@@ -1,41 +1,42 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH] MAINTAINERS: Add Samsung pinctrl entries
-Date: Thu, 13 Jun 2013 10:46:48 -0700
-Message-ID: <1371145608.31941.8.camel@joe-AO722>
-References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
-	 <9948950.GZ51yJYkxQ@flatron>
-	 <CAD=FV=Un+Ti8atZLUbK+5w=dB7vX7HoxVacEGkjvCboVo4mNpA@mail.gmail.com>
-	 <1552010.DOo3aEBKyJ@flatron>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 3/3] pinctrl: exynos: ack level-triggered interrupts
+ before unmasking
+Date: Thu, 13 Jun 2013 20:20:06 +0200
+Message-ID: <CACRpkdZT_jvUzMmOrmwLOR5Gc2TWEp85kWa+yyMAp1bG3xrWXw@mail.gmail.com>
+References: <1371058399-31933-1-git-send-email-dianders@chromium.org>
+	<1371141522-29255-3-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perches-mx.perches.com ([206.117.179.246]:59098 "EHLO
-	labridge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1758852Ab3FMRqu (ORCPT
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:57184 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758780Ab3FMSUH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 13:46:50 -0400
-In-Reply-To: <1552010.DOo3aEBKyJ@flatron>
+	Thu, 13 Jun 2013 14:20:07 -0400
+Received: by mail-oa0-f53.google.com with SMTP id k14so2399062oag.26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jun 2013 11:20:06 -0700 (PDT)
+In-Reply-To: <1371141522-29255-3-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Doug Anderson <dianders@chromium.org>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, Luigi Semenzato <semenzato@chromium.org>, ilho215.lee@samsung.com, Eunki Kim <eunki_kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, 2013-06-13 at 19:32 +0200, Tomasz Figa wrote:
-[]
-> Similarly for Kukjin, he's listed as the main Samsung maintainer already, 
-> but AFAIK in this case the script can't infer this based on directory 
-> structure. Let's see how it's done for other Samsung drivers:
+On Thu, Jun 13, 2013 at 6:38 PM, Doug Anderson <dianders@chromium.org> wrote:
 
-A pattern could be added that matches any file with
-"exynos" in it.
+> A level-triggered interrupt should be acked after the interrupt line
+> becomes inactive and before it is unmasked, or else another interrupt
+> will be immediately triggered.  Acking before or after calling the
+> handler is not enough.
+>
+> Signed-off-by: Luigi Semenzato <semenzato@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v2:
+> - Greatly simplified using Tomasz's suggestion of irqd_get_trigger_type
+> - Moved acking out of the bank spinlock since since it's not needed.
+> - Linus W. has already applied parts 1 and 2, so not resending.
 
-	N: Files and directories with regex patterns.
-	   N:	[^a-z]tegra	all files whose path contains the word tegra
-	   One pattern per line.  Multiple N: lines acceptable.
+Thanks, this v2 version applied with Tomasz ACK.
 
-like:
-
-N:	exynos
-or
-N:	drivers/pinctrl/.*exynos
+Yours,
+Linus Walleij
