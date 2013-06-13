@@ -1,174 +1,134 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 14/15] ARM: SAMSUNG: Remove remaining uses of plat/regs-timer.h header
-Date: Thu, 13 Jun 2013 22:38:57 +0200
-Message-ID: <2199978.JEbm7Iqajq@flatron>
-References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com> <1370467100-10820-15-git-send-email-tomasz.figa@gmail.com> <201306132224.33866.heiko@sntech.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] MAINTAINERS: Add Samsung pinctrl entries
+Date: Fri, 14 Jun 2013 07:22:53 +0900
+Message-ID: <15cf01ce6884$8c073f20$a415bd60$%kim@samsung.com>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
+ <9948950.GZ51yJYkxQ@flatron>
+ <CAD=FV=Un+Ti8atZLUbK+5w=dB7vX7HoxVacEGkjvCboVo4mNpA@mail.gmail.com>
+ <1552010.DOo3aEBKyJ@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f41.google.com ([74.125.83.41]:48592 "EHLO
-	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757778Ab3FMUjA convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:57447 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757899Ab3FMWWz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 16:39:00 -0400
-In-Reply-To: <201306132224.33866.heiko@sntech.de>
+	Thu, 13 Jun 2013 18:22:55 -0400
+In-reply-to: <1552010.DOo3aEBKyJ@flatron>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, thierry.reding@gmail.com, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Doug Anderson' <dianders@chromium.org>
+Cc: 'Stephen Rothwell' <sfr@canb.auug.org.au>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Olof Johansson' <olof@lixom.net>, 'Mauro Carvalho Chehab' <mchehab@redhat.com>, 'Andrew Morton' <akpm@linux-foundation.org>, 'Cesar Eduardo Barros' <cesarb@cesarb.net>, "'David S. Miller'" <davem@davemloft.net>, 'Hans Verkuil' <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-On Thursday 13 of June 2013 22:24:33 Heiko St=FCbner wrote:
-> Am Mittwoch, 5. Juni 2013, 23:18:19 schrieb Tomasz Figa:
-> > This patch removes remaining inclusions of plat/regs-timer.h as a
-> > preparation to remove the header.
->=20
-> hmm, the patch does a bit more than that, as it also removes the savi=
-ng
-> of the registers from the suspend calls, which is most likely handled
-> by the driver now. But the description should possibly reflect that.
+Tomasz Figa wrote:
+> 
+> On Thursday 13 of June 2013 10:25:02 Doug Anderson wrote:
+> > Tomasz,
+> >
+> > On Thu, Jun 13, 2013 at 10:13 AM, Tomasz Figa <tomasz.figa@gmail.com>
+> wrote:
+> > > On Thursday 13 of June 2013 10:05:44 Doug Anderson wrote:
+> > >> It's convenient if get_maintainer suggests sending samsung/exynos
+> > >> pinctrl changes to linux-samsung-soc and to Kukjin.  Add an entry for
+> > >> that.
+> > >
+> > > Well, if we are already at it, we could list the actual maintainers of
+> > > the driver.
+> > >
+> > > The original maintainer was Thomas Abraham <thomas.abraham@linaro.org>
+> > > (added to CC) and after joining to development of this driver last
+> > > year I have become a de facto maintainer as well, so...
+> > >
+> > >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> > >> ---
+> > >>
+> > >>  MAINTAINERS | 10 ++++++++++
+> > >>  1 file changed, 10 insertions(+)
+> > >>
+> > >> diff --git a/MAINTAINERS b/MAINTAINERS
+> > >> index 8d97b3e..d026e38 100644
+> > >> --- a/MAINTAINERS
+> > >> +++ b/MAINTAINERS
+> > >> @@ -6284,6 +6284,16 @@ L:     linux-arm-kernel@lists.infradead.org
+> > >> (moderated for non-subscribers) S:    Maintained
+> > >>
+> > >>  F:   drivers/pinctrl/pinctrl-at91.c
+> > >>
+> > >> +PIN CONTROLLER - SAMSUNG
+> > >> +M:   Linus Walleij <linus.walleij@linaro.org>
+> > >> +M:   Kukjin Kim <kgene.kim@samsung.com>
+> > >
+> > > So actually this would be:
+> > > M:      Thomas Abraham <thomas.abraham@linaro.org>
+> > > M:      Tomasz Figa <t.figa@samsung.com>
+> > >
+> > > Thomas, do you agree on this?
+> >
+> > Ah.  Wasn't sure where the official maintainership should lie.  ;)  If
+> > Thomas is happy with this then I'll spin and re-send.  Shall I remove
+> > Kukjin and Linus, then?  It's convenient to have Linus on the list
+> > since he tends to be the one applying the patches...
+> 
+> From my understanding how it works, there is no need to list Linus in
+> particular drivers, because he's already listed as a maintainer of the
+> whole pinctrl subsystem and get-maintainer accounts for this.
+> 
+> Similarly for Kukjin, he's listed as the main Samsung maintainer already,
 
-True, although I couldn't test suspend/resume with these patches, becau=
-se=20
-it was already broken before, at least on s3c64xx and/or mini6410.
+If so, the directory like pinctrl should be added under Samsung ARM
+Architectures like spi and sound for Samsung stuff...
 
-As an interesting side note, in case of s3c64xx and s5p64x0, existing c=
-ode=20
-was not enough to make suspend/resume of the timer work, as it can be s=
-een=20
-in case of s5pv210, which has it done almost correctly.
+> but AFAIK in this case the script can't infer this based on directory
+> structure. Let's see how it's done for other Samsung drivers:
+> 
+Well, I don't think so, because pinctrl has the close relationship with
+exynos arch part and it's little bit different with following. Just in my
+understanding.
 
-Almost, because as far as I know (and I can see in the manual) the TCNT=
-O=20
-register is read only and there is a separate procedure for loading tim=
-er=20
-value manually.
+> DRM DRIVERS FOR EXYNOS
+> M:      Inki Dae <inki.dae@samsung.com>
+> M:      Joonyoung Shim <jy0922.shim@samsung.com>
+> M:      Seung-Woo Kim <sw0312.kim@samsung.com>
+> M:      Kyungmin Park <kyungmin.park@samsung.com>
+> L:      dri-devel@lists.freedesktop.org
+> T:      git git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-
+> exynos.git
+> S:      Supported
+> F:      drivers/gpu/drm/exynos
+> F:      include/drm/exynos*
+> F:      include/uapi/drm/exynos*
+> 
+> EXYNOS DP DRIVER
+> M:      Jingoo Han <jg1.han@samsung.com>
+> L:      linux-fbdev@vger.kernel.org
+> S:      Maintained
+> F:      drivers/video/exynos/exynos_dp*
+> F:      include/video/exynos_dp*
+> 
+> EXYNOS MIPI DISPLAY DRIVERS
+> M:      Inki Dae <inki.dae@samsung.com>
+> M:      Donghwa Lee <dh09.lee@samsung.com>
+> M:      Kyungmin Park <kyungmin.park@samsung.com>
+> L:      linux-fbdev@vger.kernel.org
+> S:      Maintained
+> F:      drivers/video/exynos/exynos_mipi*
+> F:      include/video/exynos_mipi*
+> 
+> ARM/SAMSUNG S5P SERIES 2D GRAPHICS ACCELERATION (G2D) SUPPORT
+> M:      Kyungmin Park <kyungmin.park@samsung.com>
+> M:      Kamil Debski <k.debski@samsung.com>
+> L:      linux-arm-kernel@lists.infradead.org
+> L:      linux-media@vger.kernel.org
+> S:      Maintained
+> F:      drivers/media/platform/s5p-g2d/
+> 
+And I'm asking above all guys _really_ do review and maintaining the file or
+directories? I don't think so.
 
-Thanks for review.
-
-Best regards,
-Tomasz
-
-> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> > ---
-> >=20
-> >  arch/arm/mach-s3c64xx/irq-pm.c  |  2 --
-> >  arch/arm/mach-s5p64x0/pm.c      |  3 ---
-> >  arch/arm/mach-s5pv210/pm.c      | 10 ----------
-> >  arch/arm/plat-samsung/s5p-irq.c |  1 -
-> >  4 files changed, 16 deletions(-)
-> >=20
-> > diff --git a/arch/arm/mach-s3c64xx/irq-pm.c
-> > b/arch/arm/mach-s3c64xx/irq-pm.c index 0c7e1d9..c3da1b6 100644
-> > --- a/arch/arm/mach-s3c64xx/irq-pm.c
-> > +++ b/arch/arm/mach-s3c64xx/irq-pm.c
-> > @@ -22,7 +22,6 @@
-> >=20
-> >  #include <mach/map.h>
-> > =20
-> >  #include <plat/regs-serial.h>
-> >=20
-> > -#include <plat/regs-timer.h>
-> >=20
-> >  #include <mach/regs-gpio.h>
-> >  #include <plat/cpu.h>
-> >  #include <plat/pm.h>
-> >=20
-> > @@ -43,7 +42,6 @@ static struct sleep_save irq_save[] =3D {
-> >=20
-> >  	SAVE_ITEM(S3C64XX_EINT0FLTCON2),
-> >  	SAVE_ITEM(S3C64XX_EINT0FLTCON3),
-> >  	SAVE_ITEM(S3C64XX_EINT0MASK),
-> >=20
-> > -	SAVE_ITEM(S3C64XX_TINT_CSTAT),
-> >=20
-> >  };
-> > =20
-> >  static struct irq_grp_save {
-> >=20
-> > diff --git a/arch/arm/mach-s5p64x0/pm.c b/arch/arm/mach-s5p64x0/pm.=
-c
-> > index 97c2a08a..861e15c 100644
-> > --- a/arch/arm/mach-s5p64x0/pm.c
-> > +++ b/arch/arm/mach-s5p64x0/pm.c
-> > @@ -18,7 +18,6 @@
-> >=20
-> >  #include <plat/cpu.h>
-> >  #include <plat/pm.h>
-> >=20
-> > -#include <plat/regs-timer.h>
-> >=20
-> >  #include <plat/wakeup-mask.h>
-> > =20
-> >  #include <mach/regs-clock.h>
-> >=20
-> > @@ -48,8 +47,6 @@ static struct sleep_save s5p64x0_misc_save[] =3D =
-{
-> >=20
-> >  	SAVE_ITEM(S5P64X0_MEM0CONSLP1),
-> >  	SAVE_ITEM(S5P64X0_MEM0DRVCON),
-> >  	SAVE_ITEM(S5P64X0_MEM1DRVCON),
-> >=20
-> > -
-> > -	SAVE_ITEM(S3C64XX_TINT_CSTAT),
-> >=20
-> >  };
-> > =20
-> >  /* DPLL is present only in S5P6450 */
-> >=20
-> > diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.=
-c
-> > index 2b68a67..3cf3f9c 100644
-> > --- a/arch/arm/mach-s5pv210/pm.c
-> > +++ b/arch/arm/mach-s5pv210/pm.c
-> > @@ -21,7 +21,6 @@
-> >=20
-> >  #include <plat/cpu.h>
-> >  #include <plat/pm.h>
-> >=20
-> > -#include <plat/regs-timer.h>
-> >=20
-> >  #include <mach/regs-irq.h>
-> >  #include <mach/regs-clock.h>
-> >=20
-> > @@ -77,15 +76,6 @@ static struct sleep_save s5pv210_core_save[] =3D=
- {
-> >=20
-> >  	/* Clock ETC */
-> >  	SAVE_ITEM(S5P_CLK_OUT),
-> >  	SAVE_ITEM(S5P_MDNIE_SEL),
-> >=20
-> > -
-> > -	/* PWM Register */
-> > -	SAVE_ITEM(S3C2410_TCFG0),
-> > -	SAVE_ITEM(S3C2410_TCFG1),
-> > -	SAVE_ITEM(S3C64XX_TINT_CSTAT),
-> > -	SAVE_ITEM(S3C2410_TCON),
-> > -	SAVE_ITEM(S3C2410_TCNTB(0)),
-> > -	SAVE_ITEM(S3C2410_TCMPB(0)),
-> > -	SAVE_ITEM(S3C2410_TCNTO(0)),
-> >=20
-> >  };
-> > =20
-> >  static int s5pv210_cpu_suspend(unsigned long arg)
-> >=20
-> > diff --git a/arch/arm/plat-samsung/s5p-irq.c
-> > b/arch/arm/plat-samsung/s5p-irq.c index 6729cb2..ddfaca9 100644
-> > --- a/arch/arm/plat-samsung/s5p-irq.c
-> > +++ b/arch/arm/plat-samsung/s5p-irq.c
-> > @@ -17,7 +17,6 @@
-> >=20
-> >  #include <mach/irqs.h>
-> >  #include <mach/map.h>
-> >=20
-> > -#include <plat/regs-timer.h>
-> >=20
-> >  #include <plat/cpu.h>
-> > =20
-> >  void __init s5p_init_irq(u32 *vic, u32 num_vic)
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to
-> majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> and so on.
+> 
+> So I think, based on this precedent, we can do the same for pinctrl. Let's
+> wait to see Thomas' view on this.
+> 
