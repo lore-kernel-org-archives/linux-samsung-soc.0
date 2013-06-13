@@ -1,49 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [RESEND PATCH 1/3] ARM: EXYNOS: Move arm core power down clock to
- exynos5250 common clock
-Date: Thu, 13 Jun 2013 21:26:45 +0900
-Message-ID: <150e01ce6831$44d94920$ce8bdb60$%kim@samsung.com>
-References: <1363240979-1939-2-git-send-email-amit.daniel@samsung.com>
- <1370501833-9196-1-git-send-email-amit.daniel@samsung.com>
+Subject: [PATCH] ARM: dts: Add more opp levels in exynos5440
+Date: Thu, 13 Jun 2013 21:32:45 +0900
+Message-ID: <150f01ce6832$1b7db600$52792200$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:19487 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756470Ab3FMM0r (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:54582 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756914Ab3FMMcr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 08:26:47 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 13 Jun 2013 08:32:47 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOB00MHGZWMZ900@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 21:26:46 +0900 (KST)
-In-reply-to: <1370501833-9196-1-git-send-email-amit.daniel@samsung.com>
+ with ESMTP id <0MOC00JM106MP920@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Jun 2013 21:32:46 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Mike Turquette' <mturquette@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>
 
-Amit Daniel Kachhap wrote:
-> 
-> Now with common clock support added for exynos5250 it is necessary to move
-> this code to exynos5250 common clock driver as clock registers should be
-> handled there. This change is tested in exynos5250 based arndale platform.
-> 
-> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
-> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-Hmm...I'm not sure it's better to handle the ARM core power down clock in
-common clock but the clock registers should be handled in one part, clock.
+This patch updates cpu frequency level from 1500 to 800MHZ in steps
+of 100MHZ. The corresponding voltage(in uV) is also added.
 
-Acked-by: Kukjin Kim <kgene.kim@samsugn.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/boot/dts/exynos5440.dtsi |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-Mike, the mach-exynos/cpuidle.c is not touched in samsung tree at this
-moment, so this patch will not create any conflict between samsung and clk.
-
-Thanks,
-- Kukjin
+diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+index e8f5745..80ed5d9 100644
+--- a/arch/arm/boot/dts/exynos5440.dtsi
++++ b/arch/arm/boot/dts/exynos5440.dtsi
+@@ -79,8 +79,13 @@
+ 		interrupts = <0 57 0>;
+ 		operating-points = <
+ 				/* KHz	  uV */
++				1500000 1100000
++				1400000 1075000
++				1300000 1050000
+ 				1200000 1025000
++				1100000 1000000
+ 				1000000 975000
++				900000  950000
+ 				800000  925000
+ 		>;
+ 	};
+-- 
+1.7.10.4
