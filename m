@@ -1,58 +1,119 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH] clocksource: samsung_pwm_timer: Do not request PWM mem region
-Date: Thu, 13 Jun 2013 21:22:44 +0200
-Message-ID: <1371151364-8121-1-git-send-email-tomasz.figa@gmail.com>
+From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
+Date: Thu, 13 Jun 2013 22:14:19 +0200
+Message-ID: <201306132214.20017.heiko@sntech.de>
+References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com> <1370467100-10820-9-git-send-email-tomasz.figa@gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f177.google.com ([209.85.215.177]:62474 "EHLO
-	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756785Ab3FMTWw (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:53210 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757712Ab3FMUOY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 15:22:52 -0400
-Received: by mail-ea0-f177.google.com with SMTP id j14so7936025eak.22
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jun 2013 12:22:51 -0700 (PDT)
+	Thu, 13 Jun 2013 16:14:24 -0400
+In-Reply-To: <1370467100-10820-9-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, john.stultz@linaro.org, tglx@linutronix.de, Tomasz Figa <tomasz.figa@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, thierry.reding@gmail.com, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
-PWM registers are shared between clocksource and PWM drivers and so can
-not be claimed for exclusive use.
+Am Mittwoch, 5. Juni 2013, 23:18:13 schrieb Tomasz Figa:
+> This patch introduces new Samsung PWM driver, which uses Samsung
+> PWM/timer master driver to control shared parts of the hardware.
+> 
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  drivers/pwm/Makefile      |   1 +
+>  drivers/pwm/pwm-samsung.c | 528
+> ++++++++++++++++++++++++++++++++++++++++++++++ 2 files changed, 529
+> insertions(+)
+>  create mode 100644 drivers/pwm/pwm-samsung.c
+> 
+> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/clocksource/samsung_pwm_timer.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+[...]
 
-diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
-index 0234c8d..553115b 100644
---- a/drivers/clocksource/samsung_pwm_timer.c
-+++ b/drivers/clocksource/samsung_pwm_timer.c
-@@ -404,7 +404,6 @@ void __init samsung_pwm_clocksource_init(void __iomem *base,
- static void __init samsung_pwm_alloc(struct device_node *np,
- 				     const struct samsung_pwm_variant *variant)
- {
--	struct resource res;
- 	struct property *prop;
- 	const __be32 *cur;
- 	u32 val;
-@@ -423,17 +422,9 @@ static void __init samsung_pwm_alloc(struct device_node *np,
- 		pwm.variant.output_mask |= 1 << val;
- 	}
- 
--	of_address_to_resource(np, 0, &res);
--	if (!request_mem_region(res.start,
--				resource_size(&res), "samsung-pwm")) {
--		pr_err("%s: failed to request IO mem region\n", __func__);
--		return;
--	}
--
--	pwm.base = ioremap(res.start, resource_size(&res));
-+	pwm.base = of_iomap(np, 0);
- 	if (!pwm.base) {
- 		pr_err("%s: failed to map PWM registers\n", __func__);
--		release_mem_region(res.start, resource_size(&res));
- 		return;
- 	}
- 
--- 
-1.8.2.1
+> +static int pwm_samsung_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct samsung_pwm_chip *chip;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
+> +	if (chip == NULL) {
+> +		dev_err(dev, "failed to allocate driver data\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	chip->chip.dev = &pdev->dev;
+> +	chip->chip.ops = &pwm_samsung_ops;
+> +	chip->chip.base = -1;
+> +	chip->chip.npwm = SAMSUNG_PWM_NUM;
+> +
+> +	if (pdev->dev.of_node) {
+> +		ret = pwm_samsung_parse_dt(chip);
+> +		if (ret)
+> +			return ret;
+> +
+> +		chip->chip.of_xlate = of_pwm_xlate_with_flags;
+> +		chip->chip.of_pwm_n_cells = 3;
+> +	} else {
+> +		if (!pdev->dev.platform_data) {
+> +			dev_err(&pdev->dev, "no platform data specified\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +		memcpy(&chip->variant, pdev->dev.platform_data,
+> +							sizeof(chip->variant));
+> +	}
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(&pdev->dev, "failed to get mem resource\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	chip->base = devm_request_and_ioremap(&pdev->dev, res);
+> +	if (!chip->base) {
+> +		dev_err(&pdev->dev, "failed to request and map registers\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	chip->base_clk = devm_clk_get(&pdev->dev, "timers");
+> +	if (IS_ERR(chip->base_clk)) {
+> +		dev_err(dev, "failed to get timer base clk\n");
+> +		return PTR_ERR(chip->base_clk);
+> +	}
+> +	clk_prepare_enable(chip->base_clk);
+> +
+> +	chip->tclk0 = devm_clk_get(&pdev->dev, "pwm-tclk0");
+> +	chip->tclk1 = devm_clk_get(&pdev->dev, "pwm-tclk1");
+> +
+> +	ret = pwmchip_add(&chip->chip);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to register pwm\n");
+> +		goto err_clk_disable;
+> +	}
+> +
+> +	dev_info(dev, "base_clk at %lu, tclk0 at %lu, tclk1 at %lu\n",
+> +		clk_get_rate(chip->base_clk),
+> +		!IS_ERR(chip->tclk0) ? clk_get_rate(chip->tclk0) : 0,
+> +		!IS_ERR(chip->tclk1) ? clk_get_rate(chip->tclk1) : 0);
+
+hmm, these values simply tell some internal state of the pwm, so wouldn't a 
+dev_dbg be more appropriate?
+
+
+> +
+> +	platform_set_drvdata(pdev, chip);
+> +
+> +	return 0;
+> +
+> +err_clk_disable:
+> +	clk_disable_unprepare(chip->base_clk);
+> +
+> +	return ret;
+> +}
