@@ -1,44 +1,51 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 0/6] Samsung stuff for v3.11
-Date: Wed, 12 Jun 2013 16:54:55 -0700
-Message-ID: <20130612235455.GD9067@quad.lixom.net>
-References: <51B791C3.7050702@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 00/15] Final Samsung PWM support cleanup
+Date: Thu, 13 Jun 2013 09:25:08 +0900
+Message-ID: <143801ce67cc$758f54c0$60adfe40$%kim@samsung.com>
+References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com>
+ <1444953.LmSrOvSyJG@flatron> <20130612230023.GA9016@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:35538 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756927Ab3FLXyu (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:40706 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756833Ab3FMAZP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Jun 2013 19:54:50 -0400
-Received: by mail-pa0-f49.google.com with SMTP id ld11so4487688pab.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Jun 2013 16:54:50 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <51B791C3.7050702@samsung.com>
+	Wed, 12 Jun 2013 20:25:15 -0400
+In-reply-to: <20130612230023.GA9016@quad.lixom.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: 'Olof Johansson' <olof@lixom.net>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, thierry.reding@gmail.com, 'Arnd Bergmann' <arnd@arndb.de>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Mark Brown' <broonie@kernel.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-On Wed, Jun 12, 2013 at 06:08:19AM +0900, Kukjin Kim wrote:
-> Hi Arnd, Olof
+Olof Johansson wrote:
 > 
-> Please pull Samsung stuff for v3.11.
+> On Wed, Jun 12, 2013 at 11:48:56PM +0200, Tomasz Figa wrote:
 > 
-> If any problems, please kindly let me know.
+> > > Needs testing on other platforms as I could only compile test for
+them.
+> 
+> How/who can help here? WHo has and still cares for other affected
+> platforms?
+> 
+> > > 66 files changed, 627 insertions(+), 1580 deletions(-)
+> 
+> Nice cleanup.
+> 
+> > Any comments for this series?
+> 
+> Yes, above. :) In general looks good -- testing coverage is a bit of a
+> concern.
+> 
+Good news, I'm building up team to support samsung stuff in mainline
+including test on boards, you know, I have the most of smdk/ssdk boards :)
+But I need some time :(
 
-Hi,
+I looked at reply from Sylwester and Heiko, thanks. Let me pick this series
+after their test.
 
-I've pulled 1, 2, 4 and 6. Please fix the comments on 3 and 5 and send fresh
-requests.
+Thanks.
 
-Also, I see you've based a bunch of branches on -rc5. While this is
-fine, it is more convenient for us to review your branch submission if it
-doesn't also pull in a newer upstream -rc.
-
-Main reason to use the most-recent -rc would be if new code conflicts
-with fixes in the previous -rc version, but if they don't then feel free
-to start your branches on an older version instead.
-
-
--Olof
+- Kukjin
