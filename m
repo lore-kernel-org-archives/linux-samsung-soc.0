@@ -1,56 +1,88 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 3/3] pinctrl: exynos: ack level-triggered interrupts before unmasking
-Date: Thu, 13 Jun 2013 18:42:17 +0200
-Message-ID: <4661065.SXhmWQNl5M@flatron>
-References: <1371058399-31933-1-git-send-email-dianders@chromium.org> <150901ce682e$1c3fca50$54bf5ef0$%kim@samsung.com> <CAD=FV=U9V-rgjcCusCvgw-SeUH-kDbozr_T-i1DcaXNXv48vxw@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] pinctrl: exynos: ack level-triggered interrupts before unmasking
+Date: Thu, 13 Jun 2013 18:44:11 +0200
+Message-ID: <2132357.TpKeOTlAXO@flatron>
+References: <1371058399-31933-1-git-send-email-dianders@chromium.org> <1371141522-29255-3-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f49.google.com ([74.125.83.49]:54853 "EHLO
-	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754633Ab3FMQmU convert rfc822-to-8bit (ORCPT
+Received: from mail-ee0-f52.google.com ([74.125.83.52]:33795 "EHLO
+	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754633Ab3FMQoO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 12:42:20 -0400
-In-Reply-To: <CAD=FV=U9V-rgjcCusCvgw-SeUH-kDbozr_T-i1DcaXNXv48vxw@mail.gmail.com>
+	Thu, 13 Jun 2013 12:44:14 -0400
+In-Reply-To: <1371141522-29255-3-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, Luigi Semenzato <semenzato@chromium.org>, Ilho Lee <ilho215.lee@samsung.com>, =?utf-8?B?6rmA7J2A6riw?= <eunki_kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, Luigi Semenzato <semenzato@chromium.org>, ilho215.lee@samsung.com, eunki_kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday 13 of June 2013 09:38:33 Doug Anderson wrote:
-> Kukjin,
->=20
-> On Thu, Jun 13, 2013 at 5:04 AM, Kukjin Kim <kgene.kim@samsung.com>=20
-wrote:
-> > Doug Anderson wrote:
-> >> A level-triggered interrupt should be acked after the interrupt li=
-ne
-> >> becomes inactive and before it is unmasked, or else another interr=
-upt
-> >> will be immediately triggered.  Acking before or after calling the
-> >> handler is not enough.
-> >>=20
-> >> Signed-off-by: Luigi Semenzato <semenzato@chromium.org>
-> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> >=20
-> > BTW, probably we need a similar fixing in the mach-exynos/common.c
-> > file
-> > before pinct=EA=B8=B0 for distro...
->=20
-> Is anyone using the functions in mach-exynos/common.c file anymore?  =
-I
-> thought that non-dt exynos support was going away and then we could
-> just delete a whole lot of code from that file.
+On Thursday 13 of June 2013 09:38:42 Doug Anderson wrote:
+> A level-triggered interrupt should be acked after the interrupt line
+> becomes inactive and before it is unmasked, or else another interrupt
+> will be immediately triggered.  Acking before or after calling the
+> handler is not enough.
+> 
+> Signed-off-by: Luigi Semenzato <semenzato@chromium.org>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v2:
+> - Greatly simplified using Tomasz's suggestion of irqd_get_trigger_type
+> - Moved acking out of the bank spinlock since since it's not needed.
+> - Linus W. has already applied parts 1 and 2, so not resending.
+> 
+>  drivers/pinctrl/pinctrl-exynos.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
 
-I think Kukjin meant stable kernels that support Exynos boards using bo=
-ard=20
-files and without pinctrl. Would make sense to have them fixed as well,=
- I=20
-guess.
+Looks good. Thanks.
+
+Acked-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
 
->=20
-> -Doug
+> diff --git a/drivers/pinctrl/pinctrl-exynos.c
+> b/drivers/pinctrl/pinctrl-exynos.c index c0729a3..ef75321 100644
+> --- a/drivers/pinctrl/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/pinctrl-exynos.c
+> @@ -84,6 +84,17 @@ static void exynos_gpio_irq_unmask(struct irq_data
+> *irqd) unsigned long mask;
+>  	unsigned long flags;
+> 
+> +	/*
+> +	 * Ack level interrupts right before unmask
+> +	 *
+> +	 * If we don't do this we'll get a double-interrupt.  Level 
+triggered
+> +	 * interrupts must not fire an interrupt if the level is not
+> +	 * _currently_ active, even if it was active while the interrupt 
+was
+> +	 * masked.
+> +	 */
+> +	if (irqd_get_trigger_type(irqd) & IRQ_TYPE_LEVEL_MASK)
+> +		exynos_gpio_irq_ack(irqd);
+> +
+>  	spin_lock_irqsave(&bank->slock, flags);
+> 
+>  	mask = readl(d->virt_base + reg_mask);
+> @@ -302,6 +313,17 @@ static void exynos_wkup_irq_unmask(struct irq_data
+> *irqd) unsigned long mask;
+>  	unsigned long flags;
+> 
+> +	/*
+> +	 * Ack level interrupts right before unmask
+> +	 *
+> +	 * If we don't do this we'll get a double-interrupt.  Level 
+triggered
+> +	 * interrupts must not fire an interrupt if the level is not
+> +	 * _currently_ active, even if it was active while the interrupt 
+was
+> +	 * masked.
+> +	 */
+> +	if (irqd_get_trigger_type(irqd) & IRQ_TYPE_LEVEL_MASK)
+> +		exynos_wkup_irq_ack(irqd);
+> +
+>  	spin_lock_irqsave(&b->slock, flags);
+> 
+>  	mask = readl(d->virt_base + reg_mask);
