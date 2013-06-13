@@ -1,119 +1,107 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
-Date: Thu, 13 Jun 2013 22:14:19 +0200
-Message-ID: <201306132214.20017.heiko@sntech.de>
-References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com> <1370467100-10820-9-git-send-email-tomasz.figa@gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 00/15] Final Samsung PWM support cleanup
+Date: Thu, 13 Jun 2013 22:17:43 +0200
+Message-ID: <201306132217.44265.heiko@sntech.de>
+References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com> <51B909A5.2020409@gmail.com> <1808375.nuQYa2FdfG@flatron>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:53210 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:53264 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757712Ab3FMUOY (ORCPT
+	id S1757626Ab3FMURs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Jun 2013 16:14:24 -0400
-In-Reply-To: <1370467100-10820-9-git-send-email-tomasz.figa@gmail.com>
+	Thu, 13 Jun 2013 16:17:48 -0400
+In-Reply-To: <1808375.nuQYa2FdfG@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, thierry.reding@gmail.com, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, thierry.reding@gmail.com, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
-Am Mittwoch, 5. Juni 2013, 23:18:13 schrieb Tomasz Figa:
-> This patch introduces new Samsung PWM driver, which uses Samsung
-> PWM/timer master driver to control shared parts of the hardware.
-> 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  drivers/pwm/Makefile      |   1 +
->  drivers/pwm/pwm-samsung.c | 528
-> ++++++++++++++++++++++++++++++++++++++++++++++ 2 files changed, 529
-> insertions(+)
->  create mode 100644 drivers/pwm/pwm-samsung.c
-> 
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-
-[...]
-
-> +static int pwm_samsung_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct samsung_pwm_chip *chip;
-> +	struct resource *res;
-> +	int ret;
-> +
-> +	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-> +	if (chip == NULL) {
-> +		dev_err(dev, "failed to allocate driver data\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	chip->chip.dev = &pdev->dev;
-> +	chip->chip.ops = &pwm_samsung_ops;
-> +	chip->chip.base = -1;
-> +	chip->chip.npwm = SAMSUNG_PWM_NUM;
-> +
-> +	if (pdev->dev.of_node) {
-> +		ret = pwm_samsung_parse_dt(chip);
-> +		if (ret)
-> +			return ret;
-> +
-> +		chip->chip.of_xlate = of_pwm_xlate_with_flags;
-> +		chip->chip.of_pwm_n_cells = 3;
-> +	} else {
-> +		if (!pdev->dev.platform_data) {
-> +			dev_err(&pdev->dev, "no platform data specified\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		memcpy(&chip->variant, pdev->dev.platform_data,
-> +							sizeof(chip->variant));
-> +	}
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (!res) {
-> +		dev_err(&pdev->dev, "failed to get mem resource\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	chip->base = devm_request_and_ioremap(&pdev->dev, res);
-> +	if (!chip->base) {
-> +		dev_err(&pdev->dev, "failed to request and map registers\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	chip->base_clk = devm_clk_get(&pdev->dev, "timers");
-> +	if (IS_ERR(chip->base_clk)) {
-> +		dev_err(dev, "failed to get timer base clk\n");
-> +		return PTR_ERR(chip->base_clk);
-> +	}
-> +	clk_prepare_enable(chip->base_clk);
-> +
-> +	chip->tclk0 = devm_clk_get(&pdev->dev, "pwm-tclk0");
-> +	chip->tclk1 = devm_clk_get(&pdev->dev, "pwm-tclk1");
-> +
-> +	ret = pwmchip_add(&chip->chip);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to register pwm\n");
-> +		goto err_clk_disable;
-> +	}
-> +
-> +	dev_info(dev, "base_clk at %lu, tclk0 at %lu, tclk1 at %lu\n",
-> +		clk_get_rate(chip->base_clk),
-> +		!IS_ERR(chip->tclk0) ? clk_get_rate(chip->tclk0) : 0,
-> +		!IS_ERR(chip->tclk1) ? clk_get_rate(chip->tclk1) : 0);
-
-hmm, these values simply tell some internal state of the pwm, so wouldn't a 
-dev_dbg be more appropriate?
+Am Donnerstag, 13. Juni 2013, 11:07:38 schrieb Tomasz Figa:
+> Hi Heiko, Sylwester,
+>=20
+> On Thursday 13 of June 2013 01:52:05 Sylwester Nawrocki wrote:
+> > On 06/13/2013 01:38 AM, Heiko St=FCbner wrote:
+> > > Am Donnerstag, 13. Juni 2013, 01:13:47 schrieb Tomasz Figa:
+> > >> Hi Olof,
+> > >>=20
+> > >> On Wednesday 12 of June 2013 16:00:23 Olof Johansson wrote:
+> > >>> On Wed, Jun 12, 2013 at 11:48:56PM +0200, Tomasz Figa wrote:
+> > >>>>> Needs testing on other platforms as I could only compile test=
+ for
+> > >>>>> them.
+> > >>>=20
+> > >>> How/who can help here? WHo has and still cares for other affect=
+ed
+> > >>> platforms?
+> > >>>=20
+> > >>>>> 66 files changed, 627 insertions(+), 1580 deletions(-)
+> > >>=20
+> > >> I will try to test this on Exynos 4 at work, if I somehow manage=
+ to
+> > >> find any way to use PWM on our boards (other than already-tested=
+ PWM
+> > >> clocksource).
+> > >>=20
+> > >> Unfortunately, except S3C6410, I don't have access to other
+> > >> platforms, or at least I won't in any reasonable time.
+> > >>=20
+> > >> If I remember correctly, in case of my watchdog support cleanup,
+> > >> Kukjin
+> > >> has been able to test it on S5P64x0.
+> > >>=20
+> > >> Heiko and Sylwester used to have some s3c24xx-based boards, not =
+sure
+> > >> if
+> > >> they still do and are interested in their support in mainline.
+> > >>=20
+> > >> So all left is S5PC100 (for which I couldn't find anyone who car=
+es)
+> > >> and
+> > >> Exynos5.
+> > >>=20
+> > >>> Nice cleanup.
+> > >>=20
+> > >> Thanks.
+> > >>=20
+> > >>>> Any comments for this series?
+> > >>>=20
+> > >>> Yes, above. :) In general looks good -- testing coverage is a b=
+it of
+> > >>> a
+> > >>> concern.
+> > >>=20
+> > >> Yeah. Unfortunately all I could do was testing on Tiny6410 and
+> > >> compile
+> > >> testing on others. I hope we find some really helpful people ove=
+r
+> > >> here who could waste a bit of their precious time for this museu=
+m.
+> > >> ;)
+> > >=20
+> > > I'll try to give it a testrun tomorrow. And my s3c2416 will alway=
+s be
+> > > the first-love-architecture for me ;-)
+> >=20
+> > I'll likely test it tomorrow on a Mini2440 board, I was going to do=
+ it
+> > earlier
+> > but got distracted by plenty other things that needed attention too=
+=2E At
+> > least
+> > that's one of the reasons I got the board - testing the cross-platf=
+orm
+> > cleanups
+> > and ensuring they are not breaking the older platforms.
+>=20
+> Thank you both for your support. Looking forward for testing results =
+:)
 
 
-> +
-> +	platform_set_drvdata(pdev, chip);
-> +
-> +	return 0;
-> +
-> +err_clk_disable:
-> +	clk_disable_unprepare(chip->base_clk);
-> +
-> +	return ret;
-> +}
+on a s3c2416-based machine for dt and non-dt case
+[with the limit that my machine does not has anything connected to the =
+pwm=20
+outputs, so I only get to test the base-pwm and timer part]
+
+Tested-by: Heiko Stuebner <heiko@sntech.de>
