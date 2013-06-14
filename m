@@ -1,105 +1,46 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 22/28] ARM: EXYNOS: Remove mach/regs-gpio.h header
-Date: Fri, 14 Jun 2013 21:32:58 +0200
-Message-ID: <1371238384-1504-23-git-send-email-t.figa@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 00/28] Twenty eight patches big Exynos cleanup
+Date: Fri, 14 Jun 2013 23:26:04 +0200
+Message-ID: <5750530.AyJQs5JHPZ@wuerfel>
 References: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:20222 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752134Ab3FNTda (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.8]:56563 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751294Ab3FNV0G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 15:33:30 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOE00E84E2KE880@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 20:33:28 +0100 (BST)
-In-reply-to: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
+	Fri, 14 Jun 2013 17:26:06 -0400
+In-Reply-To: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
 
-Contents of this header are not used any more and can be safely removed.
+On Friday 14 June 2013 21:32:36 Tomasz Figa wrote:
+> 
+> As I promised, I am doing some spring (or rather summer) cleaning
+> of Exynos- and Samsung- related code.
+> 
+> This first part consists mostly of removing dead code remaining after
+> removal of ATAGS support for Exynos, but several patches cleans up
+> other things found by the way.
+> 
+> See particular patches for more detailed description.
+> 
+> On Exynos4210-based Trats board:
+> Tested-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> Build tested every patch with s3c6400_defconfig, s5pv210_defconfig
+> and exynos_defconfig.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/common.c                 |  1 -
- arch/arm/mach-exynos/include/mach/regs-gpio.h | 40 ---------------------------
- arch/arm/mach-exynos/pm.c                     |  1 -
- 3 files changed, 42 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-gpio.h
+Great stuff. I unfortunately did almost the exact same patch since I
+did not know you were on it too. Yours looks better in some details,
+and your patch descriptions are /much/ better than my single large
+patch.
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index f81aa22..7b53e4c 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -40,7 +40,6 @@
- 
- #include <mach/regs-irq.h>
- #include <mach/regs-pmu.h>
--#include <mach/regs-gpio.h>
- 
- #include <plat/cpu.h>
- #include <plat/pm.h>
-diff --git a/arch/arm/mach-exynos/include/mach/regs-gpio.h b/arch/arm/mach-exynos/include/mach/regs-gpio.h
-deleted file mode 100644
-index e4b5b60..0000000
---- a/arch/arm/mach-exynos/include/mach/regs-gpio.h
-+++ /dev/null
-@@ -1,40 +0,0 @@
--/* linux/arch/arm/mach-exynos4/include/mach/regs-gpio.h
-- *
-- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * EXYNOS4 - GPIO (including EINT) register definitions
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_REGS_GPIO_H
--#define __ASM_ARCH_REGS_GPIO_H __FILE__
--
--#include <mach/map.h>
--#include <mach/irqs.h>
--
--#define EINT_REG_NR(x)			(EINT_OFFSET(x) >> 3)
--#define EINT_CON(b, x)			(b + 0xE00 + (EINT_REG_NR(x) * 4))
--#define EINT_FLTCON(b, x)		(b + 0xE80 + (EINT_REG_NR(x) * 4))
--#define EINT_MASK(b, x)			(b + 0xF00 + (EINT_REG_NR(x) * 4))
--#define EINT_PEND(b, x)			(b + 0xF40 + (EINT_REG_NR(x) * 4))
--
--#define EINT_OFFSET_BIT(x)		(1 << (EINT_OFFSET(x) & 0x7))
--
--/* compatibility for plat-s5p/irq-pm.c */
--#define EXYNOS4_EINT40CON		(S5P_VA_GPIO2 + 0xE00)
--#define S5P_EINT_CON(x)			(EXYNOS4_EINT40CON + ((x) * 0x4))
--
--#define EXYNOS4_EINT40FLTCON0		(S5P_VA_GPIO2 + 0xE80)
--#define S5P_EINT_FLTCON(x)		(EXYNOS4_EINT40FLTCON0 + ((x) * 0x4))
--
--#define EXYNOS4_EINT40MASK		(S5P_VA_GPIO2 + 0xF00)
--#define S5P_EINT_MASK(x)		(EXYNOS4_EINT40MASK + ((x) * 0x4))
--
--#define EXYNOS4_EINT40PEND		(S5P_VA_GPIO2 + 0xF40)
--#define S5P_EINT_PEND(x)		(EXYNOS4_EINT40PEND + ((x) * 0x4))
--
--#endif /* __ASM_ARCH_REGS_GPIO_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index e3faaa81..41c2069 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -30,7 +30,6 @@
- #include <plat/regs-srom.h>
- 
- #include <mach/regs-irq.h>
--#include <mach/regs-gpio.h>
- #include <mach/regs-clock.h>
- #include <mach/regs-pmu.h>
- #include <mach/pm-core.h>
--- 
-1.8.2.1
+I'll try to cross-check the two series to see if there is anything
+you missed that was in my patch set.
+
+Acked-by: Arnd Bergmann <arnd@arndb.de>
