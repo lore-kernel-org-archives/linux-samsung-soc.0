@@ -1,38 +1,47 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
-Date: Fri, 14 Jun 2013 14:38:49 +0200
-Message-ID: <3309315.fJN6KWK0oA@wuerfel>
-References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com> <000001ce68d7$ca762200$5f626600$@samsung.com> <20130614105310.GA19060@manwe>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130614105310.GA19060@manwe>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH V2 0/3] Add pinctrl support to Exynos5420
+Date: Fri, 14 Jun 2013 18:32:31 +0530
+Message-ID: <1371214954-29358-1-git-send-email-l.krishna@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:14807 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752471Ab3FNMjp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Jun 2013 08:39:45 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOD00NWUV641CZ0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 21:39:44 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, sjg@chromium.org, thomas.ab@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, linus.walleij@linaro.org
 
-On Friday 14 June 2013 12:53:11 Thierry Reding wrote:
-> 
-> I think the biggest missing piece is pci_common_exit(), the counterpart
-> of pci_common_init(), to cleanup a host bridge on ARM. I haven't looked
-> in detail at the other architectures, but I suspect there must be some
-> code to call when a host bridge is removed.
-> 
-> Looking at drivers/pci/remove.c, it seems like pci_remove_root_bus()
-> might be what we're looking at. It isn't exported so it can't be used by
-> modules, but that can be changed. Is that how a host bridge is typically
-> removed from the system?
+This patchset adds the pinctrl support to Exynos5420.
+This series is rebased and tested on master branch of 
+linux-next tree over Chander Kashyap patchset.
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg18623.html
 
-It's fairly new to have host bridges in loadable modules, so I'm pretty
-sure it's not supported by the core yet, but it also doesn't seem hard
-to do. I think you are right with regard to pci_remove_root_bus,
-and Bjorn might be able to provide more information.
+Changes since V1:
+	- As gpy7 bank supports interrupts, it is defined using EINTG macro
 
-Ideally we should be able to load and unload the pci host driver
-in a loop indefinitely without crashing or exposing any races
-or leaks, but I would not bet on that working without bugs in the
-core, since that goes beyond the normal pci (device) hotplug case.
+Leela Krishna Amudala (3):
+  ARM: dts: add pinctrl support to Exynos5420
+  pinctrl: exynos: add exynos5420 SoC specific data
+  gpio: samsung: skip gpiolib registration if pinctrl support is
+    enabled for exynos5420
 
-	Arnd
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |  680 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   45 ++
+ drivers/gpio/gpio-samsung.c                        |    1 +
+ drivers/pinctrl/pinctrl-exynos.c                   |  115 ++++
+ drivers/pinctrl/pinctrl-samsung.c                  |    2 +
+ drivers/pinctrl/pinctrl-samsung.h                  |    1 +
+ 7 files changed, 845 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+
+-- 
+1.7.9.5
