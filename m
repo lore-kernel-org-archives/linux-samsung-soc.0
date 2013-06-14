@@ -1,31 +1,58 @@
-From: Andrew Bresticker <abrestic@google.com>
-Subject: Re: [PATCH v2 06/10] clk: exynos5420: register clocks using common
- clock framework
-Date: Fri, 14 Jun 2013 10:26:57 -0700
-Message-ID: <CAL1qeaFS=MMHJj8TP4vX8-KeXNo0W_EjvhrLsb5=YNsnaqOVXw@mail.gmail.com>
-References: <1370516488-25860-10-git-send-email-chander.kashyap@linaro.org>
-	<1371218572-8993-1-git-send-email-chander.kashyap@linaro.org>
-	<1371218572-8993-7-git-send-email-chander.kashyap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <1371218572-8993-7-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-serial@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, s.nawrocki@samsung.com, mark.rutland@arm.com, thomas.ab@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [RFC PATCH 0/5] Generic PHY driver for Exynos SoCs MIPI CSI-2/DSIM
+ DPHYs
+Date: Fri, 14 Jun 2013 19:45:46 +0200
+Message-ID: <1371231951-1969-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:29698 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753009Ab3FNRq1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Jun 2013 13:46:27 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kishon@ti.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, linux-fbdev@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Chander,
+Hi,
 
-> +       [Core Clocks]
-> +
-> +  Clock                        ID
-> +  ----------------------------
-> +
-> +  oscclk               1
+The following is a simple driver for the Samsung S5P/Exynos SoCs MIPI CSI-2
+receiver and MIPI DSI transmitter DPHYs, using the generic PHY framework [1].
+Previously the MIPI CSIS and MIPI DSIM used a platform callback to control
+the PHY power enable and reset bits. The callback can be dropped now and
+those drivers don't depend any more on any platform code.
 
-I know the UM refers to this as 'oscclk', but could we instead call
-this 'fin_pll' to be consistent with Exynos 4 and Exynos 5250?
+Any comments are welcome.
 
 Thanks,
-Andrew
+Sylwester
+
+[1] https://lkml.org/lkml/2013/6/13/97
+
+Sylwester Nawrocki (5):
+  phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
+  ARM: dts: Add MIPI PHY node to exynos4.dtsi
+  video: exynos_dsi: Use generic PHY driver
+  exynos4-is: Use generic MIPI CSIS PHY driver
+  ARM: Samsung: Remove MIPI PHY setup code
+
+ .../bindings/phy/exynos-video-mipi-phy.txt         |   16 ++
+ arch/arm/boot/dts/exynos4.dtsi                     |   12 ++
+ arch/arm/mach-exynos/include/mach/regs-pmu.h       |    5 -
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h    |    4 -
+ arch/arm/plat-samsung/Makefile                     |    1 -
+ arch/arm/plat-samsung/setup-mipiphy.c              |   60 -------
+ drivers/media/platform/exynos4-is/mipi-csis.c      |   11 +-
+ drivers/phy/Kconfig                                |   10 ++
+ drivers/phy/Makefile                               |    3 +-
+ drivers/phy/exynos_video_mipi_phy.c                |  166 ++++++++++++++++++++
+ drivers/video/display/source-exynos_dsi.c          |   36 ++---
+ include/linux/platform_data/mipi-csis.h            |    9 --
+ include/video/exynos_dsi.h                         |    5 -
+ 13 files changed, 226 insertions(+), 112 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/exynos-video-mipi-phy.txt
+ delete mode 100644 arch/arm/plat-samsung/setup-mipiphy.c
+ create mode 100644 drivers/phy/exynos_video_mipi_phy.c
+
+--
+1.7.9.5
