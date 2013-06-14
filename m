@@ -1,125 +1,350 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 06/28] ARM: EXYNOS: common: Remove legacy UART initialization
+Subject: [PATCH 05/28] ARM: EXYNOS: common: Remove legacy EINT initialization
  code
-Date: Fri, 14 Jun 2013 21:32:42 +0200
-Message-ID: <1371238384-1504-7-git-send-email-t.figa@samsung.com>
+Date: Fri, 14 Jun 2013 21:32:41 +0200
+Message-ID: <1371238384-1504-6-git-send-email-t.figa@samsung.com>
 References: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:31659 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751648Ab3FNTdX (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:20222 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753778Ab3FNTdY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 15:33:23 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+	Fri, 14 Jun 2013 15:33:24 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOE00FZSE9PI770@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 20:33:20 +0100 (BST)
+ 17 2011)) with ESMTP id <0MOE00E84E2KE880@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 20:33:19 +0100 (BST)
 In-reply-to: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch removes legacy UART initialization code that was used to
-set up UART platform devices when booting with ATAGS, which is not
-supported on Exynos any more.
+This patch removes legacy EINT initialization code that was used to
+handle external interrupts when booting with ATAGS, which is not
+supported any more.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/common.c | 17 -----------------
- arch/arm/plat-samsung/init.c  |  8 +++++---
- 2 files changed, 5 insertions(+), 20 deletions(-)
+ arch/arm/mach-exynos/common.c | 307 ------------------------------------------
+ 1 file changed, 307 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 488d9bd..598e4b8 100644
+index cb07f4a..488d9bd 100644
 --- a/arch/arm/mach-exynos/common.c
 +++ b/arch/arm/mach-exynos/common.c
-@@ -69,7 +69,6 @@ static const char name_exynos5440[] = "EXYNOS5440";
- static void exynos4_map_io(void);
- static void exynos5_map_io(void);
- static void exynos5440_map_io(void);
--static void exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- static int exynos_init(void);
+@@ -615,310 +615,3 @@ static void __init exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no)
  
- unsigned long xxti_f = 0, xusbxti_f = 0;
-@@ -79,21 +78,18 @@ static struct cpu_table cpu_ids[] __initdata = {
- 		.idcode		= EXYNOS4210_CPU_ID,
- 		.idmask		= EXYNOS4_CPU_MASK,
- 		.map_io		= exynos4_map_io,
--		.init_uarts	= exynos4_init_uarts,
- 		.init		= exynos_init,
- 		.name		= name_exynos4210,
- 	}, {
- 		.idcode		= EXYNOS4212_CPU_ID,
- 		.idmask		= EXYNOS4_CPU_MASK,
- 		.map_io		= exynos4_map_io,
--		.init_uarts	= exynos4_init_uarts,
- 		.init		= exynos_init,
- 		.name		= name_exynos4212,
- 	}, {
- 		.idcode		= EXYNOS4412_CPU_ID,
- 		.idmask		= EXYNOS4_CPU_MASK,
- 		.map_io		= exynos4_map_io,
--		.init_uarts	= exynos4_init_uarts,
- 		.init		= exynos_init,
- 		.name		= name_exynos4412,
- 	}, {
-@@ -602,16 +598,3 @@ static int __init exynos_init(void)
- 
- 	return device_register(&exynos4_dev);
+ 	s3c24xx_init_uartdevs("exynos4210-uart", exynos4_uart_resources, cfg, no);
  }
 -
--/* uart registration process */
+-static void __iomem *exynos_eint_base;
 -
--static void __init exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+-static DEFINE_SPINLOCK(eint_lock);
+-
+-static unsigned int eint0_15_data[16];
+-
+-static inline int exynos4_irq_to_gpio(unsigned int irq)
 -{
--	struct s3c2410_uartcfg *tcfg = cfg;
--	u32 ucnt;
+-	if (irq < IRQ_EINT(0))
+-		return -EINVAL;
 -
--	for (ucnt = 0; ucnt < no; ucnt++, tcfg++)
--		tcfg->has_fracval = 1;
+-	irq -= IRQ_EINT(0);
+-	if (irq < 8)
+-		return EXYNOS4_GPX0(irq);
 -
--	s3c24xx_init_uartdevs("exynos4210-uart", exynos4_uart_resources, cfg, no);
+-	irq -= 8;
+-	if (irq < 8)
+-		return EXYNOS4_GPX1(irq);
+-
+-	irq -= 8;
+-	if (irq < 8)
+-		return EXYNOS4_GPX2(irq);
+-
+-	irq -= 8;
+-	if (irq < 8)
+-		return EXYNOS4_GPX3(irq);
+-
+-	return -EINVAL;
 -}
-diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
-index 79d10fc..3e5c461 100644
---- a/arch/arm/plat-samsung/init.c
-+++ b/arch/arm/plat-samsung/init.c
-@@ -87,7 +87,7 @@ void __init s3c24xx_init_clocks(int xtal)
- }
- 
- /* uart management */
 -
-+#if IS_ENABLED(CONFIG_SAMSUNG_ATAGS)
- static int nr_uarts __initdata = 0;
- 
- static struct s3c2410_uartcfg uart_cfgs[CONFIG_SERIAL_SAMSUNG_UARTS];
-@@ -134,11 +134,12 @@ void __init s3c24xx_init_uarts(struct s3c2410_uartcfg *cfg, int no)
- 	if (cpu == NULL)
- 		return;
- 
--	if (cpu->init_uarts == NULL) {
-+	if (cpu->init_uarts == NULL && IS_ENABLED(CONFIG_SAMSUNG_ATAGS)) {
- 		printk(KERN_ERR "s3c24xx_init_uarts: cpu has no uart init\n");
- 	} else
- 		(cpu->init_uarts)(cfg, no);
- }
-+#endif
- 
- static int __init s3c_arch_init(void)
- {
-@@ -152,8 +153,9 @@ static int __init s3c_arch_init(void)
- 	ret = (cpu->init)();
- 	if (ret != 0)
- 		return ret;
+-static inline int exynos5_irq_to_gpio(unsigned int irq)
+-{
+-	if (irq < IRQ_EINT(0))
+-		return -EINVAL;
 -
-+#if IS_ENABLED(CONFIG_SAMSUNG_ATAGS)
- 	ret = platform_add_devices(s3c24xx_uart_devs, nr_uarts);
-+#endif
- 	return ret;
- }
- 
+-	irq -= IRQ_EINT(0);
+-	if (irq < 8)
+-		return EXYNOS5_GPX0(irq);
+-
+-	irq -= 8;
+-	if (irq < 8)
+-		return EXYNOS5_GPX1(irq);
+-
+-	irq -= 8;
+-	if (irq < 8)
+-		return EXYNOS5_GPX2(irq);
+-
+-	irq -= 8;
+-	if (irq < 8)
+-		return EXYNOS5_GPX3(irq);
+-
+-	return -EINVAL;
+-}
+-
+-static unsigned int exynos4_eint0_15_src_int[16] = {
+-	EXYNOS4_IRQ_EINT0,
+-	EXYNOS4_IRQ_EINT1,
+-	EXYNOS4_IRQ_EINT2,
+-	EXYNOS4_IRQ_EINT3,
+-	EXYNOS4_IRQ_EINT4,
+-	EXYNOS4_IRQ_EINT5,
+-	EXYNOS4_IRQ_EINT6,
+-	EXYNOS4_IRQ_EINT7,
+-	EXYNOS4_IRQ_EINT8,
+-	EXYNOS4_IRQ_EINT9,
+-	EXYNOS4_IRQ_EINT10,
+-	EXYNOS4_IRQ_EINT11,
+-	EXYNOS4_IRQ_EINT12,
+-	EXYNOS4_IRQ_EINT13,
+-	EXYNOS4_IRQ_EINT14,
+-	EXYNOS4_IRQ_EINT15,
+-};
+-
+-static unsigned int exynos5_eint0_15_src_int[16] = {
+-	EXYNOS5_IRQ_EINT0,
+-	EXYNOS5_IRQ_EINT1,
+-	EXYNOS5_IRQ_EINT2,
+-	EXYNOS5_IRQ_EINT3,
+-	EXYNOS5_IRQ_EINT4,
+-	EXYNOS5_IRQ_EINT5,
+-	EXYNOS5_IRQ_EINT6,
+-	EXYNOS5_IRQ_EINT7,
+-	EXYNOS5_IRQ_EINT8,
+-	EXYNOS5_IRQ_EINT9,
+-	EXYNOS5_IRQ_EINT10,
+-	EXYNOS5_IRQ_EINT11,
+-	EXYNOS5_IRQ_EINT12,
+-	EXYNOS5_IRQ_EINT13,
+-	EXYNOS5_IRQ_EINT14,
+-	EXYNOS5_IRQ_EINT15,
+-};
+-static inline void exynos_irq_eint_mask(struct irq_data *data)
+-{
+-	u32 mask;
+-
+-	spin_lock(&eint_lock);
+-	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->irq));
+-	mask |= EINT_OFFSET_BIT(data->irq);
+-	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->irq));
+-	spin_unlock(&eint_lock);
+-}
+-
+-static void exynos_irq_eint_unmask(struct irq_data *data)
+-{
+-	u32 mask;
+-
+-	spin_lock(&eint_lock);
+-	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->irq));
+-	mask &= ~(EINT_OFFSET_BIT(data->irq));
+-	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->irq));
+-	spin_unlock(&eint_lock);
+-}
+-
+-static inline void exynos_irq_eint_ack(struct irq_data *data)
+-{
+-	__raw_writel(EINT_OFFSET_BIT(data->irq),
+-		     EINT_PEND(exynos_eint_base, data->irq));
+-}
+-
+-static void exynos_irq_eint_maskack(struct irq_data *data)
+-{
+-	exynos_irq_eint_mask(data);
+-	exynos_irq_eint_ack(data);
+-}
+-
+-static int exynos_irq_eint_set_type(struct irq_data *data, unsigned int type)
+-{
+-	int offs = EINT_OFFSET(data->irq);
+-	int shift;
+-	u32 ctrl, mask;
+-	u32 newvalue = 0;
+-
+-	switch (type) {
+-	case IRQ_TYPE_EDGE_RISING:
+-		newvalue = S5P_IRQ_TYPE_EDGE_RISING;
+-		break;
+-
+-	case IRQ_TYPE_EDGE_FALLING:
+-		newvalue = S5P_IRQ_TYPE_EDGE_FALLING;
+-		break;
+-
+-	case IRQ_TYPE_EDGE_BOTH:
+-		newvalue = S5P_IRQ_TYPE_EDGE_BOTH;
+-		break;
+-
+-	case IRQ_TYPE_LEVEL_LOW:
+-		newvalue = S5P_IRQ_TYPE_LEVEL_LOW;
+-		break;
+-
+-	case IRQ_TYPE_LEVEL_HIGH:
+-		newvalue = S5P_IRQ_TYPE_LEVEL_HIGH;
+-		break;
+-
+-	default:
+-		printk(KERN_ERR "No such irq type %d", type);
+-		return -EINVAL;
+-	}
+-
+-	shift = (offs & 0x7) * 4;
+-	mask = 0x7 << shift;
+-
+-	spin_lock(&eint_lock);
+-	ctrl = __raw_readl(EINT_CON(exynos_eint_base, data->irq));
+-	ctrl &= ~mask;
+-	ctrl |= newvalue << shift;
+-	__raw_writel(ctrl, EINT_CON(exynos_eint_base, data->irq));
+-	spin_unlock(&eint_lock);
+-
+-	if (soc_is_exynos5250())
+-		s3c_gpio_cfgpin(exynos5_irq_to_gpio(data->irq), S3C_GPIO_SFN(0xf));
+-	else
+-		s3c_gpio_cfgpin(exynos4_irq_to_gpio(data->irq), S3C_GPIO_SFN(0xf));
+-
+-	return 0;
+-}
+-
+-static struct irq_chip exynos_irq_eint = {
+-	.name		= "exynos-eint",
+-	.irq_mask	= exynos_irq_eint_mask,
+-	.irq_unmask	= exynos_irq_eint_unmask,
+-	.irq_mask_ack	= exynos_irq_eint_maskack,
+-	.irq_ack	= exynos_irq_eint_ack,
+-	.irq_set_type	= exynos_irq_eint_set_type,
+-#ifdef CONFIG_PM
+-	.irq_set_wake	= s3c_irqext_wake,
+-#endif
+-};
+-
+-/*
+- * exynos4_irq_demux_eint
+- *
+- * This function demuxes the IRQ from from EINTs 16 to 31.
+- * It is designed to be inlined into the specific handler
+- * s5p_irq_demux_eintX_Y.
+- *
+- * Each EINT pend/mask registers handle eight of them.
+- */
+-static inline void exynos_irq_demux_eint(unsigned int start)
+-{
+-	unsigned int irq;
+-
+-	u32 status = __raw_readl(EINT_PEND(exynos_eint_base, start));
+-	u32 mask = __raw_readl(EINT_MASK(exynos_eint_base, start));
+-
+-	status &= ~mask;
+-	status &= 0xff;
+-
+-	while (status) {
+-		irq = fls(status) - 1;
+-		generic_handle_irq(irq + start);
+-		status &= ~(1 << irq);
+-	}
+-}
+-
+-static void exynos_irq_demux_eint16_31(unsigned int irq, struct irq_desc *desc)
+-{
+-	struct irq_chip *chip = irq_get_chip(irq);
+-	chained_irq_enter(chip, desc);
+-	exynos_irq_demux_eint(IRQ_EINT(16));
+-	exynos_irq_demux_eint(IRQ_EINT(24));
+-	chained_irq_exit(chip, desc);
+-}
+-
+-static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+-{
+-	u32 *irq_data = irq_get_handler_data(irq);
+-	struct irq_chip *chip = irq_get_chip(irq);
+-
+-	chained_irq_enter(chip, desc);
+-	generic_handle_irq(*irq_data);
+-	chained_irq_exit(chip, desc);
+-}
+-
+-static int __init exynos_init_irq_eint(void)
+-{
+-	int irq;
+-
+-#ifdef CONFIG_PINCTRL_SAMSUNG
+-	/*
+-	 * The Samsung pinctrl driver provides an integrated gpio/pinmux/pinconf
+-	 * functionality along with support for external gpio and wakeup
+-	 * interrupts. If the samsung pinctrl driver is enabled and includes
+-	 * the wakeup interrupt support, then the setting up external wakeup
+-	 * interrupts here can be skipped. This check here is temporary to
+-	 * allow exynos4 platforms that do not use Samsung pinctrl driver to
+-	 * co-exist with platforms that do. When all of the Samsung Exynos4
+-	 * platforms switch over to using the pinctrl driver, the wakeup
+-	 * interrupt support code here can be completely removed.
+-	 */
+-	static const struct of_device_id exynos_pinctrl_ids[] = {
+-		{ .compatible = "samsung,exynos4210-pinctrl", },
+-		{ .compatible = "samsung,exynos4x12-pinctrl", },
+-		{ .compatible = "samsung,exynos5250-pinctrl", },
+-	};
+-	struct device_node *pctrl_np, *wkup_np;
+-	const char *wkup_compat = "samsung,exynos4210-wakeup-eint";
+-
+-	for_each_matching_node(pctrl_np, exynos_pinctrl_ids) {
+-		if (of_device_is_available(pctrl_np)) {
+-			wkup_np = of_find_compatible_node(pctrl_np, NULL,
+-							wkup_compat);
+-			if (wkup_np)
+-				return -ENODEV;
+-		}
+-	}
+-#endif
+-	if (soc_is_exynos5440())
+-		return 0;
+-
+-	if (soc_is_exynos5250())
+-		exynos_eint_base = ioremap(EXYNOS5_PA_GPIO1, SZ_4K);
+-	else
+-		exynos_eint_base = ioremap(EXYNOS4_PA_GPIO2, SZ_4K);
+-
+-	if (exynos_eint_base == NULL) {
+-		pr_err("unable to ioremap for EINT base address\n");
+-		return -ENOMEM;
+-	}
+-
+-	for (irq = 0 ; irq <= 31 ; irq++) {
+-		irq_set_chip_and_handler(IRQ_EINT(irq), &exynos_irq_eint,
+-					 handle_level_irq);
+-		set_irq_flags(IRQ_EINT(irq), IRQF_VALID);
+-	}
+-
+-	irq_set_chained_handler(EXYNOS_IRQ_EINT16_31, exynos_irq_demux_eint16_31);
+-
+-	for (irq = 0 ; irq <= 15 ; irq++) {
+-		eint0_15_data[irq] = IRQ_EINT(irq);
+-
+-		if (soc_is_exynos5250()) {
+-			irq_set_handler_data(exynos5_eint0_15_src_int[irq],
+-					     &eint0_15_data[irq]);
+-			irq_set_chained_handler(exynos5_eint0_15_src_int[irq],
+-						exynos_irq_eint0_15);
+-		} else {
+-			irq_set_handler_data(exynos4_eint0_15_src_int[irq],
+-					     &eint0_15_data[irq]);
+-			irq_set_chained_handler(exynos4_eint0_15_src_int[irq],
+-						exynos_irq_eint0_15);
+-		}
+-	}
+-
+-	return 0;
+-}
+-arch_initcall(exynos_init_irq_eint);
 -- 
 1.8.2.1
