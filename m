@@ -1,849 +1,154 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: dts: add pinctrl support to Exynos5420
-Date: Fri, 14 Jun 2013 10:19:38 +0530
-Message-ID: <CAL1wa8eVCe_kYdy=T1gBNEWS-s__Sx1NUUg0b+_3yoGc9o1mMg@mail.gmail.com>
-References: <1371048688-9089-1-git-send-email-l.krishna@samsung.com>
- <1371048688-9089-2-git-send-email-l.krishna@samsung.com> <1531737.EaJZJjF9GR@flatron>
+From: =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
+Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu
+ reg control
+Date: Fri, 14 Jun 2013 15:09:28 +0900
+Message-ID: <51BAB398.8090409@samsung.com>
+References: <1370935073-7475-1-git-send-email-rahul.sharma@samsung.com>
+ <CAAQKjZMuSQhbYtOyni-RdHhXu0fv3U2Dm_2iqRLe0smSt_jjjQ@mail.gmail.com>
+ <CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com>
+ <CAPdUM4Nis0uwyZf1hNDOMmdqFm0K7beVPoyAWRjMBwq0jcwwCQ@mail.gmail.com>
+ <51B98908.8050403@samsung.com>
+ <02c101ce6828$29ab0f20$7d012d60$%dae@samsung.com> <51B9C0ED.2040605@ti.com>
+Reply-To: sw0312.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:61113 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750889Ab3FNEt7 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:27776 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751031Ab3FNGJf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 00:49:59 -0400
-Received: by mail-vc0-f174.google.com with SMTP id kw10so106577vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Jun 2013 21:49:58 -0700 (PDT)
-In-Reply-To: <1531737.EaJZJjF9GR@flatron>
+	Fri, 14 Jun 2013 02:09:35 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOD00664D2BAEN0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 15:09:28 +0900 (KST)
+In-reply-to: <51B9C0ED.2040605@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, dianders@chromium.org, sjg@chromium.org, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, t.figa@samsung.com, linus.walleij@linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Inki Dae <inki.dae@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Rahul Sharma' <r.sh.open@gmail.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'DRI mailing list' <dri-devel@lists.freedesktop.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sean Paul' <seanpaul@chromium.org>, 'sunil joshi' <joshi@samsung.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, grant.likely@linaro.org, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hi Tomasz,
-Thanks for reviewing the patchset/
+Hello Kishon,
 
-On Thu, Jun 13, 2013 at 2:28 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Leela Krishna,
->
-> On Wednesday 12 of June 2013 20:21:26 Leela Krishna Amudala wrote:
->> Add the required pin configuration support to Exynos5420 using pinctrl
->> interface.
+On 2013=EB=85=84 06=EC=9B=94 13=EC=9D=BC 21:54, Kishon Vijay Abraham I =
+wrote:
+> Hi,
+>=20
+> On Thursday 13 June 2013 04:51 PM, Inki Dae wrote:
 >>
->> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |  680
->> +++++++++++++++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi
->> |   45 ++
->>  2 files changed, 725 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/exynos5420-pinctrl.dtsi
 >>
->> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi new file mode 100644
->> index 0000000..23b7521
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> @@ -0,0 +1,680 @@
->> +/*
->> + * Samsung's Exynos5420 SoC pin-mux and pin-config device tree source
->> + *
->> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->> + *           http://www.samsung.com
->> + *
->> + * Samsung's Exynos5420 SoC pin-mux and pin-config options are listed
->> as device + * tree nodes are listed in this file.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as +
->> * published by the Free Software Foundation.
->> +*/
->> +
->> +/ {
->> +     pinctrl@13400000 {
->> +             gpy7: gpy7 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->
-> According to patch 2/3, this bank doesn't support interrupts, as it's
-> defined using EINTN macro. Which variant is correct?
->
-
-Its my mistake, gpy7 will support interrupts, so I'll change EINTN to
-EINTG in other patch.
-
->> +             };
->> +
->> +             gpx0: gpx0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     interrupt-parent = <&combiner>;
->> +                     #interrupt-cells = <2>;
->> +                     interrupts = <23 0>, <24 0>, <25 0>, <25 1>,
->> +                                  <26 0>, <26 1>, <27 0>, <27 1>;
->> +             };
->> +
->> +             gpx1: gpx1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     interrupt-parent = <&combiner>;
->> +                     #interrupt-cells = <2>;
->> +                     interrupts = <28 0>, <28 1>, <29 0>, <29 1>,
->> +                                  <30 0>, <30 1>, <31 0>, <31 1>;
->> +             };
->> +
->> +             gpx2: gpx2 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpx3: gpx3 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +     };
->> +
->> +     pinctrl@13410000 {
->> +             gpc0: gpc0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpc1: gpc1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpc2: gpc2 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpc3: gpc3 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpc4: gpc4 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpd1: gpd1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpy0: gpy0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +             };
->> +
->> +             gpy1: gpy1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +             };
->> +
->> +             gpy2: gpy2 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +             };
->> +
->> +             gpy3: gpy3 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +             };
->> +
->> +             gpy4: gpy4 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +             };
->> +
->> +             gpy5: gpy5 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +             };
->> +
->> +             gpy6: gpy6 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +             };
->> +
->> +             sd0_clk: sd0-clk {
->> +                     samsung,pins = "gpc0-0";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd0_cmd: sd0-cmd {
->> +                     samsung,pins = "gpc0-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd0_cd: sd0-cd {
->> +                     samsung,pins = "gpc0-2";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd0_bus1: sd0-bus-width1 {
->> +                     samsung,pins = "gpc0-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd0_bus4: sd0-bus-width4 {
->> +                     samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5",
-> "gpc0-6";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd0_bus8: sd0-bus-width8 {
->> +                     samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2",
-> "gpc3-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->
->
-> It seems like there is some inconsequence here, because sd0_bus4 setting
-> includes pins of sd0_bus1, while sd0_bus8 doesn't include pins of
-> sd0_bus4.
->
-> I think it should be defined either first or second way, not mixed, but I
-> don't have any strong preference over any of them.
->
-> CCing some people to hopefully get some more opinion on this.
->
-
-I'll check and post the appropriate changes to this.
-
-Best Wishes,
-Leela Krishna Amudala.
-
->> +             sd1_clk: sd1-clk {
->> +                     samsung,pins = "gpc1-0";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd1_cmd: sd1-cmd {
->> +                     samsung,pins = "gpc1-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd1_cd: sd1-cd {
->> +                     samsung,pins = "gpc1-2";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd1_int: sd1-int {
->> +                     samsung,pins = "gpd1-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             sd1_bus1: sd1-bus-width1 {
->> +                     samsung,pins = "gpc1-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd1_bus4: sd1-bus-width4 {
->> +                     samsung,pins = "gpc1-3", "gpc1-4", "gpc1-5",
-> "gpc1-6";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd1_bus8: sd1-bus-width8 {
->> +                     samsung,pins = "gpd1-4", "gpd1-5", "gpd1-6",
-> "gpd1-7";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->
-> Same here.
->
-> Rest of the patch looks fine to me.
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
-> Best regards,
-> Tomasz
->
->> +             sd2_clk: sd2-clk {
->> +                     samsung,pins = "gpc2-0";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd2_cmd: sd2-cmd {
->> +                     samsung,pins = "gpc2-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd2_cd: sd2-cd {
->> +                     samsung,pins = "gpc2-2";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd2_bus1: sd2-bus-width1 {
->> +                     samsung,pins = "gpc2-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +
->> +             sd2_bus4: sd2-bus-width4 {
->> +                     samsung,pins = "gpc2-3", "gpc2-4", "gpc2-5",
-> "gpc2-6";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <3>;
->> +             };
->> +     };
->> +
->> +     pinctrl@14000000 {
->> +             gpe0: gpe0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpe1: gpe1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpf0: gpf0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpf1: gpf1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpg0: gpg0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpg1: gpg1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpg2: gpg2 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpj4: gpj4 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             cam_gpio_a: cam-gpio-a {
->> +                     samsung,pins = "gpe0-0", "gpe0-1", "gpe0-2",
-> "gpe0-3",
->> +                                    "gpe0-4", "gpe0-5", "gpe0-6",
-> "gpe0-7",
->> +                                    "gpe1-0", "gpe1-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             cam_gpio_b: cam-gpio-b {
->> +                     samsung,pins = "gpf0-0", "gpf0-1", "gpf0-2",
-> "gpf0-3",
->> +                                    "gpf1-0", "gpf1-1", "gpf1-2",
-> "gpf1-3";
->> +                     samsung,pin-function = <3>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             cam_i2c2_bus: cam-i2c2-bus {
->> +                     samsung,pins = "gpf0-4", "gpf0-5";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +             cam_spi1_bus: cam-spi1-bus {
->> +                     samsung,pins = "gpe0-4", "gpe0-5", "gpf0-2",
-> "gpf0-3";
->> +                     samsung,pin-function = <4>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             cam_i2c1_bus: cam-i2c1-bus {
->> +                     samsung,pins = "gpf0-2", "gpf0-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             cam_i2c0_bus: cam-i2c0-bus {
->> +                     samsung,pins = "gpf0-0", "gpf0-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             cam_spi0_bus: cam-spi0-bus {
->> +                     samsung,pins = "gpf1-0", "gpf1-1", "gpf1-2",
-> "gpf1-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             cam_bayrgb_bus: cam-bayrgb-bus {
->> +                     samsung,pins = "gpg0-0", "gpg0-1", "gpg0-2",
-> "gpg0-3",
->> +                                    "gpg0-4", "gpg0-5", "gpg0-6",
-> "gpg0-7",
->> +                                    "gpg1-0", "gpg1-1", "gpg1-2",
-> "gpg1-3",
->> +                                    "gpg1-4", "gpg1-5", "gpg1-6",
-> "gpg1-7",
->> +                                    "gpg2-0";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +     };
->> +
->> +     pinctrl@14010000 {
->> +             gpa0: gpa0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpa1: gpa1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpa2: gpa2 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpb0: gpb0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpb1: gpb1 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpb2: gpb2 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpb3: gpb3 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gpb4: gpb4 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             gph0: gph0 {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             uart0_data: uart0-data {
->> +                     samsung,pins = "gpa0-0", "gpa0-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             uart0_fctl: uart0-fctl {
->> +                     samsung,pins = "gpa0-2", "gpa0-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             uart1_data: uart1-data {
->> +                     samsung,pins = "gpa0-4", "gpa0-5";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             uart1_fctl: uart1-fctl {
->> +                     samsung,pins = "gpa0-6", "gpa0-7";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c2_bus: i2c2-bus {
->> +                     samsung,pins = "gpa0-6", "gpa0-7";
->> +                     samsung,pin-function = <3>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             uart2_data: uart2-data {
->> +                     samsung,pins = "gpa1-0", "gpa1-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             uart2_fctl: uart2-fctl {
->> +                     samsung,pins = "gpa1-2", "gpa1-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c3_bus: i2c3-bus {
->> +                     samsung,pins = "gpa1-2", "gpa1-3";
->> +                     samsung,pin-function = <3>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             uart3_data: uart3-data {
->> +                     samsung,pins = "gpa1-4", "gpa1-5";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             spi0_bus: spi0-bus {
->> +                     samsung,pins = "gpa2-0", "gpa2-1", "gpa2-2",
-> "gpa2-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             spi1_bus: spi1-bus {
->> +                     samsung,pins = "gpa2-4", "gpa2-6", "gpa2-7";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c4_hs_bus: i2c4-hs-bus {
->> +                     samsung,pins = "gpa2-0", "gpa2-1";
->> +                     samsung,pin-function = <3>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c5_hs_bus: i2c5-hs-bus {
->> +                     samsung,pins = "gpa2-2", "gpa2-3";
->> +                     samsung,pin-function = <3>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2s1_bus: i2s1-bus {
->> +                     samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2",
-> "gpb0-3",
->> +                                     "gpb0-4";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             pcm1_bus: pcm1-bus {
->> +                     samsung,pins = "gpb0-0", "gpb0-1", "gpb0-2",
-> "gpb0-3",
->> +                                     "gpb0-4";
->> +                     samsung,pin-function = <3>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2s2_bus: i2s2-bus {
->> +                     samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2",
-> "gpb1-3",
->> +                                     "gpb1-4";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             pcm2_bus: pcm2-bus {
->> +                     samsung,pins = "gpb1-0", "gpb1-1", "gpb1-2",
-> "gpb1-3",
->> +                                     "gpb1-4";
->> +                     samsung,pin-function = <3>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             spdif_bus: spdif-bus {
->> +                     samsung,pins = "gpb1-0", "gpb1-1";
->> +                     samsung,pin-function = <4>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             spi2_bus: spi2-bus {
->> +                     samsung,pins = "gpb1-1", "gpb1-3", "gpb1-4";
->> +                     samsung,pin-function = <5>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c6_hs_bus: i2c6-hs-bus {
->> +                     samsung,pins = "gpb1-3", "gpb1-4";
->> +                     samsung,pin-function = <4>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c7_hs_bus: i2c7-hs-bus {
->> +                     samsung,pins = "gpb2-2", "gpb2-3";
->> +                     samsung,pin-function = <3>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c0_bus: i2c0-bus {
->> +                     samsung,pins = "gpb3-0", "gpb3-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c1_bus: i2c1-bus {
->> +                     samsung,pins = "gpb3-2", "gpb3-3";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c8_hs_bus: i2c8-hs-bus {
->> +                     samsung,pins = "gpb3-4", "gpb3-5";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c9_hs_bus: i2c9-hs-bus {
->> +                     samsung,pins = "gpb3-6", "gpb3-7";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +
->> +             i2c10_hs_bus: i2c10-hs-bus {
->> +                     samsung,pins = "gpb4-0", "gpb4-1";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <3>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +     };
->> +
->> +     pinctrl@03860000 {
->> +             gpz: gpz {
->> +                     gpio-controller;
->> +                     #gpio-cells = <2>;
->> +
->> +                     interrupt-controller;
->> +                     #interrupt-cells = <2>;
->> +             };
->> +
->> +             i2s0_bus: i2s0-bus {
->> +                     samsung,pins = "gpz-0", "gpz-1", "gpz-2", "gpz-3",
->> +                                     "gpz-4", "gpz-5", "gpz-6";
->> +                     samsung,pin-function = <2>;
->> +                     samsung,pin-pud = <0>;
->> +                     samsung,pin-drv = <0>;
->> +             };
->> +     };
->> +};
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
->> b/arch/arm/boot/dts/exynos5420.dtsi index 577dfe5..e7bf7c7 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -15,9 +15,18 @@
+>>> -----Original Message-----
+>>> From: Sylwester Nawrocki [mailto:s.nawrocki@samsung.com]
+>>> Sent: Thursday, June 13, 2013 5:56 PM
+>>> To: Rahul Sharma
+>>> Cc: Rahul Sharma; Inki Dae; linux-samsung-soc@vger.kernel.org;
+>>> devicetree-
+>>> discuss@lists.ozlabs.org; DRI mailing list; Kukjin Kim; Seung-Woo K=
+im;
+>>> Sean Paul; sunil joshi; Kishon Vijay Abraham I; Stephen Warren;
+>>> grant.likely@linaro.org
+>>> Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock=
+ with
+>>> pmu reg control
+>>>
+>>> Hi,
+>>>
+>>> On 06/13/2013 06:26 AM, Rahul Sharma wrote:
+>>>> Mr. Dae,
+>>>>
+>>>> Thanks for your valuable inputs.
+>>>>
+>>>> I posted it as RFC because, I also have received comments to regis=
+ter
+>>>> hdmiphy as a clock controller. As we always configure it for speci=
+fic
+>>>> frequency, hdmi-phy looks similar to a PLL. But it really doesn't
+>>>> belong to that class. Secondly prior to exynos5420, it was a i2c
+>>>> device. I am not sure we can register a I2C device as a clock
+>>>> controller. I wanted to discuss and explore this option here.
+>>>
+>>> Have you considered using the generic PHY framework for those HDMI
+>>> PHY devices [1] ? I guess we could add a dedicated group of ops for
+>>> video PHYs, similarly as is is done with struct v4l2_subdev_ops. Fo=
+r
+>>> configuring things like the carrier/pixel clock frequency or anythi=
+ng
+>>> what's common across the video PHYs.
+>>>
+>>> Perhaps you could have a look and see if this framework would be
+>>> useful for HDMI and possibly point out anything what might be missi=
+ng ?
+>>>
+>>> I'm not sure it it really solves the issues specific to the Exynos
+>>> HDMI but at least with a generic PHY driver the PHY module would be
+>>> separate from the PHY controller, as often same HDMI DPHY can be us=
+ed
+>>> with various types of a HDMI controller. So this would allow to not
+>>> duplicate the HDMI PHY drivers in the long-term perspective.
 >>
->>  /include/ "skeleton.dtsi"
->>  /include/ "exynos5.dtsi"
->> +/include/ "exynos5420-pinctrl.dtsi"
->>  / {
->>       compatible = "samsung,exynos5420";
->>
->> +     aliases {
->> +             pinctrl0 = &pinctrl_0;
->> +             pinctrl1 = &pinctrl_1;
->> +             pinctrl2 = &pinctrl_2;
->> +             pinctrl3 = &pinctrl_3;
->> +             pinctrl4 = &pinctrl_4;
->> +     };
->> +
->>       clock: clock-controller@0x10010000 {
->>               compatible = "samsung,exynos5420-clock";
->>               reg = <0x10010000 0x30000>;
->> @@ -83,6 +92,42 @@
->>               };
->>       };
->>
->> +     pinctrl_0: pinctrl@13400000 {
->> +             compatible = "samsung,exynos5420-pinctrl";
->> +             reg = <0x13400000 0x1000>;
->> +             interrupts = <0 45 0>;
->> +
->> +             wakeup-interrupt-controller {
->> +                     compatible = "samsung,exynos4210-wakeup-eint";
->> +                     interrupt-parent = <&gic>;
->> +                     interrupts = <0 32 0>;
->> +             };
->> +     };
->> +
->> +     pinctrl_1: pinctrl@13410000 {
->> +             compatible = "samsung,exynos5420-pinctrl";
->> +             reg = <0x13410000 0x1000>;
->> +             interrupts = <0 78 0>;
->> +     };
->> +
->> +     pinctrl_2: pinctrl@14000000 {
->> +             compatible = "samsung,exynos5420-pinctrl";
->> +             reg = <0x14000000 0x1000>;
->> +             interrupts = <0 46 0>;
->> +     };
->> +
->> +     pinctrl_3: pinctrl@14010000 {
->> +             compatible = "samsung,exynos5420-pinctrl";
->> +             reg = <0x14010000 0x1000>;
->> +             interrupts = <0 50 0>;
->> +     };
->> +
->> +     pinctrl_4: pinctrl@03860000 {
->> +             compatible = "samsung,exynos5420-pinctrl";
->> +             reg = <0x03860000 0x1000>;
->> +             interrupts = <0 47 0>;
->> +     };
->> +
->>       serial@12C00000 {
->>               clocks = <&clock 257>, <&clock 128>;
->>       };
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> Yeah, at least, it seems that we could use PHY module to control PMU
+>> register, HDMI_PHY_CONTROL. However, PHY module provides only init/o=
+n/off
+>> callbacks. As you may know, HDMIPHY needs i2c interfaces to control
+>> HDMIPHY
+>> clock. So with PHY module, HDMIPHY driver could enable PMU more
+>> generically,
+>> but also has to use existing i2c stuff to control HDMIPHY clock. I h=
+ad a
+>> quick review to Generic PHY Framework[v6] but I didn't see that the =
+PHY
+>> module could generically support more features such as i2c stuff.
+>=20
+> I don't think PHY framework needs to provide i2c interfaces to progra=
+m
+> certain configurations. Instead in one of the callbacks (init/on/off)
+> PHY driver can program whatever it wants using any of the interfaces =
+it
+> needs. IMO PHY framework should work independent of the interfaces.
+
+In exnoys hdmi case, i2c interface is not the exact issue. In exynos
+hdmi, hdmiphy should send i2c configuration about video clock
+information as the video mode information including resolution, bit per
+pixel, refresh rate passed from drm subsystem. So init/on/off callbacks
+of phy framework are not enough for exynos hdmiphy and it should have a
+callback to set video mode.
+
+Do you have plan to add driver specific extend callback pointers to phy
+framework?
+
+Currently, hdmi directly calls phy operations, but Rahul's another patc=
+h
+set, mentioned by Inki, divides hdmi and hdmiphy and hdmi and hdmiphy i=
+s
+connected with exynos hdmi own sub driver callback operations.
+
+IMHO, if phy framework can support extend callback feature, then this
+own sub driver callbacks can be replaced with phy framework at long ter=
+m
+view.
+
+Thanks and Regards,
+- Seung-Woo Kim
+
+>=20
+> For example, twl4030 phy driver actually uses i2c to program its
+> registers but still it uses the PHY framework [1].
+>=20
+> [1] --> http://www.gossamer-threads.com/lists/linux/kernel/1729414
+>=20
+> Thanks
+> Kishon
+> --=20
+> To unsubscribe from this list: send the line "unsubscribe
+> linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+
+--=20
+Seung-Woo Kim
+Samsung Software R&D Center
+--
