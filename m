@@ -1,66 +1,69 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 11/28] ARM: EXYNOS: common: Remove legacy mapping of chip ID
- block
-Date: Fri, 14 Jun 2013 21:32:47 +0200
-Message-ID: <1371238384-1504-12-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 12/28] ARM: EXYNOS: firmware: Remove check for device tree
+ presence
+Date: Fri, 14 Jun 2013 21:32:48 +0200
+Message-ID: <1371238384-1504-13-git-send-email-t.figa@samsung.com>
 References: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:31659 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753892Ab3FNTd0 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:20222 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753872Ab3FNTd1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 15:33:26 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+	Fri, 14 Jun 2013 15:33:27 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOE00FZSE9PI770@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 20:33:22 +0100 (BST)
+ 17 2011)) with ESMTP id <0MOE00E84E2KE880@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 20:33:23 +0100 (BST)
 In-reply-to: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch removes static mapping of chip ID block that was used when
-booting with ATAGS, which is not supported on Exynos any more.
+This patch makes the firmware setup code assume presence of DT, since it
+is now the only way of booting supported for Exynos.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/common.c | 14 +-------------
- 1 file changed, 1 insertion(+), 13 deletions(-)
+ arch/arm/mach-exynos/firmware.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 2c8527c..f81aa22 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -99,15 +99,6 @@ static struct cpu_table cpu_ids[] __initdata = {
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index ed11f10..932129e 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -48,20 +48,18 @@ static const struct firmware_ops exynos_firmware_ops = {
  
- /* Initial IO mappings */
- 
--static struct map_desc exynos_iodesc[] __initdata = {
--	{
--		.virtual	= (unsigned long)S5P_VA_CHIPID,
--		.pfn		= __phys_to_pfn(EXYNOS_PA_CHIPID),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	},
--};
--
- static struct map_desc exynos4_iodesc[] __initdata = {
- 	{
- 		.virtual	= (unsigned long)S3C_VA_SYS,
-@@ -365,10 +356,7 @@ void __init exynos_init_io(struct map_desc *mach_desc, int size)
+ void __init exynos_firmware_init(void)
  {
- 	debug_ll_io_init();
+-	if (of_have_populated_dt()) {
+-		struct device_node *nd;
+-		const __be32 *addr;
++	struct device_node *nd;
++	const __be32 *addr;
  
--	if (initial_boot_params)
--		of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
--	else
--		iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
-+	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
+-		nd = of_find_compatible_node(NULL, NULL,
+-						"samsung,secure-firmware");
+-		if (!nd)
+-			return;
++	nd = of_find_compatible_node(NULL, NULL,
++					"samsung,secure-firmware");
++	if (!nd)
++		return;
  
- 	if (mach_desc)
- 		iotable_init(mach_desc, size);
+-		addr = of_get_address(nd, 0, NULL, NULL);
+-		if (!addr) {
+-			pr_err("%s: No address specified.\n", __func__);
+-			return;
+-		}
++	addr = of_get_address(nd, 0, NULL, NULL);
++	if (!addr) {
++		pr_err("%s: No address specified.\n", __func__);
++		return;
+ 	}
+ 
+ 	pr_info("Running under secure firmware.\n");
 -- 
 1.8.2.1
