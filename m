@@ -1,143 +1,290 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 27/28] ARM: EXYNOS: Remove CONFIG_SOC_EXYNOS4412
-Date: Fri, 14 Jun 2013 21:33:03 +0200
-Message-ID: <1371238384-1504-28-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 26/28] ARM: EXYNOS: Remove unused base addresses from
+ mach/map.h header
+Date: Fri, 14 Jun 2013 21:33:02 +0200
+Message-ID: <1371238384-1504-27-git-send-email-t.figa@samsung.com>
 References: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:31659 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753872Ab3FNTdd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Jun 2013 15:33:33 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MOE00FZSE9PI770@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 20:33:30 +0100 (BST)
 In-reply-to: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, Mauro Carvalho Chehab <mchehab@redhat.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-media@vger.kernel.org, linux-serial@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Exynos4212 and Exynos4412 SoCs differ only in number of ARM cores and
-there is no need to have separate Kconfig options for them, since they
-use the same code.
+This patch removes all the unused base addresses from mach/map.h header,
+leaving only addresses of IPs that currently use static IO mapping or
+need the address hardcoded, like low level debug UART.
 
-This patch removes CONFIG_SOC_EXYNOS4412, leaving CONFIG_SOC_EXYNOS4212
-as the one supporting both SoCs from this series.
-
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Mauro Carvalho Chehab <mchehab@redhat.com>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cpufreq@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-Cc: linux-media@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/Kconfig              | 11 +----------
- arch/arm/plat-samsung/include/plat/cpu.h  |  6 +-----
- drivers/cpufreq/Kconfig.arm               |  2 +-
- drivers/media/platform/exynos4-is/Kconfig |  2 +-
- drivers/thermal/exynos_thermal.c          |  2 +-
- drivers/tty/serial/samsung.c              |  3 +--
- 6 files changed, 6 insertions(+), 20 deletions(-)
+ arch/arm/mach-exynos/include/mach/map.h | 214 --------------------------------
+ 1 file changed, 214 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 47d8d9e..fe75a65 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -46,7 +46,7 @@ config CPU_EXYNOS4210
- 	  Enable EXYNOS4210 CPU support
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 92b29bb..7b046b5 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -30,31 +30,6 @@
+ #define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
+ #define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
  
- config SOC_EXYNOS4212
--	bool "SAMSUNG EXYNOS4212"
-+	bool "SAMSUNG EXYNOS4212/4412"
- 	default y
- 	depends on ARCH_EXYNOS4
- 	select PINCTRL_EXYNOS
-@@ -56,15 +56,6 @@ config SOC_EXYNOS4212
- 	help
- 	  Enable EXYNOS4212 SoC support
- 
--config SOC_EXYNOS4412
--	bool "SAMSUNG EXYNOS4412"
--	default y
--	depends on ARCH_EXYNOS4
--	select PINCTRL_EXYNOS
--	select SAMSUNG_DMADEV
--	help
--	  Enable EXYNOS4412 SoC support
+-#define EXYNOS4_PA_FIMC0		0x11800000
+-#define EXYNOS4_PA_FIMC1		0x11810000
+-#define EXYNOS4_PA_FIMC2		0x11820000
+-#define EXYNOS4_PA_FIMC3		0x11830000
 -
- config SOC_EXYNOS5250
- 	bool "SAMSUNG EXYNOS5250"
- 	default y
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index 989fefe..87b03bb 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -122,13 +122,9 @@ IS_SAMSUNG_CPU(exynos5440, EXYNOS5440_SOC_ID, EXYNOS5_SOC_MASK)
- 
- #if defined(CONFIG_SOC_EXYNOS4212)
- # define soc_is_exynos4212()	is_samsung_exynos4212()
--#else
--# define soc_is_exynos4212()	0
--#endif
+-#define EXYNOS4_PA_JPEG			0x11840000
 -
--#if defined(CONFIG_SOC_EXYNOS4412)
- # define soc_is_exynos4412()	is_samsung_exynos4412()
- #else
-+# define soc_is_exynos4212()	0
- # define soc_is_exynos4412()	0
- #endif
+-/* x = 0...1 */
+-#define EXYNOS4_PA_FIMC_LITE(x)		(0x12390000 + ((x) * 0x10000))
+-
+-#define EXYNOS4_PA_G2D			0x12800000
+-
+-#define EXYNOS4_PA_I2S0			0x03830000
+-#define EXYNOS4_PA_I2S1			0xE3100000
+-#define EXYNOS4_PA_I2S2			0xE2A00000
+-
+-#define EXYNOS4_PA_PCM0			0x03840000
+-#define EXYNOS4_PA_PCM1			0x13980000
+-#define EXYNOS4_PA_PCM2			0x13990000
+-
+-#define EXYNOS4_PA_SROM_BANK(x)		(0x04000000 + ((x) * 0x01000000))
+-
+-#define EXYNOS4_PA_ONENAND		0x0C000000
+-#define EXYNOS4_PA_ONENAND_DMA		0x0C600000
+-
+ #define EXYNOS_PA_CHIPID		0x10000000
  
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index a924408..b214ad6 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -32,7 +32,7 @@ config ARM_EXYNOS4210_CPUFREQ
- 	  SoC (S5PV310 or S5PC210).
+ #define EXYNOS4_PA_SYSCON		0x10010000
+@@ -71,10 +46,6 @@
+ #define EXYNOS4_PA_WATCHDOG		0x10060000
+ #define EXYNOS5_PA_WATCHDOG		0x101D0000
  
- config ARM_EXYNOS4X12_CPUFREQ
--	def_bool (SOC_EXYNOS4212 || SOC_EXYNOS4412)
-+	def_bool SOC_EXYNOS4212
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS4X12
- 	  SoC (EXYNOS4212 or EXYNOS4412).
-diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
-index 6ff99b5..f483e11 100644
---- a/drivers/media/platform/exynos4-is/Kconfig
-+++ b/drivers/media/platform/exynos4-is/Kconfig
-@@ -32,7 +32,7 @@ config VIDEO_S5P_MIPI_CSIS
- 	  To compile this driver as a module, choose M here: the
- 	  module will be called s5p-csis.
+-#define EXYNOS4_PA_RTC			0x10070000
+-
+-#define EXYNOS4_PA_KEYPAD		0x100A0000
+-
+ #define EXYNOS4_PA_DMC0			0x10400000
+ #define EXYNOS4_PA_DMC1			0x10410000
  
--if SOC_EXYNOS4212 || SOC_EXYNOS4412 || SOC_EXYNOS5250
-+if SOC_EXYNOS4212 || SOC_EXYNOS5250
+@@ -87,207 +58,22 @@
+ #define EXYNOS5_PA_GIC_DIST		0x10481000
  
- config VIDEO_EXYNOS_FIMC_LITE
- 	tristate "EXYNOS FIMC-LITE camera interface driver"
-diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-index 788b1dd..f88a2ad 100644
---- a/drivers/thermal/exynos_thermal.c
-+++ b/drivers/thermal/exynos_thermal.c
-@@ -817,7 +817,7 @@ static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
- #define EXYNOS4210_TMU_DRV_DATA (NULL)
- #endif
+ #define EXYNOS4_PA_COREPERI		0x10500000
+-#define EXYNOS4_PA_TWD			0x10500600
+ #define EXYNOS4_PA_L2CC			0x10502000
  
--#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
-+#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4212)
- static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
- 	.threshold_falling = 10,
- 	.trigger_levels[0] = 85,
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 0c8a9fa..eeb8ecb 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1714,8 +1714,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
- #endif
+-#define EXYNOS4_PA_TMU			0x100C0000
+-
+-#define EXYNOS4_PA_MDMA0		0x10810000
+-#define EXYNOS4_PA_MDMA1		0x12850000
+-#define EXYNOS4_PA_S_MDMA1		0x12840000
+-#define EXYNOS4_PA_PDMA0		0x12680000
+-#define EXYNOS4_PA_PDMA1		0x12690000
+-#define EXYNOS5_PA_MDMA0		0x10800000
+-#define EXYNOS5_PA_MDMA1		0x11C10000
+-#define EXYNOS5_PA_PDMA0		0x121A0000
+-#define EXYNOS5_PA_PDMA1		0x121B0000
+-
+-#define EXYNOS4_PA_SYSMMU_MDMA		0x10A40000
+-#define EXYNOS4_PA_SYSMMU_2D_ACP	0x10A40000
+-#define EXYNOS4_PA_SYSMMU_SSS		0x10A50000
+-#define EXYNOS4_PA_SYSMMU_FIMC0		0x11A20000
+-#define EXYNOS4_PA_SYSMMU_FIMC1		0x11A30000
+-#define EXYNOS4_PA_SYSMMU_FIMC2		0x11A40000
+-#define EXYNOS4_PA_SYSMMU_FIMC3		0x11A50000
+-#define EXYNOS4_PA_SYSMMU_JPEG		0x11A60000
+-#define EXYNOS4_PA_SYSMMU_FIMD0		0x11E20000
+-#define EXYNOS4_PA_SYSMMU_FIMD1		0x12220000
+-#define EXYNOS4_PA_SYSMMU_FIMC_ISP	0x12260000
+-#define EXYNOS4_PA_SYSMMU_FIMC_DRC	0x12270000
+-#define EXYNOS4_PA_SYSMMU_FIMC_FD	0x122A0000
+-#define EXYNOS4_PA_SYSMMU_ISPCPU	0x122B0000
+-#define EXYNOS4_PA_SYSMMU_FIMC_LITE0	0x123B0000
+-#define EXYNOS4_PA_SYSMMU_FIMC_LITE1	0x123C0000
+-#define EXYNOS4_PA_SYSMMU_PCIe		0x12620000
+-#define EXYNOS4_PA_SYSMMU_G2D		0x12A20000
+-#define EXYNOS4_PA_SYSMMU_ROTATOR	0x12A30000
+-#define EXYNOS4_PA_SYSMMU_MDMA2		0x12A40000
+-#define EXYNOS4_PA_SYSMMU_TV		0x12E20000
+-#define EXYNOS4_PA_SYSMMU_MFC_L		0x13620000
+-#define EXYNOS4_PA_SYSMMU_MFC_R		0x13630000
+-
+-#define EXYNOS5_PA_GSC0			0x13E00000
+-#define EXYNOS5_PA_GSC1			0x13E10000
+-#define EXYNOS5_PA_GSC2			0x13E20000
+-#define EXYNOS5_PA_GSC3			0x13E30000
+-
+-#define EXYNOS5_PA_SYSMMU_MDMA1		0x10A40000
+-#define EXYNOS5_PA_SYSMMU_SSS		0x10A50000
+-#define EXYNOS5_PA_SYSMMU_2D		0x10A60000
+-#define EXYNOS5_PA_SYSMMU_MFC_L		0x11200000
+-#define EXYNOS5_PA_SYSMMU_MFC_R		0x11210000
+-#define EXYNOS5_PA_SYSMMU_ROTATOR	0x11D40000
+-#define EXYNOS5_PA_SYSMMU_MDMA2		0x11D50000
+-#define EXYNOS5_PA_SYSMMU_JPEG		0x11F20000
+-#define EXYNOS5_PA_SYSMMU_IOP		0x12360000
+-#define EXYNOS5_PA_SYSMMU_RTIC		0x12370000
+-#define EXYNOS5_PA_SYSMMU_ISP		0x13260000
+-#define EXYNOS5_PA_SYSMMU_DRC		0x12370000
+-#define EXYNOS5_PA_SYSMMU_SCALERC	0x13280000
+-#define EXYNOS5_PA_SYSMMU_SCALERP	0x13290000
+-#define EXYNOS5_PA_SYSMMU_FD		0x132A0000
+-#define EXYNOS5_PA_SYSMMU_ISPCPU	0x132B0000
+-#define EXYNOS5_PA_SYSMMU_ODC		0x132C0000
+-#define EXYNOS5_PA_SYSMMU_DIS0		0x132D0000
+-#define EXYNOS5_PA_SYSMMU_DIS1		0x132E0000
+-#define EXYNOS5_PA_SYSMMU_3DNR		0x132F0000
+-#define EXYNOS5_PA_SYSMMU_LITE0		0x13C40000
+-#define EXYNOS5_PA_SYSMMU_LITE1		0x13C50000
+-#define EXYNOS5_PA_SYSMMU_GSC0		0x13E80000
+-#define EXYNOS5_PA_SYSMMU_GSC1		0x13E90000
+-#define EXYNOS5_PA_SYSMMU_GSC2		0x13EA0000
+-#define EXYNOS5_PA_SYSMMU_GSC3		0x13EB0000
+-#define EXYNOS5_PA_SYSMMU_FIMD1		0x14640000
+-#define EXYNOS5_PA_SYSMMU_TV		0x14650000
+-
+-#define EXYNOS4_PA_SPI0			0x13920000
+-#define EXYNOS4_PA_SPI1			0x13930000
+-#define EXYNOS4_PA_SPI2			0x13940000
+-#define EXYNOS5_PA_SPI0			0x12D20000
+-#define EXYNOS5_PA_SPI1			0x12D30000
+-#define EXYNOS5_PA_SPI2			0x12D40000
+-
+-#define EXYNOS4_PA_GPIO1		0x11400000
+-#define EXYNOS4_PA_GPIO2		0x11000000
+-#define EXYNOS4_PA_GPIO3		0x03860000
+-#define EXYNOS5_PA_GPIO1		0x11400000
+-#define EXYNOS5_PA_GPIO2		0x13400000
+-#define EXYNOS5_PA_GPIO3		0x10D10000
+-#define EXYNOS5_PA_GPIO4		0x03860000
+-
+-#define EXYNOS4_PA_MIPI_CSIS0		0x11880000
+-#define EXYNOS4_PA_MIPI_CSIS1		0x11890000
+-
+-#define EXYNOS4_PA_FIMD0		0x11C00000
+-
+-#define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
+-#define EXYNOS4_PA_DWMCI		0x12550000
+-#define EXYNOS5_PA_DWMCI0		0x12200000
+-#define EXYNOS5_PA_DWMCI1		0x12210000
+-#define EXYNOS5_PA_DWMCI2		0x12220000
+-#define EXYNOS5_PA_DWMCI3		0x12230000
+-
+-#define EXYNOS4_PA_HSOTG		0x12480000
+-#define EXYNOS4_PA_USB_HSPHY		0x125B0000
+-
+-#define EXYNOS4_PA_SATA			0x12560000
+-#define EXYNOS4_PA_SATAPHY		0x125D0000
+-#define EXYNOS4_PA_SATAPHY_CTRL		0x126B0000
+-
+ #define EXYNOS4_PA_SROMC		0x12570000
+ #define EXYNOS5_PA_SROMC		0x12250000
  
- #if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212) || \
--	defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250) || \
--	defined(CONFIG_SOC_EXYNOS5440)
-+	defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS5440)
- static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
- 	.info = &(struct s3c24xx_uart_info) {
- 		.name		= "Samsung Exynos4 UART",
+-#define EXYNOS4_PA_EHCI			0x12580000
+-#define EXYNOS4_PA_OHCI			0x12590000
+ #define EXYNOS4_PA_HSPHY		0x125B0000
+-#define EXYNOS4_PA_MFC			0x13400000
+ 
+ #define EXYNOS4_PA_UART			0x13800000
+ #define EXYNOS5_PA_UART			0x12C00000
+ 
+-#define EXYNOS4_PA_VP			0x12C00000
+-#define EXYNOS4_PA_MIXER		0x12C10000
+-#define EXYNOS4_PA_SDO			0x12C20000
+-#define EXYNOS4_PA_HDMI			0x12D00000
+-#define EXYNOS4_PA_IIC_HDMIPHY		0x138E0000
+-
+-#define EXYNOS4_PA_IIC(x)		(0x13860000 + ((x) * 0x10000))
+-#define EXYNOS5_PA_IIC(x)		(0x12C60000 + ((x) * 0x10000))
+-
+-#define EXYNOS4_PA_ADC			0x13910000
+-#define EXYNOS4_PA_ADC1			0x13911000
+-
+-#define EXYNOS4_PA_AC97			0x139A0000
+-
+-#define EXYNOS4_PA_SPDIF		0x139B0000
+-
+ #define EXYNOS4_PA_TIMER		0x139D0000
+ #define EXYNOS5_PA_TIMER		0x12DD0000
+ 
+-#define EXYNOS4_PA_SDRAM		0x40000000
+-#define EXYNOS5_PA_SDRAM		0x40000000
+-
+-/* Compatibiltiy Defines */
+-
+-#define S3C_PA_HSMMC0			EXYNOS4_PA_HSMMC(0)
+-#define S3C_PA_HSMMC1			EXYNOS4_PA_HSMMC(1)
+-#define S3C_PA_HSMMC2			EXYNOS4_PA_HSMMC(2)
+-#define S3C_PA_HSMMC3			EXYNOS4_PA_HSMMC(3)
+-#define S3C_PA_IIC			EXYNOS4_PA_IIC(0)
+-#define S3C_PA_IIC1			EXYNOS4_PA_IIC(1)
+-#define S3C_PA_IIC2			EXYNOS4_PA_IIC(2)
+-#define S3C_PA_IIC3			EXYNOS4_PA_IIC(3)
+-#define S3C_PA_IIC4			EXYNOS4_PA_IIC(4)
+-#define S3C_PA_IIC5			EXYNOS4_PA_IIC(5)
+-#define S3C_PA_IIC6			EXYNOS4_PA_IIC(6)
+-#define S3C_PA_IIC7			EXYNOS4_PA_IIC(7)
+-#define S3C_PA_RTC			EXYNOS4_PA_RTC
+-#define S3C_PA_WDT			EXYNOS4_PA_WATCHDOG
+-#define S3C_PA_SPI0			EXYNOS4_PA_SPI0
+-#define S3C_PA_SPI1			EXYNOS4_PA_SPI1
+-#define S3C_PA_SPI2			EXYNOS4_PA_SPI2
+-#define S3C_PA_USB_HSOTG		EXYNOS4_PA_HSOTG
+-
+-#define S5P_PA_EHCI			EXYNOS4_PA_EHCI
+-#define S5P_PA_FIMC0			EXYNOS4_PA_FIMC0
+-#define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
+-#define S5P_PA_FIMC2			EXYNOS4_PA_FIMC2
+-#define S5P_PA_FIMC3			EXYNOS4_PA_FIMC3
+-#define S5P_PA_JPEG			EXYNOS4_PA_JPEG
+-#define S5P_PA_G2D			EXYNOS4_PA_G2D
+-#define S5P_PA_FIMD0			EXYNOS4_PA_FIMD0
+-#define S5P_PA_HDMI			EXYNOS4_PA_HDMI
+-#define S5P_PA_IIC_HDMIPHY		EXYNOS4_PA_IIC_HDMIPHY
+-#define S5P_PA_MFC			EXYNOS4_PA_MFC
+-#define S5P_PA_MIPI_CSIS0		EXYNOS4_PA_MIPI_CSIS0
+-#define S5P_PA_MIPI_CSIS1		EXYNOS4_PA_MIPI_CSIS1
+-#define S5P_PA_MIXER			EXYNOS4_PA_MIXER
+-#define S5P_PA_ONENAND			EXYNOS4_PA_ONENAND
+-#define S5P_PA_ONENAND_DMA		EXYNOS4_PA_ONENAND_DMA
+-#define S5P_PA_SDO			EXYNOS4_PA_SDO
+-#define S5P_PA_SDRAM			EXYNOS4_PA_SDRAM
+-#define S5P_PA_VP			EXYNOS4_PA_VP
+-
+-#define SAMSUNG_PA_ADC			EXYNOS4_PA_ADC
+-#define SAMSUNG_PA_ADC1			EXYNOS4_PA_ADC1
+-#define SAMSUNG_PA_KEYPAD		EXYNOS4_PA_KEYPAD
+-
+ /* Compatibility UART */
+ 
+-#define EXYNOS4_PA_UART0		0x13800000
+-#define EXYNOS4_PA_UART1		0x13810000
+-#define EXYNOS4_PA_UART2		0x13820000
+-#define EXYNOS4_PA_UART3		0x13830000
+-#define EXYNOS4_SZ_UART			SZ_256
+-
+-#define EXYNOS5_PA_UART0		0x12C00000
+-#define EXYNOS5_PA_UART1		0x12C10000
+-#define EXYNOS5_PA_UART2		0x12C20000
+-#define EXYNOS5_PA_UART3		0x12C30000
+-
+ #define EXYNOS5440_PA_UART0		0x000B0000
+-#define EXYNOS5440_PA_UART1		0x000C0000
+-#define EXYNOS5440_SZ_UART		SZ_256
+ 
+ #define S3C_VA_UARTx(x)			(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
+ 
 -- 
 1.8.2.1
