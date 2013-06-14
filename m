@@ -1,43 +1,181 @@
 From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH v2 09/10] ARM: Exynos: add secondary CPU boot base location for Exynos5420
-Date: Fri, 14 Jun 2013 19:32:51 +0530
-Message-ID: <1371218572-8993-10-git-send-email-chander.kashyap@linaro.org>
-References: <1370516488-25860-10-git-send-email-chander.kashyap@linaro.org>
- <1371218572-8993-1-git-send-email-chander.kashyap@linaro.org>
+Subject: [PATCH] ARM: DT: Exynos: fix number of interrupt-cells in mct node
+Date: Fri, 14 Jun 2013 20:11:26 +0530
+Message-ID: <1371220886-11616-1-git-send-email-chander.kashyap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:61970 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752779Ab3FNOD4 (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:57234 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752418Ab3FNOll (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 10:03:56 -0400
-Received: by mail-pa0-f44.google.com with SMTP id lj1so686764pab.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2013 07:03:56 -0700 (PDT)
-In-Reply-To: <1371218572-8993-1-git-send-email-chander.kashyap@linaro.org>
+	Fri, 14 Jun 2013 10:41:41 -0400
+Received: by mail-pa0-f47.google.com with SMTP id kl14so715452pab.34
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2013 07:41:40 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, mark.rutland@arm.com, thomas.ab@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, thomas.ab@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-The location at which the boot address is specified for secondary CPUs of
-Exynos5420 is SYSRAM base + 4. Update the cpu_boot_reg function accordingly.
+Two cells were used to specify interrupts in mct node, while second cell
+always remains unused. Hence use only one cell.
+Suggested by Tomasz Figa.
 
 Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
 ---
- arch/arm/mach-exynos/platsmp.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/boot/dts/exynos4210.dtsi |   19 +++++++++----------
+ arch/arm/boot/dts/exynos4212.dtsi |   19 +++++++++----------
+ arch/arm/boot/dts/exynos4412.dtsi |   23 +++++++++++------------
+ arch/arm/boot/dts/exynos5250.dtsi |   19 +++++++++----------
+ 4 files changed, 38 insertions(+), 42 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 85ea4ca..7b4c03e 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -50,6 +50,8 @@ static inline void __iomem *cpu_boot_reg(int cpu)
- 	boot_reg = cpu_boot_reg_base();
- 	if (soc_is_exynos4412())
- 		boot_reg += 4*cpu;
-+	else if (soc_is_exynos5420())
-+		boot_reg += 4;
- 	return boot_reg;
- }
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 54710de..ad50010 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -52,23 +52,22 @@
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x10050000 0x800>;
+ 		interrupt-controller;
+-		#interrups-cells = <2>;
++		#interrups-cells = <1>;
+ 		interrupt-parent = <&mct_map>;
+-		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+-			     <4 0>, <5 0>;
++		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+ 		clocks = <&clock 3>, <&clock 344>;
+ 		clock-names = "fin_pll", "mct";
+ 
+ 		mct_map: mct-map {
+-			#interrupt-cells = <2>;
++			#interrupt-cells = <1>;
+ 			#address-cells = <0>;
+ 			#size-cells = <0>;
+-			interrupt-map = <0x0 0 &gic 0 57 0>,
+-					<0x1 0 &gic 0 69 0>,
+-					<0x2 0 &combiner 12 6>,
+-					<0x3 0 &combiner 12 7>,
+-					<0x4 0 &gic 0 42 0>,
+-					<0x5 0 &gic 0 48 0>;
++			interrupt-map = <0 &gic 0 57 0>,
++					<1 &gic 0 69 0>,
++					<2 &combiner 12 6>,
++					<3 &combiner 12 7>,
++					<4 &gic 0 42 0>,
++					<5 &gic 0 48 0>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+index c0f60f4..ba9ada1 100644
+--- a/arch/arm/boot/dts/exynos4212.dtsi
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -39,21 +39,20 @@
+ 		compatible = "samsung,exynos4412-mct";
+ 		reg = <0x10050000 0x800>;
+ 		interrupt-controller;
+-		#interrups-cells = <2>;
++		#interrups-cells = <1>;
+ 		interrupt-parent = <&mct_map>;
+-		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+-			     <4 0>, <5 0>;
++		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+ 
+ 		mct_map: mct-map {
+-			#interrupt-cells = <2>;
++			#interrupt-cells = <>;
+ 			#address-cells = <0>;
+ 			#size-cells = <0>;
+-			interrupt-map = <0x0 0 &gic 0 57 0>,
+-					<0x1 0 &combiner 12 5>,
+-					<0x2 0 &combiner 12 6>,
+-					<0x3 0 &combiner 12 7>,
+-					<0x4 0 &gic 1 12 0>,
+-					<0x5 0 &gic 1 12 0>;
++			interrupt-map = <0 &gic 0 57 0>,
++					<1 &combiner 12 5>,
++					<2 &combiner 12 6>,
++					<3 &combiner 12 7>,
++					<4 &gic 1 12 0>,
++					<5 &gic 1 12 0>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 270b389..a680de7 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -39,25 +39,24 @@
+ 		compatible = "samsung,exynos4412-mct";
+ 		reg = <0x10050000 0x800>;
+ 		interrupt-controller;
+-		#interrups-cells = <2>;
++		#interrups-cells = <1>;
+ 		interrupt-parent = <&mct_map>;
+-		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+-			     <4 0>, <5 0>, <6 0>, <7 0>;
++		interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>;
+ 		clocks = <&clock 3>, <&clock 344>;
+ 		clock-names = "fin_pll", "mct";
+ 
+ 		mct_map: mct-map {
+-			#interrupt-cells = <2>;
++			#interrupt-cells = <1>;
+ 			#address-cells = <0>;
+ 			#size-cells = <0>;
+-			interrupt-map = <0x0 0 &gic 0 57 0>,
+-					<0x1 0 &combiner 12 5>,
+-					<0x2 0 &combiner 12 6>,
+-					<0x3 0 &combiner 12 7>,
+-					<0x4 0 &gic 1 12 0>,
+-					<0x5 0 &gic 1 12 0>,
+-					<0x6 0 &gic 1 12 0>,
+-					<0x7 0 &gic 1 12 0>;
++			interrupt-map = <0 &gic 0 57 0>,
++					<1 &combiner 12 5>,
++					<2 &combiner 12 6>,
++					<3 &combiner 12 7>,
++					<4 &gic 1 12 0>,
++					<5 &gic 1 12 0>,
++					<6 &gic 1 12 0>,
++					<7 &gic 1 12 0>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index a7cf3f5..4e633ef 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -94,23 +94,22 @@
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x101C0000 0x800>;
+ 		interrupt-controller;
+-		#interrups-cells = <2>;
++		#interrups-cells = <1>;
+ 		interrupt-parent = <&mct_map>;
+-		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+-			     <4 0>, <5 0>;
++		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+ 		clocks = <&clock 1>, <&clock 335>;
+ 		clock-names = "fin_pll", "mct";
+ 
+ 		mct_map: mct-map {
+-			#interrupt-cells = <2>;
++			#interrupt-cells = <1>;
+ 			#address-cells = <0>;
+ 			#size-cells = <0>;
+-			interrupt-map = <0x0 0 &combiner 23 3>,
+-					<0x1 0 &combiner 23 4>,
+-					<0x2 0 &combiner 25 2>,
+-					<0x3 0 &combiner 25 3>,
+-					<0x4 0 &gic 0 120 0>,
+-					<0x5 0 &gic 0 121 0>;
++			interrupt-map = <0 &combiner 23 3>,
++					<1 &combiner 23 4>,
++					<2 &combiner 25 2>,
++					<3 &combiner 25 3>,
++					<4 &gic 0 120 0>,
++					<5 &gic 0 121 0>;
+ 		};
+ 	};
  
 -- 
 1.7.9.5
