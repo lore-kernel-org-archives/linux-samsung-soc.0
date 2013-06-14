@@ -1,76 +1,229 @@
-From: =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>
-Subject: Re: [PATCH 7/9] drm/exynos: use of_get_named_gpio to get hdmi hpd gpio
-Date: Fri, 14 Jun 2013 16:17:52 +0900
-Message-ID: <51BAC3A0.7000002@samsung.com>
-References: <1370959891-8923-1-git-send-email-rahul.sharma@samsung.com>
- <1370959891-8923-8-git-send-email-rahul.sharma@samsung.com>
-Reply-To: sw0312.kim@samsung.com
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
+Date: Fri, 14 Jun 2013 17:18:46 +0900
+Message-ID: <000001ce68d7$ca762200$5f626600$@samsung.com>
+References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
+ <13685067.uPzcc2y1CU@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11021 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751933Ab3FNHSB convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 03:18:01 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOD00KXAG9NQZ60@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Jun 2013 16:17:51 +0900 (KST)
-In-reply-to: <1370959891-8923-8-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <13685067.uPzcc2y1CU@wuerfel>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, joshi@samsung.com, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hello Rahul,
+On Thursday, June 13, 2013 11:14 PM, Arnd Bergmann wrote:
+> On Thursday 13 June 2013 22:22:31 Jingoo Han wrote:
+> 
+> > +struct pcie_port_info {
+> > +	u32		cfg0_size;
+> > +	u32		cfg1_size;
+> > +	u32		io_size;
+> > +	u32		mem_size;
+> > +	phys_addr_t	io_bus_addr;
+> > +	phys_addr_t	mem_bus_addr;
+> > +};
+> > +
+> > +struct pcie_port {
+> > +	struct device		*dev;
+> > +	u8			controller;
+> > +	u8			root_bus_nr;
+> > +	void __iomem		*dbi_base;
+> > +	void __iomem		*elbi_base;
+> > +	void __iomem		*phy_base;
+> > +	void __iomem		*purple_base;
+> > +	phys_addr_t		cfg0_base;
+> > +	void __iomem		*va_cfg0_base;
+> > +	phys_addr_t		cfg1_base;
+> > +	void __iomem		*va_cfg1_base;
+> > +	phys_addr_t		io_base;
+> > +	phys_addr_t		mem_base;
+> > +	spinlock_t		conf_lock;
+> > +	struct resource		cfg;
+> > +	struct resource		io;
+> > +	struct resource		mem;
+> > +	struct pcie_port_info	config;
+> > +	struct clk		*clk;
+> > +	struct clk		*bus_clk;
+> > +	int			irq;
+> > +	int			reset_gpio;
+> > +};
+> 
+> You mentioned that you'd use u64 for the resources here but did not.
 
-this patch is not related with others and it looks good to me.
+Do you mean the following?
 
-On 2013=EB=85=84 06=EC=9B=94 11=EC=9D=BC 23:11, Rahul Sharma wrote:
-> Cleanup by removing flags variable from drm_hdmi_dt_parse_pdata
-> which is not used anywhere. Swtiching to of_get_named_gpio instead
-> of of_get_named_gpio_flags solved this.
->=20
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
++	u64		cfg0_base;
++	u64		cfg1_base;
++	u64		io_base;
++	u64		mem_base;
 
-Acked-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-> ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c |    3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/e=
-xynos/exynos_hdmi.c
-> index 1eb5ffb..fc6a9b0 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -2081,7 +2081,6 @@ static struct s5p_hdmi_platform_data *drm_hdmi_=
-dt_parse_pdata
->  {
->  	struct device_node *np =3D dev->of_node;
->  	struct s5p_hdmi_platform_data *pd;
-> -	enum of_gpio_flags flags;
->  	u32 value;
-> =20
->  	pd =3D devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-> @@ -2095,7 +2094,7 @@ static struct s5p_hdmi_platform_data *drm_hdmi_=
-dt_parse_pdata
->  		goto err_data;
->  	}
-> =20
-> -	pd->hpd_gpio =3D of_get_named_gpio_flags(np, "hpd-gpio", 0, &flags)=
-;
-> +	pd->hpd_gpio =3D of_get_named_gpio(np, "hpd-gpio", 0);
-> =20
->  	return pd;
-> =20
->=20
+> 
+> > +
+> > +static void exynos_pcie_prog_viewport_cfg0(struct pcie_port *pp, u32 busdev)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +
+> > +	/* Program viewport 0 : OUTBOUND : CFG0 */
+> > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX0;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, (u64)pp->cfg0_base, dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, (u64)pp->cfg0_base + pp->config.cfg0_size - 1,
+> > +			dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, busdev, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_CFG0, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +}
+> > +
+> > +static void exynos_pcie_prog_viewport_cfg1(struct pcie_port *pp, u32 busdev)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +
+> > +	/* Program viewport 1 : OUTBOUND : CFG1 */
+> > +	val = PCIE_ATU_REGION_OUTBOUND | PCIE_ATU_REGION_INDEX1;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_CFG1, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +	writel_rc(pp, (u64)pp->cfg1_base, dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, (u64)pp->cfg1_base + pp->config.cfg1_size - 1,
+> > +			dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, busdev, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +}
+> 
+> And you still don't set up the UPPER halves, which was really the point
+> of my comment. Same thing for all the other ones.
 
---=20
-Seung-Woo Kim
-Samsung Software R&D Center
---
+Do you mean the following?
+
++	writel_rc(pp, pp->cfg1_base, dbi_base + PCIE_ATU_LOWER_BASE);
++	writel_rc(pp, (pp->cfg1_base >> 32), dbi_base + PCIE_ATU_UPPER_BASE);
+
+
+> 
+> > +static void exynos_pcie_prog_viewport_mem_inbound(struct pcie_port *pp)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +
+> > +	/* Program viewport 0 : INBOUND : MEM */
+> > +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX0;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_MEM, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +	writel_rc(pp, (u64)pp->config.mem_bus_addr,
+> > +			dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, (u64)pp->config.mem_bus_addr + pp->config.mem_size - 1,
+> > +			dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, (u64)pp->mem_base, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +}
+> 
+> This makes even less sense than before, it seems like now you only
+> allow DMA between PCI devices but not to main memory.
+
+Sorry, I cannot understand it.
+Could you give me more details?
+Also, pseudo-code will be very helpful.
+
+
+> 
+> > +static void exynos_pcie_prog_viewport_io_inbound(struct pcie_port *pp)
+> > +{
+> > +	u32 val;
+> > +	void __iomem *dbi_base = pp->dbi_base;
+> > +
+> > +	/* Program viewport 1 : INBOUND : IO */
+> > +	val = PCIE_ATU_REGION_INBOUND | PCIE_ATU_REGION_INDEX1;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+> > +	writel_rc(pp, PCIE_ATU_TYPE_IO, dbi_base + PCIE_ATU_CR1);
+> > +	val = PCIE_ATU_ENABLE | PCIE_ATU_BAR_MODE_ENABLE;
+> > +	writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
+> > +	writel_rc(pp, (u64)pp->config.io_bus_addr,
+> > +			dbi_base + PCIE_ATU_LOWER_BASE);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+> > +	writel_rc(pp, (u64)pp->config.io_bus_addr + pp->config.io_size - 1,
+> > +			dbi_base + PCIE_ATU_LIMIT);
+> > +	writel_rc(pp, (u64)pp->io_base, dbi_base + PCIE_ATU_LOWER_TARGET);
+> > +	writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+> > +}
+> 
+> Can you please explain what the inbound window is as I asked you?
+> I still don't see why you would need to set it up like this.
+
+Sorry, I was guided to use this inbound from hardware engineer.
+without this inbound, Exynos5440 PCIe cannot work at booting.
+
+
+Surendranath Gurivireddy Balla, Siva Reddy,
+Would you explain what the inbound window is?
+
+
+> 
+> > +static int exynos_pcie_setup(int nr, struct pci_sys_data *sys)
+> > +{
+> > +	struct pcie_port *pp;
+> > +
+> > +	pp = sys_to_pcie(sys);
+> > +
+> > +	if (!pp)
+> > +		return 0;
+> > +
+> > +	pci_add_resource(&sys->resources, &pp->io);
+> > +	pci_add_resource(&sys->resources, &pp->mem);
+> 
+> Now you are missing the offsets. You have to at least pass an offset for one
+> of the I/O spaces, since they are using the same bus address. The offset must
+> match the value you pass to pci_ioremap_io.
+> 
+> For the memory space, you should pass the difference between the physical
+> base address and the bus address. That address happens to be zero with
+> you DT setup, but I would advise to also try out some other values in DT,
+> just to ensure it still works.
+
+Um, I cannot understand it, too.
+Could you give me Psuedo-code?
+Or, let me know which pcie driver can be the good reference.
+
+
+> 
+> > +	pp->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
+> 
+> Ok.
+> 
+> > +
+> > +static int __exit exynos_pcie_remove(struct platform_device *pdev)
+> > +{
+> > +	struct pcie_port *pp = platform_get_drvdata(pdev);
+> > +
+> > +	clk_disable_unprepare(pp->bus_clk);
+> > +	clk_disable_unprepare(pp->clk);
+> > +
+> > +	return 0;
+> > +}
+> 
+> You also don't remove the PCI devices here, as mentioned in an earlier
+> review.
+
+I reviewed Marvell PCIe driver and Tegra PCIe driver; however,
+I cannot know what you mean.
+
+Could let me know which additional functions are needed?
+
+
+
+> 
+> 	Arnd
