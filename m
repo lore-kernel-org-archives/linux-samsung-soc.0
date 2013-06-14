@@ -1,69 +1,30 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 00/28] Twenty eight patches big Exynos cleanup
-Date: Fri, 14 Jun 2013 23:47:36 +0200
-Message-ID: <2203616.54AcBMXmhk@flatron>
-References: <1371238384-1504-1-git-send-email-t.figa@samsung.com> <5750530.AyJQs5JHPZ@wuerfel>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] clocksource: samsung_pwm_timer: Do not request PWM mem
+ region
+Date: Fri, 14 Jun 2013 14:51:34 -0700
+Message-ID: <20130614215134.GG17326@quad.lixom.net>
+References: <1371151364-8121-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f45.google.com ([74.125.83.45]:65510 "EHLO
-	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752232Ab3FNVrh (ORCPT
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:53856 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751176Ab3FNVv2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 17:47:37 -0400
-Received: by mail-ee0-f45.google.com with SMTP id c1so620724eek.18
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2013 14:47:36 -0700 (PDT)
-In-Reply-To: <5750530.AyJQs5JHPZ@wuerfel>
+	Fri, 14 Jun 2013 17:51:28 -0400
+Received: by mail-pd0-f180.google.com with SMTP id 10so962902pdi.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2013 14:51:28 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1371151364-8121-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, john.stultz@linaro.org, tglx@linutronix.de
 
-Hi Arnd,
-
-On Friday 14 of June 2013 23:26:04 Arnd Bergmann wrote:
-> On Friday 14 June 2013 21:32:36 Tomasz Figa wrote:
-> > As I promised, I am doing some spring (or rather summer) cleaning
-> > of Exynos- and Samsung- related code.
-> > 
-> > This first part consists mostly of removing dead code remaining after
-> > removal of ATAGS support for Exynos, but several patches cleans up
-> > other things found by the way.
-> > 
-> > See particular patches for more detailed description.
-> > 
-> > On Exynos4210-based Trats board:
-> > Tested-by: Tomasz Figa <t.figa@samsung.com>
-> > 
-> > Build tested every patch with s3c6400_defconfig, s5pv210_defconfig
-> > and exynos_defconfig.
+On Thu, Jun 13, 2013 at 09:22:44PM +0200, Tomasz Figa wrote:
+> PWM registers are shared between clocksource and PWM drivers and so can
+> not be claimed for exclusive use.
 > 
-> Great stuff. I unfortunately did almost the exact same patch since I
-> did not know you were on it too.
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Hmm, I didn't see it. Looks like we need some task synchronization. :)
-
-> Yours looks better in some details,
-> and your patch descriptions are /much/ better than my single large
-> patch.
-> 
-> I'll try to cross-check the two series to see if there is anything
-> you missed that was in my patch set.
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-OK, thank you.
-
-I will continue my spring (summer) cleaning session on Monday, probably 
-focusing on init and PM code, but who knows what else can be found in this 
-code. ;)
-
-Best regards,
-Tomasz
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to
-> majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Olof Johansson <olof@lixom.net>
