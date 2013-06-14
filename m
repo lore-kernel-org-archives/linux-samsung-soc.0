@@ -1,84 +1,160 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
-Date: Fri, 14 Jun 2013 12:53:11 +0200
-Message-ID: <20130614105310.GA19060@manwe>
-References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
- <13685067.uPzcc2y1CU@wuerfel>
- <000001ce68d7$ca762200$5f626600$@samsung.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: dts: add pinctrl support to Exynos5420
+Date: Fri, 14 Jun 2013 17:51:42 +0530
+Message-ID: <CAL1wa8cWSiwW0uUNDhoagYZaOoBo2QJyp3D+pn1rHKFqC_5-tQ@mail.gmail.com>
+References: <1371048688-9089-1-git-send-email-l.krishna@samsung.com>
+ <1371048688-9089-2-git-send-email-l.krishna@samsung.com> <1531737.EaJZJjF9GR@flatron>
+ <CAD=FV=VhmCVzy-ahhhE-5ZF-cvXktchnAuaiRAG8A-KUj+azbw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Nq2Wo0NMKNjxTN9z"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <000001ce68d7$ca762200$5f626600$@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vb0-f44.google.com ([209.85.212.44]:53563 "EHLO
+	mail-vb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752471Ab3FNMWD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Jun 2013 08:22:03 -0400
+Received: by mail-vb0-f44.google.com with SMTP id e15so374202vbg.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2013 05:22:02 -0700 (PDT)
+In-Reply-To: <CAD=FV=VhmCVzy-ahhhE-5ZF-cvXktchnAuaiRAG8A-KUj+azbw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Simon Glass <sjg@chromium.org>, Thomas P Abraham <thomas.ab@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
+Hi Doug,
 
---Nq2Wo0NMKNjxTN9z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jun 13, 2013 at 2:50 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Tomasz,
+>
+> On Wed, Jun 12, 2013 at 1:58 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>> +     pinctrl@13400000 {
+>>> +             gpy7: gpy7 {
+>>> +                     gpio-controller;
+>>> +                     #gpio-cells = <2>;
+>>> +
+>>> +                     interrupt-controller;
+>>> +                     #interrupt-cells = <2>;
+>>
+>> According to patch 2/3, this bank doesn't support interrupts, as it's
+>> defined using EINTN macro. Which variant is correct?
+>
+> As far as I know the GPY registers don't support interrupts, so this
+> should be removed.  Nice catch!
+>
+>>> +             sd0_bus1: sd0-bus-width1 {
+>>> +                     samsung,pins = "gpc0-3";
+>>> +                     samsung,pin-function = <2>;
+>>> +                     samsung,pin-pud = <3>;
+>>> +                     samsung,pin-drv = <3>;
+>>> +             };
+>>> +
+>>> +             sd0_bus4: sd0-bus-width4 {
+>>> +                     samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5",
+>> "gpc0-6";
+>>> +                     samsung,pin-function = <2>;
+>>> +                     samsung,pin-pud = <3>;
+>>> +                     samsung,pin-drv = <3>;
+>>> +             };
+>>> +
+>>> +             sd0_bus8: sd0-bus-width8 {
+>>> +                     samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2",
+>> "gpc3-3";
+>>> +                     samsung,pin-function = <2>;
+>>> +                     samsung,pin-pud = <3>;
+>>> +                     samsung,pin-drv = <3>;
+>>> +             };
+>>
+>>
+>> It seems like there is some inconsequence here, because sd0_bus4 setting
+>> includes pins of sd0_bus1, while sd0_bus8 doesn't include pins of
+>> sd0_bus4.
+>>
+>> I think it should be defined either first or second way, not mixed, but I
+>> don't have any strong preference over any of them.
+>>
+>> CCing some people to hopefully get some more opinion on this.
+>
+> Yeah, I brought this up on 5250, but somehow it looks like it landed
+> without getting changed.  I agree it should be one way or the other.
+>
+>
 
-On Fri, Jun 14, 2013 at 05:18:46PM +0900, Jingoo Han wrote:
-> On Thursday, June 13, 2013 11:14 PM, Arnd Bergmann wrote:
-> > On Thursday 13 June 2013 22:22:31 Jingoo Han wrote:
-[...]
-> > > +static int __exit exynos_pcie_remove(struct platform_device *pdev)
-> > > +{
-> > > +	struct pcie_port *pp =3D platform_get_drvdata(pdev);
-> > > +
-> > > +	clk_disable_unprepare(pp->bus_clk);
-> > > +	clk_disable_unprepare(pp->clk);
-> > > +
-> > > +	return 0;
-> > > +}
-> >=20
-> > You also don't remove the PCI devices here, as mentioned in an earlier
-> > review.
->=20
-> I reviewed Marvell PCIe driver and Tegra PCIe driver; however,
-> I cannot know what you mean.
->=20
-> Could let me know which additional functions are needed?
+Here the GPIO pins added for sd0_bus1, sd0_bus4 and sd0_bus8 are correct
+Please look at the below example dwmmc node configured for 8bit bus width
 
-We don't currently do that on Tegra either. pci-mvebu doesn't do that
-either, but they don't implement the driver's .remove() in the first
-place.
+dwmmc0@12200000 {
+                /*...*/
+                pinctrl-names = "default";
+                pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
 
-I think the biggest missing piece is pci_common_exit(), the counterpart
-of pci_common_init(), to cleanup a host bridge on ARM. I haven't looked
-in detail at the other architectures, but I suspect there must be some
-code to call when a host bridge is removed.
+                slot@0 {
+                        reg = <0>;
+                        bus-width = <8>;
+                };
+        };
 
-Looking at drivers/pci/remove.c, it seems like pci_remove_root_bus()
-might be what we're looking at. It isn't exported so it can't be used by
-modules, but that can be changed. Is that how a host bridge is typically
-removed from the system?
+In the above node we are specifying "&sd0_bus4 &sd0_bus8" in pinctrl-0
+Pinctrl driver will configure the respective gpio pins given in
+sd0_bus4 and sd0_bus8 nodes.
+(which are "gpc0-3", "gpc0-4", "gpc0-5", "gpc0-6", "gpc3-0", "gpc3-1",
+"gpc3-2", "gpc3-3")
 
-Thierry
+But if we make gpio entries for sd0_bus1, sd0_bus4 and sd0_bus8 like below
 
---Nq2Wo0NMKNjxTN9z
-Content-Type: application/pgp-signature
+               sd0_bus1: sd0-bus-width1 {
+                        samsung,pins = "gpc0-3";
+                        /*...*/
+                };
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
+                sd0_bus4: sd0-bus-width4 {
+                        samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
+                        /*...*/
+                };
 
-iQIcBAEBAgAGBQJRuvYWAAoJEN0jrNd/PrOhkAgQAJTtOn0GJ8ho/oFuRmDVC/bk
-sc2guYC3/M2NK6JHpZFjb5Etylru0j6dC+8ivPH7uQlYg6AOZuOpSGk1bwmE8geM
-rzy0nRQw3JiPwtCY9rNT1NC9d4pVlfTRjzJJ6b4kfazE9ia0SyHFodbdbZER0dU0
-WuL+F2cWHYYDtYibEHRlBxG7fGPSrXnETE68kvMUCErBwMnyzsv+DXVhz1aN+F4c
-ZugaoEx3FFREGByxrS8msFjaoLca38ZRqA7mVRiaz+3ArghRwTGo+KTO2ArGsb5e
-J3gGqgJTUEWB3sDj3XLxaUQvCYHcd0dgHRDiAKE1iGZ3s3M8eQ/EaqemL9Utxx/w
-75LFWUhOaMjFFfQZJ2L+KA2FS/XQyUC4G4CVh0CtLoOaJMw2HbgqMy6fSUd9Cm5s
-jVDaxbtYGULrYpywxhgxQi1UwkjsGgA3Yq0hWowlKTqBtE3elZ8l2BqbMzMf+Yko
-DUKBVRahRl+PB7Wc5OZsoWrnQ64LeErhzDW15018+Cdrq6QOr5QzQUqvl6yMBl08
-C/Rk45vLkTpwmzUkVw8ZafybmKH4qCG6XUFkLnMON1BgxE1lvkcbTDqsOW0IREQs
-gpFKyCpkbJV1xzRzf7w+Fg53ezNXtE1Xu8Gq2WWV052boBCvMq/bIb4juINceBpI
-QbE9icw15Vwu5aW7b/Eb
-=MlcV
------END PGP SIGNATURE-----
+                sd0_bus8: sd0-bus-width8 {
+                        samsung,pins = "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
+                        /*...*/
+                };
 
---Nq2Wo0NMKNjxTN9z--
+we have to make entries like below for dwmmc node to configure 8bit bus width.
+pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
+
+or if we choose like below
+
+                sd0_bus1: sd0-bus-width1 {
+                        samsung,pins = "gpc0-3";
+                        /*...*/
+                };
+
+                sd0_bus4: sd0-bus-width4 {
+                        samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5", "gpc0-6";
+                        /*...*/
+                };
+
+                sd0_bus8: sd0-bus-width8 {
+                        samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5",
+"gpc0-6", "gpc3-0", "gpc3-1", "gpc3-2", "gpc3-3";
+                        /*...*/
+                };
+
+Then specifying pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus8>; is enough
+
+Because all the other boards have the similar kind of nodes specified
+in their DT files, I followed the same convention.
+
+Best Wishes,
+Leela Krishna Amudala.
+
+> Feel free to add my Reviewed-by.  The differences between the code you
+> sent up and our ToT are:
+> * You properly set the i2c4 drive strength to 0 to match all others.
+> * You don't yet have the HDMI hot plug detect IRQ defined.  ...but
+> that looks slightly wrong in our tree anyway and can be added later.
+>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+>
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
