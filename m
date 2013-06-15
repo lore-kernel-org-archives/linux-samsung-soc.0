@@ -1,61 +1,75 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 00/28] Twenty eight patches big Exynos cleanup
-Date: Sat, 15 Jun 2013 11:20:30 +0900
-Message-ID: <172301ce696e$e87f9f00$b97edd00$%kim@samsung.com>
-References: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
- <5750530.AyJQs5JHPZ@wuerfel>
+Subject: RE: [PATCH] ARM: exynos: remove unused code
+Date: Sat, 15 Jun 2013 11:24:38 +0900
+Message-ID: <172501ce696f$7c346d20$749d4760$%kim@samsung.com>
+References: <51B791EF.9070904@samsung.com> <201306141517.24287.arnd@arndb.de>
+ <CAOesGMjKZGWp9J5pTj6C4K20xENCtm_G=b8oKwTTkJ-03-X=Gw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58375 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:58754 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753097Ab3FOCUc (ORCPT
+	with ESMTP id S1751512Ab3FOCYj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 22:20:32 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
+	Fri, 14 Jun 2013 22:24:39 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
  by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOE00LIPX61PEG0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 15 Jun 2013 11:20:31 +0900 (KST)
-In-reply-to: <5750530.AyJQs5JHPZ@wuerfel>
+ with ESMTP id <0MOE00LMNXD2PEG0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 15 Jun 2013 11:24:38 +0900 (KST)
+In-reply-to: <CAOesGMjKZGWp9J5pTj6C4K20xENCtm_G=b8oKwTTkJ-03-X=Gw@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Tomasz Figa' <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Arnd Bergmann wrote:
+Olof Johansson wrote:
 > 
-> On Friday 14 June 2013 21:32:36 Tomasz Figa wrote:
+> On Fri, Jun 14, 2013 at 6:17 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> > After exynos has been converted to DT-only booting by removing
+> > most a lot of the ATAGS code, I had a closer look of what is
+> > left. It turns out that a number of unused files are left in
+> > the tree that can be removed along with about another quarter
+> > of the remaining code in mach-exynos.
 > >
-> > As I promised, I am doing some spring (or rather summer) cleaning
-> > of Exynos- and Samsung- related code.
+> > Specifically this includes:
 > >
-> > This first part consists mostly of removing dead code remaining after
-> > removal of ATAGS support for Exynos, but several patches cleans up
-> > other things found by the way.
+> > * all board files
+> > * all setup-*.c files
+> > * dev-audio.c and dev-uart.c
+> > * all code testing for of_have_populated_dt
+> > * the eint_irqchip
+> > * almost all the mach/irqs.h constants (the remaining ones
+> >   are likely bugs)
+> > * Most physical address constants. The remaining ones are
+> >   either bugs or used for the iotable. Both can probably
+> >   get removed in the long run.
+> > * regs-usb-phy.h, which was already unused before
+> > * A lot of code in plat-samsung/ can be made conditional
+> >   on CONFIG_ATAGS, in particular now unused device
+> >   definitions.
 > >
-> > See particular patches for more detailed description.
-> >
-> > On Exynos4210-based Trats board:
-> > Tested-by: Tomasz Figa <t.figa@samsung.com>
-> >
-> > Build tested every patch with s3c6400_defconfig, s5pv210_defconfig
-> > and exynos_defconfig.
+> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > 
-> Great stuff. I unfortunately did almost the exact same patch since I
-> did not know you were on it too. Yours looks better in some details,
-> and your patch descriptions are /much/ better than my single large
-> patch.
+> Acked-by: Olof Johansson <olof@lixom.net>
 > 
-> I'll try to cross-check the two series to see if there is anything
-> you missed that was in my patch set.
+> > Hi Kukjin,
+> >
+> > Could you check the validity of this patch please?
+> >
+> > I think we should apply it on top of your series. I've generated
+> > the patch using 'git format-patch -D' for brevity, so be careful
+> > to actually delete the unused files if you want to apply it to
+> > a local branch on your side.
 > 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-OK, let me take Tomasz's patches with your ack.
+> Great. This is the piece that I wanted to see in the non-DT-removal
+> branch before I pulled it.
+> 
+Yeah, I think so. But as Arnd suggested, I'm looking at Tomasz's patches and
+it will be sorted out in this weekend.
 
 Thanks,
 - Kukjin
