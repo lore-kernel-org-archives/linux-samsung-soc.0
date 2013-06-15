@@ -1,75 +1,42 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: exynos: remove unused code
-Date: Sat, 15 Jun 2013 11:24:38 +0900
-Message-ID: <172501ce696f$7c346d20$749d4760$%kim@samsung.com>
-References: <51B791EF.9070904@samsung.com> <201306141517.24287.arnd@arndb.de>
- <CAOesGMjKZGWp9J5pTj6C4K20xENCtm_G=b8oKwTTkJ-03-X=Gw@mail.gmail.com>
+Subject: RE: [PATCH] clocksource: samsung_pwm_timer: Do not request PWM mem
+ region
+Date: Sat, 15 Jun 2013 11:25:30 +0900
+Message-ID: <172601ce696f$9b4db310$d1e91930$%kim@samsung.com>
+References: <1371151364-8121-1-git-send-email-tomasz.figa@gmail.com>
+ <20130614215134.GG17326@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58754 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751512Ab3FOCYj (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:31013 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751512Ab3FOCZc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 22:24:39 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Fri, 14 Jun 2013 22:25:32 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOE00LMNXD2PEG0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 15 Jun 2013 11:24:38 +0900 (KST)
-In-reply-to: <CAOesGMjKZGWp9J5pTj6C4K20xENCtm_G=b8oKwTTkJ-03-X=Gw@mail.gmail.com>
+ with ESMTP id <0MOE002Z5XEH4E10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 15 Jun 2013 11:25:31 +0900 (KST)
+In-reply-to: <20130614215134.GG17326@quad.lixom.net>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Olof Johansson' <olof@lixom.net>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, john.stultz@linaro.org, tglx@linutronix.de
 
 Olof Johansson wrote:
 > 
-> On Fri, Jun 14, 2013 at 6:17 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> > After exynos has been converted to DT-only booting by removing
-> > most a lot of the ATAGS code, I had a closer look of what is
-> > left. It turns out that a number of unused files are left in
-> > the tree that can be removed along with about another quarter
-> > of the remaining code in mach-exynos.
+> On Thu, Jun 13, 2013 at 09:22:44PM +0200, Tomasz Figa wrote:
+> > PWM registers are shared between clocksource and PWM drivers and so can
+> > not be claimed for exclusive use.
 > >
-> > Specifically this includes:
-> >
-> > * all board files
-> > * all setup-*.c files
-> > * dev-audio.c and dev-uart.c
-> > * all code testing for of_have_populated_dt
-> > * the eint_irqchip
-> > * almost all the mach/irqs.h constants (the remaining ones
-> >   are likely bugs)
-> > * Most physical address constants. The remaining ones are
-> >   either bugs or used for the iotable. Both can probably
-> >   get removed in the long run.
-> > * regs-usb-phy.h, which was already unused before
-> > * A lot of code in plat-samsung/ can be made conditional
-> >   on CONFIG_ATAGS, in particular now unused device
-> >   definitions.
-> >
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 > 
 > Acked-by: Olof Johansson <olof@lixom.net>
-> 
-> > Hi Kukjin,
-> >
-> > Could you check the validity of this patch please?
-> >
-> > I think we should apply it on top of your series. I've generated
-> > the patch using 'git format-patch -D' for brevity, so be careful
-> > to actually delete the unused files if you want to apply it to
-> > a local branch on your side.
-> 
-> Great. This is the piece that I wanted to see in the non-DT-removal
-> branch before I pulled it.
-> 
-Yeah, I think so. But as Arnd suggested, I'm looking at Tomasz's patches and
-it will be sorted out in this weekend.
 
-Thanks,
+Thanks, applied.
+
 - Kukjin
