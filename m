@@ -1,255 +1,75 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 00/28] Twenty eight patches big Exynos cleanup
-Date: Sat, 15 Jun 2013 11:30:52 +0900
-Message-ID: <172701ce6970$5afdf710$10f9e530$%kim@samsung.com>
-References: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: exynos: remove unused code
+Date: Fri, 14 Jun 2013 19:34:35 -0700
+Message-ID: <CAOesGMjetpv2h-_UWUCqCK=x4f8XPodtaSHvbYtryNL3WDM4rw@mail.gmail.com>
+References: <51B791EF.9070904@samsung.com>
+	<201306141517.24287.arnd@arndb.de>
+	<CAOesGMjKZGWp9J5pTj6C4K20xENCtm_G=b8oKwTTkJ-03-X=Gw@mail.gmail.com>
+	<172501ce696f$7c346d20$749d4760$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:11405 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753012Ab3FOCay (ORCPT
+Received: from mail-qa0-f41.google.com ([209.85.216.41]:34356 "EHLO
+	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754234Ab3FOCeg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Jun 2013 22:30:54 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOE00A5VXNGR290@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 15 Jun 2013 11:30:52 +0900 (KST)
-In-reply-to: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
-Content-language: ko
+	Fri, 14 Jun 2013 22:34:36 -0400
+Received: by mail-qa0-f41.google.com with SMTP id f14so535385qak.7
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Jun 2013 19:34:36 -0700 (PDT)
+In-Reply-To: <172501ce696f$7c346d20$749d4760$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Tomasz Figa wrote:
-> 
-> Hi All,
-> 
-> As I promised, I am doing some spring (or rather summer) cleaning
-> of Exynos- and Samsung- related code.
-> 
-> This first part consists mostly of removing dead code remaining after
-> removal of ATAGS support for Exynos, but several patches cleans up
-> other things found by the way.
-> 
-> See particular patches for more detailed description.
-> 
-> On Exynos4210-based Trats board:
-> Tested-by: Tomasz Figa <t.figa@samsung.com>
-> 
-> Build tested every patch with s3c6400_defconfig, s5pv210_defconfig
-> and exynos_defconfig.
-> 
-> Tomasz Figa (28):
->   ARM: EXYNOS: Remove unused board files
->   ARM: EXYNOS: Make ARCH_EXYNOS select USE_OF
->   ARM: SAMSUNG: Introduce SAMSUNG_ATAGS Kconfig entry
->   ARM: EXYNOS: common: Remove legacy PMU initialization code
->   ARM: EXYNOS: common: Remove legacy EINT initialization code
->   ARM: EXYNOS: common: Remove legacy UART initialization code
->   ARM: EXYNOS: Remove legacy dev- and setup- files
->   ARM: EXYNOS: common: Remove legacy interrupt initialization code
->   ARM: EXYNOS: common: Remove legacy timer initialization code
->   ARM: EXYNOS: common: Remove platform device initialization
->   ARM: EXYNOS: common: Remove legacy mapping of chip ID block
->   ARM: EXYNOS: firmware: Remove check for device tree presence
->   ARM: EXYNOS: pm_domains: Remove legacy power domain registration code
->   ARM: SAMSUNG: Introduce GPIO_SAMSUNG Kconfig entry
->   ARM: EXYNOS: Provide compatibility stubs for PM code in pm-core.h
->     header
->   ARM: SAMSUNG: Compile s5p-irq-pm only with ATAGS support
->   ARM: EXYNOS: Decouple ARCH_EXYNOS from PLAT_S5P
->   ARM: SAMSUNG: pm: Include most of mach/ headers conditionally
->   ARM: EXYNOS: Do not select legacy Kconfig symbols any more
->   ARM: EXYNOS: Remove setup-i2c0.c
->   ARM: EXYNOS: Remove mach/gpio.h
->   ARM: EXYNOS: Remove mach/regs-gpio.h header
->   ARM: SAMSUNG: Make legacy MFC support code depend on SAMSUNG_ATAGS
->   ARM: EXYNOS: Select SPARSE_IRQ for Exynos
->   ARM: EXYNOS: Remove mach/irqs.h header
->   ARM: EXYNOS: Remove unused base addresses from mach/map.h header
->   ARM: EXYNOS: Remove CONFIG_SOC_EXYNOS4412
->   ARM: EXYNOS: Remove mach/regs-usb-phy.h header
-> 
->  arch/arm/Kconfig                                 |   15 +-
->  arch/arm/Makefile                                |    1 +
->  arch/arm/mach-exynos/Kconfig                     |   14 +-
->  arch/arm/mach-exynos/Makefile                    |    6 -
->  arch/arm/mach-exynos/common.c                    |  472 +-------
->  arch/arm/mach-exynos/dev-audio.c                 |  254 ----
->  arch/arm/mach-exynos/dev-uart.c                  |   55 -
->  arch/arm/mach-exynos/firmware.c                  |   22 +-
->  arch/arm/mach-exynos/include/mach/gpio.h         |  289 -----
->  arch/arm/mach-exynos/include/mach/irqs.h         |  476 --------
->  arch/arm/mach-exynos/include/mach/map.h          |  214 ----
->  arch/arm/mach-exynos/include/mach/pm-core.h      |    5 +
->  arch/arm/mach-exynos/include/mach/regs-gpio.h    |   40 -
->  arch/arm/mach-exynos/include/mach/regs-usb-phy.h |   74 --
->  arch/arm/mach-exynos/mach-armlex4210.c           |  207 ----
->  arch/arm/mach-exynos/mach-nuri.c                 | 1388
----------------------
-> -
->  arch/arm/mach-exynos/mach-origen.c               |  823 -------------
->  arch/arm/mach-exynos/mach-smdk4x12.c             |  396 ------
->  arch/arm/mach-exynos/mach-smdkv310.c             |  444 -------
->  arch/arm/mach-exynos/mach-universal_c210.c       | 1159
-------------------
->  arch/arm/mach-exynos/pm.c                        |    1 -
->  arch/arm/mach-exynos/pm_domains.c                |   94 +-
->  arch/arm/mach-exynos/setup-fimc.c                |   44 -
->  arch/arm/mach-exynos/setup-fimd0.c               |   43 -
->  arch/arm/mach-exynos/setup-i2c0.c                |   29 -
->  arch/arm/mach-exynos/setup-i2c1.c                |   23 -
->  arch/arm/mach-exynos/setup-i2c2.c                |   23 -
->  arch/arm/mach-exynos/setup-i2c3.c                |   23 -
->  arch/arm/mach-exynos/setup-i2c4.c                |   23 -
->  arch/arm/mach-exynos/setup-i2c5.c                |   23 -
->  arch/arm/mach-exynos/setup-i2c6.c                |   23 -
->  arch/arm/mach-exynos/setup-i2c7.c                |   23 -
->  arch/arm/mach-exynos/setup-keypad.c              |   36 -
->  arch/arm/mach-exynos/setup-sdhci-gpio.c          |  152 ---
->  arch/arm/mach-exynos/setup-spi.c                 |   45 -
->  arch/arm/mach-exynos/setup-usb-phy.c             |  223 ----
->  arch/arm/plat-samsung/Kconfig                    |   40 +-
->  arch/arm/plat-samsung/Makefile                   |   11 +-
->  arch/arm/plat-samsung/include/plat/cpu.h         |    6 +-
->  arch/arm/plat-samsung/include/plat/pm.h          |    5 +
->  arch/arm/plat-samsung/init.c                     |    8 +-
->  arch/arm/plat-samsung/pm-gpio.c                  |    5 +-
->  arch/arm/plat-samsung/pm.c                       |    8 +-
->  arch/arm/plat-samsung/s5p-dev-mfc.c              |   11 +-
->  drivers/cpufreq/Kconfig.arm                      |    2 +-
->  drivers/gpio/Kconfig                             |    7 +
->  drivers/gpio/Makefile                            |    2 +-
->  drivers/media/platform/exynos4-is/Kconfig        |    2 +-
->  drivers/thermal/exynos_thermal.c                 |    2 +-
->  drivers/tty/serial/samsung.c                     |    3 +-
->  50 files changed, 115 insertions(+), 7179 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/dev-audio.c
->  delete mode 100644 arch/arm/mach-exynos/dev-uart.c
->  delete mode 100644 arch/arm/mach-exynos/include/mach/gpio.h
->  delete mode 100644 arch/arm/mach-exynos/include/mach/irqs.h
->  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-gpio.h
->  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-usb-phy.h
->  delete mode 100644 arch/arm/mach-exynos/mach-armlex4210.c
->  delete mode 100644 arch/arm/mach-exynos/mach-nuri.c
->  delete mode 100644 arch/arm/mach-exynos/mach-origen.c
->  delete mode 100644 arch/arm/mach-exynos/mach-smdk4x12.c
->  delete mode 100644 arch/arm/mach-exynos/mach-smdkv310.c
->  delete mode 100644 arch/arm/mach-exynos/mach-universal_c210.c
->  delete mode 100644 arch/arm/mach-exynos/setup-fimc.c
->  delete mode 100644 arch/arm/mach-exynos/setup-fimd0.c
->  delete mode 100644 arch/arm/mach-exynos/setup-i2c0.c
->  delete mode 100644 arch/arm/mach-exynos/setup-i2c1.c
->  delete mode 100644 arch/arm/mach-exynos/setup-i2c2.c
->  delete mode 100644 arch/arm/mach-exynos/setup-i2c3.c
->  delete mode 100644 arch/arm/mach-exynos/setup-i2c4.c
->  delete mode 100644 arch/arm/mach-exynos/setup-i2c5.c
->  delete mode 100644 arch/arm/mach-exynos/setup-i2c6.c
->  delete mode 100644 arch/arm/mach-exynos/setup-i2c7.c
->  delete mode 100644 arch/arm/mach-exynos/setup-keypad.c
->  delete mode 100644 arch/arm/mach-exynos/setup-sdhci-gpio.c
->  delete mode 100644 arch/arm/mach-exynos/setup-spi.c
->  delete mode 100644 arch/arm/mach-exynos/setup-usb-phy.c
-> 
-> --
-> 1.8.2.1
+On Fri, Jun 14, 2013 at 7:24 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Olof Johansson wrote:
+>>
+>> On Fri, Jun 14, 2013 at 6:17 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> > After exynos has been converted to DT-only booting by removing
+>> > most a lot of the ATAGS code, I had a closer look of what is
+>> > left. It turns out that a number of unused files are left in
+>> > the tree that can be removed along with about another quarter
+>> > of the remaining code in mach-exynos.
+>> >
+>> > Specifically this includes:
+>> >
+>> > * all board files
+>> > * all setup-*.c files
+>> > * dev-audio.c and dev-uart.c
+>> > * all code testing for of_have_populated_dt
+>> > * the eint_irqchip
+>> > * almost all the mach/irqs.h constants (the remaining ones
+>> >   are likely bugs)
+>> > * Most physical address constants. The remaining ones are
+>> >   either bugs or used for the iotable. Both can probably
+>> >   get removed in the long run.
+>> > * regs-usb-phy.h, which was already unused before
+>> > * A lot of code in plat-samsung/ can be made conditional
+>> >   on CONFIG_ATAGS, in particular now unused device
+>> >   definitions.
+>> >
+>> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> Acked-by: Olof Johansson <olof@lixom.net>
+>>
+>> > Hi Kukjin,
+>> >
+>> > Could you check the validity of this patch please?
+>> >
+>> > I think we should apply it on top of your series. I've generated
+>> > the patch using 'git format-patch -D' for brevity, so be careful
+>> > to actually delete the unused files if you want to apply it to
+>> > a local branch on your side.
+>>
+>> Great. This is the piece that I wanted to see in the non-DT-removal
+>> branch before I pulled it.
+>>
+> Yeah, I think so. But as Arnd suggested, I'm looking at Tomasz's patches and
+> it will be sorted out in this weekend.
 
-Basically, looks good. I'm looking at this series then let me take.
+Yes, please pick up Thomasz' patches instead (and his follow-up ones
+early next week).
 
-BTW, just note, happens build error with s5pc100_defconfig....
 
-arch/arm/plat-samsung/pm-gpio.c: In function 'samsung_gpio_pm_1bit_save':
-arch/arm/plat-samsung/pm-gpio.c:33:6: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:34:6: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c: In function 'samsung_gpio_pm_1bit_resume':
-arch/arm/plat-samsung/pm-gpio.c:42:22: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:43:22: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c: At top level:
-arch/arm/plat-samsung/pm-gpio.c:63:24: error: expected identifier or '('
-before 'void'
-arch/arm/plat-samsung/pm-gpio.c:63:24: error: expected ')' before numeric
-constant
-arch/arm/plat-samsung/pm-gpio.c: In function 'samsung_gpio_pm_2bit_save':
-arch/arm/plat-samsung/pm-gpio.c:70:6: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:71:6: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:72:6: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c: In function 'samsung_gpio_pm_2bit_resume':
-arch/arm/plat-samsung/pm-gpio.c:129:22: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:130:22: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:136:19: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c: At top level:
-arch/arm/plat-samsung/pm-gpio.c:190:24: error: expected identifier or '('
-before 'void'
-arch/arm/plat-samsung/pm-gpio.c:190:24: error: expected ')' before numeric
-constant
-arch/arm/plat-samsung/pm-gpio.c: In function 'samsung_gpio_pm_4bit_save':
-arch/arm/plat-samsung/pm-gpio.c:199:6: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:200:6: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:201:6: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:204:7: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c: In function 'samsung_gpio_pm_4bit_con':
-arch/arm/plat-samsung/pm-gpio.c:250:22: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c: In function 'samsung_gpio_pm_4bit_resume':
-arch/arm/plat-samsung/pm-gpio.c:266:22: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:281:19: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:282:19: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:284:20: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:286:19: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:287:19: error: 'struct samsung_gpio_chip'
-has no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c: At top level:
-arch/arm/plat-samsung/pm-gpio.c:302:24: error: expected identifier or '('
-before 'void'
-arch/arm/plat-samsung/pm-gpio.c:302:24: error: expected ')' before numeric
-constant
-arch/arm/plat-samsung/pm-gpio.c: In function 'samsung_pm_save_gpios':
-arch/arm/plat-samsung/pm-gpio.c:342:3: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:342:3: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:342:3: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c:342:3: error: 'struct samsung_gpio_chip' has
-no member named 'pm_save'
-arch/arm/plat-samsung/pm-gpio.c: At top level:
-arch/arm/plat-samsung/pm-gpio.c:31:13: warning: 'samsung_gpio_pm_1bit_save'
-defined but not used [-Wunused-function]
-arch/arm/plat-samsung/pm-gpio.c:37:13: warning:
-'samsung_gpio_pm_1bit_resume' defined but not used [-Wunused-function]
-arch/arm/plat-samsung/pm-gpio.c:68:13: warning: 'samsung_gpio_pm_2bit_save'
-defined but not used [-Wunused-function]
-arch/arm/plat-samsung/pm-gpio.c:124:13: warning:
-'samsung_gpio_pm_2bit_resume' defined but not used [-Wunused-function]
-arch/arm/plat-samsung/pm-gpio.c:197:13: warning: 'samsung_gpio_pm_4bit_save'
-defined but not used [-Wunused-function]
-arch/arm/plat-samsung/pm-gpio.c:261:13: warning:
-'samsung_gpio_pm_4bit_resume' defined but not used [-Wunused-function]
-make[2]: *** [arch/arm/plat-samsung/pm-gpio.o] Error 1
-make[2]: *** Waiting for unfinished jobs....
-
-- Kukjin
+-Olof
