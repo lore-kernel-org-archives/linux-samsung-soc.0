@@ -1,119 +1,44 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [RFC PATCH 02/11] dma: amba-pl08x: Refactor pl08x_getbytes_chan() to
- lower indentation
-Date: Sun, 16 Jun 2013 22:54:09 +0200
-Message-ID: <1371416058-22047-3-git-send-email-tomasz.figa@gmail.com>
-References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 2/3] ARM: SAMSUNG: Consolidate uncompress subroutine
+Date: Mon, 17 Jun 2013 06:03:44 +0900
+Message-ID: <51BE2830.2070702@samsung.com>
+References: <1370319552-17694-1-git-send-email-tushar.behera@linaro.org> <1370319552-17694-3-git-send-email-tushar.behera@linaro.org> <51B960D6.7080901@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>Olof Johansson <o>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:60755 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752602Ab3FPVDt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 16 Jun 2013 17:03:49 -0400
+In-Reply-To: <51B960D6.7080901@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, arnd@arndb.de, olof@lixom.net, patches@linaro.org
 
-Further patch will introduce support for PL080S, which requires some
-things to be done conditionally, thus increasing indentation level of
-some functions even more.
+On 06/13/13 15:04, Tushar Behera wrote:
+> On 06/04/2013 09:49 AM, Tushar Behera wrote:
+>> For mach-exynos, uart_base is a pointer and the value is calculated
+>> in the machine folder. For other machines, uart_base is defined as
+>> a macro in platform directory. For symmetry, the uart_base macro
+>> definition is removed and the uart_base calculation is moved to
+>> specific machine folders.
+>>
+>> This would help us consolidating uncompress subroutine for s5p64x0.
+>>
+>> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+>> ---
+>> Changes for v2:
+>> * Remove ifdef's while calculating uart_base value.
+>>
+>
+> Kukjin,
+>
+> Would you please queue this up for 3.11?
+>
+Sure, applied this and 3rd for 3.11.
 
-This patch reduces indentation level of pl08x_getbytes_chan() function
-by inverting several conditions and returning from function wherever
-possible.
-
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/dma/amba-pl08x.c | 51 ++++++++++++++++++++++++++----------------------
- 1 file changed, 28 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index d443a68..1e57ded 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -473,47 +473,52 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
- /* The channel should be paused when calling this */
- static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
- {
-+	struct pl08x_lli *llis_va;
- 	struct pl08x_phy_chan *ch;
-+	dma_addr_t llis_bus;
- 	struct pl08x_txd *txd;
- 	size_t bytes = 0;
-+	int index;
-+	u32 clli;
- 
- 	ch = plchan->phychan;
- 	txd = plchan->at;
- 
-+	if (!ch || !txd)
-+		return bytes;
-+
- 	/*
- 	 * Follow the LLIs to get the number of remaining
- 	 * bytes in the currently active transaction.
- 	 */
--	if (ch && txd) {
--		u32 clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
-+	clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
-+
-+	/* First get the remaining bytes in the active transfer */
-+	bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
- 
--		/* First get the remaining bytes in the active transfer */
--		bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
-+	if (!clli)
-+		return bytes;
- 
--		if (clli) {
--			struct pl08x_lli *llis_va = txd->llis_va;
--			dma_addr_t llis_bus = txd->llis_bus;
--			int index;
-+	llis_va = txd->llis_va;
-+	llis_bus = txd->llis_bus;
- 
--			BUG_ON(clli < llis_bus || clli >= llis_bus +
-+	BUG_ON(clli < llis_bus || clli >= llis_bus +
- 				sizeof(struct pl08x_lli) * MAX_NUM_TSFR_LLIS);
- 
--			/*
--			 * Locate the next LLI - as this is an array,
--			 * it's simple maths to find.
--			 */
--			index = (clli - llis_bus) / sizeof(struct pl08x_lli);
-+	/*
-+	 * Locate the next LLI - as this is an array,
-+	 * it's simple maths to find.
-+	 */
-+	index = (clli - llis_bus) / sizeof(struct pl08x_lli);
- 
--			for (; index < MAX_NUM_TSFR_LLIS; index++) {
--				bytes += get_bytes_in_cctl(llis_va[index].cctl);
-+	for (; index < MAX_NUM_TSFR_LLIS; index++) {
-+		bytes += get_bytes_in_cctl(llis_va[index].cctl);
- 
--				/*
--				 * A LLI pointer of 0 terminates the LLI list
--				 */
--				if (!llis_va[index].lli)
--					break;
--			}
--		}
-+		/*
-+		 * A LLI pointer of 0 terminates the LLI list
-+		 */
-+		if (!llis_va[index].lli)
-+			break;
- 	}
- 
- 	return bytes;
--- 
-1.8.2.1
+Thanks,
+- Kukjin
