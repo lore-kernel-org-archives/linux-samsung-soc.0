@@ -1,172 +1,54 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFC PATCH 3/5] video: exynos_dsi: Use generic PHY driver
-Date: Sun, 16 Jun 2013 23:15:37 +0200
-Message-ID: <1502179.yCdHZgQgqV@flatron>
-References: <1371231951-1969-1-git-send-email-s.nawrocki@samsung.com> <1371231951-1969-4-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1371231951-1969-4-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: kishon@ti.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, linux-fbdev@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v2 1/2] MAINTAINERS: Add Samsung pinctrl entries
+Date: Sun, 16 Jun 2013 15:17:46 -0700
+Message-ID: <1371421068-28743-1-git-send-email-dianders@chromium.org>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f202.google.com ([209.85.216.202]:62742 "EHLO
+	mail-qc0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755893Ab3FPWSO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 16 Jun 2013 18:18:14 -0400
+Received: by mail-qc0-f202.google.com with SMTP id z1so240286qcx.3
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 15:18:13 -0700 (PDT)
+In-Reply-To: <1371143144-31764-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Doug Anderson <dianders@chromium.org>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org
 
-On Friday 14 of June 2013 19:45:49 Sylwester Nawrocki wrote:
-> Use the generic PHY API instead of the platform callback to control
-> the MIPI DSIM DPHY.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/video/display/source-exynos_dsi.c |   36
-> +++++++++-------------------- include/video/exynos_dsi.h               
-> |    5 ----
->  2 files changed, 11 insertions(+), 30 deletions(-)
+It's convenient if get_maintainer suggests sending samsung/exynos
+pinctrl changes to linux-samsung-soc and to Tomasz and Thomas.
 
-Yes, this is what I was really missing a lot while developing this driver.
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Changes in v2:
+- Updated with Thomas and Tomasz; removed Linus since he's already
+  there as part of the general pinctrl match.
 
-Definitely looks good! It's a shame we don't have this driver in mainline 
-yet ;) ,
+ MAINTAINERS | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Best regards,
-Tomasz
-
-> diff --git a/drivers/video/display/source-exynos_dsi.c
-> b/drivers/video/display/source-exynos_dsi.c index 145d57b..dfab790
-> 100644
-> --- a/drivers/video/display/source-exynos_dsi.c
-> +++ b/drivers/video/display/source-exynos_dsi.c
-> @@ -24,6 +24,7 @@
->  #include <linux/mm.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/regulator/consumer.h>
-> @@ -219,6 +220,7 @@ struct exynos_dsi {
->  	bool enabled;
-> 
->  	struct platform_device *pdev;
-> +	struct phy *phy;
->  	struct device *dev;
->  	struct resource *res;
->  	struct clk *pll_clk;
-> @@ -816,6 +818,7 @@ again:
-> 
->  static bool exynos_dsi_transfer_finish(struct exynos_dsi *dsi)
->  {
-> +	static unsigned long j;
->  	struct exynos_dsi_transfer *xfer;
->  	unsigned long flags;
->  	bool start = true;
-> @@ -824,7 +827,8 @@ static bool exynos_dsi_transfer_finish(struct
-> exynos_dsi *dsi)
-> 
->  	if (list_empty(&dsi->transfer_list)) {
->  		spin_unlock_irqrestore(&dsi->transfer_lock, flags);
-> -		dev_warn(dsi->dev, "unexpected TX/RX interrupt\n");
-> +		if (printk_timed_ratelimit(&j, 500))
-> +			dev_warn(dsi->dev, "unexpected TX/RX 
-interrupt\n");
->  		return false;
->  	}
-> 
-> @@ -994,8 +998,7 @@ static int exynos_dsi_enable(struct video_source
-> *src) clk_prepare_enable(dsi->bus_clk);
->  	clk_prepare_enable(dsi->pll_clk);
-> 
-> -	if (dsi->pd->phy_enable)
-> -		dsi->pd->phy_enable(dsi->pdev, true);
-> +	phy_power_on(dsi->phy);
-> 
->  	exynos_dsi_reset(dsi);
->  	exynos_dsi_init_link(dsi);
-> @@ -1019,8 +1022,7 @@ static int exynos_dsi_disable(struct video_source
-> *src)
-> 
->  	exynos_dsi_disable_clock(dsi);
-> 
-> -	if (dsi->pd->phy_enable)
-> -		dsi->pd->phy_enable(dsi->pdev, false);
-> +	phy_power_off(dsi->phy);
-> 
->  	clk_disable_unprepare(dsi->pll_clk);
->  	clk_disable_unprepare(dsi->bus_clk);
-> @@ -1099,12 +1101,6 @@ static const struct dsi_video_source_ops
-> exynos_dsi_ops = { * Device Tree
->   */
-> 
-> -static int (* const of_phy_enables[])(struct platform_device *, bool) =
-> { -#ifdef CONFIG_S5P_SETUP_MIPIPHY
-> -	[0] = s5p_dsim_phy_enable,
-> -#endif
-> -};
-> -
->  static struct exynos_dsi_platform_data *exynos_dsi_parse_dt(
->  						struct platform_device 
-*pdev)
->  {
-> @@ -1112,7 +1108,6 @@ static struct exynos_dsi_platform_data
-> *exynos_dsi_parse_dt( struct exynos_dsi_platform_data *dsi_pd;
->  	struct device *dev = &pdev->dev;
->  	const __be32 *prop_data;
-> -	u32 val;
-> 
->  	dsi_pd = kzalloc(sizeof(*dsi_pd), GFP_KERNEL);
->  	if (!dsi_pd) {
-> @@ -1120,19 +1115,6 @@ static struct exynos_dsi_platform_data
-> *exynos_dsi_parse_dt( return NULL;
->  	}
-> 
-> -	prop_data = of_get_property(node, "samsung,phy-type", NULL);
-> -	if (!prop_data) {
-> -		dev_err(dev, "failed to get phy-type property\n");
-> -		goto err_free_pd;
-> -	}
-> -
-> -	val = be32_to_cpu(*prop_data);
-> -	if (val >= ARRAY_SIZE(of_phy_enables) || !of_phy_enables[val]) {
-> -		dev_err(dev, "Invalid phy-type %u\n", val);
-> -		goto err_free_pd;
-> -	}
-> -	dsi_pd->phy_enable = of_phy_enables[val];
-> -
->  	prop_data = of_get_property(node, "samsung,pll-stable-time", 
-NULL);
->  	if (!prop_data) {
->  		dev_err(dev, "failed to get pll-stable-time property\n");
-> @@ -1254,6 +1236,10 @@ static int exynos_dsi_probe(struct
-> platform_device *pdev) return -ENOMEM;
->  	}
-> 
-> +	dsi->phy = devm_phy_get(&pdev->dev, "dsim");
-> +	if (IS_ERR(dsi->phy))
-> +		return PTR_ERR(dsi->phy);
-> +
->  	platform_set_drvdata(pdev, dsi);
-> 
->  	dsi->irq = platform_get_irq(pdev, 0);
-> diff --git a/include/video/exynos_dsi.h b/include/video/exynos_dsi.h
-> index 95e1568..5c062c7 100644
-> --- a/include/video/exynos_dsi.h
-> +++ b/include/video/exynos_dsi.h
-> @@ -25,9 +25,6 @@
->   */
->  struct exynos_dsi_platform_data {
->  	unsigned int enabled;
-> -
-> -	int (*phy_enable)(struct platform_device *pdev, bool on);
-> -
->  	unsigned int pll_stable_time;
->  	unsigned long pll_clk_rate;
->  	unsigned long esc_clk_rate;
-> @@ -36,6 +33,4 @@ struct exynos_dsi_platform_data {
->  	unsigned short rx_timeout;
->  };
-> 
-> -int s5p_dsim_phy_enable(struct platform_device *pdev, bool on);
-> -
->  #endif /* _EXYNOS_MIPI_DSIM_H */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8d97b3e..f55e3c7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6284,6 +6284,16 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	drivers/pinctrl/pinctrl-at91.c
+ 
++PIN CONTROLLER - SAMSUNG
++M:	Tomasz Figa <t.figa@samsung.com>
++M:	Thomas Abraham <thomas.abraham@linaro.org>
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
++S:	Maintained
++F:	drivers/pinctrl/pinctrl-exynos.*
++F:	drivers/pinctrl/pinctrl-s3c*
++F:	drivers/pinctrl/pinctrl-samsung.*
++
+ PIN CONTROLLER - ST SPEAR
+ M:	Viresh Kumar <viresh.linux@gmail.com>
+ L:	spear-devel@list.st.com
+-- 
+1.8.3
