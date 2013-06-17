@@ -1,64 +1,39 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 07/10] ARM: dts: Add initial device tree support for
- Exynos5420
-Date: Mon, 17 Jun 2013 09:46:48 +0100
-Message-ID: <20130617084648.GA6809@e106331-lin.cambridge.arm.com>
-References: <1370516488-25860-10-git-send-email-chander.kashyap@linaro.org>
- <1371218572-8993-1-git-send-email-chander.kashyap@linaro.org>
- <1371218572-8993-8-git-send-email-chander.kashyap@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 14/28] ARM: SAMSUNG: Introduce GPIO_SAMSUNG Kconfig entry
+Date: Mon, 17 Jun 2013 11:22:16 +0200
+Message-ID: <CACRpkdaJ9joD7rC_Rc_Jz5eocgtZFqYLRwGHwQp9FmNhVuBYtQ@mail.gmail.com>
+References: <1371238384-1504-1-git-send-email-t.figa@samsung.com>
+	<1371238384-1504-15-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-serial-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1371218572-8993-8-git-send-email-chander.kashyap@linaro.org>
-Content-Language: en-US
-Sender: linux-serial-owner@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f179.google.com ([209.85.214.179]:64194 "EHLO
+	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755718Ab3FQJWR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Jun 2013 05:22:17 -0400
+Received: by mail-ob0-f179.google.com with SMTP id xk17so2865138obc.24
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 02:22:16 -0700 (PDT)
+In-Reply-To: <1371238384-1504-15-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi,
+On Fri, Jun 14, 2013 at 9:32 PM, Tomasz Figa <t.figa@samsung.com> wrote:
 
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> new file mode 100644
-> index 0000000..43f0eb8
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -0,0 +1,40 @@
-> +/*
-> + * SAMSUNG SMDK5420 board device tree source
-> + *
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +#include "exynos5420.dtsi"
-> +
-> +/ {
-> +	model = "Samsung SMDK5420 board based on EXYNOS5420";
-> +	compatible = "samsung,smdk5420", "samsung,exynos5420";
-> +
-> +	memory {
-> +		reg =	<0x20000000 0x10000000
-> +			 0x30000000 0x10000000
-> +			 0x40000000 0x10000000
-> +			 0x50000000 0x10000000
-> +			 0x60000000 0x10000000
-> +			 0x70000000 0x10000000
-> +			 0x80000000 0x10000000
-> +			 0x90000000 0x10000000>;
-> +	};
+> This patch adds Kconfig entry that selects whether legacy Samsung GPIO
+> driver should be built or not. For platforms that support only DT based
+> boot, the new pinctrl driver is used and so the old one is not needed.
+>
+> Cc: Grant Likely <grant.likely@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-As splitting these into 256MB banks is a workaround for an implementation
-issue, there should at least be a comment to that effect.
+Looks good to me.
 
-It would be far nicer if this were described as one bank and the kernel could
-split it up as necessary when using sparsemem.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks,
-Mark.
+Yours,
+Linus Walleij
