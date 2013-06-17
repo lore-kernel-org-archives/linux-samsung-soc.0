@@ -1,63 +1,32 @@
-From: Kyungmin Park <kmpark@infradead.org>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: [PATCH v2 1/2] MAINTAINERS: Add Samsung pinctrl entries
-Date: Mon, 17 Jun 2013 12:35:52 +0900
-Message-ID: <CAH9JG2VWwdJ4t1B6fx9rx9=RMSmjmUvGSA5Eqn=aMcQ-FFyO0g@mail.gmail.com>
-References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
-	<1371421068-28743-1-git-send-email-dianders@chromium.org>
+Date: Sun, 16 Jun 2013 20:43:25 -0700
+Message-ID: <4a2043ad-0fa6-44e6-8d46-2a0ef9f9073b@email.android.com>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org> <1371421068-28743-1-git-send-email-dianders@chromium.org> <CAH9JG2VWwdJ4t1B6fx9rx9=RMSmjmUvGSA5Eqn=aMcQ-FFyO0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:41297 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754166Ab3FQDfy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Jun 2013 23:35:54 -0400
-In-Reply-To: <1371421068-28743-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAH9JG2VWwdJ4t1B6fx9rx9=RMSmjmUvGSA5Eqn=aMcQ-FFyO0g@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kyungmin Park <kmpark@infradead.org>, Doug Anderson <dianders@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2013 at 7:17 AM, Doug Anderson <dianders@chromium.org> wrote:
-> It's convenient if get_maintainer suggests sending samsung/exynos
-> pinctrl changes to linux-samsung-soc and to Tomasz and Thomas.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> Changes in v2:
-> - Updated with Thomas and Tomasz; removed Linus since he's already
->   there as part of the general pinctrl match.
->
->  MAINTAINERS | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8d97b3e..f55e3c7 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6284,6 +6284,16 @@ L:       linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->  S:     Maintained
->  F:     drivers/pinctrl/pinctrl-at91.c
->
-> +PIN CONTROLLER - SAMSUNG
-> +M:     Tomasz Figa <t.figa@samsung.com>
-> +M:     Thomas Abraham <thomas.abraham@linaro.org>
-> +L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-> +S:     Maintained
-> +F:     drivers/pinctrl/pinctrl-exynos.*
-> +F:     drivers/pinctrl/pinctrl-s3c*
-> +F:     drivers/pinctrl/pinctrl-samsung.*
-> +
->  PIN CONTROLLER - ST SPEAR
->  M:     Viresh Kumar <viresh.linux@gmail.com>
->  L:     spear-devel@list.st.com
-> --
-> 1.8.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+
+
+Kyungmin Park <kmpark@infradead.org> skrev:
+
+>On Mon, Jun 17, 2013 at 7:17 AM, Doug Anderson <dianders@chromium.org>
+>wrote:
+>> It's convenient if get_maintainer suggests sending samsung/exynos
+>> pinctrl changes to linux-samsung-soc and to Tomasz and Thomas.
+>>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+Acked-by: Olof Johansson <olof@lixom.net>
+
+--=20
+Skickat fr=C3=A5n min Android-telefon med K-9 E-post. Urs=C3=A4kta min =
+f=C3=A5ordighet.
