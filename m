@@ -1,99 +1,63 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/3] clk: exynos4: Staticize local symbols
-Date: Mon, 17 Jun 2013 08:44:07 +0530
-Message-ID: <CAK9yfHwXMHh=0j+EqhFrniJyz0Cvq+TT8hPjeu+N0+vsjVX-7A@mail.gmail.com>
-References: <1366106719-26342-1-git-send-email-sachin.kamat@linaro.org>
-	<08f401ce61e6$2ecc33f0$8c649bd0$%kim@samsung.com>
-	<CAK9yfHzMFfpLbHj0HwayPGSHWYfa5QSG-SADCvhoXJoiUE=JYQ@mail.gmail.com>
-	<CAK9yfHzRzUfiDj3ooC9OAhiH45-0ZGrC_G1odNK7e=mjLL1vag@mail.gmail.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH v2 1/2] MAINTAINERS: Add Samsung pinctrl entries
+Date: Mon, 17 Jun 2013 12:35:52 +0900
+Message-ID: <CAH9JG2VWwdJ4t1B6fx9rx9=RMSmjmUvGSA5Eqn=aMcQ-FFyO0g@mail.gmail.com>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
+	<1371421068-28743-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:40567 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755103Ab3FQDOI (ORCPT
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:41297 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754166Ab3FQDfy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Jun 2013 23:14:08 -0400
-Received: by mail-oa0-f47.google.com with SMTP id m1so2807560oag.20
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 20:14:07 -0700 (PDT)
-In-Reply-To: <CAK9yfHzRzUfiDj3ooC9OAhiH45-0ZGrC_G1odNK7e=mjLL1vag@mail.gmail.com>
+	Sun, 16 Jun 2013 23:35:54 -0400
+In-Reply-To: <1371421068-28743-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org
 
-On 13 June 2013 21:06, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> On 11 June 2013 09:46, Sachin Kamat <sachin.kamat@linaro.org> wrote:
->> On 5 June 2013 17:44, Kukjin Kim <kgene.kim@samsung.com> wrote:
->>> Sachin Kamat wrote:
->>>>
->>>> These symbols are used only in this file and hence should be
->>>> static.
->>>>
->>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->>>> ---
->>>>  drivers/clk/samsung/clk-exynos4.c |   26 ++++++++++++++------------
->>>>  1 file changed, 14 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-
->>>> exynos4.c
->>>> index 7104669..26f2a85 100644
->>>> --- a/drivers/clk/samsung/clk-exynos4.c
->>>> +++ b/drivers/clk/samsung/clk-exynos4.c
->>>> @@ -339,24 +339,26 @@ PNAME(mout_user_aclk200_p4x12) = {"fin_pll",
->>>> "div_aclk200", };
->>>>  PNAME(mout_user_aclk266_gps_p4x12) = {"fin_pll", "div_aclk266_gps", };
->>>>
->>>>  /* fixed rate clocks generated outside the soc */
->>>> -struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata
->>>> = {
->>>> +static struct
->>>> +samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata = {
->>>
->>> Any reason to use double lines?
->>
->> This is one of the ways to avoid exceeding 80 column limit.
->>
->>>
->>>>       FRATE(xxti, "xxti", NULL, CLK_IS_ROOT, 0),
->>>>       FRATE(xusbxti, "xusbxti", NULL, CLK_IS_ROOT, 0),
->>>>  };
->>>
->>> [...]
->>>
->>>> -struct samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata =
->>>> {
->>>> +static struct
->>>> +samsung_fixed_rate_clock exynos4210_fixed_rate_clks[] __initdata = {
->>>
->>> Same as above.
->>>
->>>>       FRATE(none, "sclk_usbphy1", NULL, CLK_IS_ROOT, 48000000),
->>>>  };
->>>>
->>> [...]
->>>
->>> Others look good to me,
->>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->>>
->>> Mike, please pick this into the clk tree if you're ok.
->>>
->>
->> Mike,
->> If you are taking this through your tree, please also take the below
->> patch [1] as it is dependent on this series.
->> [1] https://patchwork.kernel.org/patch/2469891/
+On Mon, Jun 17, 2013 at 7:17 AM, Doug Anderson <dianders@chromium.org> wrote:
+> It's convenient if get_maintainer suggests sending samsung/exynos
+> pinctrl changes to linux-samsung-soc and to Tomasz and Thomas.
 >
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> Changes in v2:
+> - Updated with Thomas and Tomasz; removed Linus since he's already
+>   there as part of the general pinctrl match.
 >
-> Ping Mike..
-
-
-Kukjin,
-
-Haven't heard back from Mike regarding this. Can you please take this
-through your tree?
-
-
--- 
-With warm regards,
-Sachin
+>  MAINTAINERS | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8d97b3e..f55e3c7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6284,6 +6284,16 @@ L:       linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>  S:     Maintained
+>  F:     drivers/pinctrl/pinctrl-at91.c
+>
+> +PIN CONTROLLER - SAMSUNG
+> +M:     Tomasz Figa <t.figa@samsung.com>
+> +M:     Thomas Abraham <thomas.abraham@linaro.org>
+> +L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +L:     linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> +S:     Maintained
+> +F:     drivers/pinctrl/pinctrl-exynos.*
+> +F:     drivers/pinctrl/pinctrl-s3c*
+> +F:     drivers/pinctrl/pinctrl-samsung.*
+> +
+>  PIN CONTROLLER - ST SPEAR
+>  M:     Viresh Kumar <viresh.linux@gmail.com>
+>  L:     spear-devel@list.st.com
+> --
+> 1.8.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
