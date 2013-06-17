@@ -1,122 +1,44 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 36/38] ARM: EXYNOS: Use exynos_init_io() as map_io callback
-Date: Mon, 17 Jun 2013 18:34:21 +0200
-Message-ID: <1371486863-12398-37-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 32/38] [media] exynos4-is: Remove check for SOC_EXYNOS4412
+Date: Mon, 17 Jun 2013 18:34:17 +0200
+Message-ID: <1371486863-12398-33-git-send-email-t.figa@samsung.com>
 References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:41745 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752256Ab3FQQfB (ORCPT
+	with ESMTP id S1753022Ab3FQQe7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 12:35:01 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOJ00MBNQ1N6260@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:58 +0100 (BST)
+	Mon, 17 Jun 2013 12:34:59 -0400
 In-reply-to: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-media@vger.kernel.org, Mauro Carvalho Chehab <mchehab@redhat.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Since there is no board specific mapping needed on Exynos,
-exynos_init_io() can be simplified and used as map_io callback for both
-Exynos4 and Exynos5.
+Since SOC_EXYNOS4412 Kconfig symbol has been removed, it is enough to
+check for SOC_EXYNOS4212 for both SoCs from Exynos4x12 series.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@redhat.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/common.c          | 5 +----
- arch/arm/mach-exynos/common.h          | 2 +-
- arch/arm/mach-exynos/mach-exynos4-dt.c | 7 +------
- arch/arm/mach-exynos/mach-exynos5-dt.c | 7 +------
- 4 files changed, 4 insertions(+), 17 deletions(-)
+ drivers/media/platform/exynos4-is/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 91d457f..561890f 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -351,15 +351,12 @@ int __init exynos_fdt_map_chipid(unsigned long node, const char *uname,
-  * register the standard cpu IO areas
-  */
+diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
+index 004fd0b..0d4fd5c 100644
+--- a/drivers/media/platform/exynos4-is/Kconfig
++++ b/drivers/media/platform/exynos4-is/Kconfig
+@@ -33,7 +33,7 @@ config VIDEO_S5P_MIPI_CSIS
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called s5p-csis.
  
--void __init exynos_init_io(struct map_desc *mach_desc, int size)
-+void __init exynos_init_io(void)
- {
- 	debug_ll_io_init();
+-if SOC_EXYNOS4212 || SOC_EXYNOS4412 || SOC_EXYNOS5250
++if SOC_EXYNOS4212 || SOC_EXYNOS5250
  
- 	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
- 
--	if (mach_desc)
--		iotable_init(mach_desc, size);
--
- 	/* detect cpu id and rev. */
- 	s5p_init_cpu(S5P_VA_CHIPID);
- 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 1c83f95..38d45fd 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -19,7 +19,7 @@ void exynos_init_time(void);
- extern unsigned long xxti_f, xusbxti_f;
- 
- struct map_desc;
--void exynos_init_io(struct map_desc *mach_desc, int size);
-+void exynos_init_io(void);
- void exynos4_restart(char mode, const char *cmd);
- void exynos5_restart(char mode, const char *cmd);
- void exynos_init_late(void);
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index df15726..0099c6c 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -23,11 +23,6 @@
- 
- #include "common.h"
- 
--static void __init exynos4_dt_map_io(void)
--{
--	exynos_init_io(NULL, 0);
--}
--
- static void __init exynos4_dt_machine_init(void)
- {
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-@@ -55,7 +50,7 @@ static void __init exynos4_reserve(void)
- DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
- 	.smp		= smp_ops(exynos_smp_ops),
--	.map_io		= exynos4_dt_map_io,
-+	.map_io		= exynos_init_io,
- 	.init_early	= exynos_firmware_init,
- 	.init_machine	= exynos4_dt_machine_init,
- 	.init_late	= exynos_init_late,
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 8777310..ab54770 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -27,11 +27,6 @@
- static u64 dma_mask64 = DMA_BIT_MASK(64);
- static u64 dma_mask32 = DMA_BIT_MASK(32);
- 
--static void __init exynos5_dt_map_io(void)
--{
--	exynos_init_io(NULL, 0);
--}
--
- static int exynos5440_platform_notifier(struct notifier_block *nb,
- 				  unsigned long event, void *__dev)
- {
-@@ -105,7 +100,7 @@ static void __init exynos5_reserve(void)
- DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	.smp		= smp_ops(exynos_smp_ops),
--	.map_io		= exynos5_dt_map_io,
-+	.map_io		= exynos_init_io,
- 	.init_machine	= exynos5_dt_machine_init,
- 	.init_late	= exynos_init_late,
- 	.init_time	= exynos_init_time,
+ config VIDEO_EXYNOS_FIMC_LITE
+ 	tristate "EXYNOS FIMC-LITE camera interface driver"
 -- 
 1.8.2.1
