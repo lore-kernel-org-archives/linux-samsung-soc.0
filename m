@@ -1,65 +1,49 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: dts: Enable RTC node for exynos5250
-Date: Mon, 17 Jun 2013 08:41:14 +0530
-Message-ID: <CAHbNUh2byimQ_ep0j9XkUjRFaU3K6YZE_ANcch5UhP4QsuZxPw@mail.gmail.com>
-References: <1371189378-22823-1-git-send-email-tushar.behera@linaro.org>
-	<CAD=FV=WeY5r_=qLV6dh8HkaNGygZ33uQg5Q6dKhwd31e7MfFTg@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2] clk: exynos4: Add clock entries for TMU
+Date: Mon, 17 Jun 2013 08:42:26 +0530
+Message-ID: <CAK9yfHw_2c1WbSJ7QiN1KBE-H_5BvBNwGRUO3RoHQ6GbFCVphA@mail.gmail.com>
+References: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
+	<20130429170052.8923.66455@quantum>
+	<CAK9yfHzAHx-5vznBi2K2cY7kYmGmrojwLriNGaXw1tesNoZ2-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:48967 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755546Ab3FQDLO (ORCPT
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:43785 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755573Ab3FQDM1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Jun 2013 23:11:14 -0400
-Received: by mail-oa0-f49.google.com with SMTP id n9so2871768oag.36
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 20:11:14 -0700 (PDT)
-In-Reply-To: <CAD=FV=WeY5r_=qLV6dh8HkaNGygZ33uQg5Q6dKhwd31e7MfFTg@mail.gmail.com>
+	Sun, 16 Jun 2013 23:12:27 -0400
+Received: by mail-ob0-f173.google.com with SMTP id wc20so2665928obb.32
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 20:12:27 -0700 (PDT)
+In-Reply-To: <CAK9yfHzAHx-5vznBi2K2cY7kYmGmrojwLriNGaXw1tesNoZ2-A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, Tomasz Figa <t.figa@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>
 
-On 14 June 2013 20:31, Doug Anderson <dianders@chromium.org> wrote:
-> Tushar,
+On 10 June 2013 14:21, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Hi Kukjin,
 >
-> On Thu, Jun 13, 2013 at 10:56 PM, Tushar Behera
-> <tushar.behera@linaro.org> wrote:
->> The kernel dump produced by s3c-rtc driver as reported by
->> commit 522ccdb6fd0e ("ARM: dts: Disable the RTC by default on exynos5")
->> are no longer reproducible in latest kernel.
+> On 29 April 2013 22:30, Mike Turquette <mturquette@linaro.org> wrote:
+>> Quoting Sachin Kamat (2013-04-21 20:55:46)
+>>> Added clock entries for thermal management unit (TMU) for
+>>> Exynos4 SoCs.
+>>>
+>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>>> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+>>> Cc: Mike Turquette <mturquette@linaro.org>
 >>
->> Hence it would be good to re-enable RTC support for EXYNOS5250.
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->> ---
->>  arch/arm/boot/dts/exynos5250.dtsi |    1 -
->>  1 file changed, 1 deletion(-)
+>> This has my Ack if you plan to take it through the Samsung tree.
+>> If you want it to go through the clk tree then I can take it in after
+>> 3.10-rc1.
 >
-> I would prefer we not commit this.
->
-> The original commit wasn't just about avoiding the bug (though that
+> Can you apply this one too to Samsung tree?
+> Thanks.
 
-I thought the intention of the original commit was just that. :-)
+Kukjin,
 
-> was a nice side effect).  My understanding is that the SoC dtsi file
-> ought to have most peripherals disabled by default and individual
-> board dts files should enable the peripherals that they want.  I think
-> exynos5250 is particularly bad about this right now (it starts with
-> most peripherals enabled) but that should probably be fixed...
->
+Can you please take this through your tree? This alreday has MIke's Ack.
 
-I agree, all the peripherals should be fixed for this, not just RTC.
-
-> If my understanding is wrong, others on the list should definitely speak up!  :)
->
-
-Let me know if you still prefer to keep RTC node disabled on exynos5250.dtsi.
-In that case, I would enable it only for Arndale.
-
-> -Doug
-
-
-Thanks.
---
-Tushar Behera
+-- 
+With warm regards,
+Sachin
