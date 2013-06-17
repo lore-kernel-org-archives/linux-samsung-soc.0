@@ -1,36 +1,80 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/3] gpio: samsung: add PINCTRL_S3C24XX to exclude options
-Date: Mon, 17 Jun 2013 18:49:04 +0200
-Message-ID: <CACRpkdZ2RfB4rc7xrDkyxiOzS1NvpX3mFHM+xfQB_GVf+bMRiA@mail.gmail.com>
-References: <201306140044.15568.heiko@sntech.de>
-	<201306140045.27744.heiko@sntech.de>
-	<1a1701ce6b5c$651c4d80$2f54e880$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v3] pinctrl: exynos: ack level-triggered interrupts before unmasking
+Date: Mon, 17 Jun 2013 09:50:43 -0700
+Message-ID: <1371487843-2066-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f172.google.com ([209.85.214.172]:54233 "EHLO
-	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751174Ab3FQQtF (ORCPT
+Received: from mail-ye0-f201.google.com ([209.85.213.201]:41822 "EHLO
+	mail-ye0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752070Ab3FQQut (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 12:49:05 -0400
-Received: by mail-ob0-f172.google.com with SMTP id wo10so3431368obc.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 09:49:04 -0700 (PDT)
-In-Reply-To: <1a1701ce6b5c$651c4d80$2f54e880$%kim@samsung.com>
+	Mon, 17 Jun 2013 12:50:49 -0400
+Received: by mail-ye0-f201.google.com with SMTP id m7so327648yen.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 09:50:49 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Simon Glass <sjg@chromium.org>, Luigi Semenzato <semenzato@chromium.org>, ilho215.lee@samsung.com, eunki_kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org
 
-On Mon, Jun 17, 2013 at 3:13 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+A level-triggered interrupt should be acked after the interrupt line
+becomes inactive and before it is unmasked, or else another interrupt
+will be immediately triggered.  Acking before or after calling the
+handler is not enough.
 
-> Linus, shall I take this into samsung tree? Or since the pinctrl-s3c24xx already merged into arm-soc, this could be picked into your tree...
+Signed-off-by: Luigi Semenzato <semenzato@chromium.org>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+Acked-by: Tomasz Figa <t.figa@samsung.com>
+---
+Changes in v3:
+- Rebased atop (44b6d93 pinctrl: rockchip: correctly handle arguments
+  of pinconf options)
 
-I'm not rebasing pinctrl agains the ARM SoC tree,
-I only rebase to Torvalds tree.
+Changes in v2:
+- Greatly simplified using Tomasz's suggestion of irqd_get_trigger_type
+- Moved acking out of the bank spinlock since since it's not needed.
+- Linus W. has already applied parts 1 and 2, so not resending.
 
-So please take it through the Samsung tree...
+ drivers/pinctrl/pinctrl-exynos.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
+index c0729a3..ef75321 100644
+--- a/drivers/pinctrl/pinctrl-exynos.c
++++ b/drivers/pinctrl/pinctrl-exynos.c
+@@ -84,6 +84,17 @@ static void exynos_gpio_irq_unmask(struct irq_data *irqd)
+ 	unsigned long mask;
+ 	unsigned long flags;
+ 
++	/*
++	 * Ack level interrupts right before unmask
++	 *
++	 * If we don't do this we'll get a double-interrupt.  Level triggered
++	 * interrupts must not fire an interrupt if the level is not
++	 * _currently_ active, even if it was active while the interrupt was
++	 * masked.
++	 */
++	if (irqd_get_trigger_type(irqd) & IRQ_TYPE_LEVEL_MASK)
++		exynos_gpio_irq_ack(irqd);
++
+ 	spin_lock_irqsave(&bank->slock, flags);
+ 
+ 	mask = readl(d->virt_base + reg_mask);
+@@ -302,6 +313,17 @@ static void exynos_wkup_irq_unmask(struct irq_data *irqd)
+ 	unsigned long mask;
+ 	unsigned long flags;
+ 
++	/*
++	 * Ack level interrupts right before unmask
++	 *
++	 * If we don't do this we'll get a double-interrupt.  Level triggered
++	 * interrupts must not fire an interrupt if the level is not
++	 * _currently_ active, even if it was active while the interrupt was
++	 * masked.
++	 */
++	if (irqd_get_trigger_type(irqd) & IRQ_TYPE_LEVEL_MASK)
++		exynos_wkup_irq_ack(irqd);
++
+ 	spin_lock_irqsave(&b->slock, flags);
+ 
+ 	mask = readl(d->virt_base + reg_mask);
+-- 
+1.8.3
