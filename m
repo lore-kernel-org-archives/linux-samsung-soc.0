@@ -1,78 +1,90 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 16/38] ARM: SAMSUNG: Compile legacy IRQ and GPIO PM code
- only with ATAGS support
-Date: Mon, 17 Jun 2013 18:34:01 +0200
-Message-ID: <1371486863-12398-17-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 08/38] ARM: EXYNOS: common: Remove legacy interrupt
+ initialization code
+Date: Mon, 17 Jun 2013 18:33:53 +0200
+Message-ID: <1371486863-12398-9-git-send-email-t.figa@samsung.com>
 References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:41745 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751538Ab3FQQex (ORCPT
+	with ESMTP id S1751538Ab3FQQet (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 12:34:53 -0400
+	Mon, 17 Jun 2013 12:34:49 -0400
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
  by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MOJ00MBNQ1N6260@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:47 +0100 (BST)
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:43 +0100 (BST)
 In-reply-to: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch adds new Kconfig symbols, SAMSUNG_PM_GPIO and S5P_IRQ_PM that
-get enabled when GPIO_SAMSUNG, PM and S5P_PM are enabled, but only if
-SAMSUNG_ATAGS is selected.
+This patch removes legacy IRQ initialization code that was used to set
+up interrupt handling when booting with ATAGS, which is not supported
+any more.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/plat-samsung/Kconfig  | 13 +++++++++++++
- arch/arm/plat-samsung/Makefile |  5 +++--
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ arch/arm/mach-exynos/common.c | 30 +-----------------------------
+ 1 file changed, 1 insertion(+), 29 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index c0f0542..7b08b26 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -421,6 +421,19 @@ config S3C_DMA
- 	help
- 	  Internal configuration for S3C DMA core
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 598e4b8..9626ce4 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -41,7 +41,6 @@
+ #include <mach/regs-irq.h>
+ #include <mach/regs-pmu.h>
+ #include <mach/regs-gpio.h>
+-#include <mach/irqs.h>
  
-+config S5P_IRQ_PM
-+	bool
-+	default y if S5P_PM
-+	help
-+	  Legacy IRQ power management for S5P platforms
-+
-+config SAMSUNG_PM_GPIO
-+	bool
-+	default y if GPIO_SAMSUNG && PM
-+	help
-+	  Include legacy GPIO power management code for platforms not using
-+	  pinctrl-samsung driver.
-+
- endif
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+@@ -486,41 +485,14 @@ void __init exynos_init_time(void)
+ 	}
+ }
  
- config SAMSUNG_DMADEV
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index b549ea9..6348ae2 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -52,10 +52,11 @@ obj-$(CONFIG_SAMSUNG_DMADEV)	+= dma-ops.o
- # PM support
+-static unsigned int max_combiner_nr(void)
+-{
+-	if (soc_is_exynos5250())
+-		return EXYNOS5_MAX_COMBINER_NR;
+-	else if (soc_is_exynos4412())
+-		return EXYNOS4412_MAX_COMBINER_NR;
+-	else if (soc_is_exynos4212())
+-		return EXYNOS4212_MAX_COMBINER_NR;
+-	else
+-		return EXYNOS4210_MAX_COMBINER_NR;
+-}
+-
+-
+ void __init exynos4_init_irq(void)
+ {
+-	unsigned int gic_bank_offset;
+-
+-	gic_bank_offset = soc_is_exynos4412() ? 0x4000 : 0x8000;
+-
+-	if (!of_have_populated_dt())
+-		gic_init_bases(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU, gic_bank_offset, NULL);
+-	else
+-		irqchip_init();
+-
+-	if (!of_have_populated_dt())
+-		combiner_init(S5P_VA_COMBINER_BASE, NULL,
+-			      max_combiner_nr(), COMBINER_IRQ(0, 0));
+-
+-	gic_arch_extn.irq_set_wake = s3c_irq_wake;
++	irqchip_init();
+ }
  
- obj-$(CONFIG_PM)		+= pm.o
--obj-$(CONFIG_PM)		+= pm-gpio.o
-+obj-$(CONFIG_SAMSUNG_PM_GPIO)	+= pm-gpio.o
- obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= pm-check.o
+ void __init exynos5_init_irq(void)
+ {
+ 	irqchip_init();
+-	gic_arch_extn.irq_set_wake = s3c_irq_wake;
+ }
  
- obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
- 
--obj-$(CONFIG_S5P_PM)		+= s5p-pm.o s5p-irq-pm.o
-+obj-$(CONFIG_S5P_PM)		+= s5p-pm.o
-+obj-$(CONFIG_S5P_IRQ_PM)	+= s5p-irq-pm.o
- obj-$(CONFIG_S5P_SLEEP)		+= s5p-sleep.o
+ struct bus_type exynos_subsys = {
 -- 
 1.8.2.1
