@@ -1,79 +1,65 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V5 02/30] thermal: exynos: Add ARCH_HAS_TMU config to
- know the supported soc's
-Date: Sun, 16 Jun 2013 23:05:31 -0400
-Message-ID: <51BE7CFB.6020008@ti.com>
-References: <1370955220-2949-1-git-send-email-amit.daniel@samsung.com> <1370955220-2949-3-git-send-email-amit.daniel@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: dts: Enable RTC node for exynos5250
+Date: Mon, 17 Jun 2013 08:41:14 +0530
+Message-ID: <CAHbNUh2byimQ_ep0j9XkUjRFaU3K6YZE_ANcch5UhP4QsuZxPw@mail.gmail.com>
+References: <1371189378-22823-1-git-send-email-tushar.behera@linaro.org>
+	<CAD=FV=WeY5r_=qLV6dh8HkaNGygZ33uQg5Q6dKhwd31e7MfFTg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2WXGDDBRSFUMEOPULOTXF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1370955220-2949-3-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f49.google.com ([209.85.219.49]:48967 "EHLO
+	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755546Ab3FQDLO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 16 Jun 2013 23:11:14 -0400
+Received: by mail-oa0-f49.google.com with SMTP id n9so2871768oag.36
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 20:11:14 -0700 (PDT)
+In-Reply-To: <CAD=FV=WeY5r_=qLV6dh8HkaNGygZ33uQg5Q6dKhwd31e7MfFTg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-------enig2WXGDDBRSFUMEOPULOTXF
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On 14 June 2013 20:31, Doug Anderson <dianders@chromium.org> wrote:
+> Tushar,
+>
+> On Thu, Jun 13, 2013 at 10:56 PM, Tushar Behera
+> <tushar.behera@linaro.org> wrote:
+>> The kernel dump produced by s3c-rtc driver as reported by
+>> commit 522ccdb6fd0e ("ARM: dts: Disable the RTC by default on exynos5")
+>> are no longer reproducible in latest kernel.
+>>
+>> Hence it would be good to re-enable RTC support for EXYNOS5250.
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/exynos5250.dtsi |    1 -
+>>  1 file changed, 1 deletion(-)
+>
+> I would prefer we not commit this.
+>
+> The original commit wasn't just about avoiding the bug (though that
 
-Hey Amit,
+I thought the intention of the original commit was just that. :-)
 
-On 11-06-2013 08:53, Amit Daniel Kachhap wrote:
-> This patch adds config sybmol ARCH_HAS_TMU to enable the TMU driver.
-> This will allow adding support for new soc easily as now it is the
-> platform responsibility to enable this config symbol.
->=20
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/thermal/samsung/Kconfig |    5 ++++-
->  1 files changed, 4 insertions(+), 1 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/=
-Kconfig
-> index 2d3d9dc..145a55d 100644
-> --- a/drivers/thermal/samsung/Kconfig
-> +++ b/drivers/thermal/samsung/Kconfig
-> @@ -1,6 +1,9 @@
-> +config ARCH_HAS_TMU
-> +	bool
-> +
->  config EXYNOS_THERMAL
->  	tristate "Temperature sensor on Samsung EXYNOS"
-> -	depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5)
-> +	depends on ARCH_HAS_TMU
+> was a nice side effect).  My understanding is that the SoC dtsi file
+> ought to have most peripherals disabled by default and individual
+> board dts files should enable the peripherals that they want.  I think
+> exynos5250 is particularly bad about this right now (it starts with
+> most peripherals enabled) but that should probably be fixed...
+>
 
-I would rather use ARCH_HAS_BANDGAP as discussed and agreed during your
-v4 review. I managed push this patch through RMK's system:
-http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=3D7758/1
+I agree, all the peripherals should be fixed for this, not just RTC.
 
->  	depends on CPU_THERMAL
->  	help
->  	  If you say yes here you get support for TMU (Thermal Management
->=20
+> If my understanding is wrong, others on the list should definitely speak up!  :)
+>
 
+Let me know if you still prefer to keep RTC node disabled on exynos5250.dtsi.
+In that case, I would enable it only for Arndale.
 
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
+> -Doug
 
 
-------enig2WXGDDBRSFUMEOPULOTXF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlG+fPsACgkQCXcVR3XQvP1WzwEAmtlAswHrz46LPK6MIo/e9vs8
-chXTAUh0g5SQwQLFWDgA/1NpiPYjyzJEchEyIN2zJcYAKdjdNx1V80kIk3kN2cO4
-=+DOd
------END PGP SIGNATURE-----
-
-------enig2WXGDDBRSFUMEOPULOTXF--
+Thanks.
+--
+Tushar Behera
