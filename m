@@ -1,59 +1,112 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] clk: exynos4: Add clock entries for TMU
-Date: Mon, 17 Jun 2013 21:07:50 +0900
-Message-ID: <1a0b01ce6b53$4a126460$de372d20$%kim@samsung.com>
-References: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
- <20130429170052.8923.66455@quantum>
- <CAK9yfHzAHx-5vznBi2K2cY7kYmGmrojwLriNGaXw1tesNoZ2-A@mail.gmail.com>
- <CAK9yfHw_2c1WbSJ7QiN1KBE-H_5BvBNwGRUO3RoHQ6GbFCVphA@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] Documentation: Add examples to samsung-pinctrl device tree
+ bindings documentation
+Date: Mon, 17 Jun 2013 14:10:26 +0200
+Message-ID: <2164838.KETqnlhoKR@amdc1227>
+References: <1371465896-2762-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:30913 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932683Ab3FQMHw (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:39883 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932725Ab3FQMKg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 08:07:52 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOJ007W7DP335E0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 21:07:51 +0900 (KST)
-In-reply-to: <CAK9yfHw_2c1WbSJ7QiN1KBE-H_5BvBNwGRUO3RoHQ6GbFCVphA@mail.gmail.com>
-Content-language: ko
+	Mon, 17 Jun 2013 08:10:36 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MOJ00HTDDTFAH20@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 13:10:34 +0100 (BST)
+In-reply-to: <1371465896-2762-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, 'Mike Turquette' <mturquette@linaro.org>
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dianders@chromium.org
 
-Sachin Kamat wrote:
-> 
-> On 10 June 2013 14:21, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> > Hi Kukjin,
-> >
-> > On 29 April 2013 22:30, Mike Turquette <mturquette@linaro.org> wrote:
-> >> Quoting Sachin Kamat (2013-04-21 20:55:46)
-> >>> Added clock entries for thermal management unit (TMU) for
-> >>> Exynos4 SoCs.
-> >>>
-> >>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >>> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> >>> Cc: Mike Turquette <mturquette@linaro.org>
-> >>
-> >> This has my Ack if you plan to take it through the Samsung tree.
-> >> If you want it to go through the clk tree then I can take it in after
-> >> 3.10-rc1.
-> >
-> > Can you apply this one too to Samsung tree?
-> > Thanks.
-> 
-> Kukjin,
-> 
-> Can you please take this through your tree? This alreday has MIke's Ack.
-> 
-Sure, I've applied with Mike's ack.
+Hi Leela,
 
-Thanks,
-- Kukjin
+On Monday 17 of June 2013 16:14:55 Leela Krishna Amudala wrote:
+> This patch adds examples to samsung-pinctrl.txt documentaion file
+> on how to make gpio binding and gpio request
+> 
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  .../bindings/pinctrl/samsung-pinctrl.txt           |   48
+> +++++++++++++++++++- 1 file changed, 46 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt index
+> b2bc219..f1cf177 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> @@ -25,8 +25,18 @@ Required Properties:
+> 
+>    - gpio-controller: identifies the node as a gpio controller and pin bank.
+> - #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO - 
+>   binding is used, the amount of cells must be specified as 2. See generic
+> -    GPIO binding documentation for description of particular cells. +   
+> binding is used, the amount of cells must be specified as 2. See the below
+> +    mentioned gpio binding representation for description of particular
+> cells. +
+> +	Eg: <&gpx2 6 0>
+> +	<[phandle of the gpio controller node]
+> +	[pin number within the gpio controller]
+> +	[flags]>
+> +
+> +	Values for gpio specifier:
+> +	- Pin number: is a value between 0 to 7.
+> +	- Flags: 0 - Active High
+> +		 1 - Active Low
+> 
+>  - Pin mux/config groups as child nodes: The pin mux (selecting pin function
+> mode) and pin config (pull up/down, driver strength) settings are
+> represented @@ -274,3 +284,37 @@ Example 4: Set up the default pin state
+> for uart controller.
+> 
+>  		pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
+>  	}
+> +
+> +Example 5: A display port client node that supports 'default' pinctrl state
+> +	   and gpio binding.
+> +
+> +	display-port-controller {
+> +		samsung,color-space = <0>;
+> +		samsung,dynamic-range = <0>;
+> +		samsung,ycbcr-coeff = <0>;
+> +		samsung,color-depth = <1>;
+> +		samsung,link-rate = <0x06>;
+> +		samsung,lane-count = <2>;
+
+Maybe it would be better to omit those properties above for readability of the 
+example? Just like you did with example 6.
+
+But generally it's a good addition to our documentation. Thanks.
+
+Best regards,
+Tomasz
+
+> +		samsung,hpd-gpio = <&gpx2 6 0>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&dp_hpd>;
+> +	};
+> +
+> +Example 6: Request the gpio for display port controller
+> +
+> +	static int exynos_dp_probe(struct platform_device *pdev)
+> +	{
+> +		int hpd_gpio, ret;
+> +		struct device *dev = &pdev->dev;
+> +		struct device_node *dp_node = dev->of_node;
+> +
+> +		/* ... */
+> +
+> +		hpd_gpio = of_get_named_gpio(dp_node, "samsung,hpd-gpio", 0);
+> +
+> +		/* ... */
+> +
+> +		ret = devm_gpio_request_one(&pdev->dev, hpd_gpio, GPIOF_IN,
+> +					    "hpd_gpio");
+> +		/* ... */
+> +	}
