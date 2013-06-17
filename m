@@ -1,94 +1,147 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 09/38] ARM: EXYNOS: common: Remove legacy timer
- initialization code
-Date: Mon, 17 Jun 2013 18:33:54 +0200
-Message-ID: <1371486863-12398-10-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 13/38] ARM: EXYNOS: pm_domains: Remove legacy power domain
+ registration code
+Date: Mon, 17 Jun 2013 18:33:58 +0200
+Message-ID: <1371486863-12398-14-git-send-email-t.figa@samsung.com>
 References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:10306 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751486Ab3FQQer (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 12:34:47 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOJ0085OQ1L6450@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:43 +0100 (BST)
+Return-path: <linux-pm-owner@vger.kernel.org>
 In-reply-to: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-pm-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Kyungmin Park <kyungmin.park@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch removes legacy timer initialization code that was used to
-set up system timers when booting with ATAGS, which is not supported
-on Exynos any more.
+This patch removes static definitions of power domains and code
+responsible for registering them and adding devices to them, since only
+DT based boot is now supported on Exynos.
 
+Cc: linux-pm@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/common.c | 39 ++-------------------------------------
- 1 file changed, 2 insertions(+), 37 deletions(-)
+ arch/arm/mach-exynos/pm_domains.c | 94 +--------------------------------------
+ 1 file changed, 1 insertion(+), 93 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 9626ce4..b1d0afa 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -299,13 +299,6 @@ static struct map_desc exynos5440_iodesc0[] __initdata = {
- 	},
- };
- 
--static struct samsung_pwm_variant exynos4_pwm_variant = {
--	.bits		= 32,
--	.div_base	= 0,
--	.has_tint_cstat	= true,
--	.tclk_mask	= 0,
--};
--
- void exynos4_restart(char mode, const char *cmd)
- {
- 	__raw_writel(0x1, S5P_SWRESET);
-@@ -451,38 +444,10 @@ static void __init exynos5440_map_io(void)
- 	iotable_init(exynos5440_iodesc0, ARRAY_SIZE(exynos5440_iodesc0));
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index beb946d..1703593 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -74,16 +74,6 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
+ 	return exynos_pd_power(domain, false);
  }
  
--void __init exynos_set_timer_source(u8 channels)
--{
--	exynos4_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
--	exynos4_pwm_variant.output_mask &= ~channels;
+-#define EXYNOS_GPD(PD, BASE, NAME)			\
+-static struct exynos_pm_domain PD = {			\
+-	.base = (void __iomem *)BASE,			\
+-	.name = NAME,					\
+-	.pd = {						\
+-		.power_off = exynos_pd_power_off,	\
+-		.power_on = exynos_pd_power_on,	\
+-	},						\
 -}
 -
- void __init exynos_init_time(void)
+ static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
+ 					 struct device *dev)
  {
--	unsigned int timer_irqs[SAMSUNG_PWM_NUM] = {
--		EXYNOS4_IRQ_TIMER0_VIC, EXYNOS4_IRQ_TIMER1_VIC,
--		EXYNOS4_IRQ_TIMER2_VIC, EXYNOS4_IRQ_TIMER3_VIC,
--		EXYNOS4_IRQ_TIMER4_VIC,
--	};
--
--	if (of_have_populated_dt()) {
--		of_clk_init(NULL);
--		clocksource_of_init();
--	} else {
--		/* todo: remove after migrating legacy E4 platforms to dt */
--#ifdef CONFIG_ARCH_EXYNOS4
--		exynos4_clk_init(NULL, !soc_is_exynos4210(), S5P_VA_CMU, readl(S5P_VA_CHIPID + 8) & 1);
--		exynos4_clk_register_fixed_ext(xxti_f, xusbxti_f);
--#endif
--#ifdef CONFIG_CLKSRC_SAMSUNG_PWM
--		if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_0)
--			samsung_pwm_clocksource_init(S3C_VA_TIMER,
--					timer_irqs, &exynos4_pwm_variant);
--		else
--#endif
--			mct_init(S5P_VA_SYSTIMER, EXYNOS4_IRQ_MCT_G0,
--					EXYNOS4_IRQ_MCT_L0, EXYNOS4_IRQ_MCT_L1);
--	}
-+	of_clk_init(NULL);
-+	clocksource_of_init();
- }
+@@ -156,7 +146,7 @@ static struct notifier_block platform_nb = {
+ 	.notifier_call = exynos_pm_notifier_call,
+ };
  
- void __init exynos4_init_irq(void)
+-static __init int exynos_pm_dt_parse_domains(void)
++static __init int exynos4_pm_init_power_domain(void)
+ {
+ 	struct platform_device *pdev;
+ 	struct device_node *np;
+@@ -192,88 +182,6 @@ static __init int exynos_pm_dt_parse_domains(void)
+ 
+ 	return 0;
+ }
+-
+-static __init __maybe_unused void exynos_pm_add_dev_to_genpd(struct platform_device *pdev,
+-						struct exynos_pm_domain *pd)
+-{
+-	if (pdev->dev.bus) {
+-		if (!pm_genpd_add_device(&pd->pd, &pdev->dev))
+-			pm_genpd_dev_need_restore(&pdev->dev, true);
+-		else
+-			pr_info("%s: error in adding %s device to %s power"
+-				"domain\n", __func__, dev_name(&pdev->dev),
+-				pd->name);
+-	}
+-}
+-
+-EXYNOS_GPD(exynos4_pd_mfc, S5P_PMU_MFC_CONF, "pd-mfc");
+-EXYNOS_GPD(exynos4_pd_g3d, S5P_PMU_G3D_CONF, "pd-g3d");
+-EXYNOS_GPD(exynos4_pd_lcd0, S5P_PMU_LCD0_CONF, "pd-lcd0");
+-EXYNOS_GPD(exynos4_pd_lcd1, S5P_PMU_LCD1_CONF, "pd-lcd1");
+-EXYNOS_GPD(exynos4_pd_tv, S5P_PMU_TV_CONF, "pd-tv");
+-EXYNOS_GPD(exynos4_pd_cam, S5P_PMU_CAM_CONF, "pd-cam");
+-EXYNOS_GPD(exynos4_pd_gps, S5P_PMU_GPS_CONF, "pd-gps");
+-
+-static struct exynos_pm_domain *exynos4_pm_domains[] = {
+-	&exynos4_pd_mfc,
+-	&exynos4_pd_g3d,
+-	&exynos4_pd_lcd0,
+-	&exynos4_pd_lcd1,
+-	&exynos4_pd_tv,
+-	&exynos4_pd_cam,
+-	&exynos4_pd_gps,
+-};
+-
+-static __init int exynos4_pm_init_power_domain(void)
+-{
+-	int idx;
+-
+-	if (of_have_populated_dt())
+-		return exynos_pm_dt_parse_domains();
+-
+-	for (idx = 0; idx < ARRAY_SIZE(exynos4_pm_domains); idx++) {
+-		struct exynos_pm_domain *pd = exynos4_pm_domains[idx];
+-		int on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
+-
+-		pm_genpd_init(&pd->pd, NULL, !on);
+-	}
+-
+-#ifdef CONFIG_S5P_DEV_FIMD0
+-	exynos_pm_add_dev_to_genpd(&s5p_device_fimd0, &exynos4_pd_lcd0);
+-#endif
+-#ifdef CONFIG_S5P_DEV_TV
+-	exynos_pm_add_dev_to_genpd(&s5p_device_hdmi, &exynos4_pd_tv);
+-	exynos_pm_add_dev_to_genpd(&s5p_device_mixer, &exynos4_pd_tv);
+-#endif
+-#ifdef CONFIG_S5P_DEV_MFC
+-	exynos_pm_add_dev_to_genpd(&s5p_device_mfc, &exynos4_pd_mfc);
+-#endif
+-#ifdef CONFIG_S5P_DEV_FIMC0
+-	exynos_pm_add_dev_to_genpd(&s5p_device_fimc0, &exynos4_pd_cam);
+-#endif
+-#ifdef CONFIG_S5P_DEV_FIMC1
+-	exynos_pm_add_dev_to_genpd(&s5p_device_fimc1, &exynos4_pd_cam);
+-#endif
+-#ifdef CONFIG_S5P_DEV_FIMC2
+-	exynos_pm_add_dev_to_genpd(&s5p_device_fimc2, &exynos4_pd_cam);
+-#endif
+-#ifdef CONFIG_S5P_DEV_FIMC3
+-	exynos_pm_add_dev_to_genpd(&s5p_device_fimc3, &exynos4_pd_cam);
+-#endif
+-#ifdef CONFIG_S5P_DEV_CSIS0
+-	exynos_pm_add_dev_to_genpd(&s5p_device_mipi_csis0, &exynos4_pd_cam);
+-#endif
+-#ifdef CONFIG_S5P_DEV_CSIS1
+-	exynos_pm_add_dev_to_genpd(&s5p_device_mipi_csis1, &exynos4_pd_cam);
+-#endif
+-#ifdef CONFIG_S5P_DEV_G2D
+-	exynos_pm_add_dev_to_genpd(&s5p_device_g2d, &exynos4_pd_lcd0);
+-#endif
+-#ifdef CONFIG_S5P_DEV_JPEG
+-	exynos_pm_add_dev_to_genpd(&s5p_device_jpeg, &exynos4_pd_cam);
+-#endif
+-	return 0;
+-}
+ arch_initcall(exynos4_pm_init_power_domain);
+ 
+ int __init exynos_pm_late_initcall(void)
 -- 
 1.8.2.1
+
