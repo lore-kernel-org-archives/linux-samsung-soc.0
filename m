@@ -1,105 +1,39 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 24/38] ARM: EXYNOS: Remove mach/regs-gpio.h header
-Date: Mon, 17 Jun 2013 18:34:09 +0200
-Message-ID: <1371486863-12398-25-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 31/38] cpufreq: exynos4x12: Remove check for SOC_EXYNOS4412
+Date: Mon, 17 Jun 2013 18:34:16 +0200
+Message-ID: <1371486863-12398-32-git-send-email-t.figa@samsung.com>
 References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41745 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753152Ab3FQQe4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 12:34:56 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOJ00MBNQ1N6260@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:51 +0100 (BST)
+Return-path: <linux-pm-owner@vger.kernel.org>
 In-reply-to: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-pm-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-pm@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Contents of this header are not used any more and can be safely removed.
+Since SOC_EXYNOS4412 Kconfig symbol has been removed, it is enough to
+check for SOC_EXYNOS4212 for both SoCs from Exynos4x12 series.
 
+Cc: linux-pm@vger.kernel.org
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/common.c                 |  1 -
- arch/arm/mach-exynos/include/mach/regs-gpio.h | 40 ---------------------------
- arch/arm/mach-exynos/pm.c                     |  1 -
- 3 files changed, 42 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-gpio.h
+ drivers/cpufreq/Kconfig.arm | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index f81aa22..7b53e4c 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -40,7 +40,6 @@
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index a924408..b214ad6 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -32,7 +32,7 @@ config ARM_EXYNOS4210_CPUFREQ
+ 	  SoC (S5PV310 or S5PC210).
  
- #include <mach/regs-irq.h>
- #include <mach/regs-pmu.h>
--#include <mach/regs-gpio.h>
- 
- #include <plat/cpu.h>
- #include <plat/pm.h>
-diff --git a/arch/arm/mach-exynos/include/mach/regs-gpio.h b/arch/arm/mach-exynos/include/mach/regs-gpio.h
-deleted file mode 100644
-index e4b5b60..0000000
---- a/arch/arm/mach-exynos/include/mach/regs-gpio.h
-+++ /dev/null
-@@ -1,40 +0,0 @@
--/* linux/arch/arm/mach-exynos4/include/mach/regs-gpio.h
-- *
-- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * EXYNOS4 - GPIO (including EINT) register definitions
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_REGS_GPIO_H
--#define __ASM_ARCH_REGS_GPIO_H __FILE__
--
--#include <mach/map.h>
--#include <mach/irqs.h>
--
--#define EINT_REG_NR(x)			(EINT_OFFSET(x) >> 3)
--#define EINT_CON(b, x)			(b + 0xE00 + (EINT_REG_NR(x) * 4))
--#define EINT_FLTCON(b, x)		(b + 0xE80 + (EINT_REG_NR(x) * 4))
--#define EINT_MASK(b, x)			(b + 0xF00 + (EINT_REG_NR(x) * 4))
--#define EINT_PEND(b, x)			(b + 0xF40 + (EINT_REG_NR(x) * 4))
--
--#define EINT_OFFSET_BIT(x)		(1 << (EINT_OFFSET(x) & 0x7))
--
--/* compatibility for plat-s5p/irq-pm.c */
--#define EXYNOS4_EINT40CON		(S5P_VA_GPIO2 + 0xE00)
--#define S5P_EINT_CON(x)			(EXYNOS4_EINT40CON + ((x) * 0x4))
--
--#define EXYNOS4_EINT40FLTCON0		(S5P_VA_GPIO2 + 0xE80)
--#define S5P_EINT_FLTCON(x)		(EXYNOS4_EINT40FLTCON0 + ((x) * 0x4))
--
--#define EXYNOS4_EINT40MASK		(S5P_VA_GPIO2 + 0xF00)
--#define S5P_EINT_MASK(x)		(EXYNOS4_EINT40MASK + ((x) * 0x4))
--
--#define EXYNOS4_EINT40PEND		(S5P_VA_GPIO2 + 0xF40)
--#define S5P_EINT_PEND(x)		(EXYNOS4_EINT40PEND + ((x) * 0x4))
--
--#endif /* __ASM_ARCH_REGS_GPIO_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index e3faaa81..41c2069 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -30,7 +30,6 @@
- #include <plat/regs-srom.h>
- 
- #include <mach/regs-irq.h>
--#include <mach/regs-gpio.h>
- #include <mach/regs-clock.h>
- #include <mach/regs-pmu.h>
- #include <mach/pm-core.h>
+ config ARM_EXYNOS4X12_CPUFREQ
+-	def_bool (SOC_EXYNOS4212 || SOC_EXYNOS4412)
++	def_bool SOC_EXYNOS4212
+ 	help
+ 	  This adds the CPUFreq driver for Samsung EXYNOS4X12
+ 	  SoC (EXYNOS4212 or EXYNOS4412).
 -- 
 1.8.2.1
+
