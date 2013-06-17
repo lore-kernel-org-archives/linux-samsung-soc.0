@@ -1,91 +1,151 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V6 6/6] clk: exynos5250: Add enum entries for divider
- clock of i2s1 and i2s2
-Date: Mon, 17 Jun 2013 10:29:14 +0530
-Message-ID: <CAAgF-Bf4BVfGVuFF8-CwPRi-em5VHA5HXYjkRDxPxvyAZPx7kw@mail.gmail.com>
-References: <1371024463-303-1-git-send-email-padma.v@samsung.com>
-	<1371024463-303-7-git-send-email-padma.v@samsung.com>
-	<20130612164553.26381.41398@quantum>
-	<CAAgF-BfEvBcrm186t6U9Tp4r64wB3sEsy6hoXMQi=dHJgncvfw@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add a platform bus notifier to set dma
+ masks for Exynos5440
+Date: Mon, 17 Jun 2013 11:20:12 +0530
+Message-ID: <CAJuYYwS-ipCbRijSUHpue9U97-wkjQwrHCASQJ_YHotwHKCTSg@mail.gmail.com>
+References: <1365072704-4568-1-git-send-email-kgene.kim@samsung.com>
+	<20130418153003.GW14496@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:55045 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750867Ab3FQE7O (ORCPT
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:57645 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751451Ab3FQFuN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 00:59:14 -0400
-Received: by mail-oa0-f54.google.com with SMTP id o6so2876158oag.41
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 21:59:14 -0700 (PDT)
-In-Reply-To: <CAAgF-BfEvBcrm186t6U9Tp4r64wB3sEsy6hoXMQi=dHJgncvfw@mail.gmail.com>
+	Mon, 17 Jun 2013 01:50:13 -0400
+Received: by mail-pd0-f173.google.com with SMTP id v14so2420023pde.4
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 22:50:13 -0700 (PDT)
+In-Reply-To: <20130418153003.GW14496@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, arm-linux <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.ab@samsung.com>
 
-Hi Mike,
-
-On Thu, Jun 13, 2013 at 8:32 AM, Padma Venkat <padma.kvr@gmail.com> wrote:
-> Hi Mike,
+On 18 April 2013 21:00, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
+> On Thu, Apr 04, 2013 at 07:51:43PM +0900, Kukjin Kim wrote:
+>> +static u64 dma_mask64 = DMA_BIT_MASK(64);
+> ...
+>> +     if (event != BUS_NOTIFY_ADD_DEVICE)
+>> +             return NOTIFY_DONE;
+>> +
+>> +     dev->dma_mask = &dma_mask64;
 >
-> On Wed, Jun 12, 2013 at 10:15 PM, Mike Turquette <mturquette@linaro.org> wrote:
->> Quoting Padmavathi Venna (2013-06-12 01:07:43)
->>> This patch adds enum entries for div_i2s1 and div_i2s2 which are
->>> required for i2s1 and i2s2 controllers.
->>>
->>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->>
->> Looks good.  Did you want me to take the clk patches or just gathering
->> Acks?
+> Sharing the dma mask in this way is a potential issue should you have a
+> device driver use dma_set_mask() - which can write to this value.
+
+Hi Russell,
+
+Okay, I missed this point.
+
 >
-> Please take the patches :).
+> A better solution would be:
 >
-> Thanks
-> Padma
-
-clk related patches in this set has some dependency on arch side
-patches because one of the patch replaces all '/include's with
-'#include's and adds a header file in
-arch/arm/boot/include/dt-bindings/. So all these patches required to
-go into one tree.
-
-Hi Kukjin,
-
-Can you please take all these patches into samsung-tree?
-
-Thanks
-Padma
+> diff --git a/arch/arm/include/asm/device.h b/arch/arm/include/asm/device.h
+> index dc662fc..51bb740 100644
+> --- a/arch/arm/include/asm/device.h
+> +++ b/arch/arm/include/asm/device.h
+> @@ -22,6 +22,7 @@ struct dev_archdata {
+>  struct omap_device;
 >
->>
->> Regards,
->> Mike
->>
->>> ---
->>>  drivers/clk/samsung/clk-exynos5250.c |    5 +++--
->>>  1 files changed, 3 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
->>> index 5c97e75..7c68850 100644
->>> --- a/drivers/clk/samsung/clk-exynos5250.c
->>> +++ b/drivers/clk/samsung/clk-exynos5250.c
->>> @@ -87,6 +87,7 @@ enum exynos5250_clks {
->>>         sclk_mmc0, sclk_mmc1, sclk_mmc2, sclk_mmc3, sclk_sata, sclk_usb3,
->>>         sclk_jpeg, sclk_uart0, sclk_uart1, sclk_uart2, sclk_uart3, sclk_pwm,
->>>         sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
->>> +       div_i2s1, div_i2s2,
->>>
->>>         /* gate clocks */
->>>         gscl0 = 256, gscl1, gscl2, gscl3, gscl_wa, gscl_wb, smmu_gscl0,
->>> @@ -291,8 +292,8 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
->>>         DIV(none, "div_pcm1", "sclk_audio1", DIV_PERIC4, 4, 8),
->>>         DIV(none, "div_audio2", "mout_audio2", DIV_PERIC4, 16, 4),
->>>         DIV(none, "div_pcm2", "sclk_audio2", DIV_PERIC4, 20, 8),
->>> -       DIV(none, "div_i2s1", "sclk_audio1", DIV_PERIC5, 0, 6),
->>> -       DIV(none, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
->>> +       DIV(div_i2s1, "div_i2s1", "sclk_audio1", DIV_PERIC5, 0, 6),
->>> +       DIV(div_i2s2, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
->>>         DIV(sclk_pixel, "div_hdmi_pixel", "sclk_vpll", DIV_DISP1_0, 28, 4),
->>>         DIV_A(none, "armclk", "div_arm", DIV_CPU0, 28, 3, "armclk"),
->>>         DIV_F(none, "div_mipi1_pre", "div_mipi1",
->>> --
->>> 1.7.4.4
+>  struct pdev_archdata {
+> +       u64 dma_mask;
+>  #ifdef CONFIG_ARCH_OMAP
+>         struct omap_device *od;
+>  #endif
+>
+> and then in your function do:
+>
+>         struct platform_device *pdev = to_platform_device(dev);
+> ...
+>         pdev->dev.dma_mask = &pdev->arch_data.dma_mask;
+>         pdev->arch_data.dma_mask = DMA_BIT_MASK(64);
+
+We could add a new u64 member into pdev_archdata structure, but that
+would use an additional u64 for all platform_device which do not need
+it. Adding a #ifdef around the u64 might not be ideal.
+
+>
+> However... are all your devices really DMA capable?  Normally on a SoC,
+> it's only the DMA engine which is DMA capable and everything else is not,
+> and in that case you really only want to set the DMA masks up for the
+> DMA capable devices.
+
+Yes, true. Not all devices in Exynos5440 are DMA capable and only the
+OHCI, EHCI and SATA controllers need 64-bit dma transfer capability.
+
+I have reworked this patch based on your comments, would the following
+patch be acceptable? The u64 data is still in the machine file.
+
+Sorry for the delay in replaying to your review comments.
+
+Thanks,
+Thomas.
+
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c
+b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index 753b94f..8fdcd78 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -14,6 +14,7 @@
+ #include <linux/memblock.h>
+ #include <linux/io.h>
+ #include <linux/clocksource.h>
++#include <linux/dma-mapping.h>
+
+ #include <asm/mach/arch.h>
+ #include <mach/regs-pmu.h>
+@@ -23,11 +24,39 @@
+
+ #include "common.h"
+
++static u64 dma_mask64 = DMA_BIT_MASK(64);
++static const struct of_device_id exynos5440_ctrl64bit_ids[] = {
++    { .compatible = "samsung,exynos5440-ohci", },
++    { .compatible = "samsung,exynos5440-ehci", },
++    { .compatible = "samsung,exynos5440-ahci", },
++};
++
+ static void __init exynos5_dt_map_io(void)
+ {
+     exynos_init_io(NULL, 0);
+ }
+
++static int exynos5440_platform_notifier(struct notifier_block *nb,
++  unsigned long event, void *__dev)
++{
++    struct device *dev = __dev;
++
++    if (event != BUS_NOTIFY_ADD_DEVICE)
++         return NOTIFY_DONE;
++
++    if (dev && dev->of_node &&
++         of_match_node(exynos5440_ctrl64bit_ids, dev->of_node)) {
++         dev->dma_mask = &dma_mask64;
++         dev->coherent_dma_mask = DMA_BIT_MASK(64);
++    }
++
++    return NOTIFY_OK;
++}
++
++static struct notifier_block exynos5440_platform_nb = {
++    .notifier_call = exynos5440_platform_notifier,
++};
++
+ static void __init exynos5_dt_machine_init(void)
+ {
+  struct device_node *i2c_np;
+@@ -52,6 +81,9 @@ static void __init exynos5_dt_machine_init(void)
+  }
+  }
+
++ if (of_machine_is_compatible("samsung,exynos5440"))
++     bus_register_notifier(&platform_bus_type, &exynos5440_platform_nb);
++
+  of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
