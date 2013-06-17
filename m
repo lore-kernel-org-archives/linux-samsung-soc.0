@@ -1,114 +1,105 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 34/38] ARM: EXYNOS: Remove mach/regs-usb-phy.h header
-Date: Mon, 17 Jun 2013 18:34:19 +0200
-Message-ID: <1371486863-12398-35-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 24/38] ARM: EXYNOS: Remove mach/regs-gpio.h header
+Date: Mon, 17 Jun 2013 18:34:09 +0200
+Message-ID: <1371486863-12398-25-git-send-email-t.figa@samsung.com>
 References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:41745 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753270Ab3FQQfA (ORCPT
+	with ESMTP id S1753152Ab3FQQe4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 12:35:00 -0400
+	Mon, 17 Jun 2013 12:34:56 -0400
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
  by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MOJ00MBNQ1N6260@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:57 +0100 (BST)
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:51 +0100 (BST)
 In-reply-to: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch removes mach/regs-usb-phy.h header, which is not used
-anywhere in the kernel.
+Contents of this header are not used any more and can be safely removed.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/include/mach/regs-usb-phy.h | 74 ------------------------
- 1 file changed, 74 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+ arch/arm/mach-exynos/common.c                 |  1 -
+ arch/arm/mach-exynos/include/mach/regs-gpio.h | 40 ---------------------------
+ arch/arm/mach-exynos/pm.c                     |  1 -
+ 3 files changed, 42 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/include/mach/regs-gpio.h
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index f81aa22..7b53e4c 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -40,7 +40,6 @@
+ 
+ #include <mach/regs-irq.h>
+ #include <mach/regs-pmu.h>
+-#include <mach/regs-gpio.h>
+ 
+ #include <plat/cpu.h>
+ #include <plat/pm.h>
+diff --git a/arch/arm/mach-exynos/include/mach/regs-gpio.h b/arch/arm/mach-exynos/include/mach/regs-gpio.h
 deleted file mode 100644
-index 0727773..0000000
---- a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+index e4b5b60..0000000
+--- a/arch/arm/mach-exynos/include/mach/regs-gpio.h
 +++ /dev/null
-@@ -1,74 +0,0 @@
--/*
-- * Copyright (C) 2011 Samsung Electronics Co.Ltd
-- * Author: Joonyoung Shim <jy0922.shim@samsung.com>
+@@ -1,40 +0,0 @@
+-/* linux/arch/arm/mach-exynos4/include/mach/regs-gpio.h
 - *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- */
+- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * EXYNOS4 - GPIO (including EINT) register definitions
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
 -
--#ifndef __PLAT_S5P_REGS_USB_PHY_H
--#define __PLAT_S5P_REGS_USB_PHY_H
+-#ifndef __ASM_ARCH_REGS_GPIO_H
+-#define __ASM_ARCH_REGS_GPIO_H __FILE__
 -
--#define EXYNOS4_HSOTG_PHYREG(x)		((x) + S3C_VA_USB_HSPHY)
+-#include <mach/map.h>
+-#include <mach/irqs.h>
 -
--#define EXYNOS4_PHYPWR			EXYNOS4_HSOTG_PHYREG(0x00)
--#define PHY1_HSIC_NORMAL_MASK		(0xf << 9)
--#define PHY1_HSIC1_SLEEP		(1 << 12)
--#define PHY1_HSIC1_FORCE_SUSPEND	(1 << 11)
--#define PHY1_HSIC0_SLEEP		(1 << 10)
--#define PHY1_HSIC0_FORCE_SUSPEND	(1 << 9)
+-#define EINT_REG_NR(x)			(EINT_OFFSET(x) >> 3)
+-#define EINT_CON(b, x)			(b + 0xE00 + (EINT_REG_NR(x) * 4))
+-#define EINT_FLTCON(b, x)		(b + 0xE80 + (EINT_REG_NR(x) * 4))
+-#define EINT_MASK(b, x)			(b + 0xF00 + (EINT_REG_NR(x) * 4))
+-#define EINT_PEND(b, x)			(b + 0xF40 + (EINT_REG_NR(x) * 4))
 -
--#define PHY1_STD_NORMAL_MASK		(0x7 << 6)
--#define PHY1_STD_SLEEP			(1 << 8)
--#define PHY1_STD_ANALOG_POWERDOWN	(1 << 7)
--#define PHY1_STD_FORCE_SUSPEND		(1 << 6)
+-#define EINT_OFFSET_BIT(x)		(1 << (EINT_OFFSET(x) & 0x7))
 -
--#define PHY0_NORMAL_MASK		(0x39 << 0)
--#define PHY0_SLEEP			(1 << 5)
--#define PHY0_OTG_DISABLE		(1 << 4)
--#define PHY0_ANALOG_POWERDOWN		(1 << 3)
--#define PHY0_FORCE_SUSPEND		(1 << 0)
+-/* compatibility for plat-s5p/irq-pm.c */
+-#define EXYNOS4_EINT40CON		(S5P_VA_GPIO2 + 0xE00)
+-#define S5P_EINT_CON(x)			(EXYNOS4_EINT40CON + ((x) * 0x4))
 -
--#define EXYNOS4_PHYCLK			EXYNOS4_HSOTG_PHYREG(0x04)
--#define PHY1_COMMON_ON_N		(1 << 7)
--#define PHY0_COMMON_ON_N		(1 << 4)
--#define PHY0_ID_PULLUP			(1 << 2)
+-#define EXYNOS4_EINT40FLTCON0		(S5P_VA_GPIO2 + 0xE80)
+-#define S5P_EINT_FLTCON(x)		(EXYNOS4_EINT40FLTCON0 + ((x) * 0x4))
 -
--#define EXYNOS4_CLKSEL_SHIFT		(0)
+-#define EXYNOS4_EINT40MASK		(S5P_VA_GPIO2 + 0xF00)
+-#define S5P_EINT_MASK(x)		(EXYNOS4_EINT40MASK + ((x) * 0x4))
 -
--#define EXYNOS4210_CLKSEL_MASK		(0x3 << 0)
--#define EXYNOS4210_CLKSEL_48M		(0x0 << 0)
--#define EXYNOS4210_CLKSEL_12M		(0x2 << 0)
--#define EXYNOS4210_CLKSEL_24M		(0x3 << 0)
+-#define EXYNOS4_EINT40PEND		(S5P_VA_GPIO2 + 0xF40)
+-#define S5P_EINT_PEND(x)		(EXYNOS4_EINT40PEND + ((x) * 0x4))
 -
--#define EXYNOS4X12_CLKSEL_MASK		(0x7 << 0)
--#define EXYNOS4X12_CLKSEL_9600K		(0x0 << 0)
--#define EXYNOS4X12_CLKSEL_10M		(0x1 << 0)
--#define EXYNOS4X12_CLKSEL_12M		(0x2 << 0)
--#define EXYNOS4X12_CLKSEL_19200K	(0x3 << 0)
--#define EXYNOS4X12_CLKSEL_20M		(0x4 << 0)
--#define EXYNOS4X12_CLKSEL_24M		(0x5 << 0)
--
--#define EXYNOS4_RSTCON			EXYNOS4_HSOTG_PHYREG(0x08)
--#define HOST_LINK_PORT_SWRST_MASK	(0xf << 6)
--#define HOST_LINK_PORT2_SWRST		(1 << 9)
--#define HOST_LINK_PORT1_SWRST		(1 << 8)
--#define HOST_LINK_PORT0_SWRST		(1 << 7)
--#define HOST_LINK_ALL_SWRST		(1 << 6)
--
--#define PHY1_SWRST_MASK			(0x7 << 3)
--#define PHY1_HSIC_SWRST			(1 << 5)
--#define PHY1_STD_SWRST			(1 << 4)
--#define PHY1_ALL_SWRST			(1 << 3)
--
--#define PHY0_SWRST_MASK			(0x7 << 0)
--#define PHY0_PHYLINK_SWRST		(1 << 2)
--#define PHY0_HLINK_SWRST		(1 << 1)
--#define PHY0_SWRST			(1 << 0)
--
--#define EXYNOS4_PHY1CON			EXYNOS4_HSOTG_PHYREG(0x34)
--#define FPENABLEN			(1 << 0)
--
--#endif /* __PLAT_S5P_REGS_USB_PHY_H */
+-#endif /* __ASM_ARCH_REGS_GPIO_H */
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index e3faaa81..41c2069 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -30,7 +30,6 @@
+ #include <plat/regs-srom.h>
+ 
+ #include <mach/regs-irq.h>
+-#include <mach/regs-gpio.h>
+ #include <mach/regs-clock.h>
+ #include <mach/regs-pmu.h>
+ #include <mach/pm-core.h>
 -- 
 1.8.2.1
