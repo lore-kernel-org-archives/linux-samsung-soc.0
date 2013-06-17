@@ -1,50 +1,39 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Enable RTC node for exynos5250-snow
-Date: Tue, 18 Jun 2013 00:32:00 +0900
-Message-ID: <51BF2BF0.6000100@samsung.com>
-References: <1371481572-926-1-git-send-email-dianders@chromium.org>
+Subject: Re: [PATCH v2 1/2] MAINTAINERS: Add Samsung pinctrl entries
+Date: Tue, 18 Jun 2013 00:37:40 +0900
+Message-ID: <51BF2D44.9010604@samsung.com>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org> <1371421068-28743-1-git-send-email-dianders@chromium.org> <CAH9JG2VWwdJ4t1B6fx9rx9=RMSmjmUvGSA5Eqn=aMcQ-FFyO0g@mail.gmail.com> <4a2043ad-0fa6-44e6-8d46-2a0ef9f9073b@email.android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:57809 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751259Ab3FQPcI (ORCPT
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:50544 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751090Ab3FQPhs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 11:32:08 -0400
-In-Reply-To: <1371481572-926-1-git-send-email-dianders@chromium.org>
+	Mon, 17 Jun 2013 11:37:48 -0400
+In-Reply-To: <4a2043ad-0fa6-44e6-8d46-2a0ef9f9073b@email.android.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Tushar Behera <tushar.behera@linaro.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kyungmin Park <kmpark@infradead.org>, Doug Anderson <dianders@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org
 
-On 06/18/13 00:06, Doug Anderson wrote:
-> By default the exynos RTC is disabled.  Enable it for snow.  There's
-> also an external RTC on the max77686 PMIC but we haven't yet enabled
-> that.
+On 06/17/13 12:43, Olof Johansson wrote:
 >
-> Signed-off-by: Doug Anderson<dianders@chromium.org>
-> ---
->   arch/arm/boot/dts/exynos5250-snow.dts | 4 ++++
->   1 file changed, 4 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index d449feb..05244f1 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -171,6 +171,10 @@
->   		};
->   	};
+> Kyungmin Park<kmpark@infradead.org>  skrev:
 >
-> +	rtc {
-> +		status = "okay";
-> +	};
-> +
->   	/*
->   	 * On Snow we've got SIP WiFi and so can keep drive strengths low to
->   	 * reduce EMI.
-
-OK, applied.
+>> On Mon, Jun 17, 2013 at 7:17 AM, Doug Anderson<dianders@chromium.org>
+>> wrote:
+>>> It's convenient if get_maintainer suggests sending samsung/exynos
+>>> pinctrl changes to linux-samsung-soc and to Tomasz and Thomas.
+>>>
+>>> Signed-off-by: Doug Anderson<dianders@chromium.org>
+>> Acked-by: Kyungmin Park<kyungmin.park@samsung.com>
+>
+> Acked-by: Olof Johansson<olof@lixom.net>
+>
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
 Thanks,
 - Kukjin
