@@ -1,59 +1,53 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 04/10] serial: samsung: select Exynos specific driver
- data if ARCH_EXYNOS is defined
-Date: Mon, 17 Jun 2013 20:45:04 +0900
-Message-ID: <1a0101ce6b50$1b5df060$5219d120$%kim@samsung.com>
-References: <1371466836-4111-1-git-send-email-chander.kashyap@linaro.org>
- <1371466836-4111-5-git-send-email-chander.kashyap@linaro.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH Resend] pinctrl: exynos: Fix build breakage
+Date: Mon, 17 Jun 2013 17:16:01 +0530
+Message-ID: <CAK9yfHzxC-2cZuOJJyaN8tY0_PDsW7kf3JB=GOhAm9+CA0RSXw@mail.gmail.com>
+References: <1371461892-5298-1-git-send-email-sachin.kamat@linaro.org>
+	<CACRpkdaxpr_7minVkbwsMK+tpbEy7LChz5C+Gt7zYNYhee2ibw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-reply-to: <1371466836-4111-5-git-send-email-chander.kashyap@linaro.org>
-Content-language: ko
-Sender: linux-serial-owner@vger.kernel.org
-To: 'Chander Kashyap' <chander.kashyap@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, t.figa@samsung.com, s.nawrocki@samsung.com, mark.rutland@arm.com, thomas.ab@samsung.com, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, jslaby@suse.cz
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdaxpr_7minVkbwsMK+tpbEy7LChz5C+Gt7zYNYhee2ibw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Patch Tracking <patches@linaro.org>, Doug Anderson <dianders@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Chander Kashyap wrote:
-> 
-> All Exynos4/5 SoCs share a common driver data in the samsung serial
-> driver. Hence, let the driver data inclusion be based on ARCH_EXYNOS
-> instead of SOC specific definition.
-> 
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+On 17 June 2013 16:55, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, Jun 17, 2013 at 11:38 AM, Sachin Kamat <sachin.kamat@linaro.o=
+rg> wrote:
+>
+>> 'exynos_wkup_irq_ack' should be defined ahead of its call.
+>>
+>> Fixes the following error:
+>> drivers/pinctrl/pinctrl-exynos.c: In function =91exynos_wkup_irq_mas=
+k=92:
+>> drivers/pinctrl/pinctrl-exynos.c:299:3: error: implicit declaration =
+of
+>> function =91exynos_wkup_irq_ack=92 [-Werror=3Dimplicit-function-decl=
+aration]
+>>    exynos_wkup_irq_ack(irqd);
+>>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> Cc: Doug Anderson <dianders@chromium.org>
+>> ---
+>> Fixed the commit message.
+>> ---
+>
+> Applied.
 
-(+ Greg, Jiri)
+Thanks.
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>
+> Usually you should state which commit caused
+> the problem in the commit message.
 
-Greg, Jiri, please take this in your tree with my ack if no problem on this.
+Usually I do. But in this case it was not caused by a single commit
+per se but a combination.
+Hence I wasn't sure if I should mention both as the ones causing it.
 
-Thanks,
-- Kukjin
 
-> ---
->  drivers/tty/serial/samsung.c |    4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-> index 2552c7f..e70d19a 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -1703,9 +1703,7 @@ static struct s3c24xx_serial_drv_data
-> s5pv210_serial_drv_data = {
->  #define S5PV210_SERIAL_DRV_DATA	(kernel_ulong_t)NULL
->  #endif
-> 
-> -#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212) || \
-> -	defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250) ||
-> \
-> -	defined(CONFIG_SOC_EXYNOS5440)
-> +#if defined(CONFIG_ARCH_EXYNOS)
->  static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
->  	.info = &(struct s3c24xx_uart_info) {
->  		.name		= "Samsung Exynos4 UART",
-> --
-> 1.7.9.5
-
+--=20
+With warm regards,
+Sachin
