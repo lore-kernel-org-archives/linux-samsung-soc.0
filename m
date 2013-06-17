@@ -1,67 +1,49 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V5 02/30] thermal: exynos: Add ARCH_HAS_TMU config to know
- the supported soc's
-Date: Mon, 17 Jun 2013 09:16:58 +0530
-Message-ID: <CADGdYn7miARF2h_7hu5TcvJQvTTJ3SDg01jfFkUN_2OAuJu42w@mail.gmail.com>
-References: <1370955220-2949-1-git-send-email-amit.daniel@samsung.com>
-	<1370955220-2949-3-git-send-email-amit.daniel@samsung.com>
-	<51BE7CFB.6020008@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <51BE7CFB.6020008@ti.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH V2] ARM: dts: Enable RTC node for Arndale
+Date: Mon, 17 Jun 2013 09:39:39 +0530
+Message-ID: <1371442179-23597-1-git-send-email-tushar.behera@linaro.org>
+References: <CAHbNUh2byimQ_ep0j9XkUjRFaU3K6YZE_ANcch5UhP4QsuZxPw@mail.gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:34783 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751140Ab3FQEY2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Jun 2013 00:24:28 -0400
+Received: by mail-pd0-f177.google.com with SMTP id p10so2320213pdj.8
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 21:24:27 -0700 (PDT)
+In-Reply-To: <CAHbNUh2byimQ_ep0j9XkUjRFaU3K6YZE_ANcch5UhP4QsuZxPw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, patches@linaro.org
 
-Hi Eduardo,
+The issues reported in commit 522ccdb6fd0e ("ARM: dts: Disable the RTC
+by default on exynos5") are no longer reproduced on EXYNOS5250 based
+Arndale board. Hence re-enabling RTC support for Arndale board.
 
-On Mon, Jun 17, 2013 at 8:35 AM, Eduardo Valentin
-<eduardo.valentin@ti.com> wrote:
-> Hey Amit,
->
-> On 11-06-2013 08:53, Amit Daniel Kachhap wrote:
->> This patch adds config sybmol ARCH_HAS_TMU to enable the TMU driver.
->> This will allow adding support for new soc easily as now it is the
->> platform responsibility to enable this config symbol.
->>
->> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->> ---
->>  drivers/thermal/samsung/Kconfig |    5 ++++-
->>  1 files changed, 4 insertions(+), 1 deletions(-)
->>
->> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
->> index 2d3d9dc..145a55d 100644
->> --- a/drivers/thermal/samsung/Kconfig
->> +++ b/drivers/thermal/samsung/Kconfig
->> @@ -1,6 +1,9 @@
->> +config ARCH_HAS_TMU
->> +     bool
->> +
->>  config EXYNOS_THERMAL
->>       tristate "Temperature sensor on Samsung EXYNOS"
->> -     depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5)
->> +     depends on ARCH_HAS_TMU
->
-> I would rather use ARCH_HAS_BANDGAP as discussed and agreed during your
-> v4 review. I managed push this patch through RMK's system:
-> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7758/1
-Agreed I will post my TMU re-structured patches with this config flag.
+This is helpful for testing S2R on Arndale board.
 
-Thanks,
-Amit Daniel
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+Changes for V2:
+* RTC node is enabled only for Arndale board. Earlier it was enabled
+in exynos5250.dtsi.
 
->
->>       depends on CPU_THERMAL
->>       help
->>         If you say yes here you get support for TMU (Thermal Management
->>
->
->
-> --
-> You have got to be excited about what you are doing. (L. Lamport)
->
-> Eduardo Valentin
->
+ arch/arm/boot/dts/exynos5250-arndale.dts |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index 02cfc76..b38080a 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -449,4 +449,8 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
++
++	rtc {
++		status = "okay";
++	};
+ };
+-- 
+1.7.9.5
