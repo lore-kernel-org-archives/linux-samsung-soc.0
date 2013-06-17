@@ -1,39 +1,48 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 1/2] MAINTAINERS: Add Samsung pinctrl entries
-Date: Tue, 18 Jun 2013 00:37:40 +0900
-Message-ID: <51BF2D44.9010604@samsung.com>
-References: <1371143144-31764-1-git-send-email-dianders@chromium.org> <1371421068-28743-1-git-send-email-dianders@chromium.org> <CAH9JG2VWwdJ4t1B6fx9rx9=RMSmjmUvGSA5Eqn=aMcQ-FFyO0g@mail.gmail.com> <4a2043ad-0fa6-44e6-8d46-2a0ef9f9073b@email.android.com>
+Subject: Re: [PATCH v2 2/2] MAINTAINERS: Add exynos filename match to ARM/S5P
+ EXYNOS ARM ARCHITECTURES
+Date: Tue, 18 Jun 2013 00:37:54 +0900
+Message-ID: <51BF2D52.2040000@samsung.com>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org> <1371421068-28743-1-git-send-email-dianders@chromium.org> <1371421068-28743-2-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:50544 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751090Ab3FQPhs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 11:37:48 -0400
-In-Reply-To: <4a2043ad-0fa6-44e6-8d46-2a0ef9f9073b@email.android.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1371421068-28743-2-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kyungmin Park <kmpark@infradead.org>, Doug Anderson <dianders@chromium.org>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org
 
-On 06/17/13 12:43, Olof Johansson wrote:
+On 06/17/13 07:17, Doug Anderson wrote:
+> This will help direct patches related to exynos to the
+> linux-samsung-soc mailing list for discussion.
 >
+> Suggested by Joe Perches.
 >
-> Kyungmin Park<kmpark@infradead.org>  skrev:
->
->> On Mon, Jun 17, 2013 at 7:17 AM, Doug Anderson<dianders@chromium.org>
->> wrote:
->>> It's convenient if get_maintainer suggests sending samsung/exynos
->>> pinctrl changes to linux-samsung-soc and to Tomasz and Thomas.
->>>
->>> Signed-off-by: Doug Anderson<dianders@chromium.org>
->> Acked-by: Kyungmin Park<kyungmin.park@samsung.com>
->
-> Acked-by: Olof Johansson<olof@lixom.net>
->
+> Signed-off-by: Doug Anderson<dianders@chromium.org>
+
 Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
 Thanks,
 - Kukjin
+
+> ---
+> Changes in v2:
+> - New for this version.
+>
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f55e3c7..2e95fd8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1140,6 +1140,7 @@ L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>   S:	Maintained
+>   F:	arch/arm/mach-s5p*/
+>   F:	arch/arm/mach-exynos*/
+> +N:	exynos
+>
+>   ARM/SAMSUNG MOBILE MACHINE SUPPORT
+>   M:	Kyungmin Park<kyungmin.park@samsung.com>
