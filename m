@@ -1,43 +1,122 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH RESEND V2] ARM: dts: wm8994: Add wm8994 regulator support
- on smdk5250.
-Date: Mon, 17 Jun 2013 19:21:48 +0900
-Message-ID: <19b301ce6b44$7a102670$6e307350$%kim@samsung.com>
-References: <1371025425-480-1-git-send-email-padma.v@samsung.com>
- <1371025425-480-2-git-send-email-padma.v@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH v2 08/10] clocksource: exynos_mct: use (request/free)_irq
+ calls for local timer registration
+Date: Mon, 17 Jun 2013 15:59:23 +0530
+Message-ID: <CANuQgHGAopvzomTkrNzzB6Xk-n9Ap9+VAPiEg9w8NLNFXJDn_A@mail.gmail.com>
+References: <1370516488-25860-10-git-send-email-chander.kashyap@linaro.org>
+	<1371218572-8993-1-git-send-email-chander.kashyap@linaro.org>
+	<1371218572-8993-9-git-send-email-chander.kashyap@linaro.org>
+	<20130617100152.GC6809@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:13357 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932307Ab3FQKVu (ORCPT
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:33575 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932295Ab3FQK3Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 06:21:50 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOJ00BKY8S1LN10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 19:21:49 +0900 (KST)
-In-reply-to: <1371025425-480-2-git-send-email-padma.v@samsung.com>
-Content-language: ko
+	Mon, 17 Jun 2013 06:29:24 -0400
+Received: by mail-ob0-f169.google.com with SMTP id up14so2989884obb.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 03:29:23 -0700 (PDT)
+In-Reply-To: <20130617100152.GC6809@e106331-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Padmavathi Venna' <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
 
-Padmavathi Venna wrote:
-> 
-> This patch adds the required regulator supplies and properties
-> for wm8994 codec on smdk5250 board.
-> 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
-> 
-> Changes since V1:
-> 	- Clubbed the same supply regulators as suggested by Mark.
-> 
-Applied, thanks.
+On 17 June 2013 15:31, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Fri, Jun 14, 2013 at 03:02:50PM +0100, Chander Kashyap wrote:
+>> Replace the (setup/remove)_irq calls for local timer registration with
+>> (request/free)_irq calls. This generalizes the local timer registration API.
+>> Suggested by Mark Rutland.
+>>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>
+>> Replace the (setup/remove)_irq calls for local timer registration with
+>> (request/free)_irq calls. This generalises the local timer registration API.
+>>
+>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>
+> This looks much nicer now.
+>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+Thanks Mark.
 
-- Kukjin
+>
+>> ---
+>>  drivers/clocksource/exynos_mct.c |   35 +++++++++--------------------------
+>>  1 file changed, 9 insertions(+), 26 deletions(-)
+>>
+>> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+>> index 662fcc0..a704804 100644
+>> --- a/drivers/clocksource/exynos_mct.c
+>> +++ b/drivers/clocksource/exynos_mct.c
+>> @@ -400,18 +400,6 @@ static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
+>>       return IRQ_HANDLED;
+>>  }
+>>
+>> -static struct irqaction mct_tick0_event_irq = {
+>> -     .name           = "mct_tick0_irq",
+>> -     .flags          = IRQF_TIMER | IRQF_NOBALANCING,
+>> -     .handler        = exynos4_mct_tick_isr,
+>> -};
+>> -
+>> -static struct irqaction mct_tick1_event_irq = {
+>> -     .name           = "mct_tick1_irq",
+>> -     .flags          = IRQF_TIMER | IRQF_NOBALANCING,
+>> -     .handler        = exynos4_mct_tick_isr,
+>> -};
+>> -
+>>  static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
+>>  {
+>>       struct mct_clock_event_device *mevt;
+>> @@ -435,16 +423,15 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
+>>       exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+>>
+>>       if (mct_int_type == MCT_INT_SPI) {
+>> -             if (cpu == 0) {
+>> -                     mct_tick0_event_irq.dev_id = mevt;
+>> -                     evt->irq = mct_irqs[MCT_L0_IRQ];
+>> -                     setup_irq(evt->irq, &mct_tick0_event_irq);
+>> -             } else {
+>> -                     mct_tick1_event_irq.dev_id = mevt;
+>> -                     evt->irq = mct_irqs[MCT_L1_IRQ];
+>> -                     setup_irq(evt->irq, &mct_tick1_event_irq);
+>> -                     irq_set_affinity(evt->irq, cpumask_of(1));
+>> +             evt->irq = mct_irqs[MCT_L0_IRQ + cpu];
+>> +             if (request_irq(evt->irq, exynos4_mct_tick_isr,
+>> +                             IRQF_TIMER | IRQF_NOBALANCING,
+>> +                             evt->name, mevt)) {
+>> +                     pr_err("exynos-mct: cannot register IRQ %d\n",
+>> +                             evt->irq);
+>> +                     return -EIO;
+>>               }
+>> +             irq_set_affinity(evt->irq, cpumask_of(cpu));
+>>       } else {
+>>               enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+>>       }
+>> @@ -454,13 +441,9 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
+>>
+>>  static void exynos4_local_timer_stop(struct clock_event_device *evt)
+>>  {
+>> -     unsigned int cpu = smp_processor_id();
+>>       evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
+>>       if (mct_int_type == MCT_INT_SPI)
+>> -             if (cpu == 0)
+>> -                     remove_irq(evt->irq, &mct_tick0_event_irq);
+>> -             else
+>> -                     remove_irq(evt->irq, &mct_tick1_event_irq);
+>> +             free_irq(evt->irq, this_cpu_ptr(&percpu_mct_tick));
+>>       else
+>>               disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+>>  }
+>> --
+>> 1.7.9.5
+>>
+>>
+
+
+
+--
+with warm regards,
+Chander Kashyap
