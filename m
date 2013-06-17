@@ -1,48 +1,45 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: s3c24xx: use correct header for chained_irq functions
-Date: Mon, 17 Jun 2013 17:45:46 +0200
-Message-ID: <CACRpkdbmh5sXXycHHy0GYZY0WH5np0je1NU6jyHmb2h_VuagRA@mail.gmail.com>
-References: <201306140044.15568.heiko@sntech.de>
-	<201306140045.51206.heiko@sntech.de>
-	<1a1801ce6b5c$d5395270$7fabf750$%kim@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 2/2] MAINTAINERS: Add exynos filename match to ARM/S5P
+ EXYNOS ARM ARCHITECTURES
+Date: Mon, 17 Jun 2013 08:48:34 -0700
+Message-ID: <CAD=FV=Wy5H0JzDTtwo4p6TCk186G0KOecB7Tk=t2s0_XwzO2nw@mail.gmail.com>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
+	<1371421068-28743-1-git-send-email-dianders@chromium.org>
+	<1371421068-28743-2-git-send-email-dianders@chromium.org>
+	<51BF2D52.2040000@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:40090 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752614Ab3FQPpq convert rfc822-to-8bit (ORCPT
+Received: from mail-la0-f48.google.com ([209.85.215.48]:36176 "EHLO
+	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751206Ab3FQPsg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 11:45:46 -0400
-Received: by mail-oa0-f51.google.com with SMTP id i4so3604413oah.38
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 08:45:46 -0700 (PDT)
-In-Reply-To: <1a1801ce6b5c$d5395270$7fabf750$%kim@samsung.com>
+	Mon, 17 Jun 2013 11:48:36 -0400
+Received: by mail-la0-f48.google.com with SMTP id lx15so2552469lab.21
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 08:48:34 -0700 (PDT)
+In-Reply-To: <51BF2D52.2040000@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Jun 17, 2013 at 3:16 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Heiko St=FCbner wrote:
+Kukjin,
+
+On Mon, Jun 17, 2013 at 8:37 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 06/17/13 07:17, Doug Anderson wrote:
 >>
->> chained_irq_enter and chained_irq_exit moved to a real header under
->> linux/pinctrl instead of asm/.
+>> This will help direct patches related to exynos to the
+>> linux-samsung-soc mailing list for discussion.
 >>
->> Update the pinctrl driver to use the correct header and fix the buil=
-d
->> error.
+>> Suggested by Joe Perches.
 >>
->> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-(...)
+>> Signed-off-by: Doug Anderson<dianders@chromium.org>
 >
-> Hmm, would be nice if I could take 1st and 2nd into samsung tree :-)
 >
-> Linus, if any problems, please let me know.
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-No that should work fine. Nothing is touching pinctrl-s3c in my
-pinctrl tree so:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+I _think_ you can even apply this to your tree.  Looking at commits to
+MAINTAINERS it looks individual maintainers just include this in their
+trees, though I could be wrong.
 
-Yours,
-Linus Walleij
+-Doug
