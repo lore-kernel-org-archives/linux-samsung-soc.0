@@ -1,75 +1,91 @@
-From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
-Date: Mon, 17 Jun 2013 10:20:45 +0530
-Message-ID: <51BE95A5.5090509@linaro.org>
-References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org>
- <2070978.AjQD2isvSl@flatron> <51B54B4F.3000503@linaro.org>
- <3226068.I7g6oVyl1p@flatron>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V6 6/6] clk: exynos5250: Add enum entries for divider
+ clock of i2s1 and i2s2
+Date: Mon, 17 Jun 2013 10:29:14 +0530
+Message-ID: <CAAgF-Bf4BVfGVuFF8-CwPRi-em5VHA5HXYjkRDxPxvyAZPx7kw@mail.gmail.com>
+References: <1371024463-303-1-git-send-email-padma.v@samsung.com>
+	<1371024463-303-7-git-send-email-padma.v@samsung.com>
+	<20130612164553.26381.41398@quantum>
+	<CAAgF-BfEvBcrm186t6U9Tp4r64wB3sEsy6hoXMQi=dHJgncvfw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <3226068.I7g6oVyl1p@flatron>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:55045 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750867Ab3FQE7O (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Jun 2013 00:59:14 -0400
+Received: by mail-oa0-f54.google.com with SMTP id o6so2876158oag.41
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 16 Jun 2013 21:59:14 -0700 (PDT)
+In-Reply-To: <CAAgF-BfEvBcrm186t6U9Tp4r64wB3sEsy6hoXMQi=dHJgncvfw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com
 
-On 06/11/2013 12:23 AM, Tomasz Figa wrote:
-> On Monday 10 of June 2013 09:13:11 Tushar Behera wrote:
->> On 06/08/2013 05:20 PM, Tomasz Figa wrote:
->>> On Thursday 06 of June 2013 16:52:28 Tushar Behera wrote:
+Hi Mike,
 
-[ ... ]
-
->>>>  	MUX_A(mout_core, "mout_core", mout_core_p4210,
->>>>
->>>> -			SRC_CPU, 16, 1, "mout_core"),
->>>> +			SRC_CPU, 16, 1, "moutcore"),
+On Thu, Jun 13, 2013 at 8:32 AM, Padma Venkat <padma.kvr@gmail.com> wrote:
+> Hi Mike,
+>
+> On Wed, Jun 12, 2013 at 10:15 PM, Mike Turquette <mturquette@linaro.org> wrote:
+>> Quoting Padmavathi Venna (2013-06-12 01:07:43)
+>>> This patch adds enum entries for div_i2s1 and div_i2s2 which are
+>>> required for i2s1 and i2s2 controllers.
 >>>
->>> IMHO those typo corrections are not part of this patch.
+>>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 >>
->> But the older drivers (before migration to CCF) were using the clock
->> "moutcore" (not "mout_core").
-> 
-> I mean, this should be placed in a separate patch, as this change is not 
-> "adding alias for cpufreq related clocks", but rather fixing a typo.
-> 
+>> Looks good.  Did you want me to take the clk patches or just gathering
+>> Acks?
+>
+> Please take the patches :).
+>
+> Thanks
+> Padma
 
-Is it ok if I split this patch into 2, one adding clock alias
-'mout_apll' and another one fixing the alias names 'mout_mpll',
-'moutcore' and 'armclk'?
+clk related patches in this set has some dependency on arch side
+patches because one of the patch replaces all '/include's with
+'#include's and adds a header file in
+arch/arm/boot/include/dt-bindings/. So all these patches required to
+go into one tree.
 
-[ ... ]
+Hi Kukjin,
 
->>> Basically I don't like the idea of those global aliases, which IMHO
->>> should be completely dropped. Someone might not like it, but I'd go
->>> with the conversion of our cpufreq drivers to platform drivers
->>> instead, which could receive things like clocks and regulators using
->>> DT-based lookups.
->> I agree. Migration of exynos-cpufreq driver as a platform driver is the
->> best solution. But unless someone picks up that work, cpufreq support
->> for EXYNOS4 based systems is broken because of the incorrect clock
->> aliases.
-> 
-> We have patches for this in our internal tree. I will clean them up a bit 
-> and submit soon.
-> 
+Can you please take all these patches into samsung-tree?
 
-If you are going to submit the cpufreq driver patches for v3.11, then we
-can ignore this patchset. Otherwise, I would prefer to get these patches
-merged for v3.11 to get cpufreq working. Once the driver changes are
-incorporated, we can very well modify these later.
-
-Thanks.
--- 
-Tushar Behera
+Thanks
+Padma
+>
+>>
+>> Regards,
+>> Mike
+>>
+>>> ---
+>>>  drivers/clk/samsung/clk-exynos5250.c |    5 +++--
+>>>  1 files changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+>>> index 5c97e75..7c68850 100644
+>>> --- a/drivers/clk/samsung/clk-exynos5250.c
+>>> +++ b/drivers/clk/samsung/clk-exynos5250.c
+>>> @@ -87,6 +87,7 @@ enum exynos5250_clks {
+>>>         sclk_mmc0, sclk_mmc1, sclk_mmc2, sclk_mmc3, sclk_sata, sclk_usb3,
+>>>         sclk_jpeg, sclk_uart0, sclk_uart1, sclk_uart2, sclk_uart3, sclk_pwm,
+>>>         sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
+>>> +       div_i2s1, div_i2s2,
+>>>
+>>>         /* gate clocks */
+>>>         gscl0 = 256, gscl1, gscl2, gscl3, gscl_wa, gscl_wb, smmu_gscl0,
+>>> @@ -291,8 +292,8 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+>>>         DIV(none, "div_pcm1", "sclk_audio1", DIV_PERIC4, 4, 8),
+>>>         DIV(none, "div_audio2", "mout_audio2", DIV_PERIC4, 16, 4),
+>>>         DIV(none, "div_pcm2", "sclk_audio2", DIV_PERIC4, 20, 8),
+>>> -       DIV(none, "div_i2s1", "sclk_audio1", DIV_PERIC5, 0, 6),
+>>> -       DIV(none, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
+>>> +       DIV(div_i2s1, "div_i2s1", "sclk_audio1", DIV_PERIC5, 0, 6),
+>>> +       DIV(div_i2s2, "div_i2s2", "sclk_audio2", DIV_PERIC5, 8, 6),
+>>>         DIV(sclk_pixel, "div_hdmi_pixel", "sclk_vpll", DIV_DISP1_0, 28, 4),
+>>>         DIV_A(none, "armclk", "div_arm", DIV_CPU0, 28, 3, "armclk"),
+>>>         DIV_F(none, "div_mipi1_pre", "div_mipi1",
+>>> --
+>>> 1.7.4.4
