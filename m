@@ -1,301 +1,96 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 28/38] ARM: EXYNOS: Remove unused base addresses from
- mach/map.h header
-Date: Mon, 17 Jun 2013 18:34:13 +0200
-Message-ID: <1371486863-12398-29-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 35/38] ARM: EXYNOS: Remove custom init_irq callbacks
+Date: Mon, 17 Jun 2013 18:34:20 +0200
+Message-ID: <1371486863-12398-36-git-send-email-t.figa@samsung.com>
 References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41745 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752754Ab3FQQe6 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:10306 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753256Ab3FQQe6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 17 Jun 2013 12:34:58 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOJ00MBNQ1N6260@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:53 +0100 (BST)
+ 17 2011)) with ESMTP id <0MOJ0085OQ1L6450@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:57 +0100 (BST)
 In-reply-to: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch removes all the unused base addresses from mach/map.h header,
-leaving only addresses of IPs that currently use static IO mapping or
-need the address hardcoded, like low level debug UART.
+Since both exynos4_init_irq() and exynos5_init_irq() are just calling
+irqchip_init(), there is no need for them to exist any more, since this
+is the default that is called when init_irq callback is not specified.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/include/mach/map.h | 218 +-------------------------------
- 1 file changed, 4 insertions(+), 214 deletions(-)
+ arch/arm/mach-exynos/common.c          | 10 ----------
+ arch/arm/mach-exynos/common.h          |  2 --
+ arch/arm/mach-exynos/mach-exynos4-dt.c |  1 -
+ arch/arm/mach-exynos/mach-exynos5-dt.c |  1 -
+ 4 files changed, 14 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 92b29bb..7966407 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -23,6 +23,10 @@
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 7b53e4c..91d457f 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -400,16 +400,6 @@ void __init exynos_init_time(void)
+ 	clocksource_of_init();
+ }
  
- #include <plat/map-s5p.h>
+-void __init exynos4_init_irq(void)
+-{
+-	irqchip_init();
+-}
+-
+-void __init exynos5_init_irq(void)
+-{
+-	irqchip_init();
+-}
+-
+ struct bus_type exynos_subsys = {
+ 	.name		= "exynos-core",
+ 	.dev_name	= "exynos-core",
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 11fc1e2..1c83f95 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -20,8 +20,6 @@ extern unsigned long xxti_f, xusbxti_f;
  
-+/*
-+ * FIXME: go through the list and remove from iotable
-+ * all that are not essential
-+ */
- #define EXYNOS4_PA_SYSRAM0		0x02025000
- #define EXYNOS4_PA_SYSRAM1		0x02020000
- #define EXYNOS5_PA_SYSRAM		0x02020000
-@@ -30,31 +34,6 @@
- #define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
- #define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
+ struct map_desc;
+ void exynos_init_io(struct map_desc *mach_desc, int size);
+-void exynos4_init_irq(void);
+-void exynos5_init_irq(void);
+ void exynos4_restart(char mode, const char *cmd);
+ void exynos5_restart(char mode, const char *cmd);
+ void exynos_init_late(void);
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index b9ed834..df15726 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -55,7 +55,6 @@ static void __init exynos4_reserve(void)
+ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
+ 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+ 	.smp		= smp_ops(exynos_smp_ops),
+-	.init_irq	= exynos4_init_irq,
+ 	.map_io		= exynos4_dt_map_io,
+ 	.init_early	= exynos_firmware_init,
+ 	.init_machine	= exynos4_dt_machine_init,
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index 9596861..8777310 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -104,7 +104,6 @@ static void __init exynos5_reserve(void)
  
--#define EXYNOS4_PA_FIMC0		0x11800000
--#define EXYNOS4_PA_FIMC1		0x11810000
--#define EXYNOS4_PA_FIMC2		0x11820000
--#define EXYNOS4_PA_FIMC3		0x11830000
--
--#define EXYNOS4_PA_JPEG			0x11840000
--
--/* x = 0...1 */
--#define EXYNOS4_PA_FIMC_LITE(x)		(0x12390000 + ((x) * 0x10000))
--
--#define EXYNOS4_PA_G2D			0x12800000
--
--#define EXYNOS4_PA_I2S0			0x03830000
--#define EXYNOS4_PA_I2S1			0xE3100000
--#define EXYNOS4_PA_I2S2			0xE2A00000
--
--#define EXYNOS4_PA_PCM0			0x03840000
--#define EXYNOS4_PA_PCM1			0x13980000
--#define EXYNOS4_PA_PCM2			0x13990000
--
--#define EXYNOS4_PA_SROM_BANK(x)		(0x04000000 + ((x) * 0x01000000))
--
--#define EXYNOS4_PA_ONENAND		0x0C000000
--#define EXYNOS4_PA_ONENAND_DMA		0x0C600000
--
- #define EXYNOS_PA_CHIPID		0x10000000
- 
- #define EXYNOS4_PA_SYSCON		0x10010000
-@@ -71,10 +50,6 @@
- #define EXYNOS4_PA_WATCHDOG		0x10060000
- #define EXYNOS5_PA_WATCHDOG		0x101D0000
- 
--#define EXYNOS4_PA_RTC			0x10070000
--
--#define EXYNOS4_PA_KEYPAD		0x100A0000
--
- #define EXYNOS4_PA_DMC0			0x10400000
- #define EXYNOS4_PA_DMC1			0x10410000
- 
-@@ -87,207 +62,22 @@
- #define EXYNOS5_PA_GIC_DIST		0x10481000
- 
- #define EXYNOS4_PA_COREPERI		0x10500000
--#define EXYNOS4_PA_TWD			0x10500600
- #define EXYNOS4_PA_L2CC			0x10502000
- 
--#define EXYNOS4_PA_TMU			0x100C0000
--
--#define EXYNOS4_PA_MDMA0		0x10810000
--#define EXYNOS4_PA_MDMA1		0x12850000
--#define EXYNOS4_PA_S_MDMA1		0x12840000
--#define EXYNOS4_PA_PDMA0		0x12680000
--#define EXYNOS4_PA_PDMA1		0x12690000
--#define EXYNOS5_PA_MDMA0		0x10800000
--#define EXYNOS5_PA_MDMA1		0x11C10000
--#define EXYNOS5_PA_PDMA0		0x121A0000
--#define EXYNOS5_PA_PDMA1		0x121B0000
--
--#define EXYNOS4_PA_SYSMMU_MDMA		0x10A40000
--#define EXYNOS4_PA_SYSMMU_2D_ACP	0x10A40000
--#define EXYNOS4_PA_SYSMMU_SSS		0x10A50000
--#define EXYNOS4_PA_SYSMMU_FIMC0		0x11A20000
--#define EXYNOS4_PA_SYSMMU_FIMC1		0x11A30000
--#define EXYNOS4_PA_SYSMMU_FIMC2		0x11A40000
--#define EXYNOS4_PA_SYSMMU_FIMC3		0x11A50000
--#define EXYNOS4_PA_SYSMMU_JPEG		0x11A60000
--#define EXYNOS4_PA_SYSMMU_FIMD0		0x11E20000
--#define EXYNOS4_PA_SYSMMU_FIMD1		0x12220000
--#define EXYNOS4_PA_SYSMMU_FIMC_ISP	0x12260000
--#define EXYNOS4_PA_SYSMMU_FIMC_DRC	0x12270000
--#define EXYNOS4_PA_SYSMMU_FIMC_FD	0x122A0000
--#define EXYNOS4_PA_SYSMMU_ISPCPU	0x122B0000
--#define EXYNOS4_PA_SYSMMU_FIMC_LITE0	0x123B0000
--#define EXYNOS4_PA_SYSMMU_FIMC_LITE1	0x123C0000
--#define EXYNOS4_PA_SYSMMU_PCIe		0x12620000
--#define EXYNOS4_PA_SYSMMU_G2D		0x12A20000
--#define EXYNOS4_PA_SYSMMU_ROTATOR	0x12A30000
--#define EXYNOS4_PA_SYSMMU_MDMA2		0x12A40000
--#define EXYNOS4_PA_SYSMMU_TV		0x12E20000
--#define EXYNOS4_PA_SYSMMU_MFC_L		0x13620000
--#define EXYNOS4_PA_SYSMMU_MFC_R		0x13630000
--
--#define EXYNOS5_PA_GSC0			0x13E00000
--#define EXYNOS5_PA_GSC1			0x13E10000
--#define EXYNOS5_PA_GSC2			0x13E20000
--#define EXYNOS5_PA_GSC3			0x13E30000
--
--#define EXYNOS5_PA_SYSMMU_MDMA1		0x10A40000
--#define EXYNOS5_PA_SYSMMU_SSS		0x10A50000
--#define EXYNOS5_PA_SYSMMU_2D		0x10A60000
--#define EXYNOS5_PA_SYSMMU_MFC_L		0x11200000
--#define EXYNOS5_PA_SYSMMU_MFC_R		0x11210000
--#define EXYNOS5_PA_SYSMMU_ROTATOR	0x11D40000
--#define EXYNOS5_PA_SYSMMU_MDMA2		0x11D50000
--#define EXYNOS5_PA_SYSMMU_JPEG		0x11F20000
--#define EXYNOS5_PA_SYSMMU_IOP		0x12360000
--#define EXYNOS5_PA_SYSMMU_RTIC		0x12370000
--#define EXYNOS5_PA_SYSMMU_ISP		0x13260000
--#define EXYNOS5_PA_SYSMMU_DRC		0x12370000
--#define EXYNOS5_PA_SYSMMU_SCALERC	0x13280000
--#define EXYNOS5_PA_SYSMMU_SCALERP	0x13290000
--#define EXYNOS5_PA_SYSMMU_FD		0x132A0000
--#define EXYNOS5_PA_SYSMMU_ISPCPU	0x132B0000
--#define EXYNOS5_PA_SYSMMU_ODC		0x132C0000
--#define EXYNOS5_PA_SYSMMU_DIS0		0x132D0000
--#define EXYNOS5_PA_SYSMMU_DIS1		0x132E0000
--#define EXYNOS5_PA_SYSMMU_3DNR		0x132F0000
--#define EXYNOS5_PA_SYSMMU_LITE0		0x13C40000
--#define EXYNOS5_PA_SYSMMU_LITE1		0x13C50000
--#define EXYNOS5_PA_SYSMMU_GSC0		0x13E80000
--#define EXYNOS5_PA_SYSMMU_GSC1		0x13E90000
--#define EXYNOS5_PA_SYSMMU_GSC2		0x13EA0000
--#define EXYNOS5_PA_SYSMMU_GSC3		0x13EB0000
--#define EXYNOS5_PA_SYSMMU_FIMD1		0x14640000
--#define EXYNOS5_PA_SYSMMU_TV		0x14650000
--
--#define EXYNOS4_PA_SPI0			0x13920000
--#define EXYNOS4_PA_SPI1			0x13930000
--#define EXYNOS4_PA_SPI2			0x13940000
--#define EXYNOS5_PA_SPI0			0x12D20000
--#define EXYNOS5_PA_SPI1			0x12D30000
--#define EXYNOS5_PA_SPI2			0x12D40000
--
--#define EXYNOS4_PA_GPIO1		0x11400000
--#define EXYNOS4_PA_GPIO2		0x11000000
--#define EXYNOS4_PA_GPIO3		0x03860000
--#define EXYNOS5_PA_GPIO1		0x11400000
--#define EXYNOS5_PA_GPIO2		0x13400000
--#define EXYNOS5_PA_GPIO3		0x10D10000
--#define EXYNOS5_PA_GPIO4		0x03860000
--
--#define EXYNOS4_PA_MIPI_CSIS0		0x11880000
--#define EXYNOS4_PA_MIPI_CSIS1		0x11890000
--
--#define EXYNOS4_PA_FIMD0		0x11C00000
--
--#define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
--#define EXYNOS4_PA_DWMCI		0x12550000
--#define EXYNOS5_PA_DWMCI0		0x12200000
--#define EXYNOS5_PA_DWMCI1		0x12210000
--#define EXYNOS5_PA_DWMCI2		0x12220000
--#define EXYNOS5_PA_DWMCI3		0x12230000
--
--#define EXYNOS4_PA_HSOTG		0x12480000
--#define EXYNOS4_PA_USB_HSPHY		0x125B0000
--
--#define EXYNOS4_PA_SATA			0x12560000
--#define EXYNOS4_PA_SATAPHY		0x125D0000
--#define EXYNOS4_PA_SATAPHY_CTRL		0x126B0000
--
- #define EXYNOS4_PA_SROMC		0x12570000
- #define EXYNOS5_PA_SROMC		0x12250000
- 
--#define EXYNOS4_PA_EHCI			0x12580000
--#define EXYNOS4_PA_OHCI			0x12590000
- #define EXYNOS4_PA_HSPHY		0x125B0000
--#define EXYNOS4_PA_MFC			0x13400000
- 
- #define EXYNOS4_PA_UART			0x13800000
- #define EXYNOS5_PA_UART			0x12C00000
- 
--#define EXYNOS4_PA_VP			0x12C00000
--#define EXYNOS4_PA_MIXER		0x12C10000
--#define EXYNOS4_PA_SDO			0x12C20000
--#define EXYNOS4_PA_HDMI			0x12D00000
--#define EXYNOS4_PA_IIC_HDMIPHY		0x138E0000
--
--#define EXYNOS4_PA_IIC(x)		(0x13860000 + ((x) * 0x10000))
--#define EXYNOS5_PA_IIC(x)		(0x12C60000 + ((x) * 0x10000))
--
--#define EXYNOS4_PA_ADC			0x13910000
--#define EXYNOS4_PA_ADC1			0x13911000
--
--#define EXYNOS4_PA_AC97			0x139A0000
--
--#define EXYNOS4_PA_SPDIF		0x139B0000
--
- #define EXYNOS4_PA_TIMER		0x139D0000
- #define EXYNOS5_PA_TIMER		0x12DD0000
- 
--#define EXYNOS4_PA_SDRAM		0x40000000
--#define EXYNOS5_PA_SDRAM		0x40000000
--
--/* Compatibiltiy Defines */
--
--#define S3C_PA_HSMMC0			EXYNOS4_PA_HSMMC(0)
--#define S3C_PA_HSMMC1			EXYNOS4_PA_HSMMC(1)
--#define S3C_PA_HSMMC2			EXYNOS4_PA_HSMMC(2)
--#define S3C_PA_HSMMC3			EXYNOS4_PA_HSMMC(3)
--#define S3C_PA_IIC			EXYNOS4_PA_IIC(0)
--#define S3C_PA_IIC1			EXYNOS4_PA_IIC(1)
--#define S3C_PA_IIC2			EXYNOS4_PA_IIC(2)
--#define S3C_PA_IIC3			EXYNOS4_PA_IIC(3)
--#define S3C_PA_IIC4			EXYNOS4_PA_IIC(4)
--#define S3C_PA_IIC5			EXYNOS4_PA_IIC(5)
--#define S3C_PA_IIC6			EXYNOS4_PA_IIC(6)
--#define S3C_PA_IIC7			EXYNOS4_PA_IIC(7)
--#define S3C_PA_RTC			EXYNOS4_PA_RTC
--#define S3C_PA_WDT			EXYNOS4_PA_WATCHDOG
--#define S3C_PA_SPI0			EXYNOS4_PA_SPI0
--#define S3C_PA_SPI1			EXYNOS4_PA_SPI1
--#define S3C_PA_SPI2			EXYNOS4_PA_SPI2
--#define S3C_PA_USB_HSOTG		EXYNOS4_PA_HSOTG
--
--#define S5P_PA_EHCI			EXYNOS4_PA_EHCI
--#define S5P_PA_FIMC0			EXYNOS4_PA_FIMC0
--#define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
--#define S5P_PA_FIMC2			EXYNOS4_PA_FIMC2
--#define S5P_PA_FIMC3			EXYNOS4_PA_FIMC3
--#define S5P_PA_JPEG			EXYNOS4_PA_JPEG
--#define S5P_PA_G2D			EXYNOS4_PA_G2D
--#define S5P_PA_FIMD0			EXYNOS4_PA_FIMD0
--#define S5P_PA_HDMI			EXYNOS4_PA_HDMI
--#define S5P_PA_IIC_HDMIPHY		EXYNOS4_PA_IIC_HDMIPHY
--#define S5P_PA_MFC			EXYNOS4_PA_MFC
--#define S5P_PA_MIPI_CSIS0		EXYNOS4_PA_MIPI_CSIS0
--#define S5P_PA_MIPI_CSIS1		EXYNOS4_PA_MIPI_CSIS1
--#define S5P_PA_MIXER			EXYNOS4_PA_MIXER
--#define S5P_PA_ONENAND			EXYNOS4_PA_ONENAND
--#define S5P_PA_ONENAND_DMA		EXYNOS4_PA_ONENAND_DMA
--#define S5P_PA_SDO			EXYNOS4_PA_SDO
--#define S5P_PA_SDRAM			EXYNOS4_PA_SDRAM
--#define S5P_PA_VP			EXYNOS4_PA_VP
--
--#define SAMSUNG_PA_ADC			EXYNOS4_PA_ADC
--#define SAMSUNG_PA_ADC1			EXYNOS4_PA_ADC1
--#define SAMSUNG_PA_KEYPAD		EXYNOS4_PA_KEYPAD
--
- /* Compatibility UART */
- 
--#define EXYNOS4_PA_UART0		0x13800000
--#define EXYNOS4_PA_UART1		0x13810000
--#define EXYNOS4_PA_UART2		0x13820000
--#define EXYNOS4_PA_UART3		0x13830000
--#define EXYNOS4_SZ_UART			SZ_256
--
--#define EXYNOS5_PA_UART0		0x12C00000
--#define EXYNOS5_PA_UART1		0x12C10000
--#define EXYNOS5_PA_UART2		0x12C20000
--#define EXYNOS5_PA_UART3		0x12C30000
--
- #define EXYNOS5440_PA_UART0		0x000B0000
--#define EXYNOS5440_PA_UART1		0x000C0000
--#define EXYNOS5440_SZ_UART		SZ_256
- 
- #define S3C_VA_UARTx(x)			(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
- 
+ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+-	.init_irq	= exynos5_init_irq,
+ 	.smp		= smp_ops(exynos_smp_ops),
+ 	.map_io		= exynos5_dt_map_io,
+ 	.init_machine	= exynos5_dt_machine_init,
 -- 
 1.8.2.1
