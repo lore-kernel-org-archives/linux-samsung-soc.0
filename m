@@ -1,78 +1,42 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFC PATCH 00/11] ARM: s3c64xx: Let amba-pl08x driver handle DMA
-Date: Mon, 17 Jun 2013 21:38:10 +0200
-Message-ID: <7386771.s52fBU89jU@flatron>
-References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
- <CACRpkdbS3YvwSjpMQbJvSNty=sBrx20vUHKYG44OaWowcN6b0g@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 29/38] thermal: exynos: Support both Exynos4x12 SoCs
+Date: Mon, 17 Jun 2013 21:59:15 +0200
+Message-ID: <201306172159.15352.arnd@arndb.de>
+References: <1371486863-12398-1-git-send-email-t.figa@samsung.com> <1371486863-12398-30-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACRpkdbS3YvwSjpMQbJvSNty=sBrx20vUHKYG44OaWowcN6b0g@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Jaroslav Kysela <perex@perex.cz>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.9]:63161 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751784Ab3FQUAM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Jun 2013 16:00:12 -0400
+In-Reply-To: <1371486863-12398-30-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Monday 17 of June 2013 16:06:25 Linus Walleij wrote:
-> On Sun, Jun 16, 2013 at 10:54 PM, Tomasz Figa <tomasz.figa@gmail.com> 
-wrote:
-> > One of the biggest roadblocks on the way of S3C64xx to DeviceTree
-> > support is its DMA driver, which is completely platform-specific and
-> > provides private API (s3c-dma), not even saying that its design is
-> > completely against multiplatform-awareness.
-> > 
-> > The DMA controller present on this SoC series is a custom variant
-> > of ARM PrimeCell PL080 modified by Samsung to add some extra features.
-> > 
-> > It is mostly compatible with original PL080, except:
-> >  - CH_CONTROL2 register is added between CH_CONTROL and CH_CONFIG,
-> >  - offset of CH_CONFIG register is different,
-> >  - transfer size field is moved from CH_CONTROL to CH_CONTROL2,
-> >  - transfer size field is extended to 24 bits, allowing much bigger
-> >  
-> >      single transfer,
-> >  
-> >  - LLI consists of one more word, to account for CH_CONTROL2 register.
-> > 
-> > Since all the rest is fully compatible with standard PL080 there is no
-> > point in having separate driver just for this single variant, so I
-> > decided to look into adding support for it to the amba-pl08x driver.
-> > 
-> > There was already some attempt to achieve this before, but this was
-> > before Russel's big rework of the driver to use virtual channels,
-> > making the old patches being not much of use.
-> > 
-> > This RFC series is a proof of concept that I managed to make during
-> > last days of hacking. Except one patch adding clkdev lookup to clock
-> > driver (which is being replaced with a CCF-compliant driver ATM),
-> > this is enough to get memcpy and slave transfers to work on S3C64xx.
-> > 
-> > I have tested this on Mini6410 and SMDK6410 boards using dmatest for
-> > memcpy and Samsung I2S with madplay/aplay for slave transfers.
-> > Unfortunately I do not have access to other platforms with PL08x so
-> > I could not test for any regressions introduced on them.
-> > 
-> > Credits for two patches go to Alban Bedel, who made a series fixing
-> > this driver to make it usable with audio drivers. I rebased his
-> > patches on top of mine and corrected coding style a bit.
-> > 
-> > OK, that's all. Any comments are welcome. Feel free to start throwing
-> > eggs and tomatoes if you find this awful, but I won't be upset if I
-> > get some Tested-by or Acked-by as well. ;)
-> 
-> I've waited for a long time for this to happen, thank you very much for
-> doing this.
+On Monday 17 June 2013, Tomasz Figa wrote:
+> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
+> index 788b1dd..4cbe3ee 100644
+> --- a/drivers/thermal/exynos_thermal.c
+> +++ b/drivers/thermal/exynos_thermal.c
+> @@ -817,7 +817,8 @@ static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
+>  #define EXYNOS4210_TMU_DRV_DATA (NULL)
+>  #endif
+>  
+> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
+> +#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412) || \
+> +       defined(CONFIG_SOC_EXYNOS4212)
+>  static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
+>         .threshold_falling = 10,
+>         .trigger_levels[0] = 85,
 
-You're welcome. Thanks for your review.
+The patch is correct, but generally speaking I think we should get away from
+having the drivers get configured per SoC on such a fine-grained level.
+Better make this driver (and others) always work on all exynos variants.
 
-Best regards,
-Tomasz
+	Arnd
