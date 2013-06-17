@@ -1,90 +1,76 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH RESEND V2] ARM: dts: Correct the base address of pinctrl_3
- on Exynos5250
-Date: Mon, 17 Jun 2013 21:58:47 +0900
-Message-ID: <1a1601ce6b5a$6833d8a0$389b89e0$%kim@samsung.com>
-References: <1371025425-480-1-git-send-email-padma.v@samsung.com>
+Subject: RE: [PATCH 1/3] gpio: samsung: add PINCTRL_S3C24XX to exclude options
+Date: Mon, 17 Jun 2013 22:13:00 +0900
+Message-ID: <1a1701ce6b5c$651c4d80$2f54e880$%kim@samsung.com>
+References: <201306140044.15568.heiko@sntech.de>
+ <201306140045.27744.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35406 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755240Ab3FQM7M (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:27902 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756153Ab3FQNNE convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 08:59:12 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Mon, 17 Jun 2013 09:13:04 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOJ007HVG20P1F0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 21:58:48 +0900 (KST)
-In-reply-to: <1371025425-480-1-git-send-email-padma.v@samsung.com>
+ with ESMTP id <0MOJ00JK0GPPQHR0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 22:13:02 +0900 (KST)
+In-reply-to: <201306140045.27744.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Padmavathi Venna' <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, 'Olof Johansson' <olof@lixom.net>
-Cc: sbkim73@samsung.com, broonie@kernel.org
+To: =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Grant Likely' <grant.likely@linaro.org>, linus.walleij@linaro.org
 
-Padmavathi Venna wrote:
-> 
-> This patch corrects the base address of pinctrl_3 on Exynos5250
-> platform.
-> 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Heiko St=C3=BCbner wrote:
+>=20
+> When a pinctrl driver is loaded legacy gpio support has to be disable=
+d.
+> The code checking for the pinctrl presence is contained in an #ifdef
+> checking for the presence of a valid samsung pinctrl driver.
+>=20
+> There the new PINCTRL_S3C24XX was missing resulting in the check neve=
+r
+> being run and the gpio being enabled breaking the pinctrl driver.
+>=20
+> Fix this by adding the missing CONFIG_PINCTRL_S3C24XX
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/gpio/gpio-samsung.c |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.=
+c
+> index a1392f4..c84503e 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -2949,7 +2949,8 @@ static __init int samsung_gpiolib_init(void)
+>  	int i, nr_chips;
+>  	int group =3D 0;
+>=20
+> -#if defined(CONFIG_PINCTRL_EXYNOS) || defined(CONFIG_PINCTRL_EXYNOS5=
+440)
+> +#if defined(CONFIG_PINCTRL_EXYNOS) || defined(CONFIG_PINCTRL_EXYNOS5=
+440)
+> || \
+> +    defined(CONFIG_PINCTRL_S3C24XX)
+>  	/*
+>  	* This gpio driver includes support for device tree support and
+> there
+>  	* are platforms using it. In order to maintain compatibility with
+> those
+> --
+> 1.7.10.4
 
-(+ Olof)
+Yeah, this is needed :-)
 
-Olof, there is no other fixes in my tree for v3.10 yet, so would be helpful
-if you could take this into fixes in arm-soc for v3.10. Just note, the wrong
-address added during v3.10 merge window.
-
-If you want,
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-If any problems, please kindly let me know.
+Linus, shall I take this into samsung tree? Or since the pinctrl-s3c24x=
+x already merged into arm-soc, this could be picked into your tree...
 
 Thanks,
 - Kukjin
-
-> ---
-> Changes since V1:
-> 	- Added platform name in the subject line.
-> 
->  arch/arm/boot/dts/exynos5250-pinctrl.dtsi |    2 +-
->  arch/arm/boot/dts/exynos5250.dtsi         |    4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> index d1650fb..ded558b 100644
-> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> @@ -763,7 +763,7 @@
->  		};
->  	};
-> 
-> -	pinctrl@03680000 {
-> +	pinctrl@03860000 {
->  		gpz: gpz {
->  			gpio-controller;
->  			#gpio-cells = <2>;
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> index 7154e3d..e9bfd13 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -169,9 +169,9 @@
->  		interrupts = <0 50 0>;
->  	};
-> 
-> -	pinctrl_3: pinctrl@03680000 {
-> +	pinctrl_3: pinctrl@03860000 {
->  		compatible = "samsung,exynos5250-pinctrl";
-> -		reg = <0x0368000 0x1000>;
-> +		reg = <0x03860000 0x1000>;
->  		interrupts = <0 47 0>;
->  	};
-> 
-> --
-> 1.7.4.4
