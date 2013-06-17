@@ -1,15 +1,15 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 01/11] dma: amba-pl08x: Use bitmap to
- pass variant specific quirks
-Date: Mon, 17 Jun 2013 15:25:44 +0200
-Message-ID: <CACRpkdYAm9BRVjFLwScnwK7SCm8z=4=_DUBhYPna=ywzzpJSMQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/11] dma: amba-pl08x: Refactor
+ pl08x_getbytes_chan() to lower indentation
+Date: Mon, 17 Jun 2013 15:29:40 +0200
+Message-ID: <CACRpkdaE_pFefFgMyEgGe_rRb61gOVxmihx6VNYA0Wo2w4-hmQ@mail.gmail.com>
 References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
- <1371416058-22047-2-git-send-email-tomasz.figa@gmail.com>
+ <1371416058-22047-3-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1371416058-22047-2-git-send-email-tomasz.figa@gmail.com>
+In-Reply-To: <1371416058-22047-3-git-send-email-tomasz.figa@gmail.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -25,14 +25,26 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 On Sun, Jun 16, 2013 at 10:54 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-> Instead of defining new bool field in vendor_data struct for each quirk,
-> it is more reasonable to use a single flags field and make each quirk
-> use single bits.
+> Further patch will introduce support for PL080S, which requires some
+> things to be done conditionally, thus increasing indentation level of
+> some functions even more.
+>
+> This patch reduces indentation level of pl08x_getbytes_chan() function
+> by inverting several conditions and returning from function wherever
+> possible.
 >
 > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Not that I see the point, but I have no strong preference so:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Nice refactoring and a patch that should be applied immediately
+no matter what happens with the rest.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+PS:
+
+> +       if (!ch || !txd)
+> +               return bytes;
+
+Just return 0; is even clearer in this case but who cares.
 
 Yours,
 Linus Walleij
