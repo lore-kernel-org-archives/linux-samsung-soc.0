@@ -1,145 +1,30 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 14/38] ARM: SAMSUNG: Introduce GPIO_SAMSUNG Kconfig entry
-Date: Mon, 17 Jun 2013 18:33:59 +0200
-Message-ID: <1371486863-12398-15-git-send-email-t.figa@samsung.com>
-References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41745 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752944Ab3FQQew (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 12:34:52 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOJ00MBNQ1N6260@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 17:34:46 +0100 (BST)
-In-reply-to: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/2] MAINTAINERS: Add Samsung pinctrl entries
+Date: Mon, 17 Jun 2013 18:35:52 +0200
+Message-ID: <CACRpkda=7kp_07GkQwaPVFkkF7+UPzjZkk2tb6C2oQd3hJwi_w@mail.gmail.com>
+References: <1371143144-31764-1-git-send-email-dianders@chromium.org>
+	<1371421068-28743-1-git-send-email-dianders@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1371421068-28743-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch adds Kconfig entry that selects whether legacy Samsung GPIO
-driver should be built or not. For platforms that support only DT based
-boot, the new pinctrl driver is used and so the old one is not needed.
+On Mon, Jun 17, 2013 at 12:17 AM, Doug Anderson <dianders@chromium.org> wrote:
 
-Cc: Grant Likely <grant.likely@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/Kconfig                        | 6 ++++++
- arch/arm/plat-samsung/include/plat/pm.h | 5 +++++
- drivers/gpio/Kconfig                    | 7 +++++++
- drivers/gpio/Makefile                   | 2 +-
- 4 files changed, 19 insertions(+), 1 deletion(-)
+> It's convenient if get_maintainer suggests sending samsung/exynos
+> pinctrl changes to linux-samsung-soc and to Tomasz and Thomas.
+>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v2:
+> - Updated with Thomas and Tomasz; removed Linus since he's already
+>   there as part of the general pinctrl match.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index ae7247d..9c69e6c 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -695,6 +695,7 @@ config ARCH_S3C24XX
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select GENERIC_CLOCKEVENTS
-+	select GPIO_SAMSUNG
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-@@ -718,6 +719,7 @@ config ARCH_S3C64XX
- 	select CLKSRC_MMIO
- 	select CPU_V6
- 	select GENERIC_CLOCKEVENTS
-+	select GPIO_SAMSUNG
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-@@ -741,6 +743,7 @@ config ARCH_S5P64X0
- 	select CLKSRC_MMIO
- 	select CPU_V6
- 	select GENERIC_CLOCKEVENTS
-+	select GPIO_SAMSUNG
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-@@ -758,6 +761,7 @@ config ARCH_S5PC100
- 	select CLKSRC_MMIO
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
-+	select GPIO_SAMSUNG
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-@@ -776,6 +780,7 @@ config ARCH_S5PV210
- 	select CLKSRC_MMIO
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
-+	select GPIO_SAMSUNG
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-@@ -795,6 +800,7 @@ config ARCH_EXYNOS
- 	select COMMON_CLK
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
-+	select GPIO_SAMSUNG
- 	select HAVE_CLK
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
-diff --git a/arch/arm/plat-samsung/include/plat/pm.h b/arch/arm/plat-samsung/include/plat/pm.h
-index f6fcade..5d47ca3 100644
---- a/arch/arm/plat-samsung/include/plat/pm.h
-+++ b/arch/arm/plat-samsung/include/plat/pm.h
-@@ -166,6 +166,7 @@ extern void s3c_pm_check_store(void);
-  */
- extern void s3c_pm_configure_extint(void);
- 
-+#ifdef CONFIG_GPIO_SAMSUNG
- /**
-  * samsung_pm_restore_gpios() - restore the state of the gpios after sleep.
-  *
-@@ -181,6 +182,10 @@ extern void samsung_pm_restore_gpios(void);
-  * Save the GPIO states for resotration on resume. See samsung_pm_restore_gpios().
-  */
- extern void samsung_pm_save_gpios(void);
-+#else
-+static inline void samsung_pm_restore_gpios(void) {}
-+static inline void samsung_pm_save_gpios(void) {}
-+#endif
- 
- extern void s3c_pm_save_core(void);
- extern void s3c_pm_restore_core(void);
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 573c449..9c993ed 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -209,6 +209,13 @@ config GPIO_RCAR
- 	help
- 	  Say yes here to support GPIO on Renesas R-Car SoCs.
- 
-+config GPIO_SAMSUNG
-+	bool
-+	depends on PLAT_SAMSUNG
-+	help
-+	  Legacy GPIO support. Use only for platforms without support for
-+	  pinctrl.
-+
- config GPIO_SPEAR_SPICS
- 	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
- 	depends on PLAT_SPEAR
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 0cb2d65..ef3e983 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -59,7 +59,7 @@ obj-$(CONFIG_GPIO_PXA)		+= gpio-pxa.o
- obj-$(CONFIG_GPIO_RC5T583)	+= gpio-rc5t583.o
- obj-$(CONFIG_GPIO_RDC321X)	+= gpio-rdc321x.o
- obj-$(CONFIG_GPIO_RCAR)		+= gpio-rcar.o
--obj-$(CONFIG_PLAT_SAMSUNG)	+= gpio-samsung.o
-+obj-$(CONFIG_GPIO_SAMSUNG)	+= gpio-samsung.o
- obj-$(CONFIG_ARCH_SA1100)	+= gpio-sa1100.o
- obj-$(CONFIG_GPIO_SCH)		+= gpio-sch.o
- obj-$(CONFIG_GPIO_SODAVILLE)	+= gpio-sodaville.o
--- 
-1.8.2.1
+Patch applied with all the ACKs.
+
+Yours,
+Linus Walleij
