@@ -1,92 +1,119 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V2] Documentation: Add examples to samsung-pinctrl device tree
- bindings documentation
-Date: Mon, 17 Jun 2013 18:27:06 +0530
-Message-ID: <1371473826-2595-1-git-send-email-l.krishna@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
+Date: Mon, 17 Jun 2013 14:44:40 +0200
+Message-ID: <7174350.I5qK0sQfHM@wuerfel>
+References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com> <3539874.V7zkhbMg0b@wuerfel> <005e01ce6b3f$74e3c940$5eab5bc0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:29257 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751096Ab3FQMdm (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.171]:64502 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932641Ab3FQMoF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 08:33:42 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOJ00JUXEW5SS00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 21:33:41 +0900 (KST)
+	Mon, 17 Jun 2013 08:44:05 -0400
+In-Reply-To: <005e01ce6b3f$74e3c940$5eab5bc0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dianders@chromium.org, t.figa@samsung.com, linus.walleij@linaro.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Jingoo Han <jg1.han@samsung.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>
 
-This patch adds examples to samsung-pinctrl.txt documentaion file
-on how to make gpio binding and gpio request
+On Monday 17 June 2013 18:45:52 Jingoo Han wrote:
+> On Friday, June 14, 2013 9:54 PM, Arnd Bergmann wrote:
+> > 
+> > Please look up the documentation about inbound viewport and describe
+> > in a code comment what it does. I /assume/ that this is how DMA accesses
+> > from the bus get translated into AXI bus transactions. If so, you have
+> > to let the window translate addresses from RAM. If it's something else,
+> > then you should document what it is and how it needs to be set up.
+> 
+> One of our hardware engineer confirmed it.
+> He said that these inbound functions are unnecessary.
+> Also, I checked that PCIe works properly without these functions.
+> So, I will remove these inbound functions.
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
----
- .../bindings/pinctrl/samsung-pinctrl.txt           |   44 +++++++++++++++++++-
- 1 file changed, 42 insertions(+), 2 deletions(-)
+Ok, good. So DMA just gets translated 1:1 independent of the
+inbound viewport? Have you tested this with PCI device using
+DMA?
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index b2bc219..72e9cd1 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -25,8 +25,18 @@ Required Properties:
- 
-   - gpio-controller: identifies the node as a gpio controller and pin bank.
-   - #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
--    binding is used, the amount of cells must be specified as 2. See generic
--    GPIO binding documentation for description of particular cells.
-+    binding is used, the amount of cells must be specified as 2. See the below
-+    mentioned gpio binding representation for description of particular cells.
-+
-+	Eg: <&gpx2 6 0>
-+	<[phandle of the gpio controller node]
-+	[pin number within the gpio controller]
-+	[flags]>
-+
-+	Values for gpio specifier:
-+	- Pin number: is a value between 0 to 7.
-+	- Flags: 0 - Active High
-+		 1 - Active Low
- 
- - Pin mux/config groups as child nodes: The pin mux (selecting pin function
-   mode) and pin config (pull up/down, driver strength) settings are represented
-@@ -274,3 +284,33 @@ Example 4: Set up the default pin state for uart controller.
- 
- 		pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
- 	}
-+
-+Example 5: A display port client node that supports 'default' pinctrl state
-+	   and gpio binding.
-+
-+	display-port-controller {
-+		/* ... */
-+
-+		samsung,hpd-gpio = <&gpx2 6 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&dp_hpd>;
-+	};
-+
-+Example 6: Request the gpio for display port controller
-+
-+	static int exynos_dp_probe(struct platform_device *pdev)
-+	{
-+		int hpd_gpio, ret;
-+		struct device *dev = &pdev->dev;
-+		struct device_node *dp_node = dev->of_node;
-+
-+		/* ... */
-+
-+		hpd_gpio = of_get_named_gpio(dp_node, "samsung,hpd-gpio", 0);
-+
-+		/* ... */
-+
-+		ret = devm_gpio_request_one(&pdev->dev, hpd_gpio, GPIOF_IN,
-+					    "hpd_gpio");
-+		/* ... */
-+	}
--- 
-1.7.9.5
+> static int exynos_pcie_setup(int nr, struct pci_sys_data *sys)
+> {
+> 	struct pcie_port *pp;
+> 
+> 	pp = sys_to_pcie(sys);
+> 
+> 	if (!pp)
+> 		return 0;
+> 
+> 	if (global_io_offset < SZ_1M && pp->config.io_size > 0) {
+> 		sys->io_offset = global_io_offset - pp->config.io_bus_addr; /* normally 0 */
+> 		pci_ioremap_io(sys->io_offset, pp->io.start);
+> 		global_io_offset += SZ_64K;
+> 	}
+> 
+> 	sys->mem_offset = pp->mem.start - pp->config.mem_bus_addr; /* normally 0 */
+> 
+> 	pci_add_resource_offset(&sys->resources, &pp->io, sys->io_offset);
+> 	pci_add_resource_offset(&sys->resources, &pp->mem, sys->mem_offset);
+> 
+>         return 1;
+> }
+
+This is what I meant, yes.
+
+> In this case, boot message is as below:
+> 
+> PCI host bridge to bus 0000:00
+> pci_bus 0000:00: root bus resource [io  0x40001000-0x40010fff]
+> pci_bus 0000:00: root bus resource [mem 0x40011000-0x5fffffff]
+> pci_bus 0000:00: No busn resource found for root bus, will use [bus 00-ff]
+> pci 0000:00:00.0: [144d:a549] type 01 class 0x060400
+> [.....]
+> PCI host bridge to bus 0001:00
+> pci_bus 0001:00: root bus resource [io  0x60001000-0x60010fff] (bus address [0x5fff1000-0x6000
+> 0fff])
+> pci_bus 0001:00: root bus resource [mem 0x60011000-0x7fffffff]
+> pci_bus 0001:00: No busn resource found for root bus, will use [bus 00-ff]
+> pci 0001:00:00.0: [144d:a549] type 01 class 0x060400
+
+The io resources here look wrong. I would have expected
+
+pci_bus 0000:00: root bus resource [io  0x001000-0x00ffff]
+pci_bus 0001:00: root bus resource [io  0x010000-0x01ffff] (bus address [0x000000-0x00ffff])
+
+Please have a look at the pci-mvebu driver and how it calculates its
+'realio' resource.
+
+> > > > > +static int __exit exynos_pcie_remove(struct platform_device *pdev)
+> > > > > +{
+> > > > > +	struct pcie_port *pp = platform_get_drvdata(pdev);
+> > > > > +
+> > > > > +	clk_disable_unprepare(pp->bus_clk);
+> > > > > +	clk_disable_unprepare(pp->clk);
+> > > > > +
+> > > > > +	return 0;
+> > > > > +}
+> > > >
+> > > > You also don't remove the PCI devices here, as mentioned in an earlier
+> > > > review.
+> > >
+> > > I reviewed Marvell PCIe driver and Tegra PCIe driver; however,
+> > > I cannot know what you mean.
+> > >
+> > > Could let me know which additional functions are needed?
+> > 
+> > The mvebu driver does not allow module unload. I haven't looked at the
+> > tegra driver. If you allow unloading the driver and provide a 'remove'
+> > callback, that callback needs to clean up the entire bus and remove
+> > all child devices that were added as well as undo everything the
+> > probe function did. I think it would be great if you can do that, although
+> > it might not be easy. The simplest solution would be to not support
+> > unloading though.
+> 
+> As the mvebu driver uses platform_driver_probe(), the Exynos driver uses
+> platform_driver_probe(). Thus, I will not provide a 'remove' callback.
+
+Well, the important part is not to provide a module_exit() function, which
+will ensure the driver cannot be unloaded.
+
+	Arnd
