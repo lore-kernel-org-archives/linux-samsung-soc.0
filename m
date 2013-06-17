@@ -1,93 +1,128 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH Resend] pinctrl: exynos: Fix build breakage
-Date: Mon, 17 Jun 2013 13:57:58 +0200
-Message-ID: <1992157.1uNu7hFias@amdc1227>
-References: <1371461892-5298-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] Documentation: Add examples to samsung-pinctrl device tree
+ bindings documentation
+Date: Mon, 17 Jun 2013 20:59:13 +0900
+Message-ID: <1a0601ce6b52$15c33cd0$4149b670$%kim@samsung.com>
+References: <1371465896-2762-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:51785 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932610Ab3FQL6H convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:46212 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932610Ab3FQL7P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 07:58:07 -0400
-In-reply-to: <1371461892-5298-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 17 Jun 2013 07:59:15 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOJ00CLKDAMOQK0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Jun 2013 20:59:13 +0900 (KST)
+In-reply-to: 
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>, linus.walleij@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org, Doug Anderson <dianders@chromium.org>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, dianders@chromium.org, 'Linus Walleij' <linus.walleij@linaro.org>
 
-Hi Sachin,
+Kukjin Kim wrote:
+> 
+> Leela Krishna Amudala wrote:
+> >
+> > This patch adds examples to samsung-pinctrl.txt documentaion file
+> > on how to make gpio binding and gpio request
+> >
+> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> > Reviewed-by: Doug Anderson <dianders@chromium.org>
+> > ---
+> >  .../bindings/pinctrl/samsung-pinctrl.txt           |   48
+> > +++++++++++++++++++-
+> >  1 file changed, 46 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-
+> pinctrl.txt
+> > b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> > index b2bc219..f1cf177 100644
+> > --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> > +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> > @@ -25,8 +25,18 @@ Required Properties:
+> >
+> >    - gpio-controller: identifies the node as a gpio controller and pin
+> > bank.
+> >    - #gpio-cells: number of cells in GPIO specifier. Since the generic
+> > GPIO
+> > -    binding is used, the amount of cells must be specified as 2. See
+> > generic
+> > -    GPIO binding documentation for description of particular cells.
+> > +    binding is used, the amount of cells must be specified as 2. See
+the
+> > below
+> > +    mentioned gpio binding representation for description of particular
+> > cells.
+> > +
+> > +	Eg: <&gpx2 6 0>
+> > +	<[phandle of the gpio controller node]
+> > +	[pin number within the gpio controller]
+> > +	[flags]>
+> > +
+> > +	Values for gpio specifier:
+> > +	- Pin number: is a value between 0 to 7.
+> > +	- Flags: 0 - Active High
+> > +		 1 - Active Low
+> >
+> >  - Pin mux/config groups as child nodes: The pin mux (selecting pin
+> > function
+> >    mode) and pin config (pull up/down, driver strength) settings are
+> > represented
+> > @@ -274,3 +284,37 @@ Example 4: Set up the default pin state for uart
+> > controller.
+> >
+> >  		pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
+> >  	}
+> > +
+> > +Example 5: A display port client node that supports 'default' pinctrl
+> > state
+> > +	   and gpio binding.
+> > +
+> > +	display-port-controller {
+> > +		samsung,color-space = <0>;
+> > +		samsung,dynamic-range = <0>;
+> > +		samsung,ycbcr-coeff = <0>;
+> > +		samsung,color-depth = <1>;
+> > +		samsung,link-rate = <0x06>;
+> > +		samsung,lane-count = <2>;
+> > +		samsung,hpd-gpio = <&gpx2 6 0>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&dp_hpd>;
+> > +	};
+> > +
+> > +Example 6: Request the gpio for display port controller
+> > +
+> > +	static int exynos_dp_probe(struct platform_device *pdev)
+> > +	{
+> > +		int hpd_gpio, ret;
+> > +		struct device *dev = &pdev->dev;
+> > +		struct device_node *dp_node = dev->of_node;
+> > +
+> > +		/* ... */
+> > +
+> > +		hpd_gpio = of_get_named_gpio(dp_node, "samsung,hpd-gpio",
+0);
+> > +
+> > +		/* ... */
+> > +
+> > +		ret = devm_gpio_request_one(&pdev->dev, hpd_gpio, GPIOF_IN,
+> > +					    "hpd_gpio");
+> > +		/* ... */
+> > +	}
+> > --
+> > 1.7.9.5
+> 
+> Looks good to me, applied.
+> 
+(+ Linus Walleij)
 
-On Monday 17 of June 2013 15:08:12 Sachin Kamat wrote:
-> 'exynos_wkup_irq_ack' should be defined ahead of its call.
->=20
-> Fixes the following error:
-> drivers/pinctrl/pinctrl-exynos.c: In function =E2=80=98exynos_wkup_ir=
-q_mask=E2=80=99:
-> drivers/pinctrl/pinctrl-exynos.c:299:3: error: implicit declaration o=
-f
-> function =E2=80=98exynos_wkup_irq_ack=E2=80=99 [-Werror=3Dimplicit-fu=
-nction-declaration]
->    exynos_wkup_irq_ack(irqd);
->=20
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Cc: Doug Anderson <dianders@chromium.org>
-> ---
-> Fixed the commit message.
-> ---
+Hmm, probably I need Linus' ack on this ;-)
 
-This patch is incorrect.
-
-Compilation error is caused by merge error of Doug's patch:
-
-pinctrl: exynos: ack level-triggered interrupts before unmasking
-
-hunk of which went to wrong function - mask instead of unmask.
-
-Linus, could you fix it?
-
-Best regards,
-Tomasz
-
->  drivers/pinctrl/pinctrl-exynos.c |   18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
->=20
-> diff --git a/drivers/pinctrl/pinctrl-exynos.c
-> b/drivers/pinctrl/pinctrl-exynos.c index 8cd5bf5..f9277bc 100644
-> --- a/drivers/pinctrl/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/pinctrl-exynos.c
-> @@ -279,6 +279,15 @@ err_domains:
->  	return ret;
->  }
->=20
-> +static void exynos_wkup_irq_ack(struct irq_data *irqd)
-> +{
-> +	struct samsung_pin_bank *b =3D irq_data_get_irq_chip_data(irqd);
-> +	struct samsung_pinctrl_drv_data *d =3D b->drvdata;
-> +	unsigned long pend =3D d->ctrl->weint_pend + b->eint_offset;
-> +
-> +	writel(1 << irqd->hwirq, d->virt_base + pend);
-> +}
-> +
->  static void exynos_wkup_irq_mask(struct irq_data *irqd)
->  {
->  	struct samsung_pin_bank *b =3D irq_data_get_irq_chip_data(irqd);
-> @@ -307,15 +316,6 @@ static void exynos_wkup_irq_mask(struct irq_data=
- *irqd)
-> spin_unlock_irqrestore(&b->slock, flags);
->  }
->=20
-> -static void exynos_wkup_irq_ack(struct irq_data *irqd)
-> -{
-> -	struct samsung_pin_bank *b =3D irq_data_get_irq_chip_data(irqd);
-> -	struct samsung_pinctrl_drv_data *d =3D b->drvdata;
-> -	unsigned long pend =3D d->ctrl->weint_pend + b->eint_offset;
-> -
-> -	writel(1 << irqd->hwirq, d->virt_base + pend);
-> -}
-> -
->  static void exynos_wkup_irq_unmask(struct irq_data *irqd)
->  {
->  	struct samsung_pin_bank *b =3D irq_data_get_irq_chip_data(irqd);
+- Kukjin
