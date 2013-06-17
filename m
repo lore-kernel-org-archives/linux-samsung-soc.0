@@ -1,32 +1,67 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v2 1/2] MAINTAINERS: Add Samsung pinctrl entries
-Date: Sun, 16 Jun 2013 20:43:25 -0700
-Message-ID: <4a2043ad-0fa6-44e6-8d46-2a0ef9f9073b@email.android.com>
-References: <1371143144-31764-1-git-send-email-dianders@chromium.org> <1371421068-28743-1-git-send-email-dianders@chromium.org> <CAH9JG2VWwdJ4t1B6fx9rx9=RMSmjmUvGSA5Eqn=aMcQ-FFyO0g@mail.gmail.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V5 02/30] thermal: exynos: Add ARCH_HAS_TMU config to know
+ the supported soc's
+Date: Mon, 17 Jun 2013 09:16:58 +0530
+Message-ID: <CADGdYn7miARF2h_7hu5TcvJQvTTJ3SDg01jfFkUN_2OAuJu42w@mail.gmail.com>
+References: <1370955220-2949-1-git-send-email-amit.daniel@samsung.com>
+	<1370955220-2949-3-git-send-email-amit.daniel@samsung.com>
+	<51BE7CFB.6020008@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAH9JG2VWwdJ4t1B6fx9rx9=RMSmjmUvGSA5Eqn=aMcQ-FFyO0g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>, Doug Anderson <dianders@chromium.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Joe Perches <joe@perches.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Mauro Carvalho Chehab <mchehab@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Cesar Eduardo Barros <cesarb@cesarb.net>, "David S. Miller" <davem@davemloft.net>, Hans Verkuil <hans.verkuil@cisco.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51BE7CFB.6020008@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Eduardo,
 
-
-Kyungmin Park <kmpark@infradead.org> skrev:
-
->On Mon, Jun 17, 2013 at 7:17 AM, Doug Anderson <dianders@chromium.org>
->wrote:
->> It's convenient if get_maintainer suggests sending samsung/exynos
->> pinctrl changes to linux-samsung-soc and to Tomasz and Thomas.
+On Mon, Jun 17, 2013 at 8:35 AM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> Hey Amit,
+>
+> On 11-06-2013 08:53, Amit Daniel Kachhap wrote:
+>> This patch adds config sybmol ARCH_HAS_TMU to enable the TMU driver.
+>> This will allow adding support for new soc easily as now it is the
+>> platform responsibility to enable this config symbol.
 >>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  drivers/thermal/samsung/Kconfig |    5 ++++-
+>>  1 files changed, 4 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
+>> index 2d3d9dc..145a55d 100644
+>> --- a/drivers/thermal/samsung/Kconfig
+>> +++ b/drivers/thermal/samsung/Kconfig
+>> @@ -1,6 +1,9 @@
+>> +config ARCH_HAS_TMU
+>> +     bool
+>> +
+>>  config EXYNOS_THERMAL
+>>       tristate "Temperature sensor on Samsung EXYNOS"
+>> -     depends on (ARCH_EXYNOS4 || ARCH_EXYNOS5)
+>> +     depends on ARCH_HAS_TMU
+>
+> I would rather use ARCH_HAS_BANDGAP as discussed and agreed during your
+> v4 review. I managed push this patch through RMK's system:
+> http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=7758/1
+Agreed I will post my TMU re-structured patches with this config flag.
 
-Acked-by: Olof Johansson <olof@lixom.net>
+Thanks,
+Amit Daniel
 
---=20
-Skickat fr=C3=A5n min Android-telefon med K-9 E-post. Urs=C3=A4kta min =
-f=C3=A5ordighet.
+>
+>>       depends on CPU_THERMAL
+>>       help
+>>         If you say yes here you get support for TMU (Thermal Management
+>>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
