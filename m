@@ -1,15 +1,15 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 03/11] dma: amba-pl08x: Add support for
- different offset of CONFIG register
-Date: Mon, 17 Jun 2013 15:31:27 +0200
-Message-ID: <CACRpkdYbgnkoaSiZqc7o2QvE19hZEASScfv_3onZoMmr3L9CxA@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/11] dma: amba-pl08x: Add support for
+	PL080S variant
+Date: Mon, 17 Jun 2013 15:39:34 +0200
+Message-ID: <CACRpkdZ+g-_AC=2WBs3nruyTMX16Ona99g_wcS=PqOuZ6xVpog@mail.gmail.com>
 References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
- <1371416058-22047-4-git-send-email-tomasz.figa@gmail.com>
+ <1371416058-22047-5-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1371416058-22047-4-git-send-email-tomasz.figa@gmail.com>
+In-Reply-To: <1371416058-22047-5-git-send-email-tomasz.figa@gmail.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -25,14 +25,30 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 On Sun, Jun 16, 2013 at 10:54 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-> Some variants of PL08x (namely PL080S, found in Samsung S3C64xx SoCs)
-> have CONFIG register at different offset. This patch makes the driver
-> use offset from vendor data struct.
+> PL080S is a modified version of PL080 that can be found on Samsung SoCs,
+> such as S3C6400 and S3C6410.
+>
+> It has different offset of CONFIG register, separate CONTROL1 register
+> that holds transfer size and larger maximum transfer size.
 >
 > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Looks good to me:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+(I would have done some smallish things differently but it
+is only a matter of taste.)
+
+>  static struct amba_id pl08x_ids[] = {
+> +       /* Samsung PL080S variant */
+> +       {
+> +               .id     = 0x0a141080,
+> +               .mask   = 0xffffffff,
+> +               .data   = &vendor_pl080s,
+> +       },
+
+Interesting that Samsung claim to be vendor 0x41
+(ARM). Well ARM never made revision no 0x0a so
+this works.
 
 Yours,
 Linus Walleij
