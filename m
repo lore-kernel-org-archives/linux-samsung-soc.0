@@ -1,42 +1,40 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 29/38] thermal: exynos: Support both Exynos4x12 SoCs
-Date: Mon, 17 Jun 2013 21:59:15 +0200
-Message-ID: <201306172159.15352.arnd@arndb.de>
-References: <1371486863-12398-1-git-send-email-t.figa@samsung.com> <1371486863-12398-30-git-send-email-t.figa@samsung.com>
+Subject: Re: [PATCH v2 00/38] Thirty eight patches big Exynos cleanup
+Date: Mon, 17 Jun 2013 22:00:39 +0200
+Message-ID: <201306172200.39498.arnd@arndb.de>
+References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:63161 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751784Ab3FQUAM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Jun 2013 16:00:12 -0400
-In-Reply-To: <1371486863-12398-30-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On Monday 17 June 2013, Tomasz Figa wrote:
-> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-> index 788b1dd..4cbe3ee 100644
-> --- a/drivers/thermal/exynos_thermal.c
-> +++ b/drivers/thermal/exynos_thermal.c
-> @@ -817,7 +817,8 @@ static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
->  #define EXYNOS4210_TMU_DRV_DATA (NULL)
->  #endif
->  
-> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
-> +#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412) || \
-> +       defined(CONFIG_SOC_EXYNOS4212)
->  static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
->         .threshold_falling = 10,
->         .trigger_levels[0] = 85,
+> As I promised, I am doing some spring (or rather summer) cleaning
+> of Exynos- and Samsung- related code.
+> 
+> This first part consists mostly of removing dead code remaining after
+> removal of ATAGS support for Exynos, but several patches cleans up
+> other things found by the way.
+> 
+> See particular patches for more detailed description.
+> 
+> On Exynos4210-based Trats board:
+> Tested-by: Tomasz Figa <t.figa@samsung.com>
+> 
 
-The patch is correct, but generally speaking I think we should get away from
-having the drivers get configured per SoC on such a fine-grained level.
-Better make this driver (and others) always work on all exynos variants.
+Looks all good to me.
 
-	Arnd
+Acked-by: Arnd Bergmann <arnd@arndb.de>
