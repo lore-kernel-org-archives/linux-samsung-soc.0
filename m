@@ -1,234 +1,153 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 00/38] Thirty eight patches big Exynos cleanup
-Date: Tue, 18 Jun 2013 13:11:45 +0200
-Message-ID: <1490899.cyTqiG9bBR@amdc1227>
-References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
- <1c0b01ce6c0d$e0475930$a0d60b90$%kim@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu
+ reg control
+Date: Tue, 18 Jun 2013 17:07:44 +0530
+Message-ID: <51C04688.3090205@ti.com>
+References: <1370935073-7475-1-git-send-email-rahul.sharma@samsung.com> <CAAQKjZMuSQhbYtOyni-RdHhXu0fv3U2Dm_2iqRLe0smSt_jjjQ@mail.gmail.com> <CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com> <CAPdUM4Nis0uwyZf1hNDOMmdqFm0K7beVPoyAWRjMBwq0jcwwCQ@mail.gmail.com> <51B98908.8050403@samsung.com> <02c101ce6828$29ab0f20$7d012d60$%dae@samsung.com> <51B9C0ED.2040605@ti.com> <51BAB398.8090409@samsung.com> <CAPdUM4PK7K+Vw6umnehDubLD37jiWdcd4iXX2DJvHS8990LQGQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28846 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752411Ab3FRLLy (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:34349 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752209Ab3FRLh7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 07:11:54 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOL00LVM5Q88670@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 12:11:52 +0100 (BST)
-In-reply-to: <1c0b01ce6c0d$e0475930$a0d60b90$%kim@samsung.com>
+	Tue, 18 Jun 2013 07:37:59 -0400
+In-Reply-To: <CAPdUM4PK7K+Vw6umnehDubLD37jiWdcd4iXX2DJvHS8990LQGQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: Rahul Sharma <r.sh.open@gmail.com>
+Cc: sw0312.kim@samsung.com, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, DRI mailing list <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@chromium.org>, sunil joshi <joshi@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, grant.likely@linaro.org
 
-On Tuesday 18 of June 2013 19:23:29 Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > Hi All,
-> > 
-> > As I promised, I am doing some spring (or rather summer) cleaning
-> > of Exynos- and Samsung- related code.
-> > 
-> > This first part consists mostly of removing dead code remaining after
-> > removal of ATAGS support for Exynos, but several patches cleans up
-> > other things found by the way.
-> > 
-> > See particular patches for more detailed description.
-> > 
-> > On Exynos4210-based Trats board:
-> > Tested-by: Tomasz Figa <t.figa@samsung.com>
-> > 
-> > Build tested every patch with s3c6400_defconfig, s5pv210_defconfig
-> > and exynos_defconfig.
-> > 
-> > Changes since v1:
-> >  - Split patches removing SOC_EXYNOS4412
-> >  - Adjusted drivers to check for ARCH_EXYNOS in addition to PLAT_S5P
-> >  - Fixed compilation issue on s5pc100
-> >  - Removed empty line from mach-exynos/Makefile
-> >  - Removed SAMSUNG_GPIOLIB_4BIT selection from ARCH_EXYNOS
-> >  - Sorted Kconfig and Makefile entries
-> >  - Added additional cleanup from Arnd (split and slightly modified)
-> 
-> Tomasz, good job.
+Hi,
 
-Thanks.
+On Tuesday 18 June 2013 03:33 PM, Rahul Sharma wrote:
+> Thanks all,
+>=20
+> On Fri, Jun 14, 2013 at 11:39 AM, =B1=E8=BD=C2=BF=EC <sw0312.kim@sams=
+ung.com> wrote:
+>> Hello Kishon,
+>>
+>> On 2013=B3=E2 06=BF=F9 13=C0=CF 21:54, Kishon Vijay Abraham I wrote:
+>>> Hi,
+>>>
+>>> On Thursday 13 June 2013 04:51 PM, Inki Dae wrote:
+>>>>
+>>>>
+>>>>> -----Original Message-----
+>>>>> From: Sylwester Nawrocki [mailto:s.nawrocki@samsung.com]
+>>>>> Sent: Thursday, June 13, 2013 5:56 PM
+>>>>> To: Rahul Sharma
+>>>>> Cc: Rahul Sharma; Inki Dae; linux-samsung-soc@vger.kernel.org;
+>>>>> devicetree-
+>>>>> discuss@lists.ozlabs.org; DRI mailing list; Kukjin Kim; Seung-Woo=
+ Kim;
+>>>>> Sean Paul; sunil joshi; Kishon Vijay Abraham I; Stephen Warren;
+>>>>> grant.likely@linaro.org
+>>>>> Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clo=
+ck with
+>>>>> pmu reg control
+>>>>>
+>>>>> Hi,
+>>>>>
+>>>>> On 06/13/2013 06:26 AM, Rahul Sharma wrote:
+>>>>>> Mr. Dae,
+>>>>>>
+>>>>>> Thanks for your valuable inputs.
+>>>>>>
+>>>>>> I posted it as RFC because, I also have received comments to reg=
+ister
+>>>>>> hdmiphy as a clock controller. As we always configure it for spe=
+cific
+>>>>>> frequency, hdmi-phy looks similar to a PLL. But it really doesn'=
+t
+>>>>>> belong to that class. Secondly prior to exynos5420, it was a i2c
+>>>>>> device. I am not sure we can register a I2C device as a clock
+>>>>>> controller. I wanted to discuss and explore this option here.
+>>>>>
+>>>>> Have you considered using the generic PHY framework for those HDM=
+I
+>>>>> PHY devices [1] ? I guess we could add a dedicated group of ops f=
+or
+>>>>> video PHYs, similarly as is is done with struct v4l2_subdev_ops. =
+=46or
+>>>>> configuring things like the carrier/pixel clock frequency or anyt=
+hing
+>>>>> what's common across the video PHYs.
+>>>>>
+>>>>> Perhaps you could have a look and see if this framework would be
+>>>>> useful for HDMI and possibly point out anything what might be mis=
+sing ?
+>>>>>
+>>>>> I'm not sure it it really solves the issues specific to the Exyno=
+s
+>>>>> HDMI but at least with a generic PHY driver the PHY module would =
+be
+>>>>> separate from the PHY controller, as often same HDMI DPHY can be =
+used
+>>>>> with various types of a HDMI controller. So this would allow to n=
+ot
+>>>>> duplicate the HDMI PHY drivers in the long-term perspective.
+>>>>
+>>>> Yeah, at least, it seems that we could use PHY module to control P=
+MU
+>>>> register, HDMI_PHY_CONTROL. However, PHY module provides only init=
+/on/off
+>>>> callbacks. As you may know, HDMIPHY needs i2c interfaces to contro=
+l
+>>>> HDMIPHY
+>>>> clock. So with PHY module, HDMIPHY driver could enable PMU more
+>>>> generically,
+>>>> but also has to use existing i2c stuff to control HDMIPHY clock. I=
+ had a
+>>>> quick review to Generic PHY Framework[v6] but I didn't see that th=
+e PHY
+>>>> module could generically support more features such as i2c stuff.
+>>>
+>>> I don't think PHY framework needs to provide i2c interfaces to prog=
+ram
+>>> certain configurations. Instead in one of the callbacks (init/on/of=
+f)
+>>> PHY driver can program whatever it wants using any of the interface=
+s it
+>>> needs. IMO PHY framework should work independent of the interfaces.
+>>
+>> In exnoys hdmi case, i2c interface is not the exact issue. In exynos
+>> hdmi, hdmiphy should send i2c configuration about video clock
+>> information as the video mode information including resolution, bit =
+per
+>> pixel, refresh rate passed from drm subsystem. So init/on/off callba=
+cks
+>> of phy framework are not enough for exynos hdmiphy and it should hav=
+e a
+>> callback to set video mode.
+>>
+>> Do you have plan to add driver specific extend callback pointers to =
+phy
+>> framework?
+>>
+>> Currently, hdmi directly calls phy operations, but Rahul's another p=
+atch
+>> set, mentioned by Inki, divides hdmi and hdmiphy and hdmi and hdmiph=
+y is
+>> connected with exynos hdmi own sub driver callback operations.
+>>
+>> IMHO, if phy framework can support extend callback feature, then thi=
+s
+>> own sub driver callbacks can be replaced with phy framework at long =
+term
+>> view.
+>=20
+> Extended callbacks are always welcome. I can also use phy device
+> private data to pass on private ops like get_pixelclk and set_pixelcl=
+k.
 
-> After looking at, almost same with your previous version but modifying 16,
-> 19, 21, 25(just Cc) and adding some patches 17, 18, 29 and 35 to 38. Would
-> be helpful to  me if you could note about that in this series ;-)
+I would recommend creating a wrapper to the existing PHY framework
+for HDMI PHY. That way, we can have other HDMI phys added
+easily. We need to figure out all the ops that might be needed by the
+HDMI PHY to be added to the wrapper.
+IMO extended callbacks can lead to abuse of the system and should be
+used only when absolutely necessary.
 
-OK, my bad, haven't though about it, sorry. Will remember to do it next time 
-such series update happens.
-
-By the way, patch 14 has been updated as well.
-
-Best regards,
-Tomasz
-
-> Anyway, looks good I will apply this series
-
-OK, thanks.
-
-> except removing
-> CONFIG_SOC_EXYNOS4412 patches.
-
-I don't really understand this decision, but if you really insist...
-
-Still, I think current setup is wrong, because you need to specify both SoCs 
-in drivers and both Kconfig entries must have "select" and "depends on" clauses 
-duplicated, while there are places currently where only one has been specified 
-by mistake.
-
-So if we can't get this duplication removed, I'd suggest introducing 
-CONFIG_SOC_EXYNOS4X12 which would represent the whole SoC series and making 
-existing two entries just simple bools selecting the new one.
-
-Best regards,
-Tomasz
-
-> Thanks,
-> - Kukjin
-> 
-> > Tomasz Figa (38):
-> >   ARM: EXYNOS: Remove unused board files
-> >   ARM: EXYNOS: Make ARCH_EXYNOS select USE_OF
-> >   ARM: SAMSUNG: Introduce SAMSUNG_ATAGS Kconfig entry
-> >   ARM: EXYNOS: common: Remove legacy PMU initialization code
-> >   ARM: EXYNOS: common: Remove legacy EINT initialization code
-> >   ARM: EXYNOS: common: Remove legacy UART initialization code
-> >   ARM: EXYNOS: Remove legacy dev- and setup- files
-> >   ARM: EXYNOS: common: Remove legacy interrupt initialization code
-> >   ARM: EXYNOS: common: Remove legacy timer initialization code
-> >   ARM: EXYNOS: common: Remove platform device initialization
-> >   ARM: EXYNOS: common: Remove legacy mapping of chip ID block
-> >   ARM: EXYNOS: firmware: Remove check for device tree presence
-> >   ARM: EXYNOS: pm_domains: Remove legacy power domain registration code
-> >   ARM: SAMSUNG: Introduce GPIO_SAMSUNG Kconfig entry
-> >   ARM: EXYNOS: Provide compatibility stubs for PM code in pm-core.h
-> >   
-> >     header
-> >   
-> >   ARM: SAMSUNG: Compile legacy IRQ and GPIO PM code only with ATAGS
-> >   
-> >     support
-> >   
-> >   [media] platform: Check for ARCH_EXYNOS separately
-> >   USB: Check for ARCH_EXYNOS separately
-> >   ARM: EXYNOS: Decouple ARCH_EXYNOS from PLAT_S5P
-> >   ARM: SAMSUNG: pm: Include most of mach/ headers conditionally
-> >   ARM: EXYNOS: Do not select legacy Kconfig symbols any more
-> >   ARM: EXYNOS: Remove setup-i2c0.c
-> >   ARM: EXYNOS: Remove mach/gpio.h
-> >   ARM: EXYNOS: Remove mach/regs-gpio.h header
-> >   ARM: SAMSUNG: Make legacy MFC support code depend on SAMSUNG_ATAGS
-> >   ARM: EXYNOS: Select SPARSE_IRQ for Exynos
-> >   ARM: EXYNOS: Remove mach/irqs.h header
-> >   ARM: EXYNOS: Remove unused base addresses from mach/map.h header
-> >   thermal: exynos: Support both Exynos4x12 SoCs
-> >   ARM: EXYNOS: Remove CONFIG_SOC_EXYNOS4412
-> >   cpufreq: exynos4x12: Remove check for SOC_EXYNOS4412
-> >   [media] exynos4-is: Remove check for SOC_EXYNOS4412
-> >   thermal: exynos: Remove check for SOC_EXYNOS4412
-> >   ARM: EXYNOS: Remove mach/regs-usb-phy.h header
-> >   ARM: EXYNOS: Remove custom init_irq callbacks
-> >   ARM: EXYNOS: Use exynos_init_io() as map_io callback
-> >   ARM: EXYNOS: Remove legacy L2X0 initialization
-> >   ARM: EXYNOS: Remove remaining dead code after non-DT support removal
-> >  
-> >  arch/arm/Kconfig                                 |   15 +-
-> >  arch/arm/Makefile                                |    1 +
-> >  arch/arm/mach-exynos/Kconfig                     |   31 +-
-> >  arch/arm/mach-exynos/Makefile                    |    7 -
-> >  arch/arm/mach-exynos/common.c                    |  537 +--------
-> >  arch/arm/mach-exynos/common.h                    |    4 +-
-> >  arch/arm/mach-exynos/dev-audio.c                 |  254 ----
-> >  arch/arm/mach-exynos/dev-uart.c                  |   55 -
-> >  arch/arm/mach-exynos/firmware.c                  |   22 +-
-> >  arch/arm/mach-exynos/include/mach/gpio.h         |  289 -----
-> >  arch/arm/mach-exynos/include/mach/irqs.h         |  476 --------
-> >  arch/arm/mach-exynos/include/mach/map.h          |  218 +---
-> >  arch/arm/mach-exynos/include/mach/pm-core.h      |   12 +-
-> >  arch/arm/mach-exynos/include/mach/regs-gpio.h    |   40 -
-> >  arch/arm/mach-exynos/include/mach/regs-usb-phy.h |   74 --
-> >  arch/arm/mach-exynos/mach-armlex4210.c           |  207 ----
-> >  arch/arm/mach-exynos/mach-exynos4-dt.c           |    8 +-
-> >  arch/arm/mach-exynos/mach-exynos5-dt.c           |    8 +-
-> >  arch/arm/mach-exynos/mach-nuri.c                 | 1388
-> 
-> ---------------------
-> 
-> > -
-> > 
-> >  arch/arm/mach-exynos/mach-origen.c               |  823 -------------
-> >  arch/arm/mach-exynos/mach-smdk4x12.c             |  396 ------
-> >  arch/arm/mach-exynos/mach-smdkv310.c             |  444 -------
-> >  arch/arm/mach-exynos/mach-universal_c210.c       | 1159
-> 
-> ------------------
-> 
-> >  arch/arm/mach-exynos/pm.c                        |    1 -
-> >  arch/arm/mach-exynos/pm_domains.c                |   94 +-
-> >  arch/arm/mach-exynos/setup-fimc.c                |   44 -
-> >  arch/arm/mach-exynos/setup-fimd0.c               |   43 -
-> >  arch/arm/mach-exynos/setup-i2c0.c                |   29 -
-> >  arch/arm/mach-exynos/setup-i2c1.c                |   23 -
-> >  arch/arm/mach-exynos/setup-i2c2.c                |   23 -
-> >  arch/arm/mach-exynos/setup-i2c3.c                |   23 -
-> >  arch/arm/mach-exynos/setup-i2c4.c                |   23 -
-> >  arch/arm/mach-exynos/setup-i2c5.c                |   23 -
-> >  arch/arm/mach-exynos/setup-i2c6.c                |   23 -
-> >  arch/arm/mach-exynos/setup-i2c7.c                |   23 -
-> >  arch/arm/mach-exynos/setup-keypad.c              |   36 -
-> >  arch/arm/mach-exynos/setup-sdhci-gpio.c          |  152 ---
-> >  arch/arm/mach-exynos/setup-spi.c                 |   45 -
-> >  arch/arm/mach-exynos/setup-usb-phy.c             |  223 ----
-> >  arch/arm/plat-samsung/Kconfig                    |   47 +-
-> >  arch/arm/plat-samsung/Makefile                   |   11 +-
-> >  arch/arm/plat-samsung/include/plat/cpu.h         |    6 +-
-> >  arch/arm/plat-samsung/include/plat/pm.h          |    5 +
-> >  arch/arm/plat-samsung/init.c                     |    8 +-
-> >  arch/arm/plat-samsung/pm-gpio.c                  |    5 +-
-> >  arch/arm/plat-samsung/pm.c                       |    8 +-
-> >  arch/arm/plat-samsung/s5p-dev-mfc.c              |   11 +-
-> >  drivers/cpufreq/Kconfig.arm                      |    2 +-
-> >  drivers/gpio/Kconfig                             |    7 +
-> >  drivers/gpio/Makefile                            |    2 +-
-> >  drivers/media/platform/Kconfig                   |    6 +-
-> >  drivers/media/platform/exynos4-is/Kconfig        |    5 +-
-> >  drivers/media/platform/s5p-tv/Kconfig            |    2 +-
-> >  drivers/thermal/exynos_thermal.c                 |    2 +-
-> >  drivers/usb/Kconfig                              |    1 +
-> >  drivers/usb/host/Kconfig                         |    2 +-
-> >  56 files changed, 142 insertions(+), 7284 deletions(-)
-> >  delete mode 100644 arch/arm/mach-exynos/dev-audio.c
-> >  delete mode 100644 arch/arm/mach-exynos/dev-uart.c
-> >  delete mode 100644 arch/arm/mach-exynos/include/mach/gpio.h
-> >  delete mode 100644 arch/arm/mach-exynos/include/mach/irqs.h
-> >  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-gpio.h
-> >  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> >  delete mode 100644 arch/arm/mach-exynos/mach-armlex4210.c
-> >  delete mode 100644 arch/arm/mach-exynos/mach-nuri.c
-> >  delete mode 100644 arch/arm/mach-exynos/mach-origen.c
-> >  delete mode 100644 arch/arm/mach-exynos/mach-smdk4x12.c
-> >  delete mode 100644 arch/arm/mach-exynos/mach-smdkv310.c
-> >  delete mode 100644 arch/arm/mach-exynos/mach-universal_c210.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-fimc.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-fimd0.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-i2c0.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-i2c1.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-i2c2.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-i2c3.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-i2c4.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-i2c5.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-i2c6.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-i2c7.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-keypad.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-sdhci-gpio.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-spi.c
-> >  delete mode 100644 arch/arm/mach-exynos/setup-usb-phy.c
-> > 
-> > --
-> > 1.8.2.1
+Thanks
+Kishon
