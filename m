@@ -1,91 +1,143 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 30/38] ARM: EXYNOS: Remove CONFIG_SOC_EXYNOS4412
-Date: Tue, 18 Jun 2013 11:31:47 +0200
-Message-ID: <3925237.eNXRl09cCa@amdc1227>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 36/38] ARM: EXYNOS: Use exynos_init_io() as map_io
+ callback
+Date: Tue, 18 Jun 2013 18:36:16 +0900
+Message-ID: <1b9d01ce6c07$47e42cf0$d7ac86d0$%kim@samsung.com>
 References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
- <1371486863-12398-31-git-send-email-t.figa@samsung.com>
- <1b9901ce6c04$9f4ff710$ddefe530$%kim@samsung.com>
+ <1371486863-12398-37-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:40184 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755519Ab3FRJb4 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:10686 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932114Ab3FRJgS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 05:31:56 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOL00FJG12MJO50@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 10:31:54 +0100 (BST)
-In-reply-to: <1b9901ce6c04$9f4ff710$ddefe530$%kim@samsung.com>
+	Tue, 18 Jun 2013 05:36:18 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOL00LD21C8TTD0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 18:36:17 +0900 (KST)
+In-reply-to: <1371486863-12398-37-git-send-email-t.figa@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Hi Kukjin,
-
-On Tuesday 18 of June 2013 18:17:14 Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > Exynos4212 and Exynos4412 SoCs differ only in number of ARM cores and
-> > there is no need to have separate Kconfig options for them, since they
-> > use the same code.
-> > 
-> > This patch removes CONFIG_SOC_EXYNOS4412, leaving CONFIG_SOC_EXYNOS4212
-> > as the one supporting both SoCs from this series.
-> > 
-> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> > 
-> >  arch/arm/mach-exynos/Kconfig             | 11 +----------
-> >  arch/arm/plat-samsung/include/plat/cpu.h |  6 +-----
-> >  2 files changed, 2 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> > index 65ca3ac..fcebdfb 100644
-> > --- a/arch/arm/mach-exynos/Kconfig
-> > +++ b/arch/arm/mach-exynos/Kconfig
-> > @@ -46,7 +46,7 @@ config CPU_EXYNOS4210
-> > 
-> >  	  Enable EXYNOS4210 CPU support
-> >  
-> >  config SOC_EXYNOS4212
-> > 
-> > -	bool "SAMSUNG EXYNOS4212"
-> > +	bool "SAMSUNG EXYNOS4212/4412"
-> > 
-> >  	default y
-> >  	depends on ARCH_EXYNOS4
-> >  	select PINCTRL_EXYNOS
-> > 
-> > @@ -56,15 +56,6 @@ config SOC_EXYNOS4212
-> > 
-> >  	help
-> >  	
-> >  	  Enable EXYNOS4212 SoC support
-> > 
-> > -config SOC_EXYNOS4412
-> > -	bool "SAMSUNG EXYNOS4412"
-> > -	default y
-> > -	depends on ARCH_EXYNOS4
-> > -	select PINCTRL_EXYNOS
-> > -	select SAMSUNG_DMADEV
-> > -	help
-> > -	  Enable EXYNOS4412 SoC support
-> > -
+Tomasz Figa wrote:
 > 
-> NAK, I'm still saying we need separation of exynos4212 and exynos4412
-> because there are differences, it is not implemented yet but will be
-> implemented in future. So would be helpful if we could keep them.
+> Since there is no board specific mapping needed on Exynos,
+> exynos_init_io() can be simplified and used as map_io callback for both
+> Exynos4 and Exynos5.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.c          | 5 +----
+>  arch/arm/mach-exynos/common.h          | 2 +-
+>  arch/arm/mach-exynos/mach-exynos4-dt.c | 7 +------
+>  arch/arm/mach-exynos/mach-exynos5-dt.c | 7 +------
+>  4 files changed, 4 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 91d457f..561890f 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -351,15 +351,12 @@ int __init exynos_fdt_map_chipid(unsigned long node,
+> const char *uname,
+>   * register the standard cpu IO areas
+>   */
+> 
+> -void __init exynos_init_io(struct map_desc *mach_desc, int size)
+> +void __init exynos_init_io(void)
+>  {
+>  	debug_ll_io_init();
+> 
+>  	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
+> 
+> -	if (mach_desc)
+> -		iotable_init(mach_desc, size);
+> -
+>  	/* detect cpu id and rev. */
+>  	s5p_init_cpu(S5P_VA_CHIPID);
+> 
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 1c83f95..38d45fd 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -19,7 +19,7 @@ void exynos_init_time(void);
+>  extern unsigned long xxti_f, xusbxti_f;
+> 
+>  struct map_desc;
+> -void exynos_init_io(struct map_desc *mach_desc, int size);
+> +void exynos_init_io(void);
+>  void exynos4_restart(char mode, const char *cmd);
+>  void exynos5_restart(char mode, const char *cmd);
+>  void exynos_init_late(void);
+> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-
+> exynos/mach-exynos4-dt.c
+> index df15726..0099c6c 100644
+> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> @@ -23,11 +23,6 @@
+> 
+>  #include "common.h"
+> 
+> -static void __init exynos4_dt_map_io(void)
+> -{
+> -	exynos_init_io(NULL, 0);
+> -}
+> -
+>  static void __init exynos4_dt_machine_init(void)
+>  {
+>  	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+> @@ -55,7 +50,7 @@ static void __init exynos4_reserve(void)
+>  DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device
+Tree)")
+>  	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+>  	.smp		= smp_ops(exynos_smp_ops),
+> -	.map_io		= exynos4_dt_map_io,
+> +	.map_io		= exynos_init_io,
+>  	.init_early	= exynos_firmware_init,
+>  	.init_machine	= exynos4_dt_machine_init,
+>  	.init_late	= exynos_init_late,
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-
+> exynos/mach-exynos5-dt.c
+> index 8777310..ab54770 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> @@ -27,11 +27,6 @@
+>  static u64 dma_mask64 = DMA_BIT_MASK(64);
+>  static u64 dma_mask32 = DMA_BIT_MASK(32);
+> 
+> -static void __init exynos5_dt_map_io(void)
+> -{
+> -	exynos_init_io(NULL, 0);
+> -}
+> -
+>  static int exynos5440_platform_notifier(struct notifier_block *nb,
+>  				  unsigned long event, void *__dev)
+>  {
+> @@ -105,7 +100,7 @@ static void __init exynos5_reserve(void)
+>  DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+>  	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+>  	.smp		= smp_ops(exynos_smp_ops),
+> -	.map_io		= exynos5_dt_map_io,
+> +	.map_io		= exynos_init_io,
+>  	.init_machine	= exynos5_dt_machine_init,
+>  	.init_late	= exynos_init_late,
+>  	.init_time	= exynos_init_time,
+> --
+> 1.8.2.1
 
-Sorry, but I don't understand how a Kconfig entry is related to separation of 
-those SoCs. It just selects which code needs to be compiled in, not what code 
-should be executed - this selection is done based on DeviceTree.
+Looks good to me, but I think, this change has been submitted by Arnd even
+though you did split, so the author should be Arnd. As you know, it is very
+important. Let me fix this and some patches when I apply. If any problems,
+let me know.
 
-Could you give a bit more in depth explanation for this?
-
-Best regards,
-Tomasz
+Thanks,
+- Kukjin
