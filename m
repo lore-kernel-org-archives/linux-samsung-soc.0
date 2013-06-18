@@ -1,93 +1,65 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
-Date: Tue, 18 Jun 2013 15:56:47 +0200
-Message-ID: <201306181556.47656.arnd@arndb.de>
-References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
- <7174350.I5qK0sQfHM@wuerfel> <000001ce6bd7$50146e60$f03d4b20$@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 06/10] clk: exynos5420: register clocks using common clock framework
+Date: Tue, 18 Jun 2013 16:01:16 +0200
+Message-ID: <201306181601.16795.arnd@arndb.de>
+References: <1371466836-4111-1-git-send-email-chander.kashyap@linaro.org> <3875156.5RFgBjMoqF@wuerfel> <CANuQgHHoUyE5e+MnnpzWLxcFNcD11FjYwx76pucw7peV4qmFkQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <000001ce6bd7$50146e60$f03d4b20$@samsung.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Andrew Murray' <andrew.murray-5wv7dgnIgG8@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.10]:52868 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932701Ab3FROBT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Jun 2013 10:01:19 -0400
+In-Reply-To: <CANuQgHHoUyE5e+MnnpzWLxcFNcD11FjYwx76pucw7peV4qmFkQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
 
-On Tuesday 18 June 2013, Jingoo Han wrote:
-> On Monday, June 17, 2013 9:45 PM, Arnd Bergmann wrote:
-> > On Monday 17 June 2013 18:45:52 Jingoo Han wrote:
-> > > On Friday, June 14, 2013 9:54 PM, Arnd Bergmann wrote:
-> > > >
-> > > > Please look up the documentation about inbound viewport and describe
-> > > > in a code comment what it does. I /assume/ that this is how DMA accesses
-> > > > from the bus get translated into AXI bus transactions. If so, you have
-> > > > to let the window translate addresses from RAM. If it's something else,
-> > > > then you should document what it is and how it needs to be set up.
-> > >
-> > > One of our hardware engineer confirmed it.
-> > > He said that these inbound functions are unnecessary.
-> > > Also, I checked that PCIe works properly without these functions.
-> > > So, I will remove these inbound functions.
-> > 
-> > Ok, good. So DMA just gets translated 1:1 independent of the
-> > inbound viewport? Have you tested this with PCI device using
-> > DMA?
-> 
-> According to our hardware engineer,
-> He said that
-> "That's correct. We tested it by doing a memory write from the device.
-> A device DMA is a series of memory r/w so I expect it to work same way."
-> 
-> Also, he thought that I already tested too, since it works after removing
-> the functions.
+On Tuesday 18 June 2013, Chander Kashyap wrote:
+> >> +       [Core Clocks]
+> >> +
+> >> +  Clock                      ID
+> >> +  ----------------------------
+> >> +
+> >> +  fin_pll            1
+> >> +
+> >> +  [Clock Gate for Special Clocks]
+> >> +
+> >> +  Clock                      ID
+> >> +  ----------------------------
+> >> +  sclk_uart0         128
+> >> +  sclk_uart1         129
+> >> +  sclk_uart2         130
+> >
+> >> +
+> >> +   [Peripheral Clock Gates]
+> >> +
+> >> +  Clock                      ID
+> >> +  ----------------------------
+> >> +
+> >> +  aclk66_peric               256
+> >> +  uart0                      257
+> >> +  uart1                      258
+> >
+> > It looks like these are actually separate things. Wouldn't it be more sensible
+> > to have separate device nodes for each of the lists and use a local index?
+> I have listed the parent clock first, then the child clocks, to
+> maintain  readability.
+> >
+> > What numbers are used in the data sheet?
+> I didn't get your point?
 
-It could be that the default setting just creates a 1:1 map so that would
-work, but if you tested it, that should be good enough.
+I would have expected three clock device nodes, one for fin_pll (presumably a
+fixed-rate clock?), one for "special clocks" and one for "peripheral clock
+gates", and a number space starting at '1' for each of them, rather than
+having a shared node and numbers starting at '1', '128' and '256', which looks
+a bit clumsy.
 
-> I looked at the pci-mvebu driver,
-> Then I fixed it as the pci-mvebu driver did.
-> Also, I added 'global_io_offset'.
-> 
-> @@ -909,6 +909,12 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
->                 if (restype == IORESOURCE_IO) {
->                         of_pci_range_to_resource(&range, np, &pp->io);
->                         pp->io.name = "I/O";
-> +                       pp->io.start = max_t(resource_size_t,
-> +                                               PCIBIOS_MIN_IO,
-> +                                               range.pci_addr + global_io_offset);
-> +                       pp->io.end = min_t(resource_size_t,
-> +                                               IO_SPACE_LIMIT,
-> +                                               range.pci_addr + range.size + global_io_offset);
->                         pp->config.io_size = resource_size(&pp->io);
->                         pp->config.io_bus_addr = range.pci_addr;
-> 
-> In this case, boot message is as below:
-> 
-> PCI host bridge to bus 0000:00
-> pci_bus 0000:00: root bus resource [io  0x1000-0x10000]
-> pci_bus 0000:00: root bus resource [mem 0x40011000-0x5fffffff]
-> [.....]
-> PCI host bridge to bus 0001:00
-> pci_bus 0001:00: root bus resource [io  0x10000-0x20000] (bus address [0x0000-0x10000])
-> pci_bus 0001:00: root bus resource [mem 0x60011000-0x7fffffff]
-
-Ok, very good.
-> 
-> I will remove a 'remove' callback. Is it OK?
-> Or what should I do?
-
-I think you should keep the remove function, but add a comment explaining that
-you don't allow module unload and that in order to allow it, the remove function
-will have to remove all pci buses and devices under the host bridge.
+Did you take the ID number definitions from a data sheet, or did you make up
+the numbers yourself for the purpose of defining a binding?
 
 	Arnd
