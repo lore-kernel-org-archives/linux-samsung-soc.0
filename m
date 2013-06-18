@@ -1,65 +1,66 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 06/10] clk: exynos5420: register clocks using common clock framework
-Date: Tue, 18 Jun 2013 16:01:16 +0200
-Message-ID: <201306181601.16795.arnd@arndb.de>
-References: <1371466836-4111-1-git-send-email-chander.kashyap@linaro.org> <3875156.5RFgBjMoqF@wuerfel> <CANuQgHHoUyE5e+MnnpzWLxcFNcD11FjYwx76pucw7peV4qmFkQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH 2/5] clk/exynos5420: add gate clock for tv sysmmu
+Date: Tue, 18 Jun 2013 20:03:15 +0530
+Message-ID: <1371565998-3642-3-git-send-email-rahul.sharma@samsung.com>
+References: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:52868 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932701Ab3FROBT (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:51131 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932855Ab3FROJr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 10:01:19 -0400
-In-Reply-To: <CANuQgHHoUyE5e+MnnpzWLxcFNcD11FjYwx76pucw7peV4qmFkQ@mail.gmail.com>
+	Tue, 18 Jun 2013 10:09:47 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOL00175E07N890@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 23:09:47 +0900 (KST)
+In-reply-to: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org
+Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Tuesday 18 June 2013, Chander Kashyap wrote:
-> >> +       [Core Clocks]
-> >> +
-> >> +  Clock                      ID
-> >> +  ----------------------------
-> >> +
-> >> +  fin_pll            1
-> >> +
-> >> +  [Clock Gate for Special Clocks]
-> >> +
-> >> +  Clock                      ID
-> >> +  ----------------------------
-> >> +  sclk_uart0         128
-> >> +  sclk_uart1         129
-> >> +  sclk_uart2         130
-> >
-> >> +
-> >> +   [Peripheral Clock Gates]
-> >> +
-> >> +  Clock                      ID
-> >> +  ----------------------------
-> >> +
-> >> +  aclk66_peric               256
-> >> +  uart0                      257
-> >> +  uart1                      258
-> >
-> > It looks like these are actually separate things. Wouldn't it be more sensible
-> > to have separate device nodes for each of the lists and use a local index?
-> I have listed the parent clock first, then the child clocks, to
-> maintain  readability.
-> >
-> > What numbers are used in the data sheet?
-> I didn't get your point?
+Adding sysmmu clock for tv for exynos5420.
 
-I would have expected three clock device nodes, one for fin_pll (presumably a
-fixed-rate clock?), one for "special clocks" and one for "peripheral clock
-gates", and a number space starting at '1' for each of them, rather than
-having a shared node and numbers starting at '1', '128' and '256', which looks
-a bit clumsy.
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+---
+ Documentation/devicetree/bindings/clock/exynos5420-clock.txt |    1 +
+ drivers/clk/samsung/clk-exynos5420.c                         |    3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Did you take the ID number definitions from a data sheet, or did you make up
-the numbers yourself for the purpose of defining a binding?
-
-	Arnd
+diff --git a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+index 596a368..f0b1ce0 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+@@ -180,6 +180,7 @@ clock which they consume.
+   fimc_lite3		495
+   aclk_g3d		500
+   g3d			501
++  smmu_tv		502
+ 
+ Example 1: An example of a clock controller node is listed below.
+ 
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 0945435..e8be481 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -109,7 +109,7 @@ enum exynos5420_clks {
+ 	aclk300_gscl = 460, smmu_gscl0, smmu_gscl1, gscl_wa, gscl_wb, gscl0,
+ 	gscl1, clk_3aa, aclk266_g2d = 470, sss, slim_sss, mdma0,
+ 	aclk333_g2d = 480, g2d, aclk333_432_gscl = 490, smmu_3aa, smmu_fimcl0,
+-	smmu_fimcl1, smmu_fimcl3, fimc_lite3, aclk_g3d = 500, g3d,
++	smmu_fimcl1, smmu_fimcl3, fimc_lite3, aclk_g3d = 500, g3d, smmu_tv,
+ 
+ 	nr_clks,
+ };
+@@ -696,6 +696,7 @@ struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+ 	GATE(smmu_mscl0, "smmu_mscl0", "aclk400_mscl", GATE_IP_MSCL, 8, 0, 0),
+ 	GATE(smmu_mscl1, "smmu_mscl1", "aclk400_mscl", GATE_IP_MSCL, 9, 0, 0),
+ 	GATE(smmu_mscl2, "smmu_mscl2", "aclk400_mscl", GATE_IP_MSCL, 10, 0, 0),
++	GATE(smmu_tv, "smmu_tv", "aclk200_disp1", GATE_IP_DISP1, 9, 0, 0),
+ };
+ 
+ static __initdata struct of_device_id ext_clk_match[] = {
+-- 
+1.7.10.4
