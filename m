@@ -1,361 +1,284 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
-Date: Tue, 18 Jun 2013 21:41:09 +0200
-Message-ID: <6439807.SaPozSx51p@flatron>
-References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com> <1370467100-10820-9-git-send-email-tomasz.figa@gmail.com> <20130617202910.GB5265@mithrandir>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 00/10] Samsung 2nd pull-request for v3.11
+Date: Wed, 19 Jun 2013 04:59:41 +0900
+Message-ID: <51C0BC2D.80705@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f44.google.com ([209.85.214.44]:44414 "EHLO
-	mail-bk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751301Ab3FRTlO (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:55755 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932908Ab3FRT7p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 15:41:14 -0400
-In-Reply-To: <20130617202910.GB5265@mithrandir>
+	Tue, 18 Jun 2013 15:59:45 -0400
+Received: by mail-pa0-f43.google.com with SMTP id hz11so4371734pad.30
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2013 12:59:44 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Monday 17 of June 2013 22:29:11 Thierry Reding wrote:
-> On Wed, Jun 05, 2013 at 11:18:13PM +0200, Tomasz Figa wrote:
-> > This patch introduces new Samsung PWM driver, which uses Samsung
-> > PWM/timer master driver to control shared parts of the hardware.
-> > 
-> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> Sorry for jumping in so late, I've been busy with other things lately.
-> 
-> > ---
-> > 
-> >  drivers/pwm/Makefile      |   1 +
-> >  drivers/pwm/pwm-samsung.c | 528
-> >  ++++++++++++++++++++++++++++++++++++++++++++++ 2 files changed, 529
-> >  insertions(+)
-> >  create mode 100644 drivers/pwm/pwm-samsung.c
-> > 
-> > diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> > index 229a599..833c3ac 100644
-> > --- a/drivers/pwm/Makefile
-> > +++ b/drivers/pwm/Makefile
-> > @@ -9,6 +9,7 @@ obj-$(CONFIG_PWM_MXS)		+= pwm-mxs.o
-> > 
-> >  obj-$(CONFIG_PWM_PUV3)		+= pwm-puv3.o
-> >  obj-$(CONFIG_PWM_PXA)		+= pwm-pxa.o
-> >  obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung-legacy.o
-> > 
-> > +obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
-> > 
-> >  obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
-> >  obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
-> >  obj-$(CONFIG_PWM_TIECAP)	+= pwm-tiecap.o
-> > 
-> > diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> > new file mode 100644
-> > index 0000000..61bed3d
-> > --- /dev/null
-> > +++ b/drivers/pwm/pwm-samsung.c
-> > @@ -0,0 +1,528 @@
-> > +/* drivers/pwm/pwm-samsung.c
-> 
-> Nit: this line can be dropped. It serves no purpose.
-> 
-> > + *
-> > + * Copyright (c) 2007 Ben Dooks
-> > + * Copyright (c) 2008 Simtec Electronics
-> > + *     Ben Dooks <ben@simtec.co.uk>, <ben-linux@fluff.org>
-> > + * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-> > + *
-> > + * PWM driver for Samsung SoCs
-> > + *
-> > + * This program is free software; you can redistribute it and/or
-> > modify + * it under the terms of the GNU General Public License as
-> > published by + * the Free Software Foundation; either version 2 of
-> > the License. +*/
-> 
-> Nit: the */ should align with the * above.
-> 
-> > +struct samsung_pwm_channel {
-> > +	unsigned long period_ns;
-> > +	unsigned long duty_ns;
-> > +	unsigned long tin_ns;
-> > +};
-> > +
-> > +struct samsung_pwm_chip {
-> > +	struct pwm_chip chip;
-> > +	struct samsung_pwm_variant variant;
-> > +	struct samsung_pwm_channel channels[SAMSUNG_PWM_NUM];
-> 
-> The new driver for Renesas did something similar, but I want to
-> discourage storing per-channel data within the chip structure.
-> 
-> The PWM framework provides a way to store this information along with
-> the PWM device (see pwm_{set,get}_chip_data()).
+Hi Arnd, Olof
 
-OK, this looks good, but in my case is not really useful. I need to access 
-those channel data in my suspend/resume callbacks and obviously I don't 
-have access to any pwm_device there. Any suggestions?
+This is 2nd pull-request for Samsung stuff for v3.11.
 
-Best regards,
-Tomasz
+This is including following branches.
+v3.11-next/cleanup-samsung
+v3.11-next/exynos-arch-2
+v3.11-next/exynos-dt-2
+v3.11-next/s3c24xx-dt-2
+v3.11-next/dt-n-clk-audio
+v3.11-next/remove-nondt-exynos-3
+v3.11-next/s3c24xx-pinctrl-2
+v3.11-next/soc-exynos5420
+v3.11-next/samsung-defconfig
+v3.11-next/non-critical-fixes
 
-> > +
-> > +	void __iomem *base;
-> > +	struct clk *base_clk;
-> > +	struct clk *tclk0;
-> > +	struct clk *tclk1;
-> > +};
-> > +#define to_samsung_pwm_chip(chip)	\
-> > +			container_of(chip, struct samsung_pwm_chip, chip)
-> 
-> Can you turn this into a static inline function please?
-> 
-> > +#ifndef CONFIG_CLKSRC_SAMSUNG_PWM
-> > +static DEFINE_SPINLOCK(samsung_pwm_lock);
-> > +#endif
-> 
-> Why is this lock global? Shouldn't it more correctly be part of
-> samsung_pwm_chip?
-> 
-> > +static void pwm_samsung_set_divisor(struct samsung_pwm_chip *pwm,
-> > +					unsigned int channel, u8 divisor)
-> 
-> Nit: please align arguments on subsequent lines with the first argument
-> of the first line. There's many more of these but I haven't mentioned
-> them all explicitly.
-> 
-> > +static inline int pwm_samsung_is_tdiv(struct samsung_pwm_chip *chip,
-> 
-> Any particular reason for making this inline?
-> 
-> > +static int pwm_samsung_config(struct pwm_chip *chip, struct
-> > pwm_device *pwm, +		int duty_ns, int period_ns)
-> > +{
-> > +	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
-> > +	struct samsung_pwm_channel *chan = &our_chip->channels[pwm-
->hwpwm];
-> > +	unsigned long tin_ns = chan->tin_ns;
-> > +	unsigned int tcon_chan = pwm->hwpwm;
-> > +	unsigned long tin_rate;
-> > +	unsigned long period;
-> > +	unsigned long flags;
-> > +	unsigned long tcnt;
-> 
-> Many of these unsigned long variable could be declared on a single line
-> to make the function shorter.
-> 
-> > +	long tcmp;
-> > +	u32 tcon;
-> > +
-> > +	/* We currently avoid using 64bit arithmetic by using the
-> > +	 * fact that anything faster than 1Hz is easily representable
-> > +	 * by 32bits. */
-> 
-> Can you turn these into proper block-style comments? Like so:
-> 
-> 	/*
-> 	 * We currently...
-> 	 * ...
-> 	 * by 32 bits.
-> 	 */
-> 
-> > +	if (period_ns > NSEC_PER_SEC || duty_ns > NSEC_PER_SEC)
-> > +		return -ERANGE;
-> 
-> Note that technically you only need to check period_ns because the core
-> already ensures that duty_ns <= period_ns.
-> 
-> > +static int pwm_samsung_set_polarity(struct pwm_chip *chip,
-> > +			struct pwm_device *pwm, enum pwm_polarity 
-polarity)
-> > +{
-> > +	struct samsung_pwm_chip *our_chip = to_samsung_pwm_chip(chip);
-> > +	unsigned int channel = pwm->hwpwm;
-> > +	unsigned long flags;
-> > +	u32 tcon;
-> > +
-> > +	if (channel > 0)
-> > +		++channel;
-> 
-> You have to repeat that in quite a few places, so I wonder if it'd make
-> sense to wrap it into a function and add a comment about why the
-> increment is necessary.
-> 
-> > +static struct pwm_ops pwm_samsung_ops = {
-> 
-> "static const" please.
-> 
-> > +#ifdef CONFIG_OF
-> > +static const struct samsung_pwm_variant s3c24xx_variant = {
-> > +	.bits		= 16,
-> > +	.div_base	= 1,
-> > +	.has_tint_cstat	= false,
-> > +	.tclk_mask	= (1 << 4),
-> > +};
-> > +
-> > +static const struct samsung_pwm_variant s3c64xx_variant = {
-> > +	.bits		= 32,
-> > +	.div_base	= 0,
-> > +	.has_tint_cstat	= true,
-> > +	.tclk_mask	= (1 << 7) | (1 << 6) | (1 << 5),
-> > +};
-> > +
-> > +static const struct samsung_pwm_variant s5p64x0_variant = {
-> > +	.bits		= 32,
-> > +	.div_base	= 0,
-> > +	.has_tint_cstat	= true,
-> > +	.tclk_mask	= 0,
-> > +};
-> > +
-> > +static const struct samsung_pwm_variant s5p_variant = {
-> > +	.bits		= 32,
-> > +	.div_base	= 0,
-> > +	.has_tint_cstat	= true,
-> > +	.tclk_mask	= (1 << 5),
-> > +};
-> > +
-> > +static const struct of_device_id samsung_pwm_matches[] = {
-> > +	{ .compatible = "samsung,s3c2410-pwm", .data = &s3c24xx_variant },
-> > +	{ .compatible = "samsung,s3c6400-pwm", .data = &s3c64xx_variant },
-> > +	{ .compatible = "samsung,s5p6440-pwm", .data = &s5p64x0_variant },
-> > +	{ .compatible = "samsung,s5pc100-pwm", .data = &s5p_variant },
-> > +	{ .compatible = "samsung,exynos4210-pwm", .data = &s5p64x0_variant
-> > },
-> > +	{},
-> > +};
-> > +#endif
-> > +
-> > +static int pwm_samsung_parse_dt(struct samsung_pwm_chip *chip)
-> > +{
-> > +	struct device_node *np = chip->chip.dev->of_node;
-> > +	const struct of_device_id *match;
-> > +	struct property *prop;
-> > +	const __be32 *cur;
-> > +	u32 val;
-> > +
-> > +	match = of_match_node(samsung_pwm_matches, np);
-> > +	if (!match)
-> > +		return -ENODEV;
-> > +
-> > +	memcpy(&chip->variant, match->data, sizeof(chip->variant));
-> > +
-> > +	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, 
-val)
-> > {
-> > +		if (val >= SAMSUNG_PWM_NUM) {
-> > +			pr_warning("%s: invalid channel index in 
-samsung,pwm-outputs
-> > property\n", +								
-__func__);
-> > +			continue;
-> > +		}
-> > +		chip->variant.output_mask |= 1 << val;
-> 
-> Could the output_mask be moved to the struct samsung_pwm_chip instead?
-> The reason I ask is because it would allow you to make the variant
-> constant throughout the driver.
-> 
-> > +static int pwm_samsung_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct samsung_pwm_chip *chip;
-> > +	struct resource *res;
-> > +	int ret;
-> > +
-> > +	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
-> > +	if (chip == NULL) {
-> > +		dev_err(dev, "failed to allocate driver data\n");
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> > +	chip->chip.dev = &pdev->dev;
-> > +	chip->chip.ops = &pwm_samsung_ops;
-> > +	chip->chip.base = -1;
-> > +	chip->chip.npwm = SAMSUNG_PWM_NUM;
-> > +
-> > +	if (pdev->dev.of_node) {
-> 
-> Maybe add an IS_ENABLED(CONFIG_OF) check here? That'd allow all OF-
-> related code to be thrown away if OF isn't selected.
-> 
-> > +		ret = pwm_samsung_parse_dt(chip);
-> > +		if (ret)
-> > +			return ret;
-> > +
-> > +		chip->chip.of_xlate = of_pwm_xlate_with_flags;
-> > +		chip->chip.of_pwm_n_cells = 3;
-> > +	} else {
-> > +		if (!pdev->dev.platform_data) {
-> > +			dev_err(&pdev->dev, "no platform data 
-specified\n");
-> > +			return -EINVAL;
-> > +		}
-> > +
-> > +		memcpy(&chip->variant, pdev->dev.platform_data,
-> > +							sizeof(chip-
->variant));
-> > +	}
-> 
-> Obviously this needs some modification in order for the variant to
-> become constant. But I think you can easily do so by making the driver
-> match using the platform_driver's id_table field, similar to how the
-> matching is done for OF.
-> 
-> > +	chip->base = devm_request_and_ioremap(&pdev->dev, res);
-> > +	if (!chip->base) {
-> > +		dev_err(&pdev->dev, "failed to request and map 
-registers\n");
-> > +		return -ENOMEM;
-> > +	}
-> 
-> devm_request_and_ioremap() is now deprecated and in the process of being
-> removed. You should use devm_ioremap_resource() instead.
-> 
-> > +
-> > +	chip->base_clk = devm_clk_get(&pdev->dev, "timers");
-> > +	if (IS_ERR(chip->base_clk)) {
-> > +		dev_err(dev, "failed to get timer base clk\n");
-> > +		return PTR_ERR(chip->base_clk);
-> > +	}
-> > +	clk_prepare_enable(chip->base_clk);
-> 
-> You need to check the return value of clk_prepare_enable(). And if I was
-> very pedantic, there should be a blank line before this one.
-> 
-> > +	ret = pwmchip_add(&chip->chip);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "failed to register pwm\n");
-> 
-> "failed to register PWM chip" please.
-> 
-> > +		goto err_clk_disable;
-> > +	}
-> > +
-> > +	dev_info(dev, "base_clk at %lu, tclk0 at %lu, tclk1 at %lu\n",
-> > +		clk_get_rate(chip->base_clk),
-> > +		!IS_ERR(chip->tclk0) ? clk_get_rate(chip->tclk0) : 0,
-> > +		!IS_ERR(chip->tclk1) ? clk_get_rate(chip->tclk1) : 0);
-> > +
-> > +	platform_set_drvdata(pdev, chip);
-> > +
-> > +	return 0;
-> > +
-> > +err_clk_disable:
-> > +	clk_disable_unprepare(chip->base_clk);
-> > +
-> > +	return ret;
-> 
-> There's only a single case where this can actually happen, so I don't
-> think you need the label here. Just put the clk_disable_unprepare() call
-> and the return statement where you jump to the label.
-> 
-> > +#ifdef CONFIG_PM
-> 
-> I think this should really be CONFIG_PM_SLEEP.
-> 
-> > +static struct dev_pm_ops pwm_samsung_pm_ops = {
-> 
-> "static const" please.
-> 
-> Thierry
+Just note, for remove-nondt-exynos-3 branch, small merge conflict will 
+be happened. I added my resolution in the pull-request.
+
+If any problems, please kindly let me know.
+
+Thanks,
+- Kukjin
+
+
+Amit Daniel Kachhap (1):
+       ARM: dts: Add more opp levels in exynos5440
+
+Arnd Bergmann (4):
+       ARM: EXYNOS: Remove custom init_irq callbacks
+       ARM: EXYNOS: Use exynos_init_io() as map_io callback
+       ARM: EXYNOS: Remove legacy L2X0 initialization
+       ARM: EXYNOS: Remove remaining dead code after non-DT support removal
+
+Chander Kashyap (10):
+       ARM: dts: fork out common EXYNOS5 nodes
+       ARM: dts: list the CPU nodes for EXYNOS5250
+       ARM: EXYNOS: Add support for EXYNOS5420 SoC
+       serial: samsung: select EXYNOS specific driver data if 
+ARCH_EXYNOS is defined
+       ARM: EXYNOS: use four additional chipid bits to identify EXYNOS 
+family
+       clk: exynos5420: register clocks using common clock framework
+       ARM: dts: Add initial device tree support for EXYNOS5420
+       clocksource: exynos_mct: use (request/free)_irq calls for local 
+timer registration
+       ARM: EXYNOS: add secondary CPU boot base location for EXYNOS5420
+       ARM: EXYNOS: extend soft-reset support for EXYNOS5420
+
+Doug Anderson (3):
+       ARM: dts: Enable RTC node for exynos5250-snow
+       MAINTAINERS: Add exynos filename match to ARM/S5P EXYNOS ARM 
+ARCHITECTURES
+       ARM: EXYNOS: Select PINCTRL_EXYNOS for exynos4/5 at chip level
+
+Giridhar Maruthy (1):
+       ARM: dts: Removing pdma for exynos5440
+
+Girish K S (1):
+       ARM: dts: enable spi for EXYNOS5440 SOC
+
+Heiko Stuebner (2):
+       ARM: S3C24XX: update uart addresses in s3c2416-dt auxdata
+       pinctrl: s3c24xx: use correct header for chained_irq functions
+
+Kukjin Kim (1):
+       ARM: EXYNOS: no more support non-DT for EXYNOS SoCs
+
+Leela Krishna Amudala (2):
+       Documentation: Add examples to samsung-pinctrl device tree 
+bindings documentation
+       ARM: EXYNOS: call scu_enable() only in case of cortex-A9 processor
+
+Padmavathi Venna (7):
+       ARM: dts: Add wm8994 regulator support on smdk5250
+       ARM: dts: use #include for all device trees for Samsung
+       clk: samsung: register audio subsystem clocks using common clock 
+framework
+       ARM: dts: add Exynos audio subsystem clock controller node
+       ARM: dts: add clock provider information for i2s controllers in 
+Exynos5250
+       ARM: dts: Update Samsung I2S documentation
+       clk: exynos5250: Add enum entries for divider clock of i2s1 and i2s2
+
+Sachin Kamat (3):
+       ARM: dts: Add PWM related pinctrl entries for exynos4210
+       ARM: dts: Add LCD related pinctrl entries for exynos4210
+       ARM: dts: Add FIMD node to Origen4210 board
+
+Subash Patel (1):
+       ARM: dts: update bootargs to support 8GiB for SSDK5440 and SD5v1
+
+Tomasz Figa (37):
+       ARM: EXYNOS: Remove unused board files
+       ARM: EXYNOS: Make ARCH_EXYNOS select USE_OF
+       ARM: SAMSUNG: Introduce SAMSUNG_ATAGS Kconfig entry
+       ARM: EXYNOS: Remove legacy PMU initialization code
+       ARM: EXYNOS: Remove legacy EINT initialization code
+       ARM: EXYNOS: Remove legacy UART initialization code
+       ARM: EXYNOS: Remove legacy dev- and setup- files
+       ARM: EXYNOS: Remove legacy interrupt initialization code
+       ARM: EXYNOS: Remove legacy timer initialization code
+       ARM: EXYNOS: Remove platform device initialization
+       ARM: EXYNOS: Remove legacy mapping of chip ID block
+       ARM: EXYNOS: Remove check for device tree presence
+       ARM: EXYNOS: Remove legacy power domain registration code
+       ARM: SAMSUNG: Introduce GPIO_SAMSUNG Kconfig entry
+       ARM: EXYNOS: Provide compatibility stubs for PM code in pm-core.h 
+header
+       ARM: SAMSUNG: Compile legacy IRQ and GPIO PM code only with ATAGS 
+support
+       platform: Check for ARCH_EXYNOS separately
+       USB: Check for ARCH_EXYNOS separately
+       ARM: EXYNOS: Decouple ARCH_EXYNOS from PLAT_S5P
+       ARM: SAMSUNG: Include most of mach/ headers conditionally
+       ARM: EXYNOS: Do not select legacy Kconfig symbols any more
+       ARM: EXYNOS: Remove setup-i2c0.c
+       ARM: EXYNOS: Remove mach/gpio.h
+       ARM: EXYNOS: Remove mach/regs-gpio.h header
+       ARM: SAMSUNG: Make legacy MFC support code depend on SAMSUNG_ATAGS
+       ARM: EXYNOS: Select SPARSE_IRQ for Exynos
+       ARM: EXYNOS: Remove mach/irqs.h header
+       ARM: EXYNOS: Remove unused base addresses from mach/map.h header
+       thermal: exynos: Support both EXYNOS4X12 SoCs
+       ARM: EXYNOS: Remove mach/regs-usb-phy.h header
+       ARM: S5P64X0: Use common uncompress.h part for plat-samsung
+       watchdog: s3c2410_wdt: Use local register definitions
+       ARM: SAMSUNG: Use local definitions of watchdog registers
+       ARM: SAMSUNG: Add watchdog reset driver
+       ARM: SAMSUNG: Let platforms use the new watchdog reset driver
+       ARM: SAMSUNG: Remove legacy watchdog reset code
+       ARM: SAMSUNG: Remove unused plat/regs-watchdog.h header
+
+Tushar Behera (4):
+       ARM: dts: Enable RTC node for Arndale
+       ARM: exynos_defconfig: Enable GPIO buttons and RTC drivers
+       ARM: dts: Set BUCK7 as always on for Origen board
+       ARM: SAMSUNG: Consolidate uncompress subroutine
+
+Vivek Gautam (1):
+       ARM: EXYNOS: Enable XHCI support on exynos5
+
+
+  .../devicetree/bindings/clock/clk-exynos-audss.txt |   64 +
+  .../devicetree/bindings/clock/exynos5420-clock.txt |  201 +++
+  .../bindings/pinctrl/samsung-pinctrl.txt           |   44 +-
+  .../devicetree/bindings/sound/samsung-i2s.txt      |   46 +-
+  MAINTAINERS                                        |    1 +
+  arch/arm/Kconfig                                   |   18 +-
+  arch/arm/Makefile                                  |    1 +
+  arch/arm/boot/dts/Makefile                         |    1 +
+  arch/arm/boot/dts/exynos4.dtsi                     |    2 +-
+  arch/arm/boot/dts/exynos4210-origen.dts            |   24 +-
+  arch/arm/boot/dts/exynos4210-pinctrl.dtsi          |   89 ++
+  arch/arm/boot/dts/exynos4210-smdkv310.dts          |    2 +-
+  arch/arm/boot/dts/exynos4210-trats.dts             |    2 +-
+  arch/arm/boot/dts/exynos4210-universal_c210.dts    |    2 +-
+  arch/arm/boot/dts/exynos4210.dtsi                  |    4 +-
+  arch/arm/boot/dts/exynos4212.dtsi                  |    2 +-
+  arch/arm/boot/dts/exynos4412-odroidx.dts           |    2 +-
+  arch/arm/boot/dts/exynos4412-origen.dts            |    2 +-
+  arch/arm/boot/dts/exynos4412-smdk4412.dts          |    2 +-
+  arch/arm/boot/dts/exynos4412.dtsi                  |    2 +-
+  arch/arm/boot/dts/exynos4x12.dtsi                  |    4 +-
+  arch/arm/boot/dts/exynos5.dtsi                     |  111 ++
+  arch/arm/boot/dts/exynos5250-arndale.dts           |    5 +-
+  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   39 +-
+  arch/arm/boot/dts/exynos5250-snow.dts              |    8 +-
+  arch/arm/boot/dts/exynos5250.dtsi                  |   92 +-
+  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33 +
+  arch/arm/boot/dts/exynos5420.dtsi                  |  103 ++
+  arch/arm/boot/dts/exynos5440-sd5v1.dts             |    4 +-
+  arch/arm/boot/dts/exynos5440-ssdk5440.dts          |   43 +-
+  arch/arm/boot/dts/exynos5440.dtsi                  |   43 +-
+  arch/arm/boot/dts/s3c2416-smdk2416.dts             |    2 +-
+  arch/arm/boot/dts/s3c2416.dtsi                     |    4 +-
+  arch/arm/boot/dts/s3c24xx.dtsi                     |    2 +-
+  arch/arm/configs/exynos_defconfig                  |    3 +
+  arch/arm/mach-exynos/Kconfig                       |  360 +-----
+  arch/arm/mach-exynos/Makefile                      |   33 -
+  arch/arm/mach-exynos/common.c                      |  565 +--------
+  arch/arm/mach-exynos/common.h                      |    4 +-
+  arch/arm/mach-exynos/dev-ahci.c                    |  255 ----
+  arch/arm/mach-exynos/dev-audio.c                   |  254 ----
+  arch/arm/mach-exynos/dev-ohci.c                    |   52 -
+  arch/arm/mach-exynos/dev-uart.c                    |   55 -
+  arch/arm/mach-exynos/dma.c                         |  322 -----
+  arch/arm/mach-exynos/firmware.c                    |   22 +-
+  arch/arm/mach-exynos/include/mach/gpio.h           |  289 ----
+  arch/arm/mach-exynos/include/mach/irqs.h           |  476 -------
+  arch/arm/mach-exynos/include/mach/map.h            |  214 ---
+  arch/arm/mach-exynos/include/mach/pm-core.h        |   12 +-
+  arch/arm/mach-exynos/include/mach/regs-gpio.h      |   40 -
+  arch/arm/mach-exynos/include/mach/regs-usb-phy.h   |   74 --
+  arch/arm/mach-exynos/include/mach/uncompress.h     |   10 +-
+  arch/arm/mach-exynos/mach-armlex4210.c             |  207 ---
+  arch/arm/mach-exynos/mach-exynos4-dt.c             |    8 +-
+  arch/arm/mach-exynos/mach-exynos5-dt.c             |    9 +-
+  arch/arm/mach-exynos/mach-nuri.c                   | 1388 
+--------------------
+  arch/arm/mach-exynos/mach-origen.c                 |  823 ------------
+  arch/arm/mach-exynos/mach-smdk4x12.c               |  396 ------
+  arch/arm/mach-exynos/mach-smdkv310.c               |  444 -------
+  arch/arm/mach-exynos/mach-universal_c210.c         | 1159 ----------------
+  arch/arm/mach-exynos/platsmp.c                     |   14 +-
+  arch/arm/mach-exynos/pm.c                          |    1 -
+  arch/arm/mach-exynos/pm_domains.c                  |  101 +--
+  arch/arm/mach-exynos/setup-fimc.c                  |   44 -
+  arch/arm/mach-exynos/setup-fimd0.c                 |   43 -
+  arch/arm/mach-exynos/setup-i2c0.c                  |   29 -
+  arch/arm/mach-exynos/setup-i2c1.c                  |   23 -
+  arch/arm/mach-exynos/setup-i2c2.c                  |   23 -
+  arch/arm/mach-exynos/setup-i2c3.c                  |   23 -
+  arch/arm/mach-exynos/setup-i2c4.c                  |   23 -
+  arch/arm/mach-exynos/setup-i2c5.c                  |   23 -
+  arch/arm/mach-exynos/setup-i2c6.c                  |   23 -
+  arch/arm/mach-exynos/setup-i2c7.c                  |   23 -
+  arch/arm/mach-exynos/setup-keypad.c                |   36 -
+  arch/arm/mach-exynos/setup-sdhci-gpio.c            |  152 ---
+  arch/arm/mach-exynos/setup-spi.c                   |   45 -
+  arch/arm/mach-exynos/setup-usb-phy.c               |  223 ----
+  arch/arm/mach-s3c24xx/Kconfig                      |    2 +
+  arch/arm/mach-s3c24xx/include/mach/uncompress.h    |    3 +
+  arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |    8 +-
+  arch/arm/mach-s3c24xx/s3c2410.c                    |    3 +-
+  arch/arm/mach-s3c24xx/s3c244x.c                    |    3 +-
+  arch/arm/mach-s3c64xx/common.c                     |    8 +-
+  arch/arm/mach-s3c64xx/include/mach/uncompress.h    |    3 +
+  arch/arm/mach-s5p64x0/common.c                     |    4 +-
+  arch/arm/mach-s5p64x0/include/mach/uncompress.h    |  162 +---
+  arch/arm/mach-s5pc100/common.c                     |    3 +-
+  arch/arm/mach-s5pc100/include/mach/uncompress.h    |    2 +
+  arch/arm/mach-s5pv210/include/mach/uncompress.h    |    2 +
+  arch/arm/plat-samsung/Kconfig                      |   53 +-
+  arch/arm/plat-samsung/Makefile                     |   12 +-
+  arch/arm/plat-samsung/include/plat/cpu.h           |    8 +
+  arch/arm/plat-samsung/include/plat/pm.h            |    5 +
+  arch/arm/plat-samsung/include/plat/regs-watchdog.h |   41 -
+  arch/arm/plat-samsung/include/plat/uncompress.h    |   21 +-
+  .../arm/plat-samsung/include/plat/watchdog-reset.h |   38 +-
+  arch/arm/plat-samsung/init.c                       |    8 +-
+  arch/arm/plat-samsung/pm-gpio.c                    |    5 +-
+  arch/arm/plat-samsung/pm.c                         |    8 +-
+  arch/arm/plat-samsung/s5p-dev-mfc.c                |   11 +-
+  arch/arm/plat-samsung/watchdog-reset.c             |   97 ++
+  drivers/clk/samsung/Makefile                       |    2 +
+  drivers/clk/samsung/clk-exynos-audss.c             |  133 ++
+  drivers/clk/samsung/clk-exynos5250.c               |    5 +-
+  drivers/clk/samsung/clk-exynos5420.c               |  762 +++++++++++
+  drivers/clocksource/exynos_mct.c                   |   35 +-
+  drivers/gpio/Kconfig                               |    7 +
+  drivers/gpio/Makefile                              |    2 +-
+  drivers/media/platform/Kconfig                     |    6 +-
+  drivers/media/platform/exynos4-is/Kconfig          |    3 +-
+  drivers/media/platform/s5p-tv/Kconfig              |    2 +-
+  drivers/pinctrl/Kconfig                            |    5 +-
+  drivers/pinctrl/pinctrl-s3c24xx.c                  |    3 +-
+  drivers/thermal/exynos_thermal.c                   |    3 +-
+  drivers/tty/serial/samsung.c                       |    4 +-
+  drivers/usb/Kconfig                                |    1 +
+  drivers/usb/host/Kconfig                           |    2 +-
+  drivers/watchdog/s3c2410_wdt.c                     |   17 +-
+  include/dt-bindings/clk/exynos-audss-clk.h         |   25 +
+  119 files changed, 2142 insertions(+), 8712 deletions(-)
