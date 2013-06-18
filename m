@@ -1,64 +1,58 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: exynos-drm-next todo work.
-Date: Tue, 18 Jun 2013 15:33:25 +0900
-Message-ID: <007401ce6bed$bc802920$35807b60$%dae@samsung.com>
+From: Girish KS <girishks2000@gmail.com>
+Subject: Re: [PATCH v4 04/10] serial: samsung: select Exynos specific driver
+ data if ARCH_EXYNOS is defined
+Date: Tue, 18 Jun 2013 12:20:54 +0530
+Message-ID: <CAKrE-KcvV5dQz0vUb-1y1msoron2Z=RjSnH1uxy8rzMtn8iChA@mail.gmail.com>
+References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
+	<1371536962-13322-5-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:30026 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751544Ab3FRGd3 (ORCPT
+Received: from mail-lb0-f171.google.com ([209.85.217.171]:34370 "EHLO
+	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752049Ab3FRGu4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 02:33:29 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOK00LLHSS3TT20@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 15:33:25 +0900 (KST)
-Content-language: ko
+	Tue, 18 Jun 2013 02:50:56 -0400
+In-Reply-To: <1371536962-13322-5-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: 'DRI mailing list' <dri-devel@lists.freedesktop.org>
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, kgene.kim@samsung.com, linux-serial@vger.kernel.org, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, s.nawrocki@samsung.com
 
-Hi all,
-
-I'd like to discuss Exynos DRM TODO work.
-
-There are features we have to solve and implement. The purpose of this email
-is to share what we have to do so that other guys can be involved without
-duplicated work.
-
-1. gscaler based on KMS interfaces - exynos5250 and later use the gscaler
-device instead of VP device. And now exynos drm driver has gscaler module as
-a sub module of IPP framework. However, this gscaler module is very specific
-to IPP framework so it's not easy to reuse this module. So maybe we need so
-many works for it.
-
-Video play back path using post process (AS IS):
-	MFC--------IPP--------KMS---------FIMD or HDMI
-
-Ideal video play back path using post process (TO BE):
-	MFC--------KMS--------FIMD or HDMI
-
-The above scenario is to send decoded image data (YUV format) to display
-device via post process. However, we don't really need to use IPP framework
-in case of using gscaler as VP. All we have to do is to call kms interface
-(setplane) for it like we did before.
-
-2. More features for HDMI sound support - we need to implement Exynos ALSA
-SoC DAI driver for HDMI audio (CPU DAI and CODEC DAI). Sampling freq, bit
-rate, and so on from user side should be sent to drm hdmi driver via ALSA
-interface and the ALSA SoC DAI driver. As of now, it seems like that we
-should implement this driver like OMAP does because there is no common
-framework for interfacing between ALSA SoC DAI driver and DRM HDMI driver:
-in case of OMAP, it seems like that ALSA SoC audio driver calls interfaces
-of DSS driver directly. I think we could implement ALSA SoC DAI driver in
-more generic way if we first implement common framework for it.
-
-Welcome to any volunteer and other opinions.
-
-Thanks,
-Inki Dae
+On Tue, Jun 18, 2013 at 11:59 AM, Chander Kashyap
+<chander.kashyap@linaro.org> wrote:
+> All Exynos4/5 SoCs share a common driver data in the samsung serial
+> driver. Hence, let the driver data inclusion be based on ARCH_EXYNOS
+> instead of SOC specific definition.
+>
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  drivers/tty/serial/samsung.c |    4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index 2552c7f..e70d19a 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -1703,9 +1703,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
+>  #define S5PV210_SERIAL_DRV_DATA        (kernel_ulong_t)NULL
+>  #endif
+>
+> -#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212) || \
+> -       defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250) || \
+> -       defined(CONFIG_SOC_EXYNOS5440)
+> +#if defined(CONFIG_ARCH_EXYNOS)
+>  static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
+>         .info = &(struct s3c24xx_uart_info) {
+>                 .name           = "Samsung Exynos4 UART",
+Looks good to me
+Reviewed by: Girish K S <ks.giri@samsung.com>
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
