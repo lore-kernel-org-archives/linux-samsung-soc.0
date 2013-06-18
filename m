@@ -1,124 +1,62 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v4 00/10] ARM: Exynos: Add Exynos5420 SoC support
-Date: Tue, 18 Jun 2013 16:02:51 +0530
-Message-ID: <CANuQgHHrTg7rtWVC48qxOBBrP69YL9J5U1J4gwq=EAm4Rp6yqw@mail.gmail.com>
-References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
-	<1c0c01ce6c0e$51eeceb0$f5cc6c10$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/2] Enable config options to enable S2R wakeup
+Date: Tue, 18 Jun 2013 19:58:27 +0900
+Message-ID: <1c3201ce6c12$c2c9f6b0$485de410$%kim@samsung.com>
+References: <1371442686-24999-1-git-send-email-tushar.behera@linaro.org>
+ <20130617172506.GD28497@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:52932 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754164Ab3FRKcv (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:42037 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751436Ab3FRK6e (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 06:32:51 -0400
-Received: by mail-oa0-f47.google.com with SMTP id m1so4718030oag.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2013 03:32:51 -0700 (PDT)
-In-Reply-To: <1c0c01ce6c0e$51eeceb0$f5cc6c10$%kim@samsung.com>
+	Tue, 18 Jun 2013 06:58:34 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOL007N555F13P0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 19:58:27 +0900 (KST)
+In-reply-to: <20130617172506.GD28497@quad.lixom.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, Mark Rutland <mark.rutland@arm.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
+To: 'Olof Johansson' <olof@lixom.net>, 'Tushar Behera' <tushar.behera@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-On 18 June 2013 15:56, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Chander Kashyap wrote:
->>
->> Exynos5420 is new SoC in Samsung's Exynos5 SoC series. This series adds
->> initial support for this SoC.
->>
->> Changes since v3:
->> 1. Updated the max cpu clock frequency in dt node.
->> 2. Sorted DT nodes alphabetically as suggested by Kukjin.
->> 3. Removed the duplicate commit log comment in:
->>    "clocksource: exynos_mct: use (request/free)_irq calls for local timer
->>    registration"
->> 4. Added comment for Exynos5440 in commit log of the patch:
->>    "ARM: dts: fork out common Exynos5 nodes"
->>
->> Changes since v2:
->>
->> 1. Renamed oscclk to fin_pll, in order to keep it consistent with
->>    Exynos4/Exynos5
->> 2. Pass memory as single bank rather than splitting in 256MB size banks.
->>
->> Changes since v1:
->>
->> 1. As not-dt platforms will not be supported from 3.11 onwards, following
->>    patches from previous patch series are dropped:
->>    "irqchip: exynos-combiner: set irq base as 256 for Exynos5420"
->>    "ARM: Exynos: initialize l2x0 cache controller only for cortex-a9 based
->> SoCs"
->> 2. Added device type property in cpu node in the following patch:
->>    "ARM: dts: list the CPU nodes for Exynos5250
->> 3. Sorted out the nodes listed in based upon the physical addresses as
->> suggested
->>    by Tomasz Figa.
->> 4. As Tomasz is going to consolidate the secondary cpu power register
->> address
->>    calculation in all possible scnarios, hence dropped the following
-> patch:
->>   "ARM: Exynos: fix secondary cpu power control register address
->> calculation"
->> 5. Replaced the setup/remove)_irq calls with (request/free)_irq calls as
->>    suggested by Mark Rutland in patch:
->>    "clocksource: exynos_mct: use (request/free)_irq calls for local timer
->>     registration"
->> 6. Changed the registration of epll and rpll from pll35xx to pl36xx.
->> 7. Changed driver data selection for serial port, based on ARCH_EXYNOS.
->> 8. Changed the interrupt cells from 2 to 1 as suggested by Tomasz Figa.
->>
->> Chander Kashyap (10):
->>   ARM: dts: fork out common Exynos5 nodes
->>   ARM: dts: list the CPU nodes for Exynos5250
->>   ARM: Exynos: Add support for Exynos5420 SoC
->>   serial: samsung: select Exynos specific driver data if ARCH_EXYNOS is
->>     defined
->>   ARM: Exynos: use four additional chipid bits to identify Exynos
->>     family
->>   clk: exynos5420: register clocks using common clock framework
->>   ARM: dts: Add initial device tree support for Exynos5420
->>   clocksource: exynos_mct: use (request/free)_irq calls for local timer
->>     registration
->>   ARM: Exynos: add secondary CPU boot base location for Exynos5420
->>   ARM: Exynos: extend soft-reset support for Exynos5420
->>
->>  .../devicetree/bindings/clock/exynos5420-clock.txt |  201 ++++++
->>  arch/arm/boot/dts/Makefile                         |    1 +
->>  arch/arm/boot/dts/exynos5.dtsi                     |  111 +++
->>  arch/arm/boot/dts/exynos5250.dtsi                  |   78 +-
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33 +
->>  arch/arm/boot/dts/exynos5420.dtsi                  |  103 +++
->>  arch/arm/mach-exynos/Kconfig                       |   10 +
->>  arch/arm/mach-exynos/common.c                      |   18 +-
->>  arch/arm/mach-exynos/include/mach/uncompress.h     |    7 +-
->>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    1 +
->>  arch/arm/mach-exynos/platsmp.c                     |   12 +-
->>  arch/arm/plat-samsung/include/plat/cpu.h           |    8 +
->>  drivers/clk/samsung/Makefile                       |    1 +
->>  drivers/clk/samsung/clk-exynos5420.c               |  762
->> ++++++++++++++++++++
->>  drivers/clocksource/exynos_mct.c                   |   35 +-
->>  drivers/tty/serial/samsung.c                       |    4 +-
->>  16 files changed, 1279 insertions(+), 106 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/clock/exynos5420-
->> clock.txt
->>  create mode 100644 arch/arm/boot/dts/exynos5.dtsi
->>  create mode 100644 arch/arm/boot/dts/exynos5420-smdk5420.dts
->>  create mode 100644 arch/arm/boot/dts/exynos5420.dtsi
->>  create mode 100644 drivers/clk/samsung/clk-exynos5420.c
->>
->> --
->> 1.7.9.5
->
-> Looks good to me, will apply with whole 'reviewed-by' comments.
-Thanks Kukjin.
->
-> Thanks,
-> - Kukjin
->
-
-
-
---
-with warm regards,
-Chander Kashyap
+Olof Johansson wrote:
+> 
+> On Mon, Jun 17, 2013 at 09:48:04AM +0530, Tushar Behera wrote:
+> > RTC source is very useful in testing S2R wakeup. Also enable
+> > gpio-keys driver in case someone wants wakeup the board using
+> > the buttons.
+> >
+> > S2R wakeup feature on Arndale depends on following two additional
+> > patches.
+> >
+> > 1. [PATCH 1/8] ARM: EXYNOS: use generic cpu idle function for wfi
+> >  http://permalink.gmane.org/gmane.linux.linaro.devel/15871
+> >
+> > 2. [PATCH V2] ARM: dts: Enable RTC node for Arndale
+> > (Posted a couple of minutes back, link not available yet)
+> >
+> > S2R wakeup tested on Arndale board with an initramfs through
+> > both RTC wakeup alarm and GPIO button interrupt.
+> >
+> > Tushar Behera (2):
+> >   ARM: exynos_defconfig: Enable GPIO buttons driver
+> >   ARM: exynos_defconfig: Enable RTC driver
+> >
+> >  arch/arm/configs/exynos_defconfig |    3 +++
+> >  1 file changed, 3 insertions(+)
+> 
+> Acked-by: Olof Johansson <olof@lixom.net>
+> 
+> ..  but I don't see a need to keep them as two separate commit, just
+> squash
+> them when applying, Kukjin.
+> 
+Sure, I will. Thanks.
+- Kukjin
