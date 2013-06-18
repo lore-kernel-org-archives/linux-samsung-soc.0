@@ -1,70 +1,198 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v4 04/10] serial: samsung: select Exynos specific driver
- data if ARCH_EXYNOS is defined
-Date: Tue, 18 Jun 2013 15:44:14 +0530
-Message-ID: <CANuQgHGhmq+jJV_2ciPAHztnEwLqvD9V_80KVMPy5t6XPw-rZA@mail.gmail.com>
-References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
-	<1371536962-13322-5-git-send-email-chander.kashyap@linaro.org>
-	<CAKrE-KcvV5dQz0vUb-1y1msoron2Z=RjSnH1uxy8rzMtn8iChA@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 00/38] Thirty eight patches big Exynos cleanup
+Date: Tue, 18 Jun 2013 19:23:29 +0900
+Message-ID: <1c0b01ce6c0d$e0475930$a0d60b90$%kim@samsung.com>
+References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:41506 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755716Ab3FRKOP (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:27253 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755917Ab3FRKXg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 06:14:15 -0400
-Received: by mail-ob0-f176.google.com with SMTP id v19so4351274obq.35
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2013 03:14:14 -0700 (PDT)
-In-Reply-To: <CAKrE-KcvV5dQz0vUb-1y1msoron2Z=RjSnH1uxy8rzMtn8iChA@mail.gmail.com>
+	Tue, 18 Jun 2013 06:23:36 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOL001P63J4N820@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 19:23:29 +0900 (KST)
+In-reply-to: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Girish KS <girishks2000@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
+To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-On 18 June 2013 12:20, Girish KS <girishks2000@gmail.com> wrote:
-> On Tue, Jun 18, 2013 at 11:59 AM, Chander Kashyap
-> <chander.kashyap@linaro.org> wrote:
->> All Exynos4/5 SoCs share a common driver data in the samsung serial
->> driver. Hence, let the driver data inclusion be based on ARCH_EXYNOS
->> instead of SOC specific definition.
->>
->> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> ---
->>  drivers/tty/serial/samsung.c |    4 +---
->>  1 file changed, 1 insertion(+), 3 deletions(-)
->>
->> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
->> index 2552c7f..e70d19a 100644
->> --- a/drivers/tty/serial/samsung.c
->> +++ b/drivers/tty/serial/samsung.c
->> @@ -1703,9 +1703,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
->>  #define S5PV210_SERIAL_DRV_DATA        (kernel_ulong_t)NULL
->>  #endif
->>
->> -#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212) || \
->> -       defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250) || \
->> -       defined(CONFIG_SOC_EXYNOS5440)
->> +#if defined(CONFIG_ARCH_EXYNOS)
->>  static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
->>         .info = &(struct s3c24xx_uart_info) {
->>                 .name           = "Samsung Exynos4 UART",
-> Looks good to me
-> Reviewed by: Girish K S <ks.giri@samsung.com>
+Tomasz Figa wrote:
+> 
+> Hi All,
+> 
+> As I promised, I am doing some spring (or rather summer) cleaning
+> of Exynos- and Samsung- related code.
+> 
+> This first part consists mostly of removing dead code remaining after
+> removal of ATAGS support for Exynos, but several patches cleans up
+> other things found by the way.
+> 
+> See particular patches for more detailed description.
+> 
+> On Exynos4210-based Trats board:
+> Tested-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> Build tested every patch with s3c6400_defconfig, s5pv210_defconfig
+> and exynos_defconfig.
+> 
+> Changes since v1:
+>  - Split patches removing SOC_EXYNOS4412
+>  - Adjusted drivers to check for ARCH_EXYNOS in addition to PLAT_S5P
+>  - Fixed compilation issue on s5pc100
+>  - Removed empty line from mach-exynos/Makefile
+>  - Removed SAMSUNG_GPIOLIB_4BIT selection from ARCH_EXYNOS
+>  - Sorted Kconfig and Makefile entries
+>  - Added additional cleanup from Arnd (split and slightly modified)
+> 
+Tomasz, good job.
 
-Thanks Girish
->> --
->> 1.7.9.5
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+After looking at, almost same with your previous version but modifying 16,
+19, 21, 25(just Cc) and adding some patches 17, 18, 29 and 35 to 38. Would
+be helpful to  me if you could note about that in this series ;-)
 
+Anyway, looks good I will apply this series except removing
+CONFIG_SOC_EXYNOS4412 patches.
 
+Thanks,
+- Kukjin
 
---
-with warm regards,
-Chander Kashyap
+> Tomasz Figa (38):
+>   ARM: EXYNOS: Remove unused board files
+>   ARM: EXYNOS: Make ARCH_EXYNOS select USE_OF
+>   ARM: SAMSUNG: Introduce SAMSUNG_ATAGS Kconfig entry
+>   ARM: EXYNOS: common: Remove legacy PMU initialization code
+>   ARM: EXYNOS: common: Remove legacy EINT initialization code
+>   ARM: EXYNOS: common: Remove legacy UART initialization code
+>   ARM: EXYNOS: Remove legacy dev- and setup- files
+>   ARM: EXYNOS: common: Remove legacy interrupt initialization code
+>   ARM: EXYNOS: common: Remove legacy timer initialization code
+>   ARM: EXYNOS: common: Remove platform device initialization
+>   ARM: EXYNOS: common: Remove legacy mapping of chip ID block
+>   ARM: EXYNOS: firmware: Remove check for device tree presence
+>   ARM: EXYNOS: pm_domains: Remove legacy power domain registration code
+>   ARM: SAMSUNG: Introduce GPIO_SAMSUNG Kconfig entry
+>   ARM: EXYNOS: Provide compatibility stubs for PM code in pm-core.h
+>     header
+>   ARM: SAMSUNG: Compile legacy IRQ and GPIO PM code only with ATAGS
+>     support
+>   [media] platform: Check for ARCH_EXYNOS separately
+>   USB: Check for ARCH_EXYNOS separately
+>   ARM: EXYNOS: Decouple ARCH_EXYNOS from PLAT_S5P
+>   ARM: SAMSUNG: pm: Include most of mach/ headers conditionally
+>   ARM: EXYNOS: Do not select legacy Kconfig symbols any more
+>   ARM: EXYNOS: Remove setup-i2c0.c
+>   ARM: EXYNOS: Remove mach/gpio.h
+>   ARM: EXYNOS: Remove mach/regs-gpio.h header
+>   ARM: SAMSUNG: Make legacy MFC support code depend on SAMSUNG_ATAGS
+>   ARM: EXYNOS: Select SPARSE_IRQ for Exynos
+>   ARM: EXYNOS: Remove mach/irqs.h header
+>   ARM: EXYNOS: Remove unused base addresses from mach/map.h header
+>   thermal: exynos: Support both Exynos4x12 SoCs
+>   ARM: EXYNOS: Remove CONFIG_SOC_EXYNOS4412
+>   cpufreq: exynos4x12: Remove check for SOC_EXYNOS4412
+>   [media] exynos4-is: Remove check for SOC_EXYNOS4412
+>   thermal: exynos: Remove check for SOC_EXYNOS4412
+>   ARM: EXYNOS: Remove mach/regs-usb-phy.h header
+>   ARM: EXYNOS: Remove custom init_irq callbacks
+>   ARM: EXYNOS: Use exynos_init_io() as map_io callback
+>   ARM: EXYNOS: Remove legacy L2X0 initialization
+>   ARM: EXYNOS: Remove remaining dead code after non-DT support removal
+> 
+>  arch/arm/Kconfig                                 |   15 +-
+>  arch/arm/Makefile                                |    1 +
+>  arch/arm/mach-exynos/Kconfig                     |   31 +-
+>  arch/arm/mach-exynos/Makefile                    |    7 -
+>  arch/arm/mach-exynos/common.c                    |  537 +--------
+>  arch/arm/mach-exynos/common.h                    |    4 +-
+>  arch/arm/mach-exynos/dev-audio.c                 |  254 ----
+>  arch/arm/mach-exynos/dev-uart.c                  |   55 -
+>  arch/arm/mach-exynos/firmware.c                  |   22 +-
+>  arch/arm/mach-exynos/include/mach/gpio.h         |  289 -----
+>  arch/arm/mach-exynos/include/mach/irqs.h         |  476 --------
+>  arch/arm/mach-exynos/include/mach/map.h          |  218 +---
+>  arch/arm/mach-exynos/include/mach/pm-core.h      |   12 +-
+>  arch/arm/mach-exynos/include/mach/regs-gpio.h    |   40 -
+>  arch/arm/mach-exynos/include/mach/regs-usb-phy.h |   74 --
+>  arch/arm/mach-exynos/mach-armlex4210.c           |  207 ----
+>  arch/arm/mach-exynos/mach-exynos4-dt.c           |    8 +-
+>  arch/arm/mach-exynos/mach-exynos5-dt.c           |    8 +-
+>  arch/arm/mach-exynos/mach-nuri.c                 | 1388
+---------------------
+> -
+>  arch/arm/mach-exynos/mach-origen.c               |  823 -------------
+>  arch/arm/mach-exynos/mach-smdk4x12.c             |  396 ------
+>  arch/arm/mach-exynos/mach-smdkv310.c             |  444 -------
+>  arch/arm/mach-exynos/mach-universal_c210.c       | 1159
+------------------
+>  arch/arm/mach-exynos/pm.c                        |    1 -
+>  arch/arm/mach-exynos/pm_domains.c                |   94 +-
+>  arch/arm/mach-exynos/setup-fimc.c                |   44 -
+>  arch/arm/mach-exynos/setup-fimd0.c               |   43 -
+>  arch/arm/mach-exynos/setup-i2c0.c                |   29 -
+>  arch/arm/mach-exynos/setup-i2c1.c                |   23 -
+>  arch/arm/mach-exynos/setup-i2c2.c                |   23 -
+>  arch/arm/mach-exynos/setup-i2c3.c                |   23 -
+>  arch/arm/mach-exynos/setup-i2c4.c                |   23 -
+>  arch/arm/mach-exynos/setup-i2c5.c                |   23 -
+>  arch/arm/mach-exynos/setup-i2c6.c                |   23 -
+>  arch/arm/mach-exynos/setup-i2c7.c                |   23 -
+>  arch/arm/mach-exynos/setup-keypad.c              |   36 -
+>  arch/arm/mach-exynos/setup-sdhci-gpio.c          |  152 ---
+>  arch/arm/mach-exynos/setup-spi.c                 |   45 -
+>  arch/arm/mach-exynos/setup-usb-phy.c             |  223 ----
+>  arch/arm/plat-samsung/Kconfig                    |   47 +-
+>  arch/arm/plat-samsung/Makefile                   |   11 +-
+>  arch/arm/plat-samsung/include/plat/cpu.h         |    6 +-
+>  arch/arm/plat-samsung/include/plat/pm.h          |    5 +
+>  arch/arm/plat-samsung/init.c                     |    8 +-
+>  arch/arm/plat-samsung/pm-gpio.c                  |    5 +-
+>  arch/arm/plat-samsung/pm.c                       |    8 +-
+>  arch/arm/plat-samsung/s5p-dev-mfc.c              |   11 +-
+>  drivers/cpufreq/Kconfig.arm                      |    2 +-
+>  drivers/gpio/Kconfig                             |    7 +
+>  drivers/gpio/Makefile                            |    2 +-
+>  drivers/media/platform/Kconfig                   |    6 +-
+>  drivers/media/platform/exynos4-is/Kconfig        |    5 +-
+>  drivers/media/platform/s5p-tv/Kconfig            |    2 +-
+>  drivers/thermal/exynos_thermal.c                 |    2 +-
+>  drivers/usb/Kconfig                              |    1 +
+>  drivers/usb/host/Kconfig                         |    2 +-
+>  56 files changed, 142 insertions(+), 7284 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/dev-audio.c
+>  delete mode 100644 arch/arm/mach-exynos/dev-uart.c
+>  delete mode 100644 arch/arm/mach-exynos/include/mach/gpio.h
+>  delete mode 100644 arch/arm/mach-exynos/include/mach/irqs.h
+>  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-gpio.h
+>  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+>  delete mode 100644 arch/arm/mach-exynos/mach-armlex4210.c
+>  delete mode 100644 arch/arm/mach-exynos/mach-nuri.c
+>  delete mode 100644 arch/arm/mach-exynos/mach-origen.c
+>  delete mode 100644 arch/arm/mach-exynos/mach-smdk4x12.c
+>  delete mode 100644 arch/arm/mach-exynos/mach-smdkv310.c
+>  delete mode 100644 arch/arm/mach-exynos/mach-universal_c210.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-fimc.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-fimd0.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-i2c0.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-i2c1.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-i2c2.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-i2c3.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-i2c4.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-i2c5.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-i2c6.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-i2c7.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-keypad.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-sdhci-gpio.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-spi.c
+>  delete mode 100644 arch/arm/mach-exynos/setup-usb-phy.c
+> 
+> --
+> 1.8.2.1
