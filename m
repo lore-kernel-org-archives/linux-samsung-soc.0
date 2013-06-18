@@ -1,143 +1,80 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 36/38] ARM: EXYNOS: Use exynos_init_io() as map_io
- callback
-Date: Tue, 18 Jun 2013 18:36:16 +0900
-Message-ID: <1b9d01ce6c07$47e42cf0$d7ac86d0$%kim@samsung.com>
-References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
- <1371486863-12398-37-git-send-email-t.figa@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: exynos-drm-next todo work.
+Date: Tue, 18 Jun 2013 15:15:36 +0530
+Message-ID: <CAPdUM4M4fyiKUES-BW4BKBL_0nfPjNY5Fk_H7i2FUWyxhSv_nA@mail.gmail.com>
+References: <007401ce6bed$bc802920$35807b60$%dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:10686 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932114Ab3FRJgS (ORCPT
+Received: from mail-wg0-f50.google.com ([74.125.82.50]:39374 "EHLO
+	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932070Ab3FRJph (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 05:36:18 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOL00LD21C8TTD0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 18:36:17 +0900 (KST)
-In-reply-to: <1371486863-12398-37-git-send-email-t.figa@samsung.com>
-Content-language: ko
+	Tue, 18 Jun 2013 05:45:37 -0400
+Received: by mail-wg0-f50.google.com with SMTP id k14so3272205wgh.29
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2013 02:45:36 -0700 (PDT)
+In-Reply-To: <007401ce6bed$bc802920$35807b60$%dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, DRI mailing list <dri-devel@lists.freedesktop.org>
 
-Tomasz Figa wrote:
-> 
-> Since there is no board specific mapping needed on Exynos,
-> exynos_init_io() can be simplified and used as map_io callback for both
-> Exynos4 and Exynos5.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.c          | 5 +----
->  arch/arm/mach-exynos/common.h          | 2 +-
->  arch/arm/mach-exynos/mach-exynos4-dt.c | 7 +------
->  arch/arm/mach-exynos/mach-exynos5-dt.c | 7 +------
->  4 files changed, 4 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 91d457f..561890f 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -351,15 +351,12 @@ int __init exynos_fdt_map_chipid(unsigned long node,
-> const char *uname,
->   * register the standard cpu IO areas
->   */
-> 
-> -void __init exynos_init_io(struct map_desc *mach_desc, int size)
-> +void __init exynos_init_io(void)
->  {
->  	debug_ll_io_init();
-> 
->  	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
-> 
-> -	if (mach_desc)
-> -		iotable_init(mach_desc, size);
-> -
->  	/* detect cpu id and rev. */
->  	s5p_init_cpu(S5P_VA_CHIPID);
-> 
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index 1c83f95..38d45fd 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -19,7 +19,7 @@ void exynos_init_time(void);
->  extern unsigned long xxti_f, xusbxti_f;
-> 
->  struct map_desc;
-> -void exynos_init_io(struct map_desc *mach_desc, int size);
-> +void exynos_init_io(void);
->  void exynos4_restart(char mode, const char *cmd);
->  void exynos5_restart(char mode, const char *cmd);
->  void exynos_init_late(void);
-> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-
-> exynos/mach-exynos4-dt.c
-> index df15726..0099c6c 100644
-> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> @@ -23,11 +23,6 @@
-> 
->  #include "common.h"
-> 
-> -static void __init exynos4_dt_map_io(void)
-> -{
-> -	exynos_init_io(NULL, 0);
-> -}
-> -
->  static void __init exynos4_dt_machine_init(void)
->  {
->  	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-> @@ -55,7 +50,7 @@ static void __init exynos4_reserve(void)
->  DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device
-Tree)")
->  	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
->  	.smp		= smp_ops(exynos_smp_ops),
-> -	.map_io		= exynos4_dt_map_io,
-> +	.map_io		= exynos_init_io,
->  	.init_early	= exynos_firmware_init,
->  	.init_machine	= exynos4_dt_machine_init,
->  	.init_late	= exynos_init_late,
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-
-> exynos/mach-exynos5-dt.c
-> index 8777310..ab54770 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -27,11 +27,6 @@
->  static u64 dma_mask64 = DMA_BIT_MASK(64);
->  static u64 dma_mask32 = DMA_BIT_MASK(32);
-> 
-> -static void __init exynos5_dt_map_io(void)
-> -{
-> -	exynos_init_io(NULL, 0);
-> -}
-> -
->  static int exynos5440_platform_notifier(struct notifier_block *nb,
->  				  unsigned long event, void *__dev)
->  {
-> @@ -105,7 +100,7 @@ static void __init exynos5_reserve(void)
->  DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
->  	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
->  	.smp		= smp_ops(exynos_smp_ops),
-> -	.map_io		= exynos5_dt_map_io,
-> +	.map_io		= exynos_init_io,
->  	.init_machine	= exynos5_dt_machine_init,
->  	.init_late	= exynos_init_late,
->  	.init_time	= exynos_init_time,
+Hi Mr. Dae,
+
+Related to HDMI sound support in Alsa, I have posted a working RFC
+"exynos-hdmi to CDF complaint display driver". It registers a separate
+sound card by registering hdmi audio codec dai and cpu-dai, as you
+mentioned. But there is a problem with this approach that I2S being the
+single cpu dai for HDMI and Speaker sound card, only one card can
+support playback at a time.
+
+I would like to work on this to provide a more refined solution.
+
+regards,
+Rahul Sharma.
+
+On Tue, Jun 18, 2013 at 12:03 PM, Inki Dae <inki.dae@samsung.com> wrote:
+> Hi all,
+>
+> I'd like to discuss Exynos DRM TODO work.
+>
+> There are features we have to solve and implement. The purpose of this email
+> is to share what we have to do so that other guys can be involved without
+> duplicated work.
+>
+> 1. gscaler based on KMS interfaces - exynos5250 and later use the gscaler
+> device instead of VP device. And now exynos drm driver has gscaler module as
+> a sub module of IPP framework. However, this gscaler module is very specific
+> to IPP framework so it's not easy to reuse this module. So maybe we need so
+> many works for it.
+>
+> Video play back path using post process (AS IS):
+>         MFC--------IPP--------KMS---------FIMD or HDMI
+>
+> Ideal video play back path using post process (TO BE):
+>         MFC--------KMS--------FIMD or HDMI
+>
+> The above scenario is to send decoded image data (YUV format) to display
+> device via post process. However, we don't really need to use IPP framework
+> in case of using gscaler as VP. All we have to do is to call kms interface
+> (setplane) for it like we did before.
+>
+> 2. More features for HDMI sound support - we need to implement Exynos ALSA
+> SoC DAI driver for HDMI audio (CPU DAI and CODEC DAI). Sampling freq, bit
+> rate, and so on from user side should be sent to drm hdmi driver via ALSA
+> interface and the ALSA SoC DAI driver. As of now, it seems like that we
+> should implement this driver like OMAP does because there is no common
+> framework for interfacing between ALSA SoC DAI driver and DRM HDMI driver:
+> in case of OMAP, it seems like that ALSA SoC audio driver calls interfaces
+> of DSS driver directly. I think we could implement ALSA SoC DAI driver in
+> more generic way if we first implement common framework for it.
+>
+> Welcome to any volunteer and other opinions.
+>
+> Thanks,
+> Inki Dae
+>
 > --
-> 1.8.2.1
-
-Looks good to me, but I think, this change has been submitted by Arnd even
-though you did split, so the author should be Arnd. As you know, it is very
-important. Let me fix this and some patches when I apply. If any problems,
-let me know.
-
-Thanks,
-- Kukjin
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
