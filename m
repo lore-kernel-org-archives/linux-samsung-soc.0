@@ -1,51 +1,67 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 01/11] dma: amba-pl08x: Use bitmap to
- pass variant specific quirks
-Date: Tue, 18 Jun 2013 09:47:24 +0200
-Message-ID: <CACRpkdbt4fAdnDKuP8bVpwrWoJ-oGNuSbiDZDz5J12ix2qijfQ@mail.gmail.com>
-References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
- <1371416058-22047-2-git-send-email-tomasz.figa@gmail.com>
- <20130617184856.GN2718@n2100.arm.linux.org.uk>
- <12368941.dQe8bcScGj@flatron>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH v2 29/38] thermal: exynos: Support both Exynos4x12 SoCs
+Date: Tue, 18 Jun 2013 14:24:50 +0530
+Message-ID: <CADGdYn7NqywgfYFmwZHGLQi_mciJLbPGOwj2Jm2Zgbme9GGUUw@mail.gmail.com>
+References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
+	<1371486863-12398-30-git-send-email-t.figa@samsung.com>
+	<201306172159.15352.arnd@arndb.de>
+	<51BF9D0A.6050706@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <12368941.dQe8bcScGj@flatron>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51BF9D0A.6050706@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jun 17, 2013 at 8:56 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Monday 17 of June 2013 19:48:56 Russell King - ARM Linux wrote:
->> On Sun, Jun 16, 2013 at 10:54:08PM +0200, Tomasz Figa wrote:
->> > Instead of defining new bool field in vendor_data struct for each
->> > quirk, it is more reasonable to use a single flags field and make
->> > each quirk use single bits.
->>
->> Please explain why this is better over the existing system, and why it
->> is not just churn for code modification's sake.
+Hi Eduardo,
+
+On Tue, Jun 18, 2013 at 5:04 AM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> Arnd,
 >
-> It isn't anything important. I just thought that this is a better solution
-> to store more than just two flags. Initially I had more of them added in
-> further patches, but final version ended with just one, so this can be
-> dropped.
+> On 17-06-2013 15:59, Arnd Bergmann wrote:
+>> On Monday 17 June 2013, Tomasz Figa wrote:
+>>> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
+>>> index 788b1dd..4cbe3ee 100644
+>>> --- a/drivers/thermal/exynos_thermal.c
+>>> +++ b/drivers/thermal/exynos_thermal.c
+>>> @@ -817,7 +817,8 @@ static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
+>>>  #define EXYNOS4210_TMU_DRV_DATA (NULL)
+>>>  #endif
+>>>
+>>> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
+>>> +#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412) || \
+>>> +       defined(CONFIG_SOC_EXYNOS4212)
+>>>  static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
+>>>         .threshold_falling = 10,
+>>>         .trigger_levels[0] = 85,
+>>
+>> The patch is correct, but generally speaking I think we should get away from
+>> having the drivers get configured per SoC on such a fine-grained level.
+>> Better make this driver (and others) always work on all exynos variants.
+>
+> Amit, correct if I am wrong, but:
+>
+> The driver will work on supported exynos variants. Those that have the
+> need for thermal sensing. And each of them have specific thermal needs
+> (trigger points, thresholds, etc). That is what this file tries to
+> isolate. And there is specific data structures for each soc version.
+Yes its correct that there may be some changes in data points for
+different soc's. in the new re-structured code data is separated from
+driver so more data can be added cleanly.
 
-I thought about it yesterday and it basically looks to me that
-it tries to outsmart the compiler on how to stuff the flags to save
-struct space on the heap and hint that they can be determined
-quickly by a & operation, this is like premature optimization.
-
-So please go back to the old system.
-
-Yours,
-Linus Walleij
+>
+>
+>>
+>>       Arnd
+>>
+>>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
