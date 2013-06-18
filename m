@@ -1,103 +1,37 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 4/4] ARM/dts: change compatible strings for hdmi subsystem
-Date: Tue, 18 Jun 2013 18:19:38 +0530
-Message-ID: <1371559778-9359-5-git-send-email-rahul.sharma@samsung.com>
-References: <1371559778-9359-1-git-send-email-rahul.sharma@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 29/38] thermal: exynos: Support both Exynos4x12 SoCs
+Date: Tue, 18 Jun 2013 15:02:52 +0200
+Message-ID: <201306181502.52589.arnd@arndb.de>
+References: <1371486863-12398-1-git-send-email-t.figa@samsung.com> <201306172159.15352.arnd@arndb.de> <51BF9D0A.6050706@ti.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51105 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751404Ab3FRM3L (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.8]:55876 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754050Ab3FRNDE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 08:29:11 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOL00ENU9CL1770@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 21:29:10 +0900 (KST)
-In-reply-to: <1371559778-9359-1-git-send-email-rahul.sharma@samsung.com>
+	Tue, 18 Jun 2013 09:03:04 -0400
+In-Reply-To: <51BF9D0A.6050706@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-This patch renames the combatible strings for hdmi, mixer, ddc
-and hdmiphy. It follows the convention of using compatible string
-which represent the SoC in which the IP was added for the first
-time.
+On Tuesday 18 June 2013, Eduardo Valentin wrote:
+> The driver will work on supported exynos variants. Those that have the
+> need for thermal sensing. And each of them have specific thermal needs
+> (trigger points, thresholds, etc). That is what this file tries to
+> isolate. And there is specific data structures for each soc version.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
- arch/arm/boot/dts/cros5250-common.dtsi    |    4 ++--
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    4 ++--
- arch/arm/boot/dts/exynos5250.dtsi         |    4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+Correct. My point is that the driver itself is much larger than the
+SoC-specific data sets in it. There is no reason to conditionally
+build a 108 byte data structure, making it more maintainably by removing
+all the #ifdef far outweighs the cost.
 
-diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
-index 3f0239e..dc259e8b 100644
---- a/arch/arm/boot/dts/cros5250-common.dtsi
-+++ b/arch/arm/boot/dts/cros5250-common.dtsi
-@@ -190,7 +190,7 @@
- 		samsung,i2c-max-bus-freq = <66000>;
- 
- 		hdmiddc@50 {
--			compatible = "samsung,exynos5-hdmiddc";
-+			compatible = "samsung,exynos4210-hdmiddc";
- 			reg = <0x50>;
- 		};
- 	};
-@@ -224,7 +224,7 @@
- 		samsung,i2c-max-bus-freq = <378000>;
- 
- 		hdmiphy@38 {
--			compatible = "samsung,exynos5-hdmiphy";
-+			compatible = "samsung,exynos4212-hdmiphy";
- 			reg = <0x38>;
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 3e0c792..f320d7c 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -72,7 +72,7 @@
- 		samsung,i2c-max-bus-freq = <66000>;
- 
- 		hdmiddc@50 {
--			compatible = "samsung,exynos5-hdmiddc";
-+			compatible = "samsung,exynos4210-hdmiddc";
- 			reg = <0x50>;
- 		};
- 	};
-@@ -102,7 +102,7 @@
- 		samsung,i2c-max-bus-freq = <66000>;
- 
- 		hdmiphy@38 {
--			compatible = "samsung,exynos5-hdmiphy";
-+			compatible = "samsung,exynos4212-hdmiphy";
- 			reg = <0x38>;
- 		};
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 0673524..2f7763b 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -601,7 +601,7 @@
- 	};
- 
- 	hdmi {
--		compatible = "samsung,exynos5-hdmi";
-+		compatible = "samsung,exynos4212-hdmi";
- 		reg = <0x14530000 0x70000>;
- 		interrupts = <0 95 0>;
- 		clocks = <&clock 333>, <&clock 136>, <&clock 137>,
-@@ -611,7 +611,7 @@
- 	};
- 
- 	mixer {
--		compatible = "samsung,exynos5-mixer";
-+		compatible = "samsung,exynos5250-mixer";
- 		reg = <0x14450000 0x10000>;
- 		interrupts = <0 94 0>;
- 	};
--- 
-1.7.10.4
+You can also change the driver to work only for DT based booting,
+that will simplify it further and save you more in terms of object
+code size than the exynos_tmu_platform_data instances.
+
+	Arnd
