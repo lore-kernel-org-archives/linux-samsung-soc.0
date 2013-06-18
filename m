@@ -1,75 +1,91 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
-Date: Tue, 18 Jun 2013 23:35:57 +0200
-Message-ID: <1693766.5Dkqfh4vQE@flatron>
-References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com> <1494539.CqPx2jpKaT@flatron> <20130618213344.GA1926@mithrandir>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: Update S5P/Exynos FIMC driver entry
+Date: Tue, 18 Jun 2013 23:38:10 +0200
+Message-ID: <51C0D342.6090801@gmail.com>
+References: <1371487371-31143-1-git-send-email-s.nawrocki@samsung.com> <CAK9yfHxsNED-6Q8Kv=sO+D27q7LAfpfOn1y9Nutn9k-3YhUL-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f50.google.com ([209.85.214.50]:48458 "EHLO
-	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756307Ab3FRVgB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 17:36:01 -0400
-In-Reply-To: <20130618213344.GA1926@mithrandir>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <CAK9yfHxsNED-6Q8Kv=sO+D27q7LAfpfOn1y9Nutn9k-3YhUL-A@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
-On Tuesday 18 of June 2013 23:33:45 Thierry Reding wrote:
-> On Tue, Jun 18, 2013 at 08:13:51PM +0200, Tomasz Figa wrote:
-> > On Wednesday 19 of June 2013 03:06:31 Kukjin Kim wrote:
-> > > On 06/19/13 02:59, Tomasz Figa wrote:
-> > > > Hi Thierry,
-> > > 
-> > > [...]
-> > > 
-> > > >>> +static void pwm_samsung_set_divisor(struct samsung_pwm_chip
-> > > >>> *pwm,
-> > > >>> +					unsigned int channel, u8 
-divisor)
-> > > >> 
-> > > >> Nit: please align arguments on subsequent lines with the first
-> > > >> argument
-> > > >> of the first line. There's many more of these but I haven't
-> > > >> mentioned
-> > > >> them all explicitly.
-> > > > 
-> > > > Hmm, I'm addressing all your comments that aren't addressed yet in
-> > > > v2
-> > > > at the moment and I'm wondering if this is really the correct way
-> > > > of
-> > > > breaking function headers...
-> > > 
-> > > static void pwm_samsung_set_divisor(struct samsung_pwm_chip *pwm,
-> > > 
-> > > 				    unsigned int channel, u8 divisor)
-> > > 
-> > > I also would preferred to use above style :)
-> > 
-> > Personally I find it looking better as well, but this is about being
-> > compliant with kernel coding style guidelines (which also says that
-> > indentation should be done using tabs). Please correct my
-> > understanding of the quote below if it is incorrect.
-> 
-> "placed substantially to the right" doesn't imply right-aligned. My
-> understanding is that it should be indented enough to make it stand
-> apart. I don't recall ever seeing right-aligned code.
-> 
-> And regarding tabs, you should be indenting using tabs as far as
-> possible and use spaces for the final alignment, so:
-> 
-> static void pwm_samsung_set_divisor(struct samsung_pwm_chip *pwm,
-> 				    unsigned int channel, u8 divisor)
-> 
-> In case your emailer doesn't highlight it, that's four tabs and four
-> spaces.
+Hi Sachin,
 
-OK. Thank you for clearing up my misunderstanding.
+Thanks for your review.
 
-Btw. I see it as spaces-only in my mail client somehow.
+On 06/18/2013 05:39 AM, Sachin Kamat wrote:
+> Hi Sylwester,
+>
+> Just a couple of nits inline.
+>
+> On 17 June 2013 22:12, Sylwester Nawrocki<s.nawrocki@samsung.com>  wrote:
+>> This change is mainly to update the driver's path changed from
+>> drivers/media/platform/s5p-fimc to drivers/media/platform/exynos4-is/.
+>> While at it, remove non-existent files rule, move the whole entry to
+>> the Samsung drivers section and add the patch tracking system URL.
+>
+> How about adding git URL too (of your repo)?
 
-Best regards,
-Tomasz
+Yes, I guess I should add it.
+
+>> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>> ---
+>>   MAINTAINERS |   17 ++++++++---------
+>>   1 file changed, 8 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 3d7782b..d2c5618 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -1153,15 +1153,6 @@ L:       linux-media@vger.kernel.org
+>>   S:     Maintained
+>>   F:     drivers/media/platform/s5p-g2d/
+>>
+>> -ARM/SAMSUNG S5P SERIES FIMC SUPPORT
+>> -M:     Kyungmin Park<kyungmin.park@samsung.com>
+>> -M:     Sylwester Nawrocki<s.nawrocki@samsung.com>
+>> -L:     linux-arm-kernel@lists.infradead.org
+>> -L:     linux-media@vger.kernel.org
+>> -S:     Maintained
+>> -F:     arch/arm/plat-samsung/include/plat/*fimc*
+>> -F:     drivers/media/platform/s5p-fimc/
+>> -
+>>   ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
+>
+> Probably ARM could be removed from here too and may be other places if
+> they exist just like below entry.
+
+Yes, IMHO those driver entries are misplaced now. I guess the better
+place would be at the Samsung entries section.
+
+>>   M:     Kyungmin Park<kyungmin.park@samsung.com>
+>>   M:     Kamil Debski<k.debski@samsung.com>
+>> @@ -6930,6 +6921,14 @@ F:       drivers/regulator/s5m*.c
+>>   F:     drivers/rtc/rtc-sec.c
+>>   F:     include/linux/mfd/samsung/
+>>
+>> +SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
+>> +M:     Kyungmin Park<kyungmin.park@samsung.com>
+>> +M:     Sylwester Nawrocki<s.nawrocki@samsung.com>
+>> +L:     linux-media@vger.kernel.org
+>> +Q:     https://patchwork.linuxtv.org/project/linux-media/list/
+>> +S:     Supported
+>> +F:     drivers/media/platform/exynos4-is/
+>> +
+>
+> Considering alphabetical order (now that ARM is removed), this block
+> should come after SAMSUNG S3C24XX/S3C64XX...
+
+Oops, right, thanks for spotting this.
+
+>>   SAMSUNG S3C24XX/S3C64XX SOC SERIES CAMIF DRIVER
+>>   M:     Sylwester Nawrocki<sylvester.nawrocki@gmail.com>
+>>   L:     linux-media@vger.kernel.org
+
+Regards,
+Sylwester
