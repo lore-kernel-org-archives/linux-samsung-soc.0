@@ -1,37 +1,41 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 29/38] thermal: exynos: Support both Exynos4x12 SoCs
-Date: Tue, 18 Jun 2013 15:02:52 +0200
-Message-ID: <201306181502.52589.arnd@arndb.de>
-References: <1371486863-12398-1-git-send-email-t.figa@samsung.com> <201306172159.15352.arnd@arndb.de> <51BF9D0A.6050706@ti.com>
+Subject: Re: [RFC PATCH 01/11] dma: amba-pl08x: Use bitmap to
+	pass variant specific quirks
+Date: Tue, 18 Jun 2013 15:33:46 +0200
+Message-ID: <201306181533.46905.arnd@arndb.de>
+References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
+ <12368941.dQe8bcScGj@flatron>
+ <CACRpkdbt4fAdnDKuP8bVpwrWoJ-oGNuSbiDZDz5J12ix2qijfQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:55876 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754050Ab3FRNDE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 09:03:04 -0400
-In-Reply-To: <51BF9D0A.6050706@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CACRpkdbt4fAdnDKuP8bVpwrWoJ-oGNuSbiDZDz5J12ix2qijfQ@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kerne>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-On Tuesday 18 June 2013, Eduardo Valentin wrote:
-> The driver will work on supported exynos variants. Those that have the
-> need for thermal sensing. And each of them have specific thermal needs
-> (trigger points, thresholds, etc). That is what this file tries to
-> isolate. And there is specific data structures for each soc version.
+On Tuesday 18 June 2013, Linus Walleij wrote:
+> I thought about it yesterday and it basically looks to me that
+> it tries to outsmart the compiler on how to stuff the flags to save
+> struct space on the heap and hint that they can be determined
+> quickly by a & operation, this is like premature optimization.
+> 
+> So please go back to the old system.
 
-Correct. My point is that the driver itself is much larger than the
-SoC-specific data sets in it. There is no reason to conditionally
-build a 108 byte data structure, making it more maintainably by removing
-all the #ifdef far outweighs the cost.
+Note that a 'bool' is typically stored as a 32-bit field, so there
+would be some space saving if there are a lot of flags.
 
-You can also change the driver to work only for DT based booting,
-that will simplify it further and save you more in terms of object
-code size than the exynos_tmu_platform_data instances.
+I agree with the conclusion though, the previous state was more
+readable, which outweighs any benefits.
 
 	Arnd
