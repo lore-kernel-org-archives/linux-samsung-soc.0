@@ -1,115 +1,68 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Fix incorrect usage of S5P_ARM_CORE1_* registers
-Date: Tue, 18 Jun 2013 17:26:31 +0200
-Message-ID: <1371569191-2364-1-git-send-email-t.figa@samsung.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, stable@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Subject: linux-next: origen build failed at drivers/pinctrl/pinctrl-exynos.c
+Date: Tue, 18 Jun 2013 21:49:19 +0530
+Message-ID: <CA+G9fYu3_-RZxFyRENuqJvzsM=YToT7PG+5fUytMzhsFu3=z7g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:36868 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933136Ab3FRQTU convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Jun 2013 12:19:20 -0400
+Received: by mail-oa0-f52.google.com with SMTP id g12so5342629oah.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2013 09:19:19 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd.bergmann@linaro.org>, Doug Anderson <dianders@chromium.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Milosz Wasilewski <milosz.wasilewski@linaro.org>
 
-S5P_ARM_CORE1_* registers affect only core 1. To control further cores
-properly another registers must be used.
+Hi,
 
-This patch replaces S5P_ARM_CORE1_* register definitions with
-S5P_ARM_CORE_*(x) macro which return addresses of registers for specified
-core.
+linux-next branch failed to build origen build
 
-This fixes CPU hotplug on quad core Exynos SoCs on which currently
-offlining CPUs 2 or 3 caused CPU 1 to be turned off. In addition,
-bring-up of CPU 2 and 3 is fixed on boards where bootloader powers off
-secondary cores by default.
+defconfig: exynos_defconfig
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/hotplug.c               |  9 +++++----
- arch/arm/mach-exynos/include/mach/regs-pmu.h | 10 +++++++---
- arch/arm/mach-exynos/platsmp.c               |  9 +++++----
- 3 files changed, 17 insertions(+), 11 deletions(-)
+full build log:
+----------------
+https://ci.linaro.org/jenkins/job/linux-next/hwpack=3Dorigen,label=3Dke=
+rnel_cloud/72/console
 
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index af90cfa..c089943 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -93,10 +93,11 @@ static inline void cpu_leave_lowpower(void)
- static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
- {
- 	for (;;) {
-+		void __iomem *reg_base;
-+		unsigned int phys_cpu = cpu_logical_map(cpu);
- 
--		/* make cpu1 to be turned off at next WFI command */
--		if (cpu == 1)
--			__raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
-+		reg_base = S5P_ARM_CORE_CONFIGURATION(phys_cpu);
-+		__raw_writel(0, reg_base);
- 
- 		/*
- 		 * here's the WFI
-@@ -106,7 +107,7 @@ static inline void platform_do_lowpower(unsigned int cpu, int *spurious)
- 		    :
- 		    : "memory", "cc");
- 
--		if (pen_release == cpu_logical_map(cpu)) {
-+		if (pen_release == phys_cpu) {
- 			/*
- 			 * OK, proper wakeup, we're done
- 			 */
-diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-index 57344b7..cf40b86 100644
---- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-@@ -125,10 +125,14 @@
- #define S5P_GPS_ALIVE_LOWPWR			S5P_PMUREG(0x13A0)
- 
- #define S5P_ARM_CORE0_CONFIGURATION		S5P_PMUREG(0x2000)
-+#define S5P_ARM_CORE0_STATUS			S5P_PMUREG(0x2004)
- #define S5P_ARM_CORE0_OPTION			S5P_PMUREG(0x2008)
--#define S5P_ARM_CORE1_CONFIGURATION		S5P_PMUREG(0x2080)
--#define S5P_ARM_CORE1_STATUS			S5P_PMUREG(0x2084)
--#define S5P_ARM_CORE1_OPTION			S5P_PMUREG(0x2088)
-+#define S5P_ARM_CORE_CONFIGURATION(_nr)		\
-+		(S5P_ARM_CORE0_CONFIGURATION + ((_nr) * 0x80))
-+#define S5P_ARM_CORE_STATUS(_nr)		\
-+		(S5P_ARM_CORE0_STATUS + ((_nr) * 0x80))
-+#define S5P_ARM_CORE_OPTION(_nr)		\
-+		(S5P_ARM_CORE0_OPTION + ((_nr) * 0x80))
- 
- #define S5P_ARM_COMMON_OPTION			S5P_PMUREG(0x2408)
- #define S5P_TOP_PWR_OPTION			S5P_PMUREG(0x2C48)
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index d9c6d0a..2cbabc8 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -109,14 +109,15 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
- 	 */
- 	write_pen_release(phys_cpu);
- 
--	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
-+	if (!(__raw_readl(S5P_ARM_CORE_STATUS(phys_cpu))
-+	    & S5P_CORE_LOCAL_PWR_EN)) {
- 		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
--			     S5P_ARM_CORE1_CONFIGURATION);
-+			     S5P_ARM_CORE_CONFIGURATION(phys_cpu));
- 
- 		timeout = 10;
- 
- 		/* wait max 10 ms until cpu1 is on */
--		while ((__raw_readl(S5P_ARM_CORE1_STATUS)
-+		while ((__raw_readl(S5P_ARM_CORE_STATUS(phys_cpu))
- 			& S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
- 			if (timeout-- == 0)
- 				break;
-@@ -125,7 +126,7 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
- 		}
- 
- 		if (timeout == 0) {
--			printk(KERN_ERR "cpu1 power enable failed");
-+			printk(KERN_ERR "cpu%u power enable failed", cpu);
- 			spin_unlock(&boot_lock);
- 			return -ETIMEDOUT;
- 		}
--- 
-1.8.2.1
+build error log:
+--------------------
+05:02:12 /mnt/ci_build/workspace/linux-next/hwpack/origen/label/kernel_=
+cloud/drivers/pinctrl/pinctrl-exynos.c:
+In function =91exynos_wkup_irq_mask=92:
+05:02:12 /mnt/ci_build/workspace/linux-next/hwpack/origen/label/kernel_=
+cloud/drivers/pinctrl/pinctrl-exynos.c:299:3:
+error: implicit declaration of function =91exynos_wkup_irq_ack=92
+[-Werror=3Dimplicit-function-declaration]
+05:02:12    exynos_wkup_irq_ack(irqd);
+05:02:12    ^
+05:02:12 /mnt/ci_build/workspace/linux-next/hwpack/origen/label/kernel_=
+cloud/drivers/pinctrl/pinctrl-exynos.c:
+At top level:
+05:02:12 /mnt/ci_build/workspace/linux-next/hwpack/origen/label/kernel_=
+cloud/drivers/pinctrl/pinctrl-exynos.c:310:13:
+warning: conflicting types for =91exynos_wkup_irq_ack=92 [enabled by
+default]
+05:02:12  static void exynos_wkup_irq_ack(struct irq_data *irqd)
+05:02:12              ^
+05:02:12 /mnt/ci_build/workspace/linux-next/hwpack/origen/label/kernel_=
+cloud/drivers/pinctrl/pinctrl-exynos.c:310:13:
+error: static declaration of =91exynos_wkup_irq_ack=92 follows non-stat=
+ic
+declaration
+05:02:12 /mnt/ci_build/workspace/linux-next/hwpack/origen/label/kernel_=
+cloud/drivers/pinctrl/pinctrl-exynos.c:299:3:
+note: previous implicit declaration of =91exynos_wkup_irq_ack=92 was he=
+re
+05:02:12    exynos_wkup_irq_ack(irqd);
+05:02:12    ^
+05:02:12 cc1: some warnings being treated as errors
+05:02:12 make[3]: *** [drivers/pinctrl/pinctrl-exynos.o] Error 1
+05:02:12 make[2]: *** [drivers/pinctrl] Error 2
+
+Best regards
+Naresh kamboju
