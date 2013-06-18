@@ -1,62 +1,63 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2] clk: exynos4: Add clock entries for TMU
-Date: Tue, 18 Jun 2013 10:45:33 +0530
-Message-ID: <CAK9yfHzCJ2njTWGPdTG4qhuu7BGPPzpKRKLhQPgV-Q5NtJTphA@mail.gmail.com>
-References: <1366602946-8264-1-git-send-email-sachin.kamat@linaro.org>
-	<20130429170052.8923.66455@quantum>
-	<CAK9yfHzAHx-5vznBi2K2cY7kYmGmrojwLriNGaXw1tesNoZ2-A@mail.gmail.com>
-	<CAK9yfHw_2c1WbSJ7QiN1KBE-H_5BvBNwGRUO3RoHQ6GbFCVphA@mail.gmail.com>
-	<1a0b01ce6b53$4a126460$de372d20$%kim@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
+Date: Tue, 18 Jun 2013 14:35:54 +0900
+Message-ID: <000001ce6be5$b3fd0730$1bf71590$@samsung.com>
+References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
+ <3539874.V7zkhbMg0b@wuerfel> <005e01ce6b3f$74e3c940$5eab5bc0$@samsung.com>
+ <7174350.I5qK0sQfHM@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:45261 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754238Ab3FRFPd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 01:15:33 -0400
-Received: by mail-oa0-f44.google.com with SMTP id l10so4533309oag.31
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 22:15:33 -0700 (PDT)
-In-Reply-To: <1a0b01ce6b53$4a126460$de372d20$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <7174350.I5qK0sQfHM@wuerfel>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>
 
-On 17 June 2013 17:37, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Sachin Kamat wrote:
->>
->> On 10 June 2013 14:21, Sachin Kamat <sachin.kamat@linaro.org> wrote:
->> > Hi Kukjin,
->> >
->> > On 29 April 2013 22:30, Mike Turquette <mturquette@linaro.org> wrote:
->> >> Quoting Sachin Kamat (2013-04-21 20:55:46)
->> >>> Added clock entries for thermal management unit (TMU) for
->> >>> Exynos4 SoCs.
->> >>>
->> >>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> >>> Cc: Thomas Abraham <thomas.abraham@linaro.org>
->> >>> Cc: Mike Turquette <mturquette@linaro.org>
->> >>
->> >> This has my Ack if you plan to take it through the Samsung tree.
->> >> If you want it to go through the clk tree then I can take it in after
->> >> 3.10-rc1.
->> >
->> > Can you apply this one too to Samsung tree?
->> > Thanks.
->>
->> Kukjin,
->>
->> Can you please take this through your tree? This alreday has MIke's Ack.
->>
-> Sure, I've applied with Mike's ack.
+On Monday, June 17, 2013 9:45 PM, Arnd Bergmann wrote:
+> On Monday 17 June 2013 18:45:52 Jingoo Han wrote:
+> > On Friday, June 14, 2013 9:54 PM, Arnd Bergmann wrote:
+> > >
+[.....]
+> > > > > > +static int __exit exynos_pcie_remove(struct platform_device *pdev)
+> > > > > > +{
+> > > > > > +	struct pcie_port *pp = platform_get_drvdata(pdev);
+> > > > > > +
+> > > > > > +	clk_disable_unprepare(pp->bus_clk);
+> > > > > > +	clk_disable_unprepare(pp->clk);
+> > > > > > +
+> > > > > > +	return 0;
+> > > > > > +}
+> > > > >
+> > > > > You also don't remove the PCI devices here, as mentioned in an earlier
+> > > > > review.
+> > > >
+> > > > I reviewed Marvell PCIe driver and Tegra PCIe driver; however,
+> > > > I cannot know what you mean.
+> > > >
+> > > > Could let me know which additional functions are needed?
+> > >
+> > > The mvebu driver does not allow module unload. I haven't looked at the
+> > > tegra driver. If you allow unloading the driver and provide a 'remove'
+> > > callback, that callback needs to clean up the entire bus and remove
+> > > all child devices that were added as well as undo everything the
+> > > probe function did. I think it would be great if you can do that, although
+> > > it might not be easy. The simplest solution would be to not support
+> > > unloading though.
+> >
+> > As the mvebu driver uses platform_driver_probe(), the Exynos driver uses
+> > platform_driver_probe(). Thus, I will not provide a 'remove' callback.
+> 
+> Well, the important part is not to provide a module_exit() function, which
+> will ensure the driver cannot be unloaded.
 
-Thanks. But did not find this in your for-next yet. Not pushed out yet?
+Aha, I see.
+I will not provide a module_exit() function), as the mvebu driver does.
 
-Also, please add the following series too.
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/17942
+Best regards,
+Jingoo Han
 
-
--- 
-With warm regards,
-Sachin
+> 
+> 	Arnd
