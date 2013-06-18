@@ -1,52 +1,64 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH v4 10/10] ARM: Exynos: extend soft-reset support for Exynos5420
-Date: Tue, 18 Jun 2013 11:59:22 +0530
-Message-ID: <1371536962-13322-11-git-send-email-chander.kashyap@linaro.org>
-References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, mark.rutland@arm.com, thomas.ab@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: exynos-drm-next todo work.
+Date: Tue, 18 Jun 2013 15:33:25 +0900
+Message-ID: <007401ce6bed$bc802920$35807b60$%dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:30026 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751544Ab3FRGd3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Jun 2013 02:33:29 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOK00LLHSS3TT20@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 15:33:25 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: 'DRI mailing list' <dri-devel@lists.freedesktop.org>
 
-Extend the soft reset support for Exynos5420 SoC.
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Hi all,
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
----
- arch/arm/mach-exynos/common.c |   11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+I'd like to discuss Exynos DRM TODO work.
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 6f435da..4e6c227 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -330,10 +330,10 @@ void exynos5_restart(char mode, const char *cmd)
- 	u32 val;
- 	void __iomem *addr;
- 
--	if (of_machine_is_compatible("samsung,exynos5250")) {
--		val = 0x1;
--		addr = EXYNOS_SWRESET;
--	} else if (of_machine_is_compatible("samsung,exynos5440")) {
-+	val = 0x1;
-+	addr = EXYNOS_SWRESET;
-+
-+	if (of_machine_is_compatible("samsung,exynos5440")) {
- 		u32 status;
- 		np = of_find_compatible_node(NULL, NULL, "samsung,exynos5440-clock");
- 
-@@ -344,9 +344,6 @@ void exynos5_restart(char mode, const char *cmd)
- 		val = __raw_readl(addr);
- 
- 		val = (val & 0xffff0000) | (status & 0xffff);
--	} else {
--		pr_err("%s: cannot support non-DT\n", __func__);
--		return;
- 	}
- 
- 	__raw_writel(val, addr);
--- 
-1.7.9.5
+There are features we have to solve and implement. The purpose of this email
+is to share what we have to do so that other guys can be involved without
+duplicated work.
 
+1. gscaler based on KMS interfaces - exynos5250 and later use the gscaler
+device instead of VP device. And now exynos drm driver has gscaler module as
+a sub module of IPP framework. However, this gscaler module is very specific
+to IPP framework so it's not easy to reuse this module. So maybe we need so
+many works for it.
+
+Video play back path using post process (AS IS):
+	MFC--------IPP--------KMS---------FIMD or HDMI
+
+Ideal video play back path using post process (TO BE):
+	MFC--------KMS--------FIMD or HDMI
+
+The above scenario is to send decoded image data (YUV format) to display
+device via post process. However, we don't really need to use IPP framework
+in case of using gscaler as VP. All we have to do is to call kms interface
+(setplane) for it like we did before.
+
+2. More features for HDMI sound support - we need to implement Exynos ALSA
+SoC DAI driver for HDMI audio (CPU DAI and CODEC DAI). Sampling freq, bit
+rate, and so on from user side should be sent to drm hdmi driver via ALSA
+interface and the ALSA SoC DAI driver. As of now, it seems like that we
+should implement this driver like OMAP does because there is no common
+framework for interfacing between ALSA SoC DAI driver and DRM HDMI driver:
+in case of OMAP, it seems like that ALSA SoC audio driver calls interfaces
+of DSS driver directly. I think we could implement ALSA SoC DAI driver in
+more generic way if we first implement common framework for it.
+
+Welcome to any volunteer and other opinions.
+
+Thanks,
+Inki Dae
