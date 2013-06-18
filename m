@@ -1,41 +1,93 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC PATCH 01/11] dma: amba-pl08x: Use bitmap to
-	pass variant specific quirks
-Date: Tue, 18 Jun 2013 15:33:46 +0200
-Message-ID: <201306181533.46905.arnd@arndb.de>
-References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
- <12368941.dQe8bcScGj@flatron>
- <CACRpkdbt4fAdnDKuP8bVpwrWoJ-oGNuSbiDZDz5J12ix2qijfQ@mail.gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
+Date: Tue, 18 Jun 2013 15:56:47 +0200
+Message-ID: <201306181556.47656.arnd@arndb.de>
+References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
+ <7174350.I5qK0sQfHM@wuerfel> <000001ce6bd7$50146e60$f03d4b20$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CACRpkdbt4fAdnDKuP8bVpwrWoJ-oGNuSbiDZDz5J12ix2qijfQ@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kerne>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <000001ce6bd7$50146e60$f03d4b20$@samsung.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Andrew Murray' <andrew.murray-5wv7dgnIgG8@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 18 June 2013, Linus Walleij wrote:
-> I thought about it yesterday and it basically looks to me that
-> it tries to outsmart the compiler on how to stuff the flags to save
-> struct space on the heap and hint that they can be determined
-> quickly by a & operation, this is like premature optimization.
+On Tuesday 18 June 2013, Jingoo Han wrote:
+> On Monday, June 17, 2013 9:45 PM, Arnd Bergmann wrote:
+> > On Monday 17 June 2013 18:45:52 Jingoo Han wrote:
+> > > On Friday, June 14, 2013 9:54 PM, Arnd Bergmann wrote:
+> > > >
+> > > > Please look up the documentation about inbound viewport and describe
+> > > > in a code comment what it does. I /assume/ that this is how DMA accesses
+> > > > from the bus get translated into AXI bus transactions. If so, you have
+> > > > to let the window translate addresses from RAM. If it's something else,
+> > > > then you should document what it is and how it needs to be set up.
+> > >
+> > > One of our hardware engineer confirmed it.
+> > > He said that these inbound functions are unnecessary.
+> > > Also, I checked that PCIe works properly without these functions.
+> > > So, I will remove these inbound functions.
+> > 
+> > Ok, good. So DMA just gets translated 1:1 independent of the
+> > inbound viewport? Have you tested this with PCI device using
+> > DMA?
 > 
-> So please go back to the old system.
+> According to our hardware engineer,
+> He said that
+> "That's correct. We tested it by doing a memory write from the device.
+> A device DMA is a series of memory r/w so I expect it to work same way."
+> 
+> Also, he thought that I already tested too, since it works after removing
+> the functions.
 
-Note that a 'bool' is typically stored as a 32-bit field, so there
-would be some space saving if there are a lot of flags.
+It could be that the default setting just creates a 1:1 map so that would
+work, but if you tested it, that should be good enough.
 
-I agree with the conclusion though, the previous state was more
-readable, which outweighs any benefits.
+> I looked at the pci-mvebu driver,
+> Then I fixed it as the pci-mvebu driver did.
+> Also, I added 'global_io_offset'.
+> 
+> @@ -909,6 +909,12 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+>                 if (restype == IORESOURCE_IO) {
+>                         of_pci_range_to_resource(&range, np, &pp->io);
+>                         pp->io.name = "I/O";
+> +                       pp->io.start = max_t(resource_size_t,
+> +                                               PCIBIOS_MIN_IO,
+> +                                               range.pci_addr + global_io_offset);
+> +                       pp->io.end = min_t(resource_size_t,
+> +                                               IO_SPACE_LIMIT,
+> +                                               range.pci_addr + range.size + global_io_offset);
+>                         pp->config.io_size = resource_size(&pp->io);
+>                         pp->config.io_bus_addr = range.pci_addr;
+> 
+> In this case, boot message is as below:
+> 
+> PCI host bridge to bus 0000:00
+> pci_bus 0000:00: root bus resource [io  0x1000-0x10000]
+> pci_bus 0000:00: root bus resource [mem 0x40011000-0x5fffffff]
+> [.....]
+> PCI host bridge to bus 0001:00
+> pci_bus 0001:00: root bus resource [io  0x10000-0x20000] (bus address [0x0000-0x10000])
+> pci_bus 0001:00: root bus resource [mem 0x60011000-0x7fffffff]
+
+Ok, very good.
+> 
+> I will remove a 'remove' callback. Is it OK?
+> Or what should I do?
+
+I think you should keep the remove function, but add a comment explaining that
+you don't allow module unload and that in order to allow it, the remove function
+will have to remove all pci buses and devices under the host bridge.
 
 	Arnd
