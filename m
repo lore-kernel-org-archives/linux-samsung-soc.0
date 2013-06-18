@@ -1,63 +1,96 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
-Date: Tue, 18 Jun 2013 14:35:54 +0900
-Message-ID: <000001ce6be5$b3fd0730$1bf71590$@samsung.com>
-References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
- <3539874.V7zkhbMg0b@wuerfel> <005e01ce6b3f$74e3c940$5eab5bc0$@samsung.com>
- <7174350.I5qK0sQfHM@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <7174350.I5qK0sQfHM@wuerfel>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, Jingoo Han <jg1.han@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [PATCH v4 00/10] ARM: Exynos: Add Exynos5420 SoC support
+Date: Tue, 18 Jun 2013 11:59:12 +0530
+Message-ID: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:63626 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752049Ab3FRG3j (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Jun 2013 02:29:39 -0400
+Received: by mail-pa0-f49.google.com with SMTP id ld11so3623667pab.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 23:29:38 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, mark.rutland@arm.com, thomas.ab@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-On Monday, June 17, 2013 9:45 PM, Arnd Bergmann wrote:
-> On Monday 17 June 2013 18:45:52 Jingoo Han wrote:
-> > On Friday, June 14, 2013 9:54 PM, Arnd Bergmann wrote:
-> > >
-[.....]
-> > > > > > +static int __exit exynos_pcie_remove(struct platform_device *pdev)
-> > > > > > +{
-> > > > > > +	struct pcie_port *pp = platform_get_drvdata(pdev);
-> > > > > > +
-> > > > > > +	clk_disable_unprepare(pp->bus_clk);
-> > > > > > +	clk_disable_unprepare(pp->clk);
-> > > > > > +
-> > > > > > +	return 0;
-> > > > > > +}
-> > > > >
-> > > > > You also don't remove the PCI devices here, as mentioned in an earlier
-> > > > > review.
-> > > >
-> > > > I reviewed Marvell PCIe driver and Tegra PCIe driver; however,
-> > > > I cannot know what you mean.
-> > > >
-> > > > Could let me know which additional functions are needed?
-> > >
-> > > The mvebu driver does not allow module unload. I haven't looked at the
-> > > tegra driver. If you allow unloading the driver and provide a 'remove'
-> > > callback, that callback needs to clean up the entire bus and remove
-> > > all child devices that were added as well as undo everything the
-> > > probe function did. I think it would be great if you can do that, although
-> > > it might not be easy. The simplest solution would be to not support
-> > > unloading though.
-> >
-> > As the mvebu driver uses platform_driver_probe(), the Exynos driver uses
-> > platform_driver_probe(). Thus, I will not provide a 'remove' callback.
-> 
-> Well, the important part is not to provide a module_exit() function, which
-> will ensure the driver cannot be unloaded.
+Exynos5420 is new SoC in Samsung's Exynos5 SoC series. This series adds
+initial support for this SoC.
 
-Aha, I see.
-I will not provide a module_exit() function), as the mvebu driver does.
+Changes since v3:
+1. Updated the max cpu clock frequency in dt node.
+2. Sorted DT nodes alphabetically as suggested by Kukjin.
+3. Removed the duplicate commit log comment in:
+   "clocksource: exynos_mct: use (request/free)_irq calls for local timer
+   registration"
+4. Added comment for Exynos5440 in commit log of the patch:
+   "ARM: dts: fork out common Exynos5 nodes"
 
-Best regards,
-Jingoo Han
+Changes since v2:
 
-> 
-> 	Arnd
+1. Renamed oscclk to fin_pll, in order to keep it consistent with
+   Exynos4/Exynos5
+2. Pass memory as single bank rather than splitting in 256MB size banks.
+
+Changes since v1:
+
+1. As not-dt platforms will not be supported from 3.11 onwards, following
+   patches from previous patch series are dropped:
+   "irqchip: exynos-combiner: set irq base as 256 for Exynos5420"
+   "ARM: Exynos: initialize l2x0 cache controller only for cortex-a9 based SoCs"
+2. Added device type property in cpu node in the following patch:
+   "ARM: dts: list the CPU nodes for Exynos5250
+3. Sorted out the nodes listed in based upon the physical addresses as suggested
+   by Tomasz Figa.
+4. As Tomasz is going to consolidate the secondary cpu power register address
+   calculation in all possible scnarios, hence dropped the following patch:
+  "ARM: Exynos: fix secondary cpu power control register address calculation"
+5. Replaced the setup/remove)_irq calls with (request/free)_irq calls as
+   suggested by Mark Rutland in patch: 
+   "clocksource: exynos_mct: use (request/free)_irq calls for local timer
+    registration"
+6. Changed the registration of epll and rpll from pll35xx to pl36xx.
+7. Changed driver data selection for serial port, based on ARCH_EXYNOS.
+8. Changed the interrupt cells from 2 to 1 as suggested by Tomasz Figa.
+
+Chander Kashyap (10):
+  ARM: dts: fork out common Exynos5 nodes
+  ARM: dts: list the CPU nodes for Exynos5250
+  ARM: Exynos: Add support for Exynos5420 SoC
+  serial: samsung: select Exynos specific driver data if ARCH_EXYNOS is
+    defined
+  ARM: Exynos: use four additional chipid bits to identify Exynos
+    family
+  clk: exynos5420: register clocks using common clock framework
+  ARM: dts: Add initial device tree support for Exynos5420
+  clocksource: exynos_mct: use (request/free)_irq calls for local timer
+    registration
+  ARM: Exynos: add secondary CPU boot base location for Exynos5420
+  ARM: Exynos: extend soft-reset support for Exynos5420
+
+ .../devicetree/bindings/clock/exynos5420-clock.txt |  201 ++++++
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5.dtsi                     |  111 +++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   78 +-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |  103 +++
+ arch/arm/mach-exynos/Kconfig                       |   10 +
+ arch/arm/mach-exynos/common.c                      |   18 +-
+ arch/arm/mach-exynos/include/mach/uncompress.h     |    7 +-
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    1 +
+ arch/arm/mach-exynos/platsmp.c                     |   12 +-
+ arch/arm/plat-samsung/include/plat/cpu.h           |    8 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos5420.c               |  762 ++++++++++++++++++++
+ drivers/clocksource/exynos_mct.c                   |   35 +-
+ drivers/tty/serial/samsung.c                       |    4 +-
+ 16 files changed, 1279 insertions(+), 106 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+ create mode 100644 arch/arm/boot/dts/exynos5.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5420-smdk5420.dts
+ create mode 100644 arch/arm/boot/dts/exynos5420.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos5420.c
+
+-- 
+1.7.9.5
