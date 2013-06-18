@@ -1,91 +1,85 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update S5P/Exynos FIMC driver entry
-Date: Tue, 18 Jun 2013 23:38:10 +0200
-Message-ID: <51C0D342.6090801@gmail.com>
-References: <1371487371-31143-1-git-send-email-s.nawrocki@samsung.com> <CAK9yfHxsNED-6Q8Kv=sO+D27q7LAfpfOn1y9Nutn9k-3YhUL-A@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
+Date: Tue, 18 Jun 2013 23:40:23 +0200
+Message-ID: <20130618214023.GB1926@mithrandir>
+References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com>
+ <1370467100-10820-9-git-send-email-tomasz.figa@gmail.com>
+ <20130617202910.GB5265@mithrandir>
+ <6439807.SaPozSx51p@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAK9yfHxsNED-6Q8Kv=sO+D27q7LAfpfOn1y9Nutn9k-3YhUL-A@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f180.google.com ([209.85.215.180]:50335 "EHLO
+	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933125Ab3FRVk1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Jun 2013 17:40:27 -0400
+Content-Disposition: inline
+In-Reply-To: <6439807.SaPozSx51p@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
-Hi Sachin,
 
-Thanks for your review.
+--nVMJ2NtxeReIH9PS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 06/18/2013 05:39 AM, Sachin Kamat wrote:
-> Hi Sylwester,
->
-> Just a couple of nits inline.
->
-> On 17 June 2013 22:12, Sylwester Nawrocki<s.nawrocki@samsung.com>  wrote:
->> This change is mainly to update the driver's path changed from
->> drivers/media/platform/s5p-fimc to drivers/media/platform/exynos4-is/.
->> While at it, remove non-existent files rule, move the whole entry to
->> the Samsung drivers section and add the patch tracking system URL.
->
-> How about adding git URL too (of your repo)?
+On Tue, Jun 18, 2013 at 09:41:09PM +0200, Tomasz Figa wrote:
+> On Monday 17 of June 2013 22:29:11 Thierry Reding wrote:
+> > On Wed, Jun 05, 2013 at 11:18:13PM +0200, Tomasz Figa wrote:
+[...]
+> > > +struct samsung_pwm_channel {
+> > > +	unsigned long period_ns;
+> > > +	unsigned long duty_ns;
+> > > +	unsigned long tin_ns;
+> > > +};
+> > > +
+> > > +struct samsung_pwm_chip {
+> > > +	struct pwm_chip chip;
+> > > +	struct samsung_pwm_variant variant;
+> > > +	struct samsung_pwm_channel channels[SAMSUNG_PWM_NUM];
+> >=20
+> > The new driver for Renesas did something similar, but I want to
+> > discourage storing per-channel data within the chip structure.
+> >=20
+> > The PWM framework provides a way to store this information along with
+> > the PWM device (see pwm_{set,get}_chip_data()).
+>=20
+> OK, this looks good, but in my case is not really useful. I need to acces=
+s=20
+> those channel data in my suspend/resume callbacks and obviously I don't=
+=20
+> have access to any pwm_device there. Any suggestions?
 
-Yes, I guess I should add it.
+You do have access to the struct pwm_chip, and that already has an array
+of struct pwm_devices, so you could obtain the driver-specific data from
+those (see pwm_chip.pwms).
 
->> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
->> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->> ---
->>   MAINTAINERS |   17 ++++++++---------
->>   1 file changed, 8 insertions(+), 9 deletions(-)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 3d7782b..d2c5618 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -1153,15 +1153,6 @@ L:       linux-media@vger.kernel.org
->>   S:     Maintained
->>   F:     drivers/media/platform/s5p-g2d/
->>
->> -ARM/SAMSUNG S5P SERIES FIMC SUPPORT
->> -M:     Kyungmin Park<kyungmin.park@samsung.com>
->> -M:     Sylwester Nawrocki<s.nawrocki@samsung.com>
->> -L:     linux-arm-kernel@lists.infradead.org
->> -L:     linux-media@vger.kernel.org
->> -S:     Maintained
->> -F:     arch/arm/plat-samsung/include/plat/*fimc*
->> -F:     drivers/media/platform/s5p-fimc/
->> -
->>   ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
->
-> Probably ARM could be removed from here too and may be other places if
-> they exist just like below entry.
+Thierry
 
-Yes, IMHO those driver entries are misplaced now. I guess the better
-place would be at the Samsung entries section.
+--nVMJ2NtxeReIH9PS
+Content-Type: application/pgp-signature
 
->>   M:     Kyungmin Park<kyungmin.park@samsung.com>
->>   M:     Kamil Debski<k.debski@samsung.com>
->> @@ -6930,6 +6921,14 @@ F:       drivers/regulator/s5m*.c
->>   F:     drivers/rtc/rtc-sec.c
->>   F:     include/linux/mfd/samsung/
->>
->> +SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
->> +M:     Kyungmin Park<kyungmin.park@samsung.com>
->> +M:     Sylwester Nawrocki<s.nawrocki@samsung.com>
->> +L:     linux-media@vger.kernel.org
->> +Q:     https://patchwork.linuxtv.org/project/linux-media/list/
->> +S:     Supported
->> +F:     drivers/media/platform/exynos4-is/
->> +
->
-> Considering alphabetical order (now that ARM is removed), this block
-> should come after SAMSUNG S3C24XX/S3C64XX...
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-Oops, right, thanks for spotting this.
+iQIcBAEBAgAGBQJRwNPHAAoJEN0jrNd/PrOhSt4QAICy6VxsLSvXRg7L0yqjJy/G
+31pCfThwffYAm/Lmlr7EFdRLXjwNtv5mb8m4LIL+6GDeZ0e4inEfdpGkrO76aRqR
+Uv7eFX/Zw7Dr8VWjcUhJDleG1hyM4upYxdvsoY+8QVDShyudIdaAZfUFVkCmkb05
+dzHeyJIz4EJwfW0o3AwJwjGyxRgzU3gso1vMMcP7LgKHmb4P4Kn9pxFrWxSrB8WP
+/h2A5sYBUncNtI8DK94o1KyJPa1G8hK0qJ3CVQ/uCn+Cea8h1bUelvKwlG1E881R
+gr1BSA8po9aYnJ7Fo1o2y/Xmk+S78RohDEOYXyDfBAWwVsGuiIsNifKEO9drhAj8
+NR1gjL0FaxypFltjJAOasY7HGoZy8a4Jqt5mzFv4yLbxN90Q18Nyf81o2NkdraV0
+acJqG5Zyih8bSRIe/1EgmSj9xyhyWSV/wM3uuRP59xLcuhBdaEViDry08zYhDbYm
+44af47q3rfgi0ndMbnX1k0ya/D1exyL6bEIsTuOBqZLZtnMJp5E/iemLEyhd4s73
+uBuGg+o+kZptPadLmYYoDmPTr6/+Ha2dhVGzFeCgtJvXJCdOJfDmqBljO62kFMMS
+rTvSLzbjAYuH5UJ6+UvFtwz9lwxd0km/h7+yp8IeqpDWApb/h8Nzq2Fm34+CAsFS
+TP24HPFEADkexm4M3vEa
+=OhOa
+-----END PGP SIGNATURE-----
 
->>   SAMSUNG S3C24XX/S3C64XX SOC SERIES CAMIF DRIVER
->>   M:     Sylwester Nawrocki<sylvester.nawrocki@gmail.com>
->>   L:     linux-media@vger.kernel.org
-
-Regards,
-Sylwester
+--nVMJ2NtxeReIH9PS--
