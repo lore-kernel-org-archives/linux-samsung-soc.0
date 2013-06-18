@@ -1,173 +1,104 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 36/38] ARM: EXYNOS: Use exynos_init_io() as map_io
- callback
-Date: Tue, 18 Jun 2013 11:48:27 +0200
-Message-ID: <4330740.PWIY8H74Fa@amdc1227>
-References: <1371486863-12398-1-git-send-email-t.figa@samsung.com>
- <1371486863-12398-37-git-send-email-t.figa@samsung.com>
- <1b9d01ce6c07$47e42cf0$d7ac86d0$%kim@samsung.com>
+Subject: Re: [PATCH v4 00/10] ARM: Exynos: Add Exynos5420 SoC support
+Date: Tue, 18 Jun 2013 11:49:38 +0200
+Message-ID: <3498782.ZLNmC7eOQx@amdc1227>
+References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:14591 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754536Ab3FRJsh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 05:48:37 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOL00B191WZFI60@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Jun 2013 10:48:35 +0100 (BST)
-In-reply-to: <1b9d01ce6c07$47e42cf0$d7ac86d0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-reply-to: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, kgene.kim@samsung.com, s.nawrocki@samsung.com, mark.rutland@arm.com, thomas.ab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On Tuesday 18 of June 2013 18:36:16 Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > Since there is no board specific mapping needed on Exynos,
-> > exynos_init_io() can be simplified and used as map_io callback for both
-> > Exynos4 and Exynos5.
-> > 
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> > 
-> >  arch/arm/mach-exynos/common.c          | 5 +----
-> >  arch/arm/mach-exynos/common.h          | 2 +-
-> >  arch/arm/mach-exynos/mach-exynos4-dt.c | 7 +------
-> >  arch/arm/mach-exynos/mach-exynos5-dt.c | 7 +------
-> >  4 files changed, 4 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> > index 91d457f..561890f 100644
-> > --- a/arch/arm/mach-exynos/common.c
-> > +++ b/arch/arm/mach-exynos/common.c
-> > @@ -351,15 +351,12 @@ int __init exynos_fdt_map_chipid(unsigned long node,
-> > const char *uname,
-> > 
-> >   * register the standard cpu IO areas
-> >   */
-> > 
-> > -void __init exynos_init_io(struct map_desc *mach_desc, int size)
-> > +void __init exynos_init_io(void)
-> > 
-> >  {
-> >  
-> >  	debug_ll_io_init();
-> >  	
-> >  	of_scan_flat_dt(exynos_fdt_map_chipid, NULL);
-> > 
-> > -	if (mach_desc)
-> > -		iotable_init(mach_desc, size);
-> > -
-> > 
-> >  	/* detect cpu id and rev. */
-> >  	s5p_init_cpu(S5P_VA_CHIPID);
-> > 
-> > diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> > index 1c83f95..38d45fd 100644
-> > --- a/arch/arm/mach-exynos/common.h
-> > +++ b/arch/arm/mach-exynos/common.h
-> > @@ -19,7 +19,7 @@ void exynos_init_time(void);
-> > 
-> >  extern unsigned long xxti_f, xusbxti_f;
-> >  
-> >  struct map_desc;
-> > 
-> > -void exynos_init_io(struct map_desc *mach_desc, int size);
-> > +void exynos_init_io(void);
-> > 
-> >  void exynos4_restart(char mode, const char *cmd);
-> >  void exynos5_restart(char mode, const char *cmd);
-> >  void exynos_init_late(void);
-> > 
-> > diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-
-> > exynos/mach-exynos4-dt.c
-> > index df15726..0099c6c 100644
-> > --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-> > +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> > @@ -23,11 +23,6 @@
-> > 
-> >  #include "common.h"
-> > 
-> > -static void __init exynos4_dt_map_io(void)
-> > -{
-> > -	exynos_init_io(NULL, 0);
-> > -}
-> > -
-> > 
-> >  static void __init exynos4_dt_machine_init(void)
-> >  {
-> >  
-> >  	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-> > 
-> > @@ -55,7 +50,7 @@ static void __init exynos4_reserve(void)
-> > 
-> >  DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device
-> 
-> Tree)")
-> 
-> >  	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
-> >  	.smp		= smp_ops(exynos_smp_ops),
-> > 
-> > -	.map_io		= exynos4_dt_map_io,
-> > +	.map_io		= exynos_init_io,
-> > 
-> >  	.init_early	= exynos_firmware_init,
-> >  	.init_machine	= exynos4_dt_machine_init,
-> >  	.init_late	= exynos_init_late,
-> > 
-> > diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-
-> > exynos/mach-exynos5-dt.c
-> > index 8777310..ab54770 100644
-> > --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> > +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> > @@ -27,11 +27,6 @@
-> > 
-> >  static u64 dma_mask64 = DMA_BIT_MASK(64);
-> >  static u64 dma_mask32 = DMA_BIT_MASK(32);
-> > 
-> > -static void __init exynos5_dt_map_io(void)
-> > -{
-> > -	exynos_init_io(NULL, 0);
-> > -}
-> > -
-> > 
-> >  static int exynos5440_platform_notifier(struct notifier_block *nb,
-> >  
-> >  				  unsigned long event, void *__dev)
-> >  
-> >  {
-> > 
-> > @@ -105,7 +100,7 @@ static void __init exynos5_reserve(void)
-> > 
-> >  DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
-> >  
-> >  	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-> >  	.smp		= smp_ops(exynos_smp_ops),
-> > 
-> > -	.map_io		= exynos5_dt_map_io,
-> > +	.map_io		= exynos_init_io,
-> > 
-> >  	.init_machine	= exynos5_dt_machine_init,
-> >  	.init_late	= exynos_init_late,
-> >  	.init_time	= exynos_init_time,
-> > 
-> > --
-> > 1.8.2.1
-> 
-> Looks good to me, but I think, this change has been submitted by Arnd even
-> though you did split, so the author should be Arnd. As you know, it is very
-> important. Let me fix this and some patches when I apply. If any problems,
-> let me know.
+Hi Chander,
 
-Right, I've been applying those changes manually and forgot to change the 
-author. Please fix patches 36-38 then.
+On Tuesday 18 of June 2013 11:59:12 Chander Kashyap wrote:
+> Exynos5420 is new SoC in Samsung's Exynos5 SoC series. This series adds
+> initial support for this SoC.
+> 
+> Changes since v3:
+> 1. Updated the max cpu clock frequency in dt node.
+> 2. Sorted DT nodes alphabetically as suggested by Kukjin.
+> 3. Removed the duplicate commit log comment in:
+>    "clocksource: exynos_mct: use (request/free)_irq calls for local timer
+>    registration"
+> 4. Added comment for Exynos5440 in commit log of the patch:
+>    "ARM: dts: fork out common Exynos5 nodes"
+> 
+> Changes since v2:
+> 
+> 1. Renamed oscclk to fin_pll, in order to keep it consistent with
+>    Exynos4/Exynos5
+> 2. Pass memory as single bank rather than splitting in 256MB size banks.
+> 
+> Changes since v1:
+> 
+> 1. As not-dt platforms will not be supported from 3.11 onwards, following
+>    patches from previous patch series are dropped:
+>    "irqchip: exynos-combiner: set irq base as 256 for Exynos5420"
+>    "ARM: Exynos: initialize l2x0 cache controller only for cortex-a9 based
+> SoCs" 2. Added device type property in cpu node in the following patch:
+>    "ARM: dts: list the CPU nodes for Exynos5250
+> 3. Sorted out the nodes listed in based upon the physical addresses as
+> suggested by Tomasz Figa.
+> 4. As Tomasz is going to consolidate the secondary cpu power register
+> address calculation in all possible scnarios, hence dropped the following
+> patch: "ARM: Exynos: fix secondary cpu power control register address
+> calculation" 5. Replaced the setup/remove)_irq calls with
+> (request/free)_irq calls as suggested by Mark Rutland in patch:
+>    "clocksource: exynos_mct: use (request/free)_irq calls for local timer
+>     registration"
+> 6. Changed the registration of epll and rpll from pll35xx to pl36xx.
+> 7. Changed driver data selection for serial port, based on ARCH_EXYNOS.
+> 8. Changed the interrupt cells from 2 to 1 as suggested by Tomasz Figa.
+> 
+> Chander Kashyap (10):
+>   ARM: dts: fork out common Exynos5 nodes
+>   ARM: dts: list the CPU nodes for Exynos5250
+>   ARM: Exynos: Add support for Exynos5420 SoC
+>   serial: samsung: select Exynos specific driver data if ARCH_EXYNOS is
+>     defined
+>   ARM: Exynos: use four additional chipid bits to identify Exynos
+>     family
+>   clk: exynos5420: register clocks using common clock framework
+>   ARM: dts: Add initial device tree support for Exynos5420
+>   clocksource: exynos_mct: use (request/free)_irq calls for local timer
+>     registration
+>   ARM: Exynos: add secondary CPU boot base location for Exynos5420
+>   ARM: Exynos: extend soft-reset support for Exynos5420
+> 
+>  .../devicetree/bindings/clock/exynos5420-clock.txt |  201 ++++++
+>  arch/arm/boot/dts/Makefile                         |    1 +
+>  arch/arm/boot/dts/exynos5.dtsi                     |  111 +++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   78 +-
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33 +
+>  arch/arm/boot/dts/exynos5420.dtsi                  |  103 +++
+>  arch/arm/mach-exynos/Kconfig                       |   10 +
+>  arch/arm/mach-exynos/common.c                      |   18 +-
+>  arch/arm/mach-exynos/include/mach/uncompress.h     |    7 +-
+>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    1 +
+>  arch/arm/mach-exynos/platsmp.c                     |   12 +-
+>  arch/arm/plat-samsung/include/plat/cpu.h           |    8 +
+>  drivers/clk/samsung/Makefile                       |    1 +
+>  drivers/clk/samsung/clk-exynos5420.c               |  762
+> ++++++++++++++++++++ drivers/clocksource/exynos_mct.c                   |  
+> 35 +-
+>  drivers/tty/serial/samsung.c                       |    4 +-
+>  16 files changed, 1279 insertions(+), 106 deletions(-)
+>  create mode 100644
+> Documentation/devicetree/bindings/clock/exynos5420-clock.txt create mode
+> 100644 arch/arm/boot/dts/exynos5.dtsi
+>  create mode 100644 arch/arm/boot/dts/exynos5420-smdk5420.dts
+>  create mode 100644 arch/arm/boot/dts/exynos5420.dtsi
+>  create mode 100644 drivers/clk/samsung/clk-exynos5420.c
+
+Looks good.
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
+
