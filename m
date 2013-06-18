@@ -1,119 +1,66 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v3 00/10] ARM: Exynos: Add Exynos5420 SoC support
-Date: Tue, 18 Jun 2013 09:58:08 +0530
-Message-ID: <CANuQgHFx72xNYFN1h6t63OB5gc8nzaBtik=A2WseOXjgMDvhdw@mail.gmail.com>
-References: <1371466836-4111-1-git-send-email-chander.kashyap@linaro.org>
-	<1a0401ce6b51$b58a3620$209ea260$%kim@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH 0/5] clk/exynos5250: add clocks for hdmi subsystem
+Date: Tue, 18 Jun 2013 10:39:09 +0530
+Message-ID: <CAPdUM4P8x+aeMwynE=rxfOD8L-fx1W8-C6=zqAnYO73ootX3hw@mail.gmail.com>
+References: <1370862062-16680-1-git-send-email-rahul.sharma@samsung.com>
+	<CALt3h7-9vMRx0XdxFvM4vkMOekbCwdaa_QP9Bj5Egk6vyZ5WYg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f169.google.com ([209.85.214.169]:56036 "EHLO
-	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751549Ab3FRE2J (ORCPT
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:47397 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753973Ab3FRFJL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 00:28:09 -0400
-Received: by mail-ob0-f169.google.com with SMTP id up14so4069672obb.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 21:28:09 -0700 (PDT)
-In-Reply-To: <1a0401ce6b51$b58a3620$209ea260$%kim@samsung.com>
+	Tue, 18 Jun 2013 01:09:11 -0400
+Received: by mail-wi0-f170.google.com with SMTP id ey16so4761175wid.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Jun 2013 22:09:09 -0700 (PDT)
+In-Reply-To: <CALt3h7-9vMRx0XdxFvM4vkMOekbCwdaa_QP9Bj5Egk6vyZ5WYg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, Mark Rutland <mark.rutland@arm.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
+To: Arun Kumar K <arunkk.samsung@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene.kim@samsung.com>, sw0312.kim@samsung.com, inki.dae@samsung.com, sunil joshi <joshi@samsung.com>, Arun Kumar K <arun.kk@samsung.com>
 
-On 17 June 2013 17:26, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Chander Kashyap wrote:
+Hi Mr. Kukjin,
+
+Kindly consider the following patches for review and integration.
+
+regards,
+Rahul Sharma.
+
+On Fri, Jun 14, 2013 at 3:39 PM, Arun Kumar K <arunkk.samsung@gmail.com> wrote:
+> Hi,
+> Tested this series on snow board and is working fine.
+>
+> Tested-by: Arun Kumar K <arun.kk@samsung.com>
+>
+> Regards
+> Arun
+>
+> On Mon, Jun 10, 2013 at 4:30 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+>> Add clock changes for hdmi subsystem for exynos5250 SoC. These
+>> include addition of new clocks like mout_hdmi and smmu_tv, associating
+>> ID to clk_hdmiphy and some essential corrections.
 >>
->> Exynos5420 is new SoC in Samsung's Exynos5 SoC series. This series adds
->> initial support for this SoC.
->> Changes since v2:
+>> This set is based on kukjin's for-next branch at
+>> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
 >>
->> 1. Renamed oscclk to fin_pll, in order to keep it consistant with
->> Exynos4/Exynos5
->> 2. Pass memory as single bank rather than splitting in 256MB size banks.
+>> Arun Kumar K (1):
+>>   clk/exynos5250: Fix HDMI clock number in documentation
 >>
->> Changes since v1:
+>> Rahul Sharma (4):
+>>   clk/exynos5250: add mout_hdmi mux clock for hdmi
+>>   clk/exynos5250: add sclk_hdmiphy in the list of special clocks
+>>   clk/exynos5250: add clock for tv sysmmu
+>>   clk/exynos5250: change parent to aclk200_disp1 for hdmi subsystem
 >>
->> 1. As not-dt platforms will not be supported from 3.11 onwards, following
->>    patches from previous patch series are dropped:
->>    "irqchip: exynos-combiner: set irq base as 256 for Exynos5420"
->>    "ARM: Exynos: initialize l2x0 cache controller only for cortex-a9 based
->> SoCs"
->> 2. Added device type property in cpu node in the following patch:
->>    "ARM: dts: list the CPU nodes for Exynos5250
->> 3. Sorted out the nodes listed in based upon the physical addresses as
->> suggested
->>    by Tomasz Figa.
->> 4. As Tomasz is going to consolidate the secondary cpu power register
->> address
->>    calculation in all possible scnarios, hence dropped the following
-> patch:
->>   "ARM: Exynos: fix secondary cpu power control register address
->> calculation"
->> 5. Replaced the setup/remove)_irq calls with (request/free)_irq calls as
->>    suggested by Mark Rutland in patch:
->>    "clocksource: exynos_mct: use (request/free)_irq calls for local timer
->>     registration"
->> 6. Changed the registration of epll and rpll from pll35xx to pl36xx.
->> 7. Changed driver data selection for serial port, based on ARCH_EXYNOS.
->> 8. Changed the interrupt cells from 2 to 1 as suggested by Tomasz Figa.
->>
->> Chander Kashyap (10):
->>   ARM: dts: fork out common Exynos5 nodes
->>   ARM: dts: list the CPU nodes for Exynos5250
->>   ARM: Exynos: Add support for Exynos5420 SoC
->>   serial: samsung: select Exynos specific driver data if ARCH_EXYNOS is
->>     defined
->>   ARM: Exynos: use four additional chipid bits to identify Exynos
->>     family
->>   clk: exynos5420: register clocks using common clock framework
->>   ARM: dts: Add initial device tree support for Exynos5420
->>   clocksource: exynos_mct: use (request/free)_irq calls for local timer
->>     registration
->>   ARM: Exynos: add secondary CPU boot base location for Exynos5420
->>   ARM: Exynos: extend soft-reset support for Exynos5420
->>
->>  .../devicetree/bindings/clock/exynos5420-clock.txt |  201 ++++++
->>  arch/arm/boot/dts/Makefile                         |    1 +
->>  arch/arm/boot/dts/exynos5.dtsi                     |  111 +++
->>  arch/arm/boot/dts/exynos5250.dtsi                  |   80 +-
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33 +
->>  arch/arm/boot/dts/exynos5420.dtsi                  |  103 +++
->>  arch/arm/mach-exynos/Kconfig                       |   10 +
->>  arch/arm/mach-exynos/common.c                      |   18 +-
->>  arch/arm/mach-exynos/include/mach/uncompress.h     |    7 +-
->>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    1 +
->>  arch/arm/mach-exynos/platsmp.c                     |   12 +-
->>  arch/arm/plat-samsung/include/plat/cpu.h           |    8 +
->>  drivers/clk/samsung/Makefile                       |    1 +
->>  drivers/clk/samsung/clk-exynos5420.c               |  762
->> ++++++++++++++++++++
->>  drivers/clocksource/exynos_mct.c                   |   35 +-
->>  drivers/tty/serial/samsung.c                       |    4 +-
->>  16 files changed, 1280 insertions(+), 107 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/clock/exynos5420-
->> clock.txt
->>  create mode 100644 arch/arm/boot/dts/exynos5.dtsi
->>  create mode 100644 arch/arm/boot/dts/exynos5420-smdk5420.dts
->>  create mode 100644 arch/arm/boot/dts/exynos5420.dtsi
->>  create mode 100644 drivers/clk/samsung/clk-exynos5420.c
+>>  .../devicetree/bindings/clock/exynos5250-clock.txt   |   12 +++++++++++-
+>>  drivers/clk/samsung/clk-exynos5250.c                 |   18 +++++++++++++-----
+>>  2 files changed, 24 insertions(+), 6 deletions(-)
 >>
 >> --
->> 1.7.9.5
->
-> Chander, basically looks good to me but there are some comments on several
-> patches.
-Thanks Kukjin.
->
-> Please address comments then, let me take this series after getting Mike's
-> ack on clock stuff.
-I will address the comments and resend.
->
-> Thanks,
-> - Kukjin
->
-
-
-
---
-with warm regards,
-Chander Kashyap
+>> 1.7.10.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
