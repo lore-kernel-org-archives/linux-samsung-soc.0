@@ -1,147 +1,99 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
-Date: Wed, 19 Jun 2013 00:17:06 +0200
-Message-ID: <20130618221705.GC1926@mithrandir>
+Date: Wed, 19 Jun 2013 00:20:00 +0200
+Message-ID: <20130618222000.GD1926@mithrandir>
 References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com>
- <1370467100-10820-9-git-send-email-tomasz.figa@gmail.com>
- <20130617202910.GB5265@mithrandir>
- <1920640.1A218CWh3x@flatron>
+ <6439807.SaPozSx51p@flatron>
+ <20130618214023.GB1926@mithrandir>
+ <1834122.aETH5FyPtO@flatron>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="f0KYrhQ4vYSV2aJu"
+	protocol="application/pgp-signature"; boundary="/3yNEOqWowh/8j+e"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:34107 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754090Ab3FRWRK (ORCPT
+Received: from mail-ea0-f177.google.com ([209.85.215.177]:33818 "EHLO
+	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754090Ab3FRWUE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 18:17:10 -0400
+	Tue, 18 Jun 2013 18:20:04 -0400
 Content-Disposition: inline
-In-Reply-To: <1920640.1A218CWh3x@flatron>
+In-Reply-To: <1834122.aETH5FyPtO@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
 
---f0KYrhQ4vYSV2aJu
+--/3yNEOqWowh/8j+e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2013 at 10:50:40PM +0200, Tomasz Figa wrote:
-> On Monday 17 of June 2013 22:29:11 Thierry Reding wrote:
-> > On Wed, Jun 05, 2013 at 11:18:13PM +0200, Tomasz Figa wrote:
-[...]
-> > > +#ifndef CONFIG_CLKSRC_SAMSUNG_PWM
-> > > +static DEFINE_SPINLOCK(samsung_pwm_lock);
-> > > +#endif
+On Tue, Jun 18, 2013 at 11:42:37PM +0200, Tomasz Figa wrote:
+> On Tuesday 18 of June 2013 23:40:23 Thierry Reding wrote:
+> > On Tue, Jun 18, 2013 at 09:41:09PM +0200, Tomasz Figa wrote:
+> > > On Monday 17 of June 2013 22:29:11 Thierry Reding wrote:
+> > > > On Wed, Jun 05, 2013 at 11:18:13PM +0200, Tomasz Figa wrote:
+> > [...]
 > >=20
-> > Why is this lock global? Shouldn't it more correctly be part of
-> > samsung_pwm_chip?
->=20
-> There are few registers shared with samsung_pwm_timer clocksource driver=
-=20
-> and so normally the spinlock is exported from it. However on on some=20
-> platforms (namely Exynos >=3D4x12) kernel can be compiled without that=20
-> driver, so the lock must be defined locally, just to synchronize multiple=
-=20
-> PWM channels, as they share registers as well.
-
-Okay, I think this needs further explanation. The clocksource driver is
-used for what exactly? From a quick look it seems to be very much PWM-
-specific. According to the device tree binding for the PWM driver, the
-timer blocks can also be used as clock sources and clock event timers.
-So if I understand correctly you have setups where you use one or more
-channels as clock source or clock event timer and one or more channels
-as PWM outputs.
-
-In that case it's a very bad idea to use a global lock to synchronize
-accesses. You need to do much more than that. To properly split this
-across several drivers there needs to be a mechanism to allocate
-channels for use either as clock source/event timer or PWM. Otherwise,
-how do you know that drivers aren't stepping on each other's toes?
-
-> > > +		ret =3D pwm_samsung_parse_dt(chip);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +
-> > > +		chip->chip.of_xlate =3D of_pwm_xlate_with_flags;
-> > > +		chip->chip.of_pwm_n_cells =3D 3;
-> > > +	} else {
-> > > +		if (!pdev->dev.platform_data) {
-> > > +			dev_err(&pdev->dev, "no platform data=20
-> specified\n");
-> > > +			return -EINVAL;
-> > > +		}
-> > > +
-> > > +		memcpy(&chip->variant, pdev->dev.platform_data,
-> > > +							sizeof(chip-
-> >variant));
-> > > +	}
+> > > > > +struct samsung_pwm_channel {
+> > > > > +	unsigned long period_ns;
+> > > > > +	unsigned long duty_ns;
+> > > > > +	unsigned long tin_ns;
+> > > > > +};
+> > > > > +
+> > > > > +struct samsung_pwm_chip {
+> > > > > +	struct pwm_chip chip;
+> > > > > +	struct samsung_pwm_variant variant;
+> > > > > +	struct samsung_pwm_channel channels[SAMSUNG_PWM_NUM];
+> > > >=20
+> > > > The new driver for Renesas did something similar, but I want to
+> > > > discourage storing per-channel data within the chip structure.
+> > > >=20
+> > > > The PWM framework provides a way to store this information along
+> > > > with
+> > > > the PWM device (see pwm_{set,get}_chip_data()).
+> > >=20
+> > > OK, this looks good, but in my case is not really useful. I need to
+> > > access those channel data in my suspend/resume callbacks and
+> > > obviously I don't have access to any pwm_device there. Any
+> > > suggestions?
 > >=20
-> > Obviously this needs some modification in order for the variant to
-> > become constant. But I think you can easily do so by making the driver
-> > match using the platform_driver's id_table field, similar to how the
-> > matching is done for OF.
+> > You do have access to the struct pwm_chip, and that already has an array
+> > of struct pwm_devices, so you could obtain the driver-specific data
+> > from those (see pwm_chip.pwms).
 >=20
-> Generally output_mask is board-dependent and is passed inside a variant=
+> Well, if it's legal to access internals of pwm_chip from PWM drivers then=
 =20
-> struct using platform_data pointer.
-
-That's okay. But output_mask is the only thing that's board-dependent.
-Everything else in the variant is SoC dependent judging by the OF device
-table. So really only the output_mask should be part of the platform
-data.
-
-> Same platform data is used in samsung_pwm_timer clocksource driver, so I=
+> there is no problem. Based on other subsystems, like regulators or clocks=
 =20
-> just reused it here without adding the need to rename platform device at=
+> I have concluded that this structure should be dereferenced only inside=
 =20
-> runtime (see arch/arm/plat-samsung/devs.c).
+> PWM core.
 
-Looking a bit at git log for the clocksource driver, there's this
-commit:
-
-	a3ce54f clocksource: samsung_pwm_timer: Do not request PWM mem region
-
-That's an ugly workaround for sharing registers between two drivers.
-There's a reason why drivers do request_mem_region(), and it is
-precisely to prevent them from accessing the same registers. As I
-already said above, I think you need to come up with some sort of API to
-share resources between the drivers.
-
-There was a similar issue a few months back with the pwm-tiehrpwm and
-pwm-tiecap drivers, which use a shared block of registers. Initially
-something similar was done as you do here, but eventually we came up
-with a much better solution that involved introducing a new driver for
-the shared functionality and an exported API.
-
-The situation seems to be somewhat different here since you actually
-share the same resources for different functionality instead of sharing
-one subset of register across multiple drivers, but I think a similar
-solution can be applied here.
+It's quite alright to do that. As a matter of fact you already do the
+same within the .probe() callback to set things up.
 
 Thierry
 
---f0KYrhQ4vYSV2aJu
+--/3yNEOqWowh/8j+e
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRwNxhAAoJEN0jrNd/PrOhSDQP/3eM4N40ijNsLjtNodmNFQzk
-uEtY8CLVSh6LV008OByyirflkUp9pD0toBZ8dMfLIw/nQEom7wAK/iAeyThooau6
-npsYmgLThSL9u/JiccPXBifVTSI5hP0TnHM310pyo2sWarzH9ytobwx2+MzCmAoG
-ZkWWJz+tRDEI2o0yCCGjcBJ7ShpkdlDqiFPxzhgzlA14DMdLU///sbYT5fZcK389
-XWnDVFx+lm2sOhLRXgOhX8deg0qVaFsEc8TM1va7jMZPooLP6h2VHh0VOhZVIHZU
-99eUKOnVj3Mu3HdjMSNbNuadFQLx1d2xK6QZb4a2HhNs0AB+N7p/GgSoN5hZT2pU
-EAhVkCIg87/ch5LtwxEUtZugcl6Eu7cYS0teUkfZbsEA1ERMb6ve5/Uzoaw0GHE6
-TwqxibBqTy7lds2q8eyTp/I1LJUvC5Sf/YYHJ+71Qzx6gLk9EiV460ewLSYdOWUf
-a0+p9UCL7pijLR6cXbjP9TbdwE9K0D39q/7Kbq/7Qy667/BTVHZyPfvgwlcqyTTe
-IPia2+j12ngswOTw2b352CLwcg/gvm8XTu0yIg444hdsxnKP0xrSZIeGxZQm0Swv
-FLiuYE+gZJEN3t+DkbNDNc04b5Uif8VkYcTkuVIYj7eTMVeIQ0YIBDFJCssnq8Xj
-cM5vDGRQpQ8B4xCafSrv
-=QM2m
+iQIcBAEBAgAGBQJRwN0QAAoJEN0jrNd/PrOhlXwQALHOobBpc0KaPyMoSHCiCK8f
+OOqwI65EdynLedwFr8T05rl6uCJuVDhXEyxDiFLdCv3JPKLr0131lAKb5b3cag4A
+7BRdLhsWadUu9NRXKgP4V5Cslz9qtcCY6rr74pKtcEdeHduIke3FZINJ7rxgbDkm
+n6FVAP7YKsg+iS/6OrSHBhzNo1+hGVEgmR1wxa2NYn7NP9Yaq+T3I48qwci0FBfF
+BFVeDQus0oVNBrP6gfUoBYfItLqUrfvUnRyxERy/x62sDHSTxGO+31is1aTvbvjg
+9GcTeTnd4hoKZQa6G0UzdYlnWkMsuJKSGG1EB0mr6wIQiLPv9+jarTVSrlKn7tBR
+0bbl4cKQNOEozwGhqLR9+BvtnMd9Mwz74FeOJKYfQYLiTUBhHr6xbta2w0ghTcgd
+EcnSA6gCDSIDNXq5lvyvPG3M6sKemBMncDohzABxjqJ22qXeYWl5vvOtyZYptj4q
+XU98TE0cVTMVBoxzHgd14njQZ8pdCdeP6i1xvLfdgE4hTlcp6N5K0k+hn1E3ps8l
+fTCSWrMSFeOUlnAnoElKOTY71InEkqeZ2fNMYSiKAYtkg3lnX1eKA0JupdcV0e5A
+rM2l3MI6y+dtytztMIdIXm03WBNrZxc3l7PAqIdTSktd8o+MRxdBxtqag6lLlPn3
+JFyqK3kd4TrfYYnQ2pB1
+=NnVT
 -----END PGP SIGNATURE-----
 
---f0KYrhQ4vYSV2aJu--
+--/3yNEOqWowh/8j+e--
