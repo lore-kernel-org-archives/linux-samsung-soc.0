@@ -1,74 +1,87 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 5/5] clk/exynos5420: assign sclk_pixel id to pixel clock divider
-Date: Tue, 18 Jun 2013 19:54:29 +0530
-Message-ID: <CAPdUM4NUJv7E+KqrGgHsWHYnf89_2cbiMP_D6S1pWTW=XeZO+g@mail.gmail.com>
-References: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com>
-	<1371565998-3642-6-git-send-email-rahul.sharma@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v3 06/10] clk: exynos5420: register clocks using common
+ clock framework
+Date: Tue, 18 Jun 2013 16:26:56 +0200
+Message-ID: <9285029.CIld1HyBWB@amdc1227>
+References: <1371466836-4111-1-git-send-email-chander.kashyap@linaro.org>
+ <CANuQgHHoUyE5e+MnnpzWLxcFNcD11FjYwx76pucw7peV4qmFkQ@mail.gmail.com>
+ <201306181601.16795.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:52605 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755725Ab3FROYa (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:40459 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932490Ab3FRO1G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 10:24:30 -0400
-Received: by mail-wg0-f46.google.com with SMTP id c11so3449703wgh.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2013 07:24:29 -0700 (PDT)
-In-Reply-To: <1371565998-3642-6-git-send-email-rahul.sharma@samsung.com>
+	Tue, 18 Jun 2013 10:27:06 -0400
+In-reply-to: <201306181601.16795.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mark Rutland <mark.rutland@arm.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
 
-With this patch, it is at par with Exynos5250 and Exynos4 clocks
-where sclk_pixel ID is assigned to a divider clock but in real,
-sclk_pixel is listed under gate clocks (enum value).
+Hi Arnd,
 
-Alternate to this, I can allocate a new ID, div_pixel, listed under
-new category of Divider Clocks for Exyno4, 5250 and 5420.
-div_pixel ID can be assigned to pixel clock dividers for all 3 SoCs.
-This ID can be accessed by hdmi driver as usual. While sclk_pixel
-ID can be left unused for Exyno4, 5250 as there are no pixel clock
-gates. And, For 5420, sclk_pixel can optionally be used to
-enable/disable the pixel clock gate.
+On Tuesday 18 of June 2013 16:01:16 Arnd Bergmann wrote:
+> On Tuesday 18 June 2013, Chander Kashyap wrote:
+> > >> +       [Core Clocks]
+> > >> +
+> > >> +  Clock                      ID
+> > >> +  ----------------------------
+> > >> +
+> > >> +  fin_pll            1
+> > >> +
+> > >> +  [Clock Gate for Special Clocks]
+> > >> +
+> > >> +  Clock                      ID
+> > >> +  ----------------------------
+> > >> +  sclk_uart0         128
+> > >> +  sclk_uart1         129
+> > >> +  sclk_uart2         130
+> > >> 
+> > >> +
+> > >> +   [Peripheral Clock Gates]
+> > >> +
+> > >> +  Clock                      ID
+> > >> +  ----------------------------
+> > >> +
+> > >> +  aclk66_peric               256
+> > >> +  uart0                      257
+> > >> +  uart1                      258
+> > > 
+> > > It looks like these are actually separate things. Wouldn't it be more
+> > > sensible to have separate device nodes for each of the lists and use a
+> > > local index?> 
+> > I have listed the parent clock first, then the child clocks, to
+> > maintain  readability.
+> > 
+> > > What numbers are used in the data sheet?
+> > 
+> > I didn't get your point?
+> 
+> I would have expected three clock device nodes, one for fin_pll (presumably
+> a fixed-rate clock?), one for "special clocks" and one for "peripheral
+> clock gates", and a number space starting at '1' for each of them, rather
+> than having a shared node and numbers starting at '1', '128' and '256',
+> which looks a bit clumsy.
+> 
+> Did you take the ID number definitions from a data sheet, or did you make up
+> the numbers yourself for the purpose of defining a binding?
 
-Regards,
-Rahul Sharma.
+This is a binding that has been defined for Samsung Common Clock Framework 
+drivers. Exynos4 and Exynos5250 use the same convention. The numbers are 
+defined in a way that should allow adding further clocks of particular types in 
+future as need for such shows up.
 
-On Tue, Jun 18, 2013 at 8:03 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> sclk_pixel is used to represent pixel clock divider on all exynos
-> SoCs not as a gate clock. It is queried in driver to pass as the
-> parent to hdmi clock while switching between parents. A new ID can
-> be asssigned Pixel gate clock which is currently not in use. Pixel
-> clock gate is default 'on'.
->
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 59cf177..edd0696 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -434,7 +434,7 @@ struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->         DIV(none, "dout_fimd1", "mout_fimd1", DIV_DISP10, 0, 4),
->         DIV(none, "dout_mipi1", "mout_mipi1", DIV_DISP10, 16, 8),
->         DIV(none, "dout_dp1", "mout_dp1", DIV_DISP10, 24, 4),
-> -       DIV(none, "dout_hdmi_pixel", "mout_pixel", DIV_DISP10, 28, 4),
-> +       DIV(sclk_pixel, "dout_hdmi_pixel", "mout_pixel", DIV_DISP10, 28, 4),
->
->         /* Audio Block */
->         DIV(none, "dout_maudio0", "mout_maudio0", DIV_MAU, 20, 4),
-> @@ -570,7 +570,7 @@ struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->                 GATE_TOP_SCLK_DISP1, 3, CLK_SET_RATE_PARENT, 0),
->         GATE(sclk_hdmi, "sclk_hdmi", "mout_hdmi",
->                 GATE_TOP_SCLK_DISP1, 9, CLK_SET_RATE_PARENT, 0),
-> -       GATE(sclk_pixel, "sclk_pixel", "dout_hdmi_pixel",
-> +       GATE(none, "sclk_pixel", "dout_hdmi_pixel",
->                 GATE_TOP_SCLK_DISP1, 10, CLK_SET_RATE_PARENT, 0),
->         GATE(sclk_dp1, "sclk_dp1", "dout_dp1",
->                 GATE_TOP_SCLK_DISP1, 20, CLK_SET_RATE_PARENT, 0),
+Physically there is one clock controller (CMU) which has a lot of dividers, 
+muxes and gates and so it is represented as a single device node.
+
+Best regards,
+Tomasz
+
+> 	Arnd
 > --
-> 1.7.10.4
->
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
