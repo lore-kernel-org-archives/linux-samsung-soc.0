@@ -1,57 +1,53 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/5] clk/exynos5420: add clocks for hdmi subsystem
-Date: Wed, 19 Jun 2013 23:01:17 +0900
-Message-ID: <51C1B9AD.8060804@samsung.com>
-References: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com> <CAPdUM4MtBXMaZDDRT1aKsS=HzwjpbyMY85oRLMbk-KvJCU1hag@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Common Clock Framework support for Samsung S3C64xx
+Date: Wed, 19 Jun 2013 23:17:06 +0900
+Message-ID: <51C1BD62.8050007@samsung.com>
+References: <1370476651-6743-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:64526 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756724Ab3FSOBX (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:37033 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756637Ab3FSORN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 10:01:23 -0400
-Received: by mail-pa0-f46.google.com with SMTP id fa11so5205600pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 07:01:23 -0700 (PDT)
-In-Reply-To: <CAPdUM4MtBXMaZDDRT1aKsS=HzwjpbyMY85oRLMbk-KvJCU1hag@mail.gmail.com>
+	Wed, 19 Jun 2013 10:17:13 -0400
+In-Reply-To: <1370476651-6743-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>, Mike Turquette <mturquette@linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, stern@rowland.harvard.edu, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
 
-On 06/19/13 13:04, Rahul Sharma wrote:
-> + mike
+On 06/06/13 08:57, Tomasz Figa wrote:
+> This series is an attempt to move clock support on Samsung S3C64xx SoCs
+> to Common Clock Framework.
 >
-Mike, I'm waiting for your reply on this. If you're OK, let me take this 
-series on top of exynos5420 stuff in samsung tree.
+Looks good :)
 
-Of course, if any concerns, please let me know.
+> First, support for PLL types present on S3C64xx SoCs is added to Samsung
+> Common Clock Framework driver. Then the main clock driver for mentioned
+> SoCs is introduced. Further patches contain fixes for drivers to make them
+> compliant with CCF semantics, migration of platform code to use the new
+> clock driver and removal of old clock management code.
+>
+> Depends on:
+>   - [PATCH 0/6] Samsung watchdog support clean-up
+>     http://thread.gmane.org/gmane.linux.kernel.samsung-soc/18736/focus=18989
+>   - [PATCH 00/15] Final Samsung PWM support cleanup
+>     http://www.spinics.net/lists/arm-kernel/msg248725.html
 
-Thanks,
-- Kukjin
+BTW, Tomasz, so how was going on above PWM patches?
 
-> On Tue, Jun 18, 2013 at 8:03 PM, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
->> Add clock changes for hdmi subsystem for exynos5250 SoC. These
->> include addition of new clocks like mout_hdmi and smmu_tv, associating
->> ID to clk_hdmiphy and some essential corrections.
->>
->> This set is based on kukjin's for-next branch at
->> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
->>
->> This set dependents on the following patches which add support for Exynos5420
->> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg19264.html
->>
->> Rahul Sharma (5):
->>    clk/exynos5420: add sclk_hdmiphy to the list of special clocks
->>    clk/exynos5420: add gate clock for tv sysmmu
->>    clk/exynos5420: fix the order of parents of hdmi mux
->>    clk/exynos5420: add hdmi mux to change parents in hdmi driver
->>    clk/exynos5420: assign sclk_pixel id to pixel clock divider
->>
->>   .../devicetree/bindings/clock/exynos5420-clock.txt   |    7 +++++++
->>   drivers/clk/samsung/clk-exynos5420.c                 |   18 +++++++++++-------
->>   2 files changed, 18 insertions(+), 7 deletions(-)
->>
->> --
->> 1.7.10.4
+>
+> On S3C6410-based Tiny6410 board (Mini6410-compatible):
+>
+> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
+>
+> Tomasz Figa (7):
+>    clk: samsung: pll: Add support for PLL6552 and PLL6553
+>    clk: samsung: Add clock driver for S3C64xx SoCs
+>    ARM: SAMSUNG: Add soc_is_s3c6400/s3c6410 macros
+>    ARM: s3c64xx: dma: Use clk_prepare_enable/clk_disable_unprepare
+>    usb: host: ohci-s3c2410 Use clk_prepare_enable/clk_disable_unprepare
+>    ARM: s3c64xx: Migrate clock handling to Common Clock Framework
+>    ARM: s3c64xx: Remove old clock management code
