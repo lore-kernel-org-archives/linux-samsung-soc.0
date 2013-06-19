@@ -1,53 +1,41 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/7] Common Clock Framework support for Samsung S3C64xx
-Date: Wed, 19 Jun 2013 23:17:06 +0900
-Message-ID: <51C1BD62.8050007@samsung.com>
-References: <1370476651-6743-1-git-send-email-tomasz.figa@gmail.com>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/7] clk: samsung: Add clock driver for S3C64xx SoCs
+Date: Wed, 19 Jun 2013 23:18:16 +0900
+Message-ID: <51C1BDA8.60906@samsung.com>
+References: <1370476651-6743-1-git-send-email-tomasz.figa@gmail.com> <2388977.5Y1ahHeZcl@flatron> <20130612165108.26381.54381@quantum> <6817507.KeKqs2jZHz@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:37033 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756637Ab3FSORN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 10:17:13 -0400
-In-Reply-To: <1370476651-6743-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6817507.KeKqs2jZHz@flatron>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, stern@rowland.harvard.edu, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org
 
-On 06/06/13 08:57, Tomasz Figa wrote:
-> This series is an attempt to move clock support on Samsung S3C64xx SoCs
-> to Common Clock Framework.
->
-Looks good :)
+On 06/13/13 06:38, Tomasz Figa wrote:
 
-> First, support for PLL types present on S3C64xx SoCs is added to Samsung
-> Common Clock Framework driver. Then the main clock driver for mentioned
-> SoCs is introduced. Further patches contain fixes for drivers to make them
-> compliant with CCF semantics, migration of platform code to use the new
-> clock driver and removal of old clock management code.
->
-> Depends on:
->   - [PATCH 0/6] Samsung watchdog support clean-up
->     http://thread.gmane.org/gmane.linux.kernel.samsung-soc/18736/focus=18989
->   - [PATCH 00/15] Final Samsung PWM support cleanup
->     http://www.spinics.net/lists/arm-kernel/msg248725.html
+[...]
 
-BTW, Tomasz, so how was going on above PWM patches?
+>>> Another thing is that it's unlikely for any new SoC from S3C64xx
+>>> series to show up, so basically the clock list is fixed.
+>>
+>> Sure.  I can take this into clk-next along with patch #1, or if you
+>> prefer:
+>>
+>> Acked-by: Mike Turquette<mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>
+> Thanks.
+>
+> IMHO with all the remaining platform patches in this series, it should go
+> through Samsung tree.
+>
 
->
-> On S3C6410-based Tiny6410 board (Mini6410-compatible):
->
-> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
->
-> Tomasz Figa (7):
->    clk: samsung: pll: Add support for PLL6552 and PLL6553
->    clk: samsung: Add clock driver for S3C64xx SoCs
->    ARM: SAMSUNG: Add soc_is_s3c6400/s3c6410 macros
->    ARM: s3c64xx: dma: Use clk_prepare_enable/clk_disable_unprepare
->    usb: host: ohci-s3c2410 Use clk_prepare_enable/clk_disable_unprepare
->    ARM: s3c64xx: Migrate clock handling to Common Clock Framework
->    ARM: s3c64xx: Remove old clock management code
+Mike, thanks for your ack. Let me take this whole series into samsung 
+tree when ready for other dependencies like PWM...
+
+- Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
