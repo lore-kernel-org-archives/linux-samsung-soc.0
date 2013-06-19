@@ -1,79 +1,50 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V6 03/30] thermal: exynos: Remove un-necessary CPU_THERMAL
- dependency
-Date: Wed, 19 Jun 2013 14:48:42 -0400
-Message-ID: <51C1FD0A.8060107@ti.com>
-References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com> <1371451599-31035-4-git-send-email-amit.daniel@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH 00/11] ARM: s3c64xx: Let amba-pl08x driver handle DMA
+Date: Wed, 19 Jun 2013 21:01:33 +0200
+Message-ID: <201306192101.34102.arnd@arndb.de>
+References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com> <20130619174047.GB1403@sirena.org.uk> <3697657.tZFV7pR81Q@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2MFMROPSICTCREHDNVQBW"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1371451599-31035-4-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.186]:56563 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757334Ab3FSTBs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Jun 2013 15:01:48 -0400
+In-Reply-To: <3697657.tZFV7pR81Q@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alban
 
-------enig2MFMROPSICTCREHDNVQBW
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Wednesday 19 June 2013, Tomasz Figa wrote:
+> On Wednesday 19 of June 2013 18:40:47 Mark Brown wrote:
+> > On Sun, Jun 16, 2013 at 10:54:07PM +0200, Tomasz Figa wrote:
+> > > One of the biggest roadblocks on the way of S3C64xx to DeviceTree
+> > > support is its DMA driver, which is completely platform-specific and
+> > > provides private API (s3c-dma), not even saying that its design is
+> > > completely against multiplatform-awareness.
+> > 
+> > I tried to test this on my s3c64xx based system but it gave me a kernel
+> > that didn't boot far enough to give console output (there's some early
+> > init stuff that uses SPI...).  That said, I needed:
+> > 
+> > diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+> > index 210a893..0f49707 100644
+> > --- a/drivers/dma/amba-pl08x.c
+> > +++ b/drivers/dma/amba-pl08x.c
+> > @@ -313,7 +313,7 @@ static int pl08x_request_mux(struct pl08x_dma_chan
+> > *plchan) int ret;
+> > 
+> >       if (plchan->mux_use++ == 0 && pd->get_signal) {
+> > -             ret = pd->get_signal(plchan->cd);
+> > +             ret = (pd->get_signal)(plchan->cd);
+> 
+> Hmm, that's strange. The former is a completely valid piece of code...
 
-On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
-> This patch removes the dependency on CPU_THERMAL for compiling TMU driv=
-er.
-> This is useful for cases when only TMU controller needs to be initialis=
-ed
-> without cpu cooling action.
->=20
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+get_signal is a macro defined in include/linux/signal.h. If that header
+gets included, neither of the two is valid.
 
-
-Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
-
-Please have a look on my comment on your patch 04. You may want to have
-this dependency still on your core part.
-
-> ---
->  drivers/thermal/samsung/Kconfig |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/=
-Kconfig
-> index 883a8a8..2cf31ad 100644
-> --- a/drivers/thermal/samsung/Kconfig
-> +++ b/drivers/thermal/samsung/Kconfig
-> @@ -1,7 +1,6 @@
->  config EXYNOS_THERMAL
->  	tristate "Temperature sensor on Samsung EXYNOS"
->  	depends on ARCH_HAS_BANDGAP
-> -	depends on CPU_THERMAL
->  	help
->  	  If you say yes here you get support for TMU (Thermal Management
->  	  Unit) on SAMSUNG EXYNOS series of SoC. This helps in registering
->=20
-
-
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
-------enig2MFMROPSICTCREHDNVQBW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlHB/QoACgkQCXcVR3XQvP0nKAD/QlFjCDU9UO/27tu0d6Fa+jSZ
-uu4v7hsRmWw6WR/D5coA/ilOW0uZmAVybjREUs+pmE9ckosIIKBqamuHn6ervEAp
-=/lER
------END PGP SIGNATURE-----
-
-------enig2MFMROPSICTCREHDNVQBW--
+	Arnd
