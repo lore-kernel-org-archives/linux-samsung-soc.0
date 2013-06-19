@@ -1,63 +1,51 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [GIT PULL 00/10] Samsung 2nd pull-request for v3.11
-Date: Wed, 19 Jun 2013 08:39:52 +0530
-Message-ID: <CAK9yfHx--0dKDzdpBz3o_V_j+D+4f_N576rwuuVcJbMROtx=mQ@mail.gmail.com>
-References: <51C0BC2D.80705@samsung.com>
+From: Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/5] clk/exynos5420: add clocks for hdmi subsystem
+Date: Wed, 19 Jun 2013 09:34:39 +0530
+Message-ID: <CAPdUM4MtBXMaZDDRT1aKsS=HzwjpbyMY85oRLMbk-KvJCU1hag@mail.gmail.com>
+References: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:36486 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933836Ab3FSDJw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Jun 2013 23:09:52 -0400
-Received: by mail-oa0-f42.google.com with SMTP id n12so6014536oag.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2013 20:09:52 -0700 (PDT)
-In-Reply-To: <51C0BC2D.80705@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1371565998-3642-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Kukjin,
++ mike
 
-On 19 June 2013 01:29, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Hi Arnd, Olof
+On Tue, Jun 18, 2013 at 8:03 PM, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Add clock changes for hdmi subsystem for exynos5250 SoC. These
+> include addition of new clocks like mout_hdmi and smmu_tv, associating
+> ID to clk_hdmiphy and some essential corrections.
 >
-> This is 2nd pull-request for Samsung stuff for v3.11.
+> This set is based on kukjin's for-next branch at
+> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
 >
-> This is including following branches.
-> v3.11-next/cleanup-samsung
-> v3.11-next/exynos-arch-2
-> v3.11-next/exynos-dt-2
-> v3.11-next/s3c24xx-dt-2
-> v3.11-next/dt-n-clk-audio
-> v3.11-next/remove-nondt-exynos-3
-> v3.11-next/s3c24xx-pinctrl-2
-> v3.11-next/soc-exynos5420
-> v3.11-next/samsung-defconfig
-> v3.11-next/non-critical-fixes
+> This set dependents on the following patches which add support for Exynos5420
+> http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg19264.html
 >
-> Just note, for remove-nondt-exynos-3 branch, small merge conflict will be
-> happened. I added my resolution in the pull-request.
+> Rahul Sharma (5):
+>   clk/exynos5420: add sclk_hdmiphy to the list of special clocks
+>   clk/exynos5420: add gate clock for tv sysmmu
+>   clk/exynos5420: fix the order of parents of hdmi mux
+>   clk/exynos5420: add hdmi mux to change parents in hdmi driver
+>   clk/exynos5420: assign sclk_pixel id to pixel clock divider
 >
-> If any problems, please kindly let me know.
+>  .../devicetree/bindings/clock/exynos5420-clock.txt   |    7 +++++++
+>  drivers/clk/samsung/clk-exynos5420.c                 |   18 +++++++++++-------
+>  2 files changed, 18 insertions(+), 7 deletions(-)
 >
-> Thanks,
-> - Kukjin
-
-[snip]
+> --
+> 1.7.10.4
 >
-> Sachin Kamat (3):
->       ARM: dts: Add PWM related pinctrl entries for exynos4210
->       ARM: dts: Add LCD related pinctrl entries for exynos4210
->       ARM: dts: Add FIMD node to Origen4210 board
-
-I dont see my following patch in this pull request which you said you
-had applied.
-https://patchwork.kernel.org/patch/2469891/
-
-
--- 
-With warm regards,
-Sachin
