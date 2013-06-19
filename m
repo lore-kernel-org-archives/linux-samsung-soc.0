@@ -1,44 +1,75 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: dts: Update range for vdd_arm on EXYNOS4412-origen board
-Date: Wed, 19 Jun 2013 15:28:39 +0530
-Message-ID: <1371635919-16288-1-git-send-email-tushar.behera@linaro.org>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Add MFC node for exynos 5420
+Date: Wed, 19 Jun 2013 15:49:31 +0530
+Message-ID: <CALt3h79ii8TA_gWACGS2f0QViTpCQQwqZ_i=wRiK120tRMnyRA@mail.gmail.com>
+References: <1371631969-10076-1-git-send-email-arun.kk@samsung.com>
+	<1371631969-10076-2-git-send-email-arun.kk@samsung.com>
+	<CAK9yfHw2GETii9gvuSkUE53DaqBuy7+srhKpOxJX=N7iRBAz1w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:50154 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934617Ab3FSKN2 (ORCPT
+Received: from mail-vb0-f42.google.com ([209.85.212.42]:63264 "EHLO
+	mail-vb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933833Ab3FSKTc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 06:13:28 -0400
-Received: by mail-pa0-f51.google.com with SMTP id lf11so4997385pab.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 03:13:28 -0700 (PDT)
+	Wed, 19 Jun 2013 06:19:32 -0400
+Received: by mail-vb0-f42.google.com with SMTP id i3so3604337vbh.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 03:19:32 -0700 (PDT)
+In-Reply-To: <CAK9yfHw2GETii9gvuSkUE53DaqBuy7+srhKpOxJX=N7iRBAz1w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-EXYNOS4412 cpufreq driver requires the range of vdd_arm regulator to
-be from .9v to 1.35v. Since vdd_arm regulator (BUCK2 on S5M8767) has
-a supported range of .6v to 1.6v, the constraints are updated to
-match the requirement from cpufreq driver.
+Hi Sachin,
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/boot/dts/exynos4412-origen.dts |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Jun 19, 2013 at 2:54 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 19 June 2013 14:22, Arun Kumar K <arun.kk@samsung.com> wrote:
+>> The patch adds MFC nodes for exynos 5420 and for
+>> smdk 5420 board.
+>>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    5 +++++
+>>  arch/arm/boot/dts/exynos5420.dtsi         |    8 ++++++++
+>>  2 files changed, 13 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> index 08607df..682532c 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -30,4 +30,9 @@
+>>                         clock-frequency = <24000000>;
+>>                 };
+>>         };
+>> +
+>> +       codec@11000000 {
+>> +               samsung,mfc-r = <0x43000000 0x800000>;
+>> +               samsung,mfc-l = <0x51000000 0x800000>;
+>> +       };
+>>  };
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index 8474d63..cb74356 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -100,4 +100,12 @@
+>>                 clocks = <&clock 260>, <&clock 131>;
+>>                 clock-names = "uart", "clk_uart_baud0";
+>>         };
+>> +
+>> +       codec@11000000 {
+>> +               compatible = "samsung,mfc-v7";
+>> +               reg = <0x11000000 0x10000>;
+>> +               interrupts = <0 96 0>;
+>> +               clocks = <&clock 401>;
+>> +               clock-names = "mfc";
+>> +       };
+>
+> I think it is better if we disable the IPs in dtsi file and enbale
+> them in respective board files as was followed for Exynos4.
+>
 
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 7993641..309a583 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -450,8 +450,8 @@
- 
- 				buck2_reg: BUCK2 {
- 					regulator-name = "vdd_arm";
--					regulator-min-microvolt = <925000>;
--					regulator-max-microvolt	= <1300000>;
-+					regulator-min-microvolt = <900000>;
-+					regulator-max-microvolt	= <1350000>;
- 					regulator-always-on;
- 					regulator-boot-on;
- 					op_mode = <1>; /* Normal Mode */
--- 
-1.7.9.5
+Right. Will change it.
+
+Regards
+Arun
