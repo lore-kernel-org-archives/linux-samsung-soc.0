@@ -1,81 +1,165 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH 00/11] ARM: s3c64xx: Let amba-pl08x driver handle DMA
-Date: Wed, 19 Jun 2013 18:40:47 +0100
-Message-ID: <20130619174047.GB1403@sirena.org.uk>
-References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH v6 2/7] clk: samsung: Define a common samsung_clk_register_pll()
+Date: Wed, 19 Jun 2013 23:44:47 +0530
+Message-ID: <CAKew6eXMERhqiJOz0vLeK-38U04kAxfJqfFVz+31nZcMCxhxNA@mail.gmail.com>
+References: <1370870659-10929-1-git-send-email-yadi.brar@samsung.com>
+	<1370870659-10929-3-git-send-email-yadi.brar@samsung.com>
+	<2209237.a9mepGgblz@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="uGRt5eEWyOm7cD/8"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:50589 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756805Ab3FSRlL (ORCPT
+Received: from mail-ie0-f175.google.com ([209.85.223.175]:34761 "EHLO
+	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756741Ab3FSSOr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 13:41:11 -0400
-Content-Disposition: inline
-In-Reply-To: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
+	Wed, 19 Jun 2013 14:14:47 -0400
+Received: by mail-ie0-f175.google.com with SMTP id a13so14033532iee.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 11:14:47 -0700 (PDT)
+In-Reply-To: <2209237.a9mepGgblz@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>Alban Bedel <al>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, Andrew Bresticker <abrestic@chromium.org>
 
+On Wed, Jun 19, 2013 at 10:24 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Yadwinder,
+>
+> Generally looks really good, but some comments inline.
+>
+> On Monday 10 of June 2013 18:54:14 Yadwinder Singh Brar wrote:
+>> This patch defines a common samsung_clk_register_pll() and its migrating
+>> the PLL35xx & PLL36xx to use it. Other samsung PLL can also be migrated
+>> to it. It also adds exynos5250 & exynos5420 PLLs to unique id list of
+>> clocks. Since pll2550 & pll35xx and pll2650 & pll36xx have exactly same
+>> clk ops implementation, added pll2550 and pll2650 also.
 
---uGRt5eEWyOm7cD/8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> +void __init samsung_clk_register_pll(struct samsung_pll_clock
+>> *clk_list, +                          unsigned int nr_pll, void __iomem
+> *base)
+>> +{
+>> +     struct samsung_clk_pll *pll;
+>> +     struct clk *clk;
+>> +     struct clk_init_data init;
+>> +     struct samsung_pll_clock *list = clk_list;
+>> +     int cnt;
+>> +
+>> +     for (cnt = 0; cnt < nr_pll; cnt++, list++) {
+>
+> I'd suggest moving contents of this loop to a function like following?
+>
+> static int __init _samsung_clk_register_pll(struct samsung_pll_clock *pll,
+>                                             void __iomem *base)
+>
+> This will make the code less indented and so more readable.
+>
 
-On Sun, Jun 16, 2013 at 10:54:07PM +0200, Tomasz Figa wrote:
-> One of the biggest roadblocks on the way of S3C64xx to DeviceTree support
-> is its DMA driver, which is completely platform-specific and provides
-> private API (s3c-dma), not even saying that its design is completely
-> against multiplatform-awareness.
+Yes, will do it.
 
-I tried to test this on my s3c64xx based system but it gave me a kernel
-that didn't boot far enough to give console output (there's some early
-init stuff that uses SPI...).  That said, I needed:
+>> +             pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+>> +             if (!pll) {
+>> +                     pr_err("%s: could not allocate pll clk %s\n",
+>> +                             __func__, list->name);
+>> +                     continue;
+>> +             }
+>> +
+>> +             init.name = list->name;
+>> +             init.flags = list->flags;
+>> +             init.parent_names = &list->parent_name;
+>> +             init.num_parents = 1;
+>> +
+>> +             switch (list->type) {
+>> +             /* clk_ops for 35xx and 2550 are similar */
+>> +             case pll_35xx:
+>> +             case pll_2550:
+>> +                     init.ops = &samsung_pll35xx_clk_ops;
+>> +                     break;
+>> +             /* clk_ops for 36xx and 2650 are similar */
+>> +             case pll_36xx:
+>> +             case pll_2650:
+>> +                     init.ops = &samsung_pll36xx_clk_ops;
+>> +                     break;
+>> +             default:
+>> +                     pr_warn("%s: Unknown pll type for pll clk %s\n",
+>> +                             __func__, list->name);
+>> +             }
+>> +
+>> +             pll->hw.init = &init;
+>> +             pll->type = list->type;
+>> +             pll->lock_reg = base + list->lock_offset;
+>> +             pll->con_reg = base + list->con_offset;
+>> +
+>> +             clk = clk_register(NULL, &pll->hw);
+>> +             if (IS_ERR(clk)) {
+>> +                     pr_err("%s: failed to register pll clock %s\n",
+>> +                             __func__, list->name);
+>> +                     kfree(pll);
+>> +                     continue;
+>> +             }
+>> +
+>> +             samsung_clk_add_lookup(clk, list->id);
+>> +
+>> +             if (list->alias)
+>> +                     if (clk_register_clkdev(clk, list->alias,
+>> +                             list->dev_name))
+>
+> What about
+>
+>                 if (!list->alias)
+>                         return;
+>
+>                 ret = clk_register_clkdev(clk, list->alias, list-
+>>dev_name);
+>                 if (ret)
+>                         pr_err("%s: failed to register lookup for %s",
+>                                                 __func__, list->name);
+>
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 210a893..0f49707 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -313,7 +313,7 @@ static int pl08x_request_mux(struct pl08x_dma_chan *plc=
-han)
- 	int ret;
-=20
- 	if (plchan->mux_use++ =3D=3D 0 && pd->get_signal) {
--		ret =3D pd->get_signal(plchan->cd);
-+		ret =3D (pd->get_signal)(plchan->cd);
- 		if (ret < 0) {
- 			plchan->mux_use =3D 0;
- 			return ret;
+its ok, but to me it looks more clear and precise inside if(){ },
+as its length and indentation is not much deep.
+If you really insist we can do it ?
 
-to get it to build which makes me suspect the compiler a bit as well...
-the system has audio, SPI and MMC enabled.
+>> +                             pr_err("%s: failed to register lookup for
+> %s",
+>> +                                     __func__, list->name);
+>> +     }
+>> +}
 
-I was applying this to -next, are there any other dependencies I need or
-anything?
+>> +struct samsung_pll_clock {
+>> +     unsigned int            id;
+>> +     const char              *dev_name;
+>> +     const char              *name;
+>> +     const char              *parent_name;
+>> +     unsigned long           flags;
+>> +     const int               con_offset;
+>> +     const int               lock_offset;
+>
+> I don't see any point of having all those const qualifiers of non-
+> pointers. This makes the struct useless for creating and initializing at
+> runtime.
+>
 
---uGRt5eEWyOm7cD/8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+OK, will remove it.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+>> +     enum                    samsung_pll_type type;
+>
+> IMHO the enum keyword shouldn't be separated from enum name like this.
+>
 
-iQIcBAEBAgAGBQJRwe0bAAoJELSic+t+oim98MwP/29FMHj4LijyYDE64SKiyk4K
-dnPnJEb9L0089HSrEIXeBi9an7SuKNl83tWhE1pX1hDKm4Ey/EXJ1xCfRLvoiG6Y
-Mo71VnAxiAE9kvU1pTW/X7Alm1W6uzmtMLcPUdMgKSCDl0WbrXlQmOcmfBnO6siO
-ED4NU8VuKX67HvMZ4Z4Dm1KdmgH0xoXf+Yqrg5LlNbXblVha97sH/qNc/cI71zIE
-4IpfgL1zmtfUMVDhkUUY3RovK9kszQpm6i0m3XPG0ePvam3pPA8Vv8XuSWI4aAxt
-w9UMlbja9bzEuxi7ArZ2jPQ8T9TOLm+SV3NozOpxr8QVDxenFT5GbfAV4V5PxmgV
-2/EZCFwv5n6IvVN1xckXYw/OTOx7BF6le8uEcvvybJQYijWx2hOZ6TRNNtezO+ZF
-JjuPS5hjpFKy09VItKvOpi2gLaSYL11V59MN20rl9gwGMlp9Z4BGFdJSU7ynK6hi
-2FEZvep5rAiVxbcIjD92dpa0wc22Q+pOBx+Dw5nAMyzRSu1NwaRtmqPHVn4HapK+
-fVPZyim1eFmc5tFQR1v2v5Q37iZEwbXeQ9UiSXSozq1m1b81QPItIo0xIgQREVeP
-CbY7W+3QfGPrtW435BGd1P8Ja1+EZ3DardHOi/1Nhy8YlzVrCRFNjQ3tJVeKPak6
-QbGKJj4Mv5ntZdSipxoD
-=aV7e
------END PGP SIGNATURE-----
+Any specific reason?  Just to keep indentation same for all members, I
+used tabs :).
 
---uGRt5eEWyOm7cD/8--
+> Otherwise the patch looks fine. Maybe it's a bit too big - things could be
+> done a bit more gradually, like:
+> 1) first add required structs and functions,
+> 2) then move existing clock drivers to use the new API, possibly one patch
+> per driver,
+> 3) remove the old API.
+>
+> This would make the whole change easier to review and, in case of any
+> regressions, easier to track down the problem.
+>
+
+OK, I will split it.
+
+Thanks,
+Yadwinder
