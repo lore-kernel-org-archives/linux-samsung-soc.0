@@ -1,86 +1,247 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
-Date: Wed, 19 Jun 2013 09:43:52 +0200
-Message-ID: <65316055.UrW2Xpt9hs@flatron>
-References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org> <51BE95A5.5090509@linaro.org> <51C13886.1050201@linaro.org>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] drm/exynos: rename compatible strings for hdmi
+ subsystem
+Date: Wed, 19 Jun 2013 09:52:07 +0200
+Message-ID: <7536863.RugNVV3dBS@flatron>
+References: <1371559778-9359-1-git-send-email-rahul.sharma@samsung.com>
+ <1371559778-9359-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f50.google.com ([209.85.214.50]:34344 "EHLO
-	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755576Ab3FSHn4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 03:43:56 -0400
-In-Reply-To: <51C13886.1050201@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1371559778-9359-2-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, broonie@kernel.org, l.majewski@samsung.com, s.nawrocki@samsung.com
 
-Hi Tushar,
+Hi Rahul,
 
-On Wednesday 19 of June 2013 10:20:14 Tushar Behera wrote:
-> On 06/17/2013 10:20 AM, Tushar Behera wrote:
-> > On 06/11/2013 12:23 AM, Tomasz Figa wrote:
-> >> On Monday 10 of June 2013 09:13:11 Tushar Behera wrote:
-> >>> On 06/08/2013 05:20 PM, Tomasz Figa wrote:
-> >>>> On Thursday 06 of June 2013 16:52:28 Tushar Behera wrote:
-> > [ ... ]
-> > 
-> >>>>>  	MUX_A(mout_core, "mout_core", mout_core_p4210,
-> >>>>> 
-> >>>>> -			SRC_CPU, 16, 1, "mout_core"),
-> >>>>> +			SRC_CPU, 16, 1, "moutcore"),
-> >>>> 
-> >>>> IMHO those typo corrections are not part of this patch.
-> >>> 
-> >>> But the older drivers (before migration to CCF) were using the clock
-> >>> "moutcore" (not "mout_core").
-> >> 
-> >> I mean, this should be placed in a separate patch, as this change is
-> >> not "adding alias for cpufreq related clocks", but rather fixing a
-> >> typo.> 
-> > Is it ok if I split this patch into 2, one adding clock alias
-> > 'mout_apll' and another one fixing the alias names 'mout_mpll',
-> > 'moutcore' and 'armclk'?
+On Tuesday 18 of June 2013 18:19:35 Rahul Sharma wrote:
+> This patch renames the combatible strings for hdmi, mixer, ddc
+> and hdmiphy. It follows the convention of using compatible string
+> which represent the SoC in which the IP was added for the first
+> time.
 > 
-> I have to fix up another clock for exynos4x12 too. I feel all these
-> modifications are too small to justify different patches. I would modify
-> the commit message appropriately.
+> Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/video/exynos_hdmi.txt    |    6
+> ++++-- Documentation/devicetree/bindings/video/exynos_hdmiddc.txt |   
+> 4 ++-- Documentation/devicetree/bindings/video/exynos_hdmiphy.txt |   
+> 6 ++++-- Documentation/devicetree/bindings/video/exynos_mixer.txt   |  
+>  7 +++++-- drivers/gpu/drm/exynos/exynos_ddc.c                        |
+>    2 +- drivers/gpu/drm/exynos/exynos_hdmi.c                       |   
+> 2 +- drivers/gpu/drm/exynos/exynos_hdmiphy.c                    |    4
+> +++- drivers/gpu/drm/exynos/exynos_mixer.c                      |   12
+> ++++++------ 8 files changed, 26 insertions(+), 17 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> b/Documentation/devicetree/bindings/video/exynos_hdmi.txt index
+> 589edee..2ac01ca 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> @@ -1,7 +1,9 @@
+>  Device-Tree bindings for drm hdmi driver
+> 
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmi".
+> +- compatible: value should be one among the following:
+> +	1) "samsung,exynos4210-hdmi"
+> +	2) "samsung,exynos4212-hdmi"
+>  - reg: physical base address of the hdmi and length of memory mapped
+>  	region.
+>  - interrupts: interrupt number to the cpu.
+> @@ -15,7 +17,7 @@ Required properties:
+>  Example:
+> 
+>  	hdmi {
+> -		compatible = "samsung,exynos5-hdmi";
+> +		compatible = "samsung,exynos4212-hdmi";
 
-Fine.
+Sorry, but it's a NAK from me.
 
-> > [ ... ]
-> > 
-> >>>> Basically I don't like the idea of those global aliases, which IMHO
-> >>>> should be completely dropped. Someone might not like it, but I'd go
-> >>>> with the conversion of our cpufreq drivers to platform drivers
-> >>>> instead, which could receive things like clocks and regulators
-> >>>> using
-> >>>> DT-based lookups.
-> >>> 
-> >>> I agree. Migration of exynos-cpufreq driver as a platform driver is
-> >>> the
-> >>> best solution. But unless someone picks up that work, cpufreq
-> >>> support
-> >>> for EXYNOS4 based systems is broken because of the incorrect clock
-> >>> aliases.
-> >> 
-> >> We have patches for this in our internal tree. I will clean them up a
-> >> bit and submit soon.
-> > 
-> > If you are going to submit the cpufreq driver patches for v3.11, then
-> > we can ignore this patchset. Otherwise, I would prefer to get these
-> > patches merged for v3.11 to get cpufreq working. Once the driver
-> > changes are incorporated, we can very well modify these later.
+DeviceTree bindings are considered an ABI. This is to allow older dtbs to 
+work with new kernels.
 
-I hope we can get my patches merged for 3.11, but just to be safe and have 
-things working for now, please proceed with yours.
+If you just change the binding this way, you break all the existing users 
+of this compatible value.
 
-I need a bit more time for this, because IMHO the current design of our 
-cpufreq drivers is inappropriate (directly accessing CMU registers) with 
-common clock framework already existing and it needs to be redesigned.
+In addition you are doing it in a way that breaks bisection:
+ - patch 1/4 breaks existing in-tree users of current compatible values,
+ - after patch 2 and 3 it is still broken,
+ - and eventually all in-tree users are fixed by patch 4 (but you can't 
+fix out-of-tree users).
+
+Please do it without changing existing compatible values. Even if they are 
+misleading, this is all can be described in the documentation - just list 
+SoCs that can be used with each compatible value there.
 
 Best regards,
 Tomasz
+
+>  		reg = <0x14530000 0x100000>;
+>  		interrupts = <0 95 0>;
+>  		hpd-gpio = <&gpx3 7 0xf 1 3>;
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> b/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt index
+> fa166d9..c1bd2ea 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> @@ -1,12 +1,12 @@
+>  Device-Tree bindings for hdmiddc driver
+> 
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmiddc".
+> +- compatible: value should be "samsung,exynos4210-hdmiddc".
+>  - reg: I2C address of the hdmiddc device.
+> 
+>  Example:
+> 
+>  	hdmiddc {
+> -		compatible = "samsung,exynos5-hdmiddc";
+> +		compatible = "samsung,exynos4210-hdmiddc";
+>  		reg = <0x50>;
+>  	};
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt index
+> 858f4f9..e59d793 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> @@ -1,12 +1,14 @@
+>  Device-Tree bindings for hdmiphy driver
+> 
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmiphy".
+> +- compatible: value should be
+> +	1) "samsung,exynos4210-hdmiphy".
+> +	2) "samsung,exynos4212-hdmiphy".
+>  - reg: I2C address of the hdmiphy device.
+> 
+>  Example:
+> 
+>  	hdmiphy {
+> -		compatible = "samsung,exynos5-hdmiphy";
+> +		compatible = "samsung,exynos4210-hdmiphy";
+>  		reg = <0x38>;
+>  	};
+> diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> b/Documentation/devicetree/bindings/video/exynos_mixer.txt index
+> 9b2ea03..a8b063f 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> @@ -1,7 +1,10 @@
+>  Device-Tree bindings for mixer driver
+> 
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-mixer".
+> +- compatible: value should be:
+> +	1) "samsung,exynos4210-mixer"
+> +	2) "samsung,exynos5250-mixer"
+> +
+>  - reg: physical base address of the mixer and length of memory mapped
+>  	region.
+>  - interrupts: interrupt number to the cpu.
+> @@ -9,7 +12,7 @@ Required properties:
+>  Example:
+> 
+>  	mixer {
+> -		compatible = "samsung,exynos5-mixer";
+> +		compatible = "samsung,exynos5250-mixer";
+>  		reg = <0x14450000 0x10000>;
+>  		interrupts = <0 94 0>;
+>  	};
+> diff --git a/drivers/gpu/drm/exynos/exynos_ddc.c
+> b/drivers/gpu/drm/exynos/exynos_ddc.c index 4e9b5ba..1a0cca1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_ddc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_ddc.c
+> @@ -51,7 +51,7 @@ static struct i2c_device_id ddc_idtable[] = {
+>  #ifdef CONFIG_OF
+>  static struct of_device_id hdmiddc_match_types[] = {
+>  	{
+> -		.compatible = "samsung,exynos5-hdmiddc",
+> +		.compatible = "samsung,exynos4210-hdmiddc",
+>  	}, {
+>  		/* end node */
+>  	}
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> b/drivers/gpu/drm/exynos/exynos_hdmi.c index 743059f..8752171 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -1913,7 +1913,7 @@ static struct platform_device_id
+> hdmi_driver_types[] = { #ifdef CONFIG_OF
+>  static struct of_device_id hdmi_match_types[] = {
+>  	{
+> -		.compatible = "samsung,exynos5-hdmi",
+> +		.compatible = "samsung,exynos4212-hdmi",
+>  		.data	= (void	*)HDMI_TYPE14,
+>  	}, {
+>  		/* end node */
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> b/drivers/gpu/drm/exynos/exynos_hdmiphy.c index ea49d13..bf1718a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> @@ -49,7 +49,9 @@ static const struct i2c_device_id hdmiphy_id[] = {
+>  #ifdef CONFIG_OF
+>  static struct of_device_id hdmiphy_match_types[] = {
+>  	{
+> -		.compatible = "samsung,exynos5-hdmiphy",
+> +		.compatible = "samsung,exynos4210-hdmiphy",
+> +	}, {
+> +		.compatible = "samsung,exynos4212-hdmiphy",
+>  	}, {
+>  		/* end node */
+>  	}
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c
+> b/drivers/gpu/drm/exynos/exynos_mixer.c index f36f878..2fe6d33 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1115,12 +1115,12 @@ static int vp_resources_init(struct
+> exynos_drm_hdmi_context *ctx, return 0;
+>  }
+> 
+> -static struct mixer_drv_data exynos5_mxr_drv_data = {
+> +static struct mixer_drv_data exynos5250_mxr_drv_data = {
+>  	.version = MXR_VER_16_0_33_0,
+>  	.is_vp_enabled = 0,
+>  };
+> 
+> -static struct mixer_drv_data exynos4_mxr_drv_data = {
+> +static struct mixer_drv_data exynos4210_mxr_drv_data = {
+>  	.version = MXR_VER_0_0_0_16,
+>  	.is_vp_enabled = 1,
+>  };
+> @@ -1128,10 +1128,10 @@ static struct mixer_drv_data
+> exynos4_mxr_drv_data = { static struct platform_device_id
+> mixer_driver_types[] = {
+>  	{
+>  		.name		= "s5p-mixer",
+> -		.driver_data	= (unsigned long)&exynos4_mxr_drv_data,
+> +		.driver_data	= (unsigned long)&exynos4210_mxr_drv_data,
+>  	}, {
+>  		.name		= "exynos5-mixer",
+> -		.driver_data	= (unsigned long)&exynos5_mxr_drv_data,
+> +		.driver_data	= (unsigned long)&exynos5250_mxr_drv_data,
+>  	}, {
+>  		/* end node */
+>  	}
+> @@ -1139,8 +1139,8 @@ static struct platform_device_id
+> mixer_driver_types[] = {
+> 
+>  static struct of_device_id mixer_match_types[] = {
+>  	{
+> -		.compatible = "samsung,exynos5-mixer",
+> -		.data	= &exynos5_mxr_drv_data,
+> +		.compatible = "samsung,exynos5250-mixer",
+> +		.data	= &exynos5250_mxr_drv_data,
+>  	}, {
+>  		/* end node */
+>  	}
