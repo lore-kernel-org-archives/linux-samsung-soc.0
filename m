@@ -1,26 +1,27 @@
 From: =?EUC-KR?B?sei9wr/s?= <sw0312.kim@samsung.com>
-Subject: Re: [PATCH 3/4] drm/exynos: fix interlace resolutions for exynos5420
-Date: Wed, 19 Jun 2013 14:34:28 +0900
-Message-ID: <51C142E4.1000806@samsung.com>
+Subject: Re: [PATCH 1/4] drm/exynos: rename compatible strings for hdmi
+ subsystem
+Date: Wed, 19 Jun 2013 14:43:45 +0900
+Message-ID: <51C14511.202@samsung.com>
 References: <1371559778-9359-1-git-send-email-rahul.sharma@samsung.com>
- <1371559778-9359-4-git-send-email-rahul.sharma@samsung.com>
+ <1371559778-9359-2-git-send-email-rahul.sharma@samsung.com>
 Reply-To: sw0312.kim@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=EUC-KR
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:28034 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751325Ab3FSFe3 convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:48274 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752001Ab3FSFnl convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 01:34:29 -0400
+	Wed, 19 Jun 2013 01:43:41 -0400
 Received: from epcpsbgr3.samsung.com
  (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOM00CWFKS2OXN0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Jun 2013 14:34:23 +0900 (KST)
-In-reply-to: <1371559778-9359-4-git-send-email-rahul.sharma@samsung.com>
+ with ESMTP id <0MOM00HH7L8CS1J0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Jun 2013 14:43:40 +0900 (KST)
+In-reply-to: <1371559778-9359-2-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rahul Sharma <rahul.sharma@samsung.com>
@@ -28,79 +29,222 @@ Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-
 
 Hi Rahul,
 
-This patch looks good to me.
+It looks good, at least, to me.
+
+Best Regards,
+- Seung-Woo Kim
 
 On 2013=B3=E2 06=BF=F9 18=C0=CF 21:49, Rahul Sharma wrote:
-> Modified code for calculating hdmi IP register values from drm timing
-> values. The modification is based on the inputs from hw team and spec=
-ifically
-> proposed for 1440x576i and 1440x480i. But same changes holds good for=
- other
-> interlaced resolutions also.
+> This patch renames the combatible strings for hdmi, mixer, ddc
+> and hdmiphy. It follows the convention of using compatible string
+> which represent the SoC in which the IP was added for the first
+> time.
 >=20
 > Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-
-Acked-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-
 > ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c |   14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
+>  Documentation/devicetree/bindings/video/exynos_hdmi.txt    |    6 ++=
+++--
+>  Documentation/devicetree/bindings/video/exynos_hdmiddc.txt |    4 ++=
+--
+>  Documentation/devicetree/bindings/video/exynos_hdmiphy.txt |    6 ++=
+++--
+>  Documentation/devicetree/bindings/video/exynos_mixer.txt   |    7 ++=
++++--
+>  drivers/gpu/drm/exynos/exynos_ddc.c                        |    2 +-
+>  drivers/gpu/drm/exynos/exynos_hdmi.c                       |    2 +-
+>  drivers/gpu/drm/exynos/exynos_hdmiphy.c                    |    4 ++=
++-
+>  drivers/gpu/drm/exynos/exynos_mixer.c                      |   12 ++=
+++++------
+>  8 files changed, 26 insertions(+), 17 deletions(-)
 >=20
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt =
+b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> index 589edee..2ac01ca 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> @@ -1,7 +1,9 @@
+>  Device-Tree bindings for drm hdmi driver
+> =20
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmi".
+> +- compatible: value should be one among the following:
+> +	1) "samsung,exynos4210-hdmi"
+> +	2) "samsung,exynos4212-hdmi"
+>  - reg: physical base address of the hdmi and length of memory mapped
+>  	region.
+>  - interrupts: interrupt number to the cpu.
+> @@ -15,7 +17,7 @@ Required properties:
+>  Example:
+> =20
+>  	hdmi {
+> -		compatible =3D "samsung,exynos5-hdmi";
+> +		compatible =3D "samsung,exynos4212-hdmi";
+>  		reg =3D <0x14530000 0x100000>;
+>  		interrupts =3D <0 95 0>;
+>  		hpd-gpio =3D <&gpx3 7 0xf 1 3>;
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmiddc.t=
+xt b/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> index fa166d9..c1bd2ea 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> @@ -1,12 +1,12 @@
+>  Device-Tree bindings for hdmiddc driver
+> =20
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmiddc".
+> +- compatible: value should be "samsung,exynos4210-hdmiddc".
+>  - reg: I2C address of the hdmiddc device.
+> =20
+>  Example:
+> =20
+>  	hdmiddc {
+> -		compatible =3D "samsung,exynos5-hdmiddc";
+> +		compatible =3D "samsung,exynos4210-hdmiddc";
+>  		reg =3D <0x50>;
+>  	};
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmiphy.t=
+xt b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> index 858f4f9..e59d793 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> @@ -1,12 +1,14 @@
+>  Device-Tree bindings for hdmiphy driver
+> =20
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmiphy".
+> +- compatible: value should be
+> +	1) "samsung,exynos4210-hdmiphy".
+> +	2) "samsung,exynos4212-hdmiphy".
+>  - reg: I2C address of the hdmiphy device.
+> =20
+>  Example:
+> =20
+>  	hdmiphy {
+> -		compatible =3D "samsung,exynos5-hdmiphy";
+> +		compatible =3D "samsung,exynos4210-hdmiphy";
+>  		reg =3D <0x38>;
+>  	};
+> diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt=
+ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> index 9b2ea03..a8b063f 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> @@ -1,7 +1,10 @@
+>  Device-Tree bindings for mixer driver
+> =20
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-mixer".
+> +- compatible: value should be:
+> +	1) "samsung,exynos4210-mixer"
+> +	2) "samsung,exynos5250-mixer"
+> +
+>  - reg: physical base address of the mixer and length of memory mappe=
+d
+>  	region.
+>  - interrupts: interrupt number to the cpu.
+> @@ -9,7 +12,7 @@ Required properties:
+>  Example:
+> =20
+>  	mixer {
+> -		compatible =3D "samsung,exynos5-mixer";
+> +		compatible =3D "samsung,exynos5250-mixer";
+>  		reg =3D <0x14450000 0x10000>;
+>  		interrupts =3D <0 94 0>;
+>  	};
+> diff --git a/drivers/gpu/drm/exynos/exynos_ddc.c b/drivers/gpu/drm/ex=
+ynos/exynos_ddc.c
+> index 4e9b5ba..1a0cca1 100644
+> --- a/drivers/gpu/drm/exynos/exynos_ddc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_ddc.c
+> @@ -51,7 +51,7 @@ static struct i2c_device_id ddc_idtable[] =3D {
+>  #ifdef CONFIG_OF
+>  static struct of_device_id hdmiddc_match_types[] =3D {
+>  	{
+> -		.compatible =3D "samsung,exynos5-hdmiddc",
+> +		.compatible =3D "samsung,exynos4210-hdmiddc",
+>  	}, {
+>  		/* end node */
+>  	}
 > diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/e=
 xynos/exynos_hdmi.c
-> index 8752171..2f807d5 100644
+> index 743059f..8752171 100644
 > --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 > +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -1557,8 +1557,7 @@ static void hdmi_v14_mode_set(struct hdmi_conte=
-xt *hdata,
->  			(m->vsync_start - m->vdisplay) / 2);
->  		hdmi_set_reg(core->v2_blank, 2, m->vtotal / 2);
->  		hdmi_set_reg(core->v1_blank, 2, (m->vtotal - m->vdisplay) / 2);
-> -		hdmi_set_reg(core->v_blank_f0, 2, (m->vtotal +
-> -			((m->vsync_end - m->vsync_start) * 4) + 5) / 2);
-> +		hdmi_set_reg(core->v_blank_f0, 2, m->vtotal - m->vdisplay / 2);
->  		hdmi_set_reg(core->v_blank_f1, 2, m->vtotal);
->  		hdmi_set_reg(core->v_sync_line_aft_2, 2, (m->vtotal / 2) + 7);
->  		hdmi_set_reg(core->v_sync_line_aft_1, 2, (m->vtotal / 2) + 2);
-> @@ -1568,7 +1567,10 @@ static void hdmi_v14_mode_set(struct hdmi_cont=
-ext *hdata,
->  			(m->htotal / 2) + (m->hsync_start - m->hdisplay));
->  		hdmi_set_reg(tg->vact_st, 2, (m->vtotal - m->vdisplay) / 2);
->  		hdmi_set_reg(tg->vact_sz, 2, m->vdisplay / 2);
-> -		hdmi_set_reg(tg->vact_st2, 2, 0x249);/* Reset value + 1*/
-> +		hdmi_set_reg(tg->vact_st2, 2, m->vtotal - m->vdisplay / 2);
-> +		hdmi_set_reg(tg->vsync2, 2, (m->vtotal / 2) + 1);
-> +		hdmi_set_reg(tg->vsync_bot_hdmi, 2, (m->vtotal / 2) + 1);
-> +		hdmi_set_reg(tg->field_bot_hdmi, 2, (m->vtotal / 2) + 1);
->  		hdmi_set_reg(tg->vact_st3, 2, 0x0);
->  		hdmi_set_reg(tg->vact_st4, 2, 0x0);
->  	} else {
-> @@ -1590,6 +1592,9 @@ static void hdmi_v14_mode_set(struct hdmi_conte=
-xt *hdata,
->  		hdmi_set_reg(tg->vact_st2, 2, 0x248); /* Reset value */
->  		hdmi_set_reg(tg->vact_st3, 2, 0x47b); /* Reset value */
->  		hdmi_set_reg(tg->vact_st4, 2, 0x6ae); /* Reset value */
-> +		hdmi_set_reg(tg->vsync2, 2, 0x233); /* Reset value */
-> +		hdmi_set_reg(tg->vsync_bot_hdmi, 2, 0x233); /* Reset value */
-> +		hdmi_set_reg(tg->field_bot_hdmi, 2, 0x233); /* Reset value */
+> @@ -1913,7 +1913,7 @@ static struct platform_device_id hdmi_driver_ty=
+pes[] =3D {
+>  #ifdef CONFIG_OF
+>  static struct of_device_id hdmi_match_types[] =3D {
+>  	{
+> -		.compatible =3D "samsung,exynos5-hdmi",
+> +		.compatible =3D "samsung,exynos4212-hdmi",
+>  		.data	=3D (void	*)HDMI_TYPE14,
+>  	}, {
+>  		/* end node */
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/dr=
+m/exynos/exynos_hdmiphy.c
+> index ea49d13..bf1718a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> @@ -49,7 +49,9 @@ static const struct i2c_device_id hdmiphy_id[] =3D =
+{
+>  #ifdef CONFIG_OF
+>  static struct of_device_id hdmiphy_match_types[] =3D {
+>  	{
+> -		.compatible =3D "samsung,exynos5-hdmiphy",
+> +		.compatible =3D "samsung,exynos4210-hdmiphy",
+> +	}, {
+> +		.compatible =3D "samsung,exynos4212-hdmiphy",
+>  	}, {
+>  		/* end node */
 >  	}
-> =20
->  	/* Following values & calculations are same irrespective of mode ty=
-pe */
-> @@ -1621,12 +1626,9 @@ static void hdmi_v14_mode_set(struct hdmi_cont=
-ext *hdata,
->  	hdmi_set_reg(tg->hact_sz, 2, m->hdisplay);
->  	hdmi_set_reg(tg->v_fsz, 2, m->vtotal);
->  	hdmi_set_reg(tg->vsync, 2, 0x1);
-> -	hdmi_set_reg(tg->vsync2, 2, 0x233); /* Reset value */
->  	hdmi_set_reg(tg->field_chg, 2, 0x233); /* Reset value */
->  	hdmi_set_reg(tg->vsync_top_hdmi, 2, 0x1); /* Reset value */
-> -	hdmi_set_reg(tg->vsync_bot_hdmi, 2, 0x233); /* Reset value */
->  	hdmi_set_reg(tg->field_top_hdmi, 2, 0x1); /* Reset value */
-> -	hdmi_set_reg(tg->field_bot_hdmi, 2, 0x233); /* Reset value */
->  	hdmi_set_reg(tg->tg_3d, 1, 0x0);
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
+exynos/exynos_mixer.c
+> index f36f878..2fe6d33 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1115,12 +1115,12 @@ static int vp_resources_init(struct exynos_dr=
+m_hdmi_context *ctx,
+>  	return 0;
 >  }
 > =20
+> -static struct mixer_drv_data exynos5_mxr_drv_data =3D {
+> +static struct mixer_drv_data exynos5250_mxr_drv_data =3D {
+>  	.version =3D MXR_VER_16_0_33_0,
+>  	.is_vp_enabled =3D 0,
+>  };
+> =20
+> -static struct mixer_drv_data exynos4_mxr_drv_data =3D {
+> +static struct mixer_drv_data exynos4210_mxr_drv_data =3D {
+>  	.version =3D MXR_VER_0_0_0_16,
+>  	.is_vp_enabled =3D 1,
+>  };
+> @@ -1128,10 +1128,10 @@ static struct mixer_drv_data exynos4_mxr_drv_=
+data =3D {
+>  static struct platform_device_id mixer_driver_types[] =3D {
+>  	{
+>  		.name		=3D "s5p-mixer",
+> -		.driver_data	=3D (unsigned long)&exynos4_mxr_drv_data,
+> +		.driver_data	=3D (unsigned long)&exynos4210_mxr_drv_data,
+>  	}, {
+>  		.name		=3D "exynos5-mixer",
+> -		.driver_data	=3D (unsigned long)&exynos5_mxr_drv_data,
+> +		.driver_data	=3D (unsigned long)&exynos5250_mxr_drv_data,
+>  	}, {
+>  		/* end node */
+>  	}
+> @@ -1139,8 +1139,8 @@ static struct platform_device_id mixer_driver_t=
+ypes[] =3D {
+> =20
+>  static struct of_device_id mixer_match_types[] =3D {
+>  	{
+> -		.compatible =3D "samsung,exynos5-mixer",
+> -		.data	=3D &exynos5_mxr_drv_data,
+> +		.compatible =3D "samsung,exynos5250-mixer",
+> +		.data	=3D &exynos5250_mxr_drv_data,
+>  	}, {
+>  		/* end node */
+>  	}
 >=20
 
 --=20
