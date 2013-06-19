@@ -1,70 +1,87 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH 00/11] ARM: s3c64xx: Let amba-pl08x driver handle DMA
-Date: Wed, 19 Jun 2013 23:48:00 +0100
-Message-ID: <20130619224800.GL1403@sirena.org.uk>
-References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
- <3697657.tZFV7pR81Q@flatron>
- <20130619192211.GH1403@sirena.org.uk>
- <5443580.A5iCQBtp1T@flatron>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH V6 15/30] thermal: exynos: Return success even if no cooling
+ data supplied
+Date: Wed, 19 Jun 2013 18:54:21 -0400
+Message-ID: <51C2369D.1090303@ti.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com> <1371451599-31035-16-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JTJq4mKM0qXghaEa"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:58606 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935028Ab3FSWsM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 18:48:12 -0400
-Content-Disposition: inline
-In-Reply-To: <5443580.A5iCQBtp1T@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="----enig2ODMCBIPLROQKLSJMKPQE"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1371451599-31035-16-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>Alban Bedel <al>
 
-
---JTJq4mKM0qXghaEa
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+------enig2ODMCBIPLROQKLSJMKPQE
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2013 at 09:32:44PM +0200, Tomasz Figa wrote:
-> On Wednesday 19 of June 2013 20:22:11 Mark Brown wrote:
+On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+> This patch removes the error return in the bind/unbind routine
+> as the platform may not register any cpufreq cooling data.
+>=20
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_thermal_common.c |    4 ++--
+>  1 files changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/=
+thermal/samsung/exynos_thermal_common.c
+> index 7064eb7..86d39aa 100644
+> --- a/drivers/thermal/samsung/exynos_thermal_common.c
+> +++ b/drivers/thermal/samsung/exynos_thermal_common.c
+> @@ -131,7 +131,7 @@ static int exynos_bind(struct thermal_zone_device *=
+thermal,
+>  	tab_size =3D data->cooling_data.freq_clip_count;
+> =20
+>  	if (tab_ptr =3D=3D NULL || tab_size =3D=3D 0)
+> -		return -EINVAL;
+> +		return 0;
+> =20
+>  	/* find the cooling device registered*/
+>  	for (i =3D 0; i < th_zone->cool_dev_size; i++)
+> @@ -180,7 +180,7 @@ static int exynos_unbind(struct thermal_zone_device=
+ *thermal,
+>  	tab_size =3D data->cooling_data.freq_clip_count;
+> =20
+>  	if (tab_size =3D=3D 0)
+> -		return -EINVAL;
+> +		return 0;
+> =20
+>  	/* find the cooling device registered*/
+>  	for (i =3D 0; i < th_zone->cool_dev_size; i++)
+>=20
 
-> > No, I didn't - that's most likely it, I didn't really investigate.  I
-> > didn't test the watchdog stuff as the clocks didn't get sent to me.
+I have one question before acking this one: what happens if one
+registers a TMU with no freq tab? Say the case where you have three
+sensors, just like SOC_ARCH_EXYNOS5440. Would you register
+cpufreq_cooling device for all of them? In other way, are you having 3
+cpufreq_cooling devices?
 
-> I always try to keep you on Cc of my patches for s3c64xx, as you are the=
-=20
-> most active user of this platform (if not the only one other than me) and=
-=20
-> this was the case for clock patches as well, just checked that.
 
-Yes, I had the clock patches but they depended on something or other I
-think.  I did test a previous verion IIRC.  There are other users I'm
-aware of (you can probably take a wild guess where from the board)
-though they tend not to be terribly active upstream.
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
 
---JTJq4mKM0qXghaEa
+Eduardo Valentin
+
+
+------enig2ODMCBIPLROQKLSJMKPQE
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJRwjUcAAoJELSic+t+oim9kNwP/A8TYOSfIfkfYArTyVm654EJ
-pSbqwwY7w72M3w9i+61HY0F9gDrnX63TpMG4d+us5qwvCay3aarGAgSDG3TFqcWC
-6YOungF7u3mZ14O5y4bFXA77+kye+OmtVQML0oh0flnON1pkqpS/By1tjpgCddNE
-8rxuD5i5dC9kMwWXAeHAdDg5K+WZLdA2w8aPcqcbjBFhW77yH0740B6yXGgTmL/r
-UGs1qpYzXwLYJCe1U5WyJ4pUMf1Ts6suQC9enLdjRRv3Tyu5WsdpJjc+ADiYXAFk
-Rtdp3KHnX8zL4sUhXr7cN+8BKgTnEeF5V6NUL9UqkgW0fBJ4fE5t8ybPBmlciXuV
-jmF730FUp4c1c6cCo9fM1AXyu4A4HXflDyrdd9SMu/faQCnTOLLCqYUTUBabNXiz
-3AlfJhyFXbcvlEbioBsxS2mr6N1P5W/b1wUbcEtX36wLGRl5GaDNGGxqUsMV64wF
-/BFsfjb0nDd0cy+KVDqfuhQgS2R7E2QidW+bOwSxAG9yedpOrqjFsjMSBSN1GgNo
-N2sSqkdRhKSs99/ymDoSFLYn4nF8bF5JnXl5yFafurv6gx3gCGYSEAUasR3vE6QB
-yKqGOqhsYuvEQfDBGPUVuArHnJaFAZT1Q2hZeANw0pU3Z+1eVmALK9Tq5jtVtqow
-w6vUDi9WeAnpu0N6cXBT
-=JMXm
+iF4EAREIAAYFAlHCNp0ACgkQCXcVR3XQvP2lsAD6AliygWHV68AxPqIWFsNSUmW8
+e+fNldiHZhW7gN6AnNIBAP2oY+TUFaDa4Ed6RcD8AVmIsLLX7Cz1cJRt1ivgm/fy
+=ixXh
 -----END PGP SIGNATURE-----
 
---JTJq4mKM0qXghaEa--
+------enig2ODMCBIPLROQKLSJMKPQE--
