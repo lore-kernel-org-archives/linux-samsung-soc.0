@@ -1,158 +1,106 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix incorrect usage of S5P_ARM_CORE1_*
- registers
-Date: Wed, 19 Jun 2013 15:49:43 +0200
-Message-ID: <2791500.rs0iL4EgjJ@amdc1227>
-References: <1371569191-2364-1-git-send-email-t.figa@samsung.com>
- <8974257.1Thh8U4Een@amdc1227>
- <20130619132417.GB5276@e102568-lin.cambridge.arm.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3 3/3] ARM/dts: change compatible strings for hdmi subsystem
+Date: Wed, 19 Jun 2013 22:50:34 +0900
+Message-ID: <51C1B72A.6080801@samsung.com>
+References: <1371646269-21880-1-git-send-email-rahul.sharma@samsung.com> <1371646269-21880-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:27694 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756639Ab3FSNty (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:61640 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756520Ab3FSNun (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 09:49:54 -0400
-In-reply-to: <20130619132417.GB5276@e102568-lin.cambridge.arm.com>
+	Wed, 19 Jun 2013 09:50:43 -0400
+Received: by mail-pa0-f44.google.com with SMTP id lj1so5196366pab.17
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 06:50:43 -0700 (PDT)
+In-Reply-To: <1371646269-21880-4-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Nicolas Pitre <nico@linaro.org>, Will Deacon <Will.Deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, tomasz.figa@gmail.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com, r.sh.open@gmail.com
 
-On Wednesday 19 of June 2013 14:24:17 Lorenzo Pieralisi wrote:
-> On Wed, Jun 19, 2013 at 01:50:57PM +0100, Tomasz Figa wrote:
-> > On Wednesday 19 of June 2013 17:39:21 Chander Kashyap wrote:
-> > > On 18 June 2013 23:29, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > > > On 06/19/13 02:45, Tomasz Figa wrote:
-> > > >> Ccing Arnd and Olof, because I forgot to add them to git
-> > > >> send-email...
-> > > >> 
-> > > >> Sorry for the noise.
-> > > >> 
-> > > >> On Tuesday 18 of June 2013 17:26:31 Tomasz Figa wrote:
-> > > >>> S5P_ARM_CORE1_* registers affect only core 1. To control further
-> > > >>> cores
-> > > >>> properly another registers must be used.
-> > > >>> 
-> > > >>> This patch replaces S5P_ARM_CORE1_* register definitions with
-> > > >>> S5P_ARM_CORE_*(x) macro which return addresses of registers for
-> > > >>> specified core.
-> > > >>> 
-> > > >>> This fixes CPU hotplug on quad core Exynos SoCs on which
-> > > >>> currently
-> > > >>> offlining CPUs 2 or 3 caused CPU 1 to be turned off.
-> > > >> 
-> > > >> Obviously this doesn't happen currently because of the if (cpu ==
-> > > >> 1),
-> > > >> but>
-> > > > 
-> > > > Yes, not happened...and just note exynos5440 doesn't support
-> > > > hotplug :)
-> > > > so this is available on exynos4412 and added 5420.
-> > > > 
-> > > >> if logical cpu1 turned out not to be physical cpu1, then it would
-> > > >> crash.
-> > > >> 
-> > > >> Best regards,
-> > > >> Tomasz
-> > > >> 
-> > > >>> In addition,
-> > > >>> bring-up of CPU 2 and 3 is fixed on boards where bootloader
-> > > >>> powers
-> > > >>> off
-> > > >>> secondary cores by default.
-> > > > 
-> > > > I need to test on board about above...
-> > > > 
-> > > >>> Cc: stable@vger.kernel.org
-> > > >>> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
-> > > >>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
-> > > >>> ---
-> > > >>> 
-> > > >>>   arch/arm/mach-exynos/hotplug.c               |  9 +++++----
-> > > >>>   arch/arm/mach-exynos/include/mach/regs-pmu.h | 10 +++++++---
-> > > >>>   arch/arm/mach-exynos/platsmp.c               |  9 +++++----
-> > > >>>   3 files changed, 17 insertions(+), 11 deletions(-)
-> > > >>> 
-> > > >>> diff --git a/arch/arm/mach-exynos/hotplug.c
-> > > >>> b/arch/arm/mach-exynos/hotplug.c index af90cfa..c089943 100644
-> > > >>> --- a/arch/arm/mach-exynos/hotplug.c
-> > > >>> +++ b/arch/arm/mach-exynos/hotplug.c
-> > > >>> @@ -93,10 +93,11 @@ static inline void cpu_leave_lowpower(void)
-> > > >>> 
-> > > >>>   static inline void platform_do_lowpower(unsigned int cpu, int
-> > > >>> 
-> > > >>> *spurious) {
-> > > >>> 
-> > > >>>         for (;;) {
-> > > >>> 
-> > > >>> +               void __iomem *reg_base;
-> > > >>> +               unsigned int phys_cpu = cpu_logical_map(cpu);
-> > > >>> 
-> > > >>> -               /* make cpu1 to be turned off at next WFI command
-> > > >>> */
-> > > >>> -               if (cpu == 1)
-> > > >>> -                       __raw_writel(0,
-> > > >>> S5P_ARM_CORE1_CONFIGURATION);
-> > > >>> +               reg_base = S5P_ARM_CORE_CONFIGURATION(phys_cpu);
-> > > 
-> > > Tomasz,
-> > > This will break for non-zero, MPIDR value.  Say if MPIDR is 1 then
-> > > for
-> > > cpu0 phys_cpu value will be 0x100,
-> > > and address calculation will be   (S5P_ARM_CORE0_CONFIGURATION +
-> > > ((0x101) * 0x80)), which is wrong.
-> 
-> Honestly, I did not understand the reasoning above, please clarify.
-> 
-> > Hmm, according to the code initializing __cpu_logical_map[] array this
-> > is not true.
-> > 
-> > Here's the code:
-> > 
-> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/a
-> > rch/arm/kernel/setup.c?id=refs/tags/next-20130619#n468
-> > 
-> > and for used macros and bitmasks:
-> > 
-> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/a
-> > rch/arm/include/asm/cputype.h?id=refs/tags/next-20130619#n45
-> > 
-> > Now the structure of the MPIDR register:
-> > 
-> > http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0388e/CI
-> > HEBGFG.html
-> > 
-> > As you can see, the value read from the register in
-> > smp_setup_processor_id() is only the physical CPU ID, so I don't see
-> > any
-> > problem here.
-> 
-> Define "physical CPU ID" :-)
-> 
-> There is a problem here: the MPIDR is not an index, and the
-> cpu_logical_map is populated in arm_dt_init_cpu_maps in:
-> 
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch
-> /arm/kernel/devtree.c?id=refs/tags/v3.10-rc6
-> 
-> with all affinity levels.
+On 06/19/13 21:51, Rahul Sharma wrote:
+> This patch renames the combatible strings for hdmi, mixer, ddc
+> and hdmiphy. It follows the convention of using compatible string
+> which represent the SoC in which the IP was added for the first
+> time.
+>
+> Signed-off-by: Rahul Sharma<rahul.sharma@samsung.com>
 
-OK. This is what I was missing. Thanks.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-> 
-> You need to perform a mapping between logical cpus and registers offset,
-> you can't use the cpu_logical_map directly for that.
+- Kukjin
 
-Hmm, can't I just extract cluster ID and CPU ID from the MPIDR value and 
-use them appropriately to calculate register offsets?
-
-Best regards,
-Tomasz
-
-> Next accident waiting to happen is GIC code (CONFIG_GIC_NON_BANKED),
-> where cpu_logical_map is used erroneously as an index.
-> 
-> Lorenzo
+> ---
+>   arch/arm/boot/dts/cros5250-common.dtsi    |    4 ++--
+>   arch/arm/boot/dts/exynos5250-smdk5250.dts |    4 ++--
+>   arch/arm/boot/dts/exynos5250.dtsi         |    4 ++--
+>   3 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
+> index 3f0239e..dc259e8b 100644
+> --- a/arch/arm/boot/dts/cros5250-common.dtsi
+> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
+> @@ -190,7 +190,7 @@
+>   		samsung,i2c-max-bus-freq =<66000>;
+>
+>   		hdmiddc@50 {
+> -			compatible = "samsung,exynos5-hdmiddc";
+> +			compatible = "samsung,exynos4210-hdmiddc";
+>   			reg =<0x50>;
+>   		};
+>   	};
+> @@ -224,7 +224,7 @@
+>   		samsung,i2c-max-bus-freq =<378000>;
+>
+>   		hdmiphy@38 {
+> -			compatible = "samsung,exynos5-hdmiphy";
+> +			compatible = "samsung,exynos4212-hdmiphy";
+>   			reg =<0x38>;
+>   		};
+>   	};
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index 3e0c792..f320d7c 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -72,7 +72,7 @@
+>   		samsung,i2c-max-bus-freq =<66000>;
+>
+>   		hdmiddc@50 {
+> -			compatible = "samsung,exynos5-hdmiddc";
+> +			compatible = "samsung,exynos4210-hdmiddc";
+>   			reg =<0x50>;
+>   		};
+>   	};
+> @@ -102,7 +102,7 @@
+>   		samsung,i2c-max-bus-freq =<66000>;
+>
+>   		hdmiphy@38 {
+> -			compatible = "samsung,exynos5-hdmiphy";
+> +			compatible = "samsung,exynos4212-hdmiphy";
+>   			reg =<0x38>;
+>   		};
+>   	};
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 0673524..2f7763b 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -601,7 +601,7 @@
+>   	};
+>
+>   	hdmi {
+> -		compatible = "samsung,exynos5-hdmi";
+> +		compatible = "samsung,exynos4212-hdmi";
+>   		reg =<0x14530000 0x70000>;
+>   		interrupts =<0 95 0>;
+>   		clocks =<&clock 333>,<&clock 136>,<&clock 137>,
+> @@ -611,7 +611,7 @@
+>   	};
+>
+>   	mixer {
+> -		compatible = "samsung,exynos5-mixer";
+> +		compatible = "samsung,exynos5250-mixer";
+>   		reg =<0x14450000 0x10000>;
+>   		interrupts =<0 94 0>;
+>   	};
