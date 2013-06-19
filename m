@@ -1,239 +1,233 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
-Date: Wed, 19 Jun 2013 12:23:52 +0200
-Message-ID: <1991384.bDpcDUcax8@amdc1227>
-References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com>
- <1433668.INLZy9nfLF@flatron> <20130619094355.GB2911@mithrandir>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH 1/4] drm/exynos: rename compatible strings for hdmi subsystem
+Date: Wed, 19 Jun 2013 15:56:19 +0530
+Message-ID: <CAPdUM4NX1ZcnDkqh0p=H0DKkcRneZP5oGEFJaOX1n4AAheW+cw@mail.gmail.com>
+References: <1371559778-9359-1-git-send-email-rahul.sharma@samsung.com>
+	<00a001ce6cc6$ca1807e0$5e4817a0$%dae@samsung.com>
+	<CAPdUM4OmQqkmuW3pUHuTRsZfLDwuj30aoKeA0L8Kbqn4qa1fUA@mail.gmail.com>
+	<3636784.qGOfQnZhBI@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:11907 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933914Ab3FSKYE (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:62604 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933947Ab3FSK0V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 06:24:04 -0400
-In-reply-to: <20130619094355.GB2911@mithrandir>
+	Wed, 19 Jun 2013 06:26:21 -0400
+Received: by mail-wg0-f52.google.com with SMTP id b12so4345943wgh.31
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 03:26:19 -0700 (PDT)
+In-Reply-To: <3636784.qGOfQnZhBI@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Lucas Stach <l.stach@pengutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, sw0312.kim@samsung.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Wednesday 19 of June 2013 11:43:56 Thierry Reding wrote:
-> On Wed, Jun 19, 2013 at 12:45:02AM +0200, Tomasz Figa wrote:
-> > On Wednesday 19 of June 2013 00:17:06 Thierry Reding wrote:
-> > > On Mon, Jun 17, 2013 at 10:50:40PM +0200, Tomasz Figa wrote:
-> > > > On Monday 17 of June 2013 22:29:11 Thierry Reding wrote:
-> > > > > On Wed, Jun 05, 2013 at 11:18:13PM +0200, Tomasz Figa wrote:
-> > > [...]
-> > > 
-> > > > > > +#ifndef CONFIG_CLKSRC_SAMSUNG_PWM
-> > > > > > +static DEFINE_SPINLOCK(samsung_pwm_lock);
-> > > > > > +#endif
-> > > > > 
-> > > > > Why is this lock global? Shouldn't it more correctly be part of
-> > > > > samsung_pwm_chip?
-> > > > 
-> > > > There are few registers shared with samsung_pwm_timer clocksource
-> > > > driver and so normally the spinlock is exported from it. However on
-> > > > on some platforms (namely Exynos >=4x12) kernel can be compiled
-> > > > without that driver, so the lock must be defined locally, just to
-> > > > synchronize multiple PWM channels, as they share registers as well.
-> > > 
-> > > Okay, I think this needs further explanation. The clocksource driver
-> > > is
-> > > used for what exactly? From a quick look it seems to be very much
-> > > PWM-
-> > > specific. According to the device tree binding for the PWM driver,
-> > > the
-> > > timer blocks can also be used as clock sources and clock event
-> > > timers.
-> > > So if I understand correctly you have setups where you use one or
-> > > more
-> > > channels as clock source or clock event timer and one or more
-> > > channels
-> > > as PWM outputs.
-> > > 
-> > > In that case it's a very bad idea to use a global lock to synchronize
-> > > accesses. You need to do much more than that. To properly split this
-> > > across several drivers there needs to be a mechanism to allocate
-> > > channels for use either as clock source/event timer or PWM.
-> > > Otherwise,
-> > > how do you know that drivers aren't stepping on each other's toes?
-> > > 
-> > > > > > +		ret = pwm_samsung_parse_dt(chip);
-> > > > > > +		if (ret)
-> > > > > > +			return ret;
-> > > > > > +
-> > > > > > +		chip->chip.of_xlate = of_pwm_xlate_with_flags;
-> > > > > > +		chip->chip.of_pwm_n_cells = 3;
-> > > > > > +	} else {
-> > > > > > +		if (!pdev->dev.platform_data) {
-> > > > > > +			dev_err(&pdev->dev, "no platform data
-> > > > 
-> > > > specified\n");
-> > > > 
-> > > > > > +			return -EINVAL;
-> > > > > > +		}
-> > > > > > +
-> > > > > > +		memcpy(&chip->variant, pdev->dev.platform_data,
-> > > > > > +
-> > 
-> > sizeof(chip-
-> > 
-> > > > >variant));
-> > > > >
-> > > > > > +	}
-> > > > > 
-> > > > > Obviously this needs some modification in order for the variant
-> > > > > to
-> > > > > become constant. But I think you can easily do so by making the
-> > > > > driver
-> > > > > match using the platform_driver's id_table field, similar to how
-> > > > > the
-> > > > > matching is done for OF.
-> > > > 
-> > > > Generally output_mask is board-dependent and is passed inside a
-> > > > variant
-> > > > struct using platform_data pointer.
-> > > 
-> > > That's okay. But output_mask is the only thing that's
-> > > board-dependent.
-> > > Everything else in the variant is SoC dependent judging by the OF
-> > > device
-> > > table. So really only the output_mask should be part of the platform
-> > > data.
-> > > 
-> > > > Same platform data is used in samsung_pwm_timer clocksource driver,
-> > > > so
-> > > > I just reused it here without adding the need to rename platform
-> > > > device at runtime (see arch/arm/plat-samsung/devs.c).
-> > > 
-> > > Looking a bit at git log for the clocksource driver, there's this
-> > > 
-> > > commit:
-> > > 	a3ce54f clocksource: samsung_pwm_timer: Do not request PWM mem
-> > 
-> > region
-> > 
-> > > That's an ugly workaround for sharing registers between two drivers.
-> > > There's a reason why drivers do request_mem_region(), and it is
-> > > precisely to prevent them from accessing the same registers. As I
-> > > already said above, I think you need to come up with some sort of API
-> > > to
-> > > share resources between the drivers.
-> > > 
-> > > There was a similar issue a few months back with the pwm-tiehrpwm and
-> > > pwm-tiecap drivers, which use a shared block of registers. Initially
-> > > something similar was done as you do here, but eventually we came up
-> > > with a much better solution that involved introducing a new driver
-> > > for
-> > > the shared functionality and an exported API.
-> > > 
-> > > The situation seems to be somewhat different here since you actually
-> > > share the same resources for different functionality instead of
-> > > sharing
-> > > one subset of register across multiple drivers, but I think a similar
-> > > solution can be applied here.
-> > 
-> > Well, current design, or rather lack of thereof, has been established
-> > after a significant amount of discussion, mostly with ARM SoC and MFD
-> > maintainers.
-> > 
-> > It started from a simple reorganization of the clocksource driver to be
-> > multiplatform friendly, without any means of synchronizing both drivers
-> > other than local_irq_save() and _restore() that used to be there
-> > originally, before I started my work on this. This was enough to work
-> > correctly, because both drivers at the same time are used only on
-> > uniprocessor systems.
-> > 
-> > Here's the thread with patches:
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16664/focus=1726
-> > 7
-> > 
-> > Then I opened a Pandora's Box by asking for opinion in this thread:
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16480/focus=1650
-> > 0
-> > 
-> > After that I started working on a complex framework for sharing this IP
-> > block that would solve all the problems with synchronization, channel
-> > allocation, device tree parsing, variant management, etc.
-> > 
-> > Here's an initial version, which started as an MFD master driver, which
-> > would let 2 client drivers use the hardware (only the clocksource part
-> > was implemented in that series):
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/17464/focus=2292
-> > 50
-> > 
-> > Still, that version didn't receive too good feedback, with comments
-> > pointing me to change the architecture to master-slave, with the
-> > clocksource driver being the master and PWM driver being the slave. And
-> > so v5 was made:
-> > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/17864
-> 
-> Yeah, this seemed to be going in the right direction.
-> 
-> > This version was generally accepted, but then we discussed on IRC
-> > (mostly me and Arnd) whether such complex infrastructure is really
-> > needed and concluded that for this platform a simple shared spinlock
-> > would be enough, based on following reasons:
-> > - on all SoCs on which the clocksource driver is going to be used there
-> > is only one instance of the PWM block, with 5 channels
-> 
-> You say that now. But then at some point somebody decides that it might
-> be useful to have a second instance.
+On Wed, Jun 19, 2013 at 3:20 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Rahul,
+>
+> On Wednesday 19 of June 2013 15:02:59 Rahul Sharma wrote:
+>> Hi All,
+>>
+>> On Wed, Jun 19, 2013 at 1:57 PM, Inki Dae <inki.dae@samsung.com> wrote:
+>> >> -----Original Message-----
+>> >> From: dri-devel-bounces+inki.dae=samsung.com@lists.freedesktop.org
+>> >> [mailto:dri-devel-bounces+inki.dae=samsung.com@lists.freedesktop.org] On
+>> >> Behalf Of Lucas Stach
+>> >> Sent: Wednesday, June 19, 2013 4:59 PM
+>> >> To: Tomasz Figa
+>> >> Cc: kgene.kim@samsung.com; devicetree-discuss@lists.ozlabs.org;
+>> >> sw0312.kim@samsung.com; joshi@samsung.com;
+>> >
+>> > dri-devel@lists.freedesktop.org;
+>> >
+>> >> linux-samsung-soc@vger.kernel.org; rob.herring@calxeda.com;
+>> >> s.nawrocki@samsung.com; grant.likely@linaro.org; Rahul Sharma
+>> >> Subject: Re: [PATCH 1/4] drm/exynos: rename compatible strings for hdmi
+>> >> subsystem
+>> >>
+>> >> Am Mittwoch, den 19.06.2013, 09:52 +0200 schrieb Tomasz Figa:
+>> >> > Hi Rahul,
+>> >> >
+>> >> > On Tuesday 18 of June 2013 18:19:35 Rahul Sharma wrote:
+>> >> > > This patch renames the combatible strings for hdmi, mixer, ddc
+>> >> > > and hdmiphy. It follows the convention of using compatible string
+>> >> > > which represent the SoC in which the IP was added for the first
+>> >> > > time.
+>> >> > >
+>> >> > > Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> >> > > ---
+>> >> > >
+>> >> > >  Documentation/devicetree/bindings/video/exynos_hdmi.txt    |    6
+>> >> > >
+>> >> > > ++++-- Documentation/devicetree/bindings/video/exynos_hdmiddc.txt |
+>> >> > > 4 ++-- Documentation/devicetree/bindings/video/exynos_hdmiphy.txt |
+>> >> > > 6 ++++-- Documentation/devicetree/bindings/video/exynos_mixer.txt   |
+>> >> > >
+>> >> > >  7 +++++-- drivers/gpu/drm/exynos/exynos_ddc.c
+>> >> > >
+>> >> > >    2 +- drivers/gpu/drm/exynos/exynos_hdmi.c                       |
+>> >> > >
+>> >> > > 2 +- drivers/gpu/drm/exynos/exynos_hdmiphy.c                    |
+>> >> > > 4
+>> >> > > +++- drivers/gpu/drm/exynos/exynos_mixer.c                      |
+>> >> > > 12
+>> >> > > ++++++------ 8 files changed, 26 insertions(+), 17 deletions(-)
+>> >> > >
+>> >> > > diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> >> > > b/Documentation/devicetree/bindings/video/exynos_hdmi.txt index
+>> >> > > 589edee..2ac01ca 100644
+>> >> > > --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> >> > > +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> >> > > @@ -1,7 +1,9 @@
+>> >> > >
+>> >> > >  Device-Tree bindings for drm hdmi driver
+>> >> > >
+>> >> > >  Required properties:
+>> >> > > -- compatible: value should be "samsung,exynos5-hdmi".
+>> >> > > +- compatible: value should be one among the following:
+>> >> > > + 1) "samsung,exynos4210-hdmi"
+>> >> > > + 2) "samsung,exynos4212-hdmi"
+>> >> > >
+>> >> > >  - reg: physical base address of the hdmi and length of memory mapped
+>> >> > >
+>> >> > >   region.
+>> >> > >
+>> >> > >  - interrupts: interrupt number to the cpu.
+>> >> > >
+>> >> > > @@ -15,7 +17,7 @@ Required properties:
+>> >> > >  Example:
+>> >> > >   hdmi {
+>> >> > >
+>> >> > > -         compatible = "samsung,exynos5-hdmi";
+>> >> > > +         compatible = "samsung,exynos4212-hdmi";
+>> >> >
+>> >> > Sorry, but it's a NAK from me.
+>> >> >
+>> >> > DeviceTree bindings are considered an ABI. This is to allow older dtbs
+>> >>
+>> >> to
+>> >>
+>> >> > work with new kernels.
+>> >> >
+>> >> > If you just change the binding this way, you break all the existing
+>> >>
+>> >> users
+>> >>
+>> >> > of this compatible value.
+>> >> >
+>> >> > In addition you are doing it in a way that breaks bisection:
+>> >> >  - patch 1/4 breaks existing in-tree users of current compatible
+>> >> >  values,
+>> >> >  - after patch 2 and 3 it is still broken,
+>> >> >  - and eventually all in-tree users are fixed by patch 4 (but you can't
+>> >> >
+>> >> > fix out-of-tree users).
+>>
+>> @Tomasz, I understand your point but how is it possible to change
+>> compatible types in driver as well as in dtbs by not breaking either of them
+>> other then putting changes in a single patch.
+>
+> It's very easy. (Let's forget about the fact that DT bindings are an ABI
+> temporarily) You can simply add new compatible values to the driver in first
+> patch, then modify dts files in second one and then remove old compatibles
+> values from the driver in third patch. (Now we remember about DT being ABI
+> again.)
+>
+>> I ensured that hdmi stuff is
+>> intact with whole series merged in either tree (drm or arch). Please
+>> suggest a better way.
+>>
+>> The Only existing user is Exynos5250, which is modified in the same patch
+>> set.
+>
+> This is not true. You have modified only the existing _in_ _tree_ users.
+>
+> Keep in mind that device tree is not a part of the kernel. It is currently
+> located in the same tree, but it is _not_ a part of the kernel.
+>
+> Now think about existing boards (like exynos5250-snow) that have a dtb built
+> from older dts sources stored in their flash memory. You need to maintain
+> compatibilty with this old dtb in new kernels as well.
+>
+>> >> > Please do it without changing existing compatible values. Even if they
+>> >>
+>> >> are
+>> >>
+>> >> > misleading, this is all can be described in the documentation - just
+>> >>
+>> >> list
+>> >>
+>> >> > SoCs that can be used with each compatible value there.
+>> >>
+>> >> Or you could just introduce the new compatible value and make all
+>> >> in-tree users use this, but keep the old values around and still accept
+>> >> them in the drivers. This way you get the goodness of the cleaner new
+>> >> symbols without breaking existing users. Just mark the old values as
+>> >> deprecated in the documentation, so no new devicetree usees them.
+>>
+>> I agree, above is a decent approach, but in this case we have only one
+>> user for this compatible type including in flight patches which I have
+>> modified along.
+>
+> This only user is already present in 3.10-rc6. This means that we now must
+> maintain compatibility with it.
+>
+>> If it seems better to keep old compatible type (deprecated), it is fine
+>> with me.
+>
+> Yes, this is an acceptable solution.
+>
+>> > That's a good idea. We really need to mitigate such misleading somehow or
+>> > other.
+>>
+>> Please sugggest me how to proceed.
+>
+> I think it's enough said now.
+>
+> Best regards,
+> Tomasz
 
-No, he won't.
+Fine. It seems if I change this patch to add new compatible strings,
+above concerns
+will be addressed. I will post the v2.
 
-Simply because no new SoC is going to be made which will use the 
-samsung_pwm_timer driver and all existing ones have only a single instance 
-of this IP.
+regards,
+Rahul Sharma.
 
-> > - on all existing boards there are always at least two channels that
-> > don't have outputs
-> 
-> I don't see how that's relevant here.
-
-This is the information passed through output_mask. Clocksource driver can 
-use _only_ channels without output and PWM driver can use _only_ channels 
-with output.
-
-Both drivers receive the same output_mask value, either from the same 
-variant structure or from device tree.
-
-> > - operations on particular PWM channels must be synchronized anyway,
-> > because there are registers shared by all PWM channels (TCON being most
-> > important where enable, autoreload and invert bits are located for all
-> > channels).
-> 
-> And that's precisely why there should be a more explicit way of
-> synchronizing than just acquiring a lock. Otherwise you have no
-> possibility whatsoever to detect when a board tries to use both the
-> clocksource and PWM drivers in incompatible ways. The lock may prevent
-> concurrent accesses to the shared registers, but that won't help you if
-> the PWM driver suddenly decides to use an output that was originally
-> meant to be used as clock source.
-
-See above.
-
-> > And so we got to current design which is basically a shared spinlock
-> > and
-> > per-board output_mask, which specifies which channels have outputs on
-> > particular boards. If you look to the clocksource driver, you can see
-> > that it tries to allocate two output-less channels for timekeeping
-> > purposes and if it fails to do so, it simply panics.
-> > 
-> > IMHO this solution is fine, because it's simple, has little overhead
-> > and
-> > it just works in case of platforms for which it is needed.
-> 
-> Okay, I like simple. But I see too much potential for this to break
-> in the future. There are just too many assumptions for my taste. It
-> isn't anything that I'm looking forward to have to maintain.
-
-Those are completely safe assumptions for existing platforms. Any new 
-platform with the same PWM IP will use this driver exclusively, without the 
-clocksource driver and so without the problems you mentioned.
-
-Best regards,
-Tomasz
+>
+>> regards,
+>> Rahul Sharma.
+>>
+>> > Thanks,
+>> > Inki Dae
+>> >
+>> >> Regards,
+>> >> Lucas
+>> >> --
+>> >> Pengutronix e.K.                           | Lucas Stach
+>> >> |
+>> >> Industrial Linux Solutions                 | http://www.pengutronix.de/
+>> >> |
+>> >> Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076
+>> >> |
+>> >> Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555
+>> >> |
+>> >>
+>> >> _______________________________________________
+>> >> dri-devel mailing list
+>> >> dri-devel@lists.freedesktop.org
+>> >> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>> >
+>> > _______________________________________________
+>> > dri-devel mailing list
+>> > dri-devel@lists.freedesktop.org
+>> > http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+>> in the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
