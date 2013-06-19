@@ -1,122 +1,81 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: exynos-drm-next todo work.
-Date: Wed, 19 Jun 2013 13:48:15 +0900
-Message-ID: <007e01ce6ca8$35c23a70$a146af50$%dae@samsung.com>
-References: <007401ce6bed$bc802920$35807b60$%dae@samsung.com>
- <CAPdUM4M4fyiKUES-BW4BKBL_0nfPjNY5Fk_H7i2FUWyxhSv_nA@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 2/2] clk: exynos4: Add alias for cpufreq related clocks
+Date: Wed, 19 Jun 2013 10:20:14 +0530
+Message-ID: <51C13886.1050201@linaro.org>
+References: <1370517749-29892-1-git-send-email-tushar.behera@linaro.org> <2070978.AjQD2isvSl@flatron> <51B54B4F.3000503@linaro.org> <3226068.I7g6oVyl1p@flatron> <51BE95A5.5090509@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:19039 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753027Ab3FSEsT (ORCPT
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:60480 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750815Ab3FSEuY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 00:48:19 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOM00JBYIOHQAK0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Jun 2013 13:48:17 +0900 (KST)
-In-reply-to: <CAPdUM4M4fyiKUES-BW4BKBL_0nfPjNY5Fk_H7i2FUWyxhSv_nA@mail.gmail.com>
-Content-language: ko
+	Wed, 19 Jun 2013 00:50:24 -0400
+Received: by mail-pb0-f54.google.com with SMTP id ro2so4636255pbb.27
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Jun 2013 21:50:24 -0700 (PDT)
+In-Reply-To: <51BE95A5.5090509@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rahul Sharma' <r.sh.open@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'DRI mailing list' <dri-devel@lists.freedesktop.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, patches@linaro.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, devicetree-discuss@lists.ozlabs.org, broonie@kernel.org, l.majewski@samsung.com, s.nawrocki@samsung.com
 
-
-
-> -----Original Message-----
-> From: Rahul Sharma [mailto:r.sh.open@gmail.com]
-> Sent: Tuesday, June 18, 2013 6:46 PM
-> To: Inki Dae
-> Cc: linux-samsung-soc@vger.kernel.org; DRI mailing list
-> Subject: Re: exynos-drm-next todo work.
+On 06/17/2013 10:20 AM, Tushar Behera wrote:
+> On 06/11/2013 12:23 AM, Tomasz Figa wrote:
+>> On Monday 10 of June 2013 09:13:11 Tushar Behera wrote:
+>>> On 06/08/2013 05:20 PM, Tomasz Figa wrote:
+>>>> On Thursday 06 of June 2013 16:52:28 Tushar Behera wrote:
 > 
-> Hi Mr. Dae,
+> [ ... ]
 > 
-> Related to HDMI sound support in Alsa, I have posted a working RFC
-> "exynos-hdmi to CDF complaint display driver". It registers a separate
-> sound card by registering hdmi audio codec dai and cpu-dai, as you
-> mentioned. But there is a problem with this approach that I2S being the
-> single cpu dai for HDMI and Speaker sound card, only one card can
-> support playback at a time.
+>>>>>  	MUX_A(mout_core, "mout_core", mout_core_p4210,
+>>>>>
+>>>>> -			SRC_CPU, 16, 1, "mout_core"),
+>>>>> +			SRC_CPU, 16, 1, "moutcore"),
+>>>>
+>>>> IMHO those typo corrections are not part of this patch.
+>>>
+>>> But the older drivers (before migration to CCF) were using the clock
+>>> "moutcore" (not "mout_core").
+>>
+>> I mean, this should be placed in a separate patch, as this change is not 
+>> "adding alias for cpufreq related clocks", but rather fixing a typo.
+>>
 > 
-> I would like to work on this to provide a more refined solution.
+> Is it ok if I split this patch into 2, one adding clock alias
+> 'mout_apll' and another one fixing the alias names 'mout_mpll',
+> 'moutcore' and 'armclk'?
 > 
 
-Thanks. However, I think it's not good to use the CDF framework to interface
-between ALSA SoC DAI driver and DRM HDMI driver. The purpose of the CDF
-framework is to provide common interfaces to display bus drivers to Linux
-framebuffer and DRM KMS based display controller drivers as long as I know.
-So my opinion is to implement ALSA Soc DAI driver-it seems like possible to
-use as is-based on a new common framework that the other can also use it.
+I have to fix up another clock for exynos4x12 too. I feel all these
+modifications are too small to justify different patches. I would modify
+the commit message appropriately.
 
-Thanks,
-Inki Dae
 
-> regards,
-> Rahul Sharma.
+> [ ... ]
 > 
-> On Tue, Jun 18, 2013 at 12:03 PM, Inki Dae <inki.dae@samsung.com> wrote:
-> > Hi all,
-> >
-> > I'd like to discuss Exynos DRM TODO work.
-> >
-> > There are features we have to solve and implement. The purpose of this
-> email
-> > is to share what we have to do so that other guys can be involved
-> without
-> > duplicated work.
-> >
-> > 1. gscaler based on KMS interfaces - exynos5250 and later use the
-> gscaler
-> > device instead of VP device. And now exynos drm driver has gscaler
-> module as
-> > a sub module of IPP framework. However, this gscaler module is very
-> specific
-> > to IPP framework so it's not easy to reuse this module. So maybe we need
-> so
-> > many works for it.
-> >
-> > Video play back path using post process (AS IS):
-> >         MFC--------IPP--------KMS---------FIMD or HDMI
-> >
-> > Ideal video play back path using post process (TO BE):
-> >         MFC--------KMS--------FIMD or HDMI
-> >
-> > The above scenario is to send decoded image data (YUV format) to display
-> > device via post process. However, we don't really need to use IPP
-> framework
-> > in case of using gscaler as VP. All we have to do is to call kms
-> interface
-> > (setplane) for it like we did before.
-> >
-> > 2. More features for HDMI sound support - we need to implement Exynos
-> ALSA
-> > SoC DAI driver for HDMI audio (CPU DAI and CODEC DAI). Sampling freq,
-> bit
-> > rate, and so on from user side should be sent to drm hdmi driver via
-> ALSA
-> > interface and the ALSA SoC DAI driver. As of now, it seems like that we
-> > should implement this driver like OMAP does because there is no common
-> > framework for interfacing between ALSA SoC DAI driver and DRM HDMI
-> driver:
-> > in case of OMAP, it seems like that ALSA SoC audio driver calls
-> interfaces
-> > of DSS driver directly. I think we could implement ALSA SoC DAI driver
-> in
-> > more generic way if we first implement common framework for it.
-> >
-> > Welcome to any volunteer and other opinions.
-> >
-> > Thanks,
-> > Inki Dae
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-
-> soc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>> Basically I don't like the idea of those global aliases, which IMHO
+>>>> should be completely dropped. Someone might not like it, but I'd go
+>>>> with the conversion of our cpufreq drivers to platform drivers
+>>>> instead, which could receive things like clocks and regulators using
+>>>> DT-based lookups.
+>>> I agree. Migration of exynos-cpufreq driver as a platform driver is the
+>>> best solution. But unless someone picks up that work, cpufreq support
+>>> for EXYNOS4 based systems is broken because of the incorrect clock
+>>> aliases.
+>>
+>> We have patches for this in our internal tree. I will clean them up a bit 
+>> and submit soon.
+>>
+> 
+> If you are going to submit the cpufreq driver patches for v3.11, then we
+> can ignore this patchset. Otherwise, I would prefer to get these patches
+> merged for v3.11 to get cpufreq working. Once the driver changes are
+> incorporated, we can very well modify these later.
+> 
+> Thanks.
+> 
+
+
+-- 
+Tushar Behera
