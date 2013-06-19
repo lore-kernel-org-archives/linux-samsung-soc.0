@@ -1,57 +1,200 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH 11/11] ARM: s3c64xx: Add support for
- DMA using generic amba-pl08x driver
-Date: Wed, 19 Jun 2013 21:50:35 +0200
-Message-ID: <CACRpkdYqNgLZhJ3oPZcCPjWExjWC+1WzPY2kka4uKCKkLwuu_g@mail.gmail.com>
-References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
- <1371416058-22047-12-git-send-email-tomasz.figa@gmail.com>
- <CACRpkdbQ7+FDJh235vERbCcQcnW1Mzar9r5jgLaXAT5n6CiCFQ@mail.gmail.com>
- <91444857.CpeBVZzDHZ@flatron>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH V6 08/30] thermal: exynos: Add missing definations and
+ code cleanup
+Date: Wed, 19 Jun 2013 15:55:56 -0400
+Message-ID: <51C20CCC.3060502@ti.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com> <1371451599-31035-9-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <91444857.CpeBVZzDHZ@flatron>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="----enig2QWVXCKMXPNKBUGUSRJIK"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1371451599-31035-9-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jun 19, 2013 at 8:23 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Monday 17 of June 2013 16:04:47 Linus Walleij wrote:
->> On Sun, Jun 16, 2013 at 10:54 PM, Tomasz Figa <tomasz.figa@gmail.com>
-> wrote:
->> > +static AMBA_AHB_DEVICE(s3c64xx_dma1, "dma-pl080s.1", 0x0a141080,
->> > +                       0x75100000, {IRQ_DMA1},
->> > &s3c64xx_dma1_plat_data);
->> Ah, does this mean the device does not have any AMBA PrimeCell ID
->> contents?
->
-> Hmm, not really. The ID here is what I copied from PrimeCell ID registers
-> and the method of registration is taken from S5PV210. If I remove the
-> override, it will read the same value from registers.
+------enig2QWVXCKMXPNKBUGUSRJIK
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-OK then don't override. Overriding is for hardware which is all zeroes
-in these registers.
+On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+> This patch adds some extra register bitfield definations and cleans
+> up the code to prepare for moving register macros and definations insid=
+e
+> the TMU data section.
+>=20
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c |   62 +++++++++++++++++++++++++-=
+--------
+>  1 files changed, 46 insertions(+), 16 deletions(-)
+>=20
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
+sung/exynos_tmu.c
+> index 5df04a1..fa33a48 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -43,9 +43,12 @@
+> =20
+>  #define EXYNOS_TMU_TRIM_TEMP_MASK	0xff
+>  #define EXYNOS_TMU_GAIN_SHIFT		8
+> +#define EXYNOS_TMU_GAIN_MASK		0xf
+>  #define EXYNOS_TMU_REF_VOLTAGE_SHIFT	24
+> -#define EXYNOS_TMU_CORE_ON		3
+> -#define EXYNOS_TMU_CORE_OFF		2
+> +#define EXYNOS_TMU_REF_VOLTAGE_MASK	0x1f
+> +#define EXYNOS_TMU_BUF_SLOPE_SEL_MASK	0xf
+> +#define EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT	8
+> +#define EXYNOS_TMU_CORE_EN_SHIFT	0
+>  #define EXYNOS_TMU_DEF_CODE_TO_TEMP_OFFSET	50
+> =20
+>  /* Exynos4210 specific registers */
+> @@ -63,6 +66,7 @@
+>  #define EXYNOS4210_TMU_TRIG_LEVEL1_MASK	0x10
+>  #define EXYNOS4210_TMU_TRIG_LEVEL2_MASK	0x100
+>  #define EXYNOS4210_TMU_TRIG_LEVEL3_MASK	0x1000
+> +#define EXYNOS4210_TMU_TRIG_LEVEL_MASK	0x1111
+>  #define EXYNOS4210_TMU_INTCLEAR_VAL	0x1111
+> =20
+>  /* Exynos5250 and Exynos4412 specific registers */
+> @@ -72,17 +76,30 @@
+>  #define EXYNOS_EMUL_CON		0x80
+> =20
+>  #define EXYNOS_TRIMINFO_RELOAD		0x1
+> +#define EXYNOS_TRIMINFO_SHIFT		0x0
+> +#define EXYNOS_TMU_RISE_INT_MASK	0x111
+> +#define EXYNOS_TMU_RISE_INT_SHIFT	0
+> +#define EXYNOS_TMU_FALL_INT_MASK	0x111
+> +#define EXYNOS_TMU_FALL_INT_SHIFT	12
+>  #define EXYNOS_TMU_CLEAR_RISE_INT	0x111
+>  #define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
+> -#define EXYNOS_MUX_ADDR_VALUE		6
+> -#define EXYNOS_MUX_ADDR_SHIFT		20
+>  #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
+> +#define EXYNOS_TMU_TRIP_MODE_MASK	0x7
+> +
+> +#define EXYNOS_TMU_INTEN_RISE0_SHIFT	0
+> +#define EXYNOS_TMU_INTEN_RISE1_SHIFT	4
+> +#define EXYNOS_TMU_INTEN_RISE2_SHIFT	8
+> +#define EXYNOS_TMU_INTEN_RISE3_SHIFT	12
+> +#define EXYNOS_TMU_INTEN_FALL0_SHIFT	16
+> +#define EXYNOS_TMU_INTEN_FALL1_SHIFT	20
+> +#define EXYNOS_TMU_INTEN_FALL2_SHIFT	24
+> =20
+>  #define EFUSE_MIN_VALUE 40
+>  #define EFUSE_MAX_VALUE 100
+> =20
+>  #ifdef CONFIG_THERMAL_EMULATION
+>  #define EXYNOS_EMUL_TIME	0x57F0
+> +#define EXYNOS_EMUL_TIME_MASK	0xffff
+>  #define EXYNOS_EMUL_TIME_SHIFT	16
+>  #define EXYNOS_EMUL_DATA_SHIFT	8
+>  #define EXYNOS_EMUL_DATA_MASK	0xFF
+> @@ -261,24 +278,37 @@ static void exynos_tmu_control(struct platform_de=
+vice *pdev, bool on)
+>  	mutex_lock(&data->lock);
+>  	clk_enable(data->clk);
+> =20
+> -	con =3D pdata->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT |
+> -		pdata->gain << EXYNOS_TMU_GAIN_SHIFT;
+> +	con =3D readl(data->base + EXYNOS_TMU_REG_CONTROL);
+> =20
+> -	if (data->soc =3D=3D SOC_ARCH_EXYNOS) {
+> -		con |=3D pdata->noise_cancel_mode << EXYNOS_TMU_TRIP_MODE_SHIFT;
+> -		con |=3D (EXYNOS_MUX_ADDR_VALUE << EXYNOS_MUX_ADDR_SHIFT);
+> +	if (pdata->reference_voltage) {
+> +		con &=3D ~(EXYNOS_TMU_REF_VOLTAGE_MASK <<
+> +				EXYNOS_TMU_REF_VOLTAGE_SHIFT);
+> +		con |=3D pdata->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT;
+> +	}
+> +
+> +	if (pdata->gain) {
+> +		con &=3D ~(EXYNOS_TMU_GAIN_MASK << EXYNOS_TMU_GAIN_SHIFT);
+> +		con |=3D (pdata->gain << EXYNOS_TMU_GAIN_SHIFT);
+> +	}
+> +
+> +	if (pdata->noise_cancel_mode) {
+> +		con &=3D ~(EXYNOS_TMU_TRIP_MODE_MASK <<
+> +					EXYNOS_TMU_TRIP_MODE_SHIFT);
+> +		con |=3D (pdata->noise_cancel_mode << EXYNOS_TMU_TRIP_MODE_SHIFT);
+>  	}
+> =20
+>  	if (on) {
+> -		con |=3D EXYNOS_TMU_CORE_ON;
 
->> Then use the ID 0x00053080 instead of 0x0a141080
->>
->> 0x53 is "S" for Samsung. Variant 0.
->
-> Well, that's kind of solution to make sure that it won't conflict with any
-> future variant manufactured by ARM, I guess.
 
-Yeah, but as stated, if the hardware has proper IDs (these are
-probably inspired by the PCI vendor/device/revision fields)
-then rely on those.
 
-Yours,
-Linus Walleij
+Before, in order to turn core on you had:
+	con =3D con | 3;
+
+now you do:
+	con =3D con | (1 << 0);
+
+To me, before you would set bit 1 and 0, now you set bit 0.
+
+
+> -		interrupt_en =3D pdata->trigger_level3_en << 12 |
+> -			pdata->trigger_level2_en << 8 |
+> -			pdata->trigger_level1_en << 4 |
+> -			pdata->trigger_level0_en;
+> +		con |=3D (1 << EXYNOS_TMU_CORE_EN_SHIFT);
+> +		interrupt_en =3D
+> +		pdata->trigger_level3_en << EXYNOS_TMU_INTEN_RISE3_SHIFT |
+> +		pdata->trigger_level2_en << EXYNOS_TMU_INTEN_RISE2_SHIFT |
+> +		pdata->trigger_level1_en << EXYNOS_TMU_INTEN_RISE1_SHIFT |
+> +		pdata->trigger_level0_en << EXYNOS_TMU_INTEN_RISE0_SHIFT;
+>  		if (pdata->threshold_falling)
+> -			interrupt_en |=3D interrupt_en << 16;
+> +			interrupt_en |=3D
+> +				interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
+>  	} else {
+> -		con |=3D EXYNOS_TMU_CORE_OFF;
+> +		con &=3D ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
+
+
+Before, in order to turno core off you had:
+	con =3D con | 2;
+
+now you do:
+	con =3D con & ~(1 << 0);
+
+To me, before you would set bit 2, now you clear bit 0.
+
+Using the approach on this patch looks correct to me if you have 1 bit
+core_en for instance.
+
+so, Is this a fix?
+
+Just to be clear, is this what you want ?
+
+>  		interrupt_en =3D 0; /* Disable all interrupts */
+>  	}
+>  	writel(interrupt_en, data->base + EXYNOS_TMU_REG_INTEN);
+>=20
+
+
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
+
+Eduardo Valentin
+
+
+------enig2QWVXCKMXPNKBUGUSRJIK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlHCDMwACgkQCXcVR3XQvP0LbAD/eEt4Mm9DeKzFUM6cvBl+DlhS
+ugGrOP8rczQB45DF+4UBAPpf4PvJfU5G6397t8PtTlD/7XBZg+KRNeHa2eoUY5kf
+=HXc2
+-----END PGP SIGNATURE-----
+
+------enig2QWVXCKMXPNKBUGUSRJIK--
