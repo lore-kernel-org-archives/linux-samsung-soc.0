@@ -1,375 +1,57 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V6 07/30] thermal: exynos: Bifurcate exynos tmu driver
- and configuration data
-Date: Wed, 19 Jun 2013 15:43:53 -0400
-Message-ID: <51C209F9.4000008@ti.com>
-References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com> <1371451599-31035-8-git-send-email-amit.daniel@samsung.com> <51C20810.5070601@ti.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH 11/11] ARM: s3c64xx: Add support for
+ DMA using generic amba-pl08x driver
+Date: Wed, 19 Jun 2013 21:50:35 +0200
+Message-ID: <CACRpkdYqNgLZhJ3oPZcCPjWExjWC+1WzPY2kka4uKCKkLwuu_g@mail.gmail.com>
+References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
+ <1371416058-22047-12-git-send-email-tomasz.figa@gmail.com>
+ <CACRpkdbQ7+FDJh235vERbCcQcnW1Mzar9r5jgLaXAT5n6CiCFQ@mail.gmail.com>
+ <91444857.CpeBVZzDHZ@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2BFTBBHJFTVOXBNIFXHFA"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <51C20810.5070601@ti.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <91444857.CpeBVZzDHZ@flatron>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-------enig2BFTBBHJFTVOXBNIFXHFA
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jun 19, 2013 at 8:23 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Monday 17 of June 2013 16:04:47 Linus Walleij wrote:
+>> On Sun, Jun 16, 2013 at 10:54 PM, Tomasz Figa <tomasz.figa@gmail.com>
+> wrote:
+>> > +static AMBA_AHB_DEVICE(s3c64xx_dma1, "dma-pl080s.1", 0x0a141080,
+>> > +                       0x75100000, {IRQ_DMA1},
+>> > &s3c64xx_dma1_plat_data);
+>> Ah, does this mean the device does not have any AMBA PrimeCell ID
+>> contents?
+>
+> Hmm, not really. The ID here is what I copied from PrimeCell ID registers
+> and the method of registration is taken from S5PV210. If I remove the
+> override, it will read the same value from registers.
 
-On 19-06-2013 15:35, Eduardo Valentin wrote:
-> Rui,
->=20
-> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
->> This code splits the exynos tmu driver code into SOC specific data par=
-ts.
->> This will simplify adding new SOC specific data to the same TMU contro=
-ller.
+OK then don't override. Overriding is for hardware which is all zeroes
+in these registers.
+
+>> Then use the ID 0x00053080 instead of 0x0a141080
 >>
->> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->=20
-> This patch looks good to me, you may want to add my:
->=20
-> Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
+>> 0x53 is "S" for Samsung. Variant 0.
+>
+> Well, that's kind of solution to make sure that it won't conflict with any
+> future variant manufactured by ARM, I guess.
 
-Yet another minor before adding my ack, sorry this one almost fell into
-the cracks (see below):
+Yeah, but as stated, if the hardware has proper IDs (these are
+probably inspired by the PCI vendor/device/revision fields)
+then rely on those.
 
->=20
->> ---
->>  drivers/thermal/samsung/Kconfig           |    3 +-
->>  drivers/thermal/samsung/Makefile          |    1 +
->>  drivers/thermal/samsung/exynos_tmu.c      |   67 ++------------------=
------
->>  drivers/thermal/samsung/exynos_tmu_data.c |   78 ++++++++++++++++++++=
-+++++++++
->>  drivers/thermal/samsung/exynos_tmu_data.h |   40 +++++++++++++++
->>  5 files changed, 125 insertions(+), 64 deletions(-)
->>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
->>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
->>
->> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung=
-/Kconfig
->> index f8100b1..b653f15 100644
->> --- a/drivers/thermal/samsung/Kconfig
->> +++ b/drivers/thermal/samsung/Kconfig
->> @@ -5,7 +5,8 @@ config EXYNOS_THERMAL
->>  	  If you say yes here you get support for the TMU (Thermal Managemen=
-t
->>  	  Unit) driver for SAMSUNG EXYNOS series of soc. This driver initial=
-ises
->>  	  the TMU, reports temperature and handles cooling action if defined=
-=2E
->> -	  This driver uses the exynos core thermal API's.
->> +	  This driver uses the exynos core thermal API's and TMU configurati=
-on
->> +	  data from the supported soc's.
->> =20
->>  config EXYNOS_THERMAL_CORE
->>  	bool "Core thermal framework support for EXYNOS SOC's"
->> diff --git a/drivers/thermal/samsung/Makefile b/drivers/thermal/samsun=
-g/Makefile
->> index 22528d6..c09d830 100644
->> --- a/drivers/thermal/samsung/Makefile
->> +++ b/drivers/thermal/samsung/Makefile
->> @@ -3,4 +3,5 @@
->>  #
->>  obj-$(CONFIG_EXYNOS_THERMAL)			+=3D exynos_thermal.o
->>  exynos_thermal-y				:=3D exynos_tmu.o
->> +exynos_thermal-y				+=3D exynos_tmu_data.o
->>  exynos_thermal-$(CONFIG_EXYNOS_THERMAL_CORE)	+=3D exynos_thermal_comm=
-on.o
->> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sa=
-msung/exynos_tmu.c
->> index 6aa2fd2..5df04a1 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.c
->> +++ b/drivers/thermal/samsung/exynos_tmu.c
->> @@ -30,6 +30,7 @@
->> =20
->>  #include "exynos_thermal_common.h"
->>  #include "exynos_tmu.h"
->> +#include "exynos_tmu_data.h"
->> =20
->>  /* Exynos generic registers */
->>  #define EXYNOS_TMU_REG_TRIMINFO		0x0
->> @@ -381,66 +382,6 @@ static struct thermal_sensor_conf exynos_sensor_c=
-onf =3D {
->>  	.write_emul_temp	=3D exynos_tmu_set_emulation,
->>  };
->> =20
->> -#if defined(CONFIG_CPU_EXYNOS4210)
->> -static struct exynos_tmu_platform_data const exynos4210_default_tmu_d=
-ata =3D {
->> -	.threshold =3D 80,
->> -	.trigger_levels[0] =3D 5,
->> -	.trigger_levels[1] =3D 20,
->> -	.trigger_levels[2] =3D 30,
->> -	.trigger_level0_en =3D 1,
->> -	.trigger_level1_en =3D 1,
->> -	.trigger_level2_en =3D 1,
->> -	.trigger_level3_en =3D 0,
->> -	.gain =3D 15,
->> -	.reference_voltage =3D 7,
->> -	.cal_type =3D TYPE_ONE_POINT_TRIMMING,
->> -	.freq_tab[0] =3D {
->> -		.freq_clip_max =3D 800 * 1000,
->> -		.temp_level =3D 85,
->> -	},
->> -	.freq_tab[1] =3D {
->> -		.freq_clip_max =3D 200 * 1000,
->> -		.temp_level =3D 100,
->> -	},
->> -	.freq_tab_count =3D 2,
->> -	.type =3D SOC_ARCH_EXYNOS4210,
->> -};
->> -#define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
->> -#else
->> -#define EXYNOS4210_TMU_DRV_DATA (NULL)
->> -#endif
->> -
->> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
->> -static struct exynos_tmu_platform_data const exynos_default_tmu_data =
-=3D {
->> -	.threshold_falling =3D 10,
->> -	.trigger_levels[0] =3D 85,
->> -	.trigger_levels[1] =3D 103,
->> -	.trigger_levels[2] =3D 110,
->> -	.trigger_level0_en =3D 1,
->> -	.trigger_level1_en =3D 1,
->> -	.trigger_level2_en =3D 1,
->> -	.trigger_level3_en =3D 0,
->> -	.gain =3D 8,
->> -	.reference_voltage =3D 16,
->> -	.noise_cancel_mode =3D 4,
->> -	.cal_type =3D TYPE_ONE_POINT_TRIMMING,
->> -	.efuse_value =3D 55,
->> -	.freq_tab[0] =3D {
->> -		.freq_clip_max =3D 800 * 1000,
->> -		.temp_level =3D 85,
->> -	},
->> -	.freq_tab[1] =3D {
->> -		.freq_clip_max =3D 200 * 1000,
->> -		.temp_level =3D 103,
->> -	},
->> -	.freq_tab_count =3D 2,
->> -	.type =3D SOC_ARCH_EXYNOS,
->> -};
->> -#define EXYNOS_TMU_DRV_DATA (&exynos_default_tmu_data)
->> -#else
->> -#define EXYNOS_TMU_DRV_DATA (NULL)
->> -#endif
->> -
->>  #ifdef CONFIG_OF
->>  static const struct of_device_id exynos_tmu_match[] =3D {
->>  	{
->> @@ -449,11 +390,11 @@ static const struct of_device_id exynos_tmu_matc=
-h[] =3D {
->>  	},
->>  	{
->>  		.compatible =3D "samsung,exynos4412-tmu",
->> -		.data =3D (void *)EXYNOS_TMU_DRV_DATA,
->> +		.data =3D (void *)EXYNOS5250_TMU_DRV_DATA,
->>  	},
->>  	{
->>  		.compatible =3D "samsung,exynos5250-tmu",
->> -		.data =3D (void *)EXYNOS_TMU_DRV_DATA,
->> +		.data =3D (void *)EXYNOS5250_TMU_DRV_DATA,
->>  	},
->>  	{},
->>  };
->> @@ -467,7 +408,7 @@ static struct platform_device_id exynos_tmu_driver=
-_ids[] =3D {
->>  	},
->>  	{
->>  		.name		=3D "exynos5250-tmu",
->> -		.driver_data    =3D (kernel_ulong_t)EXYNOS_TMU_DRV_DATA,
->> +		.driver_data    =3D (kernel_ulong_t)EXYNOS5250_TMU_DRV_DATA,
->>  	},
->>  	{ },
->>  };
->> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/therm=
-al/samsung/exynos_tmu_data.c
->> new file mode 100644
->> index 0000000..13a60ca
->> --- /dev/null
->> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
->> @@ -0,0 +1,78 @@
->> +/*
->> + * exynos_tmu_data.c - Samsung EXYNOS tmu data file
->> + *
->> + *  Copyright (C) 2013 Samsung Electronics
->> + *  Amit Daniel Kachhap <amit.daniel@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modi=
-fy
->> + * it under the terms of the GNU General Public License as published =
-by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program; if not, write to the Free Software
->> + * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-13=
-07  USA
->> + *
->> + */
->> +
->> +#include "exynos_thermal_common.h"
-
-You have to:
-+#include "exynos_tmu_data.h"
-
-Otherwise, you will get:
-  CC [M]  drivers/thermal/samsung/exynos_tmu.o
-drivers/thermal/samsung/exynos_tmu_data.c:27:39: warning: symbol
-'exynos4210_default_tmu_data' was not declared. Should it be static?
-drivers/thermal/samsung/exynos_tmu_data.c:53:39: warning: symbol
-'exynos5250_default_tmu_data' was not declared. Should it be static?
-
-
->> +#include "exynos_tmu.h"
-
->> +
->> +#if defined(CONFIG_CPU_EXYNOS4210)
->> +struct exynos_tmu_platform_data const exynos4210_default_tmu_data =3D=
- {
->> +	.threshold =3D 80,
->> +	.trigger_levels[0] =3D 5,
->> +	.trigger_levels[1] =3D 20,
->> +	.trigger_levels[2] =3D 30,
->> +	.trigger_level0_en =3D 1,
->> +	.trigger_level1_en =3D 1,
->> +	.trigger_level2_en =3D 1,
->> +	.trigger_level3_en =3D 0,
->> +	.gain =3D 15,
->> +	.reference_voltage =3D 7,
->> +	.cal_type =3D TYPE_ONE_POINT_TRIMMING,
->> +	.freq_tab[0] =3D {
->> +		.freq_clip_max =3D 800 * 1000,
->> +		.temp_level =3D 85,
->> +	},
->> +	.freq_tab[1] =3D {
->> +		.freq_clip_max =3D 200 * 1000,
->> +		.temp_level =3D 100,
->> +	},
->> +	.freq_tab_count =3D 2,
->> +	.type =3D SOC_ARCH_EXYNOS4210,
->> +};
->> +#endif
->> +
->> +#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
->> +struct exynos_tmu_platform_data const exynos5250_default_tmu_data =3D=
- {
->> +	.threshold_falling =3D 10,
->> +	.trigger_levels[0] =3D 85,
->> +	.trigger_levels[1] =3D 103,
->> +	.trigger_levels[2] =3D 110,
->> +	.trigger_level0_en =3D 1,
->> +	.trigger_level1_en =3D 1,
->> +	.trigger_level2_en =3D 1,
->> +	.trigger_level3_en =3D 0,
->> +	.gain =3D 8,
->> +	.reference_voltage =3D 16,
->> +	.noise_cancel_mode =3D 4,
->> +	.cal_type =3D TYPE_ONE_POINT_TRIMMING,
->> +	.efuse_value =3D 55,
->> +	.freq_tab[0] =3D {
->> +		.freq_clip_max =3D 800 * 1000,
->> +		.temp_level =3D 85,
->> +	},
->> +	.freq_tab[1] =3D {
->> +		.freq_clip_max =3D 200 * 1000,
->> +		.temp_level =3D 103,
->> +	},
->> +	.freq_tab_count =3D 2,
->> +	.type =3D SOC_ARCH_EXYNOS,
->> +};
->> +#endif
->> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therm=
-al/samsung/exynos_tmu_data.h
->> new file mode 100644
->> index 0000000..b7835fe
->> --- /dev/null
->> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
->> @@ -0,0 +1,40 @@
->> +/*
->> + * exynos_tmu_data.h - Samsung EXYNOS tmu data header file
->> + *
->> + *  Copyright (C) 2013 Samsung Electronics
->> + *  Amit Daniel Kachhap <amit.daniel@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modi=
-fy
->> + * it under the terms of the GNU General Public License as published =
-by
->> + * the Free Software Foundation; either version 2 of the License, or
->> + * (at your option) any later version.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program; if not, write to the Free Software
->> + * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-13=
-07  USA
->> + *
->> + */
->> +
->> +#ifndef _EXYNOS_TMU_DATA_H
->> +#define _EXYNOS_TMU_DATA_H
->> +
->> +#if defined(CONFIG_CPU_EXYNOS4210)
->> +extern struct exynos_tmu_platform_data const exynos4210_default_tmu_d=
-ata;
->> +#define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
->> +#else
->> +#define EXYNOS4210_TMU_DRV_DATA (NULL)
->> +#endif
->> +
->> +#if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)=
-)
->> +extern struct exynos_tmu_platform_data const exynos5250_default_tmu_d=
-ata;
->> +#define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
->> +#else
->> +#define EXYNOS5250_TMU_DRV_DATA (NULL)
->> +#endif
->> +
->> +#endif /*_EXYNOS_TMU_DATA_H*/
->>
->=20
->=20
-
-
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
-------enig2BFTBBHJFTVOXBNIFXHFA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlHCCfkACgkQCXcVR3XQvP3isgD/Qm7bVnlahTZ2A/6iDNStfv+Q
-J8ckH6Ky8qvM2aZ02W0BAKgPgY4F25xwZUMs9D4GQ/ZgvXluWe2lyUhwoGg/HR4y
-=st6S
------END PGP SIGNATURE-----
-
-------enig2BFTBBHJFTVOXBNIFXHFA--
+Yours,
+Linus Walleij
