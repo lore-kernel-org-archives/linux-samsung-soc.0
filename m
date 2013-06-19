@@ -1,73 +1,176 @@
 From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH 2/3] ARM: dts: Add MFC node for exynos 5420
-Date: Wed, 19 Jun 2013 17:34:10 +0530
-Message-ID: <CANuQgHGR1vDgz6TkCYKr5XtBLVdXng+tF90NShae_4Cqse3G+g@mail.gmail.com>
-References: <1371631969-10076-1-git-send-email-arun.kk@samsung.com>
-	<1371631969-10076-2-git-send-email-arun.kk@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix incorrect usage of S5P_ARM_CORE1_* registers
+Date: Wed, 19 Jun 2013 17:39:21 +0530
+Message-ID: <CANuQgHEd3L=F20Nrp3zWh2+uXvRU9P_KVN=1xr3RXnoGBsaHLw@mail.gmail.com>
+References: <1371569191-2364-1-git-send-email-t.figa@samsung.com>
+	<4951987.HiKYku7923@flatron>
+	<51C0A01E.5020206@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:51461 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934341Ab3FSMEM (ORCPT
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:49623 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934349Ab3FSMJW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 08:04:12 -0400
-Received: by mail-oa0-f52.google.com with SMTP id g12so6307642oah.25
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 05:04:10 -0700 (PDT)
-In-Reply-To: <1371631969-10076-2-git-send-email-arun.kk@samsung.com>
+	Wed, 19 Jun 2013 08:09:22 -0400
+Received: by mail-ob0-f171.google.com with SMTP id dn14so5886315obc.16
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 05:09:21 -0700 (PDT)
+In-Reply-To: <51C0A01E.5020206@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, k.debski@samsung.com, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, arunkk.samsung@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tomasz Figa <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-kernel@vger.kernel.org, stable@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-On 19 June 2013 14:22, Arun Kumar K <arun.kk@samsung.com> wrote:
-> The patch adds MFC nodes for exynos 5420 and for
-> smdk 5420 board.
+On 18 June 2013 23:29, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 06/19/13 02:45, Tomasz Figa wrote:
+>>
+>> Ccing Arnd and Olof, because I forgot to add them to git send-email...
+>>
+>> Sorry for the noise.
+>>
+>> On Tuesday 18 of June 2013 17:26:31 Tomasz Figa wrote:
+>>>
+>>> S5P_ARM_CORE1_* registers affect only core 1. To control further cores
+>>> properly another registers must be used.
+>>>
+>>> This patch replaces S5P_ARM_CORE1_* register definitions with
+>>> S5P_ARM_CORE_*(x) macro which return addresses of registers for
+>>> specified core.
+>>>
+>>> This fixes CPU hotplug on quad core Exynos SoCs on which currently
+>>> offlining CPUs 2 or 3 caused CPU 1 to be turned off.
+>>
+>>
+>> Obviously this doesn't happen currently because of the if (cpu == 1), but
 >
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420-smdk5420.dts |    5 +++++
->  arch/arm/boot/dts/exynos5420.dtsi         |    8 ++++++++
->  2 files changed, 13 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> index 08607df..682532c 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -30,4 +30,9 @@
->                         clock-frequency = <24000000>;
->                 };
->         };
-> +
-> +       codec@11000000 {
-> +               samsung,mfc-r = <0x43000000 0x800000>;
-> +               samsung,mfc-l = <0x51000000 0x800000>;
-> +       };
->  };
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 8474d63..cb74356 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -100,4 +100,12 @@
->                 clocks = <&clock 260>, <&clock 131>;
->                 clock-names = "uart", "clk_uart_baud0";
->         };
-> +
-> +       codec@11000000 {
-> +               compatible = "samsung,mfc-v7";
-> +               reg = <0x11000000 0x10000>;
-> +               interrupts = <0 96 0>;
-> +               clocks = <&clock 401>;
-> +               clock-names = "mfc";
-> +       };
-Is it not possible to move the common part of this node to common
-exynos5.dtsi? As exynos5250 is using same property values.
->  };
+> Yes, not happened...and just note exynos5440 doesn't support hotplug :) so
+> this is available on exynos4412 and added 5420.
+>
+>
+>> if logical cpu1 turned out not to be physical cpu1, then it would crash.
+>>
+>> Best regards,
+>> Tomasz
+>>
+>>> In addition,
+>>> bring-up of CPU 2 and 3 is fixed on boards where bootloader powers off
+>>> secondary cores by default.
+>>>
+> I need to test on board about above...
+>
+>>> Cc: stable@vger.kernel.org
+>>> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
+>>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>>> ---
+>>>   arch/arm/mach-exynos/hotplug.c               |  9 +++++----
+>>>   arch/arm/mach-exynos/include/mach/regs-pmu.h | 10 +++++++---
+>>>   arch/arm/mach-exynos/platsmp.c               |  9 +++++----
+>>>   3 files changed, 17 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos/hotplug.c
+>>> b/arch/arm/mach-exynos/hotplug.c index af90cfa..c089943 100644
+>>> --- a/arch/arm/mach-exynos/hotplug.c
+>>> +++ b/arch/arm/mach-exynos/hotplug.c
+>>> @@ -93,10 +93,11 @@ static inline void cpu_leave_lowpower(void)
+>>>   static inline void platform_do_lowpower(unsigned int cpu, int
+>>> *spurious) {
+>>>         for (;;) {
+>>> +               void __iomem *reg_base;
+>>> +               unsigned int phys_cpu = cpu_logical_map(cpu);
+>>>
+>>> -               /* make cpu1 to be turned off at next WFI command */
+>>> -               if (cpu == 1)
+>>> -                       __raw_writel(0, S5P_ARM_CORE1_CONFIGURATION);
+>>> +               reg_base = S5P_ARM_CORE_CONFIGURATION(phys_cpu);
+Tomasz,
+This will break for non-zero, MPIDR value.  Say if MPIDR is 1 then for
+cpu0 phys_cpu value will be 0x100,
+and address calculation will be   (S5P_ARM_CORE0_CONFIGURATION +
+((0x101) * 0x80)), which is wrong.
+>>> +               __raw_writel(0, reg_base);
+>>>
+>>>                 /*
+>>>                  * here's the WFI
+>>> @@ -106,7 +107,7 @@ static inline void platform_do_lowpower(unsigned int
+>>> cpu, int *spurious)
+>>>                     : "memory", "cc");
+>>>
+>>> -               if (pen_release == cpu_logical_map(cpu)) {
+>>> +               if (pen_release == phys_cpu) {
+>>>                         /*
+>>>                          * OK, proper wakeup, we're done
+>>>                          */
+>>> diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h
+>>> b/arch/arm/mach-exynos/include/mach/regs-pmu.h index 57344b7..cf40b86
+>>> 100644
+>>> --- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
+>>> +++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+>>> @@ -125,10 +125,14 @@
+>>>   #define S5P_GPS_ALIVE_LOWPWR                  S5P_PMUREG(0x13A0)
+>>>
+>>>   #define S5P_ARM_CORE0_CONFIGURATION           S5P_PMUREG(0x2000)
+>>> +#define S5P_ARM_CORE0_STATUS                   S5P_PMUREG(0x2004)
+>>>   #define S5P_ARM_CORE0_OPTION                  S5P_PMUREG(0x2008)
+>>> -#define S5P_ARM_CORE1_CONFIGURATION            S5P_PMUREG(0x2080)
+>>> -#define S5P_ARM_CORE1_STATUS                   S5P_PMUREG(0x2084)
+>>> -#define S5P_ARM_CORE1_OPTION                   S5P_PMUREG(0x2088)
+>>> +#define S5P_ARM_CORE_CONFIGURATION(_nr)                \
+>>> +               (S5P_ARM_CORE0_CONFIGURATION + ((_nr) * 0x80))
+>>> +#define S5P_ARM_CORE_STATUS(_nr)               \
+>>> +               (S5P_ARM_CORE0_STATUS + ((_nr) * 0x80))
+>>> +#define S5P_ARM_CORE_OPTION(_nr)               \
+>>> +               (S5P_ARM_CORE0_OPTION + ((_nr) * 0x80))
+>>>
+>>>   #define S5P_ARM_COMMON_OPTION                 S5P_PMUREG(0x2408)
+>>>   #define S5P_TOP_PWR_OPTION                    S5P_PMUREG(0x2C48)
+>>> diff --git a/arch/arm/mach-exynos/platsmp.c
+>>> b/arch/arm/mach-exynos/platsmp.c index d9c6d0a..2cbabc8 100644
+>>> --- a/arch/arm/mach-exynos/platsmp.c
+>>> +++ b/arch/arm/mach-exynos/platsmp.c
+>>> @@ -109,14 +109,15 @@ static int __cpuinit
+>>> exynos_boot_secondary(unsigned int cpu, struct task_struct */
+>>>         write_pen_release(phys_cpu);
+>>>
+>>> -       if (!(__raw_readl(S5P_ARM_CORE1_STATUS)&  S5P_CORE_LOCAL_PWR_EN))
+>>
+>> {
+>>>
+>>> +       if (!(__raw_readl(S5P_ARM_CORE_STATUS(phys_cpu))
+>>> +       &  S5P_CORE_LOCAL_PWR_EN)) {
+>>>                 __raw_writel(S5P_CORE_LOCAL_PWR_EN,
+>>> -                            S5P_ARM_CORE1_CONFIGURATION);
+>>> +                            S5P_ARM_CORE_CONFIGURATION(phys_cpu));
+>>>
+>>>                 timeout = 10;
+>>>
+>>>                 /* wait max 10 ms until cpu1 is on */
+>>> -               while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+>>> +               while ((__raw_readl(S5P_ARM_CORE_STATUS(phys_cpu))
+Ditto
+>>>                         &  S5P_CORE_LOCAL_PWR_EN) !=
+>>> S5P_CORE_LOCAL_PWR_EN)
+>>
+>> {
+>>>
+>>>                         if (timeout-- == 0)
+>>>                                 break;
+>>> @@ -125,7 +126,7 @@ static int __cpuinit exynos_boot_secondary(unsigned
+>>> int cpu, struct task_struct }
+>>>
+>>>                 if (timeout == 0) {
+>>> -                       printk(KERN_ERR "cpu1 power enable failed");
+>>> +                       printk(KERN_ERR "cpu%u power enable failed",
+>>> cpu);
+>>>                         spin_unlock(&boot_lock);
+>>>                         return -ETIMEDOUT;
+>>>                 }
+>>
+>> --
+>
 > --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
