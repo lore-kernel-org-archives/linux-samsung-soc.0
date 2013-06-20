@@ -1,338 +1,235 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V6 23/30] thermal: exynos: Add driver support for exynos5440
- TMU sensor
-Date: Wed, 19 Jun 2013 22:06:51 -0400
-Message-ID: <51C263BB.6020700@ti.com>
-References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com> <1371451599-31035-24-git-send-email-amit.daniel@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH v3 1/3] drm/exynos: add new compatible strings for hdmi subsystem
+Date: Thu, 20 Jun 2013 07:41:53 +0530
+Message-ID: <CAPdUM4NdY9eTTq3Dtgd10RVTA=gPAddebCYJO2HKtiZbF-MKLg@mail.gmail.com>
+References: <1371646269-21880-1-git-send-email-rahul.sharma@samsung.com>
+	<1371646269-21880-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2MTLQVKSWDNUAIPLAKNAO"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1371451599-31035-24-git-send-email-amit.daniel@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
-------enig2MTLQVKSWDNUAIPLAKNAO
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f182.google.com ([74.125.82.182]:63599 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935536Ab3FTCLy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Jun 2013 22:11:54 -0400
+Received: by mail-we0-f182.google.com with SMTP id p60so4950258wes.41
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 19:11:53 -0700 (PDT)
+In-Reply-To: <1371646269-21880-2-git-send-email-rahul.sharma@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, tomasz.figa@gmail.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com
 
-On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
-> This patch modifies TMU controller to add changes needed to work with
-> exynos5440 platform. This sensor registers 3 instance of the tmu contro=
-ller
-> with the thermal zone and hence reports 3 temperature output. This cont=
-roller
-> supports upto five trip points. For critical threshold the driver uses =
-the
-> core driver thermal framework for shutdown.
->=20
-> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Hi Tomasz, Lucas,
+
+How does this patch look to you ? Please share your views.
+
+regards,
+Rahul Sharma.
+
+On Wed, Jun 19, 2013 at 6:21 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> This patch adds new combatible strings for hdmi, mixer, ddc
+> and hdmiphy. It follows the convention of using compatible string
+> which represent the SoC in which the IP was added for the first
+> time.
+>
+> Drivers continue to support the previous compatible strings
+> but further addition of these compatible strings in device tree
+> is deprecated.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 > ---
->  .../devicetree/bindings/thermal/exynos-thermal.txt |   24 ++++++++-
->  drivers/thermal/samsung/exynos_thermal_common.h    |    2 +-
->  drivers/thermal/samsung/exynos_tmu.c               |   54 ++++++++++++=
-+++++---
->  drivers/thermal/samsung/exynos_tmu.h               |    6 ++
->  drivers/thermal/samsung/exynos_tmu_data.h          |   36 ++++++++++++=
-+
->  5 files changed, 112 insertions(+), 10 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.t=
-xt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> index 0ea33f7..e6386ea 100644
-> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> @@ -6,6 +6,7 @@
->  	       "samsung,exynos4412-tmu"
->  	       "samsung,exynos4210-tmu"
->  	       "samsung,exynos5250-tmu"
-> +	       "samsung,exynos5440-tmu"
->  - interrupt-parent : The phandle for the interrupt controller
->  - reg : Address range of the thermal registers. For soc's which has mu=
-ltiple
->  	instances of TMU and some registers are shared across all TMU's like
-> @@ -16,7 +17,7 @@
->  - clocks : The main clock for TMU device
->  - clock-names : Thermal system clock name
-> =20
-> -Example:
-> +Example 1):
-> =20
->  	tmu@100C0000 {
->  		compatible =3D "samsung,exynos4412-tmu";
-> @@ -27,3 +28,24 @@ Example:
->  		clock-names =3D "tmu_apbif";
->  		status =3D "disabled";
->  	};
+>  Documentation/devicetree/bindings/video/exynos_hdmi.txt   |    7 +++++--
+>  .../devicetree/bindings/video/exynos_hdmiddc.txt          |    7 +++++--
+>  .../devicetree/bindings/video/exynos_hdmiphy.txt          |    7 +++++--
+>  Documentation/devicetree/bindings/video/exynos_mixer.txt  |    8 ++++++--
+>  drivers/gpu/drm/exynos/exynos_ddc.c                       |    2 ++
+>  drivers/gpu/drm/exynos/exynos_hdmi.c                      |    3 +++
+>  drivers/gpu/drm/exynos/exynos_hdmiphy.c                   |    4 ++++
+>  drivers/gpu/drm/exynos/exynos_mixer.c                     |   13 ++++++++-----
+>  8 files changed, 38 insertions(+), 13 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> index 589edee..c71d0f0 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> @@ -1,7 +1,10 @@
+>  Device-Tree bindings for drm hdmi driver
+>
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmi".
+> +- compatible: value should be one among the following:
+> +       1) "samsung,exynos5-hdmi" <DEPRECATED>
+> +       2) "samsung,exynos4210-hdmi"
+> +       3) "samsung,exynos4212-hdmi"
+>  - reg: physical base address of the hdmi and length of memory mapped
+>         region.
+>  - interrupts: interrupt number to the cpu.
+> @@ -15,7 +18,7 @@ Required properties:
+>  Example:
+>
+>         hdmi {
+> -               compatible = "samsung,exynos5-hdmi";
+> +               compatible = "samsung,exynos4212-hdmi";
+>                 reg = <0x14530000 0x100000>;
+>                 interrupts = <0 95 0>;
+>                 hpd-gpio = <&gpx3 7 0xf 1 3>;
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt b/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> index fa166d9..41eee97 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
+> @@ -1,12 +1,15 @@
+>  Device-Tree bindings for hdmiddc driver
+>
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmiddc".
+> +- compatible: value should be one of the following
+> +       1) "samsung,exynos5-hdmiddc" <DEPRECATED>
+> +       2) "samsung,exynos4210-hdmiddc"
 > +
-> +Example 2):
+>  - reg: I2C address of the hdmiddc device.
+>
+>  Example:
+>
+>         hdmiddc {
+> -               compatible = "samsung,exynos5-hdmiddc";
+> +               compatible = "samsung,exynos4210-hdmiddc";
+>                 reg = <0x50>;
+>         };
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> index 858f4f9..162f641 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> @@ -1,12 +1,15 @@
+>  Device-Tree bindings for hdmiphy driver
+>
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-hdmiphy".
+> +- compatible: value should be one of the following:
+> +       1) "samsung,exynos5-hdmiphy" <DEPRECATED>
+> +       2) "samsung,exynos4210-hdmiphy".
+> +       3) "samsung,exynos4212-hdmiphy".
+>  - reg: I2C address of the hdmiphy device.
+>
+>  Example:
+>
+>         hdmiphy {
+> -               compatible = "samsung,exynos5-hdmiphy";
+> +               compatible = "samsung,exynos4210-hdmiphy";
+>                 reg = <0x38>;
+>         };
+> diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> index 9b2ea03..9131b99 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> @@ -1,7 +1,11 @@
+>  Device-Tree bindings for mixer driver
+>
+>  Required properties:
+> -- compatible: value should be "samsung,exynos5-mixer".
+> +- compatible: value should be one of the following:
+> +       1) "samsung,exynos5-mixer" <DEPRECATED>
+> +       2) "samsung,exynos4210-mixer"
+> +       3) "samsung,exynos5250-mixer"
 > +
-> +	tmuctrl_0: tmuctrl@160118 {
-> +		compatible =3D "samsung,exynos5440-tmu";
-> +		reg =3D <0x160118 0x230>, <0x160368 0x10>;
-> +		interrupts =3D <0 58 0>;
-> +		clocks =3D <&clock 21>;
-> +		clock-names =3D "tmu_apbif";
-> +	};
-> +
-> +Note: For multi-instance tmu each instance should have an alias correc=
-tly
-> +numbered in "aliases" node.
-> +
-> +Example:
-> +
-> +aliases {
-> +	tmuctrl0 =3D &tmuctrl_0;
-> +	tmuctrl1 =3D &tmuctrl_1;
-> +	tmuctrl2 =3D &tmuctrl_2;
-> +};
-> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/=
-thermal/samsung/exynos_thermal_common.h
-> index 0c189d6..7d7c29a 100644
-> --- a/drivers/thermal/samsung/exynos_thermal_common.h
-> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
-> @@ -27,7 +27,7 @@
->  #define SENSOR_NAME_LEN	16
->  #define MAX_TRIP_COUNT	8
->  #define MAX_COOLING_DEVICE 4
-> -#define MAX_THRESHOLD_LEVS 4
-> +#define MAX_THRESHOLD_LEVS 5
-> =20
->  #define ACTIVE_INTERVAL 500
->  #define IDLE_INTERVAL 10000
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
-sung/exynos_tmu.c
-> index 150a869..db4035d 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -156,7 +156,26 @@ static int exynos_tmu_initialize(struct platform_d=
-evice *pdev)
->  		__raw_writel(1, data->base + reg->triminfo_ctrl);
-> =20
->  	/* Save trimming info in order to perform calibration */
-> -	trim_info =3D readl(data->base + reg->triminfo_data);
-> +	if (data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
-
-should this become some bit at your pdata->features? TMU_SUPPORTS(pdata,
-TRIMINFO) for instance?
-
-> +		/*
-> +		 * For exynos5440 soc triminfo value is swapped between TMU0 and
-> +		 * TMU2, so the below logic is needed.
-> +		 */
-> +		switch (data->id) {
-> +		case 0:
-> +			trim_info =3D readl(data->base +
-> +			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
-> +			break;
-> +		case 1:
-> +			trim_info =3D readl(data->base + reg->triminfo_data);
-> +			break;
-> +		case 2:
-> +			trim_info =3D readl(data->base -
-> +			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
-> +		}
-> +	} else {
-> +		trim_info =3D readl(data->base + reg->triminfo_data);
-> +	}
->  	data->temp_error1 =3D trim_info & EXYNOS_TMU_TEMP_MASK;
->  	data->temp_error2 =3D ((trim_info >> reg->triminfo_85_shift) &
->  				EXYNOS_TMU_TEMP_MASK);
-> @@ -201,7 +220,8 @@ static int exynos_tmu_initialize(struct platform_de=
-vice *pdev)
->  			reg->threshold_th0 + i * sizeof(reg->threshold_th0));
-> =20
->  		writel(reg->inten_rise_mask, data->base + reg->tmu_intclear);
-> -	} else if (data->soc =3D=3D SOC_ARCH_EXYNOS) {
-> +	} else if (data->soc =3D=3D SOC_ARCH_EXYNOS ||
-> +			data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
->  		/* Write temperature code for rising and falling threshold */
->  		for (i =3D 0;
->  		i < trigger_levs && i < EXYNOS_MAX_TRIGGER_PER_REG; i++) {
-> @@ -241,14 +261,24 @@ static int exynos_tmu_initialize(struct platform_=
-device *pdev)
->  				ret =3D threshold_code;
->  				goto out;
->  			}
-> -			rising_threshold |=3D threshold_code << 8 * i;
-> -			writel(rising_threshold,
-> -				data->base + reg->threshold_th0);
-> +			if (data->soc =3D=3D SOC_ARCH_EXYNOS) {
-> +				rising_threshold |=3D threshold_code << 8 * i;
-> +				writel(rising_threshold,
-> +					data->base + reg->threshold_th0);
-> +			} else if (data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
-
-Can these ifs be translated to some TMU_SUPPORTS()?
-
-Just wondering if it is possible to get rid of data->soc flags and use
-only features or represent the shifts as fields inside your pdata.
-
-> +				rising_threshold =3D
-> +				threshold_code << reg->threshold_th3_l0_shift;
-> +				writel(rising_threshold,
-> +					data->base + reg->threshold_th2);
-> +			}
->  			con =3D readl(data->base + reg->tmu_ctrl);
->  			con |=3D (1 << reg->therm_trip_en_shift);
->  			writel(con, data->base + reg->tmu_ctrl);
->  		}
->  	}
-> +	/*Clear the PMIN in the common TMU register*/
-> +	if (reg->tmu_pmin && !data->id)
-> +		writel(0, data->base_common + reg->tmu_pmin);
-
-What happens to other TMU instances when one of them performs this
-operation? does it need to serialized?
-
->  out:
->  	clk_disable(data->clk);
->  	mutex_unlock(&data->lock);
-> @@ -377,7 +407,14 @@ static void exynos_tmu_work(struct work_struct *wo=
-rk)
->  			struct exynos_tmu_data, irq_work);
->  	struct exynos_tmu_platform_data *pdata =3D data->pdata;
->  	const struct exynos_tmu_registers *reg =3D pdata->registers;
-> -	unsigned int val_irq;
-> +	unsigned int val_irq, val_type;
-> +
-> +	/* Find which sensor generated this interrupt */
-> +	if (reg->tmu_irqstatus) {
-> +		val_type =3D readl(data->base_common + reg->tmu_irqstatus);
-> +		if (!((val_type >> data->id) & 0x1))
-> +			goto out;
-> +	}
-> =20
->  	exynos_report_trigger(data->reg_conf);
->  	mutex_lock(&data->lock);
-> @@ -390,7 +427,7 @@ static void exynos_tmu_work(struct work_struct *wor=
-k)
-> =20
->  	clk_disable(data->clk);
->  	mutex_unlock(&data->lock);
-> -
-> +out:
->  	enable_irq(data->irq);
+>  - reg: physical base address of the mixer and length of memory mapped
+>         region.
+>  - interrupts: interrupt number to the cpu.
+> @@ -9,7 +13,7 @@ Required properties:
+>  Example:
+>
+>         mixer {
+> -               compatible = "samsung,exynos5-mixer";
+> +               compatible = "samsung,exynos5250-mixer";
+>                 reg = <0x14450000 0x10000>;
+>                 interrupts = <0 94 0>;
+>         };
+> diff --git a/drivers/gpu/drm/exynos/exynos_ddc.c b/drivers/gpu/drm/exynos/exynos_ddc.c
+> index 4e9b5ba..95c75ed 100644
+> --- a/drivers/gpu/drm/exynos/exynos_ddc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_ddc.c
+> @@ -53,6 +53,8 @@ static struct of_device_id hdmiddc_match_types[] = {
+>         {
+>                 .compatible = "samsung,exynos5-hdmiddc",
+>         }, {
+> +               .compatible = "samsung,exynos4210-hdmiddc",
+> +       }, {
+>                 /* end node */
+>         }
+>  };
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 743059f..de39530 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -1916,6 +1916,9 @@ static struct of_device_id hdmi_match_types[] = {
+>                 .compatible = "samsung,exynos5-hdmi",
+>                 .data   = (void *)HDMI_TYPE14,
+>         }, {
+> +               .compatible = "samsung,exynos4212-hdmi",
+> +               .data   = (void *)HDMI_TYPE14,
+> +       }, {
+>                 /* end node */
+>         }
+>  };
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> index ea49d13..ef04255 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> @@ -51,6 +51,10 @@ static struct of_device_id hdmiphy_match_types[] = {
+>         {
+>                 .compatible = "samsung,exynos5-hdmiphy",
+>         }, {
+> +               .compatible = "samsung,exynos4210-hdmiphy",
+> +       }, {
+> +               .compatible = "samsung,exynos4212-hdmiphy",
+> +       }, {
+>                 /* end node */
+>         }
+>  };
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+> index f36f878..6225501 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -1115,12 +1115,12 @@ static int vp_resources_init(struct exynos_drm_hdmi_context *ctx,
+>         return 0;
 >  }
-> =20
-> @@ -544,7 +581,8 @@ static int exynos_tmu_probe(struct platform_device =
-*pdev)
->  		return ret;
-> =20
->  	if (pdata->type =3D=3D SOC_ARCH_EXYNOS ||
-> -				pdata->type =3D=3D SOC_ARCH_EXYNOS4210)
-> +		pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
-> +				pdata->type =3D=3D SOC_ARCH_EXYNOS5440)
->  		data->soc =3D pdata->type;
->  	else {
->  		ret =3D -EINVAL;
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sam=
-sung/exynos_tmu.h
-> index 6f55673..73aaed7 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -38,6 +38,7 @@ enum calibration_mode {
->  enum soc_type {
->  	SOC_ARCH_EXYNOS4210 =3D 1,
->  	SOC_ARCH_EXYNOS,
-> +	SOC_ARCH_EXYNOS5440,
+>
+> -static struct mixer_drv_data exynos5_mxr_drv_data = {
+> +static struct mixer_drv_data exynos5250_mxr_drv_data = {
+>         .version = MXR_VER_16_0_33_0,
+>         .is_vp_enabled = 0,
 >  };
-> =20
->  /**
-> @@ -129,6 +130,8 @@ enum soc_type {
->   * @emul_temp_shift: shift bits of emulation temperature.
->   * @emul_time_shift: shift bits of emulation time.
->   * @emul_time_mask: mask bits of emulation time.
-> + * @tmu_irqstatus: register to find which TMU generated interrupts.
-> + * @tmu_pmin: register to get/set the Pmin value.
->   */
->  struct exynos_tmu_registers {
->  	u32	triminfo_data;
-> @@ -196,6 +199,9 @@ struct exynos_tmu_registers {
->  	u32	emul_temp_shift;
->  	u32	emul_time_shift;
->  	u32	emul_time_mask;
-> +
-> +	u32	tmu_irqstatus;
-> +	u32	tmu_pmin;
+>
+> -static struct mixer_drv_data exynos4_mxr_drv_data = {
+> +static struct mixer_drv_data exynos4210_mxr_drv_data = {
+>         .version = MXR_VER_0_0_0_16,
+>         .is_vp_enabled = 1,
 >  };
-> =20
->  /**
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therma=
-l/samsung/exynos_tmu_data.h
-> index 139dbbb..ad263e9 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.h
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> @@ -93,6 +93,42 @@
-> =20
->  #define EXYNOS_MAX_TRIGGER_PER_REG	4
-> =20
-> +/*exynos5440 specific registers*/
-> +#define EXYNOS5440_TMU_S0_7_TRIM		0x000
-> +#define EXYNOS5440_TMU_S0_7_CTRL		0x020
-> +#define EXYNOS5440_TMU_S0_7_DEBUG		0x040
-> +#define EXYNOS5440_TMU_S0_7_STATUS		0x060
-> +#define EXYNOS5440_TMU_S0_7_TEMP		0x0f0
-> +#define EXYNOS5440_TMU_S0_7_TH0			0x110
-> +#define EXYNOS5440_TMU_S0_7_TH1			0x130
-> +#define EXYNOS5440_TMU_S0_7_TH2			0x150
-> +#define EXYNOS5440_TMU_S0_7_EVTEN		0x1F0
-> +#define EXYNOS5440_TMU_S0_7_IRQEN		0x210
-> +#define EXYNOS5440_TMU_S0_7_IRQ			0x230
-> +/* exynos5440 common registers */
-> +#define EXYNOS5440_TMU_IRQ_STATUS		0x000
-> +#define EXYNOS5440_TMU_PMIN			0x004
-> +#define EXYNOS5440_TMU_TEMP			0x008
-> +
-> +#define EXYNOS5440_TMU_RISE_INT_MASK		0xf
-> +#define EXYNOS5440_TMU_RISE_INT_SHIFT		0
-> +#define EXYNOS5440_TMU_FALL_INT_MASK		0xf
-> +#define EXYNOS5440_TMU_FALL_INT_SHIFT		4
-> +#define EXYNOS5440_TMU_INTEN_RISE0_SHIFT	0
-> +#define EXYNOS5440_TMU_INTEN_RISE1_SHIFT	1
-> +#define EXYNOS5440_TMU_INTEN_RISE2_SHIFT	2
-> +#define EXYNOS5440_TMU_INTEN_RISE3_SHIFT	3
-> +#define EXYNOS5440_TMU_INTEN_FALL0_SHIFT	4
-> +#define EXYNOS5440_TMU_INTEN_FALL1_SHIFT	5
-> +#define EXYNOS5440_TMU_INTEN_FALL2_SHIFT	6
-> +#define EXYNOS5440_TMU_INTEN_FALL3_SHIFT	7
-> +#define EXYNOS5440_TMU_TH_RISE0_SHIFT		0
-> +#define EXYNOS5440_TMU_TH_RISE1_SHIFT		8
-> +#define EXYNOS5440_TMU_TH_RISE2_SHIFT		16
-> +#define EXYNOS5440_TMU_TH_RISE3_SHIFT		24
-> +#define EXYNOS5440_TMU_TH_RISE4_SHIFT		24
-> +#define EXYNOS5440_EFUSE_SWAP_OFFSET		8
-> +
->  #if defined(CONFIG_CPU_EXYNOS4210)
->  extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
->  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
->=20
-
-
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
-------enig2MTLQVKSWDNUAIPLAKNAO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlHCY7sACgkQCXcVR3XQvP1kvwD7B0WwEMe/Hkuu+JXcLcGHSIX1
-NLpcpR6tAI0pGvsG2hAA/icSzIjBsLmjc71KQngasTSfQOqEDJkEZx29fr3ln+n8
-=WYGn
------END PGP SIGNATURE-----
-
-------enig2MTLQVKSWDNUAIPLAKNAO--
+> @@ -1128,10 +1128,10 @@ static struct mixer_drv_data exynos4_mxr_drv_data = {
+>  static struct platform_device_id mixer_driver_types[] = {
+>         {
+>                 .name           = "s5p-mixer",
+> -               .driver_data    = (unsigned long)&exynos4_mxr_drv_data,
+> +               .driver_data    = (unsigned long)&exynos4210_mxr_drv_data,
+>         }, {
+>                 .name           = "exynos5-mixer",
+> -               .driver_data    = (unsigned long)&exynos5_mxr_drv_data,
+> +               .driver_data    = (unsigned long)&exynos5250_mxr_drv_data,
+>         }, {
+>                 /* end node */
+>         }
+> @@ -1140,7 +1140,10 @@ static struct platform_device_id mixer_driver_types[] = {
+>  static struct of_device_id mixer_match_types[] = {
+>         {
+>                 .compatible = "samsung,exynos5-mixer",
+> -               .data   = &exynos5_mxr_drv_data,
+> +               .data   = &exynos5250_mxr_drv_data,
+> +       }, {
+> +               .compatible = "samsung,exynos5250-mixer",
+> +               .data   = &exynos5250_mxr_drv_data,
+>         }, {
+>                 /* end node */
+>         }
+> --
+> 1.7.10.4
+>
