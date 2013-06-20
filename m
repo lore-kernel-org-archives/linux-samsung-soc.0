@@ -1,300 +1,763 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v2 07/18] ARM: SAMSUNG: Move all platforms to new clocksource driver
-Date: Fri, 21 Jun 2013 00:12:52 +0200
-Message-ID: <1371766383-29077-8-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH v2 10/18] pwm: samsung: Rename to pwm-samsung-legacy
+Date: Fri, 21 Jun 2013 00:12:55 +0200
+Message-ID: <1371766383-29077-11-git-send-email-tomasz.figa@gmail.com>
 References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f42.google.com ([209.85.214.42]:53404 "EHLO
-	mail-bk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758519Ab3FTWOP (ORCPT
+Received: from mail-bk0-f53.google.com ([209.85.214.53]:42672 "EHLO
+	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758519Ab3FTWOV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 18:14:15 -0400
+	Thu, 20 Jun 2013 18:14:21 -0400
 In-Reply-To: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-This patch moves all Samsung platforms using PWM clocksource from legacy
-samsung-time to new samsung-pwm-timer driver.
+This patch renames the old pwm-samsung driver to pwm-samsung-legacy to
+create place for the new, rewritten, DT-aware pwm-samsung driver using
+Samsung PWM/timer master driver.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- arch/arm/mach-s3c24xx/Kconfig  | 12 ++++++------
- arch/arm/mach-s3c24xx/common.c | 16 ++++++++++++++++
- arch/arm/mach-s3c64xx/Kconfig  |  4 ++--
- arch/arm/mach-s3c64xx/common.c | 17 +++++++++++++++++
- arch/arm/mach-s5p64x0/Kconfig  |  4 ++--
- arch/arm/mach-s5p64x0/common.c | 17 +++++++++++++++++
- arch/arm/mach-s5pc100/Kconfig  |  2 +-
- arch/arm/mach-s5pc100/common.c | 17 +++++++++++++++++
- arch/arm/mach-s5pv210/Kconfig  |  2 +-
- arch/arm/mach-s5pv210/common.c | 17 +++++++++++++++++
- 10 files changed, 96 insertions(+), 12 deletions(-)
+ drivers/pwm/Makefile             |   2 +-
+ drivers/pwm/pwm-samsung-legacy.c | 353 +++++++++++++++++++++++++++++++++++++++
+ drivers/pwm/pwm-samsung.c        | 353 ---------------------------------------
+ 3 files changed, 354 insertions(+), 354 deletions(-)
+ create mode 100644 drivers/pwm/pwm-samsung-legacy.c
+ delete mode 100644 drivers/pwm/pwm-samsung.c
 
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 6d9252e..46f9a9c 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -30,7 +30,7 @@ config CPU_S3C2410
- 	select S3C2410_CLOCK
- 	select ARM_S3C2410_CPUFREQ if ARM_S3C24XX_CPUFREQ
- 	select S3C2410_PM if PM
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	select SAMSUNG_WDT_RESET
- 	help
- 	  Support for S3C2410 and S3C2410A family from the S3C24XX line
-@@ -42,7 +42,7 @@ config CPU_S3C2412
- 	select CPU_LLSERIAL_S3C2440
- 	select S3C2412_DMA if S3C24XX_DMA
- 	select S3C2412_PM if PM
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	help
- 	  Support for the S3C2412 and S3C2413 SoCs from the S3C24XX line
- 
-@@ -54,7 +54,7 @@ config CPU_S3C2416
- 	select S3C2443_COMMON
- 	select S3C2443_DMA if S3C24XX_DMA
- 	select SAMSUNG_CLKSRC
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	help
- 	  Support for the S3C2416 SoC from the S3C24XX line
- 
-@@ -65,7 +65,7 @@ config CPU_S3C2440
- 	select S3C2410_CLOCK
- 	select S3C2410_PM if PM
- 	select S3C2440_DMA if S3C24XX_DMA
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	help
- 	  Support for S3C2440 Samsung Mobile CPU based systems.
- 
-@@ -75,7 +75,7 @@ config CPU_S3C2442
- 	select CPU_LLSERIAL_S3C2440
- 	select S3C2410_CLOCK
- 	select S3C2410_PM if PM
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	help
- 	  Support for S3C2442 Samsung Mobile CPU based systems.
- 
-@@ -91,7 +91,7 @@ config CPU_S3C2443
- 	select S3C2443_COMMON
- 	select S3C2443_DMA if S3C24XX_DMA
- 	select SAMSUNG_CLKSRC
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	help
- 	  Support for the S3C2443 SoC from the S3C24XX line
- 
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index e5e7d7d..457261c 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -245,6 +245,22 @@ void __init s3c24xx_init_io(struct map_desc *mach_desc, int size)
- 	samsung_pwm_set_platdata(&s3c24xx_pwm_variant);
- }
- 
-+void __init samsung_set_timer_source(unsigned int event, unsigned int source)
+diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+index 94ba21e..229a599 100644
+--- a/drivers/pwm/Makefile
++++ b/drivers/pwm/Makefile
+@@ -8,7 +8,7 @@ obj-$(CONFIG_PWM_LPC32XX)	+= pwm-lpc32xx.o
+ obj-$(CONFIG_PWM_MXS)		+= pwm-mxs.o
+ obj-$(CONFIG_PWM_PUV3)		+= pwm-puv3.o
+ obj-$(CONFIG_PWM_PXA)		+= pwm-pxa.o
+-obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung.o
++obj-$(CONFIG_PWM_SAMSUNG)	+= pwm-samsung-legacy.o
+ obj-$(CONFIG_PWM_SPEAR)		+= pwm-spear.o
+ obj-$(CONFIG_PWM_TEGRA)		+= pwm-tegra.o
+ obj-$(CONFIG_PWM_TIECAP)	+= pwm-tiecap.o
+diff --git a/drivers/pwm/pwm-samsung-legacy.c b/drivers/pwm/pwm-samsung-legacy.c
+new file mode 100644
+index 0000000..a0ece50
+--- /dev/null
++++ b/drivers/pwm/pwm-samsung-legacy.c
+@@ -0,0 +1,353 @@
++/* drivers/pwm/pwm-samsung.c
++ *
++ * Copyright (c) 2007 Ben Dooks
++ * Copyright (c) 2008 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>, <ben-linux@fluff.org>
++ *
++ * S3C series PWM device core
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License.
++*/
++
++#define pr_fmt(fmt) "pwm-samsung: " fmt
++
++#include <linux/export.h>
++#include <linux/kernel.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <linux/clk.h>
++#include <linux/io.h>
++#include <linux/pwm.h>
++
++#include <mach/map.h>
++
++#include <plat/regs-timer.h>
++
++struct s3c_chip {
++	struct platform_device	*pdev;
++
++	struct clk		*clk_div;
++	struct clk		*clk;
++	const char		*label;
++
++	unsigned int		 period_ns;
++	unsigned int		 duty_ns;
++
++	unsigned char		 tcon_base;
++	unsigned char		 pwm_id;
++	struct pwm_chip		 chip;
++};
++
++#define to_s3c_chip(chip)	container_of(chip, struct s3c_chip, chip)
++
++#define pwm_dbg(_pwm, msg...) dev_dbg(&(_pwm)->pdev->dev, msg)
++
++static struct clk *clk_scaler[2];
++
++static inline int pwm_is_tdiv(struct s3c_chip *chip)
 +{
-+	s3c24xx_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
-+	s3c24xx_pwm_variant.output_mask &= ~(BIT(event) | BIT(source));
++	return clk_get_parent(chip->clk) == chip->clk_div;
 +}
 +
-+void __init samsung_timer_init(void)
-+{
-+	unsigned int timer_irqs[SAMSUNG_PWM_NUM] = {
-+		IRQ_TIMER0, IRQ_TIMER1, IRQ_TIMER2, IRQ_TIMER3, IRQ_TIMER4,
-+	};
++#define pwm_tcon_start(pwm) (1 << (pwm->tcon_base + 0))
++#define pwm_tcon_invert(pwm) (1 << (pwm->tcon_base + 2))
++#define pwm_tcon_autoreload(pwm) (1 << (pwm->tcon_base + 3))
++#define pwm_tcon_manulupdate(pwm) (1 << (pwm->tcon_base + 1))
 +
-+	samsung_pwm_clocksource_init(S3C_VA_TIMER,
-+					timer_irqs, &s3c24xx_pwm_variant);
++static int s3c_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
++{
++	struct s3c_chip *s3c = to_s3c_chip(chip);
++	unsigned long flags;
++	unsigned long tcon;
++
++	local_irq_save(flags);
++
++	tcon = __raw_readl(S3C2410_TCON);
++	tcon |= pwm_tcon_start(s3c);
++	__raw_writel(tcon, S3C2410_TCON);
++
++	local_irq_restore(flags);
++
++	return 0;
 +}
 +
- /* Serial port registrations */
- 
- #define S3C2410_PA_UART0      (S3C24XX_PA_UART)
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 2057853..f78a6a0 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -17,13 +17,13 @@ config PLAT_S3C64XX
- # Configuration options for the S3C6410 CPU
- 
- config CPU_S3C6400
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	bool
- 	help
- 	  Enable S3C6400 CPU support
- 
- config CPU_S3C6410
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	bool
- 	help
- 	  Enable S3C6410 CPU support
-diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
-index 0ab97c3..91df45a 100644
---- a/arch/arm/mach-s3c64xx/common.c
-+++ b/arch/arm/mach-s3c64xx/common.c
-@@ -157,6 +157,23 @@ static struct samsung_pwm_variant s3c64xx_pwm_variant = {
- 	.tclk_mask	= (1 << 7) | (1 << 6) | (1 << 5),
- };
- 
-+void __init samsung_set_timer_source(unsigned int event, unsigned int source)
++static void s3c_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
 +{
-+	s3c64xx_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
-+	s3c64xx_pwm_variant.output_mask &= ~(BIT(event) | BIT(source));
++	struct s3c_chip *s3c = to_s3c_chip(chip);
++	unsigned long flags;
++	unsigned long tcon;
++
++	local_irq_save(flags);
++
++	tcon = __raw_readl(S3C2410_TCON);
++	tcon &= ~pwm_tcon_start(s3c);
++	__raw_writel(tcon, S3C2410_TCON);
++
++	local_irq_restore(flags);
 +}
 +
-+void __init samsung_timer_init(void)
++static unsigned long pwm_calc_tin(struct s3c_chip *s3c, unsigned long freq)
 +{
-+	unsigned int timer_irqs[SAMSUNG_PWM_NUM] = {
-+		IRQ_TIMER0_VIC, IRQ_TIMER1_VIC, IRQ_TIMER2_VIC,
-+		IRQ_TIMER3_VIC, IRQ_TIMER4_VIC,
-+	};
++	unsigned long tin_parent_rate;
++	unsigned int div;
 +
-+	samsung_pwm_clocksource_init(S3C_VA_TIMER,
-+					timer_irqs, &s3c64xx_pwm_variant);
++	tin_parent_rate = clk_get_rate(clk_get_parent(s3c->clk_div));
++	pwm_dbg(s3c, "tin parent at %lu\n", tin_parent_rate);
++
++	for (div = 2; div <= 16; div *= 2) {
++		if ((tin_parent_rate / (div << 16)) < freq)
++			return tin_parent_rate / div;
++	}
++
++	return tin_parent_rate / 16;
 +}
 +
- /* read cpu identification code */
- 
- void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 5a707bd..a39cd9e 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -11,14 +11,14 @@ config CPU_S5P6440
- 	bool
- 	select S5P_SLEEP if PM
- 	select SAMSUNG_DMADEV
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	select SAMSUNG_WAKEMASK if PM
- 	help
- 	  Enable S5P6440 CPU support
- 
- config CPU_S5P6450
- 	bool
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	select S5P_SLEEP if PM
- 	select SAMSUNG_DMADEV
- 	select SAMSUNG_WAKEMASK if PM
-diff --git a/arch/arm/mach-s5p64x0/common.c b/arch/arm/mach-s5p64x0/common.c
-index c14d719..6ee5638 100644
---- a/arch/arm/mach-s5p64x0/common.c
-+++ b/arch/arm/mach-s5p64x0/common.c
-@@ -165,6 +165,23 @@ static struct samsung_pwm_variant s5p64x0_pwm_variant = {
- 	.tclk_mask	= 0,
- };
- 
-+void __init samsung_set_timer_source(unsigned int event, unsigned int source)
++#define NS_IN_HZ (1000000000UL)
++
++static int s3c_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
++		int duty_ns, int period_ns)
 +{
-+	s5p64x0_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
-+	s5p64x0_pwm_variant.output_mask &= ~(BIT(event) | BIT(source));
++	struct s3c_chip *s3c = to_s3c_chip(chip);
++	unsigned long tin_rate;
++	unsigned long tin_ns;
++	unsigned long period;
++	unsigned long flags;
++	unsigned long tcon;
++	unsigned long tcnt;
++	long tcmp;
++
++	/* We currently avoid using 64bit arithmetic by using the
++	 * fact that anything faster than 1Hz is easily representable
++	 * by 32bits. */
++
++	if (period_ns > NS_IN_HZ || duty_ns > NS_IN_HZ)
++		return -ERANGE;
++
++	if (period_ns == s3c->period_ns &&
++	    duty_ns == s3c->duty_ns)
++		return 0;
++
++	/* The TCMP and TCNT can be read without a lock, they're not
++	 * shared between the timers. */
++
++	tcmp = __raw_readl(S3C2410_TCMPB(s3c->pwm_id));
++	tcnt = __raw_readl(S3C2410_TCNTB(s3c->pwm_id));
++
++	period = NS_IN_HZ / period_ns;
++
++	pwm_dbg(s3c, "duty_ns=%d, period_ns=%d (%lu)\n",
++		duty_ns, period_ns, period);
++
++	/* Check to see if we are changing the clock rate of the PWM */
++
++	if (s3c->period_ns != period_ns) {
++		if (pwm_is_tdiv(s3c)) {
++			tin_rate = pwm_calc_tin(s3c, period);
++			clk_set_rate(s3c->clk_div, tin_rate);
++		} else
++			tin_rate = clk_get_rate(s3c->clk);
++
++		s3c->period_ns = period_ns;
++
++		pwm_dbg(s3c, "tin_rate=%lu\n", tin_rate);
++
++		tin_ns = NS_IN_HZ / tin_rate;
++		tcnt = period_ns / tin_ns;
++	} else
++		tin_ns = NS_IN_HZ / clk_get_rate(s3c->clk);
++
++	/* Note, counters count down */
++
++	tcmp = duty_ns / tin_ns;
++	tcmp = tcnt - tcmp;
++	/* the pwm hw only checks the compare register after a decrement,
++	   so the pin never toggles if tcmp = tcnt */
++	if (tcmp == tcnt)
++		tcmp--;
++
++	pwm_dbg(s3c, "tin_ns=%lu, tcmp=%ld/%lu\n", tin_ns, tcmp, tcnt);
++
++	if (tcmp < 0)
++		tcmp = 0;
++
++	/* Update the PWM register block. */
++
++	local_irq_save(flags);
++
++	__raw_writel(tcmp, S3C2410_TCMPB(s3c->pwm_id));
++	__raw_writel(tcnt, S3C2410_TCNTB(s3c->pwm_id));
++
++	tcon = __raw_readl(S3C2410_TCON);
++	tcon |= pwm_tcon_manulupdate(s3c);
++	tcon |= pwm_tcon_autoreload(s3c);
++	__raw_writel(tcon, S3C2410_TCON);
++
++	tcon &= ~pwm_tcon_manulupdate(s3c);
++	__raw_writel(tcon, S3C2410_TCON);
++
++	local_irq_restore(flags);
++
++	return 0;
 +}
 +
-+void __init samsung_timer_init(void)
-+{
-+	unsigned int timer_irqs[SAMSUNG_PWM_NUM] = {
-+		IRQ_TIMER0_VIC, IRQ_TIMER1_VIC, IRQ_TIMER2_VIC,
-+		IRQ_TIMER3_VIC, IRQ_TIMER4_VIC,
-+	};
++static struct pwm_ops s3c_pwm_ops = {
++	.enable = s3c_pwm_enable,
++	.disable = s3c_pwm_disable,
++	.config = s3c_pwm_config,
++	.owner = THIS_MODULE,
++};
 +
-+	samsung_pwm_clocksource_init(S3C_VA_TIMER,
-+					timer_irqs, &s5p64x0_pwm_variant);
++static int s3c_pwm_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct s3c_chip *s3c;
++	unsigned long flags;
++	unsigned long tcon;
++	unsigned int id = pdev->id;
++	int ret;
++
++	if (id == 4) {
++		dev_err(dev, "TIMER4 is currently not supported\n");
++		return -ENXIO;
++	}
++
++	s3c = devm_kzalloc(&pdev->dev, sizeof(*s3c), GFP_KERNEL);
++	if (s3c == NULL) {
++		dev_err(dev, "failed to allocate pwm_device\n");
++		return -ENOMEM;
++	}
++
++	/* calculate base of control bits in TCON */
++	s3c->tcon_base = id == 0 ? 0 : (id * 4) + 4;
++	s3c->pwm_id = id;
++	s3c->chip.dev = &pdev->dev;
++	s3c->chip.ops = &s3c_pwm_ops;
++	s3c->chip.base = -1;
++	s3c->chip.npwm = 1;
++
++	s3c->clk = devm_clk_get(dev, "pwm-tin");
++	if (IS_ERR(s3c->clk)) {
++		dev_err(dev, "failed to get pwm tin clk\n");
++		return PTR_ERR(s3c->clk);
++	}
++
++	s3c->clk_div = devm_clk_get(dev, "pwm-tdiv");
++	if (IS_ERR(s3c->clk_div)) {
++		dev_err(dev, "failed to get pwm tdiv clk\n");
++		return PTR_ERR(s3c->clk_div);
++	}
++
++	clk_enable(s3c->clk);
++	clk_enable(s3c->clk_div);
++
++	local_irq_save(flags);
++
++	tcon = __raw_readl(S3C2410_TCON);
++	tcon |= pwm_tcon_invert(s3c);
++	__raw_writel(tcon, S3C2410_TCON);
++
++	local_irq_restore(flags);
++
++	ret = pwmchip_add(&s3c->chip);
++	if (ret < 0) {
++		dev_err(dev, "failed to register pwm\n");
++		goto err_clk_tdiv;
++	}
++
++	pwm_dbg(s3c, "config bits %02x\n",
++		(__raw_readl(S3C2410_TCON) >> s3c->tcon_base) & 0x0f);
++
++	dev_info(dev, "tin at %lu, tdiv at %lu, tin=%sclk, base %d\n",
++		 clk_get_rate(s3c->clk),
++		 clk_get_rate(s3c->clk_div),
++		 pwm_is_tdiv(s3c) ? "div" : "ext", s3c->tcon_base);
++
++	platform_set_drvdata(pdev, s3c);
++	return 0;
++
++ err_clk_tdiv:
++	clk_disable(s3c->clk_div);
++	clk_disable(s3c->clk);
++	return ret;
 +}
 +
- /*
-  * s5p64x0_map_io
-  *
-diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
-index 2f456a4..2094a9b 100644
---- a/arch/arm/mach-s5pc100/Kconfig
-+++ b/arch/arm/mach-s5pc100/Kconfig
-@@ -11,7 +11,7 @@ config CPU_S5PC100
- 	bool
- 	select S5P_EXT_INT
- 	select SAMSUNG_DMADEV
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	help
- 	  Enable S5PC100 CPU support
- 
-diff --git a/arch/arm/mach-s5pc100/common.c b/arch/arm/mach-s5pc100/common.c
-index a62e8a4..544a9c6 100644
---- a/arch/arm/mach-s5pc100/common.c
-+++ b/arch/arm/mach-s5pc100/common.c
-@@ -140,6 +140,23 @@ static struct samsung_pwm_variant s5pc100_pwm_variant = {
- 	.tclk_mask	= (1 << 5),
- };
- 
-+void __init samsung_set_timer_source(unsigned int event, unsigned int source)
++static int s3c_pwm_remove(struct platform_device *pdev)
 +{
-+	s5pc100_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
-+	s5pc100_pwm_variant.output_mask &= ~(BIT(event) | BIT(source));
++	struct s3c_chip *s3c = platform_get_drvdata(pdev);
++	int err;
++
++	err = pwmchip_remove(&s3c->chip);
++	if (err < 0)
++		return err;
++
++	clk_disable(s3c->clk_div);
++	clk_disable(s3c->clk);
++
++	return 0;
 +}
 +
-+void __init samsung_timer_init(void)
++#ifdef CONFIG_PM_SLEEP
++static int s3c_pwm_suspend(struct device *dev)
 +{
-+	unsigned int timer_irqs[SAMSUNG_PWM_NUM] = {
-+		IRQ_TIMER0_VIC, IRQ_TIMER1_VIC, IRQ_TIMER2_VIC,
-+		IRQ_TIMER3_VIC, IRQ_TIMER4_VIC,
-+	};
++	struct s3c_chip *s3c = dev_get_drvdata(dev);
 +
-+	samsung_pwm_clocksource_init(S3C_VA_TIMER,
-+					timer_irqs, &s5pc100_pwm_variant);
++	/* No one preserve these values during suspend so reset them
++	 * Otherwise driver leaves PWM unconfigured if same values
++	 * passed to pwm_config
++	 */
++	s3c->period_ns = 0;
++	s3c->duty_ns = 0;
++
++	return 0;
 +}
 +
- /*
-  * s5pc100_map_io
-  *
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 0963283..07cdff7 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -15,7 +15,7 @@ config CPU_S5PV210
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
- 	select SAMSUNG_DMADEV
--	select SAMSUNG_HRT
-+	select CLKSRC_SAMSUNG_PWM
- 	help
- 	  Enable S5PV210 CPU support
- 
-diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/common.c
-index 4eba33d..d28affb 100644
---- a/arch/arm/mach-s5pv210/common.c
-+++ b/arch/arm/mach-s5pv210/common.c
-@@ -157,6 +157,23 @@ static struct samsung_pwm_variant s5pv210_pwm_variant = {
- 	.tclk_mask	= (1 << 5),
- };
- 
-+void __init samsung_set_timer_source(unsigned int event, unsigned int source)
++static int s3c_pwm_resume(struct device *dev)
 +{
-+	s5pv210_pwm_variant.output_mask = BIT(SAMSUNG_PWM_NUM) - 1;
-+	s5pv210_pwm_variant.output_mask &= ~(BIT(event) | BIT(source));
++	struct s3c_chip *s3c = dev_get_drvdata(dev);
++	unsigned long tcon;
++
++	/* Restore invertion */
++	tcon = __raw_readl(S3C2410_TCON);
++	tcon |= pwm_tcon_invert(s3c);
++	__raw_writel(tcon, S3C2410_TCON);
++
++	return 0;
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(s3c_pwm_pm_ops, s3c_pwm_suspend,
++			s3c_pwm_resume);
++
++static struct platform_driver s3c_pwm_driver = {
++	.driver		= {
++		.name	= "s3c24xx-pwm",
++		.owner	= THIS_MODULE,
++		.pm	= &s3c_pwm_pm_ops,
++	},
++	.probe		= s3c_pwm_probe,
++	.remove		= s3c_pwm_remove,
++};
++
++static int __init pwm_init(void)
++{
++	int ret;
++
++	clk_scaler[0] = clk_get(NULL, "pwm-scaler0");
++	clk_scaler[1] = clk_get(NULL, "pwm-scaler1");
++
++	if (IS_ERR(clk_scaler[0]) || IS_ERR(clk_scaler[1])) {
++		pr_err("failed to get scaler clocks\n");
++		return -EINVAL;
++	}
++
++	ret = platform_driver_register(&s3c_pwm_driver);
++	if (ret)
++		pr_err("failed to add pwm driver\n");
++
++	return ret;
 +}
 +
-+void __init samsung_timer_init(void)
-+{
-+	unsigned int timer_irqs[SAMSUNG_PWM_NUM] = {
-+		IRQ_TIMER0_VIC, IRQ_TIMER1_VIC, IRQ_TIMER2_VIC,
-+		IRQ_TIMER3_VIC, IRQ_TIMER4_VIC,
-+	};
-+
-+	samsung_pwm_clocksource_init(S3C_VA_TIMER,
-+					timer_irqs, &s5pv210_pwm_variant);
-+}
-+
- /*
-  * s5pv210_map_io
-  *
++arch_initcall(pwm_init);
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+deleted file mode 100644
+index a0ece50..0000000
+--- a/drivers/pwm/pwm-samsung.c
++++ /dev/null
+@@ -1,353 +0,0 @@
+-/* drivers/pwm/pwm-samsung.c
+- *
+- * Copyright (c) 2007 Ben Dooks
+- * Copyright (c) 2008 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>, <ben-linux@fluff.org>
+- *
+- * S3C series PWM device core
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License.
+-*/
+-
+-#define pr_fmt(fmt) "pwm-samsung: " fmt
+-
+-#include <linux/export.h>
+-#include <linux/kernel.h>
+-#include <linux/platform_device.h>
+-#include <linux/slab.h>
+-#include <linux/err.h>
+-#include <linux/clk.h>
+-#include <linux/io.h>
+-#include <linux/pwm.h>
+-
+-#include <mach/map.h>
+-
+-#include <plat/regs-timer.h>
+-
+-struct s3c_chip {
+-	struct platform_device	*pdev;
+-
+-	struct clk		*clk_div;
+-	struct clk		*clk;
+-	const char		*label;
+-
+-	unsigned int		 period_ns;
+-	unsigned int		 duty_ns;
+-
+-	unsigned char		 tcon_base;
+-	unsigned char		 pwm_id;
+-	struct pwm_chip		 chip;
+-};
+-
+-#define to_s3c_chip(chip)	container_of(chip, struct s3c_chip, chip)
+-
+-#define pwm_dbg(_pwm, msg...) dev_dbg(&(_pwm)->pdev->dev, msg)
+-
+-static struct clk *clk_scaler[2];
+-
+-static inline int pwm_is_tdiv(struct s3c_chip *chip)
+-{
+-	return clk_get_parent(chip->clk) == chip->clk_div;
+-}
+-
+-#define pwm_tcon_start(pwm) (1 << (pwm->tcon_base + 0))
+-#define pwm_tcon_invert(pwm) (1 << (pwm->tcon_base + 2))
+-#define pwm_tcon_autoreload(pwm) (1 << (pwm->tcon_base + 3))
+-#define pwm_tcon_manulupdate(pwm) (1 << (pwm->tcon_base + 1))
+-
+-static int s3c_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+-{
+-	struct s3c_chip *s3c = to_s3c_chip(chip);
+-	unsigned long flags;
+-	unsigned long tcon;
+-
+-	local_irq_save(flags);
+-
+-	tcon = __raw_readl(S3C2410_TCON);
+-	tcon |= pwm_tcon_start(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
+-
+-	local_irq_restore(flags);
+-
+-	return 0;
+-}
+-
+-static void s3c_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+-{
+-	struct s3c_chip *s3c = to_s3c_chip(chip);
+-	unsigned long flags;
+-	unsigned long tcon;
+-
+-	local_irq_save(flags);
+-
+-	tcon = __raw_readl(S3C2410_TCON);
+-	tcon &= ~pwm_tcon_start(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
+-
+-	local_irq_restore(flags);
+-}
+-
+-static unsigned long pwm_calc_tin(struct s3c_chip *s3c, unsigned long freq)
+-{
+-	unsigned long tin_parent_rate;
+-	unsigned int div;
+-
+-	tin_parent_rate = clk_get_rate(clk_get_parent(s3c->clk_div));
+-	pwm_dbg(s3c, "tin parent at %lu\n", tin_parent_rate);
+-
+-	for (div = 2; div <= 16; div *= 2) {
+-		if ((tin_parent_rate / (div << 16)) < freq)
+-			return tin_parent_rate / div;
+-	}
+-
+-	return tin_parent_rate / 16;
+-}
+-
+-#define NS_IN_HZ (1000000000UL)
+-
+-static int s3c_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
+-		int duty_ns, int period_ns)
+-{
+-	struct s3c_chip *s3c = to_s3c_chip(chip);
+-	unsigned long tin_rate;
+-	unsigned long tin_ns;
+-	unsigned long period;
+-	unsigned long flags;
+-	unsigned long tcon;
+-	unsigned long tcnt;
+-	long tcmp;
+-
+-	/* We currently avoid using 64bit arithmetic by using the
+-	 * fact that anything faster than 1Hz is easily representable
+-	 * by 32bits. */
+-
+-	if (period_ns > NS_IN_HZ || duty_ns > NS_IN_HZ)
+-		return -ERANGE;
+-
+-	if (period_ns == s3c->period_ns &&
+-	    duty_ns == s3c->duty_ns)
+-		return 0;
+-
+-	/* The TCMP and TCNT can be read without a lock, they're not
+-	 * shared between the timers. */
+-
+-	tcmp = __raw_readl(S3C2410_TCMPB(s3c->pwm_id));
+-	tcnt = __raw_readl(S3C2410_TCNTB(s3c->pwm_id));
+-
+-	period = NS_IN_HZ / period_ns;
+-
+-	pwm_dbg(s3c, "duty_ns=%d, period_ns=%d (%lu)\n",
+-		duty_ns, period_ns, period);
+-
+-	/* Check to see if we are changing the clock rate of the PWM */
+-
+-	if (s3c->period_ns != period_ns) {
+-		if (pwm_is_tdiv(s3c)) {
+-			tin_rate = pwm_calc_tin(s3c, period);
+-			clk_set_rate(s3c->clk_div, tin_rate);
+-		} else
+-			tin_rate = clk_get_rate(s3c->clk);
+-
+-		s3c->period_ns = period_ns;
+-
+-		pwm_dbg(s3c, "tin_rate=%lu\n", tin_rate);
+-
+-		tin_ns = NS_IN_HZ / tin_rate;
+-		tcnt = period_ns / tin_ns;
+-	} else
+-		tin_ns = NS_IN_HZ / clk_get_rate(s3c->clk);
+-
+-	/* Note, counters count down */
+-
+-	tcmp = duty_ns / tin_ns;
+-	tcmp = tcnt - tcmp;
+-	/* the pwm hw only checks the compare register after a decrement,
+-	   so the pin never toggles if tcmp = tcnt */
+-	if (tcmp == tcnt)
+-		tcmp--;
+-
+-	pwm_dbg(s3c, "tin_ns=%lu, tcmp=%ld/%lu\n", tin_ns, tcmp, tcnt);
+-
+-	if (tcmp < 0)
+-		tcmp = 0;
+-
+-	/* Update the PWM register block. */
+-
+-	local_irq_save(flags);
+-
+-	__raw_writel(tcmp, S3C2410_TCMPB(s3c->pwm_id));
+-	__raw_writel(tcnt, S3C2410_TCNTB(s3c->pwm_id));
+-
+-	tcon = __raw_readl(S3C2410_TCON);
+-	tcon |= pwm_tcon_manulupdate(s3c);
+-	tcon |= pwm_tcon_autoreload(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
+-
+-	tcon &= ~pwm_tcon_manulupdate(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
+-
+-	local_irq_restore(flags);
+-
+-	return 0;
+-}
+-
+-static struct pwm_ops s3c_pwm_ops = {
+-	.enable = s3c_pwm_enable,
+-	.disable = s3c_pwm_disable,
+-	.config = s3c_pwm_config,
+-	.owner = THIS_MODULE,
+-};
+-
+-static int s3c_pwm_probe(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-	struct s3c_chip *s3c;
+-	unsigned long flags;
+-	unsigned long tcon;
+-	unsigned int id = pdev->id;
+-	int ret;
+-
+-	if (id == 4) {
+-		dev_err(dev, "TIMER4 is currently not supported\n");
+-		return -ENXIO;
+-	}
+-
+-	s3c = devm_kzalloc(&pdev->dev, sizeof(*s3c), GFP_KERNEL);
+-	if (s3c == NULL) {
+-		dev_err(dev, "failed to allocate pwm_device\n");
+-		return -ENOMEM;
+-	}
+-
+-	/* calculate base of control bits in TCON */
+-	s3c->tcon_base = id == 0 ? 0 : (id * 4) + 4;
+-	s3c->pwm_id = id;
+-	s3c->chip.dev = &pdev->dev;
+-	s3c->chip.ops = &s3c_pwm_ops;
+-	s3c->chip.base = -1;
+-	s3c->chip.npwm = 1;
+-
+-	s3c->clk = devm_clk_get(dev, "pwm-tin");
+-	if (IS_ERR(s3c->clk)) {
+-		dev_err(dev, "failed to get pwm tin clk\n");
+-		return PTR_ERR(s3c->clk);
+-	}
+-
+-	s3c->clk_div = devm_clk_get(dev, "pwm-tdiv");
+-	if (IS_ERR(s3c->clk_div)) {
+-		dev_err(dev, "failed to get pwm tdiv clk\n");
+-		return PTR_ERR(s3c->clk_div);
+-	}
+-
+-	clk_enable(s3c->clk);
+-	clk_enable(s3c->clk_div);
+-
+-	local_irq_save(flags);
+-
+-	tcon = __raw_readl(S3C2410_TCON);
+-	tcon |= pwm_tcon_invert(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
+-
+-	local_irq_restore(flags);
+-
+-	ret = pwmchip_add(&s3c->chip);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to register pwm\n");
+-		goto err_clk_tdiv;
+-	}
+-
+-	pwm_dbg(s3c, "config bits %02x\n",
+-		(__raw_readl(S3C2410_TCON) >> s3c->tcon_base) & 0x0f);
+-
+-	dev_info(dev, "tin at %lu, tdiv at %lu, tin=%sclk, base %d\n",
+-		 clk_get_rate(s3c->clk),
+-		 clk_get_rate(s3c->clk_div),
+-		 pwm_is_tdiv(s3c) ? "div" : "ext", s3c->tcon_base);
+-
+-	platform_set_drvdata(pdev, s3c);
+-	return 0;
+-
+- err_clk_tdiv:
+-	clk_disable(s3c->clk_div);
+-	clk_disable(s3c->clk);
+-	return ret;
+-}
+-
+-static int s3c_pwm_remove(struct platform_device *pdev)
+-{
+-	struct s3c_chip *s3c = platform_get_drvdata(pdev);
+-	int err;
+-
+-	err = pwmchip_remove(&s3c->chip);
+-	if (err < 0)
+-		return err;
+-
+-	clk_disable(s3c->clk_div);
+-	clk_disable(s3c->clk);
+-
+-	return 0;
+-}
+-
+-#ifdef CONFIG_PM_SLEEP
+-static int s3c_pwm_suspend(struct device *dev)
+-{
+-	struct s3c_chip *s3c = dev_get_drvdata(dev);
+-
+-	/* No one preserve these values during suspend so reset them
+-	 * Otherwise driver leaves PWM unconfigured if same values
+-	 * passed to pwm_config
+-	 */
+-	s3c->period_ns = 0;
+-	s3c->duty_ns = 0;
+-
+-	return 0;
+-}
+-
+-static int s3c_pwm_resume(struct device *dev)
+-{
+-	struct s3c_chip *s3c = dev_get_drvdata(dev);
+-	unsigned long tcon;
+-
+-	/* Restore invertion */
+-	tcon = __raw_readl(S3C2410_TCON);
+-	tcon |= pwm_tcon_invert(s3c);
+-	__raw_writel(tcon, S3C2410_TCON);
+-
+-	return 0;
+-}
+-#endif
+-
+-static SIMPLE_DEV_PM_OPS(s3c_pwm_pm_ops, s3c_pwm_suspend,
+-			s3c_pwm_resume);
+-
+-static struct platform_driver s3c_pwm_driver = {
+-	.driver		= {
+-		.name	= "s3c24xx-pwm",
+-		.owner	= THIS_MODULE,
+-		.pm	= &s3c_pwm_pm_ops,
+-	},
+-	.probe		= s3c_pwm_probe,
+-	.remove		= s3c_pwm_remove,
+-};
+-
+-static int __init pwm_init(void)
+-{
+-	int ret;
+-
+-	clk_scaler[0] = clk_get(NULL, "pwm-scaler0");
+-	clk_scaler[1] = clk_get(NULL, "pwm-scaler1");
+-
+-	if (IS_ERR(clk_scaler[0]) || IS_ERR(clk_scaler[1])) {
+-		pr_err("failed to get scaler clocks\n");
+-		return -EINVAL;
+-	}
+-
+-	ret = platform_driver_register(&s3c_pwm_driver);
+-	if (ret)
+-		pr_err("failed to add pwm driver\n");
+-
+-	return ret;
+-}
+-
+-arch_initcall(pwm_init);
 -- 
 1.8.2.1
