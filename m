@@ -1,77 +1,164 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 5/5] ARM: dts: update binding documentation for hdmi subsystem
-Date: Thu, 20 Jun 2013 11:11:51 +0530
-Message-ID: <1371706911-27016-6-git-send-email-rahul.sharma@samsung.com>
-References: <1371706911-27016-1-git-send-email-rahul.sharma@samsung.com>
+From: Sunil Joshi <joshi@samsung.com>
+Subject: [PATCH] ARM: dts: Add device tree support for dwmmc
+Date: Thu, 20 Jun 2013 12:06:28 +0530
+Message-ID: <1371710188-22885-1-git-send-email-joshi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:35746 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752093Ab3FTFSh (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:9368 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751175Ab3FTGMw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 01:18:37 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 20 Jun 2013 02:12:52 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOO00HPHER0TR80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 14:18:36 +0900 (KST)
-In-reply-to: <1371706911-27016-1-git-send-email-rahul.sharma@samsung.com>
+ with ESMTP id <0MOO00AJZH9FK6P0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 15:12:51 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, tomasz.figa@gmail.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+Cc: kgene.kim@samsung.com, alim.akhtar@samsung.com, prathyush.k@samsung.com, arun.kk@samsung.com
 
-Adding information about clocks to mixer and hdmi dt
-nodes. Also removed the updated fields for hpd property.
+From: Alim Akhtar <alim.akhtar@samsung.com>
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+This patch adds alias names, device tree nodes for
+dw-mmc controller for exynos5420 soc.
+
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Signed-off-by: Sunil Joshi <joshi@samsung.com>
 ---
- .../devicetree/bindings/video/exynos_hdmi.txt         |   17 ++++++++++++++---
- .../devicetree/bindings/video/exynos_mixer.txt        |    4 ++++
- 2 files changed, 18 insertions(+), 3 deletions(-)
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +-
+ arch/arm/boot/dts/exynos5.dtsi                     |    3 ++
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   38 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   21 +++++++++++
+ 4 files changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index 589edee..5dca3af 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -8,9 +8,20 @@ Required properties:
- - hpd-gpio: following information about the hotplug gpio pin.
- 	a) phandle of the gpio controller node.
- 	b) pin number within the gpio controller.
--	c) pin function mode.
--	d) optional flags and pull up/down.
--	e) drive strength.
-+	c) optional flags and pull up/down.
-+- clocks: list of clock IDs from SoC clock driver.
-+	a) hdmi: It is required for gate operation on aclk_200_disp1 clock
-+		which clocks the display1 block.
-+	b) sclk_hdmi: It is required for gate operation on sclk_hdmi clock
-+		which clocks hdmi IP.
-+	c) sclk_pixel: Parent for mux mout_hdmi.
-+	d) sclk_hdmiphy: Parent for mux mout_hdmi.
-+	e) mout_hdmi: It is required by the driver to switch between the 2
-+		parents i.e. sclk_pixel and sclk_hdmiphy. If hdmiphy is stable
-+		after configuration, parent is set to sclk_hdmiphy else
-+		sclk_pixel.
-+- clock-names: aliases as per driver requirements for above clock IDs:
-+	"hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index 6d1c098..c48570e 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -15,7 +15,7 @@ Required Properties:
+ 	- "samsung,exynos4412-dw-mshc": for controllers with Samsung Exynos4412
+ 	  specific extensions.
+ 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+-	  specific extensions.
++	  and Exynos5420 specific extensions.
  
- Example:
+ * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index f65e124..6cb6f03 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -55,6 +55,7 @@
+ 		interrupts = <0 75 0>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		status = "disabled";
+ 	};
  
-diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-index 9b2ea03..54790a2 100644
---- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-@@ -5,6 +5,10 @@ Required properties:
- - reg: physical base address of the mixer and length of memory mapped
- 	region.
- - interrupts: interrupt number to the cpu.
-+- clocks: list of clock IDs from SoC clock driver.
-+	a) mixer: It is required for gate operation on aclk_200_disp1 clock
-+		which clocks the display1 block.
-+	b) sclk_hdmi: Parent for mux mout_mixer.
+ 	dwmmc_1: dwmmc1@12210000 {
+@@ -62,6 +63,7 @@
+ 		interrupts = <0 76 0>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		status = "disabled";
+ 	};
  
- Example:
+ 	dwmmc_2: dwmmc2@12220000 {
+@@ -69,6 +71,7 @@
+ 		interrupts = <0 77 0>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		status = "disabled";
+ 	};
  
+ 	serial@12C00000 {
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 08607df..d05de7a 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -30,4 +30,42 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
++
++	dwmmc0@12200000 {
++		status = "okay";
++		num-slots = <1>;
++		broken-cd;
++		bypass-smu;
++		supports-highspeed;
++		fifo-depth = <0x40>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <0 4>;
++		samsung,dw-mshc-ddr-timing = <0 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
++	dwmmc2@12220000 {
++		status = "okay";
++		num-slots = <1>;
++		supports-highspeed;
++		fifo-depth = <0x40>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++		};
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8c54c4b..0736994 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -24,6 +24,9 @@
+ 		pinctrl2 = &pinctrl_2;
+ 		pinctrl3 = &pinctrl_3;
+ 		pinctrl4 = &pinctrl_4;
++		mshc0 = &dwmmc_0;
++		mshc1 = &dwmmc_1;
++		mshc2 = &dwmmc_2;
+ 	};
+ 
+ 	cpus {
+@@ -145,4 +148,22 @@
+ 		clocks = <&clock 260>, <&clock 131>;
+ 		clock-names = "uart", "clk_uart_baud0";
+ 	};
++
++	dwmmc_0: dwmmc0@12200000 {
++		reg = <0x12200000 0x2000>;
++		clocks = <&clock 351>, <&clock 132>;
++		clock-names = "biu", "ciu";
++	};
++
++	dwmmc_1: dwmmc1@12210000 {
++		reg = <0x12210000 0x2000>;
++		clocks = <&clock 352>, <&clock 133>;
++		clock-names = "biu", "ciu";
++	};
++
++	dwmmc_2: dwmmc2@12220000 {
++		reg = <0x12220000 0x2000>;
++		clocks = <&clock 353>, <&clock 134>;
++		clock-names = "biu", "ciu";
++	};
+ };
 -- 
-1.7.10.4
+1.7.9.5
