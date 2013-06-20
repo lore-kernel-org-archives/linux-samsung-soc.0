@@ -1,55 +1,64 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V6 3/3] ARM: dts: Add pcie controller node for Samsung
- EXYNOS5440 SoC
-Date: Thu, 20 Jun 2013 20:04:47 +0900
-Message-ID: <00d801ce6da5$fa792d80$ef6b8880$@samsung.com>
-References: <00c201ce6d85$83b072a0$8b1157e0$@samsung.com>
- <3250954.dVh4O1LchK@flatron> <00c501ce6d8f$af1bf900$0d53eb00$@samsung.com>
- <201306201216.37248.arnd@arndb.de>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: dts: Update vdd_arm regulator
+Date: Thu, 20 Jun 2013 16:40:16 +0530
+Message-ID: <51C2E318.7020806@linaro.org>
+References: <1370516572-313-1-git-send-email-tushar.behera@linaro.org> <1975506.ECnduUFuut@flatron> <51B54BA8.9020104@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <201306201216.37248.arnd@arndb.de>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:35352 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965184Ab3FTLKW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Jun 2013 07:10:22 -0400
+Received: by mail-pb0-f47.google.com with SMTP id rr13so6086528pbb.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 04:10:22 -0700 (PDT)
+In-Reply-To: <51B54BA8.9020104@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, broonie@kernel.org, swarren@wwwdotorg.org, grant.likely@linaro.org, rob.herring@calxeda.com, l.majewski@samsung.com, s.nawrocki@samsung.com, devicetree-discuss@lists.ozlabs.org
 
-On Thursday, June 20, 2013 7:17 PM, Arnd Bergmann wrote:
-> On Thursday 20 June 2013, Jingoo Han wrote:
-> > 2. patch adding label to the pinctrl node (which is a prerequisite) and
-> >     board-specific properties of PCIe nodes.
-> >    [PATCH] ARM: dts: Add pcie controller node for exynos5440-ssdk5440
-> >
-> > arch/arm/boot/dts/exynos5440-ssdk5440.dts
-> > +
-> > +       pcie0@290000 {
-> > +               reset-gpio = <&pin_ctrl 5 0>;
-> > +       };
-> > +
-> > +       pcie1@2a0000 {
-> > +               reset-gpio = <&pin_ctrl 22 0>;
-> > +       };
-> >
-> > arch/arm/boot/dts/exynos5440.dtsi
-> > -       pinctrl {
-> > +       pin_ctrl: pinctrl {
-> >
+On 06/10/2013 09:14 AM, Tushar Behera wrote:
+> On 06/08/2013 05:22 PM, Tomasz Figa wrote:
+>> Hi Tushar,
+>>
+>> On Thursday 06 of June 2013 16:32:52 Tushar Behera wrote:
+>>> Cpufreq driver for EXYNOS4210 is not a platform driver, hence it is not
+>>> possible to provide the regulator supply name through DT bindings.
+>>> Since the cpufreq driver requires the regulator to be named as
+>>> 'vdd_arm', the related regulator name should be kept same.
+>>>
+>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>>> ---
+>>>  arch/arm/boot/dts/exynos4210-origen.dts |    2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
+>>> b/arch/arm/boot/dts/exynos4210-origen.dts index bcf8079..bd5f589 100644
+>>> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+>>> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+>>> @@ -192,7 +192,7 @@
+>>>  				};
+>>>
+>>>  				buck1_reg: BUCK1 {
+>>> -					regulator-name = "VDD_ARM_1.2V";
+>>> +					regulator-name = "vdd_arm";
+>>
+>> Yes, this is the hack I mentioned in my review of
+>> [PATCH 0/2] Clock update for EXYNOS4210-CPUFREQ driver
+>>
 > 
-> Note that you don't really have to use a label, you can also refer
-> to the pinctrl node by its full path, which is just "/pinctrl"
-> or "/pinctrl@e0000".
-
-I see.
-
-But, I have a question.
-Using phandle has been the usual way to referring to a node. 
-Why do you want to do it differently?
-
-Best regards,
-Jingoo Han
-
+> We can hold this patch till we get to a conclusion for the above
+> mentioned patch set.
 > 
-> 	Arnd
+Kukjin,
+
+We have agreed to go ahead with this approach till the cpufreq driver
+has not been modified.
+
+Can you please take this patch now?
+
+-- 
+Tushar Behera
