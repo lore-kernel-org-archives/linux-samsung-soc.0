@@ -1,85 +1,78 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/5] ARM: dts: exynos5420: add dt nodes for hdmi subsystem
-Date: Thu, 20 Jun 2013 12:08:28 +0530
-Message-ID: <CAK9yfHx+Ekrs1f=zquoSyjozsVwkWd18NLp+yadoSAbn_1008Q@mail.gmail.com>
-References: <1371706911-27016-1-git-send-email-rahul.sharma@samsung.com>
- <1371706911-27016-3-git-send-email-rahul.sharma@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
+Date: Thu, 20 Jun 2013 15:41:42 +0900
+Message-ID: <00be01ce6d81$39743950$ac5cabf0$@samsung.com>
+References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
+ <201306181556.47656.arnd@arndb.de>
+ <002401ce6c8a$2dd1e4a0$8975ade0$@samsung.com>
+ <201306191443.09598.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1371706911-27016-3-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:14998 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753714Ab3FTGlo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Jun 2013 02:41:44 -0400
+In-reply-to: <201306191443.09598.arnd@arndb.de>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, Jingoo Han <jg1.han@samsung.com>
 
-On 20 June 2013 11:11, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Add hdmi, mixer, ddc device tree nodes for Exynos 5420 SoC.
->
-> Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos5420-smdk5420.dts |   15 +++++++++++++++
->  arch/arm/boot/dts/exynos5420.dtsi         |   12 ++++++++++++
->  2 files changed, 27 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> index 08607df..b3721bd 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -30,4 +30,19 @@
->                         clock-frequency = <24000000>;
->                 };
->         };
-> +
-> +       hdmi {
-> +               hpd-gpio = <&gpx3 7 0>;
-> +       };
-> +
-> +       i2c_2: i2c@12C80000 {
-> +               samsung,i2c-sda-delay = <100>;
-> +               samsung,i2c-max-bus-freq = <66000>;
-> +               status = "okay";
-> +
-> +               hdmiddc@50 {
-> +                       compatible = "samsung,exynos4210-hdmiddc";
-> +                       reg = <0x50>;
-> +               };
-> +       };
->  };
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index b0ec047..45aadf9 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -201,4 +201,16 @@
->                 clock-names = "i2c";
->                 status = "disabled";
->         };
-> +
-> +       hdmi {
-> +               compatible = "samsung,exynos4212-hdmi";
-> +               reg = <0x14530000 0x70000>;
-> +               interrupts = <0 95 0>;
-> +       };
-> +
-> +       mixer: mixer@14450000 {
-> +               compatible = "samsung,exynos5420-mixer";
-> +               reg = <0x14450000 0x10000>;
-> +               interrupts = <0 94 0>;
-> +       };
+On Wednesday, June 19, 2013 9:43 PM, Arnd Bergmann wrote:
+> On Wednesday 19 June 2013, Jingoo Han wrote:
+> > Then, do you mean the following?
+> >
+> > static int __exit exynos_pcie_remove(struct platform_device *pdev)
+> > {
+> >         struct pcie_port *pp = platform_get_drvdata(pdev);
+> >
+> >         clk_disable_unprepare(pp->bus_clk);
+> >         clk_disable_unprepare(pp->clk);
+> >
+> >         return 0;
+> > }
+> >
+> > static struct platform_driver exynos_pcie_driver = {
+> >         .remove = __exit_p(exynos_pcie_remove),
+> >
+> > [.....]
+> >
+> > /* Exynos PCIe driver does not allow module unload */
+> >
+> > static int __init pcie_init(void)
+> > {
+> >         hook_fault_code(16 + 6, exynos_pcie_abort, SIGBUS, 0,
+> >                         "imprecise external abort");
+> >
+> >         platform_driver_probe(&exynos_pcie_driver, exynos_pcie_probe);
+> >
+> >         return 0;
+> > }
+> > subsys_initcall(pcie_init);
+> >
+> > MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
+> > MODULE_DESCRIPTION("Samsung PCIe host controller driver");
+> > MODULE_LICENSE("GPLv2");
+> >
+> 
+> Yes, this looks good. I would probably use platform_driver_register
+> rather than platform_driver_probe, but that is your choice. using
+> platform_driver_probe() mean you cannot deal with deferred probing.
 
-If these are the parent nodes, disable them here and enable in the board files.
+Hi Arnd,
+
+Thank you for your reply. :)
+I will send PATCH v6, soon.
+I really appreciate your comments.
+
+Hi Thomas Abraham, Kukjin Kim,
+Thank you for your support.
+It is very helpful.
 
 
--- 
-With warm regards,
-Sachin
+Best regards,
+Jingoo Han
