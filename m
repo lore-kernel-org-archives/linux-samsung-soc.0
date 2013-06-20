@@ -1,75 +1,59 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v2 8/8] of/documentation: update with clock information for
- exynos hdmi subsystem
-Date: Thu, 20 Jun 2013 18:43:54 +0530
-Message-ID: <1371734034-21296-9-git-send-email-rahul.sharma@samsung.com>
-References: <1371734034-21296-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58372 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757686Ab3FTMyd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 08:54:33 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOO000PGZUWK890@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 21:54:32 +0900 (KST)
-In-reply-to: <1371734034-21296-1-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V8 1/4] pci: Add PCIe driver for Samsung Exynos
+Date: Thu, 20 Jun 2013 15:20:48 +0200
+Message-ID: <201306201520.49212.arnd@arndb.de>
+References: <00db01ce6db3$7f9a3830$7ecea890$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <00db01ce6db3$7f9a3830$7ecea890$@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Thierry Reding' <thierry.reding@avionic-design.de>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, tomasz.figa@gmail.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Adding information about clocks to the binding documentation
-for exynos mixer and hdmi.
+On Thursday 20 June 2013, Jingoo Han wrote:
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
- Documentation/devicetree/bindings/video/exynos_hdmi.txt  |   14 +++++++++++++-
- Documentation/devicetree/bindings/video/exynos_mixer.txt |    4 ++++
- 2 files changed, 17 insertions(+), 1 deletion(-)
+> diff --git a/Documentation/devicetree/bindings/pci/exynos-pcie.txt b/Documentation/devicetree/bindings/pci/exynos-pcie.txt
+> new file mode 100644
+> index 0000000..f71d835
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/exynos-pcie.txt
+> @@ -0,0 +1,73 @@
+> +* Samsung Exynos PCIe interface
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index 584385a..827e64b 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -9,7 +9,19 @@ Required properties:
- 	a) phandle of the gpio controller node.
- 	b) pin number within the gpio controller.
- 	c) optional flags and pull up/down.
--
-+- clocks: list of clock IDs from SoC clock driver.
-+	a) hdmi: It is required for gate operation on aclk_200_disp1 clock
-+		which clocks the display1 block.
-+	b) sclk_hdmi: It is required for gate operation on sclk_hdmi clock
-+		which clocks hdmi IP.
-+	c) sclk_pixel: Parent for mux mout_hdmi.
-+	d) sclk_hdmiphy: Parent for mux mout_hdmi.
-+	e) mout_hdmi: It is required by the driver to switch between the 2
-+		parents i.e. sclk_pixel and sclk_hdmiphy. If hdmiphy is stable
-+		after configuration, parent is set to sclk_hdmiphy else
-+		sclk_pixel.
-+- clock-names: aliases as per driver requirements for above clock IDs:
-+	"hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
- Example:
- 
- 	hdmi {
-diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-index 9b2ea03..54790a2 100644
---- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-@@ -5,6 +5,10 @@ Required properties:
- - reg: physical base address of the mixer and length of memory mapped
- 	region.
- - interrupts: interrupt number to the cpu.
-+- clocks: list of clock IDs from SoC clock driver.
-+	a) mixer: It is required for gate operation on aclk_200_disp1 clock
-+		which clocks the display1 block.
-+	b) sclk_hdmi: Parent for mux mout_mixer.
- 
- Example:
- 
--- 
-1.7.10.4
+Please adapt the name of the binding as well, and name it snps-dwc-pcie.txt
+for instance, to match the change in the driver and in the binding.
+
+> +Required properties:
+> +-compatible: should contain "snps,dwc-pcie" to identify the
+> +	core, plus an identifier for the specific instance, such
+> +	as "samsung,exynos5440-pcie".
+
+Thanks for changing it here.
+
+> +
+> +	pcie@290000 {
+> +		compatible = "samsung,exynos5440-pcie";
+> +		reg = <0x290000 0x1000
+> +			0x270000 0x1000
+> +			0x271000 0x40>;
+
+
+but please also change the example and the .dts files to match.
+It should say here
+
+		compatible = "samsung,exynos5440-pcie", "snps,dwc-pcie";
+
+as now required by the binding.
+
+	Arnd
