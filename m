@@ -1,335 +1,42 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 1/3] drm/exynos: add new compatible strings for hdmi subsystem
-Date: Thu, 20 Jun 2013 09:22:40 +0200
-Message-ID: <3096861.E25GWO7reJ@flatron>
-References: <1371646269-21880-1-git-send-email-rahul.sharma@samsung.com> <1371646269-21880-2-git-send-email-rahul.sharma@samsung.com> <CAPdUM4NdY9eTTq3Dtgd10RVTA=gPAddebCYJO2HKtiZbF-MKLg@mail.gmail.com>
+From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH V6 3/3] ARM: dts: Add pcie controller node for Samsung
+ EXYNOS5440 SoC
+Date: Thu, 20 Jun 2013 09:48:35 +0200
+Message-ID: <20130620094835.3f1f34c2@skate>
+References: <00c201ce6d85$83b072a0$8b1157e0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f41.google.com ([209.85.214.41]:48521 "EHLO
-	mail-bk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753707Ab3FTHWn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 03:22:43 -0400
-Received: by mail-bk0-f41.google.com with SMTP id jc3so2708997bkc.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 00:22:42 -0700 (PDT)
-In-Reply-To: <CAPdUM4NdY9eTTq3Dtgd10RVTA=gPAddebCYJO2HKtiZbF-MKLg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <00c201ce6d85$83b072a0$8b1157e0$@samsung.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Andrew Murray' <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com
 
-Hi Rahul,
+Dear Jingoo Han,
 
-On Thursday 20 of June 2013 07:41:53 Rahul Sharma wrote:
-> Hi Tomasz, Lucas,
-> 
-> How does this patch look to you ? Please share your views.
+On Thu, 20 Jun 2013 16:12:24 +0900, Jingoo Han wrote:
 
-Looks fine now. Have my
+> -	pinctrl {
+> +	pin_ctrl: pinctrl {
+>  		compatible = "samsung,exynos5440-pinctrl";
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+I know I'm nitpicking, but isn't this change completely unrelated to
+PCIe support?
 
-for the whole series.
-
-Best regards,
-Tomasz
-
-> regards,
-> Rahul Sharma.
-> 
-> On Wed, Jun 19, 2013 at 6:21 PM, Rahul Sharma <rahul.sharma@samsung.com> 
-wrote:
-> > This patch adds new combatible strings for hdmi, mixer, ddc
-> > and hdmiphy. It follows the convention of using compatible string
-> > which represent the SoC in which the IP was added for the first
-> > time.
-> > 
-> > Drivers continue to support the previous compatible strings
-> > but further addition of these compatible strings in device tree
-> > is deprecated.
-> > 
-> > Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> > ---
-> > 
-> >  Documentation/devicetree/bindings/video/exynos_hdmi.txt   |    7
-> >  +++++-- .../devicetree/bindings/video/exynos_hdmiddc.txt          | 
-> >    7 +++++-- .../devicetree/bindings/video/exynos_hdmiphy.txt        
-> >   |    7 +++++--
-> >  Documentation/devicetree/bindings/video/exynos_mixer.txt  |    8
-> >  ++++++-- drivers/gpu/drm/exynos/exynos_ddc.c                       |
-> >     2 ++ drivers/gpu/drm/exynos/exynos_hdmi.c                      | 
-> >    3 +++ drivers/gpu/drm/exynos/exynos_hdmiphy.c                   | 
-> >    4 ++++ drivers/gpu/drm/exynos/exynos_mixer.c                     |
-> >    13 ++++++++----- 8 files changed, 38 insertions(+), 13
-> >  deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-> > b/Documentation/devicetree/bindings/video/exynos_hdmi.txt index
-> > 589edee..c71d0f0 100644
-> > --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-> > +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-> > @@ -1,7 +1,10 @@
-> > 
-> >  Device-Tree bindings for drm hdmi driver
-> > 
-> >  Required properties:
-> > -- compatible: value should be "samsung,exynos5-hdmi".
-> > +- compatible: value should be one among the following:
-> > +       1) "samsung,exynos5-hdmi" <DEPRECATED>
-> > +       2) "samsung,exynos4210-hdmi"
-> > +       3) "samsung,exynos4212-hdmi"
-> > 
-> >  - reg: physical base address of the hdmi and length of memory mapped
-> >  
-> >         region.
-> >  
-> >  - interrupts: interrupt number to the cpu.
-> > 
-> > @@ -15,7 +18,7 @@ Required properties:
-> >  Example:
-> >         hdmi {
-> > 
-> > -               compatible = "samsung,exynos5-hdmi";
-> > +               compatible = "samsung,exynos4212-hdmi";
-> > 
-> >                 reg = <0x14530000 0x100000>;
-> >                 interrupts = <0 95 0>;
-> >                 hpd-gpio = <&gpx3 7 0xf 1 3>;
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
-> > b/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt index
-> > fa166d9..41eee97 100644
-> > --- a/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
-> > +++ b/Documentation/devicetree/bindings/video/exynos_hdmiddc.txt
-> > @@ -1,12 +1,15 @@
-> > 
-> >  Device-Tree bindings for hdmiddc driver
-> > 
-> >  Required properties:
-> > -- compatible: value should be "samsung,exynos5-hdmiddc".
-> > +- compatible: value should be one of the following
-> > +       1) "samsung,exynos5-hdmiddc" <DEPRECATED>
-> > +       2) "samsung,exynos4210-hdmiddc"
-> > +
-> > 
-> >  - reg: I2C address of the hdmiddc device.
-> >  
-> >  Example:
-> >         hdmiddc {
-> > 
-> > -               compatible = "samsung,exynos5-hdmiddc";
-> > +               compatible = "samsung,exynos4210-hdmiddc";
-> > 
-> >                 reg = <0x50>;
-> >         
-> >         };
-> > 
-> > diff --git
-> > a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
-> > b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt index
-> > 858f4f9..162f641 100644
-> > --- a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
-> > +++ b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
-> > @@ -1,12 +1,15 @@
-> > 
-> >  Device-Tree bindings for hdmiphy driver
-> > 
-> >  Required properties:
-> > -- compatible: value should be "samsung,exynos5-hdmiphy".
-> > +- compatible: value should be one of the following:
-> > +       1) "samsung,exynos5-hdmiphy" <DEPRECATED>
-> > +       2) "samsung,exynos4210-hdmiphy".
-> > +       3) "samsung,exynos4212-hdmiphy".
-> > 
-> >  - reg: I2C address of the hdmiphy device.
-> >  
-> >  Example:
-> >         hdmiphy {
-> > 
-> > -               compatible = "samsung,exynos5-hdmiphy";
-> > +               compatible = "samsung,exynos4210-hdmiphy";
-> > 
-> >                 reg = <0x38>;
-> >         
-> >         };
-> > 
-> > diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt
-> > b/Documentation/devicetree/bindings/video/exynos_mixer.txt index
-> > 9b2ea03..9131b99 100644
-> > --- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
-> > +++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-> > @@ -1,7 +1,11 @@
-> > 
-> >  Device-Tree bindings for mixer driver
-> > 
-> >  Required properties:
-> > -- compatible: value should be "samsung,exynos5-mixer".
-> > +- compatible: value should be one of the following:
-> > +       1) "samsung,exynos5-mixer" <DEPRECATED>
-> > +       2) "samsung,exynos4210-mixer"
-> > +       3) "samsung,exynos5250-mixer"
-> > +
-> > 
-> >  - reg: physical base address of the mixer and length of memory mapped
-> >  
-> >         region.
-> >  
-> >  - interrupts: interrupt number to the cpu.
-> > 
-> > @@ -9,7 +13,7 @@ Required properties:
-> >  Example:
-> >         mixer {
-> > 
-> > -               compatible = "samsung,exynos5-mixer";
-> > +               compatible = "samsung,exynos5250-mixer";
-> > 
-> >                 reg = <0x14450000 0x10000>;
-> >                 interrupts = <0 94 0>;
-> >         
-> >         };
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_ddc.c
-> > b/drivers/gpu/drm/exynos/exynos_ddc.c index 4e9b5ba..95c75ed 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_ddc.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_ddc.c
-> > @@ -53,6 +53,8 @@ static struct of_device_id hdmiddc_match_types[] = {
-> > 
-> >         {
-> >         
-> >                 .compatible = "samsung,exynos5-hdmiddc",
-> >         
-> >         }, {
-> > 
-> > +               .compatible = "samsung,exynos4210-hdmiddc",
-> > +       }, {
-> > 
-> >                 /* end node */
-> >         
-> >         }
-> >  
-> >  };
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> > b/drivers/gpu/drm/exynos/exynos_hdmi.c index 743059f..de39530 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> > @@ -1916,6 +1916,9 @@ static struct of_device_id hdmi_match_types[] =
-> > {
-> > 
-> >                 .compatible = "samsung,exynos5-hdmi",
-> >                 .data   = (void *)HDMI_TYPE14,
-> >         
-> >         }, {
-> > 
-> > +               .compatible = "samsung,exynos4212-hdmi",
-> > +               .data   = (void *)HDMI_TYPE14,
-> > +       }, {
-> > 
-> >                 /* end node */
-> >         
-> >         }
-> >  
-> >  };
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> > b/drivers/gpu/drm/exynos/exynos_hdmiphy.c index ea49d13..ef04255
-> > 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> > @@ -51,6 +51,10 @@ static struct of_device_id hdmiphy_match_types[] =
-> > {
-> > 
-> >         {
-> >         
-> >                 .compatible = "samsung,exynos5-hdmiphy",
-> >         
-> >         }, {
-> > 
-> > +               .compatible = "samsung,exynos4210-hdmiphy",
-> > +       }, {
-> > +               .compatible = "samsung,exynos4212-hdmiphy",
-> > +       }, {
-> > 
-> >                 /* end node */
-> >         
-> >         }
-> >  
-> >  };
-> > 
-> > diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c
-> > b/drivers/gpu/drm/exynos/exynos_mixer.c index f36f878..6225501 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> > @@ -1115,12 +1115,12 @@ static int vp_resources_init(struct
-> > exynos_drm_hdmi_context *ctx,> 
-> >         return 0;
-> >  
-> >  }
-> > 
-> > -static struct mixer_drv_data exynos5_mxr_drv_data = {
-> > +static struct mixer_drv_data exynos5250_mxr_drv_data = {
-> > 
-> >         .version = MXR_VER_16_0_33_0,
-> >         .is_vp_enabled = 0,
-> >  
-> >  };
-> > 
-> > -static struct mixer_drv_data exynos4_mxr_drv_data = {
-> > +static struct mixer_drv_data exynos4210_mxr_drv_data = {
-> > 
-> >         .version = MXR_VER_0_0_0_16,
-> >         .is_vp_enabled = 1,
-> >  
-> >  };
-> > 
-> > @@ -1128,10 +1128,10 @@ static struct mixer_drv_data
-> > exynos4_mxr_drv_data = {> 
-> >  static struct platform_device_id mixer_driver_types[] = {
-> >  
-> >         {
-> >         
-> >                 .name           = "s5p-mixer",
-> > 
-> > -               .driver_data    = (unsigned
-> > long)&exynos4_mxr_drv_data,
-> > +               .driver_data    = (unsigned
-> > long)&exynos4210_mxr_drv_data,> 
-> >         }, {
-> >         
-> >                 .name           = "exynos5-mixer",
-> > 
-> > -               .driver_data    = (unsigned
-> > long)&exynos5_mxr_drv_data,
-> > +               .driver_data    = (unsigned
-> > long)&exynos5250_mxr_drv_data,> 
-> >         }, {
-> >         
-> >                 /* end node */
-> >         
-> >         }
-> > 
-> > @@ -1140,7 +1140,10 @@ static struct platform_device_id
-> > mixer_driver_types[] = {> 
-> >  static struct of_device_id mixer_match_types[] = {
-> >  
-> >         {
-> >         
-> >                 .compatible = "samsung,exynos5-mixer",
-> > 
-> > -               .data   = &exynos5_mxr_drv_data,
-> > +               .data   = &exynos5250_mxr_drv_data,
-> > +       }, {
-> > +               .compatible = "samsung,exynos5250-mixer",
-> > +               .data   = &exynos5250_mxr_drv_data,
-> > 
-> >         }, {
-> >         
-> >                 /* end node */
-> >         
-> >         }
-> > 
-> > --
-> > 1.7.10.4
+Thomas
+-- 
+Thomas Petazzoni, Free Electrons
+Kernel, drivers, real-time and embedded Linux
+development, consulting, training and support.
+http://free-electrons.com
