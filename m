@@ -1,145 +1,175 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V4 1/3] pci: Add PCIe driver for Samsung Exynos
-Date: Thu, 20 Jun 2013 20:36:01 +0900
-Message-ID: <00d901ce6daa$56ffb6b0$04ff2410$@samsung.com>
-References: <003601ce6756$444e8cd0$cceba670$@samsung.com>
- <2061566.hRLrhtBK6z@wuerfel> <000901ce6838$8b514720$a1f3d560$@samsung.com>
- <28355406.ThqqvnG0Yj@wuerfel> <51C2D260.6000303@st.com>
- <00d701ce6da5$10216ae0$306440a0$@samsung.com> <51C2E6E5.1050001@st.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH Resend] Input: samsung-keypad - let device core setup the default pin configuration
+Date: Thu, 20 Jun 2013 16:53:29 +0530
+Message-ID: <1371727409-27167-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:11451 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965241Ab3FTLgD (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:50836 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965044Ab3FTLiY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 07:36:03 -0400
-In-reply-to: <51C2E6E5.1050001@st.com>
-Content-language: ko
+	Thu, 20 Jun 2013 07:38:24 -0400
+Received: by mail-pa0-f52.google.com with SMTP id kq13so6181108pab.25
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 04:38:24 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Pratyush Anand' <pratyush.anand@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
+To: linux-input@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, dmitry.torokhov@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, sachin.kamat@linaro.org
 
-On Thursday, June 20, 2013 8:26 PM, Pratyush Anand wrote:
-> On 6/20/2013 4:28 PM, Jingoo Han wrote:
-> > On Thursday, June 20, 2013 6:59 PM, Pratyush Anand wrote:
-> >> On 6/13/2013 7:48 PM, Arnd Bergmann wrote:
-> >>> On Thursday 13 June 2013 22:18:50 Jingoo Han wrote:
-> >>>>> On Wednesday, June 12, 2013 8:23 PM, Arnd Bergmann wrote:
-> >>>>>>> On Wednesday 12 June 2013 19:19:05 Jingoo Han wrote:
-> >>>>>>>>> +
-> >>>>>>>>> +/* synopsis specific PCIE configuration registers*/
-> >>>>>>>>> +#define PCIE_PORT_LINK_CONTROL		0x710
-> >>>>>>>>> +#define PORT_LINK_MODE_MASK		(0x3f << 16)
-> >>>>>>>>> +#define PORT_LINK_MODE_4_LANES		(0x7 << 16)
-> >>>>>>>
-> >>>>>>> Do you mean this is a "Synopsys" designware part? In that case it
-> >>>>>>> should really not be called "exynos-pcie" but "designware-pcie"
-> >>>>>>> and you should make sure that the driver makes no assumptions about
-> >>>>>>> the platform. A lot of other platforms also use designware
-> >>>>>>> parts and should be able to reuse this driver.
-> >>>>>
-> >>>>> Sorry, I don't think so.
-> >>>>> Only core block is a "Synopsys" designware part IP block,
-> >>>>> other parts are Exynos-specific.
-> >>>>> So, it is hard to share with other PCIe IPs using synopsis core.
-> >>> Just call it synopsys anyway and put a comment in to explain this.
-> >>> That should be enough for the next person with a synopsys PCI core
-> >>> to reuse your code and split out the exynos specific parts into a
-> >>> separate file.
-> >>>
-> >>
-> >> I agree to Arnd that this patch should be split. I had worked in past
-> >> with SPEAr PCIe which also had designware PCIe IP. I see some code which
-> >> will fit both in SPEAr as well as in exynos. Unfortunately, I was not
-> >> able to get SPEAr driver pushed to mainline, as I moved to some other
-> >> project and got heavily occupied.
-> >
-> > Oh, I see.
-> >
-> > How about this?
-> > At the next PATCH v7, I will change the file name from 'pci-exynos.c'
-> > to 'pci-designware.c', as Arnd mentioned.
-> >
-> > Then, when Spear or other platform using designware is submitted,
-> > this 'pci-designware.c' will be split to two separate files such as
-> > 'pci-designware.c' and 'pci-exynos.c'.
-> >
-> 
-> For me it's OK. Let it go to mainline as Arnd mentioned.
-> Please keep Mohit in mail chain, who might have some bandwidth to
-> further add and follow up for SPEAr on top of your patches.
+From: Thomas Abraham <thomas.abraham@linaro.org>
 
-Dear Pratyush Anand,
+With device core now able to setup the default pin configuration,
+the pin configuration code based on the deprecated Samsung specific
+gpio bindings is removed.
 
-Thank you for accepting the suggestion. :)
-OK, I will keep Mohit in main chain.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+Hi Dmitry,
 
+Looks like the earlier submission of this patch got lost.
+This patch is rebased onto the latest linux-next (next-20130620).
+Please consider applying.
+---
+ .../devicetree/bindings/input/samsung-keypad.txt   |   24 ++-------
+ drivers/input/keyboard/samsung-keypad.c            |   52 +-------------------
+ 2 files changed, 7 insertions(+), 69 deletions(-)
 
-Best regards,
-Jingoo Han
-
-> 
-> Regards
-> Pratyush
-> 
-> >
-> > Best regards,
-> > Jingoo Han
-> >
-> >>
-> >> Last patch is here:
-> >>
-> >> https://patchwork.kernel.org/patch/1661441/
-> >>
-> >> Infact, these functions should be common to all arm platforms.
-> >>
-> >> sys_to_pcie
-> >> cfg_read
-> >> cfg_write
-> >>
-> >> Following functions should be common to all designware based driver (at
-> >> least they are same in SPEAr)
-> >>
-> >> exynos_pcie_prog_viewport_cfg0
-> >> exynos_pcie_prog_viewport_cfg1
-> >> exynos_pcie_rd_other_conf
-> >> exynos_pcie_wr_other_conf
-> >> exynos_pcie_setup
-> >> exynos_pcie_valid_config
-> >> exynos_pcie_rd_conf
-> >> exynos_pcie_wd_conf
-> >> exynos_pcie_scan_bus
-> >> exynos_pcie_map_irq
-> >> add_pcie_port (after a bit of generalization)
-> >> exynos_pcie_probe
-> >> exynos_pcie_remove
-> >>
-> >>
-> >>
-> >> Following should be specific to exynos:
-> >>
-> >> exynos_pcie_rd_own_conf
-> >> exynos_pcie_wr_own_conf
-> >> exynos_pcie_link_up
-> >> exynos_pcie_setup_rc
-> >> exynos_pcie_assert_core_reset
-> >> exynos_pcie_deassert_core_reset
-> >> exynos_pcie_assert_phy_reset
-> >> exynos_pcie_deassert_phy_reset
-> >> exynos_pcie_init_phy
-> >> exynos_pcie_assert_reset
-> >> exynos_pcie_establish_link
-> >> exynos_pcie_host_init
-> >>
-> >>
-> >>
-> >> struct pcie_port_info and struct pcie_port can also be standardized.
-> >>
-> >> Regards
-> >> Pratyush
-> >
-> > .
-> >
+diff --git a/Documentation/devicetree/bindings/input/samsung-keypad.txt b/Documentation/devicetree/bindings/input/samsung-keypad.txt
+index ce3e394..942d071 100644
+--- a/Documentation/devicetree/bindings/input/samsung-keypad.txt
++++ b/Documentation/devicetree/bindings/input/samsung-keypad.txt
+@@ -25,14 +25,6 @@ Required Board Specific Properties:
+ - samsung,keypad-num-columns: Number of column lines connected to the
+   keypad controller.
+ 
+-- row-gpios: List of gpios used as row lines. The gpio specifier for
+-  this property depends on the gpio controller to which these row lines
+-  are connected.
+-
+-- col-gpios: List of gpios used as column lines. The gpio specifier for
+-  this property depends on the gpio controller to which these column
+-  lines are connected.
+-
+ - Keys represented as child nodes: Each key connected to the keypad
+   controller is represented as a child node to the keypad controller
+   device node and should include the following properties.
+@@ -41,6 +33,9 @@ Required Board Specific Properties:
+   - linux,code: the key-code to be reported when the key is pressed
+     and released.
+ 
++- pinctrl-0: Should specify pin control groups used for this controller.
++- pinctrl-names: Should contain only one value - "default".
++
+ Optional Properties specific to linux:
+ - linux,keypad-no-autorepeat: do no enable autorepeat feature.
+ - linux,keypad-wakeup: use any event on keypad as wakeup event.
+@@ -56,17 +51,8 @@ Example:
+ 		linux,input-no-autorepeat;
+ 		linux,input-wakeup;
+ 
+-		row-gpios = <&gpx2 0 3 3 0
+-			     &gpx2 1 3 3 0>;
+-
+-		col-gpios = <&gpx1 0 3 0 0
+-			     &gpx1 1 3 0 0
+-			     &gpx1 2 3 0 0
+-			     &gpx1 3 3 0 0
+-			     &gpx1 4 3 0 0
+-			     &gpx1 5 3 0 0
+-			     &gpx1 6 3 0 0
+-			     &gpx1 7 3 0 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&keypad_rows &keypad_columns>;
+ 
+ 		key_1 {
+ 			keypad,row = <0>;
+diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input/keyboard/samsung-keypad.c
+index 7b938b4..ac43a48 100644
+--- a/drivers/input/keyboard/samsung-keypad.c
++++ b/drivers/input/keyboard/samsung-keypad.c
+@@ -24,7 +24,6 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
+ #include <linux/sched.h>
+ #include <linux/input/samsung-keypad.h>
+ 
+@@ -79,10 +78,6 @@ struct samsung_keypad {
+ 	unsigned int rows;
+ 	unsigned int cols;
+ 	unsigned int row_state[SAMSUNG_MAX_COLS];
+-#ifdef CONFIG_OF
+-	int row_gpios[SAMSUNG_MAX_ROWS];
+-	int col_gpios[SAMSUNG_MAX_COLS];
+-#endif
+ 	unsigned short keycodes[];
+ };
+ 
+@@ -304,45 +299,6 @@ static struct samsung_keypad_platdata *samsung_keypad_parse_dt(
+ 
+ 	return pdata;
+ }
+-
+-static void samsung_keypad_parse_dt_gpio(struct device *dev,
+-				struct samsung_keypad *keypad)
+-{
+-	struct device_node *np = dev->of_node;
+-	int gpio, error, row, col;
+-
+-	for (row = 0; row < keypad->rows; row++) {
+-		gpio = of_get_named_gpio(np, "row-gpios", row);
+-		keypad->row_gpios[row] = gpio;
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(dev, "keypad row[%d]: invalid gpio %d\n",
+-					row, gpio);
+-			continue;
+-		}
+-
+-		error = devm_gpio_request(dev, gpio, "keypad-row");
+-		if (error)
+-			dev_err(dev,
+-				"keypad row[%d] gpio request failed: %d\n",
+-				row, error);
+-	}
+-
+-	for (col = 0; col < keypad->cols; col++) {
+-		gpio = of_get_named_gpio(np, "col-gpios", col);
+-		keypad->col_gpios[col] = gpio;
+-		if (!gpio_is_valid(gpio)) {
+-			dev_err(dev, "keypad column[%d]: invalid gpio %d\n",
+-					col, gpio);
+-			continue;
+-		}
+-
+-		error = devm_gpio_request(dev, gpio, "keypad-col");
+-		if (error)
+-			dev_err(dev,
+-				"keypad column[%d] gpio request failed: %d\n",
+-				col, error);
+-	}
+-}
+ #else
+ static
+ struct samsung_keypad_platdata *samsung_keypad_parse_dt(struct device *dev)
+@@ -424,15 +380,11 @@ static int samsung_keypad_probe(struct platform_device *pdev)
+ 	keypad->stopped = true;
+ 	init_waitqueue_head(&keypad->wait);
+ 
+-	if (pdev->dev.of_node) {
+-#ifdef CONFIG_OF
+-		samsung_keypad_parse_dt_gpio(&pdev->dev, keypad);
++	if (pdev->dev.of_node)
+ 		keypad->type = of_device_is_compatible(pdev->dev.of_node,
+ 					"samsung,s5pv210-keypad");
+-#endif
+-	} else {
++	else
+ 		keypad->type = platform_get_device_id(pdev)->driver_data;
+-	}
+ 
+ 	input_dev->name = pdev->name;
+ 	input_dev->id.bustype = BUS_HOST;
+-- 
+1.7.9.5
