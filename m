@@ -1,72 +1,74 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 0/5] ARM: dts: exynos5420: add support for hdmi subsystem
-Date: Thu, 20 Jun 2013 12:15:28 +0530
-Message-ID: <CAPdUM4OQ_Ua_sK7iOyz_ojstnPmT0acp8wUFwLm12zJ5bZs+Tg@mail.gmail.com>
-References: <1371706911-27016-1-git-send-email-rahul.sharma@samsung.com>
-	<CANuQgHF6yGTprgxdL=qp6EoUVeSzP39NnFciix23W7n-J5EVjA@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 4/5] ARM: dts: exynos5420: add hdmi hpd gpio pinctrl node
+Date: Thu, 20 Jun 2013 09:09:03 +0200
+Message-ID: <1441318.chG7uffeCc@flatron>
+References: <1371706911-27016-1-git-send-email-rahul.sharma@samsung.com> <1371706911-27016-5-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:57762 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752800Ab3FTGp3 (ORCPT
+Received: from mail-bk0-f49.google.com ([209.85.214.49]:40247 "EHLO
+	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753619Ab3FTHJH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 02:45:29 -0400
-Received: by mail-qc0-f171.google.com with SMTP id n1so3518680qcw.16
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 23:45:28 -0700 (PDT)
-In-Reply-To: <CANuQgHF6yGTprgxdL=qp6EoUVeSzP39NnFciix23W7n-J5EVjA@mail.gmail.com>
+	Thu, 20 Jun 2013 03:09:07 -0400
+Received: by mail-bk0-f49.google.com with SMTP id mz10so2693765bkb.22
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 00:09:05 -0700 (PDT)
+In-Reply-To: <1371706911-27016-5-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <rob.herring@calxeda.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, Grant Likely <grant.likely@linaro.org>, joshi@samsung.com
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com, r.sh.open@gmail.com
 
-Thanks Chander,
+Hi Rahul,
 
-I am posting v2 with the suggested changes.
+On Thursday 20 of June 2013 11:11:50 Rahul Sharma wrote:
+> Add pinctrl node for hdmi-hpd gpio pin to exynos5420
+> device tree files.
+> 
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    7 +++++++
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    2 ++
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi index 5848c42..5706ad9
+> 100644
+> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> @@ -59,6 +59,13 @@
+>  			interrupt-controller;
+>  			#interrupt-cells = <2>;
+>  		};
+> +
+> +		hdmi_hpd_irq: hdmi-hpd-irq {
+> +		        samsung,pins = "gpx3-7";
+> +			samsung,pin-function = <0>;
+> +			samsung,pin-pud = <1>;
+> +			samsung,pin-drv = <0>;
+> +		};
 
-regards,
-Rahul Sharma.
+This looks like a board-specific pinconf entry. It should be specified in 
+the dts of appropriate board, in this case exynos5420-smdk5420.dts .
 
-On Thu, Jun 20, 2013 at 11:45 AM, Chander Kashyap
-<chander.kashyap@linaro.org> wrote:
-> On 20 June 2013 11:11, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> Add dt nodes and clocks for hdmi subsystem. It also add pinctrl
->> node for hdmi hpd gpio and update binding documents.
->>
->> This patch is based on v3.11-next/soc-exynos5420-pinctrl branch
->> at http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git
->>
->> device tree binding document for hdmi compatible type is update at
->> http://www.spinics.net/lists/dri-devel/msg39987.html
->>
->> Andrew Bresticker (1):
->>   ARM: dts: exynos5420: add i2c device nodes
->>
->> Rahul Sharma (4):
->>   ARM: dts: exynos5420: add dt nodes for hdmi subsystem
->>   ARM: dts: exynos5420: add clocks for hdmi subsystem
->>   ARM: dts: exynos5420: add hdmi hpd gpio pinctrl node
->>   ARM: dts: update binding documentation for hdmi subsystem
-> While populating exnos5420.dtsi, move nodes with common properties
-> across exynos5420 and exynos5420 to exynos5.dtsi
->>
->>  .../devicetree/bindings/video/exynos_hdmi.txt      |   17 ++++-
->>  .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
->>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |    7 ++
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   17 +++++
->>  arch/arm/boot/dts/exynos5420.dtsi                  |   74 ++++++++++++++++++++
->>  5 files changed, 116 insertions(+), 3 deletions(-)
->>
->> --
->> 1.7.10.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
-> --
-> with warm regards,
-> Chander Kashyap
+Best regards,
+Tomasz
+
+>  	};
+> 
+>  	pinctrl@13410000 {
+> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index b3721bd..2d6c74f
+> 100644
+> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> @@ -33,6 +33,8 @@
+> 
+>  	hdmi {
+>  		hpd-gpio = <&gpx3 7 0>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&hdmi_hpd_irq>;
+>  	};
+> 
+>  	i2c_2: i2c@12C80000 {
