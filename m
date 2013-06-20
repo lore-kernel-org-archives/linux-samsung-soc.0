@@ -1,107 +1,76 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V6 29/30] ARM: dts: Add device tree node for exynos5440
- TMU controller
-Date: Wed, 19 Jun 2013 22:37:47 -0400
-Message-ID: <51C26AFB.20401@ti.com>
-References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com> <1371451599-31035-30-git-send-email-amit.daniel@samsung.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Add MFC node for exynos 5420
+Date: Thu, 20 Jun 2013 10:00:56 +0530
+Message-ID: <CALt3h7-xxSUtwqeVRNHKmqd1xk3eNnOe7upmUN2E8CN0xzv8hQ@mail.gmail.com>
+References: <1371631969-10076-1-git-send-email-arun.kk@samsung.com>
+	<1371631969-10076-2-git-send-email-arun.kk@samsung.com>
+	<CANuQgHGR1vDgz6TkCYKr5XtBLVdXng+tF90NShae_4Cqse3G+g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2CLAHIQLOVAQTJBJNSRWU"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1371451599-31035-30-git-send-email-amit.daniel@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
-------enig2CLAHIQLOVAQTJBJNSRWU
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f174.google.com ([209.85.128.174]:44823 "EHLO
+	mail-ve0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751556Ab3FTEa6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Jun 2013 00:30:58 -0400
+Received: by mail-ve0-f174.google.com with SMTP id oz10so4748531veb.33
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 21:30:57 -0700 (PDT)
+In-Reply-To: <CANuQgHGR1vDgz6TkCYKr5XtBLVdXng+tF90NShae_4Cqse3G+g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: Arun Kumar K <arun.kk@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>
 
-On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
-> This patch adds device node for TMU controller. There are 3
-> instances of the controllers so 3 nodes are created.
->=20
-> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Hi Chander,
 
-Reviewed-by: Eduardo Valentin <eduardo.valentin@ti.com>
+On Wed, Jun 19, 2013 at 5:34 PM, Chander Kashyap
+<chander.kashyap@linaro.org> wrote:
+> On 19 June 2013 14:22, Arun Kumar K <arun.kk@samsung.com> wrote:
+>> The patch adds MFC nodes for exynos 5420 and for
+>> smdk 5420 board.
+>>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts |    5 +++++
+>>  arch/arm/boot/dts/exynos5420.dtsi         |    8 ++++++++
+>>  2 files changed, 13 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> index 08607df..682532c 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -30,4 +30,9 @@
+>>                         clock-frequency = <24000000>;
+>>                 };
+>>         };
+>> +
+>> +       codec@11000000 {
+>> +               samsung,mfc-r = <0x43000000 0x800000>;
+>> +               samsung,mfc-l = <0x51000000 0x800000>;
+>> +       };
+>>  };
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index 8474d63..cb74356 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -100,4 +100,12 @@
+>>                 clocks = <&clock 260>, <&clock 131>;
+>>                 clock-names = "uart", "clk_uart_baud0";
+>>         };
+>> +
+>> +       codec@11000000 {
+>> +               compatible = "samsung,mfc-v7";
+>> +               reg = <0x11000000 0x10000>;
+>> +               interrupts = <0 96 0>;
+>> +               clocks = <&clock 401>;
+>> +               clock-names = "mfc";
+>> +       };
+> Is it not possible to move the common part of this node to common
+> exynos5.dtsi? As exynos5250 is using same property values.
 
-> ---
->  arch/arm/boot/dts/exynos5440.dtsi |   30 +++++++++++++++++++++++++++++=
-+
->  1 files changed, 30 insertions(+), 0 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exyn=
-os5440.dtsi
-> index f6b1c89..716e90c 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -16,6 +16,12 @@
-> =20
->  	interrupt-parent =3D <&gic>;
-> =20
-> +	aliases {
-> +		tmuctrl0 =3D &tmuctrl_0;
-> +		tmuctrl1 =3D &tmuctrl_1;
-> +		tmuctrl2 =3D &tmuctrl_2;
-> +	};
-> +
->  	clock: clock-controller@0x160000 {
->  		compatible =3D "samsung,exynos5440-clock";
->  		reg =3D <0x160000 0x1000>;
-> @@ -216,4 +222,28 @@
->  		clock-names =3D "rtc";
->  		status =3D "disabled";
->  	};
-> +
-> +	tmuctrl_0: tmuctrl@160118 {
-> +		compatible =3D "samsung,exynos5440-tmu";
-> +		reg =3D <0x160118 0x230>, <0x160368 0x10>;
-> +		interrupts =3D <0 58 0>;
-> +		clocks =3D <&clock 21>;
-> +		clock-names =3D "tmu_apbif";
-> +	};
-> +
-> +	tmuctrl_1: tmuctrl@16011C {
-> +		compatible =3D "samsung,exynos5440-tmu";
-> +		reg =3D <0x16011C 0x230>, <0x160368 0x10>;
-> +		interrupts =3D <0 58 0>;
-> +		clocks =3D <&clock 21>;
-> +		clock-names =3D "tmu_apbif";
-> +	};
-> +
-> +	tmuctrl_2: tmuctrl@160120 {
-> +		compatible =3D "samsung,exynos5440-tmu";
-> +		reg =3D <0x160120 0x230>, <0x160368 0x10>;
-> +		interrupts =3D <0 58 0>;
-> +		clocks =3D <&clock 21>;
-> +		clock-names =3D "tmu_apbif";
-> +	};
->  };
->=20
+Yes that can be done. I have kept it separate as the IP is different
+and compatible is also changing. But the reg and interrupt remains same
+and hopefully that can be moved to common exynos5.dtsi.
 
-
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
-------enig2CLAHIQLOVAQTJBJNSRWU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlHCavsACgkQCXcVR3XQvP1oWAD/dXQOKsEP7lAzXPzdoUAkiD+/
-28uYZ/WCVP6QKfN9/pYBAN44Zf1OzdEJ+og5SOP/nPoNEbbc4hdvrZqyDuZWqP3M
-=e4he
------END PGP SIGNATURE-----
-
-------enig2CLAHIQLOVAQTJBJNSRWU--
+Regards
+Arun
