@@ -1,96 +1,75 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC v2 01/10] exynos5-fimc-is: Add Exynos5 FIMC-IS device tree
- bindings documentation
-Date: Fri, 21 Jun 2013 00:45:04 +0200
-Message-ID: <51C385F0.6000402@gmail.com>
-References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com> <1370005408-10853-2-git-send-email-arun.kk@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 01/10] Samsung cleanup-1 for v3.11
+Date: Fri, 21 Jun 2013 07:45:30 +0900
+Message-ID: <25b701ce6e07$ddec4b40$99c4e1c0$%kim@samsung.com>
+References: <51C0BC37.7090604@samsung.com> <201306201730.38049.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1370005408-10853-2-git-send-email-arun.kk@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-media@vger.kernel.org, s.nawrocki@samsung.com, kilyeon.im@samsung.com, shaik.ameer@samsung.com, arunkk.samsung@gmail.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:36569 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965396Ab3FTWpc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Jun 2013 18:45:32 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOP003JZR7U7C70@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 21 Jun 2013 07:45:31 +0900 (KST)
+In-reply-to: <201306201730.38049.arnd@arndb.de>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>
 
-Hi Arun,
+Arnd Bergmann wrote:
 
-On 05/31/2013 03:03 PM, Arun Kumar K wrote:
+[...]
 
-Please add at least one sentence here. All in all this patch
-adds DT binding documentation for a fairly complex subsystem.
+> 
+> I've had to apply this patch on top to get s5p to build cleanly again.
+> It's part of next/cleanup now as well.
+> 
+> 	Arnd
+> 
+> From 854f1c88e6ab7c8a12a49913e8b1648f96af0701 Mon Sep 17 00:00:00 2001
+> From: Arnd Bergmann <arnd@arndb.de>
+> Date: Thu, 20 Jun 2013 17:27:13 +0200
+> Subject: [PATCH] ARM: s5p64x0: avoid build warning for uncompress.h
+> 
+> Commit 5336539 "ARM: S5P64X0: Use common uncompress.h part
+> for plat-samsung" was missing a type cast, this brings
+> it in line with the other samsung platforms.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+Yes, thanks for fix it and if you want,
 
-And please Cc devicetree-discuss@lists.ozlabs.org next time.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
-> ---
->   .../devicetree/bindings/media/exynos5-fimc-is.txt  |   41 ++++++++++++++++++++
->   1 file changed, 41 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->
-> diff --git a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
-> new file mode 100644
-> index 0000000..9fd4646
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
-> @@ -0,0 +1,41 @@
-> +Samsung EXYNOS SoC Camera Subsystem
+probably, you can't amend it though :)
 
-Shouldn't it be, e.g.:
+- Kukjin
 
-Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
-
-Or do you intend this file to be describing also the other sub-devices,
-like GScaler ?
-
-> +-----------------------------------
-> +
-> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
-> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
-> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
-> +handle sensor controls and camera post-processing operations. The
-> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
-> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
-> +dedicated scalers (SCC and SCP).
-> +
-> +fimc-is node
-> +------------
-> +
-> +Required properties:
-> +
-> +- compatible        : must be "samsung,exynos5250-fimc-is"
-> +- reg               : physical base address and size of the memory mapped
-> +                      registers
-> +- interrupt-parent  : Parent interrupt controller
-> +- interrupts        : fimc-is interrupt to the parent combiner
-> +- clocks            : list of clock specifiers, corresponding to entries in
-> +                      clock-names property;
-> +- clock-names       : must contain "isp", "mcu_isp", "isp_div0", "isp_div1",
-> +                      "isp_divmpwm", "mcu_isp_div0", "mcu_isp_div1" entries,
-> +                      matching entries in the clocks property.
-> +
-> +
-> +Board specific properties:
-> +
-> +- pinctrl-names    : pinctrl names for camera port pinmux control, at least
-> +		     "default" needs to be specified.
-> +- pinctrl-0...N	   : pinctrl properties corresponding to pinctrl-names
-
-What pins exactly are supposed to be covered by these properties ? For what
-devices ? Aren't the camera port pins supposed to be specified at the common
-'camera' node ? I believe the camera ports are not specific to the FIMC-IS.
-
-> +pmu subnode
-> +-----------
-> +
-> +Required properties:
-> + - reg : should contain PMU physical base address and size of the memory
-> +         mapped registers.
-
-What about other devices, like ISP I2C, SPI ? Don't you want to list at 
-least
-the ones currently used (I2C bus controllers) ?
-
-Regards,
-Sylwester
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/uncompress.h
+> b/arch/arm/mach-s5p64x0/include/mach/uncompress.h
+> index bc04bd5..bbcc3f6 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/uncompress.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/uncompress.h
+> @@ -23,9 +23,9 @@ static void arch_detect_cpu(void)
+>  	chipid = *(const volatile unsigned int __force *) 0xE0100118;
+> 
+>  	if ((chipid & 0xff000) == 0x50000)
+> -		uart_base = S5P6450_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
+> +		uart_base = (volatile u8
+> *)S5P6450_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
+>  	else
+> -		uart_base = S5P6440_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
+> +		uart_base = (volatile u8
+> *)S5P6440_PA_UART(CONFIG_S3C_LOWLEVEL_UART_PORT);
+> 
+>  	fifo_mask = S3C2440_UFSTAT_TXMASK;
+>  	fifo_max = 63 << S3C2440_UFSTAT_TXSHIFT;
