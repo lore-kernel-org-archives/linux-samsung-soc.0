@@ -1,42 +1,49 @@
-From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+From: Jingoo Han <jg1.han@samsung.com>
 Subject: Re: [PATCH V6 3/3] ARM: dts: Add pcie controller node for Samsung
  EXYNOS5440 SoC
-Date: Thu, 20 Jun 2013 09:48:35 +0200
-Message-ID: <20130620094835.3f1f34c2@skate>
+Date: Thu, 20 Jun 2013 16:57:32 +0900
+Message-ID: <00c301ce6d8b$d198b210$74ca1630$@samsung.com>
 References: <00c201ce6d85$83b072a0$8b1157e0$@samsung.com>
+ <20130620094835.3f1f34c2@skate>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <00c201ce6d85$83b072a0$8b1157e0$@samsung.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Andrew Murray' <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <20130620094835.3f1f34c2@skate>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Dear Jingoo Han,
+On Thursday, June 20, 2013 4:49 PM, Thomas Petazzoni wrote:
+> 
+> Dear Jingoo Han,
+> 
+> On Thu, 20 Jun 2013 16:12:24 +0900, Jingoo Han wrote:
+> 
+> > -	pinctrl {
+> > +	pin_ctrl: pinctrl {
+> >  		compatible = "samsung,exynos5440-pinctrl";
+> 
+> I know I'm nitpicking, but isn't this change completely unrelated to
+> PCIe support?
 
-On Thu, 20 Jun 2013 16:12:24 +0900, Jingoo Han wrote:
+This change is related to PCIe support.
+Without this, I cannot use gpio binding.
 
-> -	pinctrl {
-> +	pin_ctrl: pinctrl {
->  		compatible = "samsung,exynos5440-pinctrl";
+This change was guided by Thomas Abraham (Author of Samsung pinctrl).
+Also, it was confirmed by Kukjin Kim (Maintainer of Samsung SoC).
 
-I know I'm nitpicking, but isn't this change completely unrelated to
-PCIe support?
+Thank you for your caring. :)
 
-Thomas
--- 
-Thomas Petazzoni, Free Electrons
-Kernel, drivers, real-time and embedded Linux
-development, consulting, training and support.
-http://free-electrons.com
+Best regards,
+Jingoo Han
+
+> 
+> Thomas
+> --
+> Thomas Petazzoni, Free Electrons
+> Kernel, drivers, real-time and embedded Linux
+> development, consulting, training and support.
+> http://free-electrons.com
