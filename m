@@ -1,94 +1,69 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix incorrect usage of S5P_ARM_CORE1_*
- registers
-Date: Thu, 20 Jun 2013 12:16:55 +0200
-Message-ID: <1550511.tLVEbtuIcN@amdc1227>
-References: <1371569191-2364-1-git-send-email-t.figa@samsung.com>
- <24503071.R7UT57fHdP@amdc1227>
- <alpine.LFD.2.03.1306191110130.18597@syhkavp.arg>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC PATCH 00/11] ARM: s3c64xx: Let amba-pl08x driver handle DMA
+Date: Thu, 20 Jun 2013 11:35:32 +0100
+Message-ID: <20130620103532.GA27646@sirena.org.uk>
+References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
+ <20130619174047.GB1403@sirena.org.uk>
+ <3697657.tZFV7pR81Q@flatron>
+ <20130619192211.GH1403@sirena.org.uk>
+ <001201ce6d98$03d9b920$0b8d2b60$%carmody@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7JfCtLOvnd9MIVvH"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22151 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935407Ab3FTKRG (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:41077 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753845Ab3FTKfp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 06:17:06 -0400
-In-reply-to: <alpine.LFD.2.03.1306191110130.18597@syhkavp.arg>
+	Thu, 20 Jun 2013 06:35:45 -0400
+Content-Disposition: inline
+In-Reply-To: <001201ce6d98$03d9b920$0b8d2b60$%carmody@partner.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Will Deacon <Will.Deacon@arm.com>, Stephen Boyd <sboyd@codeaurora.org>
+To: Phil Carmody <phil.carmody@partner.samsung.com>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <djbw@fb.co>
 
-On Wednesday 19 of June 2013 11:19:30 Nicolas Pitre wrote:
-> On Wed, 19 Jun 2013, Tomasz Figa wrote:
-> > On Wednesday 19 of June 2013 20:26:50 Chander Kashyap wrote:
-> > > On 19 June 2013 19:58, Tomasz Figa <t.figa@samsung.com> wrote:
-> > > > I mean, calculate register offset based on two parameters - cluster
-> > > > ID
-> > > > and>
-> > > > 
-> > > > CPU ID, like:
-> > > >         ...
-> > > >         
-> > > >         u32 mpidr = cpu_logical_map(cpu);
-> > > >         u32 phys_cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
-> > > >         
-> > > >         if (soc_is_exynosXXXX()) {
-> > > >         
-> > > >                 u32 cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
-> > > >                 
-> > > >                 phys_cpu += EXYNOSXXXX_CPUS_PER_CLUSTER * cluster;
-> > > >         
-> > > >         }
-> > > >         
-> > > >         reg_base = S5P_ARM_CORE_CONFIGURATION(phys_cpu);
-> > > >         __raw_writel(0, reg_base);
-> > > 
-> > > This does not seems to viable solution, as eg. clusterID for
-> > > exynos4210 is 0x9 and exynos 4412 is 0xa.
-> > 
-> > We don't need to consider cluster ID for any SoC that has just one
-> > cluster. That's why there is the if (soc_is_exynosXXXX()) clause,
-> > where exynosXXXX is the SoC that we support and has more clusters.
-> > 
-> > > But if we wass the cpu nodes
-> > > thru DT, the we can comfortably rely on the logical cpu number. Also
-> > > EXYNOSXXXX_CPUS_PER_CLUSTER can vary from cluster to cluster.
-> > 
-> > There is nothing that prevents you from specifying the CPUs in DT in
-> > different order. Moreover, even if you specify them in correct order,
-> > there is nothing that prevents you from using any of the listed CPUs
-> > as boot CPU, which will get the logical ID of 0.
-> 
-> Relying on the logical CPU number to index into hardware related
-> register space is wrong, please don't do that.
-> 
-> If the MPIDR allocation isn't linear then this cannot be used either.
-> 
-> The best solution is probably to add this reg_base as a property of each
-> CPU node in DT, and extract it at boot time to stash it into an array
-> which can be indexed with the logical CPU number afterwards.
 
-Currently we don't specify the cpu node in DT at all for Exynos 4210, 4212 
-and 4412. It's sure that their device tree sources need to be modified to 
-correct his, but since DT is considered an ABI, we should keep 
-compatibility with old device tree blobs. 
+--7JfCtLOvnd9MIVvH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This means that we can't strictly require this property to be present in 
-device tree, because it will break existing boards with older device trees. 
-So my suggestion is to user cluster ID and CPU ID to calculate the offset by 
-default and add possibility to override it with a property in device tree 
-if such need shows up.
+On Thu, Jun 20, 2013 at 12:24:47PM +0300, Phil Carmody wrote:
 
-What do you think?
+> Can you just make that minimal change, and diff the objdump of the two .o=
+'s?
+> It would be worth a bug-report against the toolchain if different code was
+> being generated. If objdump spews huge numbers of diffs (due to one addre=
+ss
+> changing and pushing everything else out of kilter), then feel free to
+> forward both .o's or both objdumps to me, and I can run a script over the=
+m,
+> which knows to ignore unimportant address changes.=20
 
-Best regards,
-Tomasz
+See Arnd's followup - this looks like a collision with the get_signal
+macro in signal.h.
 
-> Nicolas
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--7JfCtLOvnd9MIVvH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRwtrxAAoJELSic+t+oim9ytUP/iaXkxamNtAxJCrJS8P3m93W
+ZUPZaMCU41/G63MIK93SQY6CoyWa/9vouACdzxZXv0SG+IWAmiLM1+NP/B5S2HAq
+uY+SEoRhrB3tlAJqNs7HXZTQCLVe0eaSkAFPLtsvR19BxrGYv0gQZ4vvpYJlspMR
+KngeUEN73bjJXdyRVW7D2fGt3r4pSmyps15EU4wOTMfgzSxJXs1BWchzq09eEBbs
+J6rsDZU6Sh/7iinWV6/7j3ip1jDWSblb7DDH1kHim/0+J2qoSIwOUCWnzDpV3xpp
+RCxFZAImyqVfvY2kKTt5b2HusLDVN+ySN1HN6gMsd/uQ2FaYZtKiDFa0Ms2NBC4o
+BAKGrztdoXu72+3bQSwAvcBxbXUHHKnwXltoBFqfEgdGubkA8CI234/JFYKUkvzp
+e3WkQBFQ4v4Wafcerh1YXpdusB5x0mCySriVndpmypnO16VO7J4XIzeD9b5VC9DP
+V9QdH8yuKDuTIVVXQ5HsX1UGBVWqIiwyKhhsIO4eArLTiFO9NktP6Vejcaq0H2av
+Y4VbW8Lv0qMsYmDOKvZsMBqNMt8z0+oOB4cXopkAzHGi2Ks7Hori7QJ2cbt/AeoO
+XLsIUnMVGvWf+pCsqOUnCORLEDmecqkMxMovFao++yYhBMA1arxi396qwD6m+REn
+JMlx0IVUWCLiwvKbuG+S
+=2NXl
+-----END PGP SIGNATURE-----
+
+--7JfCtLOvnd9MIVvH--
