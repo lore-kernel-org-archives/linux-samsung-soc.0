@@ -1,158 +1,96 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v2 18/18] ARM: SAMSUNG: Remove plat/regs-timer.h header
-Date: Fri, 21 Jun 2013 00:13:03 +0200
-Message-ID: <1371766383-29077-19-git-send-email-tomasz.figa@gmail.com>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:53321 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030247Ab3FTWOi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 18:14:38 -0400
-In-Reply-To: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [RFC v2 01/10] exynos5-fimc-is: Add Exynos5 FIMC-IS device tree
+ bindings documentation
+Date: Fri, 21 Jun 2013 00:45:04 +0200
+Message-ID: <51C385F0.6000402@gmail.com>
+References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com> <1370005408-10853-2-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1370005408-10853-2-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, s.nawrocki@samsung.com, kilyeon.im@samsung.com, shaik.ameer@samsung.com, arunkk.samsung@gmail.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Since all uses of the header has been removed by previous patches it can
-be removed safely.
+Hi Arun,
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- arch/arm/plat-samsung/include/plat/regs-timer.h | 124 ------------------------
- 1 file changed, 124 deletions(-)
- delete mode 100644 arch/arm/plat-samsung/include/plat/regs-timer.h
+On 05/31/2013 03:03 PM, Arun Kumar K wrote:
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-timer.h b/arch/arm/plat-samsung/include/plat/regs-timer.h
-deleted file mode 100644
-index d097d92..0000000
---- a/arch/arm/plat-samsung/include/plat/regs-timer.h
-+++ /dev/null
-@@ -1,124 +0,0 @@
--/* arch/arm/mach-s3c2410/include/mach/regs-timer.h
-- *
-- * Copyright (c) 2003 Simtec Electronics <linux@simtec.co.uk>
-- *		      http://www.simtec.co.uk/products/SWLINUX/
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * S3C2410 Timer configuration
--*/
--
--#ifndef __ASM_ARCH_REGS_TIMER_H
--#define __ASM_ARCH_REGS_TIMER_H
--
--#define S3C_TIMERREG(x) (S3C_VA_TIMER + (x))
--#define S3C_TIMERREG2(tmr,reg) S3C_TIMERREG((reg)+0x0c+((tmr)*0x0c))
--
--#define S3C2410_TCFG0	      S3C_TIMERREG(0x00)
--#define S3C2410_TCFG1	      S3C_TIMERREG(0x04)
--#define S3C2410_TCON	      S3C_TIMERREG(0x08)
--
--#define S3C64XX_TINT_CSTAT    S3C_TIMERREG(0x44)
--
--#define S3C2410_TCFG_PRESCALER0_MASK (255<<0)
--#define S3C2410_TCFG_PRESCALER1_MASK (255<<8)
--#define S3C2410_TCFG_PRESCALER1_SHIFT (8)
--#define S3C2410_TCFG_DEADZONE_MASK   (255<<16)
--#define S3C2410_TCFG_DEADZONE_SHIFT  (16)
--
--#define S3C2410_TCFG1_MUX4_DIV2	  (0<<16)
--#define S3C2410_TCFG1_MUX4_DIV4	  (1<<16)
--#define S3C2410_TCFG1_MUX4_DIV8	  (2<<16)
--#define S3C2410_TCFG1_MUX4_DIV16  (3<<16)
--#define S3C2410_TCFG1_MUX4_TCLK1  (4<<16)
--#define S3C2410_TCFG1_MUX4_MASK	  (15<<16)
--#define S3C2410_TCFG1_MUX4_SHIFT  (16)
--
--#define S3C2410_TCFG1_MUX3_DIV2	  (0<<12)
--#define S3C2410_TCFG1_MUX3_DIV4	  (1<<12)
--#define S3C2410_TCFG1_MUX3_DIV8	  (2<<12)
--#define S3C2410_TCFG1_MUX3_DIV16  (3<<12)
--#define S3C2410_TCFG1_MUX3_TCLK1  (4<<12)
--#define S3C2410_TCFG1_MUX3_MASK	  (15<<12)
--
--
--#define S3C2410_TCFG1_MUX2_DIV2	  (0<<8)
--#define S3C2410_TCFG1_MUX2_DIV4	  (1<<8)
--#define S3C2410_TCFG1_MUX2_DIV8	  (2<<8)
--#define S3C2410_TCFG1_MUX2_DIV16  (3<<8)
--#define S3C2410_TCFG1_MUX2_TCLK1  (4<<8)
--#define S3C2410_TCFG1_MUX2_MASK	  (15<<8)
--
--
--#define S3C2410_TCFG1_MUX1_DIV2	  (0<<4)
--#define S3C2410_TCFG1_MUX1_DIV4	  (1<<4)
--#define S3C2410_TCFG1_MUX1_DIV8	  (2<<4)
--#define S3C2410_TCFG1_MUX1_DIV16  (3<<4)
--#define S3C2410_TCFG1_MUX1_TCLK0  (4<<4)
--#define S3C2410_TCFG1_MUX1_MASK	  (15<<4)
--
--#define S3C2410_TCFG1_MUX0_DIV2	  (0<<0)
--#define S3C2410_TCFG1_MUX0_DIV4	  (1<<0)
--#define S3C2410_TCFG1_MUX0_DIV8	  (2<<0)
--#define S3C2410_TCFG1_MUX0_DIV16  (3<<0)
--#define S3C2410_TCFG1_MUX0_TCLK0  (4<<0)
--#define S3C2410_TCFG1_MUX0_MASK	  (15<<0)
--
--#define S3C2410_TCFG1_MUX_DIV2	  (0<<0)
--#define S3C2410_TCFG1_MUX_DIV4	  (1<<0)
--#define S3C2410_TCFG1_MUX_DIV8	  (2<<0)
--#define S3C2410_TCFG1_MUX_DIV16   (3<<0)
--#define S3C2410_TCFG1_MUX_TCLK    (4<<0)
--#define S3C2410_TCFG1_MUX_MASK	  (15<<0)
--
--#define S3C64XX_TCFG1_MUX_DIV1	  (0<<0)
--#define S3C64XX_TCFG1_MUX_DIV2	  (1<<0)
--#define S3C64XX_TCFG1_MUX_DIV4	  (2<<0)
--#define S3C64XX_TCFG1_MUX_DIV8    (3<<0)
--#define S3C64XX_TCFG1_MUX_DIV16   (4<<0)
--#define S3C64XX_TCFG1_MUX_TCLK    (5<<0)  /* 3 sets of TCLK */
--#define S3C64XX_TCFG1_MUX_MASK	  (15<<0)
--
--#define S3C2410_TCFG1_SHIFT(x)	  ((x) * 4)
--
--/* for each timer, we have an count buffer, an compare buffer and
-- * an observation buffer
--*/
--
--/* WARNING - timer 4 has no buffer reg, and it's observation is at +4 */
--
--#define S3C2410_TCNTB(tmr)    S3C_TIMERREG2(tmr, 0x00)
--#define S3C2410_TCMPB(tmr)    S3C_TIMERREG2(tmr, 0x04)
--#define S3C2410_TCNTO(tmr)    S3C_TIMERREG2(tmr, (((tmr) == 4) ? 0x04 : 0x08))
--
--#define S3C2410_TCON_T4RELOAD	  (1<<22)
--#define S3C2410_TCON_T4MANUALUPD  (1<<21)
--#define S3C2410_TCON_T4START	  (1<<20)
--
--#define S3C2410_TCON_T3RELOAD	  (1<<19)
--#define S3C2410_TCON_T3INVERT	  (1<<18)
--#define S3C2410_TCON_T3MANUALUPD  (1<<17)
--#define S3C2410_TCON_T3START	  (1<<16)
--
--#define S3C2410_TCON_T2RELOAD	  (1<<15)
--#define S3C2410_TCON_T2INVERT	  (1<<14)
--#define S3C2410_TCON_T2MANUALUPD  (1<<13)
--#define S3C2410_TCON_T2START	  (1<<12)
--
--#define S3C2410_TCON_T1RELOAD	  (1<<11)
--#define S3C2410_TCON_T1INVERT	  (1<<10)
--#define S3C2410_TCON_T1MANUALUPD  (1<<9)
--#define S3C2410_TCON_T1START	  (1<<8)
--
--#define S3C2410_TCON_T0DEADZONE	  (1<<4)
--#define S3C2410_TCON_T0RELOAD	  (1<<3)
--#define S3C2410_TCON_T0INVERT	  (1<<2)
--#define S3C2410_TCON_T0MANUALUPD  (1<<1)
--#define S3C2410_TCON_T0START	  (1<<0)
--
--#endif /*  __ASM_ARCH_REGS_TIMER_H */
--
--
--
--- 
-1.8.2.1
+Please add at least one sentence here. All in all this patch
+adds DT binding documentation for a fairly complex subsystem.
+
+And please Cc devicetree-discuss@lists.ozlabs.org next time.
+
+> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+> ---
+>   .../devicetree/bindings/media/exynos5-fimc-is.txt  |   41 ++++++++++++++++++++
+>   1 file changed, 41 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+> new file mode 100644
+> index 0000000..9fd4646
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+> @@ -0,0 +1,41 @@
+> +Samsung EXYNOS SoC Camera Subsystem
+
+Shouldn't it be, e.g.:
+
+Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
+
+Or do you intend this file to be describing also the other sub-devices,
+like GScaler ?
+
+> +-----------------------------------
+> +
+> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
+> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
+> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
+> +handle sensor controls and camera post-processing operations. The
+> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
+> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
+> +dedicated scalers (SCC and SCP).
+> +
+> +fimc-is node
+> +------------
+> +
+> +Required properties:
+> +
+> +- compatible        : must be "samsung,exynos5250-fimc-is"
+> +- reg               : physical base address and size of the memory mapped
+> +                      registers
+> +- interrupt-parent  : Parent interrupt controller
+> +- interrupts        : fimc-is interrupt to the parent combiner
+> +- clocks            : list of clock specifiers, corresponding to entries in
+> +                      clock-names property;
+> +- clock-names       : must contain "isp", "mcu_isp", "isp_div0", "isp_div1",
+> +                      "isp_divmpwm", "mcu_isp_div0", "mcu_isp_div1" entries,
+> +                      matching entries in the clocks property.
+> +
+> +
+> +Board specific properties:
+> +
+> +- pinctrl-names    : pinctrl names for camera port pinmux control, at least
+> +		     "default" needs to be specified.
+> +- pinctrl-0...N	   : pinctrl properties corresponding to pinctrl-names
+
+What pins exactly are supposed to be covered by these properties ? For what
+devices ? Aren't the camera port pins supposed to be specified at the common
+'camera' node ? I believe the camera ports are not specific to the FIMC-IS.
+
+> +pmu subnode
+> +-----------
+> +
+> +Required properties:
+> + - reg : should contain PMU physical base address and size of the memory
+> +         mapped registers.
+
+What about other devices, like ISP I2C, SPI ? Don't you want to list at 
+least
+the ones currently used (I2C bus controllers) ?
+
+Regards,
+Sylwester
