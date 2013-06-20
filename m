@@ -1,217 +1,338 @@
-From: =?EUC-KR?B?sei9wr/s?= <sw0312.kim@samsung.com>
-Subject: Re: [PATCH v3 2/3] drm/exynos: add support for exynos5420 mixer
-Date: Thu, 20 Jun 2013 11:03:17 +0900
-Message-ID: <51C262E5.6050605@samsung.com>
-References: <1371646269-21880-1-git-send-email-rahul.sharma@samsung.com>
- <1371646269-21880-3-git-send-email-rahul.sharma@samsung.com>
-Reply-To: sw0312.kim@samsung.com
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH V6 23/30] thermal: exynos: Add driver support for exynos5440
+ TMU sensor
+Date: Wed, 19 Jun 2013 22:06:51 -0400
+Message-ID: <51C263BB.6020700@ti.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com> <1371451599-31035-24-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59638 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935237Ab3FTCDN convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 22:03:13 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOO00L9W5OVQKB0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 11:03:11 +0900 (KST)
-In-reply-to: <1371646269-21880-3-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="----enig2MTLQVKSWDNUAIPLAKNAO"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1371451599-31035-24-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, tomasz.figa@gmail.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hello Rahul,
+------enig2MTLQVKSWDNUAIPLAKNAO
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-This patch is exactly same with v2 2/4 and only rebased on v3 1/3, so m=
-y
-ack is valid for this patch.
-
-On 2013=B3=E2 06=BF=F9 19=C0=CF 21:51, Rahul Sharma wrote:
-> Add support for exynos5420 mixer IP in the drm mixer driver.
+On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+> This patch modifies TMU controller to add changes needed to work with
+> exynos5440 platform. This sensor registers 3 instance of the tmu contro=
+ller
+> with the thermal zone and hence reports 3 temperature output. This cont=
+roller
+> supports upto five trip points. For critical threshold the driver uses =
+the
+> core driver thermal framework for shutdown.
 >=20
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-
-Acked-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-
-Anyway, this patch can be merged after merging [Patch v3 1/3] as like v=
-2.
-
-Best Regards,
-- Seung-Woo Kim
-
+> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 > ---
->  .../devicetree/bindings/video/exynos_mixer.txt     |    1 +
->  drivers/gpu/drm/exynos/exynos_mixer.c              |   49 ++++++++++=
-+++++-----
->  drivers/gpu/drm/exynos/regs-mixer.h                |    7 +++
->  3 files changed, 45 insertions(+), 12 deletions(-)
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |   24 ++++++++-
+>  drivers/thermal/samsung/exynos_thermal_common.h    |    2 +-
+>  drivers/thermal/samsung/exynos_tmu.c               |   54 ++++++++++++=
++++++---
+>  drivers/thermal/samsung/exynos_tmu.h               |    6 ++
+>  drivers/thermal/samsung/exynos_tmu_data.h          |   36 ++++++++++++=
++
+>  5 files changed, 112 insertions(+), 10 deletions(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt=
- b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-> index 9131b99..3334b0a 100644
-> --- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
-> +++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-> @@ -5,6 +5,7 @@ Required properties:
->  	1) "samsung,exynos5-mixer" <DEPRECATED>
->  	2) "samsung,exynos4210-mixer"
->  	3) "samsung,exynos5250-mixer"
-> +	4) "samsung,exynos5420-mixer"
+> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.t=
+xt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> index 0ea33f7..e6386ea 100644
+> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> @@ -6,6 +6,7 @@
+>  	       "samsung,exynos4412-tmu"
+>  	       "samsung,exynos4210-tmu"
+>  	       "samsung,exynos5250-tmu"
+> +	       "samsung,exynos5440-tmu"
+>  - interrupt-parent : The phandle for the interrupt controller
+>  - reg : Address range of the thermal registers. For soc's which has mu=
+ltiple
+>  	instances of TMU and some registers are shared across all TMU's like
+> @@ -16,7 +17,7 @@
+>  - clocks : The main clock for TMU device
+>  - clock-names : Thermal system clock name
 > =20
->  - reg: physical base address of the mixer and length of memory mappe=
-d
->  	region.
-> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
-exynos/exynos_mixer.c
-> index 6225501..b1280b4 100644
-> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
-> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-> @@ -78,6 +78,7 @@ struct mixer_resources {
->  enum mixer_version_id {
->  	MXR_VER_0_0_0_16,
->  	MXR_VER_16_0_33_0,
-> +	MXR_VER_128_0_0_184,
->  };
+> -Example:
+> +Example 1):
 > =20
->  struct mixer_context {
-> @@ -283,17 +284,19 @@ static void mixer_cfg_scan(struct mixer_context=
- *ctx, unsigned int height)
->  	val =3D (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
->  				MXR_CFG_SCAN_PROGRASSIVE);
-> =20
-> -	/* choosing between porper HD and SD mode */
-> -	if (height <=3D 480)
-> -		val |=3D MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD;
-> -	else if (height <=3D 576)
-> -		val |=3D MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD;
-> -	else if (height <=3D 720)
-> -		val |=3D MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
-> -	else if (height <=3D 1080)
-> -		val |=3D MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD;
-> -	else
-> -		val |=3D MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
-> +	if (ctx->mxr_ver !=3D MXR_VER_128_0_0_184) {
-> +		/* choosing between proper HD and SD mode */
-> +		if (height <=3D 480)
-> +			val |=3D MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD;
-> +		else if (height <=3D 576)
-> +			val |=3D MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD;
-> +		else if (height <=3D 720)
-> +			val |=3D MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
-> +		else if (height <=3D 1080)
-> +			val |=3D MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD;
-> +		else
-> +			val |=3D MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
-> +	}
-> =20
->  	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_SCAN_MASK);
->  }
-> @@ -557,6 +560,14 @@ static void mixer_graph_buffer(struct mixer_cont=
-ext *ctx, int win)
->  	/* setup geometry */
->  	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win), win_data->fb_width);
-> =20
-> +	/* setup display size */
-> +	if (ctx->mxr_ver =3D=3D MXR_VER_128_0_0_184 &&
-> +		win =3D=3D MIXER_DEFAULT_WIN) {
-> +		val  =3D MXR_MXR_RES_HEIGHT(win_data->fb_height);
-> +		val |=3D MXR_MXR_RES_WIDTH(win_data->fb_width);
-> +		mixer_reg_write(res, MXR_RESOLUTION, val);
-> +	}
+>  	tmu@100C0000 {
+>  		compatible =3D "samsung,exynos4412-tmu";
+> @@ -27,3 +28,24 @@ Example:
+>  		clock-names =3D "tmu_apbif";
+>  		status =3D "disabled";
+>  	};
 > +
->  	val  =3D MXR_GRP_WH_WIDTH(win_data->crtc_width);
->  	val |=3D MXR_GRP_WH_HEIGHT(win_data->crtc_height);
->  	val |=3D MXR_GRP_WH_H_SCALE(x_ratio);
-> @@ -581,7 +592,8 @@ static void mixer_graph_buffer(struct mixer_conte=
-xt *ctx, int win)
->  	mixer_cfg_layer(ctx, win, true);
-> =20
->  	/* layer update mandatory for mixer 16.0.33.0 */
-> -	if (ctx->mxr_ver =3D=3D MXR_VER_16_0_33_0)
-> +	if (ctx->mxr_ver =3D=3D MXR_VER_16_0_33_0 ||
-> +		ctx->mxr_ver =3D=3D MXR_VER_128_0_0_184)
->  		mixer_layer_update(ctx);
-> =20
->  	mixer_run(ctx);
-> @@ -816,6 +828,7 @@ static void mixer_win_disable(void *ctx, int win)
-> =20
->  static int mixer_check_mode(void *ctx, struct drm_display_mode *mode=
-)
->  {
-> +	struct mixer_context *mixer_ctx =3D ctx;
->  	u32 w, h;
-> =20
->  	w =3D mode->hdisplay;
-> @@ -825,6 +838,10 @@ static int mixer_check_mode(void *ctx, struct dr=
-m_display_mode *mode)
->  		mode->hdisplay, mode->vdisplay, mode->vrefresh,
->  		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? 1 : 0);
-> =20
-> +	if (mixer_ctx->mxr_ver =3D=3D MXR_VER_0_0_0_16 ||
-> +		mixer_ctx->mxr_ver =3D=3D MXR_VER_128_0_0_184)
-> +		return 0;
+> +Example 2):
 > +
->  	if ((w >=3D 464 && w <=3D 720 && h >=3D 261 && h <=3D 576) ||
->  		(w >=3D 1024 && w <=3D 1280 && h >=3D 576 && h <=3D 720) ||
->  		(w >=3D 1664 && w <=3D 1920 && h >=3D 936 && h <=3D 1080))
-> @@ -1115,6 +1132,11 @@ static int vp_resources_init(struct exynos_drm=
-_hdmi_context *ctx,
->  	return 0;
->  }
-> =20
-> +static struct mixer_drv_data exynos5420_mxr_drv_data =3D {
-> +	.version =3D MXR_VER_128_0_0_184,
-> +	.is_vp_enabled =3D 0,
+> +	tmuctrl_0: tmuctrl@160118 {
+> +		compatible =3D "samsung,exynos5440-tmu";
+> +		reg =3D <0x160118 0x230>, <0x160368 0x10>;
+> +		interrupts =3D <0 58 0>;
+> +		clocks =3D <&clock 21>;
+> +		clock-names =3D "tmu_apbif";
+> +	};
+> +
+> +Note: For multi-instance tmu each instance should have an alias correc=
+tly
+> +numbered in "aliases" node.
+> +
+> +Example:
+> +
+> +aliases {
+> +	tmuctrl0 =3D &tmuctrl_0;
+> +	tmuctrl1 =3D &tmuctrl_1;
+> +	tmuctrl2 =3D &tmuctrl_2;
 > +};
-> +
->  static struct mixer_drv_data exynos5250_mxr_drv_data =3D {
->  	.version =3D MXR_VER_16_0_33_0,
->  	.is_vp_enabled =3D 0,
-> @@ -1145,6 +1167,9 @@ static struct of_device_id mixer_match_types[] =
-=3D {
->  		.compatible =3D "samsung,exynos5250-mixer",
->  		.data	=3D &exynos5250_mxr_drv_data,
->  	}, {
-> +		.compatible =3D "samsung,exynos5420-mixer",
-> +		.data	=3D &exynos5420_mxr_drv_data,
-> +	}, {
->  		/* end node */
+> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/=
+thermal/samsung/exynos_thermal_common.h
+> index 0c189d6..7d7c29a 100644
+> --- a/drivers/thermal/samsung/exynos_thermal_common.h
+> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
+> @@ -27,7 +27,7 @@
+>  #define SENSOR_NAME_LEN	16
+>  #define MAX_TRIP_COUNT	8
+>  #define MAX_COOLING_DEVICE 4
+> -#define MAX_THRESHOLD_LEVS 4
+> +#define MAX_THRESHOLD_LEVS 5
+> =20
+>  #define ACTIVE_INTERVAL 500
+>  #define IDLE_INTERVAL 10000
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
+sung/exynos_tmu.c
+> index 150a869..db4035d 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -156,7 +156,26 @@ static int exynos_tmu_initialize(struct platform_d=
+evice *pdev)
+>  		__raw_writel(1, data->base + reg->triminfo_ctrl);
+> =20
+>  	/* Save trimming info in order to perform calibration */
+> -	trim_info =3D readl(data->base + reg->triminfo_data);
+> +	if (data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
+
+should this become some bit at your pdata->features? TMU_SUPPORTS(pdata,
+TRIMINFO) for instance?
+
+> +		/*
+> +		 * For exynos5440 soc triminfo value is swapped between TMU0 and
+> +		 * TMU2, so the below logic is needed.
+> +		 */
+> +		switch (data->id) {
+> +		case 0:
+> +			trim_info =3D readl(data->base +
+> +			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+> +			break;
+> +		case 1:
+> +			trim_info =3D readl(data->base + reg->triminfo_data);
+> +			break;
+> +		case 2:
+> +			trim_info =3D readl(data->base -
+> +			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+> +		}
+> +	} else {
+> +		trim_info =3D readl(data->base + reg->triminfo_data);
+> +	}
+>  	data->temp_error1 =3D trim_info & EXYNOS_TMU_TEMP_MASK;
+>  	data->temp_error2 =3D ((trim_info >> reg->triminfo_85_shift) &
+>  				EXYNOS_TMU_TEMP_MASK);
+> @@ -201,7 +220,8 @@ static int exynos_tmu_initialize(struct platform_de=
+vice *pdev)
+>  			reg->threshold_th0 + i * sizeof(reg->threshold_th0));
+> =20
+>  		writel(reg->inten_rise_mask, data->base + reg->tmu_intclear);
+> -	} else if (data->soc =3D=3D SOC_ARCH_EXYNOS) {
+> +	} else if (data->soc =3D=3D SOC_ARCH_EXYNOS ||
+> +			data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
+>  		/* Write temperature code for rising and falling threshold */
+>  		for (i =3D 0;
+>  		i < trigger_levs && i < EXYNOS_MAX_TRIGGER_PER_REG; i++) {
+> @@ -241,14 +261,24 @@ static int exynos_tmu_initialize(struct platform_=
+device *pdev)
+>  				ret =3D threshold_code;
+>  				goto out;
+>  			}
+> -			rising_threshold |=3D threshold_code << 8 * i;
+> -			writel(rising_threshold,
+> -				data->base + reg->threshold_th0);
+> +			if (data->soc =3D=3D SOC_ARCH_EXYNOS) {
+> +				rising_threshold |=3D threshold_code << 8 * i;
+> +				writel(rising_threshold,
+> +					data->base + reg->threshold_th0);
+> +			} else if (data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
+
+Can these ifs be translated to some TMU_SUPPORTS()?
+
+Just wondering if it is possible to get rid of data->soc flags and use
+only features or represent the shifts as fields inside your pdata.
+
+> +				rising_threshold =3D
+> +				threshold_code << reg->threshold_th3_l0_shift;
+> +				writel(rising_threshold,
+> +					data->base + reg->threshold_th2);
+> +			}
+>  			con =3D readl(data->base + reg->tmu_ctrl);
+>  			con |=3D (1 << reg->therm_trip_en_shift);
+>  			writel(con, data->base + reg->tmu_ctrl);
+>  		}
 >  	}
+> +	/*Clear the PMIN in the common TMU register*/
+> +	if (reg->tmu_pmin && !data->id)
+> +		writel(0, data->base_common + reg->tmu_pmin);
+
+What happens to other TMU instances when one of them performs this
+operation? does it need to serialized?
+
+>  out:
+>  	clk_disable(data->clk);
+>  	mutex_unlock(&data->lock);
+> @@ -377,7 +407,14 @@ static void exynos_tmu_work(struct work_struct *wo=
+rk)
+>  			struct exynos_tmu_data, irq_work);
+>  	struct exynos_tmu_platform_data *pdata =3D data->pdata;
+>  	const struct exynos_tmu_registers *reg =3D pdata->registers;
+> -	unsigned int val_irq;
+> +	unsigned int val_irq, val_type;
+> +
+> +	/* Find which sensor generated this interrupt */
+> +	if (reg->tmu_irqstatus) {
+> +		val_type =3D readl(data->base_common + reg->tmu_irqstatus);
+> +		if (!((val_type >> data->id) & 0x1))
+> +			goto out;
+> +	}
+> =20
+>  	exynos_report_trigger(data->reg_conf);
+>  	mutex_lock(&data->lock);
+> @@ -390,7 +427,7 @@ static void exynos_tmu_work(struct work_struct *wor=
+k)
+> =20
+>  	clk_disable(data->clk);
+>  	mutex_unlock(&data->lock);
+> -
+> +out:
+>  	enable_irq(data->irq);
+>  }
+> =20
+> @@ -544,7 +581,8 @@ static int exynos_tmu_probe(struct platform_device =
+*pdev)
+>  		return ret;
+> =20
+>  	if (pdata->type =3D=3D SOC_ARCH_EXYNOS ||
+> -				pdata->type =3D=3D SOC_ARCH_EXYNOS4210)
+> +		pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
+> +				pdata->type =3D=3D SOC_ARCH_EXYNOS5440)
+>  		data->soc =3D pdata->type;
+>  	else {
+>  		ret =3D -EINVAL;
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sam=
+sung/exynos_tmu.h
+> index 6f55673..73aaed7 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -38,6 +38,7 @@ enum calibration_mode {
+>  enum soc_type {
+>  	SOC_ARCH_EXYNOS4210 =3D 1,
+>  	SOC_ARCH_EXYNOS,
+> +	SOC_ARCH_EXYNOS5440,
 >  };
-> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/ex=
-ynos/regs-mixer.h
-> index 5d8dbc0..4537026 100644
-> --- a/drivers/gpu/drm/exynos/regs-mixer.h
-> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
-> @@ -44,6 +44,9 @@
->  #define MXR_CM_COEFF_Y			0x0080
->  #define MXR_CM_COEFF_CB			0x0084
->  #define MXR_CM_COEFF_CR			0x0088
-> +#define MXR_MO				0x0304
-> +#define MXR_RESOLUTION			0x0310
-> +
->  #define MXR_GRAPHIC0_BASE_S		0x2024
->  #define MXR_GRAPHIC1_BASE_S		0x2044
 > =20
-> @@ -119,6 +122,10 @@
->  #define MXR_GRP_WH_WIDTH(x)		MXR_MASK_VAL(x, 26, 16)
->  #define MXR_GRP_WH_HEIGHT(x)		MXR_MASK_VAL(x, 10, 0)
-> =20
-> +/* bits for MXR_RESOLUTION */
-> +#define MXR_MXR_RES_HEIGHT(x)		MXR_MASK_VAL(x, 26, 16)
-> +#define MXR_MXR_RES_WIDTH(x)		MXR_MASK_VAL(x, 10, 0)
+>  /**
+> @@ -129,6 +130,8 @@ enum soc_type {
+>   * @emul_temp_shift: shift bits of emulation temperature.
+>   * @emul_time_shift: shift bits of emulation time.
+>   * @emul_time_mask: mask bits of emulation time.
+> + * @tmu_irqstatus: register to find which TMU generated interrupts.
+> + * @tmu_pmin: register to get/set the Pmin value.
+>   */
+>  struct exynos_tmu_registers {
+>  	u32	triminfo_data;
+> @@ -196,6 +199,9 @@ struct exynos_tmu_registers {
+>  	u32	emul_temp_shift;
+>  	u32	emul_time_shift;
+>  	u32	emul_time_mask;
 > +
->  /* bits for MXR_GRAPHICn_SXY */
->  #define MXR_GRP_SXY_SX(x)		MXR_MASK_VAL(x, 26, 16)
->  #define MXR_GRP_SXY_SY(x)		MXR_MASK_VAL(x, 10, 0)
+> +	u32	tmu_irqstatus;
+> +	u32	tmu_pmin;
+>  };
+> =20
+>  /**
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therma=
+l/samsung/exynos_tmu_data.h
+> index 139dbbb..ad263e9 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> @@ -93,6 +93,42 @@
+> =20
+>  #define EXYNOS_MAX_TRIGGER_PER_REG	4
+> =20
+> +/*exynos5440 specific registers*/
+> +#define EXYNOS5440_TMU_S0_7_TRIM		0x000
+> +#define EXYNOS5440_TMU_S0_7_CTRL		0x020
+> +#define EXYNOS5440_TMU_S0_7_DEBUG		0x040
+> +#define EXYNOS5440_TMU_S0_7_STATUS		0x060
+> +#define EXYNOS5440_TMU_S0_7_TEMP		0x0f0
+> +#define EXYNOS5440_TMU_S0_7_TH0			0x110
+> +#define EXYNOS5440_TMU_S0_7_TH1			0x130
+> +#define EXYNOS5440_TMU_S0_7_TH2			0x150
+> +#define EXYNOS5440_TMU_S0_7_EVTEN		0x1F0
+> +#define EXYNOS5440_TMU_S0_7_IRQEN		0x210
+> +#define EXYNOS5440_TMU_S0_7_IRQ			0x230
+> +/* exynos5440 common registers */
+> +#define EXYNOS5440_TMU_IRQ_STATUS		0x000
+> +#define EXYNOS5440_TMU_PMIN			0x004
+> +#define EXYNOS5440_TMU_TEMP			0x008
+> +
+> +#define EXYNOS5440_TMU_RISE_INT_MASK		0xf
+> +#define EXYNOS5440_TMU_RISE_INT_SHIFT		0
+> +#define EXYNOS5440_TMU_FALL_INT_MASK		0xf
+> +#define EXYNOS5440_TMU_FALL_INT_SHIFT		4
+> +#define EXYNOS5440_TMU_INTEN_RISE0_SHIFT	0
+> +#define EXYNOS5440_TMU_INTEN_RISE1_SHIFT	1
+> +#define EXYNOS5440_TMU_INTEN_RISE2_SHIFT	2
+> +#define EXYNOS5440_TMU_INTEN_RISE3_SHIFT	3
+> +#define EXYNOS5440_TMU_INTEN_FALL0_SHIFT	4
+> +#define EXYNOS5440_TMU_INTEN_FALL1_SHIFT	5
+> +#define EXYNOS5440_TMU_INTEN_FALL2_SHIFT	6
+> +#define EXYNOS5440_TMU_INTEN_FALL3_SHIFT	7
+> +#define EXYNOS5440_TMU_TH_RISE0_SHIFT		0
+> +#define EXYNOS5440_TMU_TH_RISE1_SHIFT		8
+> +#define EXYNOS5440_TMU_TH_RISE2_SHIFT		16
+> +#define EXYNOS5440_TMU_TH_RISE3_SHIFT		24
+> +#define EXYNOS5440_TMU_TH_RISE4_SHIFT		24
+> +#define EXYNOS5440_EFUSE_SWAP_OFFSET		8
+> +
+>  #if defined(CONFIG_CPU_EXYNOS4210)
+>  extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
+>  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
 >=20
+
 
 --=20
-Seung-Woo Kim
-Samsung Software R&D Center
---
+You have got to be excited about what you are doing. (L. Lamport)
+
+Eduardo Valentin
+
+
+------enig2MTLQVKSWDNUAIPLAKNAO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlHCY7sACgkQCXcVR3XQvP1kvwD7B0WwEMe/Hkuu+JXcLcGHSIX1
+NLpcpR6tAI0pGvsG2hAA/icSzIjBsLmjc71KQngasTSfQOqEDJkEZx29fr3ln+n8
+=WYGn
+-----END PGP SIGNATURE-----
+
+------enig2MTLQVKSWDNUAIPLAKNAO--
