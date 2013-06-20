@@ -1,164 +1,120 @@
-From: Sunil Joshi <joshi@samsung.com>
-Subject: [PATCH] ARM: dts: Add device tree support for dwmmc
-Date: Thu, 20 Jun 2013 12:06:28 +0530
-Message-ID: <1371710188-22885-1-git-send-email-joshi@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH 1/5] ARM: dts: exynos5420: add i2c device nodes
+Date: Thu, 20 Jun 2013 11:43:42 +0530
+Message-ID: <CANuQgHGqkoB0U=7dm5+Xwo5j=xMt6ycSuSTMC55z1EMB5OwtfQ@mail.gmail.com>
+References: <1371706911-27016-1-git-send-email-rahul.sharma@samsung.com>
+	<1371706911-27016-2-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:9368 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751175Ab3FTGMw (ORCPT
+Received: from mail-ob0-f169.google.com ([209.85.214.169]:45181 "EHLO
+	mail-ob0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751790Ab3FTGNn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 02:12:52 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOO00AJZH9FK6P0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 15:12:51 +0900 (KST)
+	Thu, 20 Jun 2013 02:13:43 -0400
+Received: by mail-ob0-f169.google.com with SMTP id up14so6786552obb.28
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Jun 2013 23:13:42 -0700 (PDT)
+In-Reply-To: <1371706911-27016-2-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, alim.akhtar@samsung.com, prathyush.k@samsung.com, arun.kk@samsung.com
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <rob.herring@calxeda.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, Grant Likely <grant.likely@linaro.org>, joshi@samsung.com, r.sh.open@gmail.com, Andrew Bresticker <abrestic@chromium.org>
 
-From: Alim Akhtar <alim.akhtar@samsung.com>
+On 20 June 2013 11:11, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> From: Andrew Bresticker <abrestic@chromium.org>
+>
+> This adds device-tree nodes for the i2c busses on Exynos
+> 5420 platforms.
+>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420.dtsi |   56 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 8c54c4b..b0ec047 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -24,6 +24,10 @@
+>                 pinctrl2 = &pinctrl_2;
+>                 pinctrl3 = &pinctrl_3;
+>                 pinctrl4 = &pinctrl_4;
+> +               i2c0 = &i2c_0;
+> +               i2c1 = &i2c_1;
+> +               i2c2 = &i2c_2;
+> +               i2c3 = &i2c_3;
+>         };
+>
+>         cpus {
+> @@ -145,4 +149,56 @@
+>                 clocks = <&clock 260>, <&clock 131>;
+>                 clock-names = "uart", "clk_uart_baud0";
+>         };
+> +
+> +       i2c_0: i2c@12C60000 {
+> +               compatible = "samsung,s3c2440-i2c";
+> +               reg = <0x12C60000 0x100>;
+> +               interrupts = <0 56 0>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&i2c0_bus>;
+> +               clocks = <&clock 261>;
+> +               clock-names = "i2c";
+> +               status = "disabled";
+> +       };
+Please move the common properties of exynos5250 and exynos5420 to exynos5.dtsi.
+> +
+> +       i2c_1: i2c@12C70000 {
+> +               compatible = "samsung,s3c2440-i2c";
+> +               reg = <0x12C70000 0x100>;
+> +               interrupts = <0 57 0>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&i2c1_bus>;
+> +               clocks = <&clock 262>;
+> +               clock-names = "i2c";
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c_2: i2c@12C80000 {
+> +               compatible = "samsung,s3c2440-i2c";
+> +               reg = <0x12C80000 0x100>;
+> +               interrupts = <0 58 0>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&i2c2_bus>;
+> +               clocks = <&clock 263>;
+> +               clock-names = "i2c";
+> +               status = "disabled";
+> +       };
+> +
+> +       i2c_3: i2c@12C90000 {
+> +               compatible = "samsung,s3c2440-i2c";
+> +               reg = <0x12C90000 0x100>;
+> +               interrupts = <0 59 0>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&i2c3_bus>;
+> +               clocks = <&clock 264>;
+> +               clock-names = "i2c";
+> +               status = "disabled";
+> +       };
+>  };
+> --
+> 1.7.10.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-This patch adds alias names, device tree nodes for
-dw-mmc controller for exynos5420 soc.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Signed-off-by: Sunil Joshi <joshi@samsung.com>
----
- .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +-
- arch/arm/boot/dts/exynos5.dtsi                     |    3 ++
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |   38 ++++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi                  |   21 +++++++++++
- 4 files changed, 63 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-index 6d1c098..c48570e 100644
---- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-+++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-@@ -15,7 +15,7 @@ Required Properties:
- 	- "samsung,exynos4412-dw-mshc": for controllers with Samsung Exynos4412
- 	  specific extensions.
- 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
--	  specific extensions.
-+	  and Exynos5420 specific extensions.
- 
- * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
-   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index f65e124..6cb6f03 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -55,6 +55,7 @@
- 		interrupts = <0 75 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disabled";
- 	};
- 
- 	dwmmc_1: dwmmc1@12210000 {
-@@ -62,6 +63,7 @@
- 		interrupts = <0 76 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disabled";
- 	};
- 
- 	dwmmc_2: dwmmc2@12220000 {
-@@ -69,6 +71,7 @@
- 		interrupts = <0 77 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disabled";
- 	};
- 
- 	serial@12C00000 {
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 08607df..d05de7a 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -30,4 +30,42 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
-+	dwmmc0@12200000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		broken-cd;
-+		bypass-smu;
-+		supports-highspeed;
-+		fifo-depth = <0x40>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <0 4>;
-+		samsung,dw-mshc-ddr-timing = <0 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+		};
-+	};
-+
-+	dwmmc2@12220000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		supports-highspeed;
-+		fifo-depth = <0x40>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+		};
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8c54c4b..0736994 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -24,6 +24,9 @@
- 		pinctrl2 = &pinctrl_2;
- 		pinctrl3 = &pinctrl_3;
- 		pinctrl4 = &pinctrl_4;
-+		mshc0 = &dwmmc_0;
-+		mshc1 = &dwmmc_1;
-+		mshc2 = &dwmmc_2;
- 	};
- 
- 	cpus {
-@@ -145,4 +148,22 @@
- 		clocks = <&clock 260>, <&clock 131>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
-+
-+	dwmmc_0: dwmmc0@12200000 {
-+		reg = <0x12200000 0x2000>;
-+		clocks = <&clock 351>, <&clock 132>;
-+		clock-names = "biu", "ciu";
-+	};
-+
-+	dwmmc_1: dwmmc1@12210000 {
-+		reg = <0x12210000 0x2000>;
-+		clocks = <&clock 352>, <&clock 133>;
-+		clock-names = "biu", "ciu";
-+	};
-+
-+	dwmmc_2: dwmmc2@12220000 {
-+		reg = <0x12220000 0x2000>;
-+		clocks = <&clock 353>, <&clock 134>;
-+		clock-names = "biu", "ciu";
-+	};
- };
--- 
-1.7.9.5
+--
+with warm regards,
+Chander Kashyap
