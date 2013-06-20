@@ -1,208 +1,66 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH V6 3/3] ARM: dts: Add pcie controller node for Samsung
+From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V6 3/3] ARM: dts: Add pcie controller node for Samsung
  EXYNOS5440 SoC
-Date: Thu, 20 Jun 2013 17:25:12 +0900
-Message-ID: <00c501ce6d8f$af1bf900$0d53eb00$@samsung.com>
+Date: Thu, 20 Jun 2013 17:40:13 +0900
+Message-ID: <00c901ce6d91$c8382010$58a86030$@samsung.com>
 References: <00c201ce6d85$83b072a0$8b1157e0$@samsung.com>
- <3250954.dVh4O1LchK@flatron>
+ <20130620094835.3f1f34c2@skate> <00c301ce6d8b$d198b210$74ca1630$@samsung.com>
+ <20130620100013.6000458f@skate>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <3250954.dVh4O1LchK@flatron>
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <20130620100013.6000458f@skate>
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jingoo Han <jg1.han@samsung.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: 'Thomas Petazzoni' <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Andrew Murray' <andrew.murray-5wv7dgnIgG8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday, June 20, 2013 5:04 PM, Tomasz Figa wrote:
+On Thursday, June 20, 2013 5:00 PM, Thomas Petazzoni wrote:
 > 
-> Hi Jingoo,
+> Dear Jingoo Han,
 > 
-> On Thursday 20 of June 2013 16:12:24 Jingoo Han wrote:
-> > Exynos5440 has two PCIe controllers which can be used as root complex
-> > for PCIe interface.
+> On Thu, 20 Jun 2013 16:57:32 +0900, Jingoo Han wrote:
+> 
+> > > > -	pinctrl {
+> > > > +	pin_ctrl: pinctrl {
+> > > >  		compatible = "samsung,exynos5440-pinctrl";
+> > >
+> > > I know I'm nitpicking, but isn't this change completely unrelated to
+> > > PCIe support?
 > >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos5440-ssdk5440.dts |    8 ++++++
-> >  arch/arm/boot/dts/exynos5440.dtsi         |   40
-> > ++++++++++++++++++++++++++++- 2 files changed, 47 insertions(+), 1
-> > deletion(-)
+> > This change is related to PCIe support.
+> > Without this, I cannot use gpio binding.
 > >
-> > diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-> > b/arch/arm/boot/dts/exynos5440-ssdk5440.dts index f32cd77..3d93804
-> > 100644
-> > --- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-> > +++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-> > @@ -65,4 +65,12 @@
-> >  			clock-frequency = <50000000>;
-> >  		};
-> >  	};
-> > +
-> > +	pcie0@290000 {
-> > +		reset-gpio = <&pin_ctrl 5 0>;
-> > +	};
-> > +
-> > +	pcie1@2a0000 {
-> > +		reset-gpio = <&pin_ctrl 22 0>;
-> > +	};
-> >  };
-> > diff --git a/arch/arm/boot/dts/exynos5440.dtsi
-> > b/arch/arm/boot/dts/exynos5440.dtsi index 03d40c0..6295eda 100644
-> > --- a/arch/arm/boot/dts/exynos5440.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> > @@ -126,7 +126,7 @@
-> >  		clock-names = "spi", "spi_busclk0";
-> >  	};
+> > This change was guided by Thomas Abraham (Author of Samsung pinctrl).
+> > Also, it was confirmed by Kukjin Kim (Maintainer of Samsung SoC).
 > >
-> > -	pinctrl {
-> > +	pin_ctrl: pinctrl {
-> >  		compatible = "samsung,exynos5440-pinctrl";
-> >  		reg = <0xE0000 0x1000>;
-> >  		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>,
-> > @@ -230,4 +230,42 @@
-> >  		clocks = <&clock 24>;
-> >  		clock-names = "usbhost";
-> >  	};
+> > Thank you for your caring. :)
 > 
-> I think this patch should be split into two:
->  - patch adding just generlic PCIe nodes for Exynos5440,
->  - patch adding label to the pinctrl node (which is a prerequisite) and
-> board-specific properties of PCIe nodes.
-
-Do you mean the following?
-
-1. patch adding just generlic PCIe nodes for Exynos5440
-    [PATCH] ARM: dts: Add pcie controller node for Samsung EXYNOS5440 SoC
-
-arch/arm/boot/dts/exynos5440.dtsi
-+
-+	pcie@290000 {
-+		compatible = "samsung,exynos5440-pcie";
-+		reg = <0x290000 0x1000
-+			0x270000 0x1000
-+			0x271000 0x40>;
-+		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
-+		clocks = <&clock 28>, <&clock 27>;
-+		clock-names = "pcie", "pcie_bus";
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000   /* configuration space */
-+			  0x81000000 0 0	  0x40001000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x40011000 0x40011000 0 0x1ffef000>; /* non-prefetchable memory */
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0x0 0 &gic 53>;
-+	};
-+
-+	pcie@2a0000 {
-+		compatible = "samsung,exynos5440-pcie";
-+		reg = <0x2a0000 0x1000
-+			0x272000 0x1000
-+			0x271040 0x40>;
-+		interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
-+		clocks = <&clock 29>, <&clock 27>;
-+		clock-names = "pcie", "pcie_bus";
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		device_type = "pci";
-+		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000   /* configuration space */
-+			  0x81000000 0 0	  0x60001000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x60011000 0x60011000 0 0x1ffef000>; /* non-prefetchable memory */
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0x0 0 &gic 56>;
-+	};
-
-
-
-2. patch adding label to the pinctrl node (which is a prerequisite) and
-    board-specific properties of PCIe nodes.
-   [PATCH] ARM: dts: Add pcie controller node for exynos5440-ssdk5440
-
-arch/arm/boot/dts/exynos5440-ssdk5440.dts
-+
-+	pcie0@290000 {
-+		reset-gpio = <&pin_ctrl 5 0>;
-+	};
-+
-+	pcie1@2a0000 {
-+		reset-gpio = <&pin_ctrl 22 0>;
-+	};
-
-arch/arm/boot/dts/exynos5440.dtsi
--	pinctrl {
-+	pin_ctrl: pinctrl {
-
-
-
+> I mean, the change is fine for sure, but it should maybe part of a
+> separate patch as it is more a fix than really the introduction of the
+> PCIe controller node, as the patch title suggests. This would also for
+> example allow this fix to be merged right now (for 3.11), regardless of
+> what happens for the rest of your PCIe patches.
 > 
-> > +
-> > +	pcie0@290000 {
-> 
-> Node naming looks incorrect here. The name should be as generic as
-> possible, without any hardware-specific IDs, e.g. pcie, not pcie0. The
-> @290000 suffix is enough to make the node unique.
+CC'ed Tomasz Figa
 
-I see. You are right.
-I will fix it.
+
+OK, I see.
+I will separate this patch to two patches, as Tomasz Figa mentioned.
+(http://www.spinics.net/lists/linux-samsung-soc/msg19639.html)
+Thank you.
 
 
 Best regards,
 Jingoo Han
-
-> 
-> > +		compatible = "samsung,exynos5440-pcie";
-> > +		reg = <0x290000 0x1000
-> > +			0x270000 0x1000
-> > +			0x271000 0x40>;
-> > +		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
-> > +		clocks = <&clock 28>, <&clock 27>;
-> > +		clock-names = "pcie", "pcie_bus";
-> > +		#address-cells = <3>;
-> > +		#size-cells = <2>;
-> > +		device_type = "pci";
-> > +		ranges = <0x00000800 0 0x40000000 0x40000000 0 0x00001000
-> /*
-> > configuration space */ +			  0x81000000 0 0
-> 0x40001000 0 0x00010000
-> > /* downstream I/O */ +			  0x82000000 0 0x40011000
-> 0x40011000 0
-> > 0x1ffef000>; /* non-prefetchable memory */ +		#interrupt-cells =
-> <1>;
-> > +		interrupt-map-mask = <0 0 0 0>;
-> > +		interrupt-map = <0x0 0 &gic 53>;
-> > +	};
-> > +
-> > +	pcie1@2a0000 {
-> 
-> Same here.
-> 
-> Best regards,
-> Tomasz
-> 
-> > +		compatible = "samsung,exynos5440-pcie";
-> > +		reg = <0x2a0000 0x1000
-> > +			0x272000 0x1000
-> > +			0x271040 0x40>;
-> > +		interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
-> > +		clocks = <&clock 29>, <&clock 27>;
-> > +		clock-names = "pcie", "pcie_bus";
-> > +		#address-cells = <3>;
-> > +		#size-cells = <2>;
-> > +		device_type = "pci";
-> > +		ranges = <0x00000800 0 0x60000000 0x60000000 0 0x00001000
-> /*
-> > configuration space */ +			  0x81000000 0 0
-> 0x60001000 0 0x00010000
-> > /* downstream I/O */ +			  0x82000000 0 0x60011000
-> 0x60011000 0
-> > 0x1ffef000>; /* non-prefetchable memory */ +		#interrupt-cells =
-> <1>;
-> > +		interrupt-map-mask = <0 0 0 0>;
-> > +		interrupt-map = <0x0 0 &gic 56>;
-> > +	};
-> >  };
