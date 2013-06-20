@@ -1,107 +1,100 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v2 02/18] ARM: SAMSUNG: Add new PWM platform device
-Date: Fri, 21 Jun 2013 00:12:47 +0200
-Message-ID: <1371766383-29077-3-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH v2 04/18] clocksource: samsung_pwm_timer: Cache clocksource register address
+Date: Fri, 21 Jun 2013 00:12:49 +0200
+Message-ID: <1371766383-29077-5-git-send-email-tomasz.figa@gmail.com>
 References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f52.google.com ([209.85.214.52]:58067 "EHLO
-	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758486Ab3FTWOE (ORCPT
+Received: from mail-bk0-f49.google.com ([209.85.214.49]:63756 "EHLO
+	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758502Ab3FTWOI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 18:14:04 -0400
+	Thu, 20 Jun 2013 18:14:08 -0400
 In-Reply-To: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-This patch adds new samsung_device_pwm platform device that represents
-the whole PWM/timer block and includes memory and IRQ resources.
+Instead of calculating register every time the timer should be read,
+we can just do it one time at initialization and store the address in
+driver data.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- arch/arm/plat-samsung/devs.c                  | 17 +++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h     |  1 +
- arch/arm/plat-samsung/include/plat/pwm-core.h | 24 ++++++++++++++++++++++++
- 3 files changed, 42 insertions(+)
- create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
+ drivers/clocksource/samsung_pwm_timer.c | 33 ++++++++-------------------------
+ 1 file changed, 8 insertions(+), 25 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 0f9c3f4..bba6d78 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -58,6 +58,7 @@
- #include <plat/keypad.h>
- #include <linux/platform_data/mmc-s3cmci.h>
- #include <linux/platform_data/mtd-nand-s3c2410.h>
-+#include <plat/pwm-core.h>
- #include <plat/sdhci.h>
- #include <linux/platform_data/touchscreen-s3c2410.h>
- #include <linux/platform_data/usb-s3c2410_udc.h>
-@@ -1127,6 +1128,22 @@ struct platform_device s3c_device_timer[] = {
- 	[3] = { DEFINE_S3C_TIMER(3, IRQ_TIMER3) },
- 	[4] = { DEFINE_S3C_TIMER(4, IRQ_TIMER4) },
- };
-+
-+static struct resource samsung_pwm_resource[] = {
-+	DEFINE_RES_MEM(SAMSUNG_PA_TIMER, SZ_4K),
-+};
-+
-+struct platform_device samsung_device_pwm = {
-+	.name		= "samsung-pwm",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(samsung_pwm_resource),
-+	.resource	= samsung_pwm_resource,
-+};
-+
-+void __init samsung_pwm_set_platdata(struct samsung_pwm_variant *pd)
-+{
-+	samsung_device_pwm.dev.platform_data = pd;
-+}
- #endif /* CONFIG_SAMSUNG_DEV_PWM */
+diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
+index 553115b..d361b5e 100644
+--- a/drivers/clocksource/samsung_pwm_timer.c
++++ b/drivers/clocksource/samsung_pwm_timer.c
+@@ -54,6 +54,7 @@ EXPORT_SYMBOL(samsung_pwm_lock);
  
- /* RTC */
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 87d501f..0dc4ac4 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -134,6 +134,7 @@ extern struct platform_device exynos4_device_spdif;
+ struct samsung_pwm_clocksource {
+ 	void __iomem *base;
++	void __iomem *source_reg;
+ 	unsigned int irq[SAMSUNG_PWM_NUM];
+ 	struct samsung_pwm_variant variant;
  
- extern struct platform_device samsung_asoc_idma;
- extern struct platform_device samsung_device_keypad;
-+extern struct platform_device samsung_device_pwm;
+@@ -286,23 +287,6 @@ static void __init samsung_clockevent_init(void)
+ 	}
+ }
  
- /* s3c2440 specific devices */
+-static void __iomem *samsung_timer_reg(void)
+-{
+-	switch (pwm.source_id) {
+-	case 0:
+-	case 1:
+-	case 2:
+-	case 3:
+-		return pwm.base + pwm.source_id * 0x0c + 0x14;
+-
+-	case 4:
+-		return pwm.base + 0x40;
+-
+-	default:
+-		BUG();
+-	}
+-}
+-
+ /*
+  * Override the global weak sched_clock symbol with this
+  * local implementation which uses the clocksource to get some
+@@ -312,17 +296,11 @@ static void __iomem *samsung_timer_reg(void)
+  */
+ static u32 notrace samsung_read_sched_clock(void)
+ {
+-	void __iomem *reg = samsung_timer_reg();
+-
+-	if (!reg)
+-		return 0;
+-
+-	return ~__raw_readl(reg);
++	return ~__raw_readl(pwm.source_reg);
+ }
  
-diff --git a/arch/arm/plat-samsung/include/plat/pwm-core.h b/arch/arm/plat-samsung/include/plat/pwm-core.h
-new file mode 100644
-index 0000000..df50f5c
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/pwm-core.h
-@@ -0,0 +1,24 @@
-+/*
-+ * linux/arch/arm/plat-samsung/onenand-core.h
-+ *
-+ *  Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-+ *
-+ * Samsung PWM Controller core functions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+ static void __init samsung_clocksource_init(void)
+ {
+-	void __iomem *reg = samsung_timer_reg();
+ 	unsigned long pclk;
+ 	unsigned long clock_rate;
+ 	int ret;
+@@ -337,10 +315,15 @@ static void __init samsung_clocksource_init(void)
+ 	samsung_time_setup(pwm.source_id, pwm.tcnt_max);
+ 	samsung_time_start(pwm.source_id, true);
+ 
++	if (pwm.source_id == 4)
++		pwm.source_reg = pwm.base + 0x40;
++	else
++		pwm.source_reg = pwm.base + pwm.source_id * 0x0c + 0x14;
 +
-+#ifndef __ASM_ARCH_PWM_CORE_H
-+#define __ASM_ARCH_PWM_CORE_H __FILE__
-+
-+#include <clocksource/samsung_pwm.h>
-+
-+#ifdef CONFIG_SAMSUNG_DEV_PWM
-+extern void samsung_pwm_set_platdata(struct samsung_pwm_variant *pd);
-+#else
-+static inline void samsung_pwm_set_platdata(struct samsung_pwm_variant *pd) { }
-+#endif
-+
-+#endif /* __ASM_ARCH_PWM_CORE_H */
+ 	setup_sched_clock(samsung_read_sched_clock,
+ 						pwm.variant.bits, clock_rate);
+ 
+-	ret = clocksource_mmio_init(reg, "samsung_clocksource_timer",
++	ret = clocksource_mmio_init(pwm.source_reg, "samsung_clocksource_timer",
+ 					clock_rate, 250, pwm.variant.bits,
+ 					clocksource_mmio_readl_down);
+ 	if (ret)
 -- 
 1.8.2.1
