@@ -1,140 +1,217 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V6 22/30] thermal: exynos: Add support to access common
- register for multistance
-Date: Wed, 19 Jun 2013 19:53:29 -0400
-Message-ID: <51C24479.9080205@ti.com>
-References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com> <1371451599-31035-23-git-send-email-amit.daniel@samsung.com>
+From: =?EUC-KR?B?sei9wr/s?= <sw0312.kim@samsung.com>
+Subject: Re: [PATCH v3 2/3] drm/exynos: add support for exynos5420 mixer
+Date: Thu, 20 Jun 2013 11:03:17 +0900
+Message-ID: <51C262E5.6050605@samsung.com>
+References: <1371646269-21880-1-git-send-email-rahul.sharma@samsung.com>
+ <1371646269-21880-3-git-send-email-rahul.sharma@samsung.com>
+Reply-To: sw0312.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2KJAWURSHMDVJPIJUBOTU"
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:46890 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934604Ab3FSXxo (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:59638 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935237Ab3FTCDN convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Jun 2013 19:53:44 -0400
-In-Reply-To: <1371451599-31035-23-git-send-email-amit.daniel@samsung.com>
+	Wed, 19 Jun 2013 22:03:13 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MOO00L9W5OVQKB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Jun 2013 11:03:11 +0900 (KST)
+In-reply-to: <1371646269-21880-3-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, tomasz.figa@gmail.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-------enig2KJAWURSHMDVJPIJUBOTU
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Hello Rahul,
 
-On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
-> This patch adds support to parse one more common set of TMU register. F=
-irst
-> set of register belongs to each instance of TMU and second set belongs =
-to
-> common TMU registers.
+This patch is exactly same with v2 2/4 and only rebased on v3 1/3, so m=
+y
+ack is valid for this patch.
+
+On 2013=B3=E2 06=BF=F9 19=C0=CF 21:51, Rahul Sharma wrote:
+> Add support for exynos5420 mixer IP in the drm mixer driver.
 >=20
-> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 
-This patch is fine:
+Acked-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
+Anyway, this patch can be merged after merging [Patch v3 1/3] as like v=
+2.
 
-But please read my concern on next patch.
+Best Regards,
+- Seung-Woo Kim
 
 > ---
->  .../devicetree/bindings/thermal/exynos-thermal.txt |    6 +++++-
->  drivers/thermal/samsung/exynos_tmu.c               |   20 ++++++++++++=
-++++++++
->  2 files changed, 25 insertions(+), 1 deletions(-)
+>  .../devicetree/bindings/video/exynos_mixer.txt     |    1 +
+>  drivers/gpu/drm/exynos/exynos_mixer.c              |   49 ++++++++++=
++++++-----
+>  drivers/gpu/drm/exynos/regs-mixer.h                |    7 +++
+>  3 files changed, 45 insertions(+), 12 deletions(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.t=
-xt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> index 535fd0e..0ea33f7 100644
-> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> @@ -7,7 +7,11 @@
->  	       "samsung,exynos4210-tmu"
->  	       "samsung,exynos5250-tmu"
->  - interrupt-parent : The phandle for the interrupt controller
-> -- reg : Address range of the thermal registers
-> +- reg : Address range of the thermal registers. For soc's which has mu=
-ltiple
-> +	instances of TMU and some registers are shared across all TMU's like
-> +	interrupt related then 2 set of register has to supplied. First set
-> +	belongs	to each instance of TMU and second set belongs to common TMU
-> +	registers.
->  - interrupts : Should contain interrupt for thermal system
->  - clocks : The main clock for TMU device
->  - clock-names : Thermal system clock name
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
-sung/exynos_tmu.c
-> index 877dab8..150a869 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -40,6 +40,7 @@
->   * @id: identifier of the one instance of the TMU controller.
->   * @pdata: pointer to the tmu platform/configuration data
->   * @base: base address of the single instance of the TMU controller.
-> + * @base_common: base address of the common registers of the TMU contr=
-oller.
->   * @irq: irq number of the TMU controller.
->   * @soc: id of the SOC type.
->   * @irq_work: pointer to the irq work structure.
-> @@ -53,6 +54,7 @@ struct exynos_tmu_data {
->  	int id;
->  	struct exynos_tmu_platform_data *pdata;
->  	void __iomem *base;
-> +	void __iomem *base_common;
->  	int irq;
->  	enum soc_type soc;
->  	struct work_struct irq_work;
-> @@ -478,6 +480,24 @@ static int exynos_map_dt_data(struct platform_devi=
-ce *pdev)
->  		return -ENODEV;
->  	}
->  	data->pdata =3D pdata;
-> +	/*
-> +	 * Check if the TMU shares some registers and then try to map the
-> +	 * memory of common registers.
-> +	 */
-> +	if (!TMU_SUPPORTS(pdata, SHARED_MEMORY))
-> +		return 0;
-> +
-> +	if (of_address_to_resource(pdev->dev.of_node, 1, &res)) {
-> +		dev_err(&pdev->dev, "failed to get Resource 1\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	data->base_common =3D devm_ioremap(&pdev->dev, res.start,
-> +					resource_size(&res));
-> +	if (!data->base) {
-> +		dev_err(&pdev->dev, "Failed to ioremap memory\n");
-> +		return -ENOMEM;
+> diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt=
+ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> index 9131b99..3334b0a 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+> @@ -5,6 +5,7 @@ Required properties:
+>  	1) "samsung,exynos5-mixer" <DEPRECATED>
+>  	2) "samsung,exynos4210-mixer"
+>  	3) "samsung,exynos5250-mixer"
+> +	4) "samsung,exynos5420-mixer"
+> =20
+>  - reg: physical base address of the mixer and length of memory mappe=
+d
+>  	region.
+> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/=
+exynos/exynos_mixer.c
+> index 6225501..b1280b4 100644
+> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> @@ -78,6 +78,7 @@ struct mixer_resources {
+>  enum mixer_version_id {
+>  	MXR_VER_0_0_0_16,
+>  	MXR_VER_16_0_33_0,
+> +	MXR_VER_128_0_0_184,
+>  };
+> =20
+>  struct mixer_context {
+> @@ -283,17 +284,19 @@ static void mixer_cfg_scan(struct mixer_context=
+ *ctx, unsigned int height)
+>  	val =3D (ctx->interlace ? MXR_CFG_SCAN_INTERLACE :
+>  				MXR_CFG_SCAN_PROGRASSIVE);
+> =20
+> -	/* choosing between porper HD and SD mode */
+> -	if (height <=3D 480)
+> -		val |=3D MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD;
+> -	else if (height <=3D 576)
+> -		val |=3D MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD;
+> -	else if (height <=3D 720)
+> -		val |=3D MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
+> -	else if (height <=3D 1080)
+> -		val |=3D MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD;
+> -	else
+> -		val |=3D MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
+> +	if (ctx->mxr_ver !=3D MXR_VER_128_0_0_184) {
+> +		/* choosing between proper HD and SD mode */
+> +		if (height <=3D 480)
+> +			val |=3D MXR_CFG_SCAN_NTSC | MXR_CFG_SCAN_SD;
+> +		else if (height <=3D 576)
+> +			val |=3D MXR_CFG_SCAN_PAL | MXR_CFG_SCAN_SD;
+> +		else if (height <=3D 720)
+> +			val |=3D MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
+> +		else if (height <=3D 1080)
+> +			val |=3D MXR_CFG_SCAN_HD_1080 | MXR_CFG_SCAN_HD;
+> +		else
+> +			val |=3D MXR_CFG_SCAN_HD_720 | MXR_CFG_SCAN_HD;
 > +	}
 > =20
+>  	mixer_reg_writemask(res, MXR_CFG, val, MXR_CFG_SCAN_MASK);
+>  }
+> @@ -557,6 +560,14 @@ static void mixer_graph_buffer(struct mixer_cont=
+ext *ctx, int win)
+>  	/* setup geometry */
+>  	mixer_reg_write(res, MXR_GRAPHIC_SPAN(win), win_data->fb_width);
+> =20
+> +	/* setup display size */
+> +	if (ctx->mxr_ver =3D=3D MXR_VER_128_0_0_184 &&
+> +		win =3D=3D MIXER_DEFAULT_WIN) {
+> +		val  =3D MXR_MXR_RES_HEIGHT(win_data->fb_height);
+> +		val |=3D MXR_MXR_RES_WIDTH(win_data->fb_width);
+> +		mixer_reg_write(res, MXR_RESOLUTION, val);
+> +	}
+> +
+>  	val  =3D MXR_GRP_WH_WIDTH(win_data->crtc_width);
+>  	val |=3D MXR_GRP_WH_HEIGHT(win_data->crtc_height);
+>  	val |=3D MXR_GRP_WH_H_SCALE(x_ratio);
+> @@ -581,7 +592,8 @@ static void mixer_graph_buffer(struct mixer_conte=
+xt *ctx, int win)
+>  	mixer_cfg_layer(ctx, win, true);
+> =20
+>  	/* layer update mandatory for mixer 16.0.33.0 */
+> -	if (ctx->mxr_ver =3D=3D MXR_VER_16_0_33_0)
+> +	if (ctx->mxr_ver =3D=3D MXR_VER_16_0_33_0 ||
+> +		ctx->mxr_ver =3D=3D MXR_VER_128_0_0_184)
+>  		mixer_layer_update(ctx);
+> =20
+>  	mixer_run(ctx);
+> @@ -816,6 +828,7 @@ static void mixer_win_disable(void *ctx, int win)
+> =20
+>  static int mixer_check_mode(void *ctx, struct drm_display_mode *mode=
+)
+>  {
+> +	struct mixer_context *mixer_ctx =3D ctx;
+>  	u32 w, h;
+> =20
+>  	w =3D mode->hdisplay;
+> @@ -825,6 +838,10 @@ static int mixer_check_mode(void *ctx, struct dr=
+m_display_mode *mode)
+>  		mode->hdisplay, mode->vdisplay, mode->vrefresh,
+>  		(mode->flags & DRM_MODE_FLAG_INTERLACE) ? 1 : 0);
+> =20
+> +	if (mixer_ctx->mxr_ver =3D=3D MXR_VER_0_0_0_16 ||
+> +		mixer_ctx->mxr_ver =3D=3D MXR_VER_128_0_0_184)
+> +		return 0;
+> +
+>  	if ((w >=3D 464 && w <=3D 720 && h >=3D 261 && h <=3D 576) ||
+>  		(w >=3D 1024 && w <=3D 1280 && h >=3D 576 && h <=3D 720) ||
+>  		(w >=3D 1664 && w <=3D 1920 && h >=3D 936 && h <=3D 1080))
+> @@ -1115,6 +1132,11 @@ static int vp_resources_init(struct exynos_drm=
+_hdmi_context *ctx,
 >  	return 0;
 >  }
+> =20
+> +static struct mixer_drv_data exynos5420_mxr_drv_data =3D {
+> +	.version =3D MXR_VER_128_0_0_184,
+> +	.is_vp_enabled =3D 0,
+> +};
+> +
+>  static struct mixer_drv_data exynos5250_mxr_drv_data =3D {
+>  	.version =3D MXR_VER_16_0_33_0,
+>  	.is_vp_enabled =3D 0,
+> @@ -1145,6 +1167,9 @@ static struct of_device_id mixer_match_types[] =
+=3D {
+>  		.compatible =3D "samsung,exynos5250-mixer",
+>  		.data	=3D &exynos5250_mxr_drv_data,
+>  	}, {
+> +		.compatible =3D "samsung,exynos5420-mixer",
+> +		.data	=3D &exynos5420_mxr_drv_data,
+> +	}, {
+>  		/* end node */
+>  	}
+>  };
+> diff --git a/drivers/gpu/drm/exynos/regs-mixer.h b/drivers/gpu/drm/ex=
+ynos/regs-mixer.h
+> index 5d8dbc0..4537026 100644
+> --- a/drivers/gpu/drm/exynos/regs-mixer.h
+> +++ b/drivers/gpu/drm/exynos/regs-mixer.h
+> @@ -44,6 +44,9 @@
+>  #define MXR_CM_COEFF_Y			0x0080
+>  #define MXR_CM_COEFF_CB			0x0084
+>  #define MXR_CM_COEFF_CR			0x0088
+> +#define MXR_MO				0x0304
+> +#define MXR_RESOLUTION			0x0310
+> +
+>  #define MXR_GRAPHIC0_BASE_S		0x2024
+>  #define MXR_GRAPHIC1_BASE_S		0x2044
+> =20
+> @@ -119,6 +122,10 @@
+>  #define MXR_GRP_WH_WIDTH(x)		MXR_MASK_VAL(x, 26, 16)
+>  #define MXR_GRP_WH_HEIGHT(x)		MXR_MASK_VAL(x, 10, 0)
+> =20
+> +/* bits for MXR_RESOLUTION */
+> +#define MXR_MXR_RES_HEIGHT(x)		MXR_MASK_VAL(x, 26, 16)
+> +#define MXR_MXR_RES_WIDTH(x)		MXR_MASK_VAL(x, 10, 0)
+> +
+>  /* bits for MXR_GRAPHICn_SXY */
+>  #define MXR_GRP_SXY_SX(x)		MXR_MASK_VAL(x, 26, 16)
+>  #define MXR_GRP_SXY_SY(x)		MXR_MASK_VAL(x, 10, 0)
 >=20
 
-
 --=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
-------enig2KJAWURSHMDVJPIJUBOTU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlHCRHkACgkQCXcVR3XQvP2sFQEAvKszEOLhCJxyZvnVRVoJR3rm
-kwAZyTb+ge0h1w16S0IA/2UalkTnUDPYIuUHa3imIOFABrVDjkVtL9llmZbesj67
-=HJCV
------END PGP SIGNATURE-----
-
-------enig2KJAWURSHMDVJPIJUBOTU--
+Seung-Woo Kim
+Samsung Software R&D Center
+--
