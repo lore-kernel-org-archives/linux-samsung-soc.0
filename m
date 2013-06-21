@@ -1,141 +1,63 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 8/8] ARM: dts: Add camera device nodes for Exynos4412 TRATS2
- board
-Date: Fri, 21 Jun 2013 14:50:24 +0200
-Message-ID: <1371819024-12596-9-git-send-email-s.nawrocki@samsung.com>
-References: <1371819024-12596-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:23576 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965550Ab3FUMw1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 08:52:27 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOQ008TRUFEEXA0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 21 Jun 2013 21:52:26 +0900 (KST)
-In-reply-to: <1371819024-12596-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 08/10] Samsung SoC EXYNOS5420 for v3.11
+Date: Fri, 21 Jun 2013 15:03:43 +0200
+Message-ID: <201306211503.44079.arnd@arndb.de>
+References: <51C0BC74.1060502@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <51C0BC74.1060502@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chander Kashyap <chander.kashyap@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch enables the front camera using the internal
-camera ISP (FIMC-IS).
+On Tuesday 18 June 2013, Kukjin Kim wrote:
+> The following changes since commit 79d743c177f99d6854e152d9e7fac5bbbeb7c25e:
+> 
+>    clk: exynos5250: Add enum entries for divider clock of i2s1 and i2s2 
+> (2013-06-19 03:28:43 +0900)
+> 
+> are available in the git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+> tags/soc-exynos5420-1
+> 
+> for you to fetch changes up to eff4e7c7f32a4e4be60b19b209ffab5cb430b385:
+> 
+>    ARM: EXYNOS: extend soft-reset support for EXYNOS5420 (2013-06-19 
+> 04:09:37 +0900)
+> 
+> ----------------------------------------------------------------
+> based on tags/common-clk-audio
+> - add support for exynos5420 SoC
+> 
+> ----------------------------------------------------------------
+> Chander Kashyap (10):
+>        ARM: dts: fork out common EXYNOS5 nodes
+>        ARM: dts: list the CPU nodes for EXYNOS5250
+>        ARM: EXYNOS: Add support for EXYNOS5420 SoC
+>        serial: samsung: select EXYNOS specific driver data if 
+> ARCH_EXYNOS is defined
+>        ARM: EXYNOS: use four additional chipid bits to identify EXYNOS 
+> family
+>        clk: exynos5420: register clocks using common clock framework
+>        ARM: dts: Add initial device tree support for EXYNOS5420
+>        clocksource: exynos_mct: use (request/free)_irq calls for local 
+> timer registration
+>        ARM: EXYNOS: add secondary CPU boot base location for EXYNOS5420
+>        ARM: EXYNOS: extend soft-reset support for EXYNOS5420
+> 
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts |   91 +++++++++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
+Pulled into next/late now to avoid the dependencies.
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 826e42e..47c40df 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -58,6 +58,15 @@
- 			enable-active-high;
- 		};
- 
-+		cam_io_reg: voltage-regulator@3 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "CAM_SENSOR_A";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpm0 2 0>;
-+			enable-active-high;
-+		};
-+
- 		/* More to come */
- 	};
- 
-@@ -468,4 +477,86 @@
- 			gpios = <&gpj0 7 0>;
- 		};
- 	};
-+
-+	camera {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cam_port_b_clk_active>;
-+		status = "okay";
-+
-+		fimc_0: fimc@11800000 {
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+		};
-+
-+		fimc_1: fimc@11810000 {
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+		};
-+
-+		fimc_2: fimc@11820000 {
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+		};
-+
-+		fimc_3: fimc@11830000 {
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+		};
-+
-+		csis_1: csis@11890000 {
-+			vddcore-supply = <&ldo8_reg>;
-+			vddio-supply = <&ldo10_reg>;
-+			clock-frequency = <160000000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "okay";
-+
-+			/* Camera D (4) MIPI CSI-2 (CSIS1) */
-+			port@4 {
-+				reg = <4>;
-+				csis1_ep: endpoint {
-+					remote-endpoint = <&is_s5k6a3_ep>;
-+					data-lanes = <1>;
-+					samsung,csis-hs-settle = <18>;
-+					samsung,csis-wclk;
-+				};
-+			};
-+		};
-+
-+		fimc_lite_0: fimc-lite@12390000 {
-+			status = "okay";
-+		};
-+
-+		fimc_lite_1: fimc-lite@123A0000 {
-+			status = "okay";
-+		};
-+
-+		fimc-is@12000000 {
-+			pinctrl-0 = <&fimc_is_uart>;
-+			pinctrl-names = "default";
-+			status = "okay";
-+
-+			i2c1_isp: i2c-isp@12140000 {
-+				pinctrl-0 = <&fimc_is_i2c1>;
-+				pinctrl-names = "default";
-+
-+				s5k6a3@10 {
-+					compatible = "samsung,s5k6a3";
-+					reg = <0x10>;
-+					svdda-supply = <&cam_io_reg>;
-+					svddio-supply = <&ldo19_reg>;
-+					clock-frequency = <24000000>;
-+					samsung,camclk-out = <1>;
-+					gpios = <&gpm1 6 0>;
-+
-+					port {
-+						is_s5k6a3_ep: endpoint {
-+							remote-endpoint = <&csis1_ep>;
-+							data-lanes = <1>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
- };
--- 
-1.7.9.5
+	Arnd
