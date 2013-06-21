@@ -1,70 +1,61 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] MAINTAINERS: Update S5P/Exynos FIMC driver entry
-Date: Fri, 21 Jun 2013 15:11:13 +0200
-Message-ID: <1371820273-14461-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39361 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965746Ab3FUNL3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 09:11:29 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 00/18] Final Samsung PWM support cleanup
+Date: Fri, 21 Jun 2013 16:04:38 +0200
+Message-ID: <201306211604.38443.arnd@arndb.de>
+References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, Thierry Reding <thierry.reding@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This change is mainly to update the driver's path changed from
-drivers/media/platform/s5p-fimc to drivers/media/platform/exynos4-is/.
-While at it, remove non-existent files rule, move the whole entry to
-the Samsung drivers section and add the patch tracking system URL
-and git repository details.
+On Friday 21 June 2013, Tomasz Figa wrote:
+> Since we now have a proper Samsung PWM clocksource driver in place,
+> we can proceed with further cleanup of PWM timers support on Samsung SoCs.
+> 
+> This series attempts to achieve this goal by:
+>  1) moving remaining Samsung platforms to the new clocksource driver
+>  2) removing old clocksource driver
+>  3) adding new multiplatform- and DT-aware PWM driver
+>  4) moving all Samsung platforms to use the new PWM driver
+>  5) removing old PWM driver
+>  6) removing all PWM-related code that is not used anymore
+> 
+> Cleaning up the PWM driver is a bit tricky, because the design of current
+> driver makes it completely unsuitable for DT and multiplatform and would
+> require a heavy rework to make it usable, breaking any existing Samsung PWM
+> users by the way. To avoid any breakage I decided to keep the old driver,
+> add new one, move all platforms to it and then remove the old one.
+> 
+> See particular patches for more detailed descriptions.
+> 
+> On S3C6410-based Tiny6410 (Mini6410-compatible), after enabling pwm-beeper
+> and Exynos4210-based Origen board (with PWM0 attached to a scope):
+> 
+> Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> 
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
-Changes since v1:
- - added SCM details, moved to proper location to keep
-   alphabetical order
----
- MAINTAINERS |   19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+Looks good to me,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3d7782b..22435e8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1153,15 +1153,6 @@ L:	linux-media@vger.kernel.org
- S:	Maintained
- F:	drivers/media/platform/s5p-g2d/
- 
--ARM/SAMSUNG S5P SERIES FIMC SUPPORT
--M:	Kyungmin Park <kyungmin.park@samsung.com>
--M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
--L:	linux-arm-kernel@lists.infradead.org
--L:	linux-media@vger.kernel.org
--S:	Maintained
--F:	arch/arm/plat-samsung/include/plat/*fimc*
--F:	drivers/media/platform/s5p-fimc/
--
- ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
- M:	Kyungmin Park <kyungmin.park@samsung.com>
- M:	Kamil Debski <k.debski@samsung.com>
-@@ -6945,6 +6936,16 @@ L:	linux-media@vger.kernel.org
- S:	Supported
- F:	drivers/media/i2c/s5c73m3/*
- 
-+SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
-+M:	Kyungmin Park <kyungmin.park@samsung.com>
-+M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+L:	linux-media@vger.kernel.org
-+Q:	https://patchwork.linuxtv.org/project/linux-media/list/
-+T:	git git://linuxtv.org/snawrocki/samsung.git
-+S:	Supported
-+F:	drivers/media/platform/exynos4-is/
-+F:	include/media/s5p_fimc.h
-+
- SERIAL DRIVERS
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- L:	linux-serial@vger.kernel.org
--- 
-1.7.9.5
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+
+Two small comments:
+
+* always use 'git format-patch -M' to detect renames (patch 10)
+
+* for new code, don't use __raw_readl and similar functions but
+  use readl_relaxed or plain readl.
+
+	Arnd
