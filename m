@@ -1,78 +1,329 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 5/5] clk/exynos5420: assign sclk_pixel id to pixel clock divider
-Date: Fri, 21 Jun 2013 10:23:01 +0530
-Message-ID: <CAPdUM4PynOJyCa2wCfoo=7y-UgQdk1-L56OkoOz+hO7-FTd5og@mail.gmail.com>
-References: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com>
-	<1371565998-3642-6-git-send-email-rahul.sharma@samsung.com>
-	<CAPdUM4NUJv7E+KqrGgHsWHYnf89_2cbiMP_D6S1pWTW=XeZO+g@mail.gmail.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V6 07/30] thermal: exynos: Bifurcate exynos tmu driver and
+ configuration data
+Date: Fri, 21 Jun 2013 10:36:55 +0530
+Message-ID: <CADGdYn40Bk9C9DG74LDToiQdSEcVK7aCkgWwXkdWRDg4_Cv6tQ@mail.gmail.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
+	<1371451599-31035-8-git-send-email-amit.daniel@samsung.com>
+	<51C20810.5070601@ti.com>
+	<51C209F9.4000008@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:40059 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965527Ab3FUExC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 00:53:02 -0400
-Received: by mail-wg0-f41.google.com with SMTP id y10so249668wgg.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 21:53:01 -0700 (PDT)
-In-Reply-To: <CAPdUM4NUJv7E+KqrGgHsWHYnf89_2cbiMP_D6S1pWTW=XeZO+g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51C209F9.4000008@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, Mike Turquette <mturquette@linaro.org>
 
-+Mike
-
-On Tue, Jun 18, 2013 at 7:54 PM, Rahul Sharma <r.sh.open@gmail.com> wrote:
-> With this patch, it is at par with Exynos5250 and Exynos4 clocks
-> where sclk_pixel ID is assigned to a divider clock but in real,
-> sclk_pixel is listed under gate clocks (enum value).
+On Thu, Jun 20, 2013 at 1:13 AM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> On 19-06-2013 15:35, Eduardo Valentin wrote:
+>> Rui,
+>>
+>> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+>>> This code splits the exynos tmu driver code into SOC specific data parts.
+>>> This will simplify adding new SOC specific data to the same TMU controller.
+>>>
+>>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>
+>> This patch looks good to me, you may want to add my:
+>>
+>> Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
 >
-> Alternate to this, I can allocate a new ID, div_pixel, listed under
-> new category of Divider Clocks for Exyno4, 5250 and 5420.
-> div_pixel ID can be assigned to pixel clock dividers for all 3 SoCs.
-> This ID can be accessed by hdmi driver as usual. While sclk_pixel
-> ID can be left unused for Exyno4, 5250 as there are no pixel clock
-> gates. And, For 5420, sclk_pixel can optionally be used to
-> enable/disable the pixel clock gate.
+> Yet another minor before adding my ack, sorry this one almost fell into
+> the cracks (see below):
 >
-> Regards,
-> Rahul Sharma.
+>>
+>>> ---
+>>>  drivers/thermal/samsung/Kconfig           |    3 +-
+>>>  drivers/thermal/samsung/Makefile          |    1 +
+>>>  drivers/thermal/samsung/exynos_tmu.c      |   67 ++-----------------------
+>>>  drivers/thermal/samsung/exynos_tmu_data.c |   78 +++++++++++++++++++++++++++++
+>>>  drivers/thermal/samsung/exynos_tmu_data.h |   40 +++++++++++++++
+>>>  5 files changed, 125 insertions(+), 64 deletions(-)
+>>>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+>>>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
+>>>
+>>> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
+>>> index f8100b1..b653f15 100644
+>>> --- a/drivers/thermal/samsung/Kconfig
+>>> +++ b/drivers/thermal/samsung/Kconfig
+>>> @@ -5,7 +5,8 @@ config EXYNOS_THERMAL
+>>>        If you say yes here you get support for the TMU (Thermal Management
+>>>        Unit) driver for SAMSUNG EXYNOS series of soc. This driver initialises
+>>>        the TMU, reports temperature and handles cooling action if defined.
+>>> -      This driver uses the exynos core thermal API's.
+>>> +      This driver uses the exynos core thermal API's and TMU configuration
+>>> +      data from the supported soc's.
+>>>
+>>>  config EXYNOS_THERMAL_CORE
+>>>      bool "Core thermal framework support for EXYNOS SOC's"
+>>> diff --git a/drivers/thermal/samsung/Makefile b/drivers/thermal/samsung/Makefile
+>>> index 22528d6..c09d830 100644
+>>> --- a/drivers/thermal/samsung/Makefile
+>>> +++ b/drivers/thermal/samsung/Makefile
+>>> @@ -3,4 +3,5 @@
+>>>  #
+>>>  obj-$(CONFIG_EXYNOS_THERMAL)                        += exynos_thermal.o
+>>>  exynos_thermal-y                            := exynos_tmu.o
+>>> +exynos_thermal-y                            += exynos_tmu_data.o
+>>>  exynos_thermal-$(CONFIG_EXYNOS_THERMAL_CORE)        += exynos_thermal_common.o
+>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>>> index 6aa2fd2..5df04a1 100644
+>>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>>> @@ -30,6 +30,7 @@
+>>>
+>>>  #include "exynos_thermal_common.h"
+>>>  #include "exynos_tmu.h"
+>>> +#include "exynos_tmu_data.h"
+>>>
+>>>  /* Exynos generic registers */
+>>>  #define EXYNOS_TMU_REG_TRIMINFO             0x0
+>>> @@ -381,66 +382,6 @@ static struct thermal_sensor_conf exynos_sensor_conf = {
+>>>      .write_emul_temp        = exynos_tmu_set_emulation,
+>>>  };
+>>>
+>>> -#if defined(CONFIG_CPU_EXYNOS4210)
+>>> -static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
+>>> -    .threshold = 80,
+>>> -    .trigger_levels[0] = 5,
+>>> -    .trigger_levels[1] = 20,
+>>> -    .trigger_levels[2] = 30,
+>>> -    .trigger_level0_en = 1,
+>>> -    .trigger_level1_en = 1,
+>>> -    .trigger_level2_en = 1,
+>>> -    .trigger_level3_en = 0,
+>>> -    .gain = 15,
+>>> -    .reference_voltage = 7,
+>>> -    .cal_type = TYPE_ONE_POINT_TRIMMING,
+>>> -    .freq_tab[0] = {
+>>> -            .freq_clip_max = 800 * 1000,
+>>> -            .temp_level = 85,
+>>> -    },
+>>> -    .freq_tab[1] = {
+>>> -            .freq_clip_max = 200 * 1000,
+>>> -            .temp_level = 100,
+>>> -    },
+>>> -    .freq_tab_count = 2,
+>>> -    .type = SOC_ARCH_EXYNOS4210,
+>>> -};
+>>> -#define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
+>>> -#else
+>>> -#define EXYNOS4210_TMU_DRV_DATA (NULL)
+>>> -#endif
+>>> -
+>>> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
+>>> -static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
+>>> -    .threshold_falling = 10,
+>>> -    .trigger_levels[0] = 85,
+>>> -    .trigger_levels[1] = 103,
+>>> -    .trigger_levels[2] = 110,
+>>> -    .trigger_level0_en = 1,
+>>> -    .trigger_level1_en = 1,
+>>> -    .trigger_level2_en = 1,
+>>> -    .trigger_level3_en = 0,
+>>> -    .gain = 8,
+>>> -    .reference_voltage = 16,
+>>> -    .noise_cancel_mode = 4,
+>>> -    .cal_type = TYPE_ONE_POINT_TRIMMING,
+>>> -    .efuse_value = 55,
+>>> -    .freq_tab[0] = {
+>>> -            .freq_clip_max = 800 * 1000,
+>>> -            .temp_level = 85,
+>>> -    },
+>>> -    .freq_tab[1] = {
+>>> -            .freq_clip_max = 200 * 1000,
+>>> -            .temp_level = 103,
+>>> -    },
+>>> -    .freq_tab_count = 2,
+>>> -    .type = SOC_ARCH_EXYNOS,
+>>> -};
+>>> -#define EXYNOS_TMU_DRV_DATA (&exynos_default_tmu_data)
+>>> -#else
+>>> -#define EXYNOS_TMU_DRV_DATA (NULL)
+>>> -#endif
+>>> -
+>>>  #ifdef CONFIG_OF
+>>>  static const struct of_device_id exynos_tmu_match[] = {
+>>>      {
+>>> @@ -449,11 +390,11 @@ static const struct of_device_id exynos_tmu_match[] = {
+>>>      },
+>>>      {
+>>>              .compatible = "samsung,exynos4412-tmu",
+>>> -            .data = (void *)EXYNOS_TMU_DRV_DATA,
+>>> +            .data = (void *)EXYNOS5250_TMU_DRV_DATA,
+>>>      },
+>>>      {
+>>>              .compatible = "samsung,exynos5250-tmu",
+>>> -            .data = (void *)EXYNOS_TMU_DRV_DATA,
+>>> +            .data = (void *)EXYNOS5250_TMU_DRV_DATA,
+>>>      },
+>>>      {},
+>>>  };
+>>> @@ -467,7 +408,7 @@ static struct platform_device_id exynos_tmu_driver_ids[] = {
+>>>      },
+>>>      {
+>>>              .name           = "exynos5250-tmu",
+>>> -            .driver_data    = (kernel_ulong_t)EXYNOS_TMU_DRV_DATA,
+>>> +            .driver_data    = (kernel_ulong_t)EXYNOS5250_TMU_DRV_DATA,
+>>>      },
+>>>      { },
+>>>  };
+>>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+>>> new file mode 100644
+>>> index 0000000..13a60ca
+>>> --- /dev/null
+>>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+>>> @@ -0,0 +1,78 @@
+>>> +/*
+>>> + * exynos_tmu_data.c - Samsung EXYNOS tmu data file
+>>> + *
+>>> + *  Copyright (C) 2013 Samsung Electronics
+>>> + *  Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License as published by
+>>> + * the Free Software Foundation; either version 2 of the License, or
+>>> + * (at your option) any later version.
+>>> + *
+>>> + * This program is distributed in the hope that it will be useful,
+>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> + * GNU General Public License for more details.
+>>> + *
+>>> + * You should have received a copy of the GNU General Public License
+>>> + * along with this program; if not, write to the Free Software
+>>> + * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>> + *
+>>> + */
+>>> +
+>>> +#include "exynos_thermal_common.h"
 >
-> On Tue, Jun 18, 2013 at 8:03 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> sclk_pixel is used to represent pixel clock divider on all exynos
->> SoCs not as a gate clock. It is queried in driver to pass as the
->> parent to hdmi clock while switching between parents. A new ID can
->> be asssigned Pixel gate clock which is currently not in use. Pixel
->> clock gate is default 'on'.
+> You have to:
+> +#include "exynos_tmu_data.h"
+>
+> Otherwise, you will get:
+>   CC [M]  drivers/thermal/samsung/exynos_tmu.o
+> drivers/thermal/samsung/exynos_tmu_data.c:27:39: warning: symbol
+> 'exynos4210_default_tmu_data' was not declared. Should it be static?
+> drivers/thermal/samsung/exynos_tmu_data.c:53:39: warning: symbol
+> 'exynos5250_default_tmu_data' was not declared. Should it be static?
+Ok.
+>
+>
+>>> +#include "exynos_tmu.h"
+>
+>>> +
+>>> +#if defined(CONFIG_CPU_EXYNOS4210)
+>>> +struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
+>>> +    .threshold = 80,
+>>> +    .trigger_levels[0] = 5,
+>>> +    .trigger_levels[1] = 20,
+>>> +    .trigger_levels[2] = 30,
+>>> +    .trigger_level0_en = 1,
+>>> +    .trigger_level1_en = 1,
+>>> +    .trigger_level2_en = 1,
+>>> +    .trigger_level3_en = 0,
+>>> +    .gain = 15,
+>>> +    .reference_voltage = 7,
+>>> +    .cal_type = TYPE_ONE_POINT_TRIMMING,
+>>> +    .freq_tab[0] = {
+>>> +            .freq_clip_max = 800 * 1000,
+>>> +            .temp_level = 85,
+>>> +    },
+>>> +    .freq_tab[1] = {
+>>> +            .freq_clip_max = 200 * 1000,
+>>> +            .temp_level = 100,
+>>> +    },
+>>> +    .freq_tab_count = 2,
+>>> +    .type = SOC_ARCH_EXYNOS4210,
+>>> +};
+>>> +#endif
+>>> +
+>>> +#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
+>>> +struct exynos_tmu_platform_data const exynos5250_default_tmu_data = {
+>>> +    .threshold_falling = 10,
+>>> +    .trigger_levels[0] = 85,
+>>> +    .trigger_levels[1] = 103,
+>>> +    .trigger_levels[2] = 110,
+>>> +    .trigger_level0_en = 1,
+>>> +    .trigger_level1_en = 1,
+>>> +    .trigger_level2_en = 1,
+>>> +    .trigger_level3_en = 0,
+>>> +    .gain = 8,
+>>> +    .reference_voltage = 16,
+>>> +    .noise_cancel_mode = 4,
+>>> +    .cal_type = TYPE_ONE_POINT_TRIMMING,
+>>> +    .efuse_value = 55,
+>>> +    .freq_tab[0] = {
+>>> +            .freq_clip_max = 800 * 1000,
+>>> +            .temp_level = 85,
+>>> +    },
+>>> +    .freq_tab[1] = {
+>>> +            .freq_clip_max = 200 * 1000,
+>>> +            .temp_level = 103,
+>>> +    },
+>>> +    .freq_tab_count = 2,
+>>> +    .type = SOC_ARCH_EXYNOS,
+>>> +};
+>>> +#endif
+>>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+>>> new file mode 100644
+>>> index 0000000..b7835fe
+>>> --- /dev/null
+>>> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+>>> @@ -0,0 +1,40 @@
+>>> +/*
+>>> + * exynos_tmu_data.h - Samsung EXYNOS tmu data header file
+>>> + *
+>>> + *  Copyright (C) 2013 Samsung Electronics
+>>> + *  Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License as published by
+>>> + * the Free Software Foundation; either version 2 of the License, or
+>>> + * (at your option) any later version.
+>>> + *
+>>> + * This program is distributed in the hope that it will be useful,
+>>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+>>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>>> + * GNU General Public License for more details.
+>>> + *
+>>> + * You should have received a copy of the GNU General Public License
+>>> + * along with this program; if not, write to the Free Software
+>>> + * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>> + *
+>>> + */
+>>> +
+>>> +#ifndef _EXYNOS_TMU_DATA_H
+>>> +#define _EXYNOS_TMU_DATA_H
+>>> +
+>>> +#if defined(CONFIG_CPU_EXYNOS4210)
+>>> +extern struct exynos_tmu_platform_data const exynos4210_default_tmu_data;
+>>> +#define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
+>>> +#else
+>>> +#define EXYNOS4210_TMU_DRV_DATA (NULL)
+>>> +#endif
+>>> +
+>>> +#if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))
+>>> +extern struct exynos_tmu_platform_data const exynos5250_default_tmu_data;
+>>> +#define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
+>>> +#else
+>>> +#define EXYNOS5250_TMU_DRV_DATA (NULL)
+>>> +#endif
+>>> +
+>>> +#endif /*_EXYNOS_TMU_DATA_H*/
+>>>
 >>
->> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-exynos5420.c |    4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->> index 59cf177..edd0696 100644
->> --- a/drivers/clk/samsung/clk-exynos5420.c
->> +++ b/drivers/clk/samsung/clk-exynos5420.c
->> @@ -434,7 +434,7 @@ struct samsung_div_clock exynos5420_div_clks[] __initdata = {
->>         DIV(none, "dout_fimd1", "mout_fimd1", DIV_DISP10, 0, 4),
->>         DIV(none, "dout_mipi1", "mout_mipi1", DIV_DISP10, 16, 8),
->>         DIV(none, "dout_dp1", "mout_dp1", DIV_DISP10, 24, 4),
->> -       DIV(none, "dout_hdmi_pixel", "mout_pixel", DIV_DISP10, 28, 4),
->> +       DIV(sclk_pixel, "dout_hdmi_pixel", "mout_pixel", DIV_DISP10, 28, 4),
->>
->>         /* Audio Block */
->>         DIV(none, "dout_maudio0", "mout_maudio0", DIV_MAU, 20, 4),
->> @@ -570,7 +570,7 @@ struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->>                 GATE_TOP_SCLK_DISP1, 3, CLK_SET_RATE_PARENT, 0),
->>         GATE(sclk_hdmi, "sclk_hdmi", "mout_hdmi",
->>                 GATE_TOP_SCLK_DISP1, 9, CLK_SET_RATE_PARENT, 0),
->> -       GATE(sclk_pixel, "sclk_pixel", "dout_hdmi_pixel",
->> +       GATE(none, "sclk_pixel", "dout_hdmi_pixel",
->>                 GATE_TOP_SCLK_DISP1, 10, CLK_SET_RATE_PARENT, 0),
->>         GATE(sclk_dp1, "sclk_dp1", "dout_dp1",
->>                 GATE_TOP_SCLK_DISP1, 20, CLK_SET_RATE_PARENT, 0),
->> --
->> 1.7.10.4
->>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
