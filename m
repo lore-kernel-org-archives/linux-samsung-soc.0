@@ -1,145 +1,251 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v6 8/8] ARM: dts: Add dts file for S3C6410-based SMDK6410 board
-Date: Fri, 21 Jun 2013 02:35:24 +0200
-Message-ID: <1371774924-9224-9-git-send-email-tomasz.figa@gmail.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v6 2/8] ARM: s3c64xx: Bypass legacy initialization when
+ booting with DT
+Date: Fri, 21 Jun 2013 02:35:18 +0200
+Message-ID: <1371774924-9224-3-git-send-email-tomasz.figa@gmail.com>
 References: <1371774924-9224-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f169.google.com ([209.85.215.169]:62188 "EHLO
-	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965851Ab3FUAgC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 20:36:02 -0400
-In-Reply-To: <1371774924-9224-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1371774924-9224-1-git-send-email-tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Benoit Cousson <benoit.cousson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>, Benoit Cousson <benoit.cousson@linaro.org>, devicetree-discuss@lists.ozlabs.org, Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Nicolas Pitre <nico@fluxnic.net>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-This patch adds basic device tree sources for SAMSUNG SMDK6410 board
-based on SAMSUNG S3C6410 SoC.
+This patch allows bypassing most of legacy initialization when booting
+an S3C64xx-based board using device tree, by adding conditional checks
+for DT presence to initcalls which are no longer necessary when booting
+with DT..
 
-Currently only UARTs, SD channel 0 and 100Mbps ethernet (SMSC911x) are
-supported.
-
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- arch/arm/boot/dts/Makefile             |  3 +-
- arch/arm/boot/dts/s3c6410-smdk6410.dts | 93 ++++++++++++++++++++++++++++++++++
- 2 files changed, 95 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/s3c6410-smdk6410.dts
+ arch/arm/mach-s3c64xx/common.c  | 12 ++++++++++++
+ arch/arm/mach-s3c64xx/dma.c     |  9 +++++++++
+ arch/arm/mach-s3c64xx/irq-pm.c  |  9 +++++++++
+ arch/arm/mach-s3c64xx/s3c6400.c |  9 +++++++++
+ arch/arm/mach-s3c64xx/s3c6410.c |  9 +++++++++
+ arch/arm/plat-samsung/init.c    | 12 +++++++++++-
+ 6 files changed, 59 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index acf41d7..0382554 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -161,7 +161,8 @@ dtb-$(CONFIG_ARCH_U8500) += snowball.dtb \
- 	hrefv60plus.dtb \
- 	ccu9540.dtb
- dtb-$(CONFIG_ARCH_S3C24XX) += s3c2416-smdk2416.dtb
--dtb-$(CONFIG_ARCH_S3C64XX) += s3c6410-mini6410.dtb
-+dtb-$(CONFIG_ARCH_S3C64XX) += s3c6410-mini6410.dtb \
-+	s3c6410-smdk6410.dtb
- dtb-$(CONFIG_ARCH_SHMOBILE) += emev2-kzm9d.dtb \
- 	r8a7740-armadillo800eva.dtb \
- 	r8a7778-bockw.dtb \
-diff --git a/arch/arm/boot/dts/s3c6410-smdk6410.dts b/arch/arm/boot/dts/s3c6410-smdk6410.dts
-new file mode 100644
-index 0000000..91341a5
---- /dev/null
-+++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
-@@ -0,0 +1,93 @@
+diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
+index bf00e60..77a22c6 100644
+--- a/arch/arm/mach-s3c64xx/common.c
++++ b/arch/arm/mach-s3c64xx/common.c
+@@ -14,6 +14,10 @@
+  * published by the Free Software Foundation.
+  */
+ 
 +/*
-+ * Samsung S3C6410 based SMDK6410 board device tree source.
-+ *
-+ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-+ *
-+ * Device tree source file for SAMSUNG SMDK6410 board which is based on
-+ * Samsung's S3C6410 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
 +
-+/dts-v1/;
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+@@ -202,6 +206,10 @@ void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
+ 
+ static __init int s3c64xx_dev_init(void)
+ {
++	/* Not applicable when using DT. */
++	if (of_have_populated_dt())
++		return 0;
 +
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
+ 	subsys_system_register(&s3c64xx_subsys, NULL);
+ 	return device_register(&s3c64xx_dev);
+ }
+@@ -403,6 +411,10 @@ static int __init s3c64xx_init_irq_eint(void)
+ {
+ 	int irq;
+ 
++	/* On DT-enabled systems EINTs are handled by pinctrl-s3c64xx driver. */
++	if (of_have_populated_dt())
++		return -ENODEV;
 +
-+#include "s3c6410.dtsi"
+ 	for (irq = IRQ_EINT(0); irq <= IRQ_EINT(27); irq++) {
+ 		irq_set_chip_and_handler(irq, &s3c_irq_eint, handle_level_irq);
+ 		irq_set_chip_data(irq, (void *)eint_irq_to_bit(irq));
+diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+index c511dfa..7e22c21 100644
+--- a/arch/arm/mach-s3c64xx/dma.c
++++ b/arch/arm/mach-s3c64xx/dma.c
+@@ -12,6 +12,10 @@
+  * published by the Free Software Foundation.
+ */
+ 
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
 +
-+/ {
-+	model = "SAMSUNG SMDK6410 board based on S3C6410";
-+	compatible = "samsung,mini6410", "samsung,s3c6410";
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+@@ -24,6 +28,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/amba/pl080.h>
++#include <linux/of.h>
+ 
+ #include <mach/dma.h>
+ #include <mach/map.h>
+@@ -726,6 +731,10 @@ static int __init s3c64xx_dma_init(void)
+ {
+ 	int ret;
+ 
++	/* This driver is not supported when booting with device tree. */
++	if (of_have_populated_dt())
++		return -ENODEV;
 +
-+	memory {
-+		reg = <0x50000000 0x8000000>;
-+	};
+ 	printk(KERN_INFO "%s: Registering DMA channels\n", __func__);
+ 
+ 	dma_pool = dma_pool_create("DMA-LLI", NULL, sizeof(struct pl080s_lli), 16, 0);
+diff --git a/arch/arm/mach-s3c64xx/irq-pm.c b/arch/arm/mach-s3c64xx/irq-pm.c
+index c3da1b6..1649c0d 100644
+--- a/arch/arm/mach-s3c64xx/irq-pm.c
++++ b/arch/arm/mach-s3c64xx/irq-pm.c
+@@ -12,12 +12,17 @@
+  * published by the Free Software Foundation.
+  */
+ 
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
 +
-+	chosen {
-+		bootargs = "console=ttySAC0,115200n8 earlyprintk rootwait root=/dev/mmcblk0p1";
-+	};
+ #include <linux/kernel.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/interrupt.h>
+ #include <linux/serial_core.h>
+ #include <linux/irq.h>
+ #include <linux/io.h>
++#include <linux/of.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -101,6 +106,10 @@ static struct syscore_ops s3c64xx_irq_syscore_ops = {
+ 
+ static __init int s3c64xx_syscore_init(void)
+ {
++	/* Appropriate drivers (pinctrl, uart) handle this when using DT. */
++	if (of_have_populated_dt())
++		return 0;
 +
-+	fixed-rate-clocks {
-+		xxti {
-+			compatible = "samsung,clock-fin-pll";
-+			clock-frequency = <12000000>;
-+		};
+ 	register_syscore_ops(&s3c64xx_irq_syscore_ops);
+ 
+ 	return 0;
+diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
+index 331fe8e..3db0c98 100644
+--- a/arch/arm/mach-s3c64xx/s3c6400.c
++++ b/arch/arm/mach-s3c64xx/s3c6400.c
+@@ -9,6 +9,10 @@
+  * published by the Free Software Foundation.
+ */
+ 
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
 +
-+		xusbxti {
-+			compatible = "samsung,clock-xusbxti";
-+			clock-frequency = <48000000>;
-+		};
-+	};
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/interrupt.h>
+@@ -20,6 +24,7 @@
+ #include <linux/device.h>
+ #include <linux/serial_core.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -76,6 +81,10 @@ static struct device s3c6400_dev = {
+ 
+ static int __init s3c6400_core_init(void)
+ {
++	/* Not applicable when using DT. */
++	if (of_have_populated_dt())
++		return 0;
 +
-+	srom-cs1@18000000 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		reg = <0x18000000 0x8000000>;
-+		ranges;
+ 	return subsys_system_register(&s3c6400_subsys, NULL);
+ }
+ 
+diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
+index 7e6fa12..72b2278 100644
+--- a/arch/arm/mach-s3c64xx/s3c6410.c
++++ b/arch/arm/mach-s3c64xx/s3c6410.c
+@@ -10,6 +10,10 @@
+  * published by the Free Software Foundation.
+ */
+ 
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
 +
-+		ethernet@18000000 {
-+			compatible = "smsc,lan9115";
-+			reg = <0x18000000 0x10000>;
-+			interrupt-parent = <&gpn>;
-+			interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
-+			phy-mode = "mii";
-+			reg-io-width = <4>;
-+			smsc,force-internal-phy;
-+		};
-+	};
-+};
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/interrupt.h>
+@@ -21,6 +25,7 @@
+ #include <linux/device.h>
+ #include <linux/serial_core.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -79,6 +84,10 @@ static struct device s3c6410_dev = {
+ 
+ static int __init s3c6410_core_init(void)
+ {
++	/* Not applicable when using DT. */
++	if (of_have_populated_dt())
++		return 0;
 +
-+&sdhci0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
+ 	return subsys_system_register(&s3c6410_subsys, NULL);
+ }
+ 
+diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
+index 3e5c461..e92aee2 100644
+--- a/arch/arm/plat-samsung/init.c
++++ b/arch/arm/plat-samsung/init.c
+@@ -11,12 +11,18 @@
+  * published by the Free Software Foundation.
+ */
+ 
++/*
++ * NOTE: Code in this file is not used on S3C64xx when booting with
++ * Device Tree support.
++ */
 +
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_data>, <&uart0_fctl>;
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_data>;
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2_data>;
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart3_data>;
-+	status = "okay";
-+};
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+ #include <linux/ioport.h>
+ #include <linux/serial_core.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ #include <mach/hardware.h>
+ 
+@@ -147,8 +153,12 @@ static int __init s3c_arch_init(void)
+ 
+ 	// do the correct init for cpu
+ 
+-	if (cpu == NULL)
++	if (cpu == NULL) {
++		/* Not needed when booting with device tree. */
++		if (of_have_populated_dt())
++			return 0;
+ 		panic("s3c_arch_init: NULL cpu\n");
++	}
+ 
+ 	ret = (cpu->init)();
+ 	if (ret != 0)
 -- 
 1.8.2.1
