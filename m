@@ -1,53 +1,47 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH V10 0/4] PCIe support for Samsung Exynos5440 SoC
-Date: Fri, 21 Jun 2013 09:31:58 +0200
-Message-ID: <201306210931.58428.arnd@arndb.de>
-References: <003901ce6e50$03d039a0$0b70ace0$@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 08/10] Samsung SoC EXYNOS5420 for v3.11
+Date: Fri, 21 Jun 2013 09:36:43 +0200
+Message-ID: <201306210936.43780.arnd@arndb.de>
+References: <51C0BC74.1060502@samsung.com> <201306202258.26968.arnd@arndb.de> <25bc01ce6e09$b149fc20$13ddf460$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <003901ce6e50$03d039a0$0b70ace0$@samsung.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Mohit KUMAR' <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Andrew Murray' <andrew.murray-5wv7dgnIgG8@public.gmane.org>, 'Pratyush Anand' <pratyush.anand-qxv4g6HH51o@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.8]:61613 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1422827Ab3FUHgy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Jun 2013 03:36:54 -0400
+In-Reply-To: <25bc01ce6e09$b149fc20$13ddf460$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Chander Kashyap' <chander.kashyap@linaro.org>
 
-On Friday 21 June 2013, Jingoo Han wrote:
-> Changes between v9 and v10:
->   * Changed the file name from 'pci-designware.c' to 'pcie-designware.c'
->     guided by Pratyush Anand, because synopsis pcie and pci controllers
->     are different.
->   * Fixed the typos of document, reported by Sachin Kamat.
+On Friday 21 June 2013, Kukjin Kim wrote:
+> > I'll probably have to create a next/soc2 branch, but
+> > will first try to merge the Renesas pull requests, which may have
+> > similar problems.
+> > 
+> > If it's possible to rebase this one not to have any dependencies
+> > other than the branches merged into next/cleanup and next/soc,
+> > I can pull it more easily, as long as I can figure out how
+> > to merge it with the common-clk-audio branch.
+> > 
+> I see, BTW as you can see, the common-clk-audio touches all of samsung dt
+> files to use '#include' instead of '/include/' so I couldn't remove the
+> dependencies :( sorry about that.
 > 
-> Changes between v8 and v9:
->   * Changed the file name from 'exynos-pcie.txt' to 'designware-pcie.txt'.
->   * Added 'snps,dw-pcie' string to compatible property.
-> 
-> Changes between v7 and v8:
->   * Changed the file name from 'pci-exynos.c' to 'pci-designware.c',
->     and added a generic string for compatible property to exynos-pcie.txt
->   * Moved pci_add_resource_offset() for I/O space to the 'if' clause
->   * Added Arnd's Acked-by
-> 
-> Changes between v6 and v7:
->   * Split ARM DT patch to two patches
->   * Fixed node naming
->   * Added Arnd's Acked-by
+> If anything is required, please kindly let me know.
 
-Ok, that takes care of all my comments.
+No, we'll figure it out.
 
-Bjorn, are you still considering to merge this for 3.11 or have you
-closed your tree for the merge window? I think it would be good to get
-it in.
+I think a better solution would have been to do the change do the
+dts files in a separate "cleanup" branch and have everything else
+that touches those files build on that branch. That way you could
+have maintained the flat hierarchy.
+
+I'll just merge it as a 'late' branch for now.
 
 	Arnd
