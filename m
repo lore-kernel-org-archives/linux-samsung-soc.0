@@ -1,72 +1,147 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 0/5] clk/exynos5420: add clocks for hdmi subsystem
-Date: Fri, 21 Jun 2013 10:17:35 +0530
-Message-ID: <CAPdUM4NxCKtKrZg1RYD0=83jDYt9Nzd3paYL53ZL9tt2zfJy7A@mail.gmail.com>
-References: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com>
-	<CAPdUM4MtBXMaZDDRT1aKsS=HzwjpbyMY85oRLMbk-KvJCU1hag@mail.gmail.com>
-	<51C1B9AD.8060804@samsung.com>
-	<20130621043252.9136.66418@quantum>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and
+ PLL36xx for samsung SoCs
+Date: Fri, 21 Jun 2013 10:18:01 +0530
+Message-ID: <CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
+References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
+	<3788098.20c4sNn9AM@amdc1227>
+	<CAKew6eUOy4=D08v_iq7CTRY5gvt37VAN7Z7WOr2Yt25znDJb2g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:54187 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755177Ab3FUErh (ORCPT
+Received: from mail-we0-f170.google.com ([74.125.82.170]:34506 "EHLO
+	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757112Ab3FUEsD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 00:47:37 -0400
-Received: by mail-we0-f176.google.com with SMTP id t56so5915875wes.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 21:47:36 -0700 (PDT)
-In-Reply-To: <20130621043252.9136.66418@quantum>
+	Fri, 21 Jun 2013 00:48:03 -0400
+Received: by mail-we0-f170.google.com with SMTP id w57so6142782wes.15
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 21:48:01 -0700 (PDT)
+In-Reply-To: <CAKew6eUOy4=D08v_iq7CTRY5gvt37VAN7Z7WOr2Yt25znDJb2g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Doug Anderson <dianders@chromium.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, Andrew Bresticker <abrestic@chromium.org>
 
-On Fri, Jun 21, 2013 at 10:02 AM, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Kukjin Kim (2013-06-19 07:01:17)
->> On 06/19/13 13:04, Rahul Sharma wrote:
->> > + mike
->> >
->> Mike, I'm waiting for your reply on this. If you're OK, let me take this
->> series on top of exynos5420 stuff in samsung tree.
+Hi Mr. Kim,
+
+On Thu, Jun 20, 2013 at 3:37 PM, Yadwinder Singh Brar
+<yadi.brar01@gmail.com> wrote:
+> Hi Tomasz,
+>
+> On Thu, Jun 20, 2013 at 3:30 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Yadwinder, Vikas,
 >>
->> Of course, if any concerns, please let me know.
->
-> I never got these patches.  I'm not subscribed to devicetree-devel or
-> linux-samsung so I only got two replies to patch #0, but none of the
-> code. Can you or Rajul resend?
->
+>> On Tuesday 11 of June 2013 15:01:05 Yadwinder Singh Brar wrote:
+>>> This patch series does the following:
+>>>
+>>>  1) Unifies the clk strutures  and registration function used for PLL35xx
+>>> & PLL36xx, to factor out possible common code.
+>>>
+>>>  2) Defines a common rate_table which will contain recommended p, m, s
+>>> and k values for supported rates that needs to be changed for changing
+>>> corresponding PLL's rate
+>>>
+>>>  3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
+>>>
+>>> changes since v6:
+>>>       - Splited the patch adding samsung_clk_register_pll() into definition
+>>>       addition, SoC specific migration and cleanup patches.
+>>>       - Addressed some NIT comments.
+>>
+>> This version looks good to me. Thanks for your work on improving this
+>> series again!
+>>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>>
 
-Sure mike.
 
+Can you apply this series..
+
+
+>
+> Thanks for helping to improve this series.
+>
 > Thanks,
-> Mike
+> Yadwinder
 >
+>> Best regards,
+>> Tomasz
 >>
->> Thanks,
->> - Kukjin
->>
->> > On Tue, Jun 18, 2013 at 8:03 PM, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
->> >> Add clock changes for hdmi subsystem for exynos5250 SoC. These
->> >> include addition of new clocks like mout_hdmi and smmu_tv, associating
->> >> ID to clk_hdmiphy and some essential corrections.
->> >>
->> >> This set is based on kukjin's for-next branch at
->> >> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
->> >>
->> >> This set dependents on the following patches which add support for Exynos5420
->> >> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg19264.html
->> >>
->> >> Rahul Sharma (5):
->> >>    clk/exynos5420: add sclk_hdmiphy to the list of special clocks
->> >>    clk/exynos5420: add gate clock for tv sysmmu
->> >>    clk/exynos5420: fix the order of parents of hdmi mux
->> >>    clk/exynos5420: add hdmi mux to change parents in hdmi driver
->> >>    clk/exynos5420: assign sclk_pixel id to pixel clock divider
->> >>
->> >>   .../devicetree/bindings/clock/exynos5420-clock.txt   |    7 +++++++
->> >>   drivers/clk/samsung/clk-exynos5420.c                 |   18 +++++++++++-------
->> >>   2 files changed, 18 insertions(+), 7 deletions(-)
->> >>
->> >> --
->> >> 1.7.10.4
+>>> changes since v5:
+>>>       - Corrected to use rate table as specified in UM for exynos5250 epll.
+>>>       - Took care of exynos5420 as well, as new exynos5420 clk driver came in
+>>>       while rebasing on latest Kgene's for-next.
+>>>
+>>>       Since we spilted 1st patch into 2 different patches,
+>>>       can we expect "reviewed-by" again for the same?
+>>>
+>>> changes since v4:
+>>>       - Defined common samsung samsung_clk_register_pll() to register a list
+>>>       of PLL and used a struct samsung_pll_clock for passing intialisation
+>>>       data instead of passing as arguments. Now passing LOCK as well as CON0
+>>>       offset as intialisation data.
+>>>       - Calculated length of rate table while registering PLL instead of
+>>>       getting it as intialisation data.
+>>>
+>>> changes since v3:
+>>>       - Used __clk_lookup() instead of adding alias for mout_vpllsrc
+>>>       - Added check for changing only M value in samsung_pll36xx_set_rate()
+>>>       - Modified samsung_pll35xx_mp_change() & samsung_pll35xx_set_rate()
+>>>       to improve readabilty.
+>>>       - Made the input rate_table as __init_data which is to be provided
+>> while
+>>> registering PLL and made a copy of that table while registering, so that
+>>> if multiple tables are their, they can be freed after getting the P, M,
+>>> S, K setting values from required one.
+>>>
+>>> changes since v2:
+>>>       - Added new patch to reorder the MUX registration for mout_vpllsrc MUX
+>>>       before the PLL registrations. And to add the alias for the mout_vpllsrc
+>>> MUX. - Added a check to confirm parent rate while registrating the PLL
+>>> rate tables.
+>>>
+>>> changes since v1:
+>>>       - removed sorting and bsearch
+>>>       - modified the definition of struct "samsung_pll_rate_table"
+>>>       - added generic round_rate()
+>>>       - rectified the ops assignment for "rate table passed as NULL
+>>>
+>>> Is rebased on branch kgene's "for-next"
+>>> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/
+>>> ?h=for-next
+>>>
+>>> Vikas Sajjan (3):
+>>>   clk: samsung: Add set_rate() clk_ops for PLL36xx
+>>>   clk: samsung: Reorder MUX registration for mout_vpllsrc
+>>>   clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
+>>>
+>>> Yadwinder Singh Brar (8):
+>>>   clk: samsung: Introduce a common samsung_clk_pll struct
+>>>   clk: samsung: Define a common samsung_clk_register_pll()
+>>>   clk: samsung: Migrate exynos5250 to use common
+>>>     samsung_clk_register_pll()
+>>>   clk: samsung: Migrate exynos4 to use common
+>>>     samsung_clk_register_pll()
+>>>   clk: samsung: Migrate exynos5420 to use common
+>>>     samsung_clk_register_pll()
+>>>   clk: samsung: Remove unused pll registeration code for pll35xx and
+>>>     pll36xx
+>>>   clk: samsung: Add support to register rate_table for samsung plls
+>>>   clk: samsung: Add set_rate() clk_ops for PLL35xx
+>>>
+>>>  drivers/clk/samsung/clk-exynos4.c    |   40 +++--
+>>>  drivers/clk/samsung/clk-exynos5250.c |  101 +++++++++--
+>>>  drivers/clk/samsung/clk-exynos5420.c |   86 ++++++---
+>>>  drivers/clk/samsung/clk-pll.c        |  339
+>>> ++++++++++++++++++++++++++-------- drivers/clk/samsung/clk-pll.h
+>>> |   38 ++++-
+>>>  drivers/clk/samsung/clk.h            |   53 ++++++
+>>>  6 files changed, 519 insertions(+), 138 deletions(-)
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
