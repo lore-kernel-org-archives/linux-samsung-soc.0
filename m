@@ -1,33 +1,49 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v2 1/3] mfd: Add irq domain support for max8998
- interrupts
-Date: Fri, 21 Jun 2013 14:12:02 +0000
-Message-ID: <u0l61x7a6z1.fsf@orc04.imf.au.dk>
-References: <1371818017-5215-1-git-send-email-t.figa@samsung.com>
-	<1371818017-5215-2-git-send-email-t.figa@samsung.com>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH V10 0/4] PCIe support for Samsung Exynos5440 SoC
+Date: Fri, 21 Jun 2013 10:11:44 -0400
+Message-ID: <20130621141144.GP31667@titan.lakedaemon.net>
+References: <003901ce6e50$03d039a0$0b70ace0$@samsung.com>
+ <201306210931.58428.arnd@arndb.de> <20130621094723.312bc331@skate>
+ <201306211030.47440.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1371818017-5215-2-git-send-email-t.figa@samsung.com> (Tomasz
- Figa's message of "Fri, 21 Jun 2013 14:33:35 +0200")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Grant Likely <grant.likely@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Masanari Iida <standby24x7@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, rtc-linux@googlegroups.com, Russell King <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <201306211030.47440.arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Jingoo Han <jg1.han@samsung.com>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Tomasz Figa <t.figa@samsung.com> writes:
+On Fri, Jun 21, 2013 at 10:30:47AM +0200, Arnd Bergmann wrote:
+> On Friday 21 June 2013, Thomas Petazzoni wrote:
+> > I am by far not an expert on how to solve merge strategies and so on,
+> > but to avoid conflicts at Linus's level while merging the arm-soc and
+> > pci trees, it would be better if this Samsung PCIe driver could go
+> > through arm-soc (with Bjorn ACK, of course), so that Arnd/Olof can
+> > make sure the ordering is correct with regard to the of/pci changes and
+> > the mvebu/pci driver.
+> 
+> Yes, good point.
+> 
+> The alternative would be that Bjorn also takes the PCI branch dependencies
+> that are already in arm-soc into his tree. Either way works, but I agree
+> that what you suggest would be simpler.
 
-> All uses of irq_base in platform data and max8997 driver private data
-> are removed.
->
-[...]
-> +static int max8998_irq_domain_map(struct irq_domain *d, unsigned int irq,
-> +					irq_hw_number_t hw)
-> +{
-> +	struct max8997_dev *max8998 = d->host_data;
+Yes, that is why we did it this way.  It was my understanding based on
+previous comments by yourself and LinusW that you both had patches
+depending on (now called) mvebu/of_pci.  So we got it into arm-soc
+early so those branches could depend on it.
 
-I may be wrong, but this sure looks like a typo (or copy-pasto).
+hth,
 
--- 
-Rasmus Villemoes
-<http://rasmusvillemoes.dk/>
+Jason.
