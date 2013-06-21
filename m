@@ -1,20 +1,21 @@
 From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 2/5] clk/exynos5250: add mout_hdmi mux clock for hdmi
-Date: Fri, 21 Jun 2013 10:19:58 +0530
-Message-ID: <CAPdUM4OGg0C03PgKKO7z11-yvaBQu6w7DCrVpJ0ee8q3HC0OYA@mail.gmail.com>
+Subject: Re: [PATCH 3/5] clk/exynos5250: add sclk_hdmiphy in the list of
+ special clocks
+Date: Fri, 21 Jun 2013 10:20:17 +0530
+Message-ID: <CAPdUM4PkLjzCYNae5_zNNyi82zcCjuBGeg1T5b2MSOnz33cadA@mail.gmail.com>
 References: <1370862062-16680-1-git-send-email-rahul.sharma@samsung.com>
-	<1370862062-16680-3-git-send-email-rahul.sharma@samsung.com>
+	<1370862062-16680-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f180.google.com ([74.125.82.180]:42729 "EHLO
-	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757274Ab3FUEt7 (ORCPT
+Received: from mail-wg0-f53.google.com ([74.125.82.53]:51421 "EHLO
+	mail-wg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757274Ab3FUEuS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 00:49:59 -0400
-Received: by mail-we0-f180.google.com with SMTP id w56so6127153wes.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 21:49:58 -0700 (PDT)
-In-Reply-To: <1370862062-16680-3-git-send-email-rahul.sharma@samsung.com>
+	Fri, 21 Jun 2013 00:50:18 -0400
+Received: by mail-wg0-f53.google.com with SMTP id y10so6198125wgg.20
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 21:50:17 -0700 (PDT)
+In-Reply-To: <1370862062-16680-4-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rahul Sharma <rahul.sharma@samsung.com>, Mike Turquette <mturquette@linaro.org>
@@ -22,63 +23,50 @@ Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-
 
 +Mike
 
-On Mon, Jun 10, 2013 at 4:30 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> hdmi driver needs to change the parent of hdmi clock
-> frequently between pixel clock and hdmiphy clock. hdmiphy is
-> not stable after power on and for a short interval while changing
-> the phy configuration. For this duration pixel clock is used to
-> clock hdmi.
->
-> This patch is exposing the mux for changing parent.
+On Mon, Jun 10, 2013 at 4:31 PM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> hdmi driver needs hdmiphy clock which is one of the parent
+> for hdmi mux clock. This is required while changing the parent
+> of mux clock.
 >
 > Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 > ---
->  Documentation/devicetree/bindings/clock/exynos5250-clock.txt |    8 ++++++++
->  drivers/clk/samsung/clk-exynos5250.c                         |    5 ++++-
->  2 files changed, 12 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/clock/exynos5250-clock.txt |    1 +
+>  drivers/clk/samsung/clk-exynos5250.c                         |    3 ++-
+>  2 files changed, 3 insertions(+), 1 deletion(-)
 >
 > diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> index 1a05761..b337147 100644
+> index b337147..f333d61 100644
 > --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
 > +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> @@ -156,6 +156,14 @@ clock which they consume.
->    mixer                        343
->    hdmi                 344
+> @@ -59,6 +59,7 @@ clock which they consume.
+>    sclk_spi0            154
+>    sclk_spi1            155
+>    sclk_spi2            156
+> +  sclk_hdmiphy         157
 >
-> +
-> +   [Clock Muxes]
-> +
-> +  Clock                        ID
-> +  ----------------------------
-> +  mout_hdmi            1024
-> +
-> +
->  Example 1: An example of a clock controller node is listed below.
 >
->         clock: clock-controller@0x10010000 {
+>     [Peripheral Clock Gates]
 > diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-> index 5c97e75..587d913 100644
+> index 587d913..88cdb13 100644
 > --- a/drivers/clk/samsung/clk-exynos5250.c
 > +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -100,6 +100,9 @@ enum exynos5250_clks {
->         tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec, mct,
->         wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi,
+> @@ -87,6 +87,7 @@ enum exynos5250_clks {
+>         sclk_mmc0, sclk_mmc1, sclk_mmc2, sclk_mmc3, sclk_sata, sclk_usb3,
+>         sclk_jpeg, sclk_uart0, sclk_uart1, sclk_uart2, sclk_uart3, sclk_pwm,
+>         sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
+> +       sclk_hdmiphy,
 >
-> +       /* mux clocks */
-> +       mout_hdmi = 1024,
-> +
->         nr_clks,
->  };
+>         /* gate clocks */
+>         gscl0 = 256, gscl1, gscl2, gscl3, gscl_wa, gscl_wb, smmu_gscl0,
+> @@ -199,7 +200,7 @@ struct samsung_fixed_rate_clock exynos5250_fixed_rate_ext_clks[] __initdata = {
 >
-> @@ -231,7 +234,7 @@ struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
->         MUX(none, "mout_fimd1", mout_group1_p, SRC_DISP1_0, 0, 4),
->         MUX(none, "mout_mipi1", mout_group1_p, SRC_DISP1_0, 12, 4),
->         MUX(none, "mout_dp", mout_group1_p, SRC_DISP1_0, 16, 4),
-> -       MUX(none, "mout_hdmi", mout_hdmi_p, SRC_DISP1_0, 20, 1),
-> +       MUX(mout_hdmi, "mout_hdmi", mout_hdmi_p, SRC_DISP1_0, 20, 1),
->         MUX(none, "mout_audio0", mout_audio0_p, SRC_MAU, 0, 4),
->         MUX(none, "mout_mmc0", mout_group1_p, SRC_FSYS, 0, 4),
->         MUX(none, "mout_mmc1", mout_group1_p, SRC_FSYS, 4, 4),
+>  /* fixed rate clocks generated inside the soc */
+>  struct samsung_fixed_rate_clock exynos5250_fixed_rate_clks[] __initdata = {
+> -       FRATE(none, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 24000000),
+> +       FRATE(sclk_hdmiphy, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 24000000),
+>         FRATE(none, "sclk_hdmi27m", NULL, CLK_IS_ROOT, 27000000),
+>         FRATE(none, "sclk_dptxphy", NULL, CLK_IS_ROOT, 24000000),
+>         FRATE(none, "sclk_uhostphy", NULL, CLK_IS_ROOT, 48000000),
 > --
 > 1.7.10.4
 >
