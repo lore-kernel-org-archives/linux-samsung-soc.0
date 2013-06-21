@@ -1,68 +1,173 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 0/5] clk/exynos5420: add clocks for hdmi subsystem
-Date: Thu, 20 Jun 2013 21:32:52 -0700
-Message-ID: <20130621043252.9136.66418@quantum>
-References: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com>
- <CAPdUM4MtBXMaZDDRT1aKsS=HzwjpbyMY85oRLMbk-KvJCU1hag@mail.gmail.com>
- <51C1B9AD.8060804@samsung.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V6 06/30] thermal: exynos: Move exynos_thermal.h from
+ include/* to driver/* folder
+Date: Fri, 21 Jun 2013 10:03:34 +0530
+Message-ID: <CADGdYn7Y2c9B3zbrGY3LssoJHJZUD7W92KyPBN+EifydNEuDEg@mail.gmail.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
+	<1371451599-31035-7-git-send-email-amit.daniel@samsung.com>
+	<51C20416.7010809@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:39147 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161062Ab3FUEc4 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 00:32:56 -0400
-Received: by mail-pa0-f51.google.com with SMTP id lf11so7152191pab.24
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 21:32:56 -0700 (PDT)
-In-Reply-To: <51C1B9AD.8060804@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51C20416.7010809@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Quoting Kukjin Kim (2013-06-19 07:01:17)
-> On 06/19/13 13:04, Rahul Sharma wrote:
-> > + mike
-> >
-> Mike, I'm waiting for your reply on this. If you're OK, let me take this 
-> series on top of exynos5420 stuff in samsung tree.
-> 
-> Of course, if any concerns, please let me know.
+Hi
 
-I never got these patches.  I'm not subscribed to devicetree-devel or
-linux-samsung so I only got two replies to patch #0, but none of the
-code. Can you or Rajul resend?
+On Thu, Jun 20, 2013 at 12:48 AM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+>> This patch renames and moves include/linux/platform_data/exynos_thermal.h to
+>> drivers/thermal/samsung/exynos_tmu.h. This file movement is needed as exynos
+>> SOC's are not supporting non-DT based platforms and this file now just contains
+>> exynos tmu driver related definations.
+>> Also struct freq_clip_table is now moved to exynos_thermal_common.c as it fixes
+>> the compilation issue occuring because now this new tmu header file is included
+>> in tmu driver c file and not in the common thermal header file.
+>>
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  drivers/thermal/samsung/exynos_thermal_common.c    |    1 -
+>>  drivers/thermal/samsung/exynos_thermal_common.h    |   15 ++++++++++++
+>>  drivers/thermal/samsung/exynos_tmu.c               |    2 +-
+>>  .../thermal/samsung/exynos_tmu.h                   |   24 ++++---------------
+>>  4 files changed, 21 insertions(+), 21 deletions(-)
+>>  rename include/linux/platform_data/exynos_thermal.h => drivers/thermal/samsung/exynos_tmu.h (84%)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
+>> index 92e50bc..dd49c9f 100644
+>> --- a/drivers/thermal/samsung/exynos_thermal_common.c
+>> +++ b/drivers/thermal/samsung/exynos_thermal_common.c
+>> @@ -21,7 +21,6 @@
+>>   */
+>>
+>>  #include <linux/cpu_cooling.h>
+>> -#include <linux/platform_data/exynos_thermal.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/thermal.h>
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
+>> index 8df1848..068f56c 100644
+>> --- a/drivers/thermal/samsung/exynos_thermal_common.h
+>> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
+>> @@ -44,6 +44,21 @@
+>>
+>>  #define EXYNOS_ZONE_COUNT    3
+>>
+>> +/**
+>> + * struct freq_clip_table
+>> + * @freq_clip_max: maximum frequency allowed for this cooling state.
+>> + * @temp_level: Temperature level at which the temperature clipping will
+>> + *   happen.
+>> + * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
+>> + *
+>> + * This structure is required to be filled and passed to the
+>> + * cpufreq_cooling_unregister function.
+>> + */
+>> +struct freq_clip_table {
+>> +     unsigned int freq_clip_max;
+>> +     unsigned int temp_level;
+>> +     const struct cpumask *mask_val;
+>> +};
+>>  struct       thermal_trip_point_conf {
+>>       int trip_val[MAX_TRIP_COUNT];
+>>       int trip_count;
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>> index 22a8874..6aa2fd2 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -27,9 +27,9 @@
+>>  #include <linux/module.h>
+>>  #include <linux/of.h>
+>>  #include <linux/platform_device.h>
+>> -#include <linux/platform_data/exynos_thermal.h>
+>>
+>>  #include "exynos_thermal_common.h"
+>> +#include "exynos_tmu.h"
+>>
+>>  /* Exynos generic registers */
+>>  #define EXYNOS_TMU_REG_TRIMINFO              0x0
+>> diff --git a/include/linux/platform_data/exynos_thermal.h b/drivers/thermal/samsung/exynos_tmu.h
+>> similarity index 84%
+>> rename from include/linux/platform_data/exynos_thermal.h
+>> rename to drivers/thermal/samsung/exynos_tmu.h
+>> index da7e627..9e0f887 100644
+>> --- a/include/linux/platform_data/exynos_thermal.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>> @@ -1,8 +1,9 @@
+>>  /*
+>> - * exynos_thermal.h - Samsung EXYNOS TMU (Thermal Management Unit)
+>> + * exynos_tmu.h - Samsung EXYNOS TMU (Thermal Management Unit)
+>>   *
+>>   *  Copyright (C) 2011 Samsung Electronics
+>>   *  Donggeun Kim <dg77.kim@samsung.com>
+>> + *  Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>   *
+>>   * This program is free software; you can redistribute it and/or modify
+>>   * it under the terms of the GNU General Public License as published by
+>> @@ -19,8 +20,8 @@
+>>   * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+>>   */
+>>
+>> -#ifndef _LINUX_EXYNOS_THERMAL_H
+>> -#define _LINUX_EXYNOS_THERMAL_H
+>> +#ifndef _EXYNOS_TMU_H
+>> +#define _EXYNOS_TMU_H
+>>  #include <linux/cpu_cooling.h>
+>>
+>>  enum calibration_type {
+>> @@ -33,21 +34,6 @@ enum soc_type {
+>>       SOC_ARCH_EXYNOS4210 = 1,
+>>       SOC_ARCH_EXYNOS,
+>>  };
+>> -/**
+>> - * struct freq_clip_table
+>> - * @freq_clip_max: maximum frequency allowed for this cooling state.
+>> - * @temp_level: Temperature level at which the temperature clipping will
+>> - *   happen.
+>> - * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
+>> - *
+>> - * This structure is required to be filled and passed to the
+>> - * cpufreq_cooling_unregister function.
+>> - */
+>> -struct freq_clip_table {
+>> -     unsigned int freq_clip_max;
+>> -     unsigned int temp_level;
+>> -     const struct cpumask *mask_val;
+>> -};
+>>
+>>  /**
+>>   * struct exynos_tmu_platform_data
+>> @@ -116,4 +102,4 @@ struct exynos_tmu_platform_data {
+>>       struct freq_clip_table freq_tab[4];
+>
+> Because you have this struct right here, you need still to have:
+> +#include "exynos_thermal_common.h"
+>
+> in your include list of exynos_tmu.h (this file).
+>
+> A part from this minor issue, you can add my acked:
+>
+> Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
+Ok will re-submit with this change.
 
 Thanks,
-Mike
-
-> 
-> Thanks,
-> - Kukjin
-> 
-> > On Tue, Jun 18, 2013 at 8:03 PM, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
-> >> Add clock changes for hdmi subsystem for exynos5250 SoC. These
-> >> include addition of new clocks like mout_hdmi and smmu_tv, associating
-> >> ID to clk_hdmiphy and some essential corrections.
-> >>
-> >> This set is based on kukjin's for-next branch at
-> >> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
-> >>
-> >> This set dependents on the following patches which add support for Exynos5420
-> >> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg19264.html
-> >>
-> >> Rahul Sharma (5):
-> >>    clk/exynos5420: add sclk_hdmiphy to the list of special clocks
-> >>    clk/exynos5420: add gate clock for tv sysmmu
-> >>    clk/exynos5420: fix the order of parents of hdmi mux
-> >>    clk/exynos5420: add hdmi mux to change parents in hdmi driver
-> >>    clk/exynos5420: assign sclk_pixel id to pixel clock divider
-> >>
-> >>   .../devicetree/bindings/clock/exynos5420-clock.txt   |    7 +++++++
-> >>   drivers/clk/samsung/clk-exynos5420.c                 |   18 +++++++++++-------
-> >>   2 files changed, 18 insertions(+), 7 deletions(-)
-> >>
-> >> --
-> >> 1.7.10.4
+Amit Daniel
+>
+>>       unsigned int freq_tab_count;
+>>  };
+>> -#endif /* _LINUX_EXYNOS_THERMAL_H */
+>> +#endif /* _EXYNOS_TMU_H */
+>>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
