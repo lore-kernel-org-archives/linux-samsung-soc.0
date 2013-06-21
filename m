@@ -1,256 +1,534 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 1/3] mfd: Add irq domain support for max8998 interrupts
-Date: Fri, 21 Jun 2013 14:33:35 +0200
-Message-ID: <1371818017-5215-2-git-send-email-t.figa@samsung.com>
-References: <1371818017-5215-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1371818017-5215-1-git-send-email-t.figa@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Grant Likely <grant.likely@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Masanari Iida <standby24x7@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, rtc-linux@googlegroups.com, Russell King <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V6 18/30] thermal: exynos: Add support to handle many
+ instances of TMU
+Date: Fri, 21 Jun 2013 18:16:03 +0530
+Message-ID: <CADGdYn7=UcOFN=SFbik_7E=_EG-htdv7bKZADeUk6WidStmKrw@mail.gmail.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
+	<1371451599-31035-19-git-send-email-amit.daniel@samsung.com>
+	<51C23E78.1010202@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51C23E78.1010202@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds irq domain support for max8998 interrupts.
+Hi Eduardo,
 
-The reverse mapping method used is linear mapping since the sub-drivers
-of max8998 such as regulator and charger drivers can use the max8998
-irq_domain to get the virtual irq number for max8998 interrupts.
+On Thu, Jun 20, 2013 at 4:57 AM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+>> This patch adds support to handle multiple instances of the TMU controllers.
+>> This is done by removing the static structure to register with the core thermal
+>> and creating it dynamically for each instance of the TMU controller. The
+>> interrupt is made shared type to handle shared interrupts. Also
+>> the identifier of the TMU controller is extracted from device tree alias.
+>>
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  drivers/thermal/samsung/exynos_thermal_common.h |    1 +
+>>  drivers/thermal/samsung/exynos_tmu.c            |  147 ++++++++++++++++-------
+>>  drivers/thermal/samsung/exynos_tmu.h            |   13 ++
+>>  drivers/thermal/samsung/exynos_tmu_data.c       |  145 ++++++++++++----------
+>>  drivers/thermal/samsung/exynos_tmu_data.h       |    4 +-
+>>  5 files changed, 197 insertions(+), 113 deletions(-)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
+>> index dd0077e..0c189d6 100644
+>> --- a/drivers/thermal/samsung/exynos_thermal_common.h
+>> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
+>> @@ -84,6 +84,7 @@ struct thermal_sensor_conf {
+>>       struct thermal_cooling_conf cooling_data;
+>>       void *driver_data;
+>>       void *pzone_data;
+>> +     struct device *dev;
+>>  };
+>>
+>>  /*Functions used exynos based thermal sensor driver*/
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>> index 4356118..1880c4e 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -26,15 +26,32 @@
+>>  #include <linux/interrupt.h>
+>>  #include <linux/module.h>
+>>  #include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>>  #include <linux/platform_device.h>
+>>
+>>  #include "exynos_thermal_common.h"
+>>  #include "exynos_tmu.h"
+>>  #include "exynos_tmu_data.h"
+>>
+>> +/**
+>> + * struct exynos_tmu_data : A structure to hold the private data of the TMU
+>> +     driver
+>> + * @id: identifier of the one instance of the TMU controller.
+>> + * @pdata: pointer to the tmu platform/configuration data
+>> + * @base: base address of the single instance of the TMU controller.
+>> + * @irq: irq number of the TMU controller.
+>> + * @soc: id of the SOC type.
+>> + * @irq_work: pointer to the irq work structure.
+>> + * @lock: lock to implement synchronization.
+>> + * @clk: pointer to the clock structure.
+>> + * @temp_error1: fused value of the first point trim.
+>> + * @temp_error2: fused value of the second point trim.
+>> + * @reg_conf: pointer to structure to register with core thermal.
+>> + */
+>>  struct exynos_tmu_data {
+>> +     int id;
+>>       struct exynos_tmu_platform_data *pdata;
+>> -     struct resource *mem;
+>>       void __iomem *base;
+>>       int irq;
+>>       enum soc_type soc;
+>> @@ -42,6 +59,7 @@ struct exynos_tmu_data {
+>>       struct mutex lock;
+>>       struct clk *clk;
+>>       u8 temp_error1, temp_error2;
+>> +     struct thermal_sensor_conf *reg_conf;
+>>  };
+>>
+>>  /*
+>> @@ -345,12 +363,6 @@ static int exynos_tmu_set_emulation(void *drv_data,      unsigned long temp)
+>>       { return -EINVAL; }
+>>  #endif/*CONFIG_THERMAL_EMULATION*/
+>>
+>> -static struct thermal_sensor_conf exynos_sensor_conf = {
+>> -     .name                   = "exynos-therm",
+>> -     .read_temperature       = (int (*)(void *))exynos_tmu_read,
+>> -     .write_emul_temp        = exynos_tmu_set_emulation,
+>> -};
+>> -
+>>  static void exynos_tmu_work(struct work_struct *work)
+>>  {
+>>       struct exynos_tmu_data *data = container_of(work,
+>> @@ -359,7 +371,7 @@ static void exynos_tmu_work(struct work_struct *work)
+>>       const struct exynos_tmu_registers *reg = pdata->registers;
+>>       unsigned int val_irq;
+>>
+>> -     exynos_report_trigger(&exynos_sensor_conf);
+>> +     exynos_report_trigger(data->reg_conf);
+>>       mutex_lock(&data->lock);
+>>       clk_enable(data->clk);
+>>
+>> @@ -404,33 +416,73 @@ MODULE_DEVICE_TABLE(of, exynos_tmu_match);
+>>  #endif
+>>
+>>  static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
+>> -                     struct platform_device *pdev)
+>> +                     struct platform_device *pdev, int id)
+>>  {
+>> +     struct  exynos_tmu_init_data *data_table;
+>> +     struct exynos_tmu_platform_data *tmu_data;
+>>  #ifdef CONFIG_OF
+>>       if (pdev->dev.of_node) {
+>>               const struct of_device_id *match;
+>>               match = of_match_node(exynos_tmu_match, pdev->dev.of_node);
+>>               if (!match)
+>>                       return NULL;
+>> -             return (struct exynos_tmu_platform_data *) match->data;
+>> +             data_table = (struct exynos_tmu_init_data *) match->data;
+>> +             if (!data_table || id >= data_table->tmu_count)
+>> +                     return NULL;
+>> +             tmu_data = data_table->tmu_data;
+>> +             return (struct exynos_tmu_platform_data *) (tmu_data + id);
+>>       }
+>>  #endif
+>>       return NULL;
+>>  }
+>>
+>> -static int exynos_tmu_probe(struct platform_device *pdev)
+>> +static int exynos_map_dt_data(struct platform_device *pdev)
+>>  {
+>> -     struct exynos_tmu_data *data;
+>> -     struct exynos_tmu_platform_data *pdata = pdev->dev.platform_data;
+>> -     int ret, i;
+>> +     struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>> +     struct exynos_tmu_platform_data *pdata;
+>> +     struct resource res;
+>>
+>> -     if (!pdata)
+>> -             pdata = exynos_get_driver_data(pdev);
+>> +     if (!data)
+>> +             return -ENODEV;
+>> +
+>> +     data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
+>> +     if (data->id < 0)
+>> +             data->id = 0;
+>>
+>> +     data->irq = irq_of_parse_and_map(pdev->dev.of_node, 0);
+>> +     if (data->irq <= 0) {
+>> +             dev_err(&pdev->dev, "failed to get IRQ\n");
+>> +             return -ENODEV;
+>> +     }
+>> +
+>> +     if (of_address_to_resource(pdev->dev.of_node, 0, &res)) {
+>> +             dev_err(&pdev->dev, "failed to get Resource 0\n");
+>> +             return -ENODEV;
+>> +     }
+>> +
+>> +     data->base = devm_ioremap(&pdev->dev, res.start, resource_size(&res));
+>> +     if (!data->base) {
+>> +             dev_err(&pdev->dev, "Failed to ioremap memory\n");
+>> +             return -EADDRNOTAVAIL;
+>> +     }
+>> +
+>> +     pdata = exynos_get_driver_data(pdev, data->id);
+>>       if (!pdata) {
+>>               dev_err(&pdev->dev, "No platform init data supplied.\n");
+>>               return -ENODEV;
+>>       }
+>> +     data->pdata = pdata;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int exynos_tmu_probe(struct platform_device *pdev)
+>> +{
+>> +     struct exynos_tmu_data *data;
+>> +     struct exynos_tmu_platform_data *pdata;
+>> +     struct thermal_sensor_conf *sensor_conf;
+>> +     int ret, i;
+>> +
+>>       data = devm_kzalloc(&pdev->dev, sizeof(struct exynos_tmu_data),
+>>                                       GFP_KERNEL);
+>>       if (!data) {
+>> @@ -438,21 +490,18 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>>               return -ENOMEM;
+>>       }
+>>
+>> -     data->irq = platform_get_irq(pdev, 0);
+>> -     if (data->irq < 0) {
+>> -             dev_err(&pdev->dev, "Failed to get platform irq\n");
+>> -             return data->irq;
+>> -     }
+>> +     platform_set_drvdata(pdev, data);
+>> +     mutex_init(&data->lock);
+>>
+>> -     INIT_WORK(&data->irq_work, exynos_tmu_work);
+>> +     ret = exynos_map_dt_data(pdev);
+>> +     if (ret)
+>> +             return ret;
+>>
+>> -     data->mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> -     data->base = devm_ioremap_resource(&pdev->dev, data->mem);
+>> -     if (IS_ERR(data->base))
+>> -             return PTR_ERR(data->base);
+>> +     pdata = data->pdata;
+>>
+>> +     INIT_WORK(&data->irq_work, exynos_tmu_work);
+>>       ret = devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
+>> -             IRQF_TRIGGER_RISING, "exynos-tmu", data);
+>> +             IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
+>
+> Lets think about this poing:  You request the IRQ before data->reg_conf
+> is allocated (below). Does it mean, from this point you can get called
+> to the IRQ handler even if reg_conf is not set? What happens then? I see
+> your irqhandler/worker use it.
 
-All uses of irq_base in platform data and max8997 driver private data
-are removed.
+Good catch. Will put a check in the IRQ handler.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/mfd/Kconfig                 |  1 +
- drivers/mfd/max8998-irq.c           | 61 ++++++++++++++++++++++---------------
- drivers/mfd/max8998.c               |  1 -
- drivers/rtc/rtc-max8998.c           | 12 +++++++-
- include/linux/mfd/max8998-private.h |  4 ++-
- include/linux/mfd/max8998.h         |  2 --
- 6 files changed, 51 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index d54e985..360be92 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1002,6 +1002,7 @@ config MFD_TC6393XB
- config MFD_VX855
- 	tristate "VIA VX855/VX875 integrated south bridge"
- 	depends on PCI && GENERIC_HARDIRQS
-+	select IRQ_DOMAIN
- 	select MFD_CORE
- 	help
- 	  Say yes here to enable support for various functions of the
-diff --git a/drivers/mfd/max8998-irq.c b/drivers/mfd/max8998-irq.c
-index 5919710..f770abf 100644
---- a/drivers/mfd/max8998-irq.c
-+++ b/drivers/mfd/max8998-irq.c
-@@ -14,6 +14,7 @@
- #include <linux/device.h>
- #include <linux/interrupt.h>
- #include <linux/irq.h>
-+#include <linux/irqdomain.h>
- #include <linux/mfd/max8998-private.h>
- 
- struct max8998_irq_data {
-@@ -99,7 +100,8 @@ static struct max8998_irq_data max8998_irqs[] = {
- static inline struct max8998_irq_data *
- irq_to_max8998_irq(struct max8998_dev *max8998, int irq)
- {
--	return &max8998_irqs[irq - max8998->irq_base];
-+	struct irq_data *data = irq_get_irq_data(irq);
-+	return &max8998_irqs[data->hwirq];
- }
- 
- static void max8998_irq_lock(struct irq_data *data)
-@@ -176,8 +178,10 @@ static irqreturn_t max8998_irq_thread(int irq, void *data)
- 
- 	/* Report */
- 	for (i = 0; i < MAX8998_IRQ_NR; i++) {
--		if (irq_reg[max8998_irqs[i].reg - 1] & max8998_irqs[i].mask)
--			handle_nested_irq(max8998->irq_base + i);
-+		if (irq_reg[max8998_irqs[i].reg - 1] & max8998_irqs[i].mask) {
-+			irq = irq_linear_revmap(max8998->irq_domain, i);
-+			handle_nested_irq(irq);
-+		}
- 	}
- 
- 	return IRQ_HANDLED;
-@@ -185,27 +189,40 @@ static irqreturn_t max8998_irq_thread(int irq, void *data)
- 
- int max8998_irq_resume(struct max8998_dev *max8998)
- {
--	if (max8998->irq && max8998->irq_base)
--		max8998_irq_thread(max8998->irq_base, max8998);
-+	if (max8998->irq && max8998->irq_domain)
-+		max8998_irq_thread(0, max8998);
-+	return 0;
-+}
-+
-+static int max8998_irq_domain_map(struct irq_domain *d, unsigned int irq,
-+					irq_hw_number_t hw)
-+{
-+	struct max8997_dev *max8998 = d->host_data;
-+
-+	irq_set_chip_data(irq, max8998);
-+	irq_set_chip_and_handler(irq, &max8998_irq_chip, handle_edge_irq);
-+	irq_set_nested_thread(irq, 1);
-+#ifdef CONFIG_ARM
-+	set_irq_flags(irq, IRQF_VALID);
-+#else
-+	irq_set_noprobe(irq);
-+#endif
- 	return 0;
- }
- 
-+static struct irq_domain_ops max8998_irq_domain_ops = {
-+	.map = max8998_irq_domain_map,
-+};
-+
- int max8998_irq_init(struct max8998_dev *max8998)
- {
- 	int i;
--	int cur_irq;
- 	int ret;
-+	struct irq_domain *domain;
- 
- 	if (!max8998->irq) {
- 		dev_warn(max8998->dev,
- 			 "No interrupt specified, no interrupts\n");
--		max8998->irq_base = 0;
--		return 0;
--	}
--
--	if (!max8998->irq_base) {
--		dev_err(max8998->dev,
--			"No interrupt base specified, no interrupts\n");
- 		return 0;
- 	}
- 
-@@ -221,19 +238,13 @@ int max8998_irq_init(struct max8998_dev *max8998)
- 	max8998_write_reg(max8998->i2c, MAX8998_REG_STATUSM1, 0xff);
- 	max8998_write_reg(max8998->i2c, MAX8998_REG_STATUSM2, 0xff);
- 
--	/* register with genirq */
--	for (i = 0; i < MAX8998_IRQ_NR; i++) {
--		cur_irq = i + max8998->irq_base;
--		irq_set_chip_data(cur_irq, max8998);
--		irq_set_chip_and_handler(cur_irq, &max8998_irq_chip,
--					 handle_edge_irq);
--		irq_set_nested_thread(cur_irq, 1);
--#ifdef CONFIG_ARM
--		set_irq_flags(cur_irq, IRQF_VALID);
--#else
--		irq_set_noprobe(cur_irq);
--#endif
-+	domain = irq_domain_add_linear(NULL, MAX8998_IRQ_NR,
-+					&max8998_irq_domain_ops, max8998);
-+	if (!domain) {
-+		dev_err(max8998->dev, "could not create irq domain\n");
-+		return -ENODEV;
- 	}
-+	max8998->irq_domain = domain;
- 
- 	ret = request_threaded_irq(max8998->irq, NULL, max8998_irq_thread,
- 				   IRQF_TRIGGER_FALLING | IRQF_ONESHOT,
-diff --git a/drivers/mfd/max8998.c b/drivers/mfd/max8998.c
-index d7218cc..e9bd352 100644
---- a/drivers/mfd/max8998.c
-+++ b/drivers/mfd/max8998.c
-@@ -146,7 +146,6 @@ static int max8998_i2c_probe(struct i2c_client *i2c,
- 	max8998->type = id->driver_data;
- 	if (pdata) {
- 		max8998->ono = pdata->ono;
--		max8998->irq_base = pdata->irq_base;
- 		max8998->wakeup = pdata->wakeup;
- 	}
- 	mutex_init(&max8998->iolock);
-diff --git a/drivers/rtc/rtc-max8998.c b/drivers/rtc/rtc-max8998.c
-index d5af7ba..46f2301 100644
---- a/drivers/rtc/rtc-max8998.c
-+++ b/drivers/rtc/rtc-max8998.c
-@@ -16,6 +16,7 @@
- #include <linux/i2c.h>
- #include <linux/slab.h>
- #include <linux/bcd.h>
-+#include <linux/irqdomain.h>
- #include <linux/rtc.h>
- #include <linux/platform_device.h>
- #include <linux/mfd/max8998.h>
-@@ -264,7 +265,6 @@ static int max8998_rtc_probe(struct platform_device *pdev)
- 	info->dev = &pdev->dev;
- 	info->max8998 = max8998;
- 	info->rtc = max8998->rtc;
--	info->irq = max8998->irq_base + MAX8998_IRQ_ALARM0;
- 
- 	platform_set_drvdata(pdev, info);
- 
-@@ -277,6 +277,15 @@ static int max8998_rtc_probe(struct platform_device *pdev)
- 		goto out_rtc;
- 	}
- 
-+	if (!max8998->irq_domain)
-+		goto no_irq;
-+
-+	info->irq = irq_create_mapping(max8998->irq_domain, MAX8998_IRQ_ALARM0);
-+	if (!info->irq) {
-+		dev_warn(&pdev->dev, "Failed to map alarm IRQ\n");
-+		goto no_irq;
-+	}
-+
- 	ret = devm_request_threaded_irq(&pdev->dev, info->irq, NULL,
- 				max8998_rtc_alarm_irq, 0, "rtc-alarm0", info);
- 
-@@ -284,6 +293,7 @@ static int max8998_rtc_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
- 			info->irq, ret);
- 
-+no_irq:
- 	dev_info(&pdev->dev, "RTC CHIP NAME: %s\n", pdev->id_entry->name);
- 	if (pdata && pdata->rtc_delay) {
- 		info->lp3974_bug_workaround = true;
-diff --git a/include/linux/mfd/max8998-private.h b/include/linux/mfd/max8998-private.h
-index effa5d3..e81077a 100644
---- a/include/linux/mfd/max8998-private.h
-+++ b/include/linux/mfd/max8998-private.h
-@@ -132,6 +132,8 @@ enum {
- 
- #define MAX8998_ENRAMP                  (1 << 4)
- 
-+struct irq_domain;
-+
- /**
-  * struct max8998_dev - max8998 master device for sub-drivers
-  * @dev: master device of the chip (can be used to access platform data)
-@@ -153,7 +155,7 @@ struct max8998_dev {
- 	struct mutex iolock;
- 	struct mutex irqlock;
- 
--	int irq_base;
-+	struct irq_domain *irq_domain;
- 	int irq;
- 	int ono;
- 	u8 irq_masks_cur[MAX8998_NUM_IRQ_REGS];
-diff --git a/include/linux/mfd/max8998.h b/include/linux/mfd/max8998.h
-index 6823548..9df60ba 100644
---- a/include/linux/mfd/max8998.h
-+++ b/include/linux/mfd/max8998.h
-@@ -68,7 +68,6 @@ struct max8998_regulator_data {
-  * struct max8998_board - packages regulator init data
-  * @regulators: array of defined regulators
-  * @num_regulators: number of regulators used
-- * @irq_base: base IRQ number for max8998, required for IRQs
-  * @ono: power onoff IRQ number for max8998
-  * @buck_voltage_lock: Do NOT change the values of the following six
-  *   registers set by buck?_voltage?. The voltage of BUCK1/2 cannot
-@@ -100,7 +99,6 @@ struct max8998_regulator_data {
- struct max8998_platform_data {
- 	struct max8998_regulator_data	*regulators;
- 	int				num_regulators;
--	int				irq_base;
- 	int				ono;
- 	bool				buck_voltage_lock;
- 	int				buck1_voltage1;
--- 
-1.8.2.1
+Thanks,
+Amit Daniel
+>
+>>       if (ret) {
+>>               dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
+>>               return ret;
+>> @@ -477,10 +526,6 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>>               goto err_clk;
+>>       }
+>>
+>> -     data->pdata = pdata;
+>> -     platform_set_drvdata(pdev, data);
+>> -     mutex_init(&data->lock);
+>> -
+>>       ret = exynos_tmu_initialize(pdev);
+>>       if (ret) {
+>>               dev_err(&pdev->dev, "Failed to initialize TMU\n");
+>> @@ -489,31 +534,43 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>>
+>>       exynos_tmu_control(pdev, true);
+>>
+>> -     /* Register the sensor with thermal management interface */
+>> -     (&exynos_sensor_conf)->driver_data = data;
+>> -     exynos_sensor_conf.trip_data.trip_count = pdata->trigger_enable[0] +
+>> +     /* Allocate a structure to register with the exynos core thermal */
+>> +     sensor_conf = devm_kzalloc(&pdev->dev,
+>> +                             sizeof(struct thermal_sensor_conf), GFP_KERNEL);
+>> +     if (!sensor_conf) {
+>> +             dev_err(&pdev->dev, "Failed to allocate registration struct\n");
+>> +             ret = -ENOMEM;
+>> +             goto err_clk;
+>> +     }
+>> +     data->reg_conf = sensor_conf;
+>> +     sprintf(sensor_conf->name, "therm_zone%d", data->id);
+>> +     sensor_conf->read_temperature = (int (*)(void *))exynos_tmu_read;
+>> +     sensor_conf->write_emul_temp =
+>> +             (int (*)(void *, unsigned long))exynos_tmu_set_emulation;
+>> +     sensor_conf->driver_data = data;
+>> +     sensor_conf->trip_data.trip_count = pdata->trigger_enable[0] +
+>>                       pdata->trigger_enable[1] + pdata->trigger_enable[2]+
+>>                       pdata->trigger_enable[3];
+>>
+>> -     for (i = 0; i < exynos_sensor_conf.trip_data.trip_count; i++) {
+>> -             exynos_sensor_conf.trip_data.trip_val[i] =
+>> +     for (i = 0; i < sensor_conf->trip_data.trip_count; i++) {
+>> +             sensor_conf->trip_data.trip_val[i] =
+>>                       pdata->threshold + pdata->trigger_levels[i];
+>> -             exynos_sensor_conf.trip_data.trip_type[i] =
+>> +             sensor_conf->trip_data.trip_type[i] =
+>>                                       pdata->trigger_type[i];
+>>       }
+>>
+>> -     exynos_sensor_conf.trip_data.trigger_falling = pdata->threshold_falling;
+>> +     sensor_conf->trip_data.trigger_falling = pdata->threshold_falling;
+>>
+>> -     exynos_sensor_conf.cooling_data.freq_clip_count =
+>> -                                             pdata->freq_tab_count;
+>> +     sensor_conf->cooling_data.freq_clip_count = pdata->freq_tab_count;
+>>       for (i = 0; i < pdata->freq_tab_count; i++) {
+>> -             exynos_sensor_conf.cooling_data.freq_data[i].freq_clip_max =
+>> +             sensor_conf->cooling_data.freq_data[i].freq_clip_max =
+>>                                       pdata->freq_tab[i].freq_clip_max;
+>> -             exynos_sensor_conf.cooling_data.freq_data[i].temp_level =
+>> +             sensor_conf->cooling_data.freq_data[i].temp_level =
+>>                                       pdata->freq_tab[i].temp_level;
+>>       }
+>> -
+>> -     ret = exynos_register_thermal(&exynos_sensor_conf);
+>> +     sensor_conf->dev = &pdev->dev;
+>> +     /* Register the sensor with thermal management interface */
+>> +     ret = exynos_register_thermal(sensor_conf);
+>>       if (ret) {
+>>               dev_err(&pdev->dev, "Failed to register thermal interface\n");
+>>               goto err_clk;
+>> @@ -531,7 +588,7 @@ static int exynos_tmu_remove(struct platform_device *pdev)
+>>
+>>       exynos_tmu_control(pdev, false);
+>>
+>> -     exynos_unregister_thermal(&exynos_sensor_conf);
+>> +     exynos_unregister_thermal(data->reg_conf);
+>>
+>>       clk_unprepare(data->clk);
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+>> index 619a34c..b614407 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>> @@ -248,4 +248,17 @@ struct exynos_tmu_platform_data {
+>>       unsigned int freq_tab_count;
+>>       const struct exynos_tmu_registers *registers;
+>>  };
+>> +
+>> +/**
+>> + * struct exynos_tmu_init_data
+>> + * @tmu_count: number of TMU instances.
+>> + * @tmu_data: platform data of all TMU instances.
+>> + * This structure is required to store data for multi-instance exynos tmu
+>> + * driver.
+>> + */
+>> +struct exynos_tmu_init_data {
+>> +     int tmu_count;
+>> +     struct exynos_tmu_platform_data tmu_data[];
+>> +};
+>> +
+>>  #endif /* _EXYNOS_TMU_H */
+>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+>> index 7fcf183..06ecfb0 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+>> @@ -48,38 +48,44 @@ static const struct exynos_tmu_registers exynos4210_tmu_registers = {
+>>       .tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+>>       .tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
+>>  };
+>> -struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
+>> -     .threshold = 80,
+>> -     .trigger_levels[0] = 5,
+>> -     .trigger_levels[1] = 20,
+>> -     .trigger_levels[2] = 30,
+>> -     .trigger_enable[0] = 1,
+>> -     .trigger_enable[1] = 1,
+>> -     .trigger_enable[2] = 1,
+>> -     .trigger_enable[3] = 0,
+>> -     .trigger_type[0] = THROTTLE_ACTIVE,
+>> -     .trigger_type[1] = THROTTLE_ACTIVE,
+>> -     .trigger_type[2] = SW_TRIP,
+>> -     .max_trigger_level = 4,
+>> -     .gain = 15,
+>> -     .reference_voltage = 7,
+>> -     .cal_type = TYPE_ONE_POINT_TRIMMING,
+>> -     .min_efuse_value = 40,
+>> -     .max_efuse_value = 100,
+>> -     .first_point_trim = 25,
+>> -     .second_point_trim = 85,
+>> -     .default_temp_offset = 50,
+>> -     .freq_tab[0] = {
+>> -             .freq_clip_max = 800 * 1000,
+>> -             .temp_level = 85,
+>> -     },
+>> -     .freq_tab[1] = {
+>> -             .freq_clip_max = 200 * 1000,
+>> -             .temp_level = 100,
+>> +
+>> +struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
+>> +     .tmu_data = {
+>> +             {
+>> +             .threshold = 80,
+>> +             .trigger_levels[0] = 5,
+>> +             .trigger_levels[1] = 20,
+>> +             .trigger_levels[2] = 30,
+>> +             .trigger_enable[0] = 1,
+>> +             .trigger_enable[1] = 1,
+>> +             .trigger_enable[2] = 1,
+>> +             .trigger_enable[3] = 0,
+>> +             .trigger_type[0] = THROTTLE_ACTIVE,
+>> +             .trigger_type[1] = THROTTLE_ACTIVE,
+>> +             .trigger_type[2] = SW_TRIP,
+>> +             .max_trigger_level = 4,
+>> +             .gain = 15,
+>> +             .reference_voltage = 7,
+>> +             .cal_type = TYPE_ONE_POINT_TRIMMING,
+>> +             .min_efuse_value = 40,
+>> +             .max_efuse_value = 100,
+>> +             .first_point_trim = 25,
+>> +             .second_point_trim = 85,
+>> +             .default_temp_offset = 50,
+>> +             .freq_tab[0] = {
+>> +                     .freq_clip_max = 800 * 1000,
+>> +                     .temp_level = 85,
+>> +                     },
+>> +             .freq_tab[1] = {
+>> +                     .freq_clip_max = 200 * 1000,
+>> +                     .temp_level = 100,
+>> +             },
+>> +             .freq_tab_count = 2,
+>> +             .type = SOC_ARCH_EXYNOS4210,
+>> +             .registers = &exynos4210_tmu_registers,
+>> +             },
+>>       },
+>> -     .freq_tab_count = 2,
+>> -     .type = SOC_ARCH_EXYNOS4210,
+>> -     .registers = &exynos4210_tmu_registers,
+>> +     .tmu_count = 1,
+>>  };
+>>  #endif
+>>
+>> @@ -120,41 +126,48 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
+>>       .emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+>>       .emul_time_mask = EXYNOS_EMUL_TIME_MASK,
+>>  };
+>> -struct exynos_tmu_platform_data const exynos5250_default_tmu_data = {
+>> -     .threshold_falling = 10,
+>> -     .trigger_levels[0] = 85,
+>> -     .trigger_levels[1] = 103,
+>> -     .trigger_levels[2] = 110,
+>> -     .trigger_levels[3] = 120,
+>> -     .trigger_enable[0] = 1,
+>> -     .trigger_enable[1] = 1,
+>> -     .trigger_enable[2] = 1,
+>> -     .trigger_enable[3] = 0,
+>> -     .trigger_type[0] = THROTTLE_ACTIVE,
+>> -     .trigger_type[1] = THROTTLE_ACTIVE,
+>> -     .trigger_type[2] = SW_TRIP,
+>> -     .trigger_type[3] = HW_TRIP,
+>> -     .max_trigger_level = 4,
+>> -     .gain = 8,
+>> -     .reference_voltage = 16,
+>> -     .noise_cancel_mode = 4,
+>> -     .cal_type = TYPE_ONE_POINT_TRIMMING,
+>> -     .efuse_value = 55,
+>> -     .min_efuse_value = 40,
+>> -     .max_efuse_value = 100,
+>> -     .first_point_trim = 25,
+>> -     .second_point_trim = 85,
+>> -     .default_temp_offset = 50,
+>> -     .freq_tab[0] = {
+>> -             .freq_clip_max = 800 * 1000,
+>> -             .temp_level = 85,
+>> -     },
+>> -     .freq_tab[1] = {
+>> -             .freq_clip_max = 200 * 1000,
+>> -             .temp_level = 103,
+>> -     },
+>> -     .freq_tab_count = 2,
+>> -     .type = SOC_ARCH_EXYNOS,
+>> +
+>> +#define EXYNOS5250_TMU_DATA \
+>> +     .threshold_falling = 10, \
+>> +     .trigger_levels[0] = 85, \
+>> +     .trigger_levels[1] = 103, \
+>> +     .trigger_levels[2] = 110, \
+>> +     .trigger_levels[3] = 120, \
+>> +     .trigger_enable[0] = 1, \
+>> +     .trigger_enable[1] = 1, \
+>> +     .trigger_enable[2] = 1, \
+>> +     .trigger_enable[3] = 0, \
+>> +     .trigger_type[0] = THROTTLE_ACTIVE, \
+>> +     .trigger_type[1] = THROTTLE_ACTIVE, \
+>> +     .trigger_type[2] = SW_TRIP, \
+>> +     .trigger_type[3] = HW_TRIP, \
+>> +     .max_trigger_level = 4, \
+>> +     .gain = 8, \
+>> +     .reference_voltage = 16, \
+>> +     .noise_cancel_mode = 4, \
+>> +     .cal_type = TYPE_ONE_POINT_TRIMMING, \
+>> +     .efuse_value = 55, \
+>> +     .min_efuse_value = 40, \
+>> +     .max_efuse_value = 100, \
+>> +     .first_point_trim = 25, \
+>> +     .second_point_trim = 85, \
+>> +     .default_temp_offset = 50, \
+>> +     .freq_tab[0] = { \
+>> +             .freq_clip_max = 800 * 1000, \
+>> +             .temp_level = 85, \
+>> +     }, \
+>> +     .freq_tab[1] = { \
+>> +             .freq_clip_max = 200 * 1000, \
+>> +             .temp_level = 103, \
+>> +     }, \
+>> +     .freq_tab_count = 2, \
+>> +     .type = SOC_ARCH_EXYNOS, \
+>>       .registers = &exynos5250_tmu_registers,
+>> +
+>> +struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
+>> +     .tmu_data = {
+>> +             { EXYNOS5250_TMU_DATA },
+>> +     },
+>> +     .tmu_count = 1,
+>>  };
+>>  #endif
+>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+>> index 4acf070..139dbbb 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+>> @@ -94,14 +94,14 @@
+>>  #define EXYNOS_MAX_TRIGGER_PER_REG   4
+>>
+>>  #if defined(CONFIG_CPU_EXYNOS4210)
+>> -extern struct exynos_tmu_platform_data const exynos4210_default_tmu_data;
+>> +extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
+>>  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
+>>  #else
+>>  #define EXYNOS4210_TMU_DRV_DATA (NULL)
+>>  #endif
+>>
+>>  #if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))
+>> -extern struct exynos_tmu_platform_data const exynos5250_default_tmu_data;
+>> +extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
+>>  #define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
+>>  #else
+>>  #define EXYNOS5250_TMU_DRV_DATA (NULL)
+>>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
