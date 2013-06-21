@@ -1,89 +1,86 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH 00/11] ARM: s3c64xx: Let amba-pl08x driver handle DMA
-Date: Fri, 21 Jun 2013 10:47:04 +0100
-Message-ID: <20130621094704.GJ27646@sirena.org.uk>
-References: <1371416058-22047-1-git-send-email-tomasz.figa@gmail.com>
- <20130619174047.GB1403@sirena.org.uk> <3697657.tZFV7pR81Q@flatron>
- <20130619192211.GH1403@sirena.org.uk>
- <001201ce6d98$03d9b920$0b8d2b60$%carmody@partner.samsung.com>
- <20130620103532.GA27646@sirena.org.uk>
- <002501ce6da7$655924b0$300b6e10$%carmody@partner.samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v6 4/8] ARM: Add .init_platform() callback to machine
+ descriptor
+Date: Fri, 21 Jun 2013 11:24:52 +0100
+Message-ID: <51C429F4.60709@arm.com>
+References: <1371774924-9224-1-git-send-email-tomasz.figa@gmail.com> <1371774924-9224-5-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3505290066535613155=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <002501ce6da7$655924b0$300b6e10$%carmody@partner.samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Phil Carmody <phil.carmody@partner.samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, 'Vinod Koul' <vinod.koul@intel.com>, linux-kernel@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-spi@vger.kernel.org, 'Dan Williams' <djbw@fb.co>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:42591 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751350Ab3FUKY5 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Jun 2013 06:24:57 -0400
+In-Reply-To: <1371774924-9224-5-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, Benoit Cousson <benoit.cousson@linaro.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Jason Cooper <jason@lakedaemon.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Pitre <nico@fluxnic.net>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <Will.Deacon@arm.com>
 
+On 21/06/13 01:35, Tomasz Figa wrote:
 
---===============3505290066535613155==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hk6Zb6cduJ+I0Tmj"
-Content-Disposition: inline
+Hi Tomasz,
 
+> Most ARM platforms have parts that should be initialized as early as
+> possible, which usually means as soon as memory management (kmalloc,
+> ioremap) starts to work,
+> 
+> However, currently there is no appropriate callback in machine_desc
+> struct to use for such initialization and platforms tend to stuff things
+> up .init_irq() and .init_time() callbacks.
+> 
+> Since all the DT-based platforms are going towards generic IRQ and time
+> initialization (using irqchip_init and clocksource_of_init) and current
+> code assumes that if custom callbacks are not provided in machine_desc
+> then generic ones should be used, this problem has become a bit more
+> inconvenient.
+> 
+> This patch tries to solve this issue by introducing new callback called
+> .init_platform(), where any custom low level initialization of platform
+> can be done safely.
+> 
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  arch/arm/include/asm/mach/arch.h | 1 +
+>  arch/arm/kernel/irq.c            | 3 +++
+>  2 files changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm/include/asm/mach/arch.h b/arch/arm/include/asm/mach/arch.h
+> index 308ad7d..b2f4d11 100644
+> --- a/arch/arm/include/asm/mach/arch.h
+> +++ b/arch/arm/include/asm/mach/arch.h
+> @@ -46,6 +46,7 @@ struct machine_desc {
+>  	void			(*reserve)(void);/* reserve mem blocks	*/
+>  	void			(*map_io)(void);/* IO mapping function	*/
+>  	void			(*init_early)(void);
+> +	void			(*init_platform)(void);
+>  	void			(*init_irq)(void);
+>  	void			(*init_time)(void);
+>  	void			(*init_machine)(void);
+> diff --git a/arch/arm/kernel/irq.c b/arch/arm/kernel/irq.c
+> index 9723d17..61e2000 100644
+> --- a/arch/arm/kernel/irq.c
+> +++ b/arch/arm/kernel/irq.c
+> @@ -115,6 +115,9 @@ EXPORT_SYMBOL_GPL(set_irq_flags);
+>  
+>  void __init init_IRQ(void)
+>  {
+> +	if (machine_desc->init_platform)
+> +		machine_desc->init_platform();
+> +
+>  	if (IS_ENABLED(CONFIG_OF) && !machine_desc->init_irq)
+>  		irqchip_init();
+>  	else
 
---hk6Zb6cduJ+I0Tmj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To me, this new hook is strictly equivalent to init_irq. What do we gain
+exactly? I didn't think init_irq was going away...
 
-On Thu, Jun 20, 2013 at 02:14:53PM +0300, Phil Carmody wrote:
+I know init_irq is not pretty, and we tend to overload it with other
+stuff, but I don't really see the point of adding a new callback that
+has the exact same properties.
 
-> With my language-lawyer hat on, I'd suggest ``(get_signal)'' to prevent t=
-he
-> macro expansion:
-
-Right, which the patch I posted in the mail was doing IIRC.
-
-> However, it's more tempting (i.e. sensible) to just rename the=20
-> one with the weaker claim to the name.
-
-I sent a patch for that which Vinod has applied.
-
---hk6Zb6cduJ+I0Tmj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRxCEVAAoJELSic+t+oim9MF4P/j3hmWhKx7+3QMiWNLdHrvjD
-Z9E0j7GVEIirmknL8PlmwKFx971klj5tifU4U0xB0WZ9oQ7DTiTyiOprjLn4J46L
-7q2P0yJDjh4d4OnnK/uzkpGsqeOW1Umcnt+4bWfOp3Xv4bF/Nu8ZLYxn6ZTHhxS3
-KsnzaXVg9pazrS0apfzR8MxYO1xdML6jRSFeIjutY9DV0YieAgjVqfWbMYpYJ2JR
-9eHGUWeKUfDJQ8aBCzJ7XAKibbv7U9PvAVkrwWzFGD1OsCn8P6WT8bgsfza/FG03
-lUZemHlDV/RjNA/x0OaFKpSs1A2Ags9wTXe4cLWFhysr5n8H8CptDBPFgpsFJEdx
-6p8VcVugYl0nPw9oPhVQTjITNFQ2J/Qxu19NLME/EjV+UccJSCLFJub3CJzhycKj
-1hNEvqZnUSzDiKGd4V/uS8AbEtu0q1sIwSCRunJ//i6E/o/1LmXZnk6Ro/MXG93S
-my63lu/ZSA8c0DaHThifvA10+u5Sj7sCXZrr7kxtTR9lrEDcbueM6rT+nAoIL+JF
-7aqdoAKemYxG1I2VJNqwiXigbpOnpkZw0dmOMKGp9l06noeHrpW8CyjS24VIgE6w
-C251BOuUa5acjUwxqDJOcnscxMBZx5vyOUWgEIs5o+kwmor9Un98i/AUifV02xwV
-aakiqqM228fOgObR+J7p
-=2CYh
------END PGP SIGNATURE-----
-
---hk6Zb6cduJ+I0Tmj--
-
-
---===============3505290066535613155==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============3505290066535613155==--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
