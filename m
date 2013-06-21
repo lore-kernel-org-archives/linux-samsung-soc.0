@@ -1,63 +1,70 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 08/10] Samsung SoC EXYNOS5420 for v3.11
-Date: Fri, 21 Jun 2013 15:03:43 +0200
-Message-ID: <201306211503.44079.arnd@arndb.de>
-References: <51C0BC74.1060502@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <51C0BC74.1060502@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chander Kashyap <chander.kashyap@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] MAINTAINERS: Update S5P/Exynos FIMC driver entry
+Date: Fri, 21 Jun 2013 15:11:13 +0200
+Message-ID: <1371820273-14461-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:39361 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965746Ab3FUNL3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Jun 2013 09:11:29 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Tuesday 18 June 2013, Kukjin Kim wrote:
-> The following changes since commit 79d743c177f99d6854e152d9e7fac5bbbeb7c25e:
-> 
->    clk: exynos5250: Add enum entries for divider clock of i2s1 and i2s2 
-> (2013-06-19 03:28:43 +0900)
-> 
-> are available in the git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-> tags/soc-exynos5420-1
-> 
-> for you to fetch changes up to eff4e7c7f32a4e4be60b19b209ffab5cb430b385:
-> 
->    ARM: EXYNOS: extend soft-reset support for EXYNOS5420 (2013-06-19 
-> 04:09:37 +0900)
-> 
-> ----------------------------------------------------------------
-> based on tags/common-clk-audio
-> - add support for exynos5420 SoC
-> 
-> ----------------------------------------------------------------
-> Chander Kashyap (10):
->        ARM: dts: fork out common EXYNOS5 nodes
->        ARM: dts: list the CPU nodes for EXYNOS5250
->        ARM: EXYNOS: Add support for EXYNOS5420 SoC
->        serial: samsung: select EXYNOS specific driver data if 
-> ARCH_EXYNOS is defined
->        ARM: EXYNOS: use four additional chipid bits to identify EXYNOS 
-> family
->        clk: exynos5420: register clocks using common clock framework
->        ARM: dts: Add initial device tree support for EXYNOS5420
->        clocksource: exynos_mct: use (request/free)_irq calls for local 
-> timer registration
->        ARM: EXYNOS: add secondary CPU boot base location for EXYNOS5420
->        ARM: EXYNOS: extend soft-reset support for EXYNOS5420
-> 
+This change is mainly to update the driver's path changed from
+drivers/media/platform/s5p-fimc to drivers/media/platform/exynos4-is/.
+While at it, remove non-existent files rule, move the whole entry to
+the Samsung drivers section and add the patch tracking system URL
+and git repository details.
 
-Pulled into next/late now to avoid the dependencies.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+Changes since v1:
+ - added SCM details, moved to proper location to keep
+   alphabetical order
+---
+ MAINTAINERS |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-	Arnd
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3d7782b..22435e8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1153,15 +1153,6 @@ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ F:	drivers/media/platform/s5p-g2d/
+ 
+-ARM/SAMSUNG S5P SERIES FIMC SUPPORT
+-M:	Kyungmin Park <kyungmin.park@samsung.com>
+-M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
+-L:	linux-arm-kernel@lists.infradead.org
+-L:	linux-media@vger.kernel.org
+-S:	Maintained
+-F:	arch/arm/plat-samsung/include/plat/*fimc*
+-F:	drivers/media/platform/s5p-fimc/
+-
+ ARM/SAMSUNG S5P SERIES Multi Format Codec (MFC) SUPPORT
+ M:	Kyungmin Park <kyungmin.park@samsung.com>
+ M:	Kamil Debski <k.debski@samsung.com>
+@@ -6945,6 +6936,16 @@ L:	linux-media@vger.kernel.org
+ S:	Supported
+ F:	drivers/media/i2c/s5c73m3/*
+ 
++SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
++M:	Kyungmin Park <kyungmin.park@samsung.com>
++M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
++L:	linux-media@vger.kernel.org
++Q:	https://patchwork.linuxtv.org/project/linux-media/list/
++T:	git git://linuxtv.org/snawrocki/samsung.git
++S:	Supported
++F:	drivers/media/platform/exynos4-is/
++F:	include/media/s5p_fimc.h
++
+ SERIAL DRIVERS
+ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ L:	linux-serial@vger.kernel.org
+-- 
+1.7.9.5
