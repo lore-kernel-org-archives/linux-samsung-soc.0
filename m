@@ -1,113 +1,191 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v6 4/8] ARM: Add .init_platform() callback to machine
- descriptor
-Date: Fri, 21 Jun 2013 13:14:34 +0200
-Message-ID: <72209947.cQvP4jsDBz@amdc1227>
-References: <1371774924-9224-1-git-send-email-tomasz.figa@gmail.com>
- <1371774924-9224-5-git-send-email-tomasz.figa@gmail.com>
- <51C429F4.60709@arm.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V6 16/30] thermal: exynos: Make the zone handling use trip information
+Date: Fri, 21 Jun 2013 18:00:27 +0530
+Message-ID: <CADGdYn66wqkJcce=4nThkQtZtgt_SdUz1pzuoWz2qHc0cnmXTQ@mail.gmail.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
+	<1371451599-31035-17-git-send-email-amit.daniel@samsung.com>
+	<51C238BA.9070200@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <51C429F4.60709@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>, Benoit Cousson <benoit.cousson@linaro.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Jason Cooper <jason@lakedaemon.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Nicolas Pitre <nico@fluxnic.net>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <Will.Deacon@arm.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51C238BA.9070200@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Marc,
+Hi
 
-On Friday 21 of June 2013 11:24:52 Marc Zyngier wrote:
-> On 21/06/13 01:35, Tomasz Figa wrote:
-> 
-> Hi Tomasz,
-> 
-> > Most ARM platforms have parts that should be initialized as early as
-> > possible, which usually means as soon as memory management (kmalloc,
-> > ioremap) starts to work,
-> > 
-> > However, currently there is no appropriate callback in machine_desc
-> > struct to use for such initialization and platforms tend to stuff
-> > things
-> > up .init_irq() and .init_time() callbacks.
-> > 
-> > Since all the DT-based platforms are going towards generic IRQ and time
-> > initialization (using irqchip_init and clocksource_of_init) and current
-> > code assumes that if custom callbacks are not provided in machine_desc
-> > then generic ones should be used, this problem has become a bit more
-> > inconvenient.
-> > 
-> > This patch tries to solve this issue by introducing new callback called
-> > .init_platform(), where any custom low level initialization of platform
-> > can be done safely.
-> > 
-> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> > ---
-> > 
-> >  arch/arm/include/asm/mach/arch.h | 1 +
-> >  arch/arm/kernel/irq.c            | 3 +++
-> >  2 files changed, 4 insertions(+)
-> > 
-> > diff --git a/arch/arm/include/asm/mach/arch.h
-> > b/arch/arm/include/asm/mach/arch.h index 308ad7d..b2f4d11 100644
-> > --- a/arch/arm/include/asm/mach/arch.h
-> > +++ b/arch/arm/include/asm/mach/arch.h
-> > @@ -46,6 +46,7 @@ struct machine_desc {
-> > 
-> >  	void			(*reserve)(void);/* reserve mem blocks	*/
-> >  	void			(*map_io)(void);/* IO mapping function	*/
-> >  	void			(*init_early)(void);
-> > 
-> > +	void			(*init_platform)(void);
-> > 
-> >  	void			(*init_irq)(void);
-> >  	void			(*init_time)(void);
-> >  	void			(*init_machine)(void);
-> > 
-> > diff --git a/arch/arm/kernel/irq.c b/arch/arm/kernel/irq.c
-> > index 9723d17..61e2000 100644
-> > --- a/arch/arm/kernel/irq.c
-> > +++ b/arch/arm/kernel/irq.c
-> > @@ -115,6 +115,9 @@ EXPORT_SYMBOL_GPL(set_irq_flags);
-> > 
-> >  void __init init_IRQ(void)
-> >  {
-> > 
-> > +	if (machine_desc->init_platform)
-> > +		machine_desc->init_platform();
-> > +
-> > 
-> >  	if (IS_ENABLED(CONFIG_OF) && !machine_desc->init_irq)
-> >  	
-> >  		irqchip_init();
-> >  	
-> >  	else
-> 
-> To me, this new hook is strictly equivalent to init_irq. What do we gain
-> exactly? I didn't think init_irq was going away...
-> 
-> I know init_irq is not pretty, and we tend to overload it with other
-> stuff, but I don't really see the point of adding a new callback that
-> has the exact same properties.
-
-Well, it doesn't really give us any functional benefits.
-
-However in my opinion it looks much saner in case of DT-only platforms that 
-don't need any specific IRQ initialization, but need to call some platform 
-specific initialization routines, after memory management, but before 
-anything else is initialized.
-
-This way irqchip_init() doesn't have to be explicitly called in platform 
-code.
-
-Anyway, I don't have any strong opinion on this. If it is perfectly fine to 
-abuse irqchip_init() for anything that must be done at this stage of boot, 
-then I'm fine with this either and will modify the board file from further 
-patch from this series to not rely on this change any more.
-
-Best regards,
-Tomasz
-
-> 
-> 	M.
+On Thu, Jun 20, 2013 at 4:33 AM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+>> This code simplifies the zone handling to use the trip information passed
+>> by the TMU driver and not the hardcoded macros. This also helps in adding
+>> more zone support.
+>>
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  drivers/thermal/samsung/exynos_thermal_common.c |   61 +++++++++++++----------
+>>  drivers/thermal/samsung/exynos_thermal_common.h |    3 +-
+>>  drivers/thermal/samsung/exynos_tmu.c            |    5 ++-
+>>  3 files changed, 40 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
+>> index 86d39aa..2873ca3 100644
+>> --- a/drivers/thermal/samsung/exynos_thermal_common.c
+>> +++ b/drivers/thermal/samsung/exynos_thermal_common.c
+>> @@ -78,17 +78,22 @@ static int exynos_set_mode(struct thermal_zone_device *thermal,
+>>  static int exynos_get_trip_type(struct thermal_zone_device *thermal, int trip,
+>>                                enum thermal_trip_type *type)
+>>  {
+>> -     switch (GET_ZONE(trip)) {
+>> -     case MONITOR_ZONE:
+>> -     case WARN_ZONE:
+>> -             *type = THERMAL_TRIP_ACTIVE;
+>> -             break;
+>> -     case PANIC_ZONE:
+>> -             *type = THERMAL_TRIP_CRITICAL;
+>> -             break;
+>> -     default:
+>> +     struct exynos_thermal_zone *th_zone = thermal->devdata;
+>> +     int max_trip = th_zone->sensor_conf->trip_data.trip_count;
+>> +     int trip_type;
+>> +
+>> +     if (trip < 0 || trip >= max_trip)
+>>               return -EINVAL;
+>> -     }
+>> +
+>> +     trip_type = th_zone->sensor_conf->trip_data.trip_type[trip];
+>> +
+>> +     if (trip_type == SW_TRIP)
+>> +             *type = THERMAL_TRIP_CRITICAL;
+>> +     else if (trip_type == THROTTLE_ACTIVE)
+>> +             *type = THERMAL_TRIP_ACTIVE;
+>> +     else if (trip_type == THROTTLE_PASSIVE)
+>> +             *type = THERMAL_TRIP_PASSIVE;
+>> +
+>>       return 0;
+>>  }
+>>
+>> @@ -97,8 +102,9 @@ static int exynos_get_trip_temp(struct thermal_zone_device *thermal, int trip,
+>>                               unsigned long *temp)
+>>  {
+>>       struct exynos_thermal_zone *th_zone = thermal->devdata;
+>> +     int max_trip = th_zone->sensor_conf->trip_data.trip_count;
+>>
+>> -     if (trip < GET_TRIP(MONITOR_ZONE) || trip > GET_TRIP(PANIC_ZONE))
+>> +     if (trip < 0 || trip >= max_trip)
+>>               return -EINVAL;
+>>
+>>       *temp = th_zone->sensor_conf->trip_data.trip_val[trip];
+>> @@ -112,10 +118,10 @@ static int exynos_get_trip_temp(struct thermal_zone_device *thermal, int trip,
+>>  static int exynos_get_crit_temp(struct thermal_zone_device *thermal,
+>>                               unsigned long *temp)
+>>  {
+>> -     int ret;
+>> -     /* Panic zone */
+>> -     ret = exynos_get_trip_temp(thermal, GET_TRIP(PANIC_ZONE), temp);
+>> -     return ret;
+>> +     struct exynos_thermal_zone *th_zone = thermal->devdata;
+>> +     int max_trip = th_zone->sensor_conf->trip_data.trip_count;
+>> +     /* Get the temp of highest trip*/
+>> +     return exynos_get_trip_temp(thermal, max_trip - 1, temp);
+>>  }
+>>
+>>  /* Bind callback functions for thermal zone */
+>> @@ -340,19 +346,22 @@ int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf)
+>>               return -ENOMEM;
+>>
+>>       th_zone->sensor_conf = sensor_conf;
+>> -     cpumask_set_cpu(0, &mask_val);
+>> -     th_zone->cool_dev[0] = cpufreq_cooling_register(&mask_val);
+>> -     if (IS_ERR(th_zone->cool_dev[0])) {
+>> -             pr_err("Failed to register cpufreq cooling device\n");
+>> -             ret = -EINVAL;
+>> -             goto err_unregister;
+>> +     if (sensor_conf->cooling_data.freq_clip_count > 0) {
+>> +             cpumask_set_cpu(0, &mask_val);
+>> +             th_zone->cool_dev[0] = cpufreq_cooling_register(&mask_val);
+>
+> Did you mean th_zone->cool_dev[th_zone->cool_dev_size] ?
+Yes.
+>
+> I think the logic behind the allocation of these cpufreq cooling devices
+> needs to be revisited. You always assigned to cool_dev[0], but you
+> always iterate the array until cool_dev_size. Remember that
+> cool_dev_size now is per th_zone, not global.
+I have kept an array of cooling devices to add other type of cooling
+devices in the same thermal zone in future. For current use case
+although it does not make sense and only one cpufreq cooling device is
+present
+>
+>> +             if (IS_ERR(th_zone->cool_dev[0])) {
+>> +                     pr_err("Failed to register cpufreq cooling device\n");
+>> +                     ret = -EINVAL;
+>> +                     goto err_unregister;
+>> +             }
+>> +             th_zone->cool_dev_size++;
+>>       }
+>> -     th_zone->cool_dev_size++;
+>>
+>> -     th_zone->therm_dev = thermal_zone_device_register(sensor_conf->name,
+>> -                     EXYNOS_ZONE_COUNT, 0, th_zone, &exynos_dev_ops, NULL, 0,
+>> -                     sensor_conf->trip_data.trigger_falling ?
+>> -                     0 : IDLE_INTERVAL);
+>> +     th_zone->therm_dev = thermal_zone_device_register(
+>> +                     sensor_conf->name, sensor_conf->trip_data.trip_count,
+>> +                     0, th_zone, &exynos_dev_ops, NULL, 0,
+>> +                     sensor_conf->trip_data.trigger_falling ? 0 :
+>> +                     IDLE_INTERVAL);
+>>
+>>       if (IS_ERR(th_zone->therm_dev)) {
+>>               pr_err("Failed to register thermal zone device\n");
+>> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
+>> index 1e9a326..dd0077e 100644
+>> --- a/drivers/thermal/samsung/exynos_thermal_common.h
+>> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
+>> @@ -42,8 +42,6 @@
+>>  #define GET_ZONE(trip) (trip + 2)
+>>  #define GET_TRIP(zone) (zone - 2)
+>>
+>> -#define EXYNOS_ZONE_COUNT    3
+>> -
+>>  enum trigger_type {
+>>       THROTTLE_ACTIVE = 1,
+>>       THROTTLE_PASSIVE,
+>> @@ -68,6 +66,7 @@ struct freq_clip_table {
+>>  };
+>>  struct       thermal_trip_point_conf {
+>>       int trip_val[MAX_TRIP_COUNT];
+>> +     int trip_type[MAX_TRIP_COUNT];
+>>       int trip_count;
+>>       unsigned char trigger_falling;
+>>  };
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>> index 40e0cfd..acbd295 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -509,9 +509,12 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>>                       pdata->trigger_enable[1] + pdata->trigger_enable[2]+
+>>                       pdata->trigger_enable[3];
+>>
+>> -     for (i = 0; i < exynos_sensor_conf.trip_data.trip_count; i++)
+>> +     for (i = 0; i < exynos_sensor_conf.trip_data.trip_count; i++) {
+>>               exynos_sensor_conf.trip_data.trip_val[i] =
+>>                       pdata->threshold + pdata->trigger_levels[i];
+>> +             exynos_sensor_conf.trip_data.trip_type[i] =
+>> +                                     pdata->trigger_type[i];
+>> +     }
+>>
+>>       exynos_sensor_conf.trip_data.trigger_falling = pdata->threshold_falling;
+>>
+>>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
