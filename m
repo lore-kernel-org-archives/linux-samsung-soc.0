@@ -1,75 +1,190 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: RE: [PATCH V6 6/6] clk: exynos5250: Add enum entries for divider clock
- of i2s1 and i2s2
-Date: Thu, 20 Jun 2013 23:54:45 -0700
-Message-ID: <20130621065445.9136.69447@quantum>
-References: <1371024463-303-1-git-send-email-padma.v@samsung.com>
- <1371024463-303-7-git-send-email-padma.v@samsung.com>
- <20130612164553.26381.41398@quantum>
- <CAAgF-BfEvBcrm186t6U9Tp4r64wB3sEsy6hoXMQi=dHJgncvfw@mail.gmail.com>
- <CAAgF-Bf4BVfGVuFF8-CwPRi-em5VHA5HXYjkRDxPxvyAZPx7kw@mail.gmail.com>
- <19ac01ce6b43$96bfb4d0$c43f1e70$%kim@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and PLL36xx for samsung SoCs
+Date: Fri, 21 Jun 2013 09:09:27 +0200
+Message-ID: <1524664.UCV47tfIRU@flatron>
+References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com> <CAKew6eUOy4=D08v_iq7CTRY5gvt37VAN7Z7WOr2Yt25znDJb2g@mail.gmail.com> <CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:60458 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758638Ab3FUGyt convert rfc822-to-8bit (ORCPT
+Received: from mail-bk0-f53.google.com ([209.85.214.53]:48716 "EHLO
+	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753195Ab3FUHJa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 02:54:49 -0400
-Received: by mail-pa0-f52.google.com with SMTP id kq13so7374059pab.39
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Jun 2013 23:54:49 -0700 (PDT)
-In-Reply-To: <19ac01ce6b43$96bfb4d0$c43f1e70$%kim@samsung.com>
+	Fri, 21 Jun 2013 03:09:30 -0400
+Received: by mail-bk0-f53.google.com with SMTP id e11so3169565bkh.26
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jun 2013 00:09:28 -0700 (PDT)
+In-Reply-To: <CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Padma Venkat' <padma.kvr@gmail.com>
-Cc: 'Padmavathi Venna' <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, sbkim73@samsung.com, broonie@kernel.org
+To: linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>
+Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, Vikas Sajjan <vikas.sajjan@linaro.org>
 
-Quoting Kukjin Kim (2013-06-17 03:15:27)
-> Padma Venkat wrote:
-> > 
-> > Hi Mike,
-> > 
-> > On Thu, Jun 13, 2013 at 8:32 AM, Padma Venkat <padma.kvr@gmail.com> wrote:
-> > > Hi Mike,
-> > >
-> > > On Wed, Jun 12, 2013 at 10:15 PM, Mike Turquette <mturquette@linaro.org>
-> > wrote:
-> > >> Quoting Padmavathi Venna (2013-06-12 01:07:43)
-> > >>> This patch adds enum entries for div_i2s1 and div_i2s2 which are
-> > >>> required for i2s1 and i2s2 controllers.
-> > >>>
-> > >>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> > >>
-> > >> Looks good.  Did you want me to take the clk patches or just gathering
-> > >> Acks?
-> > >
-> > > Please take the patches :).
-> > >
-> > > Thanks
-> > > Padma
-> > 
-> > clk related patches in this set has some dependency on arch side
-> > patches because one of the patch replaces all '/include's with
-> > '#include's and adds a header file in
-> > arch/arm/boot/include/dt-bindings/. So all these patches required to
-> > go into one tree.
-> > 
-> > Hi Kukjin,
-> > 
-> > Can you please take all these patches into samsung-tree?
-> > 
-> Padma, sure, I will.
+On Friday 21 of June 2013 10:18:01 Vikas Sajjan wrote:
+> Hi Mr. Kim,
 > 
-> BTW, Mike, according to your reply, I may get your ack on 2nd and 6th clk
-> patches...If any problems, please kindly let me know.
-
-Fine by me.
-
-Regards,
-Mike
-
+> On Thu, Jun 20, 2013 at 3:37 PM, Yadwinder Singh Brar
 > 
-> Thanks,
-> - Kukjin
+> <yadi.brar01@gmail.com> wrote:
+> > Hi Tomasz,
+> > 
+> > On Thu, Jun 20, 2013 at 3:30 PM, Tomasz Figa <t.figa@samsung.com> 
+wrote:
+> >> Hi Yadwinder, Vikas,
+> >> 
+> >> On Tuesday 11 of June 2013 15:01:05 Yadwinder Singh Brar wrote:
+> >>> This patch series does the following:
+> >>>  1) Unifies the clk strutures  and registration function used for
+> >>>  PLL35xx>>> 
+> >>> & PLL36xx, to factor out possible common code.
+> >>> 
+> >>>  2) Defines a common rate_table which will contain recommended p, m,
+> >>>  s
+> >>> 
+> >>> and k values for supported rates that needs to be changed for
+> >>> changing
+> >>> corresponding PLL's rate
+> >>> 
+> >>>  3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
+> >>> 
+> >>> changes since v6:
+> >>>       - Splited the patch adding samsung_clk_register_pll() into
+> >>>       definition
+> >>>       addition, SoC specific migration and cleanup patches.
+> >>>       - Addressed some NIT comments.
+> >> 
+> >> This version looks good to me. Thanks for your work on improving this
+> >> series again!
+> >> 
+> >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> Can you apply this series..
+
+I think we need at least Mike's (clk subsystem maintainer) ACK here.
+
+Mike, do you have any objections?
+
+Best regards,
+Tomasz
+
+> > Thanks for helping to improve this series.
+> > 
+> > Thanks,
+> > Yadwinder
+> > 
+> >> Best regards,
+> >> Tomasz
+> >> 
+> >>> changes since v5:
+> >>>       - Corrected to use rate table as specified in UM for
+> >>>       exynos5250 epll.
+> >>>       - Took care of exynos5420 as well, as new exynos5420 clk
+> >>>       driver came in
+> >>>       while rebasing on latest Kgene's for-next.
+> >>>       
+> >>>       Since we spilted 1st patch into 2 different patches,
+> >>>       can we expect "reviewed-by" again for the same?
+> >>> 
+> >>> changes since v4:
+> >>>       - Defined common samsung samsung_clk_register_pll() to
+> >>>       register a list
+> >>>       of PLL and used a struct samsung_pll_clock for passing
+> >>>       intialisation
+> >>>       data instead of passing as arguments. Now passing LOCK as well
+> >>>       as CON0
+> >>>       offset as intialisation data.
+> >>>       - Calculated length of rate table while registering PLL
+> >>>       instead of
+> >>>       getting it as intialisation data.
+> >>> 
+> >>> changes since v3:
+> >>>       - Used __clk_lookup() instead of adding alias for mout_vpllsrc
+> >>>       - Added check for changing only M value in
+> >>>       samsung_pll36xx_set_rate()
+> >>>       - Modified samsung_pll35xx_mp_change() &
+> >>>       samsung_pll35xx_set_rate()
+> >>>       to improve readabilty.
+> >>>       - Made the input rate_table as __init_data which is to be
+> >>>       provided
+> >> 
+> >> while
+> >> 
+> >>> registering PLL and made a copy of that table while registering, so
+> >>> that if multiple tables are their, they can be freed after getting
+> >>> the P, M, S, K setting values from required one.
+> >>> 
+> >>> changes since v2:
+> >>>       - Added new patch to reorder the MUX registration for
+> >>>       mout_vpllsrc MUX
+> >>>       before the PLL registrations. And to add the alias for the
+> >>>       mout_vpllsrc
+> >>> 
+> >>> MUX. - Added a check to confirm parent rate while registrating the
+> >>> PLL
+> >>> rate tables.
+> >>> 
+> >>> changes since v1:
+> >>>       - removed sorting and bsearch
+> >>>       - modified the definition of struct "samsung_pll_rate_table"
+> >>>       - added generic round_rate()
+> >>>       - rectified the ops assignment for "rate table passed as NULL
+> >>> 
+> >>> Is rebased on branch kgene's "for-next"
+> >>> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git
+> >>> /log/ ?h=for-next
+> >>> 
+> >>> Vikas Sajjan (3):
+> >>>   clk: samsung: Add set_rate() clk_ops for PLL36xx
+> >>>   clk: samsung: Reorder MUX registration for mout_vpllsrc
+> >>>   clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
+> >>> 
+> >>> Yadwinder Singh Brar (8):
+> >>>   clk: samsung: Introduce a common samsung_clk_pll struct
+> >>>   clk: samsung: Define a common samsung_clk_register_pll()
+> >>>   clk: samsung: Migrate exynos5250 to use common
+> >>>   
+> >>>     samsung_clk_register_pll()
+> >>>   
+> >>>   clk: samsung: Migrate exynos4 to use common
+> >>>   
+> >>>     samsung_clk_register_pll()
+> >>>   
+> >>>   clk: samsung: Migrate exynos5420 to use common
+> >>>   
+> >>>     samsung_clk_register_pll()
+> >>>   
+> >>>   clk: samsung: Remove unused pll registeration code for pll35xx and
+> >>>   
+> >>>     pll36xx
+> >>>   
+> >>>   clk: samsung: Add support to register rate_table for samsung plls
+> >>>   clk: samsung: Add set_rate() clk_ops for PLL35xx
+> >>>  
+> >>>  drivers/clk/samsung/clk-exynos4.c    |   40 +++--
+> >>>  drivers/clk/samsung/clk-exynos5250.c |  101 +++++++++--
+> >>>  drivers/clk/samsung/clk-exynos5420.c |   86 ++++++---
+> >>>  drivers/clk/samsung/clk-pll.c        |  339
+> >>> 
+> >>> ++++++++++++++++++++++++++-------- drivers/clk/samsung/clk-pll.h
+> >>> 
+> >>> |   38 ++++-
+> >>>  
+> >>>  drivers/clk/samsung/clk.h            |   53 ++++++
+> >>>  6 files changed, 519 insertions(+), 138 deletions(-)
+> >> 
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe
+> >> linux-samsung-soc" in the body of a message to
+> >> majordomo@vger.kernel.org
+> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe
+> > linux-samsung-soc" in the body of a message to
+> > majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
