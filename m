@@ -1,329 +1,308 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V6 07/30] thermal: exynos: Bifurcate exynos tmu driver and
- configuration data
-Date: Fri, 21 Jun 2013 10:36:55 +0530
-Message-ID: <CADGdYn40Bk9C9DG74LDToiQdSEcVK7aCkgWwXkdWRDg4_Cv6tQ@mail.gmail.com>
-References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
-	<1371451599-31035-8-git-send-email-amit.daniel@samsung.com>
-	<51C20810.5070601@ti.com>
-	<51C209F9.4000008@ti.com>
+From: Inki Dae <daeinki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 3/3] ARM/dts: change compatible strings for hdmi
+ subsystem
+Date: Fri, 21 Jun 2013 14:17:37 +0900
+Message-ID: <CAAQKjZOHmr57WoLuPvLM_KbGvvuOFNjNtD_aBmsykAebt+B+AQ@mail.gmail.com>
+References: <1371646269-21880-1-git-send-email-rahul.sharma@samsung.com>
+ <1371646269-21880-4-git-send-email-rahul.sharma@samsung.com>
+ <51C1B72A.6080801@samsung.com> <51C1B799.10008@samsung.com>
+ <CAPdUM4Pg7wG4EaPw_7R=N=Lx1qWrNt4=LxhzH2+V5YGx0USfNg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <51C209F9.4000008@ti.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
+Content-Type: multipart/mixed; boundary="===============5555065621189863744=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CAPdUM4Pg7wG4EaPw_7R=N=Lx1qWrNt4=LxhzH2+V5YGx0USfNg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, DRI mailing list <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 20, 2013 at 1:13 AM, Eduardo Valentin
-<eduardo.valentin@ti.com> wrote:
-> On 19-06-2013 15:35, Eduardo Valentin wrote:
->> Rui,
->>
->> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
->>> This code splits the exynos tmu driver code into SOC specific data parts.
->>> This will simplify adding new SOC specific data to the same TMU controller.
->>>
->>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
->>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->>
->> This patch looks good to me, you may want to add my:
->>
->> Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
+--===============5555065621189863744==
+Content-Type: multipart/alternative; boundary=001a113312d45df6f504dfa32e46
+
+--001a113312d45df6f504dfa32e46
+Content-Type: text/plain; charset=ISO-8859-1
+
+2013/6/20 Rahul Sharma <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+
+> Thanks Mr. Kim,
 >
-> Yet another minor before adding my ack, sorry this one almost fell into
-> the cracks (see below):
->
->>
->>> ---
->>>  drivers/thermal/samsung/Kconfig           |    3 +-
->>>  drivers/thermal/samsung/Makefile          |    1 +
->>>  drivers/thermal/samsung/exynos_tmu.c      |   67 ++-----------------------
->>>  drivers/thermal/samsung/exynos_tmu_data.c |   78 +++++++++++++++++++++++++++++
->>>  drivers/thermal/samsung/exynos_tmu_data.h |   40 +++++++++++++++
->>>  5 files changed, 125 insertions(+), 64 deletions(-)
->>>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
->>>  create mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
->>>
->>> diff --git a/drivers/thermal/samsung/Kconfig b/drivers/thermal/samsung/Kconfig
->>> index f8100b1..b653f15 100644
->>> --- a/drivers/thermal/samsung/Kconfig
->>> +++ b/drivers/thermal/samsung/Kconfig
->>> @@ -5,7 +5,8 @@ config EXYNOS_THERMAL
->>>        If you say yes here you get support for the TMU (Thermal Management
->>>        Unit) driver for SAMSUNG EXYNOS series of soc. This driver initialises
->>>        the TMU, reports temperature and handles cooling action if defined.
->>> -      This driver uses the exynos core thermal API's.
->>> +      This driver uses the exynos core thermal API's and TMU configuration
->>> +      data from the supported soc's.
->>>
->>>  config EXYNOS_THERMAL_CORE
->>>      bool "Core thermal framework support for EXYNOS SOC's"
->>> diff --git a/drivers/thermal/samsung/Makefile b/drivers/thermal/samsung/Makefile
->>> index 22528d6..c09d830 100644
->>> --- a/drivers/thermal/samsung/Makefile
->>> +++ b/drivers/thermal/samsung/Makefile
->>> @@ -3,4 +3,5 @@
->>>  #
->>>  obj-$(CONFIG_EXYNOS_THERMAL)                        += exynos_thermal.o
->>>  exynos_thermal-y                            := exynos_tmu.o
->>> +exynos_thermal-y                            += exynos_tmu_data.o
->>>  exynos_thermal-$(CONFIG_EXYNOS_THERMAL_CORE)        += exynos_thermal_common.o
->>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->>> index 6aa2fd2..5df04a1 100644
->>> --- a/drivers/thermal/samsung/exynos_tmu.c
->>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>> @@ -30,6 +30,7 @@
->>>
->>>  #include "exynos_thermal_common.h"
->>>  #include "exynos_tmu.h"
->>> +#include "exynos_tmu_data.h"
->>>
->>>  /* Exynos generic registers */
->>>  #define EXYNOS_TMU_REG_TRIMINFO             0x0
->>> @@ -381,66 +382,6 @@ static struct thermal_sensor_conf exynos_sensor_conf = {
->>>      .write_emul_temp        = exynos_tmu_set_emulation,
->>>  };
->>>
->>> -#if defined(CONFIG_CPU_EXYNOS4210)
->>> -static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
->>> -    .threshold = 80,
->>> -    .trigger_levels[0] = 5,
->>> -    .trigger_levels[1] = 20,
->>> -    .trigger_levels[2] = 30,
->>> -    .trigger_level0_en = 1,
->>> -    .trigger_level1_en = 1,
->>> -    .trigger_level2_en = 1,
->>> -    .trigger_level3_en = 0,
->>> -    .gain = 15,
->>> -    .reference_voltage = 7,
->>> -    .cal_type = TYPE_ONE_POINT_TRIMMING,
->>> -    .freq_tab[0] = {
->>> -            .freq_clip_max = 800 * 1000,
->>> -            .temp_level = 85,
->>> -    },
->>> -    .freq_tab[1] = {
->>> -            .freq_clip_max = 200 * 1000,
->>> -            .temp_level = 100,
->>> -    },
->>> -    .freq_tab_count = 2,
->>> -    .type = SOC_ARCH_EXYNOS4210,
->>> -};
->>> -#define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
->>> -#else
->>> -#define EXYNOS4210_TMU_DRV_DATA (NULL)
->>> -#endif
->>> -
->>> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
->>> -static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
->>> -    .threshold_falling = 10,
->>> -    .trigger_levels[0] = 85,
->>> -    .trigger_levels[1] = 103,
->>> -    .trigger_levels[2] = 110,
->>> -    .trigger_level0_en = 1,
->>> -    .trigger_level1_en = 1,
->>> -    .trigger_level2_en = 1,
->>> -    .trigger_level3_en = 0,
->>> -    .gain = 8,
->>> -    .reference_voltage = 16,
->>> -    .noise_cancel_mode = 4,
->>> -    .cal_type = TYPE_ONE_POINT_TRIMMING,
->>> -    .efuse_value = 55,
->>> -    .freq_tab[0] = {
->>> -            .freq_clip_max = 800 * 1000,
->>> -            .temp_level = 85,
->>> -    },
->>> -    .freq_tab[1] = {
->>> -            .freq_clip_max = 200 * 1000,
->>> -            .temp_level = 103,
->>> -    },
->>> -    .freq_tab_count = 2,
->>> -    .type = SOC_ARCH_EXYNOS,
->>> -};
->>> -#define EXYNOS_TMU_DRV_DATA (&exynos_default_tmu_data)
->>> -#else
->>> -#define EXYNOS_TMU_DRV_DATA (NULL)
->>> -#endif
->>> -
->>>  #ifdef CONFIG_OF
->>>  static const struct of_device_id exynos_tmu_match[] = {
->>>      {
->>> @@ -449,11 +390,11 @@ static const struct of_device_id exynos_tmu_match[] = {
->>>      },
->>>      {
->>>              .compatible = "samsung,exynos4412-tmu",
->>> -            .data = (void *)EXYNOS_TMU_DRV_DATA,
->>> +            .data = (void *)EXYNOS5250_TMU_DRV_DATA,
->>>      },
->>>      {
->>>              .compatible = "samsung,exynos5250-tmu",
->>> -            .data = (void *)EXYNOS_TMU_DRV_DATA,
->>> +            .data = (void *)EXYNOS5250_TMU_DRV_DATA,
->>>      },
->>>      {},
->>>  };
->>> @@ -467,7 +408,7 @@ static struct platform_device_id exynos_tmu_driver_ids[] = {
->>>      },
->>>      {
->>>              .name           = "exynos5250-tmu",
->>> -            .driver_data    = (kernel_ulong_t)EXYNOS_TMU_DRV_DATA,
->>> +            .driver_data    = (kernel_ulong_t)EXYNOS5250_TMU_DRV_DATA,
->>>      },
->>>      { },
->>>  };
->>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
->>> new file mode 100644
->>> index 0000000..13a60ca
->>> --- /dev/null
->>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
->>> @@ -0,0 +1,78 @@
->>> +/*
->>> + * exynos_tmu_data.c - Samsung EXYNOS tmu data file
->>> + *
->>> + *  Copyright (C) 2013 Samsung Electronics
->>> + *  Amit Daniel Kachhap <amit.daniel@samsung.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License as published by
->>> + * the Free Software Foundation; either version 2 of the License, or
->>> + * (at your option) any later version.
->>> + *
->>> + * This program is distributed in the hope that it will be useful,
->>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> + * GNU General Public License for more details.
->>> + *
->>> + * You should have received a copy of the GNU General Public License
->>> + * along with this program; if not, write to the Free Software
->>> + * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
->>> + *
->>> + */
->>> +
->>> +#include "exynos_thermal_common.h"
->
-> You have to:
-> +#include "exynos_tmu_data.h"
->
-> Otherwise, you will get:
->   CC [M]  drivers/thermal/samsung/exynos_tmu.o
-> drivers/thermal/samsung/exynos_tmu_data.c:27:39: warning: symbol
-> 'exynos4210_default_tmu_data' was not declared. Should it be static?
-> drivers/thermal/samsung/exynos_tmu_data.c:53:39: warning: symbol
-> 'exynos5250_default_tmu_data' was not declared. Should it be static?
-Ok.
+> I will post v4 with aforesaid change.
 >
 >
->>> +#include "exynos_tmu.h"
+You don't need  to re-post it. I gonna change it to "ARM/dts: change
+compatible strings for Exynos5250 hdmi subsystem", and merge it. Is there
+another you want?
+
+Thanks,
+Inki Dae
+
+regards,
+> Rahul Sharma.
 >
->>> +
->>> +#if defined(CONFIG_CPU_EXYNOS4210)
->>> +struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
->>> +    .threshold = 80,
->>> +    .trigger_levels[0] = 5,
->>> +    .trigger_levels[1] = 20,
->>> +    .trigger_levels[2] = 30,
->>> +    .trigger_level0_en = 1,
->>> +    .trigger_level1_en = 1,
->>> +    .trigger_level2_en = 1,
->>> +    .trigger_level3_en = 0,
->>> +    .gain = 15,
->>> +    .reference_voltage = 7,
->>> +    .cal_type = TYPE_ONE_POINT_TRIMMING,
->>> +    .freq_tab[0] = {
->>> +            .freq_clip_max = 800 * 1000,
->>> +            .temp_level = 85,
->>> +    },
->>> +    .freq_tab[1] = {
->>> +            .freq_clip_max = 200 * 1000,
->>> +            .temp_level = 100,
->>> +    },
->>> +    .freq_tab_count = 2,
->>> +    .type = SOC_ARCH_EXYNOS4210,
->>> +};
->>> +#endif
->>> +
->>> +#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
->>> +struct exynos_tmu_platform_data const exynos5250_default_tmu_data = {
->>> +    .threshold_falling = 10,
->>> +    .trigger_levels[0] = 85,
->>> +    .trigger_levels[1] = 103,
->>> +    .trigger_levels[2] = 110,
->>> +    .trigger_level0_en = 1,
->>> +    .trigger_level1_en = 1,
->>> +    .trigger_level2_en = 1,
->>> +    .trigger_level3_en = 0,
->>> +    .gain = 8,
->>> +    .reference_voltage = 16,
->>> +    .noise_cancel_mode = 4,
->>> +    .cal_type = TYPE_ONE_POINT_TRIMMING,
->>> +    .efuse_value = 55,
->>> +    .freq_tab[0] = {
->>> +            .freq_clip_max = 800 * 1000,
->>> +            .temp_level = 85,
->>> +    },
->>> +    .freq_tab[1] = {
->>> +            .freq_clip_max = 200 * 1000,
->>> +            .temp_level = 103,
->>> +    },
->>> +    .freq_tab_count = 2,
->>> +    .type = SOC_ARCH_EXYNOS,
->>> +};
->>> +#endif
->>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
->>> new file mode 100644
->>> index 0000000..b7835fe
->>> --- /dev/null
->>> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
->>> @@ -0,0 +1,40 @@
->>> +/*
->>> + * exynos_tmu_data.h - Samsung EXYNOS tmu data header file
->>> + *
->>> + *  Copyright (C) 2013 Samsung Electronics
->>> + *  Amit Daniel Kachhap <amit.daniel@samsung.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License as published by
->>> + * the Free Software Foundation; either version 2 of the License, or
->>> + * (at your option) any later version.
->>> + *
->>> + * This program is distributed in the hope that it will be useful,
->>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> + * GNU General Public License for more details.
->>> + *
->>> + * You should have received a copy of the GNU General Public License
->>> + * along with this program; if not, write to the Free Software
->>> + * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
->>> + *
->>> + */
->>> +
->>> +#ifndef _EXYNOS_TMU_DATA_H
->>> +#define _EXYNOS_TMU_DATA_H
->>> +
->>> +#if defined(CONFIG_CPU_EXYNOS4210)
->>> +extern struct exynos_tmu_platform_data const exynos4210_default_tmu_data;
->>> +#define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
->>> +#else
->>> +#define EXYNOS4210_TMU_DRV_DATA (NULL)
->>> +#endif
->>> +
->>> +#if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))
->>> +extern struct exynos_tmu_platform_data const exynos5250_default_tmu_data;
->>> +#define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
->>> +#else
->>> +#define EXYNOS5250_TMU_DRV_DATA (NULL)
->>> +#endif
->>> +
->>> +#endif /*_EXYNOS_TMU_DATA_H*/
->>>
->>
->>
->
->
+> On Wed, Jun 19, 2013 at 7:22 PM, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> > On 06/19/13 22:50, Kukjin Kim wrote:
+> >>
+> >> On 06/19/13 21:51, Rahul Sharma wrote:
+> >>>
+> >>> This patch renames the combatible strings for hdmi, mixer, ddc
+> >>> and hdmiphy. It follows the convention of using compatible string
+> >>> which represent the SoC in which the IP was added for the first
+> >>> time.
+> >>>
+> >>> Signed-off-by: Rahul Sharma<rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>
+> >>
+> >> Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> >>
+> >
+> > Just one nit in subject:
+> >
+> > [PATCH] ARM: dts: ..... for exynos5250
+> >
+> > Thanks,
+> >
+> > - Kukjin
+> >
+> >>> ---
+> >>> arch/arm/boot/dts/cros5250-common.dtsi | 4 ++--
+> >>> arch/arm/boot/dts/exynos5250-smdk5250.dts | 4 ++--
+> >>> arch/arm/boot/dts/exynos5250.dtsi | 4 ++--
+> >>> 3 files changed, 6 insertions(+), 6 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi
+> >>> b/arch/arm/boot/dts/cros5250-common.dtsi
+> >>> index 3f0239e..dc259e8b 100644
+> >>> --- a/arch/arm/boot/dts/cros5250-common.dtsi
+> >>> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
+> >>> @@ -190,7 +190,7 @@
+> >>> samsung,i2c-max-bus-freq =<66000>;
+> >>>
+> >>> hdmiddc@50 {
+> >>> - compatible = "samsung,exynos5-hdmiddc";
+> >>> + compatible = "samsung,exynos4210-hdmiddc";
+> >>> reg =<0x50>;
+> >>> };
+> >>> };
+> >>> @@ -224,7 +224,7 @@
+> >>> samsung,i2c-max-bus-freq =<378000>;
+> >>>
+> >>> hdmiphy@38 {
+> >>> - compatible = "samsung,exynos5-hdmiphy";
+> >>> + compatible = "samsung,exynos4212-hdmiphy";
+> >>> reg =<0x38>;
+> >>> };
+> >>> };
+> >>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >>> index 3e0c792..f320d7c 100644
+> >>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >>> @@ -72,7 +72,7 @@
+> >>> samsung,i2c-max-bus-freq =<66000>;
+> >>>
+> >>> hdmiddc@50 {
+> >>> - compatible = "samsung,exynos5-hdmiddc";
+> >>> + compatible = "samsung,exynos4210-hdmiddc";
+> >>> reg =<0x50>;
+> >>> };
+> >>> };
+> >>> @@ -102,7 +102,7 @@
+> >>> samsung,i2c-max-bus-freq =<66000>;
+> >>>
+> >>> hdmiphy@38 {
+> >>> - compatible = "samsung,exynos5-hdmiphy";
+> >>> + compatible = "samsung,exynos4212-hdmiphy";
+> >>> reg =<0x38>;
+> >>> };
+> >>> };
+> >>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> >>> b/arch/arm/boot/dts/exynos5250.dtsi
+> >>> index 0673524..2f7763b 100644
+> >>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> >>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> >>> @@ -601,7 +601,7 @@
+> >>> };
+> >>>
+> >>> hdmi {
+> >>> - compatible = "samsung,exynos5-hdmi";
+> >>> + compatible = "samsung,exynos4212-hdmi";
+> >>> reg =<0x14530000 0x70000>;
+> >>> interrupts =<0 95 0>;
+> >>> clocks =<&clock 333>,<&clock 136>,<&clock 137>,
+> >>> @@ -611,7 +611,7 @@
+> >>> };
+> >>>
+> >>> mixer {
+> >>> - compatible = "samsung,exynos5-mixer";
+> >>> + compatible = "samsung,exynos5250-mixer";
+> >>> reg =<0x14450000 0x10000>;
+> >>> interrupts =<0 94 0>;
+> >>> };
 > --
-> You have got to be excited about what you are doing. (L. Lamport)
+> To unsubscribe from this list: send the line "unsubscribe
+> linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
-> Eduardo Valentin
->
+
+--001a113312d45df6f504dfa32e46
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><br><div class=3D"gmail=
+_quote">2013/6/20 Rahul Sharma <span dir=3D"ltr">&lt;<a href=3D"mailto:r.sh=
+.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" target=3D"_blank">r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org</a>&gt;</span><br><b=
+lockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-le=
+ft:1px solid rgb(204,204,204);padding-left:1ex">
+
+Thanks Mr. Kim,<br>
+<br>
+I will post v4 with aforesaid change.<br>
+<br></blockquote><div><br></div><div>You don&#39;t need=A0 to re-post it. I=
+ gonna change it to &quot;ARM/dts: change compatible strings for Exynos5250=
+ hdmi subsystem&quot;, and merge it. Is there another you want?<br></div>
+<br><div>Thanks,<br>
+Inki Dae <br></div><div><br></div><blockquote class=3D"gmail_quote" style=
+=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding=
+-left:1ex">
+regards,<br>
+Rahul Sharma.<br>
+<div><div><br>
+On Wed, Jun 19, 2013 at 7:22 PM, Kukjin Kim &lt;<a href=3D"mailto:kgene.kim=
+@samsung.com" target=3D"_blank">kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt; wrote:<br>
+&gt; On 06/19/13 22:50, Kukjin Kim wrote:<br>
+&gt;&gt;<br>
+&gt;&gt; On 06/19/13 21:51, Rahul Sharma wrote:<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; This patch renames the combatible strings for hdmi, mixer, ddc=
+<br>
+&gt;&gt;&gt; and hdmiphy. It follows the convention of using compatible str=
+ing<br>
+&gt;&gt;&gt; which represent the SoC in which the IP was added for the firs=
+t<br>
+&gt;&gt;&gt; time.<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; Signed-off-by: Rahul Sharma&lt;<a href=3D"mailto:rahul.sharma@=
+samsung.com" target=3D"_blank">rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;<br>
+&gt;&gt;<br>
+&gt;&gt;<br>
+&gt;&gt; Acked-by: Kukjin Kim &lt;<a href=3D"mailto:kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" =
+target=3D"_blank">kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org</a>&gt;<br>
+&gt;&gt;<br>
+&gt;<br>
+&gt; Just one nit in subject:<br>
+&gt;<br>
+&gt; [PATCH] ARM: dts: ..... for exynos5250<br>
+&gt;<br>
+&gt; Thanks,<br>
+&gt;<br>
+&gt; - Kukjin<br>
+&gt;<br>
+&gt;&gt;&gt; ---<br>
+&gt;&gt;&gt; arch/arm/boot/dts/cros5250-common.dtsi | 4 ++--<br>
+&gt;&gt;&gt; arch/arm/boot/dts/exynos5250-smdk5250.dts | 4 ++--<br>
+&gt;&gt;&gt; arch/arm/boot/dts/exynos5250.dtsi | 4 ++--<br>
+&gt;&gt;&gt; 3 files changed, 6 insertions(+), 6 deletions(-)<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; diff --git a/arch/arm/boot/dts/cros5250-common.dtsi<br>
+&gt;&gt;&gt; b/arch/arm/boot/dts/cros5250-common.dtsi<br>
+&gt;&gt;&gt; index 3f0239e..dc259e8b 100644<br>
+&gt;&gt;&gt; --- a/arch/arm/boot/dts/cros5250-common.dtsi<br>
+&gt;&gt;&gt; +++ b/arch/arm/boot/dts/cros5250-common.dtsi<br>
+&gt;&gt;&gt; @@ -190,7 +190,7 @@<br>
+&gt;&gt;&gt; samsung,i2c-max-bus-freq =3D&lt;66000&gt;;<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; hdmiddc@50 {<br>
+&gt;&gt;&gt; - compatible =3D &quot;samsung,exynos5-hdmiddc&quot;;<br>
+&gt;&gt;&gt; + compatible =3D &quot;samsung,exynos4210-hdmiddc&quot;;<br>
+&gt;&gt;&gt; reg =3D&lt;0x50&gt;;<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt; @@ -224,7 +224,7 @@<br>
+&gt;&gt;&gt; samsung,i2c-max-bus-freq =3D&lt;378000&gt;;<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; hdmiphy@38 {<br>
+&gt;&gt;&gt; - compatible =3D &quot;samsung,exynos5-hdmiphy&quot;;<br>
+&gt;&gt;&gt; + compatible =3D &quot;samsung,exynos4212-hdmiphy&quot;;<br>
+&gt;&gt;&gt; reg =3D&lt;0x38&gt;;<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt; diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts<br>
+&gt;&gt;&gt; b/arch/arm/boot/dts/exynos5250-smdk5250.dts<br>
+&gt;&gt;&gt; index 3e0c792..f320d7c 100644<br>
+&gt;&gt;&gt; --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts<br>
+&gt;&gt;&gt; +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts<br>
+&gt;&gt;&gt; @@ -72,7 +72,7 @@<br>
+&gt;&gt;&gt; samsung,i2c-max-bus-freq =3D&lt;66000&gt;;<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; hdmiddc@50 {<br>
+&gt;&gt;&gt; - compatible =3D &quot;samsung,exynos5-hdmiddc&quot;;<br>
+&gt;&gt;&gt; + compatible =3D &quot;samsung,exynos4210-hdmiddc&quot;;<br>
+&gt;&gt;&gt; reg =3D&lt;0x50&gt;;<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt; @@ -102,7 +102,7 @@<br>
+&gt;&gt;&gt; samsung,i2c-max-bus-freq =3D&lt;66000&gt;;<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; hdmiphy@38 {<br>
+&gt;&gt;&gt; - compatible =3D &quot;samsung,exynos5-hdmiphy&quot;;<br>
+&gt;&gt;&gt; + compatible =3D &quot;samsung,exynos4212-hdmiphy&quot;;<br>
+&gt;&gt;&gt; reg =3D&lt;0x38&gt;;<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt; diff --git a/arch/arm/boot/dts/exynos5250.dtsi<br>
+&gt;&gt;&gt; b/arch/arm/boot/dts/exynos5250.dtsi<br>
+&gt;&gt;&gt; index 0673524..2f7763b 100644<br>
+&gt;&gt;&gt; --- a/arch/arm/boot/dts/exynos5250.dtsi<br>
+&gt;&gt;&gt; +++ b/arch/arm/boot/dts/exynos5250.dtsi<br>
+&gt;&gt;&gt; @@ -601,7 +601,7 @@<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; hdmi {<br>
+&gt;&gt;&gt; - compatible =3D &quot;samsung,exynos5-hdmi&quot;;<br>
+&gt;&gt;&gt; + compatible =3D &quot;samsung,exynos4212-hdmi&quot;;<br>
+&gt;&gt;&gt; reg =3D&lt;0x14530000 0x70000&gt;;<br>
+&gt;&gt;&gt; interrupts =3D&lt;0 95 0&gt;;<br>
+&gt;&gt;&gt; clocks =3D&lt;&amp;clock 333&gt;,&lt;&amp;clock 136&gt;,&lt;&a=
+mp;clock 137&gt;,<br>
+&gt;&gt;&gt; @@ -611,7 +611,7 @@<br>
+&gt;&gt;&gt; };<br>
+&gt;&gt;&gt;<br>
+&gt;&gt;&gt; mixer {<br>
+&gt;&gt;&gt; - compatible =3D &quot;samsung,exynos5-mixer&quot;;<br>
+&gt;&gt;&gt; + compatible =3D &quot;samsung,exynos5250-mixer&quot;;<br>
+&gt;&gt;&gt; reg =3D&lt;0x14450000 0x10000&gt;;<br>
+&gt;&gt;&gt; interrupts =3D&lt;0 94 0&gt;;<br>
+&gt;&gt;&gt; };<br>
+--<br>
+To unsubscribe from this list: send the line &quot;unsubscribe linux-samsun=
+g-soc&quot; in<br>
+the body of a message to <a href=3D"mailto:majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" targe=
+t=3D"_blank">majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org</a><br>
+More majordomo info at =A0<a href=3D"http://vger.kernel.org/majordomo-info.=
+html" target=3D"_blank">http://vger.kernel.org/majordomo-info.html</a><br>
+</div></div></blockquote></div><br></div></div>
+
+--001a113312d45df6f504dfa32e46--
+
+--===============5555065621189863744==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============5555065621189863744==--
