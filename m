@@ -1,190 +1,64 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and PLL36xx for samsung SoCs
-Date: Fri, 21 Jun 2013 09:09:27 +0200
-Message-ID: <1524664.UCV47tfIRU@flatron>
-References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com> <CAKew6eUOy4=D08v_iq7CTRY5gvt37VAN7Z7WOr2Yt25znDJb2g@mail.gmail.com> <CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC v2 03/10] exynos5-fimc-is: Adds common driver header files
+Date: Fri, 21 Jun 2013 12:44:14 +0530
+Message-ID: <CALt3h7_r3QLQs1urkhQO+1fCv1J+RaWSQ511RJELxE91cgEUdA@mail.gmail.com>
+References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com>
+	<1370005408-10853-4-git-send-email-arun.kk@samsung.com>
+	<51C3865A.4050701@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f53.google.com ([209.85.214.53]:48716 "EHLO
-	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753195Ab3FUHJa (ORCPT
+Received: from mail-ve0-f170.google.com ([209.85.128.170]:61485 "EHLO
+	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758748Ab3FUHOQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 03:09:30 -0400
-Received: by mail-bk0-f53.google.com with SMTP id e11so3169565bkh.26
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jun 2013 00:09:28 -0700 (PDT)
-In-Reply-To: <CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
+	Fri, 21 Jun 2013 03:14:16 -0400
+In-Reply-To: <51C3865A.4050701@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, Mike Turquette <mturquette@linaro.org>
-Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, Vikas Sajjan <vikas.sajjan@linaro.org>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kilyeon.im@samsung.com, shaik.ameer@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Friday 21 of June 2013 10:18:01 Vikas Sajjan wrote:
-> Hi Mr. Kim,
-> 
-> On Thu, Jun 20, 2013 at 3:37 PM, Yadwinder Singh Brar
-> 
-> <yadi.brar01@gmail.com> wrote:
-> > Hi Tomasz,
-> > 
-> > On Thu, Jun 20, 2013 at 3:30 PM, Tomasz Figa <t.figa@samsung.com> 
-wrote:
-> >> Hi Yadwinder, Vikas,
-> >> 
-> >> On Tuesday 11 of June 2013 15:01:05 Yadwinder Singh Brar wrote:
-> >>> This patch series does the following:
-> >>>  1) Unifies the clk strutures  and registration function used for
-> >>>  PLL35xx>>> 
-> >>> & PLL36xx, to factor out possible common code.
-> >>> 
-> >>>  2) Defines a common rate_table which will contain recommended p, m,
-> >>>  s
-> >>> 
-> >>> and k values for supported rates that needs to be changed for
-> >>> changing
-> >>> corresponding PLL's rate
-> >>> 
-> >>>  3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
-> >>> 
-> >>> changes since v6:
-> >>>       - Splited the patch adding samsung_clk_register_pll() into
-> >>>       definition
-> >>>       addition, SoC specific migration and cleanup patches.
-> >>>       - Addressed some NIT comments.
-> >> 
-> >> This version looks good to me. Thanks for your work on improving this
-> >> series again!
-> >> 
-> >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> 
-> Can you apply this series..
+Hi Sylwester,
 
-I think we need at least Mike's (clk subsystem maintainer) ACK here.
+On Fri, Jun 21, 2013 at 4:16 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> Guys, I was wondering how difficult would be to make a common driver
+> for the Exynos4 and Exynos5 FIMC-IS ? My feeling is that it would allow
+> to save significant amount of code, since the hardware has many
+> similarities. I imagine it would be a lot of work, and testing would have
+> been a bit difficult. But would it really to troublesome to make a common
+> driver ? Could you list some arguments against it ? For the MFC we have
+> same driver, handling different firmware versions. Similarly for the other
+> media IPs. Only the FIMC-IS subsystems would have separate drivers.
+> My intentions is really only to reduce the amount of code we would have
+> to merge with this new driver, nothing else. But I'm not going to push
+> for the common driver if this is too much trouble.
 
-Mike, do you have any objections?
+We have thought about it while starting the development and major
+arguments against common driver are :
 
-Best regards,
-Tomasz
+- FIMC-IS IP has significantly changed from Exynos4.
+In Exynos4, it has sub-components ISP, DRC and FD where as in exynos5,
+it has ISP, DRC, SCC, ODC, DIS. 3DNR, SCP and FD.
 
-> > Thanks for helping to improve this series.
-> > 
-> > Thanks,
-> > Yadwinder
-> > 
-> >> Best regards,
-> >> Tomasz
-> >> 
-> >>> changes since v5:
-> >>>       - Corrected to use rate table as specified in UM for
-> >>>       exynos5250 epll.
-> >>>       - Took care of exynos5420 as well, as new exynos5420 clk
-> >>>       driver came in
-> >>>       while rebasing on latest Kgene's for-next.
-> >>>       
-> >>>       Since we spilted 1st patch into 2 different patches,
-> >>>       can we expect "reviewed-by" again for the same?
-> >>> 
-> >>> changes since v4:
-> >>>       - Defined common samsung samsung_clk_register_pll() to
-> >>>       register a list
-> >>>       of PLL and used a struct samsung_pll_clock for passing
-> >>>       intialisation
-> >>>       data instead of passing as arguments. Now passing LOCK as well
-> >>>       as CON0
-> >>>       offset as intialisation data.
-> >>>       - Calculated length of rate table while registering PLL
-> >>>       instead of
-> >>>       getting it as intialisation data.
-> >>> 
-> >>> changes since v3:
-> >>>       - Used __clk_lookup() instead of adding alias for mout_vpllsrc
-> >>>       - Added check for changing only M value in
-> >>>       samsung_pll36xx_set_rate()
-> >>>       - Modified samsung_pll35xx_mp_change() &
-> >>>       samsung_pll35xx_set_rate()
-> >>>       to improve readabilty.
-> >>>       - Made the input rate_table as __init_data which is to be
-> >>>       provided
-> >> 
-> >> while
-> >> 
-> >>> registering PLL and made a copy of that table while registering, so
-> >>> that if multiple tables are their, they can be freed after getting
-> >>> the P, M, S, K setting values from required one.
-> >>> 
-> >>> changes since v2:
-> >>>       - Added new patch to reorder the MUX registration for
-> >>>       mout_vpllsrc MUX
-> >>>       before the PLL registrations. And to add the alias for the
-> >>>       mout_vpllsrc
-> >>> 
-> >>> MUX. - Added a check to confirm parent rate while registrating the
-> >>> PLL
-> >>> rate tables.
-> >>> 
-> >>> changes since v1:
-> >>>       - removed sorting and bsearch
-> >>>       - modified the definition of struct "samsung_pll_rate_table"
-> >>>       - added generic round_rate()
-> >>>       - rectified the ops assignment for "rate table passed as NULL
-> >>> 
-> >>> Is rebased on branch kgene's "for-next"
-> >>> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git
-> >>> /log/ ?h=for-next
-> >>> 
-> >>> Vikas Sajjan (3):
-> >>>   clk: samsung: Add set_rate() clk_ops for PLL36xx
-> >>>   clk: samsung: Reorder MUX registration for mout_vpllsrc
-> >>>   clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
-> >>> 
-> >>> Yadwinder Singh Brar (8):
-> >>>   clk: samsung: Introduce a common samsung_clk_pll struct
-> >>>   clk: samsung: Define a common samsung_clk_register_pll()
-> >>>   clk: samsung: Migrate exynos5250 to use common
-> >>>   
-> >>>     samsung_clk_register_pll()
-> >>>   
-> >>>   clk: samsung: Migrate exynos4 to use common
-> >>>   
-> >>>     samsung_clk_register_pll()
-> >>>   
-> >>>   clk: samsung: Migrate exynos5420 to use common
-> >>>   
-> >>>     samsung_clk_register_pll()
-> >>>   
-> >>>   clk: samsung: Remove unused pll registeration code for pll35xx and
-> >>>   
-> >>>     pll36xx
-> >>>   
-> >>>   clk: samsung: Add support to register rate_table for samsung plls
-> >>>   clk: samsung: Add set_rate() clk_ops for PLL35xx
-> >>>  
-> >>>  drivers/clk/samsung/clk-exynos4.c    |   40 +++--
-> >>>  drivers/clk/samsung/clk-exynos5250.c |  101 +++++++++--
-> >>>  drivers/clk/samsung/clk-exynos5420.c |   86 ++++++---
-> >>>  drivers/clk/samsung/clk-pll.c        |  339
-> >>> 
-> >>> ++++++++++++++++++++++++++-------- drivers/clk/samsung/clk-pll.h
-> >>> 
-> >>> |   38 ++++-
-> >>>  
-> >>>  drivers/clk/samsung/clk.h            |   53 ++++++
-> >>>  6 files changed, 519 insertions(+), 138 deletions(-)
-> >> 
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe
-> >> linux-samsung-soc" in the body of a message to
-> >> majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe
-> > linux-samsung-soc" in the body of a message to
-> > majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+- The FW design has changed considerably to make use of camera2 api
+interface. Most of the code in the new driver is for this FW interface
+which are done in fimc_is_pipeline.* and fimc_is_interface.*. This is the
+major reason against a common driver as the new FW expects each
+input frame to be passed along with the controls in a SHOT command.
+It is a request-response mode handled per-frame by the FW which is
+a major design philosophy change from exynos4.
+
+- Two scalers introduced in the pipeline capable of DMA out which
+again changes the pipeline design considerably compared to exynos4.
+
+- The only common part of code between exynos 4 and 5 now is in
+the fimc-isp.c and fimc-is-sensor.c and some control structures
+in header files. If re-used, only some user controls part can be
+re-used and most of the code will still be different.
+>From the exynos5 driver, still the fimc-is-scaler.*, fimc-is-pipeline.*,
+fimc-is-interface.* has to be retained which constitutes majority of the LOC.
+
+Regards
+Arun
