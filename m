@@ -1,167 +1,203 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V6 24/30] thermal: exynos: Add thermal configuration data
- for exynos5440 TMU sensor
-Date: Fri, 21 Jun 2013 20:51:16 +0530
-Message-ID: <CADGdYn4y4jR3X7dzUFjaSvFsh8WzdF7c5izJ10oYyaCEd+ioHQ@mail.gmail.com>
-References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
-	<1371451599-31035-25-git-send-email-amit.daniel@samsung.com>
-	<51C26659.9050003@ti.com>
-	<CADGdYn5JMNgPA3rqGS+QNXWx8hdsQ0g5g5z36W7HXGUssFHe3g@mail.gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and PLL36xx
+ for samsung SoCs
+Date: Fri, 21 Jun 2013 09:31:43 -0700
+Message-ID: <20130621163143.9136.28807@quantum>
+References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
+ <CAKew6eUOy4=D08v_iq7CTRY5gvt37VAN7Z7WOr2Yt25znDJb2g@mail.gmail.com>
+ <CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
+ <1524664.UCV47tfIRU@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CADGdYn5JMNgPA3rqGS+QNXWx8hdsQ0g5g5z36W7HXGUssFHe3g@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f50.google.com ([209.85.160.50]:35713 "EHLO
+	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1423060Ab3FUQbr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Jun 2013 12:31:47 -0400
+Received: by mail-pb0-f50.google.com with SMTP id wz7so7927027pbc.23
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Jun 2013 09:31:47 -0700 (PDT)
+In-Reply-To: <1524664.UCV47tfIRU@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, Vikas Sajjan <vikas.sajjan@linaro.org>
 
-On Fri, Jun 21, 2013 at 8:49 PM, amit daniel kachhap
-<amit.daniel@samsung.com> wrote:
-> Hi,
->
-> On Thu, Jun 20, 2013 at 7:48 AM, Eduardo Valentin
-> <eduardo.valentin@ti.com> wrote:
->> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
->>> This patch adds configuration data for exynos5440 soc. Also register
->>> definations for the controller are added.
->>>
->>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
->>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->>> ---
->>>  drivers/thermal/samsung/exynos_tmu.c      |    4 ++
->>>  drivers/thermal/samsung/exynos_tmu_data.c |   71 +++++++++++++++++++++++++++++
->>>  drivers/thermal/samsung/exynos_tmu_data.h |    7 +++
->>>  3 files changed, 82 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->>> index db4035d..a4dbc84 100644
->>> --- a/drivers/thermal/samsung/exynos_tmu.c
->>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>> @@ -455,6 +455,10 @@ static const struct of_device_id exynos_tmu_match[] = {
->>>               .compatible = "samsung,exynos5250-tmu",
->>>               .data = (void *)EXYNOS5250_TMU_DRV_DATA,
->>>       },
->>> +     {
->>> +             .compatible = "samsung,exynos5440-tmu",
->>> +             .data = (void *)EXYNOS5440_TMU_DRV_DATA,
->>> +     },
->>>       {},
->>>  };
->>>  MODULE_DEVICE_TABLE(of, exynos_tmu_match);
->>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
->>> index 694557e..b34e726 100644
->>> --- a/drivers/thermal/samsung/exynos_tmu_data.c
->>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
->>> @@ -175,3 +175,74 @@ struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
->>>       .tmu_count = 1,
->>>  };
->>>  #endif
->>> +
->>> +#if defined(CONFIG_SOC_EXYNOS5440)
->>> +static const struct exynos_tmu_registers exynos5440_tmu_registers = {
->>> +     .triminfo_data = EXYNOS5440_TMU_S0_7_TRIM,
->>> +     .triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
->>> +     .triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
->>> +     .tmu_ctrl = EXYNOS5440_TMU_S0_7_CTRL,
->>> +     .buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
->>> +     .buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
->>> +     .therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
->>> +     .therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
->>> +     .therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
->>> +     .buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
->>> +     .buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
->>> +     .core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
->>> +     .tmu_status = EXYNOS5440_TMU_S0_7_STATUS,
->>> +     .tmu_cur_temp = EXYNOS5440_TMU_S0_7_TEMP,
->>> +     .threshold_th0 = EXYNOS5440_TMU_S0_7_TH0,
->>> +     .threshold_th1 = EXYNOS5440_TMU_S0_7_TH1,
->>> +     .threshold_th2 = EXYNOS5440_TMU_S0_7_TH2,
->>> +     .threshold_th3_l0_shift = EXYNOS5440_TMU_TH_RISE4_SHIFT,
->>> +     .tmu_inten = EXYNOS5440_TMU_S0_7_IRQEN,
->>> +     .inten_rise_mask = EXYNOS5440_TMU_RISE_INT_MASK,
->>> +     .inten_rise_shift = EXYNOS5440_TMU_RISE_INT_SHIFT,
->>> +     .inten_fall_mask = EXYNOS5440_TMU_FALL_INT_MASK,
->>> +     .inten_fall_shift = EXYNOS5440_TMU_FALL_INT_SHIFT,
->>> +     .inten_rise0_shift = EXYNOS5440_TMU_INTEN_RISE0_SHIFT,
->>> +     .inten_rise1_shift = EXYNOS5440_TMU_INTEN_RISE1_SHIFT,
->>> +     .inten_rise2_shift = EXYNOS5440_TMU_INTEN_RISE2_SHIFT,
->>> +     .inten_rise3_shift = EXYNOS5440_TMU_INTEN_RISE3_SHIFT,
->>> +     .inten_fall0_shift = EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
->>> +     .tmu_intstat = EXYNOS5440_TMU_S0_7_IRQ,
->>> +     .tmu_intclear = EXYNOS5440_TMU_S0_7_IRQ,
->>> +     .tmu_irqstatus = EXYNOS5440_TMU_IRQ_STATUS,
->>> +     .emul_con = EXYNOS5440_TMU_S0_7_DEBUG,
->>> +     .emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
->>> +     .tmu_pmin = EXYNOS5440_TMU_PMIN,
->>> +};
->>> +
->>> +#define EXYNOS5440_TMU_DATA \
->>> +     .trigger_levels[0] = 100, \
->>> +     .trigger_levels[4] = 105, \
->>> +     .trigger_enable[0] = 1, \
->>> +     .trigger_type[0] = SW_TRIP, \
->>> +     .trigger_type[4] = HW_TRIP, \
->>
->> No active / passive cooling?
->>
->>> +     .max_trigger_level = 5, \
->>> +     .gain = 5, \
->>> +     .reference_voltage = 16, \
->>> +     .noise_cancel_mode = 4, \
->>> +     .cal_type = TYPE_ONE_POINT_TRIMMING, \
->>> +     .cal_mode = 0, \
->>> +     .efuse_value = 0x5b2d, \
->>> +     .min_efuse_value = 16, \
->>> +     .max_efuse_value = 76, \
->>> +     .first_point_trim = 25, \
->>> +     .second_point_trim = 70, \
->>> +     .default_temp_offset = 25, \
->>> +     .type = SOC_ARCH_EXYNOS5440, \
->>> +     .registers = &exynos5440_tmu_registers, \
->>> +     .features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
->>> +                     TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_SHARED_MEMORY),
->>
->> No freq table on 5440? hmm.. So no cpufreq_cooling then? Any reason why
->> not? I suppose one of these 3 sensors are on your CPU domain, right?
-> In 5440 no cpufreq cooling is needed. Only sw trip and hw trip is sufficient.
-Infact all sensors are cpu related at some positions.
->
-> Thanks,
-> Amit Daniel
->>
->>> +
->>> +struct exynos_tmu_init_data const exynos5440_default_tmu_data = {
->>> +     .tmu_data = {
->>> +             { EXYNOS5440_TMU_DATA } ,
->>> +             { EXYNOS5440_TMU_DATA } ,
->>> +             { EXYNOS5440_TMU_DATA } ,
->>> +     },
->>> +     .tmu_count = 3,
->>> +};
->>> +#endif
->>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
->>> index ad263e9..43ce5fb 100644
->>> --- a/drivers/thermal/samsung/exynos_tmu_data.h
->>> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
->>> @@ -143,4 +143,11 @@ extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
->>>  #define EXYNOS5250_TMU_DRV_DATA (NULL)
->>>  #endif
->>>
->>> +#if defined(CONFIG_SOC_EXYNOS5440)
->>> +extern struct exynos_tmu_init_data const exynos5440_default_tmu_data;
->>> +#define EXYNOS5440_TMU_DRV_DATA (&exynos5440_default_tmu_data)
->>> +#else
->>> +#define EXYNOS5440_TMU_DRV_DATA (NULL)
->>> +#endif
->>> +
->>>  #endif /*_EXYNOS_TMU_DATA_H*/
->>>
->>
->>
->> --
->> You have got to be excited about what you are doing. (L. Lamport)
->>
->> Eduardo Valentin
->>
+Quoting Tomasz Figa (2013-06-21 00:09:27)
+> On Friday 21 of June 2013 10:18:01 Vikas Sajjan wrote:
+> > Hi Mr. Kim,
+> > 
+> > On Thu, Jun 20, 2013 at 3:37 PM, Yadwinder Singh Brar
+> > 
+> > <yadi.brar01@gmail.com> wrote:
+> > > Hi Tomasz,
+> > > 
+> > > On Thu, Jun 20, 2013 at 3:30 PM, Tomasz Figa <t.figa@samsung.com> 
+> wrote:
+> > >> Hi Yadwinder, Vikas,
+> > >> 
+> > >> On Tuesday 11 of June 2013 15:01:05 Yadwinder Singh Brar wrote:
+> > >>> This patch series does the following:
+> > >>>  1) Unifies the clk strutures  and registration function used for
+> > >>>  PLL35xx>>> 
+> > >>> & PLL36xx, to factor out possible common code.
+> > >>> 
+> > >>>  2) Defines a common rate_table which will contain recommended p, m,
+> > >>>  s
+> > >>> 
+> > >>> and k values for supported rates that needs to be changed for
+> > >>> changing
+> > >>> corresponding PLL's rate
+> > >>> 
+> > >>>  3) Adds set_rate() and round_rate() clk_ops for PLL35xx and PLL36xx
+> > >>> 
+> > >>> changes since v6:
+> > >>>       - Splited the patch adding samsung_clk_register_pll() into
+> > >>>       definition
+> > >>>       addition, SoC specific migration and cleanup patches.
+> > >>>       - Addressed some NIT comments.
+> > >> 
+> > >> This version looks good to me. Thanks for your work on improving this
+> > >> series again!
+> > >> 
+> > >> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> > 
+> > Can you apply this series..
+> 
+> I think we need at least Mike's (clk subsystem maintainer) ACK here.
+> 
+> Mike, do you have any objections?
+
+Acked-by: Mike Turquette <mturquette@linaro.org>
+
+Or I can take this through the clk tree. Either way is fine.
+
+Regards,
+Mike
+
+> 
+> Best regards,
+> Tomasz
+> 
+> > > Thanks for helping to improve this series.
+> > > 
+> > > Thanks,
+> > > Yadwinder
+> > > 
+> > >> Best regards,
+> > >> Tomasz
+> > >> 
+> > >>> changes since v5:
+> > >>>       - Corrected to use rate table as specified in UM for
+> > >>>       exynos5250 epll.
+> > >>>       - Took care of exynos5420 as well, as new exynos5420 clk
+> > >>>       driver came in
+> > >>>       while rebasing on latest Kgene's for-next.
+> > >>>       
+> > >>>       Since we spilted 1st patch into 2 different patches,
+> > >>>       can we expect "reviewed-by" again for the same?
+> > >>> 
+> > >>> changes since v4:
+> > >>>       - Defined common samsung samsung_clk_register_pll() to
+> > >>>       register a list
+> > >>>       of PLL and used a struct samsung_pll_clock for passing
+> > >>>       intialisation
+> > >>>       data instead of passing as arguments. Now passing LOCK as well
+> > >>>       as CON0
+> > >>>       offset as intialisation data.
+> > >>>       - Calculated length of rate table while registering PLL
+> > >>>       instead of
+> > >>>       getting it as intialisation data.
+> > >>> 
+> > >>> changes since v3:
+> > >>>       - Used __clk_lookup() instead of adding alias for mout_vpllsrc
+> > >>>       - Added check for changing only M value in
+> > >>>       samsung_pll36xx_set_rate()
+> > >>>       - Modified samsung_pll35xx_mp_change() &
+> > >>>       samsung_pll35xx_set_rate()
+> > >>>       to improve readabilty.
+> > >>>       - Made the input rate_table as __init_data which is to be
+> > >>>       provided
+> > >> 
+> > >> while
+> > >> 
+> > >>> registering PLL and made a copy of that table while registering, so
+> > >>> that if multiple tables are their, they can be freed after getting
+> > >>> the P, M, S, K setting values from required one.
+> > >>> 
+> > >>> changes since v2:
+> > >>>       - Added new patch to reorder the MUX registration for
+> > >>>       mout_vpllsrc MUX
+> > >>>       before the PLL registrations. And to add the alias for the
+> > >>>       mout_vpllsrc
+> > >>> 
+> > >>> MUX. - Added a check to confirm parent rate while registrating the
+> > >>> PLL
+> > >>> rate tables.
+> > >>> 
+> > >>> changes since v1:
+> > >>>       - removed sorting and bsearch
+> > >>>       - modified the definition of struct "samsung_pll_rate_table"
+> > >>>       - added generic round_rate()
+> > >>>       - rectified the ops assignment for "rate table passed as NULL
+> > >>> 
+> > >>> Is rebased on branch kgene's "for-next"
+> > >>> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git
+> > >>> /log/ ?h=for-next
+> > >>> 
+> > >>> Vikas Sajjan (3):
+> > >>>   clk: samsung: Add set_rate() clk_ops for PLL36xx
+> > >>>   clk: samsung: Reorder MUX registration for mout_vpllsrc
+> > >>>   clk: samsung: Add EPLL and VPLL freq table for exynos5250 SoC
+> > >>> 
+> > >>> Yadwinder Singh Brar (8):
+> > >>>   clk: samsung: Introduce a common samsung_clk_pll struct
+> > >>>   clk: samsung: Define a common samsung_clk_register_pll()
+> > >>>   clk: samsung: Migrate exynos5250 to use common
+> > >>>   
+> > >>>     samsung_clk_register_pll()
+> > >>>   
+> > >>>   clk: samsung: Migrate exynos4 to use common
+> > >>>   
+> > >>>     samsung_clk_register_pll()
+> > >>>   
+> > >>>   clk: samsung: Migrate exynos5420 to use common
+> > >>>   
+> > >>>     samsung_clk_register_pll()
+> > >>>   
+> > >>>   clk: samsung: Remove unused pll registeration code for pll35xx and
+> > >>>   
+> > >>>     pll36xx
+> > >>>   
+> > >>>   clk: samsung: Add support to register rate_table for samsung plls
+> > >>>   clk: samsung: Add set_rate() clk_ops for PLL35xx
+> > >>>  
+> > >>>  drivers/clk/samsung/clk-exynos4.c    |   40 +++--
+> > >>>  drivers/clk/samsung/clk-exynos5250.c |  101 +++++++++--
+> > >>>  drivers/clk/samsung/clk-exynos5420.c |   86 ++++++---
+> > >>>  drivers/clk/samsung/clk-pll.c        |  339
+> > >>> 
+> > >>> ++++++++++++++++++++++++++-------- drivers/clk/samsung/clk-pll.h
+> > >>> 
+> > >>> |   38 ++++-
+> > >>>  
+> > >>>  drivers/clk/samsung/clk.h            |   53 ++++++
+> > >>>  6 files changed, 519 insertions(+), 138 deletions(-)
+> > >> 
+> > >> --
+> > >> To unsubscribe from this list: send the line "unsubscribe
+> > >> linux-samsung-soc" in the body of a message to
+> > >> majordomo@vger.kernel.org
+> > >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > > 
+> > > --
+> > > To unsubscribe from this list: send the line "unsubscribe
+> > > linux-samsung-soc" in the body of a message to
+> > > majordomo@vger.kernel.org
+> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
