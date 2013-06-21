@@ -1,62 +1,78 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 1/3] mfd: Add irq domain support for max8998 interrupts
-Date: Fri, 21 Jun 2013 15:31:50 +0100
-Message-ID: <20130621143150.GU27646@sirena.org.uk>
-References: <1371818017-5215-1-git-send-email-t.figa@samsung.com>
- <1371818017-5215-2-git-send-email-t.figa@samsung.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V6 21/30] ARM: dts: thermal: exynos4: Add documentation
+ for Exynos SoC thermal bindings
+Date: Fri, 21 Jun 2013 20:04:28 +0530
+Message-ID: <CADGdYn7=kRpdZfhZR4Hg6kdaEG9yQL=HMX7QOTBTfMh30NqKqg@mail.gmail.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
+	<1371451599-31035-22-git-send-email-amit.daniel@samsung.com>
+	<51C2428C.4070102@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UC+RhZhEc8lcmajv"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:59722 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1422890Ab3FUOb5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Jun 2013 10:31:57 -0400
-Content-Disposition: inline
-In-Reply-To: <1371818017-5215-2-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <51C2428C.4070102@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com, Lukasz Majewski <l.majewski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Grant Likely <grant.likely@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, Masanari Iida <standby24x7@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, rtc-linux@googlegroups.com, Russell King <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-
---UC+RhZhEc8lcmajv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Jun 21, 2013 at 02:33:35PM +0200, Tomasz Figa wrote:
-
-> The reverse mapping method used is linear mapping since the sub-drivers
-> of max8998 such as regulator and charger drivers can use the max8998
-> irq_domain to get the virtual irq number for max8998 interrupts.
-
-> All uses of irq_base in platform data and max8997 driver private data
-> are removed.
-
-Can you use a simple IRQ domain in order to continue to support non-DT
-systems (not all architectures use DT...)?
-
---UC+RhZhEc8lcmajv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRxGPTAAoJELSic+t+oim9jT4P/141sR6wV2nvrzcmM/7ODAQF
-WUQV9LD74yLxtKb2bJPUo6JCYMRlxdNZvwgEdOxoOi0UnlmCix+2L0Q8zCpHIN35
-mq68vurLQddlkdrNX1rrkXV5NaLkidP789osbe35xDxsQHD1oIISKUGV8UCeshh1
-bc4rm1MbblrRxh7H0O3oKy220Cep7M013Z8Kd2QG4HGuFNYBMHQpjqC7uFyrGzpe
-nzr+8rhtJdJVNg++wOoXBryEcbZK0DBZJVHyNpmqa+fSEio7UqIg4hv7QYUaxq5s
-XsN3QaPLQTtqrfQZZZ9lD8TfYeQPAFMYM+NDcx/EBXiWLrF8qkowDTwLj/namAP7
-QJtk1ATbBLe2uj0dFY3PX2AEwfZMAJa9CIVjStdE4TXhiXqVMuoaGVwfw5tGWsCN
-tC5ZfYy4BI/1mdTRh9BXI1MWBszOwTxjztlIoztslK/+JWbjnKzEXDyYb5yjOSI/
-MbbZC+VNVrP0jysCpnXjZ7n1/Zfet/7MvfdOfNpvV23dHHmVxxdoo3YUjIyWgf2k
-tg//G9nNY+vLSvDly+w+BUI6JK58GmASdSsodfU/n9ZFUZHnVoPFV5GvqSscy/RK
-HePMKf4eANt07nrOZUcYJuK1S+LMwvfUsucVsGLzhbYS0mMmZHkG/SiRA4fwvTLS
-tDBpYsdIxuCmn9/JzzB2
-=VhSb
------END PGP SIGNATURE-----
-
---UC+RhZhEc8lcmajv--
+On Thu, Jun 20, 2013 at 5:15 AM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+>> From: Lukasz Majewski <l.majewski@samsung.com>
+>>
+>> Proper description for Exynos4 bindings added to Documentation/devicetree/
+>> bindings
+>>
+>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  .../devicetree/bindings/thermal/exynos-thermal.txt |   25 ++++++++++++++++++++
+>>  1 files changed, 25 insertions(+), 0 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> new file mode 100644
+>> index 0000000..535fd0e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> @@ -0,0 +1,25 @@
+>> +* Exynos Thermal Management Unit (TMU)
+>> +
+>> +** Required properties:
+>> +
+>> +- compatible : One of the following:
+>> +            "samsung,exynos4412-tmu"
+>> +            "samsung,exynos4210-tmu"
+>> +            "samsung,exynos5250-tmu"
+>> +- interrupt-parent : The phandle for the interrupt controller
+>> +- reg : Address range of the thermal registers
+>> +- interrupts : Should contain interrupt for thermal system
+>> +- clocks : The main clock for TMU device
+>> +- clock-names : Thermal system clock name
+>
+> Should this include the documentation on the alias needed by patch 18?
+> tmuctrl?
+>Yes right it should be there. Actually It is there in the later patches. Will re-submit this patch in proper order.
+>
+>> +
+>> +Example:
+>> +
+>> +     tmu@100C0000 {
+>> +             compatible = "samsung,exynos4412-tmu";
+>> +             interrupt-parent = <&combiner>;
+>> +             reg = <0x100C0000 0x100>;
+>> +             interrupts = <2 4>;
+>> +             clocks = <&clock 383>;
+>> +             clock-names = "tmu_apbif";
+>> +             status = "disabled";
+>> +     };
+>>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
