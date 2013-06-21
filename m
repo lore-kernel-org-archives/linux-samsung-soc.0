@@ -1,143 +1,82 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V2] thermal: exynos: Support for TMU regulator defined at
- device tree
-Date: Fri, 21 Jun 2013 09:33:11 +0530
-Message-ID: <CADGdYn5MCRwK8cE9jUG73afaLQ7gp4+1BbiswY+vptVcXuPcvA@mail.gmail.com>
-References: <1367489937-30725-1-git-send-email-amit.daniel@samsung.com>
-	<51C20E8D.8040005@ti.com>
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V9 1/4] pci: Add PCIe driver for Samsung Exynos
+Date: Fri, 21 Jun 2013 09:40:48 +0530
+Message-ID: <CAK9yfHxCy0JcvsFHo8gERefdiZhxi1J8MNALe5-g6ooTGR-QjA@mail.gmail.com>
+References: <002001ce6e2e$623d7970$26b86c50$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <51C20E8D.8040005@ti.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <002001ce6e2e$623d7970$26b86c50$@samsung.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Jason Gunthorpe <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Siva Reddy Kallam <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Surendranath Gurivireddy Balla <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mohit KUMAR <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrew Murray <andrew.murray-5wv7dgnIgG8@public.gmane.org>, Pratyush Anand <pratyush.anand-qxv4g6HH51o@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 20, 2013 at 1:33 AM, Eduardo Valentin
-<eduardo.valentin@ti.com> wrote:
-> On 02-05-2013 06:18, Amit Daniel Kachhap wrote:
->> TMU probe function now checks for a device tree defined regulator.
->> For compatibility reasons it is allowed to probe driver even without
->> this regulator defined.
->>
->> Signed-off-by: Luk asz Majewski <l.majewski@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Hi Jingoo,
+
+Some small corrections inline.
+
+On 21 June 2013 08:51, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Exynos5440 has a PCIe controller which can be used as Root Complex.
+> This driver supports a PCIe controller as Root Complex mode.
 >
-> I assume this one got superseeded by the same patch on your 30 patch
-> series, right?
-> https://patchwork.kernel.org/patch/2731031/
-Yes right. In my re-structuring patch series this one is included.
+> Signed-off-by: Surendranath Gurivireddy Balla <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Siva Reddy Kallam <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> ---
+>  .../devicetree/bindings/pci/designware-pcie.txt    |   73 ++
+>  drivers/pci/host/Kconfig                           |    9 +
+>  drivers/pci/host/Makefile                          |    1 +
+>  drivers/pci/host/pci-designware.c                  | 1057 ++++++++++++++++++++
+>  4 files changed, 1140 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/designware-pcie.txt
+>  create mode 100644 drivers/pci/host/pci-designware.c
 >
->
->> ---
->>
->> Changes in V2:
->> * Added log message in regulator_get failure as suggested by Sylwester.
->> * Used IS_ERR for checking regulator pointer as suggested by Sylwester.
->>
->> This patch is repost of the patch posted by Lukasz Majewski
->> (https://patchwork.kernel.org/patch/2488211/). I have rebased this
->> patch on top of my TMU re-structured patch series
->> (http://lwn.net/Articles/548634/). Although I thought of handling
->> regulator as one type of feature (newly added) but could not do
->> so as regulator is a board/platform property and not SOC property so
->> leaving the device tree to define and handle it.
->>
->>  .../devicetree/bindings/thermal/exynos-thermal.txt |    4 ++++
->>  drivers/thermal/samsung/exynos_tmu.c               |   19 +++++++++++++++++++
->>  2 files changed, 23 insertions(+), 0 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
->> index 970eeba..ff62f7a 100644
->> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
->> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
->> @@ -14,6 +14,9 @@
->>  - interrupts : Should contain interrupt for thermal system
->>  - clocks : The main clock for TMU device
->>  - clock-names : Thermal system clock name
->> +- vtmu-supply: This entry is optional and provides the regulator node supplying
->> +             voltage to TMU. If needed this entry can be placed inside
->> +             board/platform specific dts file.
->>
->>  Example 1):
->>
->> @@ -25,6 +28,7 @@ Example 1):
->>               clocks = <&clock 383>;
->>               clock-names = "tmu_apbif";
->>               status = "disabled";
->> +             vtmu-supply = <&tmu_regulator_node>;
->>       };
->>
->>  Example 2):
->> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->> index 72446c9..b7c609a 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.c
->> +++ b/drivers/thermal/samsung/exynos_tmu.c
->> @@ -32,6 +32,7 @@
->>  #include <linux/of_address.h>
->>  #include <linux/of_irq.h>
->>  #include <linux/platform_device.h>
->> +#include <linux/regulator/consumer.h>
->>  #include <linux/slab.h>
->>  #include <linux/workqueue.h>
->>  #include "exynos_thermal_common.h"
->> @@ -52,6 +53,7 @@
->>   * @clk: pointer to the clock structure.
->>   * @temp_error1: fused value of the first point trim.
->>   * @temp_error2: fused value of the second point trim.
->> + * @regulator: pointer to the TMU regulator structure.
->>   * @reg_conf: pointer to structure to register with core thermal.
->>   */
->>  struct exynos_tmu_data {
->> @@ -65,6 +67,7 @@ struct exynos_tmu_data {
->>       struct mutex lock;
->>       struct clk *clk;
->>       u8 temp_error1, temp_error2;
->> +     struct regulator *regulator;
->>       struct thermal_sensor_conf *reg_conf;
->>  };
->>
->> @@ -501,10 +504,23 @@ static int exynos_map_dt_data(struct platform_device *pdev)
->>       struct exynos_tmu_data *data = platform_get_drvdata(pdev);
->>       struct exynos_tmu_platform_data *pdata = data->pdata;
->>       struct resource res;
->> +     int ret;
->>
->>       if (!data)
->>               return -ENODEV;
->>
->> +     /* Try enabling the regulator if found */
->> +     data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
->> +     if (!IS_ERR(data->regulator)) {
->> +             ret = regulator_enable(data->regulator);
->> +             if (ret) {
->> +                     dev_err(&pdev->dev, "failed to enable vtmu\n");
->> +                     return ret;
->> +             }
->> +     } else {
->> +             dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
->> +     }
->> +
->>       data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
->>       if (data->id < 0)
->>               data->id = 0;
->> @@ -669,6 +685,9 @@ static int exynos_tmu_remove(struct platform_device *pdev)
->>
->>       clk_unprepare(data->clk);
->>
->> +     if (!IS_ERR(data->regulator))
->> +             regulator_disable(data->regulator);
->> +
->>       platform_set_drvdata(pdev, NULL);
->>
->>       return 0;
->>
->
->
-> --
-> You have got to be excited about what you are doing. (L. Lamport)
->
-> Eduardo Valentin
->
+> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> new file mode 100644
+> index 0000000..e4681e6
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> @@ -0,0 +1,73 @@
+> +* Synopsis Designware PCIe interface
+> +
+> +Required properties:
+> +-compatible: should contain "snps,dw-pcie" to identify the
+> +       core, plus an identifier for the specific instance, such
+> +       as "samsung,exynos5440-pcie".
+> +-reg: base addresses and lengths of the pcie conteroller,
+
+s/conteroller/controller
+
+> +       the phy controller, additional register for the phy controller.
+> +- interrupts: interrupt values for level interrupt,
+> +       pulse interrupt, special interrupt.
+> +- clocks: from common clock binding: handle to pci clock.
+> +- clock-names: from common clock binding: Shall be "pcie", "pcie_bus".
+
+s/Shall be .../should be "pcie" and "pcie_bus".
+
+[snip]
+
+> +
+> +MODULE_AUTHOR("Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
+> +MODULE_DESCRIPTION("Samsung PCIe host controller driver");
+> +MODULE_LICENSE("GPLv2");
+
+I think this should be "GPL v2"  (with a space between GPL and v2).
+
+
+-- 
+With warm regards,
+Sachin
