@@ -1,62 +1,143 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V9 4/4] ARM: dts: Add pcie controller node for
- exynos5440-ssdk5440
-Date: Fri, 21 Jun 2013 12:26:13 +0900
-Message-ID: <002401ce6e2f$14c20160$3e460420$@samsung.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V2] thermal: exynos: Support for TMU regulator defined at
+ device tree
+Date: Fri, 21 Jun 2013 09:33:11 +0530
+Message-ID: <CADGdYn5MCRwK8cE9jUG73afaLQ7gp4+1BbiswY+vptVcXuPcvA@mail.gmail.com>
+References: <1367489937-30725-1-git-send-email-amit.daniel@samsung.com>
+	<51C20E8D.8040005@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52458 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965601Ab3FUD0O (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Jun 2013 23:26:14 -0400
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51C20E8D.8040005@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, Jingoo Han <jg1.han@samsung.com>
 
-This patch adds pcie controller node for exynos5440-ssdk5440,
-and also adds a phandle for pin controller node.
-
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/boot/dts/exynos5440-ssdk5440.dts |    8 ++++++++
- arch/arm/boot/dts/exynos5440.dtsi         |    2 +-
- 2 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-index f32cd77..ede7727 100644
---- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-+++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-@@ -65,4 +65,12 @@
- 			clock-frequency = <50000000>;
- 		};
- 	};
-+
-+	pcie@290000 {
-+		reset-gpio = <&pin_ctrl 5 0>;
-+	};
-+
-+	pcie@2a0000 {
-+		reset-gpio = <&pin_ctrl 22 0>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index 1ac4f5b..ff7f5d8 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -126,7 +126,7 @@
- 		clock-names = "spi", "spi_busclk0";
- 	};
- 
--	pinctrl {
-+	pin_ctrl: pinctrl {
- 		compatible = "samsung,exynos5440-pinctrl";
- 		reg = <0xE0000 0x1000>;
- 		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>,
--- 
-1.7.10.4
+On Thu, Jun 20, 2013 at 1:33 AM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> On 02-05-2013 06:18, Amit Daniel Kachhap wrote:
+>> TMU probe function now checks for a device tree defined regulator.
+>> For compatibility reasons it is allowed to probe driver even without
+>> this regulator defined.
+>>
+>> Signed-off-by: Luk asz Majewski <l.majewski@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>
+> I assume this one got superseeded by the same patch on your 30 patch
+> series, right?
+> https://patchwork.kernel.org/patch/2731031/
+Yes right. In my re-structuring patch series this one is included.
+>
+>
+>> ---
+>>
+>> Changes in V2:
+>> * Added log message in regulator_get failure as suggested by Sylwester.
+>> * Used IS_ERR for checking regulator pointer as suggested by Sylwester.
+>>
+>> This patch is repost of the patch posted by Lukasz Majewski
+>> (https://patchwork.kernel.org/patch/2488211/). I have rebased this
+>> patch on top of my TMU re-structured patch series
+>> (http://lwn.net/Articles/548634/). Although I thought of handling
+>> regulator as one type of feature (newly added) but could not do
+>> so as regulator is a board/platform property and not SOC property so
+>> leaving the device tree to define and handle it.
+>>
+>>  .../devicetree/bindings/thermal/exynos-thermal.txt |    4 ++++
+>>  drivers/thermal/samsung/exynos_tmu.c               |   19 +++++++++++++++++++
+>>  2 files changed, 23 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> index 970eeba..ff62f7a 100644
+>> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>> @@ -14,6 +14,9 @@
+>>  - interrupts : Should contain interrupt for thermal system
+>>  - clocks : The main clock for TMU device
+>>  - clock-names : Thermal system clock name
+>> +- vtmu-supply: This entry is optional and provides the regulator node supplying
+>> +             voltage to TMU. If needed this entry can be placed inside
+>> +             board/platform specific dts file.
+>>
+>>  Example 1):
+>>
+>> @@ -25,6 +28,7 @@ Example 1):
+>>               clocks = <&clock 383>;
+>>               clock-names = "tmu_apbif";
+>>               status = "disabled";
+>> +             vtmu-supply = <&tmu_regulator_node>;
+>>       };
+>>
+>>  Example 2):
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>> index 72446c9..b7c609a 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -32,6 +32,7 @@
+>>  #include <linux/of_address.h>
+>>  #include <linux/of_irq.h>
+>>  #include <linux/platform_device.h>
+>> +#include <linux/regulator/consumer.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/workqueue.h>
+>>  #include "exynos_thermal_common.h"
+>> @@ -52,6 +53,7 @@
+>>   * @clk: pointer to the clock structure.
+>>   * @temp_error1: fused value of the first point trim.
+>>   * @temp_error2: fused value of the second point trim.
+>> + * @regulator: pointer to the TMU regulator structure.
+>>   * @reg_conf: pointer to structure to register with core thermal.
+>>   */
+>>  struct exynos_tmu_data {
+>> @@ -65,6 +67,7 @@ struct exynos_tmu_data {
+>>       struct mutex lock;
+>>       struct clk *clk;
+>>       u8 temp_error1, temp_error2;
+>> +     struct regulator *regulator;
+>>       struct thermal_sensor_conf *reg_conf;
+>>  };
+>>
+>> @@ -501,10 +504,23 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>>       struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+>>       struct exynos_tmu_platform_data *pdata = data->pdata;
+>>       struct resource res;
+>> +     int ret;
+>>
+>>       if (!data)
+>>               return -ENODEV;
+>>
+>> +     /* Try enabling the regulator if found */
+>> +     data->regulator = devm_regulator_get(&pdev->dev, "vtmu");
+>> +     if (!IS_ERR(data->regulator)) {
+>> +             ret = regulator_enable(data->regulator);
+>> +             if (ret) {
+>> +                     dev_err(&pdev->dev, "failed to enable vtmu\n");
+>> +                     return ret;
+>> +             }
+>> +     } else {
+>> +             dev_info(&pdev->dev, "Regulator node (vtmu) not found\n");
+>> +     }
+>> +
+>>       data->id = of_alias_get_id(pdev->dev.of_node, "tmuctrl");
+>>       if (data->id < 0)
+>>               data->id = 0;
+>> @@ -669,6 +685,9 @@ static int exynos_tmu_remove(struct platform_device *pdev)
+>>
+>>       clk_unprepare(data->clk);
+>>
+>> +     if (!IS_ERR(data->regulator))
+>> +             regulator_disable(data->regulator);
+>> +
+>>       platform_set_drvdata(pdev, NULL);
+>>
+>>       return 0;
+>>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
