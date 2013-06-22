@@ -1,365 +1,120 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [RFC PATCH v2 03/12] dmaengine: PL08x: Rework LLI handling to be less fragile
-Date: Sat, 22 Jun 2013 22:42:35 +0200
-Message-ID: <1371933764-24875-4-git-send-email-tomasz.figa@gmail.com>
+Subject: [RFC PATCH v2 01/12] dmaengine: PL08x: Refactor pl08x_getbytes_chan()
+ to lower indentation
+Date: Sat, 22 Jun 2013 22:42:33 +0200
+Message-ID: <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
 References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:38572 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751517Ab3FVUnT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Jun 2013 16:43:19 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alban Bedel <alba>
+Cc: alsa-devel@alsa-project.org, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Jaroslav Kysela <perex@perex.cz>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>Olof Johansson <o>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently memory allocated for LLIs is casted to an array of structs,
-which is fragile and also limits the driver to a single, predefined LLI
-layout, while there are some variants of PL08x, which have more fields
-in LLI (namely PL080S with its extra CCTL2).
+Further patch will introduce support for PL080S, which requires some
+things to be done conditionally, thus increasing indentation level of
+some functions even more.
 
-This patch makes LLIs a sequence of 32-bit words, which is just filled
-with appropriate values in appropriate order and padded with required
-amount of dummy words (currently zero, but PL080S will make better use
-of this).
+This patch reduces indentation level of pl08x_getbytes_chan() function
+by inverting several conditions and returning from function wherever
+possible.
 
-Suggested-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/dma/amba-pl08x.c | 149 ++++++++++++++++++++++++++---------------------
- 1 file changed, 83 insertions(+), 66 deletions(-)
+ drivers/dma/amba-pl08x.c | 53 ++++++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
 
 diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 2538e05..50d2f77 100644
+index 06fe45c..6a12392 100644
 --- a/drivers/dma/amba-pl08x.c
 +++ b/drivers/dma/amba-pl08x.c
-@@ -90,6 +90,15 @@
- 
- #define DRIVER_NAME	"pl08xdmac"
- 
-+enum {
-+	PL080_LLI_SRC,
-+	PL080_LLI_DST,
-+	PL080_LLI_LLI,
-+	PL080_LLI_CCTL,
-+
-+	PL080_LLI_WORDS
-+};
-+
- static struct amba_driver pl08x_amba_driver;
- struct pl08x_driver_data;
- 
-@@ -108,19 +117,6 @@ struct vendor_data {
- 	bool nomadik;
- };
- 
--/*
-- * PL08X private data structures
-- * An LLI struct - see PL08x TRM.  Note that next uses bit[0] as a bus bit,
-- * start & end do not - their bus bit info is in cctl.  Also note that these
-- * are fixed 32-bit quantities.
-- */
--struct pl08x_lli {
--	u32 src;
--	u32 dst;
--	u32 lli;
--	u32 cctl;
--};
--
- /**
-  * struct pl08x_bus_data - information of source or destination
-  * busses for a transfer
-@@ -181,7 +177,7 @@ struct pl08x_txd {
- 	struct virt_dma_desc vd;
- 	struct list_head dsg_list;
- 	dma_addr_t llis_bus;
--	struct pl08x_lli *llis_va;
-+	u32 *llis_va;
- 	/* Default cctl value for LLIs */
- 	u32 cctl;
- 	/*
-@@ -265,17 +261,18 @@ struct pl08x_driver_data {
- 	struct dma_pool *pool;
- 	u8 lli_buses;
- 	u8 mem_buses;
-+	u8 lli_words;
- };
- 
- /*
-  * PL08X specific defines
-  */
- 
--/* Size (bytes) of each LLI buffer allocated for one transfer */
--# define PL08X_LLI_TSFR_SIZE	0x2000
--
--/* Maximum times we call dma_pool_alloc on this pool without freeing */
--#define MAX_NUM_TSFR_LLIS	(PL08X_LLI_TSFR_SIZE/sizeof(struct pl08x_lli))
-+/*
-+ * Number of LLIs in each LLI buffer allocated for one transfer
-+ * (maximum times we call dma_pool_alloc on this pool without freeing)
-+ */
-+#define MAX_NUM_TSFR_LLIS	512
- #define PL08X_ALIGN		8
- 
- static inline struct pl08x_dma_chan *to_pl08x_chan(struct dma_chan *chan)
-@@ -340,6 +337,23 @@ static int pl08x_phy_channel_busy(struct pl08x_phy_chan *ch)
- 	return val & PL080_CONFIG_ACTIVE;
- }
- 
-+static void pl08x_write_lli(struct pl08x_driver_data *pl08x,
-+		struct pl08x_phy_chan *phychan, const u32 *lli, u32 ccfg)
-+{
-+	dev_vdbg(&pl08x->adev->dev,
-+		"WRITE channel %d: csrc=0x%08x, cdst=0x%08x, "
-+		"clli=0x%08x, cctl=0x%08x, ccfg=0x%08x\n",
-+		phychan->id, lli[PL080_LLI_SRC], lli[PL080_LLI_DST],
-+		lli[PL080_LLI_LLI], lli[PL080_LLI_CCTL], ccfg);
-+
-+	writel(lli[PL080_LLI_SRC], phychan->base + PL080_CH_SRC_ADDR);
-+	writel(lli[PL080_LLI_DST], phychan->base + PL080_CH_DST_ADDR);
-+	writel(lli[PL080_LLI_LLI], phychan->base + PL080_CH_LLI);
-+	writel(lli[PL080_LLI_CCTL], phychan->base + PL080_CH_CONTROL);
-+
-+	writel(ccfg, phychan->reg_config);
-+}
-+
- /*
-  * Set the initial DMA register values i.e. those for the first LLI
-  * The next LLI pointer and the configuration interrupt bit have
-@@ -352,7 +366,6 @@ static void pl08x_start_next_txd(struct pl08x_dma_chan *plchan)
- 	struct pl08x_phy_chan *phychan = plchan->phychan;
- 	struct virt_dma_desc *vd = vchan_next_desc(&plchan->vc);
- 	struct pl08x_txd *txd = to_pl08x_txd(&vd->tx);
--	struct pl08x_lli *lli;
- 	u32 val;
- 
- 	list_del(&txd->vd.node);
-@@ -363,19 +376,7 @@ static void pl08x_start_next_txd(struct pl08x_dma_chan *plchan)
- 	while (pl08x_phy_channel_busy(phychan))
- 		cpu_relax();
- 
--	lli = &txd->llis_va[0];
--
--	dev_vdbg(&pl08x->adev->dev,
--		"WRITE channel %d: csrc=0x%08x, cdst=0x%08x, "
--		"clli=0x%08x, cctl=0x%08x, ccfg=0x%08x\n",
--		phychan->id, lli->src, lli->dst, lli->lli, lli->cctl,
--		txd->ccfg);
--
--	writel(lli->src, phychan->base + PL080_CH_SRC_ADDR);
--	writel(lli->dst, phychan->base + PL080_CH_DST_ADDR);
--	writel(lli->lli, phychan->base + PL080_CH_LLI);
--	writel(lli->cctl, phychan->base + PL080_CH_CONTROL);
--	writel(txd->ccfg, phychan->reg_config);
-+	pl08x_write_lli(pl08x, phychan, &txd->llis_va[0], txd->ccfg);
- 
- 	/* Enable the DMA channel */
- 	/* Do not access config register until channel shows as disabled */
-@@ -471,12 +472,13 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
+@@ -469,47 +469,52 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
  /* The channel should be paused when calling this */
  static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
  {
--	struct pl08x_lli *llis_va;
-+	struct pl08x_driver_data *pl08x = plchan->host;
-+	const u32 *llis_va, *llis_va_limit;
++	struct pl08x_lli *llis_va;
  	struct pl08x_phy_chan *ch;
- 	dma_addr_t llis_bus;
++	dma_addr_t llis_bus;
  	struct pl08x_txd *txd;
-+	u32 llis_max_words;
- 	size_t bytes;
--	int index;
- 	u32 clli;
+-	size_t bytes = 0;
++	size_t bytes;
++	int index;
++	u32 clli;
  
  	ch = plchan->phychan;
-@@ -500,22 +502,25 @@ static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
- 	llis_va = txd->llis_va;
- 	llis_bus = txd->llis_bus;
+ 	txd = plchan->at;
  
-+	llis_max_words = pl08x->lli_words * MAX_NUM_TSFR_LLIS;
- 	BUG_ON(clli < llis_bus || clli >= llis_bus +
--				sizeof(struct pl08x_lli) * MAX_NUM_TSFR_LLIS);
-+						sizeof(u32) * llis_max_words);
- 
++	if (!ch || !txd)
++		return 0;
++
  	/*
- 	 * Locate the next LLI - as this is an array,
- 	 * it's simple maths to find.
+ 	 * Follow the LLIs to get the number of remaining
+ 	 * bytes in the currently active transaction.
  	 */
--	index = (clli - llis_bus) / sizeof(struct pl08x_lli);
-+	llis_va += (clli - llis_bus) / sizeof(u32);
+-	if (ch && txd) {
+-		u32 clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
++	clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
  
--	for (; index < MAX_NUM_TSFR_LLIS; index++) {
--		bytes += get_bytes_in_cctl(llis_va[index].cctl);
-+	llis_va_limit = llis_va + llis_max_words;
+-		/* First get the remaining bytes in the active transfer */
+-		bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
++	/* First get the remaining bytes in the active transfer */
++	bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
+ 
+-		if (clli) {
+-			struct pl08x_lli *llis_va = txd->llis_va;
+-			dma_addr_t llis_bus = txd->llis_bus;
+-			int index;
++	if (!clli)
++		return bytes;
+ 
+-			BUG_ON(clli < llis_bus || clli >= llis_bus +
++	llis_va = txd->llis_va;
++	llis_bus = txd->llis_bus;
 +
-+	for (; llis_va < llis_va_limit; llis_va += pl08x->lli_words) {
-+		bytes += get_bytes_in_cctl(llis_va[PL080_LLI_CCTL]);
++	BUG_ON(clli < llis_bus || clli >= llis_bus +
+ 				sizeof(struct pl08x_lli) * MAX_NUM_TSFR_LLIS);
  
- 		/*
- 		 * A LLI pointer of 0 terminates the LLI list
- 		 */
--		if (!llis_va[index].lli)
-+		if (!llis_va[PL080_LLI_LLI])
- 			break;
+-			/*
+-			 * Locate the next LLI - as this is an array,
+-			 * it's simple maths to find.
+-			 */
+-			index = (clli - llis_bus) / sizeof(struct pl08x_lli);
++	/*
++	 * Locate the next LLI - as this is an array,
++	 * it's simple maths to find.
++	 */
++	index = (clli - llis_bus) / sizeof(struct pl08x_lli);
+ 
+-			for (; index < MAX_NUM_TSFR_LLIS; index++) {
+-				bytes += get_bytes_in_cctl(llis_va[index].cctl);
++	for (; index < MAX_NUM_TSFR_LLIS; index++) {
++		bytes += get_bytes_in_cctl(llis_va[index].cctl);
+ 
+-				/*
+-				 * A LLI pointer of 0 terminates the LLI list
+-				 */
+-				if (!llis_va[index].lli)
+-					break;
+-			}
+-		}
++		/*
++		 * A LLI pointer of 0 terminates the LLI list
++		 */
++		if (!llis_va[index].lli)
++			break;
  	}
  
-@@ -771,20 +776,24 @@ static void pl08x_choose_master_bus(struct pl08x_lli_build_data *bd,
- /*
-  * Fills in one LLI for a certain transfer descriptor and advance the counter
-  */
--static void pl08x_fill_lli_for_desc(struct pl08x_lli_build_data *bd,
--	int num_llis, int len, u32 cctl)
-+static void pl08x_fill_lli_for_desc(struct pl08x_driver_data *pl08x,
-+				    struct pl08x_lli_build_data *bd,
-+				    int num_llis, int len, u32 cctl)
- {
--	struct pl08x_lli *llis_va = bd->txd->llis_va;
-+	u32 offset = num_llis * pl08x->lli_words;
-+	u32 *llis_va = bd->txd->llis_va + offset;
- 	dma_addr_t llis_bus = bd->txd->llis_bus;
- 
- 	BUG_ON(num_llis >= MAX_NUM_TSFR_LLIS);
- 
--	llis_va[num_llis].cctl = cctl;
--	llis_va[num_llis].src = bd->srcbus.addr;
--	llis_va[num_llis].dst = bd->dstbus.addr;
--	llis_va[num_llis].lli = llis_bus + (num_llis + 1) *
--		sizeof(struct pl08x_lli);
--	llis_va[num_llis].lli |= bd->lli_bus;
-+	/* Advance the offset to next LLI. */
-+	offset += pl08x->lli_words;
-+
-+	llis_va[PL080_LLI_SRC] = bd->srcbus.addr;
-+	llis_va[PL080_LLI_DST] = bd->dstbus.addr;
-+	llis_va[PL080_LLI_LLI] = (llis_bus + sizeof(u32) * offset);
-+	llis_va[PL080_LLI_LLI] |= bd->lli_bus;
-+	llis_va[PL080_LLI_CCTL] = cctl;
- 
- 	if (cctl & PL080_CONTROL_SRC_INCR)
- 		bd->srcbus.addr += len;
-@@ -796,11 +805,12 @@ static void pl08x_fill_lli_for_desc(struct pl08x_lli_build_data *bd,
- 	bd->remainder -= len;
- }
- 
--static inline void prep_byte_width_lli(struct pl08x_lli_build_data *bd,
--		u32 *cctl, u32 len, int num_llis, size_t *total_bytes)
-+static inline void prep_byte_width_lli(struct pl08x_driver_data *pl08x,
-+			struct pl08x_lli_build_data *bd, u32 *cctl, u32 len,
-+			int num_llis, size_t *total_bytes)
- {
- 	*cctl = pl08x_cctl_bits(*cctl, 1, 1, len);
--	pl08x_fill_lli_for_desc(bd, num_llis, len, *cctl);
-+	pl08x_fill_lli_for_desc(pl08x, bd, num_llis, len, *cctl);
- 	(*total_bytes) += len;
- }
- 
-@@ -817,7 +827,7 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 	int num_llis = 0;
- 	u32 cctl, early_bytes = 0;
- 	size_t max_bytes_per_lli, total_bytes;
--	struct pl08x_lli *llis_va;
-+	u32 *llis_va, *last_lli;
- 	struct pl08x_sg *dsg;
- 
- 	txd->llis_va = dma_pool_alloc(pl08x->pool, GFP_NOWAIT, &txd->llis_bus);
-@@ -904,7 +914,8 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 
- 			cctl = pl08x_cctl_bits(cctl, bd.srcbus.buswidth,
- 					bd.dstbus.buswidth, 0);
--			pl08x_fill_lli_for_desc(&bd, num_llis++, 0, cctl);
-+			pl08x_fill_lli_for_desc(pl08x, &bd, num_llis++,
-+					0, cctl);
- 			break;
- 		}
- 
-@@ -926,8 +937,8 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 			dev_vdbg(&pl08x->adev->dev,
- 				"%s byte width LLIs (remain 0x%08x)\n",
- 				__func__, bd.remainder);
--			prep_byte_width_lli(&bd, &cctl, early_bytes, num_llis++,
--				&total_bytes);
-+			prep_byte_width_lli(pl08x, &bd, &cctl, early_bytes,
-+				num_llis++, &total_bytes);
- 		}
- 
- 		if (bd.remainder) {
-@@ -983,7 +994,7 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 
- 				cctl = pl08x_cctl_bits(cctl, bd.srcbus.buswidth,
- 					bd.dstbus.buswidth, tsize);
--				pl08x_fill_lli_for_desc(&bd, num_llis++,
-+				pl08x_fill_lli_for_desc(pl08x, &bd, num_llis++,
- 						lli_len, cctl);
- 				total_bytes += lli_len;
- 			}
-@@ -995,8 +1006,8 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 				dev_vdbg(&pl08x->adev->dev,
- 					"%s align with boundary, send odd bytes (remain %zu)\n",
- 					__func__, bd.remainder);
--				prep_byte_width_lli(&bd, &cctl, bd.remainder,
--						num_llis++, &total_bytes);
-+				prep_byte_width_lli(pl08x, &bd, &cctl,
-+					bd.remainder, num_llis++, &total_bytes);
- 			}
- 		}
- 
-@@ -1010,16 +1021,17 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 		if (num_llis >= MAX_NUM_TSFR_LLIS) {
- 			dev_err(&pl08x->adev->dev,
- 				"%s need to increase MAX_NUM_TSFR_LLIS from 0x%08x\n",
--				__func__, (u32) MAX_NUM_TSFR_LLIS);
-+				__func__, MAX_NUM_TSFR_LLIS);
- 			return 0;
- 		}
- 	}
- 
- 	llis_va = txd->llis_va;
-+	last_lli = llis_va + (num_llis - 1) * pl08x->lli_words;
- 	/* The final LLI terminates the LLI. */
--	llis_va[num_llis - 1].lli = 0;
-+	last_lli[PL080_LLI_LLI] = 0;
- 	/* The final LLI element shall also fire an interrupt. */
--	llis_va[num_llis - 1].cctl |= PL080_CONTROL_TC_IRQ_EN;
-+	last_lli[PL080_LLI_CCTL] |= PL080_CONTROL_TC_IRQ_EN;
- 
- #ifdef VERBOSE_DEBUG
- 	{
-@@ -1031,9 +1043,10 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 		for (i = 0; i < num_llis; i++) {
- 			dev_vdbg(&pl08x->adev->dev,
- 				 "%3d @%p: 0x%08x 0x%08x 0x%08x 0x%08x\n",
--				 i, &llis_va[i], llis_va[i].src,
--				 llis_va[i].dst, llis_va[i].lli, llis_va[i].cctl
--				);
-+				 i, llis_va, llis_va[PL080_LLI_SRC],
-+				 llis_va[PL080_LLI_DST], llis_va[PL080_LLI_LLI],
-+				 llis_va[PL080_LLI_CCTL]);
-+			llis_va += pl08x->lli_words;
- 		}
- 	}
- #endif
-@@ -1853,6 +1866,7 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
- {
- 	struct pl08x_driver_data *pl08x;
- 	const struct vendor_data *vd = id->data;
-+	u32 tsfr_size;
- 	int ret = 0;
- 	int i;
- 
-@@ -1909,9 +1923,12 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
- 		pl08x->mem_buses = pl08x->pd->mem_buses;
- 	}
- 
-+	pl08x->lli_words = PL080_LLI_WORDS;
-+	tsfr_size = MAX_NUM_TSFR_LLIS * pl08x->lli_words * sizeof(u32);
-+
- 	/* A DMA memory pool for LLIs, align on 1-byte boundary */
- 	pl08x->pool = dma_pool_create(DRIVER_NAME, &pl08x->adev->dev,
--			PL08X_LLI_TSFR_SIZE, PL08X_ALIGN, 0);
-+						tsfr_size, PL08X_ALIGN, 0);
- 	if (!pl08x->pool) {
- 		ret = -ENOMEM;
- 		goto out_no_lli_pool;
+ 	return bytes;
 -- 
 1.8.2.1
