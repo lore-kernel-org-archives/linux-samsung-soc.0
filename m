@@ -1,277 +1,221 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [RFC PATCH v2 07/12] dmaengine: PL08x: Add cyclic transfer support
-Date: Sat, 22 Jun 2013 22:42:39 +0200
-Message-ID: <1371933764-24875-8-git-send-email-tomasz.figa@gmail.com>
+Subject: [RFC PATCH v2 04/12] dmaengine: PL08x: Add support for PL080S variant
+Date: Sat, 22 Jun 2013 22:42:36 +0200
+Message-ID: <1371933764-24875-5-git-send-email-tomasz.figa@gmail.com>
 References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f42.google.com ([209.85.214.42]:62261 "EHLO
-	mail-bk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751593Ab3FVUna (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Jun 2013 16:43:30 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alban Bedel <alba>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Alban Bedel <alban.bedel@avionic-design.de>
+PL080S is a modified version of PL080 that can be found on Samsung SoCs,
+such as S3C6400 and S3C6410.
 
-Many audio interface drivers require support of cyclic transfers to work
-correctly, for example Samsung ASoC DMA driver. This patch adds support
-for cyclic transfers to the amba-pl08x driver.
+It has different offset of CONFIG register, separate CONTROL1 register
+that holds transfer size and larger maximum transfer size.
 
-Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
-[tfiga: Rebase and slightly beautify the original patch.]
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/dma/amba-pl08x.c | 147 +++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 118 insertions(+), 29 deletions(-)
+ drivers/dma/amba-pl08x.c   | 73 +++++++++++++++++++++++++++++++++++++++++-----
+ include/linux/amba/pl080.h |  1 +
+ 2 files changed, 66 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 1eeb911..a3a86dd 100644
+index 50d2f77..103bc1a 100644
 --- a/drivers/dma/amba-pl08x.c
 +++ b/drivers/dma/amba-pl08x.c
-@@ -181,6 +181,7 @@ struct pl08x_sg {
-  * @ccfg: config reg values for current txd
-  * @done: this marks completed descriptors, which should not have their
-  *   mux released.
-+ * @cyclic: indicate cyclic transfers
-  */
- struct pl08x_txd {
- 	struct virt_dma_desc vd;
-@@ -195,6 +196,7 @@ struct pl08x_txd {
- 	 */
- 	u32 ccfg;
- 	bool done;
-+	bool cyclic;
+@@ -96,7 +96,11 @@ enum {
+ 	PL080_LLI_LLI,
+ 	PL080_LLI_CCTL,
+ 
+-	PL080_LLI_WORDS
++	PL080_LLI_WORDS,
++
++	PL080S_LLI_CCTL2 = PL080_LLI_WORDS,
++
++	PL080S_LLI_WORDS = 8
  };
  
+ static struct amba_driver pl08x_amba_driver;
+@@ -109,14 +113,18 @@ struct pl08x_driver_data;
+  * @nomadik: whether the channels have Nomadik security extension bits
+  *	that need to be checked for permission before use and some registers are
+  *	missing
++ * @pl080s: whether this version is a PL080S, which has separate register and
++ *	LLI word for transfer size.
+  */
+ struct vendor_data {
+ 	u8 config_offset;
+ 	u8 channels;
+ 	bool dualmaster;
+ 	bool nomadik;
++	bool pl080s;
+ };
+ 
++	u32 cctl1;
  /**
-@@ -563,9 +565,9 @@ static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
- 			bytes += get_bytes_in_cctl(llis_va[PL080_LLI_CCTL]);
+  * struct pl08x_bus_data - information of source or destination
+  * busses for a transfer
+@@ -351,6 +359,10 @@ static void pl08x_write_lli(struct pl08x_driver_data *pl08x,
+ 	writel(lli[PL080_LLI_LLI], phychan->base + PL080_CH_LLI);
+ 	writel(lli[PL080_LLI_CCTL], phychan->base + PL080_CH_CONTROL);
  
- 		/*
--		 * A LLI pointer of 0 terminates the LLI list
-+		 * A LLI pointer going backward terminates the LLI list
- 		 */
--		if (!llis_va[PL080_LLI_LLI])
-+		if (llis_va[PL080_LLI_LLI] <= clli)
- 			break;
- 	}
- 
-@@ -1076,10 +1078,16 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
- 
- 	llis_va = txd->llis_va;
- 	last_lli = llis_va + (num_llis - 1) * pl08x->lli_words;
--	/* The final LLI terminates the LLI. */
--	last_lli[PL080_LLI_LLI] = 0;
--	/* The final LLI element shall also fire an interrupt. */
--	last_lli[PL080_LLI_CCTL] |= PL080_CONTROL_TC_IRQ_EN;
++	if (pl08x->vd->pl080s)
++		writel(lli[PL080S_LLI_CCTL2],
++				phychan->base + PL080S_CH_CONTROL2);
 +
-+	if (txd->cyclic) {
-+		/* Link back to the first LLI. */
-+		last_lli[PL080_LLI_LLI] = txd->llis_bus | bd.lli_bus;
-+	} else {
-+		/* The final LLI terminates the LLI. */
-+		last_lli[PL080_LLI_LLI] = 0;
-+		/* The final LLI element shall also fire an interrupt. */
-+		last_lli[PL080_LLI_CCTL] |= PL080_CONTROL_TC_IRQ_EN;
-+	}
- 
- #ifdef VERBOSE_DEBUG
- 	{
-@@ -1472,25 +1480,19 @@ static struct dma_async_tx_descriptor *pl08x_prep_dma_memcpy(
- 	return vchan_tx_prep(&plchan->vc, &txd->vd, flags);
+ 	writel(ccfg, phychan->reg_config);
  }
  
--static struct dma_async_tx_descriptor *pl08x_prep_slave_sg(
--		struct dma_chan *chan, struct scatterlist *sgl,
--		unsigned int sg_len, enum dma_transfer_direction direction,
--		unsigned long flags, void *context)
-+static struct pl08x_txd *pl08x_init_txd(
-+		struct dma_chan *chan,
-+		enum dma_transfer_direction direction,
-+		dma_addr_t *slave_addr)
+@@ -469,6 +481,24 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
+ 	return bytes;
+ }
+ 
++static inline u32 get_bytes_in_cctl_pl080s(u32 cctl, u32 cctl1)
++{
++	/* The source width defines the number of bytes */
++	u32 bytes = cctl1 & PL080S_CONTROL_TRANSFER_SIZE_MASK;
++
++	switch (cctl >> PL080_CONTROL_SWIDTH_SHIFT) {
++	case PL080_WIDTH_8BIT:
++		break;
++	case PL080_WIDTH_16BIT:
++		bytes *= 2;
++		break;
++	case PL080_WIDTH_32BIT:
++		bytes *= 4;
++		break;
++	}
++	return bytes;
++}
++
+ /* The channel should be paused when calling this */
+ static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
  {
- 	struct pl08x_dma_chan *plchan = to_pl08x_chan(chan);
- 	struct pl08x_driver_data *pl08x = plchan->host;
- 	struct pl08x_txd *txd;
--	struct pl08x_sg *dsg;
--	struct scatterlist *sg;
- 	enum dma_slave_buswidth addr_width;
--	dma_addr_t slave_addr;
- 	int ret, tmp;
- 	u8 src_buses, dst_buses;
- 	u32 maxburst, cctl;
+@@ -494,7 +524,12 @@ static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
+ 	clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
  
--	dev_dbg(&pl08x->adev->dev, "%s prepare transaction of %d bytes from %s\n",
--			__func__, sg_dma_len(sgl), plchan->name);
--
- 	txd = pl08x_get_txd(plchan);
- 	if (!txd) {
- 		dev_err(&pl08x->adev->dev, "%s no txd\n", __func__);
-@@ -1504,14 +1506,14 @@ static struct dma_async_tx_descriptor *pl08x_prep_slave_sg(
- 	 */
- 	if (direction == DMA_MEM_TO_DEV) {
- 		cctl = PL080_CONTROL_SRC_INCR;
--		slave_addr = plchan->cfg.dst_addr;
-+		*slave_addr = plchan->cfg.dst_addr;
- 		addr_width = plchan->cfg.dst_addr_width;
- 		maxburst = plchan->cfg.dst_maxburst;
- 		src_buses = pl08x->mem_buses;
- 		dst_buses = plchan->cd->periph_buses;
- 	} else if (direction == DMA_DEV_TO_MEM) {
- 		cctl = PL080_CONTROL_DST_INCR;
--		slave_addr = plchan->cfg.src_addr;
-+		*slave_addr = plchan->cfg.src_addr;
- 		addr_width = plchan->cfg.src_addr_width;
- 		maxburst = plchan->cfg.src_maxburst;
- 		src_buses = plchan->cd->periph_buses;
-@@ -1560,24 +1562,107 @@ static struct dma_async_tx_descriptor *pl08x_prep_slave_sg(
- 	else
- 		txd->ccfg |= plchan->signal << PL080_CONFIG_SRC_SEL_SHIFT;
+ 	/* First get the remaining bytes in the active transfer */
+-	bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
++	if (pl08x->vd->pl080s)
++		bytes = get_bytes_in_cctl_pl080s(
++				readl(ch->base + PL080_CH_CONTROL),
++				readl(ch->base + PL080S_CH_CONTROL2));
++	else
++		bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
  
-+	return txd;
-+}
-+
-+static int pl08x_tx_add_sg(struct pl08x_txd *txd,
-+			   enum dma_transfer_direction direction,
-+			   dma_addr_t slave_addr,
-+			   dma_addr_t buf_addr,
-+			   unsigned int len)
-+{
-+	struct pl08x_sg *dsg;
-+
-+	dsg = kzalloc(sizeof(struct pl08x_sg), GFP_NOWAIT);
-+	if (!dsg)
-+		return -ENOMEM;
-+
-+	list_add_tail(&dsg->node, &txd->dsg_list);
-+
-+	dsg->len = len;
-+	if (direction == DMA_MEM_TO_DEV) {
-+		dsg->src_addr = buf_addr;
-+		dsg->dst_addr = slave_addr;
-+	} else {
-+		dsg->src_addr = slave_addr;
-+		dsg->dst_addr = buf_addr;
-+	}
-+
-+	return 0;
-+}
-+
-+static struct dma_async_tx_descriptor *pl08x_prep_slave_sg(
-+		struct dma_chan *chan, struct scatterlist *sgl,
-+		unsigned int sg_len, enum dma_transfer_direction direction,
-+		unsigned long flags, void *context)
-+{
-+	struct pl08x_dma_chan *plchan = to_pl08x_chan(chan);
-+	struct pl08x_driver_data *pl08x = plchan->host;
-+	struct pl08x_txd *txd;
-+	struct scatterlist *sg;
-+	int ret, tmp;
-+	dma_addr_t slave_addr;
-+
-+	dev_dbg(&pl08x->adev->dev, "%s prepare transaction of %d bytes from %s\n",
-+			__func__, sg_dma_len(sgl), plchan->name);
-+
-+	txd = pl08x_init_txd(chan, direction, &slave_addr);
-+	if (!txd)
-+		return NULL;
-+
- 	for_each_sg(sgl, sg, sg_len, tmp) {
--		dsg = kzalloc(sizeof(struct pl08x_sg), GFP_NOWAIT);
--		if (!dsg) {
-+		ret = pl08x_tx_add_sg(txd, direction, slave_addr,
-+				      sg_dma_address(sg),
-+				      sg_dma_len(sg));
-+		if (ret) {
- 			pl08x_release_mux(plchan);
- 			pl08x_free_txd(pl08x, txd);
- 			dev_err(&pl08x->adev->dev, "%s no mem for pl080 sg\n",
- 					__func__);
- 			return NULL;
+ 	if (!clli)
+ 		return bytes;
+@@ -515,7 +550,12 @@ static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
+ 	llis_va_limit = llis_va + llis_max_words;
+ 
+ 	for (; llis_va < llis_va_limit; llis_va += pl08x->lli_words) {
+-		bytes += get_bytes_in_cctl(llis_va[PL080_LLI_CCTL]);
++		if (pl08x->vd->pl080s)
++			bytes += get_bytes_in_cctl_pl080s(
++						llis_va[PL080_LLI_CCTL],
++						llis_va[PL080S_LLI_CCTL2]);
++		else
++			bytes += get_bytes_in_cctl(llis_va[PL080_LLI_CCTL]);
+ 
+ 		/*
+ 		 * A LLI pointer of 0 terminates the LLI list
+@@ -778,7 +818,7 @@ static void pl08x_choose_master_bus(struct pl08x_lli_build_data *bd,
+  */
+ static void pl08x_fill_lli_for_desc(struct pl08x_driver_data *pl08x,
+ 				    struct pl08x_lli_build_data *bd,
+-				    int num_llis, int len, u32 cctl)
++				    int num_llis, int len, u32 cctl, u32 cctl2)
+ {
+ 	u32 offset = num_llis * pl08x->lli_words;
+ 	u32 *llis_va = bd->txd->llis_va + offset;
+@@ -794,6 +834,8 @@ static void pl08x_fill_lli_for_desc(struct pl08x_driver_data *pl08x,
+ 	llis_va[PL080_LLI_LLI] = (llis_bus + sizeof(u32) * offset);
+ 	llis_va[PL080_LLI_LLI] |= bd->lli_bus;
+ 	llis_va[PL080_LLI_CCTL] = cctl;
++	if (pl08x->vd->pl080s)
++		llis_va[PL080S_LLI_CCTL2] = cctl2;
+ 
+ 	if (cctl & PL080_CONTROL_SRC_INCR)
+ 		bd->srcbus.addr += len;
+@@ -810,7 +852,7 @@ static inline void prep_byte_width_lli(struct pl08x_driver_data *pl08x,
+ 			int num_llis, size_t *total_bytes)
+ {
+ 	*cctl = pl08x_cctl_bits(*cctl, 1, 1, len);
+-	pl08x_fill_lli_for_desc(pl08x, bd, num_llis, len, *cctl);
++	pl08x_fill_lli_for_desc(pl08x, bd, num_llis, len, *cctl, len);
+ 	(*total_bytes) += len;
+ }
+ 
+@@ -915,7 +957,7 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
+ 			cctl = pl08x_cctl_bits(cctl, bd.srcbus.buswidth,
+ 					bd.dstbus.buswidth, 0);
+ 			pl08x_fill_lli_for_desc(pl08x, &bd, num_llis++,
+-					0, cctl);
++					0, cctl, 0);
+ 			break;
  		}
--		list_add_tail(&dsg->node, &txd->dsg_list);
-+	}
  
--		dsg->len = sg_dma_len(sg);
--		if (direction == DMA_MEM_TO_DEV) {
--			dsg->src_addr = sg_dma_address(sg);
--			dsg->dst_addr = slave_addr;
--		} else {
--			dsg->src_addr = slave_addr;
--			dsg->dst_addr = sg_dma_address(sg);
-+	ret = pl08x_fill_llis_for_desc(plchan->host, txd);
-+	if (!ret) {
-+		pl08x_release_mux(plchan);
-+		pl08x_free_txd(pl08x, txd);
-+		return NULL;
-+	}
-+
-+	return vchan_tx_prep(&plchan->vc, &txd->vd, flags);
-+}
-+
-+static struct dma_async_tx_descriptor *pl08x_prep_dma_cyclic(
-+		struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
-+		size_t period_len, enum dma_transfer_direction direction,
-+		unsigned long flags, void *context)
-+{
-+	struct pl08x_dma_chan *plchan = to_pl08x_chan(chan);
-+	struct pl08x_driver_data *pl08x = plchan->host;
-+	struct pl08x_txd *txd;
-+	int ret, tmp;
-+	dma_addr_t slave_addr;
-+
-+	dev_dbg(&pl08x->adev->dev,
-+		"%s prepare cyclic transaction of %d/%d bytes %s %s\n",
-+		__func__, period_len, buf_len,
-+		direction == DMA_MEM_TO_DEV ? "to" : "from",
-+		plchan->name);
-+
-+	txd = pl08x_init_txd(chan, direction, &slave_addr);
-+	if (!txd)
-+		return NULL;
-+
-+	txd->cyclic = true;
-+	txd->cctl |= PL080_CONTROL_TC_IRQ_EN;
-+	for (tmp = 0; tmp < buf_len; tmp += period_len) {
-+		ret = pl08x_tx_add_sg(txd, direction, slave_addr,
-+				      buf_addr + tmp, period_len);
-+		if (ret) {
-+			pl08x_release_mux(plchan);
-+			pl08x_free_txd(pl08x, txd);
-+			return NULL;
- 		}
+@@ -995,7 +1037,7 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
+ 				cctl = pl08x_cctl_bits(cctl, bd.srcbus.buswidth,
+ 					bd.dstbus.buswidth, tsize);
+ 				pl08x_fill_lli_for_desc(pl08x, &bd, num_llis++,
+-						lli_len, cctl);
++						lli_len, cctl, tsize);
+ 				total_bytes += lli_len;
+ 			}
+ 
+@@ -1923,7 +1965,10 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
+ 		pl08x->mem_buses = pl08x->pd->mem_buses;
  	}
  
-@@ -1720,7 +1805,9 @@ static irqreturn_t pl08x_irq(int irq, void *dev)
+-	pl08x->lli_words = PL080_LLI_WORDS;
++	if (vd->pl080s)
++		pl08x->lli_words = PL080S_LLI_WORDS;
++	else
++		pl08x->lli_words = PL080_LLI_WORDS;
+ 	tsfr_size = MAX_NUM_TSFR_LLIS * pl08x->lli_words * sizeof(u32);
  
- 			spin_lock(&plchan->vc.lock);
- 			tx = plchan->at;
--			if (tx) {
-+			if (tx && tx->cyclic) {
-+				vchan_cyclic_callback(&tx->vd);
-+			} else if (tx) {
- 				plchan->at = NULL;
- 				/*
- 				 * This descriptor is done, release its mux
-@@ -1942,6 +2029,7 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
+ 	/* A DMA memory pool for LLIs, align on 1-byte boundary */
+@@ -2075,6 +2120,12 @@ static struct vendor_data vendor_nomadik = {
+ 	.nomadik = true,
+ };
  
- 	/* Initialize slave engine */
- 	dma_cap_set(DMA_SLAVE, pl08x->slave.cap_mask);
-+	dma_cap_set(DMA_CYCLIC, pl08x->slave.cap_mask);
- 	pl08x->slave.dev = &adev->dev;
- 	pl08x->slave.device_alloc_chan_resources = pl08x_alloc_chan_resources;
- 	pl08x->slave.device_free_chan_resources = pl08x_free_chan_resources;
-@@ -1949,6 +2037,7 @@ static int pl08x_probe(struct amba_device *adev, const struct amba_id *id)
- 	pl08x->slave.device_tx_status = pl08x_dma_tx_status;
- 	pl08x->slave.device_issue_pending = pl08x_issue_pending;
- 	pl08x->slave.device_prep_slave_sg = pl08x_prep_slave_sg;
-+	pl08x->slave.device_prep_dma_cyclic = pl08x_prep_dma_cyclic;
- 	pl08x->slave.device_control = pl08x_control;
++static struct vendor_data vendor_pl080s = {
++	.config_offset = PL080S_CH_CONFIG,
++	.channels = 8,
++	.pl080s = true,
++};
++
+ static struct vendor_data vendor_pl081 = {
+ 	.config_offset = PL080_CH_CONFIG,
+ 	.channels = 2,
+@@ -2082,6 +2133,12 @@ static struct vendor_data vendor_pl081 = {
+ };
  
- 	/* Get the platform data */
+ static struct amba_id pl08x_ids[] = {
++	/* Samsung PL080S variant */
++	{
++		.id	= 0x0a141080,
++		.mask	= 0xffffffff,
++		.data	= &vendor_pl080s,
++	},
+ 	/* PL080 */
+ 	{
+ 		.id	= 0x00041080,
+diff --git a/include/linux/amba/pl080.h b/include/linux/amba/pl080.h
+index 3e7b62f..ef36a0a 100644
+--- a/include/linux/amba/pl080.h
++++ b/include/linux/amba/pl080.h
+@@ -87,6 +87,7 @@
+ #define PL080_CONTROL_SB_SIZE_MASK		(0x7 << 12)
+ #define PL080_CONTROL_SB_SIZE_SHIFT		(12)
+ #define PL080_CONTROL_TRANSFER_SIZE_MASK	(0xfff << 0)
++#define PL080S_CONTROL_TRANSFER_SIZE_MASK	(0xffffff << 0)
+ #define PL080_CONTROL_TRANSFER_SIZE_SHIFT	(0)
+ 
+ #define PL080_BSIZE_1				(0x0)
 -- 
 1.8.2.1
