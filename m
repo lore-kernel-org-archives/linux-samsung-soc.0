@@ -1,52 +1,35 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [RFC PATCH v2 06/12] dmaengine: PL08x: Fix reading the byte count in cctl
-Date: Sat, 22 Jun 2013 22:42:38 +0200
-Message-ID: <1371933764-24875-7-git-send-email-tomasz.figa@gmail.com>
+Subject: [RFC PATCH v2 10/12] spi: s3c64xx: Do not require legacy DMA API in case of S3C64XX
+Date: Sat, 22 Jun 2013 22:42:42 +0200
+Message-ID: <1371933764-24875-11-git-send-email-tomasz.figa@gmail.com>
 References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:34773 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751577Ab3FVUn1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Jun 2013 16:43:27 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alban Bedel <alba>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Alban Bedel <alban.bedel@avionic-design.de>
+With support for amba-pl08x driver, on S3C64xx the generic DMA engine
+API can be used instead of the private s3c-dma interface.
 
-There are more fields than just SWIDTH in CH_CONTROL register, so read
-register value must be masked in addition to shifting.
-
-Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/dma/amba-pl08x.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/spi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 89b8120..1eeb911 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -469,6 +469,8 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
- 	/* The source width defines the number of bytes */
- 	u32 bytes = cctl & PL080_CONTROL_TRANSFER_SIZE_MASK;
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 89cbbab..241a049 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -366,7 +366,7 @@ config SPI_S3C24XX_FIQ
+ config SPI_S3C64XX
+ 	tristate "Samsung S3C64XX series type SPI"
+ 	depends on (ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
+-	select S3C64XX_DMA if ARCH_S3C64XX
++	select S3C64XX_DMA if ARCH_S3C64XX && !S3C64XX_PL080
+ 	help
+ 	  SPI driver for Samsung S3C64XX and newer SoCs.
  
-+	cctl &= PL080_CONTROL_SWIDTH_MASK;
-+
- 	switch (cctl >> PL080_CONTROL_SWIDTH_SHIFT) {
- 	case PL080_WIDTH_8BIT:
- 		break;
-@@ -487,6 +489,8 @@ static inline u32 get_bytes_in_cctl_pl080s(u32 cctl, u32 cctl1)
- 	/* The source width defines the number of bytes */
- 	u32 bytes = cctl1 & PL080S_CONTROL_TRANSFER_SIZE_MASK;
- 
-+	cctl &= PL080_CONTROL_SWIDTH_MASK;
-+
- 	switch (cctl >> PL080_CONTROL_SWIDTH_SHIFT) {
- 	case PL080_WIDTH_8BIT:
- 		break;
 -- 
 1.8.2.1
