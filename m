@@ -1,187 +1,143 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 00/18] Final Samsung PWM support cleanup
-Date: Sat, 22 Jun 2013 20:04:47 +0200
-Message-ID: <2101400.j50IudOSWr@flatron>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <201306222001.49600.heiko@sntech.de>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2] clk: Exynos5250: Add clocks for G3D
+Date: Sat, 22 Jun 2013 11:09:55 -0700
+Message-ID: <20130622180955.20448.916@quantum>
+References: <1369639213-23515-1-git-send-email-arun.kk@samsung.com>
+ <51C1B3EF.3060702@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f51.google.com ([209.85.214.51]:47612 "EHLO
-	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751879Ab3FVSEt convert rfc822-to-8bit (ORCPT
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:41794 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751879Ab3FVSJ7 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Jun 2013 14:04:49 -0400
-In-Reply-To: <201306222001.49600.heiko@sntech.de>
+	Sat, 22 Jun 2013 14:09:59 -0400
+Received: by mail-pd0-f173.google.com with SMTP id v14so148987pde.32
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Jun 2013 11:09:59 -0700 (PDT)
+In-Reply-To: <51C1B3EF.3060702@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, tomasz.figa@gmail.com, dianders@chromium.org, arunkk.samsung@gmail.com
 
-Hi Heiko,
+Quoting Kukjin Kim (2013-06-19 06:36:47)
+> On 05/27/13 16:20, Arun Kumar K wrote:
+> > This patch adds the required clocks for ARM Mali IP
+> > in Exynos5250.
+> >
+> > Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+> 
+> (+ Mike)
+> 
+> Looks good to me.
+> 
+> Mike, I'd like take this into samsung tree for v3.11, if you have any 
+> concerns, please let me know.
 
-On Saturday 22 of June 2013 20:01:49 Heiko St=FCbner wrote:
-> Am Freitag, 21. Juni 2013, 00:12:45 schrieb Tomasz Figa:
-> > Since we now have a proper Samsung PWM clocksource driver in place,
-> > we can proceed with further cleanup of PWM timers support on Samsun=
-g
-> > SoCs.>=20
-> > This series attempts to achieve this goal by:
-> >  1) moving remaining Samsung platforms to the new clocksource drive=
-r
-> >  2) removing old clocksource driver
-> >  3) adding new multiplatform- and DT-aware PWM driver
-> >  4) moving all Samsung platforms to use the new PWM driver
-> >  5) removing old PWM driver
-> >  6) removing all PWM-related code that is not used anymore
-> >=20
-> > Cleaning up the PWM driver is a bit tricky, because the design of
-> > current driver makes it completely unsuitable for DT and
-> > multiplatform and would require a heavy rework to make it usable,
-> > breaking any existing Samsung PWM users by the way. To avoid any
-> > breakage I decided to keep the old driver, add new one, move all
-> > platforms to it and then remove the old one.
-> >=20
-> > See particular patches for more detailed descriptions.
-> >=20
-> > On S3C6410-based Tiny6410 (Mini6410-compatible), after enabling
-> > pwm-beeper and Exynos4210-based Origen board (with PWM0 attached to=
- a
-> > scope):
-> >=20
-> > Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
->=20
-> On a s3c2416 based machine (with the additional two v3 patches)
->=20
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
->=20
->=20
-> and again thanks for working on this :-)
+Looks good to me too!  Ack.
 
-Thanks for testing!
+Regards,
+Mike
 
-I hope we can get this merged ASAP, as this is an important prerequisit=
-e=20
-for further work on S3C24xx and S3C64xx...
-
-Best regards,
-Tomasz
-
-> > Changes since v1:
-> >  - made sure that suspend/resume is handled correctly in both
-> > =20
-> >    clocksource and PWM drivers,
-> > =20
-> >  - fixed incorrect definition of AUTORELOAD bit for channel 4,
-> >  - fixed order of registering PWM device and calling samsung_bl_set=
-(),
-> > =20
-> >    which assumes that PWM device has been already registered,
-> > =20
-> >  - corrected commit messages of several patches,
-> >  - addressed all the valid comments from reviewers, including clean=
-up
-> > =20
-> >    of most code originally copied from previous PWM driver,
-> > =20
-> >  - rebased on top of current Kgene's for-next,
-> >  - tested on Exynos4210, verifying correct PWM output with a scope.
-> >=20
-> > Needs testing on other platforms as I could only compile test for
-> > them.
-> >=20
-> > Tomasz Figa (18):
-> >   ARM: SAMSUNG: Unify base address definitions of timer block
-> >   ARM: SAMSUNG: Add new PWM platform device
-> >   ARM: SAMSUNG: Set PWM platform data
-> >   clocksource: samsung_pwm_timer: Cache clocksource register addres=
-s
-> >   clocksource: samsung_pwm_timer: Do not use clocksource_mmio
-> >   clocksource: samsung_pwm_timer: Handle suspend/resume correctly
-> >   ARM: SAMSUNG: Move all platforms to new clocksource driver
-> >   ARM: SAMSUNG: Remove old samsung-time driver
-> >   ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
-> >   pwm: samsung: Rename to pwm-samsung-legacy
-> >   pwm: Add new pwm-samsung driver
-> >   ARM: SAMSUNG: Rework private data handling in dev-backlight
-> >   ARM: SAMSUNG: Modify board files to use new PWM platform device
-> >   pwm: Remove superseded pwm-samsung-legacy driver
-> >   ARM: SAMSUNG: Remove old PWM timer platform devices
-> >   ARM: SAMSUNG: Remove pwm-clock infrastructure
-> >   ARM: SAMSUNG: Remove remaining uses of plat/regs-timer.h header
-> >   ARM: SAMSUNG: Remove plat/regs-timer.h header
-> > =20
-> >  arch/arm/Kconfig                                   |   1 -
-> >  arch/arm/mach-s3c24xx/Kconfig                      |  12 +-
-> >  arch/arm/mach-s3c24xx/clock-s3c2410.c              |   1 -
-> >  arch/arm/mach-s3c24xx/clock-s3c2412.c              |   1 -
-> >  arch/arm/mach-s3c24xx/clock-s3c2416.c              |   2 -
-> >  arch/arm/mach-s3c24xx/clock-s3c2443.c              |   2 -
-> >  arch/arm/mach-s3c24xx/common.c                     |  27 +
-> >  arch/arm/mach-s3c24xx/include/mach/map.h           |   2 +
-> >  arch/arm/mach-s3c24xx/mach-h1940.c                 |   4 +-
-> >  arch/arm/mach-s3c24xx/mach-rx1950.c                |   5 +-
-> >  arch/arm/mach-s3c64xx/Kconfig                      |   4 +-
-> >  arch/arm/mach-s3c64xx/clock.c                      |   2 -
-> >  arch/arm/mach-s3c64xx/common.c                     |  32 +-
-> >  arch/arm/mach-s3c64xx/include/mach/irqs.h          |   8 -
-> >  arch/arm/mach-s3c64xx/include/mach/map.h           |   1 +
-> >  arch/arm/mach-s3c64xx/irq-pm.c                     |   2 -
-> >  arch/arm/mach-s3c64xx/mach-crag6410.c              |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-hmt.c                   |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-smartq.c                |   4 +-
-> >  arch/arm/mach-s3c64xx/mach-smdk6410.c              |   5 +-
-> >  arch/arm/mach-s5p64x0/Kconfig                      |   4 +-
-> >  arch/arm/mach-s5p64x0/clock-s5p6440.c              |   2 -
-> >  arch/arm/mach-s5p64x0/clock-s5p6450.c              |   2 -
-> >  arch/arm/mach-s5p64x0/common.c                     |  27 +
-> >  arch/arm/mach-s5p64x0/include/mach/irqs.h          |   2 -
-> >  arch/arm/mach-s5p64x0/include/mach/map.h           |   1 +
-> >  arch/arm/mach-s5p64x0/mach-smdk6440.c              |   5 +-
-> >  arch/arm/mach-s5p64x0/mach-smdk6450.c              |   5 +-
-> >  arch/arm/mach-s5p64x0/pm.c                         |   3 -
-> >  arch/arm/mach-s5pc100/Kconfig                      |   2 +-
-> >  arch/arm/mach-s5pc100/clock.c                      |   2 -
-> >  arch/arm/mach-s5pc100/common.c                     |  28 +
-> >  arch/arm/mach-s5pc100/include/mach/irqs.h          |   2 -
-> >  arch/arm/mach-s5pc100/include/mach/map.h           |   1 +
-> >  arch/arm/mach-s5pc100/mach-smdkc100.c              |   5 +-
-> >  arch/arm/mach-s5pv210/Kconfig                      |   2 +-
-> >  arch/arm/mach-s5pv210/clock.c                      |   1 -
-> >  arch/arm/mach-s5pv210/common.c                     |  28 +
-> >  arch/arm/mach-s5pv210/include/mach/irqs.h          |   2 -
-> >  arch/arm/mach-s5pv210/include/mach/map.h           |   1 +
-> >  arch/arm/mach-s5pv210/mach-smdkv210.c              |   5 +-
-> >  arch/arm/mach-s5pv210/pm.c                         |  10 -
-> >  arch/arm/plat-samsung/Kconfig                      |  14 -
-> >  arch/arm/plat-samsung/Makefile                     |   3 -
-> >  arch/arm/plat-samsung/dev-backlight.c              |  61 +-
-> >  arch/arm/plat-samsung/devs.c                       |  42 +-
-> >  arch/arm/plat-samsung/include/plat/clock.h         |   4 -
-> >  arch/arm/plat-samsung/include/plat/devs.h          |   1 +
-> >  arch/arm/plat-samsung/include/plat/irq-vic-timer.h |  13 -
-> >  arch/arm/plat-samsung/include/plat/irqs.h          |   9 -
-> >  arch/arm/plat-samsung/include/plat/pwm-clock.h     |  81 ---
-> >  arch/arm/plat-samsung/include/plat/pwm-core.h      |  24 +
-> >  arch/arm/plat-samsung/include/plat/regs-timer.h    | 124 ----
-> >  arch/arm/plat-samsung/include/plat/samsung-time.h  |  23 -
-> >  arch/arm/plat-samsung/irq-vic-timer.c              |  98 ---
-> >  arch/arm/plat-samsung/pwm-clock.c                  | 474
-> >  --------------
-> >  arch/arm/plat-samsung/s5p-irq.c                    |   4 -
-> >  arch/arm/plat-samsung/samsung-time.c               | 394 ---------=
----
-> >  drivers/clocksource/samsung_pwm_timer.c            |  84 +--
-> >  drivers/pwm/pwm-samsung.c                          | 694
-> >=20
-> > ++++++++++++++------- 60 files changed, 766 insertions(+), 1644
-> > deletions(-)
-> >=20
-> >  delete mode 100644 arch/arm/plat-samsung/include/plat/irq-vic-time=
-r.h
-> >  delete mode 100644 arch/arm/plat-samsung/include/plat/pwm-clock.h
-> >  create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
-> >  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-timer.h
-> >  delete mode 100644 arch/arm/plat-samsung/irq-vic-timer.c
-> >  delete mode 100644 arch/arm/plat-samsung/pwm-clock.c
-> >  delete mode 100644 arch/arm/plat-samsung/samsung-time.c
+> 
+> Thanks,
+> - Kukjin
+> 
+> > ---
+> > Changes from v1
+> > - Removed exporting of parent DIV clock for g3d
+> >    as per Tomsz Figa's comment.
+> > ---
+> >   .../devicetree/bindings/clock/exynos5250-clock.txt         |    1 +
+> >   drivers/clk/samsung/clk-exynos5250.c                       |   12 +++++++++++-
+> >   2 files changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > index 1a05761..b3700cf 100644
+> > --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > @@ -155,6 +155,7 @@ clock which they consume.
+> >     dp                        342
+> >     mixer                     343
+> >     hdmi                      344
+> > +  g3d                        345
+> >
+> >   Example 1: An example of a clock controller node is listed below.
+> >
+> > diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> > index 5c97e75..0d52c19 100644
+> > --- a/drivers/clk/samsung/clk-exynos5250.c
+> > +++ b/drivers/clk/samsung/clk-exynos5250.c
+> > @@ -23,6 +23,7 @@
+> >   #define DIV_CPU0            0x500
+> >   #define SRC_CORE1           0x4204
+> >   #define SRC_TOP0            0x10210
+> > +#define SRC_TOP1             0x10214
+> >   #define SRC_TOP2            0x10218
+> >   #define SRC_GSCL            0x10220
+> >   #define SRC_DISP1_0         0x1022c
+> > @@ -55,6 +56,7 @@
+> >   #define DIV_PERIC5          0x1056c
+> >   #define GATE_IP_GSCL                0x10920
+> >   #define GATE_IP_MFC         0x1092c
+> > +#define GATE_IP_G3D          0x10930
+> >   #define GATE_IP_GEN         0x10934
+> >   #define GATE_IP_FSYS                0x10944
+> >   #define GATE_IP_PERIC               0x10950
+> > @@ -98,7 +100,7 @@ enum exynos5250_clks {
+> >       spi2, i2s1, i2s2, pcm1, pcm2, pwm, spdif, ac97, hsi2c0, hsi2c1, hsi2c2,
+> >       hsi2c3, chipid, sysreg, pmu, cmu_top, cmu_core, cmu_mem, tzpc0, tzpc1,
+> >       tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec, mct,
+> > -     wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi,
+> > +     wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g3d,
+> >
+> >       nr_clks,
+> >   };
+> > @@ -112,6 +114,7 @@ static __initdata unsigned long exynos5250_clk_regs[] = {
+> >       DIV_CPU0,
+> >       SRC_CORE1,
+> >       SRC_TOP0,
+> > +     SRC_TOP1,
+> >       SRC_TOP2,
+> >       SRC_GSCL,
+> >       SRC_DISP1_0,
+> > @@ -164,10 +167,12 @@ PNAME(mout_vpllsrc_p)   = { "fin_pll", "sclk_hdmi27m" };
+> >   PNAME(mout_vpll_p)  = { "mout_vpllsrc", "fout_vpll" };
+> >   PNAME(mout_cpll_p)  = { "fin_pll", "fout_cpll" };
+> >   PNAME(mout_epll_p)  = { "fin_pll", "fout_epll" };
+> > +PNAME(mout_gpll_p)   = { "fin_pll", "fout_gpll" };
+> >   PNAME(mout_mpll_user_p)     = { "fin_pll", "sclk_mpll" };
+> >   PNAME(mout_bpll_user_p)     = { "fin_pll", "sclk_bpll" };
+> >   PNAME(mout_aclk166_p)       = { "sclk_cpll", "sclk_mpll_user" };
+> >   PNAME(mout_aclk200_p)       = { "sclk_mpll_user", "sclk_bpll_user" };
+> > +PNAME(mout_aclk400_p)        = { "aclk_400_g3d_mid", "sclk_gpll" };
+> >   PNAME(mout_hdmi_p)  = { "div_hdmi_pixel", "sclk_hdmiphy" };
+> >   PNAME(mout_usb3_p)  = { "sclk_mpll_user", "sclk_cpll" };
+> >   PNAME(mout_group1_p)        = { "fin_pll", "fin_pll", "sclk_hdmi27m",
+> > @@ -223,6 +228,9 @@ struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
+> >       MUX(none, "mout_aclk166", mout_aclk166_p, SRC_TOP0, 8, 1),
+> >       MUX(none, "mout_aclk333", mout_aclk166_p, SRC_TOP0, 16, 1),
+> >       MUX(none, "mout_aclk200", mout_aclk200_p, SRC_TOP0, 12, 1),
+> > +     MUX(none, "aclk_400_g3d_mid", mout_aclk200_p, SRC_TOP0, 20, 1),
+> > +     MUX(none, "sclk_gpll", mout_gpll_p, SRC_TOP2, 28, 1),
+> > +     MUX(none, "mout_aclk400", mout_aclk400_p, SRC_TOP1, 28, 1),
+> >       MUX(none, "mout_cam_bayer", mout_group1_p, SRC_GSCL, 12, 4),
+> >       MUX(none, "mout_cam0", mout_group1_p, SRC_GSCL, 16, 4),
+> >       MUX(none, "mout_cam1", mout_group1_p, SRC_GSCL, 20, 4),
+> > @@ -262,6 +270,7 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+> >       DIV(none, "aclk166", "mout_aclk166", DIV_TOP0, 8, 3),
+> >       DIV(none, "aclk333", "mout_aclk333", DIV_TOP0, 20, 3),
+> >       DIV(none, "aclk200", "mout_aclk200", DIV_TOP0, 12, 3),
+> > +     DIV(none, "aclk_400_g3d", "mout_aclk400", DIV_TOP0, 24, 3),
+> >       DIV(none, "div_cam_bayer", "mout_cam_bayer", DIV_GSCL, 12, 4),
+> >       DIV(none, "div_cam0", "mout_cam0", DIV_GSCL, 16, 4),
+> >       DIV(none, "div_cam1", "mout_cam1", DIV_GSCL, 20, 4),
+> > @@ -462,6 +471,7 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+> >       GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
+> >       GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
+> >       GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
+> > +     GATE(g3d, "g3d", "aclk_400_g3d", GATE_IP_G3D, 0, 0, 0),
+> >   };
+> >
+> >   static __initdata struct of_device_id ext_clk_match[] = {
