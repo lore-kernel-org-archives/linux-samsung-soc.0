@@ -1,65 +1,161 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 00/18] Final Samsung PWM support cleanup
-Date: Sat, 22 Jun 2013 15:10:47 +0200
-Message-ID: <3161519.pXjTM5UxUs@flatron>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <201306211604.38443.arnd@arndb.de>
+Subject: [PATCH v7 5/8] ARM: s3c64xx: Add board file for boot using Device Tree
+Date: Sat, 22 Jun 2013 15:44:07 +0200
+Message-ID: <2302304.NyG5fka8vK@flatron>
+References: <1371774924-9224-1-git-send-email-tomasz.figa@gmail.com> <1371774924-9224-6-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f53.google.com ([209.85.214.53]:46701 "EHLO
-	mail-bk0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756214Ab3FVNKt (ORCPT
+Received: from mail-bk0-f52.google.com ([209.85.214.52]:41922 "EHLO
+	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755671Ab3FVNoK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Jun 2013 09:10:49 -0400
-In-Reply-To: <201306211604.38443.arnd@arndb.de>
+	Sat, 22 Jun 2013 09:44:10 -0400
+In-Reply-To: <1371774924-9224-6-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>, Benoit Cousson <benoit.cousson@linaro.org>, devicetree-discuss@lists.ozlabs.org, Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>, Nicolas Pitre <nico@fluxnic.net>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Will Deacon <will.deacon@arm.com>
 
-On Friday 21 of June 2013 16:04:38 Arnd Bergmann wrote:
-> On Friday 21 June 2013, Tomasz Figa wrote:
-> > Since we now have a proper Samsung PWM clocksource driver in place,
-> > we can proceed with further cleanup of PWM timers support on Samsung
-> > SoCs.> 
-> > This series attempts to achieve this goal by:
-> >  1) moving remaining Samsung platforms to the new clocksource driver
-> >  2) removing old clocksource driver
-> >  3) adding new multiplatform- and DT-aware PWM driver
-> >  4) moving all Samsung platforms to use the new PWM driver
-> >  5) removing old PWM driver
-> >  6) removing all PWM-related code that is not used anymore
-> > 
-> > Cleaning up the PWM driver is a bit tricky, because the design of
-> > current driver makes it completely unsuitable for DT and
-> > multiplatform and would require a heavy rework to make it usable,
-> > breaking any existing Samsung PWM users by the way. To avoid any
-> > breakage I decided to keep the old driver, add new one, move all
-> > platforms to it and then remove the old one.
-> > 
-> > See particular patches for more detailed descriptions.
-> > 
-> > On S3C6410-based Tiny6410 (Mini6410-compatible), after enabling
-> > pwm-beeper and Exynos4210-based Origen board (with PWM0 attached to a
-> > scope):
-> > 
-> > Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> Looks good to me,
-> 
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
+This patch adds board file that will be used to boot S3C64xx-based boards
+using Device Tree.
 
-Thanks.
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ arch/arm/mach-s3c64xx/Kconfig           | 16 +++++++
+ arch/arm/mach-s3c64xx/Makefile          |  1 +
+ arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c | 85 +++++++++++++++++++++++++++++++++
+ 3 files changed, 102 insertions(+)
+ create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
 
-> Two small comments:
-> 
-> * always use 'git format-patch -M' to detect renames (patch 10)
-> 
-> * for new code, don't use __raw_readl and similar functions but
->   use readl_relaxed or plain readl.
+Changes since v6:
+ - Dropped the concept of .init_platform() callback and returned back
+   to the old good abuse of .init_irq().
 
-Just posted v3 of patches 10 and 11 addressing these issues.
-
-Best regards,
-Tomasz
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index f78a6a0..fb4258c 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -308,3 +308,19 @@ config MACH_WLF_CRAGG_6410
+ 	select SAMSUNG_GPIO_EXTRA128
+ 	help
+ 	  Machine support for the Wolfson Cragganmore S3C6410 variant.
++
++config MACH_S3C64XX_DT
++	bool "Samsung S3C6400/S3C6410 machine using Device Tree"
++	select CLKSRC_OF
++	select CPU_S3C6400
++	select CPU_S3C6410
++	select PINCTRL
++	select PINCTRL_S3C64XX
++	select USE_OF
++	help
++	  Machine support for Samsung S3C6400/S3C6410 machines with Device Tree
++	  enabled.
++	  Select this if a fdt blob is available for your S3C64XX SoC based
++	  board.
++	  Note: This is under development and not all peripherals can be
++	  supported with this machine file.
+diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
+index 645a8fe..6faedcf 100644
+--- a/arch/arm/mach-s3c64xx/Makefile
++++ b/arch/arm/mach-s3c64xx/Makefile
+@@ -57,3 +57,4 @@ obj-$(CONFIG_MACH_SMARTQ7)		+= mach-smartq7.o
+ obj-$(CONFIG_MACH_SMDK6400)		+= mach-smdk6400.o
+ obj-$(CONFIG_MACH_SMDK6410)		+= mach-smdk6410.o
+ obj-$(CONFIG_MACH_WLF_CRAGG_6410)	+= mach-crag6410.o mach-crag6410-module.o
++obj-$(CONFIG_MACH_S3C64XX_DT)		+= mach-s3c64xx-dt.o
+diff --git a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+new file mode 100644
+index 0000000..3384cb0
+--- /dev/null
++++ b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+@@ -0,0 +1,85 @@
++/*
++ * Samsung's S3C64XX flattened device tree enabled machine
++ *
++ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include <linux/clk-provider.h>
++#include <linux/irqchip.h>
++#include <linux/of_platform.h>
++
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/system_misc.h>
++
++#include <plat/cpu.h>
++#include <plat/watchdog-reset.h>
++
++#include <mach/map.h>
++
++#include "common.h"
++
++/*
++ * IO mapping for shared system controller IP.
++ *
++ * FIXME: Make remaining drivers use dynamic mapping.
++ */
++static struct map_desc s3c64xx_dt_iodesc[] __initdata = {
++	{
++		.virtual	= (unsigned long)S3C_VA_SYS,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_SYSCON),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	},
++};
++
++static void __init s3c64xx_dt_map_io(void)
++{
++	debug_ll_io_init();
++	iotable_init(s3c64xx_dt_iodesc, ARRAY_SIZE(s3c64xx_dt_iodesc));
++
++	s3c64xx_init_cpu();
++
++	if (!soc_is_s3c64xx())
++		panic("SoC is not S3C64xx!");
++}
++
++static void __init s3c64xx_dt_init_irq(void)
++{
++	of_clk_init(NULL);
++	samsung_wdt_reset_of_init();
++	irqchip_init();
++};
++
++static void __init s3c64xx_dt_init_machine(void)
++{
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
++}
++
++static void s3c64xx_dt_restart(char mode, const char *cmd)
++{
++	if (mode != 's')
++		samsung_wdt_reset();
++
++	/* if all else fails, or mode was for soft, jump to 0 */
++	soft_restart(0);
++}
++
++static char const *s3c64xx_dt_compat[] __initdata = {
++	"samsung,s3c6400",
++	"samsung,s3c6410",
++	NULL
++};
++
++DT_MACHINE_START(S3C6400_DT, "Samsung S3C64xx (Flattened Device Tree)")
++	/* Maintainer: Tomasz Figa <tomasz.figa@gmail.com> */
++	.dt_compat	= s3c64xx_dt_compat,
++	.map_io		= s3c64xx_dt_map_io,
++	.init_irq	= s3c64xx_dt_init_irq,
++	.init_machine	= s3c64xx_dt_init_machine,
++	.restart        = s3c64xx_dt_restart,
++MACHINE_END
+-- 
+1.8.2.1
