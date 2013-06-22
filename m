@@ -1,91 +1,114 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v2 00/18] Final Samsung PWM support cleanup
-Date: Sat, 22 Jun 2013 21:34:28 +0200
-Message-ID: <51C5FC44.6000001@gmail.com>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <201306222001.49600.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [RFC PATCH v2 00/12] ARM: s3c64xx: Let amba-pl08x driver handle DMA
+Date: Sat, 22 Jun 2013 22:42:32 +0200
+Message-ID: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:64988 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751288Ab3FVTeu (ORCPT
+Received: from mail-bk0-f54.google.com ([209.85.214.54]:34397 "EHLO
+	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751263Ab3FVUnL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Jun 2013 15:34:50 -0400
-In-Reply-To: <201306222001.49600.heiko@sntech.de>
+	Sat, 22 Jun 2013 16:43:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: =?ISO-8859-15?Q?Heiko_St=FCbner?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alban Bedel <alba>
 
-Hi,
+This is another version of my patches extending support of amba-pl08x
+DMA engine driver to PL080S DMA engine (PL080 modified by Samsung) found
+in Samsung S3C64xx SoCs.
 
-W dniu 2013-06-22 20:01, Heiko St=FCbner pisze:
-> Am Freitag, 21. Juni 2013, 00:12:45 schrieb Tomasz Figa:
->> Since we now have a proper Samsung PWM clocksource driver in place,
->> we can proceed with further cleanup of PWM timers support on Samsung=
- SoCs.
->>
->> This series attempts to achieve this goal by:
->>   1) moving remaining Samsung platforms to the new clocksource drive=
-r
->>   2) removing old clocksource driver
->>   3) adding new multiplatform- and DT-aware PWM driver
->>   4) moving all Samsung platforms to use the new PWM driver
->>   5) removing old PWM driver
->>   6) removing all PWM-related code that is not used anymore
->>
->> Cleaning up the PWM driver is a bit tricky, because the design of cu=
-rrent
->> driver makes it completely unsuitable for DT and multiplatform and w=
-ould
->> require a heavy rework to make it usable, breaking any existing Sams=
-ung PWM
->> users by the way. To avoid any breakage I decided to keep the old dr=
-iver,
->> add new one, move all platforms to it and then remove the old one.
->>
->> See particular patches for more detailed descriptions.
->>
->> On S3C6410-based Tiny6410 (Mini6410-compatible), after enabling pwm-=
-beeper
->> and Exynos4210-based Origen board (with PWM0 attached to a scope):
->>
->> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
->
-> On a s3c2416 based machine (with the additional two v3 patches)
->
-> Tested-by: Heiko Stuebner<heiko@sntech.de>
+Changes since RFC v1:
+ - Returned to original way of storing quirks as booleans, as suggested
+   by Russell, Linus and Arnd.
+ - Added reg_config field to pl08x_phy_chan struct, which stores
+   variant-specific address of channel config register, as suggested
+   by Russell.
+ - Simplified handling of extended maximum transfer size of PL080S
+   (no more conditional passing of 0 as length to pl08x_cctl_bits()).
+ - Reworked LLI handling in the driver to stop casting arbitrary memory
+   to a struct and allow different word count of LLI entry, as suggested
+   by Linus.
+ - Removed AMBA ID override from S3C64xx PL080 initialization code.
+ - Fixed brokenness of Samsung DMA wrapper API, which caused cyclic buffers
+   to be queued multiple times when DMA engine is used.
+ - Included patch adding clock aliases for DMA engines (depends on
+   Common Clock Framework driver for S3C64xx).
+ - Fixed several minor stylistic issues.
+ 
+For reference, here is the original description of the series:
 
-I have tested this series on Mini2440 board (all v2 patches).
-Only boot testing for now, however I'm going to inspect the PWM
-output signal and will report back if there are any issues.
-I think you could add my
+One of the biggest roadblocks on the way of S3C64xx to DeviceTree support
+is its DMA driver, which is completely platform-specific and provides
+private API (s3c-dma), not even saying that its design is completely
+against multiplatform-awareness.
 
-Tested-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+The DMA controller present on this SoC series is a custom variant
+of ARM PrimeCell PL080 modified by Samsung to add some extra features.
+It is mostly compatible with original PL080, except:
+ - CH_CONTROL2 register is added between CH_CONTROL and CH_CONFIG,
+ - offset of CH_CONFIG register is different,
+ - transfer size field is moved from CH_CONTROL to CH_CONTROL2,
+ - transfer size field is extended to 24 bits, allowing much bigger
+     single transfer,
+ - LLI consists of one more word, to account for CH_CONTROL2 register.
 
-I had to revert this patch (introduced between v3.10-rc4 and v3.10-rc5)
+Since all the rest is fully compatible with standard PL080 there is no
+point in having separate driver just for this single variant, so I decided
+to look into adding support for it to the amba-pl08x driver.
 
-commit 60e93575476f90a72146b51283f514da655410a7
-Author: Chander Kashyap <chander.kashyap@linaro.org>
-Date:   Tue May 28 18:32:07 2013 +0530
+There was already some attempt to achieve this before, but this was before
+Russel's big rework of the driver to use virtual channels, making the old
+patches being not much of use.
 
-     serial: samsung: enable clock before clearing pending interrupts=20
-during init
+This RFC series is a proof of concept that I managed to make during last
+days of hacking. Except one patch adding clkdev lookup to clock driver
+(which is being replaced with a CCF-compliant driver ATM), this is enough
+to get memcpy and slave transfers to work on S3C64xx.
 
-     Ensure that the uart controller clock is enabled prior to writing=20
-to the
-     interrupt mask and pending registers in the s3c24xx_serial_init_po=
-rt
-     function.
+I have tested this on Mini6410 and SMDK6410 boards using dmatest for
+memcpy and Samsung I2S with madplay/aplay for slave transfers.
+Unfortunately I do not have access to other platforms with PL08x so
+I could not test for any regressions introduced on them.
 
-     Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-     Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Credits for two patches go to Alban Bedel, who made a series fixing this
+driver to make it usable with audio drivers. I rebased his patches on top
+of mine and corrected coding style a bit.
 
+OK, that's all. Any comments are welcome. Feel free to start throwing eggs
+and tomatoes if you find this awful, but I won't be upset if I get some
+Tested-by or Acked-by as well. ;)
 
-to make serial console working again on Mini2440, but this is a
-different story.
+Alban Bedel (2):
+  dmaengine: PL08x: Fix reading the byte count in cctl
+  dmaengine: PL08x: Add cyclic transfer support
 
-Thanks,
-Sylwester
+Tomasz Figa (10):
+  dmaengine: PL08x: Refactor pl08x_getbytes_chan() to lower indentation
+  dmaengine: PL08x: Add support for different offset of CONFIG register
+  dmaengine: PL08x: Rework LLI handling to be less fragile
+  dmaengine: PL08x: Add support for PL080S variant
+  dmaengine: PL08x: Add support for different maximum transfer size
+  ASoC: Samsung: Do not queue cyclic buffers multiple times
+  clk: samsung: s3c64xx: Add aliases for DMA clocks
+  spi: s3c64xx: Do not require legacy DMA API in case of S3C64XX
+  ASoC: Samsung: Do not require legacy DMA API in case of S3C64XX
+  ARM: s3c64xx: Add support for DMA using generic amba-pl08x driver
+
+ arch/arm/Kconfig                         |   1 +
+ arch/arm/mach-s3c64xx/Kconfig            |   8 +-
+ arch/arm/mach-s3c64xx/Makefile           |   1 +
+ arch/arm/mach-s3c64xx/common.h           |   5 +
+ arch/arm/mach-s3c64xx/include/mach/dma.h |  65 +++++
+ arch/arm/mach-s3c64xx/pl080.c            | 244 ++++++++++++++++++
+ arch/arm/plat-samsung/s3c-dma-ops.c      |  13 +-
+ drivers/clk/samsung/clk-s3c64xx.c        |   2 +
+ drivers/dma/amba-pl08x.c                 | 426 ++++++++++++++++++++++---------
+ drivers/spi/Kconfig                      |   2 +-
+ include/linux/amba/pl080.h               |   1 +
+ sound/soc/samsung/Kconfig                |   2 +-
+ sound/soc/samsung/dma.c                  |   7 +
+ 13 files changed, 651 insertions(+), 126 deletions(-)
+ create mode 100644 arch/arm/mach-s3c64xx/pl080.c
+
+-- 
+1.8.2.1
