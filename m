@@ -1,575 +1,158 @@
 From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V7 18/30] thermal: exynos: Add support to handle many
- instances of TMU
-Date: Mon, 24 Jun 2013 11:50:51 -0400
-Message-ID: <51C86ADB.50207@ti.com>
-References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com> <1372071051-3167-19-git-send-email-amit.daniel@samsung.com>
+Subject: Re: [PATCH V7 23/30] thermal: exynos: Add thermal configuration data
+ for exynos5440 TMU sensor
+Date: Mon, 24 Jun 2013 12:37:52 -0400
+Message-ID: <51C875E0.7050702@ti.com>
+References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com> <1372071051-3167-24-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
 	protocol="application/pgp-signature";
-	boundary="----enig2CUSDNKRAGGHUUGGOVCVU"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:53177 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751044Ab3FXPvH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 11:51:07 -0400
-In-Reply-To: <1372071051-3167-19-git-send-email-amit.daniel@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+	boundary="----enig2LXJMPBRUACDBVRQSPFBB"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1372071051-3167-24-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
 To: Amit Daniel Kachhap <amit.daniel@samsung.com>
 Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-------enig2CUSDNKRAGGHUUGGOVCVU
+------enig2LXJMPBRUACDBVRQSPFBB
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
 On 24-06-2013 06:50, Amit Daniel Kachhap wrote:
-> This patch adds support to handle multiple instances of the TMU control=
-lers.
-> This is done by removing the static structure to register with the core=
- thermal
-> and creating it dynamically for each instance of the TMU controller. Th=
-e
-> interrupt is made shared type to handle shared interrupts. Now since th=
-e ISR needs
-> the core thermal framework to be registered so request_irq is moved aft=
-er the core
-> registration is done.
-> Also the identifier of the TMU controller is extracted from device tree=
- alias. This
-> will be used for TMU specific initialisation.
+> This patch adds configuration data for exynos5440 soc. Also register
+> definations for the controller are added.
 >=20
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 > Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 > Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
 Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
 
 > ---
->  drivers/thermal/samsung/exynos_thermal_common.h |    1 +
->  drivers/thermal/samsung/exynos_tmu.c            |  158 +++++++++++++++=
--------
->  drivers/thermal/samsung/exynos_tmu.h            |   13 ++
->  drivers/thermal/samsung/exynos_tmu_data.c       |  145 +++++++++++----=
-------
->  drivers/thermal/samsung/exynos_tmu_data.h       |    4 +-
->  5 files changed, 203 insertions(+), 118 deletions(-)
+>  drivers/thermal/samsung/exynos_tmu.c      |    4 ++
+>  drivers/thermal/samsung/exynos_tmu_data.c |   71 +++++++++++++++++++++=
+++++++++
+>  drivers/thermal/samsung/exynos_tmu_data.h |    7 +++
+>  3 files changed, 82 insertions(+), 0 deletions(-)
 >=20
-> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/=
-thermal/samsung/exynos_thermal_common.h
-> index bfcf69e..bc3016e 100644
-> --- a/drivers/thermal/samsung/exynos_thermal_common.h
-> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
-> @@ -85,6 +85,7 @@ struct thermal_sensor_conf {
->  	struct thermal_cooling_conf cooling_data;
->  	void *driver_data;
->  	void *pzone_data;
-> +	struct device *dev;
->  };
-> =20
->  /*Functions used exynos based thermal sensor driver*/
 > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
 sung/exynos_tmu.c
-> index 4356118..7f65fe0 100644
+> index 6bc86f6..651f460 100644
 > --- a/drivers/thermal/samsung/exynos_tmu.c
 > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -26,15 +26,32 @@
->  #include <linux/interrupt.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
->  #include <linux/platform_device.h>
-> =20
->  #include "exynos_thermal_common.h"
->  #include "exynos_tmu.h"
->  #include "exynos_tmu_data.h"
-> =20
-> +/**
-> + * struct exynos_tmu_data : A structure to hold the private data of th=
-e TMU
-> +	driver
-> + * @id: identifier of the one instance of the TMU controller.
-> + * @pdata: pointer to the tmu platform/configuration data
-> + * @base: base address of the single instance of the TMU controller.
-> + * @irq: irq number of the TMU controller.
-> + * @soc: id of the SOC type.
-> + * @irq_work: pointer to the irq work structure.
-> + * @lock: lock to implement synchronization.
-> + * @clk: pointer to the clock structure.
-> + * @temp_error1: fused value of the first point trim.
-> + * @temp_error2: fused value of the second point trim.
-> + * @reg_conf: pointer to structure to register with core thermal.
-> + */
->  struct exynos_tmu_data {
-> +	int id;
->  	struct exynos_tmu_platform_data *pdata;
-> -	struct resource *mem;
->  	void __iomem *base;
->  	int irq;
->  	enum soc_type soc;
-> @@ -42,6 +59,7 @@ struct exynos_tmu_data {
->  	struct mutex lock;
->  	struct clk *clk;
->  	u8 temp_error1, temp_error2;
-> +	struct thermal_sensor_conf *reg_conf;
+> @@ -456,6 +456,10 @@ static const struct of_device_id exynos_tmu_match[=
+] =3D {
+>  		.compatible =3D "samsung,exynos5250-tmu",
+>  		.data =3D (void *)EXYNOS5250_TMU_DRV_DATA,
+>  	},
+> +	{
+> +		.compatible =3D "samsung,exynos5440-tmu",
+> +		.data =3D (void *)EXYNOS5440_TMU_DRV_DATA,
+> +	},
+>  	{},
 >  };
-> =20
->  /*
-> @@ -345,12 +363,6 @@ static int exynos_tmu_set_emulation(void *drv_data=
-,	unsigned long temp)
->  	{ return -EINVAL; }
->  #endif/*CONFIG_THERMAL_EMULATION*/
-> =20
-> -static struct thermal_sensor_conf exynos_sensor_conf =3D {
-> -	.name			=3D "exynos-therm",
-> -	.read_temperature	=3D (int (*)(void *))exynos_tmu_read,
-> -	.write_emul_temp	=3D exynos_tmu_set_emulation,
-> -};
-> -
->  static void exynos_tmu_work(struct work_struct *work)
->  {
->  	struct exynos_tmu_data *data =3D container_of(work,
-> @@ -359,7 +371,7 @@ static void exynos_tmu_work(struct work_struct *wor=
-k)
->  	const struct exynos_tmu_registers *reg =3D pdata->registers;
->  	unsigned int val_irq;
-> =20
-> -	exynos_report_trigger(&exynos_sensor_conf);
-> +	exynos_report_trigger(data->reg_conf);
->  	mutex_lock(&data->lock);
->  	clk_enable(data->clk);
-> =20
-> @@ -404,33 +416,73 @@ MODULE_DEVICE_TABLE(of, exynos_tmu_match);
->  #endif
-> =20
->  static inline struct  exynos_tmu_platform_data *exynos_get_driver_data=
-(
-> -			struct platform_device *pdev)
-> +			struct platform_device *pdev, int id)
->  {
->  #ifdef CONFIG_OF
-> +	struct  exynos_tmu_init_data *data_table;
-> +	struct exynos_tmu_platform_data *tmu_data;
->  	if (pdev->dev.of_node) {
->  		const struct of_device_id *match;
->  		match =3D of_match_node(exynos_tmu_match, pdev->dev.of_node);
->  		if (!match)
->  			return NULL;
-> -		return (struct exynos_tmu_platform_data *) match->data;
-> +		data_table =3D (struct exynos_tmu_init_data *) match->data;
-> +		if (!data_table || id >=3D data_table->tmu_count)
-> +			return NULL;
-> +		tmu_data =3D data_table->tmu_data;
-> +		return (struct exynos_tmu_platform_data *) (tmu_data + id);
->  	}
->  #endif
->  	return NULL;
->  }
-> =20
-> -static int exynos_tmu_probe(struct platform_device *pdev)
-> +static int exynos_map_dt_data(struct platform_device *pdev)
->  {
-> -	struct exynos_tmu_data *data;
-> -	struct exynos_tmu_platform_data *pdata =3D pdev->dev.platform_data;
-> -	int ret, i;
-> +	struct exynos_tmu_data *data =3D platform_get_drvdata(pdev);
-> +	struct exynos_tmu_platform_data *pdata;
-> +	struct resource res;
-> +
-> +	if (!data)
-> +		return -ENODEV;
-> =20
-> -	if (!pdata)
-> -		pdata =3D exynos_get_driver_data(pdev);
-> +	data->id =3D of_alias_get_id(pdev->dev.of_node, "tmuctrl");
-> +	if (data->id < 0)
-> +		data->id =3D 0;
-> =20
-> +	data->irq =3D irq_of_parse_and_map(pdev->dev.of_node, 0);
-> +	if (data->irq <=3D 0) {
-> +		dev_err(&pdev->dev, "failed to get IRQ\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	if (of_address_to_resource(pdev->dev.of_node, 0, &res)) {
-> +		dev_err(&pdev->dev, "failed to get Resource 0\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	data->base =3D devm_ioremap(&pdev->dev, res.start, resource_size(&res=
-));
-> +	if (!data->base) {
-> +		dev_err(&pdev->dev, "Failed to ioremap memory\n");
-> +		return -EADDRNOTAVAIL;
-> +	}
-> +
-> +	pdata =3D exynos_get_driver_data(pdev, data->id);
->  	if (!pdata) {
->  		dev_err(&pdev->dev, "No platform init data supplied.\n");
->  		return -ENODEV;
->  	}
-> +	data->pdata =3D pdata;
-> +
-> +	return 0;
-> +}
-> +
-> +static int exynos_tmu_probe(struct platform_device *pdev)
-> +{
-> +	struct exynos_tmu_data *data;
-> +	struct exynos_tmu_platform_data *pdata;
-> +	struct thermal_sensor_conf *sensor_conf;
-> +	int ret, i;
-> +
->  	data =3D devm_kzalloc(&pdev->dev, sizeof(struct exynos_tmu_data),
->  					GFP_KERNEL);
->  	if (!data) {
-> @@ -438,25 +490,16 @@ static int exynos_tmu_probe(struct platform_devic=
-e *pdev)
->  		return -ENOMEM;
->  	}
-> =20
-> -	data->irq =3D platform_get_irq(pdev, 0);
-> -	if (data->irq < 0) {
-> -		dev_err(&pdev->dev, "Failed to get platform irq\n");
-> -		return data->irq;
-> -	}
-> +	platform_set_drvdata(pdev, data);
-> +	mutex_init(&data->lock);
-> =20
-> -	INIT_WORK(&data->irq_work, exynos_tmu_work);
-> +	ret =3D exynos_map_dt_data(pdev);
-> +	if (ret)
-> +		return ret;
-> =20
-> -	data->mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	data->base =3D devm_ioremap_resource(&pdev->dev, data->mem);
-> -	if (IS_ERR(data->base))
-> -		return PTR_ERR(data->base);
-> +	pdata =3D data->pdata;
-> =20
-> -	ret =3D devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
-> -		IRQF_TRIGGER_RISING, "exynos-tmu", data);
-> -	if (ret) {
-> -		dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
-> -		return ret;
-> -	}
-> +	INIT_WORK(&data->irq_work, exynos_tmu_work);
-> =20
->  	data->clk =3D devm_clk_get(&pdev->dev, "tmu_apbif");
->  	if (IS_ERR(data->clk)) {
-> @@ -477,10 +520,6 @@ static int exynos_tmu_probe(struct platform_device=
- *pdev)
->  		goto err_clk;
->  	}
-> =20
-> -	data->pdata =3D pdata;
-> -	platform_set_drvdata(pdev, data);
-> -	mutex_init(&data->lock);
-> -
->  	ret =3D exynos_tmu_initialize(pdev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to initialize TMU\n");
-> @@ -489,35 +528,54 @@ static int exynos_tmu_probe(struct platform_devic=
-e *pdev)
-> =20
->  	exynos_tmu_control(pdev, true);
-> =20
-> -	/* Register the sensor with thermal management interface */
-> -	(&exynos_sensor_conf)->driver_data =3D data;
-> -	exynos_sensor_conf.trip_data.trip_count =3D pdata->trigger_enable[0] =
-+
-> +	/* Allocate a structure to register with the exynos core thermal */
-> +	sensor_conf =3D devm_kzalloc(&pdev->dev,
-> +				sizeof(struct thermal_sensor_conf), GFP_KERNEL);
-> +	if (!sensor_conf) {
-> +		dev_err(&pdev->dev, "Failed to allocate registration struct\n");
-> +		ret =3D -ENOMEM;
-> +		goto err_clk;
-> +	}
-> +	sprintf(sensor_conf->name, "therm_zone%d", data->id);
-> +	sensor_conf->read_temperature =3D (int (*)(void *))exynos_tmu_read;
-> +	sensor_conf->write_emul_temp =3D
-> +		(int (*)(void *, unsigned long))exynos_tmu_set_emulation;
-> +	sensor_conf->driver_data =3D data;
-> +	sensor_conf->trip_data.trip_count =3D pdata->trigger_enable[0] +
->  			pdata->trigger_enable[1] + pdata->trigger_enable[2]+
->  			pdata->trigger_enable[3];
-> =20
-> -	for (i =3D 0; i < exynos_sensor_conf.trip_data.trip_count; i++) {
-> -		exynos_sensor_conf.trip_data.trip_val[i] =3D
-> +	for (i =3D 0; i < sensor_conf->trip_data.trip_count; i++) {
-> +		sensor_conf->trip_data.trip_val[i] =3D
->  			pdata->threshold + pdata->trigger_levels[i];
-> -		exynos_sensor_conf.trip_data.trip_type[i] =3D
-> +		sensor_conf->trip_data.trip_type[i] =3D
->  					pdata->trigger_type[i];
->  	}
-> =20
-> -	exynos_sensor_conf.trip_data.trigger_falling =3D pdata->threshold_fal=
-ling;
-> +	sensor_conf->trip_data.trigger_falling =3D pdata->threshold_falling;
-> =20
-> -	exynos_sensor_conf.cooling_data.freq_clip_count =3D
-> -						pdata->freq_tab_count;
-> +	sensor_conf->cooling_data.freq_clip_count =3D pdata->freq_tab_count;
->  	for (i =3D 0; i < pdata->freq_tab_count; i++) {
-> -		exynos_sensor_conf.cooling_data.freq_data[i].freq_clip_max =3D
-> +		sensor_conf->cooling_data.freq_data[i].freq_clip_max =3D
->  					pdata->freq_tab[i].freq_clip_max;
-> -		exynos_sensor_conf.cooling_data.freq_data[i].temp_level =3D
-> +		sensor_conf->cooling_data.freq_data[i].temp_level =3D
->  					pdata->freq_tab[i].temp_level;
->  	}
-> -
-> -	ret =3D exynos_register_thermal(&exynos_sensor_conf);
-> +	sensor_conf->dev =3D &pdev->dev;
-> +	/* Register the sensor with thermal management interface */
-> +	ret =3D exynos_register_thermal(sensor_conf);
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to register thermal interface\n");
->  		goto err_clk;
->  	}
-> +	data->reg_conf =3D sensor_conf;
-> +
-> +	ret =3D devm_request_irq(&pdev->dev, data->irq, exynos_tmu_irq,
-> +		IRQF_TRIGGER_RISING | IRQF_SHARED, dev_name(&pdev->dev), data);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
-> +		goto err_clk;
-> +	}
-> =20
->  	return 0;
->  err_clk:
-> @@ -531,7 +589,7 @@ static int exynos_tmu_remove(struct platform_device=
- *pdev)
-> =20
->  	exynos_tmu_control(pdev, false);
-> =20
-> -	exynos_unregister_thermal(&exynos_sensor_conf);
-> +	exynos_unregister_thermal(data->reg_conf);
-> =20
->  	clk_unprepare(data->clk);
-> =20
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sam=
-sung/exynos_tmu.h
-> index ef5dc0e..53fa702 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -250,4 +250,17 @@ struct exynos_tmu_platform_data {
->  	unsigned int freq_tab_count;
->  	const struct exynos_tmu_registers *registers;
->  };
-> +
-> +/**
-> + * struct exynos_tmu_init_data
-> + * @tmu_count: number of TMU instances.
-> + * @tmu_data: platform data of all TMU instances.
-> + * This structure is required to store data for multi-instance exynos =
-tmu
-> + * driver.
-> + */
-> +struct exynos_tmu_init_data {
-> +	int tmu_count;
-> +	struct exynos_tmu_platform_data tmu_data[];
-> +};
-> +
->  #endif /* _EXYNOS_TMU_H */
+>  MODULE_DEVICE_TABLE(of, exynos_tmu_match);
 > diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/therma=
 l/samsung/exynos_tmu_data.c
-> index 217b8f5..a5c25b4 100644
+> index 2612b45..5952915 100644
 > --- a/drivers/thermal/samsung/exynos_tmu_data.c
 > +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> @@ -48,38 +48,44 @@ static const struct exynos_tmu_registers exynos4210=
-_tmu_registers =3D {
->  	.tmu_intstat =3D EXYNOS_TMU_REG_INTSTAT,
->  	.tmu_intclear =3D EXYNOS_TMU_REG_INTCLEAR,
->  };
-> -struct exynos_tmu_platform_data const exynos4210_default_tmu_data =3D =
-{
-> -	.threshold =3D 80,
-> -	.trigger_levels[0] =3D 5,
-> -	.trigger_levels[1] =3D 20,
-> -	.trigger_levels[2] =3D 30,
-> -	.trigger_enable[0] =3D true,
-> -	.trigger_enable[1] =3D true,
-> -	.trigger_enable[2] =3D true,
-> -	.trigger_enable[3] =3D false,
-> -	.trigger_type[0] =3D THROTTLE_ACTIVE,
-> -	.trigger_type[1] =3D THROTTLE_ACTIVE,
-> -	.trigger_type[2] =3D SW_TRIP,
-> -	.max_trigger_level =3D 4,
-> -	.gain =3D 15,
-> -	.reference_voltage =3D 7,
-> -	.cal_type =3D TYPE_ONE_POINT_TRIMMING,
-> -	.min_efuse_value =3D 40,
-> -	.max_efuse_value =3D 100,
-> -	.first_point_trim =3D 25,
-> -	.second_point_trim =3D 85,
-> -	.default_temp_offset =3D 50,
-> -	.freq_tab[0] =3D {
-> -		.freq_clip_max =3D 800 * 1000,
-> -		.temp_level =3D 85,
-> -	},
-> -	.freq_tab[1] =3D {
-> -		.freq_clip_max =3D 200 * 1000,
-> -		.temp_level =3D 100,
-> +
-> +struct exynos_tmu_init_data const exynos4210_default_tmu_data =3D {
-> +	.tmu_data =3D {
-> +		{
-> +		.threshold =3D 80,
-> +		.trigger_levels[0] =3D 5,
-> +		.trigger_levels[1] =3D 20,
-> +		.trigger_levels[2] =3D 30,
-> +		.trigger_enable[0] =3D true,
-> +		.trigger_enable[1] =3D true,
-> +		.trigger_enable[2] =3D true,
-> +		.trigger_enable[3] =3D false,
-> +		.trigger_type[0] =3D THROTTLE_ACTIVE,
-> +		.trigger_type[1] =3D THROTTLE_ACTIVE,
-> +		.trigger_type[2] =3D SW_TRIP,
-> +		.max_trigger_level =3D 4,
-> +		.gain =3D 15,
-> +		.reference_voltage =3D 7,
-> +		.cal_type =3D TYPE_ONE_POINT_TRIMMING,
-> +		.min_efuse_value =3D 40,
-> +		.max_efuse_value =3D 100,
-> +		.first_point_trim =3D 25,
-> +		.second_point_trim =3D 85,
-> +		.default_temp_offset =3D 50,
-> +		.freq_tab[0] =3D {
-> +			.freq_clip_max =3D 800 * 1000,
-> +			.temp_level =3D 85,
-> +			},
-> +		.freq_tab[1] =3D {
-> +			.freq_clip_max =3D 200 * 1000,
-> +			.temp_level =3D 100,
-> +		},
-> +		.freq_tab_count =3D 2,
-> +		.type =3D SOC_ARCH_EXYNOS4210,
-> +		.registers =3D &exynos4210_tmu_registers,
-> +		},
->  	},
-> -	.freq_tab_count =3D 2,
-> -	.type =3D SOC_ARCH_EXYNOS4210,
-> -	.registers =3D &exynos4210_tmu_registers,
-> +	.tmu_count =3D 1,
+> @@ -175,3 +175,74 @@ struct exynos_tmu_init_data const exynos5250_defau=
+lt_tmu_data =3D {
+>  	.tmu_count =3D 1,
 >  };
 >  #endif
-> =20
-> @@ -120,41 +126,48 @@ static const struct exynos_tmu_registers exynos52=
-50_tmu_registers =3D {
->  	.emul_time_shift =3D EXYNOS_EMUL_TIME_SHIFT,
->  	.emul_time_mask =3D EXYNOS_EMUL_TIME_MASK,
->  };
-> -struct exynos_tmu_platform_data const exynos5250_default_tmu_data =3D =
-{
-> -	.threshold_falling =3D 10,
-> -	.trigger_levels[0] =3D 85,
-> -	.trigger_levels[1] =3D 103,
-> -	.trigger_levels[2] =3D 110,
-> -	.trigger_levels[3] =3D 120,
-> -	.trigger_enable[0] =3D true,
-> -	.trigger_enable[1] =3D true,
-> -	.trigger_enable[2] =3D true,
-> -	.trigger_enable[3] =3D false,
-> -	.trigger_type[0] =3D THROTTLE_ACTIVE,
-> -	.trigger_type[1] =3D THROTTLE_ACTIVE,
-> -	.trigger_type[2] =3D SW_TRIP,
-> -	.trigger_type[3] =3D HW_TRIP,
-> -	.max_trigger_level =3D 4,
-> -	.gain =3D 8,
-> -	.reference_voltage =3D 16,
-> -	.noise_cancel_mode =3D 4,
-> -	.cal_type =3D TYPE_ONE_POINT_TRIMMING,
-> -	.efuse_value =3D 55,
-> -	.min_efuse_value =3D 40,
-> -	.max_efuse_value =3D 100,
-> -	.first_point_trim =3D 25,
-> -	.second_point_trim =3D 85,
-> -	.default_temp_offset =3D 50,
-> -	.freq_tab[0] =3D {
-> -		.freq_clip_max =3D 800 * 1000,
-> -		.temp_level =3D 85,
-> -	},
-> -	.freq_tab[1] =3D {
-> -		.freq_clip_max =3D 200 * 1000,
-> -		.temp_level =3D 103,
-> -	},
-> -	.freq_tab_count =3D 2,
-> -	.type =3D SOC_ARCH_EXYNOS,
 > +
-> +#define EXYNOS5250_TMU_DATA \
-> +	.threshold_falling =3D 10, \
-> +	.trigger_levels[0] =3D 85, \
-> +	.trigger_levels[1] =3D 103, \
-> +	.trigger_levels[2] =3D 110, \
-> +	.trigger_levels[3] =3D 120, \
-> +	.trigger_enable[0] =3D true, \
-> +	.trigger_enable[1] =3D true, \
-> +	.trigger_enable[2] =3D true, \
-> +	.trigger_enable[3] =3D false, \
-> +	.trigger_type[0] =3D THROTTLE_ACTIVE, \
-> +	.trigger_type[1] =3D THROTTLE_ACTIVE, \
-> +	.trigger_type[2] =3D SW_TRIP, \
-> +	.trigger_type[3] =3D HW_TRIP, \
-> +	.max_trigger_level =3D 4, \
-> +	.gain =3D 8, \
+> +#if defined(CONFIG_SOC_EXYNOS5440)
+> +static const struct exynos_tmu_registers exynos5440_tmu_registers =3D =
+{
+> +	.triminfo_data =3D EXYNOS5440_TMU_S0_7_TRIM,
+> +	.triminfo_25_shift =3D EXYNOS_TRIMINFO_25_SHIFT,
+> +	.triminfo_85_shift =3D EXYNOS_TRIMINFO_85_SHIFT,
+> +	.tmu_ctrl =3D EXYNOS5440_TMU_S0_7_CTRL,
+> +	.buf_vref_sel_shift =3D EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+> +	.buf_vref_sel_mask =3D EXYNOS_TMU_REF_VOLTAGE_MASK,
+> +	.therm_trip_mode_shift =3D EXYNOS_TMU_TRIP_MODE_SHIFT,
+> +	.therm_trip_mode_mask =3D EXYNOS_TMU_TRIP_MODE_MASK,
+> +	.therm_trip_en_shift =3D EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
+> +	.buf_slope_sel_shift =3D EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
+> +	.buf_slope_sel_mask =3D EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
+> +	.core_en_shift =3D EXYNOS_TMU_CORE_EN_SHIFT,
+> +	.tmu_status =3D EXYNOS5440_TMU_S0_7_STATUS,
+> +	.tmu_cur_temp =3D EXYNOS5440_TMU_S0_7_TEMP,
+> +	.threshold_th0 =3D EXYNOS5440_TMU_S0_7_TH0,
+> +	.threshold_th1 =3D EXYNOS5440_TMU_S0_7_TH1,
+> +	.threshold_th2 =3D EXYNOS5440_TMU_S0_7_TH2,
+> +	.threshold_th3_l0_shift =3D EXYNOS5440_TMU_TH_RISE4_SHIFT,
+> +	.tmu_inten =3D EXYNOS5440_TMU_S0_7_IRQEN,
+> +	.inten_rise_mask =3D EXYNOS5440_TMU_RISE_INT_MASK,
+> +	.inten_rise_shift =3D EXYNOS5440_TMU_RISE_INT_SHIFT,
+> +	.inten_fall_mask =3D EXYNOS5440_TMU_FALL_INT_MASK,
+> +	.inten_fall_shift =3D EXYNOS5440_TMU_FALL_INT_SHIFT,
+> +	.inten_rise0_shift =3D EXYNOS5440_TMU_INTEN_RISE0_SHIFT,
+> +	.inten_rise1_shift =3D EXYNOS5440_TMU_INTEN_RISE1_SHIFT,
+> +	.inten_rise2_shift =3D EXYNOS5440_TMU_INTEN_RISE2_SHIFT,
+> +	.inten_rise3_shift =3D EXYNOS5440_TMU_INTEN_RISE3_SHIFT,
+> +	.inten_fall0_shift =3D EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
+> +	.tmu_intstat =3D EXYNOS5440_TMU_S0_7_IRQ,
+> +	.tmu_intclear =3D EXYNOS5440_TMU_S0_7_IRQ,
+> +	.tmu_irqstatus =3D EXYNOS5440_TMU_IRQ_STATUS,
+> +	.emul_con =3D EXYNOS5440_TMU_S0_7_DEBUG,
+> +	.emul_temp_shift =3D EXYNOS_EMUL_DATA_SHIFT,
+> +	.tmu_pmin =3D EXYNOS5440_TMU_PMIN,
+> +};
+> +
+> +#define EXYNOS5440_TMU_DATA \
+> +	.trigger_levels[0] =3D 100, \
+> +	.trigger_levels[4] =3D 105, \
+> +	.trigger_enable[0] =3D 1, \
+> +	.trigger_type[0] =3D SW_TRIP, \
+> +	.trigger_type[4] =3D HW_TRIP, \
+> +	.max_trigger_level =3D 5, \
+> +	.gain =3D 5, \
 > +	.reference_voltage =3D 16, \
 > +	.noise_cancel_mode =3D 4, \
 > +	.cal_type =3D TYPE_ONE_POINT_TRIMMING, \
-> +	.efuse_value =3D 55, \
-> +	.min_efuse_value =3D 40, \
-> +	.max_efuse_value =3D 100, \
+> +	.cal_mode =3D 0, \
+> +	.efuse_value =3D 0x5b2d, \
+> +	.min_efuse_value =3D 16, \
+> +	.max_efuse_value =3D 76, \
 > +	.first_point_trim =3D 25, \
-> +	.second_point_trim =3D 85, \
-> +	.default_temp_offset =3D 50, \
-> +	.freq_tab[0] =3D { \
-> +		.freq_clip_max =3D 800 * 1000, \
-> +		.temp_level =3D 85, \
-> +	}, \
-> +	.freq_tab[1] =3D { \
-> +		.freq_clip_max =3D 200 * 1000, \
-> +		.temp_level =3D 103, \
-> +	}, \
-> +	.freq_tab_count =3D 2, \
-> +	.type =3D SOC_ARCH_EXYNOS, \
->  	.registers =3D &exynos5250_tmu_registers,
+> +	.second_point_trim =3D 70, \
+> +	.default_temp_offset =3D 25, \
+> +	.type =3D SOC_ARCH_EXYNOS5440, \
+> +	.registers =3D &exynos5440_tmu_registers, \
+> +	.features =3D (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
+> +			TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_SHARED_MEMORY),
 > +
-> +struct exynos_tmu_init_data const exynos5250_default_tmu_data =3D {
+> +struct exynos_tmu_init_data const exynos5440_default_tmu_data =3D {
 > +	.tmu_data =3D {
-> +		{ EXYNOS5250_TMU_DATA },
+> +		{ EXYNOS5440_TMU_DATA } ,
+> +		{ EXYNOS5440_TMU_DATA } ,
+> +		{ EXYNOS5440_TMU_DATA } ,
 > +	},
-> +	.tmu_count =3D 1,
->  };
->  #endif
+> +	.tmu_count =3D 3,
+> +};
+> +#endif
 > diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therma=
 l/samsung/exynos_tmu_data.h
-> index 4acf070..139dbbb 100644
+> index ad263e9..43ce5fb 100644
 > --- a/drivers/thermal/samsung/exynos_tmu_data.h
 > +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> @@ -94,14 +94,14 @@
->  #define EXYNOS_MAX_TRIGGER_PER_REG	4
-> =20
->  #if defined(CONFIG_CPU_EXYNOS4210)
-> -extern struct exynos_tmu_platform_data const exynos4210_default_tmu_da=
-ta;
-> +extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
->  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
->  #else
->  #define EXYNOS4210_TMU_DRV_DATA (NULL)
+> @@ -143,4 +143,11 @@ extern struct exynos_tmu_init_data const exynos525=
+0_default_tmu_data;
+>  #define EXYNOS5250_TMU_DRV_DATA (NULL)
 >  #endif
 > =20
->  #if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))=
-
-> -extern struct exynos_tmu_platform_data const exynos5250_default_tmu_da=
-ta;
-> +extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
->  #define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
->  #else
->  #define EXYNOS5250_TMU_DRV_DATA (NULL)
+> +#if defined(CONFIG_SOC_EXYNOS5440)
+> +extern struct exynos_tmu_init_data const exynos5440_default_tmu_data;
+> +#define EXYNOS5440_TMU_DRV_DATA (&exynos5440_default_tmu_data)
+> +#else
+> +#define EXYNOS5440_TMU_DRV_DATA (NULL)
+> +#endif
+> +
+>  #endif /*_EXYNOS_TMU_DATA_H*/
 >=20
 
 
@@ -579,7 +162,7 @@ You have got to be excited about what you are doing. (L. Lamport)
 Eduardo Valentin
 
 
-------enig2CUSDNKRAGGHUUGGOVCVU
+------enig2LXJMPBRUACDBVRQSPFBB
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -588,9 +171,9 @@ Content-Disposition: attachment; filename="signature.asc"
 Version: GnuPG v1.4.12 (GNU/Linux)
 Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iF4EAREIAAYFAlHIatsACgkQCXcVR3XQvP2ZaAD+OOpH+xr9GkAWnluZ6PV88N4s
-fJ/He/8z/N4RZiPIE10BAOB87aUbJaO8TgKN/wUPUk+7dfZhbLRJZDTMkNzzleIp
-=+Ylb
+iF4EAREIAAYFAlHIdeAACgkQCXcVR3XQvP2P5QD/WWoBvzabqmzBctNzuJW8Q40i
+0PPWoJ7/yCKOZx1oI54A/A/m2pgyH9AatRKuK5qORmaN5heMuKPNCCZmIX+Vf8IV
+=G4zO
 -----END PGP SIGNATURE-----
 
-------enig2CUSDNKRAGGHUUGGOVCVU--
+------enig2LXJMPBRUACDBVRQSPFBB--
