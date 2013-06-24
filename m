@@ -1,80 +1,68 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 00/18] Final Samsung PWM support cleanup
-Date: Mon, 24 Jun 2013 09:14:14 +0900
-Message-ID: <29af01ce706f$c242edd0$46c8c970$%kim@samsung.com>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
- <201306222001.49600.heiko@sntech.de> <2101400.j50IudOSWr@flatron>
+From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V10 0/4] PCIe support for Samsung Exynos5440 SoC
+Date: Mon, 24 Jun 2013 11:52:10 +0900
+Message-ID: <007201ce7085$d2c4fed0$784efc70$@samsung.com>
+References: <003901ce6e50$03d039a0$0b70ace0$@samsung.com>
+ <201306211030.47440.arnd@arndb.de>
+ <20130621141144.GP31667@titan.lakedaemon.net>
+ <201306211614.49434.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:51820 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751563Ab3FXAOS convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 Jun 2013 20:14:18 -0400
-In-reply-to: <2101400.j50IudOSWr@flatron>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <201306211614.49434.arnd-r2nGTMty4D4@public.gmane.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Thomas Petazzoni' <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Jason Cooper' <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Mohit KUMAR' <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Andrew Murray' <andrew.murray-5wv7dgnIgG8@public.gmane.org>, 'Pratyush Anand' <pratyush.anand-qxv4g6HH51o@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Mark Brown' <broonie@kernel.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Thierry Reding' <thierry.reding@gmail.com>
 
-Tomasz Figa wrote:
->=20
-> Hi Heiko,
->=20
-> On Saturday 22 of June 2013 20:01:49 Heiko St=FCbner wrote:
-> > Am Freitag, 21. Juni 2013, 00:12:45 schrieb Tomasz Figa:
-> > > Since we now have a proper Samsung PWM clocksource driver in plac=
-e,
-> > > we can proceed with further cleanup of PWM timers support on Sams=
-ung
-> > > SoCs.>
-> > > This series attempts to achieve this goal by:
-> > >  1) moving remaining Samsung platforms to the new clocksource dri=
-ver
-> > >  2) removing old clocksource driver
-> > >  3) adding new multiplatform- and DT-aware PWM driver
-> > >  4) moving all Samsung platforms to use the new PWM driver
-> > >  5) removing old PWM driver
-> > >  6) removing all PWM-related code that is not used anymore
-> > >
-> > > Cleaning up the PWM driver is a bit tricky, because the design of
-> > > current driver makes it completely unsuitable for DT and
-> > > multiplatform and would require a heavy rework to make it usable,
-> > > breaking any existing Samsung PWM users by the way. To avoid any
-> > > breakage I decided to keep the old driver, add new one, move all
-> > > platforms to it and then remove the old one.
-> > >
-> > > See particular patches for more detailed descriptions.
-> > >
-> > > On S3C6410-based Tiny6410 (Mini6410-compatible), after enabling
-> > > pwm-beeper and Exynos4210-based Origen board (with PWM0 attached =
-to a
-> > > scope):
-> > >
-> > > Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> >
-Thanks.
+On Friday, June 21, 2013 11:15 PM, Arnd Bergmann wrote:
+> On Friday 21 June 2013, Jason Cooper wrote:
+> > On Fri, Jun 21, 2013 at 10:30:47AM +0200, Arnd Bergmann wrote:
+> > > On Friday 21 June 2013, Thomas Petazzoni wrote:
+> > > > I am by far not an expert on how to solve merge strategies and so on,
+> > > > but to avoid conflicts at Linus's level while merging the arm-soc and
+> > > > pci trees, it would be better if this Samsung PCIe driver could go
+> > > > through arm-soc (with Bjorn ACK, of course), so that Arnd/Olof can
+> > > > make sure the ordering is correct with regard to the of/pci changes and
+> > > > the mvebu/pci driver.
 
-> > On a s3c2416 based machine (with the additional two v3 patches)
-> >
-> > Tested-by: Heiko Stuebner <heiko@sntech.de>
-> >
-Thanks.
+Yes, right.
+That is the reason why I based on 'linu-next' tree,
+instead of 'PCI' -next branch.
 
-> >
-> > and again thanks for working on this :-)
->=20
-> Thanks for testing!
->=20
-> I hope we can get this merged ASAP, as this is an important prerequis=
-ite
-> for further work on S3C24xx and S3C64xx...
->=20
-OK, let me take this series into 4th pull-request will be sent to arm-s=
-oc
-tonight in my time. Thanks for your guys' effort.
 
-- Kukjin
+Bjorn Helgaas,
+Could you give your ACK?
+Thank you.
+
+
+Best regards,
+Jingoo Han
+
+> > >
+> > > Yes, good point.
+> > >
+> > > The alternative would be that Bjorn also takes the PCI branch dependencies
+> > > that are already in arm-soc into his tree. Either way works, but I agree
+> > > that what you suggest would be simpler.
+> >
+> > Yes, that is why we did it this way.  It was my understanding based on
+> > previous comments by yourself and LinusW that you both had patches
+> > depending on (now called) mvebu/of_pci.  So we got it into arm-soc
+> > early so those branches could depend on it.
+> 
+> Right. I wasn't paying enough attention for the early merges that
+> Olof did.
+> 
+> 	Arnd
