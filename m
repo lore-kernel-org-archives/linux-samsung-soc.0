@@ -1,15 +1,15 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v2 04/12] dmaengine: PL08x: Add support
-	for PL080S variant
-Date: Tue, 25 Jun 2013 00:26:21 +0200
-Message-ID: <CACRpkdbLr4Au_WeGU1xM7H4cW70udVjZN-zQKe1+grYyqkyBsA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 05/12] dmaengine: PL08x: Add support
+ for different maximum transfer size
+Date: Tue, 25 Jun 2013 00:27:28 +0200
+Message-ID: <CACRpkdZRJr=_yrd70NP2HfkO2ts1L-nv+Q44JvLxme7Tz+-e6g@mail.gmail.com>
 References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
- <1371933764-24875-5-git-send-email-tomasz.figa@gmail.com>
+ <1371933764-24875-6-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1371933764-24875-5-git-send-email-tomasz.figa@gmail.com>
+In-Reply-To: <1371933764-24875-6-git-send-email-tomasz.figa@gmail.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -25,24 +25,17 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 On Sat, Jun 22, 2013 at 10:42 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-> @@ -96,7 +96,11 @@ enum {
->         PL080_LLI_LLI,
->         PL080_LLI_CCTL,
+> PL080S has separate register to store transfer size in, allowing single
+> transfer to be much larger than in standard PL080.
 >
-> -       PL080_LLI_WORDS
-> +       PL080_LLI_WORDS,
-> +
-> +       PL080S_LLI_CCTL2 = PL080_LLI_WORDS,
-> +
-> +       PL080S_LLI_WORDS = 8
->  };
+> This patch makes the amba-pl08x driver aware of this and removes writing
+> transfer size to reserved bits of CH_CONTROL register on PL080S, which
+> was not a problem witn transfer sizes fitting the original bitfield
+> of PL080, but now would overwrite other fields.
+>
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-I still think it's better to just #define these and write
-some comments. Now I have to think backwards that
-I am the compiler enumerating these things and it's all
-a bit confusing.
-
-Apart from that it looks nice.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
