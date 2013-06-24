@@ -1,68 +1,204 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH V10 0/4] PCIe support for Samsung Exynos5440 SoC
-Date: Mon, 24 Jun 2013 11:52:10 +0900
-Message-ID: <007201ce7085$d2c4fed0$784efc70$@samsung.com>
-References: <003901ce6e50$03d039a0$0b70ace0$@samsung.com>
- <201306211030.47440.arnd@arndb.de>
- <20130621141144.GP31667@titan.lakedaemon.net>
- <201306211614.49434.arnd@arndb.de>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH V6 08/30] thermal: exynos: Add missing definations and
+ code cleanup
+Date: Mon, 24 Jun 2013 09:27:36 +0530
+Message-ID: <CADGdYn5HHNxj=PzjejyJRW9zW=953HJQy67H=u=uhFbtpJyENA@mail.gmail.com>
+References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
+	<1371451599-31035-9-git-send-email-amit.daniel@samsung.com>
+	<51C20CCC.3060502@ti.com>
+	<CADGdYn6FHXd2YELP1z9zbqnf3Yd0PG0svaz7V6w9NYO3xSW8PQ@mail.gmail.com>
+	<51C463B4.9070506@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <201306211614.49434.arnd-r2nGTMty4D4@public.gmane.org>
-Content-language: ko
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, 'Thomas Petazzoni' <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: 'Siva Reddy Kallam' <siva.kallam-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Jason Gunthorpe' <jgunthorpe-ePGOBjL8dl3ta4EC/59zMFaTQe2KTcn/@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Jason Cooper' <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, 'Surendranath Gurivireddy Balla' <suren.reddy-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, 'Thierry Reding' <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Mohit KUMAR' <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Andrew Murray' <andrew.murray-5wv7dgnIgG8@public.gmane.org>, 'Pratyush Anand' <pratyush.anand-qxv4g6HH51o@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <51C463B4.9070506@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday, June 21, 2013 11:15 PM, Arnd Bergmann wrote:
-> On Friday 21 June 2013, Jason Cooper wrote:
-> > On Fri, Jun 21, 2013 at 10:30:47AM +0200, Arnd Bergmann wrote:
-> > > On Friday 21 June 2013, Thomas Petazzoni wrote:
-> > > > I am by far not an expert on how to solve merge strategies and so on,
-> > > > but to avoid conflicts at Linus's level while merging the arm-soc and
-> > > > pci trees, it would be better if this Samsung PCIe driver could go
-> > > > through arm-soc (with Bjorn ACK, of course), so that Arnd/Olof can
-> > > > make sure the ordering is correct with regard to the of/pci changes and
-> > > > the mvebu/pci driver.
-
-Yes, right.
-That is the reason why I based on 'linu-next' tree,
-instead of 'PCI' -next branch.
-
-
-Bjorn Helgaas,
-Could you give your ACK?
-Thank you.
-
-
-Best regards,
-Jingoo Han
-
-> > >
-> > > Yes, good point.
-> > >
-> > > The alternative would be that Bjorn also takes the PCI branch dependencies
-> > > that are already in arm-soc into his tree. Either way works, but I agree
-> > > that what you suggest would be simpler.
-> >
-> > Yes, that is why we did it this way.  It was my understanding based on
-> > previous comments by yourself and LinusW that you both had patches
-> > depending on (now called) mvebu/of_pci.  So we got it into arm-soc
-> > early so those branches could depend on it.
-> 
-> Right. I wasn't paying enough attention for the early merges that
-> Olof did.
-> 
-> 	Arnd
+On Fri, Jun 21, 2013 at 8:01 PM, Eduardo Valentin
+<eduardo.valentin@ti.com> wrote:
+> On 20-06-2013 22:01, amit daniel kachhap wrote:
+>> Hi Eduardo,
+>>
+>> On Thu, Jun 20, 2013 at 1:25 AM, Eduardo Valentin
+>> <eduardo.valentin@ti.com> wrote:
+>>> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
+>>>> This patch adds some extra register bitfield definations and cleans
+>>>> up the code to prepare for moving register macros and definations inside
+>>>> the TMU data section.
+>>>>
+>>>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>>>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>>> ---
+>>>>  drivers/thermal/samsung/exynos_tmu.c |   62 +++++++++++++++++++++++++---------
+>>>>  1 files changed, 46 insertions(+), 16 deletions(-)
+>>>>
+>>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>>>> index 5df04a1..fa33a48 100644
+>>>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>>>> @@ -43,9 +43,12 @@
+>>>>
+>>>>  #define EXYNOS_TMU_TRIM_TEMP_MASK    0xff
+>>>>  #define EXYNOS_TMU_GAIN_SHIFT                8
+>>>> +#define EXYNOS_TMU_GAIN_MASK         0xf
+>>>>  #define EXYNOS_TMU_REF_VOLTAGE_SHIFT 24
+>>>> -#define EXYNOS_TMU_CORE_ON           3
+>>>> -#define EXYNOS_TMU_CORE_OFF          2
+>>>> +#define EXYNOS_TMU_REF_VOLTAGE_MASK  0x1f
+>>>> +#define EXYNOS_TMU_BUF_SLOPE_SEL_MASK        0xf
+>>>> +#define EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT       8
+>>>> +#define EXYNOS_TMU_CORE_EN_SHIFT     0
+>>>>  #define EXYNOS_TMU_DEF_CODE_TO_TEMP_OFFSET   50
+>>>>
+>>>>  /* Exynos4210 specific registers */
+>>>> @@ -63,6 +66,7 @@
+>>>>  #define EXYNOS4210_TMU_TRIG_LEVEL1_MASK      0x10
+>>>>  #define EXYNOS4210_TMU_TRIG_LEVEL2_MASK      0x100
+>>>>  #define EXYNOS4210_TMU_TRIG_LEVEL3_MASK      0x1000
+>>>> +#define EXYNOS4210_TMU_TRIG_LEVEL_MASK       0x1111
+>>>>  #define EXYNOS4210_TMU_INTCLEAR_VAL  0x1111
+>>>>
+>>>>  /* Exynos5250 and Exynos4412 specific registers */
+>>>> @@ -72,17 +76,30 @@
+>>>>  #define EXYNOS_EMUL_CON              0x80
+>>>>
+>>>>  #define EXYNOS_TRIMINFO_RELOAD               0x1
+>>>> +#define EXYNOS_TRIMINFO_SHIFT                0x0
+>>>> +#define EXYNOS_TMU_RISE_INT_MASK     0x111
+>>>> +#define EXYNOS_TMU_RISE_INT_SHIFT    0
+>>>> +#define EXYNOS_TMU_FALL_INT_MASK     0x111
+>>>> +#define EXYNOS_TMU_FALL_INT_SHIFT    12
+>>>>  #define EXYNOS_TMU_CLEAR_RISE_INT    0x111
+>>>>  #define EXYNOS_TMU_CLEAR_FALL_INT    (0x111 << 12)
+>>>> -#define EXYNOS_MUX_ADDR_VALUE                6
+>>>> -#define EXYNOS_MUX_ADDR_SHIFT                20
+>>>>  #define EXYNOS_TMU_TRIP_MODE_SHIFT   13
+>>>> +#define EXYNOS_TMU_TRIP_MODE_MASK    0x7
+>>>> +
+>>>> +#define EXYNOS_TMU_INTEN_RISE0_SHIFT 0
+>>>> +#define EXYNOS_TMU_INTEN_RISE1_SHIFT 4
+>>>> +#define EXYNOS_TMU_INTEN_RISE2_SHIFT 8
+>>>> +#define EXYNOS_TMU_INTEN_RISE3_SHIFT 12
+>>>> +#define EXYNOS_TMU_INTEN_FALL0_SHIFT 16
+>>>> +#define EXYNOS_TMU_INTEN_FALL1_SHIFT 20
+>>>> +#define EXYNOS_TMU_INTEN_FALL2_SHIFT 24
+>>>>
+>>>>  #define EFUSE_MIN_VALUE 40
+>>>>  #define EFUSE_MAX_VALUE 100
+>>>>
+>>>>  #ifdef CONFIG_THERMAL_EMULATION
+>>>>  #define EXYNOS_EMUL_TIME     0x57F0
+>>>> +#define EXYNOS_EMUL_TIME_MASK        0xffff
+>>>>  #define EXYNOS_EMUL_TIME_SHIFT       16
+>>>>  #define EXYNOS_EMUL_DATA_SHIFT       8
+>>>>  #define EXYNOS_EMUL_DATA_MASK        0xFF
+>>>> @@ -261,24 +278,37 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
+>>>>       mutex_lock(&data->lock);
+>>>>       clk_enable(data->clk);
+>>>>
+>>>> -     con = pdata->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT |
+>>>> -             pdata->gain << EXYNOS_TMU_GAIN_SHIFT;
+>>>> +     con = readl(data->base + EXYNOS_TMU_REG_CONTROL);
+>>>>
+>>>> -     if (data->soc == SOC_ARCH_EXYNOS) {
+>>>> -             con |= pdata->noise_cancel_mode << EXYNOS_TMU_TRIP_MODE_SHIFT;
+>>>> -             con |= (EXYNOS_MUX_ADDR_VALUE << EXYNOS_MUX_ADDR_SHIFT);
+>>>> +     if (pdata->reference_voltage) {
+>>>> +             con &= ~(EXYNOS_TMU_REF_VOLTAGE_MASK <<
+>>>> +                             EXYNOS_TMU_REF_VOLTAGE_SHIFT);
+>>>> +             con |= pdata->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT;
+>>>> +     }
+>>>> +
+>>>> +     if (pdata->gain) {
+>>>> +             con &= ~(EXYNOS_TMU_GAIN_MASK << EXYNOS_TMU_GAIN_SHIFT);
+>>>> +             con |= (pdata->gain << EXYNOS_TMU_GAIN_SHIFT);
+>>>> +     }
+>>>> +
+>>>> +     if (pdata->noise_cancel_mode) {
+>>>> +             con &= ~(EXYNOS_TMU_TRIP_MODE_MASK <<
+>>>> +                                     EXYNOS_TMU_TRIP_MODE_SHIFT);
+>>>> +             con |= (pdata->noise_cancel_mode << EXYNOS_TMU_TRIP_MODE_SHIFT);
+>>>>       }
+>>>>
+>>>>       if (on) {
+>>>> -             con |= EXYNOS_TMU_CORE_ON;
+>>>
+>>>
+>>>
+>>> Before, in order to turn core on you had:
+>>>         con = con | 3;
+>>>
+>>> now you do:
+>>>         con = con | (1 << 0);
+>>>
+>>> To me, before you would set bit 1 and 0, now you set bit 0.
+>>>
+>>>
+>>>> -             interrupt_en = pdata->trigger_level3_en << 12 |
+>>>> -                     pdata->trigger_level2_en << 8 |
+>>>> -                     pdata->trigger_level1_en << 4 |
+>>>> -                     pdata->trigger_level0_en;
+>>>> +             con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
+>>>> +             interrupt_en =
+>>>> +             pdata->trigger_level3_en << EXYNOS_TMU_INTEN_RISE3_SHIFT |
+>>>> +             pdata->trigger_level2_en << EXYNOS_TMU_INTEN_RISE2_SHIFT |
+>>>> +             pdata->trigger_level1_en << EXYNOS_TMU_INTEN_RISE1_SHIFT |
+>>>> +             pdata->trigger_level0_en << EXYNOS_TMU_INTEN_RISE0_SHIFT;
+>>>>               if (pdata->threshold_falling)
+>>>> -                     interrupt_en |= interrupt_en << 16;
+>>>> +                     interrupt_en |=
+>>>> +                             interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
+>>>>       } else {
+>>>> -             con |= EXYNOS_TMU_CORE_OFF;
+>>>> +             con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
+>>>
+>>>
+>>> Before, in order to turno core off you had:
+>>>         con = con | 2;
+>>>
+>>> now you do:
+>>>         con = con & ~(1 << 0);
+>>>
+>>> To me, before you would set bit 2, now you clear bit 0.
+>>>
+>>> Using the approach on this patch looks correct to me if you have 1 bit
+>>> core_en for instance.
+>>>
+>>> so, Is this a fix?
+>>>
+>>> Just to be clear, is this what you want ?
+>> Yes you are right. Bit 0 is the actual enable bit. Bit 1 is the
+>> reserve bit and its default value is 1. Earlier both bits are used to
+>> turn on/off the controller which was wrong so this patch rectifies it.
+>
+> Care to mention this in your patch description? It is good for code history.
+Ok
+>
+>>
+>> Thanks,
+>> Amit
+>>>
+>>>>               interrupt_en = 0; /* Disable all interrupts */
+>>>>       }
+>>>>       writel(interrupt_en, data->base + EXYNOS_TMU_REG_INTEN);
+>>>>
+>>>
+>>>
+>>> --
+>>> You have got to be excited about what you are doing. (L. Lamport)
+>>>
+>>> Eduardo Valentin
+>>>
+>>
+>>
+>
+>
+> --
+> You have got to be excited about what you are doing. (L. Lamport)
+>
+> Eduardo Valentin
+>
