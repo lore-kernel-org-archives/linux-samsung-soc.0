@@ -1,54 +1,112 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 2/2] Samsung Exynos5420 clock for hdmi for v3.11
-Date: Tue, 25 Jun 2013 02:09:15 +0900
-Message-ID: <51C87D3B.90701@samsung.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH V7 30/30] arm: exynos: enable ARCH_HAS_BANDGAP
+Date: Mon, 24 Jun 2013 13:11:19 -0400
+Message-ID: <51C87DB7.5060503@ti.com>
+References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com> <1372071051-3167-31-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="----enig2TUEEDQCUAGNJWAWRJOAT"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:43973 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750899Ab3FXRJT (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:35344 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751344Ab3FXRMD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 13:09:19 -0400
-Received: by mail-pa0-f54.google.com with SMTP id kx10so11307249pab.27
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Jun 2013 10:09:19 -0700 (PDT)
+	Mon, 24 Jun 2013 13:12:03 -0400
+In-Reply-To: <1372071051-3167-31-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>
 
-The following changes since commit eff4e7c7f32a4e4be60b19b209ffab5cb430b385:
+------enig2TUEEDQCUAGNJWAWRJOAT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-   ARM: EXYNOS: extend soft-reset support for EXYNOS5420 (2013-06-19 
-04:09:37 +0900)
+On 24-06-2013 06:50, Amit Daniel Kachhap wrote:
+> This patch enables ARCH_HAS_BANDGAP config for exynos4210, 4212, 4412, =
+5250
+> and 5440 SOC. This config symbol is recently added to allow the platfor=
+ms
+> to enable bandgap based temperature sensor.
+>=20
+> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-are available in the git repository at:
+I had already acked this one on your v6:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/soc-exynos5420-3
+Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
 
-for you to fetch changes up to 2c862cf943771b4859ecc54bc13d72b309472427:
+> ---
+>  arch/arm/mach-exynos/Kconfig |    5 +++++
+>  1 files changed, 5 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfi=
+g
+> index d19edff..d3cb5c7 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -33,6 +33,7 @@ config CPU_EXYNOS4210
+>  	bool "SAMSUNG EXYNOS4210"
+>  	default y
+>  	depends on ARCH_EXYNOS4
+> +	select ARCH_HAS_BANDGAP
+>  	select ARM_CPU_SUSPEND if PM
+>  	select PM_GENERIC_DOMAINS
+>  	select S5P_PM if PM
+> @@ -45,6 +46,7 @@ config SOC_EXYNOS4212
+>  	bool "SAMSUNG EXYNOS4212"
+>  	default y
+>  	depends on ARCH_EXYNOS4
+> +	select ARCH_HAS_BANDGAP
+>  	select S5P_PM if PM
+>  	select S5P_SLEEP if PM
+>  	select SAMSUNG_DMADEV
+> @@ -55,6 +57,7 @@ config SOC_EXYNOS4412
+>  	bool "SAMSUNG EXYNOS4412"
+>  	default y
+>  	depends on ARCH_EXYNOS4
+> +	select ARCH_HAS_BANDGAP
+>  	select SAMSUNG_DMADEV
+>  	help
+>  	  Enable EXYNOS4412 SoC support
+> @@ -63,6 +66,7 @@ config SOC_EXYNOS5250
+>  	bool "SAMSUNG EXYNOS5250"
+>  	default y
+>  	depends on ARCH_EXYNOS5
+> +	select ARCH_HAS_BANDGAP
+>  	select PM_GENERIC_DOMAINS if PM
+>  	select S5P_PM if PM
+>  	select S5P_SLEEP if PM
+> @@ -76,6 +80,7 @@ config SOC_EXYNOS5440
+>  	default y
+>  	depends on ARCH_EXYNOS5
+>  	select ARCH_HAS_OPP
+> +	select ARCH_HAS_BANDGAP
+>  	select ARM_ARCH_TIMER
+>  	select AUTO_ZRELADDR
+>  	select PINCTRL
+>=20
 
-   clk: exynos5420: assign sclk_pixel id to pixel clock divider 
-(2013-06-25 01:43:42 +0900)
 
-----------------------------------------------------------------
-based on tags/soc-exynos5420-1
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
 
-Add clock support hdmi subsystem on exynos5420
-- add new clocks, mout_hdmi and smmu_tv, associating ID to clk_hdmiphy
-- include some essential corrections
+Eduardo Valentin
 
-----------------------------------------------------------------
-Rahul Sharma (5):
-       clk: exynos5420: add sclk_hdmiphy to the list of special clocks
-       clk: exynos5420: add gate clock for tv sysmmu
-       clk: exynos5420: fix the order of parents of hdmi mux
-       clk: exynos5420: add hdmi mux to change parents in hdmi driver
-       clk: exynos5420: assign sclk_pixel id to pixel clock divider
 
-  .../devicetree/bindings/clock/exynos5420-clock.txt     |  7 +++++++
-  drivers/clk/samsung/clk-exynos5420.c                   | 18 
-+++++++++++-------
-  2 files changed, 18 insertions(+), 7 deletions(-)
+------enig2TUEEDQCUAGNJWAWRJOAT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlHIfbcACgkQCXcVR3XQvP26IQEAxY3dM5srHGb49HQO1QzAXNe6
+9nKKJHEaUZhggYdxlscBAL3UNviaKaAoewNMK/dA+0mNKJmxbWD5QswXTGvW8sae
+=j3QY
+-----END PGP SIGNATURE-----
+
+------enig2TUEEDQCUAGNJWAWRJOAT--
