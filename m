@@ -1,15 +1,15 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v2 01/12] dmaengine: PL08x: Refactor
- pl08x_getbytes_chan() to lower indentation
-Date: Tue, 25 Jun 2013 00:09:14 +0200
-Message-ID: <CACRpkdYuF7Scg4n4a_EL2WW3qyFV5f5Vr-6RPohE-4O0wd=QpA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 02/12] dmaengine: PL08x: Add support
+ for different offset of CONFIG register
+Date: Tue, 25 Jun 2013 00:11:15 +0200
+Message-ID: <CACRpkdatCWT0zd4VW3oiSUpg8Zz+xOEB+PUjFym1Q5RHQix3Cw@mail.gmail.com>
 References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
- <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
+ <1371933764-24875-3-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
+In-Reply-To: <1371933764-24875-3-git-send-email-tomasz.figa@gmail.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -25,13 +25,9 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 On Sat, Jun 22, 2013 at 10:42 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-> Further patch will introduce support for PL080S, which requires some
-> things to be done conditionally, thus increasing indentation level of
-> some functions even more.
->
-> This patch reduces indentation level of pl08x_getbytes_chan() function
-> by inverting several conditions and returning from function wherever
-> possible.
+> Some variants of PL08x (namely PL080S, found in Samsung S3C64xx SoCs)
+> have CONFIG register at different offset. This patch makes the driver
+> use offset from vendor data struct.
 >
 > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
