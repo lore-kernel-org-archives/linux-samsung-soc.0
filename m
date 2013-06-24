@@ -1,71 +1,184 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
-Date: Tue, 25 Jun 2013 00:22:42 +0900
-Message-ID: <51C86442.6090406@samsung.com>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <1371766383-29077-12-git-send-email-tomasz.figa@gmail.com> <2925617.TjWXJcIKRC@flatron>
+Subject: Re: [PATCH v2 07/18] ARM: SAMSUNG: Move all platforms to new clocksource
+ driver
+Date: Tue, 25 Jun 2013 00:33:01 +0900
+Message-ID: <51C866AD.6010406@samsung.com>
+References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <1371766383-29077-8-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:59941 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660Ab3FXPWs (ORCPT
+Received: from mail-pb0-f53.google.com ([209.85.160.53]:34835 "EHLO
+	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750872Ab3FXPdI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 11:22:48 -0400
-In-Reply-To: <2925617.TjWXJcIKRC@flatron>
+	Mon, 24 Jun 2013 11:33:08 -0400
+In-Reply-To: <1371766383-29077-8-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, Thierry Reding <thierry.reding@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-On 06/22/13 22:06, Tomasz Figa wrote:
-> This patch introduces new Samsung PWM driver, which is heavily cleaned,
-> multiplatform aware and supports DeviceTree based instantiation.
->
-> Since on historical hardware PWM block can be shared with clocksource
-> driver, a shared spinlock is used to protect access to shared registers,
-> already exported from the clocksource driver.
+On 06/21/13 07:12, Tomasz Figa wrote:
+> This patch moves all Samsung platforms using PWM clocksource from legacy
+> samsung-time to new samsung-pwm-timer driver.
 >
 > Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
 > ---
->   drivers/pwm/Makefile      |   1 +
->   drivers/pwm/pwm-samsung.c | 601 ++++++++++++++++++++++++++++++++++++++++++++++
->   2 files changed, 602 insertions(+)
->   create mode 100644 drivers/pwm/pwm-samsung.c
+>   arch/arm/mach-s3c24xx/Kconfig  | 12 ++++++------
+>   arch/arm/mach-s3c24xx/common.c | 16 ++++++++++++++++
+>   arch/arm/mach-s3c64xx/Kconfig  |  4 ++--
+>   arch/arm/mach-s3c64xx/common.c | 17 +++++++++++++++++
+>   arch/arm/mach-s5p64x0/Kconfig  |  4 ++--
+>   arch/arm/mach-s5p64x0/common.c | 17 +++++++++++++++++
+>   arch/arm/mach-s5pc100/Kconfig  |  2 +-
+>   arch/arm/mach-s5pc100/common.c | 17 +++++++++++++++++
+>   arch/arm/mach-s5pv210/Kconfig  |  2 +-
+>   arch/arm/mach-s5pv210/common.c | 17 +++++++++++++++++
+>   10 files changed, 96 insertions(+), 12 deletions(-)
 >
-> Changes since v2:
->   - Replaced __raw_{readl,writel} with {readl,writel}.
->   - Corrected commit message.
+> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+> index 6d9252e..46f9a9c 100644
+> --- a/arch/arm/mach-s3c24xx/Kconfig
+> +++ b/arch/arm/mach-s3c24xx/Kconfig
+> @@ -30,7 +30,7 @@ config CPU_S3C2410
+>   	select S3C2410_CLOCK
+>   	select ARM_S3C2410_CPUFREQ if ARM_S3C24XX_CPUFREQ
+>   	select S3C2410_PM if PM
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Please put this in alphabetical ordering, this is just replacing though.
+
+>   	select SAMSUNG_WDT_RESET
+>   	help
+>   	  Support for S3C2410 and S3C2410A family from the S3C24XX line
+> @@ -42,7 +42,7 @@ config CPU_S3C2412
+>   	select CPU_LLSERIAL_S3C2440
+>   	select S3C2412_DMA if S3C24XX_DMA
+>   	select S3C2412_PM if PM
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Same as above.
+
+>   	help
+>   	  Support for the S3C2412 and S3C2413 SoCs from the S3C24XX line
 >
+> @@ -54,7 +54,7 @@ config CPU_S3C2416
+>   	select S3C2443_COMMON
+>   	select S3C2443_DMA if S3C24XX_DMA
+>   	select SAMSUNG_CLKSRC
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Same as above.
+
+>   	help
+>   	  Support for the S3C2416 SoC from the S3C24XX line
+>
+> @@ -65,7 +65,7 @@ config CPU_S3C2440
+>   	select S3C2410_CLOCK
+>   	select S3C2410_PM if PM
+>   	select S3C2440_DMA if S3C24XX_DMA
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Same as above.
+
+>   	help
+>   	  Support for S3C2440 Samsung Mobile CPU based systems.
+>
+> @@ -75,7 +75,7 @@ config CPU_S3C2442
+>   	select CPU_LLSERIAL_S3C2440
+>   	select S3C2410_CLOCK
+>   	select S3C2410_PM if PM
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Same.
+
+>   	help
+>   	  Support for S3C2442 Samsung Mobile CPU based systems.
+>
+> @@ -91,7 +91,7 @@ config CPU_S3C2443
+>   	select S3C2443_COMMON
+>   	select S3C2443_DMA if S3C24XX_DMA
+>   	select SAMSUNG_CLKSRC
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Same.
 
 [...]
 
-> +	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, val) {
-> +		if (val>= SAMSUNG_PWM_NUM) {
-> +			pr_warning("%s: invalid channel index in samsung,pwm-outputs property\n",
+>
+>   config CPU_S3C6400
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
 
-Just note, checkpatch complains following, so fixed to use pr_warn() 
-when I applied.
+Same.
 
-WARNING: Prefer pr_warn(... to pr_warning(...
-#471: FILE: drivers/pwm/pwm-samsung.c:432:
-+			pr_warning("%s: invalid channel index in samsung,pwm-outputs 
-property\n",
+>   	bool
+>   	help
+>   	  Enable S3C6400 CPU support
+>
+>   config CPU_S3C6410
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Same.
+
+>   	bool
+>   	help
+>   	  Enable S3C6410 CPU support
 
 [...]
 
-> +
-> +static struct dev_pm_ops pwm_samsung_pm_ops = {
+> @@ -11,14 +11,14 @@ config CPU_S5P6440
+>   	bool
+>   	select S5P_SLEEP if PM
+>   	select SAMSUNG_DMADEV
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
 
-WARNING: struct dev_pm_ops should normally be const
-#622: FILE: drivers/pwm/pwm-samsung.c:583:
-+static struct dev_pm_ops pwm_samsung_pm_ops = {
+Same.
 
-fixed to add const when I applied.
+>   	select SAMSUNG_WAKEMASK if PM
+>   	help
+>   	  Enable S5P6440 CPU support
+>
+>   config CPU_S5P6450
+>   	bool
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
 
-> +	SET_SYSTEM_SLEEP_PM_OPS(pwm_samsung_suspend, pwm_samsung_resume)
-> +};
-> +
+Same.
 
-Thanks,
+[...]
+
+> @@ -11,7 +11,7 @@ config CPU_S5PC100
+>   	bool
+>   	select S5P_EXT_INT
+>   	select SAMSUNG_DMADEV
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Same.
+
+[...]
+
+> @@ -15,7 +15,7 @@ config CPU_S5PV210
+>   	select S5P_PM if PM
+>   	select S5P_SLEEP if PM
+>   	select SAMSUNG_DMADEV
+> -	select SAMSUNG_HRT
+> +	select CLKSRC_SAMSUNG_PWM
+
+Same.
+
+[...]
+
+Let me fix it...
+
 - Kukjin
