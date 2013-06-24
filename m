@@ -1,278 +1,328 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V7 22/30] thermal: exynos: Add driver support for exynos5440
- TMU sensor
-Date: Mon, 24 Jun 2013 15:43:23 -0400
-Message-ID: <51C8A15B.7040509@ti.com>
-References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com> <1372071051-3167-23-git-send-email-amit.daniel@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
+Date: Mon, 24 Jun 2013 21:50:21 +0200
+Message-ID: <20130624195020.GA7163@mithrandir>
+References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com>
+ <20130619094355.GB2911@mithrandir>
+ <1991384.bDpcDUcax8@amdc1227>
+ <24964129.e56nj79VjR@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2CETQACDRCNRSTCCWMMGT"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1372071051-3167-23-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:48512 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750745Ab3FXTu0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Jun 2013 15:50:26 -0400
+Content-Disposition: inline
+In-Reply-To: <24964129.e56nj79VjR@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
-------enig2CETQACDRCNRSTCCWMMGT
-Content-Type: text/plain; charset=ISO-8859-1
+
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On 24-06-2013 06:50, Amit Daniel Kachhap wrote:
-> This patch modifies TMU controller to add changes needed to work with
-> exynos5440 platform. This sensor registers 3 instance of the tmu contro=
-ller
-> with the thermal zone and hence reports 3 temperature output. This cont=
-roller
-> supports upto five trip points. For critical threshold the driver uses =
-the
-> core driver thermal framework for shutdown.
+On Mon, Jun 24, 2013 at 07:52:11PM +0200, Tomasz Figa wrote:
+> Hi Thierry,
 >=20
-> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Jungseok Lee <jays.lee@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-
-Acked-by: Eduardo Valentin <eduardo.valentin@ti.com>
-
-> ---
->  drivers/thermal/samsung/exynos_thermal_common.h |    2 +-
->  drivers/thermal/samsung/exynos_tmu.c            |   55 +++++++++++++++=
-++++---
->  drivers/thermal/samsung/exynos_tmu.h            |    6 +++
->  drivers/thermal/samsung/exynos_tmu_data.h       |   36 +++++++++++++++=
-
->  4 files changed, 90 insertions(+), 9 deletions(-)
+> On Wednesday 19 of June 2013 12:23:52 Tomasz Figa wrote:
+> > On Wednesday 19 of June 2013 11:43:56 Thierry Reding wrote:
+> > > On Wed, Jun 19, 2013 at 12:45:02AM +0200, Tomasz Figa wrote:
+> > > > On Wednesday 19 of June 2013 00:17:06 Thierry Reding wrote:
+> > > > > On Mon, Jun 17, 2013 at 10:50:40PM +0200, Tomasz Figa wrote:
+> > > > > > On Monday 17 of June 2013 22:29:11 Thierry Reding wrote:
+> > > > > > > On Wed, Jun 05, 2013 at 11:18:13PM +0200, Tomasz Figa wrote:
+> > > > > [...]
+> > > > >=20
+> > > > > > > > +#ifndef CONFIG_CLKSRC_SAMSUNG_PWM
+> > > > > > > > +static DEFINE_SPINLOCK(samsung_pwm_lock);
+> > > > > > > > +#endif
+> > > > > > >=20
+> > > > > > > Why is this lock global? Shouldn't it more correctly be part
+> > > > > > > of
+> > > > > > > samsung_pwm_chip?
+> > > > > >=20
+> > > > > > There are few registers shared with samsung_pwm_timer
+> > > > > > clocksource
+> > > > > > driver and so normally the spinlock is exported from it. However
+> > > > > > on
+> > > > > > on some platforms (namely Exynos >=3D4x12) kernel can be compil=
+ed
+> > > > > > without that driver, so the lock must be defined locally, just
+> > > > > > to
+> > > > > > synchronize multiple PWM channels, as they share registers as
+> > > > > > well.
+> > > > >=20
+> > > > > Okay, I think this needs further explanation. The clocksource
+> > > > > driver
+> > > > > is
+> > > > > used for what exactly? From a quick look it seems to be very much
+> > > > > PWM-
+> > > > > specific. According to the device tree binding for the PWM driver,
+> > > > > the
+> > > > > timer blocks can also be used as clock sources and clock event
+> > > > > timers.
+> > > > > So if I understand correctly you have setups where you use one or
+> > > > > more
+> > > > > channels as clock source or clock event timer and one or more
+> > > > > channels
+> > > > > as PWM outputs.
+> > > > >=20
+> > > > > In that case it's a very bad idea to use a global lock to
+> > > > > synchronize
+> > > > > accesses. You need to do much more than that. To properly split
+> > > > > this
+> > > > > across several drivers there needs to be a mechanism to allocate
+> > > > > channels for use either as clock source/event timer or PWM.
+> > > > > Otherwise,
+> > > > > how do you know that drivers aren't stepping on each other's toes?
+> > > > >=20
+> > > > > > > > +		ret =3D pwm_samsung_parse_dt(chip);
+> > > > > > > > +		if (ret)
+> > > > > > > > +			return ret;
+> > > > > > > > +
+> > > > > > > > +		chip->chip.of_xlate =3D of_pwm_xlate_with_flags;
+> > > > > > > > +		chip->chip.of_pwm_n_cells =3D 3;
+> > > > > > > > +	} else {
+> > > > > > > > +		if (!pdev->dev.platform_data) {
+> > > > > > > > +			dev_err(&pdev->dev, "no platform data
+> > > > > >=20
+> > > > > > specified\n");
+> > > > > >=20
+> > > > > > > > +			return -EINVAL;
+> > > > > > > > +		}
+> > > > > > > > +
+> > > > > > > > +		memcpy(&chip->variant, pdev->dev.platform_data,
+> > > > > > > > +
+> > > >=20
+> > > > sizeof(chip-
+> > > >=20
+> > > > > > >variant));
+> > > > > > >
+> > > > > > > > +	}
+> > > > > > >=20
+> > > > > > > Obviously this needs some modification in order for the
+> > > > > > > variant
+> > > > > > > to
+> > > > > > > become constant. But I think you can easily do so by making
+> > > > > > > the
+> > > > > > > driver
+> > > > > > > match using the platform_driver's id_table field, similar to
+> > > > > > > how
+> > > > > > > the
+> > > > > > > matching is done for OF.
+> > > > > >=20
+> > > > > > Generally output_mask is board-dependent and is passed inside a
+> > > > > > variant
+> > > > > > struct using platform_data pointer.
+> > > > >=20
+> > > > > That's okay. But output_mask is the only thing that's
+> > > > > board-dependent.
+> > > > > Everything else in the variant is SoC dependent judging by the OF
+> > > > > device
+> > > > > table. So really only the output_mask should be part of the
+> > > > > platform
+> > > > > data.
+> > > > >=20
+> > > > > > Same platform data is used in samsung_pwm_timer clocksource
+> > > > > > driver,
+> > > > > > so
+> > > > > > I just reused it here without adding the need to rename platform
+> > > > > > device at runtime (see arch/arm/plat-samsung/devs.c).
+> > > > >=20
+> > > > > Looking a bit at git log for the clocksource driver, there's this
+> > > > >=20
+> > > > > commit:
+> > > > > 	a3ce54f clocksource: samsung_pwm_timer: Do not request PWM=20
+> mem
+> > > >=20
+> > > > region
+> > > >=20
+> > > > > That's an ugly workaround for sharing registers between two
+> > > > > drivers.
+> > > > > There's a reason why drivers do request_mem_region(), and it is
+> > > > > precisely to prevent them from accessing the same registers. As I
+> > > > > already said above, I think you need to come up with some sort of
+> > > > > API
+> > > > > to
+> > > > > share resources between the drivers.
+> > > > >=20
+> > > > > There was a similar issue a few months back with the pwm-tiehrpwm
+> > > > > and
+> > > > > pwm-tiecap drivers, which use a shared block of registers.
+> > > > > Initially
+> > > > > something similar was done as you do here, but eventually we came
+> > > > > up
+> > > > > with a much better solution that involved introducing a new driver
+> > > > > for
+> > > > > the shared functionality and an exported API.
+> > > > >=20
+> > > > > The situation seems to be somewhat different here since you
+> > > > > actually
+> > > > > share the same resources for different functionality instead of
+> > > > > sharing
+> > > > > one subset of register across multiple drivers, but I think a
+> > > > > similar
+> > > > > solution can be applied here.
+> > > >=20
+> > > > Well, current design, or rather lack of thereof, has been
+> > > > established
+> > > > after a significant amount of discussion, mostly with ARM SoC and
+> > > > MFD
+> > > > maintainers.
+> > > >=20
+> > > > It started from a simple reorganization of the clocksource driver to
+> > > > be
+> > > > multiplatform friendly, without any means of synchronizing both
+> > > > drivers
+> > > > other than local_irq_save() and _restore() that used to be there
+> > > > originally, before I started my work on this. This was enough to
+> > > > work
+> > > > correctly, because both drivers at the same time are used only on
+> > > > uniprocessor systems.
+> > > >=20
+> > > > Here's the thread with patches:
+> > > > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16664/focus=
+=3D1
+> > > > 726
+> > > > 7
+> > > >=20
+> > > > Then I opened a Pandora's Box by asking for opinion in this thread:
+> > > > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/16480/focus=
+=3D1
+> > > > 650
+> > > > 0
+> > > >=20
+> > > > After that I started working on a complex framework for sharing this
+> > > > IP
+> > > > block that would solve all the problems with synchronization,
+> > > > channel
+> > > > allocation, device tree parsing, variant management, etc.
+> > > >=20
+> > > > Here's an initial version, which started as an MFD master driver,
+> > > > which
+> > > > would let 2 client drivers use the hardware (only the clocksource
+> > > > part
+> > > > was implemented in that series):
+> > > > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/17464/focus=
+=3D2
+> > > > 292
+> > > > 50
+> > > >=20
+> > > > Still, that version didn't receive too good feedback, with comments
+> > > > pointing me to change the architecture to master-slave, with the
+> > > > clocksource driver being the master and PWM driver being the slave.
+> > > > And
+> > > > so v5 was made:
+> > > > http://thread.gmane.org/gmane.linux.kernel.samsung-soc/17864
+> > >=20
+> > > Yeah, this seemed to be going in the right direction.
+> > >=20
+> > > > This version was generally accepted, but then we discussed on IRC
+> > > > (mostly me and Arnd) whether such complex infrastructure is really
+> > > > needed and concluded that for this platform a simple shared spinlock
+> > > > would be enough, based on following reasons:
+> > > > - on all SoCs on which the clocksource driver is going to be used
+> > > > there
+> > > > is only one instance of the PWM block, with 5 channels
+> > >=20
+> > > You say that now. But then at some point somebody decides that it
+> > > might
+> > > be useful to have a second instance.
+> >=20
+> > No, he won't.
+> >=20
+> > Simply because no new SoC is going to be made which will use the
+> > samsung_pwm_timer driver and all existing ones have only a single
+> > instance of this IP.
+> >=20
+> > > > - on all existing boards there are always at least two channels that
+> > > > don't have outputs
+> > >=20
+> > > I don't see how that's relevant here.
+> >=20
+> > This is the information passed through output_mask. Clocksource driver
+> > can use _only_ channels without output and PWM driver can use _only_
+> > channels with output.
+> >=20
+> > Both drivers receive the same output_mask value, either from the same
+> > variant structure or from device tree.
+> >=20
+> > > > - operations on particular PWM channels must be synchronized anyway,
+> > > > because there are registers shared by all PWM channels (TCON being
+> > > > most
+> > > > important where enable, autoreload and invert bits are located for
+> > > > all
+> > > > channels).
+> > >=20
+> > > And that's precisely why there should be a more explicit way of
+> > > synchronizing than just acquiring a lock. Otherwise you have no
+> > > possibility whatsoever to detect when a board tries to use both the
+> > > clocksource and PWM drivers in incompatible ways. The lock may prevent
+> > > concurrent accesses to the shared registers, but that won't help you
+> > > if
+> > > the PWM driver suddenly decides to use an output that was originally
+> > > meant to be used as clock source.
+> >=20
+> > See above.
+> >=20
+> > > > And so we got to current design which is basically a shared spinlock
+> > > > and
+> > > > per-board output_mask, which specifies which channels have outputs
+> > > > on
+> > > > particular boards. If you look to the clocksource driver, you can
+> > > > see
+> > > > that it tries to allocate two output-less channels for timekeeping
+> > > > purposes and if it fails to do so, it simply panics.
+> > > >=20
+> > > > IMHO this solution is fine, because it's simple, has little overhead
+> > > > and
+> > > > it just works in case of platforms for which it is needed.
+> > >=20
+> > > Okay, I like simple. But I see too much potential for this to break
+> > > in the future. There are just too many assumptions for my taste. It
+> > > isn't anything that I'm looking forward to have to maintain.
+> >=20
+> > Those are completely safe assumptions for existing platforms. Any new
+> > platform with the same PWM IP will use this driver exclusively, without
+> > the clocksource driver and so without the problems you mentioned.
 >=20
-> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/=
-thermal/samsung/exynos_thermal_common.h
-> index bc3016e..3eb2ed9 100644
-> --- a/drivers/thermal/samsung/exynos_thermal_common.h
-> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
-> @@ -27,7 +27,7 @@
->  #define SENSOR_NAME_LEN	16
->  #define MAX_TRIP_COUNT	8
->  #define MAX_COOLING_DEVICE 4
-> -#define MAX_THRESHOLD_LEVS 4
-> +#define MAX_THRESHOLD_LEVS 5
-> =20
->  #define ACTIVE_INTERVAL 500
->  #define IDLE_INTERVAL 10000
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
-sung/exynos_tmu.c
-> index 31bf373..6bc86f6 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -156,7 +156,26 @@ static int exynos_tmu_initialize(struct platform_d=
-evice *pdev)
->  		__raw_writel(1, data->base + reg->triminfo_ctrl);
-> =20
->  	/* Save trimming info in order to perform calibration */
-> -	trim_info =3D readl(data->base + reg->triminfo_data);
-> +	if (data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
-> +		/*
-> +		 * For exynos5440 soc triminfo value is swapped between TMU0 and
-> +		 * TMU2, so the below logic is needed.
-> +		 */
-> +		switch (data->id) {
-> +		case 0:
-> +			trim_info =3D readl(data->base +
-> +			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
-> +			break;
-> +		case 1:
-> +			trim_info =3D readl(data->base + reg->triminfo_data);
-> +			break;
-> +		case 2:
-> +			trim_info =3D readl(data->base -
-> +			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
-> +		}
-> +	} else {
-> +		trim_info =3D readl(data->base + reg->triminfo_data);
-> +	}
->  	data->temp_error1 =3D trim_info & EXYNOS_TMU_TEMP_MASK;
->  	data->temp_error2 =3D ((trim_info >> reg->triminfo_85_shift) &
->  				EXYNOS_TMU_TEMP_MASK);
-> @@ -201,7 +220,7 @@ static int exynos_tmu_initialize(struct platform_de=
-vice *pdev)
->  			reg->threshold_th0 + i * sizeof(reg->threshold_th0));
-> =20
->  		writel(reg->inten_rise_mask, data->base + reg->tmu_intclear);
-> -	} else if (data->soc =3D=3D SOC_ARCH_EXYNOS) {
-> +	} else {
->  		/* Write temperature code for rising and falling threshold */
->  		for (i =3D 0;
->  		i < trigger_levs && i < EXYNOS_MAX_TRIGGER_PER_REG; i++) {
-> @@ -241,14 +260,26 @@ static int exynos_tmu_initialize(struct platform_=
-device *pdev)
->  				ret =3D threshold_code;
->  				goto out;
->  			}
-> -			rising_threshold |=3D threshold_code << 8 * i;
-> -			writel(rising_threshold,
-> -				data->base + reg->threshold_th0);
-> +			if (i =3D=3D EXYNOS_MAX_TRIGGER_PER_REG - 1) {
-> +				/* 1-4 level to be assigned in th0 reg */
-> +				rising_threshold |=3D threshold_code << 8 * i;
-> +				writel(rising_threshold,
-> +					data->base + reg->threshold_th0);
-> +			} else if (i =3D=3D EXYNOS_MAX_TRIGGER_PER_REG) {
-> +				/* 5th level to be assigned in th2 reg */
-> +				rising_threshold =3D
-> +				threshold_code << reg->threshold_th3_l0_shift;
-> +				writel(rising_threshold,
-> +					data->base + reg->threshold_th2);
-> +			}
->  			con =3D readl(data->base + reg->tmu_ctrl);
->  			con |=3D (1 << reg->therm_trip_en_shift);
->  			writel(con, data->base + reg->tmu_ctrl);
->  		}
->  	}
-> +	/*Clear the PMIN in the common TMU register*/
-> +	if (reg->tmu_pmin && !data->id)
-> +		writel(0, data->base_common + reg->tmu_pmin);
->  out:
->  	clk_disable(data->clk);
->  	mutex_unlock(&data->lock);
-> @@ -377,7 +408,14 @@ static void exynos_tmu_work(struct work_struct *wo=
-rk)
->  			struct exynos_tmu_data, irq_work);
->  	struct exynos_tmu_platform_data *pdata =3D data->pdata;
->  	const struct exynos_tmu_registers *reg =3D pdata->registers;
-> -	unsigned int val_irq;
-> +	unsigned int val_irq, val_type;
-> +
-> +	/* Find which sensor generated this interrupt */
-> +	if (reg->tmu_irqstatus) {
-> +		val_type =3D readl(data->base_common + reg->tmu_irqstatus);
-> +		if (!((val_type >> data->id) & 0x1))
-> +			goto out;
-> +	}
-> =20
->  	exynos_report_trigger(data->reg_conf);
->  	mutex_lock(&data->lock);
-> @@ -390,7 +428,7 @@ static void exynos_tmu_work(struct work_struct *wor=
-k)
-> =20
->  	clk_disable(data->clk);
->  	mutex_unlock(&data->lock);
-> -
-> +out:
->  	enable_irq(data->irq);
->  }
-> =20
-> @@ -538,7 +576,8 @@ static int exynos_tmu_probe(struct platform_device =
-*pdev)
->  		return ret;
-> =20
->  	if (pdata->type =3D=3D SOC_ARCH_EXYNOS ||
-> -				pdata->type =3D=3D SOC_ARCH_EXYNOS4210)
-> +		pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
-> +				pdata->type =3D=3D SOC_ARCH_EXYNOS5440)
->  		data->soc =3D pdata->type;
->  	else {
->  		ret =3D -EINVAL;
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sam=
-sung/exynos_tmu.h
-> index ff8844f..25c48d4 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -40,6 +40,7 @@ enum calibration_mode {
->  enum soc_type {
->  	SOC_ARCH_EXYNOS4210 =3D 1,
->  	SOC_ARCH_EXYNOS,
-> +	SOC_ARCH_EXYNOS5440,
->  };
-> =20
->  /**
-> @@ -131,6 +132,8 @@ enum soc_type {
->   * @emul_temp_shift: shift bits of emulation temperature.
->   * @emul_time_shift: shift bits of emulation time.
->   * @emul_time_mask: mask bits of emulation time.
-> + * @tmu_irqstatus: register to find which TMU generated interrupts.
-> + * @tmu_pmin: register to get/set the Pmin value.
->   */
->  struct exynos_tmu_registers {
->  	u32	triminfo_data;
-> @@ -198,6 +201,9 @@ struct exynos_tmu_registers {
->  	u32	emul_temp_shift;
->  	u32	emul_time_shift;
->  	u32	emul_time_mask;
-> +
-> +	u32	tmu_irqstatus;
-> +	u32	tmu_pmin;
->  };
-> =20
->  /**
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therma=
-l/samsung/exynos_tmu_data.h
-> index 139dbbb..ad263e9 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.h
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> @@ -93,6 +93,42 @@
-> =20
->  #define EXYNOS_MAX_TRIGGER_PER_REG	4
-> =20
-> +/*exynos5440 specific registers*/
-> +#define EXYNOS5440_TMU_S0_7_TRIM		0x000
-> +#define EXYNOS5440_TMU_S0_7_CTRL		0x020
-> +#define EXYNOS5440_TMU_S0_7_DEBUG		0x040
-> +#define EXYNOS5440_TMU_S0_7_STATUS		0x060
-> +#define EXYNOS5440_TMU_S0_7_TEMP		0x0f0
-> +#define EXYNOS5440_TMU_S0_7_TH0			0x110
-> +#define EXYNOS5440_TMU_S0_7_TH1			0x130
-> +#define EXYNOS5440_TMU_S0_7_TH2			0x150
-> +#define EXYNOS5440_TMU_S0_7_EVTEN		0x1F0
-> +#define EXYNOS5440_TMU_S0_7_IRQEN		0x210
-> +#define EXYNOS5440_TMU_S0_7_IRQ			0x230
-> +/* exynos5440 common registers */
-> +#define EXYNOS5440_TMU_IRQ_STATUS		0x000
-> +#define EXYNOS5440_TMU_PMIN			0x004
-> +#define EXYNOS5440_TMU_TEMP			0x008
-> +
-> +#define EXYNOS5440_TMU_RISE_INT_MASK		0xf
-> +#define EXYNOS5440_TMU_RISE_INT_SHIFT		0
-> +#define EXYNOS5440_TMU_FALL_INT_MASK		0xf
-> +#define EXYNOS5440_TMU_FALL_INT_SHIFT		4
-> +#define EXYNOS5440_TMU_INTEN_RISE0_SHIFT	0
-> +#define EXYNOS5440_TMU_INTEN_RISE1_SHIFT	1
-> +#define EXYNOS5440_TMU_INTEN_RISE2_SHIFT	2
-> +#define EXYNOS5440_TMU_INTEN_RISE3_SHIFT	3
-> +#define EXYNOS5440_TMU_INTEN_FALL0_SHIFT	4
-> +#define EXYNOS5440_TMU_INTEN_FALL1_SHIFT	5
-> +#define EXYNOS5440_TMU_INTEN_FALL2_SHIFT	6
-> +#define EXYNOS5440_TMU_INTEN_FALL3_SHIFT	7
-> +#define EXYNOS5440_TMU_TH_RISE0_SHIFT		0
-> +#define EXYNOS5440_TMU_TH_RISE1_SHIFT		8
-> +#define EXYNOS5440_TMU_TH_RISE2_SHIFT		16
-> +#define EXYNOS5440_TMU_TH_RISE3_SHIFT		24
-> +#define EXYNOS5440_TMU_TH_RISE4_SHIFT		24
-> +#define EXYNOS5440_EFUSE_SWAP_OFFSET		8
-> +
->  #if defined(CONFIG_CPU_EXYNOS4210)
->  extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
->  #define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
->=20
+> Would you mind taking into account things I pointed in reply above?
 
+I took those into account. But quite frankly they're no excuse for not
+having at least a half-decent design. Even if you could guarantee that
+the same IP wasn't used in a different combination than you expect,
+keeping what you have now sets a very bad example and people will copy
+because they don't know better and I'll have to explain this all over
+again.
 
---=20
-You have got to be excited about what you are doing. (L. Lamport)
+Thierry
 
-Eduardo Valentin
-
-
-------enig2CETQACDRCNRSTCCWMMGT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iF4EAREIAAYFAlHIoVsACgkQCXcVR3XQvP0kEQEA6MXjKmi8DMUm7u/Gb0sWaH1C
-33WYdeMQFbTBu9tirVYA/1NUOd76uhUzSC1amzhjIjYzrRNqbfdNlehqIa5ugdlr
-=hpZN
+iQIcBAEBAgAGBQJRyKL8AAoJEN0jrNd/PrOhZqgP/jbPhPSuKdTsxR+Bk2L4WCsw
+a75j65ultVJngfUYfM//ucrC4khn+KEEYXC7EvBw8niY2fjs9jtTpZBl3/iHvVC9
+Os3w6rWXlB/oMzV9nEC+RTt9JZRl9E37SJ3wMRt+/D1dIyu9IsJWYtwG1ROofBMs
+ZPxobiTA/rfQdvIojL703lXFQJ6VfA6i8Jpn4GVvXG4AEXdstTDZlAYHKC/mqOic
+KaX0bN3I5KKFepp9vxnpA2NasxJlTFjwu7Mllj55PfdK5K5Bbe4yydhRzFWJS2BH
+r/buwzFqLWBQPPOucoIV4YaaTP7MOoF6rYBZilEZHJb7VnFqhkPn0y7elMOHtdu7
+cf6uoxINoDIsPrWASNviv9yns8WOc7K/hu7YSC5oX80mGF5W89Rd4+Jdo7tOV3Mk
+Q9lK1XiWOEUtu2Nq6C1tiI0zlQ4Jqs3T4W0wbGZMj8oQnRrSmNr+VnGaOYFrMZnf
+oUBnwSMmPlY2hfd99RZzJwdLjunBHbdtclIePWF2AOH7AtBo5jTdbazB788ZxHND
+h7bGrwP+U21ijk0XH6nBTxcagJoLn90XepHT6vhHbWz86a5KLABBjONCtIy/+r4B
+Rf3+A2t0c58xFMppFz4PSwFDuoK7Bwax3+vhsqVljz1fqTPpLzt9fNLlFFVYCqK+
+eqvPxZDiyG8fFkhcf2/W
+=7q/j
 -----END PGP SIGNATURE-----
 
-------enig2CETQACDRCNRSTCCWMMGT--
+--HcAYCG3uE/tztfnV--
