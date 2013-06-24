@@ -1,15 +1,15 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH v2 07/12] dmaengine: PL08x: Add cyclic
-	transfer support
-Date: Tue, 25 Jun 2013 00:33:51 +0200
-Message-ID: <CACRpkdZrZFZ0MDP8=CWp9gv+1R6GfEktkgWaLDgEgzgfqGXucA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 08/12] ASoC: Samsung: Do not queue
+ cyclic buffers multiple times
+Date: Tue, 25 Jun 2013 00:35:23 +0200
+Message-ID: <CACRpkdZVn_jeEYatRRH2abbeWAeoCBf0-cgY2sTiG8cyAbzhkQ@mail.gmail.com>
 References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
- <1371933764-24875-8-git-send-email-tomasz.figa@gmail.com>
+ <1371933764-24875-9-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1371933764-24875-8-git-send-email-tomasz.figa@gmail.com>
+In-Reply-To: <1371933764-24875-9-git-send-email-tomasz.figa@gmail.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -25,17 +25,25 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 On Sat, Jun 22, 2013 at 10:42 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-> From: Alban Bedel <alban.bedel@avionic-design.de>
+> The legacy S3C-DMA API required every period of a cyclic buffer to be
+> queued separately. After conversion of Samsung ASoC to Samsung DMA
+> wrappers somebody made an assumption that the same is needed for DMA
+> engine API, which is not true.
 >
-> Many audio interface drivers require support of cyclic transfers to work
-> correctly, for example Samsung ASoC DMA driver. This patch adds support
-> for cyclic transfers to the amba-pl08x driver.
+> In effect, Samsung ASoC DMA code was queuing the whole cyclic buffer
+> multiple times with a shift of one period per iteration, leading to:
+>   a) severe memory waste - up to 13x times more DMA transfer descriptors
+>      are allocated than needed,
+>   b) possible memory corruption, because further cyclic buffers were out
+>      of the original buffers, due to the offset.
 >
-> Signed-off-by: Alban Bedel <alban.bedel@avionic-design.de>
-> [tfiga: Rebase and slightly beautify the original patch.]
+> This patch fixes this problem by making the legacy S3C-DMA API use the
+> same semantics as DMA engine (the whole cyclic buffer is enqueued at
+> once) and modifying users of Samsung DMA wrappers in cyclic mode to
+> behave appropriately.
+>
 > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Looks good to me:
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
