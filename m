@@ -1,225 +1,203 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH V7 16/30] thermal: exynos: Make the zone handling use
- trip information
-Date: Mon, 24 Jun 2013 11:41:11 -0400
-Message-ID: <51C86897.1080100@ti.com>
-References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com> <1372071051-3167-17-git-send-email-amit.daniel@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 07/18] ARM: SAMSUNG: Move all platforms to new clocksource
+ driver
+Date: Tue, 25 Jun 2013 00:46:06 +0900
+Message-ID: <51C869BE.3020800@samsung.com>
+References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <1371766383-29077-8-git-send-email-tomasz.figa@gmail.com> <51C866AD.6010406@samsung.com> <1446181.qPbsJvieFG@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="----enig2FXXBJGDPEAOLWXBDJGKO"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:42852 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750872Ab3FXPl1 (ORCPT
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:43856 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751161Ab3FXPqM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 11:41:27 -0400
-In-Reply-To: <1372071051-3167-17-git-send-email-amit.daniel@samsung.com>
+	Mon, 24 Jun 2013 11:46:12 -0400
+In-Reply-To: <1446181.qPbsJvieFG@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Olof Johansson <olof@lixom.net>, Thierry Reding <thierry.reding@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-------enig2FXXBJGDPEAOLWXBDJGKO
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+On 06/25/13 00:38, Tomasz Figa wrote:
 
-On 24-06-2013 06:50, Amit Daniel Kachhap wrote:
-> This code simplifies the zone handling to use the trip information pass=
-ed
-> by the TMU driver and not the hardcoded macros. This also helps in addi=
-ng
-> more zone support.
->=20
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_thermal_common.c |   67 ++++++++++++++-=
---------
->  drivers/thermal/samsung/exynos_thermal_common.h |    3 +-
->  drivers/thermal/samsung/exynos_tmu.c            |    5 ++-
->  3 files changed, 47 insertions(+), 28 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/=
-thermal/samsung/exynos_thermal_common.c
-> index 99318e5..ecf95da 100644
-> --- a/drivers/thermal/samsung/exynos_thermal_common.c
-> +++ b/drivers/thermal/samsung/exynos_thermal_common.c
-> @@ -79,17 +79,24 @@ static int exynos_set_mode(struct thermal_zone_devi=
-ce *thermal,
->  static int exynos_get_trip_type(struct thermal_zone_device *thermal, i=
-nt trip,
->  				 enum thermal_trip_type *type)
->  {
-> -	switch (GET_ZONE(trip)) {
-> -	case MONITOR_ZONE:
-> -	case WARN_ZONE:
-> -		*type =3D THERMAL_TRIP_ACTIVE;
-> -		break;
-> -	case PANIC_ZONE:
-> +	struct exynos_thermal_zone *th_zone =3D thermal->devdata;
-> +	int max_trip =3D th_zone->sensor_conf->trip_data.trip_count;
-> +	int trip_type;
-> +
-> +	if (trip < 0 || trip >=3D max_trip)
-> +		return -EINVAL;
-> +
-> +	trip_type =3D th_zone->sensor_conf->trip_data.trip_type[trip];
-> +
-> +	if (trip_type =3D=3D SW_TRIP)
->  		*type =3D THERMAL_TRIP_CRITICAL;
-> -		break;
-> -	default:
-> +	else if (trip_type =3D=3D THROTTLE_ACTIVE)
-> +		*type =3D THERMAL_TRIP_ACTIVE;
-> +	else if (trip_type =3D=3D THROTTLE_PASSIVE)
-> +		*type =3D THERMAL_TRIP_PASSIVE;
-> +	else
->  		return -EINVAL;
-> -	}
-> +
->  	return 0;
->  }
-> =20
-> @@ -98,8 +105,9 @@ static int exynos_get_trip_temp(struct thermal_zone_=
-device *thermal, int trip,
->  				unsigned long *temp)
->  {
->  	struct exynos_thermal_zone *th_zone =3D thermal->devdata;
-> +	int max_trip =3D th_zone->sensor_conf->trip_data.trip_count;
-> =20
-> -	if (trip < GET_TRIP(MONITOR_ZONE) || trip > GET_TRIP(PANIC_ZONE))
-> +	if (trip < 0 || trip >=3D max_trip)
->  		return -EINVAL;
-> =20
->  	*temp =3D th_zone->sensor_conf->trip_data.trip_val[trip];
-> @@ -113,10 +121,10 @@ static int exynos_get_trip_temp(struct thermal_zo=
-ne_device *thermal, int trip,
->  static int exynos_get_crit_temp(struct thermal_zone_device *thermal,
->  				unsigned long *temp)
->  {
-> -	int ret;
-> -	/* Panic zone */
-> -	ret =3D exynos_get_trip_temp(thermal, GET_TRIP(PANIC_ZONE), temp);
-> -	return ret;
-> +	struct exynos_thermal_zone *th_zone =3D thermal->devdata;
-> +	int max_trip =3D th_zone->sensor_conf->trip_data.trip_count;
-> +	/* Get the temp of highest trip*/
-> +	return exynos_get_trip_temp(thermal, max_trip - 1, temp);
->  }
-> =20
->  /* Bind callback functions for thermal zone */
-> @@ -348,19 +356,28 @@ int exynos_register_thermal(struct thermal_sensor=
-_conf *sensor_conf)
->  		return -ENOMEM;
-> =20
->  	th_zone->sensor_conf =3D sensor_conf;
-> -	cpumask_set_cpu(0, &mask_val);
-> -	th_zone->cool_dev[0] =3D cpufreq_cooling_register(&mask_val);
-> -	if (IS_ERR(th_zone->cool_dev[0])) {
-> -		pr_err("Failed to register cpufreq cooling device\n");
-> -		ret =3D -EINVAL;
-> -		goto err_unregister;
-> +	/*
-> +	 * TODO: 1) Handle multiple cooling devices in a thermal zone
-> +	 *	 2) Add a flag/name in cooling info to map to specific
-> +	 *	 sensor
-> +	 */
-> +	if (sensor_conf->cooling_data.freq_clip_count > 0) {
-> +		cpumask_set_cpu(0, &mask_val);
-> +		th_zone->cool_dev[th_zone->cool_dev_size] =3D
-> +					cpufreq_cooling_register(&mask_val);
-> +		if (IS_ERR(th_zone->cool_dev[0])) {
+[...]
 
-If you assign to 'th_zone->cool_dev[th_zone->cool_dev_size]', you have
-to check against the same, not against th_zone->cool_dev[0].
+>>> -	select SAMSUNG_HRT
+>>> +	select CLKSRC_SAMSUNG_PWM
+>>
+>> Please put this in alphabetical ordering, this is just replacing though.
+>
+> Argh, I always forget about this ordering, sorry.
+>
 
-> +			pr_err("Failed to register cpufreq cooling device\n");
-> +			ret =3D -EINVAL;
-> +			goto err_unregister;
-> +		}
-> +		th_zone->cool_dev_size++;
->  	}
-> -	th_zone->cool_dev_size++;
-> =20
-> -	th_zone->therm_dev =3D thermal_zone_device_register(sensor_conf->name=
-,
-> -			EXYNOS_ZONE_COUNT, 0, th_zone, &exynos_dev_ops, NULL, 0,
-> -			sensor_conf->trip_data.trigger_falling ?
-> -			0 : IDLE_INTERVAL);
-> +	th_zone->therm_dev =3D thermal_zone_device_register(
-> +			sensor_conf->name, sensor_conf->trip_data.trip_count,
-> +			0, th_zone, &exynos_dev_ops, NULL, 0,
-> +			sensor_conf->trip_data.trigger_falling ? 0 :
-> +			IDLE_INTERVAL);
-> =20
->  	if (IS_ERR(th_zone->therm_dev)) {
->  		pr_err("Failed to register thermal zone device\n");
-> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/=
-thermal/samsung/exynos_thermal_common.h
-> index 6ca3096..bfcf69e 100644
-> --- a/drivers/thermal/samsung/exynos_thermal_common.h
-> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
-> @@ -42,8 +42,6 @@
->  #define GET_ZONE(trip) (trip + 2)
->  #define GET_TRIP(zone) (zone - 2)
-> =20
-> -#define EXYNOS_ZONE_COUNT	3
-> -
->  enum trigger_type {
->  	THROTTLE_ACTIVE =3D 1,
->  	THROTTLE_PASSIVE,
-> @@ -69,6 +67,7 @@ struct freq_clip_table {
-> =20
->  struct	thermal_trip_point_conf {
->  	int trip_val[MAX_TRIP_COUNT];
-> +	int trip_type[MAX_TRIP_COUNT];
->  	int trip_count;
->  	unsigned char trigger_falling;
->  };
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
-sung/exynos_tmu.c
-> index 40e0cfd..acbd295 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -509,9 +509,12 @@ static int exynos_tmu_probe(struct platform_device=
- *pdev)
->  			pdata->trigger_enable[1] + pdata->trigger_enable[2]+
->  			pdata->trigger_enable[3];
-> =20
-> -	for (i =3D 0; i < exynos_sensor_conf.trip_data.trip_count; i++)
-> +	for (i =3D 0; i < exynos_sensor_conf.trip_data.trip_count; i++) {
->  		exynos_sensor_conf.trip_data.trip_val[i] =3D
->  			pdata->threshold + pdata->trigger_levels[i];
-> +		exynos_sensor_conf.trip_data.trip_type[i] =3D
-> +					pdata->trigger_type[i];
-> +	}
-> =20
->  	exynos_sensor_conf.trip_data.trigger_falling =3D pdata->threshold_fal=
-ling;
-> =20
->=20
+no problem ;-)
 
+[...]
 
---=20
-You have got to be excited about what you are doing. (L. Lamport)
+>> Let me fix it...
 
-Eduardo Valentin
+like following :-)
 
+8<----------------------------------------------
 
-------enig2FXXBJGDPEAOLWXBDJGKO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 49d993c..734d85b 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -694,6 +694,7 @@ config ARCH_S3C24XX
+  	select ARCH_REQUIRE_GPIOLIB
+  	select CLKDEV_LOOKUP
+  	select CLKSRC_MMIO
++	select CLKSRC_SAMSUNG_PWM
+  	select GENERIC_CLOCKEVENTS
+  	select HAVE_CLK
+  	select HAVE_S3C2410_I2C if I2C
+@@ -715,6 +716,7 @@ config ARCH_S3C64XX
+  	select ARM_VIC
+  	select CLKDEV_LOOKUP
+  	select CLKSRC_MMIO
++	select CLKSRC_SAMSUNG_PWM
+  	select CPU_V6
+  	select GENERIC_CLOCKEVENTS
+  	select HAVE_CLK
+@@ -737,6 +739,7 @@ config ARCH_S5P64X0
+  	bool "Samsung S5P6440 S5P6450"
+  	select CLKDEV_LOOKUP
+  	select CLKSRC_MMIO
++	select CLKSRC_SAMSUNG_PWM
+  	select CPU_V6
+  	select GENERIC_CLOCKEVENTS
+  	select HAVE_CLK
+@@ -753,6 +756,7 @@ config ARCH_S5PC100
+  	select ARCH_REQUIRE_GPIOLIB
+  	select CLKDEV_LOOKUP
+  	select CLKSRC_MMIO
++	select CLKSRC_SAMSUNG_PWM
+  	select CPU_V7
+  	select GENERIC_CLOCKEVENTS
+  	select HAVE_CLK
+@@ -770,6 +774,7 @@ config ARCH_S5PV210
+  	select ARCH_SPARSEMEM_ENABLE
+  	select CLKDEV_LOOKUP
+  	select CLKSRC_MMIO
++	select CLKSRC_SAMSUNG_PWM
+  	select CPU_V7
+  	select GENERIC_CLOCKEVENTS
+  	select HAVE_CLK
+diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+index f2f7088..8124ec7 100644
+--- a/arch/arm/mach-s3c24xx/Kconfig
++++ b/arch/arm/mach-s3c24xx/Kconfig
+@@ -30,7 +30,6 @@ config CPU_S3C2410
+  	select S3C2410_CLOCK
+  	select S3C2410_CPUFREQ if CPU_FREQ_S3C24XX
+  	select S3C2410_PM if PM
+-	select SAMSUNG_HRT
+  	help
+  	  Support for S3C2410 and S3C2410A family from the S3C24XX line
+  	  of Samsung Mobile CPUs.
+@@ -41,7 +40,6 @@ config CPU_S3C2412
+  	select CPU_LLSERIAL_S3C2440
+  	select S3C2412_DMA if S3C24XX_DMA
+  	select S3C2412_PM if PM
+-	select SAMSUNG_HRT
+  	help
+  	  Support for the S3C2412 and S3C2413 SoCs from the S3C24XX line
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+@@ -53,7 +51,6 @@ config CPU_S3C2416
+  	select S3C2443_COMMON
+  	select S3C2443_DMA if S3C24XX_DMA
+  	select SAMSUNG_CLKSRC
+-	select SAMSUNG_HRT
+  	help
+  	  Support for the S3C2416 SoC from the S3C24XX line
 
-iF4EAREIAAYFAlHIaJcACgkQCXcVR3XQvP3EpwD/bgSLD8BwPXrgDtwz7S23AWaA
-dOMGK7jtDil4fRPeA98A/2IBUwgAmCih67iEFMo/jbV6NbuRx92NIS+pSs4qgJei
-=wTFc
------END PGP SIGNATURE-----
+@@ -64,7 +61,6 @@ config CPU_S3C2440
+  	select S3C2410_CLOCK
+  	select S3C2410_PM if PM
+  	select S3C2440_DMA if S3C24XX_DMA
+-	select SAMSUNG_HRT
+  	help
+  	  Support for S3C2440 Samsung Mobile CPU based systems.
 
-------enig2FXXBJGDPEAOLWXBDJGKO--
+@@ -74,7 +70,6 @@ config CPU_S3C2442
+  	select CPU_LLSERIAL_S3C2440
+  	select S3C2410_CLOCK
+  	select S3C2410_PM if PM
+-	select SAMSUNG_HRT
+  	help
+  	  Support for S3C2442 Samsung Mobile CPU based systems.
+
+@@ -89,7 +84,6 @@ config CPU_S3C2443
+  	select S3C2443_COMMON
+  	select S3C2443_DMA if S3C24XX_DMA
+  	select SAMSUNG_CLKSRC
+-	select SAMSUNG_HRT
+  	help
+  	  Support for the S3C2443 SoC from the S3C24XX line
+
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 2057853..041da51 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -17,13 +17,11 @@ config PLAT_S3C64XX
+  # Configuration options for the S3C6410 CPU
+
+  config CPU_S3C6400
+-	select SAMSUNG_HRT
+  	bool
+  	help
+  	  Enable S3C6400 CPU support
+
+  config CPU_S3C6410
+-	select SAMSUNG_HRT
+  	bool
+  	help
+  	  Enable S3C6410 CPU support
+diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
+index 5a707bd..bb2111b 100644
+--- a/arch/arm/mach-s5p64x0/Kconfig
++++ b/arch/arm/mach-s5p64x0/Kconfig
+@@ -11,14 +11,12 @@ config CPU_S5P6440
+  	bool
+  	select S5P_SLEEP if PM
+  	select SAMSUNG_DMADEV
+-	select SAMSUNG_HRT
+  	select SAMSUNG_WAKEMASK if PM
+  	help
+  	  Enable S5P6440 CPU support
+
+  config CPU_S5P6450
+  	bool
+-	select SAMSUNG_HRT
+  	select S5P_SLEEP if PM
+  	select SAMSUNG_DMADEV
+  	select SAMSUNG_WAKEMASK if PM
+diff --git a/arch/arm/mach-s5pc100/Kconfig b/arch/arm/mach-s5pc100/Kconfig
+index 2f456a4..15170be 100644
+--- a/arch/arm/mach-s5pc100/Kconfig
++++ b/arch/arm/mach-s5pc100/Kconfig
+@@ -11,7 +11,6 @@ config CPU_S5PC100
+  	bool
+  	select S5P_EXT_INT
+  	select SAMSUNG_DMADEV
+-	select SAMSUNG_HRT
+  	help
+  	  Enable S5PC100 CPU support
+
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 0963283..caaedaf 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -15,7 +15,6 @@ config CPU_S5PV210
+  	select S5P_PM if PM
+  	select S5P_SLEEP if PM
+  	select SAMSUNG_DMADEV
+-	select SAMSUNG_HRT
+  	help
+  	  Enable S5PV210 CPU support
+-- 
+
+Thanks.
+- Kukjin
