@@ -1,86 +1,119 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 08/15] pwm: Add new pwm-samsung driver
-Date: Mon, 24 Jun 2013 22:28:03 +0200
-Message-ID: <20130624202802.GC7163@mithrandir>
-References: <1370467100-10820-1-git-send-email-tomasz.figa@gmail.com>
- <24964129.e56nj79VjR@flatron>
- <20130624195020.GA7163@mithrandir>
- <8756440.8o3uDlCqg5@flatron>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
+Date: Mon, 24 Jun 2013 22:32:55 +0200
+Message-ID: <3059286.XLVAQe4lge@flatron>
+References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <1888817.YsvuAKkSk2@flatron> <20130624201326.GB7163@mithrandir>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="V88s5gaDVPzZ0KCq"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:39599 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750745Ab3FXU2I (ORCPT
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:38412 "EHLO
+	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751251Ab3FXUcz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 16:28:08 -0400
-Content-Disposition: inline
-In-Reply-To: <8756440.8o3uDlCqg5@flatron>
+	Mon, 24 Jun 2013 16:32:55 -0400
+In-Reply-To: <20130624201326.GB7163@mithrandir>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
+On Monday 24 of June 2013 22:13:27 Thierry Reding wrote:
+> On Mon, Jun 24, 2013 at 08:31:43PM +0200, Tomasz Figa wrote:
+> > On Monday 24 of June 2013 19:49:04 Thierry Reding wrote:
+> > > On Tue, Jun 25, 2013 at 12:22:42AM +0900, Kukjin Kim wrote:
+[snip]
+> > > > 
+> > > > Just note, checkpatch complains following, so fixed to use
+> > > > pr_warn()
+> > > > when I applied.
+> > > 
+> > > Note that you can't apply patches that touch the PWM tree without my
+> > > Ack and I already mentioned that the current way this driver is
+> > > written isn't acceptable.
+> > > 
+> > > So either you fix it properly, or if everybody except me thinks we
+> > > don't need a proper design for drivers anymore, then the only way
+> > > I'll accept this driver into the PWM tree is if you put a really
+> > > big comment at the top of the file saying that the driver is badly
+> > > designed on purpose and that people shouldn't be using it as a
+> > > reference.
+> > 
+> > Sorry, I don't understand what problem you have with this design. It
+> > completely meets all the requirements applicable on hardware platforms
+> > it is (and going to be) used on.
+> 
+> My main problem with it is that there is no design. And as such it sets
+> a bad example. If I accept this into the PWM tree as is then what am I
+> supposed to tell the next person that comes up with a similarly broken
+> driver?
 
---V88s5gaDVPzZ0KCq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I wouldn't call it no design. It's a simple (trivial) design.
 
-On Mon, Jun 24, 2013 at 10:03:12PM +0200, Tomasz Figa wrote:
-[...]
-> OK. So we just need to prevent people from blindly copying this.
->=20
-> Wouldn't adding a big comment about why this is enough for this platform=
-=20
-> and why anything more sophisticated would be just overengineering in this=
-=20
-> case be enough?
+Simple design is often better than a complex one. In this case it indeed 
+is, because it doesn't add code that serves no purpose, without any 
+functional drawbacks.
 
-That'd be sugarcoating. I don't think this is a good idea at all and
-using a properly encapsulated driver with proper shared API to access
-shared registers wouldn't be overengineering in my opinion. It would
-in fact be good engineering.
+> > The only thing it would do in a suboptimal way would be
+> > synchronization of register accesses for multiple instances of the
+> > driver - one spinlock would be used for all of them. This is
+> > insignificant because there is no time critical code in this driver
+> > and it is really unlikely that a SoC with multiple instances of this
+> > IP block shows up.
+> 
+> I've had people give me guarantees that this and that would *never*
+> happen only to change their minds 6 months down the road. And again,
+> even if it was actually true in this case, it isn't a valid excuse for
+> setting a bad example.
 
-> This driver is already a lot better than previous one, because as opposed=
-=20
-> to the old one, it gives synchronization that is technically correct. Not=
-=20
-> even saying about a lot of other things fixed, like multiplatform-
-> awareness, OF support, coding style, proper handling of dividers, etc.,=
-=20
-> etc. It would be really bad if all this was put to waste...
+Well, even if that happens, there is nothing on the way stopping from 
+extending this design with something that will work optimally for multiple 
+instances. For all currently supported platforms solution used in this 
+series is enough.
 
-I certainly wouldn't want any of this going to waste, and quite frankly
-letting you get away with just the comment is already more compromise
-than I really like.
+> > Channel reservation between clocksource and PWM drivers is completely
+> > correct, relying on the fact that the former can only use channels
+> > _without_ outputs and the latter can only use channels _with_ outputs.
+> > Do I have to add that there can't be a channel both with and without
+> > output?
+> The issue is that you can't really ensure that both the clocksource and
+> PWM drivers use the same variant and therefore might be using different
+> masks.
 
-The TI drivers used to have a similar problem and I required them to
-come up with a good solution. It'd be fair to require the same of you.
-But maybe I'm getting soft.
+Output mask is _not_ a part of the constant variant data. It is stored in 
+the same struct, which is to simplify passing SoC-specific parameters from 
+platform code to both drivers, but it is not defined as a constant 
+anywhere in drivers.
 
-Thierry
+As I already explained in one of my previous replies, it is either parsed 
+from DT (samsung,pwm-outputs property) or passed through the variant 
+struct as platform_data from board files. It isn't possible for both 
+drivers to get different mask values.
 
---V88s5gaDVPzZ0KCq
-Content-Type: application/pgp-signature
+> > So the only place for improvement here, without starting
+> > overengineering things, is a comment about the purpose of the
+> > spinlock and why it can be used in our case.
+> 
+> I disagree. You actually even had a version with a halfway decent design
+> at some point and it was discarded. I don't think I'm asking for all
+> that much here. I even gave you the option of admitting that the driver
+> was suboptimal. All I request in return is that you mention that in the
+> code so that either somebody else might go and clean things up or at
+> least that nobody will copy from a bad example.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+What about:
 
-iQIcBAEBAgAGBQJRyKvSAAoJEN0jrNd/PrOhQLMQAKIWVK5+aqi83VOytEbHTHJ/
-DVzC40f0TWzzjgiaToUJEqeusBdeFM7F40GxbUUDqI8QWN02NpKzsCzbCQfNSL5p
-DBbIJ2PzPVp6R9FlYv9Mlw/XjDw0/rQDyksOSdMAt5DHujX+IPuXCarnD5hDDwFr
-9d7NMg0OUt3BExQbPz1py3y8nU3w8dYq2xpHNiK3UuEeeBePP0IlIswlGDYQWpLY
-Yy5zhqc71uQQkJ0SmEkVpcKM6OgbEp6ikWud9UObs5HTwTsvTtYnKj7s0C8MF9wF
-3RedVxocpHxg0hqnAaaBKCDIhVknYH3ZGGweqJMqqBrATigxzstJqZ1KKrEZqPPr
-Jgmq/ibpyiI7SzVj2ETCJFnmXs8BMKXzEnb/RuLxUR/IN5vKKkEKivG9G2Dg+2Rt
-xFdpL2iQbRUUxSVj6aNVfUf5eN09O9o/6B8pDYWFP20DHvtLuWIAxe6MyerpjRxj
-X1PEkW4DX9+I/lqNA4nUAjIpFGvy41Ijtb99MetVVrR8ouyQ8ygXhDdim9u8v+vz
-4iOV4dBsvXTqPW6GZiYx7KVVVjO23OxP0f8cwDN8TdFneSswZ6d61piceF4mC5Zp
-1K4RvRmqENrgHTRG3NS4JjukfKSPmqcZWNXsoLsVzMqjzV44IYEAPt9ZiqYyVUZU
-ZmmaRwb9Px4g0un2xdOa
-=2WhO
------END PGP SIGNATURE-----
+/*
+ * PWM block is shared between pwm-samsung and samsung_pwm_timer drivers
+ * and some registers need access synchronization. If both drivers are
+ * compiled in, the spinlock is defined in the clocksource driver,
+ * otherwise following definition is used.
+ *
+ * Currently we do not need any more complex synchronization method 
+ * because all the supported SoCs contain only one instance of the PWM 
+ * IP. Should this change, both drivers will need to be modified to
+ * properly synchronize accesses to particular instances.
+ */
 
---V88s5gaDVPzZ0KCq--
+Best regards,
+Tomasz
