@@ -1,141 +1,92 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 8/8] ARM: dts: Add camera device nodes for Exynos4412 TRATS2
- board
-Date: Mon, 24 Jun 2013 20:05:51 +0200
-Message-ID: <1372097151-18122-9-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 4/8] ARM: dts: Use generic DMA bindings for Exynos4 SPI
+ devices
+Date: Mon, 24 Jun 2013 20:17:02 +0200
+Message-ID: <51C88D1E.90203@samsung.com>
 References: <1372097151-18122-1-git-send-email-s.nawrocki@samsung.com>
+ <1372097151-18122-5-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44132 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752935Ab3FXSHP (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:52394 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752123Ab3FXSRG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 14:07:15 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
+	Mon, 24 Jun 2013 14:17:06 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOW0060RSZYFAR0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 25 Jun 2013 03:07:14 +0900 (KST)
-In-reply-to: <1372097151-18122-1-git-send-email-s.nawrocki@samsung.com>
+ 17 2011)) with ESMTP id <0MOW004CZTGAMI40@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Jun 2013 19:17:04 +0100 (BST)
+In-reply-to: <1372097151-18122-5-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
-Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org
 
-This patch enables the front camera using the internal
-camera ISP (FIMC-IS).
+On 06/24/2013 08:05 PM, Sylwester Nawrocki wrote:
+> The Exynos4 SPI controller uses the PL330 DMA controller which has
+> migrated to the generic DMA bindings since commit b5be04d35dbb2e00
+> "spi: s3c64xx: Modify SPI driver to use generic DMA DT support".
+> Use the generic bindings to specify the corresponding DMA to make
+> the SPI usable again on Exynos4x12 SOCs.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts |   91 +++++++++++++++++++++++++++++++
- 1 file changed, 91 insertions(+)
+Huh, I've forgotten to correct this commit description, since it was
+originally written with different related commit in mind.
+Kgene, unless I post v3, could you amend the above with:
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index b9de3b5..e9fb3de 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -62,6 +62,15 @@
- 			enable-active-high;
- 		};
- 
-+		cam_io_reg: voltage-regulator@3 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "CAM_SENSOR_A";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpm0 2 0>;
-+			enable-active-high;
-+		};
-+
- 		/* More to come */
- 	};
- 
-@@ -472,4 +481,86 @@
- 			gpios = <&gpj0 7 0>;
- 		};
- 	};
-+
-+	camera {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&cam_port_b_clk_active>;
-+		status = "okay";
-+
-+		fimc_0: fimc@11800000 {
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+		};
-+
-+		fimc_1: fimc@11810000 {
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+		};
-+
-+		fimc_2: fimc@11820000 {
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+		};
-+
-+		fimc_3: fimc@11830000 {
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+		};
-+
-+		csis_1: csis@11890000 {
-+			vddcore-supply = <&ldo8_reg>;
-+			vddio-supply = <&ldo10_reg>;
-+			clock-frequency = <160000000>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "okay";
-+
-+			/* Camera D (4) MIPI CSI-2 (CSIS1) */
-+			port@4 {
-+				reg = <4>;
-+				csis1_ep: endpoint {
-+					remote-endpoint = <&is_s5k6a3_ep>;
-+					data-lanes = <1>;
-+					samsung,csis-hs-settle = <18>;
-+					samsung,csis-wclk;
-+				};
-+			};
-+		};
-+
-+		fimc_lite_0: fimc-lite@12390000 {
-+			status = "okay";
-+		};
-+
-+		fimc_lite_1: fimc-lite@123A0000 {
-+			status = "okay";
-+		};
-+
-+		fimc-is@12000000 {
-+			pinctrl-0 = <&fimc_is_uart>;
-+			pinctrl-names = "default";
-+			status = "okay";
-+
-+			i2c1_isp: i2c-isp@12140000 {
-+				pinctrl-0 = <&fimc_is_i2c1>;
-+				pinctrl-names = "default";
-+
-+				s5k6a3@10 {
-+					compatible = "samsung,s5k6a3";
-+					reg = <0x10>;
-+					svdda-supply = <&cam_io_reg>;
-+					svddio-supply = <&ldo19_reg>;
-+					clock-frequency = <24000000>;
-+					samsung,camclk-out = <1>;
-+					gpios = <&gpm1 6 0>;
-+
-+					port {
-+						is_s5k6a3_ep: endpoint {
-+							remote-endpoint = <&csis1_ep>;
-+							data-lanes = <1>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
- };
--- 
-1.7.9.5
+The Exynos4 SPI controller has migrated to the generic DMA bindings
+since commit b5be04d35dbb2e00
+"spi: s3c64xx: Modify SPI driver to use generic DMA DT support".
+Use the generic bindings to specify the corresponding DMA to make
+the SPI usable again on Exynos4x12 SoCs.
+
+? I guess this is going to be for 3.12 only now ?
+
+Thanks,
+Sylwester
+
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi |   12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 3f94fe8..bce2254 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -297,8 +297,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x13920000 0x100>;
+>  		interrupts = <0 66 0>;
+> -		tx-dma-channel = <&pdma0 7>; /* preliminary */
+> -		rx-dma-channel = <&pdma0 6>; /* preliminary */
+> +		dmas = <&pdma0 7>, <&pdma0 6>;
+> +		dma-names = "tx", "rx";
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		clocks = <&clock 327>, <&clock 159>;
+> @@ -312,8 +312,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x13930000 0x100>;
+>  		interrupts = <0 67 0>;
+> -		tx-dma-channel = <&pdma1 7>; /* preliminary */
+> -		rx-dma-channel = <&pdma1 6>; /* preliminary */
+> +		dmas = <&pdma1 7>, <&pdma1 6>;
+> +		dma-names = "tx", "rx";
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		clocks = <&clock 328>, <&clock 160>;
+> @@ -327,8 +327,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x13940000 0x100>;
+>  		interrupts = <0 68 0>;
+> -		tx-dma-channel = <&pdma0 9>; /* preliminary */
+> -		rx-dma-channel = <&pdma0 8>; /* preliminary */
+> +		dmas = <&pdma0 9>, <&pdma0 8>;
+> +		dma-names = "tx", "rx";
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  		clocks = <&clock 329>, <&clock 161>;
