@@ -1,52 +1,108 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 0/8] ARM: dts: Add camera and magnetometer support for
- TRATS2 board
-Date: Mon, 24 Jun 2013 20:05:43 +0200
-Message-ID: <1372097151-18122-1-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v2 1/8] ARM: dts: Correct camera pinctrl nodes for Exynos4x12
+ SoCs
+Date: Mon, 24 Jun 2013 20:05:44 +0200
+Message-ID: <1372097151-18122-2-git-send-email-s.nawrocki@samsung.com>
+References: <1372097151-18122-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44065 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:44076 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752288Ab3FXSGL (ORCPT
+	with ESMTP id S1752288Ab3FXSGW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 14:06:11 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+	Mon, 24 Jun 2013 14:06:22 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOW001OKSY93PE0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 25 Jun 2013 03:06:09 +0900 (KST)
+ 17 2011)) with ESMTP id <0MOW0060CSYLFAR0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 Jun 2013 03:06:22 +0900 (KST)
+In-reply-to: <1372097151-18122-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch series includes some fixes and extensions to the Exynos
-dts files to add the camera and magnetometer sensor support for TRATS2
-board. It depends on a patch from Tomasz adding initial TRATS2 board
-dts file [1].
+Add separate nodes for the CAMCLK pin and turn off pull-up on camera
+ports A, B. The video bus pins and the clock output (CAMCLK) pin need
+separate nodes since full camera port is not used in some configurations,
+e.g. for MIPI CSI-2 bus only CAMCLK is required and data/clock signal
+use separate dedicated pins.
 
-Changes since v1 (are also listed at individual patches, if any):
-  - enabled pull down in cam-port-{a, b}-clk-idle nodes (1/8)
-  - added node alias for i2c-gpio@0 I2C controller node (7/8).
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+Changes since v1:
+ - enabled pull down in cam-port-{a, b}-clk-idle nodes.
+---
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   40 ++++++++++++++++++++++++-----
+ 1 file changed, 33 insertions(+), 7 deletions(-)
 
-[1] http://www.spinics.net/lists/arm-kernel/msg253184.html
+diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+index 704290f..55ff73b 100644
+--- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
+@@ -401,13 +401,26 @@
+ 			samsung,pin-drv = <0>;
+ 		};
 
-Jacek Anaszewski (1):
-  ARM: dts: Add AK8975 device node for Exynos4412 TRATS2 board
+-		cam_port_a: cam-port-a {
++		cam_port_a_io: cam-port-a-io {
+ 			samsung,pins = "gpj0-0", "gpj0-1", "gpj0-2", "gpj0-3",
+ 					"gpj0-4", "gpj0-5", "gpj0-6", "gpj0-7",
+-					"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-3",
+-					"gpj1-4";
++					"gpj1-0", "gpj1-1", "gpj1-2", "gpj1-4";
+ 			samsung,pin-function = <2>;
+-			samsung,pin-pud = <3>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <0>;
++		};
++
++		cam_port_a_clk_active: cam-port-a-clk-active {
++			samsung,pins = "gpj1-3";
++			samsung,pin-function = <2>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
++
++		cam_port_a_clk_idle: cam-port-a-clk-idle {
++			samsung,pins = "gpj1-3";
++			samsung,pin-function = <0>;
++			samsung,pin-pud = <1>;
+ 			samsung,pin-drv = <0>;
+ 		};
+ 	};
+@@ -778,16 +791,29 @@
+ 			samsung,pin-drv = <3>;
+ 		};
 
-Sylwester Nawrocki (7):
-  ARM: dts: Correct camera pinctrl nodes for Exynos4x12 SoCs
-  ARM: dts: Add pinctrl entries for Exynos4x12 FIMC-IS peripherals
-  ARM: dts: Add ISP power domain node for Exynos4x12
-  ARM: dts: Use generic DMA bindings for Exynos4 SPI devices
-  ARM: dts: Add camera nodes for Exynos4 SoCs
-  ARM: dts: Add camera subsystem nodes to exynos4x12.dtsi
-  ARM: dts: Add camera device nodes for Exynos4412 TRATS2 board
+-		cam_port_b: cam-port-b {
++		cam_port_b_io: cam-port-b-io {
+ 			samsung,pins = "gpm0-0", "gpm0-1", "gpm0-2", "gpm0-3",
+ 					"gpm0-4", "gpm0-5", "gpm0-6", "gpm0-7",
+-					"gpm1-0", "gpm1-1", "gpm2-0", "gpm2-1",
+-					"gpm2-2";
++					"gpm1-0", "gpm1-1", "gpm2-0", "gpm2-1";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <3>;
+ 			samsung,pin-drv = <0>;
+ 		};
 
- arch/arm/boot/dts/exynos4.dtsi            |   80 +++++++++++++++++--
- arch/arm/boot/dts/exynos4412-trats2.dts   |  110 ++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   61 ++++++++++++--
- arch/arm/boot/dts/exynos4x12.dtsi         |  123 +++++++++++++++++++++++++++++
- 4 files changed, 361 insertions(+), 13 deletions(-)
-
++		cam_port_b_clk_active: cam-port-b-clk-active {
++			samsung,pins = "gpm2-2";
++			samsung,pin-function = <3>;
++			samsung,pin-pud = <0>;
++			samsung,pin-drv = <3>;
++		};
++
++		cam_port_b_clk_idle: cam-port-b-clk-idle {
++			samsung,pins = "gpm2-2";
++			samsung,pin-function = <0>;
++			samsung,pin-pud = <1>;
++			samsung,pin-drv = <0>;
++		};
++
+ 		eint0: ext-int0 {
+ 			samsung,pins = "gpx0-0";
+ 			samsung,pin-function = <0xf>;
 --
 1.7.9.5
