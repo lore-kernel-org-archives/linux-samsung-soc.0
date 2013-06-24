@@ -1,47 +1,41 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 0/2] Samsung 3rd pull-request for v3.11
-Date: Mon, 24 Jun 2013 23:23:59 +0200
-Message-ID: <201306242324.00039.arnd@arndb.de>
-References: <51C1C4BE.802@samsung.com> <51C87B3E.4000508@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH v2 01/12] dmaengine: PL08x: Refactor
+ pl08x_getbytes_chan() to lower indentation
+Date: Tue, 25 Jun 2013 00:09:14 +0200
+Message-ID: <CACRpkdYuF7Scg4n4a_EL2WW3qyFV5f5Vr-6RPohE-4O0wd=QpA@mail.gmail.com>
+References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
+ <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <51C87B3E.4000508@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday 24 June 2013, Kukjin Kim wrote:
-> On 06/19/13 23:48, Kukjin Kim wrote:
-> > Hi Arnd, Olof
-> >
-> > This is 3rd pull-request for v3.11.
-> >
-> > - pinctrl for exynos5420
-> > - update exynos clock
-> >
-> > Please see each tag in detail
-> >
-> > If any problems, please kindly let me know.
-> >
-> 
-> Arnd, Olof
-> 
-> Any concerns on this?
-> 
+On Sat, Jun 22, 2013 at 10:42 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-Sorry, I made a mistake and marked these as done in my
-email client without actually applying them. I suppose Olof
-will handle them while I'm away for a day.
+> Further patch will introduce support for PL080S, which requires some
+> things to be done conditionally, thus increasing indentation level of
+> some functions even more.
+>
+> This patch reduces indentation level of pl08x_getbytes_chan() function
+> by inverting several conditions and returning from function wherever
+> possible.
+>
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-	Arnd
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Yours,
+Linus Walleij
