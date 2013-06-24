@@ -1,87 +1,137 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
-Date: Mon, 24 Jun 2013 20:31:43 +0200
-Message-ID: <1888817.YsvuAKkSk2@flatron>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <51C86442.6090406@samsung.com> <20130624174903.GA6795@mithrandir>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] clk: exynos4: Add CLK_GET_RATE_NOCACHE flag for the Exynos4x12
+ ISP clocks
+Date: Mon, 24 Jun 2013 20:42:54 +0200
+Message-ID: <1372099374-21008-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f51.google.com ([209.85.214.51]:54535 "EHLO
-	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751971Ab3FXSbn (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:46162 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752471Ab3FXSnQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 14:31:43 -0400
-In-Reply-To: <20130624174903.GA6795@mithrandir>
+	Mon, 24 Jun 2013 14:43:16 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: mturquette@linaro.org
+Cc: linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Monday 24 of June 2013 19:49:04 Thierry Reding wrote:
-> On Tue, Jun 25, 2013 at 12:22:42AM +0900, Kukjin Kim wrote:
-> > On 06/22/13 22:06, Tomasz Figa wrote:
-> > >This patch introduces new Samsung PWM driver, which is heavily
-> > >cleaned,
-> > >multiplatform aware and supports DeviceTree based instantiation.
-> > >
-> > >Since on historical hardware PWM block can be shared with clocksource
-> > >driver, a shared spinlock is used to protect access to shared
-> > >registers, already exported from the clocksource driver.
-> > >
-> > >Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
-> > >---
-> > >
-> > >  drivers/pwm/Makefile      |   1 +
-> > >  drivers/pwm/pwm-samsung.c | 601
-> > >  ++++++++++++++++++++++++++++++++++++++++++++++ 2 files changed,
-> > >  602 insertions(+)
-> > >  create mode 100644 drivers/pwm/pwm-samsung.c
-> > >
-> > >Changes since v2:
-> > >  - Replaced __raw_{readl,writel} with {readl,writel}.
-> > >  - Corrected commit message.
-> > 
-> > [...]
-> > 
-> > >+	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, 
-val)
-> > >{
-> > >+		if (val>= SAMSUNG_PWM_NUM) {
-> > >+			pr_warning("%s: invalid channel index in 
-samsung,pwm-outputs
-> > >property\n",> 
-> > Just note, checkpatch complains following, so fixed to use pr_warn()
-> > when I applied.
-> 
-> Note that you can't apply patches that touch the PWM tree without my Ack
-> and I already mentioned that the current way this driver is written
-> isn't acceptable.
-> 
-> So either you fix it properly, or if everybody except me thinks we don't
-> need a proper design for drivers anymore, then the only way I'll accept
-> this driver into the PWM tree is if you put a really big comment at the
-> top of the file saying that the driver is badly designed on purpose and
-> that people shouldn't be using it as a reference.
+The ISP clock registers belong to the ISP power domain and may change
+their values if this power domain is switched off/on. Add
+CLK_GET_RATE_NOCACHE flags to ensure we do not rely on invalid cached
+data when setting or getting frequency of those clocks.
 
-Sorry, I don't understand what problem you have with this design. It 
-completely meets all the requirements applicable on hardware platforms it 
-is (and going to be) used on.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c |   64 ++++++++++++++++++++-----------------
+ 1 file changed, 34 insertions(+), 30 deletions(-)
 
-The only thing it would do in a suboptimal way would be synchronization of 
-register accesses for multiple instances of the driver - one spinlock 
-would be used for all of them. This is insignificant because there is no 
-time critical code in this driver and it is really unlikely that a SoC 
-with multiple instances of this IP block shows up.
-
-Channel reservation between clocksource and PWM drivers is completely 
-correct, relying on the fact that the former can only use channels 
-_without_ outputs and the latter can only use channels _with_ outputs. Do 
-I have to add that there can't be a channel both with and without output?
-
-So the only place for improvement here, without starting overengineering 
-things, is a comment about the purpose of the spinlock and why it can be 
-used in our case.
-
-Best regards,
-Tomasz
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 94c5e1a..a5d72f5 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -578,11 +578,15 @@ struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
+ 	DIV(none, "div_spi1_isp", "mout_spi1_isp", E4X12_DIV_ISP, 16, 4),
+ 	DIV(none, "div_spi1_isp_pre", "div_spi1_isp", E4X12_DIV_ISP, 20, 8),
+ 	DIV(none, "div_uart_isp", "mout_uart_isp", E4X12_DIV_ISP, 28, 4),
+-	DIV(div_isp0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
+-	DIV(div_isp1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
++	DIV_F(div_isp0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3,
++						CLK_GET_RATE_NOCACHE, 0),
++	DIV_F(div_isp1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3,
++						CLK_GET_RATE_NOCACHE, 0),
+ 	DIV(none, "div_mpwm", "div_isp1", E4X12_DIV_ISP1, 0, 3),
+-	DIV(div_mcuisp0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
+-	DIV(div_mcuisp1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
++	DIV_F(div_mcuisp0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1,
++						4, 3, CLK_GET_RATE_NOCACHE, 0),
++	DIV_F(div_mcuisp1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1,
++						8, 3, CLK_GET_RATE_NOCACHE, 0),
+ };
+ 
+ /* list of gate clocks supported in all exynos4 soc's */
+@@ -857,57 +861,57 @@ struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+ 	GATE_DA(i2s0, "samsung-i2s.0", "i2s0", "aclk100",
+ 			E4X12_GATE_IP_MAUDIO, 3, 0, 0, "iis"),
+ 	GATE(fimc_isp, "isp", "aclk200", E4X12_GATE_ISP0, 0,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(fimc_drc, "drc", "aclk200", E4X12_GATE_ISP0, 1,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(fimc_fd, "fd", "aclk200", E4X12_GATE_ISP0, 2,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(fimc_lite0, "lite0", "aclk200", E4X12_GATE_ISP0, 3,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(fimc_lite1, "lite1", "aclk200", E4X12_GATE_ISP0, 4,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(mcuisp, "mcuisp", "aclk200", E4X12_GATE_ISP0, 5,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(gicisp, "gicisp", "aclk200", E4X12_GATE_ISP0, 7,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(smmu_isp, "smmu_isp", "aclk200", E4X12_GATE_ISP0, 8,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(smmu_drc, "smmu_drc", "aclk200", E4X12_GATE_ISP0, 9,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(smmu_fd, "smmu_fd", "aclk200", E4X12_GATE_ISP0, 10,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(smmu_lite0, "smmu_lite0", "aclk200", E4X12_GATE_ISP0, 11,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(smmu_lite1, "smmu_lite1", "aclk200", E4X12_GATE_ISP0, 12,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(ppmuispmx, "ppmuispmx", "aclk200", E4X12_GATE_ISP0, 20,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(ppmuispx, "ppmuispx", "aclk200", E4X12_GATE_ISP0, 21,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(mcuctl_isp, "mcuctl_isp", "aclk200", E4X12_GATE_ISP0, 23,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(mpwm_isp, "mpwm_isp", "aclk200", E4X12_GATE_ISP0, 24,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(i2c0_isp, "i2c0_isp", "aclk200", E4X12_GATE_ISP0, 25,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(i2c1_isp, "i2c1_isp", "aclk200", E4X12_GATE_ISP0, 26,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(mtcadc_isp, "mtcadc_isp", "aclk200", E4X12_GATE_ISP0, 27,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(pwm_isp, "pwm_isp", "aclk200", E4X12_GATE_ISP0, 28,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(wdt_isp, "wdt_isp", "aclk200", E4X12_GATE_ISP0, 30,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(uart_isp, "uart_isp", "aclk200", E4X12_GATE_ISP0, 31,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(asyncaxim, "asyncaxim", "aclk200", E4X12_GATE_ISP1, 0,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(smmu_ispcx, "smmu_ispcx", "aclk200", E4X12_GATE_ISP1, 4,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(spi0_isp, "spi0_isp", "aclk200", E4X12_GATE_ISP1, 12,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ 	GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
+-			CLK_IGNORE_UNUSED, 0),
++			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
+ };
+ 
+ /*
+-- 
+1.7.9.5
