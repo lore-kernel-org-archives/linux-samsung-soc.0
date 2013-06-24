@@ -1,53 +1,200 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and
- PLL36xx for samsung SoCs
-Date: Mon, 24 Jun 2013 12:02:27 -0700
-Message-ID: <20130624190227.20448.68120@quantum>
-References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
- <CAKew6eUOy4=D08v_iq7CTRY5gvt37VAN7Z7WOr2Yt25znDJb2g@mail.gmail.com>
- <CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
- <1524664.UCV47tfIRU@flatron> <20130621163143.9136.28807@quantum>
- <51C85F8F.9050501@samsung.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH V7 25/30] thermal: exynos: Add hardware mode thermal calibration
+ support
+Date: Mon, 24 Jun 2013 15:39:21 -0400
+Message-ID: <51C8A069.5010807@ti.com>
+References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com> <1372071051-3167-26-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <51C85F8F.9050501@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="----enig2KUNLELTJCEMURLBSUIGO"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1372071051-3167-26-git-send-email-amit.daniel@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Kukjin Kim (2013-06-24 08:02:39)
-> On 06/22/13 01:31, Mike Turquette wrote:
-> >
-> > Acked-by: Mike Turquette<mturquette@linaro.org>
-> >
-> > Or I can take this through the clk tree. Either way is fine.
-> >
-> Mike, please go ahead taking this series into the clk tree for 3.11.
+------enig2KUNLELTJCEMURLBSUIGO
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Actually it might be better for you to take it. Patch #5 relies on
-drivers/clk/samsung/clk-exynos5420.c which only exists in the samsung
-tree.  It was introduced by commit 1609027f, "clk: exynos5420: register
-clocks using common clock framework".
+On 24-06-2013 06:50, Amit Daniel Kachhap wrote:
+> This patch adds support for h/w mode calibration in the TMU controller.=
 
-And these patches need to be applied with some fuzz to the clk tree due
-to other changes which are not in my tree and only present in yours.
+> Soc's like 5440 support this features. The h/w bits needed for calibrat=
+ion
+> setting are same as that of enum calibration_type.
+>=20
+> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c      |   15 +++++++++++++++
+>  drivers/thermal/samsung/exynos_tmu.h      |    6 ++++++
+>  drivers/thermal/samsung/exynos_tmu_data.c |    2 ++
+>  drivers/thermal/samsung/exynos_tmu_data.h |    2 ++
+>  4 files changed, 25 insertions(+), 0 deletions(-)
+>=20
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
+sung/exynos_tmu.c
+> index 3fac0f9..34b999b 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -73,6 +73,9 @@ static int temp_to_code(struct exynos_tmu_data *data,=
+ u8 temp)
+>  	struct exynos_tmu_platform_data *pdata =3D data->pdata;
+>  	int temp_code;
+> =20
+> +	if (pdata->cal_mode =3D=3D HW_MODE)
+> +		return temp;
+> +
+>  	if (data->soc =3D=3D SOC_ARCH_EXYNOS4210)
+>  		/* temp should range between 25 and 125 */
+>  		if (temp < 25 || temp > 125) {
+> @@ -107,6 +110,9 @@ static int code_to_temp(struct exynos_tmu_data *dat=
+a, u8 temp_code)
+>  	struct exynos_tmu_platform_data *pdata =3D data->pdata;
+>  	int temp;
+> =20
+> +	if (pdata->cal_mode =3D=3D HW_MODE)
+> +		return temp_code;
+> +
+>  	if (data->soc =3D=3D SOC_ARCH_EXYNOS4210)
+>  		/* temp_code should range between 75 and 175 */
+>  		if (temp_code < 75 || temp_code > 175) {
+> @@ -155,6 +161,9 @@ static int exynos_tmu_initialize(struct platform_de=
+vice *pdev)
+>  	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
+>  		__raw_writel(1, data->base + reg->triminfo_ctrl);
+> =20
+> +	if (pdata->cal_mode =3D=3D HW_MODE)
+> +		goto skip_calib_data;
+> +
+>  	/* Save trimming info in order to perform calibration */
+>  	if (data->soc =3D=3D SOC_ARCH_EXYNOS5440) {
+>  		/*
+> @@ -190,6 +199,7 @@ static int exynos_tmu_initialize(struct platform_de=
+vice *pdev)
+>  			(pdata->efuse_value >> reg->triminfo_85_shift) &
+>  			EXYNOS_TMU_TEMP_MASK;
+> =20
+> +skip_calib_data:
+>  	if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
+>  		dev_err(&pdev->dev, "Invalid max trigger level\n");
+>  		goto out;
+> @@ -320,6 +330,11 @@ static void exynos_tmu_control(struct platform_dev=
+ice *pdev, bool on)
+>  		con |=3D (pdata->noise_cancel_mode << reg->therm_trip_mode_shift);
+>  	}
+> =20
+> +	if (pdata->cal_mode =3D=3D HW_MODE) {
+> +		con &=3D ~(reg->calib_mode_mask << reg->calib_mode_shift);
+> +		con |=3D pdata->cal_type << reg->calib_mode_shift;
 
-The best two options are either for you to take this series or it can be
-rebased on top of clk-next, after which I'll apply it.
+Same comment as in patch v6 still applies. The above statement is a bit
+worrying because you have not defined what values cal_type can assume.
 
-Regards,
-Mike
+Here is how the type of cal_type is defined:
+enum calibration_type {
+	TYPE_ONE_POINT_TRIMMING,
+	TYPE_TWO_POINT_TRIMMING,
+	TYPE_NONE,
+};
 
-> 
-> Thanks,
-> - Kukjin
+=2E..
+
+	enum calibration_type cal_type;
+
+If you got specific bit values for each corresponding type above, I
+would suggest defining them explicitly, before doing bitwise operations.
+This is to reduce bug introduction in the future.
+
+> +	}
+> +
+>  	if (on) {
+>  		con |=3D (1 << reg->core_en_shift);
+>  		interrupt_en =3D
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sam=
+sung/exynos_tmu.h
+> index 25c48d4..60d863c 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -90,6 +90,10 @@ enum soc_type {
+>   * @buf_slope_sel_shift: shift bits of amplifier gain value in tmu_ctr=
+l
+>  	register.
+>   * @buf_slope_sel_mask: mask bits of amplifier gain value in tmu_ctrl =
+register.
+> + * @calib_mode_shift: shift bits of calibration mode value in tmu_ctrl=
+
+> +	register.
+> + * @calib_mode_mask: mask bits of calibration mode value in tmu_ctrl
+> +	register.
+>   * @therm_trip_tq_en_shift: shift bits of thermal trip enable by TQ pi=
+n in
+>  	tmu_ctrl register.
+>   * @core_en_shift: shift bits of TMU core enable bit in tmu_ctrl regis=
+ter.
+> @@ -151,6 +155,8 @@ struct exynos_tmu_registers {
+>  	u32	therm_trip_en_shift;
+>  	u32	buf_slope_sel_shift;
+>  	u32	buf_slope_sel_mask;
+> +	u32	calib_mode_shift;
+> +	u32	calib_mode_mask;
+>  	u32	therm_trip_tq_en_shift;
+>  	u32	core_en_shift;
+> =20
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/therma=
+l/samsung/exynos_tmu_data.c
+> index 5952915..9002499 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> @@ -189,6 +189,8 @@ static const struct exynos_tmu_registers exynos5440=
+_tmu_registers =3D {
+>  	.therm_trip_en_shift =3D EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
+>  	.buf_slope_sel_shift =3D EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
+>  	.buf_slope_sel_mask =3D EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
+> +	.calib_mode_shift =3D EXYNOS_TMU_CALIB_MODE_SHIFT,
+> +	.calib_mode_mask =3D EXYNOS_TMU_CALIB_MODE_MASK,
+>  	.core_en_shift =3D EXYNOS_TMU_CORE_EN_SHIFT,
+>  	.tmu_status =3D EXYNOS5440_TMU_S0_7_STATUS,
+>  	.tmu_cur_temp =3D EXYNOS5440_TMU_S0_7_TEMP,
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therma=
+l/samsung/exynos_tmu_data.h
+> index 43ce5fb..dc7feb5 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> @@ -75,6 +75,8 @@
+>  #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
+>  #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
+>  #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
+> +#define EXYNOS_TMU_CALIB_MODE_SHIFT	4
+> +#define EXYNOS_TMU_CALIB_MODE_MASK	0x3
+> =20
+>  #define EXYNOS_TMU_INTEN_RISE0_SHIFT	0
+>  #define EXYNOS_TMU_INTEN_RISE1_SHIFT	4
+>=20
+
+
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
+
+Eduardo Valentin
+
+
+------enig2KUNLELTJCEMURLBSUIGO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlHIoGkACgkQCXcVR3XQvP3QpwEAt07Y34Z9SO/AnVm7fKqnV4hY
+PeW0pg7LK0QyafY4Aw8A/iCNXyaLuhXnTtJ7SVPwk8/oEFjrNk1dJX51n1B2iFFR
+=9oCG
+-----END PGP SIGNATURE-----
+
+------enig2KUNLELTJCEMURLBSUIGO--
