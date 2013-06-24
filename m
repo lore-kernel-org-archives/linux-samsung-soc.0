@@ -1,204 +1,89 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V6 08/30] thermal: exynos: Add missing definations and
- code cleanup
-Date: Mon, 24 Jun 2013 09:27:36 +0530
-Message-ID: <CADGdYn5HHNxj=PzjejyJRW9zW=953HJQy67H=u=uhFbtpJyENA@mail.gmail.com>
-References: <1371451599-31035-1-git-send-email-amit.daniel@samsung.com>
-	<1371451599-31035-9-git-send-email-amit.daniel@samsung.com>
-	<51C20CCC.3060502@ti.com>
-	<CADGdYn6FHXd2YELP1z9zbqnf3Yd0PG0svaz7V6w9NYO3xSW8PQ@mail.gmail.com>
-	<51C463B4.9070506@ti.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH 0/5] clk/exynos5420: add clocks for hdmi subsystem
+Date: Mon, 24 Jun 2013 09:33:59 +0530
+Message-ID: <CAPdUM4MENsYV3uA+FEt7UX9Qe8DyJ6a_cNj3wzW1+j1q+xf6Fg@mail.gmail.com>
+References: <1371565998-3642-1-git-send-email-rahul.sharma@samsung.com>
+	<CAPdUM4MtBXMaZDDRT1aKsS=HzwjpbyMY85oRLMbk-KvJCU1hag@mail.gmail.com>
+	<51C1B9AD.8060804@samsung.com>
+	<20130621043252.9136.66418@quantum>
+	<CAPdUM4NxCKtKrZg1RYD0=83jDYt9Nzd3paYL53ZL9tt2zfJy7A@mail.gmail.com>
+	<20130621164303.9136.5127@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <51C463B4.9070506@ti.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f180.google.com ([74.125.82.180]:64370 "EHLO
+	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750733Ab3FXEEA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Jun 2013 00:04:00 -0400
+Received: by mail-we0-f180.google.com with SMTP id w56so7923366wes.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Jun 2013 21:03:59 -0700 (PDT)
+In-Reply-To: <20130621164303.9136.5127@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, sw0312.kim@samsung.com, inki.dae@samsung.com, joshi@samsung.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Fri, Jun 21, 2013 at 8:01 PM, Eduardo Valentin
-<eduardo.valentin@ti.com> wrote:
-> On 20-06-2013 22:01, amit daniel kachhap wrote:
->> Hi Eduardo,
+Thanks Mike.
+
+I will rebase these patches to v3.11-next/samsung-clk branch and post v2.
+
+regards,
+Rahul Sharma.
+
+On Fri, Jun 21, 2013 at 10:13 PM, Mike Turquette <mturquette@linaro.org> wrote:
+> Quoting Rahul Sharma (2013-06-20 21:47:35)
+>> On Fri, Jun 21, 2013 at 10:02 AM, Mike Turquette <mturquette@linaro.org> wrote:
+>> > Quoting Kukjin Kim (2013-06-19 07:01:17)
+>> >> On 06/19/13 13:04, Rahul Sharma wrote:
+>> >> > + mike
+>> >> >
+>> >> Mike, I'm waiting for your reply on this. If you're OK, let me take this
+>> >> series on top of exynos5420 stuff in samsung tree.
+>> >>
+>> >> Of course, if any concerns, please let me know.
+>> >
+>> > I never got these patches.  I'm not subscribed to devicetree-devel or
+>> > linux-samsung so I only got two replies to patch #0, but none of the
+>> > code. Can you or Rajul resend?
+>> >
 >>
->> On Thu, Jun 20, 2013 at 1:25 AM, Eduardo Valentin
->> <eduardo.valentin@ti.com> wrote:
->>> On 17-06-2013 02:46, Amit Daniel Kachhap wrote:
->>>> This patch adds some extra register bitfield definations and cleans
->>>> up the code to prepare for moving register macros and definations inside
->>>> the TMU data section.
->>>>
->>>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->>>> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
->>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->>>> ---
->>>>  drivers/thermal/samsung/exynos_tmu.c |   62 +++++++++++++++++++++++++---------
->>>>  1 files changed, 46 insertions(+), 16 deletions(-)
->>>>
->>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->>>> index 5df04a1..fa33a48 100644
->>>> --- a/drivers/thermal/samsung/exynos_tmu.c
->>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
->>>> @@ -43,9 +43,12 @@
->>>>
->>>>  #define EXYNOS_TMU_TRIM_TEMP_MASK    0xff
->>>>  #define EXYNOS_TMU_GAIN_SHIFT                8
->>>> +#define EXYNOS_TMU_GAIN_MASK         0xf
->>>>  #define EXYNOS_TMU_REF_VOLTAGE_SHIFT 24
->>>> -#define EXYNOS_TMU_CORE_ON           3
->>>> -#define EXYNOS_TMU_CORE_OFF          2
->>>> +#define EXYNOS_TMU_REF_VOLTAGE_MASK  0x1f
->>>> +#define EXYNOS_TMU_BUF_SLOPE_SEL_MASK        0xf
->>>> +#define EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT       8
->>>> +#define EXYNOS_TMU_CORE_EN_SHIFT     0
->>>>  #define EXYNOS_TMU_DEF_CODE_TO_TEMP_OFFSET   50
->>>>
->>>>  /* Exynos4210 specific registers */
->>>> @@ -63,6 +66,7 @@
->>>>  #define EXYNOS4210_TMU_TRIG_LEVEL1_MASK      0x10
->>>>  #define EXYNOS4210_TMU_TRIG_LEVEL2_MASK      0x100
->>>>  #define EXYNOS4210_TMU_TRIG_LEVEL3_MASK      0x1000
->>>> +#define EXYNOS4210_TMU_TRIG_LEVEL_MASK       0x1111
->>>>  #define EXYNOS4210_TMU_INTCLEAR_VAL  0x1111
->>>>
->>>>  /* Exynos5250 and Exynos4412 specific registers */
->>>> @@ -72,17 +76,30 @@
->>>>  #define EXYNOS_EMUL_CON              0x80
->>>>
->>>>  #define EXYNOS_TRIMINFO_RELOAD               0x1
->>>> +#define EXYNOS_TRIMINFO_SHIFT                0x0
->>>> +#define EXYNOS_TMU_RISE_INT_MASK     0x111
->>>> +#define EXYNOS_TMU_RISE_INT_SHIFT    0
->>>> +#define EXYNOS_TMU_FALL_INT_MASK     0x111
->>>> +#define EXYNOS_TMU_FALL_INT_SHIFT    12
->>>>  #define EXYNOS_TMU_CLEAR_RISE_INT    0x111
->>>>  #define EXYNOS_TMU_CLEAR_FALL_INT    (0x111 << 12)
->>>> -#define EXYNOS_MUX_ADDR_VALUE                6
->>>> -#define EXYNOS_MUX_ADDR_SHIFT                20
->>>>  #define EXYNOS_TMU_TRIP_MODE_SHIFT   13
->>>> +#define EXYNOS_TMU_TRIP_MODE_MASK    0x7
->>>> +
->>>> +#define EXYNOS_TMU_INTEN_RISE0_SHIFT 0
->>>> +#define EXYNOS_TMU_INTEN_RISE1_SHIFT 4
->>>> +#define EXYNOS_TMU_INTEN_RISE2_SHIFT 8
->>>> +#define EXYNOS_TMU_INTEN_RISE3_SHIFT 12
->>>> +#define EXYNOS_TMU_INTEN_FALL0_SHIFT 16
->>>> +#define EXYNOS_TMU_INTEN_FALL1_SHIFT 20
->>>> +#define EXYNOS_TMU_INTEN_FALL2_SHIFT 24
->>>>
->>>>  #define EFUSE_MIN_VALUE 40
->>>>  #define EFUSE_MAX_VALUE 100
->>>>
->>>>  #ifdef CONFIG_THERMAL_EMULATION
->>>>  #define EXYNOS_EMUL_TIME     0x57F0
->>>> +#define EXYNOS_EMUL_TIME_MASK        0xffff
->>>>  #define EXYNOS_EMUL_TIME_SHIFT       16
->>>>  #define EXYNOS_EMUL_DATA_SHIFT       8
->>>>  #define EXYNOS_EMUL_DATA_MASK        0xFF
->>>> @@ -261,24 +278,37 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
->>>>       mutex_lock(&data->lock);
->>>>       clk_enable(data->clk);
->>>>
->>>> -     con = pdata->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT |
->>>> -             pdata->gain << EXYNOS_TMU_GAIN_SHIFT;
->>>> +     con = readl(data->base + EXYNOS_TMU_REG_CONTROL);
->>>>
->>>> -     if (data->soc == SOC_ARCH_EXYNOS) {
->>>> -             con |= pdata->noise_cancel_mode << EXYNOS_TMU_TRIP_MODE_SHIFT;
->>>> -             con |= (EXYNOS_MUX_ADDR_VALUE << EXYNOS_MUX_ADDR_SHIFT);
->>>> +     if (pdata->reference_voltage) {
->>>> +             con &= ~(EXYNOS_TMU_REF_VOLTAGE_MASK <<
->>>> +                             EXYNOS_TMU_REF_VOLTAGE_SHIFT);
->>>> +             con |= pdata->reference_voltage << EXYNOS_TMU_REF_VOLTAGE_SHIFT;
->>>> +     }
->>>> +
->>>> +     if (pdata->gain) {
->>>> +             con &= ~(EXYNOS_TMU_GAIN_MASK << EXYNOS_TMU_GAIN_SHIFT);
->>>> +             con |= (pdata->gain << EXYNOS_TMU_GAIN_SHIFT);
->>>> +     }
->>>> +
->>>> +     if (pdata->noise_cancel_mode) {
->>>> +             con &= ~(EXYNOS_TMU_TRIP_MODE_MASK <<
->>>> +                                     EXYNOS_TMU_TRIP_MODE_SHIFT);
->>>> +             con |= (pdata->noise_cancel_mode << EXYNOS_TMU_TRIP_MODE_SHIFT);
->>>>       }
->>>>
->>>>       if (on) {
->>>> -             con |= EXYNOS_TMU_CORE_ON;
->>>
->>>
->>>
->>> Before, in order to turn core on you had:
->>>         con = con | 3;
->>>
->>> now you do:
->>>         con = con | (1 << 0);
->>>
->>> To me, before you would set bit 1 and 0, now you set bit 0.
->>>
->>>
->>>> -             interrupt_en = pdata->trigger_level3_en << 12 |
->>>> -                     pdata->trigger_level2_en << 8 |
->>>> -                     pdata->trigger_level1_en << 4 |
->>>> -                     pdata->trigger_level0_en;
->>>> +             con |= (1 << EXYNOS_TMU_CORE_EN_SHIFT);
->>>> +             interrupt_en =
->>>> +             pdata->trigger_level3_en << EXYNOS_TMU_INTEN_RISE3_SHIFT |
->>>> +             pdata->trigger_level2_en << EXYNOS_TMU_INTEN_RISE2_SHIFT |
->>>> +             pdata->trigger_level1_en << EXYNOS_TMU_INTEN_RISE1_SHIFT |
->>>> +             pdata->trigger_level0_en << EXYNOS_TMU_INTEN_RISE0_SHIFT;
->>>>               if (pdata->threshold_falling)
->>>> -                     interrupt_en |= interrupt_en << 16;
->>>> +                     interrupt_en |=
->>>> +                             interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
->>>>       } else {
->>>> -             con |= EXYNOS_TMU_CORE_OFF;
->>>> +             con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
->>>
->>>
->>> Before, in order to turno core off you had:
->>>         con = con | 2;
->>>
->>> now you do:
->>>         con = con & ~(1 << 0);
->>>
->>> To me, before you would set bit 2, now you clear bit 0.
->>>
->>> Using the approach on this patch looks correct to me if you have 1 bit
->>> core_en for instance.
->>>
->>> so, Is this a fix?
->>>
->>> Just to be clear, is this what you want ?
->> Yes you are right. Bit 0 is the actual enable bit. Bit 1 is the
->> reserve bit and its default value is 1. Earlier both bits are used to
->> turn on/off the controller which was wrong so this patch rectifies it.
+>> Sure mike.
 >
-> Care to mention this in your patch description? It is good for code history.
-Ok
+> Acked-by: Mike Turquette <mturquette@linaro.org>
+>
+> Regards,
+> Mike
 >
 >>
->> Thanks,
->> Amit
->>>
->>>>               interrupt_en = 0; /* Disable all interrupts */
->>>>       }
->>>>       writel(interrupt_en, data->base + EXYNOS_TMU_REG_INTEN);
->>>>
->>>
->>>
->>> --
->>> You have got to be excited about what you are doing. (L. Lamport)
->>>
->>> Eduardo Valentin
->>>
->>
->>
->
->
-> --
-> You have got to be excited about what you are doing. (L. Lamport)
->
-> Eduardo Valentin
->
+>> > Thanks,
+>> > Mike
+>> >
+>> >>
+>> >> Thanks,
+>> >> - Kukjin
+>> >>
+>> >> > On Tue, Jun 18, 2013 at 8:03 PM, Rahul Sharma<rahul.sharma@samsung.com>  wrote:
+>> >> >> Add clock changes for hdmi subsystem for exynos5250 SoC. These
+>> >> >> include addition of new clocks like mout_hdmi and smmu_tv, associating
+>> >> >> ID to clk_hdmiphy and some essential corrections.
+>> >> >>
+>> >> >> This set is based on kukjin's for-next branch at
+>> >> >> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
+>> >> >>
+>> >> >> This set dependents on the following patches which add support for Exynos5420
+>> >> >> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg19264.html
+>> >> >>
+>> >> >> Rahul Sharma (5):
+>> >> >>    clk/exynos5420: add sclk_hdmiphy to the list of special clocks
+>> >> >>    clk/exynos5420: add gate clock for tv sysmmu
+>> >> >>    clk/exynos5420: fix the order of parents of hdmi mux
+>> >> >>    clk/exynos5420: add hdmi mux to change parents in hdmi driver
+>> >> >>    clk/exynos5420: assign sclk_pixel id to pixel clock divider
+>> >> >>
+>> >> >>   .../devicetree/bindings/clock/exynos5420-clock.txt   |    7 +++++++
+>> >> >>   drivers/clk/samsung/clk-exynos5420.c                 |   18 +++++++++++-------
+>> >> >>   2 files changed, 18 insertions(+), 7 deletions(-)
+>> >> >>
+>> >> >> --
+>> >> >> 1.7.10.4
