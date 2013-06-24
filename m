@@ -1,58 +1,71 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 3/3] mfd: max8998: Add support for Device Tree
-Date: Mon, 24 Jun 2013 16:04:08 +0100
-Message-ID: <20130624150408.GQ27646@sirena.org.uk>
-References: <1372077594-17052-1-git-send-email-t.figa@samsung.com>
- <1372077594-17052-4-git-send-email-t.figa@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
+Date: Tue, 25 Jun 2013 00:22:42 +0900
+Message-ID: <51C86442.6090406@samsung.com>
+References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <1371766383-29077-12-git-send-email-tomasz.figa@gmail.com> <2925617.TjWXJcIKRC@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="u2qWrZzts+9rBanj"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:51521 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752003Ab3FXPEM (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:59941 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751660Ab3FXPWs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 11:04:12 -0400
-Content-Disposition: inline
-In-Reply-To: <1372077594-17052-4-git-send-email-t.figa@samsung.com>
+	Mon, 24 Jun 2013 11:22:48 -0400
+In-Reply-To: <2925617.TjWXJcIKRC@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Grant Likely <grant.likely@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Liam Girdwood <lgirdwood@gmail.com>, Masanari Iida <standby24x7@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, rtc-linux@googlegroups.com, Russell King <linux@arm.linux.org.uk>, Samuel Ortiz <sameo@linux.intel.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
 
+On 06/22/13 22:06, Tomasz Figa wrote:
+> This patch introduces new Samsung PWM driver, which is heavily cleaned,
+> multiplatform aware and supports DeviceTree based instantiation.
+>
+> Since on historical hardware PWM block can be shared with clocksource
+> driver, a shared spinlock is used to protect access to shared registers,
+> already exported from the clocksource driver.
+>
+> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
+> ---
+>   drivers/pwm/Makefile      |   1 +
+>   drivers/pwm/pwm-samsung.c | 601 ++++++++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 602 insertions(+)
+>   create mode 100644 drivers/pwm/pwm-samsung.c
+>
+> Changes since v2:
+>   - Replaced __raw_{readl,writel} with {readl,writel}.
+>   - Corrected commit message.
+>
 
---u2qWrZzts+9rBanj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[...]
 
-On Mon, Jun 24, 2013 at 02:39:54PM +0200, Tomasz Figa wrote:
-> This patch adds Device Tree support to max8998 driver.
+> +	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, val) {
+> +		if (val>= SAMSUNG_PWM_NUM) {
+> +			pr_warning("%s: invalid channel index in samsung,pwm-outputs property\n",
 
-Acked-by: Mark Brown <broonie@linaro.org>
+Just note, checkpatch complains following, so fixed to use pr_warn() 
+when I applied.
 
-If applying please also apply the second patch, I'll drop it from the
-regulator tree.
+WARNING: Prefer pr_warn(... to pr_warning(...
+#471: FILE: drivers/pwm/pwm-samsung.c:432:
++			pr_warning("%s: invalid channel index in samsung,pwm-outputs 
+property\n",
 
---u2qWrZzts+9rBanj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+[...]
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+> +
+> +static struct dev_pm_ops pwm_samsung_pm_ops = {
 
-iQIcBAEBAgAGBQJRyF/kAAoJELSic+t+oim9WhQP/iYZaRpXlKs/vIr/esCcdRZS
-ZAhcVxvzWZfNWJ5dVVLYZhcuT3hgBz0160ibHJ2/zAkJnJ1a4gkmBeiMgwEnHtgs
-NK3rBDz5SKLBJ+VQZ2rm2r1adgt58+0HPxNjqQKNP+VsYYz/t3/HyW4lRIIz4Run
-XVk1tWsn7N2Wws+QcnRTre/XtqU+lRVEBbi0MwUgKywnNE+twxkqUSrLRhx2BcGp
-VQAjt45k+vGzV0hORH5gTQfHBcl1/J2ZEI+HvurfW5FsaUpQ/shUNVdSAJLE0DWg
-YMzG15Kmm6gDiWY44a+vh69MPfL/9ASBEE12qyqi36u25n4xOCLj0AuNfdYxNkWE
-aXcJL7TXsGdWI7IzFwqvf/23V0ZofXqSAQgtnUSJe8pAKQ/TyJ8FU2zy8nIZvFGV
-MrOGq3MxLuiamKTMjOB5+NMswKxKm58q3pKlPCMZ8/zcY8j8Mf+uluQ8luXupFAk
-GkCUgHiCdns4Ft6ejMQJtqYi+yKvjquInJ8tWfl2r0WrH9W5kWZt3RJY3ycvOZxc
-UsEhCyrRue/qhvYRtru/4ukfZXvb0GDrryb5/y2KuvEg+gO6jvPJI2FVSCWEijtc
-aDnFkY10kPttF60bliFrlvtFJxCghVBENsRIWwgFSWdobyaa2HB2JNswuPPyE0ct
-DoDYNSMoRigpFl4XTEpI
-=ikyx
------END PGP SIGNATURE-----
+WARNING: struct dev_pm_ops should normally be const
+#622: FILE: drivers/pwm/pwm-samsung.c:583:
++static struct dev_pm_ops pwm_samsung_pm_ops = {
 
---u2qWrZzts+9rBanj--
+fixed to add const when I applied.
+
+> +	SET_SYSTEM_SLEEP_PM_OPS(pwm_samsung_suspend, pwm_samsung_resume)
+> +};
+> +
+
+Thanks,
+- Kukjin
