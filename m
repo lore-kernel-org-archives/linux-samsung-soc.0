@@ -1,137 +1,53 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] clk: exynos4: Add CLK_GET_RATE_NOCACHE flag for the Exynos4x12
- ISP clocks
-Date: Mon, 24 Jun 2013 20:42:54 +0200
-Message-ID: <1372099374-21008-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:46162 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752471Ab3FXSnQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 14:43:16 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and
+ PLL36xx for samsung SoCs
+Date: Mon, 24 Jun 2013 12:02:27 -0700
+Message-ID: <20130624190227.20448.68120@quantum>
+References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
+ <CAKew6eUOy4=D08v_iq7CTRY5gvt37VAN7Z7WOr2Yt25znDJb2g@mail.gmail.com>
+ <CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
+ <1524664.UCV47tfIRU@flatron> <20130621163143.9136.28807@quantum>
+ <51C85F8F.9050501@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <51C85F8F.9050501@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: mturquette@linaro.org
-Cc: linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-The ISP clock registers belong to the ISP power domain and may change
-their values if this power domain is switched off/on. Add
-CLK_GET_RATE_NOCACHE flags to ensure we do not rely on invalid cached
-data when setting or getting frequency of those clocks.
+Quoting Kukjin Kim (2013-06-24 08:02:39)
+> On 06/22/13 01:31, Mike Turquette wrote:
+> >
+> > Acked-by: Mike Turquette<mturquette@linaro.org>
+> >
+> > Or I can take this through the clk tree. Either way is fine.
+> >
+> Mike, please go ahead taking this series into the clk tree for 3.11.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c |   64 ++++++++++++++++++++-----------------
- 1 file changed, 34 insertions(+), 30 deletions(-)
+Actually it might be better for you to take it. Patch #5 relies on
+drivers/clk/samsung/clk-exynos5420.c which only exists in the samsung
+tree.  It was introduced by commit 1609027f, "clk: exynos5420: register
+clocks using common clock framework".
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 94c5e1a..a5d72f5 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -578,11 +578,15 @@ struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
- 	DIV(none, "div_spi1_isp", "mout_spi1_isp", E4X12_DIV_ISP, 16, 4),
- 	DIV(none, "div_spi1_isp_pre", "div_spi1_isp", E4X12_DIV_ISP, 20, 8),
- 	DIV(none, "div_uart_isp", "mout_uart_isp", E4X12_DIV_ISP, 28, 4),
--	DIV(div_isp0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3),
--	DIV(div_isp1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3),
-+	DIV_F(div_isp0, "div_isp0", "aclk200", E4X12_DIV_ISP0, 0, 3,
-+						CLK_GET_RATE_NOCACHE, 0),
-+	DIV_F(div_isp1, "div_isp1", "aclk200", E4X12_DIV_ISP0, 4, 3,
-+						CLK_GET_RATE_NOCACHE, 0),
- 	DIV(none, "div_mpwm", "div_isp1", E4X12_DIV_ISP1, 0, 3),
--	DIV(div_mcuisp0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1, 4, 3),
--	DIV(div_mcuisp1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1, 8, 3),
-+	DIV_F(div_mcuisp0, "div_mcuisp0", "aclk400_mcuisp", E4X12_DIV_ISP1,
-+						4, 3, CLK_GET_RATE_NOCACHE, 0),
-+	DIV_F(div_mcuisp1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1,
-+						8, 3, CLK_GET_RATE_NOCACHE, 0),
- };
- 
- /* list of gate clocks supported in all exynos4 soc's */
-@@ -857,57 +861,57 @@ struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 	GATE_DA(i2s0, "samsung-i2s.0", "i2s0", "aclk100",
- 			E4X12_GATE_IP_MAUDIO, 3, 0, 0, "iis"),
- 	GATE(fimc_isp, "isp", "aclk200", E4X12_GATE_ISP0, 0,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(fimc_drc, "drc", "aclk200", E4X12_GATE_ISP0, 1,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(fimc_fd, "fd", "aclk200", E4X12_GATE_ISP0, 2,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(fimc_lite0, "lite0", "aclk200", E4X12_GATE_ISP0, 3,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(fimc_lite1, "lite1", "aclk200", E4X12_GATE_ISP0, 4,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(mcuisp, "mcuisp", "aclk200", E4X12_GATE_ISP0, 5,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(gicisp, "gicisp", "aclk200", E4X12_GATE_ISP0, 7,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(smmu_isp, "smmu_isp", "aclk200", E4X12_GATE_ISP0, 8,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(smmu_drc, "smmu_drc", "aclk200", E4X12_GATE_ISP0, 9,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(smmu_fd, "smmu_fd", "aclk200", E4X12_GATE_ISP0, 10,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(smmu_lite0, "smmu_lite0", "aclk200", E4X12_GATE_ISP0, 11,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(smmu_lite1, "smmu_lite1", "aclk200", E4X12_GATE_ISP0, 12,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(ppmuispmx, "ppmuispmx", "aclk200", E4X12_GATE_ISP0, 20,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(ppmuispx, "ppmuispx", "aclk200", E4X12_GATE_ISP0, 21,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(mcuctl_isp, "mcuctl_isp", "aclk200", E4X12_GATE_ISP0, 23,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(mpwm_isp, "mpwm_isp", "aclk200", E4X12_GATE_ISP0, 24,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(i2c0_isp, "i2c0_isp", "aclk200", E4X12_GATE_ISP0, 25,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(i2c1_isp, "i2c1_isp", "aclk200", E4X12_GATE_ISP0, 26,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(mtcadc_isp, "mtcadc_isp", "aclk200", E4X12_GATE_ISP0, 27,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(pwm_isp, "pwm_isp", "aclk200", E4X12_GATE_ISP0, 28,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(wdt_isp, "wdt_isp", "aclk200", E4X12_GATE_ISP0, 30,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(uart_isp, "uart_isp", "aclk200", E4X12_GATE_ISP0, 31,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(asyncaxim, "asyncaxim", "aclk200", E4X12_GATE_ISP1, 0,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(smmu_ispcx, "smmu_ispcx", "aclk200", E4X12_GATE_ISP1, 4,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(spi0_isp, "spi0_isp", "aclk200", E4X12_GATE_ISP1, 12,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
--			CLK_IGNORE_UNUSED, 0),
-+			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- };
- 
- /*
--- 
-1.7.9.5
+And these patches need to be applied with some fuzz to the clk tree due
+to other changes which are not in my tree and only present in yours.
+
+The best two options are either for you to take this series or it can be
+rebased on top of clk-next, after which I'll apply it.
+
+Regards,
+Mike
+
+> 
+> Thanks,
+> - Kukjin
