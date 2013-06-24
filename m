@@ -1,92 +1,87 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 4/8] ARM: dts: Use generic DMA bindings for Exynos4 SPI
- devices
-Date: Mon, 24 Jun 2013 20:17:02 +0200
-Message-ID: <51C88D1E.90203@samsung.com>
-References: <1372097151-18122-1-git-send-email-s.nawrocki@samsung.com>
- <1372097151-18122-5-git-send-email-s.nawrocki@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
+Date: Mon, 24 Jun 2013 20:31:43 +0200
+Message-ID: <1888817.YsvuAKkSk2@flatron>
+References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <51C86442.6090406@samsung.com> <20130624174903.GA6795@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:52394 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752123Ab3FXSRG (ORCPT
+Received: from mail-bk0-f51.google.com ([209.85.214.51]:54535 "EHLO
+	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751971Ab3FXSbn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 14:17:06 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MOW004CZTGAMI40@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Jun 2013 19:17:04 +0100 (BST)
-In-reply-to: <1372097151-18122-5-git-send-email-s.nawrocki@samsung.com>
+	Mon, 24 Jun 2013 14:31:43 -0400
+In-Reply-To: <20130624174903.GA6795@mithrandir>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
-On 06/24/2013 08:05 PM, Sylwester Nawrocki wrote:
-> The Exynos4 SPI controller uses the PL330 DMA controller which has
-> migrated to the generic DMA bindings since commit b5be04d35dbb2e00
-> "spi: s3c64xx: Modify SPI driver to use generic DMA DT support".
-> Use the generic bindings to specify the corresponding DMA to make
-> the SPI usable again on Exynos4x12 SOCs.
-
-Huh, I've forgotten to correct this commit description, since it was
-originally written with different related commit in mind.
-Kgene, unless I post v3, could you amend the above with:
-
-The Exynos4 SPI controller has migrated to the generic DMA bindings
-since commit b5be04d35dbb2e00
-"spi: s3c64xx: Modify SPI driver to use generic DMA DT support".
-Use the generic bindings to specify the corresponding DMA to make
-the SPI usable again on Exynos4x12 SoCs.
-
-? I guess this is going to be for 3.12 only now ?
-
-Thanks,
-Sylwester
-
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi |   12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+On Monday 24 of June 2013 19:49:04 Thierry Reding wrote:
+> On Tue, Jun 25, 2013 at 12:22:42AM +0900, Kukjin Kim wrote:
+> > On 06/22/13 22:06, Tomasz Figa wrote:
+> > >This patch introduces new Samsung PWM driver, which is heavily
+> > >cleaned,
+> > >multiplatform aware and supports DeviceTree based instantiation.
+> > >
+> > >Since on historical hardware PWM block can be shared with clocksource
+> > >driver, a shared spinlock is used to protect access to shared
+> > >registers, already exported from the clocksource driver.
+> > >
+> > >Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
+> > >---
+> > >
+> > >  drivers/pwm/Makefile      |   1 +
+> > >  drivers/pwm/pwm-samsung.c | 601
+> > >  ++++++++++++++++++++++++++++++++++++++++++++++ 2 files changed,
+> > >  602 insertions(+)
+> > >  create mode 100644 drivers/pwm/pwm-samsung.c
+> > >
+> > >Changes since v2:
+> > >  - Replaced __raw_{readl,writel} with {readl,writel}.
+> > >  - Corrected commit message.
+> > 
+> > [...]
+> > 
+> > >+	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, 
+val)
+> > >{
+> > >+		if (val>= SAMSUNG_PWM_NUM) {
+> > >+			pr_warning("%s: invalid channel index in 
+samsung,pwm-outputs
+> > >property\n",> 
+> > Just note, checkpatch complains following, so fixed to use pr_warn()
+> > when I applied.
 > 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 3f94fe8..bce2254 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -297,8 +297,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x13920000 0x100>;
->  		interrupts = <0 66 0>;
-> -		tx-dma-channel = <&pdma0 7>; /* preliminary */
-> -		rx-dma-channel = <&pdma0 6>; /* preliminary */
-> +		dmas = <&pdma0 7>, <&pdma0 6>;
-> +		dma-names = "tx", "rx";
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  		clocks = <&clock 327>, <&clock 159>;
-> @@ -312,8 +312,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x13930000 0x100>;
->  		interrupts = <0 67 0>;
-> -		tx-dma-channel = <&pdma1 7>; /* preliminary */
-> -		rx-dma-channel = <&pdma1 6>; /* preliminary */
-> +		dmas = <&pdma1 7>, <&pdma1 6>;
-> +		dma-names = "tx", "rx";
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  		clocks = <&clock 328>, <&clock 160>;
-> @@ -327,8 +327,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x13940000 0x100>;
->  		interrupts = <0 68 0>;
-> -		tx-dma-channel = <&pdma0 9>; /* preliminary */
-> -		rx-dma-channel = <&pdma0 8>; /* preliminary */
-> +		dmas = <&pdma0 9>, <&pdma0 8>;
-> +		dma-names = "tx", "rx";
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  		clocks = <&clock 329>, <&clock 161>;
+> Note that you can't apply patches that touch the PWM tree without my Ack
+> and I already mentioned that the current way this driver is written
+> isn't acceptable.
+> 
+> So either you fix it properly, or if everybody except me thinks we don't
+> need a proper design for drivers anymore, then the only way I'll accept
+> this driver into the PWM tree is if you put a really big comment at the
+> top of the file saying that the driver is badly designed on purpose and
+> that people shouldn't be using it as a reference.
+
+Sorry, I don't understand what problem you have with this design. It 
+completely meets all the requirements applicable on hardware platforms it 
+is (and going to be) used on.
+
+The only thing it would do in a suboptimal way would be synchronization of 
+register accesses for multiple instances of the driver - one spinlock 
+would be used for all of them. This is insignificant because there is no 
+time critical code in this driver and it is really unlikely that a SoC 
+with multiple instances of this IP block shows up.
+
+Channel reservation between clocksource and PWM drivers is completely 
+correct, relying on the fact that the former can only use channels 
+_without_ outputs and the latter can only use channels _with_ outputs. Do 
+I have to add that there can't be a channel both with and without output?
+
+So the only place for improvement here, without starting overengineering 
+things, is a comment about the purpose of the spinlock and why it can be 
+used in our case.
+
+Best regards,
+Tomasz
