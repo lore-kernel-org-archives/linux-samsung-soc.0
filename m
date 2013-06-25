@@ -1,56 +1,52 @@
-From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 4/4] ARM: dts: exynos4210-trats: Enable USB gadget functionality
-Date: Tue, 25 Jun 2013 17:38:26 +0200
-Message-ID: <1372174706-5459-5-git-send-email-t.figa@samsung.com>
-References: <1372174706-5459-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1372174706-5459-1-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [RFC PATCH v2 00/12] ARM: s3c64xx: Let amba-pl08x driver handle DMA
+Date: Tue, 25 Jun 2013 17:44:06 +0200
+Message-ID: <1486283.2pMLZtfT9J@amdc1227>
+References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
+ <6520269.XdaOpEg0Ud@amdc1227> <20130625153843.GF27646@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:10096 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751102Ab3FYPoK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Jun 2013 11:44:10 -0400
+In-reply-to: <20130625153843.GF27646@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>Russell King - ARM Linux <lin>
 
-This patch adds device tree nodes necessary to enable USB gadget
-functionality on Exynos4210-based Trats board.
+On Tuesday 25 of June 2013 16:38:43 Mark Brown wrote:
+> On Tue, Jun 25, 2013 at 01:22:20PM +0200, Tomasz Figa wrote:
+> > On Tuesday 25 of June 2013 11:28:18 Mark Brown wrote:
+> > > On my non-DT s3c64xx system I get this when trying to use SPI for the
+> > 
+> > > first time:
+> > Could you clarify first time? Does it work on further retries?
+> 
+> No, the system appears to lock up fairly solidly - I suspect poor error
+> handling in the SPI driver.
+> 
+> > > [    1.739385] s3c64xx-spi s3c6410-spi.0: Failed to get RX DMA
+> > > channel
+> > > [    1.743437] spi_master spi0: failed to prepare transfer hardware
+> > > 
+> > > though I haven't yet tried your clock patches (there were some
+> > > conficts
+> > > that I didn't get round to picking up yet).
+> > 
+> > This shouldn't really matter, as long as the pl080 drivers probes
+> > correctly.
+> 
+> Indeed, I was wondering if it was failing to probe due to not getting
+> its clocks though since that's another area you've been actively working
+> on.
 
-Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos4210-trats.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Let me check if I can get something with SPI interface that I would be able 
+to connect to my board at home and do some testing.
 
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 9a14484..d2ce1cf 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -39,6 +39,12 @@
- 		enable-active-high;
- 	};
- 
-+	hsotg@12480000 {
-+		vusb_d-supply = <&vusb_reg>;
-+		vusb_a-supply = <&vusbdac_reg>;
-+		status = "okay";
-+	};
-+
- 	sdhci_emmc: sdhci@12510000 {
- 		bus-width = <8>;
- 		non-removable;
-@@ -48,6 +54,10 @@
- 		status = "okay";
- 	};
- 
-+	usbphy@125B0000 {
-+		status = "okay";
-+	};
-+
- 	serial@13800000 {
- 		status = "okay";
- 	};
--- 
-1.8.2.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Tomasz
