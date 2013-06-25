@@ -1,48 +1,171 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [RFC PATCH v2 00/12] ARM: s3c64xx: Let amba-pl08x driver handle DMA
-Date: Tue, 25 Jun 2013 13:22:20 +0200
-Message-ID: <6520269.XdaOpEg0Ud@amdc1227>
-References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
- <20130625102818.GA27646@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:17812 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752538Ab3FYLWY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 07:22:24 -0400
-In-reply-to: <20130625102818.GA27646@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH RESEND V7 16/30] thermal: exynos: Make the zone handling use trip information
+Date: Tue, 25 Jun 2013 17:09:19 +0530
+Message-ID: <1372160359-14504-1-git-send-email-amit.daniel@samsung.com>
+References: <1372071051-3167-17-git-send-email-amit.daniel@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1372071051-3167-17-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>Russell King - ARM Linux <lin>
 
-Hi Mark,
+This code simplifies the zone handling to use the trip information passed
+by the TMU driver and not the hardcoded macros. This also helps in adding
+more zone support.
 
-Thanks for testing this series.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
+ drivers/thermal/samsung/exynos_thermal_common.c |   67 ++++++++++++++---------
+ drivers/thermal/samsung/exynos_thermal_common.h |    3 +-
+ drivers/thermal/samsung/exynos_tmu.c            |    5 ++-
+ 3 files changed, 47 insertions(+), 28 deletions(-)
 
-On Tuesday 25 of June 2013 11:28:18 Mark Brown wrote:
-> On Sat, Jun 22, 2013 at 10:42:32PM +0200, Tomasz Figa wrote:
-> > This is another version of my patches extending support of amba-pl08x
-> > DMA engine driver to PL080S DMA engine (PL080 modified by Samsung)
-> > found
-> > in Samsung S3C64xx SoCs.
-> 
-> On my non-DT s3c64xx system I get this when trying to use SPI for the
-> first time:
+diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
+index 99318e5..ecf95da 100644
+--- a/drivers/thermal/samsung/exynos_thermal_common.c
++++ b/drivers/thermal/samsung/exynos_thermal_common.c
+@@ -79,17 +79,24 @@ static int exynos_set_mode(struct thermal_zone_device *thermal,
+ static int exynos_get_trip_type(struct thermal_zone_device *thermal, int trip,
+ 				 enum thermal_trip_type *type)
+ {
+-	switch (GET_ZONE(trip)) {
+-	case MONITOR_ZONE:
+-	case WARN_ZONE:
+-		*type = THERMAL_TRIP_ACTIVE;
+-		break;
+-	case PANIC_ZONE:
++	struct exynos_thermal_zone *th_zone = thermal->devdata;
++	int max_trip = th_zone->sensor_conf->trip_data.trip_count;
++	int trip_type;
++
++	if (trip < 0 || trip >= max_trip)
++		return -EINVAL;
++
++	trip_type = th_zone->sensor_conf->trip_data.trip_type[trip];
++
++	if (trip_type == SW_TRIP)
+ 		*type = THERMAL_TRIP_CRITICAL;
+-		break;
+-	default:
++	else if (trip_type == THROTTLE_ACTIVE)
++		*type = THERMAL_TRIP_ACTIVE;
++	else if (trip_type == THROTTLE_PASSIVE)
++		*type = THERMAL_TRIP_PASSIVE;
++	else
+ 		return -EINVAL;
+-	}
++
+ 	return 0;
+ }
+ 
+@@ -98,8 +105,9 @@ static int exynos_get_trip_temp(struct thermal_zone_device *thermal, int trip,
+ 				unsigned long *temp)
+ {
+ 	struct exynos_thermal_zone *th_zone = thermal->devdata;
++	int max_trip = th_zone->sensor_conf->trip_data.trip_count;
+ 
+-	if (trip < GET_TRIP(MONITOR_ZONE) || trip > GET_TRIP(PANIC_ZONE))
++	if (trip < 0 || trip >= max_trip)
+ 		return -EINVAL;
+ 
+ 	*temp = th_zone->sensor_conf->trip_data.trip_val[trip];
+@@ -113,10 +121,10 @@ static int exynos_get_trip_temp(struct thermal_zone_device *thermal, int trip,
+ static int exynos_get_crit_temp(struct thermal_zone_device *thermal,
+ 				unsigned long *temp)
+ {
+-	int ret;
+-	/* Panic zone */
+-	ret = exynos_get_trip_temp(thermal, GET_TRIP(PANIC_ZONE), temp);
+-	return ret;
++	struct exynos_thermal_zone *th_zone = thermal->devdata;
++	int max_trip = th_zone->sensor_conf->trip_data.trip_count;
++	/* Get the temp of highest trip*/
++	return exynos_get_trip_temp(thermal, max_trip - 1, temp);
+ }
+ 
+ /* Bind callback functions for thermal zone */
+@@ -348,19 +356,28 @@ int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf)
+ 		return -ENOMEM;
+ 
+ 	th_zone->sensor_conf = sensor_conf;
+-	cpumask_set_cpu(0, &mask_val);
+-	th_zone->cool_dev[0] = cpufreq_cooling_register(&mask_val);
+-	if (IS_ERR(th_zone->cool_dev[0])) {
+-		pr_err("Failed to register cpufreq cooling device\n");
+-		ret = -EINVAL;
+-		goto err_unregister;
++	/*
++	 * TODO: 1) Handle multiple cooling devices in a thermal zone
++	 *	 2) Add a flag/name in cooling info to map to specific
++	 *	 sensor
++	 */
++	if (sensor_conf->cooling_data.freq_clip_count > 0) {
++		cpumask_set_cpu(0, &mask_val);
++		th_zone->cool_dev[th_zone->cool_dev_size] =
++					cpufreq_cooling_register(&mask_val);
++		if (IS_ERR(th_zone->cool_dev[th_zone->cool_dev_size])) {
++			pr_err("Failed to register cpufreq cooling device\n");
++			ret = -EINVAL;
++			goto err_unregister;
++		}
++		th_zone->cool_dev_size++;
+ 	}
+-	th_zone->cool_dev_size++;
+ 
+-	th_zone->therm_dev = thermal_zone_device_register(sensor_conf->name,
+-			EXYNOS_ZONE_COUNT, 0, th_zone, &exynos_dev_ops, NULL, 0,
+-			sensor_conf->trip_data.trigger_falling ?
+-			0 : IDLE_INTERVAL);
++	th_zone->therm_dev = thermal_zone_device_register(
++			sensor_conf->name, sensor_conf->trip_data.trip_count,
++			0, th_zone, &exynos_dev_ops, NULL, 0,
++			sensor_conf->trip_data.trigger_falling ? 0 :
++			IDLE_INTERVAL);
+ 
+ 	if (IS_ERR(th_zone->therm_dev)) {
+ 		pr_err("Failed to register thermal zone device\n");
+diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
+index 6ca3096..bfcf69e 100644
+--- a/drivers/thermal/samsung/exynos_thermal_common.h
++++ b/drivers/thermal/samsung/exynos_thermal_common.h
+@@ -42,8 +42,6 @@
+ #define GET_ZONE(trip) (trip + 2)
+ #define GET_TRIP(zone) (zone - 2)
+ 
+-#define EXYNOS_ZONE_COUNT	3
+-
+ enum trigger_type {
+ 	THROTTLE_ACTIVE = 1,
+ 	THROTTLE_PASSIVE,
+@@ -69,6 +67,7 @@ struct freq_clip_table {
+ 
+ struct	thermal_trip_point_conf {
+ 	int trip_val[MAX_TRIP_COUNT];
++	int trip_type[MAX_TRIP_COUNT];
+ 	int trip_count;
+ 	unsigned char trigger_falling;
+ };
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 40e0cfd..acbd295 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -509,9 +509,12 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+ 			pdata->trigger_enable[1] + pdata->trigger_enable[2]+
+ 			pdata->trigger_enable[3];
+ 
+-	for (i = 0; i < exynos_sensor_conf.trip_data.trip_count; i++)
++	for (i = 0; i < exynos_sensor_conf.trip_data.trip_count; i++) {
+ 		exynos_sensor_conf.trip_data.trip_val[i] =
+ 			pdata->threshold + pdata->trigger_levels[i];
++		exynos_sensor_conf.trip_data.trip_type[i] =
++					pdata->trigger_type[i];
++	}
+ 
+ 	exynos_sensor_conf.trip_data.trigger_falling = pdata->threshold_falling;
+ 
+-- 
+1.7.1
 
-Could you clarify first time? Does it work on further retries?
-
-> [    1.739385] s3c64xx-spi s3c6410-spi.0: Failed to get RX DMA channel
-> [    1.743437] spi_master spi0: failed to prepare transfer hardware
-> 
-> though I haven't yet tried your clock patches (there were some conficts
-> that I didn't get round to picking up yet).
-
-This shouldn't really matter, as long as the pl080 drivers probes 
-correctly.
-
-Best regards,
-Tomasz
