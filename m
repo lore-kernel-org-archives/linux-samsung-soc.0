@@ -1,79 +1,40 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 3/4] ARM: dts: exynos4: Add nodes for USB PHY block
-Date: Tue, 25 Jun 2013 17:38:25 +0200
-Message-ID: <1372174706-5459-4-git-send-email-t.figa@samsung.com>
-References: <1372174706-5459-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:27340 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752693Ab3FYPjG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 11:39:06 -0400
-In-reply-to: <1372174706-5459-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/4] Add support for Samsung HSOTG on DT-enabled platforms
+Date: Tue, 25 Jun 2013 17:38:22 +0200
+Message-ID: <1372174706-5459-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org, Felipe Balbi <balbi@ti.com>, Grant Likely <grant.likely@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-usb@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, m.szyprowski@samsung.com, l.majewski@samsung.com, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch adds device tree nodes for USB OTG PHYs of Exynos4210 and
-Exynos4x12 SoCs.
+This series enables platforms booting with Device Tree to use the Samsung
+HSOTG IP. Since USB PHY support has been already added, it's just a matter
+of adding an OF match table to the driver and respective device tree nodes
+to dts files.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4210.dtsi | 15 +++++++++++++++
- arch/arm/boot/dts/exynos4x12.dtsi | 15 +++++++++++++++
- 2 files changed, 30 insertions(+)
+[On Samsung Trats board based on Exynos 4210]
+Tested-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 54710de..3c71ea5 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -114,6 +114,21 @@
- 		interrupts = <2 4>;
- 	};
- 
-+	usbphy@125B0000 {
-+		compatible = "samsung,exynos4210-usb2phy";
-+		reg = <0x125B0000 0x100>;
-+		clocks = <&clock 305>;
-+		clock-names = "otg";
-+		status = "disabled";
-+		ranges;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		usbphy-sys {
-+			reg = <0x10020704 0x8>;
-+		};
-+	};
-+
- 	g2d@12800000 {
- 		compatible = "samsung,s5pv210-g2d";
- 		reg = <0x12800000 0x1000>;
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index e3380a7..267ed95 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -79,4 +79,19 @@
- 		interrupts = <0 89 0>;
- 		status = "disabled";
- 	};
-+
-+	usbphy@125B0000 {
-+		compatible = "samsung,exynos4x12-usb2phy";
-+		reg = <0x125B0000 0x100>;
-+		clocks = <&clock 305>;
-+		clock-names = "otg";
-+		status = "disabled";
-+		ranges;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		usbphy-sys {
-+			reg = <0x10020704 0x8>;
-+		};
-+	};
- };
+Tomasz Figa (4):
+  usb: gadget: s3c-hsotg: Allow driver instantiation using device tree
+  ARM: dts: exynos4: Add node for hsotg
+  ARM: dts: exynos4: Add nodes for USB PHY block
+  ARM: dts: exynos4210-trats: Enable USB gadget functionality
+
+ .../devicetree/bindings/usb/samsung-hsotg.txt      | 40 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4.dtsi                     |  9 +++++
+ arch/arm/boot/dts/exynos4210-trats.dts             | 10 ++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  | 15 ++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi                  | 15 ++++++++
+ drivers/usb/gadget/s3c-hsotg.c                     | 10 ++++++
+ 6 files changed, 99 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/samsung-hsotg.txt
+
 -- 
 1.8.2.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
