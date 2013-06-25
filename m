@@ -1,88 +1,59 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 3/5] video: exynos_mipi_dsim: Use generic PHY driver
-Date: Tue, 25 Jun 2013 18:08:13 +0300
-Message-ID: <20130625150813.GB21334@arwen.pp.htv.fi>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 4/5] exynos4-is: Use generic MIPI CSIS PHY driver
+Date: Tue, 25 Jun 2013 18:09:08 +0300
+Message-ID: <20130625150908.GC21334@arwen.pp.htv.fi>
 References: <1372170110-12993-1-git-send-email-s.nawrocki@samsung.com>
- <1372170110-12993-3-git-send-email-s.nawrocki@samsung.com>
-Reply-To: balbi-l0cyMroinI0@public.gmane.org
+ <1372170110-12993-4-git-send-email-s.nawrocki@samsung.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3509253931607399251=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1372170110-12993-3-git-send-email-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VywGB/WGlW4DM4P8"
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1372170110-12993-4-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com, linux-media@vger.kernel.org, kyungmin.park@samsung.com, balbi@ti.com, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, inki.dae@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============3509253931607399251==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
-Content-Disposition: inline
-
---dTy3Mrz/UPE2dbVg
+--VywGB/WGlW4DM4P8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Tue, Jun 25, 2013 at 04:21:48PM +0200, Sylwester Nawrocki wrote:
+On Tue, Jun 25, 2013 at 04:21:49PM +0200, Sylwester Nawrocki wrote:
 > Use the generic PHY API instead of the platform callback to control
-> the MIPI DSIM DPHY. The 'phy_label' field is added to the platform
-> data structure to allow PHY lookup on non-dt platforms.
+> the MIPI CSIS DPHY. The 'phy_label' field is added to the platform
+> data structure to allow PHY lookup on non-dt platforms
 >=20
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-this is awesome :-)
-
-Acked-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Acked-by: Felipe Balbi <balbi@ti.com>
 
 --=20
 balbi
 
---dTy3Mrz/UPE2dbVg
+--VywGB/WGlW4DM4P8
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRybJdAAoJEIaOsuA1yqREvw4QAJNdJCiPv3WGbVora7qyh0zc
-Ch97HxJ1pgzjJOKK8f/WjuXaYK1HCl1Ly/PxWSRsERPk7l83HkQImebOCJl3XwFj
-R63wGnO10FoHo2ygw1Rw7MwiLl8L/1FPkVct75Z4IPPPuMIRrE0AEsvYomUEwCzp
-hv6M1mEc37So1u0Dcsc5bc25vbHp5U8hxCTB7/W9mUcWkwgvHoPShGQFQlCDyc7A
-jDoQc5KghJaQ9hinTfx8aoBdrJhl+nKPz1eeyuXJq9rHxh8UMayxzaIGeQTYakaq
-FHQwkXfQPd0ZHFSLjNkQAzQ0GGUDNWqiOgWnpE7lGeu+MPZd6w3MoJ9kBWZdq0UE
-h8uAcJd4dVZtzwWargRjHUWYhvaupUAJM5GWLE6Eum4Y18jNN1bOjoWOIH2oDhCo
-fOVhwL+uCYKAfeJdkvGisON5UPs8GixHVXGyOk9kdLl5e5sA5orOIfJLGMaXrCmB
-31l/C9fA2oSyDfgYyUFJ8pXAO+IFwU7gr12AMVYqIK8+gfwta75f5XY1NuesoOw+
-kWrKqE82ey6N+puR8O2Z+RZHxI4Z0Wh7BBag8qQjgh7dDfWfAIRsSclvm6SNENs+
-smC5NViiIsg7NkWGMl/zawaJMG/qs0Z18zWJmhAnuuiT9jPX9LUCd0NNtw16YeeN
-oHA+ftgU7Vgr7lMjwb/H
-=AUJ2
+iQIcBAEBAgAGBQJRybKUAAoJEIaOsuA1yqREJ/AP+wVZAqcv5RW7YN7jEYIdeToa
+DVGR4J/QUAG4mdvLT0UNBbOg85dMXVhq/uWcgj9JliWhEtG/yBek98foL1RJweZN
+gEvKRv41uzzrY9TWQI3Q4uYcCWCWLMEzqqBcbB1629wyUOQbrByfxQyhhQ1l9Te/
+yELVyYyGofctYqAYkSMM3zUwhWOWV8WaYVopBbV8nG47bujE0noSlU7EqsGJChKE
+B4gYXgp/L/f06EEySWY2Agssr5oqm2NuK5M5tRLCohEihl/MdYsZHYwxBLMB4cKL
+ODMy3tn6QRofyRtWLYnutJ7D7TwQ9c1B1T8459OZ0tZYkd/zuGmlJycyW9Q4FxD2
+lql7V8Qpryg/9snmkMtBicR9hPVqITWzyYaoikichLP2YV7gpD3yAY4XnsXmq2ca
+s+kuzu54I52Yw5pff8xJF+PZ4F3g2nsf2QvCSSABuReeIxgfVEgjF2mQI1lBuRQN
+PVCkZ+hwFGIt7zypCQg+jF3rC/Gvq83gdLLkVkg5Ny04KT34GoGCiWwG/MGh+Rss
+cDPSOxaC7mPBkiKU/iSBHQ2ehZ/8T1Pq3P5DLRaMQbFiqFp1mxkUWnqTvZVI/5qK
+2L9eKEChTZ7RK1bDkIj32/2G+DVTiZv3l7j3V0DJkUzikzzYU32lj4UC9j/LLOVL
+YeWJUeIme8SU5htkUVsv
+=NPCH
 -----END PGP SIGNATURE-----
 
---dTy3Mrz/UPE2dbVg--
-
---===============3509253931607399251==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
-
---===============3509253931607399251==--
+--VywGB/WGlW4DM4P8--
