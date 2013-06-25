@@ -1,175 +1,80 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V7 25/30] thermal: exynos: Add hardware mode thermal
- calibration support
-Date: Tue, 25 Jun 2013 14:42:29 +0530
-Message-ID: <CADGdYn6urNBzw55xkoXFYjwvvdg-Tqvh+Db=E8gDKY04ewGavA@mail.gmail.com>
-References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com>
-	<1372071051-3167-26-git-send-email-amit.daniel@samsung.com>
-	<51C8A069.5010807@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC PATCH v2 00/12] ARM: s3c64xx: Let amba-pl08x
+ driver handle DMA
+Date: Tue, 25 Jun 2013 11:28:18 +0100
+Message-ID: <20130625102818.GA27646@sirena.org.uk>
+References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f176.google.com ([209.85.223.176]:64888 "EHLO
-	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751461Ab3FYJMa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 05:12:30 -0400
-In-Reply-To: <51C8A069.5010807@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============8829163814687016632=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: alsa-devel@alsa-project.org, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Olof Johansson <olof@lixom.net>, Alban Bedel <alban.bedel@avionic-design.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi,
-On Tue, Jun 25, 2013 at 1:09 AM, Eduardo Valentin
-<eduardo.valentin@ti.com> wrote:
-> On 24-06-2013 06:50, Amit Daniel Kachhap wrote:
->> This patch adds support for h/w mode calibration in the TMU controller.
->> Soc's like 5440 support this features. The h/w bits needed for calibration
->> setting are same as that of enum calibration_type.
->>
->> Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
->> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->> ---
->>  drivers/thermal/samsung/exynos_tmu.c      |   15 +++++++++++++++
->>  drivers/thermal/samsung/exynos_tmu.h      |    6 ++++++
->>  drivers/thermal/samsung/exynos_tmu_data.c |    2 ++
->>  drivers/thermal/samsung/exynos_tmu_data.h |    2 ++
->>  4 files changed, 25 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->> index 3fac0f9..34b999b 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.c
->> +++ b/drivers/thermal/samsung/exynos_tmu.c
->> @@ -73,6 +73,9 @@ static int temp_to_code(struct exynos_tmu_data *data, u8 temp)
->>       struct exynos_tmu_platform_data *pdata = data->pdata;
->>       int temp_code;
->>
->> +     if (pdata->cal_mode == HW_MODE)
->> +             return temp;
->> +
->>       if (data->soc == SOC_ARCH_EXYNOS4210)
->>               /* temp should range between 25 and 125 */
->>               if (temp < 25 || temp > 125) {
->> @@ -107,6 +110,9 @@ static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
->>       struct exynos_tmu_platform_data *pdata = data->pdata;
->>       int temp;
->>
->> +     if (pdata->cal_mode == HW_MODE)
->> +             return temp_code;
->> +
->>       if (data->soc == SOC_ARCH_EXYNOS4210)
->>               /* temp_code should range between 75 and 175 */
->>               if (temp_code < 75 || temp_code > 175) {
->> @@ -155,6 +161,9 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->>       if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
->>               __raw_writel(1, data->base + reg->triminfo_ctrl);
->>
->> +     if (pdata->cal_mode == HW_MODE)
->> +             goto skip_calib_data;
->> +
->>       /* Save trimming info in order to perform calibration */
->>       if (data->soc == SOC_ARCH_EXYNOS5440) {
->>               /*
->> @@ -190,6 +199,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->>                       (pdata->efuse_value >> reg->triminfo_85_shift) &
->>                       EXYNOS_TMU_TEMP_MASK;
->>
->> +skip_calib_data:
->>       if (pdata->max_trigger_level > MAX_THRESHOLD_LEVS) {
->>               dev_err(&pdev->dev, "Invalid max trigger level\n");
->>               goto out;
->> @@ -320,6 +330,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
->>               con |= (pdata->noise_cancel_mode << reg->therm_trip_mode_shift);
->>       }
->>
->> +     if (pdata->cal_mode == HW_MODE) {
->> +             con &= ~(reg->calib_mode_mask << reg->calib_mode_shift);
->> +             con |= pdata->cal_type << reg->calib_mode_shift;
->
-> Same comment as in patch v6 still applies. The above statement is a bit
-> worrying because you have not defined what values cal_type can assume.
->
-> Here is how the type of cal_type is defined:
-> enum calibration_type {
->         TYPE_ONE_POINT_TRIMMING,
->         TYPE_TWO_POINT_TRIMMING,
->         TYPE_NONE,
-> };
->
-> ...
->
->         enum calibration_type cal_type;
->
-> If you got specific bit values for each corresponding type above, I
-> would suggest defining them explicitly, before doing bitwise operations.
-> This is to reduce bug introduction in the future.
->
->> +     }
->> +
-Agreed it is error prone, will change to use properly.
 
-Thanks,
-Amit Daniel
->>       if (on) {
->>               con |= (1 << reg->core_en_shift);
->>               interrupt_en =
->> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
->> index 25c48d4..60d863c 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.h
->> +++ b/drivers/thermal/samsung/exynos_tmu.h
->> @@ -90,6 +90,10 @@ enum soc_type {
->>   * @buf_slope_sel_shift: shift bits of amplifier gain value in tmu_ctrl
->>       register.
->>   * @buf_slope_sel_mask: mask bits of amplifier gain value in tmu_ctrl register.
->> + * @calib_mode_shift: shift bits of calibration mode value in tmu_ctrl
->> +     register.
->> + * @calib_mode_mask: mask bits of calibration mode value in tmu_ctrl
->> +     register.
->>   * @therm_trip_tq_en_shift: shift bits of thermal trip enable by TQ pin in
->>       tmu_ctrl register.
->>   * @core_en_shift: shift bits of TMU core enable bit in tmu_ctrl register.
->> @@ -151,6 +155,8 @@ struct exynos_tmu_registers {
->>       u32     therm_trip_en_shift;
->>       u32     buf_slope_sel_shift;
->>       u32     buf_slope_sel_mask;
->> +     u32     calib_mode_shift;
->> +     u32     calib_mode_mask;
->>       u32     therm_trip_tq_en_shift;
->>       u32     core_en_shift;
->>
->> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
->> index 5952915..9002499 100644
->> --- a/drivers/thermal/samsung/exynos_tmu_data.c
->> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
->> @@ -189,6 +189,8 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
->>       .therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
->>       .buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
->>       .buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
->> +     .calib_mode_shift = EXYNOS_TMU_CALIB_MODE_SHIFT,
->> +     .calib_mode_mask = EXYNOS_TMU_CALIB_MODE_MASK,
->>       .core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
->>       .tmu_status = EXYNOS5440_TMU_S0_7_STATUS,
->>       .tmu_cur_temp = EXYNOS5440_TMU_S0_7_TEMP,
->> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
->> index 43ce5fb..dc7feb5 100644
->> --- a/drivers/thermal/samsung/exynos_tmu_data.h
->> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
->> @@ -75,6 +75,8 @@
->>  #define EXYNOS_TMU_TRIP_MODE_SHIFT   13
->>  #define EXYNOS_TMU_TRIP_MODE_MASK    0x7
->>  #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT       12
->> +#define EXYNOS_TMU_CALIB_MODE_SHIFT  4
->> +#define EXYNOS_TMU_CALIB_MODE_MASK   0x3
->>
->>  #define EXYNOS_TMU_INTEN_RISE0_SHIFT 0
->>  #define EXYNOS_TMU_INTEN_RISE1_SHIFT 4
->>
->
->
-> --
-> You have got to be excited about what you are doing. (L. Lamport)
->
-> Eduardo Valentin
->
+--===============8829163814687016632==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ucH0Tl3ykwO2QBzm"
+Content-Disposition: inline
+
+
+--ucH0Tl3ykwO2QBzm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sat, Jun 22, 2013 at 10:42:32PM +0200, Tomasz Figa wrote:
+> This is another version of my patches extending support of amba-pl08x
+> DMA engine driver to PL080S DMA engine (PL080 modified by Samsung) found
+> in Samsung S3C64xx SoCs.
+
+On my non-DT s3c64xx system I get this when trying to use SPI for the
+first time:
+
+[    1.739385] s3c64xx-spi s3c6410-spi.0: Failed to get RX DMA channel
+[    1.743437] spi_master spi0: failed to prepare transfer hardware
+
+though I haven't yet tried your clock patches (there were some conficts
+that I didn't get round to picking up yet).
+
+--ucH0Tl3ykwO2QBzm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRyXC/AAoJELSic+t+oim9GmUP/R8DpB8DADk0acHVgQrnkpIi
+ZcQs+amajUAW0+rXzmXs941w7E8lPX5Vl7vZQ8C9Kcbl+HGFzaUttRBhPz+obciI
+EoM7kJAf02rn2SCgcdlLcGtP2GIjdButZudsajqm/+eiOzF2BLGFepwGswmk/yN6
+R7lwO9uw+DU/AvqRgl900IQmyUsFVjt9ozdVZqqqZNPK02BI5uDnXHkUVC4vJmSc
+jGdxTeKbP3qVV7QyI44hxx/o12nBPYPIacu35Wlxcp5tsL3BOnS14wIP2VtXVVUH
+4QXN9yMQ2A0iSNIO0xfiTQB0xl6IPSJKsprq6wpxfivTZnPXYuGQskB2OT1+FQdq
+2gH2DXTfsBHG/oz/VQcYTZRdF2bcesV2ygPiLuxzAdBY/DyyqqErCoI5VrImc8Bd
+mTM4+RNOEjhj2I5Ft0NrfDq9aOpk3tpfi2wSH8Wv99fhnVNzG97md0cgwwA/zHKF
+KylX/NOt5fSbLTFMqXOUuaIPSsGEVpajPDZyjstYyWf21p8Ya8Y/9x+JZCZ1HF+3
+X+S1eZo6R7RNCebzEv8WFjSf4z29xdlGC4DBK0N3dy73bhQ231wtdirG64KJQHDr
+ZvkfSgZYW9xDCvo05TyjtnrzQPcuQn5AjdvhL8VG8vXEIqQ3bZRUsssrZVFwgt/A
+3aWOcRCy+wNQ/q7Q+llY
+=A9bA
+-----END PGP SIGNATURE-----
+
+--ucH0Tl3ykwO2QBzm--
+
+--===============8829163814687016632==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============8829163814687016632==--
