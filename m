@@ -1,65 +1,72 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
-Date: Tue, 25 Jun 2013 16:18:52 +0100
-Message-ID: <20130625151852.GD27646@sirena.org.uk>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
- <1405696.in3RSSDWnX@flatron>
- <20130625102646.GC21137@manwe>
- <1688471.WOi6pAAcEq@amdc1227>
+Subject: Re: [RFC PATCH v2 00/12] ARM: s3c64xx: Let amba-pl08x driver handle
+ DMA
+Date: Tue, 25 Jun 2013 16:38:43 +0100
+Message-ID: <20130625153843.GF27646@sirena.org.uk>
+References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
+ <20130625102818.GA27646@sirena.org.uk>
+ <6520269.XdaOpEg0Ud@amdc1227>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pQjS7IR0m4/DQQ0Q"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:38004 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751698Ab3FYPTH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 11:19:07 -0400
+	protocol="application/pgp-signature"; boundary="qPhbOctOI3h5o759"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1688471.WOi6pAAcEq@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <6520269.XdaOpEg0Ud@amdc1227>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>Russell King - ARM Linux <lin>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
---pQjS7IR0m4/DQQ0Q
+--qPhbOctOI3h5o759
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2013 at 01:19:54PM +0200, Tomasz Figa wrote:
+On Tue, Jun 25, 2013 at 01:22:20PM +0200, Tomasz Figa wrote:
+> On Tuesday 25 of June 2013 11:28:18 Mark Brown wrote:
 
-> Kukjin, can you amend the comment I mentioned to this patch above the lin=
-e=20
-> with DEFINE_SPINLOCK or I should send fixed version?
+> > On my non-DT s3c64xx system I get this when trying to use SPI for the
+> > first time:
 
-If you're amending stuff please feel free to also add
+> Could you clarify first time? Does it work on further retries?
 
-Tested-by: Mark Brown <broonie@linaro.org>
+No, the system appears to lock up fairly solidly - I suspect poor error
+handling in the SPI driver.
 
-(for the whole series)
+> > [    1.739385] s3c64xx-spi s3c6410-spi.0: Failed to get RX DMA channel
+> > [    1.743437] spi_master spi0: failed to prepare transfer hardware
 
---pQjS7IR0m4/DQQ0Q
+> > though I haven't yet tried your clock patches (there were some conficts
+> > that I didn't get round to picking up yet).
+
+> This shouldn't really matter, as long as the pl080 drivers probes=20
+> correctly.
+
+Indeed, I was wondering if it was failing to probe due to not getting
+its clocks though since that's another area you've been actively working
+on.
+
+--qPhbOctOI3h5o759
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRybTRAAoJELSic+t+oim9arEP/iXfqz/H5YK9uVb0KCnnDuV2
-9MDwDNDjBncsjY3EJrOgMgo7oBUAMwr8NfR5LxbDQMHjXiTyQfmMe45IX+fkhaAh
-6glQr8oZXZ8koJpXBdLqkETniEDvkV3T6NQDKVUzJrjX0BQEb7cdBjg+OI/w1oTR
-OH3STJTJ4Mb6pnyXkGM9KP//54J6R3MjiJ0huBoHS8DjpPXP4cp2fEF7em3u5jgz
-zEZpwtasOkyPB9fxquD6BFChe5PdKNWJcshjI6K8BtDCX+HrUNUMP0PyLx7uT11e
-1jfB9e6ZlLFfVxTaougCEgQ+K5A44jDJSv/OE2f3OJ5+stlnur5C93HsQoekFcFx
-PPP7JulyfvR2b8f3iopujVuTD057vmiescY0zHXEApxMTw3Jz3wkDrH7QMz4msG0
-aWa9bJWzaARGByREH+MbAWKGtWfM0df9/No8xRUmVykBn6GiwYElHD12XolCfY32
-d/HEwkdiLLO4i8S6MYAFARvyn7EBioX1GuNtjFdTt31khD1ULKWBD4LuWFlgGmW0
-DFo8QThDWxAjkPnDzy4HSXN6S6afwo647mj18f24lts+wGvKFJuqLZYtSRYcj7/r
-/vRWluRO1vgYYOk4spfa6NsdtHV2fu5mbrlhJx5w3arwb/sCWVUa7MgCECO93VxX
-bSfhnDY96nzcytQ/mslD
-=h4GN
+iQIcBAEBAgAGBQJRybmAAAoJELSic+t+oim913QP/juMt3TkCGQjjxdjvuMq43df
+qSp98jXUvmvlCtiGXei/uV3RcIj98fYj5y7KP8CqSqMVoqbdURSTZojkFEOilp1c
+Rd6fhfUJLQ5h5xFBfdSYqBnphXp/DqX7z754SeAgH21xjD8w4fDTqxObAqLQ+6B7
+G27WceaFLTkQfpiGekL1KZWIT6N/f20bcfkiVGU8ek20xytwF+5GMrB/FF1apCvA
+bK6a69QUAkHnPNBIr3XA53G+Yz9xmvNkC8fH0Ygii9qEyQ8io2oWCfrZ3MErUq5n
+Bi5jxNX1+ILF4sdXyhr6Ugz4KzZ4EuuHkollwLSD96QTT0rV27NGRH3L31unfWIN
+VaLAKPMPMLybN6nwUIdjw3J58oV85AdbJvwTrsGC4NIv0hyvPs52NVcxya3Ykynm
+sG+vJquEPzgyA+CdE6ql10oET7OCvCcxqgwodZjn2VVv+iOzT8hZkrp/yZv/N+BE
+QzWq+43OUV5kORwRCvJ3mldwlsmbTYPFL8PMdXNj4CeV8Yw5arxfBDrTrd/TtUYw
+Z6dF5AClNYmrPd0DcVdS/IllVGMXBHA26l8MbokYjCzdkDzpKKXxW5/exI+Mn1LR
+pDezJ3H3tRmu4CV11NWOOELin0taPewrxpBw/K9qR+RtzAVHhe4jESUn1zMjSTCM
+hErhd6oowRnGVSeK55pW
+=CVWt
 -----END PGP SIGNATURE-----
 
---pQjS7IR0m4/DQQ0Q--
+--qPhbOctOI3h5o759--
