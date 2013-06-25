@@ -1,32 +1,40 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [RFC PATCH v2 02/12] dmaengine: PL08x: Add support for
- different offset of CONFIG register
-Date: Tue, 25 Jun 2013 21:04:40 +0530
-Message-ID: <20130625153440.GP23141@intel.com>
-References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
- <1371933764-24875-3-git-send-email-tomasz.figa@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
+Date: Wed, 26 Jun 2013 01:30:14 +0900
+Message-ID: <51C9C596.4060906@samsung.com>
+References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <1371766383-29077-12-git-send-email-tomasz.figa@gmail.com> <2925617.TjWXJcIKRC@flatron> <51C86442.6090406@samsung.com> <20130624174903.GA6795@mithrandir>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:32229 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751274Ab3FYQPI (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:58279 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751631Ab3FYQaU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 12:15:08 -0400
-Content-Disposition: inline
-In-Reply-To: <1371933764-24875-3-git-send-email-tomasz.figa@gmail.com>
+	Tue, 25 Jun 2013 12:30:20 -0400
+In-Reply-To: <20130624174903.GA6795@mithrandir>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alban Bedel <alba>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?ISO-8859-1?Q?Heiko_?= =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
-On Sat, Jun 22, 2013 at 10:42:34PM +0200, Tomasz Figa wrote:
-> Some variants of PL08x (namely PL080S, found in Samsung S3C64xx SoCs)
-> have CONFIG register at different offset. This patch makes the driver
-> use offset from vendor data struct.
-> 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
+On 06/25/13 02:49, Thierry Reding wrote:
 
---
-~Vinod
+[...]
+
+> Note that you can't apply patches that touch the PWM tree without my Ack
+> and I already mentioned that the current way this driver is written
+> isn't acceptable.
+>
+> So either you fix it properly, or if everybody except me thinks we don't
+> need a proper design for drivers anymore, then the only way I'll accept
+> this driver into the PWM tree is if you put a really big comment at the
+> top of the file saying that the driver is badly designed on purpose and
+> that people shouldn't be using it as a reference.
+>
+Thierry, hmm...I thought Tomasz addressed comments from you and probably 
+there are some comments I I missed...OK, I see what your concern is.
+
+Let me drop this series for upcoming merge window.
+
+- Kukjin
