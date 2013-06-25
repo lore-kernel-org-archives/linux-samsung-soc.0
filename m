@@ -1,59 +1,63 @@
 From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2 4/5] exynos4-is: Use generic MIPI CSIS PHY driver
-Date: Tue, 25 Jun 2013 18:09:08 +0300
-Message-ID: <20130625150908.GC21334@arwen.pp.htv.fi>
+Subject: Re: [PATCH v2 5/5] ARM: Samsung: Remove MIPI PHY setup code
+Date: Tue, 25 Jun 2013 18:09:58 +0300
+Message-ID: <20130625150958.GD21334@arwen.pp.htv.fi>
 References: <1372170110-12993-1-git-send-email-s.nawrocki@samsung.com>
- <1372170110-12993-4-git-send-email-s.nawrocki@samsung.com>
+ <1372170110-12993-5-git-send-email-s.nawrocki@samsung.com>
 Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VywGB/WGlW4DM4P8"
+	protocol="application/pgp-signature"; boundary="11Y7aswkeuHtSBEs"
 Return-path: <linux-media-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1372170110-12993-4-git-send-email-s.nawrocki@samsung.com>
+In-Reply-To: <1372170110-12993-5-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-media-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com, linux-media@vger.kernel.org, kyungmin.park@samsung.com, balbi@ti.com, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, inki.dae@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---VywGB/WGlW4DM4P8
+--11Y7aswkeuHtSBEs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2013 at 04:21:49PM +0200, Sylwester Nawrocki wrote:
-> Use the generic PHY API instead of the platform callback to control
-> the MIPI CSIS DPHY. The 'phy_label' field is added to the platform
-> data structure to allow PHY lookup on non-dt platforms
+On Tue, Jun 25, 2013 at 04:21:50PM +0200, Sylwester Nawrocki wrote:
+> Generic PHY drivers are used to handle the MIPI CSIS and MIPI DSIM
+> DPHYs so we can remove now unused code at arch/arm/plat-samsung.
+> In case there is any board file for S5PV210 platforms using MIPI
+> CSIS/DSIM (not any upstream currently) it should use the generic
+> PHY API to bind the PHYs to respective PHY consumer drivers.
 >=20
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+pretty cool stuff
 
 Acked-by: Felipe Balbi <balbi@ti.com>
 
 --=20
 balbi
 
---VywGB/WGlW4DM4P8
+--11Y7aswkeuHtSBEs
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRybKUAAoJEIaOsuA1yqREJ/AP+wVZAqcv5RW7YN7jEYIdeToa
-DVGR4J/QUAG4mdvLT0UNBbOg85dMXVhq/uWcgj9JliWhEtG/yBek98foL1RJweZN
-gEvKRv41uzzrY9TWQI3Q4uYcCWCWLMEzqqBcbB1629wyUOQbrByfxQyhhQ1l9Te/
-yELVyYyGofctYqAYkSMM3zUwhWOWV8WaYVopBbV8nG47bujE0noSlU7EqsGJChKE
-B4gYXgp/L/f06EEySWY2Agssr5oqm2NuK5M5tRLCohEihl/MdYsZHYwxBLMB4cKL
-ODMy3tn6QRofyRtWLYnutJ7D7TwQ9c1B1T8459OZ0tZYkd/zuGmlJycyW9Q4FxD2
-lql7V8Qpryg/9snmkMtBicR9hPVqITWzyYaoikichLP2YV7gpD3yAY4XnsXmq2ca
-s+kuzu54I52Yw5pff8xJF+PZ4F3g2nsf2QvCSSABuReeIxgfVEgjF2mQI1lBuRQN
-PVCkZ+hwFGIt7zypCQg+jF3rC/Gvq83gdLLkVkg5Ny04KT34GoGCiWwG/MGh+Rss
-cDPSOxaC7mPBkiKU/iSBHQ2ehZ/8T1Pq3P5DLRaMQbFiqFp1mxkUWnqTvZVI/5qK
-2L9eKEChTZ7RK1bDkIj32/2G+DVTiZv3l7j3V0DJkUzikzzYU32lj4UC9j/LLOVL
-YeWJUeIme8SU5htkUVsv
-=NPCH
+iQIcBAEBAgAGBQJRybLGAAoJEIaOsuA1yqRE/P8P/1NFpYzmZOjWX4O5YfCFJcb6
+VJRtCXfNxvkh7capMYBfsIeit3N+yStBDZ24FEybI33E4xjj3UAHecHq0USxZz+V
+lDjwHfx9588ivw2wsOFzc71LZwFNUgQmxGSuRZOtCfuFZoaEn/iUCTEP7f1lyqJi
+WTcvnVZhhwqmldiS8Sg/HBtC2f7gG18uP+DY12iEiDOqfOwUmKzjUkD6jOSS/MIt
+HTPL5tEt6OQ27bE1T4CN6ZJy9sjLRyCH/sf7CzTlOe5mBkSRspHu+2MjdBkW2o9y
+sAyfI1n7Ilep64UE+lgwGBKANJwOWl/pYoJm835s8kr7M2kNRy/tKsvBn5+emS0F
+yx2JrncbYM57NThUIKEu2IPtxzP38ec+tTVfcRup4Bn1ZQuKkq293yKkiu6wgiys
+7TZwo57BQi3XOolTABoddlVvlzhen+ZKxIduxZGKm2Dma/+6eoij0U2bCePxoPxM
+Ap2gxA0nuxt99GuX0v5UCBsFZzLG5bV+88ti2RozDJe+woMc+ghN4lqh+kL+U5bV
+PFoA2sQBfA1q8zfXhbD7OhldceiL2w26fSZcEQatkG9r7zLRCOYtEln7fTW0+30f
+vZHredQAshZPAgJUIhfIHCi/HnPOuVpjxFTJkvk62Rs9nr3+/qTx/0613xDQHFaa
+ZGXO4AJVWFH20ISs4omI
+=h90o
 -----END PGP SIGNATURE-----
 
---VywGB/WGlW4DM4P8--
+--11Y7aswkeuHtSBEs--
