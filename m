@@ -1,52 +1,96 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [RFC PATCH v2 00/12] ARM: s3c64xx: Let amba-pl08x driver handle DMA
-Date: Tue, 25 Jun 2013 17:44:06 +0200
-Message-ID: <1486283.2pMLZtfT9J@amdc1227>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [RFC PATCH v2 01/12] dmaengine: PL08x: Refactor
+ pl08x_getbytes_chan() to lower indentation
+Date: Tue, 25 Jun 2013 20:46:12 +0530
+Message-ID: <20130625151612.GO23141@intel.com>
 References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
- <6520269.XdaOpEg0Ud@amdc1227> <20130625153843.GF27646@sirena.org.uk>
+ <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:10096 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751102Ab3FYPoK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 11:44:10 -0400
-In-reply-to: <20130625153843.GF27646@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Disposition: inline
+In-Reply-To: <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: alsa-devel@alsa-project.org, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, Dan Williams <djbw@fb.com>, Olof Johansson <olof@lixom.net>, Alban Bedel <alban.bedel@avionic-design.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>Russell King - ARM Linux <lin>
 
-On Tuesday 25 of June 2013 16:38:43 Mark Brown wrote:
-> On Tue, Jun 25, 2013 at 01:22:20PM +0200, Tomasz Figa wrote:
-> > On Tuesday 25 of June 2013 11:28:18 Mark Brown wrote:
-> > > On my non-DT s3c64xx system I get this when trying to use SPI for the
-> > 
-> > > first time:
-> > Could you clarify first time? Does it work on further retries?
+On Sat, Jun 22, 2013 at 10:42:33PM +0200, Tomasz Figa wrote:
+> Further patch will introduce support for PL080S, which requires some
+> things to be done conditionally, thus increasing indentation level of
+> some functions even more.
 > 
-> No, the system appears to lock up fairly solidly - I suspect poor error
-> handling in the SPI driver.
+> This patch reduces indentation level of pl08x_getbytes_chan() function
+> by inverting several conditions and returning from function wherever
+> possible.
 > 
-> > > [    1.739385] s3c64xx-spi s3c6410-spi.0: Failed to get RX DMA
-> > > channel
-> > > [    1.743437] spi_master spi0: failed to prepare transfer hardware
-> > > 
-> > > though I haven't yet tried your clock patches (there were some
-> > > conficts
-> > > that I didn't get round to picking up yet).
-> > 
-> > This shouldn't really matter, as long as the pl080 drivers probes
-> > correctly.
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  drivers/dma/amba-pl08x.c | 53 ++++++++++++++++++++++++++----------------------
+>  1 file changed, 29 insertions(+), 24 deletions(-)
 > 
-> Indeed, I was wondering if it was failing to probe due to not getting
-> its clocks though since that's another area you've been actively working
-> on.
+> diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+> index 06fe45c..6a12392 100644
+> --- a/drivers/dma/amba-pl08x.c
+> +++ b/drivers/dma/amba-pl08x.c
+> @@ -469,47 +469,52 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
+>  /* The channel should be paused when calling this */
+>  static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
+>  {
+> +	struct pl08x_lli *llis_va;
+>  	struct pl08x_phy_chan *ch;
+> +	dma_addr_t llis_bus;
+>  	struct pl08x_txd *txd;
+> -	size_t bytes = 0;
+> +	size_t bytes;
+> +	int index;
+> +	u32 clli;
+>  
+>  	ch = plchan->phychan;
+>  	txd = plchan->at;
+>  
+> +	if (!ch || !txd)
+> +		return 0;
+shouldnt this be err return
 
-Let me check if I can get something with SPI interface that I would be able 
-to connect to my board at home and do some testing.
+> +
+>  	/*
+>  	 * Follow the LLIs to get the number of remaining
+>  	 * bytes in the currently active transaction.
+>  	 */
+> -	if (ch && txd) {
+> -		u32 clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
+> +	clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
+>  
+> -		/* First get the remaining bytes in the active transfer */
+> -		bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
+> +	/* First get the remaining bytes in the active transfer */
+> +	bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
+>  
+> -		if (clli) {
+> -			struct pl08x_lli *llis_va = txd->llis_va;
+> -			dma_addr_t llis_bus = txd->llis_bus;
+> -			int index;
+> +	if (!clli)
+> +		return bytes;
+>  
+> -			BUG_ON(clli < llis_bus || clli >= llis_bus +
+> +	llis_va = txd->llis_va;
+> +	llis_bus = txd->llis_bus;
+> +
+> +	BUG_ON(clli < llis_bus || clli >= llis_bus +
+>  				sizeof(struct pl08x_lli) * MAX_NUM_TSFR_LLIS);
+IMO BUG_ON is too much for this. Perhaps returning error and logging error would
+be okay
 
-Best regards,
-Tomasz
+--
+~Vinod
