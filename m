@@ -1,72 +1,79 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH v2 00/12] ARM: s3c64xx: Let amba-pl08x driver handle
- DMA
-Date: Tue, 25 Jun 2013 16:38:43 +0100
-Message-ID: <20130625153843.GF27646@sirena.org.uk>
-References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
- <20130625102818.GA27646@sirena.org.uk>
- <6520269.XdaOpEg0Ud@amdc1227>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qPhbOctOI3h5o759"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <6520269.XdaOpEg0Ud@amdc1227>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>Russell King - ARM Linux <lin>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH 3/4] ARM: dts: exynos4: Add nodes for USB PHY block
+Date: Tue, 25 Jun 2013 17:38:25 +0200
+Message-ID: <1372174706-5459-4-git-send-email-t.figa@samsung.com>
+References: <1372174706-5459-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:27340 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752693Ab3FYPjG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Jun 2013 11:39:06 -0400
+In-reply-to: <1372174706-5459-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org, Felipe Balbi <balbi@ti.com>, Grant Likely <grant.likely@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>, linux-usb@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, m.szyprowski@samsung.com, l.majewski@samsung.com, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
+This patch adds device tree nodes for USB OTG PHYs of Exynos4210 and
+Exynos4x12 SoCs.
 
---qPhbOctOI3h5o759
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210.dtsi | 15 +++++++++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi | 15 +++++++++++++++
+ 2 files changed, 30 insertions(+)
 
-On Tue, Jun 25, 2013 at 01:22:20PM +0200, Tomasz Figa wrote:
-> On Tuesday 25 of June 2013 11:28:18 Mark Brown wrote:
-
-> > On my non-DT s3c64xx system I get this when trying to use SPI for the
-> > first time:
-
-> Could you clarify first time? Does it work on further retries?
-
-No, the system appears to lock up fairly solidly - I suspect poor error
-handling in the SPI driver.
-
-> > [    1.739385] s3c64xx-spi s3c6410-spi.0: Failed to get RX DMA channel
-> > [    1.743437] spi_master spi0: failed to prepare transfer hardware
-
-> > though I haven't yet tried your clock patches (there were some conficts
-> > that I didn't get round to picking up yet).
-
-> This shouldn't really matter, as long as the pl080 drivers probes=20
-> correctly.
-
-Indeed, I was wondering if it was failing to probe due to not getting
-its clocks though since that's another area you've been actively working
-on.
-
---qPhbOctOI3h5o759
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRybmAAAoJELSic+t+oim913QP/juMt3TkCGQjjxdjvuMq43df
-qSp98jXUvmvlCtiGXei/uV3RcIj98fYj5y7KP8CqSqMVoqbdURSTZojkFEOilp1c
-Rd6fhfUJLQ5h5xFBfdSYqBnphXp/DqX7z754SeAgH21xjD8w4fDTqxObAqLQ+6B7
-G27WceaFLTkQfpiGekL1KZWIT6N/f20bcfkiVGU8ek20xytwF+5GMrB/FF1apCvA
-bK6a69QUAkHnPNBIr3XA53G+Yz9xmvNkC8fH0Ygii9qEyQ8io2oWCfrZ3MErUq5n
-Bi5jxNX1+ILF4sdXyhr6Ugz4KzZ4EuuHkollwLSD96QTT0rV27NGRH3L31unfWIN
-VaLAKPMPMLybN6nwUIdjw3J58oV85AdbJvwTrsGC4NIv0hyvPs52NVcxya3Ykynm
-sG+vJquEPzgyA+CdE6ql10oET7OCvCcxqgwodZjn2VVv+iOzT8hZkrp/yZv/N+BE
-QzWq+43OUV5kORwRCvJ3mldwlsmbTYPFL8PMdXNj4CeV8Yw5arxfBDrTrd/TtUYw
-Z6dF5AClNYmrPd0DcVdS/IllVGMXBHA26l8MbokYjCzdkDzpKKXxW5/exI+Mn1LR
-pDezJ3H3tRmu4CV11NWOOELin0taPewrxpBw/K9qR+RtzAVHhe4jESUn1zMjSTCM
-hErhd6oowRnGVSeK55pW
-=CVWt
------END PGP SIGNATURE-----
-
---qPhbOctOI3h5o759--
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 54710de..3c71ea5 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -114,6 +114,21 @@
+ 		interrupts = <2 4>;
+ 	};
+ 
++	usbphy@125B0000 {
++		compatible = "samsung,exynos4210-usb2phy";
++		reg = <0x125B0000 0x100>;
++		clocks = <&clock 305>;
++		clock-names = "otg";
++		status = "disabled";
++		ranges;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		usbphy-sys {
++			reg = <0x10020704 0x8>;
++		};
++	};
++
+ 	g2d@12800000 {
+ 		compatible = "samsung,s5pv210-g2d";
+ 		reg = <0x12800000 0x1000>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index e3380a7..267ed95 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -79,4 +79,19 @@
+ 		interrupts = <0 89 0>;
+ 		status = "disabled";
+ 	};
++
++	usbphy@125B0000 {
++		compatible = "samsung,exynos4x12-usb2phy";
++		reg = <0x125B0000 0x100>;
++		clocks = <&clock 305>;
++		clock-names = "otg";
++		status = "disabled";
++		ranges;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		usbphy-sys {
++			reg = <0x10020704 0x8>;
++		};
++	};
+ };
+-- 
+1.8.2.1
