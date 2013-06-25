@@ -1,63 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
-Date: Wed, 26 Jun 2013 01:41:17 +0900
-Message-ID: <51C9C82D.6010808@samsung.com>
-References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com> <1405696.in3RSSDWnX@flatron> <20130625102646.GC21137@manwe> <1688471.WOi6pAAcEq@amdc1227>
+Subject: Re: [GIT PULL 0/2] Samsung 3rd pull-request for v3.11
+Date: Wed, 26 Jun 2013 01:44:16 +0900
+Message-ID: <51C9C8E0.3090101@samsung.com>
+References: <51C1C4BE.802@samsung.com> <51C87B3E.4000508@samsung.com> <201306242324.00039.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:34418 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751060Ab3FYQl1 (ORCPT
+Received: from mail-pa0-f49.google.com ([209.85.220.49]:59524 "EHLO
+	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751004Ab3FYQoW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 12:41:27 -0400
-In-Reply-To: <1688471.WOi6pAAcEq@amdc1227>
+	Tue, 25 Jun 2013 12:44:22 -0400
+Received: by mail-pa0-f49.google.com with SMTP id ld11so12783553pab.22
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Jun 2013 09:44:22 -0700 (PDT)
+In-Reply-To: <201306242324.00039.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 06/25/13 20:19, Tomasz Figa wrote:
-
-[...]
-
->>>>> /*
->>>>>
->>>>>   * PWM block is shared between pwm-samsung and samsung_pwm_timer
->>>>>   drivers
->>>>>   * and some registers need access synchronization. If both drivers
->>>>>   are
->>>>>   * compiled in, the spinlock is defined in the clocksource driver,
->>>>>   * otherwise following definition is used.
->>>>>   *
->>>>>   * Currently we do not need any more complex synchronization method
->>>>>   * because all the supported SoCs contain only one instance of the
->>>>>   PWM
->>>>>   * IP. Should this change, both drivers will need to be modified to
->>>>>   * properly synchronize accesses to particular instances.
->>>>>   */
->>>>
->>>> I see that you can't be persuaded. And everybody else seems to be
->>>> okay
->>>> with it so... have it your way. I'm probably going to regret this.
+On 06/25/13 06:23, Arnd Bergmann wrote:
+> On Monday 24 June 2013, Kukjin Kim wrote:
+>> On 06/19/13 23:48, Kukjin Kim wrote:
+>>> Hi Arnd, Olof
 >>>
->>> This was just a proposal. Do you want anything else to be added to the
->>> comment or anything to be changed?
+>>> This is 3rd pull-request for v3.11.
+>>>
+>>> - pinctrl for exynos5420
+>>> - update exynos clock
+>>>
+>>> Please see each tag in detail
+>>>
+>>> If any problems, please kindly let me know.
+>>>
 >>
->> For reference, I still don't like this but since I'm the only one
->> complaining, go ahead. With that comment added to the driver:
+>> Arnd, Olof
 >>
->> Acked-by: Thierry Reding<thierry.reding@gmail.com>
+>> Any concerns on this?
+>>
 >
-> OK. Thank you.
+> Sorry, I made a mistake and marked these as done in my
+> email client without actually applying them. I suppose Olof
+> will handle them while I'm away for a day.
 >
-> Kukjin, can you amend the comment I mentioned to this patch above the line
-> with DEFINE_SPINLOCK or I should send fixed version?
->
-Tomasz, please re-send this one with fixing it but I'm not sure this can 
-be sent for upcoming merge window because it's a little bit late. 
-Anyway, let me try it.
+OK, thanks.
 
-Thanks,
 - Kukjin
