@@ -1,63 +1,65 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2 5/5] ARM: Samsung: Remove MIPI PHY setup code
-Date: Tue, 25 Jun 2013 18:09:58 +0300
-Message-ID: <20130625150958.GD21334@arwen.pp.htv.fi>
-References: <1372170110-12993-1-git-send-email-s.nawrocki@samsung.com>
- <1372170110-12993-5-git-send-email-s.nawrocki@samsung.com>
-Reply-To: <balbi@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 11/18] pwm: Add new pwm-samsung driver
+Date: Tue, 25 Jun 2013 16:18:52 +0100
+Message-ID: <20130625151852.GD27646@sirena.org.uk>
+References: <1371766383-29077-1-git-send-email-tomasz.figa@gmail.com>
+ <1405696.in3RSSDWnX@flatron>
+ <20130625102646.GC21137@manwe>
+ <1688471.WOi6pAAcEq@amdc1227>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="11Y7aswkeuHtSBEs"
-Return-path: <linux-media-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="pQjS7IR0m4/DQQ0Q"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:38004 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751698Ab3FYPTH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Jun 2013 11:19:07 -0400
 Content-Disposition: inline
-In-Reply-To: <1372170110-12993-5-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com, linux-media@vger.kernel.org, kyungmin.park@samsung.com, balbi@ti.com, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, inki.dae@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org
+In-Reply-To: <1688471.WOi6pAAcEq@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Thomas Abraham <thomas.abraham@linaro.org>
 
---11Y7aswkeuHtSBEs
+
+--pQjS7IR0m4/DQQ0Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2013 at 04:21:50PM +0200, Sylwester Nawrocki wrote:
-> Generic PHY drivers are used to handle the MIPI CSIS and MIPI DSIM
-> DPHYs so we can remove now unused code at arch/arm/plat-samsung.
-> In case there is any board file for S5PV210 platforms using MIPI
-> CSIS/DSIM (not any upstream currently) it should use the generic
-> PHY API to bind the PHYs to respective PHY consumer drivers.
->=20
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+On Tue, Jun 25, 2013 at 01:19:54PM +0200, Tomasz Figa wrote:
 
-pretty cool stuff
+> Kukjin, can you amend the comment I mentioned to this patch above the lin=
+e=20
+> with DEFINE_SPINLOCK or I should send fixed version?
 
-Acked-by: Felipe Balbi <balbi@ti.com>
+If you're amending stuff please feel free to also add
 
---=20
-balbi
+Tested-by: Mark Brown <broonie@linaro.org>
 
---11Y7aswkeuHtSBEs
+(for the whole series)
+
+--pQjS7IR0m4/DQQ0Q
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRybLGAAoJEIaOsuA1yqRE/P8P/1NFpYzmZOjWX4O5YfCFJcb6
-VJRtCXfNxvkh7capMYBfsIeit3N+yStBDZ24FEybI33E4xjj3UAHecHq0USxZz+V
-lDjwHfx9588ivw2wsOFzc71LZwFNUgQmxGSuRZOtCfuFZoaEn/iUCTEP7f1lyqJi
-WTcvnVZhhwqmldiS8Sg/HBtC2f7gG18uP+DY12iEiDOqfOwUmKzjUkD6jOSS/MIt
-HTPL5tEt6OQ27bE1T4CN6ZJy9sjLRyCH/sf7CzTlOe5mBkSRspHu+2MjdBkW2o9y
-sAyfI1n7Ilep64UE+lgwGBKANJwOWl/pYoJm835s8kr7M2kNRy/tKsvBn5+emS0F
-yx2JrncbYM57NThUIKEu2IPtxzP38ec+tTVfcRup4Bn1ZQuKkq293yKkiu6wgiys
-7TZwo57BQi3XOolTABoddlVvlzhen+ZKxIduxZGKm2Dma/+6eoij0U2bCePxoPxM
-Ap2gxA0nuxt99GuX0v5UCBsFZzLG5bV+88ti2RozDJe+woMc+ghN4lqh+kL+U5bV
-PFoA2sQBfA1q8zfXhbD7OhldceiL2w26fSZcEQatkG9r7zLRCOYtEln7fTW0+30f
-vZHredQAshZPAgJUIhfIHCi/HnPOuVpjxFTJkvk62Rs9nr3+/qTx/0613xDQHFaa
-ZGXO4AJVWFH20ISs4omI
-=h90o
+iQIcBAEBAgAGBQJRybTRAAoJELSic+t+oim9arEP/iXfqz/H5YK9uVb0KCnnDuV2
+9MDwDNDjBncsjY3EJrOgMgo7oBUAMwr8NfR5LxbDQMHjXiTyQfmMe45IX+fkhaAh
+6glQr8oZXZ8koJpXBdLqkETniEDvkV3T6NQDKVUzJrjX0BQEb7cdBjg+OI/w1oTR
+OH3STJTJ4Mb6pnyXkGM9KP//54J6R3MjiJ0huBoHS8DjpPXP4cp2fEF7em3u5jgz
+zEZpwtasOkyPB9fxquD6BFChe5PdKNWJcshjI6K8BtDCX+HrUNUMP0PyLx7uT11e
+1jfB9e6ZlLFfVxTaougCEgQ+K5A44jDJSv/OE2f3OJ5+stlnur5C93HsQoekFcFx
+PPP7JulyfvR2b8f3iopujVuTD057vmiescY0zHXEApxMTw3Jz3wkDrH7QMz4msG0
+aWa9bJWzaARGByREH+MbAWKGtWfM0df9/No8xRUmVykBn6GiwYElHD12XolCfY32
+d/HEwkdiLLO4i8S6MYAFARvyn7EBioX1GuNtjFdTt31khD1ULKWBD4LuWFlgGmW0
+DFo8QThDWxAjkPnDzy4HSXN6S6afwo647mj18f24lts+wGvKFJuqLZYtSRYcj7/r
+/vRWluRO1vgYYOk4spfa6NsdtHV2fu5mbrlhJx5w3arwb/sCWVUa7MgCECO93VxX
+bSfhnDY96nzcytQ/mslD
+=h4GN
 -----END PGP SIGNATURE-----
 
---11Y7aswkeuHtSBEs--
+--pQjS7IR0m4/DQQ0Q--
