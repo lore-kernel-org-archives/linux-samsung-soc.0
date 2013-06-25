@@ -1,96 +1,32 @@
 From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [RFC PATCH v2 01/12] dmaengine: PL08x: Refactor
- pl08x_getbytes_chan() to lower indentation
-Date: Tue, 25 Jun 2013 20:46:12 +0530
-Message-ID: <20130625151612.GO23141@intel.com>
+Subject: Re: [RFC PATCH v2 02/12] dmaengine: PL08x: Add support for
+ different offset of CONFIG register
+Date: Tue, 25 Jun 2013 21:04:40 +0530
+Message-ID: <20130625153440.GP23141@intel.com>
 References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
- <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
+ <1371933764-24875-3-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga14.intel.com ([143.182.124.37]:32229 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751274Ab3FYQPI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Jun 2013 12:15:08 -0400
 Content-Disposition: inline
-In-Reply-To: <1371933764-24875-2-git-send-email-tomasz.figa@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: alsa-devel@alsa-project.org, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>, Dan Williams <djbw@fb.com>, Olof Johansson <olof@lixom.net>, Alban Bedel <alban.bedel@avionic-design.de>
+In-Reply-To: <1371933764-24875-3-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <djbw@fb.com>, Linus Walleij <linus.walleij@linaro.org>, Alessandro Rubini <rubini@gnudd.com>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Padmavathi Venna <padma.v@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Alban Bedel <alba>
 
-On Sat, Jun 22, 2013 at 10:42:33PM +0200, Tomasz Figa wrote:
-> Further patch will introduce support for PL080S, which requires some
-> things to be done conditionally, thus increasing indentation level of
-> some functions even more.
-> 
-> This patch reduces indentation level of pl08x_getbytes_chan() function
-> by inverting several conditions and returning from function wherever
-> possible.
+On Sat, Jun 22, 2013 at 10:42:34PM +0200, Tomasz Figa wrote:
+> Some variants of PL08x (namely PL080S, found in Samsung S3C64xx SoCs)
+> have CONFIG register at different offset. This patch makes the driver
+> use offset from vendor data struct.
 > 
 > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  drivers/dma/amba-pl08x.c | 53 ++++++++++++++++++++++++++----------------------
->  1 file changed, 29 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-> index 06fe45c..6a12392 100644
-> --- a/drivers/dma/amba-pl08x.c
-> +++ b/drivers/dma/amba-pl08x.c
-> @@ -469,47 +469,52 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
->  /* The channel should be paused when calling this */
->  static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
->  {
-> +	struct pl08x_lli *llis_va;
->  	struct pl08x_phy_chan *ch;
-> +	dma_addr_t llis_bus;
->  	struct pl08x_txd *txd;
-> -	size_t bytes = 0;
-> +	size_t bytes;
-> +	int index;
-> +	u32 clli;
->  
->  	ch = plchan->phychan;
->  	txd = plchan->at;
->  
-> +	if (!ch || !txd)
-> +		return 0;
-shouldnt this be err return
-
-> +
->  	/*
->  	 * Follow the LLIs to get the number of remaining
->  	 * bytes in the currently active transaction.
->  	 */
-> -	if (ch && txd) {
-> -		u32 clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
-> +	clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
->  
-> -		/* First get the remaining bytes in the active transfer */
-> -		bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
-> +	/* First get the remaining bytes in the active transfer */
-> +	bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
->  
-> -		if (clli) {
-> -			struct pl08x_lli *llis_va = txd->llis_va;
-> -			dma_addr_t llis_bus = txd->llis_bus;
-> -			int index;
-> +	if (!clli)
-> +		return bytes;
->  
-> -			BUG_ON(clli < llis_bus || clli >= llis_bus +
-> +	llis_va = txd->llis_va;
-> +	llis_bus = txd->llis_bus;
-> +
-> +	BUG_ON(clli < llis_bus || clli >= llis_bus +
->  				sizeof(struct pl08x_lli) * MAX_NUM_TSFR_LLIS);
-IMO BUG_ON is too much for this. Perhaps returning error and logging error would
-be okay
+Acked-by: Vinod Koul <vinod.koul@intel.com>
 
 --
 ~Vinod
