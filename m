@@ -1,44 +1,55 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V10 1/4] pci: Add PCIe driver for Samsung Exynos
-Date: Tue, 25 Jun 2013 12:23:03 +0900
-Message-ID: <007e01ce7153$4d4b0730$e7e11590$%kim@samsung.com>
-References: <003a01ce6e50$6d5418b0$47fc4a10$@samsung.com>
- <20130625021102.GA13310@google.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFC PATCH v2 09/12] clk: samsung: s3c64xx: Add
+	aliases for DMA clocks
+Date: Tue, 25 Jun 2013 07:30:32 +0200
+Message-ID: <3499507.mKk2LUsQ0r@flatron>
+References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
+ <1371933764-24875-10-git-send-email-tomasz.figa@gmail.com>
+ <CACRpkdZ0WZ03XsNNx_e1zNuu_Mqkh6cyi0cV3PrzD1LxD0s63g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41439 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752122Ab3FYDXE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Jun 2013 23:23:04 -0400
-In-reply-to: <20130625021102.GA13310@google.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CACRpkdZ0WZ03XsNNx_e1zNuu_Mqkh6cyi0cV3PrzD1LxD0s63g@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bjorn Helgaas' <bhelgaas@google.com>, 'Jingoo Han' <jg1.han@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Andrew Murray' <andrew.murray@arm.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>
 
-Bjorn Helgaas wrote:
+On Tuesday 25 of June 2013 00:38:17 Linus Walleij wrote:
+> On Sat, Jun 22, 2013 at 10:42 PM, Tomasz Figa <tomasz.figa@gmail.com> 
+wrote:
+> > The new amba-pl08x driver requires another set of clock aliases, so
+> > this patch adds them.
+> > 
+> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > ---
+> > 
+> >  drivers/clk/samsung/clk-s3c64xx.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/clk/samsung/clk-s3c64xx.c
+> > b/drivers/clk/samsung/clk-s3c64xx.c index 253a972..9fb750c 100644
+> > --- a/drivers/clk/samsung/clk-s3c64xx.c
+> > +++ b/drivers/clk/samsung/clk-s3c64xx.c
 > 
-> On Fri, Jun 21, 2013 at 04:24:54PM +0900, Jingoo Han wrote:
-> > Exynos5440 has a PCIe controller which can be used as Root Complex.
-> > This driver supports a PCIe controller as Root Complex mode.
-> >
-> > Signed-off-by: Surendranath Gurivireddy Balla <suren.reddy@samsung.com>
-> > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Please merge this through arm-soc as you discussed.
-> 
-Sounds great.
+> This driver is not in my kernel mainline tree or linux-next,
+> is it pending in some review?
 
-Arnd, please take this series into arm-soc tree directly by yourself with my
-ack on arch/exynos stuff if you want ;)
+Kind of. Actually it has been already reviewed and acked, but it is 
+waiting on one dependency. I'm not sure anymore if I can get it merged for 
+3.11. Probably not.
 
-Thanks,
-- Kukjin
+Still, this patch is just a proof of concept, showing what needs to be 
+done to make all this work.
+
+Best regards,
+Tomasz
