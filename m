@@ -1,34 +1,48 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/2] ARM: EXYNOS: Remove combiner_init declaration
-Date: Wed, 26 Jun 2013 17:06:36 +0530
-Message-ID: <1372246597-32323-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH 2/2] irqchip: exynos-combiner: Staticize combiner_init
+Date: Wed, 26 Jun 2013 17:06:37 +0530
+Message-ID: <1372246597-32323-2-git-send-email-sachin.kamat@linaro.org>
+References: <1372246597-32323-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:33098 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752307Ab3FZLv6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Jun 2013 07:51:58 -0400
+Received: by mail-pb0-f48.google.com with SMTP id ma3so13946070pbc.7
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2013 04:51:58 -0700 (PDT)
+In-Reply-To: <1372246597-32323-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, tglx@linutronix.de, t.figa@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org, patches@linaro.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Commit d243997f ("ARM: EXYNOS: Remove legacy interrupt initialization
-code") removed the call to combiner_init(). Since there are no more
-users in the machine code, remove the declaration as well.
+combiner_init() is referenced only in this file. Make it
+static.
 
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- arch/arm/mach-exynos/common.h |    2 --
- 1 file changed, 2 deletions(-)
+ drivers/irqchip/exynos-combiner.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 3e156bc..c4abde2 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -72,8 +72,6 @@ void exynos4212_register_clocks(void);
- #endif
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+index a9d2b2f..4c68265 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -204,10 +204,10 @@ static unsigned int combiner_lookup_irq(int group)
+ 	return 0;
+ }
  
- struct device_node;
--void combiner_init(void __iomem *combiner_base, struct device_node *np,
--			unsigned int max_nr, int irq_base);
- 
- extern struct smp_operations exynos_smp_ops;
- 
+-void __init combiner_init(void __iomem *combiner_base,
+-			  struct device_node *np,
+-			  unsigned int max_nr,
+-			  int irq_base)
++static void __init combiner_init(void __iomem *combiner_base,
++				 struct device_node *np,
++				 unsigned int max_nr,
++				 int irq_base)
+ {
+ 	int i, irq;
+ 	unsigned int nr_irq;
 -- 
 1.7.9.5
