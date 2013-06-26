@@ -1,48 +1,68 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/2] irqchip: exynos-combiner: Staticize combiner_init
-Date: Wed, 26 Jun 2013 17:06:37 +0530
-Message-ID: <1372246597-32323-2-git-send-email-sachin.kamat@linaro.org>
-References: <1372246597-32323-1-git-send-email-sachin.kamat@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
+Date: Wed, 26 Jun 2013 14:03:42 +0200
+Message-ID: <51CAD89E.3060800@samsung.com>
+References: <1372170110-12993-1-git-send-email-s.nawrocki@samsung.com>
+ <20130625150649.GA21334@arwen.pp.htv.fi> <51C9D714.4000703@samsung.com>
+ <20130625205452.GC9748@arwen.pp.htv.fi> <51CACEBE.9000505@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:33098 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752307Ab3FZLv6 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38478 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752097Ab3FZMDp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Jun 2013 07:51:58 -0400
-Received: by mail-pb0-f48.google.com with SMTP id ma3so13946070pbc.7
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Jun 2013 04:51:58 -0700 (PDT)
-In-Reply-To: <1372246597-32323-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 26 Jun 2013 08:03:45 -0400
+In-reply-to: <51CACEBE.9000505@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, tglx@linutronix.de, t.figa@samsung.com, arnd@arndb.de, sachin.kamat@linaro.org, patches@linaro.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: balbi@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, inki.dae@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org
 
-combiner_init() is referenced only in this file. Make it
-static.
+On 06/26/2013 01:21 PM, Kishon Vijay Abraham I wrote:
+>>>>> +static int exynos_video_phy_probe(struct platform_device *pdev)
+>>>>> >>>> +{
+>>>>> >>>> +	struct exynos_video_phy *state;
+>>>>> >>>> +	struct device *dev = &pdev->dev;
+>>>>> >>>> +	struct resource *res;
+>>>>> >>>> +	struct phy_provider *phy_provider;
+>>>>> >>>> +	int i;
+>>>>> >>>> +
+>>>>> >>>> +	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
+>>>>> >>>> +	if (!state)
+>>>>> >>>> +		return -ENOMEM;
+>>>>> >>>> +
+>>>>> >>>> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>>>> >>>> +
+>>>>> >>>> +	state->regs = devm_ioremap_resource(dev, res);
+>>>>> >>>> +	if (IS_ERR(state->regs))
+>>>>> >>>> +		return PTR_ERR(state->regs);
+>>>>> >>>> +
+>>>>> >>>> +	dev_set_drvdata(dev, state);
+>>>> >>>
+>>>> >>> you can use platform_set_drvdata(pdev, state);
+>>> >>
+>>> >> I had it in the previous version, but changed for symmetry with
+>>> >> dev_set_drvdata(). I guess those could be replaced with
+>>> >> phy_{get, set}_drvdata as you suggested.
+>
+> right. currently I was setting dev_set_drvdata of phy (core) device
+> in phy-core.c and the corresponding dev_get_drvdata in phy provider driver
+> which is little confusing.
+> So I'll add phy_set_drvdata and phy_get_drvdata in phy.h (as suggested by
+> Felipe) to be used by phy provider drivers. So after creating the PHY, the
+> phy provider should use phy_set_drvdata and in phy_ops, it can use
+> phy_get_drvdata. (I'll remove the dev_set_drvdata in phy_create).
+> 
+> This also means _void *priv_ in phy_create is useless. So I'll be removing
+> _priv_ from phy_create.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- drivers/irqchip/exynos-combiner.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Yeah, sounds good. Then in the phy ops phy_get_drvdata(&phy->dev) would
+be used and in a custom of_xlate dev_get_drvdata(dev) (assuming the phy
+provider sets drvdata on its device beforehand).
 
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-index a9d2b2f..4c68265 100644
---- a/drivers/irqchip/exynos-combiner.c
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -204,10 +204,10 @@ static unsigned int combiner_lookup_irq(int group)
- 	return 0;
- }
- 
--void __init combiner_init(void __iomem *combiner_base,
--			  struct device_node *np,
--			  unsigned int max_nr,
--			  int irq_base)
-+static void __init combiner_init(void __iomem *combiner_base,
-+				 struct device_node *np,
-+				 unsigned int max_nr,
-+				 int irq_base)
- {
- 	int i, irq;
- 	unsigned int nr_irq;
--- 
-1.7.9.5
+I can't see any races from runtime PM with this approach.
+
+Regards,
+Sylwester
