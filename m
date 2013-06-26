@@ -1,161 +1,92 @@
-From: Jungseok Lee <jays.lee@samsung.com>
-Subject: RE: [PATCH V7 23/30] thermal: exynos: Add thermal configuration data
- for exynos5440 TMU sensor
-Date: Wed, 26 Jun 2013 10:24:42 +0900
-Message-ID: <007b01ce720b$ef1cc590$cd5650b0$%lee@samsung.com>
-References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com>
- <1372071051-3167-24-git-send-email-amit.daniel@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
+Date: Wed, 26 Jun 2013 08:23:54 +0300
+Message-ID: <20130626052353.GA12640@arwen.pp.htv.fi>
+References: <1372170110-12993-1-git-send-email-s.nawrocki@samsung.com>
+ <20130625150649.GA21334@arwen.pp.htv.fi>
+ <51C9D714.4000703@samsung.com>
+ <20130625205452.GC9748@arwen.pp.htv.fi>
+ <51CA0FE1.9090107@gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:64454 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751640Ab3FZBYo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 21:24:44 -0400
-In-reply-to: <1372071051-3167-24-git-send-email-amit.daniel@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <51CA0FE1.9090107@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: balbi@ti.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com, linux-media@vger.kernel.org, kyungmin.park@samsung.com, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, inki.dae@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, 'Zhang Rui' <rui.zhang@intel.com>, 'Eduardo Valentin' <eduardo.valentin@ti.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-On Monday, June 24, 2013 7:51 PM, Amit Daniel Kachhap wrote:
->This patch adds configuration data for exynos5440 soc. Also register
->definations for the controller are added.
->
->Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
->Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->---
-> drivers/thermal/samsung/exynos_tmu.c      |    4 ++
-> drivers/thermal/samsung/exynos_tmu_data.c |   71 +++++++++++++++++++++++++++++
-> drivers/thermal/samsung/exynos_tmu_data.h |    7 +++
-> 3 files changed, 82 insertions(+), 0 deletions(-)
->
->diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->index 6bc86f6..651f460 100644
->--- a/drivers/thermal/samsung/exynos_tmu.c
->+++ b/drivers/thermal/samsung/exynos_tmu.c
->@@ -456,6 +456,10 @@ static const struct of_device_id exynos_tmu_match[] = {
-> 		.compatible = "samsung,exynos5250-tmu",
-> 		.data = (void *)EXYNOS5250_TMU_DRV_DATA,
-> 	},
->+	{
->+		.compatible = "samsung,exynos5440-tmu",
->+		.data = (void *)EXYNOS5440_TMU_DRV_DATA,
->+	},
-> 	{},
-> };
-> MODULE_DEVICE_TABLE(of, exynos_tmu_match);
->diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
->index 2612b45..5952915 100644
->--- a/drivers/thermal/samsung/exynos_tmu_data.c
->+++ b/drivers/thermal/samsung/exynos_tmu_data.c
->@@ -175,3 +175,74 @@ struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
-> 	.tmu_count = 1,
-> };
-> #endif
->+
->+#if defined(CONFIG_SOC_EXYNOS5440)
->+static const struct exynos_tmu_registers exynos5440_tmu_registers = {
->+	.triminfo_data = EXYNOS5440_TMU_S0_7_TRIM,
->+	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
->+	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
->+	.tmu_ctrl = EXYNOS5440_TMU_S0_7_CTRL,
->+	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
->+	.buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
->+	.therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
->+	.therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
->+	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
->+	.buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
->+	.buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
->+	.core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
->+	.tmu_status = EXYNOS5440_TMU_S0_7_STATUS,
->+	.tmu_cur_temp = EXYNOS5440_TMU_S0_7_TEMP,
->+	.threshold_th0 = EXYNOS5440_TMU_S0_7_TH0,
->+	.threshold_th1 = EXYNOS5440_TMU_S0_7_TH1,
->+	.threshold_th2 = EXYNOS5440_TMU_S0_7_TH2,
->+	.threshold_th3_l0_shift = EXYNOS5440_TMU_TH_RISE4_SHIFT,
->+	.tmu_inten = EXYNOS5440_TMU_S0_7_IRQEN,
->+	.inten_rise_mask = EXYNOS5440_TMU_RISE_INT_MASK,
->+	.inten_rise_shift = EXYNOS5440_TMU_RISE_INT_SHIFT,
->+	.inten_fall_mask = EXYNOS5440_TMU_FALL_INT_MASK,
->+	.inten_fall_shift = EXYNOS5440_TMU_FALL_INT_SHIFT,
->+	.inten_rise0_shift = EXYNOS5440_TMU_INTEN_RISE0_SHIFT,
->+	.inten_rise1_shift = EXYNOS5440_TMU_INTEN_RISE1_SHIFT,
->+	.inten_rise2_shift = EXYNOS5440_TMU_INTEN_RISE2_SHIFT,
->+	.inten_rise3_shift = EXYNOS5440_TMU_INTEN_RISE3_SHIFT,
->+	.inten_fall0_shift = EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
->+	.tmu_intstat = EXYNOS5440_TMU_S0_7_IRQ,
->+	.tmu_intclear = EXYNOS5440_TMU_S0_7_IRQ,
->+	.tmu_irqstatus = EXYNOS5440_TMU_IRQ_STATUS,
->+	.emul_con = EXYNOS5440_TMU_S0_7_DEBUG,
->+	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
->+	.tmu_pmin = EXYNOS5440_TMU_PMIN,
->+};
->+
->+#define EXYNOS5440_TMU_DATA \
->+	.trigger_levels[0] = 100, \
->+	.trigger_levels[4] = 105, \
->+	.trigger_enable[0] = 1, \
->+	.trigger_type[0] = SW_TRIP, \
->+	.trigger_type[4] = HW_TRIP, \
->+	.max_trigger_level = 5, \
->+	.gain = 5, \
->+	.reference_voltage = 16, \
->+	.noise_cancel_mode = 4, \
->+	.cal_type = TYPE_ONE_POINT_TRIMMING, \
->+	.cal_mode = 0, \
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-.cal_mode = SW_MODE is a clearer expression.
+On Tue, Jun 25, 2013 at 11:47:13PM +0200, Sylwester Nawrocki wrote:
+> Hi,
+>=20
+> On 06/25/2013 10:54 PM, Felipe Balbi wrote:
+> >>>>+static int exynos_video_phy_probe(struct platform_device *pdev)
+> >>>>>  >>  +{
+> >>>>>  >>  +	struct exynos_video_phy *state;
+> >>>>>  >>  +	struct device *dev =3D&pdev->dev;
+> >>>>>  >>  +	struct resource *res;
+> >>>>>  >>  +	struct phy_provider *phy_provider;
+> >>>>>  >>  +	int i;
+> >>>>>  >>  +
+> >>>>>  >>  +	state =3D devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
+> >>>>>  >>  +	if (!state)
+> >>>>>  >>  +		return -ENOMEM;
+> >>>>>  >>  +
+> >>>>>  >>  +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> >>>>>  >>  +
+> >>>>>  >>  +	state->regs =3D devm_ioremap_resource(dev, res);
+> >>>>>  >>  +	if (IS_ERR(state->regs))
+> >>>>>  >>  +		return PTR_ERR(state->regs);
+> >>>>>  >>  +
+> >>>>>  >>  +	dev_set_drvdata(dev, state);
+> >>>>  >
+> >>>>  >  you can use platform_set_drvdata(pdev, state);
+> >>>
+> >>>  I had it in the previous version, but changed for symmetry with
+> >>>  dev_set_drvdata(). I guess those could be replaced with
+> >>>  phy_{get, set}_drvdata as you suggested.
+> >
+> >hmm, you do need to set the drvdata() to the phy object, but also to the
+> >pdev object (should you need it on a suspend/resume callback, for
+> >instance). Those are separate struct device instances.
+>=20
+> Indeed, I somehow confused phy->dev with with phy->dev.parent. I'm going
+> to just drop the above call, since the pdev drvdata is currently not
+> referenced anywhere.
 
->+	.efuse_value = 0x5b2d, \
+ok cool :-)
 
-.efuse_value should be incremented by one.
+--=20
+balbi
 
-Thanks,
-Jungseok Lee
->+	.min_efuse_value = 16, \
->+	.max_efuse_value = 76, \
->+	.first_point_trim = 25, \
->+	.second_point_trim = 70, \
->+	.default_temp_offset = 25, \
->+	.type = SOC_ARCH_EXYNOS5440, \
->+	.registers = &exynos5440_tmu_registers, \
->+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
->+			TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_SHARED_MEMORY),
->+
->+struct exynos_tmu_init_data const exynos5440_default_tmu_data = {
->+	.tmu_data = {
->+		{ EXYNOS5440_TMU_DATA } ,
->+		{ EXYNOS5440_TMU_DATA } ,
->+		{ EXYNOS5440_TMU_DATA } ,
->+	},
->+	.tmu_count = 3,
->+};
->+#endif
->diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
->index ad263e9..43ce5fb 100644
->--- a/drivers/thermal/samsung/exynos_tmu_data.h
->+++ b/drivers/thermal/samsung/exynos_tmu_data.h
->@@ -143,4 +143,11 @@ extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
-> #define EXYNOS5250_TMU_DRV_DATA (NULL)
-> #endif
->
->+#if defined(CONFIG_SOC_EXYNOS5440)
->+extern struct exynos_tmu_init_data const exynos5440_default_tmu_data;
->+#define EXYNOS5440_TMU_DRV_DATA (&exynos5440_default_tmu_data)
->+#else
->+#define EXYNOS5440_TMU_DRV_DATA (NULL)
->+#endif
->+
-> #endif /*_EXYNOS_TMU_DATA_H*/
->--
->1.7.1
->
->--
->To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJRynrpAAoJEIaOsuA1yqRELnMQAIkKkzeFVgazZcFZtjVIDyjD
+Aua6SmiixQs5snwi9P50OpG0Vm3nBTwiXoedE92rnICodJ2PxSvRBa2GTtF+HVJK
+oy29Z/8xq0uzjoq2Q/2NwT2ak8Jz/eqxfCVwb/FsYFeBEXOrCpFCHlwrX5CwgDMK
+jXnOD7dYYUTQQmCutXaWQAU8FdLk47Db7vFrMvHgp6YGzVCteATkRJWg18CIHewT
+tzytJnxzT2tctm2srn7g4xHlJhGO6t/8tGPNK1IdV8KXynoXgyqV/6+dBWl8E2TD
+r64E9IS2feoZdE2hVHCTv7xdjhLm5n+qeHKQLYMGGaZosR8+yVkA2a6Xg0gWSMt2
+H3k6ghGwn0AY7LnoVqpmLmy+23JQleqiYP2JSi0ACPSUYSknayUClGeFs40I69cE
+fLruUtcm4ZM5L5wPy5XyXwkzPmzqhtgPHxva2jBg6KxjdUhgahcE7GXAwtknnzLI
++YIxRknUXFsovXxkOKdkSioVLb/ZC08z40cM716/HdbW2Q9y4fm6CfgsduETSOEQ
+YwWPea/jrXZtGQSr+2mApyLjk+aJ87LxDCbcxyRJ/Ubbu8PW+RnGeHxFgVLVE7jk
+RhjfXdTAFsdLDjG2EgFUZJ5CmtuK7yLE0PR2I9V3i/Xxx9BrS9JcYTZe6Kz5ENn4
+yO9SiWe/qVO11LfXXGCR
+=2sMa
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
