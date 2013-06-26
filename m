@@ -1,52 +1,161 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL 1/2] Samsung cleanup PWM for v3.11
-Date: Wed, 26 Jun 2013 10:06:17 +0900
-Message-ID: <03f301ce7209$5cc5c4a0$16514de0$%kim@samsung.com>
-References: <51C87D32.6050607@samsung.com> <51C9C6B3.4040003@samsung.com>
- <20130625200851.GA8663@mithrandir>
- <CAOesGMhVsHP3Ld78MWfwwBkaKA=Z4tBmJi05OKMUgJrNp8s3dw@mail.gmail.com>
+From: Jungseok Lee <jays.lee@samsung.com>
+Subject: RE: [PATCH V7 23/30] thermal: exynos: Add thermal configuration data
+ for exynos5440 TMU sensor
+Date: Wed, 26 Jun 2013 10:24:42 +0900
+Message-ID: <007b01ce720b$ef1cc590$cd5650b0$%lee@samsung.com>
+References: <1372071051-3167-1-git-send-email-amit.daniel@samsung.com>
+ <1372071051-3167-24-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42964 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751327Ab3FZBGR (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:64454 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751640Ab3FZBYo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Jun 2013 21:06:17 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MOZ00FT3726O830@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Jun 2013 10:06:16 +0900 (KST)
-In-reply-to: <CAOesGMhVsHP3Ld78MWfwwBkaKA=Z4tBmJi05OKMUgJrNp8s3dw@mail.gmail.com>
+	Tue, 25 Jun 2013 21:24:44 -0400
+In-reply-to: <1372071051-3167-24-git-send-email-amit.daniel@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Thierry Reding' <thierry.reding@gmail.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>
+To: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, 'Zhang Rui' <rui.zhang@intel.com>, 'Eduardo Valentin' <eduardo.valentin@ti.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Olof Johansson wrote:
-> 
-> On Tue, Jun 25, 2013 at 1:08 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
-> > On Wed, Jun 26, 2013 at 01:34:59AM +0900, Kukjin Kim wrote:
-> 
-> >> Hi Arnd and Olof
-> >>
-> >> Please hold on pulling this one because Thierry Reding has objection
-> >> on this. I think, this can be queued for next time.
-> >
-> > If it's really just my objection keeping this back, then I'm fine with
-> > adding the comment in a follow-up patch.
-> 
-> No, we're also out of time for 3.11. But let's get this queued for
-> 3.12 as soon as the merge window closes -- it's a very nice cleanup.
-> 
-Agreed.
+On Monday, June 24, 2013 7:51 PM, Amit Daniel Kachhap wrote:
+>This patch adds configuration data for exynos5440 soc. Also register
+>definations for the controller are added.
+>
+>Acked-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+>Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>---
+> drivers/thermal/samsung/exynos_tmu.c      |    4 ++
+> drivers/thermal/samsung/exynos_tmu_data.c |   71 +++++++++++++++++++++++++++++
+> drivers/thermal/samsung/exynos_tmu_data.h |    7 +++
+> 3 files changed, 82 insertions(+), 0 deletions(-)
+>
+>diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>index 6bc86f6..651f460 100644
+>--- a/drivers/thermal/samsung/exynos_tmu.c
+>+++ b/drivers/thermal/samsung/exynos_tmu.c
+>@@ -456,6 +456,10 @@ static const struct of_device_id exynos_tmu_match[] = {
+> 		.compatible = "samsung,exynos5250-tmu",
+> 		.data = (void *)EXYNOS5250_TMU_DRV_DATA,
+> 	},
+>+	{
+>+		.compatible = "samsung,exynos5440-tmu",
+>+		.data = (void *)EXYNOS5440_TMU_DRV_DATA,
+>+	},
+> 	{},
+> };
+> MODULE_DEVICE_TABLE(of, exynos_tmu_match);
+>diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+>index 2612b45..5952915 100644
+>--- a/drivers/thermal/samsung/exynos_tmu_data.c
+>+++ b/drivers/thermal/samsung/exynos_tmu_data.c
+>@@ -175,3 +175,74 @@ struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
+> 	.tmu_count = 1,
+> };
+> #endif
+>+
+>+#if defined(CONFIG_SOC_EXYNOS5440)
+>+static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+>+	.triminfo_data = EXYNOS5440_TMU_S0_7_TRIM,
+>+	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+>+	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+>+	.tmu_ctrl = EXYNOS5440_TMU_S0_7_CTRL,
+>+	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+>+	.buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
+>+	.therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
+>+	.therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
+>+	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
+>+	.buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
+>+	.buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
+>+	.core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
+>+	.tmu_status = EXYNOS5440_TMU_S0_7_STATUS,
+>+	.tmu_cur_temp = EXYNOS5440_TMU_S0_7_TEMP,
+>+	.threshold_th0 = EXYNOS5440_TMU_S0_7_TH0,
+>+	.threshold_th1 = EXYNOS5440_TMU_S0_7_TH1,
+>+	.threshold_th2 = EXYNOS5440_TMU_S0_7_TH2,
+>+	.threshold_th3_l0_shift = EXYNOS5440_TMU_TH_RISE4_SHIFT,
+>+	.tmu_inten = EXYNOS5440_TMU_S0_7_IRQEN,
+>+	.inten_rise_mask = EXYNOS5440_TMU_RISE_INT_MASK,
+>+	.inten_rise_shift = EXYNOS5440_TMU_RISE_INT_SHIFT,
+>+	.inten_fall_mask = EXYNOS5440_TMU_FALL_INT_MASK,
+>+	.inten_fall_shift = EXYNOS5440_TMU_FALL_INT_SHIFT,
+>+	.inten_rise0_shift = EXYNOS5440_TMU_INTEN_RISE0_SHIFT,
+>+	.inten_rise1_shift = EXYNOS5440_TMU_INTEN_RISE1_SHIFT,
+>+	.inten_rise2_shift = EXYNOS5440_TMU_INTEN_RISE2_SHIFT,
+>+	.inten_rise3_shift = EXYNOS5440_TMU_INTEN_RISE3_SHIFT,
+>+	.inten_fall0_shift = EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
+>+	.tmu_intstat = EXYNOS5440_TMU_S0_7_IRQ,
+>+	.tmu_intclear = EXYNOS5440_TMU_S0_7_IRQ,
+>+	.tmu_irqstatus = EXYNOS5440_TMU_IRQ_STATUS,
+>+	.emul_con = EXYNOS5440_TMU_S0_7_DEBUG,
+>+	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+>+	.tmu_pmin = EXYNOS5440_TMU_PMIN,
+>+};
+>+
+>+#define EXYNOS5440_TMU_DATA \
+>+	.trigger_levels[0] = 100, \
+>+	.trigger_levels[4] = 105, \
+>+	.trigger_enable[0] = 1, \
+>+	.trigger_type[0] = SW_TRIP, \
+>+	.trigger_type[4] = HW_TRIP, \
+>+	.max_trigger_level = 5, \
+>+	.gain = 5, \
+>+	.reference_voltage = 16, \
+>+	.noise_cancel_mode = 4, \
+>+	.cal_type = TYPE_ONE_POINT_TRIMMING, \
+>+	.cal_mode = 0, \
 
-Let me send pull-request regarding this to arm-soc after 3.11-rc1.
+.cal_mode = SW_MODE is a clearer expression.
+
+>+	.efuse_value = 0x5b2d, \
+
+.efuse_value should be incremented by one.
 
 Thanks,
-- Kukjin
+Jungseok Lee
+>+	.min_efuse_value = 16, \
+>+	.max_efuse_value = 76, \
+>+	.first_point_trim = 25, \
+>+	.second_point_trim = 70, \
+>+	.default_temp_offset = 25, \
+>+	.type = SOC_ARCH_EXYNOS5440, \
+>+	.registers = &exynos5440_tmu_registers, \
+>+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
+>+			TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_SHARED_MEMORY),
+>+
+>+struct exynos_tmu_init_data const exynos5440_default_tmu_data = {
+>+	.tmu_data = {
+>+		{ EXYNOS5440_TMU_DATA } ,
+>+		{ EXYNOS5440_TMU_DATA } ,
+>+		{ EXYNOS5440_TMU_DATA } ,
+>+	},
+>+	.tmu_count = 3,
+>+};
+>+#endif
+>diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+>index ad263e9..43ce5fb 100644
+>--- a/drivers/thermal/samsung/exynos_tmu_data.h
+>+++ b/drivers/thermal/samsung/exynos_tmu_data.h
+>@@ -143,4 +143,11 @@ extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
+> #define EXYNOS5250_TMU_DRV_DATA (NULL)
+> #endif
+>
+>+#if defined(CONFIG_SOC_EXYNOS5440)
+>+extern struct exynos_tmu_init_data const exynos5440_default_tmu_data;
+>+#define EXYNOS5440_TMU_DRV_DATA (&exynos5440_default_tmu_data)
+>+#else
+>+#define EXYNOS5440_TMU_DRV_DATA (NULL)
+>+#endif
+>+
+> #endif /*_EXYNOS_TMU_DATA_H*/
+>--
+>1.7.1
+>
+>--
+>To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>the body of a message to majordomo@vger.kernel.org
+>More majordomo info at  http://vger.kernel.org/majordomo-info.html
