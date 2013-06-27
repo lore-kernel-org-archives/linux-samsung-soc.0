@@ -1,55 +1,45 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v3 5/5] ARM: Samsung: Remove the MIPI PHY setup code
-Date: Thu, 27 Jun 2013 18:34:09 +0900
-Message-ID: <085701ce7319$79b191a0$6d14b4e0$%kim@samsung.com>
-References: <1372258946-15607-1-git-send-email-s.nawrocki@samsung.com>
- <1372258946-15607-6-git-send-email-s.nawrocki@samsung.com>
+From: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
+Subject: Broken IRQ handling for S3C2416
+Date: Thu, 27 Jun 2013 12:59:07 +0100
+Message-ID: <51CC290B.5080701@inov.pt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1372258946-15607-6-git-send-email-s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-language: ko
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dh09.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lmv.inov.pt ([146.193.64.2]:51837 "EHLO lmv.inov.pt"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752165Ab3F0MTB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Jun 2013 08:19:01 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-Sylwester Nawrocki wrote:
-> 
-> Generic PHY drivers are used to handle the MIPI CSIS and MIPI DSIM
-> DPHYs so we can remove now unused code at arch/arm/plat-samsung.
-> In case there is any board file for S5PV210 platforms using MIPI
-> CSIS/DSIM (not any upstream currently) it should use the generic
-> PHY API to bind the PHYs to respective PHY consumer drivers and
-> a platform device for the PHY provider should be defined.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-> ---
->  arch/arm/mach-exynos/include/mach/regs-pmu.h    |    5 --
->  arch/arm/mach-s5pv210/include/mach/regs-clock.h |    4 --
->  arch/arm/plat-samsung/Kconfig                   |    5 --
->  arch/arm/plat-samsung/Makefile                  |    1 -
->  arch/arm/plat-samsung/setup-mipiphy.c           |   60
----------------------
-> --
->  5 files changed, 75 deletions(-)
->  delete mode 100644 arch/arm/plat-samsung/setup-mipiphy.c
-> 
-Looks good, please feel free to add my ack on this,
+Hi,
 
-Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+While migrating from kernel 3.8 to kernel 3.9 I've detected a problem o=
+n my=20
+S3C2416 based board. I'm using UART 3 as console and with kernel 3.9 I'=
+m unable to=20
+have a getty working on that port and see a lot of these on dmesg:
 
-Thanks,
-- Kukjin
+samsung-uart s3c2440-uart.3: cannot get irq 94
+
+Also WDT is not correctly initialized in 3.8, I see in dmesg:
+
+s3c2410-wdt s3c2410-wdt: watchdog inactive, reset disabled, irq disable=
+d
+
+while in 3.9 I see:
+
+s3c2410-wdt s3c2410-wdt: tmr_margin value out of range, default 15 used
+s3c2410-wdt s3c2410-wdt: failed to install irq (-38)
+s3c2410-wdt: probe of s3c2410-wdt failed with error -38
+
+So I guess something is broken in 3.9 kernel's IRQ handling for S3C2416=
+=2E
+
+Best regards,
+Jos=E9 Gon=E7alves
