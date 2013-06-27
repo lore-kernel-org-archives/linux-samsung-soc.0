@@ -1,100 +1,83 @@
 From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
-Date: Thu, 27 Jun 2013 10:51:00 +0300
-Message-ID: <20130627075100.GP15455@arwen.pp.htv.fi>
-References: <1372170110-12993-1-git-send-email-s.nawrocki@samsung.com>
- <20130625150649.GA21334@arwen.pp.htv.fi>
- <51CB0212.3050103@samsung.com>
- <20130627061713.GF15455@arwen.pp.htv.fi>
- <51CBEE23.4010402@samsung.com>
-Reply-To: <balbi@ti.com>
+Subject: Re: [PATCH v3 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
+Date: Thu, 27 Jun 2013 10:52:23 +0300
+Message-ID: <20130627075223.GQ15455@arwen.pp.htv.fi>
+References: <1372258946-15607-1-git-send-email-s.nawrocki@samsung.com>
+ <1372258946-15607-2-git-send-email-s.nawrocki@samsung.com>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PdAWLd+WEPmMbsbx"
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <51CBEE23.4010402@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: balbi@ti.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, jg1.han@samsung.com, dh09.lee@samsung.com, kishon@ti.com, inki.dae@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, plagnioj@jcrosoft.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============7089843238766759566=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1372258946-15607-2-git-send-email-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, jg1.han@samsung.com, dh09.lee@samsung.com, balbi@ti.com, kishon@ti.com, inki.dae@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, plagnioj@jcrosoft.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---PdAWLd+WEPmMbsbx
+--===============7089843238766759566==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qnK4RqISe3HuYx1/"
+Content-Disposition: inline
+
+--qnK4RqISe3HuYx1/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2013 at 09:47:47AM +0200, Andrzej Hajda wrote:
-> Hi Felipe,
+On Wed, Jun 26, 2013 at 05:02:22PM +0200, Sylwester Nawrocki wrote:
+> Add a PHY provider driver for the Samsung S5P/Exynos SoC MIPI CSI-2
+> receiver and MIPI DSI transmitter DPHYs.
 >=20
-> On 06/27/2013 08:17 AM, Felipe Balbi wrote:
-> > On Wed, Jun 26, 2013 at 05:00:34PM +0200, Sylwester Nawrocki wrote:
-> >> Hi,
-> >>
-> >> On 06/25/2013 05:06 PM, Felipe Balbi wrote:
-> >>>> +static struct platform_driver exynos_video_phy_driver =3D {
-> >>>>> +	.probe	=3D exynos_video_phy_probe,
-> >>>
-> >>> you *must* provide a remove method. drivers with NULL remove are
-> >>> non-removable :-)
-> >>
-> >> Actually the remove() callback can be NULL, it's just missing module_e=
-xit
-> >> function that makes a module not unloadable.
-> >=20
-> > look at the implementation of platform_drv_remove():
-> >=20
-> >  499 static int platform_drv_remove(struct device *_dev)
-> >  500 {
-> >  501         struct platform_driver *drv =3D to_platform_driver(_dev->d=
-river);
-> >  502         struct platform_device *dev =3D to_platform_device(_dev);
-> >  503         int ret;
-> >  504=20
-> >  505         ret =3D drv->remove(dev);
-> >  506         if (ACPI_HANDLE(_dev))
-> >  507                 acpi_dev_pm_detach(_dev, true);
-> >  508=20
-> >  509         return ret;
-> >  510 }
-> >=20
-> > that's not a conditional call right :-)
->=20
-> It is conditional, just condition check is in different place:
->=20
-> int platform_driver_register(struct platform_driver *drv)
-> {
-> 	(...)
-> 	if (drv->remove)
-> 		drv->driver.remove =3D platform_drv_remove;
-> 	(...)
-> }
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-good point :-) thanks. I'll go ack your driver now
+Acked-by: Felipe Balbi <balbi@ti.com>
 
 --=20
 balbi
 
---PdAWLd+WEPmMbsbx
+--qnK4RqISe3HuYx1/
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJRy+7kAAoJEIaOsuA1yqRE2FIP/iIkHzTyiGQ2V6Zbn1OASAOp
-04rPRzVBX2dvFh4Sqe9lXuh9D4YFDz2+My8EW9WLHQD8TRD3ez5FH47CmrhDhxVN
-vPzPO5rawQh7YEb4f4LuUHNgJ/1j4LpFxga1FjS4x/cZWqqEwkvThGjV7ZmbiJd7
-iPP9Ve1Zhx6dB4cn2gTK0rorKjz3KYbfRERHr3LUc8YVnwvm30o4QEXMHH1ES8zN
-Jj0a3p9UNhT0SnYDRyNXxC7Ga2XJl38LiviXatV0oNgagVhnLhOYyzVSuOs12VYx
-9rdhUk0OM7G3CS1NssfnA8I89igxJ/BpAUuTCPtRXSCHnn/kMxjMOdKj4eB40vpN
-9wX4S5vLblciEW8UPXzSGh11a5qaQePzE7mV+89V0CztdTPxNTQaIXSIdL4nKSlY
-Ksw0b62frgljANfz3QJLKllwvAsOijYxVli7jYLePlkCJqeSS4/S6V1i/FvA5tFe
-1UbtD8nt9S4FV5we6SkJH/Ogtf1pxehMOT+fpzlzYcPAG8UNM3f30/IeATm5ISX3
-66e3w2JfozxWRDb/9awXztCzHXZPcUYq0guWxqShZT5FYpmPKjRanYegLkkA3iOb
-SQ0sJdWzoPsBKVD6sUDxeQQ2YZMURhh2d/e4BFOgKN/9CetpJ68S7QkaHAAFdlo/
-UJxuL7vVL01BDY4RAppa
-=YrxN
+iQIcBAEBAgAGBQJRy+83AAoJEIaOsuA1yqREx9kP/Rxgg8Ajq+fiVZN0cviNBeJt
+oyKEqiTAbdqXrC6ncK+akon4WpyIt+YcubExZI88MTOXXjFmqSpXboB/SqxoznRl
+ne8R9QM8oAa00tONvi3njeDzN07etC2X6VCc3hmpZScEmP2iKzD2sB/asZNLuE2n
+MAFGeWEeqlEN/2B93aNIZT7EGrHSoTjQI2K5jHmFsbcDmSV/N2UuSOgWBvjPmCab
+GY27fKv7fVCUvmp6GdYcJDIVq5XsMbuYKaegS6SEQ15eh/SepFhAO1bQFVTXi0C7
+RLBWvIlkj7SrW7KJLG1zWZHl7lIE1ShN9P7EgmTRiR7+o4wmSO1MQNYpcw4FYLZs
+UFJe+i2cGCrnBDJE6Se6xcCgXt9/bHjFor0fJ8QuqEAwTqzqeo/bnzM6HQQhqJe5
+sIOxIxeFMc564TgP2X1qd6Bayl7NcgF9R8IrDIoFD5GJ9P0HtBgHmu/PyA7WqNYs
+s+3IhbCq9wIwX05rTT5HNbWnA3P/5unQGs2tAv5KnItPoemQ7Fk+jH8qj16d+pSM
+vJdFx0ewlAyzw9FkHAlF9xjebb21Ljbuiv5DZ8PZxonwSMt1FG/akm2hdrdwTAPZ
+RYp8p87n6+nEMD+AOKXaYYVbHXmySe+fkCTsaVubDsjYXFzpFokOkveAoiYLPLAa
+ANHgUEeMLIqcrYrvNRoa
+=v/Vo
 -----END PGP SIGNATURE-----
 
---PdAWLd+WEPmMbsbx--
+--qnK4RqISe3HuYx1/--
+
+
+--===============7089843238766759566==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7089843238766759566==--
