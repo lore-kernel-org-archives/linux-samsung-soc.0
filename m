@@ -1,42 +1,61 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Remove combiner_init declaration
-Date: Thu, 27 Jun 2013 19:50:37 +0530
-Message-ID: <CAK9yfHx2sQ38xHDM0CyS_+0HP_gLq+XnaJf5PNyLbOFM_LbR+g@mail.gmail.com>
-References: <1372246597-32323-1-git-send-email-sachin.kamat@linaro.org>
-	<201306261602.26800.arnd@arndb.de>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: Broken IRQ handling for S3C2416
+Date: Thu, 27 Jun 2013 16:26:41 +0200
+Message-ID: <201306271626.42419.heiko@sntech.de>
+References: <51CC290B.5080701@inov.pt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:47634 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751569Ab3F0OUi (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:54902 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751569Ab3F0O0t (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Jun 2013 10:20:38 -0400
-Received: by mail-ob0-f176.google.com with SMTP id v19so776582obq.21
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Jun 2013 07:20:38 -0700 (PDT)
-In-Reply-To: <201306261602.26800.arnd@arndb.de>
+	Thu, 27 Jun 2013 10:26:49 -0400
+In-Reply-To: <51CC290B.5080701@inov.pt>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, tglx@linutronix.de, t.figa@samsung.com, patches@linaro.org
+To: =?iso-8859-1?q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On 26 June 2013 19:32, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 26 June 2013, Sachin Kamat wrote:
->> Commit d243997f ("ARM: EXYNOS: Remove legacy interrupt initialization
->> code") removed the call to combiner_init(). Since there are no more
->> users in the machine code, remove the declaration as well.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->
+Hi Jose,
+
+Am Donnerstag, 27. Juni 2013, 13:59:07 schrieb Jos=E9 Miguel Gon=E7alve=
+s:
 > Hi,
->
-> Your two patches look good to me, but I think there is more that
-> can be cleaned up now. See below for my experimental patch.
-> I have not gotten around to test or submit that, but feel
-> free to take any contents for your own patches.
+>=20
+> While migrating from kernel 3.8 to kernel 3.9 I've detected a problem=
+ on my
+> S3C2416 based board. I'm using UART 3 as console and with kernel 3.9 =
+I'm
+> unable to have a getty working on that port and see a lot of these on
+> dmesg:
+>=20
+> samsung-uart s3c2440-uart.3: cannot get irq 94
+>=20
+> Also WDT is not correctly initialized in 3.8, I see in dmesg:
+>=20
+> s3c2410-wdt s3c2410-wdt: watchdog inactive, reset disabled, irq disab=
+led
+>=20
+> while in 3.9 I see:
+>=20
+> s3c2410-wdt s3c2410-wdt: tmr_margin value out of range, default 15 us=
+ed
+> s3c2410-wdt s3c2410-wdt: failed to install irq (-38)
+> s3c2410-wdt: probe of s3c2410-wdt failed with error -38
+>=20
+> So I guess something is broken in 3.9 kernel's IRQ handling for S3C24=
+16.
 
-Thanks Arnd. Let me look into it.
+when I checked two days ago, the irqs where working fine on my s3c2416 =
+board.
 
--- 
-With warm regards,
-Sachin
+Basic questions, did you change the init_irq callback to the correct ne=
+w=20
+function (s3c2416_init_irq) in your board file, can you provide a more=20
+complete log and of course and is your board-file available somewhere?
+
+
+Thanks
+Heiko
