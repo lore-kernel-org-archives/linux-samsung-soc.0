@@ -1,71 +1,58 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v3 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
-Date: Thu, 27 Jun 2013 11:40:04 +0300
-Message-ID: <20130627084004.GS15455@arwen.pp.htv.fi>
-References: <1372258946-15607-1-git-send-email-s.nawrocki@samsung.com>
- <1372258946-15607-2-git-send-email-s.nawrocki@samsung.com>
- <20130627075223.GQ15455@arwen.pp.htv.fi>
- <51CBF9B8.70103@samsung.com>
-Reply-To: <balbi@ti.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v2 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
+Date: Thu, 27 Jun 2013 09:49:02 +0100
+Message-ID: <20130627084902.GB4283@n2100.arm.linux.org.uk>
+References: <1372170110-12993-1-git-send-email-s.nawrocki@samsung.com> <20130625150649.GA21334@arwen.pp.htv.fi> <51CB0212.3050103@samsung.com> <20130627061713.GF15455@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wnBGVoaGQwxWUIo6"
-Return-path: <linux-media-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <51CBF9B8.70103@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: balbi@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com, linux-media@vger.kernel.org, kyungmin.park@samsung.com, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, inki.dae@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
---wnBGVoaGQwxWUIo6
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:46675 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752902Ab3F0ItV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Jun 2013 04:49:21 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20130627061713.GF15455@arwen.pp.htv.fi>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, jg1.han@samsung.com, dh09.lee@samsung.com, kishon@ti.com, inki.dae@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, plagnioj@jcrosoft.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-On Thu, Jun 27, 2013 at 10:37:12AM +0200, Sylwester Nawrocki wrote:
-> On 06/27/2013 09:52 AM, Felipe Balbi wrote:
-> > On Wed, Jun 26, 2013 at 05:02:22PM +0200, Sylwester Nawrocki wrote:
-> >> Add a PHY provider driver for the Samsung S5P/Exynos SoC MIPI CSI-2
-> >> receiver and MIPI DSI transmitter DPHYs.
-> >>
-> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >=20
-> > Acked-by: Felipe Balbi <balbi@ti.com>
->=20
-> Thank you for your review and ack!
->=20
-> Just for the record, I have tested this driver as a loadable
-> module on Exynos4412 TRATS2 board and it all worked fine for
-> both the camera and display side.
+On Thu, Jun 27, 2013 at 09:17:13AM +0300, Felipe Balbi wrote:
+> On Wed, Jun 26, 2013 at 05:00:34PM +0200, Sylwester Nawrocki wrote:
+> > Hi,
+> > 
+> > On 06/25/2013 05:06 PM, Felipe Balbi wrote:
+> > >> +static struct platform_driver exynos_video_phy_driver = {
+> > >> > +	.probe	= exynos_video_phy_probe,
+> > >
+> > > you *must* provide a remove method. drivers with NULL remove are
+> > > non-removable :-)
+> > 
+> > Actually the remove() callback can be NULL, it's just missing module_exit
+> > function that makes a module not unloadable.
+> 
+> look at the implementation of platform_drv_remove():
+> 
+>  499 static int platform_drv_remove(struct device *_dev)
+>  500 {
+>  501         struct platform_driver *drv = to_platform_driver(_dev->driver);
+>  502         struct platform_device *dev = to_platform_device(_dev);
+>  503         int ret;
+>  504 
+>  505         ret = drv->remove(dev);
+>  506         if (ACPI_HANDLE(_dev))
+>  507                 acpi_dev_pm_detach(_dev, true);
+>  508 
+>  509         return ret;
+>  510 }
+> 
+> that's not a conditional call right :-)
 
-Awesome dude :-) very cool, let's hope more users convert to Kishon's
-generic phy layer :-)
+Wrong.
 
---=20
-balbi
+        if (drv->remove)
+                drv->driver.remove = platform_drv_remove;
 
---wnBGVoaGQwxWUIo6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJRy/pkAAoJEIaOsuA1yqRE0usP/0kXzaQLwW6FcUZS/DU+PZ03
-Blwk6lKVGICnyrhp/xYuqQKmSgSk1wMJ+KIfu8mRi0OPJ2p0u4sDAPQ8sq0oLNVS
-rCwj75LqkbjqRWXYziFwyiSQqEsP1D4rvD3aDJXot+A5As86XAqc/YY629WZRraO
-jbpeY4FpK1A9eWgNyW4uBtyhJQKxe2/kV3Jipw6/TOl/cO2yCE+snWJXZTbrEaOy
-M1LxjHLhKqNjltxrWs5HJe2iQPSXl0zpgWZHuNht26u6wZY7F+Eo83RQeLnwzzlZ
-tK25jRT5e66UZ5vkQvKv/4cDdjGdESf5L68pAUKiUa35Bmre20GiO1IIdFy1n95f
-fb0FcK0Ye3RghjVDF8qqBqYnCGIR7+rHmRHp76/7PqbOujUHX0Nt8h3hqzthpA3I
-Uqrow12JDInJuVEgRsSEGkSU2+DT1bbZSJT2f5AYQKLu6bYLa4QU8ZuF4Ap5vysR
-UFVN8ZN2faPsB1+eQ8V2+qet5Enh46N+AAHnpe+iOJHb5khnJ8w+OKQFXwQPjag6
-2f1t9Jywy0CRWueJRhIWMv07dgZAb311JLBMzT06GzmqjsfHWo3iSkuhrWXO1Ota
-znPhyjEEifx4MeeMXfRJfE9PpcC59YH9YxWykbRFuWm3qApZFgBYq1hl5sZoGQxx
-di/7prNpFT4B2wAJF3Nu
-=OBbu
------END PGP SIGNATURE-----
-
---wnBGVoaGQwxWUIo6--
+The function you quote will only be used if drv->remove is non-NULL.
+You do not need to provide a remove method.
