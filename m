@@ -1,58 +1,60 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v2 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
-Date: Thu, 27 Jun 2013 09:49:02 +0100
-Message-ID: <20130627084902.GB4283@n2100.arm.linux.org.uk>
-References: <1372170110-12993-1-git-send-email-s.nawrocki@samsung.com> <20130625150649.GA21334@arwen.pp.htv.fi> <51CB0212.3050103@samsung.com> <20130627061713.GF15455@arwen.pp.htv.fi>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH v2 03/12] dmaengine: PL08x: Rework LLI
+ handling to be less fragile
+Date: Thu, 27 Jun 2013 11:31:06 +0200
+Message-ID: <CACRpkdYx_K9OkDDcXtHCwg4U3tB+1p3uj35-090sdoH6PU5OZw@mail.gmail.com>
+References: <1371933764-24875-1-git-send-email-tomasz.figa@gmail.com>
+ <1371933764-24875-4-git-send-email-tomasz.figa@gmail.com>
+ <CACRpkdYm7gFVLzRpQ2J97M+-zQAug_ftJhyi_kniTgCk=GT_bQ@mail.gmail.com>
+ <2212577.G2ANCYONVo@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:46675 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752902Ab3F0ItV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Jun 2013 04:49:21 -0400
-Content-Disposition: inline
-In-Reply-To: <20130627061713.GF15455@arwen.pp.htv.fi>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <2212577.G2ANCYONVo@flatron>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Padmavathi Venna <padma.v@samsung.com>, Takashi Iwai <tiwai@suse.de>, Alessandro Rubini <rubini@gnudd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Giancarlo Asnaghi <giancarlo.asnaghi@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Vinod Koul <vinod.koul@intel.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, jg1.han@samsung.com, dh09.lee@samsung.com, kishon@ti.com, inki.dae@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, plagnioj@jcrosoft.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-On Thu, Jun 27, 2013 at 09:17:13AM +0300, Felipe Balbi wrote:
-> On Wed, Jun 26, 2013 at 05:00:34PM +0200, Sylwester Nawrocki wrote:
-> > Hi,
-> > 
-> > On 06/25/2013 05:06 PM, Felipe Balbi wrote:
-> > >> +static struct platform_driver exynos_video_phy_driver = {
-> > >> > +	.probe	= exynos_video_phy_probe,
-> > >
-> > > you *must* provide a remove method. drivers with NULL remove are
-> > > non-removable :-)
-> > 
-> > Actually the remove() callback can be NULL, it's just missing module_exit
-> > function that makes a module not unloadable.
-> 
-> look at the implementation of platform_drv_remove():
-> 
->  499 static int platform_drv_remove(struct device *_dev)
->  500 {
->  501         struct platform_driver *drv = to_platform_driver(_dev->driver);
->  502         struct platform_device *dev = to_platform_device(_dev);
->  503         int ret;
->  504 
->  505         ret = drv->remove(dev);
->  506         if (ACPI_HANDLE(_dev))
->  507                 acpi_dev_pm_detach(_dev, true);
->  508 
->  509         return ret;
->  510 }
-> 
-> that's not a conditional call right :-)
+On Thu, Jun 27, 2013 at 12:04 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-Wrong.
+>> > +#define MAX_NUM_TSFR_LLIS      512
+>>
+>> And I like this nice side effect that we allocate a number of LLIs
+>> rather than a fixed-size buffer.
+>
+> As we're at it, is there any reason to choose this particular number of
+> LLis? I have calculated it from the buffer size defined originally, but I
+> wonder if 512 LLIs for single transfer isn't too much?
 
-        if (drv->remove)
-                drv->driver.remove = platform_drv_remove;
+Hm that would be some kind of rule-of-thumb thing.
 
-The function you quote will only be used if drv->remove is non-NULL.
-You do not need to provide a remove method.
+It depends on the typical DMA request size divided by the max
+bytes you can stash into an LLI in the smallest case.
+
+For example when issueing things like this:
+
+dd if=/dev/mmc0 of=/dev/null
+
+you can get *really* large LLI lists, maybe if you want to make
+a real engineering exercise you could instrument the code to
+accumulate a few stats and run this stressful usecase on the
+S3C and see where you end up?
+
+Then calculate backwards for the smaller LLI chunks of the
+unmodified PL08x and get a proper estimate.
+
+One way forward would be not to hardcode this as a
+#define but making it a field of the vendor data I guess.
+
+Yours,
+Linus Walleij
