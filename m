@@ -1,297 +1,66 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V2 3/3] video: exynos_dp: Use the generic PHY driver
-Date: Fri, 28 Jun 2013 16:18:23 +0900
-Message-ID: <002101ce73cf$ac989b70$05c9d250$@samsung.com>
+From: Hui Wang <jason77.wang@gmail.com>
+Subject: Re: [PATCH v3 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
+Date: Fri, 28 Jun 2013 16:17:28 +0800
+Message-ID: <51CD4698.3070409@gmail.com>
+References: <1372258946-15607-1-git-send-email-s.nawrocki@samsung.com> <1372258946-15607-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:14181 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752072Ab3F1HSZ (ORCPT
+Received: from mail-pb0-f50.google.com ([209.85.160.50]:40167 "EHLO
+	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754866Ab3F1IRg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Jun 2013 03:18:25 -0400
-Content-language: ko
+	Fri, 28 Jun 2013 04:17:36 -0400
+In-Reply-To: <1372258946-15607-2-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kishon@ti.com, linux-media@vger.kernel.org, kyungmin.park@samsung.com, balbi@ti.com, t.figa@samsung.com, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, inki.dae@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org
 
-Use the generic PHY API instead of the platform callback to control
-the DP PHY. The 'phy_label' field is added to the platform data
-structure to allow PHY lookup on non-dt platforms.
+On 06/26/2013 11:02 PM, Sylwester Nawrocki wrote:
+> Add a PHY provider driver for the Samsung S5P/Exynos SoC MIPI CSI-2
+> receiver and MIPI DSI transmitter DPHYs.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> Changes since v2:
+>   - adapted to the generic PHY API v9: use phy_set/get_drvdata(),
+>   - fixed of_xlate callback to return ERR_PTR() instead of NULL,
+>   - namespace cleanup, put "GPL v2" as MODULE_LICENSE, removed pr_debug,
+>   - removed phy id check in __set_phy_state().
+> ---
+[...]
+> +
+> +	if (IS_EXYNOS_MIPI_DSIM_PHY_ID(id))
+> +		reset = EXYNOS_MIPI_PHY_MRESETN;
+> +	else
+> +		reset = EXYNOS_MIPI_PHY_SRESETN;
+> +
+> +	spin_lock_irqsave(&state->slock, flags);
+Sorry for one stupid question here, why do you use spin_lock_irqsave() 
+rather than spin_lock(),
+I don't see the irq handler will use this spinlock anywhere in this c file.
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- .../devicetree/bindings/video/exynos_dp.txt        |   17 ---
- drivers/video/exynos/exynos_dp_core.c              |  118 ++------------------
- drivers/video/exynos/exynos_dp_core.h              |    2 +
- include/video/exynos_dp.h                          |    6 +-
- 4 files changed, 15 insertions(+), 128 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-index 84f10c1..a8320e3 100644
---- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -1,17 +1,6 @@
- The Exynos display port interface should be configured based on
- the type of panel connected to it.
- 
--We use two nodes:
--	-dp-controller node
--	-dptx-phy node(defined inside dp-controller node)
--
--For the DP-PHY initialization, we use the dptx-phy node.
--Required properties for dptx-phy:
--	-reg:
--		Base address of DP PHY register.
--	-samsung,enable-mask:
--		The bit-mask used to enable/disable DP PHY.
--
- For the Panel initialization, we read data from dp-controller node.
- Required properties for dp-controller:
- 	-compatible:
-@@ -67,12 +56,6 @@ SOC specific portion:
- 		interrupt-parent = <&combiner>;
- 		clocks = <&clock 342>;
- 		clock-names = "dp";
--
--		dptx-phy {
--			reg = <0x10040720>;
--			samsung,enable-mask = <1>;
--		};
--
- 	};
- 
- Board Specific portion:
-diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
-index 12bbede..bac515b 100644
---- a/drivers/video/exynos/exynos_dp_core.c
-+++ b/drivers/video/exynos/exynos_dp_core.c
-@@ -19,6 +19,7 @@
- #include <linux/interrupt.h>
- #include <linux/delay.h>
- #include <linux/of.h>
-+#include <linux/phy/phy.h>
- 
- #include <video/exynos_dp.h>
- 
-@@ -960,84 +961,15 @@ static struct exynos_dp_platdata *exynos_dp_dt_parse_pdata(struct device *dev)
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	return pd;
--}
--
--static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
--{
--	struct device_node *dp_phy_node = of_node_get(dp->dev->of_node);
--	u32 phy_base;
--	int ret = 0;
--
--	dp_phy_node = of_find_node_by_name(dp_phy_node, "dptx-phy");
--	if (!dp_phy_node) {
--		dev_err(dp->dev, "could not find dptx-phy node\n");
--		return -ENODEV;
--	}
--
--	if (of_property_read_u32(dp_phy_node, "reg", &phy_base)) {
--		dev_err(dp->dev, "failed to get reg for dptx-phy\n");
--		ret = -EINVAL;
--		goto err;
--	}
--
--	if (of_property_read_u32(dp_phy_node, "samsung,enable-mask",
--				&dp->enable_mask)) {
--		dev_err(dp->dev, "failed to get enable-mask for dptx-phy\n");
--		ret = -EINVAL;
--		goto err;
--	}
--
--	dp->phy_addr = ioremap(phy_base, SZ_4);
--	if (!dp->phy_addr) {
--		dev_err(dp->dev, "failed to ioremap dp-phy\n");
--		ret = -ENOMEM;
--		goto err;
--	}
--
--err:
--	of_node_put(dp_phy_node);
--
--	return ret;
--}
--
--static void exynos_dp_phy_init(struct exynos_dp_device *dp)
--{
--	u32 reg;
--
--	reg = __raw_readl(dp->phy_addr);
--	reg |= dp->enable_mask;
--	__raw_writel(reg, dp->phy_addr);
--}
--
--static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
--{
--	u32 reg;
-+	pd->phy_label = "dp";
- 
--	reg = __raw_readl(dp->phy_addr);
--	reg &= ~(dp->enable_mask);
--	__raw_writel(reg, dp->phy_addr);
-+	return pd;
- }
- #else
- static struct exynos_dp_platdata *exynos_dp_dt_parse_pdata(struct device *dev)
- {
- 	return NULL;
- }
--
--static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
--{
--	return -EINVAL;
--}
--
--static void exynos_dp_phy_init(struct exynos_dp_device *dp)
--{
--	return;
--}
--
--static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
--{
--	return;
--}
- #endif /* CONFIG_OF */
- 
- static int exynos_dp_probe(struct platform_device *pdev)
-@@ -1061,10 +993,6 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 		pdata = exynos_dp_dt_parse_pdata(&pdev->dev);
- 		if (IS_ERR(pdata))
- 			return PTR_ERR(pdata);
--
--		ret = exynos_dp_dt_parse_phydata(dp);
--		if (ret)
--			return ret;
- 	} else {
- 		pdata = pdev->dev.platform_data;
- 		if (!pdata) {
-@@ -1073,6 +1001,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	dp->phy = devm_phy_get(&pdev->dev, pdata->phy_label);
-+	if (IS_ERR(dp->phy))
-+		return PTR_ERR(dp->phy);
-+
- 	dp->clock = devm_clk_get(&pdev->dev, "dp");
- 	if (IS_ERR(dp->clock)) {
- 		dev_err(&pdev->dev, "failed to get clock\n");
-@@ -1097,13 +1029,7 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 
- 	dp->video_info = pdata->video_info;
- 
--	if (pdev->dev.of_node) {
--		if (dp->phy_addr)
--			exynos_dp_phy_init(dp);
--	} else {
--		if (pdata->phy_init)
--			pdata->phy_init();
--	}
-+	phy_power_on(dp->phy);
- 
- 	exynos_dp_init_dp(dp);
- 
-@@ -1121,42 +1047,27 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 
- static int exynos_dp_remove(struct platform_device *pdev)
- {
--	struct exynos_dp_platdata *pdata = pdev->dev.platform_data;
- 	struct exynos_dp_device *dp = platform_get_drvdata(pdev);
- 
- 	flush_work(&dp->hotplug_work);
- 
--	if (pdev->dev.of_node) {
--		if (dp->phy_addr)
--			exynos_dp_phy_exit(dp);
--	} else {
--		if (pdata->phy_exit)
--			pdata->phy_exit();
--	}
-+	phy_power_off(dp->phy);
- 
- 	clk_disable_unprepare(dp->clock);
- 
--
- 	return 0;
- }
- 
- #ifdef CONFIG_PM_SLEEP
- static int exynos_dp_suspend(struct device *dev)
- {
--	struct exynos_dp_platdata *pdata = dev->platform_data;
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 
- 	disable_irq(dp->irq);
- 
- 	flush_work(&dp->hotplug_work);
- 
--	if (dev->of_node) {
--		if (dp->phy_addr)
--			exynos_dp_phy_exit(dp);
--	} else {
--		if (pdata->phy_exit)
--			pdata->phy_exit();
--	}
-+	phy_power_off(dp->phy);
- 
- 	clk_disable_unprepare(dp->clock);
- 
-@@ -1165,16 +1076,9 @@ static int exynos_dp_suspend(struct device *dev)
- 
- static int exynos_dp_resume(struct device *dev)
- {
--	struct exynos_dp_platdata *pdata = dev->platform_data;
- 	struct exynos_dp_device *dp = dev_get_drvdata(dev);
- 
--	if (dev->of_node) {
--		if (dp->phy_addr)
--			exynos_dp_phy_init(dp);
--	} else {
--		if (pdata->phy_init)
--			pdata->phy_init();
--	}
-+	phy_power_on(dp->phy);
- 
- 	clk_prepare_enable(dp->clock);
- 
-diff --git a/drivers/video/exynos/exynos_dp_core.h b/drivers/video/exynos/exynos_dp_core.h
-index 6c567bbf..b3d0328 100644
---- a/drivers/video/exynos/exynos_dp_core.h
-+++ b/drivers/video/exynos/exynos_dp_core.h
-@@ -42,6 +42,8 @@ struct exynos_dp_device {
- 	struct video_info	*video_info;
- 	struct link_train	link_train;
- 	struct work_struct	hotplug_work;
-+
-+	struct phy		*phy;
- };
- 
- /* exynos_dp_reg.c */
-diff --git a/include/video/exynos_dp.h b/include/video/exynos_dp.h
-index bd8cabd..f38c9af 100644
---- a/include/video/exynos_dp.h
-+++ b/include/video/exynos_dp.h
-@@ -122,10 +122,8 @@ struct video_info {
- };
- 
- struct exynos_dp_platdata {
--	struct video_info *video_info;
--
--	void (*phy_init)(void);
--	void (*phy_exit)(void);
-+	struct video_info	*video_info;
-+	const char		*phy_label;
- };
- 
- #endif /* _EXYNOS_DP_H */
--- 
-1.7.10.4
+Regards,
+Hui.
+> +	reg = readl(addr);
+> +	if (on)
+> +		reg |= reset;
+> +	else
+> +		reg &= ~reset;
+> +	writel(reg, addr);
+> +
+> +	/* Clear ENABLE bit only if MRESETN, SRESETN bits are not set. */
+> +	if (on)
+> +		reg |= EXYNOS_MIPI_PHY_ENABLE;
+> +	else if (!(reg & EXYNOS_MIPI_PHY_RESET_MASK))
+> +		reg &= ~EXYNOS_MIPI_PHY_ENABLE;
+> +
+> +	writel(reg, addr);
+> +	spin_unlock_irqrestore(&state->slock, flags);
+> +	return 0;
+> +}
+>
