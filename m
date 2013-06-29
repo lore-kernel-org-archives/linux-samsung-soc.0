@@ -1,84 +1,60 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC PATCH 0/3] [media] s5p-jpeg: Add support for Exynos4x12
- and 5250
-Date: Sat, 29 Jun 2013 21:12:53 +0200
-Message-ID: <51CF31B5.6020003@gmail.com>
-References: <1368532420-21555-1-git-send-email-george.jp@samsung.com>
+Subject: Re: [PATCH v3 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
+Date: Sat, 29 Jun 2013 21:34:03 +0200
+Message-ID: <51CF36AB.4010300@gmail.com>
+References: <1372258946-15607-1-git-send-email-s.nawrocki@samsung.com> <1372258946-15607-2-git-send-email-s.nawrocki@samsung.com> <51CD4698.3070409@gmail.com> <51CD6153.5050406@samsung.com> <51CEA197.8070207@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1368532420-21555-1-git-send-email-george.jp@samsung.com>
+In-Reply-To: <51CEA197.8070207@ti.com>
 Sender: linux-media-owner@vger.kernel.org
-To: George Joseph <george.jp@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, a.hajda@samsung.com, ym.song@samsung.com
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, jg1.han@samsung.com, dh09.lee@samsung.com, balbi@ti.com, inki.dae@samsung.com, kyungmin.park@samsung.com, Hui Wang <jason77.wang@gmail.com>, kgene.kim@samsung.com, plagnioj@jcrosoft.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-On 05/14/2013 01:53 PM, George Joseph wrote:
-> From: George Joseph Palathingal<george.jp@samsung.com>
->
-> This patch series refactors the JPEG driver to add code to support Exynos4x12
-> and Exynos5250 JPEG IPs and makes the driver DT and CCF compliant.
->
-> Exynos4210 JPEG driver supports only single planar image formats.
-> The JPEG IP on Exynos4412 and 5250 supports multiplanar image formats as well.
-> So the existing JPEG driver is refactored to support the JPEG h/w on all
-> the three SoCs. The encoder/decoder functionalities are separated to
-> two different files for better modularity.
->
-> The encoder/decoder functionalities have been tested on Origen 4210, 4412 and SMDK 5250
-> boards. There is currently an issue with the Exynos 4210 JPEG encoder which will be
-> fixed in subsequent patches.
->
-> The patch series is based on linux-next tree (20130514).
 
 Hi,
 
-Are you still working on it ? Are you planning to address my review
-comments or are these works now abandoned ? I refrained from merging
-my patch [1] that would at least allow to use the JPEG codec on
-exynos4210 SoCs in mainline v3.11, as you guys indicated that you
-were working on full support for the exynos4x12 and exynos5250 SoCs.
-Now it's about v3.11 merge window and we are left with nothing. I'm
-not happy. Please let me know if you're going to carry on with that
-effort, if not someone from our team will complete that.
-You seem to have already done most of the hard work, and I'm really
-surprised it hasn't been completed, there was plenty time...
+On 06/29/2013 10:57 AM, Kishon Vijay Abraham I wrote:
+> On Friday 28 June 2013 03:41 PM, Sylwester Nawrocki wrote:
+>> On 06/28/2013 10:17 AM, Hui Wang wrote:
+>>> On 06/26/2013 11:02 PM, Sylwester Nawrocki wrote:
+>>>> Add a PHY provider driver for the Samsung S5P/Exynos SoC MIPI CSI-2
+>>>> receiver and MIPI DSI transmitter DPHYs.
+>>>>
+>>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> ---
+>>>> Changes since v2:
+>>>> - adapted to the generic PHY API v9: use phy_set/get_drvdata(),
+>>>> - fixed of_xlate callback to return ERR_PTR() instead of NULL,
+>>>> - namespace cleanup, put "GPL v2" as MODULE_LICENSE, removed pr_debug,
+>>>> - removed phy id check in __set_phy_state().
+>>>> ---
+>>> [...]
+>>>> +
+>>>> + if (IS_EXYNOS_MIPI_DSIM_PHY_ID(id))
+>>>> + reset = EXYNOS_MIPI_PHY_MRESETN;
+>>>> + else
+>>>> + reset = EXYNOS_MIPI_PHY_SRESETN;
+>>>> +
+>>>> + spin_lock_irqsave(&state->slock, flags);
+>>>
+>>> Sorry for one stupid question here, why do you use spin_lock_irqsave()
+>>> rather than spin_lock(),
+>>> I don't see the irq handler will use this spinlock anywhere in this c
+>>> file.
+>>
+>> Yes, there is no chance the PHY users could call the phy ops from within
+>> an interrupt context. Especially now when there is a per phy object
+>> mutex used in the PHY operation helpers. So I'll replace it with plain
+>> spin_lock/unlock. Thank you for the review.
+>
+> Now that PHY ops is already protected, do you really need a spin_lock here?
 
-[1] https://patchwork.linuxtv.org/patch/18345/
+It is still needed, to synchronize access to the control register from
+two separate PHY objects. The mutex is per PHY object, while the spinlock
+is per PHY provider.
 
 Thanks,
 Sylwester
-
-> George Joseph Palathingal (2):
->    [media] s5p-jpeg: Add support for Exynos4x12 and 5250
->    [media] s5p-jpeg: Add DT support to JPEG driver
->
-> Sylwester Nawrocki (1):
->    ARM: dts: Add documentation for Samsung JPEG driver bindings
->
->   .../devicetree/bindings/media/samsung-s5p-jpeg.txt |   21 +
->   drivers/media/platform/s5p-jpeg/Makefile           |    4 +-
->   drivers/media/platform/s5p-jpeg/jpeg-core.c        | 2041 +++++++++-----------
->   drivers/media/platform/s5p-jpeg/jpeg-core.h        |  428 ++--
->   drivers/media/platform/s5p-jpeg/jpeg-dec.c         |  489 +++++
->   drivers/media/platform/s5p-jpeg/jpeg-enc.c         |  521 +++++
->   drivers/media/platform/s5p-jpeg/jpeg-hw-v1.h       |  528 +++++
->   drivers/media/platform/s5p-jpeg/jpeg-hw-v2.c       |  614 ++++++
->   drivers/media/platform/s5p-jpeg/jpeg-hw-v2.h       |   47 +
->   drivers/media/platform/s5p-jpeg/jpeg-hw.h          |  357 ----
->   drivers/media/platform/s5p-jpeg/jpeg-regs-v1.h     |  171 ++
->   drivers/media/platform/s5p-jpeg/jpeg-regs-v2.h     |  191 ++
->   drivers/media/platform/s5p-jpeg/jpeg-regs.h        |  170 --
->   13 files changed, 3787 insertions(+), 1795 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/media/samsung-s5p-jpeg.txt
->   create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-dec.c
->   create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-enc.c
->   create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-hw-v1.h
->   create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-hw-v2.c
->   create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-hw-v2.h
->   delete mode 100644 drivers/media/platform/s5p-jpeg/jpeg-hw.h
->   create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-regs-v1.h
->   create mode 100644 drivers/media/platform/s5p-jpeg/jpeg-regs-v2.h
->   delete mode 100644 drivers/media/platform/s5p-jpeg/jpeg-regs.h
->
