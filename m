@@ -1,157 +1,74 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] drm/exynos: Add missing includes
-Date: Mon,  1 Jul 2013 13:55:55 +0100
-Message-ID: <1372683355-27460-1-git-send-email-broonie@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 00/13] ARM: dts: Add camera and magnetometer support for
+ TRATS(2) board
+Date: Mon, 01 Jul 2013 17:22:22 +0200
+Message-ID: <1372692155-17653-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:45189 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752718Ab3GAM4H (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:65282 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754309Ab3GAPXk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jul 2013 08:56:07 -0400
+	Mon, 1 Jul 2013 11:23:40 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MP900473K3FFD20@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Jul 2013 00:23:39 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: kgene.kim@samsung.com
+Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-From: Mark Brown <broonie@linaro.org>
+This patch series includes some fixes and extensions to the Exynos dts
+files to add the camera and magnetometer sensor support for the TRATS
+and TRATS2 board. It depends on a patch from Tomasz adding initial
+TRATS2 board dts file [1].
 
-Ensure that all externally accessed functions are correctly prototyped
-when defined in each file by making sure the headers with the protoypes
-are included in the file with the definition.
+Comparing to the previous version of this patch set I've added a few
+more patches, for the Exynos4210 based TRATS board and a patch adding
+MIPI CSIS/DSIM PHY provider nodes and related properties to the PHY
+consumer nodes.
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- drivers/gpu/drm/exynos/exynos_drm_connector.c | 1 +
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 1 +
- drivers/gpu/drm/exynos/exynos_drm_dmabuf.c    | 1 +
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c     | 1 +
- drivers/gpu/drm/exynos/exynos_drm_fimc.c      | 1 +
- drivers/gpu/drm/exynos/exynos_drm_g2d.c       | 1 +
- drivers/gpu/drm/exynos/exynos_drm_gsc.c       | 1 +
- drivers/gpu/drm/exynos/exynos_drm_plane.c     | 1 +
- drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 1 +
- drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 1 +
- 10 files changed, 10 insertions(+)
+This series has been tested with the S5K6A3/FIMC-IS and S5K5BAFX
+(front facing) cameras on top of next-20130627 tag. It can be found
+also at:
+http://git.linuxtv.org/snawrocki/samsung.git/next-20130627-dts-trats-v3
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c b/drivers/gpu/drm/exynos/exynos_drm_connector.c
-index 8bcc13a..ec80293 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
-@@ -17,6 +17,7 @@
- #include <drm/exynos_drm.h>
- #include "exynos_drm_drv.h"
- #include "exynos_drm_encoder.h"
-+#include "exynos_drm_connector.h"
- 
- #define to_exynos_connector(x)	container_of(x, struct exynos_drm_connector,\
- 				drm_connector)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 073c10a..6933ee9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -15,6 +15,7 @@
- #include <drm/drmP.h>
- #include <drm/drm_crtc_helper.h>
- 
-+#include "exynos_drm_crtc.h"
- #include "exynos_drm_drv.h"
- #include "exynos_drm_encoder.h"
- #include "exynos_drm_plane.h"
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-index ff7f2a8..8adafde 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-@@ -11,6 +11,7 @@
- 
- #include <drm/drmP.h>
- #include <drm/exynos_drm.h>
-+#include "exynos_drm_dmabuf.h"
- #include "exynos_drm_drv.h"
- #include "exynos_drm_gem.h"
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 8f007aa..45b6cb3 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -19,6 +19,7 @@
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
-+#include "exynos_drm_fbdev.h"
- #include "exynos_drm_gem.h"
- #include "exynos_drm_iommu.h"
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 4a1616a..a83e664 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -22,6 +22,7 @@
- #include <drm/drmP.h>
- #include <drm/exynos_drm.h>
- #include "regs-fimc.h"
-+#include "exynos_drm_drv.h"
- #include "exynos_drm_ipp.h"
- #include "exynos_drm_fimc.h"
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-index af75434..03ba897 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-@@ -24,6 +24,7 @@
- #include <drm/drmP.h>
- #include <drm/exynos_drm.h>
- #include "exynos_drm_drv.h"
-+#include "exynos_drm_g2d.h"
- #include "exynos_drm_gem.h"
- #include "exynos_drm_iommu.h"
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 762f40d..4683251 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -21,6 +21,7 @@
- #include <drm/drmP.h>
- #include <drm/exynos_drm.h>
- #include "regs-gsc.h"
-+#include "exynos_drm_drv.h"
- #include "exynos_drm_ipp.h"
- #include "exynos_drm_gsc.h"
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-index 83efc66..63ebeeb 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-@@ -16,6 +16,7 @@
- #include "exynos_drm_encoder.h"
- #include "exynos_drm_fb.h"
- #include "exynos_drm_gem.h"
-+#include "exynos_drm_plane.h"
- 
- #define to_exynos_plane(x)	container_of(x, struct exynos_plane, base)
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-index 9b6c709..2e9eee2 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-@@ -22,6 +22,7 @@
- #include <drm/exynos_drm.h>
- #include "regs-rotator.h"
- #include "exynos_drm.h"
-+#include "exynos_drm_drv.h"
- #include "exynos_drm_ipp.h"
- 
- /*
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 24376c1..498647a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -24,6 +24,7 @@
- #include "exynos_drm_drv.h"
- #include "exynos_drm_crtc.h"
- #include "exynos_drm_encoder.h"
-+#include "exynos_drm_vidi.h"
- 
- /* vidi has totally three virtual windows. */
- #define WINDOWS_NR		3
--- 
-1.8.3.1
+Detailed changes since v2 are listed in each patch.
+
+Changes since v1:
+ - enabled pull down in cam-port-{a, b}-clk-idle nodes (1/8)
+ - added node alias for i2c-gpio@0 I2C controller node (7/8).
+
+[1] http://www.spinics.net/lists/arm-kernel/msg253184.html
+
+Andrzej Hajda (2):
+  ARM: dts: Add Exynos4210 SoC camera port pinctrl nodes
+  ARM: dts: Add S5K5BA sensor regulator definitions for Trats board
+
+Jacek Anaszewski (1):
+  ARM: dts: Add AK8975 device node for Exynos4412 TRATS2 board
+
+Sylwester Nawrocki (10):
+  ARM: dts: Correct camera pinctrl nodes for Exynos4x12 SoCs
+  ARM: dts: Add pinctrl entries for Exynos4x12 FIMC-IS peripherals
+  ARM: dts: Add ISP power domain node for Exynos4x12
+  ARM: dts: Use generic DMA bindings for Exynos4 SPI devices
+  ARM: dts: Add camera subsystem device nodes to exynos4.dtsi
+  ARM: dts: Add camera subsystem nodes to exynos4x12.dtsi
+  ARM: dts: Add camera device nodes for Exynos4412 TRATS2 board
+  ARM: dts: Add camera device nodes for Exynos4210 SoCs
+  ARM: dts: Add FIMC nodes for Exynos4210 Trats board
+  ARM: dts: Add MIPI PHY node to exynos4.dtsi
+
+ arch/arm/boot/dts/exynos4.dtsi            |  102 ++++++++++++++++++++++++--
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi |   23 ++++++
+ arch/arm/boot/dts/exynos4210-trats.dts    |  103 ++++++++++++++++++++++-----
+ arch/arm/boot/dts/exynos4210.dtsi         |   30 ++++++++
+ arch/arm/boot/dts/exynos4412-trats2.dts   |  110 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   61 ++++++++++++++--
+ arch/arm/boot/dts/exynos4x12.dtsi         |  103 +++++++++++++++++++++++++++
+ 7 files changed, 503 insertions(+), 29 deletions(-)
+
+--
+1.7.9.5
