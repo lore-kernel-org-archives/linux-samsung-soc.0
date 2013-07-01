@@ -1,57 +1,31 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3/3] ARM: dts: Add WM1811A audio CODEC to Arndale bindings
-Date: Mon,  1 Jul 2013 22:36:39 +0100
-Message-ID: <1372714599-17588-3-git-send-email-broonie@kernel.org>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: Add WM1811A audio CODEC to Arndale bindings
+Date: Mon, 1 Jul 2013 18:47:00 -0300
+Message-ID: <CAOMZO5DZb1wWu93eEHkEqNORhm_hn6qy_LdiRSumP7UODJ3uMw@mail.gmail.com>
 References: <1372714599-17588-1-git-send-email-broonie@kernel.org>
+	<1372714599-17588-3-git-send-email-broonie@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:49458 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754998Ab3GAVhK (ORCPT
+Received: from mail-vb0-f47.google.com ([209.85.212.47]:59597 "EHLO
+	mail-vb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755100Ab3GAVrB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jul 2013 17:37:10 -0400
-In-Reply-To: <1372714599-17588-1-git-send-email-broonie@kernel.org>
+	Mon, 1 Jul 2013 17:47:01 -0400
+Received: by mail-vb0-f47.google.com with SMTP id x14so3999606vbb.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jul 2013 14:47:00 -0700 (PDT)
+In-Reply-To: <1372714599-17588-3-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@linaro.org>
 
-From: Mark Brown <broonie@linaro.org>
+On Mon, Jul 1, 2013 at 6:36 PM, Mark Brown <broonie@kernel.org> wrote:
 
-The default audio module for the Arndale has a WM811A on it. Add this to
-the device tree bindings.
+>         i2c@12C90000 {
+> -               status = "disabled";
+> +               wm1811a@11 {
+> +                       compatible = "wlf,wm1811";
+> +                       reg = <0x1a>;
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- arch/arm/boot/dts/exynos5250-arndale.dts | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 482f275..75c3065 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -325,7 +325,22 @@
- 	};
- 
- 	i2c@12C90000 {
--		status = "disabled";
-+		wm1811a@11 {
-+			compatible = "wlf,wm1811";
-+			reg = <0x1a>;
-+
-+			AVDD2-supply = <&main_dc_reg>;
-+			CPVDD-supply = <&main_dc_reg>;
-+			DBVDD1-supply = <&main_dc_reg>;
-+			DBVDD2-supply = <&main_dc_reg>;
-+			DBVDD3-supply = <&main_dc_reg>;
-+			LDO1VDD-supply = <&main_dc_reg>;
-+			SPKVDD1-supply = <&main_dc_reg>;
-+			SPKVDD2-supply = <&main_dc_reg>;
-+
-+			wlf,ldo1ena = <&gpb0 0 0>;
-+			wlf,ldo2ena = <&gpb0 1 0>;
-+		};
- 	};
- 
- 	i2c@12CA0000 {
--- 
-1.8.3.1
+Shouldn't it be reg = <0x11> ? Or wm1811a@1a ?
