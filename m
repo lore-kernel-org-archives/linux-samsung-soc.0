@@ -1,146 +1,162 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v10] i2c: exynos5: add High Speed I2C controller driver
-Date: Mon, 1 Jul 2013 08:17:22 +0200
-Message-ID: <20130701061722.GB2976@katana>
-References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
- <1371638905-30633-1-git-send-email-ch.naveen@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH V3 3/3] video: exynos_dp: Use the generic PHY driver
+Date: Mon, 1 Jul 2013 11:57:48 +0530
+Message-ID: <51D12164.6030507@ti.com>
+References: <005401ce761b$504d7090$f0e851b0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kORqDWCi7qDJ0mEj"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1371638905-30633-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <005401ce761b$504d7090$f0e851b0$@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Hui Wang' <jason77.wang@gmail.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi,
 
---kORqDWCi7qDJ0mEj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 19, 2013 at 04:18:25PM +0530, Naveen Krishna Chatradhi wrote:
-> Adds support for High Speed I2C driver found in Exynos5 and
-> later SoCs from Samsung.
->=20
-> Driver only supports Device Tree method.
->=20
-> Changes since v1:
-> 1. Added FIFO functionality
-> 2. Added High speed mode functionality
-> 3. Remove SMBUS_QUICK
-> 4. Remove the debugfs functionality
-> 5. Use devm_* functions where ever possible
-> 6. Driver is free from GPIO configs
-> 7. Use OF data string "clock-frequency" to get the bus operating frequenc=
-ies
-> 8. Split the clock divisor calculation function
-> 9. Add resets for the failed transacton cases
-> 10. Removed retries as core does retries if -EAGAIN is returned
-> 11. Removed mode from device tree info (use speed to distinguish
->     the mode of operation)
-> 12. Use wait_for_completion_timeout as the interruptible case is not test=
-ed well
-> 13. few other bug fixes and cosmetic changes
->=20
-> Signed-off-by: Taekgyun Ko <taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-> Tested-by: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+On Monday 01 July 2013 10:54 AM, Jingoo Han wrote:
+> Use the generic PHY API instead of the platform callback to control
+> the DP PHY. The 'phy_label' field is added to the platform data
+> structure to allow PHY lookup on non-dt platforms.
+>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Felipe Balbi <balbi@ti.com>
 > ---
->=20
-> +Optional properties:
-> +  - clock-frequency: Desired operating frequency in Hz of the bus.
-> +    -> If not specified, the default value is 100khz in fast-speed mode =
-and
-> +       1Mhz in high-speed mode.
+>   .../devicetree/bindings/video/exynos_dp.txt        |   23 +---
+>   drivers/video/exynos/exynos_dp_core.c              |  118 ++------------------
+>   drivers/video/exynos/exynos_dp_core.h              |    2 +
+>   include/video/exynos_dp.h                          |    6 +-
+>   4 files changed, 21 insertions(+), 128 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> index 84f10c1..71645dc 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_dp.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> @@ -1,17 +1,6 @@
+>   The Exynos display port interface should be configured based on
+>   the type of panel connected to it.
+>
+> -We use two nodes:
+> -	-dp-controller node
+> -	-dptx-phy node(defined inside dp-controller node)
+> -
+> -For the DP-PHY initialization, we use the dptx-phy node.
+> -Required properties for dptx-phy:
+> -	-reg:
+> -		Base address of DP PHY register.
+> -	-samsung,enable-mask:
+> -		The bit-mask used to enable/disable DP PHY.
+> -
+>   For the Panel initialization, we read data from dp-controller node.
+>   Required properties for dp-controller:
+>   	-compatible:
+> @@ -25,6 +14,10 @@ Required properties for dp-controller:
+>   		from common clock binding: handle to dp clock.
+>   	-clock-names:
+>   		from common clock binding: Shall be "dp".
+> +	-phys:
+> +		from general phy binding: the phandle for the PHY device.
+> +	-phy-names:
+> +		from general phy binding: Should be "dp".
+>   	-interrupt-parent:
+>   		phandle to Interrupt combiner node.
+>   	-samsung,color-space:
+> @@ -67,12 +60,8 @@ SOC specific portion:
+>   		interrupt-parent = <&combiner>;
+>   		clocks = <&clock 342>;
+>   		clock-names = "dp";
+> -
+> -		dptx-phy {
+> -			reg = <0x10040720>;
+> -			samsung,enable-mask = <1>;
+> -		};
+> -
+> +		phys = <&dp_phy>;
+> +		phy-names = "dp";
+>   	};
+>
+>   Board Specific portion:
+> diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
+> index 12bbede..bac515b 100644
+> --- a/drivers/video/exynos/exynos_dp_core.c
+> +++ b/drivers/video/exynos/exynos_dp_core.c
+> @@ -19,6 +19,7 @@
+>   #include <linux/interrupt.h>
+>   #include <linux/delay.h>
+>   #include <linux/of.h>
+> +#include <linux/phy/phy.h>
+>
+>   #include <video/exynos_dp.h>
+>
+> @@ -960,84 +961,15 @@ static struct exynos_dp_platdata *exynos_dp_dt_parse_pdata(struct device *dev)
+>   		return ERR_PTR(-EINVAL);
+>   	}
+>
+> -	return pd;
+> -}
+> -
+> -static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
+> -{
+> -	struct device_node *dp_phy_node = of_node_get(dp->dev->of_node);
+> -	u32 phy_base;
+> -	int ret = 0;
+> -
+> -	dp_phy_node = of_find_node_by_name(dp_phy_node, "dptx-phy");
+> -	if (!dp_phy_node) {
+> -		dev_err(dp->dev, "could not find dptx-phy node\n");
+> -		return -ENODEV;
+> -	}
+> -
+> -	if (of_property_read_u32(dp_phy_node, "reg", &phy_base)) {
+> -		dev_err(dp->dev, "failed to get reg for dptx-phy\n");
+> -		ret = -EINVAL;
+> -		goto err;
+> -	}
+> -
+> -	if (of_property_read_u32(dp_phy_node, "samsung,enable-mask",
+> -				&dp->enable_mask)) {
+> -		dev_err(dp->dev, "failed to get enable-mask for dptx-phy\n");
+> -		ret = -EINVAL;
+> -		goto err;
+> -	}
+> -
+> -	dp->phy_addr = ioremap(phy_base, SZ_4);
+> -	if (!dp->phy_addr) {
+> -		dev_err(dp->dev, "failed to ioremap dp-phy\n");
+> -		ret = -ENOMEM;
+> -		goto err;
+> -	}
+> -
+> -err:
+> -	of_node_put(dp_phy_node);
+> -
+> -	return ret;
+> -}
+> -
+> -static void exynos_dp_phy_init(struct exynos_dp_device *dp)
+> -{
+> -	u32 reg;
+> -
+> -	reg = __raw_readl(dp->phy_addr);
+> -	reg |= dp->enable_mask;
+> -	__raw_writel(reg, dp->phy_addr);
+> -}
+> -
+> -static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
+> -{
+> -	u32 reg;
+> +	pd->phy_label = "dp";
 
-? If not specified, the default is 100kHz. There is no way to get 1MHz,
-or?
+Felipe had a comment to change the label to *display-port* no?
 
-=2E..
-
-> +static int exynos5_i2c_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np =3D pdev->dev.of_node;
-> +	struct exynos5_i2c *i2c;
-> +	struct resource *mem;
-> +	unsigned int op_clock;
-
-My compiler says:
-
-drivers/i2c/busses/i2c-exynos5.c: In function =E2=80=98exynos5_i2c_probe=E2=
-=80=99:
-drivers/i2c/busses/i2c-exynos5.c:687:5: warning: =E2=80=98op_clock=E2=80=99=
- may be used uninitialized in this function [-Wuninitialized]
-
-so...
-
-> +	int ret;
-> +
-> +	if (!np) {
-> +		dev_err(&pdev->dev, "no device node\n");
-> +		return -ENOENT;
-> +	}
-> +
-> +	i2c =3D devm_kzalloc(&pdev->dev, sizeof(struct exynos5_i2c), GFP_KERNEL=
-);
-> +	if (!i2c) {
-> +		dev_err(&pdev->dev, "no memory for state\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	if (of_property_read_u32(np, "clock-frequency", &op_clock)) {
-> +		i2c->speed_mode =3D HSI2C_FAST_SPD;
-> +		i2c->fs_clock =3D HSI2C_FS_TX_CLOCK;
-> +	}
-> +
-> +	if (op_clock >=3D HSI2C_HS_TX_CLOCK) {
-
-=2E.. this should be 'else if'
-
-> +		i2c->speed_mode =3D HSI2C_HIGH_SPD;
-> +		i2c->fs_clock =3D HSI2C_FS_TX_CLOCK;
-> +		i2c->hs_clock =3D op_clock;
-> +	} else {
-> +		i2c->speed_mode =3D HSI2C_FAST_SPD;
-> +		i2c->fs_clock =3D op_clock;
-> +	}
-
-=2E..
-
-> +	i2c->bus_id =3D of_alias_get_id(i2c->adap.dev.of_node, "hsi2c");
-
-Huh, the core already gets an alias for you. Can't you use 'adap.nr'?
-
-Rest looks good.
-
-Thanks!
-
---kORqDWCi7qDJ0mEj
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR0R7yAAoJEBQN5MwUoCm2PxgP/Rx/YuLk8HofVWX1RIHerQ6v
-Tp3Lx4H1OTBSMkXGKViz6mBtj7aOoBh5GiXC/tUgsInuMngU7q+ldZ0utYcR80Xo
-Oewjzxh4qjjdOM7Ga+sH8u/SLRHU6gSSW//MS2911MoVe4qPgLpS7ACz9sgjlIeX
-j4bBU3liKaJcm6VDTx0O6jeqcE2M4dzCsoFnBJmwnkpx0lmqbf6/XDS9aip4zA7Q
-FscfNie9H8zVywJJb65YgjK5yniGS6H2wRPCxopx5mkl5zACIOOXYWaozz2G2svd
-6Uv3YWe1OkzOrLaAWxU4Yu2uLzPH90E14DOyMfBqYMRAljOc66vgcA7yJGsTxF/p
-ZUoufxo1iiX+myOywzytaxslLitVTD9DwHVHCAJcoM22dSMAGvPLxbivkdLAQywM
-FSZQyLMc6EXjgDiWx8DGKMW7UmtyG64RcdwksWBeXs8/U4AR7Q7kUZcGZT7bh7cm
-mZ8cXJuXWNLtfShIweJwNYW4og62tlcQPMJ/RGE/1RaYI2tlqyXlJi0ox9HIvaes
-hvnrk5hNpXC26k2SjpjUArlBiSehuqHq1Wb63mFjBB/z0QSdhFB2kLg7XylM0wFc
-SAqgmSLb01qGl6/aKSQyNndX2sRzmypXGXSAw7n69+1546wKA8CeeKnuzKvP+lRY
-H1ep49GncAJ6epQOJUvO
-=aJgi
------END PGP SIGNATURE-----
-
---kORqDWCi7qDJ0mEj--
+Thanks
+Kishon
