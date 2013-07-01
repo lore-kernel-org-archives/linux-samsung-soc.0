@@ -1,166 +1,136 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V3 3/3] video: exynos_dp: Use the generic PHY driver
-Date: Mon, 01 Jul 2013 16:07:24 +0900
-Message-ID: <005d01ce7629$a3801520$ea803f60$@samsung.com>
-References: <005401ce761b$504d7090$f0e851b0$@samsung.com>
- <51D12164.6030507@ti.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 1/3] ARM: EXYNOS: remove non-working AFTR mode support
+Date: Mon, 01 Jul 2013 11:09:03 +0200
+Message-ID: <51D1472F.2010103@linaro.org>
+References: <1372241627-22695-1-git-send-email-b.zolnierkie@samsung.com> <2484012.IH9WOi4iIR@amdc1032> <51CE0485.8020109@linaro.org> <2055030.cNBSJEZ4PB@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <51D12164.6030507@ti.com>
-Content-language: ko
-Sender: linux-media-owner@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, 'Hui Wang' <jason77.wang@gmail.com>, Jingoo Han <jg1.han@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <2055030.cNBSJEZ4PB@flatron>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, jc.lee@samsung.com, lorenzo.pieralisi@arm.com, Amit Kachhap <amit.daniel@samsung.com>, rjw@sisk.pl, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, July 01, 2013 3:28 PM, Kishon Vijay Abraham I wrote:
-> 
-> Hi,
-> 
-> On Monday 01 July 2013 10:54 AM, Jingoo Han wrote:
-> > Use the generic PHY API instead of the platform callback to control
-> > the DP PHY. The 'phy_label' field is added to the platform data
-> > structure to allow PHY lookup on non-dt platforms.
-> >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > Acked-by: Felipe Balbi <balbi@ti.com>
-> > ---
-> >   .../devicetree/bindings/video/exynos_dp.txt        |   23 +---
-> >   drivers/video/exynos/exynos_dp_core.c              |  118 ++------------------
-> >   drivers/video/exynos/exynos_dp_core.h              |    2 +
-> >   include/video/exynos_dp.h                          |    6 +-
-> >   4 files changed, 21 insertions(+), 128 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt
-> b/Documentation/devicetree/bindings/video/exynos_dp.txt
-> > index 84f10c1..71645dc 100644
-> > --- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-> > +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-> > @@ -1,17 +1,6 @@
-> >   The Exynos display port interface should be configured based on
-> >   the type of panel connected to it.
-> >
-> > -We use two nodes:
-> > -	-dp-controller node
-> > -	-dptx-phy node(defined inside dp-controller node)
-> > -
-> > -For the DP-PHY initialization, we use the dptx-phy node.
-> > -Required properties for dptx-phy:
-> > -	-reg:
-> > -		Base address of DP PHY register.
-> > -	-samsung,enable-mask:
-> > -		The bit-mask used to enable/disable DP PHY.
-> > -
-> >   For the Panel initialization, we read data from dp-controller node.
-> >   Required properties for dp-controller:
-> >   	-compatible:
-> > @@ -25,6 +14,10 @@ Required properties for dp-controller:
-> >   		from common clock binding: handle to dp clock.
-> >   	-clock-names:
-> >   		from common clock binding: Shall be "dp".
-> > +	-phys:
-> > +		from general phy binding: the phandle for the PHY device.
-> > +	-phy-names:
-> > +		from general phy binding: Should be "dp".
-> >   	-interrupt-parent:
-> >   		phandle to Interrupt combiner node.
-> >   	-samsung,color-space:
-> > @@ -67,12 +60,8 @@ SOC specific portion:
-> >   		interrupt-parent = <&combiner>;
-> >   		clocks = <&clock 342>;
-> >   		clock-names = "dp";
-> > -
-> > -		dptx-phy {
-> > -			reg = <0x10040720>;
-> > -			samsung,enable-mask = <1>;
-> > -		};
-> > -
-> > +		phys = <&dp_phy>;
-> > +		phy-names = "dp";
-> >   	};
-> >
-> >   Board Specific portion:
-> > diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
-> > index 12bbede..bac515b 100644
-> > --- a/drivers/video/exynos/exynos_dp_core.c
-> > +++ b/drivers/video/exynos/exynos_dp_core.c
-> > @@ -19,6 +19,7 @@
-> >   #include <linux/interrupt.h>
-> >   #include <linux/delay.h>
-> >   #include <linux/of.h>
-> > +#include <linux/phy/phy.h>
-> >
-> >   #include <video/exynos_dp.h>
-> >
-> > @@ -960,84 +961,15 @@ static struct exynos_dp_platdata *exynos_dp_dt_parse_pdata(struct device *dev)
-> >   		return ERR_PTR(-EINVAL);
-> >   	}
-> >
-> > -	return pd;
-> > -}
-> > -
-> > -static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
-> > -{
-> > -	struct device_node *dp_phy_node = of_node_get(dp->dev->of_node);
-> > -	u32 phy_base;
-> > -	int ret = 0;
-> > -
-> > -	dp_phy_node = of_find_node_by_name(dp_phy_node, "dptx-phy");
-> > -	if (!dp_phy_node) {
-> > -		dev_err(dp->dev, "could not find dptx-phy node\n");
-> > -		return -ENODEV;
-> > -	}
-> > -
-> > -	if (of_property_read_u32(dp_phy_node, "reg", &phy_base)) {
-> > -		dev_err(dp->dev, "failed to get reg for dptx-phy\n");
-> > -		ret = -EINVAL;
-> > -		goto err;
-> > -	}
-> > -
-> > -	if (of_property_read_u32(dp_phy_node, "samsung,enable-mask",
-> > -				&dp->enable_mask)) {
-> > -		dev_err(dp->dev, "failed to get enable-mask for dptx-phy\n");
-> > -		ret = -EINVAL;
-> > -		goto err;
-> > -	}
-> > -
-> > -	dp->phy_addr = ioremap(phy_base, SZ_4);
-> > -	if (!dp->phy_addr) {
-> > -		dev_err(dp->dev, "failed to ioremap dp-phy\n");
-> > -		ret = -ENOMEM;
-> > -		goto err;
-> > -	}
-> > -
-> > -err:
-> > -	of_node_put(dp_phy_node);
-> > -
-> > -	return ret;
-> > -}
-> > -
-> > -static void exynos_dp_phy_init(struct exynos_dp_device *dp)
-> > -{
-> > -	u32 reg;
-> > -
-> > -	reg = __raw_readl(dp->phy_addr);
-> > -	reg |= dp->enable_mask;
-> > -	__raw_writel(reg, dp->phy_addr);
-> > -}
-> > -
-> > -static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
-> > -{
-> > -	u32 reg;
-> > +	pd->phy_label = "dp";
-> 
-> Felipe had a comment to change the label to *display-port* no?
+On 06/29/2013 12:47 AM, Tomasz Figa wrote:
+> On Friday 28 of June 2013 23:47:49 Daniel Lezcano wrote:
+>> On 06/28/2013 06:27 PM, Bartlomiej Zolnierkiewicz wrote:
+>>> On Friday, June 28, 2013 01:20:09 PM Daniel Lezcano wrote:
+>>>> On 06/28/2013 12:11 PM, Tomasz Figa wrote:
+>>>>> Hi Daniel,
+>>>>>
+>>>>> I've been fighting with this whole AFTR state as well, before
+>>>>> Bartlomiej. Let me share my thoughts on this.
+>>
+>> [ ... ]
+>>
+>>>>> If you don't unplug all the CPUs >0 the state is obviously never
+>>>>> reached. Otherwise the whole system hangs after it tries to enter
+>>>>> this mode without any reaction for external events, other than
+>>>>> reset.
+>>>>
+>>>> Need investigation.
+>>>>
+>>>> What is the exynos board version where that occurs ?
+>>>
+>>> Could you please tell me what exactly do you mean by that?
+>>>
+>>> I already wrote that we can reproduce the problem on EXYNOS4210 rev=
+0
+>>> and rev1.1 (we don't have rev1.0). Tomek has also reproduced the
+>>> problem on some later SoCs (I hope that he can give you exact
+>>> revisions).
+>>>
+>>> In our testing we didn't encounter the board on which the problem
+>>> doesn't occur. Our current working theory is that the problem may b=
+e
+>>> u-boot (or first stage bootloader) related.
+>>
+>> Ok, the status for what I know:
+>>
+>> Origen Exynos4210, board ver A: works for me
+>> Arndale Exynos5250: works for me but only if u-boot does not enable =
+the
+>> hypervisor mode.
+>> Chromebook Exynos5250: works for me
+>>
+>> I found the following drivers:
+>>
+>> https://github.com/AndreiLux/Perseus-UNIVERSAL5410/blob/samsung/arch=
+/arm
+>> /mach-exynos/cpuidle.c
+>>
+>> https://github.com/CyanogenMod/hardkernel-kernel-4412/blob/cm-10.1/a=
+rch/
+>> arm/mach-exynos/cpuidle-exynos4.c
+>>
+>> Sounds like the num cpus > 1 is still there.
+>=20
+> As far as I know (and I can read from the documentation), AFTR is a s=
+tate=20
+> in which program execution context (e.g. PC, CPU registers, etc.) is =
+lost.=20
+> This is like sleep mode, but with much more state saved (all the=20
+> peripherals and L2 cache), which lets you resume much faster.
+>=20
+> Based on that, the execution flow is as following:
+>  - kernel stops all secondary cores,
+>  - kernel configures PMU to enter AFTR mode,
+>  - WFI is executed on boot CPU, which lets PMU enter the requested lo=
+w=20
+> power mode,
+>  - the system stays with all CPU cores powered off until a wake-up ev=
+ent=20
+> happens,
+>  - a wake-up event causes a wake-up reset of the boot CPU, which resu=
+mes=20
+> operation from reset vector (usually IROM),
+>  - here exactly the same procedure is used as on wake-up from sleep m=
+ode,=20
+> with the exception that some assumptions can be made about kept state=
+,=20
+> like BL1 being still in IRAM/SYSRAM, without the need to reload it fr=
+om=20
+> boot device,
+>  - after going through all the boot code, it finally jumps to the res=
+ume=20
+> handler saved by kernel in one of those INFORM registers or somewhere=
+ in=20
+> SYSRAM,
+>  - resume handler reinitializes boot CPU, restores things like MMU,=20
+> coprocessors, etc. and finally boots secondary cores again,
+>  - the system is operating normally again.
+>=20
+> This is simplified a lot, with all things happened internally in PMU =
+and=20
+> boot code skipped, but should give the general picture. See all the=20
+> analogies to normal sleep mode, which (IMHO) makes it understandable =
+that=20
+> this mode can't be entered with more than one core active.=20
+>=20
+> However, with something like coupled cpuidle, when possible, this mod=
+e can=20
+> be entered by powering down remaining cores automatically, so this is=
+ not=20
+> a problem with this mode itself, but rather with current approach of=20
+> entering it.
 
-No, I don't think so. :)
-I would like to use 'dp'.
+Are you saying only CPU0 can program the PMU to enter the AFTR mode ?
+And only CPU0 can be woken up ?
 
-Best regards,
-Jingoo Han
+Is it possible to have CPU0 to enter the AFTR idle state (without
+switching to this mode), save its context and go to WFI. And then when
+CPU1 goes to this state also, it saves its context and set the PMU to
+enter the AFTR mode ?
 
-> 
-> Thanks
-> Kishon
+
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
