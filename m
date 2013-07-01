@@ -1,139 +1,71 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2 1/3] phy: Add driver for Exynos DP PHY
-Date: Mon, 01 Jul 2013 10:08:14 +0900
-Message-ID: <001501ce75f7$767034c0$63509e40$@samsung.com>
-References: <001f01ce73cf$46d8c940$d48a5bc0$@samsung.com>
- <51CEA219.8030001@ti.com>
+Subject: [PATCH V3 0/3] Generic PHY driver for the Exynos SoC DP PHY
+Date: Mon, 01 Jul 2013 14:22:04 +0900
+Message-ID: <005101ce761a$ec7d6070$c5782150$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:29321 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751386Ab3GABIQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 30 Jun 2013 21:08:16 -0400
-In-reply-to: <51CEA219.8030001@ti.com>
+Return-path: <linux-media-owner@vger.kernel.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, Hui Wang <jason77.wang@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-On Saturday, June 29, 2013 6:00 PM, Kishon Vijay Abraham I wrote:
-> 
-> Hi,
-> 
-> On Friday 28 June 2013 12:45 PM, Jingoo Han wrote:
-> > Add a PHY provider driver for the Samsung Exynos SoC DP PHY.
-> >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > ---
-> >   .../phy/samsung,exynos5250-dp-video-phy.txt        |    7 ++
-> >   drivers/phy/Kconfig                                |    8 ++
-> >   drivers/phy/Makefile                               |    3 +-
-> >   drivers/phy/phy-exynos-dp-video.c                  |  122 ++++++++++++++++++++
-> >   4 files changed, 139 insertions(+), 1 deletion(-)
-> >   create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos5250-dp-video-phy.txt
-> >   create mode 100644 drivers/phy/phy-exynos-dp-video.c
-> >
-> > diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos5250-dp-video-phy.txt
-> > b/Documentation/devicetree/bindings/phy/samsung,exynos5250-dp-video-phy.txt
-> > new file mode 100644
-> > index 0000000..d1771ef
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/samsung,exynos5250-dp-video-phy.txt
-> > @@ -0,0 +1,7 @@
-> > +Samsung EXYNOS SoC series DP PHY
-> > +-------------------------------------------------
-> > +
-> > +Required properties:
-> > +- compatible : should be "samsung,exynos5250-dp-video-phy";
-> > +- reg : offset and length of the DP PHY register set;
-> > +- #phy-cells : from the generic phy bindings, must be 0;
-> > diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> > index 5f85909..6d10e3b 100644
-> > --- a/drivers/phy/Kconfig
-> > +++ b/drivers/phy/Kconfig
-> > @@ -11,3 +11,11 @@ menuconfig GENERIC_PHY
-> >   	  devices present in the kernel. This layer will have the generic
-> >   	  API by which phy drivers can create PHY using the phy framework and
-> >   	  phy users can obtain reference to the PHY.
-> > +
-> > +if GENERIC_PHY
-> > +
-> > +config PHY_EXYNOS_DP_VIDEO
-> > +	tristate "EXYNOS SoC series DP PHY driver"
-> > +	help
-> > +	  Support for DP PHY found on Samsung EXYNOS SoCs.
-> > +endif
-> > diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> > index 9e9560f..d8d861c 100644
-> > --- a/drivers/phy/Makefile
-> > +++ b/drivers/phy/Makefile
-> > @@ -2,4 +2,5 @@
-> >   # Makefile for the phy drivers.
-> >   #
-> >
-> > -obj-$(CONFIG_GENERIC_PHY)	+= phy-core.o
-> > +obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
-> > +obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-video.o
-> > diff --git a/drivers/phy/phy-exynos-dp-video.c b/drivers/phy/phy-exynos-dp-video.c
-> > new file mode 100644
-> > index 0000000..9a3d6f1
-> > --- /dev/null
-> > +++ b/drivers/phy/phy-exynos-dp-video.c
-> > @@ -0,0 +1,122 @@
-> > +/*
-> > + * Samsung EXYNOS SoC series DP PHY driver
-> > + *
-> > + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> > + * Author: Jingoo Han <jg1.han@samsung.com>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > + */
-> > +
-> > +#include <linux/io.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/phy/phy.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/spinlock.h>
-> > +
-> > +/* DPTX_PHY_CONTROL register */
-> > +#define EXYNOS_DPTX_PHY_ENABLE		(1 << 0)
-> > +
-> > +struct exynos_dp_video_phy {
-> > +	spinlock_t slock;
-> 
-> I think spinlock is not needed at all since the PHY ops is already protected
-> by a mutex.
+This patch series adds a simple driver for the Samsung Exynos SoC
+series DP transmitter PHY, using the generic PHY framework [1].
+Previously the DP PHY used a platform callback or internal DT node
+to control the PHY power enable bit.
+The platform callback and internal DT node can be dropped and this
+driver does not need any calls back to the platform code.
 
-Yes, you're right.
-Only one PHY object access the control register; thus,
-there is no need to add spinlock.
-I will remove it.
+These patches was tested on Exynos5250.
 
+This PATCH v3 follows:
+ * PATCH v2, sent on June, 28th 2013
+ * PATCH v1, sent on June, 28th 2013
 
-> > +	struct phy *phys;
-> 
-> _phys_ no longer need to part of this structure.
+Changes between v2 and v3:
+  * Removed redundant spinlock
+  * Removed 'struct phy' from 'struct exynos_dp_video_phy'
+  * Updated 'samsung-phy.txt', instead of creating
+    'samsung,exynos5250-dp-video-phy.txt'.
+  * Removed unnecessary additional specifier from 'phys'
+    DT property.
+  * Added 'phys', 'phy-names' properties to 'exynos_dp.txt' file.
+  * Added Felipe Balbi's Acked-by.
 
-OK, I see.
-'struct phy' is only used at exynos_dp_video_phy_probe().
-So, I will remove 'struct phy *phys' from 'struct exynos_dp_video_phy'.
+Changes between v1 and v2:
+  * Replaced exynos_dp_video_phy_xlate() with of_phy_simple_xlate(),
+    as Kishon Vijay Abraham I guided.
+  * Set the value of phy-cells as 0, because the phy_provider implements
+    only one PHY.
+  * Removed unnecessary header include.
+  * Added '#ifdef CONFIG_OF' and of_match_ptr macro.
 
-Thank you for your comment.
+This series depends on the generic PHY framework [1]. These patches
+refer to Sylwester Nawrocki's patches about Exynos MIPI [2].
 
-Best regards,
-Jingoo Han
+[1] https://lkml.org/lkml/2013/6/26/259
+[2] http://www.spinics.net/lists/linux-samsung-soc/msg20098.html
 
-> > +	void __iomem *regs;
-> > +};
-> 
-> Thanks
-> Kishon
+Jingoo Han (3):
+  ARM: dts: Add DP PHY node to exynos5250.dtsi
+  phy: Add driver for Exynos DP PHY
+  video: exynos_dp: Use the generic PHY driver
+
+ .../devicetree/bindings/phy/samsung-phy.txt        |    8 ++
+ .../devicetree/bindings/video/exynos_dp.txt        |   23 +---
+ arch/arm/boot/dts/exynos5250.dtsi                  |   13 ++++++++-----
+ drivers/phy/Kconfig                                |    5 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/phy-exynos-dp-video.c                  |  118 ++++++++++++++++++++
+ drivers/video/exynos/exynos_dp_core.c              |  118 ++------------------
+ drivers/video/exynos/exynos_dp_core.h              |    2 +
+ include/video/exynos_dp.h                          |    6 +-
+ 9 files changed, 161 insertions(+), 133 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos5250-dp-video-phy.txt
+ create mode 100644 drivers/phy/phy-exynos-dp-video.c
+
+--
+1.7.10.4
