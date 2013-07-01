@@ -1,70 +1,146 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v3 1/5] phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
-Date: Mon, 1 Jul 2013 10:54:28 +0530
-Message-ID: <51D1128C.90009@ti.com>
-References: <1372258946-15607-1-git-send-email-s.nawrocki@samsung.com> <1372258946-15607-2-git-send-email-s.nawrocki@samsung.com> <51CD4698.3070409@gmail.com> <51CD6153.5050406@samsung.com> <51CEA197.8070207@ti.com> <51CF36AB.4010300@gmail.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v10] i2c: exynos5: add High Speed I2C controller driver
+Date: Mon, 1 Jul 2013 08:17:22 +0200
+Message-ID: <20130701061722.GB2976@katana>
+References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
+ <1371638905-30633-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:55633 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752555Ab3GAFZI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Jul 2013 01:25:08 -0400
-In-Reply-To: <51CF36AB.4010300@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="kORqDWCi7qDJ0mEj"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1371638905-30633-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, jg1.han@samsung.com, dh09.lee@samsung.com, balbi@ti.com, inki.dae@samsung.com, kyungmin.park@samsung.com, Hui Wang <jason77.wang@gmail.com>, kgene.kim@samsung.com, plagnioj@jcrosoft.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-Hi,
 
-On Sunday 30 June 2013 01:04 AM, Sylwester Nawrocki wrote:
-> Hi,
->
-> On 06/29/2013 10:57 AM, Kishon Vijay Abraham I wrote:
->> On Friday 28 June 2013 03:41 PM, Sylwester Nawrocki wrote:
->>> On 06/28/2013 10:17 AM, Hui Wang wrote:
->>>> On 06/26/2013 11:02 PM, Sylwester Nawrocki wrote:
->>>>> Add a PHY provider driver for the Samsung S5P/Exynos SoC MIPI CSI-2
->>>>> receiver and MIPI DSI transmitter DPHYs.
->>>>>
->>>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>> ---
->>>>> Changes since v2:
->>>>> - adapted to the generic PHY API v9: use phy_set/get_drvdata(),
->>>>> - fixed of_xlate callback to return ERR_PTR() instead of NULL,
->>>>> - namespace cleanup, put "GPL v2" as MODULE_LICENSE, removed pr_debug,
->>>>> - removed phy id check in __set_phy_state().
->>>>> ---
->>>> [...]
->>>>> +
->>>>> + if (IS_EXYNOS_MIPI_DSIM_PHY_ID(id))
->>>>> + reset = EXYNOS_MIPI_PHY_MRESETN;
->>>>> + else
->>>>> + reset = EXYNOS_MIPI_PHY_SRESETN;
->>>>> +
->>>>> + spin_lock_irqsave(&state->slock, flags);
->>>>
->>>> Sorry for one stupid question here, why do you use spin_lock_irqsave()
->>>> rather than spin_lock(),
->>>> I don't see the irq handler will use this spinlock anywhere in this c
->>>> file.
->>>
->>> Yes, there is no chance the PHY users could call the phy ops from within
->>> an interrupt context. Especially now when there is a per phy object
->>> mutex used in the PHY operation helpers. So I'll replace it with plain
->>> spin_lock/unlock. Thank you for the review.
->>
->> Now that PHY ops is already protected, do you really need a spin_lock here?
->
-> It is still needed, to synchronize access to the control register from
-> two separate PHY objects. The mutex is per PHY object, while the spinlock
-> is per PHY provider.
+--kORqDWCi7qDJ0mEj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ok. Makes sense.
+On Wed, Jun 19, 2013 at 04:18:25PM +0530, Naveen Krishna Chatradhi wrote:
+> Adds support for High Speed I2C driver found in Exynos5 and
+> later SoCs from Samsung.
+>=20
+> Driver only supports Device Tree method.
+>=20
+> Changes since v1:
+> 1. Added FIFO functionality
+> 2. Added High speed mode functionality
+> 3. Remove SMBUS_QUICK
+> 4. Remove the debugfs functionality
+> 5. Use devm_* functions where ever possible
+> 6. Driver is free from GPIO configs
+> 7. Use OF data string "clock-frequency" to get the bus operating frequenc=
+ies
+> 8. Split the clock divisor calculation function
+> 9. Add resets for the failed transacton cases
+> 10. Removed retries as core does retries if -EAGAIN is returned
+> 11. Removed mode from device tree info (use speed to distinguish
+>     the mode of operation)
+> 12. Use wait_for_completion_timeout as the interruptible case is not test=
+ed well
+> 13. few other bug fixes and cosmetic changes
+>=20
+> Signed-off-by: Taekgyun Ko <taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> ---
+>=20
+> +Optional properties:
+> +  - clock-frequency: Desired operating frequency in Hz of the bus.
+> +    -> If not specified, the default value is 100khz in fast-speed mode =
+and
+> +       1Mhz in high-speed mode.
 
-Thanks
-Kishon
+? If not specified, the default is 100kHz. There is no way to get 1MHz,
+or?
+
+=2E..
+
+> +static int exynos5_i2c_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np =3D pdev->dev.of_node;
+> +	struct exynos5_i2c *i2c;
+> +	struct resource *mem;
+> +	unsigned int op_clock;
+
+My compiler says:
+
+drivers/i2c/busses/i2c-exynos5.c: In function =E2=80=98exynos5_i2c_probe=E2=
+=80=99:
+drivers/i2c/busses/i2c-exynos5.c:687:5: warning: =E2=80=98op_clock=E2=80=99=
+ may be used uninitialized in this function [-Wuninitialized]
+
+so...
+
+> +	int ret;
+> +
+> +	if (!np) {
+> +		dev_err(&pdev->dev, "no device node\n");
+> +		return -ENOENT;
+> +	}
+> +
+> +	i2c =3D devm_kzalloc(&pdev->dev, sizeof(struct exynos5_i2c), GFP_KERNEL=
+);
+> +	if (!i2c) {
+> +		dev_err(&pdev->dev, "no memory for state\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	if (of_property_read_u32(np, "clock-frequency", &op_clock)) {
+> +		i2c->speed_mode =3D HSI2C_FAST_SPD;
+> +		i2c->fs_clock =3D HSI2C_FS_TX_CLOCK;
+> +	}
+> +
+> +	if (op_clock >=3D HSI2C_HS_TX_CLOCK) {
+
+=2E.. this should be 'else if'
+
+> +		i2c->speed_mode =3D HSI2C_HIGH_SPD;
+> +		i2c->fs_clock =3D HSI2C_FS_TX_CLOCK;
+> +		i2c->hs_clock =3D op_clock;
+> +	} else {
+> +		i2c->speed_mode =3D HSI2C_FAST_SPD;
+> +		i2c->fs_clock =3D op_clock;
+> +	}
+
+=2E..
+
+> +	i2c->bus_id =3D of_alias_get_id(i2c->adap.dev.of_node, "hsi2c");
+
+Huh, the core already gets an alias for you. Can't you use 'adap.nr'?
+
+Rest looks good.
+
+Thanks!
+
+--kORqDWCi7qDJ0mEj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR0R7yAAoJEBQN5MwUoCm2PxgP/Rx/YuLk8HofVWX1RIHerQ6v
+Tp3Lx4H1OTBSMkXGKViz6mBtj7aOoBh5GiXC/tUgsInuMngU7q+ldZ0utYcR80Xo
+Oewjzxh4qjjdOM7Ga+sH8u/SLRHU6gSSW//MS2911MoVe4qPgLpS7ACz9sgjlIeX
+j4bBU3liKaJcm6VDTx0O6jeqcE2M4dzCsoFnBJmwnkpx0lmqbf6/XDS9aip4zA7Q
+FscfNie9H8zVywJJb65YgjK5yniGS6H2wRPCxopx5mkl5zACIOOXYWaozz2G2svd
+6Uv3YWe1OkzOrLaAWxU4Yu2uLzPH90E14DOyMfBqYMRAljOc66vgcA7yJGsTxF/p
+ZUoufxo1iiX+myOywzytaxslLitVTD9DwHVHCAJcoM22dSMAGvPLxbivkdLAQywM
+FSZQyLMc6EXjgDiWx8DGKMW7UmtyG64RcdwksWBeXs8/U4AR7Q7kUZcGZT7bh7cm
+mZ8cXJuXWNLtfShIweJwNYW4og62tlcQPMJ/RGE/1RaYI2tlqyXlJi0ox9HIvaes
+hvnrk5hNpXC26k2SjpjUArlBiSehuqHq1Wb63mFjBB/z0QSdhFB2kLg7XylM0wFc
+SAqgmSLb01qGl6/aKSQyNndX2sRzmypXGXSAw7n69+1546wKA8CeeKnuzKvP+lRY
+H1ep49GncAJ6epQOJUvO
+=aJgi
+-----END PGP SIGNATURE-----
+
+--kORqDWCi7qDJ0mEj--
