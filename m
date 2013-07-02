@@ -1,66 +1,93 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] video: exynos: Ensure definitions match prototypes
-Date: Tue, 2 Jul 2013 16:07:06 +0100
-Message-ID: <20130702150706.GP27646@sirena.org.uk>
-References: <1372764414-9102-1-git-send-email-broonie@kernel.org>
- <008b01ce771f$f15082c0$d3f18840$%dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nJH7yO6CWCCNbGOS"
+Subject: [PATCH] mfd: sec: Add register cache for interrupt mask registers
+Date: Tue,  2 Jul 2013 18:51:16 +0100
+Message-ID: <1372787476-10145-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:33009 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:44219 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752791Ab3GBPHd (ORCPT
+	with ESMTP id S1753006Ab3GBRwE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jul 2013 11:07:33 -0400
-Content-Disposition: inline
-In-Reply-To: <008b01ce771f$f15082c0$d3f18840$%dae@samsung.com>
+	Tue, 2 Jul 2013 13:52:04 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Jingoo Han' <jg1.han@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
+From: Mark Brown <broonie@linaro.org>
 
---nJH7yO6CWCCNbGOS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The performance of regmap-irq is improved if the interrupt mask registers
+can be cached since it does read/modify/update cycles so start using the
+register cache infrastructure for those registers. We should use this more
+widely but I don't have a datasheet and this is a nice, conservative
+starting point.
 
-On Tue, Jul 02, 2013 at 09:30:31PM +0900, Inki Dae wrote:
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ drivers/mfd/sec-core.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-> > Ensure that the definitions of functions match the prototypes used by
-> > other modules by including the header with the prototypes in the files
-> > with the definitions.
-
-> Is there some functions being used by other modules? And what problem can=
- be
-> incurred without this patch?
-
-Well, aside from it being basic good practice and allowing the compiler=20
-to check for errors in the prototypes this is also something that sparse=20
-warns about.  There do seem to be references to the functions in other
-modules, in some cases this is every single function in the file.
-
---nJH7yO6CWCCNbGOS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR0uyWAAoJELSic+t+oim9O1YP/Rvc+mOzgdHE45kkPQ6q4Sor
-pq/pYMEM7xWfshYV8VHYrFN134El3meQm0vC52qecvhCKCmnR2IEASkxSu7mxB+Y
-A/hxizLC+vJUn5xozWGa2d1tPoPvLmGpBsO4ffzvdb000z51A76Bf2GacN5OHbyx
-kM1sxSUYieHxumBDW+I9OQbDhHwpWnV5AxsGfuCY6bkFsxEf4fFbwbdp42DyZUNo
-zzSc5I6my3O5r/Zy3lsdxg+K2hg2T0WPjEx9iGyUHaPJlK+yyBP2PhDIND/0i5ch
-Z8UkE6GuWNdX1af6oRwGEWuaL3DXMzP0Gc/jEUa/IrUAAVuYvGhAijZiqA4IWUDN
-dMAcrIjVt0jjAXvJiOwB+Bex+FdvoOKAQjAgVpKRvEmyhmh0ZJ1hQLDFSMzEf5ez
-wwCdH/QJ/Zl5hgqyWDCH/jIAaZIIqsyk29/8N2sBdk5Z8cOCu8FoS1nEOuo04KXp
-+6rv4Re5M3dBCxiDqAS9R+94d8x6UKDanr9YnBwmAxuD4BlMMT+Q0CxWNyQEgiAW
-TsXrpbpp3OWz0pQBoa36OjDHEjYsJb54NsosK+F+O0m90yPFQCmzd1hD+JpC25Xk
-sC+IjxARO1cvFcaCgDKsuUPNO0vTHS7/JfDobup5Yxn0V5wgxRiw1lULJefYZopR
-W/x+LcrEZO7kTO1AijPD
-=DQ7T
------END PGP SIGNATURE-----
-
---nJH7yO6CWCCNbGOS--
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index 7976768..bbfc6c7 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -103,6 +103,31 @@ int sec_reg_update(struct sec_pmic_dev *sec_pmic, u8 reg, u8 val, u8 mask)
+ }
+ EXPORT_SYMBOL_GPL(sec_reg_update);
+ 
++static bool s2mps11_volatile(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case S2MPS11_REG_INT1M:
++	case S2MPS11_REG_INT2M:
++	case S2MPS11_REG_INT3M:
++		return false;
++	default:
++		return true;
++	}
++}
++
++static bool s5m8763_volatile(struct device *dev, unsigned int reg)
++{
++	switch (reg) {
++	case S5M8763_REG_IRQM1:
++	case S5M8763_REG_IRQM2:
++	case S5M8763_REG_IRQM3:
++	case S5M8763_REG_IRQM4:
++		return false;
++	default:
++		return true;
++	}
++}
++
+ static struct regmap_config sec_regmap_config = {
+ 	.reg_bits = 8,
+ 	.val_bits = 8,
+@@ -113,6 +138,8 @@ static struct regmap_config s2mps11_regmap_config = {
+ 	.val_bits = 8,
+ 
+ 	.max_register = S2MPS11_REG_L38CTRL,
++	.volatile_reg = s2mps11_volatile,
++	.cache_type = REGCACHE_FLAT,
+ };
+ 
+ static struct regmap_config s5m8763_regmap_config = {
+@@ -120,6 +147,8 @@ static struct regmap_config s5m8763_regmap_config = {
+ 	.val_bits = 8,
+ 
+ 	.max_register = S5M8763_REG_LBCNFG2,
++	.volatile_reg = s5m8763_volatile,
++	.cache_type = REGCACHE_FLAT,
+ };
+ 
+ static struct regmap_config s5m8767_regmap_config = {
+@@ -127,6 +156,8 @@ static struct regmap_config s5m8767_regmap_config = {
+ 	.val_bits = 8,
+ 
+ 	.max_register = S5M8767_REG_LDO28CTRL,
++	.volatile_reg = s2mps11_volatile,
++	.cache_type = REGCACHE_FLAT,
+ };
+ 
+ #ifdef CONFIG_OF
+-- 
+1.8.3.1
