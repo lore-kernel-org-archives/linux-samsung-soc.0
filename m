@@ -1,140 +1,62 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V4 4/4] video: exynos_dp: Use the generic PHY driver
-Date: Tue, 02 Jul 2013 17:42:49 +0900
-Message-ID: <000d01ce7700$222a35a0$667ea0e0$@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 3/3] ARM: dts: Add WM1811A audio CODEC to Arndale bindings
+Date: Tue, 2 Jul 2013 10:25:07 +0100
+Message-ID: <20130702092507.GV27646@sirena.org.uk>
+References: <1372714599-17588-1-git-send-email-broonie@kernel.org>
+ <1372714599-17588-3-git-send-email-broonie@kernel.org>
+ <51D26360.2080708@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xFQBzfy8IMmn3THN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16445 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932141Ab3GBImv (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:37283 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932269Ab3GBJZg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jul 2013 04:42:51 -0400
-Content-language: ko
+	Tue, 2 Jul 2013 05:25:36 -0400
+Content-Disposition: inline
+In-Reply-To: <51D26360.2080708@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, 'Hui Wang' <jason77.wang@gmail.com>, Jingoo Han <jg1.han@samsung.com>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Use the generic PHY API instead of the platform callback to control
-the DP PHY.
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- .../devicetree/bindings/video/exynos_dp.txt        |   23 +++++---------------
- drivers/video/exynos/exynos_dp_core.c              |   16 ++++++++++----
- drivers/video/exynos/exynos_dp_core.h              |    2 ++
- 3 files changed, 20 insertions(+), 21 deletions(-)
+--xFQBzfy8IMmn3THN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-index 84f10c1..022f4b6 100644
---- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -1,17 +1,6 @@
- The Exynos display port interface should be configured based on
- the type of panel connected to it.
- 
--We use two nodes:
--	-dp-controller node
--	-dptx-phy node(defined inside dp-controller node)
--
--For the DP-PHY initialization, we use the dptx-phy node.
--Required properties for dptx-phy:
--	-reg:
--		Base address of DP PHY register.
--	-samsung,enable-mask:
--		The bit-mask used to enable/disable DP PHY.
--
- For the Panel initialization, we read data from dp-controller node.
- Required properties for dp-controller:
- 	-compatible:
-@@ -25,6 +14,10 @@ Required properties for dp-controller:
- 		from common clock binding: handle to dp clock.
- 	-clock-names:
- 		from common clock binding: Shall be "dp".
-+	-phys:
-+		from general PHY binding: the phandle for the PHY device.
-+	-phy-names:
-+		from general PHY binding: Should be "dp".
- 	-interrupt-parent:
- 		phandle to Interrupt combiner node.
- 	-samsung,color-space:
-@@ -67,12 +60,8 @@ SOC specific portion:
- 		interrupt-parent = <&combiner>;
- 		clocks = <&clock 342>;
- 		clock-names = "dp";
--
--		dptx-phy {
--			reg = <0x10040720>;
--			samsung,enable-mask = <1>;
--		};
--
-+		phys = <&dp_phy>;
-+		phy-names = "dp";
- 	};
- 
- Board Specific portion:
-diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
-index 05fed7d..5e1a715 100644
---- a/drivers/video/exynos/exynos_dp_core.c
-+++ b/drivers/video/exynos/exynos_dp_core.c
-@@ -19,6 +19,7 @@
- #include <linux/interrupt.h>
- #include <linux/delay.h>
- #include <linux/of.h>
-+#include <linux/phy/phy.h>
- 
- #include "exynos_dp_core.h"
- 
-@@ -960,8 +961,11 @@ static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
- 
- 	dp_phy_node = of_find_node_by_name(dp_phy_node, "dptx-phy");
- 	if (!dp_phy_node) {
--		dev_err(dp->dev, "could not find dptx-phy node\n");
--		return -ENODEV;
-+		dp->phy = devm_phy_get(dp->dev, "dp");
-+		if (IS_ERR(dp->phy))
-+			return PTR_ERR(dp->phy);
-+		else
-+			return 0;
- 	}
- 
- 	if (of_property_read_u32(dp_phy_node, "reg", &phy_base)) {
-@@ -992,7 +996,9 @@ err:
- 
- static void exynos_dp_phy_init(struct exynos_dp_device *dp)
- {
--	if (dp->phy_addr) {
-+	if (dp->phy) {
-+		phy_power_on(dp->phy);
-+	} else if (dp->phy_addr) {
- 		u32 reg;
- 
- 		reg = __raw_readl(dp->phy_addr);
-@@ -1003,7 +1009,9 @@ static void exynos_dp_phy_init(struct exynos_dp_device *dp)
- 
- static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
- {
--	if (dp->phy_addr) {
-+	if (dp->phy) {
-+		phy_power_off(dp->phy);
-+	} else if (dp->phy_addr) {
- 		u32 reg;
- 
- 		reg = __raw_readl(dp->phy_addr);
-diff --git a/drivers/video/exynos/exynos_dp_core.h b/drivers/video/exynos/exynos_dp_core.h
-index 56cfec8..87804b6 100644
---- a/drivers/video/exynos/exynos_dp_core.h
-+++ b/drivers/video/exynos/exynos_dp_core.h
-@@ -151,6 +151,8 @@ struct exynos_dp_device {
- 	struct video_info	*video_info;
- 	struct link_train	link_train;
- 	struct work_struct	hotplug_work;
-+
-+	struct phy		*phy;
- };
- 
- /* exynos_dp_reg.c */
--- 
-1.7.10.4
+On Tue, Jul 02, 2013 at 10:51:36AM +0530, Tushar Behera wrote:
+
+> Arndale board also comes with two other audio codec boards - ALC5631Q
+> and AK4678. Different audio codec boards came with different shipments.
+
+This is the default though and since they didn't bother providing any
+way of identifying the modules we just have to put them all in the
+device tree and hope that the individual CODEC drivers can do runtime
+identification (the WM1811A can but I don't know about the other two,
+nobody supported them upstream).
+
+--xFQBzfy8IMmn3THN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR0pxwAAoJELSic+t+oim9UroP/iIa1M8RAcZy9biZPLS5F/Dk
+pyT5vlXN4PsEoTIQu/ETS3FjhPRBnJDNhqTk6coeqgCUzhzJhW1f6HGvdFyAFbUS
+P6gyEALFvJb9CtiMLXjbCUGiOOexZFy0yOreWE3RfcZX/6n7fi3XdX6FXU1GNrUW
+KTwV/PN4OFsXohh3GuOb8LdEPx/fg2EJFhXXYB4QeGREdAWRv3BUD7WKp0YqYFuP
+9I+CH/9JPDw6+V1mVPN8al4iO12QXxS2KUmjiCvUpNejBP8L8gmdHsYhiHbrrDi2
+Q7teFoc35413gfApzvo8IlB38GDMw5rEgeXsDkmLEBvHTUamTpSxPsWLpjJzz9zq
+8AKdvdb7BNxrYtyTC22OI+tnn7M42A4Y4cvsQzdMg+2id62v2GWkK6JW06LuvWuc
+xmaCI+nNuLCmuGxeN8U0Ms+HAMvCgRIMDKFs3Jgays9nuVxDiVjrOYI2ljj/uQD8
+fJrQy5/1MzyFd/3dQkPd7WG9rVVJLxTPIAvvtR+TujQI9L6hImFutpHJIgyfjzQL
+AM74xJbbO6D7bqLsY96YkXqhM0xRFr93CWfworWVJqrAOAr3m08hxJ6IvAjxJmSG
+T+XHMELgn4OI7oSaqqOVA8KrRAO/LeCQTCTZLFfjLncyeHSHh3UVo+XOi2N7e4NX
+BIoOAAf1vw289lVOnlgp
+=A8Al
+-----END PGP SIGNATURE-----
+
+--xFQBzfy8IMmn3THN--
