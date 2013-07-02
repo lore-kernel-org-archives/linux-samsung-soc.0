@@ -1,68 +1,66 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] drm/exynos: Add missing includes
-Date: Tue, 2 Jul 2013 16:04:49 +0100
-Message-ID: <20130702150449.GO27646@sirena.org.uk>
-References: <1372683355-27460-1-git-send-email-broonie@kernel.org>
- <008a01ce771e$afe02670$0fa07350$%dae@samsung.com>
+Subject: Re: [PATCH] video: exynos: Ensure definitions match prototypes
+Date: Tue, 2 Jul 2013 16:07:06 +0100
+Message-ID: <20130702150706.GP27646@sirena.org.uk>
+References: <1372764414-9102-1-git-send-email-broonie@kernel.org>
+ <008b01ce771f$f15082c0$d3f18840$%dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HevQWRStXZ0Cpw2M"
+	protocol="application/pgp-signature"; boundary="nJH7yO6CWCCNbGOS"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:32986 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:33009 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752949Ab3GBPFS (ORCPT
+	with ESMTP id S1752791Ab3GBPHd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jul 2013 11:05:18 -0400
+	Tue, 2 Jul 2013 11:07:33 -0400
 Content-Disposition: inline
-In-Reply-To: <008a01ce771e$afe02670$0fa07350$%dae@samsung.com>
+In-Reply-To: <008b01ce771f$f15082c0$d3f18840$%dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Inki Dae <inki.dae@samsung.com>
-Cc: 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'David Airlie' <airlied@linux.ie>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Jingoo Han' <jg1.han@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org
 
 
---HevQWRStXZ0Cpw2M
+--nJH7yO6CWCCNbGOS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 02, 2013 at 09:21:32PM +0900, Inki Dae wrote:
+On Tue, Jul 02, 2013 at 09:30:31PM +0900, Inki Dae wrote:
 
-> > Ensure that all externally accessed functions are correctly prototyped
-> > when defined in each file by making sure the headers with the protoypes
-> > are included in the file with the definition.
+> > Ensure that the definitions of functions match the prototypes used by
+> > other modules by including the header with the prototypes in the files
+> > with the definitions.
 
-> I don't see why this patch is needed. it seems like including unnecessary
-> headers so it makes the code size enlarged.
+> Is there some functions being used by other modules? And what problem can=
+ be
+> incurred without this patch?
 
-Well, aside from it being basic good practice and allowing the compiler
-to check for errors in the prototypes this is also something that sparse
-warns about.
+Well, aside from it being basic good practice and allowing the compiler=20
+to check for errors in the prototypes this is also something that sparse=20
+warns about.  There do seem to be references to the functions in other
+modules, in some cases this is every single function in the file.
 
-If the resulting binary size is changed by having the headers included
-then that indicates a bug in the headers - they *really* shouldn't be
-doing anything substantial here.  None of the headers in question looked
-at all worrying.
-
---HevQWRStXZ0Cpw2M
+--nJH7yO6CWCCNbGOS
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR0uwOAAoJELSic+t+oim91FUP/ifkB1DzAWrEaKgv74k9IqLB
-mYC1OFJTHEwBq1Vp0nftDsUGhPhSW5dxT6iEtu4YyStSSbesBJrGd70cBXudj76B
-6S91tbAwLkxx4f3wRXNWzFmBCVwJBcWJJCSE1ms/QLLhWCaGtpFw2D0Yc22B3kOo
-lijpTLwo4jYE9kIB3CIPCLR/hBYcu66S/zzGrFXaNLXrhiBeBIs+7UUsdVNPq5rA
-rFqyH6c2STTKfApzPZPFbePic/GdEFyu9ycthOOhCIo0AfJTlj6hFnBUMhd6M/tw
-dwU6MNjdGzQChCDN1QHUc2Uui6iT2YW21Glg6CptVZ8dGrw4UdcAjFtJjks10JUH
-2Kam2a2zPhLbP2vGyoVWlkUfw/oJKc4ffOqhJOXwdFOtXhKMv3CGShZJOT+YFgGu
-VCFsVL/zL3V9kI92vwWgcDZ8cqELRixYu9TXlf5RdSB9qbCs8JNzRtqAFh01hhgP
-SmVDax4uFZWPp59sJrkZEkH/Jho+a2RSmS/ISrkCwf9pktbd/ccgUQl6RPFgnF5S
-OjOClcTlFZsX0O97G9jCceMnE/o9xLbO8o+ZZHZneHfU57nINzdK1V7hSdxp0Je6
-pOE6i304RIMA7WqWSs/AvgDCV+ryMCPtbZ7ZgCmVZaZmv6/mk08tGFs4RAq3ShSJ
-vdJGaQnFjrf2VuIeYsDv
-=R2sJ
+iQIcBAEBAgAGBQJR0uyWAAoJELSic+t+oim9O1YP/Rvc+mOzgdHE45kkPQ6q4Sor
+pq/pYMEM7xWfshYV8VHYrFN134El3meQm0vC52qecvhCKCmnR2IEASkxSu7mxB+Y
+A/hxizLC+vJUn5xozWGa2d1tPoPvLmGpBsO4ffzvdb000z51A76Bf2GacN5OHbyx
+kM1sxSUYieHxumBDW+I9OQbDhHwpWnV5AxsGfuCY6bkFsxEf4fFbwbdp42DyZUNo
+zzSc5I6my3O5r/Zy3lsdxg+K2hg2T0WPjEx9iGyUHaPJlK+yyBP2PhDIND/0i5ch
+Z8UkE6GuWNdX1af6oRwGEWuaL3DXMzP0Gc/jEUa/IrUAAVuYvGhAijZiqA4IWUDN
+dMAcrIjVt0jjAXvJiOwB+Bex+FdvoOKAQjAgVpKRvEmyhmh0ZJ1hQLDFSMzEf5ez
+wwCdH/QJ/Zl5hgqyWDCH/jIAaZIIqsyk29/8N2sBdk5Z8cOCu8FoS1nEOuo04KXp
++6rv4Re5M3dBCxiDqAS9R+94d8x6UKDanr9YnBwmAxuD4BlMMT+Q0CxWNyQEgiAW
+TsXrpbpp3OWz0pQBoa36OjDHEjYsJb54NsosK+F+O0m90yPFQCmzd1hD+JpC25Xk
+sC+IjxARO1cvFcaCgDKsuUPNO0vTHS7/JfDobup5Yxn0V5wgxRiw1lULJefYZopR
+W/x+LcrEZO7kTO1AijPD
+=DQ7T
 -----END PGP SIGNATURE-----
 
---HevQWRStXZ0Cpw2M--
+--nJH7yO6CWCCNbGOS--
