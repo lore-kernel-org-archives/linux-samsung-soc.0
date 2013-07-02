@@ -1,93 +1,46 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] mfd: sec: Add register cache for interrupt mask registers
-Date: Tue,  2 Jul 2013 18:51:16 +0100
-Message-ID: <1372787476-10145-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:44219 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753006Ab3GBRwE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jul 2013 13:52:04 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alexander Shiyan <shc_work@mail.ru>
+Subject: [PATCH RESEND] ARM: plat-samsung: Fix switching FIFO in
+ arch_enable_uart_fifo function
+Date: Tue,  2 Jul 2013 23:16:33 +0400
+Message-ID: <1372792593-7457-1-git-send-email-shc_work@mail.ru>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Ben Dooks <ben-linux@fluff.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-From: Mark Brown <broonie@linaro.org>
+When CONFIG_S3C_BOOT_UART_FORCE_FIFO symbol is set, we should
+enable FIFO but actually switch command is missing in the code.
+This patch adds this switching.
 
-The performance of regmap-irq is improved if the interrupt mask registers
-can be cached since it does read/modify/update cycles so start using the
-register cache infrastructure for those registers. We should use this more
-widely but I don't have a datasheet and this is a nice, conservative
-starting point.
-
-Signed-off-by: Mark Brown <broonie@linaro.org>
+Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
 ---
- drivers/mfd/sec-core.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index 7976768..bbfc6c7 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -103,6 +103,31 @@ int sec_reg_update(struct sec_pmic_dev *sec_pmic, u8 reg, u8 val, u8 mask)
+diff --git a/arch/arm/plat-samsung/include/plat/uncompress.h b/arch/arm/plat-samsung/include/plat/uncompress.h
+index 4afc32f..f48dc0a 100644
+--- a/arch/arm/plat-samsung/include/plat/uncompress.h
++++ b/arch/arm/plat-samsung/include/plat/uncompress.h
+@@ -145,6 +145,8 @@ static inline void arch_enable_uart_fifo(void)
+ 			if (!(fifocon & S3C2410_UFCON_RESETBOTH))
+ 				break;
+ 		}
++
++		uart_wr(S3C2410_UFCON, S3C2410_UFCON_FIFOMODE);
+ 	}
  }
- EXPORT_SYMBOL_GPL(sec_reg_update);
- 
-+static bool s2mps11_volatile(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case S2MPS11_REG_INT1M:
-+	case S2MPS11_REG_INT2M:
-+	case S2MPS11_REG_INT3M:
-+		return false;
-+	default:
-+		return true;
-+	}
-+}
-+
-+static bool s5m8763_volatile(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case S5M8763_REG_IRQM1:
-+	case S5M8763_REG_IRQM2:
-+	case S5M8763_REG_IRQM3:
-+	case S5M8763_REG_IRQM4:
-+		return false;
-+	default:
-+		return true;
-+	}
-+}
-+
- static struct regmap_config sec_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
-@@ -113,6 +138,8 @@ static struct regmap_config s2mps11_regmap_config = {
- 	.val_bits = 8,
- 
- 	.max_register = S2MPS11_REG_L38CTRL,
-+	.volatile_reg = s2mps11_volatile,
-+	.cache_type = REGCACHE_FLAT,
- };
- 
- static struct regmap_config s5m8763_regmap_config = {
-@@ -120,6 +147,8 @@ static struct regmap_config s5m8763_regmap_config = {
- 	.val_bits = 8,
- 
- 	.max_register = S5M8763_REG_LBCNFG2,
-+	.volatile_reg = s5m8763_volatile,
-+	.cache_type = REGCACHE_FLAT,
- };
- 
- static struct regmap_config s5m8767_regmap_config = {
-@@ -127,6 +156,8 @@ static struct regmap_config s5m8767_regmap_config = {
- 	.val_bits = 8,
- 
- 	.max_register = S5M8767_REG_LDO28CTRL,
-+	.volatile_reg = s2mps11_volatile,
-+	.cache_type = REGCACHE_FLAT,
- };
- 
- #ifdef CONFIG_OF
+ #else
 -- 
-1.8.3.1
+1.8.1.5
