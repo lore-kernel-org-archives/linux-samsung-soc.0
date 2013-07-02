@@ -1,200 +1,70 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH] drm/exynos: Add missing includes
-Date: Tue, 02 Jul 2013 21:21:32 +0900
-Message-ID: <008a01ce771e$afe02670$0fa07350$%dae@samsung.com>
-References: <1372683355-27460-1-git-send-email-broonie@kernel.org>
+Subject: RE: [PATCH] video: exynos: Ensure definitions match prototypes
+Date: Tue, 02 Jul 2013 21:30:31 +0900
+Message-ID: <008b01ce771f$f15082c0$d3f18840$%dae@samsung.com>
+References: <1372764414-9102-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33470 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751479Ab3GBMVe (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:62024 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750769Ab3GBMad (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jul 2013 08:21:34 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MPB00HS16BGEVG0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 02 Jul 2013 21:21:32 +0900 (KST)
-In-reply-to: <1372683355-27460-1-git-send-email-broonie@kernel.org>
+	Tue, 2 Jul 2013 08:30:33 -0400
+In-reply-to: <1372764414-9102-1-git-send-email-broonie@kernel.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'David Airlie' <airlied@linux.ie>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@linaro.org>
+To: 'Mark Brown' <broonie@kernel.org>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Jingoo Han' <jg1.han@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, 'Mark Brown' <broonie@linaro.org>
 
 
 
 > -----Original Message-----
-> From: Mark Brown [mailto:broonie@kernel.org]
-> Sent: Monday, July 01, 2013 9:56 PM
-> To: Inki Dae; Joonyoung Shim; Seung-Woo Kim; Kyungmin Park; David Airlie
-> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
-> linux-samsung-soc@vger.kernel.org; Mark Brown
-> Subject: [PATCH] drm/exynos: Add missing includes
+> From: linux-fbdev-owner@vger.kernel.org [mailto:linux-fbdev-
+> owner@vger.kernel.org] On Behalf Of Mark Brown
+> Sent: Tuesday, July 02, 2013 8:27 PM
+> To: Tomi Valkeinen; Jingoo Han
+> Cc: linux-fbdev@vger.kernel.org; linux-samsung-soc@vger.kernel.org;
+> linaro-kernel@lists.linaro.org; Mark Brown
+> Subject: [PATCH] video: exynos: Ensure definitions match prototypes
 > 
 > From: Mark Brown <broonie@linaro.org>
 > 
-> Ensure that all externally accessed functions are correctly prototyped
-> when defined in each file by making sure the headers with the protoypes
-> are included in the file with the definition.
+> Ensure that the definitions of functions match the prototypes used by
+> other modules by including the header with the prototypes in the files
+> with the definitions.
 > 
 
-Hi Mark,
-
-I don't see why this patch is needed. it seems like including unnecessary
-headers so it makes the code size enlarged.
+Is there some functions being used by other modules? And what problem can be
+incurred without this patch?
 
 Thanks,
 Inki Dae
 
 > Signed-off-by: Mark Brown <broonie@linaro.org>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_connector.c | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_dmabuf.c    | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c     | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c      | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_g2d.c       | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c       | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 1 +
->  10 files changed, 10 insertions(+)
+>  drivers/video/exynos/exynos_mipi_dsi_lowlevel.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c
-> b/drivers/gpu/drm/exynos/exynos_drm_connector.c
-> index 8bcc13a..ec80293 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
-> @@ -17,6 +17,7 @@
->  #include <drm/exynos_drm.h>
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_encoder.h"
-> +#include "exynos_drm_connector.h"
+> diff --git a/drivers/video/exynos/exynos_mipi_dsi_lowlevel.c
+> b/drivers/video/exynos/exynos_mipi_dsi_lowlevel.c
+> index 15c5abd..c148d06 100644
+> --- a/drivers/video/exynos/exynos_mipi_dsi_lowlevel.c
+> +++ b/drivers/video/exynos/exynos_mipi_dsi_lowlevel.c
+> @@ -27,6 +27,7 @@
+>  #include <video/exynos_mipi_dsim.h>
 > 
->  #define to_exynos_connector(x)	container_of(x, struct
-> exynos_drm_connector,\
->  				drm_connector)
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> index 073c10a..6933ee9 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -15,6 +15,7 @@
->  #include <drm/drmP.h>
->  #include <drm/drm_crtc_helper.h>
+>  #include "exynos_mipi_dsi_regs.h"
+> +#include "exynos_mipi_dsi_lowlevel.h"
 > 
-> +#include "exynos_drm_crtc.h"
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_encoder.h"
->  #include "exynos_drm_plane.h"
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> index ff7f2a8..8adafde 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> @@ -11,6 +11,7 @@
-> 
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
-> +#include "exynos_drm_dmabuf.h"
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_gem.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 8f007aa..45b6cb3 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -19,6 +19,7 @@
-> 
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_fb.h"
-> +#include "exynos_drm_fbdev.h"
->  #include "exynos_drm_gem.h"
->  #include "exynos_drm_iommu.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> index 4a1616a..a83e664 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -22,6 +22,7 @@
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
->  #include "regs-fimc.h"
-> +#include "exynos_drm_drv.h"
->  #include "exynos_drm_ipp.h"
->  #include "exynos_drm_fimc.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> index af75434..03ba897 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> @@ -24,6 +24,7 @@
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
->  #include "exynos_drm_drv.h"
-> +#include "exynos_drm_g2d.h"
->  #include "exynos_drm_gem.h"
->  #include "exynos_drm_iommu.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> index 762f40d..4683251 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -21,6 +21,7 @@
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
->  #include "regs-gsc.h"
-> +#include "exynos_drm_drv.h"
->  #include "exynos_drm_ipp.h"
->  #include "exynos_drm_gsc.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> index 83efc66..63ebeeb 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> @@ -16,6 +16,7 @@
->  #include "exynos_drm_encoder.h"
->  #include "exynos_drm_fb.h"
->  #include "exynos_drm_gem.h"
-> +#include "exynos_drm_plane.h"
-> 
->  #define to_exynos_plane(x)	container_of(x, struct exynos_plane,
-> base)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> index 9b6c709..2e9eee2 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> @@ -22,6 +22,7 @@
->  #include <drm/exynos_drm.h>
->  #include "regs-rotator.h"
->  #include "exynos_drm.h"
-> +#include "exynos_drm_drv.h"
->  #include "exynos_drm_ipp.h"
-> 
->  /*
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> index 24376c1..498647a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> @@ -24,6 +24,7 @@
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_crtc.h"
->  #include "exynos_drm_encoder.h"
-> +#include "exynos_drm_vidi.h"
-> 
->  /* vidi has totally three virtual windows. */
->  #define WINDOWS_NR		3
+>  void exynos_mipi_dsi_func_reset(struct mipi_dsim_device *dsim)
+>  {
 > --
 > 1.8.3.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
