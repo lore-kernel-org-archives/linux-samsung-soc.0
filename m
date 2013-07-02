@@ -1,131 +1,200 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] ASoC: samsung: Remove obsolete GPIO based DT
-	pinmuxing
-Date: Tue,  2 Jul 2013 13:11:30 +0100
-Message-ID: <1372767090-14963-1-git-send-email-broonie@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: RE: [PATCH] drm/exynos: Add missing includes
+Date: Tue, 02 Jul 2013 21:21:32 +0900
+Message-ID: <008a01ce771e$afe02670$0fa07350$%dae@samsung.com>
+References: <1372683355-27460-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:33470 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751479Ab3GBMVe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Jul 2013 08:21:34 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MPB00HS16BGEVG0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 02 Jul 2013 21:21:32 +0900 (KST)
+In-reply-to: <1372683355-27460-1-git-send-email-broonie@kernel.org>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mark Brown' <broonie@kernel.org>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'David Airlie' <airlied@linux.ie>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@linaro.org>
 
-From: Mark Brown <broonie@linaro.org>
 
-Since the Samsung platforms have moved to pinctrl for pin muxing and that
-is handled in the core the old GPIO based muxing code can just be removed.
-Something similar had been submitted by Thomas Abraham back in March but
-a resubmission following review never happened.
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- sound/soc/samsung/i2s.c | 66 +++----------------------------------------------
- 1 file changed, 4 insertions(+), 62 deletions(-)
+> -----Original Message-----
+> From: Mark Brown [mailto:broonie@kernel.org]
+> Sent: Monday, July 01, 2013 9:56 PM
+> To: Inki Dae; Joonyoung Shim; Seung-Woo Kim; Kyungmin Park; David Airlie
+> Cc: dri-devel@lists.freedesktop.org; linux-arm-kernel@lists.infradead.org;
+> linux-samsung-soc@vger.kernel.org; Mark Brown
+> Subject: [PATCH] drm/exynos: Add missing includes
+> 
+> From: Mark Brown <broonie@linaro.org>
+> 
+> Ensure that all externally accessed functions are correctly prototyped
+> when defined in each file by making sure the headers with the protoypes
+> are included in the file with the definition.
+> 
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 82ebb1a..7a17346 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1016,52 +1016,6 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
- 	return i2s;
- }
- 
--#ifdef CONFIG_OF
--static int samsung_i2s_parse_dt_gpio(struct i2s_dai *i2s)
--{
--	struct device *dev = &i2s->pdev->dev;
--	int index, gpio, ret;
--
--	for (index = 0; index < 7; index++) {
--		gpio = of_get_gpio(dev->of_node, index);
--		if (!gpio_is_valid(gpio)) {
--			dev_err(dev, "invalid gpio[%d]: %d\n", index, gpio);
--			goto free_gpio;
--		}
--
--		ret = gpio_request(gpio, dev_name(dev));
--		if (ret) {
--			dev_err(dev, "gpio [%d] request failed\n", gpio);
--			goto free_gpio;
--		}
--		i2s->gpios[index] = gpio;
--	}
--	return 0;
--
--free_gpio:
--	while (--index >= 0)
--		gpio_free(i2s->gpios[index]);
--	return -EINVAL;
--}
--
--static void samsung_i2s_dt_gpio_free(struct i2s_dai *i2s)
--{
--	unsigned int index;
--	for (index = 0; index < 7; index++)
--		gpio_free(i2s->gpios[index]);
--}
--#else
--static int samsung_i2s_parse_dt_gpio(struct i2s_dai *dai)
--{
--	return -EINVAL;
--}
--
--static void samsung_i2s_dt_gpio_free(struct i2s_dai *dai)
--{
--}
--
--#endif
--
- static const struct of_device_id exynos_i2s_match[];
- 
- static inline int samsung_i2s_get_driver_data(struct platform_device *pdev)
-@@ -1235,18 +1189,10 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		pri_dai->sec_dai = sec_dai;
- 	}
- 
--	if (np) {
--		if (samsung_i2s_parse_dt_gpio(pri_dai)) {
--			dev_err(&pdev->dev, "Unable to configure gpio\n");
--			ret = -EINVAL;
--			goto err;
--		}
--	} else {
--		if (i2s_pdata->cfg_gpio && i2s_pdata->cfg_gpio(pdev)) {
--			dev_err(&pdev->dev, "Unable to configure gpio\n");
--			ret = -EINVAL;
--			goto err;
--		}
-+	if (i2s_pdata && i2s_pdata->cfg_gpio && i2s_pdata->cfg_gpio(pdev)) {
-+		dev_err(&pdev->dev, "Unable to configure gpio\n");
-+		ret = -EINVAL;
-+		goto err;
- 	}
- 
- 	snd_soc_register_component(&pri_dai->pdev->dev, &samsung_i2s_component,
-@@ -1267,14 +1213,10 @@ static int samsung_i2s_remove(struct platform_device *pdev)
- {
- 	struct i2s_dai *i2s, *other;
- 	struct resource *res;
--	struct s3c_audio_pdata *i2s_pdata = pdev->dev.platform_data;
- 
- 	i2s = dev_get_drvdata(&pdev->dev);
- 	other = i2s->pri_dai ? : i2s->sec_dai;
- 
--	if (!i2s_pdata->cfg_gpio && pdev->dev.of_node)
--		samsung_i2s_dt_gpio_free(i2s->pri_dai);
--
- 	if (other) {
- 		other->pri_dai = NULL;
- 		other->sec_dai = NULL;
--- 
-1.8.3.1
+Hi Mark,
+
+I don't see why this patch is needed. it seems like including unnecessary
+headers so it makes the code size enlarged.
+
+Thanks,
+Inki Dae
+
+> Signed-off-by: Mark Brown <broonie@linaro.org>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_connector.c | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_dmabuf.c    | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c     | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_fimc.c      | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_g2d.c       | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_gsc.c       | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 1 +
+>  drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 1 +
+>  10 files changed, 10 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> index 8bcc13a..ec80293 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+> @@ -17,6 +17,7 @@
+>  #include <drm/exynos_drm.h>
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_encoder.h"
+> +#include "exynos_drm_connector.h"
+> 
+>  #define to_exynos_connector(x)	container_of(x, struct
+> exynos_drm_connector,\
+>  				drm_connector)
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 073c10a..6933ee9 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -15,6 +15,7 @@
+>  #include <drm/drmP.h>
+>  #include <drm/drm_crtc_helper.h>
+> 
+> +#include "exynos_drm_crtc.h"
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_encoder.h"
+>  #include "exynos_drm_plane.h"
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
+> b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
+> index ff7f2a8..8adafde 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
+> @@ -11,6 +11,7 @@
+> 
+>  #include <drm/drmP.h>
+>  #include <drm/exynos_drm.h>
+> +#include "exynos_drm_dmabuf.h"
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_gem.h"
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> index 8f007aa..45b6cb3 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -19,6 +19,7 @@
+> 
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_fb.h"
+> +#include "exynos_drm_fbdev.h"
+>  #include "exynos_drm_gem.h"
+>  #include "exynos_drm_iommu.h"
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+> index 4a1616a..a83e664 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+> @@ -22,6 +22,7 @@
+>  #include <drm/drmP.h>
+>  #include <drm/exynos_drm.h>
+>  #include "regs-fimc.h"
+> +#include "exynos_drm_drv.h"
+>  #include "exynos_drm_ipp.h"
+>  #include "exynos_drm_fimc.h"
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> index af75434..03ba897 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+> @@ -24,6 +24,7 @@
+>  #include <drm/drmP.h>
+>  #include <drm/exynos_drm.h>
+>  #include "exynos_drm_drv.h"
+> +#include "exynos_drm_g2d.h"
+>  #include "exynos_drm_gem.h"
+>  #include "exynos_drm_iommu.h"
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> index 762f40d..4683251 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+> @@ -21,6 +21,7 @@
+>  #include <drm/drmP.h>
+>  #include <drm/exynos_drm.h>
+>  #include "regs-gsc.h"
+> +#include "exynos_drm_drv.h"
+>  #include "exynos_drm_ipp.h"
+>  #include "exynos_drm_gsc.h"
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> index 83efc66..63ebeeb 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> @@ -16,6 +16,7 @@
+>  #include "exynos_drm_encoder.h"
+>  #include "exynos_drm_fb.h"
+>  #include "exynos_drm_gem.h"
+> +#include "exynos_drm_plane.h"
+> 
+>  #define to_exynos_plane(x)	container_of(x, struct exynos_plane,
+> base)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> index 9b6c709..2e9eee2 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> @@ -22,6 +22,7 @@
+>  #include <drm/exynos_drm.h>
+>  #include "regs-rotator.h"
+>  #include "exynos_drm.h"
+> +#include "exynos_drm_drv.h"
+>  #include "exynos_drm_ipp.h"
+> 
+>  /*
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> index 24376c1..498647a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+> @@ -24,6 +24,7 @@
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_crtc.h"
+>  #include "exynos_drm_encoder.h"
+> +#include "exynos_drm_vidi.h"
+> 
+>  /* vidi has totally three virtual windows. */
+>  #define WINDOWS_NR		3
+> --
+> 1.8.3.1
