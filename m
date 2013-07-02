@@ -1,72 +1,274 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 3/3] ARM: dts: Add WM1811A audio CODEC to Arndale bindings
-Date: Tue, 02 Jul 2013 10:51:36 +0530
-Message-ID: <51D26360.2080708@linaro.org>
-References: <1372714599-17588-1-git-send-email-broonie@kernel.org> <1372714599-17588-3-git-send-email-broonie@kernel.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V3 2/3] phy: Add driver for Exynos DP PHY
+Date: Tue, 02 Jul 2013 15:58:44 +0900
+Message-ID: <000001ce76f1$97e47210$c7ad5630$@samsung.com>
+References: <005301ce761b$32adf960$9809ec20$@samsung.com>
+ <51D1DCF0.50803@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:59638 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752497Ab3GBFVl (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:50093 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932219Ab3GBG7D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Jul 2013 01:21:41 -0400
-Received: by mail-pa0-f48.google.com with SMTP id kp12so5822167pab.21
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Jul 2013 22:21:40 -0700 (PDT)
-In-Reply-To: <1372714599-17588-3-git-send-email-broonie@kernel.org>
+	Tue, 2 Jul 2013 02:59:03 -0400
+In-reply-to: <51D1DCF0.50803@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, linux-fbdev@vger.kernel.org, 'Hui Wang' <jason77.wang@gmail.com>, Jingoo Han <jg1.han@samsung.com>
 
-On 07/02/2013 03:06 AM, Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
+On Tuesday, July 02, 2013 4:48 AM, Sylwester Nawrocki wrote:
+> On 07/01/2013 07:24 AM, Jingoo Han wrote:
+> > Add a PHY provider driver for the Samsung Exynos SoC DP PHY.
+> >
+> > Signed-off-by: Jingoo Han<jg1.han@samsung.com>
+> > Cc: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> > Acked-by: Felipe Balbi<balbi@ti.com>
+> > ---
+> >   .../devicetree/bindings/phy/samsung-phy.txt        |    8 ++
+> >   drivers/phy/Kconfig                                |    5 +
+> >   drivers/phy/Makefile                               |    1 +
+> >   drivers/phy/phy-exynos-dp-video.c                  |  118 ++++++++++++++++++++
+> >   4 files changed, 132 insertions(+)
+> >   create mode 100644 drivers/phy/phy-exynos-dp-video.c
+> >
+> > diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> > index 5ff208c..3fb656a 100644
+> > --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> > +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+> > @@ -12,3 +12,11 @@ the PHY specifier identifies the PHY and its meaning is as follows:
+> >     1 - MIPI DSIM 0,
+> >     2 - MIPI CSIS 1,
+> >     3 - MIPI DSIM 1.
+> > +
+> > +Samsung EXYNOS SoC series DP PHY
 > 
-> The default audio module for the Arndale has a WM811A on it. Add this to
+> I would make it "Samsung EXYNOS SoC series Display Port PHY"
 
-typo: WM1811A
+OK.
 
-Arndale board also comes with two other audio codec boards - ALC5631Q
-and AK4678. Different audio codec boards came with different shipments.
-
-> the device tree bindings.
 > 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5250-arndale.dts | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
+> > +-------------------------------------------------
+> > +
+> > +Required properties:
+> > +- compatible : should be "samsung,exynos5250-dp-video-phy";
+> > +- reg : offset and length of the DP PHY register set;
+> > +- #phy-cells : from the generic phy bindings, must be 0;
 > 
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-> index 482f275..75c3065 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -325,7 +325,22 @@
->  	};
->  
->  	i2c@12C90000 {
-> -		status = "disabled";
-> +		wm1811a@11 {
-> +			compatible = "wlf,wm1811";
-> +			reg = <0x1a>;
-> +
-> +			AVDD2-supply = <&main_dc_reg>;
-> +			CPVDD-supply = <&main_dc_reg>;
-> +			DBVDD1-supply = <&main_dc_reg>;
-> +			DBVDD2-supply = <&main_dc_reg>;
-> +			DBVDD3-supply = <&main_dc_reg>;
-> +			LDO1VDD-supply = <&main_dc_reg>;
-> +			SPKVDD1-supply = <&main_dc_reg>;
-> +			SPKVDD2-supply = <&main_dc_reg>;
-> +
-> +			wlf,ldo1ena = <&gpb0 0 0>;
-> +			wlf,ldo2ena = <&gpb0 1 0>;
-> +		};
->  	};
->  
->  	i2c@12CA0000 {
+> s/phy/PHY ?
+
+OK.
+
 > 
+> > \ No newline at end of file
+> 
+> Missing new line character.
 
+OK.
 
--- 
-Tushar Behera
+> 
+> > diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> > index 6f446d0..760f55a 100644
+> > --- a/drivers/phy/Kconfig
+> > +++ b/drivers/phy/Kconfig
+> > @@ -19,4 +19,9 @@ config PHY_EXYNOS_MIPI_VIDEO
+> >   	help
+> >   	  Support for MIPI CSI-2 and MIPI DSI DPHY found on Samsung
+> >   	  S5P and EXYNOS SoCs.
+> > +
+> > +config PHY_EXYNOS_DP_VIDEO
+> > +	tristate "EXYNOS SoC series DP PHY driver"
+> 
+> "EXYNOS SoC series Display Port PHY driver" ?
+> 
+> > +	help
+> > +	  Support for DP PHY found on Samsung EXYNOS SoCs.
+> 
+> s/DP/Display Port ?
+
+OK.
+
+> 
+> >   endif
+> > diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> > index 71d8841..0fd1340 100644
+> > --- a/drivers/phy/Makefile
+> > +++ b/drivers/phy/Makefile
+> > @@ -4,3 +4,4 @@
+> >
+> >   obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
+> >   obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)	+= phy-exynos-mipi-video.o
+> > +obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-video.o
+> > diff --git a/drivers/phy/phy-exynos-dp-video.c b/drivers/phy/phy-exynos-dp-video.c
+> > new file mode 100644
+> > index 0000000..75e1d11
+> > --- /dev/null
+> > +++ b/drivers/phy/phy-exynos-dp-video.c
+> > @@ -0,0 +1,118 @@
+> > +/*
+> > + * Samsung EXYNOS SoC series DP PHY driver
+> 
+> s/DP/Display Port ?
+
+OK.
+
+> 
+> > + *
+> > + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> > + * Author: Jingoo Han<jg1.han@samsung.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#include<linux/io.h>
+> > +#include<linux/kernel.h>
+> > +#include<linux/module.h>
+> > +#include<linux/of.h>
+> > +#include<linux/of_address.h>
+> > +#include<linux/phy/phy.h>
+> > +#include<linux/platform_device.h>
+> > +
+> > +/* DPTX_PHY_CONTROL register */
+> > +#define EXYNOS_DPTX_PHY_ENABLE		(1<<  0)
+> > +
+> > +struct exynos_dp_video_phy {
+> > +	void __iomem *regs;
+> > +};
+> > +
+> > +static int __set_phy_state(struct exynos_dp_video_phy *state, unsigned int on)
+> > +{
+> > +	void __iomem *addr;
+> 
+> How about just dropping this local variable ?
+
+OK.
+I will drop this local variable.
+
+> 
+> > +	u32 reg;
+> > +
+> > +	addr = state->regs;
+> > +
+> > +	reg = readl(addr);
+> > +	if (on)
+> > +		reg |= EXYNOS_DPTX_PHY_ENABLE;
+> > +	else
+> > +		reg&= ~EXYNOS_DPTX_PHY_ENABLE;
+> > +	writel(reg, addr);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int exynos_dp_video_phy_power_on(struct phy *phy)
+> > +{
+> > +	struct exynos_dp_video_phy *state = phy_get_drvdata(phy);
+> > +
+> > +	return __set_phy_state(state, 1);
+> > +}
+> > +
+> > +static int exynos_dp_video_phy_power_off(struct phy *phy)
+> > +{
+> > +	struct exynos_dp_video_phy *state = phy_get_drvdata(phy);
+> > +
+> > +	return __set_phy_state(state, 0);
+> > +}
+> > +
+> > +static struct phy_ops exynos_dp_video_phy_ops = {
+> > +	.power_on	= exynos_dp_video_phy_power_on,
+> > +	.power_off	= exynos_dp_video_phy_power_off,
+> > +	.owner		= THIS_MODULE,
+> > +};
+> > +
+> > +static int exynos_dp_video_phy_probe(struct platform_device *pdev)
+> > +{
+> > +	struct exynos_dp_video_phy *state;
+> > +	struct device *dev =&pdev->dev;
+> > +	struct resource *res;
+> > +	struct phy_provider *phy_provider;
+> > +	struct phy *phy;
+> > +
+> > +	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
+> > +	if (!state)
+> > +		return -ENOMEM;
+> > +
+> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +
+> > +	state->regs = devm_ioremap_resource(dev, res);
+> > +	if (IS_ERR(state->regs))
+> > +		return PTR_ERR(state->regs);
+> > +
+> > +	dev_set_drvdata(dev, state);
+> 
+> I can't see any corresponding dev_get_drvdata(), it should be safe
+> to remove this assignment.
+
+OK.
+I will remove 'dev_set_drvdata(dev, state)'.
+
+> 
+> > +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> > +	if (IS_ERR(phy_provider))
+> > +		return PTR_ERR(phy_provider);
+> > +
+> > +	phy = devm_phy_create(dev, 0,&exynos_dp_video_phy_ops, "dp");
+> 
+> The label could be NULL, since there is no need to support non-dt config.
+
+OK.
+I will replace "dp" with NULL.
+
+> 
+> > +	if (IS_ERR(phy)) {
+> > +		dev_err(dev, "failed to create DP PHY\n");
+> > +		return PTR_ERR(phy);
+> > +	}
+> > +	phy_set_drvdata(phy, state);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +#ifdef CONFIG_OF
+> 
+> You don't use of_match_ptr() macro to assign of_match_table to the driver
+> structure below. This means build with CONFIG_OF disabled is broken now.
+> I would just remove that #ifdef and would make the driver depends on
+> CONFIG_OF.
+
+OK.
+I will add 'depends on OF', then remove '#ifdef CONFIG_OF'.
+
+Thank you for your detailed comment. :)
+
+Best regards,
+Jingoo Han
+
+> 
+> > +static const struct of_device_id exynos_dp_video_phy_of_match[] = {
+> > +	{ .compatible = "samsung,exynos5250-dp-video-phy" },
+> > +	{ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, exynos_dp_video_phy_of_match);
+> > +#endif
+> > +
+> > +static struct platform_driver exynos_dp_video_phy_driver = {
+> > +	.probe	= exynos_dp_video_phy_probe,
+> > +	.driver = {
+> > +		.name	= "exynos-dp-video-phy",
+> > +		.owner	= THIS_MODULE,
+> > +		.of_match_table	= exynos_dp_video_phy_of_match,
+> > +	}
+> > +};
+> > +module_platform_driver(exynos_dp_video_phy_driver);
+> > +
+> > +MODULE_AUTHOR("Jingoo Han<jg1.han@samsung.com>");
+> > +MODULE_DESCRIPTION("Samsung EXYNOS SoC DP PHY driver");
+> > +MODULE_LICENSE("GPL v2");
+> 
+> Thanks,
+> Sylwester
