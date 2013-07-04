@@ -1,46 +1,71 @@
-From: Alexander Shiyan <shc_work@mail.ru>
-Subject: [PATCH RESEND] ARM: plat-samsung: Fix switching FIFO in
- arch_enable_uart_fifo function
-Date: Tue,  2 Jul 2013 23:16:33 +0400
-Message-ID: <1372792593-7457-1-git-send-email-shc_work@mail.ru>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH] drm/exynos: exynos_drm_ipp: fix return value check
+Date: Thu, 4 Jul 2013 21:35:00 +0800
+Message-ID: <CAPgLHd9yE7YES-yDFSWfHOKbbay2yLS_VrvF5-QyJumnNFitQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Alexander Shiyan <shc_work@mail.ru>, Ben Dooks <ben-linux@fluff.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f47.google.com ([209.85.214.47]:53799 "EHLO
+	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751468Ab3GDNfB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Jul 2013 09:35:01 -0400
+Received: by mail-bk0-f47.google.com with SMTP id jg1so643890bkc.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Jul 2013 06:35:00 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene.kim@samsung.com
+Cc: yongjun_wei@trendmicro.com.cn, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-When CONFIG_S3C_BOOT_UART_FORCE_FIFO symbol is set, we should
-enable FIFO but actually switch command is missing in the code.
-This patch adds this switching.
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-Signed-off-by: Alexander Shiyan <shc_work@mail.ru>
+In case of error, the function ipp_find_obj() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check
+should be replaced with IS_ERR().
+
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 ---
- arch/arm/plat-samsung/include/plat/uncompress.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/uncompress.h b/arch/arm/plat-samsung/include/plat/uncompress.h
-index 4afc32f..f48dc0a 100644
---- a/arch/arm/plat-samsung/include/plat/uncompress.h
-+++ b/arch/arm/plat-samsung/include/plat/uncompress.h
-@@ -145,6 +145,8 @@ static inline void arch_enable_uart_fifo(void)
- 			if (!(fifocon & S3C2410_UFCON_RESETBOTH))
- 				break;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index b1ef8e7..0eb8538 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -342,10 +342,10 @@ int exynos_drm_ipp_get_property(struct drm_device *drm_dev, void *data,
+ 		 */
+ 		ippdrv = ipp_find_obj(&ctx->ipp_idr, &ctx->ipp_lock,
+ 						prop_list->ipp_id);
+-		if (!ippdrv) {
++		if (IS_ERR(ippdrv)) {
+ 			DRM_ERROR("not found ipp%d driver.\n",
+ 					prop_list->ipp_id);
+-			return -EINVAL;
++			return PTR_ERR(ippdrv);
  		}
-+
-+		uart_wr(S3C2410_UFCON, S3C2410_UFCON_FIFOMODE);
+ 
+ 		prop_list = ippdrv->prop_list;
+@@ -970,9 +970,9 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+ 	/* find command node */
+ 	c_node = ipp_find_obj(&ctx->prop_idr, &ctx->prop_lock,
+ 		qbuf->prop_id);
+-	if (!c_node) {
++	if (IS_ERR(c_node)) {
+ 		DRM_ERROR("failed to get command node.\n");
+-		return -EFAULT;
++		return PTR_ERR(c_node);
  	}
- }
- #else
--- 
-1.8.1.5
+ 
+ 	/* buffer control */
+@@ -1106,9 +1106,9 @@ int exynos_drm_ipp_cmd_ctrl(struct drm_device *drm_dev, void *data,
+ 
+ 	c_node = ipp_find_obj(&ctx->prop_idr, &ctx->prop_lock,
+ 		cmd_ctrl->prop_id);
+-	if (!c_node) {
++	if (IS_ERR(c_node)) {
+ 		DRM_ERROR("invalid command node list.\n");
+-		return -EINVAL;
++		return PTR_ERR(c_node);
+ 	}
+ 
+ 	if (!exynos_drm_ipp_check_valid(ippdrv->dev, cmd_ctrl->ctrl,
