@@ -1,166 +1,96 @@
-From: Cho KyongHo <pullip.cho@samsung.com>
-Subject: [PATCH v7 5/9] iommu/exynos: change rwlock to spinlock
-Date: Fri, 05 Jul 2013 21:29:26 +0900
-Message-ID: <002d01ce797b$49c441a0$dd4cc4e0$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
-Cc: 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Keyyoung Park' <keyyoung.park@samsung.com>, 'Grant Grundler' <grundler@chromium.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] spi/s3c64xx: Remove unused message queue
+Date: Fri,  5 Jul 2013 18:56:33 +0100
+Message-ID: <1373046993-1349-1-git-send-email-broonie@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:42957 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752212Ab3GER5B (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 5 Jul 2013 13:57:01 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
 
-Since acquiring read_lock is not more frequent than write_lock, it is
-not beneficial to use rwlock, this commit changes rwlock to spinlock.
+From: Mark Brown <broonie@linaro.org>
 
-Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+Since the driver has been converted to use the core message pump code
+the only use of the messsage queue in the driver is a check to see if
+it is empty which will always succeed since nothing ever adds to the
+queue. Just remove the queue.
+
+Signed-off-by: Mark Brown <broonie@linaro.org>
 ---
- drivers/iommu/exynos-iommu.c |   32 ++++++++++++++++----------------
- 1 files changed, 16 insertions(+), 16 deletions(-)
+ drivers/spi/spi-s3c64xx.c | 21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 390f8b7..6793661 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -175,7 +175,7 @@ struct sysmmu_drvdata {
- 	void __iomem **sfrbases;
- 	struct clk *clk[2];
- 	int activations;
--	rwlock_t lock;
-+	spinlock_t lock;
- 	struct iommu_domain *domain;
- 	sysmmu_fault_handler_t fault_handler;
- 	unsigned long pgtable;
-@@ -259,7 +259,7 @@ void exynos_sysmmu_set_prefbuf(struct device *dev,
- 	BUG_ON((base0 + size0) <= base0);
- 	BUG_ON((size1 > 0) && ((base1 + size1) <= base1));
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index eb53df2..def13e8 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -172,7 +172,6 @@ struct s3c64xx_spi_port_config {
+  * @master: Pointer to the SPI Protocol master.
+  * @cntrlr_info: Platform specific data for the controller this driver manages.
+  * @tgl_spi: Pointer to the last CS left untoggled by the cs_change hint.
+- * @queue: To log SPI xfer requests.
+  * @lock: Controller specific lock.
+  * @state: Set of FLAGS to indicate status.
+  * @rx_dmach: Controller's DMA channel for Rx.
+@@ -193,7 +192,6 @@ struct s3c64xx_spi_driver_data {
+ 	struct spi_master               *master;
+ 	struct s3c64xx_spi_info  *cntrlr_info;
+ 	struct spi_device               *tgl_spi;
+-	struct list_head                queue;
+ 	spinlock_t                      lock;
+ 	unsigned long                   sfr_start;
+ 	struct completion               xfer_completion;
+@@ -1053,8 +1051,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+ 	struct s3c64xx_spi_driver_data *sdd;
+ 	struct s3c64xx_spi_info *sci;
+-	struct spi_message *msg;
+-	unsigned long flags;
+ 	int err;
  
--	read_lock_irqsave(&data->lock, flags);
-+	spin_lock_irqsave(&data->lock, flags);
- 	if (!is_sysmmu_active(data))
- 		goto finish;
+ 	sdd = spi_master_get_devdata(spi->master);
+@@ -1085,21 +1081,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
  
-@@ -289,7 +289,7 @@ void exynos_sysmmu_set_prefbuf(struct device *dev,
- 		}
- 	}
- finish:
--	read_unlock_irqrestore(&data->lock, flags);
-+	spin_unlock_irqrestore(&data->lock, flags);
- }
+ 	sci = sdd->cntrlr_info;
  
- static void __set_fault_handler(struct sysmmu_drvdata *data,
-@@ -297,9 +297,9 @@ static void __set_fault_handler(struct sysmmu_drvdata *data,
- {
- 	unsigned long flags;
+-	spin_lock_irqsave(&sdd->lock, flags);
+-
+-	list_for_each_entry(msg, &sdd->queue, queue) {
+-		/* Is some mssg is already queued for this device */
+-		if (msg->spi == spi) {
+-			dev_err(&spi->dev,
+-				"setup: attempt while mssg in queue!\n");
+-			spin_unlock_irqrestore(&sdd->lock, flags);
+-			err = -EBUSY;
+-			goto err_msgq;
+-		}
+-	}
+-
+-	spin_unlock_irqrestore(&sdd->lock, flags);
+-
+ 	pm_runtime_get_sync(&sdd->pdev->dev);
  
--	write_lock_irqsave(&data->lock, flags);
-+	spin_lock_irqsave(&data->lock, flags);
- 	data->fault_handler = handler;
--	write_unlock_irqrestore(&data->lock, flags);
-+	spin_unlock_irqrestore(&data->lock, flags);
- }
+ 	/* Check if we can provide the requested rate */
+@@ -1146,7 +1127,6 @@ setup_exit:
+ 	/* setup() returns with device de-selected */
+ 	disable_cs(sdd, spi);
  
- void exynos_sysmmu_set_fault_handler(struct device *dev,
-@@ -347,7 +347,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+-err_msgq:
+ 	gpio_free(cs->line);
+ 	spi_set_ctldata(spi, NULL);
  
- 	int i, ret = -ENOSYS;
+@@ -1439,7 +1419,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
  
--	read_lock(&data->lock);
-+	spin_lock(&data->lock);
+ 	spin_lock_init(&sdd->lock);
+ 	init_completion(&sdd->xfer_completion);
+-	INIT_LIST_HEAD(&sdd->queue);
  
- 	WARN_ON(!is_sysmmu_active(data));
- 
-@@ -391,7 +391,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
- 	if (itype != SYSMMU_FAULT_UNKNOWN)
- 		sysmmu_unblock(data->sfrbases[i]);
- 
--	read_unlock(&data->lock);
-+	spin_unlock(&data->lock);
- 
- 	return IRQ_HANDLED;
- }
-@@ -402,7 +402,7 @@ static bool __exynos_sysmmu_disable(struct sysmmu_drvdata *data)
- 	bool disabled = false;
- 	int i;
- 
--	write_lock_irqsave(&data->lock, flags);
-+	spin_lock_irqsave(&data->lock, flags);
- 
- 	if (!set_sysmmu_inactive(data))
- 		goto finish;
-@@ -419,7 +419,7 @@ static bool __exynos_sysmmu_disable(struct sysmmu_drvdata *data)
- 	data->pgtable = 0;
- 	data->domain = NULL;
- finish:
--	write_unlock_irqrestore(&data->lock, flags);
-+	spin_unlock_irqrestore(&data->lock, flags);
- 
- 	if (disabled)
- 		dev_dbg(data->sysmmu, "(%s) Disabled\n", data->dbgname);
-@@ -442,7 +442,7 @@ static int __exynos_sysmmu_enable(struct sysmmu_drvdata *data,
- 	int i, ret = 0;
- 	unsigned long flags;
- 
--	write_lock_irqsave(&data->lock, flags);
-+	spin_lock_irqsave(&data->lock, flags);
- 
- 	if (!set_sysmmu_active(data)) {
- 		if (WARN_ON(pgtable != data->pgtable)) {
-@@ -481,7 +481,7 @@ static int __exynos_sysmmu_enable(struct sysmmu_drvdata *data,
- 
- 	dev_dbg(data->sysmmu, "(%s) Enabled\n", data->dbgname);
- finish:
--	write_unlock_irqrestore(&data->lock, flags);
-+	spin_unlock_irqrestore(&data->lock, flags);
- 
- 	return ret;
- }
-@@ -528,7 +528,7 @@ static void sysmmu_tlb_invalidate_entry(struct device *dev, unsigned long iova)
- 	unsigned long flags;
- 	struct sysmmu_drvdata *data = dev_get_drvdata(dev->archdata.iommu);
- 
--	read_lock_irqsave(&data->lock, flags);
-+	spin_lock_irqsave(&data->lock, flags);
- 
- 	if (is_sysmmu_active(data)) {
- 		int i;
-@@ -545,7 +545,7 @@ static void sysmmu_tlb_invalidate_entry(struct device *dev, unsigned long iova)
- 			data->dbgname);
- 	}
- 
--	read_unlock_irqrestore(&data->lock, flags);
-+	spin_unlock_irqrestore(&data->lock, flags);
- }
- 
- void exynos_sysmmu_tlb_invalidate(struct device *dev)
-@@ -553,7 +553,7 @@ void exynos_sysmmu_tlb_invalidate(struct device *dev)
- 	unsigned long flags;
- 	struct sysmmu_drvdata *data = dev_get_drvdata(dev->archdata.iommu);
- 
--	read_lock_irqsave(&data->lock, flags);
-+	spin_lock_irqsave(&data->lock, flags);
- 
- 	if (is_sysmmu_active(data)) {
- 		int i;
-@@ -569,7 +569,7 @@ void exynos_sysmmu_tlb_invalidate(struct device *dev)
- 			data->dbgname);
- 	}
- 
--	read_unlock_irqrestore(&data->lock, flags);
-+	spin_unlock_irqrestore(&data->lock, flags);
- }
- 
- static int exynos_sysmmu_probe(struct platform_device *pdev)
-@@ -666,7 +666,7 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
- 	}
- 
- 	data->sysmmu = dev;
--	rwlock_init(&data->lock);
-+	spin_lock_init(&data->lock);
- 	INIT_LIST_HEAD(&data->node);
- 
- 	__set_fault_handler(data, &default_fault_handler);
+ 	ret = devm_request_irq(&pdev->dev, irq, s3c64xx_spi_irq, 0,
+ 				"spi-s3c64xx", sdd);
 -- 
-1.7.2.5
+1.8.3.2
