@@ -1,45 +1,47 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/3] of/documentation: Update G2D documentation
-Date: Fri,  5 Jul 2013 14:12:28 +0530
-Message-ID: <1373013749-14530-2-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 3/3] ARM: EXYNOS: Add G2D support to exynos5250
+Date: Fri,  5 Jul 2013 14:12:29 +0530
+Message-ID: <1373013749-14530-3-git-send-email-sachin.kamat@linaro.org>
 References: <1373013749-14530-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:35754 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757167Ab3GEI6D (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:61964 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757167Ab3GEI6G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Jul 2013 04:58:03 -0400
-Received: by mail-pd0-f176.google.com with SMTP id t12so1812970pdi.21
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Jul 2013 01:58:02 -0700 (PDT)
+	Fri, 5 Jul 2013 04:58:06 -0400
+Received: by mail-pd0-f171.google.com with SMTP id y14so1815656pdi.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Jul 2013 01:58:06 -0700 (PDT)
 In-Reply-To: <1373013749-14530-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, mturquette@linaro.org, inki.dae@samsung.com
 
-Exynos5250 G2D IP requires only the gate clock. Update the
-binding documentation accordingly.
+Adds G2D node to exynos5250 DT file.
 
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Inki Dae <inki.dae@samsung.com>
 ---
- .../devicetree/bindings/gpu/samsung-g2d.txt        |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5250.dtsi |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
-index 3f454ff..60ca631 100644
---- a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
-+++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
-@@ -12,7 +12,9 @@ Required properties:
-   - interrupts : G2D interrupt number to the CPU.
-   - clocks : from common clock binding: handle to G2D clocks.
-   - clock-names : from common clock binding: must contain "sclk_fimg2d" and
--		  "fimg2d", corresponding to entries in the clocks property.
-+		  "fimg2d" for S5PV210 & Exynos4 based SoCs and "fimg2d" for
-+		  Exynos5250 SoC, corresponding to entries in the clocks
-+		  property.
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index ef57277..6f356ce 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -163,6 +163,14 @@
+ 		clock-names = "watchdog";
+ 	};
  
- Example:
- 	g2d@12800000 {
++	g2d@10850000 {
++		compatible = "samsung,exynos5250-g2d";
++		reg = <0x10850000 0x1000>;
++		interrupts = <0 91 0>;
++		clocks = <&clock 345>;
++		clock-names = "fimg2d";
++	};
++
+ 	codec@11000000 {
+ 		compatible = "samsung,mfc-v6";
+ 		reg = <0x11000000 0x10000>;
 -- 
 1.7.9.5
