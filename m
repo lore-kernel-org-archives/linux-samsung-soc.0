@@ -1,47 +1,122 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 3/3] ARM: EXYNOS: Add G2D support to exynos5250
-Date: Fri,  5 Jul 2013 14:12:29 +0530
-Message-ID: <1373013749-14530-3-git-send-email-sachin.kamat@linaro.org>
-References: <1373013749-14530-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:61964 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757167Ab3GEI6G (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Jul 2013 04:58:06 -0400
-Received: by mail-pd0-f171.google.com with SMTP id y14so1815656pdi.16
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Jul 2013 01:58:06 -0700 (PDT)
-In-Reply-To: <1373013749-14530-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pratyush Anand <pratyush.anand@st.com>
+Subject: Re: [PATCH] pci: exynos: split into two parts such as Synopsys part
+ and Exynos part
+Date: Fri, 5 Jul 2013 16:14:00 +0530
+Message-ID: <51D6A370.7060604@st.com>
+References: <000201ce7959$bf0fb150$3d2f13f0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000201ce7959$bf0fb150$3d2f13f0$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>, Mohit KUMAR <Mohit.KUMAR@st.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, mturquette@linaro.org, inki.dae@samsung.com
 
-Adds G2D node to exynos5250 DT file.
+On 7/5/2013 1:59 PM, Jingoo Han wrote:
+> Exynos PCIe IP consists of Synopsys specific part and Exynos
+> specific part. Only core block is a Synopsys designware part;
+> other parts are Exynos specific.
+> Also, the Synopsys designware part can be shared with other
+> platforms; thus, it can be split two parts such as Synopsys
+> designware part and Exynos specific part.
+>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/boot/dts/exynos5250.dtsi |    8 ++++++++
- 1 file changed, 8 insertions(+)
+A quick and nice job :)
+Just few minor comments.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index ef57277..6f356ce 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -163,6 +163,14 @@
- 		clock-names = "watchdog";
- 	};
- 
-+	g2d@10850000 {
-+		compatible = "samsung,exynos5250-g2d";
-+		reg = <0x10850000 0x1000>;
-+		interrupts = <0 91 0>;
-+		clocks = <&clock 345>;
-+		clock-names = "fimg2d";
-+	};
-+
- 	codec@11000000 {
- 		compatible = "samsung,mfc-v6";
- 		reg = <0x11000000 0x10000>;
--- 
-1.7.9.5
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> Cc: Pratyush Anand <pratyush.anand@st.com>
+> Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+> ---
+>   drivers/pci/host/Makefile          |    1 +
+>   drivers/pci/host/pcie-designware.c |  907 +++++++-----------------------------
+>   drivers/pci/host/pcie-designware.h |   72 +++
+>   drivers/pci/host/pcie-exynos.c     |  619 ++++++++++++++++++++++++
+>   4 files changed, 862 insertions(+), 737 deletions(-)
+>   create mode 100644 drivers/pci/host/pcie-designware.h
+>   create mode 100644 drivers/pci/host/pcie-exynos.c
+>
+
+[...]
+
+
+> -
+> -struct pcie_port {
+> -       struct device           *dev;
+> -       u8                      controller;
+> -       u8                      root_bus_nr;
+> -       void __iomem            *dbi_base;
+> -       void __iomem            *elbi_base;
+> -       void __iomem            *phy_base;
+> -       void __iomem            *purple_base;
+
+Just for knowledge, what is the purple_base. It might not be needed by 
+all vendors. Can we explain the name in comment or can give some generic 
+name?
+
+> -       u64                     cfg0_base;
+> -       void __iomem            *va_cfg0_base;
+> -       u64                     cfg1_base;
+> -       void __iomem            *va_cfg1_base;
+> -       u64                     io_base;
+> -       u64                     mem_base;
+> -       spinlock_t              conf_lock;
+> -       struct resource         cfg;
+> -       struct resource         io;
+> -       struct resource         mem;
+> -       struct pcie_port_info   config;
+> -       struct clk              *clk;
+> -       struct clk              *bus_clk;
+> -       int                     irq;
+> -       int                     reset_gpio;
+> -};
+> -
+
+[...]
+
+> -
+> -static inline void readl_rc(struct pcie_port *pp, void *dbi_base, u32 *val)
+> +static inline void dw_pcie_readl_rc(struct pcie_port *pp, void *dbi_base,
+> +                               u32 *val)
+
+dbi_base is part of pp. So why to pass 3 args?
+
+>   {
+> -       exynos_pcie_sideband_dbi_r_mode(pp, true);
+> -       *val = readl(dbi_base);
+> -       exynos_pcie_sideband_dbi_r_mode(pp, false);
+> -       return;
+> +       if (pp->ops->readl_rc)
+> +               pp->ops->readl_rc(pp, dbi_base, val);
+
+ditto
+
+> +       else
+> +               *val = readl(dbi_base);
+>   }
+>
+> -static inline void writel_rc(struct pcie_port *pp, u32 val, void *dbi_base)
+> +static inline void dw_pcie_writel_rc(struct pcie_port *pp, u32 val,
+> +                               void *dbi_base)
+
+ditto
+
+>   {
+> -       exynos_pcie_sideband_dbi_w_mode(pp, true);
+> -       writel(val, dbi_base);
+> -       exynos_pcie_sideband_dbi_w_mode(pp, false);
+> -       return;
+> +       if (pp->ops->writel_rc)
+> +               pp->ops->writel_rc(pp, val, dbi_base);
+
+ditto
+
+> +       else
+> +               writel(val, dbi_base);
+>   }
+
+
+Regards
+Pratyush
