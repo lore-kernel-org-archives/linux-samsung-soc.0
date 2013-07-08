@@ -1,88 +1,98 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 1/4] usb: gadget: s3c-hsotg: Allow driver instantiation
- using device tree
-Date: Mon, 8 Jul 2013 10:41:33 +0300
-Message-ID: <20130708074133.GC16635@arwen.pp.htv.fi>
-References: <1372174706-5459-1-git-send-email-t.figa@samsung.com>
- <1372174706-5459-2-git-send-email-t.figa@samsung.com>
-Reply-To: balbi@ti.com
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 07/13] ARM: dts: Add AK8975 device node for Exynos4412
+ TRATS2 board
+Date: Mon, 08 Jul 2013 14:52:51 +0200
+Message-ID: <51DAB623.1010404@samsung.com>
+References: <1372692155-17653-1-git-send-email-s.nawrocki@samsung.com>
+ <1372692155-17653-8-git-send-email-s.nawrocki@samsung.com>
+ <1491290.c836bFtNe2@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5524077590971762399=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1372174706-5459-2-git-send-email-t.figa@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: l.majewski@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grant Likely <grant.likely@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============5524077590971762399==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="s9fJI615cBHmzTOP"
-Content-Disposition: inline
-
---s9fJI615cBHmzTOP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, Jun 25, 2013 at 05:38:23PM +0200, Tomasz Figa wrote:
-> This patch adds OF match table to the driver to allow instantiating it
-> using device tree.
->=20
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-
-I will take this one only, the others have no dependency on this.
-
-cheers
-
---=20
-balbi
-
---s9fJI615cBHmzTOP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR2m0tAAoJEIaOsuA1yqREmWcP/jKKIl361JXR6PQM5ORfbTia
-+FU7DRMuXx3QFH7G4FnigfOJtq4FcgNMB/lj1H6qLwpXhcFKDS9nKV6+MxW6i9vw
-uEmJAUQEoGJ6Lx4YKAr//tFTfS/XrL1U107lFWRSvPS2ss4LUenLfr1H55IAYtkR
-zDQeJdQF74NsLoRSfPwLpess5Lc3g7odnigOvUK17Rz8tpJQi1ffLYzIy50298Ek
-YGhZDPwlsOQaIujgDM1S8oDHyWu9h4ZITNXA/eOuKlMppajqtr/WncsR78AofhJ5
-DREqK/m6brHeRUT3lERKOGSta67o8sPix5igPDo5dJ2vuemd0I6T2EdXcFuCLonH
-xLARrbm5nA429OMr/Rz1p/UATUDzHD9rmR7QVJ5FKGwG4lrYonRNjF0mFqPG4RXV
-yQvO0tzPC17i/OOF77LfX0vkIfQCsrVGMVpXj54gDs1iiZCENqQ3wcfELjZEnqP/
-oCTFExFuijGoMkZAQwxPVjHLyalw0z6wIiAW83AF57FSbRNcQjoAfPd+Qdo2IC68
-C8aQ6xt9CDB/711y12lKPN0bE8GEflTSuZWBhCL4dZcRA20fRZ5po1RltMtqWSWn
-33mfOpiKSqZteVAA0AZGTexC1liaNSS71s/cFRtOvQ+atRw+VgSrHNFgzi284+S/
-CrFM6IJ8yndy+di5qNuE
-=kdrh
------END PGP SIGNATURE-----
-
---s9fJI615cBHmzTOP--
-
-
---===============5524077590971762399==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:60005 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751392Ab3GHMxD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Jul 2013 08:53:03 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MPM004SVBP4U270@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 08 Jul 2013 13:53:00 +0100 (BST)
+In-reply-to: <1491290.c836bFtNe2@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, kyungmin.park@samsung.com, devicetree-discuss@lists.ozlabs.org
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Hi Tomasz,
 
---===============5524077590971762399==--
+On 07/06/2013 01:18 AM, Tomasz Figa wrote:
+> On Monday 01 of July 2013 17:22:29 Sylwester Nawrocki wrote:
+>> From: Jacek Anaszewski <j.anaszewski@samsung.com>
+>>
+>> This patch adds AK8975 magnetometer node and corresponding
+>> i2c-gpio bus node for TRATS2 board.
+>>
+>> Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos4412-trats2.dts |   19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts
+>> b/arch/arm/boot/dts/exynos4412-trats2.dts index 056b835..b9de3b5 100644
+>> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
+>> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+>> @@ -19,6 +19,10 @@
+>>  	model = "Samsung Trats 2 based on Exynos4412";
+>>  	compatible = "samsung,trats2", "samsung,exynos4412";
+>>
+>> +	aliases {
+>> +		i2c8 = &i2c_ak8975;
+>> +	};
+>> +
+>>  	memory {
+>>  		reg =  <0x40000000 0x40000000>;
+>>  	};
+>> @@ -453,4 +457,19 @@
+>>  	serial@13830000 {
+>>  		status = "okay";
+>>  	};
+>> +
+>> +	i2c_ak8975: i2c-gpio@0 {
+> 
+> I think this @0 is slightly incorrect here, as it seems like there is no 
+> reg property present inside the node and so the device isn't located at 
+> any address.
+> 
+> For logical indices like in this case I would rather use i2c-gpio-0 
+> instead.
+
+Indeed, using "-<N>" postfix sounds like a better alternative. I'll change
+it and repost the series after 3.11-rc1 is released.
+
+>> +		compatible = "i2c-gpio";
+>> +		gpios = <&gpy2 4 0>, <&gpy2 5 0>;
+>> +		i2c-gpio,delay-us = <2>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		status = "okay";
+>> +
+>> +		ak8975@0c {
+>> +			compatible = "asahi-kasei,ak8975";
+>> +			reg = <0x0c>;
+>> +			gpios = <&gpj0 7 0>;
+>> +		};
+>> +	};
+>>  };
+> 
+> Otherwise looks good.
+> 
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
+--
+Thanks,
+Sylwester
