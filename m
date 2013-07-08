@@ -1,73 +1,105 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 2/3] of/documentation: Update G2D documentation
-Date: Mon, 8 Jul 2013 12:06:28 +0530
-Message-ID: <CAK9yfHzG6ZPio9xytLoQpf0WCi9Fk3JnAXmsdjFGMiqGoYmXFA@mail.gmail.com>
-References: <1373013749-14530-1-git-send-email-sachin.kamat@linaro.org>
-	<1373013749-14530-2-git-send-email-sachin.kamat@linaro.org>
-	<4264635.Hmig5l0VLj@flatron>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] pci: exynos: split into two parts such as Synopsys part
+ and Exynos part
+Date: Mon, 08 Jul 2013 15:55:23 +0900
+Message-ID: <002d01ce7ba8$1e532250$5af966f0$@samsung.com>
+References: <000201ce7959$bf0fb150$3d2f13f0$@samsung.com>
+ <51D6A370.7060604@st.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:56357 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753422Ab3GHGg2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Jul 2013 02:36:28 -0400
-Received: by mail-oa0-f46.google.com with SMTP id h1so5811766oag.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Jul 2013 23:36:28 -0700 (PDT)
-In-Reply-To: <4264635.Hmig5l0VLj@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <51D6A370.7060604@st.com>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, patches@linaro.org, mturquette@linaro.org, inki.dae@samsung.com
 
-Hi Tomasz,
+On Friday, July 05, 2013 7:44 PM, Pratyush Anand wrote:
+> On 7/5/2013 1:59 PM, Jingoo Han wrote:
+> > Exynos PCIe IP consists of Synopsys specific part and Exynos
+> > specific part. Only core block is a Synopsys designware part;
+> > other parts are Exynos specific.
+> > Also, the Synopsys designware part can be shared with other
+> > platforms; thus, it can be split two parts such as Synopsys
+> > designware part and Exynos specific part.
+> >
+> 
+> A quick and nice job :)
+> Just few minor comments.
+> 
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > Cc: Pratyush Anand <pratyush.anand@st.com>
+> > Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+> > ---
+> >   drivers/pci/host/Makefile          |    1 +
+> >   drivers/pci/host/pcie-designware.c |  907 +++++++-----------------------------
+> >   drivers/pci/host/pcie-designware.h |   72 +++
+> >   drivers/pci/host/pcie-exynos.c     |  619 ++++++++++++++++++++++++
+> >   4 files changed, 862 insertions(+), 737 deletions(-)
+> >   create mode 100644 drivers/pci/host/pcie-designware.h
+> >   create mode 100644 drivers/pci/host/pcie-exynos.c
+> >
 
-On 6 July 2013 05:22, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Sachin,
->
-> On Friday 05 of July 2013 14:12:28 Sachin Kamat wrote:
->> Exynos5250 G2D IP requires only the gate clock. Update the
->> binding documentation accordingly.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> Cc: Inki Dae <inki.dae@samsung.com>
->> ---
->>  .../devicetree/bindings/gpu/samsung-g2d.txt        |    4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
->> b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt index
->> 3f454ff..60ca631 100644
->> --- a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
->> +++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
->> @@ -12,7 +12,9 @@ Required properties:
->>    - interrupts : G2D interrupt number to the CPU.
->>    - clocks : from common clock binding: handle to G2D clocks.
->>    - clock-names : from common clock binding: must contain "sclk_fimg2d"
->> and -           "fimg2d", corresponding to entries in the clocks
-> property. +
->>  "fimg2d" for S5PV210 & Exynos4 based SoCs and "fimg2d" for +
->> Exynos5250 SoC, corresponding to entries in the clocks
->> +               property.
->
-> I think this needs to be rephrased, because I can't get any sense from
-> this sentence.
->
-> Maybe something like:
->
-> - clock-names : names of clocks listed in clocks property, in the same
-> order, depending on SoC type:
->     - for S5PV210 and Exynos4 based SoCs : "fimg2d" and "sclk_fimg2d"
->     - for Exynos5250 SoC : "fimg2d".
->
-> What do you think?
+[...]
 
-Sure. Will update and re-send.
+> > -static inline void readl_rc(struct pcie_port *pp, void *dbi_base, u32 *val)
+> > +static inline void dw_pcie_readl_rc(struct pcie_port *pp, void *dbi_base,
+> > +                               u32 *val)
+> 
+> dbi_base is part of pp. So why to pass 3 args?
 
-Thanks for the review.
+Sorry, this variable does not mean dbi_base;
+it means 'dbi_base + offset'.
+
+dw_pcie_{readl/writel}_rc() are called as below:
+
+  dw_pcie_readl_rc(pp, dbi_base + PCIE_PORT_LINK_CONTROL, &val);
+  dw_pcie_writel_rc(pp, val, dbi_base + PCIE_PORT_LINK_CONTROL);
+
+Thus, 'dbi_base' can be replaced with 'dbi_addr'.
 
 
--- 
-With warm regards,
-Sachin
+Best regards,
+Jingoo Han
+
+
+> 
+> >   {
+> > -       exynos_pcie_sideband_dbi_r_mode(pp, true);
+> > -       *val = readl(dbi_base);
+> > -       exynos_pcie_sideband_dbi_r_mode(pp, false);
+> > -       return;
+> > +       if (pp->ops->readl_rc)
+> > +               pp->ops->readl_rc(pp, dbi_base, val);
+> 
+> ditto
+> 
+> > +       else
+> > +               *val = readl(dbi_base);
+> >   }
+> >
+> > -static inline void writel_rc(struct pcie_port *pp, u32 val, void *dbi_base)
+> > +static inline void dw_pcie_writel_rc(struct pcie_port *pp, u32 val,
+> > +                               void *dbi_base)
+> 
+> ditto
+> 
+> >   {
+> > -       exynos_pcie_sideband_dbi_w_mode(pp, true);
+> > -       writel(val, dbi_base);
+> > -       exynos_pcie_sideband_dbi_w_mode(pp, false);
+> > -       return;
+> > +       if (pp->ops->writel_rc)
+> > +               pp->ops->writel_rc(pp, val, dbi_base);
+> 
+> ditto
+> 
+> > +       else
+> > +               writel(val, dbi_base);
+> >   }
+> 
+> 
+> Regards
+> Pratyush
