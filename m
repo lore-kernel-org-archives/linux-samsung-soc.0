@@ -1,69 +1,93 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V4 4/4] video: exynos_dp: Use the generic PHY driver
-Date: Mon, 08 Jul 2013 11:04:06 +0900
-Message-ID: <001a01ce7b7f$6d7bdc60$48739520$@samsung.com>
-References: <000d01ce7700$222a35a0$667ea0e0$@samsung.com>
- <1441230.DzaqAQ9HHT@flatron>
+Subject: [PATCH V5 0/4] Generic PHY driver for the Exynos SoC DP PHY
+Date: Mon, 08 Jul 2013 11:54:48 +0900
+Message-ID: <001b01ce7b86$828743e0$8795cba0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:20091 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753326Ab3GHCEK (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:10664 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753360Ab3GHCy4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 7 Jul 2013 22:04:10 -0400
-In-reply-to: <1441230.DzaqAQ9HHT@flatron>
+	Sun, 7 Jul 2013 22:54:56 -0400
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, 'Hui Wang' <jason77.wang@gmail.com>, Jingoo Han <jg1.han@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Hui Wang <jason77.wang@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Saturday, July 06, 2013 8:04 AM, Tomasz Figa wrote:
-> 
-> Hi Jingoo,
-> 
-> On Tuesday 02 of July 2013 17:42:49 Jingoo Han wrote:
-> > Use the generic PHY API instead of the platform callback to control
-> > the DP PHY.
-> >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > ---
-> >  .../devicetree/bindings/video/exynos_dp.txt        |   23
-> > +++++--------------- drivers/video/exynos/exynos_dp_core.c
-> > |   16 ++++++++++---- drivers/video/exynos/exynos_dp_core.h
-> >  |    2 ++
-> >  3 files changed, 20 insertions(+), 21 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt
-> > b/Documentation/devicetree/bindings/video/exynos_dp.txt index
-> > 84f10c1..022f4b6 100644
-> > --- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-> > +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-> > @@ -1,17 +1,6 @@
-> >  The Exynos display port interface should be configured based on
-> >  the type of panel connected to it.
-> >
-> > -We use two nodes:
-> > -	-dp-controller node
-> > -	-dptx-phy node(defined inside dp-controller node)
-> > -
-> > -For the DP-PHY initialization, we use the dptx-phy node.
-> > -Required properties for dptx-phy:
-> > -	-reg:
-> > -		Base address of DP PHY register.
-> > -	-samsung,enable-mask:
-> > -		The bit-mask used to enable/disable DP PHY.
-> > -
-> 
-> I wonder if this part shouldn't stay here, just marked as deprecated,
-> because compatibility with old dtbs must be preserved (and rest of the
-> patch looks like it is).
+This patch series adds a simple driver for the Samsung Exynos SoC
+series DP transmitter PHY, using the generic PHY framework [1].
+Previously the DP PHY used an internal DT node to control the PHY
+power enable bit.
 
-I would like to remove these properties from Documentation.
-But, I will mark it as deprecated as you suggested..
+These patches was tested on Exynos5250.
 
+This PATCH v5 follows:
+ * PATCH v4, sent on July, 2nd 2013
+ * PATCH v3, sent on July, 1st 2013
+ * PATCH v2, sent on June, 28th 2013
+ * PATCH v1, sent on June, 28th 2013
 
-Best regards,
-Jingoo Han
+Changes between v4 and v5:
+  * Marked original bindings as deprecated in 'exynos_dp.txt'
+  * Fixed typo of commit message.
+  * Added Tomasz Figa's Reviewed-by.
+
+Changes between v3 and v4:
+  * Added OF dependancy.
+  * Removed redundant local variable 'void __iomem *addr'.
+  * Removed unnecessary dev_set_drvdata().
+  * Added a patch that remove non-DT support for Exynos
+    Display Port driver.
+  * Removed unnecessary 'struct exynos_dp_platdata'.
+  * Kept supporting the original bindings for DT compatibility.
+
+Changes between v2 and v3:
+  * Removed redundant spinlock
+  * Removed 'struct phy' from 'struct exynos_dp_video_phy'
+  * Updated 'samsung-phy.txt', instead of creating
+    'samsung,exynos5250-dp-video-phy.txt'.
+  * Removed unnecessary additional specifier from 'phys'
+    DT property.
+  * Added 'phys', 'phy-names' properties to 'exynos_dp.txt' file.
+  * Added Felipe Balbi's Acked-by.
+
+Changes between v1 and v2:
+  * Replaced exynos_dp_video_phy_xlate() with of_phy_simple_xlate(),
+    as Kishon Vijay Abraham I guided.
+  * Set the value of phy-cells as 0, because the phy_provider implements
+    only one PHY.
+  * Removed unnecessary header include.
+  * Added '#ifdef CONFIG_OF' and of_match_ptr macro.
+
+This series depends on the generic PHY framework [1]. These patches
+refer to Sylwester Nawrocki's patches about Exynos MIPI [2].
+
+[1] https://lkml.org/lkml/2013/6/26/259
+[2] http://www.spinics.net/lists/linux-samsung-soc/msg20098.html
+
+Jingoo Han (4):
+  ARM: dts: Add DP PHY node to exynos5250.dtsi
+  phy: Add driver for Exynos DP PHY
+  video: exynos_dp: remove non-DT support for Exynos Display Port
+  video: exynos_dp: Use the generic PHY driver
+
+ .../devicetree/bindings/phy/samsung-phy.txt        |    8 ++
+ .../devicetree/bindings/video/exynos_dp.txt        |   18 +++++++++---------
+ arch/arm/boot/dts/exynos5250.dtsi                  |   13 ++++++++-----
+ drivers/phy/Kconfig                                |    6 ++
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/phy-exynos-dp-video.c                  |  111 ++++++++++++++++++++
+ drivers/video/exynos/Kconfig                       |    2 +-
+ drivers/video/exynos/exynos_dp_core.c              |  132 +++++++----------------------
+ drivers/video/exynos/exynos_dp_core.h              |  110 +++++++++++++++++++++++++++
+ drivers/video/exynos/exynos_dp_reg.c               |    2 -
+ include/video/exynos_dp.h                          |  131 ---------------------------------
+ 11 files changed, 291 insertions(+), 243 deletions(-) 
+ create mode 100644 drivers/phy/phy-exynos-dp-video.c
+ delete mode 100644 include/video/exynos_dp.h
+
+--
+1.7.10.4
