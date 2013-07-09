@@ -1,71 +1,151 @@
 From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v2 0/6] Convert S3C2416 ad S3C2443 to common clock framework
-Date: Wed, 10 Jul 2013 00:57:05 +0200
-Message-ID: <201307100057.06061.heiko@sntech.de>
+Subject: [PATCH v2 1/6] clk: samsung: move common plls registration into separate function
+Date: Wed, 10 Jul 2013 00:57:47 +0200
+Message-ID: <201307100057.48265.heiko@sntech.de>
+References: <201307100057.06061.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:44488 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:44508 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752209Ab3GIW5M (ORCPT
+	id S1752209Ab3GIW5v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Jul 2013 18:57:12 -0400
+	Tue, 9 Jul 2013 18:57:51 -0400
+In-Reply-To: <201307100057.06061.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com, Russell King <linux@arm.linux.org.uk>
 
-This series provides a clock driver for s3c2416, s3c2443 and s3c2450, which
-share a common clock tree, but differ fundamentally from earlier s3c24xx
-SoCs, and converts the mentioned SoCs to use it.
+All Samsung PLLs use similar code to register the clocks and clkdev lookups.
+Therefore move these into a separate function to reduce code duplication.
 
-The clock driver itself follows the same scheme established by all other
-Samsung clock drivers.
+Suggested-by: Russell King <linux@arm.linux.org.uk>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/samsung/clk-pll.c |   68 +++++++++++++++++------------------------
+ 1 file changed, 28 insertions(+), 40 deletions(-)
 
-It depends on the pwm cleanup series from Tomasz Figa, which gets rid of the
-declarations of the pwm-internal clocks.
-
-Test on both non-dt and dt s3c2416.
-
-Heiko Stuebner (6):
-  clk: samsung: move common plls registration into separate function
-  clk: samsung: fix error handling in pll register functions
-  clk: samsung: add plls used in s3c2416 and s3c2443
-  ARM: S3C24XX: enable legacy clock code only when SAMSUNG_CLOCK
-    selected
-  clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
-  ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
-
- .../bindings/clock/samsung,s3c2443-clock.txt       |   48 ++
- arch/arm/boot/dts/s3c2416-smdk2416.dts             |    7 +
- arch/arm/boot/dts/s3c2416.dtsi                     |   42 ++
- arch/arm/mach-s3c24xx/Kconfig                      |   14 +-
- arch/arm/mach-s3c24xx/Makefile                     |    5 +-
- arch/arm/mach-s3c24xx/clock-s3c2416.c              |  171 -----
- arch/arm/mach-s3c24xx/clock-s3c2443.c              |  212 ------
- arch/arm/mach-s3c24xx/common-s3c2443.c             |  675 --------------------
- arch/arm/mach-s3c24xx/common.c                     |   20 +-
- arch/arm/mach-s3c24xx/common.h                     |    8 +
- arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   45 +-
- arch/arm/mach-s3c24xx/mach-smdk2416.c              |    9 +-
- arch/arm/mach-s3c24xx/mach-smdk2443.c              |    9 +-
- drivers/clk/Kconfig                                |    1 +
- drivers/clk/samsung/Kconfig                        |    2 +
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-pll.c                      |  374 +++++++++--
- drivers/clk/samsung/clk-pll.h                      |    8 +
- drivers/clk/samsung/clk-s3c2443.c                  |  422 ++++++++++++
- include/dt-bindings/clock/samsung,s3c2443-clock.h  |   96 +++
- 20 files changed, 998 insertions(+), 1171 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c2443-clock.txt
- delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
- delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
- delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
- create mode 100644 drivers/clk/samsung/Kconfig
- create mode 100644 drivers/clk/samsung/clk-s3c2443.c
- create mode 100644 include/dt-bindings/clock/samsung,s3c2443-clock.h
-
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 362f12d..9153e46 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -13,6 +13,24 @@
+ #include "clk.h"
+ #include "clk-pll.h"
+ 
++static inline struct clk *samsung_register_pll(struct clk_hw *hw)
++{
++	struct clk *clk;
++	const char *name = hw->init->name;
++
++	clk = clk_register(NULL, hw);
++	if (IS_ERR(clk)) {
++		pr_err("%s: failed to register pll clock %s\n", __func__,
++				name);
++		return clk;
++	}
++
++	if (clk_register_clkdev(clk, name, NULL))
++		pr_err("%s: failed to register lookup for %s", __func__, name);
++
++	return clk;
++}
++
+ /*
+  * PLL35xx Clock Type
+  */
+@@ -75,15 +93,9 @@ struct clk * __init samsung_clk_register_pll35xx(const char *name,
+ 	pll->hw.init = &init;
+ 	pll->con_reg = con_reg;
+ 
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
++	clk = samsung_register_pll(&pll->hw);
++	if (IS_ERR(clk))
+ 		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+ 
+ 	return clk;
+ }
+@@ -155,15 +167,9 @@ struct clk * __init samsung_clk_register_pll36xx(const char *name,
+ 	pll->hw.init = &init;
+ 	pll->con_reg = con_reg;
+ 
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
++	clk = samsung_register_pll(&pll->hw);
++	if (IS_ERR(clk))
+ 		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+ 
+ 	return clk;
+ }
+@@ -236,15 +242,9 @@ struct clk * __init samsung_clk_register_pll45xx(const char *name,
+ 	pll->con_reg = con_reg;
+ 	pll->type = type;
+ 
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
++	clk = samsung_register_pll(&pll->hw);
++	if (IS_ERR(clk))
+ 		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+ 
+ 	return clk;
+ }
+@@ -323,15 +323,9 @@ struct clk * __init samsung_clk_register_pll46xx(const char *name,
+ 	pll->con_reg = con_reg;
+ 	pll->type = type;
+ 
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
++	clk = samsung_register_pll(&pll->hw);
++	if (IS_ERR(clk))
+ 		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+ 
+ 	return clk;
+ }
+@@ -406,15 +400,9 @@ struct clk * __init samsung_clk_register_pll2550x(const char *name,
+ 	pll->reg_base = reg_base;
+ 	pll->offset = offset;
+ 
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
++	clk = samsung_register_pll(&pll->hw);
++	if (IS_ERR(clk))
+ 		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+ 
+ 	return clk;
+ }
 -- 
 1.7.10.4
