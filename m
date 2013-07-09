@@ -1,47 +1,138 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V6 0/4] Generic PHY driver for the Exynos SoC DP PHY
-Date: Tue, 09 Jul 2013 10:50:26 +0200
-Message-ID: <51DBCED2.7010102@samsung.com>
-References: <003d01ce7c7a$d04043d0$70c0cb70$@samsung.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC v2 01/10] exynos5-fimc-is: Add Exynos5 FIMC-IS device tree
+ bindings documentation
+Date: Tue, 9 Jul 2013 16:38:44 +0530
+Message-ID: <CALt3h7-jRSNZNsrxkeuGTgjTv1iRMb00ZAqcFUvcj_R-dsYiRw@mail.gmail.com>
+References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com>
+	<1370005408-10853-2-git-send-email-arun.kk@samsung.com>
+	<51C385F0.6000402@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:61761 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753539Ab3GIIua (ORCPT
+Received: from mail-vb0-f51.google.com ([209.85.212.51]:46738 "EHLO
+	mail-vb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751834Ab3GILIp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Jul 2013 04:50:30 -0400
-In-reply-to: <003d01ce7c7a$d04043d0$70c0cb70$@samsung.com>
+	Tue, 9 Jul 2013 07:08:45 -0400
+In-Reply-To: <51C385F0.6000402@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-media@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree-discuss@lists.ozlabs.org, 'Inki Dae' <inki.dae@samsung.com>, 'Donghwa Lee' <dh09.lee@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Hui Wang <jason77.wang@gmail.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kilyeon.im@samsung.com, shaik.ameer@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 07/09/2013 10:03 AM, Jingoo Han wrote:
-> This patch series adds a simple driver for the Samsung Exynos SoC
-> series DP transmitter PHY, using the generic PHY framework [1].
-> Previously the DP PHY used an internal DT node to control the PHY
-> power enable bit.
-> 
-> These patches was tested on Exynos5250.
-> 
-> This PATCH v6 follows:
->  * PATCH v5, sent on July, 8th 2013
->  * PATCH v4, sent on July, 2nd 2013
->  * PATCH v3, sent on July, 1st 2013
->  * PATCH v2, sent on June, 28th 2013
->  * PATCH v1, sent on June, 28th 2013
-> 
-> Changes between v5 and v6:
->   * Re-based on git://gitorious.org/linuxphy/linuxphy.git
+Hi Sylwester,
 
-I'm not sure if we really need to keep the documentation of the
-original binding. Anyway, for the whole series, please feel free
-to ad my
+Thank you for the review and sorry for the delayed response.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On Fri, Jun 21, 2013 at 4:15 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> Hi Arun,
+>
+> On 05/31/2013 03:03 PM, Arun Kumar K wrote:
+>
+> Please add at least one sentence here. All in all this patch
+> adds DT binding documentation for a fairly complex subsystem.
+>
+> And please Cc devicetree-discuss@lists.ozlabs.org next time.
+>
 
---
-Thanks,
-Sylwester
+Ok will do that.
+
+>
+>> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+>> ---
+>>   .../devicetree/bindings/media/exynos5-fimc-is.txt  |   41
+>> ++++++++++++++++++++
+>>   1 file changed, 41 insertions(+)
+>>   create mode 100644
+>> Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>> b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>> new file mode 100644
+>> index 0000000..9fd4646
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>> @@ -0,0 +1,41 @@
+>> +Samsung EXYNOS SoC Camera Subsystem
+>
+>
+> Shouldn't it be, e.g.:
+>
+> Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
+>
+> Or do you intend this file to be describing also the other sub-devices,
+> like GScaler ?
+>
+
+Probably not. WIll change it to Imaging subsystem.
+
+>
+>> +-----------------------------------
+>> +
+>> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
+>> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
+>> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
+>> +handle sensor controls and camera post-processing operations. The
+>> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
+>> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
+>> +dedicated scalers (SCC and SCP).
+>> +
+>> +fimc-is node
+>> +------------
+>> +
+>> +Required properties:
+>> +
+>> +- compatible        : must be "samsung,exynos5250-fimc-is"
+>> +- reg               : physical base address and size of the memory mapped
+>> +                      registers
+>> +- interrupt-parent  : Parent interrupt controller
+>> +- interrupts        : fimc-is interrupt to the parent combiner
+>> +- clocks            : list of clock specifiers, corresponding to entries
+>> in
+>> +                      clock-names property;
+>> +- clock-names       : must contain "isp", "mcu_isp", "isp_div0",
+>> "isp_div1",
+>> +                      "isp_divmpwm", "mcu_isp_div0", "mcu_isp_div1"
+>> entries,
+>> +                      matching entries in the clocks property.
+>> +
+>> +
+>> +Board specific properties:
+>> +
+>> +- pinctrl-names    : pinctrl names for camera port pinmux control, at
+>> least
+>> +                    "default" needs to be specified.
+>> +- pinctrl-0...N           : pinctrl properties corresponding to
+>> pinctrl-names
+>
+>
+> What pins exactly are supposed to be covered by these properties ? For what
+> devices ? Aren't the camera port pins supposed to be specified at the common
+> 'camera' node ? I believe the camera ports are not specific to the FIMC-IS.
+>
+
+These are for the sensor controls (especially clock lines).
+I think I should move these to the sensor node.
+
+>
+>> +pmu subnode
+>> +-----------
+>> +
+>> +Required properties:
+>> + - reg : should contain PMU physical base address and size of the memory
+>> +         mapped registers.
+>
+>
+> What about other devices, like ISP I2C, SPI ? Don't you want to list at
+> least
+> the ones currently used (I2C bus controllers) ?
+>
+
+The present driver doesnt make use of the SPI bus as its used only
+for sensor calibration which is not yet added.
+I2C bus is used by the sensor which has its own node. May be I should
+explain one of the sensor nodes over here?
+
+Regards
+Arun
