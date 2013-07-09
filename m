@@ -1,44 +1,71 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 3/5] mmc: dw_mmc: Add exynos resume callback to clear WAKEUP_INT
-Date: Tue, 9 Jul 2013 12:09:42 -0700
-Message-ID: <CAD=FV=XLp_2t83JfUBryaSvqLZr5OHEZeFZDRmQ1T=XA1MRkHg@mail.gmail.com>
-References: <1373391071-6312-1-git-send-email-dianders@chromium.org>
-	<1373391071-6312-4-git-send-email-dianders@chromium.org>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 0/6] Convert S3C2416 ad S3C2443 to common clock framework
+Date: Wed, 10 Jul 2013 00:57:05 +0200
+Message-ID: <201307100057.06061.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f171.google.com ([209.85.217.171]:45076 "EHLO
-	mail-lb0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752430Ab3GITJo (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:44488 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752209Ab3GIW5M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Jul 2013 15:09:44 -0400
-Received: by mail-lb0-f171.google.com with SMTP id 13so5072705lba.30
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Jul 2013 12:09:42 -0700 (PDT)
-In-Reply-To: <1373391071-6312-4-git-send-email-dianders@chromium.org>
+	Tue, 9 Jul 2013 18:57:12 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com, Russell King <linux@arm.linux.org.uk>
 
-Hi,
+This series provides a clock driver for s3c2416, s3c2443 and s3c2450, which
+share a common clock tree, but differ fundamentally from earlier s3c24xx
+SoCs, and converts the mentioned SoCs to use it.
 
-On Tue, Jul 9, 2013 at 10:31 AM, Doug Anderson <dianders@chromium.org> wrote:
-> If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
-> looping around forever.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
->  drivers/mmc/host/dw_mmc-exynos.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+The clock driver itself follows the same scheme established by all other
+Samsung clock drivers.
 
-Grant just pointed out that the WAKEUP_INT is supposed to only be
-enabled if bits 8, 9, or 10 are 1.  Our driver never sets those so we
-_should_ never get a WAKEUP_INT.  Bits 8-10 are marked as RESERVED on
-the exynos5420 manual, so the current guess is that they're broken on
-that silicon but that sometimes the interrupt fires anyway.
+It depends on the pwm cleanup series from Tomasz Figa, which gets rid of the
+declarations of the pwm-internal clocks.
 
-In any case, it is still a reasonable thing to clear this interrupt at
-wakeup if it has fired, even if we're on an exynos device without any
-problems.
+Test on both non-dt and dt s3c2416.
 
--Doug
+Heiko Stuebner (6):
+  clk: samsung: move common plls registration into separate function
+  clk: samsung: fix error handling in pll register functions
+  clk: samsung: add plls used in s3c2416 and s3c2443
+  ARM: S3C24XX: enable legacy clock code only when SAMSUNG_CLOCK
+    selected
+  clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
+  ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+
+ .../bindings/clock/samsung,s3c2443-clock.txt       |   48 ++
+ arch/arm/boot/dts/s3c2416-smdk2416.dts             |    7 +
+ arch/arm/boot/dts/s3c2416.dtsi                     |   42 ++
+ arch/arm/mach-s3c24xx/Kconfig                      |   14 +-
+ arch/arm/mach-s3c24xx/Makefile                     |    5 +-
+ arch/arm/mach-s3c24xx/clock-s3c2416.c              |  171 -----
+ arch/arm/mach-s3c24xx/clock-s3c2443.c              |  212 ------
+ arch/arm/mach-s3c24xx/common-s3c2443.c             |  675 --------------------
+ arch/arm/mach-s3c24xx/common.c                     |   20 +-
+ arch/arm/mach-s3c24xx/common.h                     |    8 +
+ arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   45 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c              |    9 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c              |    9 +-
+ drivers/clk/Kconfig                                |    1 +
+ drivers/clk/samsung/Kconfig                        |    2 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-pll.c                      |  374 +++++++++--
+ drivers/clk/samsung/clk-pll.h                      |    8 +
+ drivers/clk/samsung/clk-s3c2443.c                  |  422 ++++++++++++
+ include/dt-bindings/clock/samsung,s3c2443-clock.h  |   96 +++
+ 20 files changed, 998 insertions(+), 1171 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c2443-clock.txt
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
+ delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
+ create mode 100644 drivers/clk/samsung/Kconfig
+ create mode 100644 drivers/clk/samsung/clk-s3c2443.c
+ create mode 100644 include/dt-bindings/clock/samsung,s3c2443-clock.h
+
+-- 
+1.7.10.4
