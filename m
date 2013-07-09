@@ -1,19 +1,19 @@
 From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [RFC v2 03/10] exynos5-fimc-is: Adds common driver header files
-Date: Tue, 9 Jul 2013 16:50:13 +0530
-Message-ID: <CALt3h78=JKU0AO++n3HgPw209pDRTpiXntdpGwejNXQ7X0z9gg@mail.gmail.com>
+Subject: Re: [RFC v2 06/10] exynos5-fimc-is: Adds isp subdev
+Date: Tue, 9 Jul 2013 17:12:05 +0530
+Message-ID: <CALt3h7_Bo3P9WsZORXXWtXrWLS4Uoeq10HYr0WsgO5wVzqQ95w@mail.gmail.com>
 References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com>
-	<1370005408-10853-4-git-send-email-arun.kk@samsung.com>
-	<51C3865A.4050701@gmail.com>
+	<1370005408-10853-7-git-send-email-arun.kk@samsung.com>
+	<51C38F82.1040507@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f54.google.com ([209.85.212.54]:51358 "EHLO
-	mail-vb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751554Ab3GILUO (ORCPT
+Received: from mail-ve0-f178.google.com ([209.85.128.178]:44386 "EHLO
+	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752923Ab3GILmH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Jul 2013 07:20:14 -0400
-In-Reply-To: <51C3865A.4050701@gmail.com>
+	Tue, 9 Jul 2013 07:42:07 -0400
+In-Reply-To: <51C38F82.1040507@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
@@ -21,731 +21,691 @@ Cc: Arun Kumar K <arun.kk@samsung.com>, LMML <linux-media@vger.kernel.org>, Sylw
 
 Hi Sylwester,
 
-Thank you for the review.
-
-On Fri, Jun 21, 2013 at 4:16 AM, Sylwester Nawrocki
+On Fri, Jun 21, 2013 at 4:55 AM, Sylwester Nawrocki
 <sylvester.nawrocki@gmail.com> wrote:
 > On 05/31/2013 03:03 PM, Arun Kumar K wrote:
 >>
->> This patch adds all the common header files used by the fimc-is
->> driver. It includes the commands for interfacing with the firmware
->> and error codes from IS firmware, metadata and command parameter
->> definitions.
+>> fimc-is driver takes video data input from the ISP video node
+>> which is added in this patch. This node accepts Bayer input
+>> buffers which is given from the IS sensors.
 >>
 >> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
 >> Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
 >> ---
->>   drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  201 ++++
->>   drivers/media/platform/exynos5-is/fimc-is-err.h    |  261 ++++
->>   .../media/platform/exynos5-is/fimc-is-metadata.h   |  771 ++++++++++++
->>   drivers/media/platform/exynos5-is/fimc-is-param.h  | 1259
->> ++++++++++++++++++++
->>   4 files changed, 2492 insertions(+)
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
+>>   drivers/media/platform/exynos5-is/fimc-is-isp.c |  438
+>> +++++++++++++++++++++++
+>>   drivers/media/platform/exynos5-is/fimc-is-isp.h |   89 +++++
+>>   2 files changed, 527 insertions(+)
+>>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.c
+>>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.h
 >>
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-cmd.h
->> b/drivers/media/platform/exynos5-is/fimc-is-cmd.h
+>> diff --git a/drivers/media/platform/exynos5-is/fimc-is-isp.c
+>> b/drivers/media/platform/exynos5-is/fimc-is-isp.c
 >> new file mode 100644
->> index 0000000..4adf832
+>> index 0000000..2890f17
 >> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-cmd.h
->> @@ -0,0 +1,201 @@
+>> +++ b/drivers/media/platform/exynos5-is/fimc-is-isp.c
+>> @@ -0,0 +1,438 @@
 >> +/*
->> + * Samsung Exynos5 SoC series FIMC-IS driver
->> + *
->> + * Copyright (c) 2013 Samsung Electronics Co., Ltd
->> + * Kil-yeon Lim<kilyeon.im@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#ifndef FIMC_IS_CMD_H
->> +#define FIMC_IS_CMD_H
->> +
->> +#define IS_COMMAND_VER 122 /* IS COMMAND VERSION 1.22 */
->> +
->> +enum is_cmd {
->> +       /* HOST ->  IS */
->> +       HIC_PREVIEW_STILL = 0x1,
->> +       HIC_PREVIEW_VIDEO,
->> +       HIC_CAPTURE_STILL,
->> +       HIC_CAPTURE_VIDEO,
->> +       HIC_PROCESS_START,
->> +       HIC_PROCESS_STOP,
->> +       HIC_STREAM_ON,
->> +       HIC_STREAM_OFF,
->> +       HIC_SHOT,
->> +       HIC_GET_STATIC_METADATA,
->> +       HIC_SET_CAM_CONTROL,
->> +       HIC_GET_CAM_CONTROL,
->> +       HIC_SET_PARAMETER,
->> +       HIC_GET_PARAMETER,
->> +       HIC_SET_A5_MEM_ACCESS,
->> +       RESERVED2,
->> +       HIC_GET_STATUS,
->> +       /* SENSOR PART*/
->> +       HIC_OPEN_SENSOR,
->> +       HIC_CLOSE_SENSOR,
->> +       HIC_SIMMIAN_INIT,
->> +       HIC_SIMMIAN_WRITE,
->> +       HIC_SIMMIAN_READ,
->> +       HIC_POWER_DOWN,
->> +       HIC_GET_SET_FILE_ADDR,
->> +       HIC_LOAD_SET_FILE,
->> +       HIC_MSG_CONFIG,
->> +       HIC_MSG_TEST,
->> +       /* IS ->  HOST */
->> +       IHC_GET_SENSOR_NUMBER = 0x1000,
->> +       /* Parameter1 : Address of space to copy a setfile */
->> +       /* Parameter2 : Space szie */
->> +       IHC_SET_SHOT_MARK,
->> +       /* PARAM1 : a frame number */
->> +       /* PARAM2 : confidence level(smile 0~100) */
->> +       /* PARMA3 : confidence level(blink 0~100) */
->> +       IHC_SET_FACE_MARK,
->> +       /* PARAM1 : coordinate count */
->> +       /* PARAM2 : coordinate buffer address */
->> +       IHC_FRAME_DONE,
->> +       /* PARAM1 : frame start number */
->> +       /* PARAM2 : frame count */
->> +       IHC_AA_DONE,
->> +       IHC_NOT_READY,
->> +       IHC_FLASH_READY
->> +};
->> +
->> +enum is_reply {
->> +       ISR_DONE        = 0x2000,
->> +       ISR_NDONE
->> +};
->> +
->> +enum is_scenario_id {
->> +       ISS_PREVIEW_STILL,
->> +       ISS_PREVIEW_VIDEO,
->> +       ISS_CAPTURE_STILL,
->> +       ISS_CAPTURE_VIDEO,
->> +       ISS_END
->> +};
->> +
->> +enum is_subscenario_id {
->> +       ISS_SUB_SCENARIO_STILL,
->> +       ISS_SUB_SCENARIO_VIDEO,
->> +       ISS_SUB_SCENARIO_SCENE1,
->> +       ISS_SUB_SCENARIO_SCENE2,
->> +       ISS_SUB_SCENARIO_SCENE3,
->> +       ISS_SUB_END
->> +};
->> +
->> +struct is_setfile_header_element {
->> +       u32 binary_addr;
->> +       u32 binary_size;
->> +};
->> +
->> +struct is_setfile_header {
->> +       struct is_setfile_header_element isp[ISS_END];
->> +       struct is_setfile_header_element drc[ISS_END];
->> +       struct is_setfile_header_element fd[ISS_END];
->> +};
->> +
->> +struct is_common_reg {
->> +       u32 hicmd;
->> +       u32 hic_sensorid;
->> +       u32 hic_param1;
->> +       u32 hic_param2;
->> +       u32 hic_param3;
->> +       u32 hic_param4;
->
->
-> How about replacing the above 4 fields with
->
->         u32 hic_param[4];
->
-> ?
-
-Ok.
-
->>
->> +       u32 reserved1[3];
->> +
->> +       u32 ihcmd_iflag;
->> +       u32 ihcmd;
->> +       u32 ihc_sensorid;
->> +       u32 ihc_param1;
->> +       u32 ihc_param2;
->> +       u32 ihc_param3;
->> +       u32 ihc_param4;
->
->
-> Similarly,
->
->         u32 ihc_param[4];
->
-> and for other groups of fields below ?
->
-
-Will make this change.
-
->> +
->> +       u32 reserved2[3];
->> +
->> +       u32 isp_bayer_iflag;
->> +       u32 isp_bayer_sensor_id;
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-err.h
->> b/drivers/media/platform/exynos5-is/fimc-is-err.h
->> new file mode 100644
->> index 0000000..49d7cf5
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-err.h
->> @@ -0,0 +1,261 @@
->> +/*
->> + * Samsung Exynos5 SoC series FIMC-IS driver
->> + *
->> + * Copyright (c) 2013 Samsung Electronics Co., Ltd
->> + * Arun Kumar K<arun.kk@samsung.com>
->> + * Kil-yeon Lim<kilyeon.im@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#ifndef FIMC_IS_ERR_H
->> +#define FIMC_IS_ERR_H
->> +
->> +#define IS_ERROR_VER 012 /* IS ERROR VERSION 0.07 */
->> +
->> +/* IS error enum */
->> +enum is_error {
->> +
->> +       IS_ERROR_SUCCESS = 0,
->> +
->> +       /* General 1 ~ 100 */
->> +       IS_ERROR_INVALID_COMMAND = 1,
->> +       IS_ERROR_REQUEST_FAIL,
->> +       IS_ERROR_INVALID_SCENARIO,
->> +       IS_ERROR_INVALID_SENSORID,
->> +       IS_ERROR_INVALID_MODE_CHANGE,
->> +       IS_ERROR_INVALID_MAGIC_NUMBER,
->> +       IS_ERROR_INVALID_SETFILE_HDR,
->> +       IS_ERROR_ISP_SETFILE_VERSION_MISMATCH,
->> +       IS_ERROR_ISP_SETFILE_REVISION_MISMATCH,
->> +       IS_ERROR_BUSY,
->> +       IS_ERROR_SET_PARAMETER,
->> +       IS_ERROR_INVALID_PATH,
->> +       IS_ERROR_OPEN_SENSOR_FAIL,
->> +       IS_ERROR_ENTRY_MSG_THREAD_DOWN,
->> +       IS_ERROR_ISP_FRAME_END_NOT_DONE,
->> +       IS_ERROR_DRC_FRAME_END_NOT_DONE,
->> +       IS_ERROR_SCALERC_FRAME_END_NOT_DONE,
->> +       IS_ERROR_ODC_FRAME_END_NOT_DONE,
->> +       IS_ERROR_DIS_FRAME_END_NOT_DONE,
->> +       IS_ERROR_TDNR_FRAME_END_NOT_DONE,
->> +       IS_ERROR_SCALERP_FRAME_END_NOT_DONE,
->> +       IS_ERROR_WAIT_STREAM_OFF_NOT_DONE,
->> +       IS_ERROR_NO_MSG_IS_RECEIVED,
->> +       IS_ERROR_SENSOR_MSG_FAIL,
->> +       IS_ERROR_ISP_MSG_FAIL,
->> +       IS_ERROR_DRC_MSG_FAIL,
->> +       IS_ERROR_SCALERC_MSG_FAIL,
->> +       IS_ERROR_ODC_MSG_FAIL,
->> +       IS_ERROR_DIS_MSG_FAIL,
->> +       IS_ERROR_TDNR_MSG_FAIL,
->> +       IS_ERROR_SCALERP_MSG_FAIL,
->> +       IS_ERROR_LHFD_MSG_FAIL,
->> +       IS_ERROR_INTERNAL_STOP,
->> +       IS_ERROR_UNKNOWN,
->> +       IS_ERROR_TIME_OUT_FLAG,
->> +
->> +       /* Sensor 100 ~ 200 */
->> +       IS_ERROR_SENSOR_PWRDN_FAIL = 100,
->> +       IS_ERROR_SENSOR_STREAM_ON_FAIL,
->> +       IS_ERROR_SENSOR_STREAM_OFF_FAIL,
->> +
->> +       /* ISP 200 ~ 300 */
->> +       IS_ERROR_ISP_PWRDN_FAIL = 200,
->> +       IS_ERROR_ISP_MULTIPLE_INPUT,
->> +       IS_ERROR_ISP_ABSENT_INPUT,
->> +       IS_ERROR_ISP_ABSENT_OUTPUT,
->> +       IS_ERROR_ISP_NONADJACENT_OUTPUT,
->> +       IS_ERROR_ISP_FORMAT_MISMATCH,
->> +       IS_ERROR_ISP_WIDTH_MISMATCH,
->> +       IS_ERROR_ISP_HEIGHT_MISMATCH,
->> +       IS_ERROR_ISP_BITWIDTH_MISMATCH,
->> +       IS_ERROR_ISP_FRAME_END_TIME_OUT,
->> +
->> +       /* DRC 300 ~ 400 */
->> +       IS_ERROR_DRC_PWRDN_FAIL = 300,
->> +       IS_ERROR_DRC_MULTIPLE_INPUT,
->> +       IS_ERROR_DRC_ABSENT_INPUT,
->> +       IS_ERROR_DRC_NONADJACENT_INTPUT,
->> +       IS_ERROR_DRC_ABSENT_OUTPUT,
->> +       IS_ERROR_DRC_NONADJACENT_OUTPUT,
->> +       IS_ERROR_DRC_FORMAT_MISMATCH,
->> +       IS_ERROR_DRC_WIDTH_MISMATCH,
->> +       IS_ERROR_DRC_HEIGHT_MISMATCH,
->> +       IS_ERROR_DRC_BITWIDTH_MISMATCH,
->> +       IS_ERROR_DRC_FRAME_END_TIME_OUT,
->> +
->> +       /*SCALERC(400~500)*/
->> +       IS_ERROR_SCALERC_PWRDN_FAIL = 400,
->> +
->> +       /*ODC(500~600)*/
->> +       IS_ERROR_ODC_PWRDN_FAIL = 500,
->> +
->> +       /*DIS(600~700)*/
->> +       IS_ERROR_DIS_PWRDN_FAIL = 600,
->> +
->> +       /*TDNR(700~800)*/
->> +       IS_ERROR_TDNR_PWRDN_FAIL = 700,
->> +
->> +       /*SCALERP(800~900)*/
->> +       IS_ERROR_SCALERP_PWRDN_FAIL = 800,
->> +
->> +       /*FD(900~1000)*/
->> +       IS_ERROR_FD_PWRDN_FAIL = 900,
->> +       IS_ERROR_FD_MULTIPLE_INPUT,
->> +       IS_ERROR_FD_ABSENT_INPUT,
->> +       IS_ERROR_FD_NONADJACENT_INPUT,
->> +       IS_ERROR_LHFD_FRAME_END_TIME_OUT,
->> +};
->> +
->> +/* Set parameter error enum */
->> +enum error {
->> +       /* Common error (0~99) */
->> +       ERROR_COMMON_NO                 = 0,
->
->
-> How about renaming all those ERROR_*_NO symbols to ERROR_*_NONE ?
->
-
-Ok.
-
-
->> +       ERROR_COMMON_CMD                = 1,    /* Invalid command*/
->> +       ERROR_COMMON_PARAMETER          = 2,    /* Invalid parameter*/
->> +       /* setfile is not loaded before adjusting */
-
-[snip]
-
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-metadata.h
->> b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
->> new file mode 100644
->> index 0000000..9738d7d
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
->> @@ -0,0 +1,771 @@
->> +/*
->> + * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
+>> + * Samsung EXYNOS5250 FIMC-IS (Imaging Subsystem) driver
 >> + *
 >> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->> + * Kil-yeon Lim<kilyeon.im@samsung.com>
->> + * Arun Kumar K<arun.kk@samsung.com>
+>> + *  Arun Kumar K<arun.kk@samsung.com>
 >> + *
 >> + * This program is free software; you can redistribute it and/or modify
 >> + * it under the terms of the GNU General Public License version 2 as
 >> + * published by the Free Software Foundation.
 >> + */
 >> +
->> +#ifndef FIMC_IS_METADATA_H_
->> +#define FIMC_IS_METADATA_H_
+>> +#include<media/v4l2-ioctl.h>
+>> +#include<media/videobuf2-dma-contig.h>
 >> +
->> +struct rational {
->> +       uint32_t num;
->> +       uint32_t den;
+>> +#include "fimc-is.h"
+>> +
+>> +#define ISP_DRV_NAME "fimc-is-isp"
+>> +
+>> +static const struct fimc_is_fmt formats[] = {
+>> +       {
+>> +               .name           = "Bayer GR-BG 8bits",
+>> +               .fourcc         = V4L2_PIX_FMT_SGRBG8,
+>> +               .depth          = {8},
+>
+>
+> Please add spaces betwen {} and the number.
+>
+
+Ok
+
+>
+>> +               .num_planes     = 1,
+>> +       },
+>> +       {
+>> +               .name           = "Bayer GR-BG 10bits",
+>> +               .fourcc         = V4L2_PIX_FMT_SGRBG10,
+>> +               .depth          = {10},
+>> +               .num_planes     = 1,
+>> +       },
+>> +       {
+>> +               .name           = "Bayer GR-BG 12bits",
+>> +               .fourcc         = V4L2_PIX_FMT_SGRBG12,
+>> +               .depth          = {12},
+>> +               .num_planes     = 1,
+>> +       },
+>> +};
+>> +#define NUM_FORMATS ARRAY_SIZE(formats)
+>> +
+>> +static struct fimc_is_fmt *find_format(struct v4l2_format *f)
+>
+>
+> Make the return value 'const'...
+>
+
+Ok
+
+>
+>> +{
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i<  NUM_FORMATS; i++) {
+>> +               if (formats[i].fourcc == f->fmt.pix_mp.pixelformat)
+>> +                       return (struct fimc_is_fmt *)&formats[i];
+>
+>
+> and drop the casting here.
+>
+
+Ok
+
+>
+>> +       }
+>> +       return NULL;
+>> +}
+>> +
+>> +static int isp_video_output_start_streaming(struct vb2_queue *vq,
+>> +                                       unsigned int count)
+>> +{
+>> +       struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
+>> +
+>> +       /* Set state to RUNNING */
+>
+>
+> This comment doesn't add any value.
+>
+
+Yes :) will remove.
+
+>> +       set_bit(STATE_RUNNING,&isp->output_state);
+>>
+>> +       return 0;
+>> +}
+>> +
+>> +static int isp_video_output_stop_streaming(struct vb2_queue *vq)
+>> +{
+>> +       struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
+>> +
+>> +       clear_bit(STATE_RUNNING,&isp->output_state);
+>>
+>> +       return 0;
+>> +}
+>> +
+>> +static int isp_video_output_queue_setup(struct vb2_queue *vq,
+>> +                       const struct v4l2_format *pfmt,
+>> +                       unsigned int *num_buffers, unsigned int
+>> *num_planes,
+>> +                       unsigned int sizes[], void *allocators[])
+>> +{
+>> +       struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
+>> +       struct fimc_is_fmt *fmt = isp->fmt;
+>> +       unsigned int wh, i;
+>> +
+>> +       if (!fmt)
+>> +               return -EINVAL;
+>> +
+>> +       *num_planes = fmt->num_planes;
+>> +       wh = isp->width * isp->height;
+>> +
+>> +       for (i = 0; i<  *num_planes; i++) {
+>> +               allocators[i] = isp->alloc_ctx;
+>> +               sizes[i] = (wh * fmt->depth[i]) / 8;
+>> +       }
+>> +       return 0;
+>> +}
+>> +
+>> +static int isp_video_output_buffer_init(struct vb2_buffer *vb)
+>> +{
+>> +       struct vb2_queue *vq = vb->vb2_queue;
+>> +       struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
+>> +       struct fimc_is_buf *buf;
+>> +
+>> +       buf =&isp->output_bufs[vb->v4l2_buf.index];
+>>
+>> +       /* Initialize buffer */
+>> +       buf->vb = vb;
+>> +       buf->paddr[0] = vb2_dma_contig_plane_dma_addr(vb, 0);
+>> +       isp->out_buf_cnt++;
+>> +       return 0;
+>> +}
+>> +
+>> +static void isp_video_output_buffer_queue(struct vb2_buffer *vb)
+>> +{
+>> +       struct vb2_queue *vq = vb->vb2_queue;
+>> +       struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
+>> +       struct fimc_is_buf *buf;
+>> +
+>> +       buf =&isp->output_bufs[vb->v4l2_buf.index];
+>>
+>> +
+>> +       fimc_is_pipeline_buf_lock(isp->pipeline);
+>> +       fimc_is_isp_wait_queue_add(isp, buf);
+>> +       fimc_is_pipeline_buf_unlock(isp->pipeline);
+>> +
+>> +       /* Call shot command */
+>> +       fimc_is_pipeline_shot(isp->pipeline);
+>> +}
+>> +
+>> +static void isp_lock(struct vb2_queue *vq)
+>> +{
+>> +       struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
+>> +       mutex_lock(&isp->video_lock);
+>> +}
+>> +
+>> +static void isp_unlock(struct vb2_queue *vq)
+>> +{
+>> +       struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
+>> +       mutex_unlock(&isp->video_lock);
+>> +}
+>> +
+>> +static const struct vb2_ops isp_video_output_qops = {
+>> +       .queue_setup     = isp_video_output_queue_setup,
+>> +       .buf_init        = isp_video_output_buffer_init,
+>> +       .buf_queue       = isp_video_output_buffer_queue,
+>> +       .wait_prepare    = isp_unlock,
+>> +       .wait_finish     = isp_lock,
+>> +       .start_streaming = isp_video_output_start_streaming,
+>> +       .stop_streaming  = isp_video_output_stop_streaming,
 >> +};
 >> +
->> +#define CAMERA2_MAX_AVAILABLE_MODE     21
->> +#define CAMERA2_MAX_FACES              16
+>> +static int isp_video_output_open(struct file *file)
+>> +{
+>> +       struct fimc_is_isp *isp = video_drvdata(file);
+>> +       int ret = 0;
+>> +
+>> +       /* Check if opened before */
+>> +       if (isp->refcount>= FIMC_IS_MAX_INSTANCES) {
+>> +               pr_err("All instances are in use.\n");
+>> +               return -EBUSY;
+>
+>
+> Multiple open() should be allowed. And device node drivers should
+> use struct v4l2_fh.
+>
+
+But then we need to restrict the number of instances to the maximum
+that hardware can support. Where else can it be taken care?
+
+>
+>> +       }
+>> +
+>> +       INIT_LIST_HEAD(&isp->wait_queue);
+>> +       isp->wait_queue_cnt = 0;
+>> +       INIT_LIST_HEAD(&isp->run_queue);
+>> +       isp->run_queue_cnt = 0;
+>
+>
+> This does not belong here, I would put it into the start_streaming
+> handler.
+>
+
+Ok
+
+>
+>> +       isp->refcount++;
+>> +       return ret;
+>> +}
+>> +
+>> +static int isp_video_output_close(struct file *file)
+>> +{
+>> +       struct fimc_is_isp *isp = video_drvdata(file);
+>> +       int ret = 0;
+>
+>
+> This variable looks redundant.
+>
+
+Yes will remove.
+
+>
+>> +       isp->refcount--;
+>> +       isp->output_state = 0;
+>> +       vb2_fop_release(file);
+>
+>
+>> +       return ret;
+>> +}
+>> +
+>> +static const struct v4l2_file_operations isp_video_output_fops = {
+>> +       .owner          = THIS_MODULE,
+>> +       .open           = isp_video_output_open,
+>> +       .release        = isp_video_output_close,
+>> +       .poll           = vb2_fop_poll,
+>> +       .unlocked_ioctl = video_ioctl2,
+>> +       .mmap           = vb2_fop_mmap,
+>> +};
 >> +
 >> +/*
->> + *controls/dynamic metadata
->> +*/
->> +
->> +enum metadata_mode {
->> +       METADATA_MODE_NONE,
->> +       METADATA_MODE_FULL
->> +};
->> +
->> +struct camera2_request_ctl {
->> +       uint32_t                id;
->> +       enum metadata_mode      metadatamode;
->> +       uint8_t                 outputstreams[16];
->> +       uint32_t                framecount;
->> +};
->> +
->> +struct camera2_request_dm {
->> +       uint32_t                id;
->> +       enum metadata_mode      metadatamode;
->> +       uint32_t                framecount;
->> +};
->> +
->> +
->> +
->> +enum optical_stabilization_mode {
->> +       OPTICAL_STABILIZATION_MODE_OFF,
->> +       OPTICAL_STABILIZATION_MODE_ON
->> +};
->> +
->> +enum lens_facing {
->> +       LENS_FACING_BACK,
->> +       LENS_FACING_FRONT
->> +};
->> +
->> +struct camera2_lens_ctl {
->> +       uint32_t                                focusdistance;
->> +       float                                   aperture;
->> +       float                                   focallength;
->> +       float                                   filterdensity;
->> +       enum optical_stabilization_mode         opticalstabilizationmode;
->> +
+>> + * Video node ioctl operations
+>> + */
+>> +static int isp_querycap_output(struct file *file, void *priv,
+>> +                                       struct v4l2_capability *cap)
+>> +{
+>> +       strncpy(cap->driver, ISP_DRV_NAME, sizeof(cap->driver) - 1);
+>> +       strncpy(cap->card, ISP_DRV_NAME, sizeof(cap->card) - 1);
+>> +       strncpy(cap->bus_info, ISP_DRV_NAME, sizeof(cap->bus_info) - 1);
+>> +       cap->capabilities = V4L2_CAP_STREAMING |
+>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+>> +       cap->device_caps = V4L2_CAP_STREAMING |
+>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
 >
 >
-> Unnecessary empty line.
+>         cap->capabilities = V4L2_CAP_STREAMING;
 >
-> Huh, flat number in the kernel ? What are we going to do with those ?
-> Is this structure going to be needed to be exposed to user space somehow ?
+>         cap->device_caps = V4L2_CAP_STREAMING |
+> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+>
+> This should be:
+>
+>         cap->device_caps = V4L2_CAP_STREAMING;
+>         cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+>
+> Media Controller device nodes must not use V4L2_CAP_VIDEO_{OUTPUT,
+> CAPTURE}_(_MPLANE)
+> capability flags.
 >
 
-It was used like that in the reference driver from where this include is used
-as it is. Will remove these as we no longer do that kind of stuff in this
-re-worked driver.
+Ok
 
->> +};
+>> +       return 0;
+>> +}
 >> +
->> +struct camera2_lens_dm {
->> +       uint32_t                                focusdistance;
->> +       float                                   aperture;
->> +       float                                   focalilength;
->> +       float                                   filterdensity;
->> +       enum optical_stabilization_mode         opticalstabilizationmode;
->> +       float                                   focusrange[2];
->> +};
+>> +static int isp_enum_fmt_mplane(struct file *file, void *priv,
+>> +                                    struct v4l2_fmtdesc *f)
+>> +{
+>> +       const struct fimc_is_fmt *fmt;
 >> +
->> +struct camera2_lens_sm {
->> +       float                           minimumfocusdistance;
->> +       float                           hyperfocaldistance;
->> +       float                           availablefocalLength[2];
->> +       float                           availableapertures;
->> +       /*assuming 1 aperture*/
->> +       float                           availablefilterdensities;
->> +       /*assuming 1 ND filter value*/
->> +       enum optical_stabilization_mode availableopticalstabilization;
->> +       /*assuming 1*/
->> +       uint32_t                        shadingmapsize;
->> +       float                           shadingmap[3][40][30];
->> +       uint32_t                        geometriccorrectionmapsize;
->> +       float
->> geometriccorrectionmap[2][3][40][30];
->> +       enum lens_facing                facing;
->> +       float                           position[2];
->> +};
+>> +       if (f->index>= NUM_FORMATS)
+>> +               return -EINVAL;
 >> +
->> +enum sensor_colorfilterarrangement {
->> +       SENSOR_COLORFILTERARRANGEMENT_RGGB,
->> +       SENSOR_COLORFILTERARRANGEMENT_GRBG,
->> +       SENSOR_COLORFILTERARRANGEMENT_GBRG,
->> +       SENSOR_COLORFILTERARRANGEMENT_BGGR,
->> +       SENSOR_COLORFILTERARRANGEMENT_RGB
+>> +       fmt =&formats[f->index];
+>>
+>> +       strlcpy(f->description, fmt->name, sizeof(f->description));
+>> +       f->pixelformat = fmt->fourcc;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int isp_g_fmt_mplane(struct file *file, void *fh,
+>> +                                 struct v4l2_format *f)
+>> +{
+>> +       struct fimc_is_isp *isp = video_drvdata(file);
+>> +       struct v4l2_pix_format_mplane *pixm =&f->fmt.pix_mp;
+>> +       struct v4l2_plane_pix_format *plane_fmt =&pixm->plane_fmt[0];
+>>
+>> +       const struct fimc_is_fmt *fmt = isp->fmt;
+>> +
+>> +       plane_fmt->bytesperline = (isp->width * fmt->depth[0]) / 8;
+>> +       plane_fmt->sizeimage = plane_fmt->bytesperline * isp->height;
+>> +
+>> +       pixm->num_planes = fmt->num_planes;
+>> +       pixm->pixelformat = fmt->fourcc;
+>> +       pixm->width = isp->width;
+>> +       pixm->height = isp->height;
+>> +       pixm->field = V4L2_FIELD_NONE;
+>> +       pixm->colorspace = V4L2_COLORSPACE_JPEG;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int isp_try_fmt_mplane(struct file *file, void *fh,
+>> +               struct v4l2_format *f)
+>> +{
+>> +       struct fimc_is_fmt *fmt;
+>> +
+>> +       fmt = find_format(f);
+>> +       if (!fmt) {
+>> +               fmt = (struct fimc_is_fmt *)&formats[0];
+>>
+>> +               f->fmt.pix_mp.pixelformat = fmt->fourcc;
+>> +       }
+>> +
+>> +       if (fmt->num_planes != f->fmt.pix_mp.num_planes)
+>> +               f->fmt.pix_mp.num_planes = fmt->num_planes;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int isp_s_fmt_mplane(struct file *file, void *priv,
+>> +               struct v4l2_format *f)
+>> +{
+>> +       struct fimc_is_isp *isp = video_drvdata(file);
+>> +       struct fimc_is_pipeline *p = isp->pipeline;
+>> +       struct fimc_is_fmt *fmt;
+>> +       unsigned int sensor_width, sensor_height;
+>> +       int ret;
+>> +
+>> +       ret = isp_try_fmt_mplane(file, priv, f);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       /* Get format type */
+>> +       fmt = find_format(f);
+>> +       if (!fmt) {
+>> +               fmt = (struct fimc_is_fmt *)&formats[0];
+>>
+>> +               f->fmt.pix_mp.pixelformat = fmt->fourcc;
+>> +               f->fmt.pix_mp.num_planes = fmt->num_planes;
+>> +       }
+>> +
+>> +       /* Check if same as sensor width&  height */
+>>
+>> +       sensor_width = p->sensor->drvdata->pixel_width;
+>> +       sensor_height = p->sensor->drvdata->pixel_height;
+>> +       if ((sensor_width != f->fmt.pix_mp.width) ||
+>> +               (sensor_height != f->fmt.pix_mp.height)) {
 >
 >
-> Iwonderwhathappenedwithspacesinthoseenumdefinitions....
+> What's the point of this check ?
 >
 
-Will change it. Had a very good laugh by seeing your comment :)
+Check was added to ensure ISP input width and height is
+set same as the sensor output or not.
+But yes this cannot be extended to generic (non-IS controlled) sensors.
+Will drop this check and let media controller take care.
 
-[snip]
+>
+>> +               f->fmt.pix_mp.width = sensor_width;
+>> +               f->fmt.pix_mp.height = sensor_height;
+>> +       }
+>
+>
+>> +       isp->fmt = fmt;
+>>
+>> +       isp->width = f->fmt.pix_mp.width;
+>> +       isp->height = f->fmt.pix_mp.height;
+>> +       isp->size_image = f->fmt.pix_mp.plane_fmt[0].sizeimage;
+>> +       set_bit(STATE_INIT,&isp->output_state);
+>>
+>> +       return 0;
+>> +}
 >> +
->> +struct camera2_edge_ctl {
->> +       enum processing_mode    mode;
->> +       uint32_t                strength;
+>> +static int isp_reqbufs(struct file *file, void *priv,
+>> +               struct v4l2_requestbuffers *reqbufs)
+>> +{
+>> +       struct fimc_is_isp *isp = video_drvdata(file);
+>> +       int ret;
+>> +
+>> +       ret = vb2_reqbufs(&isp->vbq, reqbufs);
+>> +       if (ret) {
+>> +               pr_err("vb2 req buffers failed\n");
+>> +               return ret;
+>> +       }
+>> +
+>> +       isp->num_buffers = reqbufs->count;
+>> +       isp->out_buf_cnt = 0;
+>> +       set_bit(STATE_BUFS_ALLOCATED,&isp->output_state);
+>>
+>> +       return 0;
+>> +}
+>> +
+>> +static const struct v4l2_ioctl_ops isp_video_output_ioctl_ops = {
+>> +       .vidioc_querycap                = isp_querycap_output,
+>> +       .vidioc_enum_fmt_vid_out_mplane = isp_enum_fmt_mplane,
+>> +       .vidioc_try_fmt_vid_out_mplane  = isp_try_fmt_mplane,
+>> +       .vidioc_s_fmt_vid_out_mplane    = isp_s_fmt_mplane,
+>> +       .vidioc_g_fmt_vid_out_mplane    = isp_g_fmt_mplane,
+>> +       .vidioc_reqbufs                 = isp_reqbufs,
+>> +       .vidioc_querybuf                = vb2_ioctl_querybuf,
+>> +       .vidioc_qbuf                    = vb2_ioctl_qbuf,
+>> +       .vidioc_dqbuf                   = vb2_ioctl_dqbuf,
+>> +       .vidioc_streamon                = vb2_ioctl_streamon,
+>> +       .vidioc_streamoff               = vb2_ioctl_streamoff,
 >> +};
 >> +
->> +struct camera2_edge_dm {
->> +       enum processing_mode    mode;
->> +       uint32_t                strength;
+>> +static int isp_subdev_registered(struct v4l2_subdev *sd)
+>> +{
+>> +       struct fimc_is_isp *isp = v4l2_get_subdevdata(sd);
+>> +       struct vb2_queue *q =&isp->vbq;
+>> +       struct video_device *vfd =&isp->vfd;
+>>
+>> +       int ret;
+>> +
+>> +       mutex_init(&isp->video_lock);
+>> +
+>> +       memset(vfd, 0, sizeof(*vfd));
+>> +       snprintf(vfd->name, sizeof(vfd->name), "fimc-is-isp.output");
+>> +
+>> +       vfd->fops =&isp_video_output_fops;
+>> +       vfd->ioctl_ops =&isp_video_output_ioctl_ops;
+>> +       vfd->v4l2_dev = sd->v4l2_dev;
+>> +       vfd->minor = -1;
+>> +       vfd->release = video_device_release_empty;
+>> +       vfd->lock =&isp->video_lock;
+>>
+>> +       vfd->queue = q;
+>> +       vfd->vfl_dir = VFL_DIR_TX;
+>> +
+>> +       memset(q, 0, sizeof(*q));
+>> +       q->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+>> +       q->io_modes = VB2_MMAP | VB2_DMABUF;
+>> +       q->ops =&isp_video_output_qops;
+>> +       q->mem_ops =&vb2_dma_contig_memops;
+>> +       q->drv_priv = isp;
+>> +
+>> +       ret = vb2_queue_init(q);
+>> +       if (ret<  0)
+>> +               return ret;
+>> +
+>> +       isp->vd_pad.flags = MEDIA_PAD_FL_SINK;
+>> +       ret = media_entity_init(&vfd->entity, 1,&isp->vd_pad, 0);
+>>
+>> +       if (ret<  0)
+>> +               return ret;
+>> +
+>> +       video_set_drvdata(vfd, isp);
+>> +
+>> +       ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
+>> +       if (ret<  0) {
+>> +               media_entity_cleanup(&vfd->entity);
+>> +               return ret;
+>> +       }
+>> +
+>> +       v4l2_info(sd->v4l2_dev, "Registered %s as /dev/%s\n",
+>> +                 vfd->name, video_device_node_name(vfd));
+>> +       return 0;
+>> +}
+>> +
+>> +static void isp_subdev_unregistered(struct v4l2_subdev *sd)
+>> +{
+>> +       struct fimc_is_isp *isp = v4l2_get_subdevdata(sd);
+>> +
+>> +       if (isp&&  video_is_registered(&isp->vfd))
+>>
+>> +               video_unregister_device(&isp->vfd);
+>> +}
+>> +
+>> +static const struct v4l2_subdev_internal_ops isp_subdev_internal_ops = {
+>> +       .registered = isp_subdev_registered,
+>> +       .unregistered = isp_subdev_unregistered,
 >> +};
 >> +
->> +enum scaler_availableformats {
->
->
-> Perhaps just 'enum scaler_formats' ?
->
-
-Ok.
-
->> +       SCALER_FORMAT_BAYER_RAW,
->> +       SCALER_FORMAT_YV12,
->> +       SCALER_FORMAT_NV21,
->> +       SCALER_FORMAT_JPEG,
->> +       SCALER_FORMAT_UNKNOWN
->> +};
+>> +static struct v4l2_subdev_ops isp_subdev_ops;
 >> +
->> +struct camera2_scaler_ctl {
->> +       uint32_t        cropregion[3];
->> +};
+>> +int fimc_is_isp_subdev_create(struct fimc_is_isp *isp,
+>> +               struct vb2_alloc_ctx *alloc_ctx,
+>> +               struct fimc_is_pipeline *pipeline)
+>> +{
+>> +       struct v4l2_ctrl_handler *handler =&isp->ctrl_handler;
+>> +       struct v4l2_subdev *sd =&isp->subdev;
+>>
+>> +       int ret;
 >> +
->> +struct camera2_scaler_dm {
->> +       uint32_t        cropregion[3];
->> +};
->> +
->> +struct camera2_scaler_sm {
->> +       enum scaler_availableformats availableformats[4];
->> +       /*assuming # of availableFormats = 4*/
+>> +       /* Init context vars */
+>> +       isp->alloc_ctx = alloc_ctx;
+>> +       isp->pipeline = pipeline;
+>> +       isp->refcount = 0;
+>> +       isp->fmt = (struct fimc_is_fmt *)&formats[1];
 >
 >
-> nit: Can you please amend all comments in this driver so there are
->      spaces after '/*' and before '*/' ?
+> What the casting is needed for ?
+>
+>> +       v4l2_subdev_init(sd,&isp_subdev_ops);
+>>
+>> +       sd->owner = THIS_MODULE;
+>> +       sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+>> +       snprintf(sd->name, sizeof(sd->name), ISP_DRV_NAME);
+>> +
+>> +       isp->subdev_pads[ISP_SD_PAD_SINK_DMA].flags = MEDIA_PAD_FL_SINK;
+>> +       isp->subdev_pads[ISP_SD_PAD_SINK_OTF].flags = MEDIA_PAD_FL_SINK;
+>> +       isp->subdev_pads[ISP_SD_PAD_SRC].flags = MEDIA_PAD_FL_SOURCE;
+>> +       ret = media_entity_init(&sd->entity, ISP_SD_PADS_NUM,
+>> +                       isp->subdev_pads, 0);
+>> +       if (ret<  0)
+>> +               return ret;
+>> +
+>> +       ret = v4l2_ctrl_handler_init(handler, 1);
+>> +       if (handler->error)
+>> +               goto err_ctrl;
+>> +
+>> +       sd->ctrl_handler = handler;
+>> +       sd->internal_ops =&isp_subdev_internal_ops;
+>> +       v4l2_set_subdevdata(sd, isp);
+>> +
+>> +       return 0;
+>> +
+>> +err_ctrl:
+>> +       media_entity_cleanup(&sd->entity);
+>> +       v4l2_ctrl_handler_free(handler);
+>> +       return ret;
+>> +}
+>> +
+>> +void fimc_is_isp_subdev_destroy(struct fimc_is_isp *isp)
+>> +{
+>> +       struct v4l2_subdev *sd =&isp->subdev;
+>>
+>> +
+>> +       v4l2_device_unregister_subdev(sd);
+>> +       media_entity_cleanup(&sd->entity);
+>> +       v4l2_ctrl_handler_free(&isp->ctrl_handler);
+>> +       v4l2_set_subdevdata(sd, NULL);
+>> +}
+>> +
+>> diff --git a/drivers/media/platform/exynos5-is/fimc-is-isp.h
+>> b/drivers/media/platform/exynos5-is/fimc-is-isp.h
+>> new file mode 100644
+>> index 0000000..f707a8d
+>> --- /dev/null
+>> +++ b/drivers/media/platform/exynos5-is/fimc-is-isp.h
+>> @@ -0,0 +1,89 @@
+>> +/*
+>> + * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
+>> + *
+>> + * Copyright (C) 2012 Samsung Electronics Co., Ltd.
+>> + *  Arun Kumar K<arun.kk@samsung.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +#ifndef FIMC_IS_ISP_H_
+>> +#define FIMC_IS_ISP_H_
+>> +
+>> +#include "fimc-is-core.h"
+>> +#include "fimc-is-pipeline.h"
+>> +
+>> +#define FIMC_IS_ISP_REQ_BUFS_MIN       2
+>
+>
+> This is currently unused, but I guess you need to add some
+> code to ensure minimum number of buffer for the DMA interfaces.
 >
 
-Yes will correct all these comments.
+Yes will do that.
 
->> +       uint32_t        availablerawsizes;
->> +       uint64_t        availablerawmindurations;
->> +       /* needs check */
->> +       uint32_t        availableprocessedsizes[8];
->> +       uint64_t        availableprocessedmindurations[8];
->> +       uint32_t        availablejpegsizes[8][2];
->> +       uint64_t        availablejpegmindurations[8];
->> +       uint32_t        availablemaxdigitalzoom[8];
->> +};
+>
+>> +#define ISP_SD_PAD_SINK_DMA    0
+>> +#define ISP_SD_PAD_SINK_OTF    1
+>> +#define ISP_SD_PAD_SRC         2
+>> +#define ISP_SD_PADS_NUM                3
 >> +
-
-[snip]
-
+>> +#define ISP_MAX_BUFS           2
 >> +
 >> +/**
->> +       User-defined control for sensor.
->> +*/
->> +struct camera2_sensor_uctl {
->> +       struct camera2_sensor_ctl ctl;
->> +       /** Dynamic frame duration.
->> +       This feature is decided to max. value between
->> +       'sensor.exposureTime'+alpha and 'sensor.frameDuration'.
->> +       */
->
->
-> Wrong comment style, should be:
->
-> /*
->  * Dynamic frame duration....
->  * ...
->  */
->
-
-Ok will change.
-
->> +       uint64_t        dynamicrrameduration;
->> +};
->> +
->> +struct camera2_scaler_uctl {
->> +       /* target address for next frame.
->> +       [0] invalid address, stop
->> +       [others] valid address
->> +       */
->> +       uint32_t scctargetaddress[4];
->> +       uint32_t scptargetaddress[4];
->> +};
->> +
->> +struct camera2_flash_uctl {
->> +       struct camera2_flash_ctl ctl;
->> +};
->> +
->> +struct camera2_uctl {
->> +       /* Set sensor, lens, flash control for next frame.
->> +       This flag can be combined.
->> +       [0 bit] lens
->> +       [1 bit] sensor
->> +       [2 bit] flash
->> +       */
->> +       uint32_t uupdatebitmap;
->> +
->> +       /** For debugging */
->> +       uint32_t uframenumber;
->> +
->> +       /** isp fw specific control(user-defined) of lens. */
->> +       struct camera2_lens_uctl        lensud;
->> +       /** isp fw specific control(user-defined) of sensor. */
->> +       struct camera2_sensor_uctl      sensorud;
->> +       /** isp fw specific control(user-defined) of flash. */
->> +       struct camera2_flash_uctl       flashud;
->> +
->> +       struct camera2_scaler_uctl      scalerud;
->> +};
->> +
->> +struct camera2_udm {
->> +       struct camera2_lens_udm         lens;
->> +};
->> +
->> +struct camera2_shot {
->> +       /*standard area*/
->> +       struct camera2_ctl      ctl;
->> +       struct camera2_dm       dm;
->> +       /*user defined area*/
->> +       struct camera2_uctl     uctl;
->> +       struct camera2_udm      udm;
->> +       /*magic : 23456789*/
->> +       uint32_t                magicnumber;
->> +};
->> +#endif
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-param.h
->> b/drivers/media/platform/exynos5-is/fimc-is-param.h
->> new file mode 100644
->> index 0000000..8eec772
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-param.h
->> @@ -0,0 +1,1259 @@
->> +/*
->> + * Samsung Exynos5 SoC series FIMC-IS driver
->> + *
->> + * Copyright (c) 2013 Samsung Electronics Co., Ltd
->> + * Kil-yeon Lim<kilyeon.im@samsung.com>
->> + * Arun Kumar K<arun.kk@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
+>> + * struct fimc_is_isp - ISP context
+>> + * @vfd: video device node
+>> + * @fh: v4l2 file handle
+>> + * @alloc_ctx: videobuf2 memory allocator context
+>> + * @subdev: fimc-is-isp subdev
+>> + * @vd_pad: media pad for the output video node
+>> + * @subdev_pads: the subdev media pads
+>> + * @ctrl_handler: v4l2 control handler
+>> + * @video_lock: video lock mutex
+>> + * @refcount: keeps track of number of instances opened
+>> + * @pipeline: pipeline instance for this isp context
+>> + * @vbq: vb2 buffers queue for ISP output video node
+>> + * @wait_queue: list holding buffers waiting to be queued to HW
+>> + * @wait_queue_cnt: wait queue number of buffers
+>> + * @run_queue: list holding buffers queued to HW
+>> + * @run_queue_cnt: run queue number of buffers
+>> + * @output_bufs: isp output buffers array
+>> + * @out_buf_cnt: number of output buffers in use
+>> + * @fmt: output plane format for isp
+>> + * @width: user configured input width
+>> + * @height: user configured input height
+>> + * @num_buffers: number of output plane buffers in use
+>> + * @size_image: image size in bytes
+>> + * @output_state: state of the output video node operations
 >> + */
+>> +struct fimc_is_isp {
+>> +       struct video_device             vfd;
+>> +       struct v4l2_fh                  fh;
+>> +       struct vb2_alloc_ctx            *alloc_ctx;
+>> +       struct v4l2_subdev              subdev;
+>> +       struct media_pad                vd_pad;
+>> +       struct media_pad                subdev_pads[ISP_SD_PADS_NUM];
+>> +       struct v4l2_ctrl_handler        ctrl_handler;
 >> +
->> +#ifndef FIMC_IS_PARAM_H
->> +#define FIMC_IS_PARAM_H
+>> +       struct mutex                    video_lock;
 >> +
->> +#define IS_REGION_VER 145  /* IS REGION VERSION 1.45 */
+>> +       unsigned int                    refcount;
 >> +
->> +/* MACROs */
->> +#define IS_SET_PARAM_BIT(dev, num) \
->> +       (num>= 32 ? set_bit((num-32),&dev->p_region_index2) \
->> +               : set_bit(num,&dev->p_region_index1))
->
->
-> The bit operation could take a bitmask of arbitrary length, not only 32
-> bits.
-> Could you rework this parameter bitmask handling as is done in this patch
-> http://git.linuxtv.org/media_tree.git/commitdiff/0e761b21b9d6c7a95a8e2b858af85d07f6c62d99
-> ?
->
-> Then some macros below could be removed.
->
-
-Ok will do that.
-
->> +#define IS_INC_PARAM_NUM(dev)          atomic_inc(&dev->p_region_num)
->> +#define IS_PARAM_GLOBAL(dev)
->> (dev->is_p_region->parameter.global)
->> +#define IS_PARAM_ISP(dev)              (dev->is_p_region->parameter.isp)
->> +#define IS_PARAM_DRC(dev)              (dev->is_p_region->parameter.drc)
->> +#define IS_PARAM_FD(dev)               (dev->is_p_region->parameter.fd)
->> +#define IS_HEADER(dev)                 (dev->is_p_region->header)
->> +#define IS_FACE(dev)                   (dev->is_p_region->face)
->> +#define IS_SHARED(dev)                 (dev->is_shared_region)
->> +#define IS_PARAM_SIZE                  (FIMC_IS_REGION_SIZE + 1)
->
->
-> All these are unused. Please double check for any unused code, this driver
-> has already 8k LOC, and only subset of features are supported :/
->
-
-Ok will remove un-used code.
-
->> +#define  INC_BIT(bit) (bit<<1)
->> +#define  INC_NUM(bit) (bit + 1)
->
->
-> These two are unused, and a bit odd. Please remove.
->
-
-Ok.
-
->> +#define MAGIC_NUMBER 0x01020304
+>> +       struct fimc_is_pipeline         *pipeline;
 >> +
->> +#define PARAMETER_MAX_SIZE    128  /* in byte */
->> +#define PARAMETER_MAX_MEMBER  (PARAMETER_MAX_SIZE/4)
+>> +       struct vb2_queue                vbq;
+>> +       struct list_head                wait_queue;
+>> +       unsigned int                    wait_queue_cnt;
+>> +       struct list_head                run_queue;
+>> +       unsigned int                    run_queue_cnt;
 >> +
->> +enum is_param_set_bit {
->> +       PARAM_GLOBAL_SHOTMODE = 0,
->> +       PARAM_SENSOR_CONTROL,
->> +       PARAM_SENSOR_OTF_INPUT,
->> +       PARAM_SENSOR_OTF_OUTPUT,
->> +       PARAM_SENSOR_FRAME_RATE,
->> +       PARAM_SENSOR_DMA_OUTPUT,
->> +       PARAM_BUFFER_CONTROL,
->> +       PARAM_BUFFER_OTF_INPUT,
->> +       PARAM_BUFFER_OTF_OUTPUT,
->> +       PARAM_ISP_CONTROL,
->> +       PARAM_ISP_OTF_INPUT = 10,
->> +       PARAM_ISP_DMA1_INPUT,
->> +       PARAM_ISP_DMA2_INPUT,
->> +       PARAM_ISP_AA,
->> +       PARAM_ISP_FLASH,
->> +       PARAM_ISP_AWB,
->> +       PARAM_ISP_IMAGE_EFFECT,
->> +       PARAM_ISP_ISO,
->> +       PARAM_ISP_ADJUST,
->> +       PARAM_ISP_METERING,
->> +       PARAM_ISP_AFC = 20,
->> +       PARAM_ISP_OTF_OUTPUT,
->> +       PARAM_ISP_DMA1_OUTPUT,
->> +       PARAM_ISP_DMA2_OUTPUT,
->> +       PARAM_DRC_CONTROL,
->> +       PARAM_DRC_OTF_INPUT,
->> +       PARAM_DRC_DMA_INPUT,
->> +       PARAM_DRC_OTF_OUTPUT,
->> +       PARAM_SCALERC_CONTROL,
->> +       PARAM_SCALERC_OTF_INPUT,
->> +       PARAM_SCALERC_IMAGE_EFFECT = 30,
->> +       PARAM_SCALERC_INPUT_CROP,
->> +       PARAM_SCALERC_OUTPUT_CROP,
->> +       PARAM_SCALERC_OTF_OUTPUT,
->> +       PARAM_SCALERC_DMA_OUTPUT = 34,
->> +       PARAM_ODC_CONTROL,
->> +       PARAM_ODC_OTF_INPUT,
->> +       PARAM_ODC_OTF_OUTPUT,
->> +       PARAM_DIS_CONTROL,
->> +       PARAM_DIS_OTF_INPUT,
->> +       PARAM_DIS_OTF_OUTPUT = 40,
->> +       PARAM_TDNR_CONTROL,
->> +       PARAM_TDNR_OTF_INPUT,
->> +       PARAM_TDNR_1ST_FRAME,
->> +       PARAM_TDNR_OTF_OUTPUT,
->> +       PARAM_TDNR_DMA_OUTPUT,
->> +       PARAM_SCALERP_CONTROL,
->> +       PARAM_SCALERP_OTF_INPUT,
->> +       PARAM_SCALERP_IMAGE_EFFECT,
->> +       PARAM_SCALERP_INPUT_CROP,
->> +       PARAM_SCALERP_OUTPUT_CROP = 50,
->> +       PARAM_SCALERP_ROTATION,
->> +       PARAM_SCALERP_FLIP,
->> +       PARAM_SCALERP_OTF_OUTPUT,
->> +       PARAM_SCALERP_DMA_OUTPUT,
->> +       PARAM_FD_CONTROL,
->> +       PARAM_FD_OTF_INPUT,
->> +       PARAM_FD_DMA_INPUT,
->> +       PARAM_FD_CONFIG = 58,
->> +       PARAM_END,
+>> +       struct fimc_is_buf              output_bufs[ISP_MAX_BUFS];
+>> +       unsigned int                    out_buf_cnt;
+>> +
+>> +       struct fimc_is_fmt              *fmt;
+>> +       unsigned int                    width;
+>> +       unsigned int                    height;
+>> +       unsigned int                    num_buffers;
+>> +       unsigned int                    size_image;
+>> +       unsigned long                   output_state;
 >> +};
 >> +
->> +#define ADDRESS_TO_OFFSET(start, end)  ((uint32)end - (uint32)start)
->> +#define OFFSET_TO_NUM(offset)          ((offset)>>6)
->> +#define IS_OFFSET_LOWBIT(offset)       (OFFSET_TO_NUM(offset)>= \
->> +                                               32 ? false : true)
->> +#define OFFSET_TO_BIT(offset) \
->> +               {(IS_OFFSET_LOWBIT(offset) ? (1<<OFFSET_TO_NUM(offset)) \
->> +                       : (1<<(OFFSET_TO_NUM(offset)-32))}
->> +#define LOWBIT_OF_NUM(num)             (num>= 32 ? 0 : BIT0<<num)
->> +#define HIGHBIT_OF_NUM(num)            (num>= 32 ? BIT0<<(num-32) : 0)
+>> +int fimc_is_isp_subdev_create(struct fimc_is_isp *isp,
+>> +               struct vb2_alloc_ctx *alloc_ctx,
+>> +               struct fimc_is_pipeline *pipeline);
+>> +void fimc_is_isp_subdev_destroy(struct fimc_is_isp *isp);
 >> +
->> +#define PARAM_LOW_MASK         (0xFFFFFFFF)
->> +#define PARAM_HIGH_MASK                (0x07FFFFFF)
+>> +#endif /* FIMC_IS_ISP_H_ */
 >
 >
-> These guys are going to be redundant when you rework the parameter bitmask
-> handling as suggested above.
->
+> Thanks,
+> Sylwester
 
-Ok.
-
-Regards
+Thanks and regards
 Arun
