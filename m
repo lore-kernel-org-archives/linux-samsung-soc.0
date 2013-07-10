@@ -1,46 +1,67 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 3/4] ARM: dts: Correct the /include entry on exynos5420 dtsi
- file
-Date: Wed, 10 Jul 2013 17:41:52 +0530
-Message-ID: <1373458313-18970-4-git-send-email-padma.v@samsung.com>
+Subject: [PATCH 4/4] ARM: dts: exynos5420: add audio clock controller
+Date: Wed, 10 Jul 2013 17:41:53 +0530
+Message-ID: <1373458313-18970-5-git-send-email-padma.v@samsung.com>
 References: <1373458313-18970-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:17990 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751173Ab3GJMGo (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:49773 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751173Ab3GJMGq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jul 2013 08:06:44 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 10 Jul 2013 08:06:46 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MPP009YYYYXBQ60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 10 Jul 2013 21:06:43 +0900 (KST)
+ with ESMTP id <0MPP00G58YZ2GJC0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 10 Jul 2013 21:06:45 +0900 (KST)
 In-reply-to: <1373458313-18970-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.v@samsung.com, padma.kvr@gmail.com
 Cc: sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, mturquette@linaro.org, dianders@chromium.org, abrestic@chromium.org
 
-This patch corrects the /include to #include on exynos5420
+From: Andrew Bresticker <abrestic@chromium.org>
 
+This adds device-tree bindings for the audio subsystem clock controller
+on Exynos 5420.
+
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Reviewed-on: https://gerrit.chromium.org/gerrit/57712
+Reviewed-by: Simon Glass <sjg@chromium.org>
 Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8c54c4b..da55160 100644
+index da55160..a84f5f1 100644
 --- a/arch/arm/boot/dts/exynos5420.dtsi
 +++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -14,7 +14,7 @@
-  */
+@@ -15,6 +15,9 @@
  
  #include "exynos5.dtsi"
--/include/ "exynos5420-pinctrl.dtsi"
-+#include "exynos5420-pinctrl.dtsi"
+ #include "exynos5420-pinctrl.dtsi"
++
++#include <dt-bindings/clk/exynos-audss-clk.h>
++
  / {
  	compatible = "samsung,exynos5420";
  
+@@ -65,6 +68,14 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	clock_audss: audss-clock-controller@3810000 {
++		compatible = "samsung,exynos5420-audss-clock";
++		reg = <0x03810000 0x0C>;
++		#clock-cells = <1>;
++		clocks = <&clock 148>;
++		clock-names = "sclk_audio";
++	};
++
+ 	mct@101C0000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x101C0000 0x800>;
 -- 
 1.7.4.4
