@@ -1,45 +1,25 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH v2 1/6] clk: samsung: move common plls registration into
- separate function
-Date: Wed, 10 Jul 2013 22:29:13 +0530
-Message-ID: <CAKew6eUPBUZj4TuhNAjp6NitFUaeFBZscr_jqU3Y_wLi1m7Ekg@mail.gmail.com>
-References: <201307100057.06061.heiko@sntech.de>
-	<201307100057.48265.heiko@sntech.de>
+From: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
+Date: Wed, 10 Jul 2013 10:42:27 -0700
+Message-ID: <CAODwPW9dmwpXeyBeVER9azsh2uW3NXLTbDtz3mJaXrvSwb6opg@mail.gmail.com>
+References: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
+	<20130710052534.GB15674@arwen.pp.htv.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:40911 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754110Ab3GJQ7O convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jul 2013 12:59:14 -0400
-Received: by mail-ie0-f174.google.com with SMTP id 9so15759559iec.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2013 09:59:13 -0700 (PDT)
-In-Reply-To: <201307100057.48265.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130710052534.GB15674-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>
 
-Hi Heiko,
+Hi Felipe,
 
-On Wed, Jul 10, 2013 at 4:27 AM, Heiko St=FCbner <heiko@sntech.de> wrot=
-e:
-> All Samsung PLLs use similar code to register the clocks and clkdev l=
-ookups.
-> Therefore move these into a separate function to reduce code duplicat=
-ion.
->
-> Suggested-by: Russell King <linux@arm.linux.org.uk>
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-
-I have posted patch for adding common pll registration function
-which some how missed to get merged. I hope will get merged after rc1.
-Please give a look at that :
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg19543.=
-html
-
-Regards,
-Yadwinder
+This is intended to pull down a reset signal line, not to switch power
+to the device. I could implement that with the regulator framework
+too, but I think that would just be confusing and harder to understand
+without providing any benefit. It's really just a plain old GPIO.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
