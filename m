@@ -1,76 +1,45 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v3 3/5] mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
-Date: Wed, 10 Jul 2013 08:42:04 -0700
-Message-ID: <1373470926-19314-4-git-send-email-dianders@chromium.org>
-References: <1373411961-23812-1-git-send-email-dianders@chromium.org>
- <1373470926-19314-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1373470926-19314-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH v2 1/6] clk: samsung: move common plls registration into
+ separate function
+Date: Wed, 10 Jul 2013 22:29:13 +0530
+Message-ID: <CAKew6eUPBUZj4TuhNAjp6NitFUaeFBZscr_jqU3Y_wLi1m7Ekg@mail.gmail.com>
+References: <201307100057.06061.heiko@sntech.de>
+	<201307100057.48265.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:40911 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754110Ab3GJQ7O convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Jul 2013 12:59:14 -0400
+Received: by mail-ie0-f174.google.com with SMTP id 9so15759559iec.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2013 09:59:13 -0700 (PDT)
+In-Reply-To: <201307100057.48265.heiko@sntech.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Russell King <linux@arm.linux.org.uk>
 
-If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
-looping around forever.  This has been seen to happen on exynos5420
-silicon despite the fact that we haven't enabled any wakeup events.
+Hi Heiko,
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v3: None
-Changes in v2:
-- Use suspend_noirq as per James Hogan.
+On Wed, Jul 10, 2013 at 4:27 AM, Heiko St=FCbner <heiko@sntech.de> wrot=
+e:
+> All Samsung PLLs use similar code to register the clocks and clkdev l=
+ookups.
+> Therefore move these into a separate function to reduce code duplicat=
+ion.
+>
+> Suggested-by: Russell King <linux@arm.linux.org.uk>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
 
- drivers/mmc/host/dw_mmc-exynos.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+I have posted patch for adding common pll registration function
+which some how missed to get merged. I hope will get merged after rc1.
+Please give a look at that :
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg19543.=
+html
 
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index f013e7e..36b9620 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -30,6 +30,7 @@
- #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
- 					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
- 					SDMMC_CLKSEL_CCLK_DIVIDER(z))
-+#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
- 
- #define SDMMC_CMD_USE_HOLD_REG		BIT(29)
- 
-@@ -102,6 +103,27 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
- 	return 0;
- }
- 
-+/**
-+ * dw_mci_exynos_resume_noirq - Exynos-specific resume code
-+ *
-+ * We have seen cases (at least on the exynos5420) where turning off the INT
-+ * power rail during suspend will leave the WAKEUP_INT bit in the CLKSEL
-+ * register asserted.  This bit is 1 to indicate that it fired and we can
-+ * clear it by writing a 1 back.  Clear it to prevent interrupts from going off
-+ * constantly.
-+ */
-+
-+static int dw_mci_exynos_resume_noirq(struct dw_mci *host)
-+{
-+	u32 clksel;
-+
-+	clksel = mci_readl(host, CLKSEL);
-+	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
-+		mci_writel(host, CLKSEL, clksel);
-+
-+	return 0;
-+}
-+
- static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
- {
- 	/*
-@@ -165,6 +187,7 @@ static const struct dw_mci_drv_data exynos_drv_data = {
- 	.caps			= exynos_dwmmc_caps,
- 	.init			= dw_mci_exynos_priv_init,
- 	.setup_clock		= dw_mci_exynos_setup_clock,
-+	.resume_noirq		= dw_mci_exynos_resume_noirq,
- 	.prepare_command	= dw_mci_exynos_prepare_command,
- 	.set_ios		= dw_mci_exynos_set_ios,
- 	.parse_dt		= dw_mci_exynos_parse_dt,
--- 
-1.8.3
+Regards,
+Yadwinder
