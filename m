@@ -1,48 +1,76 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v3 0/5] mmc: dw_mmc: fixes for suspend/resume on exynos
-Date: Wed, 10 Jul 2013 08:42:01 -0700
-Message-ID: <1373470926-19314-1-git-send-email-dianders@chromium.org>
+Subject: [PATCH v3 3/5] mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
+Date: Wed, 10 Jul 2013 08:42:04 -0700
+Message-ID: <1373470926-19314-4-git-send-email-dianders@chromium.org>
 References: <1373411961-23812-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f201.google.com ([209.85.220.201]:51388 "EHLO
-	mail-vc0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754466Ab3GJPmP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jul 2013 11:42:15 -0400
-Received: by mail-vc0-f201.google.com with SMTP id gf11so615467vcb.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2013 08:42:14 -0700 (PDT)
-In-Reply-To: <1373411961-23812-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+ <1373470926-19314-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1373470926-19314-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Chris Ball <cjb@laptop.org>
-Cc: Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This series of patches addresses some suspend/resume problems with
-dw_mmc on exynos platforms.  Since suspend/resume is not fully working
-on ToT Linux (3.10) on exynos5250-snow, this series was tested against
-the current ToT ChromeOS 3.8 tree.  I have confirmed basic booting
-and eMMC / SD card usage (and compiling, honest!) against ToT Linux.
+If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
+looping around forever.  This has been seen to happen on exynos5420
+silicon despite the fact that we haven't enabled any wakeup events.
 
-Changes in v3:
-- Add freeze/thaw and poweroff/restore noirq entries.
-
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Changes in v3: None
 Changes in v2:
-- Fix typo (some -> come)
-- Use ~0 instead of 0xFFFFFFFF; add comment about value
 - Use suspend_noirq as per James Hogan.
 
-Doug Anderson (5):
-  mmc: dw_mmc: Invalidate cache of current_speed after suspend/resume
-  mmc: dw_mmc: Add suspend_noirq/resume_noirq callbacks for dw_mmc-pltfm
-  mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
-  mmc: dw_mmc: Always setup the bus after suspend/resume
-  mmc: dw_mmc: Set timeout to max upon resume
+ drivers/mmc/host/dw_mmc-exynos.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
- drivers/mmc/host/dw_mmc-exynos.c | 23 ++++++++++++++++++++++
- drivers/mmc/host/dw_mmc-pltfm.c  | 41 +++++++++++++++++++++++++++++++++++++---
- drivers/mmc/host/dw_mmc.c        | 15 +++++++++++----
- drivers/mmc/host/dw_mmc.h        |  4 ++++
- 4 files changed, 76 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index f013e7e..36b9620 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -30,6 +30,7 @@
+ #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
+ 					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
+ 					SDMMC_CLKSEL_CCLK_DIVIDER(z))
++#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
+ 
+ #define SDMMC_CMD_USE_HOLD_REG		BIT(29)
+ 
+@@ -102,6 +103,27 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
+ 	return 0;
+ }
+ 
++/**
++ * dw_mci_exynos_resume_noirq - Exynos-specific resume code
++ *
++ * We have seen cases (at least on the exynos5420) where turning off the INT
++ * power rail during suspend will leave the WAKEUP_INT bit in the CLKSEL
++ * register asserted.  This bit is 1 to indicate that it fired and we can
++ * clear it by writing a 1 back.  Clear it to prevent interrupts from going off
++ * constantly.
++ */
++
++static int dw_mci_exynos_resume_noirq(struct dw_mci *host)
++{
++	u32 clksel;
++
++	clksel = mci_readl(host, CLKSEL);
++	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
++		mci_writel(host, CLKSEL, clksel);
++
++	return 0;
++}
++
+ static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+ {
+ 	/*
+@@ -165,6 +187,7 @@ static const struct dw_mci_drv_data exynos_drv_data = {
+ 	.caps			= exynos_dwmmc_caps,
+ 	.init			= dw_mci_exynos_priv_init,
+ 	.setup_clock		= dw_mci_exynos_setup_clock,
++	.resume_noirq		= dw_mci_exynos_resume_noirq,
+ 	.prepare_command	= dw_mci_exynos_prepare_command,
+ 	.set_ios		= dw_mci_exynos_set_ios,
+ 	.parse_dt		= dw_mci_exynos_parse_dt,
 -- 
 1.8.3
