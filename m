@@ -1,106 +1,88 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
-Date: Wed, 10 Jul 2013 08:25:34 +0300
-Message-ID: <20130710052534.GB15674@arwen.pp.htv.fi>
-References: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
-Reply-To: <balbi@ti.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v2 0/6] Convert S3C2416 ad S3C2443 to common clock framework
+Date: Wed, 10 Jul 2013 14:17:29 +0530
+Message-ID: <CAJuYYwT73KnjFmX0+r+b1_-tggPft=Fko9oHaL3yVUdY7ov5=Q@mail.gmail.com>
+References: <201307100057.06061.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cmJC7u66zC7hs+87"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:50125 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751126Ab3GJFZ5 (ORCPT
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:65363 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751885Ab3GJIra convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Jul 2013 01:25:57 -0400
-Content-Disposition: inline
-In-Reply-To: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
+	Wed, 10 Jul 2013 04:47:30 -0400
+Received: by mail-ie0-f177.google.com with SMTP id aq17so14090046iec.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Jul 2013 01:47:30 -0700 (PDT)
+In-Reply-To: <201307100057.06061.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Praveen Paneri <p.paneri@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olofj@chromium.org>, Vincent Palatin <vpalatin@chromium.org>
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, Russell King <linux@arm.linux.org.uk>
 
---cmJC7u66zC7hs+87
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10 July 2013 04:27, Heiko St=FCbner <heiko@sntech.de> wrote:
+> This series provides a clock driver for s3c2416, s3c2443 and s3c2450,=
+ which
+> share a common clock tree, but differ fundamentally from earlier s3c2=
+4xx
+> SoCs, and converts the mentioned SoCs to use it.
+>
+> The clock driver itself follows the same scheme established by all ot=
+her
+> Samsung clock drivers.
+>
+> It depends on the pwm cleanup series from Tomasz Figa, which gets rid=
+ of the
+> declarations of the pwm-internal clocks.
+>
+> Test on both non-dt and dt s3c2416.
+>
+> Heiko Stuebner (6):
+>   clk: samsung: move common plls registration into separate function
+>   clk: samsung: fix error handling in pll register functions
+>   clk: samsung: add plls used in s3c2416 and s3c2443
+>   ARM: S3C24XX: enable legacy clock code only when SAMSUNG_CLOCK
+>     selected
+>   clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
+>   ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+>
+>  .../bindings/clock/samsung,s3c2443-clock.txt       |   48 ++
+>  arch/arm/boot/dts/s3c2416-smdk2416.dts             |    7 +
+>  arch/arm/boot/dts/s3c2416.dtsi                     |   42 ++
+>  arch/arm/mach-s3c24xx/Kconfig                      |   14 +-
+>  arch/arm/mach-s3c24xx/Makefile                     |    5 +-
+>  arch/arm/mach-s3c24xx/clock-s3c2416.c              |  171 -----
+>  arch/arm/mach-s3c24xx/clock-s3c2443.c              |  212 ------
+>  arch/arm/mach-s3c24xx/common-s3c2443.c             |  675 ----------=
+----------
+>  arch/arm/mach-s3c24xx/common.c                     |   20 +-
+>  arch/arm/mach-s3c24xx/common.h                     |    8 +
+>  arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   45 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    9 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2443.c              |    9 +-
+>  drivers/clk/Kconfig                                |    1 +
+>  drivers/clk/samsung/Kconfig                        |    2 +
+>  drivers/clk/samsung/Makefile                       |    1 +
+>  drivers/clk/samsung/clk-pll.c                      |  374 +++++++++-=
+-
+>  drivers/clk/samsung/clk-pll.h                      |    8 +
+>  drivers/clk/samsung/clk-s3c2443.c                  |  422 ++++++++++=
+++
+>  include/dt-bindings/clock/samsung,s3c2443-clock.h  |   96 +++
+>  20 files changed, 998 insertions(+), 1171 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s=
+3c2443-clock.txt
+>  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
+>  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
+>  delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
+>  create mode 100644 drivers/clk/samsung/Kconfig
+>  create mode 100644 drivers/clk/samsung/clk-s3c2443.c
+>  create mode 100644 include/dt-bindings/clock/samsung,s3c2443-clock.h
+>
+> --
+> 1.7.10.4
+>
 
-On Tue, Jul 09, 2013 at 05:34:15PM -0700, Julius Werner wrote:
-> This patch adds support for a new 'samsung,hsic-reset-gpio' in the
-> device tree, which will be interpreted as an active-low reset pin during
-> PHY initialization when it exists. Useful for intergrated HSIC devices
-> like an SMSC 3503 hub. It is necessary to add this directly to the PHY
-> initialization to get the timing right, since resetting a HSIC device
-> after it has already been enumerated can confuse the USB stack.
->=20
-> Also fixes PHY semaphore code to make sure we always go through the
-> setup at least once, even if it was already turned on (e.g. by
-> firmware), and changes a spinlock to a mutex to allow sleeping in the
-> critical section.
->=20
-> Change-Id: Ieecac52c27daa7a17a7ed3b2863ddba3aeb8d16f
-> Signed-off-by: Julius Werner <jwerner@chromium.org>
-> ---
->  .../devicetree/bindings/usb/samsung-usbphy.txt     | 10 ++++++
->  drivers/usb/phy/phy-samsung-usb.c                  | 17 ++++++++++
->  drivers/usb/phy/phy-samsung-usb.h                  |  7 ++--
->  drivers/usb/phy/phy-samsung-usb2.c                 | 38 ++++++++++------=
-------
->  drivers/usb/phy/phy-samsung-usb3.c                 | 12 +++----
->  5 files changed, 55 insertions(+), 29 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/D=
-ocumentation/devicetree/bindings/usb/samsung-usbphy.txt
-> index 33fd354..82e2e16 100644
-> --- a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-> +++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-> @@ -31,6 +31,12 @@ Optional properties:
->  - ranges: allows valid translation between child's address space and par=
-ent's
->  	  address space.
-> =20
-> +- samsung,hsic-reset-gpio: an active low GPIO pin that resets a device
-> +			connected to the HSIC port. Useful for things like
-> +			an on-board SMSC3503 hub.
-> +- pinctrl-0: Pin control group containing the HSIC reset GPIO pin.
-> +- pinctrl-names: Should contain only one value - "default".
-> +
->  - The child node 'usbphy-sys' to the node 'usbphy' is for the system con=
-troller
->    interface for usb-phy. It should provide the following information req=
-uired by
->    usb-phy controller to control phy.
-> @@ -56,6 +62,10 @@ Example:
->  		clocks =3D <&clock 2>, <&clock 305>;
->  		clock-names =3D "xusbxti", "otg";
-> =20
-> +		samsung,hsic-reset-gpio =3D <&gpx2 4 1>;
-
-looks like this should be modeled as a fixed-regulator ?
-
---=20
-balbi
-
---cmJC7u66zC7hs+87
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR3PBNAAoJEIaOsuA1yqREVrcP/3+ZoNfaRCHuCz4obAY3ncGl
-+FgaY3fuvJ1KJSXv/HzrnusggFfZ4btfeOrDRZCgDz26SAbjlQXZlgRU5Gy73G0I
-ygCZIiCrI6oYxqbDYakRT+j9sB44hRd3cFaRcKCdqdRWVmun2low4J2JjYmow9OU
-N8mYpvME4vm4AHxoOcCExgZBsdRyOUDD3k4IMHPRHITvN4sxAzDz/Dw8ykPZKCzw
-B4iItvKW4qdeLuV+y2Gyih7hD4bDiBcdln8GLXzuqgRA6zI0i1HI+nMNxJYZeRf2
-SjgzG68hNmnjxAlddwyQjbzDUgAIjFVMZyH/rP6tdzgSmJgP9reF/5UP+nilqt9t
-BWWgVSmcnMy08pxvExBRYEFLkq87G0coJpoYxrzLWuPMtOxnEubSlwt2GpH/92mx
-XLQl74NbIK9Zz1N/lyNZ3l5brV+Nc94eYc7kYr9LeWY0L/8zDXagk5n16PXCODVB
-trb0lnAQVkglBiuaLHvWcxuPNzLShTt01MgAAuQG3SR0SxWIw7xM9uFVgbL9brEV
-WRFm1xCyqg7gtoVkxhD4WJyCDJ6kuCdHfvvz72roF+lfbslgYE3rwaOLBiYaf8Io
-oAR9OB8BGweAZ3N7WibjqAuYt8ajGjC4HcUmmnyZMDMiHi/ugWy0HcQIus3zT5Wi
-Syy3jnFtel+UrFtOT4r3
-=kMEY
------END PGP SIGNATURE-----
-
---cmJC7u66zC7hs+87--
+Thanks for consolidating pll registrations.
+=46or patches 1 to 3:
+Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
