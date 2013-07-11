@@ -1,52 +1,49 @@
-From: Julius Werner <jwerner@chromium.org>
-Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
-Date: Thu, 11 Jul 2013 14:46:14 -0700
-Message-ID: <CAODwPW-=bo2BqcHopY32N76p6DDGNDmCrKFo1R4gEEZhsG-DYg@mail.gmail.com>
-References: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
-	<000901ce7dc8$90a819b0$b1f84d10$@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys part
+ and Exynos part
+Date: Fri, 12 Jul 2013 08:28:05 +0900
+Message-ID: <000301ce7e8e$4b7d9420$e278bc60$@samsung.com>
+References: <001201ce7dfa$716b3370$54419a50$@samsung.com>
+ <20130711154121.GC2198@dhcp-172-17-186-34.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:63831 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756703Ab3GKVqP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 17:46:15 -0400
-Received: by mail-ob0-f182.google.com with SMTP id va7so10584101obc.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jul 2013 14:46:15 -0700 (PDT)
-In-Reply-To: <000901ce7dc8$90a819b0$b1f84d10$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <20130711154121.GC2198@dhcp-172-17-186-34.nvidia.com>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Thierry Reding' <thierry.reding@gmail.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Julius Werner <jwerner@chromium.org>, LKML <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Praveen Paneri <p.paneri@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olofj@chromium.org>, Vincent Palatin <vpalatin@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>
 
-Hi Jingoo,
+On Friday, July 12, 2013 12:41 AM, Thierry Reding wrote:
+> On Thu, Jul 11, 2013 at 02:49:43PM +0900, Jingoo Han wrote:
+> [...]
+> > diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
+> [...]
+> >  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
+> >  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
+> > +obj-$(CONFIG_PCI_EXYNOS) += pcie-exynos.o
+> 
+> I think we should keep these sorted alphabetically. Also Tegra and
+> Marvell are PCIe controllers but they still use the pci- prefix instead
+> of pcie-. Perhaps it'd be good to keep consistency here? I initially
+> chose pci- because from a software point of view it doesn't matter all
+> that much whether it's PCI or PCIe and because the drivers are part of
+> the PCI subsystem. However if Exynos now uses the pcie- prefix it makes
+> it look like Tegra and Marvell are plain old PCI.
+> 
 
-Yeah, I followed that discussion back then, but it seems to have
-stalled a little (at least the HSIC patches haven't been picked up in
-any kernel.org repo yet to my knowledge).
+Hi Thierry,
 
-The problem is that I think these approaches cannot work reliably. I
-agree that it would be nice to control the HSIC device from its own
-driver, and have spent quite some time playing around with the
-usb/misc/usb3503.c driver to try to make this work... but there's a
-timing dependency here that you just can't model correctly with
-independent drivers.
+I initially chose 'pci-' prefix such as 'pci-designware.c'.
 
-If the HSIC device is already active during boot (e.g. because it was
-used by firmware), there's always a chance that the USB stack will
-come up before the driver that resets it does. The device will be
-enumerated as normal, and when the other driver later pulls the reset
-signal the USB stack will not notice because there is no real
-disconnect detection on HSIC. Only when you eventually try to send
-another transfer to the device will you start to get timeouts, and the
-newly reset device will not be able to reenumerate because the host
-never asks it to.
+However, Pratyush Anand suggested as below:
+"I would suggest to rename it as pcie-designware.c,
+because synopsis pcie and pci controllers are different."
 
-I really don't see how you could solve this without putting some kind
-of synchronization mechanism in the USB drivers. So this leaves
-ehci-s5p and phy-samsung-usb2 as the only possible places, and I chose
-the latter since all the host-side HSIC initialization is also there
-already. I think if you think of it as "reset whatever is on the other
-side of this PHY", it's okay to put it as an optional feature into the
-PHY driver.
+If you have a good idea, please give it to me. :)
+Thank you.
+
+Best regards,
+Jingoo Han
