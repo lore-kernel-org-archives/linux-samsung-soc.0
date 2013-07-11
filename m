@@ -1,292 +1,75 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 3/6] clk: samsung: add plls used in s3c2416 and s3c2443
-Date: Thu, 11 Jul 2013 10:16:41 +0200
-Message-ID: <1525015.XUBJYYqnvA@thinkpad>
-References: <201307100057.06061.heiko@sntech.de> <201307100059.08621.heiko@sntech.de>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys
+ part and Exynos part
+Date: Thu, 11 Jul 2013 14:05:18 +0530
+Message-ID: <51DE6E46.3030204@ti.com>
+References: <001201ce7dfa$716b3370$54419a50$@samsung.com> <51DE5359.90905@ti.com> <000001ce7e05$13ab4210$3b01c630$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:40116 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755761Ab3GKISK convert rfc822-to-8bit (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:43776 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755342Ab3GKIff (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 04:18:10 -0400
-Received: by mail-wi0-f177.google.com with SMTP id ey16so7227911wid.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jul 2013 01:18:08 -0700 (PDT)
-In-Reply-To: <201307100059.08621.heiko@sntech.de>
+	Thu, 11 Jul 2013 04:35:35 -0400
+In-Reply-To: <000001ce7e05$13ab4210$3b01c630$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Russell King <linux@arm.linux.org.uk>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>, 'Yulgon Kim' <yulgon.kim@samsung.com>
 
-Hi Heiko,
+Hi,
 
-On Wednesday 10 of July 2013 00:59:08 Heiko St=FCbner wrote:
-> This adds support for pll2126x, pll3000x, pll6552x and pll6553x.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  drivers/clk/samsung/clk-pll.c |  280
-> +++++++++++++++++++++++++++++++++++++++++ drivers/clk/samsung/clk-pll=
-=2Eh | =20
->  8 ++
->  2 files changed, 288 insertions(+)
+On Thursday 11 July 2013 12:35 PM, Jingoo Han wrote:
+> On Thursday, July 11, 2013 3:40 PM, Kishon Vijay Abraham I wrote:
+>> On Thursday 11 July 2013 11:19 AM, Jingoo Han wrote:
+>>>
+>>>  drivers/pci/host/Makefile          |    1 +
+>>>  drivers/pci/host/pcie-designware.c |  963 +++++++++---------------------------
+>>>  drivers/pci/host/pcie-designware.h |   71 +++
+>>>  drivers/pci/host/pcie-exynos.c     |  523 ++++++++++++++++++++
+>>>  4 files changed, 822 insertions(+), 736 deletions(-)
+>>>  create mode 100644 drivers/pci/host/pcie-designware.h
+>>>  create mode 100644 drivers/pci/host/pcie-exynos.c
+>>>
+>>> diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
+>>> index 086d850..7e59864 100644
+>>> --- a/drivers/pci/host/Makefile
+>>> +++ b/drivers/pci/host/Makefile
+>>> @@ -1,2 +1,3 @@
+>>>  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
+>>>  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
+>>> +obj-$(CONFIG_PCI_EXYNOS) += pcie-exynos.o
+>>> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+> [...]
+>>
+>> How about making this a separate driver in itself that does all the
+>> configurations for designware core? By this I mean we can have a separate dt
+>> node (child node of soc specific wrapper), that will have all the configuration
+>> space/IO space and memory space. pci_common_init/dw_pcie_host_init should be
+>> done in this driver.
+>> We just need to think about a way of passing the ops (since that looks like
+>> very much needed because of the sideband bits you have to enable before
+>> reading/writing).
+>>
+> 
+> CC'ed Seungwon Jeon(DW-MMC Maintainer), Yulgon Kim (DW-USB Developer)
+> 
+> 
+> Um, maybe you mean dwc3 usb driver (./drivers/usb/dwc3/)'?
+> 
+> But, I referenced dw mmc driver (./drivers/mmc/host/dw_mmc*.c).
+> 
+> Now, Exynos PCIe driver, Spear PCIe driver[1], and i.MX PCIe driver[2]
+> are submitted to PCIe mailing-list, these are using designware PCIe core.
+> 
+> There are many differences between Exynos PCIe and Spear PCIe.
+> Also, for Exynos PCIe, platform specific part will be changed more.
+> 
+> Thus, the dw mmc driver model looked more suitable.
 
-Generally the patch looks good, but I have some comments to the part re=
-lated=20
-to 655xx PLLs.
+Alright. I'll go ahead with a similar implementation then.
 
-I had a patch adding support for them too, but we can go with yours, si=
-nce the=20
-way of registration has been changed by Yadwinder's patches and mine wo=
-uld=20
-have to be updated anyway.
-
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-=
-pll.c
-> index 0afaec6..35c15a1 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -323,6 +323,73 @@ struct clk * __init samsung_clk_register_pll46xx=
-(const
-> char *name, }
->=20
->  /*
-> + * PLL2126x Clock Type
-> + */
-> +
-> +#define PLL2126X_MDIV_MASK	(0xFF)
-> +#define PLL2126X_PDIV_MASK	(0x3)
-> +#define PLL2126X_SDIV_MASK	(0x3)
-> +#define PLL2126X_MDIV_SHIFT	(16)
-> +#define PLL2126X_PDIV_SHIFT	(8)
-> +#define PLL2126X_SDIV_SHIFT	(0)
-> +
-> +struct samsung_clk_pll2126x {
-> +	struct clk_hw		hw;
-> +	const void __iomem	*con_reg;
-> +};
-> +
-> +#define to_clk_pll2126x(_hw) container_of(_hw, struct samsung_clk_pl=
-l2126x,
-> hw) +
-> +static unsigned long samsung_pll2126x_recalc_rate(struct clk_hw *hw,
-> +				unsigned long parent_rate)
-> +{
-> +	struct samsung_clk_pll2126x *pll =3D to_clk_pll2126x(hw);
-> +	u32 pll_con, mdiv, pdiv, sdiv;
-> +	u64 fvco =3D parent_rate;
-> +
-> +	pll_con =3D __raw_readl(pll->con_reg);
-> +	mdiv =3D (pll_con >> PLL2126X_MDIV_SHIFT) & PLL2126X_MDIV_MASK;
-> +	pdiv =3D (pll_con >> PLL2126X_PDIV_SHIFT) & PLL2126X_PDIV_MASK;
-> +	sdiv =3D (pll_con >> PLL2126X_SDIV_SHIFT) & PLL2126X_SDIV_MASK;
-> +
-> +	fvco *=3D (mdiv + 8);
-> +	do_div(fvco, (pdiv + 2) << sdiv);
-> +
-> +	return (unsigned long)fvco;
-> +}
-> +
-> +static const struct clk_ops samsung_pll2126x_clk_ops =3D {
-> +	.recalc_rate =3D samsung_pll2126x_recalc_rate,
-> +};
-> +
-> +struct clk * __init samsung_clk_register_pll2126x(const char *name,
-> +			const char *pname, const void __iomem *con_reg)
-> +{
-> +	struct samsung_clk_pll2126x *pll;
-> +	struct clk *clk;
-> +	struct clk_init_data init;
-> +
-> +	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-> +	if (!pll)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name =3D name;
-> +	init.ops =3D &samsung_pll2126x_clk_ops;
-> +	init.flags =3D CLK_GET_RATE_NOCACHE;
-> +	init.parent_names =3D &pname;
-> +	init.num_parents =3D 1;
-> +
-> +	pll->hw.init =3D &init;
-> +	pll->con_reg =3D con_reg;
-> +
-> +	clk =3D samsung_register_pll(&pll->hw);
-> +	if (IS_ERR(clk))
-> +		kfree(pll);
-> +
-> +	return clk;
-> +}
-> +
-> +/*
->   * PLL2550x Clock Type
->   */
->=20
-> @@ -396,3 +463,216 @@ struct clk * __init
-> samsung_clk_register_pll2550x(const char *name,
->=20
->  	return clk;
->  }
-> +
-> +/*
-> + * PLL3000x Clock Type
-> + */
-> +
-> +#define PLL3000X_MDIV_MASK	(0xFF)
-> +#define PLL3000X_PDIV_MASK	(0x3)
-> +#define PLL3000X_SDIV_MASK	(0x3)
-> +#define PLL3000X_MDIV_SHIFT	(16)
-> +#define PLL3000X_PDIV_SHIFT	(8)
-> +#define PLL3000X_SDIV_SHIFT	(0)
-> +
-> +struct samsung_clk_pll3000x {
-> +	struct clk_hw		hw;
-> +	const void __iomem	*con_reg;
-> +};
-> +
-> +#define to_clk_pll3000x(_hw) container_of(_hw, struct samsung_clk_pl=
-l3000x,
-> hw) +
-> +static unsigned long samsung_pll3000x_recalc_rate(struct clk_hw *hw,
-> +				unsigned long parent_rate)
-> +{
-> +	struct samsung_clk_pll3000x *pll =3D to_clk_pll3000x(hw);
-> +	u32 pll_con, mdiv, pdiv, sdiv;
-> +	u64 fvco =3D parent_rate;
-> +
-> +	pll_con =3D __raw_readl(pll->con_reg);
-> +	mdiv =3D (pll_con >> PLL3000X_MDIV_SHIFT) & PLL3000X_MDIV_MASK;
-> +	pdiv =3D (pll_con >> PLL3000X_PDIV_SHIFT) & PLL3000X_PDIV_MASK;
-> +	sdiv =3D (pll_con >> PLL3000X_SDIV_SHIFT) & PLL3000X_SDIV_MASK;
-> +
-> +	fvco *=3D (2 * (mdiv + 8));
-> +	do_div(fvco, pdiv << sdiv);
-> +
-> +	return (unsigned long)fvco;
-> +}
-> +
-> +static const struct clk_ops samsung_pll3000x_clk_ops =3D {
-> +	.recalc_rate =3D samsung_pll3000x_recalc_rate,
-> +};
-> +
-> +struct clk * __init samsung_clk_register_pll3000x(const char *name,
-> +			const char *pname, const void __iomem *con_reg)
-> +{
-> +	struct samsung_clk_pll3000x *pll;
-> +	struct clk *clk;
-> +	struct clk_init_data init;
-> +
-> +	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-> +	if (!pll)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name =3D name;
-> +	init.ops =3D &samsung_pll3000x_clk_ops;
-> +	init.flags =3D CLK_GET_RATE_NOCACHE;
-> +	init.parent_names =3D &pname;
-> +	init.num_parents =3D 1;
-> +
-> +	pll->hw.init =3D &init;
-> +	pll->con_reg =3D con_reg;
-> +
-> +	clk =3D samsung_register_pll(&pll->hw);
-> +	if (IS_ERR(clk))
-> +		kfree(pll);
-> +
-> +	return clk;
-> +}
-> +
-> +/*
-> + * PLL6552x Clock Type
-> + */
-> +
-> +#define PLL6552X_MDIV_MASK	(0x3FF)
-> +#define PLL6552X_PDIV_MASK	(0x3F)
-> +#define PLL6552X_SDIV_MASK	(0x7)
-> +#define PLL6552X_MDIV_SHIFT	(14)
-> +#define PLL6552X_PDIV_SHIFT	(5)
-> +#define PLL6552X_SDIV_SHIFT	(0)
-
-Are you sure about those bitfields?
-
-In S3C6410 User's Manual they are different. You can look at my patch f=
-or a=20
-comparison:
-
-http://thread.gmane.org/gmane.linux.usb.general/87571/focus=3D88344
-
-> +struct samsung_clk_pll6552x {
-> +	struct clk_hw		hw;
-> +	const void __iomem	*con_reg;
-> +};
-> +
-> +#define to_clk_pll6552x(_hw) container_of(_hw, struct samsung_clk_pl=
-l6552x,
-> hw) +
-> +static unsigned long samsung_pll6552x_recalc_rate(struct clk_hw *hw,
-> +				unsigned long parent_rate)
-> +{
-> +	struct samsung_clk_pll6552x *pll =3D to_clk_pll6552x(hw);
-> +	u32 pll_con, mdiv, pdiv, sdiv;
-> +	u64 fvco =3D parent_rate;
-> +
-> +	pll_con =3D __raw_readl(pll->con_reg);
-> +	mdiv =3D (pll_con >> PLL6552X_MDIV_SHIFT) & PLL6552X_MDIV_MASK;
-> +	pdiv =3D (pll_con >> PLL6552X_PDIV_SHIFT) & PLL6552X_PDIV_MASK;
-> +	sdiv =3D (pll_con >> PLL6552X_SDIV_SHIFT) & PLL6552X_SDIV_MASK;
-> +
-> +	fvco *=3D mdiv;
-> +	do_div(fvco, (pdiv << sdiv));
-> +
-> +	return (unsigned long)fvco;
-> +}
-> +
-> +static const struct clk_ops samsung_pll6552x_clk_ops =3D {
-> +	.recalc_rate =3D samsung_pll6552x_recalc_rate,
-> +};
-> +
-> +struct clk * __init samsung_clk_register_pll6552x(const char *name,
-> +			const char *pname, const void __iomem *con_reg)
-> +{
-> +	struct samsung_clk_pll6552x *pll;
-> +	struct clk *clk;
-> +	struct clk_init_data init;
-> +
-> +	pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
-> +	if (!pll)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init.name =3D name;
-> +	init.ops =3D &samsung_pll6552x_clk_ops;
-> +	init.flags =3D CLK_GET_RATE_NOCACHE;
-> +	init.parent_names =3D &pname;
-> +	init.num_parents =3D 1;
-> +
-> +	pll->hw.init =3D &init;
-> +	pll->con_reg =3D con_reg;
-> +
-> +	clk =3D samsung_register_pll(&pll->hw);
-> +	if (IS_ERR(clk))
-> +		kfree(pll);
-> +
-> +	return clk;
-> +}
-> +
-> +/*
-> + * PLL6553x Clock Type
-> + */
-> +
-> +#define PLL6553X_MDIV_MASK	(0x7F)
-> +#define PLL6553X_PDIV_MASK	(0x1F)
-> +#define PLL6553X_SDIV_MASK	(0x3)
-> +#define PLL6553X_KDIV_MASK	(0xFFFF)
-> +#define PLL6553X_MDIV_SHIFT	(16)
-> +#define PLL6553X_PDIV_SHIFT	(8)
-> +#define PLL6553X_SDIV_SHIFT	(0)
-
-Same about those bitfields. They seem to be different on S3C64xx.
-
-Best regards,
-Tomasz
+Thanks
+Kishon
