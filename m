@@ -1,68 +1,59 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys
- part and Exynos part
-Date: Thu, 11 Jul 2013 08:41:22 -0700
-Message-ID: <20130711154121.GC2198@dhcp-172-17-186-34.nvidia.com>
-References: <001201ce7dfa$716b3370$54419a50$@samsung.com>
+From: Grant Grundler <grundler@chromium.org>
+Subject: Re: [PATCH v7 00/12] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Thu, 11 Jul 2013 10:22:59 -0700
+Message-ID: <CANEJEGvajhgzUPG6ppbjwBb4-9TdU9em3T_SejBpz8NCjGHYTQ@mail.gmail.com>
+References: <002801ce797b$3d2fbc80$b78f3580$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f171.google.com ([209.85.215.171]:65036 "EHLO
-	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755842Ab3GKPlb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 11:41:31 -0400
-Content-Disposition: inline
-In-Reply-To: <001201ce7dfa$716b3370$54419a50$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <002801ce797b$3d2fbc80$b78f3580$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Hyunwoong Kim <khw0178.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Keyyoung Park <keyyoung.park@samsung.com>, Grant Grundler <grundler@chromium.org>, Doug Anderson <dianders@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, Pratyush Anand <pratyush.anand@st.com>, Mohit KUMAR <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org
 
+On Fri, Jul 5, 2013 at 5:29 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
+> The current exynos-iommu(System MMU) driver does not work autonomously
+> since it is lack of support for power management of peripheral blocks.
+...
+> Patch summary:
+> [PATCH v7 1/9] iommu/exynos: do not include removed header
+> [PATCH v7 2/9] iommu/exynos: add missing cache flush for removed page table entries
+> [PATCH v7 3/9] iommu/exynos: fix page table maintenance
+> [PATCH v7 4/9] iommu/exynos: allocate lv2 page table from own slab
+> [PATCH v7 5/9] iommu/exynos: change rwlock to spinlock
+> [PATCH v7 6/9] clk: exynos5250: add gate clock descriptions of System MMU
+> [PATCH v7 7/9] ARM: dts: Add description of System MMU of Exynos SoCs
+> [PATCH v7 8/9] iommu/exynos: support for device tree
+> [PATCH v7 9/9] iommu/exynos: add bus notifier for registering System MMU
 
---4jXrM3lyYWu4nBt5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Cho,
+Of the above patches, nearly all have been applied to chromeos-3.8
+(kernel-next git tree) by Doug Anderson and others.
 
-On Thu, Jul 11, 2013 at 02:49:43PM +0900, Jingoo Han wrote:
-[...]
-> diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
-[...]
->  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
->  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
-> +obj-$(CONFIG_PCI_EXYNOS) += pcie-exynos.o
+AFAICT, the only ones not applied are:
+   [v7,3/9] iommu/exynos: fix page table maintenance
+   [v7,6/9] clk: exynos5250: add gate clock descriptions of System MMU
+(conflicts in this one)
+   [v7,7/9] ARM: dts: Add description of System MMU of Exynos SoCs
+(depends on 6/9)
 
-I think we should keep these sorted alphabetically. Also Tegra and
-Marvell are PCIe controllers but they still use the pci- prefix instead
-of pcie-. Perhaps it'd be good to keep consistency here? I initially
-chose pci- because from a software point of view it doesn't matter all
-that much whether it's PCI or PCIe and because the drivers are part of
-the PCI subsystem. However if Exynos now uses the pcie- prefix it makes
-it look like Tegra and Marvell are plain old PCI.
+We also already have parts of:
+   [v7,9/9] iommu/exynos: add bus notifier for registering System MMU
 
-Thierry
+Some of those are being further discussed but I've lost track now
+exactly which ones.
 
---4jXrM3lyYWu4nBt5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I'm telling you about chromeos-3.8 status since the adopted changes
+have been reviewed (by me and others) are being tested manually here
+on several different Samsung Exynos platforms (including 5250 which is
+our "snow" platform). Not sure how you should to mark those patches
+since they aren't identical to your changes (which apply to post 3.10
+kernels, not 3.8).  You might consider splitting those patches out
+from the 4 I've listed above to get that series accepted upstream
+since the additional review/testing should provide some confidence
+those patches are good.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR3tIhAAoJEN0jrNd/PrOhCCMP/iGDcDc81Sii7T3D2sYloq4s
-uzIcMm0j0eVD2q6B3vPjZRSV7KiMMLxRHw3HeKGSlLc5xNXGquacI3uh2MImqe1K
-f6Zb6F52DvuzJ1c2Y2yWqzYTEA+X80T/zb2i0fM5R4dB4Ijf0V+R1dFpV0+IWR9x
-S2BJM9dHJ9xrWZ1tf6h+oBFPq0bq5QTNfB5V8j6GkG9SCC8fnvsfPTa8jh5zkv2k
-jiN28T4vAiRj8Xn67X47SZ3bfdvqBUQpKE9i35+F5pULF9K1d9oxqIRLzRMd7hw6
-TLpYv09h7fMhHjfOp9kGA9jf9CFbiIM795RmEfgEcsqoRX+wd0cltmGkb3Pt2Cai
-edB9RF6aXWO1CYrdDF4JRa3OyjZqlSgmWW0rHR6lBlyTFW57FK4OdFUe/wzBUOyD
-996hU8vi33vCkLwSKerKi1CC9qpoq7SVxGoB+JcGzBZIuZIQVjBkGssGPMLJhswf
-vFmujloMw62uSsw4Yb+T6+qYdxb+shKdlY7Ml7aX/RelhWO5K0FpKxCWa/cc6/UF
-i696/K1xFO9Xkm8sQa+bi9/Prql01p8bL+Hq+bymco/tIfC/rK2DsgoXHRPFHie0
-X23RiKHxUDMr1pOMiYjUG3a721Z4YdL86P6X8n57R5l3yDRYwKex+lN0AeSt+9O/
-R8YFMVAW6NYbfZiS72y5
-=ezQU
------END PGP SIGNATURE-----
-
---4jXrM3lyYWu4nBt5--
+cheers,
+grant
