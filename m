@@ -1,78 +1,167 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to support I2S on
- Exynos5420
-Date: Thu, 11 Jul 2013 14:01:39 +0100
-Message-ID: <20130711130139.GQ24508@sirena.org.uk>
-References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
- <29860116.IF545KsGYb@thinkpad>
- <20130711112023.GM24508@sirena.org.uk>
- <2214161.FSfscAvpna@thinkpad>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: Re: [PATCH 1/3] ARM: EXYNOS: remove non-working AFTR mode support
+Date: Thu, 11 Jul 2013 15:14:49 +0200
+Message-ID: <5509794.32CckI9OQ8@amdc1032>
+References: <1372241627-22695-1-git-send-email-b.zolnierkie@samsung.com>
+ <2484012.IH9WOi4iIR@amdc1032> <51CE0485.8020109@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CVXKxAdNG2kQIXaJ"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:51618 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753303Ab3GKNBm (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:42976 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751868Ab3GKNPM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 09:01:42 -0400
-Content-Disposition: inline
-In-Reply-To: <2214161.FSfscAvpna@thinkpad>
+	Thu, 11 Jul 2013 09:15:12 -0400
+In-reply-to: <51CE0485.8020109@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, kgene.kim@samsung.com, abrestic@chromium.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, jc.lee@samsung.com, lorenzo.pieralisi@arm.com, Amit Kachhap <amit.daniel@samsung.com>, rjw@sisk.pl, kyungmin.park@samsung.com
 
 
---CVXKxAdNG2kQIXaJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Thu, Jul 11, 2013 at 01:41:40PM +0200, Tomasz Figa wrote:
-> On Thursday 11 of July 2013 12:20:23 Mark Brown wrote:
+On Friday, June 28, 2013 11:47:49 PM Daniel Lezcano wrote:
+> On 06/28/2013 06:27 PM, Bartlomiej Zolnierkiewicz wrote:
+> > On Friday, June 28, 2013 01:20:09 PM Daniel Lezcano wrote:
+> >> On 06/28/2013 12:11 PM, Tomasz Figa wrote:
+> >>> Hi Daniel,
+> >>>
+> >>> I've been fighting with this whole AFTR state as well, before Bartlomiej. 
+> >>> Let me share my thoughts on this.
+> >>>
+> 
+> [ ... ]
+> 
+> >>>
+> >>> If you don't unplug all the CPUs >0 the state is obviously never reached. 
+> >>> Otherwise the whole system hangs after it tries to enter this mode without 
+> >>> any reaction for external events, other than reset.
+> >>
+> >> Need investigation.
+> >>
+> >> What is the exynos board version where that occurs ?
+> > 
+> > Could you please tell me what exactly do you mean by that?
+> > 
+> > I already wrote that we can reproduce the problem on EXYNOS4210 rev0
+> > and rev1.1 (we don't have rev1.0). Tomek has also reproduced the problem
+> > on some later SoCs (I hope that he can give you exact revisions).
+> > 
+> > In our testing we didn't encounter the board on which the problem
+> > doesn't occur. Our current working theory is that the problem may be
+> > u-boot (or first stage bootloader) related.
+> 
+> Ok, the status for what I know:
+> 
+> Origen Exynos4210, board ver A: works for me
+> Arndale Exynos5250: works for me but only if u-boot does not enable the
+> hypervisor mode.
+> Chromebook Exynos5250: works for me
 
-> > This is a bit of a larger project sadly, there was resistance to doing
-> > the DT bindings based on compatible strings using the IP version :(
+I've also done some more testing. First I tested on some Exynos4412 devices
+(M0 and SLP_PQ) and AFTR was not working on them. Then I got my hands on
+Origen Exynos4210 (thanks to Tomek Figa for providing it) and AFTR is working
+just fine on it. Finally I tried Trats board again but with the upstream
+u-boot instead of our custom modified version (thanks to help from Lukasz
+Majewski) and I found out that after this change AFTR works fine on it! It
+also gives quite nice power savings (~80mA less current drawn in AFTR mode
+compared to just WFI one).
 
-> I'm not sure if this case is related to this problem in any way. I just=
-=20
-> suggested introducing a new include like samsung,exynos5420-i2s, a oppose=
-d to=20
-> using samsung,exynos5250-i2s and adding flags, since the I2S in Exynos542=
-0 is=20
+With the above findings it now seems that the issue is on our side and is
+outside the kernel. Thanks for help with narrowing down the problem and
+sorry for wasting your time.
 
-Well, it *should* be samsung,i2s-vN where N is the version number of the
-IP but documentation on the versioning has been patchy hence this whole
-thinng.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-> the first one to have this TDM or whatever mode. (I'd still like to hear =
-what=20
-> it is...)
-
-What it *should* be is the option to send more than one audio stream
-down a link using time division multiplexing.
-
---CVXKxAdNG2kQIXaJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR3qywAAoJELSic+t+oim9HdsP/2JgmILg9uAIPS1Z2B9Nzso6
-raM33mslSkN2mRV1eFevocEtzLaoYLSz0nxB3kInUNSKEtOJoxAYIDMxNk1HZQrG
-3NFq3LncbTMi+evgqr1YCFjxKJAlnTXagCROjp4oD37coxtYAmYxAxJk/oTGbnk1
-TvJJ7ZnJrsXmL42VAdAjU8WsbtY99FVxi87CyZjbk4L25UqchCE6TJhoTUmYQPav
-ftxq5FQLtyIADiZ818z+S7Eosp+VFbYen5Hy2lhocse0weMPQb6LDTJzg278CooN
-4JTPoKHhG0WR3GSYomp7eg8jSjVI/OB75HEc0v9kVQzR+2j98GjHI5wpQjDcIs9R
-J7Mrqg4KbrTsGysEDbDJoJ+eybbYYCBoEBmvHDGscqbp2of38gyvcM2y3i2o36Hp
-i6C0pCCzdRbgG+Zaojm1Q9OQYHNlZAZoeuEVb1YG2W46Ya8IETONa7inmZBfMciA
-yhpWr1mb935seLKV6I4r3Ymgpkz44jCUQbJeeYnURmUCB/pn5Pp/qkz/s35OXm3d
-sJqW6tXCO1d4eq27bRWU9J6U6/t1JGbllgpVV2ZghpHdNOlQz2ct7ceTrV8A2Akh
-cHLA+T7LrSAhjphZvax4i45iv670+MR/RbLC8xSFJB9vG+Q1/w0/cSFMCGq291D/
-YYaxq3tcfFlg+jBJdZad
-=8vLd
------END PGP SIGNATURE-----
-
---CVXKxAdNG2kQIXaJ--
+> I found the following drivers:
+> 
+> https://github.com/AndreiLux/Perseus-UNIVERSAL5410/blob/samsung/arch/arm/mach-exynos/cpuidle.c
+> 
+> https://github.com/CyanogenMod/hardkernel-kernel-4412/blob/cm-10.1/arch/arm/mach-exynos/cpuidle-exynos4.c
+> 
+> Sounds like the num cpus > 1 is still there.
+> 
+> [ ... ]
+> 
+> >> The kernel is not a playground where you can upstream code and then
+> >> remove it because a feature seems broken and you don't have an idea of why.
+> > 
+> > Neither me or Tomek did upstream this code and we couldn't react in
+> > time because we haven't noticed that it is completely unusable for us
+> > as EXYNOS cpuidle driver is not even used by default on EXYNOS (it is
+> > not enabled either in defconfig or Kconfig).
+> > 
+> > Moreover the feature we are talking about (AFTR mode) is also not used
+> > by default (except EXYNOS4210 rev0 on which it lockups system for us)
+> > even with EXYNOS cpuidle driver being enabled (because this specific
+> > feature depends on CPU hot-unplug which is not done automatically right
+> > now).
+> > 
+> > Such things like unused/broken code removal is not something very
+> > unusual in the upstream kernel (I'm speaking from the experience here
+> > having maintained large subsystem for a couple of years). In this
+> > particular case we are talking about ~130 lines of code which can
+> > be trivially brought back later when/if needed.
+> > 
+> > Anyway if the code removal is controversial for you we can just disable
+> > AFTR mode by default and enable it only when special command line option
+> > is given (i.e. "aftr"). This would fix all the broken configuration
+> > while still allowing the feature to be enabled on systems that had it
+> > working previously (since you claim that it works on some chipset/u-boot
+> > configurations).
+> 
+> Actually, there are several reasons I am not in favor for the moment to
+> remove this code:
+> 
+> 1) code can't be pushed upstream and then removed so easily
+> 2) I asked several times what was this cpu1 hack, I had no answer
+> 3) I tried to make both cpus entering the AFTR state, but the cpu1 never
+> wakes up, I asked but no answer.
+> 
+> I would like to have some answers :)
+> 
+> Before taking the decision to remove this state (btw you can remove the
+> driver directly, no ? the default idle function is WFI), IMO it is worth
+> to investigate and to spend some time to clarify what is happening. Then
+> we can take a decision.
+> 
+> I am willing to help.
+> 
+> >> I asked several times the reasons of why the AFTR state couldn't work
+> >> with multiple CPUs and I had no answer.
+> > 
+> > Unfortunately I don't know the answer for your question.
+> > 
+> > The AFTR mode doesn't work for us *at*all* (even with *one* CPU).
+> > 
+> >> Frankly speaking I have a couple of hypothesis:
+> >>
+> >> 1. something is not correctly setup and the PMU does not wake up the CPU1
+> >> 2. there is a silicon bug and no one wants to tell it is the case
+> >>
+> >> In any case, this must be investigated and identified. And then we can
+> >> take a decision about this state.
+> > 
+> > I don't have good idea currently how to investigate it further.
+> > 
+> > I also don't have any prove that the actual work is worth it
+> > (and this work can easily take some weeks).
+> > 
+> > One of main responsibilities of the maintainer it to make sure that
+> > the code does indeed work and that regressions (like these caused by
+> > AFTR mode feature) are fixed in the timely manner, not let the code
+> > sit in the limbo state for large periods of time.  It is already very
+> > bad situation that the regression we are hitting was present since
+> > v3.4 and we are in v3.10 now, I would like to have it fixed ASAP so
+> > we may actually consider enabling cpuidle in our exynos_defconfig.
+> 
+> I agree.
+> 
+> Thanks
+>   -- Daniel
