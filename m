@@ -1,74 +1,61 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] gpio: samsung: more generic pinctrl exclude ifdef
-Date: Thu, 11 Jul 2013 12:23:13 +0200
-Message-ID: <2059841.SxvZmAMDu5@thinkpad>
-References: <201307090212.31422.heiko@sntech.de>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 Resend 2/3] of/documentation: Update G2D documentation
+Date: Thu, 11 Jul 2013 12:24:13 +0200
+Message-ID: <1748068.8mvO9B4JjP@thinkpad>
+References: <1373351355-27444-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:57048 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751868Ab3GKKXi convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 06:23:38 -0400
-Received: by mail-bk0-f47.google.com with SMTP id jg1so3249465bkc.34
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jul 2013 03:23:37 -0700 (PDT)
-In-Reply-To: <201307090212.31422.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1373351355-27444-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Heiko,
+Hi Sachin,
 
-On Tuesday 09 of July 2013 02:12:31 Heiko St=FCbner wrote:
-> The exclude check should run any time when either the PINCTRL_SAMSUNG
-> or PINCTRL_EXYNOS5440 are selected.
->=20
-> As the real check for the presence of a pinctrl driver is done via a
-> dt lookup it's not necessary to specifiy every pinctrl option in the
-> ifdef individually.
->=20
-> This fixes a breakage on s3c2416, when both the legacy and
-> dt boards are selected.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Tuesday 09 of July 2013 11:59:15 Sachin Kamat wrote:
+> Exynos5250 G2D IP requires only the gate clock. Update the
+> binding documentation accordingly.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
-> Extracted from Tomasz pinctrl series, as it fixes a bug in the curren=
-t
-> 3.11 development.
->=20
->  drivers/gpio/gpio-samsung.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.=
-c
-> index a1392f4..ceb7971 100644
-> --- a/drivers/gpio/gpio-samsung.c
-> +++ b/drivers/gpio/gpio-samsung.c
-> @@ -2949,7 +2949,7 @@ static __init int samsung_gpiolib_init(void)
->  	int i, nr_chips;
->  	int group =3D 0;
->=20
-> -#if defined(CONFIG_PINCTRL_EXYNOS) || defined(CONFIG_PINCTRL_EXYNOS5=
-440)
-> +#if defined(CONFIG_PINCTRL_SAMSUNG) || defined(CONFIG_PINCTRL_EXYNOS=
-5440)
->  	/*
->  	* This gpio driver includes support for device tree support and the=
-re
->  	* are platforms using it. In order to maintain compatibility with t=
-hose
+> Updated the description of clock-names as suggested by Tomasz Figa.
+> ---
+>  .../devicetree/bindings/gpu/samsung-g2d.txt        |    7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt index
+> 3f454ff..c4f358d 100644
+> --- a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> +++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> @@ -11,8 +11,11 @@ Required properties:
+> 
+>    - interrupts : G2D interrupt number to the CPU.
+>    - clocks : from common clock binding: handle to G2D clocks.
+> -  - clock-names : from common clock binding: must contain "sclk_fimg2d" and
+> -		  "fimg2d", corresponding to entries in the clocks property.
+> +  - clock-names : names of clocks listed in clocks property, in the same
+> +		  order, depending on SoC type:
+> +		  - for S5PV210 and Exynos4 based SoCs: "fimg2d" and
+> +		    "sclk_fimg2d"
+> +		  - for Exynos5250 SoC: "fimg2d".
 
-I think we can simplify this even more now, since when booting with DT =
-pinctrl=20
-driver is always used. What about just removing the whole check, includ=
-ing the=20
-ifdef and looking for compatible nodes and replacing them with:
+This looks fine for me now.
 
-	if (of_have_populated_dt())
-		return -ENODEV;
+Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
 Best regards,
 Tomasz
