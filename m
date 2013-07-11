@@ -1,77 +1,53 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys part
- and Exynos part
-Date: Thu, 11 Jul 2013 16:05:50 +0900
-Message-ID: <000001ce7e05$13ab4210$3b01c630$@samsung.com>
-References: <001201ce7dfa$716b3370$54419a50$@samsung.com>
- <51DE5359.90905@ti.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 1/6] clk: samsung: move common plls registration into separate function
+Date: Thu, 11 Jul 2013 09:46:53 +0200
+Message-ID: <1874409.iWz7oWBuYA@thinkpad>
+References: <201307100057.06061.heiko@sntech.de> <201307100057.48265.heiko@sntech.de> <CAKew6eUPBUZj4TuhNAjp6NitFUaeFBZscr_jqU3Y_wLi1m7Ekg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16645 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755629Ab3GKHFw (ORCPT
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:33788 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752330Ab3GKHq7 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 03:05:52 -0400
-In-reply-to: <51DE5359.90905@ti.com>
-Content-language: ko
+	Thu, 11 Jul 2013 03:46:59 -0400
+Received: by mail-wg0-f41.google.com with SMTP id y10so11685141wgg.2
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jul 2013 00:46:58 -0700 (PDT)
+In-Reply-To: <CAKew6eUPBUZj4TuhNAjp6NitFUaeFBZscr_jqU3Y_wLi1m7Ekg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>, 'Yulgon Kim' <yulgon.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Russell King <linux@arm.linux.org.uk>
 
-On Thursday, July 11, 2013 3:40 PM, Kishon Vijay Abraham I wrote:
-> On Thursday 11 July 2013 11:19 AM, Jingoo Han wrote:
-> >
-> >  drivers/pci/host/Makefile          |    1 +
-> >  drivers/pci/host/pcie-designware.c |  963 +++++++++---------------------------
-> >  drivers/pci/host/pcie-designware.h |   71 +++
-> >  drivers/pci/host/pcie-exynos.c     |  523 ++++++++++++++++++++
-> >  4 files changed, 822 insertions(+), 736 deletions(-)
-> >  create mode 100644 drivers/pci/host/pcie-designware.h
-> >  create mode 100644 drivers/pci/host/pcie-exynos.c
-> >
-> > diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
-> > index 086d850..7e59864 100644
-> > --- a/drivers/pci/host/Makefile
-> > +++ b/drivers/pci/host/Makefile
-> > @@ -1,2 +1,3 @@
-> >  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
-> >  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
-> > +obj-$(CONFIG_PCI_EXYNOS) += pcie-exynos.o
-> > diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
-[...]
-> 
-> How about making this a separate driver in itself that does all the
-> configurations for designware core? By this I mean we can have a separate dt
-> node (child node of soc specific wrapper), that will have all the configuration
-> space/IO space and memory space. pci_common_init/dw_pcie_host_init should be
-> done in this driver.
-> We just need to think about a way of passing the ops (since that looks like
-> very much needed because of the sideband bits you have to enable before
-> reading/writing).
-> 
+Hi,
 
-CC'ed Seungwon Jeon(DW-MMC Maintainer), Yulgon Kim (DW-USB Developer)
+On Wednesday 10 of July 2013 22:29:13 Yadwinder Singh Brar wrote:
+> Hi Heiko,
+>=20
+> On Wed, Jul 10, 2013 at 4:27 AM, Heiko St=FCbner <heiko@sntech.de> wr=
+ote:
+> > All Samsung PLLs use similar code to register the clocks and clkdev
+> > lookups. Therefore move these into a separate function to reduce co=
+de
+> > duplication.
+> >=20
+> > Suggested-by: Russell King <linux@arm.linux.org.uk>
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+>=20
+> I have posted patch for adding common pll registration function
+> which some how missed to get merged. I hope will get merged after rc1=
+=2E
+> Please give a look at that :
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg1954=
+3.html
 
-
-Um, maybe you mean dwc3 usb driver (./drivers/usb/dwc3/)'?
-
-But, I referenced dw mmc driver (./drivers/mmc/host/dw_mmc*.c).
-
-Now, Exynos PCIe driver, Spear PCIe driver[1], and i.MX PCIe driver[2]
-are submitted to PCIe mailing-list, these are using designware PCIe core.
-
-There are many differences between Exynos PCIe and Spear PCIe.
-Also, for Exynos PCIe, platform specific part will be changed more.
-
-Thus, the dw mmc driver model looked more suitable.
-
-
-[1] http://permalink.gmane.org/gmane.linux.kernel.pci/18400
-[2] http://www.spinics.net/lists/linux-pci/msg23489.html
-
+Yeah, I was going to post a link to it, but I couldn't find it on any m=
+ailing=20
+list archive. I think we should go with the way of registration introdu=
+ced by=20
+Yadwinder.
 
 Best regards,
-Jingoo Han
+Tomasz
