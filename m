@@ -1,117 +1,39 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to
-	support I2S on Exynos5420
-Date: Thu, 11 Jul 2013 12:43:22 +0200
-Message-ID: <29860116.IF545KsGYb@thinkpad>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to support I2S on
+ Exynos5420
+Date: Thu, 11 Jul 2013 11:48:04 +0100
+Message-ID: <20130711104804.GK24508@sirena.org.uk>
 References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tBhgiDt8dP1efIIJ"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:52002 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755803Ab3GKKsv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Jul 2013 06:48:51 -0400
+Content-Disposition: inline
 In-Reply-To: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, abrestic@chromium.org, broonie@kernel.org, padma.kvr@gmail.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, kgene.kim@samsung.com, abrestic@chromium.org
 
-Hi Padmavathi,
 
-On Thursday 11 of July 2013 12:38:24 Padmavathi Venna wrote:
-> Exynos5420 added support for I2S TDM mode. For this, there are some
-> register changes in the I2S controller. This patch adds the relevant
-> register changes to support I2S in normal mode. This patch adds a
-> quirk for TDM mode and if TDM mode is present all the relevent changes
-> will be applied.
-> 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> [abrestic: style cleanup and documentation]
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Reviewed-on: https://gerrit-int.chromium.org/37840
-> Reviewed-by: Simon Glass <sjg@google.com>
-> ---
->  .../devicetree/bindings/sound/samsung-i2s.txt      |    2 +
->  include/linux/platform_data/asoc-s3c.h             |    1 +
->  sound/soc/samsung/i2s-regs.h                       |   51 ++++++---
->  sound/soc/samsung/i2s.c                            |  117
-> ++++++++++++++++---- 4 files changed, 132 insertions(+), 39 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> b/Documentation/devicetree/bindings/sound/samsung-i2s.txt index
-> 025e66b..b8593d5 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> @@ -28,6 +28,8 @@ Optional SoC Specific Properties:
->    enabled or disabled based on need.
->  - samsung,supports-secdai:If I2S block has a secondary FIFO and internal
-> DMA, then this flag is enabled.
-> +- samsung,supports-tdm: If the I2S controller supports TDM, then this flag
-> +  must be enabled.
+--tBhgiDt8dP1efIIJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I think this should be rather handled by a different compatible value, not a 
-flag. Also a word about what this TDM mode is would be nice.
+On Thu, Jul 11, 2013 at 12:38:24PM +0530, Padmavathi Venna wrote:
 
-Best regards,
-Tomasz
-
->  - samsung,idma-addr: Internal DMA register base address of the audio
->    sub system(used in secondary sound source).
->  - pinctrl-0: Should specify pin control groups used for this controller.
-> diff --git a/include/linux/platform_data/asoc-s3c.h
-> b/include/linux/platform_data/asoc-s3c.h index 8827259..9efc04d 100644
-> --- a/include/linux/platform_data/asoc-s3c.h
-> +++ b/include/linux/platform_data/asoc-s3c.h
-> @@ -36,6 +36,7 @@ struct samsung_i2s {
->   */
->  #define QUIRK_NO_MUXPSR		(1 << 2)
->  #define QUIRK_NEED_RSTCLR	(1 << 3)
-> +#define QUIRK_SUPPORTS_TDM	(1 << 4)
->  	/* Quirks of the I2S controller */
->  	u32 quirks;
->  	dma_addr_t idma_addr;
-> diff --git a/sound/soc/samsung/i2s-regs.h b/sound/soc/samsung/i2s-regs.h
-> index c0e6d9a..821a502 100644
-> --- a/sound/soc/samsung/i2s-regs.h
-> +++ b/sound/soc/samsung/i2s-regs.h
-> @@ -31,6 +31,10 @@
->  #define I2SLVL1ADDR	0x34
->  #define I2SLVL2ADDR	0x38
->  #define I2SLVL3ADDR	0x3c
-> +#define I2SSTR1		0x40
-> +#define I2SVER		0x44
-> +#define I2SFIC2		0x48
-> +#define I2STDM		0x4c
-> 
->  #define CON_RSTCLR		(1 << 31)
->  #define CON_FRXOFSTATUS		(1 << 26)
-> @@ -95,24 +99,39 @@
->  #define MOD_RXONLY		(1 << 8)
->  #define MOD_TXRX		(2 << 8)
->  #define MOD_MASK		(3 << 8)
 > -#define MOD_LR_LLOW		(0 << 7)
 > -#define MOD_LR_RLOW		(1 << 7)
 > -#define MOD_SDF_IIS		(0 << 5)
 > -#define MOD_SDF_MSB		(1 << 5)
 > -#define MOD_SDF_LSB		(2 << 5)
 > -#define MOD_SDF_MASK		(3 << 5)
-> -#define MOD_RCLK_256FS		(0 << 3)
-> -#define MOD_RCLK_512FS		(1 << 3)
-> -#define MOD_RCLK_384FS		(2 << 3)
-> -#define MOD_RCLK_768FS		(3 << 3)
-> -#define MOD_RCLK_MASK		(3 << 3)
-> -#define MOD_BCLK_32FS		(0 << 1)
-> -#define MOD_BCLK_48FS		(1 << 1)
-> -#define MOD_BCLK_16FS		(2 << 1)
-> -#define MOD_BCLK_24FS		(3 << 1)
-> -#define MOD_BCLK_MASK		(3 << 1)
-> +#define MOD_LRP_SHIFT		7
+
 > +#define MOD_LR_LLOW		0
 > +#define MOD_LR_RLOW		1
 > +#define MOD_SDF_SHIFT		5
@@ -119,245 +41,43 @@ Tomasz
 > +#define MOD_SDF_MSB		1
 > +#define MOD_SDF_LSB		2
 > +#define MOD_SDF_MASK		3
-> +#define MOD_RCLK_SHIFT		3
-> +#define MOD_RCLK_256FS		0
-> +#define MOD_RCLK_512FS		1
-> +#define MOD_RCLK_384FS		2
-> +#define MOD_RCLK_768FS		3
-> +#define MOD_RCLK_MASK		3
-> +#define MOD_BCLK_SHIFT		1
-> +#define MOD_BCLK_32FS		0
-> +#define MOD_BCLK_48FS		1
-> +#define MOD_BCLK_16FS		2
-> +#define MOD_BCLK_24FS		3
-> +#define MOD_BCLK_MASK		3
->  #define MOD_8BIT		(1 << 0)
-> 
-> +#define EXYNOS5420_MOD_LRP_SHIFT	15
-> +#define EXYNOS5420_MOD_SDF_SHIFT	6
-> +#define EXYNOS5420_MOD_RCLK_SHIFT	4
-> +#define EXYNOS5420_MOD_BCLK_SHIFT	0
-> +#define EXYNOS5420_MOD_BCLK_64FS	4
-> +#define EXYNOS5420_MOD_BCLK_96FS	5
-> +#define EXYNOS5420_MOD_BCLK_128FS	6
-> +#define EXYNOS5420_MOD_BCLK_192FS	7
-> +#define EXYNOS5420_MOD_BCLK_256FS	8
-> +#define EXYNOS5420_MOD_BCLK_MASK	0xf
-> +
->  #define MOD_CDCLKCON		(1 << 12)
-> 
->  #define PSR_PSREN		(1 << 15)
-> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index 3fcf8d7..398f8db 100644
-> --- a/sound/soc/samsung/i2s.c
-> +++ b/sound/soc/samsung/i2s.c
-> @@ -198,7 +198,13 @@ static inline bool is_manager(struct i2s_dai *i2s)
->  /* Read RCLK of I2S (in multiples of LRCLK) */
->  static inline unsigned get_rfs(struct i2s_dai *i2s)
->  {
-> -	u32 rfs = (readl(i2s->addr + I2SMOD) >> 3) & 0x3;
-> +	u32 rfs;
-> +
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM)
-> +		rfs = readl(i2s->addr + I2SMOD) >> EXYNOS5420_MOD_RCLK_SHIFT;
-> +	else
-> +		rfs = readl(i2s->addr + I2SMOD) >> MOD_RCLK_SHIFT;
-> +	rfs &= MOD_RCLK_MASK;
-> 
->  	switch (rfs) {
->  	case 3:	return 768;
-> @@ -212,21 +218,26 @@ static inline unsigned get_rfs(struct i2s_dai *i2s)
->  static inline void set_rfs(struct i2s_dai *i2s, unsigned rfs)
->  {
->  	u32 mod = readl(i2s->addr + I2SMOD);
-> +	int rfs_shift;
-> 
-> -	mod &= ~MOD_RCLK_MASK;
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM)
-> +		rfs_shift = EXYNOS5420_MOD_RCLK_SHIFT;
-> +	else
-> +		rfs_shift = MOD_RCLK_SHIFT;
-> +	mod &= ~(MOD_RCLK_MASK << rfs_shift);
-> 
->  	switch (rfs) {
+
+This patch has an awful lot of coding style changes like this which
+are just coding style changes and not implementing TDM support.  These
+should be done separately, not as part of the same patch, in order to
+make the code easier to review.
+
 >  	case 768:
 > -		mod |= MOD_RCLK_768FS;
 > +		mod |= (MOD_RCLK_768FS << rfs_shift);
 >  		break;
->  	case 512:
-> -		mod |= MOD_RCLK_512FS;
-> +		mod |= (MOD_RCLK_512FS << rfs_shift);
->  		break;
->  	case 384:
-> -		mod |= MOD_RCLK_384FS;
-> +		mod |= (MOD_RCLK_384FS << rfs_shift);
->  		break;
->  	default:
-> -		mod |= MOD_RCLK_256FS;
-> +		mod |= (MOD_RCLK_256FS << rfs_shift);
->  		break;
->  	}
-> 
-> @@ -236,9 +247,22 @@ static inline void set_rfs(struct i2s_dai *i2s,
-> unsigned rfs) /* Read Bit-Clock of I2S (in multiples of LRCLK) */
->  static inline unsigned get_bfs(struct i2s_dai *i2s)
->  {
-> -	u32 bfs = (readl(i2s->addr + I2SMOD) >> 1) & 0x3;
-> +	u32 bfs;
-> +
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM) {
-> +		bfs = readl(i2s->addr + I2SMOD) >> EXYNOS5420_MOD_BCLK_SHIFT;
-> +		bfs &= EXYNOS5420_MOD_BCLK_MASK;
-> +	} else {
-> +		bfs = readl(i2s->addr + I2SMOD) >> MOD_BCLK_SHIFT;
-> +		bfs &= MOD_BCLK_MASK;
-> +	}
-> 
->  	switch (bfs) {
-> +	case 8: return 256;
-> +	case 7: return 192;
-> +	case 6: return 128;
-> +	case 5: return 96;
-> +	case 4: return 64;
->  	case 3: return 24;
->  	case 2: return 16;
->  	case 1:	return 48;
-> @@ -250,21 +274,50 @@ static inline unsigned get_bfs(struct i2s_dai *i2s)
->  static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
->  {
->  	u32 mod = readl(i2s->addr + I2SMOD);
-> +	int bfs_shift;
-> +	int tdm = i2s->quirks & QUIRK_SUPPORTS_TDM;
-> 
-> -	mod &= ~MOD_BCLK_MASK;
-> +	if (tdm) {
-> +		bfs_shift = EXYNOS5420_MOD_BCLK_SHIFT;
-> +		mod &= ~(EXYNOS5420_MOD_BCLK_MASK << bfs_shift);
-> +	} else {
-> +		bfs_shift = MOD_BCLK_SHIFT;
-> +		mod &= ~(MOD_BCLK_MASK << bfs_shift);
-> +	}
-> +
-> +	/* Non-TDM I2S controllers do not support BCLK > 48 * FS */
-> +	if (!tdm && bfs > 48) {
-> +		dev_err(&i2s->pdev->dev, "Unsupported BCLK divider\n");
-> +		return;
-> +	}
-> 
->  	switch (bfs) {
->  	case 48:
-> -		mod |= MOD_BCLK_48FS;
-> +		mod |= (MOD_BCLK_48FS << bfs_shift);
->  		break;
->  	case 32:
-> -		mod |= MOD_BCLK_32FS;
-> +		mod |= (MOD_BCLK_32FS << bfs_shift);
->  		break;
->  	case 24:
-> -		mod |= MOD_BCLK_24FS;
-> +		mod |= (MOD_BCLK_24FS << bfs_shift);
->  		break;
->  	case 16:
-> -		mod |= MOD_BCLK_16FS;
-> +		mod |= (MOD_BCLK_16FS << bfs_shift);
-> +		break;
-> +	case 64:
-> +		mod |= (EXYNOS5420_MOD_BCLK_64FS << bfs_shift);
-> +		break;
-> +	case 96:
-> +		mod |= (EXYNOS5420_MOD_BCLK_96FS << bfs_shift);
-> +		break;
-> +	case 128:
-> +		mod |= (EXYNOS5420_MOD_BCLK_128FS << bfs_shift);
-> +		break;
-> +	case 192:
-> +		mod |= (EXYNOS5420_MOD_BCLK_192FS << bfs_shift);
-> +		break;
-> +	case 256:
-> +		mod |= (EXYNOS5420_MOD_BCLK_256FS << bfs_shift);
->  		break;
->  	default:
->  		dev_err(&i2s->pdev->dev, "Wrong BCLK Divider!\n");
-> @@ -492,19 +545,31 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
->  	struct i2s_dai *i2s = to_info(dai);
->  	u32 mod = readl(i2s->addr + I2SMOD);
->  	u32 tmp = 0;
-> +	int lrp_shift, sdf_shift, sdf_mask, lrp_rlow;
-> +
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM) {
-> +		lrp_shift = EXYNOS5420_MOD_LRP_SHIFT;
-> +		sdf_shift = EXYNOS5420_MOD_SDF_SHIFT;
-> +	} else {
-> +		lrp_shift = MOD_LRP_SHIFT;
-> +		sdf_shift = MOD_SDF_SHIFT;
-> +	}
-> +
-> +	sdf_mask = MOD_SDF_MASK << sdf_shift;
-> +	lrp_rlow = MOD_LR_RLOW << lrp_shift;
-> 
->  	/* Format is priority */
->  	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
->  	case SND_SOC_DAIFMT_RIGHT_J:
-> -		tmp |= MOD_LR_RLOW;
-> -		tmp |= MOD_SDF_MSB;
-> +		tmp |= lrp_rlow;
-> +		tmp |= (MOD_SDF_MSB << sdf_shift);
->  		break;
->  	case SND_SOC_DAIFMT_LEFT_J:
-> -		tmp |= MOD_LR_RLOW;
-> -		tmp |= MOD_SDF_LSB;
-> +		tmp |= lrp_rlow;
-> +		tmp |= (MOD_SDF_LSB << sdf_shift);
->  		break;
->  	case SND_SOC_DAIFMT_I2S:
-> -		tmp |= MOD_SDF_IIS;
-> +		tmp |= (MOD_SDF_IIS << sdf_shift);
->  		break;
->  	default:
->  		dev_err(&i2s->pdev->dev, "Format not supported\n");
-> @@ -519,10 +584,10 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
->  	case SND_SOC_DAIFMT_NB_NF:
->  		break;
->  	case SND_SOC_DAIFMT_NB_IF:
-> -		if (tmp & MOD_LR_RLOW)
-> -			tmp &= ~MOD_LR_RLOW;
-> +		if (tmp & lrp_rlow)
-> +			tmp &= ~lrp_rlow;
->  		else
-> -			tmp |= MOD_LR_RLOW;
-> +			tmp |= lrp_rlow;
->  		break;
->  	default:
->  		dev_err(&i2s->pdev->dev, "Polarity not supported\n");
-> @@ -544,15 +609,18 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
->  		return -EINVAL;
->  	}
-> 
-> +	/*
-> +	 * Don't change the I2S mode if any controller is active on this
-> +	 * channel.
-> +	 */
->  	if (any_active(i2s) &&
-> -			((mod & (MOD_SDF_MASK | MOD_LR_RLOW
-> -				| MOD_SLAVE)) != tmp)) {
-> +	    ((mod & (sdf_mask | lrp_rlow | MOD_SLAVE)) != tmp)) {
->  		dev_err(&i2s->pdev->dev,
->  				"%s:%d Other DAI busy\n", __func__, __LINE__);
->  		return -EAGAIN;
->  	}
-> 
-> -	mod &= ~(MOD_SDF_MASK | MOD_LR_RLOW | MOD_SLAVE);
-> +	mod &= ~(sdf_mask | lrp_rlow | MOD_SLAVE);
->  	mod |= tmp;
->  	writel(mod, i2s->addr + I2SMOD);
-> 
-> @@ -1170,6 +1238,9 @@ static int samsung_i2s_probe(struct platform_device
-> *pdev) if (of_find_property(np, "samsung,supports-rstclr", NULL))
->  			quirks |= QUIRK_NEED_RSTCLR;
-> 
-> +		if (of_find_property(np, "samsung,supports-tdm", NULL))
-> +			quirks |= QUIRK_SUPPORTS_TDM;
-> +
->  		if (of_property_read_u32(np, "samsung,idma-addr",
->  					 &idma_addr)) {
->  			if (quirks & QUIRK_SEC_DAI) {
+
+This stuff is another example.
+
+I think the change itself should be fine but I'm not 100% sure I'm
+correctly identifying what's a stylistic change and what's a functional
+change.
+
+--tBhgiDt8dP1efIIJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR3o1hAAoJELSic+t+oim9pdQP/32ZdmsNmi4zhCdEw5VH09Qj
+q30ZxMGg6ZdjpiPg7b3jK81VIjF1/o43+FK1q7pQE6hzgWDRWjrl/A1kelSjrXyQ
+wMWKc2NthV/k+Y7O1vsKEC+BOZJMZ4u/D1IaGbMawgxhz31vGVHPatNuh5QJX07a
+jaQ6NKI13QX/wok/fY2ghr8SSankXzKTHC/rXahGGggZbet/QxTFN6YHv3/LgrDr
+JcaHxzG4I4OAE0SDkhp4gP5RETmO7/1ekpVSL9kUAlVh17K+bZWPnrmxc6CtrQo1
+iu7WxEUkIP0/wSN9vAfCL9lX66Nsw25PUdPC0qbE2/W8TOQjRT0ifSgiHJeKTiRp
+npnlPeImu1kN65v8Gh5qQulxhqSUcQy4gQMpwvP9iA+r3STud66FcEQY1DpmrWYt
+tlAyd75m3EaHNEKXh3O7eqr4dxX1WaKoCAKxzElylomneRD2IZkgZdftl+aT/5DT
+4sl1GsFIAFmD37lS+720I2lOQBOiVB4rQsGgrICZUTUi2/Ae0YEhn4NEJEz5zyKj
+VQCmTchkqBVqbXJZ6Z79otiwtzVjOLEU4fGCw9JKpmLHyUEC46v8t8kAzPMBUqfi
+SenMZbfFaeEng4ReGxphRpqTnS1TDooIZKa9OekQtDlduZlZUC6ueEuEXnLrCH31
+mcWIqNv1Ca4aSi5+Ez0k
+=lqLa
+-----END PGP SIGNATURE-----
+
+--tBhgiDt8dP1efIIJ--
