@@ -1,167 +1,68 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: Re: [PATCH 1/3] ARM: EXYNOS: remove non-working AFTR mode support
-Date: Thu, 11 Jul 2013 15:14:49 +0200
-Message-ID: <5509794.32CckI9OQ8@amdc1032>
-References: <1372241627-22695-1-git-send-email-b.zolnierkie@samsung.com>
- <2484012.IH9WOi4iIR@amdc1032> <51CE0485.8020109@linaro.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys
+ part and Exynos part
+Date: Thu, 11 Jul 2013 08:41:22 -0700
+Message-ID: <20130711154121.GC2198@dhcp-172-17-186-34.nvidia.com>
+References: <001201ce7dfa$716b3370$54419a50$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42976 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751868Ab3GKNPM (ORCPT
+Received: from mail-ea0-f171.google.com ([209.85.215.171]:65036 "EHLO
+	mail-ea0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755842Ab3GKPlb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 09:15:12 -0400
-In-reply-to: <51CE0485.8020109@linaro.org>
+	Thu, 11 Jul 2013 11:41:31 -0400
+Content-Disposition: inline
+In-Reply-To: <001201ce7dfa$716b3370$54419a50$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, jc.lee@samsung.com, lorenzo.pieralisi@arm.com, Amit Kachhap <amit.daniel@samsung.com>, rjw@sisk.pl, kyungmin.park@samsung.com
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, Pratyush Anand <pratyush.anand@st.com>, Mohit KUMAR <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org
 
 
-Hi,
+--4jXrM3lyYWu4nBt5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Friday, June 28, 2013 11:47:49 PM Daniel Lezcano wrote:
-> On 06/28/2013 06:27 PM, Bartlomiej Zolnierkiewicz wrote:
-> > On Friday, June 28, 2013 01:20:09 PM Daniel Lezcano wrote:
-> >> On 06/28/2013 12:11 PM, Tomasz Figa wrote:
-> >>> Hi Daniel,
-> >>>
-> >>> I've been fighting with this whole AFTR state as well, before Bartlomiej. 
-> >>> Let me share my thoughts on this.
-> >>>
-> 
-> [ ... ]
-> 
-> >>>
-> >>> If you don't unplug all the CPUs >0 the state is obviously never reached. 
-> >>> Otherwise the whole system hangs after it tries to enter this mode without 
-> >>> any reaction for external events, other than reset.
-> >>
-> >> Need investigation.
-> >>
-> >> What is the exynos board version where that occurs ?
-> > 
-> > Could you please tell me what exactly do you mean by that?
-> > 
-> > I already wrote that we can reproduce the problem on EXYNOS4210 rev0
-> > and rev1.1 (we don't have rev1.0). Tomek has also reproduced the problem
-> > on some later SoCs (I hope that he can give you exact revisions).
-> > 
-> > In our testing we didn't encounter the board on which the problem
-> > doesn't occur. Our current working theory is that the problem may be
-> > u-boot (or first stage bootloader) related.
-> 
-> Ok, the status for what I know:
-> 
-> Origen Exynos4210, board ver A: works for me
-> Arndale Exynos5250: works for me but only if u-boot does not enable the
-> hypervisor mode.
-> Chromebook Exynos5250: works for me
+On Thu, Jul 11, 2013 at 02:49:43PM +0900, Jingoo Han wrote:
+[...]
+> diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
+[...]
+>  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
+>  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
+> +obj-$(CONFIG_PCI_EXYNOS) += pcie-exynos.o
 
-I've also done some more testing. First I tested on some Exynos4412 devices
-(M0 and SLP_PQ) and AFTR was not working on them. Then I got my hands on
-Origen Exynos4210 (thanks to Tomek Figa for providing it) and AFTR is working
-just fine on it. Finally I tried Trats board again but with the upstream
-u-boot instead of our custom modified version (thanks to help from Lukasz
-Majewski) and I found out that after this change AFTR works fine on it! It
-also gives quite nice power savings (~80mA less current drawn in AFTR mode
-compared to just WFI one).
+I think we should keep these sorted alphabetically. Also Tegra and
+Marvell are PCIe controllers but they still use the pci- prefix instead
+of pcie-. Perhaps it'd be good to keep consistency here? I initially
+chose pci- because from a software point of view it doesn't matter all
+that much whether it's PCI or PCIe and because the drivers are part of
+the PCI subsystem. However if Exynos now uses the pcie- prefix it makes
+it look like Tegra and Marvell are plain old PCI.
 
-With the above findings it now seems that the issue is on our side and is
-outside the kernel. Thanks for help with narrowing down the problem and
-sorry for wasting your time.
+Thierry
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+--4jXrM3lyYWu4nBt5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> I found the following drivers:
-> 
-> https://github.com/AndreiLux/Perseus-UNIVERSAL5410/blob/samsung/arch/arm/mach-exynos/cpuidle.c
-> 
-> https://github.com/CyanogenMod/hardkernel-kernel-4412/blob/cm-10.1/arch/arm/mach-exynos/cpuidle-exynos4.c
-> 
-> Sounds like the num cpus > 1 is still there.
-> 
-> [ ... ]
-> 
-> >> The kernel is not a playground where you can upstream code and then
-> >> remove it because a feature seems broken and you don't have an idea of why.
-> > 
-> > Neither me or Tomek did upstream this code and we couldn't react in
-> > time because we haven't noticed that it is completely unusable for us
-> > as EXYNOS cpuidle driver is not even used by default on EXYNOS (it is
-> > not enabled either in defconfig or Kconfig).
-> > 
-> > Moreover the feature we are talking about (AFTR mode) is also not used
-> > by default (except EXYNOS4210 rev0 on which it lockups system for us)
-> > even with EXYNOS cpuidle driver being enabled (because this specific
-> > feature depends on CPU hot-unplug which is not done automatically right
-> > now).
-> > 
-> > Such things like unused/broken code removal is not something very
-> > unusual in the upstream kernel (I'm speaking from the experience here
-> > having maintained large subsystem for a couple of years). In this
-> > particular case we are talking about ~130 lines of code which can
-> > be trivially brought back later when/if needed.
-> > 
-> > Anyway if the code removal is controversial for you we can just disable
-> > AFTR mode by default and enable it only when special command line option
-> > is given (i.e. "aftr"). This would fix all the broken configuration
-> > while still allowing the feature to be enabled on systems that had it
-> > working previously (since you claim that it works on some chipset/u-boot
-> > configurations).
-> 
-> Actually, there are several reasons I am not in favor for the moment to
-> remove this code:
-> 
-> 1) code can't be pushed upstream and then removed so easily
-> 2) I asked several times what was this cpu1 hack, I had no answer
-> 3) I tried to make both cpus entering the AFTR state, but the cpu1 never
-> wakes up, I asked but no answer.
-> 
-> I would like to have some answers :)
-> 
-> Before taking the decision to remove this state (btw you can remove the
-> driver directly, no ? the default idle function is WFI), IMO it is worth
-> to investigate and to spend some time to clarify what is happening. Then
-> we can take a decision.
-> 
-> I am willing to help.
-> 
-> >> I asked several times the reasons of why the AFTR state couldn't work
-> >> with multiple CPUs and I had no answer.
-> > 
-> > Unfortunately I don't know the answer for your question.
-> > 
-> > The AFTR mode doesn't work for us *at*all* (even with *one* CPU).
-> > 
-> >> Frankly speaking I have a couple of hypothesis:
-> >>
-> >> 1. something is not correctly setup and the PMU does not wake up the CPU1
-> >> 2. there is a silicon bug and no one wants to tell it is the case
-> >>
-> >> In any case, this must be investigated and identified. And then we can
-> >> take a decision about this state.
-> > 
-> > I don't have good idea currently how to investigate it further.
-> > 
-> > I also don't have any prove that the actual work is worth it
-> > (and this work can easily take some weeks).
-> > 
-> > One of main responsibilities of the maintainer it to make sure that
-> > the code does indeed work and that regressions (like these caused by
-> > AFTR mode feature) are fixed in the timely manner, not let the code
-> > sit in the limbo state for large periods of time.  It is already very
-> > bad situation that the regression we are hitting was present since
-> > v3.4 and we are in v3.10 now, I would like to have it fixed ASAP so
-> > we may actually consider enabling cpuidle in our exynos_defconfig.
-> 
-> I agree.
-> 
-> Thanks
->   -- Daniel
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR3tIhAAoJEN0jrNd/PrOhCCMP/iGDcDc81Sii7T3D2sYloq4s
+uzIcMm0j0eVD2q6B3vPjZRSV7KiMMLxRHw3HeKGSlLc5xNXGquacI3uh2MImqe1K
+f6Zb6F52DvuzJ1c2Y2yWqzYTEA+X80T/zb2i0fM5R4dB4Ijf0V+R1dFpV0+IWR9x
+S2BJM9dHJ9xrWZ1tf6h+oBFPq0bq5QTNfB5V8j6GkG9SCC8fnvsfPTa8jh5zkv2k
+jiN28T4vAiRj8Xn67X47SZ3bfdvqBUQpKE9i35+F5pULF9K1d9oxqIRLzRMd7hw6
+TLpYv09h7fMhHjfOp9kGA9jf9CFbiIM795RmEfgEcsqoRX+wd0cltmGkb3Pt2Cai
+edB9RF6aXWO1CYrdDF4JRa3OyjZqlSgmWW0rHR6lBlyTFW57FK4OdFUe/wzBUOyD
+996hU8vi33vCkLwSKerKi1CC9qpoq7SVxGoB+JcGzBZIuZIQVjBkGssGPMLJhswf
+vFmujloMw62uSsw4Yb+T6+qYdxb+shKdlY7Ml7aX/RelhWO5K0FpKxCWa/cc6/UF
+i696/K1xFO9Xkm8sQa+bi9/Prql01p8bL+Hq+bymco/tIfC/rK2DsgoXHRPFHie0
+X23RiKHxUDMr1pOMiYjUG3a721Z4YdL86P6X8n57R5l3yDRYwKex+lN0AeSt+9O/
+R8YFMVAW6NYbfZiS72y5
+=ezQU
+-----END PGP SIGNATURE-----
+
+--4jXrM3lyYWu4nBt5--
