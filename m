@@ -1,55 +1,87 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/6] clk: exynos4: Remove unused function
-Date: Thu, 11 Jul 2013 14:32:10 +0530
-Message-ID: <1373533334-5169-3-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 5/6] clk: exynos5440: Staticize local symbols
+Date: Thu, 11 Jul 2013 14:32:13 +0530
+Message-ID: <1373533334-5169-6-git-send-email-sachin.kamat@linaro.org>
 References: <1373533334-5169-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:60381 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751357Ab3GKJSP (ORCPT
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:55738 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755838Ab3GKJS2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 05:18:15 -0400
-Received: by mail-pa0-f51.google.com with SMTP id lf11so7678754pab.24
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jul 2013 02:18:15 -0700 (PDT)
+	Thu, 11 Jul 2013 05:18:28 -0400
+Received: by mail-pd0-f177.google.com with SMTP id p10so7318995pdj.22
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jul 2013 02:18:27 -0700 (PDT)
 In-Reply-To: <1373533334-5169-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Subsequent to the cleanup in commit 3c70348c7c ("ARM: EXYNOS:
-Remove legacy timer initialization code"), this function has no more
-users. Hence remove it.
+Symbols referenced only in this file are made static.
 
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos4.c |   14 --------------
- 1 file changed, 14 deletions(-)
+ drivers/clk/samsung/clk-exynos5440.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 18eadc4..75635eb 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -969,20 +969,6 @@ static void __init exynos4_clk_register_finpll(unsigned long xom)
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index 7d54341..6d043a2 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -41,12 +41,12 @@ PNAME(mout_armclk_p)	= { "cplla", "cpllb" };
+ PNAME(mout_spi_p)	= { "div125", "div200" };
  
- }
+ /* fixed rate clocks generated outside the soc */
+-struct samsung_fixed_rate_clock exynos5440_fixed_rate_ext_clks[] __initdata = {
++static struct samsung_fixed_rate_clock exynos5440_fixed_rate_ext_clks[] __initdata = {
+ 	FRATE(none, "xtal", NULL, CLK_IS_ROOT, 0),
+ };
  
--/*
-- * This function allows non-dt platforms to specify the clock speed of the
-- * xxti and xusbxti clocks. These clocks are then registered with the specified
-- * clock speed.
-- */
--void __init exynos4_clk_register_fixed_ext(unsigned long xxti_f,
--						  unsigned long xusbxti_f)
--{
--	exynos4_fixed_rate_ext_clks[0].fixed_rate = xxti_f;
--	exynos4_fixed_rate_ext_clks[1].fixed_rate = xusbxti_f;
--	samsung_clk_register_fixed_rate(exynos4_fixed_rate_ext_clks,
--			ARRAY_SIZE(exynos4_fixed_rate_ext_clks));
--}
--
- static __initdata struct of_device_id ext_clk_match[] = {
- 	{ .compatible = "samsung,clock-xxti", .data = (void *)0, },
- 	{ .compatible = "samsung,clock-xusbxti", .data = (void *)1, },
+ /* fixed rate clocks */
+-struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
++static struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
+ 	FRATE(none, "ppll", NULL, CLK_IS_ROOT, 1000000000),
+ 	FRATE(none, "usb_phy0", NULL, CLK_IS_ROOT, 60000000),
+ 	FRATE(none, "usb_phy1", NULL, CLK_IS_ROOT, 60000000),
+@@ -55,26 +55,26 @@ struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
+ };
+ 
+ /* fixed factor clocks */
+-struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initdata = {
++static struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initdata = {
+ 	FFACTOR(none, "div250", "ppll", 1, 4, 0),
+ 	FFACTOR(none, "div200", "ppll", 1, 5, 0),
+ 	FFACTOR(none, "div125", "div250", 1, 2, 0),
+ };
+ 
+ /* mux clocks */
+-struct samsung_mux_clock exynos5440_mux_clks[] __initdata = {
++static struct samsung_mux_clock exynos5440_mux_clks[] __initdata = {
+ 	MUX(none, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
+ 	MUX_A(arm_clk, "arm_clk", mout_armclk_p,
+ 			CPU_CLK_STATUS, 0, 1, "armclk"),
+ };
+ 
+ /* divider clocks */
+-struct samsung_div_clock exynos5440_div_clks[] __initdata = {
++static struct samsung_div_clock exynos5440_div_clks[] __initdata = {
+ 	DIV(spi_baud, "div_spi", "mout_spi", MISC_DOUT1, 3, 2),
+ };
+ 
+ /* gate clocks */
+-struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
++static struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
+ 	GATE(pb0_250, "pb0_250", "div250", CLKEN_OV_VAL, 3, 0, 0),
+ 	GATE(pr0_250, "pr0_250", "div250", CLKEN_OV_VAL, 4, 0, 0),
+ 	GATE(pr1_250, "pr1_250", "div250", CLKEN_OV_VAL, 5, 0, 0),
+@@ -103,7 +103,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
+ };
+ 
+ /* register exynos5440 clocks */
+-void __init exynos5440_clk_init(struct device_node *np)
++static void __init exynos5440_clk_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+ 
 -- 
 1.7.9.5
