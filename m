@@ -1,93 +1,78 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys
  part and Exynos part
-Date: Fri, 12 Jul 2013 10:15:30 -0700
-Message-ID: <20130712171529.GA9620@dhcp-172-17-186-34.nvidia.com>
+Date: Fri, 12 Jul 2013 10:31:02 -0700
+Message-ID: <20130712173101.GA9677@dhcp-172-17-186-34.nvidia.com>
 References: <001201ce7dfa$716b3370$54419a50$@samsung.com>
- <20130711154121.GC2198@dhcp-172-17-186-34.nvidia.com>
- <000301ce7e8e$4b7d9420$e278bc60$@samsung.com>
+ <51DFD3F3.9050704@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f41.google.com ([74.125.83.41]:42508 "EHLO
-	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932884Ab3GLRPi (ORCPT
+Received: from mail-ea0-f176.google.com ([209.85.215.176]:58641 "EHLO
+	mail-ea0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932650Ab3GLRbM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jul 2013 13:15:38 -0400
+	Fri, 12 Jul 2013 13:31:12 -0400
 Content-Disposition: inline
-In-Reply-To: <000301ce7e8e$4b7d9420$e278bc60$@samsung.com>
+In-Reply-To: <51DFD3F3.9050704@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, Pratyush Anand <pratyush.anand@st.com>, Mohit KUMAR <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
 
---wRRV7LY7NUeQGEoC
+--SLDf9lqlvOQaIe6s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 12, 2013 at 08:28:05AM +0900, Jingoo Han wrote:
-> On Friday, July 12, 2013 12:41 AM, Thierry Reding wrote:
-> > On Thu, Jul 11, 2013 at 02:49:43PM +0900, Jingoo Han wrote:
-> > [...]
-> > > diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
-> > [...]
-> > >  obj-$(CONFIG_PCI_MVEBU) +=3D pci-mvebu.o
-> > >  obj-$(CONFIG_PCIE_DW) +=3D pcie-designware.o
-> > > +obj-$(CONFIG_PCI_EXYNOS) +=3D pcie-exynos.o
-> >=20
-> > I think we should keep these sorted alphabetically. Also Tegra and
-> > Marvell are PCIe controllers but they still use the pci- prefix instead
-> > of pcie-. Perhaps it'd be good to keep consistency here? I initially
-> > chose pci- because from a software point of view it doesn't matter all
-> > that much whether it's PCI or PCIe and because the drivers are part of
-> > the PCI subsystem. However if Exynos now uses the pcie- prefix it makes
-> > it look like Tegra and Marvell are plain old PCI.
-> >=20
+On Fri, Jul 12, 2013 at 03:31:23PM +0530, Kishon Vijay Abraham I wrote:
+> Hi,
 >=20
-> Hi Thierry,
+> On Thursday 11 July 2013 11:19 AM, Jingoo Han wrote:
+[...]
+> >  	/* set the number of lines as 4 */
+> > -	readl_rc(pp, dbi_base + PCIE_PORT_LINK_CONTROL, &val);
+> > +	dw_pcie_readl_rc(pp, dbi_base + PCIE_PORT_LINK_CONTROL, &val);
+> >  	val &=3D ~PORT_LINK_MODE_MASK;
+> >  	val |=3D PORT_LINK_MODE_4_LANES;
+> > -	writel_rc(pp, val, dbi_base + PCIE_PORT_LINK_CONTROL);
+> > +	dw_pcie_writel_rc(pp, val, dbi_base + PCIE_PORT_LINK_CONTROL);
 >=20
-> I initially chose 'pci-' prefix such as 'pci-designware.c'.
->=20
-> However, Pratyush Anand suggested as below:
-> "I would suggest to rename it as pcie-designware.c,
-> because synopsis pcie and pci controllers are different."
->=20
-> If you have a good idea, please give it to me. :)
+> I guess here we need to make this configurable. In Jacinto6 this can be e=
+ither
+> single lane or double lane. Maybe we should have a dt property to specify=
+ the
+> number of lanes?
 
-Alternatively the plain old PCI variant could be suffixed -legacy or
-similar, but I guess pcie- as a prefix works okay in this case.
-
-However I still think you should sort them properly:
-
-	obj-$(CONFIG_PCIE_DW) +=3D pcie-designware.o
-	obj-$(CONFIG_PCI_EXYNOS) +=3D pci-exynos.o
-	obj-$(CONFIG_PCI_MVEBU) +=3D pci-mvebu.o
+On Tegra we use nvidia,num-lanes to specify the lane count for each
+port. Perhaps standardizing on a generic num-lanes property would make
+sense? Cc'ing devicetree-discuss mailing list, maybe somebody can
+provide some guidance.
 
 Thierry
 
---wRRV7LY7NUeQGEoC
+--SLDf9lqlvOQaIe6s
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR4DmxAAoJEN0jrNd/PrOhGOQP/imUsGAyq5MAn4zc9TdGO3hP
-bMgEV2mNaq+VQp7y8BmV+LOaFQW4JfPZQBV0P+De75dce2eO7ZoYq8wIObXGLxt7
-9AcZOMSJFeyUixJ9WzP24ZpHJSej7kwytMPGgATphdRBS7epOMSvZTT7jwW9sfQL
-ajzmcGpYDh7gH1kW7WrGhpfcrQ/9AdhM5PoswgSHw//HCENNpXgpZrcHHacvDZD9
-/YU9U4bzQXnAjKZ641fAZUKh0VOhJVrdeSWQATCIB2aQ1jKCJKYa3uiEjftiQRtK
-oJJJAJF+5+8ZzNkzDerBAPmLBhzonPrkjXUryY5J5zA3a31jG5sEwZmcmauGlExx
-y3ajrFYdQ8JR4da/JTuc6Epnrixi7JSiCBuC8fwKE8uhhGje3TlDkgBlaPjgzPrP
-w6KS2XySrlW87slBFztakY+e9rL2pzoMb3VUxsDlTslSD4jO3dNPYa69uSSjT5bd
-LdqnkLvfE7OZLaTM16MHIs03CWNamd5zikfaUcQtAGjtjdjo2uen8fUdViDG8AZQ
-rpJvJkiwrZ/aqWAWCirjPIiWb5Xupn+RpMzY8U16e14NioDJoLWmwacqKhtBPo1/
-09Msm/2Ffev79pNEGTX05FwdgFGLd9s6m2Bjqwx8XY/uQOEkdlv8DjTlkQy/o5Li
-OPjO4ADhaF1QVHP0wqXv
-=tPL6
+iQIcBAEBAgAGBQJR4D1VAAoJEN0jrNd/PrOhb+8P/R9XTnmRnagQbeovzw36VZeY
+UFkIARUXseo9iQj6FHp+WjgQMwYV9PEe2r97NPOD2DAWTe/qIXJVfQdMBAUPjFgJ
+oueXtJIu9iG7QIKNxPI/tqTKVgQWkE+8FvxQfaH1oHZZ9ydMEn/WevP2f6jY+ZK8
+1YMCzaG6aem4QtHe6g2B56yHZafxOi59vYIVooGKmdMkyh25cnRVzm4/5K7aBV+Y
+s97UAbeeWc86qaXoTVkdIjyu57Pdv6fNqFeDRG8r3oSRMTRsgKQuUcy+rEUpGCaX
+wrATPfy82/jCAio0wKULPoxHxkoNFowf3pBl+fO/id0609Ul93OzbKWA+QavTHFq
+y9liN8BfRWA5FUjEzAelJPrxK3kc4HHTx55dsl9P71Tw4gMjwUJlD2NJrXmMcbzD
+JoJXXSGqAKVJFXp4+lp+O8KKmTvGNag8CpWsOIEgKIiJaaYNlvsMsM3OwyFq35GM
+9BoFUfB/X5eeHh1+jwr+ql7dcDnaLryoZQtLw8Ojx7NlRVivs/D8TKojxcOBfVtV
+CFm+hKjnly5yViBNwg4nwLxtfw7+7EYGuM4vSESPJspvCqUQQjZDA9/n01DDPlY1
+1Kc7BgPDV/Gx76A2Wt3qgsanJL2SrNzeRpPlC3sJwaNhID7XfIWNh43SLDWOeQT1
+d6feosqRes5b5GqnBe77
+=RM/u
 -----END PGP SIGNATURE-----
 
---wRRV7LY7NUeQGEoC--
+--SLDf9lqlvOQaIe6s--
