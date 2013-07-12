@@ -1,43 +1,61 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH] ASoC: Samsung: Set RFS and BFS in slave mode
-Date: Fri, 12 Jul 2013 10:12:12 +0530
-Message-ID: <CAAgF-BedX9G80Pjp5+oOZRCekzDzORUJj2Wvr_Lqpz=O3qg4tA@mail.gmail.com>
-References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
-	<1373526505-27115-2-git-send-email-padma.v@samsung.com>
-	<20130711111144.GL24508@sirena.org.uk>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys
+ part and Exynos part
+Date: Fri, 12 Jul 2013 10:53:51 +0530
+Message-ID: <51DF92E7.2070109@ti.com>
+References: <001201ce7dfa$716b3370$54419a50$@samsung.com> <51DE72CC.9050001@ti.com> <001301ce7e92$d19a04e0$74ce0ea0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:64329 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750856Ab3GLEmM (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:39017 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750951Ab3GLFYH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jul 2013 00:42:12 -0400
-Received: by mail-oa0-f51.google.com with SMTP id i4so12098482oah.38
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jul 2013 21:42:12 -0700 (PDT)
-In-Reply-To: <20130711111144.GL24508@sirena.org.uk>
+	Fri, 12 Jul 2013 01:24:07 -0400
+In-Reply-To: <001301ce7e92$d19a04e0$74ce0ea0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, 'Thierry Reding' <thierry.reding@gmail.com>
 
-Hi,
+On Friday 12 July 2013 05:30 AM, Jingoo Han wrote:
+> On Thursday, July 11, 2013 5:55 PM, Kishon Vijay Abraham I wrote:
+>> On Thursday 11 July 2013 11:19 AM, Jingoo Han wrote:
+>>> Exynos PCIe IP consists of Synopsys specific part and Exynos
+>>> specific part. Only core block is a Synopsys designware part;
+>>> other parts are Exynos specific.
+>>> Also, the Synopsys designware part can be shared with other
+>>> platforms; thus, it can be split two parts such as Synopsys
+>>> designware part and Exynos specific part.
+>>>
+>>> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+>>> Cc: Pratyush Anand <pratyush.anand@st.com>
+>>> Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+>>> ---
+>> .
+>> .
+>> <snip>
+>> .
+>> .
+>>> +
+>>> +/* Exynos PCIe driver does not allow module unload */
+>>
+>> Just curious, why is this restriction?
+> 
+> CC'ed Thierry Reding,
+> 
+> Hi Kishon,
+> 
+> That's a good question.
+> 
+> Now, we don't have the solution to "be able to load and unload
+> the PCI host driver in a loop definitely without crashing or exposing
+> any races  or leaks", as Arnd Bergmann said.
+> Please refer to the following thread in mailing-list.
+> (http://archive.arm.linux.org.uk/lurker/message/20130614.123849.4ff363c5.pl.html)
 
-On Thu, Jul 11, 2013 at 4:41 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Thu, Jul 11, 2013 at 12:38:25PM +0530, Padmavathi Venna wrote:
->> As per the User Manual, the RFS and BFS should be set in slave mode
->> for correct operation.
->
-> Applied, thanks.  Since this is a fix it should have been the first
-> patch in the series - this allows fixes to be sent to
->
->> Reviewed-on: https://gerrit-int.chromium.org/37841
->
-> Including things like this isn't terribly helpful - this is the Chromium
-> internal system and nobody in the community can view the review.  A link
-> to a public system might be useful but a private one should be omitted.
-
-I thought it was link to the public gerrit review system. Will remove next time.
+That explains.
 
 Thanks
-Padma
+Kishon
