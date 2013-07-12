@@ -1,82 +1,71 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
-Date: Fri, 12 Jul 2013 09:48:54 +0900
-Message-ID: <001701ce7e99$95b2c460$c1184d20$@samsung.com>
-References: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
- <000901ce7dc8$90a819b0$b1f84d10$@samsung.com>
- <CAODwPW-=bo2BqcHopY32N76p6DDGNDmCrKFo1R4gEEZhsG-DYg@mail.gmail.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to support I2S on Exynos5420
+Date: Fri, 12 Jul 2013 09:52:35 +0530
+Message-ID: <CAAgF-BdTY3x9Hb9HmTm6WBrpES7QdKO_VbxN_9zu6zf43AaGQA@mail.gmail.com>
+References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
+	<20130711104804.GK24508@sirena.org.uk>
+	<10406176.2lc5qJ8Oq7@thinkpad>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33693 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932120Ab3GLAs4 (ORCPT
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:38394 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750731Ab3GLEWg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Jul 2013 20:48:56 -0400
-In-reply-to: <CAODwPW-=bo2BqcHopY32N76p6DDGNDmCrKFo1R4gEEZhsG-DYg@mail.gmail.com>
-Content-language: ko
+	Fri, 12 Jul 2013 00:22:36 -0400
+Received: by mail-oa0-f52.google.com with SMTP id g12so12099159oah.39
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Jul 2013 21:22:36 -0700 (PDT)
+In-Reply-To: <10406176.2lc5qJ8Oq7@thinkpad>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, 'Dongjin Kim' <tobetter@gmail.com>
-Cc: 'Julius Werner' <jwerner@chromium.org>, 'LKML' <linux-kernel@vger.kernel.org>, 'Felipe Balbi' <balbi@ti.com>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Praveen Paneri' <p.paneri@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>, 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olofj@chromium.org>, 'Vincent Palatin' <vpalatin@chromium.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Fabio Estevam' <festevam@gmail.com>, 'Philipp Zabel' <p.zabel@pengutronix.de>, Yulgon Kim <yulgon.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org
 
-On Friday, July 12, 2013 6:46 AM, Julius Werner wrote:
-> 
-> Hi Jingoo,
-> 
-> Yeah, I followed that discussion back then, but it seems to have
-> stalled a little (at least the HSIC patches haven't been picked up in
-> any kernel.org repo yet to my knowledge).
-> 
-> The problem is that I think these approaches cannot work reliably. I
-> agree that it would be nice to control the HSIC device from its own
-> driver, and have spent quite some time playing around with the
-> usb/misc/usb3503.c driver to try to make this work... but there's a
-> timing dependency here that you just can't model correctly with
-> independent drivers.
-> 
-> If the HSIC device is already active during boot (e.g. because it was
-> used by firmware), there's always a chance that the USB stack will
-> come up before the driver that resets it does. The device will be
-> enumerated as normal, and when the other driver later pulls the reset
-> signal the USB stack will not notice because there is no real
-> disconnect detection on HSIC. Only when you eventually try to send
-> another transfer to the device will you start to get timeouts, and the
-> newly reset device will not be able to reenumerate because the host
-> never asks it to.
-> 
-> I really don't see how you could solve this without putting some kind
-> of synchronization mechanism in the USB drivers. So this leaves
-> ehci-s5p and phy-samsung-usb2 as the only possible places, and I chose
-> the latter since all the host-side HSIC initialization is also there
-> already. I think if you think of it as "reset whatever is on the other
-> side of this PHY", it's okay to put it as an optional feature into the
-> PHY driver.
+On Thu, Jul 11, 2013 at 4:37 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Thursday 11 of July 2013 11:48:04 Mark Brown wrote:
+>> On Thu, Jul 11, 2013 at 12:38:24PM +0530, Padmavathi Venna wrote:
+>> > -#define MOD_LR_LLOW                (0 << 7)
+>> > -#define MOD_LR_RLOW                (1 << 7)
+>> > -#define MOD_SDF_IIS                (0 << 5)
+>> > -#define MOD_SDF_MSB                (1 << 5)
+>> > -#define MOD_SDF_LSB                (2 << 5)
+>> > -#define MOD_SDF_MASK               (3 << 5)
+>> >
+>> > +#define MOD_LR_LLOW                0
+>> > +#define MOD_LR_RLOW                1
+>> > +#define MOD_SDF_SHIFT              5
+>> > +#define MOD_SDF_IIS                0
+>> > +#define MOD_SDF_MSB                1
+>> > +#define MOD_SDF_LSB                2
+>> > +#define MOD_SDF_MASK               3
+>>
+>> This patch has an awful lot of coding style changes like this which
+>> are just coding style changes and not implementing TDM support.  These
+>> should be done separately, not as part of the same patch, in order to
+>> make the code easier to review.
+>>
+>> >     case 768:
+>> > -           mod |= MOD_RCLK_768FS;
+>> > +           mod |= (MOD_RCLK_768FS << rfs_shift);
+>> >
+>> >             break;
+>>
+>> This stuff is another example.
+>>
+>> I think the change itself should be fine but I'm not 100% sure I'm
+>> correctly identifying what's a stylistic change and what's a functional
+>> change.
+>
+> Right. This could be split into two patches, first reworking the style to give
+> more flexibility with operations on registers and another one adding TDM
+> specific changes, like new bitfield definitions and conditional handling of
+> register accesses to account for new bitfield locations.
+>
+> Best regards,
+> Tomasz
+>
 
-CC'ed Tomasz Figa, Dongjin Kim, Yulgon Kim
+Ok. I will bisect the changes into two patches as suggested.
 
-
-Hi Tomasz, Dongjin,
-
-Julius Werner wants to put 'SMSC 3503 hub reset on Arndale board'
-to 'phy-samsung-usb*.c' files, because there is a timing dependency
-above mentioned.
-The following is the original patch sent by Julius Werner two day ago.
-(http://www.spinics.net/lists/linux-samsung-soc/msg20250.html)
-
-Previously, Olof mentioned that 'drivers/platform/arm/' would be used.
-(http://patches.linaro.org/16856/)
-
-Also, another way was mentioned by Fabio Estevam, using 
-'drivers/reset/gpio-reset.c' which is not merged yet.
-(http://permalink.gmane.org/gmane.linux.drivers.devicetree/36830)
-
-I think that 'phy-samsung-usb*.c' files are not a good place.
-However, Julius Werner's comment looks reasonable enough.
-
-If you have a comment, please feel free to share it. :)
-Thank you.
-
-Best regards,
-Jingoo Han
+Thanks
+Padma
