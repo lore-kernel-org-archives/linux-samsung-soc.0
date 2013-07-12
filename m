@@ -1,61 +1,67 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys
- part and Exynos part
-Date: Fri, 12 Jul 2013 10:53:51 +0530
-Message-ID: <51DF92E7.2070109@ti.com>
-References: <001201ce7dfa$716b3370$54419a50$@samsung.com> <51DE72CC.9050001@ti.com> <001301ce7e92$d19a04e0$74ce0ea0$@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
+Date: Fri, 12 Jul 2013 09:57:34 +0300
+Message-ID: <20130712065734.GE31802@arwen.pp.htv.fi>
+References: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
+ <20130710052534.GB15674@arwen.pp.htv.fi>
+ <CAODwPW9dmwpXeyBeVER9azsh2uW3NXLTbDtz3mJaXrvSwb6opg@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+jhVVhN62yS6hEJ8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:39017 "EHLO bear.ext.ti.com"
+Received: from arroyo.ext.ti.com ([192.94.94.40]:53969 "EHLO arroyo.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750951Ab3GLFYH (ORCPT
+	id S1752994Ab3GLG6B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jul 2013 01:24:07 -0400
-In-Reply-To: <001301ce7e92$d19a04e0$74ce0ea0$@samsung.com>
+	Fri, 12 Jul 2013 02:58:01 -0400
+Content-Disposition: inline
+In-Reply-To: <CAODwPW9dmwpXeyBeVER9azsh2uW3NXLTbDtz3mJaXrvSwb6opg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, 'Thierry Reding' <thierry.reding@gmail.com>
+To: Julius Werner <jwerner@chromium.org>
+Cc: balbi@ti.com, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Praveen Paneri <p.paneri@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olofj@chromium.org>, Vincent Palatin <vpalatin@chromium.org>
 
-On Friday 12 July 2013 05:30 AM, Jingoo Han wrote:
-> On Thursday, July 11, 2013 5:55 PM, Kishon Vijay Abraham I wrote:
->> On Thursday 11 July 2013 11:19 AM, Jingoo Han wrote:
->>> Exynos PCIe IP consists of Synopsys specific part and Exynos
->>> specific part. Only core block is a Synopsys designware part;
->>> other parts are Exynos specific.
->>> Also, the Synopsys designware part can be shared with other
->>> platforms; thus, it can be split two parts such as Synopsys
->>> designware part and Exynos specific part.
->>>
->>> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
->>> Cc: Pratyush Anand <pratyush.anand@st.com>
->>> Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
->>> ---
->> .
->> .
->> <snip>
->> .
->> .
->>> +
->>> +/* Exynos PCIe driver does not allow module unload */
->>
->> Just curious, why is this restriction?
-> 
-> CC'ed Thierry Reding,
-> 
-> Hi Kishon,
-> 
-> That's a good question.
-> 
-> Now, we don't have the solution to "be able to load and unload
-> the PCI host driver in a loop definitely without crashing or exposing
-> any races  or leaks", as Arnd Bergmann said.
-> Please refer to the following thread in mailing-list.
-> (http://archive.arm.linux.org.uk/lurker/message/20130614.123849.4ff363c5.pl.html)
+--+jhVVhN62yS6hEJ8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That explains.
+Hi,
 
-Thanks
-Kishon
+On Wed, Jul 10, 2013 at 10:42:27AM -0700, Julius Werner wrote:
+> Hi Felipe,
+>=20
+> This is intended to pull down a reset signal line, not to switch power
+> to the device. I could implement that with the regulator framework
+> too, but I think that would just be confusing and harder to understand
+> without providing any benefit. It's really just a plain old GPIO.
+
+alright, in that case how about using drivers/reset/ ?
+
+--=20
+balbi
+
+--+jhVVhN62yS6hEJ8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR36jeAAoJEIaOsuA1yqREPkgP/isbYeG4jRaimYMNBWfhFKpI
+9ZA3AWoO9oYP9W8iFd0Ss4xnbDpUzp2iKlyux+7D2brMmUihwforDJjGYhGs70P7
+KW3bO1JuUyvjGc2T+Zu/RsRdwfOr/m0YaRvVIuRs5BtvB1qPVpdGi3TLD758+stV
+tRW+UX30KARKnClQXnTrnXeeArd2Wie7IOI05c2+y9PK6/RCWgENsC3qZQxxTQZR
+mDBUxe+Xtna7ZM7xGvBcKrrMUlc/796LJP8DKK5j5of4FaKOWcP8aZN4o9d1Fez4
+CdB7rv8BJcu/Pa6VUjl3VRvo+My7cnhvAnWxobclyPVoj1hkXU4o5KMH4ydH0WnQ
+hx0YKm4Kf/5k2LZRUhFnUE6KujR7R7AJrcOlNyfvJ3EKdbllWESuls+umMIRfvlT
+CLun+XMGMqk8AqkUD/orYKJC1LsDCTtyRfXPFTvleAuR2/v2zusv/XBfjOTyp5LA
+wNGEoWt1/QY8SoKfIOSNcYNLHVJJAf3/E+neCKwBaqQOW8HDJzx+oXVRIORaJUVD
+VvRBDEt07S4/q5lCaKhTouliCyEDOolh8CXVc0/GovQfYv6eheddfgj4gPbwUFR3
+TWfrUImfuJzmZeggbPb271lMrPaMyC80IWb03s83q9Q9CDOr6/OiE3DboWZvx31/
++8mbayC5LH6iUxbCSbRb
+=rrdx
+-----END PGP SIGNATURE-----
+
+--+jhVVhN62yS6hEJ8--
