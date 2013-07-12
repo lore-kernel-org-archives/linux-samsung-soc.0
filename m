@@ -1,97 +1,78 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
-Date: Fri, 12 Jul 2013 12:34:25 +0200
-Message-ID: <2736758.WIzxm4p4Im@thinkpad>
-References: <1373416455-30358-1-git-send-email-jwerner@chromium.org> <CAODwPW-=bo2BqcHopY32N76p6DDGNDmCrKFo1R4gEEZhsG-DYg@mail.gmail.com> <001701ce7e99$95b2c460$c1184d20$@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to support I2S on
+ Exynos5420
+Date: Fri, 12 Jul 2013 12:18:38 +0100
+Message-ID: <20130712111838.GZ24508@sirena.org.uk>
+References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
+ <2214161.FSfscAvpna@thinkpad>
+ <20130711130139.GQ24508@sirena.org.uk>
+ <2463181.bQfIDO6XJk@thinkpad>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WeojGOqAOUQyw5FN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:60166 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757244Ab3GLKed (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:56387 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932637Ab3GLLTE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jul 2013 06:34:33 -0400
-In-Reply-To: <001701ce7e99$95b2c460$c1184d20$@samsung.com>
+	Fri, 12 Jul 2013 07:19:04 -0400
+Content-Disposition: inline
+In-Reply-To: <2463181.bQfIDO6XJk@thinkpad>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Dongjin Kim' <tobetter@gmail.com>, 'Julius Werner' <jwerner@chromium.org>, 'LKML' <linux-kernel@vger.kernel.org>, 'Felipe Balbi' <balbi@ti.com>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Praveen Paneri' <p.paneri@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>, 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olofj@chromium.org>, 'Vincent Palatin' <vpalatin@chromium.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Fabio Estevam' <festevam@gmail.com>, 'Philipp Zabel' <p.zabel@pengutronix.de>, Yulgon Kim <yulgon.kim@samsung.com>, s.nawrocki@samsung.com, grant.likely@linaro.org, arnd@arndb.de
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, kgene.kim@samsung.com, abrestic@chromium.org
 
-Hi,
 
-On Friday 12 of July 2013 09:48:54 Jingoo Han wrote:
-> On Friday, July 12, 2013 6:46 AM, Julius Werner wrote:
-> > Hi Jingoo,
-> > 
-> > Yeah, I followed that discussion back then, but it seems to have
-> > stalled a little (at least the HSIC patches haven't been picked up in
-> > any kernel.org repo yet to my knowledge).
-> > 
-> > The problem is that I think these approaches cannot work reliably. I
-> > agree that it would be nice to control the HSIC device from its own
-> > driver, and have spent quite some time playing around with the
-> > usb/misc/usb3503.c driver to try to make this work... but there's a
-> > timing dependency here that you just can't model correctly with
-> > independent drivers.
-> > 
-> > If the HSIC device is already active during boot (e.g. because it was
-> > used by firmware), there's always a chance that the USB stack will
-> > come up before the driver that resets it does. The device will be
-> > enumerated as normal, and when the other driver later pulls the reset
-> > signal the USB stack will not notice because there is no real
-> > disconnect detection on HSIC. Only when you eventually try to send
-> > another transfer to the device will you start to get timeouts, and the
-> > newly reset device will not be able to reenumerate because the host
-> > never asks it to.
-> > 
-> > I really don't see how you could solve this without putting some kind
-> > of synchronization mechanism in the USB drivers. So this leaves
-> > ehci-s5p and phy-samsung-usb2 as the only possible places, and I chose
-> > the latter since all the host-side HSIC initialization is also there
-> > already. I think if you think of it as "reset whatever is on the other
-> > side of this PHY", it's okay to put it as an optional feature into the
-> > PHY driver.
-> 
-> CC'ed Tomasz Figa, Dongjin Kim, Yulgon Kim
-> 
-> 
-> Hi Tomasz, Dongjin,
-> 
-> Julius Werner wants to put 'SMSC 3503 hub reset on Arndale board'
-> to 'phy-samsung-usb*.c' files, because there is a timing dependency
-> above mentioned.
-> The following is the original patch sent by Julius Werner two day ago.
-> (http://www.spinics.net/lists/linux-samsung-soc/msg20250.html)
+--WeojGOqAOUQyw5FN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Well, I think this is simply broken. Following are the reasons why I think so:
- a) you can use the smsc3503 chip on any USB/HSIC controller and with any 
-USB/HSIC PHY, so you would have to add such reset GPIO to _every_ PHY or 
-controller driver,
- b) you might want to use other USB/HSIC hubs like this one that requires some 
-initialization sequence, other than just toggling a GPIO, so you would have to 
-add cases for all of those hubs or other chips in _every_ PHY or controller 
-driver.
+On Fri, Jul 12, 2013 at 12:13:17PM +0200, Tomasz Figa wrote:
+> On Thursday 11 of July 2013 14:01:39 Mark Brown wrote:
 
-> Previously, Olof mentioned that 'drivers/platform/arm/' would be used.
-> (http://patches.linaro.org/16856/)
-> 
-> Also, another way was mentioned by Fabio Estevam, using
-> 'drivers/reset/gpio-reset.c' which is not merged yet.
-> (http://permalink.gmane.org/gmane.linux.drivers.devicetree/36830)
-> 
-> I think that 'phy-samsung-usb*.c' files are not a good place.
-> However, Julius Werner's comment looks reasonable enough.
+> > Well, it *should* be samsung,i2s-vN where N is the version number of the
+> > IP but documentation on the versioning has been patchy hence this whole
+> > thinng.
 
-I can see this problem almost equivalent to the problem with on-board WLAN 
-adapters connected using SDIO. Those adapters require some kind of power on 
-sequence before they can be enumerated using standard MMC/SDIO mechanisms and 
-so does this USB/HSIC hub.
+> Oh, the binding for samsung-i2s uses IP versions. Isn't that slightly bro=
+ken?
 
-So basically this is a thing that we should consider on a more generic level, 
-not just for this particular single chip.
+> At least with Samsung bindings, I think we happened to agree on a single=
+=20
+> convention of naming compatible values after the first SoC in which such =
+block=20
+> first appeared.
 
-CCing some extra people to increase chance of getting more opinions on this.
+> I wonder what happened with this i2s binding that made it end up outside =
+this=20
+> convention.
 
-Best regards,
-Tomasz
+I think it predates that convention, plus it's been quite common to put
+two different I2S blocks in the same SoC (for totally sensible reasons)
+so it's not always been clear that the SoC name is sufficiently unique.
+
+--WeojGOqAOUQyw5FN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR3+YHAAoJELSic+t+oim9e68P/2v3dCGjkpE+yoWcPDPgMltl
+thzI7yKazDQghKlH2ifJPb1Sd4eZ3DaX3YELNlI/Ej1y60l2b01UZdNuRXVlqi2q
+LiW/9hMbW6oCtVDAGSWCg/7aiXZ+CCQBzu/V6a2oVwfQt045FekfQLEeNUYFfA1D
+h4Q8JQkUrjZwDkPc9NLNvvgLST2Sy7Sp+sAb+/5z+DJ4wi2U2gMnOqPLbt04vZng
+p0iewtLcOac19w8sUtD45o6tMZQ/hcjMQCuVrTdNPdv2dAg4ec4fhhWiabhFgfbD
+BTXv1Sq5Ny2TIIB8BXzh6w80ahvjnbKkfbE+ugtBWiiP9A78+CCfqPTsLrle1hBU
+iG8Cmxs4RGRKIfg4PrPfbDk6i2Jjrh81xu66oOOcvkflubB3eR6Apm1qLjVvvupu
+Yrun0Hzc/jHu8AsY4Vz4EEAcOHQ7+0Cpv/feInYKQM+uTeNhgaw3EcC6otXdEN9z
+ZC5zMCPiv2obY/lgi+BXpW/nj3LftOEbBz3vzFeyuKhyqfgoMfEeMsCQwmfJczFn
+902Mdvn6tB2PNPcF+Q8KFAlVrvDvHRW4h7eADLESrTmtZeNte5qcRplUTXG9M53o
+i09jAIWIaxF05cxwa9con+L6GG3DyIMDpHIKrw7ICy8FkEViS0zug/721JH88NdF
+XAuEeFIsm79Gk0S0hmjk
+=sh+e
+-----END PGP SIGNATURE-----
+
+--WeojGOqAOUQyw5FN--
