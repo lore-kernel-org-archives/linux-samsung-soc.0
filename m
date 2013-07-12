@@ -1,78 +1,184 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to support I2S on
- Exynos5420
-Date: Fri, 12 Jul 2013 12:18:38 +0100
-Message-ID: <20130712111838.GZ24508@sirena.org.uk>
-References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
- <2214161.FSfscAvpna@thinkpad>
- <20130711130139.GQ24508@sirena.org.uk>
- <2463181.bQfIDO6XJk@thinkpad>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v7 5/9] iommu/exynos: change rwlock to spinlock
+Date: Fri, 12 Jul 2013 17:30:33 +0200
+Message-ID: <13890783.WKk2X4EVm4@amdc1032>
+References: <002d01ce797b$49c441a0$dd4cc4e0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WeojGOqAOUQyw5FN"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:56387 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932637Ab3GLLTE (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:57405 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932863Ab3GLPap (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jul 2013 07:19:04 -0400
-Content-Disposition: inline
-In-Reply-To: <2463181.bQfIDO6XJk@thinkpad>
+	Fri, 12 Jul 2013 11:30:45 -0400
+In-reply-to: <002d01ce797b$49c441a0$dd4cc4e0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, kgene.kim@samsung.com, abrestic@chromium.org
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Keyyoung Park' <keyyoung.park@samsung.com>, 'Grant Grundler' <grundler@chromium.org>
 
 
---WeojGOqAOUQyw5FN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Fri, Jul 12, 2013 at 12:13:17PM +0200, Tomasz Figa wrote:
-> On Thursday 11 of July 2013 14:01:39 Mark Brown wrote:
+On Friday, July 05, 2013 09:29:26 PM Cho KyongHo wrote:
+> Since acquiring read_lock is not more frequent than write_lock, it is
+> not beneficial to use rwlock, this commit changes rwlock to spinlock.
 
-> > Well, it *should* be samsung,i2s-vN where N is the version number of the
-> > IP but documentation on the versioning has been patchy hence this whole
-> > thinng.
+This change is not of a "fix type" and is not required to make the driver
+work so it would probably be best to move it to the end of a patch series
+(IOW just making it the last patch in the series).
 
-> Oh, the binding for samsung-i2s uses IP versions. Isn't that slightly bro=
-ken?
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-> At least with Samsung bindings, I think we happened to agree on a single=
-=20
-> convention of naming compatible values after the first SoC in which such =
-block=20
-> first appeared.
-
-> I wonder what happened with this i2s binding that made it end up outside =
-this=20
-> convention.
-
-I think it predates that convention, plus it's been quite common to put
-two different I2S blocks in the same SoC (for totally sensible reasons)
-so it's not always been clear that the SoC name is sufficiently unique.
-
---WeojGOqAOUQyw5FN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR3+YHAAoJELSic+t+oim9e68P/2v3dCGjkpE+yoWcPDPgMltl
-thzI7yKazDQghKlH2ifJPb1Sd4eZ3DaX3YELNlI/Ej1y60l2b01UZdNuRXVlqi2q
-LiW/9hMbW6oCtVDAGSWCg/7aiXZ+CCQBzu/V6a2oVwfQt045FekfQLEeNUYFfA1D
-h4Q8JQkUrjZwDkPc9NLNvvgLST2Sy7Sp+sAb+/5z+DJ4wi2U2gMnOqPLbt04vZng
-p0iewtLcOac19w8sUtD45o6tMZQ/hcjMQCuVrTdNPdv2dAg4ec4fhhWiabhFgfbD
-BTXv1Sq5Ny2TIIB8BXzh6w80ahvjnbKkfbE+ugtBWiiP9A78+CCfqPTsLrle1hBU
-iG8Cmxs4RGRKIfg4PrPfbDk6i2Jjrh81xu66oOOcvkflubB3eR6Apm1qLjVvvupu
-Yrun0Hzc/jHu8AsY4Vz4EEAcOHQ7+0Cpv/feInYKQM+uTeNhgaw3EcC6otXdEN9z
-ZC5zMCPiv2obY/lgi+BXpW/nj3LftOEbBz3vzFeyuKhyqfgoMfEeMsCQwmfJczFn
-902Mdvn6tB2PNPcF+Q8KFAlVrvDvHRW4h7eADLESrTmtZeNte5qcRplUTXG9M53o
-i09jAIWIaxF05cxwa9con+L6GG3DyIMDpHIKrw7ICy8FkEViS0zug/721JH88NdF
-XAuEeFIsm79Gk0S0hmjk
-=sh+e
------END PGP SIGNATURE-----
-
---WeojGOqAOUQyw5FN--
+> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+> ---
+>  drivers/iommu/exynos-iommu.c |   32 ++++++++++++++++----------------
+>  1 files changed, 16 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 390f8b7..6793661 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -175,7 +175,7 @@ struct sysmmu_drvdata {
+>  	void __iomem **sfrbases;
+>  	struct clk *clk[2];
+>  	int activations;
+> -	rwlock_t lock;
+> +	spinlock_t lock;
+>  	struct iommu_domain *domain;
+>  	sysmmu_fault_handler_t fault_handler;
+>  	unsigned long pgtable;
+> @@ -259,7 +259,7 @@ void exynos_sysmmu_set_prefbuf(struct device *dev,
+>  	BUG_ON((base0 + size0) <= base0);
+>  	BUG_ON((size1 > 0) && ((base1 + size1) <= base1));
+>  
+> -	read_lock_irqsave(&data->lock, flags);
+> +	spin_lock_irqsave(&data->lock, flags);
+>  	if (!is_sysmmu_active(data))
+>  		goto finish;
+>  
+> @@ -289,7 +289,7 @@ void exynos_sysmmu_set_prefbuf(struct device *dev,
+>  		}
+>  	}
+>  finish:
+> -	read_unlock_irqrestore(&data->lock, flags);
+> +	spin_unlock_irqrestore(&data->lock, flags);
+>  }
+>  
+>  static void __set_fault_handler(struct sysmmu_drvdata *data,
+> @@ -297,9 +297,9 @@ static void __set_fault_handler(struct sysmmu_drvdata *data,
+>  {
+>  	unsigned long flags;
+>  
+> -	write_lock_irqsave(&data->lock, flags);
+> +	spin_lock_irqsave(&data->lock, flags);
+>  	data->fault_handler = handler;
+> -	write_unlock_irqrestore(&data->lock, flags);
+> +	spin_unlock_irqrestore(&data->lock, flags);
+>  }
+>  
+>  void exynos_sysmmu_set_fault_handler(struct device *dev,
+> @@ -347,7 +347,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+>  
+>  	int i, ret = -ENOSYS;
+>  
+> -	read_lock(&data->lock);
+> +	spin_lock(&data->lock);
+>  
+>  	WARN_ON(!is_sysmmu_active(data));
+>  
+> @@ -391,7 +391,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+>  	if (itype != SYSMMU_FAULT_UNKNOWN)
+>  		sysmmu_unblock(data->sfrbases[i]);
+>  
+> -	read_unlock(&data->lock);
+> +	spin_unlock(&data->lock);
+>  
+>  	return IRQ_HANDLED;
+>  }
+> @@ -402,7 +402,7 @@ static bool __exynos_sysmmu_disable(struct sysmmu_drvdata *data)
+>  	bool disabled = false;
+>  	int i;
+>  
+> -	write_lock_irqsave(&data->lock, flags);
+> +	spin_lock_irqsave(&data->lock, flags);
+>  
+>  	if (!set_sysmmu_inactive(data))
+>  		goto finish;
+> @@ -419,7 +419,7 @@ static bool __exynos_sysmmu_disable(struct sysmmu_drvdata *data)
+>  	data->pgtable = 0;
+>  	data->domain = NULL;
+>  finish:
+> -	write_unlock_irqrestore(&data->lock, flags);
+> +	spin_unlock_irqrestore(&data->lock, flags);
+>  
+>  	if (disabled)
+>  		dev_dbg(data->sysmmu, "(%s) Disabled\n", data->dbgname);
+> @@ -442,7 +442,7 @@ static int __exynos_sysmmu_enable(struct sysmmu_drvdata *data,
+>  	int i, ret = 0;
+>  	unsigned long flags;
+>  
+> -	write_lock_irqsave(&data->lock, flags);
+> +	spin_lock_irqsave(&data->lock, flags);
+>  
+>  	if (!set_sysmmu_active(data)) {
+>  		if (WARN_ON(pgtable != data->pgtable)) {
+> @@ -481,7 +481,7 @@ static int __exynos_sysmmu_enable(struct sysmmu_drvdata *data,
+>  
+>  	dev_dbg(data->sysmmu, "(%s) Enabled\n", data->dbgname);
+>  finish:
+> -	write_unlock_irqrestore(&data->lock, flags);
+> +	spin_unlock_irqrestore(&data->lock, flags);
+>  
+>  	return ret;
+>  }
+> @@ -528,7 +528,7 @@ static void sysmmu_tlb_invalidate_entry(struct device *dev, unsigned long iova)
+>  	unsigned long flags;
+>  	struct sysmmu_drvdata *data = dev_get_drvdata(dev->archdata.iommu);
+>  
+> -	read_lock_irqsave(&data->lock, flags);
+> +	spin_lock_irqsave(&data->lock, flags);
+>  
+>  	if (is_sysmmu_active(data)) {
+>  		int i;
+> @@ -545,7 +545,7 @@ static void sysmmu_tlb_invalidate_entry(struct device *dev, unsigned long iova)
+>  			data->dbgname);
+>  	}
+>  
+> -	read_unlock_irqrestore(&data->lock, flags);
+> +	spin_unlock_irqrestore(&data->lock, flags);
+>  }
+>  
+>  void exynos_sysmmu_tlb_invalidate(struct device *dev)
+> @@ -553,7 +553,7 @@ void exynos_sysmmu_tlb_invalidate(struct device *dev)
+>  	unsigned long flags;
+>  	struct sysmmu_drvdata *data = dev_get_drvdata(dev->archdata.iommu);
+>  
+> -	read_lock_irqsave(&data->lock, flags);
+> +	spin_lock_irqsave(&data->lock, flags);
+>  
+>  	if (is_sysmmu_active(data)) {
+>  		int i;
+> @@ -569,7 +569,7 @@ void exynos_sysmmu_tlb_invalidate(struct device *dev)
+>  			data->dbgname);
+>  	}
+>  
+> -	read_unlock_irqrestore(&data->lock, flags);
+> +	spin_unlock_irqrestore(&data->lock, flags);
+>  }
+>  
+>  static int exynos_sysmmu_probe(struct platform_device *pdev)
+> @@ -666,7 +666,7 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	data->sysmmu = dev;
+> -	rwlock_init(&data->lock);
+> +	spin_lock_init(&data->lock);
+>  	INIT_LIST_HEAD(&data->node);
+>  
+>  	__set_fault_handler(data, &default_fault_handler);
