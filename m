@@ -1,67 +1,68 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
-Date: Fri, 12 Jul 2013 09:57:34 +0300
-Message-ID: <20130712065734.GE31802@arwen.pp.htv.fi>
-References: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
- <20130710052534.GB15674@arwen.pp.htv.fi>
- <CAODwPW9dmwpXeyBeVER9azsh2uW3NXLTbDtz3mJaXrvSwb6opg@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to support I2S on
+ Exynos5420
+Date: Fri, 12 Jul 2013 09:49:32 +0100
+Message-ID: <20130712084932.GY24508@sirena.org.uk>
+References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
+ <29860116.IF545KsGYb@thinkpad>
+ <20130711112023.GM24508@sirena.org.uk>
+ <2214161.FSfscAvpna@thinkpad>
+ <20130711130139.GQ24508@sirena.org.uk>
+ <CAAgF-BdM4jw0o4+ELVo_N029tbgMJBBqJxU91e=TgBNiiREyaA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+jhVVhN62yS6hEJ8"
+	protocol="application/pgp-signature"; boundary="0786ZyFfTSxuegBe"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:53969 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752994Ab3GLG6B (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:33878 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757211Ab3GLJNZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Jul 2013 02:58:01 -0400
+	Fri, 12 Jul 2013 05:13:25 -0400
 Content-Disposition: inline
-In-Reply-To: <CAODwPW9dmwpXeyBeVER9azsh2uW3NXLTbDtz3mJaXrvSwb6opg@mail.gmail.com>
+In-Reply-To: <CAAgF-BdM4jw0o4+ELVo_N029tbgMJBBqJxU91e=TgBNiiREyaA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: balbi@ti.com, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Praveen Paneri <p.paneri@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olofj@chromium.org>, Vincent Palatin <vpalatin@chromium.org>
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org
 
---+jhVVhN62yS6hEJ8
+
+--0786ZyFfTSxuegBe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Jul 12, 2013 at 10:07:22AM +0530, Padma Venkat wrote:
 
-On Wed, Jul 10, 2013 at 10:42:27AM -0700, Julius Werner wrote:
-> Hi Felipe,
->=20
-> This is intended to pull down a reset signal line, not to switch power
-> to the device. I could implement that with the regulator framework
-> too, but I think that would just be confusing and harder to understand
-> without providing any benefit. It's really just a plain old GPIO.
+> A new version number is added when a there was some change in the IP
+> like adding a internal mux to the IP, adding multi channel support,
+> adding reset control bit. This was done in the older code with
+> platform device.
+> Same thing is followed here. So as previously done, adding a new
+> compatible name like "samsung,i2s-v6" with new quirk
+> "samsung,supports-tdm" is okey?
 
-alright, in that case how about using drivers/reset/ ?
+Yes, this is good but the quirk should just be found by software based
+on the compatible string rather than in the DT.
 
---=20
-balbi
-
---+jhVVhN62yS6hEJ8
+--0786ZyFfTSxuegBe
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR36jeAAoJEIaOsuA1yqREPkgP/isbYeG4jRaimYMNBWfhFKpI
-9ZA3AWoO9oYP9W8iFd0Ss4xnbDpUzp2iKlyux+7D2brMmUihwforDJjGYhGs70P7
-KW3bO1JuUyvjGc2T+Zu/RsRdwfOr/m0YaRvVIuRs5BtvB1qPVpdGi3TLD758+stV
-tRW+UX30KARKnClQXnTrnXeeArd2Wie7IOI05c2+y9PK6/RCWgENsC3qZQxxTQZR
-mDBUxe+Xtna7ZM7xGvBcKrrMUlc/796LJP8DKK5j5of4FaKOWcP8aZN4o9d1Fez4
-CdB7rv8BJcu/Pa6VUjl3VRvo+My7cnhvAnWxobclyPVoj1hkXU4o5KMH4ydH0WnQ
-hx0YKm4Kf/5k2LZRUhFnUE6KujR7R7AJrcOlNyfvJ3EKdbllWESuls+umMIRfvlT
-CLun+XMGMqk8AqkUD/orYKJC1LsDCTtyRfXPFTvleAuR2/v2zusv/XBfjOTyp5LA
-wNGEoWt1/QY8SoKfIOSNcYNLHVJJAf3/E+neCKwBaqQOW8HDJzx+oXVRIORaJUVD
-VvRBDEt07S4/q5lCaKhTouliCyEDOolh8CXVc0/GovQfYv6eheddfgj4gPbwUFR3
-TWfrUImfuJzmZeggbPb271lMrPaMyC80IWb03s83q9Q9CDOr6/OiE3DboWZvx31/
-+8mbayC5LH6iUxbCSbRb
-=rrdx
+iQIcBAEBAgAGBQJR38MTAAoJELSic+t+oim9CUIP/2eBnv3SeQASWChUKiKz/a1t
+7XmEwmzlLDg2O1+VG29JSHI4qhHXL6GsMJ7iSmv1f7cjgmkHL3rIhp1bDt9K5hUr
+r48/uLB7A1CNa0p1CS0xDKSaZxCIOBSUmqMpVqQ+9nqzKE36EMMtfnQpwc7j38dk
+Uh3N+IwwYo0qZijzedmOKXVU/V0NBYP5JIMRLL5THjv7cZuEeIwVpWEbe7Fs2FU6
+CDT/KfVia+0PoroLGV1iT9oaV7h9OrEWdb25F56ZX//HdqnPWIARu33gep8FoOO7
+wZPopkpRO+aFccNJwnakawSObBvnbvvxgJ9QVq5AwG61HQ4Li+yl2yVCsGBftMVX
+boQy474bnwoW8FlOTwayXegBxG2jksU4ple32vCJv7nBPCgcA4LI7vXCUnH8pUOh
+OPrBAlpoStr43jIzmKqDAZuAoz0T41qB5l2TNkdxcL02WDaKVFvQ+cfFgciy3Fbs
+xKmTHtQyiUbcMJreW3Kvch9coLyoa4DJQJtpJ1dOf/7hwc2Rmw02qAaTZSGNM07m
+fd4eml107S6Cny6HISIPAMingRpyIcu89rq5gth/IHa5NsGVLomC7IHBtQc0pv2k
+YjkXLu6XDJfOhhQJXgmFCDXAQTuad5a/hiGc6hlbtlaVHzcH+rOWDh6aveOBlPBw
+8DEKv05l958sQ8UEYvas
+=UftO
 -----END PGP SIGNATURE-----
 
---+jhVVhN62yS6hEJ8--
+--0786ZyFfTSxuegBe--
