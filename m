@@ -1,60 +1,111 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] clk: exynos4: fix g2d/mdma clocks of exynos4x12
-Date: Mon, 22 Jul 2013 15:30:40 +0530
-Message-ID: <CAK9yfHwNgZrZPT5c4DxfsDchWFXR2nWTVxCY2kZTEZW4PwyOng@mail.gmail.com>
-References: <1374480750-30962-1-git-send-email-chanho61.park@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Fix low level debug support
+Date: Sat, 13 Jul 2013 15:27:45 +0530
+Message-ID: <1373709465-21042-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:56323 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754910Ab3GVKAl (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:35891 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756447Ab3GVKGk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 06:00:41 -0400
-Received: by mail-oa0-f47.google.com with SMTP id m1so8704599oag.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 03:00:40 -0700 (PDT)
-In-Reply-To: <1374480750-30962-1-git-send-email-chanho61.park@samsung.com>
+	Mon, 22 Jul 2013 06:06:40 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MQC00H9N1EUP990@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 19:06:39 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <chanho61.park@samsung.com>
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
+To: kgene@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, arnd@arndb.de, olof@lixom.net, dianders@chromium.org, thomas.abraham@linaro.org, t.figa@samsung.com, yadi.brar01@gmail.com, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-Hi Chanho,
+Presently, using exynos_defconfig with CONFIG_DEBUG_LL and CONFIG_EARLY_PRINTK
+on, kernel is not booting, we are getting following:
 
-On 22 July 2013 13:42, Chanho Park <chanho61.park@samsung.com> wrote:
-> The exynos4x12 has different address of GATE_IP_IMAGE reg. We should use
-> EXYNOS4X12_GATE_IP_IMAGE for g2d gating clocks instead of 4210's reg.
-> In case of mdma node, We don't use it for any exynos4 chipsets. I think we'll
-> need to change it to 'none' or leave it on.
->
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c |    4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 1bdb882..6300c9d 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -820,8 +820,10 @@ struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
->  struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
->         GATE(audss, "audss", "sclk_epll", E4X12_GATE_IP_MAUDIO, 0, 0, 0),
->         GATE(mdnie0, "mdnie0", "aclk160", GATE_IP_LCD0, 2, 0, 0),
-> +       GATE(g2d, "g2d", "aclk200", E4X12_GATE_IP_IMAGE, 0, 0, 0),
->         GATE(rotator, "rotator", "aclk200", E4X12_GATE_IP_IMAGE, 1, 0, 0),
-> -       GATE(mdma2, "mdma2", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
-> +       GATE(mdma, "mdma", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
-> +       GATE(smmu_g2d, "smmu_g2d", "aclk200", E4X12_GATE_IP_IMAGE, 3, 0, 0),
->         GATE(smmu_mdma, "smmu_mdma", "aclk200", E4X12_GATE_IP_IMAGE, 5, 0, 0),
->         GATE(mipi_hsi, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
->         GATE(chipid, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
+[    0.000000] ------------[ cut here ]------------
+[    0.000000] kernel BUG at mm/vmalloc.c:1134!
+[    0.000000] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 3.11.0-rc1 #633
+[    0.000000] task: c052ec48 ti: c0524000 task.ti: c0524000
+[    0.000000] PC is at vm_area_add_early+0x54/0x94
+[    0.000000] LR is at add_static_vm_early+0xc/0x60
 
-Which kernel version is this patch based on? G2D clocks for 4x12 has
-already been added by commit 5cd644d837 ("clk: exynos4: Add additional
-G2D clocks").
+Its because iotable_init tries to map UART again which is already mapped by
+debug_ll_io_init() call in exynos_init_io() within same virtal address range as
+requested later.
 
+This issue seems to be occured after :
+commit ee4de5d99aeac44f4507b7538b2b3faedc5205b9
+ARM: 7781/1: mmu: Add debug_ll_io_init() mappings to early mappings
 
+This patch moves S3C_UART iodesc(in iodesc_list) inside CONFIG_DEBUG_LL check.
+
+Tested on 4412 and 5250 smdks.
+
+Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+---
+ arch/arm/mach-exynos/common.c |   20 ++++++++++++++------
+ 1 files changed, 14 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 164685b..7f0591f 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -150,11 +150,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+ 		.length		= SZ_64K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+-		.virtual	= (unsigned long)S3C_VA_UART,
+-		.pfn		= __phys_to_pfn(EXYNOS4_PA_UART),
+-		.length		= SZ_512K,
+-		.type		= MT_DEVICE,
+-	}, {
+ 		.virtual	= (unsigned long)S5P_VA_CMU,
+ 		.pfn		= __phys_to_pfn(EXYNOS4_PA_CMU),
+ 		.length		= SZ_128K,
+@@ -185,6 +180,14 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+ 	},
++#ifndef CONFIG_DEBUG_LL
++	{
++		.virtual	= (unsigned long)S3C_VA_UART,
++		.pfn		= __phys_to_pfn(EXYNOS4_PA_UART),
++		.length		= SZ_512K,
++		.type		= MT_DEVICE,
++	},
++#endif
+ };
+ 
+ static struct map_desc exynos4_iodesc0[] __initdata = {
+@@ -268,21 +271,26 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+ 		.pfn		= __phys_to_pfn(EXYNOS5_PA_PMU),
+ 		.length		= SZ_64K,
+ 		.type		= MT_DEVICE,
+-	}, {
++	},
++#ifndef CONFIG_DEBUG_LL
++	{
+ 		.virtual	= (unsigned long)S3C_VA_UART,
+ 		.pfn		= __phys_to_pfn(EXYNOS5_PA_UART),
+ 		.length		= SZ_512K,
+ 		.type		= MT_DEVICE,
+ 	},
++#endif
+ };
+ 
+ static struct map_desc exynos5440_iodesc0[] __initdata = {
++#ifndef CONFIG_DEBUG_LL
+ 	{
+ 		.virtual	= (unsigned long)S3C_VA_UART,
+ 		.pfn		= __phys_to_pfn(EXYNOS5440_PA_UART0),
+ 		.length		= SZ_512K,
+ 		.type		= MT_DEVICE,
+ 	},
++#endif
+ };
+ 
+ void exynos4_restart(enum reboot_mode mode, const char *cmd)
 -- 
-With warm regards,
-Sachin
+1.7.0.4
