@@ -1,92 +1,59 @@
-From: Sethi Varun-B16395 <B16395@freescale.com>
-Subject: RE: [PATCH] iommu/exynos: add devices attached to the System MMU to
- an	IOMMU group
-Date: Tue, 23 Jul 2013 12:46:27 +0000
-Message-ID: <C5ECD7A89D1DC44195F34B25E172658D0A3C0DB3@039-SN2MPN1-012.039d.mgd.msft.net>
-References: <1374573694-30595-1-git-send-email-a.motakis@virtualopensystems.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Subject: [v2 PATCH 0/2] EXYNOS: Fix low level debug support
+Date: Sun, 14 Jul 2013 18:16:58 +0530
+Message-ID: <1373806020-7336-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-db9lp0252.outbound.messaging.microsoft.com ([213.199.154.252]:38474
-	"EHLO db9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756626Ab3GWMra convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 08:47:30 -0400
-In-Reply-To: <1374573694-30595-1-git-send-email-a.motakis@virtualopensystems.com>
-Content-Language: en-US
+Received: from mailout3.samsung.com ([203.254.224.33]:59144 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932175Ab3GWM4y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Jul 2013 08:56:54 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MQE003C83YTRJ00@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Jul 2013 21:56:53 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Antonios Motakis <a.motakis@virtualopensystems.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Jiri Kosina <jkosina@suse.cz>, open list <linux-kernel@vger.kernel.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Cho KyongHo <pullip.cho@samsung.com>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>
+To: kgene@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, arnd@arndb.de, olof@lixom.net, dianders@chromium.org, thomas.abraham@linaro.org, t.figa@samsung.com, yadi.brar01@gmail.com, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
+Presently, using exynos_defconfig with CONFIG_DEBUG_LL and CONFIG_EARLY_PRINTK
+on, kernel is not booting, we are getting following:
 
+[    0.000000] ------------[ cut here ]------------
+[    0.000000] kernel BUG at mm/vmalloc.c:1134!
+[    0.000000] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 3.11.0-rc1 #633
+[    0.000000] task: c052ec48 ti: c0524000 task.ti: c0524000
+[    0.000000] PC is at vm_area_add_early+0x54/0x94
+[    0.000000] LR is at add_static_vm_early+0xc/0x60
 
-> -----Original Message-----
-> From: iommu-bounces@lists.linux-foundation.org [mailto:iommu-
-> bounces@lists.linux-foundation.org] On Behalf Of Antonios Motakis
-> Sent: Tuesday, July 23, 2013 3:32 PM
-> To: linux-arm-kernel@lists.infradead.org; iommu@lists.linux-
-> foundation.org; linux-samsung-soc@vger.kernel.org
-> Cc: Sachin Kamat; Jiri Kosina; open list; Wei Yongjun; Antonios Motakis;
-> Cho KyongHo; kvmarm@lists.cs.columbia.edu
-> Subject: [PATCH] iommu/exynos: add devices attached to the System MMU to
-> an IOMMU group
-> 
-> IOMMU groups are expected by certain users of the IOMMU API, e.g. VFIO.
-> Since each device is behind its own System MMU, we can allocate a new
-> IOMMU group for each device.
-> 
-> This patch depends on Cho KyongHo's patch series titled "[PATCH v7 00/12]
-> iommu/exynos: Fixes and Enhancements of System MMU driver with DT",
-> applied on a Linux 3.10.1 kernel. It has been tested on the Arndale
-> board.
-> 
-> Signed-off-by: Antonios Motakis <a.motakis@virtualopensystems.com>
-> ---
->  drivers/iommu/exynos-iommu.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index 51d43bb..9f39eaa 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-> @@ -1134,6 +1134,28 @@ static phys_addr_t
-> exynos_iommu_iova_to_phys(struct iommu_domain *domain,
->  	return phys;
->  }
-> 
-> +static int exynos_iommu_add_device(struct device *dev) {
-> +	struct iommu_group *group;
-> +	int ret;
-> +
-> +	group = iommu_group_alloc();
-> +	if (IS_ERR(group)) {
-> +		dev_err(dev, "Failed to allocate IOMMU group\n");
-> +		return PTR_ERR(group);
-> +	}
-> +
-> +	ret = iommu_group_add_device(group, dev);
-> +	iommu_group_put(group);
-> +
-> +	return ret;
-> +}
-> +
-> +static void exynos_iommu_remove_device(struct device *dev) {
-> +	iommu_group_remove_device(dev);
-> +}
-> +
->  static struct iommu_ops exynos_iommu_ops = {
->  	.domain_init = &exynos_iommu_domain_init,
->  	.domain_destroy = &exynos_iommu_domain_destroy, @@ -1142,6 +1164,8
-> @@ static struct iommu_ops exynos_iommu_ops = {
->  	.map = &exynos_iommu_map,
->  	.unmap = &exynos_iommu_unmap,
->  	.iova_to_phys = &exynos_iommu_iova_to_phys,
-> +	.add_device	= exynos_iommu_add_device,
-> +	.remove_device	= exynos_iommu_remove_device,
->  	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,  };
-> 
-[Sethi Varun-B16395] Do you support PCI devices? This assumption of one iommu group per pci device may not hold true in case of PCI devices.
+Its because exynos[4/5]_map_io() function ioremaps a single 512KB memory
+size for all the four uart ports which envelopes the mapping created by
+debug_ll_io_init(), called earlier in exynos_init_io().
 
--Varun
+This issue seems to be occured after :
+commit ee4de5d99aeac44f4507b7538b2b3faedc5205b9
+ARM: 7781/1: mmu: Add debug_ll_io_init() mappings to early mappings
+
+This series removes static iodesc entries for UART controller for all Samsung
+SoC's and modifies pm debug code to save/restore only the selected debug uart
+registers.
+
+changes since v1:
+- removed uart iodesc entires instead of just moving inside CONFIG_DEBUG_LL
+  check, as suggested by Thomas Abraham.
+- Fixed the possible issue after removing uart entries pointed by Tomasz Figa.
+
+Tested doing suspend/resume on smdk5250.
+
+Yadwinder Singh Brar (2):
+  ARM: SAMSUNG: pm: Save/restore only selected uart's registers
+  ARM: EXYNOS: Fix low level debug support
+
+ arch/arm/mach-exynos/common.c |   26 --------------------------
+ arch/arm/plat-samsung/pm.c    |   14 +++-----------
+ 2 files changed, 3 insertions(+), 37 deletions(-)
