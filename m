@@ -1,155 +1,71 @@
 From: Jingoo Han <jg1.han@samsung.com>
 Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys part
  and Exynos part
-Date: Mon, 15 Jul 2013 17:25:15 +0900
-Message-ID: <000601ce8134$d5277b20$7f767160$@samsung.com>
+Date: Mon, 15 Jul 2013 17:26:07 +0900
+Message-ID: <000a01ce8134$f44554f0$dccffed0$@samsung.com>
 References: <001201ce7dfa$716b3370$54419a50$@samsung.com>
- <51DFD3F3.9050704@ti.com>
+ <20130711154121.GC2198@dhcp-172-17-186-34.nvidia.com>
+ <000301ce7e8e$4b7d9420$e278bc60$@samsung.com>
+ <20130712171529.GA9620@dhcp-172-17-186-34.nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:26547 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754119Ab3GOIZf (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:39537 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754287Ab3GOI0K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 04:25:35 -0400
-In-reply-to: <51DFD3F3.9050704@ti.com>
+	Mon, 15 Jul 2013 04:26:10 -0400
+In-reply-to: <20130712171529.GA9620@dhcp-172-17-186-34.nvidia.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+To: 'Thierry Reding' <thierry.reding@gmail.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, Jingoo Han <jg1.han@samsung.com>, linux-kernel@vger.kernel.org
 
-On Friday, July 12, 2013 7:01 PM, Kishon Vijay Abraham I wrote:
-> On Thursday 11 July 2013 11:19 AM, Jingoo Han wrote:
-> > Exynos PCIe IP consists of Synopsys specific part and Exynos
-> > specific part. Only core block is a Synopsys designware part;
-> > other parts are Exynos specific.
-> > Also, the Synopsys designware part can be shared with other
-> > platforms; thus, it can be split two parts such as Synopsys
-> > designware part and Exynos specific part.
+On Saturday, July 13, 2013 2:16 AM, Thierry Reding wrote:
+> On Fri, Jul 12, 2013 at 08:28:05AM +0900, Jingoo Han wrote:
+> > On Friday, July 12, 2013 12:41 AM, Thierry Reding wrote:
+> > > On Thu, Jul 11, 2013 at 02:49:43PM +0900, Jingoo Han wrote:
+> > > [...]
+> > > > diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
+> > > [...]
+> > > >  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
+> > > >  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
+> > > > +obj-$(CONFIG_PCI_EXYNOS) += pcie-exynos.o
+> > >
+> > > I think we should keep these sorted alphabetically. Also Tegra and
+> > > Marvell are PCIe controllers but they still use the pci- prefix instead
+> > > of pcie-. Perhaps it'd be good to keep consistency here? I initially
+> > > chose pci- because from a software point of view it doesn't matter all
+> > > that much whether it's PCI or PCIe and because the drivers are part of
+> > > the PCI subsystem. However if Exynos now uses the pcie- prefix it makes
+> > > it look like Tegra and Marvell are plain old PCI.
+> > >
 > >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > Cc: Pratyush Anand <pratyush.anand@st.com>
-> > Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
-> > ---
-> > Changes since v1:
-> > - moved the configuration, I/O, memory space handling to dw_pcie_host_init()
-> > - removed exynos_pcie_abort()
-> > - replaced 'purple_base' with 'block_base'
-> > - replaced 'dbi_base' with 'dbi_addr'
+> > Hi Thierry,
 > >
-> >  drivers/pci/host/Makefile          |    1 +
-> >  drivers/pci/host/pcie-designware.c |  963 +++++++++---------------------------
-> >  drivers/pci/host/pcie-designware.h |   71 +++
-> >  drivers/pci/host/pcie-exynos.c     |  523 ++++++++++++++++++++
-> >  4 files changed, 822 insertions(+), 736 deletions(-)
-> >  create mode 100644 drivers/pci/host/pcie-designware.h
-> >  create mode 100644 drivers/pci/host/pcie-exynos.c
+> > I initially chose 'pci-' prefix such as 'pci-designware.c'.
 > >
-
-[...]
-
-> > -static void exynos_pcie_setup_rc(struct pcie_port *pp)
-> > +void dw_pcie_setup_rc(struct pcie_port *pp)
-> >  {
-> >  	struct pcie_port_info *config = &pp->config;
-> >  	void __iomem *dbi_base = pp->dbi_base;
-> > @@ -549,509 +502,47 @@ static void exynos_pcie_setup_rc(struct pcie_port *pp)
-> >  	u32 memlimit;
+> > However, Pratyush Anand suggested as below:
+> > "I would suggest to rename it as pcie-designware.c,
+> > because synopsis pcie and pci controllers are different."
 > >
-> >  	/* set the number of lines as 4 */
-> > -	readl_rc(pp, dbi_base + PCIE_PORT_LINK_CONTROL, &val);
-> > +	dw_pcie_readl_rc(pp, dbi_base + PCIE_PORT_LINK_CONTROL, &val);
-> >  	val &= ~PORT_LINK_MODE_MASK;
-> >  	val |= PORT_LINK_MODE_4_LANES;
-> > -	writel_rc(pp, val, dbi_base + PCIE_PORT_LINK_CONTROL);
-> > +	dw_pcie_writel_rc(pp, val, dbi_base + PCIE_PORT_LINK_CONTROL);
+> > If you have a good idea, please give it to me. :)
 > 
-> I guess here we need to make this configurable. In Jacinto6 this can be either
-> single lane or double lane. Maybe we should have a dt property to specify the
-> number of lanes?
+> Alternatively the plain old PCI variant could be suffixed -legacy or
+> similar, but I guess pcie- as a prefix works okay in this case.
+> 
+> However I still think you should sort them properly:
+> 
+> 	obj-$(CONFIG_PCIE_DW) += pcie-designware.o
+> 	obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
+> 	obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
 
-OK, I will make it configurable.
+Hi Thierry Reding,
 
-[...]
-
-> > +struct pcie_port_info {
-> > +	u32		cfg0_size;
-> > +	u32		cfg1_size;
-> > +	u32		io_size;
-> > +	u32		mem_size;
-> > +	phys_addr_t	io_bus_addr;
-> > +	phys_addr_t	mem_bus_addr;
-> > +};
-> > +
-> > +struct pcie_port {
-> > +	struct device		*dev;
-> > +	u8			controller;
-> > +	u8			root_bus_nr;
-> > +	void __iomem		*dbi_base;
-> > +	void __iomem		*elbi_base;
-> > +	void __iomem		*phy_base;
-> > +	void __iomem		*block_base;
-> > +	u64			cfg0_base;
-> > +	void __iomem		*va_cfg0_base;
-> > +	u64			cfg1_base;
-> > +	void __iomem		*va_cfg1_base;
-> > +	u64			io_base;
-> > +	u64			mem_base;
-> > +	spinlock_t		conf_lock;
-> > +	struct resource		cfg;
-> > +	struct resource		io;
-> > +	struct resource		mem;
-> > +	struct pcie_port_info	config;
-> > +	struct clk		*clk;
-> > +	struct clk		*bus_clk;
-> > +	int			irq;
-> > +	int			reset_gpio;
-> > +	struct dw_pcie_host_ops	*ops;
-> > +};
-> 
-> I think this structure should be split. This has too many of platform specific
-> fields. Maybe we should make pcie_port have only fields necessary for core part
-> and have some other structure for platform specific part?
-> 
-> Something like
-> struct exynos_pcie {
-> 	[...]
-> 	void __iomem		*dbi_base;
-> 	void __iomem		*elbi_base;
-> 	void __iomem		*phy_base;
-> 	int			reset_gpio;
-> 	struct clk		*clk;
-> 	struct clk		*bus_clk;
-> 	[...]
-> 	struct pcie_port	pp;
-> }
-> 
-> struct pcie_port {
-> 	struct device		*dev;
-> 	u64			cfg0_base;
-> 	void __iomem		*va_cfg0_base;
-> 	u64			cfg1_base;
-> 	void __iomem		*va_cfg1_base;
-> 	u64			io_base;
-> 	u64			mem_base;
-> 	spinlock_t		conf_lock;
-> 	struct resource		cfg;
-> 	struct resource		io;
-> 	struct resource		mem;
-> 	struct pcie_port_info	config;
-> 	int			irq;
-> 	struct dw_pcie_host_ops	*ops;
-> };
-> 
-> And in ops, you can use container_of to get reference to exynos_pcie (if we
-> want to write to exynos pcie registers)
-
-OK, I see.
-It looks good. I will use it as you guided.
 Thank you for your suggestion. :)
+I will use it as you guided.
 
 Best regards,
 Jingoo Han
