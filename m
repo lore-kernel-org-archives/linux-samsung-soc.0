@@ -1,91 +1,65 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] ASoC: samsung: Enable COMPILE_TEST builds
-Date: Mon, 15 Jul 2013 18:11:24 +0100
-Message-ID: <1373908284-14305-1-git-send-email-broonie@kernel.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2 2/2] spi: s3c64xx: fix checkpatch error and warnings
+Date: Tue, 16 Jul 2013 08:23:41 +0900
+Message-ID: <002e01ce81b2$5825d800$08718800$@samsung.com>
+References: <000101ce8122$3621f7b0$a265e710$@samsung.com>
+ <1373890206.2062.4.camel@joe-AO722>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:58664 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751585Ab3GORL4 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:51725 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755797Ab3GOXXo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 13:11:56 -0400
+	Mon, 15 Jul 2013 19:23:44 -0400
+In-reply-to: <1373890206.2062.4.camel@joe-AO722>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+To: 'Joe Perches' <joe@perches.com>
+Cc: 'Mark Brown' <broonie@kernel.org>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-From: Mark Brown <broonie@linaro.org>
+On Monday, July 15, 2013 9:10 PM, Joe Perches wrote:
+> On Mon, 2013-07-15 at 15:11 +0900, Jingoo Han wrote:
+> []
+> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> []
+> > @@ -338,8 +338,10 @@ static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
+> []
+> > -	sdd->rx_dma.ch = (void *)sdd->ops->request(sdd->rx_dma.dmach, &req, dev, "rx");
+> > -	sdd->tx_dma.ch = (void *)sdd->ops->request(sdd->tx_dma.dmach, &req, dev, "tx");
+> > +	sdd->rx_dma.ch = (void *)sdd->ops->request(sdd->rx_dma.dmach,
+> > +						&req, dev, "rx");
+> > +	sdd->tx_dma.ch = (void *)sdd->ops->request(sdd->tx_dma.dmach,
+> > +						&req, dev, "tx");
+> 
+> There should be sparse errors here.
+> sdd->ops->request is unsigned int, not unsigned long.
+> Care to fix the cast of unsigned to pointer too?
 
-Platform using OF and some others don't have any dependencies on arch/arm
-so can be built on any platform. Enable that for better compile coverage
-when COMPILE_TEST is enabled.
+OK, I will fix it as below:
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- sound/soc/samsung/Kconfig | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+sdd->rx_dma.ch = (unsigned long *)sdd->ops->request(sdd->rx_dma.dmach,
+							&req, dev, "rx");
+sdd->tx_dma.ch = (unsigned long *)sdd->ops->request(sdd->tx_dma.dmach,
+							&req, dev, "tx");
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 9855dfc..df28dc8 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -1,6 +1,6 @@
- config SND_SOC_SAMSUNG
- 	tristate "ASoC support for Samsung"
--	depends on PLAT_SAMSUNG
-+	depends on PLAT_SAMSUNG || COMPILE_TEST
- 	select S3C64XX_DMA if ARCH_S3C64XX
- 	select S3C2410_DMA if ARCH_S3C24XX
- 	help
-@@ -150,7 +150,7 @@ config SND_SOC_SMARTQ
- 
- config SND_SOC_GONI_AQUILA_WM8994
- 	tristate "SoC I2S Audio support for AQUILA/GONI - WM8994"
--	depends on SND_SOC_SAMSUNG && (MACH_GONI || MACH_AQUILA)
-+	depends on SND_SOC_SAMSUNG && (MACH_GONI || MACH_AQUILA || COMPILE_TEST)
- 	depends on I2C=y && GENERIC_HARDIRQS
- 	select SND_SAMSUNG_I2S
- 	select MFD_WM8994
-@@ -186,7 +186,7 @@ config SND_SOC_SMDK_WM8994_PCM
- 
- config SND_SOC_SPEYSIDE
- 	tristate "Audio support for Wolfson Speyside"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM8996
- 	select SND_SOC_WM9081
-@@ -195,13 +195,13 @@ config SND_SOC_SPEYSIDE
- 
- config SND_SOC_TOBERMORY
- 	tristate "Audio support for Wolfson Tobermory"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM8962
- 
- config SND_SOC_BELLS
- 	tristate "Audio support for Wolfson Bells"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM5102
- 	select SND_SOC_WM5110
-@@ -211,14 +211,14 @@ config SND_SOC_BELLS
- 
- config SND_SOC_LOWLAND
- 	tristate "Audio support for Wolfson Lowland"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM5100
- 	select SND_SOC_WM9081
- 
- config SND_SOC_LITTLEMILL
- 	tristate "Audio support for Wolfson Littlemill"
--	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
-+	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
- 	select SND_SAMSUNG_I2S
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
--- 
-1.8.3.2
+> 
+> > @@ -439,7 +441,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+> >
+> >  	/* Acquire DMA channels */
+> >  	sdd->rx_dma.ch = dma_request_slave_channel_compat(mask, filter,
+> > -				(void*)sdd->rx_dma.dmach, dev, "rx");
+> > +				(void *)sdd->rx_dma.dmach, dev, "rx");
+> 
+> It seems unsigned to pointer conversions are pretty
+> rampant in this code.
+
+It seems so.
+I will look into it, later.
+
+Thank you for your feedback.
+
+Best regards,
+Jingoo Han
