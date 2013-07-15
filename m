@@ -1,59 +1,113 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 2/2] spi: s3c64xx: fix checkpatch error and warnings
-Date: Mon, 15 Jul 2013 13:00:17 +0100
-Message-ID: <20130715120017.GH11538@sirena.org.uk>
-References: <000101ce8122$3621f7b0$a265e710$@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v2 3/5] mmc: dw_mmc: Add exynos resume_noirq callback to
+ clear WAKEUP_INT
+Date: Mon, 15 Jul 2013 21:09:40 +0900
+Message-ID: <003f01ce8154$2f5ea1d0$8e1be570$%jun@samsung.com>
+References: <1373391071-6312-1-git-send-email-dianders@chromium.org>
+ <1373411961-23812-1-git-send-email-dianders@chromium.org>
+ <1373411961-23812-4-git-send-email-dianders@chromium.org>
+ <002a01ce7d7d$6bd9e870$438db950$%jun@samsung.com>
+ <CAD=FV=UtX0Z1ABdi5h270ks8Py2o1iPK4DonOHJH3N0Q1YShTQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NzX0AQGjRQPusK/O"
+Content-Type: text/plain; charset=Windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:37752 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755900Ab3GOMAU (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:20255 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755765Ab3GOMJn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 08:00:20 -0400
-Content-Disposition: inline
-In-Reply-To: <000101ce8122$3621f7b0$a265e710$@samsung.com>
+	Mon, 15 Jul 2013 08:09:43 -0400
+In-reply-to: <CAD=FV=UtX0Z1ABdi5h270ks8Py2o1iPK4DonOHJH3N0Q1YShTQ@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>
+To: 'Doug Anderson' <dianders@chromium.org>
+Cc: 'Chris Ball' <cjb@laptop.org>, 'Olof Johansson' <olof@lixom.net>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'James Hogan' <james.hogan@imgtec.com>, 'Grant Grundler' <grundler@chromium.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org
 
+On Thu, July 11, 2013, Doug Anderson wrote:
+> Seungwon,
+> 
+> On Wed, Jul 10, 2013 at 7:54 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > On Wed, July 10, 2013, Doug Anderson wrote:
+> >> If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
+> >> looping around forever.  This has been seen to happen on exynos5420
+> >> silicon despite the fact that we haven't enabled any wakeup events.
+> >>
+> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> >> ---
+> >> Changes in v2:
+> >> - Use suspend_noirq as per James Hogan.
+> >>
+> >>  drivers/mmc/host/dw_mmc-exynos.c | 23 +++++++++++++++++++++++
+> >>  1 file changed, 23 insertions(+)
+> >>
+> >> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> >> index f013e7e..36b9620 100644
+> >> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> >> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> >> @@ -30,6 +30,7 @@
+> >>  #define SDMMC_CLKSEL_TIMING(x, y, z) (SDMMC_CLKSEL_CCLK_SAMPLE(x) |  \
+> >>                                       SDMMC_CLKSEL_CCLK_DRIVE(y) |    \
+> >>                                       SDMMC_CLKSEL_CCLK_DIVIDER(z))
+> >> +#define SDMMC_CLKSEL_WAKEUP_INT              BIT(11)
+> >>
+> >>  #define SDMMC_CMD_USE_HOLD_REG               BIT(29)
+> >>
+> >> @@ -102,6 +103,27 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
+> >>       return 0;
+> >>  }
+> >>
+> >> +/**
+> >> + * dw_mci_exynos_resume_noirq - Exynos-specific resume code
+> >> + *
+> >> + * We have seen cases (at least on the exynos5420) where turning off the INT
+> >> + * power rail during suspend will leave the WAKEUP_INT bit in the CLKSEL
+> >> + * register asserted.  This bit is 1 to indicate that it fired and we can
+> >> + * clear it by writing a 1 back.  Clear it to prevent interrupts from going off
+> >> + * constantly.
+> >> + */
+> > As I know this bit is auto-cleared.
+> > Did you find the cause of this problem?
+> > How about your GPIO setting in sleep?
+> > Currently, we don't know why the problem is happened.
+> > At least, we should make it clear.
+> 
+> Yes, the documentation that I have says that this bit is "auto
+> cleared" as well but doesn't indicate under what conditions it is auto
+> cleared.  From testing how this bit reacts I have found that writing a
+> 1 to it clears the bit--in other words it behaves like bits in
+> RINTSTS.  That's a terrible design for a bit in a register with shared
+> config but appears to be how it works.
+> 
+> Note: in a sense it will be "auto cleared" because doing a
+> read-modify-write of any other bits in this register will clear the
+> interrupt.
+> 
+> I have asked for official confirmation.
+> 
+> We have found that on exynos5420 bits 8-10 of CLKSEL are marked as
+> RESERVED.  Those bits are documented to enable the WAKEUP_INT on
+> exynos5250.  My best guess is that these bits are not used on
+> exynos5420 and the WAKEUP_INT line is left floating, which means it
+> can fire randomly.  I have also asked for official confirmation about
+> this.
+Sorry for late response.
+Yes, it's not clear.
+If you get the confirmation, could you share this problem?
+Possibly, auto-clear may not be implemented.
+Then, manual should be correct.
 
---NzX0AQGjRQPusK/O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 15, 2013 at 03:11:57PM +0900, Jingoo Han wrote:
-> Fix the following checkpatch error and warnings:
->=20
->   ERROR: "(foo*)" should be "(foo *)"
->   WARNING: line over 80 characters
->   WARNING: quoted string split across lines
-
-Applied, thanks.
-
---NzX0AQGjRQPusK/O
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR4+RNAAoJELSic+t+oim9uz0QAJjtqGatjohVzvyKzCpOJ3o9
-IzmLOUSJ2xo521xrrGxINSZdjk6im+4bjeFfswKzdgbAKvXItL7gUG10JhFlhqS6
-jQCOFeKChl3IUGGNh3VegQhkezGTq4TchBTIMICFL2v67QNyzdtvhQyHz6e9xRT3
-7rGgu4C9r3UE/HIFpTYiwRMuYxgIde12dwFIOwvC4zfofs+P8mIq+GDaZMZ7Wqq7
-mhPsJzrfDoL2p4LpJB6lk+zwjQLUkWf/lg4Y2W9+c0jstx7HWcSq0REAfJEgNtrH
-T8BT2baNZFhjSzhTNNkX6sgIoC2sRewSazZMcVKvUJX4HXHMwwkmpr/GgOM3CbDb
-lDYROXFERlVxPuReKGf1qGZXfq2kowmp/6ynvulag9tBtPBYMWAiMaEOwhEcVxjr
-B0TAQ+WFJk244PG50PdWewBbHd5+s3iQYFXeu1EVOgFVRcdhZiaNg8FQstNnBJg5
-K1DZhfUtYuhiECKjb977JvOMuISf/TRARA2N8vbEy5NPdNzccyRAE/awEKn+SFqR
-FIAktiYfAMuH/MXq9yhKbDprlLz8rG/IE9O44D+P9AC7yGaWR6lZkRdCApPfM9z6
-6unrZDVDjleSuOmJDaAeQ4qLT2iBOU37JiSiWQop9Oa0ylv45FzZY0gED1hL1qHu
-Dpv8h+cRv8TtusUu7EIh
-=CxhL
------END PGP SIGNATURE-----
-
---NzX0AQGjRQPusK/O--
+Thanks,
+Seungwon Jeon
+> 
+> 
+> I will likely merge this change locally in our kernel tree while
+> waiting for a response.  If you would like to wait before Acking
+> that's very reasonable.  Do you have any other problems with this
+> change assuming my understanding above is correct?
+> 
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
