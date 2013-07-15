@@ -1,86 +1,68 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ARM: EXYNOS: remove references to non-DT SoCs
-Date: Mon, 15 Jul 2013 12:25:03 +0100
-Message-ID: <20130715112503.GB11538@sirena.org.uk>
-References: <1373804812.1370.23.camel@x61.thuisdomein>
- <20130714124538.GA11538@sirena.org.uk>
- <1373807896.1370.43.camel@x61.thuisdomein>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Update CONFIG_ARCH_NR_GPIO for Exynos
+Date: Mon, 15 Jul 2013 17:22:09 +0530
+Message-ID: <CAK9yfHyEaysTJ9QpWWxxOacQEP4wv1NX3sXKkvKFhMbBgbCYYg@mail.gmail.com>
+References: <1372054438-15693-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Bn2rw/3z4jIqBvZU"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:57826 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755711Ab3GOLZP (ORCPT
+Received: from mail-oa0-f51.google.com ([209.85.219.51]:59752 "EHLO
+	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755899Ab3GOLwK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 07:25:15 -0400
-Content-Disposition: inline
-In-Reply-To: <1373807896.1370.43.camel@x61.thuisdomein>
+	Mon, 15 Jul 2013 07:52:10 -0400
+Received: by mail-oa0-f51.google.com with SMTP id i4so15567467oah.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jul 2013 04:52:09 -0700 (PDT)
+In-Reply-To: <1372054438-15693-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+
+On 24 June 2013 11:43, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> With the recent cleanup in Exynos platform code notably commits
+> 17859bec ("ARM: EXYNOS: Do not select legacy Kconfig symbols any
+> more") and b9222210 ("ARM: EXYNOS: Remove mach/gpio.h"), the definition
+> of ARCH_NR_GPIOS got removed. This started causing problems on SoCs like
+> Exynos4412 which have more (285) than the default number of GPIOs (255).
+> Thus define this number in Kconfig file. Without this patch we get the
+> following errors during boot:
+>
+> gpiochip_add: gpios 251..258 (gpv0) failed to register
+> samsung-pinctrl 106e0000.pinctrl: failed to register gpio_chip gpv0,
+> error code: -22
+> samsung-pinctrl: probe of 106e0000.pinctrl failed with error -22
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> ---
+> Based on Kukjin's for-next tree.
+> ---
+>  arch/arm/Kconfig |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index ddf2667..380a53b 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1578,6 +1578,7 @@ config ARCH_NR_GPIO
+>         default 512 if SOC_OMAP5
+>         default 392 if ARCH_U8500
+>         default 352 if ARCH_VT8500
+> +       default 288 if ARCH_EXYNOS
+>         default 288 if ARCH_SUNXI
+>         default 264 if MACH_H4700
+>         default 0
+> --
+> 1.7.9.5
+>
+
+Kukjin,
+
+Now that 3.11-rc1 is out, can you please queue this up for 3.11-rc2 as
+without this patch
+gpio support on 4412 boards is broken.
 
 
---Bn2rw/3z4jIqBvZU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sun, Jul 14, 2013 at 03:18:16PM +0200, Paul Bolle wrote:
-> On Sun, 2013-07-14 at 13:45 +0100, Mark Brown wrote:
-
-> > Simply removing the dependencies is not going to give the clearly
-> > intended effect here.  The dependency on the DT only machine needs to be
-> > replaced with something, not just deleted, otherwise the driver can't be
-> > enabled in Kconfig.
-
-> I interpreted commit 383ffda2fa as a commit that just removed a lot of
-
-Always provide human readable descriptions of commits in email.
-
-> stuff: see its commit explanation and its diffstat (it adds one line and
-> deletes over 900 lines). Moreover, after that commit the references to
-> MACH_SMDKV310 and MACH_SMDKC210 both are nops. Deleting them can't
-> possibly change anything.
-
-This still doesn't have much to do with your commit message or indicate
-much understanding of what the change is actually doing or why it might
-be a problem.
-
-> But, anyhow, what would be the symbols to use here?
-
-Well, let's think about this for a minute - what is going on when
-someone does a device tree conversion on a platform?  What is replacing
-the board files?  What would an equivalent change be for the audio
-driver?
-
-> Besides, this patch was intended as a follow up to commit 383ffda2fa, to
-> clean up two references it apparently forgot to remove, and therefor
-> basically copied the subject line used in that commit.
-
-That doesn't really help - putting in a completely irrelevant subject
-line is a really good way to get your patch ignored.
-
---Bn2rw/3z4jIqBvZU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIbBAEBAgAGBQJR49wMAAoJELSic+t+oim9Wg4P90u6ZwB9wtBBV0kO8DY4xmTy
-l5CtbU7W+vdv/7EX6rVwfjHU9u+KUh+JH7+B0NpuFjSmdSYkYYt64nE8kUF5c7dy
-yn7NiHsCgpkmGhCCIUBK0DAHjhJWGWeiQAWFPuUNS5ObvGATPcdftikEnlr9x1cn
-KCsRB5DpRsTU5tDjWz6BEPaK5BskPrD0Vt/9otxsbzU6RpZ60IUUjhePY8uH0Ry5
-TUSXJYyt+QBW50Is1xQbIdepHnDNa/ruZFpHtaBJU3RLq7k9+n5aWfFOnV2FA5Ie
-Db0dLW38E/fnIiuRrfSZjNlIrmmCXyysp2/3JWl6mZCb4r5OdVQDbFxl/vR/gOQR
-QsslRFWGo0uqd+DofkDzvUMz/o2/VVnbrp2jeWstFSOiEEkOb3RKsfvqxFRw8bUv
-f5/toDuYXz+OtTGOo0jiPKFep6RnIaeMGFBQUREgzrX071yzLNmrqENzTPmZTVwG
-D3ULj+VvJVrxKRUKnVD3iRs0xqhrLdqttnX7IHUvI3GFtnEMYsTQJHZAccU2pIFD
-whgfi30qZ77Ugnex3exFKztfgItc90wbg6uOSMMXAJbGwd/EQNnoxutPBMohf25P
-i+KbW+MTp7oqTyxR0DV9dukOVDF0Zkra0FrdwV1mHNyP1xPjIYWY3wkxp6H6UpYi
-7722I36asRmVY9FgZD4=
-=L/lZ
------END PGP SIGNATURE-----
-
---Bn2rw/3z4jIqBvZU--
+-- 
+With warm regards,
+Sachin
