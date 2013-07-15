@@ -1,52 +1,194 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq: s3c24xx: fix typo "ARM_S3C24XX"
-Date: Mon, 15 Jul 2013 15:01:42 +0530
-Message-ID: <CAKohpok1xvsVrssYrNJJZ2GTLJZVnY8SrCzNx+VdXbiMjL6uLw@mail.gmail.com>
-References: <1373803339.1370.18.camel@x61.thuisdomein>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: RE: [PATCH v7 5/9] iommu/exynos: change rwlock to spinlock
+Date: Mon, 15 Jul 2013 19:20:34 +0900
+Message-ID: <009301ce8144$f1172c30$d3458490$@samsung.com>
+References: <002d01ce797b$49c441a0$dd4cc4e0$@samsung.com>
+ <13890783.WKk2X4EVm4@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:55829 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754636Ab3GOJbm (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:65435 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754869Ab3GOKUg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 05:31:42 -0400
-Received: by mail-ob0-f176.google.com with SMTP id v19so13736064obq.35
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jul 2013 02:31:42 -0700 (PDT)
-In-Reply-To: <1373803339.1370.18.camel@x61.thuisdomein>
+	Mon, 15 Jul 2013 06:20:36 -0400
+In-reply-to: <13890783.WKk2X4EVm4@amdc1032>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
+Cc: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Keyyoung Park' <keyyoung.park@samsung.com>, 'Grant Grundler' <grundler@chromium.org>
 
-On 14 July 2013 17:32, Paul Bolle <pebolle@tiscali.nl> wrote:
-> Kconfig symbol S3C24XX_PLL depends on ARM_S3C24XX. But that symbol
-> doesn't exist. Commit f023f8dd59bf ("cpufreq: s3c24xx: move cpufreq
-> driver to drivers/cpufreq"), which added this typo, makes clear that
-> ARM_S3C24XX_CPUFREQ was intended here.
->
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
-> ---
-> Untested!
->
->  arch/arm/mach-s3c24xx/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-> index 6d9252e..7791ac7 100644
-> --- a/arch/arm/mach-s3c24xx/Kconfig
-> +++ b/arch/arm/mach-s3c24xx/Kconfig
-> @@ -208,7 +208,7 @@ config S3C24XX_GPIO_EXTRA128
->
->  config S3C24XX_PLL
->         bool "Support CPUfreq changing of PLL frequency (EXPERIMENTAL)"
-> -       depends on ARM_S3C24XX
-> +       depends on ARM_S3C24XX_CPUFREQ
->         help
->           Compile in support for changing the PLL frequency from the
->           S3C24XX series CPUfreq driver. The PLL takes time to settle
+> From: Bartlomiej Zolnierkiewicz [mailto:b.zolnierkie@samsung.com]
+> Sent: Saturday, July 13, 2013 12:31 AM
+> 
+> Hi,
+> 
+> On Friday, July 05, 2013 09:29:26 PM Cho KyongHo wrote:
+> > Since acquiring read_lock is not more frequent than write_lock, it is
+> > not beneficial to use rwlock, this commit changes rwlock to spinlock.
+> 
+> This change is not of a "fix type" and is not required to make the driver
+> work so it would probably be best to move it to the end of a patch series
+> (IOW just making it the last patch in the series).
+> 
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Thank you for advice.
+I will do that in the next patchset :)
 
-@Rafael: I saw you taking other s3c patch directly. Mind taking this
-one too?
+Cho KyongHo.
+
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+> > ---
+> >  drivers/iommu/exynos-iommu.c |   32 ++++++++++++++++----------------
+> >  1 files changed, 16 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> > index 390f8b7..6793661 100644
+> > --- a/drivers/iommu/exynos-iommu.c
+> > +++ b/drivers/iommu/exynos-iommu.c
+> > @@ -175,7 +175,7 @@ struct sysmmu_drvdata {
+> >  	void __iomem **sfrbases;
+> >  	struct clk *clk[2];
+> >  	int activations;
+> > -	rwlock_t lock;
+> > +	spinlock_t lock;
+> >  	struct iommu_domain *domain;
+> >  	sysmmu_fault_handler_t fault_handler;
+> >  	unsigned long pgtable;
+> > @@ -259,7 +259,7 @@ void exynos_sysmmu_set_prefbuf(struct device *dev,
+> >  	BUG_ON((base0 + size0) <= base0);
+> >  	BUG_ON((size1 > 0) && ((base1 + size1) <= base1));
+> >
+> > -	read_lock_irqsave(&data->lock, flags);
+> > +	spin_lock_irqsave(&data->lock, flags);
+> >  	if (!is_sysmmu_active(data))
+> >  		goto finish;
+> >
+> > @@ -289,7 +289,7 @@ void exynos_sysmmu_set_prefbuf(struct device *dev,
+> >  		}
+> >  	}
+> >  finish:
+> > -	read_unlock_irqrestore(&data->lock, flags);
+> > +	spin_unlock_irqrestore(&data->lock, flags);
+> >  }
+> >
+> >  static void __set_fault_handler(struct sysmmu_drvdata *data,
+> > @@ -297,9 +297,9 @@ static void __set_fault_handler(struct sysmmu_drvdata *data,
+> >  {
+> >  	unsigned long flags;
+> >
+> > -	write_lock_irqsave(&data->lock, flags);
+> > +	spin_lock_irqsave(&data->lock, flags);
+> >  	data->fault_handler = handler;
+> > -	write_unlock_irqrestore(&data->lock, flags);
+> > +	spin_unlock_irqrestore(&data->lock, flags);
+> >  }
+> >
+> >  void exynos_sysmmu_set_fault_handler(struct device *dev,
+> > @@ -347,7 +347,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+> >
+> >  	int i, ret = -ENOSYS;
+> >
+> > -	read_lock(&data->lock);
+> > +	spin_lock(&data->lock);
+> >
+> >  	WARN_ON(!is_sysmmu_active(data));
+> >
+> > @@ -391,7 +391,7 @@ static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+> >  	if (itype != SYSMMU_FAULT_UNKNOWN)
+> >  		sysmmu_unblock(data->sfrbases[i]);
+> >
+> > -	read_unlock(&data->lock);
+> > +	spin_unlock(&data->lock);
+> >
+> >  	return IRQ_HANDLED;
+> >  }
+> > @@ -402,7 +402,7 @@ static bool __exynos_sysmmu_disable(struct sysmmu_drvdata *data)
+> >  	bool disabled = false;
+> >  	int i;
+> >
+> > -	write_lock_irqsave(&data->lock, flags);
+> > +	spin_lock_irqsave(&data->lock, flags);
+> >
+> >  	if (!set_sysmmu_inactive(data))
+> >  		goto finish;
+> > @@ -419,7 +419,7 @@ static bool __exynos_sysmmu_disable(struct sysmmu_drvdata *data)
+> >  	data->pgtable = 0;
+> >  	data->domain = NULL;
+> >  finish:
+> > -	write_unlock_irqrestore(&data->lock, flags);
+> > +	spin_unlock_irqrestore(&data->lock, flags);
+> >
+> >  	if (disabled)
+> >  		dev_dbg(data->sysmmu, "(%s) Disabled\n", data->dbgname);
+> > @@ -442,7 +442,7 @@ static int __exynos_sysmmu_enable(struct sysmmu_drvdata *data,
+> >  	int i, ret = 0;
+> >  	unsigned long flags;
+> >
+> > -	write_lock_irqsave(&data->lock, flags);
+> > +	spin_lock_irqsave(&data->lock, flags);
+> >
+> >  	if (!set_sysmmu_active(data)) {
+> >  		if (WARN_ON(pgtable != data->pgtable)) {
+> > @@ -481,7 +481,7 @@ static int __exynos_sysmmu_enable(struct sysmmu_drvdata *data,
+> >
+> >  	dev_dbg(data->sysmmu, "(%s) Enabled\n", data->dbgname);
+> >  finish:
+> > -	write_unlock_irqrestore(&data->lock, flags);
+> > +	spin_unlock_irqrestore(&data->lock, flags);
+> >
+> >  	return ret;
+> >  }
+> > @@ -528,7 +528,7 @@ static void sysmmu_tlb_invalidate_entry(struct device *dev, unsigned long iova)
+> >  	unsigned long flags;
+> >  	struct sysmmu_drvdata *data = dev_get_drvdata(dev->archdata.iommu);
+> >
+> > -	read_lock_irqsave(&data->lock, flags);
+> > +	spin_lock_irqsave(&data->lock, flags);
+> >
+> >  	if (is_sysmmu_active(data)) {
+> >  		int i;
+> > @@ -545,7 +545,7 @@ static void sysmmu_tlb_invalidate_entry(struct device *dev, unsigned long iova)
+> >  			data->dbgname);
+> >  	}
+> >
+> > -	read_unlock_irqrestore(&data->lock, flags);
+> > +	spin_unlock_irqrestore(&data->lock, flags);
+> >  }
+> >
+> >  void exynos_sysmmu_tlb_invalidate(struct device *dev)
+> > @@ -553,7 +553,7 @@ void exynos_sysmmu_tlb_invalidate(struct device *dev)
+> >  	unsigned long flags;
+> >  	struct sysmmu_drvdata *data = dev_get_drvdata(dev->archdata.iommu);
+> >
+> > -	read_lock_irqsave(&data->lock, flags);
+> > +	spin_lock_irqsave(&data->lock, flags);
+> >
+> >  	if (is_sysmmu_active(data)) {
+> >  		int i;
+> > @@ -569,7 +569,7 @@ void exynos_sysmmu_tlb_invalidate(struct device *dev)
+> >  			data->dbgname);
+> >  	}
+> >
+> > -	read_unlock_irqrestore(&data->lock, flags);
+> > +	spin_unlock_irqrestore(&data->lock, flags);
+> >  }
+> >
+> >  static int exynos_sysmmu_probe(struct platform_device *pdev)
+> > @@ -666,7 +666,7 @@ static int exynos_sysmmu_probe(struct platform_device *pdev)
+> >  	}
+> >
+> >  	data->sysmmu = dev;
+> > -	rwlock_init(&data->lock);
+> > +	spin_lock_init(&data->lock);
+> >  	INIT_LIST_HEAD(&data->node);
+> >
+> >  	__set_fault_handler(data, &default_fault_handler);
