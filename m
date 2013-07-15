@@ -1,71 +1,52 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys part
- and Exynos part
-Date: Mon, 15 Jul 2013 17:26:07 +0900
-Message-ID: <000a01ce8134$f44554f0$dccffed0$@samsung.com>
-References: <001201ce7dfa$716b3370$54419a50$@samsung.com>
- <20130711154121.GC2198@dhcp-172-17-186-34.nvidia.com>
- <000301ce7e8e$4b7d9420$e278bc60$@samsung.com>
- <20130712171529.GA9620@dhcp-172-17-186-34.nvidia.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: s3c24xx: fix typo "ARM_S3C24XX"
+Date: Mon, 15 Jul 2013 15:01:42 +0530
+Message-ID: <CAKohpok1xvsVrssYrNJJZ2GTLJZVnY8SrCzNx+VdXbiMjL6uLw@mail.gmail.com>
+References: <1373803339.1370.18.camel@x61.thuisdomein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39537 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754287Ab3GOI0K (ORCPT
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:55829 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754636Ab3GOJbm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 04:26:10 -0400
-In-reply-to: <20130712171529.GA9620@dhcp-172-17-186-34.nvidia.com>
-Content-language: ko
+	Mon, 15 Jul 2013 05:31:42 -0400
+Received: by mail-ob0-f176.google.com with SMTP id v19so13736064obq.35
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jul 2013 02:31:42 -0700 (PDT)
+In-Reply-To: <1373803339.1370.18.camel@x61.thuisdomein>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thierry Reding' <thierry.reding@gmail.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, Jingoo Han <jg1.han@samsung.com>, linux-kernel@vger.kernel.org
+To: Paul Bolle <pebolle@tiscali.nl>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Saturday, July 13, 2013 2:16 AM, Thierry Reding wrote:
-> On Fri, Jul 12, 2013 at 08:28:05AM +0900, Jingoo Han wrote:
-> > On Friday, July 12, 2013 12:41 AM, Thierry Reding wrote:
-> > > On Thu, Jul 11, 2013 at 02:49:43PM +0900, Jingoo Han wrote:
-> > > [...]
-> > > > diff --git a/drivers/pci/host/Makefile b/drivers/pci/host/Makefile
-> > > [...]
-> > > >  obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
-> > > >  obj-$(CONFIG_PCIE_DW) += pcie-designware.o
-> > > > +obj-$(CONFIG_PCI_EXYNOS) += pcie-exynos.o
-> > >
-> > > I think we should keep these sorted alphabetically. Also Tegra and
-> > > Marvell are PCIe controllers but they still use the pci- prefix instead
-> > > of pcie-. Perhaps it'd be good to keep consistency here? I initially
-> > > chose pci- because from a software point of view it doesn't matter all
-> > > that much whether it's PCI or PCIe and because the drivers are part of
-> > > the PCI subsystem. However if Exynos now uses the pcie- prefix it makes
-> > > it look like Tegra and Marvell are plain old PCI.
-> > >
-> >
-> > Hi Thierry,
-> >
-> > I initially chose 'pci-' prefix such as 'pci-designware.c'.
-> >
-> > However, Pratyush Anand suggested as below:
-> > "I would suggest to rename it as pcie-designware.c,
-> > because synopsis pcie and pci controllers are different."
-> >
-> > If you have a good idea, please give it to me. :)
-> 
-> Alternatively the plain old PCI variant could be suffixed -legacy or
-> similar, but I guess pcie- as a prefix works okay in this case.
-> 
-> However I still think you should sort them properly:
-> 
-> 	obj-$(CONFIG_PCIE_DW) += pcie-designware.o
-> 	obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
-> 	obj-$(CONFIG_PCI_MVEBU) += pci-mvebu.o
+On 14 July 2013 17:32, Paul Bolle <pebolle@tiscali.nl> wrote:
+> Kconfig symbol S3C24XX_PLL depends on ARM_S3C24XX. But that symbol
+> doesn't exist. Commit f023f8dd59bf ("cpufreq: s3c24xx: move cpufreq
+> driver to drivers/cpufreq"), which added this typo, makes clear that
+> ARM_S3C24XX_CPUFREQ was intended here.
+>
+> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+> ---
+> Untested!
+>
+>  arch/arm/mach-s3c24xx/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+> index 6d9252e..7791ac7 100644
+> --- a/arch/arm/mach-s3c24xx/Kconfig
+> +++ b/arch/arm/mach-s3c24xx/Kconfig
+> @@ -208,7 +208,7 @@ config S3C24XX_GPIO_EXTRA128
+>
+>  config S3C24XX_PLL
+>         bool "Support CPUfreq changing of PLL frequency (EXPERIMENTAL)"
+> -       depends on ARM_S3C24XX
+> +       depends on ARM_S3C24XX_CPUFREQ
+>         help
+>           Compile in support for changing the PLL frequency from the
+>           S3C24XX series CPUfreq driver. The PLL takes time to settle
 
-Hi Thierry Reding,
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Thank you for your suggestion. :)
-I will use it as you guided.
-
-Best regards,
-Jingoo Han
+@Rafael: I saw you taking other s3c patch directly. Mind taking this
+one too?
