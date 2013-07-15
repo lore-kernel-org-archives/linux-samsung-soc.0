@@ -1,41 +1,91 @@
-From: Grant Grundler <grundler@chromium.org>
-Subject: Re: [PATCH v7 3/9] iommu/exynos: fix page table maintenance
-Date: Mon, 15 Jul 2013 09:18:41 -0700
-Message-ID: <CANEJEGs_8a9dPCYtDT8u2NEv5HUUD5gcdmRmbsrKU-_aagztgg@mail.gmail.com>
-References: <002b01ce797b$44d4ad10$ce7e0730$@samsung.com>
-	<1933986.4vddYccClk@amdc1032>
-	<009a01ce814d$840b48c0$8c21da40$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] ASoC: samsung: Enable COMPILE_TEST builds
+Date: Mon, 15 Jul 2013 18:11:24 +0100
+Message-ID: <1373908284-14305-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:45603 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932584Ab3GOQSl (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:58664 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751585Ab3GORL4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 12:18:41 -0400
-Received: by mail-oa0-f53.google.com with SMTP id k14so15660682oag.26
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jul 2013 09:18:41 -0700 (PDT)
-In-Reply-To: <009a01ce814d$840b48c0$8c21da40$@samsung.com>
+	Mon, 15 Jul 2013 13:11:56 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Cho KyongHo <pullip.cho@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Hyunwoong Kim <khw0178.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Keyyoung Park <keyyoung.park@samsung.com>, Grant Grundler <grundler@chromium.org>
+To: Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-On Mon, Jul 15, 2013 at 4:21 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
-...
->> Maybe you could add LV1TABLE_SIZE define and use it here (there is
->> already a LV2TABLE_SIZE define)?
->
-> Yes. But, LV2TABLE_SIZE is used in more places than one.
-> I do not feel that it is needed to define LV1TABLE_SIZE for the single line.
+From: Mark Brown <broonie@linaro.org>
 
-Cho,
-#define's are part of the code "documentation". Doesn't really matter
-how often it's used. I think Bartlomiej's suggestion is a good one.
+Platform using OF and some others don't have any dependencies on arch/arm
+so can be built on any platform. Enable that for better compile coverage
+when COMPILE_TEST is enabled.
 
-Key is to use "consistent" names so they makes sense to someone not
-familiar with the code. In this case, we want to show this use is the
-same way LV2TABLE_SIZE is used and serves the same purpose.
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ sound/soc/samsung/Kconfig | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-cheers.
-grant
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index 9855dfc..df28dc8 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -1,6 +1,6 @@
+ config SND_SOC_SAMSUNG
+ 	tristate "ASoC support for Samsung"
+-	depends on PLAT_SAMSUNG
++	depends on PLAT_SAMSUNG || COMPILE_TEST
+ 	select S3C64XX_DMA if ARCH_S3C64XX
+ 	select S3C2410_DMA if ARCH_S3C24XX
+ 	help
+@@ -150,7 +150,7 @@ config SND_SOC_SMARTQ
+ 
+ config SND_SOC_GONI_AQUILA_WM8994
+ 	tristate "SoC I2S Audio support for AQUILA/GONI - WM8994"
+-	depends on SND_SOC_SAMSUNG && (MACH_GONI || MACH_AQUILA)
++	depends on SND_SOC_SAMSUNG && (MACH_GONI || MACH_AQUILA || COMPILE_TEST)
+ 	depends on I2C=y && GENERIC_HARDIRQS
+ 	select SND_SAMSUNG_I2S
+ 	select MFD_WM8994
+@@ -186,7 +186,7 @@ config SND_SOC_SMDK_WM8994_PCM
+ 
+ config SND_SOC_SPEYSIDE
+ 	tristate "Audio support for Wolfson Speyside"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
++	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8996
+ 	select SND_SOC_WM9081
+@@ -195,13 +195,13 @@ config SND_SOC_SPEYSIDE
+ 
+ config SND_SOC_TOBERMORY
+ 	tristate "Audio support for Wolfson Tobermory"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
++	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM8962
+ 
+ config SND_SOC_BELLS
+ 	tristate "Audio support for Wolfson Bells"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
++	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM5102
+ 	select SND_SOC_WM5110
+@@ -211,14 +211,14 @@ config SND_SOC_BELLS
+ 
+ config SND_SOC_LOWLAND
+ 	tristate "Audio support for Wolfson Lowland"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
++	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
+ 	select SND_SAMSUNG_I2S
+ 	select SND_SOC_WM5100
+ 	select SND_SOC_WM9081
+ 
+ config SND_SOC_LITTLEMILL
+ 	tristate "Audio support for Wolfson Littlemill"
+-	depends on SND_SOC_SAMSUNG && MACH_WLF_CRAGG_6410
++	depends on SND_SOC_SAMSUNG && (MACH_WLF_CRAGG_6410 || COMPILE_TEST)
+ 	select SND_SAMSUNG_I2S
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
+-- 
+1.8.3.2
