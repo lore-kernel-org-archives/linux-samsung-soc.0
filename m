@@ -1,88 +1,155 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V2 2/2] spi: s3c64xx: fix checkpatch error and warnings
-Date: Mon, 15 Jul 2013 15:11:57 +0900
-Message-ID: <000101ce8122$3621f7b0$a265e710$@samsung.com>
+Subject: Re: [PATCH V2] pci: exynos: split into two parts such as Synopsys part
+ and Exynos part
+Date: Mon, 15 Jul 2013 17:25:15 +0900
+Message-ID: <000601ce8134$d5277b20$7f767160$@samsung.com>
+References: <001201ce7dfa$716b3370$54419a50$@samsung.com>
+ <51DFD3F3.9050704@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:9662 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753807Ab3GOGL7 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:26547 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754119Ab3GOIZf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 02:11:59 -0400
+	Mon, 15 Jul 2013 04:25:35 -0400
+In-reply-to: <51DFD3F3.9050704@ti.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>, Jingoo Han <jg1.han@samsung.com>
+To: 'Kishon Vijay Abraham I' <kishon@ti.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-Fix the following checkpatch error and warnings:
+On Friday, July 12, 2013 7:01 PM, Kishon Vijay Abraham I wrote:
+> On Thursday 11 July 2013 11:19 AM, Jingoo Han wrote:
+> > Exynos PCIe IP consists of Synopsys specific part and Exynos
+> > specific part. Only core block is a Synopsys designware part;
+> > other parts are Exynos specific.
+> > Also, the Synopsys designware part can be shared with other
+> > platforms; thus, it can be split two parts such as Synopsys
+> > designware part and Exynos specific part.
+> >
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > Cc: Pratyush Anand <pratyush.anand@st.com>
+> > Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+> > ---
+> > Changes since v1:
+> > - moved the configuration, I/O, memory space handling to dw_pcie_host_init()
+> > - removed exynos_pcie_abort()
+> > - replaced 'purple_base' with 'block_base'
+> > - replaced 'dbi_base' with 'dbi_addr'
+> >
+> >  drivers/pci/host/Makefile          |    1 +
+> >  drivers/pci/host/pcie-designware.c |  963 +++++++++---------------------------
+> >  drivers/pci/host/pcie-designware.h |   71 +++
+> >  drivers/pci/host/pcie-exynos.c     |  523 ++++++++++++++++++++
+> >  4 files changed, 822 insertions(+), 736 deletions(-)
+> >  create mode 100644 drivers/pci/host/pcie-designware.h
+> >  create mode 100644 drivers/pci/host/pcie-exynos.c
+> >
 
-  ERROR: "(foo*)" should be "(foo *)"
-  WARNING: line over 80 characters
-  WARNING: quoted string split across lines
+[...]
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-No changes since v1:
+> > -static void exynos_pcie_setup_rc(struct pcie_port *pp)
+> > +void dw_pcie_setup_rc(struct pcie_port *pp)
+> >  {
+> >  	struct pcie_port_info *config = &pp->config;
+> >  	void __iomem *dbi_base = pp->dbi_base;
+> > @@ -549,509 +502,47 @@ static void exynos_pcie_setup_rc(struct pcie_port *pp)
+> >  	u32 memlimit;
+> >
+> >  	/* set the number of lines as 4 */
+> > -	readl_rc(pp, dbi_base + PCIE_PORT_LINK_CONTROL, &val);
+> > +	dw_pcie_readl_rc(pp, dbi_base + PCIE_PORT_LINK_CONTROL, &val);
+> >  	val &= ~PORT_LINK_MODE_MASK;
+> >  	val |= PORT_LINK_MODE_4_LANES;
+> > -	writel_rc(pp, val, dbi_base + PCIE_PORT_LINK_CONTROL);
+> > +	dw_pcie_writel_rc(pp, val, dbi_base + PCIE_PORT_LINK_CONTROL);
+> 
+> I guess here we need to make this configurable. In Jacinto6 this can be either
+> single lane or double lane. Maybe we should have a dt property to specify the
+> number of lanes?
 
- drivers/spi/spi-s3c64xx.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+OK, I will make it configurable.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 21ba0a0..dc861c0 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -338,8 +338,10 @@ static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
- 	req.cap = DMA_SLAVE;
- 	req.client = &s3c64xx_spi_dma_client;
- 
--	sdd->rx_dma.ch = (void *)sdd->ops->request(sdd->rx_dma.dmach, &req, dev, "rx");
--	sdd->tx_dma.ch = (void *)sdd->ops->request(sdd->tx_dma.dmach, &req, dev, "tx");
-+	sdd->rx_dma.ch = (void *)sdd->ops->request(sdd->rx_dma.dmach,
-+						&req, dev, "rx");
-+	sdd->tx_dma.ch = (void *)sdd->ops->request(sdd->tx_dma.dmach,
-+						&req, dev, "tx");
- 
- 	return 1;
- }
-@@ -439,7 +441,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 
- 	/* Acquire DMA channels */
- 	sdd->rx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--				(void*)sdd->rx_dma.dmach, dev, "rx");
-+				(void *)sdd->rx_dma.dmach, dev, "rx");
- 	if (!sdd->rx_dma.ch) {
- 		dev_err(dev, "Failed to get RX DMA channel\n");
- 		ret = -EBUSY;
-@@ -447,7 +449,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 	}
- 
- 	sdd->tx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--				(void*)sdd->tx_dma.dmach, dev, "tx");
-+				(void *)sdd->tx_dma.dmach, dev, "tx");
- 	if (!sdd->tx_dma.ch) {
- 		dev_err(dev, "Failed to get TX DMA channel\n");
- 		ret = -EBUSY;
-@@ -1361,16 +1363,14 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (!sdd->pdev->dev.of_node) {
- 		res = platform_get_resource(pdev, IORESOURCE_DMA,  0);
- 		if (!res) {
--			dev_warn(&pdev->dev, "Unable to get SPI tx dma "
--					"resource. Switching to poll mode\n");
-+			dev_warn(&pdev->dev, "Unable to get SPI tx dma resource. Switching to poll mode\n");
- 			sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
- 		} else
- 			sdd->tx_dma.dmach = res->start;
- 
- 		res = platform_get_resource(pdev, IORESOURCE_DMA,  1);
- 		if (!res) {
--			dev_warn(&pdev->dev, "Unable to get SPI rx dma "
--					"resource. Switching to poll mode\n");
-+			dev_warn(&pdev->dev, "Unable to get SPI rx dma resource. Switching to poll mode\n");
- 			sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
- 		} else
- 			sdd->rx_dma.dmach = res->start;
--- 
-1.7.10.4
+[...]
+
+> > +struct pcie_port_info {
+> > +	u32		cfg0_size;
+> > +	u32		cfg1_size;
+> > +	u32		io_size;
+> > +	u32		mem_size;
+> > +	phys_addr_t	io_bus_addr;
+> > +	phys_addr_t	mem_bus_addr;
+> > +};
+> > +
+> > +struct pcie_port {
+> > +	struct device		*dev;
+> > +	u8			controller;
+> > +	u8			root_bus_nr;
+> > +	void __iomem		*dbi_base;
+> > +	void __iomem		*elbi_base;
+> > +	void __iomem		*phy_base;
+> > +	void __iomem		*block_base;
+> > +	u64			cfg0_base;
+> > +	void __iomem		*va_cfg0_base;
+> > +	u64			cfg1_base;
+> > +	void __iomem		*va_cfg1_base;
+> > +	u64			io_base;
+> > +	u64			mem_base;
+> > +	spinlock_t		conf_lock;
+> > +	struct resource		cfg;
+> > +	struct resource		io;
+> > +	struct resource		mem;
+> > +	struct pcie_port_info	config;
+> > +	struct clk		*clk;
+> > +	struct clk		*bus_clk;
+> > +	int			irq;
+> > +	int			reset_gpio;
+> > +	struct dw_pcie_host_ops	*ops;
+> > +};
+> 
+> I think this structure should be split. This has too many of platform specific
+> fields. Maybe we should make pcie_port have only fields necessary for core part
+> and have some other structure for platform specific part?
+> 
+> Something like
+> struct exynos_pcie {
+> 	[...]
+> 	void __iomem		*dbi_base;
+> 	void __iomem		*elbi_base;
+> 	void __iomem		*phy_base;
+> 	int			reset_gpio;
+> 	struct clk		*clk;
+> 	struct clk		*bus_clk;
+> 	[...]
+> 	struct pcie_port	pp;
+> }
+> 
+> struct pcie_port {
+> 	struct device		*dev;
+> 	u64			cfg0_base;
+> 	void __iomem		*va_cfg0_base;
+> 	u64			cfg1_base;
+> 	void __iomem		*va_cfg1_base;
+> 	u64			io_base;
+> 	u64			mem_base;
+> 	spinlock_t		conf_lock;
+> 	struct resource		cfg;
+> 	struct resource		io;
+> 	struct resource		mem;
+> 	struct pcie_port_info	config;
+> 	int			irq;
+> 	struct dw_pcie_host_ops	*ops;
+> };
+> 
+> And in ops, you can use container_of to get reference to exynos_pcie (if we
+> want to write to exynos pcie registers)
+
+OK, I see.
+It looks good. I will use it as you guided.
+Thank you for your suggestion. :)
+
+Best regards,
+Jingoo Han
