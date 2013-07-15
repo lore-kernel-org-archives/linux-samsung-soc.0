@@ -1,68 +1,62 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Update CONFIG_ARCH_NR_GPIO for Exynos
-Date: Mon, 15 Jul 2013 17:22:09 +0530
-Message-ID: <CAK9yfHyEaysTJ9QpWWxxOacQEP4wv1NX3sXKkvKFhMbBgbCYYg@mail.gmail.com>
-References: <1372054438-15693-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V2 1/2] spi: s3c64xx: fix printk warnings
+Date: Mon, 15 Jul 2013 12:59:58 +0100
+Message-ID: <20130715115958.GG11538@sirena.org.uk>
+References: <000001ce8122$1ab3df70$501b9e50$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="L1c6L/cjZjI9d0Eq"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:59752 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755899Ab3GOLwK (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:37733 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755900Ab3GOMAC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 07:52:10 -0400
-Received: by mail-oa0-f51.google.com with SMTP id i4so15567467oah.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Jul 2013 04:52:09 -0700 (PDT)
-In-Reply-To: <1372054438-15693-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 15 Jul 2013 08:00:02 -0400
+Content-Disposition: inline
+In-Reply-To: <000001ce8122$1ab3df70$501b9e50$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
-
-On 24 June 2013 11:43, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> With the recent cleanup in Exynos platform code notably commits
-> 17859bec ("ARM: EXYNOS: Do not select legacy Kconfig symbols any
-> more") and b9222210 ("ARM: EXYNOS: Remove mach/gpio.h"), the definition
-> of ARCH_NR_GPIOS got removed. This started causing problems on SoCs like
-> Exynos4412 which have more (285) than the default number of GPIOs (255).
-> Thus define this number in Kconfig file. Without this patch we get the
-> following errors during boot:
->
-> gpiochip_add: gpios 251..258 (gpv0) failed to register
-> samsung-pinctrl 106e0000.pinctrl: failed to register gpio_chip gpv0,
-> error code: -22
-> samsung-pinctrl: probe of 106e0000.pinctrl failed with error -22
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> ---
-> Based on Kukjin's for-next tree.
-> ---
->  arch/arm/Kconfig |    1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index ddf2667..380a53b 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1578,6 +1578,7 @@ config ARCH_NR_GPIO
->         default 512 if SOC_OMAP5
->         default 392 if ARCH_U8500
->         default 352 if ARCH_VT8500
-> +       default 288 if ARCH_EXYNOS
->         default 288 if ARCH_SUNXI
->         default 264 if MACH_H4700
->         default 0
-> --
-> 1.7.9.5
->
-
-Kukjin,
-
-Now that 3.11-rc1 is out, can you please queue this up for 3.11-rc2 as
-without this patch
-gpio support on 4412 boards is broken.
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>
 
 
--- 
-With warm regards,
-Sachin
+--L1c6L/cjZjI9d0Eq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 15, 2013 at 03:11:11PM +0900, Jingoo Han wrote:
+> Fix the following build warnings when LPAE is enabled:
+>=20
+> drivers/spi/spi-s3c64xx.c:1466:2: warning: format '%x' expects argument o=
+f type 'unsigned int', but argument 4 has type
+> 'resource_size_t' [-Wformat]
+> drivers/spi/spi-s3c64xx.c:1466:2: warning: format '%x' expects argument o=
+f type 'unsigned int', but argument 5 has type
+> 'resource_size_t' [-Wformat]
+
+Applied, thanks.
+
+--L1c6L/cjZjI9d0Eq
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR4+Q7AAoJELSic+t+oim9/jgP/AhepEGAkW3xlVRb6WDDAA+8
+fwFFPikESXXb8Cnx0GVLKulMDltr0coIvWbLDBaeqA5W79DUasrYkGnzXXMFrY6H
+fIdZOtUQTP8/fmVepaYNTl3ssgBVRqWEqzkYbdNfT2vNCevReqmtPmoLd/Q2kzYH
+oJBANLMjCVMAWYHx3eDoXqMalZdgFNVTsOeEcPxzOgARDTE9+J1hyl+idOrw1VV0
+d9dfbshPd4i77MgAfS7OTw569tdKDEgGMEvLbroy0dzXuXFwVoxvV93k6FrQto/1
+pWyKqjVMCvlrQnkOnNc6kODhz0lcD/ZLuE7V0xWAjPgiFkfEZ/hi+RhOGZAXVdEe
+mdjffoTEgmLYdNE7KtB1j7Q+/Nw+yAtVk8z85zXYsvU9QEKbW7csOs6Xt5Uj4E+W
+2g2kdOBj6ieZHshR7Wsj24/XbC7EutvhMK65cLpOsvNFmdkBvl2B6ARv7QqQ2LMo
+UK+H0gqpfGyLBCqnJLvC6Xu+UWFy/M+9ze9b+jZ+FqOle16MLfLvze4tHEx5Sbaq
+PScK9yIJ+NJ0YEjM4d9u8J9X94CzKYYpUjw0ecZKYW350KQb+7QRSJy1SN+haGGT
+ma9oIGQaOdeBVPbyrEfLR1LxmeCS7RXozWiHaAO0ttlQZ/YzFLAQCKIixAET9919
+XH94OJ/X7beLq+jnjhNu
+=L593
+-----END PGP SIGNATURE-----
+
+--L1c6L/cjZjI9d0Eq--
