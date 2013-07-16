@@ -1,92 +1,90 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V4 2/2] spi: s3c64xx: fix checkpatch error and warnings
-Date: Tue, 16 Jul 2013 08:54:39 +0900
-Message-ID: <003401ce81b6$ab70cb10$02526130$@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v3 3/5] mmc: dw_mmc: Add exynos resume_noirq callback to
+ clear WAKEUP_INT
+Date: Tue, 16 Jul 2013 10:36:22 +0900
+Message-ID: <51E4A396.7010202@samsung.com>
+References: <1373411961-23812-1-git-send-email-dianders@chromium.org>
+ <1373470926-19314-1-git-send-email-dianders@chromium.org>
+ <1373470926-19314-4-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:45924 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754915Ab3GOXyl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Jul 2013 19:54:41 -0400
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1373470926-19314-4-git-send-email-dianders@chromium.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Chris Ball <cjb@laptop.org>, Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>, Jingoo Han <jg1.han@samsung.com>
 
-Fix the following checkpatch error and warnings:
+Hi Doug,
 
-  ERROR: "(foo*)" should be "(foo *)"
-  WARNING: line over 80 characters
-  WARNING: quoted string split across lines
+I think these patch-set didn't base on latest mmc-next.
+If you can rebase on latest mmc-next, it's helpful to me for testing.
 
-Also, it converts (void *) to (unsigned long *)(unsigned long)
-to fix sparse error.
+Best Regards,
+Jaehoon Chung
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-Changes since v3:
-- Converted (void *) to (unsigned long *)(unsigned long) for sdd->ops->request
+On 07/11/2013 12:42 AM, Doug Anderson wrote:
+> If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
+> looping around forever.  This has been seen to happen on exynos5420
+> silicon despite the fact that we haven't enabled any wakeup events.
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v3: None
+> Changes in v2:
+> - Use suspend_noirq as per James Hogan.
+> 
+>  drivers/mmc/host/dw_mmc-exynos.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index f013e7e..36b9620 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -30,6 +30,7 @@
+>  #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
+>  					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
+>  					SDMMC_CLKSEL_CCLK_DIVIDER(z))
+> +#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
+>  
+>  #define SDMMC_CMD_USE_HOLD_REG		BIT(29)
+>  
+> @@ -102,6 +103,27 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
+>  	return 0;
+>  }
+>  
+> +/**
+> + * dw_mci_exynos_resume_noirq - Exynos-specific resume code
+> + *
+> + * We have seen cases (at least on the exynos5420) where turning off the INT
+> + * power rail during suspend will leave the WAKEUP_INT bit in the CLKSEL
+> + * register asserted.  This bit is 1 to indicate that it fired and we can
+> + * clear it by writing a 1 back.  Clear it to prevent interrupts from going off
+> + * constantly.
+> + */
+> +
+> +static int dw_mci_exynos_resume_noirq(struct dw_mci *host)
+> +{
+> +	u32 clksel;
+> +
+> +	clksel = mci_readl(host, CLKSEL);
+> +	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
+> +		mci_writel(host, CLKSEL, clksel);
+> +
+> +	return 0;
+> +}
+> +
+>  static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>  {
+>  	/*
+> @@ -165,6 +187,7 @@ static const struct dw_mci_drv_data exynos_drv_data = {
+>  	.caps			= exynos_dwmmc_caps,
+>  	.init			= dw_mci_exynos_priv_init,
+>  	.setup_clock		= dw_mci_exynos_setup_clock,
+> +	.resume_noirq		= dw_mci_exynos_resume_noirq,
+>  	.prepare_command	= dw_mci_exynos_prepare_command,
+>  	.set_ios		= dw_mci_exynos_set_ios,
+>  	.parse_dt		= dw_mci_exynos_parse_dt,
+> 
 
- drivers/spi/spi-s3c64xx.c |   16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 21ba0a0..0768c3c 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -338,8 +338,10 @@ static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
- 	req.cap = DMA_SLAVE;
- 	req.client = &s3c64xx_spi_dma_client;
- 
--	sdd->rx_dma.ch = (void *)sdd->ops->request(sdd->rx_dma.dmach, &req, dev, "rx");
--	sdd->tx_dma.ch = (void *)sdd->ops->request(sdd->tx_dma.dmach, &req, dev, "tx");
-+	sdd->rx_dma.ch = (unsigned long *)(unsigned long)sdd->ops->request(
-+					sdd->rx_dma.dmach, &req, dev, "rx");
-+	sdd->tx_dma.ch = (unsigned long *)(unsigned long)sdd->ops->request(
-+					sdd->tx_dma.dmach, &req, dev, "tx");
- 
- 	return 1;
- }
-@@ -439,7 +441,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 
- 	/* Acquire DMA channels */
- 	sdd->rx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--				(void*)sdd->rx_dma.dmach, dev, "rx");
-+				(void *)sdd->rx_dma.dmach, dev, "rx");
- 	if (!sdd->rx_dma.ch) {
- 		dev_err(dev, "Failed to get RX DMA channel\n");
- 		ret = -EBUSY;
-@@ -447,7 +449,7 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
- 	}
- 
- 	sdd->tx_dma.ch = dma_request_slave_channel_compat(mask, filter,
--				(void*)sdd->tx_dma.dmach, dev, "tx");
-+				(void *)sdd->tx_dma.dmach, dev, "tx");
- 	if (!sdd->tx_dma.ch) {
- 		dev_err(dev, "Failed to get TX DMA channel\n");
- 		ret = -EBUSY;
-@@ -1361,16 +1363,14 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
- 	if (!sdd->pdev->dev.of_node) {
- 		res = platform_get_resource(pdev, IORESOURCE_DMA,  0);
- 		if (!res) {
--			dev_warn(&pdev->dev, "Unable to get SPI tx dma "
--					"resource. Switching to poll mode\n");
-+			dev_warn(&pdev->dev, "Unable to get SPI tx dma resource. Switching to poll mode\n");
- 			sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
- 		} else
- 			sdd->tx_dma.dmach = res->start;
- 
- 		res = platform_get_resource(pdev, IORESOURCE_DMA,  1);
- 		if (!res) {
--			dev_warn(&pdev->dev, "Unable to get SPI rx dma "
--					"resource. Switching to poll mode\n");
-+			dev_warn(&pdev->dev, "Unable to get SPI rx dma resource. Switching to poll mode\n");
- 			sdd->port_conf->quirks = S3C64XX_SPI_QUIRK_POLL;
- 		} else
- 			sdd->rx_dma.dmach = res->start;
--- 
-1.7.10.4
