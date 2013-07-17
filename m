@@ -1,93 +1,50 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V5 1/3] pci: Add PCIe driver for Samsung Exynos
-Date: Wed, 17 Jul 2013 07:07:49 +0200
-Message-ID: <20130717050748.GD11359@mithrandir>
-References: <000b01ce6839$0f0455d0$2d0d0170$@samsung.com>
- <000001ce68d7$ca762200$5f626600$@samsung.com>
- <20130614105310.GA19060@manwe>
- <3309315.fJN6KWK0oA@wuerfel>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH] spi: s3c64xx: fix casting warning
+Date: Wed, 17 Jul 2013 16:28:26 +0900
+Message-ID: <007801ce82bf$3a435a20$aeca0e60$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LKTjZJSUETSlgu2t"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:41494 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751496Ab3GQFH5 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47284 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750727Ab3GQH2a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Jul 2013 01:07:57 -0400
-Content-Disposition: inline
-In-Reply-To: <3309315.fJN6KWK0oA@wuerfel>
+	Wed, 17 Jul 2013 03:28:30 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jingoo Han <jg1.han@samsung.com>, 'Jason Gunthorpe' <jgunthorpe@obsidianresearch.com>, linux-samsung-soc@vger.kernel.org, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'Surendranath Gurivireddy Balla' <suren.reddy@samsung.com>, linux-pci@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, 'Andrew Murray' <andrew.murray@arm.com>, linux-arm-kernel@lists.infradead.org
+To: 'Mark Brown' <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>, Jingoo Han <jg1.han@samsung.com>
 
+sdd->ops->request is unsigned int, not unsigned long.
+Thus, (void *) is converted to (unsigned long *)(unsigned long),
+in order to fix possible sparse warnings.
 
---LKTjZJSUETSlgu2t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Cc: Joe Perches <joe@perches.com>
+---
+ drivers/spi/spi-s3c64xx.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On Fri, Jun 14, 2013 at 02:38:49PM +0200, Arnd Bergmann wrote:
-> On Friday 14 June 2013 12:53:11 Thierry Reding wrote:
-> >=20
-> > I think the biggest missing piece is pci_common_exit(), the counterpart
-> > of pci_common_init(), to cleanup a host bridge on ARM. I haven't looked
-> > in detail at the other architectures, but I suspect there must be some
-> > code to call when a host bridge is removed.
-> >=20
-> > Looking at drivers/pci/remove.c, it seems like pci_remove_root_bus()
-> > might be what we're looking at. It isn't exported so it can't be used by
-> > modules, but that can be changed. Is that how a host bridge is typically
-> > removed from the system?
->=20
-> It's fairly new to have host bridges in loadable modules, so I'm pretty
-> sure it's not supported by the core yet, but it also doesn't seem hard
-> to do. I think you are right with regard to pci_remove_root_bus,
-> and Bjorn might be able to provide more information.
->=20
-> Ideally we should be able to load and unload the pci host driver
-> in a loop indefinitely without crashing or exposing any races
-> or leaks, but I would not bet on that working without bugs in the
-> core, since that goes beyond the normal pci (device) hotplug case.
-
-I've done some preliminary testing on Tegra using sysfs to unbind and
-rebind the device from and to the driver. Some code needs to be added
-for this to work, but it doesn't crash and PCI even continues to work
-after unbinding and rebinding (tested using gigabit ethernet).
-
-However I haven't looked for leaks yet, and I'm pretty sure some more
-code is required to undo some of what pci_common_init() does on ARM.
-Looking more closely, I think most (if not all) remaining leaks could
-be fixed by keeping the list of pci_sys_data structures around and
-cleaning them up properly.
-
-Given the experimental nature of this I don't want to make that part of
-the driver for 3.12 and I've opted to just disable any means of removing
-the driver for now. But I do want to get back to this after the driver
-has been merged.
-
-Thierry
-
---LKTjZJSUETSlgu2t
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR5iakAAoJEN0jrNd/PrOhDWUQAKhSWJclEidsxp4PORW1YVAU
-zobh2Xrtt4Wqv21HeeEg/J8YBklf52eMQd6xzZM0S6QbBC+l7oWXKe5DSHoqEDBP
-8MkYoblEku9/otQ2KLesQabgVTysq5gA6jXwOba6Gxs9Gsx2HFETu0r1M0CDhpkZ
-8ro5MG06LhLEsNmSu7mE+723VX8PeTLINxpI8O0KRjR2Gb6grayeiQzV2s5TUgYh
-izbtnyxJV9rSW27GoUHDjMZew4k/uFjvSPO6yN7PTiuMXVFYV/3wL+k6X7rpMkS2
-PxoQy9a4RbS5u8UV2CQyfx+y/cNLvplLalFeVRCAQdZJ8ft8ncU4dinT15asP0NP
-uuRL+JOwzTvSURqTaPNFpDjVvxsPehJaxlun9ImZukBCmYRstJGJTZGxrjn3LDNc
-WUgoYPF4OcY2fO1Va7H8Z5QDZMaWKm9hjYjWCRYDjbT6u7WdD+eMz09mRMnKBUAy
-pKlLpNCClSJGByKL0qMXeSwmK5MaJtXrMbqbSs6oqcwzL2ML2GY+qs1mFM+23ZRq
-OKPzy0pTd48HtoA+8eP2t9d7jlPgZUJUXcqcpgaganfyEEIExlj4kF+kDUEFv3dw
-VBUpraqvZW6qxUIR1Pb/sIGCIVRzeCTz+/gCWfk7E6FwG1oCqANJHe6jhB91QtGy
-YULcNLf3zoC1RucOahmR
-=AEQR
------END PGP SIGNATURE-----
-
---LKTjZJSUETSlgu2t--
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 702a536..7577d79 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -336,10 +336,10 @@ static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
+ 	req.cap = DMA_SLAVE;
+ 	req.client = &s3c64xx_spi_dma_client;
+ 
+-	sdd->rx_dma.ch = (void *)sdd->ops->request(sdd->rx_dma.dmach,
+-						&req, dev, "rx");
+-	sdd->tx_dma.ch = (void *)sdd->ops->request(sdd->tx_dma.dmach,
+-						&req, dev, "tx");
++	sdd->rx_dma.ch = (unsigned long *)(unsigned long)sdd->ops->request(
++					sdd->rx_dma.dmach, &req, dev, "rx");
++	sdd->tx_dma.ch = (unsigned long *)(unsigned long)sdd->ops->request(
++					sdd->tx_dma.dmach, &req, dev, "tx");
+ 
+ 	return 1;
+ }
+-- 
+1.7.10.4
