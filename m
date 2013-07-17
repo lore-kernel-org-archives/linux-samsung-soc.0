@@ -1,55 +1,60 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH v2] spi: s3c64xx: fix casting warning
-Date: Wed, 17 Jul 2013 17:54:11 +0900
-Message-ID: <008101ce82cb$34f0eea0$9ed2cbe0$@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2] spi: s3c64xx: fix casting warning
+Date: Wed, 17 Jul 2013 11:08:16 +0100
+Message-ID: <20130717100816.GK22506@sirena.org.uk>
+References: <008101ce82cb$34f0eea0$9ed2cbe0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="sV6E+871crhbObqU"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:62344 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751543Ab3GQIyT (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:58517 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753601Ab3GQKIk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Jul 2013 04:54:19 -0400
-Content-language: ko
+	Wed, 17 Jul 2013 06:08:40 -0400
+Content-Disposition: inline
+In-Reply-To: <008101ce82cb$34f0eea0$9ed2cbe0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>, Jingoo Han <jg1.han@samsung.com>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>
 
-sdd->ops->request is unsigned int, not unsigned long.
-Also, sdd->rx_dma.ch is a 'struct dma_chan *'.
-Thus, (void *) is converted to (struct dma_chan *)(unsigned long),
-in order to fix possible sparse warnings.
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-Cc: Joe Perches <joe@perches.com>
----
-Changes since v1:
-- Replaced (unsigned long *) with (struct dma_chan *) to match the type
-  of sdd->rx_dma.ch.
+--sV6E+871crhbObqU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- drivers/spi/spi-s3c64xx.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Wed, Jul 17, 2013 at 05:54:11PM +0900, Jingoo Han wrote:
+> sdd->ops->request is unsigned int, not unsigned long.
+> Also, sdd->rx_dma.ch is a 'struct dma_chan *'.
+> Thus, (void *) is converted to (struct dma_chan *)(unsigned long),
+> in order to fix possible sparse warnings.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 702a536..c9d0b12 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -336,10 +336,10 @@ static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
- 	req.cap = DMA_SLAVE;
- 	req.client = &s3c64xx_spi_dma_client;
- 
--	sdd->rx_dma.ch = (void *)sdd->ops->request(sdd->rx_dma.dmach,
--						&req, dev, "rx");
--	sdd->tx_dma.ch = (void *)sdd->ops->request(sdd->tx_dma.dmach,
--						&req, dev, "tx");
-+	sdd->rx_dma.ch = (struct dma_chan *)(unsigned long)sdd->ops->request(
-+					sdd->rx_dma.dmach, &req, dev, "rx");
-+	sdd->tx_dma.ch = (struct dma_chan *)(unsigned long)sdd->ops->request(
-+					sdd->tx_dma.dmach, &req, dev, "tx");
- 
- 	return 1;
- }
--- 
-1.7.10.4
+Applied, though only the cast to unsigned long should actually be needed
+- casting to void * should be good for any pointer so changing to the
+specific struct shouldn't be essential (might catch issues due to
+future API changes though).
+
+--sV6E+871crhbObqU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR5m0NAAoJELSic+t+oim9y+sP/jsHN1EP0ea7n57YFOELySia
+lRzlIFVH7nxoyVm+F5xiFkSHToEbJ02kjhMVYGC2Zqh6tuVdNGHDJkQ2AosQeTGy
+ouNv/oDGqEmqU+Oqp8ZVcUmMprDCrXijdJi5uelH8Dik4k4QwnQtIEeNM5MOTP3O
+9uJGJSSy1B6e3W2bc6z3T9SwPoLpfWIgA+DVECFegepi0Baga/wIa/ZQRO2gPJZY
+kIjY0q1oF+0qeYAhAXAE83eeCn41hqaFxqlBYlBhidWWN83VM44aNFL6SqMmE9jn
+VoYYaZ0D47331MrjyR7APcpQ12/8WwHvQW+gruWTG0AFrPRY1erPuB6ZEAmbuGZ3
+LluQdb2bTxzvKjDCIfB+vboDp0pedHjVHezfiYSzOiCVv6He07rZsMfRviavPKfQ
+Nps75BK8D1l0dv/jsmmwiep0BxYW1xXXeYK51GkwI4EanNJ15Ey7GTGDvmCfRlwO
+Ovoj+dv/cm+RvNr3ntO9NkduYLCpG/2H7s8h0CYL1tox8kU3oVz8O1JPwAzT6qEo
+S0uvP5vIpibtB7Z4YYZqnwyhOm0ZI/NqWyj4m+gpnPiu2qFQfaDttTq982p+1srJ
+QoRwj0u5bKawk4kmOpvQHiBO1SXhqW969cUzoPLuRA9mZc2MI1to57HTUTwy+sPg
+/8/HKNSsnUbf5MiW0lbz
+=vUlI
+-----END PGP SIGNATURE-----
+
+--sV6E+871crhbObqU--
