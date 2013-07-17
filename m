@@ -1,44 +1,63 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V4 2/2] spi: s3c64xx: fix checkpatch error and warnings
-Date: Wed, 17 Jul 2013 13:44:25 +0900
-Message-ID: <004101ce82a8$50d424c0$f27c6e40$@samsung.com>
-References: <003401ce81b6$ab70cb10$02526130$@samsung.com>
- <20130716103630.GI22506@sirena.org.uk>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC v2 06/10] exynos5-fimc-is: Adds isp subdev
+Date: Wed, 17 Jul 2013 10:26:42 +0530
+Message-ID: <CALt3h79kknOX91tJ-pyO-dbowWUdp1v+L2x9BQn6nhPwv813Hw@mail.gmail.com>
+References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com>
+	<1370005408-10853-7-git-send-email-arun.kk@samsung.com>
+	<51C38F82.1040507@gmail.com>
+	<CALt3h7_Bo3P9WsZORXXWtXrWLS4Uoeq10HYr0WsgO5wVzqQ95w@mail.gmail.com>
+	<51E5C511.70202@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10390 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751124Ab3GQEo1 (ORCPT
+Received: from mail-vc0-f177.google.com ([209.85.220.177]:49151 "EHLO
+	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751371Ab3GQE4m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Jul 2013 00:44:27 -0400
-In-reply-to: <20130716103630.GI22506@sirena.org.uk>
-Content-language: ko
+	Wed, 17 Jul 2013 00:56:42 -0400
+In-Reply-To: <51E5C511.70202@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>, Jingoo Han <jg1.han@samsung.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: LMML <linux-media@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kilyeon.im@samsung.com, shaik.ameer@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Tuesday, July 16, 2013 7:37 PM, Mark Brown wrote:
-> On Tue, Jul 16, 2013 at 08:54:39AM +0900, Jingoo Han wrote:
-> > Fix the following checkpatch error and warnings:
-> >
-> >   ERROR: "(foo*)" should be "(foo *)"
-> >   WARNING: line over 80 characters
-> >   WARNING: quoted string split across lines
-> >
-> > Also, it converts (void *) to (unsigned long *)(unsigned long)
-> > to fix sparse error.
-> 
-> This doesn't apply to current code (and should really be split up a bit
-> for ease of review).  Can you please check and resend?
+Hi Sylwester,
 
-Hi Mark Brown,
+On Wed, Jul 17, 2013 at 3:41 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> On 07/09/2013 01:42 PM, Arun Kumar K wrote:
+>>>>
+>>>> +       /* Check if same as sensor width&   height */
+>>>> >>
+>>>> >>  +       sensor_width = p->sensor->drvdata->pixel_width;
+>>>> >>  +       sensor_height = p->sensor->drvdata->pixel_height;
+>>>> >>  +       if ((sensor_width != f->fmt.pix_mp.width) ||
+>>>> >>  +               (sensor_height != f->fmt.pix_mp.height)) {
+>>>
+>>> >
+>>> >
+>>> >  What's the point of this check ?
+>>> >
+>>
+>> Check was added to ensure ISP input width and height is
+>> set same as the sensor output or not.
+>> But yes this cannot be extended to generic (non-IS controlled) sensors.
+>> Will drop this check and let media controller take care.
+>>
+>>> >
+>>>>
+>>>> >>  +               f->fmt.pix_mp.width = sensor_width;
+>>>> >>  +               f->fmt.pix_mp.height = sensor_height;
+>>>> >>  +       }
+>
+>
+> I meant that you could do the assignment unconditionally, since you
+> always end up with sensor_width/height assigned to pix_mp.width/height.
+> Indeed, this should be handled by subdev ioctls, and any discrepancies
+> should be detected while starting streaming and reported to user space.
+>
 
-OK, I see. I will make the patch for only conversion,
-against your spi.git repository 'for-next' branch.
-Thank you. :)
+Ok I got it. Will modify accordingly
 
-Best regards,
-Jingoo Han
+Thanks & Regards
+Arun
