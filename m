@@ -1,16 +1,16 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 3/6] clk: exynos5250: Staticize local symbols
-Date: Thu, 18 Jul 2013 15:31:19 +0530
-Message-ID: <1374141682-29432-4-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 5/6] clk: exynos5440: Staticize local symbols
+Date: Thu, 18 Jul 2013 15:31:21 +0530
+Message-ID: <1374141682-29432-6-git-send-email-sachin.kamat@linaro.org>
 References: <1374141682-29432-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:35547 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754316Ab3GRKRe (ORCPT
+Received: from mail-pb0-f53.google.com ([209.85.160.53]:39429 "EHLO
+	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757524Ab3GRKRk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Jul 2013 06:17:34 -0400
-Received: by mail-pd0-f176.google.com with SMTP id t12so2873833pdi.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Jul 2013 03:17:33 -0700 (PDT)
+	Thu, 18 Jul 2013 06:17:40 -0400
+Received: by mail-pb0-f53.google.com with SMTP id xb12so3014484pbc.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Jul 2013 03:17:40 -0700 (PDT)
 In-Reply-To: <1374141682-29432-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -22,68 +22,67 @@ Symbols referenced only in this file are made static.
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5250.c |   14 +++++++-------
+ drivers/clk/samsung/clk-exynos5440.c |   14 +++++++-------
  1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index 3da0bdf..e6a4be1 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -193,24 +193,24 @@ PNAME(mout_spdif_p)	= { "sclk_audio0", "sclk_audio1", "sclk_audio2",
- 				"spdif_extclk" };
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index 7d54341..6d043a2 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -41,12 +41,12 @@ PNAME(mout_armclk_p)	= { "cplla", "cpllb" };
+ PNAME(mout_spi_p)	= { "div125", "div200" };
  
  /* fixed rate clocks generated outside the soc */
--struct samsung_fixed_rate_clock exynos5250_fixed_rate_ext_clks[] __initdata = {
-+static struct samsung_fixed_rate_clock exynos5250_fixed_rate_ext_clks[] __initdata = {
- 	FRATE(fin_pll, "fin_pll", NULL, CLK_IS_ROOT, 0),
+-struct samsung_fixed_rate_clock exynos5440_fixed_rate_ext_clks[] __initdata = {
++static struct samsung_fixed_rate_clock exynos5440_fixed_rate_ext_clks[] __initdata = {
+ 	FRATE(none, "xtal", NULL, CLK_IS_ROOT, 0),
  };
  
- /* fixed rate clocks generated inside the soc */
--struct samsung_fixed_rate_clock exynos5250_fixed_rate_clks[] __initdata = {
-+static struct samsung_fixed_rate_clock exynos5250_fixed_rate_clks[] __initdata = {
- 	FRATE(none, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 24000000),
- 	FRATE(none, "sclk_hdmi27m", NULL, CLK_IS_ROOT, 27000000),
- 	FRATE(none, "sclk_dptxphy", NULL, CLK_IS_ROOT, 24000000),
- 	FRATE(none, "sclk_uhostphy", NULL, CLK_IS_ROOT, 48000000),
+ /* fixed rate clocks */
+-struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
++static struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
+ 	FRATE(none, "ppll", NULL, CLK_IS_ROOT, 1000000000),
+ 	FRATE(none, "usb_phy0", NULL, CLK_IS_ROOT, 60000000),
+ 	FRATE(none, "usb_phy1", NULL, CLK_IS_ROOT, 60000000),
+@@ -55,26 +55,26 @@ struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
  };
  
--struct samsung_fixed_factor_clock exynos5250_fixed_factor_clks[] __initdata = {
-+static struct samsung_fixed_factor_clock exynos5250_fixed_factor_clks[] __initdata = {
- 	FFACTOR(none, "fout_mplldiv2", "fout_mpll", 1, 2, 0),
- 	FFACTOR(none, "fout_bplldiv2", "fout_bpll", 1, 2, 0),
+ /* fixed factor clocks */
+-struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initdata = {
++static struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initdata = {
+ 	FFACTOR(none, "div250", "ppll", 1, 4, 0),
+ 	FFACTOR(none, "div200", "ppll", 1, 5, 0),
+ 	FFACTOR(none, "div125", "div250", 1, 2, 0),
  };
  
--struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
-+static struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
- 	MUX_A(none, "mout_apll", mout_apll_p, SRC_CPU, 0, 1, "mout_apll"),
- 	MUX_A(none, "mout_cpu", mout_cpu_p, SRC_CPU, 16, 1, "mout_cpu"),
- 	MUX(none, "mout_mpll_fout", mout_mpll_fout_p, PLL_DIV2_SEL, 4, 1),
-@@ -256,7 +256,7 @@ struct samsung_mux_clock exynos5250_mux_clks[] __initdata = {
- 	MUX(none, "mout_spi2", mout_group1_p, SRC_PERIC1, 24, 4),
+ /* mux clocks */
+-struct samsung_mux_clock exynos5440_mux_clks[] __initdata = {
++static struct samsung_mux_clock exynos5440_mux_clks[] __initdata = {
+ 	MUX(none, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
+ 	MUX_A(arm_clk, "arm_clk", mout_armclk_p,
+ 			CPU_CLK_STATUS, 0, 1, "armclk"),
  };
  
--struct samsung_div_clock exynos5250_div_clks[] __initdata = {
-+static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
- 	DIV(none, "div_arm", "mout_cpu", DIV_CPU0, 0, 3),
- 	DIV(none, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
- 	DIV(none, "aclk66_pre", "sclk_mpll_user", DIV_TOP1, 24, 3),
-@@ -316,7 +316,7 @@ struct samsung_div_clock exynos5250_div_clks[] __initdata = {
- 			DIV_PERIC2, 8, 8, CLK_SET_RATE_PARENT, 0),
+ /* divider clocks */
+-struct samsung_div_clock exynos5440_div_clks[] __initdata = {
++static struct samsung_div_clock exynos5440_div_clks[] __initdata = {
+ 	DIV(spi_baud, "div_spi", "mout_spi", MISC_DOUT1, 3, 2),
  };
  
--struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
-+static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
- 	GATE(gscl0, "gscl0", "none", GATE_IP_GSCL, 0, 0, 0),
- 	GATE(gscl1, "gscl1", "none", GATE_IP_GSCL, 1, 0, 0),
- 	GATE(gscl2, "gscl2", "aclk266", GATE_IP_GSCL, 2, 0, 0),
-@@ -474,7 +474,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
+ /* gate clocks */
+-struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
++static struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
+ 	GATE(pb0_250, "pb0_250", "div250", CLKEN_OV_VAL, 3, 0, 0),
+ 	GATE(pr0_250, "pr0_250", "div250", CLKEN_OV_VAL, 4, 0, 0),
+ 	GATE(pr1_250, "pr1_250", "div250", CLKEN_OV_VAL, 5, 0, 0),
+@@ -103,7 +103,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
  };
  
- /* register exynox5250 clocks */
--void __init exynos5250_clk_init(struct device_node *np)
-+static void __init exynos5250_clk_init(struct device_node *np)
+ /* register exynos5440 clocks */
+-void __init exynos5440_clk_init(struct device_node *np)
++static void __init exynos5440_clk_init(struct device_node *np)
  {
  	void __iomem *reg_base;
- 	struct clk *apll, *mpll, *epll, *vpll, *bpll, *gpll, *cpll;
+ 
 -- 
 1.7.9.5
