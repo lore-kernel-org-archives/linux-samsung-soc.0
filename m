@@ -1,23 +1,22 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 10/22] ARM: ux500: Remove '0x's from Exynos5420 DTS file
-Date: Fri, 19 Jul 2013 22:49:07 +0100
-Message-ID: <20130719214907.GI24642@n2100.arm.linux.org.uk>
-References: <1374242333-6852-1-git-send-email-lee.jones@linaro.org> <1374242333-6852-10-git-send-email-lee.jones@linaro.org>
+From: auxerre@luniversinformatique.fr
+Subject: =?iso-8859-5?B?0eDV3dTe0uvVIOHj3N7n2tgg3uLb2Ofd3tPeINrQ?=
+	=?iso-8859-5?B?59Xh4tLQINjXILzY29Dd0CDe4iA3NTC+IOA=?=
+Date: Fri, 19 Jul 2013 23:36:03 +0200
+Message-ID: <099934173.20130720000255@luniversinformatique.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1374242333-6852-10-git-send-email-lee.jones@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linus.walleij@stericsson.com, arnd@arndb.de, srinidhi.kasagar@stericsson.com, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: text/plain;
+	charset="iso-8859-5";
+Content-Transfer-Encoding: base64 text/plain; charset=utf-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from www.luniversinformatique.fr ([62.193.219.238]:51210 "EHLO
+	vds-433052.amen-pro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751370Ab3GSW2K (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 19 Jul 2013 18:28:10 -0400
+Content-Transfer-Encoding: quoted-printable
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: nbykovsky@sci.lebedev.ru, linux-samsung-soc@vger.kernel.org, roywarden@hotmail.com, arenda@eastgateblock.ru, ams@ural.so-cdu.ru
 
-On Fri, Jul 19, 2013 at 02:58:41PM +0100, Lee Jones wrote:
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: linux-samsung-soc@vger.kernel.org
-> Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi | 2 +-
-
-One question.  What have all these files got to do with ux500 ?
+29XT1d3U0ODd0O8gwePc2tAg4dTV29Db0OHsIN/e1N7h4uPf3dXZISDD4d/V2eLVLSDX0CAxNSC3
+NzUg4CEgaHR0cDovL3d3dy5zaG9ydGNsaWNrLmNvbS8wcDJqLw0K
