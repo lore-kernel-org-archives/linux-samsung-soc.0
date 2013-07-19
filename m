@@ -1,85 +1,271 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
-Date: Fri, 19 Jul 2013 09:54:29 -0600
-Message-ID: <51E96135.9090108@wwwdotorg.org>
-References: <1374129984-765-1-git-send-email-kishon@ti.com> <1374129984-765-2-git-send-email-kishon@ti.com> <20130718072004.GA16720@kroah.com> <51E7AE88.3050007@ti.com> <20130718154954.GA31961@kroah.com> <51E8D086.809@ti.com> <20130719054311.GA14638@kroah.com> <51E8D4E0.8060200@ti.com> <20130719062941.GA23611@kroah.com> <51E8DE51.1060404@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <51E8DE51.1060404@ti.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, linux-fbdev@vger.kernel.org, linux-doc@vger.kernel.org, nsekhar@ti.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, swarren@nvidia.com, jg1.han@samsung.com, grant.likely@linaro.org, linux-media@vger.kernel.org, george.cherian@ti.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, balajitk@ti.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, akpm@linux-foundation.org
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH] of: provide of_platform_unpopulate()
+Date: Fri, 19 Jul 2013 20:14:51 +0200
+Message-ID: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>
+Cc: linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Tony Lindgren <tony@atomide.com>, Doug Anderson <dianders@chromium.org>, Vivek Gautam <gautam.vivek@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Roger Quadros <rogerq@ti.com>, George Cherian <george.cherian@ti.com>, Felipe Balbi <balbi@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/19/2013 12:36 AM, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Friday 19 July 2013 11:59 AM, Greg KH wrote:
->> On Fri, Jul 19, 2013 at 11:25:44AM +0530, Kishon Vijay Abraham I wrote:
->>> Hi,
->>>
->>> On Friday 19 July 2013 11:13 AM, Greg KH wrote:
->>>> On Fri, Jul 19, 2013 at 11:07:10AM +0530, Kishon Vijay Abraham I wrote:
->>>>>>>>> +	ret = dev_set_name(&phy->dev, "%s.%d", dev_name(dev), id);
->>>>>>>>
->>>>>>>> Your naming is odd, no "phy" anywhere in it?  You rely on the sender to
->>>>>>>> never send a duplicate name.id pair?  Why not create your own ids based
->>>>>>>> on the number of phys in the system, like almost all other classes and
->>>>>>>> subsystems do?
->>>>>>>
->>>>>>> hmm.. some PHY drivers use the id they provide to perform some of their
->>>>>>> internal operation as in [1] (This is used only if a single PHY provider
->>>>>>> implements multiple PHYS). Probably I'll add an option like PLATFORM_DEVID_AUTO
->>>>>>> to give the PHY drivers an option to use auto id.
->>>>>>>
->>>>>>> [1] ->
->>>>>>> http://archive.arm.linux.org.uk/lurker/message/20130628.134308.4a8f7668.ca.html
->>>>>>
->>>>>> No, who cares about the id?  No one outside of the phy core ever should,
->>>>>> because you pass back the only pointer that they really do care about,
->>>>>> if they need to do anything with the device.  Use that, and then you can
->>>>>
->>>>> hmm.. ok.
->>>>>
->>>>>> rip out all of the "search for a phy by a string" logic, as that's not
->>>>>
->>>>> Actually this is needed for non-dt boot case. In the case of dt boot, we use a
->>>>> phandle by which the controller can get a reference to the phy. But in the case
->>>>> of non-dt boot, the controller can get a reference to the phy only by label.
->>>>
->>>> I don't understand.  They registered the phy, and got back a pointer to
->>>> it.  Why can't they save it in their local structure to use it again
->>>> later if needed?  They should never have to "ask" for the device, as the
->>>
->>> One is a *PHY provider* driver which is a driver for some PHY device. This will
->>> use phy_create to create the phy.
->>> The other is a *PHY consumer* driver which might be any controller driver (can
->>> be USB/SATA/PCIE). The PHY consumer will use phy_get to get a reference to the
->>> phy (by *phandle* in the case of dt boot and *label* in the case of non-dt boot).
->>>> device id might be unknown if there are multiple devices in the system.
->>>
->>> I agree with you on the device id part. That need not be known to the PHY driver.
->>
->> How does a consumer know which "label" to use in a non-dt system if
->> there are multiple PHYs in the system?
-> 
-> That should be passed using platform data.
+So I called of_platform_populate() on a device to get each child device
+probed and on rmmod and I need to reverse its doing. After a quick grep
+I did what others did as well and rmmod ended in:
 
-I don't think that's right. That's just like passing clock names in
-platform data, which I believe is frowned upon.
+| Unable to handle kernel NULL pointer dereference at virtual address 00000018
+| PC is at release_resource+0x18/0x80
+| Process rmmod (pid: 2005, stack limit = 0xedc30238)
+| [<c003add0>] (release_resource+0x18/0x80) from [<c0300e08>] (platform_device_del+0x78/0xac)
+| [<c0300e08>] (platform_device_del+0x78/0xac) from [<c0301358>] (platform_device_unregister+0xc/0x18)
 
-Instead, why not take the approach that e.g. regulators have taken? Each
-driver defines the names of the objects that it requires. There is a
-table (registered by a board file) that has lookup key (device name,
-regulator name), and the output is the regulator device (or global
-regulator name).
+The problem is that platform_device_del() "releases" each ressource in its
+tree. This does not work on platform_devices created by OF becuase they
+were never added via insert_resource(). As a consequence old->parent in
+__release_resource() is NULL and we explode while accessing ->child.
+So I either I do something completly wrong _or_ nobody here tested the
+rmmod path of their driver.
 
-This is almost the same way that DT works, except that in DT, the table
-is represented as properties in the DT. The DT binding defines the names
-of those properties, or the strings that must be in the foo-names
-properties, just like a driver in non-DT Linux is going to define the
-names it expects to be provided with.
+This patch provides a common function to unregister / remove devices
+which added to the system via of_platform_populate(). While this works
+now on my test case I have not tested any of the driver I modify here so
+feedback is greatly appreciated.
 
-That way, you don't need platform data to define the names.
+Cc: Tony Lindgren <tony@atomide.com>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Roger Quadros <rogerq@ti.com>
+Cc: George Cherian <george.cherian@ti.com>
+Cc: Felipe Balbi <balbi@ti.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ drivers/bus/omap-ocp2scp.c     | 13 ++-----------
+ drivers/iio/adc/exynos_adc.c   | 15 ++-------------
+ drivers/mfd/omap-usb-host.c    |  9 +--------
+ drivers/of/platform.c          | 22 ++++++++++++++++++++++
+ drivers/usb/dwc3/dwc3-exynos.c | 11 +----------
+ drivers/usb/dwc3/dwc3-omap.c   | 12 +-----------
+ include/linux/of_platform.h    |  4 ++++
+ 7 files changed, 33 insertions(+), 53 deletions(-)
+
+diff --git a/drivers/bus/omap-ocp2scp.c b/drivers/bus/omap-ocp2scp.c
+index 5511f98..510bb9e 100644
+--- a/drivers/bus/omap-ocp2scp.c
++++ b/drivers/bus/omap-ocp2scp.c
+@@ -23,15 +23,6 @@
+ #include <linux/of.h>
+ #include <linux/of_platform.h>
+ 
+-static int ocp2scp_remove_devices(struct device *dev, void *c)
+-{
+-	struct platform_device *pdev = to_platform_device(dev);
+-
+-	platform_device_unregister(pdev);
+-
+-	return 0;
+-}
+-
+ static int omap_ocp2scp_probe(struct platform_device *pdev)
+ {
+ 	int ret;
+@@ -51,7 +42,7 @@ static int omap_ocp2scp_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err0:
+-	device_for_each_child(&pdev->dev, NULL, ocp2scp_remove_devices);
++	of_platform_unpopulate(&pdev->dev);
+ 
+ 	return ret;
+ }
+@@ -59,7 +50,7 @@ static int omap_ocp2scp_probe(struct platform_device *pdev)
+ static int omap_ocp2scp_remove(struct platform_device *pdev)
+ {
+ 	pm_runtime_disable(&pdev->dev);
+-	device_for_each_child(&pdev->dev, NULL, ocp2scp_remove_devices);
++	of_platform_unpopulate(&pdev->dev);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index 9809fc9..10248e1 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -216,15 +216,6 @@ static const struct iio_chan_spec exynos_adc_iio_channels[] = {
+ 	ADC_CHANNEL(9, "adc9"),
+ };
+ 
+-static int exynos_adc_remove_devices(struct device *dev, void *c)
+-{
+-	struct platform_device *pdev = to_platform_device(dev);
+-
+-	platform_device_unregister(pdev);
+-
+-	return 0;
+-}
+-
+ static void exynos_adc_hw_init(struct exynos_adc *info)
+ {
+ 	u32 con1, con2;
+@@ -357,8 +348,7 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ err_of_populate:
+-	device_for_each_child(&pdev->dev, NULL,
+-				exynos_adc_remove_devices);
++	of_platform_unpopulate(&pdev->dev);
+ 	regulator_disable(info->vdd);
+ 	clk_disable_unprepare(info->clk);
+ err_iio_dev:
+@@ -375,8 +365,7 @@ static int exynos_adc_remove(struct platform_device *pdev)
+ 	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+ 	struct exynos_adc *info = iio_priv(indio_dev);
+ 
+-	device_for_each_child(&pdev->dev, NULL,
+-				exynos_adc_remove_devices);
++	of_platform_unpopulate(&pdev->dev);
+ 	regulator_disable(info->vdd);
+ 	clk_disable_unprepare(info->clk);
+ 	writel(0, info->enable_reg);
+diff --git a/drivers/mfd/omap-usb-host.c b/drivers/mfd/omap-usb-host.c
+index 759fae3..bb26cea 100644
+--- a/drivers/mfd/omap-usb-host.c
++++ b/drivers/mfd/omap-usb-host.c
+@@ -832,13 +832,6 @@ static int usbhs_omap_probe(struct platform_device *pdev)
+ 	return ret;
+ }
+ 
+-static int usbhs_omap_remove_child(struct device *dev, void *data)
+-{
+-	dev_info(dev, "unregistering\n");
+-	platform_device_unregister(to_platform_device(dev));
+-	return 0;
+-}
+-
+ /**
+  * usbhs_omap_remove - shutdown processing for UHH & TLL HCDs
+  * @pdev: USB Host Controller being removed
+@@ -871,7 +864,7 @@ static int usbhs_omap_remove(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 
+ 	/* remove children */
+-	device_for_each_child(&pdev->dev, NULL, usbhs_omap_remove_child);
++	of_platform_unpopulate(&pdev->dev);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index e0a6514..9cbb0c3 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -473,4 +473,26 @@ int of_platform_populate(struct device_node *root,
+ 	return rc;
+ }
+ EXPORT_SYMBOL_GPL(of_platform_populate);
++
++static int of_remove_populated_child(struct device *dev, void *d)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++
++	of_device_unregister(pdev);
++	return 0;
++}
++/**
++ * of_platform_unpopulate() - Remove populated devices.
++ * @parent: parent of the populated devices.
++ *
++ * The reverse of of_platform_populate() and can only be used a parent was
++ * specified while invoking the former.
++ */
++void of_platform_unpopulate(struct device *parent)
++{
++	if (WARN_ON(!parent))
++		return;
++	device_for_each_child(parent, NULL, of_remove_populated_child);
++}
++EXPORT_SYMBOL_GPL(of_platform_unpopulate);
+ #endif /* CONFIG_OF_ADDRESS */
+diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+index 8ce9d7f..2bf5664 100644
+--- a/drivers/usb/dwc3/dwc3-exynos.c
++++ b/drivers/usb/dwc3/dwc3-exynos.c
+@@ -86,15 +86,6 @@ static int dwc3_exynos_register_phys(struct dwc3_exynos *exynos)
+ 	return ret;
+ }
+ 
+-static int dwc3_exynos_remove_child(struct device *dev, void *unused)
+-{
+-	struct platform_device *pdev = to_platform_device(dev);
+-
+-	platform_device_unregister(pdev);
+-
+-	return 0;
+-}
+-
+ static int dwc3_exynos_probe(struct platform_device *pdev)
+ {
+ 	struct dwc3_exynos	*exynos;
+@@ -164,7 +155,7 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
+ {
+ 	struct dwc3_exynos	*exynos = platform_get_drvdata(pdev);
+ 
+-	device_for_each_child(&pdev->dev, NULL, dwc3_exynos_remove_child);
++	of_platform_unpopulate(&pdev->dev);
+ 	platform_device_unregister(exynos->usb2_phy);
+ 	platform_device_unregister(exynos->usb3_phy);
+ 
+diff --git a/drivers/usb/dwc3/dwc3-omap.c b/drivers/usb/dwc3/dwc3-omap.c
+index 077f110..8688613 100644
+--- a/drivers/usb/dwc3/dwc3-omap.c
++++ b/drivers/usb/dwc3/dwc3-omap.c
+@@ -327,15 +327,6 @@ static irqreturn_t dwc3_omap_interrupt(int irq, void *_omap)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static int dwc3_omap_remove_core(struct device *dev, void *c)
+-{
+-	struct platform_device *pdev = to_platform_device(dev);
+-
+-	platform_device_unregister(pdev);
+-
+-	return 0;
+-}
+-
+ static void dwc3_omap_enable_irqs(struct dwc3_omap *omap)
+ {
+ 	u32			reg;
+@@ -529,8 +520,7 @@ static int dwc3_omap_remove(struct platform_device *pdev)
+ 	dwc3_omap_disable_irqs(omap);
+ 	pm_runtime_put_sync(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
+-	device_for_each_child(&pdev->dev, NULL, dwc3_omap_remove_core);
+-
++	of_platform_unpopulate(&pdev->dev);
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/of_platform.h b/include/linux/of_platform.h
+index 05cb4a9..e354f9c 100644
+--- a/include/linux/of_platform.h
++++ b/include/linux/of_platform.h
+@@ -72,6 +72,7 @@ extern int of_platform_populate(struct device_node *root,
+ 				const struct of_device_id *matches,
+ 				const struct of_dev_auxdata *lookup,
+ 				struct device *parent);
++extern  void of_platform_unpopulate(struct device *parent);
+ #else
+ static inline int of_platform_populate(struct device_node *root,
+ 					const struct of_device_id *matches,
+@@ -80,6 +81,9 @@ static inline int of_platform_populate(struct device_node *root,
+ {
+ 	return -ENODEV;
+ }
++static inline void of_platform_unpopulate(struct device *parent)
++{
++}
+ #endif
+ 
+ #endif	/* _LINUX_OF_PLATFORM_H */
+-- 
+1.8.3.2
