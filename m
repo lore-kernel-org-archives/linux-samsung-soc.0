@@ -1,472 +1,150 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH] watchdog: s3c2410_wdt: code clean up
-Date: Fri, 19 Jul 2013 14:28:08 +0530
-Message-ID: <1374224288-18963-1-git-send-email-l.krishna@samsung.com>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: RE: [PATCH v7 00/12] iommu/exynos: Fixes and Enhancements of System
+ MMU driver with DT
+Date: Fri, 19 Jul 2013 21:01:51 +0900
+Message-ID: <004301ce8477$c1172fe0$43458fa0$@samsung.com>
+References: <002801ce797b$3d2fbc80$b78f3580$@samsung.com>
+ <CAG8rG2y8ZN4ahv7DqJ11=FhJpVVxcbAbTaViyi-D4GH=p3xg=A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:12118 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755412Ab3GSIfR (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:42875 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760014Ab3GSMBy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Jul 2013 04:35:17 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MQ6006VWD6ON2S0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Jul 2013 17:35:12 +0900 (KST)
+	Fri, 19 Jul 2013 08:01:54 -0400
+In-reply-to: <CAG8rG2y8ZN4ahv7DqJ11=FhJpVVxcbAbTaViyi-D4GH=p3xg=A@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, dianders@chromium.org
+To: 'Antonios Motakis' <a.motakis@virtualopensystems.com>
+Cc: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Keyyoung Park' <keyyoung.park@samsung.com>, 'Grant Grundler' <grundler@chromium.org>, 'Daniel Raho' <s.raho@virtualopensystems.com>
 
-This patch removes the global variables in the driver file and
-group them into a structure.
+> -----Original Message-----
+> From: Antonios Motakis [mailto:a.motakis@virtualopensystems.com]
+> Sent: Friday, July 19, 2013 1:25 AM
+> 
+> Hello Cho,
+> 
+> I have been trying out the Exynos System MMU driver including your
+> fixes, however I notice that if you try to get the iommu_group of a
+> device (i.e. iommu_group_get(&pdev->dev)) this will not work. Since
+> each device is behind its own System MMU I would expect a distinct
+> iommu_group for that device, instead I get NULL (I tried this with the
+> MFC).
+> 
+> Indeed, it looks like this is not currently implemented in the driver.
+> Is this something that is on the roadmap?
+> 
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
----
- Note: This patch is rebased on kgene's for-next branch and tested on SMDK5420.
+I have not implemented anything about iommu_group
+since a System MMU is dedicated to a single master device.
+I also did not find any reason to implement something about iommu_group.
+I would like to know why you need to call iommu_group_get().
+Do you need some information in user-space?
 
- drivers/watchdog/s3c2410_wdt.c |  204 +++++++++++++++++++++++-----------------
- 1 file changed, 119 insertions(+), 85 deletions(-)
+Thank you.
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 6a22cf5..5e66a66 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -84,13 +84,20 @@ MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
- 			"0 to reboot (default 0)");
- MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
- 
--static struct device    *wdt_dev;	/* platform device attached to */
--static struct resource	*wdt_mem;
--static struct resource	*wdt_irq;
--static struct clk	*wdt_clock;
--static void __iomem	*wdt_base;
--static unsigned int	 wdt_count;
--static DEFINE_SPINLOCK(wdt_lock);
-+struct s3c2410_watchdog {
-+struct device		*dev;	/* platform device attached to */
-+struct clk		*clock;
-+void __iomem		*reg_base;
-+unsigned int		count;
-+spinlock_t		lock;
-+struct watchdog_device	wdt_device;
-+struct notifier_block	freq_transition;
-+};
-+
-+#define to_s3c2410_watchdog(wdd)	\
-+		container_of(wdd, struct s3c2410_watchdog, wdt_device)
-+#define freq_to_wdt(_n)			\
-+		container_of(_n, struct s3c2410_watchdog, freq_transition)
- 
- /* watchdog control routines */
- 
-@@ -104,27 +111,31 @@ do {							\
- 
- static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
- {
--	spin_lock(&wdt_lock);
--	writel(wdt_count, wdt_base + S3C2410_WTCNT);
--	spin_unlock(&wdt_lock);
-+	struct s3c2410_watchdog *wdt = to_s3c2410_watchdog(wdd);
-+
-+	spin_lock(&wdt->lock);
-+	writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
-+	spin_unlock(&wdt->lock);
- 
- 	return 0;
- }
- 
--static void __s3c2410wdt_stop(void)
-+static void __s3c2410wdt_stop(struct s3c2410_watchdog *wdt)
- {
- 	unsigned long wtcon;
- 
--	wtcon = readl(wdt_base + S3C2410_WTCON);
-+	wtcon = readl(wdt->reg_base + S3C2410_WTCON);
- 	wtcon &= ~(S3C2410_WTCON_ENABLE | S3C2410_WTCON_RSTEN);
--	writel(wtcon, wdt_base + S3C2410_WTCON);
-+	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
- }
- 
- static int s3c2410wdt_stop(struct watchdog_device *wdd)
- {
--	spin_lock(&wdt_lock);
--	__s3c2410wdt_stop();
--	spin_unlock(&wdt_lock);
-+	struct s3c2410_watchdog *wdt = to_s3c2410_watchdog(wdd);
-+
-+	spin_lock(&wdt->lock);
-+	__s3c2410wdt_stop(wdt);
-+	spin_unlock(&wdt->lock);
- 
- 	return 0;
- }
-@@ -133,11 +144,13 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
- {
- 	unsigned long wtcon;
- 
--	spin_lock(&wdt_lock);
-+	struct s3c2410_watchdog *wdt = to_s3c2410_watchdog(wdd);
-+
-+	spin_lock(&wdt->lock);
- 
--	__s3c2410wdt_stop();
-+	__s3c2410wdt_stop(wdt);
- 
--	wtcon = readl(wdt_base + S3C2410_WTCON);
-+	wtcon = readl(wdt->reg_base + S3C2410_WTCON);
- 	wtcon |= S3C2410_WTCON_ENABLE | S3C2410_WTCON_DIV128;
- 
- 	if (soft_noboot) {
-@@ -148,25 +161,26 @@ static int s3c2410wdt_start(struct watchdog_device *wdd)
- 		wtcon |= S3C2410_WTCON_RSTEN;
- 	}
- 
--	DBG("%s: wdt_count=0x%08x, wtcon=%08lx\n",
--	    __func__, wdt_count, wtcon);
-+	DBG("%s: count=0x%08x, wtcon=%08lx\n",
-+	    __func__, wdt->count, wtcon);
- 
--	writel(wdt_count, wdt_base + S3C2410_WTDAT);
--	writel(wdt_count, wdt_base + S3C2410_WTCNT);
--	writel(wtcon, wdt_base + S3C2410_WTCON);
--	spin_unlock(&wdt_lock);
-+	writel(wdt->count, wdt->reg_base + S3C2410_WTDAT);
-+	writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
-+	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
-+	spin_unlock(&wdt->lock);
- 
- 	return 0;
- }
- 
--static inline int s3c2410wdt_is_running(void)
-+static inline int s3c2410wdt_is_running(struct s3c2410_watchdog *wdt)
- {
--	return readl(wdt_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
-+	return readl(wdt->reg_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
- }
- 
- static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeout)
- {
--	unsigned long freq = clk_get_rate(wdt_clock);
-+	struct s3c2410_watchdog *wdt = to_s3c2410_watchdog(wdd);
-+	unsigned long freq = clk_get_rate(wdt->clock);
- 	unsigned int count;
- 	unsigned int divisor = 1;
- 	unsigned long wtcon;
-@@ -192,7 +206,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeou
- 		}
- 
- 		if ((count / divisor) >= 0x10000) {
--			dev_err(wdt_dev, "timeout %d too big\n", timeout);
-+			dev_err(wdt->dev, "timeout %d too big\n", timeout);
- 			return -EINVAL;
- 		}
- 	}
-@@ -201,15 +215,15 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeou
- 	    __func__, timeout, divisor, count, count/divisor);
- 
- 	count /= divisor;
--	wdt_count = count;
-+	wdt->count = count;
- 
- 	/* update the pre-scaler */
--	wtcon = readl(wdt_base + S3C2410_WTCON);
-+	wtcon = readl(wdt->reg_base + S3C2410_WTCON);
- 	wtcon &= ~S3C2410_WTCON_PRESCALE_MASK;
- 	wtcon |= S3C2410_WTCON_PRESCALE(divisor-1);
- 
--	writel(count, wdt_base + S3C2410_WTDAT);
--	writel(wtcon, wdt_base + S3C2410_WTCON);
-+	writel(count, wdt->reg_base + S3C2410_WTDAT);
-+	writel(wtcon, wdt->reg_base + S3C2410_WTCON);
- 
- 	wdd->timeout = (count * divisor) / freq;
- 
-@@ -242,21 +256,22 @@ static struct watchdog_device s3c2410_wdd = {
- 
- static irqreturn_t s3c2410wdt_irq(int irqno, void *param)
- {
--	dev_info(wdt_dev, "watchdog timer expired (irq)\n");
-+	struct s3c2410_watchdog *wdt = platform_get_drvdata(param);
-+	dev_info(wdt->dev, "watchdog timer expired (irq)\n");
- 
--	s3c2410wdt_keepalive(&s3c2410_wdd);
-+	s3c2410wdt_keepalive(&wdt->wdt_device);
- 	return IRQ_HANDLED;
- }
- 
--
- #ifdef CONFIG_CPU_FREQ
- 
- static int s3c2410wdt_cpufreq_transition(struct notifier_block *nb,
- 					  unsigned long val, void *data)
- {
- 	int ret;
-+	struct s3c2410_watchdog *wdt = freq_to_wdt(nb);
- 
--	if (!s3c2410wdt_is_running())
-+	if (!s3c2410wdt_is_running(wdt))
- 		goto done;
- 
- 	if (val == CPUFREQ_PRECHANGE) {
-@@ -265,14 +280,15 @@ static int s3c2410wdt_cpufreq_transition(struct notifier_block *nb,
- 		 * the watchdog is running.
- 		 */
- 
--		s3c2410wdt_keepalive(&s3c2410_wdd);
-+		s3c2410wdt_keepalive(&wdt->wdt_device);
- 	} else if (val == CPUFREQ_POSTCHANGE) {
--		s3c2410wdt_stop(&s3c2410_wdd);
-+		s3c2410wdt_stop(&wdt->wdt_device);
- 
--		ret = s3c2410wdt_set_heartbeat(&s3c2410_wdd, s3c2410_wdd.timeout);
-+		ret = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
-+						wdt->wdt_device.timeout);
- 
- 		if (ret >= 0)
--			s3c2410wdt_start(&s3c2410_wdd);
-+			s3c2410wdt_start(&wdt->wdt_device);
- 		else
- 			goto err;
- 	}
-@@ -281,8 +297,8 @@ done:
- 	return 0;
- 
-  err:
--	dev_err(wdt_dev, "cannot set new value for timeout %d\n",
--				s3c2410_wdd.timeout);
-+	dev_err(wdt->dev, "cannot set new value for timeout %d\n",
-+				wdt->wdt_device.timeout);
- 	return ret;
- }
- 
-@@ -290,25 +306,30 @@ static struct notifier_block s3c2410wdt_cpufreq_transition_nb = {
- 	.notifier_call	= s3c2410wdt_cpufreq_transition,
- };
- 
--static inline int s3c2410wdt_cpufreq_register(void)
-+static inline int s3c2410wdt_cpufreq_register(struct s3c2410_watchdog *wdt)
- {
--	return cpufreq_register_notifier(&s3c2410wdt_cpufreq_transition_nb,
-+	wdt->freq_transition.notifier_call = s3c2410wdt_cpufreq_transition;
-+
-+	return cpufreq_register_notifier(&wdt->freq_transition,
- 					 CPUFREQ_TRANSITION_NOTIFIER);
- }
- 
--static inline void s3c2410wdt_cpufreq_deregister(void)
-+static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_watchdog *wdt)
- {
--	cpufreq_unregister_notifier(&s3c2410wdt_cpufreq_transition_nb,
-+	wdt->freq_transition.notifier_call = s3c2410wdt_cpufreq_transition;
-+
-+	cpufreq_unregister_notifier(&wdt->freq_transition,
- 				    CPUFREQ_TRANSITION_NOTIFIER);
- }
- 
- #else
--static inline int s3c2410wdt_cpufreq_register(void)
-+
-+static inline int s3c2410wdt_cpufreq_register(struct s3c2410_watchdog *wdt)
- {
- 	return 0;
- }
- 
--static inline void s3c2410wdt_cpufreq_deregister(void)
-+static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_watchdog *wdt)
- {
- }
- #endif
-@@ -316,6 +337,9 @@ static inline void s3c2410wdt_cpufreq_deregister(void)
- static int s3c2410wdt_probe(struct platform_device *pdev)
- {
- 	struct device *dev;
-+	struct s3c2410_watchdog *wdt;
-+	struct resource *wdt_mem;
-+	struct resource *wdt_irq;
- 	unsigned int wtcon;
- 	int started = 0;
- 	int ret;
-@@ -323,8 +347,14 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	DBG("%s: probe=%p\n", __func__, pdev);
- 
- 	dev = &pdev->dev;
--	wdt_dev = &pdev->dev;
- 
-+	wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
-+	if (!wdt)
-+		return -ENOMEM;
-+
-+	wdt->dev = &pdev->dev;
-+	spin_lock_init(&wdt->lock);
-+	wdt->wdt_device = s3c2410_wdd;
- 	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (wdt_mem == NULL) {
- 		dev_err(dev, "no memory resource specified\n");
-@@ -339,24 +369,24 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	}
- 
- 	/* get the memory region for the watchdog timer */
--	wdt_base = devm_ioremap_resource(dev, wdt_mem);
--	if (IS_ERR(wdt_base)) {
--		ret = PTR_ERR(wdt_base);
-+	wdt->reg_base = devm_ioremap_resource(dev, wdt_mem);
-+	if (IS_ERR(wdt->reg_base)) {
-+		ret = PTR_ERR(wdt->reg_base);
- 		goto err;
- 	}
- 
--	DBG("probe: mapped wdt_base=%p\n", wdt_base);
-+	DBG("probe: mapped reg_base=%p\n", wdt->reg_base);
- 
--	wdt_clock = devm_clk_get(dev, "watchdog");
--	if (IS_ERR(wdt_clock)) {
-+	wdt->clock = devm_clk_get(dev, "watchdog");
-+	if (IS_ERR(wdt->clock)) {
- 		dev_err(dev, "failed to find watchdog clock source\n");
--		ret = PTR_ERR(wdt_clock);
-+		ret = PTR_ERR(wdt->clock);
- 		goto err;
- 	}
- 
--	clk_prepare_enable(wdt_clock);
-+	clk_prepare_enable(wdt->clock);
- 
--	ret = s3c2410wdt_cpufreq_register();
-+	ret = s3c2410wdt_cpufreq_register(wdt);
- 	if (ret < 0) {
- 		dev_err(dev, "failed to register cpufreq\n");
- 		goto err_clk;
-@@ -365,9 +395,10 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	/* see if we can actually set the requested timer margin, and if
- 	 * not, try the default value */
- 
--	watchdog_init_timeout(&s3c2410_wdd, tmr_margin,  &pdev->dev);
--	if (s3c2410wdt_set_heartbeat(&s3c2410_wdd, s3c2410_wdd.timeout)) {
--		started = s3c2410wdt_set_heartbeat(&s3c2410_wdd,
-+	watchdog_init_timeout(&wdt->wdt_device, tmr_margin, &pdev->dev);
-+	if (s3c2410wdt_set_heartbeat(&wdt->wdt_device,
-+					wdt->wdt_device.timeout)) {
-+		started = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
- 					CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME);
- 
- 		if (started == 0)
-@@ -386,9 +417,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 		goto err_cpufreq;
- 	}
- 
--	watchdog_set_nowayout(&s3c2410_wdd, nowayout);
-+	watchdog_set_nowayout(&wdt->wdt_device, nowayout);
- 
--	ret = watchdog_register_device(&s3c2410_wdd);
-+	ret = watchdog_register_device(&wdt->wdt_device);
- 	if (ret) {
- 		dev_err(dev, "cannot register watchdog (%d)\n", ret);
- 		goto err_cpufreq;
-@@ -396,18 +427,20 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 
- 	if (tmr_atboot && started == 0) {
- 		dev_info(dev, "starting watchdog timer\n");
--		s3c2410wdt_start(&s3c2410_wdd);
-+		s3c2410wdt_start(&wdt->wdt_device);
- 	} else if (!tmr_atboot) {
- 		/* if we're not enabling the watchdog, then ensure it is
- 		 * disabled if it has been left running from the bootloader
- 		 * or other source */
- 
--		s3c2410wdt_stop(&s3c2410_wdd);
-+		s3c2410wdt_stop(&wdt->wdt_device);
- 	}
- 
-+	platform_set_drvdata(pdev, wdt);
-+
- 	/* print out a statement of readiness */
- 
--	wtcon = readl(wdt_base + S3C2410_WTCON);
-+	wtcon = readl(wdt->reg_base + S3C2410_WTCON);
- 
- 	dev_info(dev, "watchdog %sactive, reset %sabled, irq %sabled\n",
- 		 (wtcon & S3C2410_WTCON_ENABLE) ?  "" : "in",
-@@ -417,35 +450,33 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	return 0;
- 
-  err_cpufreq:
--	s3c2410wdt_cpufreq_deregister();
-+	s3c2410wdt_cpufreq_deregister(wdt);
- 
-  err_clk:
--	clk_disable_unprepare(wdt_clock);
--	wdt_clock = NULL;
-+	clk_disable_unprepare(wdt->clock);
-+	wdt->clock = NULL;
- 
-  err:
--	wdt_irq = NULL;
--	wdt_mem = NULL;
- 	return ret;
- }
- 
- static int s3c2410wdt_remove(struct platform_device *dev)
- {
--	watchdog_unregister_device(&s3c2410_wdd);
-+	struct s3c2410_watchdog *wdt = platform_get_drvdata(dev);
-+	watchdog_unregister_device(&wdt->wdt_device);
- 
--	s3c2410wdt_cpufreq_deregister();
-+	s3c2410wdt_cpufreq_deregister(wdt);
- 
--	clk_disable_unprepare(wdt_clock);
--	wdt_clock = NULL;
-+	clk_disable_unprepare(wdt->clock);
-+	wdt->clock = NULL;
- 
--	wdt_irq = NULL;
--	wdt_mem = NULL;
- 	return 0;
- }
- 
- static void s3c2410wdt_shutdown(struct platform_device *dev)
- {
--	s3c2410wdt_stop(&s3c2410_wdd);
-+	struct s3c2410_watchdog *wdt = platform_get_drvdata(dev);
-+	s3c2410wdt_stop(&wdt->wdt_device);
- }
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -455,23 +486,26 @@ static unsigned long wtdat_save;
- 
- static int s3c2410wdt_suspend(struct device *dev)
- {
-+	struct s3c2410_watchdog *wdt = dev_get_drvdata(dev);
- 	/* Save watchdog state, and turn it off. */
--	wtcon_save = readl(wdt_base + S3C2410_WTCON);
--	wtdat_save = readl(wdt_base + S3C2410_WTDAT);
-+	wtcon_save = readl(wdt->reg_base + S3C2410_WTCON);
-+	wtdat_save = readl(wdt->reg_base + S3C2410_WTDAT);
- 
- 	/* Note that WTCNT doesn't need to be saved. */
--	s3c2410wdt_stop(&s3c2410_wdd);
-+	s3c2410wdt_stop(&wdt->wdt_device);
- 
- 	return 0;
- }
- 
- static int s3c2410wdt_resume(struct device *dev)
- {
-+	struct s3c2410_watchdog *wdt = dev_get_drvdata(dev);
-+
- 	/* Restore watchdog state. */
- 
--	writel(wtdat_save, wdt_base + S3C2410_WTDAT);
--	writel(wtdat_save, wdt_base + S3C2410_WTCNT); /* Reset count */
--	writel(wtcon_save, wdt_base + S3C2410_WTCON);
-+	writel(wtdat_save, wdt->reg_base + S3C2410_WTDAT);
-+	writel(wtdat_save, wdt->reg_base + S3C2410_WTCNT); /* Reset count */
-+	writel(wtcon_save, wdt->reg_base + S3C2410_WTCON);
- 
- 	dev_info(dev, "watchdog %sabled\n",
- 		(wtcon_save & S3C2410_WTCON_ENABLE) ? "en" : "dis");
--- 
-1.7.9.5
+Cho KyongHo.
+
+> Best regards,
+> Antonios Motakis
+> 
+> On Fri, Jul 5, 2013 at 2:29 PM, Cho KyongHo <pullip.cho@samsung.com> wrote:
+> > The current exynos-iommu(System MMU) driver does not work autonomously
+> > since it is lack of support for power management of peripheral blocks.
+> > For example, MFC device driver must ensure that its System MMU is disabled
+> > before MFC block is power-down not to invalidate IOTLB in the System MMU
+> > when I/O memory mapping is changed. Because A System MMU is resides in the
+> > same H/W block, access to control registers of System MMU while the H/W
+> > block is turned off must be prohibited.
+> >
+> > This set of changes solves the above problem with setting each System MMUs
+> > as the parent of the device which owns the System MMU to recieve the
+> > information when the device is turned off or turned on.
+> >
+> > Another big change to the driver is the support for devicetree.
+> > The bindings for System MMU is described in
+> > Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
+> >
+> > In addition, this patchset also includes several bug fixes and enhancements
+> > of the current driver.
+> >
+> > Change log:
+> > v7:
+> > - Rebased on the stable 3.10
+> > - Registered PM domains and gate clocks with DT
+> > - Changed connection method between a System MMU and its master H/W
+> >    'mmu-master' property in the node of System MMU
+> >    --> 'iommu' property in the node of master H/W
+> > - Marking device descriptor of master H/W of a System MMU with bus notifier.
+> > - Power management (PM_RUNTIME, PM_SLEEP) of System MMUs with gpd_dev_ops
+> >    of Generic IO Powerdomain. gpd_dev_ops are set to the master H/Ws
+> >    before they are probed in the bus notifier.
+> > - Removed additional debugging features like debugfs entries and
+> >    version names.
+> > - Removed support for advanced features of System MMU 3.2 and 3.3
+> >    the current IOMMU API cannot handle the feature
+> >   (A kind of L2 TLB that fetches several consequence page table entries.
+> >    It must be initialized by the driver of master H/W whenever it works.)
+> >
+> > v6:
+> > - Rebased on the branch, next/iommu-exynos of
+> >   git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> >
+> > v5:
+> > - new bugfix: patch 01
+> > - Reordered patches
+> >   * patch 01 ~ 05: Bugfix and enhancements of the existing driver
+> >   * patch 06 ~ 10: Device Tree support and callbacks for power management
+> >   * patch 11     : System MMU 3.2 and 3.3 support
+> >   * patch 12 ~ 14: Debugging features
+> > - Additional code compaction
+> >
+> > v4:
+> > - Remove Change-Id from v3 patches
+> > - Change the order of the third and the first patch
+> >   Thanks to Kukjin Kim.
+> > - Fix memory leak when allocating and assigning exynos_iommu_owner to client
+> >   device if the client device has multiple System MMUs.
+> >   Thanks to Rahul Sharma.
+> >
+> > v3:
+> > - Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
+> > - Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
+> >   Thanks to Prathyush.
+> >
+> > v2:
+> > - Split the patch to iommu/exynos into 9 patches
+> > - Support for System MMU 3.3
+> > - Some code compaction
+> >
+> > Patch summary:
+> > [PATCH v7 1/9] iommu/exynos: do not include removed header
+> > [PATCH v7 2/9] iommu/exynos: add missing cache flush for removed page table entries
+> > [PATCH v7 3/9] iommu/exynos: fix page table maintenance
+> > [PATCH v7 4/9] iommu/exynos: allocate lv2 page table from own slab
+> > [PATCH v7 5/9] iommu/exynos: change rwlock to spinlock
+> > [PATCH v7 6/9] clk: exynos5250: add gate clock descriptions of System MMU
+> > [PATCH v7 7/9] ARM: dts: Add description of System MMU of Exynos SoCs
+> > [PATCH v7 8/9] iommu/exynos: support for device tree
+> > [PATCH v7 9/9] iommu/exynos: add bus notifier for registering System MMU
+> >
+> > Diffstats:
+> > .../devicetree/bindings/clock/exynos5250-clock.txt |   28 +-
+> > .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |  103 ++
+> > arch/arm/boot/dts/exynos4.dtsi                     |  122 +++
+> > arch/arm/boot/dts/exynos4210.dtsi                  |   25 +
+> > arch/arm/boot/dts/exynos4x12.dtsi                  |   76 ++
+> > arch/arm/boot/dts/exynos5250.dtsi                  |  291 ++++++
+> > drivers/clk/samsung/clk-exynos5250.c               |   57 +-
+> > drivers/iommu/Kconfig                              |    5 +-
+> > drivers/iommu/exynos-iommu.c                       | 1011 +++++++++++++-------
+> > 9 files changed, 1382 insertions(+), 336 deletions(-)
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > Please read the FAQ at  http://www.tux.org/lkml/
