@@ -1,119 +1,107 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v4 05/20] clocksource: samsung_pwm_timer: Handle suspend/resume correctly
-Date: Sat, 20 Jul 2013 02:04:18 +0200
-Message-ID: <1374278673-25615-7-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH v4 07/20] ARM: SAMSUNG: Add new PWM platform device
+Date: Sat, 20 Jul 2013 02:04:20 +0200
+Message-ID: <1374278673-25615-9-git-send-email-tomasz.figa@gmail.com>
 References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f172.google.com ([209.85.215.172]:35532 "EHLO
-	mail-ea0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751744Ab3GTAE7 (ORCPT
+Received: from mail-ea0-f169.google.com ([209.85.215.169]:64220 "EHLO
+	mail-ea0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752103Ab3GTAFE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Jul 2013 20:04:59 -0400
+	Fri, 19 Jul 2013 20:05:04 -0400
 In-Reply-To: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Current suspend/resume handling of the driver was broken, because:
- - periodic timer was being enabled in CLOCK_EVT_MODE_RESUME mode, which
-   does not seem to be correct behavior looking at other platforms,
- - PWM divisors need to be restored, but they were not,
- - clockevent interrupt mask needs to be restored, but it was not,
- - clocksource was being restored in clockevent resume callback.
-
-This patch fixes issues mentioned above, making suspend/resume handling
-in the driver correct.
+This patch adds new samsung_device_pwm platform device that represents
+the whole PWM/timer block and includes memory and IRQ resources.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/clocksource/samsung_pwm_timer.c | 42 ++++++++++++++++++++++-----------
- 1 file changed, 28 insertions(+), 14 deletions(-)
+ arch/arm/plat-samsung/devs.c                  | 17 +++++++++++++++++
+ arch/arm/plat-samsung/include/plat/devs.h     |  1 +
+ arch/arm/plat-samsung/include/plat/pwm-core.h | 24 ++++++++++++++++++++++++
+ 3 files changed, 42 insertions(+)
+ create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
 
-diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
-index 753ffec..282e0e2 100644
---- a/drivers/clocksource/samsung_pwm_timer.c
-+++ b/drivers/clocksource/samsung_pwm_timer.c
-@@ -197,17 +197,6 @@ static int samsung_set_next_event(unsigned long cycles,
- 	return 0;
- }
- 
--static void samsung_timer_resume(void)
--{
--	/* event timer restart */
--	samsung_time_setup(pwm.event_id, pwm.clock_count_per_tick - 1);
--	samsung_time_start(pwm.event_id, true);
--
--	/* source timer restart */
--	samsung_time_setup(pwm.source_id, pwm.tcnt_max);
--	samsung_time_start(pwm.source_id, true);
--}
--
- static void samsung_set_mode(enum clock_event_mode mode,
- 				struct clock_event_device *evt)
- {
-@@ -224,20 +213,29 @@ static void samsung_set_mode(enum clock_event_mode mode,
- 
- 	case CLOCK_EVT_MODE_UNUSED:
- 	case CLOCK_EVT_MODE_SHUTDOWN:
--		break;
--
- 	case CLOCK_EVT_MODE_RESUME:
--		samsung_timer_resume();
- 		break;
- 	}
- }
- 
-+static void samsung_clockevent_resume(struct clock_event_device *cev)
-+{
-+	samsung_timer_set_prescale(pwm.event_id, pwm.tscaler_div);
-+	samsung_timer_set_divisor(pwm.event_id, pwm.tdiv);
-+
-+	if (pwm.variant.has_tint_cstat) {
-+		u32 mask = (1 << pwm.event_id);
-+		writel(mask | (mask << 5), pwm.base + REG_TINT_CSTAT);
-+	}
-+}
-+
- static struct clock_event_device time_event_device = {
- 	.name		= "samsung_event_timer",
- 	.features	= CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
- 	.rating		= 200,
- 	.set_next_event	= samsung_set_next_event,
- 	.set_mode	= samsung_set_mode,
-+	.resume		= samsung_clockevent_resume,
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 0f9c3f4..bba6d78 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -58,6 +58,7 @@
+ #include <plat/keypad.h>
+ #include <linux/platform_data/mmc-s3cmci.h>
+ #include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <plat/pwm-core.h>
+ #include <plat/sdhci.h>
+ #include <linux/platform_data/touchscreen-s3c2410.h>
+ #include <linux/platform_data/usb-s3c2410_udc.h>
+@@ -1127,6 +1128,22 @@ struct platform_device s3c_device_timer[] = {
+ 	[3] = { DEFINE_S3C_TIMER(3, IRQ_TIMER3) },
+ 	[4] = { DEFINE_S3C_TIMER(4, IRQ_TIMER4) },
  };
- 
- static irqreturn_t samsung_clock_event_isr(int irq, void *dev_id)
-@@ -288,6 +286,20 @@ static void __init samsung_clockevent_init(void)
- 	}
- }
- 
-+static void samsung_clocksource_suspend(struct clocksource *cs)
++
++static struct resource samsung_pwm_resource[] = {
++	DEFINE_RES_MEM(SAMSUNG_PA_TIMER, SZ_4K),
++};
++
++struct platform_device samsung_device_pwm = {
++	.name		= "samsung-pwm",
++	.id		= -1,
++	.num_resources	= ARRAY_SIZE(samsung_pwm_resource),
++	.resource	= samsung_pwm_resource,
++};
++
++void __init samsung_pwm_set_platdata(struct samsung_pwm_variant *pd)
 +{
-+	samsung_time_stop(pwm.source_id);
++	samsung_device_pwm.dev.platform_data = pd;
 +}
-+
-+static void samsung_clocksource_resume(struct clocksource *cs)
-+{
-+	samsung_timer_set_prescale(pwm.source_id, pwm.tscaler_div);
-+	samsung_timer_set_divisor(pwm.source_id, pwm.tdiv);
-+
-+	samsung_time_setup(pwm.source_id, pwm.tcnt_max);
-+	samsung_time_start(pwm.source_id, true);
-+}
-+
- static cycle_t samsung_clocksource_read(struct clocksource *c)
- {
- 	return ~readl_relaxed(pwm.source_reg);
-@@ -297,6 +309,8 @@ static struct clocksource samsung_clocksource = {
- 	.name		= "samsung_clocksource_timer",
- 	.rating		= 250,
- 	.read		= samsung_clocksource_read,
-+	.suspend	= samsung_clocksource_suspend,
-+	.resume		= samsung_clocksource_resume,
- 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
- };
+ #endif /* CONFIG_SAMSUNG_DEV_PWM */
  
+ /* RTC */
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index 87d501f..0dc4ac4 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -134,6 +134,7 @@ extern struct platform_device exynos4_device_spdif;
+ 
+ extern struct platform_device samsung_asoc_idma;
+ extern struct platform_device samsung_device_keypad;
++extern struct platform_device samsung_device_pwm;
+ 
+ /* s3c2440 specific devices */
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/pwm-core.h b/arch/arm/plat-samsung/include/plat/pwm-core.h
+new file mode 100644
+index 0000000..df50f5c
+--- /dev/null
++++ b/arch/arm/plat-samsung/include/plat/pwm-core.h
+@@ -0,0 +1,24 @@
++/*
++ * linux/arch/arm/plat-samsung/onenand-core.h
++ *
++ *  Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Samsung PWM Controller core functions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARCH_PWM_CORE_H
++#define __ASM_ARCH_PWM_CORE_H __FILE__
++
++#include <clocksource/samsung_pwm.h>
++
++#ifdef CONFIG_SAMSUNG_DEV_PWM
++extern void samsung_pwm_set_platdata(struct samsung_pwm_variant *pd);
++#else
++static inline void samsung_pwm_set_platdata(struct samsung_pwm_variant *pd) { }
++#endif
++
++#endif /* __ASM_ARCH_PWM_CORE_H */
 -- 
 1.8.3.2
