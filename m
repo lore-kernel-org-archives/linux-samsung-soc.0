@@ -1,56 +1,158 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v4 17/20] ARM: SAMSUNG: Remove old PWM timer platform devices
-Date: Sat, 20 Jul 2013 02:04:30 +0200
-Message-ID: <1374278673-25615-19-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH v4 20/20] ARM: SAMSUNG: Remove plat/regs-timer.h header
+Date: Sat, 20 Jul 2013 02:04:33 +0200
+Message-ID: <1374278673-25615-22-git-send-email-tomasz.figa@gmail.com>
 References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f49.google.com ([74.125.83.49]:48803 "EHLO
-	mail-ee0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753218Ab3GTAFY (ORCPT
+Received: from mail-ea0-f170.google.com ([209.85.215.170]:50210 "EHLO
+	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753218Ab3GTAFa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Jul 2013 20:05:24 -0400
+	Fri, 19 Jul 2013 20:05:30 -0400
 In-Reply-To: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-This patch removes old Samsung PWM timer platform devices that are not
-used any more.
+Since all uses of the header has been removed by previous patches it can
+be removed safely.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- arch/arm/plat-samsung/devs.c | 18 ------------------
- 1 file changed, 18 deletions(-)
+ arch/arm/plat-samsung/include/plat/regs-timer.h | 124 ------------------------
+ 1 file changed, 124 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-timer.h
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 290f63a..8ce0ac0 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -1098,24 +1098,6 @@ arch_initcall(s5p_pmu_init);
- /* PWM Timer */
- 
- #ifdef CONFIG_SAMSUNG_DEV_PWM
+diff --git a/arch/arm/plat-samsung/include/plat/regs-timer.h b/arch/arm/plat-samsung/include/plat/regs-timer.h
+deleted file mode 100644
+index d097d92..0000000
+--- a/arch/arm/plat-samsung/include/plat/regs-timer.h
++++ /dev/null
+@@ -1,124 +0,0 @@
+-/* arch/arm/mach-s3c2410/include/mach/regs-timer.h
+- *
+- * Copyright (c) 2003 Simtec Electronics <linux@simtec.co.uk>
+- *		      http://www.simtec.co.uk/products/SWLINUX/
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * S3C2410 Timer configuration
+-*/
 -
--#define DEFINE_S3C_TIMER(_tmr_no)			\
--	.name		= "s3c24xx-pwm",		\
--	.id		= _tmr_no,			\
+-#ifndef __ASM_ARCH_REGS_TIMER_H
+-#define __ASM_ARCH_REGS_TIMER_H
 -
--/*
-- * since we already have an static mapping for the timer,
-- * we do not bother setting any IO resource for the base.
-- */
+-#define S3C_TIMERREG(x) (S3C_VA_TIMER + (x))
+-#define S3C_TIMERREG2(tmr,reg) S3C_TIMERREG((reg)+0x0c+((tmr)*0x0c))
 -
--struct platform_device s3c_device_timer[] = {
--	[0] = { DEFINE_S3C_TIMER(0) },
--	[1] = { DEFINE_S3C_TIMER(1) },
--	[2] = { DEFINE_S3C_TIMER(2) },
--	[3] = { DEFINE_S3C_TIMER(3) },
--	[4] = { DEFINE_S3C_TIMER(4) },
--};
+-#define S3C2410_TCFG0	      S3C_TIMERREG(0x00)
+-#define S3C2410_TCFG1	      S3C_TIMERREG(0x04)
+-#define S3C2410_TCON	      S3C_TIMERREG(0x08)
 -
- static struct resource samsung_pwm_resource[] = {
- 	DEFINE_RES_MEM(SAMSUNG_PA_TIMER, SZ_4K),
- };
+-#define S3C64XX_TINT_CSTAT    S3C_TIMERREG(0x44)
+-
+-#define S3C2410_TCFG_PRESCALER0_MASK (255<<0)
+-#define S3C2410_TCFG_PRESCALER1_MASK (255<<8)
+-#define S3C2410_TCFG_PRESCALER1_SHIFT (8)
+-#define S3C2410_TCFG_DEADZONE_MASK   (255<<16)
+-#define S3C2410_TCFG_DEADZONE_SHIFT  (16)
+-
+-#define S3C2410_TCFG1_MUX4_DIV2	  (0<<16)
+-#define S3C2410_TCFG1_MUX4_DIV4	  (1<<16)
+-#define S3C2410_TCFG1_MUX4_DIV8	  (2<<16)
+-#define S3C2410_TCFG1_MUX4_DIV16  (3<<16)
+-#define S3C2410_TCFG1_MUX4_TCLK1  (4<<16)
+-#define S3C2410_TCFG1_MUX4_MASK	  (15<<16)
+-#define S3C2410_TCFG1_MUX4_SHIFT  (16)
+-
+-#define S3C2410_TCFG1_MUX3_DIV2	  (0<<12)
+-#define S3C2410_TCFG1_MUX3_DIV4	  (1<<12)
+-#define S3C2410_TCFG1_MUX3_DIV8	  (2<<12)
+-#define S3C2410_TCFG1_MUX3_DIV16  (3<<12)
+-#define S3C2410_TCFG1_MUX3_TCLK1  (4<<12)
+-#define S3C2410_TCFG1_MUX3_MASK	  (15<<12)
+-
+-
+-#define S3C2410_TCFG1_MUX2_DIV2	  (0<<8)
+-#define S3C2410_TCFG1_MUX2_DIV4	  (1<<8)
+-#define S3C2410_TCFG1_MUX2_DIV8	  (2<<8)
+-#define S3C2410_TCFG1_MUX2_DIV16  (3<<8)
+-#define S3C2410_TCFG1_MUX2_TCLK1  (4<<8)
+-#define S3C2410_TCFG1_MUX2_MASK	  (15<<8)
+-
+-
+-#define S3C2410_TCFG1_MUX1_DIV2	  (0<<4)
+-#define S3C2410_TCFG1_MUX1_DIV4	  (1<<4)
+-#define S3C2410_TCFG1_MUX1_DIV8	  (2<<4)
+-#define S3C2410_TCFG1_MUX1_DIV16  (3<<4)
+-#define S3C2410_TCFG1_MUX1_TCLK0  (4<<4)
+-#define S3C2410_TCFG1_MUX1_MASK	  (15<<4)
+-
+-#define S3C2410_TCFG1_MUX0_DIV2	  (0<<0)
+-#define S3C2410_TCFG1_MUX0_DIV4	  (1<<0)
+-#define S3C2410_TCFG1_MUX0_DIV8	  (2<<0)
+-#define S3C2410_TCFG1_MUX0_DIV16  (3<<0)
+-#define S3C2410_TCFG1_MUX0_TCLK0  (4<<0)
+-#define S3C2410_TCFG1_MUX0_MASK	  (15<<0)
+-
+-#define S3C2410_TCFG1_MUX_DIV2	  (0<<0)
+-#define S3C2410_TCFG1_MUX_DIV4	  (1<<0)
+-#define S3C2410_TCFG1_MUX_DIV8	  (2<<0)
+-#define S3C2410_TCFG1_MUX_DIV16   (3<<0)
+-#define S3C2410_TCFG1_MUX_TCLK    (4<<0)
+-#define S3C2410_TCFG1_MUX_MASK	  (15<<0)
+-
+-#define S3C64XX_TCFG1_MUX_DIV1	  (0<<0)
+-#define S3C64XX_TCFG1_MUX_DIV2	  (1<<0)
+-#define S3C64XX_TCFG1_MUX_DIV4	  (2<<0)
+-#define S3C64XX_TCFG1_MUX_DIV8    (3<<0)
+-#define S3C64XX_TCFG1_MUX_DIV16   (4<<0)
+-#define S3C64XX_TCFG1_MUX_TCLK    (5<<0)  /* 3 sets of TCLK */
+-#define S3C64XX_TCFG1_MUX_MASK	  (15<<0)
+-
+-#define S3C2410_TCFG1_SHIFT(x)	  ((x) * 4)
+-
+-/* for each timer, we have an count buffer, an compare buffer and
+- * an observation buffer
+-*/
+-
+-/* WARNING - timer 4 has no buffer reg, and it's observation is at +4 */
+-
+-#define S3C2410_TCNTB(tmr)    S3C_TIMERREG2(tmr, 0x00)
+-#define S3C2410_TCMPB(tmr)    S3C_TIMERREG2(tmr, 0x04)
+-#define S3C2410_TCNTO(tmr)    S3C_TIMERREG2(tmr, (((tmr) == 4) ? 0x04 : 0x08))
+-
+-#define S3C2410_TCON_T4RELOAD	  (1<<22)
+-#define S3C2410_TCON_T4MANUALUPD  (1<<21)
+-#define S3C2410_TCON_T4START	  (1<<20)
+-
+-#define S3C2410_TCON_T3RELOAD	  (1<<19)
+-#define S3C2410_TCON_T3INVERT	  (1<<18)
+-#define S3C2410_TCON_T3MANUALUPD  (1<<17)
+-#define S3C2410_TCON_T3START	  (1<<16)
+-
+-#define S3C2410_TCON_T2RELOAD	  (1<<15)
+-#define S3C2410_TCON_T2INVERT	  (1<<14)
+-#define S3C2410_TCON_T2MANUALUPD  (1<<13)
+-#define S3C2410_TCON_T2START	  (1<<12)
+-
+-#define S3C2410_TCON_T1RELOAD	  (1<<11)
+-#define S3C2410_TCON_T1INVERT	  (1<<10)
+-#define S3C2410_TCON_T1MANUALUPD  (1<<9)
+-#define S3C2410_TCON_T1START	  (1<<8)
+-
+-#define S3C2410_TCON_T0DEADZONE	  (1<<4)
+-#define S3C2410_TCON_T0RELOAD	  (1<<3)
+-#define S3C2410_TCON_T0INVERT	  (1<<2)
+-#define S3C2410_TCON_T0MANUALUPD  (1<<1)
+-#define S3C2410_TCON_T0START	  (1<<0)
+-
+-#endif /*  __ASM_ARCH_REGS_TIMER_H */
+-
+-
+-
 -- 
 1.8.3.2
