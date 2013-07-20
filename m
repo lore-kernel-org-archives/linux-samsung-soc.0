@@ -1,58 +1,100 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v4 01/20] clocksource: samsung_pwm_timer: Do not request PWM mem region
-Date: Sat, 20 Jul 2013 02:04:13 +0200
-Message-ID: <1374278673-25615-2-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH v4 03/20] clocksource: samsung_pwm_timer: Cache clocksource register address
+Date: Sat, 20 Jul 2013 02:04:16 +0200
+Message-ID: <1374278673-25615-5-git-send-email-tomasz.figa@gmail.com>
 References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f172.google.com ([209.85.215.172]:50785 "EHLO
-	mail-ea0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751383Ab3GTAEu (ORCPT
+Received: from mail-ea0-f175.google.com ([209.85.215.175]:63075 "EHLO
+	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752374Ab3GTAE4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Jul 2013 20:04:50 -0400
+	Fri, 19 Jul 2013 20:04:56 -0400
 In-Reply-To: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-PWM registers are shared between clocksource and PWM drivers and so can
-not be claimed for exclusive use.
+Instead of calculating register every time the timer should be read,
+we can just do it one time at initialization and store the address in
+driver data.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/clocksource/samsung_pwm_timer.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ drivers/clocksource/samsung_pwm_timer.c | 33 ++++++++-------------------------
+ 1 file changed, 8 insertions(+), 25 deletions(-)
 
 diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
-index 584b547..3fa5b07 100644
+index e238fb0..823279b 100644
 --- a/drivers/clocksource/samsung_pwm_timer.c
 +++ b/drivers/clocksource/samsung_pwm_timer.c
-@@ -404,7 +404,6 @@ void __init samsung_pwm_clocksource_init(void __iomem *base,
- static void __init samsung_pwm_alloc(struct device_node *np,
- 				     const struct samsung_pwm_variant *variant)
- {
--	struct resource res;
- 	struct property *prop;
- 	const __be32 *cur;
- 	u32 val;
-@@ -423,17 +422,9 @@ static void __init samsung_pwm_alloc(struct device_node *np,
- 		pwm.variant.output_mask |= 1 << val;
- 	}
+@@ -55,6 +55,7 @@ EXPORT_SYMBOL(samsung_pwm_lock);
  
--	of_address_to_resource(np, 0, &res);
--	if (!request_mem_region(res.start,
--				resource_size(&res), "samsung-pwm")) {
--		pr_err("%s: failed to request IO mem region\n", __func__);
--		return;
--	}
+ struct samsung_pwm_clocksource {
+ 	void __iomem *base;
++	void __iomem *source_reg;
+ 	unsigned int irq[SAMSUNG_PWM_NUM];
+ 	struct samsung_pwm_variant variant;
+ 
+@@ -287,23 +288,6 @@ static void __init samsung_clockevent_init(void)
+ 	}
+ }
+ 
+-static void __iomem *samsung_timer_reg(void)
+-{
+-	switch (pwm.source_id) {
+-	case 0:
+-	case 1:
+-	case 2:
+-	case 3:
+-		return pwm.base + pwm.source_id * 0x0c + 0x14;
 -
--	pwm.base = ioremap(res.start, resource_size(&res));
-+	pwm.base = of_iomap(np, 0);
- 	if (!pwm.base) {
- 		pr_err("%s: failed to map PWM registers\n", __func__);
--		release_mem_region(res.start, resource_size(&res));
- 		return;
- 	}
+-	case 4:
+-		return pwm.base + 0x40;
+-
+-	default:
+-		BUG();
+-	}
+-}
+-
+ /*
+  * Override the global weak sched_clock symbol with this
+  * local implementation which uses the clocksource to get some
+@@ -313,17 +297,11 @@ static void __iomem *samsung_timer_reg(void)
+  */
+ static u32 notrace samsung_read_sched_clock(void)
+ {
+-	void __iomem *reg = samsung_timer_reg();
+-
+-	if (!reg)
+-		return 0;
+-
+-	return ~__raw_readl(reg);
++	return ~__raw_readl(pwm.source_reg);
+ }
  
+ static void __init samsung_clocksource_init(void)
+ {
+-	void __iomem *reg = samsung_timer_reg();
+ 	unsigned long pclk;
+ 	unsigned long clock_rate;
+ 	int ret;
+@@ -338,10 +316,15 @@ static void __init samsung_clocksource_init(void)
+ 	samsung_time_setup(pwm.source_id, pwm.tcnt_max);
+ 	samsung_time_start(pwm.source_id, true);
+ 
++	if (pwm.source_id == 4)
++		pwm.source_reg = pwm.base + 0x40;
++	else
++		pwm.source_reg = pwm.base + pwm.source_id * 0x0c + 0x14;
++
+ 	setup_sched_clock(samsung_read_sched_clock,
+ 						pwm.variant.bits, clock_rate);
+ 
+-	ret = clocksource_mmio_init(reg, "samsung_clocksource_timer",
++	ret = clocksource_mmio_init(pwm.source_reg, "samsung_clocksource_timer",
+ 					clock_rate, 250, pwm.variant.bits,
+ 					clocksource_mmio_readl_down);
+ 	if (ret)
 -- 
 1.8.3.2
