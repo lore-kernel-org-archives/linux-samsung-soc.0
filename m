@@ -1,89 +1,170 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
-Date: Fri, 19 Jul 2013 16:50:55 -0700
-Message-ID: <20130719235055.GB11498@kroah.com>
-References: <1374129984-765-1-git-send-email-kishon@ti.com>
- <1374129984-765-2-git-send-email-kishon@ti.com>
- <20130718072004.GA16720@kroah.com>
- <51E7AE88.3050007@ti.com>
- <20130718154954.GA31961@kroah.com>
- <51E8D086.809@ti.com>
- <20130719054311.GA14638@kroah.com>
- <51E8D4E0.8060200@ti.com>
- <20130719062941.GA23611@kroah.com>
- <51E8DE51.1060404@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH v4 00/20] Samsung PWM support cleanup
+Date: Sat, 20 Jul 2013 02:04:12 +0200
+Message-ID: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53157 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753215Ab3GSXuu (ORCPT
+Received: from mail-ea0-f182.google.com ([209.85.215.182]:51804 "EHLO
+	mail-ea0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751132Ab3GTAEs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Jul 2013 19:50:50 -0400
-Content-Disposition: inline
-In-Reply-To: <51E8DE51.1060404@ti.com>
+	Fri, 19 Jul 2013 20:04:48 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: kyungmin.park@samsung.com, balbi@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, tony@atomide.com, arnd@arndb.de, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Fri, Jul 19, 2013 at 12:06:01PM +0530, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Friday 19 July 2013 11:59 AM, Greg KH wrote:
-> > On Fri, Jul 19, 2013 at 11:25:44AM +0530, Kishon Vijay Abraham I wrote:
-> >> Hi,
-> >>
-> >> On Friday 19 July 2013 11:13 AM, Greg KH wrote:
-> >>> On Fri, Jul 19, 2013 at 11:07:10AM +0530, Kishon Vijay Abraham I wrote:
-> >>>>>>>> +	ret = dev_set_name(&phy->dev, "%s.%d", dev_name(dev), id);
-> >>>>>>>
-> >>>>>>> Your naming is odd, no "phy" anywhere in it?  You rely on the sender to
-> >>>>>>> never send a duplicate name.id pair?  Why not create your own ids based
-> >>>>>>> on the number of phys in the system, like almost all other classes and
-> >>>>>>> subsystems do?
-> >>>>>>
-> >>>>>> hmm.. some PHY drivers use the id they provide to perform some of their
-> >>>>>> internal operation as in [1] (This is used only if a single PHY provider
-> >>>>>> implements multiple PHYS). Probably I'll add an option like PLATFORM_DEVID_AUTO
-> >>>>>> to give the PHY drivers an option to use auto id.
-> >>>>>>
-> >>>>>> [1] ->
-> >>>>>> http://archive.arm.linux.org.uk/lurker/message/20130628.134308.4a8f7668.ca.html
-> >>>>>
-> >>>>> No, who cares about the id?  No one outside of the phy core ever should,
-> >>>>> because you pass back the only pointer that they really do care about,
-> >>>>> if they need to do anything with the device.  Use that, and then you can
-> >>>>
-> >>>> hmm.. ok.
-> >>>>
-> >>>>> rip out all of the "search for a phy by a string" logic, as that's not
-> >>>>
-> >>>> Actually this is needed for non-dt boot case. In the case of dt boot, we use a
-> >>>> phandle by which the controller can get a reference to the phy. But in the case
-> >>>> of non-dt boot, the controller can get a reference to the phy only by label.
-> >>>
-> >>> I don't understand.  They registered the phy, and got back a pointer to
-> >>> it.  Why can't they save it in their local structure to use it again
-> >>> later if needed?  They should never have to "ask" for the device, as the
-> >>
-> >> One is a *PHY provider* driver which is a driver for some PHY device. This will
-> >> use phy_create to create the phy.
-> >> The other is a *PHY consumer* driver which might be any controller driver (can
-> >> be USB/SATA/PCIE). The PHY consumer will use phy_get to get a reference to the
-> >> phy (by *phandle* in the case of dt boot and *label* in the case of non-dt boot).
-> >>> device id might be unknown if there are multiple devices in the system.
-> >>
-> >> I agree with you on the device id part. That need not be known to the PHY driver.
-> > 
-> > How does a consumer know which "label" to use in a non-dt system if
-> > there are multiple PHYs in the system?
-> 
-> That should be passed using platform data.
+Since we now have a proper Samsung PWM clocksource driver in place,
+we can proceed with further cleanup of PWM timers support on Samsung SoCs.
 
-Ick, don't pass strings around, pass pointers.  If you have platform
-data you can get to, then put the pointer there, don't use a "name".
+This series attempts to achieve this goal by:
+ 1) fixing up few things in samsung_pwm_timer clocksource driver,
+ 2) moving remaining Samsung platforms to the new clocksource driver,
+ 3) removing old clocksource driver,
+ 4) adding new multiplatform- and DT-aware PWM driver,
+ 5) moving all Samsung platforms to use the new PWM driver,
+ 6) removing old PWM driver,
+ 7) removing all PWM-related code that is not used anymore.
 
-thanks,
+Cleaning up the PWM driver is a bit tricky, because the design of current
+driver makes it completely unsuitable for DT and multiplatform and would
+require a heavy rework to make it usable, breaking any existing Samsung PWM
+users by the way. To avoid any breakage this series first renames the old
+driver, then adds new one using original name, migrates all platforms to
+use it and then finally removes the old driver.
 
-greg k-h
+See particular patches for more detailed descriptions.
+
+[On S3C6410-based Tiny6410 (Mini6410-compatible) with pwm-beeper, SMDK6410
+with PWM backlight and Exynos4210-based Origen board (with PWM0 attached
+to a scope)]
+Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+[On S3C2440-based Mini2440 board]
+Tested-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+
+[On a s3c2416 based machine]
+Tested-by: Heiko Stuebner <heiko@sntech.de> 
+
+[Also not sure on what boards, but still]
+Tested-by: Mark Brown <broonie@linaro.org>
+
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Thierry Reding <thierry.reding@gmail.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de> 
+
+Changes since v3:
+ - added two extra clocksource driver fixes to the series (patches 1, 2),
+ - added comment explaining why only a simple synchronization is needed
+   between clocksource and PWM drivers,
+ - some stylistic fixes,
+ - rebased to 3.11-rc1.
+Changes since v2:
+ - replaced __raw_{readl,writel} with {readl,writel},
+ - corrected some commit messages,
+ - used git format-patch -M to detect rename.
+Changes since v1:
+ - made sure that suspend/resume is handled correctly in both
+   clocksource and PWM drivers,
+ - fixed incorrect definition of AUTORELOAD bit for channel 4,
+ - fixed order of registering PWM device and calling samsung_bl_set(),
+   which assumes that PWM device has been already registered,
+ - corrected commit messages of several patches,
+ - addressed all the valid comments from reviewers, including cleanup
+   of most code originally copied from previous PWM driver,
+ - rebased on top of current Kgene's for-next,
+ - tested on Exynos4210, verifying correct PWM output with a scope.
+
+Tomasz Figa (20):
+  clocksource: samsung_pwm_timer: Do not request PWM mem region
+  clocksource: samsung_pwm_timer: Correct definition of AUTORELOAD bit
+  clocksource: samsung_pwm_timer: Cache clocksource register address
+  clocksource: samsung_pwm_timer: Do not use clocksource_mmio
+  clocksource: samsung_pwm_timer: Handle suspend/resume correctly
+  ARM: SAMSUNG: Unify base address definitions of timer block
+  ARM: SAMSUNG: Add new PWM platform device
+  ARM: SAMSUNG: Set PWM platform data
+  ARM: SAMSUNG: Move all platforms to new clocksource driver
+  ARM: SAMSUNG: Remove old samsung-time driver
+  ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
+  pwm: samsung: Rename to pwm-samsung-legacy
+  pwm: Add new pwm-samsung driver
+  ARM: SAMSUNG: Rework private data handling in dev-backlight
+  ARM: SAMSUNG: Modify board files to use new PWM platform device
+  pwm: Remove superseded pwm-samsung-legacy driver
+  ARM: SAMSUNG: Remove old PWM timer platform devices
+  ARM: SAMSUNG: Remove pwm-clock infrastructure
+  ARM: SAMSUNG: Remove remaining uses of plat/regs-timer.h header
+  ARM: SAMSUNG: Remove plat/regs-timer.h header
+
+ arch/arm/Kconfig                                   |  11 +-
+ arch/arm/mach-s3c24xx/Kconfig                      |   6 -
+ arch/arm/mach-s3c24xx/clock-s3c2410.c              |   1 -
+ arch/arm/mach-s3c24xx/clock-s3c2412.c              |   1 -
+ arch/arm/mach-s3c24xx/clock-s3c2416.c              |   2 -
+ arch/arm/mach-s3c24xx/clock-s3c2443.c              |   2 -
+ arch/arm/mach-s3c24xx/common.c                     |  27 +
+ arch/arm/mach-s3c24xx/include/mach/map.h           |   2 +
+ arch/arm/mach-s3c24xx/mach-h1940.c                 |   4 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c                |   5 +-
+ arch/arm/mach-s3c64xx/Kconfig                      |   2 -
+ arch/arm/mach-s3c64xx/clock.c                      |   2 -
+ arch/arm/mach-s3c64xx/common.c                     |  32 +-
+ arch/arm/mach-s3c64xx/include/mach/irqs.h          |   8 -
+ arch/arm/mach-s3c64xx/include/mach/map.h           |   1 +
+ arch/arm/mach-s3c64xx/irq-pm.c                     |   2 -
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |   4 +-
+ arch/arm/mach-s3c64xx/mach-hmt.c                   |   4 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c                |   4 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |   5 +-
+ arch/arm/mach-s5p64x0/Kconfig                      |   2 -
+ arch/arm/mach-s5p64x0/clock-s5p6440.c              |   2 -
+ arch/arm/mach-s5p64x0/clock-s5p6450.c              |   2 -
+ arch/arm/mach-s5p64x0/common.c                     |  27 +
+ arch/arm/mach-s5p64x0/include/mach/irqs.h          |   2 -
+ arch/arm/mach-s5p64x0/include/mach/map.h           |   1 +
+ arch/arm/mach-s5p64x0/mach-smdk6440.c              |   5 +-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c              |   5 +-
+ arch/arm/mach-s5p64x0/pm.c                         |   3 -
+ arch/arm/mach-s5pc100/Kconfig                      |   1 -
+ arch/arm/mach-s5pc100/clock.c                      |   2 -
+ arch/arm/mach-s5pc100/common.c                     |  28 +
+ arch/arm/mach-s5pc100/include/mach/irqs.h          |   2 -
+ arch/arm/mach-s5pc100/include/mach/map.h           |   1 +
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |   5 +-
+ arch/arm/mach-s5pv210/Kconfig                      |   1 -
+ arch/arm/mach-s5pv210/clock.c                      |   1 -
+ arch/arm/mach-s5pv210/common.c                     |  28 +
+ arch/arm/mach-s5pv210/include/mach/irqs.h          |   2 -
+ arch/arm/mach-s5pv210/include/mach/map.h           |   1 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |   5 +-
+ arch/arm/mach-s5pv210/pm.c                         |  10 -
+ arch/arm/plat-samsung/Kconfig                      |  14 -
+ arch/arm/plat-samsung/Makefile                     |   3 -
+ arch/arm/plat-samsung/dev-backlight.c              |  61 +-
+ arch/arm/plat-samsung/devs.c                       |  42 +-
+ arch/arm/plat-samsung/include/plat/clock.h         |   4 -
+ arch/arm/plat-samsung/include/plat/devs.h          |   1 +
+ arch/arm/plat-samsung/include/plat/irq-vic-timer.h |  13 -
+ arch/arm/plat-samsung/include/plat/irqs.h          |   9 -
+ arch/arm/plat-samsung/include/plat/pwm-clock.h     |  81 ---
+ arch/arm/plat-samsung/include/plat/pwm-core.h      |  24 +
+ arch/arm/plat-samsung/include/plat/regs-timer.h    | 124 ----
+ arch/arm/plat-samsung/include/plat/samsung-time.h  |  23 -
+ arch/arm/plat-samsung/irq-vic-timer.c              |  98 ---
+ arch/arm/plat-samsung/pwm-clock.c                  | 474 --------------
+ arch/arm/plat-samsung/s5p-irq.c                    |   4 -
+ arch/arm/plat-samsung/samsung-time.c               | 394 ------------
+ drivers/clocksource/Kconfig                        |   1 -
+ drivers/clocksource/samsung_pwm_timer.c            |  98 +--
+ drivers/pwm/pwm-samsung.c                          | 701 ++++++++++++++-------
+ 61 files changed, 768 insertions(+), 1662 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/irq-vic-timer.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/pwm-clock.h
+ create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-timer.h
+ delete mode 100644 arch/arm/plat-samsung/irq-vic-timer.c
+ delete mode 100644 arch/arm/plat-samsung/pwm-clock.c
+ delete mode 100644 arch/arm/plat-samsung/samsung-time.c
+
+-- 
+1.8.3.2
