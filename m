@@ -1,14 +1,14 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
 Subject: [PATCH v4 02/20] clocksource: samsung_pwm_timer: Correct definition of AUTORELOAD bit
-Date: Sat, 20 Jul 2013 02:04:14 +0200
-Message-ID: <1374278673-25615-3-git-send-email-tomasz.figa@gmail.com>
+Date: Sat, 20 Jul 2013 02:04:15 +0200
+Message-ID: <1374278673-25615-4-git-send-email-tomasz.figa@gmail.com>
 References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f175.google.com ([209.85.215.175]:45399 "EHLO
-	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751956Ab3GTAEw (ORCPT
+Received: from mail-ee0-f53.google.com ([74.125.83.53]:46771 "EHLO
+	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751383Ab3GTAEy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Jul 2013 20:04:52 -0400
+	Fri, 19 Jul 2013 20:04:54 -0400
 In-Reply-To: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -22,7 +22,6 @@ This fixes a problem with the clocksource hanging after it overflows because
 it is not reloaded any more.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
  drivers/clocksource/samsung_pwm_timer.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
