@@ -1,121 +1,55 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v4 07/20] ARM: SAMSUNG: Add new PWM platform device
-Date: Sun, 21 Jul 2013 21:46:09 +0200
-Message-ID: <51EC3A81.7050001@gmail.com>
-References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com> <1374278673-25615-9-git-send-email-tomasz.figa@gmail.com>
+From: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Subject: Re: [PATCH] of: provide of_platform_unpopulate()
+Date: Sun, 21 Jul 2013 21:47:44 +0200
+Message-ID: <51EC3AE0.5020107@linutronix.de>
+References: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de>
+ <51EBF33A.4050207@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:44578 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755934Ab3GUTqO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 21 Jul 2013 15:46:14 -0400
-In-Reply-To: <1374278673-25615-9-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <51EBF33A.4050207-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: George Cherian <george.cherian-l0cyMroinI0@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 
-Hi Tomasz,
+On 07/21/2013 04:42 PM, Rob Herring wrote:
+> Wouldn't the correct fix be to call insert_resource somehow?
 
-On 07/20/2013 02:04 AM, Tomasz Figa wrote:
-> This patch adds new samsung_device_pwm platform device that represents
-> the whole PWM/timer block and includes memory and IRQ resources.
->
-> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
-> ---
->   arch/arm/plat-samsung/devs.c                  | 17 +++++++++++++++++
->   arch/arm/plat-samsung/include/plat/devs.h     |  1 +
->   arch/arm/plat-samsung/include/plat/pwm-core.h | 24 ++++++++++++++++++++++++
->   3 files changed, 42 insertions(+)
->   create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
->
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 0f9c3f4..bba6d78 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -58,6 +58,7 @@
->   #include<plat/keypad.h>
->   #include<linux/platform_data/mmc-s3cmci.h>
->   #include<linux/platform_data/mtd-nand-s3c2410.h>
-> +#include<plat/pwm-core.h>
->   #include<plat/sdhci.h>
->   #include<linux/platform_data/touchscreen-s3c2410.h>
->   #include<linux/platform_data/usb-s3c2410_udc.h>
-> @@ -1127,6 +1128,22 @@ struct platform_device s3c_device_timer[] = {
->   	[3] = { DEFINE_S3C_TIMER(3, IRQ_TIMER3) },
->   	[4] = { DEFINE_S3C_TIMER(4, IRQ_TIMER4) },
->   };
-> +
-> +static struct resource samsung_pwm_resource[] = {
-> +	DEFINE_RES_MEM(SAMSUNG_PA_TIMER, SZ_4K),
-> +};
-> +
-> +struct platform_device samsung_device_pwm = {
-> +	.name		= "samsung-pwm",
-> +	.id		= -1,
-> +	.num_resources	= ARRAY_SIZE(samsung_pwm_resource),
-> +	.resource	= samsung_pwm_resource,
-> +};
-> +
-> +void __init samsung_pwm_set_platdata(struct samsung_pwm_variant *pd)
-> +{
-> +	samsung_device_pwm.dev.platform_data = pd;
-> +}
->   #endif /* CONFIG_SAMSUNG_DEV_PWM */
->
->   /* RTC */
-> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-> index 87d501f..0dc4ac4 100644
-> --- a/arch/arm/plat-samsung/include/plat/devs.h
-> +++ b/arch/arm/plat-samsung/include/plat/devs.h
-> @@ -134,6 +134,7 @@ extern struct platform_device exynos4_device_spdif;
->
->   extern struct platform_device samsung_asoc_idma;
->   extern struct platform_device samsung_device_keypad;
-> +extern struct platform_device samsung_device_pwm;
->
->   /* s3c2440 specific devices */
->
-> diff --git a/arch/arm/plat-samsung/include/plat/pwm-core.h b/arch/arm/plat-samsung/include/plat/pwm-core.h
-> new file mode 100644
-> index 0000000..df50f5c
-> --- /dev/null
-> +++ b/arch/arm/plat-samsung/include/plat/pwm-core.h
-> @@ -0,0 +1,24 @@
-> +/*
-> + * linux/arch/arm/plat-samsung/onenand-core.h
+Yes unless there was a reason this wasn't done in the first place.
 
-Are such full file path names really useful, especially we are never
-sure they are up to date ? I guess this line could be removed.
+> The problem
+> I have is that while of_platform_populate is all about parsing the DT
+> and creating devices, the removal side has nothing to do with DT. So
+> this should not be in the DT code. I think the core device code should
+> be able to handle removal if the device creation side is done correctly.
 
-> + *  Copyright (c) 2013 Tomasz Figa<tomasz.figa@gmail.com>
-> + *
-> + * Samsung PWM Controller core functions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARCH_PWM_CORE_H
-> +#define __ASM_ARCH_PWM_CORE_H __FILE__
-> +
-> +#include<clocksource/samsung_pwm.h>
-> +
-> +#ifdef CONFIG_SAMSUNG_DEV_PWM
-> +extern void samsung_pwm_set_platdata(struct samsung_pwm_variant *pd);
+If there is no need to use the special removal function (in case we add
+insert_ressource) then yes. What about a pointer in
+of_platform_populate()'s comment referring to the removal function?
 
-nit: 'extern' is implicit for function declarations, it could be omitted 
-here.
+> 
+> It looks to me like of_device_add either needs to call
+> platform_device_add rather than device_add. I think the device name
+> setting in platform_device_add should be a nop. If not, a check that the
+> name is already set could be added.
 
-> +#else
-> +static inline void samsung_pwm_set_platdata(struct samsung_pwm_variant *pd) { }
-> +#endif
-> +
-> +#endif /* __ASM_ARCH_PWM_CORE_H */
+It does actually the same thing as platform_device_add except the
+"dynamic device id" and the resource insert if I remember correctly. If
+you guys prefer the platdorm_device_add() path including
+insert_ressource() I can try this.
 
-Thanks,
-Sylwester
+> 
+> Rob
+
+Sebastian
