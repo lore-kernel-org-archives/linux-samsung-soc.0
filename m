@@ -1,72 +1,136 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH] of: provide of_platform_unpopulate()
-Date: Sun, 21 Jul 2013 15:48:08 -0500
-Message-ID: <51EC4908.4040504@gmail.com>
-References: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de> <51EBF33A.4050207@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 07/20] ARM: SAMSUNG: Add new PWM platform device
+Date: Sun, 21 Jul 2013 23:51:24 +0200
+Message-ID: <3579759.6nJBcZTDZ4@flatron>
+References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com> <1374278673-25615-9-git-send-email-tomasz.figa@gmail.com> <51EC3A81.7050001@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:50302 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756064Ab3GUUsN (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:50854 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751253Ab3GUVvb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 21 Jul 2013 16:48:13 -0400
-In-Reply-To: <51EBF33A.4050207@gmail.com>
+	Sun, 21 Jul 2013 17:51:31 -0400
+In-Reply-To: <51EC3A81.7050001@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, George Cherian <george.cherian@ti.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-omap@vger.kernel.org, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Roger Quadros <rogerq@ti.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 
-On 07/21/2013 09:42 AM, Rob Herring wrote:
-> On 07/19/2013 01:14 PM, Sebastian Andrzej Siewior wrote:
->> So I called of_platform_populate() on a device to get each child device
->> probed and on rmmod and I need to reverse its doing. After a quick grep
->> I did what others did as well and rmmod ended in:
->>
->> | Unable to handle kernel NULL pointer dereference at virtual address 00000018
->> | PC is at release_resource+0x18/0x80
->> | Process rmmod (pid: 2005, stack limit = 0xedc30238)
->> | [<c003add0>] (release_resource+0x18/0x80) from [<c0300e08>] (platform_device_del+0x78/0xac)
->> | [<c0300e08>] (platform_device_del+0x78/0xac) from [<c0301358>] (platform_device_unregister+0xc/0x18)
->>
->> The problem is that platform_device_del() "releases" each ressource in its
->> tree. This does not work on platform_devices created by OF becuase they
->> were never added via insert_resource(). As a consequence old->parent in
->> __release_resource() is NULL and we explode while accessing ->child.
->> So I either I do something completly wrong _or_ nobody here tested the
->> rmmod path of their driver.
+Hi Sylwester,
+
+On Sunday 21 of July 2013 21:46:09 Sylwester Nawrocki wrote:
+> Hi Tomasz,
 > 
-> Wouldn't the correct fix be to call insert_resource somehow? The problem
-> I have is that while of_platform_populate is all about parsing the DT
-> and creating devices, the removal side has nothing to do with DT. So
-> this should not be in the DT code. I think the core device code should
-> be able to handle removal if the device creation side is done correctly.
+> On 07/20/2013 02:04 AM, Tomasz Figa wrote:
+> > This patch adds new samsung_device_pwm platform device that represents
+> > the whole PWM/timer block and includes memory and IRQ resources.
+> > 
+> > Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
+> > ---
+> > 
+> >   arch/arm/plat-samsung/devs.c                  | 17 +++++++++++++++++
+> >   arch/arm/plat-samsung/include/plat/devs.h     |  1 +
+> >   arch/arm/plat-samsung/include/plat/pwm-core.h | 24
+> >   ++++++++++++++++++++++++ 3 files changed, 42 insertions(+)
+> >   create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
+> > 
+> > diff --git a/arch/arm/plat-samsung/devs.c
+> > b/arch/arm/plat-samsung/devs.c index 0f9c3f4..bba6d78 100644
+> > --- a/arch/arm/plat-samsung/devs.c
+> > +++ b/arch/arm/plat-samsung/devs.c
+> > @@ -58,6 +58,7 @@
+> > 
+> >   #include<plat/keypad.h>
+> >   #include<linux/platform_data/mmc-s3cmci.h>
+> >   #include<linux/platform_data/mtd-nand-s3c2410.h>
+> > 
+> > +#include<plat/pwm-core.h>
+> > 
+> >   #include<plat/sdhci.h>
+> >   #include<linux/platform_data/touchscreen-s3c2410.h>
+> >   #include<linux/platform_data/usb-s3c2410_udc.h>
+> > 
+> > @@ -1127,6 +1128,22 @@ struct platform_device s3c_device_timer[] = {
+> > 
+> >   	[3] = { DEFINE_S3C_TIMER(3, IRQ_TIMER3) },
+> >   	[4] = { DEFINE_S3C_TIMER(4, IRQ_TIMER4) },
+> >   
+> >   };
+> > 
+> > +
+> > +static struct resource samsung_pwm_resource[] = {
+> > +	DEFINE_RES_MEM(SAMSUNG_PA_TIMER, SZ_4K),
+> > +};
+> > +
+> > +struct platform_device samsung_device_pwm = {
+> > +	.name		= "samsung-pwm",
+> > +	.id		= -1,
+> > +	.num_resources	= ARRAY_SIZE(samsung_pwm_resource),
+> > +	.resource	= samsung_pwm_resource,
+> > +};
+> > +
+> > +void __init samsung_pwm_set_platdata(struct samsung_pwm_variant *pd)
+> > +{
+> > +	samsung_device_pwm.dev.platform_data = pd;
+> > +}
+> > 
+> >   #endif /* CONFIG_SAMSUNG_DEV_PWM */
+> >   
+> >   /* RTC */
+> > 
+> > diff --git a/arch/arm/plat-samsung/include/plat/devs.h
+> > b/arch/arm/plat-samsung/include/plat/devs.h index 87d501f..0dc4ac4
+> > 100644
+> > --- a/arch/arm/plat-samsung/include/plat/devs.h
+> > +++ b/arch/arm/plat-samsung/include/plat/devs.h
+> > @@ -134,6 +134,7 @@ extern struct platform_device
+> > exynos4_device_spdif;
+> > 
+> >   extern struct platform_device samsung_asoc_idma;
+> >   extern struct platform_device samsung_device_keypad;
+> > 
+> > +extern struct platform_device samsung_device_pwm;
+> > 
+> >   /* s3c2440 specific devices */
+> > 
+> > diff --git a/arch/arm/plat-samsung/include/plat/pwm-core.h
+> > b/arch/arm/plat-samsung/include/plat/pwm-core.h new file mode 100644
+> > index 0000000..df50f5c
+> > --- /dev/null
+> > +++ b/arch/arm/plat-samsung/include/plat/pwm-core.h
+> > @@ -0,0 +1,24 @@
+> > +/*
+> > + * linux/arch/arm/plat-samsung/onenand-core.h
 > 
-> It looks to me like of_device_add either needs to call
-> platform_device_add rather than device_add. I think the device name
-> setting in platform_device_add should be a nop. If not, a check that the
-> name is already set could be added.
+> Are such full file path names really useful, especially we are never
+> sure they are up to date ? I guess this line could be removed.
+
+No, they are not. This is a copy-pasto I missed (notice onenand-core...).
+
+> > + *  Copyright (c) 2013 Tomasz Figa<tomasz.figa@gmail.com>
+> > + *
+> > + * Samsung PWM Controller core functions
+> > + *
+> > + * This program is free software; you can redistribute it and/or
+> > modify + * it under the terms of the GNU General Public License
+> > version 2 as + * published by the Free Software Foundation.
+> > +*/
+> > +
+> > +#ifndef __ASM_ARCH_PWM_CORE_H
+> > +#define __ASM_ARCH_PWM_CORE_H __FILE__
+> > +
+> > +#include<clocksource/samsung_pwm.h>
+> > +
+> > +#ifdef CONFIG_SAMSUNG_DEV_PWM
+> > +extern void samsung_pwm_set_platdata(struct samsung_pwm_variant *pd);
 > 
+> nit: 'extern' is implicit for function declarations, it could be omitted
+> here.
 
-BTW, it looks like Grant has attempted this already:
+The extern kernel is used widely over the kernel (including headers in 
+plat-samsung) and I prefer adding it for clarity.
 
-commit 02bbde7849e68e193cefaa1885fe0df0f03c9fcd
-Author: Grant Likely <grant.likely@secretlab.ca>
-Date:   Sun Feb 17 20:03:27 2013 +0000
-
-    Revert "of: use platform_device_add"
-
-    This reverts commit aac73f34542bc7ae4317928d2eabfeb21d247323. That
-    commit causes two kinds of breakage; it breaks registration of AMBA
-    devices when one of the parent nodes already contains overlapping
-    resource regions, and it breaks calls to request_region() by device
-    drivers in certain conditions where there are overlapping memory
-    regions. Both of these problems can probably be fixed, but it is better
-    to back out the commit and get a proper fix designed before trying
-again.
-
-    Signed-off-by: Grant Likely <grant.likely@secretlab.ca>
-
-
-Rob
+Best regards,
+Tomasz
