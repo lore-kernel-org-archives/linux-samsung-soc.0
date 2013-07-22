@@ -1,58 +1,49 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] of: provide of_platform_unpopulate()
-Date: Mon, 22 Jul 2013 10:25:34 +0200
-Message-ID: <51ECEC7E.7000008@linutronix.de>
-References: <2333396.179421374298979822.JavaMail.weblogic@epml22>
+From: NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>
+Subject: Re: Re: [PATCH] of: provide of_platform_unpopulate()
+Date: Mon, 22 Jul 2013 08:37:00 +0000 (GMT)
+Message-ID: <23795036.212591374482218972.JavaMail.weblogic@epml23>
+Reply-To: ch.naveen@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from www.linutronix.de ([62.245.132.108]:59520 "EHLO
-	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753959Ab3GVIZl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 04:25:41 -0400
-In-Reply-To: <2333396.179421374298979822.JavaMail.weblogic@epml22>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: ch.naveen@samsung.com
+Content-Transfer-Encoding: base64
+Return-path: <linux-omap-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-omap-owner@vger.kernel.org
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Cc: Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Doug Anderson <dianders@chromium.org>, Vivek Gautam <gautam.vivek@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Roger Quadros <rogerq@ti.com>, George Cherian <george.cherian@ti.com>, Felipe Balbi <balbi@ti.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/20/2013 07:42 AM, NAVEEN KRISHNA CHATRADHI wrote:
-> Hello Sebastian,
+SGVsbG8gU2ViYXN0aWFuLAoKLS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0KU2VuZGVy
+IDogU2ViYXN0aWFuIEFuZHJ6ZWogU2lld2lvcjxiaWdlYXN5QGxpbnV0cm9uaXguZGU+IApEYXRl
+ICAgOiBKdWwgMjIsIDIwMTMgMTM6NTUgKEdNVCswNTozMCkKVGl0bGUgIDogUmU6IFtQQVRDSF0g
+b2Y6IHByb3ZpZGUgb2ZfcGxhdGZvcm1fdW5wb3B1bGF0ZSgpCgpPbiAwNy8yMC8yMDEzIDA3OjQy
+IEFNLCBOQVZFRU4gS1JJU0hOQSBDSEFUUkFESEkgd3JvdGU6Cj4gSGVsbG8gU2ViYXN0aWFuLAoK
+SGVsbG8gTmF2ZWVuLAoKPiAKPiBJIGp1c3QgZGlkIG9uZSBtb3JlIHRlc3RpbmcuCj4gCj4gSW4g
+Y2FzZSBvZiBpaW8vYWRjL2V4eW5vc19hZGMuYyB0aGVyZSBpcyBhIGJ1ZyBpbiB0aGUgcmVtb3Zl
+IHBhdGguCj4gSWYgSSBmaXggdGhlIGJ1ZyBpbiB0aGUgZHJpdmVyLCB3aXRoIGJlbG93IHBhdGNo
+Cj4gCj4gLS0tIGEvZHJpdmVycy9paW8vYWRjL2V4eW5vc19hZGMuYwo+ICsrKyBiL2RyaXZlcnMv
+aWlvL2FkYy9leHlub3NfYWRjLmMKPiBAQCAtMzc1LDE0ICszNzUsMTQgQEAgc3RhdGljIGludCBl
+eHlub3NfYWRjX3JlbW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAgICAgICAg
+c3RydWN0IGlpb19kZXYgKmluZGlvX2RldiA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpOwo+
+ICAgICAgICAgc3RydWN0IGV4eW5vc19hZGMgKmluZm8gPSBpaW9fcHJpdihpbmRpb19kZXYpOwo+
+IAo+IC0gICAgICAgZGV2aWNlX2Zvcl9lYWNoX2NoaWxkKCZwZGV2LT5kZXYsIE5VTEwsCj4gLSAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICBleHlub3NfYWRjX3JlbW92ZV9kZXZpY2VzKTsK
+PiAgICAgICAgIHJlZ3VsYXRvcl9kaXNhYmxlKGluZm8tPnZkZCk7Cj4gICAgICAgICBjbGtfZGlz
+YWJsZV91bnByZXBhcmUoaW5mby0+Y2xrKTsKPiAgICAgICAgIHdyaXRlbCgwLCBpbmZvLT5lbmFi
+bGVfcmVnKTsKPiAgICAgICAgIGlpb19kZXZpY2VfdW5yZWdpc3RlcihpbmRpb19kZXYpOwo+ICAg
+ICAgICAgZnJlZV9pcnEoaW5mby0+aXJxLCBpbmZvKTsKPiAgICAgICAgIGlpb19kZXZpY2VfZnJl
+ZShpbmRpb19kZXYpOwo+ICsgICAgICAgZGV2aWNlX2Zvcl9lYWNoX2NoaWxkKCZwZGV2LT5kZXYs
+IE5VTEwsCj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBleHlub3NfYWRjX3JlbW92
+ZV9kZXZpY2VzKTsKPiAKPiBFdmVuIHdpdGhvdXQgeW91ciBmaXgsIEkgY291bGQgY29uZmlndXJl
+IGl0IGFzIGEgbW9kdWxlIGFuZCB0aGUgcm1tb2QsIGluc21vZCBhcmUgd29ya2luZyBmaW5lLiAo
+bm8gY3Jhc2gpCgpJIGhhdmUgbm8gaWRlYSB3aHkgeW91IG1vdmVkIGl0LiBJIGhhdmVuJ3QgZm91
+bmQgYW55IC5kdHMgd2l0aCB0aGlzCiAgcmVndWxhdG9yX2Rpc2FibGUoaW5mby0+dmRkKTsKaGFz
+IHRvIGhhcHBlbiBiZWZvcmUgd2UgZnJlZSBhbmQgcmVtb3ZlIHRoZSBkZXZpY2VzLgpUaGUgZHRz
+IHBhcnQgaXMgbm90IHVwc3RyZWFtZWQgeWV0LgoKYmluZGluZyBidXQgZnJvbSB0aGUgYmluZGlu
+ZyBkb2N1bWVudCBJIHdvdWxkIGFzc3VtZSB0aGF0IHlvdSBkbyBub3QKaGF2ZSBhbnkgbWVtb3J5
+IHJlc291cmNlcyBhbmQgdGhlcmVmb3JlIHlvdSBkb24ndCBzZWUgdGhhdCBjcmFzaC4KWWVzLCBt
+eSBkZXZpY2VzIHVuZGVyIEFEQyBhcmUgM3JkIHBhcnR5IHRoZXJtaXN0b3JzIGFuZCB0aGV5IGRv
+bid0IGhhdmUgbWVtb3J5IHJlc291cmNlcy4KTWF5IGJlIHlvdXIgZXhwbGFuYXRpb24gc2VlbXMg
+cmlnaHQuCgpUaGFua3MsCk5hdmVlbgoKPiBSZWdhcmRzLAo+IE5hdmVlbgoKU2ViYXN0aWFuCg==
 
-Hello Naveen,
 
-> 
-> I just did one more testing.
-> 
-> In case of iio/adc/exynos_adc.c there is a bug in the remove path.
-> If I fix the bug in the driver, with below patch
-> 
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -375,14 +375,14 @@ static int exynos_adc_remove(struct platform_device *pdev)
->         struct iio_dev *indio_dev = platform_get_drvdata(pdev);
->         struct exynos_adc *info = iio_priv(indio_dev);
-> 
-> -       device_for_each_child(&pdev->dev, NULL,
-> -                               exynos_adc_remove_devices);
->         regulator_disable(info->vdd);
->         clk_disable_unprepare(info->clk);
->         writel(0, info->enable_reg);
->         iio_device_unregister(indio_dev);
->         free_irq(info->irq, info);
->         iio_device_free(indio_dev);
-> +       device_for_each_child(&pdev->dev, NULL,
-> +                               exynos_adc_remove_devices);
-> 
-> Even without your fix, I could configure it as a module and the rmmod, insmod are working fine. (no crash)
-
-I have no idea why you moved it. I haven't found any .dts with this
-binding but from the binding document I would assume that you do not
-have any memory resources and therefore you don't see that crash.
-
-> Regards,
-> Naveen
-
-Sebastian
