@@ -1,126 +1,64 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
-Date: Mon, 22 Jul 2013 12:55:18 +0530
-Message-ID: <51ECDE5E.3050104@ti.com>
-References: <Pine.LNX.4.44L0.1307211453450.19133-100000@netrider.rowland.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4 02/20] clocksource: samsung_pwm_timer: Correct definition of AUTORELOAD bit
+Date: Mon, 22 Jul 2013 09:43:23 +0200
+Message-ID: <9612221.r4mx9bHE64@flatron>
+References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com> <1374278673-25615-4-git-send-email-tomasz.figa@gmail.com> <51ECABF1.4040600@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <Pine.LNX.4.44L0.1307211453450.19133-100000@netrider.rowland.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-fbdev@vger.kernel.org, linux-doc@vger.kernel.org, tony@atomide.com, nsekhar@ti.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, swarren@nvidia.com, jg1.han@samsung.com, grant.likely@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-media@vger.kernel.org, george.cherian@ti.com, arnd@arndb.de, Sascha Hauer <s.hauer@pengutronix.de>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, balajitk@ti.com, Greg KH <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, akpm@linux-foundation.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f50.google.com ([209.85.214.50]:62321 "EHLO
+	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752893Ab3GVHn3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Jul 2013 03:43:29 -0400
+In-Reply-To: <51ECABF1.4040600@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 
-Hi,
+On Monday 22 of July 2013 05:50:09 Daniel Lezcano wrote:
+> On 07/20/2013 02:04 AM, Tomasz Figa wrote:
+> > PWM channel 4 has its autoreload bit located at different position.
+> > This patch fixes the driver to account for that.
+> > 
+> > This fixes a problem with the clocksource hanging after it overflows
+> > because it is not reloaded any more.
+> > 
+> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > ---
+> > 
+> >  drivers/clocksource/samsung_pwm_timer.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/clocksource/samsung_pwm_timer.c
+> > b/drivers/clocksource/samsung_pwm_timer.c index 3fa5b07..e238fb0
+> > 100644
+> > --- a/drivers/clocksource/samsung_pwm_timer.c
+> > +++ b/drivers/clocksource/samsung_pwm_timer.c
+> > @@ -47,7 +47,8 @@
+> > 
+> >  #define TCON_START(chan)		(1 << (4 * (chan) + 0))
+> >  #define TCON_MANUALUPDATE(chan)		(1 << (4 * (chan) + 1))
+> >  #define TCON_INVERT(chan)		(1 << (4 * (chan) + 2))
+> > 
+> > -#define TCON_AUTORELOAD(chan)		(1 << (4 * (chan) + 3))
+> > +#define TCON_AUTORELOAD(chan)		(1 << (4 * (chan) \
+> > +						+ (((chan) < 5) ? 3 : 2)))
+> 
+> This macro is not readable. Please, fix it up with a comment please.
 
-On Monday 22 July 2013 12:52 AM, Alan Stern wrote:
-> On Sun, 21 Jul 2013, Sylwester Nawrocki wrote:
-> 
->>> What's wrong with the platform_data structure, why can't that be used
->>> for this?
->>
->> At the point the platform data of some driver is initialized, e.g. in
->> board setup code the PHY pointer is not known, since the PHY supplier
->> driver has not initialized yet.  Even though we wanted to pass pointer
->> to a PHY through some notifier call, it would have been not clear
->> which PHY user driver should match on such notifier.  A single PHY
->> supplier driver can create M PHY objects and this needs to be mapped
->> to N PHY user drivers.  This mapping needs to be defined somewhere by
->> the system integrator.  It works well with device tree, but except that
->> there seems to be no other reliable infrastructure in the kernel to
->> define links/dependencies between devices, since device identifiers are
->> not known in advance in all cases.
->>
->> What Tomasz proposed seems currently most reasonable to me for non-dt.
->>
->>> Or, if not, we can always add pointers to the platform device structure,
->>> or even the main 'struct device' as well, that's what it is there for.
->>
->> Still we would need to solve a problem which platform device structure
->> gets which PHY pointer.
-> 
-> Can you explain the issues in more detail?  I don't fully understand 
-> the situation.
-> 
-> Here's what I think I know:
-> 
-> 	The PHY and the controller it is attached to are both physical
-> 	devices.
-> 
-> 	The connection between them is hardwired by the system
-> 	manufacturer and cannot be changed by software.
-> 
-> 	PHYs are generally described by fixed system-specific board
-> 	files or by Device Tree information.  Are they ever discovered
-> 	dynamically?
+/*
+ * Channel 4 (logically 5 in TCON register) has different position
+ * of autoreload bit.
+ */
+#define _TCON_AUTORELOAD(chan)			(1 << (4 * (chan) + 3))
+#define _TCON_AUTORELOAD4(chan)			(1 << (4 * (chan) + 2))
+#define TCON_AUTORELOAD(chan)			((chan < 5) ? 
+		_TCON_AUTORELOAD(chan) : _TCON_AUTORELOAD4(chan))
 
-No. They are created just like any other platform devices are created.
-> 
-> 	Is the same true for the controllers attached to the PHYs?
-> 	If not -- if both a PHY and a controller are discovered 
-> 	dynamically -- how does the kernel know whether they are 
-> 	connected to each other?
+What do you think?
 
-No differences here. Both PHY and controller will have dt information or hwmod
-data using which platform devices will be created.
-> 
-> 	The kernel needs to know which controller is attached to which
-> 	PHY.  Currently this information is represented by name or ID
-> 	strings embedded in platform data.
-
-right. It's embedded in the platform data of the controller.
-> 
-> 	The PHY's driver (the supplier) uses the platform data to 
-> 	construct a platform_device structure that represents the PHY.  
-
-Currently the driver assigns static labels (corresponding to the label used in
-the platform data of the controller).
-> 	Until this is done, the controller's driver (the client) cannot 
-> 	use the PHY.
-
-right.
-> 
-> 	Since there is no parent-child relation between the PHY and the 
-> 	controller, there is no guarantee that the PHY's driver will be
-> 	ready when the controller's driver wants to use it.  A deferred
-> 	probe may be needed.
-
-right.
-> 
-> 	The issue (or one of the issues) in this discussion is that 
-> 	Greg does not like the idea of using names or IDs to associate
-> 	PHYs with controllers, because they are too prone to
-> 	duplications or other errors.  Pointers are more reliable.
-> 
-> 	But pointers to what?  Since the only data known to be 
-> 	available to both the PHY driver and controller driver is the
-> 	platform data, the obvious answer is a pointer to platform data
-> 	(either for the PHY or for the controller, or maybe both).
-
-hmm.. it's not going to be simple though as the platform device for the PHY and
-controller can be created in entirely different places. e.g., in some cases the
-PHY device is a child of some mfd core device (the device will be created in
-drivers/mfd) and the controller driver (usually) is created in board file. I
-guess then we have to come up with something to share a pointer in two
-different files.
-> 
-> Probably some of the details above are wrong; please indicate where I
-> have gone astray.  Also, I'm not clear about the role played by various 
-> APIs.  For example, where does phy_create() fit into this picture?
-
-phy_create is the API by which the PHY's driver (the supplier) hook into the
-PHY framework. It's like the controller driver will always interact with the
-PHY driver through the PHY framework.
-
-Thanks
-Kishon
+Best regards,
+Tomasz
