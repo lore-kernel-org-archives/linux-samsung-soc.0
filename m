@@ -1,65 +1,70 @@
-From: Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] of: provide of_platform_unpopulate()
-Date: Mon, 22 Jul 2013 00:44:27 +0100
-Message-ID: <CACxGe6sqv2Wsp26MWqqs9W_eWO3tjs-+2z3z8fC=2fe-BjJvkA@mail.gmail.com>
-References: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de>
- <51EBF33A.4050207@gmail.com> <51EC4908.4040504@gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] watchdog: s3c2410_wdt: code clean up
+Date: Mon, 22 Jul 2013 09:14:48 +0900
+Message-ID: <002601ce8670$7a2901d0$6e7b0570$@samsung.com>
+References: <1374224288-18963-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <51EC4908.4040504-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: George Cherian <george.cherian-l0cyMroinI0@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:34875 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753054Ab3GVAOu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 21 Jul 2013 20:14:50 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MQB001SRA0OT460@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 09:14:48 +0900 (KST)
+In-reply-to: <1374224288-18963-1-git-send-email-l.krishna@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, Jingoo Han <jg1.han@samsung.com>
 
-On Sun, Jul 21, 2013 at 9:48 PM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 07/21/2013 09:42 AM, Rob Herring wrote:
->> On 07/19/2013 01:14 PM, Sebastian Andrzej Siewior wrote:
->>> So I called of_platform_populate() on a device to get each child device
->>> probed and on rmmod and I need to reverse its doing. After a quick grep
->>> I did what others did as well and rmmod ended in:
->>>
->>> | Unable to handle kernel NULL pointer dereference at virtual address 00000018
->>> | PC is at release_resource+0x18/0x80
->>> | Process rmmod (pid: 2005, stack limit = 0xedc30238)
->>> | [<c003add0>] (release_resource+0x18/0x80) from [<c0300e08>] (platform_device_del+0x78/0xac)
->>> | [<c0300e08>] (platform_device_del+0x78/0xac) from [<c0301358>] (platform_device_unregister+0xc/0x18)
->>>
->>> The problem is that platform_device_del() "releases" each ressource in its
->>> tree. This does not work on platform_devices created by OF becuase they
->>> were never added via insert_resource(). As a consequence old->parent in
->>> __release_resource() is NULL and we explode while accessing ->child.
->>> So I either I do something completly wrong _or_ nobody here tested the
->>> rmmod path of their driver.
->>
->> Wouldn't the correct fix be to call insert_resource somehow? The problem
->> I have is that while of_platform_populate is all about parsing the DT
->> and creating devices, the removal side has nothing to do with DT. So
->> this should not be in the DT code. I think the core device code should
->> be able to handle removal if the device creation side is done correctly.
->>
->> It looks to me like of_device_add either needs to call
->> platform_device_add rather than device_add. I think the device name
->> setting in platform_device_add should be a nop. If not, a check that the
->> name is already set could be added.
->>
->
-> BTW, it looks like Grant has attempted this already:
+On Friday, July 19, 2013 5:58 PM, Leela Krishna Amudala wrote:
+> 
+> This patch removes the global variables in the driver file and
+> group them into a structure.
 
-Yup, things broke badly. Unfortunately the of_platform_device and
-platform_device history doesn't treat resources in the same way. I
-would like to merge the code, but I haven't been able to figure out a
-clean way to do it. Looks like we do need the unpopulate function.
+How about changing the subject as below?
 
-g.
+[PATCH] watchdog: s3c2410_wdt: remove the global variables
+
+
+[.....]
+
+> -static struct device    *wdt_dev;	/* platform device attached to */
+> -static struct resource	*wdt_mem;
+> -static struct resource	*wdt_irq;
+> -static struct clk	*wdt_clock;
+> -static void __iomem	*wdt_base;
+> -static unsigned int	 wdt_count;
+> -static DEFINE_SPINLOCK(wdt_lock);
+> +struct s3c2410_watchdog {
+> +struct device		*dev;	/* platform device attached to */
+> +struct clk		*clock;
+> +void __iomem		*reg_base;
+> +unsigned int		count;
+> +spinlock_t		lock;
+> +struct watchdog_device	wdt_device;
+> +struct notifier_block	freq_transition;
+> +};
+
+'tab' is necessary as below:
+
++struct s3c2410_watchdog {
++	struct device		*dev;	/* platform device attached to */
++	struct clk		*clock;
++	void __iomem		*reg_base;
++	unsigned int		count;
++	spinlock_t		lock;
++	struct watchdog_device	wdt_device;
++	struct notifier_block	freq_transition;
++};
+
+Best regards,
+Jingoo Han
