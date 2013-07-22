@@ -1,59 +1,53 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: RE: [PATCH 1/1] of/documentation: Fix a typo in exynos5250-clock.txt
-Date: Sun, 21 Jul 2013 21:42:54 -0700
-Message-ID: <20130722044254.5453.82900@quantum>
-References: <1373012281-26433-1-git-send-email-sachin.kamat@linaro.org>
- <0ab501ce867e$0adadd40$209097c0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <0ab501ce867e$0adadd40$209097c0$%kim@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: grant.likely@linaro.org, rob@landley.net, patches@linaro.org
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH v2 1/1] ARM: EXYNOS: Update CONFIG_ARCH_NR_GPIO for Exynos
+Date: Mon, 22 Jul 2013 10:00:14 +0530
+Message-ID: <1374467414-25801-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:59151 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752954Ab3GVEqZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Jul 2013 00:46:25 -0400
+Received: by mail-pd0-f171.google.com with SMTP id y14so6365810pdi.16
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Jul 2013 21:46:24 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-Quoting Kukjin Kim (2013-07-21 18:51:54)
-> Sachin Kamat wrote:
-> > 
-> > The clocks should be numbered sequentially as they are represented as
-> > enum values in the clock driver.
-> > 
-> > Typo introduced by commit 17d4caccef ("clk: exynos5250: register
-> > display block gate clocks to common clock framework")
-> > 
-> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> > ---
-> >  .../devicetree/bindings/clock/exynos5250-clock.txt |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> > b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> > index 781a627..1a05761 100644
-> > --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> > +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> > @@ -154,7 +154,7 @@ clock which they consume.
-> >    dsim0                      341
-> >    dp                 342
-> >    mixer                      343
-> > -  hdmi                       345
-> > +  hdmi                       344
-> > 
-> >  Example 1: An example of a clock controller node is listed below.
-> > 
-> > --
-> > 1.7.9.5
-> 
-> Looks OK to me.
-> 
-> Mike, do you want me to take into the samsung tree?
+With the recent cleanup in Exynos platform code notably commits
+17859bec ("ARM: EXYNOS: Do not select legacy Kconfig symbols any
+more") and b9222210 ("ARM: EXYNOS: Remove mach/gpio.h"), the definition
+of ARCH_NR_GPIOS got removed. This started causing problems on SoCs like
+Exynos4412 which have more than the default number of GPIOs. Thus define
+this number in KConfig file. Without this patch we get the following errors
+during boot:
 
-I've pulled this into clk-next.
+gpiochip_add: gpios 251..258 (gpv0) failed to register
+samsung-pinctrl 106e0000.pinctrl: failed to register gpio_chip gpv0,
+error code: -22
+samsung-pinctrl: probe of 106e0000.pinctrl failed with error -22
 
-Thanks!
-Mike
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>
+---
+Changes since v1:
+* Changed default number to 285 (as required by 4412).
+---
+ arch/arm/Kconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> Thanks,
-> Kukjin
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index ba412e0..f4841a2 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1605,6 +1605,7 @@ config ARCH_NR_GPIO
+ 	default 392 if ARCH_U8500
+ 	default 352 if ARCH_VT8500
+ 	default 288 if ARCH_SUNXI
++	default 285 if ARCH_EXYNOS
+ 	default 264 if MACH_H4700
+ 	default 0
+ 	help
+-- 
+1.7.9.5
