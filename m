@@ -1,89 +1,125 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 09/22] ARM: dts: Remove '0x's from Exynos5250 DTS file
-Date: Mon, 22 Jul 2013 11:52:28 +0100
-Message-ID: <1374490361-25769-9-git-send-email-lee.jones@linaro.org>
-References: <1374490361-25769-1-git-send-email-lee.jones@linaro.org>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix low level debug support
+Date: Mon, 22 Jul 2013 06:23:06 -0500
+Message-ID: <CAJuYYwRij6CAfLCG-xmmoe_iDnvCsTCB_4PnEiRfD+bAiBe9VQ@mail.gmail.com>
+References: <1373709465-21042-1-git-send-email-yadi.brar@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:39432 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932263Ab3GVKxG (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:34000 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932380Ab3GVLXH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 06:53:06 -0400
-Received: by mail-ee0-f47.google.com with SMTP id e49so3714728eek.34
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 03:53:05 -0700 (PDT)
-In-Reply-To: <1374490361-25769-1-git-send-email-lee.jones@linaro.org>
+	Mon, 22 Jul 2013 07:23:07 -0400
+Received: by mail-pa0-f42.google.com with SMTP id rl6so6971512pac.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 04:23:06 -0700 (PDT)
+In-Reply-To: <1373709465-21042-1-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: arnd@arndb.de, linus.walleij@stericsson.com, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Cc: kgene@kernel.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, olof@lixom.net, dianders@chromium.org, t.figa@samsung.com, yadi.brar01@gmail.com
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
----
- arch/arm/boot/dts/exynos5250.dtsi | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+On 13 July 2013 04:57, Yadwinder Singh Brar <yadi.brar@samsung.com> wrote:
+> Presently, using exynos_defconfig with CONFIG_DEBUG_LL and CONFIG_EARLY_PRINTK
+> on, kernel is not booting, we are getting following:
+>
+> [    0.000000] ------------[ cut here ]------------
+> [    0.000000] kernel BUG at mm/vmalloc.c:1134!
+> [    0.000000] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+> [    0.000000] Modules linked in:
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 3.11.0-rc1 #633
+> [    0.000000] task: c052ec48 ti: c0524000 task.ti: c0524000
+> [    0.000000] PC is at vm_area_add_early+0x54/0x94
+> [    0.000000] LR is at add_static_vm_early+0xc/0x60
+>
+> Its because iotable_init tries to map UART again which is already mapped by
+> debug_ll_io_init() call in exynos_init_io() within same virtal address range as
+> requested later.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index ef57277..24c0888 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -68,17 +68,17 @@
- 		};
- 	};
- 
--	pd_gsc: gsc-power-domain@0x10044000 {
-+	pd_gsc: gsc-power-domain@10044000 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044000 0x20>;
- 	};
- 
--	pd_mfc: mfc-power-domain@0x10044040 {
-+	pd_mfc: mfc-power-domain@10044040 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10044040 0x20>;
- 	};
- 
--	clock: clock-controller@0x10010000 {
-+	clock: clock-controller@10010000 {
- 		compatible = "samsung,exynos5250-clock";
- 		reg = <0x10010000 0x30000>;
- 		#clock-cells = <1>;
-@@ -562,7 +562,7 @@
- 		};
- 	};
- 
--	gsc_0:  gsc@0x13e00000 {
-+	gsc_0:  gsc@13e00000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e00000 0x1000>;
- 		interrupts = <0 85 0>;
-@@ -571,7 +571,7 @@
- 		clock-names = "gscl";
- 	};
- 
--	gsc_1:  gsc@0x13e10000 {
-+	gsc_1:  gsc@13e10000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e10000 0x1000>;
- 		interrupts = <0 86 0>;
-@@ -580,7 +580,7 @@
- 		clock-names = "gscl";
- 	};
- 
--	gsc_2:  gsc@0x13e20000 {
-+	gsc_2:  gsc@13e20000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e20000 0x1000>;
- 		interrupts = <0 87 0>;
-@@ -589,7 +589,7 @@
- 		clock-names = "gscl";
- 	};
- 
--	gsc_3:  gsc@0x13e30000 {
-+	gsc_3:  gsc@13e30000 {
- 		compatible = "samsung,exynos5-gsc";
- 		reg = <0x13e30000 0x1000>;
- 		interrupts = <0 88 0>;
--- 
-1.8.1.2
+debug_ll_io_init ioremaps debug uart address space with 4KB size
+whereas the exynos_init_io() function ioremaps a single 512KB memory
+size for all the four uart ports which envelops the mapping created by
+debug_ll_io_init. This is caught as a kernel bug.
+
+>
+> This issue seems to be occured after :
+> commit ee4de5d99aeac44f4507b7538b2b3faedc5205b9
+> ARM: 7781/1: mmu: Add debug_ll_io_init() mappings to early mappings
+>
+> This patch moves S3C_UART iodesc(in iodesc_list) inside CONFIG_DEBUG_LL check.
+
+Instead of moving, all the such iodesc entries for UART controller can
+be removed for all Samsung SoC's now since the Samsung uart driver
+does a ioremap during probe and any needed iomapping for earlyprintk
+is handled by debug_ll_io_init().
+
+>
+> Tested on 4412 and 5250 smdks.
+>
+> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.c |   20 ++++++++++++++------
+>  1 files changed, 14 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 164685b..7f0591f 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -150,11 +150,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+>                 .length         = SZ_64K,
+>                 .type           = MT_DEVICE,
+>         }, {
+> -               .virtual        = (unsigned long)S3C_VA_UART,
+> -               .pfn            = __phys_to_pfn(EXYNOS4_PA_UART),
+> -               .length         = SZ_512K,
+> -               .type           = MT_DEVICE,
+> -       }, {
+>                 .virtual        = (unsigned long)S5P_VA_CMU,
+>                 .pfn            = __phys_to_pfn(EXYNOS4_PA_CMU),
+>                 .length         = SZ_128K,
+> @@ -185,6 +180,14 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+>                 .length         = SZ_4K,
+>                 .type           = MT_DEVICE,
+>         },
+> +#ifndef CONFIG_DEBUG_LL
+> +       {
+> +               .virtual        = (unsigned long)S3C_VA_UART,
+> +               .pfn            = __phys_to_pfn(EXYNOS4_PA_UART),
+> +               .length         = SZ_512K,
+> +               .type           = MT_DEVICE,
+> +       },
+> +#endif
+>  };
+>
+>  static struct map_desc exynos4_iodesc0[] __initdata = {
+> @@ -268,21 +271,26 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+>                 .pfn            = __phys_to_pfn(EXYNOS5_PA_PMU),
+>                 .length         = SZ_64K,
+>                 .type           = MT_DEVICE,
+> -       }, {
+> +       },
+> +#ifndef CONFIG_DEBUG_LL
+> +       {
+>                 .virtual        = (unsigned long)S3C_VA_UART,
+>                 .pfn            = __phys_to_pfn(EXYNOS5_PA_UART),
+>                 .length         = SZ_512K,
+>                 .type           = MT_DEVICE,
+>         },
+> +#endif
+>  };
+>
+>  static struct map_desc exynos5440_iodesc0[] __initdata = {
+> +#ifndef CONFIG_DEBUG_LL
+>         {
+>                 .virtual        = (unsigned long)S3C_VA_UART,
+>                 .pfn            = __phys_to_pfn(EXYNOS5440_PA_UART0),
+>                 .length         = SZ_512K,
+>                 .type           = MT_DEVICE,
+>         },
+> +#endif
+>  };
+>
+>  void exynos4_restart(enum reboot_mode mode, const char *cmd)
+> --
+> 1.7.0.4
+>
