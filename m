@@ -1,56 +1,67 @@
 From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 0/6] clk: exynos: Some fixes and cleanup
-Date: Mon, 22 Jul 2013 11:05:15 -0700
-Message-ID: <20130722180515.7598.56428@quantum>
-References: <1374141682-29432-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/4] clk: exynos-audss: allow input clocks to be specified in
+ device tree
+Date: Mon, 22 Jul 2013 11:15:30 -0700
+Message-ID: <20130722181530.7598.73318@quantum>
+References: <1373458313-18970-1-git-send-email-padma.v@samsung.com>
+ <1373458313-18970-3-git-send-email-padma.v@samsung.com>
+ <1610421.OFFn8rqlxt@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:46483 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932264Ab3GVSFT convert rfc822-to-8bit (ORCPT
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:48564 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756784Ab3GVSPf convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 14:05:19 -0400
-Received: by mail-pb0-f53.google.com with SMTP id xb12so7298641pbc.40
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 11:05:19 -0700 (PDT)
-In-Reply-To: <1374141682-29432-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 22 Jul 2013 14:15:35 -0400
+Received: by mail-pd0-f179.google.com with SMTP id q10so7153180pdj.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 11:15:34 -0700 (PDT)
+In-Reply-To: <1610421.OFFn8rqlxt@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Tomasz Figa <t.figa@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, dianders@chromium.org, abrestic@chromium.org
 
-Quoting Sachin Kamat (2013-07-18 03:01:16)
-> Resending some of patches (1, 3 and 5) as per discussion in thread [1].
-> Other patches in the series are new.
+Quoting Tomasz Figa (2013-07-22 09:28:47)
+> Hi Padmavathi, Andrew,
 > 
-> [1] http://comments.gmane.org/gmane.linux.kernel.samsung-soc/19933
+> On Wednesday 10 of July 2013 17:41:51 Padmavathi Venna wrote:
+> > From: Andrew Bresticker <abrestic@chromium.org>
+> > 
+> > This allows the input clocks to the Exynos AudioSS block to be specified
+> > via device-tree bindings.  Default names will be used when an input clock
+> > is not given.  This will be useful when adding support for the
+> > Exynos5420 where the audio bus clock is called "sclk_maudio0" instead of
+> > "sclk_audio0".
+> > 
+> > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> > Reviewed-on: https://gerrit.chromium.org/gerrit/57833
+> > Reviewed-by: Simon Glass <sjg@chromium.org>
+> > ---
+> >  .../devicetree/bindings/clock/clk-exynos-audss.txt |   31
+> > ++++++++++++++++++- drivers/clk/samsung/clk-exynos-audss.c             |
+> >   28 +++++++++++++++-- 2 files changed, 53 insertions(+), 6 deletions(-)
 > 
-> Changes since v1:
-> * Removed an unnecessary change in Patch 1 as pointed out by Kukjin Kim.
-> * Added Kukjin's ack to patches 3~6.
+> Well, this is basically how it should be done, but in current state of 
+> clock core I can see a problem: can we really rely on the order of clock 
+> initialization? I mean, we can't defer initialization of particular clock 
+> controller until all external clocks it needs are available, because there 
+> is no probing involved here.
 
-Thanks for the fixes! Will take into clk-next unless you need them to go
-into -rc3, but I don't think there are any regression fixes here.
+The clock core allows registering clocks even if their parents are not
+yet registered. I test this path with some dummy clocks every so often
+to make sure the re-parenting operation are completed successfully after
+the parents eventually are registered.
+
+This feature was not used in practice until recently with the advent of
+multiple clock controllers getting registered and DT description of
+clocks / clock controllers that may be "out of order". If you find any
+bugs please let me know ;-)
 
 Regards,
 Mike
 
 > 
-> Sachin Kamat (6):
->   clk: exynos4: Staticize local symbols
->   clk: exynos4: Remove unused function
->   clk: exynos5250: Staticize local symbols
->   clk: exynos5420: Staticize local symbols
->   clk: exynos5440: Staticize local symbols
->   clk: exynos-audss: Staticize exynos_audss_clk_init
-> 
->  drivers/clk/samsung/clk-exynos-audss.c |    2 +-
->  drivers/clk/samsung/clk-exynos4.c      |   42 ++++++++++++--------------------
->  drivers/clk/samsung/clk-exynos5250.c   |   14 +++++------
->  drivers/clk/samsung/clk-exynos5420.c   |   14 +++++------
->  drivers/clk/samsung/clk-exynos5440.c   |   14 +++++------
->  5 files changed, 37 insertions(+), 49 deletions(-)
-> 
-> -- 
-> 1.7.9.5
+> Best regards,
+> Tomasz
