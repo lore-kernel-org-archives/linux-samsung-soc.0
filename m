@@ -1,152 +1,79 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH 2/3] drm/exynos: add dt-binding documentation for rotator
-Date: Mon, 22 Jul 2013 14:46:52 +0200
-Message-ID: <1374497212.4456.4.camel@weser.hi.pengutronix.de>
-References: <1374475767-30085-1-git-send-email-chanho61.park@samsung.com>
-	 <1374475767-30085-3-git-send-email-chanho61.park@samsung.com>
-	 <20130722084817.GA18731@e106331-lin.cambridge.arm.com>
-	 <026001ce86d8$2963d730$7c2b8590$%dae@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix low level debug support
+Date: Mon, 22 Jul 2013 15:07:44 +0200
+Message-ID: <6790481.xItQ52QUhM@amdc1227>
+References: <1373709465-21042-1-git-send-email-yadi.brar@samsung.com>
+ <CAJuYYwRij6CAfLCG-xmmoe_iDnvCsTCB_4PnEiRfD+bAiBe9VQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:33125 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752885Ab3GVMth (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:61745 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754697Ab3GVNHt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 08:49:37 -0400
-In-Reply-To: <026001ce86d8$2963d730$7c2b8590$%dae@samsung.com>
+	Mon, 22 Jul 2013 09:07:49 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MQC004JG9RN6120@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 14:07:47 +0100 (BST)
+In-reply-to: <CAJuYYwRij6CAfLCG-xmmoe_iDnvCsTCB_4PnEiRfD+bAiBe9VQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: 'Mark Rutland' <mark.rutland@arm.com>, 'Chanho Park' <chanho61.park@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, olof@lixom.net, dianders@chromium.org, yadi.brar01@gmail.com
 
-Am Montag, den 22.07.2013, 21:37 +0900 schrieb Inki Dae:
+On Monday 22 of July 2013 06:23:06 Thomas Abraham wrote:
+> On 13 July 2013 04:57, Yadwinder Singh Brar <yadi.brar@samsung.com> 
+wrote:
+> > Presently, using exynos_defconfig with CONFIG_DEBUG_LL and
+> > CONFIG_EARLY_PRINTK on, kernel is not booting, we are getting
+> > following:
+> > 
+> > [    0.000000] ------------[ cut here ]------------
+> > [    0.000000] kernel BUG at mm/vmalloc.c:1134!
+> > [    0.000000] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+> > [    0.000000] Modules linked in:
+> > [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 3.11.0-rc1 #633
+> > [    0.000000] task: c052ec48 ti: c0524000 task.ti: c0524000
+> > [    0.000000] PC is at vm_area_add_early+0x54/0x94
+> > [    0.000000] LR is at add_static_vm_early+0xc/0x60
+> > 
+> > Its because iotable_init tries to map UART again which is already
+> > mapped by debug_ll_io_init() call in exynos_init_io() within same
+> > virtal address range as requested later.
 > 
-> > -----Original Message-----
-> > From: Mark Rutland [mailto:mark.rutland@arm.com]
-> > Sent: Monday, July 22, 2013 5:48 PM
-> > To: Chanho Park
-> > Cc: inki.dae@samsung.com; kgene.kim@samsung.com; linux-samsung-
-> > soc@vger.kernel.org; jy0922.shim@samsung.com; devicetree-
-> > discuss@lists.ozlabs.org; sw0312.kim@samsung.com; dri-
-> > devel@lists.freedesktop.org; kyungmin.park@samsung.com; linux-arm-
-> > kernel@lists.infradead.org
-> > Subject: Re: [PATCH 2/3] drm/exynos: add dt-binding documentation for
-> > rotator
-> > 
-> > On Mon, Jul 22, 2013 at 07:49:26AM +0100, Chanho Park wrote:
-> > > This patch adds a dt-binding document for exynos rotator. It describes
-> > which
-> > > nodes should be defined to use the rotator.
-> > >
-> > > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > ---
-> > >  .../bindings/drm/exynos/samsung-rotator.txt        |   35
-> > ++++++++++++++++++++
-> > >  1 file changed, 35 insertions(+)
-> > >  create mode 100644
-> > Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/drm/exynos/samsung-
-> > rotator.txt b/Documentation/devicetree/bindings/drm/exynos/samsung-
-> > rotator.txt
-> > > new file mode 100644
-> > > index 0000000..6b1d704
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
-> > > @@ -0,0 +1,35 @@
-> > > +* Samsung Image Rotator
-> > > +
-> > > +Required properties:
-> > > +  - compatible : value should be the "samsung,exynos4210".
-> 
-> Please, add more compatible strings for other SoC.
-> 
-> > > +  - reg : Physical base address of the IP registers and length of
-> > memory
-> > > +	  mapped region.
-> > > +  - interrupts : interrupt number to the CPU.
-> > > +  - clocks : clock number of exynos4 rotator clock.
-> > > +  - clocks : clock name of rotator
-> > 
-> > clock-names?
-> > 
-> > > +  - status : "okay" or "disabled"
-> > > +  - limit table for image formats : min_w/min_h/max_w/max_h for min/max
-> > of image
-> > 
-> > Limit table? This doesn't seem to be a well-defined binding, and it
-> > seems like a relatively generic thing to describe.
-> > 
-> > > +
-> > > +Example:
-> > > +	rotator: rotator@12810000 {
-> > > +		compatible = "samsung,exynos4210-rotator";
-> > > +		reg = <0x12810000 0x1000>;
-> > > +		interrupts = <0 83 0>;
-> > > +		clocks = <&clock 278>;
-> > > +		clock-names = "rotator";
-> > > +		status = "disabled";
-> > > +		ycbcr420_2p {
-> > 
-> > Which names are allowed for these subnodes?
-> > 
-> > > +			min_w = <32>;
-> > > +			min_h = <32>;
-> > > +			max_w = <32768>;
-> > > +			max_h = <32768>;
-> > > +			align = <3>;
-> > 
-> > min-width, min-height, max-width, max-height? What units are they in?
-> > 
-> > What does alignment specify exactly?
-> > 
-> > Are these a configurable part of the rotator hardware, or are these
-> > values always the same?
-> 
-> Right, that seems like configurable part. At least, min_w/h and max_w/h can
-> be different values according to SoC and pixel formats so they should be
-> described enough in this dt-binding document file.
-> 
-Is there really this much configurability? Could each of those values be
-a different on different SoCs, or could you just extract those values
-from the SoC/rotator hardware version and thus the DT compatible string?
+> debug_ll_io_init ioremaps debug uart address space with 4KB size
+> whereas the exynos_init_io() function ioremaps a single 512KB memory
+> size for all the four uart ports which envelops the mapping created by
+> debug_ll_io_init. This is caught as a kernel bug.
 
-> 
-> > If thery're always the same, there's no need to
-> > describe in in the devicetree.
-> > 
-> > Thanks,
-> > Mark.
-> > 
-> > > +		};
-> > > +		rgb888 {
-> > > +			min_w = <8>;
-> > > +			min_h = <8>;
-> > > +			max_w = <8192>;
-> > > +			max_h = <8192>;
-> > > +			align = <2>;
-> > > +		};
-> > > +	};
-> > > --
-> > > 1.7.9.5
-> > >
-> > >
-> > > _______________________________________________
-> > > linux-arm-kernel mailing list
-> > > linux-arm-kernel@lists.infradead.org
-> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > >
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Right.
 
--- 
-Pengutronix e.K.                           | Lucas Stach                 |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-5076 |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+> > This issue seems to be occured after :
+> > commit ee4de5d99aeac44f4507b7538b2b3faedc5205b9
+> > ARM: 7781/1: mmu: Add debug_ll_io_init() mappings to early mappings
+> > 
+> > This patch moves S3C_UART iodesc(in iodesc_list) inside CONFIG_DEBUG_LL
+> > check.
+> Instead of moving, all the such iodesc entries for UART controller can
+> be removed for all Samsung SoC's now since the Samsung uart driver
+> does a ioremap during probe and any needed iomapping for earlyprintk
+> is handled by debug_ll_io_init().
+
+Yes. This mapping should not be here, but...
+
+If you look at plat-samsung/pm.c, there is a debugging code that relies on 
+presence of this mapping. So until this gets fixed/removed (I'm working on 
+it right now), I'd suggest keeping Yadwinder's solution.
+
+The only problem is that the code in pm.c expects _all_ UARTs to be mapped 
+(see s3c_pm_resture_uarts() and co.), so in case of DEBUG_LL enabled, 
+something must be done ensure that rest of the ports are mapped.
+
+I'm going to completely rework Samsung PM code in some time, so this 
+problem will go away, but this must be fixed in 3.11.
+
+Best regards,
+Tomasz
