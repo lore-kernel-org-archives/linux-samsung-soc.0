@@ -1,168 +1,118 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/3] drm/exynos: add dt-binding documentation for rotator
-Date: Mon, 22 Jul 2013 16:00:22 +0200
-Message-ID: <51ED3AF6.3090004@samsung.com>
-References: <1374475767-30085-1-git-send-email-chanho61.park@samsung.com>
- <1374475767-30085-3-git-send-email-chanho61.park@samsung.com>
- <20130722084817.GA18731@e106331-lin.cambridge.arm.com>
- <026001ce86d8$2963d730$7c2b8590$%dae@samsung.com>
- <1374497212.4456.4.camel@weser.hi.pengutronix.de>
- <027201ce86df$cd883d90$6898b8b0$%dae@samsung.com>
+From: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
+Date: Mon, 22 Jul 2013 10:44:39 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1307221028440.1495-100000@iolanthe.rowland.org>
+References: <51ECDE5E.3050104@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28491 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753208Ab3GVOA0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 10:00:26 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MQC007MFC7AQ110@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 15:00:24 +0100 (BST)
-In-reply-to: <027201ce86df$cd883d90$6898b8b0$%dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <51ECDE5E.3050104-l0cyMroinI0@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, balajitk-l0cyMroinI0@public.gmane.org, george.cherian-l0cyMroinI0@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, 'Chanho Park' <chanho61.park@samsung.com>
-Cc: 'Lucas Stach' <l.stach@pengutronix.de>, 'Mark Rutland' <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On 07/22/2013 03:31 PM, Inki Dae wrote:
->> ---Original Message-----
->> > From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
->> > owner@vger.kernel.org] On Behalf Of Lucas Stach
->> > Sent: Monday, July 22, 2013 9:47 PM
->> > To: Inki Dae
->> > Cc: 'Mark Rutland'; 'Chanho Park'; linux-samsung-soc@vger.kernel.org;
->> > devicetree-discuss@lists.ozlabs.org; sw0312.kim@samsung.com; dri-
->> > devel@lists.freedesktop.org; kyungmin.park@samsung.com;
->> > kgene.kim@samsung.com; linux-arm-kernel@lists.infradead.org
->> > Subject: Re: [PATCH 2/3] drm/exynos: add dt-binding documentation for
->> > rotator
->> > 
->> > Am Montag, den 22.07.2013, 21:37 +0900 schrieb Inki Dae:
->>> > >
->>>> > > > -----Original Message-----
->>>> > > > From: Mark Rutland [mailto:mark.rutland@arm.com]
->>>> > > > Sent: Monday, July 22, 2013 5:48 PM
->>>> > > > To: Chanho Park
->>>> > > > Cc: inki.dae@samsung.com; kgene.kim@samsung.com; linux-samsung-
->>>> > > > soc@vger.kernel.org; jy0922.shim@samsung.com; devicetree-
->>>> > > > discuss@lists.ozlabs.org; sw0312.kim@samsung.com; dri-
->>>> > > > devel@lists.freedesktop.org; kyungmin.park@samsung.com; linux-arm-
->>>> > > > kernel@lists.infradead.org
->>>> > > > Subject: Re: [PATCH 2/3] drm/exynos: add dt-binding documentation for
->>>> > > > rotator
->>>> > > >
->>>> > > > On Mon, Jul 22, 2013 at 07:49:26AM +0100, Chanho Park wrote:
->>>>> > > > > This patch adds a dt-binding document for exynos rotator. It
->> > describes
->>>> > > > which
->>>>> > > > > nodes should be defined to use the rotator.
->>>>> > > > >
->>>>> > > > > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
->>>>> > > > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>>>> > > > > ---
->>>>> > > > >  .../bindings/drm/exynos/samsung-rotator.txt        |   35
->>>> > > > ++++++++++++++++++++
->>>>> > > > >  1 file changed, 35 insertions(+)
->>>>> > > > >  create mode 100644
->>>> > > > Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
->>>>> > > > >
->>>>> > > > > diff --git a/Documentation/devicetree/bindings/drm/exynos/samsung-
->>>> > > > rotator.txt b/Documentation/devicetree/bindings/drm/exynos/samsung-
->>>> > > > rotator.txt
->>>>> > > > > new file mode 100644
->>>>> > > > > index 0000000..6b1d704
->>>>> > > > > --- /dev/null
->>>>> > > > > +++ b/Documentation/devicetree/bindings/drm/exynos/samsung-
->> > rotator.txt
->>>>> > > > > @@ -0,0 +1,35 @@
->>>>> > > > > +* Samsung Image Rotator
->>>>> > > > > +
->>>>> > > > > +Required properties:
->>>>> > > > > +  - compatible : value should be the "samsung,exynos4210".
->>> > >
->>> > > Please, add more compatible strings for other SoC.
->>> > >
->>>>> > > > > +  - reg : Physical base address of the IP registers and length of
->>>> > > > memory
->>>>> > > > > +	  mapped region.
->>>>> > > > > +  - interrupts : interrupt number to the CPU.
->>>>> > > > > +  - clocks : clock number of exynos4 rotator clock.
->>>>> > > > > +  - clocks : clock name of rotator
->>>> > > >
->>>> > > > clock-names?
->>>> > > >
->>>>> > > > > +  - status : "okay" or "disabled"
->>>>> > > > > +  - limit table for image formats : min_w/min_h/max_w/max_h for
->> > min/max
->>>> > > > of image
->>>> > > >
->>>> > > > Limit table? This doesn't seem to be a well-defined binding, and it
->>>> > > > seems like a relatively generic thing to describe.
->>>> > > >
->>>>> > > > > +
->>>>> > > > > +Example:
->>>>> > > > > +	rotator: rotator@12810000 {
->>>>> > > > > +		compatible = "samsung,exynos4210-rotator";
->>>>> > > > > +		reg = <0x12810000 0x1000>;
->>>>> > > > > +		interrupts = <0 83 0>;
->>>>> > > > > +		clocks = <&clock 278>;
->>>>> > > > > +		clock-names = "rotator";
->>>>> > > > > +		status = "disabled";
->>>>> > > > > +		ycbcr420_2p {
->>>> > > >
->>>> > > > Which names are allowed for these subnodes?
->>>> > > >
->>>>> > > > > +			min_w = <32>;
->>>>> > > > > +			min_h = <32>;
->>>>> > > > > +			max_w = <32768>;
->>>>> > > > > +			max_h = <32768>;
->>>>> > > > > +			align = <3>;
->>>> > > >
->>>> > > > min-width, min-height, max-width, max-height? What units are they in?
->>>> > > >
->>>> > > > What does alignment specify exactly?
->>>> > > >
->>>> > > > Are these a configurable part of the rotator hardware, or are these
->>>> > > > values always the same?
->>> > >
->>> > > Right, that seems like configurable part. At least, min_w/h and max_w/h
->> > can
->>> > > be different values according to SoC and pixel formats so they should be
->>> > > described enough in this dt-binding document file.
->>> > >
->> > Is there really this much configurability? Could each of those values be
->> > a different on different SoCs
-> Not much but Yes. Rotator devices of Exynos SoC support various pixel formats; RGB888, RGB565, YUV422, YUV420-2Plane, and YUV420-3Plane, and each of these pixel formats could be different limitation to minimum and maximum sizes.
-> For example, the below shows the limitation to Rotator device of Exynos4412 SoC according to pixel formats,
->          Image format          Minimum size          Maximum size
->           RGB888                    8x8                     8kx8k
->           RGB565                    16x16                  16kx16k
->           YUV422                    16x16                  16kx16k
->           YUV420 2-Plane         32x32                  32kx32k(in case of Y components)
->           YUV420 3-Plane         64x32                  32kx32k(in case of Y components)
+On Mon, 22 Jul 2013, Kishon Vijay Abraham I wrote:
+
+> > 	The PHY and the controller it is attached to are both physical
+> > 	devices.
+> > 
+> > 	The connection between them is hardwired by the system
+> > 	manufacturer and cannot be changed by software.
+> > 
+> > 	PHYs are generally described by fixed system-specific board
+> > 	files or by Device Tree information.  Are they ever discovered
+> > 	dynamically?
 > 
-> And, I guess those limitations are slightly different according to Exynos SoC versions as long as I know.
+> No. They are created just like any other platform devices are created.
+
+Okay.  Are PHYs _always_ platform devices?
+
+> > 	Is the same true for the controllers attached to the PHYs?
+> > 	If not -- if both a PHY and a controller are discovered 
+> > 	dynamically -- how does the kernel know whether they are 
+> > 	connected to each other?
 > 
-> Thanks,
-> Inki Dae
+> No differences here. Both PHY and controller will have dt information or hwmod
+> data using which platform devices will be created.
+> > 
+> > 	The kernel needs to know which controller is attached to which
+> > 	PHY.  Currently this information is represented by name or ID
+> > 	strings embedded in platform data.
 > 
->> > , or could you just extract those values
->> > from the SoC/rotator hardware version and thus the DT compatible string?
+> right. It's embedded in the platform data of the controller.
 
-My gut feeling is that those constraints could be well defined 
-in the driver as static data and selected by the compatible property. 
-Defining this in Device Tree may easily get out of control, when the 
-limits become dependant on more parameters.
+It must also be embedded in the PHY's platform data somehow.  
+Otherwise, how would the kernel know which PHY to use?
 
-Whether devices should be described in much detail in DT rather than
-using multiple compatible strings had been discussed multiple times, 
-for instance please see thread [1].
+> > 	The PHY's driver (the supplier) uses the platform data to 
+> > 	construct a platform_device structure that represents the PHY.  
+> 
+> Currently the driver assigns static labels (corresponding to the label used in
+> the platform data of the controller).
+> > 	Until this is done, the controller's driver (the client) cannot 
+> > 	use the PHY.
+> 
+> right.
+> > 
+> > 	Since there is no parent-child relation between the PHY and the 
+> > 	controller, there is no guarantee that the PHY's driver will be
+> > 	ready when the controller's driver wants to use it.  A deferred
+> > 	probe may be needed.
+> 
+> right.
+> > 
+> > 	The issue (or one of the issues) in this discussion is that 
+> > 	Greg does not like the idea of using names or IDs to associate
+> > 	PHYs with controllers, because they are too prone to
+> > 	duplications or other errors.  Pointers are more reliable.
+> > 
+> > 	But pointers to what?  Since the only data known to be 
+> > 	available to both the PHY driver and controller driver is the
+> > 	platform data, the obvious answer is a pointer to platform data
+> > 	(either for the PHY or for the controller, or maybe both).
+> 
+> hmm.. it's not going to be simple though as the platform device for the PHY and
+> controller can be created in entirely different places. e.g., in some cases the
+> PHY device is a child of some mfd core device (the device will be created in
+> drivers/mfd) and the controller driver (usually) is created in board file. I
+> guess then we have to come up with something to share a pointer in two
+> different files.
 
-Regards,
-Sylwester
+The ability for two different source files to share a pointer to a data 
+item defined in a third source file has been around since long before 
+the C language was invented.  :-)
 
-[1] http://www.mail-archive.com/devicetree-discuss@lists.ozlabs.org/msg36691.html
+In this case, it doesn't matter where the platform_device structures 
+are created or where the driver source code is.  Let's take a simple 
+example.  Suppose the system design includes a PHY named "foo".  Then 
+the board file could contain:
+
+struct phy_info { ... } phy_foo;
+EXPORT_SYMBOL_GPL(phy_foo);
+
+and a header file would contain:
+
+extern struct phy_info phy_foo;
+
+The PHY supplier could then call phy_create(&phy_foo), and the PHY 
+client could call phy_find(&phy_foo).  Or something like that; make up 
+your own structure tags and function names.
+
+It's still possible to have conflicts, but now two PHYs with the same 
+name (or a misspelled name somewhere) will cause an error at link time.
+
+> > Probably some of the details above are wrong; please indicate where I
+> > have gone astray.  Also, I'm not clear about the role played by various 
+> > APIs.  For example, where does phy_create() fit into this picture?
+> 
+> phy_create is the API by which the PHY's driver (the supplier) hook into the
+> PHY framework. It's like the controller driver will always interact with the
+> PHY driver through the PHY framework.
+
+Alan Stern
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
