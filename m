@@ -1,41 +1,37 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ASoC: samsung: Enable COMPILE_TEST builds
-Date: Mon, 22 Jul 2013 18:31:43 +0200
-Message-ID: <1777239.X51REAvKl1@amdc1227>
-References: <1373908284-14305-1-git-send-email-broonie@kernel.org>
+Subject: Re: [PATCH] irqchip: exynos: cleanup non-DT stuff in exynos-combiner
+Date: Mon, 22 Jul 2013 19:00:44 +0200
+Message-ID: <8556897.hUyIfVfH2g@amdc1227>
+References: <027401ce81d3$ad706570$08513050$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:15097 "EHLO
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:15726 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755194Ab3GVQbt (ORCPT
+	with ESMTP id S1754635Ab3GVRAt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 12:31:49 -0400
+	Mon, 22 Jul 2013 13:00:49 -0400
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
  by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MQC00KKSJ1OJU60@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 17:31:47 +0100 (BST)
-In-reply-to: <1373908284-14305-1-git-send-email-broonie@kernel.org>
+ 17 2011)) with ESMTP id <0MQC00GDPKL7N620@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 18:00:47 +0100 (BST)
+In-reply-to: <027401ce81d3$ad706570$08513050$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tglx@linutronix.de
 
-Hi Mark,
-
-On Monday 15 of July 2013 18:11:24 Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
+On Tuesday 16 of July 2013 12:22:14 Kukjin Kim wrote:
+> For EXYNOS SoCs, only can support for DT so removes non-DT stuff
+> in exynos-combiner.
 > 
-> Platform using OF and some others don't have any dependencies on arch/arm
-> so can be built on any platform. Enable that for better compile coverage
-> when COMPILE_TEST is enabled.
-> 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  sound/soc/samsung/Kconfig | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+>  drivers/irqchip/exynos-combiner.c |   44
+> +------------------------------------ 1 file changed, 1 insertion(+), 43
+> deletions(-)
 
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
