@@ -1,57 +1,73 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/1] of/documentation: Fix a typo in exynos5250-clock.txt
-Date: Mon, 22 Jul 2013 10:51:54 +0900
-Message-ID: <0ab501ce867e$0adadd40$209097c0$%kim@samsung.com>
-References: <1373012281-26433-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH v4 00/20] Samsung PWM support cleanup
+Date: Mon, 22 Jul 2013 10:55:39 +0900
+Message-ID: <0ab601ce867e$90b95770$b22c0650$@org>
+References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
+ <51EC5F18.8040007@gmail.com> <9102768.ef8LAvpunv@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35227 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755025Ab3GVBv4 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:34586 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755027Ab3GVBzk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 21 Jul 2013 21:51:56 -0400
-In-reply-to: <1373012281-26433-1-git-send-email-sachin.kamat@linaro.org>
+	Sun, 21 Jul 2013 21:55:40 -0400
+In-reply-to: <9102768.ef8LAvpunv@flatron>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: mturquette@linaro.org, grant.likely@linaro.org, rob@landley.net, patches@linaro.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Mark Brown' <broonie@kernel.org>, 'Thierry Reding' <thierry.reding@gmail.com>
 
-Sachin Kamat wrote:
+Tomasz Figa wrote:
 > 
-> The clocks should be numbered sequentially as they are represented as
-> enum values in the clock driver.
+> On Monday 22 of July 2013 00:22:16 Sylwester Nawrocki wrote:
+> > On 07/20/2013 02:04 AM, Tomasz Figa wrote:
+> > > Since we now have a proper Samsung PWM clocksource driver in place,
+> > > we can proceed with further cleanup of PWM timers support on Samsung
+> > > SoCs.>
+> > > This series attempts to achieve this goal by:
+> > >   1) fixing up few things in samsung_pwm_timer clocksource driver,
+> > >   2) moving remaining Samsung platforms to the new clocksource driver,
+> > >   3) removing old clocksource driver,
+> > >   4) adding new multiplatform- and DT-aware PWM driver,
+> > >   5) moving all Samsung platforms to use the new PWM driver,
+> > >   6) removing old PWM driver,
+> > >   7) removing all PWM-related code that is not used anymore.
+> > >
+> > > Cleaning up the PWM driver is a bit tricky, because the design of
+> > > current driver makes it completely unsuitable for DT and
+> > > multiplatform and would require a heavy rework to make it usable,
+> > > breaking any existing Samsung PWM users by the way. To avoid any
+> > > breakage this series first renames the old driver, then adds new one
+> > > using original name, migrates all platforms to use it and then
+> > > finally removes the old driver.
+> > >
+> > > See particular patches for more detailed descriptions.
+> > >
+> > > [On S3C6410-based Tiny6410 (Mini6410-compatible) with pwm-beeper,
+> > > SMDK6410 with PWM backlight and Exynos4210-based Origen board (with
+> > > PWM0 attached to a scope)]
+> > > Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
+> > >
+> > > [On S3C2440-based Mini2440 board]
+> > > Tested-by: Sylwester Nawrocki<sylvester.nawrocki@gmail.com>
+> >
+> > I have retested this series on top of v3.11-rc1 with pwm-backlight (and
+> > buzzer
+> > as the output :)) on Mini2440. It seems to work well - generated
+> > frequencies are correct. I'll check pulse widths with a scope tomorrow,
+> > as it's a bit late
+> > now. FWIW you can add to this series my:
+> >
+> > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > 
-> Typo introduced by commit 17d4caccef ("clk: exynos5250: register
-> display block gate clocks to common clock framework")
+> Thanks. I hope we can finally get this series merged soon.
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  .../devicetree/bindings/clock/exynos5250-clock.txt |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> index 781a627..1a05761 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> @@ -154,7 +154,7 @@ clock which they consume.
->    dsim0			341
->    dp			342
->    mixer			343
-> -  hdmi			345
-> +  hdmi			344
-> 
->  Example 1: An example of a clock controller node is listed below.
-> 
-> --
-> 1.7.9.5
-
-Looks OK to me.
-
-Mike, do you want me to take into the samsung tree?
+Yes, this whole patches look good to me, and I'd like to take this whole
+patches into the samsung tree...but need to get any response from PWM guy,
+Thierry Reding. Let's wait for his response...
 
 Thanks,
 Kukjin
