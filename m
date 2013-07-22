@@ -1,84 +1,50 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH] watchdog: s3c2410_wdt: code clean up
-Date: Mon, 22 Jul 2013 10:58:05 +0530
-Message-ID: <CAL1wa8foabtQQwXUjGp_9wZcQ6xmZS1ObqY0x+8yfQ2ur2yWkg@mail.gmail.com>
-References: <1374224288-18963-1-git-send-email-l.krishna@samsung.com> <002601ce8670$7a2901d0$6e7b0570$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCH] dts: arm: add arm-pmu node for exynos4412
+Date: Mon, 22 Jul 2013 14:38:35 +0900
+Message-ID: <1374471515-12403-1-git-send-email-chanho61.park@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f182.google.com ([209.85.128.182]:46022 "EHLO
-	mail-ve0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752954Ab3GVF21 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:38705 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752984Ab3GVFjE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 01:28:27 -0400
-Received: by mail-ve0-f182.google.com with SMTP id ox1so4714004veb.41
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 21 Jul 2013 22:28:26 -0700 (PDT)
-In-Reply-To: <002601ce8670$7a2901d0$6e7b0570$@samsung.com>
+	Mon, 22 Jul 2013 01:39:04 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MQB001GUOZVT4Q0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 14:39:01 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, thomas.abraham@linaro.org, Chanho Park <chanho61.park@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Jingoo Han,
+The Exynos4412 has 4 cpus and each has a performance counter.
+Thus, we should define 4 interrupts which are combined by irq-combiner for arm
+pmu.
 
-Thanks for reviewing the patch.
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412.dtsi |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-On Mon, Jul 22, 2013 at 5:44 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Friday, July 19, 2013 5:58 PM, Leela Krishna Amudala wrote:
->>
->> This patch removes the global variables in the driver file and
->> group them into a structure.
->
-> How about changing the subject as below?
->
-> [PATCH] watchdog: s3c2410_wdt: remove the global variables
->
-
-Okay, Will change it.
-
->
-> [.....]
->
->> -static struct device    *wdt_dev;    /* platform device attached to */
->> -static struct resource       *wdt_mem;
->> -static struct resource       *wdt_irq;
->> -static struct clk    *wdt_clock;
->> -static void __iomem  *wdt_base;
->> -static unsigned int   wdt_count;
->> -static DEFINE_SPINLOCK(wdt_lock);
->> +struct s3c2410_watchdog {
->> +struct device                *dev;   /* platform device attached to */
->> +struct clk           *clock;
->> +void __iomem         *reg_base;
->> +unsigned int         count;
->> +spinlock_t           lock;
->> +struct watchdog_device       wdt_device;
->> +struct notifier_block        freq_transition;
->> +};
->
-> 'tab' is necessary as below:
->
-
-Oh, I didn't notice it.
-I'll change it.
-
-Best Wishes,
-Leela Krishna Amudala.
-
-> +struct s3c2410_watchdog {
-> +       struct device           *dev;   /* platform device attached to */
-> +       struct clk              *clock;
-> +       void __iomem            *reg_base;
-> +       unsigned int            count;
-> +       spinlock_t              lock;
-> +       struct watchdog_device  wdt_device;
-> +       struct notifier_block   freq_transition;
-> +};
->
-> Best regards,
-> Jingoo Han
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index e743e67..cfad655 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -35,6 +35,12 @@
+ 			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupt-parent = <&combiner>;
++		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
++	};
++
+ 	mct@10050000 {
+ 		compatible = "samsung,exynos4412-mct";
+ 		reg = <0x10050000 0x800>;
+-- 
+1.7.9.5
