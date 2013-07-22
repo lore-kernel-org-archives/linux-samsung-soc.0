@@ -1,105 +1,60 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/3] drm/exynos: add dt-binding documentation for
- rotator
-Date: Mon, 22 Jul 2013 09:48:17 +0100
-Message-ID: <20130722084817.GA18731@e106331-lin.cambridge.arm.com>
-References: <1374475767-30085-1-git-send-email-chanho61.park@samsung.com>
- <1374475767-30085-3-git-send-email-chanho61.park@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] clk: exynos4: fix g2d/mdma clocks of exynos4x12
+Date: Mon, 22 Jul 2013 15:30:40 +0530
+Message-ID: <CAK9yfHwNgZrZPT5c4DxfsDchWFXR2nWTVxCY2kZTEZW4PwyOng@mail.gmail.com>
+References: <1374480750-30962-1-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:45498 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756737Ab3GVIs5 (ORCPT
+Received: from mail-oa0-f47.google.com ([209.85.219.47]:56323 "EHLO
+	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754910Ab3GVKAl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 04:48:57 -0400
-Content-Disposition: inline
-In-Reply-To: <1374475767-30085-3-git-send-email-chanho61.park@samsung.com>
+	Mon, 22 Jul 2013 06:00:41 -0400
+Received: by mail-oa0-f47.google.com with SMTP id m1so8704599oag.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 03:00:40 -0700 (PDT)
+In-Reply-To: <1374480750-30962-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Chanho Park <chanho61.park@samsung.com>
-Cc: "inki.dae@samsung.com" <inki.dae@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "jy0922.shim@samsung.com" <jy0922.shim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Mon, Jul 22, 2013 at 07:49:26AM +0100, Chanho Park wrote:
-> This patch adds a dt-binding document for exynos rotator. It describes which
-> nodes should be defined to use the rotator.
-> 
+Hi Chanho,
+
+On 22 July 2013 13:42, Chanho Park <chanho61.park@samsung.com> wrote:
+> The exynos4x12 has different address of GATE_IP_IMAGE reg. We should use
+> EXYNOS4X12_GATE_IP_IMAGE for g2d gating clocks instead of 4210's reg.
+> In case of mdma node, We don't use it for any exynos4 chipsets. I think we'll
+> need to change it to 'none' or leave it on.
+>
 > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  .../bindings/drm/exynos/samsung-rotator.txt        |   35 ++++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt b/Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
-> new file mode 100644
-> index 0000000..6b1d704
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
-> @@ -0,0 +1,35 @@
-> +* Samsung Image Rotator
-> +
-> +Required properties:
-> +  - compatible : value should be the "samsung,exynos4210".
-> +  - reg : Physical base address of the IP registers and length of memory
-> +	  mapped region.
-> +  - interrupts : interrupt number to the CPU.
-> +  - clocks : clock number of exynos4 rotator clock.
-> +  - clocks : clock name of rotator
+>  drivers/clk/samsung/clk-exynos4.c |    4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 1bdb882..6300c9d 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -820,8 +820,10 @@ struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
+>  struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
+>         GATE(audss, "audss", "sclk_epll", E4X12_GATE_IP_MAUDIO, 0, 0, 0),
+>         GATE(mdnie0, "mdnie0", "aclk160", GATE_IP_LCD0, 2, 0, 0),
+> +       GATE(g2d, "g2d", "aclk200", E4X12_GATE_IP_IMAGE, 0, 0, 0),
+>         GATE(rotator, "rotator", "aclk200", E4X12_GATE_IP_IMAGE, 1, 0, 0),
+> -       GATE(mdma2, "mdma2", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
+> +       GATE(mdma, "mdma", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
+> +       GATE(smmu_g2d, "smmu_g2d", "aclk200", E4X12_GATE_IP_IMAGE, 3, 0, 0),
+>         GATE(smmu_mdma, "smmu_mdma", "aclk200", E4X12_GATE_IP_IMAGE, 5, 0, 0),
+>         GATE(mipi_hsi, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
+>         GATE(chipid, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
 
-clock-names?
+Which kernel version is this patch based on? G2D clocks for 4x12 has
+already been added by commit 5cd644d837 ("clk: exynos4: Add additional
+G2D clocks").
 
-> +  - status : "okay" or "disabled"
-> +  - limit table for image formats : min_w/min_h/max_w/max_h for min/max of image
 
-Limit table? This doesn't seem to be a well-defined binding, and it
-seems like a relatively generic thing to describe.
-
-> +
-> +Example:
-> +	rotator: rotator@12810000 {
-> +		compatible = "samsung,exynos4210-rotator";
-> +		reg = <0x12810000 0x1000>;
-> +		interrupts = <0 83 0>;
-> +		clocks = <&clock 278>;
-> +		clock-names = "rotator";
-> +		status = "disabled";
-> +		ycbcr420_2p {
-
-Which names are allowed for these subnodes?
-
-> +			min_w = <32>;
-> +			min_h = <32>;
-> +			max_w = <32768>;
-> +			max_h = <32768>;
-> +			align = <3>;
-
-min-width, min-height, max-width, max-height? What units are they in?
-
-What does alignment specify exactly?
-
-Are these a configurable part of the rotator hardware, or are these
-values always the same? If thery're always the same, there's no need to
-describe in in the devicetree.
-
-Thanks,
-Mark.
-
-> +		};
-> +		rgb888 {
-> +			min_w = <8>;
-> +			min_h = <8>;
-> +			max_w = <8192>;
-> +			max_h = <8192>;
-> +			align = <2>;
-> +		};
-> +	};
-> -- 
-> 1.7.9.5
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+-- 
+With warm regards,
+Sachin
