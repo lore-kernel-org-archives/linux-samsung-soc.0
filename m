@@ -1,111 +1,67 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 02/20] clocksource: samsung_pwm_timer: Correct definition of AUTORELOAD bit
-Date: Mon, 22 Jul 2013 23:11:30 +0200
-Message-ID: <1658534.7nG6RFjcTc@flatron>
-References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com> <9612221.r4mx9bHE64@flatron> <51ED9C8C.10803@linaro.org>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] of: provide of_platform_unpopulate()
+Date: Mon, 22 Jul 2013 16:16:07 -0500
+Message-ID: <51EDA117.10605@gmail.com>
+References: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de> <51EBF33A.4050207@gmail.com> <51EC4908.4040504@gmail.com> <CACxGe6sqv2Wsp26MWqqs9W_eWO3tjs-+2z3z8fC=2fe-BjJvkA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f43.google.com ([209.85.214.43]:59513 "EHLO
-	mail-bk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755781Ab3GVVLg (ORCPT
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:45968 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932517Ab3GVVQS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 17:11:36 -0400
-In-Reply-To: <51ED9C8C.10803@linaro.org>
+	Mon, 22 Jul 2013 17:16:18 -0400
+In-Reply-To: <CACxGe6sqv2Wsp26MWqqs9W_eWO3tjs-+2z3z8fC=2fe-BjJvkA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Grant Likely <grant.likely@linaro.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Rob Herring <rob.herring@calxeda.com>, Kishon Vijay Abraham I <kishon@ti.com>, George Cherian <george.cherian@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Roger Quadros <rogerq@ti.com>
 
-On Monday 22 of July 2013 22:56:44 Daniel Lezcano wrote:
-> On 07/22/2013 09:43 AM, Tomasz Figa wrote:
-> > On Monday 22 of July 2013 05:50:09 Daniel Lezcano wrote:
-> >> On 07/20/2013 02:04 AM, Tomasz Figa wrote:
-> >>> PWM channel 4 has its autoreload bit located at different position.
-> >>> This patch fixes the driver to account for that.
-> >>> 
-> >>> This fixes a problem with the clocksource hanging after it overflows
-> >>> because it is not reloaded any more.
-> >>> 
-> >>> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> >>> ---
-> >>> 
-> >>>  drivers/clocksource/samsung_pwm_timer.c | 3 ++-
-> >>>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>> 
-> >>> diff --git a/drivers/clocksource/samsung_pwm_timer.c
-> >>> b/drivers/clocksource/samsung_pwm_timer.c index 3fa5b07..e238fb0
-> >>> 100644
-> >>> --- a/drivers/clocksource/samsung_pwm_timer.c
-> >>> +++ b/drivers/clocksource/samsung_pwm_timer.c
-> >>> @@ -47,7 +47,8 @@
-> >>> 
-> >>>  #define TCON_START(chan)		(1 << (4 * (chan) + 0))
-> >>>  #define TCON_MANUALUPDATE(chan)		(1 << (4 * (chan) + 1))
-> >>>  #define TCON_INVERT(chan)		(1 << (4 * (chan) + 2))
-> >>> 
-> >>> -#define TCON_AUTORELOAD(chan)		(1 << (4 * (chan) + 3))
-> >>> +#define TCON_AUTORELOAD(chan)		(1 << (4 * (chan) \
-> >>> +						+ (((chan) < 5) ? 3 : 2)))
-> >> 
-> >> This macro is not readable. Please, fix it up with a comment please.
-> > 
-> > /*
-> > 
-> >  * Channel 4 (logically 5 in TCON register) has different position
-> >  * of autoreload bit.
-> >  */
-> > 
-> > #define _TCON_AUTORELOAD(chan)			(1 << (4 * (chan) 
-+ 3))
-> > #define _TCON_AUTORELOAD4(chan)			(1 << (4 * (chan) 
-+ 2))
-> > #define TCON_AUTORELOAD(chan)			((chan < 5) ?
-> > 
-> > 		_TCON_AUTORELOAD(chan) : _TCON_AUTORELOAD4(chan))
-> > 
-> > What do you think?
+On 07/21/2013 06:44 PM, Grant Likely wrote:
+> On Sun, Jul 21, 2013 at 9:48 PM, Rob Herring <robherring2@gmail.com> wrote:
+>> On 07/21/2013 09:42 AM, Rob Herring wrote:
+>>> On 07/19/2013 01:14 PM, Sebastian Andrzej Siewior wrote:
+>>>> So I called of_platform_populate() on a device to get each child device
+>>>> probed and on rmmod and I need to reverse its doing. After a quick grep
+>>>> I did what others did as well and rmmod ended in:
+>>>>
+>>>> | Unable to handle kernel NULL pointer dereference at virtual address 00000018
+>>>> | PC is at release_resource+0x18/0x80
+>>>> | Process rmmod (pid: 2005, stack limit = 0xedc30238)
+>>>> | [<c003add0>] (release_resource+0x18/0x80) from [<c0300e08>] (platform_device_del+0x78/0xac)
+>>>> | [<c0300e08>] (platform_device_del+0x78/0xac) from [<c0301358>] (platform_device_unregister+0xc/0x18)
+>>>>
+>>>> The problem is that platform_device_del() "releases" each ressource in its
+>>>> tree. This does not work on platform_devices created by OF becuase they
+>>>> were never added via insert_resource(). As a consequence old->parent in
+>>>> __release_resource() is NULL and we explode while accessing ->child.
+>>>> So I either I do something completly wrong _or_ nobody here tested the
+>>>> rmmod path of their driver.
+>>>
+>>> Wouldn't the correct fix be to call insert_resource somehow? The problem
+>>> I have is that while of_platform_populate is all about parsing the DT
+>>> and creating devices, the removal side has nothing to do with DT. So
+>>> this should not be in the DT code. I think the core device code should
+>>> be able to handle removal if the device creation side is done correctly.
+>>>
+>>> It looks to me like of_device_add either needs to call
+>>> platform_device_add rather than device_add. I think the device name
+>>> setting in platform_device_add should be a nop. If not, a check that the
+>>> name is already set could be added.
+>>>
+>>
+>> BTW, it looks like Grant has attempted this already:
 > 
-> I don't get the arithmetic here and the code is poor in comment. A nice
-> comment would valuable here.
+> Yup, things broke badly. Unfortunately the of_platform_device and
+> platform_device history doesn't treat resources in the same way. I
+> would like to merge the code, but I haven't been able to figure out a
+> clean way to do it. Looks like we do need the unpopulate function.
 
-Each channel occupies 4 bits in TCON register, but there is a gap of 4 
-bits after channel 0. In addition for channel 4 the location of autoreload 
-bit in its set of bits is 2 as opposed to 3 for other channels. Here's the 
-layout of the register, for reference:
+Was there more breakage than imx6 and amba devices? Your first version
+had a fallback case for powerpc. Couldn't we do just allow that for more
+than just powerpc? I'd much rather see some work-around within the core
+DT code with a warning to prevent more proliferation than putting this
+into drivers.
 
-Timer 4 Auto Reload on/off	[22]
-Timer 4 Manual Update		[21]
-Timer 4 Start/Stop		[20]
-
-Timer 3 Auto Reload on/off	[19]
-Reserved			[18]
-Timer 3 Manual Update		[17]
-Timer 3 Start/Stop		[16]
-
-Timer 2 Auto Reload on/off	[15]
-Reserved			[14]
-Timer 2 Manual Update		[13]
-Timer 2 Start/Stop		[12]
-
-Timer 1 Auto Reload on/off	[11]
-Timer 1 Output Inverter on/off	[10]
-Timer 1 Manual Update		[9]
-Timer 1 Start/Stop		[8]
-
-Reserved			[7:5]
-Dead zone enable/disable	[4]
-
-Timer 0 Auto Reload on/off	[3]
-Timer 0 Output Inverter on/off	[2]
-Timer 0 Manual Update		[1]
-Timer 0 Start/Stop		[0]
-
-> May be you can replace 1 << bla by BIT(bla) ?
-
-Yes, BIT() would be nice here, but IMHO this is material for separate 
-patch as all the macros in this driver already use 1 << bla.
-
-Best regards,
-Tomasz
+Rob
