@@ -1,46 +1,98 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 00/20] Samsung PWM support cleanup
-Date: Mon, 22 Jul 2013 12:34:59 -0700
-Message-ID: <CAOesGMixczupXEv-iz2nd2GM0i5DTQvVaF2DqjFnDBqsCNKCYQ@mail.gmail.com>
-References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
-	<51EC5F18.8040007@gmail.com>
-	<9102768.ef8LAvpunv@flatron>
-	<0ac901ce867f$638a7530$2a9f5f90$@org>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Update CONFIG_ARCH_NR_GPIO for Exynos
+Date: Mon, 22 Jul 2013 21:36:42 +0200
+Message-ID: <51ED89CA.2040908@gmail.com>
+References: <1372054438-15693-1-git-send-email-sachin.kamat@linaro.org> <CAK9yfHzmF_oxc3DsuT5wtXX2C5O+wLxz4C2Ps3cVPnKLb8jOEw@mail.gmail.com> <0ad601ce868c$d88bff40$89a3fdc0$@org> <3136364.6D0qu7zGk3@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f47.google.com ([209.85.216.47]:38517 "EHLO
-	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932912Ab3GVTfA (ORCPT
+Received: from mail-bk0-f52.google.com ([209.85.214.52]:56975 "EHLO
+	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932820Ab3GVTgr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 15:35:00 -0400
-Received: by mail-qa0-f47.google.com with SMTP id o19so831093qap.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 12:34:59 -0700 (PDT)
-In-Reply-To: <0ac901ce867f$638a7530$2a9f5f90$@org>
+	Mon, 22 Jul 2013 15:36:47 -0400
+Received: by mail-bk0-f52.google.com with SMTP id d7so2626916bkh.39
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 12:36:46 -0700 (PDT)
+In-Reply-To: <3136364.6D0qu7zGk3@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-pwm@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-On Sun, Jul 21, 2013 at 7:01 PM, Kukjin Kim <kgene@kernel.org> wrote:
-
->> Yes, this whole patches look good to me, and I'd like to take this whole
->> patches into the samsung tree...but need to get any response from PWM guy,
->> Thierry Reding. Let's wait for his response...
+On 07/22/2013 07:21 PM, Tomasz Figa wrote:
+> On Monday 22 of July 2013 12:37:52 Kukjin Kim wrote:
+>> Sachin Kamat wrote:
+>>> On 22 July 2013 07:18, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>>>> Sachin Kamat wrote:
+>>>>> With the recent cleanup in Exynos platform code notably commits
+>>>>> 17859bec ("ARM: EXYNOS: Do not select legacy Kconfig symbols any
+>>>>> more") and b9222210 ("ARM: EXYNOS: Remove mach/gpio.h"), the
+>>>>> definition
+>>>>> of ARCH_NR_GPIOS got removed. This started causing problems on SoCs
+>>>
+>>> like
+>>>
+>>>>> Exynos4412 which have more (285) than the default number of GPIOs
 >>
-> To be clarify, because his ack was on v3 and I remember he had a comment. So
-> would be better if we could get his ack on pwm change again.
+>> (255).
+>>
+>>>>> Thus define this number in Kconfig file. Without this patch we get
+>>>>> the
+>>>>> following errors during boot:
+>>>>>
+>>>>> gpiochip_add: gpios 251..258 (gpv0) failed to register
+>>>>> samsung-pinctrl 106e0000.pinctrl: failed to register gpio_chip gpv0,
+>>>>> error code: -22
+>>>>> samsung-pinctrl: probe of 106e0000.pinctrl failed with error -22
+>>>>>
+>>>>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+>>>>> Cc: Tomasz Figa<t.figa@samsung.com>
+>>>>> ---
+>>>>> Based on Kukjin's for-next tree.
+>>>>> ---
+>>>>>
+>>>>>   arch/arm/Kconfig |    1 +
+>>>>>   1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>>>>> index ddf2667..380a53b 100644
+>>>>> --- a/arch/arm/Kconfig
+>>>>> +++ b/arch/arm/Kconfig
+>>>>> @@ -1578,6 +1578,7 @@ config ARCH_NR_GPIO
+>>>>>
+>>>>>        default 512 if SOC_OMAP5
+>>>>>        default 392 if ARCH_U8500
+>>>>>        default 352 if ARCH_VT8500
+>>>>>
+>>>>> +     default 288 if ARCH_EXYNOS
+>>>>>
+>>>>>        default 288 if ARCH_SUNXI
+>>>>>        default 264 if MACH_H4700
+>>>>>        default 0
+>>>>>
+>>>>> --
+>>>>> 1.7.9.5
+>>>>
+>>>> Hmm, BTW, I'm wondering why it is 288 not 285 or other specific
+>>
+>> number...
+>>
+>>> I wasn't really sure if we can have any number there. I chose the
+>>> closest one (288) which was already used by other platform.
+>>> If there is no problem to use 285 itself then I can resend with that
+>>> number. Please let me know.
+>>
+>> If there is no reason, please don't use bigger value than necessary one.
 >
-> Thanks,
-> Kukjin
->
+> Hmm, what about some GPIO expanders that would require bigger GPIO address
+> space? I would reserve some space just in case, i.e. define this value to be
+> the highest number of GPIOs on all Exynos SoCs + some extra, like 32 or 64.
 
-This is a nice cleanup series indeed.
+That sounds like a good idea. IIRC I once had to increase ARCH_NR_GPIO to
+make the wm8994 GPIO controller working. The wm8994 driver also handles
+WM1811 audio codec that some Exynos development boards are shipped with.
 
-Given the volume of changes coming from Tomasz, it seems appropriate
-that he just sends you pull requests with this as a branch when they
-are ready to go (i.e. have the appropriate acks), instead of you
-having to apply them by hand, Kukjin.
-
-
--Olof
+--
+Regards,
+Sylwester
