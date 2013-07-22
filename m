@@ -1,50 +1,58 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH] clk: exynos4: fix g2d/mdma clocks of exynos4x12
-Date: Mon, 22 Jul 2013 17:12:30 +0900
-Message-ID: <1374480750-30962-1-git-send-email-chanho61.park@samsung.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH] of: provide of_platform_unpopulate()
+Date: Mon, 22 Jul 2013 10:25:34 +0200
+Message-ID: <51ECEC7E.7000008@linutronix.de>
+References: <2333396.179421374298979822.JavaMail.weblogic@epml22>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52986 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753885Ab3GVIMn (ORCPT
+Received: from www.linutronix.de ([62.245.132.108]:59520 "EHLO
+	Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753959Ab3GVIZl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 04:12:43 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MQB004LHW56TTV0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 17:12:42 +0900 (KST)
+	Mon, 22 Jul 2013 04:25:41 -0400
+In-Reply-To: <2333396.179421374298979822.JavaMail.weblogic@epml22>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: mturquette@linaro.org, kgene.kim@samsung.com, thomas.abraham@linaro.org
-Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: ch.naveen@samsung.com
+Cc: Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@linaro.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tony Lindgren <tony@atomide.com>, Doug Anderson <dianders@chromium.org>, Vivek Gautam <gautam.vivek@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Roger Quadros <rogerq@ti.com>, George Cherian <george.cherian@ti.com>, Felipe Balbi <balbi@ti.com>
 
-The exynos4x12 has different address of GATE_IP_IMAGE reg. We should use
-EXYNOS4X12_GATE_IP_IMAGE for g2d gating clocks instead of 4210's reg.
-In case of mdma node, We don't use it for any exynos4 chipsets. I think we'll
-need to change it to 'none' or leave it on.
+On 07/20/2013 07:42 AM, NAVEEN KRISHNA CHATRADHI wrote:
+> Hello Sebastian,
 
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Hello Naveen,
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 1bdb882..6300c9d 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -820,8 +820,10 @@ struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
- struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 	GATE(audss, "audss", "sclk_epll", E4X12_GATE_IP_MAUDIO, 0, 0, 0),
- 	GATE(mdnie0, "mdnie0", "aclk160", GATE_IP_LCD0, 2, 0, 0),
-+	GATE(g2d, "g2d", "aclk200", E4X12_GATE_IP_IMAGE, 0, 0, 0),
- 	GATE(rotator, "rotator", "aclk200", E4X12_GATE_IP_IMAGE, 1, 0, 0),
--	GATE(mdma2, "mdma2", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
-+	GATE(mdma, "mdma", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
-+	GATE(smmu_g2d, "smmu_g2d", "aclk200", E4X12_GATE_IP_IMAGE, 3, 0, 0),
- 	GATE(smmu_mdma, "smmu_mdma", "aclk200", E4X12_GATE_IP_IMAGE, 5, 0, 0),
- 	GATE(mipi_hsi, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
- 	GATE(chipid, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0, 0),
--- 
-1.7.9.5
+> 
+> I just did one more testing.
+> 
+> In case of iio/adc/exynos_adc.c there is a bug in the remove path.
+> If I fix the bug in the driver, with below patch
+> 
+> --- a/drivers/iio/adc/exynos_adc.c
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -375,14 +375,14 @@ static int exynos_adc_remove(struct platform_device *pdev)
+>         struct iio_dev *indio_dev = platform_get_drvdata(pdev);
+>         struct exynos_adc *info = iio_priv(indio_dev);
+> 
+> -       device_for_each_child(&pdev->dev, NULL,
+> -                               exynos_adc_remove_devices);
+>         regulator_disable(info->vdd);
+>         clk_disable_unprepare(info->clk);
+>         writel(0, info->enable_reg);
+>         iio_device_unregister(indio_dev);
+>         free_irq(info->irq, info);
+>         iio_device_free(indio_dev);
+> +       device_for_each_child(&pdev->dev, NULL,
+> +                               exynos_adc_remove_devices);
+> 
+> Even without your fix, I could configure it as a module and the rmmod, insmod are working fine. (no crash)
+
+I have no idea why you moved it. I haven't found any .dts with this
+binding but from the binding document I would assume that you do not
+have any memory resources and therefore you don't see that crash.
+
+> Regards,
+> Naveen
+
+Sebastian
