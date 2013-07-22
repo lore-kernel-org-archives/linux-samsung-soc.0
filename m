@@ -1,88 +1,66 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/4] clk: exynos-audss: allow input clocks to be specified in device tree
-Date: Mon, 22 Jul 2013 21:42:31 +0200
-Message-ID: <5824726.DGbrnrmYE0@flatron>
-References: <1373458313-18970-1-git-send-email-padma.v@samsung.com> <1610421.OFFn8rqlxt@amdc1227> <20130722181530.7598.73318@quantum>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v4 04/20] clocksource: samsung_pwm_timer: Do not use clocksource_mmio
+Date: Mon, 22 Jul 2013 22:13:17 +0200
+Message-ID: <51ED925D.3060307@linaro.org>
+References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com> <1374278673-25615-6-git-send-email-tomasz.figa@gmail.com> <51ECAD60.1000109@linaro.org> <19090469.Cf6sbb33Ke@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f52.google.com ([209.85.214.52]:50688 "EHLO
-	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932820Ab3GVTmg (ORCPT
+Received: from mail-we0-f182.google.com ([74.125.82.182]:55644 "EHLO
+	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757021Ab3GVUNV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 15:42:36 -0400
-Received: by mail-bk0-f52.google.com with SMTP id d7so2671417bkh.25
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 12:42:35 -0700 (PDT)
-In-Reply-To: <20130722181530.7598.73318@quantum>
+	Mon, 22 Jul 2013 16:13:21 -0400
+Received: by mail-we0-f182.google.com with SMTP id u55so1627679wes.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 13:13:20 -0700 (PDT)
+In-Reply-To: <19090469.Cf6sbb33Ke@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, sylvester.nawrocki@gmail.com
-Cc: Tomasz Figa <t.figa@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, dianders@chromium.org, abrestic@chromium.org, s.nawrocki@samsung.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 
-On Monday 22 of July 2013 11:15:30 Mike Turquette wrote:
-> Quoting Tomasz Figa (2013-07-22 09:28:47)
-> 
-> > Hi Padmavathi, Andrew,
-> > 
-> > On Wednesday 10 of July 2013 17:41:51 Padmavathi Venna wrote:
-> > > From: Andrew Bresticker <abrestic@chromium.org>
-> > > 
-> > > This allows the input clocks to the Exynos AudioSS block to be
-> > > specified via device-tree bindings.  Default names will be used
-> > > when an input clock is not given.  This will be useful when adding
-> > > support for the Exynos5420 where the audio bus clock is called
-> > > "sclk_maudio0" instead of "sclk_audio0".
-> > > 
-> > > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> > > Reviewed-on: https://gerrit.chromium.org/gerrit/57833
-> > > Reviewed-by: Simon Glass <sjg@chromium.org>
-> > > ---
-> > > 
-> > >  .../devicetree/bindings/clock/clk-exynos-audss.txt |   31
-> > > 
-> > > ++++++++++++++++++- drivers/clk/samsung/clk-exynos-audss.c          
-> > >   |> > 
-> > >   28 +++++++++++++++-- 2 files changed, 53 insertions(+), 6
-> > >   deletions(-)
-> > 
-> > Well, this is basically how it should be done, but in current state of
-> > clock core I can see a problem: can we really rely on the order of
-> > clock initialization? I mean, we can't defer initialization of
-> > particular clock controller until all external clocks it needs are
-> > available, because there is no probing involved here.
-> 
-> The clock core allows registering clocks even if their parents are not
-> yet registered. I test this path with some dummy clocks every so often
-> to make sure the re-parenting operation are completed successfully after
-> the parents eventually are registered.
+On 07/22/2013 09:47 AM, Tomasz Figa wrote:
+> Hi Daniel,
+>=20
+> On Monday 22 of July 2013 05:56:16 Daniel Lezcano wrote:
+>> On 07/20/2013 02:04 AM, Tomasz Figa wrote:
+>>> In case of Samsung PWM timer, clocksource MMIO can not be used,
+>>> because
+>>> custom suspend/resume callbacks are required.
+>>>
+>>> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+>>> ---
+>>
+>> Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>=20
+> Thanks for review.
+>=20
+>> Please in the future Cc me and Thomas Gleixner (clocksource/clockeve=
+nt
+>> maintainers).
+>=20
+> Oh, right, sorry. This series originally was not touching the clockso=
+urce=20
+> driver and I just kept original recipient list.
+>=20
+> Btw. Have you updated MAINTAINERS file? In latest linux-next I can st=
+ill=20
+> see only John Stultz and Thomas Gleixner as maintainers of=20
+> drivers/clocksource.
 
-Sure it does, but this patch is about something different. It adds device 
-tree based lookup (of_clk_get_by_name()) of external clocks (as opposed to 
-existing lookup by name), which will fail if provider pointed by phandle 
-is not registered yet.
+Yes, right last week :)
 
-> This feature was not used in practice until recently with the advent of
-> multiple clock controllers getting registered and DT description of
-> clocks / clock controllers that may be "out of order". If you find any
-> bugs please let me know ;-)
+https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git/commit/?h=3Dti=
+mers/core&id=3D9222d247bcbaacc40fe15549158f9d67523c1ace
 
-I will send you a bunch of patches sorting out issues I found in 
-clk_set_rate() path, but give me some time to prepare them :).
+Thanks
+  -- Daniel
 
-As for multiple clock controllers, this is going to be funny. I have 
-discussed this a bit with Sylwester and we managed to find some design 
-issues that I think must be solved:
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
 
-a) What about multiple controllers with identical clock names? Imagine two 
-PMICs that can also generate 32 KHz clocks, both having them named 
-"clk32k". Am I right saying that this won't work with current code?
-
-b) What are the rules of using clock-output-names property (and what 
-should be used in non-DT case)? I can imagine using it to assign platform-
-specific names of clock outputs of extra clock controllers (this would 
-help in the above case of "clk32k"), but currently it seems like it is 
-optional to use it in clock drivers and the meaning is provider-specific.
-
-Best regards,
-Tomasz
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
