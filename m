@@ -1,243 +1,145 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH 1/3] drm/exynos: add device tree support for rotator
-Date: Mon, 22 Jul 2013 21:20:23 +0900
-Message-ID: <025f01ce86d5$d7251210$856f3630$%dae@samsung.com>
+Subject: RE: [PATCH 2/3] drm/exynos: add dt-binding documentation for rotator
+Date: Mon, 22 Jul 2013 21:37:00 +0900
+Message-ID: <026001ce86d8$2963d730$7c2b8590$%dae@samsung.com>
 References: <1374475767-30085-1-git-send-email-chanho61.park@samsung.com>
- <1374475767-30085-2-git-send-email-chanho61.park@samsung.com>
+ <1374475767-30085-3-git-send-email-chanho61.park@samsung.com>
+ <20130722084817.GA18731@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35299 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750876Ab3GVMUZ (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:54313 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752273Ab3GVMhD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 08:20:25 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Mon, 22 Jul 2013 08:37:03 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MQC008147LP4PP0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 21:20:24 +0900 (KST)
-In-reply-to: <1374475767-30085-2-git-send-email-chanho61.park@samsung.com>
+ with ESMTP id <0MQC00JLR8DPDRF0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Jul 2013 21:37:01 +0900 (KST)
+In-reply-to: <20130722084817.GA18731@e106331-lin.cambridge.arm.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chanho Park' <chanho61.park@samsung.com>, kgene.kim@samsung.com
-Cc: jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org
+To: 'Mark Rutland' <mark.rutland@arm.com>, 'Chanho Park' <chanho61.park@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, devicetree-discuss@lists.ozlabs.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
 
 
 
 > -----Original Message-----
-> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
-> owner@vger.kernel.org] On Behalf Of Chanho Park
-> Sent: Monday, July 22, 2013 3:49 PM
-> To: inki.dae@samsung.com; kgene.kim@samsung.com
-> Cc: jy0922.shim@samsung.com; sw0312.kim@samsung.com;
-> kyungmin.park@samsung.com; dri-devel@lists.freedesktop.org; linux-samsung-
-> soc@vger.kernel.org; linux-arm-kernel@lists.infradead.org; devicetree-
-> discuss@lists.ozlabs.org; Chanho Park
-> Subject: [PATCH 1/3] drm/exynos: add device tree support for rotator
+> From: Mark Rutland [mailto:mark.rutland@arm.com]
+> Sent: Monday, July 22, 2013 5:48 PM
+> To: Chanho Park
+> Cc: inki.dae@samsung.com; kgene.kim@samsung.com; linux-samsung-
+> soc@vger.kernel.org; jy0922.shim@samsung.com; devicetree-
+> discuss@lists.ozlabs.org; sw0312.kim@samsung.com; dri-
+> devel@lists.freedesktop.org; kyungmin.park@samsung.com; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH 2/3] drm/exynos: add dt-binding documentation for
+> rotator
 > 
-> The exynos4 platform is only dt-based since 3.10, we should convert driver
-> data
-> and ids to dt-based parsing methods. The rotator driver has a limit table
-> to get
-> size limit. The minimum size of RGB888 format is 8 x 8 and maximum size is
-> 8K x
-> 8K. The other format, YCbCr420 2-Plane has 32 x 32 min size and 32K x 32K
-> max
-> size. Each format should be multiple of 'align' value.
-> 
-> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  110 +++++++++++++++++++---
-> -----
->  1 file changed, 80 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> index 427640a..b353a10 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> @@ -96,7 +96,7 @@ struct rot_context {
->  	struct resource	*regs_res;
->  	void __iomem	*regs;
->  	struct clk	*clock;
-> -	struct rot_limit_table	*limit_tbl;
-> +	struct rot_limit_table	limit_tbl;
->  	int	irq;
->  	int	cur_buf_id[EXYNOS_DRM_OPS_MAX];
->  	bool	suspended;
-> @@ -167,7 +167,7 @@ static irqreturn_t rotator_irq_handler(int irq, void
-> *arg)
->  static void rotator_align_size(struct rot_context *rot, u32 fmt, u32
-> *hsize,
->  		u32 *vsize)
->  {
-> -	struct rot_limit_table *limit_tbl = rot->limit_tbl;
-> +	struct rot_limit_table *limit_tbl = &rot->limit_tbl;
->  	struct rot_limit *limit;
->  	u32 mask, val;
-> 
-> @@ -632,6 +632,72 @@ static int rotator_ippdrv_start(struct device *dev,
-> enum drm_exynos_ipp_cmd cmd)
->  	return 0;
->  }
-> 
-> +static const struct of_device_id exynos_rotator_match[] = {
-> +	{
-> +		.compatible = "samsung,exynos4210-rotator",
-> +	},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, exynos_rotator_match);
+> On Mon, Jul 22, 2013 at 07:49:26AM +0100, Chanho Park wrote:
+> > This patch adds a dt-binding document for exynos rotator. It describes
+> which
+> > nodes should be defined to use the rotator.
+> >
+> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  .../bindings/drm/exynos/samsung-rotator.txt        |   35
+> ++++++++++++++++++++
+> >  1 file changed, 35 insertions(+)
+> >  create mode 100644
+> Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/drm/exynos/samsung-
+> rotator.txt b/Documentation/devicetree/bindings/drm/exynos/samsung-
+> rotator.txt
+> > new file mode 100644
+> > index 0000000..6b1d704
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
+> > @@ -0,0 +1,35 @@
+> > +* Samsung Image Rotator
+> > +
+> > +Required properties:
+> > +  - compatible : value should be the "samsung,exynos4210".
 
-Rotator device cannot be plugged in. Please remove the above
-MODULE_DEVICE_TABLE.
+Please, add more compatible strings for other SoC.
 
+> > +  - reg : Physical base address of the IP registers and length of
+> memory
+> > +	  mapped region.
+> > +  - interrupts : interrupt number to the CPU.
+> > +  - clocks : clock number of exynos4 rotator clock.
+> > +  - clocks : clock name of rotator
+> 
+> clock-names?
+> 
+> > +  - status : "okay" or "disabled"
+> > +  - limit table for image formats : min_w/min_h/max_w/max_h for min/max
+> of image
+> 
+> Limit table? This doesn't seem to be a well-defined binding, and it
+> seems like a relatively generic thing to describe.
+> 
+> > +
+> > +Example:
+> > +	rotator: rotator@12810000 {
+> > +		compatible = "samsung,exynos4210-rotator";
+> > +		reg = <0x12810000 0x1000>;
+> > +		interrupts = <0 83 0>;
+> > +		clocks = <&clock 278>;
+> > +		clock-names = "rotator";
+> > +		status = "disabled";
+> > +		ycbcr420_2p {
+> 
+> Which names are allowed for these subnodes?
+> 
+> > +			min_w = <32>;
+> > +			min_h = <32>;
+> > +			max_w = <32768>;
+> > +			max_h = <32768>;
+> > +			align = <3>;
+> 
+> min-width, min-height, max-width, max-height? What units are they in?
+> 
+> What does alignment specify exactly?
+> 
+> Are these a configurable part of the rotator hardware, or are these
+> values always the same?
 
-> +
-> +static int rotator_parse_dt_tbl(struct device_node *np, struct rot_limit
-> *rlim)
-> +{
-> +	int ret;
-> +
-> +	ret = of_property_read_u32(np, "min_w", &rlim->min_w);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_property_read_u32(np, "min_h", &rlim->min_h);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_property_read_u32(np, "max_w", &rlim->max_w);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_property_read_u32(np, "max_h", &rlim->max_h);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = of_property_read_u32(np, "align", &rlim->align);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int rotator_parse_dt(struct device *dev, struct rot_context *rot)
-> +{
-> +	struct device_node *ycbcr_node, *rgb888_node;
-> +	int ret;
-> +
-> +	ycbcr_node = of_get_child_by_name(dev->of_node, "ycbcr420_2p");
-> +	if (!ycbcr_node) {
-> +		dev_err(dev, "can't find ycbcr420_2p node\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	rgb888_node = of_get_child_by_name(dev->of_node, "rgb888");
-> +	if (!rgb888_node) {
-> +		dev_err(dev, "can't find rgb888 node\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = rotator_parse_dt_tbl(ycbcr_node, &rot->limit_tbl.ycbcr420_2p);
-> +	if (ret) {
-> +		dev_err(dev, "failed to parse ycbcr420 data\n");
-> +		return ret;
-> +	}
-> +	ret = rotator_parse_dt_tbl(rgb888_node, &rot->limit_tbl.rgb888);
-> +	if (ret) {
-> +		dev_err(dev, "failed to parse rgb888 data\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int rotator_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -639,14 +705,23 @@ static int rotator_probe(struct platform_device
-> *pdev)
->  	struct exynos_drm_ippdrv *ippdrv;
->  	int ret;
+Right, that seems like configurable part. At least, min_w/h and max_w/h can
+be different values according to SoC and pixel formats so they should be
+described enough in this dt-binding document file.
+
+Thanks,
+Inki Dae
+
+> If thery're always the same, there's no need to
+> describe in in the devicetree.
 > 
-> +	if (!dev->of_node) {
-> +		dev_err(dev, "Cannot find device tree node\n");
-> +		return -ENODEV;
-> +	}
-> +
->  	rot = devm_kzalloc(dev, sizeof(*rot), GFP_KERNEL);
->  	if (!rot) {
->  		dev_err(dev, "failed to allocate rot\n");
->  		return -ENOMEM;
->  	}
+> Thanks,
+> Mark.
 > 
-> -	rot->limit_tbl = (struct rot_limit_table *)
-> -				platform_get_device_id(pdev)->driver_data;
-> +	ret = rotator_parse_dt(dev, rot);
-> +	if (ret) {
-> +		dev_err(dev, "failed parse dt info\n");
-> +		devm_kfree(dev, rot);
-> +		return ret;
-> +	}
-> 
->  	rot->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	rot->regs = devm_ioremap_resource(dev, rot->regs_res);
-> @@ -718,31 +793,6 @@ static int rotator_remove(struct platform_device
-> *pdev)
->  	return 0;
->  }
-> 
-> -static struct rot_limit_table rot_limit_tbl = {
-> -	.ycbcr420_2p = {
-> -		.min_w = 32,
-> -		.min_h = 32,
-> -		.max_w = SZ_32K,
-> -		.max_h = SZ_32K,
-> -		.align = 3,
-> -	},
-> -	.rgb888 = {
-> -		.min_w = 8,
-> -		.min_h = 8,
-> -		.max_w = SZ_8K,
-> -		.max_h = SZ_8K,
-> -		.align = 2,
-> -	},
-> -};
-> -
-> -static struct platform_device_id rotator_driver_ids[] = {
-> -	{
-> -		.name		= "exynos-rot",
-> -		.driver_data	= (unsigned long)&rot_limit_tbl,
-> -	},
-> -	{},
-> -};
-> -
->  static int rotator_clk_crtl(struct rot_context *rot, bool enable)
->  {
->  	if (enable) {
-> @@ -804,10 +854,10 @@ static const struct dev_pm_ops rotator_pm_ops = {
->  struct platform_driver rotator_driver = {
->  	.probe		= rotator_probe,
->  	.remove		= rotator_remove,
-> -	.id_table	= rotator_driver_ids,
->  	.driver		= {
->  		.name	= "exynos-rot",
->  		.owner	= THIS_MODULE,
->  		.pm	= &rotator_pm_ops,
-> +		.of_match_table = of_match_ptr(exynos_rotator_match),
->  	},
->  };
-> --
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
-> soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > +		};
+> > +		rgb888 {
+> > +			min_w = <8>;
+> > +			min_h = <8>;
+> > +			max_w = <8192>;
+> > +			max_h = <8192>;
+> > +			align = <2>;
+> > +		};
+> > +	};
+> > --
+> > 1.7.9.5
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >
