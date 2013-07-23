@@ -1,72 +1,138 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH V2] watchdog: s3c2410_wdt: remove the global variables
-Date: Tue, 23 Jul 2013 14:11:41 +0530
-Message-ID: <CAL1wa8f9xxqViuH4PeFOXuKApkMf=4oA_J-qEG+JhB=8-y6WBQ@mail.gmail.com>
-References: <1374473649-20050-1-git-send-email-l.krishna@samsung.com> <CAK9yfHwMZXV_F5=xmcbQfhFmDXsRxu_9a8n7C92gncyiPSJNrA@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys part
+ and Exynos part
+Date: Tue, 23 Jul 2013 17:42:23 +0900
+Message-ID: <001401ce8780$8d8461f0$a88d25d0$@samsung.com>
+References: <002801ce8376$a807dbf0$f81793d0$@samsung.com>
+ <51ED49D6.9050209@ti.com> <000701ce8741$fe47deb0$fad79c10$@samsung.com>
+ <51EE22DF.6090902@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:40585 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754236Ab3GWImC (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:38531 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755195Ab3GWIm0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 04:42:02 -0400
-Received: by mail-vb0-f46.google.com with SMTP id w8so384711vbf.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 01:42:01 -0700 (PDT)
-In-Reply-To: <CAK9yfHwMZXV_F5=xmcbQfhFmDXsRxu_9a8n7C92gncyiPSJNrA@mail.gmail.com>
+	Tue, 23 Jul 2013 04:42:26 -0400
+In-reply-to: <51EE22DF.6090902@ti.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Jingoo Han <jg1.han@samsung.com>
+To: 'Kishon Vijay Abraham I' <kishon@ti.com>
+Cc: 'Pratyush Anand' <pratyush.anand@st.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 
-Hi Sachin,
+On Tuesday, July 23, 2013 3:30 PM, Kishon Vijay Abraham I wrote:
+> On Tuesday 23 July 2013 06:44 AM, Jingoo Han wrote:
+> > On Tuesday, July 23, 2013 12:04 AM, Kishon Vijay Abraham I wrote:
+> >> On Thursday 18 July 2013 10:51 AM, Jingoo Han wrote:
+> >>> Exynos PCIe IP consists of Synopsys specific part and Exynos
+> >>> specific part. Only core block is a Synopsys designware part;
+> >>> other parts are Exynos specific.
+> >>> Also, the Synopsys designware part can be shared with other
+> >>> platforms; thus, it can be split two parts such as Synopsys
+> >>> designware part and Exynos specific part.
+> >>
+> >> some more queries and comments..
+> >
+> .
+> .
+> <snip>
+> .
+> .
+> >>> +			of_pci_range_to_resource(&range, np, &pp->cfg);
+> >>> +			pp->config.cfg0_size = resource_size(&pp->cfg)/2;
+> >>> +			pp->config.cfg1_size = resource_size(&pp->cfg)/2;
+> >>> +		}
+> >>> +	}
+> >>> +
+> >>> +	pp->dbi_base = devm_ioremap(pp->dev, pp->cfg.start,
+> >>> +				resource_size(&pp->cfg));
 
-On Tue, Jul 23, 2013 at 8:28 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Leela,
->
-> On 22 July 2013 11:44, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
->> This patch removes the global variables in the driver file and
->> group them into a structure.
->>
->> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> ---
->>  Note: This patch is rebased on kgene's for-next branch and tested on SMDK5420.
->>
->>  Changes since V1:
->>         - changed the patch subject.
->>         - indentation correction in s3c2410_watchdog structure.
->>
->>  drivers/watchdog/s3c2410_wdt.c |  204 +++++++++++++++++++++++-----------------
->>  1 file changed, 119 insertions(+), 85 deletions(-)
->>
->> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
->> index 6a22cf5..de679d0 100644
->> --- a/drivers/watchdog/s3c2410_wdt.c
->> +++ b/drivers/watchdog/s3c2410_wdt.c
->> @@ -84,13 +84,20 @@ MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
->>                         "0 to reboot (default 0)");
->>  MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
->>
->> -static struct device    *wdt_dev;      /* platform device attached to */
->> -static struct resource *wdt_mem;
->> -static struct resource *wdt_irq;
->> -static struct clk      *wdt_clock;
->> -static void __iomem    *wdt_base;
->> -static unsigned int     wdt_count;
->> -static DEFINE_SPINLOCK(wdt_lock);
->> +struct s3c2410_watchdog {
->> +       struct device           *dev;   /* platform device attached to */
->
-> Since you would anyway be respinning this patch to address comments
-> from Tomasz, please remove the above comment too.
->
+[.....]
 
-Done
+> >
+> >> Why should it be same as dbi_base?
+> >> AFAIK, jacinto6 has a dedicated configuration/io/memory space that is entirely
+> >> different from dbi_base.
+> >
+> > According to the Synopsys designware PCIe datasheet,
+> > in chapter 5.1.1 Register Space Layout,
+> > 'Port Logic Registers' are placed between (config space 0x0 + 0x700)
+> > and (config space 0x0 + 0xFFF).
+> > 'dbi_base' is used for reading/writing 'Port Logic Registers'.
+> > Exynos are using 'dbi_base' like this. Thus, the base addresses of
+> > both 'dbi_base' and configuration/io/memory space are same.
+> >
+> > Just now, I looked at Spear PCIe driver.
+> > However, in the case of Spear, the base address of configuration/io/memory
+> > space is defined as 0x80000000. The base address of 'Port Logic Registers'
+> > is defined as 0xb1000000.
+> > I think that the situation of 'jacinto6' is similar with Spear, right?
+> >
+> > Then, I will move pp->dbi_base mapping code from pcie-designware.c
+> > to pci-exynos.c.
+> 
+> I think you need not move this to exynos (since registers in dbi_base is common
+> for all platforms) but modify the pcie-designware.c to use different address
+> space for dbi_base. In your case, you'll duplicate the address space for
+> dbi_base and configuration space.
+> 
 
-> --
-> With warm regards,
-> Sachin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I will map 'pp->dbi_base' as below:
+Also, I referenced SPEAr PCIe patches made by Pratyush Anand.
+(http://permalink.gmane.org/gmane.linux.kernel.pci/18400)
+(http://permalink.gmane.org/gmane.linux.kernel.pci/18403)
+
+
+1. The different addresses between dbi_base and configuration space
+    : SPEAr PCIe, OMAP PCIe
+      'pp->dbi_base' value is come from DT binding, then, 'pp->dbi_base' will
+       be mapped in spear_pcie_probe() in pci-spear.c
+
+(arch/arm/boot/dts/spear13xx.dtsi)
+		pcie0@b1000000 {
+			reg = <0xb1000000 0x2000      <-- dbi register
+				 0xb1002000 0x7fdfff   <-- elbi register
+
+(drivers/pci/host/pci-spear.c)
+static int __init spear_pcie_probe(struct platform_device *pdev)
+{
+	struct resource *dbi_base;
+	struct resource *elbi_base;
+
+	dbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	pp->dbi_base = devm_ioremap_resource(&pdev->dev, dbi_base);
+
+	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+	spear_pcie->elbi_base = devm_ioremap_resource(&pdev->dev, elbi_base);
+
+
+
+2. The same addresses between dbi_base and configuration space
+    : Exynos PCIe
+      'pp->dbi_base' will be mapped in dw_pcie_host_init() of pcie-designware.c.
+
+(drivers/pci/host/pcie-exynos.c)
+static int __init exynos_pcie_probe(struct platform_device *pdev)
+{
+	struct resource *elbi_base;
+
+	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	exynos_pcie->elbi_base = devm_ioremap_resource(&pdev->dev, elbi_base);
+
+(drivers/pci/host/pcie-designware.c)
+int dw_pcie_host_init(struct pcie_port *pp)
+{
+	if (!pp->dbi_base) {
+		pp->dbi_base = devm_ioremap(pp->dev, pp->cfg.start,
+						resource_size(&pp->cfg));
+		if (!pp->dbi_base) {
+			dev_err(pp->dev, "error with ioremap\n");
+			return -ENOMEM;
+		}
+	}
+
+
+Best regards,
+Jingoo Han
