@@ -1,119 +1,86 @@
 From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
-Date: Tue, 23 Jul 2013 11:17:40 +0530
-Message-ID: <51EE18FC.2070505@ti.com>
-References: <Pine.LNX.4.44L0.1307221028440.1495-100000@iolanthe.rowland.org>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
+ part and Exynos part
+Date: Tue, 23 Jul 2013 11:59:51 +0530
+Message-ID: <51EE22DF.6090902@ti.com>
+References: <002801ce8376$a807dbf0$f81793d0$@samsung.com> <51ED49D6.9050209@ti.com> <000701ce8741$fe47deb0$fad79c10$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <Pine.LNX.4.44L0.1307221028440.1495-100000@iolanthe.rowland.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: linux-fbdev@vger.kernel.org, linux-doc@vger.kernel.org, tony@atomide.com, nsekhar@ti.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, swarren@nvidia.com, jg1.han@samsung.com, grant.likely@linaro.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, george.cherian@ti.com, arnd@arndb.de, Sascha Hauer <s.hauer@pengutronix.de>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, balajitk@ti.com, Greg KH <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, akpm@linux-foundation.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <000701ce8741$fe47deb0$fad79c10$@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Pratyush Anand' <pratyush.anand@st.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On Monday 22 July 2013 08:14 PM, Alan Stern wrote:
-> On Mon, 22 Jul 2013, Kishon Vijay Abraham I wrote:
-> 
->>> 	The PHY and the controller it is attached to are both physical
->>> 	devices.
->>>
->>> 	The connection between them is hardwired by the system
->>> 	manufacturer and cannot be changed by software.
->>>
->>> 	PHYs are generally described by fixed system-specific board
->>> 	files or by Device Tree information.  Are they ever discovered
->>> 	dynamically?
+On Tuesday 23 July 2013 06:44 AM, Jingoo Han wrote:
+> On Tuesday, July 23, 2013 12:04 AM, Kishon Vijay Abraham I wrote:
+>> On Thursday 18 July 2013 10:51 AM, Jingoo Han wrote:
+>>> Exynos PCIe IP consists of Synopsys specific part and Exynos
+>>> specific part. Only core block is a Synopsys designware part;
+>>> other parts are Exynos specific.
+>>> Also, the Synopsys designware part can be shared with other
+>>> platforms; thus, it can be split two parts such as Synopsys
+>>> designware part and Exynos specific part.
 >>
->> No. They are created just like any other platform devices are created.
+>> some more queries and comments..
 > 
-> Okay.  Are PHYs _always_ platform devices?
+.
+.
+<snip>
+.
+.
+>>> +			of_pci_range_to_resource(&range, np, &pp->cfg);
+>>> +			pp->config.cfg0_size = resource_size(&pp->cfg)/2;
+>>> +			pp->config.cfg1_size = resource_size(&pp->cfg)/2;
+>>> +		}
+>>> +	}
+>>> +
+>>> +	pp->dbi_base = devm_ioremap(pp->dev, pp->cfg.start,
+>>> +				resource_size(&pp->cfg));
+>>
+>> Why is configuraion space divided into two?
+> 
+> Sorry, I don't know the exact reason. :(
+> Pratyush Anand may know about this.
+> Pratyush Anand, could you answer the question?
+> 
+> Also, if you find some problems, please let me know.
+> 
+> 
+>> Why should it be same as dbi_base?
+>> AFAIK, jacinto6 has a dedicated configuration/io/memory space that is entirely
+>> different from dbi_base.
+> 
+> According to the Synopsys designware PCIe datasheet,
+> in chapter 5.1.1 Register Space Layout,
+> 'Port Logic Registers' are placed between (config space 0x0 + 0x700)
+> and (config space 0x0 + 0xFFF).
+> 'dbi_base' is used for reading/writing 'Port Logic Registers'.
+> Exynos are using 'dbi_base' like this. Thus, the base addresses of
+> both 'dbi_base' and configuration/io/memory space are same.
+> 
+> Just now, I looked at Spear PCIe driver.
+> However, in the case of Spear, the base address of configuration/io/memory
+> space is defined as 0x80000000. The base address of 'Port Logic Registers'
+> is defined as 0xb1000000.
+> I think that the situation of 'jacinto6' is similar with Spear, right?
+> 
+> Then, I will move pp->dbi_base mapping code from pcie-designware.c
+> to pci-exynos.c.
 
-Not always. It can be any other device also.
-> 
->>> 	Is the same true for the controllers attached to the PHYs?
->>> 	If not -- if both a PHY and a controller are discovered 
->>> 	dynamically -- how does the kernel know whether they are 
->>> 	connected to each other?
->>
->> No differences here. Both PHY and controller will have dt information or hwmod
->> data using which platform devices will be created.
->>>
->>> 	The kernel needs to know which controller is attached to which
->>> 	PHY.  Currently this information is represented by name or ID
->>> 	strings embedded in platform data.
->>
->> right. It's embedded in the platform data of the controller.
-> 
-> It must also be embedded in the PHY's platform data somehow.  
-> Otherwise, how would the kernel know which PHY to use?
-> 
->>> 	The PHY's driver (the supplier) uses the platform data to 
->>> 	construct a platform_device structure that represents the PHY.  
->>
->> Currently the driver assigns static labels (corresponding to the label used in
->> the platform data of the controller).
->>> 	Until this is done, the controller's driver (the client) cannot 
->>> 	use the PHY.
->>
->> right.
->>>
->>> 	Since there is no parent-child relation between the PHY and the 
->>> 	controller, there is no guarantee that the PHY's driver will be
->>> 	ready when the controller's driver wants to use it.  A deferred
->>> 	probe may be needed.
->>
->> right.
->>>
->>> 	The issue (or one of the issues) in this discussion is that 
->>> 	Greg does not like the idea of using names or IDs to associate
->>> 	PHYs with controllers, because they are too prone to
->>> 	duplications or other errors.  Pointers are more reliable.
->>>
->>> 	But pointers to what?  Since the only data known to be 
->>> 	available to both the PHY driver and controller driver is the
->>> 	platform data, the obvious answer is a pointer to platform data
->>> 	(either for the PHY or for the controller, or maybe both).
->>
->> hmm.. it's not going to be simple though as the platform device for the PHY and
->> controller can be created in entirely different places. e.g., in some cases the
->> PHY device is a child of some mfd core device (the device will be created in
->> drivers/mfd) and the controller driver (usually) is created in board file. I
->> guess then we have to come up with something to share a pointer in two
->> different files.
-> 
-> The ability for two different source files to share a pointer to a data 
-> item defined in a third source file has been around since long before 
-> the C language was invented.  :-)
-> 
-> In this case, it doesn't matter where the platform_device structures 
-> are created or where the driver source code is.  Let's take a simple 
-> example.  Suppose the system design includes a PHY named "foo".  Then 
-> the board file could contain:
-> 
-> struct phy_info { ... } phy_foo;
-> EXPORT_SYMBOL_GPL(phy_foo);
-> 
-> and a header file would contain:
-> 
-> extern struct phy_info phy_foo;
-> 
-> The PHY supplier could then call phy_create(&phy_foo), and the PHY 
-> client could call phy_find(&phy_foo).  Or something like that; make up 
-> your own structure tags and function names.
+I think you need not move this to exynos (since registers in dbi_base is common
+for all platforms) but modify the pcie-designware.c to use different address
+space for dbi_base. In your case, you'll duplicate the address space for
+dbi_base and configuration space.
 
-Alright. Thanks for the hint :-)
+Also I have one more query.
+In your dt binding, your pci address and cpu address is the same. But the pci
+address should start at 0x00000000 and end at 0xffffffff (for 32bit). Shouldn't
+the cpu address map to something within this range of pci address?
 
 Thanks
 Kishon
