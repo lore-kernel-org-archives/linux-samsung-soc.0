@@ -1,79 +1,183 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to support I2S on
- Exynos5420
-Date: Tue, 23 Jul 2013 20:44:47 +0100
-Message-ID: <20130723194447.GT9858@sirena.org.uk>
-References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
- <29860116.IF545KsGYb@thinkpad>
- <20130711112023.GM24508@sirena.org.uk>
- <2214161.FSfscAvpna@thinkpad>
- <20130711130139.GQ24508@sirena.org.uk>
- <CAAgF-BdM4jw0o4+ELVo_N029tbgMJBBqJxU91e=TgBNiiREyaA@mail.gmail.com>
- <20130712084932.GY24508@sirena.org.uk>
- <CAAgF-BfdfuhoFDH+SeZogXh1wju34hGp-T9N7_+mnapHfc2yww@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
+Date: Tue, 23 Jul 2013 22:07:52 +0200
+Message-ID: <1731726.KENstTPhkb@flatron>
+References: <Pine.LNX.4.44L0.1307231017290.1304-100000@iolanthe.rowland.org> <20130723193105.GP9858@sirena.org.uk> <20130723194423.GA22984@kroah.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6QoWHXajryvO0ZWw"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:53860 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933618Ab3GWTov (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 15:44:51 -0400
-Content-Disposition: inline
-In-Reply-To: <CAAgF-BfdfuhoFDH+SeZogXh1wju34hGp-T9N7_+mnapHfc2yww@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20130723194423.GA22984@kroah.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Mark Brown <broonie@kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kyungmin.park@samsung.com, balbi@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, tony@atomide.com, arnd@arndb.de, swarren@nvidia.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com, olof@lixom.net, Stephen Warren <swarren@wwwdotor>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org
 
+On Tuesday 23 of July 2013 12:44:23 Greg KH wrote:
+> On Tue, Jul 23, 2013 at 08:31:05PM +0100, Mark Brown wrote:
+> > > You don't "know" the id of the device you are looking up, due to
+> > > multiple devices being in the system (dynamic ids, look back earlier
+> > > in
+> > > this thread for details about that.)
+> > 
+> > I got copied in very late so don't have most of the thread I'm afraid,
+> > I did try looking at web archives but didn't see a clear problem
+> > statement.  In any case this is why the APIs doing lookups do the
+> > lookups in the context of the requesting device - devices ask for
+> > whatever name they use locally.
+> 
+> What do you mean by "locally"?
+> 
+> The problem with the api was that the phy core wanted a id and a name to
+> create a phy, and then later other code was doing a "lookup" based on
+> the name and id (mushed together), because it "knew" that this device
+> was the one it wanted.
+> 
+> Just like the clock api, which, for multiple devices, has proven to
+> cause problems.  I don't want to see us accept an api that we know has
+> issues in it now, I'd rather us fix it up properly.
+> 
+> Subsystems should be able to create ids how ever they want to, and not
+> rely on the code calling them to specify the names of the devices that
+> way, otherwise the api is just too fragile.
+> 
+> I think, that if you create a device, then just carry around the pointer
+> to that device (in this case a phy) and pass it to whatever other code
+> needs it.  No need to do lookups on "known names" or anything else,
+> just normal pointers, with no problems for multiple devices, busses, or
+> naming issues.
 
---6QoWHXajryvO0ZWw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+PHY object is not a device, it is something that a device driver creates 
+(one or more instances of) when it is being probed. You don't have a clean 
+way to export this PHY object to other driver, other than keeping this PHY 
+on a list inside PHY core with some well-known ID (e.g. device name + 
+consumer port name/index, like in regulator core) and then to use this 
+well-known ID inside consumer driver as a lookup key passed to phy_get();
 
-On Tue, Jul 23, 2013 at 09:38:00AM +0530, Padma Venkat wrote:
-> On Fri, Jul 12, 2013 at 2:19 PM, Mark Brown <broonie@kernel.org> wrote:
+Actually I think for PHY case, exactly the same way as used for regulators 
+might be completely fine:
 
-> > Yes, this is good but the quirk should just be found by software based
-> > on the compatible string rather than in the DT.
+1. Each PHY would have some kind of platform, non-unique name, that is 
+just used to print some messages (like the platform/board name of a 
+regulator).
+2. Each PHY would have an array of consumers. Consumer specifier would 
+consist of consumer device name and consumer port name - just like in 
+regulator subsystem.
+3. PHY driver receives an array of, let's say, phy_init_data inside its 
+platform data that it would use to register its PHYs.
+4. Consumer drivers would have constant consumer port names and wouldn't 
+receive any information about PHYs from platform code.
 
-> You mean I just need to initialize the quirks in the driver based on
-> the compatible string?
+Code example:
 
-That's the gold standard.
+[Board file]
 
-> So what about the quirks that I added previously on 5250? Should I
-> also follow the same thing for other quirks?
+static const struct phy_consumer_data usb_20_phy0_consumers[] = {
+	{
+		.devname = "foo-ehci",
+		.port = "usbphy",
+	},
+};
 
-Yes, ideally.
+static const struct phy_consumer_data usb_20_phy1_consumers[] = {
+	{
+		.devname = "foo-otg",
+		.port = "otgphy",
+	},
+};
 
-> Or it need to be passed via driver data as it is done in spi driver?
-> Please clarify me.
+static const struct phy_init_data my_phys[] = {
+	{
+		.name = "USB 2.0 PHY 0",
+		.consumers = usb_20_phy0_consumers,
+		.num_consumers = ARRAY_SIZE(usb_20_phy0_consumers),
+	},
+	{
+		.name = "USB 2.0 PHY 1",
+		.consumers = usb_20_phy1_consumers,
+		.num_consumers = ARRAY_SIZE(usb_20_phy1_consumers),
+	},
+	{ }
+};
 
-This is a good way to initialise things based on the name - the core
-will do the lookups for you.
+static const struct platform_device usb_phy_pdev = {
+	.name = "foo-usbphy",
+	.id = -1,
+	.dev = {
+		.platform_data = my_phys,
+	},
+};
 
---6QoWHXajryvO0ZWw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+[PHY driver]
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+static int foo_usbphy_probe(pdev)
+{
+	struct foo_usbphy *foo;
+	struct phy_init_data *init_data = pdev->dev.platform_data;
+	/* ... */
+	// for each PHY in init_data {
+		phy_register(&foo->phy[i], &init_data[i]);
+	// }
+	/* ... */
+}
 
-iQIcBAEBAgAGBQJR7t0sAAoJELSic+t+oim9jSoP/1903jDMr7BsIOEAWcT5diXm
-5GrXZt719vV5v4rMrWZhMolb9Uugr43U9U7+I+5RdpCEbxnkF7kDcn+SRduo8/2r
-K/E/6F1T+FCxvVvTZxj9ENAR6NQ+Zjx1EZuIOhyUg/+s0t5MN2xp/HCE58LwIUNg
-13Bjywgn/OvkyeGMZKWQiSR+yje7d5IfahwX4rH/eZt+pQVCkYWlXJhLgJ062kk3
-C50U7nq4aeOnXQyZ7kKDckY6ZWro/tfq+DB1wtjKDBXYeAvXx6DEFjZPpUhpo6be
-uz/ydQrzlQEExNmZpY1PiM/eh0Ng1fL/WufgZoLZSwGhWPvPyRL+5uHDMS+/rllH
-JDmKM0m5rYpXcdBIvRWr1DARKgHhEwD0H4rN5thbhKHzvrRvpJcHlrih28/3cILM
-Oj8kaWkFktnDzw5DvN9qSYN/6Ina+fojyLY0VHT9fa28Ei4j+FMWOf2GvnIQEw6G
-+A9Vsdt48zqxJWuhAmXUg5dLqa8fgf1kgytE5sTopqqvx/oYe+FpQj8gWFh51sW/
-iC9+eaq3BJM+IP4/iUmatDHKkZQ1KL6IYDrzaqbKwB2uBiWThyFYY5O1GgnHBELJ
-dyksOJW5uLYMzfZt15dM0HdV80DEp0v9Uv8cmSllaQeBGJuS1LZ2DJusaapwsVa9
-9fZLCcD4r5M/NSGzz2Db
-=4+TE
------END PGP SIGNATURE-----
+[EHCI driver]
 
---6QoWHXajryvO0ZWw--
+static int foo_ehci_probe(pdev)
+{
+	struct phy *phy;
+	/* ... */
+	phy = phy_get(&pdev->dev, "usbphy");
+	/* ... */
+}
+
+[OTG driver]
+
+static int foo_otg_probe(pdev)
+{
+	struct phy *phy;
+	/* ... */
+	phy = phy_get(&pdev->dev, "otgphy");
+	/* ... */
+}
+
+> > > > Having to write platform data for everything gets old fast and the
+> > > > code
+> > > > duplication is pretty tedious...
+> > > 
+> > > Adding a single pointer is "tedious"?  Where is the "name" that you
+> > > are
+> > > going to lookup going to come from?  That code doesn't write
+> > > itself...
+> > 
+> > It's adding platform data in the first place that gets tedious - and
+> > of
+> > course there's also DT and ACPI to worry about, it's not just a case
+> > of
+> > platform data and then you're done.  Pushing the lookup into library
+> > code means that drivers don't have to worry about any of this stuff.
+> 
+> I agree, so just pass around the pointer to the phy and all is good.  No
+> need to worry about DT or ACPI or anything else.
+
+With Device Tree we don't have board files anymore. How would you pass any 
+pointers between provider and consumer drivers in this case?
+
+> > For most of the APIs doing this there is a clear and unambiguous name
+> > in the hardware that can be used (and for hardware process reasons is
+> > unlikely to get changed).  The major exception to this is the clock
+> > API since it is relatively rare to have clear, segregated IP level
+> > information for IPs baked into larger chips.  The other APIs tend to
+> > be establishing chip to chip links.
+> 
+> The clock api is having problems with multiple "names" due to dynamic
+> devices from what I was told.  I want to prevent the PHY interface from
+> having that same issue.
+
+Yes, the clock API has a problem related to the clock namespace being 
+global for all registered clock controllers. This is not a problem with 
+lookup in general, but with wrong lookup key chosen.
+
+Best regards,
+Tomasz
+
