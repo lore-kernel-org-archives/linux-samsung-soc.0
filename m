@@ -1,120 +1,169 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix low level debug support
-Date: Tue, 23 Jul 2013 09:45:55 +0200
-Message-ID: <5267014.uEXBxK1uXj@flatron>
-References: <1373709465-21042-1-git-send-email-yadi.brar@samsung.com> <6790481.xItQ52QUhM@amdc1227> <CAKew6eX5JperTq4Quo_mPR8L638_VfqTnDvz_kmmTjDNNykYOg@mail.gmail.com>
+Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
+Date: Tue, 23 Jul 2013 09:55:08 +0200
+Message-ID: <3419798.aorxYv8pdo@flatron>
+References: <Pine.LNX.4.44L0.1307221028440.1495-100000@iolanthe.rowland.org> <1714400.neMPBWOlzi@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f50.google.com ([209.85.214.50]:50563 "EHLO
-	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754224Ab3GWHqB (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:53783 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754093Ab3GWHzQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 03:46:01 -0400
-Received: by mail-bk0-f50.google.com with SMTP id ik5so180080bkc.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 00:45:59 -0700 (PDT)
-In-Reply-To: <CAKew6eX5JperTq4Quo_mPR8L638_VfqTnDvz_kmmTjDNNykYOg@mail.gmail.com>
+	Tue, 23 Jul 2013 03:55:16 -0400
+In-Reply-To: <1714400.neMPBWOlzi@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, kgene@kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>
+To: Alan Stern <stern@rowland.harvard.edu>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, broonie@kernel.org
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Sascha Hauer <s.hauer@pengutronix.de>, kyungmin.park@samsung.com, balbi@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, tony@atomide.com, arnd@arndb.de, swarren@nvidia.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com, olof@lixom.net, Stephen Warren <swarren@wwwdotorg.org>, b.zolnierkie@samsung.com, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-On Tuesday 23 of July 2013 13:04:58 Yadwinder Singh Brar wrote:
-> On Mon, Jul 22, 2013 at 6:37 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > On Monday 22 of July 2013 06:23:06 Thomas Abraham wrote:
-> >> On 13 July 2013 04:57, Yadwinder Singh Brar <yadi.brar@samsung.com>
-> > 
-> > wrote:
-> >> > Presently, using exynos_defconfig with CONFIG_DEBUG_LL and
-> >> > CONFIG_EARLY_PRINTK on, kernel is not booting, we are getting
-> >> > following:
-> >> > 
-> >> > [    0.000000] ------------[ cut here ]------------
-> >> > [    0.000000] kernel BUG at mm/vmalloc.c:1134!
-> >> > [    0.000000] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-> >> > [    0.000000] Modules linked in:
-> >> > [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 3.11.0-rc1
-> >> > #633
-> >> > [    0.000000] task: c052ec48 ti: c0524000 task.ti: c0524000
-> >> > [    0.000000] PC is at vm_area_add_early+0x54/0x94
-> >> > [    0.000000] LR is at add_static_vm_early+0xc/0x60
-> >> > 
-> >> > Its because iotable_init tries to map UART again which is already
-> >> > mapped by debug_ll_io_init() call in exynos_init_io() within same
-> >> > virtal address range as requested later.
-> >> 
-> >> debug_ll_io_init ioremaps debug uart address space with 4KB size
-> >> whereas the exynos_init_io() function ioremaps a single 512KB memory
-> >> size for all the four uart ports which envelops the mapping created
-> >> by
-> >> debug_ll_io_init. This is caught as a kernel bug.
-> > 
-> > Right.
-> > 
-> >> > This issue seems to be occured after :
-> >> > commit ee4de5d99aeac44f4507b7538b2b3faedc5205b9
-> >> > ARM: 7781/1: mmu: Add debug_ll_io_init() mappings to early mappings
-> >> > 
-> >> > This patch moves S3C_UART iodesc(in iodesc_list) inside
-> >> > CONFIG_DEBUG_LL
-> >> > check.
-> >> 
-> >> Instead of moving, all the such iodesc entries for UART controller
-> >> can
-> >> be removed for all Samsung SoC's now since the Samsung uart driver
-> >> does a ioremap during probe and any needed iomapping for earlyprintk
-> >> is handled by debug_ll_io_init().
-> > 
-> > Yes. This mapping should not be here, but...
-> > 
-> > If you look at plat-samsung/pm.c, there is a debugging code that
-> > relies on presence of this mapping.
-> 
-> Thanks for pointing this, I completely missed it.
-> 
-> >So until this gets fixed/removed (I'm working on
-> >
-> > it right now), I'd suggest keeping Yadwinder's solution.
-> 
-> But that debugging code is under "CONFIG_SAMSUNG_PM_DEBUG"
-> and SAMSUNG_PM_DEBUG selects DEBUG_LL also.
-> So the problem you stated below will their always when ever it will
-> enter that code
+[Fixed address of devicetree mailing list and added more people on CC.]
 
-Makes sense.
-
-> > The only problem is that the code in pm.c expects _all_ UARTs to be
-> > mapped (see s3c_pm_resture_uarts() and co.), so in case of DEBUG_LL
-> > enabled, something must be done ensure that rest of the ports are
-> > mapped.
-> how about fixing this problem with something like below:
-> saving only mapped/configured UART's registers.
-> 
-> 8<----------------------------------------------------------------------
-> ---------------------------------- diff --git
-> a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c index
-> ea36136..34a7371 100644
-> --- a/arch/arm/plat-samsung/pm.c
-> +++ b/arch/arm/plat-samsung/pm.c
-> @@ -102,10 +102,8 @@ static void s3c_pm_save_uart(unsigned int uart,
-> struct pm_u static void s3c_pm_save_uarts(void)
->  {
->         struct pm_uart_save *save = uart_save;
-> -       unsigned int uart;
-> 
-> -       for (uart = 0; uart < CONFIG_SERIAL_SAMSUNG_UARTS; uart++,
-> save++) -               s3c_pm_save_uart(uart, save);
-> +       s3c_pm_save_uart(CONFIG_DEBUG_S3C_UART, save);
->  }
-> 
->  static void s3c_pm_restore_uart(unsigned int uart, struct pm_uart_save
-> *save)
-> 
-> 8<----------------------------------------------------------------------
-> ------------------------------------
-
-Looks good to me.
+For reference, full thread can be found under following link:
+http://thread.gmane.org/gmane.linux.ports.arm.kernel/252813
 
 Best regards,
 Tomasz
+
+On Tuesday 23 of July 2013 09:29:32 Tomasz Figa wrote:
+> Hi Alan,
+> 
+> On Monday 22 of July 2013 10:44:39 Alan Stern wrote:
+> > On Mon, 22 Jul 2013, Kishon Vijay Abraham I wrote:
+> > > > 	The PHY and the controller it is attached to are both 
+physical
+> > > > 	devices.
+> > > > 	
+> > > > 	The connection between them is hardwired by the system
+> > > > 	manufacturer and cannot be changed by software.
+> > > > 	
+> > > > 	PHYs are generally described by fixed system-specific 
+board
+> > > > 	files or by Device Tree information.  Are they ever 
+discovered
+> > > > 	dynamically?
+> > > 
+> > > No. They are created just like any other platform devices are
+> > > created.
+> > 
+> > Okay.  Are PHYs _always_ platform devices?
+> 
+> They can be i2c, spi or any other device types as well.
+> 
+> > > > 	Is the same true for the controllers attached to the PHYs?
+> > > > 	If not -- if both a PHY and a controller are discovered
+> > > > 	dynamically -- how does the kernel know whether they are
+> > > > 	connected to each other?
+> > > 
+> > > No differences here. Both PHY and controller will have dt
+> > > information
+> > > or hwmod data using which platform devices will be created.
+> > > 
+> > > > 	The kernel needs to know which controller is attached to 
+which
+> > > > 	PHY.  Currently this information is represented by name or 
+ID
+> > > > 	strings embedded in platform data.
+> > > 
+> > > right. It's embedded in the platform data of the controller.
+> > 
+> > It must also be embedded in the PHY's platform data somehow.
+> > Otherwise, how would the kernel know which PHY to use?
+> 
+> By using a PHY lookup as Stephen and I suggested in our previous
+> replies. Without any extra data in platform data. (I have even posted a
+> code example.)
+> 
+> > > > 	The PHY's driver (the supplier) uses the platform data to
+> > > > 	construct a platform_device structure that represents the 
+PHY.
+> > > 
+> > > Currently the driver assigns static labels (corresponding to the
+> > > label
+> > > used in the platform data of the controller).
+> > > 
+> > > > 	Until this is done, the controller's driver (the client) 
+cannot
+> > > > 	use the PHY.
+> > > 
+> > > right.
+> > > 
+> > > > 	Since there is no parent-child relation between the PHY 
+and the
+> > > > 	controller, there is no guarantee that the PHY's driver 
+will be
+> > > > 	ready when the controller's driver wants to use it.  A 
+deferred
+> > > > 	probe may be needed.
+> > > 
+> > > right.
+> > > 
+> > > > 	The issue (or one of the issues) in this discussion is 
+that
+> > > > 	Greg does not like the idea of using names or IDs to 
+associate
+> > > > 	PHYs with controllers, because they are too prone to
+> > > > 	duplications or other errors.  Pointers are more reliable.
+> > > > 	
+> > > > 	But pointers to what?  Since the only data known to be
+> > > > 	available to both the PHY driver and controller driver is 
+the
+> > > > 	platform data, the obvious answer is a pointer to platform 
+data
+> > > > 	(either for the PHY or for the controller, or maybe both).
+> > > 
+> > > hmm.. it's not going to be simple though as the platform device for
+> > > the PHY and controller can be created in entirely different places.
+> > > e.g., in some cases the PHY device is a child of some mfd core
+> > > device
+> > > (the device will be created in drivers/mfd) and the controller
+> > > driver
+> > > (usually) is created in board file. I guess then we have to come up
+> > > with something to share a pointer in two different files.
+> > 
+> > The ability for two different source files to share a pointer to a
+> > data
+> > item defined in a third source file has been around since long before
+> > the C language was invented.  :-)
+> > 
+> > In this case, it doesn't matter where the platform_device structures
+> > are created or where the driver source code is.  Let's take a simple
+> > example.  Suppose the system design includes a PHY named "foo".  Then
+> > the board file could contain:
+> > 
+> > struct phy_info { ... } phy_foo;
+> > EXPORT_SYMBOL_GPL(phy_foo);
+> > 
+> > and a header file would contain:
+> > 
+> > extern struct phy_info phy_foo;
+> > 
+> > The PHY supplier could then call phy_create(&phy_foo), and the PHY
+> > client could call phy_find(&phy_foo).  Or something like that; make up
+> > your own structure tags and function names.
+> > 
+> > It's still possible to have conflicts, but now two PHYs with the same
+> > name (or a misspelled name somewhere) will cause an error at link
+> > time.
+> 
+> This is incorrect, sorry. First of all it's a layering violation - you
+> export random driver-specific symbols from one driver to another. Then
+> imagine 4 SoCs - A, B, C, D. There are two PHY types PHY1 and PHY2 and
+> there are two types of consumer drivers (e.g. USB host controllers). Now
+> consider following mapping:
+> 
+> SoC	PHY	consumer
+> A	PHY1	HOST1
+> B	PHY1	HOST2
+> C	PHY2	HOST1
+> D	PHY2	HOST2
+> 
+> So we have to be able to use any of the PHYs with any of the host
+> drivers. This means you would have to export symbol with the same name
+> from both PHY drivers, which obviously would not work in this case,
+> because having both drivers enabled (in a multiplatform aware
+> configuration) would lead to linking conflict.
+> 
+> Best regards,
+> Tomasz
