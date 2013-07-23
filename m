@@ -1,195 +1,74 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH] ARM: DT: Exynos: fix number of interrupt-cells in mct node
-Date: Tue, 23 Jul 2013 15:17:58 +0530
-Message-ID: <CANuQgHH+nebJf4HPrsWPLECyvWO8OGJj=YeDG4GQAmLHM8GrPw@mail.gmail.com>
-References: <1371220886-11616-1-git-send-email-chander.kashyap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Antonios Motakis <a.motakis@virtualopensystems.com>
+Subject: [PATCH] iommu/exynos: add devices attached to the System MMU to an IOMMU group
+Date: Tue, 23 Jul 2013 12:01:32 +0200
+Message-ID: <1374573694-30595-1-git-send-email-a.motakis@virtualopensystems.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:36768 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755833Ab3GWJr7 (ORCPT
+Received: from mail-we0-f172.google.com ([74.125.82.172]:63731 "EHLO
+	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755228Ab3GWKBy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 05:47:59 -0400
-Received: by mail-oa0-f41.google.com with SMTP id n10so10816477oag.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 02:47:59 -0700 (PDT)
-In-Reply-To: <1371220886-11616-1-git-send-email-chander.kashyap@linaro.org>
+	Tue, 23 Jul 2013 06:01:54 -0400
+Received: by mail-we0-f172.google.com with SMTP id t61so1967435wes.3
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 03:01:53 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+Cc: kvmarm@lists.cs.columbia.edu, Antonios Motakis <a.motakis@virtualopensystems.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Sachin Kamat <sachin.kamat@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, open list <linux-kernel@vger.kernel.org>
 
-ping.
+IOMMU groups are expected by certain users of the IOMMU API,
+e.g. VFIO. Since each device is behind its own System MMU, we
+can allocate a new IOMMU group for each device.
 
-On 14 June 2013 20:11, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> Two cells were used to specify interrupts in mct node, while second cell
-> always remains unused. Hence use only one cell.
-> Suggested by Tomasz Figa.
->
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos4210.dtsi |   19 +++++++++----------
->  arch/arm/boot/dts/exynos4212.dtsi |   19 +++++++++----------
->  arch/arm/boot/dts/exynos4412.dtsi |   23 +++++++++++------------
->  arch/arm/boot/dts/exynos5250.dtsi |   19 +++++++++----------
->  4 files changed, 38 insertions(+), 42 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index 54710de..ad50010 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -52,23 +52,22 @@
->                 compatible = "samsung,exynos4210-mct";
->                 reg = <0x10050000 0x800>;
->                 interrupt-controller;
-> -               #interrups-cells = <2>;
-> +               #interrups-cells = <1>;
->                 interrupt-parent = <&mct_map>;
-> -               interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-> -                            <4 0>, <5 0>;
-> +               interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
->                 clocks = <&clock 3>, <&clock 344>;
->                 clock-names = "fin_pll", "mct";
->
->                 mct_map: mct-map {
-> -                       #interrupt-cells = <2>;
-> +                       #interrupt-cells = <1>;
->                         #address-cells = <0>;
->                         #size-cells = <0>;
-> -                       interrupt-map = <0x0 0 &gic 0 57 0>,
-> -                                       <0x1 0 &gic 0 69 0>,
-> -                                       <0x2 0 &combiner 12 6>,
-> -                                       <0x3 0 &combiner 12 7>,
-> -                                       <0x4 0 &gic 0 42 0>,
-> -                                       <0x5 0 &gic 0 48 0>;
-> +                       interrupt-map = <0 &gic 0 57 0>,
-> +                                       <1 &gic 0 69 0>,
-> +                                       <2 &combiner 12 6>,
-> +                                       <3 &combiner 12 7>,
-> +                                       <4 &gic 0 42 0>,
-> +                                       <5 &gic 0 48 0>;
->                 };
->         };
->
-> diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
-> index c0f60f4..ba9ada1 100644
-> --- a/arch/arm/boot/dts/exynos4212.dtsi
-> +++ b/arch/arm/boot/dts/exynos4212.dtsi
-> @@ -39,21 +39,20 @@
->                 compatible = "samsung,exynos4412-mct";
->                 reg = <0x10050000 0x800>;
->                 interrupt-controller;
-> -               #interrups-cells = <2>;
-> +               #interrups-cells = <1>;
->                 interrupt-parent = <&mct_map>;
-> -               interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-> -                            <4 0>, <5 0>;
-> +               interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
->
->                 mct_map: mct-map {
-> -                       #interrupt-cells = <2>;
-> +                       #interrupt-cells = <>;
->                         #address-cells = <0>;
->                         #size-cells = <0>;
-> -                       interrupt-map = <0x0 0 &gic 0 57 0>,
-> -                                       <0x1 0 &combiner 12 5>,
-> -                                       <0x2 0 &combiner 12 6>,
-> -                                       <0x3 0 &combiner 12 7>,
-> -                                       <0x4 0 &gic 1 12 0>,
-> -                                       <0x5 0 &gic 1 12 0>;
-> +                       interrupt-map = <0 &gic 0 57 0>,
-> +                                       <1 &combiner 12 5>,
-> +                                       <2 &combiner 12 6>,
-> +                                       <3 &combiner 12 7>,
-> +                                       <4 &gic 1 12 0>,
-> +                                       <5 &gic 1 12 0>;
->                 };
->         };
->  };
-> diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-> index 270b389..a680de7 100644
-> --- a/arch/arm/boot/dts/exynos4412.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412.dtsi
-> @@ -39,25 +39,24 @@
->                 compatible = "samsung,exynos4412-mct";
->                 reg = <0x10050000 0x800>;
->                 interrupt-controller;
-> -               #interrups-cells = <2>;
-> +               #interrups-cells = <1>;
->                 interrupt-parent = <&mct_map>;
-> -               interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-> -                            <4 0>, <5 0>, <6 0>, <7 0>;
-> +               interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>;
->                 clocks = <&clock 3>, <&clock 344>;
->                 clock-names = "fin_pll", "mct";
->
->                 mct_map: mct-map {
-> -                       #interrupt-cells = <2>;
-> +                       #interrupt-cells = <1>;
->                         #address-cells = <0>;
->                         #size-cells = <0>;
-> -                       interrupt-map = <0x0 0 &gic 0 57 0>,
-> -                                       <0x1 0 &combiner 12 5>,
-> -                                       <0x2 0 &combiner 12 6>,
-> -                                       <0x3 0 &combiner 12 7>,
-> -                                       <0x4 0 &gic 1 12 0>,
-> -                                       <0x5 0 &gic 1 12 0>,
-> -                                       <0x6 0 &gic 1 12 0>,
-> -                                       <0x7 0 &gic 1 12 0>;
-> +                       interrupt-map = <0 &gic 0 57 0>,
-> +                                       <1 &combiner 12 5>,
-> +                                       <2 &combiner 12 6>,
-> +                                       <3 &combiner 12 7>,
-> +                                       <4 &gic 1 12 0>,
-> +                                       <5 &gic 1 12 0>,
-> +                                       <6 &gic 1 12 0>,
-> +                                       <7 &gic 1 12 0>;
->                 };
->         };
->
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index a7cf3f5..4e633ef 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -94,23 +94,22 @@
->                 compatible = "samsung,exynos4210-mct";
->                 reg = <0x101C0000 0x800>;
->                 interrupt-controller;
-> -               #interrups-cells = <2>;
-> +               #interrups-cells = <1>;
->                 interrupt-parent = <&mct_map>;
-> -               interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-> -                            <4 0>, <5 0>;
-> +               interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
->                 clocks = <&clock 1>, <&clock 335>;
->                 clock-names = "fin_pll", "mct";
->
->                 mct_map: mct-map {
-> -                       #interrupt-cells = <2>;
-> +                       #interrupt-cells = <1>;
->                         #address-cells = <0>;
->                         #size-cells = <0>;
-> -                       interrupt-map = <0x0 0 &combiner 23 3>,
-> -                                       <0x1 0 &combiner 23 4>,
-> -                                       <0x2 0 &combiner 25 2>,
-> -                                       <0x3 0 &combiner 25 3>,
-> -                                       <0x4 0 &gic 0 120 0>,
-> -                                       <0x5 0 &gic 0 121 0>;
-> +                       interrupt-map = <0 &combiner 23 3>,
-> +                                       <1 &combiner 23 4>,
-> +                                       <2 &combiner 25 2>,
-> +                                       <3 &combiner 25 3>,
-> +                                       <4 &gic 0 120 0>,
-> +                                       <5 &gic 0 121 0>;
->                 };
->         };
->
-> --
-> 1.7.9.5
->
+This patch depends on Cho KyongHo's patch series titled "[PATCH v7 00/12]
+iommu/exynos: Fixes and Enhancements of System MMU driver with DT",
+applied on a Linux 3.10.1 kernel. It has been tested on the Arndale board.
 
+Signed-off-by: Antonios Motakis <a.motakis@virtualopensystems.com>
+---
+ drivers/iommu/exynos-iommu.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-
+diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+index 51d43bb..9f39eaa 100644
+--- a/drivers/iommu/exynos-iommu.c
++++ b/drivers/iommu/exynos-iommu.c
+@@ -1134,6 +1134,28 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *domain,
+ 	return phys;
+ }
+ 
++static int exynos_iommu_add_device(struct device *dev)
++{
++	struct iommu_group *group;
++	int ret;
++
++	group = iommu_group_alloc();
++	if (IS_ERR(group)) {
++		dev_err(dev, "Failed to allocate IOMMU group\n");
++		return PTR_ERR(group);
++	}
++
++	ret = iommu_group_add_device(group, dev);
++	iommu_group_put(group);
++
++	return ret;
++}
++
++static void exynos_iommu_remove_device(struct device *dev)
++{
++	iommu_group_remove_device(dev);
++}
++
+ static struct iommu_ops exynos_iommu_ops = {
+ 	.domain_init = &exynos_iommu_domain_init,
+ 	.domain_destroy = &exynos_iommu_domain_destroy,
+@@ -1142,6 +1164,8 @@ static struct iommu_ops exynos_iommu_ops = {
+ 	.map = &exynos_iommu_map,
+ 	.unmap = &exynos_iommu_unmap,
+ 	.iova_to_phys = &exynos_iommu_iova_to_phys,
++	.add_device	= exynos_iommu_add_device,
++	.remove_device	= exynos_iommu_remove_device,
+ 	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
+ };
+ 
 -- 
-with warm regards,
-Chander Kashyap
+1.8.1.2
