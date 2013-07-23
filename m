@@ -1,61 +1,120 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH V2] watchdog: s3c2410_wdt: remove the global variables
-Date: Tue, 23 Jul 2013 08:28:18 +0530
-Message-ID: <CAK9yfHwMZXV_F5=xmcbQfhFmDXsRxu_9a8n7C92gncyiPSJNrA@mail.gmail.com>
-References: <1374473649-20050-1-git-send-email-l.krishna@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Update CONFIG_ARCH_NR_GPIO for Exynos
+Date: Tue, 23 Jul 2013 08:41:32 +0530
+Message-ID: <CAK9yfHyNqDJKuC8urpyrKR564jVJVfsJRRF0Z9a3p52iLWLZ8A@mail.gmail.com>
+References: <1372054438-15693-1-git-send-email-sachin.kamat@linaro.org>
+	<CAK9yfHzmF_oxc3DsuT5wtXX2C5O+wLxz4C2Ps3cVPnKLb8jOEw@mail.gmail.com>
+	<0ad601ce868c$d88bff40$89a3fdc0$@org>
+	<3136364.6D0qu7zGk3@amdc1227>
+	<51ED89CA.2040908@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:60394 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754673Ab3GWC6T (ORCPT
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:50355 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754062Ab3GWDLd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 22:58:19 -0400
-Received: by mail-oa0-f53.google.com with SMTP id k14so9883063oag.40
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 19:58:19 -0700 (PDT)
-In-Reply-To: <1374473649-20050-1-git-send-email-l.krishna@samsung.com>
+	Mon, 22 Jul 2013 23:11:33 -0400
+Received: by mail-ob0-f176.google.com with SMTP id v19so8890733obq.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 20:11:32 -0700 (PDT)
+In-Reply-To: <51ED89CA.2040908@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, jg1.han@samsung.com
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Hi Leela,
+On 23 July 2013 01:06, Sylwester Nawrocki <sylvester.nawrocki@gmail.com> wrote:
+> On 07/22/2013 07:21 PM, Tomasz Figa wrote:
+>>
+>> On Monday 22 of July 2013 12:37:52 Kukjin Kim wrote:
+>>>
+>>> Sachin Kamat wrote:
+>>>>
+>>>> On 22 July 2013 07:18, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>>>>>
+>>>>> Sachin Kamat wrote:
+>>>>>>
+>>>>>> With the recent cleanup in Exynos platform code notably commits
+>>>>>> 17859bec ("ARM: EXYNOS: Do not select legacy Kconfig symbols any
+>>>>>> more") and b9222210 ("ARM: EXYNOS: Remove mach/gpio.h"), the
+>>>>>> definition
+>>>>>> of ARCH_NR_GPIOS got removed. This started causing problems on SoCs
+>>>>
+>>>>
+>>>> like
+>>>>
+>>>>>> Exynos4412 which have more (285) than the default number of GPIOs
+>>>
+>>>
+>>> (255).
+>>>
+>>>>>> Thus define this number in Kconfig file. Without this patch we get
+>>>>>> the
+>>>>>> following errors during boot:
+>>>>>>
+>>>>>> gpiochip_add: gpios 251..258 (gpv0) failed to register
+>>>>>> samsung-pinctrl 106e0000.pinctrl: failed to register gpio_chip gpv0,
+>>>>>> error code: -22
+>>>>>> samsung-pinctrl: probe of 106e0000.pinctrl failed with error -22
+>>>>>>
+>>>>>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+>>>>>> Cc: Tomasz Figa<t.figa@samsung.com>
+>>>>>> ---
+>>>>>> Based on Kukjin's for-next tree.
+>>>>>> ---
+>>>>>>
+>>>>>>   arch/arm/Kconfig |    1 +
+>>>>>>   1 file changed, 1 insertion(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>>>>>> index ddf2667..380a53b 100644
+>>>>>> --- a/arch/arm/Kconfig
+>>>>>> +++ b/arch/arm/Kconfig
+>>>>>> @@ -1578,6 +1578,7 @@ config ARCH_NR_GPIO
+>>>>>>
+>>>>>>        default 512 if SOC_OMAP5
+>>>>>>        default 392 if ARCH_U8500
+>>>>>>        default 352 if ARCH_VT8500
+>>>>>>
+>>>>>> +     default 288 if ARCH_EXYNOS
+>>>>>>
+>>>>>>        default 288 if ARCH_SUNXI
+>>>>>>        default 264 if MACH_H4700
+>>>>>>        default 0
+>>>>>>
+>>>>>> --
+>>>>>> 1.7.9.5
+>>>>>
+>>>>>
+>>>>> Hmm, BTW, I'm wondering why it is 288 not 285 or other specific
+>>>
+>>>
+>>> number...
+>>>
+>>>> I wasn't really sure if we can have any number there. I chose the
+>>>> closest one (288) which was already used by other platform.
+>>>> If there is no problem to use 285 itself then I can resend with that
+>>>> number. Please let me know.
+>>>
+>>>
+>>> If there is no reason, please don't use bigger value than necessary one.
+>>
+>>
+>> Hmm, what about some GPIO expanders that would require bigger GPIO address
+>> space? I would reserve some space just in case, i.e. define this value to
+>> be
+>> the highest number of GPIOs on all Exynos SoCs + some extra, like 32 or
+>> 64.
+>
+>
+> That sounds like a good idea. IIRC I once had to increase ARCH_NR_GPIO to
+> make the wm8994 GPIO controller working. The wm8994 driver also handles
+> WM1811 audio codec that some Exynos development boards are shipped with.
 
-On 22 July 2013 11:44, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
-> This patch removes the global variables in the driver file and
-> group them into a structure.
->
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  Note: This patch is rebased on kgene's for-next branch and tested on SMDK5420.
->
->  Changes since V1:
->         - changed the patch subject.
->         - indentation correction in s3c2410_watchdog structure.
->
->  drivers/watchdog/s3c2410_wdt.c |  204 +++++++++++++++++++++++-----------------
->  1 file changed, 119 insertions(+), 85 deletions(-)
->
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 6a22cf5..de679d0 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -84,13 +84,20 @@ MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
->                         "0 to reboot (default 0)");
->  MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
->
-> -static struct device    *wdt_dev;      /* platform device attached to */
-> -static struct resource *wdt_mem;
-> -static struct resource *wdt_irq;
-> -static struct clk      *wdt_clock;
-> -static void __iomem    *wdt_base;
-> -static unsigned int     wdt_count;
-> -static DEFINE_SPINLOCK(wdt_lock);
-> +struct s3c2410_watchdog {
-> +       struct device           *dev;   /* platform device attached to */
+Looks like a valid point.
 
-Since you would anyway be respinning this patch to address comments
-from Tomasz, please remove the above comment too.
+Kukjin,
+Let me know your opinion about this before I respin the patch.
 
 -- 
 With warm regards,
