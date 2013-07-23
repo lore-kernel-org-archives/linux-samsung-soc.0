@@ -1,74 +1,103 @@
-From: Antonios Motakis <a.motakis@virtualopensystems.com>
-Subject: [PATCH] iommu/exynos: add devices attached to the System MMU to an IOMMU group
-Date: Tue, 23 Jul 2013 12:01:32 +0200
-Message-ID: <1374573694-30595-1-git-send-email-a.motakis@virtualopensystems.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH 2/4] clk: exynos-audss: allow input clocks to be specified
+ in device tree
+Date: Tue, 23 Jul 2013 15:55:04 +0530
+Message-ID: <CAAgF-BeKm3EqyV9UAt0i44-dXK3n58RuCTYiRBNpsW=aED_tkg@mail.gmail.com>
+References: <1373458313-18970-1-git-send-email-padma.v@samsung.com>
+	<1610421.OFFn8rqlxt@amdc1227>
+	<20130722181530.7598.73318@quantum>
+	<5824726.DGbrnrmYE0@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f172.google.com ([74.125.82.172]:63731 "EHLO
-	mail-we0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755228Ab3GWKBy (ORCPT
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:48867 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756252Ab3GWKZF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 06:01:54 -0400
-Received: by mail-we0-f172.google.com with SMTP id t61so1967435wes.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 03:01:53 -0700 (PDT)
+	Tue, 23 Jul 2013 06:25:05 -0400
+Received: by mail-ob0-f171.google.com with SMTP id dn14so9855444obc.30
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 03:25:04 -0700 (PDT)
+In-Reply-To: <5824726.DGbrnrmYE0@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
-Cc: kvmarm@lists.cs.columbia.edu, Antonios Motakis <a.motakis@virtualopensystems.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Sachin Kamat <sachin.kamat@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, open list <linux-kernel@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, "broonie@kernel.org" <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, abrestic@chromium.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-IOMMU groups are expected by certain users of the IOMMU API,
-e.g. VFIO. Since each device is behind its own System MMU, we
-can allocate a new IOMMU group for each device.
+Hi Tomasz,
 
-This patch depends on Cho KyongHo's patch series titled "[PATCH v7 00/12]
-iommu/exynos: Fixes and Enhancements of System MMU driver with DT",
-applied on a Linux 3.10.1 kernel. It has been tested on the Arndale board.
+On Tue, Jul 23, 2013 at 1:12 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Monday 22 of July 2013 11:15:30 Mike Turquette wrote:
+>> Quoting Tomasz Figa (2013-07-22 09:28:47)
+>>
+>> > Hi Padmavathi, Andrew,
+>> >
+>> > On Wednesday 10 of July 2013 17:41:51 Padmavathi Venna wrote:
+>> > > From: Andrew Bresticker <abrestic@chromium.org>
+>> > >
+>> > > This allows the input clocks to the Exynos AudioSS block to be
+>> > > specified via device-tree bindings.  Default names will be used
+>> > > when an input clock is not given.  This will be useful when adding
+>> > > support for the Exynos5420 where the audio bus clock is called
+>> > > "sclk_maudio0" instead of "sclk_audio0".
+>> > >
+>> > > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>> > > Reviewed-on: https://gerrit.chromium.org/gerrit/57833
+>> > > Reviewed-by: Simon Glass <sjg@chromium.org>
+>> > > ---
+>> > >
+>> > >  .../devicetree/bindings/clock/clk-exynos-audss.txt |   31
+>> > >
+>> > > ++++++++++++++++++- drivers/clk/samsung/clk-exynos-audss.c
+>> > >   |> >
+>> > >   28 +++++++++++++++-- 2 files changed, 53 insertions(+), 6
+>> > >   deletions(-)
+>> >
+>> > Well, this is basically how it should be done, but in current state of
+>> > clock core I can see a problem: can we really rely on the order of
+>> > clock initialization? I mean, we can't defer initialization of
+>> > particular clock controller until all external clocks it needs are
+>> > available, because there is no probing involved here.
 
-Signed-off-by: Antonios Motakis <a.motakis@virtualopensystems.com>
----
- drivers/iommu/exynos-iommu.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+your point is valid. In this case audio clk controller registration
+happening only after CMU clk
+controller from which audss needs clks. So this patch can't be taken in?
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 51d43bb..9f39eaa 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1134,6 +1134,28 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *domain,
- 	return phys;
- }
- 
-+static int exynos_iommu_add_device(struct device *dev)
-+{
-+	struct iommu_group *group;
-+	int ret;
-+
-+	group = iommu_group_alloc();
-+	if (IS_ERR(group)) {
-+		dev_err(dev, "Failed to allocate IOMMU group\n");
-+		return PTR_ERR(group);
-+	}
-+
-+	ret = iommu_group_add_device(group, dev);
-+	iommu_group_put(group);
-+
-+	return ret;
-+}
-+
-+static void exynos_iommu_remove_device(struct device *dev)
-+{
-+	iommu_group_remove_device(dev);
-+}
-+
- static struct iommu_ops exynos_iommu_ops = {
- 	.domain_init = &exynos_iommu_domain_init,
- 	.domain_destroy = &exynos_iommu_domain_destroy,
-@@ -1142,6 +1164,8 @@ static struct iommu_ops exynos_iommu_ops = {
- 	.map = &exynos_iommu_map,
- 	.unmap = &exynos_iommu_unmap,
- 	.iova_to_phys = &exynos_iommu_iova_to_phys,
-+	.add_device	= exynos_iommu_add_device,
-+	.remove_device	= exynos_iommu_remove_device,
- 	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
- };
- 
--- 
-1.8.1.2
+Thanks
+Padma
+
+>>
+>> The clock core allows registering clocks even if their parents are not
+>> yet registered. I test this path with some dummy clocks every so often
+>> to make sure the re-parenting operation are completed successfully after
+>> the parents eventually are registered.
+>
+> Sure it does, but this patch is about something different. It adds device
+> tree based lookup (of_clk_get_by_name()) of external clocks (as opposed to
+> existing lookup by name), which will fail if provider pointed by phandle
+> is not registered yet.
+>
+>> This feature was not used in practice until recently with the advent of
+>> multiple clock controllers getting registered and DT description of
+>> clocks / clock controllers that may be "out of order". If you find any
+>> bugs please let me know ;-)
+>
+> I will send you a bunch of patches sorting out issues I found in
+> clk_set_rate() path, but give me some time to prepare them :).
+>
+> As for multiple clock controllers, this is going to be funny. I have
+> discussed this a bit with Sylwester and we managed to find some design
+> issues that I think must be solved:
+>
+> a) What about multiple controllers with identical clock names? Imagine two
+> PMICs that can also generate 32 KHz clocks, both having them named
+> "clk32k". Am I right saying that this won't work with current code?
+>
+> b) What are the rules of using clock-output-names property (and what
+> should be used in non-DT case)? I can imagine using it to assign platform-
+> specific names of clock outputs of extra clock controllers (this would
+> help in the above case of "clk32k"), but currently it seems like it is
+> optional to use it in clock drivers and the meaning is provider-specific.
+>
+> Best regards,
+> Tomasz
+>
