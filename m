@@ -1,86 +1,38 @@
-From: Chanho Park <chanho61.park@samsusng.com>
-Subject: RE: [PATCH] clk: exynos4: fix g2d/mdma clocks of exynos4x12
-Date: Tue, 23 Jul 2013 09:42:24 +0900
-Message-ID: <00f401ce873d$7fabbf80$7f033e80$@samsusng.com>
-References: <1374480750-30962-1-git-send-email-chanho61.park@samsung.com>
- <CAK9yfHwNgZrZPT5c4DxfsDchWFXR2nWTVxCY2kZTEZW4PwyOng@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 6/8] usb: host: ohci-s3c2410 Use clk_prepare_enable/clk_disable_unprepare
+Date: Tue, 23 Jul 2013 02:44:59 +0200
+Message-ID: <1749259.aa65CrEVoR@flatron>
+References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com> <1374536965-3545-7-git-send-email-tomasz.figa@gmail.com> <CAOMZO5D4X+GT+LdUOjorJ8xgBCwv9iAP4W-RzKrbnE-93kxmUg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47520 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751589Ab3GWAmr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Jul 2013 20:42:47 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MQD00HOW5YNNQ60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 23 Jul 2013 09:42:24 +0900 (KST)
-In-reply-to: <CAK9yfHwNgZrZPT5c4DxfsDchWFXR2nWTVxCY2kZTEZW4PwyOng@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOMZO5D4X+GT+LdUOjorJ8xgBCwv9iAP4W-RzKrbnE-93kxmUg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Chanho Park' <chanho61.park@samsung.com>
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-> -----Original Message-----
-> From: Sachin Kamat [mailto:sachin.kamat@linaro.org]
-> Sent: Monday, July 22, 2013 7:01 PM
-> To: Chanho Park
-> Cc: mturquette@linaro.org; kgene.kim@samsung.com;
-> thomas.abraham@linaro.org; t.figa@samsung.com; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; Kyungmin
-> Park
-> Subject: Re: [PATCH] clk: exynos4: fix g2d/mdma clocks of exynos4x12
+On Monday 22 of July 2013 21:15:12 Fabio Estevam wrote:
+> On Mon, Jul 22, 2013 at 8:49 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> 
+wrote:
+> >         dev_dbg(&dev->dev, "s3c2410_start_hc:\n");
+> > 
+> > -       clk_enable(usb_clk);
+> > +       clk_prepare_enable(usb_clk);
 > 
-> Hi Chanho,
-> 
-> On 22 July 2013 13:42, Chanho Park <chanho61.park@samsung.com> wrote:
-> > The exynos4x12 has different address of GATE_IP_IMAGE reg. We should
-> > use EXYNOS4X12_GATE_IP_IMAGE for g2d gating clocks instead of 4210's
-> reg.
-> > In case of mdma node, We don't use it for any exynos4 chipsets. I
-> > think we'll need to change it to 'none' or leave it on.
-> >
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  drivers/clk/samsung/clk-exynos4.c |    4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/samsung/clk-exynos4.c
-> > b/drivers/clk/samsung/clk-exynos4.c
-> > index 1bdb882..6300c9d 100644
-> > --- a/drivers/clk/samsung/clk-exynos4.c
-> > +++ b/drivers/clk/samsung/clk-exynos4.c
-> > @@ -820,8 +820,10 @@ struct samsung_gate_clock exynos4210_gate_clks[]
-> > __initdata = {  struct samsung_gate_clock exynos4x12_gate_clks[]
-> __initdata = {
-> >         GATE(audss, "audss", "sclk_epll", E4X12_GATE_IP_MAUDIO, 0, 0,
-0),
-> >         GATE(mdnie0, "mdnie0", "aclk160", GATE_IP_LCD0, 2, 0, 0),
-> > +       GATE(g2d, "g2d", "aclk200", E4X12_GATE_IP_IMAGE, 0, 0, 0),
-> >         GATE(rotator, "rotator", "aclk200", E4X12_GATE_IP_IMAGE, 1, 0,
-> 0),
-> > -       GATE(mdma2, "mdma2", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
-> > +       GATE(mdma, "mdma", "aclk200", E4X12_GATE_IP_IMAGE, 2, 0, 0),
-> > +       GATE(smmu_g2d, "smmu_g2d", "aclk200", E4X12_GATE_IP_IMAGE, 3,
-> > + 0, 0),
-> >         GATE(smmu_mdma, "smmu_mdma", "aclk200", E4X12_GATE_IP_IMAGE, 5,
-> 0, 0),
-> >         GATE(mipi_hsi, "mipi_hsi", "aclk133", GATE_IP_FSYS, 10, 0, 0),
-> >         GATE(chipid, "chipid", "aclk100", E4X12_GATE_IP_PERIR, 0, 0,
-> > 0),
-> 
-> Which kernel version is this patch based on? G2D clocks for 4x12 has
-> already been added by commit 5cd644d837 ("clk: exynos4: Add additional
-> G2D clocks").
+>  clk_prepare_enable may fail, so you would better check its return
+> value.
 
-I think I missed your patch.
-I'll check it and re-send it without g2d gate clock.
-Thanks
+Well, ideally yes, but since this driver doesn't have any error path here 
+anyway and on Samsung platforms clk_prepare_enable() simply can't fail, 
+I'd keep it this way until somebody fixes this driver, as it has more 
+issues than just this one.
 
-Best Regards,
-Chanho Park
+Best regards,
+Tomasz
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
