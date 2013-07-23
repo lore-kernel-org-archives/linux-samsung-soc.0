@@ -1,160 +1,65 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
-Date: Tue, 23 Jul 2013 11:04:14 -0700
-Message-ID: <20130723180414.GA9630@kroah.com>
-References: <Pine.LNX.4.44L0.1307231017290.1304-100000@iolanthe.rowland.org>
- <1446965.6APW5ZgLBW@amdc1227>
- <20130723173710.GB28284@kroah.com>
- <19656720.FrnhefyPXl@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <19656720.FrnhefyPXl@amdc1227>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Kishon Vijay Abraham I <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Tomasz Figa <tomasz.figa@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, broonie@kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kyungmin.park@samsung.com, balbi@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, tony@atomide.com, arnd@arndb.de, swarren@nvidia.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com, olof@lixom.net
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [REVIEW PATCH 0/6] exynos4-is: Asynchronous subdev registration support
+Date: Tue, 23 Jul 2013 20:39:31 +0200
+Message-ID: <1374604777-15523-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:30629 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933734Ab3GWSj4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Jul 2013 14:39:56 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, arun.kk@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Tue, Jul 23, 2013 at 07:48:11PM +0200, Tomasz Figa wrote:
-> On Tuesday 23 of July 2013 10:37:11 Greg KH wrote:
-> > On Tue, Jul 23, 2013 at 06:50:29PM +0200, Tomasz Figa wrote:
-> > > > Ick, no.  Why can't you just pass the pointer to the phy itself?  If
-> > > > you
-> > > > had a "priv" pointer to search from, then you could have just passed
-> > > > the
-> > > > original phy pointer in the first place, right?
-> > > 
-> > > IMHO it would be better if you provided some code example, but let's
-> > > try to check if I understood you correctly.
-> > 
-> > It's not my code that I want to have added, so I don't have to write
-> > examples, I just get to complain about the existing stuff :)
-> 
-> Still, I think that some small code snippets illustrating the idea are 
-> really helpful.
-> 
-> > > 8><--------------------------------------------------------------------
-> > > ----
-> > > 
-> > > [Board file]
-> > > 
-> > > static struct phy my_phy;
-> > > 
-> > > static struct platform_device phy_pdev = {
-> > > 
-> > > 	/* ... */
-> > > 	.platform_data = &my_phy;
-> > > 	/* ... */
-> > > 
-> > > };
-> > > 
-> > > static struct platform_device phy_pdev = {
-> > > 
-> > > 	/* ... */
-> > > 	.platform_data = &my_phy;
-> > > 	/* ... */
-> > > 
-> > > };
-> > > 
-> > > [Provider driver]
-> > > 
-> > > struct phy *phy = pdev->dev.platform_data;
-> > > 
-> > > ret = phy_create(phy);
-> > > 
-> > > [Consumer driver]
-> > > 
-> > > struct phy *phy = pdev->dev.platform_data;
-> > > 
-> > > ret = phy_get(&pdev->dev, phy);
-> > > 
-> > > -----------------------------------------------------------------------
-> > > -><8
-> > > 
-> > > Is this what you mean?
-> > 
-> > No.  Well, kind of.  What's wrong with using the platform data structure
-> > unique to the board to have the pointer?
-> > 
-> > For example (just randomly picking one), the ata-pxa driver would change
-> > include/linux/platform_data/ata-pxa.h to have a phy pointer in it:
-> > 
-> > struct phy;
-> > 
-> > struct  pata_pxa_pdata {
-> > 	/* PXA DMA DREQ<0:2> pin */
-> > 	uint32_t	dma_dreq;
-> > 	/* Register shift */
-> > 	uint32_t	reg_shift;
-> > 	/* IRQ flags */
-> > 	uint32_t	irq_flags;
-> > 	/* PHY */
-> > 	struct phy	*phy;
-> > };
-> > 
-> > Then, when you create the platform, set the phy* pointer with a call to
-> > phy_create().  Then you can use that pointer wherever that plaform data
-> > is available (i.e. whereever platform_data is at).
-> 
-> Hmm? So, do you suggest to call phy_create() from board file? What phy_ops 
-> struct and other hardware parameters would it take?
-> 
-> > > > The issue is that a string "name" is not going to scale at all, as it
-> > > > requires hard-coded information that will change over time (as the
-> > > > existing clock interface is already showing.)
-> > > 
-> > > I fully agree that a simple, single string will not scale even in some,
-> > > not so uncommon cases, but there is already a lot of existing lookup
-> > > solutions over the kernel and so there is no point in introducing
-> > > another one.
-> > I'm trying to get _rid_ of lookup "solutions" and just use a real
-> > pointer, as you should.  I'll go tackle those other ones after this one
-> > is taken care of, to show how the others should be handled as well.
-> 
-> There was a reason for introducing lookup solutions. The reason was that in 
-> board file there is no way to get a pointer to something that is going to be 
-> created much later in time. We don't do time travel ;-).
-> 
-> > > > Please just pass the real "phy" pointer around, that's what it is
-> > > > there
-> > > > for.  Your "board binding" logic/code should be able to handle this,
-> > > > as
-> > > > it somehow was going to do the same thing with a "name".
-> > > 
-> > > It's technically correct, but quality of this solution isn't really
-> > > nice, because it's a layering violation (at least if I understood what
-> > > you mean). This is because you need to have full definition of struct
-> > > phy in board file and a structure that is used as private data in PHY
-> > > core comes from platform code.
-> > 
-> > No, just a pointer, you don't need the "full" structure until you get to
-> > some .c code that actually manipulates the phy itself, for all other
-> > places, you are just dealing with a pointer and a structure you never
-> > reference.
-> > 
-> > Does that make more sense?
-> 
-> Well, to the point that I think I now understood your suggestion. 
-> Unfortunately the suggestion alone isn't really something that can be done, 
-> considering how driver core and generic frameworks work.
+This patch series is a refactoring of the exynos4-is driver to get rid
+of the common fimc-is-sensor driver and to adapt it to use "standard"
+sensor subdev drivers, one per each image sensor type.
+Then a clock provider is added to the exynos4-is driver and the s5k6a3
+subdev is modified to use one of the clocks registered by exynos4-is.
 
-Ok, given that I seem to be totally confused as to exactly how the
-board-specific frameworks work, I'll take your word for it.
+Arun, I think you could reuse the s5k6a3 sensor for your work on the
+Exynos5 FIMC-IS driver. One advantage of separate sensor drivers is
+that the power on/off sequences can be written specifically for each
+sensor. We are probably going to need such sequences per board in
+future. Also having the clock control inside the sensor subdev allows
+to better match the hardware power on/off sequence requirements,
+however the S5K6A3 sensor can have active clock signal on its clock
+input pin even when all its power supplies are turned off.
 
-But again, I will not accept "lookup by name" type solutions, when the
-"name" is dynamic and will change.  Because you are using a "name", you
-can deal with a pointer, putting it _somewhere_ in your board-specific
-data structures, as you are going to need to store it anyway (hint, you
-had to get that "name" from somewhere, right?)
+I'm posting this series before having a proper implementation for
+clk_unregister() in the clock framework, so you are not blocked with
+your Exynos5 FIMC-IS works.
 
-And maybe the way that these "generic frameworks" are created is wrong,
-given that you don't feel that a generic pointer can be passed to the
-needed devices.  That seems like a huge problem, one that has already
-been pointed out is causing issues with other subsystems.
+This series with all dependencies can be found at:
+http://git.linuxtv.org/snawrocki/samsung.git/exynos4-is-clk
 
-So maybe they need to be fixed?
+Thanks,
+Sylwester
 
-thanks,
 
-greg k-h
+Sylwester Nawrocki (6):
+  V4L: Add driver for s5k6a3 image sensor
+  V4L: s5k6a3: Add support for asynchronous subdev registration
+  exynos4-is: Simplify sclk_cam clocks handling
+  exynos4-is: Add clock provider for the external clocks
+  exynos4-is: Use external s5k6a3 sensor driver
+  exynos4-is: Add support for asynchronous sensor subddevs registration
+
+ .../devicetree/bindings/media/samsung-fimc.txt     |   17 +-
+ drivers/media/i2c/Kconfig                          |    8 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/s5k6a3.c                         |  356 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/fimc-is-regs.c   |    2 +-
+ drivers/media/platform/exynos4-is/fimc-is-sensor.c |  285 +---------------
+ drivers/media/platform/exynos4-is/fimc-is-sensor.h |   49 +--
+ drivers/media/platform/exynos4-is/fimc-is.c        |   96 +++---
+ drivers/media/platform/exynos4-is/fimc-is.h        |    4 +-
+ drivers/media/platform/exynos4-is/media-dev.c      |  268 ++++++++++-----
+ drivers/media/platform/exynos4-is/media-dev.h      |   31 +-
+ 11 files changed, 650 insertions(+), 467 deletions(-)
+ create mode 100644 drivers/media/i2c/s5k6a3.c
+
+--
+1.7.9.5
