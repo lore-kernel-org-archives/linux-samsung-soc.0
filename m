@@ -1,284 +1,152 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys part
- and Exynos part
-Date: Tue, 23 Jul 2013 10:14:34 +0900
-Message-ID: <000701ce8741$fe47deb0$fad79c10$@samsung.com>
-References: <002801ce8376$a807dbf0$f81793d0$@samsung.com>
- <51ED49D6.9050209@ti.com>
+From: Chanho Park <chanho61.park@samsusng.com>
+Subject: RE: [PATCH 2/3] drm/exynos: add dt-binding documentation for rotator
+Date: Tue, 23 Jul 2013 10:21:38 +0900
+Message-ID: <00f701ce8742$fa8c67e0$efa537a0$@samsusng.com>
+References: <1374475767-30085-1-git-send-email-chanho61.park@samsung.com>
+ <1374475767-30085-3-git-send-email-chanho61.park@samsung.com>
+ <20130722084817.GA18731@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <51ED49D6.9050209@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:55574 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752803Ab3GWBVj convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Jul 2013 21:21:39 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MQD00HZY7RKNQ80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 23 Jul 2013 10:21:38 +0900 (KST)
+In-reply-to: <20130722084817.GA18731@e106331-lin.cambridge.arm.com>
 Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Pratyush Anand' <pratyush.anand@st.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Jingoo Han <jg1.han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mark Rutland' <mark.rutland@arm.com>, 'Chanho Park' <chanho61.park@samsung.com>
+Cc: inki.dae@samsung.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, jy0922.shim@samsung.com, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On Tuesday, July 23, 2013 12:04 AM, Kishon Vijay Abraham I wrote:
-> On Thursday 18 July 2013 10:51 AM, Jingoo Han wrote:
-> > Exynos PCIe IP consists of Synopsys specific part and Exynos
-> > specific part. Only core block is a Synopsys designware part;
-> > other parts are Exynos specific.
-> > Also, the Synopsys designware part can be shared with other
-> > platforms; thus, it can be split two parts such as Synopsys
-> > designware part and Exynos specific part.
-> 
-> some more queries and comments..
+Hi Mark,
+Thank you for your review.
 
-Hi Kishon,
-Thank you for your comments. :)
-
-Hi Pratyush Anand,
-Please, answer one question mentioned below. :)
-
+> -----Original Message-----
+> From: Mark Rutland [mailto:mark.rutland@arm.com]
+> Sent: Monday, July 22, 2013 5:48 PM
+> To: Chanho Park
+> Cc: inki.dae@samsung.com; kgene.kim@samsung.com; linux-samsung-
+> soc@vger.kernel.org; jy0922.shim@samsung.com; devicetree-
+> discuss@lists.ozlabs.org; sw0312.kim@samsung.com; dri-
+> devel@lists.freedesktop.org; kyungmin.park@samsung.com; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH 2/3] drm/exynos: add dt-binding documentation for
+> rotator
+>=20
+> On Mon, Jul 22, 2013 at 07:49:26AM +0100, Chanho Park wrote:
+> > This patch adds a dt-binding document for exynos rotator. It descri=
+bes
+> > which nodes should be defined to use the rotator.
 > >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > Cc: Pratyush Anand <pratyush.anand@st.com>
-> > Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > > ---
-> > Changes since v2:
-> .
-> .
-> <snip>
-> .
-> .
+> >  .../bindings/drm/exynos/samsung-rotator.txt        |   35
+> ++++++++++++++++++++
+> >  1 file changed, 35 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
+> > b/Documentation/devicetree/bindings/drm/exynos/samsung-rotator.txt
+> > new file mode 100644
+> > index 0000000..6b1d704
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/drm/exynos/samsung-rotator.=
+txt
+> > @@ -0,0 +1,35 @@
+> > +* Samsung Image Rotator
 > > +
-> > +static struct pcie_host_ops exynos_pcie_host_ops = {
-> > +	.readl_rc = exynos_pcie_readl_rc,
-> > +	.writel_rc = exynos_pcie_writel_rc,
-> > +	.rd_own_conf = exynos_pcie_rd_own_conf,
-> > +	.wr_own_conf = exynos_pcie_wr_own_conf,
-> > +	.link_up = exynos_pcie_link_up,
-> > +	.host_init = exynos_pcie_host_init,
-> > +};
-> > +
-> > +static int add_pcie_port(struct pcie_port *pp, struct platform_device *pdev)
-> > +{
-> > +	struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
-> 
-> We can move the exynos_pcie specific initialization to probe and leave only
-> pcie_port initialization here.
+> > +Required properties:
+> > +  - compatible : value should be the "samsung,exynos4210".
+> > +  - reg : Physical base address of the IP registers and length of
+> memory
+> > +	  mapped region.
+> > +  - interrupts : interrupt number to the CPU.
+> > +  - clocks : clock number of exynos4 rotator clock.
+> > +  - clocks : clock name of rotator
+>=20
+> clock-names?
 
-OK, I will move the exynos_pcie specific initialization to probe
-as you mentioned.
+Yes. It seems to have =E2=80=8B=E2=80=8Ba mistake during copy and paste=
+=2E
+I'll modify it next patch.
 
-> > +	struct resource *elbi_base;
-> > +	struct resource *phy_base;
-> > +	struct resource *block_base;
-> > +	int ret;
+>=20
+> > +  - status : "okay" or "disabled"
+> > +  - limit table for image formats : min_w/min_h/max_w/max_h for
+> > + min/max of image
+>=20
+> Limit table? This doesn't seem to be a well-defined binding, and it
+> seems like a relatively generic thing to describe.
+>=20
 > > +
-> > +	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	if (!elbi_base) {
-> > +		dev_err(&pdev->dev, "couldn't get elbi base resource\n");
-> > +		return -EINVAL;
-> > +	}
-> > +	exynos_pcie->elbi_base = devm_ioremap_resource(&pdev->dev, elbi_base);
-> > +	if (IS_ERR(exynos_pcie->elbi_base))
-> > +		return PTR_ERR(exynos_pcie->elbi_base);
-> > +
-> > +	phy_base = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> > +	if (!phy_base) {
-> > +		dev_err(&pdev->dev, "couldn't get phy base resource\n");
-> > +		return -EINVAL;
-> > +	}
-> > +	exynos_pcie->phy_base = devm_ioremap_resource(&pdev->dev, phy_base);
-> > +	if (IS_ERR(exynos_pcie->phy_base))
-> > +		return PTR_ERR(exynos_pcie->phy_base);
-> > +
-> > +	block_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
-> > +	if (!block_base) {
-> > +		dev_err(&pdev->dev, "couldn't get block base resource\n");
-> > +		return -EINVAL;
-> > +	}
-> > +	exynos_pcie->block_base = devm_ioremap_resource(&pdev->dev, block_base);
-> > +	if (IS_ERR(exynos_pcie->block_base))
-> > +		return PTR_ERR(exynos_pcie->block_base);
-> 
-> So all this till here can be moved to probe.
+> > +Example:
+> > +	rotator: rotator@12810000 {
+> > +		compatible =3D "samsung,exynos4210-rotator";
+> > +		reg =3D <0x12810000 0x1000>;
+> > +		interrupts =3D <0 83 0>;
+> > +		clocks =3D <&clock 278>;
+> > +		clock-names =3D "rotator";
+> > +		status =3D "disabled";
+> > +		ycbcr420_2p {
+>=20
+> Which names are allowed for these subnodes?
+>=20
+> > +			min_w =3D <32>;
+> > +			min_h =3D <32>;
+> > +			max_w =3D <32768>;
+> > +			max_h =3D <32768>;
+> > +			align =3D <3>;
+>=20
+> min-width, min-height, max-width, max-height? What units are they in?
+>=20
+> What does alignment specify exactly?
+>=20
+> Are these a configurable part of the rotator hardware, or are these
+> values always the same? If thery're always the same, there's no need =
+to
+> describe in in the devicetree.
 
-As above mentioned, I will move it to probe.
+I've checked the rotator limitation for all of exynos4 chipsets and exy=
+nos5250.
+As a result, these have same value.
+I think it seems to be better leave on static value.
+I'll prepare next patches including your suggestion.
 
-> > +
-> > +	pp->irq = platform_get_irq(pdev, 1);
-> > +	if (!pp->irq) {
-> > +		dev_err(&pdev->dev, "failed to get irq\n");
-> > +		return -ENODEV;
-> > +	}
-> > +	ret = devm_request_irq(&pdev->dev, pp->irq, exynos_pcie_irq_handler,
-> > +				IRQF_SHARED, "exynos-pcie", pp);
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev, "failed to request irq\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	pp->root_bus_nr = -1;
-> > +	pp->ops = &exynos_pcie_host_ops;
-> > +
-> > +	spin_lock_init(&pp->conf_lock);
-> > +	ret = dw_pcie_host_init(pp);
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev, "failed to initialize host\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int __init exynos_pcie_probe(struct platform_device *pdev)
-> > +{
-> > +	struct exynos_pcie *exynos_pcie;
-> > +	struct pcie_port *pp;
-> > +	struct device_node *np = pdev->dev.of_node;
-> > +	int ret;
-> > +
-> > +	exynos_pcie = devm_kzalloc(&pdev->dev, sizeof(*exynos_pcie),
-> > +				GFP_KERNEL);
-> > +	if (!exynos_pcie) {
-> > +		dev_err(&pdev->dev, "no memory for exynos pcie\n");
-> > +		return -ENOMEM;
-> > +	}
-> > +
-> > +	pp = &exynos_pcie->pp;
-> > +
-> > +	pp->dev = &pdev->dev;
-> > +
-> > +	exynos_pcie->reset_gpio = of_get_named_gpio(np, "reset-gpio", 0);
-> > +
-> > +	exynos_pcie->clk = devm_clk_get(&pdev->dev, "pcie");
-> > +	if (IS_ERR(exynos_pcie->clk)) {
-> > +		dev_err(&pdev->dev, "Failed to get pcie rc clock\n");
-> > +		return PTR_ERR(exynos_pcie->clk);
-> > +	}
-> > +	ret = clk_prepare_enable(exynos_pcie->clk);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	exynos_pcie->bus_clk = devm_clk_get(&pdev->dev, "pcie_bus");
-> > +	if (IS_ERR(exynos_pcie->bus_clk)) {
-> > +		dev_err(&pdev->dev, "Failed to get pcie bus clock\n");
-> > +		ret = PTR_ERR(exynos_pcie->bus_clk);
-> > +		goto fail_clk;
-> > +	}
-> > +	ret = clk_prepare_enable(exynos_pcie->bus_clk);
-> > +	if (ret)
-> > +		goto fail_clk;
-> > +
-> > +	ret = add_pcie_port(pp, pdev);
-> > +	if (ret < 0)
-> > +		goto fail_bus_clk;
-> 
-> I think we should move all the below code to designware core file. IMO it
-> should be common everyone who use designware core.
+Thanks
 
-OK, I will move the below code to dw_pcie_host_init() in pcie-designware.c
+Best Regards,
+Chanho Park
 
-
-> > +
-> > +	dw_pci.nr_controllers = 1;
-> > +	dw_pci.private_data = (void **)&pp;
-> > +
-> > +	pci_common_init(&dw_pci);
-> > +	pci_assign_unassigned_resources();
-> > +#ifdef CONFIG_PCI_DOMAINS
-> > +	dw_pci.domain++;
-> > +#endif
-> > +
-> > +	platform_set_drvdata(pdev, exynos_pcie);
-> > +	return 0;
-> > +
-> > +fail_bus_clk:
-> > +	clk_disable_unprepare(exynos_pcie->bus_clk);
-> > +fail_clk:
-> > +	clk_disable_unprepare(exynos_pcie->clk);
-> > +	return ret;
-> > +}
-> > +
-
-[.....]
-
-> > +int dw_pcie_host_init(struct pcie_port *pp)
-> > +{
-> > +	struct device_node *np = pp->dev->of_node;
-> > +	struct of_pci_range range;
-> > +	struct of_pci_range_parser parser;
-> > +	u32 val;
-> > +
-> > +	if (of_pci_range_parser_init(&parser, np)) {
-> > +		dev_err(pp->dev, "missing ranges property\n");
-> > +		return -EINVAL;
-> > +	}
-> 
-> I have some confusion here w.r.t address space :-s
-
-This scheme has been confirmed for last 6 months.
-Previous mail threads on Marvell PCIe, Tegra PCIe will be helpful
-to catch up this.
-
-> > +
-> > +	/* Get the I/O and memory ranges from DT */
-> > +	for_each_of_pci_range(&parser, &range) {
-> > +		unsigned long restype = range.flags & IORESOURCE_TYPE_BITS;
-> > +		if (restype == IORESOURCE_IO) {
-> > +			of_pci_range_to_resource(&range, np, &pp->io);
-> > +			pp->io.name = "I/O";
-> > +			pp->io.start = max_t(resource_size_t,
-> > +					     PCIBIOS_MIN_IO,
-> > +					     range.pci_addr + global_io_offset);
-> > +			pp->io.end = min_t(resource_size_t,
-> > +					   IO_SPACE_LIMIT,
-> > +					   range.pci_addr + range.size
-> > +					   + global_io_offset);
-> > +			pp->config.io_size = resource_size(&pp->io);
-> > +			pp->config.io_bus_addr = range.pci_addr;
-> > +		}
-> > +		if (restype == IORESOURCE_MEM) {
-> > +			of_pci_range_to_resource(&range, np, &pp->mem);
-> > +			pp->mem.name = "MEM";
-> > +			pp->config.mem_size = resource_size(&pp->mem);
-> > +			pp->config.mem_bus_addr = range.pci_addr;
-> > +		}
-> > +		if (restype == 0) {
-> > +			of_pci_range_to_resource(&range, np, &pp->cfg);
-> > +			pp->config.cfg0_size = resource_size(&pp->cfg)/2;
-> > +			pp->config.cfg1_size = resource_size(&pp->cfg)/2;
-> > +		}
-> > +	}
-> > +
-> > +	pp->dbi_base = devm_ioremap(pp->dev, pp->cfg.start,
-> > +				resource_size(&pp->cfg));
-> 
-> Why is configuraion space divided into two?
-
-Sorry, I don't know the exact reason. :(
-Pratyush Anand may know about this.
-Pratyush Anand, could you answer the question?
-
-Also, if you find some problems, please let me know.
-
-
-> Why should it be same as dbi_base?
-> AFAIK, jacinto6 has a dedicated configuration/io/memory space that is entirely
-> different from dbi_base.
-
-According to the Synopsys designware PCIe datasheet,
-in chapter 5.1.1 Register Space Layout,
-'Port Logic Registers' are placed between (config space 0x0 + 0x700)
-and (config space 0x0 + 0xFFF).
-'dbi_base' is used for reading/writing 'Port Logic Registers'.
-Exynos are using 'dbi_base' like this. Thus, the base addresses of
-both 'dbi_base' and configuration/io/memory space are same.
-
-Just now, I looked at Spear PCIe driver.
-However, in the case of Spear, the base address of configuration/io/memory
-space is defined as 0x80000000. The base address of 'Port Logic Registers'
-is defined as 0xb1000000.
-I think that the situation of 'jacinto6' is similar with Spear, right?
-
-Then, I will move pp->dbi_base mapping code from pcie-designware.c
-to pci-exynos.c.
-
-
-Best regards,
-Jingoo Han
+>=20
+> Thanks,
+> Mark.
+>=20
+> > +		};
+> > +		rgb888 {
+> > +			min_w =3D <8>;
+> > +			min_h =3D <8>;
+> > +			max_w =3D <8192>;
+> > +			max_h =3D <8192>;
+> > +			align =3D <2>;
+> > +		};
+> > +	};
+> > --
+> > 1.7.9.5
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> >
