@@ -1,97 +1,135 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys part
- and Exynos part
-Date: Tue, 23 Jul 2013 16:00:31 +0900
-Message-ID: <001301ce8772$522dfc50$f689f4f0$@samsung.com>
-References: <002801ce8376$a807dbf0$f81793d0$@samsung.com>
- <51ED49D6.9050209@ti.com> <000701ce8741$fe47deb0$fad79c10$@samsung.com>
- <51EE22DF.6090902@ti.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
+Date: Tue, 23 Jul 2013 09:29:32 +0200
+Message-ID: <1714400.neMPBWOlzi@flatron>
+References: <Pine.LNX.4.44L0.1307221028440.1495-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <51EE22DF.6090902@ti.com>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: 'Pratyush Anand' <pratyush.anand@st.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44L0.1307221028440.1495-100000@iolanthe.rowland.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Sascha Hauer <s.hauer@pengutronix.de>, kyungmin.park@samsung.com, balbi@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, tony@atomide.com, arnd@arndb.de, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, July 23, 2013 3:30 PM, Kishon Vijay Abraham I wrote:
-> On Tuesday 23 July 2013 06:44 AM, Jingoo Han wrote:
-> > On Tuesday, July 23, 2013 12:04 AM, Kishon Vijay Abraham I wrote:
-> >> On Thursday 18 July 2013 10:51 AM, Jingoo Han wrote:
-> >>> Exynos PCIe IP consists of Synopsys specific part and Exynos
-> >>> specific part. Only core block is a Synopsys designware part;
-> >>> other parts are Exynos specific.
-> >>> Also, the Synopsys designware part can be shared with other
-> >>> platforms; thus, it can be split two parts such as Synopsys
-> >>> designware part and Exynos specific part.
-> >>
-> >> some more queries and comments..
-> >
-> .
-> .
-> <snip>
-> .
-> .
-> >>> +			of_pci_range_to_resource(&range, np, &pp->cfg);
-> >>> +			pp->config.cfg0_size = resource_size(&pp->cfg)/2;
-> >>> +			pp->config.cfg1_size = resource_size(&pp->cfg)/2;
-> >>> +		}
-> >>> +	}
-> >>> +
-> >>> +	pp->dbi_base = devm_ioremap(pp->dev, pp->cfg.start,
-> >>> +				resource_size(&pp->cfg));
-> >>
-> >> Why is configuraion space divided into two?
-> >
-> > Sorry, I don't know the exact reason. :(
-> > Pratyush Anand may know about this.
-> > Pratyush Anand, could you answer the question?
-> >
-> > Also, if you find some problems, please let me know.
-> >
-> >
-> >> Why should it be same as dbi_base?
-> >> AFAIK, jacinto6 has a dedicated configuration/io/memory space that is entirely
-> >> different from dbi_base.
-> >
-> > According to the Synopsys designware PCIe datasheet,
-> > in chapter 5.1.1 Register Space Layout,
-> > 'Port Logic Registers' are placed between (config space 0x0 + 0x700)
-> > and (config space 0x0 + 0xFFF).
-> > 'dbi_base' is used for reading/writing 'Port Logic Registers'.
-> > Exynos are using 'dbi_base' like this. Thus, the base addresses of
-> > both 'dbi_base' and configuration/io/memory space are same.
-> >
-> > Just now, I looked at Spear PCIe driver.
-> > However, in the case of Spear, the base address of configuration/io/memory
-> > space is defined as 0x80000000. The base address of 'Port Logic Registers'
-> > is defined as 0xb1000000.
-> > I think that the situation of 'jacinto6' is similar with Spear, right?
-> >
-> > Then, I will move pp->dbi_base mapping code from pcie-designware.c
-> > to pci-exynos.c.
-> 
-> I think you need not move this to exynos (since registers in dbi_base is common
-> for all platforms) but modify the pcie-designware.c to use different address
-> space for dbi_base. In your case, you'll duplicate the address space for
-> dbi_base and configuration space.
+Hi Alan,
 
-I cannot understand fully what you said.
-Please, give a pseudo code.
-
+On Monday 22 of July 2013 10:44:39 Alan Stern wrote:
+> On Mon, 22 Jul 2013, Kishon Vijay Abraham I wrote:
+> > > 	The PHY and the controller it is attached to are both physical
+> > > 	devices.
+> > > 	
+> > > 	The connection between them is hardwired by the system
+> > > 	manufacturer and cannot be changed by software.
+> > > 	
+> > > 	PHYs are generally described by fixed system-specific board
+> > > 	files or by Device Tree information.  Are they ever discovered
+> > > 	dynamically?
+> > 
+> > No. They are created just like any other platform devices are created.
 > 
-> Also I have one more query.
-> In your dt binding, your pci address and cpu address is the same. But the pci
-> address should start at 0x00000000 and end at 0xffffffff (for 32bit). Shouldn't
-> the cpu address map to something within this range of pci address?
-> 
+> Okay.  Are PHYs _always_ platform devices?
 
-Sorry, I cannot answer it exactly.
-DT binding was confirmed by Arnd Bergmann.
-He will answer it exactly.
+They can be i2c, spi or any other device types as well.
+
+> > > 	Is the same true for the controllers attached to the PHYs?
+> > > 	If not -- if both a PHY and a controller are discovered
+> > > 	dynamically -- how does the kernel know whether they are
+> > > 	connected to each other?
+> > 
+> > No differences here. Both PHY and controller will have dt information
+> > or hwmod data using which platform devices will be created.
+> > 
+> > > 	The kernel needs to know which controller is attached to which
+> > > 	PHY.  Currently this information is represented by name or ID
+> > > 	strings embedded in platform data.
+> > 
+> > right. It's embedded in the platform data of the controller.
+> 
+> It must also be embedded in the PHY's platform data somehow.
+> Otherwise, how would the kernel know which PHY to use?
+
+By using a PHY lookup as Stephen and I suggested in our previous replies. 
+Without any extra data in platform data. (I have even posted a code 
+example.)
+
+> > > 	The PHY's driver (the supplier) uses the platform data to
+> > > 	construct a platform_device structure that represents the PHY.
+> > 
+> > Currently the driver assigns static labels (corresponding to the label
+> > used in the platform data of the controller).
+> > 
+> > > 	Until this is done, the controller's driver (the client) cannot
+> > > 	use the PHY.
+> > 
+> > right.
+> > 
+> > > 	Since there is no parent-child relation between the PHY and the
+> > > 	controller, there is no guarantee that the PHY's driver will be
+> > > 	ready when the controller's driver wants to use it.  A deferred
+> > > 	probe may be needed.
+> > 
+> > right.
+> > 
+> > > 	The issue (or one of the issues) in this discussion is that
+> > > 	Greg does not like the idea of using names or IDs to associate
+> > > 	PHYs with controllers, because they are too prone to
+> > > 	duplications or other errors.  Pointers are more reliable.
+> > > 	
+> > > 	But pointers to what?  Since the only data known to be
+> > > 	available to both the PHY driver and controller driver is the
+> > > 	platform data, the obvious answer is a pointer to platform data
+> > > 	(either for the PHY or for the controller, or maybe both).
+> > 
+> > hmm.. it's not going to be simple though as the platform device for
+> > the PHY and controller can be created in entirely different places.
+> > e.g., in some cases the PHY device is a child of some mfd core device
+> > (the device will be created in drivers/mfd) and the controller driver
+> > (usually) is created in board file. I guess then we have to come up
+> > with something to share a pointer in two different files.
+> 
+> The ability for two different source files to share a pointer to a data
+> item defined in a third source file has been around since long before
+> the C language was invented.  :-)
+> 
+> In this case, it doesn't matter where the platform_device structures
+> are created or where the driver source code is.  Let's take a simple
+> example.  Suppose the system design includes a PHY named "foo".  Then
+> the board file could contain:
+> 
+> struct phy_info { ... } phy_foo;
+> EXPORT_SYMBOL_GPL(phy_foo);
+> 
+> and a header file would contain:
+> 
+> extern struct phy_info phy_foo;
+> 
+> The PHY supplier could then call phy_create(&phy_foo), and the PHY
+> client could call phy_find(&phy_foo).  Or something like that; make up
+> your own structure tags and function names.
+> 
+> It's still possible to have conflicts, but now two PHYs with the same
+> name (or a misspelled name somewhere) will cause an error at link time.
+
+This is incorrect, sorry. First of all it's a layering violation - you 
+export random driver-specific symbols from one driver to another. Then 
+imagine 4 SoCs - A, B, C, D. There are two PHY types PHY1 and PHY2 and 
+there are two types of consumer drivers (e.g. USB host controllers). Now 
+consider following mapping:
+
+SoC	PHY	consumer
+A	PHY1	HOST1
+B	PHY1	HOST2
+C	PHY2	HOST1
+D	PHY2	HOST2
+
+So we have to be able to use any of the PHYs with any of the host drivers. 
+This means you would have to export symbol with the same name from both 
+PHY drivers, which obviously would not work in this case, because having 
+both drivers enabled (in a multiplatform aware configuration) would lead 
+to linking conflict.
 
 Best regards,
-Jingoo Han
+Tomasz
+
