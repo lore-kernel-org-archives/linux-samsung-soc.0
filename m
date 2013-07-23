@@ -1,53 +1,100 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH] ASoC: Samsung: Modify the I2S driver to support I2S on Exynos5420
-Date: Tue, 23 Jul 2013 09:38:00 +0530
-Message-ID: <CAAgF-BfdfuhoFDH+SeZogXh1wju34hGp-T9N7_+mnapHfc2yww@mail.gmail.com>
-References: <1373526505-27115-1-git-send-email-padma.v@samsung.com>
-	<29860116.IF545KsGYb@thinkpad>
-	<20130711112023.GM24508@sirena.org.uk>
-	<2214161.FSfscAvpna@thinkpad>
-	<20130711130139.GQ24508@sirena.org.uk>
-	<CAAgF-BdM4jw0o4+ELVo_N029tbgMJBBqJxU91e=TgBNiiREyaA@mail.gmail.com>
-	<20130712084932.GY24508@sirena.org.uk>
+From: Pratyush Anand <pratyush.anand@st.com>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
+ part and Exynos part
+Date: Tue, 23 Jul 2013 10:19:05 +0530
+Message-ID: <51EE0B41.2090002@st.com>
+References: <002801ce8376$a807dbf0$f81793d0$@samsung.com> <51ED49D6.9050209@ti.com> <000701ce8741$fe47deb0$fad79c10$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:33449 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752572Ab3GWEIB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 00:08:01 -0400
-Received: by mail-ob0-f180.google.com with SMTP id eh20so9113297obb.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Jul 2013 21:08:00 -0700 (PDT)
-In-Reply-To: <20130712084932.GY24508@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <000701ce8741$fe47deb0$fad79c10$@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, Mohit KUMAR <Mohit.KUMAR@st.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, spear-devel <spear-devel@list.st.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org
 
-Hi Mark,
-
-On Fri, Jul 12, 2013 at 2:19 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Jul 12, 2013 at 10:07:22AM +0530, Padma Venkat wrote:
+On 7/23/2013 6:44 AM, Jingoo Han wrote:
+>>> +           if (restype == IORESOURCE_MEM) {
+>>> > >+                   of_pci_range_to_resource(&range, np, &pp->mem);
+>>> > >+                   pp->mem.name = "MEM";
+>>> > >+                   pp->config.mem_size = resource_size(&pp->mem);
+>>> > >+                   pp->config.mem_bus_addr = range.pci_addr;
+>>> > >+           }
+>>> > >+           if (restype == 0) {
+>>> > >+                   of_pci_range_to_resource(&range, np, &pp->cfg);
+>>> > >+                   pp->config.cfg0_size = resource_size(&pp->cfg)/2;
+>>> > >+                   pp->config.cfg1_size = resource_size(&pp->cfg)/2;
+>>> > >+           }
+>>> > >+   }
+>>> > >+
+>>> > >+   pp->dbi_base = devm_ioremap(pp->dev, pp->cfg.start,
+>>> > >+                           resource_size(&pp->cfg));
+>> >
+>> >Why is configuraion space divided into two?
+> Sorry, I don't know the exact reason.:(
+> Pratyush Anand may know about this.
+> Pratyush Anand, could you answer the question?
 >
->> A new version number is added when a there was some change in the IP
->> like adding a internal mux to the IP, adding multi channel support,
->> adding reset control bit. This was done in the older code with
->> platform device.
->> Same thing is followed here. So as previously done, adding a new
->> compatible name like "samsung,i2s-v6" with new quirk
->> "samsung,supports-tdm" is okey?
+
+CfgRd1 and CfgWr1 transactions are needed when an EP is not directly 
+connected to RC, rather connected through a bridge. For more detail see 
+PCIe specs.
+Now, if we wish to generate a CfgRd/Wr1 transaction using SNPS 
+controller then we can not use same programmed viewport as that for 
+CfgRd/Wr0. However, a viewport can be reprogrammed using same physical 
+cfg address to generate either cfg0 or cfg1. So, in that case we can do 
+with only one cfg area and no reason to divide it into two.
+Current code assumes that there are only 4 viewports available (2 in 
+outbound and 2 in inbound direction) and it always programs viewport 
+dynamically for cfg0/1 as per need. But same can not be true for all 
+implementations. There can be a case where hardware has sufficient 
+number of viewports and software does not need to reprogram it 
+dynamically. In that situation different physical memory area for each 
+type of TLP would make the execution faster.
+
+> Also, if you find some problems, please let me know.
 >
-> Yes, this is good but the quirk should just be found by software based
-> on the compatible string rather than in the DT.
+>
+>> >Why should it be same as dbi_base?
+>> >AFAIK, jacinto6 has a dedicated configuration/io/memory space that is entirely
+>> >different from dbi_base.
+> According to the Synopsys designware PCIe datasheet,
+> in chapter 5.1.1 Register Space Layout,
+> 'Port Logic Registers' are placed between (config space 0x0 + 0x700)
+> and (config space 0x0 + 0xFFF).
+> 'dbi_base' is used for reading/writing 'Port Logic Registers'.
+> Exynos are using 'dbi_base' like this. Thus, the base addresses of
+> both 'dbi_base' and configuration/io/memory space are same.
 
-You mean I just need to initialize the quirks in the driver based on
-the compatible string?
-So what about the quirks that I added previously on 5250? Should I
-also follow the same thing for other quirks?
+Yes address space are same, but at any moment they work either as dbi 
+space or as configuration/io/memory space depending on the dbi_enable 
+bit of application register. Similar functionality was there in one 
+older SPEAr implementation.
 
-Or it need to be passed via driver data as it is done in spi driver?
-Please clarify me.
+>
+> Just now, I looked at Spear PCIe driver.
+> However, in the case of Spear, the base address of configuration/io/memory
+> space is defined as 0x80000000. The base address of 'Port Logic Registers'
+> is defined as 0xb1000000.
+> I think that the situation of 'jacinto6' is similar with Spear, right?
 
-Thanks
-Padma
+In SPEAr1340 PCIe memory layout is as follows:
+
+DBI base (0xB1000000 to 0xB1001FFF): This space is used to read/write 
+own PCI Configuration Header, Capability and Port Logic(PL) Registers.
+
+ELBI space (0xB1002000 to  0xB17FFFFF): These are completely SPEAr 
+specific application registers.
+
+configuration/io/memory space(0x80000000 to 0x8FFFFFFF): These can be 
+used in viewport programming to generate different type of outbound 
+transaction.
+
+Regards
+Pratyush
+
+
+>
+> Then, I will move pp->dbi_base mapping code from pcie-designware.c
+> to pci-exynos.c.
