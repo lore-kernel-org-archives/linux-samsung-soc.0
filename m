@@ -1,44 +1,121 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2] spi: s3c64xx: fix casting warning
-Date: Tue, 23 Jul 2013 16:08:39 +0200
-Message-ID: <3276871.6XdjSQGWvi@amdc1227>
-References: <008101ce82cb$34f0eea0$9ed2cbe0$@samsung.com>
- <10928386.fNethLYWc8@amdc1227> <20130723132753.GE9858@sirena.org.uk>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
+Date: Tue, 23 Jul 2013 10:37:05 -0400 (EDT)
+Message-ID: <Pine.LNX.4.44L0.1307231017290.1304-100000@iolanthe.rowland.org>
+References: <3419798.aorxYv8pdo@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:52559 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932442Ab3GWOIp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 10:08:45 -0400
-In-reply-to: <20130723132753.GE9858@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3419798.aorxYv8pdo@flatron>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, broonie@kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Greg KH <gregkh@linuxfoundation.org>, Sascha Hauer <s.hauer@pengutronix.de>, kyungmin.park@samsung.com, balbi@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, tony@atomide.com, arnd@arndb.de, swarren@nvidia.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com, olof@lixom.net, Stephen Warren <swarren@wwwdotorg.>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Jingoo Han <jg1.han@samsung.com>, linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Joe Perches' <joe@perches.com>, heiko@sntech.de, sylvester.nawrocki@gmail.com
 
-On Tuesday 23 of July 2013 14:27:53 Mark Brown wrote:
-> On Mon, Jul 22, 2013 at 07:09:27PM +0200, Tomasz Figa wrote:
-> > On Wednesday 17 of July 2013 11:08:16 Mark Brown wrote:
-> > > Applied, though only the cast to unsigned long should actually be
-> > > needed
-> > > - casting to void * should be good for any pointer so changing to the
-> > > specific struct shouldn't be essential (might catch issues due to
-> > > future API changes though).
+On Tue, 23 Jul 2013, Tomasz Figa wrote:
+
+> On Tuesday 23 of July 2013 09:29:32 Tomasz Figa wrote:
+> > Hi Alan,
+
+Thanks for helping to clarify the issues here.
+
+> > > Okay.  Are PHYs _always_ platform devices?
 > > 
-> > Well, hopefully the old S3C DMA API with all its brokenness will get
-> > removed soon and we switch to generic DMA engine API. (I already have
-> > patches to migrate Samsung ASoC and SPI is being worked on.)
-> 
-> If you've done patches for ASoC note that there is generic dmaengine
-> helper code which should be used.
+> > They can be i2c, spi or any other device types as well.
 
-Hmm, good to know. Let me see if I can adapt my patches to use this. There 
-is no hurry, though, as we can't merge the conversion before s3c24xx DMA 
-engine driver and my patches for s3c64xx support in PL08x driver get 
-merged.
+In those other cases, presumably there is no platform data associated
+with the PHY since it isn't a platform device.  Then how does the
+kernel know which controller is attached to the PHY?  Is this spelled
+out in platform data associated with the PHY's i2c/spi/whatever parent?
 
-Best regards,
-Tomasz
+> > > > > 	PHY.  Currently this information is represented by name or 
+> ID
+> > > > > 	strings embedded in platform data.
+> > > > 
+> > > > right. It's embedded in the platform data of the controller.
+> > > 
+> > > It must also be embedded in the PHY's platform data somehow.
+> > > Otherwise, how would the kernel know which PHY to use?
+> > 
+> > By using a PHY lookup as Stephen and I suggested in our previous
+> > replies. Without any extra data in platform data. (I have even posted a
+> > code example.)
+
+I don't understand, because I don't know what "a PHY lookup" does.
+
+> > > In this case, it doesn't matter where the platform_device structures
+> > > are created or where the driver source code is.  Let's take a simple
+> > > example.  Suppose the system design includes a PHY named "foo".  Then
+> > > the board file could contain:
+> > > 
+> > > struct phy_info { ... } phy_foo;
+> > > EXPORT_SYMBOL_GPL(phy_foo);
+> > > 
+> > > and a header file would contain:
+> > > 
+> > > extern struct phy_info phy_foo;
+> > > 
+> > > The PHY supplier could then call phy_create(&phy_foo), and the PHY
+> > > client could call phy_find(&phy_foo).  Or something like that; make up
+> > > your own structure tags and function names.
+> > > 
+> > > It's still possible to have conflicts, but now two PHYs with the same
+> > > name (or a misspelled name somewhere) will cause an error at link
+> > > time.
+> > 
+> > This is incorrect, sorry. First of all it's a layering violation - you
+> > export random driver-specific symbols from one driver to another. Then
+
+No, that's not what I said.  Neither the PHY driver nor the controller
+driver exports anything to the other.  Instead, both drivers use data
+exported by the board file.
+
+> > imagine 4 SoCs - A, B, C, D. There are two PHY types PHY1 and PHY2 and
+> > there are two types of consumer drivers (e.g. USB host controllers). Now
+> > consider following mapping:
+> > 
+> > SoC	PHY	consumer
+> > A	PHY1	HOST1
+> > B	PHY1	HOST2
+> > C	PHY2	HOST1
+> > D	PHY2	HOST2
+> > 
+> > So we have to be able to use any of the PHYs with any of the host
+> > drivers. This means you would have to export symbol with the same name
+> > from both PHY drivers, which obviously would not work in this case,
+> > because having both drivers enabled (in a multiplatform aware
+> > configuration) would lead to linking conflict.
+
+You're right; the scheme was too simple.  Instead, the board file must
+export two types of data structures, one for PHYs and one for
+controllers.  Like this:
+
+struct phy_info {
+	/* Info for the controller attached to this PHY */
+	struct controller_info	*hinfo;
+};
+
+struct controller_info {
+	/* Info for the PHY which this controller is attached to */
+	struct phy_info		*pinfo;
+};
+
+The board file for SoC A would contain:
+
+struct phy_info phy1 = {&host1);
+EXPORT_SYMBOL(phy1);
+struct controller_info host1 = {&phy1};
+EXPORT_SYMBOL(host1);
+
+The board file for SoC B would contain:
+
+struct phy_info phy1 = {&host2);
+EXPORT_SYMBOL(phy1);
+struct controller_info host2 = {&phy1};
+EXPORT_SYMBOL(host2);
+
+And so on.  This explicitly gives the connection between PHYs and
+controllers.  The PHY providers would use &phy1 or &phy2, and the PHY
+consumers would use &host1 or &host2.
+
+Alan Stern
