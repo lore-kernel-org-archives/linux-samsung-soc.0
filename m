@@ -1,132 +1,216 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 00/20] Samsung PWM support cleanup
-Date: Tue, 23 Jul 2013 08:30:16 -0700
-Message-ID: <20130723153015.GA2066@dhcp-172-17-186-34.nvidia.com>
-References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
- <9102768.ef8LAvpunv@flatron>
- <0ac901ce867f$638a7530$2a9f5f90$@org>
- <2036745.TWe3OlGh9t@flatron>
+From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
+Date: Tue, 23 Jul 2013 09:18:46 -0700
+Message-ID: <20130723161846.GD2486@kroah.com>
+References: <Pine.LNX.4.44L0.1307231017290.1304-100000@iolanthe.rowland.org>
+ <51EE9EC0.6060905@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f182.google.com ([209.85.215.182]:56667 "EHLO
-	mail-ea0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757467Ab3GWPaY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 11:30:24 -0400
-Content-Disposition: inline
-In-Reply-To: <2036745.TWe3OlGh9t@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Heiko =?utf-8?B?U3TDvGJuZXIn?= <heiko@sntech.de>, 'Mark Brown' <broonie@kernel.org>
-
-
---vtzGhvizbBRQ85DL
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <51EE9EC0.6060905-l0cyMroinI0@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <s.hauer-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org, balajitk-l0cyMroinI0@public.gmane.org, george.cherian-l0cyMroinI0@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Daniel
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jul 22, 2013 at 09:49:49AM +0200, Tomasz Figa wrote:
-> On Monday 22 of July 2013 11:01:32 Kukjin Kim wrote:
-> > Kukjin Kim wrote:
-> > > Tomasz Figa wrote:
-> > > > On Monday 22 of July 2013 00:22:16 Sylwester Nawrocki wrote:
-> > > > > On 07/20/2013 02:04 AM, Tomasz Figa wrote:
-> > > > > > Since we now have a proper Samsung PWM clocksource driver in
-> > > > > > place,
-> > > > > > we can proceed with further cleanup of PWM timers support on
-> > > > > > Samsung
-> > > > > > SoCs.>
-> > > > > >=20
-> > > > > > This series attempts to achieve this goal by:
-> > > > > >   1) fixing up few things in samsung_pwm_timer clocksource
-> > > > > >   driver,
-> > > > > >   2) moving remaining Samsung platforms to the new clocksource
-> > >=20
-> > > driver,
-> > >=20
-> > > > > >   3) removing old clocksource driver,
-> > > > > >   4) adding new multiplatform- and DT-aware PWM driver,
-> > > > > >   5) moving all Samsung platforms to use the new PWM driver,
-> > > > > >   6) removing old PWM driver,
-> > > > > >   7) removing all PWM-related code that is not used anymore.
-> > > > > >=20
-> > > > > > Cleaning up the PWM driver is a bit tricky, because the design
-> > > > > > of
-> > > > > > current driver makes it completely unsuitable for DT and
-> > > > > > multiplatform and would require a heavy rework to make it
-> > > > > > usable,
-> > > > > > breaking any existing Samsung PWM users by the way. To avoid any
-> > > > > > breakage this series first renames the old driver, then adds new
-> > > > > > one
-> > > > > > using original name, migrates all platforms to use it and then
-> > > > > > finally removes the old driver.
-> > > > > >=20
-> > > > > > See particular patches for more detailed descriptions.
-> > > > > >=20
-> > > > > > [On S3C6410-based Tiny6410 (Mini6410-compatible) with
-> > > > > > pwm-beeper,
-> > > > > > SMDK6410 with PWM backlight and Exynos4210-based Origen board
-> > > > > > (with
-> > > > > > PWM0 attached to a scope)]
-> > > > > > Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
-> > > > > >=20
-> > > > > > [On S3C2440-based Mini2440 board]
-> > > > > > Tested-by: Sylwester Nawrocki<sylvester.nawrocki@gmail.com>
-> > > > >=20
-> > > > > I have retested this series on top of v3.11-rc1 with pwm-backlight
-> > >=20
-> > > (and
-> > >=20
-> > > > > buzzer
-> > > > > as the output :)) on Mini2440. It seems to work well - generated
-> > > > > frequencies are correct. I'll check pulse widths with a scope
-> >=20
-> > tomorrow,
-> >=20
-> > > > > as it's a bit late
-> > > > > now. FWIW you can add to this series my:
-> > > > >=20
-> > > > > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > > >=20
-> > > > Thanks. I hope we can finally get this series merged soon.
-> > >=20
-> > > Yes, this whole patches look good to me, and I'd like to take this
-> > > whole patches into the samsung tree...but need to get any response
-> > > from PWM guy, Thierry Reding. Let's wait for his response...
-> >=20
-> > To be clarify, because his ack was on v3 and I remember he had a
-> > comment. So would be better if we could get his ack on pwm change
-> > again.
->=20
-> Sure.
+On Tue, Jul 23, 2013 at 08:48:24PM +0530, Kishon Vijay Abraham I wrote:
+> Hi,
+> 
+> On Tuesday 23 July 2013 08:07 PM, Alan Stern wrote:
+> > On Tue, 23 Jul 2013, Tomasz Figa wrote:
+> > 
+> >> On Tuesday 23 of July 2013 09:29:32 Tomasz Figa wrote:
+> >>> Hi Alan,
+> > 
+> > Thanks for helping to clarify the issues here.
+> > 
+> >>>> Okay.  Are PHYs _always_ platform devices?
+> >>>
+> >>> They can be i2c, spi or any other device types as well.
+> > 
+> > In those other cases, presumably there is no platform data associated
+> > with the PHY since it isn't a platform device.  Then how does the
+> > kernel know which controller is attached to the PHY?  Is this spelled
+> > out in platform data associated with the PHY's i2c/spi/whatever parent?
+> 
+> Yes. I think we could use i2c_board_info for passing platform data.
+> > 
+> >>>>>> 	PHY.  Currently this information is represented by name or 
+> >> ID
+> >>>>>> 	strings embedded in platform data.
+> >>>>>
+> >>>>> right. It's embedded in the platform data of the controller.
+> >>>>
+> >>>> It must also be embedded in the PHY's platform data somehow.
+> >>>> Otherwise, how would the kernel know which PHY to use?
+> >>>
+> >>> By using a PHY lookup as Stephen and I suggested in our previous
+> >>> replies. Without any extra data in platform data. (I have even posted a
+> >>> code example.)
+> > 
+> > I don't understand, because I don't know what "a PHY lookup" does.
+> 
+> It is how the PHY framework finds a PHY, when the controller (say USB)requests
+> a PHY from the PHY framework.
+> > 
+> >>>> In this case, it doesn't matter where the platform_device structures
+> >>>> are created or where the driver source code is.  Let's take a simple
+> >>>> example.  Suppose the system design includes a PHY named "foo".  Then
+> >>>> the board file could contain:
+> >>>>
+> >>>> struct phy_info { ... } phy_foo;
+> >>>> EXPORT_SYMBOL_GPL(phy_foo);
+> >>>>
+> >>>> and a header file would contain:
+> >>>>
+> >>>> extern struct phy_info phy_foo;
+> >>>>
+> >>>> The PHY supplier could then call phy_create(&phy_foo), and the PHY
+> >>>> client could call phy_find(&phy_foo).  Or something like that; make up
+> >>>> your own structure tags and function names.
+> >>>>
+> >>>> It's still possible to have conflicts, but now two PHYs with the same
+> >>>> name (or a misspelled name somewhere) will cause an error at link
+> >>>> time.
+> >>>
+> >>> This is incorrect, sorry. First of all it's a layering violation - you
+> >>> export random driver-specific symbols from one driver to another. Then
+> > 
+> > No, that's not what I said.  Neither the PHY driver nor the controller
+> > driver exports anything to the other.  Instead, both drivers use data
+> > exported by the board file.
+> 
+> I think instead we can use the same data while creating the platform data of
+> the controller and the PHY.
+> The PHY driver while creating the PHY (using PHY framework) will also pass the
+> *data* it actually got from the platform data to the framework.
+> The PHY user driver (USB), while requesting for the PHY (from the PHY
+> framework) will pass the *data* it got from its platform data.
+> The PHY framework can do a comparison of the *data* pointers it has and return
+> the appropriate PHY to the controller.
+> > 
+> >>> imagine 4 SoCs - A, B, C, D. There are two PHY types PHY1 and PHY2 and
+> >>> there are two types of consumer drivers (e.g. USB host controllers). Now
+> >>> consider following mapping:
+> >>>
+> >>> SoC	PHY	consumer
+> >>> A	PHY1	HOST1
+> >>> B	PHY1	HOST2
+> >>> C	PHY2	HOST1
+> >>> D	PHY2	HOST2
+> >>>
+> >>> So we have to be able to use any of the PHYs with any of the host
+> >>> drivers. This means you would have to export symbol with the same name
+> >>> from both PHY drivers, which obviously would not work in this case,
+> >>> because having both drivers enabled (in a multiplatform aware
+> >>> configuration) would lead to linking conflict.
+> > 
+> > You're right; the scheme was too simple.  Instead, the board file must
+> > export two types of data structures, one for PHYs and one for
+> > controllers.  Like this:
+> > 
+> > struct phy_info {
+> > 	/* Info for the controller attached to this PHY */
+> > 	struct controller_info	*hinfo;
+> > };
+> > 
+> > struct controller_info {
+> > 	/* Info for the PHY which this controller is attached to */
+> > 	struct phy_info		*pinfo;
+> > };
+> > 
+> > The board file for SoC A would contain:
+> > 
+> > struct phy_info phy1 = {&host1);
+> > EXPORT_SYMBOL(phy1);
+> > struct controller_info host1 = {&phy1};
+> > EXPORT_SYMBOL(host1);
+> > 
+> > The board file for SoC B would contain:
+> > 
+> > struct phy_info phy1 = {&host2);
+> > EXPORT_SYMBOL(phy1);
+> > struct controller_info host2 = {&phy1};
+> > EXPORT_SYMBOL(host2);
+> 
+> I meant something like this
+> struct phy_info {
+> 	const char *name;
+> };
+> 
+> struct phy_platform_data {
+> 	.
+> 	.
+> 	struct phy_info *info;
+> };
+> 
+> struct usb_controller_platform_data {
+> 	.
+> 	.
+> 	struct phy_info *info;
+> };
+> 
+> struct phy_info phy_info;
+> 
+> While creating the phy device
+> 	struct phy_platform_data phy_data;
+> 	phy_data.info = &info;
+> 	platform_device_add_data(pdev, &phy_data, sizeof(*phy_data))
+> 	platform_device_add();
+> 
+> While creating the controller device
+> 	struct usb_controller_platform_data controller_data;
+> 	controller_data.info = &info;
+> 	platform_device_add_data(pdev, &controller_data, sizeof(*controller_data))
+> 	platform_device_add();
+> 
+> Then modify PHY framework API phy create
+> 	phy_create((struct device *dev, const struct phy_ops *ops,
+>         void *priv)  {//API changed to take void pointer instead of label
+> 		. //existing implementation
+> 		.
+> 		phy->priv = priv;
+> 	}
+> 
+> 	struct phy *phy_get(struct device *dev, const char *string, void *priv) {
+> //API changed to take an additional pointer
+> 		phy_lookup(priv)
+> 	}
+> 
+> 	static struct phy *phy_lookup(void *priv) {
+> 		.
+> 		.
+> 		if (phy->priv==priv) //instead of string comparison, we'll use pointer
+> 			return phy;
+> 	}
+> 
+> PHY driver should be like
+> 	phy_create((dev, ops, pdata->info);
+> 
+> The controller driver would do
+> 	phy_get(dev, NULL, pdata->info);
+> 
+> Now the PHY framework will check for a match of *priv* pointer and return the PHY.
+> 
+> I think this should be possible?
 
-Patches 12, 13 and 16:
+Ick, no.  Why can't you just pass the pointer to the phy itself?  If you
+had a "priv" pointer to search from, then you could have just passed the
+original phy pointer in the first place, right?
 
-Acked-by: Thierry Reding <thierry.reding@gmail.com>
+The issue is that a string "name" is not going to scale at all, as it
+requires hard-coded information that will change over time (as the
+existing clock interface is already showing.)
 
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Please just pass the real "phy" pointer around, that's what it is there
+for.  Your "board binding" logic/code should be able to handle this, as
+it somehow was going to do the same thing with a "name".
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+thanks,
 
-iQIcBAEBAgAGBQJR7qGHAAoJEN0jrNd/PrOhap0P+gPikCYxJ1+OhKbEZ6J1ulpA
-O5fTHa2Lf+knbq5udxaleRNsTd8v/e5E4YUPSrbB2sAkDHmJbA5Mcz7+K5b7tYfl
-wpZJOc4QgwlblbiuiQ+i5p/k+8to9shHDpWH8vESbb5LYIIkAFAo1C67Hi2+jBEh
-Pv/VPwjvQtwS7UivWWI3whaCn9e7P/YNTsqbrWclHGSSw8M+MPOvCiLbnDeuF4Bf
-UTQOSvdPPQV+u23LyRNeuyC3x4AedDUBvCvOt9v1tftPu6HpJNsS62MeByksVIog
-/nPazKbJ7KUI6CKVYqAj8f0duQz7NMfdfrLrmFp5fZ0QmC6Wm6YFlu71ca4NLMAT
-RVIjTEYyZh+HubKrO+Kq4LvT4yo/+5tzQxBIFEWLN8A0HIedW5R1lNZJ1KhKEwvQ
-2lO+Sp796qP4pzYplPrPYh8sgvEprNYU8UsMJkyNDg4DxDN6zn86MrciPgvFMYLZ
-nc9s43n2h0cgw1N4mzK+eifHvOAjiqxN2ABQuz5ZrQihuvHkSlqbj/jpepk6Us1O
-asRRHJlCFk3RgY8/xmt1h23edrH/rrOqZBNt8JqcXW6I6EJCBKqbudYqRMm8dPHm
-80AyQUjmyCxEwnmNwAlCOs3ve4RPCLl9sAHKMgVAsLmYLVhfyFjgfoSEX56Owupl
-OEzS54LS3gGOzugO7dK1
-=0lvW
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+greg k-h
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
