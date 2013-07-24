@@ -1,42 +1,54 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
-Date: Wed, 24 Jul 2013 20:32:03 +0200
-Message-ID: <201307242032.03597.arnd@arndb.de>
-References: <Pine.LNX.4.44L0.1307231708020.1304-100000@iolanthe.rowland.org> <5977067.8rykRgjgre@flatron>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys part and Exynos part
+Date: Wed, 24 Jul 2013 23:02:40 +0200
+Message-ID: <201307242302.40934.arnd@arndb.de>
+References: <002801ce8376$a807dbf0$f81793d0$@samsung.com> <51EE22DF.6090902@ti.com> <001301ce8772$522dfc50$f689f4f0$@samsung.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <5977067.8rykRgjgre@flatron>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Tomasz Figa <t.figa@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Kishon Vijay Abraham I <kishon@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, broonie@kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Sascha Hauer <s.hauer@pengutronix.de>, kyungmin.park@samsung.com, balbi@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, tony@atomide.com, swarren@nvidia.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com, olof@lixom.netStephen Warren <swarr>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <001301ce8772$522dfc50$f689f4f0$@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 23 July 2013, Tomasz Figa wrote:
-> On Tuesday 23 of July 2013 17:14:20 Alan Stern wrote:
-> > On Tue, 23 Jul 2013, Tomasz Figa wrote:
-> > > Where would you want to have those phy_address arrays stored? There
-> > > are no board files when booting with DT. Not even saying that you
-> > > don't need to use any hacky schemes like this when you have DT that
-> > > nicely specifies relations between devices.
+On Tuesday 23 July 2013, Jingoo Han wrote:
 > > 
-> > If everybody agrees DT has a nice scheme for specifying relations
-> > between devices, why not use that same scheme in the PHY core?
-> 
-> It is already used, for cases when consumer device has a DT node attached. 
-> In non-DT case this kind lookup translates loosely to something that is 
-> being done in regulator framework - you can't bind devices by pointers, 
-> because you don't have those pointers, so you need to use device names.
-> 
+> > Also I have one more query.
+> > In your dt binding, your pci address and cpu address is the same. But the pci
+> > address should start at 0x00000000 and end at 0xffffffff (for 32bit). Shouldn't
+> > the cpu address map to something within this range of pci address?
 
-Sorry for jumping in to the middle of the discussion, but why does a *new*
-framework even bother defining an interface for board files?
+The size is limited by the window available (e.g. 0x80000000-0x8FFFFFFF), it can
+never be the full 4GB on a 32 bit non-LPAE system. If you only care about memory
+space here (in practice you want at least also config space) that means you could
+either have an identity map
 
-Can't we just drop any interfaces for platform data passing in the phy
-framework and put the burden of adding those to anyone who actually needs
-them? All the platforms we are concerned with here (exynos and omap,
-plus new platforms) can be booted using DT anyway.
+	<0x82000000 0 0x80000000 0x80000000 0 0x1fffffff>;
+
+or use bus address 0
+
+	<0x82000000 0 0 0x80000000 0 0x1fffffff>;
+
+but the length is always limited by the upstream bus.
+
+> Sorry, I cannot answer it exactly.
+> DT binding was confirmed by Arnd Bergmann.
+> He will answer it exactly.
+
+Normally you want the pci and cpu addresses to be the same, i.e. identity mapped.
+This simplifies PCI bus master DMA as it ensures that there is no aliasing between
+PCI memory space and RAM addresses visible to the host.
+
+If you know that there is never any RAM at CPU address 0, you can also make the
+PCI memory space be mapped from bus address 0, which has the advantage of allowing
+access to low PCI addresses, e.g. for legacy VGA output using the 0xa0000-0xbffff
+range, but it's less common. In particular on x86 there is always an identity
+mapping.
+
+The driver should be able to handle any mapping that can be described by the binding
+and is physically possible to be programmed into the translation windows.
 
 	Arnd
