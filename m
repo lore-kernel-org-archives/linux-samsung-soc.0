@@ -1,75 +1,92 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH Resend 1/1] clk: exynos4: Add clock entries for TMU
-Date: Wed, 24 Jul 2013 15:39:15 +0530
-Message-ID: <1374660555-17429-1-git-send-email-sachin.kamat@linaro.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: exynos5420: dt: add clock entries to watchdog node
+Date: Wed, 24 Jul 2013 16:14:12 +0530
+Message-ID: <CAL1wa8cmCjZr2C5tdFchuX-ZPQ9ewKJH04fBQEWKfTwf+dVS5w@mail.gmail.com>
+References: <1374658699-3961-1-git-send-email-l.krishna@samsung.com>
+ <1374658699-3961-3-git-send-email-l.krishna@samsung.com> <CAK9yfHwFZunKudPLQsukLt0w4SNSovTWYzy8jRD+u040Pk48dw@mail.gmail.com>
+ <1478852.betFXmR41G@amdc1227> <CAK9yfHy8FY6gaKoU+v5UVOO1TRor7-TMpqPKXyN3gfvy0vXYVA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:42955 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751356Ab3GXKZi (ORCPT
+Received: from mail-vb0-f42.google.com ([209.85.212.42]:59677 "EHLO
+	mail-vb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750820Ab3GXKod (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 06:25:38 -0400
-Received: by mail-pd0-f177.google.com with SMTP id u11so222863pdi.36
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2013 03:25:37 -0700 (PDT)
+	Wed, 24 Jul 2013 06:44:33 -0400
+Received: by mail-vb0-f42.google.com with SMTP id i3so6272985vbh.15
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2013 03:44:33 -0700 (PDT)
+In-Reply-To: <CAK9yfHy8FY6gaKoU+v5UVOO1TRor7-TMpqPKXyN3gfvy0vXYVA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kgene@kernel.org, mturquette@linaro.org, sachin.kamat@linaro.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Jingoo Han <jg1.han@samsung.com>
 
-Added clock entries for thermal management unit (TMU) for
-Exynos4 SoCs.
+Hi Sachin,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Resending this (after rebasing) based on the below discussion:
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/19933
+On Wed, Jul 24, 2013 at 3:31 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Hi Tomasz,
+>
+> On 24 July 2013 15:24, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Sachin,
+>>
+>> On Wednesday 24 of July 2013 15:18:26 Sachin Kamat wrote:
+>>> Hi Leela,
+>>>
+>>> On 24 July 2013 15:08, Leela Krishna Amudala <l.krishna@samsung.com>
+>> wrote:
+>>> > This patch adds clock entries to watchdog node for exynos5420
+>>> > as per the common clock framework of exynos5420
+>>> >
+>>> > Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+>>> > Reviewed-by: Doug Anderson <dianders@chromium.org>
+>>> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>>> > ---
+>>> >
+>>> >  arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
+>>> >  1 file changed, 6 insertions(+)
+>>> >
+>>> > diff --git a/arch/arm/boot/dts/exynos5420.dtsi
+>>> > b/arch/arm/boot/dts/exynos5420.dtsi index 8c54c4b..e1d2d20 100644
+>>> > --- a/arch/arm/boot/dts/exynos5420.dtsi
+>>> > +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>>> > @@ -145,4 +145,10 @@
+>>> >
+>>> >                 clocks = <&clock 260>, <&clock 131>;
+>>> >                 clock-names = "uart", "clk_uart_baud0";
+>>> >
+>>> >         };
+>>> >
+>>> > +
+>>> > +       watchdog {
+>>> > +               clocks = <&clock 316>;
+>>> > +               clock-names = "watchdog";
+>>> > +               status = "okay";
+>>>
+>>> Generally you do "okay" in specific board dts files.
+>>
+>> Not necessarily. The status property should be set to okay whenever the
+>> device represented by such node can already work with given set of
+>> information (properties).
+>>
+>> Given the fact that watchdog driver does not require any board specific
+>> information, it can be instantiated regardless of the board.
+>
+> Yes you are right. But I was thinking of keeping this (enabling) as an
+> option at the board level.
+> We do this for some of the other IPs too where even though we have all
+> the properties we keep them disabled.
+>
 
-Previous version:
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/18081
----
- .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
- drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Watchdog does not require any board specific information so I kept it
+in 5420.dtsi file.
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-index 14d5c2a..c6bf8a6 100644
---- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-@@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
-   spi0_isp_sclk       380     Exynos4x12
-   spi1_isp_sclk       381     Exynos4x12
-   uart_isp_sclk       382     Exynos4x12
-+  tmu_apbif           383
- 
- 		[Mux Clocks]
- 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 75635eb..cee297d 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -169,7 +169,7 @@ enum exynos4_clks {
- 	gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1, mcuctl_isp,
- 	mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp, uart_isp,
- 	asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk, spi0_isp_sclk,
--	spi1_isp_sclk, uart_isp_sclk,
-+	spi1_isp_sclk, uart_isp_sclk, tmu_apbif,
- 
- 	/* mux clocks */
- 	mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
-@@ -814,6 +814,7 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
- 	GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0, "keypad"),
- 	GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
- 			E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
-+	GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0, 0),
- };
- 
- /* list of gate clocks supported in exynos4x12 soc */
-@@ -915,6 +916,7 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 	GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
- 			CLK_IGNORE_UNUSED, 0),
- 	GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
-+	GATE(tmu_apbif, "tmu_apbif", "aclk100", E4X12_GATE_IP_PERIR, 17, 0, 0),
- };
- 
- /*
--- 
-1.7.9.5
+Best wishes,
+Leela Krishna.
+
+> --
+> With warm regards,
+> Sachin
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
