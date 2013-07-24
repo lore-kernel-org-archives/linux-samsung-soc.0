@@ -1,100 +1,51 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3 00/13] ARM: dts: Add camera and magnetometer support for
- TRATS(2) board
-Date: Wed, 24 Jul 2013 15:29:09 +0200
-Message-ID: <51EFD6A5.9020006@samsung.com>
-References: <1372692155-17653-1-git-send-email-s.nawrocki@samsung.com>
- <0ee701ce886d$b7bc5930$27350b90$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v3 0/5] clk/exynos5250: add clocks for hdmi subsystem
+Date: Wed, 24 Jul 2013 19:43:30 +0530
+Message-ID: <1374675215-27862-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:59970 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902Ab3GXN3M (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:33300 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751035Ab3GXNvG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 09:29:12 -0400
-In-reply-to: <0ee701ce886d$b7bc5930$27350b90$%kim@samsung.com>
+	Wed, 24 Jul 2013 09:51:06 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MQG0011914X8360@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Jul 2013 22:51:05 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, mturquette@linaro.org, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 07/24/2013 03:00 PM, Kukjin Kim wrote:
-> Sylwester Nawrocki wrote:
->>
->> This patch series includes some fixes and extensions to the Exynos dts
->> files to add the camera and magnetometer sensor support for the TRATS
->> and TRATS2 board. It depends on a patch from Tomasz adding initial
->> TRATS2 board dts file [1].
->>
-> Already it is in my tree :)
+Add clock changes for hdmi subsystem for exynos5250 SoC. These
+include addition of new clocks like mout_hdmi and smmu_tv, associating
+ID to clk_hdmiphy and some essential corrections.
 
-Great, I guess some time is needed until it shows up in the public
-git tree.
+This set is based on kukjin's for-next branch at
+http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
 
->> Comparing to the previous version of this patch set I've added a few
->> more patches, for the Exynos4210 based TRATS board and a patch adding
->> MIPI CSIS/DSIM PHY provider nodes and related properties to the PHY
->> consumer nodes.
->>
->> This series has been tested with the S5K6A3/FIMC-IS and S5K5BAFX
->> (front facing) cameras on top of next-20130627 tag. It can be found
->> also at:
->> http://git.linuxtv.org/snawrocki/samsung.git/next-20130627-dts-trats-v3
->>
->> Detailed changes since v2 are listed in each patch.
->>
->> Changes since v1:
->>  - enabled pull down in cam-port-{a, b}-clk-idle nodes (1/8)
->>  - added node alias for i2c-gpio@0 I2C controller node (7/8).
->>
->> [1] http://www.spinics.net/lists/arm-kernel/msg253184.html
->>
->> Andrzej Hajda (2):
->>   ARM: dts: Add Exynos4210 SoC camera port pinctrl nodes
->>   ARM: dts: Add S5K5BA sensor regulator definitions for Trats board
->>
->> Jacek Anaszewski (1):
->>   ARM: dts: Add AK8975 device node for Exynos4412 TRATS2 board
->>
->> Sylwester Nawrocki (10):
->>   ARM: dts: Correct camera pinctrl nodes for Exynos4x12 SoCs
->>   ARM: dts: Add pinctrl entries for Exynos4x12 FIMC-IS peripherals
->>   ARM: dts: Add ISP power domain node for Exynos4x12
->>   ARM: dts: Use generic DMA bindings for Exynos4 SPI devices
->>   ARM: dts: Add camera subsystem device nodes to exynos4.dtsi
->>   ARM: dts: Add camera subsystem nodes to exynos4x12.dtsi
->>   ARM: dts: Add camera device nodes for Exynos4412 TRATS2 board
->>   ARM: dts: Add camera device nodes for Exynos4210 SoCs
->>   ARM: dts: Add FIMC nodes for Exynos4210 Trats board
->>   ARM: dts: Add MIPI PHY node to exynos4.dtsi
->>
->>  arch/arm/boot/dts/exynos4.dtsi            |  102
-> ++++++++++++++++++++++++--
->>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |   23 ++++++
->>  arch/arm/boot/dts/exynos4210-trats.dts    |  103
-> ++++++++++++++++++++++---
->> --
->>  arch/arm/boot/dts/exynos4210.dtsi         |   30 ++++++++
->>  arch/arm/boot/dts/exynos4412-trats2.dts   |  110
->> +++++++++++++++++++++++++++++
->>  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   61 ++++++++++++++--
->>  arch/arm/boot/dts/exynos4x12.dtsi         |  103
-> +++++++++++++++++++++++++++
->>  7 files changed, 503 insertions(+), 29 deletions(-)
->>
->> --
->> 1.7.9.5
-> 
-> Basically, I'm fine on this series but you said, you will address comments
-> on some patches :)
+V3:
+1) Rebase to kgene for-next based on 3.11-rc1.
+2) Added Tushar's patch in the series.
 
-Thanks, I've just sent an updated series. Would be good to finally
-merge it if it looks OK. I have a few more patches on top of it but
-that likely could be merged only in a week or two, after related
-driver changes are finally reviewed and queued for 3.12.
+V2:
+1) Dropped "clk/exynos5250: Fix HDMI clock number in documentation" as
+it already get merged.
 
---
-Thanks,
-Sylwester
+Rahul Sharma (4):
+  clk/exynos5250: add mout_hdmi mux clock for hdmi
+  clk/exynos5250: add sclk_hdmiphy in the list of special clocks
+  clk/exynos5250: add clock for mixer sysmmu
+  clk/exynos5250: change parent to aclk200_disp1 for hdmi subsystem
+
+Tushar Behera (1):
+  Documentation: exynos5250-clock: Add div_i2s1 and div_i2s2
+
+ .../devicetree/bindings/clock/exynos5250-clock.txt |   12 ++++++++++++
+ drivers/clk/samsung/clk-exynos5250.c               |   20 ++++++++++++++------
+ 2 files changed, 26 insertions(+), 6 deletions(-)
+
+-- 
+1.7.10.4
