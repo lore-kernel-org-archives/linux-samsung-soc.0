@@ -1,67 +1,75 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Cleanup common.h file
-Date: Wed, 24 Jul 2013 09:07:09 +0530
-Message-ID: <CAK9yfHzMyfprmtGkDxwbQcYUXueCTPYVZDU_uM=oMudAiaoC_w@mail.gmail.com>
-References: <1373533047-4509-1-git-send-email-sachin.kamat@linaro.org>
-	<0dff01ce881b$cd21c500$67654f00$@org>
+Subject: Re: [PATCH] ARM: dts: Add USB host node for Exynos4
+Date: Wed, 24 Jul 2013 09:08:41 +0530
+Message-ID: <CAK9yfHz10ao32Y4VRsvjNLe+zaq+hYk4KVgtwFgSLDsN-9Pfpw@mail.gmail.com>
+References: <1374600763-19466-1-git-send-email-tobetter@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:57898 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751148Ab3GXDhK (ORCPT
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:65159 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751579Ab3GXDim (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 23:37:10 -0400
-Received: by mail-ob0-f176.google.com with SMTP id v19so11838663obq.21
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 20:37:09 -0700 (PDT)
-In-Reply-To: <0dff01ce881b$cd21c500$67654f00$@org>
+	Tue, 23 Jul 2013 23:38:42 -0400
+Received: by mail-ob0-f180.google.com with SMTP id eh20so11754029obb.25
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 20:38:41 -0700 (PDT)
+In-Reply-To: <1374600763-19466-1-git-send-email-tobetter@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 24 July 2013 08:43, Kukjin Kim <kgene@kernel.org> wrote:
-> Kukjin Kim wrote:
->>
->> Sachin Kamat wrote:
->> >
->> > Remove unused declarations that got left behind subsequent to
->> > making Exynos a DT-only platform.
->> >
->> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> > ---
->> >  arch/arm/mach-exynos/common.h |   41
-> -----------------------------------
->> --
->> > ----
->> >  1 file changed, 41 deletions(-)
->> >
+On 23 July 2013 23:02, Dongjin Kim <tobetter@gmail.com> wrote:
+> This patch adds EHCI and OHCI host device nodes for Exynos4.
 >
-> [...]
+> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi |   20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
 >
->> > -
->> > -struct device_node;
->> > -
->> >  extern struct smp_operations exynos_smp_ops;
->> >
->> >  extern void exynos_cpu_die(unsigned int cpu);
->> > --
->> > 1.7.9.5
->>
->> Looks good to me, applied into -cleanup.
->>
-> Just note, needed following additionally.
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+> index 3f94fe8..1cdbf89 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -155,6 +155,26 @@
+>                 status = "disabled";
+>         };
 >
-> -struct device_node;
-> -void combiner_init(void __iomem *combiner_base, struct device_node *np,
-> -                       unsigned int max_nr, int irq_base);
-> -
+> +       ehci@12580000 {
+> +               compatible = "samsung,exynos4210-ehci";
+> +               reg = <0x12580000 0x100>;
+> +               interrupts = <0 70 0>;
+> +               status = "disabled";
+> +
+> +               clocks = <&clock 304>;
+> +               clock-names = "usbhost";
+> +       };
+> +
+> +       ohci@12590000 {
+> +               compatible = "samsung,exynos4210-ohci";
+> +               reg = <0x12580000 0x100>;
 
-There is already a patch to clean that up [1] submitted earlier as
-part of combiner cleanup series.
-Please apply that first or squash it into this one.
+Register value and node name do not match. Typo?
 
-[1] https://lkml.org/lkml/2013/6/26/296
+
+> +               interrupts = <0 70 0>;
+> +               status = "disabled";
+> +
+> +               clocks = <&clock 304>;
+> +               clock-names = "usbhost";
+> +       };
+> +
+>         mfc: codec@13400000 {
+>                 compatible = "samsung,mfc-v5";
+>                 reg = <0x13400000 0x10000>;
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 
 
 -- 
