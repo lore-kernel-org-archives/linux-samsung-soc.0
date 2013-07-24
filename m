@@ -1,54 +1,56 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: remove obsolete exynos4_defconfig
-Date: Wed, 24 Jul 2013 17:33:42 +0900
-Message-ID: <0e8c01ce8848$810bf370$8323da50$%kim@samsung.com>
-References: <2326060.vKzrGtO1Cq@amdc1032> <51CD5C9B.2010706@linaro.org>
- <2247183.K8o4ATxfnz@amdc1032> <51CDAA7A.9030209@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH v4 1/1] ARM: EXYNOS: Update CONFIG_ARCH_NR_GPIO for Exynos
+Date: Wed, 24 Jul 2013 14:13:25 +0530
+Message-ID: <1374655405-22998-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44922 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751115Ab3GXIdo (ORCPT
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:63388 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751855Ab3GXI7j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 04:33:44 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MQF009FLMEQGPS0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 24 Jul 2013 17:33:43 +0900 (KST)
-In-reply-to: <51CDAA7A.9030209@linaro.org>
-Content-language: ko
+	Wed, 24 Jul 2013 04:59:39 -0400
+Received: by mail-pd0-f178.google.com with SMTP id w11so151595pde.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2013 01:59:38 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Daniel Lezcano' <daniel.lezcano@linaro.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene@kernel.org, kgene.kim@samsung.com, patches@linaro.org, sachin.kamat@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-Daniel Lezcano wrote:
-> 
-> On 06/28/2013 02:45 PM, Bartlomiej Zolnierkiewicz wrote:
-> > On Friday, June 28, 2013 11:51:23 AM Daniel Lezcano wrote:
-> >> On 06/28/2013 11:48 AM, Bartlomiej Zolnierkiewicz wrote:
-> >>> It hasn't been updated since Novemeber 2011 and exynos_defconfig
-> >>> should be used instead.
-> >>
-> >> Why ?
-> >
-> > After conversion to using device tree only (no board files) on
-> > mach-exynos using exynos4_defconfig results in unbootable kernel
-> > (I used next-20130626):
-> 
-> Ok, thanks for the clarification.
-> 
-> If the other one is usable in place of the exynos4_defconfig, that makes
-> sense to not keep a duplicate one.
-> 
-> With a more detailed changelog, you can add my:
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> 
-OK, applied with amending for a more detailed changelog and Sylwester's ack.
+With the recent cleanup in Exynos platform code notably commits
+17859bec ("ARM: EXYNOS: Do not select legacy Kconfig symbols any
+more") and b9222210 ("ARM: EXYNOS: Remove mach/gpio.h"), the definition
+of ARCH_NR_GPIOS got removed. This started causing problems on SoCs like
+Exynos4412 which have more than the default number of GPIOs. Thus define
+this number in KConfig file which takes care of current SoC requirements
+and provides scope for GPIO expanders. Without this patch we get the
+following errors during boot:
 
-Thanks,
-Kukjin
+gpiochip_add: gpios 251..258 (gpv0) failed to register
+samsung-pinctrl 106e0000.pinctrl: failed to register gpio_chip gpv0,
+error code: -22
+samsung-pinctrl: probe of 106e0000.pinctrl failed with error -22
+
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>
+---
+Changes since v3:
+Rearranged different default values in single line.
+---
+ arch/arm/Kconfig |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index f8fb910..ac9fa38 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1590,8 +1590,7 @@ config ARM_PSCI
+ config ARCH_NR_GPIO
+ 	int
+ 	default 1024 if ARCH_SHMOBILE || ARCH_TEGRA
+-	default 512 if SOC_OMAP5
+-	default 512 if ARCH_KEYSTONE
++	default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5
+ 	default 392 if ARCH_U8500
+ 	default 352 if ARCH_VT8500
+ 	default 288 if ARCH_SUNXI
+-- 
+1.7.9.5
