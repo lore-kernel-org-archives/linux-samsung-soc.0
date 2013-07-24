@@ -1,75 +1,115 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH 1/1] ARM: EXYNOS: Update CONFIG_ARCH_NR_GPIO for Exynos
-Date: Wed, 24 Jul 2013 11:20:33 +0900
-Message-ID: <0df901ce8814$601ab6d0$20502470$@org>
-References: <1372054438-15693-1-git-send-email-sachin.kamat@linaro.org>
- <CAK9yfHzmF_oxc3DsuT5wtXX2C5O+wLxz4C2Ps3cVPnKLb8jOEw@mail.gmail.com>
- <0ad601ce868c$d88bff40$89a3fdc0$@org> <3136364.6D0qu7zGk3@amdc1227>
- <51ED89CA.2040908@gmail.com>
- <CAK9yfHyNqDJKuC8urpyrKR564jVJVfsJRRF0Z9a3p52iLWLZ8A@mail.gmail.com>
+Subject: RE: [PATCH 1/1] ARM: EXYNOS: Cleanup common.h file
+Date: Wed, 24 Jul 2013 11:31:06 +0900
+Message-ID: <0dfc01ce8815$d95aa450$8c0fecf0$@org>
+References: <1373533047-4509-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:21284 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750731Ab3GXCUf (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:36377 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750901Ab3GXCbI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Jul 2013 22:20:35 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Tue, 23 Jul 2013 22:31:08 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MQF0036S52ERJK0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 24 Jul 2013 11:20:33 +0900 (KST)
-In-reply-to: <CAK9yfHyNqDJKuC8urpyrKR564jVJVfsJRRF0Z9a3p52iLWLZ8A@mail.gmail.com>
+ with ESMTP id <0MQF000BZ5MLTOE0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Jul 2013 11:31:06 +0900 (KST)
+In-reply-to: <1373533047-4509-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
 Sachin Kamat wrote:
+> 
+> Remove unused declarations that got left behind subsequent to
+> making Exynos a DT-only platform.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/mach-exynos/common.h |   41
+-------------------------------------
+> ----
+>  1 file changed, 41 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index c4abde2..7318e62 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -17,7 +17,6 @@
+> 
+>  void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+>  void exynos_init_time(void);
+> -extern unsigned long xxti_f, xusbxti_f;
+> 
+>  struct map_desc;
+>  void exynos_init_io(void);
+> @@ -25,54 +24,14 @@ void exynos4_restart(enum reboot_mode mode, const char
+> *cmd);
+>  void exynos5_restart(enum reboot_mode mode, const char *cmd);
+>  void exynos_init_late(void);
+> 
+> -/* ToDo: remove these after migrating legacy exynos4 platforms to dt */
+> -void exynos4_clk_init(struct device_node *np, int is_exynos4210, void
+> __iomem *reg_base, unsigned long xom);
+> -void exynos4_clk_register_fixed_ext(unsigned long, unsigned long);
+> -
+>  void exynos_firmware_init(void);
+> 
+> -void exynos_set_timer_source(u8 channels);
+> -
+>  #ifdef CONFIG_PM_GENERIC_DOMAINS
+>  int exynos_pm_late_initcall(void);
+>  #else
+>  static inline int exynos_pm_late_initcall(void) { return 0; }
+>  #endif
+> 
+> -#ifdef CONFIG_ARCH_EXYNOS4
+> -void exynos4_register_clocks(void);
+> -void exynos4_setup_clocks(void);
+> -
+> -#else
+> -#define exynos4_register_clocks()
+> -#define exynos4_setup_clocks()
+> -#endif
+> -
+> -#ifdef CONFIG_ARCH_EXYNOS5
+> -void exynos5_register_clocks(void);
+> -void exynos5_setup_clocks(void);
+> -
+> -#else
+> -#define exynos5_register_clocks()
+> -#define exynos5_setup_clocks()
+> -#endif
+> -
+> -#ifdef CONFIG_CPU_EXYNOS4210
+> -void exynos4210_register_clocks(void);
+> -
+> -#else
+> -#define exynos4210_register_clocks()
+> -#endif
+> -
+> -#ifdef CONFIG_SOC_EXYNOS4212
+> -void exynos4212_register_clocks(void);
+> -
+> -#else
+> -#define exynos4212_register_clocks()
+> -#endif
+> -
+> -struct device_node;
+> -
+>  extern struct smp_operations exynos_smp_ops;
+> 
+>  extern void exynos_cpu_die(unsigned int cpu);
+> --
+> 1.7.9.5
 
-[...]
-
-> >>>>> Hmm, BTW, I'm wondering why it is 288 not 285 or other specific
-> >>>
-> >>>
-> >>> number...
-> >>>
-> >>>> I wasn't really sure if we can have any number there. I chose the
-> >>>> closest one (288) which was already used by other platform.
-> >>>> If there is no problem to use 285 itself then I can resend with that
-> >>>> number. Please let me know.
-> >>>
-> >>>
-> >>> If there is no reason, please don't use bigger value than necessary
-> one.
-> >>
-> >>
-> >> Hmm, what about some GPIO expanders that would require bigger GPIO
-> address
-> >> space? I would reserve some space just in case, i.e. define this value
-> to
-> >> be
-> >> the highest number of GPIOs on all Exynos SoCs + some extra, like 32 or
-> >> 64.
-> >
-> >
-> > That sounds like a good idea. IIRC I once had to increase ARCH_NR_GPIO
-> to
-> > make the wm8994 GPIO controller working. The wm8994 driver also handles
-> > WM1811 audio codec that some Exynos development boards are shipped with.
-> 
-> Looks like a valid point.
-> 
-> Kukjin,
-> Let me know your opinion about this before I respin the patch.
-> 
-Agreed, let's use 512 including some extras, I'm not sure what value for
-some GPIO expanders is reasonable at this moment, though. It should be fine
-on current EXYNOS platforms.
+Looks good to me, applied into -cleanup.
 
 Thanks,
 Kukjin
