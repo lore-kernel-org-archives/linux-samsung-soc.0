@@ -1,54 +1,43 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 2/3] ARM: exynos5420: dt: add clock entries to watchdog node
-Date: Wed, 24 Jul 2013 15:18:26 +0530
-Message-ID: <CAK9yfHwFZunKudPLQsukLt0w4SNSovTWYzy8jRD+u040Pk48dw@mail.gmail.com>
-References: <1374658699-3961-1-git-send-email-l.krishna@samsung.com>
-	<1374658699-3961-3-git-send-email-l.krishna@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: cpuidle: Skip C1 cpuidle state for exynos5440
+Date: Wed, 24 Jul 2013 15:23:35 +0530
+Message-ID: <1374659615-29447-1-git-send-email-amit.daniel@samsung.com>
+References: <0e7d01ce8840$82f79070$88e6b150$@org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f42.google.com ([209.85.219.42]:58308 "EHLO
-	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751539Ab3GXJs1 (ORCPT
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:52893 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751626Ab3GXJxv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 05:48:27 -0400
-Received: by mail-oa0-f42.google.com with SMTP id j6so435895oag.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2013 02:48:26 -0700 (PDT)
-In-Reply-To: <1374658699-3961-3-git-send-email-l.krishna@samsung.com>
+	Wed, 24 Jul 2013 05:53:51 -0400
+Received: by mail-pd0-f173.google.com with SMTP id bv13so197108pdb.32
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2013 02:53:50 -0700 (PDT)
+In-Reply-To: <0e7d01ce8840$82f79070$88e6b150$@org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, jg1.han@samsung.com, t.figa@samsung.com
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>
 
-Hi Leela,
+This patch skips the deep C1(AFTR -Arm off top running) state for exynos5440
+soc as this soc does not support this state. All the cpu's only allows the basic
+C0 state.
 
-On 24 July 2013 15:08, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
-> This patch adds clock entries to watchdog node for exynos5420
-> as per the common clock framework of exynos5420
->
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 8c54c4b..e1d2d20 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -145,4 +145,10 @@
->                 clocks = <&clock 260>, <&clock 131>;
->                 clock-names = "uart", "clk_uart_baud0";
->         };
-> +
-> +       watchdog {
-> +               clocks = <&clock 316>;
-> +               clock-names = "watchdog";
-> +               status = "okay";
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
+ arch/arm/mach-exynos/cpuidle.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Generally you do "okay" in specific board dts files.
-
+diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+index 17a18ff..9a776a1 100644
+--- a/arch/arm/mach-exynos/cpuidle.c
++++ b/arch/arm/mach-exynos/cpuidle.c
+@@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
+ 		device->cpu = cpu_id;
+ 
+ 		/* Support IDLE only */
+-		if (cpu_id != 0)
++		if (soc_is_exynos5440() || cpu_id != 0)
+ 			device->state_count = 1;
+ 
+ 		ret = cpuidle_register_device(device);
 -- 
-With warm regards,
-Sachin
+1.7.1
