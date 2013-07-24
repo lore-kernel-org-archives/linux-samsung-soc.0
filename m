@@ -1,69 +1,85 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v3 1/1] ARM: EXYNOS: Update CONFIG_ARCH_NR_GPIO for Exynos
-Date: Wed, 24 Jul 2013 11:52:40 +0530
-Message-ID: <CAK9yfHz-UcA0--Md0YfrTkPvqzZncTcu-6a-AaHbiWx2tJZczw@mail.gmail.com>
-References: <1374636693-32336-1-git-send-email-sachin.kamat@linaro.org>
-	<0e4301ce8835$f5bef5e0$e13ce1a0$@org>
+From: Dongjin Kim <tobetter@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Add USB host node for Exynos4
+Date: Wed, 24 Jul 2013 15:29:03 +0900
+Message-ID: <CADoNuNdqF0Y=3pdBCE26AQgkv6uqZQ4uE+BfPSSNxAvuuR+kvg@mail.gmail.com>
+References: <1374600763-19466-1-git-send-email-tobetter@gmail.com>
+	<CAK9yfHz10ao32Y4VRsvjNLe+zaq+hYk4KVgtwFgSLDsN-9Pfpw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:61365 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751443Ab3GXGWk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 02:22:40 -0400
-Received: by mail-pa0-f51.google.com with SMTP id lf11so265867pab.38
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Jul 2013 23:22:40 -0700 (PDT)
-In-Reply-To: <0e4301ce8835$f5bef5e0$e13ce1a0$@org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK9yfHz10ao32Y4VRsvjNLe+zaq+hYk4KVgtwFgSLDsN-9Pfpw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, jg1.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-On 24 July 2013 11:50, Kukjin Kim <kgene@kernel.org> wrote:
-> Sachin Kamat wrote:
++Jingoo Han
+
+Sorry, its my bad. Typo problem.
+
+I found another patch same with mine,
+https://patchwork.kernel.org/patch/2628451, submitted by Jingoo Han
+and tested on Exynos4210. Mine is tested on Exynos4412. Both SoC have
+same USB host address space, so I think USB host device nodes can be
+placed in exynos4.dtsi.
+
+Regards,
+Dongjin.
+
+On Wed, Jul 24, 2013 at 12:38 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 23 July 2013 23:02, Dongjin Kim <tobetter@gmail.com> wrote:
+>> This patch adds EHCI and OHCI host device nodes for Exynos4.
 >>
->> With the recent cleanup in Exynos platform code notably commits
->> 17859bec ("ARM: EXYNOS: Do not select legacy Kconfig symbols any
->> more") and b9222210 ("ARM: EXYNOS: Remove mach/gpio.h"), the definition
->> of ARCH_NR_GPIOS got removed. This started causing problems on SoCs like
->> Exynos4412 which have more than the default number of GPIOs. Thus define
->> this number in KConfig file which takes care of current SoC requirements
->> and provides scope for GPIO expanders. Without this patch we get the
->> following
->> errors during boot:
->>
->> gpiochip_add: gpios 251..258 (gpv0) failed to register
->> samsung-pinctrl 106e0000.pinctrl: failed to register gpio_chip gpv0,
->> error code: -22
->> samsung-pinctrl: probe of 106e0000.pinctrl failed with error -22
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> Cc: Tomasz Figa <t.figa@samsung.com>
+>> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
 >> ---
->> Changes since v2:
->> Changed the default number to 512 to accomodate GPIO exapnders.
->> ---
->>  arch/arm/Kconfig |    1 +
->>  1 file changed, 1 insertion(+)
+>>  arch/arm/boot/dts/exynos4.dtsi |   20 ++++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
 >>
->> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
->> index ccc388d..b3c4fa4 100644
->> --- a/arch/arm/Kconfig
->> +++ b/arch/arm/Kconfig
->> @@ -1601,6 +1601,7 @@ config ARCH_NR_GPIO
->>       int
->>       default 1024 if ARCH_SHMOBILE || ARCH_TEGRA
->>       default 512 if SOC_OMAP5
->> +     default 512 if ARCH_EXYNOS
->>       default 512 if ARCH_KEYSTONE
+>> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+>> index 3f94fe8..1cdbf89 100644
+>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>> @@ -155,6 +155,26 @@
+>>                 status = "disabled";
+>>         };
+>>
+>> +       ehci@12580000 {
+>> +               compatible = "samsung,exynos4210-ehci";
+>> +               reg = <0x12580000 0x100>;
+>> +               interrupts = <0 70 0>;
+>> +               status = "disabled";
+>> +
+>> +               clocks = <&clock 304>;
+>> +               clock-names = "usbhost";
+>> +       };
+>> +
+>> +       ohci@12590000 {
+>> +               compatible = "samsung,exynos4210-ohci";
+>> +               reg = <0x12580000 0x100>;
 >
-> +       default 512 if ARCH_EXYNOS || ARCH_KEYSTONE || SOC_OMAP5 ?
-
-Looks good. Do you want me to re-send this?
-
-
-
--- 
-With warm regards,
-Sachin
+> Register value and node name do not match. Typo?
+>
+>
+>> +               interrupts = <0 70 0>;
+>> +               status = "disabled";
+>> +
+>> +               clocks = <&clock 304>;
+>> +               clock-names = "usbhost";
+>> +       };
+>> +
+>>         mfc: codec@13400000 {
+>>                 compatible = "samsung,mfc-v5";
+>>                 reg = <0x13400000 0x10000>;
+>> --
+>> 1.7.9.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+> --
+> With warm regards,
+> Sachin
