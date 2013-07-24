@@ -1,139 +1,66 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 08/13] ARM: dts: Add camera device nodes for Exynos4412
- TRATS2 board
-Date: Wed, 24 Jul 2013 15:17:20 +0200
-Message-ID: <1374671845-30373-9-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v4 10/13] ARM: dts: Add camera device nodes for Exynos4210 SoCs
+Date: Wed, 24 Jul 2013 15:17:22 +0200
+Message-ID: <1374671845-30373-11-git-send-email-s.nawrocki@samsung.com>
 References: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27641 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902Ab3GXNTd (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:9055 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902Ab3GXNTj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 09:19:33 -0400
+	Wed, 24 Jul 2013 09:19:39 -0400
 In-reply-to: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch enables the front camera using the internal
-camera ISP (FIMC-IS).
+Add common camera node and detailed properties for
+the Exynos4210 FIMC devices.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
+ arch/arm/boot/dts/exynos4210.dtsi |   30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-Changes since v3:
- - #address-cells/#size-cells properties in csis nodes
-    moved to exynos4.dtsi,
- - added clock properties to s5k6a3 sensor node,
- - s/voltage-regulator@3/voltage-regulator-1.
----
- arch/arm/boot/dts/exynos4412-trats2.dts |   88 +++++++++++++++++++++++++++++++
- 1 file changed, 88 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index cab4c0e..5558e5a 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -62,6 +62,15 @@
- 			enable-active-high;
- 		};
- 
-+		cam_io_reg: voltage-regulator-1 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "CAM_SENSOR_A";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpm0 2 0>;
-+			enable-active-high;
-+		};
-+
- 		/* More to come */
- 	};
- 
-@@ -472,4 +481,83 @@
- 			gpios = <&gpj0 7 0>;
- 		};
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index b7f358a..ef8c2a5 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -125,4 +125,34 @@
+ 		clock-names = "sclk_fimg2d", "fimg2d";
+ 		status = "disabled";
  	};
 +
 +	camera {
-+		pinctrl-0 = <&cam_port_b_clk_active>;
-+		pinctrl-names = "default";
-+		status = "okay";
++		clocks = <&clock 132>, <&clock 133>, <&clock 351>, <&clock 352>;
++		clock-names = "sclk_cam0", "sclk_cam1", "pxl_async0", "pxl_async1";
 +
 +		fimc_0: fimc@11800000 {
-+			status = "okay";
++			samsung,pix-limits = <4224 8192 1920 4224>;
++			samsung,mainscaler-ext;
++			samsung,cam-if;
 +		};
 +
 +		fimc_1: fimc@11810000 {
-+			status = "okay";
++			samsung,pix-limits = <4224 8192 1920 4224>;
++			samsung,mainscaler-ext;
++			samsung,cam-if;
 +		};
 +
 +		fimc_2: fimc@11820000 {
-+			status = "okay";
++			samsung,pix-limits = <4224 8192 1920 4224>;
++			samsung,mainscaler-ext;
++			samsung,lcd-wb;
 +		};
 +
 +		fimc_3: fimc@11830000 {
-+			status = "okay";
-+		};
-+
-+		csis_1: csis@11890000 {
-+			vddcore-supply = <&ldo8_reg>;
-+			vddio-supply = <&ldo10_reg>;
-+			clock-frequency = <160000000>;
-+			status = "okay";
-+
-+			/* Camera D (4) MIPI CSI-2 (CSIS1) */
-+			port@4 {
-+				reg = <4>;
-+				csis1_ep: endpoint {
-+					remote-endpoint = <&is_s5k6a3_ep>;
-+					data-lanes = <1>;
-+					samsung,csis-hs-settle = <18>;
-+					samsung,csis-wclk;
-+				};
-+			};
-+		};
-+
-+		fimc_lite_0: fimc-lite@12390000 {
-+			status = "okay";
-+		};
-+
-+		fimc_lite_1: fimc-lite@123A0000 {
-+			status = "okay";
-+		};
-+
-+		fimc-is@12000000 {
-+			pinctrl-0 = <&fimc_is_uart>;
-+			pinctrl-names = "default";
-+			status = "okay";
-+
-+			i2c1_isp: i2c-isp@12140000 {
-+				pinctrl-0 = <&fimc_is_i2c1>;
-+				pinctrl-names = "default";
-+
-+				s5k6a3@10 {
-+					compatible = "samsung,s5k6a3";
-+					reg = <0x10>;
-+					svdda-supply = <&cam_io_reg>;
-+					svddio-supply = <&ldo19_reg>;
-+					clock-frequency = <24000000>;
-+					/* CAM_B_CLKOUT */
-+					clocks = <&clock_cam 1>;
-+					clock-names = "mclk";
-+					samsung,camclk-out = <1>;
-+					gpios = <&gpm1 6 0>;
-+
-+					port {
-+						is_s5k6a3_ep: endpoint {
-+							remote-endpoint = <&csis1_ep>;
-+							data-lanes = <1>;
-+						};
-+					};
-+				};
-+			};
++			samsung,pix-limits = <1920 8192 1366 1920>;
++			samsung,rotators = <0>;
++			samsung,mainscaler-ext;
++			samsung,lcd-wb;
 +		};
 +	};
  };
