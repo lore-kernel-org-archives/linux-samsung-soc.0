@@ -1,71 +1,58 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 07/13] ARM: dts: Add AK8975 device node for Exynos4412
- TRATS2 board
-Date: Wed, 24 Jul 2013 15:17:19 +0200
-Message-ID: <1374671845-30373-8-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v4 09/13] ARM: dts: Add SPI1 controller and s5c73m3 sensor node
+ for TRATS2
+Date: Wed, 24 Jul 2013 15:17:21 +0200
+Message-ID: <1374671845-30373-10-git-send-email-s.nawrocki@samsung.com>
 References: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27636 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902Ab3GXNTa (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:9051 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902Ab3GXNTg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 09:19:30 -0400
+	Wed, 24 Jul 2013 09:19:36 -0400
 In-reply-to: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>
 
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-This patch adds AK8975 magnetometer node and corresponding
-i2c-gpio bus node for TRATS2 board.
+This patch add dts entries required for the SPI bus used for
+firware upload by the S5C73M3 camera.
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
-Changes since v3:
- - s/i2c-gpio@0/i2c-gpio-0, changed compatible string to "ak,ak8975".
----
- arch/arm/boot/dts/exynos4412-trats2.dts |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/exynos4412-trats2.dts |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 056b835..cab4c0e 100644
+index 5558e5a..fb7b9ae 100644
 --- a/arch/arm/boot/dts/exynos4412-trats2.dts
 +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -19,6 +19,10 @@
- 	model = "Samsung Trats 2 based on Exynos4412";
- 	compatible = "samsung,trats2", "samsung,exynos4412";
+@@ -482,6 +482,22 @@
+ 		};
+ 	};
  
-+	aliases {
-+		i2c8 = &i2c_ak8975;
-+	};
-+
- 	memory {
- 		reg =  <0x40000000 0x40000000>;
- 	};
-@@ -453,4 +457,19 @@
- 	serial@13830000 {
- 		status = "okay";
- 	};
-+
-+	i2c_ak8975: i2c-gpio-0 {
-+		compatible = "i2c-gpio";
-+		gpios = <&gpy2 4 0>, <&gpy2 5 0>;
-+		i2c-gpio,delay-us = <2>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++	spi_1: spi@13930000 {
++		pinctrl-names = "default";
++		pinctrl-0 = <&spi1_bus>;
 +		status = "okay";
 +
-+		ak8975@0c {
-+			compatible = "ak,ak8975";
-+			reg = <0x0c>;
-+			gpios = <&gpj0 7 0>;
++		s5c73m3_spi: s5c73m3 {
++			compatible = "samsung,s5c73m3";
++			spi-max-frequency = <50000000>;
++			reg = <0>;
++			controller-data {
++				cs-gpio = <&gpb 5 0>;
++				samsung,spi-feedback-delay = <2>;
++			};
 +		};
 +	};
- };
++
+ 	camera {
+ 		pinctrl-0 = <&cam_port_b_clk_active>;
+ 		pinctrl-names = "default";
 -- 
 1.7.9.5
