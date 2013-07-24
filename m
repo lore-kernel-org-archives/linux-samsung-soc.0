@@ -1,147 +1,69 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 06/13] ARM: dts: Add camera subsystem nodes to
- exynos4x12.dtsi
-Date: Wed, 24 Jul 2013 15:17:18 +0200
-Message-ID: <1374671845-30373-7-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v4 07/13] ARM: dts: Add AK8975 device node for Exynos4412
+ TRATS2 board
+Date: Wed, 24 Jul 2013 15:17:19 +0200
+Message-ID: <1374671845-30373-8-git-send-email-s.nawrocki@samsung.com>
 References: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27633 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:27636 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902Ab3GXNT0 (ORCPT
+	with ESMTP id S1750902Ab3GXNTa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 09:19:26 -0400
+	Wed, 24 Jul 2013 09:19:30 -0400
 In-reply-to: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jacek Anaszewski <j.anaszewski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Add common camera node and Exynos4212/4412 specific nodes for
-FIMC, MIPI-CSIS, FIMC-LITE and FIMC-IS devices.
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This patch adds AK8975 magnetometer node and corresponding
+i2c-gpio bus node for TRATS2 board.
+
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
 Changes since v3:
- - fixed typo in exynos4x12 i2c_isp node reg property,
- - removed the clock properties which are now moved to exynos4.dtsi,
-   "mux" and "parent" clock entries are dropped.
+ - s/i2c-gpio@0/i2c-gpio-0, changed compatible string to "ak,ak8975".
 ---
- arch/arm/boot/dts/exynos4x12.dtsi |   98 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+ arch/arm/boot/dts/exynos4412-trats2.dts |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 0e24d85..954628c 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -26,6 +26,8 @@
- 		pinctrl1 = &pinctrl_1;
- 		pinctrl2 = &pinctrl_2;
- 		pinctrl3 = &pinctrl_3;
-+		fimc-lite0 = &fimc_lite_0;
-+		fimc-lite1 = &fimc_lite_1;
- 	};
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 056b835..cab4c0e 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -19,6 +19,10 @@
+ 	model = "Samsung Trats 2 based on Exynos4412";
+ 	compatible = "samsung,trats2", "samsung,exynos4412";
  
- 	pd_isp: isp-power-domain@10023CA0 {
-@@ -78,4 +80,100 @@
- 		clock-names = "sclk_fimg2d", "fimg2d";
- 		status = "disabled";
++	aliases {
++		i2c8 = &i2c_ak8975;
++	};
++
+ 	memory {
+ 		reg =  <0x40000000 0x40000000>;
+ 	};
+@@ -453,4 +457,19 @@
+ 	serial@13830000 {
+ 		status = "okay";
  	};
 +
-+	camera {
-+		clocks = <&clock 132>, <&clock 133>, <&clock 351>, <&clock 352>;
-+		clock-names = "sclk_cam0", "sclk_cam1", "pxl_async0", "pxl_async1";
++	i2c_ak8975: i2c-gpio-0 {
++		compatible = "i2c-gpio";
++		gpios = <&gpy2 4 0>, <&gpy2 5 0>;
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
 +
-+		fimc_0: fimc@11800000 {
-+			compatible = "samsung,exynos4212-fimc";
-+			samsung,pix-limits = <4224 8192 1920 4224>;
-+			samsung,mainscaler-ext;
-+			samsung,isp-wb;
-+			samsung,cam-if;
-+		};
-+
-+		fimc_1: fimc@11810000 {
-+			compatible = "samsung,exynos4212-fimc";
-+			samsung,pix-limits = <4224 8192 1920 4224>;
-+			samsung,mainscaler-ext;
-+			samsung,isp-wb;
-+			samsung,cam-if;
-+		};
-+
-+		fimc_2: fimc@11820000 {
-+			compatible = "samsung,exynos4212-fimc";
-+			samsung,pix-limits = <4224 8192 1920 4224>;
-+			samsung,mainscaler-ext;
-+			samsung,isp-wb;
-+			samsung,lcd-wb;
-+			samsung,cam-if;
-+		};
-+
-+		fimc_3: fimc@11830000 {
-+			compatible = "samsung,exynos4212-fimc";
-+			samsung,pix-limits = <1920 8192 1366 1920>;
-+			samsung,rotators = <0>;
-+			samsung,mainscaler-ext;
-+			samsung,isp-wb;
-+			samsung,lcd-wb;
-+		};
-+
-+		fimc_lite_0: fimc-lite@12390000 {
-+			compatible = "samsung,exynos4212-fimc-lite";
-+			reg = <0x12390000 0x1000>;
-+			interrupts = <0 105 0>;
-+			samsung,power-domain = <&pd_isp>;
-+			clocks = <&clock 353>;
-+			clock-names = "flite";
-+			status = "disabled";
-+		};
-+
-+		fimc_lite_1: fimc-lite@123A0000 {
-+			compatible = "samsung,exynos4212-fimc-lite";
-+			reg = <0x123A0000 0x1000>;
-+			interrupts = <0 106 0>;
-+			samsung,power-domain = <&pd_isp>;
-+			clocks = <&clock 354>;
-+			clock-names = "flite";
-+			status = "disabled";
-+		};
-+
-+		fimc_is: fimc-is@12000000 {
-+			compatible = "samsung,exynos4212-fimc-is", "simple-bus";
-+			reg = <0x12000000 0x260000>;
-+			interrupts = <0 90 0>, <0 95 0>;
-+			samsung,power-domain = <&pd_isp>;
-+			clocks = <&clock 353>, <&clock 354>, <&clock 355>,
-+				<&clock 356>, <&clock 17>, <&clock 357>,
-+				<&clock 358>, <&clock 359>, <&clock 360>,
-+				<&clock 450>,<&clock 451>, <&clock 452>,
-+				<&clock 453>, <&clock 176>, <&clock 13>,
-+				<&clock 454>, <&clock 395>, <&clock 455>;
-+			clock-names = "lite0", "lite1", "ppmuispx",
-+				      "ppmuispmx", "mpll", "isp",
-+				      "drc", "fd", "mcuisp",
-+				      "ispdiv0", "ispdiv1", "mcuispdiv0",
-+				      "mcuispdiv1", "uart", "aclk200",
-+				      "div_aclk200", "aclk400mcuisp",
-+				      "div_aclk400mcuisp";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			status = "disabled";
-+
-+			pmu {
-+				reg = <0x10020000 0x3000>;
-+			};
-+
-+			i2c1_isp: i2c-isp@12140000 {
-+				compatible = "samsung,exynos4212-i2c-isp";
-+				reg = <0x12140000 0x100>;
-+				clocks = <&clock 370>;
-+				clock-names = "i2c_isp";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
++		ak8975@0c {
++			compatible = "ak,ak8975";
++			reg = <0x0c>;
++			gpios = <&gpj0 7 0>;
 +		};
 +	};
  };
