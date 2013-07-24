@@ -1,140 +1,100 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v4 13/13] ARM: dts: Add S5K5BA sensor regulator definitions for
- Trats board
-Date: Wed, 24 Jul 2013 15:17:25 +0200
-Message-ID: <1374671845-30373-14-git-send-email-s.nawrocki@samsung.com>
-References: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v3 00/13] ARM: dts: Add camera and magnetometer support for
+ TRATS(2) board
+Date: Wed, 24 Jul 2013 15:29:09 +0200
+Message-ID: <51EFD6A5.9020006@samsung.com>
+References: <1372692155-17653-1-git-send-email-s.nawrocki@samsung.com>
+ <0ee701ce886d$b7bc5930$27350b90$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:18399 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750909Ab3GXNTw (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59970 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750902Ab3GXN3M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 09:19:52 -0400
-In-reply-to: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
+	Wed, 24 Jul 2013 09:29:12 -0400
+In-reply-to: <0ee701ce886d$b7bc5930$27350b90$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, myungjoo.ham@samsung.com, m.szyprowski@samsung.com, phil.carmody@partner.samsung.com, j.anaszewski@samsung.com, kyungmin.park@samsung.com, devicetree@vger.kernel.org
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+On 07/24/2013 03:00 PM, Kukjin Kim wrote:
+> Sylwester Nawrocki wrote:
+>>
+>> This patch series includes some fixes and extensions to the Exynos dts
+>> files to add the camera and magnetometer sensor support for the TRATS
+>> and TRATS2 board. It depends on a patch from Tomasz adding initial
+>> TRATS2 board dts file [1].
+>>
+> Already it is in my tree :)
 
-Add MAX8998 LDO12 and fixed voltage regulator nodes. While at it,
-all fixed voltage regulator nodes are grouped in a 'regulators' node.
+Great, I guess some time is needed until it shows up in the public
+git tree.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
-Changes since v3:
- - removed #address-cells/#size-cells properties from 'regulators'
-   node and the individual regulator node naming changed to regulator-<N>
----
- arch/arm/boot/dts/exynos4210-trats.dts |   78 +++++++++++++++++++++++++-------
- 1 file changed, 62 insertions(+), 16 deletions(-)
+>> Comparing to the previous version of this patch set I've added a few
+>> more patches, for the Exynos4210 based TRATS board and a patch adding
+>> MIPI CSIS/DSIM PHY provider nodes and related properties to the PHY
+>> consumer nodes.
+>>
+>> This series has been tested with the S5K6A3/FIMC-IS and S5K5BAFX
+>> (front facing) cameras on top of next-20130627 tag. It can be found
+>> also at:
+>> http://git.linuxtv.org/snawrocki/samsung.git/next-20130627-dts-trats-v3
+>>
+>> Detailed changes since v2 are listed in each patch.
+>>
+>> Changes since v1:
+>>  - enabled pull down in cam-port-{a, b}-clk-idle nodes (1/8)
+>>  - added node alias for i2c-gpio@0 I2C controller node (7/8).
+>>
+>> [1] http://www.spinics.net/lists/arm-kernel/msg253184.html
+>>
+>> Andrzej Hajda (2):
+>>   ARM: dts: Add Exynos4210 SoC camera port pinctrl nodes
+>>   ARM: dts: Add S5K5BA sensor regulator definitions for Trats board
+>>
+>> Jacek Anaszewski (1):
+>>   ARM: dts: Add AK8975 device node for Exynos4412 TRATS2 board
+>>
+>> Sylwester Nawrocki (10):
+>>   ARM: dts: Correct camera pinctrl nodes for Exynos4x12 SoCs
+>>   ARM: dts: Add pinctrl entries for Exynos4x12 FIMC-IS peripherals
+>>   ARM: dts: Add ISP power domain node for Exynos4x12
+>>   ARM: dts: Use generic DMA bindings for Exynos4 SPI devices
+>>   ARM: dts: Add camera subsystem device nodes to exynos4.dtsi
+>>   ARM: dts: Add camera subsystem nodes to exynos4x12.dtsi
+>>   ARM: dts: Add camera device nodes for Exynos4412 TRATS2 board
+>>   ARM: dts: Add camera device nodes for Exynos4210 SoCs
+>>   ARM: dts: Add FIMC nodes for Exynos4210 Trats board
+>>   ARM: dts: Add MIPI PHY node to exynos4.dtsi
+>>
+>>  arch/arm/boot/dts/exynos4.dtsi            |  102
+> ++++++++++++++++++++++++--
+>>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |   23 ++++++
+>>  arch/arm/boot/dts/exynos4210-trats.dts    |  103
+> ++++++++++++++++++++++---
+>> --
+>>  arch/arm/boot/dts/exynos4210.dtsi         |   30 ++++++++
+>>  arch/arm/boot/dts/exynos4412-trats2.dts   |  110
+>> +++++++++++++++++++++++++++++
+>>  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   61 ++++++++++++++--
+>>  arch/arm/boot/dts/exynos4x12.dtsi         |  103
+> +++++++++++++++++++++++++++
+>>  7 files changed, 503 insertions(+), 29 deletions(-)
+>>
+>> --
+>> 1.7.9.5
+> 
+> Basically, I'm fine on this series but you said, you will address comments
+> on some patches :)
 
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 199ff1e..1c164f2 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -30,13 +30,62 @@
- 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
- 	};
- 
--	vemmc_reg: voltage-regulator@0 {
--	        compatible = "regulator-fixed";
--		regulator-name = "VMEM_VDD_2.8V";
--		regulator-min-microvolt = <2800000>;
--		regulator-max-microvolt = <2800000>;
--		gpio = <&gpk0 2 0>;
--		enable-active-high;
-+	regulators {
-+		compatible = "simple-bus";
-+
-+		vemmc_reg: regulator-0 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "VMEM_VDD_2.8V";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpk0 2 0>;
-+			enable-active-high;
-+		};
-+
-+		tsp_reg: regulator-1 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "TSP_FIXED_VOLTAGES";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpl0 3 0>;
-+			enable-active-high;
-+		};
-+
-+		cam_af_28v_reg: regulator-2 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "8M_AF_2.8V_EN";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpk1 1 0>;
-+			enable-active-high;
-+		};
-+
-+		cam_io_en_reg: regulator-3 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "CAM_IO_EN";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpe2 1 0>;
-+			enable-active-high;
-+		};
-+
-+		cam_io_12v_reg: regulator-4 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "8M_1.2V_EN";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			gpio = <&gpe2 5 0>;
-+			enable-active-high;
-+		};
-+
-+		vt_core_15v_reg: regulator-5 {
-+			compatible = "regulator-fixed";
-+			regulator-name = "VT_CORE_1.5V";
-+			regulator-min-microvolt = <1500000>;
-+			regulator-max-microvolt = <1500000>;
-+			gpio = <&gpe2 2 0>;
-+			enable-active-high;
-+		};
- 	};
- 
- 	sdhci_emmc: sdhci@12510000 {
-@@ -97,15 +146,6 @@
- 		};
- 	};
- 
--	tsp_reg: voltage-regulator {
--		compatible = "regulator-fixed";
--		regulator-name = "TSP_FIXED_VOLTAGES";
--		regulator-min-microvolt = <2800000>;
--		regulator-max-microvolt = <2800000>;
--		gpio = <&gpl0 3 0>;
--		enable-active-high;
--	};
--
- 	i2c@13890000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-slave-addr = <0x10>;
-@@ -218,6 +258,12 @@
- 				     regulator-always-on;
- 				};
- 
-+				vtcam_reg: LDO12 {
-+				     regulator-name = "VT_CAM_1.8V";
-+				     regulator-min-microvolt = <1800000>;
-+				     regulator-max-microvolt = <1800000>;
-+				};
-+
- 				vcclcd_reg: LDO13 {
- 				     regulator-name = "VCC_3.3V_LCD";
- 				     regulator-min-microvolt = <3300000>;
--- 
-1.7.9.5
+Thanks, I've just sent an updated series. Would be good to finally
+merge it if it looks OK. I have a few more patches on top of it but
+that likely could be merged only in a week or two, after related
+driver changes are finally reviewed and queued for 3.12.
+
+--
+Thanks,
+Sylwester
