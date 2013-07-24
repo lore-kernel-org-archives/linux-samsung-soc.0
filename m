@@ -1,80 +1,47 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Cleanup common.h file
-Date: Wed, 24 Jul 2013 14:30:18 +0530
-Message-ID: <CAK9yfHzF=PqCkLMwV63gSUqaK9-emzoFvK9kUutSp6M6xmYTXw@mail.gmail.com>
-References: <1373533047-4509-1-git-send-email-sachin.kamat@linaro.org>
-	<0dff01ce881b$cd21c500$67654f00$@org>
-	<CAK9yfHzMyfprmtGkDxwbQcYUXueCTPYVZDU_uM=oMudAiaoC_w@mail.gmail.com>
-	<0e7c01ce883f$c1edafe0$45c90fa0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 0/3] parse watchdog node to read PMU registers addresses
+Date: Wed, 24 Jul 2013 15:08:16 +0530
+Message-ID: <1374658699-3961-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:63139 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751855Ab3GXJAS (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:36807 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751568Ab3GXJQH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Jul 2013 05:00:18 -0400
-Received: by mail-ob0-f182.google.com with SMTP id va7so12291943obc.41
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2013 02:00:18 -0700 (PDT)
-In-Reply-To: <0e7c01ce883f$c1edafe0$45c90fa0$%kim@samsung.com>
+	Wed, 24 Jul 2013 05:16:07 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MQF00HXTODYOM40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Jul 2013 18:15:34 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, jg1.han@samsung.com, t.figa@samsung.com, sachin.kamat@linaro.org
 
-On 24 July 2013 13:01, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Sachin Kamat wrote:
->>
->> On 24 July 2013 08:43, Kukjin Kim <kgene@kernel.org> wrote:
->> > Kukjin Kim wrote:
->> >>
->> >> Sachin Kamat wrote:
->> >> >
->> >> > Remove unused declarations that got left behind subsequent to
->> >> > making Exynos a DT-only platform.
->> >> >
->> >> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> >> > ---
->> >> >  arch/arm/mach-exynos/common.h |   41
->> > -----------------------------------
->> >> --
->> >> > ----
->> >> >  1 file changed, 41 deletions(-)
->> >> >
->> >
->> > [...]
->> >
->> >> > -
->> >> > -struct device_node;
->> >> > -
->> >> >  extern struct smp_operations exynos_smp_ops;
->> >> >
->> >> >  extern void exynos_cpu_die(unsigned int cpu);
->> >> > --
->> >> > 1.7.9.5
->> >>
->> >> Looks good to me, applied into -cleanup.
->> >>
->> > Just note, needed following additionally.
->> >
->> > -struct device_node;
->> > -void combiner_init(void __iomem *combiner_base, struct device_node *np,
->> > -                       unsigned int max_nr, int irq_base);
->> > -
->>
->> There is already a patch to clean that up [1] submitted earlier as
->> part of combiner cleanup series.
->> Please apply that first or squash it into this one.
->>
->> [1] https://lkml.org/lkml/2013/6/26/296
->>
-> Already did when I applied.
+This patch set does the following things
+	- add the clock entries to watchdog node.
+	- parse the watchdog device node to read pmu wdt sys registers
+	  addresses and do mask/unmask enable/disable of WDT in probe
+	  and s2r scenarios.
 
- Thanks Kukjin.
+This patch set is rebased on Kgene's for-next branch and is dependent on
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg20582.html
 
+Note: Tested WDT reset on SMDK5420.
 
+Leela Krishna Amudala (3):
+  watchdog: s3c2410_wdt: parse watchdog dt node to read PMU registers
+    adresses
+  ARM: exynos5420: dt: add clock entries to watchdog node
+  ARM: dts: exynos: add PMU registers addresses and mask bit to
+    watchdog node
 
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |   14 ++++-
+ arch/arm/boot/dts/exynos5.dtsi                     |    2 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |    7 +++
+ drivers/watchdog/s3c2410_wdt.c                     |   56 ++++++++++++++++++++
+ 4 files changed, 77 insertions(+), 2 deletions(-)
 
 -- 
-With warm regards,
-Sachin
+1.7.10.4
