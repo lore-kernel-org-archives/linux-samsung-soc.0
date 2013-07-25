@@ -1,83 +1,62 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/3] watchdog: s3c2410_wdt: parse watchdog dt node to read
- PMU registers adresses
-Date: Thu, 25 Jul 2013 12:27:10 +0200
-Message-ID: <3356224.pISrcKET7X@amdc1227>
-References: <1374658699-3961-1-git-send-email-l.krishna@samsung.com>
- <1374658699-3961-2-git-send-email-l.krishna@samsung.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
+Date: Thu, 25 Jul 2013 11:26:41 +0100
+Message-ID: <CAGVrzcZqTNcu4Dxnr9p6JNBVzEBSBPuFSZLpiogDVX4zfw6kWw@mail.gmail.com>
+References: <Pine.LNX.4.44L0.1307231708020.1304-100000@iolanthe.rowland.org>
+ <5977067.8rykRgjgre@flatron> <201307242032.03597.arnd@arndb.de>
+ <2174304.5JlzJ583hP@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:34886 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754994Ab3GYK1O (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Jul 2013 06:27:14 -0400
-In-reply-to: <1374658699-3961-2-git-send-email-l.krishna@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <2174304.5JlzJ583hP@avalon>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-fbdev@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-doc@vger.kernel.org, tony@atomide.com, Tomasz Figa <t.figa@samsung.com>, nsekhar@ti.com, Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com, kgene.kim@samsung.com, swarren@nvidia.com, jg1.han@samsung.com, Kishon Vijay Abraham I <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Grant Likely <grant.likely@linaro.org>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, george.cherian@ti.com, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, b.zolnierkie@samsung.com, Sascha Hauer <s.hauer@pengutronix.de>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-omap@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, balajitk@ti.com, Greg KH <gregkh@linuxfoundation.org>linux-
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, jg1.han@samsung.com, sachin.kamat@linaro.org, 'Wim Van Sebroeck' <wim@iguana.be>, devicetree@vger.kernel.org
 
-Hi Leela,
+2013/7/25 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+> Hi Arnd,
+>
+> On Wednesday 24 July 2013 20:32:03 Arnd Bergmann wrote:
+>> On Tuesday 23 July 2013, Tomasz Figa wrote:
+>> > On Tuesday 23 of July 2013 17:14:20 Alan Stern wrote:
+>> > > On Tue, 23 Jul 2013, Tomasz Figa wrote:
+>> > > > Where would you want to have those phy_address arrays stored? There
+>> > > > are no board files when booting with DT. Not even saying that you
+>> > > > don't need to use any hacky schemes like this when you have DT that
+>> > > > nicely specifies relations between devices.
+>> > >
+>> > > If everybody agrees DT has a nice scheme for specifying relations
+>> > > between devices, why not use that same scheme in the PHY core?
+>> >
+>> > It is already used, for cases when consumer device has a DT node attached.
+>> > In non-DT case this kind lookup translates loosely to something that is
+>> > being done in regulator framework - you can't bind devices by pointers,
+>> > because you don't have those pointers, so you need to use device names.
+>>
+>> Sorry for jumping in to the middle of the discussion, but why does a *new*
+>> framework even bother defining an interface for board files?
+>>
+>> Can't we just drop any interfaces for platform data passing in the phy
+>> framework and put the burden of adding those to anyone who actually needs
+>> them? All the platforms we are concerned with here (exynos and omap, plus
+>> new platforms) can be booted using DT anyway.
+>
+> What about non-DT architectures such as MIPS (still widely used in consumer
+> networking equipments from what I've heard) ?
 
-On Wednesday 24 of July 2013 15:08:17 Leela Krishna Amudala wrote:
-> This patch parses the watchdog node to read pmu wdt sys registers
-> addresses and do mask/unmask enable/disable of WDT in probe and s2r
-> scenarios.
-> 
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  .../devicetree/bindings/watchdog/samsung-wdt.txt   |   14 ++++-
->  drivers/watchdog/s3c2410_wdt.c                     |   56
-> ++++++++++++++++++++ 2 files changed, 69 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt index
-> 2aa486c..4c798e3 100644
-> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> @@ -7,8 +7,20 @@ occurred.
->  Required properties:
->  - compatible : should be "samsung,s3c2410-wdt"
->  - reg : base physical address of the controller and length of memory
-> mapped -	region.
-> +	region and the optional (addresses and length of memory mapped regions
-> +	of) PMU registers for masking/unmasking WDT.
->  - interrupts : interrupt number to the cpu.
+Is there any specific MIPS platform you are thinking about which could
+benefit from this generic PHY framework? MIPS is also trying to make
+DT the standard for passing such information now.
 
-I don't think PMU registers should be passed like this, even if USB PHY 
-driver currently does it - it needs to be fixed. Every time you are mapping 
-a single 4-byte register, you are creating new mapping for the whole page 
-(4K) containing it. In addition, this makes the WDT driver map IO memory 
-that does not belong to the IP block it handles, which is not nice.
-
-I would suggest looking into regmap helpers to implement a driver for the 
-PMU that can share PMU registers with interested drivers.
-
->  Optional properties:
->  - timeout-sec : contains the watchdog timeout in seconds.
-> +- reset-mask-bit: bit number in the PMU registers to program mask/unmask
-> WDT. +
-> +Example:
-
-If WDT of Exynos 5420 needs special masking, it is no longer compatible 
-with "samsung,s3c2410-wdt". You need to create separate compatible for it 
-("samsung,exynos5420-wdt") and do this special masking only for devices 
-using it.
-
-> +watchdog {
-> +	compatible = "samsung,s3c2410-wdt";
-> +	reg = <0x101D0000 0x100>, <0x10040408 0x4>, <0x1004040c 0x4>;
-> +	interrupts = <0 42 0>;
-> +	status = "disabled";
-> +	reset-mask-bit = <0>;
-> +};
-
-By the way, you need to Cc devicetree@vger.kernel.org mailing if you modify 
-device tree bindings.
-
-Best regards,
-Tomasz
+-- 
+Florian
