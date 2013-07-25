@@ -1,97 +1,77 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v5 4/5] clk: add CLK_SET_RATE_NO_REPARENT flag
-Date: Thu, 25 Jul 2013 11:05:57 -0700
-Message-ID: <20130725180557.7598.20285@quantum>
-References: <1371139562-305-1-git-send-email-james.hogan@imgtec.com>
- <1371139562-305-5-git-send-email-james.hogan@imgtec.com>
- <51F11B46.7010900@samsung.com> <51F1202D.9060403@imgtec.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 2/3] ARM: exynos5420: dt: add clock entries to watchdog
+ node
+Date: Thu, 25 Jul 2013 11:18:51 -0700
+Message-ID: <51F16C0B.7070107@wwwdotorg.org>
+References: <1374658699-3961-1-git-send-email-l.krishna@samsung.com> <1374683930.AViQJCJKdW@amdc1227> <CAK9yfHz9-2WeDU8fnsOoQk7FCXoUvM6MnpWNXEd_GXvv=Fd4Cw@mail.gmail.com> <5919446.9SmJVKqkD3@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:45023 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757775Ab3GYSGC convert rfc822-to-8bit (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:57588 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756758Ab3GYSSz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Jul 2013 14:06:02 -0400
-Received: by mail-pd0-f179.google.com with SMTP id v10so1778984pde.38
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jul 2013 11:06:01 -0700 (PDT)
-In-Reply-To: <51F1202D.9060403@imgtec.com>
+	Thu, 25 Jul 2013 14:18:55 -0400
+In-Reply-To: <5919446.9SmJVKqkD3@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: James Hogan <james.hogan@imgtec.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Saravana Kannan <skannan@codeaurora.org>, Doug Anderson <dianders@chromium.org>, Sascha Hauer <kernel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Viresh Kumar <viresh.linux@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Chao Xie <xiechao.mail@gmail.com>, Arnd Bergmann <arnd@arndb.de>, =?utf-8?q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Joseph Lo <josephl@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Pawel Moll <pawel.moll@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, linux-samsung-s
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, jg1.han@samsung.com, grant.likely@secretlab.ca, arnd@arndb.de, olof@lixom.net, s.nawrocki@samsung.com
 
-Quoting James Hogan (2013-07-25 05:55:09)
-> Hi Sylwester
+On 07/24/2013 07:14 AM, Tomasz Figa wrote:
+> On Wednesday 24 of July 2013 16:51:06 Sachin Kamat wrote:
+...
+>> This is contrary to the fact that we disable everything by default in
+>> the top level dt files and only enable them as required in the board
+>> dts files.
 > 
-> On 25/07/13 13:34, Sylwester Nawrocki wrote:
-> > On 06/13/2013 06:06 PM, James Hogan wrote:
-> >> Add a CLK_SET_RATE_NO_REPARENT clock flag, which will prevent muxes
-> >> being reparented during clk_set_rate.
-> >>
-> >> To avoid breaking existing platforms, all callers of clk_register_mux()
-> >> are adjusted to pass the new flag. Platform maintainers are encouraged
-> >> to remove the flag if they wish to allow mux reparenting on set_rate.
-> > [..]
-> >> Changes in v3:
-> >>
-> >> * rename/invert CLK_SET_RATE_REMUX to CLK_SET_RATE_NO_REPARENT and move
-> >>   to this new patch.
-> >> * patch 3: add CLK_SET_RATE_NO_REPARENT flag to all callers of
-> >>   clk_register_mux. If you don't mind your clocks being reparented in
-> >>   response to set_rate please let me know and I'll drop the relevant
-> >>   portion of the patch.
-> > 
-> > Why is this better to change current behaviour of the clock core
-> > and modify all drivers instead of having, e.g. CLK_SET_RATE_REPARENT
-> > set in drivers of hardware that supports clock re-parenting while
-> > setting clock rate ?
+> No, we don't disable everything. We disable things that require board 
+> specific setup or can't work without other support from board side. If there 
+> is some hardware disabled in SoC level dtsi that can work without any 
+> support from board side, then it is a BUG() and must be fixed.
 > 
-> See this message from Mike Turquette which first suggested it:
+>>> To illustrate the problem please consider that in the end, a dtb file
+>>> will be fused into board ROM (or at most flash memory) and passed to
+>>> the kernel by the bootloader. If you disable some hardware on DT level
+>>> even if it can be physically used on the board, there will be no way
+>>> to reenable it, if some user wanted to use it, because that would
+>>> require editing the fused dtb.
+>>
+>> I believe some h/w will be disabled in dt only if it should not be
+>> used for whatever reason. If there is no reason then ofcourse they
+>> would be enabled IMHO.
 > 
-> http://marc.info/?l=linux-kernel&m=136847508109344&w=2
+> Yes. This is what I meant. However the reason must be valid - e.g. 
+> "hardware does not allow such configuration", not like "some very important 
+> manager decided that this board should not use this".
 > 
-> > Is there intention to just have the automatic clock re-parenting
-> > as a default feature in the common clock API ?
+>> Whatever be the case the choice of enabling or
+>> disabling should be done at the leaf node (at board level). No?
 > 
-> Yes, that would be the result (except where explicitly disallowed).
-> Unfortunately where such policy should ideally be defined is still up in
-> the air.
-> 
-> It's not a property of the hardware, but then it is arguably a property
-> of the environment the bootloader has configured (like the stuff in the
-> /chosen device tree node).
+> It depends. For components that don't require any support from board side 
+> it can be globally enabled on SoC level. If a SoC component requires 
+> support from board side (like regulators, GPIOs, etc.) then it should be 
+> disabled on SoC level and enabled on board level only if all the 
+> dependencies are provided.
 
-I'm happy to get feedback on this decision. Looking back on
-CLK_SET_RATE_PARENT flag I wish I had made that behavior the default.
-Instead there would only be a flag for the case where you explicitly do
-not wish to propagate the rate change request up the tree.
+I tend to agree with Tomasz.
 
-Another thing to consider here is that only users of .determine_rate are
-affected. If your mux clock implements .set_parent and .round_rate, but
-not .determine_rate then you are not affected by this change.
+One note though: This is talking about the *.dts files, which may be
+different from the DTB that gets passed to the kernel.
 
-The whole thing gets messy because we're pushing policy into the clock
-framework, but there is no way to avoid that if we're going to achieve
-the goal of having drivers know only about the leaf clocks they consume
-and not requiring those drivers to understand the greater clock tree
-topology.
+In other words, I don't think that the SoC or board .dtsi file (at least
+public versions that are hosted outside company-internal/downstream
+branches) have any business disabling HW based on policy or use-cases,
+rather than actual HW issues such as requiring other HW to support it
+that isn't present or doesn't work.
 
-Regards,
-Mike
+However, I don't think anyone can influence what e.g.a bootloader does
+to the DTB before passing it to the kernel; it could add
+status="disabled" to some nodes based on policy, and nobody in the Linux
+kernel has any absolute right to influence it, although there's sure a
+right to complain about it and point out why it's a bad idea.
 
-> 
-> Presuming that the usual reason not to reparent a mux is because other
-> important clocks depend on it, the kernel might know enough to work out
-> whether it's safe (unless of course there are other cores/threads in the
-> SoC using the clock that Linux isn't aware of, which brings us back to
-> it being a bootloader environment thing).
-> 
-> > My apologies if this has already been answered, I haven't been
-> > following this thread.
-> 
-> No problem :)
-> 
-> Cheers
-> James
+Equally, if somebody is creating a "BSP" (ick!) for a specific product's
+production flash image, rather than contributing to upstream SW support
+for that HW board, we probably don't have too much say in what they do.
