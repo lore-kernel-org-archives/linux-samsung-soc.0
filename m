@@ -1,84 +1,58 @@
-From: Grant Likely <grant.likely@linaro.org>
-Subject: Re: [PATCH] of: provide of_platform_unpopulate()
-Date: Wed, 24 Jul 2013 15:19:58 +0100
-Message-ID: <20130724141958.9156F3E0A24@localhost>
-References: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de> <51EBF33A.4050207@gmail.com> <51EC4908.4040504@gmail.com> <CACxGe6sqv2Wsp26MWqqs9W_eWO3tjs-+2z3z8fC=2fe-BjJvkA@mail.gmail.com> <51EDA117.10605@gmail.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v4 0/6] clk/exynos5250: add clocks for hdmi subsystem
+Date: Thu, 25 Jul 2013 10:37:31 +0530
+Message-ID: <1374728857-4208-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:36397 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751291Ab3GYEPI (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:53576 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751106Ab3GYEow (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Jul 2013 00:15:08 -0400
-Received: by mail-pb0-f52.google.com with SMTP id xa12so235181pbc.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Jul 2013 21:15:07 -0700 (PDT)
-In-Reply-To: <51EDA117.10605@gmail.com>
+	Thu, 25 Jul 2013 00:44:52 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MQH00K8H6IGIMK0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 25 Jul 2013 13:44:51 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Rob Herring <rob.herring@calxeda.com>, Kishon Vijay Abraham I <kishon@ti.com>, George Cherian <george.cherian@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Roger Quadros <rogerq@ti.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, mturquette@linaro.org, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Mon, 22 Jul 2013 16:16:07 -0500, Rob Herring <robherring2@gmail.com> wrote:
-> On 07/21/2013 06:44 PM, Grant Likely wrote:
-> > On Sun, Jul 21, 2013 at 9:48 PM, Rob Herring <robherring2@gmail.com> wrote:
-> >> On 07/21/2013 09:42 AM, Rob Herring wrote:
-> >>> On 07/19/2013 01:14 PM, Sebastian Andrzej Siewior wrote:
-> >>>> So I called of_platform_populate() on a device to get each child device
-> >>>> probed and on rmmod and I need to reverse its doing. After a quick grep
-> >>>> I did what others did as well and rmmod ended in:
-> >>>>
-> >>>> | Unable to handle kernel NULL pointer dereference at virtual address 00000018
-> >>>> | PC is at release_resource+0x18/0x80
-> >>>> | Process rmmod (pid: 2005, stack limit = 0xedc30238)
-> >>>> | [<c003add0>] (release_resource+0x18/0x80) from [<c0300e08>] (platform_device_del+0x78/0xac)
-> >>>> | [<c0300e08>] (platform_device_del+0x78/0xac) from [<c0301358>] (platform_device_unregister+0xc/0x18)
-> >>>>
-> >>>> The problem is that platform_device_del() "releases" each ressource in its
-> >>>> tree. This does not work on platform_devices created by OF becuase they
-> >>>> were never added via insert_resource(). As a consequence old->parent in
-> >>>> __release_resource() is NULL and we explode while accessing ->child.
-> >>>> So I either I do something completly wrong _or_ nobody here tested the
-> >>>> rmmod path of their driver.
-> >>>
-> >>> Wouldn't the correct fix be to call insert_resource somehow? The problem
-> >>> I have is that while of_platform_populate is all about parsing the DT
-> >>> and creating devices, the removal side has nothing to do with DT. So
-> >>> this should not be in the DT code. I think the core device code should
-> >>> be able to handle removal if the device creation side is done correctly.
-> >>>
-> >>> It looks to me like of_device_add either needs to call
-> >>> platform_device_add rather than device_add. I think the device name
-> >>> setting in platform_device_add should be a nop. If not, a check that the
-> >>> name is already set could be added.
-> >>>
-> >>
-> >> BTW, it looks like Grant has attempted this already:
-> > 
-> > Yup, things broke badly. Unfortunately the of_platform_device and
-> > platform_device history doesn't treat resources in the same way. I
-> > would like to merge the code, but I haven't been able to figure out a
-> > clean way to do it. Looks like we do need the unpopulate function.
-> 
-> Was there more breakage than imx6 and amba devices? Your first version
-> had a fallback case for powerpc. Couldn't we do just allow that for more
-> than just powerpc? I'd much rather see some work-around within the core
-> DT code with a warning to prevent more proliferation than putting this
-> into drivers.
+Add clock changes for hdmi subsystem for exynos5250 SoC. These
+include addition of new clocks like mout_hdmi and smmu_tv, associating
+ID to clk_hdmiphy and some essential corrections.
 
-It's tricky stuff. I've not figured out a solution I'm happy with.
-Trying to figure out when to apply a work around is hard because the
-resource reservation makes assumptions about the memory range layout
-that doesn't match the assumptions made by device tree code.
+This set is based on kukjin's for-next branch at
+http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
 
-One /possible/ option is to not add the resources to the devices at all
-when the device is registered and instead resolve them right at bind
-time. Jean Christophe proposed doing this already to solve a different
-problem; obtaining resources that require other drivers to be probed
-first. If the resources are resolved at .probe() time, then the resource
-registration problem should also go away.
+V4:
+1) Added Arun's patch hdmi clock number correction in this series.
+2) Corrected clock number for smmu_mixer
 
-The downside to that approach is that it makes each deferred probe more
-expensive; potentially a *lot* more expensive depending on how much work
-the xlate functions have to do. It would be worth prototyping though to
-see how well it works.
+V3:
+1) Rebase to kgene for-next based on 3.11-rc1.
+2) Added Tushar's patch in the series.
 
-g.
+V2:
+1) Dropped "clk/exynos5250: Fix HDMI clock number in documentation" as
+it already get merged.
+
+Arun Kumar K (1):
+  clk/exynos5250: Fix HDMI clock number in documentation
+
+Rahul Sharma (4):
+  clk/exynos5250: add mout_hdmi mux clock for hdmi
+  clk/exynos5250: add sclk_hdmiphy in the list of special clocks
+  clk/exynos5250: add clock for mixer sysmmu
+  clk/exynos5250: change parent to aclk200_disp1 for hdmi subsystem
+
+Tushar Behera (1):
+  Documentation: exynos5250-clock: Add div_i2s1 and div_i2s2
+
+ .../devicetree/bindings/clock/exynos5250-clock.txt |   14 +++++++++++++-
+ drivers/clk/samsung/clk-exynos5250.c               |   20 ++++++++++++++------
+ 2 files changed, 27 insertions(+), 7 deletions(-)
+
+-- 
+1.7.10.4
