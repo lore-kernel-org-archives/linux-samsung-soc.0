@@ -1,73 +1,268 @@
-From: James Hogan <james.hogan@imgtec.com>
-Subject: Re: [PATCH v5 4/5] clk: add CLK_SET_RATE_NO_REPARENT flag
-Date: Thu, 25 Jul 2013 13:55:09 +0100
-Message-ID: <51F1202D.9060403@imgtec.com>
-References: <1371139562-305-1-git-send-email-james.hogan@imgtec.com> <1371139562-305-5-git-send-email-james.hogan@imgtec.com> <51F11B46.7010900@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH] V4L: Add driver for Samsung S5K5BAF camera sensor
+Date: Thu, 25 Jul 2013 16:42:21 +0200
+Message-ID: <201307251642.21451.hverkuil@xs4all.nl>
+References: <1374688263-31907-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from multi.imgtec.com ([194.200.65.239]:21411 "EHLO multi.imgtec.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755526Ab3GYMzR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Jul 2013 08:55:17 -0400
-In-Reply-To: <51F11B46.7010900@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1374688263-31907-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Stephen Boyd <sboyd@codeaurora.org>, linux-kernel@vger.kernel.org, Saravana Kannan <skannan@codeaurora.org>, Doug Anderson <dianders@chromium.org>, Sascha Hauer <kernel@pengutronix.de>, Russell King <linux@arm.linux.org.uk>, Viresh Kumar <viresh.linux@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Haojian Zhuang <haojian.zhuang@gmail.com>, Chao Xie <xiechao.mail@gmail.com>, Arnd Bergmann <arnd@arndb.de>, =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Thierry Reding <thierry.reding@avionic-design.de>, Joseph Lo <josephl@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Pawel Moll <pawel.moll@arm.com>, Catalin
 
-Hi Sylwester
-
-On 25/07/13 13:34, Sylwester Nawrocki wrote:
-> On 06/13/2013 06:06 PM, James Hogan wrote:
->> Add a CLK_SET_RATE_NO_REPARENT clock flag, which will prevent muxes
->> being reparented during clk_set_rate.
->>
->> To avoid breaking existing platforms, all callers of clk_register_mux()
->> are adjusted to pass the new flag. Platform maintainers are encouraged
->> to remove the flag if they wish to allow mux reparenting on set_rate.
-> [..]
->> Changes in v3:
->>
->> * rename/invert CLK_SET_RATE_REMUX to CLK_SET_RATE_NO_REPARENT and move
->>   to this new patch.
->> * patch 3: add CLK_SET_RATE_NO_REPARENT flag to all callers of
->>   clk_register_mux. If you don't mind your clocks being reparented in
->>   response to set_rate please let me know and I'll drop the relevant
->>   portion of the patch.
+On Wed 24 July 2013 19:51:03 Sylwester Nawrocki wrote:
+> From: Andrzej Hajda <a.hajda@samsung.com>
 > 
-> Why is this better to change current behaviour of the clock core
-> and modify all drivers instead of having, e.g. CLK_SET_RATE_REPARENT
-> set in drivers of hardware that supports clock re-parenting while
-> setting clock rate ?
+> This patch adds V4L2 subdev driver for Samsung S5K5BAF CMOS
+> image sensor with embedded SoC ISP.
+> 
+> The driver exposes two V4L2 subdevices:
+> - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
+>   no controls.
+> - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
+>   pre/post ISP cropping, downscaling via selection API, controls.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> v4:
+> - endpoint node presence is now optional,
+> - added asynchronous subdev registration support and clock
+>   handling,
+> - GPL changed to GPLv2,
+> - bitfields replaced by u8,
+> - corrected s_stream flow,
+> - gpio pins are no longer exported,
+> - added I2C addresses to subdev names,
+> - CIS subdev registration postponed after succesfull
+>   HW initialization,
+> - added enums for pads,
+> - selections are initialized only during probe,
+> - default resolution changed to 1600x1200,
+> - state->error pattern removed from few other functions,
+> - entity link creation moved to registered callback,
+> - some cosmetic changes.
+> 
+> v3:
+> - narrowed state->error usage to i2c and power errors,
+> - private gain controls replaced by red/blue balance user controls,
+> - added checks to devicetree gpio node parsing
+> 
+> v2:
+> - lower-cased driver name,
+> - removed underscore from regulator names,
+> - removed platform data code,
+> - v4l controls grouped in anonymous structs,
+> - added s5k5baf_clear_error function,
+> - private controls definitions moved to uapi header file,
+> - added v4l2-controls.h reservation for private controls,
+> - corrected subdev registered/unregistered code,
+> - .log_status sudbev op set to v4l2 helper,
+> - moved entity link creation to probe routines,
+> - added cleanup on error to probe function.
+> ---
+>  .../devicetree/bindings/media/samsung-s5k5baf.txt  |   58 +
+>  MAINTAINERS                                        |    7 +
+>  drivers/media/i2c/Kconfig                          |    7 +
+>  drivers/media/i2c/Makefile                         |    1 +
+>  drivers/media/i2c/s5k5baf.c                        | 2048 ++++++++++++++++++++
+>  5 files changed, 2121 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+>  create mode 100644 drivers/media/i2c/s5k5baf.c
+> 
 
-See this message from Mike Turquette which first suggested it:
+<snip>
 
-http://marc.info/?l=linux-kernel&m=136847508109344&w=2
+> +
+> +enum selection_rect { R_CIS, R_CROP_SINK, R_COMPOSE, R_CROP_SOURCE, R_INVALID };
+> +
+> +static enum selection_rect s5k5baf_get_sel_rect(u32 pad, u32 target)
+> +{
+> +	switch (target) {
+> +	case V4L2_SEL_TGT_CROP_BOUNDS:
+> +		return pad ? R_COMPOSE : R_CIS;
+> +	case V4L2_SEL_TGT_CROP:
+> +		return pad ? R_CROP_SOURCE : R_CROP_SINK;
+> +	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
+> +		return pad ? R_INVALID : R_CROP_SINK;
+> +	case V4L2_SEL_TGT_COMPOSE:
+> +		return pad ? R_INVALID : R_COMPOSE;
+> +	default:
+> +		return R_INVALID;
+> +	}
+> +}
+> +
+> +static int s5k5baf_is_bound_target(u32 target)
+> +{
+> +	return (target == V4L2_SEL_TGT_CROP_BOUNDS ||
+> +		target == V4L2_SEL_TGT_COMPOSE_BOUNDS);
+> +}
+> +
+> +static int s5k5baf_get_selection(struct v4l2_subdev *sd,
+> +				 struct v4l2_subdev_fh *fh,
+> +				 struct v4l2_subdev_selection *sel)
+> +{
+> +	static enum selection_rect rtype;
+> +	struct s5k5baf *state = to_s5k5baf(sd);
+> +
+> +	rtype = s5k5baf_get_sel_rect(sel->pad, sel->target);
+> +
+> +	switch (rtype) {
+> +	case R_INVALID:
+> +		return -EINVAL;
+> +	case R_CIS:
+> +		sel->r = s5k5baf_cis_rect;
+> +		return 0;
+> +	default:
+> +		break;
+> +	}
+> +
+> +	if (sel->which == V4L2_SUBDEV_FORMAT_TRY) {
+> +		if (rtype == R_COMPOSE)
+> +			sel->r = *v4l2_subdev_get_try_compose(fh, sel->pad);
+> +		else
+> +			sel->r = *v4l2_subdev_get_try_crop(fh, sel->pad);
+> +		return 0;
+> +	}
+> +
+> +	mutex_lock(&state->lock);
+> +	switch (rtype) {
+> +	case R_CROP_SINK:
+> +		sel->r = state->crop_sink;
+> +		break;
+> +	case R_COMPOSE:
+> +		sel->r = state->compose;
+> +		break;
+> +	case R_CROP_SOURCE:
+> +		sel->r = state->crop_source;
+> +		break;
+> +	default:
+> +		break;
+> +	}
+> +	if (s5k5baf_is_bound_target(sel->target)) {
+> +		sel->r.left = 0;
+> +		sel->r.top = 0;
+> +	}
+> +	mutex_unlock(&state->lock);
+> +
+> +	return 0;
+> +}
+> +
+> +/* bounds range [start, start+len) to [0, max) and aligns to 2 */
+> +static void s5k5baf_bound_range(u32 *start, u32 *len, u32 max)
+> +{
+> +	if (*len > max)
+> +		*len = max;
+> +	if (*start + *len > max)
+> +		*start = max - *len;
+> +	*start &= ~1;
+> +	*len &= ~1;
+> +	if (*len < S5K5BAF_WIN_WIDTH_MIN)
+> +		*len = S5K5BAF_WIN_WIDTH_MIN;
+> +}
+> +
+> +static void s5k5baf_bound_rect(struct v4l2_rect *r, u32 width, u32 height)
+> +{
+> +	s5k5baf_bound_range(&r->left, &r->width, width);
+> +	s5k5baf_bound_range(&r->top, &r->height, height);
+> +}
+> +
+> +static void s5k5baf_set_rect_and_adjust(struct v4l2_rect **rects,
+> +					enum selection_rect first,
+> +					struct v4l2_rect *v)
+> +{
+> +	struct v4l2_rect *r, *br;
+> +	enum selection_rect i = first;
+> +
+> +	*rects[first] = *v;
+> +	do {
+> +		r = rects[i];
+> +		br = rects[i - 1];
+> +		s5k5baf_bound_rect(r, br->width, br->height);
+> +	} while (++i != R_INVALID);
+> +	*v = *rects[first];
+> +}
+> +
+> +static bool s5k5baf_cmp_rect(const struct v4l2_rect *r1,
+> +			     const struct v4l2_rect *r2)
+> +{
+> +	return !memcmp(r1, r2, sizeof(*r1));
+> +}
+> +
+> +static int s5k5baf_set_selection(struct v4l2_subdev *sd,
+> +				 struct v4l2_subdev_fh *fh,
+> +				 struct v4l2_subdev_selection *sel)
+> +{
+> +	static enum selection_rect rtype;
+> +	struct s5k5baf *state = to_s5k5baf(sd);
+> +	struct v4l2_rect **rects;
+> +	int ret = 0;
+> +
+> +	rtype = s5k5baf_get_sel_rect(sel->pad, sel->target);
+> +	if (rtype == R_INVALID || s5k5baf_is_bound_target(sel->target))
+> +		return -EINVAL;
+> +
+> +	/* allow only scaling on compose */
+> +	if (rtype == R_COMPOSE) {
+> +		sel->r.left = 0;
+> +		sel->r.top = 0;
+> +	}
+> +
+> +	if (sel->which == V4L2_SUBDEV_FORMAT_TRY) {
+> +		rects = (struct v4l2_rect * []) {
+> +				&s5k5baf_cis_rect,
+> +				v4l2_subdev_get_try_crop(fh, PAD_CIS),
+> +				v4l2_subdev_get_try_compose(fh, PAD_CIS),
+> +				v4l2_subdev_get_try_crop(fh, PAD_OUT)
+> +			};
+> +		s5k5baf_set_rect_and_adjust(rects, rtype, &sel->r);
+> +		return 0;
+> +	}
+> +
+> +	rects = (struct v4l2_rect * []) {
+> +			&s5k5baf_cis_rect,
+> +			&state->crop_sink,
+> +			&state->compose,
+> +			&state->crop_source
+> +		};
+> +	mutex_lock(&state->lock);
+> +	if (state->streaming) {
+> +		/* adjust sel->r to avoid output resolution change */
+> +		if (rtype < R_CROP_SOURCE) {
+> +			if (sel->r.width < state->crop_source.width)
+> +				sel->r.width = state->crop_source.width;
+> +			if (sel->r.height < state->crop_source.height)
+> +				sel->r.height = state->crop_source.height;
+> +		} else {
+> +			sel->r.width = state->crop_source.width;
+> +			sel->r.height = state->crop_source.height;
+> +		}
+> +	}
+> +	s5k5baf_set_rect_and_adjust(rects, rtype, &sel->r);
+> +	if (!s5k5baf_cmp_rect(&state->crop_sink, &s5k5baf_cis_rect) ||
+> +	    !s5k5baf_cmp_rect(&state->compose, &s5k5baf_cis_rect))
+> +		state->apply_crop = 1;
+> +	if (state->streaming)
+> +		ret = s5k5baf_hw_set_crop_rects(state);
+> +	mutex_unlock(&state->lock);
+> +
+> +	return ret;
+> +}
 
-> Is there intention to just have the automatic clock re-parenting
-> as a default feature in the common clock API ?
+Would it be an idea to create a library with rectangle manipulation functions?
+Looking at this driver and similar ones as well that I had to deal with that
+support cropping/scaling/composing I see a lot of rectangle manipulation.
 
-Yes, that would be the result (except where explicitly disallowed).
-Unfortunately where such policy should ideally be defined is still up in
-the air.
+Moving that into a separate source that can be shared should simplify
+development.
 
-It's not a property of the hardware, but then it is arguably a property
-of the environment the bootloader has configured (like the stuff in the
-/chosen device tree node).
+This is just an idea and it's not blocking for this particular driver.
 
-Presuming that the usual reason not to reparent a mux is because other
-important clocks depend on it, the kernel might know enough to work out
-whether it's safe (unless of course there are other cores/threads in the
-SoC using the clock that Linux isn't aware of, which brings us back to
-it being a bootloader environment thing).
+Regards,
 
-> My apologies if this has already been answered, I haven't been
-> following this thread.
-
-No problem :)
-
-Cheers
-James
+	Hans
