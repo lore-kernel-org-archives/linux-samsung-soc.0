@@ -1,83 +1,104 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH 1/3] watchdog: s3c2410_wdt: parse watchdog dt node to read
- PMU registers adresses
-Date: Thu, 25 Jul 2013 17:32:23 -0700
-Message-ID: <CAD=FV=U+S__hkbtWDAb5Ezkw0jJ6-tJLFKQPx4KpbvqHfFJnAg@mail.gmail.com>
-References: <1374658699-3961-1-git-send-email-l.krishna@samsung.com>
-	<1374658699-3961-2-git-send-email-l.krishna@samsung.com>
-	<3356224.pISrcKET7X@amdc1227>
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCHv2 1/2] iommu/exynos: add devices attached to the System
+	MMU to an IOMMU group
+Date: Fri, 26 Jul 2013 10:18:31 +0530
+Message-ID: <CAK9yfHw1Q9tmARR9W9WGaW5hhzcSQ5CV13Ct=7LT8pj85tBMBA@mail.gmail.com>
+References: <1374766502-14823-1-git-send-email-a.motakis@virtualopensystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f44.google.com ([209.85.128.44]:50127 "EHLO
-	mail-qe0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756531Ab3GZAcY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Jul 2013 20:32:24 -0400
-Received: by mail-qe0-f44.google.com with SMTP id 6so694836qeb.17
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Jul 2013 17:32:23 -0700 (PDT)
-In-Reply-To: <3356224.pISrcKET7X@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1374766502-14823-1-git-send-email-a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Wim Van Sebroeck <wim@iguana.be>, devicetree@vger.kernel.org, Olof Johansson <olof@lixom.net>
 
-Tomasz,
+Hi Antonios,
 
-On Thu, Jul 25, 2013 at 3:27 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Leela,
+On 25 July 2013 21:04, Antonios Motakis
+<a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org> wrote:
+> IOMMU groups are expected by certain users of the IOMMU API,
+> e.g. VFIO. Since each device is behind its own System MMU, we
+> can allocate a new IOMMU group for each device.
 >
-> On Wednesday 24 of July 2013 15:08:17 Leela Krishna Amudala wrote:
->> This patch parses the watchdog node to read pmu wdt sys registers
->> addresses and do mask/unmask enable/disable of WDT in probe and s2r
->> scenarios.
->>
->> Reviewed-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> ---
->>  .../devicetree/bindings/watchdog/samsung-wdt.txt   |   14 ++++-
->>  drivers/watchdog/s3c2410_wdt.c                     |   56
->> ++++++++++++++++++++ 2 files changed, 69 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
->> b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt index
->> 2aa486c..4c798e3 100644
->> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
->> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
->> @@ -7,8 +7,20 @@ occurred.
->>  Required properties:
->>  - compatible : should be "samsung,s3c2410-wdt"
->>  - reg : base physical address of the controller and length of memory
->> mapped -      region.
->> +     region and the optional (addresses and length of memory mapped regions
->> +     of) PMU registers for masking/unmasking WDT.
->>  - interrupts : interrupt number to the cpu.
+> This patch depends on Cho KyongHo's patch series titled "[PATCH v7 00/12]
+> iommu/exynos: Fixes and Enhancements of System MMU driver with DT",
+> applied on a Linux 3.10.1 kernel.
+
+This kind of meta information should go after the "---" line below.
+
+It has been tested on the Arndale board.
 >
-> I don't think PMU registers should be passed like this, even if USB PHY
-> driver currently does it - it needs to be fixed. Every time you are mapping
-> a single 4-byte register, you are creating new mapping for the whole page
-> (4K) containing it. In addition, this makes the WDT driver map IO memory
-> that does not belong to the IP block it handles, which is not nice.
+> Changes since in v2:
+> - Removed possibility for minor memory leak in case of
+>   misbehaving platform drivers
 >
-> I would suggest looking into regmap helpers to implement a driver for the
-> PMU that can share PMU registers with interested drivers.
+> Signed-off-by: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
+> ---
+>  drivers/iommu/exynos-iommu.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 51d43bb..c7dd4b5 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -1134,6 +1134,32 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *domain,
+>         return phys;
+>  }
+>
+> +static int exynos_iommu_add_device(struct device *dev)
+> +{
+> +       struct iommu_group *group;
+> +       int ret;
+> +
+> +       group = iommu_group_get(dev);
+> +
+> +       if (!group) {
+> +               group = iommu_group_alloc();
+> +               if (IS_ERR(group)) {
+> +                       dev_err(dev, "Failed to allocate IOMMU group\n");
+> +                       return PTR_ERR(group);
+> +               }
+> +       }
+> +
+> +       ret = iommu_group_add_device(group, dev);
+> +       iommu_group_put(group);
+> +
+> +       return ret;
+> +}
+> +
+> +static void exynos_iommu_remove_device(struct device *dev)
+> +{
+> +       iommu_group_remove_device(dev);
+> +}
+> +
+>  static struct iommu_ops exynos_iommu_ops = {
+>         .domain_init = &exynos_iommu_domain_init,
+>         .domain_destroy = &exynos_iommu_domain_destroy,
+> @@ -1142,6 +1168,8 @@ static struct iommu_ops exynos_iommu_ops = {
+>         .map = &exynos_iommu_map,
+>         .unmap = &exynos_iommu_unmap,
+>         .iova_to_phys = &exynos_iommu_iova_to_phys,
+> +       .add_device     = exynos_iommu_add_device,
+> +       .remove_device  = exynos_iommu_remove_device,
+>         .pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
+>  };
+>
+> --
+> 1.8.1.2
+>
 
-We've done this in some other drivers as well.  I remember someone
-suggested that this was fine when I posted the change to the ADC
-driver for something similar.
 
-Do you really think it's worth adding a level of abstraction here?
-The argument I remember in the past was that it was fine as long as
-the register itself was used only by this driver.
 
-If we want to do as you say, we'll have to figure out whether you want
-to create a new generic interface for this or reuse an existing one.
-You could kinda think of these bits as enabling power, so you could
-use the regulator framework.  ...but that framework often gets abused.
-
-Olof: I think I got your advice when I did the ADC work.  Do you have
-any advice here?
-
-Thanks!
-
--Doug
+-- 
+With warm regards,
+Sachin
