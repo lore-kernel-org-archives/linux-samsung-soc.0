@@ -1,77 +1,69 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 2/8] ASoC: Samsung: I2S: Add quirks as driver data in
- I2S
-Date: Fri, 26 Jul 2013 16:25:51 +0100
-Message-ID: <20130726152551.GM9858@sirena.org.uk>
-References: <1374845812-7803-1-git-send-email-padma.v@samsung.com>
- <1374845812-7803-3-git-send-email-padma.v@samsung.com>
- <20130726145319.GI9858@sirena.org.uk>
- <1417636.4d7IlsSAyI@amdc1227>
+From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v8 02/12] iommu/exynos: add missing cache flush for
+	removed page table entries
+Date: Fri, 26 Jul 2013 08:58:55 -0700
+Message-ID: <CANEJEGshTH2pymFWeN0rOmdxRZOvVFD+AEbZ23QdxNpVkDmevw@mail.gmail.com>
+References: <003801ce89f2$f8952d20$e9bf8760$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oFPc/E1qo/d29t+k"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:38450 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757574Ab3GZP0P (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Jul 2013 11:26:15 -0400
-Content-Disposition: inline
-In-Reply-To: <1417636.4d7IlsSAyI@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <003801ce89f2$f8952d20$e9bf8760$@samsung.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hyunwoong Kim <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Keyyoung Park <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, kgene.kim@samsung.com, abrestic@chromium.org, tomasz.figa@gmail.com
 
+On Fri, Jul 26, 2013 at 4:26 AM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This commit adds cache flush for removed small and large page entries
+> in exynos_iommu_unmap(). Missing cache flush of removed page table
+> entries can cause missing page fault interrupt when a master IP
+> accesses an unmapped area.
+>
+> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
---oFPc/E1qo/d29t+k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested-by: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-On Fri, Jul 26, 2013 at 05:02:46PM +0200, Tomasz Figa wrote:
+I'm convinced this is a critical fix to apply. Any time we touch the
+IOMMU Page Table, we need to flush so the change is immediately
+visible to the IOMMU.
 
-> IMHO this SoC-based identification looks much better, especially consider=
-ing=20
-> the fact that IP version isn't something easily determinable, as even the=
-=20
-> documentation can sometimes be not really clear about that.
+thanks,
+grant
 
-Yeah, it's not terribly clever either way.  We've been using the version
-numbers in audio for a long time partly because it is documented
-sometimes and partly because most of the SoCs tend to have one fully
-featured controller and a bunch of secondary controllers on older IP
-revisions.
-
-> However the s3c6410-i2sv4 string looks a bit unfortunate. AFAIK there wer=
-e=20
-> two types of I2S IPs on S3C6410 - normal I2S and I2S multichannel. What=
-=20
-> about having a compatible like s3c6410-i2s-multi?
-
-It was explicitly identified as I2Sv4 in the S3C6410 datasheet so no
-real issue there.
-
---oFPc/E1qo/d29t+k
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR8pT8AAoJELSic+t+oim9YysP/ij8xU0g4F62uouFxbfckuN5
-FlWJImrMBRtnc0V8vp6Xa6Yxz7OIc7Sw6q9WRKrGHwqRCJb5PR0w0dfUT2LeLEGb
-OwynZPSlwLsVTguXuunXyG0inhhB10sniVM1Hh5i7JfFZ2D0lP1pXzfUUiNJ/WKp
-dicVbCd10ITIXSMOmR6AWKppvvoQMPEKKY7EV818GtrVKGmWcSoX2/xNchjjitdj
-9kCBxA/cCKaPxUHbiocbT08L1N8WegEerMu1g10IhbN35W8Xwo7f5m+iC82GNCjl
-Q2v156+to4PvKwWmru5HTqzQXrgbLW94eOGJIUFffk6ujJqucYLc1CxbAWbqxzPe
-cTIsfyJXqdHPixnAbZyLd7HwVHPr1ydfJyqXs7bdT+lPd7SZGDLR0jXGEcbDLgZj
-T2lXdIbu5aYBtq5oZqTpqi9TER4lYPaxlpn+lm7Q7LpGcsxi2LhbyYzXSkvh0YKI
-l9NxOlnVR/WCDiuL5ys1sEhTr3ZUX0Cb1tZq+ZmJYpbRlfBAxAsYMU/G6BwrBeUi
-KtJSMm/iXHrlVslWpfZDT6fMebFVEwG0B+gLcG/7C26Us753WZZEhUW9SwYCecqy
-NuDjxfw4/+d1sfNw5Vkk555iMlpdY47Y8/vzl3PuKP1Y9lnnIE9Ha5+OMR0VzaUh
-2cjw+YbnlY1w15ZGUXci
-=gMHw
------END PGP SIGNATURE-----
-
---oFPc/E1qo/d29t+k--
+> ---
+>  drivers/iommu/exynos-iommu.c |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 233f382..e3be3e5 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -1002,6 +1002,7 @@ static size_t exynos_iommu_unmap(struct iommu_domain *domain,
+>         if (lv2ent_small(ent)) {
+>                 *ent = 0;
+>                 size = SPAGE_SIZE;
+> +               pgtable_flush(ent, ent +1);
+>                 priv->lv2entcnt[lv1ent_offset(iova)] += 1;
+>                 goto done;
+>         }
+> @@ -1010,6 +1011,7 @@ static size_t exynos_iommu_unmap(struct iommu_domain *domain,
+>         BUG_ON(size < LPAGE_SIZE);
+>
+>         memset(ent, 0, sizeof(*ent) * SPAGES_PER_LPAGE);
+> +       pgtable_flush(ent, ent + SPAGES_PER_LPAGE);
+>
+>         size = LPAGE_SIZE;
+>         priv->lv2entcnt[lv1ent_offset(iova)] += SPAGES_PER_LPAGE;
+> --
+> 1.7.2.5
+>
+>
