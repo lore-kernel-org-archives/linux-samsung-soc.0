@@ -1,84 +1,77 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V2 7/8] ARM: dts: wm8994: Add wm8994 support on smdk5420
-Date: Fri, 26 Jul 2013 16:19:02 +0100
-Message-ID: <20130726151902.GL9858@sirena.org.uk>
+Subject: Re: [PATCH V2 2/8] ASoC: Samsung: I2S: Add quirks as driver data in
+ I2S
+Date: Fri, 26 Jul 2013 16:25:51 +0100
+Message-ID: <20130726152551.GM9858@sirena.org.uk>
 References: <1374845812-7803-1-git-send-email-padma.v@samsung.com>
- <1374845812-7803-8-git-send-email-padma.v@samsung.com>
+ <1374845812-7803-3-git-send-email-padma.v@samsung.com>
+ <20130726145319.GI9858@sirena.org.uk>
+ <1417636.4d7IlsSAyI@amdc1227>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bxT+UToQLZc4yXbi"
+	protocol="application/pgp-signature"; boundary="oFPc/E1qo/d29t+k"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:36989 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:38450 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759106Ab3GZPTG (ORCPT
+	with ESMTP id S1757574Ab3GZP0P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Jul 2013 11:19:06 -0400
+	Fri, 26 Jul 2013 11:26:15 -0400
 Content-Disposition: inline
-In-Reply-To: <1374845812-7803-8-git-send-email-padma.v@samsung.com>
+In-Reply-To: <1417636.4d7IlsSAyI@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, kgene.kim@samsung.com, abrestic@chromium.org, tomasz.figa@gmail.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, kgene.kim@samsung.com, abrestic@chromium.org, tomasz.figa@gmail.com
 
 
---bxT+UToQLZc4yXbi
+--oFPc/E1qo/d29t+k
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 26, 2013 at 07:06:51PM +0530, Padmavathi Venna wrote:
-> This patch adds wm8994 codec node on i2c bus1 and the required
-> regulator supplies and properties on smdk5420 board.
+On Fri, Jul 26, 2013 at 05:02:46PM +0200, Tomasz Figa wrote:
 
-This isn't a device tree patch for WM8994, it's a patch for the
-SMDK5420.
+> IMHO this SoC-based identification looks much better, especially consider=
+ing=20
+> the fact that IP version isn't something easily determinable, as even the=
+=20
+> documentation can sometimes be not really clear about that.
 
-> +	vdd: fixed-regulator@0 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vdd-supply";
+Yeah, it's not terribly clever either way.  We've been using the version
+numbers in audio for a long time partly because it is documented
+sometimes and partly because most of the SoCs tend to have one fully
+featured controller and a bunch of secondary controllers on older IP
+revisions.
 
-These names look wrong - they should reflect the names in the schematic
-as they're for human comprehensibility.  This may just be a case of
-dropping the -supply.
+> However the s3c6410-i2sv4 string looks a bit unfortunate. AFAIK there wer=
+e=20
+> two types of I2S IPs on S3C6410 - normal I2S and I2S multichannel. What=
+=20
+> about having a compatible like s3c6410-i2s-multi?
 
-> +		wm8994: wm8994@1a {
-> +			compatible = "wlf,wm8994";
-> +			reg = <0x1a>;
-> +
-> +			gpio-controller;
-> +			#gpio-cells = <2>;
-> +
-> +			AVDD2-supply = <&vdd>;
-> +			CPVDD-supply = <&vdd>;
-> +			DBVDD-supply = <&dbvdd>;
-> +			SPKVDD1-supply = <&spkvdd>;
-> +			SPKVDD2-supply = <&spkvdd>;
-> +		};
+It was explicitly identified as I2Sv4 in the S3C6410 datasheet so no
+real issue there.
 
-It would be helpful to also add a clock binding (I posted a binding
-documentation update the other day, it's in my tree now) but it's not
-essential and I suspect it needs some work on the clock driver side
-still.
-
---bxT+UToQLZc4yXbi
+--oFPc/E1qo/d29t+k
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR8pNiAAoJELSic+t+oim9LkwP/RFLwDxx9/uaIfiHRrosKZsa
-/MDgTaWLs8lEMqK3v1MTYeyjz4jRn71gbSF/3Wgzs5U4+HjjvlhL9p26kvUO7DBt
-5dv7Bw7shCHbvq7B6gubYlRVEGtP7hXVjnatH9+s2Avfx8Nt8JHAszLAKPMU9qQL
-EgyKVTCK+zXKQ65rcZXSHeLdEHmxBAah05S+Z6QxVUCdGU/hsCLK+5S5kZrDAWxG
-tGV2zDFspiim7eymqHL29M/1cQA287uLyiebwsOW6FcryjMXkfNQJdTGBSZ+xuTC
-tT91PVI6qm2vkZGylxBeUT81v1AboU6MCq8tLQPYcmAL7v9fZf9EWeFXpibtNel3
-+qZ7oGTpn+0R3jOP1QjxFxsIX9IrEmwZ5LtdTj1dBwnQfvYOFDgH7nKFWZKRh02g
-PMTGbGGh+Z3oUQC7NgjlRvlMJ1lhj1APndki/DTsle4URan0G04ji9G+JFP7kKop
-tcuEpy/9JkamomU6I3PUkrdQ+5jk1l4PyKmJybqZTF8zAhaaxlARPJokQcI41cMq
-cjm37PcCSEfXjLJoFIOii69pyu8E5Fn2SFl0LUWEP8jQYy+mE+SdbpX9nLBZxt49
-IA9iFRS1Gh+scePj3Km9BwXWNtylhRRWjirgyvsDhYhvwS5OUSYhbSOHDK9C01dD
-ob4ABdLoxH3ZStRUWp3J
-=xvOi
+iQIcBAEBAgAGBQJR8pT8AAoJELSic+t+oim9YysP/ij8xU0g4F62uouFxbfckuN5
+FlWJImrMBRtnc0V8vp6Xa6Yxz7OIc7Sw6q9WRKrGHwqRCJb5PR0w0dfUT2LeLEGb
+OwynZPSlwLsVTguXuunXyG0inhhB10sniVM1Hh5i7JfFZ2D0lP1pXzfUUiNJ/WKp
+dicVbCd10ITIXSMOmR6AWKppvvoQMPEKKY7EV818GtrVKGmWcSoX2/xNchjjitdj
+9kCBxA/cCKaPxUHbiocbT08L1N8WegEerMu1g10IhbN35W8Xwo7f5m+iC82GNCjl
+Q2v156+to4PvKwWmru5HTqzQXrgbLW94eOGJIUFffk6ujJqucYLc1CxbAWbqxzPe
+cTIsfyJXqdHPixnAbZyLd7HwVHPr1ydfJyqXs7bdT+lPd7SZGDLR0jXGEcbDLgZj
+T2lXdIbu5aYBtq5oZqTpqi9TER4lYPaxlpn+lm7Q7LpGcsxi2LhbyYzXSkvh0YKI
+l9NxOlnVR/WCDiuL5ys1sEhTr3ZUX0Cb1tZq+ZmJYpbRlfBAxAsYMU/G6BwrBeUi
+KtJSMm/iXHrlVslWpfZDT6fMebFVEwG0B+gLcG/7C26Us753WZZEhUW9SwYCecqy
+NuDjxfw4/+d1sfNw5Vkk555iMlpdY47Y8/vzl3PuKP1Y9lnnIE9Ha5+OMR0VzaUh
+2cjw+YbnlY1w15ZGUXci
+=gMHw
 -----END PGP SIGNATURE-----
 
---bxT+UToQLZc4yXbi--
+--oFPc/E1qo/d29t+k--
