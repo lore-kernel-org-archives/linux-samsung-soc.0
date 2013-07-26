@@ -1,75 +1,178 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: XCLKOUT in exynos5250 clock driver
-Date: Fri, 26 Jul 2013 14:19:39 +0200
-Message-ID: <51F2695B.8020109@gmail.com>
-References: <20130725145158.GI9858@sirena.org.uk> <51F247B6.9010902@linaro.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH v10 0/8] PHY framework
+Date: Fri, 26 Jul 2013 18:12:54 +0530
+Message-ID: <1374842582-13242-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f45.google.com ([209.85.214.45]:38182 "EHLO
-	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757080Ab3GZMTo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Jul 2013 08:19:44 -0400
-Received: by mail-bk0-f45.google.com with SMTP id je9so1105520bkc.18
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2013 05:19:43 -0700 (PDT)
-In-Reply-To: <51F247B6.9010902@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: gregkh@linuxfoundation.org, kyungmin.park@samsung.com, balbi@ti.com, kishon@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, stern@rowland.harvard.edu, broonie@kernel.org, tomasz.figa@gmail.com, arnd@arndb.de
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, swarren@nvidia.com, balajitk@ti.com, linux-doc@vger.kernel.org, tony@atomide.com, devicetree-discuss@lists.ozlabs.org, linux-usb@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, grant.likely@linaro.org, akpm@linux-foundation.org, linux-omap@vger.kernel.org, george.cherian@ti.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, Mark Brown <broonie@kernel.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomasz Figa <t.figa@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
 
-On 07/26/2013 11:56 AM, Tushar Behera wrote:
-> On 07/25/2013 08:21 PM, Mark Brown wrote:
->> I appear to be missing something in the clock driver for the exynos5250.
->> I'm looking at the Arndale schematic and I see that the audio master
->> clock is connected to XCLKOUT on the SoC.  However I can't see any
->> reference to XCLKOUT or anything similar in the clock driver or any of
->> the DTS files - where is this clock exposed by the clock driver?
+Added a generic PHY framework that provides a set of APIs for the PHY drivers
+to create/destroy a PHY and APIs for the PHY users to obtain a reference to
+the PHY with or without using phandle.
 
-This is something that's not yet supported in the mainline kernels I'm
-afraid.
+This framework will be of use only to devices that uses external PHY (PHY
+functionality is not embedded within the controller).
 
->> Unfortunately I haven't been able to get access to the datasheet for the
->> part so I can't check this myself.
->>
->
-> Information as per Exynos5250 user manual:
-> "XCLKOUT is an output pin for debugging clocks. Exynos5250 has a CLKOUT
-> logic which can select one of the clocks (within its clock domains) and
-> output that through XCLKOUT pin."
->
-> Not sure if XCLKOUT on Arndale schematics means the same.
+The intention of creating this framework is to bring the phy drivers spread
+all over the Linux kernel to drivers/phy to increase code re-use and to
+increase code maintainability.
 
-I suspect that the same, you can easily verify that by checking what ball
-identifier corresponds to XCLKOUT pin and how the routing looks like on
-the schematics.
+Comments to make PHY as bus wasn't done because PHY devices can be part of
+other bus and making a same device attached to multiple bus leads to bad
+design.
 
-We have a bit hackish patch that adds support for the CLKOUT at the
-Exynos4 clocks driver to enable the audio codec. An issue here is that the
-CLKOUT mux and divider control bitfield is in the PMU registers (as opposed
-to CMU where the clock  control registers normally are) and additionally
-single register contains the clock mux/divider bitfield as well as couple
-other unrelated control bits. Depending if those other bits are considered
-really important or not it it might another reason to expose (part of ?)
-PMU registers through syscon-like interface. There are registers in PMU
-that multiple drivers would be interested in, so instead of all of them to
-independently memory map and mess with single registers, probably a regmap
-interface could be used. Not sure if this solves the problem well, since
-each driver would need to have coded SoC specific register offsets.
+If the PHY driver has to send notification on connect/disconnect, the PHY
+driver should make use of the extcon framework. Using this susbsystem
+to use extcon framwork will have to be analysed.
 
-It can be seen in the Galaxy S3 kernel code how the Exynos5 CLKOUT handling
-might look like. See enum xclkout_select [1], exynos5_pmu_xclkout_set [2].
-It would be good someone who has access to the datasheet come up with at
-with some patch so the audio works are not blocked. I'm not working right
-now on Exynos5 :P.
+You can find this patch series @
+git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git testing
 
-[1] 
-thttps://github.com/sgs3/GT-I9300_Kernel/blob/master/arch/arm/mach-exynos/include/mach/pmu.h
-[2] 
-https://github.com/sgs3/GT-I9300_Kernel/blob/master/arch/arm/mach-exynos/pmu-exynos5.c
+I'll create a new branch *next* once this patch series is finalized. All the
+PHY driver development that depends on PHY framework can be based on this
+branch.
 
---
-Thanks,
-Sylwester
+Did USB enumeration testing in panda and beagle after applying [1]
+
+[1] -> https://lkml.org/lkml/2013/7/26/88
+
+Changes from v9:
+* Fixed Greg's concern on having *find PHY by string* and changed it to Tomasz
+  pseudo code.
+* move omap-usb2 phy and twl4030-usb phy to drivers/phy
+* made all the dependent drivers select GENERIC_PHY instead of having depends
+  on
+* Made PHY core to assign the id's (so changed the phy_create API).
+* Adapted twl4030-usb to the new design.
+
+Changes from v8:
+* Added phy_set_drvdata and phy_get_drvdata in phy.h.
+* Changed phy_create API not to take void *priv. private data should now be set
+  using phy_set_drvdata now.
+Changes from v7:
+* Fixed Documentation
+* Added to_phy, of_phy_provider_register and devm_of_phy_provider_register
+* modified runtime_pm usage in phy_init, phy_exit, phy_power_on and
+  phy_power_off. Now phy_power_on will enable the clocks and phy_power_off will
+  disable the clocks.
+* pm_runtime_no_callbacks() is added so that pm_runtime_get_sync doesn't fail
+* modified other patches to adhere to the changes in the PHY framework
+* removed usb: phy: twl4030: twl4030 shouldn't be subsys_initcall as it will
+  be merged separately.
+* reference counting has been added to protect phy ops when the PHY is shared
+  by multiple consumers.
+
+Changes from v6
+* corrected few typos in Documentation
+* Changed PHY Subsystem to *bool* in Kconfig (to avoid compilation errors when
+  PHY Subsystem is kept as module and the dependent modules are built-in)
+* Added if pm_runtime_enabled check before runtime pm calls.
+
+Changes from v5:
+* removed the new sysfs entries as it dint have any new information other than
+  what is already there in /sys/devices/...
+* removed a bunch of APIs added to get the PHY and now only phy_get and
+  devm_phy_get are used.
+* Added new APIs to register/unregister the PHY provider. This is needed for
+  dt boot case.
+* Enabled pm runtime and incorporated the comments given by Alan Stern in a
+  different patch series by Gautam.
+* Removed the *phy_bind* API. Now the phy binding information should be passed
+  using the platform data to the controller devices.
+* Fixed a few typos.
+
+Changes from v4:
+* removed of_phy_get_with_args/devm_of_phy_get_with_args. Now the *phy providers*
+  should use their custom implementation of of_xlate or use of_phy_xlate to get
+  *phy instance* from *phy providers*.
+* Added of_phy_xlate to be used by *phy providers* if it provides only one PHY.
+* changed phy_core from having subsys_initcall to module_init.
+* other minor fixes.
+
+Changes from v3:
+* Changed the return value of PHY APIs to ENOSYS
+* Added APIs of_phy_get_with_args/devm_of_phy_get_with_args to support getting
+  PHYs if the same IP implements multiple PHYs.
+* modified phy_bind API so that the binding information can now be _updated_.
+  In effect of this removed the binding information added in board files and
+  added only in usb-musb.c. If a particular board uses a different phy binding,
+  it can update it in board file after usb_musb_init().
+* Added Documentation/devicetree/bindings/phy/phy-bindings.txt for dt binding
+  information.
+
+Changes from v2:
+* removed phy_descriptor structure completely so changed the APIs which were
+  taking phy_descriptor as parameters
+* Added 2 more APIs *of_phy_get_byname* and *devm_of_phy_get_byname* to be used
+  by PHY user drivers which has *phy* and *phy-names* binding in the dt data
+* Fixed a few typos
+* Removed phy_list and we now use class_dev_iter_init, class_dev_iter_next and
+  class_dev_iter_exit for traversing through the phy list. (Note we still need
+  phy_bind list and phy_bind_mutex).
+* Changed the sysfs entry name from *bind* to *phy_bind*.
+
+Changes from v1:
+* Added Documentation for the PHY framework
+* Added few more APIs mostly w.r.t devres
+* Modified omap-usb2 and twl4030 to make use of the new framework
+
+Kishon Vijay Abraham I (8):
+  drivers: phy: add generic PHY framework
+  usb: phy: omap-usb2: use the new generic PHY framework
+  usb: phy: twl4030: use the new generic PHY framework
+  arm: omap3: twl: add phy consumer data in twl4030_usb_data
+  ARM: dts: omap: update usb_otg_hs data
+  usb: musb: omap2430: use the new generic PHY framework
+  usb: phy: omap-usb2: remove *set_suspend* callback from omap-usb2
+  usb: phy: twl4030-usb: remove *set_suspend* and *phy_init* ops
+
+ .../devicetree/bindings/phy/phy-bindings.txt       |   66 ++
+ Documentation/devicetree/bindings/usb/omap-usb.txt |    5 +
+ Documentation/devicetree/bindings/usb/usb-phy.txt  |    6 +
+ Documentation/phy.txt                              |  166 +++++
+ MAINTAINERS                                        |    8 +
+ arch/arm/boot/dts/omap3-beagle-xm.dts              |    2 +
+ arch/arm/boot/dts/omap3-evm.dts                    |    2 +
+ arch/arm/boot/dts/omap3-overo.dtsi                 |    2 +
+ arch/arm/boot/dts/omap4.dtsi                       |    3 +
+ arch/arm/boot/dts/twl4030.dtsi                     |    1 +
+ arch/arm/mach-omap2/twl-common.c                   |   11 +
+ drivers/Kconfig                                    |    2 +
+ drivers/Makefile                                   |    2 +
+ drivers/phy/Kconfig                                |   41 ++
+ drivers/phy/Makefile                               |    7 +
+ drivers/phy/phy-core.c                             |  714 ++++++++++++++++++++
+ drivers/{usb => }/phy/phy-omap-usb2.c              |   60 +-
+ drivers/{usb => }/phy/phy-twl4030-usb.c            |   69 +-
+ drivers/usb/musb/Kconfig                           |    1 +
+ drivers/usb/musb/musb_core.h                       |    2 +
+ drivers/usb/musb/omap2430.c                        |   26 +-
+ drivers/usb/phy/Kconfig                            |   19 -
+ drivers/usb/phy/Makefile                           |    2 -
+ include/linux/i2c/twl.h                            |    2 +
+ include/linux/phy/phy.h                            |  270 ++++++++
+ 25 files changed, 1413 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-bindings.txt
+ create mode 100644 Documentation/phy.txt
+ create mode 100644 drivers/phy/Kconfig
+ create mode 100644 drivers/phy/Makefile
+ create mode 100644 drivers/phy/phy-core.c
+ rename drivers/{usb => }/phy/phy-omap-usb2.c (88%)
+ rename drivers/{usb => }/phy/phy-twl4030-usb.c (94%)
+ create mode 100644 include/linux/phy/phy.h
+
+-- 
+1.7.10.4
