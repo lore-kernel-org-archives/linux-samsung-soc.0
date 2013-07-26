@@ -1,68 +1,67 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v8 12/12] iommu/exynos: return 0 if iommu_attach_device()
-	successes
-Date: Fri, 26 Jul 2013 20:31:01 +0900
-Message-ID: <004201ce89f3$9b849a20$d28dce60$@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: XCLKOUT in exynos5250 clock driver
+Date: Fri, 26 Jul 2013 12:39:34 +0100
+Message-ID: <20130726113934.GD9858@sirena.org.uk>
+References: <20130725145158.GI9858@sirena.org.uk>
+ <51F247B6.9010902@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-language: ko
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Grant Grundler' <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, 'Keyyoung Park' <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Antonios Motakis' <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="JOyJTfkrbmCrhSmw"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:58152 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752425Ab3GZLj7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 26 Jul 2013 07:39:59 -0400
+Content-Disposition: inline
+In-Reply-To: <51F247B6.9010902@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-iommu_attach_device() against exynos-iommu positive integer on success
-if the caller calls iommu_attach_device() with the same iommu_domain
-multiple times without call to iommu_detach_device() to inform the
-caller how many calls to iommu_detach_device() to really detach iommu.
 
-However the convention of the return value of success of common API is
-zero, this patch makes iommu_attach_device() call against exynos-iommu
-always return zero if the given device is successfully attached to
-the given iommu_domain even though it is already attached to the same
-iommu_domain.
+--JOyJTfkrbmCrhSmw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c |   13 +++++++------
- 1 files changed, 7 insertions(+), 6 deletions(-)
+On Fri, Jul 26, 2013 at 03:26:06PM +0530, Tushar Behera wrote:
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 51e5b35..6eed6d6 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -882,15 +882,16 @@ static int exynos_iommu_attach_device(struct iommu_domain *domain,
- 
- 	spin_unlock_irqrestore(&priv->lock, flags);
- 
--	if (ret < 0)
-+	if (ret < 0) {
- 		dev_err(dev, "%s: Failed to attach IOMMU with pgtable %#lx\n",
- 				__func__, __pa(priv->pgtable));
--	else
--		dev_dbg(dev, "%s: Attached IOMMU with pgtable 0x%lx%s\n",
--					__func__, __pa(priv->pgtable),
--					(ret == 0) ? "" : ", again");
-+		return ret;
-+	}
- 
--	return ret;
-+	dev_dbg(dev, "%s: Attached IOMMU with pgtable 0x%lx%s\n",
-+		__func__, __pa(priv->pgtable), (ret == 0) ? "" : ", again");
-+
-+	return 0;
- }
- 
- static void exynos_iommu_detach_device(struct iommu_domain *domain,
--- 
-1.7.2.5
+> Information as per Exynos5250 user manual:
+> "XCLKOUT is an output pin for debugging clocks. Exynos5250 has a CLKOUT
+> logic which can select one of the clocks (within its clock domains) and
+> output that through XCLKOUT pin."
+
+Yeah, I know what XCLKOUT is but to implement this in the driver and DT
+I'd need to know about the register or registers that are used to
+configure the mux.
+
+> Not sure if XCLKOUT on Arndale schematics means the same.
+
+I'd be astonished if it meant anything else, it's fairly clearly
+labelled as that on the schematics and this is a *very* common pattern
+in system designs using Samsung SoCs.
+
+--JOyJTfkrbmCrhSmw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR8l/zAAoJELSic+t+oim9jKEP/34thAkQMjqa8tTFigGvCxd5
+CCx0GcgHRYNyGsdRLQVmLFROQCMtP3OiRFdXjkTcViaPJ+mOZUlGHAGnKBWvqEUw
+9Fsyy4ws1RT3om45AD21Wiu397zYQU2d0itEpMW+o3zJX0SGjqAWuE4DmQ7cvpc6
+vFWGR6F9RRoVq6gCSPBlHEz8Ly77jbNuqLx5cnGmpxr4SYFYKxOKKLVmBOEGpcq7
+OWgXcsj0jcc2P/dK1vW1bb8MoN4jxdfCOLkU2uiioCS0MYqtdbxo6WqPXks/0Qex
+Ln4wd9wnTjtJ7j8kjwchAj4g8YJgR10ER853rIznB0qXlKWh5SqhgXQ3mf0C6MAO
+0cEJcTysySVk8sBAgN0CYwOsbqSlNU3OJs+exqZeF2kv5WI5TxBi9IYL9lZKR5x0
+MbKWZpb71waiqHvIIcZDeho7Mbnq/Y8MqEp2nFpfQ0QJ5XBJRKOC3c9z6xMsmPwt
+kuW7HTO0JQUcIv7i0c93FP9xEtvivcj/r7kbn4ZX33QfcPcEfU8c5qTuk+X5dzJI
+I96okN0pCxV1NbPpPsj+dyhTl+TDn28Tz5gBhLgo4YQDbPQtojHeDqFR8OhTTvTL
+Oy/Lw/BiqKyl2gtGoCTGtlEXltkm2FdsTZnvSDqliq7QsnfocLNkstAm4QvMdglI
+PRDA+rg5FJOmddWb/mkd
+=1KwT
+-----END PGP SIGNATURE-----
+
+--JOyJTfkrbmCrhSmw--
