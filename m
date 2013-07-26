@@ -1,89 +1,90 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V2 0/8] Add audio support on smdk5420
-Date: Fri, 26 Jul 2013 16:22:44 +0200
-Message-ID: <3356470.kOAo7kipSf@amdc1227>
-References: <1374845812-7803-1-git-send-email-padma.v@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: XCLKOUT in exynos5250 clock driver
+Date: Fri, 26 Jul 2013 15:27:24 +0100
+Message-ID: <20130726142724.GG9858@sirena.org.uk>
+References: <20130725145158.GI9858@sirena.org.uk>
+ <51F247B6.9010902@linaro.org>
+ <51F2695B.8020109@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EQULBRs4nj4AMCRW"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:33033 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755806Ab3GZOWs (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:60289 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755806Ab3GZO13 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Jul 2013 10:22:48 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MQJ00JACRWZ54A0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Jul 2013 15:22:46 +0100 (BST)
-In-reply-to: <1374845812-7803-1-git-send-email-padma.v@samsung.com>
+	Fri, 26 Jul 2013 10:27:29 -0400
+Content-Disposition: inline
+In-Reply-To: <51F2695B.8020109@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, broonie@kernel.org, kgene.kim@samsung.com, abrestic@chromium.org, tomasz.figa@gmail.com
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomasz Figa <t.figa@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
 
-Hi Padmavathi,
 
-On Friday 26 of July 2013 19:06:44 Padmavathi Venna wrote:
-> Samsung has different versions of I2S introduced in different
-> platforms. Each version has some new support added for multichannel,
-> secondary fifo, s/w reset control, internal mux for rclk src clk and
-> tdm support. Each newly added change has a quirk. So this patch adds
-> all the required quirks as driver data and based on compatible string
-> from dtsi fetches the quirks. This also adds i2s support on exynos5420
-> and make relevent changes in the dtsi files.
-> 
-> Changes since V1:
-> 	- Pass quirks as driver data and fetch the quirks based on
-> 	  compatible string from dtsi file as suggested by
-> 	  Tomasz Figa and Mark Brown
-> 	- Make the I2S driver more flexible with respect to register
-> 	  access as suggested by Tomasz Figa and Mark Brown
-> 	- Add 5420 support in the driver.
-> 	- Modify the dtsi files with the corresponding compatible
-> 	  strings and removed the i2s quirks from 5250 dtsi file.
-> 	- Updated the i2s Documentation with relevent changes and
-> 	  i2s versioning info.
-> 	- Add i2s nodes on exynos5420.dtsi
-> 	- Enable sound support on smdk5420
-> 
-> This patch set is dependent on the following dma and audio subsystem
-> clk controller patches.
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20661
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20668
-> 
-> This patch set is made based on Kukjin Kim for-next branch.
-> 
-> Andrew Bresticker (1):
->   ARM: dts: exynos5420: add i2s controllers
-> 
-> Padmavathi Venna (7):
->   platform: Increase platform name size
->   ASoC: Samsung: I2S: Add quirks as driver data in I2S
->   ARM: dts: Change i2s compatible string on exynos5250
->   ASoC: Samsung: I2S: Modify driver to give more flexibility
->   ASoC: Samsung: I2S: Modify the I2S driver to support I2S on
->     Exynos5420
->   ARM: dts: wm8994: Add wm8994 support on smdk5420
->   ARM: dts: Enable sound support on smdk5420
-> 
->  .../devicetree/bindings/sound/samsung-i2s.txt      |   25 ++-
->  arch/arm/boot/dts/exynos5250.dtsi                  |    9 +-
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   60 ++++++
->  arch/arm/boot/dts/exynos5420.dtsi                  |   44 +++++
->  include/linux/mod_devicetable.h                    |    2 +-
->  include/linux/platform_data/asoc-s3c.h             |    1 +
->  sound/soc/samsung/i2s-regs.h                       |   51 ++++--
->  sound/soc/samsung/i2s.c                            |  205
-> +++++++++++++++----- 8 files changed, 312 insertions(+), 85 deletions(-)
+--EQULBRs4nj4AMCRW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please resend the whole series again using correct devicetree mailing list, 
-which is:
+On Fri, Jul 26, 2013 at 02:19:39PM +0200, Sylwester Nawrocki wrote:
+> On 07/26/2013 11:56 AM, Tushar Behera wrote:
+> >On 07/25/2013 08:21 PM, Mark Brown wrote:
 
-devicetree@vger.kernel.org
+> >>I appear to be missing something in the clock driver for the exynos5250.
+> >>I'm looking at the Arndale schematic and I see that the audio master
 
-The old one (devicetree-discuss@lists.ozlabs.org) is no longer functioning.
+> This is something that's not yet supported in the mainline kernels I'm
+> afraid.
 
-Best regards,
-Tomasz
+I was trying to be polite :)
+
+> I suspect that the same, you can easily verify that by checking what ball
+> identifier corresponds to XCLKOUT pin and how the routing looks like on
+> the schematics.
+
+Right, for what it's worth it's ball AJ27 marked as XCLKOUT/ETC6_1
+
+> We have a bit hackish patch that adds support for the CLKOUT at the
+> Exynos4 clocks driver to enable the audio codec. An issue here is that the
+> CLKOUT mux and divider control bitfield is in the PMU registers (as opposed
+> to CMU where the clock  control registers normally are) and additionally
+> single register contains the clock mux/divider bitfield as well as couple
+> other unrelated control bits. Depending if those other bits are considered
+> really important or not it it might another reason to expose (part of ?)
+> PMU registers through syscon-like interface. There are registers in PMU
+
+Sounds like it'd be a good idea to do that if only for the purpose of
+describing things clearly in the DT.
+
+> It can be seen in the Galaxy S3 kernel code how the Exynos5 CLKOUT handling
+> might look like. See enum xclkout_select [1], exynos5_pmu_xclkout_set [2].
+> It would be good someone who has access to the datasheet come up with at
+> with some patch so the audio works are not blocked. I'm not working right
+> now on Exynos5 :P.
+
+I suspect I can reverse engineer something from this, though it would be
+much easier for someone with the datasheet.
+
+--EQULBRs4nj4AMCRW
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR8odJAAoJELSic+t+oim9h6QP/Am4LAAkH/pOQ/Ql5eplQVs0
+KUKf5W5i2WGOG98P8668oeDeT6Z807QxwCeGTC1pMAORxXqOj7+3UlqqYf7mUZJw
+v3l6C+IOlXC0K8SDjHoQwF9kvNgig40PL2ntNShxTDs8l09+PGKMxJqKSnXuOhSY
+4TAMAl4s7dpA98sDwDSb4ek+hDP+bMe+TrChKEICV9LBbfpjsrx6ZcVKBViB54PG
+SgXOLX3Z8/5QIaFcpWSFb/b2MP2KAAVfs247XlVZGB2lMqldmjXxyE5RWHD3Pg3o
+tKRlo3gkvaZfAeV2Zl4bWLIldsN88F8XCOOm5pMzdarnGxESWwls6p0QC21+iXyr
+wpE67i0rG3ZkAXU5a6hPWbmouBW16/bMMYdQa56Eradk+Z1BiLRWvF5R0npC9B/b
+JEgQ8toWp+dt7rwhlTEyY2kuQZPqYtzQU22NjaPvG4yLZfM5+Fo2enkW7RUZ42Nt
+f97wGjMHr0fHilxjB5T86/Q9AtBwFWTy6jmXUd/qh6gLkHdJZbNc/MoUvhkWoHG8
+oz25W2nsZ4X5P/Q3fvHOyaQBsFlJ3rzwX9DTnrM1e/z9ip+L7QQC1slprSHMyghZ
+/V3FUuMZ5R3bJ7OUmnFMdcDrGiN4qig9lZiDZ9Urug8W5m90VT/wNG0+N89q2eTX
+MrunXGI5Tv0eZO5SZNEg
+=ImDg
+-----END PGP SIGNATURE-----
+
+--EQULBRs4nj4AMCRW--
