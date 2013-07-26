@@ -1,51 +1,36 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V2 8/8] ARM: dts: Enable sound support on smdk5420
-Date: Fri, 26 Jul 2013 19:06:52 +0530
-Message-ID: <1374845812-7803-9-git-send-email-padma.v@samsung.com>
-References: <1374845812-7803-1-git-send-email-padma.v@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V2 2/8] ASoC: Samsung: I2S: Add quirks as driver data
+	in I2S
+Date: Fri, 26 Jul 2013 15:06:18 +0100
+Message-ID: <20130726140618.GP24642@n2100.arm.linux.org.uk>
+References: <1374845812-7803-1-git-send-email-padma.v@samsung.com> <1374845812-7803-3-git-send-email-padma.v@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54648 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758650Ab3GZNfA (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38722 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755909Ab3GZOGf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Jul 2013 09:35:00 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MQJ007J8PPR45R0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 26 Jul 2013 22:34:59 +0900 (KST)
-In-reply-to: <1374845812-7803-1-git-send-email-padma.v@samsung.com>
+	Fri, 26 Jul 2013 10:06:35 -0400
+Content-Disposition: inline
+In-Reply-To: <1374845812-7803-3-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: broonie@kernel.org, kgene.kim@samsung.com, abrestic@chromium.org, tomasz.figa@gmail.com
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, abrestic@chromium.org, kgene.kim@samsung.com, broonie@kernel.org, tomasz.figa@gmail.com
 
-This patch enables i2s0 and sound support on smdk5420.
+On Fri, Jul 26, 2013 at 07:06:46PM +0530, Padmavathi Venna wrote:
+> -- compatible : "samsung,i2s-v5"
+> +- compatible : should be one of the following.
+> +   - samsung,s3c6410-i2s: for 8/16/24bit stereo I2S. Previous versions
+> +     has only 8/16bit support.
+> +   - samsung,s3c6410-i2sv4: for 8/16/24bit multichannel(5.1 channel) I2S.
+> +     Introduced in s3c6410. This also applicable for s5p64x0 platforms.
+> +   - samsung,s5pc100-i2s: for 8/16/24bit multichannel(5.1 channel) I2S
+> +     with secondary fifo and s/w reset control.
+> +   - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
+> +     secondary fifo, s/w reset control and internal mux for root clk src.
+> +
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/boot/dts/exynos5420-smdk5420.dts |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 28a6855..a5a2c2f 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -118,4 +118,14 @@
- 		};
- 	};
- 
-+	i2s0: i2s@03830000 {
-+		status = "okay";
-+	};
-+
-+	sound {
-+		compatible = "samsung,smdk-wm8994";
-+
-+		samsung,i2s-controller = <&i2s0>;
-+		samsung,audio-codec = <&wm8994>;
-+	};
- };
--- 
-1.7.4.4
+So what happens with your changes to everyone who is using a DT file with
+the "samsung,i2s-v5" compatible string?
