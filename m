@@ -1,42 +1,67 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: XCLKOUT in exynos5250 clock driver
-Date: Fri, 26 Jul 2013 15:26:06 +0530
-Message-ID: <51F247B6.9010902@linaro.org>
-References: <20130725145158.GI9858@sirena.org.uk>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: RE: [PATCH 2/2] iommu/exynos: Follow kernel coding style for
+ __sysmmu_enable return type
+Date: Fri, 26 Jul 2013 19:46:01 +0900
+Message-ID: <003101ce89ed$52317330$f6945990$@samsung.com>
+References: <1374766502-14823-1-git-send-email-a.motakis@virtualopensystems.com>
+ <1374766502-14823-2-git-send-email-a.motakis@virtualopensystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:40690 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758311Ab3GZJ4K (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:47276 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754686Ab3GZKqE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Jul 2013 05:56:10 -0400
-Received: by mail-pa0-f48.google.com with SMTP id kp13so1829070pab.7
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Jul 2013 02:56:10 -0700 (PDT)
-In-Reply-To: <20130725145158.GI9858@sirena.org.uk>
+	Fri, 26 Jul 2013 06:46:04 -0400
+In-reply-to: <1374766502-14823-2-git-send-email-a.motakis@virtualopensystems.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Antonios Motakis' <a.motakis@virtualopensystems.com>, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+Cc: kvmarm@lists.cs.columbia.edu, 'Joerg Roedel' <joro@8bytes.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Varun Sethi' <Varun.Sethi@freescale.com>, 'open list' <linux-kernel@vger.kernel.org>
 
-On 07/25/2013 08:21 PM, Mark Brown wrote:
-> I appear to be missing something in the clock driver for the exynos5250.
-> I'm looking at the Arndale schematic and I see that the audio master
-> clock is connected to XCLKOUT on the SoC.  However I can't see any
-> reference to XCLKOUT or anything similar in the clock driver or any of
-> the DTS files - where is this clock exposed by the clock driver?
+> -----Original Message-----
+> From: Antonios Motakis [mailto:a.motakis@virtualopensystems.com]
+> Sent: Friday, July 26, 2013 12:35 AM
 > 
-> Unfortunately I haven't been able to get access to the datasheet for the
-> part so I can't check this myself.
+> On success, the __sysmmu_enable returns 1 instead of 0, which does not
+> respect the convention described in Chapter 16 of the Linux kernel coding
+> style.
 > 
+> In fact, this return value is propagated all the way up to
+> iommu_attach_device() and iommu_attach_device() in drivers/iommu.c,
+> which results into inconsistent behavior of the IOMMU API with Exynos
+> systems, compared to other IOMMUs.
+> 
+> This patch replaces the return value with 0, which makes the Exynos'
+> IOMMU driver behavior consistent with that of other IOMMUs.
+> 
+> Signed-off-by: Antonios Motakis <a.motakis@virtualopensystems.com>
+> ---
+>  drivers/iommu/exynos-iommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index c7dd4b5..4ea3abb 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -504,7 +504,7 @@ static int __sysmmu_enable(struct sysmmu_drvdata *data,
+> 
+>  		dev_dbg(data->sysmmu, "Enabled\n");
+>  	} else {
+> -		ret = (pgtable == data->pgtable) ? 1 : -EBUSY;
+> +		ret = (pgtable == data->pgtable) ? 0 : -EBUSY;
+> 
+Ok.
 
-Information as per Exynos5250 user manual:
-"XCLKOUT is an output pin for debugging clocks. Exynos5250 has a CLKOUT
-logic which can select one of the clocks (within its clock domains) and
-output that through XCLKOUT pin."
+__sysmmu_enable() must return 1 if it is called with the same page table.
+I have fixed it exynos_iommu_attach_device() to always return zero on success
+in the next patchset which I will post today.
 
-Not sure if XCLKOUT on Arndale schematics means the same.
+Thank you.
 
--- 
-Tushar Behera
+>  		dev_dbg(data->sysmmu, "already enabled\n");
+>  	}
+> --
+> 1.8.1.2
