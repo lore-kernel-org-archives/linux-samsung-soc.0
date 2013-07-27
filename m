@@ -1,116 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3/3] ASoC: smdk_wm8994: Configure the MCLK1 rate based on the board
-Date: Sat, 27 Jul 2013 12:53:25 +0100
-Message-ID: <1374926005-2400-3-git-send-email-broonie@kernel.org>
-References: <1374926005-2400-1-git-send-email-broonie@kernel.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH V2 2/8] ASoC: Samsung: I2S: Add quirks as driver data in I2S
+Date: Sat, 27 Jul 2013 13:56:43 +0200
+Message-ID: <2425397.IIfnern1kk@flatron>
+References: <1374845812-7803-1-git-send-email-padma.v@samsung.com> <1417636.4d7IlsSAyI@amdc1227> <20130726152551.GM9858@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:56743 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751553Ab3G0Lxz (ORCPT
+Received: from mail-bk0-f48.google.com ([209.85.214.48]:32932 "EHLO
+	mail-bk0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751538Ab3G0L4u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 27 Jul 2013 07:53:55 -0400
-In-Reply-To: <1374926005-2400-1-git-send-email-broonie@kernel.org>
+	Sat, 27 Jul 2013 07:56:50 -0400
+Received: by mail-bk0-f48.google.com with SMTP id jf3so1435981bkc.7
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 27 Jul 2013 04:56:49 -0700 (PDT)
+In-Reply-To: <20130726152551.GM9858@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, Mark Brown <broonie@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, kgene.kim@samsung.com, abrestic@chromium.org
 
-From: Mark Brown <broonie@linaro.org>
+On Friday 26 of July 2013 16:25:51 Mark Brown wrote:
+> On Fri, Jul 26, 2013 at 05:02:46PM +0200, Tomasz Figa wrote:
+> > IMHO this SoC-based identification looks much better, especially
+> > considering the fact that IP version isn't something easily
+> > determinable, as even the documentation can sometimes be not really
+> > clear about that.
+> 
+> Yeah, it's not terribly clever either way.  We've been using the version
+> numbers in audio for a long time partly because it is documented
+> sometimes and partly because most of the SoCs tend to have one fully
+> featured controller and a bunch of secondary controllers on older IP
+> revisions.
+> 
+> > However the s3c6410-i2sv4 string looks a bit unfortunate. AFAIK there
+> > were two types of I2S IPs on S3C6410 - normal I2S and I2S
+> > multichannel. What about having a compatible like s3c6410-i2s-multi?
+> 
+> It was explicitly identified as I2Sv4 in the S3C6410 datasheet so no
+> real issue there.
 
-Make the code more generally applicable by refactoring so that the MCLK1
-rate can be selected based on the compatible string provided by the device
-tree, allowing use on other boards which have different rates or use other
-information sources.
+Well, the datasheet I have calls it either "I2S V40" or "IIS MULTI AUDIO 
+INTERFACE". I like the latter much more, because it actually says what's 
+the difference compared to previous I2S IPs.
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- sound/soc/samsung/smdk_wm8994.c | 37 +++++++++++++++++++++++++++++--------
- 1 file changed, 29 insertions(+), 8 deletions(-)
+I'm not strongly against using the v4 suffix, but since we decided to use 
+more meaningful compatible values elsewhere, I think this way would be 
+better for sound drivers as well.
 
-diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
-index a561175..5fd7a05 100644
---- a/sound/soc/samsung/smdk_wm8994.c
-+++ b/sound/soc/samsung/smdk_wm8994.c
-@@ -11,6 +11,7 @@
- #include <sound/pcm_params.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- 
-  /*
-   * Default CFG switch settings to use this driver:
-@@ -37,6 +38,15 @@
- /* SMDK has a 16.934MHZ crystal attached to WM8994 */
- #define SMDK_WM8994_FREQ 16934000
- 
-+struct smdk_wm8994_data {
-+	int mclk1_rate;
-+};
-+
-+/* Default SMDKs */
-+static struct smdk_wm8994_data smdk_board_data = {
-+	.mclk1_rate = SMDK_WM8994_FREQ,
-+};
-+
- static int smdk_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_pcm_hw_params *params)
- {
-@@ -141,15 +151,28 @@ static struct snd_soc_card smdk = {
- 	.num_links = ARRAY_SIZE(smdk_dai),
- };
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id samsung_wm8994_of_match[] = {
-+	{ .compatible = "samsung,smdk-wm8994", .data = &smdk_board_data },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, samsung_wm8994_of_match);
-+#endif /* CONFIG_OF */
- 
- static int smdk_audio_probe(struct platform_device *pdev)
- {
- 	int ret;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct snd_soc_card *card = &smdk;
-+	struct smdk_wm8994_data *board;
-+	const struct of_device_id *id;
- 
- 	card->dev = &pdev->dev;
- 
-+	board = devm_kzalloc(&pdev->dev, sizeof(*board), GFP_KERNEL);
-+	if (!board)
-+		return -ENOMEM;
-+
- 	if (np) {
- 		smdk_dai[0].cpu_dai_name = NULL;
- 		smdk_dai[0].cpu_of_node = of_parse_phandle(np,
-@@ -164,6 +187,12 @@ static int smdk_audio_probe(struct platform_device *pdev)
- 		smdk_dai[0].platform_of_node = smdk_dai[0].cpu_of_node;
- 	}
- 
-+	id = of_match_device(samsung_wm8994_of_match, &pdev->dev);
-+	if (id)
-+		*board = *((struct smdk_wm8994_data *)id->data);
-+
-+	platform_set_drvdata(pdev, board);
-+
- 	ret = snd_soc_register_card(card);
- 
- 	if (ret)
-@@ -181,14 +210,6 @@ static int smdk_audio_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_OF
--static const struct of_device_id samsung_wm8994_of_match[] = {
--	{ .compatible = "samsung,smdk-wm8994", },
--	{},
--};
--MODULE_DEVICE_TABLE(of, samsung_wm8994_of_match);
--#endif /* CONFIG_OF */
--
- static struct platform_driver smdk_audio_driver = {
- 	.driver		= {
- 		.name	= "smdk-audio-wm8894",
--- 
-1.8.3.2
+Best regards,
+Tomasz
