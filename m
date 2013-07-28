@@ -1,56 +1,69 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v8 07/12] iommu/exynos: support for device tree
-Date: Sat, 27 Jul 2013 16:06:40 +0200
-Message-ID: <1743111.Ek7FldnHal@flatron>
-References: <003d01ce89f3$44ec2cf0$cec486d0$@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: cpuidle: Skip C1 cpuidle state for exynos5440
+Date: Sun, 28 Jul 2013 09:10:09 +0200
+Message-ID: <51F4C3D1.2060901@linaro.org>
+References: <0e7d01ce8840$82f79070$88e6b150$@org> <1374659615-29447-1-git-send-email-amit.daniel@samsung.com> <0eaf01ce8863$89d3c4e0$9d7b4ea0$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <003d01ce89f3$44ec2cf0$cec486d0$@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Cho KyongHo <pullip.cho@samsung.com>
-Cc: 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Grant Grundler' <grundler@chromium.org>, 'Joerg Roedel' <joro@8bytes.org>, 'Keyyoung Park' <keyyoung.park@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Antonios Motakis' <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Rahul Sharma' <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:50338 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753210Ab3G1HKK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 28 Jul 2013 03:10:10 -0400
+Received: by mail-wg0-f51.google.com with SMTP id a12so214399wgh.30
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Jul 2013 00:10:09 -0700 (PDT)
+In-Reply-To: <0eaf01ce8863$89d3c4e0$9d7b4ea0$@org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-Hi,
+On 07/24/2013 01:47 PM, Kukjin Kim wrote:
+> Amit Daniel Kachhap wrote:
+>>
+>> This patch skips the deep C1(AFTR -Arm off top running) state for
+>> exynos5440
+>> soc as this soc does not support this state. All the cpu's only allo=
+ws the
+>> basic
+>> C0 state.
+>>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/cpuidle.c |    2 +-
+>>  1 files changed, 1 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-
+>> exynos/cpuidle.c
+>> index 17a18ff..9a776a1 100644
+>> --- a/arch/arm/mach-exynos/cpuidle.c
+>> +++ b/arch/arm/mach-exynos/cpuidle.c
+>> @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
+>>  		device->cpu =3D cpu_id;
+>>
+>>  		/* Support IDLE only */
+>> -		if (cpu_id !=3D 0)
+>> +		if (soc_is_exynos5440() || cpu_id !=3D 0)
+>>  			device->state_count =3D 1;
+>>
+>>  		ret =3D cpuidle_register_device(device);
+>> --
+>> 1.7.1
+>=20
+> Applied, thanks.
 
-On Friday 26 of July 2013 20:28:36 Cho KyongHo wrote:
-> This commit adds device tree support for System MMU.
-> This also include the following changes and enhancements:
-> 
-> * use managed device helper functions.
-> Simplyfies System MMU device driver.
-> 
-> * use only a single clock descriptor.
-> System MMU device descriptor is seperate if it is imposible to make
-> a single clock descriptor to make a device descriptor for a group of
-> System MMUs.
-> 
-> * removed dbgname member from sysmmu_drvdata structure.
-> debugging kernel message for a System MMU is distinguisheable with the
-> name of device descroptors.
-> 
-> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
-> ---
->  drivers/iommu/Kconfig        |    5 +-
->  drivers/iommu/exynos-iommu.c |  182
-> ++++++++++++++++-------------------------- 2 files changed, 70
-> insertions(+), 117 deletions(-)
+You shouldn't have. This patch means exynos5540 has no cpuidle driver a=
+t
+all. It should be fixed in the Kconfig to unselect CONFIG_CPU_IDLE for
+an exynos5540.
 
-Whenever you introduce or modify (extend) a device tree binding please 
-don't forget about reflecting that in documentation 
-(Documentation/devicetree/bindings) and CCing devicetree mailing list 
-(devicetree@vger.kernel.org). Both of these steps are necessary to get any 
-device tree stuff merged.
 
-Best regards,
-Tomasz
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
