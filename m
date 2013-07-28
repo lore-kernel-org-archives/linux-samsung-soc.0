@@ -1,118 +1,56 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: EXYNOS: cpuidle: Skip C1 cpuidle state for exynos5440
-Date: Sun, 28 Jul 2013 12:46:16 +0200
-Message-ID: <1449250.PNC13edUOF@flatron>
-References: <0e7d01ce8840$82f79070$88e6b150$@org> <1877730.qZVs3NAG5h@flatron> <51F4F317.1040001@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 00/20] Samsung PWM support cleanup
+Date: Sun, 28 Jul 2013 13:22:46 +0100
+Message-ID: <20130728122246.GP9858@sirena.org.uk>
+References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YVVuqqmpr1hAxwPf"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f49.google.com ([209.85.214.49]:49947 "EHLO
-	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753386Ab3G1KqV (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:41207 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753412Ab3G1MXK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 28 Jul 2013 06:46:21 -0400
-Received: by mail-bk0-f49.google.com with SMTP id r7so1243001bkg.8
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 28 Jul 2013 03:46:20 -0700 (PDT)
-In-Reply-To: <51F4F317.1040001@linaro.org>
+	Sun, 28 Jul 2013 08:23:10 -0400
+Content-Disposition: inline
+In-Reply-To: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>
 
-On Sunday 28 of July 2013 12:31:51 Daniel Lezcano wrote:
-> On 07/28/2013 11:22 AM, Tomasz Figa wrote:
-> > On Sunday 28 of July 2013 09:10:09 Daniel Lezcano wrote:
-> >> On 07/24/2013 01:47 PM, Kukjin Kim wrote:
-> >>> Amit Daniel Kachhap wrote:
-> >>>> This patch skips the deep C1(AFTR -Arm off top running) state for
-> >>>> exynos5440
-> >>>> soc as this soc does not support this state. All the cpu's only
-> >>>> allows the basic
-> >>>> C0 state.
-> >>>> 
-> >>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> >>>> ---
-> >>>> 
-> >>>>  arch/arm/mach-exynos/cpuidle.c |    2 +-
-> >>>>  1 files changed, 1 insertions(+), 1 deletions(-)
-> >>>> 
-> >>>> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-
-> >>>> exynos/cpuidle.c
-> >>>> index 17a18ff..9a776a1 100644
-> >>>> --- a/arch/arm/mach-exynos/cpuidle.c
-> >>>> +++ b/arch/arm/mach-exynos/cpuidle.c
-> >>>> @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
-> >>>> 
-> >>>>  		device->cpu = cpu_id;
-> >>>>  		
-> >>>>  		/* Support IDLE only */
-> >>>> 
-> >>>> -		if (cpu_id != 0)
-> >>>> +		if (soc_is_exynos5440() || cpu_id != 0)
-> >>>> 
-> >>>>  			device->state_count = 1;
-> >>>>  		
-> >>>>  		ret = cpuidle_register_device(device);
-> >>>> 
-> >>>> --
-> >>>> 1.7.1
-> >>> 
-> >>> Applied, thanks.
-> >> 
-> >> You shouldn't have. This patch means exynos5540 has no cpuidle driver
-> >> at all. It should be fixed in the Kconfig to unselect
-> >> CONFIG_CPU_IDLE for an exynos5540.
-> > 
-> > To shed more light on this, let me add that you need to register a
-> > cpuidle driver only if you have more states than a simple WFI or you
-> > need some crazy steps to enter WFI. Default setup falls back to
-> > generic ARM WFI. (Daniel, do we get the nice idle stats as provided
-> > by cpuidle core then?)
-> Nope, but with one state, idle vs busy stats do the trick.
-> 
-> BTW, I am writing a tool to do some stats based on the idle events [1].
-> It is still at a very early development stage but we can get some
-> interesting informations.
 
-Sounds good.
+--YVVuqqmpr1hAxwPf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-By the way, a random idea that just came to my mind is that since we 
-already support multiple cpuidle drivers, what about providing a default 
-cpuidle-wfi driver that gets used in case no other driver is available?
+On Sat, Jul 20, 2013 at 02:04:12AM +0200, Tomasz Figa wrote:
 
-This would give us cpuidle stats at the same place as with other cpuidle 
-drivers and might also unify some code paths.
+> [Also not sure on what boards, but still]
+> Tested-by: Mark Brown <broonie@linaro.org>
 
-As I said, it's just a random idea, so feel free to redirect it to 
-/dev/null.
+Just retested this (on Cragganmore), still works fine.
 
-> > Anyway, Exynos cpuidle is using an initcall to initialize and we
-> > support multiple Exynos SoCs in single zImage, so deselecting
-> > CONFIG_CPU_IDLE is not an option.
-> 
-> Good point.
-> 
-> > Considering multiplatform requirements, the driver has to
-> > 
-> > be modified to initialize only on supported platforms, either by:
-> >  a) dropping the initcall and calling the init function directly from
-> > 
-> > arch/arm/mach-exynos
-> > 
-> >  or
-> >  
-> >  b) checking if machine we are running on is supported, which would
-> >  mean a> 
-> > long list of all Exynos SoCs that needs to be checked.
-> > 
-> > An evolution of option a) is registering a platform device somewhere
-> > in
-> > arch/arm/mach-exynos and making exynos-cpuidle a platform driver.
-> 
-> Yes, I am favorable to this solution [2].
+--YVVuqqmpr1hAxwPf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-OK, looks good.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-Best regards,
-Tomasz
+iQIcBAEBAgAGBQJR9Q0SAAoJELSic+t+oim9WkoQAILxgeOz8SZcTJ0TuPChRlK2
+jhoZCjlXJQfxkzoaemRDWqRGqJtL/POe0BbwGldiGencpRb/o4zn11JW5iQowGyq
+L5bWsAnIbgfayeUqDb/xwXUkZutBQkpaBCiiunUNu65bdilOahVDGlOrAJqzMER5
+PgCN8vdd4C42CTeHsHEsb1e81wajTxyTwN85itcv944fUA7LU7nW3vJ1AHq9PQOr
+h0/XX2R6SDSX/PmmVftDFvRHT2ZGbl9O8uqXVZbUUjB8qUll3PlK64167uGXBIX+
+bef6MgI4wFIU3leKwVFCpeuL0WOFPHE9Bx73UEuN4+UVVgFH7X+04O8Zf6yjcQ8V
+mEYok1qf9XHVxjudX/pWPpi4w8zD7933VTUy2sXyKqJnjP5Z1gY+7e3HRScXqUDe
+lxMryTXwEmhN4+AV+eiwxlOT+eQ0n2eQ4YjxyF4ocqMFNPKnLaJyWwEFrwpABZaL
+/mXyDOdagkRMDRgUHKoJy3bkN1uXBATwg03d62Tl4bvlg7K6LN6RXBALqQkelZXC
+73MlUEFZQcDXmO8lNwWsf/uaYoWWncmx2DLx2c7wbdbhbEdoaE0TxX8Jijqn7aqQ
+RsI0OhIUat+6B9rnlOzaA0wNaJlaXgEvxBgJCkonZyZjYcTDjvC4zNQ8EKG2hJbU
+TvGEsWFJABrUGZNzuoC6
+=9v/h
+-----END PGP SIGNATURE-----
+
+--YVVuqqmpr1hAxwPf--
