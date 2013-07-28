@@ -1,40 +1,101 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 2/8] clk: samsung: pll: Add support for PLL6552 and PLL6553
-Date: Sun, 28 Jul 2013 14:38:25 +0200
-Message-ID: <3758744.oOA9YxCvpA@flatron>
-References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com> <11551938.yDBcNngaZN@flatron> <20130728123051.GQ9858@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 01/11] spi: Provide core support for runtime PM during transfers
+Date: Sun, 28 Jul 2013 15:43:16 +0100
+Message-ID: <1375022606-7576-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f50.google.com ([209.85.214.50]:60728 "EHLO
-	mail-bk0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753446Ab3G1Mia (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:59100 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753709Ab3G1OoE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 28 Jul 2013 08:38:30 -0400
-In-Reply-To: <20130728123051.GQ9858@sirena.org.uk>
+	Sun, 28 Jul 2013 10:44:04 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, stern@rowland.harvard.edu, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-On Sunday 28 of July 2013 13:30:51 Mark Brown wrote:
-> On Wed, Jul 24, 2013 at 01:52:19AM +0200, Tomasz Figa wrote:
-> > Changes since v2:
-> >  - Reworked to use new PLL registration method introduced by Yadwinder
-> >  
-> >    Singh Brar's patch series:
-> >    ( http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20041 )
-> 
-> I'm not able to test this series since that lot isn't in -next and I
-> didn't get a copy.
+From: Mark Brown <broonie@linaro.org>
 
-Hmm, I wonder what happened with that series, as Mike was supposed to
-try applying it to clk tree [1].
+Most SPI drivers that implement runtime PM support use identical code to
+do so: they acquire a runtime PM lock in prepare_transfer_hardware() and
+then they release it in unprepare_transfer_hardware(). The variations in
+this are mostly missing error checking and the choice to use autosuspend.
 
-Mike, could you shed some light on this?
+Since these runtime PM calls are normally the only thing in the prepare
+and unprepare callbacks and the autosuspend API transparently does the
+right thing on devices with autosuspend disabled factor all of this out
+into the core with a flag to enable the behaviour.
 
-Best regards,
-Tomasz
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ drivers/spi/spi.c       | 16 ++++++++++++++++
+ include/linux/spi/spi.h |  4 ++++
+ 2 files changed, 20 insertions(+)
 
-[1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20041/focus=21003
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 46c3f56..61f71b9 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -553,6 +553,10 @@ static void spi_pump_messages(struct kthread_work *work)
+ 		    master->unprepare_transfer_hardware(master))
+ 			dev_err(&master->dev,
+ 				"failed to unprepare transfer hardware\n");
++		if (master->auto_runtime_pm) {
++			pm_runtime_mark_last_busy(master->dev.parent);
++			pm_runtime_put_autosuspend(master->dev.parent);
++		}
+ 		return;
+ 	}
+ 
+@@ -572,11 +576,23 @@ static void spi_pump_messages(struct kthread_work *work)
+ 		master->busy = true;
+ 	spin_unlock_irqrestore(&master->queue_lock, flags);
+ 
++	if (!was_busy && master->auto_runtime_pm) {
++		ret = pm_runtime_get_sync(master->dev.parent);
++		if (ret < 0) {
++			dev_err(&master->dev, "Failed to power device: %d\n",
++				ret);
++			return;
++		}
++	}
++
+ 	if (!was_busy && master->prepare_transfer_hardware) {
+ 		ret = master->prepare_transfer_hardware(master);
+ 		if (ret) {
+ 			dev_err(&master->dev,
+ 				"failed to prepare transfer hardware\n");
++
++			if (master->auto_runtime_pm)
++				pm_runtime_put(master->dev.parent);
+ 			return;
+ 		}
+ 	}
+diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
+index be40c97..d73059a 100644
+--- a/include/linux/spi/spi.h
++++ b/include/linux/spi/spi.h
+@@ -256,6 +256,8 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
+  * @busy: message pump is busy
+  * @running: message pump is running
+  * @rt: whether this queue is set to run as a realtime task
++ * @auto_runtime_pm: the core should ensure a runtime PM reference is held
++ *                   while the hardware is prepared
+  * @prepare_transfer_hardware: a message will soon arrive from the queue
+  *	so the subsystem requests the driver to prepare the transfer hardware
+  *	by issuing this call
+@@ -380,11 +382,13 @@ struct spi_master {
+ 	bool				busy;
+ 	bool				running;
+ 	bool				rt;
++	bool				auto_runtime_pm;
+ 
+ 	int (*prepare_transfer_hardware)(struct spi_master *master);
+ 	int (*transfer_one_message)(struct spi_master *master,
+ 				    struct spi_message *mesg);
+ 	int (*unprepare_transfer_hardware)(struct spi_master *master);
++
+ 	/* gpio chip select */
+ 	int			*cs_gpios;
+ };
+-- 
+1.8.3.2
