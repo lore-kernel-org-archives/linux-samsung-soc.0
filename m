@@ -1,56 +1,83 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 00/20] Samsung PWM support cleanup
-Date: Sun, 28 Jul 2013 13:22:46 +0100
-Message-ID: <20130728122246.GP9858@sirena.org.uk>
-References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 2/8] clk: samsung: pll: Add support for PLL6552 and
+ PLL6553
+Date: Sun, 28 Jul 2013 13:30:51 +0100
+Message-ID: <20130728123051.GQ9858@sirena.org.uk>
+References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com>
+ <1374536965-3545-3-git-send-email-tomasz.figa@gmail.com>
+ <11551938.yDBcNngaZN@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YVVuqqmpr1hAxwPf"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:41207 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753412Ab3G1MXK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 28 Jul 2013 08:23:10 -0400
-Content-Disposition: inline
-In-Reply-To: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============4580453267176853010=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <11551938.yDBcNngaZN@flatron>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, stern@rowland.harvard.edu, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
---YVVuqqmpr1hAxwPf
+--===============4580453267176853010==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="trkD0OZPq5p8NMmu"
+Content-Disposition: inline
+
+
+--trkD0OZPq5p8NMmu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Sat, Jul 20, 2013 at 02:04:12AM +0200, Tomasz Figa wrote:
+On Wed, Jul 24, 2013 at 01:52:19AM +0200, Tomasz Figa wrote:
 
-> [Also not sure on what boards, but still]
-> Tested-by: Mark Brown <broonie@linaro.org>
+> Changes since v2:
+>  - Reworked to use new PLL registration method introduced by Yadwinder
+>    Singh Brar's patch series:
+>    ( http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20041 )
 
-Just retested this (on Cragganmore), still works fine.
+I'm not able to test this series since that lot isn't in -next and I
+didn't get a copy.
 
---YVVuqqmpr1hAxwPf
+--trkD0OZPq5p8NMmu
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR9Q0SAAoJELSic+t+oim9WkoQAILxgeOz8SZcTJ0TuPChRlK2
-jhoZCjlXJQfxkzoaemRDWqRGqJtL/POe0BbwGldiGencpRb/o4zn11JW5iQowGyq
-L5bWsAnIbgfayeUqDb/xwXUkZutBQkpaBCiiunUNu65bdilOahVDGlOrAJqzMER5
-PgCN8vdd4C42CTeHsHEsb1e81wajTxyTwN85itcv944fUA7LU7nW3vJ1AHq9PQOr
-h0/XX2R6SDSX/PmmVftDFvRHT2ZGbl9O8uqXVZbUUjB8qUll3PlK64167uGXBIX+
-bef6MgI4wFIU3leKwVFCpeuL0WOFPHE9Bx73UEuN4+UVVgFH7X+04O8Zf6yjcQ8V
-mEYok1qf9XHVxjudX/pWPpi4w8zD7933VTUy2sXyKqJnjP5Z1gY+7e3HRScXqUDe
-lxMryTXwEmhN4+AV+eiwxlOT+eQ0n2eQ4YjxyF4ocqMFNPKnLaJyWwEFrwpABZaL
-/mXyDOdagkRMDRgUHKoJy3bkN1uXBATwg03d62Tl4bvlg7K6LN6RXBALqQkelZXC
-73MlUEFZQcDXmO8lNwWsf/uaYoWWncmx2DLx2c7wbdbhbEdoaE0TxX8Jijqn7aqQ
-RsI0OhIUat+6B9rnlOzaA0wNaJlaXgEvxBgJCkonZyZjYcTDjvC4zNQ8EKG2hJbU
-TvGEsWFJABrUGZNzuoC6
-=9v/h
+iQIcBAEBAgAGBQJR9Q74AAoJELSic+t+oim9T/4QAIJZUzt5dUMVnP6K8Y/zJSBF
++slACmIVDUDVG3TfGfidw2kDPr4AsUj3qrwui214hCpXS5aZ3dmHMCLxztOnLaEz
+l4o9iTvPV1MC9aPUAasN3I8JEw0YSWneUcO69mIjkGQ1FbumsEoE5vHgeFaCIa7h
+brMaUhiVjFK8BEYF9hAsyR7RauWM+l/OdFjiLksOlHADHwb1J43r/CE9RkCl8m7F
+ifBjeYHm4UKYCl6wVQg3SmGLLti5hZ8N7BwOQe1xjIsC0RtHxGt5Vh5itJ4t2+IS
+OHE8erTvYRrlq14CWM1wByFQb13VnoA01H/i0gvDEkaP/lRfIkr2dJANQNhe3Wf7
+SFhiMdO6VKp56Y5eFOWnG9HIRRXm1XBHX0eEY/GBtu4S+BMoC3VBeUZ4Ew3wHWVY
+meBkv6HdvAnAhNPiB6KsRj5yZ1dDlnBRf4DG9RMY7Cfk1nt3TEV4FXgwFXivvZ9f
+YE1QDlh5r5j9y2lw4ummy5w93T/kNUDzpkd28PccC6TMYaWDfZoCZ91W8mrPKl7c
+MAPcd7TT0R0IGs9kWhtPIvLwQNSeETzkIersDGmrazBR1AwAu3d1q8XCULsDmKLg
+UVDxBhwfOEtxvAo+t+PmsbOpurIX7XVGIgB/MU0Wvx7NrrJPCKjThkSAlcV9KiVH
+tJVii4RMSSBQL2EJQotx
+=zr2j
 -----END PGP SIGNATURE-----
 
---YVVuqqmpr1hAxwPf--
+--trkD0OZPq5p8NMmu--
+
+
+--===============4580453267176853010==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============4580453267176853010==--
