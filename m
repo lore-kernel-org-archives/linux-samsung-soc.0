@@ -1,55 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 05/11] spi/pl022: Convert to core runtime PM
-Date: Mon, 29 Jul 2013 07:04:31 +0100
-Message-ID: <20130729060431.GP9858@sirena.org.uk>
-References: <1375022606-7576-1-git-send-email-broonie@kernel.org>
- <1375022606-7576-5-git-send-email-broonie@kernel.org>
- <CACRpkdYRdO5C2_mumUcMd6naCA6JaHetFSnC5u6wO0FV8BZhHQ@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 06/12] ARM: dts: Add description of System MMU of
+	Exynos SoCs
+Date: Mon, 29 Jul 2013 12:07:56 +0530
+Message-ID: <CAK9yfHy2btp1W+5-GiVQnkffDnJ-CgqXuAjGktkiKYyf7kKQbQ@mail.gmail.com>
+References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="e0rzCtfzeQKTRplb"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYRdO5C2_mumUcMd6naCA6JaHetFSnC5u6wO0FV8BZhHQ@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linaro-kernel <linaro-kernel@lists.linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hyunwoong Kim <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Keyyoung Park <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi KyongHo,
 
---e0rzCtfzeQKTRplb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 26 July 2013 16:58, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |  103 +++++++
+>  arch/arm/boot/dts/exynos4.dtsi                     |  122 ++++++++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |   25 ++
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |   76 +++++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |  291 ++++++++++++++++++++
+>  5 files changed, 617 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
 
-On Sun, Jul 28, 2013 at 10:52:38PM +0200, Linus Walleij wrote:
+This patch does not apply on the mainline Linus' tree (3.11-rc2). Please rebase.
 
-> Someone moaned about oneline commit messages in
-> the last LWN...
-
-I saw that (and even followed up).  To be honest for this sort of patch
-I'm not that concerned about it - it's fairly clear what's going on and
-why it might be a good idea.
-
---e0rzCtfzeQKTRplb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR9gXsAAoJELSic+t+oim9kxYP/j+FTnDaYH8yWhLdSZLPZWbq
-5zO+RzDlJ1ykGwWDjDLkc8R9qv8GB1tXmZVtI80lkk+sEdDQglu3ZgUOkQJCRVLp
-QnseGPLRHA7Z4n34GYjDQgxCoN4Y9aXCKyzBnQyk1aiuM4T+pzqPFSoPEsHSBy3/
-flGqZm+rZ6YZABIQ25m8y4JoDLdQF+wis4pF9+aiPvWwHzdaIL67cZt2k9WWVxlP
-HoDEsFcECwxAlXzFMghwhYVjNT4pa6pWMIhTF98cQupxhap/LqE93PUzdwYKTusN
-e6FzcjrC5J7l2wJby4f3dR2OhU8BGW00guBvyL/krKFghJkUAvs5NapxKSfScJ7+
-SbPkwd+uKy7o6xn8NLIe/YQxdKap3Oq3hxeNZ2wYcGTVdbznYDdhB+CF4JfyIi4b
-tO6AzPcEdsGpERmrMLDW15p5Q1U+afnNrQN6ixg5RC1Jx0osP3KTxcyRvRzp/pI8
-H6kHovF5C4WfZujFCjlvW/rruIaXtYj39uRA3bvAekeWEca4h5mw9KeOl/HHaW3U
-Ekn9/vs6IPlgl0aXHioEpOZW+gomaDwsJcypagKx265rHADo00tne2eKp9WpjfWD
-tYjj2WjxdLjT7r3fPowsssFaZwK9NlZdG7ELoc/iiGJEM9Vd1MI8Dg4JL8MOvB+6
-2r1StcVPugVsEnGVqFg9
-=mhh+
------END PGP SIGNATURE-----
-
---e0rzCtfzeQKTRplb--
+-- 
+With warm regards,
+Sachin
