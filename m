@@ -1,91 +1,66 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [REVIEW PATCH 4/6] exynos4-is: Add clock provider for the
- external clocks
-Date: Mon, 29 Jul 2013 11:22:06 +0530
-Message-ID: <CALt3h79AVS_bY4b0beo+zK2JMSnp5qnmNQWM0+_CqSV7dMCeGw@mail.gmail.com>
-References: <1374604777-15523-1-git-send-email-s.nawrocki@samsung.com>
-	<1374604777-15523-5-git-send-email-s.nawrocki@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 01/11] spi: Provide core support for runtime PM during
+ transfers
+Date: Mon, 29 Jul 2013 06:56:02 +0100
+Message-ID: <20130729055602.GO9858@sirena.org.uk>
+References: <1375022606-7576-1-git-send-email-broonie@kernel.org>
+ <CACRpkdZuUiG0MydJ_k4Br5_10hXr-x4xqNLjWP8D_KFyMPg-zQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zL7/4+3/7UwZUZ29"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f44.google.com ([209.85.212.44]:50893 "EHLO
-	mail-vb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751402Ab3G2FwH (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:33775 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752843Ab3G2F4J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Jul 2013 01:52:07 -0400
-In-Reply-To: <1374604777-15523-5-git-send-email-s.nawrocki@samsung.com>
+	Mon, 29 Jul 2013 01:56:09 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZuUiG0MydJ_k4Br5_10hXr-x4xqNLjWP8D_KFyMPg-zQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: LMML <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-
-Hi Sylwester,
-
-On Wed, Jul 24, 2013 at 12:09 AM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> This patch adds clock provider to expose the sclk_cam0/1 clocks
-> for image sensor subdevs.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../devicetree/bindings/media/samsung-fimc.txt     |   17 +++-
->  drivers/media/platform/exynos4-is/media-dev.c      |   92 ++++++++++++++++++++
->  drivers/media/platform/exynos4-is/media-dev.h      |   19 +++-
->  3 files changed, 125 insertions(+), 3 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> index 96312f6..04a2b87 100644
-> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-> @@ -91,6 +91,15 @@ Optional properties
->  - samsung,camclk-out : specifies clock output for remote sensor,
->                        0 - CAM_A_CLKOUT, 1 - CAM_B_CLKOUT;
->
-> +'clock-controller' node (optional)
-> +----------------------------------
-> +
-> +The purpose of this node is to define a clock provider for external image
-> +sensors and link any of the CAM_?_CLKOUT clock outputs with related external
-> +clock consumer device. Properties specific to this node are described in
-> +../clock/clock-bindings.txt.
-> +
-> +
->  Image sensor nodes
->  ------------------
->
-> @@ -114,7 +123,7 @@ Example:
->                         vddio-supply = <...>;
->
->                         clock-frequency = <24000000>;
-> -                       clocks = <...>;
-> +                       clocks = <&camclk 1>;
->                         clock-names = "mclk";
->
->                         port {
-> @@ -135,7 +144,7 @@ Example:
->                         vddio-supply = <...>;
->
->                         clock-frequency = <24000000>;
-> -                       clocks = <...>;
-> +                       clocks = <&camclk 0>;
->                         clock-names = "mclk";
->
->                         port {
-> @@ -156,6 +165,10 @@ Example:
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&cam_port_a_clk_active>;
->
-> +               camclk: clock-controller {
-> +                      #clock-cells = 1;
-
-Isn't it
-                          #clock-cells = <1>;
-?
-
-> +               };
-> +
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>, linaro-kernel <linaro-kernel@lists.linaro.org>
 
 
-Regards
-Arun
+--zL7/4+3/7UwZUZ29
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sun, Jul 28, 2013 at 10:51:31PM +0200, Linus Walleij wrote:
+> On Sun, Jul 28, 2013 at 4:43 PM, Mark Brown <broonie@kernel.org> wrote:
+
+> > + * @auto_runtime_pm: the core should ensure a runtime PM reference is held
+> > + *                   while the hardware is prepared
+
+> I'd mention here that the reference is taken on the parent
+> device of the SPI master, i.e. the very platform or AMBA
+> device, so that it will hit upwards to the bus.
+
+Yeah, I was actually contemplating changing that to use the spidev
+though I think I'm going to stich with what's there.  On the one hand
+runtime PM does do the right thing with children but really the way it's
+set up at the minute is more obvious for users.
+
+--zL7/4+3/7UwZUZ29
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJR9gPvAAoJELSic+t+oim9n5QP/jcbIrHAuo7b2ohyG7+mDT3s
+4XY6HvUJwoikuB4IB+xJOfS58RaE1Ftj0+ePHMX0m4tLwC6Dy5A39CE90dZZZzsq
+pNmbvCZjgiRfDWhC5FMoVoqiu2qwfYr08MPgh5YR5gg5uTMEa0fm5iqujxfxQ2tj
+URZ1Sx7Gh2RgZUHGTJk4eF/d7u+592MKEx9ggCSzDwUHGC3WpdmQH8KKtsWReS26
+Uqaw2Ei6LQKpjU0q/ufKlcDD3MvgPVaBlBJ/a8WWVJSy/RLinLCWybdw+7XqWQGB
+5g7hdy0p4kgQi/ipR5liy+waND1Svk1w/6G/NU4H4Oz9N9DQSQayWoZ0i0Sq6yOP
+gOVvcE3XzDy70f0Z9OiEpONSx2qb0Dayv07rs6SMCrVcgf/DgVHaCqCqsV3zt9r4
+yT+WdisXkURjkpDRF+MgdnXdkOdI+mpdU5qMB6aiJxKp2XnHHJJYKE3M8/HkIkIb
+IqiLWwML2OBfgD921HrDBDlCawp9vb01BT9o9OS+JdbXx7TKqSBNjnt7bHX+5Yl1
+5aMkcdzDBDV+2+lH0dzHA+2UJVKOuoDrSOL/KIQz1AFPVljyTN7D2KKDuiT2Wi9P
+mbPwBgWx9Q9/51pngiqMMYmctzYiVeRJKogwkhsdyrJCbKJYUDZ1ZZDTzQuiu30d
+ZZkr2E4buyQkR8DkHsEJ
+=eP3f
+-----END PGP SIGNATURE-----
+
+--zL7/4+3/7UwZUZ29--
