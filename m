@@ -1,161 +1,49 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: EXYNOS: cpuidle: Skip C1 cpuidle state for exynos5440
-Date: Mon, 29 Jul 2013 14:34:06 +0900
-Message-ID: <167801ce8c1d$3e6ceff0$bb46cfd0$@org>
-References: <0e7d01ce8840$82f79070$88e6b150$@org>
- <0eaf01ce8863$89d3c4e0$9d7b4ea0$@org> <51F4C3D1.2060901@linaro.org>
- <1877730.qZVs3NAG5h@flatron> <51F4F317.1040001@linaro.org>
- <CADGdYn761S+rDe=GaypFwAYdtQxFZRv0W=jmX9-KomogK5T7ww@mail.gmail.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [REVIEW PATCH 0/6] exynos4-is: Asynchronous subdev registration support
+Date: Mon, 29 Jul 2013 11:10:09 +0530
+Message-ID: <CALt3h7-bSoj7nf0D20Su=oe9bOiVr9Os7bnFiZP6rZwrXBu1EA@mail.gmail.com>
+References: <1374604777-15523-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9591 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751009Ab3G2FeI convert rfc822-to-8bit (ORCPT
+Received: from mail-vb0-f49.google.com ([209.85.212.49]:47283 "EHLO
+	mail-vb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751075Ab3G2FkK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Jul 2013 01:34:08 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MQO00G2ZNGDP2G0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 29 Jul 2013 14:34:06 +0900 (KST)
-In-reply-to: <CADGdYn761S+rDe=GaypFwAYdtQxFZRv0W=jmX9-KomogK5T7ww@mail.gmail.com>
-Content-language: ko
+	Mon, 29 Jul 2013 01:40:10 -0400
+In-Reply-To: <1374604777-15523-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'amit daniel kachhap' <amit.daniel@samsung.com>, 'Daniel Lezcano' <daniel.lezcano@linaro.org>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: LMML <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-amit daniel kachhap wrote:
->=20
-> Hi Daniel/Tomasz,
->=20
-> From the discussion I can conclude that SOC check is needed in the
-> cpuidle driver for deeper C states. Only the question is where to
-> insert this.
-> Also to perform the SOC there can be 2 ways like
-> 1) each SOC check 4120, 4412, 5250 etc (long list)
-> 2) negate the nonsupporting SOC's like 5440 (small list like current =
-patch)
-> Any opinion?
+Hi Sylwester,
 
-I=E2=80=99d preferred to use 2nd :)
+On Wed, Jul 24, 2013 at 12:09 AM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> This patch series is a refactoring of the exynos4-is driver to get rid
+> of the common fimc-is-sensor driver and to adapt it to use "standard"
+> sensor subdev drivers, one per each image sensor type.
+> Then a clock provider is added to the exynos4-is driver and the s5k6a3
+> subdev is modified to use one of the clocks registered by exynos4-is.
+>
+> Arun, I think you could reuse the s5k6a3 sensor for your work on the
+> Exynos5 FIMC-IS driver. One advantage of separate sensor drivers is
+> that the power on/off sequences can be written specifically for each
+> sensor. We are probably going to need such sequences per board in
+> future. Also having the clock control inside the sensor subdev allows
+> to better match the hardware power on/off sequence requirements,
+> however the S5K6A3 sensor can have active clock signal on its clock
+> input pin even when all its power supplies are turned off.
+>
+> I'm posting this series before having a proper implementation for
+> clk_unregister() in the clock framework, so you are not blocked with
+> your Exynos5 FIMC-IS works.
+>
 
->  As Bartlomiej suggested that this patch conflicts with Daniel's
-> earlier patch http://marc.info/?l=3Dlinux-arm-kernel&m=3D137467935712=
-513&w=3D2
-> So I can re-base my patch on top of this one if needed.
->=20
-Sounds good to me.
 
-Thanks,
-Kukjin
+Thank you for the patches. I am modifying exynos5-is based on
+the same design.
 
-> Thanks,
-> Amit Daniel
->=20
-> On Sun, Jul 28, 2013 at 4:01 PM, Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> > On 07/28/2013 11:22 AM, Tomasz Figa wrote:
-> >> On Sunday 28 of July 2013 09:10:09 Daniel Lezcano wrote:
-> >>> On 07/24/2013 01:47 PM, Kukjin Kim wrote:
-> >>>> Amit Daniel Kachhap wrote:
-> >>>>> This patch skips the deep C1(AFTR -Arm off top running) state f=
-or
-> >>>>> exynos5440
-> >>>>> soc as this soc does not support this state. All the cpu's only
-> >>>>> allows the basic
-> >>>>> C0 state.
-> >>>>>
-> >>>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> >>>>> ---
-> >>>>>
-> >>>>>  arch/arm/mach-exynos/cpuidle.c |    2 +-
-> >>>>>  1 files changed, 1 insertions(+), 1 deletions(-)
-> >>>>>
-> >>>>> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-
-> >>>>> exynos/cpuidle.c
-> >>>>> index 17a18ff..9a776a1 100644
-> >>>>> --- a/arch/arm/mach-exynos/cpuidle.c
-> >>>>> +++ b/arch/arm/mach-exynos/cpuidle.c
-> >>>>> @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void=
-)
-> >>>>>
-> >>>>>            device->cpu =3D cpu_id;
-> >>>>>
-> >>>>>            /* Support IDLE only */
-> >>>>>
-> >>>>> -          if (cpu_id !=3D 0)
-> >>>>> +          if (soc_is_exynos5440() || cpu_id !=3D 0)
-> >>>>>
-> >>>>>                    device->state_count =3D 1;
-> >>>>>
-> >>>>>            ret =3D cpuidle_register_device(device);
-> >>>>>
-> >>>>> --
-> >>>>> 1.7.1
-> >>>>
-> >>>> Applied, thanks.
-> >>>
-> >>> You shouldn't have. This patch means exynos5540 has no cpuidle dr=
-iver
-> at
-> >>> all. It should be fixed in the Kconfig to unselect CONFIG_CPU_IDL=
-E for
-> >>> an exynos5540.
-> >>
-> >> To shed more light on this, let me add that you need to register a
-> cpuidle
-> >> driver only if you have more states than a simple WFI or you need =
-some
-> >> crazy steps to enter WFI. Default setup falls back to generic ARM =
-WFI.
-> >> (Daniel, do we get the nice idle stats as provided by cpuidle core
-> then?)
-> >
-> > Nope, but with one state, idle vs busy stats do the trick.
-> >
-> > BTW, I am writing a tool to do some stats based on the idle events =
-[1].
-> > It is still at a very early development stage but we can get some
-> > interesting informations.
-> >
-> >
-> >> Anyway, Exynos cpuidle is using an initcall to initialize and we
-> support
-> >> multiple Exynos SoCs in single zImage, so deselecting CONFIG_CPU_I=
-DLE
-> is
-> >> not an option.
-> >
-> > Good point.
-> >
-> >> Considering multiplatform requirements, the driver has to
-> >> be modified to initialize only on supported platforms, either by:
-> >>
-> >>  a) dropping the initcall and calling the init function directly f=
-rom
-> >> arch/arm/mach-exynos
-> >>
-> >>  or
-> >>
-> >>  b) checking if machine we are running on is supported, which woul=
-d
-> mean a
-> >> long list of all Exynos SoCs that needs to be checked.
-> >>
-> >> An evolution of option a) is registering a platform device somewhe=
-re in
-> >> arch/arm/mach-exynos and making exynos-cpuidle a platform driver.
-> >
-> > Yes, I am favorable to this solution [2].
-> >
-> >> The
-> >> problem is that you must register a static platform device from ar=
-ch
-> code,
-> >> because cpuidle is not a real hardware block that can be put into
-> device
-> >> tree.
+Thanks & Regards
+Arun
