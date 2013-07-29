@@ -1,132 +1,38 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+From: Julius Werner <jwerner@chromium.org>
 Subject: Re: [PATCH] usb: phy-samsung-usb: Simplify PMU register handling
-Date: Mon, 29 Jul 2013 23:03:07 +0200
-Message-ID: <51F6D88B.80202@gmail.com>
+Date: Mon, 29 Jul 2013 14:12:13 -0700
+Message-ID: <CAODwPW-hxtazAO=scZR+ZWK5hwdWMQXFBeYLd1qqau+a9tMCvA@mail.gmail.com>
 References: <1375130839-5523-1-git-send-email-jwerner@chromium.org>
+	<51F6D88B.80202@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f52.google.com ([209.85.214.52]:49057 "EHLO
-	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752410Ab3G2VDM (ORCPT
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:55179 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754862Ab3G2VMN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Jul 2013 17:03:12 -0400
-In-Reply-To: <1375130839-5523-1-git-send-email-jwerner@chromium.org>
+	Mon, 29 Jul 2013 17:12:13 -0400
+Received: by mail-oa0-f41.google.com with SMTP id j6so4781528oag.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jul 2013 14:12:13 -0700 (PDT)
+In-Reply-To: <51F6D88B.80202@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, devicetree@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Julius Werner <jwerner@chromium.org>, Felipe Balbi <balbi@ti.com>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, devicetree@vger.kernel.org
 
-Hi,
+>> -       if (sphy->phy_type == USB_PHY_TYPE_DEVICE) {
+>> -               reg = sphy->pmuregs + sphy->drv_data->devphy_reg_offset;
+>> -               en_mask = sphy->drv_data->devphy_en_mask;
+>> -       } else if (sphy->phy_type == USB_PHY_TYPE_HOST) {
+>> -               reg = sphy->pmuregs + sphy->drv_data->hostphy_reg_offset;
+>> -               en_mask = sphy->drv_data->hostphy_en_mask;
+>> -       }
+>
+>
+> How is en_mask supposed to get initialized, now when this code is removed ?
+> It's always 0 now, isn't it ?
+>
 
-On 07/29/2013 10:47 PM, Julius Werner wrote:
-> This patch simplifies the way the phy-samsung-usb code finds the correct
-> power management register to enable PHY clock gating. Previously, the
-> code would calculate the register address from a device tree supplied
-> base address and add an offset based on the PHY type.
->
-> Since every PHY has its own device tree entry and needs only one
-> register, we can just encode the address itself in the device tree and
-> remove the diffentiation in the code. The bitmask needed to specify the
-> bit within that register stays in place, allowing support for platforms
-> like s3c64xx that use different bits within the same register. Due to
-> this simplification, the whole complication of a Samsung-specific USB
-> PHY type can be removed from the PHY driver.
->
-> Change-Id: Id823f04bbf1942f307bd1d24ec9d8d55a69b0e56
-> Signed-off-by: Julius Werner<jwerner@chromium.org>
-> ---
->   arch/arm/boot/dts/exynos5250.dtsi  |  4 ++--
->   drivers/usb/phy/phy-samsung-usb.c  | 46 +++++++++-----------------------------
->   drivers/usb/phy/phy-samsung-usb.h  | 34 +++++++---------------------
->   drivers/usb/phy/phy-samsung-usb2.c | 34 ++++++++--------------------
->   drivers/usb/phy/phy-samsung-usb3.c | 13 +++--------
->   5 files changed, 32 insertions(+), 99 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index ef57277..5a754d7 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -473,7 +473,7 @@
->   		ranges;
->
->   		usbphy-sys {
-> -			reg =<0x10040704 0x8>;
-> +			reg =<0x10040704 0x4>;
->   		};
->   	};
->
-> @@ -505,7 +505,7 @@
->   		ranges;
->
->   		usbphy-sys {
-> -			reg =<0x10040704 0x8>,
-> +			reg =<0x10040708 0x4>,
->   			<0x10050230 0x4>;
->   		};
->   	};
-> diff --git a/drivers/usb/phy/phy-samsung-usb.c b/drivers/usb/phy/phy-samsung-usb.c
-> index ac025ca..c142233 100644
-> --- a/drivers/usb/phy/phy-samsung-usb.c
-> +++ b/drivers/usb/phy/phy-samsung-usb.c
-> @@ -27,7 +27,6 @@
->   #include<linux/io.h>
->   #include<linux/of.h>
->   #include<linux/of_address.h>
-> -#include<linux/usb/samsung_usb_phy.h>
->
->   #include "phy-samsung-usb.h"
->
-> @@ -42,9 +41,9 @@ int samsung_usbphy_parse_dt(struct samsung_usbphy *sphy)
->   		return -ENODEV;
->   	}
->
-> -	sphy->pmuregs = of_iomap(usbphy_sys, 0);
-> +	sphy->pmureg = of_iomap(usbphy_sys, 0);
->
-> -	if (sphy->pmuregs == NULL) {
-> +	if (sphy->pmureg == NULL) {
->   		dev_err(sphy->dev, "Can't get usb-phy pmu control register\n");
->   		goto err0;
->   	}
-> @@ -75,35 +74,26 @@ EXPORT_SYMBOL_GPL(samsung_usbphy_parse_dt);
->    */
->   void samsung_usbphy_set_isolation_4210(struct samsung_usbphy *sphy, bool on)
->   {
-> -	void __iomem *reg = NULL;
->   	u32 reg_val;
->   	u32 en_mask = 0;
->
-> -	if (!sphy->pmuregs) {
-> +	if (!sphy->pmureg) {
->   		dev_warn(sphy->dev, "Can't set pmu isolation\n");
->   		return;
->   	}
->
-> -	if (sphy->phy_type == USB_PHY_TYPE_DEVICE) {
-> -		reg = sphy->pmuregs + sphy->drv_data->devphy_reg_offset;
-> -		en_mask = sphy->drv_data->devphy_en_mask;
-> -	} else if (sphy->phy_type == USB_PHY_TYPE_HOST) {
-> -		reg = sphy->pmuregs + sphy->drv_data->hostphy_reg_offset;
-> -		en_mask = sphy->drv_data->hostphy_en_mask;
-> -	}
-
-How is en_mask supposed to get initialized, now when this code is removed ?
-It's always 0 now, isn't it ?
-
-> -
-> -	reg_val = readl(reg);
-> +	reg_val = readl(sphy->pmureg);
->
->   	if (on)
->   		reg_val&= ~en_mask;
->   	else
->   		reg_val |= en_mask;
->
-> -	writel(reg_val, reg);
-> +	writel(reg_val, sphy->pmureg);
-
---
-Regards,
-Sylwester
+Whoops... oh, I'm really sorry about that. I ported the patch from a
+branch with slightly different code there and overlooked this. Thanks
+for catching it, will send v2 in a minute.
