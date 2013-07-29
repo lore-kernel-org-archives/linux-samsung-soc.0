@@ -1,65 +1,261 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH v6 4/5] clk: add CLK_SET_RATE_NO_REPARENT flag
-Date: Mon, 29 Jul 2013 08:50:16 -0700
-Message-ID: <36053e73-faf4-47c6-9ff5-3e451361ef75@CH1EHSMHS012.ehs.local>
-References: <1375097102-28892-1-git-send-email-james.hogan@imgtec.com>
- <1375097102-28892-5-git-send-email-james.hogan@imgtec.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RESEND PATCH v10 1/8] drivers: phy: add generic PHY framework
+Date: Mon, 29 Jul 2013 17:51:15 +0200
+Message-ID: <51F68F73.9060603@samsung.com>
+References: <1374842963-13545-1-git-send-email-kishon@ti.com>
+ <1374842963-13545-2-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1375097102-28892-5-git-send-email-james.hogan@imgtec.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: James Hogan <james.hogan@imgtec.com>
-Cc: Prashant Gaikwad <pgaikwad@nvidia.com>, Heiko Stuebner <heiko@sntech.de>, Catalin Marinas <catalin.marinas@arm.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Chao Xie <xiechao.mail@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, Paul Walmsley <pwalmsley@nvidia.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, spear-devel@list.st.com, linux-samsung-soc@vger.kernel.org, Gregory CLEMENT <gregory.clement@free-electrons.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infrad
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1374842963-13545-2-git-send-email-kishon@ti.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: gregkh@linuxfoundation.org, kyungmin.park@samsung.com, balbi@ti.com, jg1.han@samsung.com, kgene.kim@samsung.com, stern@rowland.harvard.edu, broonie@kernel.org, tomasz.figa@gmail.com, arnd@arndb.de, devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, swarren@nvidia.com, balajitk@ti.com, linux-doc@vger.kernel.org, tony@atomide.com, Tomasz Figa <t.figa@samsung.com>, linux-usb@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, grant.likely@linaro.org, linux@arm.linux.org.uk, akpm@linux-foundation.org, linux-omap@vger.kernel.org, george.cherian@ti.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gTW9uLCBKdWwgMjksIDIwMTMgYXQgMTI6MjU6MDFQTSArMDEwMCwgSmFtZXMgSG9nYW4gd3Jv
-dGU6Cj4gQWRkIGEgQ0xLX1NFVF9SQVRFX05PX1JFUEFSRU5UIGNsb2NrIGZsYWcsIHdoaWNoIHdp
-bGwgcHJldmVudCBtdXhlcwo+IGJlaW5nIHJlcGFyZW50ZWQgZHVyaW5nIGNsa19zZXRfcmF0ZS4K
-PiAKPiBUbyBhdm9pZCBicmVha2luZyBleGlzdGluZyBwbGF0Zm9ybXMsIGFsbCBjYWxsZXJzIG9m
-IGNsa19yZWdpc3Rlcl9tdXgoKQo+IGFyZSBhZGp1c3RlZCB0byBwYXNzIHRoZSBuZXcgZmxhZy4g
-UGxhdGZvcm0gbWFpbnRhaW5lcnMgYXJlIGVuY291cmFnZWQKPiB0byByZW1vdmUgdGhlIGZsYWcg
-aWYgdGhleSB3aXNoIHRvIGFsbG93IG11eCByZXBhcmVudGluZyBvbiBzZXRfcmF0ZS4KPiAKPiBT
-aWduZWQtb2ZmLWJ5OiBKYW1lcyBIb2dhbiA8amFtZXMuaG9nYW5AaW1ndGVjLmNvbT4KPiBSZXZp
-ZXdlZC1ieTogU3RlcGhlbiBCb3lkIDxzYm95ZEBjb2RlYXVyb3JhLm9yZz4KPiBDYzogTWlrZSBU
-dXJxdWV0dGUgPG10dXJxdWV0dGVAbGluYXJvLm9yZz4KPiBDYzogUnVzc2VsbCBLaW5nIDxsaW51
-eEBhcm0ubGludXgub3JnLnVrPgo+IENjOiBTYXNjaGEgSGF1ZXIgPGtlcm5lbEBwZW5ndXRyb25p
-eC5kZT4KPiBDYzogU3RlcGhlbiBXYXJyZW4gPHN3YXJyZW5Ad3d3ZG90b3JnLm9yZz4KPiBDYzog
-VmlyZXNoIEt1bWFyIDx2aXJlc2gubGludXhAZ21haWwuY29tPgo+IENjOiBLdWtqaW4gS2ltIDxr
-Z2VuZS5raW1Ac2Ftc3VuZy5jb20+Cj4gQ2M6IEhhb2ppYW4gWmh1YW5nIDxoYW9qaWFuLnpodWFu
-Z0BsaW5hcm8ub3JnPgo+IENjOiBDaGFvIFhpZSA8eGllY2hhby5tYWlsQGdtYWlsLmNvbT4KPiBD
-YzogQXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KPiBDYzogIkVtaWxpbyBMw7NwZXoiIDxl
-bWlsaW9AZWxvcGV6LmNvbS5hcj4KPiBDYzogR3JlZ29yeSBDTEVNRU5UIDxncmVnb3J5LmNsZW1l
-bnRAZnJlZS1lbGVjdHJvbnMuY29tPgo+IENjOiBNYXhpbWUgUmlwYXJkIDxtYXhpbWUucmlwYXJk
-QGZyZWUtZWxlY3Ryb25zLmNvbT4KPiBDYzogUHJhc2hhbnQgR2Fpa3dhZCA8cGdhaWt3YWRAbnZp
-ZGlhLmNvbT4KPiBDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4K
-PiBDYzogUGV0ZXIgRGUgU2NocmlqdmVyIDxwZGVzY2hyaWp2ZXJAbnZpZGlhLmNvbT4KPiBDYzog
-UGF3ZWwgTW9sbCA8cGF3ZWwubW9sbEBhcm0uY29tPgo+IENjOiBDYXRhbGluIE1hcmluYXMgPGNh
-dGFsaW4ubWFyaW5hc0Bhcm0uY29tPgo+IENjOiBBbmRyZXcgQ2hldyA8YWNoZXdAbnZpZGlhLmNv
-bT4KPiBDYzogRG91ZyBBbmRlcnNvbiA8ZGlhbmRlcnNAY2hyb21pdW0ub3JnPgo+IENjOiBIZWlr
-byBTdHVlYm5lciA8aGVpa29Ac250ZWNoLmRlPgo+IENjOiBQYXVsIFdhbG1zbGV5IDxwd2FsbXNs
-ZXlAbnZpZGlhLmNvbT4KPiBDYzogU29yZW4gQnJpbmttYW5uIDxzb3Jlbi5icmlua21hbm5AeGls
-aW54LmNvbT4KPiBDYzogU3lsd2VzdGVyIE5hd3JvY2tpIDxzLm5hd3JvY2tpQHNhbXN1bmcuY29t
-Pgo+IENjOiBUaG9tYXMgQWJyYWhhbSA8dGhvbWFzLmFicmFoYW1AbGluYXJvLm9yZz4KPiBDYzog
-VG9tYXN6IEZpZ2EgPHQuZmlnYUBzYW1zdW5nLmNvbT4KPiBDYzogbGludXgtYXJtLWtlcm5lbEBs
-aXN0cy5pbmZyYWRlYWQub3JnCj4gQ2M6IGxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9y
-Zwo+IENjOiBzcGVhci1kZXZlbEBsaXN0LnN0LmNvbQo+IENjOiBsaW51eC10ZWdyYUB2Z2VyLmtl
-cm5lbC5vcmcKPiBUZXN0ZWQtYnk6IEhhb2ppYW4gWmh1YW5nIDxoYW9qaWFuLnpodWFuZ0BnbWFp
-bC5jb20+Cj4gQWNrZWQtYnk6IFN0ZXBoZW4gV2FycmVuIDxzd2FycmVuQG52aWRpYS5jb20+IFt0
-ZWdyYV0KPiBBY2tlZC1ieTogTWF4aW1lIFJpcGFyZCA8bWF4aW1lLnJpcGFyZEBmcmVlLWVsZWN0
-cm9ucy5jb20+IFtzdW54aV0KQUNLIGZvciBaeW5xLgoKSSdsbCBoYXZlIHRvIGxvb2sgYXQgdGhl
-IGRldGFpbHMgYW5kIGRvIHNvbWUgdGVzdGluZyB0byBzZWUgd2hldGhlciB3ZQpjYW4gcmVtb3Zl
-IHRoZSBmbGFnIGxhdGVyLgoKCVPDtnJlbgoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1h
-cm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+On 07/26/2013 02:49 PM, Kishon Vijay Abraham I wrote:
+> The PHY framework provides a set of APIs for the PHY drivers to
+> create/destroy a PHY and APIs for the PHY users to obtain a reference to the
+> PHY with or without using phandle. For dt-boot, the PHY drivers should
+> also register *PHY provider* with the framework.
+> 
+> PHY drivers should create the PHY by passing id and ops like init, exit,
+> power_on and power_off. This framework is also pm runtime enabled.
+> 
+> The documentation for the generic PHY framework is added in
+> Documentation/phy.txt and the documentation for dt binding can be found at
+> Documentation/devicetree/bindings/phy/phy-bindings.txt
+> 
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Acked-by: Felipe Balbi <balbi@ti.com>
+> Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../devicetree/bindings/phy/phy-bindings.txt       |   66 ++
+>  Documentation/phy.txt                              |  166 +++++
+>  MAINTAINERS                                        |    8 +
+>  drivers/Kconfig                                    |    2 +
+>  drivers/Makefile                                   |    2 +
+>  drivers/phy/Kconfig                                |   18 +
+>  drivers/phy/Makefile                               |    5 +
+>  drivers/phy/phy-core.c                             |  714 ++++++++++++++++++++
+>  include/linux/phy/phy.h                            |  270 ++++++++
+>  9 files changed, 1251 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/phy-bindings.txt
+>  create mode 100644 Documentation/phy.txt
+>  create mode 100644 drivers/phy/Kconfig
+>  create mode 100644 drivers/phy/Makefile
+>  create mode 100644 drivers/phy/phy-core.c
+>  create mode 100644 include/linux/phy/phy.h
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/phy-bindings.txt b/Documentation/devicetree/bindings/phy/phy-bindings.txt
+> new file mode 100644
+> index 0000000..8ae844f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/phy-bindings.txt
+> @@ -0,0 +1,66 @@
+> +This document explains only the device tree data binding. For general
+> +information about PHY subsystem refer to Documentation/phy.txt
+[...]
+> @@ -0,0 +1,166 @@
+> +			    PHY SUBSYSTEM
+> +		  Kishon Vijay Abraham I <kishon@ti.com>
+> +
+> +This document explains the Generic PHY Framework along with the APIs provided,
+> +and how-to-use.
+> +
+> +1. Introduction
+> +
+> +*PHY* is the abbreviation for physical layer. It is used to connect a device
+> +to the physical medium e.g., the USB controller has a PHY to provide functions
+> +such as serialization, de-serialization, encoding, decoding and is responsible
+> +for obtaining the required data transmission rate. Note that some USB
+> +controllers have PHY functionality embedded into it and others use an external
+> +PHY. Other peripherals that use PHY include Wireless LAN, Ethernet,
+> +SATA etc.
+> +
+> +The intention of creating this framework is to bring the PHY drivers spread
+> +all over the Linux kernel to drivers/phy to increase code re-use and for
+> +better code maintainability.
+> +
+> +This framework will be of use only to devices that use external PHY (PHY
+> +functionality is not embedded within the controller).
+> +
+> +2. Registering/Unregistering the PHY provider
+> +
+> +PHY provider refers to an entity that implements one or more PHY instances.
+> +For the simple case where the PHY provider implements only a single instance of
+> +the PHY, the framework provides its own implementation of of_xlate in
+> +of_phy_simple_xlate. If the PHY provider implements multiple instances, it
+> +should provide its own implementation of of_xlate. of_xlate is used only for
+> +dt boot case.
+> +
+> +#define of_phy_provider_register(dev, xlate)    \
+> +        __of_phy_provider_register((dev), THIS_MODULE, (xlate))
+> +
+> +#define devm_of_phy_provider_register(dev, xlate)       \
+> +        __of_phy_provider_register((dev), THIS_MODULE, (xlate))
+
+This needs to be:
+
+	__devm_of_phy_provider_register((dev), THIS_MODULE, (xlate))
+
+as Kamil pointed out. We've tested it here with v9 and it makes
+Bad Things happen. ;)
+
+> +of_phy_provider_register and devm_of_phy_provider_register macros can be used to
+> +register the phy_provider and it takes device and of_xlate as
+> +arguments. For the dt boot case, all PHY providers should use one of the above
+> +2 macros to register the PHY provider.
+> +
+> +void devm_of_phy_provider_unregister(struct device *dev,
+> +	struct phy_provider *phy_provider);
+> +void of_phy_provider_unregister(struct phy_provider *phy_provider);
+> +
+> +devm_of_phy_provider_unregister and of_phy_provider_unregister can be used to
+> +unregister the PHY.
+> +
+[...]
+> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> new file mode 100644
+> index 0000000..f1d15e5
+> --- /dev/null
+> +++ b/drivers/phy/phy-core.c
+> @@ -0,0 +1,714 @@
+[...]
+> +static struct phy *phy_lookup(struct device *device, const char *port)
+> +{
+> +	unsigned int count;
+> +	struct phy *phy;
+> +	struct device *dev;
+> +	struct phy_consumer *consumers;
+> +	struct class_dev_iter iter;
+	
+Don't you need something like
+
+	if (phy->init_data == NULL)	
+		return ERR_PTR(-EINVAL);
+
+to ensure there is no attempt to dereference NULL platform data ?
+
+> +	class_dev_iter_init(&iter, phy_class, NULL, NULL);
+> +	while ((dev = class_dev_iter_next(&iter))) {
+> +		phy = to_phy(dev);
+> +		count = phy->init_data->num_consumers;
+> +		consumers = phy->init_data->consumers;
+> +		while (count--) {
+> +			if (!strcmp(consumers->dev_name, dev_name(device)) &&
+> +					!strcmp(consumers->port, port)) {
+> +				class_dev_iter_exit(&iter);
+> +				return phy;
+> +			}
+> +			consumers++;
+> +		}
+> +	}
+> +
+> +	class_dev_iter_exit(&iter);
+> +	return ERR_PTR(-ENODEV);
+> +}
+> +
+[...]
+> +int phy_init(struct phy *phy)
+> +{
+> +	int ret;
+> +
+> +	ret = phy_pm_runtime_get_sync(phy);
+> +	if (ret < 0 && ret != -ENOTSUPP)
+> +		return ret;
+> +
+> +	mutex_lock(&phy->mutex);
+> +	if (phy->init_count++ == 0 && phy->ops->init) {
+> +		ret = phy->ops->init(phy);
+> +		if (ret < 0) {
+> +			dev_err(&phy->dev, "phy init failed --> %d\n", ret);
+> +			goto out;
+
+Is this 'goto' and similar ones below really needed ?
+
+> +		}
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&phy->mutex);
+> +	phy_pm_runtime_put(phy);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_init);
+> +
+> +int phy_exit(struct phy *phy)
+> +{
+> +	int ret;
+> +
+> +	ret = phy_pm_runtime_get_sync(phy);
+> +	if (ret < 0 && ret != -ENOTSUPP)
+> +		return ret;
+> +
+> +	mutex_lock(&phy->mutex);
+> +	if (--phy->init_count == 0 && phy->ops->exit) {
+> +		ret = phy->ops->exit(phy);
+> +		if (ret < 0) {
+> +			dev_err(&phy->dev, "phy exit failed --> %d\n", ret);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&phy->mutex);
+> +	phy_pm_runtime_put(phy);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_exit);
+> +
+> +int phy_power_on(struct phy *phy)
+> +{
+> +	int ret = -ENOTSUPP;
+> +
+> +	ret = phy_pm_runtime_get_sync(phy);
+> +	if (ret < 0 && ret != -ENOTSUPP)
+> +		return ret;
+> +
+> +	mutex_lock(&phy->mutex);
+> +	if (phy->power_count++ == 0 && phy->ops->power_on) {
+> +		ret = phy->ops->power_on(phy);
+> +		if (ret < 0) {
+> +			dev_err(&phy->dev, "phy poweron failed --> %d\n", ret);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&phy->mutex);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_power_on);
+> +
+> +int phy_power_off(struct phy *phy)
+> +{
+> +	int ret = -ENOTSUPP;
+> +
+> +	mutex_lock(&phy->mutex);
+> +	if (--phy->power_count == 0 && phy->ops->power_off) {
+> +		ret =  phy->ops->power_off(phy);
+> +		if (ret < 0) {
+> +			dev_err(&phy->dev, "phy poweroff failed --> %d\n", ret);
+> +			goto out;
+> +		}
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&phy->mutex);
+> +	phy_pm_runtime_put(phy);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(phy_power_off);
+
+--
+Thanks,
+Sylwester
