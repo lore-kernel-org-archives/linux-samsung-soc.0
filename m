@@ -1,64 +1,64 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 13/20] pwm: Add new pwm-samsung driver
-Date: Mon, 29 Jul 2013 13:44:52 +0200
-Message-ID: <20130729114452.GC23152@manwe>
+Subject: Re: [PATCH v4 16/20] pwm: Remove superseded pwm-samsung-legacy driver
+Date: Mon, 29 Jul 2013 13:45:32 +0200
+Message-ID: <20130729114531.GD23152@manwe>
 References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
- <1374278673-25615-15-git-send-email-tomasz.figa@gmail.com>
+ <1374278673-25615-18-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kfjH4zxOES6UT95V"
+	protocol="application/pgp-signature"; boundary="jCrbxBqMcLqd4mOl"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:34662 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753285Ab3G2Loz (ORCPT
+Received: from mail-bk0-f45.google.com ([209.85.214.45]:40141 "EHLO
+	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752340Ab3G2Lpf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Jul 2013 07:44:55 -0400
+	Mon, 29 Jul 2013 07:45:35 -0400
 Content-Disposition: inline
-In-Reply-To: <1374278673-25615-15-git-send-email-tomasz.figa@gmail.com>
+In-Reply-To: <1374278673-25615-18-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>
 
 
---kfjH4zxOES6UT95V
+--jCrbxBqMcLqd4mOl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 20, 2013 at 02:04:26AM +0200, Tomasz Figa wrote:
-> This patch introduces new Samsung PWM driver, which uses Samsung
-> PWM/timer master driver to control shared parts of the hardware.
+On Sat, Jul 20, 2013 at 02:04:29AM +0200, Tomasz Figa wrote:
+> This patch removes the now unused pwm-samsung-legacy driver, which was
+> replaced by new pwm-samsung driver.
 >=20
 > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 > ---
->  drivers/pwm/Makefile      |   1 +
->  drivers/pwm/pwm-samsung.c | 606 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  2 files changed, 607 insertions(+)
->  create mode 100644 drivers/pwm/pwm-samsung.c
+>  drivers/pwm/Makefile             |   1 -
+>  drivers/pwm/pwm-samsung-legacy.c | 353 ---------------------------------=
+------
+>  2 files changed, 354 deletions(-)
+>  delete mode 100644 drivers/pwm/pwm-samsung-legacy.c
 
 Acked-by: Thierry Reding <thierry.reding@gmail.com>
 
---kfjH4zxOES6UT95V
+--jCrbxBqMcLqd4mOl
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJR9lW0AAoJEN0jrNd/PrOhJYUP/AhHZ+kQTLcP0DwXpMYj9d0f
-hxsjPFt+KHR0jw/gv/3UOr0+TX/546HNTPpiVE9FS8wu9pyhGdk5kB1Lc5ns9nGL
-RPCPMxhZ2oP21l3epiuGxwvJiNaNCjVe63WwQxE6CQZGOtpS5+YFX95rAlnHwSUM
-7I3UHZjJm7qvGzUIGkrI3FZ6+QYQB73OjMNRdMo/FX5mT3uprhtUOJ0tX+dSiRrT
-x4We5aFsO7W8Jee/eT6efhtxtz92qq0Y6OQjQK9scMSzbtFGoT+WDakebTA+Kx9K
-j7ASXqwffqdZFflVVxeEEn839s+LzSyPWI4SvUwV03rXpGYh5NokQFlLyGToicnA
-+dZgNkidAZ+L2cDhge/9zNGQLtfs2HwxUSLz86CzCCh3g+7X/KB/ZaVPsYw0pVzl
-rkbWJAFBjZNfrevmUEl0647Bvghpav8tVxqOret0kxlUkZ6die/8P8G+2Ptx6F3s
-+OYsHeDDQ+Ixg+QxGZjVNsXslBxWZzROqZt5eqBYGpV0cRTU86UsrIgsa+yTh4g4
-Qsk83mfVBz6B0+0ncwNXaMcWzz6bsJTQNi8Wr73ew2XSD+n0BTABpcWS5JEcuRpU
-jhSMh6SRk+UiNBaeYaJoeUMnMQWlEyYGjnu+cC4N3atbDo6zNFL/EEmj59Pa1rCj
-krS6JmPsZwKxe7mS5sdf
-=TaBY
+iQIcBAEBAgAGBQJR9lXbAAoJEN0jrNd/PrOhGlwQAI6AhvaAZAmrMGd60gG8IRoz
+Cgs359sl96vUbsupucXMn9QBp4MrxPVZqN7mCfJTPEwPZC1Hmw9MmRgvwB8cd0Wk
+4idr79SsA53MK9ATTVGt+W3BOPl0R++uTyM7jAsy+tg/bztn4lZ7Yn5ryXef+lXO
+Q6eij0rrlsW5J2kcp9uqRPiCosqirM++/eNYez9pKGDRHzXghdZhgPZbyDftDVu9
+0ELMJtkLT2yBDN10Z1RwipD0v3ZKqIxJ0o4pH6qrvyXIqY0goc/S/c3vwpGJimZY
+exIM2TSxQD4ZIOEn7lDPyQmYnZq0bvI5B1FcCQhW4S5126y37qDjmL2Jy5fkWG7/
+2v3OQzwkgEutTbKGo+feaTiPeoZzA4VBWl5P79hBmLSchjOCr/KbRxJ9eDJC9PQU
+3IJOact/Xr8otLx47Pe4ITDlLmhQM5WMRthNsU8HCFBxCNvQ7ExZFkva8qV66DrI
+h9VtD5imsff+vZGm0aNH5ixvOAjfqpEyFVfjSxa6vKCInObhYKlpLlUleP1d6+zz
+zx32B/mKjeUb8lBeNuVbuJAzpfvcdYfwAOJ9IA7YHjL04OtpnEKGNPPOjjLHukMs
+Cc+Zzp9ou1a/0wB6QPD4aAI4/2wtdH+Bxhf1SI0Jbxi/6NBS6ioa7fr17pRIrUzm
+sYhrMUo1leHenSm/VgIH
+=DaL3
 -----END PGP SIGNATURE-----
 
---kfjH4zxOES6UT95V--
+--jCrbxBqMcLqd4mOl--
