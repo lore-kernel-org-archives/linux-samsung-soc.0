@@ -1,17 +1,19 @@
 From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [REVIEW PATCH 0/6] exynos4-is: Asynchronous subdev registration support
-Date: Mon, 29 Jul 2013 11:10:09 +0530
-Message-ID: <CALt3h7-bSoj7nf0D20Su=oe9bOiVr9Os7bnFiZP6rZwrXBu1EA@mail.gmail.com>
+Subject: Re: [REVIEW PATCH 4/6] exynos4-is: Add clock provider for the
+ external clocks
+Date: Mon, 29 Jul 2013 11:22:06 +0530
+Message-ID: <CALt3h79AVS_bY4b0beo+zK2JMSnp5qnmNQWM0+_CqSV7dMCeGw@mail.gmail.com>
 References: <1374604777-15523-1-git-send-email-s.nawrocki@samsung.com>
+	<1374604777-15523-5-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f49.google.com ([209.85.212.49]:47283 "EHLO
-	mail-vb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751075Ab3G2FkK (ORCPT
+Received: from mail-vb0-f44.google.com ([209.85.212.44]:50893 "EHLO
+	mail-vb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751402Ab3G2FwH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Jul 2013 01:40:10 -0400
-In-Reply-To: <1374604777-15523-1-git-send-email-s.nawrocki@samsung.com>
+	Mon, 29 Jul 2013 01:52:07 -0400
+In-Reply-To: <1374604777-15523-5-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
@@ -21,29 +23,69 @@ Hi Sylwester,
 
 On Wed, Jul 24, 2013 at 12:09 AM, Sylwester Nawrocki
 <s.nawrocki@samsung.com> wrote:
-> This patch series is a refactoring of the exynos4-is driver to get rid
-> of the common fimc-is-sensor driver and to adapt it to use "standard"
-> sensor subdev drivers, one per each image sensor type.
-> Then a clock provider is added to the exynos4-is driver and the s5k6a3
-> subdev is modified to use one of the clocks registered by exynos4-is.
+> This patch adds clock provider to expose the sclk_cam0/1 clocks
+> for image sensor subdevs.
 >
-> Arun, I think you could reuse the s5k6a3 sensor for your work on the
-> Exynos5 FIMC-IS driver. One advantage of separate sensor drivers is
-> that the power on/off sequences can be written specifically for each
-> sensor. We are probably going to need such sequences per board in
-> future. Also having the clock control inside the sensor subdev allows
-> to better match the hardware power on/off sequence requirements,
-> however the S5K6A3 sensor can have active clock signal on its clock
-> input pin even when all its power supplies are turned off.
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  .../devicetree/bindings/media/samsung-fimc.txt     |   17 +++-
+>  drivers/media/platform/exynos4-is/media-dev.c      |   92 ++++++++++++++++++++
+>  drivers/media/platform/exynos4-is/media-dev.h      |   19 +++-
+>  3 files changed, 125 insertions(+), 3 deletions(-)
 >
-> I'm posting this series before having a proper implementation for
-> clk_unregister() in the clock framework, so you are not blocked with
-> your Exynos5 FIMC-IS works.
+> diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> index 96312f6..04a2b87 100644
+> --- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> +++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+> @@ -91,6 +91,15 @@ Optional properties
+>  - samsung,camclk-out : specifies clock output for remote sensor,
+>                        0 - CAM_A_CLKOUT, 1 - CAM_B_CLKOUT;
 >
+> +'clock-controller' node (optional)
+> +----------------------------------
+> +
+> +The purpose of this node is to define a clock provider for external image
+> +sensors and link any of the CAM_?_CLKOUT clock outputs with related external
+> +clock consumer device. Properties specific to this node are described in
+> +../clock/clock-bindings.txt.
+> +
+> +
+>  Image sensor nodes
+>  ------------------
+>
+> @@ -114,7 +123,7 @@ Example:
+>                         vddio-supply = <...>;
+>
+>                         clock-frequency = <24000000>;
+> -                       clocks = <...>;
+> +                       clocks = <&camclk 1>;
+>                         clock-names = "mclk";
+>
+>                         port {
+> @@ -135,7 +144,7 @@ Example:
+>                         vddio-supply = <...>;
+>
+>                         clock-frequency = <24000000>;
+> -                       clocks = <...>;
+> +                       clocks = <&camclk 0>;
+>                         clock-names = "mclk";
+>
+>                         port {
+> @@ -156,6 +165,10 @@ Example:
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&cam_port_a_clk_active>;
+>
+> +               camclk: clock-controller {
+> +                      #clock-cells = 1;
+
+Isn't it
+                          #clock-cells = <1>;
+?
+
+> +               };
+> +
 
 
-Thank you for the patches. I am modifying exynos5-is based on
-the same design.
-
-Thanks & Regards
+Regards
 Arun
