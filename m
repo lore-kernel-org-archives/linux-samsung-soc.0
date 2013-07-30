@@ -1,166 +1,229 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu
-	reg control
-Date: Tue, 30 Jul 2013 14:21:40 +0530
-Message-ID: <CAPdUM4Pjapebtrh7+c7ZHNvg26MGB_byUXrasPfjA38bkvBR7g@mail.gmail.com>
-References: <1370935073-7475-1-git-send-email-rahul.sharma@samsung.com>
-	<CAAQKjZMuSQhbYtOyni-RdHhXu0fv3U2Dm_2iqRLe0smSt_jjjQ@mail.gmail.com>
-	<CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com>
-	<CAPdUM4Nis0uwyZf1hNDOMmdqFm0K7beVPoyAWRjMBwq0jcwwCQ@mail.gmail.com>
-	<51B98908.8050403@samsung.com>
-	<02c101ce6828$29ab0f20$7d012d60$%dae@samsung.com>
-	<51B9C0ED.2040605@ti.com> <51BAB398.8090409@samsung.com>
-	<CAPdUM4PK7K+Vw6umnehDubLD37jiWdcd4iXX2DJvHS8990LQGQ@mail.gmail.com>
-	<51C04688.3090205@ti.com>
-	<CAPdUM4O7cbBEEc4VdmcyryqFxpek6SsEcG-g-KyxwVypdwJnaw@mail.gmail.com>
-	<51F75802.90305@samsung.com>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: RE: RE: [PATCH v8 05/12] clk: exynos5250: add gate clock descriptions
+ of System MMU
+Date: Tue, 30 Jul 2013 20:17:08 +0900
+Message-ID: <003501ce8d16$542dd5d0$fc898170$@samsung.com>
+References: <003b01ce89f3$2be4db80$83ae9280$@samsung.com>
+ <20130726200107.7598.82010@quantum>
+ <001901ce8aa8$d1d6fef0$7584fcd0$@samsung.com>
+ <20130730064655.22022.62937@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="euc-kr"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <51F75802.90305@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: sw0312.kim@samsung.com
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, sunil joshi <joshi@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, grant.likely@linaro.org, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:31355 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751258Ab3G3LRK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 30 Jul 2013 07:17:10 -0400
+In-reply-to: <20130730064655.22022.62937@quantum>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mike Turquette' <mturquette@linaro.org>, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Grant Grundler' <grundler@chromium.org>, 'Joerg Roedel' <joro@8bytes.org>, 'Keyyoung Park' <keyyoung.park@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Antonios Motakis' <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, 'Rahul Sharma' <rahul.sharma@samsung.com>
 
-VGhhbmtzIFNldW5nLVdvbywKCk9uIFR1ZSwgSnVsIDMwLCAyMDEzIGF0IDExOjM2IEFNLCBTZXVu
-Zy1Xb28gS2ltIDxzdzAzMTIua2ltQHNhbXN1bmcuY29tPiB3cm90ZToKPiBIaSBSYWh1bCwKPgo+
-IE9uIDIwMTOz4iAwN7/5IDMwwM8gMTI6NDIsIFJhaHVsIFNoYXJtYSB3cm90ZToKPj4KPj4KPj4g
-T24gVHVlLCBKdW4gMTgsIDIwMTMgYXQgNTowNyBQTSwgS2lzaG9uIFZpamF5IEFicmFoYW0gSSA8
-a2lzaG9uQHRpLmNvbQo+PiA8bWFpbHRvOmtpc2hvbkB0aS5jb20+PiB3cm90ZToKPj4KPj4gICAg
-IEhpLAo+Pgo+PiAgICAgT24gVHVlc2RheSAxOCBKdW5lIDIwMTMgMDM6MzMgUE0sIFJhaHVsIFNo
-YXJtYSB3cm90ZToKPj4gICAgID4gVGhhbmtzIGFsbCwKPj4gICAgID4KPj4gICAgID4gT24gRnJp
-LCBKdW4gMTQsIDIwMTMgYXQgMTE6MzkgQU0sILHovcK/7CA8c3cwMzEyLmtpbUBzYW1zdW5nLmNv
-bQo+PiAgICAgPG1haWx0bzpzdzAzMTIua2ltQHNhbXN1bmcuY29tPj4gd3JvdGU6Cj4+ICAgICA+
-PiBIZWxsbyBLaXNob24sCj4+ICAgICA+Pgo+PiAgICAgPj4gT24gMjAxM7PiIDA2v/kgMTPAzyAy
-MTo1NCwgS2lzaG9uIFZpamF5IEFicmFoYW0gSSB3cm90ZToKPj4gICAgID4+PiBIaSwKPj4gICAg
-ID4+Pgo+PiAgICAgPj4+IE9uIFRodXJzZGF5IDEzIEp1bmUgMjAxMyAwNDo1MSBQTSwgSW5raSBE
-YWUgd3JvdGU6Cj4+ICAgICA+Pj4+Cj4+ICAgICA+Pj4+Cj4+ICAgICA+Pj4+PiAtLS0tLU9yaWdp
-bmFsIE1lc3NhZ2UtLS0tLQo+PiAgICAgPj4+Pj4gRnJvbTogU3lsd2VzdGVyIE5hd3JvY2tpIFtt
-YWlsdG86cy5uYXdyb2NraUBzYW1zdW5nLmNvbQo+PiAgICAgPG1haWx0bzpzLm5hd3JvY2tpQHNh
-bXN1bmcuY29tPl0KPj4gICAgID4+Pj4+IFNlbnQ6IFRodXJzZGF5LCBKdW5lIDEzLCAyMDEzIDU6
-NTYgUE0KPj4gICAgID4+Pj4+IFRvOiBSYWh1bCBTaGFybWEKPj4gICAgID4+Pj4+IENjOiBSYWh1
-bCBTaGFybWE7IElua2kgRGFlOyBsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmcKPj4g
-ICAgIDxtYWlsdG86bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3JnPjsKPj4gICAgID4+
-Pj4+IGRldmljZXRyZWUtCj4+ICAgICA+Pj4+PiBkaXNjdXNzQGxpc3RzLm96bGFicy5vcmcgPG1h
-aWx0bzpkaXNjdXNzQGxpc3RzLm96bGFicy5vcmc+Owo+PiAgICAgRFJJIG1haWxpbmcgbGlzdDsg
-S3VramluIEtpbTsgU2V1bmctV29vIEtpbTsKPj4gICAgID4+Pj4+IFNlYW4gUGF1bDsgc3VuaWwg
-am9zaGk7IEtpc2hvbiBWaWpheSBBYnJhaGFtIEk7IFN0ZXBoZW4gV2FycmVuOwo+PiAgICAgPj4+
-Pj4gZ3JhbnQubGlrZWx5QGxpbmFyby5vcmcgPG1haWx0bzpncmFudC5saWtlbHlAbGluYXJvLm9y
-Zz4KPj4gICAgID4+Pj4+IFN1YmplY3Q6IFJlOiBbUkZDIDAvMl0gZXh5bm9zNTI1MC9oZG1pOiBy
-ZXBsYWNlIGR1bW15IGhkbWlwaHkKPj4gICAgIGNsb2NrIHdpdGgKPj4gICAgID4+Pj4+IHBtdSBy
-ZWcgY29udHJvbAo+PiAgICAgPj4+Pj4KPj4gICAgID4+Pj4+IEhpLAo+PiAgICAgPj4+Pj4KPj4g
-ICAgID4+Pj4+IE9uIDA2LzEzLzIwMTMgMDY6MjYgQU0sIFJhaHVsIFNoYXJtYSB3cm90ZToKPj4g
-ICAgID4+Pj4+PiBNci4gRGFlLAo+PiAgICAgPj4+Pj4+Cj4+ICAgICA+Pj4+Pj4gVGhhbmtzIGZv
-ciB5b3VyIHZhbHVhYmxlIGlucHV0cy4KPj4gICAgID4+Pj4+Pgo+PiAgICAgPj4+Pj4+IEkgcG9z
-dGVkIGl0IGFzIFJGQyBiZWNhdXNlLCBJIGFsc28gaGF2ZSByZWNlaXZlZCBjb21tZW50cyB0bwo+
-PiAgICAgcmVnaXN0ZXIKPj4gICAgID4+Pj4+PiBoZG1pcGh5IGFzIGEgY2xvY2sgY29udHJvbGxl
-ci4gQXMgd2UgYWx3YXlzIGNvbmZpZ3VyZSBpdCBmb3IKPj4gICAgIHNwZWNpZmljCj4+ICAgICA+
-Pj4+Pj4gZnJlcXVlbmN5LCBoZG1pLXBoeSBsb29rcyBzaW1pbGFyIHRvIGEgUExMLiBCdXQgaXQg
-cmVhbGx5IGRvZXNuJ3QKPj4gICAgID4+Pj4+PiBiZWxvbmcgdG8gdGhhdCBjbGFzcy4gU2Vjb25k
-bHkgcHJpb3IgdG8gZXh5bm9zNTQyMCwgaXQgd2FzIGEgaTJjCj4+ICAgICA+Pj4+Pj4gZGV2aWNl
-LiBJIGFtIG5vdCBzdXJlIHdlIGNhbiByZWdpc3RlciBhIEkyQyBkZXZpY2UgYXMgYSBjbG9jawo+
-PiAgICAgPj4+Pj4+IGNvbnRyb2xsZXIuIEkgd2FudGVkIHRvIGRpc2N1c3MgYW5kIGV4cGxvcmUg
-dGhpcyBvcHRpb24gaGVyZS4KPj4gICAgID4+Pj4+Cj4+ICAgICA+Pj4+PiBIYXZlIHlvdSBjb25z
-aWRlcmVkIHVzaW5nIHRoZSBnZW5lcmljIFBIWSBmcmFtZXdvcmsgZm9yIHRob3NlIEhETUkKPj4g
-ICAgID4+Pj4+IFBIWSBkZXZpY2VzIFsxXSA/IEkgZ3Vlc3Mgd2UgY291bGQgYWRkIGEgZGVkaWNh
-dGVkIGdyb3VwIG9mCj4+ICAgICBvcHMgZm9yCj4+ICAgICA+Pj4+PiB2aWRlbyBQSFlzLCBzaW1p
-bGFybHkgYXMgaXMgaXMgZG9uZSB3aXRoIHN0cnVjdAo+PiAgICAgdjRsMl9zdWJkZXZfb3BzLiBG
-b3IKPj4gICAgID4+Pj4+IGNvbmZpZ3VyaW5nIHRoaW5ncyBsaWtlIHRoZSBjYXJyaWVyL3BpeGVs
-IGNsb2NrIGZyZXF1ZW5jeSBvcgo+PiAgICAgYW55dGhpbmcKPj4gICAgID4+Pj4+IHdoYXQncyBj
-b21tb24gYWNyb3NzIHRoZSB2aWRlbyBQSFlzLgo+PiAgICAgPj4+Pj4KPj4gICAgID4+Pj4+IFBl
-cmhhcHMgeW91IGNvdWxkIGhhdmUgYSBsb29rIGFuZCBzZWUgaWYgdGhpcyBmcmFtZXdvcmsgd291
-bGQgYmUKPj4gICAgID4+Pj4+IHVzZWZ1bCBmb3IgSERNSSBhbmQgcG9zc2libHkgcG9pbnQgb3V0
-IGFueXRoaW5nIHdoYXQgbWlnaHQgYmUKPj4gICAgIG1pc3NpbmcgPwo+PiAgICAgPj4+Pj4KPj4g
-ICAgID4+Pj4+IEknbSBub3Qgc3VyZSBpdCBpdCByZWFsbHkgc29sdmVzIHRoZSBpc3N1ZXMgc3Bl
-Y2lmaWMgdG8gdGhlIEV4eW5vcwo+PiAgICAgPj4+Pj4gSERNSSBidXQgYXQgbGVhc3Qgd2l0aCBh
-IGdlbmVyaWMgUEhZIGRyaXZlciB0aGUgUEhZIG1vZHVsZQo+PiAgICAgd291bGQgYmUKPj4gICAg
-ID4+Pj4+IHNlcGFyYXRlIGZyb20gdGhlIFBIWSBjb250cm9sbGVyLCBhcyBvZnRlbiBzYW1lIEhE
-TUkgRFBIWSBjYW4KPj4gICAgIGJlIHVzZWQKPj4gICAgID4+Pj4+IHdpdGggdmFyaW91cyB0eXBl
-cyBvZiBhIEhETUkgY29udHJvbGxlci4gU28gdGhpcyB3b3VsZCBhbGxvdwo+PiAgICAgdG8gbm90
-Cj4+ICAgICA+Pj4+PiBkdXBsaWNhdGUgdGhlIEhETUkgUEhZIGRyaXZlcnMgaW4gdGhlIGxvbmct
-dGVybSBwZXJzcGVjdGl2ZS4KPj4gICAgID4+Pj4KPj4gICAgID4+Pj4gWWVhaCwgYXQgbGVhc3Qs
-IGl0IHNlZW1zIHRoYXQgd2UgY291bGQgdXNlIFBIWSBtb2R1bGUgdG8KPj4gICAgIGNvbnRyb2wg
-UE1VCj4+ICAgICA+Pj4+IHJlZ2lzdGVyLCBIRE1JX1BIWV9DT05UUk9MLiBIb3dldmVyLCBQSFkg
-bW9kdWxlIHByb3ZpZGVzIG9ubHkKPj4gICAgIGluaXQvb24vb2ZmCj4+ICAgICA+Pj4+IGNhbGxi
-YWNrcy4gQXMgeW91IG1heSBrbm93LCBIRE1JUEhZIG5lZWRzIGkyYyBpbnRlcmZhY2VzIHRvIGNv
-bnRyb2wKPj4gICAgID4+Pj4gSERNSVBIWQo+PiAgICAgPj4+PiBjbG9jay4gU28gd2l0aCBQSFkg
-bW9kdWxlLCBIRE1JUEhZIGRyaXZlciBjb3VsZCBlbmFibGUgUE1VIG1vcmUKPj4gICAgID4+Pj4g
-Z2VuZXJpY2FsbHksCj4+ICAgICA+Pj4+IGJ1dCBhbHNvIGhhcyB0byB1c2UgZXhpc3RpbmcgaTJj
-IHN0dWZmIHRvIGNvbnRyb2wgSERNSVBIWQo+PiAgICAgY2xvY2suIEkgaGFkIGEKPj4gICAgID4+
-Pj4gcXVpY2sgcmV2aWV3IHRvIEdlbmVyaWMgUEhZIEZyYW1ld29ya1t2Nl0gYnV0IEkgZGlkbid0
-IHNlZSB0aGF0Cj4+ICAgICB0aGUgUEhZCj4+ICAgICA+Pj4+IG1vZHVsZSBjb3VsZCBnZW5lcmlj
-YWxseSBzdXBwb3J0IG1vcmUgZmVhdHVyZXMgc3VjaCBhcyBpMmMgc3R1ZmYuCj4+ICAgICA+Pj4K
-Pj4gICAgID4+PiBJIGRvbid0IHRoaW5rIFBIWSBmcmFtZXdvcmsgbmVlZHMgdG8gcHJvdmlkZSBp
-MmMgaW50ZXJmYWNlcyB0bwo+PiAgICAgcHJvZ3JhbQo+PiAgICAgPj4+IGNlcnRhaW4gY29uZmln
-dXJhdGlvbnMuIEluc3RlYWQgaW4gb25lIG9mIHRoZSBjYWxsYmFja3MKPj4gICAgIChpbml0L29u
-L29mZikKPj4gICAgID4+PiBQSFkgZHJpdmVyIGNhbiBwcm9ncmFtIHdoYXRldmVyIGl0IHdhbnRz
-IHVzaW5nIGFueSBvZiB0aGUKPj4gICAgIGludGVyZmFjZXMgaXQKPj4gICAgID4+PiBuZWVkcy4g
-SU1PIFBIWSBmcmFtZXdvcmsgc2hvdWxkIHdvcmsgaW5kZXBlbmRlbnQgb2YgdGhlIGludGVyZmFj
-ZXMuCj4+ICAgICA+Pgo+PiAgICAgPj4gSW4gZXhub3lzIGhkbWkgY2FzZSwgaTJjIGludGVyZmFj
-ZSBpcyBub3QgdGhlIGV4YWN0IGlzc3VlLiBJbiBleHlub3MKPj4gICAgID4+IGhkbWksIGhkbWlw
-aHkgc2hvdWxkIHNlbmQgaTJjIGNvbmZpZ3VyYXRpb24gYWJvdXQgdmlkZW8gY2xvY2sKPj4gICAg
-ID4+IGluZm9ybWF0aW9uIGFzIHRoZSB2aWRlbyBtb2RlIGluZm9ybWF0aW9uIGluY2x1ZGluZyBy
-ZXNvbHV0aW9uLAo+PiAgICAgYml0IHBlcgo+PiAgICAgPj4gcGl4ZWwsIHJlZnJlc2ggcmF0ZSBw
-YXNzZWQgZnJvbSBkcm0gc3Vic3lzdGVtLiBTbyBpbml0L29uL29mZgo+PiAgICAgY2FsbGJhY2tz
-Cj4+ICAgICA+PiBvZiBwaHkgZnJhbWV3b3JrIGFyZSBub3QgZW5vdWdoIGZvciBleHlub3MgaGRt
-aXBoeSBhbmQgaXQgc2hvdWxkCj4+ICAgICBoYXZlIGEKPj4gICAgID4+IGNhbGxiYWNrIHRvIHNl
-dCB2aWRlbyBtb2RlLgo+PiAgICAgPj4KPj4gICAgID4+IERvIHlvdSBoYXZlIHBsYW4gdG8gYWRk
-IGRyaXZlciBzcGVjaWZpYyBleHRlbmQgY2FsbGJhY2sgcG9pbnRlcnMKPj4gICAgIHRvIHBoeQo+
-PiAgICAgPj4gZnJhbWV3b3JrPwo+PiAgICAgPj4KPj4gICAgID4+IEN1cnJlbnRseSwgaGRtaSBk
-aXJlY3RseSBjYWxscyBwaHkgb3BlcmF0aW9ucywgYnV0IFJhaHVsJ3MKPj4gICAgIGFub3RoZXIg
-cGF0Y2gKPj4gICAgID4+IHNldCwgbWVudGlvbmVkIGJ5IElua2ksIGRpdmlkZXMgaGRtaSBhbmQg
-aGRtaXBoeSBhbmQgaGRtaSBhbmQKPj4gICAgIGhkbWlwaHkgaXMKPj4gICAgID4+IGNvbm5lY3Rl
-ZCB3aXRoIGV4eW5vcyBoZG1pIG93biBzdWIgZHJpdmVyIGNhbGxiYWNrIG9wZXJhdGlvbnMuCj4+
-ICAgICA+Pgo+PiAgICAgPj4gSU1ITywgaWYgcGh5IGZyYW1ld29yayBjYW4gc3VwcG9ydCBleHRl
-bmQgY2FsbGJhY2sgZmVhdHVyZSwgdGhlbiB0aGlzCj4+ICAgICA+PiBvd24gc3ViIGRyaXZlciBj
-YWxsYmFja3MgY2FuIGJlIHJlcGxhY2VkIHdpdGggcGh5IGZyYW1ld29yayBhdAo+PiAgICAgbG9u
-ZyB0ZXJtCj4+ICAgICA+PiB2aWV3Lgo+PiAgICAgPgo+PiAgICAgPiBFeHRlbmRlZCBjYWxsYmFj
-a3MgYXJlIGFsd2F5cyB3ZWxjb21lLiBJIGNhbiBhbHNvIHVzZSBwaHkgZGV2aWNlCj4+ICAgICA+
-IHByaXZhdGUgZGF0YSB0byBwYXNzIG9uIHByaXZhdGUgb3BzIGxpa2UgZ2V0X3BpeGVsY2xrIGFu
-ZAo+PiAgICAgc2V0X3BpeGVsY2xrLgo+Pgo+PiAgICAgSSB3b3VsZCByZWNvbW1lbmQgY3JlYXRp
-bmcgYSB3cmFwcGVyIHRvIHRoZSBleGlzdGluZyBQSFkgZnJhbWV3b3JrCj4+ICAgICBmb3IgSERN
-SSBQSFkuIFRoYXQgd2F5LCB3ZSBjYW4gaGF2ZSBvdGhlciBIRE1JIHBoeXMgYWRkZWQKPj4gICAg
-IGVhc2lseS4gV2UgbmVlZCB0byBmaWd1cmUgb3V0IGFsbCB0aGUgb3BzIHRoYXQgbWlnaHQgYmUg
-bmVlZGVkIGJ5IHRoZQo+PiAgICAgSERNSSBQSFkgdG8gYmUgYWRkZWQgdG8gdGhlIHdyYXBwZXIu
-Cj4+ICAgICBJTU8gZXh0ZW5kZWQgY2FsbGJhY2tzIGNhbiBsZWFkIHRvIGFidXNlIG9mIHRoZSBz
-eXN0ZW0gYW5kIHNob3VsZCBiZQo+PiAgICAgdXNlZCBvbmx5IHdoZW4gYWJzb2x1dGVseSBuZWNl
-c3NhcnkuCj4+Cj4+ICAgICBUaGFua3MKPj4gICAgIEtpc2hvbgo+Pgo+Pgo+PiBUaGFua3MgS2lz
-aG9uLAo+Pgo+PiBJIGhhdmUgc3RhcnRlZCB3b3JraW5nIG9uIHRoaXMgd3JhcHBlciBsYXllciB3
-aGljaCBpcyBjdXN0b21pemVkIGZvcgo+PiB2aWRlbyBwaHlzLgo+PiBBcyBpZiBub3csIGFkZGlu
-ZyBzZXRfZHZfdGltaW5nLCBnZXRfZHZfdGltaW5nIGFzIHRoZSBvbmx5IGFkZGl0aW9uYWwKPj4g
-Y2FsbGJhY2tzLgo+PiBJIHdpbGwgcG9zdCB0aGUgUkZDIHBhdGNoZXMuCj4KPiBJIHRoaW5rIHlv
-dXIgaGRtaXBoeSBwbXUgcGF0Y2ggaXMgZ29vZCBlbm91Z2gganVzdCBpZiBkdCBiaW5kaW5nIGZv
-ciBwbXUKPiBpcyBpbiBoZG1pcGh5IGJpbmRpbmcgaW5zdGVhZCBvZiBoZG1pIGJpbmRpbmcuIFNv
-IEkgcmVjb21tZW5kZWQgdG8gbWFrZQo+IHBtdSBwYXRjaCBzZXQgb24gdGhlIHRvcCBvZiBpbmRl
-cGVuZGVudCBoZG1pcGh5IHBhdGNoIHNldCBiZWNhdXNlIHdpdGgKPiBpbmRlcGVuZGVudCBoZG1p
-cGh5IHBhdGNoIHNldCBoZG1pcGh5IHBtdSBjb2RlIGlzIG1vdmVkIHRvIGhkbWlwaHkgZHJpdmVy
-Lgo+Cj4gSXMgaXQgcG9zc2libGUgdGhhdCBoZG1pIGRyaXZlciByZWZlcmVuY2VzIHBtdSBpbmZv
-cm1hdGlvbiBmcm9tIGhkbWlwaHkKPiBiaW5kaW5nPyBJZiB0aGF0LCBpdCBzZWVtcyBvbmUgcG9z
-c2libGUgc29sdXRpb24gdG8gZml4IGN1cnJlbnQgZXh5bm9zCj4gaGRtaSBicm9rZW4uCj4KPiBU
-aGFua3MgYW5kIFJlZ2FyZHMsCj4gLSBTZXVuZy1Xb28gS2ltCj4KCkkgY2FuIHN1cmVseSBkbyB0
-aGF0IGJ1dCwgSSBhbSB3b3JyaWVkIGFib3V0IGhkbWlwaHkgY29udHJvbCBidXMuCmNoYW5nZSBJ
-biA1NDIwLiBJdCBpcyBjaGFuZ2VkIHRvIHBsYXRmb3JtIGJ1cyBmcm9tIGkyYy4gSXNvbGF0aW5n
-CmhkbWlwaHkgZnJvbSBoZG1pIGRyaXZlciBzZWVtcyB0aGUgb25seSBjbGVhbiBtZXRob2QgdG8g
-aGFuZGxlCmNvbnRyb2wgYnVzIGNoYW5nZSwgY2hhbmdlZCBwaHkgY29uZmlndXJhdGlvbnMgYW5k
-IHBvd2VyIGNvbnRyb2wKdGhyb3VnaCBQTVUgYml0LgoKVG8gZml4IGJyb2tlbiBoZG1pIGZvciA1
-NDIwLCBJIGNhbiBhZ2FpbiBwb3N0IHRoZSAiaGRtaXBoeQpzZXBhcmF0aW9uIHBhdGNoZXMiIHRv
-IHBsYWNlIGhkbWlwaHkgZHJpdmVyIGluIERSTS4gTGF0ZXIgd2UgY2FuCm1pZ3JhdGUgdG8gR2Vu
-ZXJpYyBQaHkgRnJhbWV3b3JrLgoKcmVnYXJkcywKUmFodWwgU2hhcm1hLgoKPj4KPj4gcmVnYXJk
-cywKPj4gUmFodWwgU2hhcm1hLgo+Pgo+Pgo+Pgo+PiBfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwo+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+IGRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo+Pgo+Cj4gLS0KPiBTZXVuZy1Xb28gS2ltCj4g
-U2Ftc3VuZyBTb2Z0d2FyZSBSJkQgQ2VudGVyCj4gLS0KPgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+> -----Original Message-----
+> From: Mike Turquette [mailto:mturquette@linaro.org]
+> Sent: Tuesday, July 30, 2013 3:47 PM
+> To: Cho KyongHo; 'Linux ARM Kernel'; 'Linux IOMMU'; 'Linux Kernel'; 'Linux Samsung SOC'
+> Cc: 'Kukjin Kim'; 'Hyunwoong Kim'; 'Prathyush'; 'Grant Grundler'; 'Joerg Roedel'; 'Keyyoung Park';
+> 'Subash Patel'; 'Sachin Kamat'; 'Thomas Abraham'; 'Antonios Motakis'; kvmarm@lists.cs.columbia.edu;
+> 'Rahul Sharma'
+> Subject: Re: RE: [PATCH v8 05/12] clk: exynos5250: add gate clock descriptions of System MMU
+> 
+> Quoting Cho KyongHo (2013-07-27 02:08:11)
+> > > -----Original Message-----
+> > > From: Mike Turquette [mailto:mturquette@linaro.org]
+> > > Sent: Saturday, July 27, 2013 5:01 AM
+> > >
+> > > Quoting Cho KyongHo (2013-07-26 04:27:54)
+> > > > This adds gate clocks of all System MMUs and their master IPs
+> > > > that are not apeared in clk-exynos5250.c
+> > > >
+> > > > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+> > >
+> > > Change looks good to me. Are you OK if I take it into the clk tree or do
+> > > you want to keep this series together?
+> >
+> > I would like you to pick this to your tree and let me know which branch
+> > contains this patch.
+> > Then I will remove this from my patch series.
+> 
+> camif_top corresponds to 345 in your patch, but this conflicts the g2d
+> clock introduced in patch "clk: exynos5250: Add G2D gate clock" in the
+> clk tree. I've pushed out the latest clk-next branch with this change:
+> 
+> git://git.linaro.org/people/mturquette/linux.git clk-next
+> 
+> Can you rebase your change on top of this and resolve the clock id
+> mapping?
+> 
+Oh,
+I will rebase this patch on your git in the next patch version.
+
+Thank you.
+
+> Thanks,
+> Mike
+> 
+> >
+> > Thank you,
+> > Cho KyongHo.
+> > >
+> > > Regards,
+> > > Mike
+> > >
+> > > > ---
+> > > >  .../devicetree/bindings/clock/exynos5250-clock.txt |   28 +++++++++-
+> > > >  drivers/clk/samsung/clk-exynos5250.c               |   57 ++++++++++++++++---
+> > > >  2 files changed, 75 insertions(+), 10 deletions(-)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > > b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > > index 781a627..df49694 100644
+> > > > --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > > +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > > @@ -154,7 +154,33 @@ clock which they consume.
+> > > >    dsim0                        341
+> > > >    dp                   342
+> > > >    mixer                        343
+> > > > -  hdmi                 345
+> > > > +  hdmi                 344
+> > > > +  camif_top            345
+> > > > +  smmu_fimc_lite0      346
+> > > > +  smmu_fimc_lite1      347
+> > > > +  smmu_fimc_lite2      348
+> > > > +  smmu_tv              349
+> > > > +  smmu_fimd1           350
+> > > > +  smmu_2d              351
+> > > > +  fimc_isp             352
+> > > > +  fimc_drc             353
+> > > > +  fimc_fd              354
+> > > > +  fimc_scc             355
+> > > > +  fimc_scp             356
+> > > > +  fimc_mcuctl          357
+> > > > +  fimc_odc             358
+> > > > +  fimc_dis             359
+> > > > +  fimc_3dnr            360
+> > > > +  smmu_fimc_isp                361
+> > > > +  smmu_fimc_drc                362
+> > > > +  smmu_fimc_fd         363
+> > > > +  smmu_fimc_scc                364
+> > > > +  smmu_fimc_scp                365
+> > > > +  smmu_fimc_mcuctl     366
+> > > > +  smmu_fimc_odc                367
+> > > > +  smmu_fimc_dis0       368
+> > > > +  smmu_fimc_dis1       369
+> > > > +  smmu_fimc_3dnr       370
+> > > >
+> > > >  Example 1: An example of a clock controller node is listed below.
+> > > >
+> > > > diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> > > > index 22d7699..e242bde 100644
+> > > > --- a/drivers/clk/samsung/clk-exynos5250.c
+> > > > +++ b/drivers/clk/samsung/clk-exynos5250.c
+> > > > @@ -53,12 +53,15 @@
+> > > >  #define DIV_PERIC3             0x10564
+> > > >  #define DIV_PERIC4             0x10568
+> > > >  #define DIV_PERIC5             0x1056c
+> > > > +#define GATE_IP_ISP0           0x0C800
+> > > > +#define GATE_IP_ISP1           0x0C800
+> > > >  #define GATE_IP_GSCL           0x10920
+> > > >  #define GATE_IP_MFC            0x1092c
+> > > >  #define GATE_IP_GEN            0x10934
+> > > >  #define GATE_IP_FSYS           0x10944
+> > > >  #define GATE_IP_PERIC          0x10950
+> > > >  #define GATE_IP_PERIS          0x10960
+> > > > +#define GATE_IP_ACP            0x18800
+> > > >  #define SRC_CDREX              0x20200
+> > > >  #define PLL_DIV2_SEL           0x20a24
+> > > >  #define GATE_IP_DISP1          0x10928
+> > > > @@ -100,6 +103,14 @@ enum exynos5250_clks {
+> > > >         tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec, mct,
+> > > >         wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi,
+> > > >
+> > > > +       camif_top, smmu_fimc_lite0, smmu_fimc_lite1, smmu_fimc_lite2,
+> > > > +       smmu_tv, smmu_fimd1, smmu_2d,
+> > > > +       fimc_isp, fimc_drc, fimc_fd, fimc_scc, fimc_scp, fimc_mcuctl, fimc_odc,
+> > > > +       fimc_dis, fimc_3dnr,
+> > > > +       smmu_fimc_isp, smmu_fimc_drc, smmu_fimc_fd, smmu_fimc_scc,
+> > > > +       smmu_fimc_scp, smmu_fimc_mcuctl, smmu_fimc_odc, smmu_fimc_dis0,
+> > > > +       smmu_fimc_dis1, smmu_fimc_3dnr,
+> > > > +
+> > > >         nr_clks,
+> > > >  };
+> > > >
+> > > > @@ -320,19 +331,26 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+> > > >         GATE(gscl3, "gscl3", "aclk266", GATE_IP_GSCL, 3, 0, 0),
+> > > >         GATE(gscl_wa, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
+> > > >         GATE(gscl_wb, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
+> > > > -       GATE(smmu_gscl0, "smmu_gscl0", "aclk266", GATE_IP_GSCL, 7, 0, 0),
+> > > > -       GATE(smmu_gscl1, "smmu_gscl1", "aclk266", GATE_IP_GSCL, 8, 0, 0),
+> > > > -       GATE(smmu_gscl2, "smmu_gscl2", "aclk266", GATE_IP_GSCL, 9, 0, 0),
+> > > > -       GATE(smmu_gscl3, "smmu_gscl3", "aclk266", GATE_IP_GSCL, 10, 0, 0),
+> > > > +       GATE(smmu_gscl0, "smmu_gscl0", "none", GATE_IP_GSCL, 7, 0, 0),
+> > > > +       GATE(smmu_gscl1, "smmu_gscl1", "none", GATE_IP_GSCL, 8, 0, 0),
+> > > > +       GATE(smmu_gscl2, "smmu_gscl2", "none", GATE_IP_GSCL, 9, 0, 0),
+> > > > +       GATE(smmu_gscl3, "smmu_gscl3", "none", GATE_IP_GSCL, 10, 0, 0),
+> > > > +       GATE(camif_top, "camif_top", "aclk266", GATE_IP_GSCL, 4, 0, 0),
+> > > > +       GATE(smmu_fimc_lite0, "smmu_fimc_lite0", "none",
+> > > > +                                               GATE_IP_GSCL, 12, 0, 0),
+> > > > +       GATE(smmu_fimc_lite1, "smmu_fimc_lite1", "none",
+> > > > +                                               GATE_IP_GSCL, 13, 0, 0),
+> > > > +       GATE(smmu_fimc_lite2, "smmu_fimc_lite2", "none",
+> > > > +                                               GATE_IP_GSCL, 14, 0, 0),
+> > > >         GATE(mfc, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
+> > > > -       GATE(smmu_mfcl, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
+> > > > -       GATE(smmu_mfcr, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
+> > > > +       GATE(smmu_mfcr, "smmu_mfcr", "none", GATE_IP_MFC, 1, 0, 0),
+> > > > +       GATE(smmu_mfcl, "smmu_mfcl", "none", GATE_IP_MFC, 2, 0, 0),
+> > > >         GATE(rotator, "rotator", "aclk266", GATE_IP_GEN, 1, 0, 0),
+> > > >         GATE(jpeg, "jpeg", "aclk166", GATE_IP_GEN, 2, 0, 0),
+> > > >         GATE(mdma1, "mdma1", "aclk266", GATE_IP_GEN, 4, 0, 0),
+> > > > -       GATE(smmu_rotator, "smmu_rotator", "aclk266", GATE_IP_GEN, 6, 0, 0),
+> > > > -       GATE(smmu_jpeg, "smmu_jpeg", "aclk166", GATE_IP_GEN, 7, 0, 0),
+> > > > -       GATE(smmu_mdma1, "smmu_mdma1", "aclk266", GATE_IP_GEN, 9, 0, 0),
+> > > > +       GATE(smmu_rotator, "smmu_rotator", "none", GATE_IP_GEN, 6, 0, 0),
+> > > > +       GATE(smmu_jpeg, "smmu_jpeg", "none", GATE_IP_GEN, 7, 0, 0),
+> > > > +       GATE(smmu_mdma1, "smmu_mdma1", "none", GATE_IP_GEN, 9, 0, 0),
+> > > >         GATE(pdma0, "pdma0", "aclk200", GATE_IP_FSYS, 1, 0, 0),
+> > > >         GATE(pdma1, "pdma1", "aclk200", GATE_IP_FSYS, 2, 0, 0),
+> > > >         GATE(sata, "sata", "aclk200", GATE_IP_FSYS, 6, 0, 0),
+> > > > @@ -462,6 +480,27 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+> > > >         GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
+> > > >         GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
+> > > >         GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
+> > > > +       GATE(smmu_tv, "smmu_tv", "none", GATE_IP_DISP1, 2, 0, 0),
+> > > > +       GATE(smmu_fimd1, "smmu_fimd1", "none", GATE_IP_DISP1, 8, 0, 0),
+> > > > +
+> > > > +       GATE(smmu_fimc_isp, "smmu_fimc_isp", "none", GATE_IP_ISP0, 8, 0, 0),
+> > > > +       GATE(smmu_fimc_drc, "smmu_fimc_drc", "none", GATE_IP_ISP0, 9, 0, 0),
+> > > > +       GATE(smmu_fimc_fd, "smmu_fimc_fd", "none", GATE_IP_ISP0, 10, 0, 0),
+> > > > +       GATE(smmu_fimc_scc, "smmu_fimc_scc", "none",
+> > > > +                                                       GATE_IP_ISP0, 11, 0, 0),
+> > > > +       GATE(smmu_fimc_scp, "smmu_fimc_scp", "none",
+> > > > +                                                       GATE_IP_ISP0, 12, 0, 0),
+> > > > +       GATE(smmu_fimc_mcuctl, "smmu_fimc_mcuctl", "none",
+> > > > +                                                       GATE_IP_ISP0, 13, 0, 0),
+> > > > +       GATE(smmu_fimc_odc, "smmu_fimc_odc", "none", GATE_IP_ISP1, 4, 0, 0),
+> > > > +       GATE(smmu_fimc_dis0, "smmu_fimc_dis0", "none",
+> > > > +                                                       GATE_IP_ISP1, 5, 0, 0),
+> > > > +       GATE(smmu_fimc_dis1, "smmu_fimc_dis1", "none",
+> > > > +                                                       GATE_IP_ISP1, 6, 0, 0),
+> > > > +       GATE(smmu_fimc_3dnr, "smmu_fimc_3dnr", "none",
+> > > > +                                                       GATE_IP_ISP1, 7, 0, 0),
+> > > > +
+> > > > +       GATE(smmu_2d, "smmu_2d", "none", GATE_IP_ACP, 7, 0, 0),
+> > > >  };
+> > > >
+> > > >  static __initdata struct of_device_id ext_clk_match[] = {
+> > > > --
+> > > > 1.7.2.5
+> > > >
+> > > >
+> > > >
+> > > > _______________________________________________
+> > > > linux-arm-kernel mailing list
+> > > > linux-arm-kernel@lists.infradead.org
+> > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
