@@ -1,549 +1,250 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH V3] watchdog: s3c2410_wdt: remove the global variables
-Date: Tue, 30 Jul 2013 11:35:01 +0530
-Message-ID: <CAL1wa8e=EQ+aViO-7GRUMa2kWkdc8hEqW1-qEoTGrsS=2H3sxw@mail.gmail.com>
-References: <1374569985-13576-1-git-send-email-l.krishna@samsung.com> <0e8301ce8842$eca72880$c5f57980$@org>
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu
+ reg control
+Date: Tue, 30 Jul 2013 15:06:58 +0900
+Message-ID: <51F75802.90305@samsung.com>
+References: <1370935073-7475-1-git-send-email-rahul.sharma@samsung.com>
+ <CAAQKjZMuSQhbYtOyni-RdHhXu0fv3U2Dm_2iqRLe0smSt_jjjQ@mail.gmail.com>
+ <CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com>
+ <CAPdUM4Nis0uwyZf1hNDOMmdqFm0K7beVPoyAWRjMBwq0jcwwCQ@mail.gmail.com>
+ <51B98908.8050403@samsung.com>
+ <02c101ce6828$29ab0f20$7d012d60$%dae@samsung.com> <51B9C0ED.2040605@ti.com>
+ <51BAB398.8090409@samsung.com>
+ <CAPdUM4PK7K+Vw6umnehDubLD37jiWdcd4iXX2DJvHS8990LQGQ@mail.gmail.com>
+ <51C04688.3090205@ti.com>
+ <CAPdUM4O7cbBEEc4VdmcyryqFxpek6SsEcG-g-KyxwVypdwJnaw@mail.gmail.com>
+Reply-To: sw0312.kim@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f52.google.com ([209.85.212.52]:53190 "EHLO
-	mail-vb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757322Ab3G3GFW (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:19051 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752230Ab3G3GHJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Jul 2013 02:05:22 -0400
-Received: by mail-vb0-f52.google.com with SMTP id f12so1007740vbg.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Jul 2013 23:05:22 -0700 (PDT)
-In-Reply-To: <0e8301ce8842$eca72880$c5f57980$@org>
+	Tue, 30 Jul 2013 02:07:09 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MQQ00CPEJNG9IL0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 30 Jul 2013 15:07:02 +0900 (KST)
+In-reply-to: <CAPdUM4O7cbBEEc4VdmcyryqFxpek6SsEcG-g-KyxwVypdwJnaw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Doug Anderson <dianders@chromium.org>, Jingoo Han <jg1.han@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
+To: Rahul Sharma <r.sh.open@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, devicetree-discuss@lists.ozlabs.org, sunil joshi <joshi@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, grant.likely@linaro.org, Rahul Sharma <rahul.sharma@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
 
-Hello Wim Van Sebroeck,
+Hi Rahul,
 
-Can you please review this patch and take necessary action.
+On 2013=EB=85=84 07=EC=9B=94 30=EC=9D=BC 12:42, Rahul Sharma wrote:
+>=20
+>=20
+> On Tue, Jun 18, 2013 at 5:07 PM, Kishon Vijay Abraham I <kishon@ti.co=
+m
+> <mailto:kishon@ti.com>> wrote:
+>=20
+>     Hi,
+>=20
+>     On Tuesday 18 June 2013 03:33 PM, Rahul Sharma wrote:
+>     > Thanks all,
+>     >
+>     > On Fri, Jun 14, 2013 at 11:39 AM, =EA=B9=80=EC=8A=B9=EC=9A=B0 <=
+sw0312.kim@samsung.com
+>     <mailto:sw0312.kim@samsung.com>> wrote:
+>     >> Hello Kishon,
+>     >>
+>     >> On 2013=EB=85=84 06=EC=9B=94 13=EC=9D=BC 21:54, Kishon Vijay A=
+braham I wrote:
+>     >>> Hi,
+>     >>>
+>     >>> On Thursday 13 June 2013 04:51 PM, Inki Dae wrote:
+>     >>>>
+>     >>>>
+>     >>>>> -----Original Message-----
+>     >>>>> From: Sylwester Nawrocki [mailto:s.nawrocki@samsung.com
+>     <mailto:s.nawrocki@samsung.com>]
+>     >>>>> Sent: Thursday, June 13, 2013 5:56 PM
+>     >>>>> To: Rahul Sharma
+>     >>>>> Cc: Rahul Sharma; Inki Dae; linux-samsung-soc@vger.kernel.o=
+rg
+>     <mailto:linux-samsung-soc@vger.kernel.org>;
+>     >>>>> devicetree-
+>     >>>>> discuss@lists.ozlabs.org <mailto:discuss@lists.ozlabs.org>;
+>     DRI mailing list; Kukjin Kim; Seung-Woo Kim;
+>     >>>>> Sean Paul; sunil joshi; Kishon Vijay Abraham I; Stephen War=
+ren;
+>     >>>>> grant.likely@linaro.org <mailto:grant.likely@linaro.org>
+>     >>>>> Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmip=
+hy
+>     clock with
+>     >>>>> pmu reg control
+>     >>>>>
+>     >>>>> Hi,
+>     >>>>>
+>     >>>>> On 06/13/2013 06:26 AM, Rahul Sharma wrote:
+>     >>>>>> Mr. Dae,
+>     >>>>>>
+>     >>>>>> Thanks for your valuable inputs.
+>     >>>>>>
+>     >>>>>> I posted it as RFC because, I also have received comments =
+to
+>     register
+>     >>>>>> hdmiphy as a clock controller. As we always configure it f=
+or
+>     specific
+>     >>>>>> frequency, hdmi-phy looks similar to a PLL. But it really =
+doesn't
+>     >>>>>> belong to that class. Secondly prior to exynos5420, it was=
+ a i2c
+>     >>>>>> device. I am not sure we can register a I2C device as a cl=
+ock
+>     >>>>>> controller. I wanted to discuss and explore this option he=
+re.
+>     >>>>>
+>     >>>>> Have you considered using the generic PHY framework for tho=
+se HDMI
+>     >>>>> PHY devices [1] ? I guess we could add a dedicated group of
+>     ops for
+>     >>>>> video PHYs, similarly as is is done with struct
+>     v4l2_subdev_ops. For
+>     >>>>> configuring things like the carrier/pixel clock frequency o=
+r
+>     anything
+>     >>>>> what's common across the video PHYs.
+>     >>>>>
+>     >>>>> Perhaps you could have a look and see if this framework wou=
+ld be
+>     >>>>> useful for HDMI and possibly point out anything what might =
+be
+>     missing ?
+>     >>>>>
+>     >>>>> I'm not sure it it really solves the issues specific to the=
+ Exynos
+>     >>>>> HDMI but at least with a generic PHY driver the PHY module
+>     would be
+>     >>>>> separate from the PHY controller, as often same HDMI DPHY c=
+an
+>     be used
+>     >>>>> with various types of a HDMI controller. So this would allo=
+w
+>     to not
+>     >>>>> duplicate the HDMI PHY drivers in the long-term perspective=
+=2E
+>     >>>>
+>     >>>> Yeah, at least, it seems that we could use PHY module to
+>     control PMU
+>     >>>> register, HDMI_PHY_CONTROL. However, PHY module provides onl=
+y
+>     init/on/off
+>     >>>> callbacks. As you may know, HDMIPHY needs i2c interfaces to =
+control
+>     >>>> HDMIPHY
+>     >>>> clock. So with PHY module, HDMIPHY driver could enable PMU m=
+ore
+>     >>>> generically,
+>     >>>> but also has to use existing i2c stuff to control HDMIPHY
+>     clock. I had a
+>     >>>> quick review to Generic PHY Framework[v6] but I didn't see t=
+hat
+>     the PHY
+>     >>>> module could generically support more features such as i2c s=
+tuff.
+>     >>>
+>     >>> I don't think PHY framework needs to provide i2c interfaces t=
+o
+>     program
+>     >>> certain configurations. Instead in one of the callbacks
+>     (init/on/off)
+>     >>> PHY driver can program whatever it wants using any of the
+>     interfaces it
+>     >>> needs. IMO PHY framework should work independent of the inter=
+faces.
+>     >>
+>     >> In exnoys hdmi case, i2c interface is not the exact issue. In =
+exynos
+>     >> hdmi, hdmiphy should send i2c configuration about video clock
+>     >> information as the video mode information including resolution=
+,
+>     bit per
+>     >> pixel, refresh rate passed from drm subsystem. So init/on/off
+>     callbacks
+>     >> of phy framework are not enough for exynos hdmiphy and it shou=
+ld
+>     have a
+>     >> callback to set video mode.
+>     >>
+>     >> Do you have plan to add driver specific extend callback pointe=
+rs
+>     to phy
+>     >> framework?
+>     >>
+>     >> Currently, hdmi directly calls phy operations, but Rahul's
+>     another patch
+>     >> set, mentioned by Inki, divides hdmi and hdmiphy and hdmi and
+>     hdmiphy is
+>     >> connected with exynos hdmi own sub driver callback operations.
+>     >>
+>     >> IMHO, if phy framework can support extend callback feature, th=
+en this
+>     >> own sub driver callbacks can be replaced with phy framework at
+>     long term
+>     >> view.
+>     >
+>     > Extended callbacks are always welcome. I can also use phy devic=
+e
+>     > private data to pass on private ops like get_pixelclk and
+>     set_pixelclk.
+>=20
+>     I would recommend creating a wrapper to the existing PHY framewor=
+k
+>     for HDMI PHY. That way, we can have other HDMI phys added
+>     easily. We need to figure out all the ops that might be needed by=
+ the
+>     HDMI PHY to be added to the wrapper.
+>     IMO extended callbacks can lead to abuse of the system and should=
+ be
+>     used only when absolutely necessary.
+>=20
+>     Thanks
+>     Kishon
+>=20
+>=20
+> Thanks Kishon,
+>=20
+> I have started working on this wrapper layer which is customized for
+> video phys.
+> As if now, adding set_dv_timing, get_dv_timing as the only additional
+> callbacks.
+> I will post the RFC patches.
 
-Best Wishes,
-Leela Krishna Amudala.
+I think your hdmiphy pmu patch is good enough just if dt binding for pm=
+u
+is in hdmiphy binding instead of hdmi binding. So I recommended to make
+pmu patch set on the top of independent hdmiphy patch set because with
+independent hdmiphy patch set hdmiphy pmu code is moved to hdmiphy driv=
+er.
 
+Is it possible that hdmi driver references pmu information from hdmiphy
+binding? If that, it seems one possible solution to fix current exynos
+hdmi broken.
 
-On Wed, Jul 24, 2013 at 1:23 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> Leela Krishna Amudala wrote:
->>
->> This patch removes the global variables in the driver file and
->> group them into a structure.
->>
->> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->
-> (+ Wim Van Sebroeck)
->
-> Looks good to me,
->
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->
-> Thanks,
-> Kukjin
->
->> ---
->>  Note: This patch is rebased on kgene's for-next branch and tested on
->> SMDK5420.
->>
->>  Changes since V2:
->>       - Addressed comments given by Tomasz Figa <t.figa@samsung.com>
->>         https://patchwork.kernel.org/patch/2831032/
->>       - Renamed structure name from s3c2410_watchdog to s3c2410_wdt.
->>
->>  Changes since V1:
->>       - changed the patch subject.
->>       - indentation correction in s3c2410_watchdog structure.
->>
->>  drivers/watchdog/s3c2410_wdt.c |  225 +++++++++++++++++++++++------------
->> -----
->>  1 file changed, 131 insertions(+), 94 deletions(-)
->>
->> diff --git a/drivers/watchdog/s3c2410_wdt.c
->> b/drivers/watchdog/s3c2410_wdt.c
->> index 6a22cf5..739dbd3 100644
->> --- a/drivers/watchdog/s3c2410_wdt.c
->> +++ b/drivers/watchdog/s3c2410_wdt.c
->> @@ -84,13 +84,17 @@ MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to
->> 1 to ignore reboots, "
->>                       "0 to reboot (default 0)");
->>  MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default
->> 0)");
->>
->> -static struct device    *wdt_dev;    /* platform device attached to */
->> -static struct resource       *wdt_mem;
->> -static struct resource       *wdt_irq;
->> -static struct clk    *wdt_clock;
->> -static void __iomem  *wdt_base;
->> -static unsigned int   wdt_count;
->> -static DEFINE_SPINLOCK(wdt_lock);
->> +struct s3c2410_wdt {
->> +     struct device           *dev;
->> +     struct clk              *clock;
->> +     void __iomem            *reg_base;
->> +     unsigned int            count;
->> +     spinlock_t              lock;
->> +     unsigned long           wtcon_save;
->> +     unsigned long           wtdat_save;
->> +     struct watchdog_device  wdt_device;
->> +     struct notifier_block   freq_transition;
->> +};
->>
->>  /* watchdog control routines */
->>
->> @@ -102,29 +106,43 @@ do {
-> \
->>
->>  /* functions */
->>
->> +static inline struct s3c2410_wdt *to_s3c2410_wdt(struct watchdog_device
->> *wdd)
->> +{
->> +     return container_of(wdd, struct s3c2410_wdt, wdt_device);
->> +}
->> +
->> +static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
->> +{
->> +     return container_of(nb, struct s3c2410_wdt, freq_transition);
->> +}
->> +
->>  static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
->>  {
->> -     spin_lock(&wdt_lock);
->> -     writel(wdt_count, wdt_base + S3C2410_WTCNT);
->> -     spin_unlock(&wdt_lock);
->> +     struct s3c2410_wdt *wdt = to_s3c2410_wdt(wdd);
->> +
->> +     spin_lock(&wdt->lock);
->> +     writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
->> +     spin_unlock(&wdt->lock);
->>
->>       return 0;
->>  }
->>
->> -static void __s3c2410wdt_stop(void)
->> +static void __s3c2410wdt_stop(struct s3c2410_wdt *wdt)
->>  {
->>       unsigned long wtcon;
->>
->> -     wtcon = readl(wdt_base + S3C2410_WTCON);
->> +     wtcon = readl(wdt->reg_base + S3C2410_WTCON);
->>       wtcon &= ~(S3C2410_WTCON_ENABLE | S3C2410_WTCON_RSTEN);
->> -     writel(wtcon, wdt_base + S3C2410_WTCON);
->> +     writel(wtcon, wdt->reg_base + S3C2410_WTCON);
->>  }
->>
->>  static int s3c2410wdt_stop(struct watchdog_device *wdd)
->>  {
->> -     spin_lock(&wdt_lock);
->> -     __s3c2410wdt_stop();
->> -     spin_unlock(&wdt_lock);
->> +     struct s3c2410_wdt *wdt = to_s3c2410_wdt(wdd);
->> +
->> +     spin_lock(&wdt->lock);
->> +     __s3c2410wdt_stop(wdt);
->> +     spin_unlock(&wdt->lock);
->>
->>       return 0;
->>  }
->> @@ -132,12 +150,13 @@ static int s3c2410wdt_stop(struct watchdog_device
->> *wdd)
->>  static int s3c2410wdt_start(struct watchdog_device *wdd)
->>  {
->>       unsigned long wtcon;
->> +     struct s3c2410_wdt *wdt = to_s3c2410_wdt(wdd);
->>
->> -     spin_lock(&wdt_lock);
->> +     spin_lock(&wdt->lock);
->>
->> -     __s3c2410wdt_stop();
->> +     __s3c2410wdt_stop(wdt);
->>
->> -     wtcon = readl(wdt_base + S3C2410_WTCON);
->> +     wtcon = readl(wdt->reg_base + S3C2410_WTCON);
->>       wtcon |= S3C2410_WTCON_ENABLE | S3C2410_WTCON_DIV128;
->>
->>       if (soft_noboot) {
->> @@ -148,25 +167,26 @@ static int s3c2410wdt_start(struct watchdog_device
->> *wdd)
->>               wtcon |= S3C2410_WTCON_RSTEN;
->>       }
->>
->> -     DBG("%s: wdt_count=0x%08x, wtcon=%08lx\n",
->> -         __func__, wdt_count, wtcon);
->> +     DBG("%s: count=0x%08x, wtcon=%08lx\n",
->> +         __func__, wdt->count, wtcon);
->>
->> -     writel(wdt_count, wdt_base + S3C2410_WTDAT);
->> -     writel(wdt_count, wdt_base + S3C2410_WTCNT);
->> -     writel(wtcon, wdt_base + S3C2410_WTCON);
->> -     spin_unlock(&wdt_lock);
->> +     writel(wdt->count, wdt->reg_base + S3C2410_WTDAT);
->> +     writel(wdt->count, wdt->reg_base + S3C2410_WTCNT);
->> +     writel(wtcon, wdt->reg_base + S3C2410_WTCON);
->> +     spin_unlock(&wdt->lock);
->>
->>       return 0;
->>  }
->>
->> -static inline int s3c2410wdt_is_running(void)
->> +static inline int s3c2410wdt_is_running(struct s3c2410_wdt *wdt)
->>  {
->> -     return readl(wdt_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
->> +     return readl(wdt->reg_base + S3C2410_WTCON) & S3C2410_WTCON_ENABLE;
->>  }
->>
->>  static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned
->> timeout)
->>  {
->> -     unsigned long freq = clk_get_rate(wdt_clock);
->> +     struct s3c2410_wdt *wdt = to_s3c2410_wdt(wdd);
->> +     unsigned long freq = clk_get_rate(wdt->clock);
->>       unsigned int count;
->>       unsigned int divisor = 1;
->>       unsigned long wtcon;
->> @@ -192,7 +212,7 @@ static int s3c2410wdt_set_heartbeat(struct
->> watchdog_device *wdd, unsigned timeou
->>               }
->>
->>               if ((count / divisor) >= 0x10000) {
->> -                     dev_err(wdt_dev, "timeout %d too big\n", timeout);
->> +                     dev_err(wdt->dev, "timeout %d too big\n", timeout);
->>                       return -EINVAL;
->>               }
->>       }
->> @@ -201,15 +221,15 @@ static int s3c2410wdt_set_heartbeat(struct
->> watchdog_device *wdd, unsigned timeou
->>           __func__, timeout, divisor, count, count/divisor);
->>
->>       count /= divisor;
->> -     wdt_count = count;
->> +     wdt->count = count;
->>
->>       /* update the pre-scaler */
->> -     wtcon = readl(wdt_base + S3C2410_WTCON);
->> +     wtcon = readl(wdt->reg_base + S3C2410_WTCON);
->>       wtcon &= ~S3C2410_WTCON_PRESCALE_MASK;
->>       wtcon |= S3C2410_WTCON_PRESCALE(divisor-1);
->>
->> -     writel(count, wdt_base + S3C2410_WTDAT);
->> -     writel(wtcon, wdt_base + S3C2410_WTCON);
->> +     writel(count, wdt->reg_base + S3C2410_WTDAT);
->> +     writel(wtcon, wdt->reg_base + S3C2410_WTCON);
->>
->>       wdd->timeout = (count * divisor) / freq;
->>
->> @@ -242,21 +262,23 @@ static struct watchdog_device s3c2410_wdd = {
->>
->>  static irqreturn_t s3c2410wdt_irq(int irqno, void *param)
->>  {
->> -     dev_info(wdt_dev, "watchdog timer expired (irq)\n");
->> +     struct s3c2410_wdt *wdt = platform_get_drvdata(param);
->> +
->> +     dev_info(wdt->dev, "watchdog timer expired (irq)\n");
->>
->> -     s3c2410wdt_keepalive(&s3c2410_wdd);
->> +     s3c2410wdt_keepalive(&wdt->wdt_device);
->>       return IRQ_HANDLED;
->>  }
->>
->> -
->>  #ifdef CONFIG_CPU_FREQ
->>
->>  static int s3c2410wdt_cpufreq_transition(struct notifier_block *nb,
->>                                         unsigned long val, void *data)
->>  {
->>       int ret;
->> +     struct s3c2410_wdt *wdt = freq_to_wdt(nb);
->>
->> -     if (!s3c2410wdt_is_running())
->> +     if (!s3c2410wdt_is_running(wdt))
->>               goto done;
->>
->>       if (val == CPUFREQ_PRECHANGE) {
->> @@ -265,14 +287,15 @@ static int s3c2410wdt_cpufreq_transition(struct
->> notifier_block *nb,
->>                * the watchdog is running.
->>                */
->>
->> -             s3c2410wdt_keepalive(&s3c2410_wdd);
->> +             s3c2410wdt_keepalive(&wdt->wdt_device);
->>       } else if (val == CPUFREQ_POSTCHANGE) {
->> -             s3c2410wdt_stop(&s3c2410_wdd);
->> +             s3c2410wdt_stop(&wdt->wdt_device);
->>
->> -             ret = s3c2410wdt_set_heartbeat(&s3c2410_wdd,
->> s3c2410_wdd.timeout);
->> +             ret = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
->> +                                             wdt->wdt_device.timeout);
->>
->>               if (ret >= 0)
->> -                     s3c2410wdt_start(&s3c2410_wdd);
->> +                     s3c2410wdt_start(&wdt->wdt_device);
->>               else
->>                       goto err;
->>       }
->> @@ -281,34 +304,35 @@ done:
->>       return 0;
->>
->>   err:
->> -     dev_err(wdt_dev, "cannot set new value for timeout %d\n",
->> -                             s3c2410_wdd.timeout);
->> +     dev_err(wdt->dev, "cannot set new value for timeout %d\n",
->> +                             wdt->wdt_device.timeout);
->>       return ret;
->>  }
->>
->> -static struct notifier_block s3c2410wdt_cpufreq_transition_nb = {
->> -     .notifier_call  = s3c2410wdt_cpufreq_transition,
->> -};
->> -
->> -static inline int s3c2410wdt_cpufreq_register(void)
->> +static inline int s3c2410wdt_cpufreq_register(struct s3c2410_wdt *wdt)
->>  {
->> -     return cpufreq_register_notifier(&s3c2410wdt_cpufreq_transition_nb,
->> +     wdt->freq_transition.notifier_call = s3c2410wdt_cpufreq_transition;
->> +
->> +     return cpufreq_register_notifier(&wdt->freq_transition,
->>                                        CPUFREQ_TRANSITION_NOTIFIER);
->>  }
->>
->> -static inline void s3c2410wdt_cpufreq_deregister(void)
->> +static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
->>  {
->> -     cpufreq_unregister_notifier(&s3c2410wdt_cpufreq_transition_nb,
->> +     wdt->freq_transition.notifier_call = s3c2410wdt_cpufreq_transition;
->> +
->> +     cpufreq_unregister_notifier(&wdt->freq_transition,
->>                                   CPUFREQ_TRANSITION_NOTIFIER);
->>  }
->>
->>  #else
->> -static inline int s3c2410wdt_cpufreq_register(void)
->> +
->> +static inline int s3c2410wdt_cpufreq_register(struct s3c2410_wdt *wdt)
->>  {
->>       return 0;
->>  }
->>
->> -static inline void s3c2410wdt_cpufreq_deregister(void)
->> +static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
->>  {
->>  }
->>  #endif
->> @@ -316,6 +340,9 @@ static inline void s3c2410wdt_cpufreq_deregister(void)
->>  static int s3c2410wdt_probe(struct platform_device *pdev)
->>  {
->>       struct device *dev;
->> +     struct s3c2410_wdt *wdt;
->> +     struct resource *wdt_mem;
->> +     struct resource *wdt_irq;
->>       unsigned int wtcon;
->>       int started = 0;
->>       int ret;
->> @@ -323,8 +350,14 @@ static int s3c2410wdt_probe(struct platform_device
->> *pdev)
->>       DBG("%s: probe=%p\n", __func__, pdev);
->>
->>       dev = &pdev->dev;
->> -     wdt_dev = &pdev->dev;
->>
->> +     wdt = devm_kzalloc(dev, sizeof(*wdt), GFP_KERNEL);
->> +     if (!wdt)
->> +             return -ENOMEM;
->> +
->> +     wdt->dev = &pdev->dev;
->> +     spin_lock_init(&wdt->lock);
->> +     wdt->wdt_device = s3c2410_wdd;
->>       wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>       if (wdt_mem == NULL) {
->>               dev_err(dev, "no memory resource specified\n");
->> @@ -339,24 +372,24 @@ static int s3c2410wdt_probe(struct platform_device
->> *pdev)
->>       }
->>
->>       /* get the memory region for the watchdog timer */
->> -     wdt_base = devm_ioremap_resource(dev, wdt_mem);
->> -     if (IS_ERR(wdt_base)) {
->> -             ret = PTR_ERR(wdt_base);
->> +     wdt->reg_base = devm_ioremap_resource(dev, wdt_mem);
->> +     if (IS_ERR(wdt->reg_base)) {
->> +             ret = PTR_ERR(wdt->reg_base);
->>               goto err;
->>       }
->>
->> -     DBG("probe: mapped wdt_base=%p\n", wdt_base);
->> +     DBG("probe: mapped reg_base=%p\n", wdt->reg_base);
->>
->> -     wdt_clock = devm_clk_get(dev, "watchdog");
->> -     if (IS_ERR(wdt_clock)) {
->> +     wdt->clock = devm_clk_get(dev, "watchdog");
->> +     if (IS_ERR(wdt->clock)) {
->>               dev_err(dev, "failed to find watchdog clock source\n");
->> -             ret = PTR_ERR(wdt_clock);
->> +             ret = PTR_ERR(wdt->clock);
->>               goto err;
->>       }
->>
->> -     clk_prepare_enable(wdt_clock);
->> +     clk_prepare_enable(wdt->clock);
->>
->> -     ret = s3c2410wdt_cpufreq_register();
->> +     ret = s3c2410wdt_cpufreq_register(wdt);
->>       if (ret < 0) {
->>               dev_err(dev, "failed to register cpufreq\n");
->>               goto err_clk;
->> @@ -365,9 +398,11 @@ static int s3c2410wdt_probe(struct platform_device
->> *pdev)
->>       /* see if we can actually set the requested timer margin, and if
->>        * not, try the default value */
->>
->> -     watchdog_init_timeout(&s3c2410_wdd, tmr_margin,  &pdev->dev);
->> -     if (s3c2410wdt_set_heartbeat(&s3c2410_wdd, s3c2410_wdd.timeout)) {
->> -             started = s3c2410wdt_set_heartbeat(&s3c2410_wdd,
->> +     watchdog_init_timeout(&wdt->wdt_device, tmr_margin, &pdev->dev);
->> +     ret = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
->> +                                     wdt->wdt_device.timeout);
->> +     if (ret) {
->> +             started = s3c2410wdt_set_heartbeat(&wdt->wdt_device,
->>
-> CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME);
->>
->>               if (started == 0)
->> @@ -386,9 +421,9 @@ static int s3c2410wdt_probe(struct platform_device
->> *pdev)
->>               goto err_cpufreq;
->>       }
->>
->> -     watchdog_set_nowayout(&s3c2410_wdd, nowayout);
->> +     watchdog_set_nowayout(&wdt->wdt_device, nowayout);
->>
->> -     ret = watchdog_register_device(&s3c2410_wdd);
->> +     ret = watchdog_register_device(&wdt->wdt_device);
->>       if (ret) {
->>               dev_err(dev, "cannot register watchdog (%d)\n", ret);
->>               goto err_cpufreq;
->> @@ -396,18 +431,20 @@ static int s3c2410wdt_probe(struct platform_device
->> *pdev)
->>
->>       if (tmr_atboot && started == 0) {
->>               dev_info(dev, "starting watchdog timer\n");
->> -             s3c2410wdt_start(&s3c2410_wdd);
->> +             s3c2410wdt_start(&wdt->wdt_device);
->>       } else if (!tmr_atboot) {
->>               /* if we're not enabling the watchdog, then ensure it is
->>                * disabled if it has been left running from the bootloader
->>                * or other source */
->>
->> -             s3c2410wdt_stop(&s3c2410_wdd);
->> +             s3c2410wdt_stop(&wdt->wdt_device);
->>       }
->>
->> +     platform_set_drvdata(pdev, wdt);
->> +
->>       /* print out a statement of readiness */
->>
->> -     wtcon = readl(wdt_base + S3C2410_WTCON);
->> +     wtcon = readl(wdt->reg_base + S3C2410_WTCON);
->>
->>       dev_info(dev, "watchdog %sactive, reset %sabled, irq %sabled\n",
->>                (wtcon & S3C2410_WTCON_ENABLE) ?  "" : "in",
->> @@ -417,64 +454,64 @@ static int s3c2410wdt_probe(struct platform_device
->> *pdev)
->>       return 0;
->>
->>   err_cpufreq:
->> -     s3c2410wdt_cpufreq_deregister();
->> +     s3c2410wdt_cpufreq_deregister(wdt);
->>
->>   err_clk:
->> -     clk_disable_unprepare(wdt_clock);
->> -     wdt_clock = NULL;
->> +     clk_disable_unprepare(wdt->clock);
->> +     wdt->clock = NULL;
->>
->>   err:
->> -     wdt_irq = NULL;
->> -     wdt_mem = NULL;
->>       return ret;
->>  }
->>
->>  static int s3c2410wdt_remove(struct platform_device *dev)
->>  {
->> -     watchdog_unregister_device(&s3c2410_wdd);
->> +     struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
->>
->> -     s3c2410wdt_cpufreq_deregister();
->> +     watchdog_unregister_device(&wdt->wdt_device);
->>
->> -     clk_disable_unprepare(wdt_clock);
->> -     wdt_clock = NULL;
->> +     s3c2410wdt_cpufreq_deregister(wdt);
->> +
->> +     clk_disable_unprepare(wdt->clock);
->> +     wdt->clock = NULL;
->>
->> -     wdt_irq = NULL;
->> -     wdt_mem = NULL;
->>       return 0;
->>  }
->>
->>  static void s3c2410wdt_shutdown(struct platform_device *dev)
->>  {
->> -     s3c2410wdt_stop(&s3c2410_wdd);
->> +     struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
->> +
->> +     s3c2410wdt_stop(&wdt->wdt_device);
->>  }
->>
->>  #ifdef CONFIG_PM_SLEEP
->>
->> -static unsigned long wtcon_save;
->> -static unsigned long wtdat_save;
->> -
->>  static int s3c2410wdt_suspend(struct device *dev)
->>  {
->> +     struct s3c2410_wdt *wdt = dev_get_drvdata(dev);
->> +
->>       /* Save watchdog state, and turn it off. */
->> -     wtcon_save = readl(wdt_base + S3C2410_WTCON);
->> -     wtdat_save = readl(wdt_base + S3C2410_WTDAT);
->> +     wdt->wtcon_save = readl(wdt->reg_base + S3C2410_WTCON);
->> +     wdt->wtdat_save = readl(wdt->reg_base + S3C2410_WTDAT);
->>
->>       /* Note that WTCNT doesn't need to be saved. */
->> -     s3c2410wdt_stop(&s3c2410_wdd);
->> +     s3c2410wdt_stop(&wdt->wdt_device);
->>
->>       return 0;
->>  }
->>
->>  static int s3c2410wdt_resume(struct device *dev)
->>  {
->> -     /* Restore watchdog state. */
->> +     struct s3c2410_wdt *wdt = dev_get_drvdata(dev);
->>
->> -     writel(wtdat_save, wdt_base + S3C2410_WTDAT);
->> -     writel(wtdat_save, wdt_base + S3C2410_WTCNT); /* Reset count */
->> -     writel(wtcon_save, wdt_base + S3C2410_WTCON);
->> +     /* Restore watchdog state. */
->> +     writel(wdt->wtdat_save, wdt->reg_base + S3C2410_WTDAT);
->> +     writel(wdt->wtdat_save, wdt->reg_base + S3C2410_WTCNT);/* Reset
->> count */
->> +     writel(wdt->wtcon_save, wdt->reg_base + S3C2410_WTCON);
->>
->>       dev_info(dev, "watchdog %sabled\n",
->> -             (wtcon_save & S3C2410_WTCON_ENABLE) ? "en" : "dis");
->> +             (wdt->wtcon_save & S3C2410_WTCON_ENABLE) ? "en" : "dis");
->>
->>       return 0;
->>  }
->> --
->> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks and Regards,
+- Seung-Woo Kim
+
+>=20
+> regards,
+> Rahul Sharma.
+>=20
+>=20
+>=20
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
+
+--=20
+Seung-Woo Kim
+Samsung Software R&D Center
+--
