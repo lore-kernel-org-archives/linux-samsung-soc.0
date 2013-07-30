@@ -1,92 +1,57 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and
- PLL36xx for samsung SoCs
-Date: Tue, 30 Jul 2013 18:43:04 +0530
-Message-ID: <CAGm_ybiiCHVP5GPVe01F==SF+3rCR3a0mFGbxthEVOcbTEGmtA@mail.gmail.com>
-References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
-	<CAKew6eUOy4=D08v_iq7CTRY5gvt37VAN7Z7WOr2Yt25znDJb2g@mail.gmail.com>
-	<CAGm_ybiVZOPBJJ0bYX33wafn1So6aqSAnk7myXZ+Z+RfLBeBQw@mail.gmail.com>
-	<1524664.UCV47tfIRU@flatron>
-	<20130621163143.9136.28807@quantum>
-	<51C85F8F.9050501@samsung.com>
-	<20130624190227.20448.68120@quantum>
-	<007001ce7149$1f683f40$5e38bdc0$%kim@samsung.com>
-	<CAKew6eVW6dOzLRN2CG8jT3Oo1uzKrXqi1aRYkAHmUu61dBSDpA@mail.gmail.com>
-	<CAGm_ybj31kv=iW2YKsHnBRJ741G2amSNAJf+Mx8Z-JMoVynZ8w@mail.gmail.com>
-	<20130723012621.7598.46496@quantum>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v4 1/6] clk/exynos5250: Fix HDMI clock number in documentation
+Date: Tue, 30 Jul 2013 14:00:06 -0700
+Message-ID: <20130730210006.5270.42195@quantum>
+References: <1374728857-4208-1-git-send-email-rahul.sharma@samsung.com>
+ <1374728857-4208-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:40340 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754058Ab3G3NNG (ORCPT
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:36820 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756991Ab3G3VAM convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Jul 2013 09:13:06 -0400
-Received: by mail-wg0-f45.google.com with SMTP id x12so6135056wgg.24
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2013 06:13:04 -0700 (PDT)
-In-Reply-To: <20130723012621.7598.46496@quantum>
+	Tue, 30 Jul 2013 17:00:12 -0400
+Received: by mail-pb0-f51.google.com with SMTP id jt11so790408pbb.38
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2013 14:00:11 -0700 (PDT)
+In-Reply-To: <1374728857-4208-2-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, Vikas Sajjan <vikas.sajjan@linaro.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Arun Kumar K <arun.kk@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi Mike,
+Quoting Rahul Sharma (2013-07-24 22:07:32)
+> From: Arun Kumar K <arun.kk@samsung.com>
+> 
+> This patch corrects the HDMI clock number given wrongly
+> in the documentation.
+> 
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 
-On Tue, Jul 23, 2013 at 6:56 AM, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Vikas Sajjan (2013-07-21 23:15:27)
->> Hi Kukjin / Mike,
->>
->> Can you apply this series
->
-> Let me apply this to see if the dependencies are taken care of now. If
-> so I'll just take it through the clk tree.
->
+You can drop this patch as it is fixed in the clk-next branch already by
+commit "of/documentation: Fix a typo in exynos5250-clock.txt", 07c2ae9c.
 
-Any updates on this series.
-I could NOT see them at
-http://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=shortlog;h=refs/heads/clk-next
+Regards,
+Mike
 
-
-> Regards,
-> Mike
->
->>
->> On Tue, Jul 16, 2013 at 7:10 PM, Yadwinder Singh Brar
->> <yadi.brar01@gmail.com> wrote:
->> > Hi Kukjin / Mike,
->> >
->> > On Tue, Jun 25, 2013 at 7:40 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> >> Mike Turquette wrote:
->> >>>
->> >>> Quoting Kukjin Kim (2013-06-24 08:02:39)
->> >>> > On 06/22/13 01:31, Mike Turquette wrote:
->> >>> > >
->> >>> > > Acked-by: Mike Turquette<mturquette@linaro.org>
->> >>> > >
->> >>> > > Or I can take this through the clk tree. Either way is fine.
->> >>> > >
->> >>> > Mike, please go ahead taking this series into the clk tree for 3.11.
->> >>>
->> >>> Actually it might be better for you to take it. Patch #5 relies on
->> >>> drivers/clk/samsung/clk-exynos5420.c which only exists in the samsung
->> >>> tree.  It was introduced by commit 1609027f, "clk: exynos5420: register
->> >>> clocks using common clock framework".
->> >>>
->> >> Yes, you're right. It depends on soc-exynos5420 stuff in samsung tree.
->> >>
->> >>> And these patches need to be applied with some fuzz to the clk tree due
->> >>> to other changes which are not in my tree and only present in yours.
->> >>>
->> >>> The best two options are either for you to take this series or it can be
->> >>> rebased on top of clk-next, after which I'll apply it.
->> >>>
->> >> Let me try to send this series via samsung tree for v3.11 but I'm not sure because it's a little bit late for arm-soc tree.
->> >>
->> >> Thanks for your ack, just note I will send to arm-soc tonight in my time.
->> >>
->> >
->> > Can we get this series merge now in any of trees.
->> > Please let me if its required to rebase it.
->> >
->> > Regards,
->> > Yadwinder
+> ---
+>  Documentation/devicetree/bindings/clock/exynos5250-clock.txt |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> index 781a627..1a05761 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> @@ -154,7 +154,7 @@ clock which they consume.
+>    dsim0                        341
+>    dp                   342
+>    mixer                        343
+> -  hdmi                 345
+> +  hdmi                 344
+>  
+>  Example 1: An example of a clock controller node is listed below.
+>  
+> -- 
+> 1.7.10.4
