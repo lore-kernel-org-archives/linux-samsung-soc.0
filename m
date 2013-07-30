@@ -1,191 +1,208 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v3] usb: phy-samsung-usb: Simplify PMU register handling
-Date: Tue, 30 Jul 2013 09:25:51 +0300
-Message-ID: <20130730062551.GG9155@radagast>
-References: <1375134253-18406-1-git-send-email-jwerner@chromium.org>
-Reply-To: <balbi@ti.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: RE: [PATCH v8 05/12] clk: exynos5250: add gate clock descriptions of
+ System MMU
+Date: Mon, 29 Jul 2013 23:46:56 -0700
+Message-ID: <20130730064655.22022.62937@quantum>
+References: <003b01ce89f3$2be4db80$83ae9280$@samsung.com>
+ <20130726200107.7598.82010@quantum>
+ <001901ce8aa8$d1d6fef0$7584fcd0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0z5c7mBtSy1wdr4F"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1375134253-18406-1-git-send-email-jwerner@chromium.org>
+In-Reply-To: <001901ce8aa8$d1d6fef0$7584fcd0$@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: Cho KyongHo <pullip.cho@samsung.com>, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Grant Grundler' <grundler@chromium.org>, 'Joerg Roedel' <joro@8bytes.org>, 'Keyyoung Park' <keyyoung.park@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Antonios Motakis' <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, 'Rahul Sharma' <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---0z5c7mBtSy1wdr4F
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Quoting Cho KyongHo (2013-07-27 02:08:11)
+> > -----Original Message-----
+> > From: Mike Turquette [mailto:mturquette@linaro.org]
+> > Sent: Saturday, July 27, 2013 5:01 AM
+> > 
+> > Quoting Cho KyongHo (2013-07-26 04:27:54)
+> > > This adds gate clocks of all System MMUs and their master IPs
+> > > that are not apeared in clk-exynos5250.c
+> > >
+> > > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+> > 
+> > Change looks good to me. Are you OK if I take it into the clk tree or do
+> > you want to keep this series together?
+> 
+> I would like you to pick this to your tree and let me know which branch
+> contains this patch.
+> Then I will remove this from my patch series.
 
-On Mon, Jul 29, 2013 at 02:44:13PM -0700, Julius Werner wrote:
-> This patch simplifies the way the phy-samsung-usb code finds the correct
-> power management register to enable PHY clock gating. Previously, the
-> code would calculate the register address from a device tree supplied
-> base address and add an offset based on the PHY type.
->=20
-> Since every PHY has its own device tree entry and needs only one
-> register, we can just encode the address itself in the device tree and
-> remove the diffentiation in the code. The bitmask needed to specify the
-> bit within that register stays in place, allowing support for platforms
-> like s3c64xx that use different bits within the same register. Due to
-> this simplification, the whole complication of a Samsung-specific USB
-> PHY type can be removed from the PHY driver.
->=20
-> Signed-off-by: Julius Werner <jwerner@chromium.org>
+camif_top corresponds to 345 in your patch, but this conflicts the g2d
+clock introduced in patch "clk: exynos5250: Add G2D gate clock" in the
+clk tree. I've pushed out the latest clk-next branch with this change:
 
-alright, let's try to split this patch down, it's too large.
+git://git.linaro.org/people/mturquette/linux.git clk-next
 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos=
-5250.dtsi
-> index ef57277..5a754d7 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -473,7 +473,7 @@
->  		ranges;
-> =20
->  		usbphy-sys {
-> -			reg =3D <0x10040704 0x8>;
-> +			reg =3D <0x10040704 0x4>;
->  		};
->  	};
-> =20
-> @@ -505,7 +505,7 @@
->  		ranges;
-> =20
->  		usbphy-sys {
-> -			reg =3D <0x10040704 0x8>,
-> +			reg =3D <0x10040708 0x4>,
->  			      <0x10050230 0x4>;
->  		};
->  	};
-> diff --git a/drivers/usb/phy/phy-samsung-usb.c b/drivers/usb/phy/phy-sams=
-ung-usb.c
-> index ac025ca..32c5264 100644
-> --- a/drivers/usb/phy/phy-samsung-usb.c
-> +++ b/drivers/usb/phy/phy-samsung-usb.c
-> @@ -27,7 +27,6 @@
->  #include <linux/io.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> -#include <linux/usb/samsung_usb_phy.h>
-> =20
->  #include "phy-samsung-usb.h"
-> =20
-> @@ -42,9 +41,9 @@ int samsung_usbphy_parse_dt(struct samsung_usbphy *sphy)
->  		return -ENODEV;
->  	}
-> =20
-> -	sphy->pmuregs =3D of_iomap(usbphy_sys, 0);
-> +	sphy->pmureg =3D of_iomap(usbphy_sys, 0);
+Can you rebase your change on top of this and resolve the clock id
+mapping?
 
-this rename can go in a separate patch.
+Thanks,
+Mike
 
-> @@ -75,35 +74,25 @@ EXPORT_SYMBOL_GPL(samsung_usbphy_parse_dt);
->   */
->  void samsung_usbphy_set_isolation_4210(struct samsung_usbphy *sphy, bool=
- on)
->  {
-> -	void __iomem *reg =3D NULL;
->  	u32 reg_val;
-> -	u32 en_mask =3D 0;
-> =20
-> -	if (!sphy->pmuregs) {
-> +	if (!sphy->pmureg) {
->  		dev_warn(sphy->dev, "Can't set pmu isolation\n");
->  		return;
->  	}
-> =20
-> -	if (sphy->phy_type =3D=3D USB_PHY_TYPE_DEVICE) {
-> -		reg =3D sphy->pmuregs + sphy->drv_data->devphy_reg_offset;
-> -		en_mask =3D sphy->drv_data->devphy_en_mask;
-> -	} else if (sphy->phy_type =3D=3D USB_PHY_TYPE_HOST) {
-> -		reg =3D sphy->pmuregs + sphy->drv_data->hostphy_reg_offset;
-> -		en_mask =3D sphy->drv_data->hostphy_en_mask;
-> -	}
->=20
-> -	reg_val =3D readl(reg);
-> +	reg_val =3D readl(sphy->pmureg);
-> =20
->  	if (on)
-> -		reg_val &=3D ~en_mask;
-> +		reg_val &=3D ~sphy->drv_data->phy_en_mask;
->  	else
-> -		reg_val |=3D en_mask;
-> +		reg_val |=3D sphy->drv_data->phy_en_mask;
-
-removing the if case up there and updating this if here could be a patch
-of its own.
-
-> @@ -111,7 +100,7 @@ EXPORT_SYMBOL_GPL(samsung_usbphy_set_isolation_4210);
->  /*
->   * Configure the mode of working of usb-phy here: HOST/DEVICE.
->   */
-> -void samsung_usbphy_cfg_sel(struct samsung_usbphy *sphy)
-> +void samsung_usbphy_cfg_sel(struct samsung_usbphy *sphy, bool device_mod=
-e)
-
-passing this extra parameter could be a patch of its own.
-
-> @@ -122,31 +111,15 @@ void samsung_usbphy_cfg_sel(struct samsung_usbphy *=
-sphy)
-> =20
->  	reg =3D readl(sphy->sysreg);
-> =20
-> -	if (sphy->phy_type =3D=3D USB_PHY_TYPE_DEVICE)
-> +	if (device_mode)
->  		reg &=3D ~EXYNOS_USB20PHY_CFG_HOST_LINK;
-> -	else if (sphy->phy_type =3D=3D USB_PHY_TYPE_HOST)
-> +	else
->  		reg |=3D EXYNOS_USB20PHY_CFG_HOST_LINK;
-> =20
->  	writel(reg, sphy->sysreg);
->  }
->  EXPORT_SYMBOL_GPL(samsung_usbphy_cfg_sel);
-> =20
-> -/*
-> - * PHYs are different for USB Device and USB Host.
-> - * This make sure that correct PHY type is selected before
-> - * any operation on PHY.
-> - */
-> -int samsung_usbphy_set_type(struct usb_phy *phy,
-> -				enum samsung_usb_phy_type phy_type)
-> -{
-> -	struct samsung_usbphy *sphy =3D phy_to_sphy(phy);
-> -
-> -	sphy->phy_type =3D phy_type;
-> -
-> -	return 0;
-> -}
-> -EXPORT_SYMBOL_GPL(samsung_usbphy_set_type);
-
-removing this function should be a patch of its own.
-
---=20
-balbi
-
---0z5c7mBtSy1wdr4F
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR91xvAAoJEIaOsuA1yqREUlMP/3+Kq5szEK9694Dy7TebVSub
-KC3D+kOq+jlgiZMOhgVf/hp49C9+N1ZpSIl7tn0Qp5L4TFfrDvVjBssxWjddqY0x
-kO/hQk1g/4CSx+NmaKTGZgo/bFy47x+ZoQphaiDmqnQ6094Q/K75cTr5Bi1SohdI
-2d8+e8MzUvcxPTB/uJ06M6gqVCj4ITN19+rLT3cYndvVqxots9N5ZXwoJ+sE1XV6
-GaNLsxurNzxTRM0rYaXPfsFkVsvdK0Ewlr4vkAG1ErTggSGlR5aYmpIAI+CaxKvV
-37vOeDFRdPQib9ajehpP6MnIhODIAVrDmwqYaTiftH9+2GrAS7CxLCKwbu/POKjS
-TGtMmQXkjbus2RbRlOf1vaCVTiQQl9roxILIt71SLCGmFUl+T+X31tPI6UUWmPwb
-pJrbvquSiQJwwD/+wIJfw1RDqCIhLp0xPH8GyK0foQF8BWGCj7jVIRxsw3/XPycL
-t6Ez+VA1rWi4Z4Lb9aRmb9DugsOIfOjQfWXDeCHDFoc6r7ZECuaVu25pJ1hEADSH
-tlr7MHkMU2Y6k9kr9LE4bug2gYjRR36AjSwgtmqq7aN9mFL1lbtM4fXYSAZegfRg
-NcdBaBPBvt093+PIdWWfiw4OzVaqElcph9l9CIlEST6RQ/AKhNSFekhb1vu88rtH
-4i0/b2k04CSha3FLxHRJ
-=L1qn
------END PGP SIGNATURE-----
-
---0z5c7mBtSy1wdr4F--
+> 
+> Thank you,
+> Cho KyongHo.
+> > 
+> > Regards,
+> > Mike
+> > 
+> > > ---
+> > >  .../devicetree/bindings/clock/exynos5250-clock.txt |   28 +++++++++-
+> > >  drivers/clk/samsung/clk-exynos5250.c               |   57 ++++++++++++++++---
+> > >  2 files changed, 75 insertions(+), 10 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > index 781a627..df49694 100644
+> > > --- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > +++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > @@ -154,7 +154,33 @@ clock which they consume.
+> > >    dsim0                        341
+> > >    dp                   342
+> > >    mixer                        343
+> > > -  hdmi                 345
+> > > +  hdmi                 344
+> > > +  camif_top            345
+> > > +  smmu_fimc_lite0      346
+> > > +  smmu_fimc_lite1      347
+> > > +  smmu_fimc_lite2      348
+> > > +  smmu_tv              349
+> > > +  smmu_fimd1           350
+> > > +  smmu_2d              351
+> > > +  fimc_isp             352
+> > > +  fimc_drc             353
+> > > +  fimc_fd              354
+> > > +  fimc_scc             355
+> > > +  fimc_scp             356
+> > > +  fimc_mcuctl          357
+> > > +  fimc_odc             358
+> > > +  fimc_dis             359
+> > > +  fimc_3dnr            360
+> > > +  smmu_fimc_isp                361
+> > > +  smmu_fimc_drc                362
+> > > +  smmu_fimc_fd         363
+> > > +  smmu_fimc_scc                364
+> > > +  smmu_fimc_scp                365
+> > > +  smmu_fimc_mcuctl     366
+> > > +  smmu_fimc_odc                367
+> > > +  smmu_fimc_dis0       368
+> > > +  smmu_fimc_dis1       369
+> > > +  smmu_fimc_3dnr       370
+> > >
+> > >  Example 1: An example of a clock controller node is listed below.
+> > >
+> > > diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> > > index 22d7699..e242bde 100644
+> > > --- a/drivers/clk/samsung/clk-exynos5250.c
+> > > +++ b/drivers/clk/samsung/clk-exynos5250.c
+> > > @@ -53,12 +53,15 @@
+> > >  #define DIV_PERIC3             0x10564
+> > >  #define DIV_PERIC4             0x10568
+> > >  #define DIV_PERIC5             0x1056c
+> > > +#define GATE_IP_ISP0           0x0C800
+> > > +#define GATE_IP_ISP1           0x0C800
+> > >  #define GATE_IP_GSCL           0x10920
+> > >  #define GATE_IP_MFC            0x1092c
+> > >  #define GATE_IP_GEN            0x10934
+> > >  #define GATE_IP_FSYS           0x10944
+> > >  #define GATE_IP_PERIC          0x10950
+> > >  #define GATE_IP_PERIS          0x10960
+> > > +#define GATE_IP_ACP            0x18800
+> > >  #define SRC_CDREX              0x20200
+> > >  #define PLL_DIV2_SEL           0x20a24
+> > >  #define GATE_IP_DISP1          0x10928
+> > > @@ -100,6 +103,14 @@ enum exynos5250_clks {
+> > >         tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec, mct,
+> > >         wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi,
+> > >
+> > > +       camif_top, smmu_fimc_lite0, smmu_fimc_lite1, smmu_fimc_lite2,
+> > > +       smmu_tv, smmu_fimd1, smmu_2d,
+> > > +       fimc_isp, fimc_drc, fimc_fd, fimc_scc, fimc_scp, fimc_mcuctl, fimc_odc,
+> > > +       fimc_dis, fimc_3dnr,
+> > > +       smmu_fimc_isp, smmu_fimc_drc, smmu_fimc_fd, smmu_fimc_scc,
+> > > +       smmu_fimc_scp, smmu_fimc_mcuctl, smmu_fimc_odc, smmu_fimc_dis0,
+> > > +       smmu_fimc_dis1, smmu_fimc_3dnr,
+> > > +
+> > >         nr_clks,
+> > >  };
+> > >
+> > > @@ -320,19 +331,26 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+> > >         GATE(gscl3, "gscl3", "aclk266", GATE_IP_GSCL, 3, 0, 0),
+> > >         GATE(gscl_wa, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
+> > >         GATE(gscl_wb, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
+> > > -       GATE(smmu_gscl0, "smmu_gscl0", "aclk266", GATE_IP_GSCL, 7, 0, 0),
+> > > -       GATE(smmu_gscl1, "smmu_gscl1", "aclk266", GATE_IP_GSCL, 8, 0, 0),
+> > > -       GATE(smmu_gscl2, "smmu_gscl2", "aclk266", GATE_IP_GSCL, 9, 0, 0),
+> > > -       GATE(smmu_gscl3, "smmu_gscl3", "aclk266", GATE_IP_GSCL, 10, 0, 0),
+> > > +       GATE(smmu_gscl0, "smmu_gscl0", "none", GATE_IP_GSCL, 7, 0, 0),
+> > > +       GATE(smmu_gscl1, "smmu_gscl1", "none", GATE_IP_GSCL, 8, 0, 0),
+> > > +       GATE(smmu_gscl2, "smmu_gscl2", "none", GATE_IP_GSCL, 9, 0, 0),
+> > > +       GATE(smmu_gscl3, "smmu_gscl3", "none", GATE_IP_GSCL, 10, 0, 0),
+> > > +       GATE(camif_top, "camif_top", "aclk266", GATE_IP_GSCL, 4, 0, 0),
+> > > +       GATE(smmu_fimc_lite0, "smmu_fimc_lite0", "none",
+> > > +                                               GATE_IP_GSCL, 12, 0, 0),
+> > > +       GATE(smmu_fimc_lite1, "smmu_fimc_lite1", "none",
+> > > +                                               GATE_IP_GSCL, 13, 0, 0),
+> > > +       GATE(smmu_fimc_lite2, "smmu_fimc_lite2", "none",
+> > > +                                               GATE_IP_GSCL, 14, 0, 0),
+> > >         GATE(mfc, "mfc", "aclk333", GATE_IP_MFC, 0, 0, 0),
+> > > -       GATE(smmu_mfcl, "smmu_mfcl", "aclk333", GATE_IP_MFC, 1, 0, 0),
+> > > -       GATE(smmu_mfcr, "smmu_mfcr", "aclk333", GATE_IP_MFC, 2, 0, 0),
+> > > +       GATE(smmu_mfcr, "smmu_mfcr", "none", GATE_IP_MFC, 1, 0, 0),
+> > > +       GATE(smmu_mfcl, "smmu_mfcl", "none", GATE_IP_MFC, 2, 0, 0),
+> > >         GATE(rotator, "rotator", "aclk266", GATE_IP_GEN, 1, 0, 0),
+> > >         GATE(jpeg, "jpeg", "aclk166", GATE_IP_GEN, 2, 0, 0),
+> > >         GATE(mdma1, "mdma1", "aclk266", GATE_IP_GEN, 4, 0, 0),
+> > > -       GATE(smmu_rotator, "smmu_rotator", "aclk266", GATE_IP_GEN, 6, 0, 0),
+> > > -       GATE(smmu_jpeg, "smmu_jpeg", "aclk166", GATE_IP_GEN, 7, 0, 0),
+> > > -       GATE(smmu_mdma1, "smmu_mdma1", "aclk266", GATE_IP_GEN, 9, 0, 0),
+> > > +       GATE(smmu_rotator, "smmu_rotator", "none", GATE_IP_GEN, 6, 0, 0),
+> > > +       GATE(smmu_jpeg, "smmu_jpeg", "none", GATE_IP_GEN, 7, 0, 0),
+> > > +       GATE(smmu_mdma1, "smmu_mdma1", "none", GATE_IP_GEN, 9, 0, 0),
+> > >         GATE(pdma0, "pdma0", "aclk200", GATE_IP_FSYS, 1, 0, 0),
+> > >         GATE(pdma1, "pdma1", "aclk200", GATE_IP_FSYS, 2, 0, 0),
+> > >         GATE(sata, "sata", "aclk200", GATE_IP_FSYS, 6, 0, 0),
+> > > @@ -462,6 +480,27 @@ struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+> > >         GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
+> > >         GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
+> > >         GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
+> > > +       GATE(smmu_tv, "smmu_tv", "none", GATE_IP_DISP1, 2, 0, 0),
+> > > +       GATE(smmu_fimd1, "smmu_fimd1", "none", GATE_IP_DISP1, 8, 0, 0),
+> > > +
+> > > +       GATE(smmu_fimc_isp, "smmu_fimc_isp", "none", GATE_IP_ISP0, 8, 0, 0),
+> > > +       GATE(smmu_fimc_drc, "smmu_fimc_drc", "none", GATE_IP_ISP0, 9, 0, 0),
+> > > +       GATE(smmu_fimc_fd, "smmu_fimc_fd", "none", GATE_IP_ISP0, 10, 0, 0),
+> > > +       GATE(smmu_fimc_scc, "smmu_fimc_scc", "none",
+> > > +                                                       GATE_IP_ISP0, 11, 0, 0),
+> > > +       GATE(smmu_fimc_scp, "smmu_fimc_scp", "none",
+> > > +                                                       GATE_IP_ISP0, 12, 0, 0),
+> > > +       GATE(smmu_fimc_mcuctl, "smmu_fimc_mcuctl", "none",
+> > > +                                                       GATE_IP_ISP0, 13, 0, 0),
+> > > +       GATE(smmu_fimc_odc, "smmu_fimc_odc", "none", GATE_IP_ISP1, 4, 0, 0),
+> > > +       GATE(smmu_fimc_dis0, "smmu_fimc_dis0", "none",
+> > > +                                                       GATE_IP_ISP1, 5, 0, 0),
+> > > +       GATE(smmu_fimc_dis1, "smmu_fimc_dis1", "none",
+> > > +                                                       GATE_IP_ISP1, 6, 0, 0),
+> > > +       GATE(smmu_fimc_3dnr, "smmu_fimc_3dnr", "none",
+> > > +                                                       GATE_IP_ISP1, 7, 0, 0),
+> > > +
+> > > +       GATE(smmu_2d, "smmu_2d", "none", GATE_IP_ACP, 7, 0, 0),
+> > >  };
+> > >
+> > >  static __initdata struct of_device_id ext_clk_match[] = {
+> > > --
+> > > 1.7.2.5
+> > >
+> > >
+> > >
+> > > _______________________________________________
+> > > linux-arm-kernel mailing list
+> > > linux-arm-kernel@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
