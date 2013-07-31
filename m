@@ -1,46 +1,32 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 3/5] mmc: dw_mmc: Add exynos resume_noirq callback to
- clear WAKEUP_INT
-Date: Wed, 31 Jul 2013 09:18:23 -0700
-Message-ID: <CAD=FV=XZcf8xWWxrCoe9KqjnQs4p4y7ENnuUYsVKU+yrE09GeQ@mail.gmail.com>
-References: <1373391071-6312-1-git-send-email-dianders@chromium.org>
-	<1373411961-23812-1-git-send-email-dianders@chromium.org>
-	<1373411961-23812-4-git-send-email-dianders@chromium.org>
-	<002a01ce7d7d$6bd9e870$438db950$%jun@samsung.com>
-	<CAD=FV=UtX0Z1ABdi5h270ks8Py2o1iPK4DonOHJH3N0Q1YShTQ@mail.gmail.com>
-	<003f01ce8154$2f5ea1d0$8e1be570$%jun@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] of: provide of_platform_unpopulate()
+Date: Wed, 31 Jul 2013 11:28:24 -0500
+Message-ID: <51F93B28.3030001@gmail.com>
+References: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de>  <51EBF33A.4050207@gmail.com> <51EC4908.4040504@gmail.com>  <CACxGe6sqv2Wsp26MWqqs9W_eWO3tjs-+2z3z8fC=2fe-BjJvkA@mail.gmail.com> <1375090382.3859.38.camel@pasglop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f175.google.com ([209.85.216.175]:40923 "EHLO
-	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756867Ab3GaQS0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 31 Jul 2013 12:18:26 -0400
-Received: by mail-qc0-f175.google.com with SMTP id s11so475574qcv.20
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2013 09:18:25 -0700 (PDT)
-In-Reply-To: <003f01ce8154$2f5ea1d0$8e1be570$%jun@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1375090382.3859.38.camel@pasglop>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Grant Likely <grant.likely@linaro.org>, George Cherian <george.cherian@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Roger Quadros <rogerq@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: Chris Ball <cjb@laptop.org>, Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Seungwon,
+On 07/29/2013 04:33 AM, Benjamin Herrenschmidt wrote:
+> On Mon, 2013-07-22 at 00:44 +0100, Grant Likely wrote:
+>>> BTW, it looks like Grant has attempted this already:
+>>
+>> Yup, things broke badly. Unfortunately the of_platform_device and
+>> platform_device history doesn't treat resources in the same way. I
+>> would like to merge the code, but I haven't been able to figure out a
+>> clean way to do it. Looks like we do need the unpopulate function.
+> 
+> What is the exact problem Grant ? Care to give me an example ?
+> 
 
-On Mon, Jul 15, 2013 at 5:09 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> Sorry for late response.
-> Yes, it's not clear.
-> If you get the confirmation, could you share this problem?
-> Possibly, auto-clear may not be implemented.
-> Then, manual should be correct.
+See this thread:
 
-I just got an update from my contacts.  They confirm that bit 11 is
-not automatically cleared and that writing to it will clear it.
-Hopefully this information will make it into the next version of any
-documentation that you receive as well.
+http://www.mail-archive.com/linuxppc-dev@lists.ozlabs.org/msg63678.html
 
-It is still unclear exactly why the WAKEUP_INT was being asserted on
-our board despite the fact that all of the wakeup control signals
-(bits 10:8) were 0.  That is still being investigated.
-
--Doug
+Rob
