@@ -1,112 +1,60 @@
 From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: RE: [PATCH Resend 1/1] clk: exynos4: Add clock entries for TMU
-Date: Tue, 30 Jul 2013 21:00:56 -0700
-Message-ID: <20130731040056.24490.65774@quantum>
-References: <1374660555-17429-1-git-send-email-sachin.kamat@linaro.org>
- <0eb201ce8866$212e3080$638a9180$@org>
+Subject: Re: [PATCH v2 Resend 2/3] of/documentation: Update G2D documentation
+Date: Tue, 30 Jul 2013 21:02:23 -0700
+Message-ID: <20130731040223.24490.62098@quantum>
+References: <1373351355-27444-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:48041 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750735Ab3GaEBA convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:41074 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750808Ab3GaEC2 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 31 Jul 2013 00:01:00 -0400
-Received: by mail-pd0-f176.google.com with SMTP id q10so246917pdj.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2013 21:01:00 -0700 (PDT)
-In-Reply-To: <0eb201ce8866$212e3080$638a9180$@org>
+	Wed, 31 Jul 2013 00:02:28 -0400
+Received: by mail-pa0-f46.google.com with SMTP id fa1so360050pad.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2013 21:02:27 -0700 (PDT)
+In-Reply-To: <1373351355-27444-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, tomasz.figa@gmail.com, Inki Dae <inki.dae@samsung.com>
 
-Quoting Kukjin Kim (2013-07-24 05:05:46)
-> Sachin Kamat wrote:
-> > 
-> > Added clock entries for thermal management unit (TMU) for
-> > Exynos4 SoCs.
-> > 
-> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Quoting Sachin Kamat (2013-07-08 23:29:15)
+> Exynos5250 G2D IP requires only the gate clock. Update the
+> binding documentation accordingly.
 > 
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> Mike, I remember you're ok this for v3.12 so if you do not apply this in
-> clk-next yet, please go ahead :)
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Cc: Inki Dae <inki.dae@samsung.com>
 
-You remember correctly. I've pulled this into clk-next.
+Taken into clk-next.
 
-Regards,
+Thanks,
 Mike
 
+> ---
+> Updated the description of clock-names as suggested by Tomasz Figa.
+> ---
+>  .../devicetree/bindings/gpu/samsung-g2d.txt        |    7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> Thanks,
-> Kukjin
-> 
-> > ---
-> > Resending this (after rebasing) based on the below discussion:
-> > http://comments.gmane.org/gmane.linux.kernel.samsung-soc/19933
-> > 
-> > Previous version:
-> > http://comments.gmane.org/gmane.linux.kernel.samsung-soc/18081
-> > ---
-> >  .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
-> >  drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
-> >  2 files changed, 4 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-> > b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-> > index 14d5c2a..c6bf8a6 100644
-> > --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-> > +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-> > @@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
-> >    spi0_isp_sclk       380     Exynos4x12
-> >    spi1_isp_sclk       381     Exynos4x12
-> >    uart_isp_sclk       382     Exynos4x12
-> > +  tmu_apbif           383
-> > 
-> >               [Mux Clocks]
-> > 
-> > diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-
-> > exynos4.c
-> > index 75635eb..cee297d 100644
-> > --- a/drivers/clk/samsung/clk-exynos4.c
-> > +++ b/drivers/clk/samsung/clk-exynos4.c
-> > @@ -169,7 +169,7 @@ enum exynos4_clks {
-> >       gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1,
-> > mcuctl_isp,
-> >       mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp,
-> > uart_isp,
-> >       asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk,
-> > spi0_isp_sclk,
-> > -     spi1_isp_sclk, uart_isp_sclk,
-> > +     spi1_isp_sclk, uart_isp_sclk, tmu_apbif,
-> > 
-> >       /* mux clocks */
-> >       mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
-> > @@ -814,6 +814,7 @@ static struct samsung_gate_clock
-> exynos4210_gate_clks[]
-> > __initdata = {
-> >       GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0,
-> > "keypad"),
-> >       GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
-> >                       E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0,
-> > "sclk_fimd"),
-> > +     GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0,
-> > 0),
-> >  };
-> > 
-> >  /* list of gate clocks supported in exynos4x12 soc */
-> > @@ -915,6 +916,7 @@ static struct samsung_gate_clock
-> exynos4x12_gate_clks[]
-> > __initdata = {
-> >       GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
-> >                       CLK_IGNORE_UNUSED, 0),
-> >       GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
-> > +     GATE(tmu_apbif, "tmu_apbif", "aclk100", E4X12_GATE_IP_PERIR, 17, 0,
-> > 0),
-> >  };
-> > 
-> >  /*
-> > --
-> > 1.7.9.5
+> diff --git a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> index 3f454ff..c4f358d 100644
+> --- a/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> +++ b/Documentation/devicetree/bindings/gpu/samsung-g2d.txt
+> @@ -11,8 +11,11 @@ Required properties:
+>  
+>    - interrupts : G2D interrupt number to the CPU.
+>    - clocks : from common clock binding: handle to G2D clocks.
+> -  - clock-names : from common clock binding: must contain "sclk_fimg2d" and
+> -                 "fimg2d", corresponding to entries in the clocks property.
+> +  - clock-names : names of clocks listed in clocks property, in the same
+> +                 order, depending on SoC type:
+> +                 - for S5PV210 and Exynos4 based SoCs: "fimg2d" and
+> +                   "sclk_fimg2d"
+> +                 - for Exynos5250 SoC: "fimg2d".
+>  
+>  Example:
+>         g2d@12800000 {
+> -- 
+> 1.7.9.5
