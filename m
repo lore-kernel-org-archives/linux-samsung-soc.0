@@ -1,72 +1,112 @@
 From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 1/3] clk: exynos5250: Add G2D gate clock
-Date: Tue, 30 Jul 2013 20:42:35 -0700
-Message-ID: <20130731034235.5270.7481@quantum>
-References: <1373013749-14530-1-git-send-email-sachin.kamat@linaro.org>
- <20130726201800.7598.54329@quantum>
- <CAK9yfHw6KtVDAns-1JhNpiS0brTeUpfiHS-v3q7H2GLWkY-Adw@mail.gmail.com>
- <20130730064800.22022.14773@quantum>
- <CAK9yfHxLjYNjQ9h-N8hNLBvqyUTxNzt=Bw10=mEA=D1kg2f9dw@mail.gmail.com>
+Subject: Re: RE: [PATCH Resend 1/1] clk: exynos4: Add clock entries for TMU
+Date: Tue, 30 Jul 2013 21:00:56 -0700
+Message-ID: <20130731040056.24490.65774@quantum>
+References: <1374660555-17429-1-git-send-email-sachin.kamat@linaro.org>
+ <0eb201ce8866$212e3080$638a9180$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAK9yfHxLjYNjQ9h-N8hNLBvqyUTxNzt=Bw10=mEA=D1kg2f9dw@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: kgene.kim@samsung.com, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:48041 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750735Ab3GaEBA convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 31 Jul 2013 00:01:00 -0400
+Received: by mail-pd0-f176.google.com with SMTP id q10so246917pdj.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2013 21:01:00 -0700 (PDT)
+In-Reply-To: <0eb201ce8866$212e3080$638a9180$@org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene@kernel.org
 
-Quoting Sachin Kamat (2013-07-29 23:55:33)
-> On 30 July 2013 12:18, Mike Turquette <mturquette@linaro.org> wrote:
-> > Quoting Sachin Kamat (2013-07-27 06:29:56)
-> >> On 27 July 2013 01:48, Mike Turquette <mturquette@linaro.org> wrote:
-> >> > Quoting Sachin Kamat (2013-07-05 01:42:27)
-> >> >> Adds gate clock for G2D IP for Exynos5250 SoC.
-> >> >>
-> >> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >> >> Cc: Mike Turquette <mturquette@linaro.org>
-> >> >
-> >> > I've taken patch #1 into clk-next.
-> >>
-> >> Thanks Mike.
-> >>
-> >> >
-> >> >> ---
-> >> >> This patch depends on the following patch:
-> >> >> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20581
-> >> >
-> >> > I think I've gotten all three series you sent out, can you confirm?
-> >>
-> >> I haven't seen any update in your tree [1] since quite some time. The
-> >> last commit I see in clk-next branch is 45e3ec3784 ("clk: tegra: fix
-> >> ifdef for tegra_periph_reset_assert inline"). I hope I am looking at
-> >> the right tree?
-> >
-> > You are, but I had not pushed to it since the merge window closed. It is
-> > now updated.
-> >
+Quoting Kukjin Kim (2013-07-24 05:05:46)
+> Sachin Kamat wrote:
+> > 
+> > Added clock entries for thermal management unit (TMU) for
+> > Exynos4 SoCs.
+> > 
+> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > 
-> Thanks Mike. I confirm that all the three patch series that you
-> mentioned are applied in your tree.
-> Please check the below one too.
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 > 
-> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg20598.html
+> Mike, I remember you're ok this for v3.12 so if you do not apply this in
+> clk-next yet, please go ahead :)
 
-Ok, I picked that one up too.
+You remember correctly. I've pulled this into clk-next.
 
 Regards,
 Mike
 
 > 
-> -- 
-> With warm regards,
-> Sachin
+> Thanks,
+> Kukjin
+> 
+> > ---
+> > Resending this (after rebasing) based on the below discussion:
+> > http://comments.gmane.org/gmane.linux.kernel.samsung-soc/19933
+> > 
+> > Previous version:
+> > http://comments.gmane.org/gmane.linux.kernel.samsung-soc/18081
+> > ---
+> >  .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
+> >  drivers/clk/samsung/clk-exynos4.c                  |    4 +++-
+> >  2 files changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> > b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> > index 14d5c2a..c6bf8a6 100644
+> > --- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> > +++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> > @@ -236,6 +236,7 @@ Exynos4 SoC and this is specified where applicable.
+> >    spi0_isp_sclk       380     Exynos4x12
+> >    spi1_isp_sclk       381     Exynos4x12
+> >    uart_isp_sclk       382     Exynos4x12
+> > +  tmu_apbif           383
+> > 
+> >               [Mux Clocks]
+> > 
+> > diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-
+> > exynos4.c
+> > index 75635eb..cee297d 100644
+> > --- a/drivers/clk/samsung/clk-exynos4.c
+> > +++ b/drivers/clk/samsung/clk-exynos4.c
+> > @@ -169,7 +169,7 @@ enum exynos4_clks {
+> >       gicisp, smmu_isp, smmu_drc, smmu_fd, smmu_lite0, smmu_lite1,
+> > mcuctl_isp,
+> >       mpwm_isp, i2c0_isp, i2c1_isp, mtcadc_isp, pwm_isp, wdt_isp,
+> > uart_isp,
+> >       asyncaxim, smmu_ispcx, spi0_isp, spi1_isp, pwm_isp_sclk,
+> > spi0_isp_sclk,
+> > -     spi1_isp_sclk, uart_isp_sclk,
+> > +     spi1_isp_sclk, uart_isp_sclk, tmu_apbif,
+> > 
+> >       /* mux clocks */
+> >       mout_fimc0 = 384, mout_fimc1, mout_fimc2, mout_fimc3, mout_cam0,
+> > @@ -814,6 +814,7 @@ static struct samsung_gate_clock
+> exynos4210_gate_clks[]
+> > __initdata = {
+> >       GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0,
+> > "keypad"),
+> >       GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
+> >                       E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0,
+> > "sclk_fimd"),
+> > +     GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0,
+> > 0),
+> >  };
+> > 
+> >  /* list of gate clocks supported in exynos4x12 soc */
+> > @@ -915,6 +916,7 @@ static struct samsung_gate_clock
+> exynos4x12_gate_clks[]
+> > __initdata = {
+> >       GATE(spi1_isp, "spi1_isp", "aclk200", E4X12_GATE_ISP1, 13,
+> >                       CLK_IGNORE_UNUSED, 0),
+> >       GATE(g2d, "g2d", "aclk200", GATE_IP_DMC, 23, 0, 0),
+> > +     GATE(tmu_apbif, "tmu_apbif", "aclk100", E4X12_GATE_IP_PERIR, 17, 0,
+> > 0),
+> >  };
+> > 
+> >  /*
+> > --
+> > 1.7.9.5
