@@ -1,55 +1,46 @@
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [PATCH] of: provide of_platform_unpopulate()
-Date: Wed, 31 Jul 2013 17:21:58 +0200
-Message-ID: <20130731152158.GA10501@linutronix.de>
-References: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de>
- <51EBF33A.4050207@gmail.com>
- <51EC4908.4040504@gmail.com>
- <CACxGe6sqv2Wsp26MWqqs9W_eWO3tjs-+2z3z8fC=2fe-BjJvkA@mail.gmail.com>
- <51EDA117.10605@gmail.com>
- <20130724141958.9156F3E0A24@localhost>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 3/5] mmc: dw_mmc: Add exynos resume_noirq callback to
+ clear WAKEUP_INT
+Date: Wed, 31 Jul 2013 09:18:23 -0700
+Message-ID: <CAD=FV=XZcf8xWWxrCoe9KqjnQs4p4y7ENnuUYsVKU+yrE09GeQ@mail.gmail.com>
+References: <1373391071-6312-1-git-send-email-dianders@chromium.org>
+	<1373411961-23812-1-git-send-email-dianders@chromium.org>
+	<1373411961-23812-4-git-send-email-dianders@chromium.org>
+	<002a01ce7d7d$6bd9e870$438db950$%jun@samsung.com>
+	<CAD=FV=UtX0Z1ABdi5h270ks8Py2o1iPK4DonOHJH3N0Q1YShTQ@mail.gmail.com>
+	<003f01ce8154$2f5ea1d0$8e1be570$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130724141958.9156F3E0A24@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grant Likely <grant.likely@linaro.org>
-Cc: Rob Herring <robherring2@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Kishon Vijay Abraham I <kishon@ti.com>, George Cherian <george.cherian@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Roger Quadros <rogerq@ti.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f175.google.com ([209.85.216.175]:40923 "EHLO
+	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756867Ab3GaQS0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 31 Jul 2013 12:18:26 -0400
+Received: by mail-qc0-f175.google.com with SMTP id s11so475574qcv.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 31 Jul 2013 09:18:25 -0700 (PDT)
+In-Reply-To: <003f01ce8154$2f5ea1d0$8e1be570$%jun@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: Chris Ball <cjb@laptop.org>, Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-* Grant Likely | 2013-07-24 15:19:58 [+0100]:
+Seungwon,
 
->> Was there more breakage than imx6 and amba devices? Your first version
->> had a fallback case for powerpc. Couldn't we do just allow that for more
->> than just powerpc? I'd much rather see some work-around within the core
->> DT code with a warning to prevent more proliferation than putting this
->> into drivers.
->
->It's tricky stuff. I've not figured out a solution I'm happy with.
->Trying to figure out when to apply a work around is hard because the
->resource reservation makes assumptions about the memory range layout
->that doesn't match the assumptions made by device tree code.
+On Mon, Jul 15, 2013 at 5:09 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> Sorry for late response.
+> Yes, it's not clear.
+> If you get the confirmation, could you share this problem?
+> Possibly, auto-clear may not be implemented.
+> Then, manual should be correct.
 
-I can't really follow. Do you have a simple at hand?
+I just got an update from my contacts.  They confirm that bit 11 is
+not automatically cleared and that writing to it will clear it.
+Hopefully this information will make it into the next version of any
+documentation that you receive as well.
 
->One /possible/ option is to not add the resources to the devices at all
->when the device is registered and instead resolve them right at bind
->time. Jean Christophe proposed doing this already to solve a different
->problem; obtaining resources that require other drivers to be probed
->first. If the resources are resolved at .probe() time, then the resource
->registration problem should also go away.
->
->The downside to that approach is that it makes each deferred probe more
->expensive; potentially a *lot* more expensive depending on how much work
->the xlate functions have to do. It would be worth prototyping though to
->see how well it works.
+It is still unclear exactly why the WAKEUP_INT was being asserted on
+our board despite the fact that all of the wakeup control signals
+(bits 10:8) were 0.  That is still being investigated.
 
-So you say defer the io ressources until the device-tree device is
-actually probed. I don't really understand why that defer part should
-solve the problem but I would try and see how it goes.
-Jean-Christophe proposed that only, that means no patches yet, right?
-
->g.
-
-Sebastian
+-Doug
