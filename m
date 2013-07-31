@@ -1,96 +1,55 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC 0/2] exynos5250/hdmi: replace dummy hdmiphy clock with pmu
- reg control
-Date: Wed, 31 Jul 2013 14:11:37 +0200
-Message-ID: <51F8FEF9.9020107@samsung.com>
-References: <1370935073-7475-1-git-send-email-rahul.sharma@samsung.com>
- <CAAQKjZMuSQhbYtOyni-RdHhXu0fv3U2Dm_2iqRLe0smSt_jjjQ@mail.gmail.com>
- <CAAQKjZOZCtLnE_OPs60NU+Z4pkHiSCqZcBOi1Dv+PC=01HKqyg@mail.gmail.com>
- <CAPdUM4Nis0uwyZf1hNDOMmdqFm0K7beVPoyAWRjMBwq0jcwwCQ@mail.gmail.com>
- <51B98908.8050403@samsung.com>
- <02c101ce6828$29ab0f20$7d012d60$%dae@samsung.com> <51B9C0ED.2040605@ti.com>
- <51BAB398.8090409@samsung.com>
- <CAPdUM4PK7K+Vw6umnehDubLD37jiWdcd4iXX2DJvHS8990LQGQ@mail.gmail.com>
- <51C04688.3090205@ti.com>
- <CAPdUM4O7cbBEEc4VdmcyryqFxpek6SsEcG-g-KyxwVypdwJnaw@mail.gmail.com>
- <51F75802.90305@samsung.com>
- <CAPdUM4Pjapebtrh7+c7ZHNvg26MGB_byUXrasPfjA38bkvBR7g@mail.gmail.com>
- <CAPdUM4OgJo9TLFeRUND+s2vF-ShsvQp=uo99FEnd-7UrBfCV-g@mail.gmail.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH] of: provide of_platform_unpopulate()
+Date: Wed, 31 Jul 2013 17:21:58 +0200
+Message-ID: <20130731152158.GA10501@linutronix.de>
+References: <1374257691-31981-1-git-send-email-bigeasy@linutronix.de>
+ <51EBF33A.4050207@gmail.com>
+ <51EC4908.4040504@gmail.com>
+ <CACxGe6sqv2Wsp26MWqqs9W_eWO3tjs-+2z3z8fC=2fe-BjJvkA@mail.gmail.com>
+ <51EDA117.10605@gmail.com>
+ <20130724141958.9156F3E0A24@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:40671 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759687Ab3GaMLl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 31 Jul 2013 08:11:41 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MQS005F3V4Z4D90@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 31 Jul 2013 13:11:39 +0100 (BST)
-In-reply-to: <CAPdUM4OgJo9TLFeRUND+s2vF-ShsvQp=uo99FEnd-7UrBfCV-g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20130724141958.9156F3E0A24@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grant Likely <grant.likely@linaro.org>
+Cc: Rob Herring <robherring2@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Kishon Vijay Abraham I <kishon@ti.com>, George Cherian <george.cherian@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Roger Quadros <rogerq@ti.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: sw0312.kim@samsung.com, Kishon Vijay Abraham I <kishon@ti.com>, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, sunil joshi <joshi@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, grant.likely@linaro.org, Rahul Sharma <rahul.sharma@samsung.com>, Inki Dae <inki.dae@samsung.com>
 
-Hi Rahul,
+* Grant Likely | 2013-07-24 15:19:58 [+0100]:
 
-On 07/31/2013 01:23 PM, Rahul Sharma wrote:
->>> I think your hdmiphy pmu patch is good enough just if dt binding for pmu
->>> >> is in hdmiphy binding instead of hdmi binding. So I recommended to make
->>> >> pmu patch set on the top of independent hdmiphy patch set because with
->>> >> independent hdmiphy patch set hdmiphy pmu code is moved to hdmiphy driver.
->>> >>
->>> >> Is it possible that hdmi driver references pmu information from hdmiphy
->>> >> binding? If that, it seems one possible solution to fix current exynos
->>> >> hdmi broken.
->>> >>
->>> >> Thanks and Regards,
->>> >> - Seung-Woo Kim
->>> >>
->> >
->> > I can surely do that but, I am worried about hdmiphy control bus.
->> > change In 5420. It is changed to platform bus from i2c. Isolating
->> > hdmiphy from hdmi driver seems the only clean method to handle
->> > control bus change, changed phy configurations and power control
->> > through PMU bit.
->> >
->> > To fix broken hdmi for 5420, I can again post the "hdmiphy
->> > separation patches" to place hdmiphy driver in DRM. Later we can
->> > migrate to Generic Phy Framework.
->> >
+>> Was there more breakage than imx6 and amba devices? Your first version
+>> had a fallback case for powerpc. Couldn't we do just allow that for more
+>> than just powerpc? I'd much rather see some work-around within the core
+>> DT code with a warning to prevent more proliferation than putting this
+>> into drivers.
 >
-> Hi Seung Woo, Mr. Dae, Sylwester,
-> 
-> What you say on this? Shall I separate hdmiphy in following manner:
+>It's tricky stuff. I've not figured out a solution I'm happy with.
+>Trying to figure out when to apply a work around is hard because the
+>resource reservation makes assumptions about the memory range layout
+>that doesn't match the assumptions made by device tree code.
+
+I can't really follow. Do you have a simple at hand?
+
+>One /possible/ option is to not add the resources to the devices at all
+>when the device is registered and instead resolve them right at bind
+>time. Jean Christophe proposed doing this already to solve a different
+>problem; obtaining resources that require other drivers to be probed
+>first. If the resources are resolved at .probe() time, then the resource
+>registration problem should also go away.
 >
-> 1) Move all phy related code to hdmiphy driver i.e. exynos_hdmiphy.c
-> 2) hdmiphy driver exposes power_on/off and set_pixel callbacks for
-> hdmi driver.
-> 3) let hdmi driver behave as phy controller for hdmiphy.
-> 4) move PMU bit control to hdmiphy driver, instead of hdmi driver.
-> 
-> This way we will be very close to generic phy framework implementation
-> and migration to generic phy framework will be just a cakewalk.
+>The downside to that approach is that it makes each deferred probe more
+>expensive; potentially a *lot* more expensive depending on how much work
+>the xlate functions have to do. It would be worth prototyping though to
+>see how well it works.
 
-This all sound good to me, it seem natural to put the HDMI PHY
-functionality into a separate module. Hardware-wise the PHY is quite
-separate and as experience shows different PHYs can be attached to
-same controller. Well, we have well known that before...
+So you say defer the io ressources until the device-tree device is
+actually probed. I don't really understand why that defer part should
+solve the problem but I would try and see how it goes.
+Jean-Christophe proposed that only, that means no patches yet, right?
 
-I'm not sure what the problem is with adding subsystem specific
-classes of operations (set of callback) to the generic PHY API, until
-that gets sorted out your approach looks good to me.
+>g.
 
-As a side note, originally the V4L2 driver exposed the HDMI PHY
-as struct v4l2_subdev object, have a look at drivers/media/platform/
-s5p-tv/hdmiphy_drv.c. And in case of exynos5 we would just have
-created a platform driver for the HDMI PHY which would expose same
-subdev interface. So something similar as you proposed above.
-
-
-Regards,
-Sylwester
+Sebastian
