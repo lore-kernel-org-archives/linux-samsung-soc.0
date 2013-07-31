@@ -1,76 +1,70 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v4 0/6] clk/exynos5250: add clocks for hdmi subsystem
-Date: Tue, 30 Jul 2013 14:08:14 -0700
-Message-ID: <20130730210814.5270.44742@quantum>
-References: <1374728857-4208-1-git-send-email-rahul.sharma@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/3] clk: exynos5250: Add G2D gate clock
+Date: Wed, 31 Jul 2013 09:18:56 +0530
+Message-ID: <CAK9yfHxi-4f5UtbRj1oZZ0_jMPFBfsPHnPXoO-020-rsLXEOoQ@mail.gmail.com>
+References: <1373013749-14530-1-git-send-email-sachin.kamat@linaro.org>
+	<20130726201800.7598.54329@quantum>
+	<CAK9yfHw6KtVDAns-1JhNpiS0brTeUpfiHS-v3q7H2GLWkY-Adw@mail.gmail.com>
+	<20130730064800.22022.14773@quantum>
+	<CAK9yfHxLjYNjQ9h-N8hNLBvqyUTxNzt=Bw10=mEA=D1kg2f9dw@mail.gmail.com>
+	<20130731034235.5270.7481@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1374728857-4208-1-git-send-email-rahul.sharma@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, joshi@samsung.com, inki.dae@samsung.com, thomas.abraham@linaro.org, s.nawrocki@samsung.com, r.sh.open@gmail.com, Cho KyongHo <pullip.cho@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f43.google.com ([209.85.219.43]:48344 "EHLO
+	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753206Ab3GaDs5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 30 Jul 2013 23:48:57 -0400
+Received: by mail-oa0-f43.google.com with SMTP id i10so464282oag.30
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Jul 2013 20:48:56 -0700 (PDT)
+In-Reply-To: <20130731034235.5270.7481@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, patches@linaro.org, inki.dae@samsung.com
 
-Quoting Rahul Sharma (2013-07-24 22:07:31)
-> Add clock changes for hdmi subsystem for exynos5250 SoC. These
-> include addition of new clocks like mout_hdmi and smmu_tv, associating
-> ID to clk_hdmiphy and some essential corrections.
-> 
-> This set is based on kukjin's for-next branch at
-> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
+On 31 July 2013 09:12, Mike Turquette <mturquette@linaro.org> wrote:
+> Quoting Sachin Kamat (2013-07-29 23:55:33)
+>> On 30 July 2013 12:18, Mike Turquette <mturquette@linaro.org> wrote:
+>> > Quoting Sachin Kamat (2013-07-27 06:29:56)
+>> >> On 27 July 2013 01:48, Mike Turquette <mturquette@linaro.org> wrote:
+>> >> > Quoting Sachin Kamat (2013-07-05 01:42:27)
+>> >> >> Adds gate clock for G2D IP for Exynos5250 SoC.
+>> >> >>
+>> >> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> >> >> Cc: Mike Turquette <mturquette@linaro.org>
+>> >> >
+>> >> > I've taken patch #1 into clk-next.
+>> >>
+>> >> Thanks Mike.
+>> >>
+>> >> >
+>> >> >> ---
+>> >> >> This patch depends on the following patch:
+>> >> >> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20581
+>> >> >
+>> >> > I think I've gotten all three series you sent out, can you confirm?
+>> >>
+>> >> I haven't seen any update in your tree [1] since quite some time. The
+>> >> last commit I see in clk-next branch is 45e3ec3784 ("clk: tegra: fix
+>> >> ifdef for tegra_periph_reset_assert inline"). I hope I am looking at
+>> >> the right tree?
+>> >
+>> > You are, but I had not pushed to it since the merge window closed. It is
+>> > now updated.
+>> >
+>>
+>> Thanks Mike. I confirm that all the three patch series that you
+>> mentioned are applied in your tree.
+>> Please check the below one too.
+>>
+>> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg20598.html
+>
+> Ok, I picked that one up too.
 
-I've taken patches 2-4 into the clk-next branch. Patch #1 can be
-dropped.
+Thanks Mike.
 
-Patches 5 & 6 need to be rebased onto clk-next as the g2d clock has
-reserved mapping 345.  Also I've cc'd Cho KyongHo who is rebasing his
-system mmu clock patch[1] onto clk-next. Can the two of your coordinate
-your changes to avoid mapping conflicts in the binding? Perhaps Rahul
-can carry Cho's patch in his next version when he rebases patches 5 & 6.
-
-Thanks,
-Mike
-
-[1] https://lkml.org/lkml/2013/7/30/51
-
-> 
-> V4:
-> 1) Added Arun's patch hdmi clock number correction in this series.
-> 2) Corrected clock number for smmu_mixer
-> 
-> V3:
-> 1) Rebase to kgene for-next based on 3.11-rc1.
-> 2) Added Tushar's patch in the series.
-> 
-> V2:
-> 1) Dropped "clk/exynos5250: Fix HDMI clock number in documentation" as
-> it already get merged.
-> 
-> Arun Kumar K (1):
->   clk/exynos5250: Fix HDMI clock number in documentation
-> 
-> Rahul Sharma (4):
->   clk/exynos5250: add mout_hdmi mux clock for hdmi
->   clk/exynos5250: add sclk_hdmiphy in the list of special clocks
->   clk/exynos5250: add clock for mixer sysmmu
->   clk/exynos5250: change parent to aclk200_disp1 for hdmi subsystem
-> 
-> Tushar Behera (1):
->   Documentation: exynos5250-clock: Add div_i2s1 and div_i2s2
-> 
->  .../devicetree/bindings/clock/exynos5250-clock.txt |   14 +++++++++++++-
->  drivers/clk/samsung/clk-exynos5250.c               |   20 ++++++++++++++------
->  2 files changed, 27 insertions(+), 7 deletions(-)
-> 
-> -- 
-> 1.7.10.4
+-- 
+With warm regards,
+Sachin
