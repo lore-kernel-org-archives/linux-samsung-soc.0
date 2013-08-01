@@ -1,66 +1,83 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH v8 07/12] iommu/exynos: support for device tree
-Date: Thu, 01 Aug 2013 22:14:03 +0900
-Message-ID: <003a01ce8eb8$fe946db0$fbbd4910$@samsung.com>
-References: <003d01ce89f3$44ec2cf0$cec486d0$@samsung.com>
-	<1743111.Ek7FldnHal@flatron>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v2 1/7] ARM: dts: Move display-timimg information inside
+ FIMD DT node for exynos5250
+Date: Thu, 01 Aug 2013 16:49:46 +0200
+Message-ID: <171932162.BeOHtLbZec@amdc1227>
+References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
+ <1375183178-8201-2-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <1743111.Ek7FldnHal@flatron>
-Content-language: ko
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Grant Grundler' <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, 'Keyyoung Park' <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Antonios Motakis' <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:23177 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755605Ab3HAOt4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 Aug 2013 10:49:56 -0400
+In-reply-to: <1375183178-8201-2-git-send-email-vikas.sajjan@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, jg1.han@samsung.com, inki.dae@samsung.com, ajaynumb@gmail.com, patches@linaro.org, linaro-kernel@lists.linaro.org, grant.likely@secretlab.ca, swarren@wwwdotorg.org, mark.rutland@arm.com
 
-> -----Original Message-----
-> From: Tomasz Figa [mailto:tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
-> Sent: Saturday, July 27, 2013 11:07 PM
-> 
-> Hi,
-> 
-> On Friday 26 of July 2013 20:28:36 Cho KyongHo wrote:
-> > This commit adds device tree support for System MMU.
-> > This also include the following changes and enhancements:
-> >
-> > * use managed device helper functions.
-> > Simplyfies System MMU device driver.
-> >
-> > * use only a single clock descriptor.
-> > System MMU device descriptor is seperate if it is imposible to make
-> > a single clock descriptor to make a device descriptor for a group of
-> > System MMUs.
-> >
-> > * removed dbgname member from sysmmu_drvdata structure.
-> > debugging kernel message for a System MMU is distinguisheable with the
-> > name of device descroptors.
-> >
-> > Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  drivers/iommu/Kconfig        |    5 +-
-> >  drivers/iommu/exynos-iommu.c |  182
-> > ++++++++++++++++-------------------------- 2 files changed, 70
-> > insertions(+), 117 deletions(-)
-> 
-> Whenever you introduce or modify (extend) a device tree binding please
-> don't forget about reflecting that in documentation
-> (Documentation/devicetree/bindings) and CCing devicetree mailing list
-> (devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org). Both of these steps are necessary to get any
-> device tree stuff merged.
-> 
+Hi Vikas,
 
-Oh I see.
-Thank you for advice.
+On Tuesday 30 of July 2013 16:49:32 Vikas Sajjan wrote:
+> As the display-timing information is parsed by FIMD driver, it makes
+> sense to move the display-timimg DT node inside FIMD DT node for
+> exynos5250
+> 
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   29
+> ++++++++++++++++------------- 1 file changed, 16 insertions(+), 13
+> deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index 49f18c2..d176dbb
+> 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -262,19 +262,22 @@
+>  		pinctrl-0 = <&dp_hpd>;
+>  	};
+> 
+> -	display-timings {
+> -		native-mode = <&timing0>;
+> -		timing0: timing@0 {
+> -			/* 1280x800 */
+> -			clock-frequency = <50000>;
+> -			hactive = <1280>;
+> -			vactive = <800>;
+> -			hfront-porch = <4>;
+> -			hback-porch = <4>;
+> -			hsync-len = <4>;
+> -			vback-porch = <4>;
+> -			vfront-porch = <4>;
+> -			vsync-len = <4>;
+> +	fimd@14400000 {
+> +		status = "okay";
+> +		display-timings {
+> +			native-mode = <&timing0>;
+> +			timing0: timing@0 {
+> +				/* 1280x800 */
+> +				clock-frequency = <50000>;
+> +				hactive = <1280>;
+> +				vactive = <800>;
+> +				hfront-porch = <4>;
+> +				hback-porch = <4>;
+> +				hsync-len = <4>;
+> +				vback-porch = <4>;
+> +				vfront-porch = <4>;
+> +				vsync-len = <4>;
+> +			};
+>  		};
+>  	};
 
-> Best regards,
-> Tomasz
+Looks good to me, but I would like some other people from the device tree 
+mailing list to comment on node naming: Do we want to conform to the 
+recommendation of ePAPR about node naming, which states that node names 
+should be generic, not platform specific or we are free to ignore it?
+
+Best regards,
+Tomasz
