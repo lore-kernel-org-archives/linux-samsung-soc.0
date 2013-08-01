@@ -1,83 +1,77 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 1/7] ARM: dts: Move display-timimg information inside
- FIMD DT node for exynos5250
-Date: Thu, 01 Aug 2013 16:49:46 +0200
-Message-ID: <171932162.BeOHtLbZec@amdc1227>
-References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
- <1375183178-8201-2-git-send-email-vikas.sajjan@linaro.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically continous memory flag
+Date: Fri, 02 Aug 2013 01:20:30 +0200
+Message-ID: <5151790.EBRlE0cTxf@flatron>
+References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:23177 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755605Ab3HAOt4 (ORCPT
+Received: from mail-ea0-f173.google.com ([209.85.215.173]:56205 "EHLO
+	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756227Ab3HAXUg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Aug 2013 10:49:56 -0400
-In-reply-to: <1375183178-8201-2-git-send-email-vikas.sajjan@linaro.org>
+	Thu, 1 Aug 2013 19:20:36 -0400
+In-Reply-To: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, jg1.han@samsung.com, inki.dae@samsung.com, ajaynumb@gmail.com, patches@linaro.org, linaro-kernel@lists.linaro.org, grant.likely@secretlab.ca, swarren@wwwdotorg.org, mark.rutland@arm.com
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, arun.kk@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
 
 Hi Vikas,
 
-On Tuesday 30 of July 2013 16:49:32 Vikas Sajjan wrote:
-> As the display-timing information is parsed by FIMD driver, it makes
-> sense to move the display-timimg DT node inside FIMD DT node for
-> exynos5250
+On Thursday 01 of August 2013 16:49:32 Vikas Sajjan wrote:
+> While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
+> connected with resolution 2560x1600, following error occured even with
+> IOMMU enabled:
+> [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate
+> buffer. [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+> 
+> This patch fixes the issue by adding a check for IOMMU.
 > 
 > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> Signed-off-by: Arun Kumar <arun.kk@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5250-smdk5250.dts |   29
-> ++++++++++++++++------------- 1 file changed, 16 insertions(+), 13
-> deletions(-)
+>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |    9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index 49f18c2..d176dbb
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c index 8e60bd6..2a86666
 > 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -262,19 +262,22 @@
->  		pinctrl-0 = <&dp_hpd>;
->  	};
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> @@ -16,6 +16,7 @@
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_fb_helper.h>
+>  #include <drm/drm_crtc_helper.h>
+> +#include <drm/exynos_drm.h>
 > 
-> -	display-timings {
-> -		native-mode = <&timing0>;
-> -		timing0: timing@0 {
-> -			/* 1280x800 */
-> -			clock-frequency = <50000>;
-> -			hactive = <1280>;
-> -			vactive = <800>;
-> -			hfront-porch = <4>;
-> -			hback-porch = <4>;
-> -			hsync-len = <4>;
-> -			vback-porch = <4>;
-> -			vfront-porch = <4>;
-> -			vsync-len = <4>;
-> +	fimd@14400000 {
-> +		status = "okay";
-> +		display-timings {
-> +			native-mode = <&timing0>;
-> +			timing0: timing@0 {
-> +				/* 1280x800 */
-> +				clock-frequency = <50000>;
-> +				hactive = <1280>;
-> +				vactive = <800>;
-> +				hfront-porch = <4>;
-> +				hback-porch = <4>;
-> +				hsync-len = <4>;
-> +				vback-porch = <4>;
-> +				vfront-porch = <4>;
-> +				vsync-len = <4>;
-> +			};
->  		};
->  	};
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_fb.h"
+> @@ -143,6 +144,7 @@ static int exynos_drm_fbdev_create(struct
+> drm_fb_helper *helper, struct platform_device *pdev = dev->platformdev;
+>  	unsigned long size;
+>  	int ret;
+> +	unsigned int flag;
+> 
+>  	DRM_DEBUG_KMS("surface width(%d), height(%d) and bpp(%d\n",
+>  			sizes->surface_width, sizes->surface_height,
+> @@ -166,7 +168,12 @@ static int exynos_drm_fbdev_create(struct
+> drm_fb_helper *helper, size = mode_cmd.pitches[0] * mode_cmd.height;
+> 
+>  	/* 0 means to allocate physically continuous memory */
+> -	exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
+> +	if (!is_drm_iommu_supported(dev))
+> +		flag = 0;
+> +	else
+> +		flag = EXYNOS_BO_NONCONTIG;
 
-Looks good to me, but I would like some other people from the device tree 
-mailing list to comment on node naming: Do we want to conform to the 
-recommendation of ePAPR about node naming, which states that node names 
-should be generic, not platform specific or we are free to ignore it?
+While noncontig memory might be used for devices that support IOMMU, there 
+should be no problem with using contig memory for them, so this seems more 
+like masking the original problem rather than tracking it down.
+
+Could you check why the allocation fails when requesting contiguous 
+memory?
 
 Best regards,
 Tomasz
