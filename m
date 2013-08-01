@@ -1,47 +1,47 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] ARM: dts: exynos5420: add ADC device tree node
-Date: Thu, 01 Aug 2013 14:58:41 +0530
-Message-ID: <1375349321-18646-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:61560 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751258Ab3HAJdo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Aug 2013 05:33:44 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] ASoC: samsung: Make secondary I2S DAI device a
+	child of primary
+Date: Thu,  1 Aug 2013 11:04:24 +0100
+Message-ID: <1375351464-32618-1-git-send-email-broonie@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org
 
-From: Jaehoon Kim <jh228.kim@samsung.com>
+From: Mark Brown <broonie@linaro.org>
 
-Add device tree node for ADC in exynos5420.dtsi
+More for neatness than for any great utility. Really we shouldn't be
+creating the child device at all, refactoring will follow.
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Mark Brown <broonie@linaro.org>
 ---
- arch/arm/boot/dts/exynos5420.dtsi |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ sound/soc/samsung/i2s.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 8c54c4b..074e1bc 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -145,4 +145,15 @@
- 		clocks = <&clock 260>, <&clock 131>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index a3e4b49..47e08dd 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1019,6 +1019,8 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
+ 		if (IS_ERR(i2s->pdev))
+ 			return NULL;
+ 
++		i2s->pdev->dev.parent = &pdev->dev;
 +
-+	adc: adc@12D10000 {
-+		compatible = "samsung,exynos-adc-v2";
-+		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
-+		interrupts = <0 106 0>;
-+		#io-channel-cells = <1>;
-+		io-channel-ranges;
-+		clocks = <&clock 270>;
-+		clock-names = "adc";
-+		status = "disabled";
-+	};
- };
+ 		platform_set_drvdata(i2s->pdev, i2s);
+ 		ret = platform_device_add(i2s->pdev);
+ 		if (ret < 0)
 -- 
-1.7.9.5
+1.8.3.2
