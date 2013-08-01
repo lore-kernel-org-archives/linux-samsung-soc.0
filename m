@@ -1,71 +1,186 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH v2 6/8] usb: host: ohci-s3c2410 Use
- clk_prepare_enable/clk_disable_unprepare
-Date: Thu, 1 Aug 2013 15:45:54 +0800
-Message-ID: <20130801074554.GA7519@kroah.com>
-References: <6370497.apKG6kIlfT@flatron>
- <Pine.LNX.4.44L0.1307311643110.1546-100000@iolanthe.rowland.org>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH] thermal: exynos: Handle the misplaced TRIMINFO register
+Date: Thu, 1 Aug 2013 14:02:32 +0530
+Message-ID: <CADGdYn4DA83AcxAzEJW-ndg+wvojruqJYY=urKhxn_6GjJzE3w@mail.gmail.com>
+References: <1375336979-14747-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1307311643110.1546-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1375336979-14747-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, naveenkrishna.ch@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jul 31, 2013 at 04:44:43PM -0400, Alan Stern wrote:
-> On Wed, 31 Jul 2013, Tomasz Figa wrote:
-> 
-> > Alan, Greg,
-> > 
-> > On Tuesday 23 of July 2013 01:49:23 Tomasz Figa wrote:
-> > > This patch modifies the ohci-s3c2410 driver to prepare and unprepare
-> > > clocks in addition to enabling and disabling, since it is required
-> > > by common clock framework.
-> > > 
-> > > Signed-off-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > > ---
-> > >  drivers/usb/host/ohci-s3c2410.c | 8 ++++----
-> > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/usb/host/ohci-s3c2410.c
-> > > b/drivers/usb/host/ohci-s3c2410.c index e125770..db096bf 100644
-> > > --- a/drivers/usb/host/ohci-s3c2410.c
-> > > +++ b/drivers/usb/host/ohci-s3c2410.c
-> > > @@ -47,10 +47,10 @@ static void s3c2410_start_hc(struct platform_device
-> > > *dev, struct usb_hcd *hcd)
-> > > 
-> > >  	dev_dbg(&dev->dev, "s3c2410_start_hc:\n");
-> > > 
-> > > -	clk_enable(usb_clk);
-> > > +	clk_prepare_enable(usb_clk);
-> > >  	mdelay(2);			/* let the bus clock stabilise */
-> > > 
-> > > -	clk_enable(clk);
-> > > +	clk_prepare_enable(clk);
-> > > 
-> > >  	if (info != NULL) {
-> > >  		info->hcd	= hcd;
-> > > @@ -75,8 +75,8 @@ static void s3c2410_stop_hc(struct platform_device
-> > > *dev) (info->enable_oc)(info, 0);
-> > >  	}
-> > > 
-> > > -	clk_disable(clk);
-> > > -	clk_disable(usb_clk);
-> > > +	clk_disable_unprepare(clk);
-> > > +	clk_disable_unprepare(usb_clk);
-> > >  }
-> > > 
-> > >  /* ohci_s3c2410_hub_status_data
-> > 
-> > Any chance to get your ack on this?
-> 
-> Sorry, this must have slipped past.  It's fine with me.
+Hi Naveen,
 
-Acked-by: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Can you rebase these patches against
+https://git.kernel.org/cgit/linux/kernel/git/evalenti/linux-soc-thermal.git/log/?h=next.
+All these patches have been queued for 3.12 merge and contains the new
+re-structured TMU driver.
+
+Thanks,
+Amit Daniel
+
+On Thu, Aug 1, 2013 at 11:32 AM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> This patch adds code to handle the misplaced TRIMINFO register
+> incase of Exynos5420.
+>
+> On Exynos5420 we have a TRIMINFO register being misplaced for
+> TMU channels 2, 3 and 4
+>
+> TRIMINFO at 0x1006c000 contains data for TMU channel 3
+> TRIMINFO at 0x100a0000 contains data for TMU channel 4
+> TRIMINFO at 0x10068000 contains data for TMU channel 2
+>
+> The misplaced register address is passed through devicetree and
+> map it seperately during probe.
+> Also, adds the documentation under devicetree/bindings/thermal/
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> ---
+>
+> Rebased on http://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+> master branch. I'm not sure which one is the right tree to rebase.
+>
+>  .../devicetree/bindings/thermal/exynos-thermal.txt | 48 ++++++++++++++++++++++
+>  drivers/thermal/exynos_thermal.c                   | 26 +++++++++++-
+>  2 files changed, 72 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+>
+> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> new file mode 100644
+> index 0000000..1db279e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> @@ -0,0 +1,48 @@
+> +* Exynos Thermal
+> +
+> +Required properties:
+> +- compatible: should be one of the following.
+> +    * "samsung,exynos4210-tmu" - for controllers compatible with exynos4210 tmu.
+> +    * "samsung,exynos5250-tmu" - for controllers compatible with exynos5250 tmu.
+> +    * "samsung,exynos5420-tmu" - for controllers compatible with exynos5420 tmu.
+> +
+> +- reg: physical base address of the controller and length of
+> +  memory mapped region.
+> +
+> +    ** NOTE FOR EXYNOS5420 **
+> +    TRIMINFO register is being misplaced for TMU channels 2, 3 and 4
+> +
+> +    TERMINFO for TMU channel 2 is present in address space of TMU channel 3
+> +    TERMINFO for TMU channel 3 is present in address space of TMU channel 4
+> +    TERMINFO for TMU channel 4 is present in address space of TMU channel 2
+> +
+> +    * In such cases the reg property contains the misplaced register address and
+> +      range as the second parameter.
+> +
+> +- interrupts : interrupt number to the cpu.
+> +- clocks : Clock number as per common clock framework for the cpu.
+> +- clock-names : clock name to be used in the driver
+> +
+> +Example:
+> +
+> +       /* tmu for CPU0 */
+> +       tmu@10060000 {
+> +               compatible = "samsung,exynos5420-tmu";
+> +               reg = <0x10060000 0x100>;
+> +               interrupts = <0 65 0>;
+> +               clocks = <&clock 318>;
+> +               clock-names = "tmu_apbif";
+> +       };
+> +
+> +Example: In case of Exynos5420 TMU channel 3
+> +
+> +       /* tmu for CPU3 */
+> +       tmu@1006c000 {
+> +               compatible = "samsung,exynos5420-tmu";
+> +               /* 2nd reg is for the misplaced TRIMINFO register */
+> +               reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
+> +               interrupts = <0 185 0>;
+> +               clocks = <&clock 318>;
+> +               clock-names = "tmu_apbif";
+> +       };
+> +
+> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
+> index cec3f1f..a229314 100644
+> --- a/drivers/thermal/exynos_thermal.c
+> +++ b/drivers/thermal/exynos_thermal.c
+> @@ -38,6 +38,7 @@
+>  #include <linux/cpufreq.h>
+>  #include <linux/cpu_cooling.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>
+>  #include <plat/cpu.h>
+>  #include <mach/regs-pmu.h>     /* for EXYNOS5_PS_HOLD_CONTROL */
+> @@ -123,7 +124,7 @@ struct exynos_thermal_zone;
+>  struct exynos_tmu_data {
+>         struct exynos_tmu_platform_data *pdata;
+>         struct resource *mem;
+> -       void __iomem *base;
+> +       void __iomem *base, *triminfo_base;
+>         int irq;
+>         enum soc_type soc;
+>         struct work_struct irq_work;
+> @@ -665,8 +666,14 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>                 __raw_writel(EXYNOS_TRIMINFO_RELOAD,
+>                                 data->base + EXYNOS_TMU_TRIMINFO_CON);
+>         }
+> +
+>         /* Save trimming info in order to perform calibration */
+> -       trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> +       if (data->triminfo_base)
+> +               /* On exynos5420 TRIMINFO is misplaced for some channels */
+> +               trim_info = readl(data->triminfo_base);
+> +       else
+> +               trim_info = readl(data->base + EXYNOS_TMU_REG_TRIMINFO);
+> +
+>         data->temp_error1 = trim_info & EXYNOS_TMU_TRIM_TEMP_MASK;
+>         data->temp_error2 = ((trim_info >> 8) & EXYNOS_TMU_TRIM_TEMP_MASK);
+>
+> @@ -1016,6 +1023,15 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>                 return -ENODEV;
+>         }
+>
+> +       /* For Exynos5420 The misplaced TERMINFO register address will be
+> +        * passed from device tree node.
+> +        *
+> +        * We cannot use devm_request_and_ioremap, as the base address
+> +        * over laps with the address space of the other TMU channel.
+> +        * Check Documentation for details
+> +        */
+> +       data->triminfo_base = of_iomap(pdev->dev.of_node, 1);
+> +
+>         data->clk = devm_clk_get(&pdev->dev, "tmu_apbif");
+>         if (IS_ERR(data->clk)) {
+>                 dev_err(&pdev->dev, "Failed to get clock\n");
+> @@ -1086,6 +1102,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>  err_irq:
+>         exynos_unregister_thermal(data);
+>  err_clk:
+> +       if (data->triminfo_base)
+> +               iounmap(data->triminfo_base);
+> +
+>         platform_set_drvdata(pdev, NULL);
+>         clk_unprepare(data->clk);
+>         return ret;
+> @@ -1100,6 +1119,9 @@ static int exynos_tmu_remove(struct platform_device *pdev)
+>
+>         exynos_unregister_thermal(data);
+>
+> +       if (data->triminfo_base)
+> +               iounmap(data->triminfo_base);
+> +
+>         clk_unprepare(data->clk);
+>
+>         platform_set_drvdata(pdev, NULL);
+> --
+> 1.7.12.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
