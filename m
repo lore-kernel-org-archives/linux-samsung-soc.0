@@ -1,158 +1,215 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH trivial] include: uapi: standard all files' macro prefix
- and suffix, excluding "linux/" sub-directory
-Date: Fri, 02 Aug 2013 16:31:59 +0800
-Message-ID: <51FB6E7F.2050506@asianux.com>
-References: <51FB6216.6010008@asianux.com> <51FB634F.5070401@asianux.com>
- <87iozoqzm9.fsf@tw-ebiederman.twitter.com>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically
+ continous memory flag
+Date: Fri, 2 Aug 2013 15:40:44 +0530
+Message-ID: <CAD025yR9Xd0G81WdLDxKyu-RVZPPJAUOKZ+0b5oKUxYOe7q_pQ@mail.gmail.com>
+References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org>
+ <5151790.EBRlE0cTxf@flatron> <CAF6AEGvmd20MJ_=69kYahkeTySVbhc2GgiUNwCDFXuDWgeGAfQ@mail.gmail.com>
+ <CAD025yRZBDh6ssSUbY-mo2mo-WqrUS3R56bD-QrBvaBbWX_HMQ@mail.gmail.com> <CAAQKjZNBPxBxR-4PXbhOdX0V1inMkauE-xZ+0kwnfVTgqpCEVg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <87iozoqzm9.fsf@tw-ebiederman.twitter.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: xen-devel@lists.xensource.com, jeremy@goop.org, airlied@linux.ie, daniel.vetter@ffwll.ch, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, perex@perex.cz, "dhowells@redhat.com" <dhowells@redhat.com>, thierry.reding@gmail.com, linux-mtd@lists.infradead.org, sean.hefty@intel.com, virtualization@lists.linux-foundation.org, Linux-Arch <linux-arch@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, tbergstrom@nvidia.com, jy0922.shim@samsung.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, roland@purestorage.com, Takashi Iwai <tiwai@suse.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, mtk.manpages@gmail.com, fcoe-devel@open-fcoe.org, Paul McKenney <paulmck@linux.vnet.ibm.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, Arnd Bergmann <arnd@arndb.de>, swarren@wwwdotorg.org, intel-gfx@lists.freedesktop.org, inki.dae@samsung.com, linux-samsung-
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:45646 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030368Ab3HBKLG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 Aug 2013 06:11:06 -0400
+Received: by mail-lb0-f172.google.com with SMTP id o7so318424lbv.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Aug 2013 03:11:04 -0700 (PDT)
+In-Reply-To: <CAAQKjZNBPxBxR-4PXbhOdX0V1inMkauE-xZ+0kwnfVTgqpCEVg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Rob Clark <robdclark@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "kgene.kim" <kgene.kim@samsung.com>, "arun.kk" <arun.kk@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, m.szyprowski@samsung.com
 
-On 08/02/2013 04:13 PM, Eric W. Biederman wrote:
-> Chen Gang <gang.chen@asianux.com> writes:
-> 
->> It is a trivial patch for "include/uapi", exclude "linux" sub-directory.
+Hi Inki Dae,
+
+On 2 August 2013 12:58, Inki Dae <inki.dae@samsung.com> wrote:
+>
+>
+> 2013/8/2 Vikas Sajjan <vikas.sajjan@linaro.org>
 >>
->> If it is useful, I will send another patch for "linux" sub-directory.
+>> Hi Rob,
 >>
->> BTW: it is really big mail addresses from
->> "./scripts/get_maintainers.pl"
-> 
-> What is the point?  Is there a bug that this fixes?
-> 
-
-It is a trivial patch, it is not for bug fix.
-
-> These files are not used with api in their path in userspace so I
-> suspect your change just makes things strange and confusing.
-> 
-
-Hmm... they are in "include/uapi" which means they may be shared with
-user space, is it correct ? (or Universal API ? ... excuse me, I don't
-know the definition of "include/uapi").
-
-If some of them are really never shared with user space (or not
-'Universal' enough to multiple OS), I recommend to move them from
-"include/uapi/" to another more suitable places.
-
-
-Thanks.
-
-> Eric
-> 
->> Thanks.
+>> On 2 August 2013 06:03, Rob Clark <robdclark@gmail.com> wrote:
+>> > On Thu, Aug 1, 2013 at 7:20 PM, Tomasz Figa <tomasz.figa@gmail.com>
+>> > wrote:
+>> >> Hi Vikas,
+>> >>
+>> >> On Thursday 01 of August 2013 16:49:32 Vikas Sajjan wrote:
+>> >>> While trying to get boot-logo up on exynos5420 SMDK which has eDP
+>> >>> panel
+>> >>> connected with resolution 2560x1600, following error occured even with
+>> >>> IOMMU enabled:
+>> >>> [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate
+>> >>> buffer. [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+>> >>>
+>> >>> This patch fixes the issue by adding a check for IOMMU.
+>> >>>
+>> >>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+>> >>> Signed-off-by: Arun Kumar <arun.kk@samsung.com>
+>> >>> ---
+>> >>>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |    9 ++++++++-
+>> >>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>> >>>
+>> >>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> >>> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c index 8e60bd6..2a86666
+>> >>> 100644
+>> >>> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> >>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> >>> @@ -16,6 +16,7 @@
+>> >>>  #include <drm/drm_crtc.h>
+>> >>>  #include <drm/drm_fb_helper.h>
+>> >>>  #include <drm/drm_crtc_helper.h>
+>> >>> +#include <drm/exynos_drm.h>
+>> >>>
+>> >>>  #include "exynos_drm_drv.h"
+>> >>>  #include "exynos_drm_fb.h"
+>> >>> @@ -143,6 +144,7 @@ static int exynos_drm_fbdev_create(struct
+>> >>> drm_fb_helper *helper, struct platform_device *pdev =
+>> >>> dev->platformdev;
+>> >>>       unsigned long size;
+>> >>>       int ret;
+>> >>> +     unsigned int flag;
+>> >>>
+>> >>>       DRM_DEBUG_KMS("surface width(%d), height(%d) and bpp(%d\n",
+>> >>>                       sizes->surface_width, sizes->surface_height,
+>> >>> @@ -166,7 +168,12 @@ static int exynos_drm_fbdev_create(struct
+>> >>> drm_fb_helper *helper, size = mode_cmd.pitches[0] * mode_cmd.height;
+>> >>>
+>> >>>       /* 0 means to allocate physically continuous memory */
+>> >>> -     exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
+>> >>> +     if (!is_drm_iommu_supported(dev))
+>> >>> +             flag = 0;
+>> >>> +     else
+>> >>> +             flag = EXYNOS_BO_NONCONTIG;
+>> >>
+>> >> While noncontig memory might be used for devices that support IOMMU,
+>> >> there
+>> >> should be no problem with using contig memory for them, so this seems
+>> >> more
+>> >> like masking the original problem rather than tracking it down.
+>> >
+>> > it is probably a good idea to not require contig memory when it is not
+>> > needed for performance or functionality (and if it is only
+>> > performance, then fallback gracefully to non-contig).. but yeah, would
+>> > be good to know if this is masking another issue all the same
+>> >
 >>
->> On 08/02/2013 03:39 PM, Chen Gang wrote:
->>> For "include/uapi/*", excluding "linux/" sub-directory, let all files'
->>> macro prefix match the standard format, and give related stand comments
->>> for their macro suffix.
->>>
->>> The related standard format is:
->>>
->>>   "_SUBDIRNAME_SUBDIRNAME[_SUBDIRNAME]_FILENAME" (1st _SUBDIRNAME is _UAPI), and use '_' instead of '.' and '-'.
->>>
->>>
->>> Signed-off-by: Chen Gang <gang.chen@asianux.com>
->>> ---
->>>  include/uapi/asm-generic/auxvec.h      |    6 +++---
->>>  include/uapi/asm-generic/bitsperlong.h |    6 +++---
->>>  include/uapi/asm-generic/errno-base.h  |    6 +++---
->>>  include/uapi/asm-generic/errno.h       |    6 +++---
->>>  include/uapi/asm-generic/fcntl.h       |    6 +++---
->>>  include/uapi/asm-generic/ioctls.h      |    6 +++---
->>>  include/uapi/asm-generic/ipcbuf.h      |    6 +++---
->>>  include/uapi/asm-generic/kvm_para.h    |    5 +++++
->>>  include/uapi/asm-generic/mman-common.h |    6 +++---
->>>  include/uapi/asm-generic/mman.h        |    6 +++---
->>>  include/uapi/asm-generic/msgbuf.h      |    6 +++---
->>>  include/uapi/asm-generic/param.h       |    6 +++---
->>>  include/uapi/asm-generic/poll.h        |    6 +++---
->>>  include/uapi/asm-generic/posix_types.h |    6 +++---
->>>  include/uapi/asm-generic/sembuf.h      |    6 +++---
->>>  include/uapi/asm-generic/setup.h       |    6 +++---
->>>  include/uapi/asm-generic/shmbuf.h      |    6 +++---
->>>  include/uapi/asm-generic/shmparam.h    |    6 +++---
->>>  include/uapi/asm-generic/signal-defs.h |    6 +++---
->>>  include/uapi/asm-generic/signal.h      |    6 +++---
->>>  include/uapi/asm-generic/socket.h      |    6 +++---
->>>  include/uapi/asm-generic/sockios.h     |    6 +++---
->>>  include/uapi/asm-generic/stat.h        |    6 +++---
->>>  include/uapi/asm-generic/statfs.h      |    6 +++---
->>>  include/uapi/asm-generic/swab.h        |    6 +++---
->>>  include/uapi/asm-generic/termbits.h    |    6 +++---
->>>  include/uapi/asm-generic/types.h       |    6 +++---
->>>  include/uapi/asm-generic/ucontext.h    |    6 +++---
->>>  include/uapi/asm-generic/unistd.h      |    5 +++++
->>>  include/uapi/drm/drm.h                 |    6 +++---
->>>  include/uapi/drm/drm_fourcc.h          |    6 +++---
->>>  include/uapi/drm/drm_mode.h            |    6 +++---
->>>  include/uapi/drm/drm_sarea.h           |    6 +++---
->>>  include/uapi/drm/exynos_drm.h          |    6 +++---
->>>  include/uapi/drm/i810_drm.h            |    6 +++---
->>>  include/uapi/drm/i915_drm.h            |    6 +++---
->>>  include/uapi/drm/mga_drm.h             |    6 +++---
->>>  include/uapi/drm/nouveau_drm.h         |    6 +++---
->>>  include/uapi/drm/omap_drm.h            |    6 +++---
->>>  include/uapi/drm/qxl_drm.h             |    6 +++---
->>>  include/uapi/drm/r128_drm.h            |    6 +++---
->>>  include/uapi/drm/radeon_drm.h          |    6 +++---
->>>  include/uapi/drm/savage_drm.h          |    6 +++---
->>>  include/uapi/drm/sis_drm.h             |    6 +++---
->>>  include/uapi/drm/tegra_drm.h           |    6 +++---
->>>  include/uapi/drm/via_drm.h             |    6 +++---
->>>  include/uapi/drm/vmwgfx_drm.h          |    6 +++---
->>>  include/uapi/mtd/inftl-user.h          |    6 +++---
->>>  include/uapi/mtd/mtd-abi.h             |    6 +++---
->>>  include/uapi/mtd/mtd-user.h            |    6 +++---
->>>  include/uapi/mtd/nftl-user.h           |    6 +++---
->>>  include/uapi/mtd/ubi-user.h            |    6 +++---
->>>  include/uapi/rdma/ib_user_cm.h         |    6 +++---
->>>  include/uapi/rdma/ib_user_mad.h        |    6 +++---
->>>  include/uapi/rdma/ib_user_sa.h         |    6 +++---
->>>  include/uapi/rdma/ib_user_verbs.h      |    6 +++---
->>>  include/uapi/rdma/rdma_netlink.h       |    6 +++---
->>>  include/uapi/rdma/rdma_user_cm.h       |    6 +++---
->>>  include/uapi/scsi/fc/fc_els.h          |    6 +++---
->>>  include/uapi/scsi/fc/fc_fs.h           |    6 +++---
->>>  include/uapi/scsi/fc/fc_gs.h           |    6 +++---
->>>  include/uapi/scsi/fc/fc_ns.h           |    6 +++---
->>>  include/uapi/scsi/scsi_bsg_fc.h        |    7 +++----
->>>  include/uapi/scsi/scsi_netlink.h       |    7 +++----
->>>  include/uapi/scsi/scsi_netlink_fc.h    |    7 +++----
->>>  include/uapi/sound/asequencer.h        |    6 +++---
->>>  include/uapi/sound/asound.h            |    6 +++---
->>>  include/uapi/sound/asound_fm.h         |    6 +++---
->>>  include/uapi/sound/compress_offload.h  |    6 +++---
->>>  include/uapi/sound/compress_params.h   |    6 +++---
->>>  include/uapi/sound/emu10k1.h           |    6 +++---
->>>  include/uapi/sound/hdsp.h              |    6 +++---
->>>  include/uapi/sound/hdspm.h             |    6 +++---
->>>  include/uapi/sound/sb16_csp.h          |    6 +++---
->>>  include/uapi/sound/sfnt_info.h         |    6 +++---
->>>  include/uapi/video/edid.h              |    6 +++---
->>>  include/uapi/video/sisfb.h             |    6 +++---
->>>  include/uapi/video/uvesafb.h           |    6 +++---
->>>  include/uapi/xen/evtchn.h              |    6 +++---
->>>  include/uapi/xen/privcmd.h             |    6 +++---
->>>  80 files changed, 244 insertions(+), 237 deletions(-)
-> 
-> 
+>> Whats happening with CONTIG flag and with IOMMU,  is
+>>
+>>  __iommu_alloc_buffer() ---> dma_alloc_from_contiguous() and in this
+>> function it fails at
+>> this condition check  if (pageno >= cma->count)
+>>
+>> So I tried increasing the CONFIG_CMA_SIZE_MBYTES to 24,  this check
+>> succeeds and it works well without my patch.
+>>
+>> But what about the case where CONFIG_CMA is disabled , yet i want
+>> bigger memory for a device.
+>>  I think using IOMMU we can achieve this.
+>>
+>>  correct me, if i am wrong.
+>>
+>
+> I'm on summer vacation so I'm afraid that I cannot test and look into it but
+> I guess you guy didn't declare CMA region for Exynos drm. And in this case,
+> the size of CMA declared region is 16MB as default. That is why works well
+> after increasing default size, CONFIG_CMA_SIZE_MBYTES, to 24MB. And I
+> mentioned long time ago, we are required to use physically contiguous memory
+> in case that bootloader uses physically contiguous memory for its own
+> framebuffer, and kernel wants to share the bootloader's framebuffer region
+> to resolve flickering issue while booted; that is required for product. And
+> one question, is there any reason that you guy should use non-contiguous
+> memory for framebuffer with iommu?
+>
+
+yeah, we could not allocate CMA region for FIMD, because the function
+dma_declare_contiguous() needs "dev" as the first argument and we have
+access to "dev" node only if it is NON-DT way of probing like the way
+it is done in arch/arm/mach-davinci/devices-da8xx.c
+But now, since the probing is through DT way, there is NO way ( Let me
+know if something is newly added ) to call dma_declare_contiguous()
+and reserve CMA region .
+
+we don't have any specific requirement for NON_CONTIG or CONTIG
+memory, but only requirement was to allocate a bigger memory like (
+2560 * 1600 * 4 ) for FB.
+
+But as Rob suggested, we should have fall-back case if CONTIG memory
+allocation fails, as below
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index df43fa9..15de626 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -144,7 +144,6 @@ static int exynos_drm_fbdev_create(struct
+drm_fb_helper *helper,
+        struct platform_device *pdev = dev->platformdev;
+        unsigned long size;
+        int ret;
+
+        DRM_DEBUG_KMS("surface width(%d), height(%d) and bpp(%d\n",
+                        sizes->surface_width, sizes->surface_height,
+@@ -167,16 +166,14 @@ static int exynos_drm_fbdev_create(struct
+drm_fb_helper *helper,
+
+        size = mode_cmd.pitches[0] * mode_cmd.height;
+
+-       /* 0 means to allocate physically continuous memory */
+-       exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
++       exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
+        if (IS_ERR(exynos_gem_obj)) {
+-               ret = PTR_ERR(exynos_gem_obj);
+-               goto err_release_framebuffer;
++               if(is_drm_iommu_supported(dev))
++                       exynos_gem_obj = exynos_drm_gem_create(dev,
+EXYNOS_BO_NONCONTIG, size);
++               if (IS_ERR(exynos_gem_obj)) {
++                       ret = PTR_ERR(exynos_gem_obj);
++                       goto err_release_framebuffer;
++               }
++               dev_warn("\n exynos_gem_obj for FB is allocated with
+non physically continuous       +               memory \n");
+        }
+
+
+
+> Thanks,
+> Inki Dae
+>
+>>
+>>
+>> > BR,
+>> > -R
+>> >
+>> >> Could you check why the allocation fails when requesting contiguous
+>> >> memory?
+>> >>
+>> >> Best regards,
+>> >> Tomasz
+>> >>
+>> >> --
+>> >> To unsubscribe from this list: send the line "unsubscribe linux-media"
+>> >> in
+>> >> the body of a message to majordomo@vger.kernel.org
+>> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>>
+>> --
+>> Thanks and Regards
+>>  Vikas Sajjan
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+
 
 
 -- 
-Chen Gang
+Thanks and Regards
+ Vikas Sajjan
