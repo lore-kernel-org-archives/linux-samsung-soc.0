@@ -1,75 +1,93 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos5420: add ADC device tree node
-Date: Fri, 2 Aug 2013 10:28:04 +0530
-Message-ID: <CAHfPSqCnhejs9HapBLSWJJvqs=uhRsq8ukYnycQu5cSKhPgaSg@mail.gmail.com>
-References: <1375349321-18646-1-git-send-email-ch.naveen@samsung.com> <CANruHrQXh=aE5-DkaNzdd=PpByTqyszyh2G0cvcW2iBGH8VH4A@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically
+ continous memory flag
+Date: Fri, 2 Aug 2013 10:31:42 +0530
+Message-ID: <CAK9yfHzski3=UcUkFPPpsRBvQshHszJAsMCs+MjshRZUiTMoWg@mail.gmail.com>
+References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org>
+	<5151790.EBRlE0cTxf@flatron>
+	<CAD025yQfPxK-uGEwGWc4i8osNwY5VW4PUAQ4pD7Sy_jFfZ=LOw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CANruHrQXh=aE5-DkaNzdd=PpByTqyszyh2G0cvcW2iBGH8VH4A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: sunil joshi <sjoshi.open@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <CAD025yQfPxK-uGEwGWc4i8osNwY5VW4PUAQ4pD7Sy_jFfZ=LOw@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "kgene.kim" <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, arun.kk@samsung.com, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2 August 2013 10:20, sunil joshi <sjoshi.open@gmail.com> wrote:
-> Hi Naveen,
-> exynos5250.dtsi also needs this entry.
-> Pls consider adding adc node in exynos5250.dtsi as well, and move the
-> common content of adc node to exynos5.dtsi.
-Sure, sunil will run a boot test and submit the code
->
-> Regards
-> Sunil
->
->
-> On Thu, Aug 1, 2013 at 2:58 PM, Naveen Krishna Chatradhi
-> <ch.naveen@samsung.com> wrote:
->> From: Jaehoon Kim <jh228.kim@samsung.com>
->>
->> Add device tree node for ADC in exynos5420.dtsi
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> ---
->>  arch/arm/boot/dts/exynos5420.dtsi |   11 +++++++++++
->>  1 file changed, 11 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
->> index 8c54c4b..074e1bc 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -145,4 +145,15 @@
->>                 clocks = <&clock 260>, <&clock 131>;
->>                 clock-names = "uart", "clk_uart_baud0";
->>         };
->> +
->> +       adc: adc@12D10000 {
->> +               compatible = "samsung,exynos-adc-v2";
->> +               reg = <0x12D10000 0x100>, <0x10040720 0x4>;
->> +               interrupts = <0 106 0>;
->> +               #io-channel-cells = <1>;
->> +               io-channel-ranges;
->> +               clocks = <&clock 270>;
->> +               clock-names = "adc";
->> +               status = "disabled";
->> +       };
->>  };
->> --
->> 1.7.9.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+Hi Vikas,
 
+On 2 August 2013 09:23, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> Hi Tomasz,
+>
+>
+> On 2 August 2013 04:50, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>
+>> Hi Vikas,
+>>
+>> On Thursday 01 of August 2013 16:49:32 Vikas Sajjan wrote:
+>> > While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
+>> > connected with resolution 2560x1600, following error occured even with
+>> > IOMMU enabled:
+>> > [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate
+>> > buffer. [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+>> >
+>> > This patch fixes the issue by adding a check for IOMMU.
+>> >
+>> > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+>> > Signed-off-by: Arun Kumar <arun.kk@samsung.com>
+>> > ---
+>> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |    9 ++++++++-
+>> >  1 file changed, 8 insertions(+), 1 deletion(-)
+>> >
+>> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> > b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c index 8e60bd6..2a86666
+>> > 100644
+>> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> > @@ -16,6 +16,7 @@
+>> >  #include <drm/drm_crtc.h>
+>> >  #include <drm/drm_fb_helper.h>
+>> >  #include <drm/drm_crtc_helper.h>
+>> > +#include <drm/exynos_drm.h>
+>> >
+>> >  #include "exynos_drm_drv.h"
+>> >  #include "exynos_drm_fb.h"
+>> > @@ -143,6 +144,7 @@ static int exynos_drm_fbdev_create(struct
+>> > drm_fb_helper *helper, struct platform_device *pdev = dev->platformdev;
+>> >       unsigned long size;
+>> >       int ret;
+>> > +     unsigned int flag;
+>> >
+>> >       DRM_DEBUG_KMS("surface width(%d), height(%d) and bpp(%d\n",
+>> >                       sizes->surface_width, sizes->surface_height,
+>> > @@ -166,7 +168,12 @@ static int exynos_drm_fbdev_create(struct
+>> > drm_fb_helper *helper, size = mode_cmd.pitches[0] * mode_cmd.height;
+>> >
+>> >       /* 0 means to allocate physically continuous memory */
+>> > -     exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
+>> > +     if (!is_drm_iommu_supported(dev))
+>> > +             flag = 0;
+>> > +     else
+>> > +             flag = EXYNOS_BO_NONCONTIG;
+>>
+>> While noncontig memory might be used for devices that support IOMMU, there
+>> should be no problem with using contig memory for them, so this seems more
+>> like masking the original problem rather than tracking it down.
+>>
+>> Could you check why the allocation fails when requesting contiguous
+>> memory?
+>>
+>
+> It is failing if i am giving bigger resolution like 2560x1600, but if
+> i try for 1280x780 resolution, it   works fine.
+> Looks like arm_dma_alloc() is NOT able to allocate bigger buffer of
+> size 2560 * 1600 * 4.
 
+You may need to increase the zoneorder (from current default 11 to say
+13) if you need large physically contiguous pages.
+However I am not sure if it is recommended.
 
 -- 
-Shine bright,
-(: Nav :)
+With warm regards,
+Sachin
