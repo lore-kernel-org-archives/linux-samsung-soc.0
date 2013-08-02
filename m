@@ -1,100 +1,91 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically
- continous memory flag
-Date: Fri, 2 Aug 2013 09:23:19 +0530
-Message-ID: <CAD025yQfPxK-uGEwGWc4i8osNwY5VW4PUAQ4pD7Sy_jFfZ=LOw@mail.gmail.com>
-References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org> <5151790.EBRlE0cTxf@flatron>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC v2 06/10] exynos5-fimc-is: Adds isp subdev
+Date: Fri, 2 Aug 2013 10:01:05 +0530
+Message-ID: <CALt3h7-VfbxxHnitQFgZ3hbTv-X9T09aJznTvu2qNqGbXnftdw@mail.gmail.com>
+References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com>
+	<1370005408-10853-7-git-send-email-arun.kk@samsung.com>
+	<51C38F82.1040507@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f53.google.com ([209.85.220.53]:34036 "EHLO
-	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753892Ab3HBDxl (ORCPT
+Received: from mail-vb0-f50.google.com ([209.85.212.50]:55398 "EHLO
+	mail-vb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751746Ab3HBEbG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Aug 2013 23:53:41 -0400
-Received: by mail-pa0-f53.google.com with SMTP id lb1so195004pab.26
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Aug 2013 20:53:40 -0700 (PDT)
-In-Reply-To: <5151790.EBRlE0cTxf@flatron>
+	Fri, 2 Aug 2013 00:31:06 -0400
+In-Reply-To: <51C38F82.1040507@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "kgene.kim" <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, arun.kk@samsung.com, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: LMML <linux-media@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kilyeon.im@samsung.com, shaik.ameer@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi Tomasz,
+Hi Sylwester,
 
+On Fri, Jun 21, 2013 at 4:55 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> On 05/31/2013 03:03 PM, Arun Kumar K wrote:
+>>
+>> fimc-is driver takes video data input from the ISP video node
+>> which is added in this patch. This node accepts Bayer input
+>> buffers which is given from the IS sensors.
+>>
+>> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+>> Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
+>> ---
+>>   drivers/media/platform/exynos5-is/fimc-is-isp.c |  438
+>> +++++++++++++++++++++++
+>>   drivers/media/platform/exynos5-is/fimc-is-isp.h |   89 +++++
+>>   2 files changed, 527 insertions(+)
+>>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.c
+>>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.h
+>>
 
-On 2 August 2013 04:50, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+[snip]
+
+>> + * Video node ioctl operations
+>> + */
+>> +static int isp_querycap_output(struct file *file, void *priv,
+>> +                                       struct v4l2_capability *cap)
+>> +{
+>> +       strncpy(cap->driver, ISP_DRV_NAME, sizeof(cap->driver) - 1);
+>> +       strncpy(cap->card, ISP_DRV_NAME, sizeof(cap->card) - 1);
+>> +       strncpy(cap->bus_info, ISP_DRV_NAME, sizeof(cap->bus_info) - 1);
+>> +       cap->capabilities = V4L2_CAP_STREAMING |
+>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+>> +       cap->device_caps = V4L2_CAP_STREAMING |
+>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
 >
-> Hi Vikas,
 >
-> On Thursday 01 of August 2013 16:49:32 Vikas Sajjan wrote:
-> > While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
-> > connected with resolution 2560x1600, following error occured even with
-> > IOMMU enabled:
-> > [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate
-> > buffer. [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
-> >
-> > This patch fixes the issue by adding a check for IOMMU.
-> >
-> > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> > Signed-off-by: Arun Kumar <arun.kk@samsung.com>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |    9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c index 8e60bd6..2a86666
-> > 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> > @@ -16,6 +16,7 @@
-> >  #include <drm/drm_crtc.h>
-> >  #include <drm/drm_fb_helper.h>
-> >  #include <drm/drm_crtc_helper.h>
-> > +#include <drm/exynos_drm.h>
-> >
-> >  #include "exynos_drm_drv.h"
-> >  #include "exynos_drm_fb.h"
-> > @@ -143,6 +144,7 @@ static int exynos_drm_fbdev_create(struct
-> > drm_fb_helper *helper, struct platform_device *pdev = dev->platformdev;
-> >       unsigned long size;
-> >       int ret;
-> > +     unsigned int flag;
-> >
-> >       DRM_DEBUG_KMS("surface width(%d), height(%d) and bpp(%d\n",
-> >                       sizes->surface_width, sizes->surface_height,
-> > @@ -166,7 +168,12 @@ static int exynos_drm_fbdev_create(struct
-> > drm_fb_helper *helper, size = mode_cmd.pitches[0] * mode_cmd.height;
-> >
-> >       /* 0 means to allocate physically continuous memory */
-> > -     exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
-> > +     if (!is_drm_iommu_supported(dev))
-> > +             flag = 0;
-> > +     else
-> > +             flag = EXYNOS_BO_NONCONTIG;
+>         cap->capabilities = V4L2_CAP_STREAMING;
 >
-> While noncontig memory might be used for devices that support IOMMU, there
-> should be no problem with using contig memory for them, so this seems more
-> like masking the original problem rather than tracking it down.
+>         cap->device_caps = V4L2_CAP_STREAMING |
+> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
 >
-> Could you check why the allocation fails when requesting contiguous
-> memory?
+> This should be:
+>
+>         cap->device_caps = V4L2_CAP_STREAMING;
+>         cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+>
+> Media Controller device nodes must not use V4L2_CAP_VIDEO_{OUTPUT,
+> CAPTURE}_(_MPLANE)
+> capability flags.
 >
 
-It is failing if i am giving bigger resolution like 2560x1600, but if
-i try for 1280x780 resolution, it   works fine.
-Looks like arm_dma_alloc() is NOT able to allocate bigger buffer of
-size 2560 * 1600 * 4.
-Hence i used flag = EXYNOS_BO_NONCONTIG;
+If I dont provide any video capabilities, the v4l2-compliance tool
+gives a fail :
 
+     fail: v4l2-compliance.cpp(298) : node->is_video && !(dcaps & video_caps)
+test VIDIOC_QUERYCAP: FAIL
 
->
-> Best regards,
-> Tomasz
->
+This error doesn't come if I give V4L2_CAP_VIDEO_OUTPUT_MPLANE capability.
 
+One more related error compliance tool gives is :
 
+   fail: v4l2-test-formats.cpp(286): Video Output Multiplanar cap not
+set, but Video Output Multiplanar formats defined
+test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: FAIL
 
--- 
-Thanks and Regards
- Vikas Sajjan
+Shall these errors be ignored?
+
+Regards
+Arun
