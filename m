@@ -1,215 +1,84 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically
- continous memory flag
-Date: Fri, 2 Aug 2013 15:40:44 +0530
-Message-ID: <CAD025yR9Xd0G81WdLDxKyu-RVZPPJAUOKZ+0b5oKUxYOe7q_pQ@mail.gmail.com>
-References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org>
- <5151790.EBRlE0cTxf@flatron> <CAF6AEGvmd20MJ_=69kYahkeTySVbhc2GgiUNwCDFXuDWgeGAfQ@mail.gmail.com>
- <CAD025yRZBDh6ssSUbY-mo2mo-WqrUS3R56bD-QrBvaBbWX_HMQ@mail.gmail.com> <CAAQKjZNBPxBxR-4PXbhOdX0V1inMkauE-xZ+0kwnfVTgqpCEVg@mail.gmail.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V2 7/8] ARM: dts: wm8994: Add wm8994 support on smdk5420
+Date: Fri, 2 Aug 2013 16:15:28 +0530
+Message-ID: <CAAgF-BcPT24LcQe5SUyOP3qHThXqZ1mVts=_cnww3EAUYEYikw@mail.gmail.com>
+References: <1374845812-7803-1-git-send-email-padma.v@samsung.com>
+	<1374845812-7803-8-git-send-email-padma.v@samsung.com>
+	<20130726151902.GL9858@sirena.org.uk>
+	<CAAgF-Be8SNxTZv1yFCwH6yJ-O_3R4reh=3y+pSCLJYW7S9TkUg@mail.gmail.com>
+	<CAAgF-Bexp_fGT8KV+TQ0_kZLJBtq7UK=TG4eYRA6qpTSL+scxg@mail.gmail.com>
+	<20130729134311.GX9858@sirena.org.uk>
+	<CAAgF-BeDYm1jNJpkyfTeS5HjpEuaHiumFq+D_PNs=QYG6-Px+w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:45646 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030368Ab3HBKLG (ORCPT
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:37909 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752234Ab3HBKp3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Aug 2013 06:11:06 -0400
-Received: by mail-lb0-f172.google.com with SMTP id o7so318424lbv.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Aug 2013 03:11:04 -0700 (PDT)
-In-Reply-To: <CAAQKjZNBPxBxR-4PXbhOdX0V1inMkauE-xZ+0kwnfVTgqpCEVg@mail.gmail.com>
+	Fri, 2 Aug 2013 06:45:29 -0400
+Received: by mail-ob0-f177.google.com with SMTP id f8so844093obp.8
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Aug 2013 03:45:28 -0700 (PDT)
+In-Reply-To: <CAAgF-BeDYm1jNJpkyfTeS5HjpEuaHiumFq+D_PNs=QYG6-Px+w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Rob Clark <robdclark@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "kgene.kim" <kgene.kim@samsung.com>, "arun.kk" <arun.kk@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, m.szyprowski@samsung.com
+To: Mark Brown <broonie@kernel.org>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Inki Dae,
+Hi Mark,
 
-On 2 August 2013 12:58, Inki Dae <inki.dae@samsung.com> wrote:
+On Tue, Jul 30, 2013 at 8:58 AM, Padma Venkat <padma.kvr@gmail.com> wrote:
+> Hi Mark,
 >
+> On Mon, Jul 29, 2013 at 7:13 PM, Mark Brown <broonie@kernel.org> wrote:
+>> On Mon, Jul 29, 2013 at 05:31:16PM +0530, Padma Venkat wrote:
+>>> On Sat, Jul 27, 2013 at 6:46 AM, Padma Venkat <padma.kvr@gmail.com> wrote:
+>>
+>>> >>> +     vdd: fixed-regulator@0 {
+>>> >>> +             compatible = "regulator-fixed";
+>>> >>> +             regulator-name = "vdd-supply";
+>>
+>>> >> These names look wrong - they should reflect the names in the schematic
+>>> >> as they're for human comprehensibility.  This may just be a case of
+>>> >> dropping the -supply.
+>>
+>>> When I posted the same patch for smdk5250, you asked me to club all
+>>> the same supply regulators. So I clubbed AVDD2 and CPVDD. So any other
+>>> better name for representing both supplies?
+>>
+>> No, I'd have told you to combine things taht come from the same supply
+>> on the board - things like the speaker supplies for example aren't going
+>> to be coming from separate places.  The names should reflect whatever
+>> the names on the schemaric are, like I say that's probably just removing
+>> the -supply.
+>>
+>>> >> documentation update the other day, it's in my tree now) but it's not
+>>> >> essential and I suspect it needs some work on the clock driver side
+>>> >> still.
+>>
+>>> > OK. I will check this.
+>>
+>>> As per schemata, input clock to MCLK1 is an oscillator clock with
+>>> 16.9MHz and MCLK2 not showing any input clock. So here I need to add a
+>>> fixed rate clock with 16.9MHz as MCLK1 in the smdk board file.
+>>
+>>> Is it correct?
+>>
+>> Yes, in the DTS (or to XCLKOUT on the AP?).
 >
-> 2013/8/2 Vikas Sajjan <vikas.sajjan@linaro.org>
->>
->> Hi Rob,
->>
->> On 2 August 2013 06:03, Rob Clark <robdclark@gmail.com> wrote:
->> > On Thu, Aug 1, 2013 at 7:20 PM, Tomasz Figa <tomasz.figa@gmail.com>
->> > wrote:
->> >> Hi Vikas,
->> >>
->> >> On Thursday 01 of August 2013 16:49:32 Vikas Sajjan wrote:
->> >>> While trying to get boot-logo up on exynos5420 SMDK which has eDP
->> >>> panel
->> >>> connected with resolution 2560x1600, following error occured even with
->> >>> IOMMU enabled:
->> >>> [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate
->> >>> buffer. [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
->> >>>
->> >>> This patch fixes the issue by adding a check for IOMMU.
->> >>>
->> >>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
->> >>> Signed-off-by: Arun Kumar <arun.kk@samsung.com>
->> >>> ---
->> >>>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |    9 ++++++++-
->> >>>  1 file changed, 8 insertions(+), 1 deletion(-)
->> >>>
->> >>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> >>> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c index 8e60bd6..2a86666
->> >>> 100644
->> >>> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> >>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
->> >>> @@ -16,6 +16,7 @@
->> >>>  #include <drm/drm_crtc.h>
->> >>>  #include <drm/drm_fb_helper.h>
->> >>>  #include <drm/drm_crtc_helper.h>
->> >>> +#include <drm/exynos_drm.h>
->> >>>
->> >>>  #include "exynos_drm_drv.h"
->> >>>  #include "exynos_drm_fb.h"
->> >>> @@ -143,6 +144,7 @@ static int exynos_drm_fbdev_create(struct
->> >>> drm_fb_helper *helper, struct platform_device *pdev =
->> >>> dev->platformdev;
->> >>>       unsigned long size;
->> >>>       int ret;
->> >>> +     unsigned int flag;
->> >>>
->> >>>       DRM_DEBUG_KMS("surface width(%d), height(%d) and bpp(%d\n",
->> >>>                       sizes->surface_width, sizes->surface_height,
->> >>> @@ -166,7 +168,12 @@ static int exynos_drm_fbdev_create(struct
->> >>> drm_fb_helper *helper, size = mode_cmd.pitches[0] * mode_cmd.height;
->> >>>
->> >>>       /* 0 means to allocate physically continuous memory */
->> >>> -     exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
->> >>> +     if (!is_drm_iommu_supported(dev))
->> >>> +             flag = 0;
->> >>> +     else
->> >>> +             flag = EXYNOS_BO_NONCONTIG;
->> >>
->> >> While noncontig memory might be used for devices that support IOMMU,
->> >> there
->> >> should be no problem with using contig memory for them, so this seems
->> >> more
->> >> like masking the original problem rather than tracking it down.
->> >
->> > it is probably a good idea to not require contig memory when it is not
->> > needed for performance or functionality (and if it is only
->> > performance, then fallback gracefully to non-contig).. but yeah, would
->> > be good to know if this is masking another issue all the same
->> >
->>
->> Whats happening with CONTIG flag and with IOMMU,  is
->>
->>  __iommu_alloc_buffer() ---> dma_alloc_from_contiguous() and in this
->> function it fails at
->> this condition check  if (pageno >= cma->count)
->>
->> So I tried increasing the CONFIG_CMA_SIZE_MBYTES to 24,  this check
->> succeeds and it works well without my patch.
->>
->> But what about the case where CONFIG_CMA is disabled , yet i want
->> bigger memory for a device.
->>  I think using IOMMU we can achieve this.
->>
->>  correct me, if i am wrong.
->>
->
-> I'm on summer vacation so I'm afraid that I cannot test and look into it but
-> I guess you guy didn't declare CMA region for Exynos drm. And in this case,
-> the size of CMA declared region is 16MB as default. That is why works well
-> after increasing default size, CONFIG_CMA_SIZE_MBYTES, to 24MB. And I
-> mentioned long time ago, we are required to use physically contiguous memory
-> in case that bootloader uses physically contiguous memory for its own
-> framebuffer, and kernel wants to share the bootloader's framebuffer region
-> to resolve flickering issue while booted; that is required for product. And
-> one question, is there any reason that you guy should use non-contiguous
-> memory for framebuffer with iommu?
->
+> On smdk boards(atleast on smdk5250 and smdk5420) there is no XCLKOUT
+> funda. Codec MCLK can get clock from oscillator clock in codec master
+> mode or i2scdclk in codec slave mode. XCLKOUT is there in some other
+> variants of 5250 and 5420 where it is using other codecs than wm8994.
+> But the mux and divider of XCLKOUT is out of CMU. As Sylwester told it
+> is there in PMU registers.
 
-yeah, we could not allocate CMA region for FIMD, because the function
-dma_declare_contiguous() needs "dev" as the first argument and we have
-access to "dev" node only if it is NON-DT way of probing like the way
-it is done in arch/arm/mach-davinci/devices-da8xx.c
-But now, since the probing is through DT way, there is NO way ( Let me
-know if something is newly added ) to call dma_declare_contiguous()
-and reserve CMA region .
+Sorry for giving some what wrong info here. I verified the schemata.
+There is a switch on the board which can be used to select the input
+clock of codec MCLK1. We can either select oscillator clock which is
+16.9MHz which is on the board or XCLKOUT which is from PMU or
+i2scdclk(codec slave mode). Right now we are using oscillator clock as
+input clock to MCLK1.
 
-we don't have any specific requirement for NON_CONTIG or CONTIG
-memory, but only requirement was to allocate a bigger memory like (
-2560 * 1600 * 4 ) for FB.
-
-But as Rob suggested, we should have fall-back case if CONTIG memory
-allocation fails, as below
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index df43fa9..15de626 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -144,7 +144,6 @@ static int exynos_drm_fbdev_create(struct
-drm_fb_helper *helper,
-        struct platform_device *pdev = dev->platformdev;
-        unsigned long size;
-        int ret;
-
-        DRM_DEBUG_KMS("surface width(%d), height(%d) and bpp(%d\n",
-                        sizes->surface_width, sizes->surface_height,
-@@ -167,16 +166,14 @@ static int exynos_drm_fbdev_create(struct
-drm_fb_helper *helper,
-
-        size = mode_cmd.pitches[0] * mode_cmd.height;
-
--       /* 0 means to allocate physically continuous memory */
--       exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
-+       exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
-        if (IS_ERR(exynos_gem_obj)) {
--               ret = PTR_ERR(exynos_gem_obj);
--               goto err_release_framebuffer;
-+               if(is_drm_iommu_supported(dev))
-+                       exynos_gem_obj = exynos_drm_gem_create(dev,
-EXYNOS_BO_NONCONTIG, size);
-+               if (IS_ERR(exynos_gem_obj)) {
-+                       ret = PTR_ERR(exynos_gem_obj);
-+                       goto err_release_framebuffer;
-+               }
-+               dev_warn("\n exynos_gem_obj for FB is allocated with
-non physically continuous       +               memory \n");
-        }
-
-
-
-> Thanks,
-> Inki Dae
->
->>
->>
->> > BR,
->> > -R
->> >
->> >> Could you check why the allocation fails when requesting contiguous
->> >> memory?
->> >>
->> >> Best regards,
->> >> Tomasz
->> >>
->> >> --
->> >> To unsubscribe from this list: send the line "unsubscribe linux-media"
->> >> in
->> >> the body of a message to majordomo@vger.kernel.org
->> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->>
->> --
->> Thanks and Regards
->>  Vikas Sajjan
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-media" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
-
-
-
--- 
-Thanks and Regards
- Vikas Sajjan
+Thanks
+Padma
