@@ -1,37 +1,127 @@
-From: Julius Werner <jwerner@chromium.org>
-Subject: [PATCH 0/3] usb: phy-samsung-usb: Simplify and cleanup
-Date: Thu,  1 Aug 2013 17:52:03 -0700
-Message-ID: <1375404726-26264-1-git-send-email-jwerner@chromium.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:50821 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751022Ab3HBAw5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Aug 2013 20:52:57 -0400
-Received: by mail-pb0-f43.google.com with SMTP id md4so50285pbc.30
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Aug 2013 17:52:57 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH 2/3] usb: phy-samsung-usb: trivial: rename pmuregs variable
+Date: Thu,  1 Aug 2013 17:52:05 -0700
+Message-ID: <1375404726-26264-3-git-send-email-jwerner@chromium.org>
+References: <1375404726-26264-1-git-send-email-jwerner@chromium.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1375404726-26264-1-git-send-email-jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Julius Werner <jwerner@chromium.org>
 
-This patch series cleans up and simplifies some of the Samsung USB PHY
-driver code. It changes the PMU register handling to carry the register
-address directly in the device tree and avoid a lot of special-cased
-address arithmatic in the code. Then it removes the USB_PHY_TYPE
-HOST/DEVICE distinction which was only needed for those removed parts.
+Now that the sphy->pmuregs variable always points to only a single
+register, let's rename it to make that more clear.
 
-Julius Werner (3):
-  usb: phy-samsung-usb: Simplify PMU register handling
-  usb: phy-samsung-usb: trivial: rename pmuregs variable
-  usb: phy-samsung-usb: Remove USB_PHY_TYPE from Samsung PHY driver
+Signed-off-by: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+---
+ drivers/usb/phy/phy-samsung-usb.c  | 14 +++++++-------
+ drivers/usb/phy/phy-samsung-usb.h  |  4 ++--
+ drivers/usb/phy/phy-samsung-usb2.c |  4 ++--
+ drivers/usb/phy/phy-samsung-usb3.c |  4 ++--
+ 4 files changed, 13 insertions(+), 13 deletions(-)
 
- arch/arm/boot/dts/exynos5250.dtsi  |  4 +--
- drivers/usb/phy/phy-samsung-usb.c  | 51 +++++++++-----------------------------
- drivers/usb/phy/phy-samsung-usb.h  | 34 ++++++-------------------
- drivers/usb/phy/phy-samsung-usb2.c | 34 +++++++------------------
- drivers/usb/phy/phy-samsung-usb3.c | 13 +++-------
- 5 files changed, 34 insertions(+), 102 deletions(-)
-
+diff --git a/drivers/usb/phy/phy-samsung-usb.c b/drivers/usb/phy/phy-samsung-usb.c
+index 51cad19..fa382c9 100644
+--- a/drivers/usb/phy/phy-samsung-usb.c
++++ b/drivers/usb/phy/phy-samsung-usb.c
+@@ -42,9 +42,9 @@ int samsung_usbphy_parse_dt(struct samsung_usbphy *sphy)
+ 		return -ENODEV;
+ 	}
+ 
+-	sphy->pmuregs = of_iomap(usbphy_sys, 0);
++	sphy->pmureg = of_iomap(usbphy_sys, 0);
+ 
+-	if (sphy->pmuregs == NULL) {
++	if (sphy->pmureg == NULL) {
+ 		dev_err(sphy->dev, "Can't get usb-phy pmu control register\n");
+ 		goto err0;
+ 	}
+@@ -77,23 +77,23 @@ void samsung_usbphy_set_isolation_4210(struct samsung_usbphy *sphy, bool on)
+ {
+ 	u32 reg_val;
+ 
+-	if (!sphy->pmuregs) {
++	if (!sphy->pmureg) {
+ 		dev_warn(sphy->dev, "Can't set pmu isolation\n");
+ 		return;
+ 	}
+ 
+-	reg_val = readl(sphy->pmuregs);
++	reg_val = readl(sphy->pmureg);
+ 
+ 	if (on)
+ 		reg_val &= ~sphy->drv_data->phy_en_mask;
+ 	else
+ 		reg_val |= sphy->drv_data->phy_en_mask;
+ 
+-	writel(reg_val, sphy->pmuregs);
++	writel(reg_val, sphy->pmureg);
+ 
+ 	if (sphy->drv_data->cpu_type == TYPE_EXYNOS4X12) {
+-		writel(reg_val, sphy->pmuregs + EXYNOS4X12_PHY_HSIC_CTRL0);
+-		writel(reg_val, sphy->pmuregs + EXYNOS4X12_PHY_HSIC_CTRL1);
++		writel(reg_val, sphy->pmureg + EXYNOS4X12_PHY_HSIC_CTRL0);
++		writel(reg_val, sphy->pmureg + EXYNOS4X12_PHY_HSIC_CTRL1);
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(samsung_usbphy_set_isolation_4210);
+diff --git a/drivers/usb/phy/phy-samsung-usb.h b/drivers/usb/phy/phy-samsung-usb.h
+index a817af5..f2e9c4a 100644
+--- a/drivers/usb/phy/phy-samsung-usb.h
++++ b/drivers/usb/phy/phy-samsung-usb.h
+@@ -281,7 +281,7 @@ struct samsung_usbphy_drvdata {
+  * @dev: The parent device supplied to the probe function
+  * @clk: usb phy clock
+  * @regs: usb phy controller registers memory base
+- * @pmuregs: USB device PHY_CONTROL register memory base
++ * @pmureg: USB device PHY_CONTROL register address
+  * @sysreg: USB2.0 PHY_CFG register memory base
+  * @ref_clk_freq: reference clock frequency selection
+  * @drv_data: driver data available for different SoCs
+@@ -296,7 +296,7 @@ struct samsung_usbphy {
+ 	struct device	*dev;
+ 	struct clk	*clk;
+ 	void __iomem	*regs;
+-	void __iomem	*pmuregs;
++	void __iomem	*pmureg;
+ 	void __iomem	*sysreg;
+ 	int		ref_clk_freq;
+ 	const struct samsung_usbphy_drvdata *drv_data;
+diff --git a/drivers/usb/phy/phy-samsung-usb2.c b/drivers/usb/phy/phy-samsung-usb2.c
+index adbaa8c..c2c83d4 100644
+--- a/drivers/usb/phy/phy-samsung-usb2.c
++++ b/drivers/usb/phy/phy-samsung-usb2.c
+@@ -435,8 +435,8 @@ static int samsung_usb2phy_remove(struct platform_device *pdev)
+ 
+ 	usb_remove_phy(&sphy->phy);
+ 
+-	if (sphy->pmuregs)
+-		iounmap(sphy->pmuregs);
++	if (sphy->pmureg)
++		iounmap(sphy->pmureg);
+ 	if (sphy->sysreg)
+ 		iounmap(sphy->sysreg);
+ 
+diff --git a/drivers/usb/phy/phy-samsung-usb3.c b/drivers/usb/phy/phy-samsung-usb3.c
+index 3ad9579..6259a35 100644
+--- a/drivers/usb/phy/phy-samsung-usb3.c
++++ b/drivers/usb/phy/phy-samsung-usb3.c
+@@ -292,8 +292,8 @@ static int samsung_usb3phy_remove(struct platform_device *pdev)
+ 
+ 	usb_remove_phy(&sphy->phy);
+ 
+-	if (sphy->pmuregs)
+-		iounmap(sphy->pmuregs);
++	if (sphy->pmureg)
++		iounmap(sphy->pmureg);
+ 	if (sphy->sysreg)
+ 		iounmap(sphy->sysreg);
+ 
 -- 
 1.7.12.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
