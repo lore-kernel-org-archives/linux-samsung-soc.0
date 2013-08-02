@@ -1,377 +1,119 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: add power domains support for EXYNOS5440
-Date: Fri, 02 Aug 2013 15:23:19 +0200
-Message-ID: <2729097.X0eAsuYF97@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [RFC v3 00/13] Exynos5 IS driver
+Date: Fri,  2 Aug 2013 20:32:29 +0530
+Message-ID: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42482 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751407Ab3HBNXm (ORCPT
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:47577 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750766Ab3HBPCk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Aug 2013 09:23:42 -0400
+	Fri, 2 Aug 2013 11:02:40 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-On EXYNOS5440 power domains are handled in a different way than on
-the previous EXYNOS SoCs. Add support for them to EXYNOS pm_domains
-driver. Then add device tree nodes for PCIe (controlling power for
-PCIe host controller) and Conn2 (controlling power for Ethernet,
-SATA and USB controllers) power domains to exynos5440.dtsi.
+The patch series add support for Exynos5 camera subsystem. It
+re-uses mipi-csis and fimc-lite from exynos4-is and adds a new
+media device and fimc-is device drivers for exynos5.
+The media device supports asynchronos subdev registration for the
+fimc-is sensors and is based on the patch series from Sylwester
+for exynos4-is [1].
 
-Currently if runtime Power Management is enabled and the driver
-for devices under power domain is disabled then the power domain
-will be disabled by EXYNOS pm_domains driver. To make more active
-use of power domains (dynamically enable and disabled them as
-needed) it is required to add runtime PM support to pci-exynos,
-stmmac, ahci_platform, ohci-exynos and ehci-s5p drivers (to be
-done later).
+[1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg64653.html
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Myungjoo Ham <myungjoo.ham@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
----
- Documentation/devicetree/bindings/arm/exynos/power_domain.txt |   33 ++
- arch/arm/boot/dts/exynos5440.dtsi                             |   23 +
- arch/arm/mach-exynos/Kconfig                                  |    1 
- arch/arm/mach-exynos/common.c                                 |    4 
- arch/arm/mach-exynos/pm_domains.c                             |  138 +++++++++-
- 5 files changed, 190 insertions(+), 9 deletions(-)
+Changes from v2
+---------------
+- Added exynos5 media device driver from Shaik to this series
+- Added ISP pipeline support in media device driver
+- Based on Sylwester's latest exynos4-is development
+- Asynchronos registration of sensor subdevs
+- Made independent IS-sensor support
+- Add s5k4e5 sensor driver
+- Addressed review comments from Sylwester, Hans, Andrzej, Sachin
 
-Index: b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-===================================================================
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt	2013-08-02 14:45:53.551392396 +0200
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt	2013-08-02 14:46:29.799391845 +0200
-@@ -5,20 +5,47 @@ to gate power to one or more peripherals
- 
- Required Properties:
- - compatible: should be one of the following.
--    * samsung,exynos4210-pd - for exynos4210 type power domain.
-+    * samsung,exynos4210-pd - for Exynos4210 type power domain.
-+    * samsung,exynos5440-pd - for Exynos5440 type power domain.
- - reg: physical base address of the controller and length of memory mapped
--    region.
-+    region (Exynos4210 type power domain) or bit offset in the control
-+    register (Exynos5440 type power domain).
-+
-+Additional parent node must be created for Exynos5440 power domains with
-+the following required properties:
-+- compatible: samsung,exynos5440-power-domains, simple-bus
-+- reg: physical base address of the XMU controller and length of memory
-+    mapped region
- 
- Node of a device using power domains must have a samsung,power-domain property
- defined with a phandle to respective power domain.
- 
--Example:
-+Example for Exynos4210 compatible power domain:
- 
- 	lcd0: power-domain-lcd0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023C00 0x10>;
- 	};
- 
-+Example for Exynos5440 compatible power domains:
-+
-+	power-domains@00160000 {
-+		compatible = "samsung,exynos5440-power-domains", "simple-bus";
-+		reg = <0x00160000 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pd_pcie: pcie-power-domain@6 {
-+			compatible = "samsung,exynos5440-pd";
-+			reg = <6>;
-+		};
-+
-+		pd_conn2: conn2-power-domain@7 {
-+			compatible = "samsung,exynos5440-pd";
-+			reg = <7>;
-+		};
-+	};
-+
- Example of the node using power domain:
- 
- 	node {
-Index: b/arch/arm/boot/dts/exynos5440.dtsi
-===================================================================
---- a/arch/arm/boot/dts/exynos5440.dtsi	2013-08-02 14:45:53.599392397 +0200
-+++ b/arch/arm/boot/dts/exynos5440.dtsi	2013-08-02 14:46:29.815391842 +0200
-@@ -29,6 +29,23 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	power-domains@00160000 {
-+		compatible = "samsung,exynos5440-power-domains", "simple-bus";
-+		reg = <0x00160000 0x1000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pd_pcie: pcie-power-domain@6 {
-+			compatible = "samsung,exynos5440-pd";
-+			reg = <6>;
-+		};
-+
-+		pd_conn2: conn2-power-domain@7 {
-+			compatible = "samsung,exynos5440-pd";
-+			reg = <7>;
-+		};
-+	};
-+
- 	gic:interrupt-controller@2E0000 {
- 		compatible = "arm,cortex-a15-gic";
- 		#interrupt-cells = <3>;
-@@ -192,6 +209,7 @@
- 		phy-mode = "sgmii";
- 		clocks = <&clock 25>;
- 		clock-names = "stmmaceth";
-+		samsung,power-domain = <&pd_conn2>;
- 	};
- 
- 	amba {
-@@ -240,6 +258,7 @@
- 		interrupts = <0 30 0>;
- 		clocks = <&clock 23>;
- 		clock-names = "sata";
-+		samsung,power-domain = <&pd_conn2>;
- 	};
- 
- 	ohci@220000 {
-@@ -248,6 +267,7 @@
- 		interrupts = <0 29 0>;
- 		clocks = <&clock 24>;
- 		clock-names = "usbhost";
-+		samsung,power-domain = <&pd_conn2>;
- 	};
- 
- 	ehci@221000 {
-@@ -256,6 +276,7 @@
- 		interrupts = <0 29 0>;
- 		clocks = <&clock 24>;
- 		clock-names = "usbhost";
-+		samsung,power-domain = <&pd_conn2>;
- 	};
- 
- 	pcie@290000 {
-@@ -275,6 +296,7 @@
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0>;
- 		interrupt-map = <0x0 0 &gic 53>;
-+		samsung,power-domain = <&pd_pcie>;
- 	};
- 
- 	pcie@2a0000 {
-@@ -294,5 +316,6 @@
- 		#interrupt-cells = <1>;
- 		interrupt-map-mask = <0 0 0 0>;
- 		interrupt-map = <0x0 0 &gic 56>;
-+		samsung,power-domain = <&pd_pcie>;
- 	};
- };
-Index: b/arch/arm/mach-exynos/Kconfig
-===================================================================
---- a/arch/arm/mach-exynos/Kconfig	2013-08-02 14:45:53.563392396 +0200
-+++ b/arch/arm/mach-exynos/Kconfig	2013-08-02 14:46:29.815391842 +0200
-@@ -104,6 +104,7 @@ config SOC_EXYNOS5440
- 	select MIGHT_HAVE_PCI
- 	select PCI_DOMAINS if PCI
- 	select PINCTRL_EXYNOS5440
-+	select PM_GENERIC_DOMAINS if PM
- 	select PM_OPP
- 	help
- 	  Enable EXYNOS5440 SoC support
-Index: b/arch/arm/mach-exynos/common.c
-===================================================================
---- a/arch/arm/mach-exynos/common.c	2013-08-02 14:45:53.583392397 +0200
-+++ b/arch/arm/mach-exynos/common.c	2013-08-02 14:46:29.815391842 +0200
-@@ -296,10 +296,6 @@ void exynos5_restart(enum reboot_mode mo
- 
- void __init exynos_init_late(void)
- {
--	if (of_machine_is_compatible("samsung,exynos5440"))
--		/* to be supported later */
--		return;
--
- 	exynos_pm_late_initcall();
- }
- 
-Index: b/arch/arm/mach-exynos/pm_domains.c
-===================================================================
---- a/arch/arm/mach-exynos/pm_domains.c	2013-08-02 14:45:53.571392397 +0200
-+++ b/arch/arm/mach-exynos/pm_domains.c	2013-08-02 14:47:36.471390825 +0200
-@@ -24,12 +24,14 @@
- 
- #include <mach/regs-pmu.h>
- #include <plat/devs.h>
-+#include <plat/cpu.h>
- 
- /*
-  * Exynos specific wrapper around the generic power domain
-  */
- struct exynos_pm_domain {
- 	void __iomem *base;
-+	unsigned int bit_offset;
- 	char const *name;
- 	bool is_off;
- 	struct generic_pm_domain pd;
-@@ -74,6 +76,75 @@ static int exynos_pd_power_off(struct ge
- 	return exynos_pd_power(domain, false);
- }
- 
-+#define EXYNOS5440_PMU_STATUS	0x00BC
-+#define EXYNOS5440_PMU_CTRL	0x00C0
-+
-+static int exynos5440_check_status(struct exynos_pm_domain *pd, u32 *pwr)
-+{
-+	u32 timeout = 10; /* Wait max 1ms */
-+	int ret = 0;
-+
-+	do {
-+		*pwr = readl(pd->base + EXYNOS5440_PMU_STATUS);
-+		if ((*pwr & BIT(pd->bit_offset + 16)) == 0)
-+			break;
-+		if (!timeout) {
-+			pr_err("%s: power domain %s status read failed\n",
-+			       __func__, pd->name);
-+			ret = -ETIMEDOUT;
-+			break;
-+		}
-+		timeout--;
-+		usleep_range(80, 100);
-+	} while (1);
-+
-+	return ret;
-+}
-+
-+static int exynos5440_pd_power(struct generic_pm_domain *domain,
-+			       bool power_on)
-+{
-+	struct exynos_pm_domain *pd =
-+			container_of(domain, struct exynos_pm_domain, pd);
-+	void __iomem *base = pd->base;
-+	unsigned int bit_offset = pd->bit_offset;
-+	u32 pwr;
-+	int ret;
-+
-+	pwr = readl(base + EXYNOS5440_PMU_CTRL);
-+	if (power_on)
-+		pwr |= BIT(bit_offset);
-+	else
-+		pwr |= BIT(bit_offset + 16);
-+	writel(pwr, base + EXYNOS5440_PMU_CTRL);
-+
-+	ret = exynos5440_check_status(pd, &pwr);
-+	if (ret)
-+		goto err;
-+
-+	if ((power_on && (pwr & BIT(bit_offset)) == 0) ||
-+	    (!power_on && (pwr & BIT(bit_offset)))) {
-+		ret = -EIO;
-+		goto err;
-+	}
-+
-+	return 0;
-+err:
-+	pr_err("Power domain %s %s failed (error=%d)\n",
-+	       domain->name, power_on ? "enable" : "disable", ret);
-+	return ret;
-+}
-+
-+static int exynos5440_pd_power_on(struct generic_pm_domain *domain)
-+{
-+	return exynos5440_pd_power(domain, true);
-+}
-+
-+static int exynos5440_pd_power_off(struct generic_pm_domain *domain)
-+{
-+	return exynos5440_pd_power(domain, false);
-+}
-+
- static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
- 					 struct device *dev)
- {
-@@ -146,7 +217,7 @@ static struct notifier_block platform_nb
- 	.notifier_call = exynos_pm_notifier_call,
- };
- 
--static __init int exynos4_pm_init_power_domain(void)
-+static __init int exynos4210_pm_init_power_domain(void)
- {
- 	struct platform_device *pdev;
- 	struct device_node *np;
-@@ -182,7 +253,70 @@ static __init int exynos4_pm_init_power_
- 
- 	return 0;
- }
--arch_initcall(exynos4_pm_init_power_domain);
-+
-+static __init int exynos5440_pm_init_power_domain(void)
-+{
-+	struct device_node *np, *node = NULL;
-+	void __iomem *reg_base;
-+
-+	np = of_find_compatible_node(NULL, NULL,
-+				    "samsung,exynos5440-power-domains");
-+	if (!np)
-+		return 0;
-+
-+	reg_base = of_iomap(np, 0);
-+
-+	for_each_child_of_node(np, node) {
-+		struct platform_device *pdev;
-+		struct exynos_pm_domain *pd;
-+		u32 pwr;
-+		int ret, on;
-+
-+		pdev = of_find_device_by_node(node);
-+		if (pdev == NULL) {
-+			pr_err("%s: failed to get platform device for domain\n",
-+			       __func__);
-+			continue;
-+		}
-+
-+		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
-+		if (!pd) {
-+			pr_err("%s: failed to allocate memory for domain\n",
-+			       __func__);
-+			return -ENOMEM;
-+		}
-+
-+		pd->pd.name = kstrdup(node->name, GFP_KERNEL);
-+		pd->name = pd->pd.name;
-+		pd->base = reg_base;
-+		if (of_property_read_u32(node, "reg", &pd->bit_offset))
-+			pr_err("%s: bit offset not specified for domain %s\n",
-+			       __func__, pd->name);
-+		pd->pd.power_off = exynos5440_pd_power_off;
-+		pd->pd.power_on = exynos5440_pd_power_on;
-+		pd->pd.of_node = node;
-+
-+		platform_set_drvdata(pdev, pd);
-+
-+		ret = exynos5440_check_status(pd, &pwr);
-+		on = ret ? 0 : !!(pwr & BIT(pd->bit_offset));
-+
-+		pm_genpd_init(&pd->pd, NULL, !on);
-+	}
-+
-+	bus_register_notifier(&platform_bus_type, &platform_nb);
-+
-+	return 0;
-+}
-+
-+static __init int exynos_pm_init_power_domain(void)
-+{
-+	if (soc_is_exynos5440())
-+		return exynos5440_pm_init_power_domain();
-+	else
-+		return exynos4210_pm_init_power_domain();
-+}
-+arch_initcall(exynos_pm_init_power_domain);
- 
- int __init exynos_pm_late_initcall(void)
- {
+Changes from v1
+---------------
+- Addressed all review comments from Sylwester
+- Made sensor subdevs as independent i2c devices
+- Lots of cleanup
+- Debugfs support added
+- Removed PMU global register access
+
+Arun Kumar K (12):
+  [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device tree bindings
+    documentation
+  [media] exynos5-fimc-is: Add driver core files
+  [media] exynos5-fimc-is: Add common driver header files
+  [media] exynos5-fimc-is: Add register definition and context header
+  [media] exynos5-fimc-is: Add isp subdev
+  [media] exynos5-fimc-is: Add scaler subdev
+  [media] exynos5-fimc-is: Add sensor interface
+  [media] exynos5-fimc-is: Add the hardware pipeline control
+  [media] exynos5-fimc-is: Add the hardware interface module
+  [media] exynos5-is: Add Kconfig and Makefile
+  V4L: s5k6a3: Change sensor min/max resolutions
+  V4L: Add driver for s5k4e5 image sensor
+
+Shaik Ameer Basha (1):
+  [media] exynos5-is: Adding media device driver for exynos5
+
+ .../devicetree/bindings/media/exynos5-fimc-is.txt  |   52 +
+ .../devicetree/bindings/media/exynos5-mdev.txt     |  153 ++
+ drivers/media/i2c/Kconfig                          |    8 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/s5k4e5.c                         |  362 ++++
+ drivers/media/i2c/s5k6a3.c                         |   14 +-
+ drivers/media/platform/Kconfig                     |    1 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/exynos5-is/Kconfig          |   19 +
+ drivers/media/platform/exynos5-is/Makefile         |    7 +
+ drivers/media/platform/exynos5-is/exynos5-mdev.c   | 1471 +++++++++++++++
+ drivers/media/platform/exynos5-is/exynos5-mdev.h   |  199 ++
+ drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  187 ++
+ drivers/media/platform/exynos5-is/fimc-is-core.c   |  394 ++++
+ drivers/media/platform/exynos5-is/fimc-is-core.h   |  122 ++
+ drivers/media/platform/exynos5-is/fimc-is-err.h    |  257 +++
+ .../media/platform/exynos5-is/fimc-is-interface.c  |  861 +++++++++
+ .../media/platform/exynos5-is/fimc-is-interface.h  |  128 ++
+ drivers/media/platform/exynos5-is/fimc-is-isp.c    |  509 +++++
+ drivers/media/platform/exynos5-is/fimc-is-isp.h    |   93 +
+ .../media/platform/exynos5-is/fimc-is-metadata.h   |  767 ++++++++
+ drivers/media/platform/exynos5-is/fimc-is-param.h  | 1212 ++++++++++++
+ .../media/platform/exynos5-is/fimc-is-pipeline.c   | 1961 ++++++++++++++++++++
+ .../media/platform/exynos5-is/fimc-is-pipeline.h   |  129 ++
+ drivers/media/platform/exynos5-is/fimc-is-regs.h   |  105 ++
+ drivers/media/platform/exynos5-is/fimc-is-scaler.c |  458 +++++
+ drivers/media/platform/exynos5-is/fimc-is-scaler.h |  112 ++
+ drivers/media/platform/exynos5-is/fimc-is-sensor.c |   46 +
+ drivers/media/platform/exynos5-is/fimc-is-sensor.h |   69 +
+ drivers/media/platform/exynos5-is/fimc-is.h        |  153 ++
+ 30 files changed, 9847 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-mdev.txt
+ create mode 100644 drivers/media/i2c/s5k4e5.c
+ create mode 100644 drivers/media/platform/exynos5-is/Kconfig
+ create mode 100644 drivers/media/platform/exynos5-is/Makefile
+ create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.c
+ create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-regs.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is.h
+
+-- 
+1.7.9.5
