@@ -1,192 +1,98 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] ARM: EXYNOS: add power domains support for EXYNOS5440
-Date: Fri, 02 Aug 2013 15:01:52 -0600
-Message-ID: <51FC1E40.7030807@wwwdotorg.org>
-References: <2729097.X0eAsuYF97@amdc1032>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v7 00/11] Add generic set_rate clk_ops for PLL35xx and
+ PLL36xx for samsung SoCs
+Date: Fri, 02 Aug 2013 14:33:49 -0700
+Message-ID: <20130802213349.6450.61773@quantum>
+References: <1370943076-13461-1-git-send-email-yadi.brar@samsung.com>
+ <1524664.UCV47tfIRU@flatron> <20130621163143.9136.28807@quantum>
+ <51C85F8F.9050501@samsung.com> <20130624190227.20448.68120@quantum>
+ <007001ce7149$1f683f40$5e38bdc0$%kim@samsung.com>
+ <CAKew6eVW6dOzLRN2CG8jT3Oo1uzKrXqi1aRYkAHmUu61dBSDpA@mail.gmail.com>
+ <CAGm_ybj31kv=iW2YKsHnBRJ741G2amSNAJf+Mx8Z-JMoVynZ8w@mail.gmail.com>
+ <20130723012621.7598.46496@quantum>
+ <CAGm_ybiiCHVP5GPVe01F==SF+3rCR3a0mFGbxthEVOcbTEGmtA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:56717 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751344Ab3HBVB4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Aug 2013 17:01:56 -0400
-In-Reply-To: <2729097.X0eAsuYF97@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAGm_ybiiCHVP5GPVe01F==SF+3rCR3a0mFGbxthEVOcbTEGmtA@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vikas Sajjan <sajjan.linux@gmail.com>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Vikas Sajjan <vikas.sajjan@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <Mark.Rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>
 
-(CCing the other DT maintainers, hence quoting binding in full)
-
-On 08/02/2013 07:23 AM, Bartlomiej Zolnierkiewicz wrote:
-> On EXYNOS5440 power domains are handled in a different way than on
-> the previous EXYNOS SoCs. Add support for them to EXYNOS pm_domains
-> driver. Then add device tree nodes for PCIe (controlling power for
-> PCIe host controller) and Conn2 (controlling power for Ethernet,
-> SATA and USB controllers) power domains to exynos5440.dtsi.
+Quoting Vikas Sajjan (2013-07-30 06:13:04)
+> Hi Mike,
 > 
-> Currently if runtime Power Management is enabled and the driver
-> for devices under power domain is disabled then the power domain
-> will be disabled by EXYNOS pm_domains driver. To make more active
-> use of power domains (dynamically enable and disabled them as
-> needed) it is required to add runtime PM support to pci-exynos,
-> stmmac, ahci_platform, ohci-exynos and ehci-s5p drivers (to be
-> done later).
+> On Tue, Jul 23, 2013 at 6:56 AM, Mike Turquette <mturquette@linaro.org> wrote:
+> > Quoting Vikas Sajjan (2013-07-21 23:15:27)
+> >> Hi Kukjin / Mike,
+> >>
+> >> Can you apply this series
+> >
+> > Let me apply this to see if the dependencies are taken care of now. If
+> > so I'll just take it through the clk tree.
+> >
 > 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Myungjoo Ham <myungjoo.ham@samsung.com>
-> Cc: Tomasz Figa <t.figa@samsung.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> ---
->  Documentation/devicetree/bindings/arm/exynos/power_domain.txt |   33 ++
->  arch/arm/boot/dts/exynos5440.dtsi                             |   23 +
->  arch/arm/mach-exynos/Kconfig                                  |    1 
->  arch/arm/mach-exynos/common.c                                 |    4 
->  arch/arm/mach-exynos/pm_domains.c                             |  138 +++++++++-
->  5 files changed, 190 insertions(+), 9 deletions(-)
+> Any updates on this series.
+> I could NOT see them at
+> http://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=shortlog;h=refs/heads/clk-next
+
+You should see it now.
+
+Regards,
+Mike
+
 > 
-> Index: b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> ===================================================================
-> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt	2013-08-02 14:45:53.551392396 +0200
-> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt	2013-08-02 14:46:29.799391845 +0200
-> @@ -5,20 +5,47 @@ to gate power to one or more peripherals
->  
->  Required Properties:
->  - compatible: should be one of the following.
-> -    * samsung,exynos4210-pd - for exynos4210 type power domain.
-> +    * samsung,exynos4210-pd - for Exynos4210 type power domain.
-> +    * samsung,exynos5440-pd - for Exynos5440 type power domain.
->  - reg: physical base address of the controller and length of memory mapped
-> -    region.
-> +    region (Exynos4210 type power domain) or bit offset in the control
-> +    register (Exynos5440 type power domain).
-> +
-> +Additional parent node must be created for Exynos5440 power domains with
-> +the following required properties:
-> +- compatible: samsung,exynos5440-power-domains, simple-bus
-> +- reg: physical base address of the XMU controller and length of memory
-> +    mapped region
-
-It's a little odd to describe the child nodes first. Given the 4210 and
-5440 bindings work so differently, I'd suggest making separate binding
-files for the two; samsung,exynos4210-pd.txt and samsung,exynos5440-pd.txt.
-
-The node being describe here clearly is not a simple-bus; the child
-nodes appear to have a specific need that their parent be compatible =
-"samsung,exynos5440-power-domains", hence they aren't the independent
-devices that simple-bus would usually contain.
-
-Note that I only briefly reviewed the low-level structural aspects of
-the binding that I mentioned above; I haven't thought about the binding
-at a higher level of e.g. "does this binding conceptually make sense".
-
->  Node of a device using power domains must have a samsung,power-domain property
->  defined with a phandle to respective power domain.
->  
-> -Example:
-> +Example for Exynos4210 compatible power domain:
->  
->  	lcd0: power-domain-lcd0 {
->  		compatible = "samsung,exynos4210-pd";
->  		reg = <0x10023C00 0x10>;
->  	};
->  
-> +Example for Exynos5440 compatible power domains:
-> +
-> +	power-domains@00160000 {
-> +		compatible = "samsung,exynos5440-power-domains", "simple-bus";
-> +		reg = <0x00160000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		pd_pcie: pcie-power-domain@6 {
-> +			compatible = "samsung,exynos5440-pd";
-> +			reg = <6>;
-> +		};
-> +
-> +		pd_conn2: conn2-power-domain@7 {
-> +			compatible = "samsung,exynos5440-pd";
-> +			reg = <7>;
-> +		};
-> +	};
-> +
->  Example of the node using power domain:
->  
->  	node {
-> Index: b/arch/arm/boot/dts/exynos5440.dtsi
-> ===================================================================
-> --- a/arch/arm/boot/dts/exynos5440.dtsi	2013-08-02 14:45:53.599392397 +0200
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi	2013-08-02 14:46:29.815391842 +0200
-> @@ -29,6 +29,23 @@
->  		#clock-cells = <1>;
->  	};
->  
-> +	power-domains@00160000 {
-> +		compatible = "samsung,exynos5440-power-domains", "simple-bus";
-> +		reg = <0x00160000 0x1000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		pd_pcie: pcie-power-domain@6 {
-> +			compatible = "samsung,exynos5440-pd";
-> +			reg = <6>;
-> +		};
-> +
-> +		pd_conn2: conn2-power-domain@7 {
-> +			compatible = "samsung,exynos5440-pd";
-> +			reg = <7>;
-> +		};
-> +	};
-> +
->  	gic:interrupt-controller@2E0000 {
->  		compatible = "arm,cortex-a15-gic";
->  		#interrupt-cells = <3>;
-> @@ -192,6 +209,7 @@
->  		phy-mode = "sgmii";
->  		clocks = <&clock 25>;
->  		clock-names = "stmmaceth";
-> +		samsung,power-domain = <&pd_conn2>;
->  	};
->  
->  	amba {
-> @@ -240,6 +258,7 @@
->  		interrupts = <0 30 0>;
->  		clocks = <&clock 23>;
->  		clock-names = "sata";
-> +		samsung,power-domain = <&pd_conn2>;
->  	};
->  
->  	ohci@220000 {
-> @@ -248,6 +267,7 @@
->  		interrupts = <0 29 0>;
->  		clocks = <&clock 24>;
->  		clock-names = "usbhost";
-> +		samsung,power-domain = <&pd_conn2>;
->  	};
->  
->  	ehci@221000 {
-> @@ -256,6 +276,7 @@
->  		interrupts = <0 29 0>;
->  		clocks = <&clock 24>;
->  		clock-names = "usbhost";
-> +		samsung,power-domain = <&pd_conn2>;
->  	};
->  
->  	pcie@290000 {
-> @@ -275,6 +296,7 @@
->  		#interrupt-cells = <1>;
->  		interrupt-map-mask = <0 0 0 0>;
->  		interrupt-map = <0x0 0 &gic 53>;
-> +		samsung,power-domain = <&pd_pcie>;
->  	};
->  
->  	pcie@2a0000 {
-> @@ -294,5 +316,6 @@
->  		#interrupt-cells = <1>;
->  		interrupt-map-mask = <0 0 0 0>;
->  		interrupt-map = <0x0 0 &gic 56>;
-> +		samsung,power-domain = <&pd_pcie>;
->  	};
->  };
+> 
+> > Regards,
+> > Mike
+> >
+> >>
+> >> On Tue, Jul 16, 2013 at 7:10 PM, Yadwinder Singh Brar
+> >> <yadi.brar01@gmail.com> wrote:
+> >> > Hi Kukjin / Mike,
+> >> >
+> >> > On Tue, Jun 25, 2013 at 7:40 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> >> >> Mike Turquette wrote:
+> >> >>>
+> >> >>> Quoting Kukjin Kim (2013-06-24 08:02:39)
+> >> >>> > On 06/22/13 01:31, Mike Turquette wrote:
+> >> >>> > >
+> >> >>> > > Acked-by: Mike Turquette<mturquette@linaro.org>
+> >> >>> > >
+> >> >>> > > Or I can take this through the clk tree. Either way is fine.
+> >> >>> > >
+> >> >>> > Mike, please go ahead taking this series into the clk tree for 3.11.
+> >> >>>
+> >> >>> Actually it might be better for you to take it. Patch #5 relies on
+> >> >>> drivers/clk/samsung/clk-exynos5420.c which only exists in the samsung
+> >> >>> tree.  It was introduced by commit 1609027f, "clk: exynos5420: register
+> >> >>> clocks using common clock framework".
+> >> >>>
+> >> >> Yes, you're right. It depends on soc-exynos5420 stuff in samsung tree.
+> >> >>
+> >> >>> And these patches need to be applied with some fuzz to the clk tree due
+> >> >>> to other changes which are not in my tree and only present in yours.
+> >> >>>
+> >> >>> The best two options are either for you to take this series or it can be
+> >> >>> rebased on top of clk-next, after which I'll apply it.
+> >> >>>
+> >> >> Let me try to send this series via samsung tree for v3.11 but I'm not sure because it's a little bit late for arm-soc tree.
+> >> >>
+> >> >> Thanks for your ack, just note I will send to arm-soc tonight in my time.
+> >> >>
+> >> >
+> >> > Can we get this series merge now in any of trees.
+> >> > Please let me if its required to rebase it.
+> >> >
+> >> > Regards,
+> >> > Yadwinder
