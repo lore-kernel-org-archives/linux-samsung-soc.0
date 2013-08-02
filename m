@@ -1,202 +1,100 @@
-From: Julius Werner <jwerner@chromium.org>
-Subject: [PATCH 3/3] usb: phy-samsung-usb: Remove USB_PHY_TYPE from Samsung PHY driver
-Date: Thu,  1 Aug 2013 17:52:06 -0700
-Message-ID: <1375404726-26264-4-git-send-email-jwerner@chromium.org>
-References: <1375404726-26264-1-git-send-email-jwerner@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1375404726-26264-1-git-send-email-jwerner@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Julius Werner <jwerner@chromium.org>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically
+ continous memory flag
+Date: Fri, 2 Aug 2013 09:23:19 +0530
+Message-ID: <CAD025yQfPxK-uGEwGWc4i8osNwY5VW4PUAQ4pD7Sy_jFfZ=LOw@mail.gmail.com>
+References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org> <5151790.EBRlE0cTxf@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:34036 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753892Ab3HBDxl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 Aug 2013 23:53:41 -0400
+Received: by mail-pa0-f53.google.com with SMTP id lb1so195004pab.26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Aug 2013 20:53:40 -0700 (PDT)
+In-Reply-To: <5151790.EBRlE0cTxf@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "kgene.kim" <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, arun.kk@samsung.com, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-Since the PMU register handling was simplified, the last reason to
-differentiate between HOST and DEVICE PHYs in the Samsung USB PHY driver
-has disappeared. This patch removes that variable and reworks
-surrounding code to live without it to make the driver a little smaller
-and cleaner.
+Hi Tomasz,
 
-Signed-off-by: Julius Werner <jwerner@chromium.org>
----
- drivers/usb/phy/phy-samsung-usb.c  | 23 +++--------------------
- drivers/usb/phy/phy-samsung-usb.h  |  7 +------
- drivers/usb/phy/phy-samsung-usb2.c | 19 +++----------------
- drivers/usb/phy/phy-samsung-usb3.c |  7 -------
- 4 files changed, 7 insertions(+), 49 deletions(-)
 
-diff --git a/drivers/usb/phy/phy-samsung-usb.c b/drivers/usb/phy/phy-samsung-usb.c
-index fa382c9..32c5264 100644
---- a/drivers/usb/phy/phy-samsung-usb.c
-+++ b/drivers/usb/phy/phy-samsung-usb.c
-@@ -27,7 +27,6 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/usb/samsung_usb_phy.h>
- 
- #include "phy-samsung-usb.h"
- 
-@@ -101,7 +100,7 @@ EXPORT_SYMBOL_GPL(samsung_usbphy_set_isolation_4210);
- /*
-  * Configure the mode of working of usb-phy here: HOST/DEVICE.
-  */
--void samsung_usbphy_cfg_sel(struct samsung_usbphy *sphy)
-+void samsung_usbphy_cfg_sel(struct samsung_usbphy *sphy, bool device_mode)
- {
- 	u32 reg;
- 
-@@ -112,31 +111,15 @@ void samsung_usbphy_cfg_sel(struct samsung_usbphy *sphy)
- 
- 	reg = readl(sphy->sysreg);
- 
--	if (sphy->phy_type == USB_PHY_TYPE_DEVICE)
-+	if (device_mode)
- 		reg &= ~EXYNOS_USB20PHY_CFG_HOST_LINK;
--	else if (sphy->phy_type == USB_PHY_TYPE_HOST)
-+	else
- 		reg |= EXYNOS_USB20PHY_CFG_HOST_LINK;
- 
- 	writel(reg, sphy->sysreg);
- }
- EXPORT_SYMBOL_GPL(samsung_usbphy_cfg_sel);
- 
--/*
-- * PHYs are different for USB Device and USB Host.
-- * This make sure that correct PHY type is selected before
-- * any operation on PHY.
-- */
--int samsung_usbphy_set_type(struct usb_phy *phy,
--				enum samsung_usb_phy_type phy_type)
--{
--	struct samsung_usbphy *sphy = phy_to_sphy(phy);
--
--	sphy->phy_type = phy_type;
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(samsung_usbphy_set_type);
--
- int samsung_usbphy_rate_to_clksel_64xx(struct samsung_usbphy *sphy,
- 							unsigned long rate)
- {
-diff --git a/drivers/usb/phy/phy-samsung-usb.h b/drivers/usb/phy/phy-samsung-usb.h
-index f2e9c4a..0c0d7d1 100644
---- a/drivers/usb/phy/phy-samsung-usb.h
-+++ b/drivers/usb/phy/phy-samsung-usb.h
-@@ -285,8 +285,6 @@ struct samsung_usbphy_drvdata {
-  * @sysreg: USB2.0 PHY_CFG register memory base
-  * @ref_clk_freq: reference clock frequency selection
-  * @drv_data: driver data available for different SoCs
-- * @phy_type: Samsung SoCs specific phy types:	#HOST
-- *						#DEVICE
-  * @phy_usage: usage count for phy
-  * @lock: lock for phy operations
-  */
-@@ -300,7 +298,6 @@ struct samsung_usbphy {
- 	void __iomem	*sysreg;
- 	int		ref_clk_freq;
- 	const struct samsung_usbphy_drvdata *drv_data;
--	enum samsung_usb_phy_type phy_type;
- 	atomic_t	phy_usage;
- 	spinlock_t	lock;
- };
-@@ -326,9 +323,7 @@ static inline const struct samsung_usbphy_drvdata
- extern int samsung_usbphy_parse_dt(struct samsung_usbphy *sphy);
- extern void samsung_usbphy_set_isolation_4210(struct samsung_usbphy *sphy,
- 								bool on);
--extern void samsung_usbphy_cfg_sel(struct samsung_usbphy *sphy);
--extern int samsung_usbphy_set_type(struct usb_phy *phy,
--					enum samsung_usb_phy_type phy_type);
-+extern void samsung_usbphy_cfg_sel(struct samsung_usbphy *sphy, bool dev_mode);
- extern int samsung_usbphy_get_refclk_freq(struct samsung_usbphy *sphy);
- extern int samsung_usbphy_rate_to_clksel_64xx(struct samsung_usbphy *sphy,
- 							unsigned long rate);
-diff --git a/drivers/usb/phy/phy-samsung-usb2.c b/drivers/usb/phy/phy-samsung-usb2.c
-index c2c83d4..eb215a1 100644
---- a/drivers/usb/phy/phy-samsung-usb2.c
-+++ b/drivers/usb/phy/phy-samsung-usb2.c
-@@ -27,7 +27,6 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/usb/otg.h>
--#include <linux/usb/samsung_usb_phy.h>
- #include <linux/platform_data/samsung-usbphy.h>
- 
- #include "phy-samsung-usb.h"
-@@ -283,13 +282,13 @@ static int samsung_usb2phy_init(struct usb_phy *phy)
- 
- 	spin_lock_irqsave(&sphy->lock, flags);
- 
-+	/* Selecting Host/OTG mode; After reset USB2.0PHY_CFG: HOST */
- 	if (host) {
--		/* setting default phy-type for USB 2.0 */
- 		if (!strstr(dev_name(host->controller), "ehci") ||
- 				!strstr(dev_name(host->controller), "ohci"))
--			samsung_usbphy_set_type(&sphy->phy, USB_PHY_TYPE_HOST);
-+			samsung_usbphy_cfg_sel(sphy, false);
- 	} else {
--		samsung_usbphy_set_type(&sphy->phy, USB_PHY_TYPE_DEVICE);
-+		samsung_usbphy_cfg_sel(sphy, true);
- 	}
- 
- 	/* Disable phy isolation */
-@@ -298,9 +297,6 @@ static int samsung_usb2phy_init(struct usb_phy *phy)
- 	else if (sphy->drv_data->set_isolation)
- 		sphy->drv_data->set_isolation(sphy, false);
- 
--	/* Selecting Host/OTG mode; After reset USB2.0PHY_CFG: HOST */
--	samsung_usbphy_cfg_sel(sphy);
--
- 	/* Initialize usb phy registers */
- 	sphy->drv_data->phy_enable(sphy);
- 
-@@ -332,15 +328,6 @@ static void samsung_usb2phy_shutdown(struct usb_phy *phy)
- 
- 	spin_lock_irqsave(&sphy->lock, flags);
- 
--	if (host) {
--		/* setting default phy-type for USB 2.0 */
--		if (!strstr(dev_name(host->controller), "ehci") ||
--				!strstr(dev_name(host->controller), "ohci"))
--			samsung_usbphy_set_type(&sphy->phy, USB_PHY_TYPE_HOST);
--	} else {
--		samsung_usbphy_set_type(&sphy->phy, USB_PHY_TYPE_DEVICE);
--	}
--
- 	/* De-initialize usb phy registers */
- 	sphy->drv_data->phy_disable(sphy);
- 
-diff --git a/drivers/usb/phy/phy-samsung-usb3.c b/drivers/usb/phy/phy-samsung-usb3.c
-index 6259a35..ac05d91 100644
---- a/drivers/usb/phy/phy-samsung-usb3.c
-+++ b/drivers/usb/phy/phy-samsung-usb3.c
-@@ -24,7 +24,6 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/of.h>
--#include <linux/usb/samsung_usb_phy.h>
- #include <linux/platform_data/samsung-usbphy.h>
- 
- #include "phy-samsung-usb.h"
-@@ -178,9 +177,6 @@ static int samsung_usb3phy_init(struct usb_phy *phy)
- 
- 	spin_lock_irqsave(&sphy->lock, flags);
- 
--	/* setting default phy-type for USB 3.0 */
--	samsung_usbphy_set_type(&sphy->phy, USB_PHY_TYPE_DEVICE);
--
- 	/* Disable phy isolation */
- 	if (sphy->drv_data->set_isolation)
- 		sphy->drv_data->set_isolation(sphy, false);
-@@ -213,9 +209,6 @@ static void samsung_usb3phy_shutdown(struct usb_phy *phy)
- 
- 	spin_lock_irqsave(&sphy->lock, flags);
- 
--	/* setting default phy-type for USB 3.0 */
--	samsung_usbphy_set_type(&sphy->phy, USB_PHY_TYPE_DEVICE);
--
- 	/* De-initialize usb phy registers */
- 	sphy->drv_data->phy_disable(sphy);
- 
+On 2 August 2013 04:50, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>
+> Hi Vikas,
+>
+> On Thursday 01 of August 2013 16:49:32 Vikas Sajjan wrote:
+> > While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
+> > connected with resolution 2560x1600, following error occured even with
+> > IOMMU enabled:
+> > [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate
+> > buffer. [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+> >
+> > This patch fixes the issue by adding a check for IOMMU.
+> >
+> > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> > Signed-off-by: Arun Kumar <arun.kk@samsung.com>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |    9 ++++++++-
+> >  1 file changed, 8 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c index 8e60bd6..2a86666
+> > 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+> > @@ -16,6 +16,7 @@
+> >  #include <drm/drm_crtc.h>
+> >  #include <drm/drm_fb_helper.h>
+> >  #include <drm/drm_crtc_helper.h>
+> > +#include <drm/exynos_drm.h>
+> >
+> >  #include "exynos_drm_drv.h"
+> >  #include "exynos_drm_fb.h"
+> > @@ -143,6 +144,7 @@ static int exynos_drm_fbdev_create(struct
+> > drm_fb_helper *helper, struct platform_device *pdev = dev->platformdev;
+> >       unsigned long size;
+> >       int ret;
+> > +     unsigned int flag;
+> >
+> >       DRM_DEBUG_KMS("surface width(%d), height(%d) and bpp(%d\n",
+> >                       sizes->surface_width, sizes->surface_height,
+> > @@ -166,7 +168,12 @@ static int exynos_drm_fbdev_create(struct
+> > drm_fb_helper *helper, size = mode_cmd.pitches[0] * mode_cmd.height;
+> >
+> >       /* 0 means to allocate physically continuous memory */
+> > -     exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
+> > +     if (!is_drm_iommu_supported(dev))
+> > +             flag = 0;
+> > +     else
+> > +             flag = EXYNOS_BO_NONCONTIG;
+>
+> While noncontig memory might be used for devices that support IOMMU, there
+> should be no problem with using contig memory for them, so this seems more
+> like masking the original problem rather than tracking it down.
+>
+> Could you check why the allocation fails when requesting contiguous
+> memory?
+>
+
+It is failing if i am giving bigger resolution like 2560x1600, but if
+i try for 1280x780 resolution, it   works fine.
+Looks like arm_dma_alloc() is NOT able to allocate bigger buffer of
+size 2560 * 1600 * 4.
+Hence i used flag = EXYNOS_BO_NONCONTIG;
+
+
+>
+> Best regards,
+> Tomasz
+>
+
+
+
 -- 
-1.7.12.4
+Thanks and Regards
+ Vikas Sajjan
