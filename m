@@ -1,84 +1,64 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V2 7/8] ARM: dts: wm8994: Add wm8994 support on smdk5420
-Date: Fri, 2 Aug 2013 16:15:28 +0530
-Message-ID: <CAAgF-BcPT24LcQe5SUyOP3qHThXqZ1mVts=_cnww3EAUYEYikw@mail.gmail.com>
-References: <1374845812-7803-1-git-send-email-padma.v@samsung.com>
-	<1374845812-7803-8-git-send-email-padma.v@samsung.com>
-	<20130726151902.GL9858@sirena.org.uk>
-	<CAAgF-Be8SNxTZv1yFCwH6yJ-O_3R4reh=3y+pSCLJYW7S9TkUg@mail.gmail.com>
-	<CAAgF-Bexp_fGT8KV+TQ0_kZLJBtq7UK=TG4eYRA6qpTSL+scxg@mail.gmail.com>
-	<20130729134311.GX9858@sirena.org.uk>
-	<CAAgF-BeDYm1jNJpkyfTeS5HjpEuaHiumFq+D_PNs=QYG6-Px+w@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically
+ continous memory flag
+Date: Fri, 02 Aug 2013 12:58:13 +0200
+Message-ID: <51FB90C5.9060101@samsung.com>
+References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org>
+ <5151790.EBRlE0cTxf@flatron>
+ <CAF6AEGvmd20MJ_=69kYahkeTySVbhc2GgiUNwCDFXuDWgeGAfQ@mail.gmail.com>
+ <CAD025yRZBDh6ssSUbY-mo2mo-WqrUS3R56bD-QrBvaBbWX_HMQ@mail.gmail.com>
+ <CAAQKjZNBPxBxR-4PXbhOdX0V1inMkauE-xZ+0kwnfVTgqpCEVg@mail.gmail.com>
+ <CAD025yR9Xd0G81WdLDxKyu-RVZPPJAUOKZ+0b5oKUxYOe7q_pQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:37909 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752234Ab3HBKp3 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58995 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756039Ab3HBK6Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Aug 2013 06:45:29 -0400
-Received: by mail-ob0-f177.google.com with SMTP id f8so844093obp.8
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Aug 2013 03:45:28 -0700 (PDT)
-In-Reply-To: <CAAgF-BeDYm1jNJpkyfTeS5HjpEuaHiumFq+D_PNs=QYG6-Px+w@mail.gmail.com>
+	Fri, 2 Aug 2013 06:58:16 -0400
+In-reply-to: <CAD025yR9Xd0G81WdLDxKyu-RVZPPJAUOKZ+0b5oKUxYOe7q_pQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org, Tomasz Figa <tomasz.figa@gmail.com>
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "kgene.kim" <kgene.kim@samsung.com>, "arun.kk" <arun.kk@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, m.szyprowski@samsung.com, devicetree <devicetree@vger.kernel.org>
 
-Hi Mark,
+Hi Vikas,
 
-On Tue, Jul 30, 2013 at 8:58 AM, Padma Venkat <padma.kvr@gmail.com> wrote:
-> Hi Mark,
->
-> On Mon, Jul 29, 2013 at 7:13 PM, Mark Brown <broonie@kernel.org> wrote:
->> On Mon, Jul 29, 2013 at 05:31:16PM +0530, Padma Venkat wrote:
->>> On Sat, Jul 27, 2013 at 6:46 AM, Padma Venkat <padma.kvr@gmail.com> wrote:
->>
->>> >>> +     vdd: fixed-regulator@0 {
->>> >>> +             compatible = "regulator-fixed";
->>> >>> +             regulator-name = "vdd-supply";
->>
->>> >> These names look wrong - they should reflect the names in the schematic
->>> >> as they're for human comprehensibility.  This may just be a case of
->>> >> dropping the -supply.
->>
->>> When I posted the same patch for smdk5250, you asked me to club all
->>> the same supply regulators. So I clubbed AVDD2 and CPVDD. So any other
->>> better name for representing both supplies?
->>
->> No, I'd have told you to combine things taht come from the same supply
->> on the board - things like the speaker supplies for example aren't going
->> to be coming from separate places.  The names should reflect whatever
->> the names on the schemaric are, like I say that's probably just removing
->> the -supply.
->>
->>> >> documentation update the other day, it's in my tree now) but it's not
->>> >> essential and I suspect it needs some work on the clock driver side
->>> >> still.
->>
->>> > OK. I will check this.
->>
->>> As per schemata, input clock to MCLK1 is an oscillator clock with
->>> 16.9MHz and MCLK2 not showing any input clock. So here I need to add a
->>> fixed rate clock with 16.9MHz as MCLK1 in the smdk board file.
->>
->>> Is it correct?
->>
->> Yes, in the DTS (or to XCLKOUT on the AP?).
->
-> On smdk boards(atleast on smdk5250 and smdk5420) there is no XCLKOUT
-> funda. Codec MCLK can get clock from oscillator clock in codec master
-> mode or i2scdclk in codec slave mode. XCLKOUT is there in some other
-> variants of 5250 and 5420 where it is using other codecs than wm8994.
-> But the mux and divider of XCLKOUT is out of CMU. As Sylwester told it
-> is there in PMU registers.
+On 08/02/2013 12:10 PM, Vikas Sajjan wrote:
+> yeah, we could not allocate CMA region for FIMD, because the function
+> dma_declare_contiguous() needs "dev" as the first argument and we have
+> access to "dev" node only if it is NON-DT way of probing like the way
+> it is done in arch/arm/mach-davinci/devices-da8xx.c
+> But now, since the probing is through DT way, there is NO way ( Let me
+> know if something is newly added ) to call dma_declare_contiguous()
+> and reserve CMA region .
 
-Sorry for giving some what wrong info here. I verified the schemata.
-There is a switch on the board which can be used to select the input
-clock of codec MCLK1. We can either select oscillator clock which is
-16.9MHz which is on the board or XCLKOUT which is from PMU or
-i2scdclk(codec slave mode). Right now we are using oscillator clock as
-input clock to MCLK1.
+See this patch series [1]. We have have been using this kind of bindings
+for assigning physically contiguous memory regions to the Exynos 
+multimedia devices, instead of what's currently in mainline where same
+physical addresses are repeated in dts for various boards without much
+thought. And where custom device specific parsing code is required at 
+arch side.
 
-Thanks
-Padma
+$ git grep mfc\-[lr] arch/arm/boot/dts
+
+arch/arm/boot/dts/exynos4210-origen.dts:     samsung,mfc-r = <0x43000000 0x800000>;
+arch/arm/boot/dts/exynos4210-origen.dts:     samsung,mfc-l = <0x51000000 0x800000>;
+arch/arm/boot/dts/exynos4210-smdkv310.dts:   samsung,mfc-r = <0x43000000 0x800000>;
+arch/arm/boot/dts/exynos4210-smdkv310.dts:   samsung,mfc-l = <0x51000000 0x800000>;
+arch/arm/boot/dts/exynos4412-origen.dts:     samsung,mfc-r = <0x43000000 0x800000>;
+arch/arm/boot/dts/exynos4412-origen.dts:     samsung,mfc-l = <0x51000000 0x800000>;
+arch/arm/boot/dts/exynos4412-smdk4412.dts:   samsung,mfc-r = <0x43000000 0x800000>;
+arch/arm/boot/dts/exynos4412-smdk4412.dts:   samsung,mfc-l = <0x51000000 0x800000>;
+arch/arm/boot/dts/exynos5250-arndale.dts:    samsung,mfc-r = <0x43000000 0x800000>;
+arch/arm/boot/dts/exynos5250-arndale.dts:    samsung,mfc-l = <0x51000000 0x800000>;
+arch/arm/boot/dts/exynos5250-smdk5250.dts:   samsung,mfc-r = <0x43000000 0x800000>;
+arch/arm/boot/dts/exynos5250-smdk5250.dts:   samsung,mfc-l = <0x51000000 0x800000>;
+
+
+[1] http://www.spinics.net/lists/arm-kernel/msg263130.html
+
+Regards,
+Sylwester
