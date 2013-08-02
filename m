@@ -1,73 +1,136 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 1/3] usb: phy-samsung-usb: Simplify PMU register handling
-Date: Fri, 2 Aug 2013 10:51:22 +0300
-Message-ID: <20130802075122.GK24465@radagast>
-References: <1375404726-26264-1-git-send-email-jwerner@chromium.org>
- <1375404726-26264-2-git-send-email-jwerner@chromium.org>
-Reply-To: <balbi@ti.com>
+From: ebiederm@xmission.com (Eric W. Biederman)
+Subject: Re: [PATCH trivial] include: uapi: standard all files' macro prefix
+	and suffix, excluding "linux/" sub-directory
+Date: Fri, 02 Aug 2013 01:13:34 -0700
+Message-ID: <87iozoqzm9.fsf@tw-ebiederman.twitter.com>
+References: <51FB6216.6010008@asianux.com> <51FB634F.5070401@asianux.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="EVcIhgQsEzAXu06J"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:52333 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757858Ab3HBHvk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Aug 2013 03:51:40 -0400
-Content-Disposition: inline
-In-Reply-To: <1375404726-26264-2-git-send-email-jwerner@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+In-Reply-To: <51FB634F.5070401@asianux.com> (Chen Gang's message of "Fri, 02
+	Aug 2013 15:44:15 +0800")
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Chen Gang <gang.chen@asianux.com>
+Cc: xen-devel@lists.xensource.com, jeremy@goop.org, airlied@linux.ie, daniel.vetter@ffwll.ch, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, perex@perex.cz, "dhowells@redhat.com" <dhowells@redhat.com>, thierry.reding@gmail.com, linux-mtd@lists.infradead.org, sean.hefty@intel.com, virtualization@lists.linux-foundation.org, Linux-Arch <linux-arch@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, tbergstrom@nvidia.com, jy0922.shim@samsung.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, roland@purestorage.com, Takashi Iwai <tiwai@suse.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, mtk.manpages@gmail.com, fcoe-devel@open-fcoe.org, Paul McKenney <paulmck@linux.vnet.ibm.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, Arnd Bergmann <arnd@arndb.de>, swarren@wwwdotorg.org, intel-gfx@lists.freedesktop.org, inki.dae@samsung.com, linux-samsun
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: Felipe Balbi <balbi@ti.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, devicetree@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
---EVcIhgQsEzAXu06J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Chen Gang <gang.chen@asianux.com> writes:
 
-Hi,
+> It is a trivial patch for "include/uapi", exclude "linux" sub-directory.
+>
+> If it is useful, I will send another patch for "linux" sub-directory.
+>
+> BTW: it is really big mail addresses from
+> "./scripts/get_maintainers.pl"
 
-On Thu, Aug 01, 2013 at 05:52:04PM -0700, Julius Werner wrote:
-> This patch simplifies the way the phy-samsung-usb code finds the correct
-> power management register to enable PHY clock gating. Previously, the
-> code would calculate the register address from a device tree supplied
-> base address and add an offset based on the PHY type.
->=20
-> Since every PHY has its own device tree entry and needs only one
-> register, we can just encode the address itself in the device tree and
-> remove the diffentiation in the code. The bitmask needed to specify the
-> bit within that register stays in place, allowing support for platforms
-> like s3c64xx that use different bits within the same register.
->=20
-> Signed-off-by: Julius Werner <jwerner@chromium.org>
+What is the point?  Is there a bug that this fixes?
 
-I need an Acked-by for the dtsi part. Ideally from Exynos 5 maintainer
-and at least one of the DT maintainers.
+These files are not used with api in their path in userspace so I
+suspect your change just makes things strange and confusing.
 
---=20
-balbi
+Eric
 
---EVcIhgQsEzAXu06J
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJR+2T6AAoJEIaOsuA1yqREKGYQAI2EWPYDjwuIC6wWFnWbpYW4
-p+J0+zepF36v5zK1T8iEuYO91Fi/ByyD2s1cQHj7E90spg3hHtXOjs1ml7KzL6gL
-ftmXNJp2T4VD1YHvHSF8y0JP9D6nc8/aVViHTxmZZoVE4PzfgD5/fAz7EhGXtiK/
-5mXZdPI7TuRlhrxPfQL/juPpQY9bIQWI6Qp2aWLGqY5uydQD7e4PhfO9ZHTF0cfE
-SrQmiR1b3JOhHXd41hfYvQRtONoQ5MRKPwCb94zmeE1pdNiRDIBdKPES2En+eRS6
-AKLeB0wdDlMIvtfi1zjtVooz4fM0sf69oEmKSTh4iNVkKYx8IsqMTd/0wX+PRYZ3
-fYGStuDM12NfFdxrbGVF1nnitFd0pvmxKx/IiRdV6XUxwlukcItrsoRallJ4Mcqd
-MwbVSDu5TWgz3drxZQA2dWw5wYS8/S+LKEVwAkWC9qtPUJhCRpXxGHFKdTOoizmd
-v12vPXsyncpUuWWg20a9UnQbADbeFwuGT0sbVdJZoR9DuAafZUh/H018aU2xRaM/
-TwqM7XGsztuXTECwGl1xvJWB7VOmwlrXoGpjPwJtXrHwYOwINKLyAhG/iWH01uxI
-c/MkkodIHYmEJqg4ZBCqmUL32yFGYwZMhyvuiOeH1zuRhOEf4rbv2ViSsRYLzCuK
-S3zM1GHQxnYKR7ZV2bU1
-=ARgF
------END PGP SIGNATURE-----
-
---EVcIhgQsEzAXu06J--
+> Thanks.
+>
+> On 08/02/2013 03:39 PM, Chen Gang wrote:
+>> For "include/uapi/*", excluding "linux/" sub-directory, let all files'
+>> macro prefix match the standard format, and give related stand comments
+>> for their macro suffix.
+>> 
+>> The related standard format is:
+>> 
+>>   "_SUBDIRNAME_SUBDIRNAME[_SUBDIRNAME]_FILENAME" (1st _SUBDIRNAME is _UAPI), and use '_' instead of '.' and '-'.
+>> 
+>> 
+>> Signed-off-by: Chen Gang <gang.chen@asianux.com>
+>> ---
+>>  include/uapi/asm-generic/auxvec.h      |    6 +++---
+>>  include/uapi/asm-generic/bitsperlong.h |    6 +++---
+>>  include/uapi/asm-generic/errno-base.h  |    6 +++---
+>>  include/uapi/asm-generic/errno.h       |    6 +++---
+>>  include/uapi/asm-generic/fcntl.h       |    6 +++---
+>>  include/uapi/asm-generic/ioctls.h      |    6 +++---
+>>  include/uapi/asm-generic/ipcbuf.h      |    6 +++---
+>>  include/uapi/asm-generic/kvm_para.h    |    5 +++++
+>>  include/uapi/asm-generic/mman-common.h |    6 +++---
+>>  include/uapi/asm-generic/mman.h        |    6 +++---
+>>  include/uapi/asm-generic/msgbuf.h      |    6 +++---
+>>  include/uapi/asm-generic/param.h       |    6 +++---
+>>  include/uapi/asm-generic/poll.h        |    6 +++---
+>>  include/uapi/asm-generic/posix_types.h |    6 +++---
+>>  include/uapi/asm-generic/sembuf.h      |    6 +++---
+>>  include/uapi/asm-generic/setup.h       |    6 +++---
+>>  include/uapi/asm-generic/shmbuf.h      |    6 +++---
+>>  include/uapi/asm-generic/shmparam.h    |    6 +++---
+>>  include/uapi/asm-generic/signal-defs.h |    6 +++---
+>>  include/uapi/asm-generic/signal.h      |    6 +++---
+>>  include/uapi/asm-generic/socket.h      |    6 +++---
+>>  include/uapi/asm-generic/sockios.h     |    6 +++---
+>>  include/uapi/asm-generic/stat.h        |    6 +++---
+>>  include/uapi/asm-generic/statfs.h      |    6 +++---
+>>  include/uapi/asm-generic/swab.h        |    6 +++---
+>>  include/uapi/asm-generic/termbits.h    |    6 +++---
+>>  include/uapi/asm-generic/types.h       |    6 +++---
+>>  include/uapi/asm-generic/ucontext.h    |    6 +++---
+>>  include/uapi/asm-generic/unistd.h      |    5 +++++
+>>  include/uapi/drm/drm.h                 |    6 +++---
+>>  include/uapi/drm/drm_fourcc.h          |    6 +++---
+>>  include/uapi/drm/drm_mode.h            |    6 +++---
+>>  include/uapi/drm/drm_sarea.h           |    6 +++---
+>>  include/uapi/drm/exynos_drm.h          |    6 +++---
+>>  include/uapi/drm/i810_drm.h            |    6 +++---
+>>  include/uapi/drm/i915_drm.h            |    6 +++---
+>>  include/uapi/drm/mga_drm.h             |    6 +++---
+>>  include/uapi/drm/nouveau_drm.h         |    6 +++---
+>>  include/uapi/drm/omap_drm.h            |    6 +++---
+>>  include/uapi/drm/qxl_drm.h             |    6 +++---
+>>  include/uapi/drm/r128_drm.h            |    6 +++---
+>>  include/uapi/drm/radeon_drm.h          |    6 +++---
+>>  include/uapi/drm/savage_drm.h          |    6 +++---
+>>  include/uapi/drm/sis_drm.h             |    6 +++---
+>>  include/uapi/drm/tegra_drm.h           |    6 +++---
+>>  include/uapi/drm/via_drm.h             |    6 +++---
+>>  include/uapi/drm/vmwgfx_drm.h          |    6 +++---
+>>  include/uapi/mtd/inftl-user.h          |    6 +++---
+>>  include/uapi/mtd/mtd-abi.h             |    6 +++---
+>>  include/uapi/mtd/mtd-user.h            |    6 +++---
+>>  include/uapi/mtd/nftl-user.h           |    6 +++---
+>>  include/uapi/mtd/ubi-user.h            |    6 +++---
+>>  include/uapi/rdma/ib_user_cm.h         |    6 +++---
+>>  include/uapi/rdma/ib_user_mad.h        |    6 +++---
+>>  include/uapi/rdma/ib_user_sa.h         |    6 +++---
+>>  include/uapi/rdma/ib_user_verbs.h      |    6 +++---
+>>  include/uapi/rdma/rdma_netlink.h       |    6 +++---
+>>  include/uapi/rdma/rdma_user_cm.h       |    6 +++---
+>>  include/uapi/scsi/fc/fc_els.h          |    6 +++---
+>>  include/uapi/scsi/fc/fc_fs.h           |    6 +++---
+>>  include/uapi/scsi/fc/fc_gs.h           |    6 +++---
+>>  include/uapi/scsi/fc/fc_ns.h           |    6 +++---
+>>  include/uapi/scsi/scsi_bsg_fc.h        |    7 +++----
+>>  include/uapi/scsi/scsi_netlink.h       |    7 +++----
+>>  include/uapi/scsi/scsi_netlink_fc.h    |    7 +++----
+>>  include/uapi/sound/asequencer.h        |    6 +++---
+>>  include/uapi/sound/asound.h            |    6 +++---
+>>  include/uapi/sound/asound_fm.h         |    6 +++---
+>>  include/uapi/sound/compress_offload.h  |    6 +++---
+>>  include/uapi/sound/compress_params.h   |    6 +++---
+>>  include/uapi/sound/emu10k1.h           |    6 +++---
+>>  include/uapi/sound/hdsp.h              |    6 +++---
+>>  include/uapi/sound/hdspm.h             |    6 +++---
+>>  include/uapi/sound/sb16_csp.h          |    6 +++---
+>>  include/uapi/sound/sfnt_info.h         |    6 +++---
+>>  include/uapi/video/edid.h              |    6 +++---
+>>  include/uapi/video/sisfb.h             |    6 +++---
+>>  include/uapi/video/uvesafb.h           |    6 +++---
+>>  include/uapi/xen/evtchn.h              |    6 +++---
+>>  include/uapi/xen/privcmd.h             |    6 +++---
+>>  80 files changed, 244 insertions(+), 237 deletions(-)
