@@ -1,43 +1,43 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC v3 07/13] [media] exynos5-fimc-is: Add scaler subdev
-Date: Sat, 03 Aug 2013 23:46:36 +0200
-Message-ID: <51FD7A3C.2010507@gmail.com>
-References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-8-git-send-email-arun.kk@samsung.com>
+Subject: Re: [RFC v3 06/13] [media] exynos5-fimc-is: Add isp subdev
+Date: Sat, 03 Aug 2013 23:48:07 +0200
+Message-ID: <51FD7A97.6030907@gmail.com>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-7-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:59014 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752491Ab3HCVqm (ORCPT
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:44857 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752491Ab3HCVsM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Aug 2013 17:46:42 -0400
-In-Reply-To: <1375455762-22071-8-git-send-email-arun.kk@samsung.com>
+	Sat, 3 Aug 2013 17:48:12 -0400
+In-Reply-To: <1375455762-22071-7-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arun Kumar K <arun.kk@samsung.com>
 Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
 On 08/02/2013 05:02 PM, Arun Kumar K wrote:
-> FIMC-IS has two hardware scalers named as scaler-codec and
-> scaler-preview. This patch adds the common code handling the
-> video nodes and subdevs of both the scalers.
+> fimc-is driver takes video data input from the ISP video node
+> which is added in this patch. This node accepts Bayer input
+> buffers which is given from the IS sensors.
 >
 > Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
 > Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
 > ---
->   drivers/media/platform/exynos5-is/fimc-is-scaler.c |  458 ++++++++++++++++++++
->   drivers/media/platform/exynos5-is/fimc-is-scaler.h |  112 +++++
->   2 files changed, 570 insertions(+)
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.c
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.h
+>   drivers/media/platform/exynos5-is/fimc-is-isp.c |  509 +++++++++++++++++++++++
+>   drivers/media/platform/exynos5-is/fimc-is-isp.h |   93 +++++
+>   2 files changed, 602 insertions(+)
+>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.c
+>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.h
 >
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-scaler.c b/drivers/media/platform/exynos5-is/fimc-is-scaler.c
+> diff --git a/drivers/media/platform/exynos5-is/fimc-is-isp.c b/drivers/media/platform/exynos5-is/fimc-is-isp.c
 > new file mode 100644
-> index 0000000..7cff186
+> index 0000000..e97e473
 > --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-scaler.c
-> @@ -0,0 +1,458 @@
+> +++ b/drivers/media/platform/exynos5-is/fimc-is-isp.c
+> @@ -0,0 +1,509 @@
 > +/*
 > + * Samsung EXYNOS5250 FIMC-IS (Imaging Subsystem) driver
 > + *
@@ -54,25 +54,25 @@ On 08/02/2013 05:02 PM, Arun Kumar K wrote:
 > +
 > +#include "fimc-is.h"
 > +
-> +#define IS_SCALER_DRV_NAME "fimc-is-scaler"
+> +#define ISP_DRV_NAME "fimc-is-isp"
 > +
 > +static const struct fimc_is_fmt formats[] = {
 > +	{
-> +		.name           = "YUV 4:2:0 3p MultiPlanar",
-> +		.fourcc         = V4L2_PIX_FMT_YUV420M,
-> +		.depth		= {8, 2, 2},
-> +		.num_planes     = 3,
+> +		.name           = "Bayer GR-BG 8bits",
+> +		.fourcc         = V4L2_PIX_FMT_SGRBG8,
+> +		.depth		= { 8 },
+> +		.num_planes     = 1,
 > +	},
 > +	{
-> +		.name           = "YUV 4:2:0 2p MultiPlanar",
-> +		.fourcc         = V4L2_PIX_FMT_NV12M,
-> +		.depth		= {8, 4},
-> +		.num_planes     = 2,
+> +		.name           = "Bayer GR-BG 10bits",
+> +		.fourcc         = V4L2_PIX_FMT_SGRBG10,
+> +		.depth		= { 16 },
+> +		.num_planes     = 1,
 > +	},
 > +	{
-> +		.name           = "YUV 4:2:2 1p MultiPlanar",
-> +		.fourcc         = V4L2_PIX_FMT_NV16,
-> +		.depth		= {16},
+> +		.name           = "Bayer GR-BG 12bits",
+> +		.fourcc         = V4L2_PIX_FMT_SGRBG12,
+> +		.depth		= { 16 },
 > +		.num_planes     = 1,
 > +	},
 > +};
@@ -86,140 +86,92 @@ On 08/02/2013 05:02 PM, Arun Kumar K wrote:
 > +		if (formats[i].fourcc == f->fmt.pix_mp.pixelformat)
 > +			return&formats[i];
 > +	}
+
+CodingStyle: braces are not needed.
+
 > +	return NULL;
 > +}
 > +
-> +static int scaler_video_capture_start_streaming(struct vb2_queue *vq,
+> +static int isp_video_output_start_streaming(struct vb2_queue *vq,
 > +					unsigned int count)
 > +{
-> +	struct fimc_is_scaler *ctx = vb2_get_drv_priv(vq);
-> +	int ret;
+> +	struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
 > +
-> +	/* Scaler start */
-> +	ret = fimc_is_pipeline_scaler_start(ctx->pipeline,
-> +			ctx->scaler_id,
-> +			(unsigned int **)ctx->buf_paddr,
-> +			vq->num_buffers,
-> +			ctx->fmt->num_planes);
-> +	if (ret) {
-> +		pr_err("Scaler start failed.\n");
-
-Please avoid pr_*() and use v4l2_err() or dev_err() where possible.
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	set_bit(STATE_RUNNING,&ctx->capture_state);
+> +	set_bit(STATE_RUNNING,&isp->output_state);
 > +	return 0;
 > +}
 > +
-> +static int scaler_video_capture_stop_streaming(struct vb2_queue *vq)
+> +static int isp_video_output_stop_streaming(struct vb2_queue *vq)
 > +{
-> +	struct fimc_is_scaler *ctx = vb2_get_drv_priv(vq);
-> +	int ret;
+> +	struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
 > +
-> +	/* Scaler stop */
-
-Isn't the function name below obvious enough to not require this comment ?
-
-> +	ret = fimc_is_pipeline_scaler_stop(ctx->pipeline, ctx->scaler_id);
-> +	if (ret)
-> +		pr_debug("Scaler already stopped.\n");
-> +
-> +	clear_bit(STATE_RUNNING,&ctx->capture_state);
+> +	clear_bit(STATE_RUNNING,&isp->output_state);
 > +	return 0;
 > +}
 > +
-> +static int scaler_video_capture_queue_setup(struct vb2_queue *vq,
+> +static int isp_video_output_queue_setup(struct vb2_queue *vq,
 > +			const struct v4l2_format *pfmt,
 > +			unsigned int *num_buffers, unsigned int *num_planes,
 > +			unsigned int sizes[], void *allocators[])
 > +{
-> +	struct fimc_is_scaler *ctx = vb2_get_drv_priv(vq);
-> +	const struct fimc_is_fmt *fmt = ctx->fmt;
-> +	unsigned int wh;
-> +	int i;
+> +	struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
+> +	const struct fimc_is_fmt *fmt = isp->fmt;
+> +	unsigned int wh, i;
 > +
 > +	if (!fmt)
 > +		return -EINVAL;
 > +
 > +	*num_planes = fmt->num_planes;
-> +	wh = ctx->width * ctx->height;
+> +	wh = isp->width * isp->height;
 > +
 > +	for (i = 0; i<  *num_planes; i++) {
-> +		allocators[i] = ctx->alloc_ctx;
+> +		allocators[i] = isp->alloc_ctx;
 > +		sizes[i] = (wh * fmt->depth[i]) / 8;
 > +	}
 > +	return 0;
 > +}
 > +
-> +static int scaler_video_capture_buffer_init(struct vb2_buffer *vb)
+> +static int isp_video_output_buffer_init(struct vb2_buffer *vb)
 > +{
 > +	struct vb2_queue *vq = vb->vb2_queue;
-> +	struct fimc_is_scaler *ctx = vb2_get_drv_priv(vq);
+> +	struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
 > +	struct fimc_is_buf *buf;
-> +	const struct fimc_is_fmt *fmt;
-> +	int i;
 > +
-> +	buf =&ctx->capture_bufs[vb->v4l2_buf.index];
-
-I don't like such usage of vb->v4l2_buf.index. It would be nice to get
-rid of this pattern and leave v4l2_buf.index out for videobuf2 and
-user space. Or can't it really be avoided ?
-
+> +	buf =&isp->output_bufs[vb->v4l2_buf.index];
 > +	/* Initialize buffer */
 > +	buf->vb = vb;
-> +	fmt = ctx->fmt;
-> +	for (i = 0; i<  fmt->num_planes; i++)
-> +		buf->paddr[i] = vb2_dma_contig_plane_dma_addr(vb, i);
-> +
-> +	ctx->cap_buf_cnt++;
+> +	buf->paddr[0] = vb2_dma_contig_plane_dma_addr(vb, 0);
+> +	isp->out_buf_cnt++;
 > +	return 0;
 > +}
 > +
-> +static void scaler_video_capture_buffer_queue(struct vb2_buffer *vb)
+> +static void isp_video_output_buffer_queue(struct vb2_buffer *vb)
 > +{
 > +	struct vb2_queue *vq = vb->vb2_queue;
-> +	struct fimc_is_scaler *ctx = vb2_get_drv_priv(vq);
+> +	struct fimc_is_isp *isp = vb2_get_drv_priv(vq);
 > +	struct fimc_is_buf *buf;
 > +
-> +	buf =&ctx->capture_bufs[vb->v4l2_buf.index];
+> +	buf =&isp->output_bufs[vb->v4l2_buf.index];
 > +
-> +	/* Add buffer to the wait queue */
-> +	pr_debug("Add buffer %d in Scaler %d\n",
-> +			vb->v4l2_buf.index, ctx->scaler_id);
-> +	fimc_is_pipeline_buf_lock(ctx->pipeline);
-> +	fimc_is_scaler_wait_queue_add(ctx, buf);
-> +	fimc_is_pipeline_buf_unlock(ctx->pipeline);
+> +	fimc_is_pipeline_buf_lock(isp->pipeline);
+> +	fimc_is_isp_wait_queue_add(isp, buf);
+> +	fimc_is_pipeline_buf_unlock(isp->pipeline);
+> +
+> +	/* Call shot command */
+> +	fimc_is_pipeline_shot(isp->pipeline);
 > +}
 > +
-> +static void scaler_lock(struct vb2_queue *vq)
-> +{
-> +	struct fimc_is_scaler *ctx = vb2_get_drv_priv(vq);
-> +	mutex_lock(&ctx->video_lock);
-> +}
-> +
-> +static void scaler_unlock(struct vb2_queue *vq)
-> +{
-> +	struct fimc_is_scaler *ctx = vb2_get_drv_priv(vq);
-> +	mutex_unlock(&ctx->video_lock);
-> +}
-> +
-> +static const struct vb2_ops scaler_video_capture_qops = {
-> +	.queue_setup		= scaler_video_capture_queue_setup,
-> +	.buf_init		= scaler_video_capture_buffer_init,
-> +	.buf_queue		= scaler_video_capture_buffer_queue,
-> +	.wait_prepare		= scaler_unlock,
-> +	.wait_finish		= scaler_lock,
-
-Can't you use vb2_ops_wait_prepare/vb2_ops_wait_finish as in case of
-the isp subdev ?
-
-> +	.start_streaming	= scaler_video_capture_start_streaming,
-> +	.stop_streaming		= scaler_video_capture_stop_streaming,
+> +static const struct vb2_ops isp_video_output_qops = {
+> +	.queue_setup	 = isp_video_output_queue_setup,
+> +	.buf_init	 = isp_video_output_buffer_init,
+> +	.buf_queue	 = isp_video_output_buffer_queue,
+> +	.wait_prepare	 = vb2_ops_wait_prepare,
+> +	.wait_finish	 = vb2_ops_wait_finish,
+> +	.start_streaming = isp_video_output_start_streaming,
+> +	.stop_streaming	 = isp_video_output_stop_streaming,
 > +};
 > +
-> +static const struct v4l2_file_operations scaler_video_capture_fops = {
+> +static const struct v4l2_file_operations isp_video_output_fops = {
 > +	.owner		= THIS_MODULE,
 > +	.open		= v4l2_fh_open,
 > +	.release	= vb2_fop_release,
@@ -231,19 +183,19 @@ the isp subdev ?
 > +/*
 > + * Video node ioctl operations
 > + */
-> +static int scaler_querycap_capture(struct file *file, void *priv,
+> +static int isp_querycap_output(struct file *file, void *priv,
 > +					struct v4l2_capability *cap)
 > +{
-> +	strncpy(cap->driver, IS_SCALER_DRV_NAME, sizeof(cap->driver) - 1);
-> +	strncpy(cap->card, IS_SCALER_DRV_NAME, sizeof(cap->card) - 1);
+> +	strncpy(cap->driver, ISP_DRV_NAME, sizeof(cap->driver) - 1);
+> +	strncpy(cap->card, ISP_DRV_NAME, sizeof(cap->card) - 1);
 > +	snprintf(cap->bus_info, sizeof(cap->bus_info), "platform:%s",
-> +			IS_SCALER_DRV_NAME);
-> +	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_CAPTURE_MPLANE;
+> +			ISP_DRV_NAME);
+> +	cap->device_caps = V4L2_CAP_STREAMING;
 > +	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
 > +	return 0;
 > +}
 > +
-> +static int scaler_enum_fmt_mplane(struct file *file, void *priv,
+> +static int isp_enum_fmt_mplane(struct file *file, void *priv,
 > +				     struct v4l2_fmtdesc *f)
 > +{
 > +	const struct fimc_is_fmt *fmt;
@@ -254,28 +206,26 @@ the isp subdev ?
 > +	fmt =&formats[f->index];
 > +	strlcpy(f->description, fmt->name, sizeof(f->description));
 > +	f->pixelformat = fmt->fourcc;
+> +
 > +	return 0;
 > +}
 > +
-> +static int scaler_g_fmt_mplane(struct file *file, void *priv,
+> +static int isp_g_fmt_mplane(struct file *file, void *fh,
 > +				  struct v4l2_format *f)
 > +{
-> +	struct fimc_is_scaler *ctx = video_drvdata(file);
+> +	struct fimc_is_isp *isp = video_drvdata(file);
 > +	struct v4l2_pix_format_mplane *pixm =&f->fmt.pix_mp;
-> +	const struct fimc_is_fmt *fmt = ctx->fmt;
-> +	int i;
+> +	struct v4l2_plane_pix_format *plane_fmt =&pixm->plane_fmt[0];
+> +	const struct fimc_is_fmt *fmt = isp->fmt;
 > +
-> +	for (i = 0; i<  fmt->num_planes; i++) {
-> +		struct v4l2_plane_pix_format *plane_fmt =&pixm->plane_fmt[i];
-> +		plane_fmt->bytesperline = (ctx->width * fmt->depth[i]) / 8;
-> +		plane_fmt->sizeimage = plane_fmt->bytesperline * ctx->height;
-> +		memset(plane_fmt->reserved, 0, sizeof(plane_fmt->reserved));
-> +	}
+> +	plane_fmt->bytesperline = (isp->width * fmt->depth[0]) / 8;
+> +	plane_fmt->sizeimage = plane_fmt->bytesperline * isp->height;
+> +	memset(plane_fmt->reserved, 0, sizeof(plane_fmt->reserved));
 > +
 > +	pixm->num_planes = fmt->num_planes;
 > +	pixm->pixelformat = fmt->fourcc;
-> +	pixm->width = ctx->width;
-> +	pixm->height = ctx->height;
+> +	pixm->width = isp->width;
+> +	pixm->height = isp->height;
 > +	pixm->field = V4L2_FIELD_NONE;
 > +	pixm->colorspace = V4L2_COLORSPACE_JPEG;
 > +	memset(pixm->reserved, 0, sizeof(pixm->reserved));
@@ -283,30 +233,30 @@ the isp subdev ?
 > +	return 0;
 > +}
 > +
-> +static int scaler_try_fmt_mplane(struct file *file, void *priv,
-> +				  struct v4l2_format *f)
+> +static int isp_try_fmt_mplane(struct file *file, void *fh,
+> +		struct v4l2_format *f)
 > +{
 > +	const struct fimc_is_fmt *fmt;
 > +	struct v4l2_pix_format_mplane *pixm =&f->fmt.pix_mp;
-> +	u32 i;
+> +	struct v4l2_plane_pix_format *plane_fmt =&pixm->plane_fmt[0];
 > +
 > +	fmt = find_format(f);
 > +	if (!fmt)
-> +		fmt =&formats[0];
+> +		fmt = (struct fimc_is_fmt *)&formats[0];
 > +
-> +	v4l_bound_align_image(&pixm->width, SCALER_MIN_WIDTH,
-> +			SCALER_MAX_WIDTH, 0,
-> +			&pixm->height, SCALER_MIN_HEIGHT,
-> +			SCALER_MAX_HEIGHT, 0, 0);
+> +	v4l_bound_align_image(&pixm->width,
+> +			ISP_MIN_WIDTH + SENSOR_WIDTH_PADDING,
+> +			ISP_MAX_WIDTH + SENSOR_WIDTH_PADDING, 0,
+> +			&pixm->height,
+> +			ISP_MIN_HEIGHT + SENSOR_HEIGHT_PADDING,
+> +			ISP_MAX_HEIGHT + SENSOR_HEIGHT_PADDING, 0,
+> +			0);
 > +
-> +	for (i = 0; i<  fmt->num_planes; i++) {
-> +		struct v4l2_plane_pix_format *plane_fmt =&pixm->plane_fmt[i];
+> +	plane_fmt->bytesperline = (pixm->width * fmt->depth[0]) / 8;
+> +	plane_fmt->sizeimage = (pixm->width * pixm->height *
+> +				fmt->depth[0]) / 8;
+> +	memset(plane_fmt->reserved, 0, sizeof(plane_fmt->reserved));
 > +
-> +		plane_fmt->bytesperline = (pixm->width * fmt->depth[i]) / 8;
-> +		plane_fmt->sizeimage = (pixm->width * pixm->height *
-> +					fmt->depth[i]) / 8;
-> +		memset(plane_fmt->reserved, 0, sizeof(plane_fmt->reserved));
-> +	}
 > +	pixm->num_planes = fmt->num_planes;
 > +	pixm->pixelformat = fmt->fourcc;
 > +	pixm->colorspace = V4L2_COLORSPACE_JPEG;
@@ -316,120 +266,126 @@ the isp subdev ?
 > +	return 0;
 > +}
 > +
-> +static int scaler_s_fmt_mplane(struct file *file, void *priv,
-> +				struct v4l2_format *f)
+> +static int isp_s_fmt_mplane(struct file *file, void *priv,
+> +		struct v4l2_format *f)
 > +{
-> +	struct fimc_is_scaler *ctx = video_drvdata(file);
+> +	struct fimc_is_isp *isp = video_drvdata(file);
 
-nit: You could add:
+nit: It would make sense to add:
 
 	struct v4l2_pix_format_mplane *pixm =&f->fmt.pix_mp;
+
+And use it below instead of f->fmt.pix_mp.
 
 > +	const struct fimc_is_fmt *fmt;
 > +	int ret;
 > +
-> +	ret = scaler_try_fmt_mplane(file, priv, f);
+> +	ret = isp_try_fmt_mplane(file, priv, f);
 > +	if (ret)
 > +		return ret;
 > +
 > +	/* Get format type */
 > +	fmt = find_format(f);
 > +	if (!fmt) {
-> +		fmt =&formats[0];
+> +		fmt = (struct fimc_is_fmt *)&formats[0];
+
+Casting is not needed.
+
 > +		f->fmt.pix_mp.pixelformat = fmt->fourcc;
 > +		f->fmt.pix_mp.num_planes = fmt->num_planes;
-
-And then use it here and below.
-
 > +	}
 > +
-> +	/* Save values to context */
-> +	ctx->fmt = fmt;
-> +	ctx->width = f->fmt.pix_mp.width;
-> +	ctx->height = f->fmt.pix_mp.height;
-> +	ctx->pipeline->scaler_width[ctx->scaler_id] = ctx->width;
-> +	ctx->pipeline->scaler_height[ctx->scaler_id] = ctx->height;
-> +	set_bit(STATE_INIT,&ctx->capture_state);
+> +	isp->fmt = fmt;
+> +	isp->width = f->fmt.pix_mp.width;
+> +	isp->height = f->fmt.pix_mp.height;
+> +	isp->size_image = f->fmt.pix_mp.plane_fmt[0].sizeimage;
+> +	set_bit(STATE_INIT,&isp->output_state);
 > +	return 0;
 > +}
 > +
-> +static int scaler_reqbufs(struct file *file, void *priv,
+> +static int isp_reqbufs(struct file *file, void *priv,
 > +		struct v4l2_requestbuffers *reqbufs)
 > +{
-> +	struct fimc_is_scaler *ctx = video_drvdata(file);
+> +	struct fimc_is_isp *isp = video_drvdata(file);
 > +	int ret;
 > +
-> +	reqbufs->count = max_t(u32, FIMC_IS_SCALER_REQ_BUFS_MIN,
-> +			reqbufs->count);
-> +	ret = vb2_reqbufs(&ctx->vbq, reqbufs);
+> +	reqbufs->count = max_t(u32, FIMC_IS_ISP_REQ_BUFS_MIN, reqbufs->count);
+> +	ret = vb2_reqbufs(&isp->vbq, reqbufs);
 > +	if (ret) {
 > +		pr_err("vb2 req buffers failed\n");
+
+Please use v4l2_err() or dev_err() so we can get some hint which device
+emits the logs.
+
 > +		return ret;
 > +	}
-> +
-> +	ctx->cap_buf_cnt = 0;
-> +	set_bit(STATE_BUFS_ALLOCATED,&ctx->capture_state);
+
+I think you should check reqbufs->count here if it didn't get adjusted
+by vb2_reqbufs() to a value lower than FIMC_IS_ISP_REQ_BUFS_MIN. And in
+such case you would do something like:
+
+	reqbufs->count = 0;
+	vb2_reqbufs(&isp->vbq, reqbufs);
+	return -EERROR;
+
+> +	isp->out_buf_cnt = 0;
+> +	set_bit(STATE_BUFS_ALLOCATED,&isp->output_state);
 > +	return 0;
 > +}
 > +
-> +static const struct v4l2_ioctl_ops scaler_video_capture_ioctl_ops = {
-> +	.vidioc_querycap		= scaler_querycap_capture,
-> +	.vidioc_enum_fmt_vid_cap_mplane	= scaler_enum_fmt_mplane,
-> +	.vidioc_try_fmt_vid_cap_mplane	= scaler_try_fmt_mplane,
-> +	.vidioc_s_fmt_vid_cap_mplane	= scaler_s_fmt_mplane,
-> +	.vidioc_g_fmt_vid_cap_mplane	= scaler_g_fmt_mplane,
-> +	.vidioc_reqbufs			= scaler_reqbufs,
+> +static const struct v4l2_ioctl_ops isp_video_output_ioctl_ops = {
+> +	.vidioc_querycap		= isp_querycap_output,
+> +	.vidioc_enum_fmt_vid_out_mplane	= isp_enum_fmt_mplane,
+> +	.vidioc_try_fmt_vid_out_mplane	= isp_try_fmt_mplane,
+> +	.vidioc_s_fmt_vid_out_mplane	= isp_s_fmt_mplane,
+> +	.vidioc_g_fmt_vid_out_mplane	= isp_g_fmt_mplane,
+> +	.vidioc_reqbufs			= isp_reqbufs,
 > +	.vidioc_querybuf		= vb2_ioctl_querybuf,
 > +	.vidioc_qbuf			= vb2_ioctl_qbuf,
 > +	.vidioc_dqbuf			= vb2_ioctl_dqbuf,
-> +	.vidioc_expbuf			= vb2_ioctl_expbuf,
 > +	.vidioc_streamon		= vb2_ioctl_streamon,
 > +	.vidioc_streamoff		= vb2_ioctl_streamoff,
 > +};
 > +
-> +static int scaler_subdev_registered(struct v4l2_subdev *sd)
+> +static int isp_subdev_registered(struct v4l2_subdev *sd)
 > +{
-> +	struct fimc_is_scaler *ctx = v4l2_get_subdevdata(sd);
-> +	struct vb2_queue *q =&ctx->vbq;
-> +	struct video_device *vfd =&ctx->vfd;
+> +	struct fimc_is_isp *isp = v4l2_get_subdevdata(sd);
+> +	struct vb2_queue *q =&isp->vbq;
+> +	struct video_device *vfd =&isp->vfd;
 > +	int ret;
 > +
-> +	mutex_init(&ctx->video_lock);
+> +	mutex_init(&isp->video_lock);
 > +
 > +	memset(vfd, 0, sizeof(*vfd));
-> +	if (ctx->scaler_id == SCALER_SCC)
-> +		snprintf(vfd->name, sizeof(vfd->name), "fimc-is-scaler.codec");
-> +	else
-> +		snprintf(vfd->name, sizeof(vfd->name),
-> +				"fimc-is-scaler.preview");
+> +	snprintf(vfd->name, sizeof(vfd->name), "fimc-is-isp.output");
 > +
-> +	vfd->fops =&scaler_video_capture_fops;
-> +	vfd->ioctl_ops =&scaler_video_capture_ioctl_ops;
+> +	vfd->fops =&isp_video_output_fops;
+> +	vfd->ioctl_ops =&isp_video_output_ioctl_ops;
 > +	vfd->v4l2_dev = sd->v4l2_dev;
 > +	vfd->release = video_device_release_empty;
-> +	vfd->lock =&ctx->video_lock;
+> +	vfd->lock =&isp->video_lock;
 > +	vfd->queue = q;
-> +	vfd->vfl_dir = VFL_DIR_RX;
+> +	vfd->vfl_dir = VFL_DIR_TX;
 > +	set_bit(V4L2_FL_USE_FH_PRIO,&vfd->flags);
 > +
 > +	memset(q, 0, sizeof(*q));
-> +	q->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> +	q->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
 > +	q->io_modes = VB2_MMAP | VB2_DMABUF;
 > +	q->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_MONOTONIC;
-> +	q->ops =&scaler_video_capture_qops;
+> +	q->ops =&isp_video_output_qops;
 > +	q->mem_ops =&vb2_dma_contig_memops;
-> +	q->drv_priv = ctx;
+> +	q->drv_priv = isp;
 > +
 > +	ret = vb2_queue_init(q);
 > +	if (ret<  0)
 > +		return ret;
 > +
-> +	ctx->vd_pad.flags = MEDIA_PAD_FL_SINK;
-> +	ret = media_entity_init(&vfd->entity, 1,&ctx->vd_pad, 0);
+> +	isp->vd_pad.flags = MEDIA_PAD_FL_SINK;
+> +	ret = media_entity_init(&vfd->entity, 1,&isp->vd_pad, 0);
 > +	if (ret<  0)
 > +		return ret;
 > +
-> +	video_set_drvdata(vfd, ctx);
+> +	video_set_drvdata(vfd, isp);
 > +
 > +	ret = video_register_device(vfd, VFL_TYPE_GRABBER, -1);
 > +	if (ret<  0) {
@@ -442,62 +398,191 @@ And then use it here and below.
 > +	return 0;
 > +}
 > +
-> +static void scaler_subdev_unregistered(struct v4l2_subdev *sd)
+> +static void isp_subdev_unregistered(struct v4l2_subdev *sd)
 > +{
-> +	struct fimc_is_scaler *ctx = v4l2_get_subdevdata(sd);
+> +	struct fimc_is_isp *isp = v4l2_get_subdevdata(sd);
 > +
-> +	if (ctx&&  video_is_registered(&ctx->vfd))
-> +		video_unregister_device(&ctx->vfd);
+> +	if (isp&&  video_is_registered(&isp->vfd))
+> +		video_unregister_device(&isp->vfd);
 > +}
 > +
-> +static const struct v4l2_subdev_internal_ops scaler_subdev_internal_ops = {
-> +	.registered = scaler_subdev_registered,
-> +	.unregistered = scaler_subdev_unregistered,
+> +static const struct v4l2_subdev_internal_ops isp_subdev_internal_ops = {
+> +	.registered = isp_subdev_registered,
+> +	.unregistered = isp_subdev_unregistered,
 > +};
 > +
-> +static struct v4l2_subdev_ops scaler_subdev_ops;
+> +static struct fimc_is_sensor *fimc_is_get_sensor(struct fimc_is *is,
+> +		int sensor_id)
+> +{
+> +	int i;
 > +
-> +int fimc_is_scaler_subdev_create(struct fimc_is_scaler *ctx,
-> +		enum fimc_is_scaler_id scaler_id,
+> +	for (i = 0; i<  FIMC_IS_NUM_SENSORS; i++) {
+> +		if (is->sensor[i].drvdata->id == sensor_id)
+> +			return&is->sensor[i];
+> +	}
+> +	return NULL;
+> +}
+> +
+> +static int isp_s_power(struct v4l2_subdev *sd, int on)
+> +{
+> +	struct fimc_is_isp *isp = v4l2_get_subdevdata(sd);
+> +	struct fimc_is *is = isp->pipeline->is;
+> +	struct v4l2_subdev *sensor_sd = isp->sensor_sd;
+> +	struct fimc_is_sensor *sensor;
+> +	const struct sensor_drv_data *sdata;
+> +	struct media_pad *pad;
+> +	struct v4l2_subdev_format fmt;
+> +	int ret;
+> +
+> +	if (!sensor_sd)
+> +		return -EINVAL;
+> +
+> +	if (on) {
+> +		ret = pm_runtime_get_sync(&is->pdev->dev);
+> +		if (ret<  0)
+> +			return ret;
+> +
+> +		sdata = exynos5_is_sensor_get_drvdata(sensor_sd->dev->of_node);
+> +		sensor = fimc_is_get_sensor(is, sdata->id);
+> +		/* Retrieve the sensor format */
+> +		pad =&sensor_sd->entity.pads[0];
+
+w00t ?
+
+> +		fmt.pad = 0;
+> +		fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+> +		ret = v4l2_subdev_call(sensor_sd, pad, get_fmt, NULL,&fmt);
+
+Pad is just a name of the callback pointers data structure:
+
+struct v4l2_subdev {
+	...
+	const struct v4l2_subdev_ops *ops;
+	...
+};
+
+struct v4l2_subdev_ops {
+	const struct v4l2_subdev_core_ops	*core;
+	const struct v4l2_subdev_tuner_ops	*tuner;
+	const struct v4l2_subdev_audio_ops	*audio;
+	const struct v4l2_subdev_video_ops	*video;
+	const struct v4l2_subdev_vbi_ops	*vbi;
+	const struct v4l2_subdev_ir_ops		*ir;
+	const struct v4l2_subdev_sensor_ops	*sensor;
+	const struct v4l2_subdev_pad_ops	*pad;
+};
+
+#define v4l2_subdev_call(sd, o, f, args...)				\
+	(!(sd) ? -ENODEV : (((sd)->ops->o && (sd)->ops->o->f) ?	\
+		(sd)->ops->o->f((sd) , ##args) : -ENOIOCTLCMD))
+
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		sensor->width = fmt.format.width - SENSOR_WIDTH_PADDING;
+> +		sensor->height = fmt.format.height - SENSOR_HEIGHT_PADDING;
+> +		sensor->pixel_width = fmt.format.width;
+> +		sensor->pixel_height = fmt.format.height;
+
+Shouldn't this get_fmt call be done in STREAMON handler, after
+media_entity_pipeline_start() gets called ? Why do you need it here ?
+
+> +		ret = fimc_is_pipeline_open(isp->pipeline, sensor);
+> +		if (ret)
+> +			pr_err("Pipeline open failed\n");
+> +	} else {
+> +		ret = fimc_is_pipeline_close(isp->pipeline);
+> +		if (ret)
+> +			pr_err("Pipeline close failed\n");
+> +		pm_runtime_put_sync(&is->pdev->dev);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static struct v4l2_subdev_core_ops isp_core_ops = {
+> +	.s_power = isp_s_power,
+> +};
+> +
+> +static int isp_s_stream(struct v4l2_subdev *sd, int enable)
+> +{
+> +	struct fimc_is_isp *isp = v4l2_get_subdevdata(sd);
+> +	struct fimc_is *is = isp->pipeline->is;
+> +	struct v4l2_subdev *sensor_sd = isp->sensor_sd;
+> +	const struct sensor_drv_data *sdata;
+> +	struct fimc_is_sensor *sensor;
+> +	int ret;
+> +
+> +	if (!sensor_sd)
+> +		return -EINVAL;
+> +
+> +	if (enable) {
+> +		sdata = exynos5_is_sensor_get_drvdata(sensor_sd->dev->of_node);
+> +		sensor = fimc_is_get_sensor(is, sdata->id);
+> +		/* Check sensor resolution match */
+> +		if ((sensor->pixel_width != isp->width) ||
+> +			(sensor->pixel_height != isp->height)) {
+> +			pr_err("Resolution mismatch\n");
+> +			return -EPIPE;
+> +		}
+> +		ret = fimc_is_pipeline_start(isp->pipeline);
+> +		if (ret)
+> +			pr_err("Pipeline start failed.\n");
+
+Please use v4l2_err(sd, ...);	
+
+> +	} else {
+> +		ret = fimc_is_pipeline_stop(isp->pipeline);
+> +		if (ret)
+> +			pr_err("Pipeline stop failed.\n");
+
+Ditto.
+
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct v4l2_subdev_video_ops isp_video_ops = {
+> +	.s_stream       = isp_s_stream,
+> +};
+> +
+> +static struct v4l2_subdev_ops isp_subdev_ops = {
+> +	.core =&isp_core_ops,
+> +	.video =&isp_video_ops,
+> +};
+> +
+> +int fimc_is_isp_subdev_create(struct fimc_is_isp *isp,
 > +		struct vb2_alloc_ctx *alloc_ctx,
 > +		struct fimc_is_pipeline *pipeline)
 > +{
-> +	struct v4l2_ctrl_handler *handler =&ctx->ctrl_handler;
-> +	struct v4l2_subdev *sd =&ctx->subdev;
+> +	struct v4l2_ctrl_handler *handler =&isp->ctrl_handler;
+> +	struct v4l2_subdev *sd =&isp->subdev;
 > +	int ret;
 > +
-> +	/* Set context data */
-> +	ctx->scaler_id = scaler_id;
-> +	ctx->alloc_ctx = alloc_ctx;
-> +	ctx->pipeline = pipeline;
-> +	ctx->fmt =&formats[0];
-> +	ctx->width = SCALER_DEF_WIDTH;
-> +	ctx->height = SCALER_DEF_HEIGHT;
-> +	init_waitqueue_head(&ctx->event_q);
-> +	INIT_LIST_HEAD(&ctx->wait_queue);
-> +	INIT_LIST_HEAD(&ctx->run_queue);
+> +	/* Init context vars */
+
+This comment don't seem to be really helpful.
+
+> +	isp->alloc_ctx = alloc_ctx;
+> +	isp->pipeline = pipeline;
+> +	isp->fmt =&formats[1];
+> +	INIT_LIST_HEAD(&isp->wait_queue);
+> +	INIT_LIST_HEAD(&isp->run_queue);
+> +	isp->width = ISP_DEF_WIDTH;
+> +	isp->height = ISP_DEF_HEIGHT;
 > +
-> +	/* Initialize scaler subdev */
-> +	v4l2_subdev_init(sd,&scaler_subdev_ops);
+> +	v4l2_subdev_init(sd,&isp_subdev_ops);
 > +	sd->owner = THIS_MODULE;
 > +	sd->flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
-
-This should be:
-
-	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-
-Please check if the flags are not being overwritten for the other subdevs.
-
-> +	if (scaler_id == SCALER_SCC)
-> +		snprintf(sd->name, sizeof(sd->name), "fimc-is-scc");
-> +	else
-> +		snprintf(sd->name, sizeof(sd->name), "fimc-is-scp");
+> +	snprintf(sd->name, sizeof(sd->name), ISP_DRV_NAME);
 > +
-> +	ctx->subdev_pads[SCALER_SD_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
-> +	ctx->subdev_pads[SCALER_SD_PAD_SRC_FIFO].flags = MEDIA_PAD_FL_SOURCE;
-> +	ctx->subdev_pads[SCALER_SD_PAD_SRC_DMA].flags = MEDIA_PAD_FL_SOURCE;
+> +	isp->subdev_pads[ISP_SD_PAD_SINK_DMA].flags = MEDIA_PAD_FL_SINK;
+> +	isp->subdev_pads[ISP_SD_PAD_SINK_OTF].flags = MEDIA_PAD_FL_SINK;
+> +	isp->subdev_pads[ISP_SD_PAD_SRC].flags = MEDIA_PAD_FL_SOURCE;
 > +	ret = media_entity_init(&sd->entity, ISP_SD_PADS_NUM,
-> +			ctx->subdev_pads, 0);
+> +			isp->subdev_pads, 0);
 > +	if (ret<  0)
 > +		return ret;
 > +
@@ -506,141 +591,17 @@ Please check if the flags are not being overwritten for the other subdevs.
 > +		goto err_ctrl;
 > +
 > +	sd->ctrl_handler = handler;
-> +	sd->internal_ops =&scaler_subdev_internal_ops;
-> +	v4l2_set_subdevdata(sd, ctx);
+> +	sd->internal_ops =&isp_subdev_internal_ops;
+> +	v4l2_set_subdevdata(sd, isp);
 > +
 > +	return 0;
+> +
 > +err_ctrl:
 > +	media_entity_cleanup(&sd->entity);
 > +	v4l2_ctrl_handler_free(handler);
 > +	return ret;
 > +}
-> +
-> +void fimc_is_scaler_subdev_destroy(struct fimc_is_scaler *ctx)
-> +{
-> +	struct v4l2_subdev *sd =&ctx->subdev;
-> +
-> +	v4l2_device_unregister_subdev(sd);
-> +	media_entity_cleanup(&sd->entity);
-> +	v4l2_ctrl_handler_free(&ctx->ctrl_handler);
-> +	v4l2_set_subdevdata(sd, NULL);
-> +}
-> +
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-scaler.h b/drivers/media/platform/exynos5-is/fimc-is-scaler.h
-> new file mode 100644
-> index 0000000..6d3d831
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-scaler.h
-> @@ -0,0 +1,112 @@
-> +/*
-> + * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
-> + *
-> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + *  Arun Kumar K<arun.kk@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +#ifndef FIMC_IS_SCALER_H_
-> +#define FIMC_IS_SCALER_H_
-> +
-> +#include<linux/sizes.h>
-> +#include<linux/io.h>
-> +#include<linux/irqreturn.h>
-> +#include<linux/platform_device.h>
-> +#include<linux/sched.h>
-> +#include<linux/spinlock.h>
-> +#include<linux/types.h>
-> +#include<linux/videodev2.h>
-> +
-> +#include<media/media-entity.h>
-> +#include<media/videobuf2-core.h>
-> +#include<media/v4l2-device.h>
-> +#include<media/v4l2-mediabus.h>
-> +#include<media/s5p_fimc.h>
-> +
-> +#include "fimc-is-core.h"
-> +
-> +#define SCALER_SD_PAD_SINK	0
-> +#define SCALER_SD_PAD_SRC_FIFO	1
-> +#define SCALER_SD_PAD_SRC_DMA	2
-> +#define SCALER_SD_PADS_NUM	3
-> +
-> +#define SCALER_MAX_BUFS		32
-> +#define SCALER_MAX_PLANES	3
-> +
-> +#define FIMC_IS_SCALER_REQ_BUFS_MIN	2
-> +
-> +#define SCALER_DEF_WIDTH	1280
-> +#define SCALER_DEF_HEIGHT	720
-> +#define SCALER_MAX_WIDTH	4808
-> +#define SCALER_MAX_HEIGHT	3356
-> +#define SCALER_MIN_WIDTH	32
-> +#define SCALER_MIN_HEIGHT	32
-> +
-> +/**
-> + * struct fimc_is_scaler - fimc-is scaler structure
-> + * @vfd: video device node
-> + * @fh: v4l2 file handle
-> + * @alloc_ctx: videobuf2 memory allocator context
-> + * @subdev: fimc-is-scaler subdev
-> + * @vd_pad: media pad for the output video node
-> + * @subdev_pads: the subdev media pads
-> + * @ctrl_handler: v4l2 control handler
-> + * @video_lock: video lock mutex
-> + * @event_q: notifies scaler events
-> + * @pipeline: pipeline instance for this scaler context
-> + * @scaler_id: distinguishes scaler preview or scaler codec
-> + * @vbq: vb2 buffers queue for ISP output video node
-> + * @wait_queue: list holding buffers waiting to be queued to HW
-> + * @wait_queue_cnt: wait queue number of buffers
-> + * @run_queue: list holding buffers queued to HW
-> + * @run_queue_cnt: run queue number of buffers
-> + * @capture_bufs: scaler capture buffers array
-> + * @cap_buf_cnt: number of capture buffers in use
-> + * @fmt: capture plane format for scaler
-> + * @width: user configured output width
-> + * @height: user configured output height
-> + * @capture_state: state of the capture video node operations
-> + * @buf_paddr: holds the physical address of capture buffers
-> + */
-> +struct fimc_is_scaler {
-> +	struct video_device		vfd;
-> +	struct v4l2_fh			fh;
-> +	struct vb2_alloc_ctx		*alloc_ctx;
-> +	struct v4l2_subdev		subdev;
-> +	struct media_pad		vd_pad;
-> +	struct media_pad		subdev_pads[SCALER_SD_PADS_NUM];
-> +	struct v4l2_mbus_framefmt	subdev_fmt;
-> +	struct v4l2_ctrl_handler	ctrl_handler;
-> +
-> +	struct mutex		video_lock;
-> +	wait_queue_head_t	event_q;
-> +
-> +	struct fimc_is_pipeline	*pipeline;
-> +	enum fimc_is_scaler_id	scaler_id;
-> +
-> +	struct vb2_queue	vbq;
-> +	struct list_head	wait_queue;
-> +	unsigned int		wait_queue_cnt;
-> +	struct list_head	run_queue;
-> +	unsigned int		run_queue_cnt;
-> +
-> +	struct fimc_is_buf	capture_bufs[SCALER_MAX_BUFS];
-> +	unsigned int		cap_buf_cnt;
-> +
-> +	const struct fimc_is_fmt *fmt;
-> +	unsigned int		width;
-> +	unsigned int		height;
-> +	unsigned long		capture_state;
-> +	unsigned int		buf_paddr[SCALER_MAX_BUFS][SCALER_MAX_PLANES];
-> +};
-> +
-> +int fimc_is_scaler_subdev_create(struct fimc_is_scaler *ctx,
-> +		enum fimc_is_scaler_id scaler_id,
-> +		struct vb2_alloc_ctx *alloc_ctx,
-> +		struct fimc_is_pipeline *pipeline);
-> +void fimc_is_scaler_subdev_destroy(struct fimc_is_scaler *scaler);
-> +
-> +#endif /* FIMC_IS_SCALER_H_ */
+
+--
+Regards,
+Sylwester
