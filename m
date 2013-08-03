@@ -1,217 +1,99 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARM: EXYNOS: add power domains support for EXYNOS5440
-Date: Sat, 3 Aug 2013 21:14:11 +0100
-Message-ID: <20130803201411.GB17755@e106331-lin.cambridge.arm.com>
-References: <2729097.X0eAsuYF97@amdc1032>
- <51FC1E40.7030807@wwwdotorg.org>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [RFC v2 06/10] exynos5-fimc-is: Adds isp subdev
+Date: Sat, 03 Aug 2013 23:38:33 +0200
+Message-ID: <51FD7859.1000401@gmail.com>
+References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com> <1370005408-10853-7-git-send-email-arun.kk@samsung.com> <51C38F82.1040507@gmail.com> <CALt3h7-VfbxxHnitQFgZ3hbTv-X9T09aJznTvu2qNqGbXnftdw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:58266 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752989Ab3HCUOr (ORCPT
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:34426 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751970Ab3HCVii (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Aug 2013 16:14:47 -0400
-Content-Disposition: inline
-In-Reply-To: <51FC1E40.7030807@wwwdotorg.org>
+	Sat, 3 Aug 2013 17:38:38 -0400
+In-Reply-To: <CALt3h7-VfbxxHnitQFgZ3hbTv-X9T09aJznTvu2qNqGbXnftdw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <Pawel.Moll@arm.com>
+To: Arun Kumar K <arunkk.samsung@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, LMML <linux-media@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kilyeon.im@samsung.com, shaik.ameer@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
-On Fri, Aug 02, 2013 at 10:01:52PM +0100, Stephen Warren wrote:
-> (CCing the other DT maintainers, hence quoting binding in full)
-> 
-> On 08/02/2013 07:23 AM, Bartlomiej Zolnierkiewicz wrote:
-> > On EXYNOS5440 power domains are handled in a different way than on
-> > the previous EXYNOS SoCs. Add support for them to EXYNOS pm_domains
-> > driver. Then add device tree nodes for PCIe (controlling power for
-> > PCIe host controller) and Conn2 (controlling power for Ethernet,
-> > SATA and USB controllers) power domains to exynos5440.dtsi.
-> > 
-> > Currently if runtime Power Management is enabled and the driver
-> > for devices under power domain is disabled then the power domain
-> > will be disabled by EXYNOS pm_domains driver. To make more active
-> > use of power domains (dynamically enable and disabled them as
-> > needed) it is required to add runtime PM support to pci-exynos,
-> > stmmac, ahci_platform, ohci-exynos and ehci-s5p drivers (to be
-> > done later).
-> > 
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Signed-off-by: Myungjoo Ham <myungjoo.ham@samsung.com>
-> > Cc: Tomasz Figa <t.figa@samsung.com>
-> > Cc: Stephen Warren <swarren@wwwdotorg.org>
-> > ---
-> >  Documentation/devicetree/bindings/arm/exynos/power_domain.txt |   33 ++
-> >  arch/arm/boot/dts/exynos5440.dtsi                             |   23 +
-> >  arch/arm/mach-exynos/Kconfig                                  |    1 
-> >  arch/arm/mach-exynos/common.c                                 |    4 
-> >  arch/arm/mach-exynos/pm_domains.c                             |  138 +++++++++-
-> >  5 files changed, 190 insertions(+), 9 deletions(-)
-> > 
-> > Index: b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> > ===================================================================
-> > --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt	2013-08-02 14:45:53.551392396 +0200
-> > +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt	2013-08-02 14:46:29.799391845 +0200
-> > @@ -5,20 +5,47 @@ to gate power to one or more peripherals
-> >  
-> >  Required Properties:
-> >  - compatible: should be one of the following.
-> > -    * samsung,exynos4210-pd - for exynos4210 type power domain.
-> > +    * samsung,exynos4210-pd - for Exynos4210 type power domain.
-> > +    * samsung,exynos5440-pd - for Exynos5440 type power domain.
-> >  - reg: physical base address of the controller and length of memory mapped
-> > -    region.
-> > +    region (Exynos4210 type power domain) or bit offset in the control
-> > +    register (Exynos5440 type power domain).
-> > +
-> > +Additional parent node must be created for Exynos5440 power domains with
-> > +the following required properties:
-> > +- compatible: samsung,exynos5440-power-domains, simple-bus
-> > +- reg: physical base address of the XMU controller and length of memory
-> > +    mapped region
-> 
-> It's a little odd to describe the child nodes first. Given the 4210 and
-> 5440 bindings work so differently, I'd suggest making separate binding
-> files for the two; samsung,exynos4210-pd.txt and samsung,exynos5440-pd.txt.
-> 
-> The node being describe here clearly is not a simple-bus; the child
-> nodes appear to have a specific need that their parent be compatible =
-> "samsung,exynos5440-power-domains", hence they aren't the independent
-> devices that simple-bus would usually contain.
+Hi Arun,
 
-+1. This is most definitely not a simple-bus, the child nodes reg
-properties cdon't represent the same address space as the
-parent's reg property.
+On 08/02/2013 06:31 AM, Arun Kumar K wrote:
+[...]
+>>> + * Video node ioctl operations
+>>> + */
+>>> +static int isp_querycap_output(struct file *file, void *priv,
+>>> +                                       struct v4l2_capability *cap)
+>>> +{
+>>> +       strncpy(cap->driver, ISP_DRV_NAME, sizeof(cap->driver) - 1);
+>>> +       strncpy(cap->card, ISP_DRV_NAME, sizeof(cap->card) - 1);
+>>> +       strncpy(cap->bus_info, ISP_DRV_NAME, sizeof(cap->bus_info) - 1);
+>>> +       cap->capabilities = V4L2_CAP_STREAMING |
+>>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+>>> +       cap->device_caps = V4L2_CAP_STREAMING |
+>>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+>>
+>>
+>>          cap->capabilities = V4L2_CAP_STREAMING;
+>>
+>>          cap->device_caps = V4L2_CAP_STREAMING |
+>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
+>>
+>> This should be:
+>>
+>>          cap->device_caps = V4L2_CAP_STREAMING;
+>>          cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+>>
+>> Media Controller device nodes must not use V4L2_CAP_VIDEO_{OUTPUT,
+>> CAPTURE}_(_MPLANE) capability flags.
+>
+> If I dont provide any video capabilities, the v4l2-compliance tool
+> gives a fail :
+>
+>       fail: v4l2-compliance.cpp(298) : node->is_video&&  !(dcaps&  video_caps)
+> test VIDIOC_QUERYCAP: FAIL
+>
+> This error doesn't come if I give V4L2_CAP_VIDEO_OUTPUT_MPLANE capability.
+>
+> One more related error compliance tool gives is :
+>
+>     fail: v4l2-test-formats.cpp(286): Video Output Multiplanar cap not
+> set, but Video Output Multiplanar formats defined
+> test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: FAIL
+>
+> Shall these errors be ignored?
 
-How much does the association of bit-offsets to power domains vary? 
+I think so, yes. The capability flags should be set by a driver-specific
+user space library/middleware. Such a library would intercept 
+VIDIOC_QUERYBUF
+ioctl and set relevant capability flags. I believe v4l2-compliance should
+not be used on the bare video device nodes your driver provides. It should
+be used together with, e.g. libv4l2 plugin for this driver.
 
-> 
-> Note that I only briefly reviewed the low-level structural aspects of
-> the binding that I mentioned above; I haven't thought about the binding
-> at a higher level of e.g. "does this binding conceptually make sense".
+My colleague have been working on such a plugin for exynos4-is driver.
+There is still on my todo list modifying FIMC video capture node driver
+to allow video device open() even when no links to, e.g. sensor subdev
+were created. This is needed because with libv4l2 video device open() must
+succeed in order for the plugin to have its initialization routine called.
+Then the plugin configures pipeline according to e.g. data stored in a
+configuration file, and for some VIDIOC_* ioctls it does additional stuff
+on involved subdevices to ensure VIDIOC_* ioctls work as if the /dev/video
+would be plain V4L2 video node, without any subdev/MC stuff.
 
-This is unfortunately difficult to do :(
+I think you're just using wrong tool for the purpose. v4l2-compliance is
+just not suitable for testing MC video nodes without corresponding user
+space library that would handle quirks of your device.
 
-> 
-> >  Node of a device using power domains must have a samsung,power-domain property
-> >  defined with a phandle to respective power domain.
-> >  
-> > -Example:
-> > +Example for Exynos4210 compatible power domain:
-> >  
-> >  	lcd0: power-domain-lcd0 {
-> >  		compatible = "samsung,exynos4210-pd";
-> >  		reg = <0x10023C00 0x10>;
-> >  	};
-> >  
-> > +Example for Exynos5440 compatible power domains:
-> > +
-> > +	power-domains@00160000 {
-> > +		compatible = "samsung,exynos5440-power-domains", "simple-bus";
-> > +		reg = <0x00160000 0x1000>;
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		pd_pcie: pcie-power-domain@6 {
-> > +			compatible = "samsung,exynos5440-pd";
-> > +			reg = <6>;
-> > +		};
-> > +
-> > +		pd_conn2: conn2-power-domain@7 {
-> > +			compatible = "samsung,exynos5440-pd";
-> > +			reg = <7>;
-> > +		};
-> > +	};
-> > +
-> >  Example of the node using power domain:
-> >  
-> >  	node {
-> > Index: b/arch/arm/boot/dts/exynos5440.dtsi
-> > ===================================================================
-> > --- a/arch/arm/boot/dts/exynos5440.dtsi	2013-08-02 14:45:53.599392397 +0200
-> > +++ b/arch/arm/boot/dts/exynos5440.dtsi	2013-08-02 14:46:29.815391842 +0200
-> > @@ -29,6 +29,23 @@
-> >  		#clock-cells = <1>;
-> >  	};
-> >  
-> > +	power-domains@00160000 {
-> > +		compatible = "samsung,exynos5440-power-domains", "simple-bus";
-> > +		reg = <0x00160000 0x1000>;
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		pd_pcie: pcie-power-domain@6 {
-> > +			compatible = "samsung,exynos5440-pd";
-> > +			reg = <6>;
-> > +		};
-> > +
-> > +		pd_conn2: conn2-power-domain@7 {
-> > +			compatible = "samsung,exynos5440-pd";
-> > +			reg = <7>;
-> > +		};
-> > +	};
-> > +
-> >  	gic:interrupt-controller@2E0000 {
-> >  		compatible = "arm,cortex-a15-gic";
-> >  		#interrupt-cells = <3>;
-> > @@ -192,6 +209,7 @@
-> >  		phy-mode = "sgmii";
-> >  		clocks = <&clock 25>;
-> >  		clock-names = "stmmaceth";
-> > +		samsung,power-domain = <&pd_conn2>;
-> >  	};
+If you set the V4L2_CAP_VIDEO_OUTPUT_MPLANE capability standard
+applications, e.g. v4l2-src GStreamer plugin (oh, it likely doesn't have
+support for _MPLANE yet anyway) may get confused that this video node is
+a regular capture video node and users would start filling in bug reports
+thinking that your driver is crap because it doesn't work as expected. ;-)
 
-This feels like a clock style binding would fit better:
-samsung,power-domain = <&pwr 7>;
+Hans and Mauro may want to correct/add something to what is said above.
 
-But there may be a better, more general way of handling this. I'm not
-sure how this relates to regulators and so on, and how other vendors
-handle this stuff...
-
+--
 Thanks,
-Mark.
-
-> >  
-> >  	amba {
-> > @@ -240,6 +258,7 @@
-> >  		interrupts = <0 30 0>;
-> >  		clocks = <&clock 23>;
-> >  		clock-names = "sata";
-> > +		samsung,power-domain = <&pd_conn2>;
-> >  	};
-> >  
-> >  	ohci@220000 {
-> > @@ -248,6 +267,7 @@
-> >  		interrupts = <0 29 0>;
-> >  		clocks = <&clock 24>;
-> >  		clock-names = "usbhost";
-> > +		samsung,power-domain = <&pd_conn2>;
-> >  	};
-> >  
-> >  	ehci@221000 {
-> > @@ -256,6 +276,7 @@
-> >  		interrupts = <0 29 0>;
-> >  		clocks = <&clock 24>;
-> >  		clock-names = "usbhost";
-> > +		samsung,power-domain = <&pd_conn2>;
-> >  	};
-> >  
-> >  	pcie@290000 {
-> > @@ -275,6 +296,7 @@
-> >  		#interrupt-cells = <1>;
-> >  		interrupt-map-mask = <0 0 0 0>;
-> >  		interrupt-map = <0x0 0 &gic 53>;
-> > +		samsung,power-domain = <&pd_pcie>;
-> >  	};
-> >  
-> >  	pcie@2a0000 {
-> > @@ -294,5 +316,6 @@
-> >  		#interrupt-cells = <1>;
-> >  		interrupt-map-mask = <0 0 0 0>;
-> >  		interrupt-map = <0x0 0 &gic 56>;
-> > +		samsung,power-domain = <&pd_pcie>;
-> >  	};
-> >  };
-> 
-> 
+Sylwester
