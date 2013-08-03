@@ -1,99 +1,46 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC v2 06/10] exynos5-fimc-is: Adds isp subdev
-Date: Sat, 03 Aug 2013 23:38:33 +0200
-Message-ID: <51FD7859.1000401@gmail.com>
-References: <1370005408-10853-1-git-send-email-arun.kk@samsung.com> <1370005408-10853-7-git-send-email-arun.kk@samsung.com> <51C38F82.1040507@gmail.com> <CALt3h7-VfbxxHnitQFgZ3hbTv-X9T09aJznTvu2qNqGbXnftdw@mail.gmail.com>
+Subject: Re: [RFC v3 00/13] Exynos5 IS driver
+Date: Sat, 03 Aug 2013 23:40:05 +0200
+Message-ID: <51FD78B5.6080507@gmail.com>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:34426 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751970Ab3HCVii (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Aug 2013 17:38:38 -0400
-In-Reply-To: <CALt3h7-VfbxxHnitQFgZ3hbTv-X9T09aJznTvu2qNqGbXnftdw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arunkk.samsung@gmail.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, LMML <linux-media@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, kilyeon.im@samsung.com, shaik.ameer@samsung.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Mauro Carvalho Chehab <mchehab@redhat.com>
 
 Hi Arun,
 
-On 08/02/2013 06:31 AM, Arun Kumar K wrote:
-[...]
->>> + * Video node ioctl operations
->>> + */
->>> +static int isp_querycap_output(struct file *file, void *priv,
->>> +                                       struct v4l2_capability *cap)
->>> +{
->>> +       strncpy(cap->driver, ISP_DRV_NAME, sizeof(cap->driver) - 1);
->>> +       strncpy(cap->card, ISP_DRV_NAME, sizeof(cap->card) - 1);
->>> +       strncpy(cap->bus_info, ISP_DRV_NAME, sizeof(cap->bus_info) - 1);
->>> +       cap->capabilities = V4L2_CAP_STREAMING |
->>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
->>> +       cap->device_caps = V4L2_CAP_STREAMING |
->>> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
->>
->>
->>          cap->capabilities = V4L2_CAP_STREAMING;
->>
->>          cap->device_caps = V4L2_CAP_STREAMING |
->> V4L2_CAP_VIDEO_OUTPUT_MPLANE;
->>
->> This should be:
->>
->>          cap->device_caps = V4L2_CAP_STREAMING;
->>          cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
->>
->> Media Controller device nodes must not use V4L2_CAP_VIDEO_{OUTPUT,
->> CAPTURE}_(_MPLANE) capability flags.
+On 08/02/2013 05:02 PM, Arun Kumar K wrote:
+> The patch series add support for Exynos5 camera subsystem. It
+> re-uses mipi-csis and fimc-lite from exynos4-is and adds a new
+> media device and fimc-is device drivers for exynos5.
+> The media device supports asynchronos subdev registration for the
+> fimc-is sensors and is based on the patch series from Sylwester
+> for exynos4-is [1].
 >
-> If I dont provide any video capabilities, the v4l2-compliance tool
-> gives a fail :
+> [1]http://www.mail-archive.com/linux-media@vger.kernel.org/msg64653.html
 >
->       fail: v4l2-compliance.cpp(298) : node->is_video&&  !(dcaps&  video_caps)
-> test VIDIOC_QUERYCAP: FAIL
->
-> This error doesn't come if I give V4L2_CAP_VIDEO_OUTPUT_MPLANE capability.
->
-> One more related error compliance tool gives is :
->
->     fail: v4l2-test-formats.cpp(286): Video Output Multiplanar cap not
-> set, but Video Output Multiplanar formats defined
-> test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: FAIL
->
-> Shall these errors be ignored?
+> Changes from v2
+> ---------------
+> - Added exynos5 media device driver from Shaik to this series
+> - Added ISP pipeline support in media device driver
+> - Based on Sylwester's latest exynos4-is development
+> - Asynchronos registration of sensor subdevs
+> - Made independent IS-sensor support
+> - Add s5k4e5 sensor driver
+> - Addressed review comments from Sylwester, Hans, Andrzej, Sachin
 
-I think so, yes. The capability flags should be set by a driver-specific
-user space library/middleware. Such a library would intercept 
-VIDIOC_QUERYBUF
-ioctl and set relevant capability flags. I believe v4l2-compliance should
-not be used on the bare video device nodes your driver provides. It should
-be used together with, e.g. libv4l2 plugin for this driver.
+This is starting to look pretty good to me, I hope we can merge this
+patch set for v3.12. Let use coming two weeks for one or two review/
+corrections round.
+In the meantime I've done numerous fixes to the patch series [1],
+especially the clock provider code was pretty buggy on the clean up
+paths. Let's go through the patches and see what can be improved yet.
 
-My colleague have been working on such a plugin for exynos4-is driver.
-There is still on my todo list modifying FIMC video capture node driver
-to allow video device open() even when no links to, e.g. sensor subdev
-were created. This is needed because with libv4l2 video device open() must
-succeed in order for the plugin to have its initialization routine called.
-Then the plugin configures pipeline according to e.g. data stored in a
-configuration file, and for some VIDIOC_* ioctls it does additional stuff
-on involved subdevices to ensure VIDIOC_* ioctls work as if the /dev/video
-would be plain V4L2 video node, without any subdev/MC stuff.
-
-I think you're just using wrong tool for the purpose. v4l2-compliance is
-just not suitable for testing MC video nodes without corresponding user
-space library that would handle quirks of your device.
-
-If you set the V4L2_CAP_VIDEO_OUTPUT_MPLANE capability standard
-applications, e.g. v4l2-src GStreamer plugin (oh, it likely doesn't have
-support for _MPLANE yet anyway) may get confused that this video node is
-a regular capture video node and users would start filling in bug reports
-thinking that your driver is crap because it doesn't work as expected. ;-)
-
-Hans and Mauro may want to correct/add something to what is said above.
-
---
 Thanks,
 Sylwester
