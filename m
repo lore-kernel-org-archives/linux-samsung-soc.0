@@ -1,171 +1,221 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC v3 08/13] [media] exynos5-fimc-is: Add sensor interface
-Date: Sat, 03 Aug 2013 23:48:48 +0200
-Message-ID: <51FD7AC0.3040000@gmail.com>
-References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-9-git-send-email-arun.kk@samsung.com>
+Subject: Re: [RFC v3 13/13] V4L: Add driver for s5k4e5 image sensor
+Date: Sat, 03 Aug 2013 23:49:20 +0200
+Message-ID: <51FD7AE0.7010608@gmail.com>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-14-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:64013 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752696Ab3HCVsw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Aug 2013 17:48:52 -0400
-In-Reply-To: <1375455762-22071-9-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1375455762-22071-14-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Arun Kumar K <arun.kk@samsung.com>
 Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On 08/02/2013 05:02 PM, Arun Kumar K wrote:
-> Some sensors to be used with fimc-is are exclusively controlled
-> by the fimc-is firmware. This minimal sensor driver provides
-> the required info for the firmware to configure the sensors
-> sitting on I2C bus.
+> This patch adds subdev driver for Samsung S5K4E5 raw image sensor.
+> Like s5k6a3, it is also another fimc-is firmware controlled
+> sensor. This minimal sensor driver doesn't do any I2C communications
+> as its done by ISP firmware. It can be updated if needed to a
+> regular sensor driver by adding the I2C communication.
 >
 > Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
 > ---
->   drivers/media/platform/exynos5-is/fimc-is-sensor.c |   46 +++++++++++++
->   drivers/media/platform/exynos5-is/fimc-is-sensor.h |   69 ++++++++++++++++++++
->   2 files changed, 115 insertions(+)
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.c
->   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.h
->
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-sensor.c b/drivers/media/platform/exynos5-is/fimc-is-sensor.c
+>   drivers/media/i2c/Kconfig  |    8 +
+>   drivers/media/i2c/Makefile |    1 +
+>   drivers/media/i2c/s5k4e5.c |  362 ++++++++++++++++++++++++++++++++++++++++++++
+
+Hmm, we also need the device tree binding documentation file.
+
+>   3 files changed, 371 insertions(+)
+>   create mode 100644 drivers/media/i2c/s5k4e5.c
+[...]
 > new file mode 100644
-> index 0000000..3e4aae9
+> index 0000000..a713c6a
 > --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-sensor.c
-> @@ -0,0 +1,46 @@
+> +++ b/drivers/media/i2c/s5k4e5.c
+> @@ -0,0 +1,362 @@
 > +/*
-> + * Samsung EXYNOS5250 FIMC-IS (Imaging Subsystem) driver
+> + * Samsung S5K4E5 image sensor driver
 > + *
 > + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + * Authors:  Sylwester Nawrocki<s.nawrocki@samsung.com>
-> + *           Arun Kumar K<arun.kk@samsung.com>
+> + * Author: Arun Kumar K<arun.kk@samsung.com>
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
 > + * published by the Free Software Foundation.
 > + */
 > +
-> +#include "fimc-is-sensor.h"
+> +#include<linux/clk.h>
+> +#include<linux/delay.h>
+> +#include<linux/device.h>
+> +#include<linux/errno.h>
+> +#include<linux/gpio.h>
+> +#include<linux/i2c.h>
+> +#include<linux/kernel.h>
+> +#include<linux/module.h>
+> +#include<linux/of_gpio.h>
+> +#include<linux/pm_runtime.h>
+> +#include<linux/regulator/consumer.h>
+> +#include<linux/slab.h>
+> +#include<linux/videodev2.h>
+> +#include<media/v4l2-async.h>
+> +#include<media/v4l2-subdev.h>
 > +
-> +static const struct sensor_drv_data s5k6a3_drvdata = {
-> +	.id		= FIMC_IS_SENSOR_ID_S5K6A3,
-> +	.open_timeout	= S5K6A3_OPEN_TIMEOUT,
-> +	.setfile_name	= "setfile_6a3.bin",
-> +};
+> +#define S5K4E5_SENSOR_MAX_WIDTH		2560
+> +#define S5K4E5_SENSOR_MAX_HEIGHT	1920
+> +#define S5K4E5_SENSOR_MIN_WIDTH		32
+> +#define S5K4E5_SENSOR_MIN_HEIGHT	32
 > +
-> +static const struct sensor_drv_data s5k4e5_drvdata = {
-> +	.id		= FIMC_IS_SENSOR_ID_S5K4E5,
-> +	.open_timeout	= S5K4E5_OPEN_TIMEOUT,
-> +	.setfile_name	= "setfile_4e5.bin",
-> +};
+> +#define S5K4E5_WIDTH_PADDING		16
+> +#define S5K4E5_HEIGHT_PADDING		10
 > +
-> +static const struct of_device_id fimc_is_sensor_of_ids[] = {
-> +	{
-> +		.compatible	= "samsung,s5k6a3",
-> +		.data		=&s5k6a3_drvdata,
-> +	},
-> +	{
-> +		.compatible	= "samsung,s5k4e5",
-> +		.data		=&s5k4e5_drvdata,
-> +	},
-> +	{  }
-> +};
-> +
-> +const struct sensor_drv_data *exynos5_is_sensor_get_drvdata(
-> +			struct device_node *node)
-> +{
-> +	const struct of_device_id *of_id;
-> +
-> +	of_id = of_match_node(fimc_is_sensor_of_ids, node);
-> +	return of_id ? of_id->data : NULL;
-> +}
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-sensor.h b/drivers/media/platform/exynos5-is/fimc-is-sensor.h
-> new file mode 100644
-> index 0000000..51e18ea
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-sensor.h
-> @@ -0,0 +1,69 @@
-> +/*
-> + * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
-> + *
-> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + *
-> + * Authors:  Sylwester Nawrocki<s.nawrocki@samsung.com>
-> + *	     Younghwan Joo<yhwan.joo@samsung.com>
-> + *	     Arun Kumar K<arun.kk@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +#ifndef FIMC_IS_SENSOR_H_
-> +#define FIMC_IS_SENSOR_H_
-> +
-> +#include<linux/of.h>
-> +#include<linux/types.h>
-> +
-> +#define S5K6A3_OPEN_TIMEOUT		2000 /* ms */
-> +#define S5K6A3_SENSOR_WIDTH		1392
-> +#define S5K6A3_SENSOR_HEIGHT		1392
-> +
-> +#define S5K4E5_OPEN_TIMEOUT		2000 /* ms */
-> +#define S5K4E5_SENSOR_WIDTH		2560
-> +#define S5K4E5_SENSOR_HEIGHT		1920
-> +
-> +#define SENSOR_WIDTH_PADDING		16
-> +#define SENSOR_HEIGHT_PADDING		10
-> +
-> +enum fimc_is_sensor_id {
-> +	FIMC_IS_SENSOR_ID_S5K3H2 = 1,
-> +	FIMC_IS_SENSOR_ID_S5K6A3,
-> +	FIMC_IS_SENSOR_ID_S5K4E5,
-> +	FIMC_IS_SENSOR_ID_S5K3H7,
-> +	FIMC_IS_SENSOR_ID_CUSTOM,
-> +	FIMC_IS_SENSOR_ID_END
-> +};
-> +
-> +#define IS_SENSOR_CTRL_BUS_I2C0		0
-> +#define IS_SENSOR_CTRL_BUS_I2C1		1
+> +#define S5K4E5_DEF_PIX_WIDTH		1296
+> +#define S5K4E5_DEF_PIX_HEIGHT		732
 
-Are these two constants used anywhere ?
+Please see my comments to patch 12/13 WRT to these defines.
 
-> +struct sensor_drv_data {
-> +	enum fimc_is_sensor_id id;
-> +	/* sensor open timeout in ms */
-> +	unsigned short open_timeout;
-> +	char *setfile_name;
-> +};
+> +#define S5K4E5_DRV_NAME			"S5K4E5"
+> +#define S5K4E5_CLK_NAME			"mclk"
+> +
+> +#define S5K4E5_NUM_SUPPLIES		2
 > +
 > +/**
-> + * struct fimc_is_sensor - fimc-is sensor data structure
-> + * @drvdata: a pointer to the sensor's parameters data structure
-> + * @i2c_bus: ISP I2C bus index (0...1)
-> + * @test_pattern: true to enable video test pattern
+> + * struct s5k4e5 - fimc-is sensor data structure
+
+s/fimc-is/s5k4e5 ?
+
+> + * @dev: pointer to this I2C client device structure
+> + * @subdev: the image sensor's v4l2 subdev
+> + * @pad: subdev media source pad
+> + * @supplies: image sensor's voltage regulator supplies
+> + * @gpio_reset: GPIO connected to the sensor's reset pin
+> + * @lock: mutex protecting the structure's members below
+> + * @format: media bus format at the sensor's source pad
 > + */
-> +struct fimc_is_sensor {
-> +	const struct sensor_drv_data *drvdata;
-> +	unsigned int i2c_bus;
-
-> +	unsigned int width;
-> +	unsigned int height;
-> +	unsigned int pixel_width;
-> +	unsigned int pixel_height;
-
-What is difference between width/height and pixel_width/pixel_height ?
-Would be good to add some documentation for these fields.
-
-> +	u8 test_pattern;
+> +struct s5k4e5 {
+> +	struct device *dev;
+> +	struct v4l2_subdev subdev;
+> +	struct media_pad pad;
+> +	struct regulator_bulk_data supplies[S5K4E5_NUM_SUPPLIES];
+> +	int gpio_reset;
+> +	struct mutex lock;
+> +	struct v4l2_mbus_framefmt format;
+> +	struct clk *clock;
+> +	u32 clock_frequency;
 > +};
 > +
-> +const struct sensor_drv_data *exynos5_is_sensor_get_drvdata(
-> +			struct device_node *node);
+> +static const char * const s5k4e5_supply_names[] = {
+> +	"svdda",
+> +	"svddio"
+> +};
+[...]
+> +static int s5k4e5_probe(struct i2c_client *client,
+> +				const struct i2c_device_id *id)
+> +{
+> +	struct device *dev =&client->dev;
+> +	struct s5k4e5 *sensor;
+> +	struct v4l2_subdev *sd;
+> +	int gpio, i, ret;
 > +
-> +#endif /* FIMC_IS_SENSOR_H_ */
+> +	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
+> +	if (!sensor)
+> +		return -ENOMEM;
+> +
+> +	mutex_init(&sensor->lock);
+> +	sensor->gpio_reset = -EINVAL;
+> +	sensor->clock = ERR_PTR(-EINVAL);
+> +	sensor->dev = dev;
+> +
+> +	gpio = of_get_gpio_flags(dev->of_node, 0, NULL);
+> +	if (gpio_is_valid(gpio)) {
+> +		ret = devm_gpio_request_one(dev, gpio, GPIOF_OUT_INIT_LOW,
+> +							S5K4E5_DRV_NAME);
+> +		if (ret<  0)
+> +			return ret;
+> +	}
+> +	sensor->gpio_reset = gpio;
+> +
+> +	if (of_property_read_u32(dev->of_node, "clock-frequency",
+> +				&sensor->clock_frequency)) {
+> +		dev_err(dev, "clock-frequency property not found at %s\n",
+> +						dev->of_node->full_name);
+> +		return -EINVAL;
 
-Thanks,
+I would make "clock-frequency" property optional and instead of returning
+error use some default frequency value when this property is not specified
+in DT. This also need to be put into the DT binding document.
+
+> +	}
+> +
+> +	for (i = 0; i<  S5K4E5_NUM_SUPPLIES; i++)
+> +		sensor->supplies[i].supply = s5k4e5_supply_names[i];
+> +
+> +	ret = devm_regulator_bulk_get(&client->dev, S5K4E5_NUM_SUPPLIES,
+> +				      sensor->supplies);
+> +	if (ret<  0)
+> +		return ret;
+> +
+> +	/* Defer probing if the clock is not available yet */
+> +	sensor->clock = clk_get(dev, S5K4E5_CLK_NAME);
+> +	if (IS_ERR(sensor->clock))
+> +		return -EPROBE_DEFER;
+> +
+> +	sd =&sensor->subdev;
+> +	v4l2_i2c_subdev_init(sd, client,&s5k4e5_subdev_ops);
+> +	snprintf(sd->name, sizeof(sd->name), S5K4E5_DRV_NAME);
+
+Unfortunately this line needs to be removed, the subdev name should
+be unique and should have I2C bus number and I2C slave address appended
+to it. It's already being done in v4l2_i2c_subdev_init() function.
+
+	snprintf(sd->name, sizeof(sd->name), "%s %d-%04x",
+		client->driver->driver.name, i2c_adapter_id(client->adapter),
+		client->addr);
+
+I've also dropped such overriding for the s5k6a3 sensor.
+
+> +	sensor->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> +
+> +	sensor->format.code = s5k4e5_formats[0].code;
+> +	sensor->format.width = S5K4E5_DEF_PIX_WIDTH;
+> +	sensor->format.height = S5K4E5_DEF_PIX_HEIGHT;
+> +
+> +	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
+> +	ret = media_entity_init(&sd->entity, 1,&sensor->pad, 0);
+> +	if (ret<  0)
+> +		return ret;
+> +
+> +	pm_runtime_no_callbacks(dev);
+> +	pm_runtime_enable(dev);
+> +
+> +	ret = v4l2_async_register_subdev(sd);
+> +
+> +	/*
+> +	 * Don't hold reference to the clock to avoid circular dependency
+> +	 * between the subdev and the host driver, in case the host is
+> +	 * a supplier of the clock.
+> +	 * clk_get()/clk_put() will be called in s_power callback.
+> +	 */
+> +	clk_put(sensor->clock);
+> +
+> +	return ret;
+> +}
+[...]
+> +static struct i2c_driver s5k4e5_driver = {
+> +	.driver = {
+> +		.of_match_table	= of_match_ptr(s5k4e5_of_match),
+> +		.name		= S5K4E5_DRV_NAME,
+> +		.owner		= THIS_MODULE,
+> +	},
+> +	.probe		= s5k4e5_probe,
+> +	.remove		= s5k4e5_remove,
+> +	.id_table	= s5k4e5_ids,
+> +};
+
+Otherwise looks good to me.
+
+--
+Regards,
 Sylwester
