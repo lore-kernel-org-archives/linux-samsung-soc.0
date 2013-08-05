@@ -1,427 +1,135 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [RFC v3 03/13] [media] exynos5-fimc-is: Add driver core files
-Date: Mon, 5 Aug 2013 19:52:25 +0530
-Message-ID: <CALt3h79FxKU+CJGjAXqC+9sk-n-c2Q3v_ooRtPxKL0PFq1z6Lw@mail.gmail.com>
-References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
-	<1375455762-22071-4-git-send-email-arun.kk@samsung.com>
-	<51FD793C.8030904@gmail.com>
+From: Yoder Stuart-B08248 <B08248@freescale.com>
+Subject: RE: [RFC 0/3] WIP VFIO for device tree devices on Arndale
+Date: Mon, 5 Aug 2013 14:46:41 +0000
+Message-ID: <9F6FE96B71CF29479FF1CDC8046E1503663FA7@039-SN1MPN1-002.039d.mgd.msft.net>
+References: <1375708632-26356-1-git-send-email-a.motakis@virtualopensystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <51FD793C.8030904@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, shaik.ameer@samsung.com, kilyeon.im@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <1375708632-26356-1-git-send-email-a.motakis@virtualopensystems.com>
+Content-Language: en-US
+Sender: kvm-owner@vger.kernel.org
+To: Antonios Motakis <a.motakis@virtualopensystems.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "alex.williamson@redhat.com" <alex.williamson@redhat.com>
+Cc: "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "agraf@suse.de" <agraf@suse.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Sylwester,
+Thanks for starting work on this.
 
-On Sun, Aug 4, 2013 at 3:12 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
->>
->> This driver is for the FIMC-IS IP available in Samsung Exynos5
->> SoC onwards. This patch adds the core files for the new driver.
->>
->> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
->> Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
->> ---
->>   drivers/media/platform/exynos5-is/fimc-is-core.c |  394
->> ++++++++++++++++++++++
->>   drivers/media/platform/exynos5-is/fimc-is-core.h |  122 +++++++
->>   2 files changed, 516 insertions(+)
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.c
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.h
->>
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-core.c
->> b/drivers/media/platform/exynos5-is/fimc-is-core.c
->> new file mode 100644
->> index 0000000..7b7762b
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-core.c
->> @@ -0,0 +1,394 @@
->> +/*
->> + * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
->> +*
->> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->> + * Arun Kumar K<arun.kk@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include<linux/bug.h>
->> +#include<linux/ctype.h>
->> +#include<linux/device.h>
->> +#include<linux/debugfs.h>
->> +#include<linux/delay.h>
->> +#include<linux/errno.h>
->> +#include<linux/err.h>
->> +#include<linux/firmware.h>
->> +#include<linux/fs.h>
->> +#include<linux/gpio.h>
->> +#include<linux/interrupt.h>
->> +#include<linux/kernel.h>
->> +#include<linux/list.h>
->> +#include<linux/module.h>
->> +#include<linux/types.h>
->> +#include<linux/platform_device.h>
->> +#include<linux/pm_runtime.h>
->> +#include<linux/slab.h>
->> +#include<linux/videodev2.h>
->> +#include<linux/of.h>
->> +#include<linux/of_gpio.h>
->> +#include<linux/of_address.h>
->> +#include<linux/of_platform.h>
->> +#include<linux/of_irq.h>
->> +#include<linux/pinctrl/consumer.h>
->> +
->> +#include<media/v4l2-device.h>
->> +#include<media/v4l2-ioctl.h>
->> +#include<media/v4l2-mem2mem.h>
->> +#include<media/v4l2-of.h>
->> +#include<media/videobuf2-core.h>
->> +#include<media/videobuf2-dma-contig.h>
->> +
->> +#include "fimc-is.h"
->> +#include "fimc-is-i2c.h"
->> +
->> +#define CLK_MCU_ISP_DIV0_FREQ  (200 * 1000000)
->> +#define CLK_MCU_ISP_DIV1_FREQ  (100 * 1000000)
->> +#define CLK_ISP_DIV0_FREQ      (134 * 1000000)
->> +#define CLK_ISP_DIV1_FREQ      (68 * 1000000)
->> +#define CLK_ISP_DIVMPWM_FREQ   (34 * 1000000)
->> +
->> +static char *fimc_is_clock_name[] = {
->> +       [IS_CLK_ISP]            = "isp",
->> +       [IS_CLK_MCU_ISP]        = "mcu_isp",
->> +       [IS_CLK_ISP_DIV0]       = "isp_div0",
->> +       [IS_CLK_ISP_DIV1]       = "isp_div1",
->> +       [IS_CLK_ISP_DIVMPWM]    = "isp_divmpwm",
->> +       [IS_CLK_MCU_ISP_DIV0]   = "mcu_isp_div0",
->> +       [IS_CLK_MCU_ISP_DIV1]   = "mcu_isp_div1",
->> +};
->> +
->> +static void fimc_is_put_clocks(struct fimc_is *is)
->> +{
->> +       int i;
->> +
->> +       for (i = 0; i<  IS_CLK_MAX_NUM; i++) {
->> +               if (IS_ERR(is->clock[i]))
->> +                       continue;
->> +               clk_unprepare(is->clock[i]);
->> +               clk_put(is->clock[i]);
->> +               is->clock[i] = NULL;
->> +       }
->> +}
->> +
->> +static int fimc_is_get_clocks(struct fimc_is *is)
->> +{
->> +       struct device *dev =&is->pdev->dev;
->>
->> +       int i, ret;
->> +
->> +       for (i = 0; i<  IS_CLK_MAX_NUM; i++) {
->> +               is->clock[i] = clk_get(dev, fimc_is_clock_name[i]);
->> +               if (IS_ERR(is->clock[i]))
->> +                       goto err;
->> +               ret = clk_prepare(is->clock[i]);
->> +               if (ret<  0) {
->> +                       clk_put(is->clock[i]);
->> +                       is->clock[i] = ERR_PTR(-EINVAL);
->> +                       goto err;
->> +               }
->> +       }
->> +       return 0;
->> +err:
->> +       fimc_is_put_clocks(is);
->> +       pr_err("Failed to get clock: %s\n", fimc_is_clock_name[i]);
->> +       return -ENXIO;
->> +}
->> +
->> +static int fimc_is_configure_clocks(struct fimc_is *is)
->> +{
->> +       int i, ret;
->> +
->> +       for (i = 0; i<  IS_CLK_MAX_NUM; i++)
->> +               is->clock[i] = ERR_PTR(-EINVAL);
->> +
->> +       ret = fimc_is_get_clocks(is);
->> +       if (ret)
->> +               return ret;
->> +
->> +       /* Set rates */
->> +       ret = clk_set_rate(is->clock[IS_CLK_MCU_ISP_DIV0],
->> +                       CLK_MCU_ISP_DIV0_FREQ);
->> +       if (ret)
->> +               return ret;
->> +       ret = clk_set_rate(is->clock[IS_CLK_MCU_ISP_DIV1],
->> +                       CLK_MCU_ISP_DIV1_FREQ);
->> +       if (ret)
->> +               return ret;
->> +       ret = clk_set_rate(is->clock[IS_CLK_ISP_DIV0], CLK_ISP_DIV0_FREQ);
->> +       if (ret)
->> +               return ret;
->> +       ret = clk_set_rate(is->clock[IS_CLK_ISP_DIV1], CLK_ISP_DIV1_FREQ);
->> +       if (ret)
->> +               return ret;
->> +       ret = clk_set_rate(is->clock[IS_CLK_ISP_DIVMPWM],
->> +                       CLK_ISP_DIVMPWM_FREQ);
->> +       return ret;
->> +}
->> +
->> +static void fimc_is_pipelines_destroy(struct fimc_is *is)
->> +{
->> +       int i;
->> +
->> +       for (i = 0; i<  is->num_instance; i++)
->> +               fimc_is_pipeline_destroy(&is->pipeline[i]);
->> +}
->> +
->> +static int fimc_is_parse_sensor_config(struct fimc_is *is, unsigned int
->> index,
->> +                                               struct device_node *node)
->> +{
->> +       struct fimc_is_sensor *sensor =&is->sensor[index];
->>
->> +       u32 tmp = 0;
->> +       int ret;
->> +
->> +       sensor->drvdata = exynos5_is_sensor_get_drvdata(node);
->> +       if (!sensor->drvdata) {
->> +               dev_err(&is->pdev->dev, "no driver data found for: %s\n",
->> +                                                        node->full_name);
->> +               return -EINVAL;
->> +       }
->> +
->> +       node = v4l2_of_get_next_endpoint(node, NULL);
->> +       if (!node)
->> +               return -ENXIO;
->> +
->> +       node = v4l2_of_get_remote_port(node);
->> +       if (!node)
->> +               return -ENXIO;
->> +
->> +       /* Use MIPI-CSIS channel id to determine the ISP I2C bus index. */
->> +       ret = of_property_read_u32(node, "reg",&tmp);
->> +       if (ret<  0) {
->> +               dev_err(&is->pdev->dev, "reg property not found at: %s\n",
->> +                                                        node->full_name);
->> +               return ret;
->> +       }
->> +
->> +       sensor->i2c_bus = tmp - FIMC_INPUT_MIPI_CSI2_0;
->> +       return 0;
->> +}
->> +
->> +static int fimc_is_parse_sensor(struct fimc_is *is)
->> +{
->> +       struct device_node *i2c_bus, *child;
->> +       int ret, index = 0;
->> +
->> +       for_each_compatible_node(i2c_bus, NULL, FIMC_IS_I2C_COMPATIBLE) {
->> +               for_each_available_child_of_node(i2c_bus, child) {
->> +                       ret = fimc_is_parse_sensor_config(is, index,
->> child);
->> +
->> +                       if (ret<  0 || index>= FIMC_IS_NUM_SENSORS) {
->> +                               of_node_put(child);
->> +                               return ret;
->> +                       }
->> +                       index++;
->> +               }
->> +       }
->> +       return 0;
->> +}
->> +
->> +static int fimc_is_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev =&pdev->dev;
->>
->> +       struct resource *res;
->> +       struct fimc_is *is;
->> +       void __iomem *regs;
->> +       struct device_node *node;
->> +       int irq, ret;
->> +       int i;
->> +
->> +       pr_debug("FIMC-IS Probe Enter\n");
->
->
-> dev_dbg() ?
->
->> +       if (!pdev->dev.of_node)
->> +               return -ENODEV;
->> +
->> +       is = devm_kzalloc(&pdev->dev, sizeof(*is), GFP_KERNEL);
->> +       if (!is)
->> +               return -ENOMEM;
->> +
->> +       is->pdev = pdev;
->> +
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       regs = devm_ioremap_resource(dev, res);
->> +       if (IS_ERR(regs))
->> +               return PTR_ERR(regs);
->> +
->> +       /* Get the PMU base */
->> +       node = of_get_child_by_name(dev->of_node, "pmu");
->> +       if (!node)
->> +               return -ENODEV;
->> +       is->pmu_regs = of_iomap(node, 0);
->> +       if (!is->pmu_regs)
->> +               return -ENOMEM;
->> +
->> +       irq = irq_of_parse_and_map(dev->of_node, 0);
->> +       if (irq<  0) {
->> +               dev_err(dev, "Failed to get IRQ\n");
->> +               return irq;
->> +       }
->> +
->> +       ret = of_property_read_u32(pdev->dev.of_node, "num-instance",
->> +                       &is->num_instance);
->> +       if (ret&&  !is->num_instance) {
->>
->> +               dev_err(dev, "Error num instances\n");
->
->
-> Hmm, what is this property ? I can't see it listed in the binding document.
->
+> -----Original Message-----
+> From: Antonios Motakis [mailto:a.motakis@virtualopensystems.com]
+> Sent: Monday, August 05, 2013 8:17 AM
+> To: linux-arm-kernel@lists.infradead.org; alex.williamson@redhat.com
+> Cc: kvmarm@lists.cs.columbia.edu; iommu@lists.linux-foundation.org;
+> linux-samsung-soc@vger.kernel.org; kvm@vger.kernel.org; agraf@suse.de;
+> Yoder Stuart-B08248; Antonios Motakis
+> Subject: [RFC 0/3] WIP VFIO for device tree devices on Arndale
 
-It is the number of parallel instances that the IS-firmware can handle.
-For 5250, its only 1, but in future SoCs, it can handle multiple
-parallel pipelines
-for supporting multiple sensors simultaneously. I have now moved it to
-driver data instead of DT as its a firmware property.
+I think we should call this infrastructure vfio for "platform
+devices".  These devices are on a platform bus, as can be seen 
+in /sys/bus/platform.  It is conceivable that there are platform
+devices not in a device tree.
 
->
->> +               return -EINVAL;
->> +       }
->> +
->> +       ret = fimc_is_configure_clocks(is);
->> +       if (ret<  0) {
->> +               dev_err(dev, "Clock config failed\n");
->
->
-> s/Clock config/clocks configration ?
->
->
->> +               goto err_clk;
->> +       }
->> +
->> +       platform_set_drvdata(pdev, is);
->> +       pm_runtime_enable(dev);
->> +
->> +       ret = pm_runtime_get_sync(dev);
->> +       if (ret<  0)
->> +               goto err_pm;
->> +
->> +       is->alloc_ctx = vb2_dma_contig_init_ctx(dev);
->> +       if (IS_ERR(is->alloc_ctx)) {
->> +               ret = PTR_ERR(is->alloc_ctx);
->> +               goto err_vb;
->> +       }
->> +
->> +       /* Get IS-sensor contexts */
->> +       ret = fimc_is_parse_sensor(is);
->> +       if (ret<  0)
->> +               goto err_vb;
->> +
->> +       /* Initialize FIMC Pipeline */
->> +       for (i = 0; i<  is->num_instance; i++) {
->> +               ret = fimc_is_pipeline_init(&is->pipeline[i], i, is);
->> +               if (ret<  0)
->> +                       goto err_sd;
->> +       }
->> +
->> +       /* Initialize FIMC Interface */
->> +       ret = fimc_is_interface_init(&is->interface, regs, irq);
->> +       if (ret<  0)
->> +               goto err_sd;
->> +
->> +       pm_runtime_put(dev);
->> +
->> +       dev_dbg(dev, "FIMC-IS registered successfully\n");
->> +
->> +       return 0;
->> +
->> +err_sd:
->> +       fimc_is_pipelines_destroy(is);
->> +err_vb:
->> +       vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
->> +err_pm:
->> +       pm_runtime_put(dev);
->> +err_clk:
->> +       fimc_is_put_clocks(is);
->> +
->> +       return ret;
->> +}
->> +
->> +int fimc_is_clk_enable(struct fimc_is *is)
->> +{
->> +       int ret;
->> +
->> +       ret = clk_enable(is->clock[IS_CLK_ISP]);
->> +       if (ret)
->> +               return ret;
->> +       ret = clk_enable(is->clock[IS_CLK_MCU_ISP]);
->> +       return ret;
->> +}
->> +
->> +void fimc_is_clk_disable(struct fimc_is *is)
->> +{
->> +       clk_disable(is->clock[IS_CLK_ISP]);
->> +       clk_disable(is->clock[IS_CLK_MCU_ISP]);
->> +}
->> +
->> +static int fimc_is_pm_resume(struct device *dev)
->> +{
->> +       struct fimc_is *is = dev_get_drvdata(dev);
->> +       int ret;
->> +
->> +       ret = fimc_is_clk_enable(is);
->> +       if (ret<  0) {
->> +               dev_err(dev, "Could not enable clocks\n");
->> +               return ret;
->> +       }
->> +       return 0;
->> +}
->> +
->> +static int fimc_is_pm_suspend(struct device *dev)
->> +{
->> +       struct fimc_is *is = dev_get_drvdata(dev);
->> +
->> +       fimc_is_clk_disable(is);
->> +       return 0;
->> +}
->> +
->> +static int fimc_is_runtime_resume(struct device *dev)
->> +{
->> +       return fimc_is_pm_resume(dev);
->> +}
->> +
->> +static int fimc_is_runtime_suspend(struct device *dev)
->> +{
->> +       return fimc_is_pm_suspend(dev);
->> +}
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +static int fimc_is_resume(struct device *dev)
->> +{
->> +       return fimc_is_pm_resume(dev);
->
->
-> You're using same function for system sleep and runtime PM, fimc_is_resume()
-> should not attempt to disable the clocks if they are already disabled, i.e.
-> the device is not active.
->
+Also, the term "device tree devices" just seems awkward.
 
-Ok I havent implemented system sleep functionality yet. I will keep
-it as a TODO for now. Hope its ok.
+> This is a very early base work, towards VFIO support on ARM platforms
+> with an IOMMU. It forms a base on to which to implement the functionality
+> necessary to enable using device tree devices on ARM (and other platforms
+> based on device trees) with VFIO.
+> 
+> This very early work of progress is only published for the sake of
+> openness,
+> and is very far from usable yet. However the driver can bind to devices,
+> and return to userspace the info about the memory regions and IRQs.
+> 
+> This patch series has been tested on the Arndale board (with the Exynos
+> 5250
+> System MMU).
+> 
+> It depends on Cho KyongHo's patch series "iommu/exynos: Fixes and
+> Enhancements
+> of System MMU driver with DT", applied on a Linux 3.10.1 kernel, and also
+> my
+> own "iommu/exynos: add devices attached to the System MMU to an IOMMU
+> group".
+> Those patches are required at least in order to test the proposed module
+> on
+> Arndale.
+> 
+> This should not be treated as anything more than a work in progress.
+> Numerous
+> functions still need to be implemented properly, e.g.
+>  - Proper binding of the VFIO_DT driver to devices; currently to test the
+>    driver, one has to edit the device tree and add the "vfio-dt" to the
+>    compatible property. However Linux does not support OF drivers that
+>    can be dynamically bound to any device.
 
->> +}
->> +
+Yes, we really need to solve this.  I need to get more familiar with
+the platform device infrastructure in Linux, but it seems at a high level
+that it shouldn't be that hard to support dynamic binding.  We have
+device drivers that register to handle certain "compatible"
+strings.  And we have device tree parsing code that does platform_device_add()
+calls to associate/bind a device to a driver.
 
-Regards
-Arun
+What we need is something like the "new_id" mechanism in PCI where we
+can have a platform driver dynamically register to support a new
+device type.
+
+Also, note that any Linux driver needs to properly support 'unbinding'
+as well.   We can't have the normal driver and vfio competing to
+bind to the same device.
+
+>  - Most IOCTLs are not implemented yet. Memory region mapping, DMA
+> mapping,
+>    IRQFD still need to be added.
+>  - The VFIO_IOMMU_TYPE1 is patched to work instead of PCI IOMMU, with
+> platform
+>    IOMMUs such as the one that is found on Arndale. This is a proof of
+> concept
+>    hack, and a more permanent fix will be proposed as the code matures.
+> 
+> The API used is identical to the existing VFIO API that is also used with
+> PCI devices. Only devices that include a basic set of IRQs and memory
+> regions
+> are targeted; devices with complicated relationships with other devices
+> on the
+> device tree are not taken into account at this stage.
+> 
+> The API is not extended with device tree specific information; this would
+> complicate the driver unnecessarily as it is not needed for the base use
+> cases.
+
+I would suggest adding a patch to this series that updates Documentation/vfio.txt
+with any platform device specifics.
+
+For example, it should be stated explicitly that if a device has multiple
+regions and multiple IRQs that the "index" exposed by VFIO is the same
+as the index within the associated "reg" and "interrupt" properties
+in the device tree representation.
+
+.i.e. if a device is represented like this in the device tree:
+
+        reg = <0x101e2000 0x1000 0x101e4000 0x1000>;
+        interrupts = <24 25 26 27>;
+
+region #0 is 0x101e2000, region #1 is 0x101e4000
+interrupt #0 is 24, and so on.
+
+Perhaps that seems obvious, but think it is good to state it
+explicitly in Documentation/vfio.txt.
+
+> Antonios Motakis (3):
+>   VFIO_IOMMU_TYPE1 workaround to build for platform devices
+>   Initial skeleton of VFIO support for Device Tree based devices
+>   Return info for device and its memory regions and interrupts
+> 
+>  drivers/vfio/Kconfig            |  12 ++-
+>  drivers/vfio/Makefile           |   1 +
+>  drivers/vfio/vfio_dt.c          | 233
+
+would prefer:
+drivers/vfio/vfio_platform.c
+
+Thanks,
+Stuart
+
