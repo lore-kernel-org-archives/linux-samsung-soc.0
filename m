@@ -1,99 +1,158 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 1/7] ARM: dts: Move display-timimg information inside
- FIMD DT node for exynos5250
-Date: Mon, 5 Aug 2013 15:59:12 +0530
-Message-ID: <CAK9yfHw7zZLy3WaJHJ-3aJuG+4GL0YtsV+RXuXTUtXsj-TNw2w@mail.gmail.com>
-References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
-	<1375183178-8201-2-git-send-email-vikas.sajjan@linaro.org>
-	<171932162.BeOHtLbZec@amdc1227>
-	<CAGm_ybhipssiOXvh-kw3KpHJ-rC21t7OnV3H32LWKrmE-1aqNw@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [RFC v3 01/13] [media] exynos5-is: Adding media device driver for
+ exynos5
+Date: Mon, 05 Aug 2013 12:47:14 +0200
+Message-ID: <51FF82B2.5070907@samsung.com>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
+ <1375455762-22071-2-git-send-email-arun.kk@samsung.com>
+ <51FD78F8.4080304@gmail.com>
+ <CALt3h7_qHb4UqsnVo+KPtHFdL42AShkKo5-V3qPaPrMUOANpGg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:46288 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751938Ab3HEK3N (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 06:29:13 -0400
-Received: by mail-oa0-f41.google.com with SMTP id j6so5838926oag.14
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 03:29:12 -0700 (PDT)
-In-Reply-To: <CAGm_ybhipssiOXvh-kw3KpHJ-rC21t7OnV3H32LWKrmE-1aqNw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <CALt3h7_qHb4UqsnVo+KPtHFdL42AShkKo5-V3qPaPrMUOANpGg@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arunkk.samsung@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, shaik.ameer@samsung.com, kilyeon.im@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <sajjan.linux@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, InKi Dae <inki.dae@samsung.com>, ajaynumb@gmail.com, patches@linaro.org, linaro-kernel@lists.linaro.org, grant.likely@secretlab.ca, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On 5 August 2013 15:34, Vikas Sajjan <sajjan.linux@gmail.com> wrote:
-> Hi All,
->
-> On Thu, Aug 1, 2013 at 8:19 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> Hi Vikas,
+Hi Arun,
+
+On 08/05/2013 12:06 PM, Arun Kumar K wrote:
+> Hi Sylwester,
+> 
+> Thank you for the review.
+> Will address all your review comments.
+> Some responses below:
+
+Thanks, it took me a while to review this nearly 10k of code.
+But fortunately I could spent some more time at the computer
+this weekend ;)
+
+> [snip]
+>>> +
+>>> +static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
+>>> +{
+>>> +       struct device_node *of_node = fmd->pdev->dev.of_node;
+>>> +       int ret;
+>>> +
+>>> +       /*
+>>> +        * Runtime resume one of the FIMC entities to make sure
+>>> +        * the sclk_cam clocks are not globally disabled.
 >>
->> On Tuesday 30 of July 2013 16:49:32 Vikas Sajjan wrote:
->>> As the display-timing information is parsed by FIMD driver, it makes
->>> sense to move the display-timimg DT node inside FIMD DT node for
->>> exynos5250
->>>
->>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
->>> ---
->>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   29
->>> ++++++++++++++++------------- 1 file changed, 16 insertions(+), 13
->>> deletions(-)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index 49f18c2..d176dbb
->>> 100644
->>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->>> @@ -262,19 +262,22 @@
->>>               pinctrl-0 = <&dp_hpd>;
->>>       };
->>>
->>> -     display-timings {
->>> -             native-mode = <&timing0>;
->>> -             timing0: timing@0 {
->>> -                     /* 1280x800 */
->>> -                     clock-frequency = <50000>;
->>> -                     hactive = <1280>;
->>> -                     vactive = <800>;
->>> -                     hfront-porch = <4>;
->>> -                     hback-porch = <4>;
->>> -                     hsync-len = <4>;
->>> -                     vback-porch = <4>;
->>> -                     vfront-porch = <4>;
->>> -                     vsync-len = <4>;
->>> +     fimd@14400000 {
->>> +             status = "okay";
->>> +             display-timings {
->>> +                     native-mode = <&timing0>;
->>> +                     timing0: timing@0 {
->>> +                             /* 1280x800 */
->>> +                             clock-frequency = <50000>;
->>> +                             hactive = <1280>;
->>> +                             vactive = <800>;
->>> +                             hfront-porch = <4>;
->>> +                             hback-porch = <4>;
->>> +                             hsync-len = <4>;
->>> +                             vback-porch = <4>;
->>> +                             vfront-porch = <4>;
->>> +                             vsync-len = <4>;
->>> +                     };
->>>               };
->>>       };
 >>
->> Looks good to me, but I would like some other people from the device tree
->> mailing list to comment on node naming: Do we want to conform to the
->> recommendation of ePAPR about node naming, which states that node names
->> should be generic, not platform specific or we are free to ignore it?
+>> It's a bit mysterious to me, is this requirement still valid on Exynos5 ?
+>> I glanced over the Exynos5250 datasheet and there seem to be no sclk_cam?
+>> clocks dependency on any of GScaler clocks. Maybe you don't need a clock
+>> provider in this driver, perhaps sensor drivers could use sclk_cam clocks
+>> directly, assigned through dts ?
+> 
+> Yes these clocks can be directly exposed via dt.
+> I will drop clock provider from this driver.
+
+That's great, this patch set won't depend then on the proper clock
+deregistration support in the common clock framework.
+
+>>> +/*
+>>> + * The peripheral sensor clock management.
+>>> + */
+>>> +static void fimc_md_put_clocks(struct fimc_md *fmd)
+>>> +{
+>>> +       int i = FIMC_MAX_CAMCLKS;
+>>> +
+>>> +       while (--i>= 0) {
+>>> +               if (IS_ERR(fmd->camclk[i].clock))
+>>> +                       continue;
+>>> +               clk_put(fmd->camclk[i].clock);
+>>> +               fmd->camclk[i].clock = ERR_PTR(-EINVAL);
+>>> +       }
 >>
->
-> Any more comments on this series.
+>>
+>> Please double check if you need this sclk_cam clocks handling. We could
+>> simply add a requirement that this driver supports only sensor subdevs
+>> through the v4l2-async API and which controls their clock themselves.
+>>
+> 
+> sclk_cam* handling can be removed and be done from respective
+> sensors. But I think the sclk_bayer handling needs to be retained in the
+> media driver.
 
-One trivial typo in patch subject and commit message:
-s/timimg/timing
+Yes, that was my understanding as well.
 
+>>> +}
+>>> +
+>>> +static int fimc_md_get_clocks(struct fimc_md *fmd)
+>>> +{
+>>> +       struct device *dev = NULL;
+>>> +       char clk_name[32];
+>>> +       struct clk *clock;
+>>> +       int i, ret = 0;
+>>> +
+>>> +       for (i = 0; i<  FIMC_MAX_CAMCLKS; i++)
+>>> +               fmd->camclk[i].clock = ERR_PTR(-EINVAL);
+>>> +
+>>> +       if (fmd->pdev->dev.of_node)
+>>> +               dev =&fmd->pdev->dev;
+>>> +
+>>> +       for (i = 0; i<  SCLK_BAYER; i++) {
+>>> +               snprintf(clk_name, sizeof(clk_name), "sclk_cam%u", i);
+>>> +               clock = clk_get(dev, clk_name);
+>>> +
+>>> +               if (IS_ERR(clock)) {
+>>> +                       dev_err(&fmd->pdev->dev, "Failed to get clock:
+>>> %s\n",
+>>> +                                                               clk_name);
+>>> +                       ret = PTR_ERR(clock);
+>>> +                       break;
+>>> +               }
+>>> +               fmd->camclk[i].clock = clock;
+>>> +       }
+>>> +       if (ret)
+>>> +               fimc_md_put_clocks(fmd);
+>>> +
+>>> +       /* Prepare bayer clk */
+>>> +       clock = clk_get(dev, "sclk_bayer");
+>>> +
+>>> +       if (IS_ERR(clock)) {
+>>> +               dev_err(&fmd->pdev->dev, "Failed to get clock: %s\n",
+>>> +                                                       clk_name);
+>>
+>>
+>> Wrong error message.
+>>
+>>> +               ret = PTR_ERR(clock);
+>>> +               goto err_exit;
+>>> +       }
+>>> +       ret = clk_prepare(clock);
+>>> +       if (ret<  0) {
+>>> +               clk_put(clock);
+>>> +               fmd->camclk[SCLK_BAYER].clock = ERR_PTR(-EINVAL);
+>>> +               goto err_exit;
+>>> +       }
+>>> +       fmd->camclk[SCLK_BAYER].clock = clock;
+>>
+>>
+>> Could you explain a bit how is this SCLK_BAYER clock used ? Is it routed
+>> to external image sensor, or is it used only inside an SoC ?
+>>
+> 
+> It is not defined properly in the manual, but I suppose its the bus clock
+> for the bayer rgb data bus. So for proper sensor functionality, we need this
+> sclk_bayer in addition to the external sensor clks (sclk_cam*). Isn't
+> exynos5 media driver is the best place to handle such clocks?
 
+I see, I think it's the right place. I was just curious what this clock
+was exactly. It an SoC requires it internally then it is correct to handle
+it as you do now. And if it happens that it controls the CAM_BAY_MCLK
+output clock of the camera bay, then it could be exposed as the master
+clock for the device attached to that physical camera port. In that case
+the SCLK_CAM bayer clock could be gated conditionally in the media device
+driver, depending on the data bus interface used by a remote image data
+source device. But that's mostly speculations. I'm fine with associating
+this clock with the media device, especially as far as the DT binding is
+concerned.
 
--- 
-With warm regards,
-Sachin
+--
+Thanks,
+Sylwester
