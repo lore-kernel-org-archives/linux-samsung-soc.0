@@ -1,621 +1,161 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/2] ARM: Exynos: replace custom MFC reserved memory handling
- with generic code
-Date: Mon, 05 Aug 2013 14:26:49 +0200
-Message-ID: <1375705610-12724-2-git-send-email-m.szyprowski@samsung.com>
-References: <1375705610-12724-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25362 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751642Ab3HEM1Y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 08:27:24 -0400
-In-reply-to: <1375705610-12724-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v8 06/12] ARM: dts: Add description of System MMU of Exynos
+	SoCs
+Date: Mon, 05 Aug 2013 15:09:53 +0200
+Message-ID: <1429191.3FDem6vW0S@amdc1032>
+References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
+	<27536111.odlCO093Zi@amdc1032>
+	<003c01ce91cd$427fad70$c77f0850$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <003c01ce91cd$427fad70$c77f0850$@samsung.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Grant Grundler' <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, 'Keyyoung Park' <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Antonios Motakis' <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>
 
-MFC driver use custom bindings for managing reserved memory. Those bindings
-are not really specific to MFC device and no even well discussed. They can
-be easily replaced with generic, platform independent code for handling
-reserved and contiguous memory.
+On Monday, August 05, 2013 08:16:40 PM Cho KyongHo wrote:
+> > -----Original Message-----
+> > From: Bartlomiej Zolnierkiewicz [mailto:b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+> > Sent: Saturday, August 03, 2013 2:14 AM
+> > 
+> > Hi,
+> > 
+> > On Friday, July 26, 2013 08:28:19 PM Cho KyongHo wrote:
+> > > Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > > ---
+> > >  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |  103 +++++++
+> > >  arch/arm/boot/dts/exynos4.dtsi                     |  122 ++++++++
+> > >  arch/arm/boot/dts/exynos4210.dtsi                  |   25 ++
+> > >  arch/arm/boot/dts/exynos4x12.dtsi                  |   76 +++++
+> > >  arch/arm/boot/dts/exynos5250.dtsi                  |  291 ++++++++++++++++++++
+> > >  5 files changed, 617 insertions(+), 0 deletions(-)
+> > >  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > > b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > > new file mode 100644
+> > > index 0000000..92f0a33
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > > @@ -0,0 +1,103 @@
+> > > +Samsung Exynos4210 IOMMU H/W, System MMU (System Memory Management Unit)
+> > > +
+> > > +Samsung's Exynos architecture contains System MMU that enables scattered
+> > > +physical memory chunks visible as a contiguous region to DMA-capable peripheral
+> > > +devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
+> > > +
+> > > +System MMU is a sort of IOMMU and support identical translation table format to
+> > > +ARMv7 translation tables with minimum set of page properties including access
+> > > +permissions, shareability and security protection. In addition, System MMU has
+> > > +another capabilities like L2 TLB or block-fetch buffers to minimize translation
+> > > +latency.
+> > > +
+> > > +A System MMU is dedicated to a single master peripheral device.  Thus, it is
+> > > +important to specify the correct System MMU in the device node of its master
+> > > +device. Whereas a System MMU is dedicated to a master device, the master device
+> > > +may have more than one System MMU.
+> > > +
+> > > +Required properties:
+> > > +- compatible: Should be "samsung,exynos4210-sysmmu"
+> > > +- reg: A tuple of base address and size of System MMU registers.
+> > > +- interrupt-parent: The phandle of the interrupt controller of System MMU
+> > > +- interrupts: A tuple of numbers that indicates the interrupt source.
+> > > +- clock-names: Should be "sysmmu" if the System MMU is needed to gate its clock.
+> > > +               Please refer to the following documents:
+> > > +	       Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > > +	       Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> > > +	       Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > +	       Optional "master" if the clock to the System MMU is gated by
+> > > +	       another gate clock other than "sysmmu". The System MMU driver
+> > > +	       sets "master" the parent of "sysmmu".
+> > > +	       Exynos4 SoCs, there needs no "master" clocks.
+> > > +	       Exynos5 SoCs, some System MMUs must have "master" clocks.
+> > > +- clocks: Required if the System MMU is needed to gate its clock.
+> > > +	  Please refer to the documents listed above.
+> > > +- samsung,power-domain: Required if the System MMU is needed to gate its power.
+> > > +	  Please refer to the following document:
+> > > +	  Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> > > +
+> > > +Required properties for the master peripheral devices:
+> > > +- iommu: phandles to the System MMUs of the device
+> > > +
+> > > +Examples:
+> > > +A System MMU is dedicated to a single master device.
+> > > +	gsc_0:  gsc@0x13e00000 {
+> > > +		compatible = "samsung,exynos5-gsc";
+> > > +		reg = <0x13e00000 0x1000>;
+> > > +		interrupts = <0 85 0>;
+> > > +		samsung,power-domain = <&pd_gsc>;
+> > > +		clocks = <&clock 256>;
+> > > +		clock-names = "gscl";
+> > > +		iommu = <&sysmmu_gsc1>;
+> > > +	};
+> > > +
+> > > +	sysmmu_gsc0: sysmmu@13E80000 {
+> > > +		compatible = "samsung,exynos4210-sysmmu";
+> > > +		reg = <0x13E80000 0x1000>;
+> > > +		interrupt-parent = <&combiner>;
+> > > +		interrupt-names = "sysmmu-gsc0";
+> > > +		interrupts = <2 0>;
+> > > +		clock-names = "sysmmu", "master";
+> > > +		clocks = <&clock 262>, <&clock 256>;
+> > > +		samsung,power-domain = <&pd_gsc>;
+> > > +		status = "ok";
+> > > +	};
+> > > +
+> > > +MFC has 2 System MMUs for each port that MFC is attached. Thus it seems natural
+> > > +to define 2 System MMUs for each port of the MFC:
+> > 
+> > Marek Szyprowski (added to cc:) has a patch fixing MFC to create separate
+> > mfc_l and mfc_r devices (like it was in the past). Using this patch it
+> > would be possible to bind sysmmu_mfc_l to mfc_l device and sysmmu_mfc_r to
+> > mfc_r device. This probably also requires adding some MFC specific handling
+> > in a device tree node and to the new master's device PM ops (in patch #10)
+> > as previously (in our trees) sysmmu_mfc r device was set as parent of
+> > sysmmu_mfc_l device which in turn was a parent for main MFC device (to make
+> > runtime Power Management work). However because MFC is the only device
+> > requiring use of multiple System MMUs above changes would allow us (unless
+> > I'm missing something?) to use just one System MMU device per struct
+> > exynos_iommu_client instance (making driver a lot simpler).
+> > 
+> 
+> Does it mean that we can make the exynos-iommu driver simpler
+> with Marek Szyprowski's patch?
 
-Two additional child devices for each memory port (AXI master) are
-introduced to let one assign some properties to each of them. Later one
-can also use them to assign properties related to SYSMMU controllers,
-which can be used to manage the limited dma window provided by those
-memory ports.
+I think so and you probably need to change MFC handling anyway because
+MFC driver does DMA allocations per mfc_l/mfc_r devices and not per main
+device (at least in the upstream kernels).
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- .../devicetree/bindings/media/s5p-mfc.txt          |   63 +++++++++++++++++---
- arch/arm/boot/dts/exynos4.dtsi                     |   10 +++-
- arch/arm/boot/dts/exynos4210-origen.dts            |   25 +++++++-
- arch/arm/boot/dts/exynos4210-smdkv310.dts          |   25 +++++++-
- arch/arm/boot/dts/exynos4412-origen.dts            |   25 +++++++-
- arch/arm/boot/dts/exynos4412-smdk4412.dts          |   25 +++++++-
- arch/arm/boot/dts/exynos5250-arndale.dts           |   26 +++++++-
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |   26 +++++++-
- arch/arm/boot/dts/exynos5250.dtsi                  |   10 +++-
- arch/arm/mach-exynos/mach-exynos4-dt.c             |   16 -----
- arch/arm/mach-exynos/mach-exynos5-dt.c             |   17 ------
- arch/arm/plat-samsung/include/plat/mfc.h           |   11 ----
- arch/arm/plat-samsung/s5p-dev-mfc.c                |   32 ----------
- 13 files changed, 212 insertions(+), 99 deletions(-)
+[ Marek, could you please resfresh and post your patch on the list? ]
 
-diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-index df37b02..d9528d4 100644
---- a/Documentation/devicetree/bindings/media/s5p-mfc.txt
-+++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-@@ -6,10 +6,17 @@ The MFC device driver is a v4l2 driver which can encode/decode
- video raw/elementary streams and has support for all popular
- video codecs.
- 
-+The MFC device is connected to system bus with two memory ports (AXI
-+masters) for better performance. Those memory ports are modelled as
-+separate child devices, so one can assign some properties to them (like
-+memory region for dma buffer allocation or sysmmu controller).
-+
- Required properties:
-   - compatible : value should be either one among the following
- 	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
- 	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
-+	and additionally "simple-bus" to correctly initialize child
-+	devices for memory ports (AXI masters)
- 
-   - reg : Physical base address of the IP registers and length of memory
- 	  mapped region.
-@@ -19,31 +26,69 @@ Required properties:
-   - clock-names : from common clock binding: must contain "sclk_mfc" and "mfc",
- 		  corresponding to entries in the clocks property.
- 
--  - samsung,mfc-r : Base address of the first memory bank used by MFC
--		    for DMA contiguous memory allocation and its size.
--
--  - samsung,mfc-l : Base address of the second memory bank used by MFC
--		    for DMA contiguous memory allocation and its size.
--
- Optional properties:
-   - samsung,power-domain : power-domain property defined with a phandle
- 			   to respective power domain.
- 
-+Two child nodes must be defined for MFC device. Their names must be
-+following: "memport-r" and "memport-l" ("right" and "left"). Required
-+properties:
-+  - compatible : value should be "samsung,memport"
-+  - dma-memory-region : optional property with a phandle to respective memory
-+			region (see devicetree/bindings/memory.txt), if no region
-+			is defined, sysmmu controller must be used for managing
-+			limited dma window of each memory port.
-+
-+
- Example:
- SoC specific DT entry:
- 
- mfc: codec@13400000 {
--	compatible = "samsung,mfc-v5";
-+	compatible = "samsung,mfc-v5", "simple-bus";
- 	reg = <0x13400000 0x10000>;
- 	interrupts = <0 94 0>;
- 	samsung,power-domain = <&pd_mfc>;
- 	clocks = <&clock 170>, <&clock 273>;
- 	clock-names = "sclk_mfc", "mfc";
-+	status = "disabled";
-+
-+	mfc_r: memport-r {
-+		compatible = "samsung,memport";
-+	};
-+
-+	mfc_l: memport-l {
-+		compatible = "samsung,memport";
-+	};
- };
- 
- Board specific DT entry:
- 
-+memory {
-+	/* ... */
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		mfc_l_mem: mfc_l_region@43000000 {
-+			compatible = "contiguous-memory-region", "reserved-memory-region";
-+			reg = <0x43000000 0x1000000>;
-+		};
-+
-+		mfc_r_mem: mfc_r_region@52000000 {
-+			compatible = "contiguous-memory-region", "reserved-memory-region";
-+			reg = <0x52000000 0x1000000>;
-+		};
-+	};
-+};
-+
- codec@13400000 {
--	samsung,mfc-r = <0x43000000 0x800000>;
--	samsung,mfc-l = <0x51000000 0x800000>;
-+	status = "okay";
-+
-+	memport-r {
-+		dma-memory-region = <&mfc_r_mem>;
-+	};
-+
-+	memport-l {
-+		dma-memory-region = <&mfc_l_mem>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 3f94fe8..599637f 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -156,13 +156,21 @@
- 	};
- 
- 	mfc: codec@13400000 {
--		compatible = "samsung,mfc-v5";
-+		compatible = "samsung,mfc-v5", "simple-bus";
- 		reg = <0x13400000 0x10000>;
- 		interrupts = <0 94 0>;
- 		samsung,power-domain = <&pd_mfc>;
- 		clocks = <&clock 170>, <&clock 273>;
- 		clock-names = "sclk_mfc", "mfc";
- 		status = "disabled";
-+
-+		mfc_r: memport-r {
-+			compatible = "samsung,memport";
-+		};
-+
-+		mfc_l: memport-l {
-+			compatible = "samsung,memport";
-+		};
- 	};
- 
- 	serial@13800000 {
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 382d8c7..e80fe8a 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -26,6 +26,21 @@
- 		       0x50000000 0x10000000
- 		       0x60000000 0x10000000
- 		       0x70000000 0x10000000>;
-+
-+		reserved-memory {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			mfc_l_mem: mfc_l_region@43000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x43000000 0x1000000>;
-+			};
-+
-+			mfc_r_mem: mfc_r_region@51000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x51000000 0x1000000>;
-+			};
-+		};
- 	};
- 
- 	chosen {
-@@ -66,9 +81,15 @@
- 	};
- 
- 	codec@13400000 {
--		samsung,mfc-r = <0x43000000 0x800000>;
--		samsung,mfc-l = <0x51000000 0x800000>;
- 		status = "okay";
-+
-+		memport-r {
-+			dma-memory-region = <&mfc_r_mem>;
-+		};
-+
-+		memport-l {
-+			dma-memory-region = <&mfc_l_mem>;
-+		};
- 	};
- 
- 	serial@13800000 {
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 9c01b71..07adb56 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -23,6 +23,21 @@
- 
- 	memory {
- 		reg = <0x40000000 0x80000000>;
-+
-+		reserved-memory {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			mfc_l_mem: mfc_l_region@43000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x43000000 0x1000000>;
-+			};
-+
-+			mfc_r_mem: mfc_r_region@51000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x51000000 0x1000000>;
-+			};
-+		};
- 	};
- 
- 	chosen {
-@@ -41,9 +56,15 @@
- 	};
- 
- 	codec@13400000 {
--		samsung,mfc-r = <0x43000000 0x800000>;
--		samsung,mfc-l = <0x51000000 0x800000>;
- 		status = "okay";
-+
-+		memport-r {
-+			dma-memory-region = <&mfc_r_mem>;
-+		};
-+
-+		memport-l {
-+			dma-memory-region = <&mfc_l_mem>;
-+		};
- 	};
- 
- 	serial@13800000 {
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index 7993641..1421070 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -21,6 +21,21 @@
- 
- 	memory {
- 		reg = <0x40000000 0x40000000>;
-+
-+		reserved-memory {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			mfc_l_mem: mfc_l_region@43000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x43000000 0x1000000>;
-+			};
-+
-+			mfc_r_mem: mfc_r_region@51000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x51000000 0x1000000>;
-+			};
-+		};
- 	};
- 
- 	chosen {
-@@ -133,9 +148,15 @@
- 	};
- 
- 	codec@13400000 {
--		samsung,mfc-r = <0x43000000 0x800000>;
--		samsung,mfc-l = <0x51000000 0x800000>;
- 		status = "okay";
-+
-+		memport-r {
-+			dma-memory-region = <&mfc_r_mem>;
-+		};
-+
-+		memport-l {
-+			dma-memory-region = <&mfc_l_mem>;
-+		};
- 	};
- 
- 	fimd@11c00000 {
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index ad316a1..08a3735 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -21,6 +21,21 @@
- 
- 	memory {
- 		reg = <0x40000000 0x40000000>;
-+
-+		reserved-memory {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			mfc_l_mem: mfc_l_region@43000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x43000000 0x1000000>;
-+			};
-+
-+			mfc_r_mem: mfc_r_region@51000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x51000000 0x1000000>;
-+			};
-+		};
- 	};
- 
- 	chosen {
-@@ -126,9 +141,15 @@
- 	};
- 
- 	codec@13400000 {
--		samsung,mfc-r = <0x43000000 0x800000>;
--		samsung,mfc-l = <0x51000000 0x800000>;
- 		status = "okay";
-+
-+		memport-r {
-+			dma-memory-region = <&mfc_r_mem>;
-+		};
-+
-+		memport-l {
-+			dma-memory-region = <&mfc_l_mem>;
-+		};
- 	};
- 
- 	serial@13800000 {
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index abc7272..ba4a533 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -18,6 +18,21 @@
- 
- 	memory {
- 		reg = <0x40000000 0x80000000>;
-+
-+		reserved-memory {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			mfc_l_mem: mfc_l_region@43000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x43000000 0x1000000>;
-+			};
-+
-+			mfc_r_mem: mfc_r_region@51000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x51000000 0x1000000>;
-+			};
-+		};
- 	};
- 
- 	chosen {
-@@ -25,8 +40,15 @@
- 	};
- 
- 	codec@11000000 {
--		samsung,mfc-r = <0x43000000 0x800000>;
--		samsung,mfc-l = <0x51000000 0x800000>;
-+		status = "okay";
-+
-+		memport-r {
-+			dma-memory-region = <&mfc_r_mem>;
-+		};
-+
-+		memport-l {
-+			dma-memory-region = <&mfc_l_mem>;
-+		};
- 	};
- 
- 	i2c@12C60000 {
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 49f18c2..daed15e 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -21,6 +21,21 @@
- 
- 	memory {
- 		reg = <0x40000000 0x80000000>;
-+
-+		reserved-memory {
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			mfc_l_mem: mfc_l_region@43000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x43000000 0x1000000>;
-+			};
-+
-+			mfc_r_mem: mfc_r_region@51000000 {
-+				compatible = "contiguous-memory-region", "reserved-memory-region";
-+				reg = <0x51000000 0x1000000>;
-+			};
-+		};
- 	};
- 
- 	chosen {
-@@ -223,8 +238,15 @@
- 	};
- 
- 	codec@11000000 {
--		samsung,mfc-r = <0x43000000 0x800000>;
--		samsung,mfc-l = <0x51000000 0x800000>;
-+		status = "okay";
-+
-+		memport-r {
-+			dma-memory-region = <&mfc_r_mem>;
-+		};
-+
-+		memport-l {
-+			dma-memory-region = <&mfc_l_mem>;
-+		};
- 	};
- 
- 	i2s0: i2s@03830000 {
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index ef57277..6011518 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -164,10 +164,18 @@
- 	};
- 
- 	codec@11000000 {
--		compatible = "samsung,mfc-v6";
-+		compatible = "samsung,mfc-v6", "simple-bus";
- 		reg = <0x11000000 0x10000>;
- 		interrupts = <0 96 0>;
- 		samsung,power-domain = <&pd_mfc>;
-+
-+		mfc_r: memport-r {
-+			compatible = "samsung,memport";
-+		};
-+
-+		mfc_l: memport-l {
-+			compatible = "samsung,memport";
-+		};
- 	};
- 
- 	rtc {
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index 0099c6c..0b6da39 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -13,13 +13,10 @@
- 
- #include <linux/kernel.h>
- #include <linux/of_platform.h>
--#include <linux/of_fdt.h>
- #include <linux/serial_core.h>
--#include <linux/memblock.h>
- #include <linux/clocksource.h>
- 
- #include <asm/mach/arch.h>
--#include <plat/mfc.h>
- 
- #include "common.h"
- 
-@@ -35,18 +32,6 @@ static char const *exynos4_dt_compat[] __initdata = {
- 	NULL
- };
- 
--static void __init exynos4_reserve(void)
--{
--#ifdef CONFIG_S5P_DEV_MFC
--	struct s5p_mfc_dt_meminfo mfc_mem;
--
--	/* Reserve memory for MFC only if it's available */
--	mfc_mem.compatible = "samsung,mfc-v5";
--	if (of_scan_flat_dt(s5p_fdt_find_mfc_mem, &mfc_mem))
--		s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize, mfc_mem.loff,
--				mfc_mem.lsize);
--#endif
--}
- DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
- 	.smp		= smp_ops(exynos_smp_ops),
-@@ -57,5 +42,4 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	.init_time	= exynos_init_time,
- 	.dt_compat	= exynos4_dt_compat,
- 	.restart        = exynos4_restart,
--	.reserve	= exynos4_reserve,
- MACHINE_END
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index f874b77..b5b0571 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -10,16 +10,13 @@
- */
- 
- #include <linux/of_platform.h>
--#include <linux/of_fdt.h>
- #include <linux/memblock.h>
--#include <linux/io.h>
- #include <linux/clocksource.h>
- 
- #include <asm/mach/arch.h>
- #include <mach/regs-pmu.h>
- 
- #include <plat/cpu.h>
--#include <plat/mfc.h>
- 
- #include "common.h"
- 
-@@ -57,19 +54,6 @@ static char const *exynos5_dt_compat[] __initdata = {
- 	NULL
- };
- 
--static void __init exynos5_reserve(void)
--{
--#ifdef CONFIG_S5P_DEV_MFC
--	struct s5p_mfc_dt_meminfo mfc_mem;
--
--	/* Reserve memory for MFC only if it's available */
--	mfc_mem.compatible = "samsung,mfc-v6";
--	if (of_scan_flat_dt(s5p_fdt_find_mfc_mem, &mfc_mem))
--		s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize, mfc_mem.loff,
--				mfc_mem.lsize);
--#endif
--}
--
- DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	.smp		= smp_ops(exynos_smp_ops),
-@@ -79,5 +63,4 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	.init_time	= exynos_init_time,
- 	.dt_compat	= exynos5_dt_compat,
- 	.restart        = exynos5_restart,
--	.reserve	= exynos5_reserve,
- MACHINE_END
-diff --git a/arch/arm/plat-samsung/include/plat/mfc.h b/arch/arm/plat-samsung/include/plat/mfc.h
-index e6d7c42..ac13227 100644
---- a/arch/arm/plat-samsung/include/plat/mfc.h
-+++ b/arch/arm/plat-samsung/include/plat/mfc.h
-@@ -10,14 +10,6 @@
- #ifndef __PLAT_SAMSUNG_MFC_H
- #define __PLAT_SAMSUNG_MFC_H __FILE__
- 
--struct s5p_mfc_dt_meminfo {
--	unsigned long	loff;
--	unsigned long	lsize;
--	unsigned long	roff;
--	unsigned long	rsize;
--	char		*compatible;
--};
--
- /**
-  * s5p_mfc_reserve_mem - function to early reserve memory for MFC driver
-  * @rbase:	base address for MFC 'right' memory interface
-@@ -32,7 +24,4 @@ struct s5p_mfc_dt_meminfo {
- void __init s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
- 				phys_addr_t lbase, unsigned int lsize);
- 
--int __init s5p_fdt_find_mfc_mem(unsigned long node, const char *uname,
--				int depth, void *data);
--
- #endif /* __PLAT_SAMSUNG_MFC_H */
-diff --git a/arch/arm/plat-samsung/s5p-dev-mfc.c b/arch/arm/plat-samsung/s5p-dev-mfc.c
-index ad51f85..f83be72 100644
---- a/arch/arm/plat-samsung/s5p-dev-mfc.c
-+++ b/arch/arm/plat-samsung/s5p-dev-mfc.c
-@@ -120,35 +120,3 @@ static int __init s5p_mfc_memory_init(void)
- }
- device_initcall(s5p_mfc_memory_init);
- #endif
--
--#ifdef CONFIG_OF
--int __init s5p_fdt_find_mfc_mem(unsigned long node, const char *uname,
--				int depth, void *data)
--{
--	__be32 *prop;
--	unsigned long len;
--	struct s5p_mfc_dt_meminfo *mfc_mem = data;
--
--	if (!data)
--		return 0;
--
--	if (!of_flat_dt_is_compatible(node, mfc_mem->compatible))
--		return 0;
--
--	prop = of_get_flat_dt_prop(node, "samsung,mfc-l", &len);
--	if (!prop || (len != 2 * sizeof(unsigned long)))
--		return 0;
--
--	mfc_mem->loff = be32_to_cpu(prop[0]);
--	mfc_mem->lsize = be32_to_cpu(prop[1]);
--
--	prop = of_get_flat_dt_prop(node, "samsung,mfc-r", &len);
--	if (!prop || (len != 2 * sizeof(unsigned long)))
--		return 0;
--
--	mfc_mem->roff = be32_to_cpu(prop[0]);
--	mfc_mem->rsize = be32_to_cpu(prop[1]);
--
--	return 1;
--}
--#endif
--- 
-1.7.9.5
+BTW There is an additional problem with combining System MMU devices per
+one main device - it limits available address space (which in case of MFC
+is very limited by hardware design).
+
+> It is welcome but I don't think it covers all topologies of System MMU and
+> master H/W. Those are getting more complex.
+
+Could you please be more specific? I know about FIMC ISP subsystem but
+it doesn't require combining System MMUs. Are there any other examples of
+complex System MMU + master H/W topologies?
+
+Anyway I think that System MMUs should not be combined (as it is done in
+patch #10) and should be binded per "memport" devices and not per main
+device (as done in this patch).
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
