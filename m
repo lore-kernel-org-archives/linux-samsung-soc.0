@@ -1,84 +1,96 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC v3 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device
- tree bindings documentation
-Date: Mon, 05 Aug 2013 10:53:38 -0600
-Message-ID: <51FFD892.5000708@wwwdotorg.org>
-References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-3-git-send-email-arun.kk@samsung.com> <51FD7925.2010604@gmail.com>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 0/8] Common Clock Framework support for Samsung S3C64xx
+Date: Tue, 06 Aug 2013 02:01:36 +0900
+Message-ID: <51FFDA70.7080900@samsung.com>
+References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:48104 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751670Ab3HERAQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 13:00:16 -0400
-In-Reply-To: <51FD7925.2010604@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1374536965-3545-1-git-send-email-tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>
 
-On 08/03/2013 03:41 PM, Sylwester Nawrocki wrote:
-> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
->> The patch adds the DT binding documentation for Samsung
->> Exynos5 SoC series imaging subsystem (FIMC-IS).
+On 07/23/13 08:49, Tomasz Figa wrote:
+> This series is an attempt to move clock support on Samsung S3C64xx SoCs
+> to Common Clock Framework.
+>
+> First, support for PLL types present on S3C64xx SoCs is added to Samsung
+> Common Clock Framework driver. Then the main clock driver for mentioned
+> SoCs is introduced. Further patches contain fixes for drivers to make them
+> compliant with CCF semantics, migration of platform code to use the new
+> clock driver and removal of old clock management code.
+>
+> Depends on:
+>   - [PATCH v4 00/20] Samsung PWM support cleanup
+>     http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20856
+>
+> On S3C6410-based Tiny6410 board (Mini6410-compatible):
+>
+> Tested-by: Tomasz Figa<tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>
+> For v1:
+>
+> Acked-by: Mike Turquette<mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>
+> Changes since v1:
+>   - added patch for read-only muxes,
+>   - exported configurable muxes and dividers,
+>   - defined mout_syncmux as read-only mux,
+>   - in DT-enabled case fixed-clock binding is used to define external clocks.
+>
+> Tomasz Figa (8):
+>    clk: mux: Add support for read-only muxes.
+>    clk: samsung: pll: Add support for PLL6552 and PLL6553
+>    clk: samsung: Add clock driver for S3C64xx SoCs
+>    ARM: SAMSUNG: Add soc_is_s3c6400/s3c6410 macros
+>    ARM: s3c64xx: dma: Use clk_prepare_enable/clk_disable_unprepare
+>    usb: host: ohci-s3c2410 Use clk_prepare_enable/clk_disable_unprepare
+>    ARM: s3c64xx: Migrate clock handling to Common Clock Framework
+>    ARM: s3c64xx: Remove old clock management code
+>
+>   .../bindings/clock/samsung,s3c64xx-clock.txt       |   77 ++
+>   arch/arm/Kconfig                                   |    2 +-
+>   arch/arm/mach-s3c64xx/Makefile                     |    2 +-
+>   arch/arm/mach-s3c64xx/clock.c                      | 1007 --------------------
+>   arch/arm/mach-s3c64xx/common.c                     |   21 +-
+>   arch/arm/mach-s3c64xx/common.h                     |   12 +-
+>   arch/arm/mach-s3c64xx/dma.c                        |    4 +-
+>   arch/arm/mach-s3c64xx/include/mach/regs-clock.h    |  132 +--
+>   arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
+>   arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
+>   arch/arm/mach-s3c64xx/mach-hmt.c                   |    2 +-
+>   arch/arm/mach-s3c64xx/mach-mini6410.c              |    2 +-
+>   arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
+>   arch/arm/mach-s3c64xx/mach-smartq.c                |   11 +-
+>   arch/arm/mach-s3c64xx/mach-smdk6400.c              |    2 +-
+>   arch/arm/mach-s3c64xx/mach-smdk6410.c              |    2 +-
+>   arch/arm/mach-s3c64xx/pm.c                         |   21 -
+>   arch/arm/mach-s3c64xx/s3c6400.c                    |    6 -
+>   arch/arm/mach-s3c64xx/s3c6410.c                    |    7 -
+>   arch/arm/plat-samsung/include/plat/cpu.h           |    4 +
+>   drivers/clk/clk-mux.c                              |   10 +-
+>   drivers/clk/samsung/Makefile                       |    1 +
+>   drivers/clk/samsung/clk-pll.c                      |  160 ++++
+>   drivers/clk/samsung/clk-pll.h                      |    4 +
+>   drivers/clk/samsung/clk-s3c64xx.c                  |  465 +++++++++
+>   drivers/usb/host/ohci-s3c2410.c                    |    8 +-
+>   include/dt-bindings/clock/samsung,s3c64xx-clock.h  |  178 ++++
+>   include/linux/clk-provider.h                       |    2 +
+>   28 files changed, 943 insertions(+), 1205 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
+>   delete mode 100644 arch/arm/mach-s3c64xx/clock.c
+>   create mode 100644 drivers/clk/samsung/clk-s3c64xx.c
+>   create mode 100644 include/dt-bindings/clock/samsung,s3c64xx-clock.h
+>
+Basically, this series looks good to me, but I'm not sure how this 
+should be handled because of dependency with PWM cleanup and clk stuff 
+in clk tree now...
 
->> diff --git
->> a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->> b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->> new file mode 100644
->> index 0000000..49a373a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->> @@ -0,0 +1,52 @@
->> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
->> +------------------------------------------------------
->> +
->> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
->> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
->> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
->> +handle sensor controls and camera post-processing operations. The
->> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
->> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
->> +dedicated scalers (SCC and SCP).
-
-So there are a lot of blocks mentioned there, yet the binding doesn't
-seem to describe most of it. Is the binding complete?
-
->> +pmu subnode
->> +-----------
->> +
->> +Required properties:
->> + - reg : should contain PMU physical base address and size of the memory
->> +         mapped registers.
-
-I think you need a compatible value for this. How else is the node
-identified? The node name probably should not be used for identification.
-
->> +
->> +i2c-isp (ISP I2C bus controller) nodes
->> +------------------------------------------
->> +
->> +Required properties:
->> +
->> +- compatible    : should be "samsung,exynos4212-i2c-isp" for Exynos4212,
->> +          Exynos4412 and Exynos5250 SoCs;
->> +- reg        : physical base address and length of the registers set;
->> +- clocks    : must contain gate clock specifier for this controller;
->> +- clock-names    : must contain "i2c_isp" entry.
->> +
->> +For the above nodes it is required to specify a pinctrl state named "default",
-
-Is "above nodes" both pmu, i2c-isp? It might make sense to be more
-explicit re: which nodes this comment applies to.
-
->> +according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
->> +
->> +Device tree nodes of the image sensors' controlled directly by the FIMC-IS
-
-s/'// ?
-
->> +firmware must be child nodes of their corresponding ISP I2C bus controller node.
->> +The data link of these image sensors must be specified using the common video
->> +interfaces bindings, defined in video-interfaces.txt.
+- Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
