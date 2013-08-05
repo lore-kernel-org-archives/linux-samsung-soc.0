@@ -1,60 +1,121 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [RFC v3 00/13] Exynos5 IS driver
-Date: Mon, 5 Aug 2013 10:40:20 +0530
-Message-ID: <CALt3h78H3pmdyKJJibN35NB--DSZ9Mfdi-PpxH+MdCpbhU+=Jg@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [RFC v3 01/13] [media] exynos5-is: Adding media device driver for exynos5
+Date: Mon, 5 Aug 2013 10:51:00 +0530
+Message-ID: <CAK9yfHzt3taTwsub_DyPQr6Ojz1BAXuF+dNJ3sVv2RymmDy72A@mail.gmail.com>
 References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
-	<51FD78B5.6080507@gmail.com>
+	<1375455762-22071-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <51FD78B5.6080507@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, shaik.ameer@samsung.com, kilyeon.im@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:52292 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753736Ab3HEFVB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 Aug 2013 01:21:01 -0400
+Received: by mail-ob0-f176.google.com with SMTP id uz19so4772112obc.35
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Aug 2013 22:21:00 -0700 (PDT)
+In-Reply-To: <1375455762-22071-2-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-Hi Sylwester,
-
-On Sun, Aug 4, 2013 at 3:10 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> Hi Arun,
+On 2 August 2013 20:32, Arun Kumar K <arun.kk@samsung.com> wrote:
+> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
 >
+> This patch adds support for media device for EXYNOS5 SoCs.
+> The current media device supports the following ips to connect
+> through the media controller framework.
 >
-> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
->>
->> The patch series add support for Exynos5 camera subsystem. It
->> re-uses mipi-csis and fimc-lite from exynos4-is and adds a new
->> media device and fimc-is device drivers for exynos5.
->> The media device supports asynchronos subdev registration for the
->> fimc-is sensors and is based on the patch series from Sylwester
->> for exynos4-is [1].
->>
->> [1]http://www.mail-archive.com/linux-media@vger.kernel.org/msg64653.html
->>
->> Changes from v2
->> ---------------
->> - Added exynos5 media device driver from Shaik to this series
->> - Added ISP pipeline support in media device driver
->> - Based on Sylwester's latest exynos4-is development
->> - Asynchronos registration of sensor subdevs
->> - Made independent IS-sensor support
->> - Add s5k4e5 sensor driver
->> - Addressed review comments from Sylwester, Hans, Andrzej, Sachin
+> * MIPI-CSIS
+>   Support interconnection(subdev interface) between devices
 >
+> * FIMC-LITE
+>   Support capture interface from device(Sensor, MIPI-CSIS) to memory
+>   Support interconnection(subdev interface) between devices
 >
-> This is starting to look pretty good to me, I hope we can merge this
-> patch set for v3.12. Let use coming two weeks for one or two review/
-> corrections round.
-
-Sure. I will address the review comments quickly and send v4 version.
-
-> In the meantime I've done numerous fixes to the patch series [1],
-> especially the clock provider code was pretty buggy on the clean up
-> paths. Let's go through the patches and see what can be improved yet.
+> * FIMC-IS
+>   Camera post-processing IP having multiple sub-nodes.
 >
+> G-Scaler will be added later to the current media device.
+>
+> The media device creates two kinds of pipelines for connecting
+> the above mentioned IPs.
+> The pipeline0 is uses Sensor, MIPI-CSIS and FIMC-LITE which captures
+> image data and dumps to memory.
+> Pipeline1 uses FIMC-IS components for doing post-processing
+> operations on the captured image and give scaled YUV output.
+>
+> Pipeline0
+>   +--------+     +-----------+     +-----------+     +--------+
+>   | Sensor | --> | MIPI-CSIS | --> | FIMC-LITE | --> | Memory |
+>   +--------+     +-----------+     +-----------+     +--------+
+>
+> Pipeline1
+>  +--------+      +--------+     +-----------+     +-----------+
+>  | Memory | -->  |  ISP   | --> |    SCC    | --> |    SCP    |
+>  +--------+      +--------+     +-----------+     +-----------+
+>
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 
-Ok. Is the updated version available in your git repository
-git://linuxtv.org/snawrocki/samsung.git?
+[snip]
 
-Regards
-Arun
+> +
+> +Common 'camera' node
+> +--------------------
+> +
+> +Required properties:
+> +
+> +- compatible   : must be "samsung,exynos5-fimc", "simple-bus"
+
+I am not sure if this point was discusssed during the previous
+versions. "samsung,exynos5-fimc" seems a bit generic.
+The compatible string should generally point to a specific SoC (the
+first one to have this IP), something like "samsung,exynos5250-fimc".
+
+> +- clocks       : list of clock specifiers, corresponding to entries in
+> +                 the clock-names property;
+> +- clock-names  : must contain "sclk_cam0", "sclk_cam1" entries,
+> +                 matching entries in the clocks property.
+> +
+
+[snip]
+
+> +Example:
+> +
+> +       aliases {
+> +               fimc-lite0 = &fimc_lite_0
+> +       };
+> +
+> +       /* Parallel bus IF sensor */
+> +       i2c_0: i2c@13860000 {
+> +               s5k6aa: sensor@3c {
+> +                       compatible = "samsung,s5k6aafx";
+> +                       reg = <0x3c>;
+> +                       vddio-supply = <...>;
+> +
+> +                       clock-frequency = <24000000>;
+> +                       clocks = <...>;
+> +                       clock-names = "mclk";
+> +
+> +                       port {
+> +                               s5k6aa_ep: endpoint {
+> +                                       remote-endpoint = <&fimc0_ep>;
+> +                                       bus-width = <8>;
+> +                                       hsync-active = <0>;
+> +                                       vsync-active = <1>;
+> +                                       pclk-sample = <1>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+> +       /* MIPI CSI-2 bus IF sensor */
+> +       s5c73m3: sensor@0x1a {
+
+0x not needed.
+
+-- 
+With warm regards,
+Sachin
