@@ -1,121 +1,78 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [RFC v3 01/13] [media] exynos5-is: Adding media device driver for exynos5
-Date: Mon, 5 Aug 2013 10:51:00 +0530
-Message-ID: <CAK9yfHzt3taTwsub_DyPQr6Ojz1BAXuF+dNJ3sVv2RymmDy72A@mail.gmail.com>
-References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
-	<1375455762-22071-2-git-send-email-arun.kk@samsung.com>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically
+ continous memory flag
+Date: Mon, 5 Aug 2013 12:44:10 +0530
+Message-ID: <CAD025yS1Y0pqDnGJamm4y5SpL2d8LT58Kx2uh9U=NeqKDELa5w@mail.gmail.com>
+References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org>
+ <5151790.EBRlE0cTxf@flatron> <CAF6AEGvmd20MJ_=69kYahkeTySVbhc2GgiUNwCDFXuDWgeGAfQ@mail.gmail.com>
+ <CAD025yRZBDh6ssSUbY-mo2mo-WqrUS3R56bD-QrBvaBbWX_HMQ@mail.gmail.com>
+ <CAAQKjZNBPxBxR-4PXbhOdX0V1inMkauE-xZ+0kwnfVTgqpCEVg@mail.gmail.com>
+ <CAD025yR9Xd0G81WdLDxKyu-RVZPPJAUOKZ+0b5oKUxYOe7q_pQ@mail.gmail.com> <51FB90C5.9060101@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:52292 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753736Ab3HEFVB (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:59137 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754751Ab3HEHOb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 01:21:01 -0400
-Received: by mail-ob0-f176.google.com with SMTP id uz19so4772112obc.35
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Aug 2013 22:21:00 -0700 (PDT)
-In-Reply-To: <1375455762-22071-2-git-send-email-arun.kk@samsung.com>
+	Mon, 5 Aug 2013 03:14:31 -0400
+Received: by mail-la0-f46.google.com with SMTP id eh20so1805663lab.33
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 00:14:30 -0700 (PDT)
+In-Reply-To: <51FB90C5.9060101@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "kgene.kim" <kgene.kim@samsung.com>, "arun.kk" <arun.kk@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "m.szyprowski" <m.szyprowski@samsung.com>, devicetree <devicetree@vger.kernel.org>
 
-On 2 August 2013 20:32, Arun Kumar K <arun.kk@samsung.com> wrote:
-> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
->
-> This patch adds support for media device for EXYNOS5 SoCs.
-> The current media device supports the following ips to connect
-> through the media controller framework.
->
-> * MIPI-CSIS
->   Support interconnection(subdev interface) between devices
->
-> * FIMC-LITE
->   Support capture interface from device(Sensor, MIPI-CSIS) to memory
->   Support interconnection(subdev interface) between devices
->
-> * FIMC-IS
->   Camera post-processing IP having multiple sub-nodes.
->
-> G-Scaler will be added later to the current media device.
->
-> The media device creates two kinds of pipelines for connecting
-> the above mentioned IPs.
-> The pipeline0 is uses Sensor, MIPI-CSIS and FIMC-LITE which captures
-> image data and dumps to memory.
-> Pipeline1 uses FIMC-IS components for doing post-processing
-> operations on the captured image and give scaled YUV output.
->
-> Pipeline0
->   +--------+     +-----------+     +-----------+     +--------+
->   | Sensor | --> | MIPI-CSIS | --> | FIMC-LITE | --> | Memory |
->   +--------+     +-----------+     +-----------+     +--------+
->
-> Pipeline1
->  +--------+      +--------+     +-----------+     +-----------+
->  | Memory | -->  |  ISP   | --> |    SCC    | --> |    SCP    |
->  +--------+      +--------+     +-----------+     +-----------+
->
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Hi Sylwester,
 
-[snip]
+On 2 August 2013 16:28, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> Hi Vikas,
+>
+> On 08/02/2013 12:10 PM, Vikas Sajjan wrote:
+>> yeah, we could not allocate CMA region for FIMD, because the function
+>> dma_declare_contiguous() needs "dev" as the first argument and we have
+>> access to "dev" node only if it is NON-DT way of probing like the way
+>> it is done in arch/arm/mach-davinci/devices-da8xx.c
+>> But now, since the probing is through DT way, there is NO way ( Let me
+>> know if something is newly added ) to call dma_declare_contiguous()
+>> and reserve CMA region .
+>
+> See this patch series [1]. We have have been using this kind of bindings
+> for assigning physically contiguous memory regions to the Exynos
+> multimedia devices, instead of what's currently in mainline where same
+> physical addresses are repeated in dts for various boards without much
+> thought. And where custom device specific parsing code is required at
+> arch side.
+>
+> $ git grep mfc\-[lr] arch/arm/boot/dts
+>
+> arch/arm/boot/dts/exynos4210-origen.dts:     samsung,mfc-r = <0x43000000 0x800000>;
+> arch/arm/boot/dts/exynos4210-origen.dts:     samsung,mfc-l = <0x51000000 0x800000>;
+> arch/arm/boot/dts/exynos4210-smdkv310.dts:   samsung,mfc-r = <0x43000000 0x800000>;
+> arch/arm/boot/dts/exynos4210-smdkv310.dts:   samsung,mfc-l = <0x51000000 0x800000>;
+> arch/arm/boot/dts/exynos4412-origen.dts:     samsung,mfc-r = <0x43000000 0x800000>;
+> arch/arm/boot/dts/exynos4412-origen.dts:     samsung,mfc-l = <0x51000000 0x800000>;
+> arch/arm/boot/dts/exynos4412-smdk4412.dts:   samsung,mfc-r = <0x43000000 0x800000>;
+> arch/arm/boot/dts/exynos4412-smdk4412.dts:   samsung,mfc-l = <0x51000000 0x800000>;
+> arch/arm/boot/dts/exynos5250-arndale.dts:    samsung,mfc-r = <0x43000000 0x800000>;
+> arch/arm/boot/dts/exynos5250-arndale.dts:    samsung,mfc-l = <0x51000000 0x800000>;
+> arch/arm/boot/dts/exynos5250-smdk5250.dts:   samsung,mfc-r = <0x43000000 0x800000>;
+> arch/arm/boot/dts/exynos5250-smdk5250.dts:   samsung,mfc-l = <0x51000000 0x800000>;
+>
+>
+> [1] http://www.spinics.net/lists/arm-kernel/msg263130.html
+>
 
-> +
-> +Common 'camera' node
-> +--------------------
-> +
-> +Required properties:
-> +
-> +- compatible   : must be "samsung,exynos5-fimc", "simple-bus"
 
-I am not sure if this point was discusssed during the previous
-versions. "samsung,exynos5-fimc" seems a bit generic.
-The compatible string should generally point to a specific SoC (the
-first one to have this IP), something like "samsung,exynos5250-fimc".
+Thanks, its good that now we have a new way to reserve CMA region.
 
-> +- clocks       : list of clock specifiers, corresponding to entries in
-> +                 the clock-names property;
-> +- clock-names  : must contain "sclk_cam0", "sclk_cam1" entries,
-> +                 matching entries in the clocks property.
-> +
 
-[snip]
+> Regards,
+> Sylwester
 
-> +Example:
-> +
-> +       aliases {
-> +               fimc-lite0 = &fimc_lite_0
-> +       };
-> +
-> +       /* Parallel bus IF sensor */
-> +       i2c_0: i2c@13860000 {
-> +               s5k6aa: sensor@3c {
-> +                       compatible = "samsung,s5k6aafx";
-> +                       reg = <0x3c>;
-> +                       vddio-supply = <...>;
-> +
-> +                       clock-frequency = <24000000>;
-> +                       clocks = <...>;
-> +                       clock-names = "mclk";
-> +
-> +                       port {
-> +                               s5k6aa_ep: endpoint {
-> +                                       remote-endpoint = <&fimc0_ep>;
-> +                                       bus-width = <8>;
-> +                                       hsync-active = <0>;
-> +                                       vsync-active = <1>;
-> +                                       pclk-sample = <1>;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
-> +       /* MIPI CSI-2 bus IF sensor */
-> +       s5c73m3: sensor@0x1a {
 
-0x not needed.
 
 -- 
-With warm regards,
-Sachin
+Thanks and Regards
+ Vikas Sajjan
