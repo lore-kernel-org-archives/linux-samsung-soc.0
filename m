@@ -1,80 +1,94 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH V2] drm/exynos: Add fallback option to get non physically continous memory for fb
-Date: Mon,  5 Aug 2013 15:14:42 +0530
-Message-ID: <1375695882-16004-1-git-send-email-vikas.sajjan@linaro.org>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH v2 1/7] ARM: dts: Move display-timimg information inside
+ FIMD DT node for exynos5250
+Date: Mon, 5 Aug 2013 15:34:40 +0530
+Message-ID: <CAGm_ybhipssiOXvh-kw3KpHJ-rC21t7OnV3H32LWKrmE-1aqNw@mail.gmail.com>
+References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
+	<1375183178-8201-2-git-send-email-vikas.sajjan@linaro.org>
+	<171932162.BeOHtLbZec@amdc1227>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:43804 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751528Ab3HEJpA (ORCPT
+Received: from mail-wg0-f51.google.com ([74.125.82.51]:58200 "EHLO
+	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752112Ab3HEKEm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 05:45:00 -0400
-Received: by mail-pd0-f171.google.com with SMTP id bv13so3040733pdb.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 02:44:59 -0700 (PDT)
+	Mon, 5 Aug 2013 06:04:42 -0400
+In-Reply-To: <171932162.BeOHtLbZec@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, robdclark@gmail.com, arun.kk@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, InKi Dae <inki.dae@samsung.com>, ajaynumb@gmail.com, patches@linaro.org, linaro-kernel@lists.linaro.org, grant.likely@secretlab.ca, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
-connected with resolution 2560x1600, following error occured even with
-IOMMU enabled:
-[0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate buffer.
-[0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+Hi All,
 
-To address the case where physically continous memory MAY NOT be a
-mandatory requirement for fb, the patch adds a feature to get non physically
-continous memory for fb if IOMMU is supported and if CONTIG memory allocation
-fails.
+On Thu, Aug 1, 2013 at 8:19 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Vikas,
+>
+> On Tuesday 30 of July 2013 16:49:32 Vikas Sajjan wrote:
+>> As the display-timing information is parsed by FIMD driver, it makes
+>> sense to move the display-timimg DT node inside FIMD DT node for
+>> exynos5250
+>>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   29
+>> ++++++++++++++++------------- 1 file changed, 16 insertions(+), 13
+>> deletions(-)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index 49f18c2..d176dbb
+>> 100644
+>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> @@ -262,19 +262,22 @@
+>>               pinctrl-0 = <&dp_hpd>;
+>>       };
+>>
+>> -     display-timings {
+>> -             native-mode = <&timing0>;
+>> -             timing0: timing@0 {
+>> -                     /* 1280x800 */
+>> -                     clock-frequency = <50000>;
+>> -                     hactive = <1280>;
+>> -                     vactive = <800>;
+>> -                     hfront-porch = <4>;
+>> -                     hback-porch = <4>;
+>> -                     hsync-len = <4>;
+>> -                     vback-porch = <4>;
+>> -                     vfront-porch = <4>;
+>> -                     vsync-len = <4>;
+>> +     fimd@14400000 {
+>> +             status = "okay";
+>> +             display-timings {
+>> +                     native-mode = <&timing0>;
+>> +                     timing0: timing@0 {
+>> +                             /* 1280x800 */
+>> +                             clock-frequency = <50000>;
+>> +                             hactive = <1280>;
+>> +                             vactive = <800>;
+>> +                             hfront-porch = <4>;
+>> +                             hback-porch = <4>;
+>> +                             hsync-len = <4>;
+>> +                             vback-porch = <4>;
+>> +                             vfront-porch = <4>;
+>> +                             vsync-len = <4>;
+>> +                     };
+>>               };
+>>       };
+>
+> Looks good to me, but I would like some other people from the device tree
+> mailing list to comment on node naming: Do we want to conform to the
+> recommendation of ePAPR about node naming, which states that node names
+> should be generic, not platform specific or we are free to ignore it?
+>
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-Signed-off-by: Arun Kumar <arun.kk@samsung.com>
----
-changes since v1:
-	 - Modified to add the fallback patch if CONTIG alloc fails as suggested
-	 by Rob Clark robdclark@gmail.com and Tomasz Figa <tomasz.figa@gmail.com>.
+Any more comments on this series.
 
-	 - changed the commit message.
----
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c |   19 +++++++++++++++----
- 1 file changed, 15 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 8e60bd6..9a4b886 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -16,6 +16,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/exynos_drm.h>
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
-@@ -165,11 +166,21 @@ static int exynos_drm_fbdev_create(struct drm_fb_helper *helper,
- 
- 	size = mode_cmd.pitches[0] * mode_cmd.height;
- 
--	/* 0 means to allocate physically continuous memory */
--	exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
-+	exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
- 	if (IS_ERR(exynos_gem_obj)) {
--		ret = PTR_ERR(exynos_gem_obj);
--		goto err_release_framebuffer;
-+		/*
-+		 * If IOMMU is supported then try to get buffer from
-+		 * non-continous memory area
-+		 */
-+		if (is_drm_iommu_supported(dev))
-+			exynos_gem_obj = exynos_drm_gem_create(dev,
-+						EXYNOS_BO_NONCONTIG, size);
-+		if (IS_ERR(exynos_gem_obj)) {
-+			ret = PTR_ERR(exynos_gem_obj);
-+			goto err_release_framebuffer;
-+		}
-+		dev_warn(&pdev->dev, "exynos_gem_obj for FB is allocated with\n"
-+				"non physically continuous memory\n");
- 	}
- 
- 	exynos_fbdev->exynos_gem_obj = exynos_gem_obj;
--- 
-1.7.9.5
+> Best regards,
+> Tomasz
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
