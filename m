@@ -1,131 +1,122 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 0/8] Common Clock Framework support for Samsung S3C64xx
-Date: Mon, 05 Aug 2013 12:02:16 -0700
-Message-ID: <20130805190216.5348.8595@quantum>
-References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com>
- <51FFDA70.7080900@samsung.com> <20130805180625.5348.79570@quantum>
- <51FFEB63.6060901@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [RFC v3 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device
+ tree bindings documentation
+Date: Tue, 06 Aug 2013 00:37:34 +0200
+Message-ID: <5200292E.1000505@gmail.com>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-3-git-send-email-arun.kk@samsung.com> <51FD7925.2010604@gmail.com> <51FFD892.5000708@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <51FFEB63.6060901@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Thomas Abraham <thomas.abraham@linaro.org>, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, stern@rowland.harvard.edu, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:61071 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755437Ab3HEWhj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 Aug 2013 18:37:39 -0400
+In-Reply-To: <51FFD892.5000708@wwwdotorg.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>
 
-Quoting Kukjin Kim (2013-08-05 11:13:55)
-> On 08/06/13 03:06, Mike Turquette wrote:
-> > Quoting Kukjin Kim (2013-08-05 10:01:36)
-> >> On 07/23/13 08:49, Tomasz Figa wrote:
-> >>> This series is an attempt to move clock support on Samsung S3C64xx SoCs
-> >>> to Common Clock Framework.
-> >>>
-> >>> First, support for PLL types present on S3C64xx SoCs is added to Samsung
-> >>> Common Clock Framework driver. Then the main clock driver for mentioned
-> >>> SoCs is introduced. Further patches contain fixes for drivers to make them
-> >>> compliant with CCF semantics, migration of platform code to use the new
-> >>> clock driver and removal of old clock management code.
-> >>>
-> >>> Depends on:
-> >>>    - [PATCH v4 00/20] Samsung PWM support cleanup
-> >>>      http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20856
-> >>>
-> >>> On S3C6410-based Tiny6410 board (Mini6410-compatible):
-> >>>
-> >>> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
-> >>>
-> >>> For v1:
-> >>>
-> >>> Acked-by: Mike Turquette<mturquette@linaro.org>
-> >>>
-> >>> Changes since v1:
-> >>>    - added patch for read-only muxes,
-> >>>    - exported configurable muxes and dividers,
-> >>>    - defined mout_syncmux as read-only mux,
-> >>>    - in DT-enabled case fixed-clock binding is used to define external clocks.
-> >>>
-> >>> Tomasz Figa (8):
-> >>>     clk: mux: Add support for read-only muxes.
-> >>>     clk: samsung: pll: Add support for PLL6552 and PLL6553
-> >>>     clk: samsung: Add clock driver for S3C64xx SoCs
-> >>>     ARM: SAMSUNG: Add soc_is_s3c6400/s3c6410 macros
-> >>>     ARM: s3c64xx: dma: Use clk_prepare_enable/clk_disable_unprepare
-> >>>     usb: host: ohci-s3c2410 Use clk_prepare_enable/clk_disable_unprepare
-> >>>     ARM: s3c64xx: Migrate clock handling to Common Clock Framework
-> >>>     ARM: s3c64xx: Remove old clock management code
-> >>>
-> >>>    .../bindings/clock/samsung,s3c64xx-clock.txt       |   77 ++
-> >>>    arch/arm/Kconfig                                   |    2 +-
-> >>>    arch/arm/mach-s3c64xx/Makefile                     |    2 +-
-> >>>    arch/arm/mach-s3c64xx/clock.c                      | 1007 --------------------
-> >>>    arch/arm/mach-s3c64xx/common.c                     |   21 +-
-> >>>    arch/arm/mach-s3c64xx/common.h                     |   12 +-
-> >>>    arch/arm/mach-s3c64xx/dma.c                        |    4 +-
-> >>>    arch/arm/mach-s3c64xx/include/mach/regs-clock.h    |  132 +--
-> >>>    arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
-> >>>    arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
-> >>>    arch/arm/mach-s3c64xx/mach-hmt.c                   |    2 +-
-> >>>    arch/arm/mach-s3c64xx/mach-mini6410.c              |    2 +-
-> >>>    arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
-> >>>    arch/arm/mach-s3c64xx/mach-smartq.c                |   11 +-
-> >>>    arch/arm/mach-s3c64xx/mach-smdk6400.c              |    2 +-
-> >>>    arch/arm/mach-s3c64xx/mach-smdk6410.c              |    2 +-
-> >>>    arch/arm/mach-s3c64xx/pm.c                         |   21 -
-> >>>    arch/arm/mach-s3c64xx/s3c6400.c                    |    6 -
-> >>>    arch/arm/mach-s3c64xx/s3c6410.c                    |    7 -
-> >>>    arch/arm/plat-samsung/include/plat/cpu.h           |    4 +
-> >>>    drivers/clk/clk-mux.c                              |   10 +-
-> >>>    drivers/clk/samsung/Makefile                       |    1 +
-> >>>    drivers/clk/samsung/clk-pll.c                      |  160 ++++
-> >>>    drivers/clk/samsung/clk-pll.h                      |    4 +
-> >>>    drivers/clk/samsung/clk-s3c64xx.c                  |  465 +++++++++
-> >>>    drivers/usb/host/ohci-s3c2410.c                    |    8 +-
-> >>>    include/dt-bindings/clock/samsung,s3c64xx-clock.h  |  178 ++++
-> >>>    include/linux/clk-provider.h                       |    2 +
-> >>>    28 files changed, 943 insertions(+), 1205 deletions(-)
-> >>>    create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
-> >>>    delete mode 100644 arch/arm/mach-s3c64xx/clock.c
-> >>>    create mode 100644 drivers/clk/samsung/clk-s3c64xx.c
-> >>>    create mode 100644 include/dt-bindings/clock/samsung,s3c64xx-clock.h
-> >>>
-> >> Basically, this series looks good to me, but I'm not sure how this
-> >> should be handled because of dependency with PWM cleanup and clk stuff
-> >> in clk tree now...
-> >
-> > Patches 1-3 can go into the clk tree. 4-6 should go through their
-> > respective trees.
-> >
-> > If you want I can take 7&  8 through the clk tree.
-> >
-> > Alternatively I can provide patches 1-3 in a separate stable topic
-> > branch for you to pull in as a dependency. We'll both merge that stable
-> > topic branch into our trees and you can make a note of it for the
-> > arm-soc folks.
-> >
-> Thanks for your quick response. Would be helpful to samsung tree if you 
-> could provide a separate stable topic branch what you suggested for clk 
-> stuff in this series.
+On 08/05/2013 06:53 PM, Stephen Warren wrote:
+> On 08/03/2013 03:41 PM, Sylwester Nawrocki wrote:
+>> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
+>>> The patch adds the DT binding documentation for Samsung
+>>> Exynos5 SoC series imaging subsystem (FIMC-IS).
+>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>>> b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>>> new file mode 100644
+>>> index 0000000..49a373a
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>>> @@ -0,0 +1,52 @@
+>>> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
+>>> +------------------------------------------------------
+>>> +
+>>> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
+>>> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
+>>> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
+>>> +handle sensor controls and camera post-processing operations. The
+>>> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
+>>> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
+>>> +dedicated scalers (SCC and SCP).
+>
+> So there are a lot of blocks mentioned there, yet the binding doesn't
+> seem to describe most of it. Is the binding complete?
 
-git://git.linaro.org/people/mturquette/linux.git clk-next-s3c64xx
+Thanks for the review Stephen.
 
-Topic branch contains patches 1-3 of this series on top of v3.11-rc2. I
-have already merged the same into the clk-next branch.
+No, the binding certainly isn't complete, it doesn't describe the all
+available IP blocks. There are separate MMIO address regions for each
+block for the main CPUs and for the Cortex-A5 which is supposed to run
+firmware that controls the whole subsystem. So in theory all those IP
+blocks should be listed as device tree nodes, with at least their
+compatible, reg and interrupts properties. However due to most of the
+sub-devices being controlled by the firmware the current Linux driver
+for this whole FIMC-IS subsystem doesn't need to now exact details
+of each internal data processing block. The is a mailbox interface
+used for communication between host CPU and the FIMC-IS CPU.
 
-Regards,
-Mike
+So while we could list all the devices, we decided not to do so.
+Because it is not needed by the current software and we may miss some
+details for case where the whole subsystem is controlled by the host
+CPU (however such scenario is extremely unlikely AFAICT) which then
+would be impossible or hard to change.
 
-> 
-> Of course, I will inform when I send pull-request for this series to 
-> arm-soc.
-> 
-> Thanks,
-> Kukjin
+I guess we should list all available devices, similarly as it's done
+in Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt.
+
+And then should they just be disabled through the status property
+if they are not needed in the Linux driver ? I guess it is more
+sensible than marking them as optional and then not listing them
+in dts at all ?
+
+>>> +pmu subnode
+>>> +-----------
+>>> +
+>>> +Required properties:
+>>> + - reg : should contain PMU physical base address and size of the memory
+>>> +         mapped registers.
+>
+> I think you need a compatible value for this. How else is the node
+> identified? The node name probably should not be used for identification.
+
+Of course the node name is currently used for identification. There is no
+compatible property because this pmu node is used to get hold of only part
+of the Power Management Unit registers, specific to the FIMC-IS.
+The PMU has more registers that also other drivers would be interested in,
+e.g. clocks or USB.
+
+I have been considering exposing the PMU registers through a syscon-like
+interface and having a phandle pointing to it in the relevant device nodes.
+
+Adding compatible property might not be a good approach. It would have
+been hard to map this to a separate device described in the SoC's
+datasheet. Registers specific to the FIMC-IS are not contiguous in the
+PMU MMIO region.
+
+>>> +
+>>> +i2c-isp (ISP I2C bus controller) nodes
+>>> +------------------------------------------
+>>> +
+>>> +Required properties:
+>>> +
+>>> +- compatible    : should be "samsung,exynos4212-i2c-isp" for Exynos4212,
+>>> +          Exynos4412 and Exynos5250 SoCs;
+>>> +- reg        : physical base address and length of the registers set;
+>>> +- clocks    : must contain gate clock specifier for this controller;
+>>> +- clock-names    : must contain "i2c_isp" entry.
+>>> +
+>>> +For the above nodes it is required to specify a pinctrl state named "default",
+>
+> Is "above nodes" both pmu, i2c-isp? It might make sense to be more
+> explicit re: which nodes this comment applies to.
+
+Yeah, certainly there is room for improvement here. "above nodes" was 
+supposed
+to refer to the i2c-isp nodes only, it should be said more precisely.
+
+>>> +according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
