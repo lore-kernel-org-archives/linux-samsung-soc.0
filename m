@@ -1,78 +1,80 @@
 From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH] drm/exynos: Add check for IOMMU while passing physically
- continous memory flag
-Date: Mon, 5 Aug 2013 12:44:10 +0530
-Message-ID: <CAD025yS1Y0pqDnGJamm4y5SpL2d8LT58Kx2uh9U=NeqKDELa5w@mail.gmail.com>
-References: <1375355972-25276-1-git-send-email-vikas.sajjan@linaro.org>
- <5151790.EBRlE0cTxf@flatron> <CAF6AEGvmd20MJ_=69kYahkeTySVbhc2GgiUNwCDFXuDWgeGAfQ@mail.gmail.com>
- <CAD025yRZBDh6ssSUbY-mo2mo-WqrUS3R56bD-QrBvaBbWX_HMQ@mail.gmail.com>
- <CAAQKjZNBPxBxR-4PXbhOdX0V1inMkauE-xZ+0kwnfVTgqpCEVg@mail.gmail.com>
- <CAD025yR9Xd0G81WdLDxKyu-RVZPPJAUOKZ+0b5oKUxYOe7q_pQ@mail.gmail.com> <51FB90C5.9060101@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH V2] drm/exynos: Add fallback option to get non physically continous memory for fb
+Date: Mon,  5 Aug 2013 15:14:42 +0530
+Message-ID: <1375695882-16004-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:59137 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754751Ab3HEHOb (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:43804 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751528Ab3HEJpA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 03:14:31 -0400
-Received: by mail-la0-f46.google.com with SMTP id eh20so1805663lab.33
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 00:14:30 -0700 (PDT)
-In-Reply-To: <51FB90C5.9060101@samsung.com>
+	Mon, 5 Aug 2013 05:45:00 -0400
+Received: by mail-pd0-f171.google.com with SMTP id bv13so3040733pdb.16
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 02:44:59 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-media@vger.kernel.org, "kgene.kim" <kgene.kim@samsung.com>, "arun.kk" <arun.kk@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "m.szyprowski" <m.szyprowski@samsung.com>, devicetree <devicetree@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, robdclark@gmail.com, arun.kk@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Hi Sylwester,
+While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
+connected with resolution 2560x1600, following error occured even with
+IOMMU enabled:
+[0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate buffer.
+[0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
 
-On 2 August 2013 16:28, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> Hi Vikas,
->
-> On 08/02/2013 12:10 PM, Vikas Sajjan wrote:
->> yeah, we could not allocate CMA region for FIMD, because the function
->> dma_declare_contiguous() needs "dev" as the first argument and we have
->> access to "dev" node only if it is NON-DT way of probing like the way
->> it is done in arch/arm/mach-davinci/devices-da8xx.c
->> But now, since the probing is through DT way, there is NO way ( Let me
->> know if something is newly added ) to call dma_declare_contiguous()
->> and reserve CMA region .
->
-> See this patch series [1]. We have have been using this kind of bindings
-> for assigning physically contiguous memory regions to the Exynos
-> multimedia devices, instead of what's currently in mainline where same
-> physical addresses are repeated in dts for various boards without much
-> thought. And where custom device specific parsing code is required at
-> arch side.
->
-> $ git grep mfc\-[lr] arch/arm/boot/dts
->
-> arch/arm/boot/dts/exynos4210-origen.dts:     samsung,mfc-r = <0x43000000 0x800000>;
-> arch/arm/boot/dts/exynos4210-origen.dts:     samsung,mfc-l = <0x51000000 0x800000>;
-> arch/arm/boot/dts/exynos4210-smdkv310.dts:   samsung,mfc-r = <0x43000000 0x800000>;
-> arch/arm/boot/dts/exynos4210-smdkv310.dts:   samsung,mfc-l = <0x51000000 0x800000>;
-> arch/arm/boot/dts/exynos4412-origen.dts:     samsung,mfc-r = <0x43000000 0x800000>;
-> arch/arm/boot/dts/exynos4412-origen.dts:     samsung,mfc-l = <0x51000000 0x800000>;
-> arch/arm/boot/dts/exynos4412-smdk4412.dts:   samsung,mfc-r = <0x43000000 0x800000>;
-> arch/arm/boot/dts/exynos4412-smdk4412.dts:   samsung,mfc-l = <0x51000000 0x800000>;
-> arch/arm/boot/dts/exynos5250-arndale.dts:    samsung,mfc-r = <0x43000000 0x800000>;
-> arch/arm/boot/dts/exynos5250-arndale.dts:    samsung,mfc-l = <0x51000000 0x800000>;
-> arch/arm/boot/dts/exynos5250-smdk5250.dts:   samsung,mfc-r = <0x43000000 0x800000>;
-> arch/arm/boot/dts/exynos5250-smdk5250.dts:   samsung,mfc-l = <0x51000000 0x800000>;
->
->
-> [1] http://www.spinics.net/lists/arm-kernel/msg263130.html
->
+To address the case where physically continous memory MAY NOT be a
+mandatory requirement for fb, the patch adds a feature to get non physically
+continous memory for fb if IOMMU is supported and if CONTIG memory allocation
+fails.
 
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+Signed-off-by: Arun Kumar <arun.kk@samsung.com>
+---
+changes since v1:
+	 - Modified to add the fallback patch if CONTIG alloc fails as suggested
+	 by Rob Clark robdclark@gmail.com and Tomasz Figa <tomasz.figa@gmail.com>.
 
-Thanks, its good that now we have a new way to reserve CMA region.
+	 - changed the commit message.
+---
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |   19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
 
-
-> Regards,
-> Sylwester
-
-
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index 8e60bd6..9a4b886 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -16,6 +16,7 @@
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/exynos_drm.h>
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fb.h"
+@@ -165,11 +166,21 @@ static int exynos_drm_fbdev_create(struct drm_fb_helper *helper,
+ 
+ 	size = mode_cmd.pitches[0] * mode_cmd.height;
+ 
+-	/* 0 means to allocate physically continuous memory */
+-	exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
++	exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
+ 	if (IS_ERR(exynos_gem_obj)) {
+-		ret = PTR_ERR(exynos_gem_obj);
+-		goto err_release_framebuffer;
++		/*
++		 * If IOMMU is supported then try to get buffer from
++		 * non-continous memory area
++		 */
++		if (is_drm_iommu_supported(dev))
++			exynos_gem_obj = exynos_drm_gem_create(dev,
++						EXYNOS_BO_NONCONTIG, size);
++		if (IS_ERR(exynos_gem_obj)) {
++			ret = PTR_ERR(exynos_gem_obj);
++			goto err_release_framebuffer;
++		}
++		dev_warn(&pdev->dev, "exynos_gem_obj for FB is allocated with\n"
++				"non physically continuous memory\n");
+ 	}
+ 
+ 	exynos_fbdev->exynos_gem_obj = exynos_gem_obj;
 -- 
-Thanks and Regards
- Vikas Sajjan
+1.7.9.5
