@@ -1,45 +1,74 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung-fixes-2 for v3.11
-Date: Tue, 06 Aug 2013 02:38:18 +0900
-Message-ID: <51FFE30A.5040800@samsung.com>
+Subject: Re: [PATCH v4 00/13] ARM: dts: Add camera and magnetometer support
+ for TRATS(2) board
+Date: Tue, 06 Aug 2013 02:42:26 +0900
+Message-ID: <51FFE402.5040902@samsung.com>
+References: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:38008 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752127Ab3HERiX (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:58252 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753452Ab3HERmb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 13:38:23 -0400
-Received: by mail-pb0-f49.google.com with SMTP id xb4so3654400pbc.22
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 10:38:22 -0700 (PDT)
+	Mon, 5 Aug 2013 13:42:31 -0400
+In-Reply-To: <1374671845-30373-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-The following changes since commit 5ae90d8e467e625e447000cb4335c4db973b1095:
+On 07/24/13 22:17, Sylwester Nawrocki wrote:
+> This patch series includes some fixes and extensions to the Exynos dts
+> files to add the camera and magnetometer sensor support for the TRATS
+> and TRATS2 board. It depends on a patch from Tomasz adding initial
+> TRATS2 board dts file [1].
+>
+> Changes since v3 include:
+>   - removed patch adding MIPI PHY node (although it is unlikely the DT
+>     binding will change the PHY driver is still in review phase),
+>   - added one more patch for SPI and s5c73m3 camera.
+>
+> Detailed changes are listed in each patch.
+>
+> This series has been tested with the S5K6A3/FIMC-IS, S5C73M3 and
+> S5K5BAFX cameras on top of v3.11-rc2.
+>
+> I have a couple more similar patches that actually enable remaining
+> devices I intend to submit for v3.12, once corresponding driver
+> patches are reviewed and queued.
+>
+> [1] http://www.spinics.net/lists/arm-kernel/msg253184.html
+>
+> Andrzej Hajda (3):
+>    ARM: dts: Add SPI1 controller and s5c73m3 sensor node for TRATS2
+>    ARM: dts: Add Exynos4210 SoC camera port pinctrl nodes
+>    ARM: dts: Add S5K5BA sensor regulator definitions for Trats board
+>
+> Jacek Anaszewski (1):
+>    ARM: dts: Add AK8975 device node for Exynos4412 TRATS2 board
+>
+> Sylwester Nawrocki (9):
+>    ARM: dts: Correct camera pinctrl nodes for Exynos4x12 SoCs
+>    ARM: dts: Add pinctrl entries for Exynos4x12 FIMC-IS peripherals
+>    ARM: dts: Add ISP power domain node for Exynos4x12
+>    ARM: dts: Use generic DMA bindings for Exynos4 SPI devices
+>    ARM: dts: Add camera subsystem device nodes to exynos4.dtsi
+>    ARM: dts: Add camera subsystem nodes to exynos4x12.dtsi
+>    ARM: dts: Add camera device nodes for Exynos4412 TRATS2 board
+>    ARM: dts: Add camera device nodes for Exynos4210 SoCs
+>    ARM: dts: Add FIMC nodes for Exynos4210 Trats board
+>
+>   arch/arm/boot/dts/exynos4.dtsi            |  100 +++++++++++++++++++++--
+>   arch/arm/boot/dts/exynos4210-pinctrl.dtsi |   23 ++++++
+>   arch/arm/boot/dts/exynos4210-trats.dts    |  100 +++++++++++++++++++----
+>   arch/arm/boot/dts/exynos4210.dtsi         |   30 +++++++
+>   arch/arm/boot/dts/exynos4412-trats2.dts   |  123 +++++++++++++++++++++++++++++
+>   arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |   61 ++++++++++++--
+>   arch/arm/boot/dts/exynos4x12.dtsi         |  103 ++++++++++++++++++++++++
+>   7 files changed, 511 insertions(+), 29 deletions(-)
+>
+Applied this whole series, thanks.
 
-   Linux 3.11-rc3 (2013-07-28 20:53:33 -0700)
-
-are available in the git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-fixes-2
-
-for you to fetch changes up to 35f8550c8f27968af94ba5235cc611e3b6d86981:
-
-   ARM: SAMSUNG: fix to support for missing cpu specific map_io 
-(2013-07-30 13:30:57 +0900)
-
-----------------------------------------------------------------
-Fix to boot kernel on exynos5440 which has no specific map_io(). Current 
-kernel
-cannot support no CPU specific map_io() for Samsung SoCs.
-
-----------------------------------------------------------------
-Kukjin Kim (1):
-       ARM: SAMSUNG: fix to support for missing cpu specific map_io
-
-  arch/arm/plat-samsung/init.c | 5 +++--
-  1 file changed, 3 insertions(+), 2 deletions(-)
+- Kukjin
