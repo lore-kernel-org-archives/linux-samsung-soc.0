@@ -1,35 +1,60 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v4 00/20] Samsung PWM support cleanup
-Date: Sun, 4 Aug 2013 12:28:53 -0700
-Message-ID: <CAOesGMjAHsGuXE9bMjGCzrrBFb=qPko_3P67QC4uENa1ktPYiw@mail.gmail.com>
-References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>
-	<6035387.7ekicDUVuU@flatron>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC v3 00/13] Exynos5 IS driver
+Date: Mon, 5 Aug 2013 10:40:20 +0530
+Message-ID: <CALt3h78H3pmdyKJJibN35NB--DSZ9Mfdi-PpxH+MdCpbhU+=Jg@mail.gmail.com>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
+	<51FD78B5.6080507@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:35213 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753748Ab3HDT2y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 Aug 2013 15:28:54 -0400
-Received: by mail-qa0-f46.google.com with SMTP id bq6so590272qab.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 04 Aug 2013 12:28:53 -0700 (PDT)
-In-Reply-To: <6035387.7ekicDUVuU@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <51FD78B5.6080507@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, shaik.ameer@samsung.com, kilyeon.im@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 
-On Wed, Jul 31, 2013 at 12:03 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Kukjin,
+Hi Sylwester,
+
+On Sun, Aug 4, 2013 at 3:10 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> Hi Arun,
 >
-> Since I think we already got all the necessary Acks, do you want me to
-> send you a pull request or you already have this series applied (I can't
-> see it in your tree on kernel.org)?
+>
+> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
+>>
+>> The patch series add support for Exynos5 camera subsystem. It
+>> re-uses mipi-csis and fimc-lite from exynos4-is and adds a new
+>> media device and fimc-is device drivers for exynos5.
+>> The media device supports asynchronos subdev registration for the
+>> fimc-is sensors and is based on the patch series from Sylwester
+>> for exynos4-is [1].
+>>
+>> [1]http://www.mail-archive.com/linux-media@vger.kernel.org/msg64653.html
+>>
+>> Changes from v2
+>> ---------------
+>> - Added exynos5 media device driver from Shaik to this series
+>> - Added ISP pipeline support in media device driver
+>> - Based on Sylwester's latest exynos4-is development
+>> - Asynchronos registration of sensor subdevs
+>> - Made independent IS-sensor support
+>> - Add s5k4e5 sensor driver
+>> - Addressed review comments from Sylwester, Hans, Andrzej, Sachin
+>
+>
+> This is starting to look pretty good to me, I hope we can merge this
+> patch set for v3.12. Let use coming two weeks for one or two review/
+> corrections round.
 
-I'll take it directly. Please send me a pull request.
+Sure. I will address the review comments quickly and send v4 version.
 
+> In the meantime I've done numerous fixes to the patch series [1],
+> especially the clock provider code was pretty buggy on the clean up
+> paths. Let's go through the patches and see what can be improved yet.
+>
 
-Thanks,
+Ok. Is the updated version available in your git repository
+git://linuxtv.org/snawrocki/samsung.git?
 
--Olof
+Regards
+Arun
