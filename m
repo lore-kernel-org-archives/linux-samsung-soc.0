@@ -1,37 +1,84 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v4 00/20] Samsung PWM support cleanup
-Date: Tue, 06 Aug 2013 01:51:25 +0900
-Message-ID: <51FFD80D.4010309@samsung.com>
-References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com>	<6035387.7ekicDUVuU@flatron> <CAOesGMjAHsGuXE9bMjGCzrrBFb=qPko_3P67QC4uENa1ktPYiw@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC v3 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device
+ tree bindings documentation
+Date: Mon, 05 Aug 2013 10:53:38 -0600
+Message-ID: <51FFD892.5000708@wwwdotorg.org>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-3-git-send-email-arun.kk@samsung.com> <51FD7925.2010604@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:50994 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753957Ab3HEQvb (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:48104 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751670Ab3HERAQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 12:51:31 -0400
-In-Reply-To: <CAOesGMjAHsGuXE9bMjGCzrrBFb=qPko_3P67QC4uENa1ktPYiw@mail.gmail.com>
+	Mon, 5 Aug 2013 13:00:16 -0400
+In-Reply-To: <51FD7925.2010604@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, =?ISO-8859-1?Q?Heiko_?= =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>
 
-On 08/05/13 04:28, Olof Johansson wrote:
-> On Wed, Jul 31, 2013 at 12:03 PM, Tomasz Figa<tomasz.figa@gmail.com>  wrote:
->> Hi Kukjin,
->>
->> Since I think we already got all the necessary Acks, do you want me to
->> send you a pull request or you already have this series applied (I can't
->> see it in your tree on kernel.org)?
->
-> I'll take it directly. Please send me a pull request.
->
-Sorry for late response :(
+On 08/03/2013 03:41 PM, Sylwester Nawrocki wrote:
+> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
+>> The patch adds the DT binding documentation for Samsung
+>> Exynos5 SoC series imaging subsystem (FIMC-IS).
 
-Yes, I'm OK either way, my pulling or Olof's taking in this case. So 
-Tomasz, please send a pull request for this series, it should be fine to me.
+>> diff --git
+>> a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>> b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>> new file mode 100644
+>> index 0000000..49a373a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>> @@ -0,0 +1,52 @@
+>> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
+>> +------------------------------------------------------
+>> +
+>> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
+>> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
+>> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
+>> +handle sensor controls and camera post-processing operations. The
+>> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
+>> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
+>> +dedicated scalers (SCC and SCP).
 
-Thanks,
-Kukjin
+So there are a lot of blocks mentioned there, yet the binding doesn't
+seem to describe most of it. Is the binding complete?
+
+>> +pmu subnode
+>> +-----------
+>> +
+>> +Required properties:
+>> + - reg : should contain PMU physical base address and size of the memory
+>> +         mapped registers.
+
+I think you need a compatible value for this. How else is the node
+identified? The node name probably should not be used for identification.
+
+>> +
+>> +i2c-isp (ISP I2C bus controller) nodes
+>> +------------------------------------------
+>> +
+>> +Required properties:
+>> +
+>> +- compatible    : should be "samsung,exynos4212-i2c-isp" for Exynos4212,
+>> +          Exynos4412 and Exynos5250 SoCs;
+>> +- reg        : physical base address and length of the registers set;
+>> +- clocks    : must contain gate clock specifier for this controller;
+>> +- clock-names    : must contain "i2c_isp" entry.
+>> +
+>> +For the above nodes it is required to specify a pinctrl state named "default",
+
+Is "above nodes" both pmu, i2c-isp? It might make sense to be more
+explicit re: which nodes this comment applies to.
+
+>> +according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
+>> +
+>> +Device tree nodes of the image sensors' controlled directly by the FIMC-IS
+
+s/'// ?
+
+>> +firmware must be child nodes of their corresponding ISP I2C bus controller node.
+>> +The data link of these image sensors must be specified using the common video
+>> +interfaces bindings, defined in video-interfaces.txt.
