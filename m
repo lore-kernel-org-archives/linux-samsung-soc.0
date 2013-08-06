@@ -1,243 +1,79 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: add power domains support for EXYNOS5440
-Date: Tue, 06 Aug 2013 18:16:56 +0200
-Message-ID: <3043957.b1xFlRWI5P@amdc1032>
-References: <2729097.X0eAsuYF97@amdc1032> <51FC1E40.7030807@wwwdotorg.org>
- <20130803201411.GB17755@e106331-lin.cambridge.arm.com>
+From: Dongjin Kim <tobetter@gmail.com>
+Subject: Re: [PATCH RESEND] ARM: dts: Add USBPHY nodes to Exynos4x12
+Date: Wed, 7 Aug 2013 01:48:05 +0900
+Message-ID: <CADoNuNdOV4uwnCdtnYGzDGb=j-Qqnhx9fRrif5c=f-X=-gRoGw@mail.gmail.com>
+References: <1375726723-20862-1-git-send-email-tobetter@gmail.com>
+	<CAK9yfHwxVtJFZMQNoh-RepaF53L_TruPBSUt3YH_XY+8iXjffA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20130803201411.GB17755@e106331-lin.cambridge.arm.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <Pawel.Moll@arm.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:38535 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755431Ab3HFQsH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Aug 2013 12:48:07 -0400
+In-Reply-To: <CAK9yfHwxVtJFZMQNoh-RepaF53L_TruPBSUt3YH_XY+8iXjffA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
+Aha, yes...my misunderstanding.
+This node is not only for OTG or HSIC, could miss USB HOST transceiver
+if certain board file does not set "okay".
 
-Hi,
+Thanks,
+Dongjin.
 
-On Saturday, August 03, 2013 09:14:11 PM Mark Rutland wrote:
-> On Fri, Aug 02, 2013 at 10:01:52PM +0100, Stephen Warren wrote:
-> > (CCing the other DT maintainers, hence quoting binding in full)
-> > 
-> > On 08/02/2013 07:23 AM, Bartlomiej Zolnierkiewicz wrote:
-> > > On EXYNOS5440 power domains are handled in a different way than on
-> > > the previous EXYNOS SoCs. Add support for them to EXYNOS pm_domains
-> > > driver. Then add device tree nodes for PCIe (controlling power for
-> > > PCIe host controller) and Conn2 (controlling power for Ethernet,
-> > > SATA and USB controllers) power domains to exynos5440.dtsi.
-> > > 
-> > > Currently if runtime Power Management is enabled and the driver
-> > > for devices under power domain is disabled then the power domain
-> > > will be disabled by EXYNOS pm_domains driver. To make more active
-> > > use of power domains (dynamically enable and disabled them as
-> > > needed) it is required to add runtime PM support to pci-exynos,
-> > > stmmac, ahci_platform, ohci-exynos and ehci-s5p drivers (to be
-> > > done later).
-> > > 
-> > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > Signed-off-by: Myungjoo Ham <myungjoo.ham@samsung.com>
-> > > Cc: Tomasz Figa <t.figa@samsung.com>
-> > > Cc: Stephen Warren <swarren@wwwdotorg.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/arm/exynos/power_domain.txt |   33 ++
-> > >  arch/arm/boot/dts/exynos5440.dtsi                             |   23 +
-> > >  arch/arm/mach-exynos/Kconfig                                  |    1 
-> > >  arch/arm/mach-exynos/common.c                                 |    4 
-> > >  arch/arm/mach-exynos/pm_domains.c                             |  138 +++++++++-
-> > >  5 files changed, 190 insertions(+), 9 deletions(-)
-> > > 
-> > > Index: b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> > > ===================================================================
-> > > --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt	2013-08-02 14:45:53.551392396 +0200
-> > > +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt	2013-08-02 14:46:29.799391845 +0200
-> > > @@ -5,20 +5,47 @@ to gate power to one or more peripherals
-> > >  
-> > >  Required Properties:
-> > >  - compatible: should be one of the following.
-> > > -    * samsung,exynos4210-pd - for exynos4210 type power domain.
-> > > +    * samsung,exynos4210-pd - for Exynos4210 type power domain.
-> > > +    * samsung,exynos5440-pd - for Exynos5440 type power domain.
-> > >  - reg: physical base address of the controller and length of memory mapped
-> > > -    region.
-> > > +    region (Exynos4210 type power domain) or bit offset in the control
-> > > +    register (Exynos5440 type power domain).
-> > > +
-> > > +Additional parent node must be created for Exynos5440 power domains with
-> > > +the following required properties:
-> > > +- compatible: samsung,exynos5440-power-domains, simple-bus
-> > > +- reg: physical base address of the XMU controller and length of memory
-> > > +    mapped region
-> > 
-> > It's a little odd to describe the child nodes first. Given the 4210 and
-> > 5440 bindings work so differently, I'd suggest making separate binding
-> > files for the two; samsung,exynos4210-pd.txt and samsung,exynos5440-pd.txt.
-
-OK, I'll fix it.
-
-> > The node being describe here clearly is not a simple-bus; the child
-> > nodes appear to have a specific need that their parent be compatible =
-> > "samsung,exynos5440-power-domains", hence they aren't the independent
-> > devices that simple-bus would usually contain.
-> 
-> +1. This is most definitely not a simple-bus, the child nodes reg
-> properties cdon't represent the same address space as the
-> parent's reg property.
-
-What does in mean in the practice? What should I do instead?
-
-> How much does the association of bit-offsets to power domains vary? 
-
-On EXYNOS5440 power domains are controlled by control and status registers
-which are shared among all power domains. On other EXYNOS SoCs there are
-separate control/status registers for each power domain.
-
-> > Note that I only briefly reviewed the low-level structural aspects of
-> > the binding that I mentioned above; I haven't thought about the binding
-> > at a higher level of e.g. "does this binding conceptually make sense".
-> 
-> This is unfortunately difficult to do :(
-> 
-> > 
-> > >  Node of a device using power domains must have a samsung,power-domain property
-> > >  defined with a phandle to respective power domain.
-> > >  
-> > > -Example:
-> > > +Example for Exynos4210 compatible power domain:
-> > >  
-> > >  	lcd0: power-domain-lcd0 {
-> > >  		compatible = "samsung,exynos4210-pd";
-> > >  		reg = <0x10023C00 0x10>;
-> > >  	};
-> > >  
-> > > +Example for Exynos5440 compatible power domains:
-> > > +
-> > > +	power-domains@00160000 {
-> > > +		compatible = "samsung,exynos5440-power-domains", "simple-bus";
-> > > +		reg = <0x00160000 0x1000>;
-> > > +		#address-cells = <1>;
-> > > +		#size-cells = <0>;
-> > > +
-> > > +		pd_pcie: pcie-power-domain@6 {
-> > > +			compatible = "samsung,exynos5440-pd";
-> > > +			reg = <6>;
-> > > +		};
-> > > +
-> > > +		pd_conn2: conn2-power-domain@7 {
-> > > +			compatible = "samsung,exynos5440-pd";
-> > > +			reg = <7>;
-> > > +		};
-> > > +	};
-> > > +
-> > >  Example of the node using power domain:
-> > >  
-> > >  	node {
-> > > Index: b/arch/arm/boot/dts/exynos5440.dtsi
-> > > ===================================================================
-> > > --- a/arch/arm/boot/dts/exynos5440.dtsi	2013-08-02 14:45:53.599392397 +0200
-> > > +++ b/arch/arm/boot/dts/exynos5440.dtsi	2013-08-02 14:46:29.815391842 +0200
-> > > @@ -29,6 +29,23 @@
-> > >  		#clock-cells = <1>;
-> > >  	};
-> > >  
-> > > +	power-domains@00160000 {
-> > > +		compatible = "samsung,exynos5440-power-domains", "simple-bus";
-> > > +		reg = <0x00160000 0x1000>;
-> > > +		#address-cells = <1>;
-> > > +		#size-cells = <0>;
-> > > +
-> > > +		pd_pcie: pcie-power-domain@6 {
-> > > +			compatible = "samsung,exynos5440-pd";
-> > > +			reg = <6>;
-> > > +		};
-> > > +
-> > > +		pd_conn2: conn2-power-domain@7 {
-> > > +			compatible = "samsung,exynos5440-pd";
-> > > +			reg = <7>;
-> > > +		};
-> > > +	};
-> > > +
-> > >  	gic:interrupt-controller@2E0000 {
-> > >  		compatible = "arm,cortex-a15-gic";
-> > >  		#interrupt-cells = <3>;
-> > > @@ -192,6 +209,7 @@
-> > >  		phy-mode = "sgmii";
-> > >  		clocks = <&clock 25>;
-> > >  		clock-names = "stmmaceth";
-> > > +		samsung,power-domain = <&pd_conn2>;
-> > >  	};
-> 
-> This feels like a clock style binding would fit better:
-> samsung,power-domain = <&pwr 7>;
-> 
-> But there may be a better, more general way of handling this. I'm not
-> sure how this relates to regulators and so on, and how other vendors
-> handle this stuff...
-
-Other vendors don't implement device tree for their power domains yet.
-
-Also there is not much power domain users in the tree currently:
-
-$ git grep pm_genpd_init
-arch/arm/mach-exynos/pm_domains.c:          pm_genpd_init(&pd->pd, NULL, !on);
-arch/arm/mach-s3c64xx/pm.c:         pm_genpd_init(&s3c64xx_always_on_pm_domains[i]->pd,
-arch/arm/mach-s3c64xx/pm.c:         pm_genpd_init(&s3c64xx_pm_domains[i]->pd, NULL, false);
-arch/arm/mach-shmobile/pm-r8a7779.c:        pm_genpd_init(genpd, NULL, false);
-arch/arm/mach-shmobile/pm-rmobile.c:        pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
-drivers/base/power/domain.c: * pm_genpd_init - Initialize a generic I/O PM domain object.
-drivers/base/power/domain.c:void pm_genpd_init(struct generic_pm_domain *genpd,
-include/linux/pm_domain.h:extern void pm_genpd_init(struct generic_pm_domain *genpd,
-include/linux/pm_domain.h:static inline void pm_genpd_init(struct generic_pm_domain *genpd,
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-> Thanks,
-> Mark.
-> 
-> > >  
-> > >  	amba {
-> > > @@ -240,6 +258,7 @@
-> > >  		interrupts = <0 30 0>;
-> > >  		clocks = <&clock 23>;
-> > >  		clock-names = "sata";
-> > > +		samsung,power-domain = <&pd_conn2>;
-> > >  	};
-> > >  
-> > >  	ohci@220000 {
-> > > @@ -248,6 +267,7 @@
-> > >  		interrupts = <0 29 0>;
-> > >  		clocks = <&clock 24>;
-> > >  		clock-names = "usbhost";
-> > > +		samsung,power-domain = <&pd_conn2>;
-> > >  	};
-> > >  
-> > >  	ehci@221000 {
-> > > @@ -256,6 +276,7 @@
-> > >  		interrupts = <0 29 0>;
-> > >  		clocks = <&clock 24>;
-> > >  		clock-names = "usbhost";
-> > > +		samsung,power-domain = <&pd_conn2>;
-> > >  	};
-> > >  
-> > >  	pcie@290000 {
-> > > @@ -275,6 +296,7 @@
-> > >  		#interrupt-cells = <1>;
-> > >  		interrupt-map-mask = <0 0 0 0>;
-> > >  		interrupt-map = <0x0 0 &gic 53>;
-> > > +		samsung,power-domain = <&pd_pcie>;
-> > >  	};
-> > >  
-> > >  	pcie@2a0000 {
-> > > @@ -294,5 +316,6 @@
-> > >  		#interrupt-cells = <1>;
-> > >  		interrupt-map-mask = <0 0 0 0>;
-> > >  		interrupt-map = <0x0 0 &gic 56>;
-> > > +		samsung,power-domain = <&pd_pcie>;
-> > >  	};
-> > >  };
-
+On Tue, Aug 6, 2013 at 3:09 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Hi Dongjin,
+>
+> On 5 August 2013 23:48, Dongjin Kim <tobetter@gmail.com> wrote:
+>> This patch adds device nodes for USBPHY to Exynos4x12.
+>>
+>> CC: Sachin Kamat <sachin.kamat@linaro.org>
+>> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+>> ---
+>>  arch/arm/boot/dts/exynos4x12.dtsi |   18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+>> index 01da194..9c3335b 100644
+>> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+>> @@ -73,4 +73,22 @@
+>>                 clock-names = "sclk_fimg2d", "fimg2d";
+>>                 status = "disabled";
+>>         };
+>> +
+>> +       usbphy@125B00000 {
+>> +               #address-cells = <1>;
+>> +               #size-cells = <1>;
+>> +               compatible = "samsung,exynos4x12-usb2phy";
+>> +               reg = <0x125B0000 0x100>;
+>> +               ranges;
+>> +
+>> +               clocks = <&clock 2>, <&clock 305>;
+>> +               clock-names = "xusbxti", "otg";
+>> +               status = "disabled";
+>
+> I don't think this node has any other board specific dependencies. In
+> that case you don't need to disable this.
+>
+>> +
+>> +               usbphy-sys {
+>> +                       /* USB device and host PHY_CONTROL registers */
+>> +                       reg = <0x10020704 0xc>,
+>> +                             <0x1001021c 0x4>;
+>> +               };
+>> +       };
+>>  };
+>> --
+>> 1.7.9.5
+>>
+>
+>
+>
+> --
+> With warm regards,
+> Sachin
