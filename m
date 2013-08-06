@@ -1,105 +1,78 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [RFC v3 04/13] [media] exynos5-fimc-is: Add common driver header files
-Date: Tue, 6 Aug 2013 10:17:09 +0530
-Message-ID: <CALt3h7-N+79tfNb0o8bcEZRuNDLS9-wbynHFo+aErr0k_Lb6Vg@mail.gmail.com>
-References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
-	<1375455762-22071-5-git-send-email-arun.kk@samsung.com>
-	<51FD7982.5080101@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v3] drm/exynos: Add fallback option to get non physically continous memory for fb
+Date: Tue,  6 Aug 2013 10:53:24 +0530
+Message-ID: <1375766604-15455-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f53.google.com ([209.85.212.53]:51578 "EHLO
-	mail-vb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751122Ab3HFErK (ORCPT
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:58450 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751838Ab3HFFXh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Aug 2013 00:47:10 -0400
-In-Reply-To: <51FD7982.5080101@gmail.com>
+	Tue, 6 Aug 2013 01:23:37 -0400
+Received: by mail-pb0-f49.google.com with SMTP id xb4so4246111pbc.36
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 22:23:37 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, shaik.ameer@samsung.com, kilyeon.im@samsung.com
+To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc: linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, robdclark@gmail.com, arun.kk@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org, joshi@samsung.com
 
-Hi Sylwester,
+While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
+connected with resolution 2560x1600, following error occured even with
+IOMMU enabled:
+[0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate buffer.
+[0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
 
-On Sun, Aug 4, 2013 at 3:13 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
->>
->> This patch adds all the common header files used by the fimc-is
->> driver. It includes the commands for interfacing with the firmware
->> and error codes from IS firmware, metadata and command parameter
->> definitions.
->>
->> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
->> Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
->> ---
->>   drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  187 +++
->>   drivers/media/platform/exynos5-is/fimc-is-err.h    |  257 +++++
->>   .../media/platform/exynos5-is/fimc-is-metadata.h   |  767 +++++++++++++
->>   drivers/media/platform/exynos5-is/fimc-is-param.h  | 1212
->> ++++++++++++++++++++
->>   4 files changed, 2423 insertions(+)
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
->>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
->>
+To address the cases where physically continous memory MAY NOT be a
+mandatory requirement for fb, the patch adds a feature to get non physically
+continous memory for fb if IOMMU is supported and if CONTIG memory allocation
+fails.
 
-[snip]
+Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+Signed-off-by: Arun Kumar <arun.kk@samsung.com>
+Reviewed-by: Rob Clark <robdclark@gmail.com>
+---
+changes since v2:
+	- addressed comments given by Tomasz Figa <tomasz.figa@gmail.com>.
 
->> +
->> +struct camera2_tonemap_dm {
->> +       enum tonemap_mode               mode;
->> +       /* assuming maxCurvePoints = 64 */
->> +       float                           curve_red[64];
->> +       float                           curve_green[64];
->> +       float                           curve_blue[64];
->
->
-> So all those floating point numbers are now not really used in
-> the driver but we need them for proper data structures/offsets
-> declarations of the firmware interface ?
->
+changes since v1:
+	 - Modified to add the fallback patch if CONTIG alloc fails as suggested
+	 by Rob Clark robdclark@gmail.com and Tomasz Figa <tomasz.figa@gmail.com>.
 
-Yes. Same floats are used in firmware internal data structures
-also and the driver should assign these values when these parameters
-are to be changed.
+	 - changed the commit message.
+---
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
->> +};
->> +
-
-[snip]
-
->> +/* --------------------------  Effect
->> ----------------------------------- */
->> +enum isp_imageeffect_command {
->> +       ISP_IMAGE_EFFECT_DISABLE                = 0,
->> +       ISP_IMAGE_EFFECT_MONOCHROME             = 1,
->> +       ISP_IMAGE_EFFECT_NEGATIVE_MONO          = 2,
->> +       ISP_IMAGE_EFFECT_NEGATIVE_COLOR         = 3,
->> +       ISP_IMAGE_EFFECT_SEPIA                  = 4,
->> +       ISP_IMAGE_EFFECT_AQUA                   = 5,
->> +       ISP_IMAGE_EFFECT_EMBOSS                 = 6,
->> +       ISP_IMAGE_EFFECT_EMBOSS_MONO            = 7,
->> +       ISP_IMAGE_EFFECT_SKETCH                 = 8,
->> +       ISP_IMAGE_EFFECT_RED_YELLOW_POINT       = 9,
->> +       ISP_IMAGE_EFFECT_GREEN_POINT            = 10,
->> +       ISP_IMAGE_EFFECT_BLUE_POINT             = 11,
->> +       ISP_IMAGE_EFFECT_MAGENTA_POINT          = 12,
->> +       ISP_IMAGE_EFFECT_WARM_VINTAGE           = 13,
->> +       ISP_IMAGE_EFFECT_COLD_VINTAGE           = 14,
->> +       ISP_IMAGE_EFFECT_POSTERIZE              = 15,
->> +       ISP_IMAGE_EFFECT_SOLARIZE               = 16,
->> +       ISP_IMAGE_EFFECT_WASHED                 = 17,
->> +       ISP_IMAGE_EFFECT_CCM                    = 18,
->> +};
->
->
-> Hmm, I guess we will need a private v4l2 control for those.
->
-
-Yes. I am planning to add the controls after the basic support
-gets merged.
-
-Regards
-Arun
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index 8e60bd6..faec77e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -16,6 +16,7 @@
+ #include <drm/drm_crtc.h>
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/exynos_drm.h>
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fb.h"
+@@ -165,8 +166,17 @@ static int exynos_drm_fbdev_create(struct drm_fb_helper *helper,
+ 
+ 	size = mode_cmd.pitches[0] * mode_cmd.height;
+ 
+-	/* 0 means to allocate physically continuous memory */
+-	exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
++	exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
++	/*
++	 * If IOMMU is supported then try to get buffer from non physically
++	 * continous memory area.
++	 */
++	if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
++		dev_warn(&pdev->dev, "contiguous FB allocation failed, falling back to non-contiguous\n");
++		exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_NONCONTIG,
++							size);
++	}
++
+ 	if (IS_ERR(exynos_gem_obj)) {
+ 		ret = PTR_ERR(exynos_gem_obj);
+ 		goto err_release_framebuffer;
+-- 
+1.7.9.5
