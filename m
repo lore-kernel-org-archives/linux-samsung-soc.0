@@ -1,66 +1,60 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 07/22] ARM: dts: Remove '0x's from Exynos4210 DTSI file
-Date: Tue, 6 Aug 2013 08:18:27 +0100
-Message-ID: <20130806071827.GB5100@lee--X1>
-References: <1374490361-25769-1-git-send-email-lee.jones@linaro.org>
- <1374490361-25769-7-git-send-email-lee.jones@linaro.org>
- <20130724150937.GO26801@laptop>
- <51FFE9F0.1000100@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH RESEND] ARM: dts: Add USB host node for Exynos4
+Date: Tue, 06 Aug 2013 09:51:26 +0200
+Message-ID: <3592591.kYsJ5mO7Zi@flatron>
+References: <1375726159-20486-1-git-send-email-tobetter@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:45701 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755203Ab3HFHSd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Aug 2013 03:18:33 -0400
-Received: by mail-wi0-f177.google.com with SMTP id hq12so34465wib.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Aug 2013 00:18:32 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <51FFE9F0.1000100@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1375726159-20486-1-git-send-email-tobetter@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, arnd@arndb.de, linus.walleij@stericsson.com, linux-samsung-soc@vger.kernel.org
 
-On Tue, 06 Aug 2013, Kukjin Kim wrote:
+Hi Dongjin,
 
-> On 07/25/13 00:09, Lee Jones wrote:
-> >... for the sake of consistency and assumed convention.
-> >
-> >Cc: Kukjin Kim<kgene.kim@samsung.com>
-> >Cc: linux-samsung-soc@vger.kernel.org
-> >Signed-off-by: Lee Jones<lee.jones@linaro.org>
-> >
-> >diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/e=
-xynos4210.dtsi
-> >index b7f358a..53e2527 100644
-> >--- a/arch/arm/boot/dts/exynos4210.dtsi
-> >+++ b/arch/arm/boot/dts/exynos4210.dtsi
-> >@@ -72,7 +72,7 @@
-> >                 };
->    ^^^^^^^^^^^^^^^^
-> >         };
->    ^^^^^^^^
-> >
-> >-       clock: clock-controller@0x10030000 {
->    ^^^^^^^^
-> >+       clock: clock-controller@10030000 {
->    ^^^^^^^^
-> >                 compatible =3D "samsung,exynos4210-clock";
->    ^^^^^^^^^^^^^^^^
-> >                 reg =3D<0x10030000 0x20000>;
->    ^^^^^^^^^^^^^^^^
-> >                 #clock-cells =3D<1>;
->    ^^^^^^^^^^^^^^^^
->=20
-> BTW, should be tab at the mark '^' not white space :(
+On Tuesday 06 of August 2013 03:09:19 Dongjin Kim wrote:
+> This patch adds EHCI and OHCI host device nodes for Exynos4.
+> 
+> CC: Jingoo Han <jg1.han@samsung.com>
+> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi |   18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4.dtsi
+> b/arch/arm/boot/dts/exynos4.dtsi index 3f94fe8..cbe5219 100644
+> --- a/arch/arm/boot/dts/exynos4.dtsi
+> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> @@ -155,6 +155,24 @@
+>  		status = "disabled";
+>  	};
+> 
+> +	ehci@12580000 {
+> +		compatible = "samsung,exynos4210-ehci";
+> +		reg = <0x12580000 0x100>;
+> +		interrupts = <0 70 0>;
+> +		clocks = <&clock 304>;
+> +		clock-names = "usbhost";
+> +		status = "disabled";
+> +	};
+> +
+> +	ohci@12590000 {
+> +		compatible = "samsung,exynos4210-ohci";
+> +		reg = <0x12590000 0x100>;
+> +		interrupts = <0 70 0>;
+> +		clocks = <&clock 304>;
+> +		clock-names = "usbhost";
+> +		status = "disabled";
+> +	};
+> +
+>  	mfc: codec@13400000 {
+>  		compatible = "samsung,mfc-v5";
+>  		reg = <0x13400000 0x10000>;
 
-Agreed, but this should be a separate patch.
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
---=20
-Lee Jones
-Linaro ST-Ericsson Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Best regards,
+Tomasz
