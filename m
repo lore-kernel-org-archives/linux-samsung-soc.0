@@ -1,101 +1,66 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v3] drm/exynos: Add fallback option to get non physically
- continous memory for fb
-Date: Tue, 6 Aug 2013 11:45:43 +0530
-Message-ID: <CAK9yfHxoWkV5qROkr+TpWA+m1-K3mEUo2sp6HbZXSRTi-v3LMA@mail.gmail.com>
-References: <1375766604-15455-1-git-send-email-vikas.sajjan@linaro.org>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 07/22] ARM: dts: Remove '0x's from Exynos4210 DTSI file
+Date: Tue, 6 Aug 2013 08:18:27 +0100
+Message-ID: <20130806071827.GB5100@lee--X1>
+References: <1374490361-25769-1-git-send-email-lee.jones@linaro.org>
+ <1374490361-25769-7-git-send-email-lee.jones@linaro.org>
+ <20130724150937.GO26801@laptop>
+ <51FFE9F0.1000100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1375766604-15455-1-git-send-email-vikas.sajjan@linaro.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, robdclark@gmail.com, arun.kk@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org, joshi@samsung.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:45701 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755203Ab3HFHSd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Aug 2013 03:18:33 -0400
+Received: by mail-wi0-f177.google.com with SMTP id hq12so34465wib.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Aug 2013 00:18:32 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <51FFE9F0.1000100@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, arnd@arndb.de, linus.walleij@stericsson.com, linux-samsung-soc@vger.kernel.org
 
-Hi Vikas,
+On Tue, 06 Aug 2013, Kukjin Kim wrote:
 
-On 6 August 2013 10:53, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
-> While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
-> connected with resolution 2560x1600, following error occured even with
-> IOMMU enabled:
-> [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate buffer.
-> [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
->
-> To address the cases where physically continous memory MAY NOT be a
-> mandatory requirement for fb, the patch adds a feature to get non physically
-> continous memory for fb if IOMMU is supported and if CONTIG memory allocation
-> fails.
+> On 07/25/13 00:09, Lee Jones wrote:
+> >... for the sake of consistency and assumed convention.
+> >
+> >Cc: Kukjin Kim<kgene.kim@samsung.com>
+> >Cc: linux-samsung-soc@vger.kernel.org
+> >Signed-off-by: Lee Jones<lee.jones@linaro.org>
+> >
+> >diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/e=
+xynos4210.dtsi
+> >index b7f358a..53e2527 100644
+> >--- a/arch/arm/boot/dts/exynos4210.dtsi
+> >+++ b/arch/arm/boot/dts/exynos4210.dtsi
+> >@@ -72,7 +72,7 @@
+> >                 };
+>    ^^^^^^^^^^^^^^^^
+> >         };
+>    ^^^^^^^^
+> >
+> >-       clock: clock-controller@0x10030000 {
+>    ^^^^^^^^
+> >+       clock: clock-controller@10030000 {
+>    ^^^^^^^^
+> >                 compatible =3D "samsung,exynos4210-clock";
+>    ^^^^^^^^^^^^^^^^
+> >                 reg =3D<0x10030000 0x20000>;
+>    ^^^^^^^^^^^^^^^^
+> >                 #clock-cells =3D<1>;
+>    ^^^^^^^^^^^^^^^^
+>=20
+> BTW, should be tab at the mark '^' not white space :(
 
-The patch looks fine. Just a small nit. Please use the word contiguous
-instead of continuous to refer to memory locations consistently in
-this patch.
+Agreed, but this should be a separate patch.
 
->
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> Signed-off-by: Arun Kumar <arun.kk@samsung.com>
-> Reviewed-by: Rob Clark <robdclark@gmail.com>
-> ---
-> changes since v2:
->         - addressed comments given by Tomasz Figa <tomasz.figa@gmail.com>.
->
-> changes since v1:
->          - Modified to add the fallback patch if CONTIG alloc fails as suggested
->          by Rob Clark robdclark@gmail.com and Tomasz Figa <tomasz.figa@gmail.com>.
->
->          - changed the commit message.
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |   14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 8e60bd6..faec77e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -16,6 +16,7 @@
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_fb_helper.h>
->  #include <drm/drm_crtc_helper.h>
-> +#include <drm/exynos_drm.h>
->
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_fb.h"
-> @@ -165,8 +166,17 @@ static int exynos_drm_fbdev_create(struct drm_fb_helper *helper,
->
->         size = mode_cmd.pitches[0] * mode_cmd.height;
->
-> -       /* 0 means to allocate physically continuous memory */
-> -       exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
-> +       exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
-> +       /*
-> +        * If IOMMU is supported then try to get buffer from non physically
-> +        * continous memory area.
-> +        */
-
-To make this more clear, you could say,
-"If physically contiguous memory allocation fails and if IOMMU is
-supported, try to ....."
-
-
-> +       if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
-> +               dev_warn(&pdev->dev, "contiguous FB allocation failed, falling back to non-contiguous\n");
-> +               exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_NONCONTIG,
-> +                                                       size);
-> +       }
-> +
->         if (IS_ERR(exynos_gem_obj)) {
->                 ret = PTR_ERR(exynos_gem_obj);
->                 goto err_release_framebuffer;
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-With warm regards,
-Sachin
+--=20
+Lee Jones
+Linaro ST-Ericsson Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
