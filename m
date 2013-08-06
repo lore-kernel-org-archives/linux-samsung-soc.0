@@ -1,34 +1,105 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH RESEND] ARM: dts: Add USB host node for Exynos4
-Date: Tue, 06 Aug 2013 10:16:31 +0900
-Message-ID: <000801ce9242$95848570$c08d9050$@samsung.com>
-References: <1375726159-20486-1-git-send-email-tobetter@gmail.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [RFC v3 04/13] [media] exynos5-fimc-is: Add common driver header files
+Date: Tue, 6 Aug 2013 10:17:09 +0530
+Message-ID: <CALt3h7-N+79tfNb0o8bcEZRuNDLS9-wbynHFo+aErr0k_Lb6Vg@mail.gmail.com>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com>
+	<1375455762-22071-5-git-send-email-arun.kk@samsung.com>
+	<51FD7982.5080101@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:42662 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752190Ab3HFBQd (ORCPT
+Received: from mail-vb0-f53.google.com ([209.85.212.53]:51578 "EHLO
+	mail-vb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751122Ab3HFErK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Aug 2013 21:16:33 -0400
-In-reply-to: <1375726159-20486-1-git-send-email-tobetter@gmail.com>
-Content-language: ko
+	Tue, 6 Aug 2013 00:47:10 -0400
+In-Reply-To: <51FD7982.5080101@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Dongjin Kim' <tobetter@gmail.com>
-Cc: 'Rob Herring' <rob.herring@calxeda.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Ian Campbell' <ian.campbell@citrix.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Kukjin Kim' <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, shaik.ameer@samsung.com, kilyeon.im@samsung.com
 
-On Tuesday, August 06, 2013 3:09 AM, Dongjin Kim wrote:
-> 
-> This patch adds EHCI and OHCI host device nodes for Exynos4.
-> 
-> CC: Jingoo Han <jg1.han@samsung.com>
+Hi Sylwester,
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+On Sun, Aug 4, 2013 at 3:13 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
+>>
+>> This patch adds all the common header files used by the fimc-is
+>> driver. It includes the commands for interfacing with the firmware
+>> and error codes from IS firmware, metadata and command parameter
+>> definitions.
+>>
+>> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+>> Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
+>> ---
+>>   drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  187 +++
+>>   drivers/media/platform/exynos5-is/fimc-is-err.h    |  257 +++++
+>>   .../media/platform/exynos5-is/fimc-is-metadata.h   |  767 +++++++++++++
+>>   drivers/media/platform/exynos5-is/fimc-is-param.h  | 1212
+>> ++++++++++++++++++++
+>>   4 files changed, 2423 insertions(+)
+>>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
+>>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
+>>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
+>>   create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
+>>
 
+[snip]
 
-> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
-> ---
->  arch/arm/boot/dts/exynos4.dtsi |   18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>> +
+>> +struct camera2_tonemap_dm {
+>> +       enum tonemap_mode               mode;
+>> +       /* assuming maxCurvePoints = 64 */
+>> +       float                           curve_red[64];
+>> +       float                           curve_green[64];
+>> +       float                           curve_blue[64];
+>
+>
+> So all those floating point numbers are now not really used in
+> the driver but we need them for proper data structures/offsets
+> declarations of the firmware interface ?
+>
+
+Yes. Same floats are used in firmware internal data structures
+also and the driver should assign these values when these parameters
+are to be changed.
+
+>> +};
+>> +
+
+[snip]
+
+>> +/* --------------------------  Effect
+>> ----------------------------------- */
+>> +enum isp_imageeffect_command {
+>> +       ISP_IMAGE_EFFECT_DISABLE                = 0,
+>> +       ISP_IMAGE_EFFECT_MONOCHROME             = 1,
+>> +       ISP_IMAGE_EFFECT_NEGATIVE_MONO          = 2,
+>> +       ISP_IMAGE_EFFECT_NEGATIVE_COLOR         = 3,
+>> +       ISP_IMAGE_EFFECT_SEPIA                  = 4,
+>> +       ISP_IMAGE_EFFECT_AQUA                   = 5,
+>> +       ISP_IMAGE_EFFECT_EMBOSS                 = 6,
+>> +       ISP_IMAGE_EFFECT_EMBOSS_MONO            = 7,
+>> +       ISP_IMAGE_EFFECT_SKETCH                 = 8,
+>> +       ISP_IMAGE_EFFECT_RED_YELLOW_POINT       = 9,
+>> +       ISP_IMAGE_EFFECT_GREEN_POINT            = 10,
+>> +       ISP_IMAGE_EFFECT_BLUE_POINT             = 11,
+>> +       ISP_IMAGE_EFFECT_MAGENTA_POINT          = 12,
+>> +       ISP_IMAGE_EFFECT_WARM_VINTAGE           = 13,
+>> +       ISP_IMAGE_EFFECT_COLD_VINTAGE           = 14,
+>> +       ISP_IMAGE_EFFECT_POSTERIZE              = 15,
+>> +       ISP_IMAGE_EFFECT_SOLARIZE               = 16,
+>> +       ISP_IMAGE_EFFECT_WASHED                 = 17,
+>> +       ISP_IMAGE_EFFECT_CCM                    = 18,
+>> +};
+>
+>
+> Hmm, I guess we will need a private v4l2 control for those.
+>
+
+Yes. I am planning to add the controls after the basic support
+gets merged.
+
+Regards
+Arun
