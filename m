@@ -1,78 +1,72 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH v3] drm/exynos: Add fallback option to get non physically continous memory for fb
-Date: Tue,  6 Aug 2013 10:53:24 +0530
-Message-ID: <1375766604-15455-1-git-send-email-vikas.sajjan@linaro.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH RESEND] ARM: dts: Add USBPHY nodes to Exynos4x12
+Date: Tue, 6 Aug 2013 11:39:57 +0530
+Message-ID: <CAK9yfHwxVtJFZMQNoh-RepaF53L_TruPBSUt3YH_XY+8iXjffA@mail.gmail.com>
+References: <1375726723-20862-1-git-send-email-tobetter@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:58450 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751838Ab3HFFXh (ORCPT
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:53126 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754607Ab3HFGJ6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Aug 2013 01:23:37 -0400
-Received: by mail-pb0-f49.google.com with SMTP id xb4so4246111pbc.36
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 22:23:37 -0700 (PDT)
+	Tue, 6 Aug 2013 02:09:58 -0400
+Received: by mail-oa0-f41.google.com with SMTP id j6so8440283oag.28
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Aug 2013 23:09:57 -0700 (PDT)
+In-Reply-To: <1375726723-20862-1-git-send-email-tobetter@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, robdclark@gmail.com, arun.kk@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org, joshi@samsung.com
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
-connected with resolution 2560x1600, following error occured even with
-IOMMU enabled:
-[0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate buffer.
-[0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+Hi Dongjin,
 
-To address the cases where physically continous memory MAY NOT be a
-mandatory requirement for fb, the patch adds a feature to get non physically
-continous memory for fb if IOMMU is supported and if CONTIG memory allocation
-fails.
+On 5 August 2013 23:48, Dongjin Kim <tobetter@gmail.com> wrote:
+> This patch adds device nodes for USBPHY to Exynos4x12.
+>
+> CC: Sachin Kamat <sachin.kamat@linaro.org>
+> Signed-off-by: Dongjin Kim <tobetter@gmail.com>
+> ---
+>  arch/arm/boot/dts/exynos4x12.dtsi |   18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> index 01da194..9c3335b 100644
+> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> @@ -73,4 +73,22 @@
+>                 clock-names = "sclk_fimg2d", "fimg2d";
+>                 status = "disabled";
+>         };
+> +
+> +       usbphy@125B00000 {
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               compatible = "samsung,exynos4x12-usb2phy";
+> +               reg = <0x125B0000 0x100>;
+> +               ranges;
+> +
+> +               clocks = <&clock 2>, <&clock 305>;
+> +               clock-names = "xusbxti", "otg";
+> +               status = "disabled";
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-Signed-off-by: Arun Kumar <arun.kk@samsung.com>
-Reviewed-by: Rob Clark <robdclark@gmail.com>
----
-changes since v2:
-	- addressed comments given by Tomasz Figa <tomasz.figa@gmail.com>.
+I don't think this node has any other board specific dependencies. In
+that case you don't need to disable this.
 
-changes since v1:
-	 - Modified to add the fallback patch if CONTIG alloc fails as suggested
-	 by Rob Clark robdclark@gmail.com and Tomasz Figa <tomasz.figa@gmail.com>.
+> +
+> +               usbphy-sys {
+> +                       /* USB device and host PHY_CONTROL registers */
+> +                       reg = <0x10020704 0xc>,
+> +                             <0x1001021c 0x4>;
+> +               };
+> +       };
+>  };
+> --
+> 1.7.9.5
+>
 
-	 - changed the commit message.
----
- drivers/gpu/drm/exynos/exynos_drm_fbdev.c |   14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-index 8e60bd6..faec77e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-@@ -16,6 +16,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/exynos_drm.h>
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fb.h"
-@@ -165,8 +166,17 @@ static int exynos_drm_fbdev_create(struct drm_fb_helper *helper,
- 
- 	size = mode_cmd.pitches[0] * mode_cmd.height;
- 
--	/* 0 means to allocate physically continuous memory */
--	exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
-+	exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
-+	/*
-+	 * If IOMMU is supported then try to get buffer from non physically
-+	 * continous memory area.
-+	 */
-+	if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
-+		dev_warn(&pdev->dev, "contiguous FB allocation failed, falling back to non-contiguous\n");
-+		exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_NONCONTIG,
-+							size);
-+	}
-+
- 	if (IS_ERR(exynos_gem_obj)) {
- 		ret = PTR_ERR(exynos_gem_obj);
- 		goto err_release_framebuffer;
+
 -- 
-1.7.9.5
+With warm regards,
+Sachin
