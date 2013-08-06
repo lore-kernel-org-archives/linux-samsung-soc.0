@@ -1,93 +1,181 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3] drm/exynos: Add fallback option to get non physically
- continous memory for fb
-Date: Tue, 06 Aug 2013 10:39:24 +0200
-Message-ID: <5200B63C.9060904@samsung.com>
-References: <1375766604-15455-1-git-send-email-vikas.sajjan@linaro.org>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v8 06/12] ARM: dts: Add description of System MMU of Exynos
+	SoCs
+Date: Tue, 06 Aug 2013 18:54:36 +0900
+Message-ID: <002001ce928a$f5a7f390$e0f7dab0$@samsung.com>
+References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
+	<27536111.odlCO093Zi@amdc1032>
+	<003c01ce91cd$427fad70$c77f0850$@samsung.com>
+	<1429191.3FDem6vW0S@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1375766604-15455-1-git-send-email-vikas.sajjan@linaro.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com, robdclark@gmail.com, arun.kk@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org, joshi@samsung.com
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <1429191.3FDem6vW0S@amdc1032>
+Content-language: ko
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Hyunwoong Kim' <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Grant Grundler' <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, 'Keyyoung Park' <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Antonios Motakis' <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Vikas,
-
-On 08/06/2013 07:23 AM, Vikas Sajjan wrote:
-> While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
-> connected with resolution 2560x1600, following error occured even with
-> IOMMU enabled:
-> [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate buffer.
-> [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+> -----Original Message-----
+> From: Bartlomiej Zolnierkiewicz [mailto:b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+> Sent: Monday, August 05, 2013 10:10 PM
 > 
-> To address the cases where physically continous memory MAY NOT be a
-> mandatory requirement for fb, the patch adds a feature to get non physically
-> continous memory for fb if IOMMU is supported and if CONTIG memory allocation
-> fails.
+> On Monday, August 05, 2013 08:16:40 PM Cho KyongHo wrote:
+> > > -----Original Message-----
+> > > From: Bartlomiej Zolnierkiewicz [mailto:b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+> > > Sent: Saturday, August 03, 2013 2:14 AM
+> > >
+> > > Hi,
+> > >
+> > > On Friday, July 26, 2013 08:28:19 PM Cho KyongHo wrote:
+> > > > Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > > > ---
+> > > >  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |  103 +++++++
+> > > >  arch/arm/boot/dts/exynos4.dtsi                     |  122 ++++++++
+> > > >  arch/arm/boot/dts/exynos4210.dtsi                  |   25 ++
+> > > >  arch/arm/boot/dts/exynos4x12.dtsi                  |   76 +++++
+> > > >  arch/arm/boot/dts/exynos5250.dtsi                  |  291 ++++++++++++++++++++
+> > > >  5 files changed, 617 insertions(+), 0 deletions(-)
+> > > >  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > > > b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > > > new file mode 100644
+> > > > index 0000000..92f0a33
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > > > @@ -0,0 +1,103 @@
+> > > > +Samsung Exynos4210 IOMMU H/W, System MMU (System Memory Management Unit)
+> > > > +
+> > > > +Samsung's Exynos architecture contains System MMU that enables scattered
+> > > > +physical memory chunks visible as a contiguous region to DMA-capable peripheral
+> > > > +devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
+> > > > +
+> > > > +System MMU is a sort of IOMMU and support identical translation table format to
+> > > > +ARMv7 translation tables with minimum set of page properties including access
+> > > > +permissions, shareability and security protection. In addition, System MMU has
+> > > > +another capabilities like L2 TLB or block-fetch buffers to minimize translation
+> > > > +latency.
+> > > > +
+> > > > +A System MMU is dedicated to a single master peripheral device.  Thus, it is
+> > > > +important to specify the correct System MMU in the device node of its master
+> > > > +device. Whereas a System MMU is dedicated to a master device, the master device
+> > > > +may have more than one System MMU.
+> > > > +
+> > > > +Required properties:
+> > > > +- compatible: Should be "samsung,exynos4210-sysmmu"
+> > > > +- reg: A tuple of base address and size of System MMU registers.
+> > > > +- interrupt-parent: The phandle of the interrupt controller of System MMU
+> > > > +- interrupts: A tuple of numbers that indicates the interrupt source.
+> > > > +- clock-names: Should be "sysmmu" if the System MMU is needed to gate its clock.
+> > > > +               Please refer to the following documents:
+> > > > +	       Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > > > +	       Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> > > > +	       Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > > > +	       Optional "master" if the clock to the System MMU is gated by
+> > > > +	       another gate clock other than "sysmmu". The System MMU driver
+> > > > +	       sets "master" the parent of "sysmmu".
+> > > > +	       Exynos4 SoCs, there needs no "master" clocks.
+> > > > +	       Exynos5 SoCs, some System MMUs must have "master" clocks.
+> > > > +- clocks: Required if the System MMU is needed to gate its clock.
+> > > > +	  Please refer to the documents listed above.
+> > > > +- samsung,power-domain: Required if the System MMU is needed to gate its power.
+> > > > +	  Please refer to the following document:
+> > > > +	  Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> > > > +
+> > > > +Required properties for the master peripheral devices:
+> > > > +- iommu: phandles to the System MMUs of the device
+> > > > +
+> > > > +Examples:
+> > > > +A System MMU is dedicated to a single master device.
+> > > > +	gsc_0:  gsc@0x13e00000 {
+> > > > +		compatible = "samsung,exynos5-gsc";
+> > > > +		reg = <0x13e00000 0x1000>;
+> > > > +		interrupts = <0 85 0>;
+> > > > +		samsung,power-domain = <&pd_gsc>;
+> > > > +		clocks = <&clock 256>;
+> > > > +		clock-names = "gscl";
+> > > > +		iommu = <&sysmmu_gsc1>;
+> > > > +	};
+> > > > +
+> > > > +	sysmmu_gsc0: sysmmu@13E80000 {
+> > > > +		compatible = "samsung,exynos4210-sysmmu";
+> > > > +		reg = <0x13E80000 0x1000>;
+> > > > +		interrupt-parent = <&combiner>;
+> > > > +		interrupt-names = "sysmmu-gsc0";
+> > > > +		interrupts = <2 0>;
+> > > > +		clock-names = "sysmmu", "master";
+> > > > +		clocks = <&clock 262>, <&clock 256>;
+> > > > +		samsung,power-domain = <&pd_gsc>;
+> > > > +		status = "ok";
+> > > > +	};
+> > > > +
+> > > > +MFC has 2 System MMUs for each port that MFC is attached. Thus it seems natural
+> > > > +to define 2 System MMUs for each port of the MFC:
+> > >
+> > > Marek Szyprowski (added to cc:) has a patch fixing MFC to create separate
+> > > mfc_l and mfc_r devices (like it was in the past). Using this patch it
+> > > would be possible to bind sysmmu_mfc_l to mfc_l device and sysmmu_mfc_r to
+> > > mfc_r device. This probably also requires adding some MFC specific handling
+> > > in a device tree node and to the new master's device PM ops (in patch #10)
+> > > as previously (in our trees) sysmmu_mfc r device was set as parent of
+> > > sysmmu_mfc_l device which in turn was a parent for main MFC device (to make
+> > > runtime Power Management work). However because MFC is the only device
+> > > requiring use of multiple System MMUs above changes would allow us (unless
+> > > I'm missing something?) to use just one System MMU device per struct
+> > > exynos_iommu_client instance (making driver a lot simpler).
+> > >
+> >
+> > Does it mean that we can make the exynos-iommu driver simpler
+> > with Marek Szyprowski's patch?
 > 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> Signed-off-by: Arun Kumar <arun.kk@samsung.com>
-> Reviewed-by: Rob Clark <robdclark@gmail.com>
-> ---
-> changes since v2:
-> 	- addressed comments given by Tomasz Figa <tomasz.figa@gmail.com>.
+> I think so and you probably need to change MFC handling anyway because
+> MFC driver does DMA allocations per mfc_l/mfc_r devices and not per main
+> device (at least in the upstream kernels).
 > 
-> changes since v1:
-> 	 - Modified to add the fallback patch if CONTIG alloc fails as suggested
-> 	 by Rob Clark robdclark@gmail.com and Tomasz Figa <tomasz.figa@gmail.com>.
+> [ Marek, could you please resfresh and post your patch on the list? ]
 > 
-> 	 - changed the commit message.
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |   14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
+> BTW There is an additional problem with combining System MMU devices per
+> one main device - it limits available address space (which in case of MFC
+> is very limited by hardware design).
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 8e60bd6..faec77e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -16,6 +16,7 @@
->  #include <drm/drm_crtc.h>
->  #include <drm/drm_fb_helper.h>
->  #include <drm/drm_crtc_helper.h>
-> +#include <drm/exynos_drm.h>
->  
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_fb.h"
-> @@ -165,8 +166,17 @@ static int exynos_drm_fbdev_create(struct drm_fb_helper *helper,
->  
->  	size = mode_cmd.pitches[0] * mode_cmd.height;
->  
-> -	/* 0 means to allocate physically continuous memory */
-> -	exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
-> +	exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
-> +	/*
-> +	 * If IOMMU is supported then try to get buffer from non physically
-> +	 * continous memory area.
+> > It is welcome but I don't think it covers all topologies of System MMU and
+> > master H/W. Those are getting more complex.
+> 
+> Could you please be more specific? I know about FIMC ISP subsystem but
+> it doesn't require combining System MMUs. Are there any other examples of
+> complex System MMU + master H/W topologies?
 
-s/continous/continuous
+I meant a lot of System MMUs in FIMC-IS subsystem.
+A big challenge to System MMU configuration is FIMC-IS as you mentioned.
+Since I don't know how the driver of FIMC-IS controls its H/W,
+I made the System MMU driver to configure System MMUs flexibly.
 
-or better
+> 
+> Anyway I think that System MMUs should not be combined (as it is done in
+> patch #10) and should be binded per "memport" devices and not per main
+> device (as done in this patch).
+> 
 
-s/continous/contiguous
+Ok.
+I will make it them as you advised.
+And we can make the driver better gradually.
 
-Otherwise the patch looks good. But please note it has nothing to do
-with linux-media@vger.kernel.org, please drop this mailing list from
-Cc as I need to be constantly marking those patches as Non applicable
-in the patchwork.
+Thank you.
 
-Thanks!
-Sylwester
-
-> +	 */
-> +	if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
-> +		dev_warn(&pdev->dev, "contiguous FB allocation failed, falling back to non-contiguous\n");
-> +		exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_NONCONTIG,
-> +							size);
-> +	}
-> +
->  	if (IS_ERR(exynos_gem_obj)) {
->  		ret = PTR_ERR(exynos_gem_obj);
->  		goto err_release_framebuffer;
+KyongHo.
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
