@@ -1,15 +1,14 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 0/8] Common Clock Framework support for Samsung S3C64xx
-Date: Tue, 06 Aug 2013 12:47:51 -0700
-Message-ID: <20130806194751.5348.55680@quantum>
-References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com>
- <51FFEB63.6060901@samsung.com> <20130805190216.5348.8595@quantum>
- <7952777.WiMApbNK0e@flatron>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 1/3] clk: exynos4: Make exynos4_plls static
+Date: Tue, 6 Aug 2013 21:02:19 +0100
+Message-ID: <20130806200219.GD23006@n2100.arm.linux.org.uk>
+References: <1375788675-2638-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <7952777.WiMApbNK0e@flatron>
+Content-Disposition: inline
+In-Reply-To: <1375788675-2638-1-git-send-email-sachin.kamat@linaro.org>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,137 +18,37 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Thomas Abraham <thomas.abraham@linaro.org>, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, Mark Brown <broonie@kernel.org>, stern@rowland.harvard.edu, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Tomasz Figa (2013-08-05 16:42:16)
-> On Monday 05 of August 2013 12:02:16 Mike Turquette wrote:
-> > Quoting Kukjin Kim (2013-08-05 11:13:55)
-> > 
-> > > On 08/06/13 03:06, Mike Turquette wrote:
-> > > > Quoting Kukjin Kim (2013-08-05 10:01:36)
-> > > > 
-> > > >> On 07/23/13 08:49, Tomasz Figa wrote:
-> > > >>> This series is an attempt to move clock support on Samsung S3C64xx
-> > > >>> SoCs
-> > > >>> to Common Clock Framework.
-> > > >>> 
-> > > >>> First, support for PLL types present on S3C64xx SoCs is added to
-> > > >>> Samsung Common Clock Framework driver. Then the main clock driver
-> > > >>> for mentioned SoCs is introduced. Further patches contain fixes
-> > > >>> for drivers to make them compliant with CCF semantics, migration
-> > > >>> of platform code to use the new clock driver and removal of old
-> > > >>> clock management code.
-> > > >>> 
-> > > >>> Depends on:
-> > > >>>    - [PATCH v4 00/20] Samsung PWM support cleanup
-> > > >>>    
-> > > >>>      http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20856
-> > > >>> 
-> > > >>> On S3C6410-based Tiny6410 board (Mini6410-compatible):
-> > > >>> 
-> > > >>> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
-> > > >>> 
-> > > >>> For v1:
-> > > >>> 
-> > > >>> Acked-by: Mike Turquette<mturquette@linaro.org>
-> > > >>> 
-> > > >>> Changes since v1:
-> > > >>>    - added patch for read-only muxes,
-> > > >>>    - exported configurable muxes and dividers,
-> > > >>>    - defined mout_syncmux as read-only mux,
-> > > >>>    - in DT-enabled case fixed-clock binding is used to define
-> > > >>>    external clocks.> >>> 
-> > > >>> Tomasz Figa (8):
-> > > >>>     clk: mux: Add support for read-only muxes.
-> > > >>>     clk: samsung: pll: Add support for PLL6552 and PLL6553
-> > > >>>     clk: samsung: Add clock driver for S3C64xx SoCs
-> > > >>>     ARM: SAMSUNG: Add soc_is_s3c6400/s3c6410 macros
-> > > >>>     ARM: s3c64xx: dma: Use
-> > > >>>     clk_prepare_enable/clk_disable_unprepare
-> > > >>>     usb: host: ohci-s3c2410 Use
-> > > >>>     clk_prepare_enable/clk_disable_unprepare
-> > > >>>     ARM: s3c64xx: Migrate clock handling to Common Clock Framework
-> > > >>>     ARM: s3c64xx: Remove old clock management code
-> > > >>>    
-> > > >>>    .../bindings/clock/samsung,s3c64xx-clock.txt       |   77 ++
-> > > >>>    arch/arm/Kconfig                                   |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/Makefile                     |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/clock.c                      | 1007
-> > > >>>    -------------------- arch/arm/mach-s3c64xx/common.c           
-> > > >>>             |   21 +-
-> > > >>>    arch/arm/mach-s3c64xx/common.h                     |   12 +-
-> > > >>>    arch/arm/mach-s3c64xx/dma.c                        |    4 +-
-> > > >>>    arch/arm/mach-s3c64xx/include/mach/regs-clock.h    |  132 +--
-> > > >>>    arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/mach-hmt.c                   |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/mach-mini6410.c              |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/mach-smartq.c                |   11 +-
-> > > >>>    arch/arm/mach-s3c64xx/mach-smdk6400.c              |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/mach-smdk6410.c              |    2 +-
-> > > >>>    arch/arm/mach-s3c64xx/pm.c                         |   21 -
-> > > >>>    arch/arm/mach-s3c64xx/s3c6400.c                    |    6 -
-> > > >>>    arch/arm/mach-s3c64xx/s3c6410.c                    |    7 -
-> > > >>>    arch/arm/plat-samsung/include/plat/cpu.h           |    4 +
-> > > >>>    drivers/clk/clk-mux.c                              |   10 +-
-> > > >>>    drivers/clk/samsung/Makefile                       |    1 +
-> > > >>>    drivers/clk/samsung/clk-pll.c                      |  160 ++++
-> > > >>>    drivers/clk/samsung/clk-pll.h                      |    4 +
-> > > >>>    drivers/clk/samsung/clk-s3c64xx.c                  |  465
-> > > >>>    +++++++++
-> > > >>>    drivers/usb/host/ohci-s3c2410.c                    |    8 +-
-> > > >>>    include/dt-bindings/clock/samsung,s3c64xx-clock.h  |  178 ++++
-> > > >>>    include/linux/clk-provider.h                       |    2 +
-> > > >>>    28 files changed, 943 insertions(+), 1205 deletions(-)
-> > > >>>    create mode 100644
-> > > >>>    Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.
-> > > >>>    txt delete mode 100644 arch/arm/mach-s3c64xx/clock.c
-> > > >>>    create mode 100644 drivers/clk/samsung/clk-s3c64xx.c
-> > > >>>    create mode 100644
-> > > >>>    include/dt-bindings/clock/samsung,s3c64xx-clock.h
-> > > >> 
-> > > >> Basically, this series looks good to me, but I'm not sure how this
-> > > >> should be handled because of dependency with PWM cleanup and clk
-> > > >> stuff
-> > > >> in clk tree now...
-> > > > 
-> > > > Patches 1-3 can go into the clk tree. 4-6 should go through their
-> > > > respective trees.
-> > > > 
-> > > > If you want I can take 7&  8 through the clk tree.
-> > > > 
-> > > > Alternatively I can provide patches 1-3 in a separate stable topic
-> > > > branch for you to pull in as a dependency. We'll both merge that
-> > > > stable
-> > > > topic branch into our trees and you can make a note of it for the
-> > > > arm-soc folks.
-> > > 
-> > > Thanks for your quick response. Would be helpful to samsung tree if
-> > > you
-> > > could provide a separate stable topic branch what you suggested for
-> > > clk
-> > > stuff in this series.
-> > 
-> > git://git.linaro.org/people/mturquette/linux.git clk-next-s3c64xx
-> > 
-> > Topic branch contains patches 1-3 of this series on top of v3.11-rc2. I
-> > have already merged the same into the clk-next branch.
-> 
-> What about the dependency on PWM cleanup series? Patches 7-8 must be 
-> merged after them, otherwise there will be a regression, because the old 
-> PWM clocksource driver will be broken and so s3c64xx won't boot until 
-> moved to new one, which is done by mentioned series.
+Also note:
 
-Is this a question for me? I did not take patches 7 or 8 into clk-next.
-Sounds like those patches should go through Samsung tree into arm-soc,
-and perhaps be a late-applied branch to get the ordering right.
+On Tue, Aug 06, 2013 at 05:01:13PM +0530, Sachin Kamat wrote:
+> @@ -984,7 +984,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
 
-Regards,
-Mike
+For the declaration above...
 
-> 
-> Best regards,
-> Tomasz
+> -struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
+> +static struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
+
+And this one... __initdata should come just before the '=', not at the
+start, not in the middle and not before the variable.
+
+The reasoning is that with how you have it above, the attributes are
+applied to the structure.  You want to apply the attributes to the
+declaration instead, so it should come after the variable name.
+
+So, for example:
+
+	struct foo *foo __attribute__((section(".foo"))) = (void *)1;
+
+will place the "foo" variable into a section called ".foo", but:
+
+	struct __attribute__((section(".foo"))) foo *foo = (void *)1;
+
+will place "foo" into the normal .data section.
+
+So, the rule with variable declarations is that the __ specifiers we
+have as macros in the kernel always come after the variable name being
+declared and nowhere else.  We consider anywhere else buggy.
