@@ -1,84 +1,64 @@
-From: Cho KyongHo <pullip.cho@samsung.com>
-Subject: RE: [PATCH v8 06/12] ARM: dts: Add description of System MMU of Exynos
- SoCs
-Date: Wed, 07 Aug 2013 21:07:01 +0900
-Message-ID: <001b01ce9366$9f7427a0$de5c76e0$@samsung.com>
-References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
- <27536111.odlCO093Zi@amdc1032> <003c01ce91cd$427fad70$c77f0850$@samsung.com>
- <1429191.3FDem6vW0S@amdc1032> <002001ce928a$f5a7f390$e0f7dab0$@samsung.com>
- <5200F781.9020300@samsung.com>
- <CANEJEGtQuKG5err-R7SxD6m+aJWVmn47X9NJLx7UzaRkKhUMoQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH] [media] exynos-gsc: fix s2r functionality
+Date: Wed,  7 Aug 2013 18:23:04 +0530
+Message-ID: <1375879984-19052-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56983 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932544Ab3HGMHD (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:46191 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932738Ab3HGMwz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 08:07:03 -0400
-In-reply-to: <CANEJEGtQuKG5err-R7SxD6m+aJWVmn47X9NJLx7UzaRkKhUMoQ@mail.gmail.com>
-Content-language: ko
+	Wed, 7 Aug 2013 08:52:55 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Grant Grundler' <grundler@chromium.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, 'Hyunwoong Kim' <khw0178.kim@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Keyyoung Park' <keyyoung.park@samsung.com>, 'Antonios Motakis' <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, 'Sachin Kamat' <sachin.kamat@linaro.org>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, prathyush.k@samsung.com, arun.m@samsung.com, arunkk.samsung@gmail.com
 
-> -----Original Message-----
-> From: grundler@google.com [mailto:grundler@google.com] On Behalf Of Grant Grundler
-> Sent: Wednesday, August 07, 2013 1:07 AM
-> To: Marek Szyprowski
-> 
-> Hi Marek,
-> 
-> On Tue, Aug 6, 2013 at 6:17 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> ...
-> > IMHO it is much better to have a simple driver, which binds to a single
-> > IOMMU controller and leave it to the driver whether to have a same virtual address
-> > space for all parts of FIMC-IS or MFC submodules/memory ports or not.
-> 
-> I understand this part. I having written the IOMMU support for 4
-> different IOMMUs, all of which had exactly one IO Page Table and one
-> IOMMU shared by many devices.
-> 
-> > Just make sure that it will be possible to attach more than one sysmmu
-> > controller to one iommu domain.
-> 
-> I don't understand how this is possible. Can someone explain this
-> better in the IOMMU documentation please?
+From: Prathyush K <prathyush.k@samsung.com>
 
-System MMU is dedicated to a master H/W such as FIMD and FIMC.
-Thus, attaching a master H/W to an iommu domain can be thought as
-attaching a System MMU to an iommu domain even though such thinking
-is not correct view of the relationship between iommu domain and
-System MMU.
+When gsc is in runtime suspended state, there is no need to call
+m2m_suspend during suspend and similarily, there is no need to call
+m2m_resume during resume if already in runtime suspended state. This
+patch adds the necessary conditions to achieve this.
 
-> 
-> "iommu domain" to me means one virtual IO address space for attached
-> devices that can master DMA transactions. The IOMMU then uses it's IO
-> Page Table to translate the DMA address to the system physical address
-> space and forwards the transaction.
-> 
-> What is the role of the sysmmu in all of this?
-> Is the sysmmu just the MMU (or collection of MMU) for host DRAM?
-> Or is sysmmu responsible for "other stuff"? (clocks, power domains, MMU, etc)
-> 
-System MMU is responsible for address translation of traffic from a
-master H/W which the System MMU is dedicated to.
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+Signed-off-by: Arun Mankuzhi <arun.m@samsung.com>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+ drivers/media/platform/exynos-gsc/gsc-core.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-> I can understand we might have multiple MMUs in a system...e.g. every
-> range of memory might have it's own MMU. But they share the same
-> physical address space and generally live under one page table.
-> Because of "one page table" I would consider them one entity from the
-> the IOMMUs perspective.
-
-Sorry, I don't understand.
-Do you mean you are thinking that it is better to share one page table
-by all IOMMUs in a system?
-
-Thank you,
-KyongHo
-> 
-> thanks,
-> grant
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 559fab2..fe69eae 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -1210,12 +1210,12 @@ static int gsc_resume(struct device *dev)
+ 		spin_unlock_irqrestore(&gsc->slock, flags);
+ 		return 0;
+ 	}
+-	gsc_hw_set_sw_reset(gsc);
+-	gsc_wait_reset(gsc);
+-
+ 	spin_unlock_irqrestore(&gsc->slock, flags);
+ 
+-	return gsc_m2m_resume(gsc);
++	if (!pm_runtime_suspended(dev))
++		return gsc_runtime_resume(dev);
++
++	return 0;
+ }
+ 
+ static int gsc_suspend(struct device *dev)
+@@ -1227,7 +1227,10 @@ static int gsc_suspend(struct device *dev)
+ 	if (test_and_set_bit(ST_SUSPEND, &gsc->state))
+ 		return 0;
+ 
+-	return gsc_m2m_suspend(gsc);
++	if (!pm_runtime_suspended(dev))
++		return gsc_runtime_suspend(dev);
++
++	return 0;
+ }
+ 
+ static const struct dev_pm_ops gsc_pm_ops = {
+-- 
+1.7.9.5
