@@ -1,61 +1,97 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V3 6/7] ASoC: Samsung: wm8994: Register the osc clock.
-Date: Wed, 7 Aug 2013 16:28:59 +0100
-Message-ID: <20130807152859.GD6427@sirena.org.uk>
-References: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
- <1375866616-5541-7-git-send-email-padma.v@samsung.com>
- <1445367.zmBep3Ocuo@amdc1227>
+From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v8 06/12] ARM: dts: Add description of System MMU of
+	Exynos SoCs
+Date: Wed, 7 Aug 2013 09:21:07 -0700
+Message-ID: <CANEJEGtDm6FYvx8DdiGofk5ViU8kWK-3QvTvtU66Mvhfn+sDCQ@mail.gmail.com>
+References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
+	<27536111.odlCO093Zi@amdc1032>
+	<003c01ce91cd$427fad70$c77f0850$@samsung.com>
+	<1429191.3FDem6vW0S@amdc1032>
+	<002001ce928a$f5a7f390$e0f7dab0$@samsung.com>
+	<5200F781.9020300@samsung.com>
+	<CANEJEGtQuKG5err-R7SxD6m+aJWVmn47X9NJLx7UzaRkKhUMoQ@mail.gmail.com>
+	<001b01ce9366$9f7427a0$de5c76e0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Q4+B1pX2h4duw/kc"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:45135 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754072Ab3HGP3U (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 11:29:20 -0400
-Content-Disposition: inline
-In-Reply-To: <1445367.zmBep3Ocuo@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <001b01ce9366$9f7427a0$de5c76e0$@samsung.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hyunwoong Kim <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Keyyoung Park <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
+
+On Wed, Aug 7, 2013 at 5:07 AM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+...
+>> I don't understand how this is possible. Can someone explain this
+>> better in the IOMMU documentation please?
+>
+> System MMU is dedicated to a master H/W such as FIMD and FIMC.
+
+Sory - Exynos 5250 documentation I have (confidential version) uses
+FIMD and FIMC but never explains what they are nor identifies them in
+a diagram. Based on the references, they are related to the video
+mixer but I don't know exactly what function FIMD/FIMC serve.
 
 
---Q4+B1pX2h4duw/kc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Thus, attaching a master H/W to an iommu domain can be thought as
+> attaching a System MMU to an iommu domain even though such thinking
+> is not correct view of the relationship between iommu domain and
+> System MMU.
 
-On Wed, Aug 07, 2013 at 05:18:10PM +0200, Tomasz Figa wrote:
+This almost makes sense. I understand the above to mean the System MMU
+is a proxy for the FIMD and FIMC.
 
-> I don't think this patch is needed at all. You can use generic fixed rate=
-=20
-> clock bindings[1] to define a fixed rate clock using device tree.
+>> I can understand we might have multiple MMUs in a system...e.g. every
+>> range of memory might have it's own MMU. But they share the same
+>> physical address space and generally live under one page table.
+>> Because of "one page table" I would consider them one entity from the
+>> the IOMMUs perspective.
+>
+> Sorry, I don't understand.
+> Do you mean you are thinking that it is better to share one page table
+> by all IOMMUs in a system?
 
-OK, good - that's what I'd have expected but I wasn't sure if that
-hadn't been defined for some reason.
+No. This is how the previous IOMMUs I worked on functioned. It doesn't
+mean this is how current ones should.
 
---Q4+B1pX2h4duw/kc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+My example above was referring to CPU MMUs in the case of NUMA
+architectures. Each NUMA CPU socket can have it's own MMU (and TLB)
+and corresponding memory controller. All CPUs in an SMP system map
+process and kernel virtual addresses to one common "physical" address
+space. This means allocation and use of "physical address space" has
+to be managed as one entity (even if several page tables exist in the
+implementation - e.g. NUMA).
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSAme4AAoJELSic+t+oim9kcMP/1xrjUPTZH/3sBOkvtdlYlUR
-pMQY0J+cThx2snx7YxV0iUN4cdq++YYHsfRb8jDJJcrP95S5xQqU6r+kKJ22bOkV
-kEBd9Jh2kyn7/KgKPQ54/gtQVdiocIvraV9+78Rk1dkIPDbphZv2pJiT1wXK9IN4
-pU7LdOfcjuD0kbY7z4sR58uim3/VzB9ZOASYdk6TBhGc+UidE6s3kv/TuwmB+5En
-pa35N/Og8kgKFWvwiIbbi41fLwBHmJkXJmtlrfk3b/XdinEILIm7xnXCwwZ/E0T1
-/7BI3HrPuMrIjBRxe6fQGUsU6Nb3HYRXmbmIef/0bq2P8Zr8BFe1c782bMqSV+V6
-GRGOCJJaaOxrXUOvgdbFltL3fFN2rUL/w2Whk1yP8AMjVUOUuOx/2CckOld6SaaD
-L0UBwKBhMzj9n684Lx0gemFF6IN0vBqX1aPJmxWzlsDYxstwTq/NO9u0uZAS7iYE
-hl1n6zPdWYrt3bndx063iYKIL0NbMDt+JNZwE6Ggn8VWChMcCl36V6w66OAPR5Pg
-U3Os1krUwrdUCYMNzx1Voe/GOwVOvZwgFo1C5HKk+2K5cpzoVWNel0HtwvcaxlFX
-75OBA0C+p58cv+9wpzU/esegq2eeuZGWzAvMtZPJDmGYcjruaLN0VuytlXhuKY9d
-cze1VeMYVYVIq8zHLBC7
-=5dKq
------END PGP SIGNATURE-----
+Back to the original comment that started my question (pulled out of
+context now...sorry):
+   "Just make sure that it will be possible to attach more than one
+sysmmu controller to one iommu domain."
 
---Q4+B1pX2h4duw/kc--
+Does that mean the IOMMU now has to map to multiple "physical address
+spaces" or am I completely missing what a SysMMU does?
+
+The "SysMMU" is the System Memory Management Unit, right?
+
+I still thinking one IOMMU domain maps one (IO) virtual address space
+to one (common with CPU and other IOMMU) physical address space.
+
+cheers,
+grant
+
+>
+> Thank you,
+> KyongHo
+>>
+>> thanks,
+>> grant
+>
