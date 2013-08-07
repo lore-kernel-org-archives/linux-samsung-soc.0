@@ -1,56 +1,104 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 6/7] ASoC: Samsung: wm8994: Register the osc clock.
-Date: Wed, 7 Aug 2013 15:05:19 +0100
-Message-ID: <20130807140518.GB6427@sirena.org.uk>
-References: <1375865442-5323-1-git-send-email-padma.v@samsung.com>
- <1375865442-5323-10-git-send-email-padma.v@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH V3 3/7] ARM: dts: Add i2c bus 1 and it's audio codec child
+ node on smdk5420
+Date: Wed, 07 Aug 2013 17:11:37 +0200
+Message-ID: <1407261.xRZFWoXTos@amdc1227>
+References: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
+ <1375866616-5541-4-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AdjLlRqdF7kYRNze"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:41893 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933163Ab3HGOFg (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:40980 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755416Ab3HGPLl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 10:05:36 -0400
-Content-Disposition: inline
-In-Reply-To: <1375865442-5323-10-git-send-email-padma.v@samsung.com>
+	Wed, 7 Aug 2013 11:11:41 -0400
+In-reply-to: <1375866616-5541-4-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, broonie@kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
 
+On Wednesday 07 of August 2013 14:40:12 Padmavathi Venna wrote:
+> This patch adds i2c bus 1 and wm8994 codec node on i2c bus1 and the
+> required regulator supplies and properties on smdk5420 board.
+> 
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts |   58
+> +++++++++++++++++++++++++++++ 1 files changed, 58 insertions(+), 0
+> deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index d05de7a..e86c1ae
+> 100644
+> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+> @@ -68,4 +68,62 @@
+>  			bus-width = <4>;
+>  		};
+>  	};
+> +
+> +	avdd2: fixed-regulator@0 {
 
---AdjLlRqdF7kYRNze
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+@ suffix should be present only if reg property is present as well. 
+Otherwise a suffix separated with "-" should be used, like fixed-
+regulator-0.
 
-On Wed, Aug 07, 2013 at 02:20:41PM +0530, Padmavathi Venna wrote:
-> This patch registers the 16MHz oscillator clock as fixed clk.
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "avdd2-supply";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	cpvdd: fixed-regulator@1 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "cpvdd-supply";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	dbvdd: fixed-regulator@2 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "dbvdd-supply";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-always-on;
+> +	};
+> +
+> +	spkvdd: fixed-regulator@3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "spkvdd-supply";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		regulator-always-on;
+> +	};
 
-This appears to be the same as one of the patches in another series you
-sent?
+All these regulators should be made subnodes of a fixed-regulators node 
+aggregating all fixed regulators on the board, like on following example:
 
---AdjLlRqdF7kYRNze
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+	fixed-regulators {
+		avdd2: fixed-regulator-0 {
+			compatible = "regulator-fixed";
+			regulator-name = "avdd2-supply";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			regulator-always-on;
+		};
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+		cpvdd: fixed-regulator-1 {
+			compatible = "regulator-fixed";
+			regulator-name = "cpvdd-supply";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <1800000>;
+			regulator-always-on;
+		};
 
-iQIcBAEBAgAGBQJSAlQbAAoJELSic+t+oim9SYEP/A+U3NEYkHikI60rvJO+m3NJ
-Dham0Zg1p4+MuEZ5o51Ry3TXgd28ARDYmPjJCJx6z6POfTm/evDA/9c/MdFU9vz7
-EYqS5aWVjbS/aszYwBjAnrblYFXkWh4hN4xVkeUpDj1Fp11/EDY1l1SGz3ODxZDy
-7GWXdDJ14vtxS2BVQB8FdNZSi6LfAt9lP1QjkqOmJhEHhWXo8qKY769/UjE3qef8
-p9Kdy5+Sg5PrcD8RieY8nN3Qa5gS9M5tWjmEutG0GayhMJ3bKMy6JNIOgare/QSB
-g8odIUkBPLSVJeE/CicfQgnbjivxCboqVvnVCFh1sLrb+6KFwwfPneWZbpYlNbcn
-u947PTSf9piSkrdmIGQ+nmhsgVp6SjxS/RPzJk3sLPS8QROsGVx4xODwjpsdILK8
-HKfROKe5qIqox4WTOrbes04UbjlbvLbt69g843+0Q5EOOP5AF/Y3LEBOTGAvX13j
-impJ0jj4A8Aqmi0gHFEGz/Ao8VxgzqUB1i9P3hTTgdgxROE1xYrNp0eqPKepqGnL
-W/iuTaKVFE1CcGI2UA7B8qTaYxHer47nJfYVWHbfYuqSWRNKAF7b3L/2DtYIKbZd
-ohJRgR8v+tgLLgepGeERWQZPujHi5jknzkfSksmisKi9LAq5fCkXF8bWCDgQ1FhZ
-9HSGa9gONdGXZ1tyVVeW
-=V0rK
------END PGP SIGNATURE-----
+		/* ... */
+	};
 
---AdjLlRqdF7kYRNze--
+Best regards,
+Tomasz
