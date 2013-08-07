@@ -1,97 +1,87 @@
-From: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v8 06/12] ARM: dts: Add description of System MMU of
-	Exynos SoCs
-Date: Wed, 7 Aug 2013 09:21:07 -0700
-Message-ID: <CANEJEGtDm6FYvx8DdiGofk5ViU8kWK-3QvTvtU66Mvhfn+sDCQ@mail.gmail.com>
-References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
-	<27536111.odlCO093Zi@amdc1032>
-	<003c01ce91cd$427fad70$c77f0850$@samsung.com>
-	<1429191.3FDem6vW0S@amdc1032>
-	<002001ce928a$f5a7f390$e0f7dab0$@samsung.com>
-	<5200F781.9020300@samsung.com>
-	<CANEJEGtQuKG5err-R7SxD6m+aJWVmn47X9NJLx7UzaRkKhUMoQ@mail.gmail.com>
-	<001b01ce9366$9f7427a0$de5c76e0$@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register
+ handling
+Date: Wed, 7 Aug 2013 17:30:45 +0100
+Message-ID: <20130807163045.GK28558@e106331-lin.cambridge.arm.com>
+References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <001b01ce9366$9f7427a0$de5c76e0$@samsung.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hyunwoong Kim <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Keyyoung Park <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:43316 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757071Ab3HGQas (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Aug 2013 12:30:48 -0400
+Content-Disposition: inline
+In-Reply-To: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Julius Werner <jwerner@chromium.org>
+Cc: "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On Wed, Aug 7, 2013 at 5:07 AM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-...
->> I don't understand how this is possible. Can someone explain this
->> better in the IOMMU documentation please?
->
-> System MMU is dedicated to a master H/W such as FIMD and FIMC.
+On Tue, Aug 06, 2013 at 07:00:17PM +0100, Julius Werner wrote:
+> This patch simplifies the way the phy-samsung-usb code finds the correct
+> power management register to enable PHY clock gating. Previously, the
+> code would calculate the register address from a device tree supplied
+> base address and add an offset based on the PHY type.
+> 
+> Since every PHY has its own device tree entry and needs only one
+> register, we can just encode the address itself in the device tree and
+> remove the diffentiation in the code. The bitmask needed to specify the
+> bit within that register stays in place, allowing support for platforms
+> like s3c64xx that use different bits within the same register.
 
-Sory - Exynos 5250 documentation I have (confidential version) uses
-FIMD and FIMC but never explains what they are nor identifies them in
-a diagram. Based on the references, they are related to the video
-mixer but I don't know exactly what function FIMD/FIMC serve.
-
-
-> Thus, attaching a master H/W to an iommu domain can be thought as
-> attaching a System MMU to an iommu domain even though such thinking
-> is not correct view of the relationship between iommu domain and
-> System MMU.
-
-This almost makes sense. I understand the above to mean the System MMU
-is a proxy for the FIMD and FIMC.
-
->> I can understand we might have multiple MMUs in a system...e.g. every
->> range of memory might have it's own MMU. But they share the same
->> physical address space and generally live under one page table.
->> Because of "one page table" I would consider them one entity from the
->> the IOMMUs perspective.
->
-> Sorry, I don't understand.
-> Do you mean you are thinking that it is better to share one page table
-> by all IOMMUs in a system?
-
-No. This is how the previous IOMMUs I worked on functioned. It doesn't
-mean this is how current ones should.
-
-My example above was referring to CPU MMUs in the case of NUMA
-architectures. Each NUMA CPU socket can have it's own MMU (and TLB)
-and corresponding memory controller. All CPUs in an SMP system map
-process and kernel virtual addresses to one common "physical" address
-space. This means allocation and use of "physical address space" has
-to be managed as one entity (even if several page tables exist in the
-implementation - e.g. NUMA).
+This breaks compatibility, both for an old kernel and a new dt and a new
+kernel with an old dt. Is anyone using these bindings?
 
 
-Back to the original comment that started my question (pulled out of
-context now...sorry):
-   "Just make sure that it will be possible to attach more than one
-sysmmu controller to one iommu domain."
+> 
+> Signed-off-by: Julius Werner <jwerner@chromium.org>
+> ---
+>  .../devicetree/bindings/usb/samsung-usbphy.txt     | 26 +++++-----------------
+>  arch/arm/boot/dts/exynos5250.dtsi                  |  4 ++--
+>  drivers/usb/phy/phy-samsung-usb.c                  | 18 ++++-----------
+>  drivers/usb/phy/phy-samsung-usb.h                  | 23 +++++--------------
+>  drivers/usb/phy/phy-samsung-usb2.c                 | 11 ++++-----
+>  drivers/usb/phy/phy-samsung-usb3.c                 |  2 +-
+>  6 files changed, 22 insertions(+), 62 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+> index 33fd354..1cf9b68 100644
+> --- a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+> +++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+> @@ -34,14 +34,7 @@ Optional properties:
+>  - The child node 'usbphy-sys' to the node 'usbphy' is for the system controller
+>    interface for usb-phy. It should provide the following information required by
+>    usb-phy controller to control phy.
+> -  - reg : base physical address of PHY_CONTROL registers.
+> -	  The size of this register is the total sum of size of all PHY_CONTROL
+> -	  registers that the SoC has. For example, the size will be
+> -	  '0x4' in case we have only one PHY_CONTROL register (e.g.
+> -	  OTHERS register in S3C64XX or USB_PHY_CONTROL register in S5PV210)
+> -	  and, '0x8' in case we have two PHY_CONTROL registers (e.g.
+> -	  USBDEVICE_PHY_CONTROL and USBHOST_PHY_CONTROL registers in exynos4x).
+> -	  and so on.
+> +  - reg : address of PHY_CONTROL register for this PHY.
+>  
+>  Example:
+>   - Exynos4210
+> @@ -57,8 +50,8 @@ Example:
+>  		clock-names = "xusbxti", "otg";
+>  
+>  		usbphy-sys {
+> -			/* USB device and host PHY_CONTROL registers */
+> -			reg = <0x10020704 0x8>;
+> +			/* USB device PHY_CONTROL register */
+> +			reg = <0x10020704 0x4>;
+>  		};
+>  	};
+>  
 
-Does that mean the IOMMU now has to map to multiple "physical address
-spaces" or am I completely missing what a SysMMU does?
+Why are we describing fewer registers now? Are they described elsewhere?
 
-The "SysMMU" is the System Memory Management Unit, right?
+The dt should describe the device, not only the portion of it Linux
+wants to use right now.
 
-I still thinking one IOMMU domain maps one (IO) virtual address space
-to one (common with CPU and other IOMMU) physical address space.
-
-cheers,
-grant
-
->
-> Thank you,
-> KyongHo
->>
->> thanks,
->> grant
->
+Thanks,
+Mark.
