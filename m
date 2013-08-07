@@ -1,79 +1,58 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V3 6/7] ASoC: Samsung: wm8994: Register the osc clock.
-Date: Wed, 7 Aug 2013 11:10:24 +0100
-Message-ID: <20130807101024.GX6427@sirena.org.uk>
+Subject: Re: [PATCH V3 1/7] ARM: dts: Change i2s compatible string on
+ exynos5250
+Date: Wed, 7 Aug 2013 11:10:57 +0100
+Message-ID: <20130807101057.GY6427@sirena.org.uk>
 References: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
- <1375866616-5541-7-git-send-email-padma.v@samsung.com>
+ <1375866616-5541-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MTFjS3R2zZZVGaSB"
+	protocol="application/pgp-signature"; boundary="YPAu9GJT3m1iC0FS"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:38767 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:38774 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932292Ab3HGKLB (ORCPT
+	with ESMTP id S932292Ab3HGKLQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 06:11:01 -0400
+	Wed, 7 Aug 2013 06:11:16 -0400
 Content-Disposition: inline
-In-Reply-To: <1375866616-5541-7-git-send-email-padma.v@samsung.com>
+In-Reply-To: <1375866616-5541-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org, Mike Turquette <mturquette@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
 
 
---MTFjS3R2zZZVGaSB
+--YPAu9GJT3m1iC0FS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2013 at 02:40:15PM +0530, Padmavathi Venna wrote:
-> This patch registers the 16MHz oscillator clock as fixed clk.
+On Wed, Aug 07, 2013 at 02:40:10PM +0530, Padmavathi Venna wrote:
+> This patch removes quirks from i2s node and change the i2s
+> compatible names.
 
-> +/* 16.9MHz fixed oscillator clock */
-> +static void init_osc_clock(void)
-> +{
-> +	struct device_node *np;
-> +
-> +	np =3D of_find_compatible_node(NULL, NULL, "osc3_clk16mhz");
-> +	of_fixed_clk_setup(np);
-> +}
-> +
->  static int smdk_hw_params(struct snd_pcm_substream *substream,
->  	struct snd_pcm_hw_params *params)
->  {
-> @@ -173,6 +183,8 @@ static int smdk_audio_probe(struct platform_device *p=
-dev)
->  		smdk_dai[0].platform_of_node =3D smdk_dai[0].cpu_of_node;
->  	}
-> =20
-> +	init_osc_clock();
-> +
+This needs to go along with the driver change otherwise we break
+bisection.
 
-This doesn't seem great - it means that this machine driver needs to
-know about a specifically named fixed clock which makes it hard to reuse
-on other similar boards.  For example I'm intending to reuse this on
-Arndale.  Mike?
-
---MTFjS3R2zZZVGaSB
+--YPAu9GJT3m1iC0FS
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSAh0NAAoJELSic+t+oim9SDEQAIeNQ0spdBAT2P3S6IAPC/BB
-sa2jz0Anf1JYs+WEx15Ua2igj4WMdWJk0z+Ts3nTLzj4Yj2sFY/5unq+C4L+kmCx
-p7Zdr330yTntWEeFUo3sbpBk/GDoiy7BoxS7pntGBsB6VmsRS3a6kMkgM/+BKv5H
-nx141HQecMprVb4SJXn2b2cQA4KldLmrG+SZD0tjsu/0Pc0Fcx8Wz5wdGlyBFg9k
-qPOtC2uSRpRnhuonsOXnQLChX8t94XO0CfXgbzL4535nFDmfSODb1S54e6YyqAqW
-EGMbMomcVDiPWYoOJyx7vI1yOOatYvWyb638hQroYFtdlWCescaIjZ/kDI6mZSH2
-wc4xKkQAa3imSpVwuFEYuqcDslSOYOTH1xbqU4zYjPPaPGUKFAmP14qACYsXHbwe
-1T4hOB9a0f7n/ELdCsox9ua7PMhSWX96DVPPEo2XkySlclDvaxDGPJ0UPwF9ooQP
-kljw9qI1bzT3xKeJj/SRnIUR9HaT57g5ln2lBz4nPzh6Vg5sMJ/3peuXz++M7eed
-JawMAOOyNcUSWPaPmPAy3Bn8Uv/hmBlshq4wNS4DLs1Y1zRbLiNs/QmXwz80KMy7
-sdrj4oPefu3xfEVjlOY9+EDa/iSLPxGaIhaP1fbbgkIE5bDaK+s6GK1jpODAJ0KY
-DISjNyu1LHDu1hkbeLO+
-=22zb
+iQIcBAEBAgAGBQJSAh0uAAoJELSic+t+oim97V8P/0vqaTnFdJX7XwiG8s32oO5q
+RvzyWQxQeT9KX0eRDFXXzhJ2YoZNOx3kgbU2I8LNtufnd3BF/DIENFiSmDyJX87d
+44A9YWhmH9KtJcU6TbmhoealsEJa6ierCT5U50WDV9nASZm0Yf9sM2go9jNt7s+o
+r2wGwA12aOBAX2Dbmi7JoWZKme8HzBz2L8aMNrDvQ6WKuay/fOjmRLn8DrpoEDH1
++nmJrA0VmrkbVi+FloG+8fOJ1jqxNeCF7pTffcgDeM5+ibfSILVJVaJj/hR2Uexg
+7xmOMifG1hmTO+uypkVcbnikpwIZJIHOALsRXZhPt2i+FQAR8tPR7kiRyiyRuUFa
+L5gGOiyQ1ev+exNapLxkZmyd3v6ut4AvI/2hS8rzViOY3t7izJ/fh869CdIp7QBp
+dkoBnP+R1/dTd9eU+93xeFd6j38UFAhv6S/A3y2E+8URr+XjTt9llBNPfarPzcvo
+38VAcM0o4oWqS5G+BHuzO5SBVYDIjEFDHpk1VRX569mvDswT5MW08zfQKJxAQ+T8
+DhlV74OrlSxYDGGJuJHJZgBpzFiheAKbleM+VH8Xwuz7xTbJu5m2xIl8ysuO32rj
+TIqql+O8iD9KcgC0fAw3xYnYY+TPx4RWb3f1kH2iXbGbtZ69jvOId3Tx0r/wWZFI
+AnuAUgrBQGjdYPUQ9DpW
+=2DVT
 -----END PGP SIGNATURE-----
 
---MTFjS3R2zZZVGaSB--
+--YPAu9GJT3m1iC0FS--
