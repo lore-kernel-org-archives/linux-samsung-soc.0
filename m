@@ -1,45 +1,51 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH] cpufreq: exynos5440: Fix to skip when new frequency same as current
-Date: Wed,  7 Aug 2013 16:46:11 +0530
-Message-ID: <1375874171-16951-1-git-send-email-amit.daniel@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH V3 1/7] ARM: dts: Change i2s compatible string on exynos5250
+Date: Wed, 07 Aug 2013 13:17:42 +0200
+Message-ID: <1804681.fPhe9eeV1F@amdc1227>
+References: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
+ <20130807101057.GY6427@sirena.org.uk>
+ <CAAgF-Bcezj+QGm78Xpm2ahnMrZMqpcnLJaB5bbFyxJDGMTMrpA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f47.google.com ([209.85.160.47]:59931 "EHLO
-	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932434Ab3HGLQ3 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:29680 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757307Ab3HGLRp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 07:16:29 -0400
+	Wed, 7 Aug 2013 07:17:45 -0400
+In-reply-to: <CAAgF-Bcezj+QGm78Xpm2ahnMrZMqpcnLJaB5bbFyxJDGMTMrpA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, abrestic@chromium.org
 
-This patch fixes the issue of un-necessary setting the clock controller
-when the new target frequency is same as the current one. This case usually
-occurs with governors like ondemand which passes the target frequency as the
-percentage of average frequency. This check is present in most of the cpufreq
-driver.
+On Wednesday 07 of August 2013 16:02:16 Padma Venkat wrote:
+> Hi Mark,
+> 
+> On Wed, Aug 7, 2013 at 3:40 PM, Mark Brown <broonie@kernel.org> wrote:
+> > On Wed, Aug 07, 2013 at 02:40:10PM +0530, Padmavathi Venna wrote:
+> >> This patch removes quirks from i2s node and change the i2s
+> >> compatible names.
+> > 
+> > This needs to go along with the driver change otherwise we break
+> > bisection.
+> 
+> some of the patches at dts side are dependent on this patch. So I
+> separated it into another set. Should I re-post this patch along with
+> other driver side patches?
 
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Rafael J. Wysocki <rjw@sisk.pl>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
- drivers/cpufreq/exynos5440-cpufreq.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+I fully agree with Mark. There are 2 ways of solving this:
 
-diff --git a/drivers/cpufreq/exynos5440-cpufreq.c b/drivers/cpufreq/exynos5440-cpufreq.c
-index 0c74018..d514c15 100644
---- a/drivers/cpufreq/exynos5440-cpufreq.c
-+++ b/drivers/cpufreq/exynos5440-cpufreq.c
-@@ -238,6 +238,9 @@ static int exynos_target(struct cpufreq_policy *policy,
- 	freqs.old = dvfs_info->cur_frequency;
- 	freqs.new = freq_table[index].frequency;
- 
-+	if (freqs.old == freqs.new)
-+		goto out;
-+
- 	cpufreq_notify_transition(policy, &freqs, CPUFREQ_PRECHANGE);
- 
- 	/* Set the target frequency in all C0_3_PSTATE register */
--- 
-1.7.1
+a) Do things in steps that don't break anything, i.e.:
+	1) add new bindings to the driver,
+	2) update DTS files,
+	3) remove old bindings from the driver.
+
+b) Do all the things above atomically, in one patch.
+
+Personally, I'm a fan of method a), but if it requires much effort then 
+method b) can be used as a fallback.
+
+Best regards,
+Tomasz
