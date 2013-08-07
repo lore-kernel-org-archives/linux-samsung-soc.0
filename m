@@ -1,53 +1,65 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 2/4] mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
-Date: Wed, 07 Aug 2013 00:20:19 +0200
-Message-ID: <4664300.eCYx009QLm@flatron>
-References: <1373470926-19314-1-git-send-email-dianders@chromium.org> <19655139.gpQFe0oLNI@flatron> <CAD=FV=W3kxkwHGoWE5YsztW7NNOYQCy6yFwNJQDaTFx=58cgbA@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/3] clk: exynos4: Make exynos4_plls static
+Date: Wed, 7 Aug 2013 08:51:49 +0530
+Message-ID: <CAK9yfHxKn9JaA5Tbuw9qXeyEX_kio4mt3gOgJxkMNSoDHkHnBQ@mail.gmail.com>
+References: <1375788675-2638-1-git-send-email-sachin.kamat@linaro.org>
+	<20130806200219.GD23006@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=W3kxkwHGoWE5YsztW7NNOYQCy6yFwNJQDaTFx=58cgbA@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Chris Ball <cjb@laptop.org>, Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:38316 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756894Ab3HGDVu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Aug 2013 23:21:50 -0400
+Received: by mail-oa0-f42.google.com with SMTP id i18so2395932oag.29
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Aug 2013 20:21:49 -0700 (PDT)
+In-Reply-To: <20130806200219.GD23006@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, mturquette@linaro.org, patches@linaro.org, Joe Perches <joe@perches.com>
 
-On Tuesday 06 of August 2013 15:09:46 Doug Anderson wrote:
-> Tomasz,
-> 
-> On Tue, Aug 6, 2013 at 2:58 PM, Tomasz Figa <tomasz.figa@gmail.com> 
-wrote:
-> >> +static int dw_mci_exynos_resume_noirq(struct device *dev)
-> >> +{
-> >> +     struct dw_mci *host = dev_get_drvdata(dev);
-> >> +     u32 clksel;
-> >> +
-> >> +     clksel = mci_readl(host, CLKSEL);
-> >> +     if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
-> >> +             mci_writel(host, CLKSEL, clksel);
-> > 
-> > What about clock gating? Will the clock used for clocking this
-> > register be always enabled when this gets called?
-> 
-> Since this is just accessing and writing a register in the "Mobile
-> Storage Host" block, I'd imagine that this should be the "biu" (bus
-> interface unit) clock, right?  The dw_mmc code grabs the biu clock at
-> probe time and never lets it go.  That means that we're OK as long as
-> common clock framework has already restored clocks to normal operation
-> by this time.
-> 
-> Do you think that common clock framework might not have put the clocks
-> back into order by the time "noirq" callbacks are executed?
++CC Joe Perches
 
-Ahh, so the dw_mmc driver doesn't do any clock gating? This is not very 
-nice of it.
+On 7 August 2013 01:32, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
+> Also note:
+>
+> On Tue, Aug 06, 2013 at 05:01:13PM +0530, Sachin Kamat wrote:
+>> @@ -984,7 +984,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
+>
+> For the declaration above...
+>
+>> -struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
+>> +static struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
+>
+> And this one... __initdata should come just before the '=', not at the
+> start, not in the middle and not before the variable.
+>
+> The reasoning is that with how you have it above, the attributes are
+> applied to the structure.  You want to apply the attributes to the
+> declaration instead, so it should come after the variable name.
+>
+> So, for example:
+>
+>         struct foo *foo __attribute__((section(".foo"))) = (void *)1;
+>
+> will place the "foo" variable into a section called ".foo", but:
+>
+>         struct __attribute__((section(".foo"))) foo *foo = (void *)1;
+>
+> will place "foo" into the normal .data section.
+>
+> So, the rule with variable declarations is that the __ specifiers we
+> have as macros in the kernel always come after the variable name being
+> declared and nowhere else.  We consider anywhere else buggy.
 
-Well, in this case your patch is OK, but possibly some clock gating will 
-have to be added to this driver at some point of time. Anyway:
+Thanks for this useful tip, Russell. There are several instances in
+the kernel where these attributes are used at the beginning of the
+variable declaration.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Probably it would be useful to add this to checkpatch. Joe?
 
-Best regards,
-Tomasz
-
+-- 
+With warm regards,
+Sachin
