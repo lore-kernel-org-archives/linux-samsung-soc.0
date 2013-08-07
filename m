@@ -1,72 +1,107 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 1/3] clk: exynos4: Make exynos4_plls static
-Date: Tue, 06 Aug 2013 20:37:28 -0700
-Message-ID: <1375846648.2424.69.camel@joe-AO722>
-References: <1375788675-2638-1-git-send-email-sachin.kamat@linaro.org>
-	 <20130806200219.GD23006@n2100.arm.linux.org.uk>
-	 <CAK9yfHxKn9JaA5Tbuw9qXeyEX_kio4mt3gOgJxkMNSoDHkHnBQ@mail.gmail.com>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH v4] drm/exynos: Add fallback option to get non physically
+ contiguous memory for fb
+Date: Wed, 7 Aug 2013 09:41:12 +0530
+Message-ID: <CAGm_ybhocw7WhVfV9FVP-H9M6sh6-6vfiZD+d50eN9kbthRa4w@mail.gmail.com>
+References: <1375789924-10515-1-git-send-email-vikas.sajjan@linaro.org>
+	<CAK9yfHya4a2Wxofs8wMpkgY5MWxqpseL65u9QqOLuVb2a_26LA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perches-mx.perches.com ([206.117.179.246]:45493 "EHLO
-	labridge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1756945Ab3HGDha (ORCPT
+Received: from mail-we0-f179.google.com ([74.125.82.179]:35202 "EHLO
+	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751449Ab3HGELN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Aug 2013 23:37:30 -0400
-In-Reply-To: <CAK9yfHxKn9JaA5Tbuw9qXeyEX_kio4mt3gOgJxkMNSoDHkHnBQ@mail.gmail.com>
+	Wed, 7 Aug 2013 00:11:13 -0400
+Received: by mail-we0-f179.google.com with SMTP id t57so1066324wes.24
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Aug 2013 21:11:12 -0700 (PDT)
+In-Reply-To: <CAK9yfHya4a2Wxofs8wMpkgY5MWxqpseL65u9QqOLuVb2a_26LA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, mturquette@linaro.org, patches@linaro.org
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kukjin Kim <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, s.nawrocki@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Clark <robdclark@gmail.com>, arun.kk@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>
 
-On Wed, 2013-08-07 at 08:51 +0530, Sachin Kamat wrote:
-> +CC Joe Perches
-> 
-> On 7 August 2013 01:32, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> > Also note:
-> >
-> > On Tue, Aug 06, 2013 at 05:01:13PM +0530, Sachin Kamat wrote:
-> >> @@ -984,7 +984,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
-> >
-> > For the declaration above...
-> >
-> >> -struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
-> >> +static struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
-> >
-> > And this one... __initdata should come just before the '=', not at the
-> > start, not in the middle and not before the variable.
-> >
-> > The reasoning is that with how you have it above, the attributes are
-> > applied to the structure.  You want to apply the attributes to the
-> > declaration instead, so it should come after the variable name.
-> >
-> > So, for example:
-> >
-> >         struct foo *foo __attribute__((section(".foo"))) = (void *)1;
-> >
-> > will place the "foo" variable into a section called ".foo", but:
-> >
-> >         struct __attribute__((section(".foo"))) foo *foo = (void *)1;
-> >
-> > will place "foo" into the normal .data section.
-> >
-> > So, the rule with variable declarations is that the __ specifiers we
-> > have as macros in the kernel always come after the variable name being
-> > declared and nowhere else.  We consider anywhere else buggy.
-> 
-> Thanks for this useful tip, Russell. There are several instances in
-> the kernel where these attributes are used at the beginning of the
-> variable declaration.
-> 
-> Probably it would be useful to add this to checkpatch. Joe?
+Hi Inki,
 
-I think Russell is using the royal "We".
+On Tue, Aug 6, 2013 at 5:27 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 6 August 2013 17:22, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+>> While trying to get boot-logo up on exynos5420 SMDK which has eDP panel
+>> connected with resolution 2560x1600, following error occured even with
+>> IOMMU enabled:
+>> [0.880000] [drm:lowlevel_buffer_allocate] *ERROR* failed to allocate buffer.
+>> [0.890000] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+>>
+>> To address the cases where physically contiguous memory MAY NOT be a
+>> mandatory requirement for fb, the patch adds a feature to get non physically
+>> contiguous memory for fb if physically contiguous memory allocation fails
+>> and if IOMMU is supported.
+>>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+>> Signed-off-by: Arun Kumar <arun.kk@samsung.com>
+>> Reviewed-by: Rob Clark <robdclark@gmail.com>
+>> ---
+>> changes since v3:
+>>         - addressed nits pointed out by Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>         and Sachin Kamat <sachin.kamat@linaro.org>.
+>>
+>> changes since v2:
+>>         - addressed comments given by Tomasz Figa <tomasz.figa@gmail.com>.
+>>
+>> changes since v1:
+>>          - Modified to add the fallback patch if CONTIG alloc fails as suggested
+>>          by Rob Clark robdclark@gmail.com and Tomasz Figa <tomasz.figa@gmail.com>.
+>>
+>>          - changed the commit message.
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_fbdev.c |   15 +++++++++++++--
+>>  1 file changed, 13 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> index 8e60bd6..5292fc7 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+>> @@ -16,6 +16,7 @@
+>>  #include <drm/drm_crtc.h>
+>>  #include <drm/drm_fb_helper.h>
+>>  #include <drm/drm_crtc_helper.h>
+>> +#include <drm/exynos_drm.h>
+>>
+>>  #include "exynos_drm_drv.h"
+>>  #include "exynos_drm_fb.h"
+>> @@ -165,8 +166,18 @@ static int exynos_drm_fbdev_create(struct drm_fb_helper *helper,
+>>
+>>         size = mode_cmd.pitches[0] * mode_cmd.height;
+>>
+>> -       /* 0 means to allocate physically continuous memory */
+>> -       exynos_gem_obj = exynos_drm_gem_create(dev, 0, size);
+>> +       exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG, size);
+>> +       /*
+>> +        * If physically contiguous memory allocation fails and if IOMMU is
+>> +        * supported then try to get buffer from non physically contiguous
+>> +        * memory area.
+>> +        */
+>> +       if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
+>> +               dev_warn(&pdev->dev, "contiguous FB allocation failed, falling back to non-contiguous\n");
+>> +               exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_NONCONTIG,
+>> +                                                       size);
+>> +       }
+>> +
+>>         if (IS_ERR(exynos_gem_obj)) {
+>>                 ret = PTR_ERR(exynos_gem_obj);
+>>                 goto err_release_framebuffer;
+>> --
+>> 1.7.9.5
+>
+> Looks good to me.
+>
 
-http://en.wikipedia.org/wiki/Majestic_plural
+Can you apply this patch.
 
-There's no way for checkpatch to look at an __<foo> use
-and determine it should be before or after a variable.
 
-__scanf, __printf, __cold, etc are often place before
-declarations.
+> --
+> With warm regards,
+> Sachin
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
