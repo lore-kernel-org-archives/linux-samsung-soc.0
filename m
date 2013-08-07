@@ -1,55 +1,63 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V3 5/7] ARM: dts: Add osc clock node on smdk5420.
-Date: Wed, 07 Aug 2013 14:40:14 +0530
-Message-ID: <1375866616-5541-6-git-send-email-padma.v@samsung.com>
+Subject: [PATCH V3 6/7] ASoC: Samsung: wm8994: Register the osc clock.
+Date: Wed, 07 Aug 2013 14:40:15 +0530
+Message-ID: <1375866616-5541-7-git-send-email-padma.v@samsung.com>
 References: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:32093 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932194Ab3HGJIv (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:44940 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757345Ab3HGJI6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 05:08:51 -0400
+	Wed, 7 Aug 2013 05:08:58 -0400
 In-reply-to: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
 Cc: broonie@kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
 
-This patch adds 16MHz oscillator clock node required for audio
-on smdk5420 and adds the phandle of the same in wm8994 clock info.
+This patch registers the 16MHz oscillator clock as fixed clk.
 
 Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420-smdk5420.dts |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+ sound/soc/samsung/smdk_wm8994.c |   12 ++++++++++++
+ 1 files changed, 12 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index e86c1ae..3c56a91 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -31,6 +31,13 @@
- 		};
- 	};
+diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
+index 581ea4a..a6edded 100644
+--- a/sound/soc/samsung/smdk_wm8994.c
++++ b/sound/soc/samsung/smdk_wm8994.c
+@@ -9,6 +9,7 @@
  
-+	osc3_clk16mhz: clk16mhz {
-+		compatible = "osc3_clk16mhz";
-+		#clock-cells = <0>;
-+		clock-frequency = <16934400>;
-+		clock-output-names = "osc3_clk16mhz";
-+	};
-+
- 	dwmmc0@12200000 {
- 		status = "okay";
- 		num-slots = <1>;
-@@ -123,6 +130,9 @@
- 			DBVDD-supply = <&dbvdd>;
- 			SPKVDD1-supply = <&spkvdd>;
- 			SPKVDD2-supply = <&spkvdd>;
-+
-+			clocks = <&osc3_clk16mhz>;
-+			clock-names = "mclk1";
- 		};
- 	};
+ #include "../codecs/wm8994.h"
+ #include <sound/pcm_params.h>
++#include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
  
+@@ -37,6 +38,15 @@
+ /* SMDK has a 16.934MHZ crystal attached to WM8994 */
+ #define SMDK_WM8994_FREQ 16934000
+ 
++/* 16.9MHz fixed oscillator clock */
++static void init_osc_clock(void)
++{
++	struct device_node *np;
++
++	np = of_find_compatible_node(NULL, NULL, "osc3_clk16mhz");
++	of_fixed_clk_setup(np);
++}
++
+ static int smdk_hw_params(struct snd_pcm_substream *substream,
+ 	struct snd_pcm_hw_params *params)
+ {
+@@ -173,6 +183,8 @@ static int smdk_audio_probe(struct platform_device *pdev)
+ 		smdk_dai[0].platform_of_node = smdk_dai[0].cpu_of_node;
+ 	}
+ 
++	init_osc_clock();
++
+ 	ret = snd_soc_register_card(card);
+ 
+ 	if (ret)
 -- 
 1.7.4.4
