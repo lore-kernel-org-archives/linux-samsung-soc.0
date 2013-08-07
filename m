@@ -1,51 +1,31 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V3 1/7] ARM: dts: Change i2s compatible string on exynos5250
-Date: Wed, 07 Aug 2013 13:17:42 +0200
-Message-ID: <1804681.fPhe9eeV1F@amdc1227>
-References: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
- <20130807101057.GY6427@sirena.org.uk>
- <CAAgF-Bcezj+QGm78Xpm2ahnMrZMqpcnLJaB5bbFyxJDGMTMrpA@mail.gmail.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: exynos5440: Fix to skip when new frequency same
+ as current
+Date: Wed, 7 Aug 2013 16:52:34 +0530
+Message-ID: <CAKohpokp04HXau1fOA6w9K675LwRw6uCCZZKyFAJtF1_pkcC=Q@mail.gmail.com>
+References: <1375874171-16951-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:29680 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757307Ab3HGLRp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 07:17:45 -0400
-In-reply-to: <CAAgF-Bcezj+QGm78Xpm2ahnMrZMqpcnLJaB5bbFyxJDGMTMrpA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1375874171-16951-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, abrestic@chromium.org
 
-On Wednesday 07 of August 2013 16:02:16 Padma Venkat wrote:
-> Hi Mark,
-> 
-> On Wed, Aug 7, 2013 at 3:40 PM, Mark Brown <broonie@kernel.org> wrote:
-> > On Wed, Aug 07, 2013 at 02:40:10PM +0530, Padmavathi Venna wrote:
-> >> This patch removes quirks from i2s node and change the i2s
-> >> compatible names.
-> > 
-> > This needs to go along with the driver change otherwise we break
-> > bisection.
-> 
-> some of the patches at dts side are dependent on this patch. So I
-> separated it into another set. Should I re-post this patch along with
-> other driver side patches?
+On 7 August 2013 16:46, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
+> This patch fixes the issue of un-necessary setting the clock controller
+> when the new target frequency is same as the current one. This case usually
+> occurs with governors like ondemand which passes the target frequency as the
+> percentage of average frequency. This check is present in most of the cpufreq
+> driver.
+>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+>  drivers/cpufreq/exynos5440-cpufreq.c |    3 +++
+>  1 files changed, 3 insertions(+), 0 deletions(-)
 
-I fully agree with Mark. There are 2 ways of solving this:
-
-a) Do things in steps that don't break anything, i.e.:
-	1) add new bindings to the driver,
-	2) update DTS files,
-	3) remove old bindings from the driver.
-
-b) Do all the things above atomically, in one patch.
-
-Personally, I'm a fan of method a), but if it requires much effort then 
-method b) can be used as a fallback.
-
-Best regards,
-Tomasz
+Applied.
