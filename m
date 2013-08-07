@@ -1,63 +1,83 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V3 6/7] ASoC: Samsung: wm8994: Register the osc clock.
-Date: Wed, 07 Aug 2013 14:40:15 +0530
-Message-ID: <1375866616-5541-7-git-send-email-padma.v@samsung.com>
-References: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44940 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757345Ab3HGJI6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 05:08:58 -0400
-In-reply-to: <1375866616-5541-1-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH V5 17/30] thermal: exynos: Remove non DT based support
+Date: Wed, 7 Aug 2013 14:53:40 +0530
+Message-ID: <CAHfPSqAqUbm8=Y3jj8T7M3+yjkQO2WfB9mnP4YN=eSzYPt+fgA@mail.gmail.com>
+References: <1370955220-2949-1-git-send-email-amit.daniel@samsung.com> <1370955220-2949-18-git-send-email-amit.daniel@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1370955220-2949-18-git-send-email-amit.daniel@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.kachhap@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, jonghwa3.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: broonie@kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
 
-This patch registers the 16MHz oscillator clock as fixed clk.
+On 11 June 2013 18:23, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
+> Recently non DT support from Exynos platform is removed and hence
+> removing non DT support from the driver also. This will help in easy
+> maintainence.
+>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Hello Amit,
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- sound/soc/samsung/smdk_wm8994.c |   12 ++++++++++++
- 1 files changed, 12 insertions(+), 0 deletions(-)
+When you remove the non-DT support why have the #ifdef CONFIG_OF in the driver
+instead make the dependency in Kconfig itself.
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c |   17 +----------------
+>  1 files changed, 1 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index acbd295..4356118 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -403,19 +403,6 @@ static const struct of_device_id exynos_tmu_match[] = {
+>  MODULE_DEVICE_TABLE(of, exynos_tmu_match);
+>  #endif
+>
+> -static struct platform_device_id exynos_tmu_driver_ids[] = {
+> -       {
+> -               .name           = "exynos4210-tmu",
+> -               .driver_data    = (kernel_ulong_t)EXYNOS4210_TMU_DRV_DATA,
+> -       },
+> -       {
+> -               .name           = "exynos5250-tmu",
+> -               .driver_data    = (kernel_ulong_t)EXYNOS5250_TMU_DRV_DATA,
+> -       },
+> -       { },
+> -};
+> -MODULE_DEVICE_TABLE(platform, exynos_tmu_driver_ids);
+> -
+>  static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
+>                         struct platform_device *pdev)
+>  {
+> @@ -428,8 +415,7 @@ static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
+>                 return (struct exynos_tmu_platform_data *) match->data;
+>         }
+>  #endif
+> -       return (struct exynos_tmu_platform_data *)
+> -                       platform_get_device_id(pdev)->driver_data;
+> +       return NULL;
+>  }
+>
+>  static int exynos_tmu_probe(struct platform_device *pdev)
+> @@ -586,7 +572,6 @@ static struct platform_driver exynos_tmu_driver = {
+>         },
+>         .probe = exynos_tmu_probe,
+>         .remove = exynos_tmu_remove,
+> -       .id_table = exynos_tmu_driver_ids,
+>  };
+>
+>  module_platform_driver(exynos_tmu_driver);
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
-index 581ea4a..a6edded 100644
---- a/sound/soc/samsung/smdk_wm8994.c
-+++ b/sound/soc/samsung/smdk_wm8994.c
-@@ -9,6 +9,7 @@
- 
- #include "../codecs/wm8994.h"
- #include <sound/pcm_params.h>
-+#include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/of.h>
- 
-@@ -37,6 +38,15 @@
- /* SMDK has a 16.934MHZ crystal attached to WM8994 */
- #define SMDK_WM8994_FREQ 16934000
- 
-+/* 16.9MHz fixed oscillator clock */
-+static void init_osc_clock(void)
-+{
-+	struct device_node *np;
-+
-+	np = of_find_compatible_node(NULL, NULL, "osc3_clk16mhz");
-+	of_fixed_clk_setup(np);
-+}
-+
- static int smdk_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_pcm_hw_params *params)
- {
-@@ -173,6 +183,8 @@ static int smdk_audio_probe(struct platform_device *pdev)
- 		smdk_dai[0].platform_of_node = smdk_dai[0].cpu_of_node;
- 	}
- 
-+	init_osc_clock();
-+
- 	ret = snd_soc_register_card(card);
- 
- 	if (ret)
+
+
 -- 
-1.7.4.4
+Shine bright,
+(: Nav :)
