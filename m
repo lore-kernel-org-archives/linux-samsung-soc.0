@@ -1,52 +1,47 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v6 13/20] pwm: Add new pwm-samsung driver
-Date: Wed, 07 Aug 2013 21:49:33 +0200
-Message-ID: <4144776.HcbubHMX0J@flatron>
-References: <1374278673-25615-1-git-send-email-tomasz.figa@gmail.com> <1374623475.SoL01ZHzWk@flatron> <CAL1qeaF1Mxs_Q6QnLznW3SoXBoNhBb+gCYMESMgx6g+bUFVCmQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] cpufreq: exynos5440: Fix to skip when new frequency same as current
+Date: Thu, 08 Aug 2013 01:25:08 +0200
+Message-ID: <2331427.ybQdfvflPh@vostro.rjw.lan>
+References: <1375874171-16951-1-git-send-email-amit.daniel@samsung.com> <52022FC2.2010109@arm.com> <CAKohpom0gPk9BXRP2eEuX_HBXDut=wynrZfvOH1tcEQY6CMLNQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f54.google.com ([209.85.214.54]:42322 "EHLO
-	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932111Ab3HGTtl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 15:49:41 -0400
-In-Reply-To: <CAL1qeaF1Mxs_Q6QnLznW3SoXBoNhBb+gCYMESMgx6g+bUFVCmQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAKohpom0gPk9BXRP2eEuX_HBXDut=wynrZfvOH1tcEQY6CMLNQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Sudeep KarkadaNagesha <Sudeep.KarkadaNagesha@arm.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-pwm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 
-On Wednesday 07 of August 2013 12:35:42 Andrew Bresticker wrote:
-> Hi Tomasz,
+On Wednesday, August 07, 2013 05:03:59 PM Viresh Kumar wrote:
+> On 7 August 2013 17:00, Sudeep KarkadaNagesha
+> <Sudeep.KarkadaNagesha@arm.com> wrote:
+> > Any particular reason we need this check in all drivers after your
+> > commit: 5a1c0228 "cpufreq: Avoid calling cpufreq driver's target()
+> > routine if target_freq == policy->cur"
+> >
+> > I think it can removed from all drivers, am I missing something ?
 > 
-> > +#ifndef CONFIG_CLKSRC_SAMSUNG_PWM
-> > +/*
-> > + * PWM block is shared between pwm-samsung and samsung_pwm_timer
-> > drivers + * and some registers need access synchronization. If both
-> > drivers are + * compiled in, the spinlock is defined in the
-> > clocksource driver, + * otherwise following definition is used.
-> > + *
-> > + * Currently we do not need any more complex synchronization method
-> > + * because all the supported SoCs contain only one instance of the
-> > PWM
-> > + * IP. Should this change, both drivers will need to be modified to
-> > + * properly synchronize accesses to particular instances.
-> > + */
-> > +static DEFINE_SPINLOCK(samsung_pwm_lock);
+> Yeah.. Just a bit though :)
 > 
-> Shouldn't this not be static?
+> So, cpufreq core checks this when we call target for any frequency.
+> Now, cpufreq driver actually does a cpufreq_frequency_table_target()
+> and so the frequency may vary than what is requested, in case
+> requested frequency isn't picked from the table.
+> 
+> In such cases we check it again to be sure that we aren't at this
+> frequency already..
+> 
+> Earlier I thought of calling cpufreq_frequency_table_target() in the
+> core before calling target but dropped the idea as I wasn't sure of
+> the side effects.
+> 
+> @Rafael: Do you see why we shouldn't/can't call
+> cpufreq_frequency_table_target() from the core itself and so drivers
+> never need to do it?
 
-It should be static, when the clocksource driver is not used, but...
+It looks like it would require us to redefine .target() to take next_state
+instead of target_freq (at least in the acpi-cpufreq case), wouldn't it?
 
-> It's declared in
-> clocksource/samsung_pwm.h whether or not the samsung_pwm_timer is
-> compiled in or not.
+Rafael
 
-..it should not be defined as non-static in this case (= an ifdef is 
-needed in this header). I believe I had this already fixed, not sure what 
-happened with the fix...
-
-Best regards,
-Tomasz
