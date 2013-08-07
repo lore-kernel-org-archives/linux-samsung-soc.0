@@ -1,184 +1,71 @@
-From: Julius Werner <jwerner@chromium.org>
-Subject: Re: [PATCH] usb: phy: Cleanup error code in **_usb_get_phy_**() APIs
-Date: Wed, 7 Aug 2013 11:35:58 -0700
-Message-ID: <CAODwPW8X-sVj1XPmZsFNtUtb-LQG96omNwOqdqh8UQMDsupvVg@mail.gmail.com>
-References: <1375880938-6979-1-git-send-email-gautam.vivek@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register handling
+Date: Wed, 07 Aug 2013 20:50:21 +0200
+Message-ID: <520296ED.7080003@samsung.com>
+References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
+ <20130807163045.GK28558@e106331-lin.cambridge.arm.com>
+ <CAODwPW9DmVdzHbHN0NUK0fYUNw0tj2ktyh-20no30r14_JayFQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1375880938-6979-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Felipe Balbi <balbi@ti.com>, kishon@ti.com, Julius Werner <jwerner@chromium.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:49076 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932348Ab3HGSu0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Aug 2013 14:50:26 -0400
+In-reply-to: <CAODwPW9DmVdzHbHN0NUK0fYUNw0tj2ktyh-20no30r14_JayFQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Julius Werner <jwerner@chromium.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-> @@ -94,11 +94,11 @@ static int devm_usb_phy_match(struct device *dev, void *res, void *match_data)
->   */
->  struct usb_phy *devm_usb_get_phy(struct device *dev, enum usb_phy_type type)
->  {
-> -       struct usb_phy **ptr, *phy;
-> +       struct usb_phy  *phy = ERR_PTR(-ENOMEM), **ptr;
+On 08/07/2013 07:06 PM, Julius Werner wrote:
+>> This breaks compatibility, both for an old kernel and a new dt and a new
+>> kernel with an old dt. Is anyone using these bindings?
+> 
+> They only affect Samsung SoCs and have only been upstream for half a
+> year, so I doubt it's heavily used.
 
-This looks a little roundabout, don't you think? Why don't you just
-directly have 'return ERR_PTR(-ENOMEM)' down there where you put 'goto
-err0'?
+It probably wouldn't be of much concern, but I can't tell for sure.
 
->
->         ptr = devres_alloc(devm_usb_phy_release, sizeof(*ptr), GFP_KERNEL);
->         if (!ptr)
-> -               return NULL;
-> +               goto err0;
->
->         phy = usb_get_phy(type);
->         if (!IS_ERR(phy)) {
-> @@ -107,6 +107,7 @@ struct usb_phy *devm_usb_get_phy(struct device *dev, enum usb_phy_type type)
->         } else
->                 devres_free(ptr);
->
-> +err0:
->         return phy;
->  }
->  EXPORT_SYMBOL_GPL(devm_usb_get_phy);
+>> Why are we describing fewer registers now? Are they described elsewhere?
+>>
+>> The dt should describe the device, not only the portion of it Linux
+>> wants to use right now.
+> 
+> This only ever described a small section of the huge set of PMU
+> registers anyway. 
 
->  struct usb_phy *devm_usb_get_phy_dev(struct device *dev, u8 index)
->  {
-> -       struct usb_phy **ptr, *phy;
-> +       struct usb_phy  *phy = ERR_PTR(-ENOMEM), **ptr;
+The PMU registers are already scattered across various drivers, like
+Power Domain, various PHYs (USB/HSIC/MIPI CSI-2/DSI, ADC, ...), Reset
+and more. And it happens currently there is no central driver for
+the Power Management Unit, that would, for example expose the regmap
+interface that the interested drivers could use. The downside of this
+would be that each, e.g. USB PHY driver would need to know SoC specific
+offsets to its registers in the PMU.
 
-Same here
+Before device tree started to be used those PMU registers were controlled
+by respective drivers, mostly through platform_data callbacks. As they
+could be considered parts of given device.
 
->
->         ptr = devres_alloc(devm_usb_phy_release, sizeof(*ptr), GFP_KERNEL);
->         if (!ptr)
-> -               return NULL;
-> +               goto err0;
->
->         phy = usb_get_phy_dev(dev, index);
->         if (!IS_ERR(phy)) {
-> @@ -267,6 +268,7 @@ struct usb_phy *devm_usb_get_phy_dev(struct device *dev, u8 index)
->         } else
->                 devres_free(ptr);
->
-> +err0:
->         return phy;
->  }
->  EXPORT_SYMBOL_GPL(devm_usb_get_phy_dev);
+                   Before it described up to three registers
+> controlling different PHYs (using hardcoded offsets in the code to
+> later find the right one)... with my patch every PHY's DT entry only
+> describes the one register concerning itself, which makes more sense
+> in my opinion. It will also prevent the register descriptions in
+> different DT entries from overlapping.
 
-> @@ -142,7 +142,7 @@ extern void usb_remove_phy(struct usb_phy *);
->  /* helpers for direct access thru low-level io interface */
->  static inline int usb_phy_io_read(struct usb_phy *x, u32 reg)
->  {
-> -       if (x->io_ops && x->io_ops->read)
-> +       if (!IS_ERR(x) && x->io_ops && x->io_ops->read)
+Yes, the patch looks sensible. Since currently each USB PHY has its
+own device tree node it looks wrong to have the reg property in the
+usbphy-sys subnodes defining register region for all possible PHYs.
+And we indeed and up with multiple reg properties pointing to same
+register region.
 
-I liked the ones where we had IS_ERR_OR_NULL() here (and in all the
-ones below)... you sometimes have to handle PHYs in
-platform-independent code where you don't want to worry about if this
-platform actually has a PHY driver there or not. Any reason you
-changed that?
+However the biggest drawback is breaking backwards compatibility.
+I'm not sure if those changes are worth it, especially that all those
+USB PHY drivers are supposed to be rewritten to use the generic PHY API.
 
->                 return x->io_ops->read(x, reg);
->
->         return -EINVAL;
-> @@ -150,7 +150,7 @@ static inline int usb_phy_io_read(struct usb_phy *x, u32 reg)
->
->  static inline int usb_phy_io_write(struct usb_phy *x, u32 val, u32 reg)
->  {
-> -       if (x->io_ops && x->io_ops->write)
-> +       if (!IS_ERR(x) && x->io_ops && x->io_ops->write)
->                 return x->io_ops->write(x, val, reg);
->
->         return -EINVAL;
-> @@ -159,7 +159,7 @@ static inline int usb_phy_io_write(struct usb_phy *x, u32 val, u32 reg)
->  static inline int
->  usb_phy_init(struct usb_phy *x)
->  {
-> -       if (x->init)
-> +       if (!IS_ERR(x) && x->init)
->                 return x->init(x);
->
->         return 0;
-> @@ -168,26 +168,27 @@ usb_phy_init(struct usb_phy *x)
->  static inline void
->  usb_phy_shutdown(struct usb_phy *x)
->  {
-> -       if (x->shutdown)
-> +       if (!IS_ERR(x) && x->shutdown)
->                 x->shutdown(x);
->  }
->
->  static inline int
->  usb_phy_vbus_on(struct usb_phy *x)
->  {
-> -       if (!x->set_vbus)
-> -               return 0;
-> +       if (!IS_ERR(x) && x->set_vbus)
-> +               return x->set_vbus(x, true);
->
-> -       return x->set_vbus(x, true);
-> +       return 0;
->  }
->
->  static inline int
->  usb_phy_vbus_off(struct usb_phy *x)
->  {
-> -       if (!x->set_vbus)
-> -               return 0;
-> +       if (!IS_ERR(x) && x->set_vbus)
-> +               return x->set_vbus(x, false);
-> +
-> +       return 0;
->
-> -       return x->set_vbus(x, false);
->  }
->
->  /* for usb host and peripheral controller drivers */
-> @@ -249,8 +250,9 @@ static inline int usb_bind_phy(const char *dev_name, u8 index,
->  static inline int
->  usb_phy_set_power(struct usb_phy *x, unsigned mA)
->  {
-> -       if (x && x->set_power)
-> +       if (!IS_ERR(x) && x->set_power)
->                 return x->set_power(x, mA);
-> +
->         return 0;
->  }
->
-> @@ -258,28 +260,28 @@ usb_phy_set_power(struct usb_phy *x, unsigned mA)
->  static inline int
->  usb_phy_set_suspend(struct usb_phy *x, int suspend)
->  {
-> -       if (x->set_suspend != NULL)
-> +       if (!IS_ERR(x) && x->set_suspend != NULL)
->                 return x->set_suspend(x, suspend);
-> -       else
-> -               return 0;
-> +
-> +       return 0;
->  }
->
->  static inline int
->  usb_phy_notify_connect(struct usb_phy *x, enum usb_device_speed speed)
->  {
-> -       if (x->notify_connect)
-> +       if (!IS_ERR(x) && x->notify_connect)
->                 return x->notify_connect(x, speed);
-> -       else
-> -               return 0;
-> +
-> +       return 0;
->  }
->
->  static inline int
->  usb_phy_notify_disconnect(struct usb_phy *x, enum usb_device_speed speed)
->  {
-> -       if (x->notify_disconnect)
-> +       if (!IS_ERR(x) && x->notify_disconnect)
->                 return x->notify_disconnect(x, speed);
-> -       else
-> -               return 0;
-> +
-> +       return 0;
->  }
 
-Otherwise looks good to me.
+Thanks,
+Sylwester
