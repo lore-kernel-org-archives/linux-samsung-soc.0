@@ -1,69 +1,50 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] clk: samsung: Staticise non-exported symbols for PLLs
-Date: Thu,  8 Aug 2013 12:06:23 +0100
-Message-ID: <1375959983-2690-1-git-send-email-broonie@kernel.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v9 05/16] clk: exynos: add gate clock descriptions of
+ System MMU
+Date: Thu, 08 Aug 2013 13:17:34 +0200
+Message-ID: <52037E4E.5050706@samsung.com>
+References: <002901ce941b$0130db50$039291f0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:35682 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965139Ab3HHLG4 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:10737 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757728Ab3HHLRi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Aug 2013 07:06:56 -0400
+	Thu, 8 Aug 2013 07:17:38 -0400
+In-reply-to: <002901ce941b$0130db50$039291f0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linar-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Grant Grundler' <grundler@chromium.org>, 'Antonios Motakis' <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, 'Sachin Kamat' <sachin.kamat@linaro.org>
 
-From: Mark Brown <broonie@linaro.org>
+On 08/08/2013 11:38 AM, Cho KyongHo wrote:
+> This adds gate clocks of all System MMUs and their master IPs
+> that are not apeared in clk-exynos5250.c
+> Also fixes GATE_IP_ACP to 0x18800 and changed GATE_DA to GATE
+> for System MMU clocks in clk-exynos4.c
+> 
+> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/exynos5250-clock.txt |   26 +++++++++
+>  drivers/clk/samsung/clk-exynos4.c                  |   27 +++------
+>  drivers/clk/samsung/clk-exynos5250.c               |   57 ++++++++++++++++----
+>  3 files changed, 82 insertions(+), 28 deletions(-)
+[...]
+> @@ -349,19 +358,26 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+>  	GATE(gscl3, "gscl3", "aclk266", GATE_IP_GSCL, 3, 0, 0),
+>  	GATE(gscl_wa, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
+>  	GATE(gscl_wb, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
+> -	GATE(smmu_gscl0, "smmu_gscl0", "aclk266", GATE_IP_GSCL, 7, 0, 0),
+> -	GATE(smmu_gscl1, "smmu_gscl1", "aclk266", GATE_IP_GSCL, 8, 0, 0),
+> -	GATE(smmu_gscl2, "smmu_gscl2", "aclk266", GATE_IP_GSCL, 9, 0, 0),
+> -	GATE(smmu_gscl3, "smmu_gscl3", "aclk266", GATE_IP_GSCL, 10, 0, 0),
+> +	GATE(smmu_gscl0, "smmu_gscl0", "none", GATE_IP_GSCL, 7, 0, 0),
+> +	GATE(smmu_gscl1, "smmu_gscl1", "none", GATE_IP_GSCL, 8, 0, 0),
+> +	GATE(smmu_gscl2, "smmu_gscl2", "none", GATE_IP_GSCL, 9, 0, 0),
+> +	GATE(smmu_gscl3, "smmu_gscl3", "none", GATE_IP_GSCL, 10, 0, 0),
 
-These symbols are not used outside the files they are defined in so do
-not need to be in the global namespace and they aren't declared so sparse
-warns.
-
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- drivers/clk/samsung/clk-exynos4.c    | 2 +-
- drivers/clk/samsung/clk-exynos5250.c | 2 +-
- drivers/clk/samsung/clk-exynos5420.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 68f9a4a..fec319d 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -984,7 +984,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
- 	{},
- };
- 
--struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
-+static struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
- 	[apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, "fout_apll", NULL),
- 	[mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll",
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index df3628c..5865cef 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -517,7 +517,7 @@ static __initdata struct samsung_pll_rate_table epll_24mhz_tbl[] = {
- 	{ },
- };
- 
--struct __initdata samsung_pll_clock exynos5250_plls[nr_plls] = {
-+static struct __initdata samsung_pll_clock exynos5250_plls[nr_plls] = {
- 	[apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, "fout_apll", NULL),
- 	[mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index ca352695..872e13d 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -727,7 +727,7 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
- 	GATE(smmu_mscl2, "smmu_mscl2", "aclk400_mscl", GATE_IP_MSCL, 10, 0, 0),
- };
- 
--struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
-+static struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
- 	[apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
- 	[cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
--- 
-1.8.4.rc1
+Why are the smmu clocks' parent clocks removed ? Shouldn't both the gscaler
+gate clock and the gscaler smmu clock be still same, as it is in case of
+exynos4 ?
