@@ -1,35 +1,71 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq: exynos5440: Fix to skip when new frequency same
- as current
-Date: Thu, 8 Aug 2013 08:03:33 +0530
-Message-ID: <CAKohpokdvJxcWjbOgDLAzjcW_vN6hdZz_OWjFSBSLrFTccCmJg@mail.gmail.com>
-References: <1375874171-16951-1-git-send-email-amit.daniel@samsung.com>
-	<52022FC2.2010109@arm.com>
-	<CAKohpom0gPk9BXRP2eEuX_HBXDut=wynrZfvOH1tcEQY6CMLNQ@mail.gmail.com>
-	<2331427.ybQdfvflPh@vostro.rjw.lan>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V5] pci: exynos: split into two parts such as Synopsys part
+ and Exynos part
+Date: Thu, 08 Aug 2013 16:14:56 +0900
+Message-ID: <005101ce9406$fc649d50$f52dd7f0$@samsung.com>
+References: <002501ce9324$8066f5a0$8134e0e0$@samsung.com>
+ <CAErSpo4YuSEsUp6wyXEJyySvqUwOisdq7BURL-eVmzWL+qSgHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f50.google.com ([209.85.216.50]:41806 "EHLO
-	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933534Ab3HHCde (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Aug 2013 22:33:34 -0400
-Received: by mail-qa0-f50.google.com with SMTP id f14so54523qak.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Aug 2013 19:33:33 -0700 (PDT)
-In-Reply-To: <2331427.ybQdfvflPh@vostro.rjw.lan>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <CAErSpo4YuSEsUp6wyXEJyySvqUwOisdq7BURL-eVmzWL+qSgHw@mail.gmail.com>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Bjorn Helgaas' <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Sudeep KarkadaNagesha <Sudeep.KarkadaNagesha@arm.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
 
-On 8 August 2013 04:55, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> It looks like it would require us to redefine .target() to take next_state
-> instead of target_freq (at least in the acpi-cpufreq case), wouldn't it?
+On Thursday, August 08, 2013 2:05 AM, Bjorn Helgaas wrote:
+> On Tue, Aug 6, 2013 at 10:13 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+> > On Wednesday, July 31, 2013 5:14 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+> >> Exynos PCIe IP consists of Synopsys specific part and Exynos
+> >> specific part. Only core block is a Synopsys designware part;
+> >> other parts are Exynos specific.
+> >> Also, the Synopsys designware part can be shared with other
+> >> platforms; thus, it can be split two parts such as Synopsys
+> >> designware part and Exynos specific part.
+> >>
+> >> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> >> Cc: Pratyush Anand <pratyush.anand@st.com>
+> >> Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+> >
+> > Hi Bjorn Helgaas,
+> >
+> > There is no comment for last 2 weeks.
+> > Will you accept this patch?
+> 
+> I don't have any problem with this, since it's really arch code.  Do
+> you want me to merge it, or do you have a standard path for merging
+> Exynos and/or Designware changes?
 
-If we don't do it, then atleast for few drivers, like acpi-cpufreq, which
-use index more than just for frequency, we may end up calling
-cpufreq_frequency_table_target() twice. Once in the core and then
-in driver.
+Hi Bjorn,
 
-I believe this is doable and will post a patch soon.
+I want you to merge it. :)
+Thank you.
+
+Best regards,
+Jingoo Han
+
+> 
+> Bjorn
+> 
+> In case you need it:
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> 
+> >> ---
+> >> Changes since v4:
+> >> - fixed section mismatch warnings
+> >> - fixed sparse warnings
+> >>
+> >>  .../devicetree/bindings/pci/designware-pcie.txt    |    3 +
+> >>  arch/arm/boot/dts/exynos5440.dtsi                  |    2 +
+> >>  drivers/pci/host/Makefile                          |    3 +-
+> >>  drivers/pci/host/pci-exynos.c                      |  530 ++++++++++
+> >>  drivers/pci/host/pcie-designware.c                 | 1011 ++++++--------------
+> >>  drivers/pci/host/pcie-designware.h                 |   65 ++
+> >>  6 files changed, 874 insertions(+), 740 deletions(-)
+> >>  create mode 100644 drivers/pci/host/pci-exynos.c
+> >>  create mode 100644 drivers/pci/host/pcie-designware.h
+> >
