@@ -1,105 +1,76 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC v3 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device
- tree bindings documentation
-Date: Thu, 08 Aug 2013 14:34:51 -0600
-Message-ID: <520400EB.7000808@wwwdotorg.org>
-References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-3-git-send-email-arun.kk@samsung.com> <51FD7925.2010604@gmail.com> <51FFD892.5000708@wwwdotorg.org> <5200292E.1000505@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: Exynos: replace custom MFC reserved memory handling
+ with generic code
+Date: Thu, 08 Aug 2013 15:00:52 -0600
+Message-ID: <52040704.6090100@wwwdotorg.org>
+References: <1375705610-12724-1-git-send-email-m.szyprowski@samsung.com> <1375705610-12724-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:50072 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966267Ab3HHUoH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Aug 2013 16:44:07 -0400
-In-Reply-To: <5200292E.1000505@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1375705610-12724-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>
 
-On 08/05/2013 04:37 PM, Sylwester Nawrocki wrote:
-> On 08/05/2013 06:53 PM, Stephen Warren wrote:
->> On 08/03/2013 03:41 PM, Sylwester Nawrocki wrote:
->>> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
->>>> The patch adds the DT binding documentation for Samsung
->>>> Exynos5 SoC series imaging subsystem (FIMC-IS).
->>
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->>>> b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->>>> new file mode 100644
->>>> index 0000000..49a373a
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->>>> @@ -0,0 +1,52 @@
->>>> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
->>>> +------------------------------------------------------
->>>> +
->>>> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
->>>> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
->>>> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
->>>> +handle sensor controls and camera post-processing operations. The
->>>> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
->>>> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
->>>> +dedicated scalers (SCC and SCP).
->>
->> So there are a lot of blocks mentioned there, yet the binding doesn't
->> seem to describe most of it. Is the binding complete?
+On 08/05/2013 06:26 AM, Marek Szyprowski wrote:
+> MFC driver use custom bindings for managing reserved memory. Those bindings
+> are not really specific to MFC device and no even well discussed. They can
+> be easily replaced with generic, platform independent code for handling
+> reserved and contiguous memory.
 > 
-> Thanks for the review Stephen.
-> 
-> No, the binding certainly isn't complete, it doesn't describe the all
-> available IP blocks. There are separate MMIO address regions for each
-...
-> So while we could list all the devices, we decided not to do so.
-> Because it is not needed by the current software and we may miss some
-> details for case where the whole subsystem is controlled by the host
-> CPU (however such scenario is extremely unlikely AFAICT) which then
-> would be impossible or hard to change.
+> Two additional child devices for each memory port (AXI master) are
+> introduced to let one assign some properties to each of them. Later one
+> can also use them to assign properties related to SYSMMU controllers,
+> which can be used to manage the limited dma window provided by those
+> memory ports.
 
-Yes, that's probably a good approach.
+> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
 
-> I guess we should list all available devices, similarly as it's done
-> in Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt.
-> 
-> And then should they just be disabled through the status property
-> if they are not needed in the Linux driver ? I guess it is more
-> sensible than marking them as optional and then not listing them
-> in dts at all ?
+> +The MFC device is connected to system bus with two memory ports (AXI
+> +masters) for better performance. Those memory ports are modelled as
+> +separate child devices, so one can assign some properties to them (like
+> +memory region for dma buffer allocation or sysmmu controller).
+> +
+>  Required properties:
+>    - compatible : value should be either one among the following
+>  	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
+>  	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
+> +	and additionally "simple-bus" to correctly initialize child
+> +	devices for memory ports (AXI masters)
 
-If you can define complete bindings for those nodes, it might make sense
-to do that. If the devices are perhaps complex to represent and hence
-you might not be able to come up with complete bindings for them right
-now, it may indeed be better to simply not mention the devices you don't
-care about for now.
+simple-bus is wrong here; the child nodes aren't independent entities
+that can be instantiated separately from their parent and without
+depending on their parent.
 
->>>> +pmu subnode
->>>> +-----------
->>>> +
->>>> +Required properties:
->>>> + - reg : should contain PMU physical base address and size of the
->>>> memory
->>>> +         mapped registers.
->>
->> I think you need a compatible value for this. How else is the node
->> identified? The node name probably should not be used for identification.
-> 
-> Of course the node name is currently used for identification. There is no
-> compatible property because this pmu node is used to get hold of only part
-> of the Power Management Unit registers, specific to the FIMC-IS.
-> The PMU has more registers that also other drivers would be interested in,
-> e.g. clocks or USB.
+> -  - samsung,mfc-r : Base address of the first memory bank used by MFC
+> -		    for DMA contiguous memory allocation and its size.
+> -
+> -  - samsung,mfc-l : Base address of the second memory bank used by MFC
+> -		    for DMA contiguous memory allocation and its size.
 
-I believe the correct way to solve this is for there to be a standalone
-PMU node at the appropriate location in DT, and for the FIMC bindings to
-reference that other node by phandle.
+These properties shouldn't be removed, but simply marked deprecated. The
+driver will need to continue to support them so that old DTs work with
+new kernels. The binding must therefore continue to document them so
+that the old DT content still makes sense.
 
-Right now, the FIMC driver SW can manually follow the phandle, look at
-the reg property, and map that itself. Later down the road, you could
-instantiate a true PMU driver, and have the FIMC driver look up that
-driver, and call APIs on it. This change can be made without requiring
-any changes to the DT binding. That way, you aren't introducing a fake
-PMU node into the FIMC bindings just to satisfy internal Linux driver
-details.
+> +Two child nodes must be defined for MFC device. Their names must be
+> +following: "memport-r" and "memport-l" ("right" and "left"). Required
+
+Node names shouldn't have semantic meaning.
+
+> +properties:
+> +  - compatible : value should be "samsung,memport"
+
+There's no need to define compatible properties for things which aren't
+separate devices.
+
+> +  - dma-memory-region : optional property with a phandle to respective memory
+> +			region (see devicetree/bindings/memory.txt), if no region
+> +			is defined, sysmmu controller must be used for managing
+> +			limited dma window of each memory port.
+
+What's the benefit of putting this property in a sub-node; surely you
+can put the property in the main MFC node yet follow the same conceptual
+schema for its content as a dma-memory-region node?
