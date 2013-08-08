@@ -1,56 +1,105 @@
-From: Grant Grundler <grundler@chromium.org>
-Subject: Re: [PATCH v9 03/16] iommu/exynos: fix page table maintenance
-Date: Thu, 8 Aug 2013 11:28:44 -0700
-Message-ID: <CANEJEGu1ponghpfvyUsQX16+TZWUV+0KXJ7AehjXpju2N_H+Ew@mail.gmail.com>
-References: <002701ce941a$eecebdb0$cc6c3910$@samsung.com>
-	<1516548.d7oQuzQS7g@amdc1227>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [RFC v3 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device
+ tree bindings documentation
+Date: Thu, 08 Aug 2013 14:34:51 -0600
+Message-ID: <520400EB.7000808@wwwdotorg.org>
+References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-3-git-send-email-arun.kk@samsung.com> <51FD7925.2010604@gmail.com> <51FFD892.5000708@wwwdotorg.org> <5200292E.1000505@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:54163 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758127Ab3HHS2p (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:50072 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966267Ab3HHUoH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Aug 2013 14:28:45 -0400
-Received: by mail-oa0-f52.google.com with SMTP id n12so1173354oag.11
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2013 11:28:44 -0700 (PDT)
-In-Reply-To: <1516548.d7oQuzQS7g@amdc1227>
+	Thu, 8 Aug 2013 16:44:07 -0400
+In-Reply-To: <5200292E.1000505@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Cho KyongHo <pullip.cho@samsung.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Grant Grundler <grundler@chromium.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, Sachin Kamat <sachin.kamat@linaro.org>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>
 
-Tomasz,
-
-On Thu, Aug 8, 2013 at 6:54 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+On 08/05/2013 04:37 PM, Sylwester Nawrocki wrote:
+> On 08/05/2013 06:53 PM, Stephen Warren wrote:
+>> On 08/03/2013 03:41 PM, Sylwester Nawrocki wrote:
+>>> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
+>>>> The patch adds the DT binding documentation for Samsung
+>>>> Exynos5 SoC series imaging subsystem (FIMC-IS).
+>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>>>> b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>>>> new file mode 100644
+>>>> index 0000000..49a373a
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>>>> @@ -0,0 +1,52 @@
+>>>> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
+>>>> +------------------------------------------------------
+>>>> +
+>>>> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
+>>>> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
+>>>> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
+>>>> +handle sensor controls and camera post-processing operations. The
+>>>> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
+>>>> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
+>>>> +dedicated scalers (SCC and SCP).
+>>
+>> So there are a lot of blocks mentioned there, yet the binding doesn't
+>> seem to describe most of it. Is the binding complete?
+> 
+> Thanks for the review Stephen.
+> 
+> No, the binding certainly isn't complete, it doesn't describe the all
+> available IP blocks. There are separate MMIO address regions for each
 ...
->> +     BUG_ON(lv1ent_section(sent));
->
-> Is this condition really a critical one, to the point that the system
-> should not continue execution?
->
-...
->>       if (lv1ent_page(sent)) {
->> -             if (*pgcnt != NUM_LV2ENTRIES)
->> -                     return -EADDRINUSE;
->> -
->> +             BUG_ON(*pgcnt != NUM_LV2ENTRIES);
->
-> Ditto.
+> So while we could list all the devices, we decided not to do so.
+> Because it is not needed by the current software and we may miss some
+> details for case where the whole subsystem is controlled by the host
+> CPU (however such scenario is extremely unlikely AFAICT) which then
+> would be impossible or hard to change.
 
-I can't speak to the previous BUG_ON(). I believe the EADDRESSINUSE
-failures could be either WARN_ON or BUG_ON.   This condition is
-clearly a bug in the generic IOMMU allocator and I think that's why
-KyongHo Cho used BUG_ON.
+Yes, that's probably a good approach.
 
-Handing out duplicate addresses will generally lead to some sort of
-data corruption or other fault depending on how robust the underlying
-device drivers are written.  So my preference is a BUG_ON to
-immediately flag this condition instead of hoping a device driver will
-correctly handling the dma mapping failure (Some do, most currently
-don't).
+> I guess we should list all available devices, similarly as it's done
+> in Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt.
+> 
+> And then should they just be disabled through the status property
+> if they are not needed in the Linux driver ? I guess it is more
+> sensible than marking them as optional and then not listing them
+> in dts at all ?
 
-WARN_ON() + return -EADDRESSINUSE would be a good alternative.
+If you can define complete bindings for those nodes, it might make sense
+to do that. If the devices are perhaps complex to represent and hence
+you might not be able to come up with complete bindings for them right
+now, it may indeed be better to simply not mention the devices you don't
+care about for now.
 
-thanks,
-grant
+>>>> +pmu subnode
+>>>> +-----------
+>>>> +
+>>>> +Required properties:
+>>>> + - reg : should contain PMU physical base address and size of the
+>>>> memory
+>>>> +         mapped registers.
+>>
+>> I think you need a compatible value for this. How else is the node
+>> identified? The node name probably should not be used for identification.
+> 
+> Of course the node name is currently used for identification. There is no
+> compatible property because this pmu node is used to get hold of only part
+> of the Power Management Unit registers, specific to the FIMC-IS.
+> The PMU has more registers that also other drivers would be interested in,
+> e.g. clocks or USB.
+
+I believe the correct way to solve this is for there to be a standalone
+PMU node at the appropriate location in DT, and for the FIMC bindings to
+reference that other node by phandle.
+
+Right now, the FIMC driver SW can manually follow the phandle, look at
+the reg property, and map that itself. Later down the road, you could
+instantiate a true PMU driver, and have the FIMC driver look up that
+driver, and call APIs on it. This change can be made without requiring
+any changes to the DT binding. That way, you aren't introducing a fake
+PMU node into the FIMC bindings just to satisfy internal Linux driver
+details.
