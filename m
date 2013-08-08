@@ -1,122 +1,55 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V3 2/3] ASoC: Samsung: I2S: Add quirks as
-	driver data in I2S
-Date: Thu, 08 Aug 2013 10:10:27 +0200
-Message-ID: <3759902.V2gf68Lg3g@flatron>
-References: <1375865122-5258-1-git-send-email-padma.v@samsung.com>
- <2116389.OxrlCQ9LXd@amdc1227>
- <CAAgF-BdpsgQk8myq7OOk5zJ8Zxy+J6LUPb3-d40+iE2aNwdwDw@mail.gmail.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register
+ handling
+Date: Thu, 8 Aug 2013 10:26:15 +0100
+Message-ID: <20130808092615.GF14648@e106331-lin.cambridge.arm.com>
+References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
+ <20130807163045.GK28558@e106331-lin.cambridge.arm.com>
+ <CAODwPW9DmVdzHbHN0NUK0fYUNw0tj2ktyh-20no30r14_JayFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAAgF-BdpsgQk8myq7OOk5zJ8Zxy+J6LUPb3-d40+iE2aNwdwDw@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, abrestic@chromium.org, Tomasz Figa <t.figa@samsung.com>, "broonie@kernel.org" <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAODwPW9DmVdzHbHN0NUK0fYUNw0tj2ktyh-20no30r14_JayFQ@mail.gmail.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Julius Werner <jwerner@chromium.org>
+Cc: "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday 08 of August 2013 13:13:02 Padma Venkat wrote:
-> Hi Tomasz,
+On Wed, Aug 07, 2013 at 06:06:05PM +0100, Julius Werner wrote:
+> > This breaks compatibility, both for an old kernel and a new dt and a new
+> > kernel with an old dt. Is anyone using these bindings?
 > 
-> On Wed, Aug 7, 2013 at 4:43 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Ahh, one more thing inline.
+> They only affect Samsung SoCs and have only been upstream for half a
+> year, so I doubt it's heavily used.
+
+I'm not sure everyone will be happy with that line.
+
 > 
-> [snip]
+> > Why are we describing fewer registers now? Are they described elsewhere?
+> >
+> > The dt should describe the device, not only the portion of it Linux
+> > wants to use right now.
 > 
-> >> +static struct samsung_i2s_dai_data i2sv3_dai_type = {
-> >> +     .dai_type = TYPE_PRI,
-> >> +     .quirks = QUIRK_NO_MUXPSR,
-> >> +};
-> >> +
-> >> +static struct samsung_i2s_dai_data i2sv4_dai_type = {
-> >> +     .dai_type = TYPE_PRI,
-> >> +     .quirks = QUIRK_PRI_6CHAN | QUIRK_NO_MUXPSR,
-> >> +};
-> >> +
-> >> +static struct samsung_i2s_dai_data i2sv5_c100_dai_type = {
-> >> +     .dai_type = TYPE_PRI,
-> >> +     .quirks = QUIRK_PRI_6CHAN | QUIRK_NO_MUXPSR | QUIRK_SEC_DAI |
-> >> +                     QUIRK_NEED_RSTCLR,
-> >> +};
-> >> +
-> >> +static struct samsung_i2s_dai_data i2sv5_dai_type = {
-> >> +     .dai_type = TYPE_PRI,
-> >> +     .quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI | QUIRK_NEED_RSTCLR,
-> >> +};
-> >> +
-> >> +static struct samsung_i2s_dai_data samsung_dai_type_sec = {
-> >> +     .dai_type = TYPE_SEC,
-> >> +};
-> >> +
-> >> 
-> >>  static struct platform_device_id samsung_i2s_driver_ids[] = {
-> >>  
-> >>       {
-> >> 
-> >> -             .name           = "samsung-i2s",
-> >> -             .driver_data    = TYPE_PRI,
-> >> +             .name           = "samsung,s3c6410-i2s",
-> >> +             .driver_data    = (kernel_ulong_t)&i2sv3_dai_type,
-> >> +     }, {
-> >> +             .name           = "samsung,s3c6410-i2s-multi",
-> >> +             .driver_data    = (kernel_ulong_t)&i2sv4_dai_type,
-> >> +     }, {
-> >> +             .name           = "samsung,s5pc100-i2s",
-> >> +             .driver_data    = (kernel_ulong_t)&i2sv5_c100_dai_type,
-> >> 
-> >>       }, {
-> >> 
-> >> -             .name           = "samsung-i2s-sec",
-> >> -             .driver_data    = TYPE_SEC,
-> >> +             .name           = "samsung,s5pv210-i2s",
-> >> +             .driver_data    = (kernel_ulong_t)&i2sv5_dai_type,
-> >> +     }, {
-> >> +             .name           = "samsung-i2s-sec",
-> >> +             .driver_data    =
-> >> (kernel_ulong_t)&samsung_dai_type_sec,
-> > 
-> > I don't think you need to change the legacy platform IDs at all.
+> This only ever described a small section of the huge set of PMU
+> registers anyway. Before it described up to three registers
+> controlling different PHYs (using hardcoded offsets in the code to
+> later find the right one)... with my patch every PHY's DT entry only
+> describes the one register concerning itself, which makes more sense
+> in my opinion. It will also prevent the register descriptions in
+> different DT entries from overlapping.
 > 
-> If legacy platforms not required to change then I need to introduce a
-> new samsung_i2s_dai_data structure which holds only dai_type for
-> non-dt platforms. If I change legacy platforms it breaks the older
-> platforms now. Is it okay adding a samsung_i2s_dai_data structure for
-> non-dt platforms which will be removed later?
 
-Sorry, I don't understand the problem here.
+I'm not sure I understand. The old documentation referred to the
+USBDEVICE_PHY_CONTROL and USBHOST_PHY_CONTROL registers for a phy, and
+your new version only refers to (usb device) PHY_CONTROL. Regardless of
+multiple phys, you're suggesting that we describe less of each phy.
+That seems like taking away usable information. Unless I've
+misunderstood?
 
-Original contents of samsung_i2s_driver_ids[] array already conveyed 
-information about dai type inside driver_data field of each 
-platform_device_id entry.
+Ideally, we'd describe the whole set of registers and linkages to phys,
+even if Linux doesn't ahppen to use that information right now.
 
-If you really need to have samsung_i2s_dai_data struct for both DT and 
-non-DT cases you can create dummy dai_data for both platform ID entries, 
-which would have only dai type field initialized. This would be fine, 
-because the non-DT probe path takes anything else from platform_data and 
-would not need samsung_i2s_dai_data struct in any other way than getting 
-dai_type in probe.
-
-Best regards,
-Tomasz
-
-> > IMHO it would be better to keep the old way of quirk retrieval from
-> > platform_data (which I think this patch does anyway, because the probe
-> > path without DT is unchanged), as it will be dropped in some point in
-> > time anyway.
-> > 
-> > This would also eliminate the need for patch 1.
-> > 
-> > Best regards,
-> > Tomasz
-> 
-> Thanks
-> Padma
+Thanks,
+Mark.
