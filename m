@@ -1,37 +1,56 @@
-From: Julius Werner <jwerner@chromium.org>
-Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register handling
-Date: Thu, 8 Aug 2013 11:06:54 -0700
-Message-ID: <CAODwPW-j=JjunZU3zewrE1_-WoW-RXLmKVQypzxmo_BOYjc3VA@mail.gmail.com>
-References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
-	<20130807163045.GK28558@e106331-lin.cambridge.arm.com>
-	<CAODwPW9DmVdzHbHN0NUK0fYUNw0tj2ktyh-20no30r14_JayFQ@mail.gmail.com>
-	<20130808092615.GF14648@e106331-lin.cambridge.arm.com>
+From: Grant Grundler <grundler@chromium.org>
+Subject: Re: [PATCH v9 03/16] iommu/exynos: fix page table maintenance
+Date: Thu, 8 Aug 2013 11:28:44 -0700
+Message-ID: <CANEJEGu1ponghpfvyUsQX16+TZWUV+0KXJ7AehjXpju2N_H+Ew@mail.gmail.com>
+References: <002701ce941a$eecebdb0$cc6c3910$@samsung.com>
+	<1516548.d7oQuzQS7g@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130808092615.GF14648@e106331-lin.cambridge.arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Julius Werner <jwerner@chromium.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:54163 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758127Ab3HHS2p (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 Aug 2013 14:28:45 -0400
+Received: by mail-oa0-f52.google.com with SMTP id n12so1173354oag.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2013 11:28:44 -0700 (PDT)
+In-Reply-To: <1516548.d7oQuzQS7g@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Cho KyongHo <pullip.cho@samsung.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Grant Grundler <grundler@chromium.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, Sachin Kamat <sachin.kamat@linaro.org>
 
-> I'm not sure I understand. The old documentation referred to the
-> USBDEVICE_PHY_CONTROL and USBHOST_PHY_CONTROL registers for a phy, and
-> your new version only refers to (usb device) PHY_CONTROL. Regardless of
-> multiple phys, you're suggesting that we describe less of each phy.
-> That seems like taking away usable information. Unless I've
-> misunderstood?
+Tomasz,
 
-Well that's just the thing that's confusing right now, and which I am
-trying to fix: every PHY is either DEVICE or HOST and thus has only
-one PMU register. The current code describes the PMU register space
-for all PHYs on the system in the DT entry of every PHY and then
-calculates which register to use with hardcoded offsets. I think it
-makes much more sense if every PHY only describes its own register and
-doesn't need to do address arithmetic later on.
+On Thu, Aug 8, 2013 at 6:54 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+...
+>> +     BUG_ON(lv1ent_section(sent));
+>
+> Is this condition really a critical one, to the point that the system
+> should not continue execution?
+>
+...
+>>       if (lv1ent_page(sent)) {
+>> -             if (*pgcnt != NUM_LV2ENTRIES)
+>> -                     return -EADDRINUSE;
+>> -
+>> +             BUG_ON(*pgcnt != NUM_LV2ENTRIES);
+>
+> Ditto.
 
-As Vivek said there is one exception in an old Exynos4, but that is
-currently not implemented in the upstream kernel anyway, and if it
-ever will be it's still much easier to special case one weird chip
-than to have a super complicated and confusing mechanism for all of
-them.
+I can't speak to the previous BUG_ON(). I believe the EADDRESSINUSE
+failures could be either WARN_ON or BUG_ON.   This condition is
+clearly a bug in the generic IOMMU allocator and I think that's why
+KyongHo Cho used BUG_ON.
+
+Handing out duplicate addresses will generally lead to some sort of
+data corruption or other fault depending on how robust the underlying
+device drivers are written.  So my preference is a BUG_ON to
+immediately flag this condition instead of hoping a device driver will
+correctly handling the dma mapping failure (Some do, most currently
+don't).
+
+WARN_ON() + return -EADDRESSINUSE would be a good alternative.
+
+thanks,
+grant
