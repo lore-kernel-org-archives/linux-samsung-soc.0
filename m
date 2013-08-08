@@ -1,93 +1,82 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register handling
-Date: Thu, 8 Aug 2013 15:24:47 +0530
-Message-ID: <CAFp+6iF6HoNsgyzM97H94Tbcqa599uE9z9XYVOxMivq1W6pnDw@mail.gmail.com>
-References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
-	<20130807163045.GK28558@e106331-lin.cambridge.arm.com>
-	<CAODwPW9DmVdzHbHN0NUK0fYUNw0tj2ktyh-20no30r14_JayFQ@mail.gmail.com>
-	<20130808092615.GF14648@e106331-lin.cambridge.arm.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V3 2/3] ASoC: Samsung: I2S: Add quirks as
+ driver data in I2S
+Date: Thu, 8 Aug 2013 11:31:24 +0100
+Message-ID: <20130808103124.GU6427@sirena.org.uk>
+References: <1375865122-5258-1-git-send-email-padma.v@samsung.com>
+ <1375865122-5258-3-git-send-email-padma.v@samsung.com>
+ <2116389.OxrlCQ9LXd@amdc1227>
+ <CAAgF-BdpsgQk8myq7OOk5zJ8Zxy+J6LUPb3-d40+iE2aNwdwDw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f43.google.com ([209.85.214.43]:37682 "EHLO
-	mail-bk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934079Ab3HHJyt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Aug 2013 05:54:49 -0400
-In-Reply-To: <20130808092615.GF14648@e106331-lin.cambridge.arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============8126326205863901185=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CAAgF-BdpsgQk8myq7OOk5zJ8Zxy+J6LUPb3-d40+iE2aNwdwDw@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, abrestic@chromium.org, Tomasz Figa <t.figa@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Julius Werner <jwerner@chromium.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-
-On Thu, Aug 8, 2013 at 2:56 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Wed, Aug 07, 2013 at 06:06:05PM +0100, Julius Werner wrote:
->> > This breaks compatibility, both for an old kernel and a new dt and a new
->> > kernel with an old dt. Is anyone using these bindings?
->>
->> They only affect Samsung SoCs and have only been upstream for half a
->> year, so I doubt it's heavily used.
->
-> I'm not sure everyone will be happy with that line.
->
->>
->> > Why are we describing fewer registers now? Are they described elsewhere?
->> >
->> > The dt should describe the device, not only the portion of it Linux
->> > wants to use right now.
->>
->> This only ever described a small section of the huge set of PMU
->> registers anyway. Before it described up to three registers
->> controlling different PHYs (using hardcoded offsets in the code to
->> later find the right one)... with my patch every PHY's DT entry only
->> describes the one register concerning itself, which makes more sense
->> in my opinion. It will also prevent the register descriptions in
->> different DT entries from overlapping.
->>
->
-> I'm not sure I understand. The old documentation referred to the
-> USBDEVICE_PHY_CONTROL and USBHOST_PHY_CONTROL registers for a phy, and
-> your new version only refers to (usb device) PHY_CONTROL. Regardless of
-> multiple phys, you're suggesting that we describe less of each phy.
-> That seems like taking away usable information. Unless I've
-> misunderstood?
-
-Just giving some pointers here:
-
-As also mentioned in the documentation for samsung-usbphy, SoCs prior
-to exynos4x had only one PMU
-register handling power to the PHYs (USB 2.0 phy to be specific).
-Exynos4x SoCs also had USB 2.0 PHY only
-but device and host PHYs' power was being handled by two registers
-namely - USBDEVICE_PHY_CONTROL and
-USBHOST_PHY_CONTROL.
-
-Exynos5x series of SoCs now have USB 2.0 type PHY (both device and
-host PHY are power-handled by only one register)
-and USB 3.0 type PHY (having a separate PMU register to handle power
-to PHY); so in a total of two registers but both
-handling entirely separate PHYs.
-
-So, samsung-usb2 phy driver should be interacting with only one PMU
-register (with an exception for exynos4x)
-and furthermore samsung-usb3phy driver interact with its separate PMU register.
-
-Sylwester,
-Please correct me if i am wrong somewhere.
-
->
-> Ideally, we'd describe the whole set of registers and linkages to phys,
-> even if Linux doesn't ahppen to use that information right now.
->
-> Thanks,
-> Mark.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
+--===============8126326205863901185==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PseDLKNfj4uXA+Je"
+Content-Disposition: inline
 
--- 
-Best Regards
-Vivek
+
+--PseDLKNfj4uXA+Je
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Aug 08, 2013 at 01:13:02PM +0530, Padma Venkat wrote:
+
+> If legacy platforms not required to change then I need to introduce a
+> new samsung_i2s_dai_data structure which holds only dai_type for
+> non-dt platforms. If I change legacy platforms it breaks the older
+> platforms now. Is it okay adding a samsung_i2s_dai_data structure for
+> non-dt platforms which will be removed later?
+
+This is totally fine and looks much nicer - you're not creating DT style
+names in the platform bus, nor making names that are so long that we
+need to expand the maximum length of a plaform device name (which isn't
+awesome).
+
+--PseDLKNfj4uXA+Je
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSA3N5AAoJELSic+t+oim9fmwP/isaw453TfVvVkNp3dVAZ0DD
+X9g+vk/u45d4BK992PsY9jaPo5Ae6jPkDeOJU74/9GmmJH8n3pucT05/FJXk6G0B
+SJwMMJ148M74kjdZ2OPOHE0Htg9dXuqsM8MS0ZfCgRL7rsDHsb3meqSbNDP1Qr3D
+HovqOFWEeeC9Ykrm9TeqNoDn9Gq02fXKiwJAcAvn3YIpQo0/WUMCLSWyXYfNdld4
+RAmigD3+kVuGSTxJej4oDmVKr27mFZqP5XE3sMsvNOgaoQg9TO/TIV8LWciNuDGX
+7e18WPxwr0RSh5H4053n+cdu/+wpwCRFdiV3RVFjjjWDWGmVL0OqaiIw0Abi13EB
+ZuS5a7SBwoOqxQyw45MOZBr0rKD4Nf3BUritUrJnEW9em5hlh1WpVxoauiyuy7/z
+mrTIK6zNwRjxpNgBHHR3wL/Jet8OwzBt7Wr3jXwsP+xJpg8nuz5NYYDWEfH9CF3G
+HowkDVkDNbZSBX9G0Q8m4zdtFFHVJdTnpw62i6zXKJKfXHvkLUCWV9Ln8EZsYWVN
+PbocLSk7ntuhKI0MyJhPi7nIbB1Kz0HJi1if5ts2Hx6BI1Mv+IBQCEq4gAWfbWuO
+wAisJ7I8QBPrF42Bm2Zz9usmXREanjfNyKZCE+9ukcxuWSwLoT7+Uo1cBajOdT3A
+9cT3X66YKZMHpC/Cfqgs
+=v3eL
+-----END PGP SIGNATURE-----
+
+--PseDLKNfj4uXA+Je--
+
+--===============8126326205863901185==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============8126326205863901185==--
