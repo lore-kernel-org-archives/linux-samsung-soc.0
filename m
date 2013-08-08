@@ -1,115 +1,281 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 1/2] ARM: Exynos: replace custom MFC reserved memory handling
- with generic code
-Date: Thu, 08 Aug 2013 15:47:19 -0600
-Message-ID: <520411E7.4070708@wwwdotorg.org>
-References: <1375705610-12724-1-git-send-email-m.szyprowski@samsung.com> <1375705610-12724-2-git-send-email-m.szyprowski@samsung.com> <52040704.6090100@wwwdotorg.org> <1421964.5VNJUTGkrX@flatron>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v4 01/13] [media] exynos5-is: Adding media device driver
+ for exynos5
+Date: Fri, 09 Aug 2013 00:08:24 +0200
+Message-ID: <520416D8.9050701@gmail.com>
+References: <1375866242-18084-1-git-send-email-arun.kk@samsung.com> <1375866242-18084-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1421964.5VNJUTGkrX@flatron>
-Sender: linux-media-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-media@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robherring2@gmail.com>, Olof Johansson <olof@lixom.net>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f45.google.com ([209.85.214.45]:58331 "EHLO
+	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966688Ab3HHWIc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 Aug 2013 18:08:32 -0400
+In-Reply-To: <1375866242-18084-2-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-On 08/08/2013 03:19 PM, Tomasz Figa wrote:
-> Hi Stephen,
-> 
-> On Thursday 08 of August 2013 15:00:52 Stephen Warren wrote:
->> On 08/05/2013 06:26 AM, Marek Szyprowski wrote:
->>> MFC driver use custom bindings for managing reserved memory. Those
->>> bindings are not really specific to MFC device and no even well
->>> discussed. They can be easily replaced with generic, platform
->>> independent code for handling reserved and contiguous memory.
->>>
->>> Two additional child devices for each memory port (AXI master) are
->>> introduced to let one assign some properties to each of them. Later
->>> one
->>> can also use them to assign properties related to SYSMMU controllers,
->>> which can be used to manage the limited dma window provided by those
->>> memory ports.
->>>
->>> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt
->>> b/Documentation/devicetree/bindings/media/s5p-mfc.txt
->>>
->>> +The MFC device is connected to system bus with two memory ports (AXI
->>> +masters) for better performance. Those memory ports are modelled as
->>> +separate child devices, so one can assign some properties to them
->>> (like +memory region for dma buffer allocation or sysmmu controller).
->>> +
->>>
->>>  Required properties:
->>>    - compatible : value should be either one among the following
->>>  	
->>>  	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
->>>  	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
->>>
->>> +	and additionally "simple-bus" to correctly initialize child
->>> +	devices for memory ports (AXI masters)
->>
->> simple-bus is wrong here; the child nodes aren't independent entities
->> that can be instantiated separately from their parent and without
->> depending on their parent.
-> 
-> I fully agree, but I can't think of anything better. Could you suggest a 
-> solution that would cover our use case:
-> 
-> The MFC IP has two separate bus masters (called here and there memports). 
-> On some SoCs, each master must use different memory bank to meet memory 
-> bandwidth requirements for higher bitrate video streams. This can be seen 
-> as MFC having two DMA subdevices, which have different DMA windows.
-> 
-> On Linux, this is handled by binding two appropriate CMA memory regions to 
-> the memports, so the driver can do DMA allocations on behalf of particular 
-> memport and get appropriate memory for it.
+On 08/07/2013 11:03 AM, Arun Kumar K wrote:
+> From: Shaik Ameer Basha<shaik.ameer@samsung.com>
+>
+> This patch adds support for media device for EXYNOS5 SoCs.
+> The current media device supports the following ips to connect
+> through the media controller framework.
+>
+> * MIPI-CSIS
+>    Support interconnection(subdev interface) between devices
+>
+> * FIMC-LITE
+>    Support capture interface from device(Sensor, MIPI-CSIS) to memory
+>    Support interconnection(subdev interface) between devices
+>
+> * FIMC-IS
+>    Camera post-processing IP having multiple sub-nodes.
+>
+> G-Scaler will be added later to the current media device.
+>
+> The media device creates two kinds of pipelines for connecting
+> the above mentioned IPs.
+> The pipeline0 is uses Sensor, MIPI-CSIS and FIMC-LITE which captures
+> image data and dumps to memory.
+> Pipeline1 uses FIMC-IS components for doing post-processing
+> operations on the captured image and give scaled YUV output.
+>
+> Pipeline0
+>    +--------+     +-----------+     +-----------+     +--------+
+>    | Sensor | -->  | MIPI-CSIS | -->  | FIMC-LITE | -->  | Memory |
+>    +--------+     +-----------+     +-----------+     +--------+
+>
+> Pipeline1
+>   +--------+      +--------+     +-----------+     +-----------+
+>   | Memory | -->   |  ISP   | -->  |    SCC    | -->  |    SCP    |
+>   +--------+      +--------+     +-----------+     +-----------+
+>
+> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
+> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+> ---
+>   .../devicetree/bindings/media/exynos5-mdev.txt     |  148 +++
+>   drivers/media/platform/exynos5-is/exynos5-mdev.c   | 1189 ++++++++++++++++++++
+>   drivers/media/platform/exynos5-is/exynos5-mdev.h   |  164 +++
+>   3 files changed, 1501 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/exynos5-mdev.txt
+>   create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.c
+>   create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.h
+>
+> diff --git a/Documentation/devicetree/bindings/media/exynos5-mdev.txt b/Documentation/devicetree/bindings/media/exynos5-mdev.txt
+> new file mode 100644
+> index 0000000..8b2ffb9
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5-mdev.txt
+> @@ -0,0 +1,148 @@
+> +Samsung EXYNOS5 SoC Camera Subsystem
+> +------------------------------------
+> +
+> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
+> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
+> +MIPI CSIS and FIMC-IS.
+> +
+> +The sub-subdevices are defined as child nodes of the common 'camera' node which
+> +also includes common properties of the whole subsystem not really specific to
+> +any single sub-device, like common camera port pins or the CAMCLK clock outputs
+> +for external image sensors attached to an SoC.
+> +
+> +Common 'camera' node
+> +--------------------
+> +
+> +Required properties:
+> +
+> +- compatible	: must be "samsung,exynos5-fimc", "simple-bus"
+> +- clocks	: list of clock specifiers, corresponding to entries in
+> +		  the clock-names property;
+> +- clock-names	: must contain "sclk_bayer" entry and matching clock property
+> +                  entry
 
-I don't see what that has to do with simple-bus. Whatever parses the
-node of the MFC can directly read from any contained property or child
-node; there's no need to try and get the core DT tree parser to
-enumerate the children.
+I guess "and matching clock property entry" could be removed.
 
-If you actually need a struct platform_device for each of these child
-nodes (which sounds wrong, but I'm not familiar with the code), then
-simply have the driver call of_platform_populate() itself at the
-appropriate time. But that's not going to work well unless the child
-nodes have compatible values, which doesn't seem right given their purpose.
+> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
+> +to define a required pinctrl state named "default" and optional pinctrl states:
 
->>> -  - samsung,mfc-r : Base address of the first memory bank used by MFC
->>> -		    for DMA contiguous memory allocation and its size.
->>> -
->>> -  - samsung,mfc-l : Base address of the second memory bank used by
->>> MFC
->>> -		    for DMA contiguous memory allocation and its size.
->>
->> These properties shouldn't be removed, but simply marked deprecated. The
->> driver will need to continue to support them so that old DTs work with
->> new kernels. The binding must therefore continue to document them so
->> that the old DT content still makes sense.
-> 
-> I tend to disagree on this. For Samsung platforms we've been trying to 
-> avoid DT bindings changes as much as possible, but I'd rather say that 
-> device tree was coupled with kernel version it came from, so Samsung-
-> specific bindings haven't been fully stabilized yet, especially since we 
-> are still at discussion stage when it's about defining processes for 
-> binding staging and stabilization.
+How about only supporting "default" pinctrl state in this initial DT 
+binding/driver
+version ? The optional states could be added later, my concern is that 
+except the
+camera port A, B there is also the RGB camera bay. Thus using "idle", 
+"active-a",
+active-b" won't work any more. We need to find some better solution for 
+that.
 
-Well, that's why everyone is shouting at ARM for abusing DT...
+Besides now when you removed the clock provider, there is not much you 
+could do
+with those optional pinctrl states. Those were originally meant to be 
+used in
+the clk_prepare/clk_unprepare ops. So, e.g. when sensor disables the 
+clock the
+host driver sets a clock output pin into idle state, e.g. input with 
+pull down.
 
-> I would rather see this patch as part of work on Samsung DT binding 
-> janitoring or maybe even sanitizing in some cases, like this one, when the 
-> old (and IMHO bad) MFC binding was introduced without proper review. I 
-> don't think we want to support this kind of brokenness anymore, especially 
-> considering the hacks which would be required by such support (see 
-> original implementation of this binding and code required in board file).
-> 
->>> +Two child nodes must be defined for MFC device. Their names must be
->>> +following: "memport-r" and "memport-l" ("right" and "left"). Required
->>
->> Node names shouldn't have semantic meaning.
-> 
-> What about bus-master-0 and bus-master-1?
+But maybe Exynos5 SoCs got improved comparing to e.g. Exynos4 so the 
+clock output
+pin is put into high impedance state when the sclk_cam clock is disabled ?
+However that seems unlikely.
 
-Just "bus-master" for each might make sense. Use reg properties to
-differentiate the two?
+> +"idle", "active-a", active-b". These optional states can be used to switch the
+> +camera port pinmux at runtime. The "idle" state should configure both the camera
+> +ports A and B into high impedance state, especially the CAMCLK clock output
+> +should be inactive. For the "active-a" state the camera port A must be activated
+> +and the port B deactivated and for the state "active-b" it should be the other
+> +way around.
+> +
+> +The 'camera' node must include at least one 'fimc-lite' child node.
+
+This shouldn't be necessary, i.e. making the individual device nodes 
+child nodes
+of the camera node. Think of GScaler which can be used either by the 
+camera or
+the display/HDMI subsystem. Although csis and fimc-lite are purely 
+camera specific
+I'm inclined to move them out of the camera node and couple them with 
+this node
+either manually through 'compatible' values or explicitly through phandles.
+
+> +'parallel-ports' node
+> +---------------------
+> +
+> +This node should contain child 'port' nodes specifying active parallel video
+> +input ports. It includes camera A and camera B inputs. 'reg' property in the
+
+I suppose the RGB camera bay needs to be also listed here. It could be 
+added
+later but might be more reasonable to add it now, e.g.
+
+1 - parallel camport A
+2 - parallel camport B
+3 - serial MIPI CSI-2 port 0
+4 - serial MIPI CSI-2 port 1
+5 - RGB camera bay
+
+3, 4 are already described in samsung-mipi-csis.txt.
+
+> +port nodes specifies data input - 0, 1 indicates input A, B respectively.
+> +
+> +Image sensor nodes
+> +------------------
+> +
+> +The sensor device nodes should be added to their control bus controller (e.g.
+> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
+> +using the common video interfaces bindings, defined in video-interfaces.txt.
+> +The implementation of this bindings requires clock-frequency property to be
+> +present in the sensor device nodes.
+> +
+> +Example:
+> +
+> +	aliases {
+> +		fimc-lite0 =&fimc_lite_0
+> +	};
+[...]
+> +	camera {
+> +		compatible = "samsung,exynos5-fimc", "simple-bus";
+> +		#address-cells =<1>;
+> +		#size-cells =<1>;
+> +		status = "okay";
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 =<&cam_port_a_clk_active>;
+> +
+> +		/* parallel camera ports */
+> +		parallel-ports {
+> +			/* camera A input */
+> +			port@0 {
+> +				reg =<0>;
+> +				fimc0_ep: endpoint {
+> +					remote-endpoint =<&s5k6aa_ep>;
+> +					bus-width =<8>;
+> +					hsync-active =<0>;
+> +					vsync-active =<1>;
+> +					pclk-sample =<1>;
+> +				};
+> +			};
+> +		};
+> +
+> +		fimc_lite_0: fimc-lite@13C00000 {
+> +			compatible = "samsung,exynos5250-fimc-lite";
+> +			reg =<0x13C00000 0x1000>;
+> +			interrupts =<0 126 0>;
+> +			clocks =<&clock 129>;
+> +			clock-names = "flite";
+> +			status = "okay";
+> +		};
+> +
+> +		csis_0: csis@11880000 {
+> +			compatible = "samsung,exynos4210-csis";
+> +			reg =<0x11880000 0x1000>;
+> +			interrupts =<0 78 0>;
+> +			/* camera C input */
+> +			port@3 {
+> +				reg =<3>;
+> +				csis0_ep: endpoint {
+> +					remote-endpoint =<&s5c73m3_ep>;
+> +					data-lanes =<1 2 3 4>;
+> +					samsung,csis-hs-settle =<12>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +MIPI-CSIS device binding is defined in samsung-mipi-csis.txt and FIMC-LITE
+> +device binding is defined in exynos-fimc-lite.txt.
+> diff --git a/drivers/media/platform/exynos5-is/exynos5-mdev.c b/drivers/media/platform/exynos5-is/exynos5-mdev.c
+> new file mode 100644
+> index 0000000..4cef69e
+> --- /dev/null
+> +++ b/drivers/media/platform/exynos5-is/exynos5-mdev.c
+> @@ -0,0 +1,1189 @@
+[...]
+> +/* Register FIMC, FIMC-LITE and CSIS media entities */
+> +static int fimc_md_register_of_platform_entities(struct fimc_md *fmd,
+> +						 struct device_node *parent)
+> +{
+> +	struct device_node *node;
+> +	int ret = 0;
+> +
+> +	for_each_available_child_of_node(parent, node) {
+> +		struct platform_device *pdev;
+> +		int plat_entity = -1;
+> +
+> +		pdev = of_find_device_by_node(node);
+> +		if (!pdev)
+> +			continue;
+> +
+> +		/* If driver of any entity isn't ready try all again later. */
+> +		if (!strcmp(node->name, CSIS_OF_NODE_NAME))
+> +			plat_entity = IDX_CSIS;
+> +		else if (!strcmp(node->name, FIMC_LITE_OF_NODE_NAME))
+> +			plat_entity = IDX_FLITE;
+> +		else if (!strcmp(node->name, FIMC_IS_OF_NODE_NAME))
+> +			plat_entity = IDX_FIMC_IS;
+
+And that needs to be replaced with something else, e.g. phandles or 
+searching
+with compatible value as the key. The former will be of course less 
+efficient.
+By the time I wrote similar code for Exynos4 I wasn't really aware the 
+device
+node names should not have semantic meaning.
+
+> +		if (plat_entity>= 0)
+> +			ret = fimc_md_register_platform_entity(fmd, pdev,
+> +							plat_entity);
+> +		put_device(&pdev->dev);
+> +		if (ret<  0)
+> +			break;
+> +	}
+> +
+> +	return ret;
+> +}
+
+Thanks,
+Sylwester
