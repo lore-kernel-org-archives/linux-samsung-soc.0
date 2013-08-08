@@ -1,94 +1,74 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v8 06/12] ARM: dts: Add description of System MMU of
-	Exynos SoCs
-Date: Thu, 8 Aug 2013 08:09:49 -0500
-Message-ID: <CAL_Jsq+_5GekzXpjWrtKZi2jWuxHSJxkPmVC4zmakfjAYai=eA@mail.gmail.com>
-References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
-	<CAL_JsqJdh5F0rK3koAW7DvRVU3RwS5pLgR5sV_Bak+K-6CrRFA@mail.gmail.com>
-	<003801ce8eb7$d7647f10$862d7d30$@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v9 01/16] iommu/exynos: do not include removed header
+Date: Thu, 08 Aug 2013 15:42:24 +0200
+Message-ID: <21505674.fdNgPGp76O@amdc1227>
+References: <002501ce941a$e3d87f40$ab897dc0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <003801ce8eb7$d7647f10$862d7d30$@samsung.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hyunwoong Kim <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Keyyoung Park <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:17433 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751797Ab3HHNm3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 8 Aug 2013 09:42:29 -0400
+In-reply-to: <002501ce941a$e3d87f40$ab897dc0$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Grant Grundler' <grundler@chromium.org>, 'Antonios Motakis' <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, 'Sachin Kamat' <sachin.kamat@linaro.org>
 
-On Thu, Aug 1, 2013 at 8:05 AM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> -----Original Message-----
->> From: Rob Herring [mailto:robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
->> Sent: Saturday, July 27, 2013 10:55 PM
->> On Fri, Jul 26, 2013 at 6:28 AM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> > Signed-off-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> > ---
->> >  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |  103 +++++++
->> >  arch/arm/boot/dts/exynos4.dtsi                     |  122 ++++++++
->> >  arch/arm/boot/dts/exynos4210.dtsi                  |   25 ++
->> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   76 +++++
->> >  arch/arm/boot/dts/exynos5250.dtsi                  |  291 ++++++++++++++++++++
->> >  5 files changed, 617 insertions(+), 0 deletions(-)
->> >  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
->> > b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
->> > new file mode 100644
->> > index 0000000..92f0a33
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
->> > @@ -0,0 +1,103 @@
->> > +Samsung Exynos4210 IOMMU H/W, System MMU (System Memory Management Unit)
->> > +
->> > +Samsung's Exynos architecture contains System MMU that enables scattered
->> > +physical memory chunks visible as a contiguous region to DMA-capable peripheral
->> > +devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
->> > +
->> > +System MMU is a sort of IOMMU and support identical translation table format to
->> > +ARMv7 translation tables with minimum set of page properties including access
->> > +permissions, shareability and security protection. In addition, System MMU has
->> > +another capabilities like L2 TLB or block-fetch buffers to minimize translation
->> > +latency.
->> > +
->> > +A System MMU is dedicated to a single master peripheral device.  Thus, it is
->> > +important to specify the correct System MMU in the device node of its master
->> > +device. Whereas a System MMU is dedicated to a master device, the master device
->> > +may have more than one System MMU.
->>
->> I don't follow the last sentence. Can you elaborate on the type of
->> connection you are talking about.
->>
-> Grant also addressed that.
-> He corrected the sentence like the following:
->
->   " Can I suggest rewriting the last two sentences to:
->      The master device node must correctly specify at least one
->      SystemMMU. A master  device may have more than one System MMU. "
->
-> I will change the sentence
->
->> Also, please align with the ARM system MMU binding that Will Deacon
->> has submitted particularly in terms of how master connections are
->> described.
->>
-> I didn't check it.
->
-> Should this align with ARM System MMU bindings?
-> System MMU in Exynos SoC is different from ARM System MMU.
-> It does not follows the specifications of ARM System MMU.
+Hi KyongHo,
 
-I'm not saying the h/w is the same or even the same spec, but how you
-describe a master to iommu connection needs to be done in the same
-way. This should be done in the same way for ALL iommu's. And if what
-is defined does not work for you, then we need to understand that and
-fix the binding now.
+On Thursday 08 of August 2013 18:37:25 Cho KyongHo wrote:
+> This commit remove <mach/sysmmu.h> which is removed.
 
-Rob
+I would prefer a more meaningful commit message, something among following 
+lines:
+
+8<---
+Commit 25e9d28d92 (ARM: EXYNOS: remove system mmu initialization from 
+exynos tree) removed arch/arm/mach-exynos/mach/sysmmu.h header without 
+removing remaining use of it from exynos-iommu driver, thus causing a 
+compilation error.
+
+This patch fixes the error by removing respective include line from exynos-
+iommu.c.
+--->8
+
+Also a sentence explaining why linux/kernel.h header must be included would 
+be nice.
+
+> Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+
+Please note that as far as I'm aware of, tags should be made using western 
+name writing convention, i.e. starting with first name.
+
+Best regards,
+Tomasz
+
+> ---
+>  drivers/iommu/exynos-iommu.c |    3 +--
+>  1 files changed, 1 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> index 3f32d64..233f382 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -12,6 +12,7 @@
+>  #define DEBUG
+>  #endif
+> 
+> +#include <linux/kernel.h>
+>  #include <linux/io.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/platform_device.h>
+> @@ -29,8 +30,6 @@
+>  #include <asm/cacheflush.h>
+>  #include <asm/pgtable.h>
+> 
+> -#include <mach/sysmmu.h>
+> -
+>  /* We does not consider super section mapping (16MB) */
+>  #define SECT_ORDER 20
+>  #define LPAGE_ORDER 16
