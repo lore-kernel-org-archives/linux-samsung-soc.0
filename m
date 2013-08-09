@@ -1,66 +1,71 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: always enable PM domains support for
- EXYNOS4x12
-Date: Fri, 09 Aug 2013 16:53:02 +0200
-Message-ID: <1427702.Wy3A0eELLT@amdc1227>
-References: <2897494.fSQeGUd9YR@amdc1032>
+Subject: Re: [PATCH v9 07/16] iommu/exynos: support for device tree
+Date: Fri, 09 Aug 2013 17:02:02 +0200
+Message-ID: <33568604.vCtP4hvQ1q@amdc1227>
+References: <002b01ce941b$160a88a0$421f99e0$@samsung.com>
+ <20130809153730.83d3a5ba419def5424bcbb0e@samsung.com>
+ <CAL_JsqKM_YP0Cj3Uo7TeCVcKcbzzsuK3yxTSn6pG8qGFOnZAiA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:50128 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757646Ab3HIOxI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 10:53:08 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MR900E89QOFUQ00@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Aug 2013 15:53:05 +0100 (BST)
-In-reply-to: <2897494.fSQeGUd9YR@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAL_JsqKM_YP0Cj3Uo7TeCVcKcbzzsuK3yxTSn6pG8qGFOnZAiA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Cho KyongHo <pullip.cho@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Grant Grundler <grundler@chromium.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, Sachin Kamat <sachin.kamat@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Bart,
+On Friday 09 of August 2013 08:28:09 Rob Herring wrote:
+> On Fri, Aug 9, 2013 at 1:37 AM, Cho KyongHo <pullip.cho@samsung.com> 
+wrote:
+> > On Fri, 09 Aug 2013 00:41:25 +0200, Tomasz Figa wrote:
+> >> Hi KyongHo,
+> >> 
+> >> On Thursday 08 of August 2013 18:38:49 Cho KyongHo wrote:
+> >> > This commit adds device tree support for System MMU.
+> >> > This also include the following changes and enhancements:
+> >> > 
+> >> > * use managed device helper functions.
+> >> > Simplyfies System MMU device driver.
+> >> > 
+> >> > * use only a single clock descriptor.
+> >> > System MMU device descriptor is seperate if it is imposible to make
+> >> > a single clock descriptor to make a device descriptor for a group of
+> >> > System MMUs.
+> >> > 
+> >> > * removed dbgname member from sysmmu_drvdata structure.
+> >> > debugging kernel message for a System MMU is distinguisheable with
+> >> > the
+> >> > name of device descroptors.
+> >> 
+> >> Please put all these three changes in separate patches. This patch is
+> >> hard to review with all the changes mixed together...
+> 
+> Agreed.
+> 
+> > Ok.
+> > 
+> >> In addition, I believe this is the patch that should be adding device
+> >> tree binding documentation, not the 6/16 one, as this is where
+> >> actually support for this binding gets added to the kernel.
+> > 
+> > Oh, I didn't know that devicetree binding description and
+> > implementation need to be in the same patch.
+> > I will do as you advised.
+> 
+> Actually, I prefer the binding docs be separate patches. The reason
+> being so we can get closer to having them in a separate repository.
+> Also, then the binding can be acked separately from the kernel
+> implementation using the binding.
 
-On Friday 09 of August 2013 13:56:05 Bartlomiej Zolnierkiewicz wrote:
-> Currently PM domains support will be enabled for EXYNOS4x12 SoCs
-> only if EXYNOS4210 SoC or EXYNOS5250 SoC support is also enabled.
-> 
-> Fix it by explicitly selecting PM domains support (if PM support
-> is enabled) by SOC_EXYNOS4212 and SOC_EXYNOS4412 config options.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-exynos/Kconfig |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> Index: b/arch/arm/mach-exynos/Kconfig
-> ===================================================================
-> --- a/arch/arm/mach-exynos/Kconfig	2013-08-08 14:36:02.000000000 +0200
-> +++ b/arch/arm/mach-exynos/Kconfig	2013-08-08 14:38:48.967486318 +0200
-> @@ -52,6 +52,7 @@ config SOC_EXYNOS4212
->  	depends on ARCH_EXYNOS4
->  	select ARCH_HAS_BANDGAP
->  	select PINCTRL_EXYNOS
-> +	select PM_GENERIC_DOMAINS if PM
->  	select S5P_PM if PM
->  	select S5P_SLEEP if PM
->  	select SAMSUNG_DMADEV
-> @@ -64,6 +65,7 @@ config SOC_EXYNOS4412
->  	depends on ARCH_EXYNOS4
->  	select ARCH_HAS_BANDGAP
->  	select PINCTRL_EXYNOS
-> +	select PM_GENERIC_DOMAINS if PM
->  	select SAMSUNG_DMADEV
->  	help
->  	  Enable EXYNOS4412 SoC support
+OK. This is a good point. So maybe let's fully define this order to be as 
+following (and have first best practice for the DT binding best practices 
+that need to be defined):
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
+Bindings documentation should be added with a separate patch, before any 
+user of these bindings is introduced.
+
+What do you think?
 
 Best regards,
 Tomasz
