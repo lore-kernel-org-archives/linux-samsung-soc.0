@@ -1,43 +1,55 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Set 64-bit DMA mask for EXYNOS5250
-Date: Fri, 9 Aug 2013 17:08:44 +0530
-Message-ID: <CAHbNUh0Tn2P7ngMPaJOTpvwfHyYLFV03HaK_0gix_3vbs_uE8A@mail.gmail.com>
-References: <1376042714-26513-1-git-send-email-tushar.behera@linaro.org>
-	<20130809102752.GP23006@n2100.arm.linux.org.uk>
-	<CAHbNUh1z8ULaxpJuHe=B5+ey+19LznD_tzSopJ6y3h09rw=-8g@mail.gmail.com>
-	<20130809111608.GR23006@n2100.arm.linux.org.uk>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: always enable PM domains support for EXYNOS4x12
+Date: Fri, 09 Aug 2013 13:56:05 +0200
+Message-ID: <2897494.fSQeGUd9YR@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:44494 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934273Ab3HILip (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:55173 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965820Ab3HIL4f (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 07:38:45 -0400
-Received: by mail-oa0-f54.google.com with SMTP id o6so6669731oag.41
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Aug 2013 04:38:45 -0700 (PDT)
-In-Reply-To: <20130809111608.GR23006@n2100.arm.linux.org.uk>
+	Fri, 9 Aug 2013 07:56:35 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MR900B89IHUQQK0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Aug 2013 20:56:33 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 9 August 2013 16:46, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
-> On Fri, Aug 09, 2013 at 04:41:57PM +0530, Tushar Behera wrote:
->> On 9 August 2013 15:57, Russell King - ARM Linux <linux@arm.linux.org.uk> wrote:
->> > On Fri, Aug 09, 2013 at 03:35:14PM +0530, Tushar Behera wrote:
->> >> When LPAE is enabled, we need to set 64bit DMA mask bits.
->> >
->> > *Please* check the list archives.  I sent during the last 7 days a patch
->> > series which should address this problem.  Unfortunately, it seems almost
->> > no one has looked at it.
->>
->> Thanks for the patchset. Tested on Arndale.
->
-> Thanks - can I assume that's a proper Tested-by: ?  Also, please confirm
-> the patch numbers which you tested.  Thanks.
+Currently PM domains support will be enabled for EXYNOS4x12 SoCs
+only if EXYNOS4210 SoC or EXYNOS5250 SoC support is also enabled.
 
-Replied to [PATCH 46/51] with a Tested-by.
+Fix it by explicitly selecting PM domains support (if PM support
+is enabled) by SOC_EXYNOS4212 and SOC_EXYNOS4412 config options.
 
--- 
-Tushar Behera
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
+
+Index: b/arch/arm/mach-exynos/Kconfig
+===================================================================
+--- a/arch/arm/mach-exynos/Kconfig	2013-08-08 14:36:02.000000000 +0200
++++ b/arch/arm/mach-exynos/Kconfig	2013-08-08 14:38:48.967486318 +0200
+@@ -52,6 +52,7 @@ config SOC_EXYNOS4212
+ 	depends on ARCH_EXYNOS4
+ 	select ARCH_HAS_BANDGAP
+ 	select PINCTRL_EXYNOS
++	select PM_GENERIC_DOMAINS if PM
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+ 	select SAMSUNG_DMADEV
+@@ -64,6 +65,7 @@ config SOC_EXYNOS4412
+ 	depends on ARCH_EXYNOS4
+ 	select ARCH_HAS_BANDGAP
+ 	select PINCTRL_EXYNOS
++	select PM_GENERIC_DOMAINS if PM
+ 	select SAMSUNG_DMADEV
+ 	help
+ 	  Enable EXYNOS4412 SoC support
