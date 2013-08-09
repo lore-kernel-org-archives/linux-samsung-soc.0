@@ -1,109 +1,85 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v4 11/13] [media] exynos5-is: Add Kconfig and Makefile
-Date: Sat, 10 Aug 2013 01:25:52 +0200
-Message-ID: <52057A80.30006@gmail.com>
-References: <1375866242-18084-1-git-send-email-arun.kk@samsung.com> <1375866242-18084-12-git-send-email-arun.kk@samsung.com>
+Subject: Re: [PATCH v4 12/13] V4L: s5k6a3: Change sensor min/max resolutions
+Date: Sat, 10 Aug 2013 01:37:05 +0200
+Message-ID: <52057D21.1010408@gmail.com>
+References: <1375866242-18084-1-git-send-email-arun.kk@samsung.com> <1375866242-18084-13-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f48.google.com ([74.125.83.48]:53591 "EHLO
-	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031447Ab3HIXZ6 (ORCPT
+Received: from mail-ea0-f178.google.com ([209.85.215.178]:52585 "EHLO
+	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031614Ab3HIXhK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 19:25:58 -0400
-In-Reply-To: <1375866242-18084-12-git-send-email-arun.kk@samsung.com>
+	Fri, 9 Aug 2013 19:37:10 -0400
+In-Reply-To: <1375866242-18084-13-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arun Kumar K <arun.kk@samsung.com>
 Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-On 08/07/2013 11:03 AM, Arun Kumar K wrote:
-> Adds Kconfig and Makefile for exynos5-is driver files.
+On 08/07/2013 11:04 AM, Arun Kumar K wrote:
+> s5k6a3 sensor has actual pixel resolution of 1408x1402 against
+> the active resolution 1392x1392. The real resolution is needed
+> when raw sensor SRGB data is dumped to memory by fimc-lite.
 >
-> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
-> Signed-off-by: Kilyeon Im<kilyeon.im@samsung.com>
 > Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
 > ---
->   drivers/media/platform/Kconfig             |    1 +
->   drivers/media/platform/Makefile            |    1 +
->   drivers/media/platform/exynos5-is/Kconfig  |   20 ++++++++++++++++++++
->   drivers/media/platform/exynos5-is/Makefile |    7 +++++++
->   4 files changed, 29 insertions(+)
->   create mode 100644 drivers/media/platform/exynos5-is/Kconfig
->   create mode 100644 drivers/media/platform/exynos5-is/Makefile
+>   drivers/media/i2c/s5k6a3.c |   21 +++++++++++++--------
+>   1 file changed, 13 insertions(+), 8 deletions(-)
 >
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index 08de865..4b0475e 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -123,6 +123,7 @@ config VIDEO_S3C_CAMIF
+> diff --git a/drivers/media/i2c/s5k6a3.c b/drivers/media/i2c/s5k6a3.c
+> index ccbb4fc..6dec2ec 100644
+> --- a/drivers/media/i2c/s5k6a3.c
+> +++ b/drivers/media/i2c/s5k6a3.c
+> @@ -25,10 +25,14 @@
+>   #include<media/v4l2-async.h>
+>   #include<media/v4l2-subdev.h>
 >
->   source "drivers/media/platform/soc_camera/Kconfig"
->   source "drivers/media/platform/exynos4-is/Kconfig"
-> +source "drivers/media/platform/exynos5-is/Kconfig"
->   source "drivers/media/platform/s5p-tv/Kconfig"
->
->   endif # V4L_PLATFORM_DRIVERS
-> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-> index eee28dd..40bf09f 100644
-> --- a/drivers/media/platform/Makefile
-> +++ b/drivers/media/platform/Makefile
-> @@ -37,6 +37,7 @@ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_TV)	+= s5p-tv/
->
->   obj-$(CONFIG_VIDEO_SAMSUNG_S5P_G2D)	+= s5p-g2d/
->   obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)	+= exynos-gsc/
-> +obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS5_CAMERA) += exynos5-is/
->
->   obj-$(CONFIG_BLACKFIN)                  += blackfin/
->
-> diff --git a/drivers/media/platform/exynos5-is/Kconfig b/drivers/media/platform/exynos5-is/Kconfig
-> new file mode 100644
-> index 0000000..c872757
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/Kconfig
-> @@ -0,0 +1,20 @@
-> +config VIDEO_SAMSUNG_EXYNOS5_CAMERA
-> +	bool "Samsung Exynos5 Media Device driver"
+> -#define S5K6A3_SENSOR_MAX_WIDTH		1392
+> -#define S5K6A3_SENSOR_MAX_HEIGHT	1392
+> -#define S5K6A3_SENSOR_MIN_WIDTH		32
+> -#define S5K6A3_SENSOR_MIN_HEIGHT	32
+> +#define S5K6A3_SENSOR_MAX_WIDTH		1408
+> +#define S5K6A3_SENSOR_MAX_HEIGHT	1408
 
-"Samsung Exynos5 SoC Camera Media Device driver" ?
+Don't you want this to be 1402 ?
 
-> +	depends on VIDEO_V4L2&&  VIDEO_V4L2_SUBDEV_API&&  PM_RUNTIME
-> +	depends on VIDEO_SAMSUNG_EXYNOS4_IS
-> +	help
-> +	  This is a v4l2 based media controller driver for
-> +	  Exynos5 SoC.
+> +
 
-Or perhaps:
-	  This is a V4L2 media device driver for Exynos5 SoC series
-	  camera subsystem.
-?
+Empty line could be removed.
+
+> +#define S5K6A3_SENSOR_ACTIVE_WIDTH	1392
+> +#define S5K6A3_SENSOR_ACTIVE_HEIGHT	1392
 > +
-> +if VIDEO_SAMSUNG_EXYNOS5_CAMERA
-> +
-> +config VIDEO_SAMSUNG_EXYNOS5_FIMC_IS
-> +	tristate "Samsung Exynos5 SoC FIMC-IS driver"
-> +	depends on I2C&&  OF
-> +	depends on VIDEO_EXYNOS4_FIMC_IS
-> +	select VIDEOBUF2_DMA_CONTIG
-> +	help
-> +	  This is a V4L2 driver for Samsung Exynos5 SoC series Imaging
-> +	  Subsystem known as FIMC-IS.
-> +
-> +endif #VIDEO_SAMSUNG_EXYNOS5_MDEV
-> diff --git a/drivers/media/platform/exynos5-is/Makefile b/drivers/media/platform/exynos5-is/Makefile
-> new file mode 100644
-> index 0000000..6cdb037
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/Makefile
-> @@ -0,0 +1,7 @@
-> +ccflags-y += -Idrivers/media/platform/exynos4-is
-> +exynos5-fimc-is-objs := fimc-is-core.o fimc-is-isp.o fimc-is-scaler.o
-> +exynos5-fimc-is-objs += fimc-is-pipeline.o fimc-is-interface.o fimc-is-sensor.o
-> +exynos-mdevice-objs := exynos5-mdev.o
-> +
-> +obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS5_FIMC_IS) += exynos5-fimc-is.o
-> +obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS5_CAMERA) += exynos-mdevice.o
+
+Ditto.
+
+> +#define S5K6A3_SENSOR_MIN_WIDTH		(32 + 16)
+> +#define S5K6A3_SENSOR_MIN_HEIGHT	(32 + 10)
+>
+>   #define S5K6A3_DEF_PIX_WIDTH		1296
+>   #define S5K6A3_DEF_PIX_HEIGHT		732
+> @@ -107,10 +111,11 @@ static void s5k6a3_try_format(struct v4l2_mbus_framefmt *mf)
+>
+>   	fmt = find_sensor_format(mf);
+>   	mf->code = fmt->code;
+> -	v4l_bound_align_image(&mf->width, S5K6A3_SENSOR_MIN_WIDTH,
+> -			      S5K6A3_SENSOR_MAX_WIDTH, 0,
+> -			&mf->height, S5K6A3_SENSOR_MIN_HEIGHT,
+> -			      S5K6A3_SENSOR_MAX_HEIGHT, 0, 0);
+> +	v4l_bound_align_image(&mf->width,
+> +			S5K6A3_SENSOR_MIN_WIDTH, S5K6A3_SENSOR_MAX_WIDTH, 0,
+> +			&mf->height,
+> +			S5K6A3_SENSOR_MIN_HEIGHT, S5K6A3_SENSOR_MAX_HEIGHT, 0,
+> +			0);
+>   }
+>
+>   static struct v4l2_mbus_framefmt *__s5k6a3_get_format(
 
 
 Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+-- 
+Thanks,
+Sylwester
