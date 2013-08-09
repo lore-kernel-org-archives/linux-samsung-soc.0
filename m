@@ -1,74 +1,122 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: dw_mmc: Does anyone use multiple slots?
-Date: Fri, 9 Aug 2013 08:51:57 -0700
-Message-ID: <CAD=FV=X9G66zg+OQ5C0gkkkYDdrkegkZdmWNXRDiS2V5_yY+6w@mail.gmail.com>
-References: <CAD=FV=U3aT1KKtSwAFhYURJJerp70ij8h647=xyV51et4jYipg@mail.gmail.com>
-	<CAOesGMjaF2K0CnuWBj7xdXGAQk-XRetBstaQdd9EZzBYrmDjeA@mail.gmail.com>
-	<86mworfzsf.fsf@void.printf.net>
-	<000e01ce94af$12710ef0$37532cd0$%jun@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [RFC PATCH] cpuidle: fix device->state_count handling
+Date: Fri, 09 Aug 2013 18:01:22 +0200
+Message-ID: <52051252.9020405@linaro.org>
+References: <8500767.uCb7Y0sjbx@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f169.google.com ([209.85.216.169]:56411 "EHLO
-	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934146Ab3HIPv6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 11:51:58 -0400
-Received: by mail-qc0-f169.google.com with SMTP id m15so2303296qcq.28
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Aug 2013 08:51:57 -0700 (PDT)
-In-Reply-To: <000e01ce94af$12710ef0$37532cd0$%jun@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <8500767.uCb7Y0sjbx@amdc1032>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: Chris Ball <cjb@laptop.org>, Olof Johansson <olof@lixom.net>, James Hogan <james.hogan@imgtec.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sonny Rao <sonnyrao@chromium.org>
 
-Hi,
+On 08/09/2013 01:59 PM, Bartlomiej Zolnierkiewicz wrote:
+> Use device->state_count instead of driver->state_count in
+> cpuidle_play_dead(), ladder_select_state() and menu_select().
+>=20
+> This allows cpuidle drivers to override maximum allowable
+> state number for a given device, which is what some cpuidle
+> drivers would like to do (i.e. EXYNOS cpuidle driver).
+>=20
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+> Alternatively, we can make EXYNOS cpuidle driver work without
+> device->state_count (at a some tiny performance cost?). This
+> would allow us to remove device->state_count completely as it
+> is not needed by any other cpuidle driver currently (AFAICS).
 
-On Thu, Aug 8, 2013 at 8:18 PM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> On Fri, August 09, 2013, Chris Ball wrote:
->> On Fri, Aug 09 2013, Olof Johansson wrote:
->> > On Thu, Aug 8, 2013 at 5:16 PM, Doug Anderson <dianders@google.com> wrote:
->> >
->> >> I guess my overall question is: if there are no actual implementations
->> >> of multislot, shouldn't we kill it and simplify the code a whole lot?
->> >> If someone out there has a real multislot device they can step back in
->> >> and do it more correctly?
->> >>
->> >> Of course we need to find someone to actually go through and do the
->> >> killing of multislot, but finding that person might be easier if there
->> >> was some agreement that it was good to do.
->> >
->> > There clearly seems to be no in-tree users of multislot. If someone
->> > new comes in, we have the code in the history and can revert the
->> > removal (or at least use it as reference for re-introduction).
->> >
->> > I vote for removing it. It adds really annoying complexity for
->> > something that nobody uses.
->>
->> I agree with Olof, for what it's worth.  (The maintainers of the
->> driver are Jaehoon and Seungwon, though.)
->
-> I feel like there is no actual use case for that though origin Synopsys IP supports.
-> Multi-slot  might be not useful in terms of performance because shared bus should be allowed.
-> (At least this is the way I see it, though)
-> As Exynos's host does so, other hosts which are introduced in Linux seems use one card per host.
-> If it's really not found now, I could agree on this topic.
+I am inclined for this solution.
 
-This all sounds very promising.  Certainly we should wait a little
-longer to see if others find / respond to this thread, but otherwise
-we can go ahead?
+The state_count was initially in the device structure, then it has been
+moved to the driver structure and the code has been changed accordingly=
+=2E
+That was part of the cpuidle code consolidation made by Deepthi Dharwar
+(46bcfad7).
 
-It's possible to do this in somewhat small steps.  I think the first
-step is to remove num_slots and remove all loops over num_slots.  That
-actually sounds pretty easy/small, though it will touch a lot of code.
- After that we can try to move things out of the separate slot
-structure, I think.  That might be a bit of a bigger change.  I can
-keep that as a back burner task, but I wouldn't object at all to
-someone else doing it!  ;)
+This patch is one step back.
 
-The big question, though, is what to do about device tree bindings
-(cringe).  Really bus-width, wp-gpios, and disable-wp ought to be
-promoted up and we should remove the "slot" subnode.  ...but that of
-course breaks the stable API.
+There is an alternate solution. May be you can use the multiple driver
+support to register two cpuidle driver (one for each cpus) ? It was
+initially made to support cpus with different latencies but that should
+work.
 
--Doug
+>  drivers/cpuidle/cpuidle.c          |    2 +-
+>  drivers/cpuidle/governors/ladder.c |    2 +-
+>  drivers/cpuidle/governors/menu.c   |    2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+>=20
+> Index: b/drivers/cpuidle/cpuidle.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- a/drivers/cpuidle/cpuidle.c	2013-08-08 14:36:09.611488750 +0200
+> +++ b/drivers/cpuidle/cpuidle.c	2013-08-08 14:39:02.291486116 +0200
+> @@ -57,7 +57,7 @@ int cpuidle_play_dead(void)
+>  		return -ENODEV;
+> =20
+>  	/* Find lowest-power state that supports long-term idle */
+> -	for (i =3D drv->state_count - 1; i >=3D CPUIDLE_DRIVER_STATE_START;=
+ i--)
+> +	for (i =3D dev->state_count - 1; i >=3D CPUIDLE_DRIVER_STATE_START;=
+ i--)
+>  		if (drv->states[i].enter_dead)
+>  			return drv->states[i].enter_dead(dev, i);
+> =20
+> Index: b/drivers/cpuidle/governors/ladder.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- a/drivers/cpuidle/governors/ladder.c	2013-08-08 14:36:09.61148875=
+0 +0200
+> +++ b/drivers/cpuidle/governors/ladder.c	2013-08-08 14:39:02.29948611=
+6 +0200
+> @@ -87,7 +87,7 @@ static int ladder_select_state(struct cp
+>  		last_residency =3D last_state->threshold.promotion_time + 1;
+> =20
+>  	/* consider promotion */
+> -	if (last_idx < drv->state_count - 1 &&
+> +	if (last_idx < dev->state_count - 1 &&
+>  	    !drv->states[last_idx + 1].disabled &&
+>  	    !dev->states_usage[last_idx + 1].disable &&
+>  	    last_residency > last_state->threshold.promotion_time &&
+> Index: b/drivers/cpuidle/governors/menu.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- a/drivers/cpuidle/governors/menu.c	2013-08-08 14:36:09.611488750 =
++0200
+> +++ b/drivers/cpuidle/governors/menu.c	2013-08-08 14:39:02.299486116 =
++0200
+> @@ -312,7 +312,7 @@ static int menu_select(struct cpuidle_dr
+>  	 * Find the idle state with the lowest power while satisfying
+>  	 * our constraints.
+>  	 */
+> -	for (i =3D CPUIDLE_DRIVER_STATE_START; i < drv->state_count; i++) {
+> +	for (i =3D CPUIDLE_DRIVER_STATE_START; i < dev->state_count; i++) {
+>  		struct cpuidle_state *s =3D &drv->states[i];
+>  		struct cpuidle_state_usage *su =3D &dev->states_usage[i];
+> =20
+>=20
+
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
+  * English - detected
+  * English
+  * French
+
+  * English
+  * French
+
+ <javascript:void(0);>
