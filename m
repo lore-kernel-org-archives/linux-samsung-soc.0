@@ -1,178 +1,88 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v9 00/16] iommu/exynos: Fixes and Enhancements of System
-	MMU driver with DT
-Date: Fri, 09 Aug 2013 10:00:16 +0900
-Message-ID: <20130809100016.a22e5938a829f229eb5df00f@samsung.com>
-References: <002401ce941a$dad907c0$908b1740$@samsung.com>
-	<2763595.7SYUCgBHXZ@amdc1227>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: samsung: Staticise non-exported symbols for PLLs
+Date: Thu, 08 Aug 2013 18:18:46 -0700
+Message-ID: <20130809011846.5348.36623@quantum>
+References: <1375959983-2690-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <2763595.7SYUCgBHXZ@amdc1227>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Grant Grundler' <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Antonios Motakis' <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1375959983-2690-1-git-send-email-broonie@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linar-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 08 Aug 2013 14:13:57 +0200, Tomasz Figa wrote:
-
-> Hi KyongHo,
+Quoting Mark Brown (2013-08-08 04:06:23)
+> From: Mark Brown <broonie@linaro.org>
 > 
-> Just a little hint for future:
+> These symbols are not used outside the files they are defined in so do
+> not need to be in the global namespace and they aren't declared so sparse
+> warns.
 > 
-> To make reviewing your patches easier, please send all patches (01 and 
-> further) as a follow up (reply) to cover letter of the series (patch 00).
+> Signed-off-by: Mark Brown <broonie@linaro.org>
+
+Hi Mark,
+
+Sachin already submitted a patch for this two days back. I've pushed
+this out to my public git tree just now so it should land in the next
+linux-next.
+
+Regards,
+Mike
+
+> ---
+>  drivers/clk/samsung/clk-exynos4.c    | 2 +-
+>  drivers/clk/samsung/clk-exynos5250.c | 2 +-
+>  drivers/clk/samsung/clk-exynos5420.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> This can be achieved by using --thread switch of git send-email for 
-> example.
-> 
-
-Thank you for advice.
-However, git send-email and something like that is prohibitted by the
-security policy of my company :(
-I used an email client in windows O/S.
-
-I need more consideration to the patches are sent in the order of patches.
-
-Thank you.
-
-KyongHo.
-
-> Best regards,
-> Tomasz
-> 
-> On Thursday 08 of August 2013 18:37:10 Cho KyongHo wrote:
-> > The current exynos-iommu(System MMU) driver does not work autonomously
-> > since it is lack of support for power management of peripheral blocks.
-> > For example, MFC device driver must ensure that its System MMU is
-> > disabled before MFC block is power-down not to invalidate IOTLB in the
-> > System MMU when I/O memory mapping is changed. Because a System MMU
-> > resides in the same H/W block, access to control registers of System MMU
-> > while the H/W block is turned off must be prohibited.
-> > 
-> > This set of changes solves the above problem with setting each System
-> > MMUs as the parent of the device which owns the System MMU to receive
-> > the information when the device is turned off or turned on.
-> > 
-> > Another big change to the driver is the support for devicetree.
-> > The bindings for System MMU is described in
-> > Documentation/devicetree/bindings/arm/samsung/system-mmu.txt
-> > 
-> > In addition, this patchset also includes several bug fixes and
-> > enhancements of the current driver.
-> > 
-> > Change log:
-> > v9:
-> > - Rebased on the following branches
-> >   git.linaro.org/git-ro/people/mturquette/linux.git/clk-next
-> >  
-> > git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git/samsung-
-> > next git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/master
-> > (3.11-rc4) - Split "add bus notifier for registering System MMU" into 5
-> > patches - Call clk_prepare() that was missing in v8.
-> > - Fixed base address of sysmmu_tv in exynos4210.dtsi
-> > - BUG_ON() instead of return -EADDRINUSE when trying mapping on an mapped
-> > area - Moved camif_top to 317 in drivers/clk/samsung/clk-exynos5250.c -
-> > Removed 'iommu' property from 'codec'(mfc) node
-> > - Does not make 'master' clock to be the parent of 'sysmmu' clock.
-> >    'master' clock is enabled before accessing control registers of System
-> > MMU and disabled after the access.
-> > 
-> > v8:
-> > - Reordered patch list: moved "change rwloc to spinlock" to the last.
-> > - Fixed remained bug in "fix page table maintenance".
-> > - Always return 0 from exynos_iommu_attach_device().
-> > - Removed prefetch buffer setting when System MMU is enabled
-> >   due to the restriction of prefetch buffers:
-> >   A prefetch buffer must not hit from more than one DMA.
-> >   For instance with GScalers, if a single prefetch buffer is initialized
-> >   with 0x0 ~ 0xFFFFFFFF and a GScaler works on source buffer at
-> > 0x10000000 and target buffer @ 0x20000000, the System MMU may be got
-> > deadlock. Clients must initialize prefetch buffers with custom function
-> > defined in exynos-iommu drivers whenever they need to enable prefetch
-> > buffers. - The clock of System MMU has no relationship with the clock of
-> > its master H/W. The clock of master H/W is always enabled when
-> > exynos-iommu driver needs to access MMIO area and disabled as soon as
-> > the access finishes. - Removed err_page variable used in
-> > exynos_iommu_unmap() in the previous patch "fix page table maintenance".
-> > - Split a big patch "add bus notifier for registering System MMU".
-> >    Extracted the following 2 patches: 9/12 and 10/12.
-> > - And some additional fixes...
-> > 
-> > v7:
-> > - Rebased on the stable 3.10
-> > - Registered PM domains and gate clocks with DT
-> > - Changed connection method between a System MMU and its master H/W
-> >    'mmu-master' property in the node of System MMU
-> >    --> 'iommu' property in the node of master H/W
-> > - Marking device descriptor of master H/W of a System MMU with bus
-> > notifier. - Power management (PM_RUNTIME, PM_SLEEP) of System MMUs with
-> > gpd_dev_ops of Generic IO Powerdomain. gpd_dev_ops are set to the master
-> > H/Ws before they are probed in the bus notifier.
-> > - Removed additional debugging features like debugfs entries and
-> >    version names.
-> > - Removed support for advanced features of System MMU 3.2 and 3.3
-> >    the current IOMMU API cannot handle the feature
-> >   (A kind of L2 TLB that fetches several consequence page table entries.
-> >    It must be initialized by the driver of master H/W whenever it works.)
-> > 
-> > v6:
-> > - Rebased on the branch, next/iommu-exynos of
-> >   git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > 
-> > v5:
-> > - new bugfix: patch 01
-> > - Reordered patches
-> >   * patch 01 ~ 05: Bugfix and enhancements of the existing driver
-> >   * patch 06 ~ 10: Device Tree support and callbacks for power management
-> > * patch 11     : System MMU 3.2 and 3.3 support
-> >   * patch 12 ~ 14: Debugging features
-> > - Additional code compaction
-> > 
-> > v4:
-> > - Remove Change-Id from v3 patches
-> > - Change the order of the third and the first patch
-> >   Thanks to Kukjin Kim.
-> > - Fix memory leak when allocating and assigning exynos_iommu_owner to
-> > client device if the client device has multiple System MMUs.
-> >   Thanks to Rahul Sharma.
-> > 
-> > v3:
-> > - Fix prefetch buffer flag definition for System MMU 3.3 (patch 10/12)
-> > - Fix incorrect setting for SET_RUNTIME_PM_OPS (patch 09/12)
-> >   Thanks to Prathyush.
-> > 
-> > v2:
-> > - Split the patch to iommu/exynos into 9 patches
-> > - Support for System MMU 3.3
-> > - Some code compaction
-> > 
-> > Patch summary:
-> > 
-> > Diffstats:
-> >  .../devicetree/bindings/clock/exynos5250-clock.txt |   26 +
-> >  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |  103 ++
-> >  arch/arm/boot/dts/exynos4.dtsi                     |  122 +++
-> >  arch/arm/boot/dts/exynos4210.dtsi                  |   25 +
-> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   82 ++
-> >  arch/arm/boot/dts/exynos5250.dtsi                  |  290 ++++++
-> >  drivers/clk/samsung/clk-exynos4.c                  |   27 +-
-> >  drivers/clk/samsung/clk-exynos5250.c               |   57 +-
-> >  drivers/iommu/Kconfig                              |    5 +-
-> >  drivers/iommu/exynos-iommu.c                       | 1061
-> > +++++++++++++------- 10 files changed, 1423 insertions(+), 375
-> > deletions(-)
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe
-> > linux-samsung-soc" in the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+> index 68f9a4a..fec319d 100644
+> --- a/drivers/clk/samsung/clk-exynos4.c
+> +++ b/drivers/clk/samsung/clk-exynos4.c
+> @@ -984,7 +984,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
+>         {},
+>  };
+>  
+> -struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
+> +static struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
+>         [apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
+>                 APLL_CON0, "fout_apll", NULL),
+>         [mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll",
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+> index df3628c..5865cef 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -517,7 +517,7 @@ static __initdata struct samsung_pll_rate_table epll_24mhz_tbl[] = {
+>         { },
+>  };
+>  
+> -struct __initdata samsung_pll_clock exynos5250_plls[nr_plls] = {
+> +static struct __initdata samsung_pll_clock exynos5250_plls[nr_plls] = {
+>         [apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
+>                 APLL_CON0, "fout_apll", NULL),
+>         [mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index ca352695..872e13d 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -727,7 +727,7 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
+>         GATE(smmu_mscl2, "smmu_mscl2", "aclk400_mscl", GATE_IP_MSCL, 10, 0, 0),
+>  };
+>  
+> -struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
+> +static struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
+>         [apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
+>                 APLL_CON0, NULL),
+>         [cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
+> -- 
+> 1.8.4.rc1
