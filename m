@@ -1,88 +1,67 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: samsung: Staticise non-exported symbols for PLLs
-Date: Thu, 08 Aug 2013 18:18:46 -0700
-Message-ID: <20130809011846.5348.36623@quantum>
-References: <1375959983-2690-1-git-send-email-broonie@kernel.org>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v8 06/12] ARM: dts: Add description of System MMU of Exynos
+	SoCs
+Date: Fri, 09 Aug 2013 11:24:36 +0900
+Message-ID: <20130809112436.8e44545cd503ca5a2b55a8cd@samsung.com>
+References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
+	<003801ce8eb7$d7647f10$862d7d30$@samsung.com>
+	<CAL_Jsq+_5GekzXpjWrtKZi2jWuxHSJxkPmVC4zmakfjAYai=eA@mail.gmail.com>
+	<5354557.DijgoUKjW2@flatron>
+	<20130808214343.GA19383@mudshark.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1375959983-2690-1-git-send-email-broonie@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linar-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@linaro.org>
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <20130808214343.GA19383-MRww78TxoiP5vMa5CHWGZ34zcgK1vI+I0E9HWUfgJXw@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Hyunwoong Kim <khw0178.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Keyyoung Park <keyyoung.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org" <kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Mark Brown (2013-08-08 04:06:23)
-> From: Mark Brown <broonie@linaro.org>
+On Thu, 08 Aug 2013 22:43:43 +0100, Will Deacon wrote:
+> On Thu, Aug 08, 2013 at 10:38:10PM +0100, Tomasz Figa wrote:
+> > On Thursday 08 of August 2013 08:09:49 Rob Herring wrote:
+> > > On Thu, Aug 1, 2013 at 8:05 AM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> 
+> > wrote:
+> > > > Should this align with ARM System MMU bindings?
+> > > > System MMU in Exynos SoC is different from ARM System MMU.
+> > > > It does not follows the specifications of ARM System MMU.
+> > > 
+> > > I'm not saying the h/w is the same or even the same spec, but how you
+> > > describe a master to iommu connection needs to be done in the same
+> > > way. This should be done in the same way for ALL iommu's. And if what
+> > > is defined does not work for you, then we need to understand that and
+> > > fix the binding now.
+> > 
+> > +1
+> > 
+> > All IOMMUs should use a generic IOMMU Device Tree bindings (and in 
+> > general, the same should be true for all Device Tree bindings).
+> > 
+> > This means that if we already have some bindings for IOMMU, then they 
+> > should be reused if possible or extended if there is anything missing.
+> > 
+> > Of course there might be things that such generic bindings can't specify. 
+> > In this case device-specific properties can be introduced, but this is 
+> > last resort.
 > 
-> These symbols are not used outside the files they are defined in so do
-> not need to be in the global namespace and they aren't declared so sparse
-> warns.
+> I'm also happy to discuss and/or review bindings in light of what we did for
+> the ARM SMMU.
 > 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
+> Will
 
-Hi Mark,
+Rob, I now understood what you are talking about.
+Do you mean the binding description is lack of details about connection
+betwen  System MMU and its master?
 
-Sachin already submitted a patch for this two days back. I've pushed
-this out to my public git tree just now so it should land in the next
-linux-next.
+thanks.
 
-Regards,
-Mike
-
-> ---
->  drivers/clk/samsung/clk-exynos4.c    | 2 +-
->  drivers/clk/samsung/clk-exynos5250.c | 2 +-
->  drivers/clk/samsung/clk-exynos5420.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-> index 68f9a4a..fec319d 100644
-> --- a/drivers/clk/samsung/clk-exynos4.c
-> +++ b/drivers/clk/samsung/clk-exynos4.c
-> @@ -984,7 +984,7 @@ static __initdata struct of_device_id ext_clk_match[] = {
->         {},
->  };
->  
-> -struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
-> +static struct __initdata samsung_pll_clock exynos4_plls[nr_plls] = {
->         [apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
->                 APLL_CON0, "fout_apll", NULL),
->         [mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll",
-> diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-> index df3628c..5865cef 100644
-> --- a/drivers/clk/samsung/clk-exynos5250.c
-> +++ b/drivers/clk/samsung/clk-exynos5250.c
-> @@ -517,7 +517,7 @@ static __initdata struct samsung_pll_rate_table epll_24mhz_tbl[] = {
->         { },
->  };
->  
-> -struct __initdata samsung_pll_clock exynos5250_plls[nr_plls] = {
-> +static struct __initdata samsung_pll_clock exynos5250_plls[nr_plls] = {
->         [apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
->                 APLL_CON0, "fout_apll", NULL),
->         [mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index ca352695..872e13d 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -727,7 +727,7 @@ static struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->         GATE(smmu_mscl2, "smmu_mscl2", "aclk400_mscl", GATE_IP_MSCL, 10, 0, 0),
->  };
->  
-> -struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
-> +static struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
->         [apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
->                 APLL_CON0, NULL),
->         [cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
-> -- 
-> 1.8.4.rc1
+KyongHo.
