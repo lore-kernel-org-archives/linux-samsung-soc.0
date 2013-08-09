@@ -1,92 +1,37 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 03/10] exynos4-is: Handle suspend/resume of fimc-is-i2c
- correctly
-Date: Fri, 09 Aug 2013 21:24:05 +0200
-Message-ID: <1376076252-30150-3-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 04/10] exynos4-is: Initialize the ISP subdev sd->owner field
+Date: Fri, 09 Aug 2013 21:24:06 +0200
+Message-ID: <1376076252-30150-4-git-send-email-s.nawrocki@samsung.com>
 References: <1376076122-29963-1-git-send-email-s.nawrocki@samsung.com>
  <1376076252-30150-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:24108 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030789Ab3HITZ3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 15:25:29 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1376076252-30150-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: a.hajda@samsung.com, arun.kk@samsung.com, linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: a.hajda@samsung.com, arun.kk@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Tomasz Figa <t.figa@samsung.com>
+Set the subdevs owner module so the exynos4_fimc_is module cannot
+be unloaded when the FIMC-IS driver is in use.
 
-If the same callbacks are used for runtime and system suspend/resume,
-clocks can get disabled twice, which can lead to negative reference
-counts and kernel warnings.
-
-This patch splits suspend/resume callbacks into separate runtime and
-system-wide functions, so clock gating is done correctly.
-
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/platform/exynos4-is/fimc-is-i2c.c |   33 ++++++++++++++++++++---
- 1 file changed, 29 insertions(+), 4 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-isp.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is-i2c.c b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-index 617a798..6bc481a 100644
---- a/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-@@ -83,21 +83,46 @@ static int fimc_is_i2c_remove(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp.c b/drivers/media/platform/exynos4-is/fimc-isp.c
+index cf520a7..d2e6cba 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp.c
+@@ -672,6 +672,8 @@ int fimc_isp_subdev_create(struct fimc_isp *isp)
+ 	mutex_init(&isp->subdev_lock);
  
--static int fimc_is_i2c_suspend(struct device *dev)
-+#if defined(CONFIG_PM_RUNTIME) || defined(CONFIG_PM_SLEEP)
-+static int fimc_is_i2c_runtime_suspend(struct device *dev)
- {
- 	struct fimc_is_i2c *isp_i2c = dev_get_drvdata(dev);
+ 	v4l2_subdev_init(sd, &fimc_is_subdev_ops);
 +
- 	clk_disable_unprepare(isp_i2c->clock);
- 	return 0;
- }
- 
--static int fimc_is_i2c_resume(struct device *dev)
-+static int fimc_is_i2c_runtime_resume(struct device *dev)
- {
- 	struct fimc_is_i2c *isp_i2c = dev_get_drvdata(dev);
-+
- 	return clk_prepare_enable(isp_i2c->clock);
- }
-+#endif
- 
--static UNIVERSAL_DEV_PM_OPS(fimc_is_i2c_pm_ops, fimc_is_i2c_suspend,
--		     fimc_is_i2c_resume, NULL);
-+#ifdef CONFIG_PM_SLEEP
-+static int fimc_is_i2c_suspend(struct device *dev)
-+{
-+	if (pm_runtime_suspended(dev))
-+		return 0;
-+
-+	return fimc_is_i2c_runtime_suspend(dev);
-+}
-+
-+static int fimc_is_i2c_resume(struct device *dev)
-+{
-+	if (pm_runtime_suspended(dev))
-+		return 0;
-+
-+	return fimc_is_i2c_runtime_resume(dev);
-+}
-+#endif
-+
-+static struct dev_pm_ops fimc_is_i2c_pm_ops = {
-+	SET_RUNTIME_PM_OPS(fimc_is_i2c_runtime_suspend,
-+					fimc_is_i2c_runtime_resume, NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(fimc_is_i2c_suspend, fimc_is_i2c_resume)
-+};
- 
- static const struct of_device_id fimc_is_i2c_of_match[] = {
- 	{ .compatible = FIMC_IS_I2C_COMPATIBLE },
++	sd->owner = THIS_MODULE;
+ 	sd->grp_id = GRP_ID_FIMC_IS;
+ 	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+ 	snprintf(sd->name, sizeof(sd->name), "FIMC-IS-ISP");
 -- 
 1.7.9.5
