@@ -1,79 +1,96 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Set 64-bit DMA mask for EXYNOS5250
-Date: Fri,  9 Aug 2013 15:35:14 +0530
-Message-ID: <1376042714-26513-1-git-send-email-tushar.behera@linaro.org>
+From: Chanho Park <chanho61.park@samsusng.com>
+Subject: RE: [PATCHv2 5/5] ARM: dts: Add dt binding documentation for exynos
+ rotator
+Date: Fri, 09 Aug 2013 19:22:25 +0900
+Message-ID: <011001ce94ea$579258f0$06b70ad0$@samsusng.com>
+References: <1376034053-31910-1-git-send-email-chanho61.park@samsung.com>
+ <1376034053-31910-6-git-send-email-chanho61.park@samsung.com>
+ <CAK9yfHzQ+vfsdYU-HZrmW5LbU7+ME-qF-xqZk+dx6AS_CKkgzQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f173.google.com ([209.85.192.173]:64690 "EHLO
-	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965879Ab3HIKWD (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:53714 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965879Ab3HIKW1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 06:22:03 -0400
-Received: by mail-pd0-f173.google.com with SMTP id p10so380998pdj.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Aug 2013 03:22:03 -0700 (PDT)
+	Fri, 9 Aug 2013 06:22:27 -0400
+In-reply-to: <CAK9yfHzQ+vfsdYU-HZrmW5LbU7+ME-qF-xqZk+dx6AS_CKkgzQ@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, patches@linaro.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Chanho Park' <chanho61.park@samsung.com>
+Cc: inki.dae@samsung.com, kgene.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, mark.rutland@arm.com, l.stach@pengutronix.de, s.nawrocki@samsung.com, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-When LPAE is enabled, we need to set 64bit DMA mask bits.
+Hi Sachin,
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
-Based on v3.11-rc4.
+> -----Original Message-----
+> From: Sachin Kamat [mailto:sachin.kamat@linaro.org]
+> Sent: Friday, August 09, 2013 6:40 PM
+> To: Chanho Park
+> Cc: inki.dae@samsung.com; kgene.kim@samsung.com; dri-
+> devel@lists.freedesktop.org; kyungmin.park@samsung.com;
+> mark.rutland@arm.com; l.stach@pengutronix.de; s.nawrocki@samsung.com;
+> tomasz.figa@gmail.com; linux-samsung-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; devicetree@vger.kernel.org; Thomas Abraham
+> Subject: Re: [PATCHv2 5/5] ARM: dts: Add dt binding documentation for
+> exynos rotator
+> 
+> Hi Chanho,
+> 
+> On 9 August 2013 13:10, Chanho Park <chanho61.park@samsung.com> wrote:
+> > This patch describes each nodes of rotator and specifies a example how
+> > to bind it.
+> >
+> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> > Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> > Cc: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: Inki Dae <inki.dae@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  .../devicetree/bindings/gpu/samsung-rotator.txt    |   26
+> ++++++++++++++++++++
+> >  1 file changed, 26 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+> > b/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+> > new file mode 100644
+> > index 0000000..31ee7b5
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+> > @@ -0,0 +1,26 @@
+> > +* Samsung Image Rotator
+> > +
+> > +Required properties:
+> > +  - compatible : value should be following:
+> 
+> This should be "should be one of the following:"
 
- arch/arm/mach-exynos/mach-exynos5-dt.c |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+I left out while I changed it to select multiple choices.
+Thanks.
 
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index f874b77..2217631 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -14,6 +14,7 @@
- #include <linux/memblock.h>
- #include <linux/io.h>
- #include <linux/clocksource.h>
-+#include <linux/dma-mapping.h>
- 
- #include <asm/mach/arch.h>
- #include <mach/regs-pmu.h>
-@@ -23,6 +24,26 @@
- 
- #include "common.h"
- 
-+static u64 dma_mask64 = DMA_BIT_MASK(64);
-+
-+static int exynos5250_platform_notifier(struct notifier_block *nb,
-+				  unsigned long event, void *__dev)
-+{
-+	struct device *dev = __dev;
-+
-+	if (event != BUS_NOTIFY_ADD_DEVICE)
-+		return NOTIFY_DONE;
-+
-+	dev->dma_mask = &dma_mask64;
-+	dev->coherent_dma_mask = DMA_BIT_MASK(64);
-+
-+	return NOTIFY_OK;
-+}
-+
-+static struct notifier_block exynos5250_platform_nb = {
-+	.notifier_call = exynos5250_platform_notifier,
-+};
-+
- static void __init exynos5_dt_machine_init(void)
- {
- 	struct device_node *i2c_np;
-@@ -47,6 +68,11 @@ static void __init exynos5_dt_machine_init(void)
- 		}
- 	}
- 
-+	if (config_enabled(CONFIG_ARM_LPAE) &&
-+			of_machine_is_compatible("samsung,exynos5250"))
-+		bus_register_notifier(&platform_bus_type,
-+				&exynos5250_platform_nb);
-+
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
- }
- 
--- 
-1.7.9.5
+> 
+> > +       (a) "samsung,exynos4210-rotator" for Rotator IP in Exynos4210
+> > +       (b) "samsung,exynos4212-rotator" for Rotator IP in
+> Exynos4212/4412
+> > +       (c) "samsung,exynos5250-rotator" for Rotator IP in Exynos5250
+> > +
+> > +  - reg : Physical base address of the IP registers and length of
+> memory
+> > +         mapped region.
+> > +
+> > +  - interrupts : Interrupt number of Rotator
+> > +
+> > +  - clocks : Clock number described in
+> Documentations/devicetree/binding/clock.
+> 
+> The path has several typos. Instead you can simply mention clocks : from
+> common clock binding: handle to rotator clock.
+
+Oh, it has many typos. I'll change it.
+Thanks for your review.
+
+Best Regards,
+Chanho Park
