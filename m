@@ -1,121 +1,50 @@
-From: Chanho Park <chanho61.park@samsusng.com>
-Subject: RE: [PATCHv2 1/5] drm/exynos: add device tree support for rotator
-Date: Fri, 09 Aug 2013 19:29:50 +0900
-Message-ID: <011101ce94eb$612ae6b0$2380b410$@samsusng.com>
-References: <1376034053-31910-1-git-send-email-chanho61.park@samsung.com>
- <1376034053-31910-2-git-send-email-chanho61.park@samsung.com>
- <CAK9yfHwrE8pnc=jF+7=wuqyemmZFMi5WX+giXYizbP_yy34Wfw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCH-RESEND] ARM: dts: Add arm-pmu node for exynos4412
+Date: Fri, 09 Aug 2013 19:41:54 +0900
+Message-ID: <1376044914-1759-1-git-send-email-chanho61.park@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64530 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966467Ab3HIK3w (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47884 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965774Ab3HIKmD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 06:29:52 -0400
-In-reply-to: <CAK9yfHwrE8pnc=jF+7=wuqyemmZFMi5WX+giXYizbP_yy34Wfw@mail.gmail.com>
-Content-language: ko
+	Fri, 9 Aug 2013 06:42:03 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MR90032RF20DLM0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Aug 2013 19:42:00 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Chanho Park' <chanho61.park@samsung.com>
-Cc: inki.dae@samsung.com, kgene.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, mark.rutland@arm.com, l.stach@pengutronix.de, s.nawrocki@samsung.com, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, Chanho Park <chanho61.park@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Sachin,
+The Exynos4412 has 4 cpus and each has a performance counter.
+Thus, we should define 4 interrupts which are combined by irq-combiner for arm
+pmu.
 
-> -----Original Message-----
-> From: Sachin Kamat [mailto:sachin.kamat@linaro.org]
-> Sent: Friday, August 09, 2013 6:49 PM
-> To: Chanho Park
-> Cc: inki.dae@samsung.com; kgene.kim@samsung.com; dri-
-> devel@lists.freedesktop.org; kyungmin.park@samsung.com;
-> mark.rutland@arm.com; l.stach@pengutronix.de; s.nawrocki@samsung.com;
-> tomasz.figa@gmail.com; linux-samsung-soc@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org; devicetree@vger.kernel.org
-> Subject: Re: [PATCHv2 1/5] drm/exynos: add device tree support for
-> rotator
-> 
-> Hi Chanho,
-> 
-> On 9 August 2013 13:10, Chanho Park <chanho61.park@samsung.com> wrote:
-> > The exynos4 platform is only dt-based since 3.10, we should convert
-> > driver data and ids to dt-based parsing methods. The rotator driver
-> > has a limit table to get size limit of input picture. Each SoCs has
-> > slightly different limit value compared with any others.
-> > For example, exynos4210's max_size of RGB888 is 16k x 16k. But, others
-> > have 8k x 8k. Another example the exynos5250 should have multiple of 2
-> > pixel size for its X/Y axis. Thus, we should keep different tables for
-> each of them.
-> >
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  109
-> > ++++++++++++++++++++-------
-> >  1 file changed, 81 insertions(+), 28 deletions(-)
-> [snip]
-> > +
-> > +static const struct of_device_id exynos_rotator_match[] = {
-> > +       {
-> > +               .compatible = "samsung,exynos4210-rotator",
-> > +               .data = &rot_limit_tbl_4210,
-> > +       },
-> > +       {
-> > +               .compatible = "samsung,exynos4212-rotator",
-> > +               .data = &rot_limit_tbl_4x12,
-> > +       },
-> > +       {
-> > +               .compatible = "samsung,exynos5250-rotator",
-> > +               .data = &rot_limit_tbl_5250,
-> > +       },
-> > +       {},
-> > +};
-> > +
-> >  static int rotator_probe(struct platform_device *pdev)  {
-> >         struct device *dev = &pdev->dev; @@ -645,8 +712,19 @@ static
-> > int rotator_probe(struct platform_device *pdev)
-> >                 return -ENOMEM;
-> >         }
-> >
-> > -       rot->limit_tbl = (struct rot_limit_table *)
-> > -
-platform_get_device_id(pdev)->driver_data;
-> > +       if (dev->of_node) {
-> > +               const struct of_device_id *match;
-> > +               match =
-> > + of_match_node(of_match_ptr(exynos_rotator_match),
-> 
-> of_match_ptr is not needed since exynos_rotator_match is always compiled
-> in.
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412.dtsi |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-OK. I'll remove it.
-Thanks.
-
-> 
-> [snip]
-> > -static struct platform_device_id rotator_driver_ids[] = {
-> > -       {
-> > -               .name           = "exynos-rot",
-> > -               .driver_data    = (unsigned long)&rot_limit_tbl,
-> > -       },
-> > -       {},
-> > -};
-> > -
-> >  static int rotator_clk_crtl(struct rot_context *rot, bool enable)  {
-> >         if (enable) {
-> > @@ -804,10 +857,10 @@ static const struct dev_pm_ops rotator_pm_ops =
-> > {  struct platform_driver rotator_driver = {
-> >         .probe          = rotator_probe,
-> >         .remove         = rotator_remove,
-> > -       .id_table       = rotator_driver_ids,
-> >         .driver         = {
-> >                 .name   = "exynos-rot",
-> >                 .owner  = THIS_MODULE,
-> >                 .pm     = &rotator_pm_ops,
-> > +               .of_match_table = of_match_ptr(exynos_rotator_match),
-> 
-> ditto
-> 
-> --
-> With warm regards,
-> Sachin
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index e743e67..cfad655 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -35,6 +35,12 @@
+ 			     <0 107 0>, <0 108 0>, <0 48 0>, <0 42 0>;
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupt-parent = <&combiner>;
++		interrupts = <2 2>, <3 2>, <18 2>, <19 2>;
++	};
++
+ 	mct@10050000 {
+ 		compatible = "samsung,exynos4412-mct";
+ 		reg = <0x10050000 0x800>;
+-- 
+1.7.9.5
