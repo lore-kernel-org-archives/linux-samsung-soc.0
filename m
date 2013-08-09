@@ -1,126 +1,41 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v5 2/4] mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
-Date: Fri,  9 Aug 2013 09:33:18 -0700
-Message-ID: <1376066000-5495-3-git-send-email-dianders@chromium.org>
-References: <1375825071-20922-1-git-send-email-dianders@chromium.org>
- <1376066000-5495-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1376066000-5495-1-git-send-email-dianders@chromium.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCHv2 5/5] ARM: dts: Add dt binding documentation for exynos
+ rotator
+Date: Fri, 09 Aug 2013 10:38:30 -0600
+Message-ID: <52051B06.7000209@wwwdotorg.org>
+References: <1376034053-31910-1-git-send-email-chanho61.park@samsung.com> <1376034053-31910-6-git-send-email-chanho61.park@samsung.com> <229348511.e5ckfeMu0d@amdc1227>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:33973 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S968067Ab3HIQie (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Aug 2013 12:38:34 -0400
+In-Reply-To: <229348511.e5ckfeMu0d@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Chanho Park <chanho61.park@samsung.com>, inki.dae@samsung.com, kgene.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, mark.rutland@arm.com, l.stach@pengutronix.de, s.nawrocki@samsung.com, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, ian.campbell@citrix.com, rob.herring@calxeda.com, pawel.moll@arm.com
 
-If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
-looping around forever.  This has been seen to happen on exynos5420
-silicon despite the fact that we haven't enabled any wakeup events due
-to a silicon errata.  It is safe to do on all exynos variants.
+On 08/09/2013 07:15 AM, Tomasz Figa wrote:
+> Hi Chanho,
+> 
+> On Friday 09 of August 2013 16:40:53 Chanho Park wrote:
+>> This patch describes each nodes of rotator and specifies a example how to
+>> bind it.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v5:
-- Cleaned up dw_mci_exynos_resume_noirq() comment as per Seungwon.
-- Don't memcpy dev_pm_ops structure, define a new one.
+>> diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
 
-Changes in v4:
-- Take Seungwon's suggestion and don't add any dw_mmc-pltfm code.
+>> +* Samsung Image Rotator
+>> +
+>> +Required properties:
+>> +  - compatible : value should be following:
+>> +	(a) "samsung,exynos4210-rotator" for Rotator IP in Exynos4210
+>> +	(b) "samsung,exynos4212-rotator" for Rotator IP in Exynos4212/4412
+>> +	(c) "samsung,exynos5250-rotator" for Rotator IP in Exynos5250
 
-Changes in v3:
-- Add freeze/thaw and poweroff/restore noirq entries.
-
-Changes in v2:
-- Use suspend_noirq as per James Hogan.
-
- drivers/mmc/host/dw_mmc-exynos.c | 56 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 55 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-index 866edef..7d88583 100644
---- a/drivers/mmc/host/dw_mmc-exynos.c
-+++ b/drivers/mmc/host/dw_mmc-exynos.c
-@@ -30,6 +30,7 @@
- #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
- 					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
- 					SDMMC_CLKSEL_CCLK_DIVIDER(z))
-+#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
- 
- #define EXYNOS4210_FIXED_CIU_CLK_DIV	2
- #define EXYNOS4412_FIXED_CIU_CLK_DIV	4
-@@ -100,6 +101,52 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
- 	return 0;
- }
- 
-+#ifdef CONFIG_PM_SLEEP
-+/*
-+ * TODO: we should probably disable the clock to the card in the suspend path.
-+ */
-+static int dw_mci_exynos_suspend(struct device *dev)
-+{
-+	struct dw_mci *host = dev_get_drvdata(dev);
-+
-+	return dw_mci_suspend(host);
-+}
-+
-+static int dw_mci_exynos_resume(struct device *dev)
-+{
-+	struct dw_mci *host = dev_get_drvdata(dev);
-+
-+	return dw_mci_resume(host);
-+}
-+
-+/**
-+ * dw_mci_exynos_resume_noirq - Exynos-specific resume code
-+ *
-+ * On exynos5420 there is a silicon errata that will sometimes leave the
-+ * WAKEUP_INT bit in the CLKSEL register asserted.  This bit is 1 to indicate
-+ * that it fired and we can clear it by writing a 1 back.  Clear it to prevent
-+ * interrupts from going off constantly.
-+ *
-+ * We run this code on all exynos variants because it doesn't hurt.
-+ */
-+
-+static int dw_mci_exynos_resume_noirq(struct device *dev)
-+{
-+	struct dw_mci *host = dev_get_drvdata(dev);
-+	u32 clksel;
-+
-+	clksel = mci_readl(host, CLKSEL);
-+	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
-+		mci_writel(host, CLKSEL, clksel);
-+
-+	return 0;
-+}
-+#else
-+#define dw_mci_exynos_suspend		NULL
-+#define dw_mci_exynos_resume		NULL
-+#define dw_mci_exynos_resume_noirq	NULL
-+#endif /* CONFIG_PM_SLEEP */
-+
- static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
- {
- 	/*
-@@ -187,13 +234,20 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
- 	return dw_mci_pltfm_register(pdev, drv_data);
- }
- 
-+const struct dev_pm_ops dw_mci_exynos_pmops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(dw_mci_exynos_suspend, dw_mci_exynos_resume)
-+	.resume_noirq = dw_mci_exynos_resume_noirq,
-+	.thaw_noirq = dw_mci_exynos_resume_noirq,
-+	.restore_noirq = dw_mci_exynos_resume_noirq,
-+};
-+
- static struct platform_driver dw_mci_exynos_pltfm_driver = {
- 	.probe		= dw_mci_exynos_probe,
- 	.remove		= __exit_p(dw_mci_pltfm_remove),
- 	.driver		= {
- 		.name		= "dwmmc_exynos",
- 		.of_match_table	= dw_mci_exynos_match,
--		.pm		= &dw_mci_pltfm_pmops,
-+		.pm		= &dw_mci_exynos_pmops,
- 	},
- };
- 
--- 
-1.8.3
-
+Is "rotator" the name that the HW documentation uses to refer to this
+block? If so, those compatible values seem fine. If not, they seem
+slightly too generic for me; perhaps better to use the raw HW block name?
