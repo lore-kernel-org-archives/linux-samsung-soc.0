@@ -1,64 +1,123 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v9 07/16] iommu/exynos: support for device tree
-Date: Fri, 9 Aug 2013 08:28:09 -0500
-Message-ID: <CAL_JsqKM_YP0Cj3Uo7TeCVcKcbzzsuK3yxTSn6pG8qGFOnZAiA@mail.gmail.com>
-References: <002b01ce941b$160a88a0$421f99e0$@samsung.com>
-	<5396565.vjlSOm37Vf@flatron>
-	<20130809153730.83d3a5ba419def5424bcbb0e@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v4 2/4] mmc: dw_mmc: Add exynos resume_noirq callback to
+ clear WAKEUP_INT
+Date: Fri, 09 Aug 2013 22:33:21 +0900
+Message-ID: <001901ce9505$04483820$0cd8a860$%jun@samsung.com>
+References: <1373470926-19314-1-git-send-email-dianders@chromium.org>
+ <1375825071-20922-1-git-send-email-dianders@chromium.org>
+ <1375825071-20922-3-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f48.google.com ([209.85.128.48]:57141 "EHLO
-	mail-qe0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966041Ab3HIN2L (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 09:28:11 -0400
-In-Reply-To: <20130809153730.83d3a5ba419def5424bcbb0e@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1375825071-20922-3-git-send-email-dianders@chromium.org>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Doug Anderson' <dianders@chromium.org>, 'Chris Ball' <cjb@laptop.org>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'James Hogan' <james.hogan@imgtec.com>, 'Grant Grundler' <grundler@chromium.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Cho KyongHo <pullip.cho@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Grant Grundler <grundler@chromium.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, Sachin Kamat <sachin.kamat@linaro.org>
 
-On Fri, Aug 9, 2013 at 1:37 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
-> On Fri, 09 Aug 2013 00:41:25 +0200, Tomasz Figa wrote:
->> Hi KyongHo,
->>
->> On Thursday 08 of August 2013 18:38:49 Cho KyongHo wrote:
->> > This commit adds device tree support for System MMU.
->> > This also include the following changes and enhancements:
->> >
->> > * use managed device helper functions.
->> > Simplyfies System MMU device driver.
->> >
->> > * use only a single clock descriptor.
->> > System MMU device descriptor is seperate if it is imposible to make
->> > a single clock descriptor to make a device descriptor for a group of
->> > System MMUs.
->> >
->> > * removed dbgname member from sysmmu_drvdata structure.
->> > debugging kernel message for a System MMU is distinguisheable with the
->> > name of device descroptors.
->>
->> Please put all these three changes in separate patches. This patch is hard
->> to review with all the changes mixed together...
+On Wed, August 07, 2013, Doug Anderson wrote:
+> If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
+> looping around forever.  This has been seen to happen on exynos5420
+> silicon despite the fact that we haven't enabled any wakeup events due
+> to a silicon errata.  It is safe to do on all exynos variants.
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v4:
+> - Take Seungwon's suggestion and don't add any dw_mmc-pltfm code.
+> 
+> Changes in v3:
+> - Add freeze/thaw and poweroff/restore noirq entries.
+> 
+> Changes in v2:
+> - Use suspend_noirq as per James Hogan.
+> 
+>  drivers/mmc/host/dw_mmc-exynos.c | 51 ++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 49 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 866edef..0c1f192 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -30,6 +30,7 @@
+>  #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
+>  					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
+>  					SDMMC_CLKSEL_CCLK_DIVIDER(z))
+> +#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
+> 
+>  #define EXYNOS4210_FIXED_CIU_CLK_DIV	2
+>  #define EXYNOS4412_FIXED_CIU_CLK_DIV	4
+> @@ -100,6 +101,30 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
+>  	return 0;
+>  }
+> 
+> +/**
+> + * dw_mci_exynos_resume_noirq - Exynos-specific resume code
+> + *
+> + * On exynos5420 there is a silicon errata that will sometimes leave the
+> + * WAKEUP_INT bit in the CLKSEL register asserted.  This bit is 1 to indicate
+> + * that it fired and we can clear it by writing a 1 back.  Clear it to prevent
+> + * interrupts from going off constantly.
+> + *
+> + * We run this code on all exynos variants because it doesn't hurt and the bug
+> + * may be more widespread than just exynos5420.
+I guess just above comment can be removed. (Not be widespread)
+Updating the origin value of CLKSEL looks like no harm while SDMMC_CLKSEL_WAKEUP_INT is cleared.
 
-Agreed.
+> + */
+> +
+> +static int dw_mci_exynos_resume_noirq(struct device *dev)
+> +{
+> +	struct dw_mci *host = dev_get_drvdata(dev);
+> +	u32 clksel;
+> +
+> +	clksel = mci_readl(host, CLKSEL);
+> +	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
+> +		mci_writel(host, CLKSEL, clksel);
+> +
+> +	return 0;
+> +}
+> +
+>  static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>  {
+>  	/*
+> @@ -187,17 +212,39 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
+>  	return dw_mci_pltfm_register(pdev, drv_data);
+>  }
+> 
+> +static struct dev_pm_ops dw_mci_exynos_pmops;
+> +
+>  static struct platform_driver dw_mci_exynos_pltfm_driver = {
+>  	.probe		= dw_mci_exynos_probe,
+>  	.remove		= __exit_p(dw_mci_pltfm_remove),
+>  	.driver		= {
+>  		.name		= "dwmmc_exynos",
+>  		.of_match_table	= dw_mci_exynos_match,
+> -		.pm		= &dw_mci_pltfm_pmops,
+> +		.pm		= &dw_mci_exynos_pmops,
+>  	},
+>  };
+> 
+> -module_platform_driver(dw_mci_exynos_pltfm_driver);
+> +static int __init dw_mci_exynos_init(void)
+> +{
+> +	/* Add a "noirq" resume to platform pmops */
+> +	memcpy(&dw_mci_exynos_pmops, &dw_mci_pltfm_pmops,
+> +	       sizeof(dw_mci_exynos_pmops));
+> +	WARN_ON(dw_mci_exynos_pmops.resume_noirq ||
+> +		dw_mci_exynos_pmops.thaw_noirq ||
+> +		dw_mci_exynos_pmops.restore_noirq);
+> +	dw_mci_exynos_pmops.resume_noirq = dw_mci_exynos_resume_noirq;
+> +	dw_mci_exynos_pmops.thaw_noirq = dw_mci_exynos_resume_noirq;
+> +	dw_mci_exynos_pmops.restore_noirq = dw_mci_exynos_resume_noirq;
 
->>
->
-> Ok.
->
->> In addition, I believe this is the patch that should be adding device tree
->> binding documentation, not the 6/16 one, as this is where actually support
->> for this binding gets added to the kernel.
->
-> Oh, I didn't know that devicetree binding description and implementation need
-> to be in the same patch.
-> I will do as you advised.
+If CONFIG_PM_SLEEP is not defined, we don't need to add it.
+And also, instead of reusing dw_mci_pltfm_pmops, how about defining dw_mci_exynos_pmops's own?
+Of course, suspend/resume will not different with dw_mci_pltfm* just now.
+But specific code for exynos would be added soon.
 
-Actually, I prefer the binding docs be separate patches. The reason
-being so we can get closer to having them in a separate repository.
-Also, then the binding can be acked separately from the kernel
-implementation using the binding.
+Thanks,
+Seungwon Jeon
 
-Rob
