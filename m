@@ -1,41 +1,44 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCHv2 5/5] ARM: dts: Add dt binding documentation for exynos
- rotator
-Date: Fri, 09 Aug 2013 10:38:30 -0600
-Message-ID: <52051B06.7000209@wwwdotorg.org>
-References: <1376034053-31910-1-git-send-email-chanho61.park@samsung.com> <1376034053-31910-6-git-send-email-chanho61.park@samsung.com> <229348511.e5ckfeMu0d@amdc1227>
+From: Fabio Estevam <festevam@gmail.com>
+Subject: Re: [PATCH v5 2/4] mmc: dw_mmc: Add exynos resume_noirq callback to
+ clear WAKEUP_INT
+Date: Fri, 9 Aug 2013 13:41:58 -0300
+Message-ID: <CAOMZO5DZ=aJsOvTyrKL=57_jGMGQX8k3mDamgXqnF-9Ou2fpAg@mail.gmail.com>
+References: <1375825071-20922-1-git-send-email-dianders@chromium.org>
+	<1376066000-5495-1-git-send-email-dianders@chromium.org>
+	<1376066000-5495-3-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:33973 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S968067Ab3HIQie (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 12:38:34 -0400
-In-Reply-To: <229348511.e5ckfeMu0d@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1376066000-5495-3-git-send-email-dianders@chromium.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, James Hogan <james.hogan@imgtec.com>, Seungwon Jeon <tgih.jun@samsung.com>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, linux-mmc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>, Grant Grundler <grundler@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Chanho Park <chanho61.park@samsung.com>, inki.dae@samsung.com, kgene.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, mark.rutland@arm.com, l.stach@pengutronix.de, s.nawrocki@samsung.com, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, ian.campbell@citrix.com, rob.herring@calxeda.com, pawel.moll@arm.com
 
-On 08/09/2013 07:15 AM, Tomasz Figa wrote:
-> Hi Chanho,
-> 
-> On Friday 09 of August 2013 16:40:53 Chanho Park wrote:
->> This patch describes each nodes of rotator and specifies a example how to
->> bind it.
+On Fri, Aug 9, 2013 at 1:33 PM, Doug Anderson <dianders@chromium.org> wrote:
 
->> diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.txt
+> +#else
+> +#define dw_mci_exynos_suspend          NULL
+> +#define dw_mci_exynos_resume           NULL
+> +#define dw_mci_exynos_resume_noirq     NULL
+> +#endif /* CONFIG_PM_SLEEP */
 
->> +* Samsung Image Rotator
->> +
->> +Required properties:
->> +  - compatible : value should be following:
->> +	(a) "samsung,exynos4210-rotator" for Rotator IP in Exynos4210
->> +	(b) "samsung,exynos4212-rotator" for Rotator IP in Exynos4212/4412
->> +	(c) "samsung,exynos5250-rotator" for Rotator IP in Exynos5250
+You could avoid this else block if you use 'static SIMPLE_DEV_PM_OPS' below.
 
-Is "rotator" the name that the HW documentation uses to refer to this
-block? If so, those compatible values seem fine. If not, they seem
-slightly too generic for me; perhaps better to use the raw HW block name?
+> +
+>  static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>  {
+>         /*
+> @@ -187,13 +234,20 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
+>         return dw_mci_pltfm_register(pdev, drv_data);
+>  }
+>
+> +const struct dev_pm_ops dw_mci_exynos_pmops = {
+> +       SET_SYSTEM_SLEEP_PM_OPS(dw_mci_exynos_suspend, dw_mci_exynos_resume)
+> +       .resume_noirq = dw_mci_exynos_resume_noirq,
+> +       .thaw_noirq = dw_mci_exynos_resume_noirq,
+> +       .restore_noirq = dw_mci_exynos_resume_noirq,
+> +};
+
+static SIMPLE_DEV_PM_OPS(dw_mci_exynos_pmops, dw_mci_exynos_suspend,
+ dw_mci_exynos_resume ) ;
