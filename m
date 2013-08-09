@@ -1,122 +1,58 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [RFC PATCH] cpuidle: fix device->state_count handling
-Date: Fri, 09 Aug 2013 18:01:22 +0200
-Message-ID: <52051252.9020405@linaro.org>
-References: <8500767.uCb7Y0sjbx@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <8500767.uCb7Y0sjbx@amdc1032>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v5 0/4] mmc: dw_mmc: fixes for suspend/resume on exynos
+Date: Fri,  9 Aug 2013 09:33:16 -0700
+Message-ID: <1376066000-5495-1-git-send-email-dianders@chromium.org>
+References: <1375825071-20922-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f74.google.com ([209.85.216.74]:51807 "EHLO
+	mail-qa0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S968081Ab3HIQda (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Aug 2013 12:33:30 -0400
+Received: by mail-qa0-f74.google.com with SMTP id hu14so198650qab.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Aug 2013 09:33:29 -0700 (PDT)
+In-Reply-To: <1375825071-20922-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 08/09/2013 01:59 PM, Bartlomiej Zolnierkiewicz wrote:
-> Use device->state_count instead of driver->state_count in
-> cpuidle_play_dead(), ladder_select_state() and menu_select().
->=20
-> This allows cpuidle drivers to override maximum allowable
-> state number for a given device, which is what some cpuidle
-> drivers would like to do (i.e. EXYNOS cpuidle driver).
->=20
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
-> Alternatively, we can make EXYNOS cpuidle driver work without
-> device->state_count (at a some tiny performance cost?). This
-> would allow us to remove device->state_count completely as it
-> is not needed by any other cpuidle driver currently (AFAICS).
+This series of patches addresses some suspend/resume problems with
+dw_mmc on exynos platforms, espeically exynos5420.  Since
+suspend/resume is not fully working on ToT Linux (v3.11-rc4) on
+exynos5250-snow, this series was tested against the current ToT
+ChromeOS 3.8 tree.  I have confirmed basic booting and eMMC / SD card
+usage (and compiling, honest!) against ToT Linux.
 
-I am inclined for this solution.
+I have received confirmation from Samsung that the problem solved is a
+silicon errata on exynos5420 and that this is a good fix.
 
-The state_count was initially in the device structure, then it has been
-moved to the driver structure and the code has been changed accordingly=
-=2E
-That was part of the cpuidle code consolidation made by Deepthi Dharwar
-(46bcfad7).
+Changes in v5:
+- Remove force_clkinit as per Jaehoon.
+- Update commit message to (hopefully) be clearer.
+- Cleaned up dw_mci_exynos_resume_noirq() comment as per Seungwon.
+- Don't memcpy dev_pm_ops structure, define a new one.
 
-This patch is one step back.
+Changes in v4:
+- Take Seungwon's suggestion and don't add any dw_mmc-pltfm code.
 
-There is an alternate solution. May be you can use the multiple driver
-support to register two cpuidle driver (one for each cpus) ? It was
-initially made to support cpus with different latencies but that should
-work.
+Changes in v3:
+- Add freeze/thaw and poweroff/restore noirq entries.
 
->  drivers/cpuidle/cpuidle.c          |    2 +-
->  drivers/cpuidle/governors/ladder.c |    2 +-
->  drivers/cpuidle/governors/menu.c   |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> Index: b/drivers/cpuidle/cpuidle.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- a/drivers/cpuidle/cpuidle.c	2013-08-08 14:36:09.611488750 +0200
-> +++ b/drivers/cpuidle/cpuidle.c	2013-08-08 14:39:02.291486116 +0200
-> @@ -57,7 +57,7 @@ int cpuidle_play_dead(void)
->  		return -ENODEV;
-> =20
->  	/* Find lowest-power state that supports long-term idle */
-> -	for (i =3D drv->state_count - 1; i >=3D CPUIDLE_DRIVER_STATE_START;=
- i--)
-> +	for (i =3D dev->state_count - 1; i >=3D CPUIDLE_DRIVER_STATE_START;=
- i--)
->  		if (drv->states[i].enter_dead)
->  			return drv->states[i].enter_dead(dev, i);
-> =20
-> Index: b/drivers/cpuidle/governors/ladder.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- a/drivers/cpuidle/governors/ladder.c	2013-08-08 14:36:09.61148875=
-0 +0200
-> +++ b/drivers/cpuidle/governors/ladder.c	2013-08-08 14:39:02.29948611=
-6 +0200
-> @@ -87,7 +87,7 @@ static int ladder_select_state(struct cp
->  		last_residency =3D last_state->threshold.promotion_time + 1;
-> =20
->  	/* consider promotion */
-> -	if (last_idx < drv->state_count - 1 &&
-> +	if (last_idx < dev->state_count - 1 &&
->  	    !drv->states[last_idx + 1].disabled &&
->  	    !dev->states_usage[last_idx + 1].disable &&
->  	    last_residency > last_state->threshold.promotion_time &&
-> Index: b/drivers/cpuidle/governors/menu.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- a/drivers/cpuidle/governors/menu.c	2013-08-08 14:36:09.611488750 =
-+0200
-> +++ b/drivers/cpuidle/governors/menu.c	2013-08-08 14:39:02.299486116 =
-+0200
-> @@ -312,7 +312,7 @@ static int menu_select(struct cpuidle_dr
->  	 * Find the idle state with the lowest power while satisfying
->  	 * our constraints.
->  	 */
-> -	for (i =3D CPUIDLE_DRIVER_STATE_START; i < drv->state_count; i++) {
-> +	for (i =3D CPUIDLE_DRIVER_STATE_START; i < dev->state_count; i++) {
->  		struct cpuidle_state *s =3D &drv->states[i];
->  		struct cpuidle_state_usage *su =3D &dev->states_usage[i];
-> =20
->=20
+Changes in v2:
+- Fix typo (some -> come)
+- Use ~0 instead of 0xFFFFFFFF; add comment about value
+- Use suspend_noirq as per James Hogan.
 
+Doug Anderson (4):
+  mmc: dw_mmc: Invalidate cache of current_speed after suspend/resume
+  mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
+  mmc: dw_mmc: Always setup the bus after suspend/resume
+  mmc: dw_mmc: Set timeout to max upon resume
 
---=20
- <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
- ARM SoCs
+ drivers/mmc/host/dw_mmc-exynos.c | 56 +++++++++++++++++++++++++++++++++++++++-
+ drivers/mmc/host/dw_mmc.c        | 21 ++++++++++-----
+ 2 files changed, 69 insertions(+), 8 deletions(-)
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
-  * English - detected
-  * English
-  * French
-
-  * English
-  * French
-
- <javascript:void(0);>
+-- 
+1.8.3
