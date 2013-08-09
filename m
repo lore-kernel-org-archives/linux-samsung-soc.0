@@ -1,75 +1,45 @@
-From: Cho KyongHo <pullip.cho@samsung.com>
-Subject: Re: [PATCH v9 05/16] clk: exynos: add gate clock descriptions of
- System MMU
-Date: Fri, 09 Aug 2013 09:48:41 +0900
-Message-ID: <20130809094841.98ccbe2202e3bb2dab9f5220@samsung.com>
-References: <002901ce941b$0130db50$039291f0$@samsung.com>
- <52037E4E.5050706@samsung.com> <1673985.XNpTEeH9vo@amdc1227>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: dw_mmc: Does anyone use multiple slots?
+Date: Fri, 09 Aug 2013 01:55:44 +0100
+Message-ID: <86mworfzsf.fsf@void.printf.net>
+References: <CAD=FV=U3aT1KKtSwAFhYURJJerp70ij8h647=xyV51et4jYipg@mail.gmail.com>
+	<CAOesGMjaF2K0CnuWBj7xdXGAQk-XRetBstaQdd9EZzBYrmDjeA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:16807 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966966Ab3HIAsn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Aug 2013 20:48:43 -0400
-In-reply-to: <1673985.XNpTEeH9vo@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAOesGMjaF2K0CnuWBj7xdXGAQk-XRetBstaQdd9EZzBYrmDjeA@mail.gmail.com>
+	(Olof Johansson's message of "Thu, 8 Aug 2013 17:19:44 -0700")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Doug Anderson <dianders@google.com>, James Hogan <james.hogan@imgtec.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sonny Rao <sonnyrao@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, 'Linux IOMMU' <iommu@lists.linux-foundation.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Linux Samsung SOC' <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, 'Joerg Roedel' <joro@8bytes.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Prathyush' <prathyush.k@samsung.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'Subash Patel' <supash.ramaswamy@linaro.org>, 'Grant Grundler' <grundler@chromium.org>, 'Antonios Motakis' <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, 'Sachin Kamat' <sachin.kamat@linaro.org>
 
-On Thu, 08 Aug 2013 13:40:13 +0200, Tomasz Figa wrote:
+Hi,
 
-> On Thursday 08 of August 2013 13:17:34 Sylwester Nawrocki wrote:
-> > On 08/08/2013 11:38 AM, Cho KyongHo wrote:
-> > > This adds gate clocks of all System MMUs and their master IPs
-> > > that are not apeared in clk-exynos5250.c
-> > > Also fixes GATE_IP_ACP to 0x18800 and changed GATE_DA to GATE
-> > > for System MMU clocks in clk-exynos4.c
-> > > 
-> > > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
-> > > ---
-> > > 
-> > >  .../devicetree/bindings/clock/exynos5250-clock.txt |   26 +++++++++
-> > >  drivers/clk/samsung/clk-exynos4.c                  |   27 +++------
-> > >  drivers/clk/samsung/clk-exynos5250.c               |   57
-> > >  ++++++++++++++++---- 3 files changed, 82 insertions(+), 28
-> > >  deletions(-)
-> > 
-> > [...]
-> > 
-> > > @@ -349,19 +358,26 @@ static struct samsung_gate_clock
-> > > exynos5250_gate_clks[] __initdata = {> 
-> > >  	GATE(gscl3, "gscl3", "aclk266", GATE_IP_GSCL, 3, 0, 0),
-> > >  	GATE(gscl_wa, "gscl_wa", "div_gscl_wa", GATE_IP_GSCL, 5, 0, 0),
-> > >  	GATE(gscl_wb, "gscl_wb", "div_gscl_wb", GATE_IP_GSCL, 6, 0, 0),
-> > > 
-> > > -	GATE(smmu_gscl0, "smmu_gscl0", "aclk266", GATE_IP_GSCL, 7, 0, 0),
-> > > -	GATE(smmu_gscl1, "smmu_gscl1", "aclk266", GATE_IP_GSCL, 8, 0, 0),
-> > > -	GATE(smmu_gscl2, "smmu_gscl2", "aclk266", GATE_IP_GSCL, 9, 0, 0),
-> > > -	GATE(smmu_gscl3, "smmu_gscl3", "aclk266", GATE_IP_GSCL, 10, 0, 0),
-> > > +	GATE(smmu_gscl0, "smmu_gscl0", "none", GATE_IP_GSCL, 7, 0, 0),
-> > > +	GATE(smmu_gscl1, "smmu_gscl1", "none", GATE_IP_GSCL, 8, 0, 0),
-> > > +	GATE(smmu_gscl2, "smmu_gscl2", "none", GATE_IP_GSCL, 9, 0, 0),
-> > > +	GATE(smmu_gscl3, "smmu_gscl3", "none", GATE_IP_GSCL, 10, 0, 0),
-> > 
-> > Why are the smmu clocks' parent clocks removed ? Shouldn't both the
-> > gscaler gate clock and the gscaler smmu clock be still same, as it is in
-> > case of exynos4 ?
-> 
-> I agree with Sylwester.
-> 
-> In fact, it is not a valid clock setup. A valid clock must be either root 
-> clock (indicated by appropriate clock flag and specified frequency) or have 
-> a valid parent.
-> 
+On Fri, Aug 09 2013, Olof Johansson wrote:
+> On Thu, Aug 8, 2013 at 5:16 PM, Doug Anderson <dianders@google.com> wrote:
+>
+>> I guess my overall question is: if there are no actual implementations
+>> of multislot, shouldn't we kill it and simplify the code a whole lot?
+>> If someone out there has a real multislot device they can step back in
+>> and do it more correctly?
+>>
+>> Of course we need to find someone to actually go through and do the
+>> killing of multislot, but finding that person might be easier if there
+>> was some agreement that it was good to do.
+>
+> There clearly seems to be no in-tree users of multislot. If someone
+> new comes in, we have the code in the history and can revert the
+> removal (or at least use it as reference for re-introduction).
+>
+> I vote for removing it. It adds really annoying complexity for
+> something that nobody uses.
 
-I thought that it does not require parent clock since it is just a gating clock.
-Let me check it again.
+I agree with Olof, for what it's worth.  (The maintainers of the
+driver are Jaehoon and Seungwon, though.)
 
-Thank you.
-> Best regards,
-> Tomasz
-> 
+Thanks,
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
