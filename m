@@ -1,123 +1,66 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH v4 2/4] mmc: dw_mmc: Add exynos resume_noirq callback to
- clear WAKEUP_INT
-Date: Fri, 09 Aug 2013 22:33:21 +0900
-Message-ID: <001901ce9505$04483820$0cd8a860$%jun@samsung.com>
-References: <1373470926-19314-1-git-send-email-dianders@chromium.org>
- <1375825071-20922-1-git-send-email-dianders@chromium.org>
- <1375825071-20922-3-git-send-email-dianders@chromium.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: always enable PM domains support for
+ EXYNOS4x12
+Date: Fri, 09 Aug 2013 16:53:02 +0200
+Message-ID: <1427702.Wy3A0eELLT@amdc1227>
+References: <2897494.fSQeGUd9YR@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1375825071-20922-3-git-send-email-dianders@chromium.org>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, 'Chris Ball' <cjb@laptop.org>
-Cc: 'Olof Johansson' <olof@lixom.net>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'James Hogan' <james.hogan@imgtec.com>, 'Grant Grundler' <grundler@chromium.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:50128 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757646Ab3HIOxI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Aug 2013 10:53:08 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MR900E89QOFUQ00@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Aug 2013 15:53:05 +0100 (BST)
+In-reply-to: <2897494.fSQeGUd9YR@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, August 07, 2013, Doug Anderson wrote:
-> If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
-> looping around forever.  This has been seen to happen on exynos5420
-> silicon despite the fact that we haven't enabled any wakeup events due
-> to a silicon errata.  It is safe to do on all exynos variants.
+Hi Bart,
+
+On Friday 09 of August 2013 13:56:05 Bartlomiej Zolnierkiewicz wrote:
+> Currently PM domains support will be enabled for EXYNOS4x12 SoCs
+> only if EXYNOS4210 SoC or EXYNOS5250 SoC support is also enabled.
 > 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Fix it by explicitly selecting PM domains support (if PM support
+> is enabled) by SOC_EXYNOS4212 and SOC_EXYNOS4412 config options.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
-> Changes in v4:
-> - Take Seungwon's suggestion and don't add any dw_mmc-pltfm code.
+>  arch/arm/mach-exynos/Kconfig |    2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Changes in v3:
-> - Add freeze/thaw and poweroff/restore noirq entries.
-> 
-> Changes in v2:
-> - Use suspend_noirq as per James Hogan.
-> 
->  drivers/mmc/host/dw_mmc-exynos.c | 51 ++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 49 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index 866edef..0c1f192 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -30,6 +30,7 @@
->  #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
->  					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
->  					SDMMC_CLKSEL_CCLK_DIVIDER(z))
-> +#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
-> 
->  #define EXYNOS4210_FIXED_CIU_CLK_DIV	2
->  #define EXYNOS4412_FIXED_CIU_CLK_DIV	4
-> @@ -100,6 +101,30 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
->  	return 0;
->  }
-> 
-> +/**
-> + * dw_mci_exynos_resume_noirq - Exynos-specific resume code
-> + *
-> + * On exynos5420 there is a silicon errata that will sometimes leave the
-> + * WAKEUP_INT bit in the CLKSEL register asserted.  This bit is 1 to indicate
-> + * that it fired and we can clear it by writing a 1 back.  Clear it to prevent
-> + * interrupts from going off constantly.
-> + *
-> + * We run this code on all exynos variants because it doesn't hurt and the bug
-> + * may be more widespread than just exynos5420.
-I guess just above comment can be removed. (Not be widespread)
-Updating the origin value of CLKSEL looks like no harm while SDMMC_CLKSEL_WAKEUP_INT is cleared.
+> Index: b/arch/arm/mach-exynos/Kconfig
+> ===================================================================
+> --- a/arch/arm/mach-exynos/Kconfig	2013-08-08 14:36:02.000000000 +0200
+> +++ b/arch/arm/mach-exynos/Kconfig	2013-08-08 14:38:48.967486318 +0200
+> @@ -52,6 +52,7 @@ config SOC_EXYNOS4212
+>  	depends on ARCH_EXYNOS4
+>  	select ARCH_HAS_BANDGAP
+>  	select PINCTRL_EXYNOS
+> +	select PM_GENERIC_DOMAINS if PM
+>  	select S5P_PM if PM
+>  	select S5P_SLEEP if PM
+>  	select SAMSUNG_DMADEV
+> @@ -64,6 +65,7 @@ config SOC_EXYNOS4412
+>  	depends on ARCH_EXYNOS4
+>  	select ARCH_HAS_BANDGAP
+>  	select PINCTRL_EXYNOS
+> +	select PM_GENERIC_DOMAINS if PM
+>  	select SAMSUNG_DMADEV
+>  	help
+>  	  Enable EXYNOS4412 SoC support
 
-> + */
-> +
-> +static int dw_mci_exynos_resume_noirq(struct device *dev)
-> +{
-> +	struct dw_mci *host = dev_get_drvdata(dev);
-> +	u32 clksel;
-> +
-> +	clksel = mci_readl(host, CLKSEL);
-> +	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
-> +		mci_writel(host, CLKSEL, clksel);
-> +
-> +	return 0;
-> +}
-> +
->  static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
->  {
->  	/*
-> @@ -187,17 +212,39 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
->  	return dw_mci_pltfm_register(pdev, drv_data);
->  }
-> 
-> +static struct dev_pm_ops dw_mci_exynos_pmops;
-> +
->  static struct platform_driver dw_mci_exynos_pltfm_driver = {
->  	.probe		= dw_mci_exynos_probe,
->  	.remove		= __exit_p(dw_mci_pltfm_remove),
->  	.driver		= {
->  		.name		= "dwmmc_exynos",
->  		.of_match_table	= dw_mci_exynos_match,
-> -		.pm		= &dw_mci_pltfm_pmops,
-> +		.pm		= &dw_mci_exynos_pmops,
->  	},
->  };
-> 
-> -module_platform_driver(dw_mci_exynos_pltfm_driver);
-> +static int __init dw_mci_exynos_init(void)
-> +{
-> +	/* Add a "noirq" resume to platform pmops */
-> +	memcpy(&dw_mci_exynos_pmops, &dw_mci_pltfm_pmops,
-> +	       sizeof(dw_mci_exynos_pmops));
-> +	WARN_ON(dw_mci_exynos_pmops.resume_noirq ||
-> +		dw_mci_exynos_pmops.thaw_noirq ||
-> +		dw_mci_exynos_pmops.restore_noirq);
-> +	dw_mci_exynos_pmops.resume_noirq = dw_mci_exynos_resume_noirq;
-> +	dw_mci_exynos_pmops.thaw_noirq = dw_mci_exynos_resume_noirq;
-> +	dw_mci_exynos_pmops.restore_noirq = dw_mci_exynos_resume_noirq;
+Acked-by: Tomasz Figa <t.figa@samsung.com>
 
-If CONFIG_PM_SLEEP is not defined, we don't need to add it.
-And also, instead of reusing dw_mci_pltfm_pmops, how about defining dw_mci_exynos_pmops's own?
-Of course, suspend/resume will not different with dw_mci_pltfm* just now.
-But specific code for exynos would be added soon.
-
-Thanks,
-Seungwon Jeon
-
+Best regards,
+Tomasz
