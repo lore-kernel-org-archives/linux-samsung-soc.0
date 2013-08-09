@@ -1,159 +1,201 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] cpufreq: fix EXYNOS drivers selection
-Date: Fri, 09 Aug 2013 14:04:55 +0200
-Message-ID: <2522264.d7vsK7QKUi@amdc1032>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCHv2 1/5] drm/exynos: add device tree support for rotator
+Date: Fri, 09 Aug 2013 14:50:44 +0200
+Message-ID: <7210617.268rmnOmdK@amdc1227>
+References: <1376034053-31910-1-git-send-email-chanho61.park@samsung.com>
+ <1376034053-31910-2-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:64365 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965752Ab3HIMFY (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:49802 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757076Ab3HIMut (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 08:05:24 -0400
+	Fri, 9 Aug 2013 08:50:49 -0400
+In-reply-to: <1376034053-31910-2-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: inki.dae@samsung.com, kgene.kim@samsung.com, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, mark.rutland@arm.com, l.stach@pengutronix.de, s.nawrocki@samsung.com, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
 
-* remove superfluous pr_debug() call from exynos_cpufreq_init()
-  (init errors are always logged anyway)
-* add dummy per-SoC type init functions to exynos-cpufreq.h
-* make per-SoC type cpufreq config options selectable
-* make CONFIG_ARM_EXYNOS_CPUFREQ config option invisible to user and
-  automatically enable it when needed
+Hi Chanho,
 
-This patch fixes following issues:
-* EXYNOS per-SoC type cpufreq support (i.e. exynos4210-cpufreq.c) being
-  always built if given SoC support was enabled (i.e. CPU_EXYNOS4210),
-  even if common EXYNOS cpufreq support was disabled
-* inability to select cpufreq for each SoC type separately (it could
-  be only enabled/disabled for all SoCs for which support was enabled)
-* EXYNOS5440 cpufreq support was always enabled when EXYNOS5440
-  support was enabled and couldn't be disabled
+On Friday 09 of August 2013 16:40:49 Chanho Park wrote:
+> The exynos4 platform is only dt-based since 3.10, we should convert
+> driver data and ids to dt-based parsing methods. The rotator driver has
+> a limit table to get size limit of input picture. Each SoCs has slightly
+> different limit value compared with any others.
+> For example, exynos4210's max_size of RGB888 is 16k x 16k. But, others
+> have 8k x 8k. Another example the exynos5250 should have multiple of 2
+> pixel size for its X/Y axis. Thus, we should keep different tables for
+> each of them.
+> 
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_rotator.c |  109
+> ++++++++++++++++++++------- 1 file changed, 81 insertions(+), 28
+> deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> b/drivers/gpu/drm/exynos/exynos_drm_rotator.c index 427640a..39b09e0
+> 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+> @@ -632,6 +632,73 @@ static int rotator_ippdrv_start(struct device *dev,
+> enum drm_exynos_ipp_cmd cmd) return 0;
+>  }
+> 
+> +static struct rot_limit_table rot_limit_tbl_4210 = {
+> +	.ycbcr420_2p = {
+> +		.min_w = 32,
+> +		.min_h = 32,
+> +		.max_w = SZ_64K,
+> +		.max_h = SZ_64K,
+> +		.align = 3,
+> +	},
+> +	.rgb888 = {
+> +		.min_w = 8,
+> +		.min_h = 8,
+> +		.max_w = SZ_16K,
+> +		.max_h = SZ_16K,
+> +		.align = 2,
+> +	},
+> +};
+> +
+> +static struct rot_limit_table rot_limit_tbl_4x12 = {
+> +	.ycbcr420_2p = {
+> +		.min_w = 32,
+> +		.min_h = 32,
+> +		.max_w = SZ_32K,
+> +		.max_h = SZ_32K,
+> +		.align = 3,
+> +	},
+> +	.rgb888 = {
+> +		.min_w = 8,
+> +		.min_h = 8,
+> +		.max_w = SZ_8K,
+> +		.max_h = SZ_8K,
+> +		.align = 2,
+> +	},
+> +};
+> +
+> +static struct rot_limit_table rot_limit_tbl_5250 = {
+> +	.ycbcr420_2p = {
+> +		.min_w = 32,
+> +		.min_h = 32,
+> +		.max_w = SZ_32K,
+> +		.max_h = SZ_32K,
+> +		.align = 3,
+> +	},
+> +	.rgb888 = {
+> +		.min_w = 8,
+> +		.min_h = 8,
+> +		.max_w = SZ_8K,
+> +		.max_h = SZ_8K,
+> +		.align = 1,
+> +	},
+> +};
+> +
+> +static const struct of_device_id exynos_rotator_match[] = {
+> +	{
+> +		.compatible = "samsung,exynos4210-rotator",
+> +		.data = &rot_limit_tbl_4210,
+> +	},
+> +	{
+> +		.compatible = "samsung,exynos4212-rotator",
+> +		.data = &rot_limit_tbl_4x12,
+> +	},
+> +	{
+> +		.compatible = "samsung,exynos5250-rotator",
+> +		.data = &rot_limit_tbl_5250,
+> +	},
+> +	{},
+> +};
+> +
+>  static int rotator_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -645,8 +712,19 @@ static int rotator_probe(struct platform_device
+> *pdev) return -ENOMEM;
+>  	}
+> 
+> -	rot->limit_tbl = (struct rot_limit_table *)
+> -				platform_get_device_id(pdev)->driver_data;
+> +	if (dev->of_node) {
+> +		const struct of_device_id *match;
+> +		match = of_match_node(of_match_ptr(exynos_rotator_match),
+> +					dev->of_node);
+> +		if (match == NULL) {
+> +			dev_err(dev, "failed to match node\n");
+> +			return -ENODEV;
+> +		}
+> +		rot->limit_tbl = (struct rot_limit_table *)match->data;
+> +	} else {
+> +		dev_err(dev, "cannot find binding\n");
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/cpufreq/Kconfig.arm      |   36 ++++++++++++++++++++++++------------
- drivers/cpufreq/exynos-cpufreq.c |    1 -
- drivers/cpufreq/exynos-cpufreq.h |   21 +++++++++++++++++++++
- 3 files changed, 45 insertions(+), 13 deletions(-)
+What about having a check for !dev->of_node at the beginning of probe, to 
+not complicate further code?
 
-Index: b/drivers/cpufreq/Kconfig.arm
-===================================================================
---- a/drivers/cpufreq/Kconfig.arm	2013-08-08 14:36:09.000000000 +0200
-+++ b/drivers/cpufreq/Kconfig.arm	2013-08-08 15:50:58.099420242 +0200
-@@ -17,37 +17,47 @@ config ARM_DT_BL_CPUFREQ
- 	  big.LITTLE platform. This gets frequency tables from DT.
- 
- config ARM_EXYNOS_CPUFREQ
--	bool "SAMSUNG EXYNOS SoCs"
--	depends on ARCH_EXYNOS
-+	bool
- 	select CPU_FREQ_TABLE
--	default y
--	help
--	  This adds the CPUFreq driver common part for Samsung
--	  EXYNOS SoCs.
--
--	  If in doubt, say N.
- 
- config ARM_EXYNOS4210_CPUFREQ
--	def_bool CPU_EXYNOS4210
-+	bool "SAMSUNG EXYNOS4210"
-+	depends on CPU_EXYNOS4210
-+	default y
-+	select ARM_EXYNOS_CPUFREQ
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS4210
- 	  SoC (S5PV310 or S5PC210).
- 
-+	  If in doubt, say N.
-+
- config ARM_EXYNOS4X12_CPUFREQ
--	def_bool (SOC_EXYNOS4212 || SOC_EXYNOS4412)
-+	bool "SAMSUNG EXYNOS4x12"
-+	depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
-+	default y
-+	select ARM_EXYNOS_CPUFREQ
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS4X12
- 	  SoC (EXYNOS4212 or EXYNOS4412).
- 
-+	  If in doubt, say N.
-+
- config ARM_EXYNOS5250_CPUFREQ
--	def_bool SOC_EXYNOS5250
-+	bool "SAMSUNG EXYNOS5250"
-+	depends on SOC_EXYNOS5250
-+	default y
-+	select ARM_EXYNOS_CPUFREQ
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS5250
- 	  SoC.
- 
-+	  If in doubt, say N.
-+
- config ARM_EXYNOS5440_CPUFREQ
--	def_bool SOC_EXYNOS5440
-+	bool "SAMSUNG EXYNOS5440"
-+	depends on SOC_EXYNOS5440
- 	depends on HAVE_CLK && PM_OPP && OF
-+	default y
- 	select CPU_FREQ_TABLE
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS5440
-@@ -55,6 +65,8 @@ config ARM_EXYNOS5440_CPUFREQ
- 	  different than previous exynos controllers so not using
- 	  the common exynos framework.
- 
-+	  If in doubt, say N.
-+
- config ARM_HIGHBANK_CPUFREQ
- 	tristate "Calxeda Highbank-based"
- 	depends on ARCH_HIGHBANK
-Index: b/drivers/cpufreq/exynos-cpufreq.c
-===================================================================
---- a/drivers/cpufreq/exynos-cpufreq.c	2013-08-08 14:36:09.000000000 +0200
-+++ b/drivers/cpufreq/exynos-cpufreq.c	2013-08-08 15:47:39.619423270 +0200
-@@ -332,7 +332,6 @@ err_cpufreq:
- 	regulator_put(arm_regulator);
- err_vdd_arm:
- 	kfree(exynos_info);
--	pr_debug("%s: failed initialization\n", __func__);
- 	return -EINVAL;
- }
- late_initcall(exynos_cpufreq_init);
-Index: b/drivers/cpufreq/exynos-cpufreq.h
-===================================================================
---- a/drivers/cpufreq/exynos-cpufreq.h	2013-08-08 14:28:57.000000000 +0200
-+++ b/drivers/cpufreq/exynos-cpufreq.h	2013-08-08 15:47:39.619423270 +0200
-@@ -43,6 +43,27 @@ struct exynos_dvfs_info {
- 	bool (*need_apll_change)(unsigned int, unsigned int);
- };
- 
-+#ifdef CONFIG_ARM_EXYNOS4210_CPUFREQ
- extern int exynos4210_cpufreq_init(struct exynos_dvfs_info *);
-+#else
-+static inline int exynos4210_cpufreq_init(struct exynos_dvfs_info *info)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+#ifdef CONFIG_ARM_EXYNOS4X12_CPUFREQ
- extern int exynos4x12_cpufreq_init(struct exynos_dvfs_info *);
-+#else
-+static inline int exynos4x12_cpufreq_init(struct exynos_dvfs_info *info)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-+#ifdef CONFIG_ARM_EXYNOS5250_CPUFREQ
- extern int exynos5250_cpufreq_init(struct exynos_dvfs_info *);
-+#else
-+static inline int exynos5250_cpufreq_init(struct exynos_dvfs_info *info)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
+Also the error message is confusing. It should be something closer to 
+"device does not have of_node".
+
+> +		return -ENODEV;
+> +	}
+> 
+>  	rot->regs_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	rot->regs = devm_ioremap_resource(dev, rot->regs_res);
+> @@ -718,31 +796,6 @@ static int rotator_remove(struct platform_device
+> *pdev) return 0;
+>  }
+> 
+> -static struct rot_limit_table rot_limit_tbl = {
+> -	.ycbcr420_2p = {
+> -		.min_w = 32,
+> -		.min_h = 32,
+> -		.max_w = SZ_32K,
+> -		.max_h = SZ_32K,
+> -		.align = 3,
+> -	},
+> -	.rgb888 = {
+> -		.min_w = 8,
+> -		.min_h = 8,
+> -		.max_w = SZ_8K,
+> -		.max_h = SZ_8K,
+> -		.align = 2,
+> -	},
+> -};
+> -
+> -static struct platform_device_id rotator_driver_ids[] = {
+> -	{
+> -		.name		= "exynos-rot",
+> -		.driver_data	= (unsigned long)&rot_limit_tbl,
+> -	},
+> -	{},
+> -};
+> -
+>  static int rotator_clk_crtl(struct rot_context *rot, bool enable)
+>  {
+>  	if (enable) {
+> @@ -804,10 +857,10 @@ static const struct dev_pm_ops rotator_pm_ops = {
+>  struct platform_driver rotator_driver = {
+>  	.probe		= rotator_probe,
+>  	.remove		= rotator_remove,
+> -	.id_table	= rotator_driver_ids,
+>  	.driver		= {
+>  		.name	= "exynos-rot",
+>  		.owner	= THIS_MODULE,
+>  		.pm	= &rotator_pm_ops,
+> +		.of_match_table = of_match_ptr(exynos_rotator_match),
+>  	},
+>  };
+
+Otherwise looks fine.
+
+One more thing is that IMHO patch 5/5 could be squashed with this one, so 
+documentation for the binding would be available at the same it is 
+introduced.
+
+Best regards,
+Tomasz
