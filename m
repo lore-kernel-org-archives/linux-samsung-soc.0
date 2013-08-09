@@ -1,173 +1,74 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] cpufreq: fix EXYNOS drivers selection
-Date: Fri, 09 Aug 2013 17:50:05 +0200
-Message-ID: <76454119.W9pKpoo1U1@amdc1227>
-References: <2522264.d7vsK7QKUi@amdc1032>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: dw_mmc: Does anyone use multiple slots?
+Date: Fri, 9 Aug 2013 08:51:57 -0700
+Message-ID: <CAD=FV=X9G66zg+OQ5C0gkkkYDdrkegkZdmWNXRDiS2V5_yY+6w@mail.gmail.com>
+References: <CAD=FV=U3aT1KKtSwAFhYURJJerp70ij8h647=xyV51et4jYipg@mail.gmail.com>
+	<CAOesGMjaF2K0CnuWBj7xdXGAQk-XRetBstaQdd9EZzBYrmDjeA@mail.gmail.com>
+	<86mworfzsf.fsf@void.printf.net>
+	<000e01ce94af$12710ef0$37532cd0$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:57180 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965201Ab3HIPuK (ORCPT
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:56411 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934146Ab3HIPv6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Aug 2013 11:50:10 -0400
-In-reply-to: <2522264.d7vsK7QKUi@amdc1032>
+	Fri, 9 Aug 2013 11:51:58 -0400
+Received: by mail-qc0-f169.google.com with SMTP id m15so2303296qcq.28
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Aug 2013 08:51:57 -0700 (PDT)
+In-Reply-To: <000e01ce94af$12710ef0$37532cd0$%jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: Chris Ball <cjb@laptop.org>, Olof Johansson <olof@lixom.net>, James Hogan <james.hogan@imgtec.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Jaehoon Chung <jh80.chung@samsung.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sonny Rao <sonnyrao@chromium.org>
 
-Hi Bart,
+Hi,
 
-On Friday 09 of August 2013 14:04:55 Bartlomiej Zolnierkiewicz wrote:
-> * remove superfluous pr_debug() call from exynos_cpufreq_init()
->   (init errors are always logged anyway)
-> * add dummy per-SoC type init functions to exynos-cpufreq.h
-> * make per-SoC type cpufreq config options selectable
-> * make CONFIG_ARM_EXYNOS_CPUFREQ config option invisible to user and
->   automatically enable it when needed
-> 
-> This patch fixes following issues:
-> * EXYNOS per-SoC type cpufreq support (i.e. exynos4210-cpufreq.c) being
->   always built if given SoC support was enabled (i.e. CPU_EXYNOS4210),
->   even if common EXYNOS cpufreq support was disabled
-> * inability to select cpufreq for each SoC type separately (it could
->   be only enabled/disabled for all SoCs for which support was enabled)
-> * EXYNOS5440 cpufreq support was always enabled when EXYNOS5440
->   support was enabled and couldn't be disabled
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/cpufreq/Kconfig.arm      |   36
-> ++++++++++++++++++++++++------------ drivers/cpufreq/exynos-cpufreq.c | 
->   1 -
->  drivers/cpufreq/exynos-cpufreq.h |   21 +++++++++++++++++++++
->  3 files changed, 45 insertions(+), 13 deletions(-)
-> 
-> Index: b/drivers/cpufreq/Kconfig.arm
-> ===================================================================
-> --- a/drivers/cpufreq/Kconfig.arm	2013-08-08 14:36:09.000000000 +0200
-> +++ b/drivers/cpufreq/Kconfig.arm	2013-08-08 15:50:58.099420242 +0200
-> @@ -17,37 +17,47 @@ config ARM_DT_BL_CPUFREQ
->  	  big.LITTLE platform. This gets frequency tables from DT.
-> 
->  config ARM_EXYNOS_CPUFREQ
-> -	bool "SAMSUNG EXYNOS SoCs"
-> -	depends on ARCH_EXYNOS
-> +	bool
->  	select CPU_FREQ_TABLE
-> -	default y
-> -	help
-> -	  This adds the CPUFreq driver common part for Samsung
-> -	  EXYNOS SoCs.
-> -
-> -	  If in doubt, say N.
-> 
->  config ARM_EXYNOS4210_CPUFREQ
-> -	def_bool CPU_EXYNOS4210
-> +	bool "SAMSUNG EXYNOS4210"
-> +	depends on CPU_EXYNOS4210
-> +	default y
-> +	select ARM_EXYNOS_CPUFREQ
->  	help
->  	  This adds the CPUFreq driver for Samsung EXYNOS4210
->  	  SoC (S5PV310 or S5PC210).
-> 
-> +	  If in doubt, say N.
-> +
->  config ARM_EXYNOS4X12_CPUFREQ
-> -	def_bool (SOC_EXYNOS4212 || SOC_EXYNOS4412)
-> +	bool "SAMSUNG EXYNOS4x12"
-> +	depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
-> +	default y
-> +	select ARM_EXYNOS_CPUFREQ
->  	help
->  	  This adds the CPUFreq driver for Samsung EXYNOS4X12
->  	  SoC (EXYNOS4212 or EXYNOS4412).
-> 
-> +	  If in doubt, say N.
-> +
->  config ARM_EXYNOS5250_CPUFREQ
-> -	def_bool SOC_EXYNOS5250
-> +	bool "SAMSUNG EXYNOS5250"
-> +	depends on SOC_EXYNOS5250
-> +	default y
-> +	select ARM_EXYNOS_CPUFREQ
->  	help
->  	  This adds the CPUFreq driver for Samsung EXYNOS5250
->  	  SoC.
-> 
-> +	  If in doubt, say N.
-> +
->  config ARM_EXYNOS5440_CPUFREQ
-> -	def_bool SOC_EXYNOS5440
-> +	bool "SAMSUNG EXYNOS5440"
-> +	depends on SOC_EXYNOS5440
->  	depends on HAVE_CLK && PM_OPP && OF
-> +	default y
->  	select CPU_FREQ_TABLE
->  	help
->  	  This adds the CPUFreq driver for Samsung EXYNOS5440
-> @@ -55,6 +65,8 @@ config ARM_EXYNOS5440_CPUFREQ
->  	  different than previous exynos controllers so not using
->  	  the common exynos framework.
-> 
-> +	  If in doubt, say N.
-> +
->  config ARM_HIGHBANK_CPUFREQ
->  	tristate "Calxeda Highbank-based"
->  	depends on ARCH_HIGHBANK
-> Index: b/drivers/cpufreq/exynos-cpufreq.c
-> ===================================================================
-> --- a/drivers/cpufreq/exynos-cpufreq.c	2013-08-08 14:36:09.000000000
-> +0200 +++ b/drivers/cpufreq/exynos-cpufreq.c	2013-08-08
-> 15:47:39.619423270 +0200 @@ -332,7 +332,6 @@ err_cpufreq:
->  	regulator_put(arm_regulator);
->  err_vdd_arm:
->  	kfree(exynos_info);
-> -	pr_debug("%s: failed initialization\n", __func__);
->  	return -EINVAL;
->  }
->  late_initcall(exynos_cpufreq_init);
-> Index: b/drivers/cpufreq/exynos-cpufreq.h
-> ===================================================================
-> --- a/drivers/cpufreq/exynos-cpufreq.h	2013-08-08 14:28:57.000000000
-> +0200 +++ b/drivers/cpufreq/exynos-cpufreq.h	2013-08-08
-> 15:47:39.619423270 +0200 @@ -43,6 +43,27 @@ struct exynos_dvfs_info {
->  	bool (*need_apll_change)(unsigned int, unsigned int);
->  };
-> 
-> +#ifdef CONFIG_ARM_EXYNOS4210_CPUFREQ
->  extern int exynos4210_cpufreq_init(struct exynos_dvfs_info *);
-> +#else
-> +static inline int exynos4210_cpufreq_init(struct exynos_dvfs_info *info)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif
-> +#ifdef CONFIG_ARM_EXYNOS4X12_CPUFREQ
->  extern int exynos4x12_cpufreq_init(struct exynos_dvfs_info *);
-> +#else
-> +static inline int exynos4x12_cpufreq_init(struct exynos_dvfs_info *info)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif
-> +#ifdef CONFIG_ARM_EXYNOS5250_CPUFREQ
->  extern int exynos5250_cpufreq_init(struct exynos_dvfs_info *);
-> +#else
-> +static inline int exynos5250_cpufreq_init(struct exynos_dvfs_info *info)
-> +{
-> +	return -EOPNOTSUPP;
-> +}
-> +#endif
-> 
+On Thu, Aug 8, 2013 at 8:18 PM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> On Fri, August 09, 2013, Chris Ball wrote:
+>> On Fri, Aug 09 2013, Olof Johansson wrote:
+>> > On Thu, Aug 8, 2013 at 5:16 PM, Doug Anderson <dianders@google.com> wrote:
+>> >
+>> >> I guess my overall question is: if there are no actual implementations
+>> >> of multislot, shouldn't we kill it and simplify the code a whole lot?
+>> >> If someone out there has a real multislot device they can step back in
+>> >> and do it more correctly?
+>> >>
+>> >> Of course we need to find someone to actually go through and do the
+>> >> killing of multislot, but finding that person might be easier if there
+>> >> was some agreement that it was good to do.
+>> >
+>> > There clearly seems to be no in-tree users of multislot. If someone
+>> > new comes in, we have the code in the history and can revert the
+>> > removal (or at least use it as reference for re-introduction).
+>> >
+>> > I vote for removing it. It adds really annoying complexity for
+>> > something that nobody uses.
+>>
+>> I agree with Olof, for what it's worth.  (The maintainers of the
+>> driver are Jaehoon and Seungwon, though.)
+>
+> I feel like there is no actual use case for that though origin Synopsys IP supports.
+> Multi-slot  might be not useful in terms of performance because shared bus should be allowed.
+> (At least this is the way I see it, though)
+> As Exynos's host does so, other hosts which are introduced in Linux seems use one card per host.
+> If it's really not found now, I could agree on this topic.
 
-Finally someone cleaned this up. Thanks.
+This all sounds very promising.  Certainly we should wait a little
+longer to see if others find / respond to this thread, but otherwise
+we can go ahead?
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+It's possible to do this in somewhat small steps.  I think the first
+step is to remove num_slots and remove all loops over num_slots.  That
+actually sounds pretty easy/small, though it will touch a lot of code.
+ After that we can try to move things out of the separate slot
+structure, I think.  That might be a bit of a bigger change.  I can
+keep that as a back burner task, but I wouldn't object at all to
+someone else doing it!  ;)
 
-Best regards,
-Tomasz
+The big question, though, is what to do about device tree bindings
+(cringe).  Really bus-width, wp-gpios, and disable-wp ought to be
+promoted up and we should remove the "slot" subnode.  ...but that of
+course breaks the stable API.
+
+-Doug
