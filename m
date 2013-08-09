@@ -1,38 +1,50 @@
-From: Julius Werner <jwerner@chromium.org>
-Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register handling
-Date: Thu, 8 Aug 2013 19:52:09 -0700
-Message-ID: <CAODwPW_W9gu+nwNzpq3sfcOCDkyppu6K8C9+S8OZt_A0qHqNEg@mail.gmail.com>
-References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
-	<20130808092615.GF14648@e106331-lin.cambridge.arm.com>
-	<CAODwPW-j=JjunZU3zewrE1_-WoW-RXLmKVQypzxmo_BOYjc3VA@mail.gmail.com>
-	<1729120.r596vOTlMW@flatron>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: dw_mmc: Does anyone use multiple slots?
+Date: Fri, 09 Aug 2013 12:18:07 +0900
+Message-ID: <000e01ce94af$12710ef0$37532cd0$%jun@samsung.com>
+References: <CAD=FV=U3aT1KKtSwAFhYURJJerp70ij8h647=xyV51et4jYipg@mail.gmail.com>
+ <CAOesGMjaF2K0CnuWBj7xdXGAQk-XRetBstaQdd9EZzBYrmDjeA@mail.gmail.com>
+ <86mworfzsf.fsf@void.printf.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f42.google.com ([209.85.216.42]:53858 "EHLO
-	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758247Ab3HICwK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Aug 2013 22:52:10 -0400
-Received: by mail-qa0-f42.google.com with SMTP id bv4so684607qab.15
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2013 19:52:09 -0700 (PDT)
-In-Reply-To: <1729120.r596vOTlMW@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <86mworfzsf.fsf@void.printf.net>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Chris Ball' <cjb@laptop.org>, 'Olof Johansson' <olof@lixom.net>
+Cc: 'Doug Anderson' <dianders@google.com>, 'James Hogan' <james.hogan@imgtec.com>, linux-mmc@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Grant Grundler' <grundler@chromium.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Doug Anderson' <dianders@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Sonny Rao' <sonnyrao@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Julius Werner <jwerner@chromium.org>, Mark Rutland <mark.rutland@arm.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-> Sorry, I don't understand what is not implemented. Without your patch, the
-> PHY driver handles both PMU registers of Exynos4.
+On Fri, August 09, 2013, Chris Ball wrote:
+> On Fri, Aug 09 2013, Olof Johansson wrote:
+> > On Thu, Aug 8, 2013 at 5:16 PM, Doug Anderson <dianders@google.com> wrote:
+> >
+> >> I guess my overall question is: if there are no actual implementations
+> >> of multislot, shouldn't we kill it and simplify the code a whole lot?
+> >> If someone out there has a real multislot device they can step back in
+> >> and do it more correctly?
+> >>
+> >> Of course we need to find someone to actually go through and do the
+> >> killing of multislot, but finding that person might be easier if there
+> >> was some agreement that it was good to do.
+> >
+> > There clearly seems to be no in-tree users of multislot. If someone
+> > new comes in, we have the code in the history and can revert the
+> > removal (or at least use it as reference for re-introduction).
+> >
+> > I vote for removing it. It adds really annoying complexity for
+> > something that nobody uses.
+> 
+> I agree with Olof, for what it's worth.  (The maintainers of the
+> driver are Jaehoon and Seungwon, though.)
 
-I don't have an Exynos4 to actually test this, so please let me know
-if I'm missing something here... but in order to hit the right HOST
-PHY register in the current upstream code, the Exynos4 code would need
-to have a hostphy_reg_offset of 4 somewhere in its
-samsung_usbphy_drvdata. In my latest checkout of Linus' tree (6c2580c)
-it does not (only Exynos5 sets that attribute), so it would default to
-0 (thereby actually hitting the DEVICE register).
+I feel like there is no actual use case for that though origin Synopsys IP supports.
+Multi-slot  might be not useful in terms of performance because shared bus should be allowed.
+(At least this is the way I see it, though)
+As Exynos's host does so, other hosts which are introduced in Linux seems use one card per host.
+If it's really not found now, I could agree on this topic.
 
-If you want I can gladly provide another change on top of my patchset
-to fix that in the future... but it looks to me like it had been
-broken anyway for now.
+Thanks,
+Seungwon Jeon
+
