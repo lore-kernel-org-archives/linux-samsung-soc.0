@@ -1,251 +1,66 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V3 3/3] ASoC: Samsung: I2S: Modify the I2S driver to support I2S on Exynos5420
-Date: Fri, 09 Aug 2013 01:05:46 +0200
-Message-ID: <2802930.EccX991DZW@flatron>
-References: <1375865122-5258-1-git-send-email-padma.v@samsung.com> <1375865122-5258-4-git-send-email-padma.v@samsung.com>
+From: Doug Anderson <dianders@google.com>
+Subject: dw_mmc: Does anyone use multiple slots?
+Date: Thu, 8 Aug 2013 17:16:55 -0700
+Message-ID: <CAD=FV=U3aT1KKtSwAFhYURJJerp70ij8h647=xyV51et4jYipg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f51.google.com ([209.85.214.51]:64367 "EHLO
-	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966339Ab3HHXFz (ORCPT
+Received: from mail-qc0-f182.google.com ([209.85.216.182]:65429 "EHLO
+	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966814Ab3HIAQ4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Aug 2013 19:05:55 -0400
-In-Reply-To: <1375865122-5258-4-git-send-email-padma.v@samsung.com>
+	Thu, 8 Aug 2013 20:16:56 -0400
+Received: by mail-qc0-f182.google.com with SMTP id c11so1894915qcv.41
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Aug 2013 17:16:55 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, broonie@kernel.org, kgene.kim@samsung.com, abrestic@chromium.org
+To: James Hogan <james.hogan@imgtec.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sonny Rao <sonnyrao@chromium.org>
 
-Hi Padmavathi,
+Hi,
 
-On Wednesday 07 of August 2013 14:15:22 Padmavathi Venna wrote:
-> Exynos5420 added support for I2S TDM mode. For this, there are some
-> register changes in the I2S controller. This patch adds the relevant
-> register changes to support I2S in normal mode. This patch adds a
-> quirk for TDM mode and if TDM mode is present all the relevent changes
-> will be applied.
-> 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
->  .../devicetree/bindings/sound/samsung-i2s.txt      |    4 +
->  include/linux/platform_data/asoc-s3c.h             |    1 +
->  sound/soc/samsung/i2s-regs.h                       |   15 ++++
->  sound/soc/samsung/i2s.c                            |   81
-> ++++++++++++++++++-- 4 files changed, 93 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> b/Documentation/devicetree/bindings/sound/samsung-i2s.txt index
-> b3f6443..9b5c892 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-> @@ -11,6 +11,10 @@ Required SoC Specific Properties:
->       with secondary fifo and s/w reset control.
->     - samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with
->       secondary fifo, s/w reset control and internal mux for root clk
-> src. +   - samsung,exynos5420-i2s: for 8/16/24bit multichannel(7.1) I2S
-> with +     secondary fifo, s/w reset control, internal mux for root clk
-> src and +     TDM support. TDM (Time division multiplexing) is to allow
-> transfer of +     multiple channel audio data on single data line.
-> 
->  - reg: physical base address of the controller and length of memory
-> mapped region.
-> diff --git a/include/linux/platform_data/asoc-s3c.h
-> b/include/linux/platform_data/asoc-s3c.h index 8827259..9efc04d 100644
-> --- a/include/linux/platform_data/asoc-s3c.h
-> +++ b/include/linux/platform_data/asoc-s3c.h
-> @@ -36,6 +36,7 @@ struct samsung_i2s {
->   */
->  #define QUIRK_NO_MUXPSR		(1 << 2)
->  #define QUIRK_NEED_RSTCLR	(1 << 3)
-> +#define QUIRK_SUPPORTS_TDM	(1 << 4)
->  	/* Quirks of the I2S controller */
->  	u32 quirks;
->  	dma_addr_t idma_addr;
-> diff --git a/sound/soc/samsung/i2s-regs.h b/sound/soc/samsung/i2s-regs.h
-> index 30513b7..821a502 100644
-> --- a/sound/soc/samsung/i2s-regs.h
-> +++ b/sound/soc/samsung/i2s-regs.h
-> @@ -31,6 +31,10 @@
->  #define I2SLVL1ADDR	0x34
->  #define I2SLVL2ADDR	0x38
->  #define I2SLVL3ADDR	0x3c
-> +#define I2SSTR1		0x40
-> +#define I2SVER		0x44
-> +#define I2SFIC2		0x48
-> +#define I2STDM		0x4c
-> 
->  #define CON_RSTCLR		(1 << 31)
->  #define CON_FRXOFSTATUS		(1 << 26)
-> @@ -117,6 +121,17 @@
->  #define MOD_BCLK_MASK		3
->  #define MOD_8BIT		(1 << 0)
-> 
-> +#define EXYNOS5420_MOD_LRP_SHIFT	15
-> +#define EXYNOS5420_MOD_SDF_SHIFT	6
-> +#define EXYNOS5420_MOD_RCLK_SHIFT	4
-> +#define EXYNOS5420_MOD_BCLK_SHIFT	0
-> +#define EXYNOS5420_MOD_BCLK_64FS	4
-> +#define EXYNOS5420_MOD_BCLK_96FS	5
-> +#define EXYNOS5420_MOD_BCLK_128FS	6
-> +#define EXYNOS5420_MOD_BCLK_192FS	7
-> +#define EXYNOS5420_MOD_BCLK_256FS	8
-> +#define EXYNOS5420_MOD_BCLK_MASK	0xf
-> +
->  #define MOD_CDCLKCON		(1 << 12)
-> 
->  #define PSR_PSREN		(1 << 15)
-> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index 8a5504c..6964672 100644
-> --- a/sound/soc/samsung/i2s.c
-> +++ b/sound/soc/samsung/i2s.c
-> @@ -199,7 +199,12 @@ static inline bool is_manager(struct i2s_dai *i2s)
->  /* Read RCLK of I2S (in multiples of LRCLK) */
->  static inline unsigned get_rfs(struct i2s_dai *i2s)
->  {
-> -	u32 rfs = (readl(i2s->addr + I2SMOD) >> MOD_RCLK_SHIFT);
-> +	u32 rfs;
-> +
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM)
-> +		rfs = readl(i2s->addr + I2SMOD) >> 
-EXYNOS5420_MOD_RCLK_SHIFT;
-> +	else
-> +		rfs = (readl(i2s->addr + I2SMOD) >> MOD_RCLK_SHIFT);
->  	rfs &= MOD_RCLK_MASK;
-> 
->  	switch (rfs) {
-> @@ -214,8 +219,12 @@ static inline unsigned get_rfs(struct i2s_dai *i2s)
-> static inline void set_rfs(struct i2s_dai *i2s, unsigned rfs) {
->  	u32 mod = readl(i2s->addr + I2SMOD);
-> -	int rfs_shift =  MOD_RCLK_SHIFT;
-> +	int rfs_shift;
-> 
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM)
-> +		rfs_shift = EXYNOS5420_MOD_RCLK_SHIFT;
-> +	else
-> +		rfs_shift = MOD_RCLK_SHIFT;
->  	mod &= ~(MOD_RCLK_MASK << rfs_shift);
-> 
->  	switch (rfs) {
-> @@ -239,10 +248,22 @@ static inline void set_rfs(struct i2s_dai *i2s,
-> unsigned rfs) /* Read Bit-Clock of I2S (in multiples of LRCLK) */
->  static inline unsigned get_bfs(struct i2s_dai *i2s)
->  {
-> -	u32 bfs =  readl(i2s->addr + I2SMOD) >> MOD_BCLK_SHIFT;
-> -	bfs &= MOD_BCLK_MASK;
-> +	u32 bfs;
-> +
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM) {
-> +		bfs = readl(i2s->addr + I2SMOD) >> 
-EXYNOS5420_MOD_BCLK_SHIFT;
-> +		bfs &= EXYNOS5420_MOD_BCLK_MASK;
-> +	} else {
-> +		bfs =  readl(i2s->addr + I2SMOD) >> MOD_BCLK_SHIFT;
-> +		bfs &= MOD_BCLK_MASK;
-> +	}
-> 
->  	switch (bfs) {
-> +	case 8: return 256;
-> +	case 7: return 192;
-> +	case 6: return 128;
-> +	case 5: return 96;
-> +	case 4: return 64;
->  	case 3: return 24;
->  	case 2: return 16;
->  	case 1:	return 48;
-> @@ -254,9 +275,22 @@ static inline unsigned get_bfs(struct i2s_dai *i2s)
-> static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs) {
->  	u32 mod = readl(i2s->addr + I2SMOD);
-> -	int bfs_shift = MOD_BCLK_SHIFT;
-> +	int bfs_shift;
-> +	int tdm = i2s->quirks & QUIRK_SUPPORTS_TDM;
-> 
-> -	mod &= ~(MOD_BCLK_MASK << bfs_shift);
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM) {
-> +		bfs_shift = EXYNOS5420_MOD_BCLK_SHIFT;
-> +		mod &= ~(EXYNOS5420_MOD_BCLK_MASK << bfs_shift);
-> +	} else {
-> +		bfs_shift = MOD_BCLK_SHIFT;
-> +		mod &= ~(MOD_BCLK_MASK << bfs_shift);
-> +	}
-> +
-> +	/* Non-TDM I2S controllers do not support BCLK > 48 * FS */
-> +	if (!tdm && bfs > 48) {
-> +		dev_err(&i2s->pdev->dev, "Unsupported BCLK divider\n");
-> +		return;
-> +	}
-> 
->  	switch (bfs) {
->  	case 48:
-> @@ -271,6 +305,21 @@ static inline void set_bfs(struct i2s_dai *i2s,
-> unsigned bfs) case 16:
->  		mod |= (MOD_BCLK_16FS << bfs_shift);
->  		break;
-> +	case 64:
-> +		mod |= (EXYNOS5420_MOD_BCLK_64FS << bfs_shift);
-> +		break;
-> +	case 96:
-> +		mod |= (EXYNOS5420_MOD_BCLK_96FS << bfs_shift);
-> +		break;
-> +	case 128:
-> +		mod |= (EXYNOS5420_MOD_BCLK_128FS << bfs_shift);
-> +		break;
-> +	case 192:
-> +		mod |= (EXYNOS5420_MOD_BCLK_192FS << bfs_shift);
-> +		break;
-> +	case 256:
-> +		mod |= (EXYNOS5420_MOD_BCLK_256FS << bfs_shift);
-> +		break;
->  	default:
->  		dev_err(&i2s->pdev->dev, "Wrong BCLK Divider!\n");
->  		return;
-> @@ -496,10 +545,17 @@ static int i2s_set_fmt(struct snd_soc_dai *dai,
->  {
->  	struct i2s_dai *i2s = to_info(dai);
->  	u32 mod = readl(i2s->addr + I2SMOD);
-> -	int lrp_shift = MOD_LRP_SHIFT, sdf_shift = MOD_SDF_SHIFT;
-> -	int sdf_mask, lrp_rlow;
-> +	int lrp_shift, sdf_shift, sdf_mask, lrp_rlow;
->  	u32 tmp = 0;
-> 
-> +	if (i2s->quirks & QUIRK_SUPPORTS_TDM) {
-> +		lrp_shift = EXYNOS5420_MOD_LRP_SHIFT;
-> +		sdf_shift = EXYNOS5420_MOD_SDF_SHIFT;
-> +	} else {
-> +		lrp_shift = MOD_LRP_SHIFT;
-> +		sdf_shift = MOD_SDF_SHIFT;
-> +	}
-> +
->  	sdf_mask = MOD_SDF_MASK << sdf_shift;
->  	lrp_rlow = MOD_LR_RLOW << lrp_shift;
-> 
-> @@ -1264,6 +1320,12 @@ static struct samsung_i2s_dai_data i2sv5_dai_type
-> = { .quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI | QUIRK_NEED_RSTCLR, };
-> 
-> +static struct samsung_i2s_dai_data i2sv6_dai_type = {
-> +	.dai_type = TYPE_PRI,
-> +	.quirks = QUIRK_PRI_6CHAN | QUIRK_SEC_DAI | QUIRK_NEED_RSTCLR |
-> +			QUIRK_SUPPORTS_TDM,
-> +};
-> +
->  static struct samsung_i2s_dai_data samsung_dai_type_sec = {
->  	.dai_type = TYPE_SEC,
->  };
-> @@ -1297,6 +1359,9 @@ static const struct of_device_id
-> exynos_i2s_match[] = { }, {
->  		.compatible = "samsung,s5pv210-i2s",
->  		.data = &i2sv5_dai_type,
-> +	}, {
-> +		.compatible = "samsung,exynos5420-i2s",
-> +		.data = &i2sv6_dai_type,
->  	},
->  	{},
->  };
+A quick question: does anyone know of any hardware that actually
+implements multiple slots per host on the dw_mmc controller?
 
-This one looks good to me.
+When working on the driver I often find myself running into questions
+about how things should work on the theoretical "multiple slot" dw_mmc
+implementation.  ...and I often find bugs where things couldn't
+possibly work for a multiple slot implementation.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+As an example, recently I sent up (870556a mmc: dw_mmc: Handle late
+vmmc regulators with EPROBE_DEFER).  Before that patch the host-global
+"host->vmmc" was being set once per slot.  Said another way, if slot 0
+set host->mmc to ABC, then slot 1 would come along and clobber
+host->mmc to DEF.  After my patch the dw_mmc code assumes one vmmc
+regulator per host.  As Tomasz pointed out, that might not be so good
+(*), but it was better than what was there before.  Maybe all
+multislot implementations don't use vmmc?
 
-Best regards,
-Tomasz
+Another example, though, is dw_mci_init_slot().  It calls this once per slot:
+  mmc_alloc_host(sizeof(struct dw_mci_slot), host->dev);
+
+...where "host->dev" is shared among all the slots.  I haven't tested
+it (since I don't have multislot), but that doesn't seem wise to me.
+Reading through mmc_alloc_host(), it looks like it assumes that this
+host owns host->dev and it feels free to clobber variables.  Sound
+familiar?
+
+I guess my overall question is: if there are no actual implementations
+of multislot, shouldn't we kill it and simplify the code a whole lot?
+If someone out there has a real multislot device they can step back in
+and do it more correctly?
+
+Of course we need to find someone to actually go through and do the
+killing of multislot, but finding that person might be easier if there
+was some agreement that it was good to do.
+
+Cheers?  Flames?
+
+-Doug
+
+---
+
+(*) On the other hand, maybe my patch is OK.  A reasonable way that
+multi-slot power might work is with a since vmmc and then it is
+multiplexed through with PWREN?  All I know is that exynos says
+"PWREN" is not implemented and that exynos only has one slot per host.
