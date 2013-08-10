@@ -1,177 +1,100 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [GIT PULL] Samsung PWM support cleanup
-Date: Sat, 10 Aug 2013 14:16:48 +0200
-Message-ID: <2197909.dzUDYPGiF0@flatron>
-References: <3573853.gDiLaTfgOu@flatron> <520173EF.1040808@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 1/3] watchdog: s3c2410_wdt: parse watchdog dt node to read
+ PMU registers adresses
+Date: Sat, 10 Aug 2013 14:32:20 -0700
+Message-ID: <CAOesGMj0AeU8ZCGd-t7+hBFvF6u_Vga28eQza7C7jAiJF6zU0w@mail.gmail.com>
+References: <1374658699-3961-1-git-send-email-l.krishna@samsung.com>
+	<1374658699-3961-2-git-send-email-l.krishna@samsung.com>
+	<3356224.pISrcKET7X@amdc1227>
+	<CAD=FV=U+S__hkbtWDAb5Ezkw0jJ6-tJLFKQPx4KpbvqHfFJnAg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f52.google.com ([209.85.214.52]:64006 "EHLO
-	mail-bk0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758500Ab3HJMQ5 (ORCPT
+Received: from mail-qe0-f50.google.com ([209.85.128.50]:45796 "EHLO
+	mail-qe0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757704Ab3HJVcU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Aug 2013 08:16:57 -0400
-Received: by mail-bk0-f52.google.com with SMTP id e11so1677176bkh.11
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Aug 2013 05:16:56 -0700 (PDT)
-In-Reply-To: <520173EF.1040808@samsung.com>
+	Sat, 10 Aug 2013 17:32:20 -0400
+Received: by mail-qe0-f50.google.com with SMTP id q19so2917855qeb.23
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Aug 2013 14:32:20 -0700 (PDT)
+In-Reply-To: <CAD=FV=U+S__hkbtWDAb5Ezkw0jJ6-tJLFKQPx4KpbvqHfFJnAg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrew Bresticker <abrestic@chromium.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Wim Van Sebroeck <wim@iguana.be>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Kukjin,
+On Thu, Jul 25, 2013 at 5:32 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Tomasz,
+>
+> On Thu, Jul 25, 2013 at 3:27 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Leela,
+>>
+>> On Wednesday 24 of July 2013 15:08:17 Leela Krishna Amudala wrote:
+>>> This patch parses the watchdog node to read pmu wdt sys registers
+>>> addresses and do mask/unmask enable/disable of WDT in probe and s2r
+>>> scenarios.
+>>>
+>>> Reviewed-by: Doug Anderson <dianders@chromium.org>
+>>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/watchdog/samsung-wdt.txt   |   14 ++++-
+>>>  drivers/watchdog/s3c2410_wdt.c                     |   56
+>>> ++++++++++++++++++++ 2 files changed, 69 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+>>> b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt index
+>>> 2aa486c..4c798e3 100644
+>>> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+>>> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+>>> @@ -7,8 +7,20 @@ occurred.
+>>>  Required properties:
+>>>  - compatible : should be "samsung,s3c2410-wdt"
+>>>  - reg : base physical address of the controller and length of memory
+>>> mapped -      region.
+>>> +     region and the optional (addresses and length of memory mapped regions
+>>> +     of) PMU registers for masking/unmasking WDT.
+>>>  - interrupts : interrupt number to the cpu.
+>>
+>> I don't think PMU registers should be passed like this, even if USB PHY
+>> driver currently does it - it needs to be fixed. Every time you are mapping
+>> a single 4-byte register, you are creating new mapping for the whole page
+>> (4K) containing it. In addition, this makes the WDT driver map IO memory
+>> that does not belong to the IP block it handles, which is not nice.
+>>
+>> I would suggest looking into regmap helpers to implement a driver for the
+>> PMU that can share PMU registers with interested drivers.
+>
+> We've done this in some other drivers as well.  I remember someone
+> suggested that this was fine when I posted the change to the ADC
+> driver for something similar.
+>
+> Do you really think it's worth adding a level of abstraction here?
+> The argument I remember in the past was that it was fine as long as
+> the register itself was used only by this driver.
+>
+> If we want to do as you say, we'll have to figure out whether you want
+> to create a new generic interface for this or reuse an existing one.
+> You could kinda think of these bits as enabling power, so you could
+> use the regulator framework.  ...but that framework often gets abused.
+>
+> Olof: I think I got your advice when I did the ADC work.  Do you have
+> any advice here?
 
-On Wednesday 07 of August 2013 07:08:47 Kukjin Kim wrote:
-> On 08/06/13 08:32, Tomasz Figa wrote:
-> > Hi Olof, Arnd,
-> > 
-> > Here is the Samsung PWM cleanup series for you. Particular patches of
-> > the> 
-> > series involve following modifications:
-> >   1) fixing up few things in samsung_pwm_timer clocksource driver,
-> >   2) moving remaining Samsung platforms to the new clocksource driver,
-> >   3) removing old clocksource driver,
-> >   4) adding new multiplatform- and DT-aware PWM driver,
-> >   5) moving all Samsung platforms to use the new PWM driver,
-> >   6) removing old PWM driver,
-> >   7) removing all PWM-related code that is not used anymore.
-> > 
-> > This is my first pull request ever, so I hope I haven't screwed up
-> > anything. ;)
-> > 
-> > Best regards,
-> > Tomasz
-> > 
-> > The following changes since commit 
-c095ba7224d8edc71dcef0d655911399a8bd4a3f:
-> >    Linux 3.11-rc4 (2013-08-04 13:46:46 -0700)
-> > 
-> > are available in the git repository at:
-> >    git://github.com/tom3q/linux.git v3.12-next/pwm-cleanup
-> > 
-> > for you to fetch changes up to 
-519e8e0da7509fcc71c12bcd3a681bb62770f692:
-> >    ARM: SAMSUNG: Remove plat/regs-timer.h header (2013-08-06 01:21:55
-> >    +0200)> 
-> > ----------------------------------------------------------------
-> > 
-> > Tomasz Figa (20):
-> >        clocksource: samsung_pwm_timer: Do not request PWM mem region
-> >        clocksource: samsung_pwm_timer: Correct definition of
-> >        AUTORELOAD bit
-> >        clocksource: samsung_pwm_timer: Cache clocksource register
-> >        address
-> >        clocksource: samsung_pwm_timer: Do not use clocksource_mmio
-> >        clocksource: samsung_pwm_timer: Handle suspend/resume correctly
-> >        ARM: SAMSUNG: Unify base address definitions of timer block
-> >        ARM: SAMSUNG: Add new PWM platform device
-> >        ARM: SAMSUNG: Set PWM platform data
-> >        ARM: SAMSUNG: Move all platforms to new clocksource driver
-> >        ARM: SAMSUNG: Remove old samsung-time driver
-> >        ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
-> >        pwm: samsung: Rename to pwm-samsung-legacy
-> >        pwm: Add new pwm-samsung driver
-> >        ARM: SAMSUNG: Rework private data handling in dev-backlight
-> >        ARM: SAMSUNG: Modify board files to use new PWM platform device
-> >        pwm: Remove superseded pwm-samsung-legacy driver
-> >        ARM: SAMSUNG: Remove old PWM timer platform devices
-> >        ARM: SAMSUNG: Remove pwm-clock infrastructure
-> >        ARM: SAMSUNG: Remove remaining uses of plat/regs-timer.h header
-> >        ARM: SAMSUNG: Remove plat/regs-timer.h header
-> >   
-> >   arch/arm/Kconfig                                   |  11 +-
-> >   arch/arm/mach-s3c24xx/Kconfig                      |   6 -
-> >   arch/arm/mach-s3c24xx/clock-s3c2410.c              |   1 -
-> >   arch/arm/mach-s3c24xx/clock-s3c2412.c              |   1 -
-> >   arch/arm/mach-s3c24xx/clock-s3c2416.c              |   2 -
-> >   arch/arm/mach-s3c24xx/clock-s3c2443.c              |   2 -
-> >   arch/arm/mach-s3c24xx/common.c                     |  27 +
-> >   arch/arm/mach-s3c24xx/include/mach/map.h           |   2 +
-> >   arch/arm/mach-s3c24xx/mach-h1940.c                 |   4 +-
-> >   arch/arm/mach-s3c24xx/mach-rx1950.c                |   5 +-
-> >   arch/arm/mach-s3c64xx/Kconfig                      |   2 -
-> >   arch/arm/mach-s3c64xx/clock.c                      |   2 -
-> >   arch/arm/mach-s3c64xx/common.c                     |  32 +-
-> >   arch/arm/mach-s3c64xx/include/mach/irqs.h          |   8 -
-> >   arch/arm/mach-s3c64xx/include/mach/map.h           |   1 +
-> >   arch/arm/mach-s3c64xx/irq-pm.c                     |   2 -
-> >   arch/arm/mach-s3c64xx/mach-crag6410.c              |   4 +-
-> >   arch/arm/mach-s3c64xx/mach-hmt.c                   |   4 +-
-> >   arch/arm/mach-s3c64xx/mach-smartq.c                |   4 +-
-> >   arch/arm/mach-s3c64xx/mach-smdk6410.c              |   5 +-
-> >   arch/arm/mach-s5p64x0/Kconfig                      |   2 -
-> >   arch/arm/mach-s5p64x0/clock-s5p6440.c              |   2 -
-> >   arch/arm/mach-s5p64x0/clock-s5p6450.c              |   2 -
-> >   arch/arm/mach-s5p64x0/common.c                     |  27 +
-> >   arch/arm/mach-s5p64x0/include/mach/irqs.h          |   2 -
-> >   arch/arm/mach-s5p64x0/include/mach/map.h           |   1 +
-> >   arch/arm/mach-s5p64x0/mach-smdk6440.c              |   5 +-
-> >   arch/arm/mach-s5p64x0/mach-smdk6450.c              |   5 +-
-> >   arch/arm/mach-s5p64x0/pm.c                         |   3 -
-> >   arch/arm/mach-s5pc100/Kconfig                      |   1 -
-> >   arch/arm/mach-s5pc100/clock.c                      |   2 -
-> >   arch/arm/mach-s5pc100/common.c                     |  28 +
-> >   arch/arm/mach-s5pc100/include/mach/irqs.h          |   2 -
-> >   arch/arm/mach-s5pc100/include/mach/map.h           |   1 +
-> >   arch/arm/mach-s5pc100/mach-smdkc100.c              |   5 +-
-> >   arch/arm/mach-s5pv210/Kconfig                      |   1 -
-> >   arch/arm/mach-s5pv210/clock.c                      |   1 -
-> >   arch/arm/mach-s5pv210/common.c                     |  28 +
-> >   arch/arm/mach-s5pv210/include/mach/irqs.h          |   2 -
-> >   arch/arm/mach-s5pv210/include/mach/map.h           |   1 +
-> >   arch/arm/mach-s5pv210/mach-smdkv210.c              |   5 +-
-> >   arch/arm/mach-s5pv210/pm.c                         |  10 -
-> >   arch/arm/plat-samsung/Kconfig                      |  14 -
-> >   arch/arm/plat-samsung/Makefile                     |   3 -
-> >   arch/arm/plat-samsung/dev-backlight.c              |  61 +-
-> >   arch/arm/plat-samsung/devs.c                       |  42 +-
-> >   arch/arm/plat-samsung/include/plat/clock.h         |   4 -
-> >   arch/arm/plat-samsung/include/plat/devs.h          |   1 +
-> >   arch/arm/plat-samsung/include/plat/irq-vic-timer.h |  13 -
-> >   arch/arm/plat-samsung/include/plat/irqs.h          |   9 -
-> >   arch/arm/plat-samsung/include/plat/pwm-clock.h     |  81 ---
-> >   arch/arm/plat-samsung/include/plat/pwm-core.h      |  22 +
-> >   arch/arm/plat-samsung/include/plat/regs-timer.h    | 124 ----
-> >   arch/arm/plat-samsung/include/plat/samsung-time.h  |  23 -
-> >   arch/arm/plat-samsung/irq-vic-timer.c              |  98 ---
-> >   arch/arm/plat-samsung/pwm-clock.c                  | 474
-> >   --------------
-> >   arch/arm/plat-samsung/s5p-irq.c                    |   4 -
-> >   arch/arm/plat-samsung/samsung-time.c               | 394
-> >   ------------
-> >   drivers/clocksource/Kconfig                        |   1 -
-> >   drivers/clocksource/samsung_pwm_timer.c            | 108 ++--
-> >   drivers/pwm/pwm-samsung.c                          | 709
-> >   ++++++++++++++------- 61 files changed, 786 insertions(+), 1660
-> >   deletions(-)
-> >   delete mode 100644
-> >   arch/arm/plat-samsung/include/plat/irq-vic-timer.h
-> >   delete mode 100644 arch/arm/plat-samsung/include/plat/pwm-clock.h
-> >   create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
-> >   delete mode 100644 arch/arm/plat-samsung/include/plat/regs-timer.h
-> >   delete mode 100644 arch/arm/plat-samsung/irq-vic-timer.c
-> >   delete mode 100644 arch/arm/plat-samsung/pwm-clock.c
-> >   delete mode 100644 arch/arm/plat-samsung/samsung-time.c
-> 
-> Just note that I also have pulled into samsung tree because of
-> dependency with others, this will be pulled directly by Olof though.
+These tradeoffs are always tricky since it's hard to decide what
+corners are OK to cut a bit off of, and when you have to be a stickler
+for really following hard strict rules and stick to abstraction
+models.
 
-Have you already pulled this into your tree? There was a patch[1] that was 
-posted for 3.11 at the time this series was merged in your for-next 
-branch, before it got dropped, that fixed one found build issue that I 
-missed.
+I think the more reasonable approach is the one you've taken here,
+Doug. I think we risk over-abstracting this otherwise, to little
+actual gain. The register is not shared so there's no conflict in that
+area. The argument that it wastes a 4K page isn't a big deal either,
+since we don't do this everywhere all the time.
 
-In the end the series got dropped, that patch was not applied and I forgot 
-about this issue. This was caught by Andrew Bresticker after I already 
-sent my pull request.
+I'd rather have the register described in the reg range like this,
+than having the driver go out and find the PMU node and find a magic
+offset into that, with or without an abstraction layer for the PMU
+register access.
 
-According to Olof, he hasn't pulled this yet and you don't seem to have it 
-in your public tree either, so we could either drop this pull request and 
-send another one with the fixup patch squashed or apply the fixup patch 
-separately on top of this. What do you think?
 
-Best regads,
-Tomasz
-
-[1] https://patchwork.kernel.org/patch/2787271/
+-Olof
