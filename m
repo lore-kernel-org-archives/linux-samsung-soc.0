@@ -1,7 +1,7 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 13/18] ARM: s3c64xx: clock: Add clkdev lookup for DMA clocks
-Date: Sun, 11 Aug 2013 19:59:25 +0200
-Message-ID: <1376243970-6489-14-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 16/18] clk: samsung: s3c64xx: Remove clock aliases of old DMA driver
+Date: Sun, 11 Aug 2013 19:59:28 +0200
+Message-ID: <1376243970-6489-17-git-send-email-tomasz.figa@gmail.com>
 References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
@@ -10,73 +10,27 @@ To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds clkdev lookup entries for clocks used by PL08x DMA
-driver.
+Since the old DMA driver got removed, these aliases are no longer
+necessary.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- arch/arm/mach-s3c64xx/clock.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ drivers/clk/samsung/clk-s3c64xx.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
-index 8499415..33aa851 100644
---- a/arch/arm/mach-s3c64xx/clock.c
-+++ b/arch/arm/mach-s3c64xx/clock.c
-@@ -194,16 +194,6 @@ static struct clk init_clocks_off[] = {
- 		.enable		= s3c64xx_hclk_ctrl,
- 		.ctrlbit	= S3C_CLKCON_HCLK_IHOST,
- 	}, {
--		.name		= "dma0",
--		.parent		= &clk_h,
--		.enable		= s3c64xx_hclk_ctrl,
--		.ctrlbit	= S3C_CLKCON_HCLK_DMA0,
--	}, {
--		.name		= "dma1",
--		.parent		= &clk_h,
--		.enable		= s3c64xx_hclk_ctrl,
--		.ctrlbit	= S3C_CLKCON_HCLK_DMA1,
--	}, {
- 		.name		= "3dse",
- 		.parent		= &clk_h,
- 		.enable		= s3c64xx_hclk_ctrl,
-@@ -345,6 +335,20 @@ static struct clk clk_i2s2 = {
- };
- #endif
- 
-+static struct clk clk_dma0 = {
-+	.name		= "dma0",
-+	.parent		= &clk_h,
-+	.enable		= s3c64xx_hclk_ctrl,
-+	.ctrlbit	= S3C_CLKCON_HCLK_DMA0,
-+};
-+
-+static struct clk clk_dma1 = {
-+	.name		= "dma1",
-+	.parent		= &clk_h,
-+	.enable		= s3c64xx_hclk_ctrl,
-+	.ctrlbit	= S3C_CLKCON_HCLK_DMA1,
-+};
-+
- static struct clk init_clocks[] = {
- 	{
- 		.name		= "lcd",
-@@ -849,6 +853,8 @@ static struct clk *clk_cdev[] = {
- 	&clk_48m_spi1,
- 	&clk_i2s0,
- 	&clk_i2s1,
-+	&clk_dma0,
-+	&clk_dma1,
- };
- 
- static struct clk_lookup s3c64xx_clk_lookup[] = {
-@@ -873,6 +879,8 @@ static struct clk_lookup s3c64xx_clk_lookup[] = {
- 	CLKDEV_INIT("samsung-i2s.2", "i2s_opclk0", &clk_i2s2),
- 	CLKDEV_INIT("samsung-i2s.2", "i2s_opclk1", &clk_audio_bus2.clk),
- #endif
-+	CLKDEV_INIT("dma-pl080s.0", "apb_pclk", &clk_dma0),
-+	CLKDEV_INIT("dma-pl080s.1", "apb_pclk", &clk_dma1),
- };
- 
- #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index 79ee9a6..dd47a83 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -331,9 +331,7 @@ static struct samsung_clock_alias s3c64xx_clock_aliases[] = {
+ 	ALIAS(HCLK_HSMMC1, "s3c-sdhci.1", "mmc_busclk.0"),
+ 	ALIAS(HCLK_HSMMC0, "s3c-sdhci.0", "hsmmc"),
+ 	ALIAS(HCLK_HSMMC0, "s3c-sdhci.0", "mmc_busclk.0"),
+-	ALIAS(HCLK_DMA1, NULL, "dma1"),
+ 	ALIAS(HCLK_DMA1, "dma-pl080s.1", "apb_pclk"),
+-	ALIAS(HCLK_DMA0, NULL, "dma0"),
+ 	ALIAS(HCLK_DMA0, "dma-pl080s.0", "apb_pclk"),
+ 	ALIAS(HCLK_CAMIF, "s3c-camif", "camif"),
+ 	ALIAS(HCLK_LCD, "s3c-fb", "lcd"),
 -- 
 1.8.3.2
