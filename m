@@ -1,36 +1,121 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 10/18] spi: s3c64xx: Do not require legacy DMA API in case of S3C64XX
-Date: Sun, 11 Aug 2013 19:59:22 +0200
-Message-ID: <1376243970-6489-11-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 01/18] dmaengine: PL08x: Refactor pl08x_getbytes_chan() to
+ lower indentation
+Date: Sun, 11 Aug 2013 19:59:13 +0200
+Message-ID: <1376243970-6489-2-git-send-email-tomasz.figa@gmail.com>
 References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>, Dan Williams <djbw@fb.com>, Russell King <linux@arm.linux.org.uk>, linux-spi@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-With support for amba-pl08x driver, on S3C64xx the generic DMA engine
-API can be used instead of the private s3c-dma interface.
+Further patch will introduce support for PL080S, which requires some
+things to be done conditionally, thus increasing indentation level of
+some functions even more.
+
+This patch reduces indentation level of pl08x_getbytes_chan() function
+by inverting several conditions and returning from function wherever
+possible.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/spi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/dma/amba-pl08x.c | 53 ++++++++++++++++++++++++++----------------------
+ 1 file changed, 29 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 89cbbab..241a049 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -366,7 +366,7 @@ config SPI_S3C24XX_FIQ
- config SPI_S3C64XX
- 	tristate "Samsung S3C64XX series type SPI"
- 	depends on (ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
--	select S3C64XX_DMA if ARCH_S3C64XX
-+	select S3C64XX_DMA if ARCH_S3C64XX && !S3C64XX_PL080
- 	help
- 	  SPI driver for Samsung S3C64XX and newer SoCs.
+diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+index 06fe45c..6a12392 100644
+--- a/drivers/dma/amba-pl08x.c
++++ b/drivers/dma/amba-pl08x.c
+@@ -469,47 +469,52 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
+ /* The channel should be paused when calling this */
+ static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
+ {
++	struct pl08x_lli *llis_va;
+ 	struct pl08x_phy_chan *ch;
++	dma_addr_t llis_bus;
+ 	struct pl08x_txd *txd;
+-	size_t bytes = 0;
++	size_t bytes;
++	int index;
++	u32 clli;
  
+ 	ch = plchan->phychan;
+ 	txd = plchan->at;
+ 
++	if (!ch || !txd)
++		return 0;
++
+ 	/*
+ 	 * Follow the LLIs to get the number of remaining
+ 	 * bytes in the currently active transaction.
+ 	 */
+-	if (ch && txd) {
+-		u32 clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
++	clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
+ 
+-		/* First get the remaining bytes in the active transfer */
+-		bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
++	/* First get the remaining bytes in the active transfer */
++	bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
+ 
+-		if (clli) {
+-			struct pl08x_lli *llis_va = txd->llis_va;
+-			dma_addr_t llis_bus = txd->llis_bus;
+-			int index;
++	if (!clli)
++		return bytes;
+ 
+-			BUG_ON(clli < llis_bus || clli >= llis_bus +
++	llis_va = txd->llis_va;
++	llis_bus = txd->llis_bus;
++
++	BUG_ON(clli < llis_bus || clli >= llis_bus +
+ 				sizeof(struct pl08x_lli) * MAX_NUM_TSFR_LLIS);
+ 
+-			/*
+-			 * Locate the next LLI - as this is an array,
+-			 * it's simple maths to find.
+-			 */
+-			index = (clli - llis_bus) / sizeof(struct pl08x_lli);
++	/*
++	 * Locate the next LLI - as this is an array,
++	 * it's simple maths to find.
++	 */
++	index = (clli - llis_bus) / sizeof(struct pl08x_lli);
+ 
+-			for (; index < MAX_NUM_TSFR_LLIS; index++) {
+-				bytes += get_bytes_in_cctl(llis_va[index].cctl);
++	for (; index < MAX_NUM_TSFR_LLIS; index++) {
++		bytes += get_bytes_in_cctl(llis_va[index].cctl);
+ 
+-				/*
+-				 * A LLI pointer of 0 terminates the LLI list
+-				 */
+-				if (!llis_va[index].lli)
+-					break;
+-			}
+-		}
++		/*
++		 * A LLI pointer of 0 terminates the LLI list
++		 */
++		if (!llis_va[index].lli)
++			break;
+ 	}
+ 
+ 	return bytes;
 -- 
 1.8.3.2
