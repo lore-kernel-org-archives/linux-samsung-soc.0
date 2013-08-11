@@ -1,121 +1,82 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 01/18] dmaengine: PL08x: Refactor pl08x_getbytes_chan() to
- lower indentation
-Date: Sun, 11 Aug 2013 19:59:13 +0200
-Message-ID: <1376243970-6489-2-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH 13/18] ARM: s3c64xx: clock: Add clkdev lookup for DMA clocks
+Date: Sun, 11 Aug 2013 19:59:25 +0200
+Message-ID: <1376243970-6489-14-git-send-email-tomasz.figa@gmail.com>
 References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, linux-kernel@vger.kernel.org, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>, Dan Williams <djbw@fb.com>, Russell King <linux@arm.linux.org.uk>, linux-spi@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Further patch will introduce support for PL080S, which requires some
-things to be done conditionally, thus increasing indentation level of
-some functions even more.
-
-This patch reduces indentation level of pl08x_getbytes_chan() function
-by inverting several conditions and returning from function wherever
-possible.
+This patch adds clkdev lookup entries for clocks used by PL08x DMA
+driver.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/dma/amba-pl08x.c | 53 ++++++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 24 deletions(-)
+ arch/arm/mach-s3c64xx/clock.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-index 06fe45c..6a12392 100644
---- a/drivers/dma/amba-pl08x.c
-+++ b/drivers/dma/amba-pl08x.c
-@@ -469,47 +469,52 @@ static inline u32 get_bytes_in_cctl(u32 cctl)
- /* The channel should be paused when calling this */
- static u32 pl08x_getbytes_chan(struct pl08x_dma_chan *plchan)
- {
-+	struct pl08x_lli *llis_va;
- 	struct pl08x_phy_chan *ch;
-+	dma_addr_t llis_bus;
- 	struct pl08x_txd *txd;
--	size_t bytes = 0;
-+	size_t bytes;
-+	int index;
-+	u32 clli;
+diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
+index 8499415..33aa851 100644
+--- a/arch/arm/mach-s3c64xx/clock.c
++++ b/arch/arm/mach-s3c64xx/clock.c
+@@ -194,16 +194,6 @@ static struct clk init_clocks_off[] = {
+ 		.enable		= s3c64xx_hclk_ctrl,
+ 		.ctrlbit	= S3C_CLKCON_HCLK_IHOST,
+ 	}, {
+-		.name		= "dma0",
+-		.parent		= &clk_h,
+-		.enable		= s3c64xx_hclk_ctrl,
+-		.ctrlbit	= S3C_CLKCON_HCLK_DMA0,
+-	}, {
+-		.name		= "dma1",
+-		.parent		= &clk_h,
+-		.enable		= s3c64xx_hclk_ctrl,
+-		.ctrlbit	= S3C_CLKCON_HCLK_DMA1,
+-	}, {
+ 		.name		= "3dse",
+ 		.parent		= &clk_h,
+ 		.enable		= s3c64xx_hclk_ctrl,
+@@ -345,6 +335,20 @@ static struct clk clk_i2s2 = {
+ };
+ #endif
  
- 	ch = plchan->phychan;
- 	txd = plchan->at;
- 
-+	if (!ch || !txd)
-+		return 0;
++static struct clk clk_dma0 = {
++	.name		= "dma0",
++	.parent		= &clk_h,
++	.enable		= s3c64xx_hclk_ctrl,
++	.ctrlbit	= S3C_CLKCON_HCLK_DMA0,
++};
 +
- 	/*
- 	 * Follow the LLIs to get the number of remaining
- 	 * bytes in the currently active transaction.
- 	 */
--	if (ch && txd) {
--		u32 clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
-+	clli = readl(ch->base + PL080_CH_LLI) & ~PL080_LLI_LM_AHB2;
- 
--		/* First get the remaining bytes in the active transfer */
--		bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
-+	/* First get the remaining bytes in the active transfer */
-+	bytes = get_bytes_in_cctl(readl(ch->base + PL080_CH_CONTROL));
- 
--		if (clli) {
--			struct pl08x_lli *llis_va = txd->llis_va;
--			dma_addr_t llis_bus = txd->llis_bus;
--			int index;
-+	if (!clli)
-+		return bytes;
- 
--			BUG_ON(clli < llis_bus || clli >= llis_bus +
-+	llis_va = txd->llis_va;
-+	llis_bus = txd->llis_bus;
++static struct clk clk_dma1 = {
++	.name		= "dma1",
++	.parent		= &clk_h,
++	.enable		= s3c64xx_hclk_ctrl,
++	.ctrlbit	= S3C_CLKCON_HCLK_DMA1,
++};
 +
-+	BUG_ON(clli < llis_bus || clli >= llis_bus +
- 				sizeof(struct pl08x_lli) * MAX_NUM_TSFR_LLIS);
+ static struct clk init_clocks[] = {
+ 	{
+ 		.name		= "lcd",
+@@ -849,6 +853,8 @@ static struct clk *clk_cdev[] = {
+ 	&clk_48m_spi1,
+ 	&clk_i2s0,
+ 	&clk_i2s1,
++	&clk_dma0,
++	&clk_dma1,
+ };
  
--			/*
--			 * Locate the next LLI - as this is an array,
--			 * it's simple maths to find.
--			 */
--			index = (clli - llis_bus) / sizeof(struct pl08x_lli);
-+	/*
-+	 * Locate the next LLI - as this is an array,
-+	 * it's simple maths to find.
-+	 */
-+	index = (clli - llis_bus) / sizeof(struct pl08x_lli);
+ static struct clk_lookup s3c64xx_clk_lookup[] = {
+@@ -873,6 +879,8 @@ static struct clk_lookup s3c64xx_clk_lookup[] = {
+ 	CLKDEV_INIT("samsung-i2s.2", "i2s_opclk0", &clk_i2s2),
+ 	CLKDEV_INIT("samsung-i2s.2", "i2s_opclk1", &clk_audio_bus2.clk),
+ #endif
++	CLKDEV_INIT("dma-pl080s.0", "apb_pclk", &clk_dma0),
++	CLKDEV_INIT("dma-pl080s.1", "apb_pclk", &clk_dma1),
+ };
  
--			for (; index < MAX_NUM_TSFR_LLIS; index++) {
--				bytes += get_bytes_in_cctl(llis_va[index].cctl);
-+	for (; index < MAX_NUM_TSFR_LLIS; index++) {
-+		bytes += get_bytes_in_cctl(llis_va[index].cctl);
- 
--				/*
--				 * A LLI pointer of 0 terminates the LLI list
--				 */
--				if (!llis_va[index].lli)
--					break;
--			}
--		}
-+		/*
-+		 * A LLI pointer of 0 terminates the LLI list
-+		 */
-+		if (!llis_va[index].lli)
-+			break;
- 	}
- 
- 	return bytes;
+ #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
 -- 
 1.8.3.2
