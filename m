@@ -1,60 +1,57 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 3/3] spi: s3c64xx: Use dmaengine_prep_slave_single() to prepare DMA transfers
-Date: Sun, 11 Aug 2013 02:33:30 +0200
-Message-ID: <1376181210-14599-3-git-send-email-tomasz.figa@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/3] spi: s3c64xx: Zero dma_slave_config struct in
+ prepare_dma()
+Date: Sun, 11 Aug 2013 14:07:19 +0100
+Message-ID: <20130811130719.GZ6427@sirena.org.uk>
 References: <1376181210-14599-1-git-send-email-tomasz.figa@gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6rTh04rb0J9qQhfe"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f178.google.com ([209.85.215.178]:63704 "EHLO
-	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751224Ab3HKAdy (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:36379 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753425Ab3HKNHX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Aug 2013 20:33:54 -0400
+	Sun, 11 Aug 2013 09:07:23 -0400
+Content-Disposition: inline
 In-Reply-To: <1376181210-14599-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-spi@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Since the driver supports only contiguous buffers, there is no need to
-manually construct a scatterlist with just a single entry, when there is
-a dedicated helper for this purpose.
 
-This patch modifies prepare_dma() function to use available helper instead
-of manually creating a scatterlist.
+--6rTh04rb0J9qQhfe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/spi/spi-s3c64xx.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+On Sun, Aug 11, 2013 at 02:33:28AM +0200, Tomasz Figa wrote:
+> Not all fields of dma_slave_config struct are being initialized by
+> prepare_dma() function, leaving those which are not in undefined state,
+> which can confuse DMA drivers using them.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 597dc2f..9b4e54d 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -386,7 +386,6 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
- {
- 	struct s3c64xx_spi_driver_data *sdd;
- 	struct dma_slave_config config;
--	struct scatterlist sg;
- 	struct dma_async_tx_descriptor *desc;
- 
- 	memset(&config, 0, sizeof(config));
-@@ -409,14 +408,8 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
- 		dmaengine_slave_config(dma->ch, &config);
- 	}
- 
--	sg_init_table(&sg, 1);
--	sg_dma_len(&sg) = len;
--	sg_set_page(&sg, pfn_to_page(PFN_DOWN(buf)),
--		    len, offset_in_page(buf));
--	sg_dma_address(&sg) = buf;
--
--	desc = dmaengine_prep_slave_sg(dma->ch,
--		&sg, 1, dma->direction, DMA_PREP_INTERRUPT);
-+	desc = dmaengine_prep_slave_single(dma->ch, buf, len,
-+					dma->direction, DMA_PREP_INTERRUPT);
- 
- 	desc->callback = s3c64xx_spi_dmacb;
- 	desc->callback_param = dma;
--- 
-1.8.3.2
+Applied all, thanks.
+
+--6rTh04rb0J9qQhfe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSB4yEAAoJELSic+t+oim93ncP/35C+uRg2hRZ9BdGVjwtKcay
+v+O1FVz+7TIya9tYtOYLmwnXZCJiGS4jLBGitZLZ0goT3D78EAHUuuoHNuQaYEuS
+OZUkOtZgcxQa48GspVMgAFtLgl4VzGuEACDOHyYELnD/Xb/hjknyBLIP/8G62Var
+mcwIg8NymPkglo3STHc+uiLj/VM9z6l+PfljaAY3MPJk/cnYhLQqmmzHUvLXBwr6
+beC1kWekeDk5tiGe0OB91a7/S4LvdNkUyYxkzp36xZEpmPrs5B2T1Uf+7PSbdhyb
+PRiw85rYNATQoPidel1/oytp7yAj1DxgVWyTVAD/+qmnb89Z9Wj6XfDv/YtZX3Lq
+Kx7u+FujOtmGGAtaAsfpy/5LlR2nbmDKZIRMtqFTGQ4TfVBAm5od70ZS49WOmU7K
+nJ4NSQG0R+ww3otLKPyjwTKJ4fTbMGGj/pGR9GIYdNIgdDQ4hKLkoUmDCINFYLo0
+H2ItIm6WC7meC49Y88hs+dtT3XQyPFWP0j2FeQZI/8oMdbOuqz+qgvBrX2TXm1/m
+nnUIhn61JEjcUVqfn701/RNdOUGEnsF+/BZUAZBGS//0BxAd+17/WzDgw+XJJTvm
+j+wIhrPfTG85es+jQIksKiiVpIGRypu+9EBj4z9PloIIrZ4B7q+iycroLXDw+DIP
+Bqfei2g6y1jhXTlhdaNm
+=kRYP
+-----END PGP SIGNATURE-----
+
+--6rTh04rb0J9qQhfe--
