@@ -1,58 +1,54 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V4 0/4]  Add i2s nodes on Exynos5420 and enable sound support
- on sdmk5420
-Date: Mon, 12 Aug 2013 15:37:46 +0530
-Message-ID: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
+Subject: [PATCH V4 3/4] ARM: dts: Add osc clock node on smdk5420.
+Date: Mon, 12 Aug 2013 15:37:49 +0530
+Message-ID: <1376302070-1877-4-git-send-email-padma.v@samsung.com>
+References: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:50162 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755963Ab3HLKGg (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47849 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755963Ab3HLKGk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Aug 2013 06:06:36 -0400
+	Mon, 12 Aug 2013 06:06:40 -0400
+In-reply-to: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
 Cc: broonie@kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
 
-Changes since V3:
-	- used existent fixed-clock binding for registering oscillator clock
-	  as fixed rate clock as pointed by Tomasz Figa
-	- Made some changes in wm8994 regulator nodes as suggested by Tomasz Figa
-	- Separated out only adding i2s nodes and enabling sound support on smdk5420
-	  into different patch set as they are dependent on on some of already posted
-	  but not yet merged i2c, dwmmc, dma and audss clock controller patches on
-	  Kukjin for-next branch.
+This patch adds 16MHz oscillator clock node required for audio
+on smdk5420 and adds the phandle of the same in wm8994 clock info.
 
-Changes since V2:
-        - Separated out driver side changes and dts changes in two
-          patch sets
-        - Added proper names for wm8994 regulators as commented by Mark
-        - Moved common i2s nodes into the exynos5.dtsi
-        - Added clock info in wm8994 node as requested by Mark.
-        - Registered the 16.9MHz oscillator clock as fixed clock in the
-          machine file. Right now no user of this clock but as Mark requested
-          to add mclk info in wm8994 node, I added this part.
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
+ arch/arm/boot/dts/exynos5420-smdk5420.dts |    9 +++++++++
+ 1 files changed, 9 insertions(+), 0 deletions(-)
 
-This patch set is dependent on the following i2c, dma and audio subsystem
-clk controller patches.
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20077
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20661
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20668
-
-This patch set is made based on Kukjin Kim for-next branch.
-
-
-Andrew Bresticker (1):
-  ARM: dts: exynos5420: add i2s controllers
-
-Padmavathi Venna (3):
-  ARM: dts: Add i2c bus 1 and it's audio codec child node on smdk5420
-  ARM: dts: Add osc clock node on smdk5420.
-  ARM: dts: Enable sound support on smdk5420
-
- arch/arm/boot/dts/exynos5420-smdk5420.dts |   81 +++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi         |   32 +++++++++++
- 2 files changed, 113 insertions(+), 0 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 1ef7e2e..a898b3f 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -31,6 +31,12 @@
+ 		};
+ 	};
+ 
++	osc3_clk16mhz: oscillator-0 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <16934400>;
++	};
++
+ 	dwmmc0@12200000 {
+ 		status = "okay";
+ 		num-slots = <1>;
+@@ -127,6 +133,9 @@
+ 			DBVDD-supply = <&dbvdd>;
+ 			SPKVDD1-supply = <&spkvdd>;
+ 			SPKVDD2-supply = <&spkvdd>;
++
++			clocks = <&osc3_clk16mhz>;
++			clock-names = "mclk1";
+ 		};
+ 	};
+ 
 -- 
 1.7.4.4
