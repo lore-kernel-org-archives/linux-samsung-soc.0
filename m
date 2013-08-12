@@ -1,106 +1,151 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH v2 1/7] ARM: dts: Move display-timimg information inside
- FIMD DT node for exynos5250
-Date: Mon, 12 Aug 2013 12:27:53 +0530
-Message-ID: <CAGm_ybi_P7KBb7qDe0fDWQxO8oyR0X7oiHrq9UGQ+pxDzuAiRA@mail.gmail.com>
-References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
-	<1375183178-8201-2-git-send-email-vikas.sajjan@linaro.org>
-	<171932162.BeOHtLbZec@amdc1227>
-	<CAGm_ybhipssiOXvh-kw3KpHJ-rC21t7OnV3H32LWKrmE-1aqNw@mail.gmail.com>
-	<CAK9yfHw7zZLy3WaJHJ-3aJuG+4GL0YtsV+RXuXTUtXsj-TNw2w@mail.gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v5 2/4] mmc: dw_mmc: Add exynos resume_noirq callback to
+ clear WAKEUP_INT
+Date: Mon, 12 Aug 2013 16:21:48 +0900
+Message-ID: <000e01ce972c$9be7d4a0$d3b77de0$%jun@samsung.com>
+References: <1375825071-20922-1-git-send-email-dianders@chromium.org>
+ <1376066000-5495-1-git-send-email-dianders@chromium.org>
+ <1376066000-5495-3-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f170.google.com ([74.125.82.170]:33898 "EHLO
-	mail-we0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750865Ab3HLG5z (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:14163 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752737Ab3HLHVu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Aug 2013 02:57:55 -0400
-In-Reply-To: <CAK9yfHw7zZLy3WaJHJ-3aJuG+4GL0YtsV+RXuXTUtXsj-TNw2w@mail.gmail.com>
+	Mon, 12 Aug 2013 03:21:50 -0400
+In-reply-to: <1376066000-5495-3-git-send-email-dianders@chromium.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, InKi Dae <inki.dae@samsung.com>, ajaynumb@gmail.com, patches@linaro.org, linaro-kernel@lists.linaro.org, grant.likely@secretlab.ca, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, sunil joshi <joshi@samsung.com>
+To: 'Doug Anderson' <dianders@chromium.org>, 'Chris Ball' <cjb@laptop.org>
+Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'James Hogan' <james.hogan@imgtec.com>, 'Grant Grundler' <grundler@chromium.org>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Olof Johansson' <olof@lixom.net>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Kukjin,
+Doug,
+Looks good to me except for minor comment.
 
-On Mon, Aug 5, 2013 at 3:59 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> On 5 August 2013 15:34, Vikas Sajjan <sajjan.linux@gmail.com> wrote:
->> Hi All,
->>
->> On Thu, Aug 1, 2013 at 8:19 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->>> Hi Vikas,
->>>
->>> On Tuesday 30 of July 2013 16:49:32 Vikas Sajjan wrote:
->>>> As the display-timing information is parsed by FIMD driver, it makes
->>>> sense to move the display-timimg DT node inside FIMD DT node for
->>>> exynos5250
->>>>
->>>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
->>>> ---
->>>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   29
->>>> ++++++++++++++++------------- 1 file changed, 16 insertions(+), 13
->>>> deletions(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->>>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index 49f18c2..d176dbb
->>>> 100644
->>>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->>>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->>>> @@ -262,19 +262,22 @@
->>>>               pinctrl-0 = <&dp_hpd>;
->>>>       };
->>>>
->>>> -     display-timings {
->>>> -             native-mode = <&timing0>;
->>>> -             timing0: timing@0 {
->>>> -                     /* 1280x800 */
->>>> -                     clock-frequency = <50000>;
->>>> -                     hactive = <1280>;
->>>> -                     vactive = <800>;
->>>> -                     hfront-porch = <4>;
->>>> -                     hback-porch = <4>;
->>>> -                     hsync-len = <4>;
->>>> -                     vback-porch = <4>;
->>>> -                     vfront-porch = <4>;
->>>> -                     vsync-len = <4>;
->>>> +     fimd@14400000 {
->>>> +             status = "okay";
->>>> +             display-timings {
->>>> +                     native-mode = <&timing0>;
->>>> +                     timing0: timing@0 {
->>>> +                             /* 1280x800 */
->>>> +                             clock-frequency = <50000>;
->>>> +                             hactive = <1280>;
->>>> +                             vactive = <800>;
->>>> +                             hfront-porch = <4>;
->>>> +                             hback-porch = <4>;
->>>> +                             hsync-len = <4>;
->>>> +                             vback-porch = <4>;
->>>> +                             vfront-porch = <4>;
->>>> +                             vsync-len = <4>;
->>>> +                     };
->>>>               };
->>>>       };
->>>
->>> Looks good to me, but I would like some other people from the device tree
->>> mailing list to comment on node naming: Do we want to conform to the
->>> recommendation of ePAPR about node naming, which states that node names
->>> should be generic, not platform specific or we are free to ignore it?
->>>
->>
->> Any more comments on this series.
->
-> One trivial typo in patch subject and commit message:
-> s/timimg/timing
->
+On Sat, August 10, 2013, Doug Anderson wrote:
+> If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
+> looping around forever.  This has been seen to happen on exynos5420
+> silicon despite the fact that we haven't enabled any wakeup events due
+> to a silicon errata.  It is safe to do on all exynos variants.
+> 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> ---
+> Changes in v5:
+> - Cleaned up dw_mci_exynos_resume_noirq() comment as per Seungwon.
+> - Don't memcpy dev_pm_ops structure, define a new one.
+> 
+> Changes in v4:
+> - Take Seungwon's suggestion and don't add any dw_mmc-pltfm code.
+> 
+> Changes in v3:
+> - Add freeze/thaw and poweroff/restore noirq entries.
+> 
+> Changes in v2:
+> - Use suspend_noirq as per James Hogan.
+> 
+>  drivers/mmc/host/dw_mmc-exynos.c | 56 +++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 55 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 866edef..7d88583 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -30,6 +30,7 @@
+>  #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
+>  					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
+>  					SDMMC_CLKSEL_CCLK_DIVIDER(z))
+> +#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
+> 
+>  #define EXYNOS4210_FIXED_CIU_CLK_DIV	2
+>  #define EXYNOS4412_FIXED_CIU_CLK_DIV	4
+> @@ -100,6 +101,52 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
+>  	return 0;
+>  }
+> 
+> +#ifdef CONFIG_PM_SLEEP
+> +/*
+> + * TODO: we should probably disable the clock to the card in the suspend path.
+In suspend, clock is gated, isn't it?
+Rather, no comment looks better, if intention is not clear.
 
-Can you apply this series (by correcting typo s/timimg/timing) OR you
-want me to respin V3 with this typo correction.
+Thanks,
+Seungwon Jeon
 
-
->
->
+> + */
+> +static int dw_mci_exynos_suspend(struct device *dev)
+> +{
+> +	struct dw_mci *host = dev_get_drvdata(dev);
+> +
+> +	return dw_mci_suspend(host);
+> +}
+> +
+> +static int dw_mci_exynos_resume(struct device *dev)
+> +{
+> +	struct dw_mci *host = dev_get_drvdata(dev);
+> +
+> +	return dw_mci_resume(host);
+> +}
+> +
+> +/**
+> + * dw_mci_exynos_resume_noirq - Exynos-specific resume code
+> + *
+> + * On exynos5420 there is a silicon errata that will sometimes leave the
+> + * WAKEUP_INT bit in the CLKSEL register asserted.  This bit is 1 to indicate
+> + * that it fired and we can clear it by writing a 1 back.  Clear it to prevent
+> + * interrupts from going off constantly.
+> + *
+> + * We run this code on all exynos variants because it doesn't hurt.
+> + */
+> +
+> +static int dw_mci_exynos_resume_noirq(struct device *dev)
+> +{
+> +	struct dw_mci *host = dev_get_drvdata(dev);
+> +	u32 clksel;
+> +
+> +	clksel = mci_readl(host, CLKSEL);
+> +	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
+> +		mci_writel(host, CLKSEL, clksel);
+> +
+> +	return 0;
+> +}
+> +#else
+> +#define dw_mci_exynos_suspend		NULL
+> +#define dw_mci_exynos_resume		NULL
+> +#define dw_mci_exynos_resume_noirq	NULL
+> +#endif /* CONFIG_PM_SLEEP */
+> +
+>  static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>  {
+>  	/*
+> @@ -187,13 +234,20 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
+>  	return dw_mci_pltfm_register(pdev, drv_data);
+>  }
+> 
+> +const struct dev_pm_ops dw_mci_exynos_pmops = {
+> +	SET_SYSTEM_SLEEP_PM_OPS(dw_mci_exynos_suspend, dw_mci_exynos_resume)
+> +	.resume_noirq = dw_mci_exynos_resume_noirq,
+> +	.thaw_noirq = dw_mci_exynos_resume_noirq,
+> +	.restore_noirq = dw_mci_exynos_resume_noirq,
+> +};
+> +
+>  static struct platform_driver dw_mci_exynos_pltfm_driver = {
+>  	.probe		= dw_mci_exynos_probe,
+>  	.remove		= __exit_p(dw_mci_pltfm_remove),
+>  	.driver		= {
+>  		.name		= "dwmmc_exynos",
+>  		.of_match_table	= dw_mci_exynos_match,
+> -		.pm		= &dw_mci_pltfm_pmops,
+> +		.pm		= &dw_mci_exynos_pmops,
+>  	},
+>  };
+> 
 > --
-> With warm regards,
-> Sachin
+> 1.8.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
