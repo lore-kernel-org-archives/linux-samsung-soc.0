@@ -1,181 +1,90 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung PWM support cleanup
-Date: Sun, 11 Aug 2013 16:17:07 -0700
-Message-ID: <20130811231707.GF26757@quad.lixom.net>
-References: <3573853.gDiLaTfgOu@flatron>
- <520173EF.1040808@samsung.com>
- <2197909.dzUDYPGiF0@flatron>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v9 14/16] iommu/exynos: add support for power management
+	subsystems.
+Date: Mon, 12 Aug 2013 10:55:01 +0900
+Message-ID: <20130812105501.d5c52155b378b5e2f4d4bb53@samsung.com>
+References: <003201ce941b$6e5a90e0$4b0fb2a0$@samsung.com>
+	<1949492.N82v2nAcIY@flatron>
+	<20130809164943.fe4b673e92b3f7680562f29b@samsung.com>
+	<3833452.V3JQdooaWE@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:54114 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752910Ab3HKXRv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 11 Aug 2013 19:17:51 -0400
-Received: by mail-pb0-f41.google.com with SMTP id rp2so6280791pbb.28
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Aug 2013 16:17:51 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <2197909.dzUDYPGiF0@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <3833452.V3JQdooaWE@flatron>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Linux Samsung SOC' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Prathyush' <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Grant Grundler' <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, 'Subash Patel' <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Linux IOMMU' <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Antonios Motakis' <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, 'Linux ARM Kernel' <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Andrew Bresticker <abrestic@chromium.org>
 
-On Sat, Aug 10, 2013 at 02:16:48PM +0200, Tomasz Figa wrote:
-> Hi Kukjin,
-> 
-> On Wednesday 07 of August 2013 07:08:47 Kukjin Kim wrote:
-> > On 08/06/13 08:32, Tomasz Figa wrote:
-> > > Hi Olof, Arnd,
+On Fri, 09 Aug 2013 10:32:40 +0200, Tomasz Figa wrote:
+> On Friday 09 of August 2013 16:49:43 Cho KyongHo wrote:
+> > On Fri, 09 Aug 2013 01:03:05 +0200, Tomasz Figa wrote:
+> > > Hi KyongHo,
 > > > 
-> > > Here is the Samsung PWM cleanup series for you. Particular patches of
-> > > the> 
-> > > series involve following modifications:
-> > >   1) fixing up few things in samsung_pwm_timer clocksource driver,
-> > >   2) moving remaining Samsung platforms to the new clocksource driver,
-> > >   3) removing old clocksource driver,
-> > >   4) adding new multiplatform- and DT-aware PWM driver,
-> > >   5) moving all Samsung platforms to use the new PWM driver,
-> > >   6) removing old PWM driver,
-> > >   7) removing all PWM-related code that is not used anymore.
-> > > 
-> > > This is my first pull request ever, so I hope I haven't screwed up
-> > > anything. ;)
-> > > 
-> > > Best regards,
-> > > Tomasz
-> > > 
-> > > The following changes since commit 
-> c095ba7224d8edc71dcef0d655911399a8bd4a3f:
-> > >    Linux 3.11-rc4 (2013-08-04 13:46:46 -0700)
-> > > 
-> > > are available in the git repository at:
-> > >    git://github.com/tom3q/linux.git v3.12-next/pwm-cleanup
-> > > 
-> > > for you to fetch changes up to 
-> 519e8e0da7509fcc71c12bcd3a681bb62770f692:
-> > >    ARM: SAMSUNG: Remove plat/regs-timer.h header (2013-08-06 01:21:55
-> > >    +0200)> 
-> > > ----------------------------------------------------------------
-> > > 
-> > > Tomasz Figa (20):
-> > >        clocksource: samsung_pwm_timer: Do not request PWM mem region
-> > >        clocksource: samsung_pwm_timer: Correct definition of
-> > >        AUTORELOAD bit
-> > >        clocksource: samsung_pwm_timer: Cache clocksource register
-> > >        address
-> > >        clocksource: samsung_pwm_timer: Do not use clocksource_mmio
-> > >        clocksource: samsung_pwm_timer: Handle suspend/resume correctly
-> > >        ARM: SAMSUNG: Unify base address definitions of timer block
-> > >        ARM: SAMSUNG: Add new PWM platform device
-> > >        ARM: SAMSUNG: Set PWM platform data
-> > >        ARM: SAMSUNG: Move all platforms to new clocksource driver
-> > >        ARM: SAMSUNG: Remove old samsung-time driver
-> > >        ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
-> > >        pwm: samsung: Rename to pwm-samsung-legacy
-> > >        pwm: Add new pwm-samsung driver
-> > >        ARM: SAMSUNG: Rework private data handling in dev-backlight
-> > >        ARM: SAMSUNG: Modify board files to use new PWM platform device
-> > >        pwm: Remove superseded pwm-samsung-legacy driver
-> > >        ARM: SAMSUNG: Remove old PWM timer platform devices
-> > >        ARM: SAMSUNG: Remove pwm-clock infrastructure
-> > >        ARM: SAMSUNG: Remove remaining uses of plat/regs-timer.h header
-> > >        ARM: SAMSUNG: Remove plat/regs-timer.h header
-> > >   
-> > >   arch/arm/Kconfig                                   |  11 +-
-> > >   arch/arm/mach-s3c24xx/Kconfig                      |   6 -
-> > >   arch/arm/mach-s3c24xx/clock-s3c2410.c              |   1 -
-> > >   arch/arm/mach-s3c24xx/clock-s3c2412.c              |   1 -
-> > >   arch/arm/mach-s3c24xx/clock-s3c2416.c              |   2 -
-> > >   arch/arm/mach-s3c24xx/clock-s3c2443.c              |   2 -
-> > >   arch/arm/mach-s3c24xx/common.c                     |  27 +
-> > >   arch/arm/mach-s3c24xx/include/mach/map.h           |   2 +
-> > >   arch/arm/mach-s3c24xx/mach-h1940.c                 |   4 +-
-> > >   arch/arm/mach-s3c24xx/mach-rx1950.c                |   5 +-
-> > >   arch/arm/mach-s3c64xx/Kconfig                      |   2 -
-> > >   arch/arm/mach-s3c64xx/clock.c                      |   2 -
-> > >   arch/arm/mach-s3c64xx/common.c                     |  32 +-
-> > >   arch/arm/mach-s3c64xx/include/mach/irqs.h          |   8 -
-> > >   arch/arm/mach-s3c64xx/include/mach/map.h           |   1 +
-> > >   arch/arm/mach-s3c64xx/irq-pm.c                     |   2 -
-> > >   arch/arm/mach-s3c64xx/mach-crag6410.c              |   4 +-
-> > >   arch/arm/mach-s3c64xx/mach-hmt.c                   |   4 +-
-> > >   arch/arm/mach-s3c64xx/mach-smartq.c                |   4 +-
-> > >   arch/arm/mach-s3c64xx/mach-smdk6410.c              |   5 +-
-> > >   arch/arm/mach-s5p64x0/Kconfig                      |   2 -
-> > >   arch/arm/mach-s5p64x0/clock-s5p6440.c              |   2 -
-> > >   arch/arm/mach-s5p64x0/clock-s5p6450.c              |   2 -
-> > >   arch/arm/mach-s5p64x0/common.c                     |  27 +
-> > >   arch/arm/mach-s5p64x0/include/mach/irqs.h          |   2 -
-> > >   arch/arm/mach-s5p64x0/include/mach/map.h           |   1 +
-> > >   arch/arm/mach-s5p64x0/mach-smdk6440.c              |   5 +-
-> > >   arch/arm/mach-s5p64x0/mach-smdk6450.c              |   5 +-
-> > >   arch/arm/mach-s5p64x0/pm.c                         |   3 -
-> > >   arch/arm/mach-s5pc100/Kconfig                      |   1 -
-> > >   arch/arm/mach-s5pc100/clock.c                      |   2 -
-> > >   arch/arm/mach-s5pc100/common.c                     |  28 +
-> > >   arch/arm/mach-s5pc100/include/mach/irqs.h          |   2 -
-> > >   arch/arm/mach-s5pc100/include/mach/map.h           |   1 +
-> > >   arch/arm/mach-s5pc100/mach-smdkc100.c              |   5 +-
-> > >   arch/arm/mach-s5pv210/Kconfig                      |   1 -
-> > >   arch/arm/mach-s5pv210/clock.c                      |   1 -
-> > >   arch/arm/mach-s5pv210/common.c                     |  28 +
-> > >   arch/arm/mach-s5pv210/include/mach/irqs.h          |   2 -
-> > >   arch/arm/mach-s5pv210/include/mach/map.h           |   1 +
-> > >   arch/arm/mach-s5pv210/mach-smdkv210.c              |   5 +-
-> > >   arch/arm/mach-s5pv210/pm.c                         |  10 -
-> > >   arch/arm/plat-samsung/Kconfig                      |  14 -
-> > >   arch/arm/plat-samsung/Makefile                     |   3 -
-> > >   arch/arm/plat-samsung/dev-backlight.c              |  61 +-
-> > >   arch/arm/plat-samsung/devs.c                       |  42 +-
-> > >   arch/arm/plat-samsung/include/plat/clock.h         |   4 -
-> > >   arch/arm/plat-samsung/include/plat/devs.h          |   1 +
-> > >   arch/arm/plat-samsung/include/plat/irq-vic-timer.h |  13 -
-> > >   arch/arm/plat-samsung/include/plat/irqs.h          |   9 -
-> > >   arch/arm/plat-samsung/include/plat/pwm-clock.h     |  81 ---
-> > >   arch/arm/plat-samsung/include/plat/pwm-core.h      |  22 +
-> > >   arch/arm/plat-samsung/include/plat/regs-timer.h    | 124 ----
-> > >   arch/arm/plat-samsung/include/plat/samsung-time.h  |  23 -
-> > >   arch/arm/plat-samsung/irq-vic-timer.c              |  98 ---
-> > >   arch/arm/plat-samsung/pwm-clock.c                  | 474
-> > >   --------------
-> > >   arch/arm/plat-samsung/s5p-irq.c                    |   4 -
-> > >   arch/arm/plat-samsung/samsung-time.c               | 394
-> > >   ------------
-> > >   drivers/clocksource/Kconfig                        |   1 -
-> > >   drivers/clocksource/samsung_pwm_timer.c            | 108 ++--
-> > >   drivers/pwm/pwm-samsung.c                          | 709
-> > >   ++++++++++++++------- 61 files changed, 786 insertions(+), 1660
-> > >   deletions(-)
-> > >   delete mode 100644
-> > >   arch/arm/plat-samsung/include/plat/irq-vic-timer.h
-> > >   delete mode 100644 arch/arm/plat-samsung/include/plat/pwm-clock.h
-> > >   create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
-> > >   delete mode 100644 arch/arm/plat-samsung/include/plat/regs-timer.h
-> > >   delete mode 100644 arch/arm/plat-samsung/irq-vic-timer.c
-> > >   delete mode 100644 arch/arm/plat-samsung/pwm-clock.c
-> > >   delete mode 100644 arch/arm/plat-samsung/samsung-time.c
+> > > nit: Please drop the trailing dot at the end of patch subject.
 > > 
-> > Just note that I also have pulled into samsung tree because of
-> > dependency with others, this will be pulled directly by Olof though.
+> > Oh. I didn't catch that.
+> > Thank you.
+> > 
+> > > On Thursday 08 of August 2013 18:41:17 Cho KyongHo wrote:
+> > > > This adds support for Advance Power Management and Runtime Power
+> > > > Management.
+> > > 
+> > > This patch adds support for system-wide and runtime power management.
+> > 
+> > Ok.
+> > 
+> > > > Since System MMU is located in the same local power domain of its
+> > > > master H/W, System MMU must be initialized before it is working if
+> > > > its power domain was ever turned off. TLB invalidation according to
+> > > > unmapping on page tables must also be performed while power domain
+> > > > is
+> > > > turned on.
+> > > > 
+> > > > This patch ensures that resume and runtime_resume(restore_state)
+> > > > functions in this driver is called before the calls to resume and
+> > > > runtime_resume callback functions in the drivers of master H/Ws.
+> > > > Likewise, suspend and runtime_suspend(save_state) functions in this
+> > > > driver is called after the calls to suspend and runtime_suspend in
+> > > > the
+> > > > drivers of master H/Ws.
+> > > > 
+> > > > In order to get benefit of this support, the master H/W and its
+> > > > System
+> > > > MMU must resides in the same power domain in terms of Linux kernel.
+> > > > If
+> > > > a master H/W does not use generic I/O power domain, its driver must
+> > > > call iommu_attach_device() after its local power domain is turned
+> > > > on,
+> > > > iommu_detach_device before turned off.
+> > > 
+> > > I don't get the point of this last paragraph. What a power domain can
+> > > be in other terms? Is there any other way to support power domains on
+> > > Exynos than generic power domains?
+> > 
+> > I just addressed the case a device driver turns off local power of its
+> > device without the help of generic I/O powerdomain.
 > 
-> Have you already pulled this into your tree? There was a patch[1] that was 
-> posted for 3.11 at the time this series was merged in your for-next 
-> branch, before it got dropped, that fixed one found build issue that I 
-> missed.
-> 
-> In the end the series got dropped, that patch was not applied and I forgot 
-> about this issue. This was caught by Andrew Bresticker after I already 
-> sent my pull request.
-> 
-> According to Olof, he hasn't pulled this yet and you don't seem to have it 
-> in your public tree either, so we could either drop this pull request and 
-> send another one with the fixup patch squashed or apply the fixup patch 
-> separately on top of this. What do you think?
+> Out of curiosity, do we have such cases for Exynos in mainline kernel? 
+> IMHO this is what the generic PM core is for and drivers shouldn't care 
+> about such low level PM details.
 
-I have not pulled anything from Kukjin yet, so please respin your branch as
-needed, Tomasz. Also, see the reply about making a signed tag.
+I don't know if there is the case and I also agree with you.
 
+I hope that there is no case that I addressed.
+I just mentioned an exceptional case.
+The best way is that all device drivers of master H/W of System MMU register
+their defvice in a generic i/o powerdomain.
 
--Olof
+Thank you.
+
+KyongHo.
