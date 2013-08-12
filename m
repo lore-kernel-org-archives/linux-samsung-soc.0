@@ -1,68 +1,67 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V4 1/4] ASoC: Samsung: I2S: Add quirks as driver data
- in I2S
-Date: Mon, 12 Aug 2013 17:18:34 -0600
-Message-ID: <52096D4A.5070903@wwwdotorg.org>
-References: <1376300994-1679-1-git-send-email-padma.v@samsung.com> <1376300994-1679-2-git-send-email-padma.v@samsung.com> <52096871.4030703@wwwdotorg.org> <20130812231327.GK6427@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 10/18] spi: s3c64xx: Do not require legacy DMA API in
+ case of S3C64XX
+Date: Tue, 13 Aug 2013 00:36:41 +0100
+Message-ID: <20130812233641.GL6427@sirena.org.uk>
+References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
+ <1376243970-6489-11-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="aVF5wPVC5Z7LhB4n"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:58462 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752290Ab3HLXSj (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:42615 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755877Ab3HLXgz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Aug 2013 19:18:39 -0400
-In-Reply-To: <20130812231327.GK6427@sirena.org.uk>
+	Mon, 12 Aug 2013 19:36:55 -0400
+Content-Disposition: inline
+In-Reply-To: <1376243970-6489-11-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org, Mark Rutland <Mark.Rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Kumar Gala <galak@codeaurora.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>
 
-On 08/12/2013 05:13 PM, Mark Brown wrote:
-> On Mon, Aug 12, 2013 at 04:57:53PM -0600, Stephen Warren wrote:
->> On 08/12/2013 03:49 AM, Padmavathi Venna wrote:
-> 
->>> +- compatible : should be one of the following. +   -
->>> samsung,s3c6410-i2s: for 8/16/24bit stereo I2S. +   -
->>> samsung,s5pv210-i2s: for 8/16/24bit multichannel(5.1) I2S with 
->>> +     secondary fifo, s/w reset control and internal mux for
->>> root clk src.
-> 
->> Those descriptions seem a little odd. If I have an SoC that
->> isn't s5pv210, yet supports "8/16/24bit multichannel(5.1) I2S
->> with secondary fifo, s/w reset control and internal mux for root
->> clk src", will compatible="samsung,s5pv210-i2s" work for my HW?
-> 
->> I wonder if you should instead include the IP block version in
->> the compatible value?
-> 
-> We've been round this loop several times, I'd prefer the IP block 
-> versions too but they're at best patchily documented and so as a
-> general policy the Samsung bindings use the name of the SoC an IP
-> first appeared in as the version.
-> 
->> In other words, I don't think we have an answer to the question:
->> Should differences between similar HW blocks be encoded into DT
->> properties, or should the driver encode them into some table, and
->> look them up from compatible value?
-> 
-> For usability it seems better to just be able to say which IP
-> you've got, this also makes it easier to implement support for new
-> IP features later on without having to go back and add new
-> properties which would be sad.
 
-That seems quite reasonable, but I don't think everyone involved in DT
-has come out and agreed on that. I'm quite happy with the approach of
-looking up everything based on compatible.
+--aVF5wPVC5Z7LhB4n
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> (although I dare say that at least samsung,supports-rstclr should
->> be modified to use the new reset controller bindings)
-> 
-> Really?  That doesn't seem terribly sane - I had thought that was
-> for bodging resets on the side of things that don't normally have
-> them or need board specific logic.  Also note that this is actually
-> a magic register write done to reset the IP on some specific IPs.
+On Sun, Aug 11, 2013 at 07:59:22PM +0200, Tomasz Figa wrote:
+> With support for amba-pl08x driver, on S3C64xx the generic DMA engine
+> API can be used instead of the private s3c-dma interface.
 
-I believe that's exactly what the reset subsystem and associated DT
-bindings were designed for.
+I'm still getting issues for SPI with this:
+
+[   50.952845] s3c64xx-spi s3c6410-spi.0: Failed to get RX DMA channel
+[   50.953520] spi_master spi0: failed to prepare transfer hardware
+
+when I test (with -next with this series applied on top), this is from
+the first transfer that tries to DMA - there's actually no RX data.  No
+errors are reported by the DMA controller itself.  I'm also getting
+crashes setting up the audio DMA while derferencecing the channel.
+
+This is without DT - are there any hookups missing because of that?
+
+--aVF5wPVC5Z7LhB4n
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSCXGGAAoJELSic+t+oim9XdEP/jjU2+VNZYOHerrBv1kvn4ru
+4Y/cKtRQSgnvuhubIWr0eEiHa5gOYz7I27efZlbas90no+x7PkrQ9lHrJyzSXRGm
+w3rSHitDX3D+m18jam6Rl2Ok4Kaz1NkRhaiR4HXFj7hmsIzqjNBegEpHxTcAOJIp
+d5hslTMzUB+3uwAoVuIuS2lSyGKeTnT0WXeaB+qjmvamYDx8fU3YNDVX1Lf/3qBg
+0aIreTf5HqhyA7XYpaDotUQh4IcbkLJzUKCNyPQtph9H0e6+gvPpmjSPQqWd3VoO
+2Cfw9XXuIpDonW9PTflCPIxuOTbh7eEFtuYR0ZGcvhDWrax5dm82txJKy/6JQE/9
+pwsSyYZQWIcZ+UU2knj/wAfG4/wJQfOe81D6nANID3loWfpl6jEE9ooLF0Y8FcVw
+8+OrcD3RDLo3Xo/1HsHG6sxTYMlthh4HkA9EVjHp+lks8xm+VjSbj+oifoh6XfOI
+sdUW4c/Qt/etsB/p/VceNcb/cHpmGBaM9S5uMSkSj1jBEGIFdF1yxxk4GGzvDCX7
+PFfPFqfEHiBbmanBRTP/tbOwYknVhpCRvwprjUEW9oaakL+AoGXAG7uG2pKZT5/i
+dCuU4F9Gul4EbiG2HPYXPlOlCdSdWatPlG4YdpfX16J8UBduo07dgnqKhURPxwCg
+AbKwZ+IOADF6htqXUWtp
+=Vh+Z
+-----END PGP SIGNATURE-----
+
+--aVF5wPVC5Z7LhB4n--
