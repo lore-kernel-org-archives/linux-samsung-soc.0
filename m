@@ -1,131 +1,63 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH 2/2] clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420 SoC
-Date: Mon, 12 Aug 2013 15:32:14 +0530
-Message-ID: <1376301734-21847-3-git-send-email-vikas.sajjan@linaro.org>
-References: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung PWM support cleanup
+Date: Mon, 12 Aug 2013 19:05:17 +0900
+Message-ID: <0bcb01ce9743$72337120$569a5360$%kim@samsung.com>
+References: <3573853.gDiLaTfgOu@flatron> <520173EF.1040808@samsung.com>
+ <2197909.dzUDYPGiF0@flatron> <20130811231707.GF26757@quad.lixom.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:32995 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756027Ab3HLKCi (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:62755 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756027Ab3HLKFT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Aug 2013 06:02:38 -0400
-Received: by mail-pa0-f42.google.com with SMTP id lj1so7341257pab.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2013 03:02:37 -0700 (PDT)
-In-Reply-To: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org>
+	Mon, 12 Aug 2013 06:05:19 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MRE007MGXCTHZK0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Aug 2013 19:05:17 +0900 (KST)
+In-reply-to: <20130811231707.GF26757@quad.lixom.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, dianders@chromium.org, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: 'Olof Johansson' <olof@lixom.net>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Andrew Bresticker' <abrestic@chromium.org>
 
-Adds APLL, KPLL, EPLL and VPLL freq table for exynos5420 SoC.
+Olof Johansson wrote:
+> 
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
----
- drivers/clk/samsung/clk-exynos5420.c |   81 ++++++++++++++++++++++++++++++++++
- 1 file changed, 81 insertions(+)
+[...]
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index e035fd0..42cea7e 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -757,10 +757,81 @@ static struct of_device_id ext_clk_match[] __initdata = {
- 	{ },
- };
- 
-+static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_35XX_RATE(rate, m, p, s) */
-+	PLL_35XX_RATE(2000000000, 250, 3, 0),
-+	PLL_35XX_RATE(1900000000, 475, 6, 0),
-+	PLL_35XX_RATE(1800000000, 225, 3, 0),
-+	PLL_35XX_RATE(1700000000, 425, 6, 0),
-+	PLL_35XX_RATE(1600000000, 200, 3, 0),
-+	PLL_35XX_RATE(1500000000, 250, 4, 0),
-+	PLL_35XX_RATE(1400000000, 175, 3, 0),
-+	PLL_35XX_RATE(1300000000, 325, 6, 0),
-+	PLL_35XX_RATE(1200000000, 200, 2, 1),
-+	PLL_35XX_RATE(1100000000, 275, 3, 1),
-+	PLL_35XX_RATE(1000000000, 250, 3, 1),
-+	PLL_35XX_RATE(900000000, 150, 2, 1),
-+	PLL_35XX_RATE(800000000, 200, 3, 1),
-+	PLL_35XX_RATE(700000000, 175, 3, 1),
-+	PLL_35XX_RATE(600000000, 200, 2, 2),
-+	PLL_35XX_RATE(500000000, 250, 3, 2),
-+	PLL_35XX_RATE(400000000, 200, 3, 2),
-+	PLL_35XX_RATE(300000000, 400, 4, 3),
-+	PLL_35XX_RATE(200000000, 200, 3, 3),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table kpll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_35XX_RATE(rate, m, p, s) */
-+	PLL_35XX_RATE(1300000000, 325, 6, 0),
-+	PLL_35XX_RATE(1200000000, 200, 2, 1),
-+	PLL_35XX_RATE(1100000000, 275, 3, 1),
-+	PLL_35XX_RATE(1000000000, 250, 3, 1),
-+	PLL_35XX_RATE(900000000, 150, 2, 1),
-+	PLL_35XX_RATE(800000000, 200, 3, 1),
-+	PLL_35XX_RATE(700000000, 175, 3, 1),
-+	PLL_35XX_RATE(600000000, 200, 2, 2),
-+	PLL_35XX_RATE(500000000, 250, 3, 2),
-+	PLL_35XX_RATE(400000000, 200, 3, 2),
-+	PLL_35XX_RATE(300000000, 400, 4, 3),
-+	PLL_35XX_RATE(200000000, 200, 3, 3),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_36XX_RATE(rate, m, p, s, k) */
-+	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
-+	PLL_36XX_RATE(180633600, 45, 3, 1, 10381),
-+	PLL_36XX_RATE(180000000, 45, 3, 1, 0),
-+	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
-+	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
-+	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
-+	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
-+	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-+	{ },
-+};
-+
-+static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
-+	/* sorted in descending order */
-+	/* PLL_35XX_RATE(rate, m, p, s) */
-+	PLL_35XX_RATE(533000000, 533, 6, 2),
-+	PLL_35XX_RATE(480000000, 160, 2, 2),
-+	PLL_35XX_RATE(420000000, 140, 2, 2),
-+	PLL_35XX_RATE(350000000, 175, 3, 2),
-+	PLL_35XX_RATE(266000000, 266, 3, 3),
-+	PLL_35XX_RATE(177000000, 118, 2, 3),
-+	PLL_35XX_RATE(100000000, 200, 3, 4),
-+	{ },
-+};
-+
- /* register exynos5420 clocks */
- static void __init exynos5420_clk_init(struct device_node *np)
- {
- 	void __iomem *reg_base;
-+	unsigned long fin_pll_rate;
- 
- 	if (np) {
- 		reg_base = of_iomap(np, 0);
-@@ -776,6 +847,16 @@ static void __init exynos5420_clk_init(struct device_node *np)
- 	samsung_clk_of_register_fixed_ext(exynos5420_fixed_rate_ext_clks,
- 			ARRAY_SIZE(exynos5420_fixed_rate_ext_clks),
- 			ext_clk_match);
-+
-+	fin_pll_rate = _get_rate("fin_pll");
-+
-+	if (fin_pll_rate == 24 * MHZ) {
-+		exynos5420_plls[apll].rate_table = apll_24mhz_tbl;
-+		exynos5420_plls[kpll].rate_table = kpll_24mhz_tbl;
-+		exynos5420_plls[epll].rate_table = epll_24mhz_tbl;
-+		exynos5420_plls[vpll].rate_table = vpll_24mhz_tbl;
-+	}
-+
- 	samsung_clk_register_pll(exynos5420_plls, ARRAY_SIZE(exynos5420_plls),
- 					reg_base);
- 	samsung_clk_register_fixed_rate(exynos5420_fixed_rate_clks,
--- 
-1.7.9.5
+> > > Just note that I also have pulled into samsung tree because of
+> > > dependency with others, this will be pulled directly by Olof though.
+> >
+> > Have you already pulled this into your tree? There was a patch[1] that
+> was
+> > posted for 3.11 at the time this series was merged in your for-next
+> > branch, before it got dropped, that fixed one found build issue that I
+> > missed.
+> >
+> > In the end the series got dropped, that patch was not applied and I
+> forgot
+> > about this issue. This was caught by Andrew Bresticker after I already
+> > sent my pull request.
+> >
+> > According to Olof, he hasn't pulled this yet and you don't seem to have
+> it
+> > in your public tree either, so we could either drop this pull request
+> and
+> > send another one with the fixup patch squashed or apply the fixup patch
+> > separately on top of this. What do you think?
+> 
+> I have not pulled anything from Kukjin yet, so please respin your branch
+> as
+> needed, Tomasz. Also, see the reply about making a signed tag.
+> 
+OK, I see. Let me drop this in my local and will wait for Tomasz' new pull
+request.
+
+Thanks,
+Kukjin
