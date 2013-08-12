@@ -1,45 +1,58 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V4 4/4] ARM: dts: Enable sound support on smdk5420
-Date: Mon, 12 Aug 2013 15:37:50 +0530
-Message-ID: <1376302070-1877-5-git-send-email-padma.v@samsung.com>
-References: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
+Subject: [PATCH V4 0/4]  Add i2s nodes on Exynos5420 and enable sound support
+ on sdmk5420
+Date: Mon, 12 Aug 2013 15:37:46 +0530
+Message-ID: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47849 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756043Ab3HLKGl (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:50162 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755963Ab3HLKGg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Aug 2013 06:06:41 -0400
-In-reply-to: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
+	Mon, 12 Aug 2013 06:06:36 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
 Cc: broonie@kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
 
-This patch enables i2s0 and sound support on smdk5420.
+Changes since V3:
+	- used existent fixed-clock binding for registering oscillator clock
+	  as fixed rate clock as pointed by Tomasz Figa
+	- Made some changes in wm8994 regulator nodes as suggested by Tomasz Figa
+	- Separated out only adding i2s nodes and enabling sound support on smdk5420
+	  into different patch set as they are dependent on on some of already posted
+	  but not yet merged i2c, dwmmc, dma and audss clock controller patches on
+	  Kukjin for-next branch.
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/boot/dts/exynos5420-smdk5420.dts |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+Changes since V2:
+        - Separated out driver side changes and dts changes in two
+          patch sets
+        - Added proper names for wm8994 regulators as commented by Mark
+        - Moved common i2s nodes into the exynos5.dtsi
+        - Added clock info in wm8994 node as requested by Mark.
+        - Registered the 16.9MHz oscillator clock as fixed clock in the
+          machine file. Right now no user of this clock but as Mark requested
+          to add mclk info in wm8994 node, I added this part.
 
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index a898b3f..b1b745c 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -139,4 +139,14 @@
- 		};
- 	};
- 
-+	i2s0: i2s@03830000 {
-+		status = "okay";
-+	};
-+
-+	sound {
-+		compatible = "samsung,smdk-wm8994";
-+
-+		samsung,i2s-controller = <&i2s0>;
-+		samsung,audio-codec = <&wm8994>;
-+	};
- };
+This patch set is dependent on the following i2c, dma and audio subsystem
+clk controller patches.
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20077
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20661
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20668
+
+This patch set is made based on Kukjin Kim for-next branch.
+
+
+Andrew Bresticker (1):
+  ARM: dts: exynos5420: add i2s controllers
+
+Padmavathi Venna (3):
+  ARM: dts: Add i2c bus 1 and it's audio codec child node on smdk5420
+  ARM: dts: Add osc clock node on smdk5420.
+  ARM: dts: Enable sound support on smdk5420
+
+ arch/arm/boot/dts/exynos5420-smdk5420.dts |   81 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi         |   32 +++++++++++
+ 2 files changed, 113 insertions(+), 0 deletions(-)
+
 -- 
 1.7.4.4
