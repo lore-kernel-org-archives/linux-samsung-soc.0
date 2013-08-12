@@ -1,72 +1,69 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V4 0/4]  Add i2s nodes on Exynos5420 and enable sound
- support on sdmk5420
-Date: Mon, 12 Aug 2013 13:18:45 +0200
-Message-ID: <1563060.2xzTKrBOxD@amdc1227>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V4 1/4] ARM: dts: exynos5420: add i2s controllers
+Date: Mon, 12 Aug 2013 12:34:48 +0100
+Message-ID: <20130812113447.GW6427@sirena.org.uk>
 References: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
+ <1376302070-1877-2-git-send-email-padma.v@samsung.com>
+ <21180092.af8YMiXtjc@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="muZOxeWw7VP4OgIK"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:52979 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752569Ab3HLLSv (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:57861 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755019Ab3HLLfL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Aug 2013 07:18:51 -0400
-In-reply-to: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
+	Mon, 12 Aug 2013 07:35:11 -0400
+Content-Disposition: inline
+In-Reply-To: <21180092.af8YMiXtjc@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, broonie@kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
 
-Hi Padmavathi,
 
-On Monday 12 of August 2013 15:37:46 Padmavathi Venna wrote:
-> Changes since V3:
-> 	- used existent fixed-clock binding for registering oscillator clock
-> 	  as fixed rate clock as pointed by Tomasz Figa
-> 	- Made some changes in wm8994 regulator nodes as suggested by Tomasz
-> Figa - Separated out only adding i2s nodes and enabling sound support on
-> smdk5420 into different patch set as they are dependent on on some of
-> already posted but not yet merged i2c, dwmmc, dma and audss clock
-> controller patches on Kukjin for-next branch.
-> 
-> Changes since V2:
->         - Separated out driver side changes and dts changes in two
->           patch sets
->         - Added proper names for wm8994 regulators as commented by Mark
->         - Moved common i2s nodes into the exynos5.dtsi
->         - Added clock info in wm8994 node as requested by Mark.
->         - Registered the 16.9MHz oscillator clock as fixed clock in the
->           machine file. Right now no user of this clock but as Mark
-> requested to add mclk info in wm8994 node, I added this part.
-> 
-> This patch set is dependent on the following i2c, dma and audio subsystem
-> clk controller patches.
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20077
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20661
-> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/20668
-> 
-> This patch set is made based on Kukjin Kim for-next branch.
-> 
-> 
-> Andrew Bresticker (1):
->   ARM: dts: exynos5420: add i2s controllers
-> 
-> Padmavathi Venna (3):
->   ARM: dts: Add i2c bus 1 and it's audio codec child node on smdk5420
->   ARM: dts: Add osc clock node on smdk5420.
->   ARM: dts: Enable sound support on smdk5420
-> 
->  arch/arm/boot/dts/exynos5420-smdk5420.dts |   81
-> +++++++++++++++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi        
-> |   32 +++++++++++
->  2 files changed, 113 insertions(+), 0 deletions(-)
+--muZOxeWw7VP4OgIK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Except the node status misuse that I commented on in patches 1/4 and 4/4, 
-looks good to me:
+On Mon, Aug 12, 2013 at 01:14:20PM +0200, Tomasz Figa wrote:
+> On Monday 12 of August 2013 15:37:47 Padmavathi Venna wrote:
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> > +	i2s_0: i2s@03830000 {
+> > +		status =3D "disabled";
 
-Best regards,
-Tomasz
+> If a node does not require any board-specific properties for the device t=
+o=20
+> operate properly, there is no point in disabling it, just to add a single=
+=20
+> status property at board level.
+
+I'd expect that to interact badly with the pinmuxing - unless the device
+is disabled it'll try to grab its pins on probe which is not going to be
+a good idea unless it is actually wired up for use in the system.  Or is
+there some other mechanism for handling that?
+
+--muZOxeWw7VP4OgIK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSCMhUAAoJELSic+t+oim9nJ8P/0u+42W4yK/ouDZ6GuxVSFci
+Pmxj0Q02fdIw5wNRrfainfjJT05fvp+HxeU8qZV4AAAoP2xoZewVyCh4FM05SATU
+ADkkLtSwFz4gE02hYu6hH24MBrwL5aQHY+QyTiByXGASeVmsRmEH6aoyuFYgBy83
+v8UJaKCL+CFFTxyY2oh4QZz7pxHP1lMVY5qBeX0QyzqoABhBMYgz5c/qPHX6lUNs
+Poauav1GaQJnz5z2iPSO2Ts5B/1EUTmKXCiEFXc8pGv8IQzt4eQ8yOpeTgCiRugu
+6XAxdHJRC2yT9D3Yy+QOR/qIHaC0tzzzWepC0TRPcSJ0joBd0B6odkGC3en9jUri
+scM/y2kKLg6kfPciG6uS7U4DLtAUtqepq65Uig+I/53mehjyuieTHpkjVzHEMi68
+LwSbBUBIF3m2XNRADj/JZidzbIGG7HYUGE0Zo7TjSi9I3cCAwyodWhfizKMdy76S
+wXtfMuJpa1qUbAm4DtnV5ct3fHw18oUiatUvsW9wfhyY+CuuUT8Wg1BBnQbqJzH7
+tZyaGTtKX1T7V0XwPtSyUz0ZmeD0hOJCa6lTTh5sJ66JcqO1W0hMEHYQpk18bZBH
+SkS2sKkm8Xh96MWcMTKiSBR1wtb2e5VC6CFpMH8MD4L/w4AA3NhrDhywgWUH66bG
+WU0JGIctWnVzIG/nElMh
+=XLls
+-----END PGP SIGNATURE-----
+
+--muZOxeWw7VP4OgIK--
