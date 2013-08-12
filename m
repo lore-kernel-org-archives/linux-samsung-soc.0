@@ -1,66 +1,131 @@
 From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH 1/2] clk: samsung: Add GPLL freq table for exynos5250 SoC
-Date: Mon, 12 Aug 2013 15:32:13 +0530
-Message-ID: <1376301734-21847-2-git-send-email-vikas.sajjan@linaro.org>
+Subject: [PATCH 2/2] clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420 SoC
+Date: Mon, 12 Aug 2013 15:32:14 +0530
+Message-ID: <1376301734-21847-3-git-send-email-vikas.sajjan@linaro.org>
 References: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:53627 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756027Ab3HLKCd (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:32995 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756027Ab3HLKCi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Aug 2013 06:02:33 -0400
-Received: by mail-pd0-f182.google.com with SMTP id r10so3220060pdi.41
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2013 03:02:32 -0700 (PDT)
+	Mon, 12 Aug 2013 06:02:38 -0400
+Received: by mail-pa0-f42.google.com with SMTP id lj1so7341257pab.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Aug 2013 03:02:37 -0700 (PDT)
 In-Reply-To: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, t.figa@samsung.com, dianders@chromium.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Adds GPLL freq table for exynos5250 SoC.
+Adds APLL, KPLL, EPLL and VPLL freq table for exynos5420 SoC.
 
 Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
 ---
- drivers/clk/samsung/clk-exynos5250.c |   19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5420.c |   81 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index a9916a4..c400e82 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -494,6 +494,21 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
- 	GATE(g2d, "g2d", "aclk200", GATE_IP_ACP, 3, 0, 0),
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index e035fd0..42cea7e 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -757,10 +757,81 @@ static struct of_device_id ext_clk_match[] __initdata = {
+ 	{ },
  };
  
-+static struct samsung_pll_rate_table gpll_24mhz_tbl[] __initdata = {
++static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
 +	/* sorted in descending order */
 +	/* PLL_35XX_RATE(rate, m, p, s) */
-+	PLL_35XX_RATE(1400000000, 175, 3, 0), /* for 466MHz */
-+	PLL_35XX_RATE(800000000, 100, 3, 0),  /* for 400MHz, 200MHz */
-+	PLL_35XX_RATE(667000000, 389, 7, 1),  /* for 333MHz, 222MHz, 166MHz */
-+	PLL_35XX_RATE(600000000, 200, 4, 1),  /* for 300MHz, 200MHz, 150MHz */
-+	PLL_35XX_RATE(533000000, 533, 12, 1), /* for 533MHz, 266MHz, 133MHz */
-+	PLL_35XX_RATE(450000000, 450, 12, 1), /* for 450Hz */
-+	PLL_35XX_RATE(400000000, 100, 3, 1),
-+	PLL_35XX_RATE(333000000, 222, 4, 2),
-+	PLL_35XX_RATE(200000000, 100, 3, 2),
++	PLL_35XX_RATE(2000000000, 250, 3, 0),
++	PLL_35XX_RATE(1900000000, 475, 6, 0),
++	PLL_35XX_RATE(1800000000, 225, 3, 0),
++	PLL_35XX_RATE(1700000000, 425, 6, 0),
++	PLL_35XX_RATE(1600000000, 200, 3, 0),
++	PLL_35XX_RATE(1500000000, 250, 4, 0),
++	PLL_35XX_RATE(1400000000, 175, 3, 0),
++	PLL_35XX_RATE(1300000000, 325, 6, 0),
++	PLL_35XX_RATE(1200000000, 200, 2, 1),
++	PLL_35XX_RATE(1100000000, 275, 3, 1),
++	PLL_35XX_RATE(1000000000, 250, 3, 1),
++	PLL_35XX_RATE(900000000, 150, 2, 1),
++	PLL_35XX_RATE(800000000, 200, 3, 1),
++	PLL_35XX_RATE(700000000, 175, 3, 1),
++	PLL_35XX_RATE(600000000, 200, 2, 2),
++	PLL_35XX_RATE(500000000, 250, 3, 2),
++	PLL_35XX_RATE(400000000, 200, 3, 2),
++	PLL_35XX_RATE(300000000, 400, 4, 3),
++	PLL_35XX_RATE(200000000, 200, 3, 3),
 +	{ },
 +};
 +
- static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
- 	/* sorted in descending order */
- 	/* PLL_36XX_RATE(rate, m, p, s, k) */
-@@ -565,8 +580,10 @@ static void __init exynos5250_clk_init(struct device_node *np)
++static struct samsung_pll_rate_table kpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(1300000000, 325, 6, 0),
++	PLL_35XX_RATE(1200000000, 200, 2, 1),
++	PLL_35XX_RATE(1100000000, 275, 3, 1),
++	PLL_35XX_RATE(1000000000, 250, 3, 1),
++	PLL_35XX_RATE(900000000, 150, 2, 1),
++	PLL_35XX_RATE(800000000, 200, 3, 1),
++	PLL_35XX_RATE(700000000, 175, 3, 1),
++	PLL_35XX_RATE(600000000, 200, 2, 2),
++	PLL_35XX_RATE(500000000, 250, 3, 2),
++	PLL_35XX_RATE(400000000, 200, 3, 2),
++	PLL_35XX_RATE(300000000, 400, 4, 3),
++	PLL_35XX_RATE(200000000, 200, 3, 3),
++	{ },
++};
++
++static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_36XX_RATE(rate, m, p, s, k) */
++	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
++	PLL_36XX_RATE(180633600, 45, 3, 1, 10381),
++	PLL_36XX_RATE(180000000, 45, 3, 1, 0),
++	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
++	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
++	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
++	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
++	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
++	{ },
++};
++
++static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
++	/* sorted in descending order */
++	/* PLL_35XX_RATE(rate, m, p, s) */
++	PLL_35XX_RATE(533000000, 533, 6, 2),
++	PLL_35XX_RATE(480000000, 160, 2, 2),
++	PLL_35XX_RATE(420000000, 140, 2, 2),
++	PLL_35XX_RATE(350000000, 175, 3, 2),
++	PLL_35XX_RATE(266000000, 266, 3, 3),
++	PLL_35XX_RATE(177000000, 118, 2, 3),
++	PLL_35XX_RATE(100000000, 200, 3, 4),
++	{ },
++};
++
+ /* register exynos5420 clocks */
+ static void __init exynos5420_clk_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
++	unsigned long fin_pll_rate;
  
- 	fin_pll_rate = _get_rate("fin_pll");
- 
--	if (fin_pll_rate == 24 * MHZ)
+ 	if (np) {
+ 		reg_base = of_iomap(np, 0);
+@@ -776,6 +847,16 @@ static void __init exynos5420_clk_init(struct device_node *np)
+ 	samsung_clk_of_register_fixed_ext(exynos5420_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5420_fixed_rate_ext_clks),
+ 			ext_clk_match);
++
++	fin_pll_rate = _get_rate("fin_pll");
++
 +	if (fin_pll_rate == 24 * MHZ) {
- 		exynos5250_plls[epll].rate_table = epll_24mhz_tbl;
-+		exynos5250_plls[gpll].rate_table = gpll_24mhz_tbl;
++		exynos5420_plls[apll].rate_table = apll_24mhz_tbl;
++		exynos5420_plls[kpll].rate_table = kpll_24mhz_tbl;
++		exynos5420_plls[epll].rate_table = epll_24mhz_tbl;
++		exynos5420_plls[vpll].rate_table = vpll_24mhz_tbl;
 +	}
- 
- 	vpllsrc = __clk_lookup("mout_vpllsrc");
- 	if (vpllsrc)
++
+ 	samsung_clk_register_pll(exynos5420_plls, ARRAY_SIZE(exynos5420_plls),
+ 					reg_base);
+ 	samsung_clk_register_fixed_rate(exynos5420_fixed_rate_clks,
 -- 
 1.7.9.5
