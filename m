@@ -1,70 +1,69 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] PCI: exynos: add support for MSI
-Date: Mon, 12 Aug 2013 14:42:31 +0530
-Message-ID: <CAK9yfHwEPEfhMCWGbDWK2NQE2zAgmsQc6_Dn498pRP4UX6sYmQ@mail.gmail.com>
-References: <000401ce9739$e0a65410$a1f2fc30$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <000401ce9739$e0a65410$a1f2fc30$@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Pratyush Anand <pratyush.anand@st.com>, Mohit KUMAR <Mohit.KUMAR@st.com>, Siva Reddy Kallam <siva.kallam@samsung.com>, SRIKANTH TUMKUR SHIVANAND <ts.srikanth@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Sean Cross <xobs@kosagi.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH V4 0/4] Add i2s support on smdk5420
+Date: Mon, 12 Aug 2013 15:19:50 +0530
+Message-ID: <1376300994-1679-1-git-send-email-padma.v@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:44928 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756009Ab3HLJsg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Aug 2013 05:48:36 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
+Cc: broonie@kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, abrestic@chromium.org
 
-Hi Jingoo,
+Samsung has different versions of I2S introduced in different
+platforms. Each version has some new support added for multichannel,
+secondary fifo, s/w reset control, internal mux for rclk src clk and
+tdm support. Each newly added change has a quirk. So this patch adds
+all the required quirks as driver data and based on compatible string
+from dtsi fetches the quirks. This also adds i2s support on exynos5420.
 
-On 12 August 2013 14:26, Jingoo Han <jg1.han@samsung.com> wrote:
-> This patch adds support for Message Signaled Interrupt in the
-> Exynops PCIe diver using Synopsys designware PCIe core IP.
+Changes since V3:
+	- Addressed review comments by Tomasz Figa related to const qualifier
+	  for samsung_i2s_dai_data
+	- Removed passing quirks as driver data for non-dt platforms. 
+	- Separated out adding i2s nodes and enabling audio support on 5420
+	  into different patch set as they are dependent on some of already posted
+	  but not yet merged i2c, dwmmc, dma and audss clock controller patches.
 
-s/Exynops PCIe diver/Exynos PCIe driver
+Changes since V2:
+        - Separated out driver side changes and dts changes in two
+          patch sets.
+        - Replaced samsung,s3c6410-i2s-v4 with samsung,s3c6410-i2s-multi
+          for more clarity as suggested by Tomasz Figa.
 
->
-> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> Signed-off-by: Srikanth T Shivanand <ts.srikanth@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> Cc: Pratyush Anand <pratyush.anand@st.com>
-> Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
-> ---
->  arch/arm/boot/dts/exynos5440.dtsi  |    2 +
->  arch/arm/mach-exynos/Kconfig       |    1 +
->  drivers/pci/host/pci-exynos.c      |   60 ++++++++++
->  drivers/pci/host/pcie-designware.c |  213 ++++++++++++++++++++++++++++++++++++
->  drivers/pci/host/pcie-designware.h |    8 ++
->  5 files changed, 284 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> index 586134e..3746835 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -249,6 +249,7 @@
->                 interrupt-map-mask = <0 0 0 0>;
->                 interrupt-map = <0x0 0 &gic 53>;
->                 num-lanes = <4>;
-> +               msi-base = <200>;
+Changes since V1:
+        - Pass quirks as driver data and fetch the quirks based on
+          compatible string from dtsi file as suggested by
+          Tomasz Figa and Mark Brown
+        - Make the I2S driver more flexible with respect to register
+          access as suggested by Tomasz Figa and Mark Brown
+        - Add 5420 support in the driver.
+        - Modify the dtsi files with the corresponding compatible
+          strings and removed the i2s quirks from 5250 dtsi file.
+        - Updated the i2s Documentation with relevent changes and
+          i2s versioning info.
+        - Add i2s nodes on exynos5420.dtsi
+        - Enable sound support on smdk5420
 
-Please update the bindings documentation too.
+This patch set is made based on Mark Brown for-next branch on sound.git.
 
->         };
->
->         pcie@2a0000 {
-> @@ -269,5 +270,6 @@
-[snip]
->
-> +#ifdef CONFIG_PCI_MSI
-> +static void exynos_pcie_clear_irq_level(struct pcie_port *pp)
-> +{
-> +       u32 val;
-> +       struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
-> +       void __iomem *elbi_base = exynos_pcie->elbi_base;
-> +
-> +       val = readl(elbi_base + PCIE_IRQ_LEVEL);
-> +       writel(val, elbi_base + PCIE_IRQ_LEVEL);
+Padmavathi Venna (4):
+  ASoC: Samsung: I2S: Add quirks as driver data in I2S
+  ASoC: Samsung: I2S: Modify the I2S driver to support I2S on
+    Exynos5420
+  ARM: dts: exynos5250: move common i2s properties to exynos5 dtsi
+  ARM: dts: Change i2s compatible string on exynos5250
 
-Sorry, I did not get this. Writing the value read from the same
-register without any operation.
+ .../devicetree/bindings/sound/samsung-i2s.txt      |   22 ++--
+ arch/arm/boot/dts/exynos5.dtsi                     |   21 +++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   17 +---
+ include/linux/platform_data/asoc-s3c.h             |    1 +
+ sound/soc/samsung/i2s-regs.h                       |   15 ++
+ sound/soc/samsung/i2s.c                            |  143 +++++++++++++++-----
+ 6 files changed, 157 insertions(+), 62 deletions(-)
 
 -- 
-With warm regards,
-Sachin
+1.7.4.4
