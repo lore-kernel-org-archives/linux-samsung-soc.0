@@ -1,89 +1,157 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V4 1/4] ASoC: Samsung: I2S: Add quirks as
- driver data in I2S
-Date: Tue, 13 Aug 2013 00:46:03 +0100
-Message-ID: <20130812234603.GM6427@sirena.org.uk>
-References: <1376300994-1679-1-git-send-email-padma.v@samsung.com>
- <1376300994-1679-2-git-send-email-padma.v@samsung.com>
- <52096871.4030703@wwwdotorg.org>
- <20130812231327.GK6427@sirena.org.uk>
- <52096D4A.5070903@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2625783359098949804=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <52096D4A.5070903@wwwdotorg.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Padmavathi Venna <padma.v@samsung.com>, abrestic@chromium.org, tomasz.figa@gmail.com, Rob Herring <rob.herring@calxeda.com>, kgene.kim@samsung.com, Kumar Gala <galak@codeaurora.org>, padma.kvr@gmail.com, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] drm/exynos: Add missing includes
+Date: Tue, 13 Aug 2013 00:46:40 +0100
+Message-ID: <1376351200-23009-1-git-send-email-broonie@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:45176 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755911Ab3HLXrG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Aug 2013 19:47:06 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: David Airlie <airlied@linux.ie>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Mark Brown <broonie@linaro.org>
 
+From: Mark Brown <broonie@linaro.org>
 
---===============2625783359098949804==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="X0jFZ9B+Xs9PGREg"
-Content-Disposition: inline
+Ensure that all externally accessed functions are correctly prototyped
+when defined in each file by making sure the headers with the protoypes
+are included in the file with the definition.
 
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_connector.c | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_dmabuf.c    | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c     | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c      | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c       | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c       | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_plane.c     | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 1 +
+ 10 files changed, 10 insertions(+)
 
---X0jFZ9B+Xs9PGREg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Aug 12, 2013 at 05:18:34PM -0600, Stephen Warren wrote:
-> On 08/12/2013 05:13 PM, Mark Brown wrote:
-
-> >> (although I dare say that at least samsung,supports-rstclr should
-> >> be modified to use the new reset controller bindings)
-
-> > Really?  That doesn't seem terribly sane - I had thought that was
-> > for bodging resets on the side of things that don't normally have
-> > them or need board specific logic.  Also note that this is actually
-> > a magic register write done to reset the IP on some specific IPs.
-
-> I believe that's exactly what the reset subsystem and associated DT
-> bindings were designed for.
-
-That seems...  interesting.  It seems like this is fairly core device
-functionality I'd expect the driver to just be able to understand;  the
-main thing this property was doing was deciding if the reset was needed.
-I'm not sure I see the benefit here?
-
---X0jFZ9B+Xs9PGREg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSCXO4AAoJELSic+t+oim9WzcP/is9ByUR8vY3cN3SRv7JRCqz
-K5bzWSFb7z0xFlNTFY+Z93RtilBbisI+FHo8CDgSI3Ycs8KN+sM1bpgoC3gYIRGS
-it9bzSoeMvQBNnxuhzOS0jDbznohQ+xiTX2gkISVX8X4mxDpGPLMtx2cqVZpCXh/
-E9cSs0QcEu1/5VsxDO61UncBn/Jt53qIoj9hfziFzruUXoxLHOiMIzdhviST8/zc
-AWm/0RIsHzXhgusVc/hNZ9Q6AVwWdJ2437taGPuuzaByWuKDp5I4Ohk2jTLn28P0
-0YeV8/5qn8hQYlGiu6ru39ZyDnFmbObmO5z4ZBiM/r2D2IOv+1GPBTwCHerQezEU
-gUDPcwAOOUXXR2kpvyXG5n9U5QTj3NX1LxTD4cPR5NG15J+bYPDZLoUgCRIw327E
-pNmiL+77JbJNQAL4pQp42PdEkUYxAqSc1B0IgSLaDcNzhI8PQH8WtCUUnqhWkCh7
-qKUFftwBK62CT/klCiNi5XYjGiMGGzRdwoRPqfRpyni67a531/G+tlukS3NYlbqv
-iExrUdDW9rn/mSODgw4KglRLvXYzwwgoxBdqjPeLTdmSS6nQNB18VE2mlXR7TklM
-/kSsQbbKSZWJ+gHDlMyKMgG0jS6Mx/dHmad7hus6rwnDwt5e1u+KO/rfitKgr1Fq
-BxBSdKizLJjW5NkwV42f
-=+4Rk
------END PGP SIGNATURE-----
-
---X0jFZ9B+Xs9PGREg--
-
---===============2625783359098949804==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============2625783359098949804==--
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+index 02a8bc5..3f80673 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
+@@ -17,6 +17,7 @@
+ #include <drm/exynos_drm.h>
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_encoder.h"
++#include "exynos_drm_connector.h"
+ 
+ #define to_exynos_connector(x)	container_of(x, struct exynos_drm_connector,\
+ 				drm_connector)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 9a35d17..6b836c1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -15,6 +15,7 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
+ 
++#include "exynos_drm_crtc.h"
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_encoder.h"
+ #include "exynos_drm_plane.h"
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
+index a0f997e..2b25ac8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
+@@ -11,6 +11,7 @@
+ 
+ #include <drm/drmP.h>
+ #include <drm/exynos_drm.h>
++#include "exynos_drm_dmabuf.h"
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_gem.h"
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index 8e60bd6..3199f5b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -19,6 +19,7 @@
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fb.h"
++#include "exynos_drm_fbdev.h"
+ #include "exynos_drm_gem.h"
+ #include "exynos_drm_iommu.h"
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 6e047bd..a8ab4a4 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -21,6 +21,7 @@
+ #include <drm/drmP.h>
+ #include <drm/exynos_drm.h>
+ #include "regs-fimc.h"
++#include "exynos_drm_drv.h"
+ #include "exynos_drm_ipp.h"
+ #include "exynos_drm_fimc.h"
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index eddea49..1262434 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -23,6 +23,7 @@
+ #include <drm/drmP.h>
+ #include <drm/exynos_drm.h>
+ #include "exynos_drm_drv.h"
++#include "exynos_drm_g2d.h"
+ #include "exynos_drm_gem.h"
+ #include "exynos_drm_iommu.h"
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index 90b8a1a..e69d1d2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -20,6 +20,7 @@
+ #include <drm/drmP.h>
+ #include <drm/exynos_drm.h>
+ #include "regs-gsc.h"
++#include "exynos_drm_drv.h"
+ #include "exynos_drm_ipp.h"
+ #include "exynos_drm_gsc.h"
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 6ee55e6..98eb1f7 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -16,6 +16,7 @@
+ #include "exynos_drm_encoder.h"
+ #include "exynos_drm_fb.h"
+ #include "exynos_drm_gem.h"
++#include "exynos_drm_plane.h"
+ 
+ #define to_exynos_plane(x)	container_of(x, struct exynos_plane, base)
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+index 49669aa..54b7360 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -21,6 +21,7 @@
+ #include <drm/exynos_drm.h>
+ #include "regs-rotator.h"
+ #include "exynos_drm.h"
++#include "exynos_drm_drv.h"
+ #include "exynos_drm_ipp.h"
+ 
+ /*
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index c57c565..4400330 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -23,6 +23,7 @@
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_encoder.h"
++#include "exynos_drm_vidi.h"
+ 
+ /* vidi has totally three virtual windows. */
+ #define WINDOWS_NR		3
+-- 
+1.8.4.rc1
