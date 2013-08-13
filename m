@@ -1,211 +1,53 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH] drm/exynos: Add missing includes
-Date: Tue, 13 Aug 2013 11:27:04 +0900
-Message-ID: <005601ce97cc$995f3840$cc1da8c0$%dae@samsung.com>
-References: <1376351200-23009-1-git-send-email-broonie@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCHv3 0/4] device tree support for exynos rotator
+Date: Tue, 13 Aug 2013 14:12:55 +0900
+Message-ID: <1376370779-26930-1-git-send-email-chanho61.park@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28121 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756774Ab3HMC1H (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62296 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753705Ab3HMFNd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Aug 2013 22:27:07 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MRG00JSZ6SYEN00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Aug 2013 11:27:04 +0900 (KST)
-In-reply-to: <1376351200-23009-1-git-send-email-broonie@kernel.org>
-Content-language: ko
+	Tue, 13 Aug 2013 01:13:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>, 'David Airlie' <airlied@linux.ie>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Mark Brown' <broonie@linaro.org>
+To: inki.dae@samsung.com, kgene.kim@samsung.com
+Cc: dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, mark.rutland@arm.com, l.stach@pengutronix.de, s.nawrocki@samsung.com, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, sachin.kamat@linaro.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Chanho Park <chanho61.park@samsung.com>
 
+This patchset includes device tree support for rotator of exynos4210/4x12/5250.
+Unfortunately, each of them has slightly different limitations of image size.
+The rotator can support several image formats(RGB888/555, YCbCr422/420_2/3p).
+For convinience, however, exynos drm rotator driver only support RGB888 and
+YCbCr420 2-Plane formats. For example, the exynos4210 has 16k x 16k maximum size
+. But rest of them has 8k x 8k. In addition, RGB888 X/Y pixel size of exynos5250
+should be multiple of 2. But others are multiple of 4.
+Thus, we should define different compatibles and limit tables for each chipsets.
 
+This patchset is based on the Kukjin's dt-exynos tree.
+(git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.12-next/dt-exynos)
 
-> -----Original Message-----
-> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
-> owner@vger.kernel.org] On Behalf Of Mark Brown
-> Sent: Tuesday, August 13, 2013 8:47 AM
-> To: David Airlie
-> Cc: linux-samsung-soc@vger.kernel.org; dri-devel@lists.freedesktop.org;
-> Mark Brown
-> Subject: [PATCH] drm/exynos: Add missing includes
-> 
-> From: Mark Brown <broonie@linaro.org>
-> 
-> Ensure that all externally accessed functions are correctly prototyped
-> when defined in each file by making sure the headers with the protoypes
-> are included in the file with the definition.
-> 
+Changes from v2:
+ - Remove unnecessary 'of_match_ptr'
+ - Consolidate dt support code and documentation into one patch
+ - Fix typo and remove status node.
 
-I definitely missed it. sorry about that. Actually I was going to try to
-incur something such as compile warning. You mean that the warning could be
-incurred by compiler in case that a external module includes a header of
-Exynos drm but the prototype of the header file differs from the one of .c
-file?
+Changes from v1:
+ - Added exynos5250 binding.
+ - Move limit table into driver code from DT-nodes
 
-I will apply it to -next but I'd like to understand why this patch is needed
-surely. And it seems like that other drivers have same issue also. :)
+Chanho Park (4):
+  drm/exynos: add device tree support for rotator
+  ARM: dts: Add rotator node for exynos4210
+  ARM: dts: Add rotator node for exynos4x12
+  ARM: dts: Add rotator node for exynos5250
 
-Thanks,
-Inki Dae
+ .../devicetree/bindings/gpu/samsung-rotator.txt    |   27 +++++
+ arch/arm/boot/dts/exynos4.dtsi                     |    8 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                  |    4 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c        |  108 +++++++++++++++-----
+ 5 files changed, 127 insertions(+), 28 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpu/samsung-rotator.txt
 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_connector.c | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_dmabuf.c    | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_fbdev.c     | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c      | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_g2d.c       | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c       | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_plane.c     | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_rotator.c   | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c      | 1 +
->  10 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_connector.c
-> b/drivers/gpu/drm/exynos/exynos_drm_connector.c
-> index 02a8bc5..3f80673 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_connector.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_connector.c
-> @@ -17,6 +17,7 @@
->  #include <drm/exynos_drm.h>
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_encoder.h"
-> +#include "exynos_drm_connector.h"
-> 
->  #define to_exynos_connector(x)	container_of(x, struct
-> exynos_drm_connector,\
->  				drm_connector)
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> index 9a35d17..6b836c1 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -15,6 +15,7 @@
->  #include <drm/drmP.h>
->  #include <drm/drm_crtc_helper.h>
-> 
-> +#include "exynos_drm_crtc.h"
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_encoder.h"
->  #include "exynos_drm_plane.h"
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> index a0f997e..2b25ac8 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> @@ -11,6 +11,7 @@
-> 
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
-> +#include "exynos_drm_dmabuf.h"
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_gem.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> index 8e60bd6..3199f5b 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
-> @@ -19,6 +19,7 @@
-> 
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_fb.h"
-> +#include "exynos_drm_fbdev.h"
->  #include "exynos_drm_gem.h"
->  #include "exynos_drm_iommu.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> index 6e047bd..a8ab4a4 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -21,6 +21,7 @@
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
->  #include "regs-fimc.h"
-> +#include "exynos_drm_drv.h"
->  #include "exynos_drm_ipp.h"
->  #include "exynos_drm_fimc.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> index eddea49..1262434 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> @@ -23,6 +23,7 @@
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
->  #include "exynos_drm_drv.h"
-> +#include "exynos_drm_g2d.h"
->  #include "exynos_drm_gem.h"
->  #include "exynos_drm_iommu.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> index 90b8a1a..e69d1d2 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -20,6 +20,7 @@
->  #include <drm/drmP.h>
->  #include <drm/exynos_drm.h>
->  #include "regs-gsc.h"
-> +#include "exynos_drm_drv.h"
->  #include "exynos_drm_ipp.h"
->  #include "exynos_drm_gsc.h"
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> index 6ee55e6..98eb1f7 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> @@ -16,6 +16,7 @@
->  #include "exynos_drm_encoder.h"
->  #include "exynos_drm_fb.h"
->  #include "exynos_drm_gem.h"
-> +#include "exynos_drm_plane.h"
-> 
->  #define to_exynos_plane(x)	container_of(x, struct exynos_plane,
-> base)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> index 49669aa..54b7360 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> @@ -21,6 +21,7 @@
->  #include <drm/exynos_drm.h>
->  #include "regs-rotator.h"
->  #include "exynos_drm.h"
-> +#include "exynos_drm_drv.h"
->  #include "exynos_drm_ipp.h"
-> 
->  /*
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> index c57c565..4400330 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-> @@ -23,6 +23,7 @@
->  #include "exynos_drm_drv.h"
->  #include "exynos_drm_crtc.h"
->  #include "exynos_drm_encoder.h"
-> +#include "exynos_drm_vidi.h"
-> 
->  /* vidi has totally three virtual windows. */
->  #define WINDOWS_NR		3
-> --
-> 1.8.4.rc1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
-> soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+1.7.9.5
