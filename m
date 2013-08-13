@@ -1,119 +1,141 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC v3 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device
- tree bindings documentation
-Date: Tue, 13 Aug 2013 23:14:23 +0200
-Message-ID: <520AA1AF.1010606@gmail.com>
-References: <1375455762-22071-1-git-send-email-arun.kk@samsung.com> <1375455762-22071-3-git-send-email-arun.kk@samsung.com> <51FD7925.2010604@gmail.com> <51FFD892.5000708@wwwdotorg.org> <5200292E.1000505@gmail.com> <520400EB.7000808@wwwdotorg.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [GIT PULL] Samsung PWM support cleanup
+Date: Tue, 13 Aug 2013 23:16:35 +0200
+Message-ID: <3516906.8u5IrARqm7@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f175.google.com ([74.125.82.175]:65197 "EHLO
-	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932141Ab3HMVOf (ORCPT
+Received: from mail-bk0-f41.google.com ([209.85.214.41]:49488 "EHLO
+	mail-bk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759137Ab3HMVQk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Aug 2013 17:14:35 -0400
-In-Reply-To: <520400EB.7000808@wwwdotorg.org>
+	Tue, 13 Aug 2013 17:16:40 -0400
+Received: by mail-bk0-f41.google.com with SMTP id na10so2561882bkb.28
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Aug 2013 14:16:38 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Rob Herring <rob.herring@calxeda.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ian.campbell@citrix.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arm@kernel.org
 
-W dniu 2013-08-08 22:34, Stephen Warren pisze:
-> On 08/05/2013 04:37 PM, Sylwester Nawrocki wrote:
->> On 08/05/2013 06:53 PM, Stephen Warren wrote:
->>> On 08/03/2013 03:41 PM, Sylwester Nawrocki wrote:
->>>> On 08/02/2013 05:02 PM, Arun Kumar K wrote:
->>>>> The patch adds the DT binding documentation for Samsung
->>>>> Exynos5 SoC series imaging subsystem (FIMC-IS).
->>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->>>>> b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->>>>> new file mode 100644
->>>>> index 0000000..49a373a
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->>>>> @@ -0,0 +1,52 @@
->>>>> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
->>>>> +------------------------------------------------------
->>>>> +
->>>>> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
->>>>> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
->>>>> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
->>>>> +handle sensor controls and camera post-processing operations. The
->>>>> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
->>>>> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
->>>>> +dedicated scalers (SCC and SCP).
->>>
->>> So there are a lot of blocks mentioned there, yet the binding doesn't
->>> seem to describe most of it. Is the binding complete?
->>
->> Thanks for the review Stephen.
->>
->> No, the binding certainly isn't complete, it doesn't describe the all
->> available IP blocks. There are separate MMIO address regions for each
-> ...
->> So while we could list all the devices, we decided not to do so.
->> Because it is not needed by the current software and we may miss some
->> details for case where the whole subsystem is controlled by the host
->> CPU (however such scenario is extremely unlikely AFAICT) which then
->> would be impossible or hard to change.
->
-> Yes, that's probably a good approach.
->
->> I guess we should list all available devices, similarly as it's done
->> in Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt.
->>
->> And then should they just be disabled through the status property
->> if they are not needed in the Linux driver ? I guess it is more
->> sensible than marking them as optional and then not listing them
->> in dts at all ?
->
-> If you can define complete bindings for those nodes, it might make sense
-> to do that. If the devices are perhaps complex to represent and hence
-> you might not be able to come up with complete bindings for them right
-> now, it may indeed be better to simply not mention the devices you don't
-> care about for now.
+Dear ARM SoC maintainers,
 
-We would prefer to start with a minimal binding, this would minimize
-possible issues in future IMHO, as the subsystem is pretty complex.
-Then, if detailed H/W description is required the firmware would need
-to be updated, which would have been backward compatible.
-We could probably come up with a complete binding, but there is a good
-chance something could be done wrong, as that couldn't be actually
-tested. It's not trivial to make this all work on the host CPU while
-most of the detailed H/W knowledge stays on the firmware teams side.
+The following changes since commit 
+c095ba7224d8edc71dcef0d655911399a8bd4a3f:
 
->>>>> +pmu subnode
->>>>> +-----------
->>>>> +
->>>>> +Required properties:
->>>>> + - reg : should contain PMU physical base address and size of the
->>>>> memory
->>>>> +         mapped registers.
->>>
->>> I think you need a compatible value for this. How else is the node
->>> identified? The node name probably should not be used for identification.
->>
->> Of course the node name is currently used for identification. There is no
->> compatible property because this pmu node is used to get hold of only part
->> of the Power Management Unit registers, specific to the FIMC-IS.
->> The PMU has more registers that also other drivers would be interested in,
->> e.g. clocks or USB.
->
-> I believe the correct way to solve this is for there to be a standalone
-> PMU node at the appropriate location in DT, and for the FIMC bindings to
-> reference that other node by phandle.
->
-> Right now, the FIMC driver SW can manually follow the phandle, look at
-> the reg property, and map that itself. Later down the road, you could
-> instantiate a true PMU driver, and have the FIMC driver look up that
-> driver, and call APIs on it. This change can be made without requiring
-> any changes to the DT binding. That way, you aren't introducing a fake
-> PMU node into the FIMC bindings just to satisfy internal Linux driver
-> details.
+  Linux 3.11-rc4 (2013-08-04 13:46:46 -0700)
 
-That sounds reasonable. It lets us to keep the DT binding stable and
-at the same move forward with the FIMC-IS while the PMU part is being
-worked on. Thanks.
+are available in the git repository at:
+
+  git://github.com/tom3q/linux.git tags/v3.12-pwm-cleanup-for-olof
+
+for you to fetch changes up to 4380c39ad3efbe58d7ed3b6adf6e602b23402b1e:
+
+  ARM: SAMSUNG: Remove plat/regs-timer.h header (2013-08-12 21:53:24 
++0200)
+
+----------------------------------------------------------------
+Here is the Samsung PWM cleanup series for you. Particular patches of the
+series involve following modifications:
+ 1) fixing up few things in samsung_pwm_timer clocksource driver,
+ 2) moving remaining Samsung platforms to the new clocksource driver,
+ 3) removing old clocksource driver,
+ 4) adding new multiplatform- and DT-aware PWM driver,
+ 5) moving all Samsung platforms to use the new PWM driver,
+ 6) removing old PWM driver,
+ 7) removing all PWM-related code that is not used anymore.
+
+----------------------------------------------------------------
+Tomasz Figa (20):
+      clocksource: samsung_pwm_timer: Do not request PWM mem region
+      clocksource: samsung_pwm_timer: Correct definition of AUTORELOAD bit
+      clocksource: samsung_pwm_timer: Cache clocksource register address
+      clocksource: samsung_pwm_timer: Do not use clocksource_mmio
+      clocksource: samsung_pwm_timer: Handle suspend/resume correctly
+      ARM: SAMSUNG: Unify base address definitions of timer block
+      ARM: SAMSUNG: Add new PWM platform device
+      ARM: SAMSUNG: Set PWM platform data
+      ARM: SAMSUNG: Move all platforms to new clocksource driver
+      ARM: SAMSUNG: Remove old samsung-time driver
+      ARM: SAMSUNG: Remove unused PWM timer IRQ chip code
+      pwm: samsung: Rename to pwm-samsung-legacy
+      pwm: Add new pwm-samsung driver
+      ARM: SAMSUNG: Rework private data handling in dev-backlight
+      ARM: SAMSUNG: Modify board files to use new PWM platform device
+      pwm: Remove superseded pwm-samsung-legacy driver
+      ARM: SAMSUNG: Remove old PWM timer platform devices
+      ARM: SAMSUNG: Remove pwm-clock infrastructure
+      ARM: SAMSUNG: Remove remaining uses of plat/regs-timer.h header
+      ARM: SAMSUNG: Remove plat/regs-timer.h header
+
+ arch/arm/Kconfig                                   |  11 +-
+ arch/arm/mach-s3c24xx/Kconfig                      |   6 -
+ arch/arm/mach-s3c24xx/clock-s3c2410.c              |   1 -
+ arch/arm/mach-s3c24xx/clock-s3c2412.c              |   1 -
+ arch/arm/mach-s3c24xx/clock-s3c2416.c              |   2 -
+ arch/arm/mach-s3c24xx/clock-s3c2443.c              |   2 -
+ arch/arm/mach-s3c24xx/common.c                     |  27 +
+ arch/arm/mach-s3c24xx/include/mach/map.h           |   2 +
+ arch/arm/mach-s3c24xx/mach-h1940.c                 |   4 +-
+ arch/arm/mach-s3c24xx/mach-rx1950.c                |   5 +-
+ arch/arm/mach-s3c64xx/Kconfig                      |   2 -
+ arch/arm/mach-s3c64xx/clock.c                      |   2 -
+ arch/arm/mach-s3c64xx/common.c                     |  32 +-
+ arch/arm/mach-s3c64xx/include/mach/irqs.h          |   8 -
+ arch/arm/mach-s3c64xx/include/mach/map.h           |   1 +
+ arch/arm/mach-s3c64xx/irq-pm.c                     |   2 -
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |   4 +-
+ arch/arm/mach-s3c64xx/mach-hmt.c                   |   4 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c                |   4 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |   5 +-
+ arch/arm/mach-s5p64x0/Kconfig                      |   2 -
+ arch/arm/mach-s5p64x0/clock-s5p6440.c              |   2 -
+ arch/arm/mach-s5p64x0/clock-s5p6450.c              |   2 -
+ arch/arm/mach-s5p64x0/common.c                     |  27 +
+ arch/arm/mach-s5p64x0/include/mach/irqs.h          |   2 -
+ arch/arm/mach-s5p64x0/include/mach/map.h           |   1 +
+ arch/arm/mach-s5p64x0/mach-smdk6440.c              |   5 +-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c              |   5 +-
+ arch/arm/mach-s5p64x0/pm.c                         |   3 -
+ arch/arm/mach-s5pc100/Kconfig                      |   1 -
+ arch/arm/mach-s5pc100/clock.c                      |   2 -
+ arch/arm/mach-s5pc100/common.c                     |  28 +
+ arch/arm/mach-s5pc100/include/mach/irqs.h          |   2 -
+ arch/arm/mach-s5pc100/include/mach/map.h           |   1 +
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |   5 +-
+ arch/arm/mach-s5pv210/Kconfig                      |   1 -
+ arch/arm/mach-s5pv210/clock.c                      |   1 -
+ arch/arm/mach-s5pv210/common.c                     |  28 +
+ arch/arm/mach-s5pv210/include/mach/irqs.h          |   2 -
+ arch/arm/mach-s5pv210/include/mach/map.h           |   1 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |   5 +-
+ arch/arm/mach-s5pv210/pm.c                         |  10 -
+ arch/arm/plat-samsung/Kconfig                      |  14 -
+ arch/arm/plat-samsung/Makefile                     |   3 -
+ arch/arm/plat-samsung/dev-backlight.c              |  61 +-
+ arch/arm/plat-samsung/devs.c                       |  42 +-
+ arch/arm/plat-samsung/include/plat/clock.h         |   4 -
+ arch/arm/plat-samsung/include/plat/devs.h          |   1 +
+ arch/arm/plat-samsung/include/plat/irq-vic-timer.h |  13 -
+ arch/arm/plat-samsung/include/plat/irqs.h          |   9 -
+ arch/arm/plat-samsung/include/plat/pwm-clock.h     |  81 ---
+ arch/arm/plat-samsung/include/plat/pwm-core.h      |  22 +
+ arch/arm/plat-samsung/include/plat/regs-timer.h    | 124 ----
+ arch/arm/plat-samsung/include/plat/samsung-time.h  |  23 -
+ arch/arm/plat-samsung/irq-vic-timer.c              |  98 ---
+ arch/arm/plat-samsung/pwm-clock.c                  | 474 --------------
+ arch/arm/plat-samsung/s5p-irq.c                    |   4 -
+ arch/arm/plat-samsung/samsung-time.c               | 394 ------------
+ drivers/clocksource/Kconfig                        |   1 -
+ drivers/clocksource/samsung_pwm_timer.c            | 108 ++--
+ drivers/pwm/pwm-samsung.c                          | 709 
+++++++++++++++-------
+ include/clocksource/samsung_pwm.h                  |   7 +
+ 62 files changed, 793 insertions(+), 1660 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/irq-vic-timer.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/pwm-clock.h
+ create mode 100644 arch/arm/plat-samsung/include/plat/pwm-core.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-timer.h
+ delete mode 100644 arch/arm/plat-samsung/irq-vic-timer.c
+ delete mode 100644 arch/arm/plat-samsung/pwm-clock.c
+ delete mode 100644 arch/arm/plat-samsung/samsung-time.c
