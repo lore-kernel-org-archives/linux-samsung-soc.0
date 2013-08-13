@@ -1,119 +1,87 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 01/15] drivers: phy: add generic PHY framework
-Date: Tue, 13 Aug 2013 13:37:07 +0200
-Message-ID: <2034985.S0danJZqk4@amdc1227>
-References: <20130720220006.GA7977@kroah.com> <20130731061538.GC13289@radagast>
- <520A0E1C.5000306@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 10/18] spi: s3c64xx: Do not require legacy
+ DMA API in case of S3C64XX
+Date: Tue, 13 Aug 2013 13:02:03 +0100
+Message-ID: <20130813120203.GW6427@sirena.org.uk>
+References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
+ <1376243970-6489-11-git-send-email-tomasz.figa@gmail.com>
+ <20130812233641.GL6427@sirena.org.uk> <2472314.6b8DcBdcjO@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <520A0E1C.5000306@ti.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: balbi@ti.com, Greg KH <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Alan Stern <stern@rowland.harvard.edu>, kyungmin.park@samsung.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, tony@atomide.com, arnd@arndb.de, swarren@nvidia.com, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com
+Content-Type: multipart/mixed; boundary="===============1711056094833517217=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <2472314.6b8DcBdcjO@flatron>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Takashi Iwai <tiwai@suse.de>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <djbw@fb.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 13 of August 2013 16:14:44 Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Wednesday 31 July 2013 11:45 AM, Felipe Balbi wrote:
-> > Hi,
-> > 
-> > On Wed, Jul 31, 2013 at 11:14:32AM +0530, Kishon Vijay Abraham I wrote:
-> >>>>>>> IMHO we need a lookup method for PHYs, just like for clocks,
-> >>>>>>> regulators, PWMs or even i2c busses because there are complex
-> >>>>>>> cases
-> >>>>>>> when passing just a name using platform data will not work. I
-> >>>>>>> would
-> >>>>>>> second what Stephen said [1] and define a structure doing things
-> >>>>>>> in a
-> >>>>>>> DT-like way.
-> >>>>>>> 
-> >>>>>>> Example;
-> >>>>>>> 
-> >>>>>>> [platform code]
-> >>>>>>> 
-> >>>>>>> static const struct phy_lookup my_phy_lookup[] = {
-> >>>>>>> 
-> >>>>>>> 	PHY_LOOKUP("s3c-hsotg.0", "otg", "samsung-usbphy.1", "phy.2"),
-> >>>>>> 
-> >>>>>> The only problem here is that if *PLATFORM_DEVID_AUTO* is used
-> >>>>>> while
-> >>>>>> creating the device, the ids in the device name would change and
-> >>>>>> PHY_LOOKUP wont be useful.
-> >>>>> 
-> >>>>> I don't think this is a problem. All the existing lookup methods
-> >>>>> already
-> >>>>> use ID to identify devices (see regulators, clkdev, PWMs, i2c,
-> >>>>> ...). You
-> >>>>> can simply add a requirement that the ID must be assigned manually,
-> >>>>> without using PLATFORM_DEVID_AUTO to use PHY lookup.
-> >>>> 
-> >>>> And I'm saying that this idea, of using a specific name and id, is
-> >>>> frought with fragility and will break in the future in various ways
-> >>>> when
-> >>>> devices get added to systems, making these strings constantly have
-> >>>> to be
-> >>>> kept up to date with different board configurations.
-> >>>> 
-> >>>> People, NEVER, hardcode something like an id.  The fact that this
-> >>>> happens today with the clock code, doesn't make it right, it makes
-> >>>> the
-> >>>> clock code wrong.  Others have already said that this is wrong there
-> >>>> as
-> >>>> well, as systems change and dynamic ids get used more and more.
-> >>>> 
-> >>>> Let's not repeat the same mistakes of the past just because we
-> >>>> refuse to
-> >>>> learn from them...
-> >>>> 
-> >>>> So again, the "find a phy by a string" functions should be removed,
-> >>>> the
-> >>>> device id should be automatically created by the phy core just to
-> >>>> make
-> >>>> things unique in sysfs, and no driver code should _ever_ be reliant
-> >>>> on
-> >>>> the number that is being created, and the pointer to the phy
-> >>>> structure
-> >>>> should be used everywhere instead.
-> >>>> 
-> >>>> With those types of changes, I will consider merging this subsystem,
-> >>>> but
-> >>>> without them, sorry, I will not.
-> >>> 
-> >>> I'll agree with Greg here, the very fact that we see people trying to
-> >>> add a requirement of *NOT* using PLATFORM_DEVID_AUTO already points
-> >>> to a
-> >>> big problem in the framework.
-> >>> 
-> >>> The fact is that if we don't allow PLATFORM_DEVID_AUTO we will end up
-> >>> adding similar infrastructure to the driver themselves to make sure
-> >>> we
-> >>> don't end up with duplicate names in sysfs in case we have multiple
-> >>> instances of the same IP in the SoC (or several of the same PCIe
-> >>> card).
-> >>> I really don't want to go back to that.
-> >> 
-> >> If we are using PLATFORM_DEVID_AUTO, then I dont see any way we can
-> >> give the correct binding information to the PHY framework. I think we
-> >> can drop having this non-dt support in PHY framework? I see only one
-> >> platform (OMAP3) going to be needing this non-dt support and we can
-> >> use the USB PHY library for it.> 
-> > you shouldn't drop support for non-DT platform, in any case we lived
-> > without DT (and still do) for years. Gotta find a better way ;-)
-> 
-> hmm..
-> 
-> how about passing the device names of PHY in platform data of the
-> controller? It should be deterministic as the PHY framework assigns its
-> own id and we *don't* want to add any requirement that the ID must be
-> assigned manually without using PLATFORM_DEVID_AUTO. We can get rid of
-> *phy_init_data* in the v10 patch series.
 
-What about slightly altering the concept of v9 to pass a pointer to struct 
-device instead of device name inside phy_init_data?
+--===============1711056094833517217==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xQA5JmyoyfznAa64"
+Content-Disposition: inline
 
-Best regards,
-Tomasz
 
+--xQA5JmyoyfznAa64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Aug 13, 2013 at 01:49:53AM +0200, Tomasz Figa wrote:
+
+> I've been testing this without any significant patches, like PWM, CCF or=
+=20
+> DT support, just everything from the branch I pointed to and some board-
+> specific patches to help in debugging.
+
+I retested with the SPI patches you sent separately yesterday which
+didn't make a difference for the SPI issue.
+
+> Anyway, this is the exact branch I've been using:
+
+> git://github.com/tom3q/linux.git v3.12-pl080-devel
+
+I can't test this directly as it has the DAPM bugs I fixed yesterday
+in it (those patches will hit -next tomorrow), however it does look like
+there's nothing else relevant in there...
+
+--xQA5JmyoyfznAa64
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSCiA4AAoJELSic+t+oim9ep0QAJWIMmIJR3Y9j/6Ui7SEUO2Z
+WEf3zdq+jDqLw/rUkHYhCKKTxokUsDpuDwuFmc/oc9sMLIU3g7bXrEu1PTTu06HY
+5Gm4aIJ05E9170oS+JsMwuBBAUoIh30v9M2/B3yglACIkHB2QRJB+gPVsWIF4EfU
+xOvDBZ8oOiSAZ4JPichgaUf9IPOtuCic12IFR1Cr68SGNyKr3QvxOBjpvubXe+C8
+yqVOXt6nlABHX8yzzwlqeAGztOmdWMiGpm3WFHM9DkK1PvJl15C4uSrBgBGs5Ptw
+3j4f0qxEl6FDKiSlQ1BIg9HdFcpT+FQ8n60CB2MO78J25zAOeuWj9NGKArLAmdPS
+AGkxAx/e/jASGTuk21Jo3PJfiF0g2dvw9HVdVi75TcT1erWW+gewgqqC6Hqzm4qL
+f25qupR6d6OSHnpzGaBb11wayQjxX7W3IlS3IfddYAxNrSU6fM/+bjVcCgoKrYJ6
+4A75fVv4XpRKY/zOVMjDFO77nZTWPh5Op2S7Ue9V/x1vFOTfa+Vpo7/9eDu5meJO
+RlNkADdo5f9U9koY6PTRyIp7MfFTEx9GUD7oja+iIlwL5GXroSvGcYTYso1ymLqd
+0B7kyMx5+zIEm9gJloP8QOofWQqvJwi2MYF5UCl3kBvyZgNcd4hs0wBzzWACltjY
+/uQzui8buV6Rf5uf4LAI
+=V8HO
+-----END PGP SIGNATURE-----
+
+--xQA5JmyoyfznAa64--
+
+--===============1711056094833517217==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1711056094833517217==--
