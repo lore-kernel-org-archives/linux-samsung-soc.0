@@ -1,15 +1,15 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 10/18] spi: s3c64xx: Do not require legacy
- DMA API in case of S3C64XX
-Date: Tue, 13 Aug 2013 21:29:41 +0100
-Message-ID: <20130813202941.GH6427@sirena.org.uk>
+Subject: Re: [PATCH 12/18] ARM: s3c64xx: Add support for DMA
+ using generic amba-pl08x driver
+Date: Tue, 13 Aug 2013 21:35:36 +0100
+Message-ID: <20130813203536.GI6427@sirena.org.uk>
 References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
- <20130813185547.GD6427@sirena.org.uk>
- <20130813201816.GG6427@sirena.org.uk> <1686992.nQEd3xdoHn@flatron>
+ <1376243970-6489-13-git-send-email-tomasz.figa@gmail.com>
+ <20130813175251.GC6427@sirena.org.uk> <4262768.VLqddFvVic@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5788349411129249805=="
+Content-Type: multipart/mixed; boundary="===============6082986098341513195=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1686992.nQEd3xdoHn@flatron>
+In-Reply-To: <4262768.VLqddFvVic@flatron>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -24,66 +24,76 @@ Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Mike Turquet
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============5788349411129249805==
+--===============6082986098341513195==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="t8sZUJWWzCYn6PHL"
+	protocol="application/pgp-signature"; boundary="5Vr4v9a0xMzD0x07"
 Content-Disposition: inline
 
 
---t8sZUJWWzCYn6PHL
+--5Vr4v9a0xMzD0x07
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2013 at 10:20:19PM +0200, Tomasz Figa wrote:
-> On Tuesday 13 of August 2013 21:18:16 Mark Brown wrote:
+On Tue, Aug 13, 2013 at 01:10:02PM -0700, Tomasz Figa wrote:
+> On Tuesday 13 of August 2013 18:52:51 Mark Brown wrote:
 
-> > 	if (dev->chancnt > 1 && !dma_has_cap(DMA_PRIVATE, dev->cap_mask))
-> > 		list_for_each_entry(chan, &dev->channels, device_node) {
-> > 			/* some channels are already publicly allocated */
-> > 			if (chan->client_count) {
+> > On Sun, Aug 11, 2013 at 07:59:24PM +0200, Tomasz Figa wrote:
+> > > +#define pl330_filter pl08x_filter_id
 
-> > which is happening because dma1chan0 (which is on the same DMA
-> > controller as the SPI controller) and in fact every other DMA channel
-> > had references grabbed by the network stack dmaengine helpers which I'd
-> > enabled in config.  The fact that they do that is unhelpful, it renders
-> > the API mostly useless, but is nothing to do with this series.
+> > So, this is pretty fun and probably not going to play too nicely for
+> > multiplatform kernels...
 
-> I believe you just found another brokenness of current DMA channel=20
-> matching.
+> Yes, this is really funny and only shows the brokenness of current channe=
+l=20
+> filtering mechanism used in DMA engine subsystem. Fortunately this is=20
+> quite irrelevant to multiplatform kernels, because no users of it will be=
+=20
+> compiled in, since it's used only for legacy (non-DT) channel filtering.
 
-Yeah, at first glance the reference grabbing thing seems a bit peculiar.
-I didn't research why it's done that way yet.
+Well, the thing here is more about the fact that the match function is
+silently being hijacked - it should be possible to do this in the device
+registrations.  I'd expect you could get a non-DT kernel which was
+affected, but you'd probably have to try.
 
---t8sZUJWWzCYn6PHL
+> Anyway, I would happily redesign and rewrite the DMA engine channel=20
+> matching completely to make it much more sane, but I guess I would need a=
+n=20
+> ack from Vinod and Dan to do it.
+
+I'd be really keen to get this code merged sooner rather than later for
+ASoC development so if there's a way to do it separately to fixing the
+filtering that'd be good.
+
+--5Vr4v9a0xMzD0x07
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.20 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSCpcxAAoJELSic+t+oim9bxAP/0QJ1lRL0/9GWqrLeXp5Sb7q
-yt/beBWYPnfQyGZ0dtWZZfnD4Ftfi8x/rzEWOkGPGsm0BqmiP0Szjb7Imm9Nd5WK
-rM62iGiK+eZzTfcc6EaSXWZwf5IEJyrvqcqDjWNjDqREaA4jWSz/bFIYuk+djOL9
-BiB5Q9C+AfzfwL4ZG0Wm+74pd/FR5rLG87H++86tJzYgaKeGE7si3UiPmUXAiUTN
-cFW8MAEKjqD/eQkUN9gRrSl/sUx7adLEPLTdc3U7nPGVqH+unD2Qis5moBe3WKfo
-ZRGjk4dfi2hC56EJIuTXUr9VkMcCMtmvc63l4thYEXxk1Kw36vWnn7pasEHlWTRT
-TYUHRxWTIWxIt92Vv9Bu17wPIrh+99xCOwSmw2zsVE+hTijq6VErgtDTt2onx/S7
-oG6IpmetjBprM2HPk0WZxj8glFl3o80nb/eFgz8fJCc9RE6lb5lnmutKZ6izRQYR
-+oGRH46+OZXCWl7WlFO11ybmuJK2ApbKUJGiqUaj7xKBe5kCNXUnzM+Hn37kMaUl
-GVZ1ENzmduPOpu8G3Kcc27VCANIgcC0iCrXe7ol1Wodpdc3VxYybFLIoHCYhEx0t
-sa4Mwn/ApZRZZXsZtiU2YAA9IubaBwTcqKmDUgEUOqT8nwgL7tfTQMXIRk8J3s0L
-edyU0gFv7A4OeFAskC67
-=dMF/
+iQIcBAEBAgAGBQJSCpiVAAoJELSic+t+oim9MAAP/3HX1IK+aB+Ilsw39w42zb8n
+320rmAVrtcykTm0pskBAiEOpRgDK+SnpJQdmw53is/zZBfnZTafcz57Mp+ftfoLJ
+w+J5AJ/E1DMVmeiaWETFouMnqLfaVDyyb89eTtSlUvWw6YvoEWgm69R5D4l3gNgW
+XrHOWaDHMBb2CswKVGUCBlLhDDHxVpKgSYxEC2rZOISO89Q9FjfjdOi/BBNiMUqA
+fXGRfJ+859bDtpsc2T4aJh3CHoW1swSVaUKxbt0HDa+NKDPi7woNBikdqPNhN60W
+TJyIhM4Qn/a3PI6WIBdJwW553LIa8bMEEInGGzd92hlqVQ01S1ugmYQ78H0CqGHT
+R0lcwc657i5vrN/eaGtt50mfVOm+S7nn7/9uWKpMLqAgKANRfCZMl4hcE0B8V8kO
+5pVY1O3A3qcJP9+oMwTzP7BOIA3Vr8/U/V7t6ye2/yYWI5la+NWQGjHV7c4GfIAZ
+u/iW1aCh7wS9WxNm5E48/XEeyWNPS+HS5oNW5rETEfs+bPZx9+aWjb6AqB5aJ9hb
+yLE3cBMX2OX01P0nAuy9N1/jrXzXWslD7r0YDBANujujuoTjxCB7xGrs1tWNi2qZ
+UHMiSmsA3SOVOrtRjQNVEeL8bKzSnZjBpUKqa7Cqdo8os4c4cV/yqAQDAucfTy5k
+6o7Ac5WJvv4H3mzJnwzp
+=0ass
 -----END PGP SIGNATURE-----
 
---t8sZUJWWzCYn6PHL--
+--5Vr4v9a0xMzD0x07--
 
---===============5788349411129249805==
+--===============6082986098341513195==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
---===============5788349411129249805==--
+--===============6082986098341513195==--
