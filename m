@@ -1,26 +1,24 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v3 5/9] ARM: dts: exynos5250: move common hdmi properties
- to exynos5 dtsi
-Date: Wed, 14 Aug 2013 19:05:37 +0900
-Message-ID: <112601ce98d5$d2ff5d50$78fe17f0$@org>
+Subject: RE: [PATCH v3 0/9] ARM: dts: exynos: add support for hdmi subsystem
+Date: Wed, 14 Aug 2013 19:11:39 +0900
+Message-ID: <112701ce98d6$aaed8840$00c898c0$@org>
 References: <1374737677-3215-1-git-send-email-rahul.sharma@samsung.com>
- <1374737677-3215-6-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50713 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:51699 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759357Ab3HNKFj (ORCPT
+	with ESMTP id S1752727Ab3HNKLm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 06:05:39 -0400
+	Wed, 14 Aug 2013 06:11:42 -0400
 Received: from epcpsbgr5.samsung.com
  (u145.gpu120.samsung.co.kr [203.254.230.145])
  by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MRI00LH0MPE7IX0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 19:05:38 +0900 (KST)
-In-reply-to: <1374737677-3215-6-git-send-email-rahul.sharma@samsung.com>
+ with ESMTP id <0MRI00EMVMZAWTK0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 19:11:40 +0900 (KST)
+In-reply-to: <1374737677-3215-1-git-send-email-rahul.sharma@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -29,156 +27,69 @@ Cc: sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach
 
 Rahul Sharma wrote:
 > 
-> Hdmi Subsystem nodes shares many properties across exynos5 SoCs
-> (exynos5250 and exyno5420). Common code is moved to exynos5.dtsi
-> which is included in exyno5250 and exynos5420 SoC files.
+> Common properties for I2C and Hdmi Subsystem is moved to exynos5
+> dtsi file. It also adds Device tree nodes and clocks information
+> for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
+> hpd gpio and update binding documents.
 > 
-> It also renames the hdmi and mixer nodes as per dt naming
-> convention in the format name@phy_add.
+> This set is based on kukjin's for-next branch at
+> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
 > 
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> ---
->  arch/arm/boot/dts/cros5250-common.dtsi    |    2 +-
->  arch/arm/boot/dts/exynos5.dtsi            |   12 ++++++++++++
->  arch/arm/boot/dts/exynos5250-arndale.dts  |    7 ++++++-
->  arch/arm/boot/dts/exynos5250-smdk5250.dts |    7 ++++++-
->  arch/arm/boot/dts/exynos5250-snow.dts     |    8 ++++++++
->  arch/arm/boot/dts/exynos5250.dtsi         |    8 ++------
->  6 files changed, 35 insertions(+), 9 deletions(-)
+> v3:
+> 1) Rebase to kgene for-next based on 3.11-rc1.
+> 2) Changes clock numbers as per updated clocks file for
+> exyno5250 and exynos5420.
+> 3) Dropped Sachin patch as already got merged.
 > 
-> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi
-> b/arch/arm/boot/dts/cros5250-common.dtsi
-> index dc259e8b..bef56fa 100644
-> --- a/arch/arm/boot/dts/cros5250-common.dtsi
-> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
-> @@ -299,7 +299,7 @@
->  		status = "disabled";
->  	};
+> v2:
+> 1) Added patch for moving common i2c properties to exynos5.dtsi
+> 2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
+> 3) moved hpd pinctrl node to board file.
+> 4) Added Sachin's patch to update binding document for hdmi with hpd
+> information.
 > 
-> -	hdmi {
-> +	hdmi@14530000 {
->  		hpd-gpio = <&gpx3 7 0>;
->  	};
+> Andrew Bresticker (1):
+>   ARM: dts: exynos5420: add i2c device nodes
 > 
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi
-> b/arch/arm/boot/dts/exynos5.dtsi
-> index 1ae179e..dcb4943 100644
-> --- a/arch/arm/boot/dts/exynos5.dtsi
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -144,4 +144,16 @@
->  		#size-cells = <0>;
->  		status = "disabled";
->  	};
-> +
-> +	hdmi@14530000 {
-> +		reg = <0x14530000 0x70000>;
-> +		interrupts = <0 95 0>;
-> +		status = "disabled";
-> +	};
-> +
-> +	mixer@14450000 {
-> +		reg = <0x14450000 0x10000>;
-> +		interrupts = <0 94 0>;
-> +		status = "disabled";
-> +	};
->  };
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
-> b/arch/arm/boot/dts/exynos5250-arndale.dts
-> index 83ab780..955ecfc 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -471,13 +471,18 @@
->  		};
->  	};
+> Rahul Sharma (7):
+>   ARM: dts: exynos5250: add clocks to hdmi dt node
+>   ARM: dts: exynos5250: move common i2c properties to exynos5 dtsi
+>   ARM: dts: exynos5250: move common hdmi properties to exynos5 dtsi
+>   ARM: dts: exynos5420: add dt nodes for hdmi subsystem
+>   ARM: dts: exynos5420: add clocks for hdmi subsystem
+>   ARM: dts: exynos5420: add hdmi hpd gpio pinctrl node
+>   of/documentation: update with clock information for exynos hdmi
+>     subsystem
 > 
-> -	hdmi {
-> +	hdmi@14530000 {
-> +		status = "okay";
->  		hpd-gpio = <&gpx3 7 2>;
->  		vdd_osc-supply = <&ldo10_reg>;
->  		vdd_pll-supply = <&ldo8_reg>;
->  		vdd-supply = <&ldo8_reg>;
->  	};
+> Sean Paul (1):
+>   ARM: dts: exynos5250: add mixer clocks to mixer node
 > 
-> +	mixer@14450000 {
-> +		status = "okay";
-> +	};
-> +
->  	regulators {
->  		compatible = "simple-bus";
->  		#address-cells = <1>;
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 945e6cc..1cce2e8 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -221,10 +221,15 @@
->  		status = "disabled";
->  	};
+>  .../devicetree/bindings/video/exynos_hdmi.txt      |   14 +++++-
+>  .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
+>  arch/arm/boot/dts/cros5250-common.dtsi             |    2 +-
+>  arch/arm/boot/dts/exynos5.dtsi                     |   48
+++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5250-arndale.dts           |    8 +++-
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   10 +++-
+>  arch/arm/boot/dts/exynos5250-snow.dts              |    8 ++++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   36 +++------------
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   31 +++++++++++++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |   46
++++++++++++++++++++
+>  10 files changed, 174 insertions(+), 33 deletions(-)
 > 
-> -	hdmi {
-> +	hdmi@14530000 {
-> +		status = "okay";
->  		hpd-gpio = <&gpx3 7 0>;
->  	};
-> 
-> +	mixer@14450000 {
-> +		status = "okay";
-> +	};
-> +
->  	codec@11000000 {
->  		samsung,mfc-r = <0x43000000 0x800000>;
->  		samsung,mfc-l = <0x51000000 0x800000>;
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
-> b/arch/arm/boot/dts/exynos5250-snow.dts
-> index e79331d..b1378af 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -196,4 +196,12 @@
->  			clock-frequency = <24000000>;
->  		};
->  	};
-> +
-> +	hdmi@14530000 {
-> +		status = "okay";
-> +	};
-> +
-> +	mixer@14450000 {
-> +		status = "okay";
-> +	};
->  };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> index de54b38..f587cd7 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -578,20 +578,16 @@
->  		clock-names = "gscl";
->  	};
-> 
-> -	hdmi {
-> +	hdmi@14530000 {
->  		compatible = "samsung,exynos4212-hdmi";
-> -		reg = <0x14530000 0x70000>;
-> -		interrupts = <0 95 0>;
->  		clocks = <&clock 344>, <&clock 136>, <&clock 137>,
->  				<&clock 159>, <&clock 1024>;
->  		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
->  				"sclk_hdmiphy", "mout_hdmi";
->  	};
-> 
-> -	mixer {
-> +	mixer@14450000 {
->  		compatible = "samsung,exynos5250-mixer";
-> -		reg = <0x14450000 0x10000>;
-> -		interrupts = <0 94 0>;
->  		clocks = <&clock 343>, <&clock 136>;
->  		clock-names = "mixer", "sclk_hdmi";
->  	};
 > --
 > 1.7.10.4
 
-NAK, again because of same reason with previous my comments. Note, different
-addresses and IRQ# on upcoming exynos5 SoC.
+See my comments about making common stuff for exynos5 SoCs.
+
+And please don't use title like following,
+
+'ARM: dts: exynos0000: ....'.
+
+Because the relatively long prefix of title can cover _real_ title, So just
+'ARM: dts: .... in exynos000' is better.
+
+One more, devicetree(at)vger.kernel.org is right for dt ml.
 
 - Kukjin
