@@ -1,54 +1,39 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 0/29] simplify use of devm_ioremap_resource
-Date: Wed, 14 Aug 2013 11:11:04 +0200
-Message-ID: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Build failure on linux-next
+Date: Wed, 14 Aug 2013 14:44:22 +0530
+Message-ID: <CAHbNUh0ydr7-8rhoOz2+aQYGSNHYiO3bO6WBx6+TYoSqFm2M=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: dri-devel@lists.freedesktop.org
-Cc: alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, linux-input@vger.kernel.org, linux-media@vger.kernel.org, linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, rtc-linux@googlegroups.com, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:56180 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759675Ab3HNJOX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Aug 2013 05:14:23 -0400
+Received: by mail-oa0-f48.google.com with SMTP id o17so12736923oag.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2013 02:14:23 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-devm_ioremap_resource often uses the result of a call to
-platform_get_resource as its last argument.  devm_ioremap_resource does
-appropriate error handling on this argument, so error handling can be
-removed from the call site.  To make the connection between the call to
-platform_get_resource and the call to devm_ioremap_resource more clear, the
-former is also moved down to be adjacent to the latter.
+Hi,
 
-In many cases, this patch changes the specific error value that is
-returned on failure of platform_get_resource.
+We are getting a build failure on today's linux-next (next-20130814)
+with exynos_defconfig.
 
-The semantic patch that makes this change is as follows:
-(http://coccinelle.lip6.fr/)
+  DTC     arch/arm/boot/dts/exynos5420-smdk5420.dtb
+ERROR (phandle_references): Reference to non-existent node or label "pdma1"
 
-// <smpl>
-@@
-expression pdev,res,n,e,e1;
-expression ret != 0;
-identifier l;
-@@
+ERROR (phandle_references): Reference to non-existent node or label "pdma1"
 
-(
-  res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-- if (res == NULL) { ... \(goto l;\|return ret;\) }
-  e = devm_ioremap_resource(e1, res);
-|
-- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  ... when != res
-- if (res == NULL) { ... \(goto l;\|return ret;\) }
-  ... when != res
-+ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  e = devm_ioremap_resource(e1, res);
-)
-// </smpl>
+ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+
+ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+
+ERROR: Input tree has errors, aborting (use -f to force output)
+make[1]: *** [arch/arm/boot/dts/exynos5420-smdk5420.dtb] Error 2
+make: *** [dtbs] Error 2
+
+
+-- 
+Tushar Behera
