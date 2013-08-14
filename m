@@ -1,52 +1,107 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v2 4/4] ARM: SAMSUNG: set s3c24xx_dma_filter for s3c64xx-spi0 device
-Date: Wed, 14 Aug 2013 14:01:22 +0200
-Message-ID: <201308141401.22989.heiko@sntech.de>
-References: <201308141359.13872.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201308141359.13872.heiko@sntech.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH V2] ARM: dts: Add DMA controller node info on Exynos5420.
+Date: Wed, 14 Aug 2013 17:34:22 +0530
+Message-ID: <1376481862-9578-1-git-send-email-padma.v@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:50748 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759580Ab3HNMDO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Aug 2013 08:03:14 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
+Cc: broonie@kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com
 
-The spi-s3c64xx device is also used on the s3c2416 and s3c2443 SoCs.
-The driver also already uses only generic dma-engine operations.
+This patch adds dma controller node info on Exynos5420.
 
-Therefore add another elif to set the s3c24xx filter.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- arch/arm/plat-samsung/devs.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 0f9c3f4..fab458f 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -32,6 +32,7 @@
- #include <linux/ioport.h>
- #include <linux/platform_data/s3c-hsudc.h>
- #include <linux/platform_data/s3c-hsotg.h>
-+#include <linux/platform_data/dma-s3c24xx.h>
+Changes since V1:
+	- In V1, dma node common stuff was added in common exynos5.dtsi file. 
+	  This was removed as per Kukjin comment and added in exynos5420.dtsi.
+
+This patch is dependent on audss clk controller patches that were
+posted in the below link.
+http://www.spinics.net/lists/linux-samsung-soc/msg20253.html
+
+ arch/arm/boot/dts/exynos5420.dtsi |   63 +++++++++++++++++++++++++++++++++++++
+ 1 files changed, 63 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 9e90d1e..23cfea4 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -126,6 +126,69 @@
+ 		interrupts = <0 47 0>;
+ 	};
  
- #include <media/s5p_hdmi.h>
- 
-@@ -1513,8 +1514,10 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- 	pd.num_cs = num_cs;
- 	pd.src_clk_nr = src_clk_nr;
- 	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
--#ifdef CONFIG_PL330_DMA
-+#if defined(CONFIG_PL330_DMA)
- 	pd.filter = pl330_filter;
-+#elif defined(CONFIG_S3C24XX_DMAC)
-+	pd.filter = s3c24xx_dma_filter;
- #endif
- 
- 	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
++	amba {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "arm,amba-bus";
++		interrupt-parent = <&gic>;
++		ranges;
++
++		pdma0: pdma@121A0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x121A0000 0x1000>;
++			interrupts = <0 34 0>;
++			clocks = <&clock 362>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
++		};
++
++		pdma1: pdma@121B0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x121B0000 0x1000>;
++			interrupts = <0 35 0>;
++			clocks = <&clock 363>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
++		};
++
++		mdma0: mdma@10800000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x10800000 0x1000>;
++			interrupts = <0 33 0>;
++			clocks = <&clock 473>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <1>;
++		};
++
++		mdma1: mdma@11C10000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x11C10000 0x1000>;
++			interrupts = <0 124 0>;
++			clocks = <&clock 442>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <1>;
++		};
++
++		adma: adma@03880000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x03880000 0x1000>;
++			interrupts = <0 110 0>;
++			clocks = <&clock_audss EXYNOS_ADMA>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <6>;
++			#dma-requests = <16>;
++		};
++	};
++
+ 	serial@12C00000 {
+ 		clocks = <&clock 257>, <&clock 128>;
+ 		clock-names = "uart", "clk_uart_baud0";
 -- 
-1.7.10.4
+1.7.4.4
