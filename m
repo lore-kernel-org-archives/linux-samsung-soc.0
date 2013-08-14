@@ -1,81 +1,111 @@
 From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH v2 0/7] Add DT nodes for FIMD and DP controller for
- Exynos5420 SoC
-Date: Wed, 14 Aug 2013 11:30:23 +0530
-Message-ID: <CAGm_ybirjeHYAiU=VL6+sZYTW=p8oY1pEJ3Q9gpXvLdPpEFQKw@mail.gmail.com>
-References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
-	<105d01ce98b3$5a395dc0$0eac1940$%kim@samsung.com>
+Subject: Re: [PATCH V2] ARM: dts: Add RTC DT node to Exynos5420 SoC
+Date: Wed, 14 Aug 2013 11:33:06 +0530
+Message-ID: <CAGm_ybgO5MNtjcygC5oCbPh31SfvYin7Gik1OpAGQJwwtOSODg@mail.gmail.com>
+References: <1376308293-7766-1-git-send-email-vikas.sajjan@linaro.org>
+	<105b01ce98b1$5a716fa0$0f544ee0$@org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:65427 "EHLO
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:44834 "EHLO
 	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751861Ab3HNGAZ (ORCPT
+	with ESMTP id S1751861Ab3HNGDI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 02:00:25 -0400
-In-Reply-To: <105d01ce98b3$5a395dc0$0eac1940$%kim@samsung.com>
+	Wed, 14 Aug 2013 02:03:08 -0400
+Received: by mail-wg0-f43.google.com with SMTP id z12so7352130wgg.22
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Aug 2013 23:03:06 -0700 (PDT)
+In-Reply-To: <105b01ce98b1$5a716fa0$0f544ee0$@org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, InKi Dae <inki.dae@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, patches@linaro.org, linaro-kernel@lists.linaro.org
 
 Hi Kukjin,
 
-On Wed, Aug 14, 2013 at 11:28 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+On Wed, Aug 14, 2013 at 11:14 AM, Kukjin Kim <kgene@kernel.org> wrote:
 > Vikas Sajjan wrote:
 >>
->> This patchset adds DT nodes for FIMD and DP controller for Exynos5420
->> based SMDK.
+>> Adds RTC DT node to Exynos5420 SoC.
 >>
->> It moves all common properties of FIMD and DP controller DT node specific
->> to
->> Exynos5 Socs like 5250 and 5420 to exynos5.dtsi file.
->>
->> It also adds required PM domain DT nodes for exynos5420.
->>
->> Is rebased on branch kgene's "for-next"
->> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-
->> samsung.git/log/?h=for-next
->>
->> The DP PHY DT Node is based on Jingoo Han's inflight patchset at
->> http://comments.gmane.org/gmane.linux.drivers.video-input-
->> infrastructure/66435
->>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+>> ---
 >> changes since v1:
->>       - Addressed comments given by Tomasz Figa <tomasz.figa@gmail.com>
->>       and Ajay kumar <ajaynumb@gmail.com>
+>>       - made DT node status as "okay" in the dtsi file itself.
+>> ---
+>>  arch/arm/boot/dts/exynos5.dtsi    |    2 +-
+>>  arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
+>>  arch/arm/boot/dts/exynos5420.dtsi |    7 +++++++
+>>  3 files changed, 10 insertions(+), 2 deletions(-)
 >>
->> Vikas Sajjan (6):
->>   ARM: dts: Move display-timimg information inside FIMD DT node for
->>     exynos5250
->>   ARM: dts: Update FIMD DT node for Exynos5 SoCs
->>   ARM: dts: Add FIMD DT node to exynos5420 DTS files
->>   ARM: dts: Update DP controller DT Node for Exynos5 based SoCs
->>   ARM: dts: Add DP controller DT node to exynos5420 SoC
->>   ARM: dts: Add pin state information for DP HPD support to Exynos5420
+>> diff --git a/arch/arm/boot/dts/exynos5.dtsi
+>> b/arch/arm/boot/dts/exynos5.dtsi
+>> index f65e124..4a8e223 100644
+>> --- a/arch/arm/boot/dts/exynos5.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5.dtsi
+>> @@ -95,7 +95,7 @@
+>>               interrupts = <0 54 0>;
+>>       };
 >>
->> Yadwinder Singh Brar (1):
->>   ARM: dts: Add basic PM domains for EXYNOS5420
+>> -     rtc {
+>> +     rtc@101E0000 {
+>>               compatible = "samsung,s3c6410-rtc";
+>>               reg = <0x101E0000 0x100>;
+>>               interrupts = <0 43 0>, <0 44 0>;
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 88589b7..c82137b 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -178,9 +178,10 @@
+>>               samsung,power-domain = <&pd_mfc>;
+>>       };
 >>
->>  arch/arm/boot/dts/exynos5.dtsi            |   21 +++++++++++
->>  arch/arm/boot/dts/exynos5250-arndale.dts  |    4 ++-
->>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   32 +++++++++--------
->>  arch/arm/boot/dts/exynos5250.dtsi         |   28 ++++++---------
->>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    7 ++++
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts |   31 ++++++++++++++++
->>  arch/arm/boot/dts/exynos5420.dtsi         |   55
->> +++++++++++++++++++++++++++++
->>  7 files changed, 145 insertions(+), 33 deletions(-)
->>
->> --
->> 1.7.9.5
+>> -     rtc {
+>> +     rtc@101E0000 {
+>>               clocks = <&clock 337>;
+>>               clock-names = "rtc";
+>> +             status = "okay";
 >
-> Looks good to me, will apply this whole series with fix typo, timimg? ;-)
+> Well, according to the subject, 'add rtc dt node to exynos5420', this should
+> be handled separately if required.
 >
 
-Thanks.
+So, you want me to spit this 5250 modification to a separate patch
+OR
+Modify the subject line to match the changes.
+
+>>       };
+>>
+>>       tmu@10060000 {
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
+>> b/arch/arm/boot/dts/exynos5420.dtsi
+>> index 9e90d1e..8f1bb08 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -145,4 +145,11 @@
+>>               clocks = <&clock 260>, <&clock 131>;
+>>               clock-names = "uart", "clk_uart_baud0";
+>>       };
+>> +
+>> +     rtc@101E0000 {
+>
+> Please put in the address order or alphabetical.
+>
+
+Sure will do.
 
 
+>> +             clocks = <&clock 317>;
+>> +             clock-names = "rtc";
+>> +             status = "okay";
+>> +       };
+>> +
+>
+> No need last empty line.
+
+OK.
+
+>
 > - Kukjin
 >
 > --
