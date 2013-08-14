@@ -1,87 +1,45 @@
 From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH V2] ARM: dts: Add RTC DT node to Exynos5420 SoC
-Date: Wed, 14 Aug 2013 10:35:57 +0530
-Message-ID: <CAGm_ybih7CppG-Ronq=WK0WPK3rb0HxL3zF7aUA1Ub_0EmXDPQ@mail.gmail.com>
-References: <1376308293-7766-1-git-send-email-vikas.sajjan@linaro.org>
+Subject: Re: [PATCH 0/2] Add GPLL, APLL, KPLL, EPLL and VPLL freq table for
+ exynos5420 and exynos5250
+Date: Wed, 14 Aug 2013 10:36:53 +0530
+Message-ID: <CAGm_ybjdmO3Oisco7eYbQ3=bLjsAi7A4mt8R53tqM=z96m0QjA@mail.gmail.com>
+References: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:59797 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751135Ab3HNFF6 (ORCPT
+Received: from mail-wi0-f177.google.com ([209.85.212.177]:42431 "EHLO
+	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751848Ab3HNFGy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 01:05:58 -0400
-Received: by mail-wi0-f170.google.com with SMTP id hi8so3726005wib.3
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Aug 2013 22:05:57 -0700 (PDT)
-In-Reply-To: <1376308293-7766-1-git-send-email-vikas.sajjan@linaro.org>
+	Wed, 14 Aug 2013 01:06:54 -0400
+Received: by mail-wi0-f177.google.com with SMTP id hq12so1474092wib.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Aug 2013 22:06:53 -0700 (PDT)
+In-Reply-To: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Hi Kukjin,
+Hi Mike,
 
-On Mon, Aug 12, 2013 at 5:21 PM, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
-> Adds RTC DT node to Exynos5420 SoC.
+On Mon, Aug 12, 2013 at 3:32 PM, Vikas Sajjan <vikas.sajjan@linaro.org> wrote:
+> Adds GPLL, APLL, KPLL, EPLL and VPLL freq table for exynos5420 and exynos5250.
 >
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> ---
-> changes since v1:
->         - made DT node status as "okay" in the dtsi file itself.
-> ---
->  arch/arm/boot/dts/exynos5.dtsi    |    2 +-
->  arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
->  arch/arm/boot/dts/exynos5420.dtsi |    7 +++++++
->  3 files changed, 10 insertions(+), 2 deletions(-)
+> is rebased on Mike's
+> https://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=shortlog;h=refs/heads/clk-next
 >
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-> index f65e124..4a8e223 100644
-> --- a/arch/arm/boot/dts/exynos5.dtsi
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -95,7 +95,7 @@
->                 interrupts = <0 54 0>;
->         };
 >
-> -       rtc {
-> +       rtc@101E0000 {
->                 compatible = "samsung,s3c6410-rtc";
->                 reg = <0x101E0000 0x100>;
->                 interrupts = <0 43 0>, <0 44 0>;
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 88589b7..c82137b 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -178,9 +178,10 @@
->                 samsung,power-domain = <&pd_mfc>;
->         };
+> Vikas Sajjan (2):
+>   clk: samsung: Add GPLL freq table for exynos5250 SoC
+>   clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420
+>     SoC
 >
-> -       rtc {
-> +       rtc@101E0000 {
->                 clocks = <&clock 337>;
->                 clock-names = "rtc";
-> +               status = "okay";
->         };
+>  drivers/clk/samsung/clk-exynos5250.c |   19 +++++++-
+>  drivers/clk/samsung/clk-exynos5420.c |   81 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 99 insertions(+), 1 deletion(-)
 >
->         tmu@10060000 {
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 9e90d1e..8f1bb08 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -145,4 +145,11 @@
->                 clocks = <&clock 260>, <&clock 131>;
->                 clock-names = "uart", "clk_uart_baud0";
->         };
-> +
-> +       rtc@101E0000 {
-> +               clocks = <&clock 317>;
-> +               clock-names = "rtc";
-> +               status = "okay";
-> +       };
-> +
->  };
 
-Can you apply this patch.
-
+Can you apply this patchset.
 
 > --
 > 1.7.9.5
