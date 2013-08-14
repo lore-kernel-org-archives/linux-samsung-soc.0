@@ -1,72 +1,98 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL] Samsung-fixes-2 for v3.11
-Date: Wed, 14 Aug 2013 16:32:11 +0900
-Message-ID: <10a801ce98c0$64064b80$2c12e280$@org>
-References: <51FFE30A.5040800@samsung.com> <87ob92pv1x.fsf@kernel.org>
- <10a101ce98bd$c004bd20$400e3760$@org>
- <CAOesGMini9xy5AjVzQinvGS3c2eA9dcPYRJxKf0R0z84FUSHGg@mail.gmail.com>
+Subject: RE: [PATCH v2 2/7] ARM: dts: Update FIMD DT node for Exynos5 SoCs
+Date: Wed, 14 Aug 2013 16:33:56 +0900
+Message-ID: <10a901ce98c0$a25c3de0$e714b9a0$@org>
+References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
+ <1375183178-8201-3-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63376 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758279Ab3HNHcM (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:15597 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759290Ab3HNHd5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 03:32:12 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MRI00EEQFL9GNU0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 16:32:11 +0900 (KST)
-In-reply-to: <CAOesGMini9xy5AjVzQinvGS3c2eA9dcPYRJxKf0R0z84FUSHGg@mail.gmail.com>
+	Wed, 14 Aug 2013 03:33:57 -0400
+In-reply-to: <1375183178-8201-3-git-send-email-vikas.sajjan@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>
-Cc: 'Kevin Hilman' <khilman@linaro.org>, 'Arnd Bergmann' <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Vikas Sajjan' <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: t.figa@samsung.com, devicetree@vger.kernel.org, jg1.han@samsung.com, inki.dae@samsung.com, ajaynumb@gmail.com, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Olof Johansson wrote:
+Vikas Sajjan wrote:
 > 
-> On Wed, Aug 14, 2013 at 12:13 AM, Kukjin Kim <kgene@kernel.org> wrote:
-> > Kevin Hilman wrote:
-> >>
-> >> Kukjin Kim <kgene.kim@samsung.com> writes:
-> >>
-> >> > The following changes since commit
-> >> 5ae90d8e467e625e447000cb4335c4db973b1095:
-> >> >
-> >> >   Linux 3.11-rc3 (2013-07-28 20:53:33 -0700)
-> >> >
-> >> > are available in the git repository at:
-> >> >
-> >> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-
-> samsung.git
-> >> > tags/samsung-fixes-2
-> >> >
-> >> > for you to fetch changes up to
-> 35f8550c8f27968af94ba5235cc611e3b6d86981:
-> >> >
-> >> >   ARM: SAMSUNG: fix to support for missing cpu specific map_io
-> >> > (2013-07-30 13:30:57 +0900)
-> >>
-> >> In the future, please send arm-soc pull request to arm@kernel.org also,
-> >> this makes filtering easier when non-Arnd/Olof folks (like me) are
-> > helping.
-> >>
-> > OK, it's not difficult, BTW I'm not sure what the difference of
-> > linux-arm-kernel ml and arm(at)kernel.org.
+> Moves the properties of FIMD DT node which are common across Exynos5 based
+> SoCs like Exynos5250 and Exxynos5420 to exynos5.dtsi
 > 
-> arm@kernel.org goes to Arnd, Kevin, Russel and myself. I think there
-> might be one or two more people on there, but in general it's
-> arm-soc+arm maintainers.
+%s/Exxynos/Exynos
+
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos5.dtsi           |   10 ++++++++++
+>  arch/arm/boot/dts/exynos5250-arndale.dts |    1 +
+>  arch/arm/boot/dts/exynos5250.dtsi        |    7 +------
+>  3 files changed, 12 insertions(+), 6 deletions(-)
 > 
-> We haven't wanted to add it to MAINTAINERS since we want to keep the
-> traffic mostly to the pull requests of platform maintainers, and not
-> as a cc of patch postings, to keep the traffic volume manageable. :)
+> diff --git a/arch/arm/boot/dts/exynos5.dtsi
+> b/arch/arm/boot/dts/exynos5.dtsi
+> index f65e124..d464b6c 100644
+> --- a/arch/arm/boot/dts/exynos5.dtsi
+> +++ b/arch/arm/boot/dts/exynos5.dtsi
+> @@ -108,4 +108,14 @@
+>  		interrupts = <0 42 0>;
+>  		status = "disabled";
+>  	};
+> +
+> +	fimd@14400000 {
+> +		compatible = "samsung,exynos5250-fimd";
+> +		interrupt-parent = <&combiner>;
+> +		reg = <0x14400000 0x40000>;
+> +		interrupt-names = "fifo", "vsync", "lcd_sys";
+> +		interrupts = <18 4>, <18 5>, <18 6>;
+> +		status = "disabled";
+> +	};
+> +
+
+No need last empty line.
+
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
+> b/arch/arm/boot/dts/exynos5250-arndale.dts
+> index 96d528d..76825ef 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -519,6 +519,7 @@
+>  	};
 > 
-OK, I see.
+>  	fimd: fimd@14400000 {
+> +		status = "okay";
+>  		display-timings {
+>  			native-mode = <&timing0>;
+>  			timing0: timing@0 {
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index ef57277..238bdb2 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -630,12 +630,7 @@
+>  		};
+>  	};
+> 
+> -	fimd {
+> -		compatible = "samsung,exynos5250-fimd";
+> -		interrupt-parent = <&combiner>;
+> -		reg = <0x14400000 0x40000>;
+> -		interrupt-names = "fifo", "vsync", "lcd_sys";
+> -		interrupts = <18 4>, <18 5>, <18 6>;
+> +	fimd@14400000 {
+>  		clocks = <&clock 133>, <&clock 339>;
+>  		clock-names = "sclk_fimd", "fimd";
+>  	};
+> --
+> 1.7.9.5
+
+But you don't need to repost because let me fix when I apply.
 
 Thanks,
 Kukjin
