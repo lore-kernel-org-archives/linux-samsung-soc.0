@@ -1,38 +1,47 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung PWM support cleanup
-Date: Tue, 13 Aug 2013 23:07:02 -0700
-Message-ID: <20130814060702.GH16635@quad.lixom.net>
-References: <3516906.8u5IrARqm7@flatron>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL] Samsung PWM support cleanup
+Date: Wed, 14 Aug 2013 16:08:36 +0900
+Message-ID: <109a01ce98bd$1843cae0$48cb60a0$@org>
+References: <3516906.8u5IrARqm7@flatron> <20130814060702.GH16635@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:54779 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751906Ab3HNGHq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56459 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752784Ab3HNHIh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 02:07:46 -0400
-Received: by mail-pd0-f175.google.com with SMTP id q10so1908204pdj.34
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Aug 2013 23:07:45 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <3516906.8u5IrARqm7@flatron>
+	Wed, 14 Aug 2013 03:08:37 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MRI00JICEI0VGM0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 16:08:36 +0900 (KST)
+In-reply-to: <20130814060702.GH16635@quad.lixom.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arm@kernel.org
+To: 'Olof Johansson' <olof@lixom.net>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arm@kernel.org
 
-On Tue, Aug 13, 2013 at 11:16:35PM +0200, Tomasz Figa wrote:
-> Dear ARM SoC maintainers,
+Olof Johansson wrote:
 > 
-> The following changes since commit 
-> c095ba7224d8edc71dcef0d655911399a8bd4a3f:
+> On Tue, Aug 13, 2013 at 11:16:35PM +0200, Tomasz Figa wrote:
+> > Dear ARM SoC maintainers,
+> >
+> > The following changes since commit
+> > c095ba7224d8edc71dcef0d655911399a8bd4a3f:
+> >
+> >   Linux 3.11-rc4 (2013-08-04 13:46:46 -0700)
+> >
+> > are available in the git repository at:
+> >
+> >   git://github.com/tom3q/linux.git tags/v3.12-pwm-cleanup-for-olof
 > 
->   Linux 3.11-rc4 (2013-08-04 13:46:46 -0700)
+> Thanks, applied.
 > 
-> are available in the git repository at:
-> 
->   git://github.com/tom3q/linux.git tags/v3.12-pwm-cleanup-for-olof
+Same here, this will be merged into samsung tree because of dependency.
 
-Thanks, applied.
-
-
--Olof
+Thanks,
+Kukjin
