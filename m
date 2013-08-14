@@ -1,65 +1,59 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Subject: [PATCH 2/2] ARM: dts: Add dwmmc nodes in SOC specific dts file
-Date: Wed, 14 Aug 2013 17:48:59 +0530
-Message-ID: <1376482739-1994-2-git-send-email-yuvaraj.cd@samsung.com>
-References: <1376482739-1994-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH V3 0/2] Add RTC DT node to Exynos5420 SoC and Fix RTC DT
+ node name for 5250 Soc
+Date: Wed, 14 Aug 2013 14:27:03 +0200
+Message-ID: <3941559.QnWYLUF6Gp@amdc1227>
+References: <1376478181-27539-1-git-send-email-vikas.sajjan@linaro.org>
+ <3054059.xbBShFpfCt@amdc1227>
+ <CAD025yRSX-8Yn1OKo7mZ_qtU057GRr=FOJ7ro-Of+2ePqoAHvA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:63753 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752803Ab3HNMTM (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:24699 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932160Ab3HNM1L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 08:19:12 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rq2so9346016pbb.33
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2013 05:19:11 -0700 (PDT)
-In-Reply-To: <1376482739-1994-1-git-send-email-yuvaraj.cd@samsung.com>
+	Wed, 14 Aug 2013 08:27:11 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MRI0029UT8YYX20@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 13:27:08 +0100 (BST)
+In-reply-to: <CAD025yRSX-8Yn1OKo7mZ_qtU057GRr=FOJ7ro-Of+2ePqoAHvA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim" <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-Exynos5 series SOC's have different versions of DWMMC controller.
-So dwmmc device nodes moved from Exynos5 SOC's common dts file to
-SOC specific dts file.
+On Wednesday 14 of August 2013 17:37:47 Vikas Sajjan wrote:
+> Hi Tomasz,
+> 
+> On 14 August 2013 17:00, Tomasz Figa <t.figa@samsung.com> wrote:
+> > Hi Vikas,
+> > 
+> > On Wednesday 14 of August 2013 16:32:59 Vikas Sajjan wrote:
+> >> changes since v2:
+> >>       - split the 5250 related modifications into a separate patch.
+> > 
+> > I'm not sure whether Kukjin's comment was about this, as it introduces
+> > a
+> > short bisect breakage between patch 1 and patch 2 from this series.
+> > 
+> > IMHO it would be more sensible to make first patch simply fix name of
+> > the node and then a separate patch adding the rtc node for exynos5420.
+> Are you saying that
+> patch 1: should contain modifications for exynos5.dtsi and
+> exynos5250.dtsi   ( basically the RTC name change and status as
+> "okay")
+> patch 2: should contain modifications only for exynos5420.dtsi ( new
+> RTC DT node )
 
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Oh, I forgot about the status property. So ideally there should be 3 
+patches:
+ - patch 1 changing exynos5.dtsi and exynos5250.dtsi to fix RTC node name,
+ - patch 2 adding status="okay" to exynos5250.dtsi,
+ - patch 3 adding RTC node to exynos5420.dtsi.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 88589b7..ae0d852 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -385,18 +385,30 @@
- 	};
- 
- 	dwmmc_0: dwmmc0@12200000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		interrupts = <0 75 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		reg = <0x12200000 0x1000>;
- 		clocks = <&clock 280>, <&clock 139>;
- 		clock-names = "biu", "ciu";
- 	};
- 
- 	dwmmc_1: dwmmc1@12210000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		interrupts = <0 76 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		reg = <0x12210000 0x1000>;
- 		clocks = <&clock 281>, <&clock 140>;
- 		clock-names = "biu", "ciu";
- 	};
- 
- 	dwmmc_2: dwmmc2@12220000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		reg = <0x12220000 0x1000>;
- 		clocks = <&clock 282>, <&clock 141>;
- 		clock-names = "biu", "ciu";
--- 
-1.7.9.5
+Best regards,
+Tomasz
