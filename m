@@ -1,55 +1,48 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V3 0/2] Add RTC DT node to Exynos5420 SoC and Fix RTC DT
- node name for 5250 Soc
-Date: Wed, 14 Aug 2013 13:30 +0200
-Message-ID: <3054059.xbBShFpfCt@amdc1227>
-References: <1376478181-27539-1-git-send-email-vikas.sajjan@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v3 0/4] DT/ARCH updates for MFC
+Date: Wed, 14 Aug 2013 17:11:33 +0530
+Message-ID: <1376480497-17572-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:24025 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759704Ab3HNLaH (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:40245 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759767Ab3HNLlZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 07:30:07 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MRI008XYQLOTZ00@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 12:30:05 +0100 (BST)
-In-reply-to: <1376478181-27539-1-git-send-email-vikas.sajjan@linaro.org>
+	Wed, 14 Aug 2013 07:41:25 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, k.debski@samsung.com, s.nawrocki@samsung.com, sachin.kamat@linaro.org, arun.kk@samsung.com
 
-Hi Vikas,
+The patch series updates the DT nodes of MFC in Exynos4,
+Exynos 5250 and creates node in 5420.
+The memory reservation patch for MFC v7 firmware is omitted
+in this series as its no longer needed after the new CMA DT
+framework by Marek Szyprowski.
 
-On Wednesday 14 of August 2013 16:32:59 Vikas Sajjan wrote:
-> changes since v2:
-> 	- split the 5250 related modifications into a separate patch.
+Changes from v2:
+- Removed register and interrupt properties from common
+exynos5.dtsi file as per Kukjin Kim's suggestion.
+- Dropped v7 memory reservation patch
 
-I'm not sure whether Kukjin's comment was about this, as it introduces a 
-short bisect breakage between patch 1 and patch 2 from this series.
+Changes from v1:
+- Made status disabled in dtsi and enable in dts
+as suggested by Sachin Kamat.
+- Moved common properties to exynos5.dtsi as
+suggested by Chander.
+- Updated binding documentation for special clk removal
+- Updated exynos4 dtsi
 
-IMHO it would be more sensible to make first patch simply fix name of the 
-node and then a separate patch adding the rtc node for exynos5420.
+Arun Kumar K (4):
+  ARM: dts: Update clocks entry in MFC binding documentation
+  ARM: dts: Remove unsused MFC clock from exynos4
+  ARM: dts: Update 5250 MFC node
+  ARM: dts: Add MFC node for exynos 5420
 
-Best regards,
-Tomasz
+ .../devicetree/bindings/media/s5p-mfc.txt          |   10 +++++-----
+ arch/arm/boot/dts/exynos4.dtsi                     |    4 ++--
+ arch/arm/boot/dts/exynos5250.dtsi                  |    2 ++
+ arch/arm/boot/dts/exynos5420.dtsi                  |    8 ++++++++
+ 4 files changed, 17 insertions(+), 7 deletions(-)
 
-> 	- placed the RTC node as per the alphabetical order in the DTS file as
-> 	suggested by Kukjin Kim <kgene@kernel.org>.
-> 
-> changes since v1:
-> 	- made DT node status as "okay" in the dtsi file itself.
-> -
-> Vikas Sajjan (2):
->   ARM: dts: Add RTC DT node to Exynos5420 SoC
->   ARM: dts: Fix the RTC DT node name for Exynos5250 SoC
-> 
->  arch/arm/boot/dts/exynos5.dtsi    |    2 +-
->  arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
->  arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
->  3 files changed, 9 insertions(+), 2 deletions(-)
+-- 
+1.7.9.5
