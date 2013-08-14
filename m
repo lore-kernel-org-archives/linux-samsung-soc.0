@@ -1,54 +1,47 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v2] clk: Exynos5250: Add clocks for G3D
-Date: Wed, 14 Aug 2013 16:08:01 +0530
-Message-ID: <CALt3h78+jYKuNa8=Gty+4rqU7k6Wow3wN5maDLa=c+R4o-j2mA@mail.gmail.com>
-References: <1369639213-23515-1-git-send-email-arun.kk@samsung.com>
-	<51C1B3EF.3060702@samsung.com>
-	<20130622180955.20448.916@quantum>
-	<115a01ce98d8$5bba58a0$132f09e0$@org>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v9 03/16] iommu/exynos: fix page table maintenance
+Date: Wed, 14 Aug 2013 12:49:38 +0200
+Message-ID: <20130814104938.GF4491@8bytes.org>
+References: <002701ce941a$eecebdb0$cc6c3910$@samsung.com>
+	<1516548.d7oQuzQS7g@amdc1227>
+	<CANEJEGu1ponghpfvyUsQX16+TZWUV+0KXJ7AehjXpju2N_H+Ew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f47.google.com ([209.85.212.47]:62230 "EHLO
-	mail-vb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932495Ab3HNKiD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 06:38:03 -0400
-Received: by mail-vb0-f47.google.com with SMTP id h10so7374638vbh.20
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2013 03:38:01 -0700 (PDT)
-In-Reply-To: <115a01ce98d8$5bba58a0$132f09e0$@org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CANEJEGu1ponghpfvyUsQX16+TZWUV+0KXJ7AehjXpju2N_H+Ew-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Mike Turquette <mturquette@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>
 
-Hi Kukjin,
+On Thu, Aug 08, 2013 at 11:28:44AM -0700, Grant Grundler wrote:
+> I can't speak to the previous BUG_ON(). I believe the EADDRESSINUSE
+> failures could be either WARN_ON or BUG_ON.   This condition is
+> clearly a bug in the generic IOMMU allocator and I think that's why
+> KyongHo Cho used BUG_ON.
+> 
+> Handing out duplicate addresses will generally lead to some sort of
+> data corruption or other fault depending on how robust the underlying
+> device drivers are written.  So my preference is a BUG_ON to
+> immediately flag this condition instead of hoping a device driver will
+> correctly handling the dma mapping failure (Some do, most currently
+> don't).
+> 
+> WARN_ON() + return -EADDRESSINUSE would be a good alternative.
 
-On Wed, Aug 14, 2013 at 3:53 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> Mike Turquette wrote:
->>
->> Quoting Kukjin Kim (2013-06-19 06:36:47)
->> > On 05/27/13 16:20, Arun Kumar K wrote:
->> > > This patch adds the required clocks for ARM Mali IP
->> > > in Exynos5250.
->> > >
->> > > Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
->> >
->> > (+ Mike)
->> >
->> > Looks good to me.
->> >
->> > Mike, I'd like take this into samsung tree for v3.11, if you have any
->> > concerns, please let me know.
->>
->> Looks good to me too!  Ack.
->>
-> Probably, missed this in a last. But this cannot be merged without updating based on latest Mike's tree.
->
-> Arun, please re-spin this with my ack so that Mike could take for upcoming merge window. Note there is no dependency with samsung tree now :)
->
+Even if it is a real BUG condition, I don't think it is worth to stop
+execution at this point. It makes debugging harder and the system less
+reliable. I prefer to go with the WARN_ON and an error return value.
 
-Ok. I will post it again with your ack.
 
-Thanks and regards
-Arun
+	Joerg
