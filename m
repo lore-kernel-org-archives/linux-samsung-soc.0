@@ -1,81 +1,165 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 20/29] watchdog: s3c2410_wdt: simplify use of
- devm_ioremap_resource
-Date: Wed, 14 Aug 2013 11:11:24 +0200
-Message-ID: <1376471493-22215-21-git-send-email-Julia.Lawall@lip6.fr>
-References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH 1/2] ARM: dts: Move the common DMA controller nodes to
+ exynos5.dtsi
+Date: Wed, 14 Aug 2013 18:44:08 +0900
+Message-ID: <110401ce98d2$d304e2f0$790ea8d0$@org>
+References: <1373458449-19039-1-git-send-email-padma.v@samsung.com>
+ <1373458449-19039-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:36798 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752942Ab3HNJoM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Aug 2013 05:44:12 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MRI00LK5LP84O01@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 18:44:10 +0900 (KST)
+In-reply-to: <1373458449-19039-2-git-send-email-padma.v@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Padmavathi Venna' <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com
+Cc: sbkim73@samsung.com, broonie@kernel.org, dianders@chromium.org, abrestic@chromium.org, vinod.koul@intel.com
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Padmavathi Venna wrote:
+> 
+> exynos5250 and exynos5420 has 4 DMA controllers in common. So this patch
+> moves these nodes to common file keeping the dma controllers clk info in
+> the exynos5250 dtsi file.
+> 
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5.dtsi    |   44
+> +++++++++++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi |   30 -------------------------
+>  2 files changed, 44 insertions(+), 30 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5.dtsi
+> b/arch/arm/boot/dts/exynos5.dtsi
+> index f65e124..cac35c8 100644
+> --- a/arch/arm/boot/dts/exynos5.dtsi
+> +++ b/arch/arm/boot/dts/exynos5.dtsi
+> @@ -50,6 +50,50 @@
+>  		interrupts = <1 9 0xf04>;
+>  	};
+> 
+> +	amba {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		compatible = "arm,amba-bus";
+> +		interrupt-parent = <&gic>;
+> +		ranges;
+> +
+> +		pdma0: pdma@121A0000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x121A0000 0x1000>;
+> +			interrupts = <0 34 0>;
+> +			#dma-cells = <1>;
+> +			#dma-channels = <8>;
+> +			#dma-requests = <32>;
+> +		};
+> +
+> +		pdma1: pdma@121B0000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x121B0000 0x1000>;
+> +			interrupts = <0 35 0>;
+> +			#dma-cells = <1>;
+> +			#dma-channels = <8>;
+> +			#dma-requests = <32>;
+> +		};
+> +
+> +		mdma0: mdma@10800000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x10800000 0x1000>;
+> +			interrupts = <0 33 0>;
+> +			#dma-cells = <1>;
+> +			#dma-channels = <8>;
+> +			#dma-requests = <1>;
+> +		};
+> +
+> +		mdma1: mdma@11C10000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x11C10000 0x1000>;
+> +			interrupts = <0 124 0>;
+> +			#dma-cells = <1>;
+> +			#dma-channels = <8>;
+> +			#dma-requests = <1>;
+> +		};
+> +	};
+> +
+>  	dwmmc_0: dwmmc0@12200000 {
+>  		compatible = "samsung,exynos5250-dw-mshc";
+>  		interrupts = <0 75 0>;
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index 41cd625..3a474c4 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -511,54 +511,24 @@
+>  	};
+> 
+>  	amba {
+> -		#address-cells = <1>;
+> -		#size-cells = <1>;
+> -		compatible = "arm,amba-bus";
+> -		interrupt-parent = <&gic>;
+> -		ranges;
+> -
+>  		pdma0: pdma@121A0000 {
+> -			compatible = "arm,pl330", "arm,primecell";
+> -			reg = <0x121A0000 0x1000>;
+> -			interrupts = <0 34 0>;
+>  			clocks = <&clock 275>;
+>  			clock-names = "apb_pclk";
+> -			#dma-cells = <1>;
+> -			#dma-channels = <8>;
+> -			#dma-requests = <32>;
+>  		};
+> 
+>  		pdma1: pdma@121B0000 {
+> -			compatible = "arm,pl330", "arm,primecell";
+> -			reg = <0x121B0000 0x1000>;
+> -			interrupts = <0 35 0>;
+>  			clocks = <&clock 276>;
+>  			clock-names = "apb_pclk";
+> -			#dma-cells = <1>;
+> -			#dma-channels = <8>;
+> -			#dma-requests = <32>;
+>  		};
+> 
+>  		mdma0: mdma@10800000 {
+> -			compatible = "arm,pl330", "arm,primecell";
+> -			reg = <0x10800000 0x1000>;
+> -			interrupts = <0 33 0>;
+>  			clocks = <&clock 271>;
+>  			clock-names = "apb_pclk";
+> -			#dma-cells = <1>;
+> -			#dma-channels = <8>;
+> -			#dma-requests = <1>;
+>  		};
+> 
+>  		mdma1: mdma@11C10000 {
+> -			compatible = "arm,pl330", "arm,primecell";
+> -			reg = <0x11C10000 0x1000>;
+> -			interrupts = <0 124 0>;
+>  			clocks = <&clock 271>;
+>  			clock-names = "apb_pclk";
+> -			#dma-cells = <1>;
+> -			#dma-channels = <8>;
+> -			#dma-requests = <1>;
+>  		};
+>  	};
+> 
+> --
+> 1.7.4.4
 
-Remove unneeded error handling on the result of a call to
-platform_get_resource when the value is passed to devm_ioremap_resource.
+NAK, because the dmac addresses are different on upcoming exynos5 and there
+are 2-mdma and only one pdma. So this change can make more complicated.
 
-Move the call to platform_get_resource adjacent to the call to
-devm_ioremap_resource to make the connection between them more clear.
-
-A simplified version of the semantic patch that makes this change is as
-follows: (http://coccinelle.lip6.fr/)
-
-// <smpl>
-@@
-expression pdev,res,n,e,e1;
-expression ret != 0;
-identifier l;
-@@
-
-- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  ... when != res
-- if (res == NULL) { ... \(goto l;\|return ret;\) }
-  ... when != res
-+ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
-  e = devm_ioremap_resource(e1, res);
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/watchdog/s3c2410_wdt.c |    7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 6a22cf5..9fbc993 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -325,12 +325,6 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	dev = &pdev->dev;
- 	wdt_dev = &pdev->dev;
- 
--	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (wdt_mem == NULL) {
--		dev_err(dev, "no memory resource specified\n");
--		return -ENOENT;
--	}
--
- 	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (wdt_irq == NULL) {
- 		dev_err(dev, "no irq resource specified\n");
-@@ -339,6 +333,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	}
- 
- 	/* get the memory region for the watchdog timer */
-+	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	wdt_base = devm_ioremap_resource(dev, wdt_mem);
- 	if (IS_ERR(wdt_base)) {
- 		ret = PTR_ERR(wdt_base);
+- Kukjin
