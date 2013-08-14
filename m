@@ -1,99 +1,63 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH V2] ARM: dts: Add RTC DT node to Exynos5420 SoC
-Date: Wed, 14 Aug 2013 14:44:33 +0900
-Message-ID: <105b01ce98b1$5a716fa0$0f544ee0$@org>
-References: <1376308293-7766-1-git-send-email-vikas.sajjan@linaro.org>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V4 1/4] ARM: dts: exynos5420: add i2s controllers
+Date: Wed, 14 Aug 2013 11:21:40 +0530
+Message-ID: <CAAgF-BcXDeLiOMA-S-TSNEGG1hMyCyNTJCyEwmb=SO5waOsu5A@mail.gmail.com>
+References: <1376302070-1877-1-git-send-email-padma.v@samsung.com>
+	<3916118.YsNJ4NTaJS@amdc1227>
+	<20130812131235.GX6427@sirena.org.uk>
+	<1427610.pB8BGbMKTL@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:36963 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751884Ab3HNFof (ORCPT
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:55489 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752624Ab3HNFvk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 01:44:35 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MRI00HGRALUO1K0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 14:44:33 +0900 (KST)
-In-reply-to: <1376308293-7766-1-git-send-email-vikas.sajjan@linaro.org>
-Content-language: ko
+	Wed, 14 Aug 2013 01:51:40 -0400
+In-Reply-To: <1427610.pB8BGbMKTL@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vikas Sajjan' <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org
 
-Vikas Sajjan wrote:
-> 
-> Adds RTC DT node to Exynos5420 SoC.
-> 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> ---
-> changes since v1:
-> 	- made DT node status as "okay" in the dtsi file itself.
-> ---
->  arch/arm/boot/dts/exynos5.dtsi    |    2 +-
->  arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
->  arch/arm/boot/dts/exynos5420.dtsi |    7 +++++++
->  3 files changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi
-> b/arch/arm/boot/dts/exynos5.dtsi
-> index f65e124..4a8e223 100644
-> --- a/arch/arm/boot/dts/exynos5.dtsi
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -95,7 +95,7 @@
->  		interrupts = <0 54 0>;
->  	};
-> 
-> -	rtc {
-> +	rtc@101E0000 {
->  		compatible = "samsung,s3c6410-rtc";
->  		reg = <0x101E0000 0x100>;
->  		interrupts = <0 43 0>, <0 44 0>;
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> index 88589b7..c82137b 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -178,9 +178,10 @@
->  		samsung,power-domain = <&pd_mfc>;
->  	};
-> 
-> -	rtc {
-> +	rtc@101E0000 {
->  		clocks = <&clock 337>;
->  		clock-names = "rtc";
-> +		status = "okay";
+Hi Tomasz,
 
-Well, according to the subject, 'add rtc dt node to exynos5420', this should
-be handled separately if required.
+On Mon, Aug 12, 2013 at 10:32 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Monday 12 of August 2013 14:12:36 Mark Brown wrote:
+>> On Mon, Aug 12, 2013 at 01:41:23PM +0200, Tomasz Figa wrote:
+>> > On Monday 12 of August 2013 12:34:48 Mark Brown wrote:
+>> > > I'd expect that to interact badly with the pinmuxing - unless the
+>> > > device is disabled it'll try to grab its pins on probe which is not
+>> > > going to be a good idea unless it is actually wired up for use in
+>> > > the system.  Or is there some other mechanism for handling that?
+>> >
+>> > Ah, good point. Now I wonder whether pinctrl nodes shouldn't be
+>> > considered board-specific and specified in board-level dts instead?
+>>
+>> It seems a bit cleaner to use the current mechanism in that it stops the
+>> device appearing at all and hence repeated efforts to probe, plus a
+>> simple enable is less error prone, the way these SoCs are designed you
+>> don't have to pick which pinmux is in use for most of the IPs.  Where
+>> there are multiple options it does seem like a good approach though.
+>>
+>> Tastes may differ though.
+>
+> Right, if this SoC has only one pinmux setting for this IP, then it's
+> fine.
 
->  	};
-> 
->  	tmu@10060000 {
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
-> b/arch/arm/boot/dts/exynos5420.dtsi
-> index 9e90d1e..8f1bb08 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -145,4 +145,11 @@
->  		clocks = <&clock 260>, <&clock 131>;
->  		clock-names = "uart", "clk_uart_baud0";
->  	};
-> +
-> +	rtc@101E0000 {
+Yes. This IP has only default pin configuration.
 
-Please put in the address order or alphabetical.
+>
+> Padmavathi, this was the only issue I spotted, so have my:
+>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-> +		clocks = <&clock 317>;
-> +		clock-names = "rtc";
-> +		status = "okay";
-> +       };
-> +
+Thanks for your review.
 
-No need last empty line.
+>
+> Best regards,
+> Tomasz
+>
 
-- Kukjin
+Best Regards,
+Padma
