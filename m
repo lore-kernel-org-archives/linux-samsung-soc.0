@@ -1,126 +1,80 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH v2 1/7] ARM: dts: Move display-timimg information inside
- FIMD DT node for exynos5250
-Date: Wed, 14 Aug 2013 14:10:16 +0530
-Message-ID: <CAGm_ybiXe17UNrXzj0YCA2E6W-L1zpPbhh8TqMqBAJbYm7KG=g@mail.gmail.com>
-References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
-	<171932162.BeOHtLbZec@amdc1227>
-	<105c01ce98b3$14b3d1e0$3e1b75a0$@org>
-	<1502617.tZjjGUmS3P@flatron>
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 12/29] sound/soc/samsung/ac97.c: simplify use
+	of devm_ioremap_resource
+Date: Wed, 14 Aug 2013 11:11:16 +0200
+Message-ID: <1376471493-22215-13-git-send-email-Julia.Lawall@lip6.fr>
+References: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:36734 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759410Ab3HNIkT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 04:40:19 -0400
-In-Reply-To: <1502617.tZjjGUmS3P@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1376471493-22215-1-git-send-email-Julia.Lawall@lip6.fr>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, alsa-devel@alsa-project.org, Sangbeom Kim <sbkim73@samsung.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Tomasz Figa <t.figa@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, InKi Dae <inki.dae@samsung.com>, Ajay kumar <ajaynumb@gmail.com>, patches@linaro.org, linaro-kernel@lists.linaro.org, Grant Likely <grant.likely@secretlab.ca>, swarren@wwwdotorg.org, mark.rutland@arm.com
 
-Hi Tomasz,
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-On Wed, Aug 14, 2013 at 1:46 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Wednesday 14 of August 2013 14:56:55 Kukjin Kim wrote:
->> Tomasz Figa wrote:
->> > Hi Vikas,
->> >
->> > On Tuesday 30 of July 2013 16:49:32 Vikas Sajjan wrote:
->> > > As the display-timing information is parsed by FIMD driver, it makes
->> > > sense to move the display-timimg DT node inside FIMD DT node for
->> > > exynos5250
->> > >
->> > > Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
->> > > ---
->> > >
->> > >  arch/arm/boot/dts/exynos5250-smdk5250.dts |   29
->> > >
->> > > ++++++++++++++++------------- 1 file changed, 16 insertions(+), 13
->> > > deletions(-)
->> > >
->> > > diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> > > b/arch/arm/boot/dts/exynos5250-smdk5250.dts index 49f18c2..d176dbb
->> > > 100644
->> > > --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> > > +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> > > @@ -262,19 +262,22 @@
->> > >
->> > >           pinctrl-0 = <&dp_hpd>;
->> > >
->> > >   };
->> > >
->> > > - display-timings {
->> > > -         native-mode = <&timing0>;
->> > > -         timing0: timing@0 {
->> > > -                 /* 1280x800 */
->> > > -                 clock-frequency = <50000>;
->> > > -                 hactive = <1280>;
->> > > -                 vactive = <800>;
->> > > -                 hfront-porch = <4>;
->> > > -                 hback-porch = <4>;
->> > > -                 hsync-len = <4>;
->> > > -                 vback-porch = <4>;
->> > > -                 vfront-porch = <4>;
->> > > -                 vsync-len = <4>;
->> > > + fimd@14400000 {
->> > > +         status = "okay";
->> > > +         display-timings {
->> > > +                 native-mode = <&timing0>;
->> > > +                 timing0: timing@0 {
->> > > +                         /* 1280x800 */
->> > > +                         clock-frequency = <50000>;
->> > > +                         hactive = <1280>;
->> > > +                         vactive = <800>;
->> > > +                         hfront-porch = <4>;
->> > > +                         hback-porch = <4>;
->> > > +                         hsync-len = <4>;
->> > > +                         vback-porch = <4>;
->> > > +                         vfront-porch = <4>;
->> > > +                         vsync-len = <4>;
->> > > +                 };
->> > >
->> > >           };
->> > >
->> > >   };
->> >
->> > Looks good to me, but I would like some other people from the device
->> > tree mailing list to comment on node naming: Do we want to conform to
->> > the recommendation of ePAPR about node naming, which states that node
->> > names should be generic, not platform specific or we are free to
->> > ignore it?
->> The name of node looks good to me and the name had been being used for a
->> long time
->
-> Like a lot of things used in device trees of ARM platforms, since we did
-> not have any proper processes defined for creating device tree bindings
-> and device trees themselves, including any recommended set of good
-> practices.
->
-> We are now trying to define all of this and so it's time to rethink all
-> the DT related things that has been added for ARM platforms since the time
-> DT for ARM was introduced and make sure that everything is reasonable.
->
->> , and if we change that now, that will cause the bigger
->> confusion.
->
-> Still, I think this patch can go as is and node naming can be fixed in
-> separate patches, including any other quirks of Exynos device trees.
->
-> So, for the whole series:
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
+Remove unneeded error handling on the result of a call to
+platform_get_resource when the value is passed to devm_ioremap_resource.
 
-Thanks for the review.
+Move the call to platform_get_resource adjacent to the call to
+devm_ioremap_resource to make the connection between them more clear.
 
+A simplified version of the semantic patch that makes this change is as
+follows: (http://coccinelle.lip6.fr/)
 
-> Best regards,
-> Tomasz
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+// <smpl>
+@@
+expression pdev,res,n,e,e1;
+expression ret != 0;
+identifier l;
+@@
+
+- res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  ... when != res
+- if (res == NULL) { ... \(goto l;\|return ret;\) }
+  ... when != res
++ res = platform_get_resource(pdev, IORESOURCE_MEM, n);
+  e = devm_ioremap_resource(e1, res);
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ sound/soc/samsung/ac97.c |    7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+index 2dd623f..c732df9 100644
+--- a/sound/soc/samsung/ac97.c
++++ b/sound/soc/samsung/ac97.c
+@@ -404,18 +404,13 @@ static int s3c_ac97_probe(struct platform_device *pdev)
+ 		return -ENXIO;
+ 	}
+ 
+-	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (!mem_res) {
+-		dev_err(&pdev->dev, "Unable to get register resource\n");
+-		return -ENXIO;
+-	}
+-
+ 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+ 	if (!irq_res) {
+ 		dev_err(&pdev->dev, "AC97 IRQ not provided!\n");
+ 		return -ENXIO;
+ 	}
+ 
++	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	s3c_ac97.regs = devm_ioremap_resource(&pdev->dev, mem_res);
+ 	if (IS_ERR(s3c_ac97.regs))
+ 		return PTR_ERR(s3c_ac97.regs);
