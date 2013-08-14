@@ -1,69 +1,61 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: Re: [PATCH V3 0/2] Add RTC DT node to Exynos5420 SoC and Fix RTC DT
- node name for 5250 Soc
-Date: Wed, 14 Aug 2013 17:37:47 +0530
-Message-ID: <CAD025yRSX-8Yn1OKo7mZ_qtU057GRr=FOJ7ro-Of+2ePqoAHvA@mail.gmail.com>
-References: <1376478181-27539-1-git-send-email-vikas.sajjan@linaro.org> <3054059.xbBShFpfCt@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH 1/2] ARM: dts: remove dwmmc nodes from exynos5 common dts file.
+Date: Wed, 14 Aug 2013 17:48:58 +0530
+Message-ID: <1376482739-1994-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f172.google.com ([209.85.217.172]:40978 "EHLO
-	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759580Ab3HNMIJ (ORCPT
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:37406 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752803Ab3HNMTK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 08:08:09 -0400
-Received: by mail-lb0-f172.google.com with SMTP id o7so6801227lbv.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2013 05:08:08 -0700 (PDT)
-In-Reply-To: <3054059.xbBShFpfCt@amdc1227>
+	Wed, 14 Aug 2013 08:19:10 -0400
+Received: by mail-pa0-f53.google.com with SMTP id lb1so10028463pab.26
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2013 05:19:09 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim" <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Hi Tomasz,
+Exynos5 series SOC's 5250 and 5420 have different versions of
+DWMMC controller.So there is a new compatible string to distinguish
+between them.So these nodes should be moved out of Exynos5 series
+common device tree source.
 
-On 14 August 2013 17:00, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Vikas,
->
-> On Wednesday 14 of August 2013 16:32:59 Vikas Sajjan wrote:
->> changes since v2:
->>       - split the 5250 related modifications into a separate patch.
->
-> I'm not sure whether Kukjin's comment was about this, as it introduces a
-> short bisect breakage between patch 1 and patch 2 from this series.
->
-> IMHO it would be more sensible to make first patch simply fix name of the
-> node and then a separate patch adding the rtc node for exynos5420.
->
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ arch/arm/boot/dts/exynos5.dtsi |   21 ---------------------
+ 1 file changed, 21 deletions(-)
 
-Are you saying that
-patch 1: should contain modifications for exynos5.dtsi and
-exynos5250.dtsi   ( basically the RTC name change and status as
-"okay")
-patch 2: should contain modifications only for exynos5420.dtsi ( new
-RTC DT node )
-
-
-> Best regards,
-> Tomasz
->
->>       - placed the RTC node as per the alphabetical order in the DTS file as
->>       suggested by Kukjin Kim <kgene@kernel.org>.
->>
->> changes since v1:
->>       - made DT node status as "okay" in the dtsi file itself.
->> -
->> Vikas Sajjan (2):
->>   ARM: dts: Add RTC DT node to Exynos5420 SoC
->>   ARM: dts: Fix the RTC DT node name for Exynos5250 SoC
->>
->>  arch/arm/boot/dts/exynos5.dtsi    |    2 +-
->>  arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
->>  arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
->>  3 files changed, 9 insertions(+), 2 deletions(-)
-
-
-
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index f65e124..c9fea70 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -50,27 +50,6 @@
+ 		interrupts = <1 9 0xf04>;
+ 	};
+ 
+-	dwmmc_0: dwmmc0@12200000 {
+-		compatible = "samsung,exynos5250-dw-mshc";
+-		interrupts = <0 75 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-	};
+-
+-	dwmmc_1: dwmmc1@12210000 {
+-		compatible = "samsung,exynos5250-dw-mshc";
+-		interrupts = <0 76 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-	};
+-
+-	dwmmc_2: dwmmc2@12220000 {
+-		compatible = "samsung,exynos5250-dw-mshc";
+-		interrupts = <0 77 0>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-	};
+-
+ 	serial@12C00000 {
+ 		compatible = "samsung,exynos4210-uart";
+ 		reg = <0x12C00000 0x100>;
 -- 
-Thanks and Regards
- Vikas Sajjan
+1.7.9.5
