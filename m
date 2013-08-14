@@ -1,45 +1,79 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v3 4/4] ARM: dts: Add MFC node for exynos 5420
-Date: Wed, 14 Aug 2013 17:11:37 +0530
-Message-ID: <1376480497-17572-5-git-send-email-arun.kk@samsung.com>
-References: <1376480497-17572-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:40711 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759898Ab3HNLlm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 07:41:42 -0400
-In-Reply-To: <1376480497-17572-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 0/4] ARM: S3C24XX: add dmaengine based dma-driver
+Date: Wed, 14 Aug 2013 13:59:13 +0200
+Message-ID: <201308141359.13872.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, k.debski@samsung.com, s.nawrocki@samsung.com, sachin.kamat@linaro.org, arun.kk@samsung.com
 
-The patch adds MFC nodes for exynos 5420.
+This series tries to provide a basic dmaengine driver for the s3c24xx
+SoCs to subsequently retire the old one with custom API.
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi |    8 ++++++++
- 1 file changed, 8 insertions(+)
+Since v1 three big changes happened (appart from fixing received comments):
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 9e90d1e..bbf71e9 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -65,6 +65,14 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	codec@11000000 {
-+		compatible = "samsung,mfc-v7";
-+		reg = <0x11000000 0x10000>;
-+		interrupts = <0 96 0>;
-+		clocks = <&clock 401>;
-+		clock-names = "mfc";
-+	};
-+
- 	mct@101C0000 {
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x101C0000 0x800>;
+For one the limitation of sg-lists to 1 element is gone.Secondly the
+specifics of the virtual channels (target bus, handshake, etc) are not
+encoded with channel ids but in the platformdata - making a later dt
+binding easier, as these informations can there be gathered by the xlate
+function. And lastly I also added a preliminary mechanism to handle the
+specific needs for the earlier variants of the driver.
+
+While s3c2443 and later can use any channel for any peripheral with just
+marking the target-peripheral-id in a register, earlier SoCs can only use
+specific channels and the target-ids also vary depending on the channel.
+
+Therefore on newer SoCs the chansel element only needs to contain the
+requested target-id, while on the older variants use it to encode both
+the valid channels and the channel-specific peripheral-id.
+
+On affected SoCs the target-id is always 3 bit wide, so we use these and
+an additional 4th bit to hold the valid state. As the older SoCs all have
+4 dma channels this can live happily in an u16 element.
+
+The s3c24xx series will most likely not see any new offspring, but even
+if it happens any new model will probably use the newer more flexible
+variant of the dma controller, so this should not restrict anything
+in the future.
+
+Example:
+SDI is valid on channels 0, 2 and 3 - with varying hw request sources.
+For it the chansel field would look like
+
+ ((BIT(3) | 1) << 3 * 4) | // channel 3, with request source 1
+ ((BIT(3) | 2) << 2 * 4) | // channel 2, with request source 2
+ ((BIT(3) | 2) << 0 * 4)   // channel 0, with request source 2
+
+
+Heiko Stuebner (4):
+  ARM: S3C24XX: number the dma clocks
+  dmaengine: add driver for Samsung s3c24xx SoCs
+  ARM: S3C24XX: add platform-devices for new dma driver for s3c2412 and
+    s3c2443
+  ARM: SAMSUNG: set s3c24xx_dma_filter for s3c64xx-spi0 device
+
+ arch/arm/mach-s3c24xx/clock-s3c2412.c     |    8 +-
+ arch/arm/mach-s3c24xx/common-s3c2443.c    |   12 +-
+ arch/arm/mach-s3c24xx/common.c            |  106 +++
+ arch/arm/mach-s3c24xx/common.h            |    3 +
+ arch/arm/mach-s3c24xx/mach-jive.c         |    1 +
+ arch/arm/mach-s3c24xx/mach-smdk2413.c     |    1 +
+ arch/arm/mach-s3c24xx/mach-smdk2416.c     |    1 +
+ arch/arm/mach-s3c24xx/mach-smdk2443.c     |    1 +
+ arch/arm/mach-s3c24xx/mach-vstms.c        |    1 +
+ arch/arm/plat-samsung/devs.c              |    5 +-
+ drivers/dma/Kconfig                       |   12 +
+ drivers/dma/Makefile                      |    1 +
+ drivers/dma/s3c24xx-dma.c                 | 1255 +++++++++++++++++++++++++++++
+ include/linux/platform_data/dma-s3c24xx.h |   43 +
+ 14 files changed, 1439 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/dma/s3c24xx-dma.c
+ create mode 100644 include/linux/platform_data/dma-s3c24xx.h
+
 -- 
-1.7.9.5
+1.7.10.4
