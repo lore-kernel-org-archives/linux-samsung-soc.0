@@ -1,107 +1,69 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V2] ARM: dts: Add DMA controller node info on Exynos5420.
-Date: Wed, 14 Aug 2013 17:34:22 +0530
-Message-ID: <1376481862-9578-1-git-send-email-padma.v@samsung.com>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: Re: [PATCH V3 0/2] Add RTC DT node to Exynos5420 SoC and Fix RTC DT
+ node name for 5250 Soc
+Date: Wed, 14 Aug 2013 17:37:47 +0530
+Message-ID: <CAD025yRSX-8Yn1OKo7mZ_qtU057GRr=FOJ7ro-Of+2ePqoAHvA@mail.gmail.com>
+References: <1376478181-27539-1-git-send-email-vikas.sajjan@linaro.org> <3054059.xbBShFpfCt@amdc1227>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50748 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759580Ab3HNMDO (ORCPT
+Received: from mail-lb0-f172.google.com ([209.85.217.172]:40978 "EHLO
+	mail-lb0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759580Ab3HNMIJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 08:03:14 -0400
+	Wed, 14 Aug 2013 08:08:09 -0400
+Received: by mail-lb0-f172.google.com with SMTP id o7so6801227lbv.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2013 05:08:08 -0700 (PDT)
+In-Reply-To: <3054059.xbBShFpfCt@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: broonie@kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim" <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-This patch adds dma controller node info on Exynos5420.
+Hi Tomasz,
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
+On 14 August 2013 17:00, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Vikas,
+>
+> On Wednesday 14 of August 2013 16:32:59 Vikas Sajjan wrote:
+>> changes since v2:
+>>       - split the 5250 related modifications into a separate patch.
+>
+> I'm not sure whether Kukjin's comment was about this, as it introduces a
+> short bisect breakage between patch 1 and patch 2 from this series.
+>
+> IMHO it would be more sensible to make first patch simply fix name of the
+> node and then a separate patch adding the rtc node for exynos5420.
+>
 
-Changes since V1:
-	- In V1, dma node common stuff was added in common exynos5.dtsi file. 
-	  This was removed as per Kukjin comment and added in exynos5420.dtsi.
+Are you saying that
+patch 1: should contain modifications for exynos5.dtsi and
+exynos5250.dtsi   ( basically the RTC name change and status as
+"okay")
+patch 2: should contain modifications only for exynos5420.dtsi ( new
+RTC DT node )
 
-This patch is dependent on audss clk controller patches that were
-posted in the below link.
-http://www.spinics.net/lists/linux-samsung-soc/msg20253.html
 
- arch/arm/boot/dts/exynos5420.dtsi |   63 +++++++++++++++++++++++++++++++++++++
- 1 files changed, 63 insertions(+), 0 deletions(-)
+> Best regards,
+> Tomasz
+>
+>>       - placed the RTC node as per the alphabetical order in the DTS file as
+>>       suggested by Kukjin Kim <kgene@kernel.org>.
+>>
+>> changes since v1:
+>>       - made DT node status as "okay" in the dtsi file itself.
+>> -
+>> Vikas Sajjan (2):
+>>   ARM: dts: Add RTC DT node to Exynos5420 SoC
+>>   ARM: dts: Fix the RTC DT node name for Exynos5250 SoC
+>>
+>>  arch/arm/boot/dts/exynos5.dtsi    |    2 +-
+>>  arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
+>>  arch/arm/boot/dts/exynos5420.dtsi |    6 ++++++
+>>  3 files changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 9e90d1e..23cfea4 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -126,6 +126,69 @@
- 		interrupts = <0 47 0>;
- 	};
- 
-+	amba {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "arm,amba-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		pdma0: pdma@121A0000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x121A0000 0x1000>;
-+			interrupts = <0 34 0>;
-+			clocks = <&clock 362>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
-+		};
-+
-+		pdma1: pdma@121B0000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x121B0000 0x1000>;
-+			interrupts = <0 35 0>;
-+			clocks = <&clock 363>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <32>;
-+		};
-+
-+		mdma0: mdma@10800000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x10800000 0x1000>;
-+			interrupts = <0 33 0>;
-+			clocks = <&clock 473>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <1>;
-+		};
-+
-+		mdma1: mdma@11C10000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x11C10000 0x1000>;
-+			interrupts = <0 124 0>;
-+			clocks = <&clock 442>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <8>;
-+			#dma-requests = <1>;
-+		};
-+
-+		adma: adma@03880000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x03880000 0x1000>;
-+			interrupts = <0 110 0>;
-+			clocks = <&clock_audss EXYNOS_ADMA>;
-+			clock-names = "apb_pclk";
-+			#dma-cells = <1>;
-+			#dma-channels = <6>;
-+			#dma-requests = <16>;
-+		};
-+	};
-+
- 	serial@12C00000 {
- 		clocks = <&clock 257>, <&clock 128>;
- 		clock-names = "uart", "clk_uart_baud0";
+
+
 -- 
-1.7.4.4
+Thanks and Regards
+ Vikas Sajjan
