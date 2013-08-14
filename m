@@ -1,41 +1,69 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH 2/4] clk: exynos-audss: allow input clocks to be specified
- in device tree
-Date: Wed, 14 Aug 2013 13:11:18 -0700
-Message-ID: <CAL1qeaFZH+3D26Vis4rUqCKK6Un-eHBv1wckYpPR-fac_gz6qA@mail.gmail.com>
-References: <1373458313-18970-1-git-send-email-padma.v@samsung.com>
-	<1373458313-18970-3-git-send-email-padma.v@samsung.com>
-	<1610421.OFFn8rqlxt@amdc1227>
+From: Grant Grundler <grundler@chromium.org>
+Subject: Re: [PATCH v9 03/16] iommu/exynos: fix page table maintenance
+Date: Wed, 14 Aug 2013 13:54:53 -0700
+Message-ID: <CANEJEGveOtGs8XEYFnnXoZ575bqKRkc3AMikr_1x02cNikwTng@mail.gmail.com>
+References: <002701ce941a$eecebdb0$cc6c3910$@samsung.com>
+	<1516548.d7oQuzQS7g@amdc1227>
+	<CANEJEGu1ponghpfvyUsQX16+TZWUV+0KXJ7AehjXpju2N_H+Ew@mail.gmail.com>
+	<20130814104938.GF4491@8bytes.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:42643 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933081Ab3HNULT (ORCPT
+Received: from mail-ie0-f171.google.com ([209.85.223.171]:57260 "EHLO
+	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932987Ab3HNUyy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 16:11:19 -0400
-Received: by mail-bk0-f47.google.com with SMTP id mx12so2896204bkb.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2013 13:11:18 -0700 (PDT)
-In-Reply-To: <1610421.OFFn8rqlxt@amdc1227>
+	Wed, 14 Aug 2013 16:54:54 -0400
+Received: by mail-ie0-f171.google.com with SMTP id 10so3958415ied.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Aug 2013 13:54:53 -0700 (PDT)
+In-Reply-To: <20130814104938.GF4491@8bytes.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Padma Venkat <padma.kvr@gmail.com>, sbkim73@samsung.com, "broonie@kernel.org" <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Doug Anderson <dianders@chromium.org>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Grant Grundler <grundler@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, Sachin Kamat <sachin.kamat@linaro.org>
 
-Hi Tomasz,
+On Wed, Aug 14, 2013 at 3:49 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> On Thu, Aug 08, 2013 at 11:28:44AM -0700, Grant Grundler wrote:
+>> I can't speak to the previous BUG_ON(). I believe the EADDRESSINUSE
+>> failures could be either WARN_ON or BUG_ON.   This condition is
+>> clearly a bug in the generic IOMMU allocator and I think that's why
+>> KyongHo Cho used BUG_ON.
+>>
+>> Handing out duplicate addresses will generally lead to some sort of
+>> data corruption or other fault depending on how robust the underlying
+>> device drivers are written.  So my preference is a BUG_ON to
+>> immediately flag this condition instead of hoping a device driver will
+>> correctly handling the dma mapping failure (Some do, most currently
+>> don't).
+>>
+>> WARN_ON() + return -EADDRESSINUSE would be a good alternative.
+>
+> Even if it is a real BUG condition, I don't think it is worth to stop
+> execution at this point. It makes debugging harder and the system less
+> reliable. I prefer to go with the WARN_ON and an error return value.
 
-> Well, this is basically how it should be done, but in current state of
-> clock core I can see a problem: can we really rely on the order of clock
-> initialization? I mean, we can't defer initialization of particular clock
-> controller until all external clocks it needs are available, because there
-> is no probing involved here.
+I'm ok with WARN_ON and an error return value. This is "valid"
+behavior.  I expect this bug to never happen but if and when it does,
+I want a clear symptom (e.g. WARN_ON) that it happened.
 
-Right, we can't.  The reason I added the device-tree lookup of input
-clocks was because Exynos5420 has different names for several of the
-input clocks to the audio block.  We already need a separate
-compatibility string because of the ADMA clock, so we could just use
-that to determine the parent clock names.  It's not ideal, but it's a
-workaround for the initialization order issue.  Thoughts?
+My concern is that historically, drivers did not get an error return
+value on failure:
+    ftp://193.166.3.4/pub/linux/kernel/v2.3/patch-html/patch-2.3.47/linux_Documentation_DMA-mapping.txt.html
 
-Thanks,
-Andrew
+or later:
+    https://www.kernel.org/pub/linux/kernel/people/marcelo/linux-2.4/Documentation/DMA-mapping.txt
+
+And thus, some drivers don't check or attempt to handle mapping
+failures based on this existing code. Here is a recent example:
+     http://comments.gmane.org/gmane.linux.network/272969
+
+I hope very few or none of those exist since Neil Horman demonstrated
+"dma debugging" can flag this behavior.
+
+Just for fun, I'll include this link : (apperently 2003 was a good
+year for DMA talks :)
+     http://ols.fedoraproject.org/OLS/Reprints-2003/LinuxSymposium2003-2side.pdf
+     (three talks on DMA issues)
+
+thanks
+grant
