@@ -1,64 +1,184 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH V4 0/4] Add i2s support on smdk5420
-Date: Wed, 14 Aug 2013 11:03:14 +0100
-Message-ID: <20130814100314.GN6427@sirena.org.uk>
-References: <1376300994-1679-1-git-send-email-padma.v@samsung.com>
- <20130813124440.GX6427@sirena.org.uk>
- <6538092.D4LPomiMyc@flatron>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH v3 5/9] ARM: dts: exynos5250: move common hdmi properties
+ to exynos5 dtsi
+Date: Wed, 14 Aug 2013 19:05:37 +0900
+Message-ID: <112601ce98d5$d2ff5d50$78fe17f0$@org>
+References: <1374737677-3215-1-git-send-email-rahul.sharma@samsung.com>
+ <1374737677-3215-6-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="86KltPKNp6kAaMsY"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:57589 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752411Ab3HNKDS (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50713 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759357Ab3HNKFj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Aug 2013 06:03:18 -0400
-Content-Disposition: inline
-In-Reply-To: <6538092.D4LPomiMyc@flatron>
+	Wed, 14 Aug 2013 06:05:39 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MRI00LH0MPE7IX0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Aug 2013 19:05:38 +0900 (KST)
+In-reply-to: <1374737677-3215-6-git-send-email-rahul.sharma@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, kgene.kim@samsung.com, abrestic@chromium.org
+To: 'Rahul Sharma' <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, l.stach@pengutronix.de, tomasz.figa@gmail.com, rob.herring@calxeda.com, s.nawrocki@samsung.com, grant.likely@linaro.org, joshi@samsung.com, r.sh.open@gmail.com
 
+Rahul Sharma wrote:
+> 
+> Hdmi Subsystem nodes shares many properties across exynos5 SoCs
+> (exynos5250 and exyno5420). Common code is moved to exynos5.dtsi
+> which is included in exyno5250 and exynos5420 SoC files.
+> 
+> It also renames the hdmi and mixer nodes as per dt naming
+> convention in the format name@phy_add.
+> 
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  arch/arm/boot/dts/cros5250-common.dtsi    |    2 +-
+>  arch/arm/boot/dts/exynos5.dtsi            |   12 ++++++++++++
+>  arch/arm/boot/dts/exynos5250-arndale.dts  |    7 ++++++-
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |    7 ++++++-
+>  arch/arm/boot/dts/exynos5250-snow.dts     |    8 ++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi         |    8 ++------
+>  6 files changed, 35 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi
+> b/arch/arm/boot/dts/cros5250-common.dtsi
+> index dc259e8b..bef56fa 100644
+> --- a/arch/arm/boot/dts/cros5250-common.dtsi
+> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
+> @@ -299,7 +299,7 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	hdmi {
+> +	hdmi@14530000 {
+>  		hpd-gpio = <&gpx3 7 0>;
+>  	};
+> 
+> diff --git a/arch/arm/boot/dts/exynos5.dtsi
+> b/arch/arm/boot/dts/exynos5.dtsi
+> index 1ae179e..dcb4943 100644
+> --- a/arch/arm/boot/dts/exynos5.dtsi
+> +++ b/arch/arm/boot/dts/exynos5.dtsi
+> @@ -144,4 +144,16 @@
+>  		#size-cells = <0>;
+>  		status = "disabled";
+>  	};
+> +
+> +	hdmi@14530000 {
+> +		reg = <0x14530000 0x70000>;
+> +		interrupts = <0 95 0>;
+> +		status = "disabled";
+> +	};
+> +
+> +	mixer@14450000 {
+> +		reg = <0x14450000 0x10000>;
+> +		interrupts = <0 94 0>;
+> +		status = "disabled";
+> +	};
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
+> b/arch/arm/boot/dts/exynos5250-arndale.dts
+> index 83ab780..955ecfc 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -471,13 +471,18 @@
+>  		};
+>  	};
+> 
+> -	hdmi {
+> +	hdmi@14530000 {
+> +		status = "okay";
+>  		hpd-gpio = <&gpx3 7 2>;
+>  		vdd_osc-supply = <&ldo10_reg>;
+>  		vdd_pll-supply = <&ldo8_reg>;
+>  		vdd-supply = <&ldo8_reg>;
+>  	};
+> 
+> +	mixer@14450000 {
+> +		status = "okay";
+> +	};
+> +
+>  	regulators {
+>  		compatible = "simple-bus";
+>  		#address-cells = <1>;
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index 945e6cc..1cce2e8 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -221,10 +221,15 @@
+>  		status = "disabled";
+>  	};
+> 
+> -	hdmi {
+> +	hdmi@14530000 {
+> +		status = "okay";
+>  		hpd-gpio = <&gpx3 7 0>;
+>  	};
+> 
+> +	mixer@14450000 {
+> +		status = "okay";
+> +	};
+> +
+>  	codec@11000000 {
+>  		samsung,mfc-r = <0x43000000 0x800000>;
+>  		samsung,mfc-l = <0x51000000 0x800000>;
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
+> b/arch/arm/boot/dts/exynos5250-snow.dts
+> index e79331d..b1378af 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -196,4 +196,12 @@
+>  			clock-frequency = <24000000>;
+>  		};
+>  	};
+> +
+> +	hdmi@14530000 {
+> +		status = "okay";
+> +	};
+> +
+> +	mixer@14450000 {
+> +		status = "okay";
+> +	};
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index de54b38..f587cd7 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -578,20 +578,16 @@
+>  		clock-names = "gscl";
+>  	};
+> 
+> -	hdmi {
+> +	hdmi@14530000 {
+>  		compatible = "samsung,exynos4212-hdmi";
+> -		reg = <0x14530000 0x70000>;
+> -		interrupts = <0 95 0>;
+>  		clocks = <&clock 344>, <&clock 136>, <&clock 137>,
+>  				<&clock 159>, <&clock 1024>;
+>  		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
+>  				"sclk_hdmiphy", "mout_hdmi";
+>  	};
+> 
+> -	mixer {
+> +	mixer@14450000 {
+>  		compatible = "samsung,exynos5250-mixer";
+> -		reg = <0x14450000 0x10000>;
+> -		interrupts = <0 94 0>;
+>  		clocks = <&clock 343>, <&clock 136>;
+>  		clock-names = "mixer", "sclk_hdmi";
+>  	};
+> --
+> 1.7.10.4
 
---86KltPKNp6kAaMsY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+NAK, again because of same reason with previous my comments. Note, different
+addresses and IRQ# on upcoming exynos5 SoC.
 
-On Wed, Aug 14, 2013 at 10:25:27AM +0200, Tomasz Figa wrote:
-
-> Hmm, this series looks good to me too, except one thing. What about the=
-=20
-> bisection breakage introduced by the hole between patches 1/4 and 4/4=20
-> (after the list of supported compatible changes in the driver and before=
-=20
-> respective dts files are updated)?
-
-It's annoying but relatively localised and obvious rather than the cross
-tree stuff that happens so frequently with these platforms.
-
---86KltPKNp6kAaMsY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSC1XfAAoJELSic+t+oim9HigP/3U0AAYx96EfIyyY2RZMP54U
-rb68TaV2TTOxrLn+odRbmsRbUGJC2D8W4LheOxenJ6biqG7dMD5TEwR/5ddyDmZI
-rFCgBvGRy8ylZabbRScMZP3TQkPoMmXW4EAwOJJ5nynqjgeeUpHkft6mzyLo6bXK
-6oKw3FDO7v9Ty3HPsWDAQ81WZ8p8ULjHZ+6cKdt2EKL+IhhIRqejmrDPQ0zZeL9c
-ltM9Jufg4/XgWXdkRlLev5hrNQUggMY6sygw272Jgav0PA20z8ppgzHL6vysHJfj
-3fSuakT4HO9hh9nbV+CuWEqk8ZjXWDRKO0BS1qSnSlXTOta6bo9vAIPn4eD5kr0O
-GSW5HFhyIZoDXBUmqXlBbqA/OiiGx0iD7D8xJWEytIra82ZXA/5H4ScyoeUSLqZs
-8uzQegDRcmkl0vWDih/iXr/TdvYWToveX/VNMDu6JmCDqNOLxuW0nQDriykxW8CQ
-QHMlwudzvOqieTKv0JE5M75aMNZx02HuAmkxagUVVTQi7EUtzHi0oC2AACPJ1kAr
-UnLNXVO66ZcuS3NC9Di8IL7t5duP41dsX3qXEOre/165BKwizM3C8fM5rK5PktA4
-Pf7eVNCAWYWu3OETbCAnAAK/ZBj2uxqF4JSWVog3MPPAE7DrkUKUGgEpm52R9U2w
-NJshjqfA6FqExHFWn/bv
-=cd85
------END PGP SIGNATURE-----
-
---86KltPKNp6kAaMsY--
+- Kukjin
