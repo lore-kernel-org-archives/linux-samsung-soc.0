@@ -1,96 +1,45 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v5 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS
- device tree bindings documentation
-Date: Thu, 15 Aug 2013 17:09:14 +0200
-Message-ID: <520CEF1A.90306@gmail.com>
-References: <1376455574-15560-1-git-send-email-arun.kk@samsung.com> <1376455574-15560-3-git-send-email-arun.kk@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Broken device trees for exynos in linux-next
+Date: Thu, 15 Aug 2013 09:43:37 -0700
+Message-ID: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1376455574-15560-3-git-send-email-arun.kk@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f47.google.com ([209.85.216.47]:36783 "EHLO
+	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757521Ab3HOQnr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Aug 2013 12:43:47 -0400
+Received: by mail-qa0-f47.google.com with SMTP id o19so1851315qap.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Aug 2013 09:43:46 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-W dniu 2013-08-14 06:46, Arun Kumar K pisze:
-> The patch adds the DT binding documentation for Samsung
-> Exynos5 SoC series imaging subsystem (FIMC-IS).
+Kukjin,
+
+On Thu, Aug 15, 2013 at 12:34 AM,  <build@lixom.net> wrote:
+
+>         exynos5440_defconfig:
+> ERROR: Input tree has errors, aborting (use -f to force output)
 >
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->   .../devicetree/bindings/media/exynos5-fimc-is.txt  |   47 ++++++++++++++++++++
->   1 file changed, 47 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
->
-> diff --git a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
-> new file mode 100644
-> index 0000000..bfd36df
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
-> @@ -0,0 +1,47 @@
-> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
-> +------------------------------------------------------
-> +
-> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
-> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
-> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
-> +handle sensor controls and camera post-processing operations. The
-> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
-> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
-> +dedicated scalers (SCC and SCP).
-> +
-> +fimc-is node
-> +------------
-> +
-> +Required properties:
-> +
-> +- compatible        : must be "samsung,exynos5250-fimc-is"
-> +- reg               : physical base address and size of the memory mapped
-> +                      registers
-> +- interrupt-parent  : parent interrupt controller
-> +- interrupts        : fimc-is interrupt to the parent combiner
+>         exynos_defconfig:
+> ERROR: Input tree has errors, aborting (use -f to force output)
 
-Is it really only one interrupt or two as in case of Exynos4x12 ?
-Also it's probably more appropriate to say "interrupt controller"
-instead of "combiner", not including details of the the FIMC-IS external 
-interrupt controller in this binding.
+Full error is:
 
-> +- clocks            : list of clock specifiers, corresponding to entries in
-> +                      clock-names property;
-> +- clock-names       : must contain "isp", "mcu_isp", "isp_div0", "isp_div1",
-> +                      "isp_divmpwm", "mcu_isp_div0", "mcu_isp_div1" entries,
-> +                      matching entries in the clocks property.
-> +- pmu               : phandle to the fimc-is pmu node describing the register
-> +                      base and size for FIMC-IS PMU.
+  DTC     arch/arm/boot/dts/exynos5420-smdk5420.dtb
+ERROR (phandle_references): Reference to non-existent node or label "pdma1"
+ERROR (phandle_references): Reference to non-existent node or label "pdma1"
+ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+ERROR (phandle_references): Reference to non-existent node or label "pdma0"
 
-This property needs to be prefixed with "samsung,".
+Looks like you have broken device trees in linux next. Also, what is
+exynos5440_defconfig? Don't add contents (which includes defconfigs)
+to linux-next branches that won't make it all the way upstream.
 
-> +
-> +i2c-isp (ISP I2C bus controller) nodes
-> +------------------------------------------
-> +
-> +Required properties:
-> +
-> +- compatible	: should be "samsung,exynos4212-i2c-isp" for Exynos4212,
-> +		  Exynos4412 and Exynos5250 SoCs;
-> +- reg		: physical base address and length of the registers set;
-> +- clocks	: must contain gate clock specifier for this controller;
-> +- clock-names	: must contain "i2c_isp" entry.
-> +
-> +For the i2c-isp node, it is required to specify a pinctrl state named "default",
-> +according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
-> +
-> +Device tree nodes of the image sensors' controlled directly by the FIMC-IS
 
-nit: As pointed out already there is no need for the apostrophe.
-
-> +firmware must be child nodes of their corresponding ISP I2C bus controller node.
-> +The data link of these image sensors must be specified using the common video
-> +interfaces bindings, defined in video-interfaces.txt.
-
---
 Thanks,
-Sylwester
+
+-Olof
