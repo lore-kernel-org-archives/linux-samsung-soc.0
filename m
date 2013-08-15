@@ -1,55 +1,96 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v10] i2c: exynos5: add High Speed I2C controller driver
-Date: Thu, 15 Aug 2013 15:12:26 +0200
-Message-ID: <20130815131226.GI17155@katana>
-References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
- <1371638905-30633-1-git-send-email-ch.naveen@samsung.com>
- <3925484.kHD24rQYyy@amdc1227>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v5 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS
+ device tree bindings documentation
+Date: Thu, 15 Aug 2013 17:09:14 +0200
+Message-ID: <520CEF1A.90306@gmail.com>
+References: <1376455574-15560-1-git-send-email-arun.kk@samsung.com> <1376455574-15560-3-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CD/aTaZybdUisKIc"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3925484.kHD24rQYyy@amdc1227>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, naveenkrishna.ch@gmail.com, kgene.kim@samsung.com, grant.likely@secretlab.ca, linux-kernel@vger.kernel.org, taeggyun.ko@samsung.com, balbi@ti.com, thomas.abraham@linaro.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1376455574-15560-3-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+W dniu 2013-08-14 06:46, Arun Kumar K pisze:
+> The patch adds the DT binding documentation for Samsung
+> Exynos5 SoC series imaging subsystem (FIMC-IS).
+>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>   .../devicetree/bindings/media/exynos5-fimc-is.txt  |   47 ++++++++++++++++++++
+>   1 file changed, 47 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+> new file mode 100644
+> index 0000000..bfd36df
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+> @@ -0,0 +1,47 @@
+> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
+> +------------------------------------------------------
+> +
+> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
+> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
+> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
+> +handle sensor controls and camera post-processing operations. The
+> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
+> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
+> +dedicated scalers (SCC and SCP).
+> +
+> +fimc-is node
+> +------------
+> +
+> +Required properties:
+> +
+> +- compatible        : must be "samsung,exynos5250-fimc-is"
+> +- reg               : physical base address and size of the memory mapped
+> +                      registers
+> +- interrupt-parent  : parent interrupt controller
+> +- interrupts        : fimc-is interrupt to the parent combiner
 
---CD/aTaZybdUisKIc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is it really only one interrupt or two as in case of Exynos4x12 ?
+Also it's probably more appropriate to say "interrupt controller"
+instead of "combiner", not including details of the the FIMC-IS external 
+interrupt controller in this binding.
 
-On Mon, Jul 01, 2013 at 12:25:19PM +0200, Tomasz Figa wrote:
-> Hi Naveen,
->=20
-> Looks mostly good, but see some comments inline.
+> +- clocks            : list of clock specifiers, corresponding to entries in
+> +                      clock-names property;
+> +- clock-names       : must contain "isp", "mcu_isp", "isp_div0", "isp_div1",
+> +                      "isp_divmpwm", "mcu_isp_div0", "mcu_isp_div1" entries,
+> +                      matching entries in the clocks property.
+> +- pmu               : phandle to the fimc-is pmu node describing the register
+> +                      base and size for FIMC-IS PMU.
 
-Ping?
+This property needs to be prefixed with "samsung,".
 
+> +
+> +i2c-isp (ISP I2C bus controller) nodes
+> +------------------------------------------
+> +
+> +Required properties:
+> +
+> +- compatible	: should be "samsung,exynos4212-i2c-isp" for Exynos4212,
+> +		  Exynos4412 and Exynos5250 SoCs;
+> +- reg		: physical base address and length of the registers set;
+> +- clocks	: must contain gate clock specifier for this controller;
+> +- clock-names	: must contain "i2c_isp" entry.
+> +
+> +For the i2c-isp node, it is required to specify a pinctrl state named "default",
+> +according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
+> +
+> +Device tree nodes of the image sensors' controlled directly by the FIMC-IS
 
---CD/aTaZybdUisKIc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+nit: As pointed out already there is no need for the apostrophe.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+> +firmware must be child nodes of their corresponding ISP I2C bus controller node.
+> +The data link of these image sensors must be specified using the common video
+> +interfaces bindings, defined in video-interfaces.txt.
 
-iQIcBAEBAgAGBQJSDNO5AAoJEBQN5MwUoCm2EMkQAK9DlXI0LeKYmHLIM1Hq7sN3
-pUrztsLfAWW8z366FWVGn0WGQltfkal5m2cLsARjRA64q9MVsap82G5FQ24xsMOp
-cZQz9wo3m6SpfKlOjHoiPqmdoHTJ7wElewUt49dv2kVLdT3KHdRVLf+QZMhmVIjW
-3+MwKCjem+5d340MNMw4a6D4hEHF9J5nbITfkXCpjG+Ek/CBnvZxqQjci1C6JQjt
-BpvyWVta+36xKuuwfvqx2QYjWAaiypHGU6gNOJEPbsaiPGBoewk+ycDvWhzQi8U1
-TpxPzP9lOWkZECSWS1z+5yHEG3uZeQk4ifyeQpVMMjpqIH9OsuTbVAGq3szch/mY
-GomZMnQ6ZUCt2N78SCc5fnFRxesGVKK77KoJE/gOptWURJiu5XUICa6p0cgsNwnp
-gBioQAgoPc/aShpHZWO3GB0sB4yOLbk5QQntL6ClocHx94h8We0j+M7w7sSf8d/I
-wHOIp9P1mA4timswcodzLyd82dgo14bna9utmlOZiP63aoQayz/fmBF8lmJpCBWt
-GtYR3ph2rAiQjFmI6GWX5tZqqWEBl3ZuZKKaBJYt/vDB6XXVKWg68P/iOSe+hrNe
-ueHusK6Rf4VWztprdkpZvPyUPrAfpt2WTs7w4n5UdEi+TlFEkwzTv36AOQat03tG
-4Rvvhst6WrcObAL2h92o
-=QJEZ
------END PGP SIGNATURE-----
-
---CD/aTaZybdUisKIc--
+--
+Thanks,
+Sylwester
