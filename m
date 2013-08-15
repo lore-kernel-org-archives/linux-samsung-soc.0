@@ -1,45 +1,43 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Broken device trees for exynos in linux-next
-Date: Thu, 15 Aug 2013 09:43:37 -0700
-Message-ID: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 1/4] ARM: S3C24XX: number the dma clocks
+Date: Thu, 15 Aug 2013 22:04:14 +0200
+Message-ID: <CACRpkdboWnsRRUEEufQY_=x3bWKyZLoWP5G_YvEhtTtZs6BTuw@mail.gmail.com>
+References: <201308141359.13872.heiko@sntech.de>
+	<201308141359.54473.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f47.google.com ([209.85.216.47]:36783 "EHLO
-	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757521Ab3HOQnr (ORCPT
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:64375 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758889Ab3HOUEO convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Aug 2013 12:43:47 -0400
-Received: by mail-qa0-f47.google.com with SMTP id o19so1851315qap.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Aug 2013 09:43:46 -0700 (PDT)
+	Thu, 15 Aug 2013 16:04:14 -0400
+Received: by mail-ob0-f180.google.com with SMTP id up14so1277367obb.39
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Aug 2013 13:04:14 -0700 (PDT)
+In-Reply-To: <201308141359.54473.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Kukjin,
+On Wed, Aug 14, 2013 at 1:59 PM, Heiko St=FCbner <heiko@sntech.de> wrot=
+e:
 
-On Thu, Aug 15, 2013 at 12:34 AM,  <build@lixom.net> wrote:
-
->         exynos5440_defconfig:
-> ERROR: Input tree has errors, aborting (use -f to force output)
+> Each dma channel has its own clock. The upcoming dma driver wants to
+> handle these itself and therefore needs to be able to get the correct
+> clock for a channel.
 >
->         exynos_defconfig:
-> ERROR: Input tree has errors, aborting (use -f to force output)
+> Therefore rename the dma clocks to "dma.X" for s3c2412, s3c2416 and
+> s3c2443. This does not change the behaviour for the old dma driver at
+> all, as all dma clocks are still always on and not handled by the old
+> dma driver at all.
+>
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> are always enabled in the original code.
+> ---
 
-Full error is:
+There is some noise at the end of your commit message.
 
-  DTC     arch/arm/boot/dts/exynos5420-smdk5420.dtb
-ERROR (phandle_references): Reference to non-existent node or label "pdma1"
-ERROR (phandle_references): Reference to non-existent node or label "pdma1"
-ERROR (phandle_references): Reference to non-existent node or label "pdma0"
-ERROR (phandle_references): Reference to non-existent node or label "pdma0"
-
-Looks like you have broken device trees in linux next. Also, what is
-exynos5440_defconfig? Don't add contents (which includes defconfigs)
-to linux-next branches that won't make it all the way upstream.
-
-
-Thanks,
-
--Olof
+Yours,
+Linus Walleij
