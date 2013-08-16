@@ -1,49 +1,59 @@
-From: Olof Johansson <olof@lixom.net>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: Broken device trees for exynos in linux-next
-Date: Fri, 16 Aug 2013 09:04:41 -0700
-Message-ID: <CAOesGMiyNM6VdNzKQU3XwoiacJV8hc60mcLiH+vHoS6xJM6q-A@mail.gmail.com>
+Date: Fri, 16 Aug 2013 19:03:59 +0100
+Message-ID: <20130816180359.GO30073@sirena.org.uk>
 References: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
-	<13b101ce9a14$2cebd700$86c38500$@org>
+ <13b101ce9a14$2cebd700$86c38500$@org>
+ <CAOesGMiyNM6VdNzKQU3XwoiacJV8hc60mcLiH+vHoS6xJM6q-A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lCFQJunhLz1tFGpX"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f51.google.com ([209.85.216.51]:35794 "EHLO
-	mail-qa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752270Ab3HPQEl (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:54856 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754207Ab3HPSEF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Aug 2013 12:04:41 -0400
-Received: by mail-qa0-f51.google.com with SMTP id f11so583193qae.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2013 09:04:41 -0700 (PDT)
-In-Reply-To: <13b101ce9a14$2cebd700$86c38500$@org>
+	Fri, 16 Aug 2013 14:04:05 -0400
+Content-Disposition: inline
+In-Reply-To: <CAOesGMiyNM6VdNzKQU3XwoiacJV8hc60mcLiH+vHoS6xJM6q-A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-
-On Thu, Aug 15, 2013 at 5:04 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> I think, maybe we discussed about that? :) current exynos_defconfig cannot
-> support exynos5440 because of LPAE and I remember we decided LPAE and
-> non-LPAE should be separated. So as I commented before, exynos5440_defconfig
-> is needed. If you have any concerns, please let me know.
-
-Having a SoC-specific defconfig makes no sense. You can run with LPAE
-enabled on A15 and A7-based systems even if they don't have enough
-memory to need it.
-
-Really, what we want is to just turn on the LPAE functionality and
-keep everything else common. Forking into two defconfigs seems like
-the wrong idea, even if we did discuss it before. Having something
-like a config fragment to include would make more sense, since that
-could be shared across all platforms (and apply with
-multi_v7_defconfig for those who want to run that on LPAE as well).
-
-Or, you know, just have your build script enable it without having an
-in-tree config fragment. That'd work too.
-
-The main case where this isn't sufficient is on platforms where _all_
-memory sits above 4G, since you can't boot a non-LPAE kernel on those
-at all. It seems like 5440 has memory starting at 2GB so it's not one
-of those.
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
 
--Olof
+--lCFQJunhLz1tFGpX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Aug 16, 2013 at 09:04:41AM -0700, Olof Johansson wrote:
+
+> Really, what we want is to just turn on the LPAE functionality and
+> keep everything else common. Forking into two defconfigs seems like
+
+There's issues with that at the minute due to the DMA mask fun breaking
+stuff, though Russell's work has resolved that it should work fine.
+
+--lCFQJunhLz1tFGpX
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSDmmMAAoJELSic+t+oim97t0P/1v5qFDGHiBHYvwXddlrTP97
+pzlFLwugnSs/mh885j+T8zYOVkd0niLTKLNR7zZHihXnXLkmvetcm9ejktaP2snV
+rvXhI4h6pdxVRJaEpOACKTRy78agjr2PP1T39yA71iArEZqDucJUoQwuSbtx0Mme
+77SVmW5UHI2iv/tv/ZaSkeNng/s6/UaBO95tsrBEUba3EOb6r2cC1BQ9u5k/GL3r
+4jTjBC+1LUqBPLsBQZfgBRPcb8MK5fjludEvDxAk5wYWLReey20ZMtmKvpqKn8Uw
+nu4+whRhxmQ6oVCYlP2F11xdvTqkI4F3vfQUAjYgTp+HuHUcOobA7b71VKtTvzzI
+NNnU5cPd20MpV3gx0TrDuAYwX1vlO/6icFTCk9kk1GYdPqtisOXLhORLsMdSr5VA
+itlc5RtzJ2lTA2YtE057D9uRqTg8mcO6WIrd7j/w0s2aXmodByyvXNeYutGZ8+pM
+UyOQA+RIqstZnB/qIcBOklSC26AhNDZgJ9hYJCllLU/HRs4B0t2Auj3MqXK+0v+f
+/LXfXljpplh7yOdTj/faA6/++xJvfZ5qwQLHs94W0t2MQjA0F3X0YTJMGiKHoeqE
+JG80KzpXDWwXoYmq0tUX3/EwmwizC3XrJjBv44e/LRTDkkqosgl6sp2tjnG/29l6
+KtNAblLDp4/kBe//1rQ2
+=Dy0O
+-----END PGP SIGNATURE-----
+
+--lCFQJunhLz1tFGpX--
