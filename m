@@ -1,51 +1,144 @@
-From: Cho KyongHo <pullip.cho@samsung.com>
-Subject: Re: [PATCH 2/2] iommu/exynos: Follow kernel coding style for
- __sysmmu_enable return type
-Date: Fri, 16 Aug 2013 20:21:51 +0900
-Message-ID: <20130816202151.b47fae1e9ed249d06baa37d1@samsung.com>
-References: <1374766502-14823-1-git-send-email-a.motakis@virtualopensystems.com>
- <1374766502-14823-2-git-send-email-a.motakis@virtualopensystems.com>
- <003101ce89ed$52317330$f6945990$@samsung.com>
- <20130814131547.GA5889@8bytes.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH 4/8] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Fri, 16 Aug 2013 17:30:12 +0530
+Message-ID: <1376654412-32230-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:49290 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751737Ab3HPLVx (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:61417 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754547Ab3HPMAX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Aug 2013 07:21:53 -0400
-In-reply-to: <20130814131547.GA5889@8bytes.org>
+	Fri, 16 Aug 2013 08:00:23 -0400
+Received: by mail-pa0-f47.google.com with SMTP id kl13so1785783pab.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2013 05:00:22 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joerg Roedel' <joro@8bytes.org>
-Cc: 'Antonios Motakis' <a.motakis@virtualopensystems.com>, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, kvmarm@lists.cs.columbia.edu, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Varun Sethi' <Varun.Sethi@freescale.com>, 'open list' <linux-kernel@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On Wed, 14 Aug 2013 15:15:49 +0200, 'Joerg Roedel' wrote:
-> KyongHo,
-> 
-> On Fri, Jul 26, 2013 at 07:46:01PM +0900, Cho KyongHo wrote:
-> > __sysmmu_enable() must return 1 if it is called with the same page table.
-> > I have fixed it exynos_iommu_attach_device() to always return zero on success
-> > in the next patchset which I will post today.
-> > 
-> > Thank you.
-> 
-> When you are fine with these patches please put them on-top of your
-> patch-set when you re-submit. I will take them from there then.
-> 
+This patch adds the device tree node entries for exynos5420 SOC.
+Exynos5420 has a different version of DWMMC controller,so a new
+compatible string is used to distinguish it from the prior SOC's.
 
-Ok.
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   41 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   33 ++++++++++++++++
+ 3 files changed, 76 insertions(+)
 
-Antonios,
-
-Would you mind
-if I submit your 2 patches on top of my patches with your signed-off?
-
-KyongHo.
-
-> 
-> 	Joerg
-> 
-> 
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index 6d1c098..84cd56f 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -16,6 +16,8 @@ Required Properties:
+ 	  specific extensions.
+ 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+ 	  specific extensions.
++	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
++	  specific extensions.
+ 
+ * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 08607df..4530700 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -30,4 +30,45 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
++
++	dwmmc0@12200000 {
++		num-slots = <1>;
++		broken-cd;
++		bypass-smu;
++		supports-highspeed;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <0 4>;
++		samsung,dw-mshc-ddr-timing = <0 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
++	dwmmc1@12210000 {
++		status = "disabled";
++	};
++
++	dwmmc2@12220000 {
++		num-slots = <1>;
++		supports-highspeed;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++		};
++	};
++
+ };
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 9e90d1e..8559aa8 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -19,6 +19,9 @@
+ 	compatible = "samsung,exynos5420";
+ 
+ 	aliases {
++		mshc0 = &dwmmc_0;
++		mshc1 = &dwmmc_1;
++		mshc2 = &dwmmc_2;
+ 		pinctrl0 = &pinctrl_0;
+ 		pinctrl1 = &pinctrl_1;
+ 		pinctrl2 = &pinctrl_2;
+@@ -65,6 +68,36 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	dwmmc_0: dwmmc0@12200000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 75 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12200000 0x2000>;
++		clocks = <&clock 351>, <&clock 132>;
++		clock-names = "biu", "ciu";
++	};
++
++	dwmmc_1: dwmmc1@12210000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 76 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12210000 0x2000>;
++		clocks = <&clock 352>, <&clock 133>;
++		clock-names = "biu", "ciu";
++	};
++
++	dwmmc_2: dwmmc2@12220000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 77 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12220000 0x2000>;
++		clocks = <&clock 353>, <&clock 134>;
++		clock-names = "biu", "ciu";
++	};
++
+ 	mct@101C0000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x101C0000 0x800>;
+-- 
+1.7.9.5
