@@ -1,50 +1,85 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: Broken device trees for exynos in linux-next
-Date: Fri, 16 Aug 2013 09:04:01 +0530
-Message-ID: <CAAgF-BcwfSGo0odosVS=zYHQ5-6rGpuxLRRMRSBOp1=GGNqiuQ@mail.gmail.com>
-References: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
-	<13b101ce9a14$2cebd700$86c38500$@org>
-	<20130816003557.GJ30073@sirena.org.uk>
-	<20130816004202.GA28985@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH V5] ARM: dts: Change i2s compatible string on exynos5250
+Date: Fri, 16 Aug 2013 09:56:18 +0530
+Message-ID: <1376627178-28649-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:38466 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753008Ab3HPDeD (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:47868 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750810Ab3HPEZK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Aug 2013 23:34:03 -0400
-Received: by mail-oa0-f46.google.com with SMTP id l10so1741931oag.33
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Aug 2013 20:34:01 -0700 (PDT)
-In-Reply-To: <20130816004202.GA28985@sirena.org.uk>
+	Fri, 16 Aug 2013 00:25:10 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
+Cc: broonie@kernel.org, kgene.kim@samsung.com, olof@lixom.net, tushar.behera@linaro.org
 
-Hi,
+This patch removes quirks from i2s node and change the i2s
+compatible names.
 
-On Fri, Aug 16, 2013 at 6:12 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Aug 16, 2013 at 01:35:57AM +0100, Mark Brown wrote:
->> On Fri, Aug 16, 2013 at 09:04:28AM +0900, Kukjin Kim wrote:
->
->> > NO, the build breakage is due to commit 6187288f15bc ("ARM: dts: exynos5250:
->> > move common i2s properties to exynos5 dtsi" which is in Mark Brown's tree.
->
->> > Mark, pleaser revert it in your tree...
->
->> I'll do that but I don't know if that's then going to break anything
->> else.  This sort of bisection/cross tree issue does come up a lot with
->> the Samsung SoCs - it'd be good if you could remind the people working
->> on them about the need to make sure that when there are dependencies
->> they're handled when things are merged.
->
-> I also had to revert "ARM: dts: Change i2s compatible string on
-> exynos5250" from my tree since it depended on the above commit.  I
-> suspect this may leave the driver broken and we'll need a new version
-> before the merge window...
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
 
-I apologize for this bisection. Soon I will post a new patch for this.
+Changes since V4:
+	- Mark Brown reverted the below two patches due to below build failure with
+	  exynos_defconfig.
+		"ARM: dts: exynos5250: move common i2s properties to exynos5 dtsi"
+		"ARM: dts: Change i2s compatible string on exynos5250"
 
-Thanks
-Padma
+	  build error:
+	  DTC     arch/arm/boot/dts/exynos5420-smdk5420.dtb
+	  ERROR (phandle_references): Reference to non-existent node or label "pdma1"
+	  ERROR (phandle_references): Reference to non-existent node or label "pdma1"
+	  ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+	  ERROR (phandle_references): Reference to non-existent node or label "pdma0"
+
+But with out "ARM: dts: Change i2s compatible string on exynos5250" will break the i2s
+driver.
+
+So posting this patch now and will take care of posting other patch later after dependent
+patches got merged.
+
+ arch/arm/boot/dts/exynos5250.dtsi |    9 +++------
+ 1 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index ef57277..376090f 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -405,7 +405,7 @@
+ 	};
+ 
+ 	i2s0: i2s@03830000 {
+-		compatible = "samsung,i2s-v5";
++		compatible = "samsung,s5pv210-i2s";
+ 		reg = <0x03830000 0x100>;
+ 		dmas = <&pdma0 10
+ 			&pdma0 9
+@@ -415,16 +415,13 @@
+ 			<&clock_audss EXYNOS_I2S_BUS>,
+ 			<&clock_audss EXYNOS_SCLK_I2S>;
+ 		clock-names = "iis", "i2s_opclk0", "i2s_opclk1";
+-		samsung,supports-6ch;
+-		samsung,supports-rstclr;
+-		samsung,supports-secdai;
+ 		samsung,idma-addr = <0x03000000>;
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2s0_bus>;
+ 	};
+ 
+ 	i2s1: i2s@12D60000 {
+-		compatible = "samsung,i2s-v5";
++		compatible = "samsung,s3c6410-i2s";
+ 		reg = <0x12D60000 0x100>;
+ 		dmas = <&pdma1 12
+ 			&pdma1 11>;
+@@ -436,7 +433,7 @@
+ 	};
+ 
+ 	i2s2: i2s@12D70000 {
+-		compatible = "samsung,i2s-v5";
++		compatible = "samsung,s3c6410-i2s";
+ 		reg = <0x12D70000 0x100>;
+ 		dmas = <&pdma0 12
+ 			&pdma0 11>;
+-- 
+1.7.4.4
