@@ -1,78 +1,63 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: Broken device trees for exynos in linux-next
-Date: Fri, 16 Aug 2013 09:04:28 +0900
-Message-ID: <13b101ce9a14$2cebd700$86c38500$@org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Broken device trees for exynos in linux-next
+Date: Fri, 16 Aug 2013 01:35:57 +0100
+Message-ID: <20130816003557.GJ30073@sirena.org.uk>
 References: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
+ <13b101ce9a14$2cebd700$86c38500$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="6J7GEvtanOfV9oXA"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58751 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752047Ab3HPAEv (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:44650 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752540Ab3HPAhJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Aug 2013 20:04:51 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MRL00LBLK7HWHB0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Aug 2013 09:04:29 +0900 (KST)
-In-reply-to: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
-Content-language: ko
+	Thu, 15 Aug 2013 20:37:09 -0400
+Content-Disposition: inline
+In-Reply-To: <13b101ce9a14$2cebd700$86c38500$@org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Mark Brown' <broonie@kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Olof Johansson wrote:
-> 
-> Kukjin,
-> 
-Hi, Olof,
 
-> On Thu, Aug 15, 2013 at 12:34 AM,  <build@lixom.net> wrote:
-> 
-> >         exynos5440_defconfig:
-> > ERROR: Input tree has errors, aborting (use -f to force output)
-> >
-> >         exynos_defconfig:
-> > ERROR: Input tree has errors, aborting (use -f to force output)
-> 
-> Full error is:
-> 
->   DTC     arch/arm/boot/dts/exynos5420-smdk5420.dtb
-> ERROR (phandle_references): Reference to non-existent node or label
-> "pdma1"
-> ERROR (phandle_references): Reference to non-existent node or label
-> "pdma1"
-> ERROR (phandle_references): Reference to non-existent node or label
-> "pdma0"
-> ERROR (phandle_references): Reference to non-existent node or label
-> "pdma0"
-> 
-> Looks like you have broken device trees in linux next.
+--6J7GEvtanOfV9oXA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-(+ Mark)
+On Fri, Aug 16, 2013 at 09:04:28AM +0900, Kukjin Kim wrote:
 
-NO, the build breakage is due to commit 6187288f15bc ("ARM: dts: exynos5250:
-move common i2s properties to exynos5 dtsi" which is in Mark Brown's tree.
+> NO, the build breakage is due to commit 6187288f15bc ("ARM: dts: exynos5250:
+> move common i2s properties to exynos5 dtsi" which is in Mark Brown's tree.
 
-Mark, pleaser revert it in your tree...
+> Mark, pleaser revert it in your tree...
 
-> Also, what is exynos5440_defconfig?
+I'll do that but I don't know if that's then going to break anything
+else.  This sort of bisection/cross tree issue does come up a lot with
+the Samsung SoCs - it'd be good if you could remind the people working
+on them about the need to make sure that when there are dependencies
+they're handled when things are merged.
 
-(+ Arnd)
+--6J7GEvtanOfV9oXA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-I think, maybe we discussed about that? :) current exynos_defconfig cannot
-support exynos5440 because of LPAE and I remember we decided LPAE and
-non-LPAE should be separated. So as I commented before, exynos5440_defconfig
-is needed. If you have any concerns, please let me know.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
 
-> Don't add contents (which includes defconfigs)
-> to linux-next branches that won't make it all the way upstream.
-> 
-Sure :)
+iQIcBAEBAgAGBQJSDXPqAAoJELSic+t+oim9V0AP+wR31UkP07OzGq+crvrTAtWO
+ioEGdY3qWunByLm94T50zjE8caZXbmNtI1p0sDvxD2PXCmIflytGvL6AZgxvWuOE
+VFVSPV7dDV18lld7zcHWpAT7zKyU+qd7Nb4BygQWHh2Y1KybS1tACLlYhkp5qFhT
+u3pZCcRANVUQvqrCgGaiG4OeasPrBU8zK8IzGyUtRCbFraROGm+VNYeA65kmE7Km
+cH2hg83cAakOqHwU7DSXSIPBuI/IQ4R1HISk/55ZgUNiloiuT4uO1PhVgoOZyPR/
+t43RbQDw7cjbp9QVZ5BwnGY7iz5U0wNpiuCYkKDw6wfzxeAvAVCuZ7jNITF0YShV
+zxfBPGkCUsRSbx3wjm9bxmlQZ4qV3lOsp0HOm37z39gWrLch54pbuu43SF2JXbzA
+KZflkg3YEVx3pSIBiLx2JQ/OLeF1a5oJlzLLQLxRMcTDHl2eyHzG56oUb3e1iQ4n
+77ZUSSOyqSt80GGotItgYVWvelPqNv1Dm52AlSWIfXvALxVniSej/5ASPgPZCyNv
+eboqR+erXhcPUtUFe60Y0/TWmP/ribPisjj7uROs4MqeCmSB3N61bYccRtxGRMrn
+zzKptRTxtWhSVsqIiYejdsuHlPgChVgjkfUPBGnhhb1/ODQe1JfqaexrKhO9QVzb
+lxDD3oHjCm443+7zWmpF
+=gjn7
+-----END PGP SIGNATURE-----
 
-Thanks,
-Kukjin
+--6J7GEvtanOfV9oXA--
