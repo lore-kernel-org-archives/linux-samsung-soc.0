@@ -1,166 +1,82 @@
-From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 0/8] Common Clock Framework support for Samsung S3C64xx
-Date: Fri, 16 Aug 2013 12:44:44 +0200
-Message-ID: <2956608.dyLtqySMuJ@amdc1227>
-References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com>
- <51FFDA70.7080900@samsung.com> <20130805180625.5348.79570@quantum>
+From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v9 03/16] iommu/exynos: fix page table maintenance
+Date: Fri, 16 Aug 2013 20:17:21 +0900
+Message-ID: <20130816201721.b93a6e3db960e38b29ca7b1a@samsung.com>
+References: <002701ce941a$eecebdb0$cc6c3910$@samsung.com>
+	<1516548.d7oQuzQS7g@amdc1227>
+	<CANEJEGu1ponghpfvyUsQX16+TZWUV+0KXJ7AehjXpju2N_H+Ew@mail.gmail.com>
+	<20130814104938.GF4491@8bytes.org>
+	<CANEJEGveOtGs8XEYFnnXoZ575bqKRkc3AMikr_1x02cNikwTng@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary=nextPart1560779.elQ0zaIA6Y;
- micalg=pgp-sha1; protocol="application/pgp-signature"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20130805180625.5348.79570@quantum>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <CANEJEGveOtGs8XEYFnnXoZ575bqKRkc3AMikr_1x02cNikwTng-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---nextPart1560779.elQ0zaIA6Y
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-
-Hi Mike,
-
-On Monday 05 of August 2013 11:06:25 Mike Turquette wrote:
-> Quoting Kukjin Kim (2013-08-05 10:01:36)
+On Wed, 14 Aug 2013 13:54:53 -0700, Grant Grundler wrote:
+> On Wed, Aug 14, 2013 at 3:49 AM, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org> wrote:
+> > On Thu, Aug 08, 2013 at 11:28:44AM -0700, Grant Grundler wrote:
+> >> I can't speak to the previous BUG_ON(). I believe the EADDRESSINUSE
+> >> failures could be either WARN_ON or BUG_ON.   This condition is
+> >> clearly a bug in the generic IOMMU allocator and I think that's why
+> >> KyongHo Cho used BUG_ON.
+> >>
+> >> Handing out duplicate addresses will generally lead to some sort of
+> >> data corruption or other fault depending on how robust the underlying
+> >> device drivers are written.  So my preference is a BUG_ON to
+> >> immediately flag this condition instead of hoping a device driver will
+> >> correctly handling the dma mapping failure (Some do, most currently
+> >> don't).
+> >>
+> >> WARN_ON() + return -EADDRESSINUSE would be a good alternative.
+> >
+> > Even if it is a real BUG condition, I don't think it is worth to stop
+> > execution at this point. It makes debugging harder and the system less
+> > reliable. I prefer to go with the WARN_ON and an error return value.
 > 
-> > On 07/23/13 08:49, Tomasz Figa wrote:
-> > > This series is an attempt to move clock support on Samsung S3C64xx
-> > > SoCs
-> > > to Common Clock Framework.
-> > > 
-> > > First, support for PLL types present on S3C64xx SoCs is added to
-> > > Samsung
-> > > Common Clock Framework driver. Then the main clock driver for
-> > > mentioned
-> > > SoCs is introduced. Further patches contain fixes for drivers to make
-> > > them compliant with CCF semantics, migration of platform code to use
-> > > the new clock driver and removal of old clock management code.
-> > > 
-> > > Depends on:
-> > >   - [PATCH v4 00/20] Samsung PWM support cleanup
-> > >   
-> > >     http://thread.gmane.org/gmane.linux.kernel.samsung-soc/20856
-> > > 
-> > > On S3C6410-based Tiny6410 board (Mini6410-compatible):
-> > > 
-> > > Tested-by: Tomasz Figa<tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > > 
-> > > For v1:
-> > > 
-> > > Acked-by: Mike Turquette<mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > > 
-> > > Changes since v1:
-> > >   - added patch for read-only muxes,
-> > >   - exported configurable muxes and dividers,
-> > >   - defined mout_syncmux as read-only mux,
-> > >   - in DT-enabled case fixed-clock binding is used to define external
-> > >   clocks.> > 
-> > > Tomasz Figa (8):
-> > >    clk: mux: Add support for read-only muxes.
-> > >    clk: samsung: pll: Add support for PLL6552 and PLL6553
-> > >    clk: samsung: Add clock driver for S3C64xx SoCs
-> > >    ARM: SAMSUNG: Add soc_is_s3c6400/s3c6410 macros
-> > >    ARM: s3c64xx: dma: Use clk_prepare_enable/clk_disable_unprepare
-> > >    usb: host: ohci-s3c2410 Use
-> > >    clk_prepare_enable/clk_disable_unprepare
-> > >    ARM: s3c64xx: Migrate clock handling to Common Clock Framework
-> > >    ARM: s3c64xx: Remove old clock management code
-> > >   
-> > >   .../bindings/clock/samsung,s3c64xx-clock.txt       |   77 ++
-> > >   arch/arm/Kconfig                                   |    2 +-
-> > >   arch/arm/mach-s3c64xx/Makefile                     |    2 +-
-> > >   arch/arm/mach-s3c64xx/clock.c                      | 1007
-> > >   -------------------- arch/arm/mach-s3c64xx/common.c               
-> > >        |   21 +-
-> > >   arch/arm/mach-s3c64xx/common.h                     |   12 +-
-> > >   arch/arm/mach-s3c64xx/dma.c                        |    4 +-
-> > >   arch/arm/mach-s3c64xx/include/mach/regs-clock.h    |  132 +--
-> > >   arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
-> > >   arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
-> > >   arch/arm/mach-s3c64xx/mach-hmt.c                   |    2 +-
-> > >   arch/arm/mach-s3c64xx/mach-mini6410.c              |    2 +-
-> > >   arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
-> > >   arch/arm/mach-s3c64xx/mach-smartq.c                |   11 +-
-> > >   arch/arm/mach-s3c64xx/mach-smdk6400.c              |    2 +-
-> > >   arch/arm/mach-s3c64xx/mach-smdk6410.c              |    2 +-
-> > >   arch/arm/mach-s3c64xx/pm.c                         |   21 -
-> > >   arch/arm/mach-s3c64xx/s3c6400.c                    |    6 -
-> > >   arch/arm/mach-s3c64xx/s3c6410.c                    |    7 -
-> > >   arch/arm/plat-samsung/include/plat/cpu.h           |    4 +
-> > >   drivers/clk/clk-mux.c                              |   10 +-
-> > >   drivers/clk/samsung/Makefile                       |    1 +
-> > >   drivers/clk/samsung/clk-pll.c                      |  160 ++++
-> > >   drivers/clk/samsung/clk-pll.h                      |    4 +
-> > >   drivers/clk/samsung/clk-s3c64xx.c                  |  465 +++++++++
-> > >   drivers/usb/host/ohci-s3c2410.c                    |    8 +-
-> > >   include/dt-bindings/clock/samsung,s3c64xx-clock.h  |  178 ++++
-> > >   include/linux/clk-provider.h                       |    2 +
-> > >   28 files changed, 943 insertions(+), 1205 deletions(-)
-> > >   create mode 100644
-> > >   Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
-> > >   delete mode 100644 arch/arm/mach-s3c64xx/clock.c
-> > >   create mode 100644 drivers/clk/samsung/clk-s3c64xx.c
-> > >   create mode 100644
-> > >   include/dt-bindings/clock/samsung,s3c64xx-clock.h
-> > 
-> > Basically, this series looks good to me, but I'm not sure how this
-> > should be handled because of dependency with PWM cleanup and clk stuff
-> > in clk tree now...
+> I'm ok with WARN_ON and an error return value. This is "valid"
+> behavior.  I expect this bug to never happen but if and when it does,
+> I want a clear symptom (e.g. WARN_ON) that it happened.
 > 
-> Patches 1-3 can go into the clk tree. 4-6 should go through their
-> respective trees.
 
-It looks like version 2 of patch 2/8 has been applied by mistake, breaking 
-compilation (and operation) of the clock driver added in patch 3/8.
+Ok.
+Finally, everyone thinks that WARN_ON() is OK.
+It will be helpful for the kernel code that uses iommu api.
 
-Could you please fix this up? Thanks in advance.
-
-Best regards,
-Tomasz
-
-> If you want I can take 7 & 8 through the clk tree.
+> My concern is that historically, drivers did not get an error return
+> value on failure:
+>     ftp://193.166.3.4/pub/linux/kernel/v2.3/patch-html/patch-2.3.47/linux_Documentation_DMA-mapping.txt.html
 > 
-> Alternatively I can provide patches 1-3 in a separate stable topic
-> branch for you to pull in as a dependency. We'll both merge that stable
-> topic branch into our trees and you can make a note of it for the
-> arm-soc folks.
+> or later:
+>     https://www.kernel.org/pub/linux/kernel/people/marcelo/linux-2.4/Documentation/DMA-mapping.txt
 > 
-> Regards,
-> Mike
+> And thus, some drivers don't check or attempt to handle mapping
+> failures based on this existing code. Here is a recent example:
+>      http://comments.gmane.org/gmane.linux.network/272969
 > 
-> > - Kukjin
+> I hope very few or none of those exist since Neil Horman demonstrated
+> "dma debugging" can flag this behavior.
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---nextPart1560779.elQ0zaIA6Y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+> Just for fun, I'll include this link : (apperently 2003 was a good
+> year for DMA talks :)
+>      http://ols.fedoraproject.org/OLS/Reprints-2003/LinuxSymposium2003-2side.pdf
+>      (three talks on DMA issues)
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
+Thank you for the resources :)
+Those will be helpful for the guys with me.
 
-iQIcBAABAgAGBQJSDgKgAAoJEIv3Hb8G/XruEbgQAKse3gzqmuNFdJThcWKkynG3
-MH6NjgVrwQO0uaoZRpLH/IwF4grNtvHzCJR1IeEuTe/NZRWrsBEV9V4vFNg5tl54
-U8cXVHIjltoX8qPTSsGu45VjaMiOfEX52GZgV2Qk4hACIIgA892eygWyl+04wMqH
-YzC7xU5jZAIb9ntK1LjZo7qTlX6MNUnIGaqNNr5UlAqS9cN89aNkE0TbRLH2WjZB
-xccXiQu7A4oO57yYI046ZW0K2bNHNHvseO5os/urmWZlpNuF29nmpkouei2tt2mU
-jGa/yooO+5elnvjWvtdKXKyGQG1qGrDCaxrjgVGN85wuKbT+MfvH35kvNd6LyQgM
-zQiBcnObmcBQL02xtCi/4ONIGupKgYK/82/G9Lvn2GgVhB7aLL0qkND+lPsnoBdU
-5xPRlw0ASS6E7KoivRNWAGEyCn1xHVK2RiznaIhuSIx3nhjVMzLBBq9kd0pf43i6
-GU5glM/6Wrav9Osz51cv4yd1qVddHVhoI83la4Hc7d/nzZfGrf9Do6kuNGmbDQIQ
-Dg0uNvN/ckLx21HlI1nC2ahvDboLtbwgzwclxeyY3IiyWw4yKEQQEtxxcrSqs+uR
-lYkd5m8Y5dHTrcIBvRHU7JY7X1lRNH8sTDH0bf791SEJo/FPthPF07/mdGpjZUHY
-YB955ofaxqxCAph0FG/R
-=dKwN
------END PGP SIGNATURE-----
-
---nextPart1560779.elQ0zaIA6Y--
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> thanks
+> grant
