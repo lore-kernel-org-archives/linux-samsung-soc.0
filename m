@@ -1,69 +1,40 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V2 2/4] clk: exynos-audss: set correct parent clocks
-Date: Fri, 16 Aug 2013 13:19:36 +0530
-Message-ID: <1376639378-20707-3-git-send-email-padma.v@samsung.com>
+Subject: [PATCH V2 3/4] ARM: dts: Correct the /include entry on exynos5420 dtsi
+ file
+Date: Fri, 16 Aug 2013 13:19:37 +0530
+Message-ID: <1376639378-20707-4-git-send-email-padma.v@samsung.com>
 References: <1376639378-20707-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:29312 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753055Ab3HPHsV (ORCPT
+	with ESMTP id S1753084Ab3HPHsW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Aug 2013 03:48:21 -0400
+	Fri, 16 Aug 2013 03:48:22 -0400
 In-reply-to: <1376639378-20707-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.v@samsung.com, padma.kvr@gmail.com
 Cc: broonie@kernel.org, kgene.kim@samsung.com, abrestic@chromium.org, mturquette@linaro.org
 
-From: Andrew Bresticker <abrestic@chromium.org>
+This patch corrects the /include to #include on exynos5420
 
-Different Exynos SoCs have different names for certain input clocks
-to the AudioSS block.  Since the order in which clock providers are
-probed is not guaranteed, we can't use the device-tree to pass the
-correct input clocks.  Instead, use the compatibility string to
-determine what the correct parent clocks should be.
-
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos-audss.c |   12 +++++++++++-
- 1 files changed, 11 insertions(+), 1 deletions(-)
+ arch/arm/boot/dts/exynos5420.dtsi |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 86d2606..d81c5f8 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -35,6 +35,7 @@ static unsigned long reg_save[][2] = {
- /* list of all parent clock list */
- static const char *mout_audss_p[] = { "fin_pll", "fout_epll" };
- static const char *mout_i2s_p[] = { "mout_audss", "cdclk0", "sclk_audio0" };
-+static const char *sclk_pcm_p = "sclk_pcm0";
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 9e90d1e..334f7b7 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -14,7 +14,7 @@
+  */
  
- #ifdef CONFIG_PM_SLEEP
- static int exynos_audss_clk_suspend(void)
-@@ -77,6 +78,15 @@ void __init exynos_audss_clk_init(struct device_node *np)
- 		return;
- 	}
+ #include "exynos5.dtsi"
+-/include/ "exynos5420-pinctrl.dtsi"
++#include "exynos5420-pinctrl.dtsi"
+ / {
+ 	compatible = "samsung,exynos5420";
  
-+	/* fix up clock parent names based on SoC */
-+	if (of_device_is_compatible(np, "samsung,exynos5420-audss-clock")) {
-+		mout_i2s_p[2] = "sclk_maudio0";
-+		sclk_pcm_p = "sclk_maupcm0";
-+	} else if (of_device_is_compatible(np,
-+					"samsung,exynos5250-audss-clock")) {
-+		sclk_pcm_p = "div_pcm0";
-+	}
-+
- 	clk_data.clks = clk_table;
- 	clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
- 	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
-@@ -118,7 +128,7 @@ void __init exynos_audss_clk_init(struct device_node *np)
- 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
- 
- 	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
--				"div_pcm0", CLK_SET_RATE_PARENT,
-+				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
- 
- 	if (of_device_is_compatible(np, "samsung,exynos5420-audss-clock")) {
 -- 
 1.7.4.4
