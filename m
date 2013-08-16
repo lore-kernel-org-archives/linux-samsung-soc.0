@@ -1,144 +1,49 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Subject: [PATCH] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Fri, 16 Aug 2013 19:23:54 +0530
-Message-ID: <1376661234-516-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: Broken device trees for exynos in linux-next
+Date: Fri, 16 Aug 2013 09:04:41 -0700
+Message-ID: <CAOesGMiyNM6VdNzKQU3XwoiacJV8hc60mcLiH+vHoS6xJM6q-A@mail.gmail.com>
+References: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
+	<13b101ce9a14$2cebd700$86c38500$@org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:60598 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751574Ab3HPNyG (ORCPT
+Received: from mail-qa0-f51.google.com ([209.85.216.51]:35794 "EHLO
+	mail-qa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752270Ab3HPQEl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Aug 2013 09:54:06 -0400
-Received: by mail-pa0-f54.google.com with SMTP id kx10so1903252pab.41
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2013 06:54:05 -0700 (PDT)
+	Fri, 16 Aug 2013 12:04:41 -0400
+Received: by mail-qa0-f51.google.com with SMTP id f11so583193qae.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Aug 2013 09:04:41 -0700 (PDT)
+In-Reply-To: <13b101ce9a14$2cebd700$86c38500$@org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-This patch adds the device tree node entries for exynos5420 SOC.
-Exynos5420 has a different version of DWMMC controller,so a new
-compatible string is used to distinguish it from the prior SOC's.
+On Thu, Aug 15, 2013 at 5:04 PM, Kukjin Kim <kgene@kernel.org> wrote:
+> I think, maybe we discussed about that? :) current exynos_defconfig cannot
+> support exynos5440 because of LPAE and I remember we decided LPAE and
+> non-LPAE should be separated. So as I commented before, exynos5440_defconfig
+> is needed. If you have any concerns, please let me know.
 
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
----
- .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |   41 ++++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi                  |   33 ++++++++++++++++
- 3 files changed, 76 insertions(+)
+Having a SoC-specific defconfig makes no sense. You can run with LPAE
+enabled on A15 and A7-based systems even if they don't have enough
+memory to need it.
 
-diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-index 6d1c098..84cd56f 100644
---- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-+++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-@@ -16,6 +16,8 @@ Required Properties:
- 	  specific extensions.
- 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
- 	  specific extensions.
-+	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
-+	  specific extensions.
- 
- * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
-   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 08607df..4530700 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -30,4 +30,45 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
-+	dwmmc0@12200000 {
-+		num-slots = <1>;
-+		broken-cd;
-+		bypass-smu;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <0 4>;
-+		samsung,dw-mshc-ddr-timing = <0 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+		};
-+	};
-+
-+	dwmmc1@12210000 {
-+		status = "disabled";
-+	};
-+
-+	dwmmc2@12220000 {
-+		num-slots = <1>;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+		};
-+	};
-+
- };
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 9e90d1e..8559aa8 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -19,6 +19,9 @@
- 	compatible = "samsung,exynos5420";
- 
- 	aliases {
-+		mshc0 = &dwmmc_0;
-+		mshc1 = &dwmmc_1;
-+		mshc2 = &dwmmc_2;
- 		pinctrl0 = &pinctrl_0;
- 		pinctrl1 = &pinctrl_1;
- 		pinctrl2 = &pinctrl_2;
-@@ -65,6 +68,36 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	dwmmc_0: dwmmc0@12200000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 75 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12200000 0x2000>;
-+		clocks = <&clock 351>, <&clock 132>;
-+		clock-names = "biu", "ciu";
-+	};
-+
-+	dwmmc_1: dwmmc1@12210000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 76 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12210000 0x2000>;
-+		clocks = <&clock 352>, <&clock 133>;
-+		clock-names = "biu", "ciu";
-+	};
-+
-+	dwmmc_2: dwmmc2@12220000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12220000 0x2000>;
-+		clocks = <&clock 353>, <&clock 134>;
-+		clock-names = "biu", "ciu";
-+	};
-+
- 	mct@101C0000 {
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x101C0000 0x800>;
--- 
-1.7.9.5
+Really, what we want is to just turn on the LPAE functionality and
+keep everything else common. Forking into two defconfigs seems like
+the wrong idea, even if we did discuss it before. Having something
+like a config fragment to include would make more sense, since that
+could be shared across all platforms (and apply with
+multi_v7_defconfig for those who want to run that on LPAE as well).
+
+Or, you know, just have your build script enable it without having an
+in-tree config fragment. That'd work too.
+
+The main case where this isn't sufficient is on platforms where _all_
+memory sits above 4G, since you can't boot a non-LPAE kernel on those
+at all. It seems like 5440 has memory starting at 2GB so it's not one
+of those.
+
+
+-Olof
