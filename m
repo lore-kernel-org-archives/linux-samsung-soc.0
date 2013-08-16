@@ -1,91 +1,57 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH V5] ARM: dts: Change i2s compatible string on exynos5250
-Date: Fri, 16 Aug 2013 14:43:17 +0900
-Message-ID: <13f801ce9a43$823571b0$86a05510$@org>
-References: <1376627178-28649-1-git-send-email-padma.v@samsung.com>
- <CAOesGMj4y=uVMmETLXs_1ZfTD+CrQgKuirrpGrqs=CU3uk5__Q@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v10] i2c: exynos5: add High Speed I2C controller driver
+Date: Fri, 16 Aug 2013 09:05:00 +0200
+Message-ID: <20130816070500.GA3046@katana>
+References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
+ <1371638905-30633-1-git-send-email-ch.naveen@samsung.com>
+ <3925484.kHD24rQYyy@amdc1227>
+ <20130815131226.GI17155@katana>
+ <CAHfPSqBnj2OTHdbnW3SCRf7SL1maMsWau1+9DWFLYRBM+1HOJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:64461 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750925Ab3HPFnU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Aug 2013 01:43:20 -0400
-In-reply-to: <CAOesGMj4y=uVMmETLXs_1ZfTD+CrQgKuirrpGrqs=CU3uk5__Q@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BOKacYhQ+x31HxR3"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAHfPSqBnj2OTHdbnW3SCRf7SL1maMsWau1+9DWFLYRBM+1HOJQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org, Kukjin Kim <kgene.kim@samsung.com>, grant.likely@secretlab.ca, linux-kernel@vger.kernel.org, taeggyun.ko@samsung.com, balbi@ti.com, thomas.abraham@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Padmavathi Venna' <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, padma.kvr@gmail.com, 'Mark Brown' <broonie@kernel.org>, 'Tushar Behera' <tushar.behera@linaro.org>
 
-Olof Johansson wrote:
-> 
-> On Thu, Aug 15, 2013 at 9:26 PM, Padmavathi Venna <padma.v@samsung.com>
-> wrote:
-> > This patch removes quirks from i2s node and change the i2s
-> > compatible names.
-> >
-> > Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> > ---
-> >
-> > Changes since V4:
-> >         - Mark Brown reverted the below two patches due to below build
-> failure with
-> >           exynos_defconfig.
-> >                 "ARM: dts: exynos5250: move common i2s properties to
-exynos5
-> dtsi"
-> >                 "ARM: dts: Change i2s compatible string on exynos5250"
-> >
-> >           build error:
-> >           DTC     arch/arm/boot/dts/exynos5420-smdk5420.dtb
-> >           ERROR (phandle_references): Reference to non-existent node or
-> label "pdma1"
-> >           ERROR (phandle_references): Reference to non-existent node or
-> label "pdma1"
-> >           ERROR (phandle_references): Reference to non-existent node or
-> label "pdma0"
-> >           ERROR (phandle_references): Reference to non-existent node or
-> label "pdma0"
-> >
-> > But with out "ARM: dts: Change i2s compatible string on exynos5250" will
-> break the i2s
-> > driver.
-> >
-> > So posting this patch now and will take care of posting other patch
-> later after dependent
-> > patches got merged.
-> >
-> >  arch/arm/boot/dts/exynos5250.dtsi |    9 +++------
-> >  1 files changed, 3 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> > index ef57277..376090f 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -405,7 +405,7 @@
-> >         };
-> >
-> >         i2s0: i2s@03830000 {
-> > -               compatible = "samsung,i2s-v5";
-> > +               compatible = "samsung,s5pv210-i2s";
-> 
-> Device tree reviewers, this is something to look out for in the
-> future. Some samsung platforms/drivers use "samsung,<chip>-<ip>",
-> others "samsung,<ip>-<chip>". I don't personally care much one way or
-> another, but it really should be consistent.
-> 
-Hmm...I think, if "samsung,<ip name>-<ip version>" is possible, it would be
-nice. I remember there are no versions in datasheet for some IPs but
-something have like i2s and mfc. So "samsung,<ip>-<version>" is used for
-only i2s and mfc. But actually there are versions for Samsung IPs, no
-comments for that in datasheet. So I think, if Samsung can provide the
-specific version of Samsung IPs, we can use that like other platforms. I
-will prepare some table for that after meeting with Samsung hardware IP team
-so that samsung platform use one format "samsung,<ip>-<version>".
 
-Thanks,
-Kukjin
+--BOKacYhQ+x31HxR3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> Once, we fix this problem. i planned to rebase and submit.
+>=20
+> Is it okey with you?
+
+Perfectly fine. Thanks for the heads up.
+
+
+--BOKacYhQ+x31HxR3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSDc8cAAoJEBQN5MwUoCm25cIP/22yNBOO1nSiKedOZMw4S5EI
+hsywrjpoLQXfJXswRER+c1RSBya7S9JVahPxlJ0dIJXdTi+WYLaVBsZEzLsup6zh
+tJIydVzskt3aHozFIr77byir3xEtilZBnJ2RsUnjp+hOJteAb00x4CXm13fA3J6e
+StzvjnZ+C14kxbUbv7inuj2ARg6BON3FV3YNHKBJx1y4vPCfvAmBnL1L0c9UFTvi
+U5+Vg1LRqdhPh3V549yrS5tP4Lv8NdSYpVs8fKHuDvyKLG49D56lw+Jl51lkkeKb
+v6I3zB++1DL/zp/Bvx6f6HkWduytqbHU38sDGDxcmiY5C6DlGees5590vkkBP1Qv
+veM53ULgiDjWDOPBGXZWXf9JTzTSmFVUQVL9ajNGyP8b3JCCuBj4pMXTtoZkFY7e
+hCzoD5hqOa5wl60qJYhi4bQ/uJ8uBjbbOjYpcBkshEnsNlYMTDJvULLORU5lMywh
+ukOLwOMH7fZC0GjTBKaboz87JNX+iE2YZ9POzVWlDHwcDWXMVrMRTo+uQIfT1lnd
+Ql0ReWOAvfqm5HMcoKVHhVn+tH5uqipJVLeScDBIpwIhXOK3SzkWKYBsdPdC5RuA
+spD7ez64NgxHpN7sWlxExygec1q06CTf+tvy6TVMxLQrJR8OCWPmzwrbXau+kDqh
+5YgQuxeg+avitKCNkpnh
+=Oa2x
+-----END PGP SIGNATURE-----
+
+--BOKacYhQ+x31HxR3--
