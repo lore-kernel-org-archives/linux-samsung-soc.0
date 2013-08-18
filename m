@@ -1,58 +1,69 @@
-From: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
-Subject: Re: [PATCH 2/2] iommu/exynos: Follow kernel coding style for
-	__sysmmu_enable return type
-Date: Sun, 18 Aug 2013 15:33:07 +0200
-Message-ID: <CAG8rG2zf8CUu+1qRURRhvX8RsNx8CLXJU85qnsFjCvm0FYYuRg@mail.gmail.com>
-References: <1374766502-14823-1-git-send-email-a.motakis@virtualopensystems.com>
-	<1374766502-14823-2-git-send-email-a.motakis@virtualopensystems.com>
-	<003101ce89ed$52317330$f6945990$@samsung.com>
-	<20130814131547.GA5889@8bytes.org>
-	<20130816202151.b47fae1e9ed249d06baa37d1@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH V5] ARM: dts: Change i2s compatible string on exynos5250
+Date: Mon, 19 Aug 2013 03:05:29 +0900
+Message-ID: <52110CE9.8000100@samsung.com>
+References: <1376627178-28649-1-git-send-email-padma.v@samsung.com> <CAOesGMj4y=uVMmETLXs_1ZfTD+CrQgKuirrpGrqs=CU3uk5__Q@mail.gmail.com> <13f801ce9a43$823571b0$86a05510$@org> <1812843.09c8C6xn0E@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20130816202151.b47fae1e9ed249d06baa37d1-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, kvm-arm <kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:44310 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754350Ab3HRSFe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 18 Aug 2013 14:05:34 -0400
+In-Reply-To: <1812843.09c8C6xn0E@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Padmavathi Venna' <padma.v@samsung.com>, padma.kvr@gmail.com, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'Tushar Behera' <tushar.behera@linaro.org>
 
-Yes, of course, I have no objections.
+On 08/16/13 16:53, Tomasz Figa wrote:
+> Hi Kukjin,
+>
+[...]
 
-On Fri, Aug 16, 2013 at 1:21 PM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On Wed, 14 Aug 2013 15:15:49 +0200, 'Joerg Roedel' wrote:
->> KyongHo,
+>>>> -               compatible = "samsung,i2s-v5";
+>>>> +               compatible = "samsung,s5pv210-i2s";
+>>>
+>>> Device tree reviewers, this is something to look out for in the
+>>> future. Some samsung platforms/drivers use "samsung,<chip>-<ip>",
+>>> others "samsung,<ip>-<chip>". I don't personally care much one way or
+>>> another, but it really should be consistent.
 >>
->> On Fri, Jul 26, 2013 at 07:46:01PM +0900, Cho KyongHo wrote:
->> > __sysmmu_enable() must return 1 if it is called with the same page table.
->> > I have fixed it exynos_iommu_attach_device() to always return zero on success
->> > in the next patchset which I will post today.
->> >
->> > Thank you.
->>
->> When you are fine with these patches please put them on-top of your
->> patch-set when you re-submit. I will take them from there then.
->>
+>> Hmm...I think, if "samsung,<ip name>-<ip version>" is possible, it would
+>> be nice. I remember there are no versions in datasheet for some IPs but
+>> something have like i2s and mfc. So "samsung,<ip>-<version>" is used
+>> for only i2s and mfc. But actually there are versions for Samsung IPs,
+>> no comments for that in datasheet. So I think, if Samsung can provide
+>> the specific version of Samsung IPs, we can use that like other
+>> platforms. I will prepare some table for that after meeting with
+>> Samsung hardware IP team so that samsung platform use one format
+>> "samsung,<ip>-<version>".
 >
-> Ok.
+> Sorry, I don't think this is a good idea, unless you can force the IP team
+> to release a version table containing version of _every_ IP for _every_
+> released SoC, including those historical ones, like S3C24xx and S3C64xx.
+> Of course such tables should be available publicly.
 >
-> Antonios,
+It's different issue and I agree with Mark Brown's comments.
+
+> In addition, there might be other funny things going on with IPs and their
+> surroundings, that could make a need to create several separate compatible
+> values for the same IP revision, but on different SoCs, because it was
+> integrated in a slightly different way.
 >
-> Would you mind
-> if I submit your 2 patches on top of my patches with your signed-off?
+> I believe we have choses the "samsung,<chip>-<ip>" scheme to avoid being
+> dependent upon data that is not always publicly available, which is more
+> future- (and past-) proof and also solves the integration problem.
 >
-> KyongHo.
->
->>
->>       Joerg
->>
->>
+Well, I don't think so, because Samsung is no more just SoC vendor. 
+Actually Samsung is providing just IP to customers, I think, they don't 
+like to use the name, exynos**** for their SoC or Chip, because exynos, 
+s3c or s5p whatever is Samsung's SoC brand name. If so, I think, my 
+suggestion is more reasonable. See the example of Synopsys and ARM 
+primecell...that's why I will try to do it. But I know I need to get 
+agreement from DT guys and maybe I need more time than I expect ;-)
+
+Thanks,
+Kukjin
