@@ -1,86 +1,40 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Remove unnecessary exynos4_default_sdhci*()
-Date: Mon, 19 Aug 2013 05:24:10 +0900
-Message-ID: <52112D6A.9090102@samsung.com>
-References: <004d01ce80f1$33533d90$99f9b8b0$@samsung.com>
+Subject: [GIT PULL 0/2] Samsung pull-request for v3.12
+Date: Mon, 19 Aug 2013 07:34:51 +0900
+Message-ID: <15ff01ce9c63$276aa940$763ffbc0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:43371 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754710Ab3HRUYN (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:47582 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755140Ab3HRWex (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 Aug 2013 16:24:13 -0400
-Received: by mail-pa0-f44.google.com with SMTP id fz6so3843097pac.17
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Aug 2013 13:24:13 -0700 (PDT)
-In-Reply-To: <004d01ce80f1$33533d90$99f9b8b0$@samsung.com>
+	Sun, 18 Aug 2013 18:34:53 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MRR00E8O0239Q20@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Aug 2013 07:34:51 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org
 
-On 07/15/13 09:21, Jingoo Han wrote:
-> Commit 17397a2("ARM: EXYNOS: Remove platform device initialization")
-> removes calling exynos4_default_sdhci*() functions; thus, these are
-> not necessary any more.
->
-> Signed-off-by: Jingoo Han<jg1.han@samsung.com>
-> ---
->   arch/arm/plat-samsung/include/plat/sdhci.h |   38 ----------------------------
->   1 file changed, 38 deletions(-)
->
-> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
-> index ce1d0f7..bf65021 100644
-> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
-> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
-> @@ -260,44 +260,6 @@ static inline void s5pv210_default_sdhci3(void) { }
->
->   #endif /* CONFIG_S5PV210_SETUP_SDHCI */
->
-> -/* EXYNOS4 SDHCI setup */
-> -#ifdef CONFIG_EXYNOS4_SETUP_SDHCI
-> -static inline void exynos4_default_sdhci0(void)
-> -{
-> -#ifdef CONFIG_S3C_DEV_HSMMC
-> -	s3c_hsmmc0_def_platdata.cfg_gpio = exynos4_setup_sdhci0_cfg_gpio;
-> -#endif
-> -}
-> -
-> -static inline void exynos4_default_sdhci1(void)
-> -{
-> -#ifdef CONFIG_S3C_DEV_HSMMC1
-> -	s3c_hsmmc1_def_platdata.cfg_gpio = exynos4_setup_sdhci1_cfg_gpio;
-> -#endif
-> -}
-> -
-> -static inline void exynos4_default_sdhci2(void)
-> -{
-> -#ifdef CONFIG_S3C_DEV_HSMMC2
-> -	s3c_hsmmc2_def_platdata.cfg_gpio = exynos4_setup_sdhci2_cfg_gpio;
-> -#endif
-> -}
-> -
-> -static inline void exynos4_default_sdhci3(void)
-> -{
-> -#ifdef CONFIG_S3C_DEV_HSMMC3
-> -	s3c_hsmmc3_def_platdata.cfg_gpio = exynos4_setup_sdhci3_cfg_gpio;
-> -#endif
-> -}
-> -
-> -#else
-> -static inline void exynos4_default_sdhci0(void) { }
-> -static inline void exynos4_default_sdhci1(void) { }
-> -static inline void exynos4_default_sdhci2(void) { }
-> -static inline void exynos4_default_sdhci3(void) { }
-> -
-> -#endif /* CONFIG_EXYNOS4_SETUP_SDHCI */
-> -
->   static inline void s3c_sdhci_setname(int id, char *name)
->   {
->   	switch (id) {
+Hi Arnd and Olof,
 
-Looks good to me, applied.
+Here is Samsung cleanup and Exynos DT stuff for v3.12.
+
+They include non-dt cleanup and unused codes, and add exynos4412-trats2
+board and update Arndale board, exynos5420 and exynos4 series.
+
+Just note, I'm holding on defconfig update branch because of concern for
+exynos5440_defconfig and I'm waiting for Mike's clk update for s3c64xx
+common clk and addressing comments for several DT patches.
+
+If any problems, please let me know.
 
 Thanks,
 Kukjin
