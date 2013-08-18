@@ -1,56 +1,47 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 0/4] DT/ARCH updates for MFC
-Date: Mon, 19 Aug 2013 04:47:48 +0900
-Message-ID: <521124E4.6090100@samsung.com>
-References: <1376480497-17572-1-git-send-email-arun.kk@samsung.com>
+Subject: Re: [PATCH 3/4] ARM: dts: Correct the /include entry on exynos5420
+ dtsi file
+Date: Mon, 19 Aug 2013 04:54:06 +0900
+Message-ID: <5211265E.7030808@samsung.com>
+References: <1373458313-18970-1-git-send-email-padma.v@samsung.com> <1373458313-18970-4-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:63578 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752495Ab3HRTrv (ORCPT
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:62534 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754687Ab3HRTyL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 Aug 2013 15:47:51 -0400
-In-Reply-To: <1376480497-17572-1-git-send-email-arun.kk@samsung.com>
+	Sun, 18 Aug 2013 15:54:11 -0400
+Received: by mail-pd0-f174.google.com with SMTP id y13so4185141pdi.5
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Aug 2013 12:54:11 -0700 (PDT)
+In-Reply-To: <1373458313-18970-4-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, k.debski@samsung.com, s.nawrocki@samsung.com, sachin.kamat@linaro.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, mturquette@linaro.org, dianders@chromium.org, abrestic@chromium.org
 
-On 08/14/13 20:41, Arun Kumar K wrote:
-> The patch series updates the DT nodes of MFC in Exynos4,
-> Exynos 5250 and creates node in 5420.
-> The memory reservation patch for MFC v7 firmware is omitted
-> in this series as its no longer needed after the new CMA DT
-> framework by Marek Szyprowski.
+On 07/10/13 21:11, Padmavathi Venna wrote:
+> This patch corrects the /include to #include on exynos5420
 >
-> Changes from v2:
-> - Removed register and interrupt properties from common
-> exynos5.dtsi file as per Kukjin Kim's suggestion.
-> - Dropped v7 memory reservation patch
+> Signed-off-by: Padmavathi Venna<padma.v@samsung.com>
+> ---
+>   arch/arm/boot/dts/exynos5420.dtsi |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
 >
-> Changes from v1:
-> - Made status disabled in dtsi and enable in dts
-> as suggested by Sachin Kamat.
-> - Moved common properties to exynos5.dtsi as
-> suggested by Chander.
-> - Updated binding documentation for special clk removal
-> - Updated exynos4 dtsi
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 8c54c4b..da55160 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -14,7 +14,7 @@
+>    */
 >
-> Arun Kumar K (4):
->    ARM: dts: Update clocks entry in MFC binding documentation
->    ARM: dts: Remove unsused MFC clock from exynos4
->    ARM: dts: Update 5250 MFC node
->    ARM: dts: Add MFC node for exynos 5420
+>   #include "exynos5.dtsi"
+> -/include/ "exynos5420-pinctrl.dtsi"
+> +#include "exynos5420-pinctrl.dtsi"
+>   / {
+>   	compatible = "samsung,exynos5420";
 >
->   .../devicetree/bindings/media/s5p-mfc.txt          |   10 +++++-----
->   arch/arm/boot/dts/exynos4.dtsi                     |    4 ++--
->   arch/arm/boot/dts/exynos5250.dtsi                  |    2 ++
->   arch/arm/boot/dts/exynos5420.dtsi                  |    8 ++++++++
->   4 files changed, 17 insertions(+), 7 deletions(-)
->
+Applied, thanks.
 
-Applied this whole series, thanks.
-
-Kukjin
+- Kukjin
