@@ -1,69 +1,106 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH V5] ARM: dts: Change i2s compatible string on exynos5250
-Date: Mon, 19 Aug 2013 03:05:29 +0900
-Message-ID: <52110CE9.8000100@samsung.com>
-References: <1376627178-28649-1-git-send-email-padma.v@samsung.com> <CAOesGMj4y=uVMmETLXs_1ZfTD+CrQgKuirrpGrqs=CU3uk5__Q@mail.gmail.com> <13f801ce9a43$823571b0$86a05510$@org> <1812843.09c8C6xn0E@flatron>
+Subject: Re: [PATCH v2 0/4] ARM: S3C24XX: add dmaengine based dma-driver
+Date: Mon, 19 Aug 2013 03:13:19 +0900
+Message-ID: <52110EBF.9010209@samsung.com>
+References: <201308141359.13872.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:44310 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754350Ab3HRSFe (ORCPT
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:40165 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754362Ab3HRSNX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 Aug 2013 14:05:34 -0400
-In-Reply-To: <1812843.09c8C6xn0E@flatron>
+	Sun, 18 Aug 2013 14:13:23 -0400
+In-Reply-To: <201308141359.13872.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Padmavathi Venna' <padma.v@samsung.com>, padma.kvr@gmail.com, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'Tushar Behera' <tushar.behera@linaro.org>
+To: =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: kgene.kim@samsung.com, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 08/16/13 16:53, Tomasz Figa wrote:
-> Hi Kukjin,
+On 08/14/13 20:59, Heiko St=C3=BCbner wrote:
+> This series tries to provide a basic dmaengine driver for the s3c24xx
+> SoCs to subsequently retire the old one with custom API.
 >
-[...]
+> Since v1 three big changes happened (appart from fixing received comm=
+ents):
+>
+> For one the limitation of sg-lists to 1 element is gone.Secondly the
+> specifics of the virtual channels (target bus, handshake, etc) are no=
+t
+> encoded with channel ids but in the platformdata - making a later dt
+> binding easier, as these informations can there be gathered by the xl=
+ate
+> function. And lastly I also added a preliminary mechanism to handle t=
+he
+> specific needs for the earlier variants of the driver.
+>
+> While s3c2443 and later can use any channel for any peripheral with j=
+ust
+> marking the target-peripheral-id in a register, earlier SoCs can only=
+ use
+> specific channels and the target-ids also vary depending on the chann=
+el.
+>
+> Therefore on newer SoCs the chansel element only needs to contain the
+> requested target-id, while on the older variants use it to encode bot=
+h
+> the valid channels and the channel-specific peripheral-id.
+>
+> On affected SoCs the target-id is always 3 bit wide, so we use these =
+and
+> an additional 4th bit to hold the valid state. As the older SoCs all =
+have
+> 4 dma channels this can live happily in an u16 element.
+>
+> The s3c24xx series will most likely not see any new offspring, but ev=
+en
+> if it happens any new model will probably use the newer more flexible
+> variant of the dma controller, so this should not restrict anything
+> in the future.
+>
+> Example:
+> SDI is valid on channels 0, 2 and 3 - with varying hw request sources=
+=2E
+> For it the chansel field would look like
+>
+>   ((BIT(3) | 1)<<  3 * 4) | // channel 3, with request source 1
+>   ((BIT(3) | 2)<<  2 * 4) | // channel 2, with request source 2
+>   ((BIT(3) | 2)<<  0 * 4)   // channel 0, with request source 2
+>
+>
+> Heiko Stuebner (4):
+>    ARM: S3C24XX: number the dma clocks
+>    dmaengine: add driver for Samsung s3c24xx SoCs
+>    ARM: S3C24XX: add platform-devices for new dma driver for s3c2412 =
+and
+>      s3c2443
+>    ARM: SAMSUNG: set s3c24xx_dma_filter for s3c64xx-spi0 device
+>
+>   arch/arm/mach-s3c24xx/clock-s3c2412.c     |    8 +-
+>   arch/arm/mach-s3c24xx/common-s3c2443.c    |   12 +-
+>   arch/arm/mach-s3c24xx/common.c            |  106 +++
+>   arch/arm/mach-s3c24xx/common.h            |    3 +
+>   arch/arm/mach-s3c24xx/mach-jive.c         |    1 +
+>   arch/arm/mach-s3c24xx/mach-smdk2413.c     |    1 +
+>   arch/arm/mach-s3c24xx/mach-smdk2416.c     |    1 +
+>   arch/arm/mach-s3c24xx/mach-smdk2443.c     |    1 +
+>   arch/arm/mach-s3c24xx/mach-vstms.c        |    1 +
+>   arch/arm/plat-samsung/devs.c              |    5 +-
+>   drivers/dma/Kconfig                       |   12 +
+>   drivers/dma/Makefile                      |    1 +
+>   drivers/dma/s3c24xx-dma.c                 | 1255 ++++++++++++++++++=
++++++++++++
+>   include/linux/platform_data/dma-s3c24xx.h |   43 +
+>   14 files changed, 1439 insertions(+), 11 deletions(-)
+>   create mode 100644 drivers/dma/s3c24xx-dma.c
+>   create mode 100644 include/linux/platform_data/dma-s3c24xx.h
+>
+Looks good to me, but I need ack from Vinod, dma maintainer.
 
->>>> -               compatible = "samsung,i2s-v5";
->>>> +               compatible = "samsung,s5pv210-i2s";
->>>
->>> Device tree reviewers, this is something to look out for in the
->>> future. Some samsung platforms/drivers use "samsung,<chip>-<ip>",
->>> others "samsung,<ip>-<chip>". I don't personally care much one way or
->>> another, but it really should be consistent.
->>
->> Hmm...I think, if "samsung,<ip name>-<ip version>" is possible, it would
->> be nice. I remember there are no versions in datasheet for some IPs but
->> something have like i2s and mfc. So "samsung,<ip>-<version>" is used
->> for only i2s and mfc. But actually there are versions for Samsung IPs,
->> no comments for that in datasheet. So I think, if Samsung can provide
->> the specific version of Samsung IPs, we can use that like other
->> platforms. I will prepare some table for that after meeting with
->> Samsung hardware IP team so that samsung platform use one format
->> "samsung,<ip>-<version>".
->
-> Sorry, I don't think this is a good idea, unless you can force the IP team
-> to release a version table containing version of _every_ IP for _every_
-> released SoC, including those historical ones, like S3C24xx and S3C64xx.
-> Of course such tables should be available publicly.
->
-It's different issue and I agree with Mark Brown's comments.
-
-> In addition, there might be other funny things going on with IPs and their
-> surroundings, that could make a need to create several separate compatible
-> values for the same IP revision, but on different SoCs, because it was
-> integrated in a slightly different way.
->
-> I believe we have choses the "samsung,<chip>-<ip>" scheme to avoid being
-> dependent upon data that is not always publicly available, which is more
-> future- (and past-) proof and also solves the integration problem.
->
-Well, I don't think so, because Samsung is no more just SoC vendor. 
-Actually Samsung is providing just IP to customers, I think, they don't 
-like to use the name, exynos**** for their SoC or Chip, because exynos, 
-s3c or s5p whatever is Samsung's SoC brand name. If so, I think, my 
-suggestion is more reasonable. See the example of Synopsys and ARM 
-primecell...that's why I will try to do it. But I know I need to get 
-agreement from DT guys and maybe I need more time than I expect ;-)
+Vinod, if you're OK on this, please let us know so that I could take=20
+this whole series into samsung tree.
 
 Thanks,
 Kukjin
