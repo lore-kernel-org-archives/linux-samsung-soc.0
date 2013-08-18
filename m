@@ -1,75 +1,58 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: Broken device trees for exynos in linux-next
-Date: Sat, 17 Aug 2013 19:40:18 +0900
-Message-ID: <159201ce9b36$2a513f30$7ef3bd90$@org>
-References: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
- <13b101ce9a14$2cebd700$86c38500$@org>
- <CAOesGMiyNM6VdNzKQU3XwoiacJV8hc60mcLiH+vHoS6xJM6q-A@mail.gmail.com>
+From: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
+Subject: Re: [PATCH 2/2] iommu/exynos: Follow kernel coding style for
+	__sysmmu_enable return type
+Date: Sun, 18 Aug 2013 15:33:07 +0200
+Message-ID: <CAG8rG2zf8CUu+1qRURRhvX8RsNx8CLXJU85qnsFjCvm0FYYuRg@mail.gmail.com>
+References: <1374766502-14823-1-git-send-email-a.motakis@virtualopensystems.com>
+	<1374766502-14823-2-git-send-email-a.motakis@virtualopensystems.com>
+	<003101ce89ed$52317330$f6945990$@samsung.com>
+	<20130814131547.GA5889@8bytes.org>
+	<20130816202151.b47fae1e9ed249d06baa37d1@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:18190 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751624Ab3HQKkU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 17 Aug 2013 06:40:20 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MRO008CC8B67B10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 17 Aug 2013 19:40:18 +0900 (KST)
-In-reply-to: <CAOesGMiyNM6VdNzKQU3XwoiacJV8hc60mcLiH+vHoS6xJM6q-A@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20130816202151.b47fae1e9ed249d06baa37d1-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, kvm-arm <kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>
-Cc: 'Mark Brown' <broonie@kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Olof Johansson wrote:
-> 
-> On Thu, Aug 15, 2013 at 5:04 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> > I think, maybe we discussed about that? :) current exynos_defconfig
-> cannot
-> > support exynos5440 because of LPAE and I remember we decided LPAE and
-> > non-LPAE should be separated. So as I commented before,
-> exynos5440_defconfig
-> > is needed. If you have any concerns, please let me know.
-> 
-> Having a SoC-specific defconfig makes no sense. You can run with LPAE
-> enabled on A15 and A7-based systems even if they don't have enough
-> memory to need it.
-> 
-Hmm, I'm not sure. If so, I'm wondering why LPAE is implemented with 'ifdef'
-and why Red Hat and Canonical provide PAE enabled kernel separately in
-x86...
+Yes, of course, I have no objections.
 
-> Really, what we want is to just turn on the LPAE functionality and
-> keep everything else common. Forking into two defconfigs seems like
-> the wrong idea, even if we did discuss it before. Having something
-> like a config fragment to include would make more sense, since that
-> could be shared across all platforms (and apply with
-> multi_v7_defconfig for those who want to run that on LPAE as well).
-> 
-If we could make LPAE enabled defconfig for all ARM platforms, I'm fine. I
-think your concern is creating SoC specific defconfig and I agree with you.
-But I'm not sure how we can support LPAE enabled defconfig for ARM
-platforms.
-
-> Or, you know, just have your build script enable it without having an
-> in-tree config fragment. That'd work too.
-> 
-I don't think so because the defconfig will be used by customer for their
-product so I should provide some defconfig for exynos5440 in mainline...
-
-> The main case where this isn't sufficient is on platforms where _all_
-> memory sits above 4G, since you can't boot a non-LPAE kernel on those
-> at all. It seems like 5440 has memory starting at 2GB so it's not one
-> of those.
-> 
-5440 has 8GB memory by default.
-
-So let me know which way is fine to us?
-
-- Kukjin
+On Fri, Aug 16, 2013 at 1:21 PM, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> On Wed, 14 Aug 2013 15:15:49 +0200, 'Joerg Roedel' wrote:
+>> KyongHo,
+>>
+>> On Fri, Jul 26, 2013 at 07:46:01PM +0900, Cho KyongHo wrote:
+>> > __sysmmu_enable() must return 1 if it is called with the same page table.
+>> > I have fixed it exynos_iommu_attach_device() to always return zero on success
+>> > in the next patchset which I will post today.
+>> >
+>> > Thank you.
+>>
+>> When you are fine with these patches please put them on-top of your
+>> patch-set when you re-submit. I will take them from there then.
+>>
+>
+> Ok.
+>
+> Antonios,
+>
+> Would you mind
+> if I submit your 2 patches on top of my patches with your signed-off?
+>
+> KyongHo.
+>
+>>
+>>       Joerg
+>>
+>>
