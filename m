@@ -1,46 +1,76 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
-Date: Mon, 19 Aug 2013 12:20:23 +0200
-Message-ID: <2108924.tnr1vBaclB@amdc1227>
-References: <201308141359.13872.heiko@sntech.de>
- <201308141400.25681.heiko@sntech.de> <20130819044811.GR32147@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20130819044811.GR32147@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, kgene.kim@samsung.com, Dan Williams <djbw@fb.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v2 0/5] Exynos5 M-Scaler Driver
+Date: Mon, 19 Aug 2013 16:28:47 +0530
+Message-ID: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, posciak@google.com, arun.kk@samsung.com, shaik.ameer@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday 19 of August 2013 10:18:12 Vinod Koul wrote:
-> On Wed, Aug 14, 2013 at 02:00:25PM +0200, Heiko St=FCbner wrote:
-> > This adds a new driver to support the s3c24xx dma using the dmaengi=
-ne
-> > and makes the old one in mach-s3c24xx obsolete in the long run.
-> >=20
-> > Conceptually the s3c24xx-dma feels like a distant relative of the p=
-l08x
-> > with numerous virtual channels being mapped to a lot less physical
-> > ones.
-> > The driver therefore borrows a lot from the amba-pl08x driver in th=
-is
-> > regard. Functionality-wise the driver gains a memcpy ability in
-> > addition
-> > to the slave_sg one.
->=20
-> If that is the case why cant we have this driver supported from pl08x
-> driver? If the delta is only mapping then can that be seprated or bot=
-h
-> mapping hanlded? Maybe you and Linus have already though about that?
+This patch adds support for M-Scaler (M2M Scaler) device which is a
+new device for scaling, blending, color fill  and color space
+conversion on EXYNOS5 SoCs.
 
-Well, the similarity here is only conceptual. Both controllers are=20
-completely different in terms of their programming interfaces, not even=
-=20
-mentioning that s3c24xx-dma doesn't support LLIs and this must be handl=
-ed=20
-in software.
+This device supports the following as key features.
+    input image format
+        - YCbCr420 2P(UV/VU), 3P
+        - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+        - YCbCr444 2P(UV,VU), 3P
+        - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+        - Pre-multiplexed ARGB8888, L8A8 and L8
+    output image format
+        - YCbCr420 2P(UV/VU), 3P
+        - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+        - YCbCr444 2P(UV,VU), 3P
+        - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+        - Pre-multiplexed ARGB8888
+    input rotation
+        - 0/90/180/270 degree, X/Y/XY Flip
+    scale ratio
+        - 1/4 scale down to 16 scale up
+    color space conversion
+        - RGB to YUV / YUV to RGB
+    Size
+        - Input : 16x16 to 8192x8192
+        - Output:   4x4 to 8192x8192
+    alpha blending, color fill
 
-Best regards,
-Tomasz
+Rebased on:
+-----------
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
+
+Changes from v1:
+---------------
+1] Split the previous single patch into multiple patches.
+2] Added DT binding documentation.
+3] Removed the unnecessary header file inclusions.
+4] Fix the condition check in mscl_prepare_address for swapping cb/cr addresses.
+
+Shaik Ameer Basha (5):
+  [media] exynos-mscl: Add new driver for M-Scaler
+  [media] exynos-mscl: Add core functionality for the M-Scaler driver
+  [media] exynos-mscl: Add m2m functionality for the M-Scaler driver
+  [media] exynos-mscl: Add DT bindings for M-Scaler driver
+  [media] exynos-mscl: Add Makefile for M-Scaler driver
+
+ .../devicetree/bindings/media/exynos5-mscl.txt     |   34 +
+ drivers/media/platform/Kconfig                     |    8 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/exynos-mscl/Makefile        |    3 +
+ drivers/media/platform/exynos-mscl/mscl-core.c     | 1312 ++++++++++++++++++++
+ drivers/media/platform/exynos-mscl/mscl-core.h     |  549 ++++++++
+ drivers/media/platform/exynos-mscl/mscl-m2m.c      |  763 ++++++++++++
+ drivers/media/platform/exynos-mscl/mscl-regs.c     |  318 +++++
+ drivers/media/platform/exynos-mscl/mscl-regs.h     |  282 +++++
+ 9 files changed, 3270 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-mscl.txt
+ create mode 100644 drivers/media/platform/exynos-mscl/Makefile
+ create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.c
+ create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.h
+ create mode 100644 drivers/media/platform/exynos-mscl/mscl-m2m.c
+ create mode 100644 drivers/media/platform/exynos-mscl/mscl-regs.c
+ create mode 100644 drivers/media/platform/exynos-mscl/mscl-regs.h
+
+-- 
+1.7.9.5
