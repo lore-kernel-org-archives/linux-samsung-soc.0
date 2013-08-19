@@ -1,144 +1,95 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Subject: [PATCH] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Mon, 19 Aug 2013 12:09:59 +0530
-Message-ID: <1376894399-2766-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: Re: [PATCH v4 2/3] ARM: dts: Update the status of RTC DT node of
+ Exynos5250 SoC to "okay"
+Date: Mon, 19 Aug 2013 13:48:45 +0530
+Message-ID: <CAD025ySAYRVWxJZubwDShOtwdRXKhg2JRUoPGmhaMmH31JVdTQ@mail.gmail.com>
+References: <1376488710-12124-1-git-send-email-vikas.sajjan@linaro.org>
+ <1376488710-12124-3-git-send-email-vikas.sajjan@linaro.org>
+ <CAHbNUh3LG4coLDfGZ5b=agaJ0PhhAR0A3Nhq-tPyL78KekhFOw@mail.gmail.com>
+ <2856422.z0LmRpN0Wg@flatron> <52111505.9010207@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f52.google.com ([209.85.160.52]:62609 "EHLO
-	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750943Ab3HSGkM (ORCPT
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:47094 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750759Ab3HSITH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Aug 2013 02:40:12 -0400
-Received: by mail-pb0-f52.google.com with SMTP id wz12so4585928pbc.39
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Aug 2013 23:40:11 -0700 (PDT)
+	Mon, 19 Aug 2013 04:19:07 -0400
+Received: by mail-lb0-f173.google.com with SMTP id 10so2769652lbf.18
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Aug 2013 01:19:06 -0700 (PDT)
+In-Reply-To: <52111505.9010207@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, Doug Anderson <dianders@chromium.org>, devicetree <devicetree@vger.kernel.org>, sunil joshi <joshi@samsung.com>
 
-This patch adds the device tree node entries for exynos5420 SOC.
-Exynos5420 has a different version of DWMMC controller,so a new
-compatible string is used to distinguish it from the prior SOC's.
+Hi Kukjin,
 
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
----
- .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |   41 ++++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi                  |   33 ++++++++++++++++
- 3 files changed, 76 insertions(+)
+On 19 August 2013 00:10, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 08/15/13 17:59, Tomasz Figa wrote:
+>>
+>> Hi Tushar,
+>>
+> [...]
+>
+>
+>>>> +               status = "okay";
+>>>>
+>>>>          };
+>>>
+>>>
+>>> Sometime back we had a discussion on this, the decision was to enable
+>>> it in respective boards.
+>>
+>>
+>> This is not entirely true.
+>>
+>> According to ePAPR, chapter 2.3.4, the status property has a well defined
+>> meaning and it should be set to "disabled" when "the device is not
+>> presently operational, but it might become operational in the future (for
+>> example, something is not plugged in, or switched off)".
+>>
+> So in my understanding, you mean using "okay" is wrong and only "disabled"
+> is used? and in board dt file? Already there are too many "okay"...
+>
+>
+>> This means that unless setup of the device is missing something (e.g.
+>> board-specific properties, like regulators or pin config) or there is a
+>> valid technical reason for disabling the device by default (e.g. it needs
+>> certain SoC pins to be properly connected to something), then such device
+>> should be "okay", because it is operational.
+>>
+>>> Also if we are going ahead with this, we would need to remove the
+>>> corresponding status statements from board files.
+>>
+>>
+>> Yes, this is true.
+>>
+> According to above, probably we should add "disabled" in board dt file?
+>
 
-diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-index 6d1c098..84cd56f 100644
---- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-+++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-@@ -16,6 +16,8 @@ Required Properties:
- 	  specific extensions.
- 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
- 	  specific extensions.
-+	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
-+	  specific extensions.
- 
- * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
-   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index 08607df..4530700 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -30,4 +30,45 @@
- 			clock-frequency = <24000000>;
- 		};
- 	};
-+
-+	dwmmc0@12200000 {
-+		num-slots = <1>;
-+		broken-cd;
-+		bypass-smu;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <0 4>;
-+		samsung,dw-mshc-ddr-timing = <0 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+		};
-+	};
-+
-+	dwmmc1@12210000 {
-+		status = "disabled";
-+	};
-+
-+	dwmmc2@12220000 {
-+		num-slots = <1>;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+		};
-+	};
-+
- };
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 9e90d1e..8559aa8 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -19,6 +19,9 @@
- 	compatible = "samsung,exynos5420";
- 
- 	aliases {
-+		mshc0 = &dwmmc_0;
-+		mshc1 = &dwmmc_1;
-+		mshc2 = &dwmmc_2;
- 		pinctrl0 = &pinctrl_0;
- 		pinctrl1 = &pinctrl_1;
- 		pinctrl2 = &pinctrl_2;
-@@ -65,6 +68,36 @@
- 		#clock-cells = <1>;
- 	};
- 
-+	dwmmc_0: dwmmc0@12200000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 75 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12200000 0x2000>;
-+		clocks = <&clock 351>, <&clock 132>;
-+		clock-names = "biu", "ciu";
-+	};
-+
-+	dwmmc_1: dwmmc1@12210000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 76 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12210000 0x2000>;
-+		clocks = <&clock 352>, <&clock 133>;
-+		clock-names = "biu", "ciu";
-+	};
-+
-+	dwmmc_2: dwmmc2@12220000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12220000 0x2000>;
-+		clocks = <&clock 353>, <&clock 134>;
-+		clock-names = "biu", "ciu";
-+	};
-+
- 	mct@101C0000 {
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x101C0000 0x800>;
+what Tushar meant was, since we made the status as "okay" in
+exynos5250.dtsi itself, its better to remove the "okay" from the board
+DTS files of exynos5250 ( exynos5250-snow.dts and
+exynos5250-arndale.dts). Am I right Tushar?
+
+
+> If I'm wrong, correct me.
+>
+> (+ dt ml)
+>
+> Anyway, I'm not sure how to use 'okay' and 'disabled' for status...
+>
+> I think, every hardware information should be defined in SoC dt file and
+> maybe some of them could be set disabled or okay in each board dt file...
+>
+> Any suggestions?
+>
+> Thanks,
+> Kukjin
+
+
+
 -- 
-1.7.9.5
+Thanks and Regards
+ Vikas Sajjan
