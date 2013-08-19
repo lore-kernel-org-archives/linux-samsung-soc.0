@@ -1,65 +1,123 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH RESEND] i2c: move of helpers into the core
-Date: Mon, 19 Aug 2013 23:16:20 +0200
-Message-ID: <20130819211620.GA13092@katana>
-References: <1376918361-7014-1-git-send-email-wsa@the-dreams.de>
- <1376935183-11218-1-git-send-email-wsa@the-dreams.de>
- <20130819194603.GC4961@mithrandir>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Kj7319i9nmIyA2yE"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20130819194603.GC4961@mithrandir>
-Sender: linux-doc-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-i2c@vger.kernel.org, linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, davinci-linux-open-source@linux.davincidsp.com, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] ASoC: samsung: Rename DMA platform registration functions
+Date: Mon, 19 Aug 2013 22:59:57 +0100
+Message-ID: <1376949597-28470-1-git-send-email-broonie@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:47245 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750900Ab3HSWAH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Aug 2013 18:00:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
+From: Mark Brown <broonie@linaro.org>
 
---Kj7319i9nmIyA2yE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The current naming with a simple asoc_ prefix is too generic for use in
+multiplatform kernels.
 
-On Mon, Aug 19, 2013 at 09:46:04PM +0200, Thierry Reding wrote:
-> On Mon, Aug 19, 2013 at 07:59:40PM +0200, Wolfram Sang wrote:
-> [...]
-> > diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-> [...]
-> > +#if IS_ENABLED(CONFIG_OF)
-> > +static void of_i2c_register_devices(struct i2c_adapter *adap)
-> > +{
-> [...]
-> > +}
-> [...]
-> > +#endif /* CONFIG_OF */
->=20
-> Isn't this missing the dummy implementation for !OF.
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ sound/soc/samsung/ac97.c | 4 ++--
+ sound/soc/samsung/dma.c  | 8 ++++----
+ sound/soc/samsung/dma.h  | 4 ++--
+ sound/soc/samsung/i2s.c  | 6 +++---
+ 4 files changed, 11 insertions(+), 11 deletions(-)
 
-Argh, will fix...
-
-
---Kj7319i9nmIyA2yE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSEoskAAoJEBQN5MwUoCm2s7wP/jg4ety3vt8GoDAxMBSl1yyE
-Aesg6uS/yOz/Rx2wXZTa6+fK//TyAJNz1zNNtuUQHx/UCtu7hxxzwFy9WQDS+Zt9
-lXi1Up78t5dkVIUQU6UWYUVukjhBOxvluwAC9qC39sz571GGYN8QHWf5Y6XDV1Qx
-IFertp0mZIje9ZafP/Rsr9uhB/0plyB316sv6/KWk7RI6VSDNXMVU6mhk5WqhIr5
-gCMf2RQcUHWSPpTVylgfAspl4NCEBkbUrn9vFFOZ84r2njQ/2BlrBO9fPkDAaa3L
-Ha+x6YJi5mhnGnoB93Eq0DWgQub6rHVGS6l9YEbkpY2+pcwwSIppZJlqZOMrr43h
-5dZ2dv3nybYzzK1KILz3F92Dm6JUQsQyFwyb7Jn0h8afVkSra2ULG9BiqEHC4sRV
-i0NAySXCCMLIdOqAOkQd06SDATZKMmQUPJMd1rVt96gT2cXDUY+bsnNjVQy/3Inb
-gFZbChI8vzwwcZQtLqVW4ndCLRaR4942wREo0ZYoJ2vwtlW2dVsoLZfDc5CmmC5i
-l+sDFbEUJvZ90y5idr9ZOY8F3N99BGk36ZjmDlPdp7PkzepMayaznRAysSPnRk45
-IA/7kr2nwvGnXwMtdhkfSJ0xVqzpMoBVvSzFUWNih8JhwhltDzYvIeIDNLmoIl7s
-Wv3iOYPn/bIrssEVlN9d
-=fivW
------END PGP SIGNATURE-----
-
---Kj7319i9nmIyA2yE--
+diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+index c732df9..2acf987 100644
+--- a/sound/soc/samsung/ac97.c
++++ b/sound/soc/samsung/ac97.c
+@@ -457,7 +457,7 @@ static int s3c_ac97_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err5;
+ 
+-	ret = asoc_dma_platform_register(&pdev->dev);
++	ret = samsung_asoc_dma_platform_register(&pdev->dev);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to get register DMA: %d\n", ret);
+ 		goto err6;
+@@ -480,7 +480,7 @@ static int s3c_ac97_remove(struct platform_device *pdev)
+ {
+ 	struct resource *irq_res;
+ 
+-	asoc_dma_platform_unregister(&pdev->dev);
++	samsung_asoc_dma_platform_unregister(&pdev->dev);
+ 	snd_soc_unregister_component(&pdev->dev);
+ 
+ 	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+index d54df85..9338d11 100644
+--- a/sound/soc/samsung/dma.c
++++ b/sound/soc/samsung/dma.c
+@@ -444,17 +444,17 @@ static struct snd_soc_platform_driver samsung_asoc_platform = {
+ 	.pcm_free	= dma_free_dma_buffers,
+ };
+ 
+-int asoc_dma_platform_register(struct device *dev)
++int samsung_asoc_dma_platform_register(struct device *dev)
+ {
+ 	return snd_soc_register_platform(dev, &samsung_asoc_platform);
+ }
+-EXPORT_SYMBOL_GPL(asoc_dma_platform_register);
++EXPORT_SYMBOL_GPL(samsung_asoc_dma_platform_register);
+ 
+-void asoc_dma_platform_unregister(struct device *dev)
++void samsung_asoc_dma_platform_unregister(struct device *dev)
+ {
+ 	snd_soc_unregister_platform(dev);
+ }
+-EXPORT_SYMBOL_GPL(asoc_dma_platform_unregister);
++EXPORT_SYMBOL_GPL(samsung_asoc_dma_platform_unregister);
+ 
+ MODULE_AUTHOR("Ben Dooks, <ben@simtec.co.uk>");
+ MODULE_DESCRIPTION("Samsung ASoC DMA Driver");
+diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
+index 189a7a6..0e86315 100644
+--- a/sound/soc/samsung/dma.h
++++ b/sound/soc/samsung/dma.h
+@@ -22,7 +22,7 @@ struct s3c_dma_params {
+ 	char *ch_name;
+ };
+ 
+-int asoc_dma_platform_register(struct device *dev);
+-void asoc_dma_platform_unregister(struct device *dev);
++int samsung_asoc_dma_platform_register(struct device *dev);
++void samsung_asoc_dma_platform_unregister(struct device *dev);
+ 
+ #endif
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index ce487c2..b302f3b 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1146,7 +1146,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 		snd_soc_register_component(&sec_dai->pdev->dev,
+ 					   &samsung_i2s_component,
+ 					   &sec_dai->i2s_dai_drv, 1);
+-		asoc_dma_platform_register(&pdev->dev);
++		samsung_asoc_dma_platform_register(&pdev->dev);
+ 		return 0;
+ 	}
+ 
+@@ -1263,7 +1263,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_enable(&pdev->dev);
+ 
+-	asoc_dma_platform_register(&pdev->dev);
++	samsung_asoc_dma_platform_register(&pdev->dev);
+ 
+ 	return 0;
+ err:
+@@ -1293,7 +1293,7 @@ static int samsung_i2s_remove(struct platform_device *pdev)
+ 	i2s->pri_dai = NULL;
+ 	i2s->sec_dai = NULL;
+ 
+-	asoc_dma_platform_unregister(&pdev->dev);
++	samsung_asoc_dma_platform_unregister(&pdev->dev);
+ 	snd_soc_unregister_component(&pdev->dev);
+ 
+ 	return 0;
+-- 
+1.8.4.rc3
