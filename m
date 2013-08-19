@@ -1,2165 +1,1089 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH RFC v5] s5k5baf: add camera sensor driver
-Date: Mon, 19 Aug 2013 15:18:27 +0200
-Message-ID: <1376918307-21490-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:49915 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751449Ab3HSNT6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Aug 2013 09:19:58 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: [PATCH] i2c: move of helpers into the core
+Date: Mon, 19 Aug 2013 15:19:18 +0200
+Message-ID: <1376918361-7014-1-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Unsubscribe: <http://linux.davincidsp.com/mailman/options/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://linux.davincidsp.com/pipermail/davinci-linux-open-source>
+List-Post: <mailto:davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+List-Help: <mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=help>
+List-Subscribe: <http://linux.davincidsp.com/mailman/listinfo/davinci-linux-open-source>,
+	<mailto:davinci-linux-open-source-request-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org?subject=subscribe>
+Sender: <davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org>
+Errors-To: davinci-linux-open-source-bounces-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org
+To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Kevin Hilman <khilman-1D3HCaltpLuhEniVeURVKkEOCMrvLtNR@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vitaly Wool <vitalywool-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jochen Friedrich <jochen-NIgtFMG+Po8@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alessandro Rubini <rubini-9wsNiZum9E8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap@vger
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Grant Likely <grant.likely@linaro.org>
 
-Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
-with embedded SoC ISP.
-The driver exposes the sensor as two V4L2 subdevices:
-- S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
-  no controls.
-- S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
-  pre/post ISP cropping, downscaling via selection API, controls.
+I2C of helpers used to live in of_i2c.c but experience (from SPI) shows
+that it is much cleaner to have this in the core. This also removes a
+circular dependency between the helpers and the core, and so we can
+finally register child nodes in the core instead of doing this manually
+in each driver. So, fix the drivers and documentation, too.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 ---
-v5
-- removed non-standard samsung hflip/vflip device tree bindings
+ Documentation/acpi/enumeration.txt              |    1 -
+ drivers/i2c/busses/i2c-at91.c                   |    3 -
+ drivers/i2c/busses/i2c-cpm.c                    |    6 --
+ drivers/i2c/busses/i2c-davinci.c                |    2 -
+ drivers/i2c/busses/i2c-designware-platdrv.c     |    2 -
+ drivers/i2c/busses/i2c-gpio.c                   |    3 -
+ drivers/i2c/busses/i2c-i801.c                   |    2 -
+ drivers/i2c/busses/i2c-ibm_iic.c                |    4 -
+ drivers/i2c/busses/i2c-imx.c                    |    3 -
+ drivers/i2c/busses/i2c-mpc.c                    |    2 -
+ drivers/i2c/busses/i2c-mv64xxx.c                |    3 -
+ drivers/i2c/busses/i2c-mxs.c                    |    3 -
+ drivers/i2c/busses/i2c-nomadik.c                |    3 -
+ drivers/i2c/busses/i2c-ocores.c                 |    3 -
+ drivers/i2c/busses/i2c-octeon.c                 |    3 -
+ drivers/i2c/busses/i2c-omap.c                   |    3 -
+ drivers/i2c/busses/i2c-pnx.c                    |    3 -
+ drivers/i2c/busses/i2c-powermac.c               |    9 +-
+ drivers/i2c/busses/i2c-pxa.c                    |    2 -
+ drivers/i2c/busses/i2c-s3c2410.c                |    2 -
+ drivers/i2c/busses/i2c-sh_mobile.c              |    2 -
+ drivers/i2c/busses/i2c-sirf.c                   |    3 -
+ drivers/i2c/busses/i2c-stu300.c                 |    2 -
+ drivers/i2c/busses/i2c-tegra.c                  |    3 -
+ drivers/i2c/busses/i2c-versatile.c              |    2 -
+ drivers/i2c/busses/i2c-wmt.c                    |    3 -
+ drivers/i2c/busses/i2c-xiic.c                   |    3 -
+ drivers/i2c/i2c-core.c                          |  107 ++++++++++++++++++++-
+ drivers/i2c/i2c-mux.c                           |    3 -
+ drivers/i2c/muxes/i2c-arb-gpio-challenge.c      |    1 -
+ drivers/i2c/muxes/i2c-mux-gpio.c                |    1 -
+ drivers/i2c/muxes/i2c-mux-pinctrl.c             |    1 -
+ drivers/media/platform/exynos4-is/fimc-is-i2c.c |    3 -
+ drivers/of/Kconfig                              |    6 --
+ drivers/of/Makefile                             |    1 -
+ drivers/of/of_i2c.c                             |  114 -----------------------
+ include/linux/i2c.h                             |   20 ++++
+ include/linux/of_i2c.h                          |   46 ---------
+ 38 files changed, 130 insertions(+), 253 deletions(-)
+ delete mode 100644 drivers/of/of_i2c.c
+ delete mode 100644 include/linux/of_i2c.h
 
-v4
-- GPL changed to GPLv2,
-- bitfields replaced by u8,
-- cosmetic changes,
-- corrected s_stream flow,
-- gpio pins are no longer exported,
-- added I2C addresses to subdev names,
-- CIS subdev registration postponed after
-  succesfull HW initialization,
-- added enums for pads,
-- selections are initialized only during probe,
-- default resolution changed to 1600x1200,
-- state->error pattern removed from few other functions,
-- entity link creation moved to registered callback.
-
-v3:
-- narrowed state->error usage to i2c and power errors,
-- private gain controls replaced by red/blue balance user controls,
-- added checks to devicetree gpio node parsing
-
-v2:
-- lower-cased driver name,
-- removed underscore from regulator names,
-- removed platform data code,
-- v4l controls grouped in anonymous structs,
-- added s5k5baf_clear_error function,
-- private controls definitions moved to uapi header file,
-- added v4l2-controls.h reservation for private controls,
-- corrected subdev registered/unregistered code,
-- .log_status sudbev op set to v4l2 helper,
-- moved entity link creation to probe routines,
-- added cleanup on error to probe function.
----
- .../devicetree/bindings/media/samsung-s5k5baf.txt  |   51 +
- MAINTAINERS                                        |    7 +
- drivers/media/i2c/Kconfig                          |    7 +
- drivers/media/i2c/Makefile                         |    1 +
- drivers/media/i2c/s5k5baf.c                        | 1980 ++++++++++++++++++++
- 5 files changed, 2046 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
- create mode 100644 drivers/media/i2c/s5k5baf.c
-
-diff --git a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
-new file mode 100644
-index 0000000..b1f2fde
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
-@@ -0,0 +1,51 @@
-+Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
-+-------------------------------------------------------------
-+
-+Required properties:
-+
-+- compatible	  : "samsung,s5k5baf";
-+- reg		  : I2C slave address of the sensor;
-+- vdda-supply	  : analog power supply 2.8V (2.6V to 3.0V);
-+- vddreg-supply	  : regulator input power supply 1.8V (1.7V to 1.9V)
-+                    or 2.8V (2.6V to 3.0);
-+- vddio-supply	  : I/O power supply 1.8V (1.65V to 1.95V)
-+                    or 2.8V (2.5V to 3.1V);
-+- gpios		  : GPIOs connected to STDBYN and RSTN pins,
-+                    in order: STBYN, RSTN;
-+- clock-frequency : master clock frequency in Hz;
-+
-+Optional properties:
-+
-+- clocks	  : contains the sensor's master clock specifier;
-+- clock-names	  : contains "mclk" entry;
-+
-+The device node should contain one 'port' child node with one child 'endpoint'
-+node, according to the bindings defined in Documentation/devicetree/bindings/
-+media/video-interfaces.txt. The following are properties specific to those nodes.
-+
-+endpoint node
-+-------------
-+
-+- data-lanes	  : (optional) an array specifying active physical MIPI-CSI2
-+		    data output lanes and their mapping to logical lanes; the
-+		    array's content is unused, only its length is meaningful;
-+
-+Example:
-+
-+s5k5bafx@2d {
-+	compatible = "samsung,s5k5baf";
-+	reg = <0x2d>;
-+	vdda-supply = <&cam_io_en_reg>;
-+	vddreg-supply = <&vt_core_15v_reg>;
-+	vddio-supply = <&vtcam_reg>;
-+	gpios = <&gpl2 0 1>,
-+		<&gpl2 1 1>;
-+	clock-frequency = <24000000>;
-+
-+	port {
-+		s5k5bafx_ep: endpoint {
-+			remote-endpoint = <&csis1_ep>;
-+			data-lanes = <1>;
-+		};
-+	};
-+};
-diff --git a/MAINTAINERS b/MAINTAINERS
-index bf61e04..3d5ec58 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7103,6 +7103,13 @@ L:	linux-media@vger.kernel.org
- S:	Supported
- F:	drivers/media/i2c/s5c73m3/*
+diff --git a/Documentation/acpi/enumeration.txt b/Documentation/acpi/enumeration.txt
+index d9be7a9..958266e 100644
+--- a/Documentation/acpi/enumeration.txt
++++ b/Documentation/acpi/enumeration.txt
+@@ -238,7 +238,6 @@ An I2C bus (controller) driver does:
+ 	if (ret)
+ 		/* handle error */
  
-+SAMSUNG S5K5BAF CAMERA DRIVER
-+M:	Kyungmin Park <kyungmin.park@samsung.com>
-+M:	Andrzej Hajda <a.hajda@samsung.com>
-+L:	linux-media@vger.kernel.org
-+S:	Supported
-+F:	drivers/media/i2c/s5k5baf.c
-+
- SERIAL DRIVERS
- M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
- L:	linux-serial@vger.kernel.org
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index b2cd8ca..3367ec2 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -571,6 +571,13 @@ config VIDEO_S5K4ECGX
-           This is a V4L2 sensor-level driver for Samsung S5K4ECGX 5M
-           camera sensor with an embedded SoC image signal processor.
+-	of_i2c_register_devices(adapter);
+ 	/* Enumerate the slave devices behind this bus via ACPI */
+ 	acpi_i2c_register_devices(adapter);
  
-+config VIDEO_S5K5BAF
-+	tristate "Samsung S5K5BAF sensor support"
-+	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
-+	---help---
-+	  This is a V4L2 sensor-level driver for Samsung S5K5BAF 2M
-+	  camera sensor with an embedded SoC image signal processor.
-+
- source "drivers/media/i2c/smiapp/Kconfig"
+diff --git a/drivers/i2c/busses/i2c-at91.c b/drivers/i2c/busses/i2c-at91.c
+index 6bb839b..fd05930 100644
+--- a/drivers/i2c/busses/i2c-at91.c
++++ b/drivers/i2c/busses/i2c-at91.c
+@@ -28,7 +28,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_i2c.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/platform_data/dma-atmel.h>
+@@ -775,8 +774,6 @@ static int at91_twi_probe(struct platform_device *pdev)
+ 		return rc;
+ 	}
  
- config VIDEO_S5C73M3
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index dc20653..d590925 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_VIDEO_SR030PC30)	+= sr030pc30.o
- obj-$(CONFIG_VIDEO_NOON010PC30)	+= noon010pc30.o
- obj-$(CONFIG_VIDEO_S5K6AA)	+= s5k6aa.o
- obj-$(CONFIG_VIDEO_S5K4ECGX)	+= s5k4ecgx.o
-+obj-$(CONFIG_VIDEO_S5K5BAF)	+= s5k5baf.o
- obj-$(CONFIG_VIDEO_S5C73M3)	+= s5c73m3/
- obj-$(CONFIG_VIDEO_ADP1653)	+= adp1653.o
- obj-$(CONFIG_VIDEO_AS3645A)	+= as3645a.o
-diff --git a/drivers/media/i2c/s5k5baf.c b/drivers/media/i2c/s5k5baf.c
-new file mode 100644
-index 0000000..8bf09b6
---- /dev/null
-+++ b/drivers/media/i2c/s5k5baf.c
-@@ -0,0 +1,1980 @@
-+/*
-+ * Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
-+ * with embedded SoC ISP.
-+ *
-+ * Copyright (C) 2013, Samsung Electronics Co., Ltd.
-+ * Andrzej Hajda <a.hajda@samsung.com>
-+ *
-+ * Based on S5K6AA driver authored by Sylwester Nawrocki
-+ * Copyright (C) 2013, Samsung Electronics Co., Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
+-	of_i2c_register_devices(&dev->adapter);
+-
+ 	dev_info(dev->dev, "AT91 i2c bus driver.\n");
+ 	return 0;
+ }
+diff --git a/drivers/i2c/busses/i2c-cpm.c b/drivers/i2c/busses/i2c-cpm.c
+index 2e1f7eb..b2b8aa9 100644
+--- a/drivers/i2c/busses/i2c-cpm.c
++++ b/drivers/i2c/busses/i2c-cpm.c
+@@ -42,7 +42,6 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/of_device.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_i2c.h>
+ #include <sysdev/fsl_soc.h>
+ #include <asm/cpm.h>
+ 
+@@ -681,11 +680,6 @@ static int cpm_i2c_probe(struct platform_device *ofdev)
+ 	dev_dbg(&ofdev->dev, "hw routines for %s registered.\n",
+ 		cpm->adap.name);
+ 
+-	/*
+-	 * register OF I2C devices
+-	 */
+-	of_i2c_register_devices(&cpm->adap);
+-
+ 	return 0;
+ out_shut:
+ 	cpm_i2c_shutdown(cpm);
+diff --git a/drivers/i2c/busses/i2c-davinci.c b/drivers/i2c/busses/i2c-davinci.c
+index fa55605..62be3b3 100644
+--- a/drivers/i2c/busses/i2c-davinci.c
++++ b/drivers/i2c/busses/i2c-davinci.c
+@@ -38,7 +38,6 @@
+ #include <linux/slab.h>
+ #include <linux/cpufreq.h>
+ #include <linux/gpio.h>
+-#include <linux/of_i2c.h>
+ #include <linux/of_device.h>
+ 
+ #include <mach/hardware.h>
+@@ -728,7 +727,6 @@ static int davinci_i2c_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "failure adding adapter\n");
+ 		goto err_unuse_clocks;
+ 	}
+-	of_i2c_register_devices(adap);
+ 
+ 	return 0;
+ 
+diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
+index 4c5fada..27ea436 100644
+--- a/drivers/i2c/busses/i2c-designware-platdrv.c
++++ b/drivers/i2c/busses/i2c-designware-platdrv.c
+@@ -35,7 +35,6 @@
+ #include <linux/err.h>
+ #include <linux/interrupt.h>
+ #include <linux/of.h>
+-#include <linux/of_i2c.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
+ #include <linux/pm_runtime.h>
+@@ -172,7 +171,6 @@ static int dw_i2c_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "failure adding adapter\n");
+ 		return r;
+ 	}
+-	of_i2c_register_devices(adap);
+ 	acpi_i2c_register_devices(adap);
+ 
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, 1000);
+diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+index bc6e139..e5da9fe 100644
+--- a/drivers/i2c/busses/i2c-gpio.c
++++ b/drivers/i2c/busses/i2c-gpio.c
+@@ -16,7 +16,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/gpio.h>
+ #include <linux/of_gpio.h>
+-#include <linux/of_i2c.h>
+ 
+ struct i2c_gpio_private_data {
+ 	struct i2c_adapter adap;
+@@ -224,8 +223,6 @@ static int i2c_gpio_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_add_bus;
+ 
+-	of_i2c_register_devices(adap);
+-
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	dev_info(&pdev->dev, "using pins %u (SDA) and %u (SCL%s)\n",
+diff --git a/drivers/i2c/busses/i2c-i801.c b/drivers/i2c/busses/i2c-i801.c
+index 4ebceed..4296d17 100644
+--- a/drivers/i2c/busses/i2c-i801.c
++++ b/drivers/i2c/busses/i2c-i801.c
+@@ -87,7 +87,6 @@
+ #include <linux/slab.h>
+ #include <linux/wait.h>
+ #include <linux/err.h>
+-#include <linux/of_i2c.h>
+ 
+ #if (defined CONFIG_I2C_MUX_GPIO || defined CONFIG_I2C_MUX_GPIO_MODULE) && \
+ 		defined CONFIG_DMI
+@@ -1230,7 +1229,6 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 		goto exit_free_irq;
+ 	}
+ 
+-	of_i2c_register_devices(&priv->adapter);
+ 	i801_probe_optional_slaves(priv);
+ 	/* We ignore errors - multiplexing is optional */
+ 	i801_add_mux(priv);
+diff --git a/drivers/i2c/busses/i2c-ibm_iic.c b/drivers/i2c/busses/i2c-ibm_iic.c
+index 973f516..ff3caa0 100644
+--- a/drivers/i2c/busses/i2c-ibm_iic.c
++++ b/drivers/i2c/busses/i2c-ibm_iic.c
+@@ -42,7 +42,6 @@
+ #include <linux/io.h>
+ #include <linux/i2c.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_i2c.h>
+ 
+ #include "i2c-ibm_iic.h"
+ 
+@@ -759,9 +758,6 @@ static int iic_probe(struct platform_device *ofdev)
+ 	dev_info(&ofdev->dev, "using %s mode\n",
+ 		 dev->fast_mode ? "fast (400 kHz)" : "standard (100 kHz)");
+ 
+-	/* Now register all the child nodes */
+-	of_i2c_register_devices(adap);
+-
+ 	return 0;
+ 
+ error_cleanup:
+diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
+index e242797..bbbea6b 100644
+--- a/drivers/i2c/busses/i2c-imx.c
++++ b/drivers/i2c/busses/i2c-imx.c
+@@ -50,7 +50,6 @@
+ #include <linux/slab.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_i2c.h>
+ #include <linux/platform_data/i2c-imx.h>
+ 
+ /** Defines ********************************************************************
+@@ -570,8 +569,6 @@ static int __init i2c_imx_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	of_i2c_register_devices(&i2c_imx->adapter);
+-
+ 	/* Set up platform driver data */
+ 	platform_set_drvdata(pdev, i2c_imx);
+ 
+diff --git a/drivers/i2c/busses/i2c-mpc.c b/drivers/i2c/busses/i2c-mpc.c
+index 7607dc0..9f2513d 100644
+--- a/drivers/i2c/busses/i2c-mpc.c
++++ b/drivers/i2c/busses/i2c-mpc.c
+@@ -18,7 +18,6 @@
+ #include <linux/sched.h>
+ #include <linux/init.h>
+ #include <linux/of_platform.h>
+-#include <linux/of_i2c.h>
+ #include <linux/slab.h>
+ 
+ #include <linux/io.h>
+@@ -691,7 +690,6 @@ static int fsl_i2c_probe(struct platform_device *op)
+ 		dev_err(i2c->dev, "failed to add adapter\n");
+ 		goto fail_add;
+ 	}
+-	of_i2c_register_devices(&i2c->adap);
+ 
+ 	return result;
+ 
+diff --git a/drivers/i2c/busses/i2c-mv64xxx.c b/drivers/i2c/busses/i2c-mv64xxx.c
+index b1f42bf..8220322 100644
+--- a/drivers/i2c/busses/i2c-mv64xxx.c
++++ b/drivers/i2c/busses/i2c-mv64xxx.c
+@@ -21,7 +21,6 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/of_irq.h>
+-#include <linux/of_i2c.h>
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ 
+@@ -689,8 +688,6 @@ mv64xxx_i2c_probe(struct platform_device *pd)
+ 		goto exit_free_irq;
+ 	}
+ 
+-	of_i2c_register_devices(&drv_data->adapter);
+-
+ 	return 0;
+ 
+ exit_free_irq:
+diff --git a/drivers/i2c/busses/i2c-mxs.c b/drivers/i2c/busses/i2c-mxs.c
+index df8ff5a..62ed07d 100644
+--- a/drivers/i2c/busses/i2c-mxs.c
++++ b/drivers/i2c/busses/i2c-mxs.c
+@@ -27,7 +27,6 @@
+ #include <linux/stmp_device.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_i2c.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/dmaengine.h>
+ 
+@@ -701,8 +700,6 @@ static int mxs_i2c_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	of_i2c_register_devices(adap);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/i2c/busses/i2c-nomadik.c b/drivers/i2c/busses/i2c-nomadik.c
+index 512dfe6..519df17 100644
+--- a/drivers/i2c/busses/i2c-nomadik.c
++++ b/drivers/i2c/busses/i2c-nomadik.c
+@@ -24,7 +24,6 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/platform_data/i2c-nomadik.h>
+ #include <linux/of.h>
+-#include <linux/of_i2c.h>
+ #include <linux/pinctrl/consumer.h>
+ 
+ #define DRIVER_NAME "nmk-i2c"
+@@ -1045,8 +1044,6 @@ static int nmk_i2c_probe(struct amba_device *adev, const struct amba_id *id)
+ 		goto err_add_adap;
+ 	}
+ 
+-	of_i2c_register_devices(adap);
+-
+ 	pm_runtime_put(&adev->dev);
+ 
+ 	return 0;
+diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
+index 0e1f824..0a52b78 100644
+--- a/drivers/i2c/busses/i2c-ocores.c
++++ b/drivers/i2c/busses/i2c-ocores.c
+@@ -24,7 +24,6 @@
+ #include <linux/i2c-ocores.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+-#include <linux/of_i2c.h>
+ #include <linux/log2.h>
+ 
+ struct ocores_i2c {
+@@ -435,8 +434,6 @@ static int ocores_i2c_probe(struct platform_device *pdev)
+ 	if (pdata) {
+ 		for (i = 0; i < pdata->num_devices; i++)
+ 			i2c_new_device(&i2c->adap, pdata->devices + i);
+-	} else {
+-		of_i2c_register_devices(&i2c->adap);
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/i2c/busses/i2c-octeon.c b/drivers/i2c/busses/i2c-octeon.c
+index 956fe32..b929ba2 100644
+--- a/drivers/i2c/busses/i2c-octeon.c
++++ b/drivers/i2c/busses/i2c-octeon.c
+@@ -15,7 +15,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/of_i2c.h>
+ #include <linux/delay.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+@@ -599,8 +598,6 @@ static int octeon_i2c_probe(struct platform_device *pdev)
+ 	}
+ 	dev_info(i2c->dev, "version %s\n", DRV_VERSION);
+ 
+-	of_i2c_register_devices(&i2c->adap);
+-
+ 	return 0;
+ 
+ out:
+diff --git a/drivers/i2c/busses/i2c-omap.c b/drivers/i2c/busses/i2c-omap.c
+index 142b694d..a9f0f80 100644
+--- a/drivers/i2c/busses/i2c-omap.c
++++ b/drivers/i2c/busses/i2c-omap.c
+@@ -38,7 +38,6 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
+-#include <linux/of_i2c.h>
+ #include <linux/of_device.h>
+ #include <linux/slab.h>
+ #include <linux/i2c-omap.h>
+@@ -1245,8 +1244,6 @@ omap_i2c_probe(struct platform_device *pdev)
+ 	dev_info(dev->dev, "bus %d rev%d.%d at %d kHz\n", adap->nr,
+ 		 major, minor, dev->speed);
+ 
+-	of_i2c_register_devices(adap);
+-
+ 	pm_runtime_mark_last_busy(dev->dev);
+ 	pm_runtime_put_autosuspend(dev->dev);
+ 
+diff --git a/drivers/i2c/busses/i2c-pnx.c b/drivers/i2c/busses/i2c-pnx.c
+index 5f39c6d..7b57d67 100644
+--- a/drivers/i2c/busses/i2c-pnx.c
++++ b/drivers/i2c/busses/i2c-pnx.c
+@@ -23,7 +23,6 @@
+ #include <linux/err.h>
+ #include <linux/clk.h>
+ #include <linux/slab.h>
+-#include <linux/of_i2c.h>
+ 
+ #define I2C_PNX_TIMEOUT_DEFAULT		10 /* msec */
+ #define I2C_PNX_SPEED_KHZ_DEFAULT	100
+@@ -741,8 +740,6 @@ static int i2c_pnx_probe(struct platform_device *pdev)
+ 		goto out_irq;
+ 	}
+ 
+-	of_i2c_register_devices(&alg_data->adapter);
+-
+ 	dev_dbg(&pdev->dev, "%s: Master at %#8x, irq %d.\n",
+ 		alg_data->adapter.name, res->start, alg_data->irq);
+ 
+diff --git a/drivers/i2c/busses/i2c-powermac.c b/drivers/i2c/busses/i2c-powermac.c
+index bb81773..25f25d2 100644
+--- a/drivers/i2c/busses/i2c-powermac.c
++++ b/drivers/i2c/busses/i2c-powermac.c
+@@ -440,7 +440,9 @@ static int i2c_powermac_probe(struct platform_device *dev)
+ 	adapter->algo = &i2c_powermac_algorithm;
+ 	i2c_set_adapdata(adapter, bus);
+ 	adapter->dev.parent = &dev->dev;
+-	adapter->dev.of_node = dev->dev.of_node;
++
++	/* Clear of_node to skip automatic registration of i2c child nodes */
++	adapter->dev.of_node = NULL;
+ 	rc = i2c_add_adapter(adapter);
+ 	if (rc) {
+ 		printk(KERN_ERR "i2c-powermac: Adapter %s registration "
+@@ -451,9 +453,8 @@ static int i2c_powermac_probe(struct platform_device *dev)
+ 
+ 	printk(KERN_INFO "PowerMac i2c bus %s registered\n", adapter->name);
+ 
+-	/* Cannot use of_i2c_register_devices() due to Apple device-tree
+-	 * funkyness
+-	 */
++	/* Use custom child registration due to Apple device-tree funkyness */
++	adapter->dev.of_node = dev->dev.of_node;
+ 	i2c_powermac_register_devices(adapter, bus);
+ 
+ 	return 0;
+diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
+index fbafed2..bc65014 100644
+--- a/drivers/i2c/busses/i2c-pxa.c
++++ b/drivers/i2c/busses/i2c-pxa.c
+@@ -31,7 +31,6 @@
+ #include <linux/i2c-pxa.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_i2c.h>
+ #include <linux/platform_device.h>
+ #include <linux/err.h>
+ #include <linux/clk.h>
+@@ -1185,7 +1184,6 @@ static int i2c_pxa_probe(struct platform_device *dev)
+ 		printk(KERN_INFO "I2C: Failed to add bus\n");
+ 		goto eadapt;
+ 	}
+-	of_i2c_register_devices(&i2c->adap);
+ 
+ 	platform_set_drvdata(dev, i2c);
+ 
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index cab1c91..643426e 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -36,7 +36,6 @@
+ #include <linux/cpufreq.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+-#include <linux/of_i2c.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pinctrl/consumer.h>
+ 
+@@ -1154,7 +1153,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	of_i2c_register_devices(&i2c->adap);
+ 	platform_set_drvdata(pdev, i2c);
+ 
+ 	pm_runtime_enable(&pdev->dev);
+diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
+index debf745..aa1268f 100644
+--- a/drivers/i2c/busses/i2c-sh_mobile.c
++++ b/drivers/i2c/busses/i2c-sh_mobile.c
+@@ -27,7 +27,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/interrupt.h>
+ #include <linux/i2c.h>
+-#include <linux/of_i2c.h>
+ #include <linux/err.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/clk.h>
+@@ -758,7 +757,6 @@ static int sh_mobile_i2c_probe(struct platform_device *dev)
+ 		 "I2C adapter %d with bus speed %lu Hz (L/H=%x/%x)\n",
+ 		 adap->nr, pd->bus_speed, pd->iccl, pd->icch);
+ 
+-	of_i2c_register_devices(adap);
+ 	return 0;
+ 
+  err_all:
+diff --git a/drivers/i2c/busses/i2c-sirf.c b/drivers/i2c/busses/i2c-sirf.c
+index a63c7d5..0ff22e2 100644
+--- a/drivers/i2c/busses/i2c-sirf.c
++++ b/drivers/i2c/busses/i2c-sirf.c
+@@ -12,7 +12,6 @@
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
+ #include <linux/i2c.h>
+-#include <linux/of_i2c.h>
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+@@ -366,8 +365,6 @@ static int i2c_sirfsoc_probe(struct platform_device *pdev)
+ 
+ 	clk_disable(clk);
+ 
+-	of_i2c_register_devices(adap);
+-
+ 	dev_info(&pdev->dev, " I2C adapter ready to operate\n");
+ 
+ 	return 0;
+diff --git a/drivers/i2c/busses/i2c-stu300.c b/drivers/i2c/busses/i2c-stu300.c
+index d1a6b20..047546c 100644
+--- a/drivers/i2c/busses/i2c-stu300.c
++++ b/drivers/i2c/busses/i2c-stu300.c
+@@ -17,7 +17,6 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+-#include <linux/of_i2c.h>
+ 
+ /* the name of this kernel module */
+ #define NAME "stu300"
+@@ -936,7 +935,6 @@ stu300_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, dev);
+ 	dev_info(&pdev->dev, "ST DDC I2C @ %p, irq %d\n",
+ 		 dev->virtbase, dev->irq);
+-	of_i2c_register_devices(adap);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 9aa1b60..c457cb4 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -25,7 +25,6 @@
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+-#include <linux/of_i2c.h>
+ #include <linux/of_device.h>
+ #include <linux/module.h>
+ #include <linux/clk/tegra.h>
+@@ -802,8 +801,6 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	of_i2c_register_devices(&i2c_dev->adapter);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/i2c/busses/i2c-versatile.c b/drivers/i2c/busses/i2c-versatile.c
+index f3a8790..6bb3a89 100644
+--- a/drivers/i2c/busses/i2c-versatile.c
++++ b/drivers/i2c/busses/i2c-versatile.c
+@@ -16,7 +16,6 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+-#include <linux/of_i2c.h>
+ 
+ #define I2C_CONTROL	0x00
+ #define I2C_CONTROLS	0x00
+@@ -108,7 +107,6 @@ static int i2c_versatile_probe(struct platform_device *dev)
+ 	ret = i2c_bit_add_numbered_bus(&i2c->adap);
+ 	if (ret >= 0) {
+ 		platform_set_drvdata(dev, i2c);
+-		of_i2c_register_devices(&i2c->adap);
+ 		return 0;
+ 	}
+ 
+diff --git a/drivers/i2c/busses/i2c-wmt.c b/drivers/i2c/busses/i2c-wmt.c
+index baaa7d1..c65da3d 100644
+--- a/drivers/i2c/busses/i2c-wmt.c
++++ b/drivers/i2c/busses/i2c-wmt.c
+@@ -21,7 +21,6 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_i2c.h>
+ #include <linux/of_irq.h>
+ #include <linux/platform_device.h>
+ 
+@@ -439,8 +438,6 @@ static int wmt_i2c_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, i2c_dev);
+ 
+-	of_i2c_register_devices(adap);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/i2c/busses/i2c-xiic.c b/drivers/i2c/busses/i2c-xiic.c
+index 3d0f052..8823db7 100644
+--- a/drivers/i2c/busses/i2c-xiic.c
++++ b/drivers/i2c/busses/i2c-xiic.c
+@@ -40,7 +40,6 @@
+ #include <linux/i2c-xiic.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+-#include <linux/of_i2c.h>
+ 
+ #define DRIVER_NAME "xiic-i2c"
+ 
+@@ -752,8 +751,6 @@ static int xiic_i2c_probe(struct platform_device *pdev)
+ 			i2c_new_device(&i2c->adap, pdata->devices + i);
+ 	}
+ 
+-	of_i2c_register_devices(&i2c->adap);
+-
+ 	return 0;
+ 
+ add_adapter_failed:
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index f32ca29..321b7ca 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -23,7 +23,11 @@
+    SMBus 2.0 support by Mark Studebaker <mdsxyz123-/E1597aS9LQAvxtiuMwx3w@public.gmane.org> and
+    Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>
+    Mux support by Rodolfo Giometti <giometti-AVVDYK/kqiJWk0Htik3J/w@public.gmane.org> and
+-   Michael Lawnick <michael.lawnick.ext-OYasijW0DpE@public.gmane.org> */
++   Michael Lawnick <michael.lawnick.ext-OYasijW0DpE@public.gmane.org>
++   OF support is copyright (c) 2008 Jochen Friedrich <jochen-NIgtFMG+Po8@public.gmane.org>
++   (based on a previous patch from Jon Smirl <jonsmirl-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>) and
++   (c) 2013  Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 + */
+ 
+ #include <linux/module.h>
+ #include <linux/kernel.h>
+@@ -35,7 +39,9 @@
+ #include <linux/init.h>
+ #include <linux/idr.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/of_irq.h>
+ #include <linux/completion.h>
+ #include <linux/hardirq.h>
+ #include <linux/irqflags.h>
+@@ -954,6 +960,102 @@ static void i2c_scan_static_board_info(struct i2c_adapter *adapter)
+ 	up_read(&__i2c_board_lock);
+ }
+ 
++/* of support code */
 +
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/gpio.h>
-+#include <linux/i2c.h>
-+#include <linux/media.h>
-+#include <linux/module.h>
-+#include <linux/of_gpio.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+
-+#include <media/media-entity.h>
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-subdev.h>
-+#include <media/v4l2-mediabus.h>
-+#include <media/v4l2-of.h>
-+
-+static int debug;
-+module_param(debug, int, 0644);
-+
-+#define S5K5BAF_DRIVER_NAME		"s5k5baf"
-+
-+#define S5K5BAF_CIS_WIDTH		1600
-+#define S5K5BAF_CIS_HEIGHT		1200
-+#define S5K5BAF_WIN_WIDTH_MIN		8
-+#define S5K5BAF_WIN_HEIGHT_MIN		8
-+#define S5K5BAF_GAIN_RED_DEF		127
-+#define S5K5BAF_GAIN_GREEN_DEF		95
-+#define S5K5BAF_GAIN_BLUE_DEF		180
-+
-+#define AHB_MSB_ADDR_PTR		0xfcfc
-+
-+/*
-+ * Register interface pages (the most significant word of the address)
-+ */
-+#define PAGE_IF_HW			0xd000
-+#define PAGE_IF_SW			0x7000
-+
-+/*
-+ * H/W register Interface (PAGE_IF_HW)
-+ */
-+#define REG_SW_LOAD_COMPLETE		0x0014
-+#define REG_CMDWR_PAGE			0x0028
-+#define REG_CMDWR_ADDR			0x002a
-+#define REG_CMDRD_PAGE			0x002c
-+#define REG_CMDRD_ADDR			0x002e
-+#define REG_CMD_BUF			0x0f12
-+#define REG_SET_HOST_INT		0x1000
-+#define REG_CLEAR_HOST_INT		0x1030
-+#define REG_PATTERN_SET			0x3100
-+#define REG_PATTERN_WIDTH		0x3118
-+#define REG_PATTERN_HEIGHT		0x311a
-+#define REG_PATTERN_PARAM		0x311c
-+
-+/*
-+ * S/W register interface (PAGE_IF_SW)
-+ */
-+
-+/* Firmware revision information */
-+#define REG_FW_APIVER			0x012e
-+#define  S5K5BAF_FW_APIVER		0x0001
-+#define REG_FW_REVISION			0x0130
-+#define REG_FW_SENSOR_ID		0x0152
-+
-+/* Initialization parameters */
-+/* Master clock frequency in KHz */
-+#define REG_I_INCLK_FREQ_L		0x01b8
-+#define REG_I_INCLK_FREQ_H		0x01ba
-+#define  MIN_MCLK_FREQ_KHZ		6000U
-+#define  MAX_MCLK_FREQ_KHZ		48000U
-+#define REG_I_USE_NPVI_CLOCKS		0x01c6
-+#define  NPVI_CLOCKS			1
-+#define REG_I_USE_NMIPI_CLOCKS		0x01c8
-+#define  NMIPI_CLOCKS			1
-+#define REG_I_BLOCK_INTERNAL_PLL_CALC	0x01ca
-+
-+/* Clock configurations, n = 0..2. REG_I_* frequency unit is 4 kHz. */
-+#define REG_I_OPCLK_4KHZ(n)		((n) * 6 + 0x01cc)
-+#define REG_I_MIN_OUTRATE_4KHZ(n)	((n) * 6 + 0x01ce)
-+#define REG_I_MAX_OUTRATE_4KHZ(n)	((n) * 6 + 0x01d0)
-+#define  SCLK_PVI_FREQ			24000
-+#define  SCLK_MIPI_FREQ			48000
-+#define  PCLK_MIN_FREQ			6000
-+#define  PCLK_MAX_FREQ			48000
-+#define REG_I_USE_REGS_API		0x01de
-+#define REG_I_INIT_PARAMS_UPDATED	0x01e0
-+#define REG_I_ERROR_INFO		0x01e2
-+
-+/* General purpose parameters */
-+#define REG_USER_BRIGHTNESS		0x01e4
-+#define REG_USER_CONTRAST		0x01e6
-+#define REG_USER_SATURATION		0x01e8
-+#define REG_USER_SHARPBLUR		0x01ea
-+
-+#define REG_G_SPEC_EFFECTS		0x01ee
-+#define REG_G_ENABLE_PREV		0x01f0
-+#define REG_G_ENABLE_PREV_CHG		0x01f2
-+#define REG_G_NEW_CFG_SYNC		0x01f8
-+#define REG_G_PREVREQ_IN_WIDTH		0x01fa
-+#define REG_G_PREVREQ_IN_HEIGHT		0x01fc
-+#define REG_G_PREVREQ_IN_XOFFS		0x01fe
-+#define REG_G_PREVREQ_IN_YOFFS		0x0200
-+#define REG_G_PREVZOOM_IN_WIDTH		0x020a
-+#define REG_G_PREVZOOM_IN_HEIGHT	0x020c
-+#define REG_G_PREVZOOM_IN_XOFFS		0x020e
-+#define REG_G_PREVZOOM_IN_YOFFS		0x0210
-+#define REG_G_INPUTS_CHANGE_REQ		0x021a
-+#define REG_G_ACTIVE_PREV_CFG		0x021c
-+#define REG_G_PREV_CFG_CHG		0x021e
-+#define REG_G_PREV_OPEN_AFTER_CH	0x0220
-+#define REG_G_PREV_CFG_ERROR		0x0222
-+#define  CFG_ERROR_RANGE		0x0b
-+#define REG_G_PREV_CFG_BYPASS_CHANGED	0x022a
-+#define REG_G_ACTUAL_P_FR_TIME		0x023a
-+#define REG_G_ACTUAL_P_OUT_RATE		0x023c
-+#define REG_G_ACTUAL_C_FR_TIME		0x023e
-+#define REG_G_ACTUAL_C_OUT_RATE		0x0240
-+
-+/* Preview control section. n = 0...4. */
-+#define PREG(n, x)			((n) * 0x26 + x)
-+#define REG_P_OUT_WIDTH(n)		PREG(n, 0x0242)
-+#define REG_P_OUT_HEIGHT(n)		PREG(n, 0x0244)
-+#define REG_P_FMT(n)			PREG(n, 0x0246)
-+#define REG_P_MAX_OUT_RATE(n)		PREG(n, 0x0248)
-+#define REG_P_MIN_OUT_RATE(n)		PREG(n, 0x024a)
-+#define REG_P_PVI_MASK(n)		PREG(n, 0x024c)
-+#define  PVI_MASK_MIPI			0x52
-+#define REG_P_CLK_INDEX(n)		PREG(n, 0x024e)
-+#define  CLK_PVI_INDEX			0
-+#define  CLK_MIPI_INDEX			NPVI_CLOCKS
-+#define REG_P_FR_RATE_TYPE(n)		PREG(n, 0x0250)
-+#define  FR_RATE_DYNAMIC		0
-+#define  FR_RATE_FIXED			1
-+#define  FR_RATE_FIXED_ACCURATE		2
-+#define REG_P_FR_RATE_Q_TYPE(n)		PREG(n, 0x0252)
-+#define  FR_RATE_Q_DYNAMIC		0
-+#define  FR_RATE_Q_BEST_FRRATE		1 /* Binning enabled */
-+#define  FR_RATE_Q_BEST_QUALITY		2 /* Binning disabled */
-+/* Frame period in 0.1 ms units */
-+#define REG_P_MAX_FR_TIME(n)		PREG(n, 0x0254)
-+#define REG_P_MIN_FR_TIME(n)		PREG(n, 0x0256)
-+#define  S5K5BAF_MIN_FR_TIME		333  /* x100 us */
-+#define  S5K5BAF_MAX_FR_TIME		6500 /* x100 us */
-+/* The below 5 registers are for "device correction" values */
-+#define REG_P_SATURATION(n)		PREG(n, 0x0258)
-+#define REG_P_SHARP_BLUR(n)		PREG(n, 0x025a)
-+#define REG_P_GLAMOUR(n)		PREG(n, 0x025c)
-+#define REG_P_COLORTEMP(n)		PREG(n, 0x025e)
-+#define REG_P_GAMMA_INDEX(n)		PREG(n, 0x0260)
-+#define REG_P_PREV_MIRROR(n)		PREG(n, 0x0262)
-+#define REG_P_CAP_MIRROR(n)		PREG(n, 0x0264)
-+#define REG_P_CAP_ROTATION(n)		PREG(n, 0x0266)
-+
-+/* Extended image property controls */
-+/* Exposure time in 10 us units */
-+#define REG_SF_USR_EXPOSURE_L		0x03bc
-+#define REG_SF_USR_EXPOSURE_H		0x03be
-+#define REG_SF_USR_EXPOSURE_CHG		0x03c0
-+#define REG_SF_USR_TOT_GAIN		0x03c2
-+#define REG_SF_USR_TOT_GAIN_CHG		0x03c4
-+#define REG_SF_RGAIN			0x03c6
-+#define REG_SF_RGAIN_CHG		0x03c8
-+#define REG_SF_GGAIN			0x03ca
-+#define REG_SF_GGAIN_CHG		0x03cc
-+#define REG_SF_BGAIN			0x03ce
-+#define REG_SF_BGAIN_CHG		0x03d0
-+#define REG_SF_WBGAIN_CHG		0x03d2
-+#define REG_SF_FLICKER_QUANT		0x03d4
-+#define REG_SF_FLICKER_QUANT_CHG	0x03d6
-+
-+/* Output interface (parallel/MIPI) setup */
-+#define REG_OIF_EN_MIPI_LANES		0x03f2
-+#define REG_OIF_EN_PACKETS		0x03f4
-+#define  EN_PACKETS_CSI2		0xc3
-+#define REG_OIF_CFG_CHG			0x03f6
-+
-+/* Auto-algorithms enable mask */
-+#define REG_DBG_AUTOALG_EN		0x03f8
-+#define  AALG_ALL_EN			BIT(0)
-+#define  AALG_AE_EN			BIT(1)
-+#define  AALG_DIVLEI_EN			BIT(2)
-+#define  AALG_WB_EN			BIT(3)
-+#define  AALG_USE_WB_FOR_ISP		BIT(4)
-+#define  AALG_FLICKER_EN		BIT(5)
-+#define  AALG_FIT_EN			BIT(6)
-+#define  AALG_WRHW_EN			BIT(7)
-+
-+/* Pointers to color correction matrices */
-+#define REG_PTR_CCM_HORIZON		0x06d0
-+#define REG_PTR_CCM_INCANDESCENT	0x06d4
-+#define REG_PTR_CCM_WARM_WHITE		0x06d8
-+#define REG_PTR_CCM_COOL_WHITE		0x06dc
-+#define REG_PTR_CCM_DL50		0x06e0
-+#define REG_PTR_CCM_DL65		0x06e4
-+#define REG_PTR_CCM_OUTDOOR		0x06ec
-+
-+#define REG_ARR_CCM(n)			(0x2800 + 36 * (n))
-+
-+static const char * const s5k5baf_supply_names[] = {
-+	"vdda",		/* Analog power supply 2.8V (2.6V to 3.0V) */
-+	"vddreg",	/* Regulator input power supply 1.8V (1.7V to 1.9V)
-+			   or 2.8V (2.6V to 3.0) */
-+	"vddio",	/* I/O power supply 1.8V (1.65V to 1.95V)
-+			   or 2.8V (2.5V to 3.1V) */
-+};
-+#define S5K5BAF_NUM_SUPPLIES ARRAY_SIZE(s5k5baf_supply_names)
-+
-+struct s5k5baf_gpio {
-+	int gpio;
-+	int level;
-+};
-+
-+enum s5k5baf_gpio_id {
-+	STBY,
-+	RST,
-+	GPIO_NUM,
-+};
-+
-+enum s5k5baf_pads_id {
-+	PAD_CIS,
-+	PAD_OUT,
-+	CIS_PAD_NUM = 1,
-+	ISP_PAD_NUM = 2
-+};
-+
-+struct s5k5baf_pixfmt {
-+	enum v4l2_mbus_pixelcode code;
-+	u32 colorspace;
-+	/* REG_P_FMT(x) register value */
-+	u16 reg_p_fmt;
-+};
-+
-+struct s5k5baf_ctrls {
-+	struct v4l2_ctrl_handler handler;
-+	struct { /* Auto / manual white balance cluster */
-+		struct v4l2_ctrl *awb;
-+		struct v4l2_ctrl *gain_red;
-+		struct v4l2_ctrl *gain_blue;
-+	};
-+	struct { /* Mirror cluster */
-+		struct v4l2_ctrl *hflip;
-+		struct v4l2_ctrl *vflip;
-+	};
-+	struct { /* Auto exposure / manual exposure and gain cluster */
-+		struct v4l2_ctrl *auto_exp;
-+		struct v4l2_ctrl *exposure;
-+		struct v4l2_ctrl *gain;
-+	};
-+};
-+
-+struct s5k5baf {
-+	u32 mclk_frequency;
-+	struct s5k5baf_gpio gpios[GPIO_NUM];
-+	enum v4l2_mbus_type bus_type;
-+	u8 nlanes;
-+	struct regulator_bulk_data supplies[S5K5BAF_NUM_SUPPLIES];
-+
-+	struct v4l2_subdev cis_sd;
-+	struct media_pad cis_pad;
-+
-+	struct v4l2_subdev sd;
-+	struct media_pad pads[ISP_PAD_NUM];
-+
-+	/* protects the struct members below */
-+	struct mutex lock;
-+
-+	int error;
-+
-+	struct v4l2_rect crop_sink;
-+	struct v4l2_rect compose;
-+	struct v4l2_rect crop_source;
-+	/* index to s5k5baf_formats array */
-+	int pixfmt;
-+	/* actual frame interval in 100us */
-+	u16 fiv;
-+	/* requested frame interval in 100us */
-+	u16 req_fiv;
-+
-+	struct s5k5baf_ctrls ctrls;
-+
-+	unsigned int streaming:1;
-+	unsigned int apply_cfg:1;
-+	unsigned int apply_crop:1;
-+	unsigned int power;
-+};
-+
-+static const struct s5k5baf_pixfmt s5k5baf_formats[] = {
-+	{ V4L2_MBUS_FMT_VYUY8_2X8,	V4L2_COLORSPACE_JPEG,	5 },
-+	/* range 16-240 */
-+	{ V4L2_MBUS_FMT_VYUY8_2X8,	V4L2_COLORSPACE_REC709,	6 },
-+	{ V4L2_MBUS_FMT_RGB565_2X8_BE,	V4L2_COLORSPACE_JPEG,	0 },
-+};
-+
-+static struct v4l2_rect s5k5baf_cis_rect = { 0, 0, S5K5BAF_CIS_WIDTH,
-+				     S5K5BAF_CIS_HEIGHT };
-+
-+static inline struct v4l2_subdev *ctrl_to_sd(struct v4l2_ctrl *ctrl)
++#if IS_ENABLED(CONFIG_OF)
++static void of_i2c_register_devices(struct i2c_adapter *adap)
 +{
-+	return &container_of(ctrl->handler, struct s5k5baf, ctrls.handler)->sd;
-+}
++	void *result;
++	struct device_node *node;
 +
-+static inline bool s5k5baf_is_cis_subdev(struct v4l2_subdev *sd)
-+{
-+	return sd->entity.type == MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
-+}
-+
-+static inline struct s5k5baf *to_s5k5baf(struct v4l2_subdev *sd)
-+{
-+	if (s5k5baf_is_cis_subdev(sd))
-+		return container_of(sd, struct s5k5baf, cis_sd);
-+	else
-+		return container_of(sd, struct s5k5baf, sd);
-+}
-+
-+static u16 s5k5baf_i2c_read(struct s5k5baf *state, u16 addr)
-+{
-+	struct i2c_client *c = v4l2_get_subdevdata(&state->sd);
-+	u16 w, r;
-+	struct i2c_msg msg[] = {
-+		{ .addr = c->addr, .flags = 0,
-+		  .len = 2, .buf = (u8 *)&w },
-+		{ .addr = c->addr, .flags = I2C_M_RD,
-+		  .len = 2, .buf = (u8 *)&r },
-+	};
-+	int ret;
-+
-+	if (state->error)
-+		return 0;
-+
-+	w = htons(addr);
-+	ret = i2c_transfer(c->adapter, msg, 2);
-+	r = ntohs(r);
-+
-+	v4l2_dbg(3, debug, c, "i2c_read: 0x%04x : 0x%04x\n", addr, r);
-+
-+	if (ret != 2) {
-+		v4l2_err(c, "i2c_read: error during transfer (%d)\n", ret);
-+		state->error = ret;
-+	}
-+	return r;
-+}
-+
-+static void s5k5baf_i2c_write(struct s5k5baf *state, u16 addr, u16 val)
-+{
-+	u8 buf[4] = { addr >> 8, addr & 0xFF, val >> 8, val & 0xFF };
-+	struct i2c_client *c = v4l2_get_subdevdata(&state->sd);
-+	int ret;
-+
-+	if (state->error)
++	/* Only register child devices if the adapter has a node pointer set */
++	if (!adap->dev.of_node)
 +		return;
 +
-+	ret = i2c_master_send(c, buf, 4);
-+	v4l2_dbg(3, debug, c, "i2c_write: 0x%04x : 0x%04x\n", addr, val);
++	dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
 +
-+	if (ret != 4) {
-+		v4l2_err(c, "i2c_write: error during transfer (%d)\n", ret);
-+		state->error = ret;
-+	}
-+}
++	for_each_available_child_of_node(adap->dev.of_node, node) {
++		struct i2c_board_info info = {};
++		struct dev_archdata dev_ad = {};
++		const __be32 *addr;
++		int len;
 +
-+static u16 s5k5baf_read(struct s5k5baf *state, u16 addr)
-+{
-+	s5k5baf_i2c_write(state, REG_CMDRD_ADDR, addr);
-+	return s5k5baf_i2c_read(state, REG_CMD_BUF);
-+}
++		dev_dbg(&adap->dev, "of_i2c: register %s\n", node->full_name);
 +
-+static void s5k5baf_write(struct s5k5baf *state, u16 addr, u16 val)
-+{
-+	s5k5baf_i2c_write(state, REG_CMDWR_ADDR, addr);
-+	s5k5baf_i2c_write(state, REG_CMD_BUF, val);
-+}
-+
-+static void s5k5baf_write_arr_seq(struct s5k5baf *state, u16 addr,
-+				  u16 count, const u16 *seq)
-+{
-+	struct i2c_client *c = v4l2_get_subdevdata(&state->sd);
-+	u16 buf[count + 1];
-+	int ret, n;
-+
-+	s5k5baf_i2c_write(state, REG_CMDWR_ADDR, addr);
-+	if (state->error)
-+		return;
-+
-+	buf[0] = __constant_htons(REG_CMD_BUF);
-+	for (n = 1; n <= count; ++n)
-+		buf[n] = htons(*seq++);
-+
-+	n *= 2;
-+	ret = i2c_master_send(c, (char *)buf, n);
-+	v4l2_dbg(3, debug, c, "i2c_write_seq(count=%d): %*ph\n", count,
-+		 min(2 * count, 64), seq - count);
-+
-+	if (ret != n) {
-+		v4l2_err(c, "i2c_write_seq: error during transfer (%d)\n", ret);
-+		state->error = ret;
-+	}
-+}
-+
-+#define s5k5baf_write_seq(state, addr, seq...) \
-+	s5k5baf_write_arr_seq(state, addr, sizeof((char[]){ seq }), \
-+			      (const u16 []){ seq });
-+
-+/* add items count at the beginning of the list */
-+#define NSEQ(seq...) sizeof((char[]){ seq }), seq
-+
-+/*
-+ * s5k5baf_write_nseq() - Writes sequences of values to sensor memory via i2c
-+ * @nseq: sequence of u16 words in format:
-+ *	(N, address, value[1]...value[N-1])*,0
-+ * Ex.:
-+ *	u16 seq[] = { NSEQ(0x4000, 1, 1), NSEQ(0x4010, 640, 480), 0 };
-+ *	ret = s5k5baf_write_nseq(c, seq);
-+ */
-+static void s5k5baf_write_nseq(struct s5k5baf *state, const u16 *nseq)
-+{
-+	int count;
-+
-+	while ((count = *nseq++)) {
-+		u16 addr = *nseq++;
-+		--count;
-+
-+		s5k5baf_write_arr_seq(state, addr, count, nseq);
-+		nseq += count;
-+	}
-+}
-+
-+static void s5k5baf_synchronize(struct s5k5baf *state, int timeout, u16 addr)
-+{
-+	unsigned long end = jiffies + msecs_to_jiffies(timeout);
-+	u16 reg;
-+
-+	s5k5baf_write(state, addr, 1);
-+	do {
-+		reg = s5k5baf_read(state, addr);
-+		if (state->error || !reg)
-+			return;
-+		usleep_range(5000, 10000);
-+	} while (time_is_after_jiffies(end));
-+
-+	v4l2_err(&state->sd, "timeout on register synchronize (%#x)\n", addr);
-+	state->error = -ETIMEDOUT;
-+}
-+
-+static void s5k5baf_hw_patch(struct s5k5baf *state)
-+{
-+	static const u16 nseq_patch[] = {
-+		NSEQ(0x1668,
-+		0xb5fe, 0x0007, 0x683c, 0x687e, 0x1da5, 0x88a0, 0x2800, 0xd00b,
-+		0x88a8, 0x2800, 0xd008, 0x8820, 0x8829, 0x4288, 0xd301, 0x1a40,
-+		0xe000, 0x1a08, 0x9001, 0xe001, 0x2019, 0x9001, 0x4916, 0x466b,
-+		0x8a48, 0x8118, 0x8a88, 0x8158, 0x4814, 0x8940, 0x0040, 0x2103,
-+		0xf000, 0xf826, 0x88a1, 0x4288, 0xd908, 0x8828, 0x8030, 0x8868,
-+		0x8070, 0x88a8, 0x6038, 0xbcfe, 0xbc08, 0x4718, 0x88a9, 0x4288,
-+		0xd906, 0x8820, 0x8030, 0x8860, 0x8070, 0x88a0, 0x6038, 0xe7f2,
-+		0x9801, 0xa902, 0xf000, 0xf812, 0x0033, 0x0029, 0x9a02, 0x0020,
-+		0xf000, 0xf814, 0x6038, 0xe7e6, 0x1a28, 0x7000, 0x0d64, 0x7000,
-+		0x4778, 0x46c0, 0xf004, 0xe51f, 0xa464, 0x0000, 0x4778, 0x46c0,
-+		0xc000, 0xe59f, 0xff1c, 0xe12f, 0x6009, 0x0000, 0x4778, 0x46c0,
-+		0xc000, 0xe59f, 0xff1c, 0xe12f, 0x622f, 0x0000),
-+		NSEQ(0x2080,
-+		0xb510, 0xf000, 0xf8f4, 0xbc10, 0xbc08, 0x4718, 0xb5f0, 0xb08b,
-+		0x0006, 0x2000, 0x9004, 0x6835, 0x6874, 0x68b0, 0x900a, 0x68f0,
-+		0x9009, 0x4f7d, 0x8979, 0x084a, 0x88a8, 0x88a3, 0x4298, 0xd300,
-+		0x0018, 0xf000, 0xf907, 0x9007, 0x0021, 0x0028, 0xaa04, 0xf000,
-+		0xf909, 0x9006, 0x88a8, 0x2800, 0xd102, 0x27ff, 0x1c7f, 0xe047,
-+		0x88a0, 0x2800, 0xd101, 0x2700, 0xe042, 0x8820, 0x466b, 0x8198,
-+		0x8860, 0x81d8, 0x8828, 0x8118, 0x8868, 0x8158, 0xa802, 0xc803,
-+		0xf000, 0xf8f8, 0x9008, 0x8aba, 0x9808, 0x466b, 0x4342, 0x9202,
-+		0x8820, 0x8198, 0x8860, 0x81d8, 0x980a, 0x9903, 0xf000, 0xf8ea,
-+		0x9a02, 0x17d1, 0x0e09, 0x1889, 0x1209, 0x4288, 0xdd1f, 0x8820,
-+		0x466b, 0x8198, 0x8860, 0x81d8, 0x980a, 0x9903, 0xf000, 0xf8da,
-+		0x9001, 0x8828, 0x466b, 0x8118, 0x8868, 0x8158, 0x980a, 0x9902,
-+		0xf000, 0xf8d0, 0x8ab9, 0x9a08, 0x4351, 0x17ca, 0x0e12, 0x1851,
-+		0x120a, 0x9901, 0xf000, 0xf8b6, 0x0407, 0x0c3f, 0xe000, 0x2700,
-+		0x8820, 0x466b, 0xaa05, 0x8198, 0x8860, 0x81d8, 0x8828, 0x8118,
-+		0x8868, 0x8158, 0xa802, 0xc803, 0x003b, 0xf000, 0xf8bb, 0x88a1,
-+		0x88a8, 0x003a, 0xf000, 0xf8be, 0x0004, 0xa804, 0xc803, 0x9a09,
-+		0x9b07, 0xf000, 0xf8af, 0xa806, 0xc805, 0x0021, 0xf000, 0xf8b2,
-+		0x6030, 0xb00b, 0xbcf0, 0xbc08, 0x4718, 0xb5f1, 0x9900, 0x680c,
-+		0x493a, 0x694b, 0x698a, 0x4694, 0x69cd, 0x6a0e, 0x4f38, 0x42bc,
-+		0xd800, 0x0027, 0x4937, 0x6b89, 0x0409, 0x0c09, 0x4a35, 0x1e92,
-+		0x6bd2, 0x0412, 0x0c12, 0x429f, 0xd801, 0x0020, 0xe031, 0x001f,
-+		0x434f, 0x0a3f, 0x42a7, 0xd301, 0x0018, 0xe02a, 0x002b, 0x434b,
-+		0x0a1b, 0x42a3, 0xd303, 0x0220, 0xf000, 0xf88c, 0xe021, 0x0029,
-+		0x4351, 0x0a09, 0x42a1, 0xd301, 0x0028, 0xe01a, 0x0031, 0x4351,
-+		0x0a09, 0x42a1, 0xd304, 0x0220, 0x0011, 0xf000, 0xf87b, 0xe010,
-+		0x491e, 0x8c89, 0x000a, 0x4372, 0x0a12, 0x42a2, 0xd301, 0x0030,
-+		0xe007, 0x4662, 0x434a, 0x0a12, 0x42a2, 0xd302, 0x0220, 0xf000,
-+		0xf869, 0x4b16, 0x4d18, 0x8d99, 0x1fca, 0x3af9, 0xd00a, 0x2001,
-+		0x0240, 0x8468, 0x0220, 0xf000, 0xf85d, 0x9900, 0x6008, 0xbcf8,
-+		0xbc08, 0x4718, 0x8d19, 0x8469, 0x9900, 0x6008, 0xe7f7, 0xb570,
-+		0x2200, 0x490e, 0x480e, 0x2401, 0xf000, 0xf852, 0x0022, 0x490d,
-+		0x480d, 0x2502, 0xf000, 0xf84c, 0x490c, 0x480d, 0x002a, 0xf000,
-+		0xf847, 0xbc70, 0xbc08, 0x4718, 0x0d64, 0x7000, 0x0470, 0x7000,
-+		0xa120, 0x0007, 0x0402, 0x7000, 0x14a0, 0x7000, 0x208d, 0x7000,
-+		0x622f, 0x0000, 0x1669, 0x7000, 0x6445, 0x0000, 0x21ab, 0x7000,
-+		0x2aa9, 0x0000, 0x4778, 0x46c0, 0xc000, 0xe59f, 0xff1c, 0xe12f,
-+		0x5f49, 0x0000, 0x4778, 0x46c0, 0xc000, 0xe59f, 0xff1c, 0xe12f,
-+		0x5fc7, 0x0000, 0x4778, 0x46c0, 0xc000, 0xe59f, 0xff1c, 0xe12f,
-+		0x5457, 0x0000, 0x4778, 0x46c0, 0xc000, 0xe59f, 0xff1c, 0xe12f,
-+		0x5fa3, 0x0000, 0x4778, 0x46c0, 0xc000, 0xe59f, 0xff1c, 0xe12f,
-+		0x51f9, 0x0000, 0x4778, 0x46c0, 0xf004, 0xe51f, 0xa464, 0x0000,
-+		0x4778, 0x46c0, 0xc000, 0xe59f, 0xff1c, 0xe12f, 0xa007, 0x0000,
-+		0x6546, 0x2062, 0x3120, 0x3220, 0x3130, 0x0030, 0xe010, 0x0208,
-+		0x0058, 0x0000),
-+		0
-+	};
-+
-+	s5k5baf_write_nseq(state, nseq_patch);
-+}
-+
-+static void s5k5baf_hw_set_clocks(struct s5k5baf *state)
-+{
-+	unsigned long mclk = state->mclk_frequency / 1000;
-+	u16 status;
-+	static const u16 nseq_clk_cfg[] = {
-+		NSEQ(REG_I_USE_NPVI_CLOCKS,
-+		  NPVI_CLOCKS, NMIPI_CLOCKS, 0,
-+		  SCLK_PVI_FREQ / 4, PCLK_MIN_FREQ / 4, PCLK_MAX_FREQ / 4,
-+		  SCLK_MIPI_FREQ / 4, PCLK_MIN_FREQ / 4, PCLK_MAX_FREQ / 4),
-+		NSEQ(REG_I_USE_REGS_API, 1),
-+		0
-+	};
-+
-+	s5k5baf_write_seq(state, REG_I_INCLK_FREQ_L, mclk & 0xffff, mclk >> 16);
-+	s5k5baf_write_nseq(state, nseq_clk_cfg);
-+
-+	s5k5baf_synchronize(state, 250, REG_I_INIT_PARAMS_UPDATED);
-+	status = s5k5baf_read(state, REG_I_ERROR_INFO);
-+	if (!state->error && status) {
-+		v4l2_err(&state->sd, "error configuring PLL (%d)\n", status);
-+		state->error = -EINVAL;
-+	}
-+}
-+
-+static void s5k5baf_hw_set_ccm(struct s5k5baf *state)
-+{
-+	static const u16 nseq_cfg[] = {
-+		NSEQ(REG_PTR_CCM_HORIZON,
-+		REG_ARR_CCM(0), PAGE_IF_SW,
-+		REG_ARR_CCM(1), PAGE_IF_SW,
-+		REG_ARR_CCM(2), PAGE_IF_SW,
-+		REG_ARR_CCM(3), PAGE_IF_SW,
-+		REG_ARR_CCM(4), PAGE_IF_SW,
-+		REG_ARR_CCM(5), PAGE_IF_SW),
-+		NSEQ(REG_PTR_CCM_OUTDOOR,
-+		REG_ARR_CCM(6), PAGE_IF_SW),
-+		NSEQ(REG_ARR_CCM(0),
-+		/* horizon */
-+		0x010d, 0xffa7, 0xfff5, 0x003b, 0x00ef, 0xff38,
-+		0xfe42, 0x0270, 0xff71, 0xfeed, 0x0198, 0x0198,
-+		0xff95, 0xffa3, 0x0260, 0x00ec, 0xff33, 0x00f4,
-+		/* incandescent */
-+		0x010d, 0xffa7, 0xfff5, 0x003b, 0x00ef, 0xff38,
-+		0xfe42, 0x0270, 0xff71, 0xfeed, 0x0198, 0x0198,
-+		0xff95, 0xffa3, 0x0260, 0x00ec, 0xff33, 0x00f4,
-+		/* warm white */
-+		0x01ea, 0xffb9, 0xffdb, 0x0127, 0x0109, 0xff3c,
-+		0xff2b, 0x021b, 0xff48, 0xff03, 0x0207, 0x0113,
-+		0xffca, 0xff93, 0x016f, 0x0164, 0xff55, 0x0163,
-+		/* cool white */
-+		0x01ea, 0xffb9, 0xffdb, 0x0127, 0x0109, 0xff3c,
-+		0xff2b, 0x021b, 0xff48, 0xff03, 0x0207, 0x0113,
-+		0xffca, 0xff93, 0x016f, 0x0164, 0xff55, 0x0163,
-+		/* daylight 5000K */
-+		0x0194, 0xffad, 0xfffe, 0x00c5, 0x0103, 0xff5d,
-+		0xfee3, 0x01ae, 0xff27, 0xff18, 0x018f, 0x00c8,
-+		0xffe8, 0xffaa, 0x01c8, 0x0132, 0xff3e, 0x0100,
-+		/* daylight 6500K */
-+		0x0194, 0xffad, 0xfffe, 0x00c5, 0x0103, 0xff5d,
-+		0xfee3, 0x01ae, 0xff27, 0xff18, 0x018f, 0x00c8,
-+		0xffe8, 0xffaa, 0x01c8, 0x0132, 0xff3e, 0x0100,
-+		/* outdoor */
-+		0x01cc, 0xffc3, 0x0009, 0x00a2, 0x0106, 0xff3f,
-+		0xfed8, 0x01fe, 0xff08, 0xfec7, 0x00f5, 0x0119,
-+		0xffdf, 0x0024, 0x01a8, 0x0170, 0xffad, 0x011b),
-+		0
-+	};
-+	s5k5baf_write_nseq(state, nseq_cfg);
-+}
-+
-+static void s5k5baf_hw_set_cis(struct s5k5baf *state)
-+{
-+	static const u16 nseq_cfg[] = {
-+		NSEQ(0xc202, 0x0700),
-+		NSEQ(0xf260, 0x0001),
-+		NSEQ(0xf414, 0x0030),
-+		NSEQ(0xc204, 0x0100),
-+		NSEQ(0xf402, 0x0092, 0x007f),
-+		NSEQ(0xf700, 0x0040),
-+		NSEQ(0xf708,
-+		0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-+		0x0040, 0x0040, 0x0040, 0x0040, 0x0040,
-+		0x0001, 0x0015, 0x0001, 0x0040),
-+		NSEQ(0xf48a, 0x0048),
-+		NSEQ(0xf10a, 0x008b),
-+		NSEQ(0xf900, 0x0067),
-+		NSEQ(0xf406, 0x0092, 0x007f, 0x0003, 0x0003, 0x0003),
-+		NSEQ(0xf442, 0x0000, 0x0000),
-+		NSEQ(0xf448, 0x0000),
-+		NSEQ(0xf456, 0x0001, 0x0010, 0x0000),
-+		NSEQ(0xf41a, 0x00ff, 0x0003, 0x0030),
-+		NSEQ(0xf410, 0x0001, 0x0000),
-+		NSEQ(0xf416, 0x0001),
-+		NSEQ(0xf424, 0x0000),
-+		NSEQ(0xf422, 0x0000),
-+		NSEQ(0xf41e, 0x0000),
-+		NSEQ(0xf428, 0x0000, 0x0000, 0x0000),
-+		NSEQ(0xf430, 0x0000, 0x0000, 0x0008, 0x0005, 0x000f, 0x0001,
-+		0x0040, 0x0040, 0x0010),
-+		NSEQ(0xf4d6, 0x0090, 0x0000),
-+		NSEQ(0xf47c, 0x000c, 0x0000),
-+		NSEQ(0xf49a, 0x0008, 0x0000),
-+		NSEQ(0xf4a2, 0x0008, 0x0000),
-+		NSEQ(0xf4b2, 0x0013, 0x0000, 0x0013, 0x0000),
-+		NSEQ(0xf4aa, 0x009b, 0x00fb, 0x009b, 0x00fb),
-+		0
-+	};
-+
-+	s5k5baf_i2c_write(state, REG_CMDWR_PAGE, PAGE_IF_HW);
-+	s5k5baf_write_nseq(state, nseq_cfg);
-+	s5k5baf_i2c_write(state, REG_CMDWR_PAGE, PAGE_IF_SW);
-+}
-+
-+static void s5k5baf_hw_sync_cfg(struct s5k5baf *state)
-+{
-+	s5k5baf_write(state, REG_G_PREV_CFG_CHG, 1);
-+	if (state->apply_crop) {
-+		s5k5baf_write(state, REG_G_INPUTS_CHANGE_REQ, 1);
-+		s5k5baf_write(state, REG_G_PREV_CFG_BYPASS_CHANGED, 1);
-+	}
-+	s5k5baf_synchronize(state, 500, REG_G_NEW_CFG_SYNC);
-+}
-+/* Set horizontal and vertical image flipping */
-+static void s5k5baf_hw_set_mirror(struct s5k5baf *state)
-+{
-+	u16 flip = state->ctrls.vflip->val | (state->ctrls.vflip->val << 1);
-+
-+	s5k5baf_write(state, REG_P_PREV_MIRROR(0), flip);
-+	if (state->streaming)
-+		s5k5baf_hw_sync_cfg(state);
-+}
-+
-+/* Configure auto/manual white balance and R/G/B gains */
-+static void s5k5baf_hw_set_awb(struct s5k5baf *state, int awb)
-+{
-+	struct s5k5baf_ctrls *ctrls = &state->ctrls;
-+	u16 reg;
-+
-+	reg = s5k5baf_read(state, REG_DBG_AUTOALG_EN);
-+
-+	if (!awb)
-+		s5k5baf_write_seq(state, REG_SF_RGAIN,
-+				  ctrls->gain_red->val, 1,
-+				  S5K5BAF_GAIN_GREEN_DEF, 1,
-+				  ctrls->gain_blue->val, 1,
-+				  1);
-+	reg = awb ? reg | AALG_WB_EN : reg & ~AALG_WB_EN;
-+	s5k5baf_write(state, REG_DBG_AUTOALG_EN, reg);
-+}
-+
-+/* Program FW with exposure time, 'exposure' in us units */
-+static void s5k5baf_hw_set_user_exposure(struct s5k5baf *state, int exposure)
-+{
-+	unsigned int time = exposure / 10;
-+
-+	s5k5baf_write_seq(state, REG_SF_USR_EXPOSURE_L,
-+			  time & 0xffff, time >> 16, 1);
-+}
-+
-+static void s5k5baf_hw_set_user_gain(struct s5k5baf *state, int gain)
-+{
-+	s5k5baf_write_seq(state, REG_SF_USR_TOT_GAIN, gain, 1);
-+}
-+
-+/* Set auto/manual exposure and total gain */
-+static void s5k5baf_hw_set_auto_exposure(struct s5k5baf *state, int value)
-+{
-+	unsigned int exp_time = state->ctrls.exposure->val;
-+	u16 auto_alg;
-+
-+	auto_alg = s5k5baf_read(state, REG_DBG_AUTOALG_EN);
-+
-+	if (value == V4L2_EXPOSURE_AUTO) {
-+		auto_alg |= AALG_AE_EN | AALG_DIVLEI_EN;
-+	} else {
-+		s5k5baf_hw_set_user_exposure(state, exp_time);
-+		s5k5baf_hw_set_user_gain(state, state->ctrls.gain->val);
-+		auto_alg &= ~(AALG_AE_EN | AALG_DIVLEI_EN);
-+	}
-+
-+	s5k5baf_write(state, REG_DBG_AUTOALG_EN, auto_alg);
-+}
-+
-+static void s5k5baf_hw_set_anti_flicker(struct s5k5baf *state, int v)
-+{
-+	u16 auto_alg;
-+
-+	auto_alg = s5k5baf_read(state, REG_DBG_AUTOALG_EN);
-+
-+	if (v == V4L2_CID_POWER_LINE_FREQUENCY_AUTO) {
-+		auto_alg |= AALG_FLICKER_EN;
-+	} else {
-+		auto_alg &= ~AALG_FLICKER_EN;
-+		/* The V4L2_CID_LINE_FREQUENCY control values match
-+		 * the register values */
-+		s5k5baf_write_seq(state, REG_SF_FLICKER_QUANT, v, 1);
-+	}
-+
-+	s5k5baf_write(state, REG_DBG_AUTOALG_EN, auto_alg);
-+}
-+
-+static void s5k5baf_hw_set_colorfx(struct s5k5baf *state, int val)
-+{
-+	static const u16 colorfx[] = {
-+		[V4L2_COLORFX_NONE] = 0,
-+		[V4L2_COLORFX_BW] = 1,
-+		[V4L2_COLORFX_NEGATIVE] = 2,
-+		[V4L2_COLORFX_SEPIA] = 3,
-+		[V4L2_COLORFX_SKY_BLUE] = 4,
-+		[V4L2_COLORFX_SKETCH] = 5,
-+	};
-+
-+	if (val >= ARRAY_SIZE(colorfx)) {
-+		v4l2_err(&state->sd, "colorfx(%d) out of range(%d)\n",
-+			 val, ARRAY_SIZE(colorfx));
-+		state->error = -EINVAL;
-+	} else {
-+		s5k5baf_write(state, REG_G_SPEC_EFFECTS, colorfx[val]);
-+	}
-+}
-+
-+static int s5k5baf_find_pixfmt(struct v4l2_mbus_framefmt *mf)
-+{
-+	int i, c = -1;
-+
-+	for (i = 0; i < ARRAY_SIZE(s5k5baf_formats); i++) {
-+		if (mf->colorspace != s5k5baf_formats[i].colorspace)
++		if (of_modalias_node(node, info.type, sizeof(info.type)) < 0) {
++			dev_err(&adap->dev, "of_i2c: modalias failure on %s\n",
++				node->full_name);
 +			continue;
-+		if (mf->code == s5k5baf_formats[i].code)
-+			return i;
-+		if (c < 0)
-+			c = i;
-+	}
-+	return (c < 0) ? 0 : c;
-+}
-+
-+static int s5k5baf_clear_error(struct s5k5baf *state)
-+{
-+	int ret = state->error;
-+
-+	state->error = 0;
-+	return ret;
-+}
-+
-+static int s5k5baf_hw_set_video_bus(struct s5k5baf *state)
-+{
-+	u16 en_packets;
-+
-+	switch (state->bus_type) {
-+	case V4L2_MBUS_CSI2:
-+		en_packets = EN_PACKETS_CSI2;
-+		break;
-+	case V4L2_MBUS_PARALLEL:
-+		en_packets = 0;
-+		break;
-+	default:
-+		v4l2_err(&state->sd, "unknown video bus: %d\n", state->bus_type);
-+		return -EINVAL;
-+	};
-+
-+	s5k5baf_write_seq(state, REG_OIF_EN_MIPI_LANES,
-+			  state->nlanes, en_packets, 1);
-+
-+	return s5k5baf_clear_error(state);
-+}
-+
-+static u16 s5k5baf_get_cfg_error(struct s5k5baf *state)
-+{
-+	u16 err = s5k5baf_read(state, REG_G_PREV_CFG_ERROR);
-+	if (err)
-+		s5k5baf_write(state, REG_G_PREV_CFG_ERROR, 0);
-+	return err;
-+}
-+
-+static void s5k5baf_hw_set_fiv(struct s5k5baf *state, u16 fiv)
-+{
-+	s5k5baf_write(state, REG_P_MAX_FR_TIME(0), fiv);
-+	s5k5baf_hw_sync_cfg(state);
-+}
-+
-+static void s5k5baf_hw_find_min_fiv(struct s5k5baf *state)
-+{
-+	u16 err, fiv;
-+	int n;
-+
-+	fiv = s5k5baf_read(state,  REG_G_ACTUAL_P_FR_TIME);
-+	if (state->error)
-+		return;
-+
-+	for (n = 5; n > 0; --n) {
-+		s5k5baf_hw_set_fiv(state, fiv);
-+		err = s5k5baf_get_cfg_error(state);
-+		if (state->error)
-+			return;
-+		switch (err) {
-+		case CFG_ERROR_RANGE:
-+			++fiv;
-+			break;
-+		case 0:
-+			state->fiv = fiv;
-+			v4l2_info(&state->sd,
-+				  "found valid frame interval: %d00us\n", fiv);
-+			return;
-+		default:
-+			v4l2_err(&state->sd,
-+				 "error setting frame interval: %d\n", err);
-+			state->error = -EINVAL;
 +		}
-+	};
-+	v4l2_err(&state->sd, "cannot find correct frame interval\n");
-+	state->error = -ERANGE;
-+}
 +
-+static void s5k5baf_hw_validate_cfg(struct s5k5baf *state)
-+{
-+	u16 err;
-+
-+	err = s5k5baf_get_cfg_error(state);
-+	if (state->error)
-+		return;
-+
-+	switch (err) {
-+	case 0:
-+		state->apply_cfg = 1;
-+		return;
-+	case CFG_ERROR_RANGE:
-+		s5k5baf_hw_find_min_fiv(state);
-+		if (!state->error)
-+			state->apply_cfg = 1;
-+		return;
-+	default:
-+		v4l2_err(&state->sd,
-+			 "error setting format: %d\n", err);
-+		state->error = -EINVAL;
-+	}
-+}
-+
-+static void s5k5baf_rescale(struct v4l2_rect *r, const struct v4l2_rect *v,
-+			    const struct v4l2_rect *n,
-+			    const struct v4l2_rect *d)
-+{
-+	r->left = v->left * n->width / d->width;
-+	r->top = v->top * n->height / d->height;
-+	r->width = v->width * n->width / d->width;
-+	r->height = v->height * n->height / d->height;
-+}
-+
-+static int s5k5baf_hw_set_crop_rects(struct s5k5baf *state)
-+{
-+	struct v4l2_rect *p, r;
-+	u16 err;
-+	int ret;
-+
-+	p = &state->crop_sink;
-+	s5k5baf_write_seq(state, REG_G_PREVREQ_IN_WIDTH, p->width, p->height,
-+			  p->left, p->top);
-+
-+	s5k5baf_rescale(&r, &state->crop_source, &state->crop_sink,
-+			&state->compose);
-+	s5k5baf_write_seq(state, REG_G_PREVZOOM_IN_WIDTH, r.width, r.height,
-+			  r.left, r.top);
-+
-+	s5k5baf_synchronize(state, 500, REG_G_INPUTS_CHANGE_REQ);
-+	s5k5baf_synchronize(state, 500, REG_G_PREV_CFG_BYPASS_CHANGED);
-+	err = s5k5baf_get_cfg_error(state);
-+	ret = s5k5baf_clear_error(state);
-+	if (ret)
-+		return ret;
-+
-+	switch (err) {
-+	case 0:
-+		break;
-+	case CFG_ERROR_RANGE:
-+		/* retry crop with frame interval set to max */
-+		s5k5baf_hw_set_fiv(state, S5K5BAF_MAX_FR_TIME);
-+		err = s5k5baf_get_cfg_error(state);
-+		ret = s5k5baf_clear_error(state);
-+		if (ret)
-+			return ret;
-+		if (err) {
-+			v4l2_err(&state->sd,
-+				 "crop error on max frame interval: %d\n", err);
-+			state->error = -EINVAL;
++		addr = of_get_property(node, "reg", &len);
++		if (!addr || (len < sizeof(int))) {
++			dev_err(&adap->dev, "of_i2c: invalid reg on %s\n",
++				node->full_name);
++			continue;
 +		}
-+		s5k5baf_hw_set_fiv(state, state->req_fiv);
-+		s5k5baf_hw_validate_cfg(state);
-+		break;
-+	default:
-+		v4l2_err(&state->sd, "crop error: %d\n", err);
-+		return -EINVAL;
-+	}
 +
-+	if (!state->apply_cfg)
-+		return 0;
-+
-+	p = &state->crop_source;
-+	s5k5baf_write_seq(state, REG_P_OUT_WIDTH(0), p->width, p->height);
-+	s5k5baf_hw_set_fiv(state, state->req_fiv);
-+	s5k5baf_hw_validate_cfg(state);
-+
-+	return s5k5baf_clear_error(state);
-+}
-+
-+static void s5k5baf_hw_set_config(struct s5k5baf *state)
-+{
-+	u16 reg_fmt = s5k5baf_formats[state->pixfmt].reg_p_fmt;
-+	struct v4l2_rect *r = &state->crop_source;
-+
-+	s5k5baf_write_seq(state, REG_P_OUT_WIDTH(0),
-+			  r->width, r->height, reg_fmt,
-+			  PCLK_MAX_FREQ >> 2, PCLK_MIN_FREQ >> 2,
-+			  PVI_MASK_MIPI, CLK_MIPI_INDEX,
-+			  FR_RATE_FIXED, FR_RATE_Q_DYNAMIC,
-+			  state->req_fiv, S5K5BAF_MIN_FR_TIME);
-+	s5k5baf_hw_sync_cfg(state);
-+	s5k5baf_hw_validate_cfg(state);
-+}
-+
-+
-+static void s5k5baf_hw_set_test_pattern(struct s5k5baf *state, int id)
-+{
-+	s5k5baf_i2c_write(state, REG_PATTERN_WIDTH, 800);
-+	s5k5baf_i2c_write(state, REG_PATTERN_HEIGHT, 511);
-+	s5k5baf_i2c_write(state, REG_PATTERN_PARAM, 0);
-+	s5k5baf_i2c_write(state, REG_PATTERN_SET, id);
-+}
-+
-+static void s5k5baf_gpio_assert(struct s5k5baf *state, int id)
-+{
-+	struct s5k5baf_gpio *gpio = &state->gpios[id];
-+
-+	gpio_set_value(gpio->gpio, gpio->level);
-+}
-+
-+static void s5k5baf_gpio_deassert(struct s5k5baf *state, int id)
-+{
-+	struct s5k5baf_gpio *gpio = &state->gpios[id];
-+
-+	gpio_set_value(gpio->gpio, !gpio->level);
-+}
-+
-+static int s5k5baf_power_on(struct s5k5baf *state)
-+{
-+	int ret;
-+
-+	ret = regulator_bulk_enable(S5K5BAF_NUM_SUPPLIES, state->supplies);
-+	if (ret)
-+		return ret;
-+
-+	s5k5baf_gpio_deassert(state, STBY);
-+	usleep_range(50, 100);
-+	s5k5baf_gpio_deassert(state, RST);
-+	return 0;
-+}
-+
-+static int s5k5baf_power_off(struct s5k5baf *state)
-+{
-+	state->streaming = 0;
-+	state->apply_cfg = 0;
-+	state->apply_crop = 0;
-+	s5k5baf_gpio_assert(state, RST);
-+	s5k5baf_gpio_assert(state, STBY);
-+	return regulator_bulk_disable(S5K5BAF_NUM_SUPPLIES, state->supplies);
-+}
-+
-+static void s5k5baf_hw_init(struct s5k5baf *state)
-+{
-+	s5k5baf_i2c_write(state, AHB_MSB_ADDR_PTR, PAGE_IF_HW);
-+	s5k5baf_i2c_write(state, REG_CLEAR_HOST_INT, 0);
-+	s5k5baf_i2c_write(state, REG_SW_LOAD_COMPLETE, 1);
-+	s5k5baf_i2c_write(state, REG_CMDRD_PAGE, PAGE_IF_SW);
-+	s5k5baf_i2c_write(state, REG_CMDWR_PAGE, PAGE_IF_SW);
-+}
-+
-+/*
-+ * V4L2 subdev core and video operations
-+ */
-+
-+static void s5k5baf_initialize_data(struct s5k5baf *state)
-+{
-+	state->pixfmt = 0;
-+	state->req_fiv = 10000 / 15;
-+	state->fiv = state->req_fiv;
-+}
-+
-+static int s5k5baf_set_power(struct v4l2_subdev *sd, int on)
-+{
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+	int ret = 0;
-+
-+	mutex_lock(&state->lock);
-+
-+	if (!on != state->power)
-+		goto out;
-+
-+	if (on) {
-+		s5k5baf_initialize_data(state);
-+		ret = s5k5baf_power_on(state);
-+		if (ret)
-+			goto out;
-+		s5k5baf_hw_init(state);
-+		s5k5baf_hw_patch(state);
-+		s5k5baf_i2c_write(state, REG_SET_HOST_INT, 1);
-+		s5k5baf_hw_set_clocks(state);
-+		ret = s5k5baf_hw_set_video_bus(state);
-+		if (ret)
-+			goto out;
-+		s5k5baf_hw_set_cis(state);
-+		s5k5baf_hw_set_ccm(state);
-+		ret = s5k5baf_clear_error(state);
-+		if (!ret)
-+			state->power++;
-+	} else {
-+		s5k5baf_power_off(state);
-+		state->power--;
-+	}
-+
-+out:
-+	mutex_unlock(&state->lock);
-+
-+	if (!ret && on)
-+		ret = v4l2_ctrl_handler_setup(&state->ctrls.handler);
-+
-+	return ret;
-+}
-+
-+static void s5k5baf_hw_set_stream(struct s5k5baf *state, int enable)
-+{
-+	s5k5baf_write_seq(state, REG_G_ENABLE_PREV, enable, 1);
-+}
-+
-+static int s5k5baf_s_stream(struct v4l2_subdev *sd, int on)
-+{
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+	int ret;
-+
-+	if (state->streaming == !!on)
-+		return 0;
-+
-+	mutex_lock(&state->lock);
-+
-+	if (on) {
-+		s5k5baf_hw_set_config(state);
-+		ret = s5k5baf_hw_set_crop_rects(state);
-+		if (ret)
-+			goto out;
-+		s5k5baf_hw_set_stream(state, 1);
-+		s5k5baf_i2c_write(state, 0xb0cc, 0x000b);
-+	} else {
-+		s5k5baf_hw_set_stream(state, 0);
-+	}
-+	ret = s5k5baf_clear_error(state);
-+	if (!ret)
-+		state->streaming = !state->streaming;
-+
-+out:
-+	mutex_unlock(&state->lock);
-+
-+	return ret;
-+}
-+
-+static int s5k5baf_g_frame_interval(struct v4l2_subdev *sd,
-+				   struct v4l2_subdev_frame_interval *fi)
-+{
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+
-+	mutex_lock(&state->lock);
-+	fi->interval.numerator = state->fiv;
-+	fi->interval.denominator = 10000;
-+	mutex_unlock(&state->lock);
-+
-+	return 0;
-+}
-+
-+static void s5k5baf_set_frame_interval(struct s5k5baf *state,
-+				       struct v4l2_subdev_frame_interval *fi)
-+{
-+	struct v4l2_fract *i = &fi->interval;
-+
-+	if (fi->interval.denominator == 0)
-+		state->req_fiv = S5K5BAF_MAX_FR_TIME;
-+	else
-+		state->req_fiv = clamp_t(u32,
-+					 i->numerator * 10000 / i->denominator,
-+					 S5K5BAF_MIN_FR_TIME,
-+					 S5K5BAF_MAX_FR_TIME);
-+
-+	state->fiv = state->req_fiv;
-+	if (state->apply_cfg) {
-+		s5k5baf_hw_set_fiv(state, state->req_fiv);
-+		s5k5baf_hw_validate_cfg(state);
-+	}
-+	*i = (struct v4l2_fract){ state->fiv, 10000 };
-+	if (state->fiv == state->req_fiv)
-+		v4l2_info(&state->sd, "frame interval changed to %d00us\n",
-+			  state->fiv);
-+}
-+
-+static int s5k5baf_s_frame_interval(struct v4l2_subdev *sd,
-+				   struct v4l2_subdev_frame_interval *fi)
-+{
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+
-+	mutex_lock(&state->lock);
-+	s5k5baf_set_frame_interval(state, fi);
-+	mutex_unlock(&state->lock);
-+	return 0;
-+}
-+
-+/*
-+ * V4L2 subdev pad level and video operations
-+ */
-+static int s5k5baf_enum_frame_interval(struct v4l2_subdev *sd,
-+			      struct v4l2_subdev_fh *fh,
-+			      struct v4l2_subdev_frame_interval_enum *fie)
-+{
-+	if (fie->index > S5K5BAF_MAX_FR_TIME - S5K5BAF_MIN_FR_TIME ||
-+	    fie->pad != PAD_CIS)
-+		return -EINVAL;
-+
-+	v4l_bound_align_image(&fie->width, S5K5BAF_WIN_WIDTH_MIN,
-+			      S5K5BAF_CIS_WIDTH, 1,
-+			      &fie->height, S5K5BAF_WIN_HEIGHT_MIN,
-+			      S5K5BAF_CIS_HEIGHT, 1, 0);
-+
-+	fie->interval.numerator = S5K5BAF_MIN_FR_TIME + fie->index;
-+	fie->interval.denominator = 10000;
-+
-+	return 0;
-+}
-+
-+static int s5k5baf_enum_mbus_code(struct v4l2_subdev *sd,
-+				 struct v4l2_subdev_fh *fh,
-+				 struct v4l2_subdev_mbus_code_enum *code)
-+{
-+	if (code->pad == PAD_CIS) {
-+		if (code->index > 0)
-+			return -EINVAL;
-+		code->code = V4L2_MBUS_FMT_FIXED;
-+		return 0;
-+	}
-+
-+	if (code->index >= ARRAY_SIZE(s5k5baf_formats))
-+		return -EINVAL;
-+
-+	code->code = s5k5baf_formats[code->index].code;
-+	return 0;
-+}
-+
-+static int s5k5baf_enum_frame_size(struct v4l2_subdev *sd,
-+				  struct v4l2_subdev_fh *fh,
-+				  struct v4l2_subdev_frame_size_enum *fse)
-+{
-+	int i;
-+
-+	if (fse->index > 0)
-+		return -EINVAL;
-+
-+	if (fse->pad == PAD_CIS) {
-+		fse->code = V4L2_MBUS_FMT_FIXED;
-+		fse->min_width = S5K5BAF_CIS_WIDTH;
-+		fse->max_width = S5K5BAF_CIS_WIDTH;
-+		fse->min_height = S5K5BAF_CIS_HEIGHT;
-+		fse->max_height = S5K5BAF_CIS_HEIGHT;
-+		return 0;
-+	}
-+
-+	i = ARRAY_SIZE(s5k5baf_formats);
-+	while (--i)
-+		if (fse->code == s5k5baf_formats[i].code)
-+			break;
-+	fse->code = s5k5baf_formats[i].code;
-+	fse->min_width = S5K5BAF_WIN_WIDTH_MIN;
-+	fse->max_width = S5K5BAF_CIS_WIDTH;
-+	fse->max_height = S5K5BAF_WIN_HEIGHT_MIN;
-+	fse->min_height = S5K5BAF_CIS_HEIGHT;
-+
-+	return 0;
-+}
-+
-+static void s5k5baf_try_cis_format(struct v4l2_mbus_framefmt *mf)
-+{
-+	mf->width = S5K5BAF_CIS_WIDTH;
-+	mf->height = S5K5BAF_CIS_HEIGHT;
-+	mf->code = V4L2_MBUS_FMT_FIXED;
-+	mf->colorspace = V4L2_COLORSPACE_JPEG;
-+	mf->field = V4L2_FIELD_NONE;
-+}
-+
-+static int s5k5baf_try_isp_format(struct v4l2_mbus_framefmt *mf)
-+{
-+	int pixfmt;
-+
-+	v4l_bound_align_image(&mf->width, S5K5BAF_WIN_WIDTH_MIN,
-+			      S5K5BAF_CIS_WIDTH, 1,
-+			      &mf->height, S5K5BAF_WIN_HEIGHT_MIN,
-+			      S5K5BAF_CIS_HEIGHT, 1, 0);
-+
-+	pixfmt = s5k5baf_find_pixfmt(mf);
-+
-+	mf->colorspace = s5k5baf_formats[pixfmt].colorspace;
-+	mf->code = s5k5baf_formats[pixfmt].code;
-+	mf->field = V4L2_FIELD_NONE;
-+
-+	return pixfmt;
-+}
-+
-+static int s5k5baf_get_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
-+			  struct v4l2_subdev_format *fmt)
-+{
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+	const struct s5k5baf_pixfmt *pixfmt;
-+	struct v4l2_mbus_framefmt *mf;
-+
-+	if (fmt->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		mf = v4l2_subdev_get_try_format(fh, fmt->pad);
-+		fmt->format = *mf;
-+		return 0;
-+	}
-+
-+	mf = &fmt->format;
-+	if (fmt->pad == PAD_CIS) {
-+		s5k5baf_try_cis_format(mf);
-+		return 0;
-+	}
-+	mf->field = V4L2_FIELD_NONE;
-+	mutex_lock(&state->lock);
-+	pixfmt = &s5k5baf_formats[state->pixfmt];
-+	mf->width = state->crop_source.width;
-+	mf->height = state->crop_source.height;
-+	mf->code = pixfmt->code;
-+	mf->colorspace = pixfmt->colorspace;
-+	mutex_unlock(&state->lock);
-+
-+	return 0;
-+}
-+
-+static int s5k5baf_set_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
-+			  struct v4l2_subdev_format *fmt)
-+{
-+	struct v4l2_mbus_framefmt *mf = &fmt->format;
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+	const struct s5k5baf_pixfmt *pixfmt;
-+	int ret = 0;
-+
-+	if (fmt->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		*v4l2_subdev_get_try_format(fh, fmt->pad) = *mf;
-+		return 0;
-+	}
-+
-+	if (fmt->pad == PAD_CIS) {
-+		s5k5baf_try_cis_format(mf);
-+		return 0;
-+	}
-+
-+	mutex_lock(&state->lock);
-+
-+	if (state->streaming) {
-+		mutex_unlock(&state->lock);
-+		return -EBUSY;
-+	}
-+
-+	state->pixfmt = s5k5baf_try_isp_format(mf);
-+	pixfmt = &s5k5baf_formats[state->pixfmt];
-+	mf->code = pixfmt->code;
-+	mf->colorspace = pixfmt->colorspace;
-+	mf->width = state->crop_source.width;
-+	mf->height = state->crop_source.height;
-+
-+	mutex_unlock(&state->lock);
-+	return ret;
-+}
-+
-+enum selection_rect { R_CIS, R_CROP_SINK, R_COMPOSE, R_CROP_SOURCE, R_INVALID };
-+
-+static enum selection_rect s5k5baf_get_sel_rect(u32 pad, u32 target)
-+{
-+	switch (target) {
-+	case V4L2_SEL_TGT_CROP_BOUNDS:
-+		return pad ? R_COMPOSE : R_CIS;
-+	case V4L2_SEL_TGT_CROP:
-+		return pad ? R_CROP_SOURCE : R_CROP_SINK;
-+	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
-+		return pad ? R_INVALID : R_CROP_SINK;
-+	case V4L2_SEL_TGT_COMPOSE:
-+		return pad ? R_INVALID : R_COMPOSE;
-+	default:
-+		return R_INVALID;
-+	}
-+}
-+
-+static int s5k5baf_is_bound_target(u32 target)
-+{
-+	return (target == V4L2_SEL_TGT_CROP_BOUNDS ||
-+		target == V4L2_SEL_TGT_COMPOSE_BOUNDS);
-+}
-+
-+static int s5k5baf_get_selection(struct v4l2_subdev *sd,
-+				 struct v4l2_subdev_fh *fh,
-+				 struct v4l2_subdev_selection *sel)
-+{
-+	static enum selection_rect rtype;
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+
-+	rtype = s5k5baf_get_sel_rect(sel->pad, sel->target);
-+
-+	switch (rtype) {
-+	case R_INVALID:
-+		return -EINVAL;
-+	case R_CIS:
-+		sel->r = s5k5baf_cis_rect;
-+		return 0;
-+	default:
-+		break;
-+	}
-+
-+	if (sel->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		if (rtype == R_COMPOSE)
-+			sel->r = *v4l2_subdev_get_try_compose(fh, sel->pad);
-+		else
-+			sel->r = *v4l2_subdev_get_try_crop(fh, sel->pad);
-+		return 0;
-+	}
-+
-+	mutex_lock(&state->lock);
-+	switch (rtype) {
-+	case R_CROP_SINK:
-+		sel->r = state->crop_sink;
-+		break;
-+	case R_COMPOSE:
-+		sel->r = state->compose;
-+		break;
-+	case R_CROP_SOURCE:
-+		sel->r = state->crop_source;
-+		break;
-+	default:
-+		break;
-+	}
-+	if (s5k5baf_is_bound_target(sel->target)) {
-+		sel->r.left = 0;
-+		sel->r.top = 0;
-+	}
-+	mutex_unlock(&state->lock);
-+
-+	return 0;
-+}
-+
-+/* bounds range [start, start+len) to [0, max) and aligns to 2 */
-+static void s5k5baf_bound_range(u32 *start, u32 *len, u32 max)
-+{
-+	if (*len > max)
-+		*len = max;
-+	if (*start + *len > max)
-+		*start = max - *len;
-+	*start &= ~1;
-+	*len &= ~1;
-+	if (*len < S5K5BAF_WIN_WIDTH_MIN)
-+		*len = S5K5BAF_WIN_WIDTH_MIN;
-+}
-+
-+static void s5k5baf_bound_rect(struct v4l2_rect *r, u32 width, u32 height)
-+{
-+	s5k5baf_bound_range(&r->left, &r->width, width);
-+	s5k5baf_bound_range(&r->top, &r->height, height);
-+}
-+
-+static void s5k5baf_set_rect_and_adjust(struct v4l2_rect **rects,
-+					enum selection_rect first,
-+					struct v4l2_rect *v)
-+{
-+	struct v4l2_rect *r, *br;
-+	enum selection_rect i = first;
-+
-+	*rects[first] = *v;
-+	do {
-+		r = rects[i];
-+		br = rects[i - 1];
-+		s5k5baf_bound_rect(r, br->width, br->height);
-+	} while (++i != R_INVALID);
-+	*v = *rects[first];
-+}
-+
-+static bool s5k5baf_cmp_rect(const struct v4l2_rect *r1,
-+			     const struct v4l2_rect *r2)
-+{
-+	return !memcmp(r1, r2, sizeof(*r1));
-+}
-+
-+static int s5k5baf_set_selection(struct v4l2_subdev *sd,
-+				 struct v4l2_subdev_fh *fh,
-+				 struct v4l2_subdev_selection *sel)
-+{
-+	static enum selection_rect rtype;
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+	struct v4l2_rect **rects;
-+	int ret = 0;
-+
-+	rtype = s5k5baf_get_sel_rect(sel->pad, sel->target);
-+	if (rtype == R_INVALID || s5k5baf_is_bound_target(sel->target))
-+		return -EINVAL;
-+
-+	/* allow only scaling on compose */
-+	if (rtype == R_COMPOSE) {
-+		sel->r.left = 0;
-+		sel->r.top = 0;
-+	}
-+
-+	if (sel->which == V4L2_SUBDEV_FORMAT_TRY) {
-+		rects = (struct v4l2_rect * []) {
-+				&s5k5baf_cis_rect,
-+				v4l2_subdev_get_try_crop(fh, PAD_CIS),
-+				v4l2_subdev_get_try_compose(fh, PAD_CIS),
-+				v4l2_subdev_get_try_crop(fh, PAD_OUT)
-+			};
-+		s5k5baf_set_rect_and_adjust(rects, rtype, &sel->r);
-+		return 0;
-+	}
-+
-+	rects = (struct v4l2_rect * []) {
-+			&s5k5baf_cis_rect,
-+			&state->crop_sink,
-+			&state->compose,
-+			&state->crop_source
-+		};
-+	mutex_lock(&state->lock);
-+	if (state->streaming) {
-+		/* adjust sel->r to avoid output resolution change */
-+		if (rtype < R_CROP_SOURCE) {
-+			if (sel->r.width < state->crop_source.width)
-+				sel->r.width = state->crop_source.width;
-+			if (sel->r.height < state->crop_source.height)
-+				sel->r.height = state->crop_source.height;
-+		} else {
-+			sel->r.width = state->crop_source.width;
-+			sel->r.height = state->crop_source.height;
++		info.addr = be32_to_cpup(addr);
++		if (info.addr > (1 << 10) - 1) {
++			dev_err(&adap->dev, "of_i2c: invalid addr=%x on %s\n",
++				info.addr, node->full_name);
++			continue;
++		}
++
++		info.irq = irq_of_parse_and_map(node, 0);
++		info.of_node = of_node_get(node);
++		info.archdata = &dev_ad;
++
++		if (of_get_property(node, "wakeup-source", NULL))
++			info.flags |= I2C_CLIENT_WAKE;
++
++		request_module("%s%s", I2C_MODULE_PREFIX, info.type);
++
++		result = i2c_new_device(adap, &info);
++		if (result == NULL) {
++			dev_err(&adap->dev, "of_i2c: Failure registering %s\n",
++				node->full_name);
++			of_node_put(node);
++			irq_dispose_mapping(info.irq);
++			continue;
 +		}
 +	}
-+	s5k5baf_set_rect_and_adjust(rects, rtype, &sel->r);
-+	if (!s5k5baf_cmp_rect(&state->crop_sink, &s5k5baf_cis_rect) ||
-+	    !s5k5baf_cmp_rect(&state->compose, &s5k5baf_cis_rect))
-+		state->apply_crop = 1;
-+	if (state->streaming)
-+		ret = s5k5baf_hw_set_crop_rects(state);
-+	mutex_unlock(&state->lock);
-+
-+	return ret;
 +}
 +
-+static const struct v4l2_subdev_pad_ops s5k5baf_cis_pad_ops = {
-+	.enum_mbus_code		= s5k5baf_enum_mbus_code,
-+	.enum_frame_size	= s5k5baf_enum_frame_size,
-+	.get_fmt		= s5k5baf_get_fmt,
-+	.set_fmt		= s5k5baf_set_fmt,
-+};
-+
-+static const struct v4l2_subdev_pad_ops s5k5baf_pad_ops = {
-+	.enum_mbus_code		= s5k5baf_enum_mbus_code,
-+	.enum_frame_size	= s5k5baf_enum_frame_size,
-+	.enum_frame_interval	= s5k5baf_enum_frame_interval,
-+	.get_fmt		= s5k5baf_get_fmt,
-+	.set_fmt		= s5k5baf_set_fmt,
-+	.get_selection		= s5k5baf_get_selection,
-+	.set_selection		= s5k5baf_set_selection,
-+};
-+
-+static const struct v4l2_subdev_video_ops s5k5baf_video_ops = {
-+	.g_frame_interval	= s5k5baf_g_frame_interval,
-+	.s_frame_interval	= s5k5baf_s_frame_interval,
-+	.s_stream		= s5k5baf_s_stream,
-+};
-+
-+/*
-+ * V4L2 subdev controls
-+ */
-+
-+static int s5k5baf_s_ctrl(struct v4l2_ctrl *ctrl)
++static int of_dev_node_match(struct device *dev, void *data)
 +{
-+	struct v4l2_subdev *sd = ctrl_to_sd(ctrl);
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+	int ret;
-+
-+	v4l2_dbg(1, debug, sd, "ctrl: %s, value: %d\n", ctrl->name, ctrl->val);
-+
-+	mutex_lock(&state->lock);
-+
-+	if (state->power == 0)
-+		goto unlock;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_AUTO_WHITE_BALANCE:
-+		s5k5baf_hw_set_awb(state, ctrl->val);
-+		break;
-+
-+	case V4L2_CID_BRIGHTNESS:
-+		s5k5baf_write(state, REG_USER_BRIGHTNESS, ctrl->val);
-+		break;
-+
-+	case V4L2_CID_COLORFX:
-+		s5k5baf_hw_set_colorfx(state, ctrl->val);
-+		break;
-+
-+	case V4L2_CID_CONTRAST:
-+		s5k5baf_write(state, REG_USER_CONTRAST, ctrl->val);
-+		break;
-+
-+	case V4L2_CID_EXPOSURE_AUTO:
-+		s5k5baf_hw_set_auto_exposure(state, ctrl->val);
-+		break;
-+
-+	case V4L2_CID_HFLIP:
-+		s5k5baf_hw_set_mirror(state);
-+		break;
-+
-+	case V4L2_CID_POWER_LINE_FREQUENCY:
-+		s5k5baf_hw_set_anti_flicker(state, ctrl->val);
-+		break;
-+
-+	case V4L2_CID_SATURATION:
-+		s5k5baf_write(state, REG_USER_SATURATION, ctrl->val);
-+		break;
-+
-+	case V4L2_CID_SHARPNESS:
-+		s5k5baf_write(state, REG_USER_SHARPBLUR, ctrl->val);
-+		break;
-+
-+	case V4L2_CID_WHITE_BALANCE_TEMPERATURE:
-+		s5k5baf_write(state, REG_P_COLORTEMP(0), ctrl->val);
-+		if (state->apply_cfg)
-+			s5k5baf_hw_sync_cfg(state);
-+		break;
-+
-+	case V4L2_CID_TEST_PATTERN:
-+		s5k5baf_hw_set_test_pattern(state, ctrl->val);
-+		break;
-+	}
-+unlock:
-+	ret = s5k5baf_clear_error(state);
-+	mutex_unlock(&state->lock);
-+	return ret;
++	return dev->of_node == data;
 +}
 +
-+static const struct v4l2_ctrl_ops s5k5baf_ctrl_ops = {
-+	.s_ctrl	= s5k5baf_s_ctrl,
-+};
-+
-+static const char * const s5k5baf_test_pattern_menu[] = {
-+	"Disabled",
-+	"Blank",
-+	"Bars",
-+	"Gradients",
-+	"Textile",
-+	"Textile2",
-+	"Squares"
-+};
-+
-+static int s5k5baf_initialize_ctrls(struct s5k5baf *state)
++/* must call put_device() when done with returned i2c_client device */
++struct i2c_client *of_find_i2c_device_by_node(struct device_node *node)
 +{
-+	const struct v4l2_ctrl_ops *ops = &s5k5baf_ctrl_ops;
-+	struct s5k5baf_ctrls *ctrls = &state->ctrls;
-+	struct v4l2_ctrl_handler *hdl = &ctrls->handler;
-+	int ret;
++	struct device *dev;
 +
-+	ret = v4l2_ctrl_handler_init(hdl, 16);
-+	if (ret) {
-+		v4l2_err(&state->sd, "cannot init ctrl handler (%d)\n", ret);
-+		return ret;
-+	}
++	dev = bus_find_device(&i2c_bus_type, NULL, node,
++					 of_dev_node_match);
++	if (!dev)
++		return NULL;
 +
-+	/* Auto white balance cluster */
-+	ctrls->awb = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_AUTO_WHITE_BALANCE,
-+				       0, 1, 1, 1);
-+	ctrls->gain_red = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_RED_BALANCE,
-+					    0, 255, 1, S5K5BAF_GAIN_RED_DEF);
-+	ctrls->gain_blue = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_BLUE_BALANCE,
-+					     0, 255, 1, S5K5BAF_GAIN_BLUE_DEF);
-+	v4l2_ctrl_auto_cluster(3, &ctrls->awb, 0, false);
-+
-+	ctrls->hflip = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_HFLIP, 0, 1, 1, 0);
-+	ctrls->vflip = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_VFLIP, 0, 1, 1, 0);
-+	v4l2_ctrl_cluster(2, &ctrls->hflip);
-+
-+	ctrls->auto_exp = v4l2_ctrl_new_std_menu(hdl, ops,
-+				V4L2_CID_EXPOSURE_AUTO,
-+				V4L2_EXPOSURE_MANUAL, 0, V4L2_EXPOSURE_AUTO);
-+	/* Exposure time: x 1 us */
-+	ctrls->exposure = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_EXPOSURE,
-+					    0, 6000000U, 1, 100000U);
-+	/* Total gain: 256 <=> 1x */
-+	ctrls->gain = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_GAIN,
-+					0, 256, 1, 256);
-+	v4l2_ctrl_auto_cluster(3, &ctrls->auto_exp, 0, false);
-+
-+	v4l2_ctrl_new_std_menu(hdl, ops, V4L2_CID_POWER_LINE_FREQUENCY,
-+			       V4L2_CID_POWER_LINE_FREQUENCY_AUTO, 0,
-+			       V4L2_CID_POWER_LINE_FREQUENCY_AUTO);
-+
-+	v4l2_ctrl_new_std_menu(hdl, ops, V4L2_CID_COLORFX,
-+			       V4L2_COLORFX_SKY_BLUE, ~0x6f, V4L2_COLORFX_NONE);
-+
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_WHITE_BALANCE_TEMPERATURE,
-+			  0, 256, 1, 0);
-+
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_SATURATION, -127, 127, 1, 0);
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_BRIGHTNESS, -127, 127, 1, 0);
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_CONTRAST, -127, 127, 1, 0);
-+	v4l2_ctrl_new_std(hdl, ops, V4L2_CID_SHARPNESS, -127, 127, 1, 0);
-+
-+	v4l2_ctrl_new_std_menu_items(hdl, ops, V4L2_CID_TEST_PATTERN,
-+				     ARRAY_SIZE(s5k5baf_test_pattern_menu) - 1,
-+				     0, 0, s5k5baf_test_pattern_menu);
-+
-+	if (hdl->error) {
-+		v4l2_err(&state->sd, "error creating controls (%d)\n",
-+			 hdl->error);
-+		ret = hdl->error;
-+		v4l2_ctrl_handler_free(hdl);
-+		return ret;
-+	}
-+
-+	state->sd.ctrl_handler = hdl;
-+	return 0;
++	return i2c_verify_client(dev);
 +}
++EXPORT_SYMBOL(of_find_i2c_adapter_by_node);
 +
-+/*
-+ * V4L2 subdev internal operations
-+ */
-+static int s5k5baf_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
++/* must call put_device() when done with returned i2c_adapter device */
++struct i2c_adapter *of_find_i2c_adapter_by_node(struct device_node *node)
 +{
-+	struct v4l2_mbus_framefmt *mf;
++	struct device *dev;
 +
-+	mf = v4l2_subdev_get_try_format(fh, PAD_CIS);
-+	s5k5baf_try_cis_format(mf);
++	dev = bus_find_device(&i2c_bus_type, NULL, node,
++					 of_dev_node_match);
++	if (!dev)
++		return NULL;
 +
-+	if (s5k5baf_is_cis_subdev(sd))
-+		return 0;
-+
-+	mf = v4l2_subdev_get_try_format(fh, PAD_OUT);
-+	mf->colorspace = s5k5baf_formats[0].colorspace;
-+	mf->code = s5k5baf_formats[0].code;
-+	mf->width = s5k5baf_cis_rect.width;
-+	mf->height = s5k5baf_cis_rect.height;
-+	mf->field = V4L2_FIELD_NONE;
-+
-+	*v4l2_subdev_get_try_crop(fh, PAD_CIS) = s5k5baf_cis_rect;
-+	*v4l2_subdev_get_try_compose(fh, PAD_CIS) = s5k5baf_cis_rect;
-+	*v4l2_subdev_get_try_crop(fh, PAD_OUT) = s5k5baf_cis_rect;
-+
-+	return 0;
++	return i2c_verify_adapter(dev);
 +}
++EXPORT_SYMBOL(of_find_i2c_device_by_node);
++#endif /* CONFIG_OF */
 +
-+static int s5k5baf_check_fw_revision(struct s5k5baf *state)
+ static int i2c_do_add_adapter(struct i2c_driver *driver,
+ 			      struct i2c_adapter *adap)
+ {
+@@ -1058,6 +1160,8 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
+ 
+ exit_recovery:
+ 	/* create pre-declared device nodes */
++	of_i2c_register_devices(adap);
++
+ 	if (adap->nr < __i2c_first_dynamic_bus_num)
+ 		i2c_scan_static_board_info(adap);
+ 
+@@ -1282,7 +1386,6 @@ void i2c_del_adapter(struct i2c_adapter *adap)
+ }
+ EXPORT_SYMBOL(i2c_del_adapter);
+ 
+-
+ /* ------------------------------------------------------------------------- */
+ 
+ int i2c_for_each_dev(void *data, int (*fn)(struct device *, void *))
+diff --git a/drivers/i2c/i2c-mux.c b/drivers/i2c/i2c-mux.c
+index 7409ebb..797e311 100644
+--- a/drivers/i2c/i2c-mux.c
++++ b/drivers/i2c/i2c-mux.c
+@@ -25,7 +25,6 @@
+ #include <linux/i2c.h>
+ #include <linux/i2c-mux.h>
+ #include <linux/of.h>
+-#include <linux/of_i2c.h>
+ 
+ /* multiplexer per channel data */
+ struct i2c_mux_priv {
+@@ -185,8 +184,6 @@ struct i2c_adapter *i2c_add_mux_adapter(struct i2c_adapter *parent,
+ 	dev_info(&parent->dev, "Added multiplexed i2c bus %d\n",
+ 		 i2c_adapter_id(&priv->adap));
+ 
+-	of_i2c_register_devices(&priv->adap);
+-
+ 	return &priv->adap;
+ }
+ EXPORT_SYMBOL_GPL(i2c_add_mux_adapter);
+diff --git a/drivers/i2c/muxes/i2c-arb-gpio-challenge.c b/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
+index 210b6f7..b901638 100644
+--- a/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
++++ b/drivers/i2c/muxes/i2c-arb-gpio-challenge.c
+@@ -21,7 +21,6 @@
+ #include <linux/i2c-mux.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+-#include <linux/of_i2c.h>
+ #include <linux/of_gpio.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+diff --git a/drivers/i2c/muxes/i2c-mux-gpio.c b/drivers/i2c/muxes/i2c-mux-gpio.c
+index 5a0ce00..128a981 100644
+--- a/drivers/i2c/muxes/i2c-mux-gpio.c
++++ b/drivers/i2c/muxes/i2c-mux-gpio.c
+@@ -16,7 +16,6 @@
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ #include <linux/gpio.h>
+-#include <linux/of_i2c.h>
+ #include <linux/of_gpio.h>
+ 
+ struct gpiomux {
+diff --git a/drivers/i2c/muxes/i2c-mux-pinctrl.c b/drivers/i2c/muxes/i2c-mux-pinctrl.c
+index a43c0ce..859a6d2 100644
+--- a/drivers/i2c/muxes/i2c-mux-pinctrl.c
++++ b/drivers/i2c/muxes/i2c-mux-pinctrl.c
+@@ -20,7 +20,6 @@
+ #include <linux/i2c-mux.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+-#include <linux/of_i2c.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/i2c-mux-pinctrl.h>
+ #include <linux/platform_device.h>
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-i2c.c b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
+index 617a798..c283186 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-i2c.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-i2c.c
+@@ -12,7 +12,6 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/module.h>
+-#include <linux/of_i2c.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/slab.h>
+@@ -67,8 +66,6 @@ static int fimc_is_i2c_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_enable(&i2c_adap->dev);
+ 
+-	of_i2c_register_devices(i2c_adap);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+index 80e5c13..78cc760 100644
+--- a/drivers/of/Kconfig
++++ b/drivers/of/Kconfig
+@@ -48,12 +48,6 @@ config OF_IRQ
+ 	def_bool y
+ 	depends on !SPARC
+ 
+-config OF_I2C
+-	def_tristate I2C
+-	depends on I2C
+-	help
+-	  OpenFirmware I2C accessors
+-
+ config OF_NET
+ 	depends on NETDEVICES
+ 	def_bool y
+diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+index 1f9c0c4..efd0510 100644
+--- a/drivers/of/Makefile
++++ b/drivers/of/Makefile
+@@ -3,7 +3,6 @@ obj-$(CONFIG_OF_FLATTREE) += fdt.o
+ obj-$(CONFIG_OF_PROMTREE) += pdt.o
+ obj-$(CONFIG_OF_ADDRESS)  += address.o
+ obj-$(CONFIG_OF_IRQ)    += irq.o
+-obj-$(CONFIG_OF_I2C)	+= of_i2c.o
+ obj-$(CONFIG_OF_NET)	+= of_net.o
+ obj-$(CONFIG_OF_SELFTEST) += selftest.o
+ obj-$(CONFIG_OF_MDIO)	+= of_mdio.o
+diff --git a/drivers/of/of_i2c.c b/drivers/of/of_i2c.c
+deleted file mode 100644
+index b667264..0000000
+--- a/drivers/of/of_i2c.c
++++ /dev/null
+@@ -1,114 +0,0 @@
+-/*
+- * OF helpers for the I2C API
+- *
+- * Copyright (c) 2008 Jochen Friedrich <jochen-NIgtFMG+Po8@public.gmane.org>
+- *
+- * Based on a previous patch from Jon Smirl <jonsmirl-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#include <linux/i2c.h>
+-#include <linux/irq.h>
+-#include <linux/of.h>
+-#include <linux/of_i2c.h>
+-#include <linux/of_irq.h>
+-#include <linux/module.h>
+-
+-void of_i2c_register_devices(struct i2c_adapter *adap)
+-{
+-	void *result;
+-	struct device_node *node;
+-
+-	/* Only register child devices if the adapter has a node pointer set */
+-	if (!adap->dev.of_node)
+-		return;
+-
+-	dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
+-
+-	for_each_available_child_of_node(adap->dev.of_node, node) {
+-		struct i2c_board_info info = {};
+-		struct dev_archdata dev_ad = {};
+-		const __be32 *addr;
+-		int len;
+-
+-		dev_dbg(&adap->dev, "of_i2c: register %s\n", node->full_name);
+-
+-		if (of_modalias_node(node, info.type, sizeof(info.type)) < 0) {
+-			dev_err(&adap->dev, "of_i2c: modalias failure on %s\n",
+-				node->full_name);
+-			continue;
+-		}
+-
+-		addr = of_get_property(node, "reg", &len);
+-		if (!addr || (len < sizeof(int))) {
+-			dev_err(&adap->dev, "of_i2c: invalid reg on %s\n",
+-				node->full_name);
+-			continue;
+-		}
+-
+-		info.addr = be32_to_cpup(addr);
+-		if (info.addr > (1 << 10) - 1) {
+-			dev_err(&adap->dev, "of_i2c: invalid addr=%x on %s\n",
+-				info.addr, node->full_name);
+-			continue;
+-		}
+-
+-		info.irq = irq_of_parse_and_map(node, 0);
+-		info.of_node = of_node_get(node);
+-		info.archdata = &dev_ad;
+-
+-		if (of_get_property(node, "wakeup-source", NULL))
+-			info.flags |= I2C_CLIENT_WAKE;
+-
+-		request_module("%s%s", I2C_MODULE_PREFIX, info.type);
+-
+-		result = i2c_new_device(adap, &info);
+-		if (result == NULL) {
+-			dev_err(&adap->dev, "of_i2c: Failure registering %s\n",
+-			        node->full_name);
+-			of_node_put(node);
+-			irq_dispose_mapping(info.irq);
+-			continue;
+-		}
+-	}
+-}
+-EXPORT_SYMBOL(of_i2c_register_devices);
+-
+-static int of_dev_node_match(struct device *dev, void *data)
+-{
+-        return dev->of_node == data;
+-}
+-
+-/* must call put_device() when done with returned i2c_client device */
+-struct i2c_client *of_find_i2c_device_by_node(struct device_node *node)
+-{
+-	struct device *dev;
+-
+-	dev = bus_find_device(&i2c_bus_type, NULL, node,
+-					 of_dev_node_match);
+-	if (!dev)
+-		return NULL;
+-
+-	return i2c_verify_client(dev);
+-}
+-EXPORT_SYMBOL(of_find_i2c_device_by_node);
+-
+-/* must call put_device() when done with returned i2c_adapter device */
+-struct i2c_adapter *of_find_i2c_adapter_by_node(struct device_node *node)
+-{
+-	struct device *dev;
+-
+-	dev = bus_find_device(&i2c_bus_type, NULL, node,
+-					 of_dev_node_match);
+-	if (!dev)
+-		return NULL;
+-
+-	return i2c_verify_adapter(dev);
+-}
+-EXPORT_SYMBOL(of_find_i2c_adapter_by_node);
+-
+-MODULE_LICENSE("GPL");
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index e988fa9..2189189 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -542,6 +542,26 @@ static inline int i2c_adapter_id(struct i2c_adapter *adap)
+ 
+ #endif /* I2C */
+ 
++#if IS_ENABLED(CONFIG_OF)
++/* must call put_device() when done with returned i2c_client device */
++extern struct i2c_client *of_find_i2c_device_by_node(struct device_node *node);
++
++/* must call put_device() when done with returned i2c_adapter device */
++extern struct i2c_adapter *of_find_i2c_adapter_by_node(struct device_node *node);
++
++#else
++
++static inline struct i2c_client *of_find_i2c_device_by_node(struct device_node *node)
 +{
-+	u16 api_ver = 0, fw_rev = 0, s_id = 0;
-+	int ret;
-+
-+	api_ver = s5k5baf_read(state, REG_FW_APIVER);
-+	fw_rev = s5k5baf_read(state, REG_FW_REVISION) & 0xff;
-+	s_id = s5k5baf_read(state, REG_FW_SENSOR_ID);
-+	ret = s5k5baf_clear_error(state);
-+	if (ret)
-+		return ret;
-+
-+	v4l2_info(&state->sd, "FW API=%#x, revision=%#x sensor_id=%#x\n",
-+		  api_ver, fw_rev, s_id);
-+
-+	if (api_ver == S5K5BAF_FW_APIVER)
-+		return 0;
-+
-+	v4l2_err(&state->sd, "FW API version not supported\n");
-+	return -ENODEV;
++	return NULL;
 +}
 +
-+static int s5k5baf_registered(struct v4l2_subdev *sd)
++static inline struct i2c_adapter *of_find_i2c_adapter_by_node(struct device_node *node)
 +{
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+	int ret;
-+
-+	mutex_lock(&state->lock);
-+
-+	ret = s5k5baf_power_on(state);
-+	if (!ret) {
-+		s5k5baf_hw_init(state);
-+		ret = s5k5baf_check_fw_revision(state);
-+		s5k5baf_power_off(state);
-+	}
-+
-+	mutex_unlock(&state->lock);
-+
-+	if (ret)
-+		return ret;
-+
-+	ret = v4l2_device_register_subdev(sd->v4l2_dev, &state->cis_sd);
-+	if (ret)
-+		v4l2_err(sd, "failed to register subdev %s\n",
-+			 state->cis_sd.name);
-+	else
-+		ret = media_entity_create_link(&state->cis_sd.entity, PAD_CIS,
-+					       &state->sd.entity, PAD_CIS,
-+					       MEDIA_LNK_FL_IMMUTABLE |
-+					       MEDIA_LNK_FL_ENABLED);
-+
-+	return ret;
++	return NULL;
 +}
++#endif /* CONFIG_OF */
 +
-+static void s5k5baf_unregistered(struct v4l2_subdev *sd)
-+{
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+	v4l2_device_unregister_subdev(&state->cis_sd);
-+}
-+
-+static const struct v4l2_subdev_ops s5k5baf_cis_subdev_ops = {
-+	.pad	= &s5k5baf_cis_pad_ops,
-+};
-+
-+static const struct v4l2_subdev_internal_ops s5k5baf_cis_subdev_internal_ops = {
-+	.open = s5k5baf_open,
-+};
-+
-+static const struct v4l2_subdev_internal_ops s5k5baf_subdev_internal_ops = {
-+	.registered = s5k5baf_registered,
-+	.unregistered = s5k5baf_unregistered,
-+	.open = s5k5baf_open,
-+};
-+
-+static const struct v4l2_subdev_core_ops s5k5baf_core_ops = {
-+	.s_power = s5k5baf_set_power,
-+	.log_status = v4l2_ctrl_subdev_log_status,
-+};
-+
-+static const struct v4l2_subdev_ops s5k5baf_subdev_ops = {
-+	.core = &s5k5baf_core_ops,
-+	.pad = &s5k5baf_pad_ops,
-+	.video = &s5k5baf_video_ops,
-+};
-+
-+static int s5k5baf_configure_gpios(struct s5k5baf *state)
-+{
-+	static const char const *name[] = { "S5K5BAF_STBY", "S5K5BAF_RST" };
-+	struct i2c_client *c = v4l2_get_subdevdata(&state->sd);
-+	struct s5k5baf_gpio *g = state->gpios;
-+	int ret, i;
-+
-+	for (i = 0; i < GPIO_NUM; ++i) {
-+		int flags = GPIOF_DIR_OUT;
-+		if (g[i].level)
-+			flags |= GPIOF_INIT_HIGH;
-+		ret = devm_gpio_request_one(&c->dev, g[i].gpio, flags, name[i]);
-+		if (ret) {
-+			v4l2_err(c, "failed to request gpio %s\n", name[i]);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int s5k5baf_parse_gpio(struct s5k5baf_gpio *gpio,
-+			      struct device_node *node, int idx)
-+{
-+	enum of_gpio_flags of_flags;
-+	int ret;
-+
-+	ret = of_get_gpio_flags(node, idx, &of_flags);
-+	if (ret < 0)
-+		return ret;
-+
-+	gpio->gpio = ret;
-+	gpio->level = !(of_flags & OF_GPIO_ACTIVE_LOW);
-+	return 0;
-+}
-+
-+static int s5k5baf_parse_device_node(struct s5k5baf *state, struct device *dev)
-+{
-+	struct device_node *node = dev->of_node;
-+	struct device_node *node_ep;
-+	struct v4l2_of_endpoint ep;
-+	int ret;
-+
-+	if (!node) {
-+		dev_err(dev, "no device-tree node provided\n");
-+		return -EINVAL;
-+	}
-+
-+	of_property_read_u32(node, "clock-frequency", &state->mclk_frequency);
-+	ret = s5k5baf_parse_gpio(&state->gpios[STBY], node, STBY);
-+	if (ret) {
-+		dev_err(dev, "no standby gpio pin provided\n");
-+		return -EINVAL;
-+	}
-+	ret = s5k5baf_parse_gpio(&state->gpios[RST], node, RST);
-+	if (ret) {
-+		dev_err(dev, "no reset gpio pin provided\n");
-+		return -EINVAL;
-+	}
-+
-+	node_ep = v4l2_of_get_next_endpoint(node, NULL);
-+	if (!node_ep) {
-+		dev_err(dev, "no endpoint defined at node %s\n",
-+			node->full_name);
-+		return -EINVAL;
-+	}
-+
-+	v4l2_of_parse_endpoint(node_ep, &ep);
-+	of_node_put(node_ep);
-+	state->bus_type = ep.bus_type;
-+	if (state->bus_type == V4L2_MBUS_CSI2)
-+		state->nlanes = ep.bus.mipi_csi2.num_data_lanes;
-+	return 0;
-+}
-+
-+static int s5k5baf_configure_subdevs(struct s5k5baf *state,
-+				     struct i2c_client *c)
-+{
-+	struct v4l2_subdev *sd;
-+	int ret;
-+
-+	sd = &state->cis_sd;
-+	v4l2_subdev_init(sd, &s5k5baf_cis_subdev_ops);
-+	sd->owner = THIS_MODULE;
-+	v4l2_set_subdevdata(sd, state);
-+	snprintf(sd->name, sizeof(sd->name), "S5K5BAF-CIS %d-%04x",
-+		 i2c_adapter_id(c->adapter), c->addr);
-+
-+	sd->internal_ops = &s5k5baf_cis_subdev_internal_ops;
-+	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-+
-+	state->cis_pad.flags = MEDIA_PAD_FL_SOURCE;
-+	sd->entity.type = MEDIA_ENT_T_V4L2_SUBDEV_SENSOR;
-+	ret = media_entity_init(&sd->entity, CIS_PAD_NUM, &state->cis_pad, 0);
-+	if (ret)
-+		goto err;
-+
-+	sd = &state->sd;
-+	v4l2_i2c_subdev_init(sd, c, &s5k5baf_subdev_ops);
-+	snprintf(sd->name, sizeof(sd->name), "S5K5BAF-ISP %d-%04x",
-+		 i2c_adapter_id(c->adapter), c->addr);
-+
-+	sd->internal_ops = &s5k5baf_subdev_internal_ops;
-+	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-+
-+	state->pads[PAD_CIS].flags = MEDIA_PAD_FL_SINK;
-+	state->pads[PAD_OUT].flags = MEDIA_PAD_FL_SOURCE;
-+	sd->entity.type = MEDIA_ENT_T_V4L2_SUBDEV;
-+	ret = media_entity_init(&sd->entity, ISP_PAD_NUM, state->pads, 0);
-+
-+	if (!ret)
-+		return 0;
-+
-+	media_entity_cleanup(&state->cis_sd.entity);
-+err:
-+	dev_err(&c->dev, "cannot init media entity %s\n", sd->name);
-+	return ret;
-+}
-+
-+static int s5k5baf_configure_regulators(struct s5k5baf *state)
-+{
-+	struct i2c_client *c = v4l2_get_subdevdata(&state->sd);
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < S5K5BAF_NUM_SUPPLIES; i++)
-+		state->supplies[i].supply = s5k5baf_supply_names[i];
-+
-+	ret = devm_regulator_bulk_get(&c->dev, S5K5BAF_NUM_SUPPLIES,
-+				      state->supplies);
-+	if (ret)
-+		v4l2_err(c, "failed to get regulators\n");
-+	return ret;
-+}
-+
-+static int s5k5baf_probe(struct i2c_client *c,
-+			const struct i2c_device_id *id)
-+{
-+	struct s5k5baf *state;
-+	int ret;
-+
-+	state = devm_kzalloc(&c->dev, sizeof(*state), GFP_KERNEL);
-+	if (!state)
-+		return -ENOMEM;
-+
-+	mutex_init(&state->lock);
-+	state->crop_sink = s5k5baf_cis_rect;
-+	state->compose = s5k5baf_cis_rect;
-+	state->crop_source = s5k5baf_cis_rect;
-+
-+	ret = s5k5baf_parse_device_node(state, &c->dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = s5k5baf_configure_subdevs(state, c);
-+	if (ret)
-+		return ret;
-+
-+	ret = s5k5baf_configure_gpios(state);
-+	if (ret)
-+		goto err;
-+
-+	ret = s5k5baf_configure_regulators(state);
-+	if (ret)
-+		goto err;
-+
-+	ret = s5k5baf_initialize_ctrls(state);
-+	if (ret)
-+		goto err;
-+
-+	return 0;
-+err:
-+	media_entity_cleanup(&state->sd.entity);
-+	media_entity_cleanup(&state->cis_sd.entity);
-+	return ret;
-+}
-+
-+static int s5k5baf_remove(struct i2c_client *c)
-+{
-+	struct v4l2_subdev *sd = i2c_get_clientdata(c);
-+	struct s5k5baf *state = to_s5k5baf(sd);
-+
-+	v4l2_device_unregister_subdev(sd);
-+	v4l2_ctrl_handler_free(sd->ctrl_handler);
-+	media_entity_cleanup(&sd->entity);
-+
-+	sd = &state->cis_sd;
-+	v4l2_device_unregister_subdev(sd);
-+	media_entity_cleanup(&sd->entity);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id s5k5baf_id[] = {
-+	{ S5K5BAF_DRIVER_NAME, 0 },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(i2c, s5k5baf_id);
-+
-+static const struct of_device_id s5k5baf_of_match[] = {
-+	{ .compatible = "samsung,s5k5baf" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, s5k5baf_of_match);
-+
-+static struct i2c_driver s5k5baf_i2c_driver = {
-+	.driver = {
-+		.of_match_table = s5k5baf_of_match,
-+		.name = S5K5BAF_DRIVER_NAME
-+	},
-+	.probe		= s5k5baf_probe,
-+	.remove		= s5k5baf_remove,
-+	.id_table	= s5k5baf_id,
-+};
-+
-+module_i2c_driver(s5k5baf_i2c_driver);
-+
-+MODULE_DESCRIPTION("Samsung S5K5BAF(X) UXGA camera driver");
-+MODULE_AUTHOR("Andrzej Hajda <a.hajda@samsung.com>");
-+MODULE_LICENSE("GPL v2");
+ #if IS_ENABLED(CONFIG_ACPI_I2C)
+ extern void acpi_i2c_register_devices(struct i2c_adapter *adap);
+ #else
+diff --git a/include/linux/of_i2c.h b/include/linux/of_i2c.h
+deleted file mode 100644
+index cfb545c..0000000
+--- a/include/linux/of_i2c.h
++++ /dev/null
+@@ -1,46 +0,0 @@
+-/*
+- * Generic I2C API implementation for PowerPC.
+- *
+- * Copyright (c) 2008 Jochen Friedrich <jochen-NIgtFMG+Po8@public.gmane.org>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- */
+-
+-#ifndef __LINUX_OF_I2C_H
+-#define __LINUX_OF_I2C_H
+-
+-#if defined(CONFIG_OF_I2C) || defined(CONFIG_OF_I2C_MODULE)
+-#include <linux/i2c.h>
+-
+-extern void of_i2c_register_devices(struct i2c_adapter *adap);
+-
+-/* must call put_device() when done with returned i2c_client device */
+-extern struct i2c_client *of_find_i2c_device_by_node(struct device_node *node);
+-
+-/* must call put_device() when done with returned i2c_adapter device */
+-extern struct i2c_adapter *of_find_i2c_adapter_by_node(
+-						struct device_node *node);
+-
+-#else
+-static inline void of_i2c_register_devices(struct i2c_adapter *adap)
+-{
+-	return;
+-}
+-
+-static inline struct i2c_client *of_find_i2c_device_by_node(struct device_node *node)
+-{
+-	return NULL;
+-}
+-
+-/* must call put_device() when done with returned i2c_adapter device */
+-static inline struct i2c_adapter *of_find_i2c_adapter_by_node(
+-						struct device_node *node)
+-{
+-	return NULL;
+-}
+-#endif /* CONFIG_OF_I2C */
+-
+-#endif /* __LINUX_OF_I2C_H */
 -- 
-1.8.1.2
+1.7.10.4
