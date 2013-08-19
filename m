@@ -1,69 +1,114 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v2 5/5] [media] exynos-mscl: Add Makefile for M-Scaler driver
-Date: Mon, 19 Aug 2013 16:28:52 +0530
-Message-ID: <1376909932-23644-6-git-send-email-shaik.ameer@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: RE: [PATCH v2 0/5] Exynos5 M-Scaler Driver
+Date: Mon, 19 Aug 2013 21:26:53 +0900
+Message-ID: <032601ce9cd7$63666640$2a3332c0$%dae@samsung.com>
 References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:45481 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751087Ab3HSKzf (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:37356 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751328Ab3HSM06 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Aug 2013 06:55:35 -0400
-In-Reply-To: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
+	Mon, 19 Aug 2013 08:26:58 -0400
+In-reply-to: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, posciak@google.com, arun.kk@samsung.com, shaik.ameer@samsung.com
+To: 'Shaik Ameer Basha' <shaik.ameer@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com
+Cc: s.nawrocki@samsung.com, posciak@google.com, arun.kk@samsung.com
 
-This patch adds the Makefile for the M-Scaler (M2M scaler).
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
----
- drivers/media/platform/Kconfig              |    8 ++++++++
- drivers/media/platform/Makefile             |    1 +
- drivers/media/platform/exynos-mscl/Makefile |    3 +++
- 3 files changed, 12 insertions(+)
- create mode 100644 drivers/media/platform/exynos-mscl/Makefile
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index 08de865..bff437a 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -201,6 +201,14 @@ config VIDEO_SAMSUNG_EXYNOS_GSC
- 	help
- 	  This is a v4l2 driver for Samsung EXYNOS5 SoC G-Scaler.
- 
-+config VIDEO_SAMSUNG_EXYNOS_MSCL
-+	tristate "Samsung Exynos M-Scaler driver"
-+	depends on OF && VIDEO_DEV && VIDEO_V4L2 && ARCH_EXYNOS5
-+	select VIDEOBUF2_DMA_CONTIG
-+	select V4L2_MEM2MEM_DEV
-+	help
-+	  This is a v4l2 driver for Samsung EXYNOS5 SoC M-Scaler.
-+
- config VIDEO_SH_VEU
- 	tristate "SuperH VEU mem2mem video processing driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2 && GENERIC_HARDIRQS
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index eee28dd..2452b09 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_TV)	+= s5p-tv/
- 
- obj-$(CONFIG_VIDEO_SAMSUNG_S5P_G2D)	+= s5p-g2d/
- obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)	+= exynos-gsc/
-+obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_MSCL)	+= exynos-mscl/
- 
- obj-$(CONFIG_BLACKFIN)                  += blackfin/
- 
-diff --git a/drivers/media/platform/exynos-mscl/Makefile b/drivers/media/platform/exynos-mscl/Makefile
-new file mode 100644
-index 0000000..c9ffcd8
---- /dev/null
-+++ b/drivers/media/platform/exynos-mscl/Makefile
-@@ -0,0 +1,3 @@
-+exynos-mscl-objs := mscl-core.o mscl-m2m.o mscl-regs.o
-+
-+obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_MSCL)	+= exynos-mscl.o
--- 
-1.7.9.5
+> -----Original Message-----
+> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+> owner@vger.kernel.org] On Behalf Of Shaik Ameer Basha
+> Sent: Monday, August 19, 2013 7:59 PM
+> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+> Cc: s.nawrocki@samsung.com; posciak@google.com; arun.kk@samsung.com;
+> shaik.ameer@samsung.com
+> Subject: [PATCH v2 0/5] Exynos5 M-Scaler Driver
+> 
+> This patch adds support for M-Scaler (M2M Scaler) device which is a
+> new device for scaling, blending, color fill  and color space
+> conversion on EXYNOS5 SoCs.
+
+All Exynos5 SoCs really have this IP? It seems that only Exynos5420 and
+maybe Exynos5410 have this IP, NOT Exynos5250. Please check it again and
+describe it surely over the all patch series.
+
+Thanks,
+Inki Dae
+
+> 
+> This device supports the following as key features.
+>     input image format
+>         - YCbCr420 2P(UV/VU), 3P
+>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+>         - YCbCr444 2P(UV,VU), 3P
+>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+>         - Pre-multiplexed ARGB8888, L8A8 and L8
+>     output image format
+>         - YCbCr420 2P(UV/VU), 3P
+>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+>         - YCbCr444 2P(UV,VU), 3P
+>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+>         - Pre-multiplexed ARGB8888
+>     input rotation
+>         - 0/90/180/270 degree, X/Y/XY Flip
+>     scale ratio
+>         - 1/4 scale down to 16 scale up
+>     color space conversion
+>         - RGB to YUV / YUV to RGB
+>     Size
+>         - Input : 16x16 to 8192x8192
+>         - Output:   4x4 to 8192x8192
+>     alpha blending, color fill
+> 
+> Rebased on:
+> -----------
+> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
+> 
+> Changes from v1:
+> ---------------
+> 1] Split the previous single patch into multiple patches.
+> 2] Added DT binding documentation.
+> 3] Removed the unnecessary header file inclusions.
+> 4] Fix the condition check in mscl_prepare_address for swapping cb/cr
+> addresses.
+> 
+> Shaik Ameer Basha (5):
+>   [media] exynos-mscl: Add new driver for M-Scaler
+>   [media] exynos-mscl: Add core functionality for the M-Scaler driver
+>   [media] exynos-mscl: Add m2m functionality for the M-Scaler driver
+>   [media] exynos-mscl: Add DT bindings for M-Scaler driver
+>   [media] exynos-mscl: Add Makefile for M-Scaler driver
+> 
+>  .../devicetree/bindings/media/exynos5-mscl.txt     |   34 +
+>  drivers/media/platform/Kconfig                     |    8 +
+>  drivers/media/platform/Makefile                    |    1 +
+>  drivers/media/platform/exynos-mscl/Makefile        |    3 +
+>  drivers/media/platform/exynos-mscl/mscl-core.c     | 1312
+> ++++++++++++++++++++
+>  drivers/media/platform/exynos-mscl/mscl-core.h     |  549 ++++++++
+>  drivers/media/platform/exynos-mscl/mscl-m2m.c      |  763 ++++++++++++
+>  drivers/media/platform/exynos-mscl/mscl-regs.c     |  318 +++++
+>  drivers/media/platform/exynos-mscl/mscl-regs.h     |  282 +++++
+>  9 files changed, 3270 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/exynos5-
+> mscl.txt
+>  create mode 100644 drivers/media/platform/exynos-mscl/Makefile
+>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.c
+>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.h
+>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-m2m.c
+>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-regs.c
+>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-regs.h
+> 
+> --
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
