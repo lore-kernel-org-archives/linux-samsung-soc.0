@@ -1,141 +1,144 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v2 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
-Date: Mon, 19 Aug 2013 10:18:12 +0530
-Message-ID: <20130819044811.GR32147@intel.com>
-References: <201308141359.13872.heiko@sntech.de>
- <201308141400.25681.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Mon, 19 Aug 2013 12:09:59 +0530
+Message-ID: <1376894399-2766-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:4231 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750792Ab3HSFbz (ORCPT
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:62609 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750943Ab3HSGkM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Aug 2013 01:31:55 -0400
-Content-Disposition: inline
-In-Reply-To: <201308141400.25681.heiko@sntech.de>
+	Mon, 19 Aug 2013 02:40:12 -0400
+Received: by mail-pb0-f52.google.com with SMTP id wz12so4585928pbc.39
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Aug 2013 23:40:11 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: kgene.kim@samsung.com, Dan Williams <djbw@fb.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On Wed, Aug 14, 2013 at 02:00:25PM +0200, Heiko St=FCbner wrote:
-> This adds a new driver to support the s3c24xx dma using the dmaengine
-> and makes the old one in mach-s3c24xx obsolete in the long run.
->=20
-> Conceptually the s3c24xx-dma feels like a distant relative of the pl0=
-8x
-> with numerous virtual channels being mapped to a lot less physical on=
-es.
-> The driver therefore borrows a lot from the amba-pl08x driver in this
-> regard. Functionality-wise the driver gains a memcpy ability in addit=
-ion
-> to the slave_sg one.
-If that is the case why cant we have this driver supported from pl08x d=
-river? If
-the delta is only mapping then can that be seprated or both mapping han=
-lded?
-Maybe you and Linus have already though about that?
+This patch adds the device tree node entries for exynos5420 SOC.
+Exynos5420 has a different version of DWMMC controller,so a new
+compatible string is used to distinguish it from the prior SOC's.
 
-> The driver supports both the method for requesting the peripheral use=
-d
-> by SoCs before the S3C2443 and the different method for S3C2443 and l=
-ater.
->=20
-> On earlier SoCs the hardware channels usable for specific peripherals=
- is
-> constrainted while on later SoCs all channels can be used for any per=
-ipheral.
->=20
-> Tested on a s3c2416-based board, memcpy using the dmatest module and
-> slave_sg partially using the spi-s3c64xx driver.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   41 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   33 ++++++++++++++++
+ 3 files changed, 76 insertions(+)
 
-> +#define DISRC			(0x00)
-> +#define DISRCC			(0x04)
-> +#define DISRCC_INC_INCREMENT	(0 << 0)
-> +#define DISRCC_INC_FIXED	(1 << 0)
-> +#define DISRCC_LOC_AHB		(0 << 1)
-> +#define DISRCC_LOC_APB		(1 << 1)
-> +
-> +#define DIDST			(0x08)
-> +#define DIDSTC			(0x0C)
-> +#define DIDSTC_INC_INCREMENT	(0 << 0)
-> +#define DIDSTC_INC_FIXED	(1 << 0)
-> +#define DIDSTC_LOC_AHB		(0 << 1)
-> +#define DIDSTC_LOC_APB		(1 << 1)
-> +#define DIDSTC_INT_TC0		(0 << 2)
-> +#define DIDSTC_INT_RELOAD	(1 << 2)
-> +
-> +#define DCON			(0x10)
-> +
-> +#define DCON_TC_MASK		0xfffff
-> +#define DCON_DSZ_BYTE		(0 << 20)
-> +#define DCON_DSZ_HALFWORD	(1 << 20)
-> +#define DCON_DSZ_WORD		(2 << 20)
-> +#define DCON_DSZ_MASK		(3 << 20)
-> +#define DCON_DSZ_SHIFT		20
-> +#define DCON_AUTORELOAD		(0 << 22)
-> +#define DCON_NORELOAD		(1 << 22)
-> +#define DCON_HWTRIG		(1 << 23)
-> +#define DCON_HWSRC_SHIFT	24
-> +#define DCON_SERV_SINGLE	(0 << 27)
-> +#define DCON_SERV_WHOLE		(1 << 27)
-> +#define DCON_TSZ_UNIT		(0 << 28)
-> +#define DCON_TSZ_BURST4		(1 << 28)
-> +#define DCON_INT		(1 << 29)
-> +#define DCON_SYNC_PCLK		(0 << 30)
-> +#define DCON_SYNC_HCLK		(1 << 30)
-> +#define DCON_DEMAND		(0 << 31)
-> +#define DCON_HANDSHAKE		(1 << 31)
-> +
-> +#define DSTAT			(0x14)
-> +#define DSTAT_STAT_BUSY		(1 << 20)
-> +#define DSTAT_CURRTC_MASK	0xfffff
-> +
-> +#define DMASKTRIG		(0x20)
-> +#define DMASKTRIG_STOP		(1 << 2)
-> +#define DMASKTRIG_ON		(1 << 1)
-> +#define DMASKTRIG_SWTRIG	(1 << 0)
-> +
-> +#define DMAREQSEL		(0x24)
-> +#define DMAREQSEL_HW		(1 << 0)
-This is proper namespacing...
-
-> +static int s3c24xx_dma_set_runtime_config(struct s3c24xx_dma_chan *s=
-3cchan,
-> +				  struct dma_slave_config *config)
-> +{
-> +	if (!s3cchan->slave)
-> +		return -EINVAL;
-> +
-> +	/* Reject definitely invalid configurations */
-> +	if (config->src_addr_width =3D=3D DMA_SLAVE_BUSWIDTH_8_BYTES ||
-> +	    config->dst_addr_width =3D=3D DMA_SLAVE_BUSWIDTH_8_BYTES)
-> +		return -EINVAL;
-> +
-> +	s3cchan->cfg =3D *config;
-you are takinga  ref to client pointer without a clue on when that woul=
-d be
-freed. I dont think its a good idea!
-
-> +static irqreturn_t s3c24xx_dma_irq(int irq, void *data)
-> +{
-> +	struct s3c24xx_dma_phy *phy =3D data;
-> +	struct s3c24xx_dma_chan *s3cchan =3D phy->serving;
-> +	struct s3c24xx_txd *txd;
-> +
-> +	dev_dbg(&phy->host->pdev->dev, "interrupt on channel %d\n", phy->id=
-);
-> +
-> +	if (!s3cchan) {
-> +		dev_err(&phy->host->pdev->dev, "interrupt on unused channel %d\n",
-> +			phy->id);
-> +		return IRQ_NONE;
-hmmm, these channles belong to you. So if one of them is behvaing badly=
-, then
-not handling the interrupt will make things worse...
-
-~Vinod
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index 6d1c098..84cd56f 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -16,6 +16,8 @@ Required Properties:
+ 	  specific extensions.
+ 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+ 	  specific extensions.
++	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
++	  specific extensions.
+ 
+ * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index 08607df..4530700 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -30,4 +30,45 @@
+ 			clock-frequency = <24000000>;
+ 		};
+ 	};
++
++	dwmmc0@12200000 {
++		num-slots = <1>;
++		broken-cd;
++		bypass-smu;
++		supports-highspeed;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <0 4>;
++		samsung,dw-mshc-ddr-timing = <0 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
++	dwmmc1@12210000 {
++		status = "disabled";
++	};
++
++	dwmmc2@12220000 {
++		num-slots = <1>;
++		supports-highspeed;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++		};
++	};
++
+ };
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 9e90d1e..8559aa8 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -19,6 +19,9 @@
+ 	compatible = "samsung,exynos5420";
+ 
+ 	aliases {
++		mshc0 = &dwmmc_0;
++		mshc1 = &dwmmc_1;
++		mshc2 = &dwmmc_2;
+ 		pinctrl0 = &pinctrl_0;
+ 		pinctrl1 = &pinctrl_1;
+ 		pinctrl2 = &pinctrl_2;
+@@ -65,6 +68,36 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	dwmmc_0: dwmmc0@12200000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 75 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12200000 0x2000>;
++		clocks = <&clock 351>, <&clock 132>;
++		clock-names = "biu", "ciu";
++	};
++
++	dwmmc_1: dwmmc1@12210000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 76 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12210000 0x2000>;
++		clocks = <&clock 352>, <&clock 133>;
++		clock-names = "biu", "ciu";
++	};
++
++	dwmmc_2: dwmmc2@12220000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 77 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12220000 0x2000>;
++		clocks = <&clock 353>, <&clock 134>;
++		clock-names = "biu", "ciu";
++	};
++
+ 	mct@101C0000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x101C0000 0x800>;
+-- 
+1.7.9.5
