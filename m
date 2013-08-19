@@ -1,87 +1,152 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH RESEND] i2c: move of helpers into the core
-Date: Mon, 19 Aug 2013 15:10:05 -0500
-Message-ID: <20130819201005.GM26587@radagast>
-References: <1376918361-7014-1-git-send-email-wsa@the-dreams.de>
- <1376935183-11218-1-git-send-email-wsa@the-dreams.de>
-Reply-To: balbi@ti.com
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH RFC v5] s5k5baf: add camera sensor driver
+Date: Mon, 19 Aug 2013 23:03:43 +0200
+Message-ID: <5212882F.6020702@gmail.com>
+References: <1376918307-21490-1-git-send-email-a.hajda@samsung.com> <20130819133907.GN3719@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0980446090809621484=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1376935183-11218-1-git-send-email-wsa@the-dreams.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: devicetree@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============0980446090809621484==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="McpcKDxJRrEJVmOH"
-Content-Disposition: inline
-
---McpcKDxJRrEJVmOH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Aug 19, 2013 at 07:59:40PM +0200, Wolfram Sang wrote:
-> I2C of helpers used to live in of_i2c.c but experience (from SPI) shows
-> that it is much cleaner to have this in the core. This also removes a
-> circular dependency between the helpers and the core, and so we can
-> finally register child nodes in the core instead of doing this manually
-> in each driver. So, fix the drivers and documentation, too.
->=20
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-
-for i2c-omap.c:
-
-Reviewed-by: Felipe Balbi <balbi@ti.com>
-
---=20
-balbi
-
---McpcKDxJRrEJVmOH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSEnudAAoJEIaOsuA1yqREcNkP/0LKPk4o7wCnJXxOqAyLoeZd
-WwCRafc7R0Ls3S5M28xTpxPm+34Ol7FOt8tezKWc1s6G6WCLxEo84glBf4gAWKhf
-KaVC35hyoh1tibIeUZR4QfXYKn+UVxu6lMeEwJaC8+yMhuMjq0SLXBHkAUwsLCiN
-q3/Unq+bsuNgup5HnIJ6aAOZfbYj047leZF/cnfqup3epSxcZDsU/1lVj+I19rL3
-pTYeZ6WECWwhmxHj0rjEf3mgeqCaMwW8XCsRKDoDTOd/sTcvWsAooC53h2ygYe2b
-tS9zeeNW9uIlZSmtR1yNBgr59PP1ykf0zp9jGOY0r8u/oP6HG5h/bAjLMN58dXwt
-WWLYYJgj3mrXA2EtXoSKQnDNmJl7tLOJu3oxMpQfBbKlrCECgyvxp54xSQpUd+yB
-0kT8QEY/wQXCLjlLJWuPWqHkHw+YNCTap//XQYEfPyubucT27Zxa8wz4vhmkjWdH
-Cp1VEWD2O5sWpfwdyS7w54GgAOfkNyuF+FWus8zd7PN1hMxNKui2Tw8n4glmC2Ql
-LljlBN9YZUvz9ETmJTFuGFGLnX3PZO/zWeF7JkXbEDjYV4tAlKYo0pW8SeTSnY6v
-M3I3C6h4TFKDYmctFDbEJnZl8NBmBImV3Zhh+eRohrhimEtscvyoYAiFXtK3tgWN
-ojVKmnuVliAHBulFgZbj
-=wjr2
------END PGP SIGNATURE-----
-
---McpcKDxJRrEJVmOH--
-
-
---===============0980446090809621484==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f47.google.com ([209.85.214.47]:56849 "EHLO
+	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750900Ab3HSVDt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Aug 2013 17:03:49 -0400
+In-Reply-To: <20130819133907.GN3719@e106331-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>
 
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On 08/19/2013 03:39 PM, Mark Rutland wrote:
+> On Mon, Aug 19, 2013 at 02:18:27PM +0100, Andrzej Hajda wrote:
+>> Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
+>> with embedded SoC ISP.
+>> The driver exposes the sensor as two V4L2 subdevices:
+>> - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
+>>    no controls.
+>> - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
+>>    pre/post ISP cropping, downscaling via selection API, controls.
+>>
+>> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+>> Signed-off-by: Andrzej Hajda<a.hajda@samsung.com>
+>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>> ---
+>> v5
+>> - removed non-standard samsung hflip/vflip device tree bindings
+>>
+>> v4
+>> - GPL changed to GPLv2,
+>> - bitfields replaced by u8,
+>> - cosmetic changes,
+>> - corrected s_stream flow,
+>> - gpio pins are no longer exported,
+>> - added I2C addresses to subdev names,
+>> - CIS subdev registration postponed after
+>>    succesfull HW initialization,
+>> - added enums for pads,
+>> - selections are initialized only during probe,
+>> - default resolution changed to 1600x1200,
+>> - state->error pattern removed from few other functions,
+>> - entity link creation moved to registered callback.
+[...]
+>> ---
+>>   .../devicetree/bindings/media/samsung-s5k5baf.txt  |   51 +
+>>   MAINTAINERS                                        |    7 +
+>>   drivers/media/i2c/Kconfig                          |    7 +
+>>   drivers/media/i2c/Makefile                         |    1 +
+>>   drivers/media/i2c/s5k5baf.c                        | 1980 ++++++++++++++++++++
+>>   5 files changed, 2046 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+>>   create mode 100644 drivers/media/i2c/s5k5baf.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+>> new file mode 100644
+>> index 0000000..b1f2fde
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+>> @@ -0,0 +1,51 @@
+>> +Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
+>> +-------------------------------------------------------------
+>> +
+>> +Required properties:
+>> +
+>> +- compatible     : "samsung,s5k5baf";
+>> +- reg            : I2C slave address of the sensor;
+>> +- vdda-supply    : analog power supply 2.8V (2.6V to 3.0V);
+>> +- vddreg-supply          : regulator input power supply 1.8V (1.7V to 1.9V)
+>> +                    or 2.8V (2.6V to 3.0);
+>> +- vddio-supply   : I/O power supply 1.8V (1.65V to 1.95V)
+>> +                    or 2.8V (2.5V to 3.1V);
+>> +- gpios                  : GPIOs connected to STDBYN and RSTN pins,
+>> +                    in order: STBYN, RSTN;
+>> +- clock-frequency : master clock frequency in Hz;
+>
+> Why is this necessary? Could you not just require having a clocks
+> property? You could then get equivalent functionality to the
+> clock-frequency property by having a fixed-clock node if you don't ahve
+> a real clock specifier to wire up.
 
---===============0980446090809621484==--
+Oops, looks like we didn't consolidate all the changes that were present in
+v4 [1]. clock, clock-names should be required properties and 
+clock-frequency
+should be optional.
+
+Yes, fixed clock could be used when, e.g. the sensor feeds its master clock
+from a separate external oscillator.
+
+The clock-frequency property is there to _set_ a board specific master 
+clock
+frequency of the sensor at the driver. I hope it doesn't fall into category
+"doesn't describe hardware", because the optimal frequency often needs to be
+specified per board and some common denominator value or range might not
+work well, leading to video signal distortions, etc.
+
+>> +
+>> +Optional properties:
+>> +
+>> +- clocks         : contains the sensor's master clock specifier;
+>> +- clock-names    : contains "mclk" entry;
+>> +
+>> +The device node should contain one 'port' child node with one child 'endpoint'
+>> +node, according to the bindings defined in Documentation/devicetree/bindings/
+>> +media/video-interfaces.txt. The following are properties specific to those nodes.
+>> +
+>> +endpoint node
+>> +-------------
+>> +
+>> +- data-lanes     : (optional) an array specifying active physical MIPI-CSI2
+>> +                   data output lanes and their mapping to logical lanes; the
+>> +                   array's content is unused, only its length is meaningful;
+>
+> Is that a property of the driver, or does the design of the hardware
+> mean that this can never encode useful information?
+
+This sensor doesn't support the data lanes re-routing at the MIPI CSI-2
+transmitter [2]. The data/clock lanes just appear on fixed physical pins,
+thus there is nothing that could be done with data in the array. The number
+of entries determines how many lanes are wired between the transmitter and
+the receiver and this is configurable for that particular device in range
+<1, 2> - it can transmit data on either 1 or 2 lanes.
+
+Presumably an important detail missing here is that this is the common
+property from video-interfaces.txt and what we mention here is only some
+device-specific constraints.
+
+> What does the length of the property imply?
+
+The description of this property should really be as in v4 of the patch:
+
+"- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
+   video-interfaces.txt.  This property can be only used to specify number
+   of data lanes, i.e. the array's content is unused, only its length is
+   meaningful.  When this property is not specified default value of 1 lane
+   will be used."
+
+
+[1] http://www.spinics.net/lists/linux-media/msg66152.html
+[2] http://www.mipi.org/specifications/camera-interface#CSI2
+
+--
+Thanks,
+Sylwester
