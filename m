@@ -1,41 +1,57 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 8/8] ARM: dts: exynos4: Add missing unit-address of sysreg node
-Date: Tue, 20 Aug 2013 15:52:48 +0200
-Message-ID: <1377006768-23174-9-git-send-email-t.figa@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 0/8] Exynos device tree clean-up for 3.12
+Date: Tue, 20 Aug 2013 16:20:02 +0200
+Message-ID: <52137B12.2050708@samsung.com>
 References: <1377006768-23174-1-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36543 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751303Ab3HTNxJ (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:36905 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013Ab3HTOUG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 09:53:09 -0400
+	Tue, 20 Aug 2013 10:20:06 -0400
 In-reply-to: <1377006768-23174-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, ian.campbell@citrix.com, pawel.moll@arm.com, mark.rutland@arm.com, rob.herring@calxeda.com, swarren@wwwdotorg.org, galak@codeaurora.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, ian.campbell@citrix.com, pawel.moll@arm.com, mark.rutland@arm.com, rob.herring@calxeda.com, swarren@wwwdotorg.org, galak@codeaurora.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
 
-The node contains reg property, so unit-address suffix should be present
-in its name.
+On 08/20/2013 03:52 PM, Tomasz Figa wrote:
+> This series intends to fix small problems with Exynos device tree sources
+> that I spotted during my work on other things. The fixes are mostly
+> stylistic, without any funtional changes introduced, except patch 6/8,
+> which makes the mshc node disabled by default, but for all affected
+> boards it is enabled at board level.
+> 
+> Tomasz Figa (8):
+>   Documentation: devicetree: Update Exynos MCT bindings description
+>   ARM: dts: exynos4: Drop interrupt controller properties from MCT nodes
+>   ARM: dts: exynos4x12: Move MCT node to exynos4x12.dtsi
+>   ARM: dts: exynos4: Simplify MCT interrupt map
+>   ARM: dts: exynos4x12: Move mshc node to exynos4x12.dtsi
+>   ARM: dts: exynos4x12: Keep mshc node disabled by default
+>   ARM: dts: exynos: Fix missing spaces after labels
+>   ARM: dts: exynos4: Add missing unit-address of sysreg node
+> 
+>  .../bindings/timer/samsung,exynos4210-mct.txt      | 49 ++++++++++++++--------
+>  arch/arm/boot/dts/exynos4.dtsi                     |  6 +--
+>  arch/arm/boot/dts/exynos4210.dtsi                  | 23 +++++-----
+>  arch/arm/boot/dts/exynos4212.dtsi                  | 24 +----------
+>  arch/arm/boot/dts/exynos4412.dtsi                  | 36 +---------------
+>  arch/arm/boot/dts/exynos4x12.dtsi                  | 29 +++++++++++++
+>  arch/arm/boot/dts/exynos5.dtsi                     |  4 +-
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |  6 +--
+>  arch/arm/boot/dts/exynos5440.dtsi                  |  2 +-
+>  9 files changed, 82 insertions(+), 97 deletions(-)
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks Tomasz, for the whole series:
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 892d5ea..92c9d24 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -93,7 +93,7 @@
- 		reg = <0x10440000 0x1000>;
- 	};
- 
--	sys_reg: sysreg {
-+	sys_reg: sysreg@10010000 {
- 		compatible = "samsung,exynos4-sysreg", "syscon";
- 		reg = <0x10010000 0x400>;
- 	};
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+
+Regards,
 -- 
-1.8.3.2
+Sylwester Nawrocki
+Samsung R&D Institute Poland
