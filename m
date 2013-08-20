@@ -1,457 +1,222 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 06/16] clk: samsung: exynos4: Remove unused static clkdev
- aliases
-Date: Tue, 20 Aug 2013 19:31:33 +0200
-Message-ID: <1377019903-14614-7-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 12/16] clk: samsung: pll: Add support for rate configuration of
+ PLL46xx
+Date: Tue, 20 Aug 2013 19:31:39 +0200
+Message-ID: <1377019903-14614-13-git-send-email-t.figa@samsung.com>
 References: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.w1.samsung.com ([210.118.77.13]:41640 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751546Ab3HTRcE (ORCPT
+	with ESMTP id S1751822Ab3HTRcI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 13:32:04 -0400
+	Tue, 20 Aug 2013 13:32:08 -0400
 In-reply-to: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Since Exynos does not support legacy non-DT boot anymore, most of clock
-lookups happen using device tree, so most of static clkdev aliases are no
-longer necessary. This patch removes them.
+This patch implements round_rate and set_rate callbacks of PLL46xx
+driver to allow reconfiguration of PLL at runtime.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos4.c | 356 ++++++++++++++++++--------------------
- 1 file changed, 172 insertions(+), 184 deletions(-)
+ drivers/clk/samsung/clk-pll.c | 111 +++++++++++++++++++++++++++++++++++++++++-
+ drivers/clk/samsung/clk-pll.h |  25 ++++++++++
+ 2 files changed, 135 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index a974a56..457b15a 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -374,7 +374,7 @@ static struct samsung_mux_clock exynos4_mux_clks[] __initdata = {
- 			CLK_SET_RATE_PARENT, 0),
- 	MUX(none, "mout_spdif", mout_spdif_p, SRC_PERIL1, 8, 2),
- 	MUX(none, "mout_onenand1", mout_onenand1_p, SRC_TOP0, 0, 1),
--	MUX_A(sclk_epll, "sclk_epll", mout_epll_p, SRC_TOP0, 4, 1, "sclk_epll"),
-+	MUX(sclk_epll, "sclk_epll", mout_epll_p, SRC_TOP0, 4, 1),
- 	MUX(none, "mout_onenand", mout_onenand_p, SRC_TOP0, 28, 1),
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 8a008ca..c1f1c87 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -410,10 +410,13 @@ static const struct clk_ops samsung_pll45xx_clk_min_ops = {
+ /*
+  * PLL46xx Clock Type
+  */
++#define PLL46XX_LOCK_FACTOR	3000
+ 
++#define PLL46XX_VSEL_MASK	(1)
+ #define PLL46XX_MDIV_MASK	(0x1FF)
+ #define PLL46XX_PDIV_MASK	(0x3F)
+ #define PLL46XX_SDIV_MASK	(0x7)
++#define PLL46XX_VSEL_SHIFT	(27)
+ #define PLL46XX_MDIV_SHIFT	(16)
+ #define PLL46XX_PDIV_SHIFT	(8)
+ #define PLL46XX_SDIV_SHIFT	(0)
+@@ -421,6 +424,15 @@ static const struct clk_ops samsung_pll45xx_clk_min_ops = {
+ #define PLL46XX_KDIV_MASK	(0xFFFF)
+ #define PLL4650C_KDIV_MASK	(0xFFF)
+ #define PLL46XX_KDIV_SHIFT	(0)
++#define PLL46XX_MFR_MASK	(0x3F)
++#define PLL46XX_MRR_MASK	(0x1F)
++#define PLL46XX_KDIV_SHIFT	(0)
++#define PLL46XX_MFR_SHIFT	(16)
++#define PLL46XX_MRR_SHIFT	(24)
++
++#define PLL46XX_ENABLE		BIT(31)
++#define PLL46XX_LOCKED		BIT(29)
++#define PLL46XX_VSEL		BIT(27)
+ 
+ static unsigned long samsung_pll46xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+@@ -445,8 +457,102 @@ static unsigned long samsung_pll46xx_recalc_rate(struct clk_hw *hw,
+ 	return (unsigned long)fvco;
+ }
+ 
++static bool samsung_pll46xx_mpk_change(u32 pll_con0, u32 pll_con1,
++				const struct samsung_pll_rate_table *rate)
++{
++	u32 old_mdiv, old_pdiv, old_kdiv;
++
++	old_mdiv = (pll_con0 >> PLL46XX_MDIV_SHIFT) & PLL46XX_MDIV_MASK;
++	old_pdiv = (pll_con0 >> PLL46XX_PDIV_SHIFT) & PLL46XX_PDIV_MASK;
++	old_kdiv = (pll_con1 >> PLL46XX_KDIV_SHIFT) & PLL46XX_KDIV_MASK;
++
++	return (old_mdiv != rate->mdiv || old_pdiv != rate->pdiv
++		|| old_kdiv != rate->kdiv);
++}
++
++static int samsung_pll46xx_set_rate(struct clk_hw *hw, unsigned long drate,
++					unsigned long prate)
++{
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
++	const struct samsung_pll_rate_table *rate;
++	u32 con0, con1, lock;
++	ktime_t start;
++
++	/* Get required rate settings from table */
++	rate = samsung_get_pll_settings(pll, drate);
++	if (!rate) {
++		pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
++			drate, __clk_get_name(hw->clk));
++		return -EINVAL;
++	}
++
++	con0 = __raw_readl(pll->con_reg);
++	con1 = __raw_readl(pll->con_reg + 0x4);
++
++	if (!(samsung_pll46xx_mpk_change(con0, con1, rate))) {
++		/* If only s change, change just s value only*/
++		con0 &= ~(PLL46XX_SDIV_MASK << PLL46XX_SDIV_SHIFT);
++		con0 |= rate->sdiv << PLL46XX_SDIV_SHIFT;
++		__raw_writel(con0, pll->con_reg);
++
++		return 0;
++	}
++
++	/* Set PLL lock time. */
++	lock = rate->pdiv * PLL46XX_LOCK_FACTOR;
++	if (lock > 0xffff)
++		/* Maximum lock time bitfield is 16-bit. */
++		lock = 0xffff;
++
++	/* Set PLL PMS and VSEL values. */
++	con0 &= ~((PLL46XX_MDIV_MASK << PLL46XX_MDIV_SHIFT) |
++			(PLL46XX_PDIV_MASK << PLL46XX_PDIV_SHIFT) |
++			(PLL46XX_SDIV_MASK << PLL46XX_SDIV_SHIFT) |
++			(PLL46XX_VSEL_MASK << PLL46XX_VSEL_SHIFT));
++	con0 |= (rate->mdiv << PLL46XX_MDIV_SHIFT) |
++			(rate->pdiv << PLL46XX_PDIV_SHIFT) |
++			(rate->sdiv << PLL46XX_SDIV_SHIFT) |
++			(rate->vsel << PLL46XX_VSEL_SHIFT);
++
++	/* Set PLL AFC, MFR and MRR values. */
++	con1 = __raw_readl(pll->con_reg + 0x4);
++	con1 &= ~((PLL46XX_KDIV_MASK << PLL46XX_KDIV_SHIFT) |
++			(PLL46XX_MFR_MASK << PLL46XX_MFR_SHIFT) |
++			(PLL46XX_MRR_MASK << PLL46XX_MRR_SHIFT));
++	con1 |= (rate->kdiv << PLL46XX_KDIV_SHIFT) |
++			(rate->mfr << PLL46XX_MFR_SHIFT) |
++			(rate->mrr << PLL46XX_MRR_SHIFT);
++
++	/* Write configuration to PLL */
++	__raw_writel(lock, pll->lock_reg);
++	__raw_writel(con0, pll->con_reg);
++	__raw_writel(con1, pll->con_reg + 0x4);
++
++	/* Wait for locking. */
++	start = ktime_get();
++	while (!(__raw_readl(pll->con_reg) & PLL46XX_LOCKED)) {
++		ktime_t delta = ktime_sub(ktime_get(), start);
++
++		if (ktime_to_ms(delta) > PLL_TIMEOUT_MS) {
++			pr_err("%s: could not lock PLL %s\n",
++					__func__, __clk_get_name(hw->clk));
++			return -EFAULT;
++		}
++
++		cpu_relax();
++	}
++
++	return 0;
++}
++
+ static const struct clk_ops samsung_pll46xx_clk_ops = {
+ 	.recalc_rate = samsung_pll46xx_recalc_rate,
++	.round_rate = samsung_pll_round_rate,
++	.set_rate = samsung_pll46xx_set_rate,
++};
++
++static const struct clk_ops samsung_pll46xx_clk_min_ops = {
++	.recalc_rate = samsung_pll46xx_recalc_rate,
  };
  
-@@ -394,8 +394,7 @@ static struct samsung_mux_clock exynos4210_mux_clks[] __initdata = {
- 	MUX(none, "mout_mipi1", group1_p4210, E4210_SRC_LCD1, 12, 4),
- 	MUX(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_CPU, 8, 1),
- 	MUX(mout_core, "mout_core", mout_core_p4210, SRC_CPU, 16, 1),
--	MUX_A(sclk_vpll, "sclk_vpll", sclk_vpll_p4210,
--			SRC_TOP0, 8, 1, "sclk_vpll"),
-+	MUX(sclk_vpll, "sclk_vpll", sclk_vpll_p4210, SRC_TOP0, 8, 1),
- 	MUX(mout_fimc0, "mout_fimc0", group1_p4210, SRC_CAM, 0, 4),
- 	MUX(mout_fimc1, "mout_fimc1", group1_p4210, SRC_CAM, 4, 4),
- 	MUX(mout_fimc2, "mout_fimc2", group1_p4210, SRC_CAM, 8, 4),
-@@ -451,10 +450,8 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
- 	MUX(none, "mout_jpeg0", sclk_ampll_p4x12, E4X12_SRC_CAM1, 0, 1),
- 	MUX(none, "mout_jpeg1", sclk_evpll_p, E4X12_SRC_CAM1, 4, 1),
- 	MUX(none, "mout_jpeg", mout_jpeg_p, E4X12_SRC_CAM1, 8, 1),
--	MUX_A(sclk_mpll, "sclk_mpll", mout_mpll_p,
--			SRC_DMC, 12, 1, "sclk_mpll"),
--	MUX_A(sclk_vpll, "sclk_vpll", mout_vpll_p,
--			SRC_TOP0, 8, 1, "sclk_vpll"),
-+	MUX(sclk_mpll, "sclk_mpll", mout_mpll_p, SRC_DMC, 12, 1),
-+	MUX(sclk_vpll, "sclk_vpll", mout_vpll_p, SRC_TOP0, 8, 1),
- 	MUX(mout_core, "mout_core", mout_core_p4x12, SRC_CPU, 16, 1),
- 	MUX(mout_fimc0, "mout_fimc0", group1_p4x12, SRC_CAM, 0, 4),
- 	MUX(mout_fimc1, "mout_fimc1", group1_p4x12, SRC_CAM, 4, 4),
-@@ -544,8 +541,7 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
- 	DIV(none, "div_audio1", "mout_audio1", DIV_PERIL4, 0, 4),
- 	DIV(none, "div_audio2", "mout_audio2", DIV_PERIL4, 16, 4),
- 	DIV(arm_clk, "arm_clk", "div_core2", DIV_CPU0, 28, 3),
--	DIV_A(sclk_apll, "sclk_apll", "mout_apll",
--			DIV_CPU0, 24, 3, "sclk_apll"),
-+	DIV(sclk_apll, "sclk_apll", "mout_apll", DIV_CPU0, 24, 3),
- 	DIV_F(none, "div_mipi_pre0", "div_mipi0", DIV_LCD0, 20, 4,
- 			CLK_SET_RATE_PARENT, 0),
- 	DIV_F(none, "div_mmc_pre0", "div_mmc0", DIV_FSYS1, 8, 8,
-@@ -634,160 +630,147 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
- 			CLK_SET_RATE_PARENT, 0),
- 	GATE(sclk_audio1, "sclk_audio1", "div_audio1", SRC_MASK_PERIL1, 0,
- 			CLK_SET_RATE_PARENT, 0),
--	GATE_D(vp, "s5p-mixer", "vp", "aclk160", GATE_IP_TV, 0, 0, 0),
--	GATE_D(mixer, "s5p-mixer", "mixer", "aclk160", GATE_IP_TV, 1, 0, 0),
--	GATE_D(hdmi, "exynos4-hdmi", "hdmi", "aclk160", GATE_IP_TV, 3, 0, 0),
--	GATE_A(pwm, "pwm", "aclk100", GATE_IP_PERIL, 24, 0, 0, "timers"),
--	GATE_A(sdmmc4, "sdmmc4", "aclk133", GATE_IP_FSYS, 9, 0, 0, "biu"),
--	GATE_A(usb_host, "usb_host", "aclk133",
--			GATE_IP_FSYS, 12, 0, 0, "usbhost"),
--	GATE_DA(sclk_fimc0, "exynos4-fimc.0", "sclk_fimc0", "div_fimc0",
--			SRC_MASK_CAM, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimc"),
--	GATE_DA(sclk_fimc1, "exynos4-fimc.1", "sclk_fimc1", "div_fimc1",
--			SRC_MASK_CAM, 4, CLK_SET_RATE_PARENT, 0, "sclk_fimc"),
--	GATE_DA(sclk_fimc2, "exynos4-fimc.2", "sclk_fimc2", "div_fimc2",
--			SRC_MASK_CAM, 8, CLK_SET_RATE_PARENT, 0, "sclk_fimc"),
--	GATE_DA(sclk_fimc3, "exynos4-fimc.3", "sclk_fimc3", "div_fimc3",
--			SRC_MASK_CAM, 12, CLK_SET_RATE_PARENT, 0, "sclk_fimc"),
--	GATE_DA(sclk_csis0, "s5p-mipi-csis.0", "sclk_csis0", "div_csis0",
--			SRC_MASK_CAM, 24, CLK_SET_RATE_PARENT, 0, "sclk_csis"),
--	GATE_DA(sclk_csis1, "s5p-mipi-csis.1", "sclk_csis1", "div_csis1",
--			SRC_MASK_CAM, 28, CLK_SET_RATE_PARENT, 0, "sclk_csis"),
--	GATE_DA(sclk_fimd0, "exynos4-fb.0", "sclk_fimd0", "div_fimd0",
--			SRC_MASK_LCD0, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
--	GATE_DA(sclk_mmc0, "exynos4-sdhci.0", "sclk_mmc0", "div_mmc_pre0",
--			SRC_MASK_FSYS, 0, CLK_SET_RATE_PARENT, 0,
--			"mmc_busclk.2"),
--	GATE_DA(sclk_mmc1, "exynos4-sdhci.1", "sclk_mmc1", "div_mmc_pre1",
--			SRC_MASK_FSYS, 4, CLK_SET_RATE_PARENT, 0,
--			"mmc_busclk.2"),
--	GATE_DA(sclk_mmc2, "exynos4-sdhci.2", "sclk_mmc2", "div_mmc_pre2",
--			SRC_MASK_FSYS, 8, CLK_SET_RATE_PARENT, 0,
--			"mmc_busclk.2"),
--	GATE_DA(sclk_mmc3, "exynos4-sdhci.3", "sclk_mmc3", "div_mmc_pre3",
--			SRC_MASK_FSYS, 12, CLK_SET_RATE_PARENT, 0,
--			"mmc_busclk.2"),
--	GATE_DA(sclk_mmc4, NULL, "sclk_mmc4", "div_mmc_pre4",
--			SRC_MASK_FSYS, 16, CLK_SET_RATE_PARENT, 0, "ciu"),
--	GATE_DA(sclk_uart0, "exynos4210-uart.0", "uclk0", "div_uart0",
--			SRC_MASK_PERIL0, 0, CLK_SET_RATE_PARENT,
--			0, "clk_uart_baud0"),
--	GATE_DA(sclk_uart1, "exynos4210-uart.1", "uclk1", "div_uart1",
--			SRC_MASK_PERIL0, 4, CLK_SET_RATE_PARENT,
--			0, "clk_uart_baud0"),
--	GATE_DA(sclk_uart2, "exynos4210-uart.2", "uclk2", "div_uart2",
--			SRC_MASK_PERIL0, 8, CLK_SET_RATE_PARENT,
--			0, "clk_uart_baud0"),
--	GATE_DA(sclk_uart3, "exynos4210-uart.3", "uclk3", "div_uart3",
--			SRC_MASK_PERIL0, 12, CLK_SET_RATE_PARENT,
--			0, "clk_uart_baud0"),
--	GATE_DA(sclk_uart4, "exynos4210-uart.4", "uclk4", "div_uart4",
--			SRC_MASK_PERIL0, 16, CLK_SET_RATE_PARENT,
--			0, "clk_uart_baud0"),
-+	GATE(vp, "vp", "aclk160", GATE_IP_TV, 0, 0, 0),
-+	GATE(mixer, "mixer", "aclk160", GATE_IP_TV, 1, 0, 0),
-+	GATE(hdmi, "hdmi", "aclk160", GATE_IP_TV, 3, 0, 0),
-+	GATE(pwm, "pwm", "aclk100", GATE_IP_PERIL, 24, 0, 0),
-+	GATE(sdmmc4, "sdmmc4", "aclk133", GATE_IP_FSYS, 9, 0, 0),
-+	GATE(usb_host, "usb_host", "aclk133", GATE_IP_FSYS, 12, 0, 0),
-+	GATE(sclk_fimc0, "sclk_fimc0", "div_fimc0", SRC_MASK_CAM, 0,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_fimc1, "sclk_fimc1", "div_fimc1", SRC_MASK_CAM, 4,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_fimc2, "sclk_fimc2", "div_fimc2", SRC_MASK_CAM, 8,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_fimc3, "sclk_fimc3", "div_fimc3", SRC_MASK_CAM, 12,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_csis0, "sclk_csis0", "div_csis0", SRC_MASK_CAM, 24,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_csis1, "sclk_csis1", "div_csis1", SRC_MASK_CAM, 28,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_fimd0, "sclk_fimd0", "div_fimd0", SRC_MASK_LCD0, 0,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_mmc0, "sclk_mmc0", "div_mmc_pre0", SRC_MASK_FSYS, 0,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_mmc1, "sclk_mmc1", "div_mmc_pre1", SRC_MASK_FSYS, 4,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_mmc2, "sclk_mmc2", "div_mmc_pre2", SRC_MASK_FSYS, 8,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_mmc3, "sclk_mmc3", "div_mmc_pre3", SRC_MASK_FSYS, 12,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_mmc4, "sclk_mmc4", "div_mmc_pre4", SRC_MASK_FSYS, 16,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_uart0, "uclk0", "div_uart0", SRC_MASK_PERIL0, 0,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_uart1, "uclk1", "div_uart1", SRC_MASK_PERIL0, 4,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_uart2, "uclk2", "div_uart2", SRC_MASK_PERIL0, 8,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_uart3, "uclk3", "div_uart3", SRC_MASK_PERIL0, 12,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_uart4, "uclk4", "div_uart4", SRC_MASK_PERIL0, 16,
-+			CLK_SET_RATE_PARENT, 0),
- 	GATE(sclk_audio2, "sclk_audio2", "div_audio2", SRC_MASK_PERIL1, 4,
- 			CLK_SET_RATE_PARENT, 0),
--	GATE_DA(sclk_spi0, "exynos4210-spi.0", "sclk_spi0", "div_spi_pre0",
--			SRC_MASK_PERIL1, 16, CLK_SET_RATE_PARENT,
--			0, "spi_busclk0"),
--	GATE_DA(sclk_spi1, "exynos4210-spi.1", "sclk_spi1", "div_spi_pre1",
--			SRC_MASK_PERIL1, 20, CLK_SET_RATE_PARENT,
--			0, "spi_busclk0"),
--	GATE_DA(sclk_spi2, "exynos4210-spi.2", "sclk_spi2", "div_spi_pre2",
--			SRC_MASK_PERIL1, 24, CLK_SET_RATE_PARENT,
--			0, "spi_busclk0"),
--	GATE_DA(fimc0, "exynos4-fimc.0", "fimc0", "aclk160",
--			GATE_IP_CAM, 0, 0, 0, "fimc"),
--	GATE_DA(fimc1, "exynos4-fimc.1", "fimc1", "aclk160",
--			GATE_IP_CAM, 1, 0, 0, "fimc"),
--	GATE_DA(fimc2, "exynos4-fimc.2", "fimc2", "aclk160",
--			GATE_IP_CAM, 2, 0, 0, "fimc"),
--	GATE_DA(fimc3, "exynos4-fimc.3", "fimc3", "aclk160",
--			GATE_IP_CAM, 3, 0, 0, "fimc"),
--	GATE_DA(csis0, "s5p-mipi-csis.0", "csis0", "aclk160",
--			GATE_IP_CAM, 4, 0, 0, "fimc"),
--	GATE_DA(csis1, "s5p-mipi-csis.1", "csis1", "aclk160",
--			GATE_IP_CAM, 5, 0, 0, "fimc"),
--	GATE_DA(smmu_fimc0, "exynos-sysmmu.5", "smmu_fimc0", "aclk160",
--			GATE_IP_CAM, 7, 0, 0, "sysmmu"),
--	GATE_DA(smmu_fimc1, "exynos-sysmmu.6", "smmu_fimc1", "aclk160",
--			GATE_IP_CAM, 8, 0, 0, "sysmmu"),
--	GATE_DA(smmu_fimc2, "exynos-sysmmu.7", "smmu_fimc2", "aclk160",
--			GATE_IP_CAM, 9, 0, 0, "sysmmu"),
--	GATE_DA(smmu_fimc3, "exynos-sysmmu.8", "smmu_fimc3", "aclk160",
--			GATE_IP_CAM, 10, 0, 0, "sysmmu"),
--	GATE_DA(smmu_jpeg, "exynos-sysmmu.3", "smmu_jpeg", "aclk160",
--			GATE_IP_CAM, 11, 0, 0, "sysmmu"),
-+	GATE(sclk_spi0, "sclk_spi0", "div_spi_pre0", SRC_MASK_PERIL1, 16,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_spi1, "sclk_spi1", "div_spi_pre1", SRC_MASK_PERIL1, 20,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(sclk_spi2, "sclk_spi2", "div_spi_pre2", SRC_MASK_PERIL1, 24,
-+			CLK_SET_RATE_PARENT, 0),
-+	GATE(fimc0, "fimc0", "aclk160", GATE_IP_CAM, 0,
-+			0, 0),
-+	GATE(fimc1, "fimc1", "aclk160", GATE_IP_CAM, 1,
-+			0, 0),
-+	GATE(fimc2, "fimc2", "aclk160", GATE_IP_CAM, 2,
-+			0, 0),
-+	GATE(fimc3, "fimc3", "aclk160", GATE_IP_CAM, 3,
-+			0, 0),
-+	GATE(csis0, "csis0", "aclk160", GATE_IP_CAM, 4,
-+			0, 0),
-+	GATE(csis1, "csis1", "aclk160", GATE_IP_CAM, 5,
-+			0, 0),
-+	GATE(smmu_fimc0, "smmu_fimc0", "aclk160", GATE_IP_CAM, 7,
-+			0, 0),
-+	GATE(smmu_fimc1, "smmu_fimc1", "aclk160", GATE_IP_CAM, 8,
-+			0, 0),
-+	GATE(smmu_fimc2, "smmu_fimc2", "aclk160", GATE_IP_CAM, 9,
-+			0, 0),
-+	GATE(smmu_fimc3, "smmu_fimc3", "aclk160", GATE_IP_CAM, 10,
-+			0, 0),
-+	GATE(smmu_jpeg, "smmu_jpeg", "aclk160", GATE_IP_CAM, 11,
-+			0, 0),
- 	GATE(pixelasyncm0, "pxl_async0", "aclk160", GATE_IP_CAM, 17, 0, 0),
- 	GATE(pixelasyncm1, "pxl_async1", "aclk160", GATE_IP_CAM, 18, 0, 0),
--	GATE_DA(smmu_tv, "exynos-sysmmu.2", "smmu_tv", "aclk160",
--			GATE_IP_TV, 4, 0, 0, "sysmmu"),
--	GATE_DA(mfc, "s5p-mfc", "mfc", "aclk100", GATE_IP_MFC, 0, 0, 0, "mfc"),
--	GATE_DA(smmu_mfcl, "exynos-sysmmu.0", "smmu_mfcl", "aclk100",
--			GATE_IP_MFC, 1, 0, 0, "sysmmu"),
--	GATE_DA(smmu_mfcr, "exynos-sysmmu.1", "smmu_mfcr", "aclk100",
--			GATE_IP_MFC, 2, 0, 0, "sysmmu"),
--	GATE_DA(fimd0, "exynos4-fb.0", "fimd0", "aclk160",
--			GATE_IP_LCD0, 0, 0, 0, "fimd"),
--	GATE_DA(smmu_fimd0, "exynos-sysmmu.10", "smmu_fimd0", "aclk160",
--			GATE_IP_LCD0, 4, 0, 0, "sysmmu"),
--	GATE_DA(pdma0, "dma-pl330.0", "pdma0", "aclk133",
--			GATE_IP_FSYS, 0, 0, 0, "dma"),
--	GATE_DA(pdma1, "dma-pl330.1", "pdma1", "aclk133",
--			GATE_IP_FSYS, 1, 0, 0, "dma"),
--	GATE_DA(sdmmc0, "exynos4-sdhci.0", "sdmmc0", "aclk133",
--			GATE_IP_FSYS, 5, 0, 0, "hsmmc"),
--	GATE_DA(sdmmc1, "exynos4-sdhci.1", "sdmmc1", "aclk133",
--			GATE_IP_FSYS, 6, 0, 0, "hsmmc"),
--	GATE_DA(sdmmc2, "exynos4-sdhci.2", "sdmmc2", "aclk133",
--			GATE_IP_FSYS, 7, 0, 0, "hsmmc"),
--	GATE_DA(sdmmc3, "exynos4-sdhci.3", "sdmmc3", "aclk133",
--			GATE_IP_FSYS, 8, 0, 0, "hsmmc"),
--	GATE_DA(uart0, "exynos4210-uart.0", "uart0", "aclk100",
--			GATE_IP_PERIL, 0, 0, 0, "uart"),
--	GATE_DA(uart1, "exynos4210-uart.1", "uart1", "aclk100",
--			GATE_IP_PERIL, 1, 0, 0, "uart"),
--	GATE_DA(uart2, "exynos4210-uart.2", "uart2", "aclk100",
--			GATE_IP_PERIL, 2, 0, 0, "uart"),
--	GATE_DA(uart3, "exynos4210-uart.3", "uart3", "aclk100",
--			GATE_IP_PERIL, 3, 0, 0, "uart"),
--	GATE_DA(uart4, "exynos4210-uart.4", "uart4", "aclk100",
--			GATE_IP_PERIL, 4, 0, 0, "uart"),
--	GATE_DA(i2c0, "s3c2440-i2c.0", "i2c0", "aclk100",
--			GATE_IP_PERIL, 6, 0, 0, "i2c"),
--	GATE_DA(i2c1, "s3c2440-i2c.1", "i2c1", "aclk100",
--			GATE_IP_PERIL, 7, 0, 0, "i2c"),
--	GATE_DA(i2c2, "s3c2440-i2c.2", "i2c2", "aclk100",
--			GATE_IP_PERIL, 8, 0, 0, "i2c"),
--	GATE_DA(i2c3, "s3c2440-i2c.3", "i2c3", "aclk100",
--			GATE_IP_PERIL, 9, 0, 0, "i2c"),
--	GATE_DA(i2c4, "s3c2440-i2c.4", "i2c4", "aclk100",
--			GATE_IP_PERIL, 10, 0, 0, "i2c"),
--	GATE_DA(i2c5, "s3c2440-i2c.5", "i2c5", "aclk100",
--			GATE_IP_PERIL, 11, 0, 0, "i2c"),
--	GATE_DA(i2c6, "s3c2440-i2c.6", "i2c6", "aclk100",
--			GATE_IP_PERIL, 12, 0, 0, "i2c"),
--	GATE_DA(i2c7, "s3c2440-i2c.7", "i2c7", "aclk100",
--			GATE_IP_PERIL, 13, 0, 0, "i2c"),
--	GATE_DA(i2c_hdmi, "s3c2440-hdmiphy-i2c", "i2c-hdmi", "aclk100",
--			GATE_IP_PERIL, 14, 0, 0, "i2c"),
--	GATE_DA(spi0, "exynos4210-spi.0", "spi0", "aclk100",
--			GATE_IP_PERIL, 16, 0, 0, "spi"),
--	GATE_DA(spi1, "exynos4210-spi.1", "spi1", "aclk100",
--			GATE_IP_PERIL, 17, 0, 0, "spi"),
--	GATE_DA(spi2, "exynos4210-spi.2", "spi2", "aclk100",
--			GATE_IP_PERIL, 18, 0, 0, "spi"),
--	GATE_DA(i2s1, "samsung-i2s.1", "i2s1", "aclk100",
--			GATE_IP_PERIL, 20, 0, 0, "iis"),
--	GATE_DA(i2s2, "samsung-i2s.2", "i2s2", "aclk100",
--			GATE_IP_PERIL, 21, 0, 0, "iis"),
--	GATE_DA(pcm1, "samsung-pcm.1", "pcm1", "aclk100",
--			GATE_IP_PERIL, 22, 0, 0, "pcm"),
--	GATE_DA(pcm2, "samsung-pcm.2", "pcm2", "aclk100",
--			GATE_IP_PERIL, 23, 0, 0, "pcm"),
--	GATE_DA(spdif, "samsung-spdif", "spdif", "aclk100",
--			GATE_IP_PERIL, 26, 0, 0, "spdif"),
--	GATE_DA(ac97, "samsung-ac97", "ac97", "aclk100",
--			GATE_IP_PERIL, 27, 0, 0, "ac97"),
-+	GATE(smmu_tv, "smmu_tv", "aclk160", GATE_IP_TV, 4,
-+			0, 0),
-+	GATE(mfc, "mfc", "aclk100", GATE_IP_MFC, 0, 0, 0),
-+	GATE(smmu_mfcl, "smmu_mfcl", "aclk100", GATE_IP_MFC, 1,
-+			0, 0),
-+	GATE(smmu_mfcr, "smmu_mfcr", "aclk100", GATE_IP_MFC, 2,
-+			0, 0),
-+	GATE(fimd0, "fimd0", "aclk160", GATE_IP_LCD0, 0,
-+			0, 0),
-+	GATE(smmu_fimd0, "smmu_fimd0", "aclk160", GATE_IP_LCD0, 4,
-+			0, 0),
-+	GATE(pdma0, "pdma0", "aclk133", GATE_IP_FSYS, 0,
-+			0, 0),
-+	GATE(pdma1, "pdma1", "aclk133", GATE_IP_FSYS, 1,
-+			0, 0),
-+	GATE(sdmmc0, "sdmmc0", "aclk133", GATE_IP_FSYS, 5,
-+			0, 0),
-+	GATE(sdmmc1, "sdmmc1", "aclk133", GATE_IP_FSYS, 6,
-+			0, 0),
-+	GATE(sdmmc2, "sdmmc2", "aclk133", GATE_IP_FSYS, 7,
-+			0, 0),
-+	GATE(sdmmc3, "sdmmc3", "aclk133", GATE_IP_FSYS, 8,
-+			0, 0),
-+	GATE(uart0, "uart0", "aclk100", GATE_IP_PERIL, 0,
-+			0, 0),
-+	GATE(uart1, "uart1", "aclk100", GATE_IP_PERIL, 1,
-+			0, 0),
-+	GATE(uart2, "uart2", "aclk100", GATE_IP_PERIL, 2,
-+			0, 0),
-+	GATE(uart3, "uart3", "aclk100", GATE_IP_PERIL, 3,
-+			0, 0),
-+	GATE(uart4, "uart4", "aclk100", GATE_IP_PERIL, 4,
-+			0, 0),
-+	GATE(i2c0, "i2c0", "aclk100", GATE_IP_PERIL, 6,
-+			0, 0),
-+	GATE(i2c1, "i2c1", "aclk100", GATE_IP_PERIL, 7,
-+			0, 0),
-+	GATE(i2c2, "i2c2", "aclk100", GATE_IP_PERIL, 8,
-+			0, 0),
-+	GATE(i2c3, "i2c3", "aclk100", GATE_IP_PERIL, 9,
-+			0, 0),
-+	GATE(i2c4, "i2c4", "aclk100", GATE_IP_PERIL, 10,
-+			0, 0),
-+	GATE(i2c5, "i2c5", "aclk100", GATE_IP_PERIL, 11,
-+			0, 0),
-+	GATE(i2c6, "i2c6", "aclk100", GATE_IP_PERIL, 12,
-+			0, 0),
-+	GATE(i2c7, "i2c7", "aclk100", GATE_IP_PERIL, 13,
-+			0, 0),
-+	GATE(i2c_hdmi, "i2c-hdmi", "aclk100", GATE_IP_PERIL, 14,
-+			0, 0),
-+	GATE(spi0, "spi0", "aclk100", GATE_IP_PERIL, 16,
-+			0, 0),
-+	GATE(spi1, "spi1", "aclk100", GATE_IP_PERIL, 17,
-+			0, 0),
-+	GATE(spi2, "spi2", "aclk100", GATE_IP_PERIL, 18,
-+			0, 0),
-+	GATE(i2s1, "i2s1", "aclk100", GATE_IP_PERIL, 20,
-+			0, 0),
-+	GATE(i2s2, "i2s2", "aclk100", GATE_IP_PERIL, 21,
-+			0, 0),
-+	GATE(pcm1, "pcm1", "aclk100", GATE_IP_PERIL, 22,
-+			0, 0),
-+	GATE(pcm2, "pcm2", "aclk100", GATE_IP_PERIL, 23,
-+			0, 0),
-+	GATE(spdif, "spdif", "aclk100", GATE_IP_PERIL, 26,
-+			0, 0),
-+	GATE(ac97, "ac97", "aclk100", GATE_IP_PERIL, 27,
-+			0, 0),
+ /*
+@@ -757,7 +863,10 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
+ 	case pll_4600:
+ 	case pll_4650:
+ 	case pll_4650c:
+-		init.ops = &samsung_pll46xx_clk_ops;
++		if (!pll->rate_table)
++			init.ops = &samsung_pll46xx_clk_min_ops;
++		else
++			init.ops = &samsung_pll46xx_clk_ops;
+ 		break;
+ 	default:
+ 		pr_warn("%s: Unknown pll type for pll clk %s\n",
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index 7de5e3e..53847e0 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -51,6 +51,28 @@ enum samsung_pll_type {
+ 		.afc	=	(_afc),				\
+ 	}
+ 
++#define PLL_4600_RATE(_rate, _m, _p, _s, _k, _vsel)		\
++	{							\
++		.rate	=	(_rate),			\
++		.mdiv	=	(_m),				\
++		.pdiv	=	(_p),				\
++		.sdiv	=	(_s),				\
++		.kdiv	=	(_k),				\
++		.vsel	=	(_vsel),			\
++	}
++
++#define PLL_4650_RATE(_rate, _m, _p, _s, _k, _mfr, _mrr, _vsel)	\
++	{							\
++		.rate	=	(_rate),			\
++		.mdiv	=	(_m),				\
++		.pdiv	=	(_p),				\
++		.sdiv	=	(_s),				\
++		.kdiv	=	(_k),				\
++		.mfr	=	(_mfr),				\
++		.mrr	=	(_mrr),				\
++		.vsel	=	(_vsel),			\
++	}
++
+ /* NOTE: Rate table should be kept sorted in descending order. */
+ 
+ struct samsung_pll_rate_table {
+@@ -60,6 +82,9 @@ struct samsung_pll_rate_table {
+ 	unsigned int sdiv;
+ 	unsigned int kdiv;
+ 	unsigned int afc;
++	unsigned int mfr;
++	unsigned int mrr;
++	unsigned int vsel;
  };
  
- /* list of gate clocks supported in exynos4210 soc */
-@@ -816,13 +799,18 @@ static struct samsung_gate_clock exynos4210_gate_clks[] __initdata = {
- 			SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
- 	GATE(sclk_mixer, "sclk_mixer", "mout_mixer", SRC_MASK_TV, 4, 0, 0),
- 	GATE(sclk_dac, "sclk_dac", "mout_dac", SRC_MASK_TV, 8, 0, 0),
--	GATE_A(tsadc, "tsadc", "aclk100", GATE_IP_PERIL, 15, 0, 0, "adc"),
--	GATE_A(mct, "mct", "aclk100", E4210_GATE_IP_PERIR, 13, 0, 0, "mct"),
--	GATE_A(wdt, "watchdog", "aclk100", E4210_GATE_IP_PERIR, 14, 0, 0, "watchdog"),
--	GATE_A(rtc, "rtc", "aclk100", E4210_GATE_IP_PERIR, 15, 0, 0, "rtc"),
--	GATE_A(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16, 0, 0, "keypad"),
--	GATE_DA(sclk_fimd1, "exynos4-fb.1", "sclk_fimd1", "div_fimd1",
--			E4210_SRC_MASK_LCD1, 0, CLK_SET_RATE_PARENT, 0, "sclk_fimd"),
-+	GATE(tsadc, "tsadc", "aclk100", GATE_IP_PERIL, 15,
-+			0, 0),
-+	GATE(mct, "mct", "aclk100", E4210_GATE_IP_PERIR, 13,
-+			0, 0),
-+	GATE(wdt, "watchdog", "aclk100", E4210_GATE_IP_PERIR, 14,
-+			0, 0),
-+	GATE(rtc, "rtc", "aclk100", E4210_GATE_IP_PERIR, 15,
-+			0, 0),
-+	GATE(keyif, "keyif", "aclk100", E4210_GATE_IP_PERIR, 16,
-+			0, 0),
-+	GATE(sclk_fimd1, "sclk_fimd1", "div_fimd1", E4210_SRC_MASK_LCD1, 0,
-+			CLK_SET_RATE_PARENT, 0),
- 	GATE(tmu_apbif, "tmu_apbif", "aclk100", E4210_GATE_IP_PERIR, 17, 0, 0),
- };
- 
-@@ -846,10 +834,11 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 			SRC_MASK_FSYS, 24, CLK_SET_RATE_PARENT, 0),
- 	GATE(smmu_rotator, "smmu_rotator", "aclk200",
- 			E4X12_GATE_IP_IMAGE, 4, 0, 0),
--	GATE_A(mct, "mct", "aclk100", E4X12_GATE_IP_PERIR, 13, 0, 0, "mct"),
--	GATE_A(rtc, "rtc", "aclk100", E4X12_GATE_IP_PERIR, 15, 0, 0, "rtc"),
--	GATE_A(keyif, "keyif", "aclk100",
--			E4X12_GATE_IP_PERIR, 16, 0, 0, "keypad"),
-+	GATE(mct, "mct", "aclk100", E4X12_GATE_IP_PERIR, 13,
-+			0, 0),
-+	GATE(rtc, "rtc", "aclk100", E4X12_GATE_IP_PERIR, 15,
-+			0, 0),
-+	GATE(keyif, "keyif", "aclk100", E4X12_GATE_IP_PERIR, 16, 0, 0),
- 	GATE(sclk_pwm_isp, "sclk_pwm_isp", "div_pwm_isp",
- 			E4X12_SRC_MASK_ISP, 0, CLK_SET_RATE_PARENT, 0),
- 	GATE(sclk_spi0_isp, "sclk_spi0_isp", "div_spi0_isp_pre",
-@@ -866,12 +855,11 @@ static struct samsung_gate_clock exynos4x12_gate_clks[] __initdata = {
- 			E4X12_GATE_IP_ISP, 2, 0, 0),
- 	GATE(uart_isp_sclk, "uart_isp_sclk", "sclk_uart_isp",
- 			E4X12_GATE_IP_ISP, 3, 0, 0),
--	GATE_A(wdt, "watchdog", "aclk100",
--			E4X12_GATE_IP_PERIR, 14, 0, 0, "watchdog"),
--	GATE_DA(pcm0, "samsung-pcm.0", "pcm0", "aclk100",
--			E4X12_GATE_IP_MAUDIO, 2, 0, 0, "pcm"),
--	GATE_DA(i2s0, "samsung-i2s.0", "i2s0", "aclk100",
--			E4X12_GATE_IP_MAUDIO, 3, 0, 0, "iis"),
-+	GATE(wdt, "watchdog", "aclk100", E4X12_GATE_IP_PERIR, 14, 0, 0),
-+	GATE(pcm0, "pcm0", "aclk100", E4X12_GATE_IP_MAUDIO, 2,
-+			0, 0),
-+	GATE(i2s0, "i2s0", "aclk100", E4X12_GATE_IP_MAUDIO, 3,
-+			0, 0),
- 	GATE(fimc_isp, "isp", "aclk200", E4X12_GATE_ISP0, 0,
- 			CLK_IGNORE_UNUSED | CLK_GET_RATE_NOCACHE, 0),
- 	GATE(fimc_drc, "drc", "aclk200", E4X12_GATE_ISP0, 1,
-@@ -1001,14 +989,14 @@ static struct of_device_id ext_clk_match[] __initdata = {
- };
- 
- static struct samsung_pll_clock exynos4_plls[nr_plls] __initdata = {
--	[apll] = PLL_A(pll_35xx, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
--		APLL_CON0, "fout_apll", NULL),
--	[mpll] = PLL_A(pll_35xx, fout_mpll, "fout_mpll", "fin_pll",
--		E4X12_MPLL_LOCK, E4X12_MPLL_CON0, "fout_mpll", NULL),
--	[epll] = PLL_A(pll_36xx, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
--		EPLL_CON0, "fout_epll", NULL),
--	[vpll] = PLL_A(pll_36xx, fout_vpll, "fout_vpll", "fin_pll", VPLL_LOCK,
--		VPLL_CON0, "fout_vpll", NULL),
-+	[apll] = PLL(pll_35xx, fout_apll, "fout_apll", "fin_pll",
-+			APLL_LOCK, APLL_CON0, NULL),
-+	[mpll] = PLL(pll_35xx, fout_mpll, "fout_mpll", "fin_pll",
-+			E4X12_MPLL_LOCK, E4X12_MPLL_CON0, NULL),
-+	[epll] = PLL(pll_36xx, fout_epll, "fout_epll", "fin_pll",
-+			EPLL_LOCK, EPLL_CON0, NULL),
-+	[vpll] = PLL(pll_36xx, fout_vpll, "fout_vpll", "fin_pll",
-+			VPLL_LOCK, VPLL_CON0, NULL),
- };
- 
- /* register exynos4 clocks */
+ extern struct clk *samsung_clk_register_pll6552(const char *name,
 -- 
 1.8.3.2
