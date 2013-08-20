@@ -1,50 +1,67 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 00/16] Exynos clock clean-up for 3.12
-Date: Tue, 20 Aug 2013 19:31:27 +0200
-Message-ID: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 03/16] clocksource: samsung_pwm_timer: Get clock from device
+ tree
+Date: Tue, 20 Aug 2013 19:31:30 +0200
+Message-ID: <1377019903-14614-4-git-send-email-t.figa@samsung.com>
+References: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.w1.samsung.com ([210.118.77.14]:37421 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751420Ab3HTRcA (ORCPT
+	with ESMTP id S1751420Ab3HTRcB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 13:32:00 -0400
+	Tue, 20 Aug 2013 13:32:01 -0400
+In-reply-to: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This series fixes various functional and non-functional (e.g. stylistic)
-issues in Common Clock Framework drivers for Samsung Exynos SoCs. See
-particular patches for more detailed descriptions.
+When booting with device tree static clkdev aliases should not be used.
+This patch modifies the samsung_pwm_timer driver to use DT-based clock
+lookup when booting with device tree.
 
-Tomasz Figa (16):
-  pwm: samsung: Update DT bindings documentation to cover clocks
-  ARM: dts: exynos4: Specify PWM clocks in PWM node
-  clocksource: samsung_pwm_timer: Get clock from device tree
-  clk: samsung: exynos4: Use separate aliases for cpufreq related clocks
-  clk: samsung: Modify _get_rate() helper to use __clk_lookup()
-  clk: samsung: exynos4: Remove unused static clkdev aliases
-  clk: samsung: exynos4: Remove checks for DT node
-  clk: samsung: exynos4: Rename exynos4_plls to exynos4x12_plls
-  clk: samsung: pll: Use new registration method for PLL45xx
-  clk: samsung: pll: Add support for rate configuration of PLL45xx
-  clk: samsung: pll: Use new registration method for PLL46xx
-  clk: samsung: pll: Add support for rate configuration of PLL46xx
-  clk: samsung: exynos4: Reorder registration of mout_vpllsrc
-  clk: samsung: exynos4: Register PLL rate tables for Exynos4210
-  clk: samsung: exynos4: Register PLL rate tables for Exynos4x12
-  clk: samsung: exynos5250: Simplify registration of PLL rate tables
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/clocksource/samsung_pwm_timer.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
- .../devicetree/bindings/pwm/pwm-samsung.txt        |  12 +
- arch/arm/boot/dts/exynos4.dtsi                     |   2 +
- drivers/clk/samsung/clk-exynos4.c                  | 539 ++++++++++++---------
- drivers/clk/samsung/clk-exynos5250.c               |  12 +-
- drivers/clk/samsung/clk-exynos5440.c               |   2 +-
- drivers/clk/samsung/clk-pll.c                      | 284 ++++++++---
- drivers/clk/samsung/clk-pll.h                      |  59 ++-
- drivers/clk/samsung/clk.c                          |  10 +-
- drivers/clocksource/samsung_pwm_timer.c            |  12 +-
- 9 files changed, 601 insertions(+), 331 deletions(-)
-
+diff --git a/drivers/clocksource/samsung_pwm_timer.c b/drivers/clocksource/samsung_pwm_timer.c
+index ac60f8b..ab29476 100644
+--- a/drivers/clocksource/samsung_pwm_timer.c
++++ b/drivers/clocksource/samsung_pwm_timer.c
+@@ -368,10 +368,6 @@ static void __init samsung_clocksource_init(void)
+ 
+ static void __init samsung_timer_resources(void)
+ {
+-	pwm.timerclk = clk_get(NULL, "timers");
+-	if (IS_ERR(pwm.timerclk))
+-		panic("failed to get timers clock for timer");
+-
+ 	clk_prepare_enable(pwm.timerclk);
+ 
+ 	pwm.tcnt_max = (1UL << pwm.variant.bits) - 1;
+@@ -416,6 +412,10 @@ void __init samsung_pwm_clocksource_init(void __iomem *base,
+ 	memcpy(&pwm.variant, variant, sizeof(pwm.variant));
+ 	memcpy(pwm.irq, irqs, SAMSUNG_PWM_NUM * sizeof(*irqs));
+ 
++	pwm.timerclk = clk_get(NULL, "timers");
++	if (IS_ERR(pwm.timerclk))
++		panic("failed to get timers clock for timer");
++
+ 	_samsung_pwm_clocksource_init();
+ }
+ 
+@@ -447,6 +447,10 @@ static void __init samsung_pwm_alloc(struct device_node *np,
+ 		return;
+ 	}
+ 
++	pwm.timerclk = of_clk_get_by_name(np, "timers");
++	if (IS_ERR(pwm.timerclk))
++		panic("failed to get timers clock for timer");
++
+ 	_samsung_pwm_clocksource_init();
+ }
+ 
 -- 
 1.8.3.2
