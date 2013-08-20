@@ -1,121 +1,54 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v2 2/5] [media] exynos-mscl: Add core functionality for
- the M-Scaler driver
-Date: Tue, 20 Aug 2013 08:27:57 +0200
-Message-ID: <52130C6D.6010601@xs4all.nl>
-References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com> <1376909932-23644-3-git-send-email-shaik.ameer@samsung.com> <52121844.3030300@xs4all.nl> <CAOD6ATqTz+xTqwXe0PvQq43fk4AiAdcMy-RwbOczU++dXZOyyQ@mail.gmail.com>
+From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: RE: RE: [PATCH v2 0/8] Common Clock Framework support for Samsung
+ S3C64xx
+Date: Tue, 20 Aug 2013 16:09:26 +0900
+Message-ID: <18f101ce9d74$34e23450$9ea69cf0$@org>
+References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com>
+ <2956608.dyLtqySMuJ@amdc1227> <20130816210203.4443.43511@quantum>
+ <3890424.fJfWX17mED@flatron> <158901ce9b34$c0ac8720$42059560$@org>
+ <20130820002258.4443.34197@quantum>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <CAOD6ATqTz+xTqwXe0PvQq43fk4AiAdcMy-RwbOczU++dXZOyyQ@mail.gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Arun Kumar K <arun.kk@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20130820002258.4443.34197@quantum>
+Content-language: ko
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Mike Turquette' <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Mark Brown' <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, 'Olof Johansson' <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Sylwester Nawrocki' <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/20/2013 07:43 AM, Shaik Ameer Basha wrote:
-> + linux-media, linux-samsung-soc
+Mike Turquette wrote:
 > 
-> Hi Hans,
-> 
-> Thanks for the review.
-> Will address all your comments in v3.
-> 
-> I have only one doubt regarding try_ctrl... (addressed inline)
-> 
-> 
-> On Mon, Aug 19, 2013 at 6:36 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>
->> On 08/19/2013 12:58 PM, Shaik Ameer Basha wrote:
->>> This patch adds the core functionality for the M-Scaler driver.
->>
->> Some more comments below...
->>
->>>
->>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->>> ---
->>>  drivers/media/platform/exynos-mscl/mscl-core.c | 1312 ++++++++++++++++++++++++
->>>  drivers/media/platform/exynos-mscl/mscl-core.h |  549 ++++++++++
->>>  2 files changed, 1861 insertions(+)
->>>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.c
->>>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.h
->>>
->>> diff --git a/drivers/media/platform/exynos-mscl/mscl-core.c b/drivers/media/platform/exynos-mscl/mscl-core.c
->>> new file mode 100644
->>> index 0000000..4a3a851
->>> --- /dev/null
->>> +++ b/drivers/media/platform/exynos-mscl/mscl-core.c
->>> @@ -0,0 +1,1312 @@
->>> +/*
->>> + * Copyright (c) 2013 - 2014 Samsung Electronics Co., Ltd.
->>> + *           http://www.samsung.com
->>> + *
->>> + * Samsung EXYNOS5 SoC series M-Scaler driver
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License as published
->>> + * by the Free Software Foundation, either version 2 of the License,
->>> + * or (at your option) any later version.
->>> + */
->>> +
->>> +#include <linux/clk.h>
->>> +#include <linux/interrupt.h>
-> 
-> [snip]
-> 
->>> +
->>> +static int __mscl_s_ctrl(struct mscl_ctx *ctx, struct v4l2_ctrl *ctrl)
->>> +{
->>> +     struct mscl_dev *mscl = ctx->mscl_dev;
->>> +     struct mscl_variant *variant = mscl->variant;
->>> +     unsigned int flags = MSCL_DST_FMT | MSCL_SRC_FMT;
->>> +     int ret = 0;
->>> +
->>> +     if (ctrl->flags & V4L2_CTRL_FLAG_INACTIVE)
->>> +             return 0;
->>
->> Why would you want to do this check?
-> 
-> Will remove this. seems no such check is required for this driver.
-> 
->>
->>> +
->>> +     switch (ctrl->id) {
->>> +     case V4L2_CID_HFLIP:
->>> +             ctx->hflip = ctrl->val;
->>> +             break;
->>> +
->>> +     case V4L2_CID_VFLIP:
->>> +             ctx->vflip = ctrl->val;
->>> +             break;
->>> +
->>> +     case V4L2_CID_ROTATE:
->>> +             if ((ctx->state & flags) == flags) {
->>> +                     ret = mscl_check_scaler_ratio(variant,
->>> +                                     ctx->s_frame.crop.width,
->>> +                                     ctx->s_frame.crop.height,
->>> +                                     ctx->d_frame.crop.width,
->>> +                                     ctx->d_frame.crop.height,
->>> +                                     ctx->ctrls_mscl.rotate->val);
->>> +
->>> +                     if (ret)
->>> +                             return -EINVAL;
->>> +             }
->>
->> I think it would be good if the try_ctrl op is implemented so you can call
->> VIDIOC_EXT_TRY_CTRLS in the application to check if the ROTATE control can be
->> set.
-> 
-> * @try_ctrl: Test whether the control's value is valid. Only relevant when
-> * the usual min/max/step checks are not sufficient.
-> 
-> As we support only 0,90,270 and the min, max and step can address these values,
-> does it really relevant to have try_ctrl op here ???
 
-Well, you seem to have an additional mscl_check_scaler_ratio check here that can
-make it fail, in other words: the min/max/step checks aren't sufficient.
+[...]
 
-Regards,
+> > OK, if new branch is ready, I will replace with that or if re-merge is
+> > required, I will. Either way, I'm fine and can handle. Mike, let me know
+> > your choice :-)
+> 
+> Since I have already published it let's just go with the delta patch.  I
+> can create another stable branch named clk-next-s3c64xx-delta that just
+> has this patch on top of clk-next-s3c64xx OR I can apply it on top of
+> the existing clk-next-s3c64xx and re-merge it.
+> 
+Sounds good to me. If the branch for the delta is ready, let me know.
 
-	Hans
+> I'm trying to think on whether there are any weird git corner cases with
+> re-merging clk-next-s3c64xx. Let me know if re-merging is somehow unsafe
+> (makes history weird, or whatever).
+> 
+I don't think it causes some problem.
+
+> Let me know what option is better for you. I'll publish as soon as I get
+> the delta patch. Apologies again for creating some extra work!
+> 
+No problem.
+
+Thanks,
+Kukjin
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
