@@ -1,162 +1,128 @@
 From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v2 2/5] [media] exynos-mscl: Add core functionality for
- the M-Scaler driver
-Date: Tue, 20 Aug 2013 11:13:20 +0530
-Message-ID: <CAOD6ATqTz+xTqwXe0PvQq43fk4AiAdcMy-RwbOczU++dXZOyyQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Exynos5 M-Scaler Driver
+Date: Tue, 20 Aug 2013 11:15:28 +0530
+Message-ID: <CAOD6ATpvMcqQKuX1DHuNgNn0QD9QPxWM39iLRzM41r0J74oYLA@mail.gmail.com>
 References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
-	<1376909932-23644-3-git-send-email-shaik.ameer@samsung.com>
-	<52121844.3030300@xs4all.nl>
+	<032601ce9cd7$63666640$2a3332c0$%dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f42.google.com ([209.85.128.42]:45275 "EHLO
-	mail-qe0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751162Ab3HTFnV (ORCPT
+Received: from mail-qe0-f41.google.com ([209.85.128.41]:54641 "EHLO
+	mail-qe0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751162Ab3HTFp2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 01:43:21 -0400
-In-Reply-To: <52121844.3030300@xs4all.nl>
+	Tue, 20 Aug 2013 01:45:28 -0400
+In-Reply-To: <032601ce9cd7$63666640$2a3332c0$%dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Arun Kumar K <arun.kk@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Arun Kumar K <arun.kk@samsung.com>
 
-+ linux-media, linux-samsung-soc
-
-Hi Hans,
+Hi Inki Dae,
 
 Thanks for the review.
-Will address all your comments in v3.
 
-I have only one doubt regarding try_ctrl... (addressed inline)
-
-
-On Mon, Aug 19, 2013 at 6:36 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+On Mon, Aug 19, 2013 at 5:56 PM, Inki Dae <inki.dae@samsung.com> wrote:
 >
-> On 08/19/2013 12:58 PM, Shaik Ameer Basha wrote:
-> > This patch adds the core functionality for the M-Scaler driver.
 >
-> Some more comments below...
+>> -----Original Message-----
+>> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+>> owner@vger.kernel.org] On Behalf Of Shaik Ameer Basha
+>> Sent: Monday, August 19, 2013 7:59 PM
+>> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+>> Cc: s.nawrocki@samsung.com; posciak@google.com; arun.kk@samsung.com;
+>> shaik.ameer@samsung.com
+>> Subject: [PATCH v2 0/5] Exynos5 M-Scaler Driver
+>>
+>> This patch adds support for M-Scaler (M2M Scaler) device which is a
+>> new device for scaling, blending, color fill  and color space
+>> conversion on EXYNOS5 SoCs.
 >
-> >
-> > Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> > ---
-> >  drivers/media/platform/exynos-mscl/mscl-core.c | 1312 ++++++++++++++++++++++++
-> >  drivers/media/platform/exynos-mscl/mscl-core.h |  549 ++++++++++
-> >  2 files changed, 1861 insertions(+)
-> >  create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.c
-> >  create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.h
-> >
-> > diff --git a/drivers/media/platform/exynos-mscl/mscl-core.c b/drivers/media/platform/exynos-mscl/mscl-core.c
-> > new file mode 100644
-> > index 0000000..4a3a851
-> > --- /dev/null
-> > +++ b/drivers/media/platform/exynos-mscl/mscl-core.c
-> > @@ -0,0 +1,1312 @@
-> > +/*
-> > + * Copyright (c) 2013 - 2014 Samsung Electronics Co., Ltd.
-> > + *           http://www.samsung.com
-> > + *
-> > + * Samsung EXYNOS5 SoC series M-Scaler driver
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License as published
-> > + * by the Free Software Foundation, either version 2 of the License,
-> > + * or (at your option) any later version.
-> > + */
-> > +
-> > +#include <linux/clk.h>
-> > +#include <linux/interrupt.h>
-
-[snip]
-
-> > +
-> > +static int __mscl_s_ctrl(struct mscl_ctx *ctx, struct v4l2_ctrl *ctrl)
-> > +{
-> > +     struct mscl_dev *mscl = ctx->mscl_dev;
-> > +     struct mscl_variant *variant = mscl->variant;
-> > +     unsigned int flags = MSCL_DST_FMT | MSCL_SRC_FMT;
-> > +     int ret = 0;
-> > +
-> > +     if (ctrl->flags & V4L2_CTRL_FLAG_INACTIVE)
-> > +             return 0;
+> All Exynos5 SoCs really have this IP? It seems that only Exynos5420 and
+> maybe Exynos5410 have this IP, NOT Exynos5250. Please check it again and
+> describe it surely over the all patch series.
 >
-> Why would you want to do this check?
+> Thanks,
+> Inki Dae
 
-Will remove this. seems no such check is required for this driver.
-
->
-> > +
-> > +     switch (ctrl->id) {
-> > +     case V4L2_CID_HFLIP:
-> > +             ctx->hflip = ctrl->val;
-> > +             break;
-> > +
-> > +     case V4L2_CID_VFLIP:
-> > +             ctx->vflip = ctrl->val;
-> > +             break;
-> > +
-> > +     case V4L2_CID_ROTATE:
-> > +             if ((ctx->state & flags) == flags) {
-> > +                     ret = mscl_check_scaler_ratio(variant,
-> > +                                     ctx->s_frame.crop.width,
-> > +                                     ctx->s_frame.crop.height,
-> > +                                     ctx->d_frame.crop.width,
-> > +                                     ctx->d_frame.crop.height,
-> > +                                     ctx->ctrls_mscl.rotate->val);
-> > +
-> > +                     if (ret)
-> > +                             return -EINVAL;
-> > +             }
->
-> I think it would be good if the try_ctrl op is implemented so you can call
-> VIDIOC_EXT_TRY_CTRLS in the application to check if the ROTATE control can be
-> set.
-
-* @try_ctrl: Test whether the control's value is valid. Only relevant when
-* the usual min/max/step checks are not sufficient.
-
-As we support only 0,90,270 and the min, max and step can address these values,
-does it really relevant to have try_ctrl op here ???
+True, not all exynos5 series SoCs has this IP.
+Will change the description and the binding accordingly.
 
 Regards,
 Shaik Ameer Basha
-
 >
-> > +
-> > +             ctx->rotation = ctrl->val;
-> > +             break;
-> > +
-> > +     case V4L2_CID_ALPHA_COMPONENT:
-> > +             ctx->d_frame.alpha = ctrl->val;
-> > +             break;
-> > +     }
-> > +
-> > +     ctx->state |= MSCL_PARAMS;
-> > +     return 0;
-> > +}
-> > +
-> > +static int mscl_s_ctrl(struct v4l2_ctrl *ctrl)
-> > +{
-> > +     struct mscl_ctx *ctx = ctrl_to_ctx(ctrl);
-> > +     unsigned long flags;
-> > +     int ret;
-> > +
-> > +     spin_lock_irqsave(&ctx->mscl_dev->slock, flags);
-> > +     ret = __mscl_s_ctrl(ctx, ctrl);
-> > +     spin_unlock_irqrestore(&ctx->mscl_dev->slock, flags);
-> > +
-> > +     return ret;
-> > +}
-> > +
-> > +static const struct v4l2_ctrl_ops mscl_ctrl_ops = {
-> > +     .s_ctrl = mscl_s_ctrl,
-> > +};
+>>
+>> This device supports the following as key features.
+>>     input image format
+>>         - YCbCr420 2P(UV/VU), 3P
+>>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+>>         - YCbCr444 2P(UV,VU), 3P
+>>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+>>         - Pre-multiplexed ARGB8888, L8A8 and L8
+>>     output image format
+>>         - YCbCr420 2P(UV/VU), 3P
+>>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+>>         - YCbCr444 2P(UV,VU), 3P
+>>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+>>         - Pre-multiplexed ARGB8888
+>>     input rotation
+>>         - 0/90/180/270 degree, X/Y/XY Flip
+>>     scale ratio
+>>         - 1/4 scale down to 16 scale up
+>>     color space conversion
+>>         - RGB to YUV / YUV to RGB
+>>     Size
+>>         - Input : 16x16 to 8192x8192
+>>         - Output:   4x4 to 8192x8192
+>>     alpha blending, color fill
+>>
+>> Rebased on:
+>> -----------
+>> git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
+>>
+>> Changes from v1:
+>> ---------------
+>> 1] Split the previous single patch into multiple patches.
+>> 2] Added DT binding documentation.
+>> 3] Removed the unnecessary header file inclusions.
+>> 4] Fix the condition check in mscl_prepare_address for swapping cb/cr
+>> addresses.
+>>
+>> Shaik Ameer Basha (5):
+>>   [media] exynos-mscl: Add new driver for M-Scaler
+>>   [media] exynos-mscl: Add core functionality for the M-Scaler driver
+>>   [media] exynos-mscl: Add m2m functionality for the M-Scaler driver
+>>   [media] exynos-mscl: Add DT bindings for M-Scaler driver
+>>   [media] exynos-mscl: Add Makefile for M-Scaler driver
+>>
+>>  .../devicetree/bindings/media/exynos5-mscl.txt     |   34 +
+>>  drivers/media/platform/Kconfig                     |    8 +
+>>  drivers/media/platform/Makefile                    |    1 +
+>>  drivers/media/platform/exynos-mscl/Makefile        |    3 +
+>>  drivers/media/platform/exynos-mscl/mscl-core.c     | 1312
+>> ++++++++++++++++++++
+>>  drivers/media/platform/exynos-mscl/mscl-core.h     |  549 ++++++++
+>>  drivers/media/platform/exynos-mscl/mscl-m2m.c      |  763 ++++++++++++
+>>  drivers/media/platform/exynos-mscl/mscl-regs.c     |  318 +++++
+>>  drivers/media/platform/exynos-mscl/mscl-regs.h     |  282 +++++
+>>  9 files changed, 3270 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/exynos5-
+>> mscl.txt
+>>  create mode 100644 drivers/media/platform/exynos-mscl/Makefile
+>>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.c
+>>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-core.h
+>>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-m2m.c
+>>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-regs.c
+>>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-regs.h
+>>
+>> --
+>> 1.7.9.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
-> Thanks for the patches!
->
-> Regards,
->
->         Hans
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-media" in
 > the body of a message to majordomo@vger.kernel.org
