@@ -1,58 +1,65 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] irqchip: gic: Allow setting affinity to offline CPUs
-Date: Tue, 20 Aug 2013 18:11:10 +0200
-Message-ID: <1377015070-26320-1-git-send-email-t.figa@samsung.com>
+Subject: [PATCH] pinctrl: samsung: Parse pin groups before calling
+ pinctrl_register()
+Date: Tue, 20 Aug 2013 18:16:21 +0200
+Message-ID: <1377015381-26455-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:39871 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751391Ab3HTQLZ (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41820 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751519Ab3HTQQh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 12:11:25 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
+	Tue, 20 Aug 2013 12:16:37 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MRU00F5Z7MZB1C0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Aug 2013 17:11:23 +0100 (BST)
+ 17 2011)) with ESMTP id <0MRU00IWK7VFGVC0@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 20 Aug 2013 17:16:35 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Sometimes it is necessary to fix interrupt affinity to an offline CPU,
-for example in initialization of local timers. This patch modifies
-.set_affinity() operation of irq-gic driver to fall back to any possible
-CPU if no online CPU can be found in requested CPU mask.
+Calling pinctrl_register() means that the driver is fully initialized
+and might accept pinmux/pinconf requests, so pin groups must be parsed
+before.
 
-This fixes broken Exynos4210 support since commit
-	ee98d27df6 ARM: EXYNOS4: Divorce mct from local timer API
-caused by timer initialization code unable to set affinity for local
-timer interrupts.
+This patch fixes this problem by moving device tree parsing before call
+to pinctrl_register(). In addition, this fixes support for hogs on
+pin controllers handled by pinctrl-samsung driver.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/irqchip/irq-gic.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/pinctrl/pinctrl-samsung.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index ee7c503..5f0797e 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -250,6 +250,15 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- 	unsigned int cpu = cpumask_any_and(mask_val, cpu_online_mask);
- 	u32 val, mask, bit;
+diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+index a7fa9e2..439f2ef 100644
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@ -767,6 +767,10 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
+ 		}
+ 	}
  
-+	/*
-+	 * If no online CPU could be found, fall back to any possible CPU.
-+	 *
-+	 * This is to allow setting affinity of some interrupts to a CPU
-+	 * before it is marked as online, i.e. local timer initialization.
-+	 */
-+	if (cpu >= nr_cpu_ids)
-+		cpu = cpumask_any_and(mask_val, cpu_possible_mask);
++	ret = samsung_pinctrl_parse_dt(pdev, drvdata);
++	if (ret)
++		return ret;
 +
- 	if (cpu >= NR_GIC_CPU_IF || cpu >= nr_cpu_ids)
- 		return -EINVAL;
+ 	drvdata->pctl_dev = pinctrl_register(ctrldesc, &pdev->dev, drvdata);
+ 	if (!drvdata->pctl_dev) {
+ 		dev_err(&pdev->dev, "could not register pinctrl driver\n");
+@@ -784,12 +788,6 @@ static int samsung_pinctrl_register(struct platform_device *pdev,
+ 		pinctrl_add_gpio_range(drvdata->pctl_dev, &pin_bank->grange);
+ 	}
+ 
+-	ret = samsung_pinctrl_parse_dt(pdev, drvdata);
+-	if (ret) {
+-		pinctrl_unregister(drvdata->pctl_dev);
+-		return ret;
+-	}
+-
+ 	return 0;
+ }
  
 -- 
 1.8.3.2
