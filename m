@@ -1,97 +1,61 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v6 02/13] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS
- device tree bindings documentation
-Date: Tue, 20 Aug 2013 13:59:46 +0200
-Message-ID: <52135A32.70305@samsung.com>
-References: <1376644845-10422-1-git-send-email-arun.kk@samsung.com>
- <1376644845-10422-3-git-send-email-arun.kk@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: fix PL330 MDMA1 address in DT for Universal
+ C210 board
+Date: Tue, 20 Aug 2013 14:13:04 +0200
+Message-ID: <1448881.nvIAFtzzXr@amdc1227>
+References: <8667689.9TcYbn9cHO@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:28632 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751033Ab3HTL7u (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:28841 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750934Ab3HTMNI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 07:59:50 -0400
-In-reply-to: <1376644845-10422-3-git-send-email-arun.kk@samsung.com>
+	Tue, 20 Aug 2013 08:13:08 -0400
+In-reply-to: <8667689.9TcYbn9cHO@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, devicetree@vger.kernel.org
 
-Cc: Pawel, Kumar
+Hi Bart,
 
-On 08/16/2013 11:20 AM, Arun Kumar K wrote:
-> The patch adds the DT binding documentation for Samsung
-> Exynos5 SoC series imaging subsystem (FIMC-IS).
+On Tuesday 20 of August 2013 13:22:45 Bartlomiej Zolnierkiewicz wrote:
+> Revision 0 of Exynos4210 SoC (used on Universal C210 board) requires
+> 'secure' PL330 MDMA1 address (0x12840000) instead of 'non-secure' one
+> (0x12850000). Fix it by overriding the default PL330 MDMA1 address in
+> exynos4210-universal_c210.dts.
 > 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> This is a Device Tree (DT) version of commit 91280e7 ("ARM: EXYNOS:
+> PL330 MDMA1 fix for revision 0 of Exynos4210 SOC") and fixes recent
+> regression caused by conversion to DT-only setup on ARM EXYNOS.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  .../devicetree/bindings/media/exynos5-fimc-is.txt  |   47 ++++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
-> new file mode 100644
-> index 0000000..bc279b4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
-> @@ -0,0 +1,47 @@
-> +Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
-> +------------------------------------------------------
+> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> b/arch/arm/boot/dts/exynos4210-universal_c210.dts index 889cdad..d2e3f5f
+> 100644
+> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> @@ -350,3 +350,7 @@
+>  		status = "okay";
+>  	};
+>  };
 > +
-> +The camera subsystem on Samsung Exynos5 SoC has some changes relative
-> +to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
-> +FIMC-LITE IPs but has a much improved version of FIMC-IS which can
-> +handle sensor controls and camera post-processing operations. The
-> +Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
-> +post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
-> +dedicated scalers (SCC and SCP).
-> +
-> +fimc-is node
-> +------------
-> +
-> +Required properties:
-> +
-> +- compatible        : must be "samsung,exynos5250-fimc-is"
-> +- reg               : physical base address and size of the memory mapped
-> +                      registers
-> +- interrupt-parent  : parent interrupt controller
-> +- interrupts        : fimc-is interrupt to the parent interrupt controller
-> +- clocks            : list of clock specifiers, corresponding to entries in
-> +                      clock-names property;
-> +- clock-names       : must contain "isp", "mcu_isp", "isp_div0", "isp_div1",
-> +                      "isp_divmpwm", "mcu_isp_div0", "mcu_isp_div1" entries,
-> +                      matching entries in the clocks property.
-> +- samsung,pmu       : phandle to the fimc-is pmu node describing the register
-> +                      base and size for FIMC-IS PMU.
+> +&mdma1 {
+> +	reg = <0x12840000 0x1000>;
+> +};
 
-As this is a phandle to the whole SoC Power Management Unit I would amend
-this to something like:
+Acked-by: Tomasz Figa <t.figa@samsung.com>
 
-- samsung,pmu       : phandle to the Power Management Unit (PMU) node.
+As a side note for other reviewers, Universal C210 is the only board based 
+on Exynos4210 rev0, so board-level dts is the right place for such 
+override.
 
-> +
-> +i2c-isp (ISP I2C bus controller) nodes
-> +------------------------------------------
-> +
-> +Required properties:
-> +
-> +- compatible	: should be "samsung,exynos4212-i2c-isp" for Exynos4212,
-> +		  Exynos4412 and Exynos5250 SoCs;
-> +- reg		: physical base address and length of the registers set;
-> +- clocks	: must contain gate clock specifier for this controller;
-> +- clock-names	: must contain "i2c_isp" entry.
-> +
-> +For the i2c-isp node, it is required to specify a pinctrl state named "default",
-> +according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
-> +
-> +Device tree nodes of the image sensors controlled directly by the FIMC-IS
-> +firmware must be child nodes of their corresponding ISP I2C bus controller node.
-> +The data link of these image sensors must be specified using the common video
-> +interfaces bindings, defined in video-interfaces.txt.
-
-Thanks,
-Sylwester
+Best regards,
+Tomasz
