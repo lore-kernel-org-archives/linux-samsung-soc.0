@@ -1,185 +1,515 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v2 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
-Date: Tue, 20 Aug 2013 10:23:49 +0200
-Message-ID: <201308201023.50594.heiko@sntech.de>
-References: <201308141359.13872.heiko@sntech.de> <201308141400.25681.heiko@sntech.de> <20130819044811.GR32147@intel.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: RE: [PATCH v2 1/5] [media] exynos-mscl: Add new driver for M-Scaler
+Date: Tue, 20 Aug 2013 17:43:47 +0900
+Message-ID: <016f01ce9d81$6306b8d0$29142a70$%dae@samsung.com>
+References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
+ <1376909932-23644-2-git-send-email-shaik.ameer@samsung.com>
+ <032701ce9cda$5c0e55d0$142b0170$%dae@samsung.com>
+ <CAOD6ATqdW4zqaKNrWtJ9x+fR_TW2hHYMt27wAHB3py4=8G2Rww@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:53900 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751793Ab3HTIYE (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:24727 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751304Ab3HTInt convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 04:24:04 -0400
-In-Reply-To: <20130819044811.GR32147@intel.com>
+	Tue, 20 Aug 2013 04:43:49 -0400
+In-reply-to: <CAOD6ATqdW4zqaKNrWtJ9x+fR_TW2hHYMt27wAHB3py4=8G2Rww@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: kgene.kim@samsung.com, Dan Williams <djbw@fb.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-
-Hi Vinod,
-
-Am Montag, 19. August 2013, 06:48:12 schrieb Vinod Koul:
-> On Wed, Aug 14, 2013 at 02:00:25PM +0200, Heiko St=FCbner wrote:
-> > This adds a new driver to support the s3c24xx dma using the dmaengi=
-ne
-> > and makes the old one in mach-s3c24xx obsolete in the long run.
-> >=20
-> > Conceptually the s3c24xx-dma feels like a distant relative of the p=
-l08x
-> > with numerous virtual channels being mapped to a lot less physical =
-ones.
-> > The driver therefore borrows a lot from the amba-pl08x driver in th=
-is
-> > regard. Functionality-wise the driver gains a memcpy ability in add=
-ition
-> > to the slave_sg one.
->=20
-> If that is the case why cant we have this driver supported from pl08x
-> driver? If the delta is only mapping then can that be seprated or bot=
-h
-> mapping hanlded? Maybe you and Linus have already though about that?
-
-Yes we have ... As Tomasz has already written the hardware itself is ve=
-ry much=20
-different. It's only the concept of mapping virtual channels to physica=
-l=20
-channels that is somehow similar.
-
-It seems my patch message is lacking in making this clearer ;-) .
+To: 'Shaik Ameer Basha' <shaik.samsung@gmail.com>
+Cc: 'Shaik Ameer Basha' <shaik.ameer@samsung.com>, 'LMML' <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, posciak@google.com, 'Arun Kumar K' <arun.kk@samsung.com>
 
 
-> > The driver supports both the method for requesting the peripheral u=
-sed
-> > by SoCs before the S3C2443 and the different method for S3C2443 and
-> > later.
-> >=20
-> > On earlier SoCs the hardware channels usable for specific periphera=
-ls is
-> > constrainted while on later SoCs all channels can be used for any
-> > peripheral.
-> >=20
-> > Tested on a s3c2416-based board, memcpy using the dmatest module an=
-d
-> > slave_sg partially using the spi-s3c64xx driver.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> >=20
-> > +#define DISRC			(0x00)
-> > +#define DISRCC			(0x04)
-> > +#define DISRCC_INC_INCREMENT	(0 << 0)
-> > +#define DISRCC_INC_FIXED	(1 << 0)
-> > +#define DISRCC_LOC_AHB		(0 << 1)
-> > +#define DISRCC_LOC_APB		(1 << 1)
-> > +
-> > +#define DIDST			(0x08)
-> > +#define DIDSTC			(0x0C)
-> > +#define DIDSTC_INC_INCREMENT	(0 << 0)
-> > +#define DIDSTC_INC_FIXED	(1 << 0)
-> > +#define DIDSTC_LOC_AHB		(0 << 1)
-> > +#define DIDSTC_LOC_APB		(1 << 1)
-> > +#define DIDSTC_INT_TC0		(0 << 2)
-> > +#define DIDSTC_INT_RELOAD	(1 << 2)
-> > +
-> > +#define DCON			(0x10)
-> > +
-> > +#define DCON_TC_MASK		0xfffff
-> > +#define DCON_DSZ_BYTE		(0 << 20)
-> > +#define DCON_DSZ_HALFWORD	(1 << 20)
-> > +#define DCON_DSZ_WORD		(2 << 20)
-> > +#define DCON_DSZ_MASK		(3 << 20)
-> > +#define DCON_DSZ_SHIFT		20
-> > +#define DCON_AUTORELOAD		(0 << 22)
-> > +#define DCON_NORELOAD		(1 << 22)
-> > +#define DCON_HWTRIG		(1 << 23)
-> > +#define DCON_HWSRC_SHIFT	24
-> > +#define DCON_SERV_SINGLE	(0 << 27)
-> > +#define DCON_SERV_WHOLE		(1 << 27)
-> > +#define DCON_TSZ_UNIT		(0 << 28)
-> > +#define DCON_TSZ_BURST4		(1 << 28)
-> > +#define DCON_INT		(1 << 29)
-> > +#define DCON_SYNC_PCLK		(0 << 30)
-> > +#define DCON_SYNC_HCLK		(1 << 30)
-> > +#define DCON_DEMAND		(0 << 31)
-> > +#define DCON_HANDSHAKE		(1 << 31)
-> > +
-> > +#define DSTAT			(0x14)
-> > +#define DSTAT_STAT_BUSY		(1 << 20)
-> > +#define DSTAT_CURRTC_MASK	0xfffff
-> > +
-> > +#define DMASKTRIG		(0x20)
-> > +#define DMASKTRIG_STOP		(1 << 2)
-> > +#define DMASKTRIG_ON		(1 << 1)
-> > +#define DMASKTRIG_SWTRIG	(1 << 0)
-> > +
-> > +#define DMAREQSEL		(0x24)
-> > +#define DMAREQSEL_HW		(1 << 0)
->=20
-> This is proper namespacing...
 
-Hmm, I don't understand meaning of this sentence. Is it a suggestion to=
- change=20
-anything?
+> -----Original Message-----
+> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+> owner@vger.kernel.org] On Behalf Of Shaik Ameer Basha
+> Sent: Tuesday, August 20, 2013 5:07 PM
+> To: Inki Dae
+> Cc: Shaik Ameer Basha; LMML; linux-samsung-soc@vger.kernel.org;
+> cpgs@samsung.com; Sylwester Nawrocki; posciak@google.com; Arun Kumar K
+> Subject: Re: [PATCH v2 1/5] [media] exynos-mscl: Add new driver for M-
+> Scaler
+> 
+> Hi Inki Dae,
+> 
+> Thanks for the review.
+> 
+> 
+> On Mon, Aug 19, 2013 at 6:18 PM, Inki Dae <inki.dae@samsung.com> wrote:
+> > Just quick review.
+> >
+> >> -----Original Message-----
+> >> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+> >> owner@vger.kernel.org] On Behalf Of Shaik Ameer Basha
+> >> Sent: Monday, August 19, 2013 7:59 PM
+> >> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+> >> Cc: s.nawrocki@samsung.com; posciak@google.com; arun.kk@samsung.com;
+> >> shaik.ameer@samsung.com
+> >> Subject: [PATCH v2 1/5] [media] exynos-mscl: Add new driver for M-
+> Scaler
+> >>
+> >> This patch adds support for M-Scaler (M2M Scaler) device which is a
+> >> new device for scaling, blending, color fill  and color space
+> >> conversion on EXYNOS5 SoCs.
+> >>
+> >> This device supports the followings as key feature.
+> >>     input image format
+> >>         - YCbCr420 2P(UV/VU), 3P
+> >>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+> >>         - YCbCr444 2P(UV,VU), 3P
+> >>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+> >>         - Pre-multiplexed ARGB8888, L8A8 and L8
+> >>     output image format
+> >>         - YCbCr420 2P(UV/VU), 3P
+> >>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+> >>         - YCbCr444 2P(UV,VU), 3P
+> >>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+> >>         - Pre-multiplexed ARGB8888
+> >>     input rotation
+> >>         - 0/90/180/270 degree, X/Y/XY Flip
+> >>     scale ratio
+> >>         - 1/4 scale down to 16 scale up
+> >>     color space conversion
+> >>         - RGB to YUV / YUV to RGB
+> >>     Size
+> >>         - Input : 16x16 to 8192x8192
+> >>         - Output:   4x4 to 8192x8192
+> >>     alpha blending, color fill
+> >>
+> >> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> >> ---
+> >>  drivers/media/platform/exynos-mscl/mscl-regs.c |  318
+> >> ++++++++++++++++++++++++
+> >>  drivers/media/platform/exynos-mscl/mscl-regs.h |  282
+> >> +++++++++++++++++++++
+> >>  2 files changed, 600 insertions(+)
+> >>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-regs.c
+> >>  create mode 100644 drivers/media/platform/exynos-mscl/mscl-regs.h
+> >>
+> >> diff --git a/drivers/media/platform/exynos-mscl/mscl-regs.c
+> >> b/drivers/media/platform/exynos-mscl/mscl-regs.c
+> >> new file mode 100644
+> >> index 0000000..9354afc
+> >> --- /dev/null
+> >> +++ b/drivers/media/platform/exynos-mscl/mscl-regs.c
+> >> @@ -0,0 +1,318 @@
+> >> +/*
+> >> + * Copyright (c) 2013 - 2014 Samsung Electronics Co., Ltd.
+> >> + *           http://www.samsung.com
+> >> + *
+> >> + * Samsung EXYNOS5 SoC series M-Scaler driver
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or
+> modify
+> >> + * it under the terms of the GNU General Public License as published
+> >> + * by the Free Software Foundation, either version 2 of the License,
+> >> + * or (at your option) any later version.
+> >> + */
+> >> +
+> >> +#include <linux/delay.h>
+> >> +#include <linux/platform_device.h>
+> >> +
+> >> +#include "mscl-core.h"
+> >> +
+> >> +void mscl_hw_set_sw_reset(struct mscl_dev *dev)
+> >> +{
+> >> +     u32 cfg;
+> >> +
+> >> +     cfg = readl(dev->regs + MSCL_CFG);
+> >> +     cfg |= MSCL_CFG_SOFT_RESET;
+> >> +
+> >> +     writel(cfg, dev->regs + MSCL_CFG);
+> >> +}
+> >> +
+> >> +int mscl_wait_reset(struct mscl_dev *dev)
+> >> +{
+> >> +     unsigned long end = jiffies + msecs_to_jiffies(50);
+> >
+> > What does 50 mean?
+> >
+> >> +     u32 cfg, reset_done = 0;
+> >> +
+> >
+> > Please describe why the below codes are needed.
+> 
+> 
+> As per the Documentation,
+> 
+> " SOFT RESET: Writing "1" to this bit generates software reset. To
+> check the completion of the reset, wait until this
+> field becomes zero, then wrie an arbitrary value to any of RW
+> registers and read it. If the read data matches the written data,
+>  it means SW reset succeeded. Otherwise, repeat write & read until
+> matched."
+> 
+> 
+> Thie below code tries to do the same (as per user manual). and in the
+> above msec_to_jiffies(50), 50 is the 50msec wait. before
+> checking the SOFT RESET is really done.
+> 
+> Is it good to ignore this checks?
+> 
 
+No, I mean that someone may want to understand your codes so leave comments enough for them.
 
-> > +static int s3c24xx_dma_set_runtime_config(struct s3c24xx_dma_chan
-> > *s3cchan, +				  struct dma_slave_config *config)
-> > +{
-> > +	if (!s3cchan->slave)
-> > +		return -EINVAL;
-> > +
-> > +	/* Reject definitely invalid configurations */
-> > +	if (config->src_addr_width =3D=3D DMA_SLAVE_BUSWIDTH_8_BYTES ||
-> > +	    config->dst_addr_width =3D=3D DMA_SLAVE_BUSWIDTH_8_BYTES)
-> > +		return -EINVAL;
-> > +
-> > +	s3cchan->cfg =3D *config;
->=20
-> you are takinga  ref to client pointer without a clue on when that wo=
-uld be
-> freed. I dont think its a good idea!
+Thanks,
+Inki Dae
 
-hmm, the config pointer is dereferenced here and its data thus copyied =
-into=20
-s3cchan->cfg, so no reference to the origial config pointer is kept.
-
-
-> > +static irqreturn_t s3c24xx_dma_irq(int irq, void *data)
-> > +{
-> > +	struct s3c24xx_dma_phy *phy =3D data;
-> > +	struct s3c24xx_dma_chan *s3cchan =3D phy->serving;
-> > +	struct s3c24xx_txd *txd;
-> > +
-> > +	dev_dbg(&phy->host->pdev->dev, "interrupt on channel %d\n", phy->=
-id);
-> > +
-> > +	if (!s3cchan) {
-> > +		dev_err(&phy->host->pdev->dev, "interrupt on unused channel=20
-%d\n",
-> > +			phy->id);
-> > +		return IRQ_NONE;
->=20
-> hmmm, these channles belong to you. So if one of them is behvaing bad=
-ly,
-> then not handling the interrupt will make things worse...
-
-hmm ... I'm not sure what a valid handling would be for this.
-
-The interrupt is only asserted when a transfer is completed - there are=
- no=20
-other interrupt-triggers. But when phy->serving is NULL, this also mean=
-s that=20
-the clock of the channel is disabled at this time. So this _should_ nev=
-er=20
-happen.
-
-And as written above, the interrupt is only triggered when a transfer w=
-as=20
-completed and the channel is idle again, so if there is no virtual chan=
-nel=20
-being served, there is nothing else to do.
-
-
-Thanks
-Heiko
+> 
+> 
+> >
+> >> +     while (time_before(jiffies, end)) {
+> >> +             cfg = readl(dev->regs + MSCL_CFG);
+> >> +             if (!(cfg & MSCL_CFG_SOFT_RESET)) {
+> >> +                     reset_done = 1;
+> >> +                     break;
+> >> +             }
+> >> +             usleep_range(10, 20);
+> >> +     }
+> >> +
+> >> +     /* write any value to r/w reg and read it back */
+> >> +     while (reset_done) {
+> >> +
+> >> +             /* [TBD] need to define number of tries before returning
+> >> +              * -EBUSY to the caller
+> >> +              */
+> >> +
+> >> +             writel(MSCL_CFG_SOFT_RESET_CHECK_VAL,
+> >> +                             dev->regs + MSCL_CFG_SOFT_RESET_CHECK_REG);
+> >> +             if (MSCL_CFG_SOFT_RESET_CHECK_VAL ==
+> >> +                     readl(dev->regs + MSCL_CFG_SOFT_RESET_CHECK_REG))
+> >> +                     return 0;
+> >> +     }
+> >> +
+> >> +     return -EBUSY;
+> >> +}
+> >> +
+> >> +void mscl_hw_set_irq_mask(struct mscl_dev *dev, int interrupt, bool
+> mask)
+> >> +{
+> >> +     u32 cfg;
+> >> +
+> >> +     switch (interrupt) {
+> >> +     case MSCL_INT_TIMEOUT:
+> >> +     case MSCL_INT_ILLEGAL_BLEND:
+> >> +     case MSCL_INT_ILLEGAL_RATIO:
+> >> +     case MSCL_INT_ILLEGAL_DST_HEIGHT:
+> >> +     case MSCL_INT_ILLEGAL_DST_WIDTH:
+> >> +     case MSCL_INT_ILLEGAL_DST_V_POS:
+> >> +     case MSCL_INT_ILLEGAL_DST_H_POS:
+> >> +     case MSCL_INT_ILLEGAL_DST_C_SPAN:
+> >> +     case MSCL_INT_ILLEGAL_DST_Y_SPAN:
+> >> +     case MSCL_INT_ILLEGAL_DST_CR_BASE:
+> >> +     case MSCL_INT_ILLEGAL_DST_CB_BASE:
+> >> +     case MSCL_INT_ILLEGAL_DST_Y_BASE:
+> >> +     case MSCL_INT_ILLEGAL_DST_COLOR:
+> >> +     case MSCL_INT_ILLEGAL_SRC_HEIGHT:
+> >> +     case MSCL_INT_ILLEGAL_SRC_WIDTH:
+> >> +     case MSCL_INT_ILLEGAL_SRC_CV_POS:
+> >> +     case MSCL_INT_ILLEGAL_SRC_CH_POS:
+> >> +     case MSCL_INT_ILLEGAL_SRC_YV_POS:
+> >> +     case MSCL_INT_ILLEGAL_SRC_YH_POS:
+> >> +     case MSCL_INT_ILLEGAL_SRC_C_SPAN:
+> >> +     case MSCL_INT_ILLEGAL_SRC_Y_SPAN:
+> >> +     case MSCL_INT_ILLEGAL_SRC_CR_BASE:
+> >> +     case MSCL_INT_ILLEGAL_SRC_CB_BASE:
+> >> +     case MSCL_INT_ILLEGAL_SRC_Y_BASE:
+> >> +     case MSCL_INT_ILLEGAL_SRC_COLOR:
+> >> +     case MSCL_INT_FRAME_END:
+> >> +             break;
+> >> +     default:
+> >> +             return;
+> >> +     }
+> >
+> > It seems that the above codes could be more simple,
+> 
+> 
+> ok. will change this.
+> 
+> 
+> >
+> >
+> >> +     cfg = readl(dev->regs + MSCL_INT_EN);
+> >> +     if (mask)
+> >> +             cfg |= interrupt;
+> >> +     else
+> >> +             cfg &= ~interrupt;
+> >> +     writel(cfg, dev->regs + MSCL_INT_EN);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_input_addr(struct mscl_dev *dev, struct mscl_addr
+> *addr)
+> >> +{
+> >> +     dev_dbg(&dev->pdev->dev, "src_buf: 0x%X, cb: 0x%X, cr: 0x%X",
+> >> +                             addr->y, addr->cb, addr->cr);
+> >> +     writel(addr->y, dev->regs + MSCL_SRC_Y_BASE);
+> >> +     writel(addr->cb, dev->regs + MSCL_SRC_CB_BASE);
+> >> +     writel(addr->cr, dev->regs + MSCL_SRC_CR_BASE);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_output_addr(struct mscl_dev *dev,
+> >> +                          struct mscl_addr *addr)
+> >> +{
+> >> +     dev_dbg(&dev->pdev->dev, "dst_buf: 0x%X, cb: 0x%X, cr: 0x%X",
+> >> +                             addr->y, addr->cb, addr->cr);
+> >> +     writel(addr->y, dev->regs + MSCL_DST_Y_BASE);
+> >> +     writel(addr->cb, dev->regs + MSCL_DST_CB_BASE);
+> >> +     writel(addr->cr, dev->regs + MSCL_DST_CR_BASE);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_in_size(struct mscl_ctx *ctx)
+> >> +{
+> >> +     struct mscl_dev *dev = ctx->mscl_dev;
+> >> +     struct mscl_frame *frame = &ctx->s_frame;
+> >> +     u32 cfg;
+> >> +
+> >> +     /* set input pixel offset */
+> >> +     cfg = MSCL_SRC_YH_POS(frame->crop.left);
+> >> +     cfg |= MSCL_SRC_YV_POS(frame->crop.top);
+> >
+> > Where are the limitations to left and top checked?.
+> 
+> 
+> 
+> mscl_try_crop() does this checking.
+> 
+> 
+> 
+> >
+> >> +     writel(cfg, dev->regs + MSCL_SRC_Y_POS);
+> >> +
+> >> +     /* [TBD] calculate 'C' plane h/v offset using 'Y' plane h/v offset
+> >> */
+> >> +
+> >> +     /* set input span */
+> >> +     cfg = MSCL_SRC_Y_SPAN(frame->f_width);
+> >> +     if (is_yuv420_2p(frame->fmt))
+> >> +             cfg |= MSCL_SRC_C_SPAN(frame->f_width);
+> >> +     else
+> >> +             cfg |= MSCL_SRC_C_SPAN(frame->f_width); /* [TBD] Verify */
+> >> +
+> >> +     writel(cfg, dev->regs + MSCL_SRC_SPAN);
+> >> +
+> >> +     /* Set input cropped size */
+> >> +     cfg = MSCL_SRC_WIDTH(frame->crop.width);
+> >> +     cfg |= MSCL_SRC_HEIGHT(frame->crop.height);
+> >> +     writel(cfg, dev->regs + MSCL_SRC_WH);
+> >> +
+> >> +     dev_dbg(&dev->pdev->dev,
+> >> +             "src: posx: %d, posY: %d, spanY: %d, spanC: %d, "
+> >> +             "cropX: %d, cropY: %d\n",
+> >> +             frame->crop.left, frame->crop.top, frame->f_width,
+> >> +             frame->f_width, frame->crop.width, frame->crop.height);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_in_image_format(struct mscl_ctx *ctx)
+> >> +{
+> >> +     struct mscl_dev *dev = ctx->mscl_dev;
+> >> +     struct mscl_frame *frame = &ctx->s_frame;
+> >> +     u32 cfg;
+> >> +
+> >> +     cfg = readl(dev->regs + MSCL_SRC_CFG);
+> >> +     cfg &= ~MSCL_SRC_COLOR_FORMAT_MASK;
+> >> +     cfg |= MSCL_SRC_COLOR_FORMAT(frame->fmt->mscl_color);
+> >> +
+> >> +     /* setting tile/linear format */
+> >> +     if (frame->fmt->is_tiled)
+> >> +             cfg |= MSCL_SRC_TILE_EN;
+> >> +     else
+> >> +             cfg &= ~MSCL_SRC_TILE_EN;
+> >> +
+> >> +     writel(cfg, dev->regs + MSCL_SRC_CFG);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_out_size(struct mscl_ctx *ctx)
+> >> +{
+> >> +     struct mscl_dev *dev = ctx->mscl_dev;
+> >> +     struct mscl_frame *frame = &ctx->d_frame;
+> >> +     u32 cfg;
+> >> +
+> >> +     /* set output pixel offset */
+> >> +     cfg = MSCL_DST_H_POS(frame->crop.left);
+> >> +     cfg |= MSCL_DST_V_POS(frame->crop.top);
+> >
+> > Ditto.
+> >
+> >> +     writel(cfg, dev->regs + MSCL_DST_POS);
+> >> +
+> >> +     /* set output span */
+> >> +     cfg = MSCL_DST_Y_SPAN(frame->f_width);
+> >> +     if (is_yuv420_2p(frame->fmt))
+> >> +             cfg |= MSCL_DST_C_SPAN(frame->f_width/2);
+> >> +     else
+> >> +             cfg |= MSCL_DST_C_SPAN(frame->f_width);
+> >> +     writel(cfg, dev->regs + MSCL_DST_SPAN);
+> >> +
+> >> +     /* set output scaled size */
+> >> +     cfg = MSCL_DST_WIDTH(frame->crop.width);
+> >> +     cfg |= MSCL_DST_HEIGHT(frame->crop.height);
+> >> +     writel(cfg, dev->regs + MSCL_DST_WH);
+> >> +
+> >> +     dev_dbg(&dev->pdev->dev,
+> >> +             "dst: posx: %d, posY: %d, spanY: %d, spanC: %d, "
+> >> +             "cropX: %d, cropY: %d\n",
+> >> +             frame->crop.left, frame->crop.top, frame->f_width,
+> >> +             frame->f_width, frame->crop.width, frame->crop.height);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_out_image_format(struct mscl_ctx *ctx)
+> >> +{
+> >> +     struct mscl_dev *dev = ctx->mscl_dev;
+> >> +     struct mscl_frame *frame = &ctx->d_frame;
+> >> +     u32 cfg;
+> >> +
+> >> +     cfg = readl(dev->regs + MSCL_DST_CFG);
+> >> +     cfg &= ~MSCL_DST_COLOR_FORMAT_MASK;
+> >> +     cfg |= MSCL_DST_COLOR_FORMAT(frame->fmt->mscl_color);
+> >> +
+> >> +     writel(cfg, dev->regs + MSCL_DST_CFG);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_scaler_ratio(struct mscl_ctx *ctx)
+> >> +{
+> >> +     struct mscl_dev *dev = ctx->mscl_dev;
+> >> +     struct mscl_scaler *sc = &ctx->scaler;
+> >> +     u32 cfg;
+> >> +
+> >> +     cfg = MSCL_H_RATIO_VALUE(sc->hratio);
+> >> +     writel(cfg, dev->regs + MSCL_H_RATIO);
+> >> +
+> >> +     cfg = MSCL_V_RATIO_VALUE(sc->vratio);
+> >> +     writel(cfg, dev->regs + MSCL_V_RATIO);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_rotation(struct mscl_ctx *ctx)
+> >> +{
+> >> +     struct mscl_dev *dev = ctx->mscl_dev;
+> >> +     u32 cfg = 0;
+> >> +
+> >> +     cfg = MSCL_ROTMODE(ctx->ctrls_mscl.rotate->val/90);
+> >> +
+> >> +     if (ctx->ctrls_mscl.hflip->val)
+> >> +             cfg |= MSCL_FLIP_X_EN;
+> >> +
+> >> +     if (ctx->ctrls_mscl.vflip->val)
+> >> +             cfg |= MSCL_FLIP_Y_EN;
+> >> +
+> >> +     writel(cfg, dev->regs + MSCL_ROT_CFG);
+> >> +}
+> >> +
+> >> +void mscl_hw_address_queue_reset(struct mscl_ctx *ctx)
+> >> +{
+> >> +     struct mscl_dev *dev = ctx->mscl_dev;
+> >> +
+> >> +     writel(MSCL_ADDR_QUEUE_RST, dev->regs + MSCL_ADDR_QUEUE_CONFIG);
+> >> +}
+> >> +
+> >> +void mscl_hw_set_csc_coeff(struct mscl_ctx *ctx)
+> >> +{
+> >> +     struct mscl_dev *dev = ctx->mscl_dev;
+> >> +     enum mscl_csc_coeff type;
+> >> +     u32 cfg = 0;
+> >> +     int i, j;
+> >> +     static const u32 csc_coeff[MSCL_CSC_COEFF_MAX][3][3] = {
+> >> +             { /* YCbCr to RGB */
+> >> +                     {0x200, 0x000, 0x2be},
+> >> +                     {0x200, 0xeac, 0x165},
+> >> +                     {0x200, 0x377, 0x000}
+> >> +             },
+> >> +             { /* YCbCr to RGB with -16 offset */
+> >> +                     {0x254, 0x000, 0x331},
+> >> +                     {0x254, 0xec8, 0xFA0},
+> >> +                     {0x254, 0x409, 0x000}
+> >> +             },
+> >> +             { /* RGB to YCbCr */
+> >> +                     {0x099, 0x12d, 0x03a},
+> >> +                     {0xe58, 0xeae, 0x106},
+> >> +                     {0x106, 0xedb, 0xe2a}
+> >> +             },
+> >> +             { /* RGB to YCbCr with -16 offset */
+> >> +                     {0x084, 0x102, 0x032},
+> >> +                     {0xe4c, 0xe95, 0x0e1},
+> >> +                     {0x0e1, 0xebc, 0xe24}
+> >> +             } };
+> >> +
+> >> +     if (is_rgb(ctx->s_frame.fmt) == is_rgb(ctx->d_frame.fmt))
+> >> +             type = MSCL_CSC_COEFF_NONE;
+> >> +     else if (is_rgb(ctx->d_frame.fmt))
+> >> +             type = MSCL_CSC_COEFF_YCBCR_TO_RGB_OFF16;
+> >> +     else
+> >> +             type = MSCL_CSC_COEFF_RGB_TO_YCBCR_OFF16;
+> >> +
+> >> +     if ((type == ctx->mscl_dev->coeff_type) || (type >=
+> >> MSCL_CSC_COEFF_MAX))
+> >> +             return;
+> >> +
+> >> +     for (i = 0; i < 3; i++) {
+> >> +             for (j = 0; j < 3; j++) {
+> >> +                     cfg = csc_coeff[type][i][j];
+> >> +                     writel(cfg, dev->regs + MSCL_CSC_COEF(i, j));
+> >> +             }
+> >> +     }
+> >> +
+> >> +     switch (type) {
+> >> +     case MSCL_CSC_COEFF_YCBCR_TO_RGB:
+> >
+> > Is there this case?
+> >
+> >> +             mscl_hw_src_y_offset_en(ctx->mscl_dev, false);
+> >
+> > And this switch-case could be removed if you move the above line to the
+> > above if-sentence.
+> >
+> >
+> >> +             break;
+> >> +     case MSCL_CSC_COEFF_YCBCR_TO_RGB_OFF16:
+> >> +             mscl_hw_src_y_offset_en(ctx->mscl_dev, true);
+> >
+> > Ditto.
+> >
+> >> +             break;
+> >> +     case MSCL_CSC_COEFF_RGB_TO_YCBCR:
+> >
+> > Seems no case.
+> >
+> >> +             mscl_hw_src_y_offset_en(ctx->mscl_dev, false);
+> >
+> > Could be moved to the above if-sentence.
+> 
+> 
+> 
+> I think MSCL_CSC_COEFF_YCBCR_TO_RGB_OFF16, MSCL_CSC_COEFF_YCBCR_TO_RGB
+> belongs to different color spaces.
+> Anyways, will remove the unused cases and will reorganize the code as
+> per your comments.
+> 
+> Regards,
+> Shaik Ameer Basha
+> 
+> 
+> 
+> >
+> >> +             break;
+> >> +     case MSCL_CSC_COEFF_RGB_TO_YCBCR_OFF16:
+> >> +             mscl_hw_src_y_offset_en(ctx->mscl_dev, true);
+> >
+> > Ditto.
+> >
+> >> +             break;
+> >> +     default:
+> >> +             return;
+> >> +     }
+> >> +
+> >> +     ctx->mscl_dev->coeff_type = type;
+> >> +     return;
+> >> +}
+> 
+> [snip]
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
