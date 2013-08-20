@@ -1,42 +1,60 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 02/16] ARM: dts: exynos4: Specify PWM clocks in PWM node
-Date: Tue, 20 Aug 2013 19:31:29 +0200
-Message-ID: <1377019903-14614-3-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 01/16] pwm: samsung: Update DT bindings documentation to cover
+ clocks
+Date: Tue, 20 Aug 2013 19:31:28 +0200
+Message-ID: <1377019903-14614-2-git-send-email-t.figa@samsung.com>
 References: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41640 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751442Ab3HTRcC (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37421 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751345Ab3HTRcA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 13:32:02 -0400
+	Tue, 20 Aug 2013 13:32:00 -0400
 In-reply-to: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Since pwm-samsung bindings require at least one clock to be specified,
-this patch adds the missing clocks and clock-names properties to specify
-clocks used by PWM block on Exynos4 SoCs.
+PWM driver consumes at least one and up to three clocks, which need to be
+specified in device tree when used. This patch updates bindings
+documentation to add information about clocks.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/pwm/pwm-samsung.txt | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 93c2501..caadc02 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -448,6 +448,8 @@
- 		compatible = "samsung,exynos4210-pwm";
- 		reg = <0x139D0000 0x1000>;
- 		interrupts = <0 37 0>, <0 38 0>, <0 39 0>, <0 40 0>, <0 41 0>;
-+		clocks = <&clock 336>;
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+index 4caa1a7..d61fccd 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+@@ -19,6 +19,16 @@ Required properties:
+ - reg: base address and size of register area
+ - interrupts: list of timer interrupts (one interrupt per timer, starting at
+   timer 0)
++- clock-names: should contain all following required clock names:
++    - "timers" - PWM base clock used to generate PWM signals,
++  and any subset of following optional clock names:
++    - "pwm-tclk0" - first external PWM clock source,
++    - "pwm-tclk1" - second external PWM clock source.
++  Note that not all IP variants allow using all external clock sources.
++  Refer to SoC documentation to learn which clock source configurations
++  are available.
++- clocks: should contain clock specifiers of all clocks, which input names
++  have been specified in clock-names property, in same order.
+ - #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+   the cells format. The only third cell flag supported by this binding is
+   PWM_POLARITY_INVERTED.
+@@ -34,6 +44,8 @@ Example:
+ 		reg = <0x7f006000 0x1000>;
+ 		interrupt-parent = <&vic0>;
+ 		interrupts = <23>, <24>, <25>, <27>, <28>;
++		clocks = <&clock 67>;
 +		clock-names = "timers";
- 		#pwm-cells = <2>;
- 		status = "disabled";
- 	};
+ 		samsung,pwm-outputs = <0>, <1>;
+ 		#pwm-cells = <3>;
+ 	}
 -- 
 1.8.3.2
