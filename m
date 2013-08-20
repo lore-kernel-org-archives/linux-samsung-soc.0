@@ -1,15 +1,15 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 15/16] clk: samsung: exynos4: Register PLL rate tables for
- Exynos4x12
-Date: Tue, 20 Aug 2013 19:31:42 +0200
-Message-ID: <1377019903-14614-16-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 14/16] clk: samsung: exynos4: Register PLL rate tables for
+ Exynos4210
+Date: Tue, 20 Aug 2013 19:31:41 +0200
+Message-ID: <1377019903-14614-15-git-send-email-t.figa@samsung.com>
 References: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41662 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751420Ab3HTRcL (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37444 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751380Ab3HTRcJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 13:32:11 -0400
+	Tue, 20 Aug 2013 13:32:09 -0400
 In-reply-to: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -17,82 +17,78 @@ To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
 This patch adds rate tables for PLLs that can be reconfigured at runtime
-for Exynos4x12 SoCs. Provided tables contain PLL coefficients for
+for Exynos4210 SoCs. Provided tables contain PLL coefficients for
 input clock of 24 MHz and so are registered only in this case. MPLL does
 not need runtime reconfiguration and so table for it is not provided.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos4.c | 49 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
+ drivers/clk/samsung/clk-exynos4.c | 45 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
 diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index e18cfae..8ab86f8 100644
+index 34474ce..e18cfae 100644
 --- a/drivers/clk/samsung/clk-exynos4.c
 +++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1026,6 +1026,46 @@ static struct samsung_pll_rate_table exynos4210_vpll_rates[] = {
- 	{ /* sentinel */ }
+@@ -992,6 +992,40 @@ static struct of_device_id ext_clk_match[] __initdata = {
+ 	{},
  };
  
-+static struct samsung_pll_rate_table exynos4x12_apll_rates[] = {
-+	PLL_35XX_RATE(1500000000, 250, 4, 0),
-+	PLL_35XX_RATE(1400000000, 175, 3, 0),
-+	PLL_35XX_RATE(1300000000, 325, 6, 0),
-+	PLL_35XX_RATE(1200000000, 200, 4, 0),
-+	PLL_35XX_RATE(1100000000, 275, 6, 0),
-+	PLL_35XX_RATE(1000000000, 125, 3, 0),
-+	PLL_35XX_RATE( 900000000, 150, 4, 0),
-+	PLL_35XX_RATE( 800000000, 100, 3, 0),
-+	PLL_35XX_RATE( 700000000, 175, 3, 1),
-+	PLL_35XX_RATE( 600000000, 200, 4, 1),
-+	PLL_35XX_RATE( 500000000, 125, 3, 1),
-+	PLL_35XX_RATE( 400000000, 100, 3, 1),
-+	PLL_35XX_RATE( 300000000, 200, 4, 2),
-+	PLL_35XX_RATE( 200000000, 100, 3, 2),
++/* PLLs PMS values */
++static struct samsung_pll_rate_table exynos4210_apll_rates[] = {
++	PLL_45XX_RATE(1200000000, 150,  3, 1, 28),
++	PLL_45XX_RATE(1000000000, 250,  6, 1, 28),
++	PLL_45XX_RATE( 800000000, 200,  6, 1, 28),
++	PLL_45XX_RATE( 666857142, 389, 14, 1, 13),
++	PLL_45XX_RATE( 600000000, 100,  4, 1, 13),
++	PLL_45XX_RATE( 533000000, 533, 24, 1,  5),
++	PLL_45XX_RATE( 500000000, 250,  6, 2, 28),
++	PLL_45XX_RATE( 400000000, 200,  6, 2, 28),
++	PLL_45XX_RATE( 200000000, 200,  6, 3, 28),
 +	{ /* sentinel */ }
 +};
 +
-+static struct samsung_pll_rate_table exynos4x12_epll_rates[] = {
-+	PLL_36XX_RATE(192000000, 48, 3, 1,     0),
-+	PLL_36XX_RATE(180633605, 45, 3, 1, 10381),
-+	PLL_36XX_RATE(180000000, 45, 3, 1,     0),
-+	PLL_36XX_RATE( 73727996, 73, 3, 3, 47710),
-+	PLL_36XX_RATE( 67737602, 90, 4, 3, 20762),
-+	PLL_36XX_RATE( 49151992, 49, 3, 3,  9961),
-+	PLL_36XX_RATE( 45158401, 45, 3, 3, 10381),
++static struct samsung_pll_rate_table exynos4210_epll_rates[] = {
++	PLL_4600_RATE(192000000, 48, 3, 1,     0, 0),
++	PLL_4600_RATE(180633605, 45, 3, 1, 10381, 0),
++	PLL_4600_RATE(180000000, 45, 3, 1,     0, 0),
++	PLL_4600_RATE( 73727996, 73, 3, 3, 47710, 1),
++	PLL_4600_RATE( 67737602, 90, 4, 3, 20762, 1),
++	PLL_4600_RATE( 49151992, 49, 3, 3,  9961, 0),
++	PLL_4600_RATE( 45158401, 45, 3, 3, 10381, 0),
 +	{ /* sentinel */ }
 +};
 +
-+static struct samsung_pll_rate_table exynos4x12_vpll_rates[] = {
-+	PLL_36XX_RATE(533000000, 133, 3, 1, 16384),
-+	PLL_36XX_RATE(440000000, 110, 3, 1,     0),
-+	PLL_36XX_RATE(350000000, 175, 3, 2,     0),
-+	PLL_36XX_RATE(266000000, 133, 3, 2,     0),
-+	PLL_36XX_RATE(160000000, 160, 3, 3,     0),
-+	PLL_36XX_RATE(106031250,  53, 3, 2,  1024),
-+	PLL_36XX_RATE( 53015625,  53, 3, 3,  1024),
++static struct samsung_pll_rate_table exynos4210_vpll_rates[] = {
++	PLL_4650_RATE(360000000, 44, 3, 0, 1024, 0, 14, 0),
++	PLL_4650_RATE(324000000, 53, 2, 1, 1024, 1,  1, 1),
++	PLL_4650_RATE(259617187, 63, 3, 1, 1950, 0, 20, 1),
++	PLL_4650_RATE(110000000, 53, 3, 2, 2048, 0, 17, 0),
++	PLL_4650_RATE( 55360351, 53, 3, 3, 2417, 0, 17, 0),
 +	{ /* sentinel */ }
 +};
 +
  static struct __initdata samsung_pll_clock exynos4210_plls[nr_plls] = {
  	[apll] = PLL_A(pll_4508, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
  		APLL_CON0, "fout_apll", NULL),
-@@ -1090,6 +1130,15 @@ static void __init exynos4_clk_init(struct device_node *np,
+@@ -1042,6 +1076,17 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 		samsung_clk_register_mux(exynos4210_mux_early,
+ 					ARRAY_SIZE(exynos4210_mux_early));
+ 
++		if (_get_rate("fin_pll") == 24000000) {
++			exynos4210_plls[apll].rate_table =
++							exynos4210_apll_rates;
++			exynos4210_plls[epll].rate_table =
++							exynos4210_epll_rates;
++		}
++
++		if (_get_rate("mout_vpllsrc") == 24000000)
++			exynos4210_plls[vpll].rate_table =
++							exynos4210_vpll_rates;
++
  		samsung_clk_register_pll(exynos4210_plls,
  					ARRAY_SIZE(exynos4210_plls), reg_base);
  	} else {
-+		if (_get_rate("fin_pll") == 24000000) {
-+			exynos4x12_plls[apll].rate_table =
-+							exynos4x12_apll_rates;
-+			exynos4x12_plls[epll].rate_table =
-+							exynos4x12_epll_rates;
-+			exynos4x12_plls[vpll].rate_table =
-+							exynos4x12_vpll_rates;
-+		}
-+
- 		samsung_clk_register_pll(exynos4x12_plls,
- 					ARRAY_SIZE(exynos4x12_plls), reg_base);
- 	}
 -- 
 1.8.3.2
