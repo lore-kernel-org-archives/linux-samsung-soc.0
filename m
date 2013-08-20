@@ -1,53 +1,215 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: fix PL330 MDMA1 address in DT for Universal C210
- board
-Date: Tue, 20 Aug 2013 13:22:45 +0200
-Message-ID: <8667689.9TcYbn9cHO@amdc1032>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v6 01/13] [media] exynos5-is: Adding media device driver
+ for exynos5
+Date: Tue, 20 Aug 2013 13:59:37 +0200
+Message-ID: <52135A29.80203@samsung.com>
+References: <1376644845-10422-1-git-send-email-arun.kk@samsung.com>
+ <1376644845-10422-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41917 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751603Ab3HTLXA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 07:23:00 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MRT00EADUA9ITK0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 20 Aug 2013 20:22:58 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1376644845-10422-2-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-Revision 0 of Exynos4210 SoC (used on Universal C210 board) requires
-'secure' PL330 MDMA1 address (0x12840000) instead of 'non-secure' one
-(0x12850000). Fix it by overriding the default PL330 MDMA1 address in
-exynos4210-universal_c210.dts.
+Cc: Pawel, Kumar
 
-This is a Device Tree (DT) version of commit 91280e7 ("ARM: EXYNOS:
-PL330 MDMA1 fix for revision 0 of Exynos4210 SOC") and fixes recent
-regression caused by conversion to DT-only setup on ARM EXYNOS.
+On 08/16/2013 11:20 AM, Arun Kumar K wrote:
+> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> 
+> This patch adds support for media device for EXYNOS5 SoCs.
+> The current media device supports the following ips to connect
+> through the media controller framework.
+> 
+> * MIPI-CSIS
+>   Support interconnection(subdev interface) between devices
+> 
+> * FIMC-LITE
+>   Support capture interface from device(Sensor, MIPI-CSIS) to memory
+>   Support interconnection(subdev interface) between devices
+> 
+> * FIMC-IS
+>   Camera post-processing IP having multiple sub-nodes.
+> 
+> G-Scaler will be added later to the current media device.
+> 
+> The media device creates two kinds of pipelines for connecting
+> the above mentioned IPs.
+> The pipeline0 is uses Sensor, MIPI-CSIS and FIMC-LITE which captures
+> image data and dumps to memory.
+> Pipeline1 uses FIMC-IS components for doing post-processing
+> operations on the captured image and give scaled YUV output.
+> 
+> Pipeline0
+>   +--------+     +-----------+     +-----------+     +--------+
+>   | Sensor | --> | MIPI-CSIS | --> | FIMC-LITE | --> | Memory |
+>   +--------+     +-----------+     +-----------+     +--------+
+> 
+> Pipeline1
+>  +--------+      +--------+     +-----------+     +-----------+
+>  | Memory | -->  |  ISP   | --> |    SCC    | --> |    SCP    |
+>  +--------+      +--------+     +-----------+     +-----------+
+> 
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  .../devicetree/bindings/media/exynos5-mdev.txt     |  126 ++
+>  drivers/media/platform/exynos5-is/exynos5-mdev.c   | 1210 ++++++++++++++++++++
+>  drivers/media/platform/exynos5-is/exynos5-mdev.h   |  126 ++
+>  3 files changed, 1462 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/exynos5-mdev.txt
+>  create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.c
+>  create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.h
+> 
+> diff --git a/Documentation/devicetree/bindings/media/exynos5-mdev.txt b/Documentation/devicetree/bindings/media/exynos5-mdev.txt
+> new file mode 100644
+> index 0000000..b1299e2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5-mdev.txt
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+Sorry, I missed this previously. How about renaming this file to something
+more specific to the subsystem it describes, e.g. exynos5250-camera.txt ?
 
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index 889cdad..d2e3f5f 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -350,3 +350,7 @@
- 		status = "okay";
- 	};
- };
-+
-+&mdma1 {
-+	reg = <0x12840000 0x1000>;
-+};
--- 
-1.8.2.3
+> @@ -0,0 +1,126 @@
+> +Samsung EXYNOS5 SoC Camera Subsystem
+> +------------------------------------
+> +
+> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
+> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
+> +MIPI CSIS and FIMC-IS.
+> +
+> +The sub-device nodes are referenced using phandles in the common 'camera' node
+> +which also includes common properties of the whole subsystem not really
+> +specific to any single sub-device, like common camera port pins or the common
+> +camera bus clocks.
+> +
+> +Common 'camera' node
+> +--------------------
+> +
+> +Required properties:
+> +
+> +- compatible		: must be "samsung,exynos5250-fimc"
+> +- clocks		: list of clock specifiers, corresponding to entries in
+> +                          the clock-names property;
+> +- clock-names		: must contain "sclk_bayer" entry
+> +- samsung,csis		: list of phandles to the mipi-csis device nodes
+> +- samsung,fimc-lite	: list of phandles to the fimc-lite device nodes
+> +- samsung,fimc-is	: phandle to the fimc-is device node
+> +
+> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
+> +to define a required pinctrl state named "default".
+> +
+> +'parallel-ports' node
+> +---------------------
+> +
+> +This node should contain child 'port' nodes specifying active parallel video
+> +input ports. It includes camera A, camera B and RGB bay inputs.
+> +'reg' property in the port nodes specifies the input type:
+> + 1 - parallel camport A
+> + 2 - parallel camport B
+> + 5 - RGB camera bay
+> +
+> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
+> +
+> +Image sensor nodes
+> +------------------
+> +
+> +The sensor device nodes should be added to their control bus controller (e.g.
+> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
+> +using the common video interfaces bindings, defined in video-interfaces.txt.
+> +
+> +Example:
+> +
+> +	aliases {
+> +		fimc-lite0 = &fimc_lite_0
+> +	};
+> +
+> +	/* Parallel bus IF sensor */
+> +	i2c_0: i2c@13860000 {
+> +		s5k6aa: sensor@3c {
+> +			compatible = "samsung,s5k6aafx";
+> +			reg = <0x3c>;
+> +			vddio-supply = <...>;
+> +
+> +			clock-frequency = <24000000>;
+> +			clocks = <...>;
+> +			clock-names = "mclk";
+> +
+> +			port {
+> +				s5k6aa_ep: endpoint {
+> +					remote-endpoint = <&fimc0_ep>;
+> +					bus-width = <8>;
+> +					hsync-active = <0>;
+> +					vsync-active = <1>;
+> +					pclk-sample = <1>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	/* MIPI CSI-2 bus IF sensor */
+> +	s5c73m3: sensor@1a {
+> +		compatible = "samsung,s5c73m3";
+> +		reg = <0x1a>;
+> +		vddio-supply = <...>;
+> +
+> +		clock-frequency = <24000000>;
+> +		clocks = <...>;
+> +		clock-names = "mclk";
+> +
+> +		port {
+> +			s5c73m3_1: endpoint {
+> +				data-lanes = <1 2 3 4>;
+> +				remote-endpoint = <&csis0_ep>;
+> +			};
+> +		};
+> +	};
+> +
+> +	camera {
+> +		compatible = "samsung,exynos5250-fimc";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		status = "okay";
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&cam_port_a_clk_active>;
+> +
+> +		samsung,csis = <&csis_0>, <&csis_1>;
+> +		samsung,fimc-lite = <&fimc_lite_0>, <&fimc_lite_1>, <&fimc_lite_2>;
+> +		samsung,fimc-is = <&fimc_is>;
+> +
+> +		/* parallel camera ports */
+> +		parallel-ports {
+> +			/* camera A input */
+> +			port@0 {
+
+This should be port@1
+
+> +				reg = <0>;
+
+and reg = <1>;
+
+> +				camport_a_ep: endpoint {
+> +					remote-endpoint = <&s5k6aa_ep>;
+> +					bus-width = <8>;
+> +					hsync-active = <0>;
+> +					vsync-active = <1>;
+> +					pclk-sample = <1>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +MIPI-CSIS device binding is defined in samsung-mipi-csis.txt, FIMC-LITE
+> +device binding is defined in exynos-fimc-lite.txt and FIMC-IS binding
+> +is defined in exynos5-fimc-is.txt.
+
+Otherwise looks good to me. I think we now need an Ack from the DT
+maintainers. If they are OK with the binding I could queue this whole
+series for v3.12 this week, once you resend patches #1, #2.
+
+Thanks,
+Sylwester
