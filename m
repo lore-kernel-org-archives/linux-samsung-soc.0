@@ -1,62 +1,68 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 01/16] pwm: samsung: Update DT bindings documentation to cover clocks
-Date: Wed, 21 Aug 2013 00:32:06 +0200
-Message-ID: <11380970.mYsvoRAzs5@flatron>
-References: <1377019903-14614-1-git-send-email-t.figa@samsung.com> <1377019903-14614-2-git-send-email-t.figa@samsung.com> <5213D2D6.50603@wwwdotorg.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] irqchip: gic: Allow setting affinity to offline CPUs
+Date: Tue, 20 Aug 2013 15:39:17 -0700
+Message-ID: <20130820223916.GB23960@codeaurora.org>
+References: <1377015070-26320-1-git-send-email-t.figa@samsung.com>
+ <20130820211442.GF17845@n2100.arm.linux.org.uk>
+ <2189739.GnKWSuLhMq@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f41.google.com ([209.85.214.41]:63604 "EHLO
-	mail-bk0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751168Ab3HTWcN (ORCPT
+Received: from smtp.codeaurora.org ([198.145.11.231]:45830 "EHLO
+	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751322Ab3HTWjX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 18:32:13 -0400
-In-Reply-To: <5213D2D6.50603@wwwdotorg.org>
+	Tue, 20 Aug 2013 18:39:23 -0400
+Content-Disposition: inline
+In-Reply-To: <2189739.GnKWSuLhMq@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-On Tuesday 20 of August 2013 14:34:30 Stephen Warren wrote:
-> On 08/20/2013 11:31 AM, Tomasz Figa wrote:
-> > PWM driver consumes at least one and up to three clocks, which need to
-> > be specified in device tree when used. This patch updates bindings
-> > documentation to add information about clocks.
+On 08/21, Tomasz Figa wrote:
+> On Tuesday 20 of August 2013 22:14:42 Russell King - ARM Linux wrote:
+> > On Tue, Aug 20, 2013 at 06:11:10PM +0200, Tomasz Figa wrote:
+> > > Sometimes it is necessary to fix interrupt affinity to an offline CPU,
+> > > for example in initialization of local timers. This patch modifies
+> > > .set_affinity() operation of irq-gic driver to fall back to any
+> > > possible CPU if no online CPU can be found in requested CPU mask.
 > > 
-> > diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
-> > b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+> > Err, this is a bad idea.  If a CPU is offline, then it must not respond
+> > to interrupts.  If you bind an interrupt to an offline CPU, and that
+> > device asserts its interrupt, what happens?  It doesn't get serviced
+> > until that CPU comes back online, which may be a very long time.
 > > 
-> > +- clock-names: should contain all following required clock names:
-> > +    - "timers" - PWM base clock used to generate PWM signals,
-> > +  and any subset of following optional clock names:
-> > +    - "pwm-tclk0" - first external PWM clock source,
-> > +    - "pwm-tclk1" - second external PWM clock source.
-> > +  Note that not all IP variants allow using all external clock
-> > sources. +  Refer to SoC documentation to learn which clock source
-> > configurations +  are available.
+> > If, for example, that is your network device, it would mean your
+> > network stops operating.  Worse, the network layer will time out and
+> > reset the ethernet device, trying to get things working (which it
+> > won't.)
+> > 
+> > I think how I used to handle this case prior to genirq is that I fell
+> > back to any online CPU if the interrupt ended up only routed to offline
+> > CPUs, but when an offline CPU comes back, it could then be re-routed
+> > back to that CPU.  In other words, the mask change was non-destructive.
+> > 
+> > I think with genirq, such mask changes are destructive.
 > 
-> It might be nice to explicitly enumerate which variants (or rather, I
-> suppose which exact compatible values) support which optional clocks.
-> However, I suppose it's fine to just say "go read the HW manual"
-> instead.
+> Yes, that's correct. Although if you _explicitly_ request the interrupt to 
+> be routed to an offline CPU (i.e. only offline CPUs have bits set in 
+> passed cpumask), is it an error?
+> 
+> There is at least one irqchip that does not check received cpumask for 
+> this (metag) and I don't see any documentation saying what should happen 
+> in this case in .set_affinity operation.
+> 
+> Still, if you have any better solution for the original problem (broken 
+> Exynos4210 local timers, due to failing irq_set_affinity()), then I'd 
+> appreciate it, as I don't like the one from this patch too much either.
+> 
 
-I don't have enough information about some of the variants, so I decided 
-to put it this way, instead of making an incomplete list or speculating 
-about things.
+One "solution" might be to change the irq affinity after the CPU
+is marked online via the hotplug notifier chain. For a short
+period of time the timer interrupt will go to a different CPU but
+I don't see how that is a problem.
 
-> So, this patch,
-> Acked-by: Stephen Warren <swarren@nvidia.com>
-
-Thanks.
-
-> (although this patch isn't backwards-compatible since before now, DT
-> nodes didn't need to provide any entries in clocks)
-
-The thing is that the clocks were supposed to be there from the beginning, 
-but in a hurry I forgot to specify them in original bindings documentation 
-and things were running over compatibility clkdev aliases anyway, so 
-nobody (including me) noticed.
-
-Best regards,
-Tomasz
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+hosted by The Linux Foundation
