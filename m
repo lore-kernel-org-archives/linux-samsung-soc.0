@@ -1,67 +1,42 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v6] s5k5baf: add camera sensor driver
-Date: Tue, 20 Aug 2013 14:48:44 -0600
-Message-ID: <5213D62C.6020205@wwwdotorg.org>
-References: <1377014619-5349-1-git-send-email-a.hajda@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] irqchip: gic: Allow setting affinity to offline CPUs
+Date: Tue, 20 Aug 2013 22:14:42 +0100
+Message-ID: <20130820211442.GF17845@n2100.arm.linux.org.uk>
+References: <1377015070-26320-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1377014619-5349-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Grant Likely <grant.likely@linaro.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:42150 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751142Ab3HTVP0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Aug 2013 17:15:26 -0400
+Content-Disposition: inline
+In-Reply-To: <1377015070-26320-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 
-On 08/20/2013 10:03 AM, Andrzej Hajda wrote:
-> Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
-> with embedded SoC ISP.
-> The driver exposes the sensor as two V4L2 subdevices:
-> - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
->   no controls.
-> - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
->   pre/post ISP cropping, downscaling via selection API, controls.
+On Tue, Aug 20, 2013 at 06:11:10PM +0200, Tomasz Figa wrote:
+> Sometimes it is necessary to fix interrupt affinity to an offline CPU,
+> for example in initialization of local timers. This patch modifies
+> .set_affinity() operation of irq-gic driver to fall back to any possible
+> CPU if no online CPU can be found in requested CPU mask.
 
-> diff --git a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+Err, this is a bad idea.  If a CPU is offline, then it must not respond
+to interrupts.  If you bind an interrupt to an offline CPU, and that
+device asserts its interrupt, what happens?  It doesn't get serviced
+until that CPU comes back online, which may be a very long time.
 
-> +Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
-> +--------------------------------------------------------------------
-> +
-> +Required properties:
-> +
-> +- compatible	  : "samsung,s5k5baf";
-> +- reg		  : I2C slave address of the sensor;
-> +- vdda-supply	  : analog power supply 2.8V (2.6V to 3.0V);
-> +- vddreg-supply	  : regulator input power supply 1.8V (1.7V to 1.9V)
-> +		    or 2.8V (2.6V to 3.0);
-> +- vddio-supply	  : I/O power supply 1.8V (1.65V to 1.95V)
-> +		    or 2.8V (2.5V to 3.1V);
-> +- stbyn-gpios	  : GPIO connected to STDBYN pin;
-> +- rstn-gpios	  : GPIO connected to RSTN pin;
-> +- clocks	  : the sensor's master clock specifier (from the common
-> +		    clock bindings);
-> +- clock-names	  : must be "mclk";
+If, for example, that is your network device, it would mean your
+network stops operating.  Worse, the network layer will time out and
+reset the ethernet device, trying to get things working (which it
+won't.)
 
-That all looks sane.
+I think how I used to handle this case prior to genirq is that I fell
+back to any online CPU if the interrupt ended up only routed to offline
+CPUs, but when an offline CPU comes back, it could then be re-routed
+back to that CPU.  In other words, the mask change was non-destructive.
 
-> +Optional properties:
-> +
-> +- clock-frequency : master clock frequency in Hz; if this property is
-> +		    not specified default 24 MHz value will be used.
-
-I /think/ the explanation you gave Mark on this property makes sense.
-However, it's not clear from the description what this does; in many
-other cases a clock-frequency describes a fixed/actual input clock rate
-to a device, rather than a frequency which the device believes it should
-operate at, and hence the driver should request. Perhaps the following
-would describe this:
-
-- clock-frequency : The frequency at which the "mclk" clock should be
-		configured to operate, in Hz. If this property is not
-		specified default 24 MHz value will be used.
-
-To me, this more strongly implies that the user of the node should
-configure the clock, rather than the property reporting the rate at
-which the clock is already configured to operate.
-
-I think the rest of the binding doc (below this point) seems reasonable too.
+I think with genirq, such mask changes are destructive.
