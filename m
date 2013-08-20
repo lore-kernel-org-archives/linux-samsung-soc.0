@@ -1,94 +1,67 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 14/16] clk: samsung: exynos4: Register PLL rate tables for
- Exynos4210
-Date: Tue, 20 Aug 2013 19:31:41 +0200
-Message-ID: <1377019903-14614-15-git-send-email-t.figa@samsung.com>
-References: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4210: Work around lack of cpufreq regulator
+ lookup
+Date: Tue, 20 Aug 2013 19:35:36 +0200
+Message-ID: <1377020136-14838-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37444 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751380Ab3HTRcJ (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:41751 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751670Ab3HTRfl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 13:32:09 -0400
-In-reply-to: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
+	Tue, 20 Aug 2013 13:35:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch adds rate tables for PLLs that can be reconfigured at runtime
-for Exynos4210 SoCs. Provided tables contain PLL coefficients for
-input clock of 24 MHz and so are registered only in this case. MPLL does
-not need runtime reconfiguration and so table for it is not provided.
+Exynos cpufreq drivers does not support device tree based regulator
+lookup, so it can get the VDD ARM regulator only by its name. To get
+cpufreq working for now, this patch works this around by renaming the
+regulator in board dts files to vdd_arm, which is the name expected by
+the driver.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos4.c | 45 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
+ arch/arm/boot/dts/exynos4210-origen.dts | 7 ++++++-
+ arch/arm/boot/dts/exynos4210-trats.dts  | 7 ++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 34474ce..e18cfae 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -992,6 +992,40 @@ static struct of_device_id ext_clk_match[] __initdata = {
- 	{},
- };
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index 382d8c7..46378fe 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -192,7 +192,12 @@
+ 				};
  
-+/* PLLs PMS values */
-+static struct samsung_pll_rate_table exynos4210_apll_rates[] = {
-+	PLL_45XX_RATE(1200000000, 150,  3, 1, 28),
-+	PLL_45XX_RATE(1000000000, 250,  6, 1, 28),
-+	PLL_45XX_RATE( 800000000, 200,  6, 1, 28),
-+	PLL_45XX_RATE( 666857142, 389, 14, 1, 13),
-+	PLL_45XX_RATE( 600000000, 100,  4, 1, 13),
-+	PLL_45XX_RATE( 533000000, 533, 24, 1,  5),
-+	PLL_45XX_RATE( 500000000, 250,  6, 2, 28),
-+	PLL_45XX_RATE( 400000000, 200,  6, 2, 28),
-+	PLL_45XX_RATE( 200000000, 200,  6, 3, 28),
-+	{ /* sentinel */ }
-+};
-+
-+static struct samsung_pll_rate_table exynos4210_epll_rates[] = {
-+	PLL_4600_RATE(192000000, 48, 3, 1,     0, 0),
-+	PLL_4600_RATE(180633605, 45, 3, 1, 10381, 0),
-+	PLL_4600_RATE(180000000, 45, 3, 1,     0, 0),
-+	PLL_4600_RATE( 73727996, 73, 3, 3, 47710, 1),
-+	PLL_4600_RATE( 67737602, 90, 4, 3, 20762, 1),
-+	PLL_4600_RATE( 49151992, 49, 3, 3,  9961, 0),
-+	PLL_4600_RATE( 45158401, 45, 3, 3, 10381, 0),
-+	{ /* sentinel */ }
-+};
-+
-+static struct samsung_pll_rate_table exynos4210_vpll_rates[] = {
-+	PLL_4650_RATE(360000000, 44, 3, 0, 1024, 0, 14, 0),
-+	PLL_4650_RATE(324000000, 53, 2, 1, 1024, 1,  1, 1),
-+	PLL_4650_RATE(259617187, 63, 3, 1, 1950, 0, 20, 1),
-+	PLL_4650_RATE(110000000, 53, 3, 2, 2048, 0, 17, 0),
-+	PLL_4650_RATE( 55360351, 53, 3, 3, 2417, 0, 17, 0),
-+	{ /* sentinel */ }
-+};
-+
- static struct __initdata samsung_pll_clock exynos4210_plls[nr_plls] = {
- 	[apll] = PLL_A(pll_4508, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, "fout_apll", NULL),
-@@ -1042,6 +1076,17 @@ static void __init exynos4_clk_init(struct device_node *np,
- 		samsung_clk_register_mux(exynos4210_mux_early,
- 					ARRAY_SIZE(exynos4210_mux_early));
+ 				buck1_reg: BUCK1 {
+-					regulator-name = "VDD_ARM_1.2V";
++					/*
++					* HACK: The real name is VDD_ARM_1.2V,
++					* but exynos-cpufreq does not support
++					* DT-based regulator lookup yet.
++					*/
++					regulator-name = "vdd_arm";
+ 					regulator-min-microvolt = <950000>;
+ 					regulator-max-microvolt	= <1350000>;
+ 					regulator-always-on;
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 1c164f2..63cc571 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -290,7 +290,12 @@
+ 				};
  
-+		if (_get_rate("fin_pll") == 24000000) {
-+			exynos4210_plls[apll].rate_table =
-+							exynos4210_apll_rates;
-+			exynos4210_plls[epll].rate_table =
-+							exynos4210_epll_rates;
-+		}
-+
-+		if (_get_rate("mout_vpllsrc") == 24000000)
-+			exynos4210_plls[vpll].rate_table =
-+							exynos4210_vpll_rates;
-+
- 		samsung_clk_register_pll(exynos4210_plls,
- 					ARRAY_SIZE(exynos4210_plls), reg_base);
- 	} else {
+ 				varm_breg: BUCK1 {
+-				     regulator-name = "VARM_1.2V_C210";
++				     /*
++				      * HACK: The real name is VARM_1.2V_C210,
++				      * but exynos-cpufreq does not support
++				      * DT-based regulator lookup yet.
++				      */
++				     regulator-name = "vdd_arm";
+ 				     regulator-min-microvolt = <900000>;
+ 				     regulator-max-microvolt = <1350000>;
+ 				     regulator-always-on;
 -- 
 1.8.3.2
