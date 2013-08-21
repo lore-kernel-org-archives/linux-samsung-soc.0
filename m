@@ -1,101 +1,187 @@
 From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH 12/16] clk: samsung: pll: Add support for rate
- configuration of PLL46xx
-Date: Wed, 21 Aug 2013 18:42:40 +0530
-Message-ID: <CAKew6eUGOgUWzgU7SnCjAenSHxwaOgFUhPWHbav3C8z=tS+EpA@mail.gmail.com>
+Subject: Re: [PATCH 09/16] clk: samsung: pll: Use new registration method for PLL45xx
+Date: Wed, 21 Aug 2013 18:47:10 +0530
+Message-ID: <CAKew6eV79H60iU9X5DKOKo57Y51RfVtML2qEqD1z4m6rT_yLJA@mail.gmail.com>
 References: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
-	<1377019903-14614-13-git-send-email-t.figa@samsung.com>
-	<CAKew6eU4ofumk64fwZSK-R-UUBQos6UU1TLDdVRDE-bvOrbitw@mail.gmail.com>
-	<14520108.LqsSBuPVXk@amdc1227>
+	<1377019903-14614-10-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f173.google.com ([209.85.214.173]:58714 "EHLO
-	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751463Ab3HUNMl (ORCPT
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:41565 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751506Ab3HUNRL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 09:12:41 -0400
-In-Reply-To: <14520108.LqsSBuPVXk@amdc1227>
+	Wed, 21 Aug 2013 09:17:11 -0400
+In-Reply-To: <1377019903-14614-10-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
->> <snip>
->>
->> > --- a/drivers/clk/samsung/clk-pll.h
->> > +++ b/drivers/clk/samsung/clk-pll.h
->> > @@ -51,6 +51,28 @@ enum samsung_pll_type {
->> >
->> >                 .afc    =       (_afc),                         \
->> >
->> >         }
->> >
->> > +#define PLL_4600_RATE(_rate, _m, _p, _s, _k, _vsel)            \
->> > +       {                                                       \
->> > +               .rate   =       (_rate),                        \
->> > +               .mdiv   =       (_m),                           \
->> > +               .pdiv   =       (_p),                           \
->> > +               .sdiv   =       (_s),                           \
->> > +               .kdiv   =       (_k),                           \
->> > +               .vsel   =       (_vsel),                        \
->> > +       }
->> > +
->> > +#define PLL_4650_RATE(_rate, _m, _p, _s, _k, _mfr, _mrr, _vsel)
->> > \ +       {                                                       \ +
->> >              .rate   =       (_rate),                        \ +
->> >         .mdiv   =       (_m),                           \ +
->> >    .pdiv   =       (_p),                           \ +
->> > .sdiv   =       (_s),                           \ +
->> > .kdiv   =       (_k),                           \ +               .mfr
->> >    =       (_mfr),                         \ +               .mrr    =
->> >       (_mrr),                         \ +               .vsel   =
->> >  (_vsel),                        \ +       }
->> > +
->> >
->> >  /* NOTE: Rate table should be kept sorted in descending order. */
->> >
->> >  struct samsung_pll_rate_table {
->> >
->> > @@ -60,6 +82,9 @@ struct samsung_pll_rate_table {
->> >
->> >         unsigned int sdiv;
->> >         unsigned int kdiv;
->> >         unsigned int afc;
->> >
->> > +       unsigned int mfr;
->> > +       unsigned int mrr;
->> > +       unsigned int vsel;
->> >
->> >  };
->>
->> This struct seems to be expanding too much.
+>  };
 >
-> I don't think it's a problem. How many bytes such tables can occupy in a
-> system?
+> +static struct __initdata samsung_pll_clock exynos4210_plls[nr_plls] = {
+
+NIT: __initdata should be at last.
+
+> +       [apll] = PLL_A(pll_4508, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
+> +               APLL_CON0, "fout_apll", NULL),
+> +       [mpll] = PLL_A(pll_4508, fout_mpll, "fout_mpll", "fin_pll",
+> +               E4210_MPLL_LOCK, E4210_MPLL_CON0, "fout_mpll", NULL),
+> +};
+> +
+>  static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
+>         [apll] = PLL(pll_35xx, fout_apll, "fout_apll", "fin_pll",
+>                         APLL_LOCK, APLL_CON0, NULL),
+> @@ -1004,7 +1012,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+>                                     enum exynos4_soc exynos4_soc,
+>                                     void __iomem *reg_base, unsigned long xom)
+>  {
+> -       struct clk *apll, *mpll, *epll, *vpll;
+> +       struct clk *epll, *vpll;
 >
-
-no doubt comparing with memory size its negligible..
-but comparing only struct size and coding lines it seems costlier :) .
-
->> Can we re-think on options for using bit map same as register
->> definition? It can reduce code in set_rate also little bit.
+>         reg_base = of_iomap(np, 0);
+>         if (!reg_base)
+> @@ -1026,17 +1034,13 @@ static void __init exynos4_clk_init(struct device_node *np,
+>         exynos4_clk_register_finpll(xom);
 >
-> IMHO it is more clear what the code does when accessing a single
-> coefficient at once.
+>         if (exynos4_soc == EXYNOS4210) {
+> -               apll = samsung_clk_register_pll45xx("fout_apll", "fin_pll",
+> -                                       reg_base + APLL_CON0, pll_4508);
+> -               mpll = samsung_clk_register_pll45xx("fout_mpll", "fin_pll",
+> -                                       reg_base + E4210_MPLL_CON0, pll_4508);
+> +               samsung_clk_register_pll(exynos4210_plls,
+> +                                       ARRAY_SIZE(exynos4210_plls), reg_base);
+>                 epll = samsung_clk_register_pll46xx("fout_epll", "fin_pll",
+>                                         reg_base + EPLL_CON0, pll_4600);
+>                 vpll = samsung_clk_register_pll46xx("fout_vpll", "mout_vpllsrc",
+>                                         reg_base + VPLL_CON0, pll_4650c);
 >
-> In addition you still would need to preserve bitfields that are not changed
-> by the driver
-
-Sorry, I can't see any such problem, it will OR only the required bits.
-
-> and also unpack some of the coefficients anyway, like pdiv
-> that is used to calculate lock time.
-
-Agree, but cases of unpacking will always be less than cases of
-shifting and packing.
-
-Anyways, its only MHO :).
-
-Regards,
-Yadwinder
+> -               samsung_clk_add_lookup(apll, fout_apll);
+> -               samsung_clk_add_lookup(mpll, fout_mpll);
+>                 samsung_clk_add_lookup(epll, fout_epll);
+>                 samsung_clk_add_lookup(vpll, fout_vpll);
+>         } else {
+> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+> index 0775554..b0398d2 100644
+> --- a/drivers/clk/samsung/clk-pll.c
+> +++ b/drivers/clk/samsung/clk-pll.c
+> @@ -280,18 +280,10 @@ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+>  #define PLL45XX_PDIV_SHIFT     (8)
+>  #define PLL45XX_SDIV_SHIFT     (0)
+>
+> -struct samsung_clk_pll45xx {
+> -       struct clk_hw           hw;
+> -       enum pll45xx_type       type;
+> -       const void __iomem      *con_reg;
+> -};
+> -
+> -#define to_clk_pll45xx(_hw) container_of(_hw, struct samsung_clk_pll45xx, hw)
+> -
+>  static unsigned long samsung_pll45xx_recalc_rate(struct clk_hw *hw,
+>                                 unsigned long parent_rate)
+>  {
+> -       struct samsung_clk_pll45xx *pll = to_clk_pll45xx(hw);
+> +       struct samsung_clk_pll *pll = to_clk_pll(hw);
+>         u32 mdiv, pdiv, sdiv, pll_con;
+>         u64 fvco = parent_rate;
+>
+> @@ -313,43 +305,6 @@ static const struct clk_ops samsung_pll45xx_clk_ops = {
+>         .recalc_rate = samsung_pll45xx_recalc_rate,
+>  };
+>
+> -struct clk * __init samsung_clk_register_pll45xx(const char *name,
+> -                       const char *pname, const void __iomem *con_reg,
+> -                       enum pll45xx_type type)
+> -{
+> -       struct samsung_clk_pll45xx *pll;
+> -       struct clk *clk;
+> -       struct clk_init_data init;
+> -
+> -       pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+> -       if (!pll) {
+> -               pr_err("%s: could not allocate pll clk %s\n", __func__, name);
+> -               return NULL;
+> -       }
+> -
+> -       init.name = name;
+> -       init.ops = &samsung_pll45xx_clk_ops;
+> -       init.flags = CLK_GET_RATE_NOCACHE;
+> -       init.parent_names = &pname;
+> -       init.num_parents = 1;
+> -
+> -       pll->hw.init = &init;
+> -       pll->con_reg = con_reg;
+> -       pll->type = type;
+> -
+> -       clk = clk_register(NULL, &pll->hw);
+> -       if (IS_ERR(clk)) {
+> -               pr_err("%s: failed to register pll clock %s\n", __func__,
+> -                               name);
+> -               kfree(pll);
+> -       }
+> -
+> -       if (clk_register_clkdev(clk, name, NULL))
+> -               pr_err("%s: failed to register lookup for %s", __func__, name);
+> -
+> -       return clk;
+> -}
+> -
+>  /*
+>   * PLL46xx Clock Type
+>   */
+> @@ -724,6 +679,11 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
+>                 else
+>                         init.ops = &samsung_pll35xx_clk_ops;
+>                 break;
+> +       case pll_4500:
+> +       case pll_4502:
+> +       case pll_4508:
+> +               init.ops = &samsung_pll45xx_clk_ops;
+> +               break;
+>         /* clk_ops for 36xx and 2650 are similar */
+>         case pll_36xx:
+>         case pll_2650:
+> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+> index 2f70e88..f3faf24 100644
+> --- a/drivers/clk/samsung/clk-pll.h
+> +++ b/drivers/clk/samsung/clk-pll.h
+> @@ -17,6 +17,9 @@ enum samsung_pll_type {
+>         pll_36xx,
+>         pll_2550,
+>         pll_2650,
+> +       pll_4500,
+> +       pll_4502,
+> +       pll_4508
+>  };
+>
+>  #define PLL_35XX_RATE(_rate, _m, _p, _s)                       \
+> @@ -46,21 +49,12 @@ struct samsung_pll_rate_table {
+>         unsigned int kdiv;
+>  };
+>
+> -enum pll45xx_type {
+> -       pll_4500,
+> -       pll_4502,
+> -       pll_4508
+> -};
+> -
+>  enum pll46xx_type {
+>         pll_4600,
+>         pll_4650,
+>         pll_4650c,
+>  };
+>
+> -extern struct clk * __init samsung_clk_register_pll45xx(const char *name,
+> -                       const char *pname, const void __iomem *con_reg,
+> -                       enum pll45xx_type type);
+>  extern struct clk * __init samsung_clk_register_pll46xx(const char *name,
+>                         const char *pname, const void __iomem *con_reg,
+>                         enum pll46xx_type type);
+> --
+> 1.8.3.2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
