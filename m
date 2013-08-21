@@ -1,49 +1,151 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH V3] watchdog: s3c2410_wdt: remove the global variables
-Date: Wed, 21 Aug 2013 14:22:28 -0700
-Message-ID: <20130821212228.GA3136@roeck-us.net>
-References: <1374569985-13576-1-git-send-email-l.krishna@samsung.com>
- <0e8301ce8842$eca72880$c5f57980$@org>
- <20130821200105.GB815@spo001.leaseweb.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:60239 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752919Ab3HUVWd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 17:22:33 -0400
-Content-Disposition: inline
-In-Reply-To: <20130821200105.GB815@spo001.leaseweb.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH v7 7/7] ARM: dts: Add dts file for S3C6410-based SMDK6410 board
+Date: Wed, 21 Aug 2013 23:21:51 +0200
+Message-ID: <1377120111-25601-8-git-send-email-tomasz.figa@gmail.com>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, jg1.han@samsung.com, t.figa@samsung.com, sachin.kamat@linaro.org, linux-watchdog@vger.kernel.org
 
-On Wed, Aug 21, 2013 at 10:01:05PM +0200, Wim Van Sebroeck wrote:
-> Hi All,
-> 
-> > Leela Krishna Amudala wrote:
-> > > 
-> > > This patch removes the global variables in the driver file and
-> > > group them into a structure.
-> > > 
-> > > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> > 
-> > (+ Wim Van Sebroeck)
-> > 
-> > Looks good to me,
-> > 
-> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> > 
-> > Thanks,
-> > Kukjin
-> 
-> Can someone sent me the (unquoted) patch so that I can review and add it?
-> 
+This patch adds basic device tree sources for SAMSUNG SMDK6410 board
+based on SAMSUNG S3C6410 SoC.
 
-Try this:
+Currently only UARTs, SD channel 0 and 100Mbps ethernet (SMSC911x) are
+supported.
 
-wget "http://download.gmane.org/gmane.linux.kernel.samsung-soc/21022/21023"
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+ arch/arm/boot/dts/Makefile             |   3 +-
+ arch/arm/boot/dts/s3c6410-smdk6410.dts | 103 +++++++++++++++++++++++++++++++++
+ 2 files changed, 105 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/s3c6410-smdk6410.dts
 
-Guenter
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 72f8af3..e55c644 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -194,7 +194,8 @@ dtb-$(CONFIG_ARCH_U8500) += snowball.dtb \
+ 	ccu8540.dtb \
+ 	ccu9540.dtb
+ dtb-$(CONFIG_ARCH_S3C24XX) += s3c2416-smdk2416.dtb
+-dtb-$(CONFIG_ARCH_S3C64XX) += s3c6410-mini6410.dtb
++dtb-$(CONFIG_ARCH_S3C64XX) += s3c6410-mini6410.dtb \
++	s3c6410-smdk6410.dtb
+ dtb-$(CONFIG_ARCH_SHMOBILE) += emev2-kzm9d.dtb \
+ 	emev2-kzm9d-reference.dtb \
+ 	r8a7740-armadillo800eva.dtb \
+diff --git a/arch/arm/boot/dts/s3c6410-smdk6410.dts b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+new file mode 100644
+index 0000000..ecf35ec
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c6410-smdk6410.dts
+@@ -0,0 +1,103 @@
++/*
++ * Samsung S3C6410 based SMDK6410 board device tree source.
++ *
++ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Device tree source file for SAMSUNG SMDK6410 board which is based on
++ * Samsung's S3C6410 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++
++#include "s3c6410.dtsi"
++
++/ {
++	model = "SAMSUNG SMDK6410 board based on S3C6410";
++	compatible = "samsung,mini6410", "samsung,s3c6410";
++
++	memory {
++		reg = <0x50000000 0x8000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttySAC0,115200n8 earlyprintk rootwait root=/dev/mmcblk0p1";
++	};
++
++	clocks {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		fin_pll: oscillator@0 {
++			compatible = "fixed-clock";
++			reg = <0>;
++			clock-frequency = <12000000>;
++			clock-output-names = "fin_pll";
++			#clock-cells = <0>;
++		};
++
++		xusbxti: oscillator@1 {
++			compatible = "fixed-clock";
++			reg = <1>;
++			clock-output-names = "xusbxti";
++			clock-frequency = <48000000>;
++			#clock-cells = <0>;
++		};
++	};
++
++	srom-cs1@18000000 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		reg = <0x18000000 0x8000000>;
++		ranges;
++
++		ethernet@18000000 {
++			compatible = "smsc,lan9115";
++			reg = <0x18000000 0x10000>;
++			interrupt-parent = <&gpn>;
++			interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
++			phy-mode = "mii";
++			reg-io-width = <4>;
++			smsc,force-internal-phy;
++		};
++	};
++};
++
++&sdhci0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
++	bus-width = <4>;
++	status = "okay";
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_data>, <&uart0_fctl>;
++	status = "okay";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_data>;
++	status = "okay";
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart2_data>;
++	status = "okay";
++};
++
++&uart3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart3_data>;
++	status = "okay";
++};
+-- 
+1.8.3.2
+
