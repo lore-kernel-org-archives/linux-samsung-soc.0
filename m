@@ -1,137 +1,85 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH 10/16] clk: samsung: pll: Add support for rate
- configuration of PLL45xx
-Date: Wed, 21 Aug 2013 17:48:44 +0530
-Message-ID: <CAKew6eVFC0kbQtWF+eH+h1deGhZosBD=X3ZgCXE1k4yndGrvLw@mail.gmail.com>
-References: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
-	<1377019903-14614-11-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] irqchip: gic: Allow setting affinity to offline CPUs
+Date: Wed, 21 Aug 2013 14:23:02 +0200
+Message-ID: <2014445.LqiPMUoEWf@amdc1227>
+References: <1377015070-26320-1-git-send-email-t.figa@samsung.com>
+ <2189739.GnKWSuLhMq@flatron> <20130820223916.GB23960@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f52.google.com ([209.85.219.52]:59441 "EHLO
-	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751861Ab3HUMSp (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:15613 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751462Ab3HUMXH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 08:18:45 -0400
-In-Reply-To: <1377019903-14614-11-git-send-email-t.figa@samsung.com>
+	Wed, 21 Aug 2013 08:23:07 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MRV0043LRQGTZA0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Aug 2013 13:23:04 +0100 (BST)
+In-reply-to: <20130820223916.GB23960@codeaurora.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Hi Tomasz,
+[Copying Daniel]
 
-On Tue, Aug 20, 2013 at 11:01 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> This patch implements round_rate and set_rate callbacks of PLL45xx
-> driver to allow reconfiguration of PLL at runtime.
->
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/clk/samsung/clk-pll.c | 109 +++++++++++++++++++++++++++++++++++++++++-
->  drivers/clk/samsung/clk-pll.h |  10 ++++
->  2 files changed, 118 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index b0398d2..cb971cb 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -10,9 +10,12 @@
->  */
->
->  #include <linux/errno.h>
-> +#include <linux/hrtimer.h>
->  #include "clk.h"
->  #include "clk-pll.h"
->
-> +#define PLL_TIMEOUT_MS         10
-> +
->  struct samsung_clk_pll {
->         struct clk_hw           hw;
->         void __iomem            *lock_reg;
-> @@ -272,13 +275,20 @@ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
->  /*
->   * PLL45xx Clock Type
->   */
-> +#define PLL4502_LOCK_FACTOR    400
-> +#define PLL4508_LOCK_FACTOR    240
->
->  #define PLL45XX_MDIV_MASK      (0x3FF)
->  #define PLL45XX_PDIV_MASK      (0x3F)
->  #define PLL45XX_SDIV_MASK      (0x7)
-> +#define PLL45XX_AFC_MASK       (0x1F)
->  #define PLL45XX_MDIV_SHIFT     (16)
->  #define PLL45XX_PDIV_SHIFT     (8)
->  #define PLL45XX_SDIV_SHIFT     (0)
-> +#define PLL45XX_AFC_SHIFT      (0)
-> +
-> +#define PLL45XX_ENABLE         BIT(31)
-> +#define PLL45XX_LOCKED         BIT(29)
->
->  static unsigned long samsung_pll45xx_recalc_rate(struct clk_hw *hw,
->                                 unsigned long parent_rate)
-> @@ -301,8 +311,100 @@ static unsigned long samsung_pll45xx_recalc_rate(struct clk_hw *hw,
->         return (unsigned long)fvco;
->  }
->
-> +static bool samsung_pll45xx_mp_change(u32 pll_con0, u32 pll_con1,
-> +                               const struct samsung_pll_rate_table *rate)
-> +{
-> +       u32 old_mdiv, old_pdiv, old_afc;
-> +
-> +       old_mdiv = (pll_con0 >> PLL45XX_MDIV_SHIFT) & PLL45XX_MDIV_MASK;
-> +       old_pdiv = (pll_con0 >> PLL45XX_PDIV_SHIFT) & PLL45XX_PDIV_MASK;
-> +       old_afc = (pll_con1 >> PLL45XX_AFC_SHIFT) & PLL45XX_AFC_MASK;
+On Tuesday 20 of August 2013 15:39:17 Stephen Boyd wrote:
+> On 08/21, Tomasz Figa wrote:
+> > On Tuesday 20 of August 2013 22:14:42 Russell King - ARM Linux wrote:
+> > > On Tue, Aug 20, 2013 at 06:11:10PM +0200, Tomasz Figa wrote:
+> > > > Sometimes it is necessary to fix interrupt affinity to an offline
+> > > > CPU,
+> > > > for example in initialization of local timers. This patch modifies
+> > > > .set_affinity() operation of irq-gic driver to fall back to any
+> > > > possible CPU if no online CPU can be found in requested CPU mask.
+> > > 
+> > > Err, this is a bad idea.  If a CPU is offline, then it must not
+> > > respond
+> > > to interrupts.  If you bind an interrupt to an offline CPU, and that
+> > > device asserts its interrupt, what happens?  It doesn't get serviced
+> > > until that CPU comes back online, which may be a very long time.
+> > > 
+> > > If, for example, that is your network device, it would mean your
+> > > network stops operating.  Worse, the network layer will time out and
+> > > reset the ethernet device, trying to get things working (which it
+> > > won't.)
+> > > 
+> > > I think how I used to handle this case prior to genirq is that I fell
+> > > back to any online CPU if the interrupt ended up only routed to
+> > > offline
+> > > CPUs, but when an offline CPU comes back, it could then be re-routed
+> > > back to that CPU.  In other words, the mask change was
+> > > non-destructive.
+> > > 
+> > > I think with genirq, such mask changes are destructive.
+> > 
+> > Yes, that's correct. Although if you _explicitly_ request the interrupt
+> > to be routed to an offline CPU (i.e. only offline CPUs have bits set
+> > in passed cpumask), is it an error?
+> > 
+> > There is at least one irqchip that does not check received cpumask for
+> > this (metag) and I don't see any documentation saying what should
+> > happen
+> > in this case in .set_affinity operation.
+> > 
+> > Still, if you have any better solution for the original problem (broken
+> > Exynos4210 local timers, due to failing irq_set_affinity()), then I'd
+> > appreciate it, as I don't like the one from this patch too much either.
+> 
+> One "solution" might be to change the irq affinity after the CPU
+> is marked online via the hotplug notifier chain. For a short
+> period of time the timer interrupt will go to a different CPU but
+> I don't see how that is a problem.
 
-old_afc doesn't required in this function.
+After initial testing, this seems to work, but but it still seems a little 
+hackish.
 
-> +
-> +       return (old_mdiv != rate->mdiv || old_pdiv != rate->pdiv);
-> +}
-> +
-> +static int samsung_pll45xx_set_rate(struct clk_hw *hw, unsigned long drate,
-> +                                       unsigned long prate)
-> +{
-> +       struct samsung_clk_pll *pll = to_clk_pll(hw);
-> +       const struct samsung_pll_rate_table *rate;
-> +       u32 con0, con1;
-> +       ktime_t start;
-> +
-> +       /* Get required rate settings from table */
-> +       rate = samsung_get_pll_settings(pll, drate);
-> +       if (!rate) {
-> +               pr_err("%s: Invalid rate : %lu for pll clk %s\n", __func__,
-> +                       drate, __clk_get_name(hw->clk));
-> +               return -EINVAL;
-> +       }
-> +
-> +       con0 = __raw_readl(pll->con_reg);
-> +       con1 = __raw_readl(pll->con_reg + 0x4);
-> +
-> +       if (!(samsung_pll45xx_mp_change(con0, con1, rate))) {
-> +               /* If only s change, change just s value only*/
-> +               con0 &= ~(PLL45XX_SDIV_MASK << PLL45XX_SDIV_SHIFT);
-> +               con0 |= rate->sdiv << PLL45XX_SDIV_SHIFT;
-> +               __raw_writel(con0, pll->con_reg);
-> +
-> +               return 0;
-> +       }
-> +
-> +       /* Set PLL PMS values. */
-> +       con0 &= ~((PLL45XX_MDIV_MASK << PLL45XX_MDIV_SHIFT) |
-> +                       (PLL45XX_PDIV_MASK << PLL45XX_PDIV_SHIFT) |
-> +                       (PLL45XX_SDIV_MASK << PLL45XX_SDIV_SHIFT));
-> +       con0 |= (rate->mdiv << PLL45XX_MDIV_SHIFT) |
-> +                       (rate->pdiv << PLL45XX_PDIV_SHIFT) |
-> +                       (rate->sdiv << PLL45XX_SDIV_SHIFT);
-> +
-> +       /* Set PLL AFC value. */
-> +       con1 = __raw_readl(pll->con_reg + 0x4);
-> +       con1 &= ~(PLL45XX_AFC_MASK << PLL45XX_AFC_SHIFT);
-> +       con1 |= (rate->afc << PLL45XX_AFC_SHIFT);
-> +
+I'd like to make sure that nothing bad happens if the irq somehow fires 
+before setting the affinity. An opinion of someone that is more into kernel 
+timekeeping than me would be nice.
 
-Do we need to take care of AFC_ENB also, if we are using AFC ?
-
-Regards,
-Yadwinder
+Best regards,
+Tomasz
