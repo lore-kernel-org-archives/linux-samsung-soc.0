@@ -1,148 +1,126 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Subject: [PATCH V2] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Wed, 21 Aug 2013 12:13:53 +0530
-Message-ID: <1377067433-28373-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v7 13/13] V4L: Add driver for s5k4e5 image sensor
+Date: Wed, 21 Aug 2013 08:53:55 +0200
+Message-ID: <52146403.9050702@xs4all.nl>
+References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com> <1377066881-5423-14-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:63371 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752068Ab3HUGoH (ORCPT
+Received: from [194.109.24.22] ([194.109.24.22]:3943 "EHLO smtp-vbr2.xs4all.nl"
+	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1752216Ab3HUGy7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 02:44:07 -0400
+	Wed, 21 Aug 2013 02:54:59 -0400
+In-Reply-To: <1377066881-5423-14-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, kgene.kim@samsung.com
-Cc: ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-This patch adds the device tree node entries for exynos5420 SOC.
-Exynos5420 has a different version of DWMMC controller,so a new
-compatible string is used to distinguish it from the prior SOC's.
+On 08/21/2013 08:34 AM, Arun Kumar K wrote:
+> This patch adds subdev driver for Samsung S5K4E5 raw image sensor.
+> Like s5k6a3, it is also another fimc-is firmware controlled
+> sensor. This minimal sensor driver doesn't do any I2C communications
+> as its done by ISP firmware. It can be updated if needed to a
+> regular sensor driver by adding the I2C communication.
+> 
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../devicetree/bindings/media/i2c/s5k4e5.txt       |   43 +++
+>  drivers/media/i2c/Kconfig                          |    8 +
+>  drivers/media/i2c/Makefile                         |    1 +
+>  drivers/media/i2c/s5k4e5.c                         |  361 ++++++++++++++++++++
+>  4 files changed, 413 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+>  create mode 100644 drivers/media/i2c/s5k4e5.c
+> 
 
-changes since V1:
-	1.disable node by status = disabled in SOC file
-	2.enable node by status = okay in board specific file
+...
 
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
----
- .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 ++
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |   38 ++++++++++++++++++++
- arch/arm/boot/dts/exynos5420.dtsi                  |   36 +++++++++++++++++++
- 3 files changed, 76 insertions(+)
+> diff --git a/drivers/media/i2c/s5k4e5.c b/drivers/media/i2c/s5k4e5.c
+> new file mode 100644
+> index 0000000..0a6ece6
+> --- /dev/null
+> +++ b/drivers/media/i2c/s5k4e5.c
+> @@ -0,0 +1,361 @@
+> +/*
+> + * Samsung S5K4E5 image sensor driver
+> + *
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> + * Author: Arun Kumar K <arun.kk@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/errno.h>
+> +#include <linux/gpio.h>
+> +#include <linux/i2c.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of_gpio.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/slab.h>
+> +#include <linux/videodev2.h>
+> +#include <media/v4l2-async.h>
+> +#include <media/v4l2-subdev.h>
+> +
+> +#define S5K4E5_SENSOR_MAX_WIDTH		2576
+> +#define S5K4E5_SENSOR_MAX_HEIGHT	1930
+> +
+> +#define S5K4E5_SENSOR_ACTIVE_WIDTH	2560
+> +#define S5K4E5_SENSOR_ACTIVE_HEIGHT	1920
+> +
+> +#define S5K4E5_SENSOR_MIN_WIDTH		(32 + 16)
+> +#define S5K4E5_SENSOR_MIN_HEIGHT	(32 + 10)
+> +
+> +#define S5K4E5_DEF_WIDTH		1296
+> +#define S5K4E5_DEF_HEIGHT		732
+> +
+> +#define S5K4E5_DRV_NAME			"S5K4E5"
+> +#define S5K4E5_CLK_NAME			"mclk"
+> +
+> +#define S5K4E5_NUM_SUPPLIES		2
+> +
+> +#define S5K4E5_DEF_CLK_FREQ		24000000
+> +
+> +/**
+> + * struct s5k4e5 - s5k4e5 sensor data structure
+> + * @dev: pointer to this I2C client device structure
+> + * @subdev: the image sensor's v4l2 subdev
+> + * @pad: subdev media source pad
+> + * @supplies: image sensor's voltage regulator supplies
+> + * @gpio_reset: GPIO connected to the sensor's reset pin
+> + * @lock: mutex protecting the structure's members below
+> + * @format: media bus format at the sensor's source pad
+> + */
+> +struct s5k4e5 {
+> +	struct device *dev;
+> +	struct v4l2_subdev subdev;
+> +	struct media_pad pad;
+> +	struct regulator_bulk_data supplies[S5K4E5_NUM_SUPPLIES];
+> +	int gpio_reset;
+> +	struct mutex lock;
+> +	struct v4l2_mbus_framefmt format;
+> +	struct clk *clock;
+> +	u32 clock_frequency;
+> +};
+> +
+> +static const char * const s5k4e5_supply_names[] = {
+> +	"svdda",
+> +	"svddio"
+> +};
 
-diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-index 6d1c098..84cd56f 100644
---- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-+++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-@@ -16,6 +16,8 @@ Required Properties:
- 	  specific extensions.
- 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
- 	  specific extensions.
-+	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
-+	  specific extensions.
- 
- * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
-   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index bafba25..6e65278 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -31,6 +31,44 @@
- 		};
- 	};
- 
-+	dwmmc0@12200000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		broken-cd;
-+		bypass-smu;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <0 4>;
-+		samsung,dw-mshc-ddr-timing = <0 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+		};
-+	};
-+
-+	dwmmc2@12220000 {
-+		status = "okay";
-+		num-slots = <1>;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-ciu-div = <3>;
-+		samsung,dw-mshc-sdr-timing = <2 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+		};
-+	};
-+
- 	dp-controller@145B0000 {
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&dp_hpd>;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 5353e32..694e7f1 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -22,6 +22,9 @@
- 	compatible = "samsung,exynos5420";
- 
- 	aliases {
-+		mshc0 = &dwmmc_0;
-+		mshc1 = &dwmmc_1;
-+		mshc2 = &dwmmc_2;
- 		pinctrl0 = &pinctrl_0;
- 		pinctrl1 = &pinctrl_1;
- 		pinctrl2 = &pinctrl_2;
-@@ -84,6 +87,39 @@
- 		clock-names = "mfc";
- 	};
- 
-+	dwmmc_0: dwmmc0@12200000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 75 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12200000 0x2000>;
-+		clocks = <&clock 351>, <&clock 132>;
-+		clock-names = "biu", "ciu";
-+		status = "disabled";
-+	};
-+
-+	dwmmc_1: dwmmc1@12210000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 76 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12210000 0x2000>;
-+		clocks = <&clock 352>, <&clock 133>;
-+		clock-names = "biu", "ciu";
-+		status = "disabled";
-+	};
-+
-+	dwmmc_2: dwmmc2@12220000 {
-+		compatible = "samsung,exynos5420-dw-mshc";
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0x12220000 0x2000>;
-+		clocks = <&clock 353>, <&clock 134>;
-+		clock-names = "biu", "ciu";
-+		status = "disabled";
-+	};
-+
- 	mct@101C0000 {
- 		compatible = "samsung,exynos4210-mct";
- 		reg = <0x101C0000 0x800>;
--- 
-1.7.9.5
+I'm no regulator expert, but shouldn't this list come from the DT or platform_data?
+Or are these names specific to this sensor?
+
+Regards,
+
+	Hans
