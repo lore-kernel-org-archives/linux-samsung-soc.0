@@ -1,109 +1,60 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 12/16] clk: samsung: pll: Add support for rate
- configuration of PLL46xx
-Date: Wed, 21 Aug 2013 14:44:41 +0200
-Message-ID: <14520108.LqsSBuPVXk@amdc1227>
+Subject: Re: [PATCH 14/16] clk: samsung: exynos4: Register PLL rate tables for
+ Exynos4210
+Date: Wed, 21 Aug 2013 14:45:21 +0200
+Message-ID: <1953130.hE0ZFC2CqQ@amdc1227>
 References: <1377019903-14614-1-git-send-email-t.figa@samsung.com>
- <1377019903-14614-13-git-send-email-t.figa@samsung.com>
- <CAKew6eU4ofumk64fwZSK-R-UUBQos6UU1TLDdVRDE-bvOrbitw@mail.gmail.com>
+ <1377019903-14614-15-git-send-email-t.figa@samsung.com>
+ <CAKew6eXbc8ai9vSX2EMv+=7LYmxZ+75z1X72ytULOxtwX7bebg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:10261 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751511Ab3HUMop (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:15160 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751603Ab3HUMpZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 08:44:45 -0400
-In-reply-to: <CAKew6eU4ofumk64fwZSK-R-UUBQos6UU1TLDdVRDE-bvOrbitw@mail.gmail.com>
+	Wed, 21 Aug 2013 08:45:25 -0400
+In-reply-to: <CAKew6eXbc8ai9vSX2EMv+=7LYmxZ+75z1X72ytULOxtwX7bebg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Wednesday 21 of August 2013 18:02:16 Yadwinder Singh Brar wrote:
-> > +       con0 |= (rate->mdiv << PLL46XX_MDIV_SHIFT) |
-> > +                       (rate->pdiv << PLL46XX_PDIV_SHIFT) |
-> > +                       (rate->sdiv << PLL46XX_SDIV_SHIFT) |
-> > +                       (rate->vsel << PLL46XX_VSEL_SHIFT);
-> > +
-> > +       /* Set PLL AFC, MFR and MRR values. */
-> 
-> This comments seems to be miss match with below code.
-
-Hmm, looks like a copy/paste error. Thanks for spotting.
-
-> > +       con1 = __raw_readl(pll->con_reg + 0x4);
-> > +       con1 &= ~((PLL46XX_KDIV_MASK << PLL46XX_KDIV_SHIFT) |
-> > +                       (PLL46XX_MFR_MASK << PLL46XX_MFR_SHIFT) |
-> > +                       (PLL46XX_MRR_MASK << PLL46XX_MRR_SHIFT));
-> > +       con1 |= (rate->kdiv << PLL46XX_KDIV_SHIFT) |
-> > +                       (rate->mfr << PLL46XX_MFR_SHIFT) |
-> > +                       (rate->mrr << PLL46XX_MRR_SHIFT);
-> > +
-> 
-> <snip>
-> 
-> > --- a/drivers/clk/samsung/clk-pll.h
-> > +++ b/drivers/clk/samsung/clk-pll.h
-> > @@ -51,6 +51,28 @@ enum samsung_pll_type {
+On Wednesday 21 of August 2013 18:04:07 Yadwinder Singh Brar wrote:
+> On Tue, Aug 20, 2013 at 11:01 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> > This patch adds rate tables for PLLs that can be reconfigured at
+> > runtime
+> > for Exynos4210 SoCs. Provided tables contain PLL coefficients for
+> > input clock of 24 MHz and so are registered only in this case. MPLL
+> > does
+> > not need runtime reconfiguration and so table for it is not provided.
 > > 
-> >                 .afc    =       (_afc),                         \
-> >         
-> >         }
+> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
 > > 
-> > +#define PLL_4600_RATE(_rate, _m, _p, _s, _k, _vsel)            \
-> > +       {                                                       \
-> > +               .rate   =       (_rate),                        \
-> > +               .mdiv   =       (_m),                           \
-> > +               .pdiv   =       (_p),                           \
-> > +               .sdiv   =       (_s),                           \
-> > +               .kdiv   =       (_k),                           \
-> > +               .vsel   =       (_vsel),                        \
-> > +       }
-> > +
-> > +#define PLL_4650_RATE(_rate, _m, _p, _s, _k, _mfr, _mrr, _vsel)       
-> > \ +       {                                                       \ + 
-> >              .rate   =       (_rate),                        \ +      
-> >         .mdiv   =       (_m),                           \ +           
-> >    .pdiv   =       (_p),                           \ +              
-> > .sdiv   =       (_s),                           \ +              
-> > .kdiv   =       (_k),                           \ +               .mfr
-> >    =       (_mfr),                         \ +               .mrr    =
-> >       (_mrr),                         \ +               .vsel   =     
-> >  (_vsel),                        \ +       }
-> > +
+> >  drivers/clk/samsung/clk-exynos4.c | 45
+> >  +++++++++++++++++++++++++++++++++++++++ 1 file changed, 45
+> >  insertions(+)
 > > 
-> >  /* NOTE: Rate table should be kept sorted in descending order. */
+> > diff --git a/drivers/clk/samsung/clk-exynos4.c
+> > b/drivers/clk/samsung/clk-exynos4.c index 34474ce..e18cfae 100644
+> > --- a/drivers/clk/samsung/clk-exynos4.c
+> > +++ b/drivers/clk/samsung/clk-exynos4.c
+> > @@ -992,6 +992,40 @@ static struct of_device_id ext_clk_match[]
+> > __initdata = {> 
+> >         {},
 > >  
-> >  struct samsung_pll_rate_table {
-> > 
-> > @@ -60,6 +82,9 @@ struct samsung_pll_rate_table {
-> > 
-> >         unsigned int sdiv;
-> >         unsigned int kdiv;
-> >         unsigned int afc;
-> > 
-> > +       unsigned int mfr;
-> > +       unsigned int mrr;
-> > +       unsigned int vsel;
-> > 
 > >  };
+> > 
+> > +/* PLLs PMS values */
+> > +static struct samsung_pll_rate_table exynos4210_apll_rates[] = {
+> > +       PLL_45XX_RATE(1200000000, 150,  3, 1, 28),
 > 
-> This struct seems to be expanding too much.
+> All these tables in this patch as well as next patch can be __initdata
 
-I don't think it's a problem. How many bytes such tables can occupy in a 
-system?
-
-> Can we re-think on options for using bit map same as register
-> definition? It can reduce code in set_rate also little bit.
-
-IMHO it is more clear what the code does when accessing a single 
-coefficient at once.
-
-In addition you still would need to preserve bitfields that are not changed 
-by the driver and also unpack some of the coefficients anyway, like pdiv 
-that is used to calculate lock time.
+Right, I forgot to mark them as such. Thanks for spotting.
 
 Best regards,
 Tomasz
