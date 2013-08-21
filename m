@@ -1,68 +1,223 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH] irqchip: gic: Allow setting affinity to offline CPUs
-Date: Tue, 20 Aug 2013 15:39:17 -0700
-Message-ID: <20130820223916.GB23960@codeaurora.org>
-References: <1377015070-26320-1-git-send-email-t.figa@samsung.com>
- <20130820211442.GF17845@n2100.arm.linux.org.uk>
- <2189739.GnKWSuLhMq@flatron>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] clk: samsung: pll: Use new registration method for PLL6552 and PLL6553
+Date: Wed, 21 Aug 2013 02:33:21 +0200
+Message-ID: <1856348.DCxTucbm8V@flatron>
+References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com> <158901ce9b34$c0ac8720$42059560$@org> <20130820002258.4443.34197@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:45830 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751322Ab3HTWjX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Aug 2013 18:39:23 -0400
-Content-Disposition: inline
-In-Reply-To: <2189739.GnKWSuLhMq@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20130820002258.4443.34197@quantum>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Mark Brown' <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, 'Olof Johansson' <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Sylwester Nawrocki' <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Heiko =?ISO-8859-1?Q?St=FCbner=27?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-On 08/21, Tomasz Figa wrote:
-> On Tuesday 20 of August 2013 22:14:42 Russell King - ARM Linux wrote:
-> > On Tue, Aug 20, 2013 at 06:11:10PM +0200, Tomasz Figa wrote:
-> > > Sometimes it is necessary to fix interrupt affinity to an offline CPU,
-> > > for example in initialization of local timers. This patch modifies
-> > > .set_affinity() operation of irq-gic driver to fall back to any
-> > > possible CPU if no online CPU can be found in requested CPU mask.
-> > 
-> > Err, this is a bad idea.  If a CPU is offline, then it must not respond
-> > to interrupts.  If you bind an interrupt to an offline CPU, and that
-> > device asserts its interrupt, what happens?  It doesn't get serviced
-> > until that CPU comes back online, which may be a very long time.
-> > 
-> > If, for example, that is your network device, it would mean your
-> > network stops operating.  Worse, the network layer will time out and
-> > reset the ethernet device, trying to get things working (which it
-> > won't.)
-> > 
-> > I think how I used to handle this case prior to genirq is that I fell
-> > back to any online CPU if the interrupt ended up only routed to offline
-> > CPUs, but when an offline CPU comes back, it could then be re-routed
-> > back to that CPU.  In other words, the mask change was non-destructive.
-> > 
-> > I think with genirq, such mask changes are destructive.
-> 
-> Yes, that's correct. Although if you _explicitly_ request the interrupt to 
-> be routed to an offline CPU (i.e. only offline CPUs have bits set in 
-> passed cpumask), is it an error?
-> 
-> There is at least one irqchip that does not check received cpumask for 
-> this (metag) and I don't see any documentation saying what should happen 
-> in this case in .set_affinity operation.
-> 
-> Still, if you have any better solution for the original problem (broken 
-> Exynos4210 local timers, due to failing irq_set_affinity()), then I'd 
-> appreciate it, as I don't like the one from this patch too much either.
-> 
+This patch modifies PLL6552 and PLL6553 clock drivers to use recently
+added common Samsung PLL registration method.
 
-One "solution" might be to change the irq affinity after the CPU
-is marked online via the hotplug notifier chain. For a short
-period of time the timer interrupt will go to a different CPU but
-I don't see how that is a problem.
+Signed-off-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/clk/samsung/clk-pll.c | 105 +++++-------------------------------------
+ drivers/clk/samsung/clk-pll.h |   6 +--
+ 2 files changed, 13 insertions(+), 98 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 0775554..7572d1d 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -441,9 +441,6 @@ struct clk * __init samsung_clk_register_pll46xx(const char *name,
+  * PLL6552 Clock Type
+  */
+ 
+-#define PLL6552_LOCK_REG	0x00
+-#define PLL6552_CON_REG		0x0c
+-
+ #define PLL6552_MDIV_MASK	0x3ff
+ #define PLL6552_PDIV_MASK	0x3f
+ #define PLL6552_SDIV_MASK	0x7
+@@ -451,21 +448,14 @@ struct clk * __init samsung_clk_register_pll46xx(const char *name,
+ #define PLL6552_PDIV_SHIFT	8
+ #define PLL6552_SDIV_SHIFT	0
+ 
+-struct samsung_clk_pll6552 {
+-	struct clk_hw hw;
+-	void __iomem *reg_base;
+-};
+-
+-#define to_clk_pll6552(_hw) container_of(_hw, struct samsung_clk_pll6552, hw)
+-
+ static unsigned long samsung_pll6552_recalc_rate(struct clk_hw *hw,
+ 						unsigned long parent_rate)
+ {
+-	struct samsung_clk_pll6552 *pll = to_clk_pll6552(hw);
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
+ 	u32 mdiv, pdiv, sdiv, pll_con;
+ 	u64 fvco = parent_rate;
+ 
+-	pll_con = __raw_readl(pll->reg_base + PLL6552_CON_REG);
++	pll_con = __raw_readl(pll->con_reg);
+ 	mdiv = (pll_con >> PLL6552_MDIV_SHIFT) & PLL6552_MDIV_MASK;
+ 	pdiv = (pll_con >> PLL6552_PDIV_SHIFT) & PLL6552_PDIV_MASK;
+ 	sdiv = (pll_con >> PLL6552_SDIV_SHIFT) & PLL6552_SDIV_MASK;
+@@ -480,48 +470,10 @@ static const struct clk_ops samsung_pll6552_clk_ops = {
+ 	.recalc_rate = samsung_pll6552_recalc_rate,
+ };
+ 
+-struct clk * __init samsung_clk_register_pll6552(const char *name,
+-					const char *pname, void __iomem *base)
+-{
+-	struct samsung_clk_pll6552 *pll;
+-	struct clk *clk;
+-	struct clk_init_data init;
+-
+-	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+-	if (!pll) {
+-		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
+-		return NULL;
+-	}
+-
+-	init.name = name;
+-	init.ops = &samsung_pll6552_clk_ops;
+-	init.parent_names = &pname;
+-	init.num_parents = 1;
+-
+-	pll->hw.init = &init;
+-	pll->reg_base = base;
+-
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
+-		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+-
+-	return clk;
+-}
+-
+ /*
+  * PLL6553 Clock Type
+  */
+ 
+-#define PLL6553_LOCK_REG	0x00
+-#define PLL6553_CON0_REG	0x0c
+-#define PLL6553_CON1_REG	0x10
+-
+ #define PLL6553_MDIV_MASK	0xff
+ #define PLL6553_PDIV_MASK	0x3f
+ #define PLL6553_SDIV_MASK	0x7
+@@ -531,22 +483,15 @@ struct clk * __init samsung_clk_register_pll6552(const char *name,
+ #define PLL6553_SDIV_SHIFT	0
+ #define PLL6553_KDIV_SHIFT	0
+ 
+-struct samsung_clk_pll6553 {
+-	struct clk_hw hw;
+-	void __iomem *reg_base;
+-};
+-
+-#define to_clk_pll6553(_hw) container_of(_hw, struct samsung_clk_pll6553, hw)
+-
+ static unsigned long samsung_pll6553_recalc_rate(struct clk_hw *hw,
+ 						unsigned long parent_rate)
+ {
+-	struct samsung_clk_pll6553 *pll = to_clk_pll6553(hw);
++	struct samsung_clk_pll *pll = to_clk_pll(hw);
+ 	u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
+ 	u64 fvco = parent_rate;
+ 
+-	pll_con0 = __raw_readl(pll->reg_base + PLL6553_CON0_REG);
+-	pll_con1 = __raw_readl(pll->reg_base + PLL6553_CON1_REG);
++	pll_con0 = __raw_readl(pll->con_reg);
++	pll_con1 = __raw_readl(pll->con_reg + 0x4);
+ 	mdiv = (pll_con0 >> PLL6553_MDIV_SHIFT) & PLL6553_MDIV_MASK;
+ 	pdiv = (pll_con0 >> PLL6553_PDIV_SHIFT) & PLL6553_PDIV_MASK;
+ 	sdiv = (pll_con0 >> PLL6553_SDIV_SHIFT) & PLL6553_SDIV_MASK;
+@@ -563,40 +508,6 @@ static const struct clk_ops samsung_pll6553_clk_ops = {
+ 	.recalc_rate = samsung_pll6553_recalc_rate,
+ };
+ 
+-struct clk * __init samsung_clk_register_pll6553(const char *name,
+-					const char *pname, void __iomem *base)
+-{
+-	struct samsung_clk_pll6553 *pll;
+-	struct clk *clk;
+-	struct clk_init_data init;
+-
+-	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+-	if (!pll) {
+-		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
+-		return NULL;
+-	}
+-
+-	init.name = name;
+-	init.ops = &samsung_pll6553_clk_ops;
+-	init.parent_names = &pname;
+-	init.num_parents = 1;
+-
+-	pll->hw.init = &init;
+-	pll->reg_base = base;
+-
+-	clk = clk_register(NULL, &pll->hw);
+-	if (IS_ERR(clk)) {
+-		pr_err("%s: failed to register pll clock %s\n", __func__,
+-				name);
+-		kfree(pll);
+-	}
+-
+-	if (clk_register_clkdev(clk, name, NULL))
+-		pr_err("%s: failed to register lookup for %s", __func__, name);
+-
+-	return clk;
+-}
+-
+ /*
+  * PLL2550x Clock Type
+  */
+@@ -732,6 +643,12 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
+ 		else
+ 			init.ops = &samsung_pll36xx_clk_ops;
+ 		break;
++	case pll_6552:
++		init.ops = &samsung_pll6552_clk_ops;
++		break;
++	case pll_6553:
++		init.ops = &samsung_pll6553_clk_ops;
++		break;
+ 	default:
+ 		pr_warn("%s: Unknown pll type for pll clk %s\n",
+ 			__func__, pll_clk->name);
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index 2f70e88..cd11037 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -17,6 +17,8 @@ enum samsung_pll_type {
+ 	pll_36xx,
+ 	pll_2550,
+ 	pll_2650,
++	pll_6552,
++	pll_6553,
+ };
+ 
+ #define PLL_35XX_RATE(_rate, _m, _p, _s)			\
+@@ -64,10 +66,6 @@ extern struct clk * __init samsung_clk_register_pll45xx(const char *name,
+ extern struct clk * __init samsung_clk_register_pll46xx(const char *name,
+ 			const char *pname, const void __iomem *con_reg,
+ 			enum pll46xx_type type);
+-extern struct clk *samsung_clk_register_pll6552(const char *name,
+-			const char *pname, void __iomem *base);
+-extern struct clk *samsung_clk_register_pll6553(const char *name,
+-			const char *pname, void __iomem *base);
+ extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
+ 			const char *pname, const void __iomem *reg_base,
+ 			const unsigned long offset);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+1.8.3.2
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
