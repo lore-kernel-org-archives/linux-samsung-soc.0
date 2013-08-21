@@ -1,223 +1,182 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] clk: samsung: pll: Use new registration method for PLL6552 and PLL6553
-Date: Wed, 21 Aug 2013 02:33:21 +0200
-Message-ID: <1856348.DCxTucbm8V@flatron>
-References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com> <158901ce9b34$c0ac8720$42059560$@org> <20130820002258.4443.34197@quantum>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH v11 0/8] PHY framework
+Date: Wed, 21 Aug 2013 11:16:05 +0530
+Message-ID: <1377063973-22044-1-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130820002258.4443.34197@quantum>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Mark Brown' <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, 'Olof Johansson' <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Sylwester Nawrocki' <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Heiko =?ISO-8859-1?Q?St=FCbner=27?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: gregkh@linuxfoundation.org, kyungmin.park@samsung.com, balbi@ti.com, kishon@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, stern@rowland.harvard.edu, broonie@kernel.org, tomasz.figa@gmail.com, arnd@arndb.de
+Cc: devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, swarren@nvidia.com, balajitk@ti.com, linux-doc@vger.kernel.org, tony@atomide.com, linux-usb@vger.kernel.org, nsekhar@ti.com, linux-kernel@vger.kernel.org, grant.likely@linaro.org, linux@arm.linux.org.uk, akpm@linux-foundation.org, linux-omap@vger.kernel.org, george.cherian@ti.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch modifies PLL6552 and PLL6553 clock drivers to use recently
-added common Samsung PLL registration method.
+Added a generic PHY framework that provides a set of APIs for the PHY drivers
+to create/destroy a PHY and APIs for the PHY users to obtain a reference to
+the PHY with or without using phandle.
 
-Signed-off-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/clk/samsung/clk-pll.c | 105 +++++-------------------------------------
- drivers/clk/samsung/clk-pll.h |   6 +--
- 2 files changed, 13 insertions(+), 98 deletions(-)
+This framework will be of use only to devices that uses external PHY (PHY
+functionality is not embedded within the controller).
 
-diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-index 0775554..7572d1d 100644
---- a/drivers/clk/samsung/clk-pll.c
-+++ b/drivers/clk/samsung/clk-pll.c
-@@ -441,9 +441,6 @@ struct clk * __init samsung_clk_register_pll46xx(const char *name,
-  * PLL6552 Clock Type
-  */
- 
--#define PLL6552_LOCK_REG	0x00
--#define PLL6552_CON_REG		0x0c
--
- #define PLL6552_MDIV_MASK	0x3ff
- #define PLL6552_PDIV_MASK	0x3f
- #define PLL6552_SDIV_MASK	0x7
-@@ -451,21 +448,14 @@ struct clk * __init samsung_clk_register_pll46xx(const char *name,
- #define PLL6552_PDIV_SHIFT	8
- #define PLL6552_SDIV_SHIFT	0
- 
--struct samsung_clk_pll6552 {
--	struct clk_hw hw;
--	void __iomem *reg_base;
--};
--
--#define to_clk_pll6552(_hw) container_of(_hw, struct samsung_clk_pll6552, hw)
--
- static unsigned long samsung_pll6552_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
--	struct samsung_clk_pll6552 *pll = to_clk_pll6552(hw);
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
- 	u32 mdiv, pdiv, sdiv, pll_con;
- 	u64 fvco = parent_rate;
- 
--	pll_con = __raw_readl(pll->reg_base + PLL6552_CON_REG);
-+	pll_con = __raw_readl(pll->con_reg);
- 	mdiv = (pll_con >> PLL6552_MDIV_SHIFT) & PLL6552_MDIV_MASK;
- 	pdiv = (pll_con >> PLL6552_PDIV_SHIFT) & PLL6552_PDIV_MASK;
- 	sdiv = (pll_con >> PLL6552_SDIV_SHIFT) & PLL6552_SDIV_MASK;
-@@ -480,48 +470,10 @@ static const struct clk_ops samsung_pll6552_clk_ops = {
- 	.recalc_rate = samsung_pll6552_recalc_rate,
- };
- 
--struct clk * __init samsung_clk_register_pll6552(const char *name,
--					const char *pname, void __iomem *base)
--{
--	struct samsung_clk_pll6552 *pll;
--	struct clk *clk;
--	struct clk_init_data init;
--
--	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
--	if (!pll) {
--		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
--		return NULL;
--	}
--
--	init.name = name;
--	init.ops = &samsung_pll6552_clk_ops;
--	init.parent_names = &pname;
--	init.num_parents = 1;
--
--	pll->hw.init = &init;
--	pll->reg_base = base;
--
--	clk = clk_register(NULL, &pll->hw);
--	if (IS_ERR(clk)) {
--		pr_err("%s: failed to register pll clock %s\n", __func__,
--				name);
--		kfree(pll);
--	}
--
--	if (clk_register_clkdev(clk, name, NULL))
--		pr_err("%s: failed to register lookup for %s", __func__, name);
--
--	return clk;
--}
--
- /*
-  * PLL6553 Clock Type
-  */
- 
--#define PLL6553_LOCK_REG	0x00
--#define PLL6553_CON0_REG	0x0c
--#define PLL6553_CON1_REG	0x10
--
- #define PLL6553_MDIV_MASK	0xff
- #define PLL6553_PDIV_MASK	0x3f
- #define PLL6553_SDIV_MASK	0x7
-@@ -531,22 +483,15 @@ struct clk * __init samsung_clk_register_pll6552(const char *name,
- #define PLL6553_SDIV_SHIFT	0
- #define PLL6553_KDIV_SHIFT	0
- 
--struct samsung_clk_pll6553 {
--	struct clk_hw hw;
--	void __iomem *reg_base;
--};
--
--#define to_clk_pll6553(_hw) container_of(_hw, struct samsung_clk_pll6553, hw)
--
- static unsigned long samsung_pll6553_recalc_rate(struct clk_hw *hw,
- 						unsigned long parent_rate)
- {
--	struct samsung_clk_pll6553 *pll = to_clk_pll6553(hw);
-+	struct samsung_clk_pll *pll = to_clk_pll(hw);
- 	u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
- 	u64 fvco = parent_rate;
- 
--	pll_con0 = __raw_readl(pll->reg_base + PLL6553_CON0_REG);
--	pll_con1 = __raw_readl(pll->reg_base + PLL6553_CON1_REG);
-+	pll_con0 = __raw_readl(pll->con_reg);
-+	pll_con1 = __raw_readl(pll->con_reg + 0x4);
- 	mdiv = (pll_con0 >> PLL6553_MDIV_SHIFT) & PLL6553_MDIV_MASK;
- 	pdiv = (pll_con0 >> PLL6553_PDIV_SHIFT) & PLL6553_PDIV_MASK;
- 	sdiv = (pll_con0 >> PLL6553_SDIV_SHIFT) & PLL6553_SDIV_MASK;
-@@ -563,40 +508,6 @@ static const struct clk_ops samsung_pll6553_clk_ops = {
- 	.recalc_rate = samsung_pll6553_recalc_rate,
- };
- 
--struct clk * __init samsung_clk_register_pll6553(const char *name,
--					const char *pname, void __iomem *base)
--{
--	struct samsung_clk_pll6553 *pll;
--	struct clk *clk;
--	struct clk_init_data init;
--
--	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
--	if (!pll) {
--		pr_err("%s: could not allocate pll clk %s\n", __func__, name);
--		return NULL;
--	}
--
--	init.name = name;
--	init.ops = &samsung_pll6553_clk_ops;
--	init.parent_names = &pname;
--	init.num_parents = 1;
--
--	pll->hw.init = &init;
--	pll->reg_base = base;
--
--	clk = clk_register(NULL, &pll->hw);
--	if (IS_ERR(clk)) {
--		pr_err("%s: failed to register pll clock %s\n", __func__,
--				name);
--		kfree(pll);
--	}
--
--	if (clk_register_clkdev(clk, name, NULL))
--		pr_err("%s: failed to register lookup for %s", __func__, name);
--
--	return clk;
--}
--
- /*
-  * PLL2550x Clock Type
-  */
-@@ -732,6 +643,12 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
- 		else
- 			init.ops = &samsung_pll36xx_clk_ops;
- 		break;
-+	case pll_6552:
-+		init.ops = &samsung_pll6552_clk_ops;
-+		break;
-+	case pll_6553:
-+		init.ops = &samsung_pll6553_clk_ops;
-+		break;
- 	default:
- 		pr_warn("%s: Unknown pll type for pll clk %s\n",
- 			__func__, pll_clk->name);
-diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-index 2f70e88..cd11037 100644
---- a/drivers/clk/samsung/clk-pll.h
-+++ b/drivers/clk/samsung/clk-pll.h
-@@ -17,6 +17,8 @@ enum samsung_pll_type {
- 	pll_36xx,
- 	pll_2550,
- 	pll_2650,
-+	pll_6552,
-+	pll_6553,
- };
- 
- #define PLL_35XX_RATE(_rate, _m, _p, _s)			\
-@@ -64,10 +66,6 @@ extern struct clk * __init samsung_clk_register_pll45xx(const char *name,
- extern struct clk * __init samsung_clk_register_pll46xx(const char *name,
- 			const char *pname, const void __iomem *con_reg,
- 			enum pll46xx_type type);
--extern struct clk *samsung_clk_register_pll6552(const char *name,
--			const char *pname, void __iomem *base);
--extern struct clk *samsung_clk_register_pll6553(const char *name,
--			const char *pname, void __iomem *base);
- extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
- 			const char *pname, const void __iomem *reg_base,
- 			const unsigned long offset);
+The intention of creating this framework is to bring the phy drivers spread
+all over the Linux kernel to drivers/phy to increase code re-use and to
+increase code maintainability.
+
+Comments to make PHY as bus wasn't done because PHY devices can be part of
+other bus and making a same device attached to multiple bus leads to bad
+design.
+
+If the PHY driver has to send notification on connect/disconnect, the PHY
+driver should make use of the extcon framework. Using this susbsystem
+to use extcon framwork will have to be analysed.
+
+You can find this patch series @
+git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git testing
+
+I'll create a new branch *next* once this patch series is finalized. All the
+PHY driver development that depends on PHY framework can be based on this
+branch.
+
+Did USB enumeration testing in panda and beagle after applying [1]
+
+[1] -> https://lkml.org/lkml/2013/7/26/88
+
+Changes from v10:
+* fixed a mistake in devm_of_phy_provider_register macro which was carried over from earlier version.
+* used ida_simple_get for obtaining the id.
+
+Changes from v9:
+* Fixed Greg's concern on having *find PHY by string* and changed it to Tomasz
+  pseudo code.
+* move omap-usb2 phy and twl4030-usb phy to drivers/phy
+* made all the dependent drivers select GENERIC_PHY instead of having depends
+  on
+* Made PHY core to assign the id's (so changed the phy_create API).
+* Adapted twl4030-usb to the new design.
+
+Changes from v8:
+* Added phy_set_drvdata and phy_get_drvdata in phy.h.
+* Changed phy_create API not to take void *priv. private data should now be set
+  using phy_set_drvdata now.
+Changes from v7:
+* Fixed Documentation
+* Added to_phy, of_phy_provider_register and devm_of_phy_provider_register
+* modified runtime_pm usage in phy_init, phy_exit, phy_power_on and
+  phy_power_off. Now phy_power_on will enable the clocks and phy_power_off will
+  disable the clocks.
+* pm_runtime_no_callbacks() is added so that pm_runtime_get_sync doesn't fail
+* modified other patches to adhere to the changes in the PHY framework
+* removed usb: phy: twl4030: twl4030 shouldn't be subsys_initcall as it will
+  be merged separately.
+* reference counting has been added to protect phy ops when the PHY is shared
+  by multiple consumers.
+
+Changes from v6
+* corrected few typos in Documentation
+* Changed PHY Subsystem to *bool* in Kconfig (to avoid compilation errors when
+  PHY Subsystem is kept as module and the dependent modules are built-in)
+* Added if pm_runtime_enabled check before runtime pm calls.
+
+Changes from v5:
+* removed the new sysfs entries as it dint have any new information other than
+  what is already there in /sys/devices/...
+* removed a bunch of APIs added to get the PHY and now only phy_get and
+  devm_phy_get are used.
+* Added new APIs to register/unregister the PHY provider. This is needed for
+  dt boot case.
+* Enabled pm runtime and incorporated the comments given by Alan Stern in a
+  different patch series by Gautam.
+* Removed the *phy_bind* API. Now the phy binding information should be passed
+  using the platform data to the controller devices.
+* Fixed a few typos.
+
+Changes from v4:
+* removed of_phy_get_with_args/devm_of_phy_get_with_args. Now the *phy providers*
+  should use their custom implementation of of_xlate or use of_phy_xlate to get
+  *phy instance* from *phy providers*.
+* Added of_phy_xlate to be used by *phy providers* if it provides only one PHY.
+* changed phy_core from having subsys_initcall to module_init.
+* other minor fixes.
+
+Changes from v3:
+* Changed the return value of PHY APIs to ENOSYS
+* Added APIs of_phy_get_with_args/devm_of_phy_get_with_args to support getting
+  PHYs if the same IP implements multiple PHYs.
+* modified phy_bind API so that the binding information can now be _updated_.
+  In effect of this removed the binding information added in board files and
+  added only in usb-musb.c. If a particular board uses a different phy binding,
+  it can update it in board file after usb_musb_init().
+* Added Documentation/devicetree/bindings/phy/phy-bindings.txt for dt binding
+  information.
+
+Changes from v2:
+* removed phy_descriptor structure completely so changed the APIs which were
+  taking phy_descriptor as parameters
+* Added 2 more APIs *of_phy_get_byname* and *devm_of_phy_get_byname* to be used
+  by PHY user drivers which has *phy* and *phy-names* binding in the dt data
+* Fixed a few typos
+* Removed phy_list and we now use class_dev_iter_init, class_dev_iter_next and
+  class_dev_iter_exit for traversing through the phy list. (Note we still need
+  phy_bind list and phy_bind_mutex).
+* Changed the sysfs entry name from *bind* to *phy_bind*.
+
+Changes from v1:
+* Added Documentation for the PHY framework
+* Added few more APIs mostly w.r.t devres
+* Modified omap-usb2 and twl4030 to make use of the new framework
+
+Kishon Vijay Abraham I (8):
+  drivers: phy: add generic PHY framework
+  usb: phy: omap-usb2: use the new generic PHY framework
+  usb: phy: twl4030: use the new generic PHY framework
+  arm: omap3: twl: add phy consumer data in twl4030_usb_data
+  ARM: dts: omap: update usb_otg_hs data
+  usb: musb: omap2430: use the new generic PHY framework
+  usb: phy: omap-usb2: remove *set_suspend* callback from omap-usb2
+  usb: phy: twl4030-usb: remove *set_suspend* and *phy_init* ops
+
+ .../devicetree/bindings/phy/phy-bindings.txt       |   66 ++
+ Documentation/devicetree/bindings/usb/omap-usb.txt |    5 +
+ Documentation/devicetree/bindings/usb/usb-phy.txt  |    6 +
+ Documentation/phy.txt                              |  166 +++++
+ MAINTAINERS                                        |    8 +
+ arch/arm/boot/dts/omap3-beagle-xm.dts              |    2 +
+ arch/arm/boot/dts/omap3-evm.dts                    |    2 +
+ arch/arm/boot/dts/omap3-overo.dtsi                 |    2 +
+ arch/arm/boot/dts/omap4.dtsi                       |    3 +
+ arch/arm/boot/dts/twl4030.dtsi                     |    1 +
+ arch/arm/mach-omap2/twl-common.c                   |   11 +
+ drivers/Kconfig                                    |    2 +
+ drivers/Makefile                                   |    2 +
+ drivers/phy/Kconfig                                |   41 ++
+ drivers/phy/Makefile                               |    7 +
+ drivers/phy/phy-core.c                             |  698 ++++++++++++++++++++
+ drivers/{usb => }/phy/phy-omap-usb2.c              |   60 +-
+ drivers/{usb => }/phy/phy-twl4030-usb.c            |   69 +-
+ drivers/usb/musb/Kconfig                           |    1 +
+ drivers/usb/musb/musb_core.h                       |    2 +
+ drivers/usb/musb/omap2430.c                        |   26 +-
+ drivers/usb/phy/Kconfig                            |   19 -
+ drivers/usb/phy/Makefile                           |    2 -
+ include/linux/i2c/twl.h                            |    2 +
+ include/linux/phy/phy.h                            |  270 ++++++++
+ 25 files changed, 1397 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/phy-bindings.txt
+ create mode 100644 Documentation/phy.txt
+ create mode 100644 drivers/phy/Kconfig
+ create mode 100644 drivers/phy/Makefile
+ create mode 100644 drivers/phy/phy-core.c
+ rename drivers/{usb => }/phy/phy-omap-usb2.c (88%)
+ rename drivers/{usb => }/phy/phy-twl4030-usb.c (94%)
+ create mode 100644 include/linux/phy/phy.h
+
 -- 
-1.8.3.2
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.10.4
