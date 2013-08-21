@@ -1,81 +1,239 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v7 1/7] ARM: common: vic: Parse interrupt and resume masks from device tree
-Date: Wed, 21 Aug 2013 23:21:45 +0200
-Message-ID: <1377120111-25601-2-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH v7 2/7] ARM: s3c64xx: Bypass legacy initialization when booting with DT
+Date: Wed, 21 Aug 2013 23:21:46 +0200
+Message-ID: <1377120111-25601-3-git-send-email-tomasz.figa@gmail.com>
 References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f44.google.com ([209.85.214.44]:33229 "EHLO
-	mail-bk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752477Ab3HUVWU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 17:22:20 -0400
+Return-path: <linux-gpio-owner@vger.kernel.org>
 In-Reply-To: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch extends vic_of_init to parse valid interrupt sources
-and resume sources masks from device tree.
-
-If mask values are not specified in device tree, all sources
-are assumed to be valid, as before this patch.
+This patch allows bypassing most of legacy initialization when booting
+an S3C64xx-based board using device tree, by adding conditional checks
+for DT presence to initcalls which are no longer necessary when booting
+with DT..
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/vic.txt | 6 ++++++
- drivers/irqchip/irq-vic.c                     | 7 ++++++-
- 2 files changed, 12 insertions(+), 1 deletion(-)
+ arch/arm/mach-s3c64xx/common.c  | 12 ++++++++++++
+ arch/arm/mach-s3c64xx/dma.c     |  9 +++++++++
+ arch/arm/mach-s3c64xx/irq-pm.c  |  9 +++++++++
+ arch/arm/mach-s3c64xx/s3c6400.c |  9 +++++++++
+ arch/arm/mach-s3c64xx/s3c6410.c |  9 +++++++++
+ arch/arm/plat-samsung/init.c    | 12 +++++++++++-
+ 6 files changed, 59 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
-index 266716b..bb7137c 100644
---- a/Documentation/devicetree/bindings/arm/vic.txt
-+++ b/Documentation/devicetree/bindings/arm/vic.txt
-@@ -18,6 +18,9 @@ Required properties:
- Optional properties:
+diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
+index 7d3cb58..7a3ce4c 100644
+--- a/arch/arm/mach-s3c64xx/common.c
++++ b/arch/arm/mach-s3c64xx/common.c
+@@ -14,6 +14,10 @@
+  * published by the Free Software Foundation.
+  */
  
- - interrupts : Interrupt source for parent controllers if the VIC is nested.
-+- interrupt-mask : Bit mask of valid interrupt sources (defaults to all valid)
-+- wakeup-mask : Bit mask of interrupt sources that can wake up the system
-+  (defaults to all allowed)
- 
- Example:
- 
-@@ -26,4 +29,7 @@ Example:
- 		interrupt-controller;
- 		#interrupt-cells = <1>;
- 		reg = <0x60000 0x1000>;
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
 +
-+		interrupt-mask = <0xffffff7f>;
-+		wakeup-mask = <0x0000ff7f>;
- 	};
-diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
-index 2bbb004..d56750eb 100644
---- a/drivers/irqchip/irq-vic.c
-+++ b/drivers/irqchip/irq-vic.c
-@@ -469,6 +469,8 @@ void __init vic_init(void __iomem *base, unsigned int irq_start,
- int __init vic_of_init(struct device_node *node, struct device_node *parent)
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ #include <linux/module.h>
+@@ -203,6 +207,10 @@ void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
+ 
+ static __init int s3c64xx_dev_init(void)
  {
- 	void __iomem *regs;
-+	u32 interrupt_mask = ~0;
-+	u32 wakeup_mask = ~0;
- 
- 	if (WARN(parent, "non-root VICs are not supported"))
- 		return -EINVAL;
-@@ -477,10 +479,13 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
- 	if (WARN_ON(!regs))
- 		return -EIO;
- 
-+	of_property_read_u32(node, "interrupt-mask", &interrupt_mask);
-+	of_property_read_u32(node, "wakeup-mask", &wakeup_mask);
++	/* Not applicable when using DT. */
++	if (of_have_populated_dt())
++		return 0;
 +
- 	/*
- 	 * Passing 0 as first IRQ makes the simple domain allocate descriptors
- 	 */
--	__vic_init(regs, 0, ~0, ~0, node);
-+	__vic_init(regs, 0, interrupt_mask, wakeup_mask, node);
+ 	subsys_system_register(&s3c64xx_subsys, NULL);
+ 	return device_register(&s3c64xx_dev);
+ }
+@@ -404,6 +412,10 @@ static int __init s3c64xx_init_irq_eint(void)
+ {
+ 	int irq;
+ 
++	/* On DT-enabled systems EINTs are handled by pinctrl-s3c64xx driver. */
++	if (of_have_populated_dt())
++		return -ENODEV;
++
+ 	for (irq = IRQ_EINT(0); irq <= IRQ_EINT(27); irq++) {
+ 		irq_set_chip_and_handler(irq, &s3c_irq_eint, handle_level_irq);
+ 		irq_set_chip_data(irq, (void *)eint_irq_to_bit(irq));
+diff --git a/arch/arm/mach-s3c64xx/dma.c b/arch/arm/mach-s3c64xx/dma.c
+index c511dfa..7e22c21 100644
+--- a/arch/arm/mach-s3c64xx/dma.c
++++ b/arch/arm/mach-s3c64xx/dma.c
+@@ -12,6 +12,10 @@
+  * published by the Free Software Foundation.
+ */
+ 
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
++
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+@@ -24,6 +28,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/amba/pl080.h>
++#include <linux/of.h>
+ 
+ #include <mach/dma.h>
+ #include <mach/map.h>
+@@ -726,6 +731,10 @@ static int __init s3c64xx_dma_init(void)
+ {
+ 	int ret;
+ 
++	/* This driver is not supported when booting with device tree. */
++	if (of_have_populated_dt())
++		return -ENODEV;
++
+ 	printk(KERN_INFO "%s: Registering DMA channels\n", __func__);
+ 
+ 	dma_pool = dma_pool_create("DMA-LLI", NULL, sizeof(struct pl080s_lli), 16, 0);
+diff --git a/arch/arm/mach-s3c64xx/irq-pm.c b/arch/arm/mach-s3c64xx/irq-pm.c
+index c3da1b6..1649c0d 100644
+--- a/arch/arm/mach-s3c64xx/irq-pm.c
++++ b/arch/arm/mach-s3c64xx/irq-pm.c
+@@ -12,12 +12,17 @@
+  * published by the Free Software Foundation.
+  */
+ 
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
++
+ #include <linux/kernel.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/interrupt.h>
+ #include <linux/serial_core.h>
+ #include <linux/irq.h>
+ #include <linux/io.h>
++#include <linux/of.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -101,6 +106,10 @@ static struct syscore_ops s3c64xx_irq_syscore_ops = {
+ 
+ static __init int s3c64xx_syscore_init(void)
+ {
++	/* Appropriate drivers (pinctrl, uart) handle this when using DT. */
++	if (of_have_populated_dt())
++		return 0;
++
+ 	register_syscore_ops(&s3c64xx_irq_syscore_ops);
  
  	return 0;
+diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
+index 331fe8e..3db0c98 100644
+--- a/arch/arm/mach-s3c64xx/s3c6400.c
++++ b/arch/arm/mach-s3c64xx/s3c6400.c
+@@ -9,6 +9,10 @@
+  * published by the Free Software Foundation.
+ */
+ 
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
++
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/interrupt.h>
+@@ -20,6 +24,7 @@
+ #include <linux/device.h>
+ #include <linux/serial_core.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -76,6 +81,10 @@ static struct device s3c6400_dev = {
+ 
+ static int __init s3c6400_core_init(void)
+ {
++	/* Not applicable when using DT. */
++	if (of_have_populated_dt())
++		return 0;
++
+ 	return subsys_system_register(&s3c6400_subsys, NULL);
  }
+ 
+diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
+index 7e6fa12..72b2278 100644
+--- a/arch/arm/mach-s3c64xx/s3c6410.c
++++ b/arch/arm/mach-s3c64xx/s3c6410.c
+@@ -10,6 +10,10 @@
+  * published by the Free Software Foundation.
+ */
+ 
++/*
++ * NOTE: Code in this file is not used when booting with Device Tree support.
++ */
++
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+ #include <linux/interrupt.h>
+@@ -21,6 +25,7 @@
+ #include <linux/device.h>
+ #include <linux/serial_core.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+@@ -79,6 +84,10 @@ static struct device s3c6410_dev = {
+ 
+ static int __init s3c6410_core_init(void)
+ {
++	/* Not applicable when using DT. */
++	if (of_have_populated_dt())
++		return 0;
++
+ 	return subsys_system_register(&s3c6410_subsys, NULL);
+ }
+ 
+diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
+index 50a3ea0..aa9511b 100644
+--- a/arch/arm/plat-samsung/init.c
++++ b/arch/arm/plat-samsung/init.c
+@@ -11,12 +11,18 @@
+  * published by the Free Software Foundation.
+ */
+ 
++/*
++ * NOTE: Code in this file is not used on S3C64xx when booting with
++ * Device Tree support.
++ */
++
+ #include <linux/init.h>
+ #include <linux/module.h>
+ #include <linux/interrupt.h>
+ #include <linux/ioport.h>
+ #include <linux/serial_core.h>
+ #include <linux/platform_device.h>
++#include <linux/of.h>
+ 
+ #include <mach/hardware.h>
+ 
+@@ -148,8 +154,12 @@ static int __init s3c_arch_init(void)
+ 
+ 	// do the correct init for cpu
+ 
+-	if (cpu == NULL)
++	if (cpu == NULL) {
++		/* Not needed when booting with device tree. */
++		if (of_have_populated_dt())
++			return 0;
+ 		panic("s3c_arch_init: NULL cpu\n");
++	}
+ 
+ 	ret = (cpu->init)();
+ 	if (ret != 0)
 -- 
 1.8.3.2
+
