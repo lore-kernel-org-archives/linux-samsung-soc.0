@@ -1,152 +1,65 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v7 13/13] V4L: Add driver for s5k4e5 image sensor
-Date: Wed, 21 Aug 2013 14:34:59 +0530
-Message-ID: <CALt3h7-anvW+=gZF6XxVpwrSWo_6-Nq7S72xGJv+xQguEAjJyQ@mail.gmail.com>
-References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com>
-	<52146403.9050702@xs4all.nl>
-	<4486068.1NMnLxuSKb@flatron>
-	<201308211024.58303.hverkuil@xs4all.nl>
+From: GIRISH K S <ks.giri@samsung.com>
+Subject: Re: [PATCH V2 2/2] ARM: dts: Add dwmmc nodes in SOC specific dts file
+Date: Wed, 21 Aug 2013 09:05:08 +0000 (GMT)
+Message-ID: <18907195.1256371377075906874.JavaMail.weblogic@epml01>
+Reply-To: ks.giri@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f42.google.com ([209.85.212.42]:63254 "EHLO
-	mail-vb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751619Ab3HUJFA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 05:05:00 -0400
-In-Reply-To: <201308211024.58303.hverkuil@xs4all.nl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
+Return-path: <linux-mmc-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-mmc-owner@vger.kernel.org
+To: "yuvaraj.cd@gmail.com" <yuvaraj.cd@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: YUVARAJ CD <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, kilyeon.im@samsung.com
 
-Hi Hans,
+DQoNCi0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tDQpTZW5kZXIgOiB5dXZhcmFqLmNk
+QGdtYWlsLmNvbTx5dXZhcmFqLmNkQGdtYWlsLmNvbT4NCkRhdGUgOiBBdWcgMjEsIDIwMTMgMTI6
+MDcgKEdNVCswNTozMCkNClRpdGxlIDogW1BBVENIIFYyIDIvMl0gQVJNOiBkdHM6IEFkZCBkd21t
+YyBub2RlcyBpbiBTT0Mgc3BlY2lmaWMgZHRzIGZpbGUNCg0KRnJvbTogWXV2YXJhaiBLdW1hciBD
+IEQgDQoNCkV4eW5vczUgc2VyaWVzIFNPQydzIGhhdmUgZGlmZmVyZW50IHZlcnNpb25zIG9mIERX
+TU1DIGNvbnRyb2xsZXIuDQpTbyBkd21tYyBkZXZpY2Ugbm9kZXMgbW92ZWQgZnJvbSBFeHlub3M1
+IFNPQydzIGNvbW1vbiBkdHMgZmlsZSB0bw0KU09DIHNwZWNpZmljIGR0cyBmaWxlLg0KDQpjaGFu
+Z2VzIHNpbmNlIFYxOg0KMS5kaXNhYmxlIG5vZGUgYnkgc3RhdHVzID0gZGlzYWJsZWQgaW4gU09D
+IGZpbGUNCjIuZW5hYmxlIG5vZGUgYnkgc3RhdHVzID0gb2theSBpbiBib2FyZCBzcGVjaWZpYyBm
+aWxlDQoNClNpZ25lZC1vZmYtYnk6IFl1dmFyYWogS3VtYXIgQyBEIA0KLS0tDQphcmNoL2FybS9i
+b290L2R0cy9leHlub3M1MjUwLXNtZGs1MjUwLmR0cyB8ICAgMTAgKystLS0tLS0tLQ0KYXJjaC9h
+cm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpICAgICAgICAgfCAgIDE2ICsrKysrKysrKysrKysr
+KysNCjIgZmlsZXMgY2hhbmdlZCwgMTggaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCg0K
+ZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc21kazUyNTAuZHRzIGIv
+YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbWRrNTI1MC5kdHMNCmluZGV4IDI1MzhiMzIu
+LmJkMTlkNTVkIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC1zbWRr
+NTI1MC5kdHMNCisrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc21kazUyNTAuZHRz
+DQpAQCAtMTQxLDYgKzE0MSw3IEBADQp9Ow0KDQpkd21tYzBAMTIyMDAwMDAgew0KKyBzdGF0dXMg
+PSAib2theSI7DQpudW0tc2xvdHMgPSA8MT47DQpzdXBwb3J0cy1oaWdoc3BlZWQ7DQpicm9rZW4t
+Y2Q7DQpAQCAtMTU4LDExICsxNTksOCBAQA0KfTsNCn07DQoNCi0gZHdtbWMxQDEyMjEwMDAwIHsN
+Ci0gc3RhdHVzID0gImRpc2FibGVkIjsNCi0gfTsNCi0NCmR3bW1jMkAxMjIyMDAwMCB7DQorIHN0
+YXR1cyA9ICJva2F5IjsNCm51bS1zbG90cyA9IDwxPjsNCnN1cHBvcnRzLWhpZ2hzcGVlZDsNCmZp
+Zm8tZGVwdGggPSA8MHg4MD47DQpAQCAtMTgwLDEwICsxNzgsNiBAQA0KfTsNCn07DQoNCi0gZHdt
+bWMzQDEyMjMwMDAwIHsNCi0gc3RhdHVzID0gImRpc2FibGVkIjsNCi0gfTsNCi0NCnNwaV8wOiBz
+cGlAMTJkMjAwMDAgew0Kc3RhdHVzID0gImRpc2FibGVkIjsNCn07DQpkaWZmIC0tZ2l0IGEvYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
+NTI1MC5kdHNpDQppbmRleCAxZWVjNjQ2Li5iMWI2ZjYxIDEwMDY0NA0KLS0tIGEvYXJjaC9hcm0v
+Ym9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpDQorKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1
+MjUwLmR0c2kNCkBAIC0zODcsMjEgKzM4NywzNiBAQA0KfTsNCg0KZHdtbWNfMDogZHdtbWMwQDEy
+MjAwMDAwIHsNCisgY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczUyNTAtZHctbXNoYyI7DQor
+IGludGVycnVwdHMgPSA8MCA3NSAwPjsNCisgI2FkZHJlc3MtY2VsbHMgPSA8MT47DQorICNzaXpl
+LWNlbGxzID0gPDA+Ow0KcmVnID0gPDB4MTIyMDAwMDAgMHgxMDAwPjsNCmNsb2NrcyA9IDwmY2xv
+Y2sgMjgwPiwgPCZjbG9jayAxMzk+Ow0KY2xvY2stbmFtZXMgPSAiYml1IiwgImNpdSI7DQorIHN0
+YXR1cyA9ICJkaXNhYmxlZCI7DQp9Ow0KDQpkd21tY18xOiBkd21tYzFAMTIyMTAwMDAgew0KKyBj
+b21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTI1MC1kdy1tc2hjIjsNCisgaW50ZXJydXB0cyA9
+IDwwIDc2IDA+Ow0KKyAjYWRkcmVzcy1jZWxscyA9IDwxPjsNCisgI3NpemUtY2VsbHMgPSA8MD47
+DQpyZWcgPSA8MHgxMjIxMDAwMCAweDEwMDA+Ow0KY2xvY2tzID0gPCZjbG9jayAyODE+LCA8JmNs
+b2NrIDE0MD47DQpjbG9jay1uYW1lcyA9ICJiaXUiLCAiY2l1IjsNCisgc3RhdHVzID0gImRpc2Fi
+bGVkIjsNCn07DQoNCmR3bW1jXzI6IGR3bW1jMkAxMjIyMDAwMCB7DQorIGNvbXBhdGlibGUgPSAi
+c2Ftc3VuZyxleHlub3M1MjUwLWR3LW1zaGMiOw0KKyBpbnRlcnJ1cHRzID0gPDAgNzcgMD47DQor
+ICNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KKyAjc2l6ZS1jZWxscyA9IDwwPjsNCnJlZyA9IDwweDEy
+MjIwMDAwIDB4MTAwMD47DQpjbG9ja3MgPSA8JmNsb2NrIDI4Mj4sIDwmY2xvY2sgMTQxPjsNCmNs
+b2NrLW5hbWVzID0gImJpdSIsICJjaXUiOw0KKyBzdGF0dXMgPSAiZGlzYWJsZWQiOw0KfTsNCg0K
+ZHdtbWNfMzogZHdtbWMzQDEyMjMwMDAwIHsNCkBAIC00MTIsNiArNDI3LDcgQEANCiNzaXplLWNl
+bGxzID0gPDA+Ow0KY2xvY2tzID0gPCZjbG9jayAyODM+LCA8JmNsb2NrIDE0Mj47DQpjbG9jay1u
+YW1lcyA9ICJiaXUiLCAiY2l1IjsNCisgc3RhdHVzID0gImRpc2FibGVkIjsNCn07DQoNCmkyczA6
+IGkyc0AwMzgzMDAwMCB7DQoNCkxvb2tzIE9rIHRvIG1lLg0KUmV2aWV3ZWQgQnk6IEdpcmlzaCBL
+IFMgPGtzLmdpcmlAc2Ftc3VuZy5jb20+DQoNCi0tIA0KMS43LjkuNQ==
 
-On Wed, Aug 21, 2013 at 1:54 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> On Wed 21 August 2013 09:58:28 Tomasz Figa wrote:
->> Hi Hans,
->>
->> On Wednesday 21 of August 2013 08:53:55 Hans Verkuil wrote:
->> > On 08/21/2013 08:34 AM, Arun Kumar K wrote:
->> > > This patch adds subdev driver for Samsung S5K4E5 raw image sensor.
->> > > Like s5k6a3, it is also another fimc-is firmware controlled
->> > > sensor. This minimal sensor driver doesn't do any I2C communications
->> > > as its done by ISP firmware. It can be updated if needed to a
->> > > regular sensor driver by adding the I2C communication.
->> > >
->> > > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> > > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> > > ---
->> > >
->> > >  .../devicetree/bindings/media/i2c/s5k4e5.txt       |   43 +++
->> > >  drivers/media/i2c/Kconfig                          |    8 +
->> > >  drivers/media/i2c/Makefile                         |    1 +
->> > >  drivers/media/i2c/s5k4e5.c                         |  361
->> > >  ++++++++++++++++++++ 4 files changed, 413 insertions(+)
->> > >  create mode 100644
->> > >  Documentation/devicetree/bindings/media/i2c/s5k4e5.txt create mode
->> > >  100644 drivers/media/i2c/s5k4e5.c
->> >
->> > ...
->> >
->> > > diff --git a/drivers/media/i2c/s5k4e5.c b/drivers/media/i2c/s5k4e5.c
->> > > new file mode 100644
->> > > index 0000000..0a6ece6
->> > > --- /dev/null
->> > > +++ b/drivers/media/i2c/s5k4e5.c
->> > > @@ -0,0 +1,361 @@
->> > > +/*
->> > > + * Samsung S5K4E5 image sensor driver
->> > > + *
->> > > + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->> > > + * Author: Arun Kumar K <arun.kk@samsung.com>
->> > > + *
->> > > + * This program is free software; you can redistribute it and/or
->> > > modify + * it under the terms of the GNU General Public License
->> > > version 2 as + * published by the Free Software Foundation.
->> > > + */
->> > > +
->> > > +#include <linux/clk.h>
->> > > +#include <linux/delay.h>
->> > > +#include <linux/device.h>
->> > > +#include <linux/errno.h>
->> > > +#include <linux/gpio.h>
->> > > +#include <linux/i2c.h>
->> > > +#include <linux/kernel.h>
->> > > +#include <linux/module.h>
->> > > +#include <linux/of_gpio.h>
->> > > +#include <linux/pm_runtime.h>
->> > > +#include <linux/regulator/consumer.h>
->> > > +#include <linux/slab.h>
->> > > +#include <linux/videodev2.h>
->> > > +#include <media/v4l2-async.h>
->> > > +#include <media/v4l2-subdev.h>
->> > > +
->> > > +#define S5K4E5_SENSOR_MAX_WIDTH          2576
->> > > +#define S5K4E5_SENSOR_MAX_HEIGHT 1930
->> > > +
->> > > +#define S5K4E5_SENSOR_ACTIVE_WIDTH       2560
->> > > +#define S5K4E5_SENSOR_ACTIVE_HEIGHT      1920
->> > > +
->> > > +#define S5K4E5_SENSOR_MIN_WIDTH          (32 + 16)
->> > > +#define S5K4E5_SENSOR_MIN_HEIGHT (32 + 10)
->> > > +
->> > > +#define S5K4E5_DEF_WIDTH         1296
->> > > +#define S5K4E5_DEF_HEIGHT                732
->> > > +
->> > > +#define S5K4E5_DRV_NAME                  "S5K4E5"
->> > > +#define S5K4E5_CLK_NAME                  "mclk"
->> > > +
->> > > +#define S5K4E5_NUM_SUPPLIES              2
->> > > +
->> > > +#define S5K4E5_DEF_CLK_FREQ              24000000
->> > > +
->> > > +/**
->> > > + * struct s5k4e5 - s5k4e5 sensor data structure
->> > > + * @dev: pointer to this I2C client device structure
->> > > + * @subdev: the image sensor's v4l2 subdev
->> > > + * @pad: subdev media source pad
->> > > + * @supplies: image sensor's voltage regulator supplies
->> > > + * @gpio_reset: GPIO connected to the sensor's reset pin
->> > > + * @lock: mutex protecting the structure's members below
->> > > + * @format: media bus format at the sensor's source pad
->> > > + */
->> > > +struct s5k4e5 {
->> > > + struct device *dev;
->> > > + struct v4l2_subdev subdev;
->> > > + struct media_pad pad;
->> > > + struct regulator_bulk_data supplies[S5K4E5_NUM_SUPPLIES];
->> > > + int gpio_reset;
->> > > + struct mutex lock;
->> > > + struct v4l2_mbus_framefmt format;
->> > > + struct clk *clock;
->> > > + u32 clock_frequency;
->> > > +};
->> > > +
->> > > +static const char * const s5k4e5_supply_names[] = {
->> > > + "svdda",
->> > > + "svddio"
->> > > +};
->> >
->> > I'm no regulator expert, but shouldn't this list come from the DT or
->> > platform_data? Or are these names specific to this sensor?
->>
->> This is a list of regulator input (aka supply) names. In other words those
->> are usually names of pins of the consumer device (s5k4e5 chip in this
->> case) to which the regulators are connected. They are used as lookup keys
->> when looking up regulators, either from device tree or lookup tables.
->
-> How does that work if you have two of these sensors? E.g. in a stereo-camera?
-> Can the regulator subsystem map those pins to the correct regulators?
->
-> Again, sorry for my ignorance in this area as I've never used it. I just
-> want to make sure this information is stored in the right place.
->
 
-There are two regulator supplies needed for this sensor, and these pin names
-are just used in the driver to differentiate them.
->From the DT, we pass regulator node phandles with these properties
-(supply names) which the driver uses.
-
-Regards
-Arun
