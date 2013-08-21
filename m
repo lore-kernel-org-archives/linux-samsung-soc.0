@@ -1,271 +1,52 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v7 6/7] ARM: dts: Add dts file for S3C6410-based Mini6410 board
-Date: Wed, 21 Aug 2013 23:21:50 +0200
-Message-ID: <1377120111-25601-7-git-send-email-tomasz.figa@gmail.com>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
+Date: Thu, 22 Aug 2013 00:21:59 +0200
+Message-ID: <CACRpkdZL0ErFG2OFd1D-9xQYMY4GJD=zd6sFZenM=HCHD2HszA@mail.gmail.com>
+References: <201308141359.13872.heiko@sntech.de>
+	<201308141400.25681.heiko@sntech.de>
+	<20130819044811.GR32147@intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f41.google.com ([209.85.219.41]:38350 "EHLO
+	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752588Ab3HUWWA convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Aug 2013 18:22:00 -0400
+Received: by mail-oa0-f41.google.com with SMTP id j6so2132637oag.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2013 15:21:59 -0700 (PDT)
+In-Reply-To: <20130819044811.GR32147@intel.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <djbw@fb.com>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-This patch adds basic device tree sources for FriendlyARM Mini6410 board
-based on Samsung S3C6410 SoC.
+On Mon, Aug 19, 2013 at 6:48 AM, Vinod Koul <vinod.koul@intel.com> wrot=
+e:
+> On Wed, Aug 14, 2013 at 02:00:25PM +0200, Heiko St=FCbner wrote:
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- arch/arm/boot/dts/Makefile             |   1 +
- arch/arm/boot/dts/s3c6410-mini6410.dts | 228 +++++++++++++++++++++++++++++++++
- 2 files changed, 229 insertions(+)
- create mode 100644 arch/arm/boot/dts/s3c6410-mini6410.dts
+>> Conceptually the s3c24xx-dma feels like a distant relative of the pl=
+08x
+>> with numerous virtual channels being mapped to a lot less physical o=
+nes.
+>> The driver therefore borrows a lot from the amba-pl08x driver in thi=
+s
+>> regard. Functionality-wise the driver gains a memcpy ability in addi=
+tion
+>> to the slave_sg one.
+>
+> If that is the case why cant we have this driver supported from pl08x=
+ driver? If
+> the delta is only mapping then can that be seprated or both mapping h=
+anlded?
+> Maybe you and Linus have already though about that?
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index ada589c..72f8af3 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -194,6 +194,7 @@ dtb-$(CONFIG_ARCH_U8500) += snowball.dtb \
- 	ccu8540.dtb \
- 	ccu9540.dtb
- dtb-$(CONFIG_ARCH_S3C24XX) += s3c2416-smdk2416.dtb
-+dtb-$(CONFIG_ARCH_S3C64XX) += s3c6410-mini6410.dtb
- dtb-$(CONFIG_ARCH_SHMOBILE) += emev2-kzm9d.dtb \
- 	emev2-kzm9d-reference.dtb \
- 	r8a7740-armadillo800eva.dtb \
-diff --git a/arch/arm/boot/dts/s3c6410-mini6410.dts b/arch/arm/boot/dts/s3c6410-mini6410.dts
-new file mode 100644
-index 0000000..57e00f9
---- /dev/null
-+++ b/arch/arm/boot/dts/s3c6410-mini6410.dts
-@@ -0,0 +1,228 @@
-+/*
-+ * Samsung's S3C6410 based Mini6410 board device tree source
-+ *
-+ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
-+ *
-+ * Device tree source file for FriendlyARM Mini6410 board which is based on
-+ * Samsung's S3C6410 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+#include "s3c6410.dtsi"
-+
-+/ {
-+	model = "FriendlyARM Mini6410 board based on S3C6410";
-+	compatible = "friendlyarm,mini6410", "samsung,s3c6410";
-+
-+	memory {
-+		reg = <0x50000000 0x10000000>;
-+	};
-+
-+	chosen {
-+		bootargs = "console=ttySAC0,115200n8 earlyprintk rootwait root=/dev/mmcblk0p1";
-+	};
-+
-+	clocks {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		fin_pll: oscillator@0 {
-+			compatible = "fixed-clock";
-+			reg = <0>;
-+			clock-frequency = <12000000>;
-+			clock-output-names = "fin_pll";
-+			#clock-cells = <0>;
-+		};
-+
-+		xusbxti: oscillator@1 {
-+			compatible = "fixed-clock";
-+			reg = <1>;
-+			clock-output-names = "xusbxti";
-+			clock-frequency = <48000000>;
-+			#clock-cells = <0>;
-+		};
-+	};
-+
-+	srom-cs1@18000000 {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		reg = <0x18000000 0x8000000>;
-+		ranges;
-+
-+		ethernet@18000000 {
-+			compatible = "davicom,dm9000";
-+			reg = <0x18000000 0x2 0x18000004 0x2>;
-+			interrupt-parent = <&gpn>;
-+			interrupts = <7 IRQ_TYPE_LEVEL_HIGH>;
-+			davicom,no-eeprom;
-+		};
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_keys>;
-+		autorepeat;
-+
-+		button-k1 {
-+			label = "K1";
-+			gpios = <&gpn 0 GPIO_ACTIVE_LOW>;
-+			linux,code = <2>;
-+			debounce-interval = <20>;
-+		};
-+
-+		button-k2 {
-+			label = "K2";
-+			gpios = <&gpn 1 GPIO_ACTIVE_LOW>;
-+			linux,code = <3>;
-+			debounce-interval = <20>;
-+		};
-+
-+		button-k3 {
-+			label = "K3";
-+			gpios = <&gpn 2 GPIO_ACTIVE_LOW>;
-+			linux,code = <4>;
-+			debounce-interval = <20>;
-+		};
-+
-+		button-k4 {
-+			label = "K4";
-+			gpios = <&gpn 3 GPIO_ACTIVE_LOW>;
-+			linux,code = <5>;
-+			debounce-interval = <20>;
-+		};
-+
-+		button-k5 {
-+			label = "K5";
-+			gpios = <&gpn 4 GPIO_ACTIVE_LOW>;
-+			linux,code = <6>;
-+			debounce-interval = <20>;
-+		};
-+
-+		button-k6 {
-+			label = "K6";
-+			gpios = <&gpn 5 GPIO_ACTIVE_LOW>;
-+			linux,code = <7>;
-+			debounce-interval = <20>;
-+		};
-+
-+		button-k7 {
-+			label = "K7";
-+			gpios = <&gpl 11 GPIO_ACTIVE_LOW>;
-+			linux,code = <8>;
-+			debounce-interval = <20>;
-+		};
-+
-+		button-k8 {
-+			label = "K8";
-+			gpios = <&gpl 12 GPIO_ACTIVE_LOW>;
-+			linux,code = <9>;
-+			debounce-interval = <20>;
-+		};
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_leds>;
-+
-+		led-1 {
-+			label = "LED1";
-+			gpios = <&gpk 4 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led-2 {
-+			label = "LED2";
-+			gpios = <&gpk 5 GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		led-3 {
-+			label = "LED3";
-+			gpios = <&gpk 6 GPIO_ACTIVE_LOW>;
-+		};
-+
-+		led-4 {
-+			label = "LED4";
-+			gpios = <&gpk 7 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	buzzer {
-+		compatible = "pwm-beeper";
-+		pwms = <&pwm 0 1000000 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm0_out>;
-+	};
-+};
-+
-+&sdhci0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk>, <&sd0_cmd>, <&sd0_cd>, <&sd0_bus4>;
-+	bus-width = <4>;
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_data>;
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_data>, <&uart1_fctl>;
-+	status = "okay";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2_data>;
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart3_data>;
-+	status = "okay";
-+};
-+
-+&pwm {
-+	status = "okay";
-+};
-+
-+&pinctrl0 {
-+	gpio_leds: gpio-leds {
-+		samsung,pins = "gpk-4", "gpk-5", "gpk-6", "gpk-7";
-+		samsung,pin-pud = <PIN_PULL_NONE>;
-+	};
-+
-+	gpio_keys: gpio-keys {
-+		samsung,pins = "gpn-0", "gpn-1", "gpn-2", "gpn-3",
-+				"gpn-4", "gpn-5", "gpl-11", "gpl-12";
-+		samsung,pin-pud = <PIN_PULL_NONE>;
-+	};
-+};
-+
-+&i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_bus>;
-+	status = "okay";
-+
-+	eeprom@50 {
-+		compatible = "atmel,24c08";
-+		reg = <0x50>;
-+		pagesize = <16>;
-+	};
-+};
--- 
-1.8.3.2
+I took a look at the register list and couldn't find a way to save code
+by trying to shoehorn it into the PL08x, the registers and bit layouts =
+are
+totally different. IIRC this driver does not
+have LLIs either so it's quite different and would look strange.
 
+Yours,
+Linus Walleij
