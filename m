@@ -1,154 +1,1041 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v7 4/7] ARM: s3c64xx: Add board file for boot using Device Tree
-Date: Wed, 21 Aug 2013 23:21:48 +0200
-Message-ID: <1377120111-25601-5-git-send-email-tomasz.figa@gmail.com>
+Subject: [PATCH v7 5/7] ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
+Date: Wed, 21 Aug 2013 23:21:49 +0200
+Message-ID: <1377120111-25601-6-git-send-email-tomasz.figa@gmail.com>
 References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f51.google.com ([209.85.214.51]:47324 "EHLO
-	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752670Ab3HUVW1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 17:22:27 -0400
+Return-path: <linux-gpio-owner@vger.kernel.org>
 In-Reply-To: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-gpio-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds board file that will be used to boot S3C64xx-based boards
-using Device Tree.
+This patch adds basic device tree definitions for Samsung S3C64xx SoCs.
+
+Since all the SoCs in the series are very similar, the files are created
+hierarchically - one file for the whole series and then separate files
+for particular SoCs including the common one.
 
 Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- arch/arm/mach-s3c64xx/Kconfig           | 16 +++++++
- arch/arm/mach-s3c64xx/Makefile          |  1 +
- arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c | 85 +++++++++++++++++++++++++++++++++
- 3 files changed, 102 insertions(+)
- create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+ arch/arm/boot/dts/s3c6400.dtsi         |  41 ++
+ arch/arm/boot/dts/s3c6410.dtsi         |  57 +++
+ arch/arm/boot/dts/s3c64xx-pinctrl.dtsi | 687 +++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/s3c64xx.dtsi         | 199 ++++++++++
+ 4 files changed, 984 insertions(+)
+ create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index 041da51..bd14e3a 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -306,3 +306,19 @@ config MACH_WLF_CRAGG_6410
- 	select SAMSUNG_GPIO_EXTRA128
- 	help
- 	  Machine support for the Wolfson Cragganmore S3C6410 variant.
-+
-+config MACH_S3C64XX_DT
-+	bool "Samsung S3C6400/S3C6410 machine using Device Tree"
-+	select CLKSRC_OF
-+	select CPU_S3C6400
-+	select CPU_S3C6410
-+	select PINCTRL
-+	select PINCTRL_S3C64XX
-+	select USE_OF
-+	help
-+	  Machine support for Samsung S3C6400/S3C6410 machines with Device Tree
-+	  enabled.
-+	  Select this if a fdt blob is available for your S3C64XX SoC based
-+	  board.
-+	  Note: This is under development and not all peripherals can be
-+	  supported with this machine file.
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index 645a8fe..6faedcf 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -57,3 +57,4 @@ obj-$(CONFIG_MACH_SMARTQ7)		+= mach-smartq7.o
- obj-$(CONFIG_MACH_SMDK6400)		+= mach-smdk6400.o
- obj-$(CONFIG_MACH_SMDK6410)		+= mach-smdk6410.o
- obj-$(CONFIG_MACH_WLF_CRAGG_6410)	+= mach-crag6410.o mach-crag6410-module.o
-+obj-$(CONFIG_MACH_S3C64XX_DT)		+= mach-s3c64xx-dt.o
-diff --git a/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+diff --git a/arch/arm/boot/dts/s3c6400.dtsi b/arch/arm/boot/dts/s3c6400.dtsi
 new file mode 100644
-index 0000000..7eb9a10
+index 0000000..692f827
 --- /dev/null
-+++ b/arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
-@@ -0,0 +1,85 @@
++++ b/arch/arm/boot/dts/s3c6400.dtsi
+@@ -0,0 +1,41 @@
 +/*
-+ * Samsung's S3C64XX flattened device tree enabled machine
++ * Samsung's S3C6400 SoC device tree source
 + *
 + * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Samsung's S3C6400 SoC device nodes are listed in this file. S3C6400
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * S3C6400 SoC. As device tree coverage for S3C6400 increases, additional
++ * nodes can be added to this file.
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#include <linux/clk-provider.h>
-+#include <linux/irqchip.h>
-+#include <linux/of_platform.h>
++#include "s3c64xx.dtsi"
 +
-+#include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
-+#include <asm/system_misc.h>
++/ {
++	compatible = "samsung,s3c6400";
++};
 +
-+#include <plat/cpu.h>
-+#include <plat/watchdog-reset.h>
++&vic0 {
++	interrupt-mask = <0xfffffe1f>;
++	wakeup-mask = <0x00200004>;
++};
 +
-+#include <mach/map.h>
++&vic1 {
++	interrupt-mask = <0xffffffff>;
++	wakeup-mask = <0x53020000>;
++};
 +
-+#include "common.h"
-+
++&soc {
++	clocks: clock-controller@7e00f000 {
++		compatible = "samsung,s3c6400-clock";
++		reg = <0x7e00f000 0x1000>;
++		#clock-cells = <1>;
++	};
++};
+diff --git a/arch/arm/boot/dts/s3c6410.dtsi b/arch/arm/boot/dts/s3c6410.dtsi
+new file mode 100644
+index 0000000..79c7083
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c6410.dtsi
+@@ -0,0 +1,57 @@
 +/*
-+ * IO mapping for shared system controller IP.
++ * Samsung's S3C6410 SoC device tree source
 + *
-+ * FIXME: Make remaining drivers use dynamic mapping.
++ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Samsung's S3C6410 SoC device nodes are listed in this file. S3C6410
++ * based board files can include this file and provide values for board specfic
++ * bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * S3C6410 SoC. As device tree coverage for S3C6410 increases, additional
++ * nodes can be added to this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#include "s3c64xx.dtsi"
++
++/ {
++	compatible = "samsung,s3c6410";
++
++	aliases {
++		i2c1 = &i2c1;
++	};
++};
++
++&vic0 {
++	interrupt-mask = <0xffffff7f>;
++	wakeup-mask = <0x00200004>;
++};
++
++&vic1 {
++	interrupt-mask = <0xffffffff>;
++	wakeup-mask = <0x53020000>;
++};
++
++&soc {
++	clocks: clock-controller@7e00f000 {
++		compatible = "samsung,s3c6410-clock";
++		reg = <0x7e00f000 0x1000>;
++		#clock-cells = <1>;
++	};
++
++	i2c1: i2c@7f00f000 {
++		compatible = "samsung,s3c2440-i2c";
++		reg = <0x7f00f000 0x1000>;
++		interrupt-parent = <&vic0>;
++		interrupts = <5>;
++		clock-names = "i2c";
++		clocks = <&clocks PCLK_IIC1>;
++		status = "disabled";
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++};
+diff --git a/arch/arm/boot/dts/s3c64xx-pinctrl.dtsi b/arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
+new file mode 100644
+index 0000000..b1197d8
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
+@@ -0,0 +1,687 @@
++/*
++ * Samsung's S3C64xx SoC series common device tree source
++ * - pin control-related definitions
++ *
++ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Samsung's S3C64xx SoCs pin banks, pin-mux and pin-config options are
++ * listed as device tree nodes in this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + */
-+static struct map_desc s3c64xx_dt_iodesc[] __initdata = {
-+	{
-+		.virtual	= (unsigned long)S3C_VA_SYS,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_SYSCON),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	},
++
++#define PIN_PULL_NONE	0
++#define PIN_PULL_DOWN	1
++#define PIN_PULL_UP	2
++
++&pinctrl0 {
++	/*
++	 * Pin banks
++	 */
++
++	gpa: gpa {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpb: gpb {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpc: gpc {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpd: gpd {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpe: gpe {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpf: gpf {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpg: gpg {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gph: gph {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpi: gpi {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpj: gpj {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpk: gpk {
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++
++	gpl: gpl {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpm: gpm {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpn: gpn {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpo: gpo {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpp: gpp {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpq: gpq {
++		gpio-controller;
++		#gpio-cells = <2>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	/*
++	 * Pin groups
++	 */
++
++	uart0_data: uart0-data {
++		samsung,pins = "gpa-0", "gpa-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	uart0_fctl: uart0-fctl {
++		samsung,pins = "gpa-2", "gpa-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	uart1_data: uart1-data {
++		samsung,pins = "gpa-4", "gpa-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	uart1_fctl: uart1-fctl {
++		samsung,pins = "gpa-6", "gpa-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	uart2_data: uart2-data {
++		samsung,pins = "gpb-0", "gpb-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	uart3_data: uart3-data {
++		samsung,pins = "gpb-2", "gpb-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	ext_dma_0: ext-dma-0 {
++		samsung,pins = "gpb-0", "gpb-1";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	ext_dma_1: ext-dma-1 {
++		samsung,pins = "gpb-2", "gpb-3";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	irda_data_0: irda-data-0 {
++		samsung,pins = "gpb-0", "gpb-1";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	irda_data_1: irda-data-1 {
++		samsung,pins = "gpb-2", "gpb-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	irda_sdbw: irda-sdbw {
++		samsung,pins = "gpb-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	i2c0_bus: i2c0-bus {
++		samsung,pins = "gpb-5", "gpb-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_UP>;
++	};
++
++	i2c1_bus: i2c1-bus {
++		/* S3C6410-only */
++		samsung,pins = "gpb-2", "gpb-3";
++		samsung,pin-function = <6>;
++		samsung,pin-pud = <PIN_PULL_UP>;
++	};
++
++	spi0_bus: spi0-bus {
++		samsung,pins = "gpc-0", "gpc-1", "gpc-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_UP>;
++	};
++
++	spi0_cs: spi0-cs {
++		samsung,pins = "gpc-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	spi1_bus: spi1-bus {
++		samsung,pins = "gpc-4", "gpc-5", "gpc-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_UP>;
++	};
++
++	spi1_cs: spi1-cs {
++		samsung,pins = "gpc-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd0_cmd: sd0-cmd {
++		samsung,pins = "gpg-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd0_clk: sd0-clk {
++		samsung,pins = "gpg-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd0_bus1: sd0-bus1 {
++		samsung,pins = "gpg-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd0_bus4: sd0-bus4 {
++		samsung,pins = "gpg-2", "gpg-3", "gpg-4", "gpg-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd0_cd: sd0-cd {
++		samsung,pins = "gpg-6";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_UP>;
++	};
++
++	sd1_cmd: sd1-cmd {
++		samsung,pins = "gph-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd1_clk: sd1-clk {
++		samsung,pins = "gph-0";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd1_bus1: sd1-bus1 {
++		samsung,pins = "gph-2";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd1_bus4: sd1-bus4 {
++		samsung,pins = "gph-2", "gph-3", "gph-4", "gph-5";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd1_bus8: sd1-bus8 {
++		samsung,pins = "gph-2", "gph-3", "gph-4", "gph-5",
++				"gph-6", "gph-7", "gph-8", "gph-9";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd1_cd: sd1-cd {
++		samsung,pins = "gpg-6";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_UP>;
++	};
++
++	sd2_cmd: sd2-cmd {
++		samsung,pins = "gpc-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd2_clk: sd2-clk {
++		samsung,pins = "gpc-5";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd2_bus1: sd2-bus1 {
++		samsung,pins = "gph-6";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	sd2_bus4: sd2-bus4 {
++		samsung,pins = "gph-6", "gph-7", "gph-8", "gph-9";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	i2s0_bus: i2s0-bus {
++		samsung,pins = "gpd-0", "gpd-2", "gpd-3", "gpd-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	i2s0_cdclk: i2s0-cdclk {
++		samsung,pins = "gpd-1";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	i2s1_bus: i2s1-bus {
++		samsung,pins = "gpe-0", "gpe-2", "gpe-3", "gpe-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	i2s1_cdclk: i2s1-cdclk {
++		samsung,pins = "gpe-1";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	i2s2_bus: i2s2-bus {
++		/* S3C6410-only */
++		samsung,pins = "gpc-4", "gpc-5", "gpc-6", "gph-6",
++				"gph-8", "gph-9";
++		samsung,pin-function = <5>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	i2s2_cdclk: i2s2-cdclk {
++		/* S3C6410-only */
++		samsung,pins = "gph-7";
++		samsung,pin-function = <5>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	pcm0_bus: pcm0-bus {
++		samsung,pins = "gpd-0", "gpd-2", "gpd-3", "gpd-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	pcm0_extclk: pcm0-extclk {
++		samsung,pins = "gpd-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	pcm1_bus: pcm1-bus {
++		samsung,pins = "gpe-0", "gpe-2", "gpe-3", "gpe-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	pcm1_extclk: pcm1-extclk {
++		samsung,pins = "gpe-1";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	ac97_bus_0: ac97-bus-0 {
++		samsung,pins = "gpd-0", "gpd-1", "gpd-2", "gpd-3", "gpd-4";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	ac97_bus_1: ac97-bus-1 {
++		samsung,pins = "gpe-0", "gpe-1", "gpe-2", "gpe-3", "gpe-4";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	cam_port: cam-port {
++		samsung,pins = "gpf-0", "gpf-1", "gpf-2", "gpf-4",
++				"gpf-5", "gpf-6", "gpf-7", "gpf-8",
++				"gpf-9", "gpf-10", "gpf-11", "gpf-12";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	cam_rst: cam-rst {
++		samsung,pins = "gpf-3";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	cam_field: cam-field {
++		/* S3C6410-only */
++		samsung,pins = "gpb-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	pwm_extclk: pwm-extclk {
++		samsung,pins = "gpf-13";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	pwm0_out: pwm0-out {
++		samsung,pins = "gpf-14";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	pwm1_out: pwm1-out {
++		samsung,pins = "gpf-15";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	clkout0: clkout-0 {
++		samsung,pins = "gpf-14";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col0_0: keypad-col0-0 {
++		samsung,pins = "gph-0";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col1_0: keypad-col1-0 {
++		samsung,pins = "gph-1";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col2_0: keypad-col2-0 {
++		samsung,pins = "gph-2";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col3_0: keypad-col3-0 {
++		samsung,pins = "gph-3";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col4_0: keypad-col4-0 {
++		samsung,pins = "gph-4";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col5_0: keypad-col5-0 {
++		samsung,pins = "gph-5";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col6_0: keypad-col6-0 {
++		samsung,pins = "gph-6";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col7_0: keypad-col7-0 {
++		samsung,pins = "gph-7";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col0_1: keypad-col0-1 {
++		samsung,pins = "gpl-0";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col1_1: keypad-col1-1 {
++		samsung,pins = "gpl-1";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col2_1: keypad-col2-1 {
++		samsung,pins = "gpl-2";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col3_1: keypad-col3-1 {
++		samsung,pins = "gpl-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col4_1: keypad-col4-1 {
++		samsung,pins = "gpl-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col5_1: keypad-col5-1 {
++		samsung,pins = "gpl-5";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col6_1: keypad-col6-1 {
++		samsung,pins = "gpl-6";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_col7_1: keypad-col7-1 {
++		samsung,pins = "gpl-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row0_0: keypad-row0-0 {
++		samsung,pins = "gpk-8";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row1_0: keypad-row1-0 {
++		samsung,pins = "gpk-9";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row2_0: keypad-row2-0 {
++		samsung,pins = "gpk-10";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row3_0: keypad-row3-0 {
++		samsung,pins = "gpk-11";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row4_0: keypad-row4-0 {
++		samsung,pins = "gpk-12";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row5_0: keypad-row5-0 {
++		samsung,pins = "gpk-13";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row6_0: keypad-row6-0 {
++		samsung,pins = "gpk-14";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row7_0: keypad-row7-0 {
++		samsung,pins = "gpk-15";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row0_1: keypad-row0-1 {
++		samsung,pins = "gpn-0";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row1_1: keypad-row1-1 {
++		samsung,pins = "gpn-1";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row2_1: keypad-row2-1 {
++		samsung,pins = "gpn-2";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row3_1: keypad-row3-1 {
++		samsung,pins = "gpn-3";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row4_1: keypad-row4-1 {
++		samsung,pins = "gpn-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row5_1: keypad-row5-1 {
++		samsung,pins = "gpn-5";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row6_1: keypad-row6-1 {
++		samsung,pins = "gpn-6";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	keypad_row7_1: keypad-row7-1 {
++		samsung,pins = "gpn-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	lcd_ctrl: lcd-ctrl {
++		samsung,pins = "gpj-8", "gpj-9", "gpj-10", "gpj-11";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	lcd_data16: lcd-data-width16 {
++		samsung,pins = "gpi-3", "gpi-4", "gpi-5", "gpi-6",
++				"gpi-7", "gpi-10", "gpi-11", "gpi-12",
++				"gpi-13", "gpi-14", "gpi-15", "gpj-3",
++				"gpj-4", "gpj-5", "gpj-6", "gpj-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	lcd_data18: lcd-data-width18 {
++		samsung,pins = "gpi-2", "gpi-3", "gpi-4", "gpi-5",
++				"gpi-6", "gpi-7", "gpi-10", "gpi-11",
++				"gpi-12", "gpi-13", "gpi-14", "gpi-15",
++				"gpj-2", "gpj-3", "gpj-4", "gpj-5",
++				"gpj-6", "gpj-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	lcd_data24: lcd-data-width24 {
++		samsung,pins = "gpi-0", "gpi-1", "gpi-2", "gpi-3",
++				"gpi-4", "gpi-5", "gpi-6", "gpi-7",
++				"gpi-8", "gpi-9", "gpi-10", "gpi-11",
++				"gpi-12", "gpi-13", "gpi-14", "gpi-15",
++				"gpj-0", "gpj-1", "gpj-2", "gpj-3",
++				"gpj-4", "gpj-5", "gpj-6", "gpj-7";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++
++	hsi_bus: hsi-bus {
++		samsung,pins = "gpk-0", "gpk-1", "gpk-2", "gpk-3",
++				"gpk-4", "gpk-5", "gpk-6", "gpk-7";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <PIN_PULL_NONE>;
++	};
++};
+diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
+new file mode 100644
+index 0000000..4e3be4d
+--- /dev/null
++++ b/arch/arm/boot/dts/s3c64xx.dtsi
+@@ -0,0 +1,199 @@
++/*
++ * Samsung's S3C64xx SoC series common device tree source
++ *
++ * Copyright (c) 2013 Tomasz Figa <tomasz.figa@gmail.com>
++ *
++ * Samsung's S3C64xx SoC series device nodes are listed in this file.
++ * Particular SoCs from S3C64xx series can include this file and provide
++ * values for SoCs specfic bindings.
++ *
++ * Note: This file does not include device nodes for all the controllers in
++ * S3C64xx SoCs. As device tree coverage for S3C64xx increases, additional
++ * nodes can be added to this file.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include "skeleton.dtsi"
++#include <dt-bindings/clock/samsung,s3c64xx-clock.h>
++
++/ {
++	aliases {
++		i2c0 = &i2c0;
++		pinctrl0 = &pinctrl0;
++	};
++
++	cpus {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		cpu@0 {
++			device_type = "cpu";
++			compatible = "arm,arm1176jzf-s", "arm,arm1176";
++			reg = <0x0>;
++		};
++	};
++
++	soc: soc {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		vic0: interrupt-controller@71200000 {
++			compatible = "arm,pl192-vic";
++			interrupt-controller;
++			reg = <0x71200000 0x1000>;
++			#interrupt-cells = <1>;
++		};
++
++		vic1: interrupt-controller@71300000 {
++			compatible = "arm,pl192-vic";
++			interrupt-controller;
++			reg = <0x71300000 0x1000>;
++			#interrupt-cells = <1>;
++		};
++
++		sdhci0: sdhci@7c200000 {
++			compatible = "samsung,s3c6410-sdhci";
++			reg = <0x7c200000 0x100>;
++			interrupt-parent = <&vic1>;
++			interrupts = <24>;
++			clock-names = "hsmmc", "mmc_busclk.0", "mmc_busclk.2";
++			clocks = <&clocks HCLK_HSMMC0>, <&clocks HCLK_HSMMC0>,
++					<&clocks SCLK_MMC0>;
++			status = "disabled";
++		};
++
++		sdhci1: sdhci@7c300000 {
++			compatible = "samsung,s3c6410-sdhci";
++			reg = <0x7c300000 0x100>;
++			interrupt-parent = <&vic1>;
++			interrupts = <25>;
++			clock-names = "hsmmc", "mmc_busclk.0", "mmc_busclk.2";
++			clocks = <&clocks HCLK_HSMMC1>, <&clocks HCLK_HSMMC1>,
++					<&clocks SCLK_MMC1>;
++			status = "disabled";
++		};
++
++		sdhci2: sdhci@7c400000 {
++			compatible = "samsung,s3c6410-sdhci";
++			reg = <0x7c400000 0x100>;
++			interrupt-parent = <&vic1>;
++			interrupts = <17>;
++			clock-names = "hsmmc", "mmc_busclk.0", "mmc_busclk.2";
++			clocks = <&clocks HCLK_HSMMC2>, <&clocks HCLK_HSMMC2>,
++					<&clocks SCLK_MMC2>;
++			status = "disabled";
++		};
++
++		watchdog: watchdog@7e004000 {
++			compatible = "samsung,s3c2410-wdt";
++			reg = <0x7e004000 0x1000>;
++			interrupt-parent = <&vic0>;
++			interrupts = <26>;
++			clock-names = "watchdog";
++			clocks = <&clocks PCLK_WDT>;
++			status = "disabled";
++		};
++
++		i2c0: i2c@7f004000 {
++			compatible = "samsung,s3c2440-i2c";
++			reg = <0x7f004000 0x1000>;
++			interrupt-parent = <&vic1>;
++			interrupts = <18>;
++			clock-names = "i2c";
++			clocks = <&clocks PCLK_IIC0>;
++			status = "disabled";
++			#address-cells = <1>;
++			#size-cells = <0>;
++		};
++
++		uart0: serial@7f005000 {
++			compatible = "samsung,s3c6400-uart";
++			reg = <0x7f005000 0x100>;
++			interrupt-parent = <&vic1>;
++			interrupts = <5>;
++			clock-names = "uart", "clk_uart_baud2",
++					"clk_uart_baud3";
++			clocks = <&clocks PCLK_UART0>, <&clocks PCLK_UART0>,
++					<&clocks SCLK_UART>;
++			status = "disabled";
++		};
++
++		uart1: serial@7f005400 {
++			compatible = "samsung,s3c6400-uart";
++			reg = <0x7f005400 0x100>;
++			interrupt-parent = <&vic1>;
++			interrupts = <6>;
++			clock-names = "uart", "clk_uart_baud2",
++					"clk_uart_baud3";
++			clocks = <&clocks PCLK_UART1>, <&clocks PCLK_UART1>,
++					<&clocks SCLK_UART>;
++			status = "disabled";
++		};
++
++		uart2: serial@7f005800 {
++			compatible = "samsung,s3c6400-uart";
++			reg = <0x7f005800 0x100>;
++			interrupt-parent = <&vic1>;
++			interrupts = <7>;
++			clock-names = "uart", "clk_uart_baud2",
++					"clk_uart_baud3";
++			clocks = <&clocks PCLK_UART2>, <&clocks PCLK_UART2>,
++					<&clocks SCLK_UART>;
++			status = "disabled";
++		};
++
++		uart3: serial@7f005c00 {
++			compatible = "samsung,s3c6400-uart";
++			reg = <0x7f005c00 0x100>;
++			interrupt-parent = <&vic1>;
++			interrupts = <8>;
++			clock-names = "uart", "clk_uart_baud2",
++					"clk_uart_baud3";
++			clocks = <&clocks PCLK_UART3>, <&clocks PCLK_UART3>,
++					<&clocks SCLK_UART>;
++			status = "disabled";
++		};
++
++		pwm: pwm@7f006000 {
++			compatible = "samsung,s3c6400-pwm";
++			reg = <0x7f006000 0x1000>;
++			interrupt-parent = <&vic0>;
++			interrupts = <23>, <24>, <25>, <27>, <28>;
++			clock-names = "timers";
++			clocks = <&clocks PCLK_PWM>;
++			samsung,pwm-outputs = <0>, <1>;
++			#pwm-cells = <3>;
++			status = "disabled";
++		};
++
++		pinctrl0: pinctrl@7f008000 {
++			compatible = "samsung,s3c64xx-pinctrl";
++			reg = <0x7f008000 0x1000>;
++			interrupt-parent = <&vic1>;
++			interrupts = <21>;
++
++			pctrl_int_map: pinctrl-interrupt-map {
++				interrupt-map = <0 &vic0 0>,
++						<1 &vic0 1>,
++						<2 &vic1 0>,
++						<3 &vic1 1>;
++				#address-cells = <0>;
++				#size-cells = <0>;
++				#interrupt-cells = <1>;
++			};
++
++			wakeup-interrupt-controller {
++				compatible = "samsung,s3c64xx-wakeup-eint";
++				interrupts = <0>, <1>, <2>, <3>;
++				interrupt-parent = <&pctrl_int_map>;
++			};
++		};
++	};
 +};
 +
-+static void __init s3c64xx_dt_map_io(void)
-+{
-+	debug_ll_io_init();
-+	iotable_init(s3c64xx_dt_iodesc, ARRAY_SIZE(s3c64xx_dt_iodesc));
-+
-+	s3c64xx_init_cpu();
-+
-+	if (!soc_is_s3c64xx())
-+		panic("SoC is not S3C64xx!");
-+}
-+
-+static void __init s3c64xx_dt_init_irq(void)
-+{
-+	of_clk_init(NULL);
-+	samsung_wdt_reset_of_init();
-+	irqchip_init();
-+};
-+
-+static void __init s3c64xx_dt_init_machine(void)
-+{
-+	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
-+}
-+
-+static void s3c64xx_dt_restart(enum reboot_mode mode, const char *cmd)
-+{
-+	if (mode != REBOOT_SOFT)
-+		samsung_wdt_reset();
-+
-+	/* if all else fails, or mode was for soft, jump to 0 */
-+	soft_restart(0);
-+}
-+
-+static char const *s3c64xx_dt_compat[] __initdata = {
-+	"samsung,s3c6400",
-+	"samsung,s3c6410",
-+	NULL
-+};
-+
-+DT_MACHINE_START(S3C6400_DT, "Samsung S3C64xx (Flattened Device Tree)")
-+	/* Maintainer: Tomasz Figa <tomasz.figa@gmail.com> */
-+	.dt_compat	= s3c64xx_dt_compat,
-+	.map_io		= s3c64xx_dt_map_io,
-+	.init_irq	= s3c64xx_dt_init_irq,
-+	.init_machine	= s3c64xx_dt_init_machine,
-+	.restart        = s3c64xx_dt_restart,
-+MACHINE_END
++#include "s3c64xx-pinctrl.dtsi"
 -- 
 1.8.3.2
+
