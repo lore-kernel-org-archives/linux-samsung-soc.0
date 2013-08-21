@@ -1,42 +1,109 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH V3] watchdog: s3c2410_wdt: remove the global variables
-Date: Wed, 21 Aug 2013 22:01:05 +0200
-Message-ID: <20130821200105.GB815@spo001.leaseweb.com>
-References: <1374569985-13576-1-git-send-email-l.krishna@samsung.com> <0e8301ce8842$eca72880$c5f57980$@org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:58572 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752041Ab3HUU3z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 16:29:55 -0400
-Content-Disposition: inline
-In-Reply-To: <0e8301ce8842$eca72880$c5f57980$@org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH v7 0/7] Initial Device Tree support for S3C64xx
+Date: Wed, 21 Aug 2013 23:21:44 +0200
+Message-ID: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, jg1.han@samsung.com, t.figa@samsung.com, sachin.kamat@linaro.org, linux-watchdog@vger.kernel.org
 
-Hi All,
+This series adds Device Tree support for Samsung S3C64xx SoC series.
 
-> Leela Krishna Amudala wrote:
-> > 
-> > This patch removes the global variables in the driver file and
-> > group them into a structure.
-> > 
-> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> 
-> (+ Wim Van Sebroeck)
-> 
-> Looks good to me,
-> 
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> Thanks,
-> Kukjin
+It fixes several problems preventing from booting an S3C64xx-based system
+using Device Tree, adds all the infrastructure for Device Tree-based board
+support, including mach-s3c64xx-dt and dts include files for S3C64xx SoCs,
+and basic device tree source for FriendlyARM Mini6410 and SAMSUNG SMDK6410
+boards.
 
-Can someone sent me the (unquoted) patch so that I can review and add it?
+Current support is somewhat limite, but should be fine as a start and
+will be extended in future, hopefully with help of S3C64xx board
+maintainers.
 
-Thanks in advance,
-Wim.
+Depends on:
+ - [PATCH v2 0/8] Common Clock Framework support for Samsung S3C64xx
+   http://thread.gmane.org/gmane.linux.usb.general/90493
+
+On Samsung S3C6410-based Mini6410 and SMDK6410 boards:
+
+Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Changes since v6:
+ - Rebased onto current for-next branch of Kgene's tree,
+ - Dropped the idea of .init_platform() machine callback,
+ - Added support for i2c controllers,
+ - Replaced separate apb and ahb nodes with a single common soc node,
+ - Updated cpus node according to CPU bindings,
+ - Updated fixed rate clock nodes to use generic bindings,
+ - Added support for PWM buzzer and I2C EEPROM on Mini6410 board,
+ - Simplified the condition of skipping legacy GPIO initialization.
+
+Changes since v5:
+ - Rebased onto current for-next branch of Kgene's tree,
+ - Added support for new Common Clock Framework based clock driver,
+ - Introduced hierarchical structure of device nodes (representing
+   physical AHB and APB buses),
+ - Bypassed most of legacy initialization when booting with DT,
+ - Used preprocessor macros in dts files to improve readabilty,
+ - Added support for SMDK6410 board.
+
+Changes since v4:
+ - Rebased onto current for-next branch of Kgene's tree
+ - Added support for pinctrl (driver merged through pinctrl tree)
+ - Added labels to all nodes that can be overridden from board dts
+ - Modified board dts to use the &label syntax to reference device nodes
+
+Changes since v3:
+ - Rebased onto current for-next branch of Kgene's tree
+ - Updated timer node for next version of samsung-time patches
+ - Replaced local s3c64xx_dt_init_irq with irqchip_init
+
+Changes since v2:
+ - Updated timer node for next version of samsung-time patches
+
+Changes since v1:
+ - Dropped two VIC-related patches that are no longer necessary
+ - Added Device Tree-based instantation of system timers
+ - Corrected VIC interrupt specifiers
+ - Adjusted CPU compatible values and dropped @id
+
+Tomasz Figa (7):
+  ARM: common: vic: Parse interrupt and resume masks from device tree
+  ARM: s3c64xx: Bypass legacy initialization when booting with DT
+  gpio: samsung: Skip initialization if device tree is present
+  ARM: s3c64xx: Add board file for boot using Device Tree
+  ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
+  ARM: dts: Add dts file for S3C6410-based Mini6410 board
+  ARM: dts: Add dts file for S3C6410-based SMDK6410 board
+
+ Documentation/devicetree/bindings/arm/vic.txt |   6 +
+ arch/arm/boot/dts/Makefile                    |   2 +
+ arch/arm/boot/dts/s3c6400.dtsi                |  41 ++
+ arch/arm/boot/dts/s3c6410-mini6410.dts        | 228 +++++++++
+ arch/arm/boot/dts/s3c6410-smdk6410.dts        | 103 ++++
+ arch/arm/boot/dts/s3c6410.dtsi                |  57 +++
+ arch/arm/boot/dts/s3c64xx-pinctrl.dtsi        | 687 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/s3c64xx.dtsi                | 199 ++++++++
+ arch/arm/mach-s3c64xx/Kconfig                 |  16 +
+ arch/arm/mach-s3c64xx/Makefile                |   1 +
+ arch/arm/mach-s3c64xx/common.c                |  12 +
+ arch/arm/mach-s3c64xx/dma.c                   |   9 +
+ arch/arm/mach-s3c64xx/irq-pm.c                |   9 +
+ arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c       |  85 ++++
+ arch/arm/mach-s3c64xx/s3c6400.c               |   9 +
+ arch/arm/mach-s3c64xx/s3c6410.c               |   9 +
+ arch/arm/plat-samsung/init.c                  |  12 +-
+ drivers/gpio/gpio-samsung.c                   |  34 +-
+ drivers/irqchip/irq-vic.c                     |   7 +-
+ 19 files changed, 1497 insertions(+), 29 deletions(-)
+ create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c6410-mini6410.dts
+ create mode 100644 arch/arm/boot/dts/s3c6410-smdk6410.dts
+ create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
+ create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+
+-- 
+1.8.3.2
+
