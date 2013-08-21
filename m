@@ -1,30 +1,42 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v5 0/4] mmc: dw_mmc: fixes for suspend/resume on exynos
-Date: Wed, 21 Aug 2013 08:13:18 -0700
-Message-ID: <CAD=FV=Uo3zs6EqZDJTh1=dezRRtT-M3RDRoWCGw6pquZ8qFboA@mail.gmail.com>
-References: <1375825071-20922-1-git-send-email-dianders@chromium.org>
-	<1376066000-5495-1-git-send-email-dianders@chromium.org>
-	<001e01ce9e64$59c3b780$0d4b2680$%jun@samsung.com>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: [PATCH V3] watchdog: s3c2410_wdt: remove the global variables
+Date: Wed, 21 Aug 2013 22:01:05 +0200
+Message-ID: <20130821200105.GB815@spo001.leaseweb.com>
+References: <1374569985-13576-1-git-send-email-l.krishna@samsung.com> <0e8301ce8842$eca72880$c5f57980$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <001e01ce9e64$59c3b780$0d4b2680$%jun@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ns1.pc-advies.be ([83.149.101.17]:58572 "EHLO
+	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1752041Ab3HUU3z (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Aug 2013 16:29:55 -0400
+Content-Disposition: inline
+In-Reply-To: <0e8301ce8842$eca72880$c5f57980$@org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, jg1.han@samsung.com, t.figa@samsung.com, sachin.kamat@linaro.org, linux-watchdog@vger.kernel.org
 
-Seungwon,
+Hi All,
 
+> Leela Krishna Amudala wrote:
+> > 
+> > This patch removes the global variables in the driver file and
+> > group them into a structure.
+> > 
+> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> 
+> (+ Wim Van Sebroeck)
+> 
+> Looks good to me,
+> 
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> Thanks,
+> Kukjin
 
-On Wed, Aug 21, 2013 at 4:48 AM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> Hi Doug,
-> Do you have any update for this series?
-> Please let me know.
+Can someone sent me the (unquoted) patch so that I can review and add it?
 
-Thank you for the ping.  The changes requested looked big enough that
-I knew I was going to have to devote some time to looking this all
-over again, which I haven't had time for.  I'll make time for it today
-or tomorrow and repost.  Sorry for the delay.
-
--Doug
+Thanks in advance,
+Wim.
