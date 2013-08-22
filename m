@@ -1,48 +1,74 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v7 3/7] gpio: samsung: Skip initialization if device tree
- is present
-Date: Thu, 22 Aug 2013 18:59:23 +0900
-Message-ID: <1c9a01ce9f1e$473b58b0$d5b20a10$@org>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
- <1377120111-25601-4-git-send-email-tomasz.figa@gmail.com>
- <CACRpkda2ZjPm4nEeDujPWSDCNLk4mr9izPvhqNKx5urVAg_Azg@mail.gmail.com>
- <3452017.UPhKO6xNO5@flatron>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-reply-to: <3452017.UPhKO6xNO5@flatron>
-Content-language: ko
-Sender: linux-gpio-owner@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 'Ian Campbell' <ian.campbell@citrix.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Rob Herring' <rob.herring@calxeda.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Thomas Gleixner' <tglx@linutronix.de>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, 'Marc Zyngier' <marc.zyngier@arm.com>, 'Mark Brown' <broonie@kernel.org>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] ARM: dts: exynos5420/5250: add ADC device tree node
+Date: Thu, 22 Aug 2013 15:48:11 +0530
+Message-ID: <1377166691-5118-1-git-send-email-ch.naveen@samsung.com>
+References: <1375349321-18646-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:51018 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752296Ab3HVKYL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Aug 2013 06:24:11 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MRX00HRNGVIXKB0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 Aug 2013 19:23:43 +0900 (KST)
+In-reply-to: <1375349321-18646-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: naveenkrishna.ch@gmail.com
 
-Tomasz Figa wrote:
-> 
-> On Thursday 22 of August 2013 01:21:25 Linus Walleij wrote:
-> > On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa <tomasz.figa@gmail.com>
-> wrote:
-> > > Since this driver does not handle GPIO on device tree enabled
-> > > platforms
-> > > any more, it should be bypassed whenever device tree is available, to
-> > > not conflict with the new pinctrl-samsung driver.
-> > >
-> > > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> >
-> > This seems like something I should apply to the GPIO tree
-> > right now, shall I?
-> 
-> Would be nice, but since this patch is a dependency for rest of this
-> series and there are no other dependencies on GPIO tree, it might be
-> easier to just let Kukjin take all the patches with required Acks.
-> 
-Oh, I didn't see any dependencies...but if so, Linus do you agree with
-Tomasz' opinion?
+Add ADC device tree node for exynos5420 and exynos5250
 
-Please let me know so that I could take this with others into the samsung
-tree. And please kindly ignore my previous reply on this ;-)
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |   11 +++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi |   11 +++++++++++
+ 2 files changed, 22 insertions(+)
 
-Thanks,
-Kukjin
-
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 1eec646..518f8cd 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -641,4 +641,15 @@
+ 		clocks = <&clock 133>, <&clock 339>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 	};
++
++	adc: adc@12D10000 {
++		compatible = "samsung,exynos-adc-v1";
++		reg = <0x12D10000 0x100>, <0x10040718 0x4>;
++		interrupts = <0 106 0>;
++		clocks = <&clock 303>;
++		clock-names = "adc";
++		#io-channel-cells = <1>;
++		io-channel-ranges;
++		status = "disabled";
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 5353e32..0c5c055 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -218,4 +218,15 @@
+ 		clocks = <&clock 147>, <&clock 421>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 	};
++
++	adc: adc@12D10000 {
++		compatible = "samsung,exynos-adc-v2";
++		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
++		interrupts = <0 106 0>;
++		clocks = <&clock 270>;
++		clock-names = "adc";
++		#io-channel-cells = <1>;
++		io-channel-ranges;
++		status = "disabled";
++	};
+ };
+-- 
+1.7.9.5
