@@ -1,39 +1,107 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [RFC PATCH 2/3] clk: update users of "clk_register_mux" and
- "DEFINE_CLK_MUX"
-Date: Wed, 21 Aug 2013 23:19:30 -0700
-Message-ID: <20130822061930.8231.89917@quantum>
-References: <1375778065-21808-1-git-send-email-chander.kashyap@linaro.org>
- <1375778065-21808-3-git-send-email-chander.kashyap@linaro.org>
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [PATCH V2] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Thu, 22 Aug 2013 12:24:58 +0530
+Message-ID: <CAKuRcOL7Vs=1em8U6rx=ZBRU8j=0A-WiNK44JrFn6jtVRCns0w@mail.gmail.com>
+References: <1377067433-28373-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1382155.lZhuLK0WA6@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:38975 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753162Ab3HVGTd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 02:19:33 -0400
-Received: by mail-pa0-f52.google.com with SMTP id kq13so1749661pab.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2013 23:19:33 -0700 (PDT)
-In-Reply-To: <1375778065-21808-3-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1382155.lZhuLK0WA6@amdc1227>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, kgene.kim@samsung.com, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, Chander Kashyap <chander.kashyap@linaro.org>
 
-Quoting Chander Kashyap (2013-08-06 01:34:24)
-> As with the patch "clk-add-support-for-temporary-parent-clock-migration.patch"
-> a new field "alternate_parent_name", is added to clk structure. This field can
-> be passed using clk_register_mux API and DEFINE_CLK_MUX macro.
-
-Nitpick: it's easier to search for the patch you mentioned if you quote
-the actual patch $SUBJECT instead of the name of the patch file. In this
-case, "clk: add support for temporary parent clock migration".
-
-This invasive change is not necessary if the temporary parent stuff is
-not added to the clock core and is instead left to the .set_parent
-callbacks of custom clock providers.
-
-Regards,
-Mike
+On Wed, Aug 21, 2013 at 4:00 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Yuvaraj,
+>
+> On Wednesday 21 of August 2013 12:13:53 Yuvaraj Kumar C D wrote:
+>> This patch adds the device tree node entries for exynos5420 SOC.
+>> Exynos5420 has a different version of DWMMC controller,so a new
+>> compatible string is used to distinguish it from the prior SOC's.
+>
+> What are the difference between both versions? Is there a patch adding the
+> new compatible to the driver somewhere?
+Exynos5250 has DWMMC controller of IP version 2.41a
+Exynos5420 has DWMMC controller of IP version 2.50a
+In addition Exynos5420 has Security Management Unit for eMMC.
+>
+>> changes since V1:
+>>       1.disable node by status = disabled in SOC file
+>>       2.enable node by status = okay in board specific file
+>
+> Ahh, so you fixed this already in this version, thanks. Haven't noticed
+> this patch at first and commented on previous one. Sorry for the noise.
+>
+>>
+>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> ---
+>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 ++
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   38
+>> ++++++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi
+>> |   36 +++++++++++++++++++ 3 files changed, 76 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt index
+>> 6d1c098..84cd56f 100644
+>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> @@ -16,6 +16,8 @@ Required Properties:
+>>         specific extensions.
+>>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+>> specific extensions.
+>> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
+>> +       specific extensions.
+>>
+>>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card
+>> interface unit (ciu) clock. This property is applicable only for Exynos5
+>> SoC's and diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..6e65278
+>> 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -31,6 +31,44 @@
+>>               };
+>>       };
+>>
+>> +     dwmmc0@12200000 {
+>> +             status = "okay";
+>> +             num-slots = <1>;
+>
+> You don't have to specify this property if there is only one slot. Also are
+> you sure that this is a board specific property?
+Yes,If num-slots property is not defined dw_mmc driver assumes 1 slot
+is available.
+I think yes,its a board specific property as number of card slots is
+board dependent.
+>
+>> +             broken-cd;
+>> +             bypass-smu;
+>
+> This property doesn't seem to be documented nor used anywhere.
+Sorry. I missed to add in binding document.Will add in next version.
+>
+>> +             supports-highspeed;
+>
+> Is it a board specific property?
+>
+>> +             fifo-depth = <0x80>;
+>
+> Ditto.
+Ideally this can be move to SOC specific dts.But I am just following
+,already merged smdk5250 board
+dts convensions.
+>
+>> +             card-detect-delay = <200>;
+>> +             samsung,dw-mshc-ciu-div = <3>;
+>> +             samsung,dw-mshc-sdr-timing = <0 4>;
+>> +             samsung,dw-mshc-ddr-timing = <0 2>;
+>
+> Are the above three properties really board-specific?
+>
+> Same for remaining nodes.
+>
+> Best regards,
+> Tomasz
+>
