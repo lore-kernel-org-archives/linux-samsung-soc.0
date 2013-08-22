@@ -1,134 +1,60 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V2] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Fri, 23 Aug 2013 01:06:42 +0200
-Message-ID: <3264029.cracds40W5@flatron>
-References: <1377067433-28373-1-git-send-email-yuvaraj.cd@samsung.com> <1382155.lZhuLK0WA6@amdc1227> <CAKuRcOL7Vs=1em8U6rx=ZBRU8j=0A-WiNK44JrFn6jtVRCns0w@mail.gmail.com>
+Subject: Re: [PATCH v7 3/7] gpio: samsung: Skip initialization if device tree is present
+Date: Fri, 23 Aug 2013 01:19:53 +0200
+Message-ID: <2011022.7zNcjpuhKL@flatron>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <3452017.UPhKO6xNO5@flatron> <1c9a01ce9f1e$473b58b0$d5b20a10$@org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f43.google.com ([209.85.214.43]:55491 "EHLO
-	mail-bk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753068Ab3HVXGu (ORCPT
+Received: from mail-ea0-f172.google.com ([209.85.215.172]:39702 "EHLO
+	mail-ea0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753954Ab3HVXUD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 19:06:50 -0400
-In-Reply-To: <CAKuRcOL7Vs=1em8U6rx=ZBRU8j=0A-WiNK44JrFn6jtVRCns0w@mail.gmail.com>
+	Thu, 22 Aug 2013 19:20:03 -0400
+In-Reply-To: <1c9a01ce9f1e$473b58b0$d5b20a10$@org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>, Doug Anderson <dianders@chromium.org>, Seungwon Jeon <tgih.jun@samsung.com>, Chris Ball <cjb@laptop.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, kgene.kim@samsung.com, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Mark Rutland' <mark.rutland@arm.com>, devicetree@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Russell King' <linux@arm.linux.org.uk>, 'Ian Campbell' <ian.campbell@citrix.com>, 'Pawel Moll' <pawel.moll@arm.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, 'Marc Zyngier' <marc.zyngier@arm.com>, 'Rob Herring' <rob.herring@calxeda.com>, linux-gpio@vger.kernel.org, 'Mark Brown' <broonie@kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Thomas Gleixner' <tglx@linutronix.de>
 
-On Thursday 22 of August 2013 12:24:58 Yuvaraj Kumar wrote:
-> On Wed, Aug 21, 2013 at 4:00 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Yuvaraj,
+On Thursday 22 of August 2013 18:59:23 Kukjin Kim wrote:
+> Tomasz Figa wrote:
+> > On Thursday 22 of August 2013 01:21:25 Linus Walleij wrote:
+> > > On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa
+> > > <tomasz.figa@gmail.com>
 > > 
-> > On Wednesday 21 of August 2013 12:13:53 Yuvaraj Kumar C D wrote:
-> >> This patch adds the device tree node entries for exynos5420 SOC.
-> >> Exynos5420 has a different version of DWMMC controller,so a new
-> >> compatible string is used to distinguish it from the prior SOC's.
+> > wrote:
+> > > > Since this driver does not handle GPIO on device tree enabled
+> > > > platforms
+> > > > any more, it should be bypassed whenever device tree is available,
+> > > > to
+> > > > not conflict with the new pinctrl-samsung driver.
+> > > > 
+> > > > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > > 
+> > > This seems like something I should apply to the GPIO tree
+> > > right now, shall I?
 > > 
-> > What are the difference between both versions? Is there a patch adding
-> > the new compatible to the driver somewhere?
+> > Would be nice, but since this patch is a dependency for rest of this
+> > series and there are no other dependencies on GPIO tree, it might be
+> > easier to just let Kukjin take all the patches with required Acks.
 > 
-> Exynos5250 has DWMMC controller of IP version 2.41a
-> Exynos5420 has DWMMC controller of IP version 2.50a
-> In addition Exynos5420 has Security Management Unit for eMMC.
+> Oh, I didn't see any dependencies...but if so, Linus do you agree with
+> Tomasz' opinion?
 
-OK. What about my second question?
+Without this patch DT-based bootup would fail, because the legacy GPIO 
+driver would kick in and register GPIO chips before the pinctrl driver. 
+Things would compile fine, though. So this is a run time dependency, not 
+compile time.
 
-> >> changes since V1:
-> >>       1.disable node by status = disabled in SOC file
-> >>       2.enable node by status = okay in board specific file
-> > 
-> > Ahh, so you fixed this already in this version, thanks. Haven't
-> > noticed
-> > this patch at first and commented on previous one. Sorry for the
-> > noise.
-> > 
-> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> >> ---
-> >> 
-> >>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 ++
-> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   38
-> >> 
-> >> ++++++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi
-> >> 
-> >> |   36 +++++++++++++++++++ 3 files changed, 76 insertions(+)
-> >> 
-> >> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >> b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt index
-> >> 6d1c098..84cd56f 100644
-> >> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >> 
-> >> @@ -16,6 +16,8 @@ Required Properties:
-> >>         specific extensions.
-> >>       
-> >>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung
-> >>       Exynos5250
-> >> 
-> >> specific extensions.
-> >> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung
-> >> Exynos5420 +       specific extensions.
-> >> 
-> >>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card
-> >> 
-> >> interface unit (ciu) clock. This property is applicable only for
-> >> Exynos5 SoC's and diff --git
-> >> a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..6e65278
-> >> 100644
-> >> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >> @@ -31,6 +31,44 @@
-> >> 
-> >>               };
-> >>       
-> >>       };
-> >> 
-> >> +     dwmmc0@12200000 {
-> >> +             status = "okay";
-> >> +             num-slots = <1>;
-> > 
-> > You don't have to specify this property if there is only one slot.
-> > Also are you sure that this is a board specific property?
-> 
-> Yes,If num-slots property is not defined dw_mmc driver assumes 1 slot
-> is available.
-> I think yes,its a board specific property as number of card slots is
-> board dependent.
-> 
-> >> +             broken-cd;
-> >> +             bypass-smu;
-> > 
-> > This property doesn't seem to be documented nor used anywhere.
-> 
-> Sorry. I missed to add in binding document.Will add in next version.
+> Please let me know so that I could take this with others into the
+> samsung tree. And please kindly ignore my previous reply on this ;-)
 
-Is there a patch adding support for this property to the driver?
-
-> >> +             supports-highspeed;
-> > 
-> > Is it a board specific property?
-> > 
-> >> +             fifo-depth = <0x80>;
-> > 
-> > Ditto.
-> 
-> Ideally this can be move to SOC specific dts.But I am just following
-> ,already merged smdk5250 board
-> dts convensions.
-
-This means that Exynos5250 board dts files need to be fixed as well.
-
-> >> +             card-detect-delay = <200>;
-> >> +             samsung,dw-mshc-ciu-div = <3>;
-> >> +             samsung,dw-mshc-sdr-timing = <0 4>;
-> >> +             samsung,dw-mshc-ddr-timing = <0 2>;
-> > 
-> > Are the above three properties really board-specific?
-
-Hmm?
+I would be really happy if we could finally merge this for this release. 
+This series is not really invasive in any way, so it is unlikely to 
+introduce any regressions and it has waited so many releases, without any 
+significant changes, due to a lot of other dependencies.
 
 Best regards,
 Tomasz
