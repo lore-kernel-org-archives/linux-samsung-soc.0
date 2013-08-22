@@ -1,51 +1,50 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [RFC PATCH 2/3] clk: update users of "clk_register_mux" and "DEFINE_CLK_MUX"
-Date: Thu, 22 Aug 2013 13:25:21 +0530
-Message-ID: <CANuQgHE5XhHP4hgwkn+_2zdUYRGEofsyek3juj+HJk5FRMBGcw@mail.gmail.com>
-References: <1375778065-21808-1-git-send-email-chander.kashyap@linaro.org>
-	<1375778065-21808-3-git-send-email-chander.kashyap@linaro.org>
-	<20130822061930.8231.89917@quantum>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v7 1/7] ARM: common: vic: Parse interrupt and resume masks from device tree
+Date: Thu, 22 Aug 2013 09:57:42 +0200
+Message-ID: <1741526.ERsruKK5Pm@flatron>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1377120111-25601-2-git-send-email-tomasz.figa@gmail.com> <CACRpkdboi3MUiUSDuhjwsjzVH3y9bYf9VpyfWK6PCkV-0fUZzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:53700 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753843Ab3HVHzW (ORCPT
+Received: from mail-bk0-f44.google.com ([209.85.214.44]:62475 "EHLO
+	mail-bk0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753879Ab3HVH5t (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 03:55:22 -0400
-Received: by mail-oa0-f46.google.com with SMTP id j10so2801417oah.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Aug 2013 00:55:22 -0700 (PDT)
-In-Reply-To: <20130822061930.8231.89917@quantum>
+	Thu, 22 Aug 2013 03:57:49 -0400
+In-Reply-To: <CACRpkdboi3MUiUSDuhjwsjzVH3y9bYf9VpyfWK6PCkV-0fUZzw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
 
-On 22 August 2013 11:49, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Chander Kashyap (2013-08-06 01:34:24)
->> As with the patch "clk-add-support-for-temporary-parent-clock-migration.patch"
->> a new field "alternate_parent_name", is added to clk structure. This field can
->> be passed using clk_register_mux API and DEFINE_CLK_MUX macro.
->
-> Nitpick: it's easier to search for the patch you mentioned if you quote
-> the actual patch $SUBJECT instead of the name of the patch file. In this
-> case, "clk: add support for temporary parent clock migration".
->
+On Thursday 22 of August 2013 01:19:34 Linus Walleij wrote:
+> On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa <tomasz.figa@gmail.com> 
+wrote:
+> > +++ b/Documentation/devicetree/bindings/arm/vic.txt
+> > 
+> > @@ -18,6 +18,9 @@ Required properties:
+> >  Optional properties:
+> >  
+> >  - interrupts : Interrupt source for parent controllers if the VIC is
+> >  nested.> 
+> > +- interrupt-mask : Bit mask of valid interrupt sources (defaults to
+> > all valid) +- wakeup-mask : Bit mask of interrupt sources that can
+> > wake up the system +  (defaults to all allowed)
+> 
+> The "interrupt-mask" is called "valid-mask" on the FPGA IRQ controller
+> See
+> Documentation/devicetree/bindings/arm/versatile-fpga-irq.txt
+> 
+> Example:
+> 
+>                 reg = <0x10000040 0x100>;
+>                 clear-mask = <0xffffffff>;
+>                 valid-mask = <0x00000007>;
+> 
+> Please use the same name.
 
-thanks for the suggestion.
+Oh, I haven't noticed that. Thanks for the information.
 
-> This invasive change is not necessary if the temporary parent stuff is
-> not added to the clock core and is instead left to the .set_parent
-> callbacks of custom clock providers.
->
-
-Yes if we decide not to add new flag.
-
-> Regards,
-> Mike
-
-
-
--- 
-with warm regards,
-Chander Kashyap
+Best regards,
+Tomasz
