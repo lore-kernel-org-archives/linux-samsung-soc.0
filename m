@@ -1,56 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Fix build error with dma function rename
-Date: Thu, 22 Aug 2013 14:28:24 +0100
-Message-ID: <20130822132824.GN26118@sirena.org.uk>
-References: <1377175502-6169-1-git-send-email-tushar.behera@linaro.org>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [GIT PULL 1/2] Samsung cleanup for v3.12
+Date: Thu, 22 Aug 2013 08:52:18 -0700
+Message-ID: <877gfdu3il.fsf@linaro.org>
+References: <160001ce9c63$2ab54060$801fc120$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MEtH+zcSjJxXgQVV"
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:56917 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752256Ab3HVN21 (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:63788 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752291Ab3HVPwW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 09:28:27 -0400
-Content-Disposition: inline
-In-Reply-To: <1377175502-6169-1-git-send-email-tushar.behera@linaro.org>
+	Thu, 22 Aug 2013 11:52:22 -0400
+Received: by mail-pd0-f181.google.com with SMTP id g10so2043966pdj.40
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Aug 2013 08:52:21 -0700 (PDT)
+In-Reply-To: <160001ce9c63$2ab54060$801fc120$%kim@samsung.com> (Kukjin Kim's
+	message of "Mon, 19 Aug 2013 07:34:57 +0900")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arm@kernel.org
 
+Kukjin Kim <kgene.kim@samsung.com> writes:
 
---MEtH+zcSjJxXgQVV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
+>
+>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-cleanup-1
+>
+> for you to fetch changes up to 8c3736e20ee387acefffdfcac560ea23ee6fd4d8:
+>
+>   ARM: SAMSUNG: Remove unnecessary exynos4_default_sdhci*() (2013-08-19
+> 05:23:32 +0900)
+>
+> ----------------------------------------------------------------
+> samsung cleanup for v3.12
+> - cleanup non-dt stuff in exynos
+> - remove 0x from exynos dt files
+> - remove unused codes
 
-On Thu, Aug 22, 2013 at 06:15:02PM +0530, Tushar Behera wrote:
-> commit 85ff3c29d720 ("ASoC: samsung: Rename DMA platform registration
-> functions") renames the DMA registration functions. Fix the places where
-> it was left out.
+Pulled into next/cleanup
 
-Applied, thanks.
-
---MEtH+zcSjJxXgQVV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSFhH1AAoJELSic+t+oim92uYP/jvFkRsHHJT9tOu30Pma9Adv
-QAx8T+xD950T0q3a7ZQ1CVVzilnNLmYZeGCE3YXYqV7SgTCOPVTSsW5kjOieqD19
-fOYwA4wJcZJLSPqRC7gmPypjTuLVTm10AsL7mcgudPeaFampMZfp4s39wsgcFXd6
-hY3qX0aPWLNKEpg1miFtK1Zcx1EjtG6Oy1z0iraQcQNTv5a1lq8+i8hJxm0ygbtW
-IKn+kQSJtRnRMB510ijkdBOx6Bje/8QvrJKf0jfjLpoiz4MoLusDbIfAnv/OYVMr
-d09QZSnjtsislJnOwX0LnFX2ILCQRwfqYQXf3tHuqAGBdt1hkTv3imFIKKqlwOnP
-jpGhjKoJgMSJF0k+OeCJt1YEdrAEpE7wUIpFthzfe7jq3Qnub3d+IUXmm7Bgl+YG
-wCLsQxaGQ0/N6/WpH5tWP/7JBWCJHFzcwMhdtuqk/lYQZRW4tCw/8cNEGuw59tAX
-d/zHC8oUgBRgBIoNBnRvWvHHL9mTG62y9dMYx3CEzsnbNIZHZXf5wQc99lPPKCmP
-Bwz+K8xCqUDjZn0zdkqckZ8AJ61BXy0LYKh9QvMz/9cjcH9F4elgMMe40GA0PSAc
-rMNdHLTRA7+yL4Gp0iD1rPbNhFYs4W7nWXfpxzVaKnHzyE/bpU6y6LE7Gj7H4uhu
-60lt4YUDgUj/0oZyxr3Z
-=gAFL
------END PGP SIGNATURE-----
-
---MEtH+zcSjJxXgQVV--
+Kevin
