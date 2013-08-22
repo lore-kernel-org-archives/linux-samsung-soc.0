@@ -1,63 +1,60 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v7 3/7] gpio: samsung: Skip initialization if device tree
- is present
-Date: Thu, 22 Aug 2013 10:48:15 +0100
-Message-ID: <20130822094815.GP26118@sirena.org.uk>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
- <1377120111-25601-4-git-send-email-tomasz.figa@gmail.com>
- <CACRpkda2ZjPm4nEeDujPWSDCNLk4mr9izPvhqNKx5urVAg_Azg@mail.gmail.com>
- <3452017.UPhKO6xNO5@flatron>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: Broken device trees for exynos in linux-next
+Date: Thu, 22 Aug 2013 18:55:35 +0900
+Message-ID: <1c7e01ce9f1d$bf4967d0$3ddc3770$@org>
+References: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
+ <13b101ce9a14$2cebd700$86c38500$@org>
+ <CAOesGMiyNM6VdNzKQU3XwoiacJV8hc60mcLiH+vHoS6xJM6q-A@mail.gmail.com>
+ <159201ce9b36$2a513f30$7ef3bd90$@org> <8738q5lnjc.fsf@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="By57YlnFViWR/M0S"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3452017.UPhKO6xNO5@flatron>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---By57YlnFViWR/M0S
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:38002 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752428Ab3HVJzh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Aug 2013 05:55:37 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MRX00G46FKJN340@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 22 Aug 2013 18:55:35 +0900 (KST)
+In-reply-to: <8738q5lnjc.fsf@kernel.org>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kevin Hilman' <khilman@linaro.org>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, 'Arnd Bergmann' <arnd@arndb.de>
 
-On Thu, Aug 22, 2013 at 10:06:46AM +0200, Tomasz Figa wrote:
-> On Thursday 22 of August 2013 01:21:25 Linus Walleij wrote:
+Kevin Hilman wrote:
+> 
+> Kukjin Kim <kgene@kernel.org> writes:
+> 
+> [...]
+> 
+> > If we could make LPAE enabled defconfig for all ARM platforms, I'm fine.
+> I
+> > think your concern is creating SoC specific defconfig and I agree with
+> you.
+> > But I'm not sure how we can support LPAE enabled defconfig for ARM
+> > platforms.
+> 
+> Here's a simple way to keep a single base defconfig, and enable LPAE:
+> 
+> $ echo CONFIG_ARM_LPAE=y > /tmp/lpae.config
+> $ ./scripts/kconfig/merge_config.sh arch/arm/config/exynos_defconfig
+> /tmp/lpae.config
+> 
+Yeah, it can be used for test. But there are many differences between
+exynos_defconfig and exynos5440_defconfig...PCIe, GbE, HugeTLB and KVM...so
+I'm still wondering how to handle it without other defconfig.
 
-> > This seems like something I should apply to the GPIO tree
-> > right now, shall I?
+Olof, do you still having objection for exynos5440_defconfig? If so, OK I
+will revert exynos5440_defconfig for now so that I could pull out the
+'defconfig' branch to arm-soc for upcoming merge window. Then, let's discuss
+again :)
 
-> Would be nice, but since this patch is a dependency for rest of this=20
-> series and there are no other dependencies on GPIO tree, it might be=20
-> easier to just let Kukjin take all the patches with required Acks.
-
-Though if the rest of the series might miss v3.12 (seems likely given
-the arm-soc deadlines have passed) then Linus could apply this for
-v3.12?
-
---By57YlnFViWR/M0S
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.20 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSFd5cAAoJELSic+t+oim9NGoP+wfi3HmKJp+QaLURrX+Soc0B
-wyNveicf/4qNNgIFR1u2Ih3a4RQaBOaHX0vOEE1e/RFmo7lQ6bd9ZjdYMbUQd7tn
-pX1v164UH/Pm+ERPwZFv9pUlnj/tUzfv94LHeypwstZR4xHS46BsIcRdCVMz3tqo
-XR7ByhIwDjg6DWKwzV2N8ckWUrKeLtYj/cPGdhXeZ3HJjqgHS1euFi8Zs9NOxVJq
-k5lMJi0qQlYtCmRgwzjHW6x7SCwXZeU645h8keOCrjb50odwGeLhJPNVC/dcHyWE
-eplajSS6EvufkP5cEx93SaexmRoZX+VjMCRg4xQ1kc42g1uBl+3DFAaMS7oyYDMg
-4FTn3E1Zh43hUAo/2Eey4mnJgCkJKop6qUmQsmsKrChp4WVsToPwtlMtyslYJiKR
-Cc9idoaP6UVrCemgaYJRjZ7R5OOjDJEyEhOf6+vhl9EI4sMNiu7qEksW3DofOpGj
-55JP77jmoVKoqgh/SMeDWkma3XaI+1ea39OfKxza3g64X16KrV3JelweZcvPmO3r
-fnjhE7uWTqKKW+p8WVa62tMlk3DMm3HjDWKTEEeYMRnEFqg+xVbD88QqerCIsIDy
-UVOoyIYw/bCwXWKslXHcoWUPRANbM01BKARn49UqAdFqUBJKhVsAIwdC1WVDeR8b
-XyZQ5pWg+eiSKAnvk7Hn
-=fqfK
------END PGP SIGNATURE-----
-
---By57YlnFViWR/M0S--
+Thanks,
+Kukjin
