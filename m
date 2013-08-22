@@ -1,80 +1,175 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] PCI: exynos: add support for MSI
-Date: Thu, 22 Aug 2013 14:25:26 +0900
-Message-ID: <000101ce9ef8$024f1be0$06ed53a0$%han@samsung.com>
-References: <000401ce9739$e0a65410$a1f2fc30$@samsung.com>
- <CAK9yfHwEPEfhMCWGbDWK2NQE2zAgmsQc6_Dn498pRP4UX6sYmQ@mail.gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [RFC PATCH 1/3] clk: add support for temporary parent clock migration
+Date: Wed, 21 Aug 2013 23:16:49 -0700
+Message-ID: <20130822061649.8231.86212@quantum>
+References: <1375778065-21808-1-git-send-email-chander.kashyap@linaro.org>
+ <1375778065-21808-2-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAK9yfHwEPEfhMCWGbDWK2NQE2zAgmsQc6_Dn498pRP4UX6sYmQ@mail.gmail.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:37621 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753162Ab3HVGQx convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Aug 2013 02:16:53 -0400
+Received: by mail-pa0-f53.google.com with SMTP id lb1so1732320pab.40
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2013 23:16:52 -0700 (PDT)
+In-Reply-To: <1375778065-21808-2-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, Chander Kashyap <chander.kashyap@linaro.org>
 
-On Monday, August 12, 2013 6:13 PM, Sachin Kamat wrote:
-> On 12 August 2013 14:26, Jingoo Han <jg1.han@samsung.com> wrote:
-> > This patch adds support for Message Signaled Interrupt in the
-> > Exynops PCIe diver using Synopsys designware PCIe core IP.
+Quoting Chander Kashyap (2013-08-06 01:34:23)
+> Some platforms use to migrate temporarily to another parent during cpu frequency
+> scaling, e.g. Exynos and Tegra. Once the frequency is changed the latch on to
+> original parent.
 > 
-> s/Exynops PCIe diver/Exynos PCIe driver
+> The generic cpufreq-cpu0 driver use CCF to scale cpu frequency. This patch is an
+> attempt to address the above mentioned requirement.
 
-OK, I will fix this typo.
+The generic cpufreq-cpu0 driver does not use CCF per se. It uses the
+long-standing clock api written by Russell. Coincidentally I think that
+all the platforms using cpufreq-cpu0 have converted to the common struct
+clk.
 
-> > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> > Signed-off-by: Srikanth T Shivanand <ts.srikanth@samsung.com>
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > Cc: Pratyush Anand <pratyush.anand@st.com>
-> > Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
-> > ---
-> >  arch/arm/boot/dts/exynos5440.dtsi  |    2 +
-> >  arch/arm/mach-exynos/Kconfig       |    1 +
-> >  drivers/pci/host/pci-exynos.c      |   60 ++++++++++
-> >  drivers/pci/host/pcie-designware.c |  213 ++++++++++++++++++++++++++++++++++++
-> >  drivers/pci/host/pcie-designware.h |    8 ++
-> >  5 files changed, 284 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> > index 586134e..3746835 100644
-> > --- a/arch/arm/boot/dts/exynos5440.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> > @@ -249,6 +249,7 @@
-> >                 interrupt-map-mask = <0 0 0 0>;
-> >                 interrupt-map = <0x0 0 &gic 53>;
-> >                 num-lanes = <4>;
-> > +               msi-base = <200>;
 > 
-> Please update the bindings documentation too.
-
-OK, I will updated the bindings documentation.
-
-[.....]
-
-> > +#ifdef CONFIG_PCI_MSI
-> > +static void exynos_pcie_clear_irq_level(struct pcie_port *pp)
-> > +{
-> > +       u32 val;
-> > +       struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
-> > +       void __iomem *elbi_base = exynos_pcie->elbi_base;
-> > +
-> > +       val = readl(elbi_base + PCIE_IRQ_LEVEL);
-> > +       writel(val, elbi_base + PCIE_IRQ_LEVEL);
+> This is achieved as follows:
 > 
-> Sorry, I did not get this. Writing the value read from the same
-> register without any operation.
+> Add a clk flag "CLK_SET_RATE_ALTERNATE" for clocks which need to migrate to
+> another parent during set_rate operation on them.
 
-It was intended to clear the bits by writing 1 of each bit.
-But I will remove this function.
+We discussed the naming a bit already. I think I like
+CLK_SET_RATE_TEMP_PARENT more. It's really long but it gets the idea
+across easily.
 
-My coworker, Srikanth T Shivanand found that this function is
-unnecessary. This is because PCIE_IRQ_LEVEL register is read-only
-register. Also, PCIE_IRQ_LEVEL register is already cleared before
-this function is called.
+> 
+> Add "alternate_parent_name" and "alternate_parent" fields to clk structure
+> i.e the name of alternate_parent_clock and reference to alternate_parent_clock.
 
-Thank you for your comment.
+Similarly temp_parent_name and temp_parent here.
 
-Best regards,
-Jingoo Han
+> 
+> Hence in clk_set_rate API check for the "CLK_SET_RATE_ALTERNATE" flag, then
+> latch on to alternate parent clock temporarily. Once the requested rate is set
+> on the clk, re-parent back to original parent clock.
+> 
+> This property is applicable only for mux-clocks, where it is guaranteed that
+> set_rate will actually execute on parent clock.
+
+Can you clarify what you mean by this?
+
+> 
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> ---
+>  drivers/clk/clk-mux.c        |   13 ++++++------
+>  drivers/clk/clk.c            |   45 +++++++++++++++++++++++++++++++++++++++---
+>  include/linux/clk-private.h  |   17 +++++++++-------
+>  include/linux/clk-provider.h |   10 ++++++----
+>  4 files changed, 65 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+> index 614444c..47cb77f 100644
+> --- a/drivers/clk/clk-mux.c
+> +++ b/drivers/clk/clk-mux.c
+> @@ -109,8 +109,8 @@ EXPORT_SYMBOL_GPL(clk_mux_ops);
+>  
+>  struct clk *clk_register_mux_table(struct device *dev, const char *name,
+>                 const char **parent_names, u8 num_parents, unsigned long flags,
+> -               void __iomem *reg, u8 shift, u32 mask,
+> -               u8 clk_mux_flags, u32 *table, spinlock_t *lock)
+> +               const char *alternate_parent_name, void __iomem *reg, u8 shift,
+> +               u32 mask, u8 clk_mux_flags, u32 *table, spinlock_t *lock)
+>  {
+>         struct clk_mux *mux;
+>         struct clk *clk;
+> @@ -137,6 +137,7 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+>         init.flags = flags | CLK_IS_BASIC;
+>         init.parent_names = parent_names;
+>         init.num_parents = num_parents;
+> +       init.alternate_parent_name = alternate_parent_name;
+>  
+>         /* struct clk_mux assignments */
+>         mux->reg = reg;
+> @@ -157,12 +158,12 @@ struct clk *clk_register_mux_table(struct device *dev, const char *name,
+>  
+>  struct clk *clk_register_mux(struct device *dev, const char *name,
+>                 const char **parent_names, u8 num_parents, unsigned long flags,
+> -               void __iomem *reg, u8 shift, u8 width,
+> -               u8 clk_mux_flags, spinlock_t *lock)
+> +               const char *alternate_parent_name, void __iomem *reg, u8 shift,
+> +               u8 width, u8 clk_mux_flags, spinlock_t *lock)
+>  {
+>         u32 mask = BIT(width) - 1;
+>  
+>         return clk_register_mux_table(dev, name, parent_names, num_parents,
+> -                                     flags, reg, shift, mask, clk_mux_flags,
+> -                                     NULL, lock);
+> +                                     flags, alternate_parent_name, reg, shift,
+> +                                     mask, clk_mux_flags, NULL, lock);
+>  }
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 54a191c..0f18a45 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1209,8 +1209,8 @@ static void clk_change_rate(struct clk *clk)
+>   */
+>  int clk_set_rate(struct clk *clk, unsigned long rate)
+>  {
+> -       struct clk *top, *fail_clk;
+> -       int ret = 0;
+> +       struct clk *top, *fail_clk, *parent = NULL;
+> +       int ret = 0, index;
+>  
+>         /* prevent racing with updates to the clock topology */
+>         clk_prepare_lock();
+> @@ -1231,6 +1231,36 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+>                 goto out;
+>         }
+>  
+> +       /* Latch on to alternate parent temporarily if needed */
+> +       if ((clk->flags & CLK_SET_RATE_ALTERNATE)
+> +                               && clk->alternate_parent_name) {
+> +               /* Save current parent before latching on to alternate parent */
+> +               parent = clk->parent;
+> +
+> +               if (!clk->alternate_parent) {
+> +                       for (index = 0; index < clk->num_parents; index++) {
+> +                               if (!strcmp(clk->parent_names[index],
+> +                                               clk->alternate_parent_name))
+> +                                       clk->alternate_parent =
+> +                                       __clk_lookup(clk->alternate_parent_name);
+> +                       }
+> +
+> +                       if (!clk->alternate_parent) {
+> +                               pr_warn("%s: wrong alternate_parent_name %s",
+> +                                       __func__, clk->alternate_parent_name);
+> +                               ret = -EINVAL;
+> +                               goto out;
+> +                       }
+> +               }
+> +
+> +               ret = clk_set_parent(clk, clk->alternate_parent);
+> +               if (ret) {
+> +                       pr_warn("%s: failed to set %s parent\n",
+> +                               __func__, clk->alternate_parent->name);
+> +                       goto out;
+> +               }
+> +       }
+
+I have two concerns here. First is making the core code more complex for
+handling this case. I think that the .set_rate callback for a clock type
+could just as easily call clk_set_parent() twice instead of introducing
+a new flag and doing it here inside clk_set_rate().
+
+My second concern is the case where there could be more than one
+temporary parent. If a clock has 3 possible inputs, one being the
+reference input and the other two being alternate/temporary inputs then
+there might be a time to use one of the other of the alternates. This is
+purely hypothetical but it shows how the CLK_SET_RATE_ALTERNATE flag is
+less flexible than just leaving these details up to the .set_rate
+callback implementation.
+
+Regards,
+Mike
