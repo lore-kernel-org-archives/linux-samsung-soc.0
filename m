@@ -1,36 +1,80 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v7 3/7] gpio: samsung: Skip initialization if device tree
- is present
-Date: Thu, 22 Aug 2013 01:21:25 +0200
-Message-ID: <CACRpkda2ZjPm4nEeDujPWSDCNLk4mr9izPvhqNKx5urVAg_Azg@mail.gmail.com>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-	<1377120111-25601-4-git-send-email-tomasz.figa@gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] PCI: exynos: add support for MSI
+Date: Thu, 22 Aug 2013 14:25:26 +0900
+Message-ID: <000101ce9ef8$024f1be0$06ed53a0$%han@samsung.com>
+References: <000401ce9739$e0a65410$a1f2fc30$@samsung.com>
+ <CAK9yfHwEPEfhMCWGbDWK2NQE2zAgmsQc6_Dn498pRP4UX6sYmQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f44.google.com ([209.85.219.44]:48231 "EHLO
-	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752369Ab3HUXV0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Aug 2013 19:21:26 -0400
-Received: by mail-oa0-f44.google.com with SMTP id l20so2192137oag.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Aug 2013 16:21:25 -0700 (PDT)
-In-Reply-To: <1377120111-25601-4-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAK9yfHwEPEfhMCWGbDWK2NQE2zAgmsQc6_Dn498pRP4UX6sYmQ@mail.gmail.com>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
 
-On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On Monday, August 12, 2013 6:13 PM, Sachin Kamat wrote:
+> On 12 August 2013 14:26, Jingoo Han <jg1.han@samsung.com> wrote:
+> > This patch adds support for Message Signaled Interrupt in the
+> > Exynops PCIe diver using Synopsys designware PCIe core IP.
+> 
+> s/Exynops PCIe diver/Exynos PCIe driver
 
-> Since this driver does not handle GPIO on device tree enabled platforms
-> any more, it should be bypassed whenever device tree is available, to
-> not conflict with the new pinctrl-samsung driver.
->
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+OK, I will fix this typo.
 
-This seems like something I should apply to the GPIO tree
-right now, shall I?
+> > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> > Signed-off-by: Srikanth T Shivanand <ts.srikanth@samsung.com>
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > Cc: Pratyush Anand <pratyush.anand@st.com>
+> > Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+> > ---
+> >  arch/arm/boot/dts/exynos5440.dtsi  |    2 +
+> >  arch/arm/mach-exynos/Kconfig       |    1 +
+> >  drivers/pci/host/pci-exynos.c      |   60 ++++++++++
+> >  drivers/pci/host/pcie-designware.c |  213 ++++++++++++++++++++++++++++++++++++
+> >  drivers/pci/host/pcie-designware.h |    8 ++
+> >  5 files changed, 284 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
+> > index 586134e..3746835 100644
+> > --- a/arch/arm/boot/dts/exynos5440.dtsi
+> > +++ b/arch/arm/boot/dts/exynos5440.dtsi
+> > @@ -249,6 +249,7 @@
+> >                 interrupt-map-mask = <0 0 0 0>;
+> >                 interrupt-map = <0x0 0 &gic 53>;
+> >                 num-lanes = <4>;
+> > +               msi-base = <200>;
+> 
+> Please update the bindings documentation too.
 
-Yours,
-Linus Walleij
+OK, I will updated the bindings documentation.
+
+[.....]
+
+> > +#ifdef CONFIG_PCI_MSI
+> > +static void exynos_pcie_clear_irq_level(struct pcie_port *pp)
+> > +{
+> > +       u32 val;
+> > +       struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
+> > +       void __iomem *elbi_base = exynos_pcie->elbi_base;
+> > +
+> > +       val = readl(elbi_base + PCIE_IRQ_LEVEL);
+> > +       writel(val, elbi_base + PCIE_IRQ_LEVEL);
+> 
+> Sorry, I did not get this. Writing the value read from the same
+> register without any operation.
+
+It was intended to clear the bits by writing 1 of each bit.
+But I will remove this function.
+
+My coworker, Srikanth T Shivanand found that this function is
+unnecessary. This is because PCIE_IRQ_LEVEL register is read-only
+register. Also, PCIE_IRQ_LEVEL register is already cleared before
+this function is called.
+
+Thank you for your comment.
+
+Best regards,
+Jingoo Han
