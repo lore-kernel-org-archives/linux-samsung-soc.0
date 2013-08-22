@@ -1,32 +1,34 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 09/16] clk: samsung: pll: Use new registration method
- for PLL45xx
-Date: Thu, 22 Aug 2013 13:59:09 -0600
-Message-ID: <52166D8D.1070900@wwwdotorg.org>
-References: <1377019903-14614-1-git-send-email-t.figa@samsung.com> <1377019903-14614-10-git-send-email-t.figa@samsung.com> <CAKew6eV79H60iU9X5DKOKo57Y51RfVtML2qEqD1z4m6rT_yLJA@mail.gmail.com>
+Subject: Re: [PATCH v7] s5k5baf: add camera sensor driver
+Date: Thu, 22 Aug 2013 14:01:13 -0600
+Message-ID: <52166E09.60908@wwwdotorg.org>
+References: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:55167 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:35760 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754449Ab3HVT7O (ORCPT
+	with ESMTP id S1754287Ab3HVUBR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 15:59:14 -0400
-In-Reply-To: <CAKew6eV79H60iU9X5DKOKo57Y51RfVtML2qEqD1z4m6rT_yLJA@mail.gmail.com>
+	Thu, 22 Aug 2013 16:01:17 -0400
+In-Reply-To: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ian.campbell@citrix.com>, Grant Likely <grant.likely@linaro.org>
 
-On 08/21/2013 07:17 AM, Yadwinder Singh Brar wrote:
->>  };
->>
->> +static struct __initdata samsung_pll_clock exynos4210_plls[nr_plls] = {
-> 
-> NIT: __initdata should be at last.
+On 08/21/2013 08:41 AM, Andrzej Hajda wrote:
+> Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
+> with embedded SoC ISP.
+> The driver exposes the sensor as two V4L2 subdevices:
+> - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
+>   no controls.
+> - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
+>   pre/post ISP cropping, downscaling via selection API, controls.
 
-It's helpful if you only quote as much of the patch as you need to in
-order to reply to it; it wasn't obvious in your message that you had no
-comments on the rest of the patch that you quoted, so people have to
-scroll through it looking carefully for any other comments.
+The binding,
+Acked-by: Stephen Warren <swarren@nvidia.com>
+
+(although it would be great if another DT binding maintainer gave it a
+quick look-over to make sure I didn't miss anything!)
