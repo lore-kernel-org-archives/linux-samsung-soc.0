@@ -1,68 +1,56 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v5 1/3] ARM: dts: Fix the RTC DT node name for Exynos5250
- SoC
-Date: Thu, 22 Aug 2013 14:27:04 +0200
-Message-ID: <2478737.HBqGSWXzHv@amdc1227>
-References: <1377171208-23515-1-git-send-email-vikas.sajjan@linaro.org>
- <1377171208-23515-2-git-send-email-vikas.sajjan@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH v6 0/3] Add RTC DT node to Exynos5420 SoC and Fix RTC DT node name for Exynos5250
+Date: Thu, 22 Aug 2013 18:29:00 +0530
+Message-ID: <1377176343-24859-1-git-send-email-vikas.sajjan@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:55652 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752580Ab3HVM1I (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:62171 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752473Ab3HVM7P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 08:27:08 -0400
-In-reply-to: <1377171208-23515-2-git-send-email-vikas.sajjan@linaro.org>
+	Thu, 22 Aug 2013 08:59:15 -0400
+Received: by mail-pa0-f50.google.com with SMTP id fb10so2189113pad.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Aug 2013 05:59:14 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-Hi Vikas,
+This patchset does the following 3 things:
+ 1) Fixes the RTC DT node name for Exynos5250
+ 2) Update the "status" property of RTC DT node for Exynos5250 SoC
+ 3) Adds RTC DT node to Exynos5420 SoC
 
-On Thursday 22 of August 2013 17:03:26 Vikas Sajjan wrote:
-> Fixes the RTC DT node name for Exynos5250 SoC as per the DT node naming
-> convention.
-> 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5.dtsi    |    2 +-
->  arch/arm/boot/dts/exynos5250.dtsi |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi
-> b/arch/arm/boot/dts/exynos5.dtsi index 6afa57d..074739d 100644
-> --- a/arch/arm/boot/dts/exynos5.dtsi
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -95,7 +95,7 @@
->  		interrupts = <0 54 0>;
->  	};
-> 
-> -	rtc {
-> +	rtc@101E0000 {
->  		compatible = "samsung,s3c6410-rtc";
->  		reg = <0x101E0000 0x100>;
->  		interrupts = <0 43 0>, <0 44 0>;
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi index 1eec646..b278b00 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -180,7 +180,7 @@
->  		clock-names = "mfc";
->  	};
-> 
-> -	rtc {
-> +	rtc@101E0000 {
->  		clocks = <&clock 337>;
->  		clock-names = "rtc";
->  	};
+changes since v5:
+	- Fixed the RTC DT node name for Exynos5250 board files also,
+	because otherwise it breaks RTC support in bisections.
 
-This patch should also rename any other occurencies of rtc node in board 
-dts files, because otherwise it breaks RTC support in bisections.
+changes since v4:
+	- removed "status" property of RTC DT node from exynos5250 board dts files 
 
-Otherwise the whole series looks fine to me.
+changes since v3:
+	- split the 5250 related modifications into 2 separate patch as 
+	suggested by Tomasz Figa <t.figa@samsung.com>
 
-Best regards,
-Tomasz
+changes since v2:
+	- split the 5250 related modifications into a separate patch.
+	- placed the RTC node as per the alphabetical order in the DTS file as
+	suggested by Kukjin Kim <kgene@kernel.org>.
+
+changes since v1:
+	- made DT node status as "okay" in the dtsi file itself.
+
+Vikas Sajjan (3):
+  ARM: dts: Fix the RTC DT node name for Exynos5250
+  ARM: dts: Update the "status" property of RTC DT node for Exynos5250
+    SoC
+  ARM: dts: Add RTC DT node to Exynos5420 SoC
+
+ arch/arm/boot/dts/exynos5.dtsi           |    2 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts |    4 ----
+ arch/arm/boot/dts/exynos5250-snow.dts    |    4 ----
+ arch/arm/boot/dts/exynos5250.dtsi        |    3 ++-
+ arch/arm/boot/dts/exynos5420.dtsi        |    6 ++++++
+ 5 files changed, 9 insertions(+), 10 deletions(-)
+
+-- 
+1.7.9.5
