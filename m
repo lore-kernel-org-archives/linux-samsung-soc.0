@@ -1,49 +1,32 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: Broken device trees for exynos in linux-next
-Date: Thu, 22 Aug 2013 09:20:24 -0700
-Message-ID: <CAOesGMhSsWp1ECuGfoB1P4TmZzc-bbDET5DwwdbvvJfJ2k2xJw@mail.gmail.com>
-References: <CAOesGMgv9gTQ_NtaKZY_ZfLD1NBU19E-vaLaWwmvGJJB1MQrwg@mail.gmail.com>
-	<13b101ce9a14$2cebd700$86c38500$@org>
-	<CAOesGMiyNM6VdNzKQU3XwoiacJV8hc60mcLiH+vHoS6xJM6q-A@mail.gmail.com>
-	<159201ce9b36$2a513f30$7ef3bd90$@org>
-	<8738q5lnjc.fsf@kernel.org>
-	<1c7e01ce9f1d$bf4967d0$3ddc3770$@org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 09/16] clk: samsung: pll: Use new registration method
+ for PLL45xx
+Date: Thu, 22 Aug 2013 13:59:09 -0600
+Message-ID: <52166D8D.1070900@wwwdotorg.org>
+References: <1377019903-14614-1-git-send-email-t.figa@samsung.com> <1377019903-14614-10-git-send-email-t.figa@samsung.com> <CAKew6eV79H60iU9X5DKOKo57Y51RfVtML2qEqD1z4m6rT_yLJA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f41.google.com ([209.85.216.41]:51233 "EHLO
-	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752917Ab3HVQU0 (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:55167 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754449Ab3HVT7O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 12:20:26 -0400
-Received: by mail-qa0-f41.google.com with SMTP id hv16so430064qab.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Aug 2013 09:20:25 -0700 (PDT)
-In-Reply-To: <1c7e01ce9f1d$bf4967d0$3ddc3770$@org>
+	Thu, 22 Aug 2013 15:59:14 -0400
+In-Reply-To: <CAKew6eV79H60iU9X5DKOKo57Y51RfVtML2qEqD1z4m6rT_yLJA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Kevin Hilman <khilman@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Arnd Bergmann <arnd@arndb.de>
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Thomas Abraham <thomas.abraham@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@chromium.org>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Kukjin,
+On 08/21/2013 07:17 AM, Yadwinder Singh Brar wrote:
+>>  };
+>>
+>> +static struct __initdata samsung_pll_clock exynos4210_plls[nr_plls] = {
+> 
+> NIT: __initdata should be at last.
 
-On Thu, Aug 22, 2013 at 2:55 AM, Kukjin Kim <kgene@kernel.org> wrote:
-> Yeah, it can be used for test. But there are many differences between
-> exynos_defconfig and exynos5440_defconfig...PCIe, GbE, HugeTLB and KVM...so
-> I'm still wondering how to handle it without other defconfig.
->
-> Olof, do you still having objection for exynos5440_defconfig? If so, OK I
-> will revert exynos5440_defconfig for now so that I could pull out the
-> 'defconfig' branch to arm-soc for upcoming merge window. Then, let's discuss
-> again :)
-
-As far as I see it, you have two options:
-
-1. Add the needed drivers to multi_v7_defconfig and use that for your platform.
-2. Add them to both multi_v7_defconfig and exynos_defconfig.
-
-Enabling the new drivers on exynos_defconfig does no harm.
-
-I don't want to see a new defconfig for this.
-
-
--Olof
+It's helpful if you only quote as much of the patch as you need to in
+order to reply to it; it wasn't obvious in your message that you had no
+comments on the rest of the patch that you quoted, so people have to
+scroll through it looking carefully for any other comments.
