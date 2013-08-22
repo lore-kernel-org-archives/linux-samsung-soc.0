@@ -1,68 +1,56 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v6 0/3] Add RTC DT node to Exynos5420 SoC and Fix RTC DT
- node name for Exynos5250
-Date: Thu, 22 Aug 2013 15:07:58 +0200
-Message-ID: <2046167.RNzj0dOWkj@amdc1227>
-References: <1377176343-24859-1-git-send-email-vikas.sajjan@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: Fix build error with dma function rename
+Date: Thu, 22 Aug 2013 14:28:24 +0100
+Message-ID: <20130822132824.GN26118@sirena.org.uk>
+References: <1377175502-6169-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MEtH+zcSjJxXgQVV"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55182 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752807Ab3HVNID (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:56917 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752256Ab3HVN21 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 09:08:03 -0400
-In-reply-to: <1377176343-24859-1-git-send-email-vikas.sajjan@linaro.org>
+	Thu, 22 Aug 2013 09:28:27 -0400
+Content-Disposition: inline
+In-Reply-To: <1377175502-6169-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Hi Vikas,
 
-On Thursday 22 of August 2013 18:29:00 Vikas Sajjan wrote:
-> This patchset does the following 3 things:
->  1) Fixes the RTC DT node name for Exynos5250
->  2) Update the "status" property of RTC DT node for Exynos5250 SoC
->  3) Adds RTC DT node to Exynos5420 SoC
-> 
-> changes since v5:
-> 	- Fixed the RTC DT node name for Exynos5250 board files also,
-> 	because otherwise it breaks RTC support in bisections.
-> 
-> changes since v4:
-> 	- removed "status" property of RTC DT node from exynos5250 board dts
-> files
-> 
-> changes since v3:
-> 	- split the 5250 related modifications into 2 separate patch as
-> 	suggested by Tomasz Figa <t.figa@samsung.com>
-> 
-> changes since v2:
-> 	- split the 5250 related modifications into a separate patch.
-> 	- placed the RTC node as per the alphabetical order in the DTS file as
-> 	suggested by Kukjin Kim <kgene@kernel.org>.
-> 
-> changes since v1:
-> 	- made DT node status as "okay" in the dtsi file itself.
-> 
-> Vikas Sajjan (3):
->   ARM: dts: Fix the RTC DT node name for Exynos5250
->   ARM: dts: Update the "status" property of RTC DT node for Exynos5250
->     SoC
->   ARM: dts: Add RTC DT node to Exynos5420 SoC
-> 
->  arch/arm/boot/dts/exynos5.dtsi           |    2 +-
->  arch/arm/boot/dts/exynos5250-arndale.dts |    4 ----
->  arch/arm/boot/dts/exynos5250-snow.dts    |    4 ----
->  arch/arm/boot/dts/exynos5250.dtsi        |    3 ++-
->  arch/arm/boot/dts/exynos5420.dtsi        |    6 ++++++
->  5 files changed, 9 insertions(+), 10 deletions(-)
+--MEtH+zcSjJxXgQVV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Looks good to me now.
+On Thu, Aug 22, 2013 at 06:15:02PM +0530, Tushar Behera wrote:
+> commit 85ff3c29d720 ("ASoC: samsung: Rename DMA platform registration
+> functions") renames the DMA registration functions. Fix the places where
+> it was left out.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Applied, thanks.
 
-Best regards,
-Tomasz
+--MEtH+zcSjJxXgQVV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.20 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSFhH1AAoJELSic+t+oim92uYP/jvFkRsHHJT9tOu30Pma9Adv
+QAx8T+xD950T0q3a7ZQ1CVVzilnNLmYZeGCE3YXYqV7SgTCOPVTSsW5kjOieqD19
+fOYwA4wJcZJLSPqRC7gmPypjTuLVTm10AsL7mcgudPeaFampMZfp4s39wsgcFXd6
+hY3qX0aPWLNKEpg1miFtK1Zcx1EjtG6Oy1z0iraQcQNTv5a1lq8+i8hJxm0ygbtW
+IKn+kQSJtRnRMB510ijkdBOx6Bje/8QvrJKf0jfjLpoiz4MoLusDbIfAnv/OYVMr
+d09QZSnjtsislJnOwX0LnFX2ILCQRwfqYQXf3tHuqAGBdt1hkTv3imFIKKqlwOnP
+jpGhjKoJgMSJF0k+OeCJt1YEdrAEpE7wUIpFthzfe7jq3Qnub3d+IUXmm7Bgl+YG
+wCLsQxaGQ0/N6/WpH5tWP/7JBWCJHFzcwMhdtuqk/lYQZRW4tCw/8cNEGuw59tAX
+d/zHC8oUgBRgBIoNBnRvWvHHL9mTG62y9dMYx3CEzsnbNIZHZXf5wQc99lPPKCmP
+Bwz+K8xCqUDjZn0zdkqckZ8AJ61BXy0LYKh9QvMz/9cjcH9F4elgMMe40GA0PSAc
+rMNdHLTRA7+yL4Gp0iD1rPbNhFYs4W7nWXfpxzVaKnHzyE/bpU6y6LE7Gj7H4uhu
+60lt4YUDgUj/0oZyxr3Z
+=gAFL
+-----END PGP SIGNATURE-----
+
+--MEtH+zcSjJxXgQVV--
