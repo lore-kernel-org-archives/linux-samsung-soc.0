@@ -1,80 +1,90 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH v6 0/3] Add RTC DT node to Exynos5420 SoC and Fix RTC DT
- node name for Exynos5250
-Date: Fri, 23 Aug 2013 08:19:25 +0530
-Message-ID: <CAGm_ybgdC8B==GpCiDwnmWzV+L5hDFWr0ZP3tMq2MHWp-p9E1w@mail.gmail.com>
-References: <1377176343-24859-1-git-send-email-vikas.sajjan@linaro.org>
-	<2046167.RNzj0dOWkj@amdc1227>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] PCI: exynos: add support for MSI
+Date: Fri, 23 Aug 2013 13:58:07 +0900
+Message-ID: <002e01ce9fbd$5b728430$12578c90$%han@samsung.com>
+References: <000401ce9739$e0a65410$a1f2fc30$@samsung.com>
+ <20130812105638.GA12042@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:54146 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753486Ab3HWCt0 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:26253 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753471Ab3HWE6J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Aug 2013 22:49:26 -0400
-In-Reply-To: <2046167.RNzj0dOWkj@amdc1227>
+	Fri, 23 Aug 2013 00:58:09 -0400
+In-reply-to: <20130812105638.GA12042@ulmo>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org, Tomasz Figa <t.figa@samsung.com>
+To: 'Thierry Reding' <thierry.reding@gmail.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Kukjin,
+On Monday, August 12, 2013 7:57 PM, Thierry Reding wrote:
+> On Mon, Aug 12, 2013 at 05:56:47PM +0900, Jingoo Han wrote:
+> [...]
+> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> > index 855d4a7..9ef1c95 100644
+> > --- a/arch/arm/mach-exynos/Kconfig
+> > +++ b/arch/arm/mach-exynos/Kconfig
+> > @@ -93,6 +93,7 @@ config SOC_EXYNOS5440
+> >  	default y
+> >  	depends on ARCH_EXYNOS5
+> >  	select ARCH_HAS_OPP
+> > +	select ARCH_SUPPORTS_MSI
+> 
+> This symbol goes away in Thomas Petazzoni's MSI patch series which is
+> targetted at 3.12, so I don't think you should add that here.
 
-On Thu, Aug 22, 2013 at 6:37 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Vikas,
->
-> On Thursday 22 of August 2013 18:29:00 Vikas Sajjan wrote:
->> This patchset does the following 3 things:
->>  1) Fixes the RTC DT node name for Exynos5250
->>  2) Update the "status" property of RTC DT node for Exynos5250 SoC
->>  3) Adds RTC DT node to Exynos5420 SoC
->>
->> changes since v5:
->>       - Fixed the RTC DT node name for Exynos5250 board files also,
->>       because otherwise it breaks RTC support in bisections.
->>
->> changes since v4:
->>       - removed "status" property of RTC DT node from exynos5250 board dts
->> files
->>
->> changes since v3:
->>       - split the 5250 related modifications into 2 separate patch as
->>       suggested by Tomasz Figa <t.figa@samsung.com>
->>
->> changes since v2:
->>       - split the 5250 related modifications into a separate patch.
->>       - placed the RTC node as per the alphabetical order in the DTS file as
->>       suggested by Kukjin Kim <kgene@kernel.org>.
->>
->> changes since v1:
->>       - made DT node status as "okay" in the dtsi file itself.
->>
->> Vikas Sajjan (3):
->>   ARM: dts: Fix the RTC DT node name for Exynos5250
->>   ARM: dts: Update the "status" property of RTC DT node for Exynos5250
->>     SoC
->>   ARM: dts: Add RTC DT node to Exynos5420 SoC
->>
->>  arch/arm/boot/dts/exynos5.dtsi           |    2 +-
->>  arch/arm/boot/dts/exynos5250-arndale.dts |    4 ----
->>  arch/arm/boot/dts/exynos5250-snow.dts    |    4 ----
->>  arch/arm/boot/dts/exynos5250.dtsi        |    3 ++-
->>  arch/arm/boot/dts/exynos5420.dtsi        |    6 ++++++
->>  5 files changed, 9 insertions(+), 10 deletions(-)
->
-> Looks good to me now.
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+OK, I see.
+I will remove ARCH_SUPPORTS_MSI.
 
+[.....]
 
-Can you apply this patchset.
+> > +#endif
+> > +
+> >  static void exynos_pcie_enable_interrupts(struct pcie_port *pp)
+> >  {
+> >  	exynos_pcie_enable_irq_pulse(pp);
+> > +#ifdef CONFIG_PCI_MSI
+> > +	exynos_pcie_msi_init(pp);
+> > +#endif
+> >  	return;
+> >  }
+> 
+> Instead of the whole #ifdef business above, can't you just use something
+> like this in exynos_pcie_enable_interrupts():
+> 
+> 	if (IS_ENABLED(CONFIG_PCI_MSI))
+> 		exynos_pcie_msi_init(pp);
+> 
+> Now you can drop the #ifdef guards and the compiler will throw away all
+> the related code automatically if PCI_MSI is not selected because the
+> functions are all static and unused. This has the advantage of compiling
+> all the code whether or not PCI_MSI is selected or not, therefore
+> increasing compile coverage of the driver.
 
->
-> Best regards,
-> Tomasz
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+OK, I see.
+I will use 'if IS_ENABLED(CONFIG_PCI_MSI))', and remove #ifdef guards.
+
+[.....]
+
+> > +
+> > +void arch_teardown_msi_irq(unsigned int irq)
+> > +{
+> > +	clear_irq(irq);
+> > +}
+> 
+> And we've reworked this largely so that drivers no longer provide arch_*
+> functions because that prevents multi-platform support. So I think you
+> need to port this to the new msi_chip infrastructure that's being
+> introduced in 3.12.
+
+OK, I have looked at the new msi_chip infrastructure made by Thomas Petazzoni.
+I will use this msi_chip.
+
+I really appreciate your comment. :)
+Thank you.
+
+Best regards,
+Jingoo Han
