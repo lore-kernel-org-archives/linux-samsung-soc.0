@@ -1,47 +1,63 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [media] s5p-csis: Add support for non-image data packets capture
-Date: Fri, 23 Aug 2013 11:54:29 +0200
-Message-ID: <52173155.9090902@samsung.com>
-References: <20130823093504.GJ31293@elgon.mountain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v4 0/7] ARM: dts: add support for exynos hdmi subsystem
+Date: Fri, 23 Aug 2013 15:54:14 +0530
+Message-ID: <1377253461-20851-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:35605 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753898Ab3HWJyd (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:30517 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753600Ab3HWKCX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 05:54:33 -0400
-In-reply-to: <20130823093504.GJ31293@elgon.mountain>
+	Fri, 23 Aug 2013 06:02:23 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On 08/23/2013 11:35 AM, Dan Carpenter wrote:
-> Hello Sylwester Nawrocki,
-> 
-> I had a question about 36fa80927638: "[media] s5p-csis: Add support for
-> non-image data packets capture" from Sep 21, 2012.
-> 
-> S5PCSIS_INTSRC_NON_IMAGE_DATA is defined in mipi-csis.c:
-> 
-> #define S5PCSIS_INTSRC_NON_IMAGE_DATA   (0xff << 28)
+It adds Device tree nodes and clocks information for HDMI subsystem
+for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
+hpd gpio and update binding documents.
 
-This is supposed to be a mask for bits [31:28], so (0xf << 28)
+This set is based on kukjin's for-next branch at
+http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
 
-> And it's only used in one place.
-> 
-> drivers/media/platform/exynos4-is/mipi-csis.c
->    692          u32 status;
->    693  
->    694          status = s5pcsis_read(state, S5PCSIS_INTSRC);
->    695          spin_lock_irqsave(&state->slock, flags);
->    696  
->    697          if ((status & S5PCSIS_INTSRC_NON_IMAGE_DATA) && pktbuf->data) {
->                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> "status" is a u32 so 0xff0000000 is 4 bits too much.  In other words,
-> the mask is effectively "(0xf << 28)".  Was that intended or should it
-> be (0xff << 24)?
+v4:
+1) Remove the movement of common properties to Exynos5.dtsi for
+I2C and hdmi subsystem.
+2) Change the title of the patches.
 
-It should be (0xf << 28). Thanks for looking into this.
+v3:
+1) Rebase to kgene for-next based on 3.11-rc1.
+2) Changes clock numbers as per updated clocks file for
+exyno5250 and exynos5420.
+3) Dropped Sachin patch as already got merged.
+
+v2:
+1) Added patch for moving common i2c properties to exynos5.dtsi
+2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
+3) moved hpd pinctrl node to board file.
+4) Added Sachin's patch to update binding document for hdmi with hpd
+information.
+
+Andrew Bresticker (1):
+  ARM: dts: add i2c device nodes for Exynos5420
+
+Rahul Sharma (5):
+  ARM: dts: add clocks to hdmi dt node for exynos5250
+  ARM: dts: add dt nodes for hdmi subsystem for exynos5420
+  ARM: dts: add clocks for hdmi subsystem for exynos5420
+  ARM: dts: add hdmi hpd gpio pinctrl node for exynos5420
+  of/documentation: update with clock information for exynos hdmi
+    subsystem
+
+Sean Paul (1):
+  ARM: dts: add mixer clocks to mixer node for Exynos5250
+
+ .../devicetree/bindings/video/exynos_hdmi.txt      |   14 +++-
+ .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   30 ++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   76 ++++++++++++++++++++
+ 5 files changed, 128 insertions(+), 4 deletions(-)
+
+-- 
+1.7.10.4
