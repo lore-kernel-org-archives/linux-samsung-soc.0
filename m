@@ -1,91 +1,53 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] s5p-jpeg: Add initial device tree support for
- S5PV210/Exynos4210 SoCs
-Date: Fri, 23 Aug 2013 18:01:35 +0200
-Message-ID: <5217875F.2030307@samsung.com>
-References: <1376856867-17771-1-git-send-email-s.nawrocki@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v7 3/7] gpio: samsung: Skip initialization if device tree
+ is present
+Date: Fri, 23 Aug 2013 20:11:02 +0200
+Message-ID: <CACRpkdZX96YUpCn8_vkFsZQK2q5asHtxYtaHR2y1hDK_QQs6iA@mail.gmail.com>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
+	<1377120111-25601-4-git-send-email-tomasz.figa@gmail.com>
+	<CACRpkda2ZjPm4nEeDujPWSDCNLk4mr9izPvhqNKx5urVAg_Azg@mail.gmail.com>
+	<3452017.UPhKO6xNO5@flatron>
+	<1c9a01ce9f1e$473b58b0$d5b20a10$@org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:42252 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754162Ab3HWQBj (ORCPT
+Received: from mail-oa0-f52.google.com ([209.85.219.52]:62502 "EHLO
+	mail-oa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755874Ab3HWSLD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 12:01:39 -0400
-In-reply-to: <1376856867-17771-1-git-send-email-s.nawrocki@samsung.com>
+	Fri, 23 Aug 2013 14:11:03 -0400
+Received: by mail-oa0-f52.google.com with SMTP id f4so1157108oah.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Aug 2013 11:11:02 -0700 (PDT)
+In-Reply-To: <1c9a01ce9f1e$473b58b0$d5b20a10$@org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Rob Herring <rob.herring@calxeda.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Ian Campbell <ian.campbell@citrix.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
 
-On 08/18/2013 10:14 PM, Sylwester Nawrocki wrote:
-> This patch enables the JPEG codec on S5PV210 and Exynos4210 SoCs. There are
-> some differences in newer versions of the JPEG codec IP on SoCs like Exynos4x12
-> and Exynos5 series and support for them will be added in subsequent patches.
-> 
-> Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+On Thu, Aug 22, 2013 at 11:59 AM, Kukjin Kim <kgene@kernel.org> wrote:
+> Tomasz Figa wrote:
+>> On Thursday 22 of August 2013 01:21:25 Linus Walleij wrote:
+>> > On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa <tomasz.figa@gmail.com>
+>> wrote:
+>> > > Since this driver does not handle GPIO on device tree enabled
+>> > > platforms
+>> > > any more, it should be bypassed whenever device tree is available, to
+>> > > not conflict with the new pinctrl-samsung driver.
+>> > >
+>> > > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> >
+>> > This seems like something I should apply to the GPIO tree
+>> > right now, shall I?
+>>
+>> Would be nice, but since this patch is a dependency for rest of this
+>> series and there are no other dependencies on GPIO tree, it might be
+>> easier to just let Kukjin take all the patches with required Acks.
+>>
+> Oh, I didn't see any dependencies...but if so, Linus do you agree with
+> Tomasz' opinion?
 
-Could a DT maintainer review/Ack the binding in this patch ?
+Yes please merge it through the Samsung tree.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> ---
->  .../bindings/media/exynos-jpeg-codec.txt           |   11 +++++++++++
->  drivers/media/platform/s5p-jpeg/jpeg-core.c        |   12 +++++++++++-
->  2 files changed, 22 insertions(+), 1 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-> new file mode 100644
-> index 0000000..937b755
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
-> @@ -0,0 +1,11 @@
-> +Samsung S5P/EXYNOS SoC series JPEG codec
-> +
-> +Required properties:
-> +
-> +- compatible	: should be one of:
-> +		  "samsung,s5pv210-jpeg", "samsung,exynos4210-jpeg";
-> +- reg		: address and length of the JPEG codec IP register set;
-> +- interrupts	: specifies the JPEG codec IP interrupt;
-> +- clocks	: should contain the JPEG codec IP gate clock specifier, from the
-> +		  common clock bindings;
-> +- clock-names	: should contain "jpeg" entry.
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> index 15d2396..88c5beb 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> @@ -17,6 +17,7 @@
->  #include <linux/io.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/slab.h>
-> @@ -1513,10 +1514,20 @@ static const struct dev_pm_ops s5p_jpeg_pm_ops = {
->  	.runtime_resume	 = s5p_jpeg_runtime_resume,
->  };
->  
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id s5p_jpeg_of_match[] = {
-> +	{ .compatible = "samsung,s5pv210-jpeg" },
-> +	{ .compatible = "samsung,exynos4210-jpeg" },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, s5p_jpeg_of_match);
-> +#endif
-> +
->  static struct platform_driver s5p_jpeg_driver = {
->  	.probe = s5p_jpeg_probe,
->  	.remove = s5p_jpeg_remove,
->  	.driver = {
-> +		.of_match_table = of_match_ptr(s5p_jpeg_of_match),
->  		.owner = THIS_MODULE,
->  		.name = S5P_JPEG_M2M_NAME,
->  		.pm = &s5p_jpeg_pm_ops,
-> @@ -1528,4 +1539,3 @@ module_platform_driver(s5p_jpeg_driver);
->  MODULE_AUTHOR("Andrzej Pietrasiewicz <andrzej.p@samsung.com>");
->  MODULE_DESCRIPTION("Samsung JPEG codec driver");
->  MODULE_LICENSE("GPL");
+Yours,
+Linus Walleij
