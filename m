@@ -1,564 +1,137 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v7] s5k5baf: add camera sensor driver
-Date: Fri, 23 Aug 2013 14:53:18 +0200
-Message-ID: <1544715.uKei6kdjbJ@avalon>
-References: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC V2 4/4] mmc: dw_mmc: exynos: add a quirk for SMU.
+Date: Fri, 23 Aug 2013 21:55:15 +0900
+Message-ID: <52175BB3.5020301@samsung.com>
+References: <1377256509-18922-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1377256509-18922-5-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:40051 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754220Ab3HWMwE (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:42098 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754965Ab3HWMzJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 08:52:04 -0400
-In-Reply-To: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
+	Fri, 23 Aug 2013 08:55:09 -0400
+In-reply-to: <1377256509-18922-5-git-send-email-yuvaraj.cd@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, tgih.jun@samsung.com, alim.akhtar@samsung.com, ks.giri@samsung.com, t.figa@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Hi Andrzej,
+Hi Yuvaraj,
 
-Thank you for the patch.
+Is there dependency with other patch?
+I didn't see the defined "DW_MCI_TYPE_EXYNOS5420".
+If i missed something, let me know.
 
-On Wednesday 21 August 2013 16:41:31 Andrzej Hajda wrote:
-> Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
-> with embedded SoC ISP.
-> The driver exposes the sensor as two V4L2 subdevices:
-> - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
->   no controls.
-> - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
->   pre/post ISP cropping, downscaling via selection API, controls.
+Best Regards,
+Jaehoon Chung
+
+On 08/23/2013 08:15 PM, Yuvaraj Kumar C D wrote:
+> Exynos5420 Mobile Storage Host controller has Security Management Unit
+> (SMU) for channel 0 and channel 1 (mainly for eMMC).This patch adds a
+> quirk to bypass SMU as it is not being used yet.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> This patch is on top of the below patch by Doug Anderson.
+> mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
+> 
+> changes since V1:
+> 	1.avoid code duplication by calling dw_mci_exynos_priv_init in
+> 	  resume path.
+> 
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
-> Hi,
+>  drivers/mmc/host/dw_mmc-exynos.c |   33 +++++++++++++++++++++++++++++++++
+>  drivers/mmc/host/dw_mmc.c        |    3 +++
+>  include/linux/mmc/dw_mmc.h       |    2 ++
+>  3 files changed, 38 insertions(+)
 > 
-> This patch incorporates Stephen's suggestions, thanks.
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 19c845b..8e70fc6 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -35,6 +35,25 @@
+>  #define EXYNOS4210_FIXED_CIU_CLK_DIV	2
+>  #define EXYNOS4412_FIXED_CIU_CLK_DIV	4
+>  
+> +/* Block number in eMMC */
+> +#define DWMCI_BLOCK_NUM			0xFFFFFFFF
+> +
+> +#define SDMMC_EMMCP_BASE		0x1000
+> +#define SDMMC_MPSECURITY		(SDMMC_EMMCP_BASE + 0x0010)
+> +#define SDMMC_MPSBEGIN0			(SDMMC_EMMCP_BASE + 0x0200)
+> +#define SDMMC_MPSEND0			(SDMMC_EMMCP_BASE + 0x0204)
+> +#define SDMMC_MPSCTRL0			(SDMMC_EMMCP_BASE + 0x020C)
+> +
+> +/* SMU control bits */
+> +#define DWMCI_MPSCTRL_SECURE_READ_BIT		BIT(7)
+> +#define DWMCI_MPSCTRL_SECURE_WRITE_BIT		BIT(6)
+> +#define DWMCI_MPSCTRL_NON_SECURE_READ_BIT	BIT(5)
+> +#define DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT	BIT(4)
+> +#define DWMCI_MPSCTRL_USE_FUSE_KEY		BIT(3)
+> +#define DWMCI_MPSCTRL_ECB_MODE			BIT(2)
+> +#define DWMCI_MPSCTRL_ENCRYPTION		BIT(1)
+> +#define DWMCI_MPSCTRL_VALID			BIT(0)
+> +
+>  /* Variations in Exynos specific dw-mshc controller */
+>  enum dw_mci_exynos_type {
+>  	DW_MCI_TYPE_EXYNOS4210,
+> @@ -74,6 +93,16 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>  {
+>  	struct dw_mci_exynos_priv_data *priv = host->priv;
+>  
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420 &&
+> +		host->pdata->quirks & DW_MCI_QUIRK_BYPASS_SMU) {
+> +		mci_writel(host, MPSBEGIN0, 0);
+> +		mci_writel(host, MPSEND0, DWMCI_BLOCK_NUM);
+> +		mci_writel(host, MPSCTRL0, DWMCI_MPSCTRL_SECURE_WRITE_BIT |
+> +			DWMCI_MPSCTRL_NON_SECURE_READ_BIT |
+> +			DWMCI_MPSCTRL_VALID |
+> +			DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT);
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -106,7 +135,11 @@ static int dw_mci_exynos_suspend(struct device *dev)
+>  static int dw_mci_exynos_resume(struct device *dev)
+>  {
+>  	struct dw_mci *host = dev_get_drvdata(dev);
+> +	struct dw_mci_exynos_priv_data *priv = host->priv;
+>  
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420 &&
+> +		host->pdata->quirks & DW_MCI_QUIRK_BYPASS_SMU)
+> +		dw_mci_exynos_priv_init(host);
+>  	return dw_mci_resume(host);
+>  }
+>  
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 0c0cada..49df69f 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -2107,6 +2107,9 @@ static struct dw_mci_of_quirks {
+>  	}, {
+>  		.quirk	= "broken-cd",
+>  		.id	= DW_MCI_QUIRK_BROKEN_CARD_DETECTION,
+> +	}, {
+> +		.quirk	= "bypass-smu",
+> +		.id	= DW_MCI_QUIRK_BYPASS_SMU,
+>  	},
+>  };
+>  
+> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+> index 198f0fa..2d3f83f 100644
+> --- a/include/linux/mmc/dw_mmc.h
+> +++ b/include/linux/mmc/dw_mmc.h
+> @@ -209,6 +209,8 @@ struct dw_mci_dma_ops {
+>  #define DW_MCI_QUIRK_HIGHSPEED			BIT(2)
+>  /* Unreliable card detection */
+>  #define DW_MCI_QUIRK_BROKEN_CARD_DETECTION	BIT(3)
+> +/*Bypass the Security management unit*/
+> +#define DW_MCI_QUIRK_BYPASS_SMU			BIT(4)
+>  
+>  /* Slot level quirks */
+>  /* This slot has no write protect */
 > 
-> Regards
-> Andrzej
-> 
-> v7
-> - changed description of 'clock-frequency' DT property
-> 
-> v6
-> - endpoint node presence is now optional,
-> - added asynchronous subdev registration support and clock
->   handling,
-> - use named gpios in DT bindings
-> 
-> v5
-> - removed hflip/vflip device tree properties
-> 
-> v4
-> - GPL changed to GPLv2,
-> - bitfields replaced by u8,
-> - cosmetic changes,
-> - corrected s_stream flow,
-> - gpio pins are no longer exported,
-> - added I2C addresses to subdev names,
-> - CIS subdev registration postponed after
->   succesfull HW initialization,
-> - added enums for pads,
-> - selections are initialized only during probe,
-> - default resolution changed to 1600x1200,
-> - state->error pattern removed from few other functions,
-> - entity link creation moved to registered callback.
-> 
-> v3:
-> - narrowed state->error usage to i2c and power errors,
-> - private gain controls replaced by red/blue balance user controls,
-> - added checks to devicetree gpio node parsing
-> 
-> v2:
-> - lower-cased driver name,
-> - removed underscore from regulator names,
-> - removed platform data code,
-> - v4l controls grouped in anonymous structs,
-> - added s5k5baf_clear_error function,
-> - private controls definitions moved to uapi header file,
-> - added v4l2-controls.h reservation for private controls,
-> - corrected subdev registered/unregistered code,
-> - .log_status sudbev op set to v4l2 helper,
-> - moved entity link creation to probe routines,
-> - added cleanup on error to probe function.
-> ---
->  .../devicetree/bindings/media/samsung-s5k5baf.txt  |   59 +
->  MAINTAINERS                                        |    7 +
->  drivers/media/i2c/Kconfig                          |    7 +
->  drivers/media/i2c/Makefile                         |    1 +
->  drivers/media/i2c/s5k5baf.c                        | 2045 +++++++++++++++++
->  5 files changed, 2119 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/media/samsung-s5k5baf.txt create mode
-> 100644 drivers/media/i2c/s5k5baf.c
-
-[snip]
-
-> diff --git a/drivers/media/i2c/s5k5baf.c b/drivers/media/i2c/s5k5baf.c
-> new file mode 100644
-> index 0000000..f21d9f1
-> --- /dev/null
-> +++ b/drivers/media/i2c/s5k5baf.c
-
-[snip]
-
-> +enum s5k5baf_pads_id {
-> +	PAD_CIS,
-> +	PAD_OUT,
-> +	CIS_PAD_NUM = 1,
-> +	ISP_PAD_NUM = 2
-> +};
-
-You can just use #define's here, the enum doesn't bring any additional value 
-and isn't very explicit.
-
-> +static struct v4l2_rect s5k5baf_cis_rect = { 0, 0, S5K5BAF_CIS_WIDTH,
-> +				     S5K5BAF_CIS_HEIGHT };
-
-Shouldn't this be const ?
-
-> +static u16 s5k5baf_i2c_read(struct s5k5baf *state, u16 addr)
-> +{
-> +	struct i2c_client *c = v4l2_get_subdevdata(&state->sd);
-> +	u16 w, r;
-
-You should declare these variables as __be16.
-
-> +	struct i2c_msg msg[] = {
-> +		{ .addr = c->addr, .flags = 0,
-> +		  .len = 2, .buf = (u8 *)&w },
-> +		{ .addr = c->addr, .flags = I2C_M_RD,
-> +		  .len = 2, .buf = (u8 *)&r },
-> +	};
-> +	int ret;
-> +
-> +	if (state->error)
-> +		return 0;
-> +
-> +	w = htons(addr);
-
-Wouldln't cpu_to_be16() be more appropriate ?
-
-> +	ret = i2c_transfer(c->adapter, msg, 2);
-> +	r = ntohs(r);
-
-And be16_to_cpu() here.
-
-> +
-> +	v4l2_dbg(3, debug, c, "i2c_read: 0x%04x : 0x%04x\n", addr, r);
-> +
-> +	if (ret != 2) {
-> +		v4l2_err(c, "i2c_read: error during transfer (%d)\n", ret);
-> +		state->error = ret;
-> +	}
-> +	return r;
-> +}
-
-[snip]
-
-> +static void s5k5baf_write_arr_seq(struct s5k5baf *state, u16 addr,
-> +				  u16 count, const u16 *seq)
-> +{
-> +	struct i2c_client *c = v4l2_get_subdevdata(&state->sd);
-> +	u16 buf[count + 1];
-> +	int ret, n;
-> +
-> +	s5k5baf_i2c_write(state, REG_CMDWR_ADDR, addr);
-> +	if (state->error)
-> +		return;
-
-I would have a preference for returning an error directly from the write 
-function instead of storing it in state->error, that would be more explicit. 
-The same is true for all read/write functions.
-
-> +	buf[0] = __constant_htons(REG_CMD_BUF);
-> +	for (n = 1; n <= count; ++n)
-> +		buf[n] = htons(*seq++);
-
-cpu_to_be16()/be16_to_cpu() here as well ?
-
-> +
-> +	n *= 2;
-> +	ret = i2c_master_send(c, (char *)buf, n);
-> +	v4l2_dbg(3, debug, c, "i2c_write_seq(count=%d): %*ph\n", count,
-> +		 min(2 * count, 64), seq - count);
-> +
-> +	if (ret != n) {
-> +		v4l2_err(c, "i2c_write_seq: error during transfer (%d)\n", ret);
-> +		state->error = ret;
-> +	}
-> +}
-
-[snip]
-
-> +static void s5k5baf_hw_set_ccm(struct s5k5baf *state)
-
-A small comment explaining what this function configures would be nice.
-
-> +{
-> +	static const u16 nseq_cfg[] = {
-> +		NSEQ(REG_PTR_CCM_HORIZON,
-> +		REG_ARR_CCM(0), PAGE_IF_SW,
-> +		REG_ARR_CCM(1), PAGE_IF_SW,
-> +		REG_ARR_CCM(2), PAGE_IF_SW,
-> +		REG_ARR_CCM(3), PAGE_IF_SW,
-> +		REG_ARR_CCM(4), PAGE_IF_SW,
-> +		REG_ARR_CCM(5), PAGE_IF_SW),
-> +		NSEQ(REG_PTR_CCM_OUTDOOR,
-> +		REG_ARR_CCM(6), PAGE_IF_SW),
-> +		NSEQ(REG_ARR_CCM(0),
-> +		/* horizon */
-> +		0x010d, 0xffa7, 0xfff5, 0x003b, 0x00ef, 0xff38,
-> +		0xfe42, 0x0270, 0xff71, 0xfeed, 0x0198, 0x0198,
-> +		0xff95, 0xffa3, 0x0260, 0x00ec, 0xff33, 0x00f4,
-> +		/* incandescent */
-> +		0x010d, 0xffa7, 0xfff5, 0x003b, 0x00ef, 0xff38,
-> +		0xfe42, 0x0270, 0xff71, 0xfeed, 0x0198, 0x0198,
-> +		0xff95, 0xffa3, 0x0260, 0x00ec, 0xff33, 0x00f4,
-> +		/* warm white */
-> +		0x01ea, 0xffb9, 0xffdb, 0x0127, 0x0109, 0xff3c,
-> +		0xff2b, 0x021b, 0xff48, 0xff03, 0x0207, 0x0113,
-> +		0xffca, 0xff93, 0x016f, 0x0164, 0xff55, 0x0163,
-> +		/* cool white */
-> +		0x01ea, 0xffb9, 0xffdb, 0x0127, 0x0109, 0xff3c,
-> +		0xff2b, 0x021b, 0xff48, 0xff03, 0x0207, 0x0113,
-> +		0xffca, 0xff93, 0x016f, 0x0164, 0xff55, 0x0163,
-> +		/* daylight 5000K */
-> +		0x0194, 0xffad, 0xfffe, 0x00c5, 0x0103, 0xff5d,
-> +		0xfee3, 0x01ae, 0xff27, 0xff18, 0x018f, 0x00c8,
-> +		0xffe8, 0xffaa, 0x01c8, 0x0132, 0xff3e, 0x0100,
-> +		/* daylight 6500K */
-> +		0x0194, 0xffad, 0xfffe, 0x00c5, 0x0103, 0xff5d,
-> +		0xfee3, 0x01ae, 0xff27, 0xff18, 0x018f, 0x00c8,
-> +		0xffe8, 0xffaa, 0x01c8, 0x0132, 0xff3e, 0x0100,
-> +		/* outdoor */
-> +		0x01cc, 0xffc3, 0x0009, 0x00a2, 0x0106, 0xff3f,
-> +		0xfed8, 0x01fe, 0xff08, 0xfec7, 0x00f5, 0x0119,
-> +		0xffdf, 0x0024, 0x01a8, 0x0170, 0xffad, 0x011b),
-> +		0
-> +	};
-> +	s5k5baf_write_nseq(state, nseq_cfg);
-> +}
-> +
-> +static void s5k5baf_hw_set_cis(struct s5k5baf *state)
-
-Same here.
-
-> +{
-> +	static const u16 nseq_cfg[] = {
-> +		NSEQ(0xc202, 0x0700),
-> +		NSEQ(0xf260, 0x0001),
-> +		NSEQ(0xf414, 0x0030),
-> +		NSEQ(0xc204, 0x0100),
-> +		NSEQ(0xf402, 0x0092, 0x007f),
-> +		NSEQ(0xf700, 0x0040),
-> +		NSEQ(0xf708,
-> +		0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-> +		0x0040, 0x0040, 0x0040, 0x0040, 0x0040,
-> +		0x0001, 0x0015, 0x0001, 0x0040),
-> +		NSEQ(0xf48a, 0x0048),
-> +		NSEQ(0xf10a, 0x008b),
-> +		NSEQ(0xf900, 0x0067),
-> +		NSEQ(0xf406, 0x0092, 0x007f, 0x0003, 0x0003, 0x0003),
-> +		NSEQ(0xf442, 0x0000, 0x0000),
-> +		NSEQ(0xf448, 0x0000),
-> +		NSEQ(0xf456, 0x0001, 0x0010, 0x0000),
-> +		NSEQ(0xf41a, 0x00ff, 0x0003, 0x0030),
-> +		NSEQ(0xf410, 0x0001, 0x0000),
-> +		NSEQ(0xf416, 0x0001),
-> +		NSEQ(0xf424, 0x0000),
-> +		NSEQ(0xf422, 0x0000),
-> +		NSEQ(0xf41e, 0x0000),
-> +		NSEQ(0xf428, 0x0000, 0x0000, 0x0000),
-> +		NSEQ(0xf430, 0x0000, 0x0000, 0x0008, 0x0005, 0x000f, 0x0001,
-> +		0x0040, 0x0040, 0x0010),
-> +		NSEQ(0xf4d6, 0x0090, 0x0000),
-> +		NSEQ(0xf47c, 0x000c, 0x0000),
-> +		NSEQ(0xf49a, 0x0008, 0x0000),
-> +		NSEQ(0xf4a2, 0x0008, 0x0000),
-> +		NSEQ(0xf4b2, 0x0013, 0x0000, 0x0013, 0x0000),
-> +		NSEQ(0xf4aa, 0x009b, 0x00fb, 0x009b, 0x00fb),
-> +		0
-> +	};
-> +
-> +	s5k5baf_i2c_write(state, REG_CMDWR_PAGE, PAGE_IF_HW);
-> +	s5k5baf_write_nseq(state, nseq_cfg);
-> +	s5k5baf_i2c_write(state, REG_CMDWR_PAGE, PAGE_IF_SW);
-> +}
-
-[snip]
-
-> +/* Set auto/manual exposure and total gain */
-> +static void s5k5baf_hw_set_auto_exposure(struct s5k5baf *state, int value)
-> +{
-> +	unsigned int exp_time = state->ctrls.exposure->val;
-> +	u16 auto_alg;
-> +
-> +	auto_alg = s5k5baf_read(state, REG_DBG_AUTOALG_EN);
-
-Wouldn't it be faster to cache the register value in the state structure 
-instead of reading it back ? By the way, you might want to have a look at 
-regmap.
-
-> +
-> +	if (value == V4L2_EXPOSURE_AUTO) {
-> +		auto_alg |= AALG_AE_EN | AALG_DIVLEI_EN;
-> +	} else {
-> +		s5k5baf_hw_set_user_exposure(state, exp_time);
-> +		s5k5baf_hw_set_user_gain(state, state->ctrls.gain->val);
-> +		auto_alg &= ~(AALG_AE_EN | AALG_DIVLEI_EN);
-> +	}
-> +
-> +	s5k5baf_write(state, REG_DBG_AUTOALG_EN, auto_alg);
-> +}
-
-> +static void s5k5baf_hw_set_colorfx(struct s5k5baf *state, int val)
-> +{
-> +	static const u16 colorfx[] = {
-> +		[V4L2_COLORFX_NONE] = 0,
-> +		[V4L2_COLORFX_BW] = 1,
-> +		[V4L2_COLORFX_NEGATIVE] = 2,
-> +		[V4L2_COLORFX_SEPIA] = 3,
-> +		[V4L2_COLORFX_SKY_BLUE] = 4,
-> +		[V4L2_COLORFX_SKETCH] = 5,
-> +	};
-> +
-> +	if (val >= ARRAY_SIZE(colorfx)) {
-> +		v4l2_err(&state->sd, "colorfx(%d) out of range(%d)\n",
-> +			 val, ARRAY_SIZE(colorfx));
-> +		state->error = -EINVAL;
-
-Can this happen, given the range of admissible values for the control ?
-
-> +	} else {
-> +		s5k5baf_write(state, REG_G_SPEC_EFFECTS, colorfx[val]);
-> +	}
-> +}
-> +
-> +static int s5k5baf_find_pixfmt(struct v4l2_mbus_framefmt *mf)
-> +{
-> +	int i, c = -1;
-
-I tend to use unsigned int for integer variables that store unsigned content 
-(i in this case), but that might just be me.
-
-> +
-> +	for (i = 0; i < ARRAY_SIZE(s5k5baf_formats); i++) {
-> +		if (mf->colorspace != s5k5baf_formats[i].colorspace)
-> +			continue;
-> +		if (mf->code == s5k5baf_formats[i].code)
-> +			return i;
-> +		if (c < 0)
-> +			c = i;
-> +	}
-> +	return (c < 0) ? 0 : c;
-> +}
-
-[snip]
-
-> +static int s5k5baf_hw_set_video_bus(struct s5k5baf *state)
-> +{
-> +	u16 en_packets;
-> +
-> +	switch (state->bus_type) {
-> +	case V4L2_MBUS_CSI2:
-> +		en_packets = EN_PACKETS_CSI2;
-> +		break;
-> +	case V4L2_MBUS_PARALLEL:
-> +		en_packets = 0;
-> +		break;
-> +	default:
-> +		v4l2_err(&state->sd, "unknown video bus: %d\n",
-> +			 state->bus_type);
-> +		return -EINVAL;
-
-Can this happen ?
-
-> +	};
-> +
-> +	s5k5baf_write_seq(state, REG_OIF_EN_MIPI_LANES,
-> +			  state->nlanes, en_packets, 1);
-> +
-> +	return s5k5baf_clear_error(state);
-> +}
-
-[snip]
-
-> +static int s5k5baf_s_stream(struct v4l2_subdev *sd, int on)
-> +{
-> +	struct s5k5baf *state = to_s5k5baf(sd);
-> +	int ret;
-> +
-> +	if (state->streaming == !!on)
-> +		return 0;
-> +
-> +	mutex_lock(&state->lock);
-
-Shouldn't the lock protect the state->streaming check above ?
-
-> +	if (on) {
-> +		s5k5baf_hw_set_config(state);
-> +		ret = s5k5baf_hw_set_crop_rects(state);
-> +		if (ret < 0)
-> +			goto out;
-> +		s5k5baf_hw_set_stream(state, 1);
-> +		s5k5baf_i2c_write(state, 0xb0cc, 0x000b);
-> +	} else {
-> +		s5k5baf_hw_set_stream(state, 0);
-> +	}
-> +	ret = s5k5baf_clear_error(state);
-> +	if (!ret)
-> +		state->streaming = !state->streaming;
-> +
-> +out:
-> +	mutex_unlock(&state->lock);
-> +
-> +	return ret;
-> +}
-
-[snip]
-
-> +/*
-> + * V4L2 subdev internal operations
-> + */
-> +static int s5k5baf_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-> +{
-> +	struct v4l2_mbus_framefmt *mf;
-> +
-> +	mf = v4l2_subdev_get_try_format(fh, PAD_CIS);
-> +	s5k5baf_try_cis_format(mf);
-> +
-> +	if (s5k5baf_is_cis_subdev(sd))
-> +		return 0;
-
-What about defining two open operations instead, one for each subdev ?
-
-> +	mf = v4l2_subdev_get_try_format(fh, PAD_OUT);
-> +	mf->colorspace = s5k5baf_formats[0].colorspace;
-> +	mf->code = s5k5baf_formats[0].code;
-> +	mf->width = s5k5baf_cis_rect.width;
-> +	mf->height = s5k5baf_cis_rect.height;
-> +	mf->field = V4L2_FIELD_NONE;
-> +
-> +	*v4l2_subdev_get_try_crop(fh, PAD_CIS) = s5k5baf_cis_rect;
-> +	*v4l2_subdev_get_try_compose(fh, PAD_CIS) = s5k5baf_cis_rect;
-> +	*v4l2_subdev_get_try_crop(fh, PAD_OUT) = s5k5baf_cis_rect;
-> +
-> +	return 0;
-> +}
-> +
-> +static int s5k5baf_check_fw_revision(struct s5k5baf *state)
-> +{
-> +	u16 api_ver = 0, fw_rev = 0, s_id = 0;
-> +	int ret;
-> +
-> +	api_ver = s5k5baf_read(state, REG_FW_APIVER);
-> +	fw_rev = s5k5baf_read(state, REG_FW_REVISION) & 0xff;
-> +	s_id = s5k5baf_read(state, REG_FW_SENSOR_ID);
-> +	ret = s5k5baf_clear_error(state);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	v4l2_info(&state->sd, "FW API=%#x, revision=%#x sensor_id=%#x\n",
-> +		  api_ver, fw_rev, s_id);
-> +
-> +	if (api_ver == S5K5BAF_FW_APIVER)
-> +		return 0;
-
-I would have dealt with the error inside the if, but that's up to you.
-
-> +	v4l2_err(&state->sd, "FW API version not supported\n");
-> +	return -ENODEV;
-> +}
-> +
-> +static int s5k5baf_registered(struct v4l2_subdev *sd)
-> +{
-> +	struct s5k5baf *state = to_s5k5baf(sd);
-> +	int ret;
-> +
-> +	ret = v4l2_device_register_subdev(sd->v4l2_dev, &state->cis_sd);
-> +	if (ret < 0)
-> +		v4l2_err(sd, "failed to register subdev %s\n",
-> +			 state->cis_sd.name);
-> +	else
-> +		ret = media_entity_create_link(&state->cis_sd.entity, PAD_CIS,
-> +					       &state->sd.entity, PAD_CIS,
-> +					       MEDIA_LNK_FL_IMMUTABLE |
-> +					       MEDIA_LNK_FL_ENABLED);
-> +	return ret;
-> +}
-> +
-> +static void s5k5baf_unregistered(struct v4l2_subdev *sd)
-> +{
-> +	struct s5k5baf *state = to_s5k5baf(sd);
-> +	v4l2_device_unregister_subdev(&state->cis_sd);
-
-The unregistered operation is called from v4l2_device_unregister_subdev(). 
-Calling it again will be a no-op, the function will return immediately. You 
-can thus get rid of the unregistered operation completely.
-
-Similarly, the registered operation is called from 
-v4l2_device_register_subdev(). You can get rid of it as well and just create 
-the link in the probe function.
-
-> +}
-
-[snip]
-
-> +static int s5k5baf_parse_device_node(struct s5k5baf *state, struct device
-> *dev) +{
-> +	struct device_node *node = dev->of_node;
-> +	struct device_node *node_ep;
-> +	struct v4l2_of_endpoint ep;
-> +	int ret;
-> +
-> +	if (!node) {
-> +		dev_err(dev, "no device-tree node provided\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = of_property_read_u32(node, "clock-frequency",
-> +				   &state->mclk_frequency);
-> +	if (ret < 0) {
-> +		state->mclk_frequency = S5K5BAF_DEFAULT_MCLK_FREQ;
-> +		dev_info(dev, "using default %u Hz clock frequency\n",
-> +			 state->mclk_frequency);
-> +	}
-> +
-> +	ret = s5k5baf_parse_gpios(state->gpios, dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	node_ep = v4l2_of_get_next_endpoint(node, NULL);
-> +	if (!node_ep) {
-> +		/* Default data bus configuration: MIPI CSI-2, 1 data lane. */
-> +		state->bus_type = V4L2_MBUS_CSI2;
-> +		state->nlanes = S5K5BAF_DEF_NUM_LANES;
-> +		dev_warn(dev, "no endpoint defined at node %s\n",
-> +			 node->full_name);
-> +		return 0;
-
-Shouldn't this be a fatal error ? If there's no endpoint the sensor isn't part 
-of any media pipeline, so it's unusable anyway.
-
-> +	}
-> +
-> +	v4l2_of_parse_endpoint(node_ep, &ep);
-> +	of_node_put(node_ep);
-> +	state->bus_type = ep.bus_type;
-> +
-> +	if (state->bus_type == V4L2_MBUS_CSI2)
-> +		state->nlanes = ep.bus.mipi_csi2.num_data_lanes;
-> +
-> +	return 0;
-> +}
-
--- 
-Regards,
-
-Laurent Pinchart
