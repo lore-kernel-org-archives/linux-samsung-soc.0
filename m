@@ -1,44 +1,34 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v8 1/7] irqchip: vic: Parse interrupt and resume masks
- from device tree
-Date: Fri, 23 Aug 2013 16:11:18 -0600
-Message-ID: <5217DE06.3070005@wwwdotorg.org>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1377120111-25601-2-git-send-email-tomasz.figa@gmail.com> <1500724.07LRpFtgcx@flatron>
+Subject: Re: [PATCH] s5p-jpeg: Add initial device tree support for S5PV210/Exynos4210
+ SoCs
+Date: Fri, 23 Aug 2013 16:45:41 -0600
+Message-ID: <5217E615.9040101@wwwdotorg.org>
+References: <1376856867-17771-1-git-send-email-s.nawrocki@samsung.com> <5217875F.2030307@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1500724.07LRpFtgcx@flatron>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from avon.wwwdotorg.org ([70.85.31.133]:58132 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752312Ab3HWWpq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Aug 2013 18:45:46 -0400
+In-Reply-To: <5217875F.2030307@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Rob Herring <rob.herring@calxeda.com>
 
-On 08/22/2013 05:22 PM, Tomasz Figa wrote:
-> This patch extends vic_of_init to parse valid interrupt sources
-> and resume sources masks from device tree.
+On 08/23/2013 10:01 AM, Sylwester Nawrocki wrote:
+> On 08/18/2013 10:14 PM, Sylwester Nawrocki wrote:
+>> This patch enables the JPEG codec on S5PV210 and Exynos4210 SoCs. There are
+>> some differences in newer versions of the JPEG codec IP on SoCs like Exynos4x12
+>> and Exynos5 series and support for them will be added in subsequent patches.
+>>
+>> Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > 
-> If mask values are not specified in device tree, all sources
-> are assumed to be valid, as before this patch.
+> Could a DT maintainer review/Ack the binding in this patch ?
 
-Can you explain further why the VIC needs this information up-front?
-Presumably it can accumulate it as devices request interrupts.
-
-> diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
-
-> +- valid-mask : Bit mask of valid interrupt sources (defaults to all valid)
-
-Until a device requests an interrupt, it can be left disabled. Once
-something does request it, it gets enabled. If nothing requests it, it
-never gets enabled. Doesn't the result of that logic end up being the
-same thing as valid-mask represents? The only difference would be if
-some device requests an invalid interrupt source, but then why not just
-fix the interrupt client instead of adding this property to reject the
-request?
-
-> +- wakeup-mask : Bit mask of interrupt sources that can wake up the system
-> +  (defaults to all allowed)
-
-Shouldn't drivers for end-devices request interrupts, and then set wake
-enable on those interrupts, which would then trickle up the IRQ chain to
-tell the VIC which interrupts to enable wakeup on?
+The binding looks reasonable to me, so,
+Acked-by: Stephen Warren <swarren@nvidia.com>
