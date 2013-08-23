@@ -1,71 +1,52 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v8 1/7] irqchip: vic: Parse interrupt and resume masks from device tree
-Date: Sat, 24 Aug 2013 01:04:44 +0200
-Message-ID: <2159266.zeHHUDxisq@flatron>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1500724.07LRpFtgcx@flatron> <5217DE06.3070005@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v8 1/7] irqchip: vic: Parse interrupt and resume masks
+ from device tree
+Date: Fri, 23 Aug 2013 17:19:50 -0600
+Message-ID: <5217EE16.6020702@wwwdotorg.org>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1500724.07LRpFtgcx@flatron> <5217DE06.3070005@wwwdotorg.org> <2159266.zeHHUDxisq@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f54.google.com ([209.85.214.54]:54299 "EHLO
-	mail-bk0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754044Ab3HWXEw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 19:04:52 -0400
-In-Reply-To: <5217DE06.3070005@wwwdotorg.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <2159266.zeHHUDxisq@flatron>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday 23 of August 2013 16:11:18 Stephen Warren wrote:
-> On 08/22/2013 05:22 PM, Tomasz Figa wrote:
-> > This patch extends vic_of_init to parse valid interrupt sources
-> > and resume sources masks from device tree.
-> > 
-> > If mask values are not specified in device tree, all sources
-> > are assumed to be valid, as before this patch.
+On 08/23/2013 05:04 PM, Tomasz Figa wrote:
+> On Friday 23 of August 2013 16:11:18 Stephen Warren wrote:
+>> On 08/22/2013 05:22 PM, Tomasz Figa wrote:
+>>> This patch extends vic_of_init to parse valid interrupt sources
+>>> and resume sources masks from device tree.
+>>>
+>>> If mask values are not specified in device tree, all sources
+>>> are assumed to be valid, as before this patch.
+>>
+>> Can you explain further why the VIC needs this information up-front?
+>> Presumably it can accumulate it as devices request interrupts.
 > 
-> Can you explain further why the VIC needs this information up-front?
-> Presumably it can accumulate it as devices request interrupts.
+> It does not need this information just for operation, but this makes the 
+> hardware description more detailed and allows better sanity checking of 
+> interrupts being requested.
 
-It does not need this information just for operation, but this makes the 
-hardware description more detailed and allows better sanity checking of 
-interrupts being requested.
+Ah, OK. It may be worth mentioning the intent of the properties. I
+suppose this is purely a representation of HW then, so it's reasonable
+to include it in the binding. I'm not sure /quite/ how useful it is;
+after all the error-checking that it enables will never trigger assuming
+the rest of the DT is written to "request" the correct interrupts.
+However, I guess there is little harm in allowing these properties.
 
-To clarify, this is a mask of valid interrupt sources of the VIC, where 
-set bit indicates that given signal is wired and clear bit that it is not.
+Bikeshedding a bit, but perhaps rename wakeup-mask to valid-wakeup-mask
+(and perhaps valid-mask to valid-source-mask for consistency, although I
+see you already renamed that to be consistent with other bindings...)?
+To me, wakeup-mask sounds like a configuration of which sources should
+be configured to wakeup the system; something to do with
+configuration/policy rather than HW capabilities.
 
-> > diff --git a/Documentation/devicetree/bindings/arm/vic.txt
-> > b/Documentation/devicetree/bindings/arm/vic.txt
-> > 
-> > +- valid-mask : Bit mask of valid interrupt sources (defaults to all
-> > valid)
-> Until a device requests an interrupt, it can be left disabled. Once
-> something does request it, it gets enabled. If nothing requests it, it
-> never gets enabled. Doesn't the result of that logic end up being the
-> same thing as valid-mask represents? The only difference would be if
-> some device requests an invalid interrupt source, but then why not just
-> fix the interrupt client instead of adding this property to reject the
-> request?
+Either way, the binding,
+Acked-by: Stephen Warren <swarren@nvidia.com>
 
-This property does not have anything to do with enabling or disabling (aka 
-unmasking/masking) of interrupts. It just lists valid interrupt signals of 
-given VIC.
-
-> > +- wakeup-mask : Bit mask of interrupt sources that can wake up the
-> > system +  (defaults to all allowed)
-> 
-> Shouldn't drivers for end-devices request interrupts, and then set wake
-> enable on those interrupts, which would then trickle up the IRQ chain to
-> tell the VIC which interrupts to enable wakeup on?
-
-This is the same as previous property. It does not have anything to do 
-with requesting particular signal to wake up the system, but rather 
-indicating that particular signal _can_ be requested to do so.
-
-Again, this is not strictly needed for correct operation, but this way you 
-wouldn't get any sanity check over wake up signals being requested.
-
-Best regards,
-Tomasz
+(I assume those 2 new properties always have 1 cell since the controller
+can only support up to 32 IRQ sources? If not, then perhaps add wording
+to describe how long the properties should be).
