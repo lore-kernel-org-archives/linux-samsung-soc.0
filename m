@@ -1,69 +1,43 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v7] s5k5baf: add camera sensor driver
-Date: Fri, 23 Aug 2013 11:23:31 +0200
-Message-ID: <52172A13.1080701@samsung.com>
-References: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
- <9243520.EzMBhpL3jX@flatron>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: re: [media] s5p-csis: Add support for non-image data packets capture
+Date: Fri, 23 Aug 2013 12:35:04 +0300
+Message-ID: <20130823093504.GJ31293@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:34452 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752946Ab3HWJXf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 05:23:35 -0400
-In-reply-to: <9243520.EzMBhpL3jX@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-media-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-media-owner@vger.kernel.org
+To: s.nawrocki@samsung.com
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Grant Likely <grant.likely@linaro.org>
 
-On 08/23/2013 12:39 AM, Tomasz Figa wrote:
->> Documentation/devicetree/bindings/media/samsung-s5k5baf.txt create mode
->> > 100644 drivers/media/i2c/s5k5baf.c
->> > 
->> > diff --git a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
->> > b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt new file
->> > mode 100644
->> > index 0000000..d680d99
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
->> > @@ -0,0 +1,59 @@
->> > +Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
->> > +--------------------------------------------------------------------
->> > +
->> > +Required properties:
->> > +
->> > +- compatible	  : "samsung,s5k5baf";
->> > +- reg		  : I2C slave address of the sensor;
->
-> Can this sensor have an aribitrary slave address or only a set of well 
-> known possible addresses (e.g. listed in documentation)?
+Hello Sylwester Nawrocki,
 
-According to the datasheet it can have one of two I2C addresses (0x2D, 0x3C),
-selectable by a dedicated pin. Also they may be revisions of the device that
-use different addresses. I believe what addresses are possible is out of
-scope of this binding document. We can handle whatever is used.
+I had a question about 36fa80927638: "[media] s5p-csis: Add support for
+non-image data packets capture" from Sep 21, 2012.
 
->> > +- vdda-supply	  : analog power supply 2.8V (2.6V to 3.0V);
->> > +- vddreg-supply	  : regulator input power supply 1.8V (1.7V to 
-> 1.9V)
->> > +		    or 2.8V (2.6V to 3.0);
->> > +- vddio-supply	  : I/O power supply 1.8V (1.65V to 1.95V)
->> > +		    or 2.8V (2.5V to 3.1V);
->> > +- stbyn-gpios	  : GPIO connected to STDBYN pin;
->> > +- rstn-gpios	  : GPIO connected to RSTN pin;
->
-> Both GPIOs above have names suggesting that they are active low. I wonder 
-> how the GPIO flags cell is interpreted here, namely the polarity bit.
+S5PCSIS_INTSRC_NON_IMAGE_DATA is defined in mipi-csis.c:
 
-That's a good point. The GPIO flags are be used to specify active state
-of the GPIO. Some sensors happen to use different active state for those
-signals. It's not the case for this sensor though AFAICT.
+#define S5PCSIS_INTSRC_NON_IMAGE_DATA   (0xff << 28)
 
-Anyway IMO it would be better to name those gpios: "stby-gpios",
-"rst-gpios" in case there appear revisions that have their pin named STDBY
-or RST rather than STDBYN, RSTN. That seems rather unlikely though, but
-since there are devices to which that could apply I think for consistency
-it might be better to remove indication of polarity from the GPIO names.
+And it's only used in one place.
+
+drivers/media/platform/exynos4-is/mipi-csis.c
+   692          u32 status;
+   693  
+   694          status = s5pcsis_read(state, S5PCSIS_INTSRC);
+   695          spin_lock_irqsave(&state->slock, flags);
+   696  
+   697          if ((status & S5PCSIS_INTSRC_NON_IMAGE_DATA) && pktbuf->data) {
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"status" is a u32 so 0xff0000000 is 4 bits too much.  In other words,
+the mask is effectively "(0xf << 28)".  Was that intended or should it
+be (0xff << 24)?
+
+   698                  u32 offset;
+   699  
+   700                  if (status & S5PCSIS_INTSRC_EVEN)
+   701                          offset = S5PCSIS_PKTDATA_EVEN;
+
+regards,
+dan carpenter
