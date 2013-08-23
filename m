@@ -1,76 +1,92 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v8 1/7] irqchip: vic: Parse interrupt and resume masks from device tree
-Date: Sat, 24 Aug 2013 01:33:31 +0200
-Message-ID: <1874369.t457ToAVgC@flatron>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <2159266.zeHHUDxisq@flatron> <5217EE16.6020702@wwwdotorg.org>
+Subject: [PATCH v9 1/7] irqchip: vic: Parse interrupt and resume masks from device tree
+Date: Sat, 24 Aug 2013 01:54:51 +0200
+Message-ID: <2280792.12A0UohYGl@flatron>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1377120111-25601-2-git-send-email-tomasz.figa@gmail.com> <1500724.07LRpFtgcx@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <5217EE16.6020702@wwwdotorg.org>
+In-Reply-To: <1500724.07LRpFtgcx@flatron>
 Sender: linux-gpio-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-gpio@vger.kernel.org, Ian Campbell <ian.campbell@citrix.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thomas Gleixner <tglx@linutronix.de>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Marc Zyngier <marc.zyngier@arm.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday 23 of August 2013 17:19:50 Stephen Warren wrote:
-> On 08/23/2013 05:04 PM, Tomasz Figa wrote:
-> > On Friday 23 of August 2013 16:11:18 Stephen Warren wrote:
-> >> On 08/22/2013 05:22 PM, Tomasz Figa wrote:
-> >>> This patch extends vic_of_init to parse valid interrupt sources
-> >>> and resume sources masks from device tree.
-> >>> 
-> >>> If mask values are not specified in device tree, all sources
-> >>> are assumed to be valid, as before this patch.
-> >> 
-> >> Can you explain further why the VIC needs this information up-front?
-> >> Presumably it can accumulate it as devices request interrupts.
-> > 
-> > It does not need this information just for operation, but this makes
-> > the hardware description more detailed and allows better sanity
-> > checking of interrupts being requested.
-> 
-> Ah, OK. It may be worth mentioning the intent of the properties.
+This patch extends vic_of_init to parse valid interrupt sources
+and resume sources masks from device tree.
 
-Right, a bit more detailed description will be nice indeed. I didn't think 
-such thing like this is so uncommon to need such.
+If mask values are not specified in device tree, all sources
+are assumed to be valid, as before this patch.
 
-> I
-> suppose this is purely a representation of HW then, so it's reasonable
-> to include it in the binding. I'm not sure /quite/ how useful it is;
-> after all the error-checking that it enables will never trigger assuming
-> the rest of the DT is written to "request" the correct interrupts.
-> However, I guess there is little harm in allowing these properties.
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Acked-by: Stephen Warren <swarren@nvidia.com>
+---
+ Documentation/devicetree/bindings/arm/vic.txt | 12 ++++++++++++
+ drivers/irqchip/irq-vic.c                     |  7 ++++++-
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-Well, the valid-mask is indeed a bit redundant (although might let you 
-spot errors in interrupt specification in your device tree faster), but 
-wakeup-mask is something that prevents drivers from incorrectly thinking 
-that an interrupt can wake the system up, while it can't. Otherwise 
-enable_irq_wake() wouldn't know when to return an error.
+Changes since v8:
+ - Renamed wakeup-mask property to valid-wakeup-mask.
+ - Extended description of valid-mask and valid-wakeup-mask properties.
 
-> Bikeshedding a bit, but perhaps rename wakeup-mask to valid-wakeup-mask
-> (and perhaps valid-mask to valid-source-mask for consistency, although I
-> see you already renamed that to be consistent with other bindings...)?
-> To me, wakeup-mask sounds like a configuration of which sources should
-> be configured to wakeup the system; something to do with
-> configuration/policy rather than HW capabilities.
+diff --git a/Documentation/devicetree/bindings/arm/vic.txt b/Documentation/devicetree/bindings/arm/vic.txt
+index 266716b..dd52721 100644
+--- a/Documentation/devicetree/bindings/arm/vic.txt
++++ b/Documentation/devicetree/bindings/arm/vic.txt
+@@ -18,6 +18,15 @@ Required properties:
+ Optional properties:
+ 
+ - interrupts : Interrupt source for parent controllers if the VIC is nested.
++- valid-mask : A one cell big bit mask of valid interrupt sources. Each bit
++  represents single interrupt source, starting from source 0 at LSb and ending
++  at source 31 at MSb. A bit that is set means that the source is wired and
++  clear means otherwise. If unspecified, defaults to all valid.
++- valid-wakeup-mask : A one cell big bit mask of interrupt sources that can be
++  configured as wake up source for the system. Order of bits is the same as for
++  valid-mask property. A set bit means that this interrupt source can be
++  configured as a wake up source for the system. If unspecied, defaults to all
++  interrupt sources configurable as wake up sources.
+ 
+ Example:
+ 
+@@ -26,4 +35,7 @@ Example:
+ 		interrupt-controller;
+ 		#interrupt-cells = <1>;
+ 		reg = <0x60000 0x1000>;
++
++		valid-mask = <0xffffff7f>;
++		valid-wakeup-mask = <0x0000ff7f>;
+ 	};
+diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
+index 2bbb004..8e21ae0 100644
+--- a/drivers/irqchip/irq-vic.c
++++ b/drivers/irqchip/irq-vic.c
+@@ -469,6 +469,8 @@ void __init vic_init(void __iomem *base, unsigned int irq_start,
+ int __init vic_of_init(struct device_node *node, struct device_node *parent)
+ {
+ 	void __iomem *regs;
++	u32 interrupt_mask = ~0;
++	u32 wakeup_mask = ~0;
+ 
+ 	if (WARN(parent, "non-root VICs are not supported"))
+ 		return -EINVAL;
+@@ -477,10 +479,13 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
+ 	if (WARN_ON(!regs))
+ 		return -EIO;
+ 
++	of_property_read_u32(node, "valid-mask", &interrupt_mask);
++	of_property_read_u32(node, "valid-wakeup-mask", &wakeup_mask);
++
+ 	/*
+ 	 * Passing 0 as first IRQ makes the simple domain allocate descriptors
+ 	 */
+-	__vic_init(regs, 0, ~0, ~0, node);
++	__vic_init(regs, 0, interrupt_mask, wakeup_mask, node);
+ 
+ 	return 0;
+ }
+-- 
+1.8.3.2
 
-Yes, valid-wakeup-mask sounds reasonably to me. The valid-mask property 
-has been taken from bindings/arm/versatile-fpga-irq.txt, as suggested by 
-Linus Walleij.
-
-> Either way, the binding,
-> Acked-by: Stephen Warren <swarren@nvidia.com>
-
-Thanks.
-
-> (I assume those 2 new properties always have 1 cell since the controller
-> can only support up to 32 IRQ sources? If not, then perhaps add wording
-> to describe how long the properties should be).
-
-Correct, one VIC can support up to 32 interrupt sources. A word on this in 
-binding description will be nice indeed.
-
-Best regards,
-Tomasz
 
