@@ -1,43 +1,41 @@
 From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: re: [media] s5p-csis: Add support for non-image data packets capture
-Date: Fri, 23 Aug 2013 12:35:04 +0300
-Message-ID: <20130823093504.GJ31293@elgon.mountain>
+Subject: [patch] [media] exynos4-is: print error message on timeout
+Date: Fri, 23 Aug 2013 12:36:56 +0300
+Message-ID: <20130823093656.GK31293@elgon.mountain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-media-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-Sender: linux-media-owner@vger.kernel.org
-To: s.nawrocki@samsung.com
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Sylwester Nawrocki,
+There is a stray '!' character so the error message never gets printed.
 
-I had a question about 36fa80927638: "[media] s5p-csis: Add support for
-non-image data packets capture" from Sep 21, 2012.
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+Static checker stuff.  Not tested.
 
-S5PCSIS_INTSRC_NON_IMAGE_DATA is defined in mipi-csis.c:
-
-#define S5PCSIS_INTSRC_NON_IMAGE_DATA   (0xff << 28)
-
-And it's only used in one place.
-
-drivers/media/platform/exynos4-is/mipi-csis.c
-   692          u32 status;
-   693  
-   694          status = s5pcsis_read(state, S5PCSIS_INTSRC);
-   695          spin_lock_irqsave(&state->slock, flags);
-   696  
-   697          if ((status & S5PCSIS_INTSRC_NON_IMAGE_DATA) && pktbuf->data) {
-                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-"status" is a u32 so 0xff0000000 is 4 bits too much.  In other words,
-the mask is effectively "(0xf << 28)".  Was that intended or should it
-be (0xff << 24)?
-
-   698                  u32 offset;
-   699  
-   700                  if (status & S5PCSIS_INTSRC_EVEN)
-   701                          offset = S5PCSIS_PKTDATA_EVEN;
-
-regards,
-dan carpenter
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+index 63c68ec..42f2925 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+@@ -236,7 +236,7 @@ int fimc_is_itf_mode_change(struct fimc_is *is)
+ 	fimc_is_hw_change_mode(is);
+ 	ret = fimc_is_wait_event(is, IS_ST_CHANGE_MODE, 1,
+ 				FIMC_IS_CONFIG_TIMEOUT);
+-	if (!ret < 0)
++	if (ret < 0)
+ 		dev_err(&is->pdev->dev, "%s(): mode change (%d) timeout\n",
+ 			__func__, is->config_index);
+ 	return ret;
