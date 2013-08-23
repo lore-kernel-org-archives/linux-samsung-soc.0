@@ -1,89 +1,45 @@
-From: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
-Subject: Re: [PATCH V3] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Fri, 23 Aug 2013 11:55:39 +0530
-Message-ID: <CA+NduCBhD1aKe1G+P1k8P9pEDrHy2U50VzANi6_90P1wOB69Vg@mail.gmail.com>
-References: <1377172278-15161-1-git-send-email-yuvaraj.cd@samsung.com>
-	<CAD=FV=W1LBYSQdLT7N6tTu6rGvUOFuPdFBNP2BRGDCXOH1hT9g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v2 0/5] clk/exynos5420: add clocks for hdmi subsystem
+Date: Fri, 23 Aug 2013 12:27:53 +0530
+Message-ID: <1377241078-11808-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f182.google.com ([74.125.82.182]:51316 "EHLO
-	mail-we0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754457Ab3HWGZl (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:45438 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754634Ab3HWGgK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 02:25:41 -0400
-In-Reply-To: <CAD=FV=W1LBYSQdLT7N6tTu6rGvUOFuPdFBNP2BRGDCXOH1hT9g@mail.gmail.com>
+	Fri, 23 Aug 2013 02:36:10 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MRZ00KEO1046R90@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Aug 2013 15:36:08 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Fri, Aug 23, 2013 at 5:23 AM, Doug Anderson <dianders@google.com> wrote:
-> Hi,
->
-> Thanks for adding my Thomasz,
->
-> On Thu, Aug 22, 2013 at 4:51 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
->> This patch adds the device tree node entries for exynos5420 SOC.
->> Exynos5420 has a different version of DWMMC controller,so a new
->> compatible string is used to distinguish it from the prior SOC's.
->>
->> changes since V2:
->>         1.dropped num-slots property from node as its not required
->>           if number of card slots available is 1.
->
-> Just to mention: this is actually not board specific.  No exynos
-> products support more than one slot.  ...and in fact apparently NOBODY
-> supports more than one slot.  I have a plan to post up a patch
-> removing multislot support whenever I have a free moment.
->
-> Anyway, what you did is fine.
->
->
->>         2.Move the below properties
->>                 a.fifo-depth
->
-> Right, not board-specific.  This is SoC specific.  Interestingly
-> enough you appear to have it wrong.  I have it on good authority that
-> 5420 has a FIFO depth of 0x40 not 0x80.  Apparently the FIFO is 0x40
-> deep and 64 wide whereas the old FIFO is 0x80 deep and 32 wide.
-Ok.I will change fifo-depth to 0x40.
->
->
->>                 b.card-detect-delay
->>                 c.samsung,dw-mshc-ciu-div
->>                 d.samsung,dw-mshc-sdr-timing
->>                 e.samsung,dw-mshc-ddr-timing
->
-> These ARE board specific, actually.  ...and Tomasz has pointed out.
-I am not sure, why these properties are not SOC specific?How these
-properties value
-will change in other variants(boards) of exynos5420?
+Add clock changes for hdmi subsystem for exynos5250 SoC. These
+include addition of new clocks like mout_hdmi and smmu_tv, associating
+ID to clk_hdmiphy and some essential corrections.
 
->
->
->> +       dwmmc_2: dwmmc2@12220000 {
->> +               compatible = "samsung,exynos5420-dw-mshc";
->> +               interrupts = <0 77 0>;
->> +               #address-cells = <1>;
->> +               #size-cells = <0>;
->> +               reg = <0x12220000 0x2000>;
->> +               clocks = <&clock 353>, <&clock 134>;
->> +               clock-names = "biu", "ciu";
->> +               fifo-depth = <0x80>;
->> +               card-detect-delay = <200>;
->> +               samsung,dw-mshc-ciu-div = <3>;
->> +               samsung,dw-mshc-sdr-timing = <2 3>;
->> +               samsung,dw-mshc-ddr-timing = <1 2>;
->
-> Note: I have information that says that these timings are not correct
-> and that nearly always the "drive" timing should be 0 and the sample
-> timing 4.  ...but we haven't landed that change ourselves yet, so
-> maybe keeping the timings you have is right.
->
->
-> -Doug
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+V2:
+1) Rebase to Mike's Tree.
+2) Change smmu_tv to smmu_mixer.
+
+This set is based on Mike's clk-next branch at
+https://git.linaro.org/gitweb?p=people/mturquette/linux.git
+
+Rahul Sharma (5):
+  clk/exynos5420: add sclk_hdmiphy to the list of special clocks
+  clk/exynos5420: add gate clock for mixer sysmmu
+  clk/exynos5420: fix the order of parents of hdmi mux
+  clk/exynos5420: add hdmi mux to change parents in hdmi driver
+  clk/exynos5420: assign sclk_pixel id to pixel clock divider
+
+ .../devicetree/bindings/clock/exynos5420-clock.txt   |    7 +++++++
+ drivers/clk/samsung/clk-exynos5420.c                 |   18 +++++++++++-------
+ 2 files changed, 18 insertions(+), 7 deletions(-)
+
+-- 
+1.7.10.4
