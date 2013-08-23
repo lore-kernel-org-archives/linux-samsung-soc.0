@@ -1,96 +1,69 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V2] PCI: exynos: add support for MSI
-Date: Fri, 23 Aug 2013 11:22:38 +0200
-Message-ID: <20130823092238.GJ3535@ulmo>
-References: <003d01ce9fc6$9c0f1c20$d42d5460$%han@samsung.com>
- <20130823083539.GB3937@pratyush-vbox>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v7] s5k5baf: add camera sensor driver
+Date: Fri, 23 Aug 2013 11:23:31 +0200
+Message-ID: <52172A13.1080701@samsung.com>
+References: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
+ <9243520.EzMBhpL3jX@flatron>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XigHxYirkHk2Kxsx"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f65.google.com ([209.85.214.65]:49814 "EHLO
-	mail-bk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753051Ab3HWJXE (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34452 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752946Ab3HWJXf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 05:23:04 -0400
-Content-Disposition: inline
-In-Reply-To: <20130823083539.GB3937@pratyush-vbox>
+	Fri, 23 Aug 2013 05:23:35 -0400
+In-reply-to: <9243520.EzMBhpL3jX@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pratyush Anand <pratyush.anand@st.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, Siva Reddy Kallam <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, Arnd Bergmann <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Grant Likely <grant.likely@linaro.org>
 
+On 08/23/2013 12:39 AM, Tomasz Figa wrote:
+>> Documentation/devicetree/bindings/media/samsung-s5k5baf.txt create mode
+>> > 100644 drivers/media/i2c/s5k5baf.c
+>> > 
+>> > diff --git a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+>> > b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt new file
+>> > mode 100644
+>> > index 0000000..d680d99
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+>> > @@ -0,0 +1,59 @@
+>> > +Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
+>> > +--------------------------------------------------------------------
+>> > +
+>> > +Required properties:
+>> > +
+>> > +- compatible	  : "samsung,s5k5baf";
+>> > +- reg		  : I2C slave address of the sensor;
+>
+> Can this sensor have an aribitrary slave address or only a set of well 
+> known possible addresses (e.g. listed in documentation)?
 
---XigHxYirkHk2Kxsx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+According to the datasheet it can have one of two I2C addresses (0x2D, 0x3C),
+selectable by a dedicated pin. Also they may be revisions of the device that
+use different addresses. I believe what addresses are possible is out of
+scope of this binding document. We can handle whatever is used.
 
-On Fri, Aug 23, 2013 at 02:05:39PM +0530, Pratyush Anand wrote:
-> On Fri, Aug 23, 2013 at 02:04:20PM +0800, Jingoo Han wrote:
-[...]
-> > +
-> >  static struct hw_pci dw_pci;
-> >=20
-> >  unsigned long global_io_offset;
-> > @@ -144,6 +152,205 @@ int dw_pcie_wr_own_conf(struct pcie_port *pp, int=
- where, int size,
-> >         return ret;
-> >  }
-> >=20
->=20
-> [...]
->=20
-> >  int dw_pcie_link_up(struct pcie_port *pp)
-> >  {
-> >         if (pp->ops->link_up)
-> > @@ -225,6 +432,13 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
-> >                 return -EINVAL;
-> >         }
-> >=20
-> > +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> > +               if (of_property_read_u32(np, "msi-base", &pp->msi_irq_s=
-tart)) {
-> > +                       dev_err(pp->dev, "Failed to parse the number of=
- lanes\n");
-> > +                       return -EINVAL;
-> > +               }
-> > +       }
-> > +
->=20
-> What if an implementor want to use irq_domain method for msi_irq_start
-> allocation? Is it fine to return error if msi-base is not passed from
-> dt?
+>> > +- vdda-supply	  : analog power supply 2.8V (2.6V to 3.0V);
+>> > +- vddreg-supply	  : regulator input power supply 1.8V (1.7V to 
+> 1.9V)
+>> > +		    or 2.8V (2.6V to 3.0);
+>> > +- vddio-supply	  : I/O power supply 1.8V (1.65V to 1.95V)
+>> > +		    or 2.8V (2.5V to 3.1V);
+>> > +- stbyn-gpios	  : GPIO connected to STDBYN pin;
+>> > +- rstn-gpios	  : GPIO connected to RSTN pin;
+>
+> Both GPIOs above have names suggesting that they are active low. I wonder 
+> how the GPIO flags cell is interpreted here, namely the polarity bit.
 
-I agree. This should be using an IRQ domain to represent the MSI
-controller. Both Tegra and Marvell drivers do that already and if Exynos
-can follow that same path it will increase the chances of refactoring
-common bits.
+That's a good point. The GPIO flags are be used to specify active state
+of the GPIO. Some sensors happen to use different active state for those
+signals. It's not the case for this sensor though AFAICT.
 
-Also the error message doesn't quite match up with what the code is
-doing. =3D)
-
-Thierry
-
---XigHxYirkHk2Kxsx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSFyneAAoJEN0jrNd/PrOhDAIQAKOeEA49U2PfcVhTnerHhzez
-U7eFZ4i+C39l/qcGEqckiq7QkDI7osqJBhlmjYjXBLGXaJuWy5lVpWd0OY8RK8Xs
-jqfKDvO5K6BAq7+djYFF4s/tTXBE756OXx2vnUXxlla67roeqCS6x/yFZto5MmD5
-HxlDXs0PdZOtsQ4RiS6qRu8BvUwYdGsa1mwcxWgdsoVeqXu5e93NojyQtJorUdLo
-JhiAM5koWX/6Ms8v3HrxghVxRsu+5+pOalFA5hwNrW3uylmEGjOVxuSVVe+zIonA
-ztxRXKHN7y3AFuCD7mLJegRW3Ffp37oTUfJI4DgzBnUHtl8iFJ2jj667in8syvnJ
-84YyxUxEyr/z2ZhTMR+ZPT5hhM77FXXA4GZgaIL+wQIHzIYamX55qyqSt+qJiL4d
-NEhMwsDVa9Hi98PeimtLLqe1xNQg4wEaiVdGOOJtdsxue5ZjphUKH9lDq9GHYCwg
-H3DSf/r5tm386Lk7GpSJKP9GjdJ1VisXmnGM3QKheyNmU0odhR30Stfmb/0WYKPE
-3HDRamcY8n1Hez7aAzjMfAeBfgOCnnBX36IwyurDjsXesNK8u8vcf3jZyoC67Wfm
-O9UAV2fKvxxSsSBNXewzVvj8W/pkZ/3gQU1vXWz6EtpGpmcYKakVKwGFARXK8QvJ
-Xv7iRE1L+M2U3mtH6i0P
-=8SnG
------END PGP SIGNATURE-----
-
---XigHxYirkHk2Kxsx--
+Anyway IMO it would be better to name those gpios: "stby-gpios",
+"rst-gpios" in case there appear revisions that have their pin named STDBY
+or RST rather than STDBYN, RSTN. That seems rather unlikely though, but
+since there are devices to which that could apply I think for consistency
+it might be better to remove indication of polarity from the GPIO names.
