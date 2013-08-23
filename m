@@ -1,60 +1,96 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH V3] i2c: move of helpers into the core
-Date: Fri, 23 Aug 2013 10:52:03 +0200
-Message-ID: <20130823085203.GC3035@katana>
-References: <1377187217-31820-1-git-send-email-wsa@the-dreams.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2] PCI: exynos: add support for MSI
+Date: Fri, 23 Aug 2013 11:22:38 +0200
+Message-ID: <20130823092238.GJ3535@ulmo>
+References: <003d01ce9fc6$9c0f1c20$d42d5460$%han@samsung.com>
+ <20130823083539.GB3937@pratyush-vbox>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bAmEntskrkuBymla"
-Return-path: <linux-doc-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="XigHxYirkHk2Kxsx"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f65.google.com ([209.85.214.65]:49814 "EHLO
+	mail-bk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753051Ab3HWJXE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 23 Aug 2013 05:23:04 -0400
 Content-Disposition: inline
-In-Reply-To: <1377187217-31820-1-git-send-email-wsa@the-dreams.de>
-Sender: linux-doc-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, devel@driverdev.osuosl.org, alsa-devel@alsa-project.org
+In-Reply-To: <20130823083539.GB3937@pratyush-vbox>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pratyush Anand <pratyush.anand@st.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, Siva Reddy Kallam <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, Arnd Bergmann <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
 
---bAmEntskrkuBymla
+--XigHxYirkHk2Kxsx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 22, 2013 at 06:00:14PM +0200, Wolfram Sang wrote:
-> I2C of helpers used to live in of_i2c.c but experience (from SPI) shows
-> that it is much cleaner to have this in the core. This also removes a
-> circular dependency between the helpers and the core, and so we can
-> finally register child nodes in the core instead of doing this manually
-> in each driver. So, fix the drivers and documentation, too.
+On Fri, Aug 23, 2013 at 02:05:39PM +0530, Pratyush Anand wrote:
+> On Fri, Aug 23, 2013 at 02:04:20PM +0800, Jingoo Han wrote:
+[...]
+> > +
+> >  static struct hw_pci dw_pci;
+> >=20
+> >  unsigned long global_io_offset;
+> > @@ -144,6 +152,205 @@ int dw_pcie_wr_own_conf(struct pcie_port *pp, int=
+ where, int size,
+> >         return ret;
+> >  }
+> >=20
 >=20
-> Acked-by: Rob Herring <rob.herring@calxeda.com>
-> Reviewed-by: Felipe Balbi <balbi@ti.com>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Tested-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+> [...]
+>=20
+> >  int dw_pcie_link_up(struct pcie_port *pp)
+> >  {
+> >         if (pp->ops->link_up)
+> > @@ -225,6 +432,13 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
+> >                 return -EINVAL;
+> >         }
+> >=20
+> > +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> > +               if (of_property_read_u32(np, "msi-base", &pp->msi_irq_s=
+tart)) {
+> > +                       dev_err(pp->dev, "Failed to parse the number of=
+ lanes\n");
+> > +                       return -EINVAL;
+> > +               }
+> > +       }
+> > +
+>=20
+> What if an implementor want to use irq_domain method for msi_irq_start
+> allocation? Is it fine to return error if msi-base is not passed from
+> dt?
 
-Applied to for-next!
+I agree. This should be using an IRQ domain to represent the MSI
+controller. Both Tegra and Marvell drivers do that already and if Exynos
+can follow that same path it will increase the chances of refactoring
+common bits.
 
---bAmEntskrkuBymla
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Also the error message doesn't quite match up with what the code is
+doing. =3D)
+
+Thierry
+
+--XigHxYirkHk2Kxsx
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSFyKzAAoJEBQN5MwUoCm2bI0QAK5awQ507hl+3+q76tlv3bM/
-+m1YNlqdEye7K3+XmB48MpCUi65bGtoITuOg+DaWYxw3+A7RhoJgwkFyMZ0gpesj
-aHkFe51yVYiU4Zx1MVSpIDo5ufAmp+8FRM3TF++IgAq62/7fLtwhTJlU2qgzShzs
-rw8UbmXg9+VjWFRfw1tAl+Vz3sWb9+vH2fmNiwXyPMglOdpClKe28rXrABJ78Gqc
-cxqgatPqfBCxyob57z/hGShtPUZkRWdpMU/hjbfemsPrysbLQzmqVyVS2idFP1ad
-T3mJ3xbKXcyJNO4NjGWazxPnpZ74RfNIJQ5nerZfqralO2gdVW8EFwCYaEy9k8YF
-/EpBpMQkHz3Pb3eb4tZJa50cVCygjuikpPoxq9Mtao6T8VG0aVNj8NuE9ros2WS8
-YWkRaVRDN8fjW98vuw7HmNuHCfFZV7QQ8uCcDtrl9k7X+fLQIvxPAVgrDs7Qmugm
-9nzR9AchLDuHuBNRM42bz/t+cILX2ExwIMC5k1YouF0Inuvfrh3LSrEyaJSD8IEF
-VeRGJPNSEP+Ww2+bGexV56ziz8JeMNLaj5rghDw9h9Jz5D4nMRjqhsRAbSfjrlMb
-YfyMTzS/tmJgt2NPj2bc2DvK4JLfrS/SR5YsdWSgR6VQ0WUvPSLJL/rY8Gn/UJ2j
-gfliuM4Sj6/OhS+bbMX3
-=pGc6
+iQIcBAEBAgAGBQJSFyneAAoJEN0jrNd/PrOhDAIQAKOeEA49U2PfcVhTnerHhzez
+U7eFZ4i+C39l/qcGEqckiq7QkDI7osqJBhlmjYjXBLGXaJuWy5lVpWd0OY8RK8Xs
+jqfKDvO5K6BAq7+djYFF4s/tTXBE756OXx2vnUXxlla67roeqCS6x/yFZto5MmD5
+HxlDXs0PdZOtsQ4RiS6qRu8BvUwYdGsa1mwcxWgdsoVeqXu5e93NojyQtJorUdLo
+JhiAM5koWX/6Ms8v3HrxghVxRsu+5+pOalFA5hwNrW3uylmEGjOVxuSVVe+zIonA
+ztxRXKHN7y3AFuCD7mLJegRW3Ffp37oTUfJI4DgzBnUHtl8iFJ2jj667in8syvnJ
+84YyxUxEyr/z2ZhTMR+ZPT5hhM77FXXA4GZgaIL+wQIHzIYamX55qyqSt+qJiL4d
+NEhMwsDVa9Hi98PeimtLLqe1xNQg4wEaiVdGOOJtdsxue5ZjphUKH9lDq9GHYCwg
+H3DSf/r5tm386Lk7GpSJKP9GjdJ1VisXmnGM3QKheyNmU0odhR30Stfmb/0WYKPE
+3HDRamcY8n1Hez7aAzjMfAeBfgOCnnBX36IwyurDjsXesNK8u8vcf3jZyoC67Wfm
+O9UAV2fKvxxSsSBNXewzVvj8W/pkZ/3gQU1vXWz6EtpGpmcYKakVKwGFARXK8QvJ
+Xv7iRE1L+M2U3mtH6i0P
+=8SnG
 -----END PGP SIGNATURE-----
 
---bAmEntskrkuBymla--
+--XigHxYirkHk2Kxsx--
