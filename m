@@ -1,51 +1,72 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH] clk/exynos5250: change parent to aclk200_disp1 for hdmi
- subsystem
-Date: Fri, 23 Aug 2013 12:46:59 +0530
-Message-ID: <1377242219-30831-1-git-send-email-rahul.sharma@samsung.com>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH v2] ARM: dts: exynos5420/5250: add ADC device tree node
+Date: Fri, 23 Aug 2013 13:32:32 +0530
+Message-ID: <1377244952-25493-1-git-send-email-ch.naveen@samsung.com>
+References: <1377166691-5118-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20992 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754755Ab3HWGy7 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:58970 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754911Ab3HWIIH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 02:54:59 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MRZ000KA1VM2KC0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Aug 2013 15:54:58 +0900 (KST)
+	Fri, 23 Aug 2013 04:08:07 -0400
+In-reply-to: <1377166691-5118-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: rob.herring@calxeda.com, naveenkrishna.ch@gmail.com
 
-parent of hdmi and mixer block is mentioned as aclk200 which is
-not correct. It is clocked by the ouput of aclk200_disp1. Hence
-parent for mixer and hdmi clocks is changed to aclk200_disp1.
+Add ADC device tree node for exynos5420 and exynos5250
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Signed-off-by: Doug Anderson <dianders@chromium.org>
 ---
-This set is based on Mike's clk-next branch at
-https://git.linaro.org/gitweb?p=people/mturquette/linux.git
 
- drivers/clk/samsung/clk-exynos5250.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Added recipients accordingly,
+./scripts/get_maintainer.pl  -f of the modified files
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index a9916a4..d90e593 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -489,8 +489,8 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
- 	GATE(mie1, "mie1", "aclk200", GATE_IP_DISP1, 1, 0, 0),
- 	GATE(dsim0, "dsim0", "aclk200", GATE_IP_DISP1, 3, 0, 0),
- 	GATE(dp, "dp", "aclk200", GATE_IP_DISP1, 4, 0, 0),
--	GATE(mixer, "mixer", "aclk200", GATE_IP_DISP1, 5, 0, 0),
--	GATE(hdmi, "hdmi", "aclk200", GATE_IP_DISP1, 6, 0, 0),
-+	GATE(mixer, "mixer", "mout_aclk200_disp1", GATE_IP_DISP1, 5, 0, 0),
-+	GATE(hdmi, "hdmi", "mout_aclk200_disp1", GATE_IP_DISP1, 6, 0, 0),
- 	GATE(g2d, "g2d", "aclk200", GATE_IP_ACP, 3, 0, 0),
+ arch/arm/boot/dts/exynos5250.dtsi |   11 +++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi |   11 +++++++++++
+ 2 files changed, 22 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 1eec646..518f8cd 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -641,4 +641,15 @@
+ 		clocks = <&clock 133>, <&clock 339>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 	};
++
++	adc: adc@12D10000 {
++		compatible = "samsung,exynos-adc-v1";
++		reg = <0x12D10000 0x100>, <0x10040718 0x4>;
++		interrupts = <0 106 0>;
++		clocks = <&clock 303>;
++		clock-names = "adc";
++		#io-channel-cells = <1>;
++		io-channel-ranges;
++		status = "disabled";
++	};
  };
- 
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 5353e32..0c5c055 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -218,4 +218,15 @@
+ 		clocks = <&clock 147>, <&clock 421>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 	};
++
++	adc: adc@12D10000 {
++		compatible = "samsung,exynos-adc-v2";
++		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
++		interrupts = <0 106 0>;
++		clocks = <&clock 270>;
++		clock-names = "adc";
++		#io-channel-cells = <1>;
++		io-channel-ranges;
++		status = "disabled";
++	};
+ };
 -- 
-1.7.10.4
+1.7.9.5
