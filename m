@@ -1,47 +1,47 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v7] s5k5baf: add camera sensor driver
-Date: Fri, 23 Aug 2013 11:48:23 +0200
-Message-ID: <52172FE7.8040506@samsung.com>
-References: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
- <9243520.EzMBhpL3jX@flatron> <52172A13.1080701@samsung.com>
+Subject: Re: [media] s5p-csis: Add support for non-image data packets capture
+Date: Fri, 23 Aug 2013 11:54:29 +0200
+Message-ID: <52173155.9090902@samsung.com>
+References: <20130823093504.GJ31293@elgon.mountain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:27420 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754895Ab3HWJs1 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35605 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753898Ab3HWJyd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Aug 2013 05:48:27 -0400
-In-reply-to: <52172A13.1080701@samsung.com>
+	Fri, 23 Aug 2013 05:54:33 -0400
+In-reply-to: <20130823093504.GJ31293@elgon.mountain>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Grant Likely <grant.likely@linaro.org>
+To: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 08/23/2013 11:23 AM, Sylwester Nawrocki wrote:
->>>> +- stbyn-gpios	  : GPIO connected to STDBYN pin;
->>>> >> > +- rstn-gpios	  : GPIO connected to RSTN pin;
->> >
->> > Both GPIOs above have names suggesting that they are active low. I wonder 
->> > how the GPIO flags cell is interpreted here, namely the polarity bit.
-
-To be more clear, the polarity bit specifies GPIO state at the GPIO controller
-(SoC) that corresponds to active STANDBY or RESET signal state at the sensor.
-So it is supposed to cover any inverter in between the sensor and an SoC.
-
-> That's a good point. The GPIO flags are be used to specify active state
-> of the GPIO. Some sensors happen to use different active state for those
-> signals. It's not the case for this sensor though AFAICT.
+On 08/23/2013 11:35 AM, Dan Carpenter wrote:
+> Hello Sylwester Nawrocki,
 > 
-> Anyway IMO it would be better to name those gpios: "stby-gpios",
-> "rst-gpios" in case there appear revisions that have their pin named STDBY
-> or RST rather than STDBYN, RSTN. That seems rather unlikely though, but
-> since there are devices to which that could apply I think for consistency
-> it might be better to remove indication of polarity from the GPIO names.
+> I had a question about 36fa80927638: "[media] s5p-csis: Add support for
+> non-image data packets capture" from Sep 21, 2012.
+> 
+> S5PCSIS_INTSRC_NON_IMAGE_DATA is defined in mipi-csis.c:
+> 
+> #define S5PCSIS_INTSRC_NON_IMAGE_DATA   (0xff << 28)
 
+This is supposed to be a mask for bits [31:28], so (0xf << 28)
 
+> And it's only used in one place.
+> 
+> drivers/media/platform/exynos4-is/mipi-csis.c
+>    692          u32 status;
+>    693  
+>    694          status = s5pcsis_read(state, S5PCSIS_INTSRC);
+>    695          spin_lock_irqsave(&state->slock, flags);
+>    696  
+>    697          if ((status & S5PCSIS_INTSRC_NON_IMAGE_DATA) && pktbuf->data) {
+>                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> "status" is a u32 so 0xff0000000 is 4 bits too much.  In other words,
+> the mask is effectively "(0xf << 28)".  Was that intended or should it
+> be (0xff << 24)?
 
--- 
-Sylwester Nawrocki
-Samsung R&D Institute Poland
+It should be (0xf << 28). Thanks for looking into this.
