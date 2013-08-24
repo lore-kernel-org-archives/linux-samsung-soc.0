@@ -1,86 +1,106 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH V3] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Fri, 23 Aug 2013 20:48:21 -0700
-Message-ID: <CAD=FV=VRJceienPHcq3U2MCuYXjO-HaH1jHxyaz7JiAHcJTU1A@mail.gmail.com>
-References: <1377172278-15161-1-git-send-email-yuvaraj.cd@samsung.com>
-	<CAD=FV=W1LBYSQdLT7N6tTu6rGvUOFuPdFBNP2BRGDCXOH1hT9g@mail.gmail.com>
-	<CA+NduCBhD1aKe1G+P1k8P9pEDrHy2U50VzANi6_90P1wOB69Vg@mail.gmail.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH v4 4/7] ARM: dts: add dt nodes for exynos5420 hdmi subsystem
+Date: Sat, 24 Aug 2013 12:05:36 +0530
+Message-ID: <CAPdUM4N9cBfJFL1XMXug+QjbCdgq9b9u6u6ViH3Rc4Bh-5MOOQ@mail.gmail.com>
+References: <1377253461-20851-1-git-send-email-rahul.sharma@samsung.com>
+	<1377253461-20851-5-git-send-email-rahul.sharma@samsung.com>
+	<7099911.E9MGK44AOv@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CA+NduCBhD1aKe1G+P1k8P9pEDrHy2U50VzANi6_90P1wOB69Vg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:51802 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755187Ab3HXGfi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 24 Aug 2013 02:35:38 -0400
+In-Reply-To: <7099911.E9MGK44AOv@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sunil joshi <joshi@samsung.com>
 
-Yuvaraj,
+> Hi Rahul,
+>
+> Please see my comments inline.
+>
+> On Friday 23 of August 2013 15:54:18 Rahul Sharma wrote:
+>> Add hdmi, mixer, ddc device tree nodes for Exynos 5420 SoC.
+>>
+>> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts |   19 +++++++++++++++++++
+>>  arch/arm/boot/dts/exynos5420.dtsi         |   14 ++++++++++++++
+>>  2 files changed, 33 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..7dbf1fa
+>> 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -61,4 +61,23 @@
+>>               };
+>>       };
+>>
+>> +     hdmi@14530000 {
+>> +             status = "okay";
+>> +             hpd-gpio = <&gpx3 7 0>;
+>> +     };
+>> +
+>> +     mixer@14450000 {
+>> +             status = "okay";
+>> +     };
+>> +
+>> +     i2c_2: i2c@12C80000 {
+>> +             samsung,i2c-sda-delay = <100>;
+>> +             samsung,i2c-max-bus-freq = <66000>;
+>> +             status = "okay";
+>> +
+>> +             hdmiddc@50 {
+>> +                     compatible = "samsung,exynos4210-hdmiddc";
+>> +                     reg = <0x50>;
+>> +             };
+>> +     };
+>>  };
+>
+> You should separate above board-specific changes from this patch and
+> squash it with patch 6/7, adjusting patch subject and description
+> appropriately.
+>
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
+>> b/arch/arm/boot/dts/exynos5420.dtsi index 05dee86..7c6214d 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -274,4 +274,18 @@
+>>               pinctrl-0 = <&i2c3_bus>;
+>>               status = "disabled";
+>>       };
+>> +
+>> +     hdmi@14530000 {
+>> +             compatible = "samsung,exynos4212-hdmi";
+>> +             reg = <0x14530000 0x70000>;
+>> +             interrupts = <0 95 0>;
+>> +             status = "disabled";
+>> +     };
+>> +
+>> +     mixer@14450000 {
+>> +             compatible = "samsung,exynos5420-mixer";
+>> +             reg = <0x14450000 0x10000>;
+>> +             interrupts = <0 94 0>;
+>> +             status = "disabled";
+>
+> This node looks like a candidate to be enabled here on SoC level, since it
+> does not require any board specific information.
+>
 
-On Thu, Aug 22, 2013 at 11:25 PM, Yuvaraj Cd <yuvaraj.lkml@gmail.com> wrote:
->>>                 b.card-detect-delay
->>>                 c.samsung,dw-mshc-ciu-div
->>>                 d.samsung,dw-mshc-sdr-timing
->>>                 e.samsung,dw-mshc-ddr-timing
+Hi Tomasz,
 
-OK, so I don't know about card-detect-delay, but here's my belief
-about the others.  Feel free to tell me I'm wrong, since I'm not an EE
-by training and also the stuff below has been cobbled together from
-lots of different docs.  I also haven't experimented enough to know
-100% that it's correct.  I also know nothing about the actual
-signaling protocols of SD/MMC...  Enough caveats?
+Both hdmi and mixer should be enabled at same time. Mixer don't
+but hdmi needs hpd gpio information which is board dependent. Thats
+why I kept them disabled in SoC file. What you say?
 
+Regards,
+Rahul Sharma.
 
-sdr-timing / ddr-timing:
-
-* First number (I think) allows you to drive data related lines at a
-phase offset from the clock line.  So if you have crazy routing on
-your board and the data lines are much longer than the clock lines you
-might want to do this.  This is not common, so usually you want 0
-here.  Note that some other docs I have disagree with this and claim
-that this number has to do with hold time requirements.
-
-* Second number allows you to sample signals from the card at a phase
-offset from the clock line.  This number might depend on the card, but
-hopefully not much.  It's supposed to depend more on the length of the
-lines (AKA depends on the board), though it might also depend on
-pullup values as well and somewhat on the card?  This number needs to
-be tuned (like link training) when you operate a card at > 50MHz.
-
-* For ciu-div:
-
-With a ciu-div of 3 (really 3+1 = 4) you get phase offsets of 45 degrees.
-With a ciu-div of 1 (really 1+1 = 2) you get phase offsets of 90 degrees.
-WIth a ciu-div of 0 (really 0+1 = 1) you get no phase offsets (I would
-have guessed 180, but manual says otherwise)
-
-So ciu-div intimately affects the sdr-timing and ddr-timing.  Thus if
-those are board-specific then so is ciu-div.
-
----
-
-All of the above suggests to me the following untested things:
-
-* If you happened to have a situation where you had a "ciu-div" of 3
-and all of your sdr-timing/ddr-timing values were even, you could cut
-the input clock in half, change "ciu-div" to 1, and cut all your
-timings in half.  I'd imagine that would save you power (better to
-slow clocks down higher in the clock tree?).  It would be sorta nice
-if this was done automatically (assuming that you have full control of
-input clock).
-
-* I'm a little unclear exactly how the CLKDIV register interacts with
-all of the above.  I guess I'd be under the assumption that the CLKDIV
-applies to the main clock, the sample clock, and the drive clock.
-...but maybe I'm confused.  I think you also get different results (in
-terms of how many ns the drive and sample are delayed) depending on
-whether the CLKDIV applies _after_ ciu-div or before.  My guess is
-that it applies after.
-
----
-
-Anyway, not sure that helps a whole lot, but that's a summary of what
-I've come to understand.  I'm happy to be enlightened.  I'm still
-trying to figure how how these numbers were picked for our hardware
-and whether those numbers are actually right.
-
--Doug
+> Best regards,
+> Tomasz
+>
