@@ -1,111 +1,111 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v8 1/7] irqchip: vic: Parse interrupt and resume masks from device tree
-Date: Sat, 24 Aug 2013 18:57:13 +0200
-Message-ID: <2823496.bR7bMWMK3l@flatron>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <11592715.CyyL3y3PT6@flatron> <5218E0B7.4020701@gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v2 4/5] [media] exynos-mscl: Add DT bindings for M-Scaler
+ driver
+Date: Sun, 25 Aug 2013 00:26:02 +0200
+Message-ID: <521932FA.20801@gmail.com>
+References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com> <1376909932-23644-5-git-send-email-shaik.ameer@samsung.com> <033401ce9cdb$af145800$0d3d0800$%dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f48.google.com ([74.125.83.48]:53816 "EHLO
-	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755299Ab3HXQ5U (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Aug 2013 12:57:20 -0400
-In-Reply-To: <5218E0B7.4020701@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <033401ce9cdb$af145800$0d3d0800$%dae@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: 'Shaik Ameer Basha' <shaik.ameer@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, s.nawrocki@samsung.com, posciak@google.com, arun.kk@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-gpio@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Saturday 24 of August 2013 11:35:03 Rob Herring wrote:
-> On 08/24/2013 10:31 AM, Tomasz Figa wrote:
-> > On Saturday 24 of August 2013 10:25:26 Rob Herring wrote:
-> >> On Fri, Aug 23, 2013 at 6:04 PM, Tomasz Figa <tomasz.figa@gmail.com>
-> > 
-> > wrote:
-> >>> On Friday 23 of August 2013 16:11:18 Stephen Warren wrote:
-> >>>> On 08/22/2013 05:22 PM, Tomasz Figa wrote:
-> >>>>> This patch extends vic_of_init to parse valid interrupt sources
-> >>>>> and resume sources masks from device tree.
-> >>>>> 
-> >>>>> If mask values are not specified in device tree, all sources
-> >>>>> are assumed to be valid, as before this patch.
-> >>>> 
-> >>>> Can you explain further why the VIC needs this information
-> >>>> up-front?
-> >>>> Presumably it can accumulate it as devices request interrupts.
-> >>> 
-> >>> It does not need this information just for operation, but this makes
-> >>> the hardware description more detailed and allows better sanity
-> >>> checking of interrupts being requested.
-> >>> 
-> >>> To clarify, this is a mask of valid interrupt sources of the VIC,
-> >>> where
-> >>> set bit indicates that given signal is wired and clear bit that it
-> >>> is
-> >>> not.
-> >> 
-> >> I agree with Stephen here. The valid interrupts are the ones in the
-> >> DT. The reserved ones are the ones not present. If it is not needed
-> >> for the operation of the VIC, then remove it. The argument of sanity
-> >> checking could apply to all interrupt controllers.
-> > 
-> > Sorry, but I don't get what's wrong in having a more detailed
-> > description than required just for operation of the hardware.
-> > 
-> > The feature of sanity checks based on interrupt_mask (here now called
-> > valid-mask) has been present in the VIC driver since a long time
-> > already (if not from the beginning of existence of this driver) and
-> > before we started using DT, the mask was being passed from platform
-> > code as VIC init function argument.
-> 
-> So we should base the binding on the Linux software design?
+On 08/19/2013 02:57 PM, Inki Dae wrote:
+>> -----Original Message-----
+>> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+>> owner@vger.kernel.org] On Behalf Of Shaik Ameer Basha
+>> Sent: Monday, August 19, 2013 7:59 PM
+>> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+>> Cc: s.nawrocki@samsung.com; posciak@google.com; arun.kk@samsung.com;
+>> shaik.ameer@samsung.com
+>> Subject: [PATCH v2 4/5] [media] exynos-mscl: Add DT bindings for M-Scaler
+>> driver
+>>
+>> This patch adds the DT binding documentation for the exynos5
 
-I would put it different way: The binding should provide information 
-detailed enough to allow any features allowed by Linux software design.
+You may want to say to which specific SoC it applies.
 
-Well, anyway, I don't believe that existing, pre-ARM, bindings wasn't 
-influenced by how things worked on PowerPC platforms and software running 
-on them (including OpenFirmware and OS'es like Linux).
+>> based M-Scaler device driver.
+>>
+>> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
+>> ---
+>>   .../devicetree/bindings/media/exynos5-mscl.txt     |   34
+>> ++++++++++++++++++++
+>>   1 file changed, 34 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/media/exynos5-
+>> mscl.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/exynos5-mscl.txt
+>> b/Documentation/devicetree/bindings/media/exynos5-mscl.txt
+>> new file mode 100644
+>> index 0000000..5c9d1b1
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/exynos5-mscl.txt
+>> @@ -0,0 +1,34 @@
+>> +* Samsung Exynos5 M-Scaler device
+>> +
+>> +M-Scaler is used for scaling, blending, color fill and color space
+>> +conversion on EXYNOS5 SoCs.
+>> +
+>> +Required properties:
+>> +- compatible: should be "samsung,exynos5-mscl"
 
-> > I'd prefer this feature to be available when using DT as well, unless
-> > we really want to move things backwards, just because we want to use
-> > DT...
-> As I mentioned all these arguments apply to ALL interrupt controllers
-> except ones which a mask does not work. So IF this makes sense, then
-> this should be a generic property and generic code to support.
+What is an exact name of this IP in the datasheet ?
 
-Isn't a binding of particular device free to define a private property? 
-Anyway, I wouldn't be opposed to making it generic.
+> If Exynos5410/5420 have same IP,
+> "samsung,exynos5410-mscl" for M Scaler IP in Exynos5410/5420"
+>
+> Else,
+> Compatible: should be one of the following:
+> (a) "samsung,exynos5410-mscl" for M Scaler IP in Exynos5410"
+> (b) "samsung,exynos5420-mscl" for M Scaler IP in Exynos5420"
 
-> You simply have the same information twice. One is distributed
+Yes, except I suspect "mscl" is incorrect. It sounds like an unclear
+abbreviation of real name of the IP. It likely should be "mscaler".
 
-Assuming you have it specified correctly under client nodes.
+>> +- reg: should contain M-Scaler physical address location and length.
+>> +- interrupts: should contain M-Scaler interrupt number
+>> +- clocks: should contain the clock number according to CCF
 
-> and one
-> is centralized. While it adds a way to validate things it also adds a
-> way to introduce errors. Suppose someone writes a dts such that
-> valid-mask matches the irq lines present in that dts (simply because
-> they were lazy or don't have documentation of all interrupt lines).
+Hmm, this sounds like a Linux specific term in the binding. Perhaps:
 
-That's why this property is optional. If you don't know how this is set up 
-on your hardware then you don't fill it with a random value, but just skip 
-it instead.
+  - clocks: should contain the M-Scaler clock specifier, from the common
+	   clock bindings
 
-> Then
-> you go add a node with a new interrupt (because the initial dts was not
-> complete). Updating the valid-mask could very easily be forgotten. Yes,
-> this should all be found by testing, but people don't always have
-> access to all the h/w.
+?
+>> +- clock-names: should be "mscl"
+>> +
+>> +Example:
+>> +
+>> +	mscl_0: mscl@0x12800000 {
 
-Adding a node with a new interrupt usually means adding support for new 
-hardware. This is something I wouldn't really want to see submitted 
-untested...
+s/0x//
 
-Anyway, since I'd like this series to be merged ASAP and this patch is not 
-strictly necessary, especially this optional sanity check, let me just 
-drop this property and move on with other things...
+>> +		compatible = "samsung,exynos5-mscl";
+>
+> "samsung,exynos5410-mscl";
+>
+>> +		reg =<0x12800000 0x1000>;
+>> +		interrupts =<0 220 0>;
+>> +		clocks =<&clock 381>;
+>> +		clock-names = "mscl";
+>> +	};
+>> +
+>> +Aliases:
+>> +Each M-Scaler node should have a numbered alias in the aliases node,
+>> +in the form of msclN, N = 0...2. M-Scaler driver uses these aliases
+>> +to retrieve the device IDs using "of_alias_get_id()" call.
 
-Best regards,
-Tomasz
+So except in debug logs and for selecting variant data (which is same for
+all IP instances) are the aliases used for anything else ?
+I suspect you could do without these aliases. Device name includes start
+address of the IP register region, so that could be used to identify the
+M-Scaler instance in the logs.
+
+--
+Regards,
+Sylwester
