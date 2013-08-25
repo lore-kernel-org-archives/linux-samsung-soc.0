@@ -1,78 +1,116 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v6 0/3] Add RTC DT node to Exynos5420 SoC and Fix RTC
- DT node name for Exynos5250
-Date: Mon, 26 Aug 2013 02:23:57 +0900
-Message-ID: <521A3DAD.4030301@samsung.com>
-References: <1377176343-24859-1-git-send-email-vikas.sajjan@linaro.org>	<2046167.RNzj0dOWkj@amdc1227> <CAGm_ybgdC8B==GpCiDwnmWzV+L5hDFWr0ZP3tMq2MHWp-p9E1w@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] Initial Device Tree support for S3C64xx
+Date: Mon, 26 Aug 2013 02:31:11 +0900
+Message-ID: <521A3F5F.8040809@samsung.com>
+References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:47610 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753791Ab3HYRYD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 25 Aug 2013 13:24:03 -0400
-In-Reply-To: <CAGm_ybgdC8B==GpCiDwnmWzV+L5hDFWr0ZP3tMq2MHWp-p9E1w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <sajjan.linux@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-On 08/23/13 11:49, Vikas Sajjan wrote:
-> Hi Kukjin,
+On 08/22/13 06:21, Tomasz Figa wrote:
+> This series adds Device Tree support for Samsung S3C64xx SoC series.
 >
-> On Thu, Aug 22, 2013 at 6:37 PM, Tomasz Figa<t.figa@samsung.com>  wrote:
->> Hi Vikas,
->>
->> On Thursday 22 of August 2013 18:29:00 Vikas Sajjan wrote:
->>> This patchset does the following 3 things:
->>>   1) Fixes the RTC DT node name for Exynos5250
->>>   2) Update the "status" property of RTC DT node for Exynos5250 SoC
->>>   3) Adds RTC DT node to Exynos5420 SoC
->>>
->>> changes since v5:
->>>        - Fixed the RTC DT node name for Exynos5250 board files also,
->>>        because otherwise it breaks RTC support in bisections.
->>>
->>> changes since v4:
->>>        - removed "status" property of RTC DT node from exynos5250 board dts
->>> files
->>>
->>> changes since v3:
->>>        - split the 5250 related modifications into 2 separate patch as
->>>        suggested by Tomasz Figa<t.figa@samsung.com>
->>>
->>> changes since v2:
->>>        - split the 5250 related modifications into a separate patch.
->>>        - placed the RTC node as per the alphabetical order in the DTS file as
->>>        suggested by Kukjin Kim<kgene@kernel.org>.
->>>
->>> changes since v1:
->>>        - made DT node status as "okay" in the dtsi file itself.
->>>
->>> Vikas Sajjan (3):
->>>    ARM: dts: Fix the RTC DT node name for Exynos5250
->>>    ARM: dts: Update the "status" property of RTC DT node for Exynos5250
->>>      SoC
->>>    ARM: dts: Add RTC DT node to Exynos5420 SoC
->>>
->>>   arch/arm/boot/dts/exynos5.dtsi           |    2 +-
->>>   arch/arm/boot/dts/exynos5250-arndale.dts |    4 ----
->>>   arch/arm/boot/dts/exynos5250-snow.dts    |    4 ----
->>>   arch/arm/boot/dts/exynos5250.dtsi        |    3 ++-
->>>   arch/arm/boot/dts/exynos5420.dtsi        |    6 ++++++
->>>   5 files changed, 9 insertions(+), 10 deletions(-)
->>
->> Looks good to me now.
->>
->> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+> It fixes several problems preventing from booting an S3C64xx-based system
+> using Device Tree, adds all the infrastructure for Device Tree-based board
+> support, including mach-s3c64xx-dt and dts include files for S3C64xx SoCs,
+> and basic device tree source for FriendlyARM Mini6410 and SAMSUNG SMDK6410
+> boards.
 >
+> Current support is somewhat limite, but should be fine as a start and
+> will be extended in future, hopefully with help of S3C64xx board
+> maintainers.
 >
-> Can you apply this patchset.
+> Depends on:
+>   - [PATCH v2 0/8] Common Clock Framework support for Samsung S3C64xx
+>     http://thread.gmane.org/gmane.linux.usb.general/90493
 >
-
-Applied this whole series.
+> On Samsung S3C6410-based Mini6410 and SMDK6410 boards:
+>
+> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
+>
+> Changes since v6:
+>   - Rebased onto current for-next branch of Kgene's tree,
+>   - Dropped the idea of .init_platform() machine callback,
+>   - Added support for i2c controllers,
+>   - Replaced separate apb and ahb nodes with a single common soc node,
+>   - Updated cpus node according to CPU bindings,
+>   - Updated fixed rate clock nodes to use generic bindings,
+>   - Added support for PWM buzzer and I2C EEPROM on Mini6410 board,
+>   - Simplified the condition of skipping legacy GPIO initialization.
+>
+> Changes since v5:
+>   - Rebased onto current for-next branch of Kgene's tree,
+>   - Added support for new Common Clock Framework based clock driver,
+>   - Introduced hierarchical structure of device nodes (representing
+>     physical AHB and APB buses),
+>   - Bypassed most of legacy initialization when booting with DT,
+>   - Used preprocessor macros in dts files to improve readabilty,
+>   - Added support for SMDK6410 board.
+>
+> Changes since v4:
+>   - Rebased onto current for-next branch of Kgene's tree
+>   - Added support for pinctrl (driver merged through pinctrl tree)
+>   - Added labels to all nodes that can be overridden from board dts
+>   - Modified board dts to use the&label syntax to reference device nodes
+>
+> Changes since v3:
+>   - Rebased onto current for-next branch of Kgene's tree
+>   - Updated timer node for next version of samsung-time patches
+>   - Replaced local s3c64xx_dt_init_irq with irqchip_init
+>
+> Changes since v2:
+>   - Updated timer node for next version of samsung-time patches
+>
+> Changes since v1:
+>   - Dropped two VIC-related patches that are no longer necessary
+>   - Added Device Tree-based instantation of system timers
+>   - Corrected VIC interrupt specifiers
+>   - Adjusted CPU compatible values and dropped @id
+>
+> Tomasz Figa (7):
+>    ARM: common: vic: Parse interrupt and resume masks from device tree
+>    ARM: s3c64xx: Bypass legacy initialization when booting with DT
+>    gpio: samsung: Skip initialization if device tree is present
+>    ARM: s3c64xx: Add board file for boot using Device Tree
+>    ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
+>    ARM: dts: Add dts file for S3C6410-based Mini6410 board
+>    ARM: dts: Add dts file for S3C6410-based SMDK6410 board
+>
+>   Documentation/devicetree/bindings/arm/vic.txt |   6 +
+>   arch/arm/boot/dts/Makefile                    |   2 +
+>   arch/arm/boot/dts/s3c6400.dtsi                |  41 ++
+>   arch/arm/boot/dts/s3c6410-mini6410.dts        | 228 +++++++++
+>   arch/arm/boot/dts/s3c6410-smdk6410.dts        | 103 ++++
+>   arch/arm/boot/dts/s3c6410.dtsi                |  57 +++
+>   arch/arm/boot/dts/s3c64xx-pinctrl.dtsi        | 687 ++++++++++++++++++++++++++
+>   arch/arm/boot/dts/s3c64xx.dtsi                | 199 ++++++++
+>   arch/arm/mach-s3c64xx/Kconfig                 |  16 +
+>   arch/arm/mach-s3c64xx/Makefile                |   1 +
+>   arch/arm/mach-s3c64xx/common.c                |  12 +
+>   arch/arm/mach-s3c64xx/dma.c                   |   9 +
+>   arch/arm/mach-s3c64xx/irq-pm.c                |   9 +
+>   arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c       |  85 ++++
+>   arch/arm/mach-s3c64xx/s3c6400.c               |   9 +
+>   arch/arm/mach-s3c64xx/s3c6410.c               |   9 +
+>   arch/arm/plat-samsung/init.c                  |  12 +-
+>   drivers/gpio/gpio-samsung.c                   |  34 +-
+>   drivers/irqchip/irq-vic.c                     |   7 +-
+>   19 files changed, 1497 insertions(+), 29 deletions(-)
+>   create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
+>   create mode 100644 arch/arm/boot/dts/s3c6410-mini6410.dts
+>   create mode 100644 arch/arm/boot/dts/s3c6410-smdk6410.dts
+>   create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
+>   create mode 100644 arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
+>   create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
+>   create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
+>
+Nice, applied this whole series.
 
 Thanks,
 Kukjin
