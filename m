@@ -1,60 +1,59 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [media] exynos4-is: Add Exynos5250 SoC support to fimc-lite driver
-Date: Sun, 25 Aug 2013 15:30:17 +0200
-Message-ID: <521A06E9.7010100@gmail.com>
-References: <20130821085241.GA7574@elgon.mountain>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 0/8] Common Clock Framework support for Samsung S3C64xx
+Date: Mon, 26 Aug 2013 02:19:42 +0900
+Message-ID: <521A3CAE.7020903@samsung.com>
+References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com> <2956608.dyLtqySMuJ@amdc1227> <20130816210203.4443.43511@quantum> <3890424.fJfWX17mED@flatron> <158901ce9b34$c0ac8720$42059560$@org> <20130820002258.4443.34197@quantum> <18f101ce9d74$34e23450$9ea69cf0$@org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:62996 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753603Ab3HYNaV (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:53932 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755241Ab3HYRTv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 25 Aug 2013 09:30:21 -0400
-Received: by mail-ee0-f46.google.com with SMTP id c13so1112430eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 25 Aug 2013 06:30:20 -0700 (PDT)
-In-Reply-To: <20130821085241.GA7574@elgon.mountain>
+	Sun, 25 Aug 2013 13:19:51 -0400
+In-Reply-To: <18f101ce9d74$34e23450$9ea69cf0$@org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Mike Turquette' <mturquette@linaro.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?=27Heiko_St=FCbner=27?= <heiko@sntech.de>, 'Arnd Bergmann' <arnd@arndb.de>, gregkh@linuxfoundation.org, 'Tomasz Figa' <t.figa@samsung.com>, linux-usb@vger.kernel.org, 'Mark Brown' <broonie@kernel.org>, stern@rowland.harvard.edu, 'Olof Johansson' <olof@lixom.net>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-On 08/21/2013 10:52 AM, Dan Carpenter wrote:
-> Hello Sylwester Nawrocki,
+On 08/20/13 16:09, Kukjin Kim wrote:
+> Mike Turquette wrote:
+>>
 >
-> This is a semi-automatic email about new static checker warnings.
+> [...]
 >
-> The patch 086eca2905d0: "[media] exynos4-is: Add Exynos5250 SoC
-> support to fimc-lite driver" from Jun 14, 2013, leads to the
-> following Smatch complaint:
+>>> OK, if new branch is ready, I will replace with that or if re-merge is
+>>> required, I will. Either way, I'm fine and can handle. Mike, let me know
+>>> your choice :-)
+>>
+>> Since I have already published it let's just go with the delta patch.  I
+>> can create another stable branch named clk-next-s3c64xx-delta that just
+>> has this patch on top of clk-next-s3c64xx OR I can apply it on top of
+>> the existing clk-next-s3c64xx and re-merge it.
+>>
+> Sounds good to me. If the branch for the delta is ready, let me know.
 >
-> drivers/media/platform/exynos4-is/fimc-lite.c:1521 fimc_lite_probe()
-> 	 error: we previously assumed 'dev->of_node' could be null (see line 1511)
->
-> drivers/media/platform/exynos4-is/fimc-lite.c
->    1510	
->    1511		if (dev->of_node) {
->                      ^^^^^^^^^^^^
-> Existing check.
->
->    1512			of_id = of_match_node(flite_of_match, dev->of_node);
->    1513			if (of_id)
->    1514				drv_data = (struct flite_drvdata *)of_id->data;
->    1515			fimc->index = of_alias_get_id(dev->of_node, "fimc-lite");
->    1516		}
->    1517	
->    1518		if (!drv_data || fimc->index>= drv_data->num_instances ||
->    1519							fimc->index<  0) {
->    1520			dev_err(dev, "Wrong %s node alias\n",
->    1521						dev->of_node->full_name);
->                                                  ^^^^^^^^^^^^^^
-> Patch adds this dereference.
+Mike, I'm waiting for your delta branch which includes following from 
+Tomasz.
 
+[PATCH] clk: samsung: pll: Use new registration method for PLL6552 and 
+PLL6553
 
-Thanks, this issue has been fixed in commit:
-http://git.linuxtv.org/media_tree.git/commitdiff/6a40cbbe471bc7b821458973a5c18ba3d97d72f4
+I couldn't send some branches to arm-soc for upcoming merge window yet 
+because of build compilation breakage of common-clk-s3c64xx branch which 
+has many dependencies...
 
---
-Regards,
-Sylwester
+- Kukjin
+
+>> I'm trying to think on whether there are any weird git corner cases with
+>> re-merging clk-next-s3c64xx. Let me know if re-merging is somehow unsafe
+>> (makes history weird, or whatever).
+>>
+> I don't think it causes some problem.
+>
+>> Let me know what option is better for you. I'll publish as soon as I get
+>> the delta patch. Apologies again for creating some extra work!
+>>
+> No problem.
