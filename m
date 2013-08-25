@@ -1,116 +1,74 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v7 0/7] Initial Device Tree support for S3C64xx
-Date: Mon, 26 Aug 2013 02:31:11 +0900
-Message-ID: <521A3F5F.8040809@samsung.com>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: exynos5420/5250: add ADC device tree node
+Date: Mon, 26 Aug 2013 02:43:35 +0900
+Message-ID: <521A4247.9000900@samsung.com>
+References: <1377166691-5118-1-git-send-email-ch.naveen@samsung.com> <1377244952-25493-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1377244952-25493-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, naveenkrishna.ch@gmail.com, rob.herring@calxeda.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/22/13 06:21, Tomasz Figa wrote:
-> This series adds Device Tree support for Samsung S3C64xx SoC series.
+On 08/23/13 17:02, Naveen Krishna Chatradhi wrote:
+> Add ADC device tree node for exynos5420 and exynos5250
 >
-> It fixes several problems preventing from booting an S3C64xx-based system
-> using Device Tree, adds all the infrastructure for Device Tree-based board
-> support, including mach-s3c64xx-dt and dts include files for S3C64xx SoCs,
-> and basic device tree source for FriendlyARM Mini6410 and SAMSUNG SMDK6410
-> boards.
+> Signed-off-by: Naveen Krishna Chatradhi<ch.naveen@samsung.com>
+> Signed-off-by: Doug Anderson<dianders@chromium.org>
+> ---
 >
-> Current support is somewhat limite, but should be fine as a start and
-> will be extended in future, hopefully with help of S3C64xx board
-> maintainers.
+> Added recipients accordingly,
+> ./scripts/get_maintainer.pl  -f of the modified files
 >
-> Depends on:
->   - [PATCH v2 0/8] Common Clock Framework support for Samsung S3C64xx
->     http://thread.gmane.org/gmane.linux.usb.general/90493
+>   arch/arm/boot/dts/exynos5250.dtsi |   11 +++++++++++
+>   arch/arm/boot/dts/exynos5420.dtsi |   11 +++++++++++
+>   2 files changed, 22 insertions(+)
 >
-> On Samsung S3C6410-based Mini6410 and SMDK6410 boards:
->
-> Tested-by: Tomasz Figa<tomasz.figa@gmail.com>
->
-> Changes since v6:
->   - Rebased onto current for-next branch of Kgene's tree,
->   - Dropped the idea of .init_platform() machine callback,
->   - Added support for i2c controllers,
->   - Replaced separate apb and ahb nodes with a single common soc node,
->   - Updated cpus node according to CPU bindings,
->   - Updated fixed rate clock nodes to use generic bindings,
->   - Added support for PWM buzzer and I2C EEPROM on Mini6410 board,
->   - Simplified the condition of skipping legacy GPIO initialization.
->
-> Changes since v5:
->   - Rebased onto current for-next branch of Kgene's tree,
->   - Added support for new Common Clock Framework based clock driver,
->   - Introduced hierarchical structure of device nodes (representing
->     physical AHB and APB buses),
->   - Bypassed most of legacy initialization when booting with DT,
->   - Used preprocessor macros in dts files to improve readabilty,
->   - Added support for SMDK6410 board.
->
-> Changes since v4:
->   - Rebased onto current for-next branch of Kgene's tree
->   - Added support for pinctrl (driver merged through pinctrl tree)
->   - Added labels to all nodes that can be overridden from board dts
->   - Modified board dts to use the&label syntax to reference device nodes
->
-> Changes since v3:
->   - Rebased onto current for-next branch of Kgene's tree
->   - Updated timer node for next version of samsung-time patches
->   - Replaced local s3c64xx_dt_init_irq with irqchip_init
->
-> Changes since v2:
->   - Updated timer node for next version of samsung-time patches
->
-> Changes since v1:
->   - Dropped two VIC-related patches that are no longer necessary
->   - Added Device Tree-based instantation of system timers
->   - Corrected VIC interrupt specifiers
->   - Adjusted CPU compatible values and dropped @id
->
-> Tomasz Figa (7):
->    ARM: common: vic: Parse interrupt and resume masks from device tree
->    ARM: s3c64xx: Bypass legacy initialization when booting with DT
->    gpio: samsung: Skip initialization if device tree is present
->    ARM: s3c64xx: Add board file for boot using Device Tree
->    ARM: dts: Add basic dts include files for Samsung S3C64xx SoCs
->    ARM: dts: Add dts file for S3C6410-based Mini6410 board
->    ARM: dts: Add dts file for S3C6410-based SMDK6410 board
->
->   Documentation/devicetree/bindings/arm/vic.txt |   6 +
->   arch/arm/boot/dts/Makefile                    |   2 +
->   arch/arm/boot/dts/s3c6400.dtsi                |  41 ++
->   arch/arm/boot/dts/s3c6410-mini6410.dts        | 228 +++++++++
->   arch/arm/boot/dts/s3c6410-smdk6410.dts        | 103 ++++
->   arch/arm/boot/dts/s3c6410.dtsi                |  57 +++
->   arch/arm/boot/dts/s3c64xx-pinctrl.dtsi        | 687 ++++++++++++++++++++++++++
->   arch/arm/boot/dts/s3c64xx.dtsi                | 199 ++++++++
->   arch/arm/mach-s3c64xx/Kconfig                 |  16 +
->   arch/arm/mach-s3c64xx/Makefile                |   1 +
->   arch/arm/mach-s3c64xx/common.c                |  12 +
->   arch/arm/mach-s3c64xx/dma.c                   |   9 +
->   arch/arm/mach-s3c64xx/irq-pm.c                |   9 +
->   arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c       |  85 ++++
->   arch/arm/mach-s3c64xx/s3c6400.c               |   9 +
->   arch/arm/mach-s3c64xx/s3c6410.c               |   9 +
->   arch/arm/plat-samsung/init.c                  |  12 +-
->   drivers/gpio/gpio-samsung.c                   |  34 +-
->   drivers/irqchip/irq-vic.c                     |   7 +-
->   19 files changed, 1497 insertions(+), 29 deletions(-)
->   create mode 100644 arch/arm/boot/dts/s3c6400.dtsi
->   create mode 100644 arch/arm/boot/dts/s3c6410-mini6410.dts
->   create mode 100644 arch/arm/boot/dts/s3c6410-smdk6410.dts
->   create mode 100644 arch/arm/boot/dts/s3c6410.dtsi
->   create mode 100644 arch/arm/boot/dts/s3c64xx-pinctrl.dtsi
->   create mode 100644 arch/arm/boot/dts/s3c64xx.dtsi
->   create mode 100644 arch/arm/mach-s3c64xx/mach-s3c64xx-dt.c
->
-Nice, applied this whole series.
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 1eec646..518f8cd 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -641,4 +641,15 @@
+>   		clocks =<&clock 133>,<&clock 339>;
+>   		clock-names = "sclk_fimd", "fimd";
+>   	};
+> +
+> +	adc: adc@12D10000 {
+> +		compatible = "samsung,exynos-adc-v1";
+> +		reg =<0x12D10000 0x100>,<0x10040718 0x4>;
+> +		interrupts =<0 106 0>;
+> +		clocks =<&clock 303>;
+> +		clock-names = "adc";
+> +		#io-channel-cells =<1>;
+> +		io-channel-ranges;
+> +		status = "disabled";
+> +	};
+>   };
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 5353e32..0c5c055 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -218,4 +218,15 @@
+>   		clocks =<&clock 147>,<&clock 421>;
+>   		clock-names = "sclk_fimd", "fimd";
+>   	};
+> +
+> +	adc: adc@12D10000 {
+> +		compatible = "samsung,exynos-adc-v2";
+> +		reg =<0x12D10000 0x100>,<0x10040720 0x4>;
+> +		interrupts =<0 106 0>;
+> +		clocks =<&clock 270>;
+> +		clock-names = "adc";
+> +		#io-channel-cells =<1>;
+> +		io-channel-ranges;
+> +		status = "disabled";
+> +	};
+>   };
+
+Looks good to me, applied.
 
 Thanks,
 Kukjin
