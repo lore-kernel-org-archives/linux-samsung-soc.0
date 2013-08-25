@@ -1,45 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v7 3/7] gpio: samsung: Skip initialization if device tree
- is present
-Date: Mon, 26 Aug 2013 02:21:21 +0900
-Message-ID: <521A3D11.8090903@samsung.com>
-References: <1377120111-25601-1-git-send-email-tomasz.figa@gmail.com> <1377120111-25601-4-git-send-email-tomasz.figa@gmail.com> <CACRpkda2ZjPm4nEeDujPWSDCNLk4mr9izPvhqNKx5urVAg_Azg@mail.gmail.com> <3452017.UPhKO6xNO5@flatron> <1c9a01ce9f1e$473b58b0$d5b20a10$@org> <CACRpkdZX96YUpCn8_vkFsZQK2q5asHtxYtaHR2y1hDK_QQs6iA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/3] Add RTC DT node to Exynos5420 SoC and Fix RTC
+ DT node name for Exynos5250
+Date: Mon, 26 Aug 2013 02:23:57 +0900
+Message-ID: <521A3DAD.4030301@samsung.com>
+References: <1377176343-24859-1-git-send-email-vikas.sajjan@linaro.org>	<2046167.RNzj0dOWkj@amdc1227> <CAGm_ybgdC8B==GpCiDwnmWzV+L5hDFWr0ZP3tMq2MHWp-p9E1w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZX96YUpCn8_vkFsZQK2q5asHtxYtaHR2y1hDK_QQs6iA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ian.campbell@citrix.com>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Rob Herring <rob.herring@calxeda.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:47610 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753791Ab3HYRYD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 25 Aug 2013 13:24:03 -0400
+In-Reply-To: <CAGm_ybgdC8B==GpCiDwnmWzV+L5hDFWr0ZP3tMq2MHWp-p9E1w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <sajjan.linux@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, patches@linaro.org, linaro-kernel@lists.linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-On 08/24/13 03:11, Linus Walleij wrote:
-> On Thu, Aug 22, 2013 at 11:59 AM, Kukjin Kim<kgene@kernel.org>  wrote:
->> Tomasz Figa wrote:
->>> On Thursday 22 of August 2013 01:21:25 Linus Walleij wrote:
->>>> On Wed, Aug 21, 2013 at 11:21 PM, Tomasz Figa<tomasz.figa@gmail.com>
->>> wrote:
->>>>> Since this driver does not handle GPIO on device tree enabled
->>>>> platforms
->>>>> any more, it should be bypassed whenever device tree is available, to
->>>>> not conflict with the new pinctrl-samsung driver.
->>>>>
->>>>> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
->>>>
->>>> This seems like something I should apply to the GPIO tree
->>>> right now, shall I?
->>>
->>> Would be nice, but since this patch is a dependency for rest of this
->>> series and there are no other dependencies on GPIO tree, it might be
->>> easier to just let Kukjin take all the patches with required Acks.
->>>
->> Oh, I didn't see any dependencies...but if so, Linus do you agree with
->> Tomasz' opinion?
+On 08/23/13 11:49, Vikas Sajjan wrote:
+> Hi Kukjin,
 >
-> Yes please merge it through the Samsung tree.
-> Acked-by: Linus Walleij<linus.walleij@linaro.org>
+> On Thu, Aug 22, 2013 at 6:37 PM, Tomasz Figa<t.figa@samsung.com>  wrote:
+>> Hi Vikas,
+>>
+>> On Thursday 22 of August 2013 18:29:00 Vikas Sajjan wrote:
+>>> This patchset does the following 3 things:
+>>>   1) Fixes the RTC DT node name for Exynos5250
+>>>   2) Update the "status" property of RTC DT node for Exynos5250 SoC
+>>>   3) Adds RTC DT node to Exynos5420 SoC
+>>>
+>>> changes since v5:
+>>>        - Fixed the RTC DT node name for Exynos5250 board files also,
+>>>        because otherwise it breaks RTC support in bisections.
+>>>
+>>> changes since v4:
+>>>        - removed "status" property of RTC DT node from exynos5250 board dts
+>>> files
+>>>
+>>> changes since v3:
+>>>        - split the 5250 related modifications into 2 separate patch as
+>>>        suggested by Tomasz Figa<t.figa@samsung.com>
+>>>
+>>> changes since v2:
+>>>        - split the 5250 related modifications into a separate patch.
+>>>        - placed the RTC node as per the alphabetical order in the DTS file as
+>>>        suggested by Kukjin Kim<kgene@kernel.org>.
+>>>
+>>> changes since v1:
+>>>        - made DT node status as "okay" in the dtsi file itself.
+>>>
+>>> Vikas Sajjan (3):
+>>>    ARM: dts: Fix the RTC DT node name for Exynos5250
+>>>    ARM: dts: Update the "status" property of RTC DT node for Exynos5250
+>>>      SoC
+>>>    ARM: dts: Add RTC DT node to Exynos5420 SoC
+>>>
+>>>   arch/arm/boot/dts/exynos5.dtsi           |    2 +-
+>>>   arch/arm/boot/dts/exynos5250-arndale.dts |    4 ----
+>>>   arch/arm/boot/dts/exynos5250-snow.dts    |    4 ----
+>>>   arch/arm/boot/dts/exynos5250.dtsi        |    3 ++-
+>>>   arch/arm/boot/dts/exynos5420.dtsi        |    6 ++++++
+>>>   5 files changed, 9 insertions(+), 10 deletions(-)
+>>
+>> Looks good to me now.
+>>
+>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
 >
-Applied, thanks.
+>
+> Can you apply this patchset.
+>
 
-- Kukjin
+Applied this whole series.
+
+Thanks,
+Kukjin
