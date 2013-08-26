@@ -1,132 +1,172 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH RFC 3/5] ARM: samsung: add clock setup for FIMC and FIMD
-Date: Mon, 26 Aug 2013 18:19:18 +0200
-Message-ID: <1445676.NMCyFEC5q4@amdc1032>
-References: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
- <1377517114-20222-4-git-send-email-m.krawczuk@partner.samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 4/5] [media] exynos-mscl: Add DT bindings for M-Scaler
+ driver
+Date: Mon, 26 Aug 2013 18:21:27 +0200
+Message-ID: <521B8087.9010605@samsung.com>
+References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
+ <1376909932-23644-5-git-send-email-shaik.ameer@samsung.com>
+ <033401ce9cdb$af145800$0d3d0800$%dae@samsung.com> <521932FA.20801@gmail.com>
+ <CAOD6ATqNkN4Nqroi0miUpWFgPqTK5gfYX-G7mLTxuDau3iAdVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11172 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751901Ab3HZQTf (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:47089 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752097Ab3HZQVb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 12:19:35 -0400
-In-reply-to: <1377517114-20222-4-git-send-email-m.krawczuk@partner.samsung.com>
+	Mon, 26 Aug 2013 12:21:31 -0400
+In-reply-to: <CAOD6ATqNkN4Nqroi0miUpWFgPqTK5gfYX-G7mLTxuDau3iAdVw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, thomas.abraham@linaro.org, t.stanislaws@samsung.com, m.chehab@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Inki Dae <inki.dae@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, posciak@google.com, Arun Kumar K <arun.kk@samsung.com>
 
-
-Hi,
-
-On Monday, August 26, 2013 01:38:32 PM Mateusz Krawczuk wrote:
-> This patch adds code that sets correct parents and rates for clocks
-> used by FIMC and FIMD on Goni board.
+On 08/26/2013 02:20 PM, Shaik Ameer Basha wrote:
+> Hi Sylwester,
 > 
-> Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-> ---
->  arch/arm/mach-s5pv210/mach-goni.c | 48 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
+> Thanks for the comments.
+> Please find the response inline...
 > 
-> diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-> index e5cd9fb..309b5ad 100644
-> --- a/arch/arm/mach-s5pv210/mach-goni.c
-> +++ b/arch/arm/mach-s5pv210/mach-goni.c
-> @@ -55,6 +55,7 @@
->  #include <media/s5p_fimc.h>
->  #include <media/noon010pc30.h>
->  
-> +#include <linux/clk.h>
->  #include "common.h"
->  
->  /* Following are default values for UCON, ULCON and UFCON UART registers */
-> @@ -195,6 +196,49 @@ static struct platform_device goni_spi_gpio = {
->  	},
->  };
->  
-> +static void set_fimd_clock(void)
+> Actually, I am waiting for your comments only :)
+> are you also reviewing the driver code? If yes, I can delay the next
+> version until your post your comments.
 
-It can be marked as __init.
+Yes, I've started reviewing the remaining patches. I just put this on
+my todo list with a bit lower priority since it is too late to have it
+in v3.12 anyway. I'll finish review today or tomorrow. It might be
+a good idea to hold on with posting new version until then.
 
-> +{
-> +	struct clk *lcd_clk, *parent_clk;
-> +
-> +	lcd_clk = clk_get(NULL, "sclk_fimd");
-> +	parent_clk = clk_get(NULL, "mout_mpll");
-> +	clk_set_parent(lcd_clk, parent_clk);
-> +	clk_set_rate(lcd_clk, clk_get_rate(parent_clk)/3);
-> +
-> +	clk_put(parent_clk);
-> +	clk_put(lcd_clk);
-> +}
-> +
-> +static void set_fimc_clock(void)
+> On Sun, Aug 25, 2013 at 3:56 AM, Sylwester Nawrocki
+> <sylvester.nawrocki@gmail.com> wrote:
+>> On 08/19/2013 02:57 PM, Inki Dae wrote:
+>>>>
+>>>> -----Original Message-----
+>>>> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+>>>> owner@vger.kernel.org] On Behalf Of Shaik Ameer Basha
+>>>> Sent: Monday, August 19, 2013 7:59 PM
+>>>> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+>>>> Cc: s.nawrocki@samsung.com; posciak@google.com; arun.kk@samsung.com;
+>>>> shaik.ameer@samsung.com
+>>>> Subject: [PATCH v2 4/5] [media] exynos-mscl: Add DT bindings for M-Scaler
+>>>> driver
+>>>>
+>>>> This patch adds the DT binding documentation for the exynos5
+>>
+>>
+>> You may want to say to which specific SoC it applies.
+> 
+> Ok. will update this.
+> Only 5410 and 5420 has this IP as of now.
 
-ditto
+OK, good.
 
-> +{
-> +	struct clk *cam0_clk, *cam1_clk, *fimc2_clk, *fimc1_clk,
-> +			*fimc0_clk, *parent_clk, *vpll_clk, *csis_clk;
-> +
-> +	parent_clk = clk_get(NULL, "mout_mpll");
-> +	vpll_clk = clk_get(NULL, "mout_vpll");
-> +	cam0_clk = clk_get(NULL, "mout_cam0");
-> +	cam1_clk = clk_get(NULL, "mout_cam1");
-> +	fimc2_clk = clk_get(NULL, "mout_fimc2");
-> +	fimc1_clk = clk_get(NULL, "mout_fimc1");
-> +	fimc0_clk = clk_get(NULL, "mout_fimc0");
-> +	csis_clk = clk_get(NULL, "mout_csis");
+>>>> based M-Scaler device driver.
+>>>>
+>>>> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
+>>>> ---
+>>>>   .../devicetree/bindings/media/exynos5-mscl.txt     |   34
+>>>> ++++++++++++++++++++
+>>>>   1 file changed, 34 insertions(+)
+>>>>   create mode 100644 Documentation/devicetree/bindings/media/exynos5-
+>>>> mscl.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/media/exynos5-mscl.txt
+>>>> b/Documentation/devicetree/bindings/media/exynos5-mscl.txt
+>>>> new file mode 100644
+>>>> index 0000000..5c9d1b1
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/media/exynos5-mscl.txt
+>>>> @@ -0,0 +1,34 @@
+>>>> +* Samsung Exynos5 M-Scaler device
+>>>> +
+>>>> +M-Scaler is used for scaling, blending, color fill and color space
+>>>> +conversion on EXYNOS5 SoCs.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: should be "samsung,exynos5-mscl"
+>>
+>>
+>> What is an exact name of this IP in the datasheet ?
+> 
+> It is named as "SCALER". But when i got the Initial doc, it was also
+> known as memory to memory scaler.
+> so, i am using M-Scaler.
+> 
+> Can i change this name to SCALER instead ?
 
-Shouldn't you check clk_get() return value with IS_ERR()?
+I think we should use names as they appear in the User Manuals, even
+though those might be overly generic. It shouldn't be difficult to
+identify an IP in a specific SoC.
 
-You can do one big check here and than just do clk_put() if !IS_ERR(), i.e.
+>>> If Exynos5410/5420 have same IP,
+>>> "samsung,exynos5410-mscl" for M Scaler IP in Exynos5410/5420"
+>>>
+>>> Else,
+>>> Compatible: should be one of the following:
+>>> (a) "samsung,exynos5410-mscl" for M Scaler IP in Exynos5410"
+>>> (b) "samsung,exynos5420-mscl" for M Scaler IP in Exynos5420"
+>>
+>>
+>> Yes, except I suspect "mscl" is incorrect. It sounds like an unclear
+>> abbreviation of real name of the IP. It likely should be "mscaler".
+>>
+>>
+>>>> +- reg: should contain M-Scaler physical address location and length.
+>>>> +- interrupts: should contain M-Scaler interrupt number
+>>>> +- clocks: should contain the clock number according to CCF
+>>
+>>
+>> Hmm, this sounds like a Linux specific term in the binding. Perhaps:
+>>
+>>  - clocks: should contain the M-Scaler clock specifier, from the common
+>>            clock bindings
+>>
+>>
+>> ?
+>>>>
+>>>> +- clock-names: should be "mscl"
+>>>> +
+>>>> +Example:
+>>>> +
+>>>> +       mscl_0: mscl@0x12800000 {
+>>
+>>
+>> s/0x//
+> 
+> Ok. Like this?
+> mscl_0: mscl@12800000 {
 
-if (IS_ERR(parent_clk) || IS_ERR(vpll_clk) || ...)
-...
+Yup.
 
-clk_set_parent()
-...
+>>>> +               compatible = "samsung,exynos5-mscl";
+>>>
+>>>
+>>> "samsung,exynos5410-mscl";
+>>>
+>>>> +               reg =<0x12800000 0x1000>;
+>>>> +               interrupts =<0 220 0>;
+>>>> +               clocks =<&clock 381>;
+>>>> +               clock-names = "mscl";
+>>>> +       };
+>>>> +
+>>>> +Aliases:
+>>>> +Each M-Scaler node should have a numbered alias in the aliases node,
+>>>> +in the form of msclN, N = 0...2. M-Scaler driver uses these aliases
+>>>> +to retrieve the device IDs using "of_alias_get_id()" call.
+>>
+>>
+>> So except in debug logs and for selecting variant data (which is same for
+>> all IP instances) are the aliases used for anything else ?
+>> I suspect you could do without these aliases. Device name includes start
+>> address of the IP register region, so that could be used to identify the
+>> M-Scaler instance in the logs.
+> 
+> Ok. I will check more.
+> If it is only used for logs, then i will remove the aliases.
 
-if (!IS_ERR(parent_clk))
-	clk_put(parent_clk);
-...
+Thanks.
 
-> +	clk_set_parent(cam0_clk, vpll_clk);
-> +	clk_set_parent(cam1_clk, vpll_clk);
-> +	clk_set_parent(fimc2_clk, parent_clk);
-> +	clk_set_parent(fimc1_clk, parent_clk);
-> +	clk_set_parent(fimc0_clk, parent_clk);
-> +	clk_set_parent(csis_clk, parent_clk);
-> +
-> +	clk_put(parent_clk);
-> +	clk_put(vpll_clk);
-> +	clk_put(cam0_clk);
-> +	clk_put(cam1_clk);
-> +	clk_put(fimc2_clk);
-> +	clk_put(fimc1_clk);
-> +	clk_put(fimc0_clk);
-> +}
-> +
->  /* KEYPAD */
->  static uint32_t keymap[] __initdata = {
->  	/* KEY(row, col, keycode) */
-> @@ -931,6 +975,10 @@ static void __init goni_machine_init(void)
->  	s3c_i2c2_set_platdata(&i2c2_data);
->  	i2c_register_board_info(2, i2c2_devs, ARRAY_SIZE(i2c2_devs));
->  
-> +	/* FIMD AND FIMC set clock config */
-> +	set_fimd_clock();
-> +	set_fimc_clock();
-> +
->  	/* PMIC */
->  	goni_pmic_init();
->  	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
-
-Best regards,
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Regards,
+Sylwester
