@@ -1,85 +1,58 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v5 0/6] ARM: dts: add support for exynos hdmi subsystem
-Date: Tue, 27 Aug 2013 01:42:39 +0200
-Message-ID: <3096714.XGeJNyPCXd@flatron>
-References: <1377509901-9467-1-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH v3 4/5] clk/exynos5420: add hdmi mux to change parents in hdmi driver
+Date: Tue, 27 Aug 2013 01:46:42 +0200
+Message-ID: <1919681.jqCQjHmyQW@flatron>
+References: <1377508383-15185-1-git-send-email-rahul.sharma@samsung.com> <1377508383-15185-5-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f52.google.com ([74.125.83.52]:43749 "EHLO
-	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751575Ab3HZXmn (ORCPT
+Received: from mail-ee0-f51.google.com ([74.125.83.51]:56859 "EHLO
+	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751838Ab3HZXqq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 19:42:43 -0400
-In-Reply-To: <1377509901-9467-1-git-send-email-rahul.sharma@samsung.com>
+	Mon, 26 Aug 2013 19:46:46 -0400
+Received: by mail-ee0-f51.google.com with SMTP id c1so1877407eek.24
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2013 16:46:45 -0700 (PDT)
+In-Reply-To: <1377508383-15185-5-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, joshi@samsung.com, r.sh.open@gmail.com
 
 Hi Rahul,
 
-On Monday 26 of August 2013 15:08:15 Rahul Sharma wrote:
-> It adds Device tree nodes and clocks information for HDMI subsystem
-> for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
-> hpd gpio and update binding documents.
+On Monday 26 of August 2013 14:43:02 Rahul Sharma wrote:
+> hdmi driver needs to change the parent of hdmi clock
+> to pixel clock or hdmiphy clock, based on the stability
+> of hdmiphy. This patch is exposing the mux for changing
+> the parent.
 > 
-> This set is based on kukjin's for-next branch at
-> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/clock/exynos5420-clock.txt |    5
+> +++++ drivers/clk/samsung/clk-exynos5420.c                         |   
+> 5 ++++- 2 files changed, 9 insertions(+), 1 deletion(-)
 > 
-> v5:
-> 1) Merged Clock addition patch to DT nmde addition patch.
-> 2) Add dout_pixel clock for hdmi in place of sclk_pixel.
-> 3) Enable mixer node in soc dtsi file.
+> diff --git
+> a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+> b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt index
+> 5758a69..6f16aa8 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+> @@ -182,6 +182,11 @@ clock which they consume.
+>    g3d			501
+>    smmu_mixer		502
 > 
-> v4:
-> 1) Remove the movement of common properties to Exynos5.dtsi for
-> I2C and hdmi subsystem.
-> 2) Change the title of the patches.
-> 
-> v3:
-> 1) Rebase to kgene for-next based on 3.11-rc1.
-> 2) Changes clock numbers as per updated clocks file for
-> exyno5250 and exynos5420.
-> 3) Dropped Sachin patch as already got merged.
-> 
-> v2:
-> 1) Added patch for moving common i2c properties to exynos5.dtsi
-> 2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
-> 3) moved hpd pinctrl node to board file.
-> 4) Added Sachin's patch to update binding document for hdmi with hpd
-> information.
-> 
-> 
-> 
-> Andrew Bresticker (1):
->   ARM: dts: add i2c device nodes for Exynos5420
-> 
-> Rahul Sharma (4):
->   ARM: dts: add clocks to hdmi dt node for exynos5250
->   ARM: dts: add dt nodes for hdmi subsystem for exynos5420
->   ARM: dts: add hdmi hpd gpio pinctrl node for exynos5420
->   of/documentation: update with clock information for exynos hdmi
->     subsystem
-> 
-> Sean Paul (1):
->   ARM: dts: add mixer clocks to mixer node for Exynos5250
-> 
->  .../devicetree/bindings/video/exynos_hdmi.txt      |   14 +++-
->  .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++-
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   26 +++++++
->  arch/arm/boot/dts/exynos5420.dtsi                  |   75
-> ++++++++++++++++++++ 5 files changed, 123 insertions(+), 4 deletions(-)
+> +  Mux			ID
+> +  ----------------------------
+> +
+> +  mout_hdmi		1024
 
-Except patches 4-6, which I have commented on, for the series:
-
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
-Also one minor comment: It would be better if you updated the 
-documentation as first patch. This would make all the following patches to 
-be based on already existing documentation.
+Is there a need for such big hole between smm_mixer and this clock? I 
+believe that based on the documentation, the total amount of clocks that 
+can be defined may be approximated and some extra margin added, so you 
+don't waste so much of numbering space and memory used for lookup array.
 
 Best regards,
 Tomasz
