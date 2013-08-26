@@ -1,194 +1,213 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Subject: Re: [GIT PULL 3/3] 2nd Round Samsung mach-exynos for v3.12
-Date: Mon, 26 Aug 2013 16:33:55 +0530
-Message-ID: <CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
+Date: Mon, 26 Aug 2013 13:19:11 +0200
+Message-ID: <4070794.XxjluIqBpK@amdc1032>
 References: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
-	<3145165.ZB7l3vNJ7a@amdc1032>
+ <3145165.ZB7l3vNJ7a@amdc1032>
+ <CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f182.google.com ([209.85.217.182]:46963 "EHLO
-	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752319Ab3HZLD6 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:18045 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752361Ab3HZLTa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 07:03:58 -0400
-Received: by mail-lb0-f182.google.com with SMTP id r12so1348941lbi.27
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2013 04:03:55 -0700 (PDT)
-In-Reply-To: <3145165.ZB7l3vNJ7a@amdc1032>
+	Mon, 26 Aug 2013 07:19:30 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MS400CATY4GS620@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Aug 2013 20:19:28 +0900 (KST)
+In-reply-to: <CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: amit daniel kachhap <amit.daniel@samsung.com>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, arm@kernel.org, Olof Johansson <olof@lixom.net>, LAK <linux-arm-kernel@lists.infradead.org>
 
-Hi,
-
-On Mon, Aug 26, 2013 at 3:36 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
+On Monday, August 26, 2013 04:33:55 PM amit daniel kachhap wrote:
 > Hi,
->
-> On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
->> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
->>
->>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->> tags/samsung-mach-exynos
->>
->> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
->>
->>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
->> 05:05:16 +0900)
->>
->> ----------------------------------------------------------------
->> update mach-exynos
->> - enable ARCH_HAS_BANDGAP for exynos SoCs
->> - skip C1 cpuidle for exynos5440 because non-supporting
->> - always enable PM domains for exynos4x12
->>
->> ----------------------------------------------------------------
->> Amit Daniel Kachhap (2):
->>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
->>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
->
-> The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
->
-> --- a/arch/arm/mach-exynos/cpuidle.c
-> +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
->                 device->cpu = cpu_id;
->
->                 /* Support IDLE only */
-> -               if (cpu_id != 0)
-> +               if (soc_is_exynos5440() || cpu_id != 0)
->                         device->state_count = 1;
->
->                 ret = cpuidle_register_device(device);
->
-> is incorrect as noted a month ago in:
->
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
->
-> [ Because of the deficiency in the core cpuidle core (device->state_count
->   not being used by governors' code) only sysfs entries for C1 state will be
->   disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
->
-> also non-working device->state_count is planned to be removed by:
->
-> http://permalink.gmane.org/gmane.linux.power-management.general/37390
-I looked at your patch series and it seems reasonable. I will repost
-this patch on top of yours.
-But I suggest to keep this patch temporary till your patch series gets merged.
+> 
+> On Mon, Aug 26, 2013 at 3:36 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > Hi,
+> >
+> > On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
+> >> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
+> >>
+> >>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
+> >>
+> >> are available in the git repository at:
+> >>
+> >>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> >> tags/samsung-mach-exynos
+> >>
+> >> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
+> >>
+> >>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
+> >> 05:05:16 +0900)
+> >>
+> >> ----------------------------------------------------------------
+> >> update mach-exynos
+> >> - enable ARCH_HAS_BANDGAP for exynos SoCs
+> >> - skip C1 cpuidle for exynos5440 because non-supporting
+> >> - always enable PM domains for exynos4x12
+> >>
+> >> ----------------------------------------------------------------
+> >> Amit Daniel Kachhap (2):
+> >>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
+> >>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
+> >
+> > The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
+> >
+> > --- a/arch/arm/mach-exynos/cpuidle.c
+> > +++ b/arch/arm/mach-exynos/cpuidle.c
+> > @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
+> >                 device->cpu = cpu_id;
+> >
+> >                 /* Support IDLE only */
+> > -               if (cpu_id != 0)
+> > +               if (soc_is_exynos5440() || cpu_id != 0)
+> >                         device->state_count = 1;
+> >
+> >                 ret = cpuidle_register_device(device);
+> >
+> > is incorrect as noted a month ago in:
+> >
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
+> >
+> > [ Because of the deficiency in the core cpuidle core (device->state_count
+> >   not being used by governors' code) only sysfs entries for C1 state will be
+> >   disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
+> >
+> > also non-working device->state_count is planned to be removed by:
+> >
+> > http://permalink.gmane.org/gmane.linux.power-management.general/37390
+> I looked at your patch series and it seems reasonable. I will repost
+> this patch on top of yours.
 
-Thanks,
-Amit Daniel
->
->
-> To disable C1 state on EXYNOS5440 something like:
->
->         static int __init exynos4_init_cpuidle(void)
->         {
->         ...
->                 if (soc_is_exynos5440())
->                         exynos4_idle_driver.state_count = 1;
->         ...
->         }
->
-> should be done instead.
->
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+If you correctly use driver's state_count (instead of device's) there will be
+no dependency on my patch series and the new patch can be applied immediately.
 
+> But I suggest to keep this patch temporary till your patch series gets merged.
 
-On Mon, Aug 26, 2013 at 3:36 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
-> Hi,
->
-> On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
->> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
->>
->>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->> tags/samsung-mach-exynos
->>
->> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
->>
->>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
->> 05:05:16 +0900)
->>
->> ----------------------------------------------------------------
->> update mach-exynos
->> - enable ARCH_HAS_BANDGAP for exynos SoCs
->> - skip C1 cpuidle for exynos5440 because non-supporting
->> - always enable PM domains for exynos4x12
->>
->> ----------------------------------------------------------------
->> Amit Daniel Kachhap (2):
->>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
->>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
->
-> The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
->
-> --- a/arch/arm/mach-exynos/cpuidle.c
-> +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
->                 device->cpu = cpu_id;
->
->                 /* Support IDLE only */
-> -               if (cpu_id != 0)
-> +               if (soc_is_exynos5440() || cpu_id != 0)
->                         device->state_count = 1;
->
->                 ret = cpuidle_register_device(device);
->
-> is incorrect as noted a month ago in:
->
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
->
-> [ Because of the deficiency in the core cpuidle core (device->state_count
->   not being used by governors' code) only sysfs entries for C1 state will be
->   disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
->
-> also non-working device->state_count is planned to be removed by:
->
-> http://permalink.gmane.org/gmane.linux.power-management.general/37390
->
->
-> To disable C1 state on EXYNOS5440 something like:
->
->         static int __init exynos4_init_cpuidle(void)
->         {
->         ...
->                 if (soc_is_exynos5440())
->                         exynos4_idle_driver.state_count = 1;
->         ...
->         }
->
-> should be done instead.
->
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+The current patch (the one Kukjin merged) is incorrect as it just doesn't
+do what it advertises. I see no reason to keep it.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> Thanks,
+> Amit Daniel
+> >
+> >
+> > To disable C1 state on EXYNOS5440 something like:
+> >
+> >         static int __init exynos4_init_cpuidle(void)
+> >         {
+> >         ...
+> >                 if (soc_is_exynos5440())
+> >                         exynos4_idle_driver.state_count = 1;
+> >         ...
+> >         }
+> >
+> > should be done instead.
+> >
+> > Best regards,
+> > --
+> > Bartlomiej Zolnierkiewicz
+> > Samsung R&D Institute Poland
+> > Samsung Electronics
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> 
+> On Mon, Aug 26, 2013 at 3:36 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > Hi,
+> >
+> > On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
+> >> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
+> >>
+> >>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
+> >>
+> >> are available in the git repository at:
+> >>
+> >>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> >> tags/samsung-mach-exynos
+> >>
+> >> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
+> >>
+> >>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
+> >> 05:05:16 +0900)
+> >>
+> >> ----------------------------------------------------------------
+> >> update mach-exynos
+> >> - enable ARCH_HAS_BANDGAP for exynos SoCs
+> >> - skip C1 cpuidle for exynos5440 because non-supporting
+> >> - always enable PM domains for exynos4x12
+> >>
+> >> ----------------------------------------------------------------
+> >> Amit Daniel Kachhap (2):
+> >>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
+> >>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
+> >
+> > The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
+> >
+> > --- a/arch/arm/mach-exynos/cpuidle.c
+> > +++ b/arch/arm/mach-exynos/cpuidle.c
+> > @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
+> >                 device->cpu = cpu_id;
+> >
+> >                 /* Support IDLE only */
+> > -               if (cpu_id != 0)
+> > +               if (soc_is_exynos5440() || cpu_id != 0)
+> >                         device->state_count = 1;
+> >
+> >                 ret = cpuidle_register_device(device);
+> >
+> > is incorrect as noted a month ago in:
+> >
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
+> >
+> > [ Because of the deficiency in the core cpuidle core (device->state_count
+> >   not being used by governors' code) only sysfs entries for C1 state will be
+> >   disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
+> >
+> > also non-working device->state_count is planned to be removed by:
+> >
+> > http://permalink.gmane.org/gmane.linux.power-management.general/37390
+> >
+> >
+> > To disable C1 state on EXYNOS5440 something like:
+> >
+> >         static int __init exynos4_init_cpuidle(void)
+> >         {
+> >         ...
+> >                 if (soc_is_exynos5440())
+> >                         exynos4_idle_driver.state_count = 1;
+> >         ...
+> >         }
+> >
+> > should be done instead.
+> >
+> > Best regards,
+> > --
+> > Bartlomiej Zolnierkiewicz
+> > Samsung R&D Institute Poland
+> > Samsung Electronics
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
