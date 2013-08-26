@@ -1,95 +1,155 @@
 From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH RFC 3/5] ARM: samsung: add clock setup for FIMC and FIMD
-Date: Mon, 26 Aug 2013 13:38:32 +0200
-Message-ID: <1377517114-20222-4-git-send-email-m.krawczuk@partner.samsung.com>
+Subject: [PATCH RFC 1/5] media: s5p-tv: Fix sdo driver to work with CCF
+Date: Mon, 26 Aug 2013 13:38:30 +0200
+Message-ID: <1377517114-20222-2-git-send-email-m.krawczuk@partner.samsung.com>
 References: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene.kim@samsung.com
-Cc: kyungmin.park@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, thomas.abraham@linaro.org, t.stanislaws@samsung.com, m.chehab@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+Cc: mark.rutland@arm.com, m.szyprowski@samung.com, linux-doc@vger.kernel.org, t.figa@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, thomas.abraham@linaro.org, t.stanislaws@samsung.com, devicetree@vger.kernel.org, ian.campbell@citrix.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob.herring@calxeda.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, rob@landley.net, m.chehab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds code that sets correct parents and rates for clocks
-used by FIMC and FIMD on Goni board.
+Replace clk_enable by clock_enable_prepare and clk_disable with clk_disable_unprepare.
+Clock prepare is required by Clock Common Framework, and old clock driver didn`t support it.
+Without it Common Clock Framework prints a warning.
 
 Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 ---
- arch/arm/mach-s5pv210/mach-goni.c | 48 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ drivers/media/platform/s5p-tv/sdo_drv.c | 44 +++++++++++++++++++++++++--------
+ 1 file changed, 34 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index e5cd9fb..309b5ad 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -55,6 +55,7 @@
- #include <media/s5p_fimc.h>
- #include <media/noon010pc30.h>
+diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c b/drivers/media/platform/s5p-tv/sdo_drv.c
+index 0afa90f..77eac6d 100644
+--- a/drivers/media/platform/s5p-tv/sdo_drv.c
++++ b/drivers/media/platform/s5p-tv/sdo_drv.c
+@@ -55,6 +55,8 @@ struct sdo_device {
+ 	struct clk *dacphy;
+ 	/** clock for control of VPLL */
+ 	struct clk *fout_vpll;
++	/** vpll rate before sdo stream was on */
++	int vpll_rate;
+ 	/** regulator for SDO IP power */
+ 	struct regulator *vdac;
+ 	/** regulator for SDO plug detection */
+@@ -193,17 +195,34 @@ static int sdo_s_power(struct v4l2_subdev *sd, int on)
  
-+#include <linux/clk.h>
- #include "common.h"
+ static int sdo_streamon(struct sdo_device *sdev)
+ {
++	int ret = 0;
++
+ 	/* set proper clock for Timing Generator */
+-	clk_set_rate(sdev->fout_vpll, 54000000);
++	sdev->vpll_rate = clk_get_rate(sdev->fout_vpll);
++	ret = clk_set_rate(sdev->fout_vpll, 54000000);
++	if (ret < 0) {
++		dev_err(sdev->dev,
++			"%s: Failed to set vpll rate!\n", __func__);
++		return ret;
++	}
+ 	dev_info(sdev->dev, "fout_vpll.rate = %lu\n",
+ 	clk_get_rate(sdev->fout_vpll));
+ 	/* enable clock in SDO */
+ 	sdo_write_mask(sdev, SDO_CLKCON, ~0, SDO_TVOUT_CLOCK_ON);
+-	clk_enable(sdev->dacphy);
++	ret = clk_prepare_enable(sdev->dacphy);
++	if (ret < 0) {
++		dev_err(sdev->dev,
++			"%s: Failed to prepare and enable clock !\n", __func__);
++		goto fail;
++	}
+ 	/* enable DAC */
+ 	sdo_write_mask(sdev, SDO_DAC, ~0, SDO_POWER_ON_DAC);
+ 	sdo_reg_debug(sdev);
+ 	return 0;
++fail:
++	sdo_write_mask(sdev, SDO_CLKCON, 0, SDO_TVOUT_CLOCK_ON);
++	clk_set_rate(sdev->fout_vpll, sdev->vpll_rate);
++	return ret;
+ }
  
- /* Following are default values for UCON, ULCON and UFCON UART registers */
-@@ -195,6 +196,49 @@ static struct platform_device goni_spi_gpio = {
- 	},
- };
+ static int sdo_streamoff(struct sdo_device *sdev)
+@@ -211,7 +230,7 @@ static int sdo_streamoff(struct sdo_device *sdev)
+ 	int tries;
  
-+static void set_fimd_clock(void)
-+{
-+	struct clk *lcd_clk, *parent_clk;
-+
-+	lcd_clk = clk_get(NULL, "sclk_fimd");
-+	parent_clk = clk_get(NULL, "mout_mpll");
-+	clk_set_parent(lcd_clk, parent_clk);
-+	clk_set_rate(lcd_clk, clk_get_rate(parent_clk)/3);
-+
-+	clk_put(parent_clk);
-+	clk_put(lcd_clk);
-+}
-+
-+static void set_fimc_clock(void)
-+{
-+	struct clk *cam0_clk, *cam1_clk, *fimc2_clk, *fimc1_clk,
-+			*fimc0_clk, *parent_clk, *vpll_clk, *csis_clk;
-+
-+	parent_clk = clk_get(NULL, "mout_mpll");
-+	vpll_clk = clk_get(NULL, "mout_vpll");
-+	cam0_clk = clk_get(NULL, "mout_cam0");
-+	cam1_clk = clk_get(NULL, "mout_cam1");
-+	fimc2_clk = clk_get(NULL, "mout_fimc2");
-+	fimc1_clk = clk_get(NULL, "mout_fimc1");
-+	fimc0_clk = clk_get(NULL, "mout_fimc0");
-+	csis_clk = clk_get(NULL, "mout_csis");
-+
-+	clk_set_parent(cam0_clk, vpll_clk);
-+	clk_set_parent(cam1_clk, vpll_clk);
-+	clk_set_parent(fimc2_clk, parent_clk);
-+	clk_set_parent(fimc1_clk, parent_clk);
-+	clk_set_parent(fimc0_clk, parent_clk);
-+	clk_set_parent(csis_clk, parent_clk);
-+
-+	clk_put(parent_clk);
-+	clk_put(vpll_clk);
-+	clk_put(cam0_clk);
-+	clk_put(cam1_clk);
-+	clk_put(fimc2_clk);
-+	clk_put(fimc1_clk);
-+	clk_put(fimc0_clk);
-+}
-+
- /* KEYPAD */
- static uint32_t keymap[] __initdata = {
- 	/* KEY(row, col, keycode) */
-@@ -931,6 +975,10 @@ static void __init goni_machine_init(void)
- 	s3c_i2c2_set_platdata(&i2c2_data);
- 	i2c_register_board_info(2, i2c2_devs, ARRAY_SIZE(i2c2_devs));
+ 	sdo_write_mask(sdev, SDO_DAC, 0, SDO_POWER_ON_DAC);
+-	clk_disable(sdev->dacphy);
++	clk_disable_unprepare(sdev->dacphy);
+ 	sdo_write_mask(sdev, SDO_CLKCON, 0, SDO_TVOUT_CLOCK_ON);
+ 	for (tries = 100; tries; --tries) {
+ 		if (sdo_read(sdev, SDO_CLKCON) & SDO_TVOUT_CLOCK_READY)
+@@ -220,6 +239,7 @@ static int sdo_streamoff(struct sdo_device *sdev)
+ 	}
+ 	if (tries == 0)
+ 		dev_err(sdev->dev, "failed to stop streaming\n");
++	clk_set_rate(sdev->fout_vpll, sdev->vpll_rate);
+ 	return tries ? 0 : -EIO;
+ }
  
-+	/* FIMD AND FIMC set clock config */
-+	set_fimd_clock();
-+	set_fimc_clock();
-+
- 	/* PMIC */
- 	goni_pmic_init();
- 	i2c_register_board_info(AP_I2C_GPIO_PMIC_BUS_4, i2c_gpio_pmic_devs,
+@@ -254,7 +274,7 @@ static int sdo_runtime_suspend(struct device *dev)
+ 	dev_info(dev, "suspend\n");
+ 	regulator_disable(sdev->vdet);
+ 	regulator_disable(sdev->vdac);
+-	clk_disable(sdev->sclk_dac);
++	clk_disable_unprepare(sdev->sclk_dac);
+ 	return 0;
+ }
+ 
+@@ -266,7 +286,7 @@ static int sdo_runtime_resume(struct device *dev)
+ 
+ 	dev_info(dev, "resume\n");
+ 
+-	ret = clk_enable(sdev->sclk_dac);
++	ret = clk_prepare_enable(sdev->sclk_dac);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -299,7 +319,7 @@ static int sdo_runtime_resume(struct device *dev)
+ vdac_r_dis:
+ 	regulator_disable(sdev->vdac);
+ dac_clk_dis:
+-	clk_disable(sdev->sclk_dac);
++	clk_disable_unprepare(sdev->sclk_dac);
+ 	return ret;
+ }
+ 
+@@ -403,10 +423,14 @@ static int sdo_probe(struct platform_device *pdev)
+ 		ret = PTR_ERR(sdev->vdet);
+ 		goto fail_fout_vpll;
+ 	}
+-
+ 	/* enable gate for dac clock, because mixer uses it */
+-	clk_enable(sdev->dac);
+-
++	clk_prepare_enable(sdev->dac);
++	if (IS_ERR(sdev->dac)) {
++		dev_err(dev,
++			"%s: Failed to prepare and enable clock !\n", __func__);
++		ret = PTR_ERR(sdev->dac);
++		goto fail_fout_vpll;
++	}
+ 	/* configure power management */
+ 	pm_runtime_enable(dev);
+ 
+@@ -444,7 +468,7 @@ static int sdo_remove(struct platform_device *pdev)
+ 	struct sdo_device *sdev = sd_to_sdev(sd);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+-	clk_disable(sdev->dac);
++	clk_disable_unprepare(sdev->dac);
+ 	clk_put(sdev->fout_vpll);
+ 	clk_put(sdev->dacphy);
+ 	clk_put(sdev->dac);
 -- 
 1.8.1.2
