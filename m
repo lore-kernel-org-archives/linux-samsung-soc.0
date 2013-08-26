@@ -1,172 +1,89 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 4/5] [media] exynos-mscl: Add DT bindings for M-Scaler
- driver
-Date: Mon, 26 Aug 2013 18:21:27 +0200
-Message-ID: <521B8087.9010605@samsung.com>
-References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
- <1376909932-23644-5-git-send-email-shaik.ameer@samsung.com>
- <033401ce9cdb$af145800$0d3d0800$%dae@samsung.com> <521932FA.20801@gmail.com>
- <CAOD6ATqNkN4Nqroi0miUpWFgPqTK5gfYX-G7mLTxuDau3iAdVw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH] clocksource: exynos_mct: Set IRQ affinity when the CPU goes
+ online
+Date: Mon, 26 Aug 2013 18:33:56 +0200
+Message-ID: <1377534836-21682-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:47089 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:47337 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752097Ab3HZQVb (ORCPT
+	with ESMTP id S1752269Ab3HZQeN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 12:21:31 -0400
-In-reply-to: <CAOD6ATqNkN4Nqroi0miUpWFgPqTK5gfYX-G7mLTxuDau3iAdVw@mail.gmail.com>
+	Mon, 26 Aug 2013 12:34:13 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MS500J1RCOJTID0@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Aug 2013 17:34:11 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Inki Dae <inki.dae@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, posciak@google.com, Arun Kumar K <arun.kk@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 08/26/2013 02:20 PM, Shaik Ameer Basha wrote:
-> Hi Sylwester,
-> 
-> Thanks for the comments.
-> Please find the response inline...
-> 
-> Actually, I am waiting for your comments only :)
-> are you also reviewing the driver code? If yes, I can delay the next
-> version until your post your comments.
+Some variants of Exynos MCT, namely exynos4210-mct at the moment, use
+normal, shared interrupts for local timers. This means that each
+interrupt must have correct affinity set to fire only on CPU
+corresponding to given local timer.
 
-Yes, I've started reviewing the remaining patches. I just put this on
-my todo list with a bit lower priority since it is too late to have it
-in v3.12 anyway. I'll finish review today or tomorrow. It might be
-a good idea to hold on with posting new version until then.
+However after recent conversion of clocksource drivers to not use the
+local timer API for local timer initialization any more, the point of
+time when local timers get initialized changed and irq_set_affinity()
+fails because the CPU is not marked as online yet.
 
-> On Sun, Aug 25, 2013 at 3:56 AM, Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com> wrote:
->> On 08/19/2013 02:57 PM, Inki Dae wrote:
->>>>
->>>> -----Original Message-----
->>>> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
->>>> owner@vger.kernel.org] On Behalf Of Shaik Ameer Basha
->>>> Sent: Monday, August 19, 2013 7:59 PM
->>>> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
->>>> Cc: s.nawrocki@samsung.com; posciak@google.com; arun.kk@samsung.com;
->>>> shaik.ameer@samsung.com
->>>> Subject: [PATCH v2 4/5] [media] exynos-mscl: Add DT bindings for M-Scaler
->>>> driver
->>>>
->>>> This patch adds the DT binding documentation for the exynos5
->>
->>
->> You may want to say to which specific SoC it applies.
-> 
-> Ok. will update this.
-> Only 5410 and 5420 has this IP as of now.
+This patch fixes this by moving the call to irq_set_affinity() to
+CPU_ONLINE notification, so the affinity is being set when the CPU goes
+online.
 
-OK, good.
+This fixes a problem with Exynos4210 failing to boot, present since commit
+	ee98d27df6 ARM: EXYNOS4: Divorce mct from local timer API
+due to failing irq_set_affinity().
 
->>>> based M-Scaler device driver.
->>>>
->>>> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
->>>> ---
->>>>   .../devicetree/bindings/media/exynos5-mscl.txt     |   34
->>>> ++++++++++++++++++++
->>>>   1 file changed, 34 insertions(+)
->>>>   create mode 100644 Documentation/devicetree/bindings/media/exynos5-
->>>> mscl.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/media/exynos5-mscl.txt
->>>> b/Documentation/devicetree/bindings/media/exynos5-mscl.txt
->>>> new file mode 100644
->>>> index 0000000..5c9d1b1
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/media/exynos5-mscl.txt
->>>> @@ -0,0 +1,34 @@
->>>> +* Samsung Exynos5 M-Scaler device
->>>> +
->>>> +M-Scaler is used for scaling, blending, color fill and color space
->>>> +conversion on EXYNOS5 SoCs.
->>>> +
->>>> +Required properties:
->>>> +- compatible: should be "samsung,exynos5-mscl"
->>
->>
->> What is an exact name of this IP in the datasheet ?
-> 
-> It is named as "SCALER". But when i got the Initial doc, it was also
-> known as memory to memory scaler.
-> so, i am using M-Scaler.
-> 
-> Can i change this name to SCALER instead ?
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/clocksource/exynos_mct.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-I think we should use names as they appear in the User Manuals, even
-though those might be overly generic. It shouldn't be difficult to
-identify an IP in a specific SoC.
-
->>> If Exynos5410/5420 have same IP,
->>> "samsung,exynos5410-mscl" for M Scaler IP in Exynos5410/5420"
->>>
->>> Else,
->>> Compatible: should be one of the following:
->>> (a) "samsung,exynos5410-mscl" for M Scaler IP in Exynos5410"
->>> (b) "samsung,exynos5420-mscl" for M Scaler IP in Exynos5420"
->>
->>
->> Yes, except I suspect "mscl" is incorrect. It sounds like an unclear
->> abbreviation of real name of the IP. It likely should be "mscaler".
->>
->>
->>>> +- reg: should contain M-Scaler physical address location and length.
->>>> +- interrupts: should contain M-Scaler interrupt number
->>>> +- clocks: should contain the clock number according to CCF
->>
->>
->> Hmm, this sounds like a Linux specific term in the binding. Perhaps:
->>
->>  - clocks: should contain the M-Scaler clock specifier, from the common
->>            clock bindings
->>
->>
->> ?
->>>>
->>>> +- clock-names: should be "mscl"
->>>> +
->>>> +Example:
->>>> +
->>>> +       mscl_0: mscl@0x12800000 {
->>
->>
->> s/0x//
-> 
-> Ok. Like this?
-> mscl_0: mscl@12800000 {
-
-Yup.
-
->>>> +               compatible = "samsung,exynos5-mscl";
->>>
->>>
->>> "samsung,exynos5410-mscl";
->>>
->>>> +               reg =<0x12800000 0x1000>;
->>>> +               interrupts =<0 220 0>;
->>>> +               clocks =<&clock 381>;
->>>> +               clock-names = "mscl";
->>>> +       };
->>>> +
->>>> +Aliases:
->>>> +Each M-Scaler node should have a numbered alias in the aliases node,
->>>> +in the form of msclN, N = 0...2. M-Scaler driver uses these aliases
->>>> +to retrieve the device IDs using "of_alias_get_id()" call.
->>
->>
->> So except in debug logs and for selecting variant data (which is same for
->> all IP instances) are the aliases used for anything else ?
->> I suspect you could do without these aliases. Device name includes start
->> address of the IP register region, so that could be used to identify the
->> M-Scaler instance in the logs.
-> 
-> Ok. I will check more.
-> If it is only used for logs, then i will remove the aliases.
-
-Thanks.
-
---
-Regards,
-Sylwester
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 5b34768..62b0de6 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -428,7 +428,6 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+ 				evt->irq);
+ 			return -EIO;
+ 		}
+-		irq_set_affinity(evt->irq, cpumask_of(cpu));
+ 	} else {
+ 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+ 	}
+@@ -449,6 +448,7 @@ static int exynos4_mct_cpu_notify(struct notifier_block *self,
+ 					   unsigned long action, void *hcpu)
+ {
+ 	struct mct_clock_event_device *mevt;
++	unsigned int cpu;
+ 
+ 	/*
+ 	 * Grab cpu pointer in each case to avoid spurious
+@@ -459,6 +459,12 @@ static int exynos4_mct_cpu_notify(struct notifier_block *self,
+ 		mevt = this_cpu_ptr(&percpu_mct_tick);
+ 		exynos4_local_timer_setup(&mevt->evt);
+ 		break;
++	case CPU_ONLINE:
++		cpu = (unsigned long)hcpu;
++		if (mct_int_type == MCT_INT_SPI)
++			irq_set_affinity(mct_irqs[MCT_L0_IRQ + cpu],
++						cpumask_of(cpu));
++		break;
+ 	case CPU_DYING:
+ 		mevt = this_cpu_ptr(&percpu_mct_tick);
+ 		exynos4_local_timer_stop(&mevt->evt);
+@@ -500,6 +506,8 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
+ 					 &percpu_mct_tick);
+ 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+ 		     mct_irqs[MCT_L0_IRQ], err);
++	} else {
++		irq_set_affinity(mct_irqs[MCT_L0_IRQ], cpumask_of(0));
+ 	}
+ 
+ 	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
+-- 
+1.8.3.2
