@@ -1,87 +1,98 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V7 0/3] Generic PHY driver for the Exynos SoC DP PHY
-Date: Mon, 26 Aug 2013 15:13:34 +0530
-Message-ID: <521B2346.10307@ti.com>
-References: <003e01cea23a$03aac850$0b0058f0$%han@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [GIT PULL 3/3] 2nd Round Samsung mach-exynos for v3.12
+Date: Mon, 26 Aug 2013 12:06:48 +0200
+Message-ID: <3145165.ZB7l3vNJ7a@amdc1032>
+References: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:60501 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751562Ab3HZJnp (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:15286 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751732Ab3HZKHK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 05:43:45 -0400
-In-Reply-To: <003e01cea23a$03aac850$0b0058f0$%han@samsung.com>
+	Mon, 26 Aug 2013 06:07:10 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MS40075KURWQX51@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Aug 2013 19:07:08 +0900 (KST)
+In-reply-to: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, 'devicetree' <devicetree@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-On Monday 26 August 2013 02:25 PM, Jingoo Han wrote:
-> This patch series adds a simple driver for the Samsung Exynos SoC
-> series DP transmitter PHY, using the generic PHY framework [1].
-> Previously the DP PHY used an internal DT node to control the PHY
-> power enable bit.
-> 
-> These patches was tested on Exynos5250.
-> 
-> This PATCH v7 follows:
->  * PATCH v6, sent on July, 9th 2013
->  * PATCH v5, sent on July, 8th 2013
->  * PATCH v4, sent on July, 2nd 2013
->  * PATCH v3, sent on July, 1st 2013
->  * PATCH v2, sent on June, 28th 2013
->  * PATCH v1, sent on June, 28th 2013
-> 
-> Changes from v6:
->   * Re-based on git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git
-> 
-> Changes from v5:
->   * Re-based on git://gitorious.org/linuxphy/linuxphy.git
-> 
-> Changes from v4:
->   * Marked original bindings as deprecated in 'exynos_dp.txt'
->   * Fixed typo of commit message.
->   * Added Tomasz Figa's Reviewed-by.
-> 
-> Changes from v3:
->   * Added OF dependancy.
->   * Removed redundant local variable 'void __iomem *addr'.
->   * Removed unnecessary dev_set_drvdata().
->   * Added a patch that remove non-DT support for Exynos
->     Display Port driver.
->   * Removed unnecessary 'struct exynos_dp_platdata'.
->   * Kept supporting the original bindings for DT compatibility.
-> 
-> Changes from v2:
->   * Removed redundant spinlock
->   * Removed 'struct phy' from 'struct exynos_dp_video_phy'
->   * Updated 'samsung-phy.txt', instead of creating
->     'samsung,exynos5250-dp-video-phy.txt'.
->   * Removed unnecessary additional specifier from 'phys'
->     DT property.
->   * Added 'phys', 'phy-names' properties to 'exynos_dp.txt' file.
->   * Added Felipe Balbi's Acked-by.
-> 
-> Changes from v1:
->   * Replaced exynos_dp_video_phy_xlate() with of_phy_simple_xlate(),
->     as Kishon Vijay Abraham I guided.
->   * Set the value of phy-cells as 0, because the phy_provider implements
->     only one PHY.
->   * Removed unnecessary header include.
->   * Added '#ifdef CONFIG_OF' and of_match_ptr macro.
-> 
-> This series depends on the generic PHY framework [1]. These patches
-> refer to Sylwester Nawrocki's patches about Exynos MIPI [2].
-> 
-> [1] http://lwn.net/Articles/564188/
-> [2] http://www.spinics.net/lists/linux-samsung-soc/msg20098.html
-> 
-> Jingoo Han (3):
->   phy: Add driver for Exynos DP PHY
->   video: exynos_dp: remove non-DT support for Exynos Display Port
->   video: exynos_dp: Use the generic PHY driver
 
-FWIW,
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+Hi,
+
+On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
+> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
+> 
+>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-mach-exynos
+> 
+> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
+> 
+>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
+> 05:05:16 +0900)
+> 
+> ----------------------------------------------------------------
+> update mach-exynos
+> - enable ARCH_HAS_BANDGAP for exynos SoCs
+> - skip C1 cpuidle for exynos5440 because non-supporting
+> - always enable PM domains for exynos4x12
+> 
+> ----------------------------------------------------------------
+> Amit Daniel Kachhap (2):
+>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
+>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
+
+The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
+
+--- a/arch/arm/mach-exynos/cpuidle.c
++++ b/arch/arm/mach-exynos/cpuidle.c
+@@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
+                device->cpu = cpu_id;
+ 
+                /* Support IDLE only */
+-               if (cpu_id != 0)
++               if (soc_is_exynos5440() || cpu_id != 0)
+                        device->state_count = 1;
+ 
+                ret = cpuidle_register_device(device);
+
+is incorrect as noted a month ago in:
+
+http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
+
+[ Because of the deficiency in the core cpuidle core (device->state_count
+  not being used by governors' code) only sysfs entries for C1 state will be
+  disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
+
+also non-working device->state_count is planned to be removed by:
+
+http://permalink.gmane.org/gmane.linux.power-management.general/37390
+
+
+To disable C1 state on EXYNOS5440 something like:
+
+	static int __init exynos4_init_cpuidle(void)
+	{
+	...
+		if (soc_is_exynos5440())
+			exynos4_idle_driver.state_count = 1;
+	...
+	}
+
+should be done instead.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
