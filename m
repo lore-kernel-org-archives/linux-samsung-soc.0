@@ -1,43 +1,52 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V2] PCI: exynos: add support for MSI
-Date: Sun, 25 Aug 2013 22:28:20 +0200
-Message-ID: <201308252228.20843.arnd@arndb.de>
-References: <003d01ce9fc6$9c0f1c20$d42d5460$%han@samsung.com> <20130823083539.GB3937@pratyush-vbox> <20130823092238.GJ3535@ulmo>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 1/3] 2nd Round Samsung defconfig for v3.12
+Date: Mon, 26 Aug 2013 09:14:31 +0900
+Message-ID: <1f7501cea1f1$3c7edb60$b57c9220$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20130823092238.GJ3535@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Pratyush Anand <pratyush.anand@st.com>, Jingoo Han <jg1.han@samsung.com>, Bjorn Helgaas <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, Siva Reddy Kallam <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:61862 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754270Ab3HZAOe (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 25 Aug 2013 20:14:34 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MS40046Z3C923D0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Aug 2013 09:14:33 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, arm@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-On Friday 23 August 2013, Thierry Reding wrote:
-> > > +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> > > +               if (of_property_read_u32(np, "msi-base", &pp->msi_irq_start)) {
-> > > +                       dev_err(pp->dev, "Failed to parse the number of lanes\n");
-> > > +                       return -EINVAL;
-> > > +               }
-> > > +       }
-> > > +
-> > 
-> > What if an implementor want to use irq_domain method for msi_irq_start
-> > allocation? Is it fine to return error if msi-base is not passed from
-> > dt?
-> 
-> I agree. This should be using an IRQ domain to represent the MSI
-> controller. Both Tegra and Marvell drivers do that already and if Exynos
-> can follow that same path it will increase the chances of refactoring
-> common bits.
-> 
-> Also the error message doesn't quite match up with what the code is
-> doing. =)
+The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
 
-Agreed. Besides the encoding of "base" irq values in the device tree is always
-wrong, since the numbers are not at all a hardware property but an implementation
-detail of how Linux currently uses interrupt numbers. When using DT probing,
-you *have* to use IRQ domains, and the rest of Exynos does that.
+  Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
 
-	Arnd
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-defconfig-v2
+
+for you to fetch changes up to c3e566d941636c6b1f8849d403b23d83c0e10901:
+
+  ARM: exynos4_defconfig: remove obsolete exynos4_defconfig (2013-07-24
+17:41:50 +0900)
+
+----------------------------------------------------------------
+Remove exynos4_defconfig because,
+- No more used after disabling exynos non-DT
+- exynos_defconfig can support exynos SoCs
+
+----------------------------------------------------------------
+Bartlomiej Zolnierkiewicz (1):
+      ARM: exynos4_defconfig: remove obsolete exynos4_defconfig
+
+ arch/arm/configs/exynos4_defconfig |   68
+------------------------------------
+ 1 file changed, 68 deletions(-)
+ delete mode 100644 arch/arm/configs/exynos4_defconfig
