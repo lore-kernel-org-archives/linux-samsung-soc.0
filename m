@@ -1,99 +1,199 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V7 0/3] Generic PHY driver for the Exynos SoC DP PHY
-Date: Mon, 26 Aug 2013 17:55:29 +0900
-Message-ID: <003e01cea23a$03aac850$0b0058f0$%han@samsung.com>
+Subject: [PATCH 1/3] phy: Add driver for Exynos DP PHY
+Date: Mon, 26 Aug 2013 17:56:32 +0900
+Message-ID: <004001cea23a$29580400$7c080c00$%han@samsung.com>
+References: <003e01cea23a$03aac850$0b0058f0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60307 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:60508 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751391Ab3HZIza (ORCPT
+	with ESMTP id S1756305Ab3HZI4e (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 04:55:30 -0400
+	Mon, 26 Aug 2013 04:56:34 -0400
+In-reply-to: <003e01cea23a$03aac850$0b0058f0$%han@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, 'devicetree' <devicetree@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, 'Jingoo Han' <jg1.han@samsung.com>
+Cc: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, 'devicetree' <devicetree@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-This patch series adds a simple driver for the Samsung Exynos SoC
-series DP transmitter PHY, using the generic PHY framework [1].
-Previously the DP PHY used an internal DT node to control the PHY
-power enable bit.
+Add a PHY provider driver for the Samsung Exynos SoC Display Port PHY.
 
-These patches was tested on Exynos5250.
-
-This PATCH v7 follows:
- * PATCH v6, sent on July, 9th 2013
- * PATCH v5, sent on July, 8th 2013
- * PATCH v4, sent on July, 2nd 2013
- * PATCH v3, sent on July, 1st 2013
- * PATCH v2, sent on June, 28th 2013
- * PATCH v1, sent on June, 28th 2013
-
-Changes from v6:
-  * Re-based on git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git
-
-Changes from v5:
-  * Re-based on git://gitorious.org/linuxphy/linuxphy.git
-
-Changes from v4:
-  * Marked original bindings as deprecated in 'exynos_dp.txt'
-  * Fixed typo of commit message.
-  * Added Tomasz Figa's Reviewed-by.
-
-Changes from v3:
-  * Added OF dependancy.
-  * Removed redundant local variable 'void __iomem *addr'.
-  * Removed unnecessary dev_set_drvdata().
-  * Added a patch that remove non-DT support for Exynos
-    Display Port driver.
-  * Removed unnecessary 'struct exynos_dp_platdata'.
-  * Kept supporting the original bindings for DT compatibility.
-
-Changes from v2:
-  * Removed redundant spinlock
-  * Removed 'struct phy' from 'struct exynos_dp_video_phy'
-  * Updated 'samsung-phy.txt', instead of creating
-    'samsung,exynos5250-dp-video-phy.txt'.
-  * Removed unnecessary additional specifier from 'phys'
-    DT property.
-  * Added 'phys', 'phy-names' properties to 'exynos_dp.txt' file.
-  * Added Felipe Balbi's Acked-by.
-
-Changes from v1:
-  * Replaced exynos_dp_video_phy_xlate() with of_phy_simple_xlate(),
-    as Kishon Vijay Abraham I guided.
-  * Set the value of phy-cells as 0, because the phy_provider implements
-    only one PHY.
-  * Removed unnecessary header include.
-  * Added '#ifdef CONFIG_OF' and of_match_ptr macro.
-
-This series depends on the generic PHY framework [1]. These patches
-refer to Sylwester Nawrocki's patches about Exynos MIPI [2].
-
-[1] http://lwn.net/Articles/564188/
-[2] http://www.spinics.net/lists/linux-samsung-soc/msg20098.html
-
-Jingoo Han (3):
-  phy: Add driver for Exynos DP PHY
-  video: exynos_dp: remove non-DT support for Exynos Display Port
-  video: exynos_dp: Use the generic PHY driver
-
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Acked-by: Felipe Balbi <balbi@ti.com>
+---
  .../devicetree/bindings/phy/samsung-phy.txt        |    7 ++
- .../devicetree/bindings/video/exynos_dp.txt        |   17 +--
  drivers/phy/Kconfig                                |    7 ++
  drivers/phy/Makefile                               |    7 +-
- drivers/phy/phy-exynos-dp-video.c                  |  111 ++++++++++++++++
- drivers/video/exynos/Kconfig                       |    2 +-
- drivers/video/exynos/exynos_dp_core.c              |  132 ++++++--------------
- drivers/video/exynos/exynos_dp_core.h              |  110 ++++++++++++++++
- drivers/video/exynos/exynos_dp_reg.c               |    2 -
- include/video/exynos_dp.h                          |  131 -------------------
- 10 files changed, 286 insertions(+), 240 deletions(-)
+ drivers/phy/phy-exynos-dp-video.c                  |  111 ++++++++++++++++++++
+ 4 files changed, 129 insertions(+), 3 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/phy/samsung-phy.txt
  create mode 100644 drivers/phy/phy-exynos-dp-video.c
- delete mode 100644 include/video/exynos_dp.h
---
+
+diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+new file mode 100644
+index 0000000..ee262238
+--- /dev/null
++++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+@@ -0,0 +1,7 @@
++Samsung EXYNOS SoC series Display Port PHY
++-------------------------------------------------
++
++Required properties:
++- compatible : should be "samsung,exynos5250-dp-video-phy";
++- reg : offset and length of the Display Port PHY register set;
++- #phy-cells : from the generic PHY bindings, must be 0;
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index ac239ac..fed26a0 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -38,4 +38,11 @@ config TWL4030_USB
+ 	  This transceiver supports high and full speed devices plus,
+ 	  in host mode, low speed.
+ 
++config PHY_EXYNOS_DP_VIDEO
++	tristate "EXYNOS SoC series Display Port PHY driver"
++	depends on OF
++	select GENERIC_PHY
++	help
++	  Support for Display Port PHY found on Samsung EXYNOS SoCs.
++
+ endmenu
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index 0dd8a98..433e685 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -2,6 +2,7 @@
+ # Makefile for the phy drivers.
+ #
+ 
+-obj-$(CONFIG_GENERIC_PHY)	+= phy-core.o
+-obj-$(CONFIG_OMAP_USB2)		+= phy-omap-usb2.o
+-obj-$(CONFIG_TWL4030_USB)	+= phy-twl4030-usb.o
++obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
++obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
++obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
++obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-video.o
+diff --git a/drivers/phy/phy-exynos-dp-video.c b/drivers/phy/phy-exynos-dp-video.c
+new file mode 100644
+index 0000000..1dbe6ce
+--- /dev/null
++++ b/drivers/phy/phy-exynos-dp-video.c
+@@ -0,0 +1,111 @@
++/*
++ * Samsung EXYNOS SoC series Display Port PHY driver
++ *
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Author: Jingoo Han <jg1.han@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++
++/* DPTX_PHY_CONTROL register */
++#define EXYNOS_DPTX_PHY_ENABLE		(1 << 0)
++
++struct exynos_dp_video_phy {
++	void __iomem *regs;
++};
++
++static int __set_phy_state(struct exynos_dp_video_phy *state, unsigned int on)
++{
++	u32 reg;
++
++	reg = readl(state->regs);
++	if (on)
++		reg |= EXYNOS_DPTX_PHY_ENABLE;
++	else
++		reg &= ~EXYNOS_DPTX_PHY_ENABLE;
++	writel(reg, state->regs);
++
++	return 0;
++}
++
++static int exynos_dp_video_phy_power_on(struct phy *phy)
++{
++	struct exynos_dp_video_phy *state = phy_get_drvdata(phy);
++
++	return __set_phy_state(state, 1);
++}
++
++static int exynos_dp_video_phy_power_off(struct phy *phy)
++{
++	struct exynos_dp_video_phy *state = phy_get_drvdata(phy);
++
++	return __set_phy_state(state, 0);
++}
++
++static struct phy_ops exynos_dp_video_phy_ops = {
++	.power_on	= exynos_dp_video_phy_power_on,
++	.power_off	= exynos_dp_video_phy_power_off,
++	.owner		= THIS_MODULE,
++};
++
++static int exynos_dp_video_phy_probe(struct platform_device *pdev)
++{
++	struct exynos_dp_video_phy *state;
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	struct phy_provider *phy_provider;
++	struct phy *phy;
++
++	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
++	if (!state)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++
++	state->regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(state->regs))
++		return PTR_ERR(state->regs);
++
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	if (IS_ERR(phy_provider))
++		return PTR_ERR(phy_provider);
++
++	phy = devm_phy_create(dev, &exynos_dp_video_phy_ops, NULL);
++	if (IS_ERR(phy)) {
++		dev_err(dev, "failed to create Display Port PHY\n");
++		return PTR_ERR(phy);
++	}
++	phy_set_drvdata(phy, state);
++
++	return 0;
++}
++
++static const struct of_device_id exynos_dp_video_phy_of_match[] = {
++	{ .compatible = "samsung,exynos5250-dp-video-phy" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, exynos_dp_video_phy_of_match);
++
++static struct platform_driver exynos_dp_video_phy_driver = {
++	.probe	= exynos_dp_video_phy_probe,
++	.driver = {
++		.name	= "exynos-dp-video-phy",
++		.owner	= THIS_MODULE,
++		.of_match_table	= exynos_dp_video_phy_of_match,
++	}
++};
++module_platform_driver(exynos_dp_video_phy_driver);
++
++MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
++MODULE_DESCRIPTION("Samsung EXYNOS SoC DP PHY driver");
++MODULE_LICENSE("GPL v2");
+-- 
 1.7.10.4
