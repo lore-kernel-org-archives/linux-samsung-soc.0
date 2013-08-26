@@ -1,255 +1,110 @@
-From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH RFC 5/5] ARM: s5pv210: Migrate clock handling to Common Clock
- Framework
-Date: Mon, 26 Aug 2013 13:38:34 +0200
-Message-ID: <1377517114-20222-6-git-send-email-m.krawczuk@partner.samsung.com>
-References: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: kyungmin.park@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, thomas.abraham@linaro.org, t.stanislaws@samsung.com, m.chehab@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL 3/3] 2nd Round Samsung mach-exynos for v3.12
+Date: Mon, 26 Aug 2013 20:52:44 +0900
+Message-ID: <200c01cea252$c67a87e0$536f97a0$@org>
+References: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
+ <3145165.ZB7l3vNJ7a@amdc1032>
+ <CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
+ <4070794.XxjluIqBpK@amdc1032>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:21190 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751524Ab3HZLws (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Aug 2013 07:52:48 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MS400BYDZNXSK30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Aug 2013 20:52:45 +0900 (KST)
+In-reply-to: <4070794.XxjluIqBpK@amdc1032>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'amit daniel kachhap' <amit.daniel@samsung.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, arm@kernel.org, 'Olof Johansson' <olof@lixom.net>, 'LAK' <linux-arm-kernel@lists.infradead.org>
 
-This patch migrates the s5pv210 platform to use new clock driver
-using Common Clock Framework.
+Bartlomiej Zolnierkiewicz wrote:
 
-Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
----
- arch/arm/mach-s5pv210/Kconfig         |  9 +++++++++
- arch/arm/mach-s5pv210/Makefile        |  4 ++--
- arch/arm/mach-s5pv210/common.c        | 22 ++++++++++++++++++++++
- arch/arm/mach-s5pv210/common.h        | 13 +++++++++++++
- arch/arm/mach-s5pv210/mach-aquila.c   |  1 +
- arch/arm/mach-s5pv210/mach-goni.c     |  3 ++-
- arch/arm/mach-s5pv210/mach-smdkc110.c |  1 +
- arch/arm/mach-s5pv210/mach-smdkv210.c |  1 +
- arch/arm/mach-s5pv210/mach-torbreck.c |  1 +
- arch/arm/plat-samsung/Kconfig         |  2 +-
- arch/arm/plat-samsung/init.c          |  2 --
- 11 files changed, 53 insertions(+), 6 deletions(-)
+[...]
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index caaedaf..ad4546e 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -15,6 +15,7 @@ config CPU_S5PV210
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
- 	select SAMSUNG_DMADEV
-+	select S5P_CLOCK if !COMMON_CLK
- 	help
- 	  Enable S5PV210 CPU support
- 
-@@ -69,6 +70,14 @@ config S5PV210_SETUP_USB_PHY
- 	help
- 	  Common setup code for USB PHY controller
- 
-+config COMMON_CLK_S5PV210
-+	bool "Common Clock Framework support"
-+	default y
-+	select COMMON_CLK
-+	help
-+	  Enable this option to use new clock driver
-+	  based on Common Clock Framework.
-+
- menu "S5PC110 Machines"
- 
- config MACH_AQUILA
-diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index 1c4e419..0c67fe2 100644
---- a/arch/arm/mach-s5pv210/Makefile
-+++ b/arch/arm/mach-s5pv210/Makefile
-@@ -12,8 +12,8 @@ obj-				:=
- 
- # Core
- 
--obj-y				+= common.o clock.o
--
-+obj-y					+= common.o
-+obj-$(CONFIG_S5P_CLOCK)			+= clock.o
- obj-$(CONFIG_PM)		+= pm.o
- 
- obj-y				+= dma.o
-diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/common.c
-index 26027a2..3c3dd05 100644
---- a/arch/arm/mach-s5pv210/common.c
-+++ b/arch/arm/mach-s5pv210/common.c
-@@ -34,7 +34,13 @@
- #include <mach/regs-clock.h>
- 
- #include <plat/cpu.h>
-+
-+#ifdef CONFIG_S5P_CLOCK
- #include <plat/clock.h>
-+#else
-+#include <linux/clk-provider.h>
-+#endif
-+
- #include <plat/devs.h>
- #include <plat/sdhci.h>
- #include <plat/adc-core.h>
-@@ -50,6 +56,19 @@
- 
- #include "common.h"
- 
-+/* External clock frequency */
-+static unsigned long xxti_f, xusbxti_f;
-+
-+void __init s5pv210_set_xxti_freq(unsigned long freq)
-+{
-+	xxti_f = freq;
-+}
-+
-+void __init s5pv210_set_xusbxti_freq(unsigned long freq)
-+{
-+	xusbxti_f = freq;
-+}
-+
- static const char name_s5pv210[] = "S5PV210/S5PC110";
- 
- static struct cpu_table cpu_ids[] __initdata = {
-@@ -229,12 +248,14 @@ void __init s5pv210_map_io(void)
- 
- void __init s5pv210_init_clocks(int xtal)
- {
-+#ifdef CONFIG_S5P_CLOCK
- 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
- 
- 	s3c24xx_register_baseclocks(xtal);
- 	s5p_register_clocks(xtal);
- 	s5pv210_register_clocks();
- 	s5pv210_setup_clocks();
-+#endif
- }
- 
- void __init s5pv210_init_irq(void)
-@@ -248,6 +269,7 @@ void __init s5pv210_init_irq(void)
- 	vic[3] = ~0;
- 
- 	s5p_init_irq(vic, ARRAY_SIZE(vic));
-+	s5pv210_clk_init(NULL, xxti_f, xusbxti_f, S3C_VA_SYS);
- }
- 
- struct bus_type s5pv210_subsys = {
-diff --git a/arch/arm/mach-s5pv210/common.h b/arch/arm/mach-s5pv210/common.h
-index fe1beb5..2db2a15 100644
---- a/arch/arm/mach-s5pv210/common.h
-+++ b/arch/arm/mach-s5pv210/common.h
-@@ -14,6 +14,19 @@
- 
- #include <linux/reboot.h>
- 
-+void s5pv210_set_xxti_freq(unsigned long freq);
-+void s5pv210_set_xusbxti_freq(unsigned long freq);
-+
-+#ifdef CONFIG_COMMON_CLK_S5PV210
-+void s5pv210_clk_init(struct device_node *np,
-+			    unsigned long xxti_f, unsigned long xusbxti_f,
-+			    void __iomem *reg_base);
-+#else
-+static inline void s5pv210_clk_init(struct device_node *np,
-+			    unsigned long xxti_f, unsigned long xusbxti_f,
-+			    void __iomem *reg_base) {}
-+#endif
-+
- void s5pv210_init_io(struct map_desc *mach_desc, int size);
- void s5pv210_init_irq(void);
- 
-diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-s5pv210/mach-aquila.c
-index ad40ab0..e37a311 100644
---- a/arch/arm/mach-s5pv210/mach-aquila.c
-+++ b/arch/arm/mach-s5pv210/mach-aquila.c
-@@ -646,6 +646,7 @@ static void __init aquila_map_io(void)
- {
- 	s5pv210_init_io(NULL, 0);
- 	s3c24xx_init_clocks(24000000);
-+	s5pv210_set_xusbxti_freq(24000000);
- 	s3c24xx_init_uarts(aquila_uartcfgs, ARRAY_SIZE(aquila_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM3, SAMSUNG_PWM4);
- }
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 309b5ad..a306c3b 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -946,7 +946,8 @@ static void __init goni_sound_init(void)
- static void __init goni_map_io(void)
- {
- 	s5pv210_init_io(NULL, 0);
--	s3c24xx_init_clocks(clk_xusbxti.rate);
-+	s3c24xx_init_clocks(24000000);
-+	s5pv210_set_xusbxti_freq(24000000);
- 	s3c24xx_init_uarts(goni_uartcfgs, ARRAY_SIZE(goni_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM3, SAMSUNG_PWM4);
- }
-diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
-index 7c0ed07..89563ed 100644
---- a/arch/arm/mach-s5pv210/mach-smdkc110.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
-@@ -119,6 +119,7 @@ static void __init smdkc110_map_io(void)
- {
- 	s5pv210_init_io(NULL, 0);
- 	s3c24xx_init_clocks(24000000);
-+	s5pv210_set_xusbxti_freq(24000000);
- 	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM3, SAMSUNG_PWM4);
- }
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index 6d72bb99..ff4a470 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -285,6 +285,7 @@ static void __init smdkv210_map_io(void)
- {
- 	s5pv210_init_io(NULL, 0);
- 	s3c24xx_init_clocks(clk_xusbxti.rate);
-+	s5pv210_set_xusbxti_freq(24000000);
- 	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM2, SAMSUNG_PWM4);
- }
-diff --git a/arch/arm/mach-s5pv210/mach-torbreck.c b/arch/arm/mach-s5pv210/mach-torbreck.c
-index 579afe8..c131cd2 100644
---- a/arch/arm/mach-s5pv210/mach-torbreck.c
-+++ b/arch/arm/mach-s5pv210/mach-torbreck.c
-@@ -105,6 +105,7 @@ static void __init torbreck_map_io(void)
- {
- 	s5pv210_init_io(NULL, 0);
- 	s3c24xx_init_clocks(24000000);
-+	s5pv210_set_xusbxti_freq(24000000);
- 	s3c24xx_init_uarts(torbreck_uartcfgs, ARRAY_SIZE(torbreck_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM3, SAMSUNG_PWM4);
- }
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 7dfba93..2a98613 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -91,7 +91,7 @@ config SAMSUNG_CLKSRC
- 	  used by newer systems such as the S3C64XX.
- 
- config S5P_CLOCK
--	def_bool (ARCH_S5P64X0 || ARCH_S5PC100 || ARCH_S5PV210)
-+	def_bool (ARCH_S5P64X0 || ARCH_S5PC100)
- 	help
- 	  Support common clock part for ARCH_S5P and ARCH_EXYNOS SoCs
- 
-diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
-index 50a3ea0..915e87f 100644
---- a/arch/arm/plat-samsung/init.c
-+++ b/arch/arm/plat-samsung/init.c
-@@ -63,7 +63,6 @@ void __init s3c_init_cpu(unsigned long idcode,
- 	if (cpu->map_io)
- 		cpu->map_io();
- }
--
- /* s3c24xx_init_clocks
-  *
-  * Initialise the clock subsystem and associated information from the
-@@ -86,7 +85,6 @@ void __init s3c24xx_init_clocks(int xtal)
- 	else
- 		(cpu->init_clocks)(xtal);
- }
--
- /* uart management */
- #if IS_ENABLED(CONFIG_SAMSUNG_ATAGS)
- static int nr_uarts __initdata = 0;
--- 
-1.8.1.2
+> > > is incorrect as noted a month ago in:
+> > >
+> > > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-
+> July/186355.html
+> > >
+> > > [ Because of the deficiency in the core cpuidle core (device-
+> >state_count
+> > >   not being used by governors' code) only sysfs entries for C1 state
+> will be
+> > >   disabled and EXYNOS cpuidle driver will still attempt to use C1
+> state.
+> > >
+> > > also non-working device->state_count is planned to be removed by:
+> > >
+> > > http://permalink.gmane.org/gmane.linux.power-management.general/37390
+> > I looked at your patch series and it seems reasonable. I will repost
+> > this patch on top of yours.
+> 
+> If you correctly use driver's state_count (instead of device's) there will
+> be
+> no dependency on my patch series and the new patch can be applied
+> immediately.
+> 
+> > But I suggest to keep this patch temporary till your patch series gets
+> merged.
+> 
+> The current patch (the one Kukjin merged) is incorrect as it just doesn't
+> do what it advertises. I see no reason to keep it.
+> 
+Well, I don't think so, because if the patch is missing, following kernel
+panic happens on exynos5440 platform.
+
+Unable to handle kernel paging request at virtual address f8180608
+pgd = c0003000
+[f8180608] *pgd=80000080007003, *pmd=af7fb003, *pte=00000000
+Internal error: Oops: a07 [#1] PREEMPT ARM
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper Not tainted 3.11.0-0-generic
+#1~d20130819t044008~3372c79
+task: c0529d80 ti: c051e000 task.ti: c051e000
+PC is at exynos4_enter_lowpower+0x18/0x130
+LR is at cpuidle_enter_state+0x3c/0xe8
+pc : []    lr : []    psr: 200f0093
+sp : c051ff68  ip : 00000018  fp : 00000000
+r10: 00000000  r9 : 412fc0f3  r8 : 00000000
+r7 : c052c9cc  r6 : 00000001  r5 : 00000000  r4 : d5c3cc94
+r3 : f8180000  r2 : 0000ff3e  r1 : c052c980  r0 : c052cc98
+Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+Control: 30c5387d  Table: af139b00  DAC: fffffffd
+Process swapper (pid: 0, stack limit = 0xc051e230)
+Stack: (0xc051ff68 to 0xc0520000)
+ff60:                   d5c3cc94 00000000 c052cc98 c02c1310 d5c3cc94
+00000000
+ff80: c0550288 c052c980 c058898c c052cc98 00000001 c052c980 c058898c
+c02c1458
+ffa0: c051e000 c0550288 c0550288 00000001 c05260dc c001b2cc 000001fe
+c00573e4
+ffc0: ffffffff c04f07d8 ffffffff ffffffff c04f0290 00000000 00000000
+c05134d8
+ffe0: 30c7387d c0526064 c05134d4 c052b5b4 80007000 80008080 00000000
+00000000
+[] (exynos4_enter_lowpower+0x18/0x130) from []
+(cpuidle_enter_state+0x3c/0xe8)
+[] (cpuidle_enter_state+0x3c/0xe8) from [] (cpuidle_idle_call+0x9c/0x140)
+[] (cpuidle_idle_call+0x9c/0x140) from [] (arch_cpu_idle+0x8/0x38)
+[] (arch_cpu_idle+0x8/0x38) from [] (cpu_startup_entry+0x4c/0x114)
+[] (cpu_startup_entry+0x4c/0x114) from [] (start_kernel+0x324/0x37c)
+Code: 0a000043 e3a03000 e30f2f3e e34f3818 (e5832608) 
+---[ end trace 617b9e1a4ff91d2f ]---
+Kernel panic - not syncing: Attempted to kill the idle task!
+
+In addition, I didn't see your patches in linux-next for upcoming merge
+window. So I think, if any fixup is required, it should be done on top of
+current shape.
+
+- Kukjin
