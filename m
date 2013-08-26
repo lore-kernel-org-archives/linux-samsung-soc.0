@@ -1,73 +1,181 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH V2] ARM: EXYNOS: cpuidle: Skip C1 cpuidle state for
- exynos5440
-Date: Mon, 26 Aug 2013 16:23:03 +0200
-Message-ID: <18873465.YOJHgsXmcz@amdc1032>
-References: <4070794.XxjluIqBpK@amdc1032>
- <1377519363-23077-1-git-send-email-amit.daniel@samsung.com>
+Subject: Re: [PATCH RFC 1/5] media: s5p-tv: Fix sdo driver to work with CCF
+Date: Mon, 26 Aug 2013 17:32:05 +0200
+Message-ID: <3259807.j0POtVdD7o@amdc1032>
+References: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
+ <1377517114-20222-2-git-send-email-m.krawczuk@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:19442 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756372Ab3HZOXb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 10:23:31 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MS5009ES6N6BQ10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Aug 2013 23:23:30 +0900 (KST)
-In-reply-to: <1377519363-23077-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1377517114-20222-2-git-send-email-m.krawczuk@partner.samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, thomas.abraham@linaro.org, t.stanislaws@samsung.com, m.chehab@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>
 
-On Monday, August 26, 2013 05:46:03 PM Amit Daniel Kachhap wrote:
-> This patch skips the deep C1(AFTR -Arm off top running) state for exynos5440
-> soc as this soc does not support this state. The cpu's only allows the basic
-> C0 state. The C1 state is filtered by re-initialising the driver state_count
-> value to 1.
+
+Hi,
+
+On Monday, August 26, 2013 01:38:30 PM Mateusz Krawczuk wrote:
+> Replace clk_enable by clock_enable_prepare and clk_disable with clk_disable_unprepare.
+> Clock prepare is required by Clock Common Framework, and old clock driver didn`t support it.
+> Without it Common Clock Framework prints a warning.
 > 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Acked-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Thanks for fixing this.
-
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 > ---
+>  drivers/media/platform/s5p-tv/sdo_drv.c | 44 +++++++++++++++++++++++++--------
+>  1 file changed, 34 insertions(+), 10 deletions(-)
 > 
-> Changes in V2:
-> * Used driver state_count variable to filter the C1 state
->  instead of device state count variable. Although this V2 patch is also
->  not complete as there are suggestions to make this driver platform driver.
-
-I'm going to look into making it a platform driver later this week.
-
->  arch/arm/mach-exynos/cpuidle.c |    3 +++
->  1 files changed, 3 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-> index 225ee84..ac13922 100644
-> --- a/arch/arm/mach-exynos/cpuidle.c
-> +++ b/arch/arm/mach-exynos/cpuidle.c
-> @@ -200,6 +200,9 @@ static int __init exynos4_init_cpuidle(void)
->  	if (soc_is_exynos5250())
->  		exynos5_core_down_clk();
+> diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c b/drivers/media/platform/s5p-tv/sdo_drv.c
+> index 0afa90f..77eac6d 100644
+> --- a/drivers/media/platform/s5p-tv/sdo_drv.c
+> +++ b/drivers/media/platform/s5p-tv/sdo_drv.c
+> @@ -55,6 +55,8 @@ struct sdo_device {
+>  	struct clk *dacphy;
+>  	/** clock for control of VPLL */
+>  	struct clk *fout_vpll;
+> +	/** vpll rate before sdo stream was on */
+> +	int vpll_rate;
+>  	/** regulator for SDO IP power */
+>  	struct regulator *vdac;
+>  	/** regulator for SDO plug detection */
+> @@ -193,17 +195,34 @@ static int sdo_s_power(struct v4l2_subdev *sd, int on)
 >  
-> +	if (soc_is_exynos5440())
-> +		exynos4_idle_driver.state_count = 1;
-> +
->  	ret = cpuidle_register_driver(&exynos4_idle_driver);
->  	if (ret) {
->  		printk(KERN_ERR "CPUidle failed to register driver\n");
+>  static int sdo_streamon(struct sdo_device *sdev)
+>  {
+> +	int ret = 0;
+
+There is no need to initialize ret to 0 here.
+
+>  	/* set proper clock for Timing Generator */
+> -	clk_set_rate(sdev->fout_vpll, 54000000);
+> +	sdev->vpll_rate = clk_get_rate(sdev->fout_vpll);
+> +	ret = clk_set_rate(sdev->fout_vpll, 54000000);
+> +	if (ret < 0) {
+> +		dev_err(sdev->dev,
+> +			"%s: Failed to set vpll rate!\n", __func__);
+> +		return ret;
+> +	}
+>  	dev_info(sdev->dev, "fout_vpll.rate = %lu\n",
+>  	clk_get_rate(sdev->fout_vpll));
+>  	/* enable clock in SDO */
+>  	sdo_write_mask(sdev, SDO_CLKCON, ~0, SDO_TVOUT_CLOCK_ON);
+> -	clk_enable(sdev->dacphy);
+> +	ret = clk_prepare_enable(sdev->dacphy);
+> +	if (ret < 0) {
+> +		dev_err(sdev->dev,
+> +			"%s: Failed to prepare and enable clock !\n", __func__);
+> +		goto fail;
+> +	}
+>  	/* enable DAC */
+>  	sdo_write_mask(sdev, SDO_DAC, ~0, SDO_POWER_ON_DAC);
+>  	sdo_reg_debug(sdev);
+>  	return 0;
+> +fail:
+> +	sdo_write_mask(sdev, SDO_CLKCON, 0, SDO_TVOUT_CLOCK_ON);
+> +	clk_set_rate(sdev->fout_vpll, sdev->vpll_rate);
+
+There is not a word about this change in the patch description.
+
+> +	return ret;
+>  }
+>  
+>  static int sdo_streamoff(struct sdo_device *sdev)
+> @@ -211,7 +230,7 @@ static int sdo_streamoff(struct sdo_device *sdev)
+>  	int tries;
+>  
+>  	sdo_write_mask(sdev, SDO_DAC, 0, SDO_POWER_ON_DAC);
+> -	clk_disable(sdev->dacphy);
+> +	clk_disable_unprepare(sdev->dacphy);
+>  	sdo_write_mask(sdev, SDO_CLKCON, 0, SDO_TVOUT_CLOCK_ON);
+>  	for (tries = 100; tries; --tries) {
+>  		if (sdo_read(sdev, SDO_CLKCON) & SDO_TVOUT_CLOCK_READY)
+> @@ -220,6 +239,7 @@ static int sdo_streamoff(struct sdo_device *sdev)
+>  	}
+>  	if (tries == 0)
+>  		dev_err(sdev->dev, "failed to stop streaming\n");
+> +	clk_set_rate(sdev->fout_vpll, sdev->vpll_rate);
+
+ditto
+
+sdev->fout_vpll rate related changes should be moved to a separate patch
+(or at least described properly in the patch description).
+
+>  	return tries ? 0 : -EIO;
+>  }
+>  
+> @@ -254,7 +274,7 @@ static int sdo_runtime_suspend(struct device *dev)
+>  	dev_info(dev, "suspend\n");
+>  	regulator_disable(sdev->vdet);
+>  	regulator_disable(sdev->vdac);
+> -	clk_disable(sdev->sclk_dac);
+> +	clk_disable_unprepare(sdev->sclk_dac);
+>  	return 0;
+>  }
+>  
+> @@ -266,7 +286,7 @@ static int sdo_runtime_resume(struct device *dev)
+>  
+>  	dev_info(dev, "resume\n");
+>  
+> -	ret = clk_enable(sdev->sclk_dac);
+> +	ret = clk_prepare_enable(sdev->sclk_dac);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -299,7 +319,7 @@ static int sdo_runtime_resume(struct device *dev)
+>  vdac_r_dis:
+>  	regulator_disable(sdev->vdac);
+>  dac_clk_dis:
+> -	clk_disable(sdev->sclk_dac);
+> +	clk_disable_unprepare(sdev->sclk_dac);
+>  	return ret;
+>  }
+>  
+> @@ -403,10 +423,14 @@ static int sdo_probe(struct platform_device *pdev)
+>  		ret = PTR_ERR(sdev->vdet);
+>  		goto fail_fout_vpll;
+>  	}
+> -
+>  	/* enable gate for dac clock, because mixer uses it */
+> -	clk_enable(sdev->dac);
+> -
+> +	clk_prepare_enable(sdev->dac);
+> +	if (IS_ERR(sdev->dac)) {
+
+It doesn't seem correct to check sdev->dac with IS_ERR() here, especially
+since we have the following code earlier:
+
+	sdev->dac = clk_get(dev, "dac");
+	if (IS_ERR(sdev->dac)) {
+		dev_err(dev, "failed to get clock 'dac'\n");
+		ret = PTR_ERR(sdev->dac);
+		goto fail_sclk_dac;
+	}
+
+I think you should just check clk_prepare_enable() return value instead.
+
+> +		dev_err(dev,
+> +			"%s: Failed to prepare and enable clock !\n", __func__);
+> +		ret = PTR_ERR(sdev->dac);
+> +		goto fail_fout_vpll;
+> +	}
+>  	/* configure power management */
+>  	pm_runtime_enable(dev);
+>  
+> @@ -444,7 +468,7 @@ static int sdo_remove(struct platform_device *pdev)
+>  	struct sdo_device *sdev = sd_to_sdev(sd);
+>  
+>  	pm_runtime_disable(&pdev->dev);
+> -	clk_disable(sdev->dac);
+> +	clk_disable_unprepare(sdev->dac);
+>  	clk_put(sdev->fout_vpll);
+>  	clk_put(sdev->dacphy);
+>  	clk_put(sdev->dac);
 
 Best regards,
 --
 Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
 Samsung Electronics
+
