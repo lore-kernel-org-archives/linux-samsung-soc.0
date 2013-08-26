@@ -1,59 +1,86 @@
 From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH RFC 0/5] ARM: s5pv210: move to common clk framework
-Date: Mon, 26 Aug 2013 13:38:29 +0200
-Message-ID: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
-Return-path: <linux-doc-owner@vger.kernel.org>
-Sender: linux-doc-owner@vger.kernel.org
+Subject: [PATCH RFC 2/5] media: s5p-tv: Fix mixer driver to work with CCF
+Date: Mon, 26 Aug 2013 13:38:31 +0200
+Message-ID: <1377517114-20222-3-git-send-email-m.krawczuk@partner.samsung.com>
+References: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1377517114-20222-1-git-send-email-m.krawczuk@partner.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: kyungmin.park@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, thomas.abraham@linaro.org, t.stanislaws@samsung.com, m.chehab@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series is the new s5pv210 clock implementation
-(using common clk framework).
+Replace clk_enable by clock_enable_prepare and clk_disable with clk_disable_unprepare.
+Clock prepare is required by Clock Common Framework, and old clock driver didn`t support it.
+Without it Common Clock Framework prints a warning.
 
-This implementation is compatible with device tree definition and board files.
+Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+---
+ drivers/media/platform/s5p-tv/mixer_drv.c | 33 +++++++++++++++++++++++++------
+ 1 file changed, 27 insertions(+), 6 deletions(-)
 
-This patch series is based on linux-next and has been tested on goni and aquila 
-boards using board file.
-
-This patch series require adding new registration method
-for PLL45xx and PLL46xx, which is included in this patch series:
-clk: samsung: pll: Use new registration method for PLL46xx
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg21653.html
-clk: samsung: pll: Use new registration method for PLL45xx
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg21652.html
-clk: samsung: exynos4: Rename exynos4_plls to exynos4x12_plls
-http://www.spinics.net/lists/arm-kernel/msg268486.html
-
-Mateusz Krawczuk (5):
-  media: s5p-tv: Fix sdo driver to work with CCF
-  media: s5p-tv: Fix mixer driver to work with CCF
-  ARM: samsung: add clock setup for FIMC and FIMD
-  clk: samsung: Add clock driver for s5pc110/s5pv210
-  ARM: s5pv210: Migrate clock handling to Common Clock Framework
-
- .../bindings/clock/samsung,s5pv210-clock.txt       |  72 ++
- arch/arm/mach-s5pv210/Kconfig                      |   9 +
- arch/arm/mach-s5pv210/Makefile                     |   4 +-
- arch/arm/mach-s5pv210/common.c                     |  22 +
- arch/arm/mach-s5pv210/common.h                     |  13 +
- arch/arm/mach-s5pv210/mach-aquila.c                |   1 +
- arch/arm/mach-s5pv210/mach-goni.c                  |  51 +-
- arch/arm/mach-s5pv210/mach-smdkc110.c              |   1 +
- arch/arm/mach-s5pv210/mach-smdkv210.c              |   1 +
- arch/arm/mach-s5pv210/mach-torbreck.c              |   1 +
- arch/arm/plat-samsung/Kconfig                      |   2 +-
- arch/arm/plat-samsung/init.c                       |   2 -
- drivers/clk/samsung/Makefile                       |   3 +-
- drivers/clk/samsung/clk-s5pv210.c                  | 732 +++++++++++++++++++++
- drivers/media/platform/s5p-tv/mixer_drv.c          |  33 +-
- drivers/media/platform/s5p-tv/sdo_drv.c            |  44 +-
- include/dt-bindings/clock/samsung,s5pv210-clock.h  | 221 +++++++
- 17 files changed, 1189 insertions(+), 23 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
- create mode 100644 drivers/clk/samsung/clk-s5pv210.c
- create mode 100644 include/dt-bindings/clock/samsung,s5pv210-clock.h
-
+diff --git a/drivers/media/platform/s5p-tv/mixer_drv.c b/drivers/media/platform/s5p-tv/mixer_drv.c
+index 51805a5..f889591 100644
+--- a/drivers/media/platform/s5p-tv/mixer_drv.c
++++ b/drivers/media/platform/s5p-tv/mixer_drv.c
+@@ -345,21 +345,42 @@ fail:
+ 
+ static int mxr_runtime_resume(struct device *dev)
+ {
++	int ret = 0;
+ 	struct mxr_device *mdev = to_mdev(dev);
+ 	struct mxr_resources *res = &mdev->res;
+ 
+ 	mxr_dbg(mdev, "resume - start\n");
+ 	mutex_lock(&mdev->mutex);
+ 	/* turn clocks on */
+-	clk_enable(res->mixer);
+-	clk_enable(res->vp);
+-	clk_enable(res->sclk_mixer);
++	ret = clk_prepare_enable(res->mixer);
++	if (ret < 0) {
++		dev_err(dev, "clk_prepare_enable(mixer) failed\n");
++		goto fail;
++	}
++	ret = clk_prepare_enable(res->vp);
++	if (ret < 0) {
++		dev_err(dev, "clk_prepare_enable(vp) failed\n");
++		goto fail_mixer;
++	}
++	ret = clk_prepare_enable(res->sclk_mixer);
++	if (ret < 0) {
++		dev_err(dev, "clk_prepare_enable(sclk_mixer) failed\n");
++		goto fail_vp;
++	}
+ 	/* apply default configuration */
+ 	mxr_reg_reset(mdev);
+ 	mxr_dbg(mdev, "resume - finished\n");
+ 
+ 	mutex_unlock(&mdev->mutex);
+ 	return 0;
++fail_vp:
++	clk_disable_unprepare(res->vp);
++fail_mixer:
++	clk_disable_unprepare(res->mixer);
++fail:
++	mutex_unlock(&mdev->mutex);
++	dev_info(dev, "resume failed\n");
++	return ret;
+ }
+ 
+ static int mxr_runtime_suspend(struct device *dev)
+@@ -369,9 +390,9 @@ static int mxr_runtime_suspend(struct device *dev)
+ 	mxr_dbg(mdev, "suspend - start\n");
+ 	mutex_lock(&mdev->mutex);
+ 	/* turn clocks off */
+-	clk_disable(res->sclk_mixer);
+-	clk_disable(res->vp);
+-	clk_disable(res->mixer);
++	clk_disable_unprepare(res->sclk_mixer);
++	clk_disable_unprepare(res->vp);
++	clk_disable_unprepare(res->mixer);
+ 	mutex_unlock(&mdev->mutex);
+ 	mxr_dbg(mdev, "suspend - finished\n");
+ 	return 0;
 -- 
 1.8.1.2
-
