@@ -1,53 +1,69 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v11 0/8] PHY framework
-Date: Mon, 26 Aug 2013 13:44:49 +0530
-Message-ID: <521B0E79.6060506@ti.com>
-References: <1377063973-22044-1-git-send-email-kishon@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1377063973-22044-1-git-send-email-kishon@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: gregkh@linuxfoundation.org
-Cc: linux-fbdev@vger.kernel.org, linux-doc@vger.kernel.org, tony@atomide.com, nsekhar@ti.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, swarren@nvidia.com, jg1.han@samsung.com, Kishon Vijay Abraham I <kishon@ti.com>, stern@rowland.harvard.edu, grant.likely@linaro.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, george.cherian@ti.com, arnd@arndb.de, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, balajitk@ti.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, broonie@kernel.org, akpm@linux-foundation.org
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v3 1/5] clk/exynos5420: add sclk_hdmiphy to the list of special
+ clocks
+Date: Mon, 26 Aug 2013 14:42:59 +0530
+Message-ID: <1377508383-15185-2-git-send-email-rahul.sharma@samsung.com>
+References: <1377508383-15185-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:53559 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756549Ab3HZIvL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Aug 2013 04:51:11 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MS4005K0R93Q3X0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Aug 2013 17:51:10 +0900 (KST)
+In-reply-to: <1377508383-15185-1-git-send-email-rahul.sharma@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Hi Greg,
+Add sclk_hdmiphy to the list of exposed clocks. This is required
+by hdmi driver to change the parent of hdmi clock.
 
-On Wednesday 21 August 2013 11:16 AM, Kishon Vijay Abraham I wrote:
-> Added a generic PHY framework that provides a set of APIs for the PHY drivers
-> to create/destroy a PHY and APIs for the PHY users to obtain a reference to
-> the PHY with or without using phandle.
-> 
-> This framework will be of use only to devices that uses external PHY (PHY
-> functionality is not embedded within the controller).
-> 
-> The intention of creating this framework is to bring the phy drivers spread
-> all over the Linux kernel to drivers/phy to increase code re-use and to
-> increase code maintainability.
-> 
-> Comments to make PHY as bus wasn't done because PHY devices can be part of
-> other bus and making a same device attached to multiple bus leads to bad
-> design.
-> 
-> If the PHY driver has to send notification on connect/disconnect, the PHY
-> driver should make use of the extcon framework. Using this susbsystem
-> to use extcon framwork will have to be analysed.
-> 
-> You can find this patch series @
-> git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git testing
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+---
+ Documentation/devicetree/bindings/clock/exynos5420-clock.txt |    1 +
+ drivers/clk/samsung/clk-exynos5420.c                         |    4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-Looks like there are not further comments on this series. Can you take this in
-your misc tree?
-
-Thanks
-Kishon
+diff --git a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+index 9bcc4b1..596a368 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+@@ -59,6 +59,7 @@ clock which they consume.
+   sclk_pwm		155
+   sclk_gscl_wa		156
+   sclk_gscl_wb		157
++  sclk_hdmiphy		158
+ 
+    [Peripheral Clock Gates]
+ 
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index e035fd0..a86cadc 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -120,7 +120,7 @@ enum exynos5420_clks {
+ 	sclk_i2s2, sclk_pcm1, sclk_pcm2, sclk_spdif, sclk_hdmi, sclk_pixel,
+ 	sclk_dp1, sclk_mipi1, sclk_fimd1, sclk_maudio0, sclk_maupcm0,
+ 	sclk_usbd300, sclk_usbd301, sclk_usbphy300, sclk_usbphy301, sclk_unipro,
+-	sclk_pwm, sclk_gscl_wa, sclk_gscl_wb,
++	sclk_pwm, sclk_gscl_wa, sclk_gscl_wb, sclk_hdmiphy,
+ 
+ 	/* gate clocks */
+ 	aclk66_peric = 256, uart0, uart1, uart2, uart3, i2c0, i2c1, i2c2, i2c3,
+@@ -297,7 +297,7 @@ static struct samsung_fixed_rate_clock exynos5420_fixed_rate_ext_clks[] __initda
+ 
+ /* fixed rate clocks generated inside the soc */
+ static struct samsung_fixed_rate_clock exynos5420_fixed_rate_clks[] __initdata = {
+-	FRATE(none, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 24000000),
++	FRATE(sclk_hdmiphy, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 24000000),
+ 	FRATE(none, "sclk_pwi", NULL, CLK_IS_ROOT, 24000000),
+ 	FRATE(none, "sclk_usbh20", NULL, CLK_IS_ROOT, 48000000),
+ 	FRATE(none, "mphy_refclk_ixtal24", NULL, CLK_IS_ROOT, 48000000),
+-- 
+1.7.10.4
