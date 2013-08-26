@@ -1,80 +1,123 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos4210: Work around lack of cpufreq
- regulator lookup
-Date: Mon, 26 Aug 2013 19:13:28 +0200
-Message-ID: <2243476.800bKojdAz@amdc1227>
-References: <1377020136-14838-1-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 1/8] Documentation: devicetree: Update Exynos MCT bindings
+ description
+Date: Mon, 26 Aug 2013 19:21:18 +0200
+Message-ID: <17222799.7ejNIvMnNi@amdc1227>
+References: <1377006768-23174-1-git-send-email-t.figa@samsung.com>
+ <1377006768-23174-2-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:50525 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752065Ab3HZRNd (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54785 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754590Ab3HZRVX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 13:13:33 -0400
-In-reply-to: <1377020136-14838-1-git-send-email-t.figa@samsung.com>
+	Mon, 26 Aug 2013 13:21:23 -0400
+In-reply-to: <1377006768-23174-2-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, ian.campbell@citrix.com, pawel.moll@arm.com, mark.rutland@arm.com, rob.herring@calxeda.com, swarren@wwwdotorg.org, galak@codeaurora.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Tuesday 20 of August 2013 19:35:36 Tomasz Figa wrote:
-> Exynos cpufreq drivers does not support device tree based regulator
-> lookup, so it can get the VDD ARM regulator only by its name. To get
-> cpufreq working for now, this patch works this around by renaming the
-> regulator in board dts files to vdd_arm, which is the name expected by
-> the driver.
-> 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4210-origen.dts | 7 ++++++-
->  arch/arm/boot/dts/exynos4210-trats.dts  | 7 ++++++-
->  2 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
-> b/arch/arm/boot/dts/exynos4210-origen.dts index 382d8c7..46378fe 100644
-> --- a/arch/arm/boot/dts/exynos4210-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> @@ -192,7 +192,12 @@
->  				};
-> 
->  				buck1_reg: BUCK1 {
-> -					regulator-name = "VDD_ARM_1.2V";
-> +					/*
-> +					* HACK: The real name is VDD_ARM_1.2V,
-> +					* but exynos-cpufreq does not support
-> +					* DT-based regulator lookup yet.
-> +					*/
-> +					regulator-name = "vdd_arm";
->  					regulator-min-microvolt = <950000>;
->  					regulator-max-microvolt	= <1350000>;
->  					regulator-always-on;
-> diff --git a/arch/arm/boot/dts/exynos4210-trats.dts
-> b/arch/arm/boot/dts/exynos4210-trats.dts index 1c164f2..63cc571 100644
-> --- a/arch/arm/boot/dts/exynos4210-trats.dts
-> +++ b/arch/arm/boot/dts/exynos4210-trats.dts
-> @@ -290,7 +290,12 @@
->  				};
-> 
->  				varm_breg: BUCK1 {
-> -				     regulator-name = "VARM_1.2V_C210";
-> +				     /*
-> +				      * HACK: The real name is VARM_1.2V_C210,
-> +				      * but exynos-cpufreq does not support
-> +				      * DT-based regulator lookup yet.
-> +				      */
-> +				     regulator-name = "vdd_arm";
->  				     regulator-min-microvolt = <900000>;
->  				     regulator-max-microvolt = <1350000>;
->  				     regulator-always-on;
+This patch updates description of device tree bindings for Exynos MCT
+(multicore timers). Namely:
+ - added note about simplified specification of local timer interrupts,
+   when using single per-processor interrupt for all local timers,
+ - changed first example that was incorrectly suggesting that global
+   timer interrupts are optional,
+ - simplified example interrupt map,
+ - added example showing simplified local timer interrupt specification.
 
-Ping.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ .../bindings/timer/samsung,exynos4210-mct.txt      | 54 +++++++++++++++-------
+ 1 file changed, 37 insertions(+), 17 deletions(-)
 
-This patch fixes broken cpufreq on above two boards, so it would be nice to 
-have it merged for 3.12, even if it's a bit hacky, since it's too late for 
-proper solution at the moment. (It's already in development, though.)
+Changes since v1:
+ - corrected typo reported by Stephen Warren,
+ - edited last example to use separate properties to represent possible
+   alternatives, as suggested by Stephen Warren.
 
-Best regards,
-Tomasz
+diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+index b5a86d2..167d5da 100644
+--- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
++++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.txt
+@@ -31,38 +31,58 @@ Required properties:
+ 	7: ..
+ 	i: Local Timer Interrupt n
+ 
+-Example 1: In this example, the system uses only the first global timer
+-	   interrupt generated by MCT and the remaining three global timer
+-	   interrupts are unused. Two local timer interrupts have been
+-	   specified.
++  For MCT block that uses a per-processor interrupt for local timers, such
++  as ones compatible with "samsung,exynos4412-mct", only one local timer
++  interrupt might be specified, meaning that all local timers use the same
++  per processor interrupt.
++
++Example 1: In this example, the IP contains two local timers, using separate
++	   interrupts, so two local timer interrupts have been specified,
++	   in addition to four global timer interrupts.
+ 
+ 	mct@10050000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x10050000 0x800>;
+-		interrupts = <0 57 0>, <0 0 0>, <0 0 0>, <0 0 0>,
++		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
+ 			     <0 42 0>, <0 48 0>;
+ 	};
+ 
+-Example 2: In this example, the MCT global and local timer interrupts are
+-	   connected to two separate interrupt controllers. Hence, an
+-	   interrupt-map is created to map the interrupts to the respective
+-	   interrupt controllers.
++Example 2: In this example, the timer interrupts are connected to two separate
++	   interrupt controllers. Hence, an interrupt-map is created to map
++	   the interrupts to the respective interrupt controllers.
+ 
+ 	mct@101C0000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x101C0000 0x800>;
+-		interrupt-controller;
+-		#interrups-cells = <2>;
+ 		interrupt-parent = <&mct_map>;
+-		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+-			     <4 0>, <5 0>;
++		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+ 
+ 		mct_map: mct-map {
+-			#interrupt-cells = <2>;
++			#interrupt-cells = <1>;
+ 			#address-cells = <0>;
+ 			#size-cells = <0>;
+-			interrupt-map = <0x0 0 &combiner 23 3>,
+-					<0x4 0 &gic 0 120 0>,
+-					<0x5 0 &gic 0 121 0>;
++			interrupt-map = <0 &gic 0 57 0>,
++					<1 &gic 0 69 0>,
++					<2 &combiner 12 6>,
++					<3 &combiner 12 7>,
++					<4 &gic 0 42 0>,
++					<5 &gic 0 48 0>;
+ 		};
+ 	};
++
++Example 3: In this example, the IP contains four local timers, but using
++	   a per-processor interrupt to handle them. Either all the local
++	   timer interrupts can be specified, with the same interrupt specifier
++	   value or just the first one.
++
++	mct@10050000 {
++		compatible = "samsung,exynos4412-mct";
++		reg = <0x10050000 0x800>;
++
++		/* Both ways are possible in this case. Either: */
++		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
++			     <0 42 0>;
++		/* or: */
++		interrupts = <0 57 0>, <0 69 0>, <0 70 0>, <0 71 0>,
++			     <0 42 0>, <0 42 0>, <0 42 0>, <0 42 0>;
++	};
+-- 
+1.8.3.2
