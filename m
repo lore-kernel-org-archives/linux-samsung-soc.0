@@ -1,54 +1,53 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [RFC] cleanup mach-s5p*
-Date: Mon, 26 Aug 2013 13:54:59 +0200
-Message-ID: <521B4213.8040601@samsung.com>
-References: <1f7b01cea1f6$9560aa10$c021fe30$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH V2] ARM: EXYNOS: cpuidle: Skip C1 cpuidle state for exynos5440
+Date: Mon, 26 Aug 2013 17:46:03 +0530
+Message-ID: <1377519363-23077-1-git-send-email-amit.daniel@samsung.com>
+References: <4070794.XxjluIqBpK@amdc1032>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37982 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751524Ab3HZLzE (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:34662 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751554Ab3HZMQT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 07:55:04 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MS400M4EZQ30G90@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Aug 2013 12:55:01 +0100 (BST)
-In-reply-to: <1f7b01cea1f6$9560aa10$c021fe30$%kim@samsung.com>
+	Mon, 26 Aug 2013 08:16:19 -0400
+Received: by mail-pd0-f181.google.com with SMTP id g10so3363317pdj.40
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2013 05:16:18 -0700 (PDT)
+In-Reply-To: <4070794.XxjluIqBpK@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, =?UTF-8?B?IlRvbWFzeiBGaWdhLw==?= =?UTF-8?B?U1JQT0wtS2VybmVsICYgU3lzdGVtIEZyYW1ld29yayAoU1NEKS8uL+yCvOyEseyghA==?= =?UTF-8?B?7J6QIg==?= <t.figa@samsung.com>, =?UTF-8?B?IlN5bHdlc3RlciBOYXdy?= =?UTF-8?B?b2NraS9TUlBPTC1LZXJuZWwgJiBTeXN0ZW0gRnJhbWV3b3JrIChTU0QpLy4v7IK8?= =?UTF-8?B?7ISx7KCE7J6QIg==?= <s.nawrocki@samsung.com>, m.krawczuk@partner.samsung.com
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Kukjin,
+This patch skips the deep C1(AFTR -Arm off top running) state for exynos5440
+soc as this soc does not support this state. The cpu's only allows the basic
+C0 state. The C1 state is filtered by re-initialising the driver state_count
+value to 1.
 
-On 8/26/2013 2:52 AM, Kukjin Kim wrote:
-> Hi all,
->
-> I have a plan to remove supporting following SoCs in mainline in the near
-> future.
-> - s5pc100 - smdkc100
-> - s5pv210(s5c110) - aquial, goni, smdkc110, smdkv210, torbreck
-> - s5p64x0(s5p6440, s5p6450)- smdk6440, smdk6450
->
-> I think users don't seem to use that any more with mainline. If so, we are
-> able to consider, it is not right now though.
->
-> How do you think?
+Cc: Kukjin Kim <kgene@kernel.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
 
-I am against removing support for S5PC110/S5PV210. We still use it for some
-of our internal development. DT support patches will be posted soon (pinctrl
-and clocks). Support for S5PC100 can be easily added the same way (we also
-have DT patches almost ready). S5PV210, S5PC100 and the older S3C64xx can
-all be handled by the same Samsung-DT 'machine file'.
+Changes in V2:
+* Used driver state_count variable to filter the C1 state
+ instead of device state count variable. Although this V2 patch is also
+ not complete as there are suggestions to make this driver platform driver.
 
-However we don't have any s5p64x0 based boards to develop DT support for
-them.
+ arch/arm/mach-exynos/cpuidle.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-Best regards
+diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+index 225ee84..ac13922 100644
+--- a/arch/arm/mach-exynos/cpuidle.c
++++ b/arch/arm/mach-exynos/cpuidle.c
+@@ -200,6 +200,9 @@ static int __init exynos4_init_cpuidle(void)
+ 	if (soc_is_exynos5250())
+ 		exynos5_core_down_clk();
+ 
++	if (soc_is_exynos5440())
++		exynos4_idle_driver.state_count = 1;
++
+ 	ret = cpuidle_register_driver(&exynos4_idle_driver);
+ 	if (ret) {
+ 		printk(KERN_ERR "CPUidle failed to register driver\n");
 -- 
-Marek Szyprowski
-Samsung R&D Institute Poland
+1.7.1
