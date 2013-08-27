@@ -1,131 +1,60 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH RFC v2 01/16] ARM: call clk_of_init from time_init
-Date: Tue, 27 Aug 2013 16:20:02 -0700
-Message-ID: <2caa20c0-cfa8-497d-8aef-fb99f2a0d821@DB9EHSMHS015.ehs.local>
-References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
- <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com>
- <3837b119-baad-4e68-8805-2bc52c0135f9@DB9EHSMHS031.ehs.local>
- <521D2F1F.1070103@gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL 3/3] 2nd Round Samsung mach-exynos for v3.12
+Date: Wed, 28 Aug 2013 08:33:34 +0900
+Message-ID: <232301cea37d$d8e32f50$8aa98df0$%kim@samsung.com>
+References: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
+ <3145165.ZB7l3vNJ7a@amdc1032>
+ <CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
+ <4070794.XxjluIqBpK@amdc1032>
+ <CADGdYn7YWscQ_EOqjbq29pNHvoxa0qqXHZeOBuz-Wi22H=Dc_w@mail.gmail.com>
+ <87bo4j6aii.fsf@linaro.org> <521CCC65.3070605@samsung.com>
+ <20130827185712.GD22852@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <521D2F1F.1070103@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:53584 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753038Ab3H0Xdf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Aug 2013 19:33:35 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MS7003HNQQP4H70@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Aug 2013 08:33:34 +0900 (KST)
+In-reply-to: <20130827185712.GD22852@quad.lixom.net>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: 'Kevin Hilman' <khilman@linaro.org>, 'amit daniel kachhap' <amit.daniel@samsung.com>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'LAK' <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Aug 28, 2013 at 12:58:39AM +0200, Sebastian Hesselbarth wrote:
-> On 08/28/13 00:19, S=C3=B6ren Brinkmann wrote:
-> >On Tue, Aug 27, 2013 at 11:27:55PM +0200, Sebastian Hesselbarth wrot=
-e:
-> >>Most DT ARM machs require common clock providers initialized before=
- timers.
-> >>Currently, arch/arm machs use .init_time to call clk_of_init right =
-before
-> >>clocksource_of_init. This prevents to remove that hook and use the =
-default
-> >>hook instead. clk_of_init is safe to call for non-DT platforms, so =
-add
-> >>the call to ARM arch time_init by default. While at it, also reorde=
-r includes
-> >>alphabetically.
-> >>
-> >>Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.c=
-om>
-> >>---
-> >>Changelog:
-> >>v1->v2:
-> >>- reorder includes alphabetically
-> >>
-> >>Cc: Russell King <linux@arm.linux.org.uk>
-> >>Cc: Arnd Bergmann <arnd@arndb.de>
-> >>Cc: linux-tegra@vger.kernel.org
-> >>Cc: kernel@stlinux.com
-> >>Cc: linux-samsung-soc@vger.kernel.org
-> >>Cc: linux-arm-kernel@lists.infradead.org
-> >>Cc: linux-kernel@vger.kernel.org
-> >>---
-> >>  arch/arm/kernel/time.c |   24 ++++++++++++++----------
-> >>  1 files changed, 14 insertions(+), 10 deletions(-)
-> >>
-> >>diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
-> >>index 98aee32..dd1028e 100644
-> >>--- a/arch/arm/kernel/time.c
-> >>+++ b/arch/arm/kernel/time.c
-> >>@@ -11,25 +11,26 @@
-> >[ ... ]
-> >>  void __init time_init(void)
-> >>  {
-> >>+	/* initalize common clocks before timers */
-> >>+	of_clk_init(NULL);
-> >>+
-> >>  	if (machine_desc->init_time)
-> >>  		machine_desc->init_time();
-> >>  	else
+Olof Johansson wrote:
+> 
+> On Wed, Aug 28, 2013 at 12:57:25AM +0900, Kukjin Kim wrote:
+> > On 08/27/13 13:08, Kevin Hilman wrote:
+> > >amit daniel kachhap<amit.daniel@samsung.com>  writes:
+> > >
+> > >>Submitted the V2 version of this patch with your suggestion.
+> > >
+> > >So will there be an updated branch (and pull request) with these
+> changes?
+> > >
+> > OK, Bart's concern makes sense so I replaced with Amit's v2 patch.
 > >
-> >This forces zynq to move some initialization our clock code relies o=
-n to
-> >init_irq(). Also, the current code already takes an approach of
-> >doing either common init or machine specific init.
->=20
-> Soeren,
->=20
-> you know that patch 16/16 takes care of zynq's clock init?
->=20
-> It's your own patch you provided from the last RFC. Looking at it, it
-> moves  zynq_sclr_init() to .init_irq and removes the call to
-> of_clk_init() from zynq_clock_init() which is called by
-> zynq_sclr_init().
->=20
-> Isn't that solving the above issues for mach-zynq?
+> > Kevin, here is updated branch so please pull following.
+> >
+> > If any problems, please kindly let me know.
+> 
+> Please don't post pull requests in the middle of a comment thread; start a
+> new
+> thread or at least do a new subject for them -- they are much too easy to
+> miss
+> otherwise.
+> 
+Oh, OK. I see.
 
-Yes, I know. This alternative approach came to me after I sent my patch
-and took a closer look at init_irq(). As you said, we move our problem
-just to an earlier boot stage. Which wouldn't be true if a strict
-if-else would allow us to explicitly call everything in the right order
-- which init_irq by the way does.
-I mentioned it in an email in the original thread yesterday. But since
-there is a v2 now, I just thought to bring it up here now.
-
->=20
-> >I think it might be better to move the call to of_clk_init() down in=
-to
-> >the else branch of the if-else.
->=20
-> Possibly, yes. But we could also unconditionally call of_clk_init() a=
-t
-> the beginning of time_init() and call clocksource_of_init() at the en=
-d.
-> That will make .init_time() to some fixup hook between
-> initialization of clocks and timers.
-
-Right, the question is what is the common case? What do SOCs use the
-custom init_time() hook for?
-
-If SOCs use it for things additionally to clock init where=20
-execution order doesn't matter, your patch works perfectly well and is
-the preferred solution.
-
-If they use it just to call of_clk_init() and of_clocksource_init(),
-those hooks can go away and it would work in the else branch or outside=
-,
-equally well.
-
-If they use it like Zynq, to do some required SOC specific init which m=
-ust
-be done before clock init, it would make more sense to have it in the
-else branch. That way the SOC intentionally replaces init_time()
-with its own implementation and has to take care of calling everything =
-in the
-right order.
-
-Another approach might be to move the custom init_time() hook before th=
-e
-call to of_clk_init().
-
-As I said, it depends on how this hook is used.
-
-	S=C3=B6ren
+Thanks,
+Kukjin
