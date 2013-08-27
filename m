@@ -1,67 +1,114 @@
 From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v3 4/5] clk/exynos5420: add hdmi mux to change parents in
- hdmi driver
-Date: Tue, 27 Aug 2013 10:14:01 +0530
-Message-ID: <CAPdUM4MUvzyAjyFwuYyBY6C-nn_VHttwf=ebAZLgc4VTNgS05A@mail.gmail.com>
-References: <1377508383-15185-1-git-send-email-rahul.sharma@samsung.com>
-	<1377508383-15185-5-git-send-email-rahul.sharma@samsung.com>
-	<1919681.jqCQjHmyQW@flatron>
+Subject: Re: [PATCH v5 6/6] of/documentation: update with clock information
+ for exynos hdmi subsystem
+Date: Tue, 27 Aug 2013 10:35:36 +0530
+Message-ID: <CAPdUM4OKB00KuB+_Go8b0bGJthy1tXF-RuCVyCOLpKRbUtP_Sg@mail.gmail.com>
+References: <1377509901-9467-1-git-send-email-rahul.sharma@samsung.com>
+	<1377509901-9467-7-git-send-email-rahul.sharma@samsung.com>
+	<9840790.B5asg6Si2U@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:50084 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752572Ab3H0EoD (ORCPT
+Received: from mail-we0-f175.google.com ([74.125.82.175]:65088 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751738Ab3H0FFi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 00:44:03 -0400
-Received: by mail-we0-f174.google.com with SMTP id q54so3501743wes.33
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2013 21:44:01 -0700 (PDT)
-In-Reply-To: <1919681.jqCQjHmyQW@flatron>
+	Tue, 27 Aug 2013 01:05:38 -0400
+In-Reply-To: <9840790.B5asg6Si2U@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, sunil joshi <joshi@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sunil joshi <joshi@samsung.com>
 
-On 27 August 2013 05:16, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On 27 August 2013 05:10, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 > Hi Rahul,
 >
-> On Monday 26 of August 2013 14:43:02 Rahul Sharma wrote:
->> hdmi driver needs to change the parent of hdmi clock
->> to pixel clock or hdmiphy clock, based on the stability
->> of hdmiphy. This patch is exposing the mux for changing
->> the parent.
+> On Monday 26 of August 2013 15:08:21 Rahul Sharma wrote:
+>> Adding information about clocks to the binding documentation
+>> for exynos mixer and hdmi.
 >>
 >> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 >> ---
->>  Documentation/devicetree/bindings/clock/exynos5420-clock.txt |    5
->> +++++ drivers/clk/samsung/clk-exynos5420.c                         |
->> 5 ++++- 2 files changed, 9 insertions(+), 1 deletion(-)
+>>  Documentation/devicetree/bindings/video/exynos_hdmi.txt  |   14
+>> +++++++++++++- Documentation/devicetree/bindings/video/exynos_mixer.txt
+>> |    4 ++++ 2 files changed, 17 insertions(+), 1 deletion(-)
 >>
->> diff --git
->> a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->> b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt index
->> 5758a69..6f16aa8 100644
->> --- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->> +++ b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->> @@ -182,6 +182,11 @@ clock which they consume.
->>    g3d                        501
->>    smmu_mixer         502
+>> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> b/Documentation/devicetree/bindings/video/exynos_hdmi.txt index
+>> 323983b..94aaa7d 100644
+>> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+>> @@ -12,7 +12,19 @@ Required properties:
+>>       a) phandle of the gpio controller node.
+>>       b) pin number within the gpio controller.
+>>       c) optional flags and pull up/down.
+>> -
+>> +- clocks: list of clock IDs from SoC clock driver.
+>> +     a) hdmi: It is required for gate operation on aclk_200_disp1 clock
+>> +             which clocks the display1 block.
+>
+> Isn't aclk_200_disp1 a name specific to Exynos5 SoCs? AFAIK this binding
+> is also used for other SoCs, including Exynos4 and probably S5PV210, so it
+> should be written to either be SoC-agnostic or account for all supported
+> SoCs. What about following descriptions:
+>
+> Gate of HDMI IP block bus clock.
+>
+>> +     b) sclk_hdmi: It is required for gate operation on sclk_hdmi clock
+>> +             which clocks hdmi IP.
+>
+> Gate of HDMI special clock.
+>
+>> +     c) sclk_pixel: Parent for mux mout_hdmi.
+>
+> Pixel special clock, one of two possible inputs of HDMI clock mux.
+>
+>> +     d) sclk_hdmiphy: Parent for mux mout_hdmi.
+>
+> HDMI PHY clock output, one of two possible inputs of HDMI clock mux.
+>
+>> +     e) mout_hdmi: It is required by the driver to switch between the 2
+>> +             parents i.e. sclk_pixel and sclk_hdmiphy. If hdmiphy is
+> stable
+>> +             after configuration, parent is set to sclk_hdmiphy else
+>> +             sclk_pixel.
+>
+> HDMI clock mux, used to select between clock generated by HDMI PHY and
+> alternative clock source that can be used until HDMI PHY is set up.
+>
+>> +- clock-names: aliases as per driver requirements for above clock IDs:
+>> +     "hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
+>>  Example:
 >>
->> +  Mux                        ID
->> +  ----------------------------
->> +
->> +  mout_hdmi          1024
+>>       hdmi {
+>> diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt
+>> b/Documentation/devicetree/bindings/video/exynos_mixer.txt index
+>> 3334b0a..94b40b6 100644
+>> --- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
+>> +++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+>> @@ -10,6 +10,10 @@ Required properties:
+>>  - reg: physical base address of the mixer and length of memory mapped
+>>       region.
+>>  - interrupts: interrupt number to the cpu.
+>> +- clocks: list of clock IDs from SoC clock driver.
+>> +     a) mixer: It is required for gate operation on aclk_200_disp1
+> clock
 >
-> Is there a need for such big hole between smm_mixer and this clock? I
-> believe that based on the documentation, the total amount of clocks that
-> can be defined may be approximated and some extra margin added, so you
-> don't waste so much of numbering space and memory used for lookup array.
+> Gate of Mixer IP bus clock.
 >
+>> +             which clocks the display1 block.
+>> +     b) sclk_hdmi: Parent for mux mout_mixer.
+>
+> I'm not sure why this clock is needed here. Could you explain what role it
+> plays in functioning of the Mixer IP?
+>
+I have done above rephrasing.
 
-Total number of Gates are coming upto the enum value 540. I can leave gap
-of 64 in between for first mux. Similarly, total muxes in system are 118.
-Optimum gab would be between 128~150. What you say about these
-values?
+For exynos4 socs, sclk_mixer can have sclk_hdmi or sclk_dac as inputs.
+mout_mixer
+is configured to select sclk_hdmi. I am not sure that how sclk_mixer
+is utilized inside
+mixer hardware.
 
 regards,
 Rahul Sharma.
