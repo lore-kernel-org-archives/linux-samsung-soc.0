@@ -1,120 +1,63 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V4] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Tue, 27 Aug 2013 15:09:49 +0100
-Message-ID: <20130827140949.GK19893@e106331-lin.cambridge.arm.com>
-References: <1377595351-30233-1-git-send-email-yuvaraj.cd@samsung.com>
- <20130827110145.GG19893@e106331-lin.cambridge.arm.com>
- <CAKuRcOLK0PjcVKFxUZ9hedVScKe1K+QYE1g57CZ5JOE=AmFJow@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera
+ interface
+Date: Tue, 27 Aug 2013 17:19:14 +0300
+Message-ID: <20130827141914.GD19256@mwanda>
+References: <20130823094647.GO31293@elgon.mountain>
+ <5219F736.2010706@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:42213 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753257Ab3H0OJx (ORCPT
+Received: from userp1040.oracle.com ([156.151.31.81]:16960 "EHLO
+	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753055Ab3H0OTZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 10:09:53 -0400
+	Tue, 27 Aug 2013 10:19:25 -0400
 Content-Disposition: inline
-In-Reply-To: <CAKuRcOLK0PjcVKFxUZ9hedVScKe1K+QYE1g57CZ5JOE=AmFJow@mail.gmail.com>
+In-Reply-To: <5219F736.2010706@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "dianders@chromium.org" <dianders@chromium.org>, "cjb@laptop.org" <cjb@laptop.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Tue, Aug 27, 2013 at 01:02:52PM +0100, Yuvaraj Kumar wrote:
-> On Tue, Aug 27, 2013 at 4:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Tue, Aug 27, 2013 at 10:22:31AM +0100, Yuvaraj Kumar C D wrote:
-> >> This patch adds the device tree node entries for exynos5420 SOC.
-> >> Exynos5420 has a different version of DWMMC controller,so a new
-> >> compatible string is used to distinguish it from the prior SOC's.
-> >>
-> >> This patch depends on
-> >>       mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
-> >>
-> >> changes since V3:
-> >>       1.change fifo-depth size from 0x80 to 0x40
-> >>       2.Move the below properties
-> >>               a.card-detect-delay
-> >>               b.samsung,dw-mshc-ciu-div
-> >>               c.samsung,dw-mshc-sdr-timing
-> >>               d.samsung,dw-mshc-ddr-timing
-> >>       from SOC dts to board dts file as suggested by Doug Anderson
-> >>
-> >> changes since V2:
-> >>       1.dropped num-slots property from node as its not required
-> >>         if number of card slots available is 1.
-> >>
-> >>       2.Move the below properties
-> >>               a.fifo-depth
-> >>               b.card-detect-delay
-> >>               c.samsung,dw-mshc-ciu-div
-> >>               d.samsung,dw-mshc-sdr-timing
-> >>               e.samsung,dw-mshc-ddr-timing
-> >>       from board dts to SOC dts,as these are not board specific properties.
-> >>
-> >>       3.Updated the binding document exynos-dw-mshc.txt.
-> >>
-> >> changes since V1:
-> >>       1.disable node by status = disabled in SOC file
-> >>       2.enable node by status = okay in board specific file
-> >>
-> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> >> ---
-> >>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    4 ++
-> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   34 +++++++++++++++++
-> >>  arch/arm/boot/dts/exynos5420.dtsi                  |   39 ++++++++++++++++++++
-> >>  3 files changed, 77 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >> index 6d1c098..25368e8 100644
-> >> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >> @@ -16,6 +16,8 @@ Required Properties:
-> >>         specific extensions.
-> >>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
-> >>         specific extensions.
-> >> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
-> >> +       specific extensions.
-> >>
-> >>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
-> >>    unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-> >> @@ -31,6 +33,8 @@ Required Properties:
-> >>    data rate mode operation. Refer notes below for the order of the cells and the
-> >>    valid values.
-> >>
-> >> +* bypass-smu: Bypass Security Management Unit of eMMC channel 0 and channel 1.
-> >> +
+On Sun, Aug 25, 2013 at 02:23:18PM +0200, Sylwester Nawrocki wrote:
+> On 08/23/2013 11:46 AM, Dan Carpenter wrote:
+> >[ Going through some old warnings... ]
 > >
-> > Could you elaborate on why this is needed?
-> Exynos5420  Mobile Storage Host controller has a Security Management
-> Unit (SMU) for
-> channel 0 and channel 1 (mainly for eMMC). This binding property
-> requires to add a quirk
-> to bypass SMU as it is not being used yet.
-
-When you say it's not being used _yet_, what do you mean? That the
-driver doesn't have support for it, but will in future?
-
-Can the driver not just choose to bypass it entirely for now, regardless
-of what's in the dt? Do we need to bypass it in future for some reason?
-
-I don't see why this needs to be in the dt.
-
+> >Hello Sylwester Nawrocki,
 > >
-> > Is the SMU broken or not present in some hardware revisions?
-> SMU is only present in channel 0 and channel 1,but not in channel 2.So
-> to distinguish this,
-> bypass-smu property has been added as quirks in the channel.
+> >This is a semi-automatic email about new static checker warnings.
 > >
-> >>    Notes for the sdr-timing and ddr-timing values:
-> >>
-> >>      The order of the cells should be
+> >The patch babde1c243b2: "[media] V4L: Add driver for S3C24XX/S3C64XX
+> >SoC series camera interface" from Aug 22, 2012, leads to the
+> >following Smatch complaint:
 > >
-> > On an unrelated note, I see the binding in mainline defines a gpios
-> > property that doesn't seem to be used anywhere. Am I missing something,
-> > or do we just not have support for that part of the binding?
-> Yes,This document has been little outdated.I will update and post a
-> separate patch.
+> >drivers/media/platform/s3c-camif/camif-capture.c:463 queue_setup()
+> >	 warn: variable dereferenced before check 'fmt' (see line 460)
+> >
+> >drivers/media/platform/s3c-camif/camif-capture.c
+> >    455          if (pfmt) {
+> >    456                  pix =&pfmt->fmt.pix;
+> >    457                  fmt = s3c_camif_find_format(vp,&pix->pixelformat, -1);
+> >    458                  size = (pix->width * pix->height * fmt->depth) / 8;
+> >                                                            ^^^^^^^^^^
+> >Dereference.
+> >
+> >    459		} else {
+> >    460			size = (frame->f_width * frame->f_height * fmt->depth) / 8;
+> >                                                                    ^^^^^^^^^^
+> >Dereference.
+> >
+> >    461		}
+> >    462	
+> >    463		if (fmt == NULL)
+> >                     ^^^^^^^^^^^
+> >Check.
+> 
+> Thanks for the bug report. This check of course should be before line 455.
+> Would you like to sent a patch for this or should I handle that ?
 
-Cheers!
+Could you handle it and give me the Reported-by tag?
 
-Mark.
+regards,
+dan carpenter
