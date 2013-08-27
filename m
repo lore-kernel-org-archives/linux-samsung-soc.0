@@ -1,78 +1,158 @@
-From: YUVARAJ CD <yuvaraj.cd@samsung.com>
-Subject: Re: Re: [PATCH V3] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Tue, 27 Aug 2013 06:40:48 +0000 (GMT)
-Message-ID: <25858666.81171377585647211.JavaMail.weblogic@epml04>
-Reply-To: yuvaraj.cd@samsung.com
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH v3] pinctrl: Pass all configs to driver on pin_config_set()
+Date: Tue, 27 Aug 2013 10:56:31 +0200
+Message-ID: <6659378.X3XNCLDVvV@avalon>
+References: <1377134300-25480-1-git-send-email-syin@broadcom.com> <1377484899-4918-1-git-send-email-syin@broadcom.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
-Return-path: <linux-mmc-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-mmc-owner@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, GIRISH K S <ks.giri@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from perceval.ideasonboard.com ([95.142.166.194]:38653 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753596Ab3H0IzL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Aug 2013 04:55:11 -0400
+In-Reply-To: <1377484899-4918-1-git-send-email-syin@broadcom.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sherman Yin <syin@broadcom.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@nvidia.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-rpi-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Laxman Dewangan <ldewangan@nvidia.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-tegra@vger.kernel.org, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Simon Horman <horms+renesas@verge.net.au>, Paul Mundt <lethal@linux-sh.org>, Tony Prisk <linux@prisktec>
 
-LS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0NClNlbmRlciA6IERvdWcgQW5kZXJzb248
-ZGlhbmRlcnNAZ29vZ2xlLmNvbT4NCkRhdGUgOiBBdWcgMjQsIDIwMTMgMDk6MTggKEdNVCswNToz
-MCkNClRpdGxlIDogUmU6IFtQQVRDSCBWM10gQVJNOiBkdHM6IEFkZCBkd21tYyBEVCBub2RlcyBm
-b3IgZXh5bm9zNTQyMCBTT0MNCiANCll1dmFyYWosDQoNCk9uIFRodSwgQXVnIDIyLCAyMDEzIGF0
-IDExOjI1IFBNLCBZdXZhcmFqIENkIHdyb3RlOg0KPj4+ICAgICAgICAgICAgICAgICBiLmNhcmQt
-ZGV0ZWN0LWRlbGF5DQo+Pj4gICAgICAgICAgICAgICAgIGMuc2Ftc3VuZyxkdy1tc2hjLWNpdS1k
-aXYNCj4+PiAgICAgICAgICAgICAgICAgZC5zYW1zdW5nLGR3LW1zaGMtc2RyLXRpbWluZw0KPj4+
-ICAgICAgICAgICAgICAgICBlLnNhbXN1bmcsZHctbXNoYy1kZHItdGltaW5nDQoNCk9LLCBzbyBJ
-IGRvbid0IGtub3cgYWJvdXQgY2FyZC1kZXRlY3QtZGVsYXksIGJ1dCBoZXJlJ3MgbXkgYmVsaWVm
-DQphYm91dCB0aGUgb3RoZXJzLiAgRmVlbCBmcmVlIHRvIHRlbGwgbWUgSSdtIHdyb25nLCBzaW5j
-ZSBJJ20gbm90IGFuIEVFDQpieSB0cmFpbmluZyBhbmQgYWxzbyB0aGUgc3R1ZmYgYmVsb3cgaGFz
-IGJlZW4gY29iYmxlZCB0b2dldGhlciBmcm9tDQpsb3RzIG9mIGRpZmZlcmVudCBkb2NzLiAgSSBh
-bHNvIGhhdmVuJ3QgZXhwZXJpbWVudGVkIGVub3VnaCB0byBrbm93DQoxMDAlIHRoYXQgaXQncyBj
-b3JyZWN0LiAgSSBhbHNvIGtub3cgbm90aGluZyBhYm91dCB0aGUgYWN0dWFsDQpzaWduYWxpbmcg
-cHJvdG9jb2xzIG9mIFNEL01NQy4uLiAgRW5vdWdoIGNhdmVhdHM/DQoNCg0Kc2RyLXRpbWluZyAv
-IGRkci10aW1pbmc6DQoNCiogRmlyc3QgbnVtYmVyIChJIHRoaW5rKSBhbGxvd3MgeW91IHRvIGRy
-aXZlIGRhdGEgcmVsYXRlZCBsaW5lcyBhdCBhDQpwaGFzZSBvZmZzZXQgZnJvbSB0aGUgY2xvY2sg
-bGluZS4gIFNvIGlmIHlvdSBoYXZlIGNyYXp5IHJvdXRpbmcgb24NCnlvdXIgYm9hcmQgYW5kIHRo
-ZSBkYXRhIGxpbmVzIGFyZSBtdWNoIGxvbmdlciB0aGFuIHRoZSBjbG9jayBsaW5lcyB5b3UNCm1p
-Z2h0IHdhbnQgdG8gZG8gdGhpcy4gIFRoaXMgaXMgbm90IGNvbW1vbiwgc28gdXN1YWxseSB5b3Ug
-d2FudCAwDQpoZXJlLiAgTm90ZSB0aGF0IHNvbWUgb3RoZXIgZG9jcyBJIGhhdmUgZGlzYWdyZWUg
-d2l0aCB0aGlzIGFuZCBjbGFpbQ0KdGhhdCB0aGlzIG51bWJlciBoYXMgdG8gZG8gd2l0aCBob2xk
-IHRpbWUgcmVxdWlyZW1lbnRzLg0KDQoqIFNlY29uZCBudW1iZXIgYWxsb3dzIHlvdSB0byBzYW1w
-bGUgc2lnbmFscyBmcm9tIHRoZSBjYXJkIGF0IGEgcGhhc2UNCm9mZnNldCBmcm9tIHRoZSBjbG9j
-ayBsaW5lLiAgVGhpcyBudW1iZXIgbWlnaHQgZGVwZW5kIG9uIHRoZSBjYXJkLCBidXQNCmhvcGVm
-dWxseSBub3QgbXVjaC4gIEl0J3Mgc3VwcG9zZWQgdG8gZGVwZW5kIG1vcmUgb24gdGhlIGxlbmd0
-aCBvZiB0aGUNCmxpbmVzIChBS0EgZGVwZW5kcyBvbiB0aGUgYm9hcmQpLCB0aG91Z2ggaXQgbWln
-aHQgYWxzbyBkZXBlbmQgb24NCnB1bGx1cCB2YWx1ZXMgYXMgd2VsbCBhbmQgc29tZXdoYXQgb24g
-dGhlIGNhcmQ/ICBUaGlzIG51bWJlciBuZWVkcyB0bw0KYmUgdHVuZWQgKGxpa2UgbGluayB0cmFp
-bmluZykgd2hlbiB5b3Ugb3BlcmF0ZSBhIGNhcmQgYXQgPiA1ME1Iei4NCg0KKiBGb3IgY2l1LWRp
-djoNCg0KV2l0aCBhIGNpdS1kaXYgb2YgMyAocmVhbGx5IDMrMSA9IDQpIHlvdSBnZXQgcGhhc2Ug
-b2Zmc2V0cyBvZiA0NSBkZWdyZWVzLg0KV2l0aCBhIGNpdS1kaXYgb2YgMSAocmVhbGx5IDErMSA9
-IDIpIHlvdSBnZXQgcGhhc2Ugb2Zmc2V0cyBvZiA5MCBkZWdyZWVzLg0KV0l0aCBhIGNpdS1kaXYg
-b2YgMCAocmVhbGx5IDArMSA9IDEpIHlvdSBnZXQgbm8gcGhhc2Ugb2Zmc2V0cyAoSSB3b3VsZA0K
-aGF2ZSBndWVzc2VkIDE4MCwgYnV0IG1hbnVhbCBzYXlzIG90aGVyd2lzZSkNCg0KU28gY2l1LWRp
-diBpbnRpbWF0ZWx5IGFmZmVjdHMgdGhlIHNkci10aW1pbmcgYW5kIGRkci10aW1pbmcuICBUaHVz
-IGlmDQp0aG9zZSBhcmUgYm9hcmQtc3BlY2lmaWMgdGhlbiBzbyBpcyBjaXUtZGl2Lg0KDQotLS0N
-Cg0KQWxsIG9mIHRoZSBhYm92ZSBzdWdnZXN0cyB0byBtZSB0aGUgZm9sbG93aW5nIHVudGVzdGVk
-IHRoaW5nczoNCg0KKiBJZiB5b3UgaGFwcGVuZWQgdG8gaGF2ZSBhIHNpdHVhdGlvbiB3aGVyZSB5
-b3UgaGFkIGEgImNpdS1kaXYiIG9mIDMNCmFuZCBhbGwgb2YgeW91ciBzZHItdGltaW5nL2Rkci10
-aW1pbmcgdmFsdWVzIHdlcmUgZXZlbiwgeW91IGNvdWxkIGN1dA0KdGhlIGlucHV0IGNsb2NrIGlu
-IGhhbGYsIGNoYW5nZSAiY2l1LWRpdiIgdG8gMSwgYW5kIGN1dCBhbGwgeW91cg0KdGltaW5ncyBp
-biBoYWxmLiAgSSdkIGltYWdpbmUgdGhhdCB3b3VsZCBzYXZlIHlvdSBwb3dlciAoYmV0dGVyIHRv
-DQpzbG93IGNsb2NrcyBkb3duIGhpZ2hlciBpbiB0aGUgY2xvY2sgdHJlZT8pLiAgSXQgd291bGQg
-YmUgc29ydGEgbmljZQ0KaWYgdGhpcyB3YXMgZG9uZSBhdXRvbWF0aWNhbGx5IChhc3N1bWluZyB0
-aGF0IHlvdSBoYXZlIGZ1bGwgY29udHJvbCBvZg0KaW5wdXQgY2xvY2spLg0KDQoqIEknbSBhIGxp
-dHRsZSB1bmNsZWFyIGV4YWN0bHkgaG93IHRoZSBDTEtESVYgcmVnaXN0ZXIgaW50ZXJhY3RzIHdp
-dGgNCmFsbCBvZiB0aGUgYWJvdmUuICBJIGd1ZXNzIEknZCBiZSB1bmRlciB0aGUgYXNzdW1wdGlv
-biB0aGF0IHRoZSBDTEtESVYNCmFwcGxpZXMgdG8gdGhlIG1haW4gY2xvY2ssIHRoZSBzYW1wbGUg
-Y2xvY2ssIGFuZCB0aGUgZHJpdmUgY2xvY2suDQouLi5idXQgbWF5YmUgSSdtIGNvbmZ1c2VkLiAg
-SSB0aGluayB5b3UgYWxzbyBnZXQgZGlmZmVyZW50IHJlc3VsdHMgKGluDQp0ZXJtcyBvZiBob3cg
-bWFueSBucyB0aGUgZHJpdmUgYW5kIHNhbXBsZSBhcmUgZGVsYXllZCkgZGVwZW5kaW5nIG9uDQp3
-aGV0aGVyIHRoZSBDTEtESVYgYXBwbGllcyBfYWZ0ZXJfIGNpdS1kaXYgb3IgYmVmb3JlLiAgTXkg
-Z3Vlc3MgaXMNCnRoYXQgaXQgYXBwbGllcyBhZnRlci4NCg0KLS0tDQoNCkFueXdheSwgbm90IHN1
-cmUgdGhhdCBoZWxwcyBhIHdob2xlIGxvdCwgYnV0IHRoYXQncyBhIHN1bW1hcnkgb2Ygd2hhdA0K
-SSd2ZSBjb21lIHRvIHVuZGVyc3RhbmQuICBJJ20gaGFwcHkgdG8gYmUgZW5saWdodGVuZWQuICBJ
-J20gc3RpbGwNCnRyeWluZyB0byBmaWd1cmUgaG93IGhvdyB0aGVzZSBudW1iZXJzIHdlcmUgcGlj
-a2VkIGZvciBvdXIgaGFyZHdhcmUNCmFuZCB3aGV0aGVyIHRob3NlIG51bWJlcnMgYXJlIGFjdHVh
-bGx5IHJpZ2h0Lg0KDQpUaGFua3MgRG91Zy5JdCB3YXMgdmVyeSBpbmZvcm1hdGl2ZSBhbmQgSSdt
-IGVubGlnaHRlbmVkLg0KSSB3aWxsIGluY29ycG9yYXRlIHRoZXNlIGNoYW5nZXMgaW4gbmV4dCB2
-ZXJzaW9uIGFuZCBwb3N0IHNvb24uIA0KDQoNCi1Eb3Vn
+Hi Sherman,
 
+Thank you for the patch.
 
+On Sunday 25 August 2013 19:41:39 Sherman Yin wrote:
+> When setting pin configuration in the pinctrl framework, pin_config_set() or
+> pin_config_group_set() is called in a loop to set one configuration at a
+> time for the specified pin or group.
+> 
+> This patch 1) removes the loop and 2) changes the API to pass the whole pin
+> config array to the driver.  It is now up to the driver to loop through the
+> configs.  This allows the driver to potentially combine configs and reduce
+> the number of writes to pin config registers.
+> 
+> All c files changed have been build-tested to verify the change compiles and
+> that the corresponding .o is successfully generated.
+> 
+> Signed-off-by: Sherman Yin <syin@broadcom.com>
+> Reviewed-by: Christian Daudt <csd@broadcom.com>
+> Reviewed-by: Matt Porter <matt.porter@linaro.org>
+> 
+>   drivers/pinctrl/pinconf.c             |   42 ++++----
+>   drivers/pinctrl/pinctrl-tegra.c       |   69 ++++++------
+>   include/linux/pinctrl/pinconf.h       |    6 +-
+> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+> 
+>   On Tegra (Tegra114 Dalmore board, on top of next-20130816),
+> Tested-by: Stephen Warren <swarren@nvidia.com>
+> 
+> ---
+> Please refer to the discussion with Linus W. "[PATCH] ARM: Adds pin config
+> API to set all configs in one function" here:
+> 
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-May/166567.html
+> 
+> All c files changed have been build-tested to verify the change compiles and
+> that the corresponding .o are successfully generated.
+> 
+> [v2]	rebased on LinusW's linux-pinctrl.git "devel" branch.  Fixed and
+> build-tested pinctrl-sunxi.c
+> [v3]	rebased on linux-pinctrl.git:devel as of 2013.08.25. Applied API
+> change to new driver pinctrl-palmas.c. Re build-tested all files.
+> ---
+>  drivers/pinctrl/mvebu/pinctrl-mvebu.c |   26 +++--
+>  drivers/pinctrl/pinconf.c             |   42 ++++----
+>  drivers/pinctrl/pinctrl-abx500.c      |  187 ++++++++++++++++--------------
+>  drivers/pinctrl/pinctrl-at91.c        |   48 +++++----
+>  drivers/pinctrl/pinctrl-bcm2835.c     |   43 ++++----
+>  drivers/pinctrl/pinctrl-exynos5440.c  |  113 +++++++++++---------
+>  drivers/pinctrl/pinctrl-falcon.c      |   63 ++++++-----
+>  drivers/pinctrl/pinctrl-imx.c         |   28 ++---
+>  drivers/pinctrl/pinctrl-mxs.c         |   91 ++++++++--------
+>  drivers/pinctrl/pinctrl-nomadik.c     |  125 ++++++++++++----------
+>  drivers/pinctrl/pinctrl-palmas.c      |  134 ++++++++++++-----------
+>  drivers/pinctrl/pinctrl-rockchip.c    |   57 ++++++----
+>  drivers/pinctrl/pinctrl-samsung.c     |   17 ++-
+>  drivers/pinctrl/pinctrl-single.c      |   33 ++++--
+>  drivers/pinctrl/pinctrl-st.c          |   11 +-
+>  drivers/pinctrl/pinctrl-sunxi.c       |   77 +++++++-------
+>  drivers/pinctrl/pinctrl-tegra.c       |   69 ++++++------
+>  drivers/pinctrl/pinctrl-tz1090-pdc.c  |  135 ++++++++++++++----------
+>  drivers/pinctrl/pinctrl-tz1090.c      |  140 +++++++++++++-----------
+>  drivers/pinctrl/pinctrl-u300.c        |   18 ++--
+>  drivers/pinctrl/pinctrl-xway.c        |  119 +++++++++++++--------
+>  drivers/pinctrl/sh-pfc/pinctrl.c      |   42 ++++----
+>  drivers/pinctrl/vt8500/pinctrl-wmt.c  |   54 +++++-----
+>  include/linux/pinctrl/pinconf.h       |    6 +-
+>  24 files changed, 952 insertions(+), 726 deletions(-)
+
+[snip]
+
+> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c
+> b/drivers/pinctrl/sh-pfc/pinctrl.c index 8649ec3..ced199e 100644
+> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
+> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+> @@ -529,38 +529,44 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
+> *pctldev, unsigned _pin, }
+> 
+>  static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
+> -			      unsigned long config)
+> +			      unsigned long *configs, unsigned num_configs)
+>  {
+>  	struct sh_pfc_pinctrl *pmx = pinctrl_dev_get_drvdata(pctldev);
+>  	struct sh_pfc *pfc = pmx->pfc;
+> -	enum pin_config_param param = pinconf_to_config_param(config);
+> +	enum pin_config_param param;
+>  	unsigned long flags;
+> +	int i;
+
+Could you please make this an unsigned int ?
+
+Other than that the sh-pfc part looks good to me.
+
+> -	if (!sh_pfc_pinconf_validate(pfc, _pin, param))
+> -		return -ENOTSUPP;
+> +	for (i = 0; i < num_configs; i++) {
+> +		param = pinconf_to_config_param(configs[i]);
+> 
+> -	switch (param) {
+> -	case PIN_CONFIG_BIAS_PULL_UP:
+> -	case PIN_CONFIG_BIAS_PULL_DOWN:
+> -	case PIN_CONFIG_BIAS_DISABLE:
+> -		if (!pfc->info->ops || !pfc->info->ops->set_bias)
+> +		if (!sh_pfc_pinconf_validate(pfc, _pin, param))
+>  			return -ENOTSUPP;
+> 
+> -		spin_lock_irqsave(&pfc->lock, flags);
+> -		pfc->info->ops->set_bias(pfc, _pin, param);
+> -		spin_unlock_irqrestore(&pfc->lock, flags);
+> +		switch (param) {
+> +		case PIN_CONFIG_BIAS_PULL_UP:
+> +		case PIN_CONFIG_BIAS_PULL_DOWN:
+> +		case PIN_CONFIG_BIAS_DISABLE:
+> +			if (!pfc->info->ops || !pfc->info->ops->set_bias)
+> +				return -ENOTSUPP;
+> 
+> -		break;
+> +			spin_lock_irqsave(&pfc->lock, flags);
+> +			pfc->info->ops->set_bias(pfc, _pin, param);
+> +			spin_unlock_irqrestore(&pfc->lock, flags);
+> 
+> -	default:
+> -		return -ENOTSUPP;
+> -	}
+> +			break;
+> +
+> +		default:
+> +			return -ENOTSUPP;
+> +		}
+> +	} /* for each config */
+> 
+>  	return 0;
+>  }
+
+-- 
+Regards,
+
+Laurent Pinchart
