@@ -1,63 +1,62 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL V2 3/3] 2nd Round Samsung mach-exynos-v2 for v3.12
-Date: Wed, 28 Aug 2013 08:34:58 +0900
-Message-ID: <232401cea37e$0afca7a0$20f5f6e0$%kim@samsung.com>
-References: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
- <3145165.ZB7l3vNJ7a@amdc1032>
- <CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
- <4070794.XxjluIqBpK@amdc1032>
- <CADGdYn7YWscQ_EOqjbq29pNHvoxa0qqXHZeOBuz-Wi22H=Dc_w@mail.gmail.com>
- <87bo4j6aii.fsf@linaro.org>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH] clk: samsung: pll: Use new registration method for
+ PLL6552 and PLL6553
+Date: Tue, 27 Aug 2013 16:45:25 -0700
+Message-ID: <20130827234525.8231.17145@quantum>
+References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com>
+ <158901ce9b34$c0ac8720$42059560$@org> <20130820002258.4443.34197@quantum>
+ <1856348.DCxTucbm8V@flatron> <20130827011422.8231.95092@quantum>
+ <521CDEDE.1070003@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53828 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751522Ab3H0XfB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 19:35:01 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MS700201QU59080@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Aug 2013 08:34:58 +0900 (KST)
-In-reply-to: <87bo4j6aii.fsf@linaro.org>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <521CDEDE.1070003@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?utf-8?q?=27Heiko_St=C3=BCbner=27?= <heiko@sntech.de>, 'Arnd Bergmann' <arnd@arndb.de>, gregkh@linuxfoundation.org, 'Tomasz Figa' <t.figa@samsung.com>, linux-usb@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, stern@rowland.harvard.edu, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kevin Hilman' <khilman@linaro.org>, 'amit daniel kachhap' <amit.daniel@samsung.com>
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'LAK' <linux-arm-kernel@lists.infradead.org>
 
-The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
+Quoting Kukjin Kim (2013-08-27 10:16:14)
+> On 08/27/13 10:14, Mike Turquette wrote:
+> > Quoting Tomasz Figa (2013-08-20 17:33:21)
+> >> This patch modifies PLL6552 and PLL6553 clock drivers to use recently
+> >> added common Samsung PLL registration method.
+> >>
+> >> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
+> >
+> > Sigh. This change won't apply on top of clk-next-s3c64xx since it
+> > requires Yadwinder's change (amongst) others.
+> >
+> > The best I could do was spin out another topic branch with the relevant
+> > changes and apply this patch on top. It is a subset of clk-next but it
+> > is almost entirely Samsung patches:
+> >
+> > git://git.linaro.org/people/mturquette/linux.git clk-next-s3c64xx-delta
+> >
+> > Kukjin&  Tomasz, let me know if this OK for you to add as a dependency
+> > to the Samsung tree. If it is I will merge it into clk-next, but I want
+> > your OK that this branch is OK for you to take.
+> >
+> Hi Mike,
+> 
+> I merged the branch clk-next-s3c64xx-delta you provided on top of 
+> previous clk-next-s3c64xx for common-clk-s3c64xx and dt-s3c64xx and it 
+> looks fine to me.
 
-   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
+Cool. I've merged it into clk-next as well.
 
-are available in the git repository at:
+Regards,
+Mike
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-mach-exynos-v2
-
-for you to fetch changes up to 1e9fec0e40deff9d18e4197b5f5f99f85f5d36a5:
-
-   ARM: EXYNOS: Skip C1 cpuidle state for exynos5440 (2013-08-28 
-00:51:21 +0900)
-
-----------------------------------------------------------------
-update mach-exynos v2 for v3.12
-- enable ARCH_HAS_BANDGAP for exynos SoCs
-- always enable PM domains for exynos4x12
-- skip C1 cpuidle state for exynos5440
-
-----------------------------------------------------------------
-Amit Daniel Kachhap (2):
-       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
-       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
-
-Bartlomiej Zolnierkiewicz (1):
-       ARM: EXYNOS: always enable PM domains support for EXYNOS4X12
-
-  arch/arm/mach-exynos/Kconfig   | 7 +++++++
-  arch/arm/mach-exynos/cpuidle.c | 3 +++
-  2 files changed, 10 insertions(+)
+> 
+> Thanks,
+> Kukjin
