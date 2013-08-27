@@ -1,119 +1,38 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v11 0/8] PHY framework
-Date: Tue, 27 Aug 2013 14:20:59 -0500
-Message-ID: <20130827192059.GZ3005@radagast>
-References: <1377063973-22044-1-git-send-email-kishon@ti.com>
- <521B0E79.6060506@ti.com>
-Reply-To: balbi@ti.com
+From: Julius Werner <jwerner@chromium.org>
+Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register handling
+Date: Tue, 27 Aug 2013 13:27:48 -0700
+Message-ID: <CAODwPW8KG2ZxOFf936H233g35KVPjDp+f8e3qgkd4Z7NN9RAtQ@mail.gmail.com>
+References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
+	<20130808092615.GF14648@e106331-lin.cambridge.arm.com>
+	<CAODwPW-j=JjunZU3zewrE1_-WoW-RXLmKVQypzxmo_BOYjc3VA@mail.gmail.com>
+	<1729120.r596vOTlMW@flatron>
+	<CAODwPW_W9gu+nwNzpq3sfcOCDkyppu6K8C9+S8OZt_A0qHqNEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0432715803386776241=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <521B0E79.6060506@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-fbdev@vger.kernel.org, linux-doc@vger.kernel.org, tony@atomide.com, nsekhar@ti.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, swarren@nvidia.com, jg1.han@samsung.com, stern@rowland.harvard.edu, grant.likely@linaro.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, george.cherian@ti.com, arnd@arndb.de, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, balajitk@ti.com, gregkh@linuxfoundation.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, broonie@kernel.org, akpm@linux-foundation.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f172.google.com ([209.85.214.172]:59892 "EHLO
+	mail-ob0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753599Ab3H0U1u (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Aug 2013 16:27:50 -0400
+Received: by mail-ob0-f172.google.com with SMTP id er7so5585583obc.31
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Aug 2013 13:27:48 -0700 (PDT)
+In-Reply-To: <CAODwPW_W9gu+nwNzpq3sfcOCDkyppu6K8C9+S8OZt_A0qHqNEg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Julius Werner <jwerner@chromium.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
---===============0432715803386776241==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kqOsKy60S4p104jH"
-Content-Disposition: inline
+*Ping!*
 
---kqOsKy60S4p104jH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Are there still unanswered concerns left with this patch? I hope my
+prior mails could clear up why I think that the PMU register
+description in the device tree for a specific PHY is represents the
+hardware more accurately after my patch, and my analysis of the
+Exynos4 situation currently not being implemented (and therefore not
+needing to be addressed by this patch) was correct. Please let me know
+if you have further objections... and if not, could we agree to have
+this picked up somewhere?
 
-Hi,
-
-On Mon, Aug 26, 2013 at 01:44:49PM +0530, Kishon Vijay Abraham I wrote:
-> On Wednesday 21 August 2013 11:16 AM, Kishon Vijay Abraham I wrote:
-> > Added a generic PHY framework that provides a set of APIs for the PHY d=
-rivers
-> > to create/destroy a PHY and APIs for the PHY users to obtain a referenc=
-e to
-> > the PHY with or without using phandle.
-> >=20
-> > This framework will be of use only to devices that uses external PHY (P=
-HY
-> > functionality is not embedded within the controller).
-> >=20
-> > The intention of creating this framework is to bring the phy drivers sp=
-read
-> > all over the Linux kernel to drivers/phy to increase code re-use and to
-> > increase code maintainability.
-> >=20
-> > Comments to make PHY as bus wasn't done because PHY devices can be part=
- of
-> > other bus and making a same device attached to multiple bus leads to bad
-> > design.
-> >=20
-> > If the PHY driver has to send notification on connect/disconnect, the P=
-HY
-> > driver should make use of the extcon framework. Using this susbsystem
-> > to use extcon framwork will have to be analysed.
-> >=20
-> > You can find this patch series @
-> > git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git test=
-ing
->=20
-> Looks like there are not further comments on this series. Can you take th=
-is in
-> your misc tree?
-
-Do you want me to queue these for you ? There are quite a few users for
-this framework already and I know of at least 2 others which will show
-up for v3.13.
-
-Let me know.
-
-cheers
-
---=20
-balbi
-
---kqOsKy60S4p104jH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSHPwbAAoJEIaOsuA1yqRE2nsQALFK6rMKqgAruQXU+gcAWuJg
-UjjW+Xp+SkOhvWawDZw1DAWBVwzDb0sBACYnCKxgsBKjHxXpTXTc3FeMl9zUxDa6
-8ViDWK4HpkkesIdI2lGbEPXL0sgSzBwmpPXAv2ctZFuKBEzPuNLxqcHNLKoxYeF9
-RdGbESxggPmmVL25iwOu187DvEcX9H+PZ2HzcJNjRjHX8uLOCDLZo6zGs61rqFpB
-vGMWgY+eP5NF2o4taf4JsSYQCT8F8Vda7cn5dNEekk0h7pIzHbCFbgqvuPax+zT2
-EjK1mRAj9mPT8qQIBR4F3ubiPXBBNd2pHHvXeC0WmEfxyAl74bZcOvRhER97jPFd
-CJFAy2pJRlEXOfHFHKQ7a3BbpY/fjacRJgbsB04JoPwr43Huin/w82+pO2LYnYVb
-LAA7avWE/4fGqUqlchiCcpSaC4rxTtF613t9GiVsim7oVE/BIIKqqbTdqSOGey2k
-BcKtFfhN62UZia7EGtdIttbdnBYffAzO5Mh4bTmF3APu1NvkGv36vzUcPukh1rB/
-bvxYPriPwtJEx4sQUmrta9LIvK5/7ogsHpB2FqhSywjc7H94PXwJGeCWTX5ZYrk5
-KNidKS5P1+F8HVA2Oa3E6fGEC9dMWi08YYUhykTw4nvwn7mSV0c2zERxHE06J9SN
-4SNq+kshoP9LPk9+IXfg
-=n6Sq
------END PGP SIGNATURE-----
-
---kqOsKy60S4p104jH--
-
-
---===============0432715803386776241==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0432715803386776241==--
+Thanks,
+Julius
