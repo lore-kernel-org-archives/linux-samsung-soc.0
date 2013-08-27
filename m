@@ -1,228 +1,135 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [GIT PULL 3/3] 2nd Round Samsung mach-exynos for v3.12
-Date: Mon, 26 Aug 2013 21:08:37 -0700
-Message-ID: <87bo4j6aii.fsf@linaro.org>
-References: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
-	<3145165.ZB7l3vNJ7a@amdc1032>
-	<CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
-	<4070794.XxjluIqBpK@amdc1032>
-	<CADGdYn7YWscQ_EOqjbq29pNHvoxa0qqXHZeOBuz-Wi22H=Dc_w@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: RE: [PATCH] drm/exynos: Add fallback option to get non physically
+ contiguous memory for gem_dumb_create
+Date: Tue, 27 Aug 2013 13:14:18 +0900
+Message-ID: <02b501cea2db$e61ef890$b25ce9b0$%dae@samsung.com>
+References: <1377239706-17804-1-git-send-email-vikas.sajjan@linaro.org>
+ <02a401cea2cf$57be6ab0$073b4010$%dae@samsung.com>
+ <CAD025yQArMU6ps5Pn=E5skDyei0=Rv2vxq2gqGoPXkb4+0OHrg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:37211 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752213Ab3H0EIk (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:45307 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752629Ab3H0EOU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 00:08:40 -0400
-Received: by mail-pa0-f47.google.com with SMTP id kl13so4280031pab.34
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2013 21:08:40 -0700 (PDT)
-In-Reply-To: <CADGdYn7YWscQ_EOqjbq29pNHvoxa0qqXHZeOBuz-Wi22H=Dc_w@mail.gmail.com>
-	(amit daniel kachhap's message of "Mon, 26 Aug 2013 17:48:35 +0530")
+	Tue, 27 Aug 2013 00:14:20 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MS60074V92W8B40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Aug 2013 13:14:18 +0900 (KST)
+In-reply-to: <CAD025yQArMU6ps5Pn=E5skDyei0=Rv2vxq2gqGoPXkb4+0OHrg@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: amit daniel kachhap <amit.daniel@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, LAK <linux-arm-kernel@lists.infradead.org>
+To: 'Vikas Sajjan' <vikas.sajjan@linaro.org>
+Cc: 'DRI mailing list' <dri-devel@lists.freedesktop.org>, "'kgene.kim'" <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Rob Clark' <robdclark@gmail.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Laurent Pinchart' <laurent.pinchart@ideasonboard.com>, 'Patch Tracking' <patches@linaro.org>, linaro-dev@lists.linaro.org, 'sunil joshi' <joshi@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-amit daniel kachhap <amit.daniel@samsung.com> writes:
 
-> Submitted the V2 version of this patch with your suggestion.
+One more thing, changed the subject to "Consider fallback option to
+allocation fail". The subject is too long :)
 
-So will there be an updated branch (and pull request) with these changes?
+Thanks,
+Inki Dae
 
-Kevin
 
-> On Mon, Aug 26, 2013 at 4:49 PM, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
->> On Monday, August 26, 2013 04:33:55 PM amit daniel kachhap wrote:
->>> Hi,
->>>
->>> On Mon, Aug 26, 2013 at 3:36 PM, Bartlomiej Zolnierkiewicz
->>> <b.zolnierkie@samsung.com> wrote:
->>> >
->>> > Hi,
->>> >
->>> > On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
->>> >> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
->>> >>
->>> >>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
->>> >>
->>> >> are available in the git repository at:
->>> >>
->>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->>> >> tags/samsung-mach-exynos
->>> >>
->>> >> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
->>> >>
->>> >>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
->>> >> 05:05:16 +0900)
->>> >>
->>> >> ----------------------------------------------------------------
->>> >> update mach-exynos
->>> >> - enable ARCH_HAS_BANDGAP for exynos SoCs
->>> >> - skip C1 cpuidle for exynos5440 because non-supporting
->>> >> - always enable PM domains for exynos4x12
->>> >>
->>> >> ----------------------------------------------------------------
->>> >> Amit Daniel Kachhap (2):
->>> >>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
->>> >>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
->>> >
->>> > The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
->>> >
->>> > --- a/arch/arm/mach-exynos/cpuidle.c
->>> > +++ b/arch/arm/mach-exynos/cpuidle.c
->>> > @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
->>> >                 device->cpu = cpu_id;
->>> >
->>> >                 /* Support IDLE only */
->>> > -               if (cpu_id != 0)
->>> > +               if (soc_is_exynos5440() || cpu_id != 0)
->>> >                         device->state_count = 1;
->>> >
->>> >                 ret = cpuidle_register_device(device);
->>> >
->>> > is incorrect as noted a month ago in:
->>> >
->>> > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
->>> >
->>> > [ Because of the deficiency in the core cpuidle core (device->state_count
->>> >   not being used by governors' code) only sysfs entries for C1 state will be
->>> >   disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
->>> >
->>> > also non-working device->state_count is planned to be removed by:
->>> >
->>> > http://permalink.gmane.org/gmane.linux.power-management.general/37390
->>> I looked at your patch series and it seems reasonable. I will repost
->>> this patch on top of yours.
->>
->> If you correctly use driver's state_count (instead of device's) there will be
->> no dependency on my patch series and the new patch can be applied immediately.
->>
->>> But I suggest to keep this patch temporary till your patch series gets merged.
->>
->> The current patch (the one Kukjin merged) is incorrect as it just doesn't
->> do what it advertises. I see no reason to keep it.
->>
->> Best regards,
->> --
->> Bartlomiej Zolnierkiewicz
->> Samsung R&D Institute Poland
->> Samsung Electronics
->>
->>> Thanks,
->>> Amit Daniel
->>> >
->>> >
->>> > To disable C1 state on EXYNOS5440 something like:
->>> >
->>> >         static int __init exynos4_init_cpuidle(void)
->>> >         {
->>> >         ...
->>> >                 if (soc_is_exynos5440())
->>> >                         exynos4_idle_driver.state_count = 1;
->>> >         ...
->>> >         }
->>> >
->>> > should be done instead.
->>> >
->>> > Best regards,
->>> > --
->>> > Bartlomiej Zolnierkiewicz
->>> > Samsung R&D Institute Poland
->>> > Samsung Electronics
->>> >
->>> >
->>> > _______________________________________________
->>> > linux-arm-kernel mailing list
->>> > linux-arm-kernel@lists.infradead.org
->>> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>>
->>>
->>> On Mon, Aug 26, 2013 at 3:36 PM, Bartlomiej Zolnierkiewicz
->>> <b.zolnierkie@samsung.com> wrote:
->>> >
->>> > Hi,
->>> >
->>> > On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
->>> >> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
->>> >>
->>> >>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
->>> >>
->>> >> are available in the git repository at:
->>> >>
->>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->>> >> tags/samsung-mach-exynos
->>> >>
->>> >> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
->>> >>
->>> >>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
->>> >> 05:05:16 +0900)
->>> >>
->>> >> ----------------------------------------------------------------
->>> >> update mach-exynos
->>> >> - enable ARCH_HAS_BANDGAP for exynos SoCs
->>> >> - skip C1 cpuidle for exynos5440 because non-supporting
->>> >> - always enable PM domains for exynos4x12
->>> >>
->>> >> ----------------------------------------------------------------
->>> >> Amit Daniel Kachhap (2):
->>> >>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
->>> >>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
->>> >
->>> > The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
->>> >
->>> > --- a/arch/arm/mach-exynos/cpuidle.c
->>> > +++ b/arch/arm/mach-exynos/cpuidle.c
->>> > @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
->>> >                 device->cpu = cpu_id;
->>> >
->>> >                 /* Support IDLE only */
->>> > -               if (cpu_id != 0)
->>> > +               if (soc_is_exynos5440() || cpu_id != 0)
->>> >                         device->state_count = 1;
->>> >
->>> >                 ret = cpuidle_register_device(device);
->>> >
->>> > is incorrect as noted a month ago in:
->>> >
->>> > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
->>> >
->>> > [ Because of the deficiency in the core cpuidle core (device->state_count
->>> >   not being used by governors' code) only sysfs entries for C1 state will be
->>> >   disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
->>> >
->>> > also non-working device->state_count is planned to be removed by:
->>> >
->>> > http://permalink.gmane.org/gmane.linux.power-management.general/37390
->>> >
->>> >
->>> > To disable C1 state on EXYNOS5440 something like:
->>> >
->>> >         static int __init exynos4_init_cpuidle(void)
->>> >         {
->>> >         ...
->>> >                 if (soc_is_exynos5440())
->>> >                         exynos4_idle_driver.state_count = 1;
->>> >         ...
->>> >         }
->>> >
->>> > should be done instead.
->>> >
->>> > Best regards,
->>> > --
->>> > Bartlomiej Zolnierkiewicz
->>> > Samsung R&D Institute Poland
->>> > Samsung Electronics
->>> >
->>> >
->>> > _______________________________________________
->>> > linux-arm-kernel mailing list
->>> > linux-arm-kernel@lists.infradead.org
->>> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> -----Original Message-----
+> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
+> owner@vger.kernel.org] On Behalf Of Vikas Sajjan
+> Sent: Tuesday, August 27, 2013 12:05 PM
+> To: Inki Dae
+> Cc: DRI mailing list; kgene.kim; Sylwester Nawrocki; Rob Clark; Tomasz
+> Figa; Laurent Pinchart; Patch Tracking; linaro-dev@lists.linaro.org; sunil
+> joshi; linux-samsung-soc@vger.kernel.org
+> Subject: Re: [PATCH] drm/exynos: Add fallback option to get non physically
+> contiguous memory for gem_dumb_create
+> 
+> Thanks.
+> 
+> On 27 August 2013 08:14, Inki Dae <inki.dae@samsung.com> wrote:
+> > Applied.
+> >
+> > Thanks,
+> > Inki Dae
+> >
+> >> -----Original Message-----
+> >> From: Vikas Sajjan [mailto:vikas.sajjan@linaro.org]
+> >> Sent: Friday, August 23, 2013 3:35 PM
+> >> To: dri-devel@lists.freedesktop.org; inki.dae@samsung.com
+> >> Cc: kgene.kim@samsung.com; s.nawrocki@samsung.com; robdclark@gmail.com;
+> >> tomasz.figa@gmail.com; laurent.pinchart@ideasonboard.com;
+> >> patches@linaro.org; linaro-dev@lists.linaro.org
+> >> Subject: [PATCH] drm/exynos: Add fallback option to get non physically
+> >> contiguous memory for gem_dumb_create
+> >>
+> >> To address the case where physically contiguous memory MAY NOT be a
+> >> mandatory
+> >> requirement for framebuffer for the application calling
+> >> exynos_drm_gem_dumb_create,
+> >> the patch adds a feature to get non physically contiguous memory for
+> >> framebuffer,
+> >> if physically contiguous memory allocation fails and if IOMMU is
+> > supported.
+> >>
+> >> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> >> Signed-off-by: Arun Kumar <arun.kk@samsung.com>
+> >> ---
+> >>  drivers/gpu/drm/exynos/exynos_drm_gem.c |   13 +++++++++++++
+> >>  1 file changed, 13 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> index 2eabe1a..66d1b40 100644
+> >> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> >> @@ -17,6 +17,7 @@
+> >>  #include "exynos_drm_drv.h"
+> >>  #include "exynos_drm_gem.h"
+> >>  #include "exynos_drm_buf.h"
+> >> +#include "exynos_drm_iommu.h"
+> >>
+> >>  static unsigned int convert_to_vm_err_msg(int msg)
+> >>  {
+> >> @@ -666,6 +667,18 @@ int exynos_drm_gem_dumb_create(struct drm_file
+> >> *file_priv,
+> >>
+> >>       exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG |
+> >>                                               EXYNOS_BO_WC,
+args->size);
+> >> +     /*
+> >> +      * If physically contiguous memory allocation fails and if IOMMU
+> is
+> >> +      * supported then try to get buffer from non physically
+contiguous
+> >> +      * memory area.
+> >> +      */
+> >> +     if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
+> >> +             dev_warn(dev->dev, "contiguous FB allocation failed,
+falling
+> >> back to non-contiguous\n");
+> >> +             exynos_gem_obj = exynos_drm_gem_create(dev,
+> >> +                                     EXYNOS_BO_NONCONTIG |
+EXYNOS_BO_WC,
+> >> +                                     args->size);
+> >> +     }
+> >> +
+> >>       if (IS_ERR(exynos_gem_obj))
+> >>               return PTR_ERR(exynos_gem_obj);
+> >>
+> >> --
+> >> 1.7.9.5
+> >
+> 
+> 
+> 
+> --
+> Thanks and Regards
+>  Vikas Sajjan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
+> soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
