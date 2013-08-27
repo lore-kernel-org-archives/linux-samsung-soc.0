@@ -1,66 +1,41 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [media] V4L: Add driver for S3C24XX/S3C64XX SoC series camera
- interface
-Date: Tue, 27 Aug 2013 16:26:07 +0200
-Message-ID: <521CB6FF.70401@samsung.com>
-References: <20130823094647.GO31293@elgon.mountain>
- <5219F736.2010706@gmail.com> <20130827141914.GD19256@mwanda>
+Subject: Re: [PATCH] s5p-jpeg: Add initial device tree support for
+ S5PV210/Exynos4210 SoCs
+Date: Tue, 27 Aug 2013 16:39:32 +0200
+Message-ID: <521CBA24.8000703@samsung.com>
+References: <1376856867-17771-1-git-send-email-s.nawrocki@samsung.com>
+ <5217875F.2030307@samsung.com> <5217E615.9040101@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:31673 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753071Ab3H0O0K (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:26740 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752152Ab3H0Ojf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 10:26:10 -0400
-In-reply-to: <20130827141914.GD19256@mwanda>
+	Tue, 27 Aug 2013 10:39:35 -0400
+In-reply-to: <5217E615.9040101@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Pawel Moll <Pawel.Moll@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Kumar Gala <galak@codeaurora.org>, Rob Herring <rob.herring@calxeda.com>
 
-On 08/27/2013 04:19 PM, Dan Carpenter wrote:
-> On Sun, Aug 25, 2013 at 02:23:18PM +0200, Sylwester Nawrocki wrote:
->> On 08/23/2013 11:46 AM, Dan Carpenter wrote:
->>> [ Going through some old warnings... ]
->>>
->>> Hello Sylwester Nawrocki,
->>>
->>> This is a semi-automatic email about new static checker warnings.
->>>
->>> The patch babde1c243b2: "[media] V4L: Add driver for S3C24XX/S3C64XX
->>> SoC series camera interface" from Aug 22, 2012, leads to the
->>> following Smatch complaint:
->>>
->>> drivers/media/platform/s3c-camif/camif-capture.c:463 queue_setup()
->>> 	 warn: variable dereferenced before check 'fmt' (see line 460)
->>>
->>> drivers/media/platform/s3c-camif/camif-capture.c
->>>    455          if (pfmt) {
->>>    456                  pix =&pfmt->fmt.pix;
->>>    457                  fmt = s3c_camif_find_format(vp,&pix->pixelformat, -1);
->>>    458                  size = (pix->width * pix->height * fmt->depth) / 8;
->>>                                                            ^^^^^^^^^^
->>> Dereference.
->>>
->>>    459		} else {
->>>    460			size = (frame->f_width * frame->f_height * fmt->depth) / 8;
->>>                                                                    ^^^^^^^^^^
->>> Dereference.
->>>
->>>    461		}
->>>    462	
->>>    463		if (fmt == NULL)
->>>                     ^^^^^^^^^^^
->>> Check.
->>
->> Thanks for the bug report. This check of course should be before line 455.
->> Would you like to sent a patch for this or should I handle that ?
-> 
-> Could you handle it and give me the Reported-by tag?
+On 08/24/2013 12:45 AM, Stephen Warren wrote:
+> On 08/23/2013 10:01 AM, Sylwester Nawrocki wrote:
+>> > On 08/18/2013 10:14 PM, Sylwester Nawrocki wrote:
+>>> >> This patch enables the JPEG codec on S5PV210 and Exynos4210 SoCs. There are
+>>> >> some differences in newer versions of the JPEG codec IP on SoCs like Exynos4x12
+>>> >> and Exynos5 series and support for them will be added in subsequent patches.
+>>> >>
+>>> >> Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+>>> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> > 
+>> > Could a DT maintainer review/Ack the binding in this patch ?
+>
+> The binding looks reasonable to me, so,
+> Acked-by: Stephen Warren <swarren@nvidia.com>
 
-Sure, will do.
+Thanks Stephen, I've queued this for v3.13.
 
 --
 Regards,
