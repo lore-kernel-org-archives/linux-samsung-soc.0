@@ -1,75 +1,48 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
-Date: Tue, 27 Aug 2013 13:44:47 -0500
-Message-ID: <20130827184447.GR3005@radagast>
-References: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
- <20130710052534.GB15674@arwen.pp.htv.fi>
- <CAODwPW9dmwpXeyBeVER9azsh2uW3NXLTbDtz3mJaXrvSwb6opg@mail.gmail.com>
- <20130712065734.GE31802@arwen.pp.htv.fi>
- <CAHbNUh0Sa-atYMHbhEUX2vnVAcsdBJxw9RRzAp+6vqE8hi=p1w@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 3/3] 2nd Round Samsung mach-exynos for v3.12
+Date: Tue, 27 Aug 2013 11:57:12 -0700
+Message-ID: <20130827185712.GD22852@quad.lixom.net>
+References: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
+ <3145165.ZB7l3vNJ7a@amdc1032>
+ <CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
+ <4070794.XxjluIqBpK@amdc1032>
+ <CADGdYn7YWscQ_EOqjbq29pNHvoxa0qqXHZeOBuz-Wi22H=Dc_w@mail.gmail.com>
+ <87bo4j6aii.fsf@linaro.org>
+ <521CCC65.3070605@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="syxNSs/hKlQka4Wt"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAHbNUh0Sa-atYMHbhEUX2vnVAcsdBJxw9RRzAp+6vqE8hi=p1w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: balbi@ti.com, Julius Werner <jwerner@chromium.org>, LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Praveen Paneri <p.paneri@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olofj@chromium.org>, Vincent Palatin <vpalatin@chromium.org>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---syxNSs/hKlQka4Wt
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:37704 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752355Ab3H0S5v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Aug 2013 14:57:51 -0400
+Received: by mail-pa0-f41.google.com with SMTP id bj1so5236779pad.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Aug 2013 11:57:51 -0700 (PDT)
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <521CCC65.3070605@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kevin Hilman <khilman@linaro.org>, amit daniel kachhap <amit.daniel@samsung.com>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Aug 13, 2013 at 02:11:27PM +0530, Tushar Behera wrote:
-> On 12 July 2013 12:27, Felipe Balbi <balbi@ti.com> wrote:
-> > Hi,
+On Wed, Aug 28, 2013 at 12:57:25AM +0900, Kukjin Kim wrote:
+> On 08/27/13 13:08, Kevin Hilman wrote:
+> >amit daniel kachhap<amit.daniel@samsung.com>  writes:
 > >
-> > On Wed, Jul 10, 2013 at 10:42:27AM -0700, Julius Werner wrote:
-> >> Hi Felipe,
-> >>
-> >> This is intended to pull down a reset signal line, not to switch power
-> >> to the device. I could implement that with the regulator framework
-> >> too, but I think that would just be confusing and harder to understand
-> >> without providing any benefit. It's really just a plain old GPIO.
+> >>Submitted the V2 version of this patch with your suggestion.
 > >
-> > alright, in that case how about using drivers/reset/ ?
+> >So will there be an updated branch (and pull request) with these changes?
 > >
->=20
-> IIUC, reset-gpio driver only provides APIs for reset controls (reset,
-> assert, deassert). We still need to find out the location from where
-> we would be calling the reset function.
+> OK, Bart's concern makes sense so I replaced with Amit's v2 patch.
+> 
+> Kevin, here is updated branch so please pull following.
+> 
+> If any problems, please kindly let me know.
 
-that's fair, but at least you reuse a bunch of boilerplate code to claim
-the GPIO, set proper direction and value. No need to duplicate that in
-your driver.
+Please don't post pull requests in the middle of a comment thread; start a new
+thread or at least do a new subject for them -- they are much too easy to miss
+otherwise.
 
---=20
-balbi
 
---syxNSs/hKlQka4Wt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSHPOfAAoJEIaOsuA1yqREK/AQAJz1pjDg4TF8/kklUNT96FWM
-lcTmiNXXyhCVNRJERcKoAqiAC5YgOeSM3BcEE5iMHUTaUQKdT2Xebb0MDXdc6X2/
-pFrx7fvtdnwJU4xW4WBGvB6jQ+kNh8dXzO7wHnuSeIa+pEJaQYP+1kg9otTMCBS7
-tGtpG9JQPlODyeNRiG3uqRI/6Bt74oAVhDNCT+KDozyP6VYU+/8gLB7Aiq6znTbI
-2LILM44aGt+E+pHnTD0KRmytMIOFVk7SZ4D+E1sWf1ztwk58pMRBAcaCG+2GWhxQ
-6fQ565O8v5NkeSECV5Qn5aXf+wU9+RLVdc5nJUMZXIilK03yU7MPA2L+Koaku08d
-a85GKiE9k0zOdxoLK2sfT4R9SD4VXjAlI9llwJCGhrnKQ+3XvEsx6zz0+aa4ghch
-xCpSSFxKlQpLWivI86U2TCcCX5h0oSRr+6xBIzxRsz6GYfKsvBP1QhM+Rat3CVey
-sS0RbLBVMOy/wimhDEE0U4P9F6+FIeWLFWHC+DI1WMH3bmkaJghydOVqT7/KzFhU
-WKgi4ZEve9vkoG5Iy9/EcZYcoTcRW9GR+rq7lVgEcQ1Tk9u2F8SduO7XJ3nFFSl2
-NRnt786nyYGLmxEhPAipYdRgCOKznqa5yxOtsx+EOhzlGc2IkKqH+mCD7zNVaR7g
-mqaGRb3RhTWmmhzDurH6
-=h3Il
------END PGP SIGNATURE-----
-
---syxNSs/hKlQka4Wt--
+-Olof
