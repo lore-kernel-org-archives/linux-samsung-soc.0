@@ -1,75 +1,228 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v5 4/6] ARM: dts: add dt nodes for exynos5420 hdmi subsystem
-Date: Tue, 27 Aug 2013 09:26:37 +0530
-Message-ID: <CAPdUM4MaEZsHfFpxv=5nx6tfzv+FhucEdc8-8Ygmx+LKtG=SUg@mail.gmail.com>
-References: <1377509901-9467-1-git-send-email-rahul.sharma@samsung.com>
-	<1377509901-9467-5-git-send-email-rahul.sharma@samsung.com>
-	<1957834.igXyqAoa6C@flatron>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [GIT PULL 3/3] 2nd Round Samsung mach-exynos for v3.12
+Date: Mon, 26 Aug 2013 21:08:37 -0700
+Message-ID: <87bo4j6aii.fsf@linaro.org>
+References: <1f7701cea1f1$431f2d30$c95d8790$%kim@samsung.com>
+	<3145165.ZB7l3vNJ7a@amdc1032>
+	<CADGdYn7_Gm7rwkhRSUmvktB_hHNboY8eB5fi8E62-Br5Vk5D0A@mail.gmail.com>
+	<4070794.XxjluIqBpK@amdc1032>
+	<CADGdYn7YWscQ_EOqjbq29pNHvoxa0qqXHZeOBuz-Wi22H=Dc_w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:59546 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753286Ab3H0D4i (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:37211 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752213Ab3H0EIk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 23:56:38 -0400
-In-Reply-To: <1957834.igXyqAoa6C@flatron>
+	Tue, 27 Aug 2013 00:08:40 -0400
+Received: by mail-pa0-f47.google.com with SMTP id kl13so4280031pab.34
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2013 21:08:40 -0700 (PDT)
+In-Reply-To: <CADGdYn7YWscQ_EOqjbq29pNHvoxa0qqXHZeOBuz-Wi22H=Dc_w@mail.gmail.com>
+	(amit daniel kachhap's message of "Mon, 26 Aug 2013 17:48:35 +0530")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sunil joshi <joshi@samsung.com>
+To: amit daniel kachhap <amit.daniel@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, LAK <linux-arm-kernel@lists.infradead.org>
 
-On 27 August 2013 04:59, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Rahul,
->
-> On Monday 26 of August 2013 15:08:19 Rahul Sharma wrote:
->> Add hdmi, mixer, ddc device tree nodes for Exynos 5420 SoC.
+amit daniel kachhap <amit.daniel@samsung.com> writes:
+
+> Submitted the V2 version of this patch with your suggestion.
+
+So will there be an updated branch (and pull request) with these changes?
+
+Kevin
+
+> On Mon, Aug 26, 2013 at 4:49 PM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+>> On Monday, August 26, 2013 04:33:55 PM amit daniel kachhap wrote:
+>>> Hi,
+>>>
+>>> On Mon, Aug 26, 2013 at 3:36 PM, Bartlomiej Zolnierkiewicz
+>>> <b.zolnierkie@samsung.com> wrote:
+>>> >
+>>> > Hi,
+>>> >
+>>> > On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
+>>> >> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
+>>> >>
+>>> >>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
+>>> >>
+>>> >> are available in the git repository at:
+>>> >>
+>>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>>> >> tags/samsung-mach-exynos
+>>> >>
+>>> >> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
+>>> >>
+>>> >>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
+>>> >> 05:05:16 +0900)
+>>> >>
+>>> >> ----------------------------------------------------------------
+>>> >> update mach-exynos
+>>> >> - enable ARCH_HAS_BANDGAP for exynos SoCs
+>>> >> - skip C1 cpuidle for exynos5440 because non-supporting
+>>> >> - always enable PM domains for exynos4x12
+>>> >>
+>>> >> ----------------------------------------------------------------
+>>> >> Amit Daniel Kachhap (2):
+>>> >>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
+>>> >>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
+>>> >
+>>> > The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
+>>> >
+>>> > --- a/arch/arm/mach-exynos/cpuidle.c
+>>> > +++ b/arch/arm/mach-exynos/cpuidle.c
+>>> > @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
+>>> >                 device->cpu = cpu_id;
+>>> >
+>>> >                 /* Support IDLE only */
+>>> > -               if (cpu_id != 0)
+>>> > +               if (soc_is_exynos5440() || cpu_id != 0)
+>>> >                         device->state_count = 1;
+>>> >
+>>> >                 ret = cpuidle_register_device(device);
+>>> >
+>>> > is incorrect as noted a month ago in:
+>>> >
+>>> > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
+>>> >
+>>> > [ Because of the deficiency in the core cpuidle core (device->state_count
+>>> >   not being used by governors' code) only sysfs entries for C1 state will be
+>>> >   disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
+>>> >
+>>> > also non-working device->state_count is planned to be removed by:
+>>> >
+>>> > http://permalink.gmane.org/gmane.linux.power-management.general/37390
+>>> I looked at your patch series and it seems reasonable. I will repost
+>>> this patch on top of yours.
 >>
->> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts |   15 +++++++++++++++
->>  arch/arm/boot/dts/exynos5420.dtsi         |   19 +++++++++++++++++++
->>  2 files changed, 34 insertions(+)
+>> If you correctly use driver's state_count (instead of device's) there will be
+>> no dependency on my patch series and the new patch can be applied immediately.
 >>
->> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..140565f
->> 100644
->> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> @@ -61,4 +61,19 @@
->>               };
->>       };
+>>> But I suggest to keep this patch temporary till your patch series gets merged.
 >>
->> +     hdmi@14530000 {
->> +             status = "okay";
->> +             hpd-gpio = <&gpx3 7 0>;
->> +     };
->> +
->> +     i2c_2: i2c@12C80000 {
->> +             samsung,i2c-sda-delay = <100>;
->> +             samsung,i2c-max-bus-freq = <66000>;
->> +             status = "okay";
->> +
->> +             hdmiddc@50 {
->> +                     compatible = "samsung,exynos4210-hdmiddc";
->> +                     reg = <0x50>;
->> +             };
->> +     };
->>  };
->
-> As I mentioned in my reply for previous version of this patch, changes
-> done to this board dts file should be moved to next patch instead and its
-> subject appropriately modified.
->
-
-Hi Tomasz,
-
-Sorry. I missed that. I will move the hpd-gpio related change to patch 5.
-I will spin off a new patch for Hdmi ddc related additions.
-
-regards,
-Rahul Sharma.
-
-> Best regards,
-> Tomasz
->
+>> The current patch (the one Kukjin merged) is incorrect as it just doesn't
+>> do what it advertises. I see no reason to keep it.
+>>
+>> Best regards,
+>> --
+>> Bartlomiej Zolnierkiewicz
+>> Samsung R&D Institute Poland
+>> Samsung Electronics
+>>
+>>> Thanks,
+>>> Amit Daniel
+>>> >
+>>> >
+>>> > To disable C1 state on EXYNOS5440 something like:
+>>> >
+>>> >         static int __init exynos4_init_cpuidle(void)
+>>> >         {
+>>> >         ...
+>>> >                 if (soc_is_exynos5440())
+>>> >                         exynos4_idle_driver.state_count = 1;
+>>> >         ...
+>>> >         }
+>>> >
+>>> > should be done instead.
+>>> >
+>>> > Best regards,
+>>> > --
+>>> > Bartlomiej Zolnierkiewicz
+>>> > Samsung R&D Institute Poland
+>>> > Samsung Electronics
+>>> >
+>>> >
+>>> > _______________________________________________
+>>> > linux-arm-kernel mailing list
+>>> > linux-arm-kernel@lists.infradead.org
+>>> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>>
+>>>
+>>> On Mon, Aug 26, 2013 at 3:36 PM, Bartlomiej Zolnierkiewicz
+>>> <b.zolnierkie@samsung.com> wrote:
+>>> >
+>>> > Hi,
+>>> >
+>>> > On Monday, August 26, 2013 09:14:42 AM Kukjin Kim wrote:
+>>> >> The following changes since commit ad81f0545ef01ea651886dddac4bef6cec930092:
+>>> >>
+>>> >>   Linux 3.11-rc1 (2013-07-14 15:18:27 -0700)
+>>> >>
+>>> >> are available in the git repository at:
+>>> >>
+>>> >>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>>> >> tags/samsung-mach-exynos
+>>> >>
+>>> >> for you to fetch changes up to f52616f4233d71d0fb00f06f86d046d18d2b7f3b:
+>>> >>
+>>> >>   ARM: EXYNOS: always enable PM domains support for EXYNOS4X12 (2013-08-19
+>>> >> 05:05:16 +0900)
+>>> >>
+>>> >> ----------------------------------------------------------------
+>>> >> update mach-exynos
+>>> >> - enable ARCH_HAS_BANDGAP for exynos SoCs
+>>> >> - skip C1 cpuidle for exynos5440 because non-supporting
+>>> >> - always enable PM domains for exynos4x12
+>>> >>
+>>> >> ----------------------------------------------------------------
+>>> >> Amit Daniel Kachhap (2):
+>>> >>       ARM: EXYNOS: enable ARCH_HAS_BANDGAP
+>>> >>       ARM: EXYNOS: Skip C1 cpuidle state for exynos5440
+>>> >
+>>> > The patch "ARM: EXYNOS: Skip C1 cpuidle state for exynos5440":
+>>> >
+>>> > --- a/arch/arm/mach-exynos/cpuidle.c
+>>> > +++ b/arch/arm/mach-exynos/cpuidle.c
+>>> > @@ -210,7 +210,7 @@ static int __init exynos4_init_cpuidle(void)
+>>> >                 device->cpu = cpu_id;
+>>> >
+>>> >                 /* Support IDLE only */
+>>> > -               if (cpu_id != 0)
+>>> > +               if (soc_is_exynos5440() || cpu_id != 0)
+>>> >                         device->state_count = 1;
+>>> >
+>>> >                 ret = cpuidle_register_device(device);
+>>> >
+>>> > is incorrect as noted a month ago in:
+>>> >
+>>> > http://lists.infradead.org/pipermail/linux-arm-kernel/2013-July/186355.html
+>>> >
+>>> > [ Because of the deficiency in the core cpuidle core (device->state_count
+>>> >   not being used by governors' code) only sysfs entries for C1 state will be
+>>> >   disabled and EXYNOS cpuidle driver will still attempt to use C1 state.
+>>> >
+>>> > also non-working device->state_count is planned to be removed by:
+>>> >
+>>> > http://permalink.gmane.org/gmane.linux.power-management.general/37390
+>>> >
+>>> >
+>>> > To disable C1 state on EXYNOS5440 something like:
+>>> >
+>>> >         static int __init exynos4_init_cpuidle(void)
+>>> >         {
+>>> >         ...
+>>> >                 if (soc_is_exynos5440())
+>>> >                         exynos4_idle_driver.state_count = 1;
+>>> >         ...
+>>> >         }
+>>> >
+>>> > should be done instead.
+>>> >
+>>> > Best regards,
+>>> > --
+>>> > Bartlomiej Zolnierkiewicz
+>>> > Samsung R&D Institute Poland
+>>> > Samsung Electronics
+>>> >
+>>> >
+>>> > _______________________________________________
+>>> > linux-arm-kernel mailing list
+>>> > linux-arm-kernel@lists.infradead.org
+>>> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
