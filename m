@@ -1,246 +1,134 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: samsung: pll: Use new registration method for
- PLL6552 and PLL6553
-Date: Mon, 26 Aug 2013 18:14:22 -0700
-Message-ID: <20130827011422.8231.95092@quantum>
-References: <1374536965-3545-1-git-send-email-tomasz.figa@gmail.com>
- <158901ce9b34$c0ac8720$42059560$@org> <20130820002258.4443.34197@quantum>
- <1856348.DCxTucbm8V@flatron>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC V2 1/4] mmc: dw_mmc: exynos: move the exynos private init
+Date: Tue, 27 Aug 2013 11:34:44 +0900
+Message-ID: <521C1044.8060804@samsung.com>
+References: <1377256509-18922-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1377256509-18922-2-git-send-email-yuvaraj.cd@samsung.com>
+ <5217673C.1040305@samsung.com>
+ <CAKuRcOKSzXXGnN1jZhYhimnRqmKM4pc2qB2N0AgXdRX1VFLb3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1856348.DCxTucbm8V@flatron>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, =?utf-8?q?=27Heiko_St=C3=BCbner=27?= <heiko@sntech.de>, 'Arnd Bergmann' <arnd@arndb.de>, gregkh@linuxfoundation.org, 'Tomasz Figa' <t.figa@samsung.com>, linux-usb@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, stern@rowland.harvard.edu, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:29276 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751783Ab3H0Ces (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Aug 2013 22:34:48 -0400
+In-reply-to: <CAKuRcOKSzXXGnN1jZhYhimnRqmKM4pc2qB2N0AgXdRX1VFLb3Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, ks.giri@samsung.com, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, thomas.ab@samsung.com
 
-Quoting Tomasz Figa (2013-08-20 17:33:21)
-> This patch modifies PLL6552 and PLL6553 clock drivers to use recently
-> added common Samsung PLL registration method.
+Dear Yuvaraj,
+
+On 08/26/2013 06:20 PM, Yuvaraj Kumar wrote:
+> On Fri, Aug 23, 2013 at 7:14 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>> Hi Yuvaraj,
+>>
+>> On 08/23/2013 08:15 PM, Yuvaraj Kumar C D wrote:
+>>> Currently platform specific private data initialisation is done by
+>>> dw_mci_exynos_priv_init and dw_mci_exynos_parse_dt.As we already have
+>>> separate platform specific device tree parser dw_mci_exynos_parse_dt,
+>>> move the dw_mci_exynos_priv_init code to dw_mci_exynos_parse_dt.
+>>> We can use the dw_mci_exynos_priv_init to do some actual platform
+>>> specific initialisation of SMU and etc.
+>>>
+>>> changes since V1: none
+>>>
+>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>> ---
+>>>  drivers/mmc/host/dw_mmc-exynos.c |   31 +++++++++++++++----------------
+>>>  1 file changed, 15 insertions(+), 16 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+>>> index 9990f98..19c845b 100644
+>>> --- a/drivers/mmc/host/dw_mmc-exynos.c
+>>> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+>>> @@ -72,22 +72,8 @@ static struct dw_mci_exynos_compatible {
+>>>
+>>>  static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>>>  {
+>>> -     struct dw_mci_exynos_priv_data *priv;
+>>> -     int idx;
+>>> -
+>>> -     priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+>>> -     if (!priv) {
+>>> -             dev_err(host->dev, "mem alloc failed for private data\n");
+>>> -             return -ENOMEM;
+>>> -     }
+>>> -
+>>> -     for (idx = 0; idx < ARRAY_SIZE(exynos_compat); idx++) {
+>>> -             if (of_device_is_compatible(host->dev->of_node,
+>>> -                                     exynos_compat[idx].compatible))
+>>> -                     priv->ctrl_type = exynos_compat[idx].ctrl_type;
+>>> -     }
+>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>
+>>> -     host->priv = priv;
+>>>       return 0;
+>>>  }
+>>>
+>>> @@ -177,12 +163,24 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>>>
+>>>  static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>>>  {
+>>> -     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>> +     struct dw_mci_exynos_priv_data *priv;
+>>>       struct device_node *np = host->dev->of_node;
+>>>       u32 timing[2];
+>>>       u32 div = 0;
+>>> +     int idx;
+>>>       int ret;
+>>>
+>>> +     priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+>>> +     if (!priv) {
+>>> +             dev_err(host->dev, "mem alloc failed for private data\n");
+>>> +             return -ENOMEM;
+>>> +     }
+>>> +
+>>> +     for (idx = 0; idx < ARRAY_SIZE(exynos_compat); idx++) {
+>>> +             if (of_device_is_compatible(np, exynos_compat[idx].compatible))
+>>> +                     priv->ctrl_type = exynos_compat[idx].ctrl_type;
+>>> +     }
+>>> +
+>>>       of_property_read_u32(np, "samsung,dw-mshc-ciu-div", &div);
+>>>       priv->ciu_div = div;
+>>>
+>>> @@ -199,6 +197,7 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>>>               return ret;
+>>>
+>>>       priv->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0], timing[1], div);
+>>> +     host->priv = priv;
+>>
+>> I'm not sure whether my thinking is right or not.
+>> if host->pdata is present, then dw_mci_parse_dt() didn't called at dw_mci_probe.
+> Yes, you are right.
+>> then how host->priv set to priv?
+> Earlier host->priv set to priv in both non-DT and DT case.True, with
+> this patch it does it only in DT case.
+> Is there any platform/board which still uses dw_mmc and its platform
+> extension driver with non DT case?
+You're right. i didn't see the extension driver with non DT-case?
+Then we can also modify the host->pdata into dw_mci_probe().
+
+Best Regards,
+Jaehoon Chung
+> I found a reference of non-DT case where host->pdata is present in
+> dw_mmc-pci.c driver but does not
+> use platform extension driver (exynos/socfpga).
+>>
+>> Best Regards,
+>> Jaehoon Chung
+>>
+>>>       return 0;
+>>>  }
+>>>
+>>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Sigh. This change won't apply on top of clk-next-s3c64xx since it
-requires Yadwinder's change (amongst) others.
-
-The best I could do was spin out another topic branch with the relevant
-changes and apply this patch on top. It is a subset of clk-next but it
-is almost entirely Samsung patches:
-
-git://git.linaro.org/people/mturquette/linux.git clk-next-s3c64xx-delta
-
-Kukjin & Tomasz, let me know if this OK for you to add as a dependency
-to the Samsung tree. If it is I will merge it into clk-next, but I want
-your OK that this branch is OK for you to take.
-
-Regards,
-Mike
-
-> ---
->  drivers/clk/samsung/clk-pll.c | 105 +++++-------------------------------------
->  drivers/clk/samsung/clk-pll.h |   6 +--
->  2 files changed, 13 insertions(+), 98 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
-> index 0775554..7572d1d 100644
-> --- a/drivers/clk/samsung/clk-pll.c
-> +++ b/drivers/clk/samsung/clk-pll.c
-> @@ -441,9 +441,6 @@ struct clk * __init samsung_clk_register_pll46xx(const char *name,
->   * PLL6552 Clock Type
->   */
->  
-> -#define PLL6552_LOCK_REG       0x00
-> -#define PLL6552_CON_REG                0x0c
-> -
->  #define PLL6552_MDIV_MASK      0x3ff
->  #define PLL6552_PDIV_MASK      0x3f
->  #define PLL6552_SDIV_MASK      0x7
-> @@ -451,21 +448,14 @@ struct clk * __init samsung_clk_register_pll46xx(const char *name,
->  #define PLL6552_PDIV_SHIFT     8
->  #define PLL6552_SDIV_SHIFT     0
->  
-> -struct samsung_clk_pll6552 {
-> -       struct clk_hw hw;
-> -       void __iomem *reg_base;
-> -};
-> -
-> -#define to_clk_pll6552(_hw) container_of(_hw, struct samsung_clk_pll6552, hw)
-> -
->  static unsigned long samsung_pll6552_recalc_rate(struct clk_hw *hw,
->                                                 unsigned long parent_rate)
->  {
-> -       struct samsung_clk_pll6552 *pll = to_clk_pll6552(hw);
-> +       struct samsung_clk_pll *pll = to_clk_pll(hw);
->         u32 mdiv, pdiv, sdiv, pll_con;
->         u64 fvco = parent_rate;
->  
-> -       pll_con = __raw_readl(pll->reg_base + PLL6552_CON_REG);
-> +       pll_con = __raw_readl(pll->con_reg);
->         mdiv = (pll_con >> PLL6552_MDIV_SHIFT) & PLL6552_MDIV_MASK;
->         pdiv = (pll_con >> PLL6552_PDIV_SHIFT) & PLL6552_PDIV_MASK;
->         sdiv = (pll_con >> PLL6552_SDIV_SHIFT) & PLL6552_SDIV_MASK;
-> @@ -480,48 +470,10 @@ static const struct clk_ops samsung_pll6552_clk_ops = {
->         .recalc_rate = samsung_pll6552_recalc_rate,
->  };
->  
-> -struct clk * __init samsung_clk_register_pll6552(const char *name,
-> -                                       const char *pname, void __iomem *base)
-> -{
-> -       struct samsung_clk_pll6552 *pll;
-> -       struct clk *clk;
-> -       struct clk_init_data init;
-> -
-> -       pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-> -       if (!pll) {
-> -               pr_err("%s: could not allocate pll clk %s\n", __func__, name);
-> -               return NULL;
-> -       }
-> -
-> -       init.name = name;
-> -       init.ops = &samsung_pll6552_clk_ops;
-> -       init.parent_names = &pname;
-> -       init.num_parents = 1;
-> -
-> -       pll->hw.init = &init;
-> -       pll->reg_base = base;
-> -
-> -       clk = clk_register(NULL, &pll->hw);
-> -       if (IS_ERR(clk)) {
-> -               pr_err("%s: failed to register pll clock %s\n", __func__,
-> -                               name);
-> -               kfree(pll);
-> -       }
-> -
-> -       if (clk_register_clkdev(clk, name, NULL))
-> -               pr_err("%s: failed to register lookup for %s", __func__, name);
-> -
-> -       return clk;
-> -}
-> -
->  /*
->   * PLL6553 Clock Type
->   */
->  
-> -#define PLL6553_LOCK_REG       0x00
-> -#define PLL6553_CON0_REG       0x0c
-> -#define PLL6553_CON1_REG       0x10
-> -
->  #define PLL6553_MDIV_MASK      0xff
->  #define PLL6553_PDIV_MASK      0x3f
->  #define PLL6553_SDIV_MASK      0x7
-> @@ -531,22 +483,15 @@ struct clk * __init samsung_clk_register_pll6552(const char *name,
->  #define PLL6553_SDIV_SHIFT     0
->  #define PLL6553_KDIV_SHIFT     0
->  
-> -struct samsung_clk_pll6553 {
-> -       struct clk_hw hw;
-> -       void __iomem *reg_base;
-> -};
-> -
-> -#define to_clk_pll6553(_hw) container_of(_hw, struct samsung_clk_pll6553, hw)
-> -
->  static unsigned long samsung_pll6553_recalc_rate(struct clk_hw *hw,
->                                                 unsigned long parent_rate)
->  {
-> -       struct samsung_clk_pll6553 *pll = to_clk_pll6553(hw);
-> +       struct samsung_clk_pll *pll = to_clk_pll(hw);
->         u32 mdiv, pdiv, sdiv, kdiv, pll_con0, pll_con1;
->         u64 fvco = parent_rate;
->  
-> -       pll_con0 = __raw_readl(pll->reg_base + PLL6553_CON0_REG);
-> -       pll_con1 = __raw_readl(pll->reg_base + PLL6553_CON1_REG);
-> +       pll_con0 = __raw_readl(pll->con_reg);
-> +       pll_con1 = __raw_readl(pll->con_reg + 0x4);
->         mdiv = (pll_con0 >> PLL6553_MDIV_SHIFT) & PLL6553_MDIV_MASK;
->         pdiv = (pll_con0 >> PLL6553_PDIV_SHIFT) & PLL6553_PDIV_MASK;
->         sdiv = (pll_con0 >> PLL6553_SDIV_SHIFT) & PLL6553_SDIV_MASK;
-> @@ -563,40 +508,6 @@ static const struct clk_ops samsung_pll6553_clk_ops = {
->         .recalc_rate = samsung_pll6553_recalc_rate,
->  };
->  
-> -struct clk * __init samsung_clk_register_pll6553(const char *name,
-> -                                       const char *pname, void __iomem *base)
-> -{
-> -       struct samsung_clk_pll6553 *pll;
-> -       struct clk *clk;
-> -       struct clk_init_data init;
-> -
-> -       pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-> -       if (!pll) {
-> -               pr_err("%s: could not allocate pll clk %s\n", __func__, name);
-> -               return NULL;
-> -       }
-> -
-> -       init.name = name;
-> -       init.ops = &samsung_pll6553_clk_ops;
-> -       init.parent_names = &pname;
-> -       init.num_parents = 1;
-> -
-> -       pll->hw.init = &init;
-> -       pll->reg_base = base;
-> -
-> -       clk = clk_register(NULL, &pll->hw);
-> -       if (IS_ERR(clk)) {
-> -               pr_err("%s: failed to register pll clock %s\n", __func__,
-> -                               name);
-> -               kfree(pll);
-> -       }
-> -
-> -       if (clk_register_clkdev(clk, name, NULL))
-> -               pr_err("%s: failed to register lookup for %s", __func__, name);
-> -
-> -       return clk;
-> -}
-> -
->  /*
->   * PLL2550x Clock Type
->   */
-> @@ -732,6 +643,12 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
->                 else
->                         init.ops = &samsung_pll36xx_clk_ops;
->                 break;
-> +       case pll_6552:
-> +               init.ops = &samsung_pll6552_clk_ops;
-> +               break;
-> +       case pll_6553:
-> +               init.ops = &samsung_pll6553_clk_ops;
-> +               break;
->         default:
->                 pr_warn("%s: Unknown pll type for pll clk %s\n",
->                         __func__, pll_clk->name);
-> diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
-> index 2f70e88..cd11037 100644
-> --- a/drivers/clk/samsung/clk-pll.h
-> +++ b/drivers/clk/samsung/clk-pll.h
-> @@ -17,6 +17,8 @@ enum samsung_pll_type {
->         pll_36xx,
->         pll_2550,
->         pll_2650,
-> +       pll_6552,
-> +       pll_6553,
->  };
->  
->  #define PLL_35XX_RATE(_rate, _m, _p, _s)                       \
-> @@ -64,10 +66,6 @@ extern struct clk * __init samsung_clk_register_pll45xx(const char *name,
->  extern struct clk * __init samsung_clk_register_pll46xx(const char *name,
->                         const char *pname, const void __iomem *con_reg,
->                         enum pll46xx_type type);
-> -extern struct clk *samsung_clk_register_pll6552(const char *name,
-> -                       const char *pname, void __iomem *base);
-> -extern struct clk *samsung_clk_register_pll6553(const char *name,
-> -                       const char *pname, void __iomem *base);
->  extern struct clk * __init samsung_clk_register_pll2550x(const char *name,
->                         const char *pname, const void __iomem *reg_base,
->                         const unsigned long offset);
-> -- 
-> 1.8.3.2
