@@ -1,141 +1,182 @@
-From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH 1/4] pinctrl: Add s5pv210 support to pinctrl-exynos
-Date: Tue, 27 Aug 2013 11:19:31 +0200
-Message-ID: <1377595171-31116-1-git-send-email-m.krawczuk@partner.samsung.com>
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH V4] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Tue, 27 Aug 2013 14:52:31 +0530
+Message-ID: <1377595351-30233-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:10749 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751849Ab3H0JUB (ORCPT
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:49807 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752970Ab3H0JWv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 05:20:01 -0400
+	Tue, 27 Aug 2013 05:22:51 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linus.walleij@linaro.org
-Cc: t.figa@samsung.com, thomas.abraham@linaro.org, kgene.kim@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org
+Cc: rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, t.figa@samsung.com, dianders@chromium.org, cjb@laptop.org, thomas.abraham@linaro.org, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-This patch implements pinctrl for s5pv210 and adds required device tree bindings.
+This patch adds the device tree node entries for exynos5420 SOC.
+Exynos5420 has a different version of DWMMC controller,so a new
+compatible string is used to distinguish it from the prior SOC's.
 
-Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+This patch depends on
+	mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
+
+changes since V3:
+	1.change fifo-depth size from 0x80 to 0x40
+	2.Move the below properties
+		a.card-detect-delay
+		b.samsung,dw-mshc-ciu-div
+		c.samsung,dw-mshc-sdr-timing
+		d.samsung,dw-mshc-ddr-timing
+	from SOC dts to board dts file as suggested by Doug Anderson
+
+changes since V2:
+	1.dropped num-slots property from node as its not required
+	  if number of card slots available is 1.
+
+	2.Move the below properties
+		a.fifo-depth
+		b.card-detect-delay
+		c.samsung,dw-mshc-ciu-div
+		d.samsung,dw-mshc-sdr-timing
+		e.samsung,dw-mshc-ddr-timing
+	from board dts to SOC dts,as these are not board specific properties.
+
+	3.Updated the binding document exynos-dw-mshc.txt.
+
+changes since V1:
+	1.disable node by status = disabled in SOC file
+	2.enable node by status = okay in board specific file
+
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 ---
- drivers/pinctrl/Kconfig           |  2 +-
- drivers/pinctrl/pinctrl-exynos.c  | 58 +++++++++++++++++++++++++++++++++++++++
- drivers/pinctrl/pinctrl-samsung.c |  3 +-
- drivers/pinctrl/pinctrl-samsung.h |  1 +
- 4 files changed, 62 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    4 ++
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   34 +++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   39 ++++++++++++++++++++
+ 3 files changed, 77 insertions(+)
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index bdb1a87..ffe4b49 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -252,7 +252,7 @@ config PINCTRL_SAMSUNG
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index 6d1c098..25368e8 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -16,6 +16,8 @@ Required Properties:
+ 	  specific extensions.
+ 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+ 	  specific extensions.
++	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
++	  specific extensions.
  
- config PINCTRL_EXYNOS
- 	bool "Pinctrl driver data for Samsung EXYNOS SoCs other than 5440"
--	depends on OF && GPIOLIB && ARCH_EXYNOS
-+	depends on OF && GPIOLIB && (ARCH_EXYNOS || ARCH_S5PV210)
- 	select PINCTRL_SAMSUNG
+ * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+@@ -31,6 +33,8 @@ Required Properties:
+   data rate mode operation. Refer notes below for the order of the cells and the
+   valid values.
  
- config PINCTRL_EXYNOS5440
-diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
-index a74b3cb..fc3e1d7 100644
---- a/drivers/pinctrl/pinctrl-exynos.c
-+++ b/drivers/pinctrl/pinctrl-exynos.c
-@@ -660,6 +660,64 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
- 			exynos_pinctrl_resume_bank(drvdata, bank);
- }
- 
-+/* pin banks of s5pv210 pin-controller */
-+static struct samsung_pin_bank s5pv210_pin_banks0[] = {
-+	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpd0", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpd1", 0x18),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x0E0, "gpe0", 0x1c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpe1", 0x20),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x120, "gpf0", 0x24),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x140, "gpf1", 0x28),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x160, "gpf2", 0x2c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf3", 0x30),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x1A0, "gpg0", 0x34),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x1C0, "gpg1", 0x38),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x1E0, "gpg2", 0x3c),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x200, "gpg3", 0x40),
-+	EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpgi"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x240, "gpj0", 0x44),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x260, "gpj1", 0x48),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x280, "gpj2", 0x4c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x2A0, "gpj3", 0x50),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x2C0, "gpj4", 0x54),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x2E0, "mp01"),
-+	EXYNOS_PIN_BANK_EINTN(4, 0x300, "mp02"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp03"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x340, "mp04"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x360, "mp05"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x300, "mp06"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp07"),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gph0", 0x00),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gph1", 0x04),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gph2", 0x08),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gph3", 0x0c),
-+};
++* bypass-smu: Bypass Security Management Unit of eMMC channel 0 and channel 1.
 +
-+struct samsung_pin_ctrl s5pv210_pin_ctrl[] = {
-+	{
-+		/* pin-controller instance 0 data */
-+		.pin_banks	= s5pv210_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(s5pv210_pin_banks0),
-+		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-+		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-+		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-+		.weint_con	= EXYNOS_WKUP_ECON_OFFSET,
-+		.weint_mask	= EXYNOS_WKUP_EMASK_OFFSET,
-+		.weint_pend	= EXYNOS_WKUP_EPEND_OFFSET,
-+		.svc		= EXYNOS_SVC_OFFSET,
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "s5pv210-gpio-ctrl0",
-+	},
-+};
-+
- /* pin banks of exynos4210 pin-controller 0 */
- static struct samsung_pin_bank exynos4210_pin_banks0[] = {
- 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index 439f2ef..f14b379 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -878,7 +878,6 @@ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
- 	}
- 	match = of_match_node(samsung_pinctrl_dt_match, node);
- 	ctrl = (struct samsung_pin_ctrl *)match->data + id;
--
- 	bank = ctrl->pin_banks;
- 	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
- 		spin_lock_init(&bank->slock);
-@@ -1113,6 +1112,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = (void *)exynos5250_pin_ctrl },
- 	{ .compatible = "samsung,exynos5420-pinctrl",
- 		.data = (void *)exynos5420_pin_ctrl },
-+	{ .compatible = "samsung,s5pv210-pinctrl",
-+		.data = (void *)s5pv210_pin_ctrl },
- #endif
- #ifdef CONFIG_PINCTRL_S3C64XX
- 	{ .compatible = "samsung,s3c64xx-pinctrl",
-diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-index 11bb75b..30622d9 100644
---- a/drivers/pinctrl/pinctrl-samsung.h
-+++ b/drivers/pinctrl/pinctrl-samsung.h
-@@ -260,5 +260,6 @@ extern struct samsung_pin_ctrl s3c2412_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c2416_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c2440_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c2450_pin_ctrl[];
-+extern struct samsung_pin_ctrl s5pv210_pin_ctrl[];
+   Notes for the sdr-timing and ddr-timing values:
  
- #endif /* __PINCTRL_SAMSUNG_H */
+     The order of the cells should be
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index bafba25..576066c 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -31,6 +31,40 @@
+ 		};
+ 	};
+ 
++	dwmmc0@12200000 {
++		status = "okay";
++		broken-cd;
++		bypass-smu;
++		supports-highspeed;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <0 4>;
++		samsung,dw-mshc-ddr-timing = <0 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
++	dwmmc2@12220000 {
++		status = "okay";
++		supports-highspeed;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++		};
++	};
++
+ 	dp-controller@145B0000 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&dp_hpd>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index d537cd7..3893f45 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -22,6 +22,9 @@
+ 	compatible = "samsung,exynos5420";
+ 
+ 	aliases {
++		mshc0 = &dwmmc_0;
++		mshc1 = &dwmmc_1;
++		mshc2 = &dwmmc_2;
+ 		pinctrl0 = &pinctrl_0;
+ 		pinctrl1 = &pinctrl_1;
+ 		pinctrl2 = &pinctrl_2;
+@@ -84,6 +87,42 @@
+ 		clock-names = "mfc";
+ 	};
+ 
++	dwmmc_0: dwmmc0@12200000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 75 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12200000 0x2000>;
++		clocks = <&clock 351>, <&clock 132>;
++		clock-names = "biu", "ciu";
++		fifo-depth = <0x40>;
++		status = "disabled";
++	};
++
++	dwmmc_1: dwmmc1@12210000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 76 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12210000 0x2000>;
++		clocks = <&clock 352>, <&clock 133>;
++		clock-names = "biu", "ciu";
++		fifo-depth = <0x40>;
++		status = "disabled";
++	};
++
++	dwmmc_2: dwmmc2@12220000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 77 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12220000 0x2000>;
++		clocks = <&clock 353>, <&clock 134>;
++		clock-names = "biu", "ciu";
++		fifo-depth = <0x40>;
++		status = "disabled";
++	};
++
+ 	mct@101C0000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x101C0000 0x800>;
 -- 
-1.8.1.2
+1.7.9.5
