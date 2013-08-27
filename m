@@ -1,293 +1,214 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v7] s5k5baf: add camera sensor driver
-Date: Tue, 27 Aug 2013 13:52:04 +0200
-Message-ID: <1424546.lJXUZLPMUj@avalon>
-References: <1377096091-7284-1-git-send-email-a.hajda@samsung.com> <1544715.uKei6kdjbJ@avalon> <521B4B4D.50209@samsung.com>
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [PATCH V4] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Tue, 27 Aug 2013 17:32:52 +0530
+Message-ID: <CAKuRcOLK0PjcVKFxUZ9hedVScKe1K+QYE1g57CZ5JOE=AmFJow@mail.gmail.com>
+References: <1377595351-30233-1-git-send-email-yuvaraj.cd@samsung.com>
+	<20130827110145.GG19893@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:39595 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752908Ab3H0Lun (ORCPT
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:43971 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753083Ab3H0MCx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 07:50:43 -0400
-In-Reply-To: <521B4B4D.50209@samsung.com>
+	Tue, 27 Aug 2013 08:02:53 -0400
+In-Reply-To: <20130827110145.GG19893@e106331-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "dianders@chromium.org" <dianders@chromium.org>, "cjb@laptop.org" <cjb@laptop.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Hi Andrejz,
-
-On Monday 26 August 2013 14:34:21 Andrzej Hajda wrote:
-> On 08/23/2013 02:53 PM, Laurent Pinchart wrote:
-> > On Wednesday 21 August 2013 16:41:31 Andrzej Hajda wrote:
-> >> Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
-> >> with embedded SoC ISP.
-> >> The driver exposes the sensor as two V4L2 subdevices:
-> >> - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
-> >>   no controls.
-> >> 
-> >> - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
-> >>   pre/post ISP cropping, downscaling via selection API, controls.
-> >> 
-> >> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >> ---
-> >> Hi,
-> >> 
-> >> This patch incorporates Stephen's suggestions, thanks.
-> >> 
-> >> Regards
-> >> Andrzej
-> >> 
-> >> v7
-> >> - changed description of 'clock-frequency' DT property
-> >> 
-> >> v6
-> >> - endpoint node presence is now optional,
-> >> - added asynchronous subdev registration support and clock
-> >> 
-> >>   handling,
-> >> 
-> >> - use named gpios in DT bindings
-> >> 
-> >> v5
-> >> - removed hflip/vflip device tree properties
-> >> 
-> >> v4
-> >> - GPL changed to GPLv2,
-> >> - bitfields replaced by u8,
-> >> - cosmetic changes,
-> >> - corrected s_stream flow,
-> >> - gpio pins are no longer exported,
-> >> - added I2C addresses to subdev names,
-> >> - CIS subdev registration postponed after
-> >> 
-> >>   succesfull HW initialization,
-> >> 
-> >> - added enums for pads,
-> >> - selections are initialized only during probe,
-> >> - default resolution changed to 1600x1200,
-> >> - state->error pattern removed from few other functions,
-> >> - entity link creation moved to registered callback.
-> >> 
-> >> v3:
-> >> - narrowed state->error usage to i2c and power errors,
-> >> - private gain controls replaced by red/blue balance user controls,
-> >> - added checks to devicetree gpio node parsing
-> >> 
-> >> v2:
-> >> - lower-cased driver name,
-> >> - removed underscore from regulator names,
-> >> - removed platform data code,
-> >> - v4l controls grouped in anonymous structs,
-> >> - added s5k5baf_clear_error function,
-> >> - private controls definitions moved to uapi header file,
-> >> - added v4l2-controls.h reservation for private controls,
-> >> - corrected subdev registered/unregistered code,
-> >> - .log_status sudbev op set to v4l2 helper,
-> >> - moved entity link creation to probe routines,
-> >> - added cleanup on error to probe function.
-> >> ---
-> >> 
-> >>  .../devicetree/bindings/media/samsung-s5k5baf.txt  |   59 +
-> >>  MAINTAINERS                                        |    7 +
-> >>  drivers/media/i2c/Kconfig                          |    7 +
-> >>  drivers/media/i2c/Makefile                         |    1 +
-> >>  drivers/media/i2c/s5k5baf.c                        | 2045 ++++++++++++++
-> >>  5 files changed, 2119 insertions(+)
-> >>  create mode 100644
-> >> 
-> >> Documentation/devicetree/bindings/media/samsung-s5k5baf.txt create mode
-> >> 100644 drivers/media/i2c/s5k5baf.c
-> > 
-> > [snip]
-> > 
-> >> diff --git a/drivers/media/i2c/s5k5baf.c b/drivers/media/i2c/s5k5baf.c
-> >> new file mode 100644
-> >> index 0000000..f21d9f1
-> >> --- /dev/null
-> >> +++ b/drivers/media/i2c/s5k5baf.c
-
-[snip]
-
-> >> +static void s5k5baf_write_arr_seq(struct s5k5baf *state, u16 addr,
-> >> +				  u16 count, const u16 *seq)
-> >> +{
-> >> +	struct i2c_client *c = v4l2_get_subdevdata(&state->sd);
-> >> +	u16 buf[count + 1];
-> >> +	int ret, n;
-> >> +
-> >> +	s5k5baf_i2c_write(state, REG_CMDWR_ADDR, addr);
-> >> +	if (state->error)
-> >> +		return;
-> > 
-> > I would have a preference for returning an error directly from the write
-> > function instead of storing it in state->error, that would be more
-> > explicit. The same is true for all read/write functions.
-> 
-> I have introduced state->error to avoid code bloat. With this 'pattern'
-> error is checked in about 10 places in the code, of course without
-> scarifying code correctness.
-> Replacing this pattern with classic 'return error directly from function'
-> would result with adding error checks after all calls to i2c i/o functions
-> and after calls to many functions which those i2c i/o calls contains.
-> According to my rough estimates it is about 70 places.
-> 
-> Similar pattern is used already in v4l2_ctrl_handler::error.
-> 
-> >> +	buf[0] = __constant_htons(REG_CMD_BUF);
-> >> +	for (n = 1; n <= count; ++n)
-> >> +		buf[n] = htons(*seq++);
-> > 
-> > cpu_to_be16()/be16_to_cpu() here as well ?
-> 
-> OK
-> 
-> >> +
-> >> +	n *= 2;
-> >> +	ret = i2c_master_send(c, (char *)buf, n);
-> >> +	v4l2_dbg(3, debug, c, "i2c_write_seq(count=%d): %*ph\n", count,
-> >> +		 min(2 * count, 64), seq - count);
-> >> +
-> >> +	if (ret != n) {
-> >> +		v4l2_err(c, "i2c_write_seq: error during transfer (%d)\n", ret);
-> >> +		state->error = ret;
-> >> +	}
-> >> +}
-
-[snip]
-
-> >> +static int s5k5baf_hw_set_video_bus(struct s5k5baf *state)
-> >> +{
-> >> +	u16 en_packets;
-> >> +
-> >> +	switch (state->bus_type) {
-> >> +	case V4L2_MBUS_CSI2:
-> >> +		en_packets = EN_PACKETS_CSI2;
-> >> +		break;
-> >> +	case V4L2_MBUS_PARALLEL:
-> >> +		en_packets = 0;
-> >> +		break;
-> >> +	default:
-> >> +		v4l2_err(&state->sd, "unknown video bus: %d\n",
-> >> +			 state->bus_type);
-> >> +		return -EINVAL;
-> > 
-> > Can this happen ?
-> 
-> Yes, in case of incorrect DT bindings.
-
-Shouldn't it be caught at probe time instead then ?
-
-> >> +	};
-> >> +
-> >> +	s5k5baf_write_seq(state, REG_OIF_EN_MIPI_LANES,
-> >> +			  state->nlanes, en_packets, 1);
-> >> +
-> >> +	return s5k5baf_clear_error(state);
-> >> +}
-> > 
-> > [snip]
-> > 
-> >> +static int s5k5baf_s_stream(struct v4l2_subdev *sd, int on)
-> >> +{
-> >> +	struct s5k5baf *state = to_s5k5baf(sd);
-> >> +	int ret;
-> >> +
-> >> +	if (state->streaming == !!on)
-> >> +		return 0;
-> >> +
-> >> +	mutex_lock(&state->lock);
-> > 
-> > Shouldn't the lock protect the state->streaming check above ?
-> 
-> Yes, will be corrected.
-> 
-> >> +	if (on) {
-> >> +		s5k5baf_hw_set_config(state);
-> >> +		ret = s5k5baf_hw_set_crop_rects(state);
-> >> +		if (ret < 0)
-> >> +			goto out;
-> >> +		s5k5baf_hw_set_stream(state, 1);
-> >> +		s5k5baf_i2c_write(state, 0xb0cc, 0x000b);
-> >> +	} else {
-> >> +		s5k5baf_hw_set_stream(state, 0);
-> >> +	}
-> >> +	ret = s5k5baf_clear_error(state);
-> >> +	if (!ret)
-> >> +		state->streaming = !state->streaming;
-> >> +
-> >> +out:
-> >> +	mutex_unlock(&state->lock);
-> >> +
-> >> +	return ret;
-> >> +}
-
-[snip]
-
-> >> +static int s5k5baf_registered(struct v4l2_subdev *sd)
-> >> +{
-> >> +	struct s5k5baf *state = to_s5k5baf(sd);
-> >> +	int ret;
-> >> +
-> >> +	ret = v4l2_device_register_subdev(sd->v4l2_dev, &state->cis_sd);
-> >> +	if (ret < 0)
-> >> +		v4l2_err(sd, "failed to register subdev %s\n",
-> >> +			 state->cis_sd.name);
-> >> +	else
-> >> +		ret = media_entity_create_link(&state->cis_sd.entity, PAD_CIS,
-> >> +					       &state->sd.entity, PAD_CIS,
-> >> +					       MEDIA_LNK_FL_IMMUTABLE |
-> >> +					       MEDIA_LNK_FL_ENABLED);
-> >> +	return ret;
-> >> +}
-> >> +
-> >> +static void s5k5baf_unregistered(struct v4l2_subdev *sd)
-> >> +{
-> >> +	struct s5k5baf *state = to_s5k5baf(sd);
-> >> +	v4l2_device_unregister_subdev(&state->cis_sd);
-> > 
-> > The unregistered operation is called from v4l2_device_unregister_subdev().
-> > Calling it again will be a no-op, the function will return immediately.
-> > You can thus get rid of the unregistered operation completely.
-> > 
-> > Similarly, the registered operation is called from
-> > v4l2_device_register_subdev(). You can get rid of it as well and just
-> > create the link in the probe function.
-> 
-> The sensor exposes two subdevs: s5k5baf_cis and s5k5baf_isp.
-> v4l2_device is not aware of it - he registers only the subdev bound to
-> i2c client - isp.
-> The registration of cis subdev is performed by the sensor in .registered
-> callback. Without .registered callback cis subdev will not be registered.
-
-You're right, my bad. I had overlooked that, I thought you were registering 
-the ISP subdev. Could you please add a comment to the .registered() handler to 
-document this ?
-
-> This is similar solution to smiapp and s5c73m3 drivers.
-> 
-> Regarding .unregistered callback, it seems that removing it would not harm -
-> there should be added only check in .registered to avoid its re-
-> registration. On the other hand IMO if sensor driver is responsible for
-> registration it should be responsible for unregistration of subdev, what do
-> you think about it?
-
-I agree.
-
-> And about links: v4l2_device_unregister_subdev calls
-> media_entity_remove_links,
-> so in case device is re-registered driver should re-create them.
-> 
-> >> +}
-
-[snip]
-
--- 
-Regards,
-
-Laurent Pinchart
+On Tue, Aug 27, 2013 at 4:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Tue, Aug 27, 2013 at 10:22:31AM +0100, Yuvaraj Kumar C D wrote:
+>> This patch adds the device tree node entries for exynos5420 SOC.
+>> Exynos5420 has a different version of DWMMC controller,so a new
+>> compatible string is used to distinguish it from the prior SOC's.
+>>
+>> This patch depends on
+>>       mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
+>>
+>> changes since V3:
+>>       1.change fifo-depth size from 0x80 to 0x40
+>>       2.Move the below properties
+>>               a.card-detect-delay
+>>               b.samsung,dw-mshc-ciu-div
+>>               c.samsung,dw-mshc-sdr-timing
+>>               d.samsung,dw-mshc-ddr-timing
+>>       from SOC dts to board dts file as suggested by Doug Anderson
+>>
+>> changes since V2:
+>>       1.dropped num-slots property from node as its not required
+>>         if number of card slots available is 1.
+>>
+>>       2.Move the below properties
+>>               a.fifo-depth
+>>               b.card-detect-delay
+>>               c.samsung,dw-mshc-ciu-div
+>>               d.samsung,dw-mshc-sdr-timing
+>>               e.samsung,dw-mshc-ddr-timing
+>>       from board dts to SOC dts,as these are not board specific properties.
+>>
+>>       3.Updated the binding document exynos-dw-mshc.txt.
+>>
+>> changes since V1:
+>>       1.disable node by status = disabled in SOC file
+>>       2.enable node by status = okay in board specific file
+>>
+>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> ---
+>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    4 ++
+>>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   34 +++++++++++++++++
+>>  arch/arm/boot/dts/exynos5420.dtsi                  |   39 ++++++++++++++++++++
+>>  3 files changed, 77 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> index 6d1c098..25368e8 100644
+>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> @@ -16,6 +16,8 @@ Required Properties:
+>>         specific extensions.
+>>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+>>         specific extensions.
+>> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
+>> +       specific extensions.
+>>
+>>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+>>    unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+>> @@ -31,6 +33,8 @@ Required Properties:
+>>    data rate mode operation. Refer notes below for the order of the cells and the
+>>    valid values.
+>>
+>> +* bypass-smu: Bypass Security Management Unit of eMMC channel 0 and channel 1.
+>> +
+>
+> Could you elaborate on why this is needed?
+Exynos5420  Mobile Storage Host controller has a Security Management
+Unit (SMU) for
+channel 0 and channel 1 (mainly for eMMC). This binding property
+requires to add a quirk
+to bypass SMU as it is not being used yet.
+>
+> Is the SMU broken or not present in some hardware revisions?
+SMU is only present in channel 0 and channel 1,but not in channel 2.So
+to distinguish this,
+bypass-smu property has been added as quirks in the channel.
+>
+>>    Notes for the sdr-timing and ddr-timing values:
+>>
+>>      The order of the cells should be
+>
+> On an unrelated note, I see the binding in mainline defines a gpios
+> property that doesn't seem to be used anywhere. Am I missing something,
+> or do we just not have support for that part of the binding?
+Yes,This document has been little outdated.I will update and post a
+separate patch.
+>
+> Thanks,
+> Mark.
+>
+>> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> index bafba25..576066c 100644
+>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>> @@ -31,6 +31,40 @@
+>>               };
+>>       };
+>>
+>> +     dwmmc0@12200000 {
+>> +             status = "okay";
+>> +             broken-cd;
+>> +             bypass-smu;
+>> +             supports-highspeed;
+>> +             card-detect-delay = <200>;
+>> +             samsung,dw-mshc-ciu-div = <3>;
+>> +             samsung,dw-mshc-sdr-timing = <0 4>;
+>> +             samsung,dw-mshc-ddr-timing = <0 2>;
+>> +             pinctrl-names = "default";
+>> +             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+>> +
+>> +             slot@0 {
+>> +                     reg = <0>;
+>> +                     bus-width = <8>;
+>> +             };
+>> +     };
+>> +
+>> +     dwmmc2@12220000 {
+>> +             status = "okay";
+>> +             supports-highspeed;
+>> +             card-detect-delay = <200>;
+>> +             samsung,dw-mshc-ciu-div = <3>;
+>> +             samsung,dw-mshc-sdr-timing = <2 3>;
+>> +             samsung,dw-mshc-ddr-timing = <1 2>;
+>> +             pinctrl-names = "default";
+>> +             pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>> +
+>> +             slot@0 {
+>> +                     reg = <0>;
+>> +                     bus-width = <4>;
+>> +             };
+>> +     };
+>> +
+>>       dp-controller@145B0000 {
+>>               pinctrl-names = "default";
+>>               pinctrl-0 = <&dp_hpd>;
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index d537cd7..3893f45 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -22,6 +22,9 @@
+>>       compatible = "samsung,exynos5420";
+>>
+>>       aliases {
+>> +             mshc0 = &dwmmc_0;
+>> +             mshc1 = &dwmmc_1;
+>> +             mshc2 = &dwmmc_2;
+>>               pinctrl0 = &pinctrl_0;
+>>               pinctrl1 = &pinctrl_1;
+>>               pinctrl2 = &pinctrl_2;
+>> @@ -84,6 +87,42 @@
+>>               clock-names = "mfc";
+>>       };
+>>
+>> +     dwmmc_0: dwmmc0@12200000 {
+>> +             compatible = "samsung,exynos5420-dw-mshc";
+>> +             interrupts = <0 75 0>;
+>> +             #address-cells = <1>;
+>> +             #size-cells = <0>;
+>> +             reg = <0x12200000 0x2000>;
+>> +             clocks = <&clock 351>, <&clock 132>;
+>> +             clock-names = "biu", "ciu";
+>> +             fifo-depth = <0x40>;
+>> +             status = "disabled";
+>> +     };
+>> +
+>> +     dwmmc_1: dwmmc1@12210000 {
+>> +             compatible = "samsung,exynos5420-dw-mshc";
+>> +             interrupts = <0 76 0>;
+>> +             #address-cells = <1>;
+>> +             #size-cells = <0>;
+>> +             reg = <0x12210000 0x2000>;
+>> +             clocks = <&clock 352>, <&clock 133>;
+>> +             clock-names = "biu", "ciu";
+>> +             fifo-depth = <0x40>;
+>> +             status = "disabled";
+>> +     };
+>> +
+>> +     dwmmc_2: dwmmc2@12220000 {
+>> +             compatible = "samsung,exynos5420-dw-mshc";
+>> +             interrupts = <0 77 0>;
+>> +             #address-cells = <1>;
+>> +             #size-cells = <0>;
+>> +             reg = <0x12220000 0x2000>;
+>> +             clocks = <&clock 353>, <&clock 134>;
+>> +             clock-names = "biu", "ciu";
+>> +             fifo-depth = <0x40>;
+>> +             status = "disabled";
+>> +     };
+>> +
+>>       mct@101C0000 {
+>>               compatible = "samsung,exynos4210-mct";
+>>               reg = <0x101C0000 0x800>;
+>> --
+>> 1.7.9.5
+>>
+>>
