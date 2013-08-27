@@ -1,75 +1,58 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: EXYNOS: add cpuidle-exynos.max_states kernel
- parameter
-Date: Mon, 02 Sep 2013 15:48:12 +0200
-Message-ID: <2459763.PzPngK0oec@amdc1032>
-References: <4002844.4ZqqJexTv4@amdc1032> <7429815.RzOHxBbusd@amdc1032>
- <5224903B.9050404@linaro.org>
+From: "Sherman Yin" <syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: RE: [PATCH v3] pinctrl: Pass all configs to driver on pin_config_set()
+Date: Tue, 27 Aug 2013 18:22:31 +0000
+Message-ID: <051069C10411E24D9749790C498526FA1BDDF56E@SJEXCHMB12.corp.ad.broadcom.com>
+References: <1377134300-25480-1-git-send-email-syin@broadcom.com>
+ <1377484899-4918-1-git-send-email-syin@broadcom.com>
+ <6659378.X3XNCLDVvV@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <5224903B.9050404@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Tomasz Figa <t.figa@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <6659378.X3XNCLDVvV@avalon>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rpi-kernel>,
+ <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rpi-kernel/>
+List-Post: <mailto:linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel>,
+ <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "linux-rpi-kernel" <linux-rpi-kernel-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: Srinidhi Kasagar <srinidhi.kasagar-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Christian Daudt <csd-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, "linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-r>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, September 02, 2013 03:18:51 PM Daniel Lezcano wrote:
-> On 09/02/2013 11:41 AM, Bartlomiej Zolnierkiewicz wrote:
-> > On Monday, September 02, 2013 10:54:17 AM Daniel Lezcano wrote:
-> >> On 08/30/2013 12:21 PM, Bartlomiej Zolnierkiewicz wrote:
-> >>> Add "cpuidle-exynos.max_states=" parameter to allow user to specify
-> >>> the maximum of allowed CPU idle states for ARM EXYNOS cpuidle driver.
-> >>>
-> >>> This change is needed because C1 state (AFTR mode) is often not able
-> >>> to work properly due to incompatibility with some bootloader versions.
-> >>>
-> >>> Usage examples:
-> >>>
-> >>> "cpuidle-exynos.max_states=1" disables C1 state (AFTR mode).
-> >>>
-> >>> "cpuidle-exynos.max_states=0" disables the driver completely.
-> >>>
-> >>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >>> Cc: Tomasz Figa <t.figa@samsung.com>
-> >>> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> >>
-> >> There is a max_cstate option for acpi and intel idle. There is also the
-> >> cpuidle.off=1 option. As the semantic is the same, I think adding a
-> >> common cpuidle option usable for all the drivers is better.
-> > 
-> > I thought about making the option common for all cpuidle drivers first
-> > but due to support for multiple cpuidle drivers on one machine (i.e.
-> > big.LITTLE), per-driver option looked like a better approach.
-> > 
-> > Should I make the option common and not worry about multiple drivers on
-> > one machine support?
-> 
-> Mmh, that's a good point.
-> 
-> I am not in favor of multiple options spread across the different
-> drivers. Furthermore the max_cstate is used in the intel platform to
-> 'discover' what states the firmware supports which is not the case of
-> the cpuidle ARM drivers (except new PSCI based). This option does not
-> really fits well here.
-> 
-> There is the kernel parameter 'cpuidle.off', so disabling the driver is ok.
-> 
-> You converted the cpuidle driver to a platform driver. Isn't possible to
-> pass information in the platform data field at boot time to tell AFTR is
-> not supported and then act on the 'disabled' field of this state ?
+Hi Laurent,
 
-It might be possible but I don't know where the source of this data would
-be, platform specific kernel parameter? It sounds just like moving the code
-around and adding superfluous platform->driver code because the similar
-kernel parameter to disable just AFTR can be added in cpuidle-exynos driver
-as well.
+>> diff --git a/drivers/pinctrl/sh-pfc/pinctrl.c
+>> b/drivers/pinctrl/sh-pfc/pinctrl.c index 8649ec3..ced199e 100644
+>> --- a/drivers/pinctrl/sh-pfc/pinctrl.c
+>> +++ b/drivers/pinctrl/sh-pfc/pinctrl.c
+>> @@ -529,38 +529,44 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev
+>> *pctldev, unsigned _pin, }
+>>
+>>  static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
+>> -			      unsigned long config)
+>> +			      unsigned long *configs, unsigned num_configs)
+>>  {
+>>  	struct sh_pfc_pinctrl *pmx = pinctrl_dev_get_drvdata(pctldev);
+>>  	struct sh_pfc *pfc = pmx->pfc;
+>> -	enum pin_config_param param = pinconf_to_config_param(config);
+>> +	enum pin_config_param param;
+>>  	unsigned long flags;
+>> +	int i;
+>
+>Could you please make this an unsigned int ?
+>
+>Other than that the sh-pfc part looks good to me.
+ 
+Thanks for the review.  I'll make this change.  Can I add you as a 
+Reviewed-by?
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+I just realized I didn't include the linux-arm-kernel maillist in my v3 patch, so 
+I'll make this change send out a v4.  
 
+Regards,
+Sherman
