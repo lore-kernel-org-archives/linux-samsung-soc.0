@@ -1,93 +1,140 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v5 0/6] ARM: dts: add support for exynos hdmi subsystem
-Date: Tue, 27 Aug 2013 10:59:28 +0530
-Message-ID: <CAPdUM4OJJd40dcsy=5PO7kv7UANq5z=aXnTq7coH11j3M8yWLg@mail.gmail.com>
-References: <1377509901-9467-1-git-send-email-rahul.sharma@samsung.com>
-	<3096714.XGeJNyPCXd@flatron>
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [RFC V2 1/4] mmc: dw_mmc: exynos: move the exynos private init
+Date: Tue, 27 Aug 2013 11:33:16 +0530
+Message-ID: <CAKuRcOLGZeeXjy=U4-MSm5r+_VRUMbvAMSG5ioUR+9Lyf-eGmQ@mail.gmail.com>
+References: <1377256509-18922-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1377256509-18922-2-git-send-email-yuvaraj.cd@samsung.com>
+	<5217673C.1040305@samsung.com>
+	<CAKuRcOKSzXXGnN1jZhYhimnRqmKM4pc2qB2N0AgXdRX1VFLb3Q@mail.gmail.com>
+	<521C1044.8060804@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:44817 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752576Ab3H0F3a (ORCPT
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:45248 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752329Ab3H0GDQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 01:29:30 -0400
-In-Reply-To: <3096714.XGeJNyPCXd@flatron>
+	Tue, 27 Aug 2013 02:03:16 -0400
+In-Reply-To: <521C1044.8060804@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sunil joshi <joshi@samsung.com>
+To: Jaehoon Chung <jh80.chung@samsung.com>, shashidharh@vayavyalabs.com
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, ks.giri@samsung.com, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, thomas.ab@samsung.com
 
-On 27 August 2013 05:12, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Rahul,
+On Tue, Aug 27, 2013 at 8:04 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Dear Yuvaraj,
 >
-> On Monday 26 of August 2013 15:08:15 Rahul Sharma wrote:
->> It adds Device tree nodes and clocks information for HDMI subsystem
->> for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
->> hpd gpio and update binding documents.
->>
->> This set is based on kukjin's for-next branch at
->> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
->>
->> v5:
->> 1) Merged Clock addition patch to DT nmde addition patch.
->> 2) Add dout_pixel clock for hdmi in place of sclk_pixel.
->> 3) Enable mixer node in soc dtsi file.
->>
->> v4:
->> 1) Remove the movement of common properties to Exynos5.dtsi for
->> I2C and hdmi subsystem.
->> 2) Change the title of the patches.
->>
->> v3:
->> 1) Rebase to kgene for-next based on 3.11-rc1.
->> 2) Changes clock numbers as per updated clocks file for
->> exyno5250 and exynos5420.
->> 3) Dropped Sachin patch as already got merged.
->>
->> v2:
->> 1) Added patch for moving common i2c properties to exynos5.dtsi
->> 2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
->> 3) moved hpd pinctrl node to board file.
->> 4) Added Sachin's patch to update binding document for hdmi with hpd
->> information.
->>
->>
->>
->> Andrew Bresticker (1):
->>   ARM: dts: add i2c device nodes for Exynos5420
->>
->> Rahul Sharma (4):
->>   ARM: dts: add clocks to hdmi dt node for exynos5250
->>   ARM: dts: add dt nodes for hdmi subsystem for exynos5420
->>   ARM: dts: add hdmi hpd gpio pinctrl node for exynos5420
->>   of/documentation: update with clock information for exynos hdmi
->>     subsystem
->>
->> Sean Paul (1):
->>   ARM: dts: add mixer clocks to mixer node for Exynos5250
->>
->>  .../devicetree/bindings/video/exynos_hdmi.txt      |   14 +++-
->>  .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
->>  arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++-
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   26 +++++++
->>  arch/arm/boot/dts/exynos5420.dtsi                  |   75
->> ++++++++++++++++++++ 5 files changed, 123 insertions(+), 4 deletions(-)
+> On 08/26/2013 06:20 PM, Yuvaraj Kumar wrote:
+>> On Fri, Aug 23, 2013 at 7:14 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>> Hi Yuvaraj,
+>>>
+>>> On 08/23/2013 08:15 PM, Yuvaraj Kumar C D wrote:
+>>>> Currently platform specific private data initialisation is done by
+>>>> dw_mci_exynos_priv_init and dw_mci_exynos_parse_dt.As we already have
+>>>> separate platform specific device tree parser dw_mci_exynos_parse_dt,
+>>>> move the dw_mci_exynos_priv_init code to dw_mci_exynos_parse_dt.
+>>>> We can use the dw_mci_exynos_priv_init to do some actual platform
+>>>> specific initialisation of SMU and etc.
+>>>>
+>>>> changes since V1: none
+>>>>
+>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>>> ---
+>>>>  drivers/mmc/host/dw_mmc-exynos.c |   31 +++++++++++++++----------------
+>>>>  1 file changed, 15 insertions(+), 16 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+>>>> index 9990f98..19c845b 100644
+>>>> --- a/drivers/mmc/host/dw_mmc-exynos.c
+>>>> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+>>>> @@ -72,22 +72,8 @@ static struct dw_mci_exynos_compatible {
+>>>>
+>>>>  static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>>>>  {
+>>>> -     struct dw_mci_exynos_priv_data *priv;
+>>>> -     int idx;
+>>>> -
+>>>> -     priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+>>>> -     if (!priv) {
+>>>> -             dev_err(host->dev, "mem alloc failed for private data\n");
+>>>> -             return -ENOMEM;
+>>>> -     }
+>>>> -
+>>>> -     for (idx = 0; idx < ARRAY_SIZE(exynos_compat); idx++) {
+>>>> -             if (of_device_is_compatible(host->dev->of_node,
+>>>> -                                     exynos_compat[idx].compatible))
+>>>> -                     priv->ctrl_type = exynos_compat[idx].ctrl_type;
+>>>> -     }
+>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>>
+>>>> -     host->priv = priv;
+>>>>       return 0;
+>>>>  }
+>>>>
+>>>> @@ -177,12 +163,24 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>>>>
+>>>>  static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>>>>  {
+>>>> -     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>> +     struct dw_mci_exynos_priv_data *priv;
+>>>>       struct device_node *np = host->dev->of_node;
+>>>>       u32 timing[2];
+>>>>       u32 div = 0;
+>>>> +     int idx;
+>>>>       int ret;
+>>>>
+>>>> +     priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+>>>> +     if (!priv) {
+>>>> +             dev_err(host->dev, "mem alloc failed for private data\n");
+>>>> +             return -ENOMEM;
+>>>> +     }
+>>>> +
+>>>> +     for (idx = 0; idx < ARRAY_SIZE(exynos_compat); idx++) {
+>>>> +             if (of_device_is_compatible(np, exynos_compat[idx].compatible))
+>>>> +                     priv->ctrl_type = exynos_compat[idx].ctrl_type;
+>>>> +     }
+>>>> +
+>>>>       of_property_read_u32(np, "samsung,dw-mshc-ciu-div", &div);
+>>>>       priv->ciu_div = div;
+>>>>
+>>>> @@ -199,6 +197,7 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>>>>               return ret;
+>>>>
+>>>>       priv->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0], timing[1], div);
+>>>> +     host->priv = priv;
+>>>
+>>> I'm not sure whether my thinking is right or not.
+>>> if host->pdata is present, then dw_mci_parse_dt() didn't called at dw_mci_probe.
+>> Yes, you are right.
+>>> then how host->priv set to priv?
+>> Earlier host->priv set to priv in both non-DT and DT case.True, with
+>> this patch it does it only in DT case.
+>> Is there any platform/board which still uses dw_mmc and its platform
+>> extension driver with non DT case?
+> You're right. i didn't see the extension driver with non DT-case?
+> Then we can also modify the host->pdata into dw_mci_probe().
+I think its not necessary becuase dw_mmc-pci.c driver calls
+dw_mci_probe with host->pdata NOT NULL.
+Only dwmmc platform extension driver (exynos/socfpga) which are
+basically DT based uses host->priv .
 >
-> Except patches 4-6, which I have commented on, for the series:
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
-> Also one minor comment: It would be better if you updated the
-> documentation as first patch. This would make all the following patches to
-> be based on already existing documentation.
->
-
-Done. I reordered them.
-
-regards,
-Rahul Sharma.
-
-> Best regards,
-> Tomasz
+> Best Regards,
+> Jaehoon Chung
+>> I found a reference of non-DT case where host->pdata is present in
+>> dw_mmc-pci.c driver but does not
+>> use platform extension driver (exynos/socfpga).
+>>>
+>>> Best Regards,
+>>> Jaehoon Chung
+>>>
+>>>>       return 0;
+>>>>  }
+>>>>
+>>>>
+>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
 >
