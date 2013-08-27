@@ -1,65 +1,141 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v7] s5k5baf: add camera sensor driver
-Date: Tue, 27 Aug 2013 10:14:48 +0100
-Message-ID: <20130827091448.GA19893@e106331-lin.cambridge.arm.com>
-References: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+Subject: [PATCH 1/4] pinctrl: Add s5pv210 support to pinctrl-exynos
+Date: Tue, 27 Aug 2013 11:19:31 +0200
+Message-ID: <1377595171-31116-1-git-send-email-m.krawczuk@partner.samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:37047 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753208Ab3H0JPF (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:10749 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751849Ab3H0JUB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 05:15:05 -0400
-Content-Disposition: inline
-In-Reply-To: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
-Content-Language: en-US
+	Tue, 27 Aug 2013 05:20:01 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>
+To: linus.walleij@linaro.org
+Cc: t.figa@samsung.com, thomas.abraham@linaro.org, kgene.kim@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 
-Hi,
+This patch implements pinctrl for s5pv210 and adds required device tree bindings.
 
-[trimming down to relevant context]
+Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+---
+ drivers/pinctrl/Kconfig           |  2 +-
+ drivers/pinctrl/pinctrl-exynos.c  | 58 +++++++++++++++++++++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.c |  3 +-
+ drivers/pinctrl/pinctrl-samsung.h |  1 +
+ 4 files changed, 62 insertions(+), 2 deletions(-)
 
-> +endpoint node
-> +-------------
-> +
-> +- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
-> +  video-interfaces.txt. This property can be only used to specify number
-> +  of data lanes, i.e. the array's content is unused, only its length is
-> +  meaningful. When this property is not specified default value of 1 lane
-> +  will be used.
-
-Apologies for having not replied to the last posting, but having looked
-at the documentation I was provided last time [1], I don't think the
-values in the data-lanes property should be described as unused. That
-may be the way the Linux driver functions at present, but it's not how
-the generic video-interfaces binding documentation describes the
-property.
-
-If the CSI transmitter hardware doesn't support logical remapping of
-lanes, then the only valid values for data-lanes would be a contiguous
-list of lane IDs starting at 1, ending at 4 at most. Valid values for
-the property would be one of:
-
-data-lanes = <1>;
-data-lanes = <1>, <2>;
-data-lanes = <1>, <2>, <3>;
-data-lanes = <1>, <2>, <3>, <4>;
-
-We can mention the fact the hardware doesn't support remapping of lanes,
-and therefore the list must start with lane 1 and end with (at most)
-lane 4. That way a dts will match the generic binding and actually
-describe the hardware, and it's possible for Linux (or any other OS) to
-factor out the parsing of data-lanes later as desired.
-
-I don't think we should offer freedom to encode garbage in the dt when
-we can just as easily encourage more standard use of bindings that will
-make our lives easier in the long-term.
-
-Thanks,
-Mark.
-
-[1] http://www.mipi.org/specifications/camera-interface#CSI2
+diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
+index bdb1a87..ffe4b49 100644
+--- a/drivers/pinctrl/Kconfig
++++ b/drivers/pinctrl/Kconfig
+@@ -252,7 +252,7 @@ config PINCTRL_SAMSUNG
+ 
+ config PINCTRL_EXYNOS
+ 	bool "Pinctrl driver data for Samsung EXYNOS SoCs other than 5440"
+-	depends on OF && GPIOLIB && ARCH_EXYNOS
++	depends on OF && GPIOLIB && (ARCH_EXYNOS || ARCH_S5PV210)
+ 	select PINCTRL_SAMSUNG
+ 
+ config PINCTRL_EXYNOS5440
+diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
+index a74b3cb..fc3e1d7 100644
+--- a/drivers/pinctrl/pinctrl-exynos.c
++++ b/drivers/pinctrl/pinctrl-exynos.c
+@@ -660,6 +660,64 @@ static void exynos_pinctrl_resume(struct samsung_pinctrl_drv_data *drvdata)
+ 			exynos_pinctrl_resume_bank(drvdata, bank);
+ }
+ 
++/* pin banks of s5pv210 pin-controller */
++static struct samsung_pin_bank s5pv210_pin_banks0[] = {
++	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
++	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb", 0x08),
++	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpd0", 0x14),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpd1", 0x18),
++	EXYNOS_PIN_BANK_EINTG(5, 0x0E0, "gpe0", 0x1c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpe1", 0x20),
++	EXYNOS_PIN_BANK_EINTG(6, 0x120, "gpf0", 0x24),
++	EXYNOS_PIN_BANK_EINTG(8, 0x140, "gpf1", 0x28),
++	EXYNOS_PIN_BANK_EINTG(8, 0x160, "gpf2", 0x2c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf3", 0x30),
++	EXYNOS_PIN_BANK_EINTG(7, 0x1A0, "gpg0", 0x34),
++	EXYNOS_PIN_BANK_EINTG(7, 0x1C0, "gpg1", 0x38),
++	EXYNOS_PIN_BANK_EINTG(7, 0x1E0, "gpg2", 0x3c),
++	EXYNOS_PIN_BANK_EINTG(7, 0x200, "gpg3", 0x40),
++	EXYNOS_PIN_BANK_EINTN(7, 0x220, "gpgi"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x240, "gpj0", 0x44),
++	EXYNOS_PIN_BANK_EINTG(6, 0x260, "gpj1", 0x48),
++	EXYNOS_PIN_BANK_EINTG(8, 0x280, "gpj2", 0x4c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x2A0, "gpj3", 0x50),
++	EXYNOS_PIN_BANK_EINTG(5, 0x2C0, "gpj4", 0x54),
++	EXYNOS_PIN_BANK_EINTN(8, 0x2E0, "mp01"),
++	EXYNOS_PIN_BANK_EINTN(4, 0x300, "mp02"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp03"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x340, "mp04"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x360, "mp05"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x300, "mp06"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x320, "mp07"),
++	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gph0", 0x00),
++	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gph1", 0x04),
++	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gph2", 0x08),
++	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gph3", 0x0c),
++};
++
++struct samsung_pin_ctrl s5pv210_pin_ctrl[] = {
++	{
++		/* pin-controller instance 0 data */
++		.pin_banks	= s5pv210_pin_banks0,
++		.nr_banks	= ARRAY_SIZE(s5pv210_pin_banks0),
++		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
++		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
++		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
++		.weint_con	= EXYNOS_WKUP_ECON_OFFSET,
++		.weint_mask	= EXYNOS_WKUP_EMASK_OFFSET,
++		.weint_pend	= EXYNOS_WKUP_EPEND_OFFSET,
++		.svc		= EXYNOS_SVC_OFFSET,
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.eint_wkup_init = exynos_eint_wkup_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "s5pv210-gpio-ctrl0",
++	},
++};
++
+ /* pin banks of exynos4210 pin-controller 0 */
+ static struct samsung_pin_bank exynos4210_pin_banks0[] = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
+index 439f2ef..f14b379 100644
+--- a/drivers/pinctrl/pinctrl-samsung.c
++++ b/drivers/pinctrl/pinctrl-samsung.c
+@@ -878,7 +878,6 @@ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
+ 	}
+ 	match = of_match_node(samsung_pinctrl_dt_match, node);
+ 	ctrl = (struct samsung_pin_ctrl *)match->data + id;
+-
+ 	bank = ctrl->pin_banks;
+ 	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
+ 		spin_lock_init(&bank->slock);
+@@ -1113,6 +1112,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ 		.data = (void *)exynos5250_pin_ctrl },
+ 	{ .compatible = "samsung,exynos5420-pinctrl",
+ 		.data = (void *)exynos5420_pin_ctrl },
++	{ .compatible = "samsung,s5pv210-pinctrl",
++		.data = (void *)s5pv210_pin_ctrl },
+ #endif
+ #ifdef CONFIG_PINCTRL_S3C64XX
+ 	{ .compatible = "samsung,s3c64xx-pinctrl",
+diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
+index 11bb75b..30622d9 100644
+--- a/drivers/pinctrl/pinctrl-samsung.h
++++ b/drivers/pinctrl/pinctrl-samsung.h
+@@ -260,5 +260,6 @@ extern struct samsung_pin_ctrl s3c2412_pin_ctrl[];
+ extern struct samsung_pin_ctrl s3c2416_pin_ctrl[];
+ extern struct samsung_pin_ctrl s3c2440_pin_ctrl[];
+ extern struct samsung_pin_ctrl s3c2450_pin_ctrl[];
++extern struct samsung_pin_ctrl s5pv210_pin_ctrl[];
+ 
+ #endif /* __PINCTRL_SAMSUNG_H */
+-- 
+1.8.1.2
