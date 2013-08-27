@@ -1,58 +1,77 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v3 4/4] ARM: SAMSUNG: set s3c24xx_dma_filter for s3c64xx-spi0 device
-Date: Wed, 28 Aug 2013 00:14:52 +0200
-Message-ID: <201308280014.52597.heiko@sntech.de>
-References: <201308280012.41638.heiko@sntech.de>
+From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH RFC v2 01/16] ARM: call clk_of_init from time_init
+Date: Tue, 27 Aug 2013 15:19:46 -0700
+Message-ID: <3837b119-baad-4e68-8805-2bc52c0135f9@DB9EHSMHS031.ehs.local>
+References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
+ <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:45204 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751625Ab3H0WO7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 18:14:59 -0400
-In-Reply-To: <201308280012.41638.heiko@sntech.de>
+Received: from mail-db9lp0253.outbound.messaging.microsoft.com ([213.199.154.253]:4604
+	"EHLO db9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751838Ab3H0WTv convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Aug 2013 18:19:51 -0400
+Content-Disposition: inline
+In-Reply-To: <1377638890-371-2-git-send-email-sebastian.hesselbarth@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-The spi-s3c64xx device is also used on the s3c2416 and s3c2443 SoCs.
-The driver also already uses only generic dma-engine operations.
+On Tue, Aug 27, 2013 at 11:27:55PM +0200, Sebastian Hesselbarth wrote:
+> Most DT ARM machs require common clock providers initialized before t=
+imers.
+> Currently, arch/arm machs use .init_time to call clk_of_init right be=
+fore
+> clocksource_of_init. This prevents to remove that hook and use the de=
+fault
+> hook instead. clk_of_init is safe to call for non-DT platforms, so ad=
+d
+> the call to ARM arch time_init by default. While at it, also reorder =
+includes
+> alphabetically.
+>=20
+> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com=
+>
+> ---
+> Changelog:
+> v1->v2:
+> - reorder includes alphabetically
+>=20
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-tegra@vger.kernel.org
+> Cc: kernel@stlinux.com
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/arm/kernel/time.c |   24 ++++++++++++++----------
+>  1 files changed, 14 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
+> index 98aee32..dd1028e 100644
+> --- a/arch/arm/kernel/time.c
+> +++ b/arch/arm/kernel/time.c
+> @@ -11,25 +11,26 @@
+[ ... ]
+>  void __init time_init(void)
+>  {
+> +	/* initalize common clocks before timers */
+> +	of_clk_init(NULL);
+> +
+>  	if (machine_desc->init_time)
+>  		machine_desc->init_time();
+>  	else
 
-Therefore add another elif to set the s3c24xx filter.
+This forces zynq to move some initialization our clock code relies on t=
+o
+init_irq(). Also, the current code already takes an approach of
+doing either common init or machine specific init.
+I think it might be better to move the call to of_clk_init() down into
+the else branch of the if-else.
+Though, this probably contradicts the purpose of the whole series.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/plat-samsung/devs.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 0f9c3f4..fab458f 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -32,6 +32,7 @@
- #include <linux/ioport.h>
- #include <linux/platform_data/s3c-hsudc.h>
- #include <linux/platform_data/s3c-hsotg.h>
-+#include <linux/platform_data/dma-s3c24xx.h>
- 
- #include <media/s5p_hdmi.h>
- 
-@@ -1513,8 +1514,10 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- 	pd.num_cs = num_cs;
- 	pd.src_clk_nr = src_clk_nr;
- 	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
--#ifdef CONFIG_PL330_DMA
-+#if defined(CONFIG_PL330_DMA)
- 	pd.filter = pl330_filter;
-+#elif defined(CONFIG_S3C24XX_DMAC)
-+	pd.filter = s3c24xx_dma_filter;
- #endif
- 
- 	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
--- 
-1.7.10.4
+	S=C3=B6ren
