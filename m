@@ -1,79 +1,98 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH 0/3] drm/exynos: fimd: get signal polarities from device
- tree
-Date: Tue, 27 Aug 2013 11:46:26 +0900
-Message-ID: <02a501cea2cf$9fc08f50$df41adf0$%dae@samsung.com>
-References: <1377094923-6919-1-git-send-email-a.hajda@samsung.com>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: Re: [PATCH] drm/exynos: Add fallback option to get non physically
+ contiguous memory for gem_dumb_create
+Date: Tue, 27 Aug 2013 08:34:49 +0530
+Message-ID: <CAD025yQArMU6ps5Pn=E5skDyei0=Rv2vxq2gqGoPXkb4+0OHrg@mail.gmail.com>
+References: <1377239706-17804-1-git-send-email-vikas.sajjan@linaro.org> <02a401cea2cf$57be6ab0$073b4010$%dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21300 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751807Ab3H0Cq3 (ORCPT
+Received: from mail-lb0-f170.google.com ([209.85.217.170]:58517 "EHLO
+	mail-lb0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751807Ab3H0DFL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 22:46:29 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MS600G4K51CQK50@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Aug 2013 11:46:26 +0900 (KST)
-In-reply-to: <1377094923-6919-1-git-send-email-a.hajda@samsung.com>
-Content-language: ko
+	Mon, 26 Aug 2013 23:05:11 -0400
+Received: by mail-lb0-f170.google.com with SMTP id r12so2153600lbi.29
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Aug 2013 20:05:10 -0700 (PDT)
+In-Reply-To: <02a401cea2cf$57be6ab0$073b4010$%dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Andrzej Hajda' <a.hajda@samsung.com>, "'open list:DRM DRIVERS FOR E...'" <dri-devel@lists.freedesktop.org>
-Cc: 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'David Airlie' <airlied@linux.ie>, "'moderated list:ARM/S5P EXYNOS AR...'" <linux-samsung-soc@vger.kernel.org>, t.figa@samsung.com, s.nawrocki@samsung.com
+To: Inki Dae <inki.dae@samsung.com>
+Cc: DRI mailing list <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Clark <robdclark@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Patch Tracking <patches@linaro.org>, linaro-dev@lists.linaro.org, sunil joshi <joshi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+
+Thanks.
+
+On 27 August 2013 08:14, Inki Dae <inki.dae@samsung.com> wrote:
+> Applied.
+>
+> Thanks,
+> Inki Dae
+>
+>> -----Original Message-----
+>> From: Vikas Sajjan [mailto:vikas.sajjan@linaro.org]
+>> Sent: Friday, August 23, 2013 3:35 PM
+>> To: dri-devel@lists.freedesktop.org; inki.dae@samsung.com
+>> Cc: kgene.kim@samsung.com; s.nawrocki@samsung.com; robdclark@gmail.com;
+>> tomasz.figa@gmail.com; laurent.pinchart@ideasonboard.com;
+>> patches@linaro.org; linaro-dev@lists.linaro.org
+>> Subject: [PATCH] drm/exynos: Add fallback option to get non physically
+>> contiguous memory for gem_dumb_create
+>>
+>> To address the case where physically contiguous memory MAY NOT be a
+>> mandatory
+>> requirement for framebuffer for the application calling
+>> exynos_drm_gem_dumb_create,
+>> the patch adds a feature to get non physically contiguous memory for
+>> framebuffer,
+>> if physically contiguous memory allocation fails and if IOMMU is
+> supported.
+>>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+>> Signed-off-by: Arun Kumar <arun.kk@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_gem.c |   13 +++++++++++++
+>>  1 file changed, 13 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> index 2eabe1a..66d1b40 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+>> @@ -17,6 +17,7 @@
+>>  #include "exynos_drm_drv.h"
+>>  #include "exynos_drm_gem.h"
+>>  #include "exynos_drm_buf.h"
+>> +#include "exynos_drm_iommu.h"
+>>
+>>  static unsigned int convert_to_vm_err_msg(int msg)
+>>  {
+>> @@ -666,6 +667,18 @@ int exynos_drm_gem_dumb_create(struct drm_file
+>> *file_priv,
+>>
+>>       exynos_gem_obj = exynos_drm_gem_create(dev, EXYNOS_BO_CONTIG |
+>>                                               EXYNOS_BO_WC, args->size);
+>> +     /*
+>> +      * If physically contiguous memory allocation fails and if IOMMU is
+>> +      * supported then try to get buffer from non physically contiguous
+>> +      * memory area.
+>> +      */
+>> +     if (IS_ERR(exynos_gem_obj) && is_drm_iommu_supported(dev)) {
+>> +             dev_warn(dev->dev, "contiguous FB allocation failed, falling
+>> back to non-contiguous\n");
+>> +             exynos_gem_obj = exynos_drm_gem_create(dev,
+>> +                                     EXYNOS_BO_NONCONTIG | EXYNOS_BO_WC,
+>> +                                     args->size);
+>> +     }
+>> +
+>>       if (IS_ERR(exynos_gem_obj))
+>>               return PTR_ERR(exynos_gem_obj);
+>>
+>> --
+>> 1.7.9.5
+>
 
 
 
-> -----Original Message-----
-> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
-> owner@vger.kernel.org] On Behalf Of Andrzej Hajda
-> Sent: Wednesday, August 21, 2013 11:22 PM
-> To: open list:DRM DRIVERS FOR E...
-> Cc: Andrzej Hajda; Inki Dae; Joonyoung Shim; Seung-Woo Kim; Kyungmin Park;
-> David Airlie; moderated list:ARM/S5P EXYNOS AR...; t.figa@samsung.com;
-> s.nawrocki@samsung.com
-> Subject: [PATCH 0/3] drm/exynos: fimd: get signal polarities from device
-> tree
-> 
-> Hi,
-> 
-> This patch series adds signal polarities parsing from display-timings
-> devicetree node. To do it efficiently struct fb_videomode is replaced
-> with struct videomode and some additional code cleaning is performed.
-> 
-
-Good patch set. Applied.
-
-Thanks,
-Inki Dae
-
-
-> The patches are for drm-exynos/exynos-drm-next branch.
-> 
-> Regards
-> Andrzej Hajda
-> 
-> Andrzej Hajda (3):
->   drm/exynos: fimd: replace struct fb_videomode with videomode
->   drm/exynos: fimd: get signal polarities from device tree
->   drm/exynos: fimd: move platform data parsing to separate function
-> 
->  drivers/gpu/drm/exynos/exynos_drm_connector.c |  33 +----
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 189
-+++++++++++++---------
-> ----
->  include/drm/exynos_drm.h                      |   3 +-
->  3 files changed, 103 insertions(+), 122 deletions(-)
-> 
-> --
-> 1.8.1.2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
-> soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Thanks and Regards
+ Vikas Sajjan
