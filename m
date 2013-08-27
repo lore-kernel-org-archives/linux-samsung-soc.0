@@ -1,134 +1,79 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [RFC V2 1/4] mmc: dw_mmc: exynos: move the exynos private init
-Date: Tue, 27 Aug 2013 11:34:44 +0900
-Message-ID: <521C1044.8060804@samsung.com>
-References: <1377256509-18922-1-git-send-email-yuvaraj.cd@samsung.com>
- <1377256509-18922-2-git-send-email-yuvaraj.cd@samsung.com>
- <5217673C.1040305@samsung.com>
- <CAKuRcOKSzXXGnN1jZhYhimnRqmKM4pc2qB2N0AgXdRX1VFLb3Q@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: RE: [PATCH 0/3] drm/exynos: fimd: get signal polarities from device
+ tree
+Date: Tue, 27 Aug 2013 11:46:26 +0900
+Message-ID: <02a501cea2cf$9fc08f50$df41adf0$%dae@samsung.com>
+References: <1377094923-6919-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:29276 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751783Ab3H0Ces (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:21300 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751807Ab3H0Cq3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Aug 2013 22:34:48 -0400
-In-reply-to: <CAKuRcOKSzXXGnN1jZhYhimnRqmKM4pc2qB2N0AgXdRX1VFLb3Q@mail.gmail.com>
+	Mon, 26 Aug 2013 22:46:29 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MS600G4K51CQK50@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Aug 2013 11:46:26 +0900 (KST)
+In-reply-to: <1377094923-6919-1-git-send-email-a.hajda@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, ks.giri@samsung.com, Tomasz Figa <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, thomas.ab@samsung.com
+To: 'Andrzej Hajda' <a.hajda@samsung.com>, "'open list:DRM DRIVERS FOR E...'" <dri-devel@lists.freedesktop.org>
+Cc: 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Seung-Woo Kim' <sw0312.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'David Airlie' <airlied@linux.ie>, "'moderated list:ARM/S5P EXYNOS AR...'" <linux-samsung-soc@vger.kernel.org>, t.figa@samsung.com, s.nawrocki@samsung.com
 
-Dear Yuvaraj,
 
-On 08/26/2013 06:20 PM, Yuvaraj Kumar wrote:
-> On Fri, Aug 23, 2013 at 7:14 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->> Hi Yuvaraj,
->>
->> On 08/23/2013 08:15 PM, Yuvaraj Kumar C D wrote:
->>> Currently platform specific private data initialisation is done by
->>> dw_mci_exynos_priv_init and dw_mci_exynos_parse_dt.As we already have
->>> separate platform specific device tree parser dw_mci_exynos_parse_dt,
->>> move the dw_mci_exynos_priv_init code to dw_mci_exynos_parse_dt.
->>> We can use the dw_mci_exynos_priv_init to do some actual platform
->>> specific initialisation of SMU and etc.
->>>
->>> changes since V1: none
->>>
->>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->>> ---
->>>  drivers/mmc/host/dw_mmc-exynos.c |   31 +++++++++++++++----------------
->>>  1 file changed, 15 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
->>> index 9990f98..19c845b 100644
->>> --- a/drivers/mmc/host/dw_mmc-exynos.c
->>> +++ b/drivers/mmc/host/dw_mmc-exynos.c
->>> @@ -72,22 +72,8 @@ static struct dw_mci_exynos_compatible {
->>>
->>>  static int dw_mci_exynos_priv_init(struct dw_mci *host)
->>>  {
->>> -     struct dw_mci_exynos_priv_data *priv;
->>> -     int idx;
->>> -
->>> -     priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
->>> -     if (!priv) {
->>> -             dev_err(host->dev, "mem alloc failed for private data\n");
->>> -             return -ENOMEM;
->>> -     }
->>> -
->>> -     for (idx = 0; idx < ARRAY_SIZE(exynos_compat); idx++) {
->>> -             if (of_device_is_compatible(host->dev->of_node,
->>> -                                     exynos_compat[idx].compatible))
->>> -                     priv->ctrl_type = exynos_compat[idx].ctrl_type;
->>> -     }
->>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
->>>
->>> -     host->priv = priv;
->>>       return 0;
->>>  }
->>>
->>> @@ -177,12 +163,24 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->>>
->>>  static int dw_mci_exynos_parse_dt(struct dw_mci *host)
->>>  {
->>> -     struct dw_mci_exynos_priv_data *priv = host->priv;
->>> +     struct dw_mci_exynos_priv_data *priv;
->>>       struct device_node *np = host->dev->of_node;
->>>       u32 timing[2];
->>>       u32 div = 0;
->>> +     int idx;
->>>       int ret;
->>>
->>> +     priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
->>> +     if (!priv) {
->>> +             dev_err(host->dev, "mem alloc failed for private data\n");
->>> +             return -ENOMEM;
->>> +     }
->>> +
->>> +     for (idx = 0; idx < ARRAY_SIZE(exynos_compat); idx++) {
->>> +             if (of_device_is_compatible(np, exynos_compat[idx].compatible))
->>> +                     priv->ctrl_type = exynos_compat[idx].ctrl_type;
->>> +     }
->>> +
->>>       of_property_read_u32(np, "samsung,dw-mshc-ciu-div", &div);
->>>       priv->ciu_div = div;
->>>
->>> @@ -199,6 +197,7 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
->>>               return ret;
->>>
->>>       priv->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0], timing[1], div);
->>> +     host->priv = priv;
->>
->> I'm not sure whether my thinking is right or not.
->> if host->pdata is present, then dw_mci_parse_dt() didn't called at dw_mci_probe.
-> Yes, you are right.
->> then how host->priv set to priv?
-> Earlier host->priv set to priv in both non-DT and DT case.True, with
-> this patch it does it only in DT case.
-> Is there any platform/board which still uses dw_mmc and its platform
-> extension driver with non DT case?
-You're right. i didn't see the extension driver with non DT-case?
-Then we can also modify the host->pdata into dw_mci_probe().
 
-Best Regards,
-Jaehoon Chung
-> I found a reference of non-DT case where host->pdata is present in
-> dw_mmc-pci.c driver but does not
-> use platform extension driver (exynos/socfpga).
->>
->> Best Regards,
->> Jaehoon Chung
->>
->>>       return 0;
->>>  }
->>>
->>>
->>
+> -----Original Message-----
+> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
+> owner@vger.kernel.org] On Behalf Of Andrzej Hajda
+> Sent: Wednesday, August 21, 2013 11:22 PM
+> To: open list:DRM DRIVERS FOR E...
+> Cc: Andrzej Hajda; Inki Dae; Joonyoung Shim; Seung-Woo Kim; Kyungmin Park;
+> David Airlie; moderated list:ARM/S5P EXYNOS AR...; t.figa@samsung.com;
+> s.nawrocki@samsung.com
+> Subject: [PATCH 0/3] drm/exynos: fimd: get signal polarities from device
+> tree
+> 
+> Hi,
+> 
+> This patch series adds signal polarities parsing from display-timings
+> devicetree node. To do it efficiently struct fb_videomode is replaced
+> with struct videomode and some additional code cleaning is performed.
+> 
+
+Good patch set. Applied.
+
+Thanks,
+Inki Dae
+
+
+> The patches are for drm-exynos/exynos-drm-next branch.
+> 
+> Regards
+> Andrzej Hajda
+> 
+> Andrzej Hajda (3):
+>   drm/exynos: fimd: replace struct fb_videomode with videomode
+>   drm/exynos: fimd: get signal polarities from device tree
+>   drm/exynos: fimd: move platform data parsing to separate function
+> 
+>  drivers/gpu/drm/exynos/exynos_drm_connector.c |  33 +----
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c      | 189
++++++++++++++---------
+> ----
+>  include/drm/exynos_drm.h                      |   3 +-
+>  3 files changed, 103 insertions(+), 122 deletions(-)
+> 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> 1.8.1.2
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
+> soc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
