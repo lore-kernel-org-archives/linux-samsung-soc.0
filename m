@@ -1,106 +1,86 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH RFC v2 00/16] ARM: provide common arch init for DT clocks
-Date: Tue, 27 Aug 2013 23:27:54 +0200
-Message-ID: <1377638890-371-1-git-send-email-sebastian.hesselbarth@gmail.com>
-References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v3 0/4] ARM: S3C24XX: add dmaengine based dma-driver
+Date: Wed, 28 Aug 2013 00:12:41 +0200
+Message-ID: <201308280012.41638.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:45134 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751625Ab3H0WM4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 27 Aug 2013 18:12:56 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-This RFC converts arch/arm to provide a common arch init for DT clock
-providers. Currently, the call to of_clk_init(NULL) to initialize DT
-clock providers is spread among several mach-dirs. Since most machs
-require DT clocks initialized before timers, no initcall can be used.
+This series tries to provide a basic dmaengine driver for the s3c24xx
+SoCs to subsequently retire the old one with custom API.
 
-By adding of_clk_init(NULL) to ARM time_init(), we can remove all
-mach-specific .init_time hooks that basically called of_clk_init before
-starting timers.
+Since v2 only some small fixes to the dma driver itself were added.
 
-Based on the previous version, this one now includes patches provided by
-Stephen Warren for mach-tegra and Soren Brinkmann for mach-zynq.
+Since v1 three big changes happened (appart from fixing received comments):
 
-With mach-tegra now requiring clocks as late as the other machs, the
-patch to protect of_clk_init() from being called twice, has been dropped.
+For one the limitation of sg-lists to 1 element is gone.Secondly the
+specifics of the virtual channels (target bus, handshake, etc) are not
+encoded with channel ids but in the platformdata - making a later dt
+binding easier, as these informations can there be gathered by the xlate
+function. And lastly I also added a preliminary mechanism to handle the
+specific needs for the earlier variants of the driver.
 
-The RFCv2 is based on next-20130827 and has been compile tested for
-multi_v7_defconfig and mach-dove. All single patches have also been sent
-to the respective maintainers and corresponding mailing lists.
+While s3c2443 and later can use any channel for any peripheral with just
+marking the target-peripheral-id in a register, earlier SoCs can only use
+specific channels and the target-ids also vary depending on the channel.
 
-Before going for a real patch set after v3.11 drops, I prefer to have
-Tested-by or Acked-by for at least mach-imx, mach-mxs, mach-sti, and
-mach-vexpress. Others are trivial, prepared by maintainers (mach-tegra
-and mach-zynq), or have already been Acked-by (mach-highbank).
+Therefore on newer SoCs the chansel element only needs to contain the
+requested target-id, while on the older variants use it to encode both
+the valid channels and the channel-specific peripheral-id.
 
-Also, I'd like to know if the patches should be grouped by mach- or
-rather been split into mach- preparation and .init_time removal.
+On affected SoCs the target-id is always 3 bit wide, so we use these and
+an additional 4th bit to hold the valid state. As the older SoCs all have
+4 dma channels this can live happily in an u16 element.
 
-Sebastian Hesselbarth (14):
-  ARM: call clk_of_init from time_init
-  ARM: dove: remove custom .init_time hook
-  ARM: exynos: remove custom .init_time hook
-  ARM: highbank: remove custom .init_time hook
-  ARM: imx: remove custom .init_time hook
-  ARM: kirkwood: remove custom .init_time hook
-  ARM: mvebu: remove custom .init_time hook
-  ARM: mxs: remove custom .init_time hook
-  ARM: nspire: remove custom .init_time hook
-  ARM: rockchip: remove custom .init_time hook
-  ARM: socfpga: remove call to of_clk_init
-  ARM: sti: remove custom .init_time hook
-  ARM: vexpress: remove custom .init_time hook
-  clk: vt8500: remove call to of_clk_init
+The s3c24xx series will most likely not see any new offspring, but even
+if it happens any new model will probably use the newer more flexible
+variant of the dma controller, so this should not restrict anything
+in the future.
 
-Soren Brinkmann (1):
-  ARM: zynq: Don't call of_clk_init()
+Example:
+SDI is valid on channels 0, 2 and 3 - with varying hw request sources.
+For it the chansel field would look like
 
-Stephen Warren (1):
-  ARM: tegra: split tegra_pmc_init() in two
+ ((BIT(3) | 1) << 3 * 4) | // channel 3, with request source 1
+ ((BIT(3) | 2) << 2 * 4) | // channel 2, with request source 2
+ ((BIT(3) | 2) << 0 * 4)   // channel 0, with request source 2
 
- arch/arm/kernel/time.c                 |   24 +++++++++++-------
- arch/arm/mach-dove/board-dt.c          |   17 +------------
- arch/arm/mach-exynos/common.c          |    7 -----
- arch/arm/mach-exynos/common.h          |    1 -
- arch/arm/mach-exynos/mach-exynos4-dt.c |    1 -
- arch/arm/mach-exynos/mach-exynos5-dt.c |    1 -
- arch/arm/mach-highbank/highbank.c      |   23 +++++------------
- arch/arm/mach-imx/clk-imx51-imx53.c    |   29 +++++++--------------
- arch/arm/mach-imx/common.h             |    4 ---
- arch/arm/mach-imx/imx51-dt.c           |    6 ----
- arch/arm/mach-imx/mach-imx53.c         |    6 ----
- arch/arm/mach-imx/mach-imx6q.c         |   14 ++--------
- arch/arm/mach-imx/mach-imx6sl.c        |    7 -----
- arch/arm/mach-imx/mach-vf610.c         |    9 -------
- arch/arm/mach-kirkwood/board-dt.c      |    8 ------
- arch/arm/mach-mvebu/armada-370-xp.c    |    2 -
- arch/arm/mach-mxs/mach-mxs.c           |   13 ----------
- arch/arm/mach-nspire/nspire.c          |    9 -------
- arch/arm/mach-rockchip/rockchip.c      |    9 -------
- arch/arm/mach-socfpga/socfpga.c        |    2 -
- arch/arm/mach-sti/board-dt.c           |   10 +++----
- arch/arm/mach-tegra/common.c           |    4 +--
- arch/arm/mach-tegra/pmc.c              |   41 +++++++++++++++++--------------
- arch/arm/mach-tegra/pmc.h              |    1 +
- arch/arm/mach-tegra/tegra.c            |    5 ++-
- arch/arm/mach-vexpress/v2m.c           |   14 +----------
- arch/arm/mach-zynq/common.c            |    9 +++----
- drivers/clk/clk-highbank.c             |   10 +++++--
- drivers/clk/clk-vt8500.c               |    2 -
- drivers/clk/mxs/clk-imx23.c            |   16 +++++-------
- drivers/clk/mxs/clk-imx28.c            |   16 +++++-------
- drivers/clk/zynq/clkc.c                |    4 ++-
- include/linux/clk/mxs.h                |    2 -
- 33 files changed, 95 insertions(+), 231 deletions(-)
 
----
-Cc: Mike Turquette <mturquette@linaro.org>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-tegra@vger.kernel.org
-Cc: kernel@stlinux.com
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
+Heiko Stuebner (4):
+  ARM: S3C24XX: number the dma clocks
+  dmaengine: add driver for Samsung s3c24xx SoCs
+  ARM: S3C24XX: add platform-devices for new dma driver for s3c2412 and
+    s3c2443
+  ARM: SAMSUNG: set s3c24xx_dma_filter for s3c64xx-spi0 device
+
+ arch/arm/mach-s3c24xx/clock-s3c2412.c     |    8 +-
+ arch/arm/mach-s3c24xx/common-s3c2443.c    |   12 +-
+ arch/arm/mach-s3c24xx/common.c            |  106 +++
+ arch/arm/mach-s3c24xx/common.h            |    3 +
+ arch/arm/mach-s3c24xx/mach-jive.c         |    1 +
+ arch/arm/mach-s3c24xx/mach-smdk2413.c     |    1 +
+ arch/arm/mach-s3c24xx/mach-smdk2416.c     |    1 +
+ arch/arm/mach-s3c24xx/mach-smdk2443.c     |    1 +
+ arch/arm/mach-s3c24xx/mach-vstms.c        |    1 +
+ arch/arm/plat-samsung/devs.c              |    5 +-
+ drivers/dma/Kconfig                       |   12 +
+ drivers/dma/Makefile                      |    1 +
+ drivers/dma/s3c24xx-dma.c                 | 1285 +++++++++++++++++++++++++++++
+ include/linux/platform_data/dma-s3c24xx.h |   43 +
+ 14 files changed, 1469 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/dma/s3c24xx-dma.c
+ create mode 100644 include/linux/platform_data/dma-s3c24xx.h
+
 -- 
-1.7.2.5
+1.7.10.4
