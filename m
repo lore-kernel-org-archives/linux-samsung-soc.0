@@ -1,53 +1,78 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH V2 0/4] clk: Samsung: audss: Add support for Exynos5420
-Date: Tue, 27 Aug 2013 11:48:02 +0530
-Message-ID: <CAAgF-BesO-CpNzEdyn=2V1wVzLvcSkV5mimsfqD1ndTfxDNG9A@mail.gmail.com>
-References: <1376639378-20707-1-git-send-email-padma.v@samsung.com>
-	<CAAgF-Bcb+MfBbBkgta8_WyVf5+_LM0_tqCBhvwxqvniniO6rpw@mail.gmail.com>
+From: YUVARAJ CD <yuvaraj.cd@samsung.com>
+Subject: Re: Re: [PATCH V3] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Tue, 27 Aug 2013 06:40:48 +0000 (GMT)
+Message-ID: <25858666.81171377585647211.JavaMail.weblogic@epml04>
+Reply-To: yuvaraj.cd@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f47.google.com ([209.85.219.47]:41360 "EHLO
-	mail-oa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752358Ab3H0GSD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Aug 2013 02:18:03 -0400
-In-Reply-To: <CAAgF-Bcb+MfBbBkgta8_WyVf5+_LM0_tqCBhvwxqvniniO6rpw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
+Return-path: <linux-mmc-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@google.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, GIRISH K S <ks.giri@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, "broonie@kernel.org" <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, abrestic@chromium.org, Mike Turquette <mturquette@linaro.org>
 
-Hi Mike,
+LS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0NClNlbmRlciA6IERvdWcgQW5kZXJzb248
+ZGlhbmRlcnNAZ29vZ2xlLmNvbT4NCkRhdGUgOiBBdWcgMjQsIDIwMTMgMDk6MTggKEdNVCswNToz
+MCkNClRpdGxlIDogUmU6IFtQQVRDSCBWM10gQVJNOiBkdHM6IEFkZCBkd21tYyBEVCBub2RlcyBm
+b3IgZXh5bm9zNTQyMCBTT0MNCiANCll1dmFyYWosDQoNCk9uIFRodSwgQXVnIDIyLCAyMDEzIGF0
+IDExOjI1IFBNLCBZdXZhcmFqIENkIHdyb3RlOg0KPj4+ICAgICAgICAgICAgICAgICBiLmNhcmQt
+ZGV0ZWN0LWRlbGF5DQo+Pj4gICAgICAgICAgICAgICAgIGMuc2Ftc3VuZyxkdy1tc2hjLWNpdS1k
+aXYNCj4+PiAgICAgICAgICAgICAgICAgZC5zYW1zdW5nLGR3LW1zaGMtc2RyLXRpbWluZw0KPj4+
+ICAgICAgICAgICAgICAgICBlLnNhbXN1bmcsZHctbXNoYy1kZHItdGltaW5nDQoNCk9LLCBzbyBJ
+IGRvbid0IGtub3cgYWJvdXQgY2FyZC1kZXRlY3QtZGVsYXksIGJ1dCBoZXJlJ3MgbXkgYmVsaWVm
+DQphYm91dCB0aGUgb3RoZXJzLiAgRmVlbCBmcmVlIHRvIHRlbGwgbWUgSSdtIHdyb25nLCBzaW5j
+ZSBJJ20gbm90IGFuIEVFDQpieSB0cmFpbmluZyBhbmQgYWxzbyB0aGUgc3R1ZmYgYmVsb3cgaGFz
+IGJlZW4gY29iYmxlZCB0b2dldGhlciBmcm9tDQpsb3RzIG9mIGRpZmZlcmVudCBkb2NzLiAgSSBh
+bHNvIGhhdmVuJ3QgZXhwZXJpbWVudGVkIGVub3VnaCB0byBrbm93DQoxMDAlIHRoYXQgaXQncyBj
+b3JyZWN0LiAgSSBhbHNvIGtub3cgbm90aGluZyBhYm91dCB0aGUgYWN0dWFsDQpzaWduYWxpbmcg
+cHJvdG9jb2xzIG9mIFNEL01NQy4uLiAgRW5vdWdoIGNhdmVhdHM/DQoNCg0Kc2RyLXRpbWluZyAv
+IGRkci10aW1pbmc6DQoNCiogRmlyc3QgbnVtYmVyIChJIHRoaW5rKSBhbGxvd3MgeW91IHRvIGRy
+aXZlIGRhdGEgcmVsYXRlZCBsaW5lcyBhdCBhDQpwaGFzZSBvZmZzZXQgZnJvbSB0aGUgY2xvY2sg
+bGluZS4gIFNvIGlmIHlvdSBoYXZlIGNyYXp5IHJvdXRpbmcgb24NCnlvdXIgYm9hcmQgYW5kIHRo
+ZSBkYXRhIGxpbmVzIGFyZSBtdWNoIGxvbmdlciB0aGFuIHRoZSBjbG9jayBsaW5lcyB5b3UNCm1p
+Z2h0IHdhbnQgdG8gZG8gdGhpcy4gIFRoaXMgaXMgbm90IGNvbW1vbiwgc28gdXN1YWxseSB5b3Ug
+d2FudCAwDQpoZXJlLiAgTm90ZSB0aGF0IHNvbWUgb3RoZXIgZG9jcyBJIGhhdmUgZGlzYWdyZWUg
+d2l0aCB0aGlzIGFuZCBjbGFpbQ0KdGhhdCB0aGlzIG51bWJlciBoYXMgdG8gZG8gd2l0aCBob2xk
+IHRpbWUgcmVxdWlyZW1lbnRzLg0KDQoqIFNlY29uZCBudW1iZXIgYWxsb3dzIHlvdSB0byBzYW1w
+bGUgc2lnbmFscyBmcm9tIHRoZSBjYXJkIGF0IGEgcGhhc2UNCm9mZnNldCBmcm9tIHRoZSBjbG9j
+ayBsaW5lLiAgVGhpcyBudW1iZXIgbWlnaHQgZGVwZW5kIG9uIHRoZSBjYXJkLCBidXQNCmhvcGVm
+dWxseSBub3QgbXVjaC4gIEl0J3Mgc3VwcG9zZWQgdG8gZGVwZW5kIG1vcmUgb24gdGhlIGxlbmd0
+aCBvZiB0aGUNCmxpbmVzIChBS0EgZGVwZW5kcyBvbiB0aGUgYm9hcmQpLCB0aG91Z2ggaXQgbWln
+aHQgYWxzbyBkZXBlbmQgb24NCnB1bGx1cCB2YWx1ZXMgYXMgd2VsbCBhbmQgc29tZXdoYXQgb24g
+dGhlIGNhcmQ/ICBUaGlzIG51bWJlciBuZWVkcyB0bw0KYmUgdHVuZWQgKGxpa2UgbGluayB0cmFp
+bmluZykgd2hlbiB5b3Ugb3BlcmF0ZSBhIGNhcmQgYXQgPiA1ME1Iei4NCg0KKiBGb3IgY2l1LWRp
+djoNCg0KV2l0aCBhIGNpdS1kaXYgb2YgMyAocmVhbGx5IDMrMSA9IDQpIHlvdSBnZXQgcGhhc2Ug
+b2Zmc2V0cyBvZiA0NSBkZWdyZWVzLg0KV2l0aCBhIGNpdS1kaXYgb2YgMSAocmVhbGx5IDErMSA9
+IDIpIHlvdSBnZXQgcGhhc2Ugb2Zmc2V0cyBvZiA5MCBkZWdyZWVzLg0KV0l0aCBhIGNpdS1kaXYg
+b2YgMCAocmVhbGx5IDArMSA9IDEpIHlvdSBnZXQgbm8gcGhhc2Ugb2Zmc2V0cyAoSSB3b3VsZA0K
+aGF2ZSBndWVzc2VkIDE4MCwgYnV0IG1hbnVhbCBzYXlzIG90aGVyd2lzZSkNCg0KU28gY2l1LWRp
+diBpbnRpbWF0ZWx5IGFmZmVjdHMgdGhlIHNkci10aW1pbmcgYW5kIGRkci10aW1pbmcuICBUaHVz
+IGlmDQp0aG9zZSBhcmUgYm9hcmQtc3BlY2lmaWMgdGhlbiBzbyBpcyBjaXUtZGl2Lg0KDQotLS0N
+Cg0KQWxsIG9mIHRoZSBhYm92ZSBzdWdnZXN0cyB0byBtZSB0aGUgZm9sbG93aW5nIHVudGVzdGVk
+IHRoaW5nczoNCg0KKiBJZiB5b3UgaGFwcGVuZWQgdG8gaGF2ZSBhIHNpdHVhdGlvbiB3aGVyZSB5
+b3UgaGFkIGEgImNpdS1kaXYiIG9mIDMNCmFuZCBhbGwgb2YgeW91ciBzZHItdGltaW5nL2Rkci10
+aW1pbmcgdmFsdWVzIHdlcmUgZXZlbiwgeW91IGNvdWxkIGN1dA0KdGhlIGlucHV0IGNsb2NrIGlu
+IGhhbGYsIGNoYW5nZSAiY2l1LWRpdiIgdG8gMSwgYW5kIGN1dCBhbGwgeW91cg0KdGltaW5ncyBp
+biBoYWxmLiAgSSdkIGltYWdpbmUgdGhhdCB3b3VsZCBzYXZlIHlvdSBwb3dlciAoYmV0dGVyIHRv
+DQpzbG93IGNsb2NrcyBkb3duIGhpZ2hlciBpbiB0aGUgY2xvY2sgdHJlZT8pLiAgSXQgd291bGQg
+YmUgc29ydGEgbmljZQ0KaWYgdGhpcyB3YXMgZG9uZSBhdXRvbWF0aWNhbGx5IChhc3N1bWluZyB0
+aGF0IHlvdSBoYXZlIGZ1bGwgY29udHJvbCBvZg0KaW5wdXQgY2xvY2spLg0KDQoqIEknbSBhIGxp
+dHRsZSB1bmNsZWFyIGV4YWN0bHkgaG93IHRoZSBDTEtESVYgcmVnaXN0ZXIgaW50ZXJhY3RzIHdp
+dGgNCmFsbCBvZiB0aGUgYWJvdmUuICBJIGd1ZXNzIEknZCBiZSB1bmRlciB0aGUgYXNzdW1wdGlv
+biB0aGF0IHRoZSBDTEtESVYNCmFwcGxpZXMgdG8gdGhlIG1haW4gY2xvY2ssIHRoZSBzYW1wbGUg
+Y2xvY2ssIGFuZCB0aGUgZHJpdmUgY2xvY2suDQouLi5idXQgbWF5YmUgSSdtIGNvbmZ1c2VkLiAg
+SSB0aGluayB5b3UgYWxzbyBnZXQgZGlmZmVyZW50IHJlc3VsdHMgKGluDQp0ZXJtcyBvZiBob3cg
+bWFueSBucyB0aGUgZHJpdmUgYW5kIHNhbXBsZSBhcmUgZGVsYXllZCkgZGVwZW5kaW5nIG9uDQp3
+aGV0aGVyIHRoZSBDTEtESVYgYXBwbGllcyBfYWZ0ZXJfIGNpdS1kaXYgb3IgYmVmb3JlLiAgTXkg
+Z3Vlc3MgaXMNCnRoYXQgaXQgYXBwbGllcyBhZnRlci4NCg0KLS0tDQoNCkFueXdheSwgbm90IHN1
+cmUgdGhhdCBoZWxwcyBhIHdob2xlIGxvdCwgYnV0IHRoYXQncyBhIHN1bW1hcnkgb2Ygd2hhdA0K
+SSd2ZSBjb21lIHRvIHVuZGVyc3RhbmQuICBJJ20gaGFwcHkgdG8gYmUgZW5saWdodGVuZWQuICBJ
+J20gc3RpbGwNCnRyeWluZyB0byBmaWd1cmUgaG93IGhvdyB0aGVzZSBudW1iZXJzIHdlcmUgcGlj
+a2VkIGZvciBvdXIgaGFyZHdhcmUNCmFuZCB3aGV0aGVyIHRob3NlIG51bWJlcnMgYXJlIGFjdHVh
+bGx5IHJpZ2h0Lg0KDQpUaGFua3MgRG91Zy5JdCB3YXMgdmVyeSBpbmZvcm1hdGl2ZSBhbmQgSSdt
+IGVubGlnaHRlbmVkLg0KSSB3aWxsIGluY29ycG9yYXRlIHRoZXNlIGNoYW5nZXMgaW4gbmV4dCB2
+ZXJzaW9uIGFuZCBwb3N0IHNvb24uIA0KDQoNCi1Eb3Vn
 
-On Mon, Aug 19, 2013 at 2:18 PM, Padma Venkat <padma.kvr@gmail.com> wrote:
-> Hi Mike,
->
-> On Fri, Aug 16, 2013 at 1:19 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
->> This patch set adds support for audio subsystem clks on Exynos5420. Exynos5420
->> audio subsystem has a gate bit for ADMA controller and the some of the parent
->> clks for mout_i2s and sclk_pcm are different from Exynos5250. So this patch
->> adds provision for supporting both the platforms by determining the parent clk
->> names based on compatible string.
->>
->> Changes since V1:
->>         - parent clocks are determined by using the compatible string and not
->>           passed via device tree as done in V1 because the probing order of
->>           the clock providers can't be guaranteed.
->>
->> Andrew Bresticker (3):
->>   clk: exynos-audss: add support for Exynos 5420
->>   clk: exynos-audss: set correct parent clocks
->
-> Can you apply the above two patches into your tree?
->
 
-If there is no review comment on the above two can you please
-acknowledge them? The below patch is dependent on these two patches
-and Kukjin is waiting for these patches to be merged.
-
-[V2] ARM: dts: Add DMA controller node info on Exynos5420.
-https://patchwork.kernel.org/patch/2844436/
-
-Thanks
-Padma
