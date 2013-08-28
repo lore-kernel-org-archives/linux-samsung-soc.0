@@ -1,63 +1,128 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 09/18] ASoC: Samsung: Do not queue cyclic buffers
- multiple times
-Date: Wed, 28 Aug 2013 10:53:15 +0100
-Message-ID: <20130828095315.GG10783@sirena.org.uk>
-References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
- <1376243970-6489-10-git-send-email-tomasz.figa@gmail.com>
- <CACRpkdZd+LJeZdSjsD6OCLOnZ0VrDg0aa-e163NXsw6ajWf7rA@mail.gmail.com>
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [PATCH V4] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Wed, 28 Aug 2013 15:25:45 +0530
+Message-ID: <CAKuRcOLK7_DQ3qbZfCOJ-cRQi4MfAedmgAyx0TTW90qvYSS-5A@mail.gmail.com>
+References: <1377595351-30233-1-git-send-email-yuvaraj.cd@samsung.com>
+	<20130827110145.GG19893@e106331-lin.cambridge.arm.com>
+	<CAKuRcOLK0PjcVKFxUZ9hedVScKe1K+QYE1g57CZ5JOE=AmFJow@mail.gmail.com>
+	<20130827140949.GK19893@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bfHXWC0AWsk5KHuB"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:37206 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752441Ab3H1JxZ (ORCPT
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:59244 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752423Ab3H1Jzq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 05:53:25 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZd+LJeZdSjsD6OCLOnZ0VrDg0aa-e163NXsw6ajWf7rA@mail.gmail.com>
+	Wed, 28 Aug 2013 05:55:46 -0400
+In-Reply-To: <20130827140949.GK19893@e106331-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "dianders@chromium.org" <dianders@chromium.org>, "cjb@laptop.org" <cjb@laptop.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-
---bfHXWC0AWsk5KHuB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Aug 28, 2013 at 09:06:27AM +0200, Linus Walleij wrote:
-
-> If patch 1 thru 9 are uncontroversial now, maybe Vinod can apply
-> these for v3.12 so we can get less noise and risk of collissions
-> in the next merge window?
-
-Patch 9 I was going to apply to ASoC towards the end of the release
-cycle - it shouldn't depend on the earlier ones as ASoC isn't using
-dmaengine yet.  Holding off partly to run testing and partly in case
-this ends up getting applied.
-
---bfHXWC0AWsk5KHuB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSHciIAAoJELSic+t+oim9fJ4P/j2sUwQRjMcCBS9A+6sCysTp
-N2dRUyj6YYqlhYZhCzYVvM7Gs4fENfFbsVBfr2XJ4uct8YooUJ+L2Unq0h33ZHGf
-4/Zelr4XydWS1T1xXljpU8qt1IulOxGIynADOKZ3craKsnqbpVI0tBk1yG0eLOYZ
-Cjkn8bSMTvme+TMPN9ecPEjik+o8gy/VBDstx9D8RiVPTfDOq2ZhMRuPzJ6Zsmce
-ZSO5sQI/KeoF3vajH0oxsw+U5Q6ziKuYVrYnBGmO38qEzVIGJNo2sreGup9bzOR/
-l9DFqS7MGOeNFIv7EzW2ztjj30aJ8XlnYyMc0cguMN2/pQMtq+27nADiwOnM3LOt
-fk3IusueuTc8Gn+GFnK37UikdBmn7EzuKl2RV7xWjN3V+SI6409Ei3Jp4+KTyk2C
-GpH4bG1e4/6/pzWdEPj8AcPL0ugpFXCN8vN9ZDQru2CTEul6YHORbP0MPBqYflzg
-FSOmzLmHCNAl3qoRhRF5aHvmnOXP05Pd50Mn46F2GR0xo3qYyY+7Y5OAGsCv6WzH
-CsMy0Ak2GUbW5RXgTMmiwyu1MjRTpeAPhcJdfuODnylAiEfyKwCxCwEH89eqYnEw
-tHrhzOkONwarQwnQ+nY1DcZAwiIAgDMG5ej2MsSnVW/ChRh1zZtJcBb+2Wp+f+Nm
-Kaex90saPSjyXDzm4d/V
-=KUZC
------END PGP SIGNATURE-----
-
---bfHXWC0AWsk5KHuB--
+On Tue, Aug 27, 2013 at 7:39 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Tue, Aug 27, 2013 at 01:02:52PM +0100, Yuvaraj Kumar wrote:
+>> On Tue, Aug 27, 2013 at 4:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> > On Tue, Aug 27, 2013 at 10:22:31AM +0100, Yuvaraj Kumar C D wrote:
+>> >> This patch adds the device tree node entries for exynos5420 SOC.
+>> >> Exynos5420 has a different version of DWMMC controller,so a new
+>> >> compatible string is used to distinguish it from the prior SOC's.
+>> >>
+>> >> This patch depends on
+>> >>       mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
+>> >>
+>> >> changes since V3:
+>> >>       1.change fifo-depth size from 0x80 to 0x40
+>> >>       2.Move the below properties
+>> >>               a.card-detect-delay
+>> >>               b.samsung,dw-mshc-ciu-div
+>> >>               c.samsung,dw-mshc-sdr-timing
+>> >>               d.samsung,dw-mshc-ddr-timing
+>> >>       from SOC dts to board dts file as suggested by Doug Anderson
+>> >>
+>> >> changes since V2:
+>> >>       1.dropped num-slots property from node as its not required
+>> >>         if number of card slots available is 1.
+>> >>
+>> >>       2.Move the below properties
+>> >>               a.fifo-depth
+>> >>               b.card-detect-delay
+>> >>               c.samsung,dw-mshc-ciu-div
+>> >>               d.samsung,dw-mshc-sdr-timing
+>> >>               e.samsung,dw-mshc-ddr-timing
+>> >>       from board dts to SOC dts,as these are not board specific properties.
+>> >>
+>> >>       3.Updated the binding document exynos-dw-mshc.txt.
+>> >>
+>> >> changes since V1:
+>> >>       1.disable node by status = disabled in SOC file
+>> >>       2.enable node by status = okay in board specific file
+>> >>
+>> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> >> ---
+>> >>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    4 ++
+>> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   34 +++++++++++++++++
+>> >>  arch/arm/boot/dts/exynos5420.dtsi                  |   39 ++++++++++++++++++++
+>> >>  3 files changed, 77 insertions(+)
+>> >>
+>> >> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> >> index 6d1c098..25368e8 100644
+>> >> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> >> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> >> @@ -16,6 +16,8 @@ Required Properties:
+>> >>         specific extensions.
+>> >>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+>> >>         specific extensions.
+>> >> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
+>> >> +       specific extensions.
+>> >>
+>> >>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+>> >>    unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+>> >> @@ -31,6 +33,8 @@ Required Properties:
+>> >>    data rate mode operation. Refer notes below for the order of the cells and the
+>> >>    valid values.
+>> >>
+>> >> +* bypass-smu: Bypass Security Management Unit of eMMC channel 0 and channel 1.
+>> >> +
+>> >
+>> > Could you elaborate on why this is needed?
+>> Exynos5420  Mobile Storage Host controller has a Security Management
+>> Unit (SMU) for
+>> channel 0 and channel 1 (mainly for eMMC). This binding property
+>> requires to add a quirk
+>> to bypass SMU as it is not being used yet.
+>
+> When you say it's not being used _yet_, what do you mean? That the
+> driver doesn't have support for it, but will in future?
+Yes.Currently we do not have full support for SMU."bypass-smu" was added
+to do minimal configuration of SMU to make it usable with the eMMC.
+>
+> Can the driver not just choose to bypass it entirely for now, regardless
+> of what's in the dt? Do we need to bypass it in future for some reason?
+bypassing SMU entirely, will definitely not work as it requires some
+minimal configuration such as
+defining first sector and end sector of partitions.
+As Tomasz figa suggested,we can do this without adding it as a quirk.I
+will repost this patch.
+>
+> I don't see why this needs to be in the dt.
+>
+>> >
+>> > Is the SMU broken or not present in some hardware revisions?
+>> SMU is only present in channel 0 and channel 1,but not in channel 2.So
+>> to distinguish this,
+>> bypass-smu property has been added as quirks in the channel.
+>> >
+>> >>    Notes for the sdr-timing and ddr-timing values:
+>> >>
+>> >>      The order of the cells should be
+>> >
+>> > On an unrelated note, I see the binding in mainline defines a gpios
+>> > property that doesn't seem to be used anywhere. Am I missing something,
+>> > or do we just not have support for that part of the binding?
+>> Yes,This document has been little outdated.I will update and post a
+>> separate patch.
+>
+> Cheers!
+>
+> Mark.
