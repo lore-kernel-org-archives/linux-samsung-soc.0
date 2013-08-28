@@ -1,52 +1,84 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 09/18] ASoC: Samsung: Do not queue cyclic buffers multiple times
-Date: Wed, 28 Aug 2013 09:06:27 +0200
-Message-ID: <CACRpkdZd+LJeZdSjsD6OCLOnZ0VrDg0aa-e163NXsw6ajWf7rA@mail.gmail.com>
-References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
-	<1376243970-6489-10-git-send-email-tomasz.figa@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2] clk: samsung: Add GPLL freq table for exynos5250 SoC
+Date: Wed, 28 Aug 2013 10:06:49 +0200
+Message-ID: <6793396.xvnsuP0Ggu@flatron>
+References: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org> <1376301734-21847-2-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:65319 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752299Ab3H1HG1 (ORCPT
+Received: from mail-ea0-f178.google.com ([209.85.215.178]:60737 "EHLO
+	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752345Ab3H1IGw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 03:06:27 -0400
-Received: by mail-ob0-f179.google.com with SMTP id fb19so6266526obc.38
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 00:06:27 -0700 (PDT)
-In-Reply-To: <1376243970-6489-10-git-send-email-tomasz.figa@gmail.com>
+	Wed, 28 Aug 2013 04:06:52 -0400
+Received: by mail-ea0-f178.google.com with SMTP id a15so2766500eae.37
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 01:06:51 -0700 (PDT)
+In-Reply-To: <1376301734-21847-2-git-send-email-vikas.sajjan@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, dianders@chromium.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-On Sun, Aug 11, 2013 at 7:59 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+Hi Vikas,
 
-> The legacy S3C-DMA API required every period of a cyclic buffer to be
-> queued separately. After conversion of Samsung ASoC to Samsung DMA
-> wrappers somebody made an assumption that the same is needed for DMA
-> engine API, which is not true.
->
-> In effect, Samsung ASoC DMA code was queuing the whole cyclic buffer
-> multiple times with a shift of one period per iteration, leading to:
->   a) severe memory waste - up to 13x times more DMA transfer descriptors
->      are allocated than needed,
->   b) possible memory corruption, because further cyclic buffers were out
->      of the original buffers, due to the offset.
->
-> This patch fixes this problem by making the legacy S3C-DMA API use the
-> same semantics as DMA engine (the whole cyclic buffer is enqueued at
-> once) and modifying users of Samsung DMA wrappers in cyclic mode to
-> behave appropriately.
->
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+On Monday 12 of August 2013 15:32:13 Vikas Sajjan wrote:
+> Adds GPLL freq table for exynos5250 SoC.
+> 
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  drivers/clk/samsung/clk-exynos5250.c |   19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5250.c
+> b/drivers/clk/samsung/clk-exynos5250.c index a9916a4..c400e82 100644
+> --- a/drivers/clk/samsung/clk-exynos5250.c
+> +++ b/drivers/clk/samsung/clk-exynos5250.c
+> @@ -494,6 +494,21 @@ static struct samsung_gate_clock
+> exynos5250_gate_clks[] __initdata = { GATE(g2d, "g2d", "aclk200",
+> GATE_IP_ACP, 3, 0, 0),
+>  };
+> 
+> +static struct samsung_pll_rate_table gpll_24mhz_tbl[] __initdata = {
+> +	/* sorted in descending order */
+> +	/* PLL_35XX_RATE(rate, m, p, s) */
+> +	PLL_35XX_RATE(1400000000, 175, 3, 0), /* for 466MHz */
+> +	PLL_35XX_RATE(800000000, 100, 3, 0),  /* for 400MHz, 200MHz */
+> +	PLL_35XX_RATE(667000000, 389, 7, 1),  /* for 333MHz, 222MHz, 
+166MHz */
 
-If patch 1 thru 9 are uncontroversial now, maybe Vinod can apply
-these for v3.12 so we can get less noise and risk of collissions
-in the next merge window?
+Frequency generated by this entry is not exactly 667 MHz, but rather 
+666857142 Hz. This must be reflected by the rate field or PLL rate setting 
+won't work correctly otherwise.
 
-Just an idea.
+> +	PLL_35XX_RATE(600000000, 200, 4, 1),  /* for 300MHz, 200MHz, 
+150MHz
+> */ +	PLL_35XX_RATE(533000000, 533, 12, 1), /* for 533MHz, 266MHz,
+> 133MHz */ +	PLL_35XX_RATE(450000000, 450, 12, 1), /* for 450Hz */
+> +	PLL_35XX_RATE(400000000, 100, 3, 1),
+> +	PLL_35XX_RATE(333000000, 222, 4, 2),
+> +	PLL_35XX_RATE(200000000, 100, 3, 2),
+> +	{ },
+> +};
+> +
+>  static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
+>  	/* sorted in descending order */
+>  	/* PLL_36XX_RATE(rate, m, p, s, k) */
+> @@ -565,8 +580,10 @@ static void __init exynos5250_clk_init(struct
+> device_node *np)
+> 
+>  	fin_pll_rate = _get_rate("fin_pll");
+> 
+> -	if (fin_pll_rate == 24 * MHZ)
+> +	if (fin_pll_rate == 24 * MHZ) {
+>  		exynos5250_plls[epll].rate_table = epll_24mhz_tbl;
+> +		exynos5250_plls[gpll].rate_table = gpll_24mhz_tbl;
+> +	}
 
-Yours,
-Linus Walleij
+Also you could rebase this series on my patches[1] cleaning several things 
+up, to simplify this table setting code a bit.
+
+[1] - http://www.spinics.net/lists/arm-kernel/msg269848.html
+
+Best regards,
+Tomasz
