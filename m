@@ -1,97 +1,69 @@
 From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH v2 2/5] media: s5p-tv: Fix sdo driver to work with CCF
-Date: Wed, 28 Aug 2013 15:34:29 +0200
-Message-ID: <1377696872-32069-3-git-send-email-m.krawczuk@partner.samsung.com>
-References: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2 0/5] ARM: S5PV210: move to common clk framework
+Date: Wed, 28 Aug 2013 15:34:27 +0200
+Message-ID: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kyungmin.park@samsung.com
-Cc: t.stanislaws@samsung.com, m.chehab@samsung.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, s.nawrocki@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+Cc: mark.rutland@arm.com, linux-doc@vger.kernel.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, mturquette@linaro.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, thomas.abraham@linaro.org, linux-media@vger.kernel.org, t.stanislaws@samsung.com, devicetree@vger.kernel.org, ian.campbell@citrix.com, pawel.moll@arm.com, swarren@wwwdotorg.org, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, rob@landley.net, m.chehab@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace clk_enable by clock_enable_prepare and clk_disable with clk_disable_unprepare.
-Clock prepare is required by Clock Common Framework, and old clock driver didn`t support it.
-Without it Common Clock Framework prints a warning.
+This patch series is the new s5pv210 clock implementation
+(using common clk framework).
 
-Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
----
- drivers/media/platform/s5p-tv/sdo_drv.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+This implementation is compatible with device tree definition and board files.
 
-diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c b/drivers/media/platform/s5p-tv/sdo_drv.c
-index b919008..acdae6b 100644
---- a/drivers/media/platform/s5p-tv/sdo_drv.c
-+++ b/drivers/media/platform/s5p-tv/sdo_drv.c
-@@ -230,7 +230,7 @@ static int sdo_streamoff(struct sdo_device *sdev)
- 	int tries;
- 
- 	sdo_write_mask(sdev, SDO_DAC, 0, SDO_POWER_ON_DAC);
--	clk_disable(sdev->dacphy);
-+	clk_disable_unprepare(sdev->dacphy);
- 	sdo_write_mask(sdev, SDO_CLKCON, 0, SDO_TVOUT_CLOCK_ON);
- 	for (tries = 100; tries; --tries) {
- 		if (sdo_read(sdev, SDO_CLKCON) & SDO_TVOUT_CLOCK_READY)
-@@ -274,7 +274,7 @@ static int sdo_runtime_suspend(struct device *dev)
- 	dev_info(dev, "suspend\n");
- 	regulator_disable(sdev->vdet);
- 	regulator_disable(sdev->vdac);
--	clk_disable(sdev->sclk_dac);
-+	clk_disable_unprepare(sdev->sclk_dac);
- 	return 0;
- }
- 
-@@ -286,7 +286,7 @@ static int sdo_runtime_resume(struct device *dev)
- 
- 	dev_info(dev, "resume\n");
- 
--	ret = clk_enable(sdev->sclk_dac);
-+	ret = clk_prepare_enable(sdev->sclk_dac);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -319,7 +319,7 @@ static int sdo_runtime_resume(struct device *dev)
- vdac_r_dis:
- 	regulator_disable(sdev->vdac);
- dac_clk_dis:
--	clk_disable(sdev->sclk_dac);
-+	clk_disable_unprepare(sdev->sclk_dac);
- 	return ret;
- }
- 
-@@ -333,7 +333,7 @@ static int sdo_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct sdo_device *sdev;
- 	struct resource *res;
--	int ret = 0;
-+	int ret;
- 	struct clk *sclk_vpll;
- 
- 	dev_info(dev, "probe start\n");
-@@ -425,8 +425,13 @@ static int sdo_probe(struct platform_device *pdev)
- 	}
- 
- 	/* enable gate for dac clock, because mixer uses it */
--	clk_enable(sdev->dac);
--
-+	clk_prepare_enable(sdev->dac);
-+	if (IS_ERR(sdev->dac)) {
-+		dev_err(dev,
-+			"%s: Failed to prepare and enable clock !\n", __func__);
-+		ret = PTR_ERR(sdev->dac);
-+		goto fail_fout_vpll;
-+	}
- 	/* configure power management */
- 	pm_runtime_enable(dev);
- 
-@@ -464,7 +469,7 @@ static int sdo_remove(struct platform_device *pdev)
- 	struct sdo_device *sdev = sd_to_sdev(sd);
- 
- 	pm_runtime_disable(&pdev->dev);
--	clk_disable(sdev->dac);
-+	clk_disable_unprepare(sdev->dac);
- 	clk_put(sdev->fout_vpll);
- 	clk_put(sdev->dacphy);
- 	clk_put(sdev->dac);
+This patch series is based on linux-next and has been tested on goni and aquila 
+boards using board file.
+
+This patch series require adding new registration method
+for PLL45xx and PLL46xx, which is included in this patch series:
+clk: samsung: pll: Use new registration method for PLL46xx
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg21653.html
+clk: samsung: pll: Use new registration method for PLL45xx
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg21652.html
+clk: samsung: exynos4: Rename exynos4_plls to exynos4x12_plls
+http://www.spinics.net/lists/arm-kernel/msg268486.html
+
+Mateusz Krawczuk (5):
+  media: s5p-tv: Restore vpll clock rate
+  media: s5p-tv: Fix sdo driver to work with CCF
+  media: s5p-tv: Fix mixer driver to work with CCF
+  clk: samsung: Add clock driver for s5pc110/s5pv210
+  ARM: s5pv210: Migrate clock handling to Common Clock Framework
+
+ .../bindings/clock/samsung,s5pv210-clock.txt       |  72 ++
+ arch/arm/mach-s5pv210/Kconfig                      |   9 +
+ arch/arm/mach-s5pv210/Makefile                     |   4 +-
+ arch/arm/mach-s5pv210/common.c                     |  17 +
+ arch/arm/mach-s5pv210/common.h                     |  13 +
+ arch/arm/mach-s5pv210/mach-aquila.c                |   1 +
+ arch/arm/mach-s5pv210/mach-goni.c                  |   3 +-
+ arch/arm/mach-s5pv210/mach-smdkc110.c              |   1 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |   1 +
+ arch/arm/mach-s5pv210/mach-torbreck.c              |   1 +
+ arch/arm/plat-samsung/Kconfig                      |   2 +-
+ arch/arm/plat-samsung/init.c                       |   2 -
+ drivers/clk/samsung/Makefile                       |   3 +
+ drivers/clk/samsung/clk-s5pv210.c                  | 733 +++++++++++++++++++++
+ drivers/media/platform/s5p-tv/mixer_drv.c          |  35 +-
+ drivers/media/platform/s5p-tv/sdo_drv.c            |  45 +-
+ include/dt-bindings/clock/samsung,s5pv210-clock.h  | 221 +++++++
+ 17 files changed, 1140 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
+ create mode 100644 drivers/clk/samsung/clk-s5pv210.c
+ create mode 100644 include/dt-bindings/clock/samsung,s5pv210-clock.h
+
 -- 
 1.8.1.2
