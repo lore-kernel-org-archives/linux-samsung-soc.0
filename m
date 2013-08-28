@@ -1,43 +1,47 @@
 From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [RFC 0/3] ARM: S5PC100: move to common clk framework
-Date: Wed, 28 Aug 2013 18:29:14 +0200
-Message-ID: <1377707357-4902-1-git-send-email-m.krawczuk@partner.samsung.com>
+Subject: [RFC 1/3] clk: samsung: pll: Add support for PLL6545a and PLL6522x
+Date: Wed, 28 Aug 2013 18:29:15 +0200
+Message-ID: <1377707357-4902-2-git-send-email-m.krawczuk@partner.samsung.com>
+References: <1377707357-4902-1-git-send-email-m.krawczuk@partner.samsung.com>
 Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1377707357-4902-1-git-send-email-m.krawczuk@partner.samsung.com>
 Sender: linux-doc-owner@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: mturquette@linaro.org, tomasz.figa@gmail.com, yadi.brar@samsung.com, dianders@chromium.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, thomas.abraham@linaro.org, s.nawrocki@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series is the new s5pc100 clock implementation
-(using common clk framework).
+Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+---
+ drivers/clk/samsung/clk-pll.c | 2 ++
+ drivers/clk/samsung/clk-pll.h | 2 ++
+ 2 files changed, 4 insertions(+)
 
-This implementation is compatible with device tree definition and board files.
-
-This patch series is based on linux-next and has been tested on smdkc100 
-board using board file.
-
-Mateusz Krawczuk (3):
-  clk: samsung: pll: Add support for PLL6545a and PLL6522x
-  clk: samsung: Add clock driver for s5pc100
-  ARM: s5pc100: Migrate clock handling to Common Clock Framework
-
- .../bindings/clock/samsung,s5pc100-clock.txt       |  72 +++
- arch/arm/mach-s5pc100/Kconfig                      |   8 +
- arch/arm/mach-s5pc100/Makefile                     |   4 +-
- arch/arm/mach-s5pc100/common.c                     |  23 +-
- arch/arm/mach-s5pc100/common.h                     |  13 +
- arch/arm/mach-s5pc100/mach-smdkc100.c              |   3 +-
- arch/arm/plat-samsung/Kconfig                      |   2 +-
- drivers/clk/samsung/Makefile                       |   3 +-
- drivers/clk/samsung/clk-pll.c                      |   2 +
- drivers/clk/samsung/clk-pll.h                      |   2 +
- drivers/clk/samsung/clk-s5pc100.c                  | 695 +++++++++++++++++++++
- include/dt-bindings/clock/samsung,s5pc100-clock.h  | 202 ++++++
- 12 files changed, 1023 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/samsung,s5pc100-clock.txt
- create mode 100644 drivers/clk/samsung/clk-s5pc100.c
- create mode 100644 include/dt-bindings/clock/samsung,s5pc100-clock.h
-
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 7572d1d..c62ddfc 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -644,6 +644,8 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
+ 			init.ops = &samsung_pll36xx_clk_ops;
+ 		break;
+ 	case pll_6552:
++	case pll_6545a:
++	case pll_6522x:
+ 		init.ops = &samsung_pll6552_clk_ops;
+ 		break;
+ 	case pll_6553:
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index cd11037..7679c4c 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -19,6 +19,8 @@ enum samsung_pll_type {
+ 	pll_2650,
+ 	pll_6552,
+ 	pll_6553,
++	pll_6545a,
++	pll_6522x,
+ };
+ 
+ #define PLL_35XX_RATE(_rate, _m, _p, _s)			\
 -- 
 1.8.1.2
 
