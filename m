@@ -1,244 +1,140 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v2: 3/3] thermal: samsung: Add TMU support for Exynos5420 SoCs
-Date: Wed, 28 Aug 2013 14:46:49 +0530
-Message-ID: <1377681409-18166-3-git-send-email-ch.naveen@samsung.com>
-References: <1375336979-14747-1-git-send-email-ch.naveen@samsung.com>
- <1377681409-18166-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1377681409-18166-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, naveenkrishna.ch@gmail.com, devicetree@vger.kernel.org
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [PATCH V4] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Wed, 28 Aug 2013 14:55:29 +0530
+Message-ID: <CAKuRcOK9LywWsZvjgozaCexs4aLN+teZG1YQq51iLWuWsjbqCw@mail.gmail.com>
+References: <1377595351-30233-1-git-send-email-yuvaraj.cd@samsung.com>
+	<20130827110145.GG19893@e106331-lin.cambridge.arm.com>
+	<CAKuRcOLK0PjcVKFxUZ9hedVScKe1K+QYE1g57CZ5JOE=AmFJow@mail.gmail.com>
+	<4043486.2T4HEilLdr@amdc1227>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:64224 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751616Ab3H1JZc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Aug 2013 05:25:32 -0400
+In-Reply-To: <4043486.2T4HEilLdr@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "dianders@chromium.org" <dianders@chromium.org>, "cjb@laptop.org" <cjb@laptop.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-This patch adds the neccessary register changes and arch information
-to support Exynos5420 SoCs
-Exynos5420 has 5 TMU channels one for each CPU 0, 1, 2 and 3 and GPU
-
-Note: The platform data structure will be handled properly once the driver
- moves to complete device driver solution.
-
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
----
-Changes since v1:
-1. modified the platform data structure in order to pass SHARED flag
-   for channels that need sharing of address space.
-2. https://lkml.org/lkml/2013/8/1/38 is merged into this patch.
-   As the changes are minimum and can be added here.
-
- drivers/thermal/samsung/exynos_tmu.c      |   14 +++-
- drivers/thermal/samsung/exynos_tmu.h      |    1 +
- drivers/thermal/samsung/exynos_tmu_data.c |  130 +++++++++++++++++++++++++++++
- drivers/thermal/samsung/exynos_tmu_data.h |    7 ++
- 4 files changed, 150 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index c56f7e5..d57a4e2 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -186,7 +186,12 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
- 		}
- 	} else {
--		trim_info = readl(data->base + reg->triminfo_data);
-+		/* On exynos5420 the triminfo register is in the shared space */
-+		if (data->base_second && (data->soc == SOC_ARCH_EXYNOS5420))
-+			trim_info = readl(data->base_second +
-+							reg->triminfo_data);
-+		else
-+			trim_info = readl(data->base + reg->triminfo_data);
- 	}
- 	data->temp_error1 = trim_info & EXYNOS_TMU_TEMP_MASK;
- 	data->temp_error2 = ((trim_info >> reg->triminfo_85_shift) &
-@@ -499,6 +504,10 @@ static const struct of_device_id exynos_tmu_match[] = {
- 		.compatible = "samsung,exynos5440-tmu",
- 		.data = (void *)EXYNOS5440_TMU_DRV_DATA,
- 	},
-+	{
-+		.compatible = "samsung,exynos5420-tmu",
-+		.data = (void *)EXYNOS5420_TMU_DRV_DATA,
-+	},
- 	{},
- };
- MODULE_DEVICE_TABLE(of, exynos_tmu_match);
-@@ -637,7 +646,8 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 
- 	if (pdata->type == SOC_ARCH_EXYNOS ||
- 		pdata->type == SOC_ARCH_EXYNOS4210 ||
--				pdata->type == SOC_ARCH_EXYNOS5440)
-+				pdata->type == SOC_ARCH_EXYNOS5440 ||
-+				pdata->type == SOC_ARCH_EXYNOS5420)
- 		data->soc = pdata->type;
- 	else {
- 		ret = -EINVAL;
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 7c6c34a..d88a536 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -43,6 +43,7 @@ enum soc_type {
- 	SOC_ARCH_EXYNOS4210 = 1,
- 	SOC_ARCH_EXYNOS,
- 	SOC_ARCH_EXYNOS5440,
-+	SOC_ARCH_EXYNOS5420,
- };
- 
- /**
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index 23fea23..c3cdfbb 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -177,6 +177,136 @@ struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
- };
- #endif
- 
-+#if defined(CONFIG_SOC_EXYNOS5420)
-+static const struct exynos_tmu_registers exynos5420_tmu_registers = {
-+	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
-+	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
-+	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-+	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
-+	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
-+	.buf_vref_sel_mask = EXYNOS_TMU_REF_VOLTAGE_MASK,
-+	.therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
-+	.therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
-+	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
-+	.buf_slope_sel_shift = EXYNOS_TMU_BUF_SLOPE_SEL_SHIFT,
-+	.buf_slope_sel_mask = EXYNOS_TMU_BUF_SLOPE_SEL_MASK,
-+	.core_en_shift = EXYNOS_TMU_CORE_EN_SHIFT,
-+	.tmu_status = EXYNOS_TMU_REG_STATUS,
-+	.tmu_cur_temp = EXYNOS_TMU_REG_CURRENT_TEMP,
-+	.threshold_th0 = EXYNOS_THD_TEMP_RISE,
-+	.threshold_th1 = EXYNOS_THD_TEMP_FALL,
-+	.tmu_inten = EXYNOS_TMU_REG_INTEN,
-+	.inten_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
-+	.inten_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
-+	.inten_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
-+	.inten_fall_shift = EXYNOS_TMU_FALL_INT_SHIFT,
-+	.inten_rise0_shift = EXYNOS_TMU_INTEN_RISE0_SHIFT,
-+	.inten_rise1_shift = EXYNOS_TMU_INTEN_RISE1_SHIFT,
-+	.inten_rise2_shift = EXYNOS_TMU_INTEN_RISE2_SHIFT,
-+	/* INTEN_RISE3 Not availble in exynos5420 */
-+	.inten_rise3_shift = EXYNOS_TMU_INTEN_RISE3_SHIFT,
-+	.inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
-+	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
-+	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
-+	.intclr_fall_shift = EXYNOS_TMU_FALL_INT_SHIFT,
-+	.emul_con = EXYNOS_EMUL_CON,
-+	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
-+	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
-+	.emul_time_mask = EXYNOS_EMUL_TIME_MASK,
-+};
-+
-+#define EXYNOS5420_TMU_DATA \
-+	.threshold_falling = 10, \
-+	.trigger_levels[0] = 85, \
-+	.trigger_levels[1] = 103, \
-+	.trigger_levels[2] = 110, \
-+	.trigger_levels[3] = 120, \
-+	.trigger_enable[0] = true, \
-+	.trigger_enable[1] = true, \
-+	.trigger_enable[2] = true, \
-+	.trigger_enable[3] = false, \
-+	.trigger_type[0] = THROTTLE_ACTIVE, \
-+	.trigger_type[1] = THROTTLE_ACTIVE, \
-+	.trigger_type[2] = SW_TRIP, \
-+	.trigger_type[3] = HW_TRIP, \
-+	.max_trigger_level = 4, \
-+	.gain = 8, \
-+	.reference_voltage = 16, \
-+	.noise_cancel_mode = 4, \
-+	.cal_type = TYPE_ONE_POINT_TRIMMING, \
-+	.efuse_value = 55, \
-+	.min_efuse_value = 40, \
-+	.max_efuse_value = 100, \
-+	.first_point_trim = 25, \
-+	.second_point_trim = 85, \
-+	.default_temp_offset = 50, \
-+	.freq_tab[0] = { \
-+		.freq_clip_max = 800 * 1000, \
-+		.temp_level = 85, \
-+	}, \
-+	.freq_tab[1] = { \
-+		.freq_clip_max = 200 * 1000, \
-+		.temp_level = 103, \
-+	}, \
-+	.freq_tab_count = 2, \
-+	.type = SOC_ARCH_EXYNOS5420, \
-+	.registers = &exynos5420_tmu_registers, \
-+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
-+			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
-+			TMU_SUPPORT_EMUL_TIME)
-+
-+#define EXYNOS5420_TMU_DATA_SHARED \
-+	.threshold_falling = 10, \
-+	.trigger_levels[0] = 85, \
-+	.trigger_levels[1] = 103, \
-+	.trigger_levels[2] = 110, \
-+	.trigger_levels[3] = 120, \
-+	.trigger_enable[0] = true, \
-+	.trigger_enable[1] = true, \
-+	.trigger_enable[2] = true, \
-+	.trigger_enable[3] = false, \
-+	.trigger_type[0] = THROTTLE_ACTIVE, \
-+	.trigger_type[1] = THROTTLE_ACTIVE, \
-+	.trigger_type[2] = SW_TRIP, \
-+	.trigger_type[3] = HW_TRIP, \
-+	.max_trigger_level = 4, \
-+	.gain = 8, \
-+	.reference_voltage = 16, \
-+	.noise_cancel_mode = 4, \
-+	.cal_type = TYPE_ONE_POINT_TRIMMING, \
-+	.efuse_value = 55, \
-+	.min_efuse_value = 40, \
-+	.max_efuse_value = 100, \
-+	.first_point_trim = 25, \
-+	.second_point_trim = 85, \
-+	.default_temp_offset = 50, \
-+	.freq_tab[0] = { \
-+		.freq_clip_max = 800 * 1000, \
-+		.temp_level = 85, \
-+	}, \
-+	.freq_tab[1] = { \
-+		.freq_clip_max = 200 * 1000, \
-+		.temp_level = 103, \
-+	}, \
-+	.freq_tab_count = 2, \
-+	.type = SOC_ARCH_EXYNOS5420, \
-+	.registers = &exynos5420_tmu_registers, \
-+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
-+			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
-+			TMU_SUPPORT_EMUL_TIME | TMU_SUPPORT_SHARED_MEMORY)
-+
-+struct exynos_tmu_init_data const exynos5420_default_tmu_data = {
-+	.tmu_data = {
-+		{ EXYNOS5420_TMU_DATA },
-+		{ EXYNOS5420_TMU_DATA },
-+		{ EXYNOS5420_TMU_DATA_SHARED },
-+		{ EXYNOS5420_TMU_DATA_SHARED },
-+		{ EXYNOS5420_TMU_DATA_SHARED },
-+	},
-+	.tmu_count = 5,
-+};
-+#endif
-+
- #if defined(CONFIG_SOC_EXYNOS5440)
- static const struct exynos_tmu_registers exynos5440_tmu_registers = {
- 	.triminfo_data = EXYNOS5440_TMU_S0_7_TRIM,
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-index 8788a87..3ce94cd 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.h
-+++ b/drivers/thermal/samsung/exynos_tmu_data.h
-@@ -153,4 +153,11 @@ extern struct exynos_tmu_init_data const exynos5440_default_tmu_data;
- #define EXYNOS5440_TMU_DRV_DATA (NULL)
- #endif
- 
-+#if defined(CONFIG_SOC_EXYNOS5420)
-+extern struct exynos_tmu_init_data const exynos5420_default_tmu_data;
-+#define EXYNOS5420_TMU_DRV_DATA (&exynos5420_default_tmu_data)
-+#else
-+#define EXYNOS5420_TMU_DRV_DATA (NULL)
-+#endif
-+
- #endif /*_EXYNOS_TMU_DATA_H*/
--- 
-1.7.9.5
+On Tue, Aug 27, 2013 at 6:31 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Yuvaraj,
+>
+> On Tuesday 27 of August 2013 17:32:52 Yuvaraj Kumar wrote:
+>> On Tue, Aug 27, 2013 at 4:31 PM, Mark Rutland <mark.rutland@arm.com>
+> wrote:
+>> > On Tue, Aug 27, 2013 at 10:22:31AM +0100, Yuvaraj Kumar C D wrote:
+>> >> This patch adds the device tree node entries for exynos5420 SOC.
+>> >> Exynos5420 has a different version of DWMMC controller,so a new
+>> >> compatible string is used to distinguish it from the prior SOC's.
+>> >>
+>> >> This patch depends on
+>> >>
+>> >>       mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
+>> >>
+>> >> changes since V3:
+>> >>       1.change fifo-depth size from 0x80 to 0x40
+>> >>       2.Move the below properties
+>> >>
+>> >>               a.card-detect-delay
+>> >>               b.samsung,dw-mshc-ciu-div
+>> >>               c.samsung,dw-mshc-sdr-timing
+>> >>               d.samsung,dw-mshc-ddr-timing
+>> >>
+>> >>       from SOC dts to board dts file as suggested by Doug Anderson
+>> >>
+>> >> changes since V2:
+>> >>       1.dropped num-slots property from node as its not required
+>> >>
+>> >>         if number of card slots available is 1.
+>> >>
+>> >>       2.Move the below properties
+>> >>
+>> >>               a.fifo-depth
+>> >>               b.card-detect-delay
+>> >>               c.samsung,dw-mshc-ciu-div
+>> >>               d.samsung,dw-mshc-sdr-timing
+>> >>               e.samsung,dw-mshc-ddr-timing
+>> >>
+>> >>       from board dts to SOC dts,as these are not board specific
+>> >>       properties.
+>> >>
+>> >>       3.Updated the binding document exynos-dw-mshc.txt.
+>> >>
+>> >> changes since V1:
+>> >>       1.disable node by status = disabled in SOC file
+>> >>       2.enable node by status = okay in board specific file
+>> >>
+>> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> >> ---
+>> >>
+>> >>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    4 ++
+>> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   34
+>> >>  +++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi
+>> >>  |   39 ++++++++++++++++++++ 3 files changed, 77 insertions(+)
+>> >>
+>> >> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> >> b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt index
+>> >> 6d1c098..25368e8 100644
+>> >> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> >> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> >>
+>> >> @@ -16,6 +16,8 @@ Required Properties:
+>> >>         specific extensions.
+>> >>
+>> >>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung
+>> >>       Exynos5250
+>> >>
+>> >>         specific extensions.
+>> >>
+>> >> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung
+>> >> Exynos5420 +       specific extensions.
+>> >>
+>> >>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card
+>> >>  interface>>
+>> >>    unit (ciu) clock. This property is applicable only for Exynos5
+>> >>    SoC's and
+>> >>
+>> >> @@ -31,6 +33,8 @@ Required Properties:
+>> >>    data rate mode operation. Refer notes below for the order of the
+>> >>    cells and the valid values.
+>> >>
+>> >> +* bypass-smu: Bypass Security Management Unit of eMMC channel 0 and
+>> >> channel 1. +
+>> >
+>> > Could you elaborate on why this is needed?
+>>
+>> Exynos5420  Mobile Storage Host controller has a Security Management
+>> Unit (SMU) for
+>> channel 0 and channel 1 (mainly for eMMC). This binding property
+>> requires to add a quirk
+>> to bypass SMU as it is not being used yet.
+>
+> This looks like a configuration property, not hardware description to me
+> then. If presence of SMU depends on particular channel, then either the
+> property should be "snps,has-smu" or something like this, to indicate that
+> particular channel supports it and it's up to the driver how to handle this
+> feature.
+>
+>> > Is the SMU broken or not present in some hardware revisions?
+>>
+>> SMU is only present in channel 0 and channel 1,but not in channel 2.So
+>> to distinguish this,
+>> bypass-smu property has been added as quirks in the channel.
+>
+> Also a good question is what you mean with "channel". Is it the whole mshc
+> entity having compatible property or its subnodes aka slots?
+Its with the whole MSHC entity.
+>
+> If it's the former and channel 2 does not have SMU, making it compatible
+> with "samsung,exynos5250-dw-mshc", then it should be marked as such. In
+> this case the ideal solution would be to determine the SMU quirk only by
+> compatible value.
+Good one.I tried this,works perfect.Will repost the patch soon.
+>
+> Best regards,
+> Tomasz
+>
