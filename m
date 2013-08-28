@@ -1,225 +1,63 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH] ARM: DT: Exynos: fix number of interrupt-cells in mct node
-Date: Wed, 28 Aug 2013 15:20:40 +0530
-Message-ID: <CANuQgHFP2n33neHbW90JZbPmcPkZ-X=NDwXDqQw1sfQUUT_zNQ@mail.gmail.com>
-References: <1371220886-11616-1-git-send-email-chander.kashyap@linaro.org>
-	<CANuQgHH+nebJf4HPrsWPLECyvWO8OGJj=YeDG4GQAmLHM8GrPw@mail.gmail.com>
-	<CANuQgHEq3QA_zE1axnXqCdv8RLXHTfv3wVn59gHSk3jEPtLiXQ@mail.gmail.com>
-	<52112004.90202@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 09/18] ASoC: Samsung: Do not queue cyclic buffers
+ multiple times
+Date: Wed, 28 Aug 2013 10:53:15 +0100
+Message-ID: <20130828095315.GG10783@sirena.org.uk>
+References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
+ <1376243970-6489-10-git-send-email-tomasz.figa@gmail.com>
+ <CACRpkdZd+LJeZdSjsD6OCLOnZ0VrDg0aa-e163NXsw6ajWf7rA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bfHXWC0AWsk5KHuB"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:64706 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752565Ab3H1Jul (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:37206 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441Ab3H1JxZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 05:50:41 -0400
-Received: by mail-ob0-f177.google.com with SMTP id f8so6334515obp.8
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 02:50:40 -0700 (PDT)
-In-Reply-To: <52112004.90202@samsung.com>
+	Wed, 28 Aug 2013 05:53:25 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZd+LJeZdSjsD6OCLOnZ0VrDg0aa-e163NXsw6ajWf7rA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "t.figa@samsung.com" <t.figa@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
-
-On 19 August 2013 00:57, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 08/12/13 15:23, Chander Kashyap wrote:
->>
->> ping
->>
->> On 23 July 2013 15:17, Chander Kashyap<chander.kashyap@linaro.org>  wrote:
->>>
->>> ping.
->>>
->>> On 14 June 2013 20:11, Chander Kashyap<chander.kashyap@linaro.org>
->>> wrote:
->>>>
->>>> Two cells were used to specify interrupts in mct node, while second cell
->>>> always remains unused. Hence use only one cell.
->>>> Suggested by Tomasz Figa.
->>>>
->>>> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
->>>> ---
->>>>   arch/arm/boot/dts/exynos4210.dtsi |   19 +++++++++----------
->>>>   arch/arm/boot/dts/exynos4212.dtsi |   19 +++++++++----------
->>>>   arch/arm/boot/dts/exynos4412.dtsi |   23 +++++++++++------------
->>>>   arch/arm/boot/dts/exynos5250.dtsi |   19 +++++++++----------
->>>>   4 files changed, 38 insertions(+), 42 deletions(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
->>>> b/arch/arm/boot/dts/exynos4210.dtsi
->>>> index 54710de..ad50010 100644
->>>> --- a/arch/arm/boot/dts/exynos4210.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
->>>> @@ -52,23 +52,22 @@
->>>>                  compatible = "samsung,exynos4210-mct";
->>>>                  reg =<0x10050000 0x800>;
->>>>                  interrupt-controller;
->>>> -               #interrups-cells =<2>;
->>>> +               #interrups-cells =<1>;
->>>>                  interrupt-parent =<&mct_map>;
->>>> -               interrupts =<0 0>,<1 0>,<2 0>,<3 0>,
->>>> -<4 0>,<5 0>;
->>>> +               interrupts =<0>,<1>,<2>,<3>,<4>,<5>;
->>>>                  clocks =<&clock 3>,<&clock 344>;
->>>>                  clock-names = "fin_pll", "mct";
->>>>
->>>>                  mct_map: mct-map {
->>>> -                       #interrupt-cells =<2>;
->>>> +                       #interrupt-cells =<1>;
->>>>                          #address-cells =<0>;
->>>>                          #size-cells =<0>;
->>>> -                       interrupt-map =<0x0 0&gic 0 57 0>,
->>>> -<0x1 0&gic 0 69 0>,
->>>> -<0x2 0&combiner 12 6>,
->>>> -<0x3 0&combiner 12 7>,
->>>> -<0x4 0&gic 0 42 0>,
->>>> -<0x5 0&gic 0 48 0>;
->>>> +                       interrupt-map =<0&gic 0 57 0>,
->>>> +<1&gic 0 69 0>,
->>>>
->>>> +<2&combiner 12 6>,
->>>> +<3&combiner 12 7>,
->>>> +<4&gic 0 42 0>,
->>>> +<5&gic 0 48 0>;
->>>>
->>>>                  };
->>>>          };
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos4212.dtsi
->>>> b/arch/arm/boot/dts/exynos4212.dtsi
->>>> index c0f60f4..ba9ada1 100644
->>>> --- a/arch/arm/boot/dts/exynos4212.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos4212.dtsi
->>>> @@ -39,21 +39,20 @@
->>>>                  compatible = "samsung,exynos4412-mct";
->>>>                  reg =<0x10050000 0x800>;
->>>>                  interrupt-controller;
->>>> -               #interrups-cells =<2>;
->>>> +               #interrups-cells =<1>;
->>>>                  interrupt-parent =<&mct_map>;
->>>> -               interrupts =<0 0>,<1 0>,<2 0>,<3 0>,
->>>> -<4 0>,<5 0>;
->>>> +               interrupts =<0>,<1>,<2>,<3>,<4>,<5>;
->>>>
->>>>                  mct_map: mct-map {
->>>> -                       #interrupt-cells =<2>;
->>>> +                       #interrupt-cells =<>;
->>>>                          #address-cells =<0>;
->>>>                          #size-cells =<0>;
->>>> -                       interrupt-map =<0x0 0&gic 0 57 0>,
->>>> -<0x1 0&combiner 12 5>,
->>>> -<0x2 0&combiner 12 6>,
->>>> -<0x3 0&combiner 12 7>,
->>>> -<0x4 0&gic 1 12 0>,
->>>> -<0x5 0&gic 1 12 0>;
->>>> +                       interrupt-map =<0&gic 0 57 0>,
->>>> +<1&combiner 12 5>,
->>>> +<2&combiner 12 6>,
->>>> +<3&combiner 12 7>,
->>>> +<4&gic 1 12 0>,
->>>> +<5&gic 1 12 0>;
->>>>
->>>>                  };
->>>>          };
->>>>   };
->>>> diff --git a/arch/arm/boot/dts/exynos4412.dtsi
->>>> b/arch/arm/boot/dts/exynos4412.dtsi
->>>> index 270b389..a680de7 100644
->>>> --- a/arch/arm/boot/dts/exynos4412.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos4412.dtsi
->>>> @@ -39,25 +39,24 @@
->>>>                  compatible = "samsung,exynos4412-mct";
->>>>                  reg =<0x10050000 0x800>;
->>>>                  interrupt-controller;
->>>> -               #interrups-cells =<2>;
->>>> +               #interrups-cells =<1>;
->>>>                  interrupt-parent =<&mct_map>;
->>>> -               interrupts =<0 0>,<1 0>,<2 0>,<3 0>,
->>>> -<4 0>,<5 0>,<6 0>,<7 0>;
->>>> +               interrupts =<0>,<1>,<2>,<3>,<4>,<5>,<6>,<7>;
->>>>                  clocks =<&clock 3>,<&clock 344>;
->>>>                  clock-names = "fin_pll", "mct";
->>>>
->>>>                  mct_map: mct-map {
->>>> -                       #interrupt-cells =<2>;
->>>> +                       #interrupt-cells =<1>;
->>>>                          #address-cells =<0>;
->>>>                          #size-cells =<0>;
->>>> -                       interrupt-map =<0x0 0&gic 0 57 0>,
->>>> -<0x1 0&combiner 12 5>,
->>>> -<0x2 0&combiner 12 6>,
->>>> -<0x3 0&combiner 12 7>,
->>>> -<0x4 0&gic 1 12 0>,
->>>> -<0x5 0&gic 1 12 0>,
->>>> -<0x6 0&gic 1 12 0>,
->>>> -<0x7 0&gic 1 12 0>;
->>>> +                       interrupt-map =<0&gic 0 57 0>,
->>>> +<1&combiner 12 5>,
->>>> +<2&combiner 12 6>,
->>>> +<3&combiner 12 7>,
->>>> +<4&gic 1 12 0>,
->>>> +<5&gic 1 12 0>,
->>>> +<6&gic 1 12 0>,
->>>> +<7&gic 1 12 0>;
->>>>
->>>>                  };
->>>>          };
->>>>
->>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->>>> b/arch/arm/boot/dts/exynos5250.dtsi
->>>> index a7cf3f5..4e633ef 100644
->>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->>>> @@ -94,23 +94,22 @@
->>>>                  compatible = "samsung,exynos4210-mct";
->>>>                  reg =<0x101C0000 0x800>;
->>>>                  interrupt-controller;
->>>> -               #interrups-cells =<2>;
->>>> +               #interrups-cells =<1>;
->>>>                  interrupt-parent =<&mct_map>;
->>>> -               interrupts =<0 0>,<1 0>,<2 0>,<3 0>,
->>>> -<4 0>,<5 0>;
->>>> +               interrupts =<0>,<1>,<2>,<3>,<4>,<5>;
->>>>                  clocks =<&clock 1>,<&clock 335>;
->>>>                  clock-names = "fin_pll", "mct";
->>>>
->>>>                  mct_map: mct-map {
->>>> -                       #interrupt-cells =<2>;
->>>> +                       #interrupt-cells =<1>;
->>>>                          #address-cells =<0>;
->>>>                          #size-cells =<0>;
->>>> -                       interrupt-map =<0x0 0&combiner 23 3>,
->>>> -<0x1 0&combiner 23 4>,
->>>> -<0x2 0&combiner 25 2>,
->>>> -<0x3 0&combiner 25 3>,
->>>> -<0x4 0&gic 0 120 0>,
->>>> -<0x5 0&gic 0 121 0>;
->>>>
->>>> +                       interrupt-map =<0&combiner 23 3>,
->>>> +<1&combiner 23 4>,
->>>> +<2&combiner 25 2>,
->>>> +<3&combiner 25 3>,
->>>> +<4&gic 0 120 0>,
->>>> +<5&gic 0 121 0>;
->>>>                  };
->>>>          };
->>>>
->>>> --
->>>> 1.7.9.5
->
->
-> Should be updated with regarding Doc.
-
-Will update the document.
-
-Thanks.
-
->
-> Kukjin
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>
 
 
+--bfHXWC0AWsk5KHuB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-with warm regards,
-Chander Kashyap
+On Wed, Aug 28, 2013 at 09:06:27AM +0200, Linus Walleij wrote:
+
+> If patch 1 thru 9 are uncontroversial now, maybe Vinod can apply
+> these for v3.12 so we can get less noise and risk of collissions
+> in the next merge window?
+
+Patch 9 I was going to apply to ASoC towards the end of the release
+cycle - it shouldn't depend on the earlier ones as ASoC isn't using
+dmaengine yet.  Holding off partly to run testing and partly in case
+this ends up getting applied.
+
+--bfHXWC0AWsk5KHuB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSHciIAAoJELSic+t+oim9fJ4P/j2sUwQRjMcCBS9A+6sCysTp
+N2dRUyj6YYqlhYZhCzYVvM7Gs4fENfFbsVBfr2XJ4uct8YooUJ+L2Unq0h33ZHGf
+4/Zelr4XydWS1T1xXljpU8qt1IulOxGIynADOKZ3craKsnqbpVI0tBk1yG0eLOYZ
+Cjkn8bSMTvme+TMPN9ecPEjik+o8gy/VBDstx9D8RiVPTfDOq2ZhMRuPzJ6Zsmce
+ZSO5sQI/KeoF3vajH0oxsw+U5Q6ziKuYVrYnBGmO38qEzVIGJNo2sreGup9bzOR/
+l9DFqS7MGOeNFIv7EzW2ztjj30aJ8XlnYyMc0cguMN2/pQMtq+27nADiwOnM3LOt
+fk3IusueuTc8Gn+GFnK37UikdBmn7EzuKl2RV7xWjN3V+SI6409Ei3Jp4+KTyk2C
+GpH4bG1e4/6/pzWdEPj8AcPL0ugpFXCN8vN9ZDQru2CTEul6YHORbP0MPBqYflzg
+FSOmzLmHCNAl3qoRhRF5aHvmnOXP05Pd50Mn46F2GR0xo3qYyY+7Y5OAGsCv6WzH
+CsMy0Ak2GUbW5RXgTMmiwyu1MjRTpeAPhcJdfuODnylAiEfyKwCxCwEH89eqYnEw
+tHrhzOkONwarQwnQ+nY1DcZAwiIAgDMG5ej2MsSnVW/ChRh1zZtJcBb+2Wp+f+Nm
+Kaex90saPSjyXDzm4d/V
+=KUZC
+-----END PGP SIGNATURE-----
+
+--bfHXWC0AWsk5KHuB--
