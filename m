@@ -1,57 +1,74 @@
-From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] usb: phy: samsung-usb2: Toggle HSIC GPIO from device tree
-Date: Wed, 28 Aug 2013 09:25:22 +0530
-Message-ID: <CAHbNUh06Rxd9JRieeXCydB_JwiUOrUXADL6nUGZxONQJmz2-CQ@mail.gmail.com>
-References: <1373416455-30358-1-git-send-email-jwerner@chromium.org>
-	<20130710052534.GB15674@arwen.pp.htv.fi>
-	<CAODwPW9dmwpXeyBeVER9azsh2uW3NXLTbDtz3mJaXrvSwb6opg@mail.gmail.com>
-	<20130712065734.GE31802@arwen.pp.htv.fi>
-	<CAHbNUh0Sa-atYMHbhEUX2vnVAcsdBJxw9RRzAp+6vqE8hi=p1w@mail.gmail.com>
-	<20130827184447.GR3005@radagast>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH 0/2] Add GPLL, APLL, KPLL, EPLL and VPLL freq table for
+ exynos5420 and exynos5250
+Date: Wed, 28 Aug 2013 10:45:11 +0530
+Message-ID: <CAGm_ybgAW2UAXkYhRmvegexL5UPm2GaKbKLp4jP41Opowe1AYw@mail.gmail.com>
+References: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org>
+	<CAGm_ybjdmO3Oisco7eYbQ3=bLjsAi7A4mt8R53tqM=z96m0QjA@mail.gmail.com>
+	<6501649.Hcij7zmiRh@amdc1227>
+	<CAGm_ybg9GGpmXfD4qMC76aLwVpUhC=t6whtZA33KjVz2+63g1w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130827184447.GR3005@radagast>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: balbi-l0cyMroinI0@public.gmane.org
-Cc: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:39957 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752568Ab3H1FPN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Aug 2013 01:15:13 -0400
+Received: by mail-wi0-f178.google.com with SMTP id c10so2154322wiw.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Aug 2013 22:15:11 -0700 (PDT)
+In-Reply-To: <CAGm_ybg9GGpmXfD4qMC76aLwVpUhC=t6whtZA33KjVz2+63g1w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, patches@linaro.org, linaro-kernel@lists.linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-On 28 August 2013 00:14, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
-> On Tue, Aug 13, 2013 at 02:11:27PM +0530, Tushar Behera wrote:
->> On 12 July 2013 12:27, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
->> > Hi,
->> >
->> > On Wed, Jul 10, 2013 at 10:42:27AM -0700, Julius Werner wrote:
->> >> Hi Felipe,
->> >>
->> >> This is intended to pull down a reset signal line, not to switch power
->> >> to the device. I could implement that with the regulator framework
->> >> too, but I think that would just be confusing and harder to understand
->> >> without providing any benefit. It's really just a plain old GPIO.
->> >
->> > alright, in that case how about using drivers/reset/ ?
->> >
+Hi Mike,
+
+On Thu, Aug 22, 2013 at 12:30 PM, Vikas Sajjan <sajjan.linux@gmail.com> wrote:
+> Hi Mike,
+>
+> On Wed, Aug 14, 2013 at 9:07 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Vikas,
 >>
->> IIUC, reset-gpio driver only provides APIs for reset controls (reset,
->> assert, deassert). We still need to find out the location from where
->> we would be calling the reset function.
+>> On Wednesday 14 of August 2013 10:36:53 Vikas Sajjan wrote:
+>>> Hi Mike,
+>>>
+>>> On Mon, Aug 12, 2013 at 3:32 PM, Vikas Sajjan <vikas.sajjan@linaro.org>
+>> wrote:
+>>> > Adds GPLL, APLL, KPLL, EPLL and VPLL freq table for exynos5420 and
+>>> > exynos5250.
+>>> >
+>>> > is rebased on Mike's
+>>> > https://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=shortlog;
+>>> > h=refs/heads/clk-next>
+>>> > Vikas Sajjan (2):
+>>> >   clk: samsung: Add GPLL freq table for exynos5250 SoC
+>>> >   clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420
+>>> >
+>>> >     SoC
+>>> >
+>>> >  drivers/clk/samsung/clk-exynos5250.c |   19 +++++++-
+>>> >  drivers/clk/samsung/clk-exynos5420.c |   81
+>>> >  ++++++++++++++++++++++++++++++++++ 2 files changed, 99 insertions(+),
+>>> >  1 deletion(-)
+>>>
+>>> Can you apply this patchset.
+>>
+>> Please give few more days for the patch to be reviewed by people.
+>>
+>> A reasonable period of time which should pass after submitting a patch to
+>> ping the maintainers is around a week. This allows people to find some time
+>> to read your patches and share their opinions (and/or give their reviewed-
+>> by/acked-by tags).
+>>
 >
-> that's fair, but at least you reuse a bunch of boilerplate code to claim
-> the GPIO, set proper direction and value. No need to duplicate that in
-> your driver.
+> any comments on this.
 >
 
-SMSC3503 driver code was recently updated by Mark Brown [1] which
-allows the device to work even if it is not connected to I2C bus. The
-timing is still an issue though [2]. With this USB works on
-linux-next, but surely that [2] is not the solution.
+Can you apply this patchset.
 
-[1] http://comments.gmane.org/gmane.linux.usb.general/92061
-[2] https://lkml.org/lkml/2013/8/14/814
--- 
-Tushar Behera
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+>
+>> Best regards,
+>> Tomasz
