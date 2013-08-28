@@ -1,102 +1,149 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2] PCI: exynos: add support for MSI
-Date: Wed, 28 Aug 2013 17:17:24 +0900
-Message-ID: <001801cea3c7$06bca9d0$1435fd70$%han@samsung.com>
-References: <003d01ce9fc6$9c0f1c20$d42d5460$%han@samsung.com>
- <20130823083539.GB3937@pratyush-vbox>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 2/2] clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420 SoC
+Date: Wed, 28 Aug 2013 10:18:32 +0200
+Message-ID: <1819543.NdlB5vViSf@flatron>
+References: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org> <1376301734-21847-3-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <20130823083539.GB3937@pratyush-vbox>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Pratyush Anand' <pratyush.anand@st.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mohit KUMAR DCG' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f179.google.com ([209.85.215.179]:50048 "EHLO
+	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752569Ab3H1ISf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Aug 2013 04:18:35 -0400
+Received: by mail-ea0-f179.google.com with SMTP id b10so2725241eae.24
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 01:18:34 -0700 (PDT)
+In-Reply-To: <1376301734-21847-3-git-send-email-vikas.sajjan@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, dianders@chromium.org, patches@linaro.org, linaro-kernel@lists.linaro.org
 
-On Friday, August 23, 2013 5:36 PM, Pratyush Anand wrote:
-> On Fri, Aug 23, 2013 at 02:04:20PM +0800, Jingoo Han wrote:
+Hi Vikas,
 
-[.....]
-
-> > +#define MAX_MSI_IRQS                   32
+On Monday 12 of August 2013 15:32:14 Vikas Sajjan wrote:
+> Adds APLL, KPLL, EPLL and VPLL freq table for exynos5420 SoC.
 > 
-> DW MSI controller can support upto 256. However, 32 seems a practical
-> choice, as there might not be any system which may use more
-> than 32. But a comment like as follows can be put here:
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c |   81
+> ++++++++++++++++++++++++++++++++++ 1 file changed, 81 insertions(+)
 > 
-> /*
-> * Maximum number of MSI IRQs can be 256 per controller. But keep
-> * it 32 as of now. Probably we will never need more than 32. If needed,
-> * then increment it in multiple of 32.
-> */
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c
+> b/drivers/clk/samsung/clk-exynos5420.c index e035fd0..42cea7e 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -757,10 +757,81 @@ static struct of_device_id ext_clk_match[]
+> __initdata = { { },
+>  };
+> 
+> +static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
+> +	/* sorted in descending order */
+> +	/* PLL_35XX_RATE(rate, m, p, s) */
+> +	PLL_35XX_RATE(2000000000, 250, 3, 0),
+> +	PLL_35XX_RATE(1900000000, 475, 6, 0),
+> +	PLL_35XX_RATE(1800000000, 225, 3, 0),
+> +	PLL_35XX_RATE(1700000000, 425, 6, 0),
+> +	PLL_35XX_RATE(1600000000, 200, 3, 0),
+> +	PLL_35XX_RATE(1500000000, 250, 4, 0),
+> +	PLL_35XX_RATE(1400000000, 175, 3, 0),
+> +	PLL_35XX_RATE(1300000000, 325, 6, 0),
+> +	PLL_35XX_RATE(1200000000, 200, 2, 1),
+> +	PLL_35XX_RATE(1100000000, 275, 3, 1),
+> +	PLL_35XX_RATE(1000000000, 250, 3, 1),
+> +	PLL_35XX_RATE(900000000, 150, 2, 1),
+> +	PLL_35XX_RATE(800000000, 200, 3, 1),
+> +	PLL_35XX_RATE(700000000, 175, 3, 1),
+> +	PLL_35XX_RATE(600000000, 200, 2, 2),
+> +	PLL_35XX_RATE(500000000, 250, 3, 2),
+> +	PLL_35XX_RATE(400000000, 200, 3, 2),
+> +	PLL_35XX_RATE(300000000, 400, 4, 3),
+> +	PLL_35XX_RATE(200000000, 200, 3, 3),
+> +	{ },
+> +};
+> +
+> +static struct samsung_pll_rate_table kpll_24mhz_tbl[] __initdata = {
+> +	/* sorted in descending order */
+> +	/* PLL_35XX_RATE(rate, m, p, s) */
+> +	PLL_35XX_RATE(1300000000, 325, 6, 0),
+> +	PLL_35XX_RATE(1200000000, 200, 2, 1),
+> +	PLL_35XX_RATE(1100000000, 275, 3, 1),
+> +	PLL_35XX_RATE(1000000000, 250, 3, 1),
+> +	PLL_35XX_RATE(900000000, 150, 2, 1),
+> +	PLL_35XX_RATE(800000000, 200, 3, 1),
+> +	PLL_35XX_RATE(700000000, 175, 3, 1),
+> +	PLL_35XX_RATE(600000000, 200, 2, 2),
+> +	PLL_35XX_RATE(500000000, 250, 3, 2),
+> +	PLL_35XX_RATE(400000000, 200, 3, 2),
+> +	PLL_35XX_RATE(300000000, 400, 4, 3),
+> +	PLL_35XX_RATE(200000000, 200, 3, 3),
+> +	{ },
+> +};
+> +
+> +static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
+> +	/* sorted in descending order */
+> +	/* PLL_36XX_RATE(rate, m, p, s, k) */
+> +	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
+> +	PLL_36XX_RATE(180633600, 45, 3, 1, 10381),
 
-OK.
-I will add this comment.
+This one is in fact 180633605 Hz.
+
+> +	PLL_36XX_RATE(180000000, 45, 3, 1, 0),
+> +	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
+> +	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
+
+67737602 Hz
+
+> +	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
+> +	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
+
+45158401 Hz
+
+> +	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
+
+32768001 Hz
+
+> +	{ },
+> +};
+> +
+> +static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
+> +	/* sorted in descending order */
+> +	/* PLL_35XX_RATE(rate, m, p, s) */
+> +	PLL_35XX_RATE(533000000, 533, 6, 2),
+> +	PLL_35XX_RATE(480000000, 160, 2, 2),
+> +	PLL_35XX_RATE(420000000, 140, 2, 2),
+> +	PLL_35XX_RATE(350000000, 175, 3, 2),
+> +	PLL_35XX_RATE(266000000, 266, 3, 3),
+> +	PLL_35XX_RATE(177000000, 118, 2, 3),
+> +	PLL_35XX_RATE(100000000, 200, 3, 4),
+> +	{ },
+> +};
+> +
+>  /* register exynos5420 clocks */
+>  static void __init exynos5420_clk_init(struct device_node *np)
+>  {
+>  	void __iomem *reg_base;
+> +	unsigned long fin_pll_rate;
+
+This variable seems to be unnecessary. See below.
 
 > 
-> > +#define MAX_MSI_CTRLS                  8
-> 
-> Why to waste cpu cycles when MAX_MSI_IRQS is 32 only.
-> #define MAX_MSI_CTRLS   (MAX_MSI_IRQS / 32)
+>  	if (np) {
+>  		reg_base = of_iomap(np, 0);
+> @@ -776,6 +847,16 @@ static void __init exynos5420_clk_init(struct
+> device_node *np)
+> samsung_clk_of_register_fixed_ext(exynos5420_fixed_rate_ext_clks,
+> ARRAY_SIZE(exynos5420_fixed_rate_ext_clks),
+>  			ext_clk_match);
+> +
+> +	fin_pll_rate = _get_rate("fin_pll");
+> +
+> +	if (fin_pll_rate == 24 * MHZ) {
 
-OK.
-I will fix it as you guide.
+You can simplify this to
 
-> 
-> > +
-> > +static unsigned int msi_data;
-> > +static DECLARE_BITMAP(msi_irq_in_use, MAX_MSI_IRQS);
-> 
-> What if one has more than one RC.
-> There are SOCs which support 3 RCs.
-> So something like this:
-> 
-> #define MAX_PCIE_PORT_SUPPORTED 3
-> static DECLARE_BITMAP(msi_irq_in_use[MAX_PCIE_PORT_SUPPORTED],
->                   NUM_MSI_IRQS);
-> static unsigned int *msi_data[MAX_PCIE_PORT_SUPPORTED];
-
-No, there is no need to do it.
-Without this, we can use 3 RCs by adding a node of 3rd RC to dt file.
-
-> 
-> Allocate msi_data using __get_free_pages(GFP_KERNEL, 0)) as Thierry
-> suggested.
-
-OK.
-I will use '__get_free_pages(GFP_KERNEL, 0))' as Thierry guide.
-
-> >  int dw_pcie_link_up(struct pcie_port *pp)
-> >  {
-> >         if (pp->ops->link_up)
-> > @@ -225,6 +432,13 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
-> >                 return -EINVAL;
-> >         }
-> >
-> > +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
-> > +               if (of_property_read_u32(np, "msi-base", &pp->msi_irq_start)) {
-> > +                       dev_err(pp->dev, "Failed to parse the number of lanes\n");
-> > +                       return -EINVAL;
-> > +               }
-> > +       }
-> > +
-> 
-> What if an implementor want to use irq_domain method for msi_irq_start
-> allocation? Is it fine to return error if msi-base is not passed from
-> dt?
-
-Sure, I will consider using irq_domain method.
-
->
-> Also, with the limited knowledge of dt I do not understand one thing, how
-> would dt understand that you have used 32 msi irqs (MAX_MSI_IRQS)?
-
-Sorry, I cannot understand exactly. :-(
-I will look into it.
-
-I really appreciate your comments. :-)
+	if (_get_rate("fin_pll") == 24 * MHZ) {
 
 Best regards,
-Jingoo Han
+Tomasz
