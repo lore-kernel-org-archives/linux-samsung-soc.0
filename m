@@ -1,40 +1,65 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] iio: exynos_adc: fix wrong structure extration in suspend
- and resume
-Date: Wed, 28 Aug 2013 08:40:27 -0700
-Message-ID: <CAD=FV=V4bGrP58XuL_s2zr_O81iTPNB90MrKengF2JYv5SWi1A@mail.gmail.com>
-References: <1369031689-23189-1-git-send-email-ch.naveen@samsung.com>
-	<CAD=FV=Xppyb+Y0atygnwA8oBHmGHDx7Bit2fN12GX5Tt-Y9H1A@mail.gmail.com>
-	<519D3594.4070305@kernel.org>
-	<CAHfPSqD0zpR3dRDaH4c3uxHS81vYn6mPyNjCmJ6c-TC1wpZeig@mail.gmail.com>
-	<CAHfPSqDYLYDEDqEhd20e4RQP+-ciu+d6MTyOWRi8OHD29dOhSA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAHfPSqDYLYDEDqEhd20e4RQP+-ciu+d6MTyOWRi8OHD29dOhSA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lars-Peter Clausen <lars@metafoo.de>
+From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+Subject: [PATCH v3 0/6] ARM: S5PV210: move to common clk framework
+Date: Wed, 28 Aug 2013 18:12:58 +0200
+Message-ID: <1377706384-3697-1-git-send-email-m.krawczuk@partner.samsung.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: kyungmin.park@samsung.com
+Cc: t.stanislaws@samsung.com, m.chehab@samsung.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, s.nawrocki@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Naveen
+This patch series is the new s5pv210 clock implementation
+(using common clk framework).
 
-On Tue, Aug 27, 2013 at 10:33 PM, Naveen Krishna Ch
-<naveenkrishna.ch@gmail.com> wrote:
->> I would like to know any comments on
->>
->> https://patchwork.kernel.org/patch/2513361/
->>
->> Its been pending for a while now.
->>
->> Thanks,
->> Naveen
-> Ping
-> Any comments please
+This implementation is compatible with device tree definition and board files.
 
-I assume you're asking for a ping for the _other_ patch (AKA: "Handle
-timeout issues"), not the one you're replying to here.
+This patch series is based on linux-next and has been tested on goni and aquila 
+boards using board file.
 
-Can you please just do a REPOST of the patch you'd like comments on?
+This patch series require adding new registration method
+for PLL45xx and PLL46xx, which is included in this patch series:
+clk: samsung: pll: Use new registration method for PLL46xx
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg21653.html
+clk: samsung: pll: Use new registration method for PLL45xx
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg21652.html
+clk: samsung: exynos4: Rename exynos4_plls to exynos4x12_plls
+http://www.spinics.net/lists/arm-kernel/msg268486.html
 
--Doug
+Mateusz Krawczuk (6):
+  media: s5p-tv: Replace mxr_ macro by default dev_
+  media: s5p-tv: Restore vpll clock rate
+  media: s5p-tv: Fix sdo driver to work with CCF
+  media: s5p-tv: Fix mixer driver to work with CCF
+  clk: samsung: Add clock driver for s5pc110/s5pv210
+  ARM: s5pv210: Migrate clock handling to Common Clock Framework
+
+ .../bindings/clock/samsung,s5pv210-clock.txt       |  72 ++
+ arch/arm/mach-s5pv210/Kconfig                      |   9 +
+ arch/arm/mach-s5pv210/Makefile                     |   4 +-
+ arch/arm/mach-s5pv210/common.c                     |  17 +
+ arch/arm/mach-s5pv210/common.h                     |  13 +
+ arch/arm/mach-s5pv210/mach-aquila.c                |   1 +
+ arch/arm/mach-s5pv210/mach-goni.c                  |   3 +-
+ arch/arm/mach-s5pv210/mach-smdkc110.c              |   1 +
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |   1 +
+ arch/arm/mach-s5pv210/mach-torbreck.c              |   1 +
+ arch/arm/plat-samsung/Kconfig                      |   2 +-
+ arch/arm/plat-samsung/init.c                       |   2 -
+ drivers/clk/samsung/Makefile                       |   3 +
+ drivers/clk/samsung/clk-s5pv210.c                  | 732 +++++++++++++++++++++
+ drivers/media/platform/s5p-tv/mixer.h              |  12 -
+ drivers/media/platform/s5p-tv/mixer_drv.c          |  80 ++-
+ drivers/media/platform/s5p-tv/mixer_grp_layer.c    |   2 +-
+ drivers/media/platform/s5p-tv/mixer_reg.c          |   6 +-
+ drivers/media/platform/s5p-tv/mixer_video.c        | 100 +--
+ drivers/media/platform/s5p-tv/mixer_vp_layer.c     |   2 +-
+ drivers/media/platform/s5p-tv/sdo_drv.c            |  45 +-
+ include/dt-bindings/clock/samsung,s5pv210-clock.h  | 221 +++++++
+ 22 files changed, 1216 insertions(+), 113 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
+ create mode 100644 drivers/clk/samsung/clk-s5pv210.c
+ create mode 100644 include/dt-bindings/clock/samsung,s5pv210-clock.h
+
+-- 
+1.8.1.2
+
