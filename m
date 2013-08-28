@@ -1,149 +1,63 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/2] clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420 SoC
-Date: Wed, 28 Aug 2013 10:18:32 +0200
-Message-ID: <1819543.NdlB5vViSf@flatron>
-References: <1376301734-21847-1-git-send-email-vikas.sajjan@linaro.org> <1376301734-21847-3-git-send-email-vikas.sajjan@linaro.org>
+Subject: Re: [PATCH 09/18] ASoC: Samsung: Do not queue cyclic buffers multiple times
+Date: Wed, 28 Aug 2013 10:23:34 +0200
+Message-ID: <3566701.5anQOxoFga@flatron>
+References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com> <1376243970-6489-10-git-send-email-tomasz.figa@gmail.com> <CACRpkdZd+LJeZdSjsD6OCLOnZ0VrDg0aa-e163NXsw6ajWf7rA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f179.google.com ([209.85.215.179]:50048 "EHLO
-	mail-ea0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752569Ab3H1ISf (ORCPT
+Received: from mail-ea0-f176.google.com ([209.85.215.176]:63788 "EHLO
+	mail-ea0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752057Ab3H1IXh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 04:18:35 -0400
-Received: by mail-ea0-f179.google.com with SMTP id b10so2725241eae.24
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 01:18:34 -0700 (PDT)
-In-Reply-To: <1376301734-21847-3-git-send-email-vikas.sajjan@linaro.org>
+	Wed, 28 Aug 2013 04:23:37 -0400
+In-Reply-To: <CACRpkdZd+LJeZdSjsD6OCLOnZ0VrDg0aa-e163NXsw6ajWf7rA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: mturquette@linaro.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, dianders@chromium.org, patches@linaro.org, linaro-kernel@lists.linaro.org
+To: Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Vinod Koul <vinod.koul@intel.com>
 
-Hi Vikas,
-
-On Monday 12 of August 2013 15:32:14 Vikas Sajjan wrote:
-> Adds APLL, KPLL, EPLL and VPLL freq table for exynos5420 SoC.
+On Wednesday 28 of August 2013 09:06:27 Linus Walleij wrote:
+> On Sun, Aug 11, 2013 at 7:59 PM, Tomasz Figa <tomasz.figa@gmail.com> 
+wrote:
+> > The legacy S3C-DMA API required every period of a cyclic buffer to be
+> > queued separately. After conversion of Samsung ASoC to Samsung DMA
+> > wrappers somebody made an assumption that the same is needed for DMA
+> > engine API, which is not true.
+> > 
+> > In effect, Samsung ASoC DMA code was queuing the whole cyclic buffer
+> > 
+> > multiple times with a shift of one period per iteration, leading to:
+> >   a) severe memory waste - up to 13x times more DMA transfer
+> >   descriptors
+> >   
+> >      are allocated than needed,
+> >   
+> >   b) possible memory corruption, because further cyclic buffers were
+> >   out
+> >   
+> >      of the original buffers, due to the offset.
+> > 
+> > This patch fixes this problem by making the legacy S3C-DMA API use the
+> > same semantics as DMA engine (the whole cyclic buffer is enqueued at
+> > once) and modifying users of Samsung DMA wrappers in cyclic mode to
+> > behave appropriately.
+> > 
+> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c |   81
-> ++++++++++++++++++++++++++++++++++ 1 file changed, 81 insertions(+)
+> If patch 1 thru 9 are uncontroversial now, maybe Vinod can apply
+> these for v3.12 so we can get less noise and risk of collissions
+> in the next merge window?
 > 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c
-> b/drivers/clk/samsung/clk-exynos5420.c index e035fd0..42cea7e 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -757,10 +757,81 @@ static struct of_device_id ext_clk_match[]
-> __initdata = { { },
->  };
-> 
-> +static struct samsung_pll_rate_table apll_24mhz_tbl[] __initdata = {
-> +	/* sorted in descending order */
-> +	/* PLL_35XX_RATE(rate, m, p, s) */
-> +	PLL_35XX_RATE(2000000000, 250, 3, 0),
-> +	PLL_35XX_RATE(1900000000, 475, 6, 0),
-> +	PLL_35XX_RATE(1800000000, 225, 3, 0),
-> +	PLL_35XX_RATE(1700000000, 425, 6, 0),
-> +	PLL_35XX_RATE(1600000000, 200, 3, 0),
-> +	PLL_35XX_RATE(1500000000, 250, 4, 0),
-> +	PLL_35XX_RATE(1400000000, 175, 3, 0),
-> +	PLL_35XX_RATE(1300000000, 325, 6, 0),
-> +	PLL_35XX_RATE(1200000000, 200, 2, 1),
-> +	PLL_35XX_RATE(1100000000, 275, 3, 1),
-> +	PLL_35XX_RATE(1000000000, 250, 3, 1),
-> +	PLL_35XX_RATE(900000000, 150, 2, 1),
-> +	PLL_35XX_RATE(800000000, 200, 3, 1),
-> +	PLL_35XX_RATE(700000000, 175, 3, 1),
-> +	PLL_35XX_RATE(600000000, 200, 2, 2),
-> +	PLL_35XX_RATE(500000000, 250, 3, 2),
-> +	PLL_35XX_RATE(400000000, 200, 3, 2),
-> +	PLL_35XX_RATE(300000000, 400, 4, 3),
-> +	PLL_35XX_RATE(200000000, 200, 3, 3),
-> +	{ },
-> +};
-> +
-> +static struct samsung_pll_rate_table kpll_24mhz_tbl[] __initdata = {
-> +	/* sorted in descending order */
-> +	/* PLL_35XX_RATE(rate, m, p, s) */
-> +	PLL_35XX_RATE(1300000000, 325, 6, 0),
-> +	PLL_35XX_RATE(1200000000, 200, 2, 1),
-> +	PLL_35XX_RATE(1100000000, 275, 3, 1),
-> +	PLL_35XX_RATE(1000000000, 250, 3, 1),
-> +	PLL_35XX_RATE(900000000, 150, 2, 1),
-> +	PLL_35XX_RATE(800000000, 200, 3, 1),
-> +	PLL_35XX_RATE(700000000, 175, 3, 1),
-> +	PLL_35XX_RATE(600000000, 200, 2, 2),
-> +	PLL_35XX_RATE(500000000, 250, 3, 2),
-> +	PLL_35XX_RATE(400000000, 200, 3, 2),
-> +	PLL_35XX_RATE(300000000, 400, 4, 3),
-> +	PLL_35XX_RATE(200000000, 200, 3, 3),
-> +	{ },
-> +};
-> +
-> +static struct samsung_pll_rate_table epll_24mhz_tbl[] __initdata = {
-> +	/* sorted in descending order */
-> +	/* PLL_36XX_RATE(rate, m, p, s, k) */
-> +	PLL_36XX_RATE(192000000, 64, 2, 2, 0),
-> +	PLL_36XX_RATE(180633600, 45, 3, 1, 10381),
+> Just an idea.
 
-This one is in fact 180633605 Hz.
+That would be nice, leaving only Samsung-specific patches for the next 
+merge window.
 
-> +	PLL_36XX_RATE(180000000, 45, 3, 1, 0),
-> +	PLL_36XX_RATE(73728000, 98, 2, 4, 19923),
-> +	PLL_36XX_RATE(67737600, 90, 2, 4, 20762),
-
-67737602 Hz
-
-> +	PLL_36XX_RATE(49152000, 98, 3, 4, 19923),
-> +	PLL_36XX_RATE(45158400, 90, 3, 4, 20762),
-
-45158401 Hz
-
-> +	PLL_36XX_RATE(32768000, 131, 3, 5, 4719),
-
-32768001 Hz
-
-> +	{ },
-> +};
-> +
-> +static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
-> +	/* sorted in descending order */
-> +	/* PLL_35XX_RATE(rate, m, p, s) */
-> +	PLL_35XX_RATE(533000000, 533, 6, 2),
-> +	PLL_35XX_RATE(480000000, 160, 2, 2),
-> +	PLL_35XX_RATE(420000000, 140, 2, 2),
-> +	PLL_35XX_RATE(350000000, 175, 3, 2),
-> +	PLL_35XX_RATE(266000000, 266, 3, 3),
-> +	PLL_35XX_RATE(177000000, 118, 2, 3),
-> +	PLL_35XX_RATE(100000000, 200, 3, 4),
-> +	{ },
-> +};
-> +
->  /* register exynos5420 clocks */
->  static void __init exynos5420_clk_init(struct device_node *np)
->  {
->  	void __iomem *reg_base;
-> +	unsigned long fin_pll_rate;
-
-This variable seems to be unnecessary. See below.
-
-> 
->  	if (np) {
->  		reg_base = of_iomap(np, 0);
-> @@ -776,6 +847,16 @@ static void __init exynos5420_clk_init(struct
-> device_node *np)
-> samsung_clk_of_register_fixed_ext(exynos5420_fixed_rate_ext_clks,
-> ARRAY_SIZE(exynos5420_fixed_rate_ext_clks),
->  			ext_clk_match);
-> +
-> +	fin_pll_rate = _get_rate("fin_pll");
-> +
-> +	if (fin_pll_rate == 24 * MHZ) {
-
-You can simplify this to
-
-	if (_get_rate("fin_pll") == 24 * MHZ) {
+(That would be patches 1 to 8, though, as 9 is a patch for ASoC that could 
+be picked up by Mark Brown independently.)
 
 Best regards,
 Tomasz
