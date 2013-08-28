@@ -1,7 +1,7 @@
 From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH v2 3/5] media: s5p-tv: Fix mixer driver to work with CCF
-Date: Wed, 28 Aug 2013 15:34:30 +0200
-Message-ID: <1377696872-32069-4-git-send-email-m.krawczuk@partner.samsung.com>
+Subject: [PATCH v2 2/5] media: s5p-tv: Fix sdo driver to work with CCF
+Date: Wed, 28 Aug 2013 15:34:29 +0200
+Message-ID: <1377696872-32069-3-git-send-email-m.krawczuk@partner.samsung.com>
 References: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
@@ -16,72 +16,82 @@ Without it Common Clock Framework prints a warning.
 
 Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 ---
- drivers/media/platform/s5p-tv/mixer_drv.c | 35 ++++++++++++++++++++++++-------
- 1 file changed, 28 insertions(+), 7 deletions(-)
+ drivers/media/platform/s5p-tv/sdo_drv.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-tv/mixer_drv.c b/drivers/media/platform/s5p-tv/mixer_drv.c
-index 51805a5..435c8c0 100644
---- a/drivers/media/platform/s5p-tv/mixer_drv.c
-+++ b/drivers/media/platform/s5p-tv/mixer_drv.c
-@@ -345,21 +345,42 @@ fail:
+diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c b/drivers/media/platform/s5p-tv/sdo_drv.c
+index b919008..acdae6b 100644
+--- a/drivers/media/platform/s5p-tv/sdo_drv.c
++++ b/drivers/media/platform/s5p-tv/sdo_drv.c
+@@ -230,7 +230,7 @@ static int sdo_streamoff(struct sdo_device *sdev)
+ 	int tries;
  
- static int mxr_runtime_resume(struct device *dev)
- {
-+	int ret;
- 	struct mxr_device *mdev = to_mdev(dev);
- 	struct mxr_resources *res = &mdev->res;
- 
- 	mxr_dbg(mdev, "resume - start\n");
- 	mutex_lock(&mdev->mutex);
- 	/* turn clocks on */
--	clk_enable(res->mixer);
--	clk_enable(res->vp);
--	clk_enable(res->sclk_mixer);
-+	ret = clk_prepare_enable(res->mixer);
-+	if (ret < 0) {
-+		mxr_err(mdev, "clk_prepare_enable(mixer) failed\n");
-+		goto fail;
-+	}
-+	ret = clk_prepare_enable(res->vp);
-+	if (ret < 0) {
-+		mxr_err(mdev, "clk_prepare_enable(vp) failed\n");
-+		goto fail_mixer;
-+	}
-+	ret = clk_prepare_enable(res->sclk_mixer);
-+	if (ret < 0) {
-+		mxr_err(mdev, "clk_prepare_enable(sclk_mixer) failed\n");
-+		goto fail_vp;
-+	}
- 	/* apply default configuration */
- 	mxr_reg_reset(mdev);
--	mxr_dbg(mdev, "resume - finished\n");
- 
- 	mutex_unlock(&mdev->mutex);
-+	mxr_dbg(mdev, "resume - finished\n");
+ 	sdo_write_mask(sdev, SDO_DAC, 0, SDO_POWER_ON_DAC);
+-	clk_disable(sdev->dacphy);
++	clk_disable_unprepare(sdev->dacphy);
+ 	sdo_write_mask(sdev, SDO_CLKCON, 0, SDO_TVOUT_CLOCK_ON);
+ 	for (tries = 100; tries; --tries) {
+ 		if (sdo_read(sdev, SDO_CLKCON) & SDO_TVOUT_CLOCK_READY)
+@@ -274,7 +274,7 @@ static int sdo_runtime_suspend(struct device *dev)
+ 	dev_info(dev, "suspend\n");
+ 	regulator_disable(sdev->vdet);
+ 	regulator_disable(sdev->vdac);
+-	clk_disable(sdev->sclk_dac);
++	clk_disable_unprepare(sdev->sclk_dac);
  	return 0;
-+fail_vp:
-+	clk_disable_unprepare(res->vp);
-+fail_mixer:
-+	clk_disable_unprepare(res->mixer);
-+fail:
-+	mutex_unlock(&mdev->mutex);
-+	mxr_info(mdev, "resume failed\n");
-+	return ret;
  }
  
- static int mxr_runtime_suspend(struct device *dev)
-@@ -369,9 +390,9 @@ static int mxr_runtime_suspend(struct device *dev)
- 	mxr_dbg(mdev, "suspend - start\n");
- 	mutex_lock(&mdev->mutex);
- 	/* turn clocks off */
--	clk_disable(res->sclk_mixer);
--	clk_disable(res->vp);
--	clk_disable(res->mixer);
-+	clk_disable_unprepare(res->sclk_mixer);
-+	clk_disable_unprepare(res->vp);
-+	clk_disable_unprepare(res->mixer);
- 	mutex_unlock(&mdev->mutex);
- 	mxr_dbg(mdev, "suspend - finished\n");
- 	return 0;
+@@ -286,7 +286,7 @@ static int sdo_runtime_resume(struct device *dev)
+ 
+ 	dev_info(dev, "resume\n");
+ 
+-	ret = clk_enable(sdev->sclk_dac);
++	ret = clk_prepare_enable(sdev->sclk_dac);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -319,7 +319,7 @@ static int sdo_runtime_resume(struct device *dev)
+ vdac_r_dis:
+ 	regulator_disable(sdev->vdac);
+ dac_clk_dis:
+-	clk_disable(sdev->sclk_dac);
++	clk_disable_unprepare(sdev->sclk_dac);
+ 	return ret;
+ }
+ 
+@@ -333,7 +333,7 @@ static int sdo_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct sdo_device *sdev;
+ 	struct resource *res;
+-	int ret = 0;
++	int ret;
+ 	struct clk *sclk_vpll;
+ 
+ 	dev_info(dev, "probe start\n");
+@@ -425,8 +425,13 @@ static int sdo_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* enable gate for dac clock, because mixer uses it */
+-	clk_enable(sdev->dac);
+-
++	clk_prepare_enable(sdev->dac);
++	if (IS_ERR(sdev->dac)) {
++		dev_err(dev,
++			"%s: Failed to prepare and enable clock !\n", __func__);
++		ret = PTR_ERR(sdev->dac);
++		goto fail_fout_vpll;
++	}
+ 	/* configure power management */
+ 	pm_runtime_enable(dev);
+ 
+@@ -464,7 +469,7 @@ static int sdo_remove(struct platform_device *pdev)
+ 	struct sdo_device *sdev = sd_to_sdev(sd);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+-	clk_disable(sdev->dac);
++	clk_disable_unprepare(sdev->dac);
+ 	clk_put(sdev->fout_vpll);
+ 	clk_put(sdev->dacphy);
+ 	clk_put(sdev->dac);
 -- 
 1.8.1.2
