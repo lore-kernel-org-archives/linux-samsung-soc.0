@@ -1,64 +1,55 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH v2: 3/3] thermal: samsung: Add TMU support for Exynos5420
- SoCs
-Date: Wed, 28 Aug 2013 12:38:31 +0200
-Message-ID: <2432994.TkQmThmFSA@amdc1032>
-References: <1375336979-14747-1-git-send-email-ch.naveen@samsung.com>
- <1377681409-18166-1-git-send-email-ch.naveen@samsung.com>
- <1377681409-18166-3-git-send-email-ch.naveen@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v11 0/8] PHY framework
+Date: Wed, 28 Aug 2013 16:13:58 +0530
+Message-ID: <521DD46E.9090202@ti.com>
+References: <1377063973-22044-1-git-send-email-kishon@ti.com> <521B0E79.6060506@ti.com> <20130827192059.GZ3005@radagast>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44994 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751743Ab3H1Kil (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 06:38:41 -0400
-In-reply-to: <1377681409-18166-3-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20130827192059.GZ3005@radagast>
+Sender: linux-kernel-owner@vger.kernel.org
+To: balbi@ti.com
+Cc: gregkh@linuxfoundation.org, kyungmin.park@samsung.com, jg1.han@samsung.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, stern@rowland.harvard.edu, broonie@kernel.org, tomasz.figa@gmail.com, arnd@arndb.de, grant.likely@linaro.org, tony@atomide.com, swarren@nvidia.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org, linux-media@vger.kernel.org, linux-fbdev@vger.kernel.org, akpm@linux-foundation.org, balajitk@ti.com, george.cherian@ti.com, nsekhar@ti.com, linux@arm.linux.org.uk
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, naveenkrishna.ch@gmail.com, devicetree@vger.kernel.org
-
 
 Hi,
 
-On Wednesday, August 28, 2013 02:46:49 PM Naveen Krishna Chatradhi wrote:
-> This patch adds the neccessary register changes and arch information
-> to support Exynos5420 SoCs
-> Exynos5420 has 5 TMU channels one for each CPU 0, 1, 2 and 3 and GPU
+On Wednesday 28 August 2013 12:50 AM, Felipe Balbi wrote:
+> Hi,
 > 
-> Note: The platform data structure will be handled properly once the driver
->  moves to complete device driver solution.
+> On Mon, Aug 26, 2013 at 01:44:49PM +0530, Kishon Vijay Abraham I wrote:
+>> On Wednesday 21 August 2013 11:16 AM, Kishon Vijay Abraham I wrote:
+>>> Added a generic PHY framework that provides a set of APIs for the PHY drivers
+>>> to create/destroy a PHY and APIs for the PHY users to obtain a reference to
+>>> the PHY with or without using phandle.
+>>>
+>>> This framework will be of use only to devices that uses external PHY (PHY
+>>> functionality is not embedded within the controller).
+>>>
+>>> The intention of creating this framework is to bring the phy drivers spread
+>>> all over the Linux kernel to drivers/phy to increase code re-use and to
+>>> increase code maintainability.
+>>>
+>>> Comments to make PHY as bus wasn't done because PHY devices can be part of
+>>> other bus and making a same device attached to multiple bus leads to bad
+>>> design.
+>>>
+>>> If the PHY driver has to send notification on connect/disconnect, the PHY
+>>> driver should make use of the extcon framework. Using this susbsystem
+>>> to use extcon framwork will have to be analysed.
+>>>
+>>> You can find this patch series @
+>>> git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git testing
+>>
+>> Looks like there are not further comments on this series. Can you take this in
+>> your misc tree?
 > 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Do you want me to queue these for you ? There are quite a few users for
+> this framework already and I know of at least 2 others which will show
+> up for v3.13.
 
-OK, this is also an acceptable solution (though it seems to be worse
-in terms of simplicity and long term maintainance). Anyway please ignore
-my comments to v1, just remember to rename this flag (as already pointed
-by out by Amit). TMU_SUPPORT_SHARED_MEMORY documentation in exynos_tmu.h
-also requires an update.
+yeah sure. That would be better I think.
 
-> ---
-> Changes since v1:
-> 1. modified the platform data structure in order to pass SHARED flag
->    for channels that need sharing of address space.
-> 2. https://lkml.org/lkml/2013/8/1/38 is merged into this patch.
->    As the changes are minimum and can be added here.
-
-Documentation/devicetree/bindings/thermal/exynos-thermal.txt update got
-lost and it is quite important now as second address servers multiple
-purposes. Please fix it.
-
->  drivers/thermal/samsung/exynos_tmu.c      |   14 +++-
->  drivers/thermal/samsung/exynos_tmu.h      |    1 +
->  drivers/thermal/samsung/exynos_tmu_data.c |  130 +++++++++++++++++++++++++++++
->  drivers/thermal/samsung/exynos_tmu_data.h |    7 ++
->  4 files changed, 150 insertions(+), 2 deletions(-)
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Thanks
+Kishon
