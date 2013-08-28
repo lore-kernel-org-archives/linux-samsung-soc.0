@@ -1,85 +1,68 @@
 From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH] ARM: DT: Exynos: fix number of interrupt-cells in mct node
-Date: Wed, 28 Aug 2013 16:18:58 +0530
-Message-ID: <CANuQgHF=P7gV5aU81T5Y9OyxBy9TFkeJXBJHp6iXVs6epknRYA@mail.gmail.com>
-References: <1371220886-11616-1-git-send-email-chander.kashyap@linaro.org>
-	<52112004.90202@samsung.com>
-	<CANuQgHFP2n33neHbW90JZbPmcPkZ-X=NDwXDqQw1sfQUUT_zNQ@mail.gmail.com>
-	<1525883.6gVrCoPa3t@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH] ARM: DT: Exynos5250: fix number of interrupt-cells in mct node
+Date: Wed, 28 Aug 2013 16:30:41 +0530
+Message-ID: <1377687641-15376-1-git-send-email-chander.kashyap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:40406 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752822Ab3H1Ks7 (ORCPT
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:61978 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752184Ab3H1LA4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 06:48:59 -0400
-Received: by mail-ob0-f174.google.com with SMTP id wd6so6510933obb.33
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 03:48:59 -0700 (PDT)
-In-Reply-To: <1525883.6gVrCoPa3t@amdc1227>
+	Wed, 28 Aug 2013 07:00:56 -0400
+Received: by mail-pb0-f41.google.com with SMTP id rp2so6141208pbb.28
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 04:00:56 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, thomas.ab@samsung.com, t.figa@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-On 28 August 2013 16:01, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Chander,
->
-> On Wednesday 28 of August 2013 15:20:40 Chander Kashyap wrote:
->> On 19 August 2013 00:57, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> > On 08/12/13 15:23, Chander Kashyap wrote:
->> >> ping
->> >>
->> >> On 23 July 2013 15:17, Chander Kashyap<chander.kashyap@linaro.org>
-> wrote:
->> >>> ping.
->> >>>
->> >>> On 14 June 2013 20:11, Chander Kashyap<chander.kashyap@linaro.org>
->> >>>
->> >>> wrote:
->> >>>> Two cells were used to specify interrupts in mct node, while second
->> >>>> cell
->> >>>> always remains unused. Hence use only one cell.
->> >>>> Suggested by Tomasz Figa.
->> >>>>
->> >>>> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
->> >>>> ---
->> >>>>
->> >>>>   arch/arm/boot/dts/exynos4210.dtsi |   19 +++++++++----------
->> >>>>   arch/arm/boot/dts/exynos4212.dtsi |   19 +++++++++----------
->> >>>>   arch/arm/boot/dts/exynos4412.dtsi |   23 +++++++++++------------
->> >>>>   arch/arm/boot/dts/exynos5250.dtsi |   19 +++++++++----------
->> >>>>   4 files changed, 38 insertions(+), 42 deletions(-)
->> >>>>
-> [snip]
->> >
->> > Should be updated with regarding Doc.
->>
->> Will update the document.
->
-> Apparently I missed your patch and did the same change for Exynos 4 SoCs in
-> my patch series[1] cleaning up Exynos 4 device tree files a bit.
->
-> Since in my series it is a part of a more complex change, i.e. moving mct
-> node to exynos4x12.dtsi and update of MCT bindings documentation, would you
-> mind if we could keep with my patch doing this change for Exynos 4 and
-> yours taking care for Exynos 5?
->
-> The documentation is already being updated in my series, so you could just
-> drop the changes done to exynos4*.dtsi files in next version.
+Two cells were used to specify interrupts in mct node, while second cell
+always remains unused. Hence use only one cell.
+Suggested by Tomasz Figa.
 
-Ok, That make sense.
-I will post patche with changes for exynos5, only
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+---
+changes in v2:
+	- Drop Changes for Exynos4 as done in separate patch by Tomasz
 
->
-> [1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/22207
->
-> Best regards,
-> Tomasz
->
+ arch/arm/boot/dts/exynos5250.dtsi |   19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
 
-
-
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index ef57277..f2f178a 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -102,23 +102,22 @@
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x101C0000 0x800>;
+ 		interrupt-controller;
+-		#interrups-cells = <2>;
++		#interrups-cells = <1>;
+ 		interrupt-parent = <&mct_map>;
+-		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+-			     <4 0>, <5 0>;
++		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+ 		clocks = <&clock 1>, <&clock 335>;
+ 		clock-names = "fin_pll", "mct";
+ 
+ 		mct_map: mct-map {
+-			#interrupt-cells = <2>;
++			#interrupt-cells = <1>;
+ 			#address-cells = <0>;
+ 			#size-cells = <0>;
+-			interrupt-map = <0x0 0 &combiner 23 3>,
+-					<0x1 0 &combiner 23 4>,
+-					<0x2 0 &combiner 25 2>,
+-					<0x3 0 &combiner 25 3>,
+-					<0x4 0 &gic 0 120 0>,
+-					<0x5 0 &gic 0 121 0>;
++			interrupt-map = <0 &combiner 23 3>,
++					<1 &combiner 23 4>,
++					<2 &combiner 25 2>,
++					<3 &combiner 25 3>,
++					<4 &gic 0 120 0>,
++					<5 &gic 0 121 0>;
+ 		};
+ 	};
+ 
 -- 
-with warm regards,
-Chander Kashyap
+1.7.9.5
