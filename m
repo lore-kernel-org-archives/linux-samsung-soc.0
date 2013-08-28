@@ -1,139 +1,79 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH 3/5] drivers: thermal: make usage of CONFIG_THERMAL_HWMON
- optional
-Date: Wed, 28 Aug 2013 09:15:50 -0400
-Message-ID: <521DF806.4030900@ti.com>
-References: <1377295396-17289-1-git-send-email-eduardo.valentin@ti.com>
- <4832825.8PCMQe7StP@vostro.rjw.lan> <521CEF61.6040504@ti.com>
- <8131326.8QGX41MW6c@vostro.rjw.lan> <1377648836.2335.252.camel@rzhang-lenovo>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3684300722018677354=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1377648836.2335.252.camel@rzhang-lenovo>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Zhang Rui <rui.zhang@intel.com>
-Cc: Lan Tianyu <tianyu.lan@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, Anton Vorontsov <anton@enomsg.org>, Peter Feuerer <peter@piie.net>, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, platform-driver-x86@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-acpi@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Matthew Garrett <matthew.garrett@nebula.com>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org, Len Brown <lenb@kernel.org>
+From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+Subject: [PATCH v2 1/5] media: s5p-tv: Restore vpll clock rate
+Date: Wed, 28 Aug 2013 15:34:28 +0200
+Message-ID: <1377696872-32069-2-git-send-email-m.krawczuk@partner.samsung.com>
+References: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kyungmin.park@samsung.com
+Cc: t.stanislaws@samsung.com, m.chehab@samsung.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, s.nawrocki@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============3684300722018677354==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="mWhQBTIXSPWUdFBXk4Q2HNmMGfgbf8xVc"
+Restore vpll clock rate if start stream fail or stream is off.
 
---mWhQBTIXSPWUdFBXk4Q2HNmMGfgbf8xVc
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+---
+ drivers/media/platform/s5p-tv/sdo_drv.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
 
-On 27-08-2013 20:13, Zhang Rui wrote:
-> On =E4=BA=8C, 2013-08-27 at 23:17 +0200, Rafael J. Wysocki wrote:
->> On Tuesday, August 27, 2013 02:26:41 PM Eduardo Valentin wrote:
->>> On 23-08-2013 19:08, Rafael J. Wysocki wrote:
->>>> On Friday, August 23, 2013 06:03:14 PM Eduardo Valentin wrote:
->>>>> When registering a new thermal_device, the thermal framework
->>>>> will always add a hwmon sysfs interface.
->>>>>
->>>>> This patch adds a flag to make this behavior optional. Now
->>>>> when registering a new thermal device, the caller needs
->>>>> to say if the hwmon interface is required.
->>>>>
->>>>> In order to keep same behavior as of today, all current
->>>>> calls will by default create the hwmon interface.
->>>>
->>>> Well, instead of modifying all of the callers this way, why don't
->>>> you add new versions taking the additional argument as, for example,=
-
->>>>
->>>> thermal_zone_device_register_full()
->>>>
->>>> and redefine the old ones as static inline wrappers, for example
->>>>
->>>> static inline struct thermal_zone_device *thermal_zone_device_regist=
-er(args)
->>>> {
->>>> 	return thermal_zone_device_register_full(args, true);
->>>> }
->>>>
->>>> ?
->>>
->>> Yeah, that is another way to go and I thought of doing it like that. =
-I
->>> just could not come out with a good API naming:
->>>
->>> thermal_zone_device_register_full(all args)
->>>
->>> thermal_zone_device_register(args) /* on hwmon =3D=3D true */
->>> thermal_zone_device_register_no_hwmon(args) /* on hwmon =3D=3D false =
-*/
->>>
->>> Would this sound reasonable naming?
->>
->> Yeah, sounds good to me.
->>
-> Well, actually, Tianyu is working on a patch set to move all the
-> thermal_zone_device_register() parameters to struct thermal_zone_params=
-=2E
->=20
-> But with that patch set done, what you need to do next is just to
-> introduce a new field in struct thermal_zone_params and make sure 0
-> means registering hwmon sysfs I/F.
-
-Rui,
-
-Do you have a pointer to his patch?
-
->=20
-> thanks,
-> rui
->=20
->> Thanks,
->> Rafael
->>
->=20
->=20
->=20
->=20
-
-
---=20
-You have got to be excited about what you are doing. (L. Lamport)
-
-Eduardo Valentin
-
-
---mWhQBTIXSPWUdFBXk4Q2HNmMGfgbf8xVc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlId+AoACgkQCXcVR3XQvP2kqQD+Pw7guXqGlaKBfZxUlPAxmFpO
-0FpvSYqnSqGxrvIY10EA/jw72f7Ssk7xDeg14e8VfJi3M0jNbGQSm9w8sIVcH2QW
-=lOEf
------END PGP SIGNATURE-----
-
---mWhQBTIXSPWUdFBXk4Q2HNmMGfgbf8xVc--
-
-
---===============3684300722018677354==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============3684300722018677354==--
+diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c b/drivers/media/platform/s5p-tv/sdo_drv.c
+index 0afa90f..b919008 100644
+--- a/drivers/media/platform/s5p-tv/sdo_drv.c
++++ b/drivers/media/platform/s5p-tv/sdo_drv.c
+@@ -55,6 +55,8 @@ struct sdo_device {
+ 	struct clk *dacphy;
+ 	/** clock for control of VPLL */
+ 	struct clk *fout_vpll;
++	/** vpll rate before sdo stream was on */
++	int vpll_rate;
+ 	/** regulator for SDO IP power */
+ 	struct regulator *vdac;
+ 	/** regulator for SDO plug detection */
+@@ -193,17 +195,34 @@ static int sdo_s_power(struct v4l2_subdev *sd, int on)
+ 
+ static int sdo_streamon(struct sdo_device *sdev)
+ {
++	int ret;
++
+ 	/* set proper clock for Timing Generator */
+-	clk_set_rate(sdev->fout_vpll, 54000000);
++	sdev->vpll_rate = clk_get_rate(sdev->fout_vpll);
++	ret = clk_set_rate(sdev->fout_vpll, 54000000);
++	if (ret < 0) {
++		dev_err(sdev->dev,
++			"%s: Failed to set vpll rate!\n", __func__);
++		return ret;
++	}
+ 	dev_info(sdev->dev, "fout_vpll.rate = %lu\n",
+ 	clk_get_rate(sdev->fout_vpll));
+ 	/* enable clock in SDO */
+ 	sdo_write_mask(sdev, SDO_CLKCON, ~0, SDO_TVOUT_CLOCK_ON);
+-	clk_enable(sdev->dacphy);
++	ret = clk_prepare_enable(sdev->dacphy);
++	if (ret < 0) {
++		dev_err(sdev->dev,
++			"%s: Failed to prepare and enable clock !\n", __func__);
++		goto fail;
++	}
+ 	/* enable DAC */
+ 	sdo_write_mask(sdev, SDO_DAC, ~0, SDO_POWER_ON_DAC);
+ 	sdo_reg_debug(sdev);
+ 	return 0;
++fail:
++	sdo_write_mask(sdev, SDO_CLKCON, 0, SDO_TVOUT_CLOCK_ON);
++	clk_set_rate(sdev->fout_vpll, sdev->vpll_rate);
++	return ret;
+ }
+ 
+ static int sdo_streamoff(struct sdo_device *sdev)
+@@ -220,6 +239,7 @@ static int sdo_streamoff(struct sdo_device *sdev)
+ 	}
+ 	if (tries == 0)
+ 		dev_err(sdev->dev, "failed to stop streaming\n");
++	clk_set_rate(sdev->fout_vpll, sdev->vpll_rate);
+ 	return tries ? 0 : -EIO;
+ }
+ 
+-- 
+1.8.1.2
