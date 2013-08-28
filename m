@@ -1,7 +1,7 @@
 From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH v2 1/5] media: s5p-tv: Restore vpll clock rate
-Date: Wed, 28 Aug 2013 15:34:28 +0200
-Message-ID: <1377696872-32069-2-git-send-email-m.krawczuk@partner.samsung.com>
+Subject: [PATCH v2 3/5] media: s5p-tv: Fix mixer driver to work with CCF
+Date: Wed, 28 Aug 2013 15:34:30 +0200
+Message-ID: <1377696872-32069-4-git-send-email-m.krawczuk@partner.samsung.com>
 References: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1377696872-32069-1-git-send-email-m.krawczuk@partner.samsung.com>
@@ -10,70 +10,78 @@ To: kyungmin.park@samsung.com
 Cc: t.stanislaws@samsung.com, m.chehab@samsung.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, rob@landley.net, mturquette@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, s.nawrocki@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux@arm.linux.org.uk, ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Restore vpll clock rate if start stream fail or stream is off.
+Replace clk_enable by clock_enable_prepare and clk_disable with clk_disable_unprepare.
+Clock prepare is required by Clock Common Framework, and old clock driver didn`t support it.
+Without it Common Clock Framework prints a warning.
 
 Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 ---
- drivers/media/platform/s5p-tv/sdo_drv.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+ drivers/media/platform/s5p-tv/mixer_drv.c | 35 ++++++++++++++++++++++++-------
+ 1 file changed, 28 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-tv/sdo_drv.c b/drivers/media/platform/s5p-tv/sdo_drv.c
-index 0afa90f..b919008 100644
---- a/drivers/media/platform/s5p-tv/sdo_drv.c
-+++ b/drivers/media/platform/s5p-tv/sdo_drv.c
-@@ -55,6 +55,8 @@ struct sdo_device {
- 	struct clk *dacphy;
- 	/** clock for control of VPLL */
- 	struct clk *fout_vpll;
-+	/** vpll rate before sdo stream was on */
-+	int vpll_rate;
- 	/** regulator for SDO IP power */
- 	struct regulator *vdac;
- 	/** regulator for SDO plug detection */
-@@ -193,17 +195,34 @@ static int sdo_s_power(struct v4l2_subdev *sd, int on)
+diff --git a/drivers/media/platform/s5p-tv/mixer_drv.c b/drivers/media/platform/s5p-tv/mixer_drv.c
+index 51805a5..435c8c0 100644
+--- a/drivers/media/platform/s5p-tv/mixer_drv.c
++++ b/drivers/media/platform/s5p-tv/mixer_drv.c
+@@ -345,21 +345,42 @@ fail:
  
- static int sdo_streamon(struct sdo_device *sdev)
+ static int mxr_runtime_resume(struct device *dev)
  {
 +	int ret;
-+
- 	/* set proper clock for Timing Generator */
--	clk_set_rate(sdev->fout_vpll, 54000000);
-+	sdev->vpll_rate = clk_get_rate(sdev->fout_vpll);
-+	ret = clk_set_rate(sdev->fout_vpll, 54000000);
+ 	struct mxr_device *mdev = to_mdev(dev);
+ 	struct mxr_resources *res = &mdev->res;
+ 
+ 	mxr_dbg(mdev, "resume - start\n");
+ 	mutex_lock(&mdev->mutex);
+ 	/* turn clocks on */
+-	clk_enable(res->mixer);
+-	clk_enable(res->vp);
+-	clk_enable(res->sclk_mixer);
++	ret = clk_prepare_enable(res->mixer);
 +	if (ret < 0) {
-+		dev_err(sdev->dev,
-+			"%s: Failed to set vpll rate!\n", __func__);
-+		return ret;
-+	}
- 	dev_info(sdev->dev, "fout_vpll.rate = %lu\n",
- 	clk_get_rate(sdev->fout_vpll));
- 	/* enable clock in SDO */
- 	sdo_write_mask(sdev, SDO_CLKCON, ~0, SDO_TVOUT_CLOCK_ON);
--	clk_enable(sdev->dacphy);
-+	ret = clk_prepare_enable(sdev->dacphy);
-+	if (ret < 0) {
-+		dev_err(sdev->dev,
-+			"%s: Failed to prepare and enable clock !\n", __func__);
++		mxr_err(mdev, "clk_prepare_enable(mixer) failed\n");
 +		goto fail;
 +	}
- 	/* enable DAC */
- 	sdo_write_mask(sdev, SDO_DAC, ~0, SDO_POWER_ON_DAC);
- 	sdo_reg_debug(sdev);
++	ret = clk_prepare_enable(res->vp);
++	if (ret < 0) {
++		mxr_err(mdev, "clk_prepare_enable(vp) failed\n");
++		goto fail_mixer;
++	}
++	ret = clk_prepare_enable(res->sclk_mixer);
++	if (ret < 0) {
++		mxr_err(mdev, "clk_prepare_enable(sclk_mixer) failed\n");
++		goto fail_vp;
++	}
+ 	/* apply default configuration */
+ 	mxr_reg_reset(mdev);
+-	mxr_dbg(mdev, "resume - finished\n");
+ 
+ 	mutex_unlock(&mdev->mutex);
++	mxr_dbg(mdev, "resume - finished\n");
  	return 0;
++fail_vp:
++	clk_disable_unprepare(res->vp);
++fail_mixer:
++	clk_disable_unprepare(res->mixer);
 +fail:
-+	sdo_write_mask(sdev, SDO_CLKCON, 0, SDO_TVOUT_CLOCK_ON);
-+	clk_set_rate(sdev->fout_vpll, sdev->vpll_rate);
++	mutex_unlock(&mdev->mutex);
++	mxr_info(mdev, "resume failed\n");
 +	return ret;
  }
  
- static int sdo_streamoff(struct sdo_device *sdev)
-@@ -220,6 +239,7 @@ static int sdo_streamoff(struct sdo_device *sdev)
- 	}
- 	if (tries == 0)
- 		dev_err(sdev->dev, "failed to stop streaming\n");
-+	clk_set_rate(sdev->fout_vpll, sdev->vpll_rate);
- 	return tries ? 0 : -EIO;
- }
- 
+ static int mxr_runtime_suspend(struct device *dev)
+@@ -369,9 +390,9 @@ static int mxr_runtime_suspend(struct device *dev)
+ 	mxr_dbg(mdev, "suspend - start\n");
+ 	mutex_lock(&mdev->mutex);
+ 	/* turn clocks off */
+-	clk_disable(res->sclk_mixer);
+-	clk_disable(res->vp);
+-	clk_disable(res->mixer);
++	clk_disable_unprepare(res->sclk_mixer);
++	clk_disable_unprepare(res->vp);
++	clk_disable_unprepare(res->mixer);
+ 	mutex_unlock(&mdev->mutex);
+ 	mxr_dbg(mdev, "suspend - finished\n");
+ 	return 0;
 -- 
 1.8.1.2
