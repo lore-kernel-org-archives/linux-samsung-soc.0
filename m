@@ -1,90 +1,177 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 4/5] clk/exynos5420: add hdmi mux to change parents in
- hdmi driver
-Date: Wed, 28 Aug 2013 13:55:36 +0200
-Message-ID: <3222483.BXBstlS3j6@amdc1227>
-References: <1377508383-15185-1-git-send-email-rahul.sharma@samsung.com>
- <1919681.jqCQjHmyQW@flatron>
- <CAPdUM4MUvzyAjyFwuYyBY6C-nn_VHttwf=ebAZLgc4VTNgS05A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH V5] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Wed, 28 Aug 2013 17:33:06 +0530
+Message-ID: <1377691386-7085-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:8345 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752724Ab3H1Lzm (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:60635 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752979Ab3H1MDW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 07:55:42 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MS8000BPP4I7YC0@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Aug 2013 12:55:40 +0100 (BST)
-In-reply-to: <CAPdUM4MUvzyAjyFwuYyBY6C-nn_VHttwf=ebAZLgc4VTNgS05A@mail.gmail.com>
+	Wed, 28 Aug 2013 08:03:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, sunil joshi <joshi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org
+Cc: rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, t.figa@samsung.com, dianders@chromium.org, cjb@laptop.org, thomas.abraham@linaro.org, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On Tuesday 27 of August 2013 10:14:01 Rahul Sharma wrote:
-> On 27 August 2013 05:16, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> > Hi Rahul,
-> > 
-> > On Monday 26 of August 2013 14:43:02 Rahul Sharma wrote:
-> >> hdmi driver needs to change the parent of hdmi clock
-> >> to pixel clock or hdmiphy clock, based on the stability
-> >> of hdmiphy. This patch is exposing the mux for changing
-> >> the parent.
-> >> 
-> >> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-> >> ---
-> >> 
-> >>  Documentation/devicetree/bindings/clock/exynos5420-clock.txt |    5
-> >> 
-> >> +++++ drivers/clk/samsung/clk-exynos5420.c                         |
-> >> 5 ++++- 2 files changed, 9 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
-> >> b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt index
-> >> 5758a69..6f16aa8 100644
-> >> --- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
-> >> +++ b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
-> >> @@ -182,6 +182,11 @@ clock which they consume.
-> >> 
-> >>    g3d                        501
-> >>    smmu_mixer         502
-> >> 
-> >> +  Mux                        ID
-> >> +  ----------------------------
-> >> +
-> >> +  mout_hdmi          1024
-> > 
-> > Is there a need for such big hole between smm_mixer and this clock? I
-> > believe that based on the documentation, the total amount of clocks
-> > that
-> > can be defined may be approximated and some extra margin added, so you
-> > don't waste so much of numbering space and memory used for lookup
-> > array.
-> 
-> Total number of Gates are coming upto the enum value 540. I can leave gap
-> of 64 in between for first mux. Similarly, total muxes in system are
-> 118. Optimum gab would be between 128~150. What you say about these
-> values?
+This patch adds the device tree node entries for exynos5420 SOC.
+Exynos5420 has a different version of DWMMC controller,so a new
+compatible string is used to distinguish it from the prior SOC's.
 
-OK, so let's say that muxes should start at 640 and dividers at 768.
+This patch depends on
+	mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
 
-Anyway, ideally, we should break from this idea of grouping and convert 
-this way of definition to normal preprocessor macros that could be used 
-inside dts files as well. Then we could detach ourselves from referring to 
-clocks by numbers, because those macros would do that for us, without the 
-need to group clocks together for better readability. See clock driver for 
-S3C64xx [1].
+changes since v4:
+	1.Droppped the bypass-smu binding property.
+	2.Used compatible string "samsung,exynos5250-dw-mshc"
+	  for controller instance which does not have SMU.
 
-This is an idea for further work, though. For now the values I proposed 
-should be more than enough.
+changes since V3:
+	1.change fifo-depth size from 0x80 to 0x40
+	2.Move the below properties
+		a.card-detect-delay
+		b.samsung,dw-mshc-ciu-div
+		c.samsung,dw-mshc-sdr-timing
+		d.samsung,dw-mshc-ddr-timing
+	from SOC dts to board dts file as suggested by Doug Anderson
 
-[1] http://thread.gmane.org/gmane.linux.usb.general/90493/focus=21090
+changes since V2:
+	1.dropped num-slots property from node as its not required
+	  if number of card slots available is 1.
 
-Best regards,
-Tomasz
+	2.Move the below properties
+		a.fifo-depth
+		b.card-detect-delay
+		c.samsung,dw-mshc-ciu-div
+		d.samsung,dw-mshc-sdr-timing
+		e.samsung,dw-mshc-ddr-timing
+	from board dts to SOC dts,as these are not board specific properties.
+
+	3.Updated the binding document exynos-dw-mshc.txt.
+
+changes since V1:
+	1.disable node by status = disabled in SOC file
+	2.enable node by status = okay in board specific file
+
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33 +++++++++++++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   39 ++++++++++++++++++++
+ 3 files changed, 74 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index 6d1c098..84cd56f 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -16,6 +16,8 @@ Required Properties:
+ 	  specific extensions.
+ 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+ 	  specific extensions.
++	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
++	  specific extensions.
+ 
+ * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index bafba25..3ce5c97 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -31,6 +31,39 @@
+ 		};
+ 	};
+ 
++	dwmmc0@12200000 {
++		status = "okay";
++		broken-cd;
++		supports-highspeed;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <0 4>;
++		samsung,dw-mshc-ddr-timing = <0 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
++	dwmmc2@12220000 {
++		status = "okay";
++		supports-highspeed;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++		};
++	};
++
+ 	dp-controller@145B0000 {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&dp_hpd>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index d537cd7..ccfa235 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -22,6 +22,9 @@
+ 	compatible = "samsung,exynos5420";
+ 
+ 	aliases {
++		mshc0 = &dwmmc_0;
++		mshc1 = &dwmmc_1;
++		mshc2 = &dwmmc_2;
+ 		pinctrl0 = &pinctrl_0;
+ 		pinctrl1 = &pinctrl_1;
+ 		pinctrl2 = &pinctrl_2;
+@@ -84,6 +87,42 @@
+ 		clock-names = "mfc";
+ 	};
+ 
++	dwmmc_0: dwmmc0@12200000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 75 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12200000 0x2000>;
++		clocks = <&clock 351>, <&clock 132>;
++		clock-names = "biu", "ciu";
++		fifo-depth = <0x40>;
++		status = "disabled";
++	};
++
++	dwmmc_1: dwmmc1@12210000 {
++		compatible = "samsung,exynos5420-dw-mshc";
++		interrupts = <0 76 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12210000 0x2000>;
++		clocks = <&clock 352>, <&clock 133>;
++		clock-names = "biu", "ciu";
++		fifo-depth = <0x40>;
++		status = "disabled";
++	};
++
++	dwmmc_2: dwmmc2@12220000 {
++		compatible = "samsung,exynos5250-dw-mshc";
++		interrupts = <0 77 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		reg = <0x12220000 0x2000>;
++		clocks = <&clock 353>, <&clock 134>;
++		clock-names = "biu", "ciu";
++		fifo-depth = <0x40>;
++		status = "disabled";
++	};
++
+ 	mct@101C0000 {
+ 		compatible = "samsung,exynos4210-mct";
+ 		reg = <0x101C0000 0x800>;
+-- 
+1.7.9.5
