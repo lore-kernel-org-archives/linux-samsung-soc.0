@@ -1,36 +1,58 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/3] thermal: samsung: Add TMU for Exynos5420
-Date: Wed, 28 Aug 2013 11:15:16 +0530
-Message-ID: <1377668719-8602-1-git-send-email-ch.naveen@samsung.com>
-References: <1375336979-14747-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1375336979-14747-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, naveenkrishna.ch@gmail.com, devicetree@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [RFC V2 0/4] dw_mmc platform specific private data init
+Date: Wed, 28 Aug 2013 11:16:19 +0530
+Message-ID: <CAGOxZ510xNnRPobEQuwTEfs-xxJdwtkvDVzjm_tU6oMT3ux2SQ@mail.gmail.com>
+References: <1377256509-18922-1-git-send-email-yuvaraj.cd@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f179.google.com ([209.85.220.179]:52327 "EHLO
+	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752565Ab3H1FrA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Aug 2013 01:47:00 -0400
+In-Reply-To: <1377256509-18922-1-git-send-email-yuvaraj.cd@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: linux-mmc@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Girish K S <ks.giri@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-The below patchset adds the TMU support for Exynos5420
-1. correct the fall interrupt en, status bit fields
-  Fixes an existing bug in the register field access
-2. Add TMU support for Exynos5420 SoCs
-  Adds support for Exynos5420. (These changes were tested on a different
-  kernel version)
-3. Handle the misplaced TRIMINFO register
-  Discussion was going on at https://lkml.org/lkml/2013/8/7/59
-  Handles the misplaced register on Exynos5420 Only
+Hi Yuvaraj
 
-Naveen Krishna Chatradhi (3):
-  thermal: samsung: correct the fall interrupt en, status bit fields
-  thermal: samsung: Add TMU support for Exynos5420 SoCs
-  thermal: exynos: Handle the misplaced TRIMINFO register
+On Fri, Aug 23, 2013 at 4:45 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+> changes from V1:
+>         1.Added a new RFC patch
+>                 mmc: dw_mmc: socfpga: move socfpga private init
+>         2.Avoid code duplication in
+>                 mmc: dw_mmc: exynos: add a quirk for SMU.
+>
+> Yuvaraj Kumar C D (4):
+>   mmc: dw_mmc: exynos: move the exynos private init
+>   mmc: dw_mmc: socfpga: move socfpga private init
+>   mmc: dw_mmc: move the platform specific init call
+>   mmc: dw_mmc: exynos: add a quirk for SMU.
+>
+>  drivers/mmc/host/dw_mmc-exynos.c  |   60 ++++++++++++++++++++++++++++---------
+>  drivers/mmc/host/dw_mmc-pltfm.c   |    7 -----
+>  drivers/mmc/host/dw_mmc-socfpga.c |   29 +++++++++---------
+>  drivers/mmc/host/dw_mmc.c         |   12 ++++++++
+>  include/linux/mmc/dw_mmc.h        |    2 ++
+>  5 files changed, 74 insertions(+), 36 deletions(-)
 
- .../devicetree/bindings/thermal/exynos-thermal.txt |   21 +++++
- drivers/thermal/samsung/exynos_tmu.c               |   38 ++++++--
- drivers/thermal/samsung/exynos_tmu.h               |    3 +
- drivers/thermal/samsung/exynos_tmu_data.c          |   92 ++++++++++++++++++++
- drivers/thermal/samsung/exynos_tmu_data.h          |   10 ++-
- 5 files changed, 158 insertions(+), 6 deletions(-)
+Tested this serise on exynos5420.
+Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 
 -- 
-1.7.9.5
+Regards,
+Alim
