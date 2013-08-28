@@ -1,89 +1,90 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: DT: Exynos5250: fix number of interrupt-cells in mct
- node
-Date: Wed, 28 Aug 2013 13:18:33 +0200
-Message-ID: <6294395.8UjbZM2KH4@amdc1227>
-References: <1377687641-15376-1-git-send-email-chander.kashyap@linaro.org>
+Subject: Re: [PATCH v3 4/5] clk/exynos5420: add hdmi mux to change parents in
+ hdmi driver
+Date: Wed, 28 Aug 2013 13:55:36 +0200
+Message-ID: <3222483.BXBstlS3j6@amdc1227>
+References: <1377508383-15185-1-git-send-email-rahul.sharma@samsung.com>
+ <1919681.jqCQjHmyQW@flatron>
+ <CAPdUM4MUvzyAjyFwuYyBY6C-nn_VHttwf=ebAZLgc4VTNgS05A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:57583 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751936Ab3H1LSj (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:8345 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752724Ab3H1Lzm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 07:18:39 -0400
+	Wed, 28 Aug 2013 07:55:42 -0400
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MS8008YTNE7IVA0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Aug 2013 12:18:37 +0100 (BST)
-In-reply-to: <1377687641-15376-1-git-send-email-chander.kashyap@linaro.org>
+ 17 2011)) with ESMTP id <0MS8000BPP4I7YC0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Aug 2013 12:55:40 +0100 (BST)
+In-reply-to: <CAPdUM4MUvzyAjyFwuYyBY6C-nn_VHttwf=ebAZLgc4VTNgS05A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, thomas.ab@samsung.com
+To: Rahul Sharma <r.sh.open@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, sunil joshi <joshi@samsung.com>
 
-Hi Chander,
-
-On Wednesday 28 of August 2013 16:30:41 Chander Kashyap wrote:
-> Two cells were used to specify interrupts in mct node, while second cell
-> always remains unused. Hence use only one cell.
-> Suggested by Tomasz Figa.
+On Tuesday 27 of August 2013 10:14:01 Rahul Sharma wrote:
+> On 27 August 2013 05:16, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> > Hi Rahul,
+> > 
+> > On Monday 26 of August 2013 14:43:02 Rahul Sharma wrote:
+> >> hdmi driver needs to change the parent of hdmi clock
+> >> to pixel clock or hdmiphy clock, based on the stability
+> >> of hdmiphy. This patch is exposing the mux for changing
+> >> the parent.
+> >> 
+> >> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> >> ---
+> >> 
+> >>  Documentation/devicetree/bindings/clock/exynos5420-clock.txt |    5
+> >> 
+> >> +++++ drivers/clk/samsung/clk-exynos5420.c                         |
+> >> 5 ++++- 2 files changed, 9 insertions(+), 1 deletion(-)
+> >> 
+> >> diff --git
+> >> a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+> >> b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt index
+> >> 5758a69..6f16aa8 100644
+> >> --- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+> >> +++ b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+> >> @@ -182,6 +182,11 @@ clock which they consume.
+> >> 
+> >>    g3d                        501
+> >>    smmu_mixer         502
+> >> 
+> >> +  Mux                        ID
+> >> +  ----------------------------
+> >> +
+> >> +  mout_hdmi          1024
+> > 
+> > Is there a need for such big hole between smm_mixer and this clock? I
+> > believe that based on the documentation, the total amount of clocks
+> > that
+> > can be defined may be approximated and some extra margin added, so you
+> > don't waste so much of numbering space and memory used for lookup
+> > array.
 > 
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> ---
-> changes in v2:
-> 	- Drop Changes for Exynos4 as done in separate patch by Tomasz
-> 
->  arch/arm/boot/dts/exynos5250.dtsi |   19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi index ef57277..f2f178a 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -102,23 +102,22 @@
->  		compatible = "samsung,exynos4210-mct";
->  		reg = <0x101C0000 0x800>;
->  		interrupt-controller;
-> -		#interrups-cells = <2>;
-> +		#interrups-cells = <1>;
+> Total number of Gates are coming upto the enum value 540. I can leave gap
+> of 64 in between for first mux. Similarly, total muxes in system are
+> 118. Optimum gab would be between 128~150. What you say about these
+> values?
 
-Those two properties above are unused and in fact incorrect, because MCT is 
-not an interrupt controller, so they could be removed in a follow-up patch.
+OK, so let's say that muxes should start at 640 and dividers at 768.
 
-You can also check out the clean-up series I mentioned for other things 
-that could be cleaned up in Exynos 5 dtsi files.
+Anyway, ideally, we should break from this idea of grouping and convert 
+this way of definition to normal preprocessor macros that could be used 
+inside dts files as well. Then we could detach ourselves from referring to 
+clocks by numbers, because those macros would do that for us, without the 
+need to group clocks together for better readability. See clock driver for 
+S3C64xx [1].
 
->  		interrupt-parent = <&mct_map>;
-> -		interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
-> -			     <4 0>, <5 0>;
-> +		interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
->  		clocks = <&clock 1>, <&clock 335>;
->  		clock-names = "fin_pll", "mct";
-> 
->  		mct_map: mct-map {
-> -			#interrupt-cells = <2>;
-> +			#interrupt-cells = <1>;
->  			#address-cells = <0>;
->  			#size-cells = <0>;
-> -			interrupt-map = <0x0 0 &combiner 23 3>,
-> -					<0x1 0 &combiner 23 4>,
-> -					<0x2 0 &combiner 25 2>,
-> -					<0x3 0 &combiner 25 3>,
-> -					<0x4 0 &gic 0 120 0>,
-> -					<0x5 0 &gic 0 121 0>;
-> +			interrupt-map = <0 &combiner 23 3>,
-> +					<1 &combiner 23 4>,
-> +					<2 &combiner 25 2>,
-> +					<3 &combiner 25 3>,
-> +					<4 &gic 0 120 0>,
-> +					<5 &gic 0 121 0>;
->  		};
->  	};
+This is an idea for further work, though. For now the values I proposed 
+should be more than enough.
 
-Otherwise, looks fine. Thanks.
+[1] http://thread.gmane.org/gmane.linux.usb.general/90493/focus=21090
 
 Best regards,
 Tomasz
