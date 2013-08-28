@@ -1,105 +1,115 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V5] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Wed, 28 Aug 2013 14:22:01 +0200
-Message-ID: <1499444.qkqi2LXfcl@amdc1227>
-References: <1377691386-7085-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH] ARM: DT: Exynos5250: fix number of interrupt-cells in mct node
+Date: Wed, 28 Aug 2013 18:10:38 +0530
+Message-ID: <CANuQgHGq_hKouJ-xSMaqH6dTsOCZxzf1ki9fiE5sSXe5jAbE2g@mail.gmail.com>
+References: <1377687641-15376-1-git-send-email-chander.kashyap@linaro.org>
+	<6294395.8UjbZM2KH4@amdc1227>
+	<CANuQgHG03q5mZALdyOaQv3ndD45n4UjmsuoHE7F96WM0ueKw0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:61220 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753130Ab3H1MWI (ORCPT
+Received: from mail-oa0-f42.google.com ([209.85.219.42]:53851 "EHLO
+	mail-oa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753956Ab3H1Mkj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 08:22:08 -0400
-In-reply-to: <1377691386-7085-1-git-send-email-yuvaraj.cd@samsung.com>
+	Wed, 28 Aug 2013 08:40:39 -0400
+Received: by mail-oa0-f42.google.com with SMTP id j10so258415oah.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 05:40:38 -0700 (PDT)
+In-Reply-To: <CANuQgHG03q5mZALdyOaQv3ndD45n4UjmsuoHE7F96WM0ueKw0g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, dianders@chromium.org, cjb@laptop.org, thomas.abraham@linaro.org, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>swarren@wwwdotorg.orgmark.rutland@arm.compawel.moll@arm.comian.campbell@citrix.com, galak@codeaurora.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>
 
-Hi Yuvaraj,
+Ki Kukjin,
 
-On Wednesday 28 of August 2013 17:33:06 Yuvaraj Kumar C D wrote:
-> This patch adds the device tree node entries for exynos5420 SOC.
-> Exynos5420 has a different version of DWMMC controller,so a new
-> compatible string is used to distinguish it from the prior SOC's.
-> 
-> This patch depends on
-> 	mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
-> 
-> changes since v4:
-> 	1.Droppped the bypass-smu binding property.
-> 	2.Used compatible string "samsung,exynos5250-dw-mshc"
-> 	  for controller instance which does not have SMU.
-> 
-> changes since V3:
-> 	1.change fifo-depth size from 0x80 to 0x40
-> 	2.Move the below properties
-> 		a.card-detect-delay
-> 		b.samsung,dw-mshc-ciu-div
-> 		c.samsung,dw-mshc-sdr-timing
-> 		d.samsung,dw-mshc-ddr-timing
-> 	from SOC dts to board dts file as suggested by Doug Anderson
-> 
-> changes since V2:
-> 	1.dropped num-slots property from node as its not required
-> 	  if number of card slots available is 1.
-> 
-> 	2.Move the below properties
-> 		a.fifo-depth
-> 		b.card-detect-delay
-> 		c.samsung,dw-mshc-ciu-div
-> 		d.samsung,dw-mshc-sdr-timing
-> 		e.samsung,dw-mshc-ddr-timing
-> 	from board dts to SOC dts,as these are not board specific properties.
-> 
-> 	3.Updated the binding document exynos-dw-mshc.txt.
-> 
-> changes since V1:
-> 	1.disable node by status = disabled in SOC file
-> 	2.enable node by status = okay in board specific file
-> 
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> ---
->  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33
-> +++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi                  |  
-> 39 ++++++++++++++++++++ 3 files changed, 74 insertions(+)
+On 28 August 2013 17:36, Chander Kashyap <chander.kashyap@linaro.org> wrote:
+> On 28 August 2013 16:48, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Chander,
+>>
+>> On Wednesday 28 of August 2013 16:30:41 Chander Kashyap wrote:
+>>> Two cells were used to specify interrupts in mct node, while second cell
+>>> always remains unused. Hence use only one cell.
+>>> Suggested by Tomasz Figa.
+>>>
+>>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+>>> ---
+>>> changes in v2:
+>>>       - Drop Changes for Exynos4 as done in separate patch by Tomasz
+>>>
+>>>  arch/arm/boot/dts/exynos5250.dtsi |   19 +++++++++----------
+>>>  1 file changed, 9 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>>> b/arch/arm/boot/dts/exynos5250.dtsi index ef57277..f2f178a 100644
+>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>>> @@ -102,23 +102,22 @@
+>>>               compatible = "samsung,exynos4210-mct";
+>>>               reg = <0x101C0000 0x800>;
+>>>               interrupt-controller;
+>>> -             #interrups-cells = <2>;
+>>> +             #interrups-cells = <1>;
+>>
+>> Those two properties above are unused and in fact incorrect, because MCT is
+>> not an interrupt controller, so they could be removed in a follow-up patch.
+>
+> Thanks for the correction. I will remove them.
+>
+>>
+>> You can also check out the clean-up series I mentioned for other things
+>> that could be cleaned up in Exynos 5 dtsi files.
+>
+> ok
+>
+>>
+>>>               interrupt-parent = <&mct_map>;
+>>> -             interrupts = <0 0>, <1 0>, <2 0>, <3 0>,
+>>> -                          <4 0>, <5 0>;
+>>> +             interrupts = <0>, <1>, <2>, <3>, <4>, <5>;
+>>>               clocks = <&clock 1>, <&clock 335>;
+>>>               clock-names = "fin_pll", "mct";
+>>>
+>>>               mct_map: mct-map {
+>>> -                     #interrupt-cells = <2>;
+>>> +                     #interrupt-cells = <1>;
+>>>                       #address-cells = <0>;
+>>>                       #size-cells = <0>;
+>>> -                     interrupt-map = <0x0 0 &combiner 23 3>,
+>>> -                                     <0x1 0 &combiner 23 4>,
+>>> -                                     <0x2 0 &combiner 25 2>,
+>>> -                                     <0x3 0 &combiner 25 3>,
+>>> -                                     <0x4 0 &gic 0 120 0>,
+>>> -                                     <0x5 0 &gic 0 121 0>;
+>>> +                     interrupt-map = <0 &combiner 23 3>,
+>>> +                                     <1 &combiner 23 4>,
+>>> +                                     <2 &combiner 25 2>,
+>>> +                                     <3 &combiner 25 3>,
+>>> +                                     <4 &gic 0 120 0>,
+>>> +                                     <5 &gic 0 121 0>;
+>>>               };
+>>>       };
+>>
+>> Otherwise, looks fine. Thanks.
+>
+> Thanks
+>
 
-This patch looks good to me now, except some minor comments below.
+Kindly Ignore this patch, i will send it with another patch series.
 
-> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt index
-> 6d1c098..84cd56f 100644
-> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> @@ -16,6 +16,8 @@ Required Properties:
->  	  specific extensions.
->  	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
-> specific extensions.
-> +	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
-> +	  specific extensions.
-> 
->  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card
-> interface unit (ciu) clock. This property is applicable only for Exynos5
-> SoC's and diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..3ce5c97
-> 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -31,6 +31,39 @@
->  		};
->  	};
-> 
-> +	dwmmc0@12200000 {
+>>
+>> Best regards,
+>> Tomasz
+>>
+>
+>
+>
+> --
+> with warm regards,
+> Chander Kashyap
 
-Node name should not contain instance index. Instead, according to ePAPR 
-recommendation, I would opt for a generic name such as mmc, mshc or sdio-
-host. mshc is already used on Exynos 4 so it might be a good idea to use it 
-for consistency.
 
-[Adding DT maintainers on CC]
 
-Best regards,
-Tomasz
+-- 
+with warm regards,
+Chander Kashyap
