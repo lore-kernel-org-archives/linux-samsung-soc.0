@@ -1,76 +1,80 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [RFC V3 0/4] dw_mmc platform specific private data and SMU init
-Date: Thu, 29 Aug 2013 16:12:34 +0900
-Message-ID: <000401cea487$22820690$678613b0$%jun@samsung.com>
-References: <1377691731-7226-1-git-send-email-yuvaraj.cd@samsung.com>
- <521EBA6D.2070900@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v4 02/10] ARM: dts: list the CPU nodes for Exynos5250
+Date: Thu, 29 Aug 2013 13:45:56 +0530
+Message-ID: <CAOh2x=nsQ5paiMHSH8z9drsqr7_+TvMtNefczf8QNQNbYo0y=Q@mail.gmail.com>
+References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
+	<1371536962-13322-3-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <521EBA6D.2070900@samsung.com>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Yuvaraj Kumar C D' <yuvaraj.cd@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, ks.giri@samsung.com, t.figa@samsung.com, alim.akhtar@samsung.com, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <1371536962-13322-3-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-serial@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, mark.rutland@arm.com, thomas.ab@samsung.com, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday, August 29, 2013, Jaehoon Chung wrote:
-> Hi Yuvaraj,
-> 
-> I have tested on Exynos4 series.
-> I didn't test for SMU feature. If Seungwon could test or review and confirm this patch,
-> then looks good to me.
-> 
-> With exynos4 series,
-> Tested-by: Jaehoon Chung <jh80.chung@samsung.com>
+On Tue, Jun 18, 2013 at 11:59 AM, Chander Kashyap
+<chander.kashyap@linaro.org> wrote:
+> Instead of having to specify the number for CPUs in Exynos5250 in platsmp.c
+> file, let the number of CPUs be determined by having this information listed
+> in Exynos5250 device tree file.
+>
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++++++++++++
+>  arch/arm/mach-exynos/platsmp.c    |   10 +++++++---
+>  2 files changed, 23 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 63ca03d..1aeef98 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -50,6 +50,22 @@
+>                 pinctrl3 = &pinctrl_3;
+>         };
+>
+> +       cpus {
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <0>;
+> +               };
+> +               cpu@1 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a15";
+> +                       reg = <1>;
+> +               };
+> +       };
+> +
+>         pd_gsc: gsc-power-domain@0x10044000 {
+>                 compatible = "samsung,exynos4210-pd";
+>                 reg = <0x10044000 0x20>;
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 1a4e4e5..85ea4ca 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -180,10 +180,14 @@ static void __init exynos_smp_init_cpus(void)
+>         void __iomem *scu_base = scu_base_addr();
+>         unsigned int i, ncores;
+>
+> -       if (soc_is_exynos5250())
+> -               ncores = 2;
+> -       else
+> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
+>                 ncores = scu_base ? scu_get_core_count(scu_base) : 1;
+> +       else
+> +               /*
+> +                * CPU Nodes are passed thru DT and set_cpu_possible
+> +                * is set by "arm_dt_init_cpu_maps".
+> +                */
+> +               return;
+>
+>         /* sanity check */
+>         if (ncores > nr_cpu_ids) {
 
-Just now, this series looks good to me.
-But direct access for SMU concerning (4/4, exynos: configure SMU in exynos5420') 
-will be removed in driver before long.
-I will sort your patches with the pending others.
-
-Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
-
-Thanks,
-Seungwon Jeon
-
-> 
-> Best Regards.
-> Jaehoon Chung
-> 
-> On 08/28/2013 09:08 PM, Yuvaraj Kumar C D wrote:
-> > changes from V2:
-> > 	1.dropped the bypass-smu quirk
-> > 		mmc: dw_mmc: exynos: configure SMU in exynos5420.
-> > 	2.Changed the subject line for this patch
-> > 	  add a quirk for SMU -> configure SMU in exynos5420
-> >
-> > 	mmc: dw_mmc: exynos: configure SMU in exynos5420
-> > 	was earlier
-> > 	mmc: dw_mmc: exynos: add a quirk for SMU.
-> >
-> > changes from V1:
-> > 	1.Added a new RFC patch
-> > 		mmc: dw_mmc: socfpga: move socfpga private init
-> > 	2.Avoid code duplication in
-> > 		mmc: dw_mmc: exynos: add a quirk for SMU.
-> >
-> > Yuvaraj Kumar C D (4):
-> >   mmc: dw_mmc: exynos: move the exynos private init
-> >   mmc: dw_mmc: socfpga: move socfpga private init
-> >   mmc: dw_mmc: move the platform specific init call
-> >   mmc: dw_mmc: exynos: configure SMU in exynos5420.
-> >
-> >  drivers/mmc/host/dw_mmc-exynos.c  |   56 +++++++++++++++++++++++++++----------
-> >  drivers/mmc/host/dw_mmc-pltfm.c   |    7 -----
-> >  drivers/mmc/host/dw_mmc-socfpga.c |   29 ++++++++++---------
-> >  drivers/mmc/host/dw_mmc.c         |    9 ++++++
-> >  4 files changed, 65 insertions(+), 36 deletions(-)
-> >
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+After this patch only one cpu is coming up for me on my Arndale board..
+Revert of this one fixes the issue though (Tested over v3.11-rc7)
