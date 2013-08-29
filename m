@@ -1,97 +1,38 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v3 4/5] clk/exynos5420: add hdmi mux to change parents in
- hdmi driver
-Date: Thu, 29 Aug 2013 08:52:42 +0530
-Message-ID: <CAPdUM4MLz8FapYSr35O_1rZmAw-XvgM6w+7OUKdufJk8hQQPVQ@mail.gmail.com>
-References: <1377508383-15185-1-git-send-email-rahul.sharma@samsung.com>
-	<1919681.jqCQjHmyQW@flatron>
-	<CAPdUM4MUvzyAjyFwuYyBY6C-nn_VHttwf=ebAZLgc4VTNgS05A@mail.gmail.com>
-	<3222483.BXBstlS3j6@amdc1227>
+From: Pratyush Anand <pratyush.anand@st.com>
+Subject: Re: [PATCH V2] PCI: exynos: add support for MSI
+Date: Thu, 29 Aug 2013 09:15:08 +0530
+Message-ID: <20130829034508.GA3025@pratyush-vbox>
+References: <003d01ce9fc6$9c0f1c20$d42d5460$%han@samsung.com>
+ <20130823083539.GB3937@pratyush-vbox>
+ <001801cea3c7$06bca9d0$1435fd70$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:44134 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752086Ab3H2DWn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 23:22:43 -0400
-Received: by mail-wg0-f52.google.com with SMTP id l18so5320346wgh.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 20:22:42 -0700 (PDT)
-In-Reply-To: <3222483.BXBstlS3j6@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <001801cea3c7$06bca9d0$1435fd70$%han@samsung.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, sunil joshi <joshi@samsung.com>
 
-Thanks Tomasz,
+On Wed, Aug 28, 2013 at 04:17:24PM +0800, Jingoo Han wrote:
+> On Friday, August 23, 2013 5:36 PM, Pratyush Anand wrote:
+> > On Fri, Aug 23, 2013 at 02:04:20PM +0800, Jingoo Han wrote:
+> 
 
-I will post the reworked patches with above change.
+[...]
 
-regards,
-Rahul Sharma
+> > #define MAX_PCIE_PORT_SUPPORTED 3
+> > static DECLARE_BITMAP(msi_irq_in_use[MAX_PCIE_PORT_SUPPORTED],
+> >                   NUM_MSI_IRQS);
+> > static unsigned int *msi_data[MAX_PCIE_PORT_SUPPORTED];
+> 
+> No, there is no need to do it.
+> Without this, we can use 3 RCs by adding a node of 3rd RC to dt file.
+> 
 
+Yes, you can use RCs by adding nodes to dt file. But you will need one 
+msi_irq_in_use and one msi_data per RC (ie per port in this driver), isn't it? 
 
-On 28 August 2013 17:25, Tomasz Figa <t.figa@samsung.com> wrote:
-> On Tuesday 27 of August 2013 10:14:01 Rahul Sharma wrote:
->> On 27 August 2013 05:16, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> > Hi Rahul,
->> >
->> > On Monday 26 of August 2013 14:43:02 Rahul Sharma wrote:
->> >> hdmi driver needs to change the parent of hdmi clock
->> >> to pixel clock or hdmiphy clock, based on the stability
->> >> of hdmiphy. This patch is exposing the mux for changing
->> >> the parent.
->> >>
->> >> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->> >> ---
->> >>
->> >>  Documentation/devicetree/bindings/clock/exynos5420-clock.txt |    5
->> >>
->> >> +++++ drivers/clk/samsung/clk-exynos5420.c                         |
->> >> 5 ++++- 2 files changed, 9 insertions(+), 1 deletion(-)
->> >>
->> >> diff --git
->> >> a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->> >> b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt index
->> >> 5758a69..6f16aa8 100644
->> >> --- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->> >> +++ b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
->> >> @@ -182,6 +182,11 @@ clock which they consume.
->> >>
->> >>    g3d                        501
->> >>    smmu_mixer         502
->> >>
->> >> +  Mux                        ID
->> >> +  ----------------------------
->> >> +
->> >> +  mout_hdmi          1024
->> >
->> > Is there a need for such big hole between smm_mixer and this clock? I
->> > believe that based on the documentation, the total amount of clocks
->> > that
->> > can be defined may be approximated and some extra margin added, so you
->> > don't waste so much of numbering space and memory used for lookup
->> > array.
->>
->> Total number of Gates are coming upto the enum value 540. I can leave gap
->> of 64 in between for first mux. Similarly, total muxes in system are
->> 118. Optimum gab would be between 128~150. What you say about these
->> values?
->
-> OK, so let's say that muxes should start at 640 and dividers at 768.
->
-> Anyway, ideally, we should break from this idea of grouping and convert
-> this way of definition to normal preprocessor macros that could be used
-> inside dts files as well. Then we could detach ourselves from referring to
-> clocks by numbers, because those macros would do that for us, without the
-> need to group clocks together for better readability. See clock driver for
-> S3C64xx [1].
->
-> This is an idea for further work, though. For now the values I proposed
-> should be more than enough.
->
-> [1] http://thread.gmane.org/gmane.linux.usb.general/90493/focus=21090
->
-> Best regards,
-> Tomasz
->
+Regards
+Pratyush
