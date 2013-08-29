@@ -1,51 +1,72 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2] PCI: exynos: add support for MSI
-Date: Thu, 29 Aug 2013 13:43:00 +0900
-Message-ID: <003001cea472$3d6ffee0$b84ffca0$%han@samsung.com>
-References: <003d01ce9fc6$9c0f1c20$d42d5460$%han@samsung.com>
- <20130823083539.GB3937@pratyush-vbox>
- <001801cea3c7$06bca9d0$1435fd70$%han@samsung.com>
- <20130829034508.GA3025@pratyush-vbox>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <20130829034508.GA3025@pratyush-vbox>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Pratyush Anand' <pratyush.anand@st.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mohit KUMAR DCG' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH v6 0/7] ARM: dts: add support for exynos hdmi subsystem
+Date: Thu, 29 Aug 2013 10:44:53 +0530
+Message-ID: <1377753300-9118-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:60730 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753156Ab3H2EzI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Aug 2013 00:55:08 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Thursday, August 29, 2013 12:45 PM, Pratyush Anand wrote:
-> On Wed, Aug 28, 2013 at 04:17:24PM +0800, Jingoo Han wrote:
-> > On Friday, August 23, 2013 5:36 PM, Pratyush Anand wrote:
-> > > On Fri, Aug 23, 2013 at 02:04:20PM +0800, Jingoo Han wrote:
-> >
-> 
-> [...]
-> 
-> > > #define MAX_PCIE_PORT_SUPPORTED 3
-> > > static DECLARE_BITMAP(msi_irq_in_use[MAX_PCIE_PORT_SUPPORTED],
-> > >                   NUM_MSI_IRQS);
-> > > static unsigned int *msi_data[MAX_PCIE_PORT_SUPPORTED];
-> >
-> > No, there is no need to do it.
-> > Without this, we can use 3 RCs by adding a node of 3rd RC to dt file.
-> >
-> 
-> Yes, you can use RCs by adding nodes to dt file. But you will need one
-> msi_irq_in_use and one msi_data per RC (ie per port in this driver), isn't it?
+It adds Device tree nodes and clocks information for HDMI subsystem
+for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
+hpd gpio and update binding documents.
 
-Aha, you're right.
+This set is based on kukjin's for-next branch at
+http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
 
-A few minutes ago, I found the same value of msi_data is
-used for 2 different RCs. It is my fault.
+v6:
+1) Update clock numbers as per change in mux and divider clock numbers.
+2) Split the board patch from SoC patch and added a diff patch for ddc.
 
-As you mentioned, one msi_data per RC should be used.
-I will modify it in order to use one msi_data per RC.
+v5:
+1) Merged Clock addition patch to DT nmde addition patch.
+2) Add dout_pixel clock for hdmi in place of sclk_pixel.
+3) Enable mixer node in soc dtsi file.
 
-Thank you for your kind description. :-)
+v4:
+1) Remove the movement of common properties to Exynos5.dtsi for
+I2C and hdmi subsystem.
+2) Change the title of the patches.
 
-Best regards,
-Jingoo Han
+v3:
+1) Rebase to kgene for-next based on 3.11-rc1.
+2) Changes clock numbers as per updated clocks file for
+exyno5250 and exynos5420.
+3) Dropped Sachin patch as already got merged.
+
+v2:
+1) Added patch for moving common i2c properties to exynos5.dtsi
+2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
+3) moved hpd pinctrl node to board file.
+4) Added Sachin's patch to update binding document for hdmi with hpd
+information.
+
+Andrew Bresticker (1):
+  ARM: dts: add i2c device nodes for Exynos5420
+
+Rahul Sharma (5):
+  of/documentation: update with clock information for exynos hdmi
+    subsystem
+  ARM: dts: add clocks to hdmi dt node for exynos5250
+  ARM: dts: add dt nodes for hdmi subsystem for exynos5420
+  ARM: dts: add hdmi hpd gpio pinctrl node for exynos5420 smdk board
+  ARM: dts: add hdmi ddc device for exynos5420 smdk board
+
+Sean Paul (1):
+  ARM: dts: add mixer clocks to mixer node for Exynos5250
+
+ .../devicetree/bindings/video/exynos_hdmi.txt      |   15 +++-
+ .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   26 +++++++
+ arch/arm/boot/dts/exynos5420.dtsi                  |   75 ++++++++++++++++++++
+ 5 files changed, 124 insertions(+), 4 deletions(-)
+
+-- 
+1.7.10.4
