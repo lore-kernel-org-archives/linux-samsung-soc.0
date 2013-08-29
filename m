@@ -1,103 +1,44 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v7 4/6] ARM: dts: add i2c device nodes for Exynos5420
-Date: Thu, 29 Aug 2013 19:22:55 +0530
-Message-ID: <1377784377-28426-5-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH v7 2/6] ARM: dts: add mixer clocks to mixer node for Exynos5250
+Date: Thu, 29 Aug 2013 19:22:53 +0530
+Message-ID: <1377784377-28426-3-git-send-email-rahul.sharma@samsung.com>
 References: <1377784377-28426-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:23222 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754287Ab3H2NbQ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:55922 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754265Ab3H2NbM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 09:31:16 -0400
+	Thu, 29 Aug 2013 09:31:12 -0400
 In-reply-to: <1377784377-28426-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Andrew Bresticker <abrestic@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>
+Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Sean Paul <seanpaul@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Andrew Bresticker <abrestic@chromium.org>
+From: Sean Paul <seanpaul@chromium.org>
 
-This adds device-tree nodes for the i2c busses on Exynos
-5420 platforms.
+This patch adds the mixer clocks to the mixer node in the
+exynos 5250 dts file.
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/boot/dts/exynos5420.dtsi |   56 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ arch/arm/boot/dts/exynos5250.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index d537cd7..77805a5 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -27,6 +27,10 @@
- 		pinctrl2 = &pinctrl_2;
- 		pinctrl3 = &pinctrl_3;
- 		pinctrl4 = &pinctrl_4;
-+		i2c0 = &i2c_0;
-+		i2c1 = &i2c_1;
-+		i2c2 = &i2c_2;
-+		i2c3 = &i2c_3;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 864ae90..2c41b2d 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -623,6 +623,8 @@
+ 		compatible = "samsung,exynos5250-mixer";
+ 		reg = <0x14450000 0x10000>;
+ 		interrupts = <0 94 0>;
++		clocks = <&clock 343>, <&clock 136>;
++		clock-names = "mixer", "sclk_hdmi";
  	};
  
- 	cpus {
-@@ -235,4 +239,56 @@
- 		io-channel-ranges;
- 		status = "disabled";
- 	};
-+
-+	i2c_0: i2c@12C60000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C60000 0x100>;
-+		interrupts = <0 56 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock 261>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c0_bus>;
-+		status = "disabled";
-+	};
-+
-+	i2c_1: i2c@12C70000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C70000 0x100>;
-+		interrupts = <0 57 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock 262>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c1_bus>;
-+		status = "disabled";
-+	};
-+
-+	i2c_2: i2c@12C80000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C80000 0x100>;
-+		interrupts = <0 58 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock 263>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c2_bus>;
-+		status = "disabled";
-+	};
-+
-+	i2c_3: i2c@12C90000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C90000 0x100>;
-+		interrupts = <0 59 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock 264>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c3_bus>;
-+		status = "disabled";
-+	};
- };
+ 	dp_phy: video-phy@10040720 {
 -- 
 1.7.10.4
