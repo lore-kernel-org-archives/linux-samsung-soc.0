@@ -1,47 +1,44 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH RFC v2 01/16] ARM: call clk_of_init from time_init
-Date: Thu, 29 Aug 2013 15:45:37 +0200
-Message-ID: <201308291545.37520.arnd@arndb.de>
-References: <1376964271-22715-1-git-send-email-sebastian.hesselbarth@gmail.com> <3837b119-baad-4e68-8805-2bc52c0135f9@DB9EHSMHS031.ehs.local> <521D2F1F.1070103@gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] gpio: samsung: Drop support for Exynos SoCs
+Date: Thu, 29 Aug 2013 16:35:44 +0200
+Message-ID: <3799135.ZH1kjyjuQO@amdc1227>
+References: <1377538555-14901-1-git-send-email-t.figa@samsung.com>
+ <CACRpkdbUo2t1gT8=6UpjiXs4Sd-1xLpEqOqdA220L0wgVC-4uw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:56316 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753288Ab3H2NqY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 09:46:24 -0400
-In-Reply-To: <521D2F1F.1070103@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-reply-to: <CACRpkdbUo2t1gT8=6UpjiXs4Sd-1xLpEqOqdA220L0wgVC-4uw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: =?utf-8?q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Russell King <linux@arm.linux.org.uk>, linux-tegra@vger.kernel.org, kernel@stlinux.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wednesday 28 August 2013, Sebastian Hesselbarth wrote:
-> >
-> > This forces zynq to move some initialization our clock code relies on to
-> > init_irq(). Also, the current code already takes an approach of
-> > doing either common init or machine specific init.
+On Thursday 29 of August 2013 14:42:25 Linus Walleij wrote:
+> On Mon, Aug 26, 2013 at 7:35 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> > GPIO support on Exynos SoCs is provided by pinctrl-samsung driver,
+> > leaving all the support code in gpio-samsung driver unused.
 > 
-> Soeren,
-> 
-> you know that patch 16/16 takes care of zynq's clock init?
-> 
-> It's your own patch you provided from the last RFC. Looking at it, it
-> moves  zynq_sclr_init() to .init_irq and removes the call to
-> of_clk_init() from zynq_clock_init() which is called by
-> zynq_sclr_init().
-> 
-> Isn't that solving the above issues for mach-zynq?
+> Just double checking: you mean it is unused in v3.11-rc7 OK?
 
-Please be careful with the patch ordering here. The patch series should
-be bisectable, i.e. no patch should ever knowingly break any of the
-platforms, with the fix getting added in a later patch.
+That's correct. Non-DT support for Exynos (and so need for this driver to 
+be used on Exynos) has been dropped in 3.11.
 
-You should be able to do that by cleaning up all platforms to not
-rely on ordering first, then add this patch, and finally remove
-the other calls.
+> Not in Linux-next?
+> 
+> In the former case I can merge it into the GPIO tree and in the
+> latter case I need to merge it into the pinctrl tree.
+> 
+> > This dead
+> > code can be safely removed and so it is done by this patch.
+> > 
+> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Tentatively applied to the gpio tree.
 
-	Arnd
+Thanks.
+
+Best regards,
+Tomasz
+
