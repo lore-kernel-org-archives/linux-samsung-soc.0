@@ -1,80 +1,116 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v4 02/10] ARM: dts: list the CPU nodes for Exynos5250
-Date: Thu, 29 Aug 2013 13:45:56 +0530
-Message-ID: <CAOh2x=nsQ5paiMHSH8z9drsqr7_+TvMtNefczf8QNQNbYo0y=Q@mail.gmail.com>
-References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
-	<1371536962-13322-3-git-send-email-chander.kashyap@linaro.org>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [RFC V3 4/4] mmc: dw_mmc: exynos: configure SMU in exynos5420.
+Date: Thu, 29 Aug 2013 17:23:22 +0900
+Message-ID: <000901cea491$06b8a360$1429ea20$%jun@samsung.com>
+References: <1377691731-7226-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1377691731-7226-5-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <1371536962-13322-3-git-send-email-chander.kashyap@linaro.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-serial@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, mark.rutland@arm.com, thomas.ab@samsung.com, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:36276 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753331Ab3H2IXZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Aug 2013 04:23:25 -0400
+In-reply-to: <1377691731-7226-5-git-send-email-yuvaraj.cd@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Yuvaraj Kumar C D' <yuvaraj.cd@gmail.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, jh80.chung@samsung.com
+Cc: ks.giri@samsung.com, t.figa@samsung.com, alim.akhtar@samsung.com, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
 
-On Tue, Jun 18, 2013 at 11:59 AM, Chander Kashyap
-<chander.kashyap@linaro.org> wrote:
-> Instead of having to specify the number for CPUs in Exynos5250 in platsmp.c
-> file, let the number of CPUs be determined by having this information listed
-> in Exynos5250 device tree file.
->
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+On Wed, August 28, 2013, Yuvaraj Kumar C D wrote:
+> Exynos5420 Mobile Storage Host controller has Security Management Unit
+> (SMU) for channel 0 and channel 1 (mainly for eMMC).This patch configures
+> SMU for exynos5420.
+> 
+> This patch is on top of the below patch by Doug Anderson.
+> mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
+> 
+> changes since V2:
+> 	1.Droppped the bypass-smu quirk.
+> 	2.Changed the subject line for this patch
+> 	  add a quirk for SMU -> configure SMU in exynos5420
+> 
+> changes since V1:
+> 	1.avoid code duplication by calling dw_mci_exynos_priv_init in
+> 	  resume path.
+> 
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++++++++++++
->  arch/arm/mach-exynos/platsmp.c    |   10 +++++++---
->  2 files changed, 23 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 63ca03d..1aeef98 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -50,6 +50,22 @@
->                 pinctrl3 = &pinctrl_3;
->         };
->
-> +       cpus {
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
+>  drivers/mmc/host/dw_mmc-exynos.c |   29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 19c845b..db28f10 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -35,6 +35,25 @@
+>  #define EXYNOS4210_FIXED_CIU_CLK_DIV	2
+>  #define EXYNOS4412_FIXED_CIU_CLK_DIV	4
+> 
+> +/* Block number in eMMC */
+> +#define DWMCI_BLOCK_NUM			0xFFFFFFFF
 > +
-> +               cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <0>;
-> +               };
-> +               cpu@1 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a15";
-> +                       reg = <1>;
-> +               };
-> +       };
+> +#define SDMMC_EMMCP_BASE		0x1000
+> +#define SDMMC_MPSECURITY		(SDMMC_EMMCP_BASE + 0x0010)
+> +#define SDMMC_MPSBEGIN0			(SDMMC_EMMCP_BASE + 0x0200)
+> +#define SDMMC_MPSEND0			(SDMMC_EMMCP_BASE + 0x0204)
+> +#define SDMMC_MPSCTRL0			(SDMMC_EMMCP_BASE + 0x020C)
 > +
->         pd_gsc: gsc-power-domain@0x10044000 {
->                 compatible = "samsung,exynos4210-pd";
->                 reg = <0x10044000 0x20>;
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index 1a4e4e5..85ea4ca 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -180,10 +180,14 @@ static void __init exynos_smp_init_cpus(void)
->         void __iomem *scu_base = scu_base_addr();
->         unsigned int i, ncores;
->
-> -       if (soc_is_exynos5250())
-> -               ncores = 2;
-> -       else
-> +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->                 ncores = scu_base ? scu_get_core_count(scu_base) : 1;
-> +       else
-> +               /*
-> +                * CPU Nodes are passed thru DT and set_cpu_possible
-> +                * is set by "arm_dt_init_cpu_maps".
-> +                */
-> +               return;
->
->         /* sanity check */
->         if (ncores > nr_cpu_ids) {
+> +/* SMU control bits */
+> +#define DWMCI_MPSCTRL_SECURE_READ_BIT		BIT(7)
+> +#define DWMCI_MPSCTRL_SECURE_WRITE_BIT		BIT(6)
+> +#define DWMCI_MPSCTRL_NON_SECURE_READ_BIT	BIT(5)
+> +#define DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT	BIT(4)
+> +#define DWMCI_MPSCTRL_USE_FUSE_KEY		BIT(3)
+> +#define DWMCI_MPSCTRL_ECB_MODE			BIT(2)
+> +#define DWMCI_MPSCTRL_ENCRYPTION		BIT(1)
+> +#define DWMCI_MPSCTRL_VALID			BIT(0)
+> +
+>  /* Variations in Exynos specific dw-mshc controller */
+>  enum dw_mci_exynos_type {
+>  	DW_MCI_TYPE_EXYNOS4210,
+> @@ -74,6 +93,15 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>  {
+>  	struct dw_mci_exynos_priv_data *priv = host->priv;
+> 
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420) {
+> +		mci_writel(host, MPSBEGIN0, 0);
+> +		mci_writel(host, MPSEND0, DWMCI_BLOCK_NUM);
+> +		mci_writel(host, MPSCTRL0, DWMCI_MPSCTRL_SECURE_WRITE_BIT |
+> +			DWMCI_MPSCTRL_NON_SECURE_READ_BIT |
+> +			DWMCI_MPSCTRL_VALID |
+> +			DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT);
+Yuvaraj,
 
-After this patch only one cpu is coming up for me on my Arndale board..
-Revert of this one fixes the issue though (Tested over v3.11-rc7)
+Just one thing to check.
+ch#0 and #1 of three hosts are only valid for SMU control.
+Did you consider #2 host?
+It seems not.
+
+Thanks,
+Seungwon Jeon
+
+> +	}
+> +
+>  	return 0;
+>  }
+> 
+> @@ -107,6 +135,7 @@ static int dw_mci_exynos_resume(struct device *dev)
+>  {
+>  	struct dw_mci *host = dev_get_drvdata(dev);
+> 
+> +	dw_mci_exynos_priv_init(host);
+>  	return dw_mci_resume(host);
+>  }
+> 
+> --
+> 1.7.9.5
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
