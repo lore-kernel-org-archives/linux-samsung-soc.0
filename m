@@ -1,89 +1,69 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v7 0/6] ARM: dts: add support for exynos hdmi subsystem
-Date: Thu, 29 Aug 2013 15:35:49 +0200
-Message-ID: <1620695.hYygFk0Iax@amdc1227>
-References: <1377784377-28426-1-git-send-email-rahul.sharma@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH v4 0/5] clk/exynos5420: add clocks for hdmi subsystem
+Date: Thu, 29 Aug 2013 19:06:51 +0530
+Message-ID: <CAPdUM4Mf4pv031-W0X0EAJe7R=8xtqnNbbLyoo+O6LV0d-H0GA@mail.gmail.com>
+References: <1377754629-31465-1-git-send-email-rahul.sharma@samsung.com>
+	<1873021.WMcNDqLpjt@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:53093 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753238Ab3H2Nfz (ORCPT
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:56713 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753029Ab3H2Ngw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 09:35:55 -0400
-In-reply-to: <1377784377-28426-1-git-send-email-rahul.sharma@samsung.com>
+	Thu, 29 Aug 2013 09:36:52 -0400
+Received: by mail-wi0-f176.google.com with SMTP id l12so8070036wiv.15
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Aug 2013 06:36:51 -0700 (PDT)
+In-Reply-To: <1873021.WMcNDqLpjt@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-Hi Rahul,
+On 29 August 2013 18:00, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Rahul,
+>
+> On Thursday 29 of August 2013 11:07:04 Rahul Sharma wrote:
+>> Add clock changes for hdmi subsystem for exynos5250 SoC. These
+>> include addition of new clocks like mout_hdmi and smmu_tv, associating
+>> ID to clk_hdmiphy and some essential corrections.
+>>
+>> V4:
+>> 1) Optimised gaps between Gate, Muxes and Dividers.
+>>
+>> V3:
+>> 1) Assign new ID to divider clock keeping sclk_pixel gate same.
+>>
+>> V2:
+>> 1) Rebase to Mike's Tree.
+>> 2) Change smmu_tv to smmu_mixer.
+>>
+>> This set is based on Mike's clk-next branch at
+>> https://git.linaro.org/gitweb?p=people/mturquette/linux.git
+>>
+>> Rahul Sharma (5):
+>>   clk/exynos5420: add sclk_hdmiphy to the list of special clocks
+>>   clk/exynos5420: add gate clock for mixer sysmmu
+>>   clk/exynos5420: fix the order of parents of hdmi mux
+>>   clk/exynos5420: add hdmi mux to change parents in hdmi driver
+>>   clk/exynos5420: assign dout_pixel id to pixel clock divider
+>>
+>>  .../devicetree/bindings/clock/exynos5420-clock.txt  |   12 ++++++++++++
+>>  drivers/clk/samsung/clk-exynos5420.c                |   19
+>> +++++++++++++------ 2 files changed, 25 insertions(+), 6 deletions(-)
+>
+> For the whole series:
+>
+> Acked-by: Tomasz Figa <t.figa@samsung.com>
+>
 
-On Thursday 29 of August 2013 19:22:51 Rahul Sharma wrote:
-> It adds Device tree nodes and clocks information for HDMI subsystem
-> for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
-> hpd gpio and update binding documents.
-> 
-> This set is based on kukjin's for-next branch at
-> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
-> 
-> v7:
-> 1) Minor change in of-documentation.
-> 2) Squash gpio pin-ctrl and ddc patch to one patch.
-> 
-> v6:
-> 1) Update clock numbers as per change in mux and divider clocks.
-> 2) Isolate board changes from SoC patch and add a different patch for
-> ddc.
-> 
-> v5:
-> 1) Merged Clock addition patch to DT nmde addition patch.
-> 2) Add dout_pixel clock for hdmi in place of sclk_pixel.
-> 3) Enable mixer node in soc dtsi file.
-> 
-> v4:
-> 1) Remove the movement of common properties to Exynos5.dtsi for
-> I2C and hdmi subsystem.
-> 2) Change the title of the patches.
-> 
-> v3:
-> 1) Rebase to kgene for-next based on 3.11-rc1.
-> 2) Changes clock numbers as per updated clocks file for
-> exyno5250 and exynos5420.
-> 3) Dropped Sachin patch as already got merged.
-> 
-> v2:
-> 1) Added patch for moving common i2c properties to exynos5.dtsi
-> 2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
-> 3) moved hpd pinctrl node to board file.
-> 4) Added Sachin's patch to update binding document for hdmi with hpd
-> information.
-> 
-> Andrew Bresticker (1):
->   ARM: dts: add i2c device nodes for Exynos5420
-> 
-> Rahul Sharma (4):
->   of/documentation: update with clock information for exynos hdmi
->     subsystem
->   ARM: dts: add clocks to hdmi dt node for exynos5250
->   ARM: dts: add dt nodes for hdmi subsystem for exynos5420
->   ARM: dts: enable hdmi subsystem for exynos5420 smdk board
-> 
-> Sean Paul (1):
->   ARM: dts: add mixer clocks to mixer node for Exynos5250
-> 
->  .../devicetree/bindings/video/exynos_hdmi.txt      |   14 +++-
->  .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
->  arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++-
->  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   26 +++++++
->  arch/arm/boot/dts/exynos5420.dtsi                  |   75
-> ++++++++++++++++++++ 5 files changed, 123 insertions(+), 4 deletions(-)
+Thanks Tomasz,
 
-The whole series looks good to me now. Thanks for keeping up with all the 
-comments.
+Mike ! please consider it for clk-next branch.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+regards,
+Rahul Sharma.
 
-Best regards,
-Tomasz
+> Best regards,
+> Tomasz
+>
