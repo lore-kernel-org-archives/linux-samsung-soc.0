@@ -1,38 +1,63 @@
-From: Pratyush Anand <pratyush.anand@st.com>
-Subject: Re: [PATCH V2] PCI: exynos: add support for MSI
-Date: Thu, 29 Aug 2013 09:15:08 +0530
-Message-ID: <20130829034508.GA3025@pratyush-vbox>
-References: <003d01ce9fc6$9c0f1c20$d42d5460$%han@samsung.com>
- <20130823083539.GB3937@pratyush-vbox>
- <001801cea3c7$06bca9d0$1435fd70$%han@samsung.com>
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: Re: [PATCH v2 0/2] Add GPLL, APLL, KPLL, EPLL and VPLL freq table for
+ exynos5420 and exynos5250
+Date: Thu, 29 Aug 2013 09:24:13 +0530
+Message-ID: <CAD025yRTj2buv12T_DFJ4aLB8a6g_=JN8rM84_JZTpKry_q=Qg@mail.gmail.com>
+References: <1377697198-19097-1-git-send-email-vikas.sajjan@linaro.org> <20130829024244.10934.6393@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <001801cea3c7$06bca9d0$1435fd70$%han@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f182.google.com ([209.85.217.182]:41092 "EHLO
+	mail-lb0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755559Ab3H2Dye (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Aug 2013 23:54:34 -0400
+Received: by mail-lb0-f182.google.com with SMTP id r12so259252lbi.27
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 20:54:33 -0700 (PDT)
+In-Reply-To: <20130829024244.10934.6393@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim" <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>
 
-On Wed, Aug 28, 2013 at 04:17:24PM +0800, Jingoo Han wrote:
-> On Friday, August 23, 2013 5:36 PM, Pratyush Anand wrote:
-> > On Fri, Aug 23, 2013 at 02:04:20PM +0800, Jingoo Han wrote:
-> 
+Sure, Mike.
 
-[...]
 
-> > #define MAX_PCIE_PORT_SUPPORTED 3
-> > static DECLARE_BITMAP(msi_irq_in_use[MAX_PCIE_PORT_SUPPORTED],
-> >                   NUM_MSI_IRQS);
-> > static unsigned int *msi_data[MAX_PCIE_PORT_SUPPORTED];
-> 
-> No, there is no need to do it.
-> Without this, we can use 3 RCs by adding a node of 3rd RC to dt file.
-> 
+On 29 August 2013 08:12, Mike Turquette <mturquette@linaro.org> wrote:
+> Quoting Vikas Sajjan (2013-08-28 06:39:56)
+>> Adds GPLL, APLL, KPLL, EPLL and VPLL freq table for exynos5420 and exynos5250.
+>>
+>> changes since v1:
+>>         - addressed comments from Tomasz Figa <tomasz.figa@gmail.com>
+>>
+>> is rebased on Mike's
+>> https://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=shortlog;h=refs/heads/clk-next
+>> and on top of Tomasz Figa's clk clean-up patch series
+>> http://www.spinics.net/lists/arm-kernel/msg269848.html
+>
+> Looks good to me but it will have to wait until Tomasz's cleanup series
+> is merged. I'm waiting on that get to get reviewed-by's and then I'll
+> take them both in.
+>
+> Regards,
+> Mike
+>
+>>
+>>
+>> Vikas Sajjan (2):
+>>   clk: samsung: Add GPLL freq table for exynos5250 SoC
+>>   clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420
+>>     SoC
+>>
+>>  drivers/clk/samsung/clk-exynos5250.c |   19 ++++++++-
+>>  drivers/clk/samsung/clk-exynos5420.c |   78 ++++++++++++++++++++++++++++++++++
+>>  2 files changed, 96 insertions(+), 1 deletion(-)
+>>
+>> --
+>> 1.7.9.5
 
-Yes, you can use RCs by adding nodes to dt file. But you will need one 
-msi_irq_in_use and one msi_data per RC (ie per port in this driver), isn't it? 
 
-Regards
-Pratyush
+
+-- 
+Thanks and Regards
+ Vikas Sajjan
