@@ -1,55 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 04/35] spi: use dev_get_platdata()
-Date: Thu, 29 Aug 2013 13:56:43 +0100
-Message-ID: <20130829125643.GG10783@sirena.org.uk>
-References: <003601ce8cfa$a63ab120$f2b01360$@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v6 1/7] of/documentation: update with clock information for
+ exynos hdmi subsystem
+Date: Thu, 29 Aug 2013 14:59:51 +0200
+Message-ID: <2408083.FgRSDHIkdl@amdc1227>
+References: <1377754827-31786-1-git-send-email-rahul.sharma@samsung.com>
+ <1377754827-31786-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BbvjD0mU+7XPw0yH"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:35642 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752844Ab3H2M4s (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:45741 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752393Ab3H2M75 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 08:56:48 -0400
-Content-Disposition: inline
-In-Reply-To: <003601ce8cfa$a63ab120$f2b01360$@samsung.com>
+	Thu, 29 Aug 2013 08:59:57 -0400
+In-reply-to: <1377754827-31786-2-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com
 
+On Thursday 29 of August 2013 11:10:21 Rahul Sharma wrote:
+> Adding information about clocks to the binding documentation
+> for exynos mixer and hdmi.
+> 
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/video/exynos_hdmi.txt |   15
+> ++++++++++++++- .../devicetree/bindings/video/exynos_mixer.txt         
+> |    4 ++++ 2 files changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> b/Documentation/devicetree/bindings/video/exynos_hdmi.txt index
+> 323983b..1878418 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+> @@ -12,7 +12,20 @@ Required properties:
+>  	a) phandle of the gpio controller node.
+>  	b) pin number within the gpio controller.
+>  	c) optional flags and pull up/down.
+> -
+> +- clocks: list of clock IDs from SoC clock driver.
+> +	a) hdmi: It is required for gate operation on aclk_200_disp1 clock
+> +		which clocks the display1 block.
 
---BbvjD0mU+7XPw0yH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The "aclk_200_disp1" name is valid only on Exynos 5, but this binding is 
+generic for all Exynos SoCs and probably also previous S5P SoCs. I believe 
+that "Gate of HDMI IP bus clock." would be appropriate here.
 
-On Tue, Jul 30, 2013 at 04:58:59PM +0900, Jingoo Han wrote:
-> Use the wrapper function for retrieving the platform data instead of
-> accessing dev->platform_data directly.
+Otherwise, this patch looks good to me.
 
-Applied, thanks.
-
---BbvjD0mU+7XPw0yH
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSH0UIAAoJELSic+t+oim9iPIP/3cx/SKEAJyqOiguHKXZwf6X
-W7/XKUOqmDHnfM0sVWS81gGiHCVYL8LL75QD8d7qmzJI3X5AdyfkCXonCRb/fNwA
-cHHv4MLphn1OxyBpm28fK/L1YiKzVV3SuAZj0I8ce/Zk/BOXAJ0y4ZN2IR+yeR/H
-pBgkNCGChUXfzXKJ/VXHjxeUfKpADf7d5NAwvtZLYnfub7eIEEio7O+OZ6/9llOQ
-ao9J9UaS/5qEx35hMAhbyJyyt1eMR13gT076qTsQS0HSdWRZO1ChU5f/2MbXkAvh
-ANElABEvRexhKhk5v9vHNLgvIfCak1732zhqhDrkWjSXwa5POMazzYU5hRyjVHC6
-KApbtFnzNYt8ZCvDrQJdtbzZRuMmkiYW8j9hCXX1/X0dgbfoI+BxbPf+KuMmYc4F
-DGoS7WmOyvFc6Q7VLIsNgWBdItFsDi9ZMpoe0TykHtVbt7PmFGxKRF5jKeRNRw9U
-HUszc8gR5MkzbpUg7X8o1Nx5NNvSAGi67emWZDyR3aQxHglK+m7oNrbpe6lfh+Bs
-Na6ggAql4sstgqNvnTiMnaVJTyzOrKLhYi+sKA5bu0NXqtDfDr2MJFW08+YzQyM7
-vxGBhMXedApihc5dJL4daKdxQxB6T6YNYw6LS+suwW6mSxLXSUd3NkaKRpcUSRbs
-4kZt4ajDpBmsGq54E/nL
-=i+W/
------END PGP SIGNATURE-----
-
---BbvjD0mU+7XPw0yH--
+Best regards,
+Tomasz
