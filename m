@@ -1,70 +1,44 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v6 1/7] of/documentation: update with clock information for
- exynos hdmi subsystem
-Date: Thu, 29 Aug 2013 11:10:21 +0530
-Message-ID: <1377754827-31786-2-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH v6 2/7] ARM: dts: add mixer clocks to mixer node for Exynos5250
+Date: Thu, 29 Aug 2013 11:10:22 +0530
+Message-ID: <1377754827-31786-3-git-send-email-rahul.sharma@samsung.com>
 References: <1377754827-31786-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.samsung.com ([203.254.224.24]:8233 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752230Ab3H2FSu (ORCPT
+	with ESMTP id S1753282Ab3H2FSv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 01:18:50 -0400
+	Thu, 29 Aug 2013 01:18:51 -0400
 In-reply-to: <1377754827-31786-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
+Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Sean Paul <seanpaul@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>
 
-Adding information about clocks to the binding documentation
-for exynos mixer and hdmi.
+From: Sean Paul <seanpaul@chromium.org>
 
+This patch adds the mixer clocks to the mixer node in the
+exynos 5250 dts file.
+
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
- Documentation/devicetree/bindings/video/exynos_hdmi.txt |   15 ++++++++++++++-
- .../devicetree/bindings/video/exynos_mixer.txt          |    4 ++++
- 2 files changed, 18 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos5250.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-index 323983b..1878418 100644
---- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
-@@ -12,7 +12,20 @@ Required properties:
- 	a) phandle of the gpio controller node.
- 	b) pin number within the gpio controller.
- 	c) optional flags and pull up/down.
--
-+- clocks: list of clock IDs from SoC clock driver.
-+	a) hdmi: It is required for gate operation on aclk_200_disp1 clock
-+		which clocks the display1 block.
-+	b) sclk_hdmi: Gate of HDMI special clock.
-+	c) sclk_pixel: Pixel special clock, one of the two possible inputs of
-+		HDMI clock mux.
-+	d) sclk_hdmiphy: HDMI PHY clock output, one of two possible inputs of
-+		HDMI clock mux.
-+	e) mout_hdmi: It is required by the driver to switch between the 2
-+		parents i.e. sclk_pixel and sclk_hdmiphy. If hdmiphy is stable
-+		after configuration, parent is set to sclk_hdmiphy else
-+		sclk_pixel.
-+- clock-names: aliases as per driver requirements for above clock IDs:
-+	"hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
- Example:
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 864ae90..2c41b2d 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -623,6 +623,8 @@
+ 		compatible = "samsung,exynos5250-mixer";
+ 		reg = <0x14450000 0x10000>;
+ 		interrupts = <0 94 0>;
++		clocks = <&clock 343>, <&clock 136>;
++		clock-names = "mixer", "sclk_hdmi";
+ 	};
  
- 	hdmi {
-diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-index 3334b0a..7bfde9c 100644
---- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
-@@ -10,6 +10,10 @@ Required properties:
- - reg: physical base address of the mixer and length of memory mapped
- 	region.
- - interrupts: interrupt number to the cpu.
-+- clocks: list of clock IDs from SoC clock driver.
-+	a) mixer: Gate of Mixer IP bus clock.
-+	b) sclk_hdmi: HDMI Special clock, one of the two possible inputs of
-+               mixer mux.
- 
- Example:
- 
+ 	dp_phy: video-phy@10040720 {
 -- 
 1.7.10.4
