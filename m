@@ -1,62 +1,35 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 0/5] clk/exynos5420: add clocks for hdmi subsystem
-Date: Thu, 29 Aug 2013 14:30:41 +0200
-Message-ID: <1873021.WMcNDqLpjt@amdc1227>
-References: <1377754629-31465-1-git-send-email-rahul.sharma@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: samsung: Drop support for Exynos SoCs
+Date: Thu, 29 Aug 2013 14:42:25 +0200
+Message-ID: <CACRpkdbUo2t1gT8=6UpjiXs4Sd-1xLpEqOqdA220L0wgVC-4uw@mail.gmail.com>
+References: <1377538555-14901-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:43676 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751715Ab3H2Mar (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 08:30:47 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MSA00JJ5LDWT8C0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Aug 2013 13:30:46 +0100 (BST)
-In-reply-to: <1377754629-31465-1-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1377538555-14901-1-git-send-email-t.figa@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com
 
-Hi Rahul,
+On Mon, Aug 26, 2013 at 7:35 PM, Tomasz Figa <t.figa@samsung.com> wrote:
 
-On Thursday 29 of August 2013 11:07:04 Rahul Sharma wrote:
-> Add clock changes for hdmi subsystem for exynos5250 SoC. These
-> include addition of new clocks like mout_hdmi and smmu_tv, associating
-> ID to clk_hdmiphy and some essential corrections.
-> 
-> V4:
-> 1) Optimised gaps between Gate, Muxes and Dividers.
-> 
-> V3:
-> 1) Assign new ID to divider clock keeping sclk_pixel gate same.
-> 
-> V2:
-> 1) Rebase to Mike's Tree.
-> 2) Change smmu_tv to smmu_mixer.
-> 
-> This set is based on Mike's clk-next branch at
-> https://git.linaro.org/gitweb?p=people/mturquette/linux.git
-> 
-> Rahul Sharma (5):
->   clk/exynos5420: add sclk_hdmiphy to the list of special clocks
->   clk/exynos5420: add gate clock for mixer sysmmu
->   clk/exynos5420: fix the order of parents of hdmi mux
->   clk/exynos5420: add hdmi mux to change parents in hdmi driver
->   clk/exynos5420: assign dout_pixel id to pixel clock divider
-> 
->  .../devicetree/bindings/clock/exynos5420-clock.txt  |   12 ++++++++++++
->  drivers/clk/samsung/clk-exynos5420.c                |   19
-> +++++++++++++------ 2 files changed, 25 insertions(+), 6 deletions(-)
+> GPIO support on Exynos SoCs is provided by pinctrl-samsung driver,
+> leaving all the support code in gpio-samsung driver unused.
 
-For the whole series:
+Just double checking: you mean it is unused in v3.11-rc7 OK?
+Not in Linux-next?
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
+In the former case I can merge it into the GPIO tree and in the
+latter case I need to merge it into the pinctrl tree.
 
-Best regards,
-Tomasz
+> This dead
+> code can be safely removed and so it is done by this patch.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+Tentatively applied to the gpio tree.
+
+Yours,
+Linus Walleij
