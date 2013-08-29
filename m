@@ -1,72 +1,70 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v6 0/7] ARM: dts: add support for exynos hdmi subsystem
-Date: Thu, 29 Aug 2013 10:44:53 +0530
-Message-ID: <1377753300-9118-1-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH v6 1/7] of/documentation: update with clock information for
+ exynos hdmi subsystem
+Date: Thu, 29 Aug 2013 10:44:54 +0530
+Message-ID: <1377753300-9118-2-git-send-email-rahul.sharma@samsung.com>
+References: <1377753300-9118-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.samsung.com ([203.254.224.24]:60730 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753156Ab3H2EzI (ORCPT
+	with ESMTP id S1753261Ab3H2EzJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 00:55:08 -0400
+	Thu, 29 Aug 2013 00:55:09 -0400
+In-reply-to: <1377753300-9118-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-It adds Device tree nodes and clocks information for HDMI subsystem
-for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
-hpd gpio and update binding documents.
+Adding information about clocks to the binding documentation
+for exynos mixer and hdmi.
 
-This set is based on kukjin's for-next branch at
-http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+---
+ Documentation/devicetree/bindings/video/exynos_hdmi.txt |   15 ++++++++++++++-
+ .../devicetree/bindings/video/exynos_mixer.txt          |    4 ++++
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
-v6:
-1) Update clock numbers as per change in mux and divider clock numbers.
-2) Split the board patch from SoC patch and added a diff patch for ddc.
-
-v5:
-1) Merged Clock addition patch to DT nmde addition patch.
-2) Add dout_pixel clock for hdmi in place of sclk_pixel.
-3) Enable mixer node in soc dtsi file.
-
-v4:
-1) Remove the movement of common properties to Exynos5.dtsi for
-I2C and hdmi subsystem.
-2) Change the title of the patches.
-
-v3:
-1) Rebase to kgene for-next based on 3.11-rc1.
-2) Changes clock numbers as per updated clocks file for
-exyno5250 and exynos5420.
-3) Dropped Sachin patch as already got merged.
-
-v2:
-1) Added patch for moving common i2c properties to exynos5.dtsi
-2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
-3) moved hpd pinctrl node to board file.
-4) Added Sachin's patch to update binding document for hdmi with hpd
-information.
-
-Andrew Bresticker (1):
-  ARM: dts: add i2c device nodes for Exynos5420
-
-Rahul Sharma (5):
-  of/documentation: update with clock information for exynos hdmi
-    subsystem
-  ARM: dts: add clocks to hdmi dt node for exynos5250
-  ARM: dts: add dt nodes for hdmi subsystem for exynos5420
-  ARM: dts: add hdmi hpd gpio pinctrl node for exynos5420 smdk board
-  ARM: dts: add hdmi ddc device for exynos5420 smdk board
-
-Sean Paul (1):
-  ARM: dts: add mixer clocks to mixer node for Exynos5250
-
- .../devicetree/bindings/video/exynos_hdmi.txt      |   15 +++-
- .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
- arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++-
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |   26 +++++++
- arch/arm/boot/dts/exynos5420.dtsi                  |   75 ++++++++++++++++++++
- 5 files changed, 124 insertions(+), 4 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/video/exynos_hdmi.txt b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+index 323983b..1878418 100644
+--- a/Documentation/devicetree/bindings/video/exynos_hdmi.txt
++++ b/Documentation/devicetree/bindings/video/exynos_hdmi.txt
+@@ -12,7 +12,20 @@ Required properties:
+ 	a) phandle of the gpio controller node.
+ 	b) pin number within the gpio controller.
+ 	c) optional flags and pull up/down.
+-
++- clocks: list of clock IDs from SoC clock driver.
++	a) hdmi: It is required for gate operation on aclk_200_disp1 clock
++		which clocks the display1 block.
++	b) sclk_hdmi: Gate of HDMI special clock.
++	c) sclk_pixel: Pixel special clock, one of the two possible inputs of
++		HDMI clock mux.
++	d) sclk_hdmiphy: HDMI PHY clock output, one of two possible inputs of
++		HDMI clock mux.
++	e) mout_hdmi: It is required by the driver to switch between the 2
++		parents i.e. sclk_pixel and sclk_hdmiphy. If hdmiphy is stable
++		after configuration, parent is set to sclk_hdmiphy else
++		sclk_pixel.
++- clock-names: aliases as per driver requirements for above clock IDs:
++	"hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy" and "mout_hdmi".
+ Example:
+ 
+ 	hdmi {
+diff --git a/Documentation/devicetree/bindings/video/exynos_mixer.txt b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+index 3334b0a..7bfde9c 100644
+--- a/Documentation/devicetree/bindings/video/exynos_mixer.txt
++++ b/Documentation/devicetree/bindings/video/exynos_mixer.txt
+@@ -10,6 +10,10 @@ Required properties:
+ - reg: physical base address of the mixer and length of memory mapped
+ 	region.
+ - interrupts: interrupt number to the cpu.
++- clocks: list of clock IDs from SoC clock driver.
++	a) mixer: Gate of Mixer IP bus clock.
++	b) sclk_hdmi: HDMI Special clock, one of the two possible inputs of
++               mixer mux.
+ 
+ Example:
+ 
 -- 
 1.7.10.4
