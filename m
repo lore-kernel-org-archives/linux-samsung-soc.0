@@ -1,54 +1,61 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v2 0/2] Add GPLL, APLL, KPLL,
- EPLL and VPLL freq table for exynos5420 and exynos5250
-Date: Wed, 28 Aug 2013 19:42:44 -0700
-Message-ID: <20130829024244.10934.6393@quantum>
-References: <1377697198-19097-1-git-send-email-vikas.sajjan@linaro.org>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [RFC V3 0/4] dw_mmc platform specific private data and SMU init
+Date: Thu, 29 Aug 2013 12:05:17 +0900
+Message-ID: <521EBA6D.2070900@samsung.com>
+References: <1377691731-7226-1-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:64026 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754964Ab3H2Cmv convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:25563 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752186Ab3H2DFG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Aug 2013 22:42:51 -0400
-Received: by mail-pb0-f53.google.com with SMTP id up15so7042973pbc.26
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Aug 2013 19:42:51 -0700 (PDT)
-In-Reply-To: <1377697198-19097-1-git-send-email-vikas.sajjan@linaro.org>
+	Wed, 28 Aug 2013 23:05:06 -0400
+In-reply-to: <1377691731-7226-1-git-send-email-yuvaraj.cd@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org, joshi@samsung.com
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, jh80.chung@samsung.com, tgih.jun@samsung.com, ks.giri@samsung.com, t.figa@samsung.com, alim.akhtar@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Quoting Vikas Sajjan (2013-08-28 06:39:56)
-> Adds GPLL, APLL, KPLL, EPLL and VPLL freq table for exynos5420 and exynos5250.
-> 
-> changes since v1:
->         - addressed comments from Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> is rebased on Mike's 
-> https://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=shortlog;h=refs/heads/clk-next
-> and on top of Tomasz Figa's clk clean-up patch series
-> http://www.spinics.net/lists/arm-kernel/msg269848.html
+Hi Yuvaraj,
 
-Looks good to me but it will have to wait until Tomasz's cleanup series
-is merged. I'm waiting on that get to get reviewed-by's and then I'll
-take them both in.
+I have tested on Exynos4 series.
+I didn't test for SMU feature. If Seungwon could test or review and confirm this patch,
+then looks good to me.
 
-Regards,
-Mike
+With exynos4 series,
+Tested-by: Jaehoon Chung <jh80.chung@samsung.com> 
 
+Best Regards.
+Jaehoon Chung
+
+On 08/28/2013 09:08 PM, Yuvaraj Kumar C D wrote:
+> changes from V2:
+> 	1.dropped the bypass-smu quirk 
+> 		mmc: dw_mmc: exynos: configure SMU in exynos5420.
+> 	2.Changed the subject line for this patch
+> 	  add a quirk for SMU -> configure SMU in exynos5420
+> 	
+> 	mmc: dw_mmc: exynos: configure SMU in exynos5420 
+> 	was earlier 
+> 	mmc: dw_mmc: exynos: add a quirk for SMU.
 > 
+> changes from V1:
+> 	1.Added a new RFC patch 
+> 		mmc: dw_mmc: socfpga: move socfpga private init
+> 	2.Avoid code duplication in
+> 		mmc: dw_mmc: exynos: add a quirk for SMU.
 > 
-> Vikas Sajjan (2):
->   clk: samsung: Add GPLL freq table for exynos5250 SoC
->   clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420
->     SoC
+> Yuvaraj Kumar C D (4):
+>   mmc: dw_mmc: exynos: move the exynos private init
+>   mmc: dw_mmc: socfpga: move socfpga private init
+>   mmc: dw_mmc: move the platform specific init call
+>   mmc: dw_mmc: exynos: configure SMU in exynos5420.
 > 
->  drivers/clk/samsung/clk-exynos5250.c |   19 ++++++++-
->  drivers/clk/samsung/clk-exynos5420.c |   78 ++++++++++++++++++++++++++++++++++
->  2 files changed, 96 insertions(+), 1 deletion(-)
+>  drivers/mmc/host/dw_mmc-exynos.c  |   56 +++++++++++++++++++++++++++----------
+>  drivers/mmc/host/dw_mmc-pltfm.c   |    7 -----
+>  drivers/mmc/host/dw_mmc-socfpga.c |   29 ++++++++++---------
+>  drivers/mmc/host/dw_mmc.c         |    9 ++++++
+>  4 files changed, 65 insertions(+), 36 deletions(-)
 > 
-> -- 
-> 1.7.9.5
