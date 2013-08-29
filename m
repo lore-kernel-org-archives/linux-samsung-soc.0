@@ -1,108 +1,51 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 3/6] ARM: dts: add i2c device nodes for Exynos5420
-Date: Thu, 29 Aug 2013 10:58:27 +0530
-Message-ID: <1377754110-31084-3-git-send-email-rahul.sharma@samsung.com>
-References: <1377754110-31084-1-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH v4 0/5] clk/exynos5420: add clocks for hdmi subsystem
+Date: Thu, 29 Aug 2013 11:07:04 +0530
+Message-ID: <1377754629-31465-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24702 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753289Ab3H2FGr (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:65010 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752230Ab3H2FPb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 01:06:47 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 29 Aug 2013 01:15:31 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MSA002LY0TC3LO0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Aug 2013 14:06:43 +0900 (KST)
-In-reply-to: <1377754110-31084-1-git-send-email-rahul.sharma@samsung.com>
+ with ESMTP id <0MSA00L7C17M49O0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Aug 2013 14:15:30 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Andrew Bresticker <abrestic@chromium.org>, Rahul Sharma <rahul.sharma@samsung.com>
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Andrew Bresticker <abrestic@chromium.org>
+Add clock changes for hdmi subsystem for exynos5250 SoC. These
+include addition of new clocks like mout_hdmi and smmu_tv, associating
+ID to clk_hdmiphy and some essential corrections.
 
-This adds device-tree nodes for the i2c busses on Exynos
-5420 platforms.
+V4:
+1) Optimised gaps between Gate, Muxes and Dividers.
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
----
- arch/arm/boot/dts/exynos5420.dtsi |   56 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+V3:
+1) Assign new ID to divider clock keeping sclk_pixel gate same.
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 5353e32..05dee86 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -27,6 +27,10 @@
- 		pinctrl2 = &pinctrl_2;
- 		pinctrl3 = &pinctrl_3;
- 		pinctrl4 = &pinctrl_4;
-+		i2c0 = &i2c_0;
-+		i2c1 = &i2c_1;
-+		i2c2 = &i2c_2;
-+		i2c3 = &i2c_3;
- 	};
- 
- 	cpus {
-@@ -218,4 +222,56 @@
- 		clocks = <&clock 147>, <&clock 421>;
- 		clock-names = "sclk_fimd", "fimd";
- 	};
-+
-+	i2c_0: i2c@12C60000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C60000 0x100>;
-+		interrupts = <0 56 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock 261>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c0_bus>;
-+		status = "disabled";
-+	};
-+
-+	i2c_1: i2c@12C70000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C70000 0x100>;
-+		interrupts = <0 57 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock 262>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c1_bus>;
-+		status = "disabled";
-+	};
-+
-+       i2c_2: i2c@12C80000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C80000 0x100>;
-+		interrupts = <0 58 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock 263>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c2_bus>;
-+		status = "disabled";
-+       };
-+
-+	i2c_3: i2c@12C90000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C90000 0x100>;
-+		interrupts = <0 59 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clocks = <&clock 264>;
-+		clock-names = "i2c";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c3_bus>;
-+		status = "disabled";
-+	};
- };
+V2:
+1) Rebase to Mike's Tree.
+2) Change smmu_tv to smmu_mixer.
+
+This set is based on Mike's clk-next branch at
+https://git.linaro.org/gitweb?p=people/mturquette/linux.git
+
+Rahul Sharma (5):
+  clk/exynos5420: add sclk_hdmiphy to the list of special clocks
+  clk/exynos5420: add gate clock for mixer sysmmu
+  clk/exynos5420: fix the order of parents of hdmi mux
+  clk/exynos5420: add hdmi mux to change parents in hdmi driver
+  clk/exynos5420: assign dout_pixel id to pixel clock divider
+
+ .../devicetree/bindings/clock/exynos5420-clock.txt  |   12 ++++++++++++
+ drivers/clk/samsung/clk-exynos5420.c                |   19 +++++++++++++------
+ 2 files changed, 25 insertions(+), 6 deletions(-)
+
 -- 
 1.7.10.4
