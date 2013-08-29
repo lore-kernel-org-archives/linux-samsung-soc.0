@@ -1,72 +1,47 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v6 0/7] ARM: dts: add support for exynos hdmi subsystem
-Date: Thu, 29 Aug 2013 11:10:20 +0530
-Message-ID: <1377754827-31786-1-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH v6 3/7] ARM: dts: add clocks to hdmi dt node for exynos5250
+Date: Thu, 29 Aug 2013 11:10:23 +0530
+Message-ID: <1377754827-31786-4-git-send-email-rahul.sharma@samsung.com>
+References: <1377754827-31786-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47458 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752230Ab3H2FSo (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:26777 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752230Ab3H2FSs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 01:18:44 -0400
+	Thu, 29 Aug 2013 01:18:48 -0400
+In-reply-to: <1377754827-31786-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-It adds Device tree nodes and clocks information for HDMI subsystem
-for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
-hpd gpio and update binding documents.
+Fix wrong clock numbers in hdmi dt node. Removed hdmiphy
+clock which was a dummy clock earlier and not required now.
+Also added mux clock to change the clock parent.
 
-This set is based on kukjin's for-next branch at
-http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-v6:
-1) Update clock numbers as per change in mux and divider clocks.
-2) Isolate board changes from SoC patch and add a different patch for ddc.
-
-v5:
-1) Merged Clock addition patch to DT nmde addition patch.
-2) Add dout_pixel clock for hdmi in place of sclk_pixel.
-3) Enable mixer node in soc dtsi file.
-
-v4:
-1) Remove the movement of common properties to Exynos5.dtsi for
-I2C and hdmi subsystem.
-2) Change the title of the patches.
-
-v3:
-1) Rebase to kgene for-next based on 3.11-rc1.
-2) Changes clock numbers as per updated clocks file for
-exyno5250 and exynos5420.
-3) Dropped Sachin patch as already got merged.
-
-v2:
-1) Added patch for moving common i2c properties to exynos5.dtsi
-2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
-3) moved hpd pinctrl node to board file.
-4) Added Sachin's patch to update binding document for hdmi with hpd
-information.
-
-Andrew Bresticker (1):
-  ARM: dts: add i2c device nodes for Exynos5420
-
-Rahul Sharma (5):
-  of/documentation: update with clock information for exynos hdmi
-    subsystem
-  ARM: dts: add clocks to hdmi dt node for exynos5250
-  ARM: dts: add dt nodes for hdmi subsystem for exynos5420
-  ARM: dts: add hdmi hpd gpio pinctrl node for exynos5420 smdk board
-  ARM: dts: add hdmi ddc device for exynos5420 smdk board
-
-Sean Paul (1):
-  ARM: dts: add mixer clocks to mixer node for Exynos5250
-
- .../devicetree/bindings/video/exynos_hdmi.txt      |   15 +++-
- .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
- arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++-
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |   26 +++++++
- arch/arm/boot/dts/exynos5420.dtsi                  |   75 ++++++++++++++++++++
- 5 files changed, 124 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 2c41b2d..c2b4d95 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -613,10 +613,10 @@
+ 		compatible = "samsung,exynos4212-hdmi";
+ 		reg = <0x14530000 0x70000>;
+ 		interrupts = <0 95 0>;
+-		clocks = <&clock 333>, <&clock 136>, <&clock 137>,
+-				<&clock 333>, <&clock 333>;
++		clocks = <&clock 344>, <&clock 136>, <&clock 137>,
++				<&clock 159>, <&clock 1024>;
+ 		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
+-				"sclk_hdmiphy", "hdmiphy";
++				"sclk_hdmiphy", "mout_hdmi";
+ 	};
+ 
+ 	mixer {
 -- 
 1.7.10.4
