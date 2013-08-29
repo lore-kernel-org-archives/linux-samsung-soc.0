@@ -1,111 +1,109 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 02/10] ARM: dts: list the CPU nodes for Exynos5250
-Date: Thu, 29 Aug 2013 13:51:47 +0200
-Message-ID: <1440260.Z9PFmnVfM0@amdc1227>
-References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
- <1371536962-13322-3-git-send-email-chander.kashyap@linaro.org>
- <CAOh2x=nsQ5paiMHSH8z9drsqr7_+TvMtNefczf8QNQNbYo0y=Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH] ARM: dts: update binding document exynos-dw-mshc.txt
+Date: Thu, 29 Aug 2013 17:23:57 +0530
+Message-ID: <1377777238-25087-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41708 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753414Ab3H2Lvy (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:55343 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752608Ab3H2LyM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 07:51:54 -0400
-In-reply-to: <CAOh2x=nsQ5paiMHSH8z9drsqr7_+TvMtNefczf8QNQNbYo0y=Q@mail.gmail.com>
+	Thu, 29 Aug 2013 07:54:12 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-serial@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, mark.rutland@arm.com, thomas.ab@samsung.com, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org
+Cc: rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, t.figa@samsung.com, dianders@chromium.org, cjb@laptop.org, thomas.abraham@linaro.org, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Hi Viresh,
+This patch updates the exynos-dw-mshc.txt.Currently we are using
+"pinctrl" binding property to describe the CMD and DATA line's
+of Mobile Storage Host Controller(mshc) node.
 
-On Thursday 29 of August 2013 13:45:56 Viresh Kumar wrote:
-> On Tue, Jun 18, 2013 at 11:59 AM, Chander Kashyap
-> 
-> <chander.kashyap@linaro.org> wrote:
-> > Instead of having to specify the number for CPUs in Exynos5250 in
-> > platsmp.c file, let the number of CPUs be determined by having this
-> > information listed in Exynos5250 device tree file.
-> > 
-> > Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> > ---
-> > 
-> >  arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++++++++++++
-> >  arch/arm/mach-exynos/platsmp.c    |   10 +++++++---
-> >  2 files changed, 23 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> > b/arch/arm/boot/dts/exynos5250.dtsi index 63ca03d..1aeef98 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -50,6 +50,22 @@
-> > 
-> >                 pinctrl3 = &pinctrl_3;
-> >         
-> >         };
-> > 
-> > +       cpus {
-> > +               #address-cells = <1>;
-> > +               #size-cells = <0>;
-> > +
-> > +               cpu@0 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a15";
-> > +                       reg = <0>;
-> > +               };
-> > +               cpu@1 {
-> > +                       device_type = "cpu";
-> > +                       compatible = "arm,cortex-a15";
-> > +                       reg = <1>;
-> > +               };
-> > +       };
-> > +
-> > 
-> >         pd_gsc: gsc-power-domain@0x10044000 {
-> >         
-> >                 compatible = "samsung,exynos4210-pd";
-> >                 reg = <0x10044000 0x20>;
-> > 
-> > diff --git a/arch/arm/mach-exynos/platsmp.c
-> > b/arch/arm/mach-exynos/platsmp.c index 1a4e4e5..85ea4ca 100644
-> > --- a/arch/arm/mach-exynos/platsmp.c
-> > +++ b/arch/arm/mach-exynos/platsmp.c
-> > @@ -180,10 +180,14 @@ static void __init exynos_smp_init_cpus(void)
-> > 
-> >         void __iomem *scu_base = scu_base_addr();
-> >         unsigned int i, ncores;
-> > 
-> > -       if (soc_is_exynos5250())
-> > -               ncores = 2;
-> > -       else
-> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
-> > 
-> >                 ncores = scu_base ? scu_get_core_count(scu_base) : 1;
-> > 
-> > +       else
-> > +               /*
-> > +                * CPU Nodes are passed thru DT and set_cpu_possible
-> > +                * is set by "arm_dt_init_cpu_maps".
-> > +                */
-> > +               return;
-> > 
-> >         /* sanity check */
-> >         if (ncores > nr_cpu_ids) {
-> 
-> After this patch only one cpu is coming up for me on my Arndale board..
-> Revert of this one fixes the issue though (Tested over v3.11-rc7)
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   34 ++++++++++----------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-It is quite likely that 0 and 1 are not real MPIDR values for CPU cores on 
-Exynos5250, because cluster ID might not be 0, as one could expect.
-
-This is what I found out on Exynos4210 and 4x12, when trying to add CPU 
-nodes in DT for them, leading in turn to a series of regressions, for which 
-it was to late to do all the necessary code rework to fix them for 3.12, so 
-I had to defer this work for next release.
-
-Best regards,
-Tomasz
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index 84cd56f..646a902 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -7,9 +7,9 @@ differences between the core Synopsis dw mshc controller properties described
+ by synopsis-dw-mshc.txt and the properties used by the Samsung Exynos specific
+ extensions to the Synopsis Designware Mobile Storage Host Controller.
+ 
+-Required Properties:
++Required SoC Specific Properties:
+ 
+-* compatible: should be
++* compatible: should be one of the following
+ 	- "samsung,exynos4210-dw-mshc": for controllers with Samsung Exynos4210
+ 	  specific extensions.
+ 	- "samsung,exynos4412-dw-mshc": for controllers with Samsung Exynos4412
+@@ -19,6 +19,8 @@ Required Properties:
+ 	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
+ 	  specific extensions.
+ 
++Required Board Specific Properties:
++
+ * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+   ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
+@@ -46,44 +48,42 @@ Required Properties:
+       - if CIU clock divider value is 0 (that is divide by 1), both tx and rx
+         phase shift clocks should be 0.
+ 
+-Required properties for a slot:
+-
+-* gpios: specifies a list of gpios used for command, clock and data bus. The
+-  first gpio is the command line and the second gpio is the clock line. The
+-  rest of the gpios (depending on the bus-width property) are the data lines in
+-  no particular order. The format of the gpio specifier depends on the gpio
+-  controller.
++* pinctrl-0: Should specify pin control groups used for this controller.
++* pinctrl-names: Should contain only one value - "default".
+ 
++Required properties for a slot:
++	Refer synopsis-dw-mshc.txt
+ Example:
+ 
+   The MSHC controller node can be split into two portions, SoC specific and
+   board specific portions as listed below.
+ 
+-	dwmmc0@12200000 {
++	mshc@12200000 {
+ 		compatible = "samsung,exynos5250-dw-mshc";
+ 		reg = <0x12200000 0x1000>;
+ 		interrupts = <0 75 0>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		clocks = <&clock 351>, <&clock 132>;
++		clock-names = "biu", "ciu";
++		fifo-depth = <0x80>;
++		status = "disabled";
+ 	};
+ 
+-	dwmmc0@12200000 {
++	mshc@12200000 {
++		status = "okay";
+ 		num-slots = <1>;
+ 		supports-highspeed;
+ 		broken-cd;
+-		fifo-depth = <0x80>;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+ 
+ 		slot@0 {
+ 			reg = <0>;
+ 			bus-width = <8>;
+-			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
+-				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
+-				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
+-				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
+-				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
+ 		};
+ 	};
+-- 
+1.7.9.5
