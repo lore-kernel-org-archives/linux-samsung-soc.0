@@ -1,127 +1,81 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [RFC V3 4/4] mmc: dw_mmc: exynos: configure SMU in exynos5420.
-Date: Thu, 29 Aug 2013 14:38:42 +0530
-Message-ID: <CAGOxZ53iuTNtY5jWMBNfdcp05QSwdbSY+-A4G6zrjV2ae8BJ6A@mail.gmail.com>
-References: <1377691731-7226-1-git-send-email-yuvaraj.cd@samsung.com>
- <1377691731-7226-5-git-send-email-yuvaraj.cd@samsung.com> <000901cea491$06b8a360$1429ea20$%jun@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <000901cea491$06b8a360$1429ea20$%jun@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-mmc@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, Girish K S <ks.giri@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [RESEND PATCH v2 0/7] Add device tree support for Exynos4412 Trats2
+ cameras
+Date: Thu, 29 Aug 2013 11:24:31 +0200
+Message-ID: <1377768278-15391-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:43933 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753356Ab3H2JZd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 29 Aug 2013 05:25:33 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: mturquette@linaro.org, g.liakhovetski@gmx.de, laurent.pinchart@ideasonboard.com, arun.kk@samsung.com, hverkuil@xs4all.nl, sakari.ailus@iki.fi, a.hajda@samsung.com, kyungmin.park@samsung.com, t.figa@samsung.com, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, swarren@wwwdotorg.org, pawel.moll@arm.com, rob.herring@calxeda.com, galak@codeaurora.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Seungwon,
+[Sigh, I've forgotten to Cc some mailing lists when submitting this
+ previously, resending with device tree and samsung-soc ML added]
 
-On Thu, Aug 29, 2013 at 1:53 PM, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> On Wed, August 28, 2013, Yuvaraj Kumar C D wrote:
->> Exynos5420 Mobile Storage Host controller has Security Management Unit
->> (SMU) for channel 0 and channel 1 (mainly for eMMC).This patch configures
->> SMU for exynos5420.
->>
->> This patch is on top of the below patch by Doug Anderson.
->> mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
->>
->> changes since V2:
->>       1.Droppped the bypass-smu quirk.
->>       2.Changed the subject line for this patch
->>         add a quirk for SMU -> configure SMU in exynos5420
->>
->> changes since V1:
->>       1.avoid code duplication by calling dw_mci_exynos_priv_init in
->>         resume path.
->>
->> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>  drivers/mmc/host/dw_mmc-exynos.c |   29 +++++++++++++++++++++++++++++
->>  1 file changed, 29 insertions(+)
->>
->> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
->> index 19c845b..db28f10 100644
->> --- a/drivers/mmc/host/dw_mmc-exynos.c
->> +++ b/drivers/mmc/host/dw_mmc-exynos.c
->> @@ -35,6 +35,25 @@
->>  #define EXYNOS4210_FIXED_CIU_CLK_DIV 2
->>  #define EXYNOS4412_FIXED_CIU_CLK_DIV 4
->>
->> +/* Block number in eMMC */
->> +#define DWMCI_BLOCK_NUM                      0xFFFFFFFF
->> +
->> +#define SDMMC_EMMCP_BASE             0x1000
->> +#define SDMMC_MPSECURITY             (SDMMC_EMMCP_BASE + 0x0010)
->> +#define SDMMC_MPSBEGIN0                      (SDMMC_EMMCP_BASE + 0x0200)
->> +#define SDMMC_MPSEND0                        (SDMMC_EMMCP_BASE + 0x0204)
->> +#define SDMMC_MPSCTRL0                       (SDMMC_EMMCP_BASE + 0x020C)
->> +
->> +/* SMU control bits */
->> +#define DWMCI_MPSCTRL_SECURE_READ_BIT                BIT(7)
->> +#define DWMCI_MPSCTRL_SECURE_WRITE_BIT               BIT(6)
->> +#define DWMCI_MPSCTRL_NON_SECURE_READ_BIT    BIT(5)
->> +#define DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT   BIT(4)
->> +#define DWMCI_MPSCTRL_USE_FUSE_KEY           BIT(3)
->> +#define DWMCI_MPSCTRL_ECB_MODE                       BIT(2)
->> +#define DWMCI_MPSCTRL_ENCRYPTION             BIT(1)
->> +#define DWMCI_MPSCTRL_VALID                  BIT(0)
->> +
->>  /* Variations in Exynos specific dw-mshc controller */
->>  enum dw_mci_exynos_type {
->>       DW_MCI_TYPE_EXYNOS4210,
->> @@ -74,6 +93,15 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
->>  {
->>       struct dw_mci_exynos_priv_data *priv = host->priv;
->>
->> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420) {
->> +             mci_writel(host, MPSBEGIN0, 0);
->> +             mci_writel(host, MPSEND0, DWMCI_BLOCK_NUM);
->> +             mci_writel(host, MPSCTRL0, DWMCI_MPSCTRL_SECURE_WRITE_BIT |
->> +                     DWMCI_MPSCTRL_NON_SECURE_READ_BIT |
->> +                     DWMCI_MPSCTRL_VALID |
->> +                     DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT);
-> Yuvaraj,
->
-> Just one thing to check.
-> ch#0 and #1 of three hosts are only valid for SMU control.
-> Did you consider #2 host?
-> It seems not.
->
+This series is intended to add device tree support for both cameras
+on the Exynos4412 SoC Trats 2 board. It converts related drivers to use
+the v4l2-async API and expose the sensor's master clock supplied by the
+camera host interface through the common clock API.
 
-Only host#0 and host#1 has SMU (On exynos5420).
-Host #2 does not contain SMU.
+This changeset is an updated version of my patch series [1] separating
+the sensor subdev driver from the exynos4-fimc-is module and adding
+asynchronous sensor registration support. There is also included next
+iteration of the patch adding DT bits to the rear facing S5C73M3 camera
+module driver [2].
 
-> Thanks,
-> Seungwon Jeon
->
->> +     }
->> +
->>       return 0;
->>  }
->>
->> @@ -107,6 +135,7 @@ static int dw_mci_exynos_resume(struct device *dev)
->>  {
->>       struct dw_mci *host = dev_get_drvdata(dev);
->>
->> +     dw_mci_exynos_priv_init(host);
->>       return dw_mci_resume(host);
->>  }
->>
->> --
->> 1.7.9.5
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The S5K6A3 is a raw image sensor of the front facing camera connected
+to the SoC local ISP (FIMC-IS).
 
+This series has run-time dependency on the patches adding clk_unregister()
+implementation [3].
 
+Any feedback, especially on the "s5k6a3: Add DT binding documentation"
+patch, where I've described some issue with the common video-interfaces
+binding is welcome.
 
--- 
-Regards,
-Alim
+[1] http://www.spinics.net/lists/linux-media/msg66073.html
+[2] https://linuxtv.org/patch/19386/
+[3] https://lkml.org/lkml/2013/8/24/63
+
+Thanks,
+Sylwester
+
+Andrzej Hajda (1):
+  V4L: s5c73m3: Add device tree support
+
+Sylwester Nawrocki (6):
+  V4L: s5k6a3: Add DT binding documentation
+  V4L: Add driver for s5k6a3 image sensor
+  V4L: s5k6a3: Add support for asynchronous subdev registration
+  exynos4-is: Add clock provider for the external clocks
+  exynos4-is: Use external s5k6a3 sensor driver
+  exynos4-is: Add support for asynchronous sensor subddevs registration
+
+ .../devicetree/bindings/media/samsung-fimc.txt     |   21 +-
+ .../devicetree/bindings/media/samsung-s5c73m3.txt  |   95 ++++++
+ .../devicetree/bindings/media/samsung-s5k6a3.txt   |   31 ++
+ drivers/media/i2c/Kconfig                          |    8 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c           |  206 +++++++++---
+ drivers/media/i2c/s5c73m3/s5c73m3-spi.c            |    6 +
+ drivers/media/i2c/s5c73m3/s5c73m3.h                |    4 +
+ drivers/media/i2c/s5k6a3.c                         |  340 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/fimc-is-regs.c   |    2 +-
+ drivers/media/platform/exynos4-is/fimc-is-sensor.c |  285 +---------------
+ drivers/media/platform/exynos4-is/fimc-is-sensor.h |   49 +--
+ drivers/media/platform/exynos4-is/fimc-is.c        |   97 +++---
+ drivers/media/platform/exynos4-is/fimc-is.h        |    4 +-
+ drivers/media/platform/exynos4-is/media-dev.c      |  335 +++++++++++++------
+ drivers/media/platform/exynos4-is/media-dev.h      |   31 +-
+ 16 files changed, 984 insertions(+), 531 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k6a3.txt
+ create mode 100644 drivers/media/i2c/s5k6a3.c
+
+--
+1.7.9.5
