@@ -1,46 +1,133 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 5/5] [media] exynos-mscl: Add Makefile for M-Scaler
- driver
-Date: Thu, 29 Aug 2013 18:36:36 +0200
-Message-ID: <521F7894.7080909@samsung.com>
-References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
- <1376909932-23644-6-git-send-email-shaik.ameer@samsung.com>
- <521F1E83.8060108@samsung.com>
- <CAOD6AToJhN4FTW+g=L8+tEL2ftA7a10gd0LxUnyTkK1_0F0s1Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH v7 1/3] mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
+Date: Thu, 29 Aug 2013 09:39:08 -0700
+Message-ID: <1377794350-12335-2-git-send-email-dianders@chromium.org>
+References: <1377188348-3418-1-git-send-email-dianders@chromium.org>
+ <1377794350-12335-1-git-send-email-dianders@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:61126 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755228Ab3H2Qgj (ORCPT
+Received: from mail-gh0-f202.google.com ([209.85.160.202]:57971 "EHLO
+	mail-gh0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754119Ab3H2QjS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 12:36:39 -0400
-In-reply-to: <CAOD6AToJhN4FTW+g=L8+tEL2ftA7a10gd0LxUnyTkK1_0F0s1Q@mail.gmail.com>
+	Thu, 29 Aug 2013 12:39:18 -0400
+Received: by mail-gh0-f202.google.com with SMTP id g24so55653ghb.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Aug 2013 09:39:17 -0700 (PDT)
+In-Reply-To: <1377794350-12335-1-git-send-email-dianders@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, posciak@google.com, Arun Kumar K <arun.kk@samsung.com>
+To: Chris Ball <cjb@laptop.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, James Hogan <james.hogan@imgtec.com>, Grant Grundler <grundler@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/29/2013 01:55 PM, Shaik Ameer Basha wrote:
-> Hi Sylwester,
-> 
-> On Thu, Aug 29, 2013 at 3:42 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> Hi Shaik,
->>
->> On 08/19/2013 12:58 PM, Shaik Ameer Basha wrote:
->>> This patch adds the Makefile for the M-Scaler (M2M scaler).
->>
->> Perhaps we could combine this with patch 3/5 ?
-> 
-> Ok. I will do that.
-> 
-> are you done with the review? can I start preparing for v3?
+If the WAKEUP_INT is asserted at wakeup and not cleared, we'll end up
+looping around forever.  This has been seen to happen on exynos5420
+silicon despite the fact that we haven't enabled any wakeup events due
+to a silicon errata.  It is safe to do on all exynos variants.
 
-Yes, I've left some more comments for you. :)
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Changes in v7: None
+Changes in v6:
+- Took out TODO comment copied from main platform code.
 
-Regards,
+Changes in v5:
+- Cleaned up dw_mci_exynos_resume_noirq() comment as per Seungwon.
+- Don't memcpy dev_pm_ops structure, define a new one.
+
+Changes in v4:
+- Take Seungwon's suggestion and don't add any dw_mmc-pltfm code.
+
+Changes in v3:
+- Add freeze/thaw and poweroff/restore noirq entries.
+
+Changes in v2:
+- Use suspend_noirq as per James Hogan.
+
+ drivers/mmc/host/dw_mmc-exynos.c | 53 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 52 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+index 866edef..e8c6cc9 100644
+--- a/drivers/mmc/host/dw_mmc-exynos.c
++++ b/drivers/mmc/host/dw_mmc-exynos.c
+@@ -30,6 +30,7 @@
+ #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
+ 					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
+ 					SDMMC_CLKSEL_CCLK_DIVIDER(z))
++#define SDMMC_CLKSEL_WAKEUP_INT		BIT(11)
+ 
+ #define EXYNOS4210_FIXED_CIU_CLK_DIV	2
+ #define EXYNOS4412_FIXED_CIU_CLK_DIV	4
+@@ -100,6 +101,49 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int dw_mci_exynos_suspend(struct device *dev)
++{
++	struct dw_mci *host = dev_get_drvdata(dev);
++
++	return dw_mci_suspend(host);
++}
++
++static int dw_mci_exynos_resume(struct device *dev)
++{
++	struct dw_mci *host = dev_get_drvdata(dev);
++
++	return dw_mci_resume(host);
++}
++
++/**
++ * dw_mci_exynos_resume_noirq - Exynos-specific resume code
++ *
++ * On exynos5420 there is a silicon errata that will sometimes leave the
++ * WAKEUP_INT bit in the CLKSEL register asserted.  This bit is 1 to indicate
++ * that it fired and we can clear it by writing a 1 back.  Clear it to prevent
++ * interrupts from going off constantly.
++ *
++ * We run this code on all exynos variants because it doesn't hurt.
++ */
++
++static int dw_mci_exynos_resume_noirq(struct device *dev)
++{
++	struct dw_mci *host = dev_get_drvdata(dev);
++	u32 clksel;
++
++	clksel = mci_readl(host, CLKSEL);
++	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
++		mci_writel(host, CLKSEL, clksel);
++
++	return 0;
++}
++#else
++#define dw_mci_exynos_suspend		NULL
++#define dw_mci_exynos_resume		NULL
++#define dw_mci_exynos_resume_noirq	NULL
++#endif /* CONFIG_PM_SLEEP */
++
+ static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+ {
+ 	/*
+@@ -187,13 +231,20 @@ static int dw_mci_exynos_probe(struct platform_device *pdev)
+ 	return dw_mci_pltfm_register(pdev, drv_data);
+ }
+ 
++const struct dev_pm_ops dw_mci_exynos_pmops = {
++	SET_SYSTEM_SLEEP_PM_OPS(dw_mci_exynos_suspend, dw_mci_exynos_resume)
++	.resume_noirq = dw_mci_exynos_resume_noirq,
++	.thaw_noirq = dw_mci_exynos_resume_noirq,
++	.restore_noirq = dw_mci_exynos_resume_noirq,
++};
++
+ static struct platform_driver dw_mci_exynos_pltfm_driver = {
+ 	.probe		= dw_mci_exynos_probe,
+ 	.remove		= __exit_p(dw_mci_pltfm_remove),
+ 	.driver		= {
+ 		.name		= "dwmmc_exynos",
+ 		.of_match_table	= dw_mci_exynos_match,
+-		.pm		= &dw_mci_pltfm_pmops,
++		.pm		= &dw_mci_exynos_pmops,
+ 	},
+ };
+ 
 -- 
-Sylwester Nawrocki
-Samsung R&D Institute Poland
+1.8.4
