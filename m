@@ -1,46 +1,69 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v4 3/5] clk/exynos5420: fix the order of parents of hdmi mux
-Date: Thu, 29 Aug 2013 11:07:07 +0530
-Message-ID: <1377754629-31465-4-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH v4 1/5] clk/exynos5420: add sclk_hdmiphy to the list of special
+ clocks
+Date: Thu, 29 Aug 2013 11:07:05 +0530
+Message-ID: <1377754629-31465-2-git-send-email-rahul.sharma@samsung.com>
 References: <1377754629-31465-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:65023 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752337Ab3H2FPg (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:52168 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753376Ab3H2FPn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 01:15:36 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 29 Aug 2013 01:15:43 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MSA004D519J1WM0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Aug 2013 14:15:36 +0900 (KST)
+ with ESMTP id <0MSA007LH199PC70@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Aug 2013 14:15:32 +0900 (KST)
 In-reply-to: <1377754629-31465-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: mturquette@linaro.org, kgene.kim@samsung.com, inki.dae@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, tomasz.figa@gmail.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Listing sclk_hdmiphy at 0th position in the list of parents is
-causing wrong configuration in reg SRC_DISP10.
+Add sclk_hdmiphy to the list of exposed clocks. This is required
+by hdmi driver to change the parent of hdmi clock.
 
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos5420.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/clock/exynos5420-clock.txt |    1 +
+ drivers/clk/samsung/clk-exynos5420.c                         |    4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+index 9bcc4b1..596a368 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5420-clock.txt
+@@ -59,6 +59,7 @@ clock which they consume.
+   sclk_pwm		155
+   sclk_gscl_wa		156
+   sclk_gscl_wb		157
++  sclk_hdmiphy		158
+ 
+    [Peripheral Clock Gates]
+ 
 diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 4e0c13e..522c033 100644
+index e035fd0..a86cadc 100644
 --- a/drivers/clk/samsung/clk-exynos5420.c
 +++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -286,7 +286,7 @@ PNAME(audio2_p)	= { "fin_pll", "cdclk2", "sclk_dpll", "sclk_mpll",
- 		  "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
- PNAME(spdif_p)	= { "fin_pll", "dout_audio0", "dout_audio1", "dout_audio2",
- 		  "spdif_extclk", "sclk_ipll", "sclk_epll", "sclk_rpll" };
--PNAME(hdmi_p)	= { "sclk_hdmiphy", "dout_hdmi_pixel" };
-+PNAME(hdmi_p)	= { "dout_hdmi_pixel", "sclk_hdmiphy" };
- PNAME(maudio0_p)	= { "fin_pll", "maudio_clk", "sclk_dpll", "sclk_mpll",
- 			  "sclk_spll", "sclk_ipll", "sclk_epll", "sclk_rpll" };
+@@ -120,7 +120,7 @@ enum exynos5420_clks {
+ 	sclk_i2s2, sclk_pcm1, sclk_pcm2, sclk_spdif, sclk_hdmi, sclk_pixel,
+ 	sclk_dp1, sclk_mipi1, sclk_fimd1, sclk_maudio0, sclk_maupcm0,
+ 	sclk_usbd300, sclk_usbd301, sclk_usbphy300, sclk_usbphy301, sclk_unipro,
+-	sclk_pwm, sclk_gscl_wa, sclk_gscl_wb,
++	sclk_pwm, sclk_gscl_wa, sclk_gscl_wb, sclk_hdmiphy,
  
+ 	/* gate clocks */
+ 	aclk66_peric = 256, uart0, uart1, uart2, uart3, i2c0, i2c1, i2c2, i2c3,
+@@ -297,7 +297,7 @@ static struct samsung_fixed_rate_clock exynos5420_fixed_rate_ext_clks[] __initda
+ 
+ /* fixed rate clocks generated inside the soc */
+ static struct samsung_fixed_rate_clock exynos5420_fixed_rate_clks[] __initdata = {
+-	FRATE(none, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 24000000),
++	FRATE(sclk_hdmiphy, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 24000000),
+ 	FRATE(none, "sclk_pwi", NULL, CLK_IS_ROOT, 24000000),
+ 	FRATE(none, "sclk_usbh20", NULL, CLK_IS_ROOT, 48000000),
+ 	FRATE(none, "mphy_refclk_ixtal24", NULL, CLK_IS_ROOT, 48000000),
 -- 
 1.7.10.4
