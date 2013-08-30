@@ -1,78 +1,180 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v4 0/5] clk/exynos5420: add clocks for hdmi subsystem
-Date: Thu, 29 Aug 2013 18:04:36 -0700
-Message-ID: <20130830010436.10934.31643@quantum>
-References: <1377754629-31465-1-git-send-email-rahul.sharma@samsung.com>
- <1873021.WMcNDqLpjt@amdc1227>
- <CAPdUM4Mf4pv031-W0X0EAJe7R=8xtqnNbbLyoo+O6LV0d-H0GA@mail.gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [RFC V3 4/4] mmc: dw_mmc: exynos: configure SMU in exynos5420.
+Date: Fri, 30 Aug 2013 12:44:43 +0900
+Message-ID: <000a01cea533$43cfa580$cb6ef080$%jun@samsung.com>
+References: <1377691731-7226-1-git-send-email-yuvaraj.cd@samsung.com>
+ <CAKuRcO+R4G9LXdXGJOXFNGB+XZeJwvnVq1U5wtCKRPmNN8DWPA@mail.gmail.com>
+ <001001cea4a3$9eb13080$dc139180$%jun@samsung.com>
+ <49209892.KLA1Q6dtil@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:43860 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751968Ab3H3BEp convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:46185 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754443Ab3H3Doq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 21:04:45 -0400
-Received: by mail-pa0-f42.google.com with SMTP id lj1so1634457pab.29
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Aug 2013 18:04:44 -0700 (PDT)
-In-Reply-To: <CAPdUM4Mf4pv031-W0X0EAJe7R=8xtqnNbbLyoo+O6LV0d-H0GA@mail.gmail.com>
+	Thu, 29 Aug 2013 23:44:46 -0400
+In-reply-to: <49209892.KLA1Q6dtil@amdc1227>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
+To: 'Tomasz Figa' <t.figa@samsung.com>
+Cc: 'Yuvaraj Kumar' <yuvaraj.cd@gmail.com>, 'Alim Akhtar' <alim.akhtar@gmail.com>, 'linux-mmc' <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Girish K S' <ks.giri@samsung.com>, 'Alim Akhtar' <alim.akhtar@samsung.com>, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>, swarren@wwwdotorg.org, mark.rutland@arm.com, ian.campbell@citrix.com, rob.herring@calxeda.com, pawel.moll@arm.com, galak@codeaurora.org, devicetree@vger.kernel.org
 
-Quoting Rahul Sharma (2013-08-29 06:36:51)
-> On 29 August 2013 18:00, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Rahul,
-> >
-> > On Thursday 29 of August 2013 11:07:04 Rahul Sharma wrote:
-> >> Add clock changes for hdmi subsystem for exynos5250 SoC. These
-> >> include addition of new clocks like mout_hdmi and smmu_tv, associating
-> >> ID to clk_hdmiphy and some essential corrections.
-> >>
-> >> V4:
-> >> 1) Optimised gaps between Gate, Muxes and Dividers.
-> >>
-> >> V3:
-> >> 1) Assign new ID to divider clock keeping sclk_pixel gate same.
-> >>
-> >> V2:
-> >> 1) Rebase to Mike's Tree.
-> >> 2) Change smmu_tv to smmu_mixer.
-> >>
-> >> This set is based on Mike's clk-next branch at
-> >> https://git.linaro.org/gitweb?p=people/mturquette/linux.git
-> >>
-> >> Rahul Sharma (5):
-> >>   clk/exynos5420: add sclk_hdmiphy to the list of special clocks
-> >>   clk/exynos5420: add gate clock for mixer sysmmu
-> >>   clk/exynos5420: fix the order of parents of hdmi mux
-> >>   clk/exynos5420: add hdmi mux to change parents in hdmi driver
-> >>   clk/exynos5420: assign dout_pixel id to pixel clock divider
-> >>
-> >>  .../devicetree/bindings/clock/exynos5420-clock.txt  |   12 ++++++++++++
-> >>  drivers/clk/samsung/clk-exynos5420.c                |   19
-> >> +++++++++++++------ 2 files changed, 25 insertions(+), 6 deletions(-)
-> >
-> > For the whole series:
-> >
-> > Acked-by: Tomasz Figa <t.figa@samsung.com>
-> >
+On Thu, August 29, 2013, Tomasz Figa wrote:
+> Hi Seungwon,
 > 
-> Thanks Tomasz,
+> On Thursday 29 of August 2013 19:36:28 Seungwon Jeon wrote:
+> > Yuvaraj Kumar wrote:
+> > > On Thu, Aug 29, 2013 at 3:14 PM, Seungwon Jeon <tgih.jun@samsung.com>
+> wrote:
+> > > > On Thu, August 29, 2013, Alim Akhtar wrote:
+> > > >> Hi Seungwon,
+> > > >>
+> > > >> On Thu, Aug 29, 2013 at 1:53 PM, Seungwon Jeon
+> <tgih.jun@samsung.com> wrote:
+> > > >> > On Wed, August 28, 2013, Yuvaraj Kumar C D wrote:
+> > > >> >> Exynos5420 Mobile Storage Host controller has Security Management
+> > > >> >> Unit
+> > > >> >> (SMU) for channel 0 and channel 1 (mainly for eMMC).This patch
+> > > >> >> configures SMU for exynos5420.
+> > > >> >>
+> > > >> >> This patch is on top of the below patch by Doug Anderson.
+> > > >> >> mmc: dw_mmc: Add exynos resume_noirq callback to clear WAKEUP_INT
+> > > >> >>
+> > > >> >> changes since V2:
+> > > >> >>       1.Droppped the bypass-smu quirk.
+> > > >> >>       2.Changed the subject line for this patch
+> > > >> >>
+> > > >> >>         add a quirk for SMU -> configure SMU in exynos5420
+> > > >> >>
+> > > >> >> changes since V1:
+> > > >> >>       1.avoid code duplication by calling dw_mci_exynos_priv_init
+> > > >> >>       in
+> > > >> >>
+> > > >> >>         resume path.
+> > > >> >>
+> > > >> >> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> > > >> >> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> > > >> >> ---
+> > > >> >>
+> > > >> >>  drivers/mmc/host/dw_mmc-exynos.c |   29
+> > > >> >>  +++++++++++++++++++++++++++++
+> > > >> >>  1 file changed, 29 insertions(+)
+> > > >> >>
+> > > >> >> diff --git a/drivers/mmc/host/dw_mmc-exynos.c
+> > > >> >> b/drivers/mmc/host/dw_mmc-exynos.c index 19c845b..db28f10 100644
+> > > >> >> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> > > >> >> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> > > >> >> @@ -35,6 +35,25 @@
+> > > >> >>
+> > > >> >>  #define EXYNOS4210_FIXED_CIU_CLK_DIV 2
+> > > >> >>  #define EXYNOS4412_FIXED_CIU_CLK_DIV 4
+> > > >> >>
+> > > >> >> +/* Block number in eMMC */
+> > > >> >> +#define DWMCI_BLOCK_NUM                      0xFFFFFFFF
+> > > >> >> +
+> > > >> >> +#define SDMMC_EMMCP_BASE             0x1000
+> > > >> >> +#define SDMMC_MPSECURITY             (SDMMC_EMMCP_BASE + 0x0010)
+> > > >> >> +#define SDMMC_MPSBEGIN0                      (SDMMC_EMMCP_BASE +
+> > > >> >> 0x0200) +#define SDMMC_MPSEND0
+> > > >> >> (SDMMC_EMMCP_BASE + 0x0204) +#define SDMMC_MPSCTRL0
+> > > >> >>          (SDMMC_EMMCP_BASE + 0x020C) +
+> > > >> >> +/* SMU control bits */
+> > > >> >> +#define DWMCI_MPSCTRL_SECURE_READ_BIT                BIT(7)
+> > > >> >> +#define DWMCI_MPSCTRL_SECURE_WRITE_BIT               BIT(6)
+> > > >> >> +#define DWMCI_MPSCTRL_NON_SECURE_READ_BIT    BIT(5)
+> > > >> >> +#define DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT   BIT(4)
+> > > >> >> +#define DWMCI_MPSCTRL_USE_FUSE_KEY           BIT(3)
+> > > >> >> +#define DWMCI_MPSCTRL_ECB_MODE                       BIT(2)
+> > > >> >> +#define DWMCI_MPSCTRL_ENCRYPTION             BIT(1)
+> > > >> >> +#define DWMCI_MPSCTRL_VALID                  BIT(0)
+> > > >> >> +
+> > > >> >>
+> > > >> >>  /* Variations in Exynos specific dw-mshc controller */
+> > > >> >>  enum dw_mci_exynos_type {
+> > > >> >>
+> > > >> >>       DW_MCI_TYPE_EXYNOS4210,
+> > > >> >>
+> > > >> >> @@ -74,6 +93,15 @@ static int dw_mci_exynos_priv_init(struct
+> > > >> >> dw_mci *host)> >> >>
+> > > >> >>  {
+> > > >> >>
+> > > >> >>       struct dw_mci_exynos_priv_data *priv = host->priv;
+> > > >> >>
+> > > >> >> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420) {
+> > > >> >> +             mci_writel(host, MPSBEGIN0, 0);
+> > > >> >> +             mci_writel(host, MPSEND0, DWMCI_BLOCK_NUM);
+> > > >> >> +             mci_writel(host, MPSCTRL0,
+> > > >> >> DWMCI_MPSCTRL_SECURE_WRITE_BIT | +
+> > > >> >> DWMCI_MPSCTRL_NON_SECURE_READ_BIT |
+> > > >> >> +                     DWMCI_MPSCTRL_VALID |
+> > > >> >> +                     DWMCI_MPSCTRL_NON_SECURE_WRITE_BIT);
+> > > >> >
+> > > >> > Yuvaraj,
+> > > >> >
+> > > >> > Just one thing to check.
+> > > >> > ch#0 and #1 of three hosts are only valid for SMU control.
+> > > >> > Did you consider #2 host?
+> > > >> > It seems not.
+> > > >>
+> > > >> Only host#0 and host#1 has SMU (On exynos5420).
+> > > >> Host #2 does not contain SMU.
+> > > >
+> > > > Let me clear it.
+> > > > I mean that current change allows for ch2 to access registers related
+> > > > to SMU, even though ch2 doesn't actually has SMU. It's not valid IO
+> > > > area.>
+> > > No,host#0 and host#1 are compatible with "samsung,exynos5420-dw-mshc"
+> > > but host#2 is compatible with the "samsung,exynos5250-dw-mshc".
+> > > Below is the DT patch posted in another thread.
+> > > [1] [PATCH V4] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+> > > http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg21985.
+> > > html I will resubmit the DT patch[1] with reg = <0x12220000 0x1000> for
+> > > host#2.
+> > Hmm. If we notice exynos5420's other newly added registers apart from
+> > SMU, it is difficult to say exynos5420 is compatible with exynos5250
+> > fully for #2. But because there is no use case for new registers, it
+> > could be acceptable. Ok, we should be careful to configure DT file
+> > though.
 > 
-> Mike ! please consider it for clk-next branch.
+> Could you elaborate a bit more on the differences in DW MMC IP between
+> Exynos5250 and Exynos5420? If the differences are significant, then it
+> might be necessary to use different compatible value, as it should not
+> depend on any use case (or lack of).
+Actually the reason is  that extended register of ch2 doesn't work rather than none of use case.
+Ch2 is targeted for removable card type.
 
-Taken into clk-next.
+> 
+> If the DW MMC version used in Exynos 5420 provides the whole set of
+> functionality of the version used in Exynos 5250 and some extra extensions,
+> then it can be called "compatible with Exynos 5250", but if you ever need
+> to support those extra extensions, you will have to add a separate
+> compatible string for it.
+> 
+> With regard to SMU that is present only on selected instances, you can as
+> well create two compatible values for the DW MMC IP on Exynos 5420, e.g.
+> "samsung,exynos5420-dw-mshc" and "samsung,exynos5420-dw-mshc-smu".
+I think your suggestion is a nice thing. It makes sense.
+And I missed one thing.
+Apart from added register, Exynos5420 ch2 is designed for I/O of 1.2V voltage unlike Exynos5250.
+So it is worthy to be distinguished.
 
-Regards,
-Mike
+Yuvaraj,
+Could you apply Tomasz's suggestion ("samsung,exynos5420-dw-mshc" and "samsung,exynos5420-dw-mshc-smu") and resend it?
+
+Thanks,
+Seungwon Jeon
 
 > 
-> regards,
-> Rahul Sharma.
+> [Adding devicetree ML and DT maintainers on CC, as this is something they
+> should be able to comment on.]
 > 
-> > Best regards,
-> > Tomasz
-> >
+> Best regards,
+> Tomasz
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
