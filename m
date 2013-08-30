@@ -1,52 +1,43 @@
-From: Wim Van Sebroeck <wim@iguana.be>
-Subject: Re: [PATCH V4] watchdog: s3c2410_wdt: remove the global variables
-Date: Fri, 30 Aug 2013 20:19:05 +0200
-Message-ID: <20130830181905.GA27363@spo001.leaseweb.com>
-References: <1377597963-27939-1-git-send-email-l.krishna@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] clk: s3c64xx: Fix aliases for SPI devices
+Date: Fri, 30 Aug 2013 22:47:44 +0100
+Message-ID: <1377899264-5917-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ns1.pc-advies.be ([83.149.101.17]:59568 "EHLO
-	spo001.leaseweb.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1754841Ab3H3STH (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:47083 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754571Ab3H3Vrv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Aug 2013 14:19:07 -0400
-Content-Disposition: inline
-In-Reply-To: <1377597963-27939-1-git-send-email-l.krishna@samsung.com>
+	Fri, 30 Aug 2013 17:47:51 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dianders@chromium.org, jg1.han@samsung.com, t.figa@samsung.com, linux-watchdog@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-Hi Leela,
+From: Mark Brown <broonie@linaro.org>
 
-> This patch removes the global variables in the driver file and
-> group them into a structure.
-> 
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> Note: This patch is rebased on kgene's for-next branch and tested on SMDK5420.
-> 
->  Changes since V3:
-> 	- As Wim Van Sebroeck suggested removed to_s3c2410_wdt() and used
-> 	  watchdog_get_drvdata() instead.
-> 
->  Changes since V2:
-> 	- Addressed comments given by Tomasz Figa <t.figa@samsung.com>
-> 	  https://patchwork.kernel.org/patch/2831032/
-> 	- Renamed structure name from s3c2410_watchdog to s3c2410_wdt.
-> 
->  Changes since V1:
-> 	- changed the patch subject.
-> 	- indentation correction in s3c2410_watchdog structure.
-> 
->  drivers/watchdog/s3c2410_wdt.c |  222 +++++++++++++++++++++++-----------------
->  1 file changed, 128 insertions(+), 94 deletions(-)
-> 
+The clock aliases for SPI devices do not reflect the actual usage in the
+driver causing the SPI controller to fail to probe when the clock driver
+is in use, fix this up.
 
-Added to linux-watchdog-next.
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ drivers/clk/samsung/clk-s3c64xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Kind regards,
-Wim.
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index eeda567..d4f4f70 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -356,8 +356,8 @@ static struct samsung_clock_alias s3c64xx_clock_aliases[] = {
+ 	ALIAS(SCLK_MMC2, "s3c-sdhci.2", "mmc_busclk.2"),
+ 	ALIAS(SCLK_MMC1, "s3c-sdhci.1", "mmc_busclk.2"),
+ 	ALIAS(SCLK_MMC0, "s3c-sdhci.0", "mmc_busclk.2"),
+-	ALIAS(SCLK_SPI1, "s3c6410-spi.1", "spi-bus"),
+-	ALIAS(SCLK_SPI0, "s3c6410-spi.0", "spi-bus"),
++	ALIAS(SCLK_SPI1, "s3c6410-spi.1", "spi_busclk1"),
++	ALIAS(SCLK_SPI0, "s3c6410-spi.0", "spi_busclk0"),
+ 	ALIAS(SCLK_AUDIO1, "samsung-pcm.1", "audio-bus"),
+ 	ALIAS(SCLK_AUDIO1, "samsung-i2s.1", "audio-bus"),
+ 	ALIAS(SCLK_AUDIO0, "samsung-pcm.0", "audio-bus"),
+-- 
+1.8.4.rc3
