@@ -1,119 +1,65 @@
-From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Subject: Re: [PATCH V5] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Fri, 30 Aug 2013 12:29:10 +0530
-Message-ID: <CAKuRcO+qhfry4KT2gJmB5DGgPF7=0WrEJH=7quVOj3tobnPv=A@mail.gmail.com>
-References: <1377691386-7085-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1499444.qkqi2LXfcl@amdc1227>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH] video: exynos: Ensure definitions match prototypes
+Date: Fri, 30 Aug 2013 10:15:23 +0300
+Message-ID: <5220468B.2090304@ti.com>
+References: <1372764414-9102-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="JH6O745Mwki3Q2iOFiXmTnIkUsoIr4dKp"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:63596 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754273Ab3H3G7L (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:56184 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754320Ab3H3HPg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Aug 2013 02:59:11 -0400
-In-Reply-To: <1499444.qkqi2LXfcl@amdc1227>
+	Fri, 30 Aug 2013 03:15:36 -0400
+In-Reply-To: <1372764414-9102-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Doug Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, Thomas Abraham <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, galak@codeaurora.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Jingoo Han <jg1.han@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-On Wed, Aug 28, 2013 at 5:52 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Yuvaraj,
->
-> On Wednesday 28 of August 2013 17:33:06 Yuvaraj Kumar C D wrote:
->> This patch adds the device tree node entries for exynos5420 SOC.
->> Exynos5420 has a different version of DWMMC controller,so a new
->> compatible string is used to distinguish it from the prior SOC's.
->>
->> This patch depends on
->>       mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
->>
->> changes since v4:
->>       1.Droppped the bypass-smu binding property.
->>       2.Used compatible string "samsung,exynos5250-dw-mshc"
->>         for controller instance which does not have SMU.
->>
->> changes since V3:
->>       1.change fifo-depth size from 0x80 to 0x40
->>       2.Move the below properties
->>               a.card-detect-delay
->>               b.samsung,dw-mshc-ciu-div
->>               c.samsung,dw-mshc-sdr-timing
->>               d.samsung,dw-mshc-ddr-timing
->>       from SOC dts to board dts file as suggested by Doug Anderson
->>
->> changes since V2:
->>       1.dropped num-slots property from node as its not required
->>         if number of card slots available is 1.
->>
->>       2.Move the below properties
->>               a.fifo-depth
->>               b.card-detect-delay
->>               c.samsung,dw-mshc-ciu-div
->>               d.samsung,dw-mshc-sdr-timing
->>               e.samsung,dw-mshc-ddr-timing
->>       from board dts to SOC dts,as these are not board specific properties.
->>
->>       3.Updated the binding document exynos-dw-mshc.txt.
->>
->> changes since V1:
->>       1.disable node by status = disabled in SOC file
->>       2.enable node by status = okay in board specific file
->>
->> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->> ---
->>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
->>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33
->> +++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi                  |
->> 39 ++++++++++++++++++++ 3 files changed, 74 insertions(+)
->
-> This patch looks good to me now, except some minor comments below.
->
->> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt index
->> 6d1c098..84cd56f 100644
->> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> @@ -16,6 +16,8 @@ Required Properties:
->>         specific extensions.
->>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
->> specific extensions.
->> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
->> +       specific extensions.
->>
->>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card
->> interface unit (ciu) clock. This property is applicable only for Exynos5
->> SoC's and diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..3ce5c97
->> 100644
->> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> @@ -31,6 +31,39 @@
->>               };
->>       };
->>
->> +     dwmmc0@12200000 {
->
-> Node name should not contain instance index. Instead, according to ePAPR
-> recommendation, I would opt for a generic name such as mmc, mshc or sdio-
-> host. mshc is already used on Exynos 4 so it might be a good idea to use it
-> for consistency.
-If we change node name's to mshc, debug statements are look like below:
-dwmmc_exynos 12200000.mshc: num-slots property not found, assuming 1
-slot is available
-dwmmc_exynos 12200000.mshc: no vmmc regulator found: -19
-dwmmc_exynos 12200000.mshc: Using internal DMA controller.
-dwmmc_exynos 12200000.mshc: Version ID is 250a
-dwmmc_exynos 12200000.mshc: DW MMC controller at irq 107, 64 bit host
-data width, 64 deep fifo
+--JH6O745Mwki3Q2iOFiXmTnIkUsoIr4dKp
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-"dwmmc_exynos" is platform driver name and "12200000.mshc" from dt
-node.Is'nt it look like bit confusing?
+On 02/07/13 14:26, Mark Brown wrote:
+> From: Mark Brown <broonie@linaro.org>
+>=20
+> Ensure that the definitions of functions match the prototypes used by
+> other modules by including the header with the prototypes in the files
+> with the definitions.
+>=20
+> Signed-off-by: Mark Brown <broonie@linaro.org>
 
->
-> [Adding DT maintainers on CC]
->
-> Best regards,
-> Tomasz
->
+Thanks, queued this for 3.12.
+
+ Tomi
+
+
+
+--JH6O745Mwki3Q2iOFiXmTnIkUsoIr4dKp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQIcBAEBAgAGBQJSIEaLAAoJEPo9qoy8lh71R80P/A16bQ1Fz8jG/kZZb260p3Bj
+1IrBKr2WyqY8CNvDfHPE87lHf1TIjU8p/kyPx1ZIlMouL4Mrn9lIjFBFvgD71Rzc
+A/vRC4rzbFFxACNt0aeCtiYYiGLANZDxYGoXdm5/DLX5Kz2dyJCfHJi0yL1IWWf9
+joN2hO7KWUp/zvw7sAHIHHIoGDxLNTMScGFKzMl+GT1aYZvy7p/giVnxB1PeE7OI
+mlS3FGm23wTbe0lhM2vtKx2KRmFj4RR77b7K1s22uqDy8QjDEnMdxI51lY6yENfq
+hjuOJcR4RhBs+XPfWLTlvVvf1H+QHiBvyBL5Nt0OSS5Iw1bVmx54Hir+MSuSjlXb
+OX9aLWCcqsn+QbeWiosz2RxAfazruwcBGHQsqMVejXZM2Wznx7oG5iRvbIAUqB8U
+nOlMc01as2nkePdurLL/kg9tRIlcHlz4q3BjKF4HmKxlmvgjmO+cQIQL4oMmDWA7
+RyAgNs/m5ZXKdIfQYWo9uC1Nj6qX1fOWPN1x73Diizos0tRTTpFlN3mlIAer4MqY
+Vk3Z3zsYBK5lFuOin2e+FUAC0ZQskgZBSqmO7jmuFpRL37Nj4Wbcmh0v2oGUOHeI
+fzJqhrOPVodu4779feeDrgh/4va7CP59YJiE0owDkY7PG3hgPlODpGpHwblG6IEv
+zczAyW0wK9zhe1TzN16p
+=1h7W
+-----END PGP SIGNATURE-----
+
+--JH6O745Mwki3Q2iOFiXmTnIkUsoIr4dKp--
