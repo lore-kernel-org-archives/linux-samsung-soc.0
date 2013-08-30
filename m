@@ -1,65 +1,58 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH] video: exynos: Ensure definitions match prototypes
-Date: Fri, 30 Aug 2013 10:15:23 +0300
-Message-ID: <5220468B.2090304@ti.com>
-References: <1372764414-9102-1-git-send-email-broonie@kernel.org>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] mmc: sdhci-s3c: Check if clk_set_rate() succeeds
+Date: Fri, 30 Aug 2013 17:21:44 +0900
+Message-ID: <52205618.70107@samsung.com>
+References: <1377792936-775-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="JH6O745Mwki3Q2iOFiXmTnIkUsoIr4dKp"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:56184 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754320Ab3H3HPg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Aug 2013 03:15:36 -0400
-In-Reply-To: <1372764414-9102-1-git-send-email-broonie@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Jingoo Han <jg1.han@samsung.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
-
---JH6O745Mwki3Q2iOFiXmTnIkUsoIr4dKp
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1377792936-775-1-git-send-email-broonie@kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/07/13 14:26, Mark Brown wrote:
+Looks good to me.
+
+Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+
+On 08/30/2013 01:15 AM, Mark Brown wrote:
 > From: Mark Brown <broonie@linaro.org>
->=20
-> Ensure that the definitions of functions match the prototypes used by
-> other modules by including the header with the prototypes in the files
-> with the definitions.
->=20
+> 
+> It is possible that we may fail to set the clock rate, if we do so then
+> log the failure and don't bother reprogramming the IP.
+> 
 > Signed-off-by: Mark Brown <broonie@linaro.org>
+> ---
+>  drivers/mmc/host/sdhci-s3c.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 926aaf6..d10de3f 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -295,6 +295,7 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
+>  	struct device *dev = &ourhost->pdev->dev;
+>  	unsigned long timeout;
+>  	u16 clk = 0;
+> +	int ret;
+>  
+>  	/* don't bother if the clock is going off */
+>  	if (clock == 0)
+> @@ -302,7 +303,12 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
+>  
+>  	sdhci_s3c_set_clock(host, clock);
+>  
+> -	clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
+> +	ret = clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
+> +	if (ret != 0) {
+> +		dev_err(dev, "%s: failed to set clock rate %uHz\n",
+> +			mmc_hostname(host->mmc), clock);
+> +		return;
+> +	}
+>  
+>  	host->clock = clock;
+>  
+> 
 
-Thanks, queued this for 3.12.
-
- Tomi
-
-
-
---JH6O745Mwki3Q2iOFiXmTnIkUsoIr4dKp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJSIEaLAAoJEPo9qoy8lh71R80P/A16bQ1Fz8jG/kZZb260p3Bj
-1IrBKr2WyqY8CNvDfHPE87lHf1TIjU8p/kyPx1ZIlMouL4Mrn9lIjFBFvgD71Rzc
-A/vRC4rzbFFxACNt0aeCtiYYiGLANZDxYGoXdm5/DLX5Kz2dyJCfHJi0yL1IWWf9
-joN2hO7KWUp/zvw7sAHIHHIoGDxLNTMScGFKzMl+GT1aYZvy7p/giVnxB1PeE7OI
-mlS3FGm23wTbe0lhM2vtKx2KRmFj4RR77b7K1s22uqDy8QjDEnMdxI51lY6yENfq
-hjuOJcR4RhBs+XPfWLTlvVvf1H+QHiBvyBL5Nt0OSS5Iw1bVmx54Hir+MSuSjlXb
-OX9aLWCcqsn+QbeWiosz2RxAfazruwcBGHQsqMVejXZM2Wznx7oG5iRvbIAUqB8U
-nOlMc01as2nkePdurLL/kg9tRIlcHlz4q3BjKF4HmKxlmvgjmO+cQIQL4oMmDWA7
-RyAgNs/m5ZXKdIfQYWo9uC1Nj6qX1fOWPN1x73Diizos0tRTTpFlN3mlIAer4MqY
-Vk3Z3zsYBK5lFuOin2e+FUAC0ZQskgZBSqmO7jmuFpRL37Nj4Wbcmh0v2oGUOHeI
-fzJqhrOPVodu4779feeDrgh/4va7CP59YJiE0owDkY7PG3hgPlODpGpHwblG6IEv
-zczAyW0wK9zhe1TzN16p
-=1h7W
------END PGP SIGNATURE-----
-
---JH6O745Mwki3Q2iOFiXmTnIkUsoIr4dKp--
