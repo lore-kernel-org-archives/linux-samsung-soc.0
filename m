@@ -1,95 +1,120 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 2/2] ARM: EXYNOS: add cpuidle-exynos.max_states kernel parameter
-Date: Fri, 30 Aug 2013 12:21:07 +0200
-Message-ID: <4002844.4ZqqJexTv4@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH] mmc: dw_mmc: update binding document exynos-dw-mshc.txt
+Date: Fri, 30 Aug 2013 16:50:11 +0530
+Message-ID: <1377861611-3891-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:19858 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752882Ab3H3KVV (ORCPT
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:47018 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753667Ab3H3LUW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Aug 2013 06:21:21 -0400
+	Fri, 30 Aug 2013 07:20:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Tomasz Figa <t.figa@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, jh80.chung@samsung.com, tgih.jun@samsung.com
+Cc: ks.giri@samsung.com, t.figa@samsung.com, alim.akhtar@samsung.com, dianders@chromium.org, devicetree@vger.kernel.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Add "cpuidle-exynos.max_states=" parameter to allow user to specify
-the maximum of allowed CPU idle states for ARM EXYNOS cpuidle driver.
+This patch updates the exynos-dw-mshc.txt.Currently we are using
+"pinctrl" binding property to describe the CMD and DATA line's
+of Mobile Storage Host Controller(mshc) node.
 
-This change is needed because C1 state (AFTR mode) is often not able
-to work properly due to incompatibility with some bootloader versions.
+Compatibility string is added in the driver with the patch.
+[1] mmc: dw_mmc: exynos: configure SMU in exynos5420.
 
-Usage examples:
+DT nodes has been added in separate patch.
+[2] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
 
-"cpuidle-exynos.max_states=1" disables C1 state (AFTR mode).
-
-"cpuidle-exynos.max_states=0" disables the driver completely.
-
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 ---
- arch/arm/mach-exynos/cpuidle.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   39 +++++++++++---------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 8e881e0..ead0f71 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -16,6 +16,7 @@
- #include <linux/export.h>
- #include <linux/time.h>
- #include <linux/platform_device.h>
-+#include <linux/moduleparam.h>
+diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+index 84cd56f..0e1d4d9 100644
+--- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
++++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+@@ -7,9 +7,9 @@ differences between the core Synopsis dw mshc controller properties described
+ by synopsis-dw-mshc.txt and the properties used by the Samsung Exynos specific
+ extensions to the Synopsis Designware Mobile Storage Host Controller.
  
- #include <asm/proc-fns.h>
- #include <asm/smp_scu.h>
-@@ -30,6 +31,9 @@
+-Required Properties:
++Required SoC Specific Properties:
  
- #include "common.h"
- 
-+#define MODULE_PARAM_PREFIX	"cpuidle-exynos."
-+#define PREFIX			"cpuidle-exynos: "
+-* compatible: should be
++* compatible: should be one of the following
+ 	- "samsung,exynos4210-dw-mshc": for controllers with Samsung Exynos4210
+ 	  specific extensions.
+ 	- "samsung,exynos4412-dw-mshc": for controllers with Samsung Exynos4412
+@@ -17,7 +17,12 @@ Required Properties:
+ 	- "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+ 	  specific extensions.
+ 	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
+-	  specific extensions.
++	  specific extensions which does not have SMU(Security Management Unit).
++	- "samsung,exynos5420-dw-mshc-smu": for controllers with Samsung
++	  Exynos5420 specific extensions which has SMU(Security Management
++	  Unit).
 +
- #define REG_DIRECTGO_ADDR	(samsung_rev() == EXYNOS4210_REV_1_1 ? \
- 			S5P_INFORM7 : (samsung_rev() == EXYNOS4210_REV_1_0 ? \
- 			(S5P_VA_SYSRAM + 0x24) : S5P_INFORM0))
-@@ -63,6 +67,9 @@ static struct cpuidle_driver exynos4_idle_driver = {
- 	.safe_state_index = 0,
- };
++Required Board Specific Properties:
  
-+/* cpuidle-exynos.max_states=0 disables driver */
-+static int max_states = CPUIDLE_STATE_MAX;
-+
- /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
- static void exynos4_set_wakeupmask(void)
- {
-@@ -198,6 +205,16 @@ static int __init exynos_cpuidle_probe(struct platform_device *pdev)
- 	int cpu_id, ret;
- 	struct cpuidle_device *device;
+ * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+   unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+@@ -46,44 +51,42 @@ Required Properties:
+       - if CIU clock divider value is 0 (that is divide by 1), both tx and rx
+         phase shift clocks should be 0.
  
-+	if (max_states == 0) {
-+		pr_info(PREFIX "disabled\n");
-+		return 0;
-+	}
-+
-+	if (max_states < exynos4_idle_driver.state_count) {
-+		pr_info(PREFIX "limiting to %d state(s)\n", max_states);
-+		exynos4_idle_driver.state_count = max_states;
-+	}
-+
- 	if (soc_is_exynos5250())
- 		exynos5_core_down_clk();
+-Required properties for a slot:
+-
+-* gpios: specifies a list of gpios used for command, clock and data bus. The
+-  first gpio is the command line and the second gpio is the clock line. The
+-  rest of the gpios (depending on the bus-width property) are the data lines in
+-  no particular order. The format of the gpio specifier depends on the gpio
+-  controller.
++* pinctrl-0: Should specify pin control groups used for this controller.
++* pinctrl-names: Should contain only one value - "default".
  
-@@ -234,3 +251,5 @@ static struct platform_driver exynos_cpuidle_driver = {
- };
++Required properties for a slot:
++	Refer synopsis-dw-mshc.txt
+ Example:
  
- module_platform_driver(exynos_cpuidle_driver);
-+
-+module_param(max_states, int, 0444);
+   The MSHC controller node can be split into two portions, SoC specific and
+   board specific portions as listed below.
+ 
+-	dwmmc0@12200000 {
++	mshc@12200000 {
+ 		compatible = "samsung,exynos5250-dw-mshc";
+ 		reg = <0x12200000 0x1000>;
+ 		interrupts = <0 75 0>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		clocks = <&clock 351>, <&clock 132>;
++		clock-names = "biu", "ciu";
++		fifo-depth = <0x80>;
++		status = "disabled";
+ 	};
+ 
+-	dwmmc0@12200000 {
++	mshc@12200000 {
++		status = "okay";
+ 		num-slots = <1>;
+ 		supports-highspeed;
+ 		broken-cd;
+-		fifo-depth = <0x80>;
+ 		card-detect-delay = <200>;
+ 		samsung,dw-mshc-ciu-div = <3>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
+ 		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+ 
+ 		slot@0 {
+ 			reg = <0>;
+ 			bus-width = <8>;
+-			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
+-				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
+-				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
+-				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
+-				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
+ 		};
+ 	};
 -- 
-1.8.2.3
+1.7.9.5
