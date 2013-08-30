@@ -1,45 +1,78 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 0/2] 3rd Round Samsung stuff for v3.12
-Date: Thu, 29 Aug 2013 16:57:35 -0700
-Message-ID: <20130829235735.GG29606@quad.lixom.net>
-References: <235001cea389$b2059380$1610ba80$%kim@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v4 0/5] clk/exynos5420: add clocks for hdmi subsystem
+Date: Thu, 29 Aug 2013 18:04:36 -0700
+Message-ID: <20130830010436.10934.31643@quantum>
+References: <1377754629-31465-1-git-send-email-rahul.sharma@samsung.com>
+ <1873021.WMcNDqLpjt@amdc1227>
+ <CAPdUM4Mf4pv031-W0X0EAJe7R=8xtqnNbbLyoo+O6LV0d-H0GA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:41268 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753722Ab3H2X6O (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:43860 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751968Ab3H3BEp convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Aug 2013 19:58:14 -0400
-Received: by mail-pb0-f49.google.com with SMTP id xb4so1105429pbc.22
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Aug 2013 16:58:13 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <235001cea389$b2059380$1610ba80$%kim@samsung.com>
+	Thu, 29 Aug 2013 21:04:45 -0400
+Received: by mail-pa0-f42.google.com with SMTP id lj1so1634457pab.29
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 29 Aug 2013 18:04:44 -0700 (PDT)
+In-Reply-To: <CAPdUM4Mf4pv031-W0X0EAJe7R=8xtqnNbbLyoo+O6LV0d-H0GA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Mike Turquette' <mturquette@linaro.org>
+To: Rahul Sharma <r.sh.open@gmail.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-On Wed, Aug 28, 2013 at 09:58:23AM +0900, Kukjin Kim wrote:
-> Hi Arnd, Olof and Kevin,
+Quoting Rahul Sharma (2013-08-29 06:36:51)
+> On 29 August 2013 18:00, Tomasz Figa <t.figa@samsung.com> wrote:
+> > Hi Rahul,
+> >
+> > On Thursday 29 of August 2013 11:07:04 Rahul Sharma wrote:
+> >> Add clock changes for hdmi subsystem for exynos5250 SoC. These
+> >> include addition of new clocks like mout_hdmi and smmu_tv, associating
+> >> ID to clk_hdmiphy and some essential corrections.
+> >>
+> >> V4:
+> >> 1) Optimised gaps between Gate, Muxes and Dividers.
+> >>
+> >> V3:
+> >> 1) Assign new ID to divider clock keeping sclk_pixel gate same.
+> >>
+> >> V2:
+> >> 1) Rebase to Mike's Tree.
+> >> 2) Change smmu_tv to smmu_mixer.
+> >>
+> >> This set is based on Mike's clk-next branch at
+> >> https://git.linaro.org/gitweb?p=people/mturquette/linux.git
+> >>
+> >> Rahul Sharma (5):
+> >>   clk/exynos5420: add sclk_hdmiphy to the list of special clocks
+> >>   clk/exynos5420: add gate clock for mixer sysmmu
+> >>   clk/exynos5420: fix the order of parents of hdmi mux
+> >>   clk/exynos5420: add hdmi mux to change parents in hdmi driver
+> >>   clk/exynos5420: assign dout_pixel id to pixel clock divider
+> >>
+> >>  .../devicetree/bindings/clock/exynos5420-clock.txt  |   12 ++++++++++++
+> >>  drivers/clk/samsung/clk-exynos5420.c                |   19
+> >> +++++++++++++------ 2 files changed, 25 insertions(+), 6 deletions(-)
+> >
+> > For the whole series:
+> >
+> > Acked-by: Tomasz Figa <t.figa@samsung.com>
+> >
 > 
-> Sorry for a bit late pull-request.
+> Thanks Tomasz,
 > 
-> Here is s3c64xx DT series and common clk stuff. It took some time due to
-> dependency problem with the clk tree, and fixed now by merge clk-s3c64xx
-> branch in Mike's clk tree. So many clock patches are included in 1st
-> pull-request but most of them are for Samsung clk stuff.
+> Mike ! please consider it for clk-next branch.
+
+Taken into clk-next.
+
+Regards,
+Mike
+
 > 
-> So I think, this branches would be sent to mainline after clk stuff during
-> merge window. Anyway, Tomasz's s3c64xx patches have been posted long time
-> and look nice to support for s3c64xx with DT.
+> regards,
+> Rahul Sharma.
 > 
-> If any problems, please kindly let me know.
-
-Hi,
-
-We're out of time for 3.12 now. Please send these as soon as -rc1 is cut and
-we'll queue them up for 3.13.
-
-
--Olof
+> > Best regards,
+> > Tomasz
+> >
