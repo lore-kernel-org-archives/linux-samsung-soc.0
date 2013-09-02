@@ -1,432 +1,122 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH 0/7] drm/exynos: move hdmiphy related code to hdmiphy driver
-Date: Mon, 02 Sep 2013 19:06:05 +0900
-Message-ID: <01da01cea7c4$095b4c90$1c11e5b0$%dae@samsung.com>
-References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com>
- <02dd01cea55b$98d117d0$ca734770$%dae@samsung.com>
- <CAPdUM4ORmf9P_HK7ajg6yw7mCaKF_eM=ZsbY7fPPMMbPNLG_iQ@mail.gmail.com>
- <018b01cea79a$6fbdb970$4f392c50$%dae@samsung.com>
- <CAPdUM4MByf+mjEvHhPECtOzD6SMbeeJdNsEJmvCRoj7_hX2Bcg@mail.gmail.com>
- <01a401cea7ad$247ff730$6d7fe590$%dae@samsung.com>
- <CAPdUM4PE+gtsi+_notRO6WUNeXgTx5TVGghxZ9htaJ_wgXHaSA@mail.gmail.com>
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [PATCH V5] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Mon, 2 Sep 2013 16:45:41 +0530
+Message-ID: <CAKuRcO+EF12mbx-EyptWKmuAiabw4Cx7TqUMTmUAgVFWkwMr=w@mail.gmail.com>
+References: <1377691386-7085-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1499444.qkqi2LXfcl@amdc1227>
+	<CAKuRcO+qhfry4KT2gJmB5DGgPF7=0WrEJH=7quVOj3tobnPv=A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55714 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755133Ab3IBKGH (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:56707 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755915Ab3IBLPm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Sep 2013 06:06:07 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MSH0063ETE5U101@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Sep 2013 19:06:05 +0900 (KST)
-In-reply-to: <CAPdUM4PE+gtsi+_notRO6WUNeXgTx5TVGghxZ9htaJ_wgXHaSA@mail.gmail.com>
-Content-language: ko
+	Mon, 2 Sep 2013 07:15:42 -0400
+In-Reply-To: <CAKuRcO+qhfry4KT2gJmB5DGgPF7=0WrEJH=7quVOj3tobnPv=A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rahul Sharma' <r.sh.open@gmail.com>
-Cc: 'Rahul Sharma' <rahul.sharma@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, dri-devel@lists.freedesktop.org, 'Kukjin Kim' <kgene.kim@samsung.com>, "'sw0312.kim'" <sw0312.kim@samsung.com>, 'Sean Paul' <seanpaul@chromium.org>, 'Lucas Stach' <l.stach@pengutronix.de>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'sunil joshi' <joshi@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Doug Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, Thomas Abraham <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Kumar Gala <galak@codeaurora.org>
 
-
-
-> -----Original Message-----
-> From: Rahul Sharma [mailto:r.sh.open@gmail.com]
-> Sent: Monday, September 02, 2013 6:06 PM
-> To: Inki Dae
-> Cc: Rahul Sharma; linux-samsung-soc; dri-devel@lists.freedesktop.org;
-> Kukjin Kim; sw0312.kim; Sean Paul; Lucas Stach; Tomasz Figa; Sylwester
-> Nawrocki; sunil joshi
-> Subject: Re: [PATCH 0/7] drm/exynos: move hdmiphy related code to hdmiphy
-> driver
-> 
-> On 2 September 2013 12:52, Inki Dae <inki.dae@samsung.com> wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Rahul Sharma [mailto:r.sh.open@gmail.com]
-> >> Sent: Monday, September 02, 2013 3:28 PM
-> >> To: Inki Dae
-> >> Cc: Rahul Sharma; linux-samsung-soc; dri-devel@lists.freedesktop.org;
-> >> Kukjin Kim; sw0312.kim; Sean Paul; Lucas Stach; Tomasz Figa; Sylwester
-> >> Nawrocki; sunil joshi
-> >> Subject: Re: [PATCH 0/7] drm/exynos: move hdmiphy related code to
-> hdmiphy
-> >> driver
-> >>
-> >> On 2 September 2013 10:38, Inki Dae <inki.dae@samsung.com> wrote:
-> >> > Hi Rahul,
-> >> >
-> >> >> -----Original Message-----
-> >> >> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-
-> >> soc-
-> >> >> owner@vger.kernel.org] On Behalf Of Rahul Sharma
-> >> >> Sent: Friday, August 30, 2013 7:06 PM
-> >> >> To: Inki Dae
-> >> >> Cc: Rahul Sharma; linux-samsung-soc;
-dri-devel@lists.freedesktop.org;
-> >> >> Kukjin Kim; sw0312.kim; Sean Paul; Lucas Stach; Tomasz Figa;
-> Sylwester
-> >> >> Nawrocki; sunil joshi
-> >> >> Subject: Re: [PATCH 0/7] drm/exynos: move hdmiphy related code to
-> >> hdmiphy
-> >> >> driver
-> >> >>
-> >> >> Thanks Mr. Dae,
-> >> >>
-> >> >> I have some points for discussion.
-> >> >>
-> >> >> On 30 August 2013 14:03, Inki Dae <inki.dae@samsung.com> wrote:
-> >> >> > Hi Rahul.
-> >> >> >
-> >> >> > Thanks for your patch set.
-> >> >> >
-> >> >> > I had just quick review to all patch series. And I think we could
-> >> fully
-> >> >> hide
-> >> >> > hdmiphy interfaces,
-> >> >> > exynos_hdmiphy_enable/disable/check_mode/set_mode/conf_apply, from
-> >> hdmi
-> >> >> > driver.
-> >> >> > That may be prototyped like below,
-> >> >> >
-> >> >> > at exynos_hdmi.h
-> >> >> >
-> >> >> > /* Define hdmiphy callbacks. */
-> >> >> > struct exynos_hdmiphy_ops {
-> >> >> >         void (*enable)(struct device *dev);
-> >> >> >         void (*disable)(struct device *dev);
-> >> >> >         int (*check_mode)(struct device *dev, struct
-> drm_display_mode
-> >> >> > *mode);
-> >> >> >         int (*set_mode)(struct device *dev, struct
-drm_display_mode
-> >> > *mode);
-> >> >> >         int (*apply)(struct device *dev);
-> >> >> > };
-> >> >> >
-> >> >>
-> >> >> Above looks fine to me. I will hide the ops as you suggested.
-> >> >>
-> >> >> >
-> >> >> > at exynos_hdmi.c
-> >> >> >
-> >> >> > /*
-> >> >> >   * Add a new structure for hdmi driver data.
-> >> >> >   * type could be HDMI_TYPE13 or HDMI_TYPE14.
-> >> >> >   * i2c_hdmiphy could be true or false: true means that current
-> hdmi
-> >> >> device
-> >> >> > uses i2c
-> >> >> >   * based hdmiphy device, otherwise platform device based one.
-> >> >> >   */
-> >> >> > struct hdmi_drv_data {
-> >> >> >         unsigned int type;
-> >> >> >         unsigned int i2c_hdmiphy;
-> >> >> > };
-> >> >> >
-> >> >> > ...
-> >> >> >
-> >> >> > /* Add new members to hdmi context. */
-> >> >> > struct hdmi_context {
-> >> >> >         ...
-> >> >> >         struct hdmi_drv_data *drv_data;
-> >> >> >         struct hdmiphy_ops *ops;
-> >> >> >         ...
-> >> >> > };
-> >> >> >
-> >> >> >
-> >> >> > /* Add hdmi device data according Exynos SoC. */
-> >> >> > static struct hdmi_drv_data exynos4212_hdmi_drv_data = {
-> >> >> >         .type = HDMI_TYPE14,
-> >> >> >         .i2c_hdmiphy = true
-> >> >> > };
-> >> >> >
-> >> >> > static struct hdmi_drv_data exynos5420_hdmi_drv_data = {
-> >> >> >         .type = HDMI_TYPE14,
-> >> >> >         .i2c_hdmiphy = false
-> >> >> > };
-> >> >> >
-> >> >> >
-> >> >> > static struct of_device_id hdmi_match_types[] = {
-> >> >> >         {
-> >> >> >                 .compatible = "samsung,exynos4212-hdmi",
-> >> >> >                 .data           = (void
-*)&exynos4212_hdmi_drv_data,
-> >> >> >         }, {
-> >> >> >         ...
-> >> >> >
-> >> >> >                 .compatible = "samsung,exynos5420-hdmi",
-> >> >> >                 .data           = (void
-*)&exynos5420_hdmi_drv_data,
-> >> >> >         }, {
-> >> >> >         }
-> >> >> > };
-> >> >> >
-> >> >> > /* the below example function shows how hdmiphy interfaces can be
-> >> hided
-> >> >> from
-> >> >> > hdmi driver. */
-> >> >> > static void hdmi_mode_set(...)
-> >> >> > {
-> >> >> >         ...
-> >> >> >         hdata->ops->set_mode(hdata->hdmiphy_dev, mode);
-> >> >>
-> >> >> This looks fine.
-> >> >>
-> >> >> > }
-> >> >> >
-> >> >> > static int hdmi_get_phy_device(struct hdmi_context *hdata)
-> >> >> > {
-> >> >> >         struct hdmi_drv_data *data = hdata->drv_data;
-> >> >> >
-> >> >> >         ...
-> >> >> >         /* Register hdmiphy driver according to i2c_hdmiphy value.
-> */
-> >> >> >         ret = exynos_hdmiphy_driver_register(data->i2c_hdmiphy);
-> >> >> >         ...
-> >> >> >         /* Get hdmiphy driver ops according to i2c_hdmiphy value.
-*/
-> >> >> >         hdata->ops = exynos_hdmiphy_get_ops(data->i2c_hdmiphy);
-> >> >> >         ...
-> >> >> > }
-> >> >> >
-> >> >> >
-> >> >> > at exynos_hdmiphy.c
-> >> >> >
-> >> >> > /* Define hdmiphy ops respectively. */
-> >> >> > struct exynos_hdmiphy_ops hdmiphy_i2c_ops = {
-> >> >> >         .enable = exynos_hdmiphy_i2c_enable,
-> >> >> >         .disable = exynos_hdmiphy_i2c_disable,
-> >> >> >         ...
-> >> >> > };
-> >> >> >
-> >> >> > struct exynos_hdmiphy_ops hdmiphy_platdev_ops = {
-> >> >> >         .enable = exynos_hdmiphy_platdev_enable,
-> >> >> >         .disable = exynos_hdmiphy_platdev_disable,
-> >> >> >         ...
-> >> >> > };
-> >> >>
-> >> >> Actually, Ops for Hdmiphy I2c and platform devices are exactly
-> >> >> same. We don't need 2 sets. Only difference is in static function to
-> >> >> write configuration values to phy. Based on i2c_verify_client(hdata-
-> >> >dev),
-> >> >> we use i2c_master_send or writeb.
-> >> >>
-> >> >> >
-> >> >> > struct exynos_hdmiphy_ops *exynos_hdmiphy_get_ops(unsigned int
-> >> >> i2c_hdmiphy)
-> >> >> > {
-> >> >> >         /* Return hdmiphy ops appropriately according to
-i2c_hdmiphy.
-> >> */
-> >> >> >         if (i2c_hdmiphy)
-> >> >> >                 return &hdmiphy_i2c_ops;
-> >> >> >
-> >> >> >         return &hdmiphy_platdev_ops;
-> >> >> > }
-> >> >>
-> >> >> We don't need i2c_hdmiphy flag from the hdmi driver. After probe,
-> >> >> this information is available in hdmiphy driver itself.
-> >> >>
-> >> >> >
-> >> >> > int exynos_hdmiphy_driver_register(unsigned int i2c_hdmiphy)
-> >> >> > {
-> >> >> >         ...
-> >> >> >         /* Register hdmiphy driver appropriately according to
-> >> > i2c_hdmiphy.
-> >> >> > */
-> >> >> >         if (i2c_hdmiphy) {
-> >> >> >                 ret = i2c_add_driver(&hdmiphy_i2c_driver);
-> >> >> >                 ...
-> >> >> >         } else {
-> >> >> >                 ret =
-> >> > platform_driver_register(&hdmiphy_platform_driver);
-> >> >> >                 ...
-> >> >> >         }
-> >> >> >
-> >> >>
-> >> >> Here i2c_hdmiphy flag helps in avoiding registering both i2c
-> >> >> and platform drivers for phy. But is it a concern that we should
-> >> >> not register 2 drivers on different buses for single hw device. I am
-> >> >> still not clear on this.
-> >> >>
-> >> >> Otherwise we do not need to maintain i2c_hdmiphy flag.
-> >> >>
-> >> >> Secondly, we always have registration of i2c driver for ddc and
-> >> >> hdmiphy driver in hdmi probe. It works. I have also tested above
-> >> >> series for 5420 and 5250 smdk board. There are no issues.
-> >> >>
-> >> >
-> >> > Can you re-check it? I guess platform_driver_register function would
-> be
-> >> > failed. Actually, I had faced with same issue at hdmi initial work.
-> And
-> >> then
-> >> > only thing we have to discuss  is different buses issue on single hw
-> >> device
-> >> > if the above case really works fine.
-> >> >
-> >> Mr. dae,
-> >>
-> >> I have re-confirmed. It is working fine. No failure during registering
-> >> platform
-> >> device. Probe hits immediately after registration. I tried 8~9 times.
-> >> No failure.
-> >> see logs:
-> >>
-> >> # dmesg | grep -i RSH
-> >> [    0.895000] [RSH][hdmi_probe][1719] Starting phy registeration
-> >> [    0.900000] [RSH][hdmiphy_platform_device_probe Enter][644]
-> >> [    0.905000] [RSH][hdmiphy_platform_device_probe Exit Success][683]
-> >> [    0.910000] [RSH][exynos_hdmiphy_driver_register][768] Phy
-> >> registeration Success.
-> >> [    0.915000] [RSH][hdmi_probe][1729] Phy registeration completed.
-> >>
-> >
-> > Great. I will also re-check it.
-> >
-
-
-Works fine. :) It seems that some patch to avoid duplicate probe was merged
-to mainline.
-For this, someone had posed it like below but this patch hasn't been merged
-to mainline.
- https://lists.ozlabs.org/pipermail/devicetree-discuss/2012-July/017011.html
-
-So it seems that mainline has other solution to avoid that issue. Is there
-anyone to give me more detail for this?
-
-> >> > For this, my opinion is to separate the hdmiphy driver into i2c based
-> >> and
-> >> > platform device based drivers; they include same common header file
-> >> > containing phy configuration data. And it makes hdmi driver call
-> >> > exynos_hdmiphy_driver_register function in i2c based hdmiphy or
-> platform
-> >> > device based hdmiphy drivers according to hdmi driver data.
-> >> >
-> >>
-> >> I am fine with it. We can register hdmiphy-i2c or hdmiphy-platform
-> >> driver based on the flag from hdmi driver. But we can still keep both
-> >> the drivers in exynos_hdmiphy.c. file and let them share most of the
-> >> other callbacks.
-> >>
-> >
-> > Is there any mainline driver that keeps two bus drivers; i2c and
-> platform
-> > device, in one file? I'm not sure that this is a good way. So it seems
-> good
-> 
-> I haven't come across any such mainline driver. I always have this doubt.
-> If it is not fitting properly, I will implement 2 different drivers in 2
-> files
-> (exynos_hdmiphy_i2c.c and exynos_hdmiphy_platform.c).
-> 
-
-Let's do it if there is no other opinion. :)
-
-Thanks,
-Inki Dae
-
-> Regards,
-> Rahul Sharma.
-> 
-> > to keep two hdmiphy drivers: One is based on i2c bus, and other is based
-> on
-> > platform device. Anyway, we should keep different type's drivers because
-> > Exynos SoC has different type's hdmiphy IP; based on i2c or memory
-> mapped
-> > IO.
-> >
-> > Thanks,
-> > Inki Dae
-> >
-> >> regards,
-> >> Rahul Sharma.
-> >>
-> >> > However, we may need to re-design it if the above case is failed.
-> >> >
-> >> > Thanks,
-> >> > Inki Dae
-> >> >
-> >> >
-> >> >> regards,
-> >> >> Rahul Sharma.
-> >> >>
-> >> >> >         return ret;
-> >> >> > }
-> >> >> >
-> >> >> > Thanks,
-> >> >> > Inki Dae
-> >> >> >
-> >> >> >> -----Original Message-----
-> >> >> >> From: Rahul Sharma [mailto:rahul.sharma@samsung.com]
-> >> >> >> Sent: Friday, August 30, 2013 3:59 PM
-> >> >> >> To: linux-samsung-soc@vger.kernel.org; dri-
-> >> devel@lists.freedesktop.org
-> >> >> >> Cc: kgene.kim@samsung.com; sw0312.kim@samsung.com;
-> >> > inki.dae@samsung.com;
-> >> >> >> seanpaul@chromium.org; l.stach@pengutronix.de;
-> > tomasz.figa@gmail.com;
-> >> >> >> s.nawrocki@samsung.com; joshi@samsung.com; r.sh.open@gmail.com;
-> >> Rahul
-> >> >> >> Sharma
-> >> >> >> Subject: [PATCH 0/7] drm/exynos: move hdmiphy related code to
-> >> hdmiphy
-> >> >> >> driver
-> >> >> >>
-> >> >> >> Currently, exynos hdmiphy operations and configs are kept
-> >> >> >> inside the hdmi driver. Hdmiphy related code is tightly
-> >> >> >> coupled with hdmi IP driver.
-> >> >> >>
-> >> >> >> This series also removes hdmiphy dummy clock for hdmiphy
-> >> >> >> and replace it with Phy PMU Control from the hdmiphy driver.
-> >> >> >>
-> >> >> >> At the end, support for exynos5420 hdmiphy is added to the
-> >> >> >> hdmiphy driver which is a platform device.
-> >> >> >>
-> >> >> >> Drm related paches are based on exynos-drm-next branch at
-> >> >> >> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-
-> exynos.git
-> >> >> >>
-> >> >> >> Arch patches are dependent on
-> >> >> >> http://www.mail-archive.com/linux-samsung-
-> >> >> >> soc@vger.kernel.org/msg22195.html
-> >> >> >>
-> >> >> >> Rahul Sharma (7):
-> >> >> >>   drm/exynos: move hdmiphy related code to hdmiphy driver
-> >> >> >>   drm/exynos: remove dummy hdmiphy clock
-> >> >> >>   drm/exynos: add hdmiphy pmu bit control in hdmiphy driver
-> >> >> >>   drm/exynos: add support for exynos5420 hdmiphy
-> >> >> >>   exynos/drm: fix ddc i2c device probe failure
-> >> >> >>   ARM: dts: update hdmiphy dt node for exynos5250
-> >> >> >>   ARM: dts: update hdmiphy dt node for exynos5420
-> >> >> >>
-> >> >> >>  .../devicetree/bindings/video/exynos_hdmi.txt      |    2 +
-> >> >> >>  .../devicetree/bindings/video/exynos_hdmiphy.txt   |    6 +
-> >> >> >>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    9 +-
-> >> >> >>  arch/arm/boot/dts/exynos5420.dtsi                  |   12 +
-> >> >> >>  drivers/gpu/drm/exynos/exynos_ddc.c                |    5 +
-> >> >> >>  drivers/gpu/drm/exynos/exynos_drm_hdmi.h           |   13 +
-> >> >> >>  drivers/gpu/drm/exynos/exynos_hdmi.c               |  353
-> > ++--------
-> >> >> >>  drivers/gpu/drm/exynos/exynos_hdmiphy.c            |  738
-> >> >> >> +++++++++++++++++++-
-> >> >> >>  drivers/gpu/drm/exynos/regs-hdmiphy.h              |   35 +
-> >> >> >>  9 files changed, 868 insertions(+), 305 deletions(-)
-> >> >> >>  create mode 100644 drivers/gpu/drm/exynos/regs-hdmiphy.h
-> >> >> >>
-> >> >> >> --
-> >> >> >> 1.7.10.4
-> >> >> >
-> >> >> --
-> >> >> To unsubscribe from this list: send the line "unsubscribe linux-
-> >> samsung-
-> >> >> soc" in
-> >> >> the body of a message to majordomo@vger.kernel.org
-> >> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >> >
-> >
+On Fri, Aug 30, 2013 at 12:29 PM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> wrote:
+> On Wed, Aug 28, 2013 at 5:52 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi Yuvaraj,
+>>
+>> On Wednesday 28 of August 2013 17:33:06 Yuvaraj Kumar C D wrote:
+>>> This patch adds the device tree node entries for exynos5420 SOC.
+>>> Exynos5420 has a different version of DWMMC controller,so a new
+>>> compatible string is used to distinguish it from the prior SOC's.
+>>>
+>>> This patch depends on
+>>>       mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
+>>>
+>>> changes since v4:
+>>>       1.Droppped the bypass-smu binding property.
+>>>       2.Used compatible string "samsung,exynos5250-dw-mshc"
+>>>         for controller instance which does not have SMU.
+>>>
+>>> changes since V3:
+>>>       1.change fifo-depth size from 0x80 to 0x40
+>>>       2.Move the below properties
+>>>               a.card-detect-delay
+>>>               b.samsung,dw-mshc-ciu-div
+>>>               c.samsung,dw-mshc-sdr-timing
+>>>               d.samsung,dw-mshc-ddr-timing
+>>>       from SOC dts to board dts file as suggested by Doug Anderson
+>>>
+>>> changes since V2:
+>>>       1.dropped num-slots property from node as its not required
+>>>         if number of card slots available is 1.
+>>>
+>>>       2.Move the below properties
+>>>               a.fifo-depth
+>>>               b.card-detect-delay
+>>>               c.samsung,dw-mshc-ciu-div
+>>>               d.samsung,dw-mshc-sdr-timing
+>>>               e.samsung,dw-mshc-ddr-timing
+>>>       from board dts to SOC dts,as these are not board specific properties.
+>>>
+>>>       3.Updated the binding document exynos-dw-mshc.txt.
+>>>
+>>> changes since V1:
+>>>       1.disable node by status = disabled in SOC file
+>>>       2.enable node by status = okay in board specific file
+>>>
+>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
+>>>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33
+>>> +++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi                  |
+>>> 39 ++++++++++++++++++++ 3 files changed, 74 insertions(+)
+>>
+>> This patch looks good to me now, except some minor comments below.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>>> b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt index
+>>> 6d1c098..84cd56f 100644
+>>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>>> @@ -16,6 +16,8 @@ Required Properties:
+>>>         specific extensions.
+>>>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung Exynos5250
+>>> specific extensions.
+>>> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
+>>> +       specific extensions.
+>>>
+>>>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card
+>>> interface unit (ciu) clock. This property is applicable only for Exynos5
+>>> SoC's and diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>>> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..3ce5c97
+>>> 100644
+>>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+>>> @@ -31,6 +31,39 @@
+>>>               };
+>>>       };
+>>>
+>>> +     dwmmc0@12200000 {
+>>
+>> Node name should not contain instance index. Instead, according to ePAPR
+>> recommendation, I would opt for a generic name such as mmc, mshc or sdio-
+>> host. mshc is already used on Exynos 4 so it might be a good idea to use it
+>> for consistency.
+> If we change node name's to mshc, debug statements are look like below:
+> dwmmc_exynos 12200000.mshc: num-slots property not found, assuming 1
+> slot is available
+> dwmmc_exynos 12200000.mshc: no vmmc regulator found: -19
+> dwmmc_exynos 12200000.mshc: Using internal DMA controller.
+> dwmmc_exynos 12200000.mshc: Version ID is 250a
+> dwmmc_exynos 12200000.mshc: DW MMC controller at irq 107, 64 bit host
+> data width, 64 deep fifo
+>
+> "dwmmc_exynos" is platform driver name and "12200000.mshc" from dt
+> node.Is'nt it look like bit confusing?
+Any comments on this?
+>
+>>
+>> [Adding DT maintainers on CC]
+>>
+>> Best regards,
+>> Tomasz
+>>
