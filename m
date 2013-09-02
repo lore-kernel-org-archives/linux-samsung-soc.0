@@ -1,120 +1,92 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: EXYNOS: add cpuidle-exynos.max_states kernel
- parameter
-Date: Mon, 02 Sep 2013 18:13:06 +0200
-Message-ID: <7806688.0T3JdgSQ52@amdc1032>
-References: <4002844.4ZqqJexTv4@amdc1032> <3870129.vNtjevCIAF@amdc1032>
- <5224B42F.3090500@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v7] s5k5baf: add camera sensor driver
+Date: Mon, 02 Sep 2013 18:21:58 +0200
+Message-ID: <5224BB26.9090902@samsung.com>
+References: <1377096091-7284-1-git-send-email-a.hajda@samsung.com>
+ <20130827091448.GA19893@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48811 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932158Ab3IBQNQ (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:52635 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758854Ab3IBQWG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Sep 2013 12:13:16 -0400
-In-reply-to: <5224B42F.3090500@linaro.org>
+	Mon, 2 Sep 2013 12:22:06 -0400
+In-reply-to: <20130827091448.GA19893@e106331-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Tomasz Figa <t.figa@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>
 
-On Monday, September 02, 2013 05:52:15 PM Daniel Lezcano wrote:
-> On 09/02/2013 04:43 PM, Bartlomiej Zolnierkiewicz wrote:
-> > On Monday, September 02, 2013 04:24:23 PM Daniel Lezcano wrote:
-> >> On 09/02/2013 03:48 PM, Bartlomiej Zolnierkiewicz wrote:
-> >>> On Monday, September 02, 2013 03:18:51 PM Daniel Lezcano wrote:
-> >>>> On 09/02/2013 11:41 AM, Bartlomiej Zolnierkiewicz wrote:
-> >>>>> On Monday, September 02, 2013 10:54:17 AM Daniel Lezcano wrote:
-> >>>>>> On 08/30/2013 12:21 PM, Bartlomiej Zolnierkiewicz wrote:
-> >>>>>>> Add "cpuidle-exynos.max_states=" parameter to allow user to specify
-> >>>>>>> the maximum of allowed CPU idle states for ARM EXYNOS cpuidle driver.
-> >>>>>>>
-> >>>>>>> This change is needed because C1 state (AFTR mode) is often not able
-> >>>>>>> to work properly due to incompatibility with some bootloader versions.
-> >>>>>>>
-> >>>>>>> Usage examples:
-> >>>>>>>
-> >>>>>>> "cpuidle-exynos.max_states=1" disables C1 state (AFTR mode).
-> >>>>>>>
-> >>>>>>> "cpuidle-exynos.max_states=0" disables the driver completely.
-> >>>>>>>
-> >>>>>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> >>>>>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >>>>>>> Cc: Tomasz Figa <t.figa@samsung.com>
-> >>>>>>> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> >>>>>>
-> >>>>>> There is a max_cstate option for acpi and intel idle. There is also the
-> >>>>>> cpuidle.off=1 option. As the semantic is the same, I think adding a
-> >>>>>> common cpuidle option usable for all the drivers is better.
-> >>>>>
-> >>>>> I thought about making the option common for all cpuidle drivers first
-> >>>>> but due to support for multiple cpuidle drivers on one machine (i.e.
-> >>>>> big.LITTLE), per-driver option looked like a better approach.
-> >>>>>
-> >>>>> Should I make the option common and not worry about multiple drivers on
-> >>>>> one machine support?
-> >>>>
-> >>>> Mmh, that's a good point.
-> >>>>
-> >>>> I am not in favor of multiple options spread across the different
-> >>>> drivers. Furthermore the max_cstate is used in the intel platform to
-> >>>> 'discover' what states the firmware supports which is not the case of
-> >>>> the cpuidle ARM drivers (except new PSCI based). This option does not
-> >>>> really fits well here.
-> >>>>
-> >>>> There is the kernel parameter 'cpuidle.off', so disabling the driver is ok.
-> >>>>
-> >>>> You converted the cpuidle driver to a platform driver. Isn't possible to
-> >>>> pass information in the platform data field at boot time to tell AFTR is
-> >>>> not supported and then act on the 'disabled' field of this state ?
-> >>>
-> >>> It might be possible but I don't know where the source of this data would
-> >>> be, platform specific kernel parameter? It sounds just like moving the code
-> >>> around and adding superfluous platform->driver code because the similar
-> >>> kernel parameter to disable just AFTR can be added in cpuidle-exynos driver
-> >>> as well.
-> >>
-> >> It is to prevent to add a new kernel parameter (with the documentation)
-> >> for a single driver which has a bogus idle state. If that could be
-> >> handled internally that would be cleaner.
-> > 
-> > If I believed that it could be handled internally I wouldn't be trying to
-> > add a kernel parameter to handle it.. Would I? ;)
-> > 
-> >> Can you shortly describe what happens with the bootloader and AFTR ?
-> > 
-> > AFTR just doesn't work with the custom U-Boot version that we are using
-> > (attempts to go into AFTR mode result in lockup) and using the upstream
-> > version of U-Boot is not an option since it doesn't support the hardware
-> > that we are using AFAIK. I also don't know exactly why it doesn't work
-> > (I just suspect that it reuses INFORM registers for some other purposes).
+Hi Mark,
+
+On 08/27/2013 11:14 AM, Mark Rutland wrote:
+>> +endpoint node
+>> +-------------
+>> +
+>> +- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
+>> +  video-interfaces.txt. This property can be only used to specify number
+>> +  of data lanes, i.e. the array's content is unused, only its length is
+>> +  meaningful. When this property is not specified default value of 1 lane
+>> +  will be used.
 > 
-> You want to add a kernel option as a work around for a bug in U-Boot ?
+> Apologies for having not replied to the last posting, but having looked
+> at the documentation I was provided last time [1], I don't think the
+> values in the data-lanes property should be described as unused. That
+> may be the way the Linux driver functions at present, but it's not how
+> the generic video-interfaces binding documentation describes the
+> property.
 > 
-> IMO, you should drop the hot potato to the u-boot guys :)
+> If the CSI transmitter hardware doesn't support logical remapping of
+> lanes, then the only valid values for data-lanes would be a contiguous
+> list of lane IDs starting at 1, ending at 4 at most. Valid values for
+> the property would be one of:
+> 
+> data-lanes = <1>;
+> data-lanes = <1>, <2>;
+> data-lanes = <1>, <2>, <3>;
+> data-lanes = <1>, <2>, <3>, <4>;
+> 
+> We can mention the fact the hardware doesn't support remapping of lanes,
+> and therefore the list must start with lane 1 and end with (at most)
+> lane 4. That way a dts will match the generic binding and actually
+> describe the hardware, and it's possible for Linux (or any other OS) to
+> factor out the parsing of data-lanes later as desired.
+> 
+> I don't think we should offer freedom to encode garbage in the dt when
+> we can just as easily encourage more standard use of bindings that will
+> make our lives easier in the long-term.
 
-Well, if it only was so simple. :)
+I entirely agree, that's a very accurate analysis.
 
-[ Unfortunately, they have higher priority tasks so this is unlikely to get
-  fixed in the foreseeable future. ]
+Presumably the data-lanes property's descriptions could be improved so
+it is said explicitly that array elements 0...N - 1, where N = 4, 
+correspond to logical data lanes 1...N.
 
-Problems with AFTR are also not limited to our U-Boot problem (i.e. issue
-with Hypervisor enabled on EXYNOS5 or problem with CONFIG_THUMB2_KERNEL=y
-compiled kernels) so it would be nice to have a way to disable it without
-the need for recompiling the kernel.
+Then considering the values in the data-lanes property, I didn't make
+the description terribly specific about the fact that pool of indexes
+0...4 is used for the clock lane and 4 data lanes. The values could well
+be H/W specific, but it seems more sensible to enforce common range.
+It may not match exactly with documentation of various hardware. E.g.
+OMAP, see page 1661, register CSI2_COMPLEXIO_CFG [1], uses indexes 
+1..5 to indicate position of a data lane and 0 is used to mark a lane 
+as unused.
 
-Limiting maximum allowed cpuidle state is also useful for testing purposes
-(this is not limited to EXYNOS driver but a generally useful thing).
+I think we should have similarly defined value 0 to indicate an unused 
+lane. None of drivers in mainline uses this line remapping feature, so 
+changing meaning of the array values wouldn't presumably have any bad 
+side effects. I'm not sure if it's OK to make a change like this now. 
+IIUC the MIPI CSI-2 standard requires consecutive data lane indexes, 
+so valid set of data lanes could be only: <1>, <1, 2>, <1, 2, 3>, 
+<1, 2, 3, 4>. So there seems to be no issue for MIPI CSI-2. But for 
+future protocols the current convention might not have been flexible 
+enough.
 
-> >> I guess you are not interested in cpuidle.off=1 because you want cpuidle
-> >> statistics for WFI, right ?
-> > 
-> > Right. :)
+> [1] http://www.mipi.org/specifications/camera-interface#CSI2
 
-Best regards,
+[2] http://www.ti.com/general/docs/lit/getliterature.tsp?literatureNumber=swpu231ao&fileType=pdf
+
 --
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Regards,
+Sylwester
