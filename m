@@ -1,77 +1,115 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3] pinctrl: Pass all configs to driver on pin_config_set()
-Date: Wed, 28 Aug 2013 13:44:59 +0200
-Message-ID: <CACRpkdYVzXDRWFEa84LwN7fh9x1mK+7YOLeps51zcRHZCCowsQ@mail.gmail.com>
-References: <1377134300-25480-1-git-send-email-syin@broadcom.com>
- <1377484899-4918-1-git-send-email-syin@broadcom.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 2/2] ARM: EXYNOS: add cpuidle-exynos.max_states kernel
+ parameter
+Date: Mon, 02 Sep 2013 16:24:23 +0200
+Message-ID: <52249F97.4080807@linaro.org>
+References: <4002844.4ZqqJexTv4@amdc1032> <7429815.RzOHxBbusd@amdc1032> <5224903B.9050404@linaro.org> <2459763.PzPngK0oec@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1377484899-4918-1-git-send-email-syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rpi-kernel/>
-List-Post: <mailto:linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rpi-kernel>,
- <mailto:linux-rpi-kernel-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "linux-rpi-kernel" <linux-rpi-kernel-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rpi-kernel-bounces+glkr-linux-rpi-kernel=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Sherman Yin <syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-Cc: Srinidhi Kasagar <srinidhi.kasagar-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Christian Daudt <csd-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart+renesas-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Markus Mayer <mmayer-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>"linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <li>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f43.google.com ([209.85.214.43]:49900 "EHLO
+	mail-bk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756145Ab3IBOY2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Sep 2013 10:24:28 -0400
+Received: by mail-bk0-f43.google.com with SMTP id mz13so1693824bkb.30
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Sep 2013 07:24:27 -0700 (PDT)
+In-Reply-To: <2459763.PzPngK0oec@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Tomasz Figa <t.figa@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 
-On Mon, Aug 26, 2013 at 4:41 AM, Sherman Yin <syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org> wrote:
+On 09/02/2013 03:48 PM, Bartlomiej Zolnierkiewicz wrote:
+> On Monday, September 02, 2013 03:18:51 PM Daniel Lezcano wrote:
+>> On 09/02/2013 11:41 AM, Bartlomiej Zolnierkiewicz wrote:
+>>> On Monday, September 02, 2013 10:54:17 AM Daniel Lezcano wrote:
+>>>> On 08/30/2013 12:21 PM, Bartlomiej Zolnierkiewicz wrote:
+>>>>> Add "cpuidle-exynos.max_states=3D" parameter to allow user to spe=
+cify
+>>>>> the maximum of allowed CPU idle states for ARM EXYNOS cpuidle dri=
+ver.
+>>>>>
+>>>>> This change is needed because C1 state (AFTR mode) is often not a=
+ble
+>>>>> to work properly due to incompatibility with some bootloader vers=
+ions.
+>>>>>
+>>>>> Usage examples:
+>>>>>
+>>>>> "cpuidle-exynos.max_states=3D1" disables C1 state (AFTR mode).
+>>>>>
+>>>>> "cpuidle-exynos.max_states=3D0" disables the driver completely.
+>>>>>
+>>>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.co=
+m>
+>>>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>> Cc: Tomasz Figa <t.figa@samsung.com>
+>>>>> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>>>
+>>>> There is a max_cstate option for acpi and intel idle. There is als=
+o the
+>>>> cpuidle.off=3D1 option. As the semantic is the same, I think addin=
+g a
+>>>> common cpuidle option usable for all the drivers is better.
+>>>
+>>> I thought about making the option common for all cpuidle drivers fi=
+rst
+>>> but due to support for multiple cpuidle drivers on one machine (i.e=
+=2E
+>>> big.LITTLE), per-driver option looked like a better approach.
+>>>
+>>> Should I make the option common and not worry about multiple driver=
+s on
+>>> one machine support?
+>>
+>> Mmh, that's a good point.
+>>
+>> I am not in favor of multiple options spread across the different
+>> drivers. Furthermore the max_cstate is used in the intel platform to
+>> 'discover' what states the firmware supports which is not the case o=
+f
+>> the cpuidle ARM drivers (except new PSCI based). This option does no=
+t
+>> really fits well here.
+>>
+>> There is the kernel parameter 'cpuidle.off', so disabling the driver=
+ is ok.
+>>
+>> You converted the cpuidle driver to a platform driver. Isn't possibl=
+e to
+>> pass information in the platform data field at boot time to tell AFT=
+R is
+>> not supported and then act on the 'disabled' field of this state ?
+>=20
+> It might be possible but I don't know where the source of this data w=
+ould
+> be, platform specific kernel parameter? It sounds just like moving th=
+e code
+> around and adding superfluous platform->driver code because the simil=
+ar
+> kernel parameter to disable just AFTR can be added in cpuidle-exynos =
+driver
+> as well.
 
-> When setting pin configuration in the pinctrl framework, pin_config_set() or
-> pin_config_group_set() is called in a loop to set one configuration at a time
-> for the specified pin or group.
->
-> This patch 1) removes the loop and 2) changes the API to pass the whole pin
-> config array to the driver.  It is now up to the driver to loop through the
-> configs.  This allows the driver to potentially combine configs and reduce the
-> number of writes to pin config registers.
->
-> All c files changed have been build-tested to verify the change compiles and
-> that the corresponding .o is successfully generated.
->
-> Signed-off-by: Sherman Yin <syin-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-> Reviewed-by: Christian Daudt <csd-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
-> Reviewed-by: Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->
->   drivers/pinctrl/pinconf.c             |   42 ++++----
->   drivers/pinctrl/pinctrl-tegra.c       |   69 ++++++------
->   include/linux/pinctrl/pinconf.h       |    6 +-
-> Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
->   On Tegra (Tegra114 Dalmore board, on top of next-20130816),
-> Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> ---
-> Please refer to the discussion with Linus W. "[PATCH] ARM: Adds pin config API
-> to set all configs in one function" here:
->
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-May/166567.html
->
-> All c files changed have been build-tested to verify the change compiles and
-> that the corresponding .o are successfully generated.
->
-> [v2]    rebased on LinusW's linux-pinctrl.git "devel" branch.  Fixed and build-
->         tested pinctrl-sunxi.c
-> [v3]    rebased on linux-pinctrl.git:devel as of 2013.08.25. Applied API change
->         to new driver pinctrl-palmas.c. Re build-tested all files.
+It is to prevent to add a new kernel parameter (with the documentation)
+for a single driver which has a bogus idle state. If that could be
+handled internally that would be cleaner.
+
+Can you shortly describe what happens with the bootloader and AFTR ?
+
+I guess you are not interested in cpuidle.off=3D1 because you want cpui=
+dle
+statistics for WFI, right ?
 
 
-OK it appears to work flawlessly on ux500 as well, and with
-Stephen's Tested-by and Laurent's ACK, there is really no
-reason for me not to apply this right off. And no reason to
-prolong this much needed change.
 
-So patch applied for v3.12.
 
-Let's see if something nasty happens in linux-next or this
-is a go.
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
 
-Yours,
-Linus Walleij
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
