@@ -1,154 +1,172 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V5] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Mon, 02 Sep 2013 14:21:01 +0200
-Message-ID: <11882414.uDVzNviTV8@amdc1227>
-References: <1377691386-7085-1-git-send-email-yuvaraj.cd@samsung.com>
- <CAKuRcO+qhfry4KT2gJmB5DGgPF7=0WrEJH=7quVOj3tobnPv=A@mail.gmail.com>
- <CAKuRcO+EF12mbx-EyptWKmuAiabw4Cx7TqUMTmUAgVFWkwMr=w@mail.gmail.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v3 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
+Date: Mon, 2 Sep 2013 17:21:57 +0530
+Message-ID: <20130902115157.GQ7376@intel.com>
+References: <201308280012.41638.heiko@sntech.de>
+ <201308280013.52076.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:30885 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754305Ab3IBMVK (ORCPT
+Received: from mga02.intel.com ([134.134.136.20]:38247 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756346Ab3IBMiL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Sep 2013 08:21:10 -0400
-In-reply-to: <CAKuRcO+EF12mbx-EyptWKmuAiabw4Cx7TqUMTmUAgVFWkwMr=w@mail.gmail.com>
+	Mon, 2 Sep 2013 08:38:11 -0400
+Content-Disposition: inline
+In-Reply-To: <201308280013.52076.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Doug Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, Thomas Abraham <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Kumar Gala <galak@codeaurora.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: kgene.kim@samsung.com, Dan Williams <djbw@fb.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Monday 02 of September 2013 16:45:41 Yuvaraj Kumar wrote:
-> On Fri, Aug 30, 2013 at 12:29 PM, Yuvaraj Kumar <yuvaraj.cd@gmail.com> 
-wrote:
-> > On Wed, Aug 28, 2013 at 5:52 PM, Tomasz Figa <t.figa@samsung.com> 
-wrote:
-> >> Hi Yuvaraj,
-> >> 
-> >> On Wednesday 28 of August 2013 17:33:06 Yuvaraj Kumar C D wrote:
-> >>> This patch adds the device tree node entries for exynos5420 SOC.
-> >>> Exynos5420 has a different version of DWMMC controller,so a new
-> >>> compatible string is used to distinguish it from the prior SOC's.
-> >>> 
-> >>> This patch depends on
-> >>> 
-> >>>       mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
-> >>> 
-> >>> changes since v4:
-> >>>       1.Droppped the bypass-smu binding property.
-> >>>       2.Used compatible string "samsung,exynos5250-dw-mshc"
-> >>>       
-> >>>         for controller instance which does not have SMU.
-> >>> 
-> >>> changes since V3:
-> >>>       1.change fifo-depth size from 0x80 to 0x40
-> >>>       2.Move the below properties
-> >>>       
-> >>>               a.card-detect-delay
-> >>>               b.samsung,dw-mshc-ciu-div
-> >>>               c.samsung,dw-mshc-sdr-timing
-> >>>               d.samsung,dw-mshc-ddr-timing
-> >>>       
-> >>>       from SOC dts to board dts file as suggested by Doug Anderson
-> >>> 
-> >>> changes since V2:
-> >>>       1.dropped num-slots property from node as its not required
-> >>>       
-> >>>         if number of card slots available is 1.
-> >>>       
-> >>>       2.Move the below properties
-> >>>       
-> >>>               a.fifo-depth
-> >>>               b.card-detect-delay
-> >>>               c.samsung,dw-mshc-ciu-div
-> >>>               d.samsung,dw-mshc-sdr-timing
-> >>>               e.samsung,dw-mshc-ddr-timing
-> >>>       
-> >>>       from board dts to SOC dts,as these are not board specific
-> >>>       properties.
-> >>>       
-> >>>       3.Updated the binding document exynos-dw-mshc.txt.
-> >>> 
-> >>> changes since V1:
-> >>>       1.disable node by status = disabled in SOC file
-> >>>       2.enable node by status = okay in board specific file
-> >>> 
-> >>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> >>> ---
-> >>> 
-> >>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
-> >>>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33
-> >>> 
-> >>> +++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi                 
-> >>> |
-> >>> 39 ++++++++++++++++++++ 3 files changed, 74 insertions(+)
-> >> 
-> >> This patch looks good to me now, except some minor comments below.
-> >> 
-> >>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >>> b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt index
-> >>> 6d1c098..84cd56f 100644
-> >>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> >>> 
-> >>> @@ -16,6 +16,8 @@ Required Properties:
-> >>>         specific extensions.
-> >>>       
-> >>>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung
-> >>>       Exynos5250
-> >>> 
-> >>> specific extensions.
-> >>> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung
-> >>> Exynos5420 +       specific extensions.
-> >>> 
-> >>>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card
-> >>> 
-> >>> interface unit (ciu) clock. This property is applicable only for
-> >>> Exynos5
-> >>> SoC's and diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >>> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..3ce5c97
-> >>> 100644
-> >>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> >>> @@ -31,6 +31,39 @@
-> >>> 
-> >>>               };
-> >>>       
-> >>>       };
-> >>> 
-> >>> +     dwmmc0@12200000 {
-> >> 
-> >> Node name should not contain instance index. Instead, according to
-> >> ePAPR
-> >> recommendation, I would opt for a generic name such as mmc, mshc or
-> >> sdio- host. mshc is already used on Exynos 4 so it might be a good
-> >> idea to use it for consistency.
-> > 
-> > If we change node name's to mshc, debug statements are look like below:
-> > dwmmc_exynos 12200000.mshc: num-slots property not found, assuming 1
-> > slot is available
-> > dwmmc_exynos 12200000.mshc: no vmmc regulator found: -19
-> > dwmmc_exynos 12200000.mshc: Using internal DMA controller.
-> > dwmmc_exynos 12200000.mshc: Version ID is 250a
-> > dwmmc_exynos 12200000.mshc: DW MMC controller at irq 107, 64 bit host
-> > data width, 64 deep fifo
-> > 
-> > "dwmmc_exynos" is platform driver name and "12200000.mshc" from dt
-> > node.Is'nt it look like bit confusing?
+On Wed, Aug 28, 2013 at 12:13:51AM +0200, Heiko St=FCbner wrote:
+> This adds a new driver to support the s3c24xx dma using the dmaengine
+> and makes the old one in mach-s3c24xx obsolete in the long run.
+>=20
+> Conceptually the s3c24xx-dma feels like a distant relative of the pl0=
+8x
+> with numerous virtual channels being mapped to a lot less physical on=
+es.
+> The driver therefore borrows a lot from the amba-pl08x driver in this
+> regard. Functionality-wise the driver gains a memcpy ability in addit=
+ion
+> to the slave_sg one.
+>=20
+> The driver supports both the method for requesting the peripheral use=
+d
+> by SoCs before the S3C2443 and the different method for S3C2443 and l=
+ater.
+>=20
+> On earlier SoCs the hardware channels usable for specific peripherals=
+ is
+> constrainted while on later SoCs all channels can be used for any per=
+ipheral.
+>=20
+> Tested on a s3c2416-based board, memcpy using the dmatest module and
+> slave_sg partially using the spi-s3c64xx driver.
+>=20
 
-Well, device tree should be written in an OS-agnostic way, so it's not a 
-valid reason to use node names not complying to the recommendations.
+> +static int s3c24xx_dma_control(struct dma_chan *chan, enum dma_ctrl_=
+cmd cmd,
+> +			 unsigned long arg)
+> +{
+> +	struct s3c24xx_dma_chan *s3cchan =3D to_s3c24xx_dma_chan(chan);
+> +	struct s3c24xx_dma_engine *s3cdma =3D s3cchan->host;
+> +	unsigned long flags;
+> +	int ret =3D 0;
+> +
+> +	/* Controls applicable to inactive channels */
+> +	if (cmd =3D=3D DMA_SLAVE_CONFIG)
+> +		return s3c24xx_dma_set_runtime_config(s3cchan,
+> +					      (struct dma_slave_config *)arg);
+> +
+> +	/*
+> +	 * Anything succeeds on channels with no physical allocation and
+> +	 * no queued transfers.
+> +	 */
+> +	spin_lock_irqsave(&s3cchan->vc.lock, flags);
+> +	if (!s3cchan->phy && !s3cchan->at) {
+> +		spin_unlock_irqrestore(&s3cchan->vc.lock, flags);
+> +		return 0;
+this can be bad cmd or terminating already closed channel, return 0 doe=
+snt make
+sense
+> +	}
+> +
+> +	switch (cmd) {
+> +	case DMA_TERMINATE_ALL:
+why not DMA_SLAVE_CONFIG in this switch to make it look simpler...
 
-Also, I don't see anything wrong in this name. There is a lot of devices 
-named this way, like 13920000.spi, 139d0000.pwm or 13800000.serial.
 
-Looking at other dts(i) files around the kernel, mmc is the most commonly 
-used node name for MMC controllers (after sdhci, but it's used for the 
-whole class of controllers compatible with standard SDHCI).
+> +static enum dma_status s3c24xx_dma_tx_status(struct dma_chan *chan,
+> +		dma_cookie_t cookie, struct dma_tx_state *txstate)
+> +{
+> +	struct s3c24xx_dma_chan *s3cchan =3D to_s3c24xx_dma_chan(chan);
+> +	struct virt_dma_desc *vd;
+> +	unsigned long flags;
+> +	enum dma_status ret;
+> +	size_t bytes =3D 0;
+> +
+> +	ret =3D dma_cookie_status(chan, cookie, txstate);
+> +	if (ret =3D=3D DMA_SUCCESS)
+> +		return ret;
+> +
+> +	/*
+> +	 * There's no point calculating the residue if there's
+> +	 * no txstate to store the value.
+> +	 */
+> +	if (!txstate)
+> +		return ret;
+> +
+> +	spin_lock_irqsave(&s3cchan->vc.lock, flags);
+> +	ret =3D dma_cookie_status(chan, cookie, txstate);
+you are checking the cookie status twice, if you check txstate (which s=
+hould be
+valid anyways), then you avoid the duplication
 
-So, for me, just go with "mmc" and it should be fine.
+> +	if (ret !=3D DMA_SUCCESS) {
+> +		struct s3c24xx_txd *txd;
+> +		struct s3c24xx_sg *dsg;
+> +
+> +		vd =3D vchan_find_desc(&s3cchan->vc, cookie);
+> +		if (vd) {
+> +			/* On the issued list, so hasn't been processed yet */
+> +			txd =3D to_s3c24xx_txd(&vd->tx);
+> +
+> +			list_for_each_entry(dsg, &txd->dsg_list, node)
+> +				bytes +=3D dsg->len;
+> +		} else {
+> +			/*
+> +			 * Currently running, so sum over the pending sg's and
+> +			 * the currently active one.
+> +			 */
+> +			txd =3D s3cchan->at;
+> +
+> +			dsg =3D list_entry(txd->at, struct s3c24xx_sg, node);
+> +			list_for_each_entry_from(dsg, &txd->dsg_list, node);
+> +				bytes +=3D dsg->len;
+> +
+> +			bytes +=3D s3c24xx_dma_getbytes_chan(s3cchan);
+> +		}
+> +	}
+> +	spin_unlock_irqrestore(&s3cchan->vc.lock, flags);
+> +
+> +	/*
+> +	 * This cookie not complete yet
+> +	 * Get number of bytes left in the active transactions and queue
+> +	 */
+> +	dma_set_residue(txstate, bytes);
+> +
+> +	/* Whether waiting or running, we're in progress */
+> +	return ret;
+> +}
+> +
+> +/*
+> + * Initialize a descriptor to be used by memcpy submit
+> + */
+> +static struct dma_async_tx_descriptor *s3c24xx_dma_prep_memcpy(
+> +		struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
+> +		size_t len, unsigned long flags)
+> +{
+> +	struct s3c24xx_dma_chan *s3cchan =3D to_s3c24xx_dma_chan(chan);
+> +	struct s3c24xx_dma_engine *s3cdma =3D s3cchan->host;
+> +	struct s3c24xx_txd *txd;
+> +	struct s3c24xx_sg *dsg;
+> +
+> +	dev_dbg(&s3cdma->pdev->dev, "prepare memcpy of %d bytes from %s\n",
+> +			len, s3cchan->name);
+> +
+> +	if ((len & S3C24XX_DCON_TC_MASK) !=3D len) {
+> +		dev_err(&s3cdma->pdev->dev, "memcpy size %d to large\n", len);
+> +		return NULL;
+> +	}
+> +
+> +	txd =3D s3c24xx_dma_get_txd();
+> +	if (!txd)
+> +		return NULL;
+> +
+> +	dsg =3D kzalloc(sizeof(struct s3c24xx_sg), GFP_NOWAIT);
+sizeof(*dsg)
 
-Best regards,
-Tomasz
+~Vinod
