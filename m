@@ -1,134 +1,54 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v4 02/10] ARM: dts: list the CPU nodes for Exynos5250
-Date: Mon, 2 Sep 2013 12:07:43 +0530
-Message-ID: <CANuQgHE8Z5P0BpP0jtRjqPGOSxT07DF-pVNjnwbcpTSjxQ8dZg@mail.gmail.com>
-References: <1371536962-13322-1-git-send-email-chander.kashyap@linaro.org>
-	<1371536962-13322-3-git-send-email-chander.kashyap@linaro.org>
-	<CAOh2x=nsQ5paiMHSH8z9drsqr7_+TvMtNefczf8QNQNbYo0y=Q@mail.gmail.com>
-	<1440260.Z9PFmnVfM0@amdc1227>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH 00/18] ARM: s3c64xx: Let amba-pl08x driver handle DMA
+Date: Mon, 2 Sep 2013 11:46:56 +0530
+Message-ID: <20130902061656.GF7376@intel.com>
+References: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f49.google.com ([209.85.219.49]:35839 "EHLO
-	mail-oa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757204Ab3IBGho (ORCPT
+Received: from mga02.intel.com ([134.134.136.20]:63632 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754914Ab3IBHDW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Sep 2013 02:37:44 -0400
-Received: by mail-oa0-f49.google.com with SMTP id i7so4784137oag.22
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Sep 2013 23:37:43 -0700 (PDT)
-In-Reply-To: <1440260.Z9PFmnVfM0@amdc1227>
+	Mon, 2 Sep 2013 03:03:22 -0400
+Content-Disposition: inline
+In-Reply-To: <1376243970-6489-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mark Rutland <mark.rutland@arm.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, Dan Williams <djbw@fb.com>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>
 
-Hi Viresh,
+On Sun, Aug 11, 2013 at 07:59:12PM +0200, Tomasz Figa wrote:
+> This is first non-RFC version of my patches extending support of
+> amba-pl08x DMA engine driver to PL080S DMA engine (PL080 modified by
+> Samsung) found in Samsung S3C64xx SoCs.
+> 
+> Due to changes scattered across different areas of kernel, patches are
+> based on merged 3 branches:
+>  - for-next of Kgene's Samsung tree,
+>  - clk-next of Mike's clock tree,
+>  - next of Vinod's slave DMA tree.
+> 
+> To ease testing I have prepared a branch in my private tree for anyone
+> willing to check the patches out:
+> 	git://github.com/tom3q/linux.git v3.12-pl080
+> 
+> Dependencies (already applied in my branch):
+>  - for patches 14 and 16 - CCF-based clock driver for s3c64xx.
+>  
+> Some of the patches not related to the amba-pl08x driver itself
+> can be likely applied into appropriate trees separately, namely:
+>  - 09/18 - ASoC: Samsung: Do not queue cyclic buffers multiple times,
+>  - 14/18 - clk: samsung: s3c64xx: Add aliases for DMA clocks.
+>  
+> After patch 14/18, both old and new DMA drivers can be supported on
+> S3C64xx, depending on Kconfig options. Patches 15-18 remove the old driver
+> leaving support only for the generic pl08x driver. Feel free to drop those
+> patches for now if we want more testing, but I don't suspect any problems.
+> 
+> On S3C64xx-based Mini6410 and SMDK6410 boards, with I2S audio
+> playback and capture (including full duplex operation) and also SPI
+> using spidev:
+Applied 1-8 to slave-dma tree, thanks
 
-On 29 August 2013 17:21, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Viresh,
->
-> On Thursday 29 of August 2013 13:45:56 Viresh Kumar wrote:
->> On Tue, Jun 18, 2013 at 11:59 AM, Chander Kashyap
->>
->> <chander.kashyap@linaro.org> wrote:
->> > Instead of having to specify the number for CPUs in Exynos5250 in
->> > platsmp.c file, let the number of CPUs be determined by having this
->> > information listed in Exynos5250 device tree file.
->> >
->> > Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> > ---
->> >
->> >  arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++++++++++++
->> >  arch/arm/mach-exynos/platsmp.c    |   10 +++++++---
->> >  2 files changed, 23 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->> > b/arch/arm/boot/dts/exynos5250.dtsi index 63ca03d..1aeef98 100644
->> > --- a/arch/arm/boot/dts/exynos5250.dtsi
->> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> > @@ -50,6 +50,22 @@
->> >
->> >                 pinctrl3 = &pinctrl_3;
->> >
->> >         };
->> >
->> > +       cpus {
->> > +               #address-cells = <1>;
->> > +               #size-cells = <0>;
->> > +
->> > +               cpu@0 {
->> > +                       device_type = "cpu";
->> > +                       compatible = "arm,cortex-a15";
->> > +                       reg = <0>;
->> > +               };
->> > +               cpu@1 {
->> > +                       device_type = "cpu";
->> > +                       compatible = "arm,cortex-a15";
->> > +                       reg = <1>;
->> > +               };
->> > +       };
->> > +
->> >
->> >         pd_gsc: gsc-power-domain@0x10044000 {
->> >
->> >                 compatible = "samsung,exynos4210-pd";
->> >                 reg = <0x10044000 0x20>;
->> >
->> > diff --git a/arch/arm/mach-exynos/platsmp.c
->> > b/arch/arm/mach-exynos/platsmp.c index 1a4e4e5..85ea4ca 100644
->> > --- a/arch/arm/mach-exynos/platsmp.c
->> > +++ b/arch/arm/mach-exynos/platsmp.c
->> > @@ -180,10 +180,14 @@ static void __init exynos_smp_init_cpus(void)
->> >
->> >         void __iomem *scu_base = scu_base_addr();
->> >         unsigned int i, ncores;
->> >
->> > -       if (soc_is_exynos5250())
->> > -               ncores = 2;
->> > -       else
->> > +       if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A9)
->> >
->> >                 ncores = scu_base ? scu_get_core_count(scu_base) : 1;
->> >
->> > +       else
->> > +               /*
->> > +                * CPU Nodes are passed thru DT and set_cpu_possible
->> > +                * is set by "arm_dt_init_cpu_maps".
->> > +                */
->> > +               return;
->> >
->> >         /* sanity check */
->> >         if (ncores > nr_cpu_ids) {
->>
->> After this patch only one cpu is coming up for me on my Arndale board..
->> Revert of this one fixes the issue though (Tested over v3.11-rc7)
->
-I tested on 3.11-rc7.
-Both the cpu's are booting. I didnet see any issue.
-
-> It is quite likely that 0 and 1 are not real MPIDR values for CPU cores on
-> Exynos5250, because cluster ID might not be 0, as one could expect.
->
-@Tomasz:
-Mpidr values are correct.
-
-> This is what I found out on Exynos4210 and 4x12, when trying to add CPU
-> nodes in DT for them, leading in turn to a series of regressions, for which
-> it was to late to do all the necessary code rework to fix them for 3.12, so
-> I had to defer this work for next release.
-
-Exynos4210 and 4x12 mpidr values have issue. They do start from
-cluster ID 9, which breaks the gic init code.
-But that is not the case with exynos 5250.
-
->
-> Best regards,
-> Tomasz
->
-
-
-
--- 
-with warm regards,
-Chander Kashyap
+~Vinod
