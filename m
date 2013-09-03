@@ -1,79 +1,240 @@
 From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 2/7] drm/exynos: remove dummy hdmiphy clock
-Date: Tue, 3 Sep 2013 11:58:02 -0400
-Message-ID: <CAOw6vbKT9R2Cyz8F0ND2K71MvBJ3Zu1y8uCw6Cka2iLxgB54QA@mail.gmail.com>
-References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com> <1377845974-28373-3-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH 3/7] drm/exynos: add hdmiphy pmu bit control in hdmiphy driver
+Date: Tue, 3 Sep 2013 12:10:25 -0400
+Message-ID: <CAOw6vbJtd91nyc1-YRUzjfjMLYSX+OdpcimFg3Hzu1F0QbATeQ@mail.gmail.com>
+References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com> <1377845974-28373-4-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:50791 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756945Ab3ICP6Z (ORCPT
+Received: from mail-oa0-f54.google.com ([209.85.219.54]:63475 "EHLO
+	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756064Ab3ICQKt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Sep 2013 11:58:25 -0400
-Received: by mail-ob0-f174.google.com with SMTP id wd6so5986665obb.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 08:58:25 -0700 (PDT)
-Received: by mail-ob0-f173.google.com with SMTP id ta17so6002868obb.18
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 08:58:22 -0700 (PDT)
-In-Reply-To: <1377845974-28373-3-git-send-email-rahul.sharma@samsung.com>
+	Tue, 3 Sep 2013 12:10:49 -0400
+Received: by mail-oa0-f54.google.com with SMTP id j10so1867374oah.27
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 09:10:48 -0700 (PDT)
+Received: by mail-oa0-f46.google.com with SMTP id o20so6928391oag.33
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 09:10:46 -0700 (PDT)
+In-Reply-To: <1377845974-28373-4-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rahul Sharma <rahul.sharma@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, l.stach@pengutronix.de, Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com, sunil joshi <joshi@samsung.com>, "r.sh.open" <r.sh.open@gmail.com>
 
 On Fri, Aug 30, 2013 at 2:59 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> hdmiphy is a dummy clock which actually controls the PMU bit
-> to enable/disbale hdmiphy (before CCF). This clock is cleaned
+> Before hdmiphy operation like config, start etc, hdmiphy
+> bit in PMU block should be enabled. Earlier this happens
+> in hdmi drvier through a dummy "hdmiphy" clock.
 
-s/disbale/disable/
+s/drvier/driver/
 
-> from the hdmi driver.
 >
 > Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_hdmi.c |    8 --------
->  1 file changed, 8 deletions(-)
+>  .../devicetree/bindings/video/exynos_hdmiphy.txt   |    6 ++
+>  drivers/gpu/drm/exynos/exynos_drm_hdmi.h           |    2 +
+>  drivers/gpu/drm/exynos/exynos_hdmi.c               |    2 +
+>  drivers/gpu/drm/exynos/exynos_hdmiphy.c            |   82 ++++++++++++++++++++
+>  4 files changed, 92 insertions(+)
 >
+> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> index 162f641..f6bf096 100644
+> --- a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> +++ b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
+> @@ -6,10 +6,16 @@ Required properties:
+>         2) "samsung,exynos4210-hdmiphy".
+>         3) "samsung,exynos4212-hdmiphy".
+>  - reg: I2C address of the hdmiphy device.
+> +- phy-power-control: this child node represents phy power control
+> +       register which is inside the pmu block (power management unit).
+
+Should you include devicetree-discuss on this?
+
+>
+>  Example:
+>
+>         hdmiphy {
+>                 compatible = "samsung,exynos4210-hdmiphy";
+>                 reg = <0x38>;
+> +
+> +               phy-power-control {
+> +                               reg = <0x10040700 0x04>;
+> +               };
+>         };
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> index 1c839f8..9a14f96 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
+> @@ -68,6 +68,8 @@ void exynos_mixer_ops_register(struct exynos_mixer_ops *ops);
+>  int exynos_hdmiphy_driver_register(void);
+>  void exynos_hdmiphy_driver_unregister(void);
+>
+> +void exynos_hdmiphy_poweron(struct device *dev);
+> +void exynos_hdmiphy_poweroff(struct device *dev);
+>  void exynos_hdmiphy_enable(struct device *dev);
+>  void exynos_hdmiphy_disable(struct device *dev);
+>  int exynos_hdmiphy_check_mode(struct device *dev,
 > diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index 3af4e4c..cd1d921 100644
+> index cd1d921..a6234fc 100644
 > --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
 > +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -84,7 +84,6 @@ struct hdmi_resources {
->         struct clk                      *sclk_hdmi;
->         struct clk                      *sclk_pixel;
->         struct clk                      *sclk_hdmiphy;
-> -       struct clk                      *hdmiphy;
->         struct clk                      *mout_hdmi;
->         struct regulator_bulk_data      *regul_bulk;
->         int                             regul_count;
-> @@ -1431,7 +1430,6 @@ static void hdmi_poweron(struct hdmi_context *hdata)
->         if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
->                 DRM_DEBUG_KMS("failed to enable regulator bulk\n");
+> @@ -1131,6 +1131,7 @@ static void hdmiphy_poweron(struct hdmi_context *hdata)
+>         if (hdata->type == HDMI_TYPE14)
+>                 hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0,
+>                         HDMI_PHY_POWER_OFF_EN);
+> +       exynos_hdmiphy_poweron(hdata->hdmiphy_dev);
+>  }
 >
-> -       clk_prepare_enable(res->hdmiphy);
->         clk_prepare_enable(res->hdmi);
->         clk_prepare_enable(res->sclk_hdmi);
+>  static void hdmiphy_poweroff(struct hdmi_context *hdata)
+> @@ -1138,6 +1139,7 @@ static void hdmiphy_poweroff(struct hdmi_context *hdata)
+>         if (hdata->type == HDMI_TYPE14)
+>                 hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0,
+>                         HDMI_PHY_POWER_OFF_EN);
+> +       exynos_hdmiphy_poweroff(hdata->hdmiphy_dev);
+
+Shouldn't the phy power off before HDMI?
+
+>  }
 >
-> @@ -1456,7 +1454,6 @@ static void hdmi_poweroff(struct hdmi_context *hdata)
+>  static void hdmi_conf_apply(struct hdmi_context *hdata)
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> index 82daa42..b1b8a0f 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
+> @@ -30,6 +30,9 @@ struct hdmiphy_context {
+>         struct device           *dev;
+>         struct hdmiphy_config   *current_conf;
 >
->         clk_disable_unprepare(res->sclk_hdmi);
->         clk_disable_unprepare(res->hdmi);
-> -       clk_disable_unprepare(res->hdmiphy);
->         regulator_bulk_disable(res->regul_count, res->regul_bulk);
+> +       /* hdmiphy resources */
+> +       void __iomem            *phy_pow_ctrl_reg;
+> +
+>         struct hdmiphy_config   *confs;
+>         unsigned int            nr_confs;
+>  };
+> @@ -225,6 +228,49 @@ static struct hdmiphy_config *hdmiphy_find_conf(struct hdmiphy_context *hdata,
+>         return NULL;
+>  }
 >
->         mutex_lock(&hdata->hdmi_mutex);
-> @@ -1549,11 +1546,6 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
->                 DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
->                 goto fail;
+> +static int hdmiphy_dt_parse_power_control(struct hdmiphy_context *hdata)
+> +{
+> +       struct device_node *phy_pow_ctrl_node;
+> +       u32 buf[2];
+> +       int ret = 0;
+> +
+> +       phy_pow_ctrl_node = of_get_child_by_name(hdata->dev->of_node,
+> +                       "phy-power-control");
+> +       if (!phy_pow_ctrl_node) {
+> +               DRM_ERROR("Failed to find phy power control node\n");
+> +               ret = -ENODEV;
+> +               goto fail;
+
+You can just return -ENODEV here.
+
+> +       }
+> +
+> +       /* reg property holds two informations: addr of pmu register, size */
+> +       if (of_property_read_u32_array(phy_pow_ctrl_node, "reg",
+> +                       (u32 *)&buf, 2)) {
+
+Maybe I'm missing something, but this looks bad. I think this should be:
+
+of_property_read_u32_array(phy_pow_ctrl_node, "reg", buf, ARRAY_SIZE(buf))
+
+ie: dereferencing buf won't do what you expect it to.
+
+> +               DRM_ERROR("faild to get phy power control reg\n");
+> +               ret = -EINVAL;
+> +               goto fail;
+> +       }
+> +
+> +       hdata->phy_pow_ctrl_reg = devm_ioremap(hdata->dev, buf[0], buf[1]);
+> +       if (!hdata->phy_pow_ctrl_reg) {
+> +               DRM_ERROR("failed to ioremap phy pmu reg\n");
+> +               ret = -ENOMEM;
+> +               goto fail;
+> +       }
+> +
+> +fail:
+
+fail seems like the wrong thing to call this, since it's run on
+success too :) Maybe "out" would be more appropriate.
+
+> +       of_node_put(phy_pow_ctrl_node);
+> +       return ret;
+> +}
+> +
+> +static inline void hdmiphy_pow_ctrl_reg_writemask(
+> +                       struct hdmiphy_context *hdata,
+> +                       u32 value, u32 mask)
+> +{
+> +       u32 old = readl(hdata->phy_pow_ctrl_reg);
+> +       value = (value & mask) | (old & ~mask);
+> +       writel(value, hdata->phy_pow_ctrl_reg);
+> +}
+> +
+>  static int hdmiphy_reg_writeb(struct hdmiphy_context *hdata,
+>                         u32 reg_offset, u8 value)
+>  {
+> @@ -353,6 +399,36 @@ void exynos_hdmiphy_disable(struct device *dev)
 >         }
-> -       res->hdmiphy = devm_clk_get(dev, "hdmiphy");
-> -       if (IS_ERR(res->hdmiphy)) {
-> -               DRM_ERROR("failed to get clock 'hdmiphy'\n");
-> -               goto fail;
-> -       }
->         res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
->         if (IS_ERR(res->mout_hdmi)) {
->                 DRM_ERROR("failed to get clock 'mout_hdmi'\n");
+>  }
+>
+> +void exynos_hdmiphy_poweron(struct device *dev)
+> +{
+> +       struct hdmiphy_context *hdata = dev_get_drvdata(dev);
+> +
+> +       DRM_DEBUG_KMS("[%d]\n", __LINE__);
+> +
+> +       if (!hdata) {
+> +               DRM_ERROR("Invalid arg: hdmiphy device pointer.\n");
+> +               return;
+> +       }
+
+Same comment as the other review. I wonder if you really need this check
+
+> +
+> +       hdmiphy_pow_ctrl_reg_writemask(hdata, PMU_HDMI_PHY_ENABLE,
+> +               PMU_HDMI_PHY_CONTROL_MASK);
+> +}
+> +
+> +void exynos_hdmiphy_poweroff(struct device *dev)
+> +{
+> +       struct hdmiphy_context *hdata = dev_get_drvdata(dev);
+> +
+> +       DRM_DEBUG_KMS("[%d]\n", __LINE__);
+> +
+> +       if (!hdata) {
+> +               DRM_ERROR("Invalid arg: hdmiphy device pointer.\n");
+> +               return;
+> +       }
+> +
+> +       hdmiphy_pow_ctrl_reg_writemask(hdata, PMU_HDMI_PHY_DISABLE,
+> +               PMU_HDMI_PHY_CONTROL_MASK);
+> +}
+> +
+>  int exynos_hdmiphy_conf_apply(struct device *dev)
+>  {
+>         struct hdmiphy_context *hdata = dev_get_drvdata(dev);
+> @@ -413,6 +489,7 @@ static int hdmiphy_i2c_device_probe(struct i2c_client *client,
+>         struct hdmiphy_context *hdata;
+>         struct hdmiphy_drv_data *drv;
+>         const struct of_device_id *match;
+> +       int ret;
+>
+>         DRM_DEBUG_KMS("[%d]\n", __LINE__);
+>
+> @@ -436,6 +513,11 @@ static int hdmiphy_i2c_device_probe(struct i2c_client *client,
+>         hdata->nr_confs = drv->count;
+>
+>         i2c_set_clientdata(client, hdata);
+> +       ret = hdmiphy_dt_parse_power_control(hdata);
+> +       if (ret) {
+> +               DRM_ERROR("failed to map hdmiphy pow control reg.\n");
+> +               return ret;
+> +       }
+>
+>         return 0;
+>  }
 > --
 > 1.7.10.4
 >
