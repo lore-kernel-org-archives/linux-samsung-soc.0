@@ -1,239 +1,335 @@
 From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 3/7] drm/exynos: add hdmiphy pmu bit control in hdmiphy driver
-Date: Tue, 3 Sep 2013 12:10:25 -0400
-Message-ID: <CAOw6vbJtd91nyc1-YRUzjfjMLYSX+OdpcimFg3Hzu1F0QbATeQ@mail.gmail.com>
-References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com> <1377845974-28373-4-git-send-email-rahul.sharma@samsung.com>
+Subject: Re: [PATCH 4/7] drm/exynos: add support for exynos5420 hdmiphy
+Date: Tue, 3 Sep 2013 12:15:44 -0400
+Message-ID: <CAOw6vb+X9Z3QVcKcdB9snO7NPyFH_ZMRGxypgDHdst6gyo5wSw@mail.gmail.com>
+References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com> <1377845974-28373-5-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f54.google.com ([209.85.219.54]:63475 "EHLO
-	mail-oa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756064Ab3ICQKt (ORCPT
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:42805 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754820Ab3ICQQH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Sep 2013 12:10:49 -0400
-Received: by mail-oa0-f54.google.com with SMTP id j10so1867374oah.27
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 09:10:48 -0700 (PDT)
-Received: by mail-oa0-f46.google.com with SMTP id o20so6928391oag.33
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 09:10:46 -0700 (PDT)
-In-Reply-To: <1377845974-28373-4-git-send-email-rahul.sharma@samsung.com>
+	Tue, 3 Sep 2013 12:16:07 -0400
+Received: by mail-ob0-f181.google.com with SMTP id dn14so5962373obc.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 09:16:06 -0700 (PDT)
+Received: by mail-ob0-f180.google.com with SMTP id v19so6062962obq.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 09:16:04 -0700 (PDT)
+In-Reply-To: <1377845974-28373-5-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rahul Sharma <rahul.sharma@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, l.stach@pengutronix.de, Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com, sunil joshi <joshi@samsung.com>, "r.sh.open" <r.sh.open@gmail.com>
 
 On Fri, Aug 30, 2013 at 2:59 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> Before hdmiphy operation like config, start etc, hdmiphy
-> bit in PMU block should be enabled. Earlier this happens
-> in hdmi drvier through a dummy "hdmiphy" clock.
-
-s/drvier/driver/
-
+> Exynos5420 hdmiphy device is a platform device, unlike
+> predecessor SoCs where it used to be a I2C device. This
+> support is added to the hdmiphy driver.
 >
+
+Stuffing a platform driver in the same place as your i2c driver seems
+weird. I think you should split them up.
+
 > Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
 > ---
->  .../devicetree/bindings/video/exynos_hdmiphy.txt   |    6 ++
->  drivers/gpu/drm/exynos/exynos_drm_hdmi.h           |    2 +
->  drivers/gpu/drm/exynos/exynos_hdmi.c               |    2 +
->  drivers/gpu/drm/exynos/exynos_hdmiphy.c            |   82 ++++++++++++++++++++
->  4 files changed, 92 insertions(+)
+>  drivers/gpu/drm/exynos/exynos_hdmiphy.c |  224 ++++++++++++++++++++++++++++++-
+>  1 file changed, 221 insertions(+), 3 deletions(-)
 >
-> diff --git a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
-> index 162f641..f6bf096 100644
-> --- a/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
-> +++ b/Documentation/devicetree/bindings/video/exynos_hdmiphy.txt
-> @@ -6,10 +6,16 @@ Required properties:
->         2) "samsung,exynos4210-hdmiphy".
->         3) "samsung,exynos4212-hdmiphy".
->  - reg: I2C address of the hdmiphy device.
-> +- phy-power-control: this child node represents phy power control
-> +       register which is inside the pmu block (power management unit).
-
-Should you include devicetree-discuss on this?
-
->
->  Example:
->
->         hdmiphy {
->                 compatible = "samsung,exynos4210-hdmiphy";
->                 reg = <0x38>;
-> +
-> +               phy-power-control {
-> +                               reg = <0x10040700 0x04>;
-> +               };
->         };
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
-> index 1c839f8..9a14f96 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_hdmi.h
-> @@ -68,6 +68,8 @@ void exynos_mixer_ops_register(struct exynos_mixer_ops *ops);
->  int exynos_hdmiphy_driver_register(void);
->  void exynos_hdmiphy_driver_unregister(void);
->
-> +void exynos_hdmiphy_poweron(struct device *dev);
-> +void exynos_hdmiphy_poweroff(struct device *dev);
->  void exynos_hdmiphy_enable(struct device *dev);
->  void exynos_hdmiphy_disable(struct device *dev);
->  int exynos_hdmiphy_check_mode(struct device *dev,
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> index cd1d921..a6234fc 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-> @@ -1131,6 +1131,7 @@ static void hdmiphy_poweron(struct hdmi_context *hdata)
->         if (hdata->type == HDMI_TYPE14)
->                 hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, 0,
->                         HDMI_PHY_POWER_OFF_EN);
-> +       exynos_hdmiphy_poweron(hdata->hdmiphy_dev);
->  }
->
->  static void hdmiphy_poweroff(struct hdmi_context *hdata)
-> @@ -1138,6 +1139,7 @@ static void hdmiphy_poweroff(struct hdmi_context *hdata)
->         if (hdata->type == HDMI_TYPE14)
->                 hdmi_reg_writemask(hdata, HDMI_PHY_CON_0, ~0,
->                         HDMI_PHY_POWER_OFF_EN);
-> +       exynos_hdmiphy_poweroff(hdata->hdmiphy_dev);
-
-Shouldn't the phy power off before HDMI?
-
->  }
->
->  static void hdmi_conf_apply(struct hdmi_context *hdata)
 > diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> index 82daa42..b1b8a0f 100644
+> index b1b8a0f..33e89d9 100644
 > --- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
 > +++ b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> @@ -30,6 +30,9 @@ struct hdmiphy_context {
->         struct device           *dev;
->         struct hdmiphy_config   *current_conf;
+> @@ -32,6 +32,7 @@ struct hdmiphy_context {
 >
-> +       /* hdmiphy resources */
-> +       void __iomem            *phy_pow_ctrl_reg;
-> +
+>         /* hdmiphy resources */
+>         void __iomem            *phy_pow_ctrl_reg;
+> +       void __iomem            *regs;
+>
 >         struct hdmiphy_config   *confs;
 >         unsigned int            nr_confs;
+> @@ -48,6 +49,135 @@ struct hdmiphy_drv_data {
 >  };
-> @@ -225,6 +228,49 @@ static struct hdmiphy_config *hdmiphy_find_conf(struct hdmiphy_context *hdata,
->         return NULL;
->  }
 >
-> +static int hdmiphy_dt_parse_power_control(struct hdmiphy_context *hdata)
-> +{
-> +       struct device_node *phy_pow_ctrl_node;
-> +       u32 buf[2];
-> +       int ret = 0;
+>  /* list of all required phy config settings */
+> +static struct hdmiphy_config hdmiphy_5420_configs[] = {
+> +       {
+> +               .pixel_clock = 25200000,
+> +               .conf = {
+> +                       0x01, 0x52, 0x3F, 0x55, 0x40, 0x01, 0x00, 0xC8,
+> +                       0x82, 0xC8, 0xBD, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x06, 0x80, 0x01, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0xF4, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 27000000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x22, 0x51, 0x40, 0x08, 0xFC, 0xE0,
+> +                       0x98, 0xE8, 0xCB, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x06, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0xE4, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 27027000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x2D, 0x72, 0x40, 0x64, 0x12, 0xC8,
+> +                       0x43, 0xE8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x06, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0xE3, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 36000000,
+> +               .conf = {
+> +                       0x01, 0x51, 0x2D, 0x55, 0x40, 0x40, 0x00, 0xC8,
+> +                       0x02, 0xC8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0xAB, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 40000000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x21, 0x31, 0x40, 0x3C, 0x28, 0xC8,
+> +                       0x87, 0xE8, 0xC8, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0x9A, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 65000000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x36, 0x34, 0x40, 0x0C, 0x04, 0xC8,
+> +                       0x82, 0xE8, 0x45, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0xBD, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 71000000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x3B, 0x35, 0x40, 0x0C, 0x04, 0xC8,
+> +                       0x85, 0xE8, 0x63, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0x57, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 74176000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x1F, 0x10, 0x40, 0x5B, 0xEF, 0xC8,
+> +                       0x81, 0xE8, 0xB9, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x56, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0xA6, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 74250000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x1F, 0x10, 0x40, 0x40, 0xF8, 0xC8,
+> +                       0x81, 0xE8, 0xBA, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x56, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0xA5, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 83500000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x23, 0x11, 0x40, 0x0C, 0xFB, 0xC8,
+> +                       0x85, 0xE8, 0xD1, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0x4A, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 106500000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x2C, 0x12, 0x40, 0x0C, 0x09, 0xC8,
+> +                       0x84, 0xE8, 0x0A, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0x73, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 108000000,
+> +               .conf = {
+> +                       0x01, 0x51, 0x2D, 0x15, 0x40, 0x01, 0x00, 0xC8,
+> +                       0x82, 0xC8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0xC7, 0x25, 0x03, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 146250000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x3D, 0x15, 0x40, 0x18, 0xFD, 0xC8,
+> +                       0x83, 0xE8, 0x6E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0x54, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +       {
+> +               .pixel_clock = 148500000,
+> +               .conf = {
+> +                       0x01, 0xD1, 0x1F, 0x00, 0x40, 0x40, 0xF8, 0xC8,
+> +                       0x81, 0xE8, 0xBA, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
+> +                       0x66, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
+> +                       0x54, 0x4B, 0x25, 0x03, 0x00, 0x00, 0x01, 0x80,
+> +               },
+> +       },
+> +};
+
+Same comment here about these being board-specific. It would be nice
+to come to consensus about putting this stuff in dt before moving too
+far forward.
+
 > +
-> +       phy_pow_ctrl_node = of_get_child_by_name(hdata->dev->of_node,
-> +                       "phy-power-control");
-> +       if (!phy_pow_ctrl_node) {
-> +               DRM_ERROR("Failed to find phy power control node\n");
-> +               ret = -ENODEV;
-> +               goto fail;
-
-You can just return -ENODEV here.
-
-> +       }
-> +
-> +       /* reg property holds two informations: addr of pmu register, size */
-> +       if (of_property_read_u32_array(phy_pow_ctrl_node, "reg",
-> +                       (u32 *)&buf, 2)) {
-
-Maybe I'm missing something, but this looks bad. I think this should be:
-
-of_property_read_u32_array(phy_pow_ctrl_node, "reg", buf, ARRAY_SIZE(buf))
-
-ie: dereferencing buf won't do what you expect it to.
-
-> +               DRM_ERROR("faild to get phy power control reg\n");
-> +               ret = -EINVAL;
-> +               goto fail;
-> +       }
-> +
-> +       hdata->phy_pow_ctrl_reg = devm_ioremap(hdata->dev, buf[0], buf[1]);
-> +       if (!hdata->phy_pow_ctrl_reg) {
-> +               DRM_ERROR("failed to ioremap phy pmu reg\n");
-> +               ret = -ENOMEM;
-> +               goto fail;
-> +       }
-> +
-> +fail:
-
-fail seems like the wrong thing to call this, since it's run on
-success too :) Maybe "out" would be more appropriate.
-
-> +       of_node_put(phy_pow_ctrl_node);
-> +       return ret;
-> +}
-> +
-> +static inline void hdmiphy_pow_ctrl_reg_writemask(
-> +                       struct hdmiphy_context *hdata,
-> +                       u32 value, u32 mask)
-> +{
-> +       u32 old = readl(hdata->phy_pow_ctrl_reg);
-> +       value = (value & mask) | (old & ~mask);
-> +       writel(value, hdata->phy_pow_ctrl_reg);
-> +}
-> +
->  static int hdmiphy_reg_writeb(struct hdmiphy_context *hdata,
->                         u32 reg_offset, u8 value)
->  {
-> @@ -353,6 +399,36 @@ void exynos_hdmiphy_disable(struct device *dev)
+>  static struct hdmiphy_config hdmiphy_4212_configs[] = {
+>         {
+>                 .pixel_clock = 25200000,
+> @@ -290,7 +420,8 @@ static int hdmiphy_reg_writeb(struct hdmiphy_context *hdata,
+>                         return 0;
+>                 return ret;
+>         } else {
+> -               return -EINVAL;
+> +               writeb(value, hdata->regs + (reg_offset<<2));
+> +               return 0;
 >         }
 >  }
 >
-> +void exynos_hdmiphy_poweron(struct device *dev)
-> +{
-> +       struct hdmiphy_context *hdata = dev_get_drvdata(dev);
+> @@ -309,7 +440,11 @@ static int hdmiphy_reg_write_buf(struct hdmiphy_context *hdata,
+>                         return 0;
+>                 return ret;
+>         } else {
+> -               return -EINVAL;
+> +               int i;
+> +               for (i = 0; i < len; i++)
+> +                       writeb(buf[i], hdata->regs +
+> +                               ((reg_offset + i)<<2));
+> +               return 0;
+>         }
+>  }
+>
+> @@ -457,6 +592,11 @@ int exynos_hdmiphy_conf_apply(struct device *dev)
+>         return 0;
+>  }
+>
+> +static struct hdmiphy_drv_data exynos5420_hdmiphy_drv_data = {
+> +       .confs = hdmiphy_5420_configs,
+> +       .count = ARRAY_SIZE(hdmiphy_5420_configs)
+> +};
 > +
-> +       DRM_DEBUG_KMS("[%d]\n", __LINE__);
-> +
-> +       if (!hdata) {
-> +               DRM_ERROR("Invalid arg: hdmiphy device pointer.\n");
-> +               return;
+>  static struct hdmiphy_drv_data exynos4212_hdmiphy_drv_data = {
+>         .confs = hdmiphy_4212_configs,
+>         .count = ARRAY_SIZE(hdmiphy_4212_configs)
+> @@ -482,6 +622,67 @@ static struct of_device_id hdmiphy_i2c_device_match_types[] = {
+>         }
+>  };
+>
+> +static struct of_device_id hdmiphy_platform_device_match_types[] = {
+> +       {
+> +               .compatible = "samsung,exynos5420-hdmiphy",
+> +               .data   = &exynos5420_hdmiphy_drv_data,
+> +       }, {
+> +               /* end node */
 > +       }
-
-Same comment as the other review. I wonder if you really need this check
-
+> +};
 > +
-> +       hdmiphy_pow_ctrl_reg_writemask(hdata, PMU_HDMI_PHY_ENABLE,
-> +               PMU_HDMI_PHY_CONTROL_MASK);
-> +}
-> +
-> +void exynos_hdmiphy_poweroff(struct device *dev)
+> +static int hdmiphy_platform_device_probe(struct platform_device *pdev)
 > +{
-> +       struct hdmiphy_context *hdata = dev_get_drvdata(dev);
-> +
-> +       DRM_DEBUG_KMS("[%d]\n", __LINE__);
-> +
-> +       if (!hdata) {
-> +               DRM_ERROR("Invalid arg: hdmiphy device pointer.\n");
-> +               return;
-> +       }
-> +
-> +       hdmiphy_pow_ctrl_reg_writemask(hdata, PMU_HDMI_PHY_DISABLE,
-> +               PMU_HDMI_PHY_CONTROL_MASK);
-> +}
-> +
->  int exynos_hdmiphy_conf_apply(struct device *dev)
->  {
->         struct hdmiphy_context *hdata = dev_get_drvdata(dev);
-> @@ -413,6 +489,7 @@ static int hdmiphy_i2c_device_probe(struct i2c_client *client,
->         struct hdmiphy_context *hdata;
->         struct hdmiphy_drv_data *drv;
->         const struct of_device_id *match;
+> +       struct device *dev = &pdev->dev;
+> +       struct hdmiphy_context *hdata;
+> +       struct hdmiphy_drv_data *drv;
+> +       struct resource *res;
+> +       const struct of_device_id *match;
 > +       int ret;
->
->         DRM_DEBUG_KMS("[%d]\n", __LINE__);
->
-> @@ -436,6 +513,11 @@ static int hdmiphy_i2c_device_probe(struct i2c_client *client,
->         hdata->nr_confs = drv->count;
->
->         i2c_set_clientdata(client, hdata);
+> +
+> +       DRM_DEBUG_KMS("[%d]\n", __LINE__);
+> +
+> +       hdata = devm_kzalloc(dev, sizeof(*hdata), GFP_KERNEL);
+> +       if (!hdata) {
+> +               DRM_ERROR("failed to allocate hdmiphy context.\n");
+> +               return -ENOMEM;
+> +       }
+> +
+> +       match = of_match_node(of_match_ptr(
+> +               hdmiphy_platform_device_match_types),
+> +               dev->of_node);
+> +
+> +       if (match == NULL)
+
+if (!match) should do the trick
+
+> +               return -ENODEV;
+> +
+> +       drv = (struct hdmiphy_drv_data *)match->data;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (!res) {
+> +               DRM_ERROR("failed to find phy registers\n");
+> +               return -ENOENT;
+> +       }
+> +
+> +       hdata->regs = devm_request_and_ioremap(&pdev->dev, res);
+> +       if (!hdata->regs) {
+> +               DRM_ERROR("failed to map registers\n");
+> +               return -ENXIO;
+> +       }
+> +
+> +       hdata->dev = dev;
+> +       hdata->confs = drv->confs;
+> +       hdata->nr_confs = drv->count;
+> +
+> +       platform_set_drvdata(pdev, hdata);
 > +       ret = hdmiphy_dt_parse_power_control(hdata);
 > +       if (ret) {
 > +               DRM_ERROR("failed to map hdmiphy pow control reg.\n");
 > +               return ret;
 > +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int hdmiphy_i2c_device_probe(struct i2c_client *client,
+>         const struct i2c_device_id *id)
+>  {
+> @@ -538,18 +739,35 @@ struct i2c_driver hdmiphy_i2c_driver = {
+>         .command                = NULL,
+>  };
+>
+> +struct platform_driver hdmiphy_platform_driver = {
+> +       .driver = {
+> +               .name   = "exynos-hdmiphy",
+> +               .owner  = THIS_MODULE,
+> +               .of_match_table = of_match_ptr(
+> +                               hdmiphy_platform_device_match_types),
+> +       },
+> +       .probe          = hdmiphy_platform_device_probe,
+> +};
+> +
+>  int exynos_hdmiphy_driver_register(void)
+>  {
+>         int ret;
+>
+>         ret = i2c_add_driver(&hdmiphy_i2c_driver);
+>         if (ret)
+> -               return ret;
+> +               goto err;
+> +
+> +       ret = platform_driver_register(&hdmiphy_platform_driver);
+> +       if (ret)
+> +               goto err;
 >
 >         return 0;
+> +err:
+> +       return ret;
+>  }
+>
+>  void exynos_hdmiphy_driver_unregister(void)
+>  {
+>         i2c_del_driver(&hdmiphy_i2c_driver);
+> +       platform_driver_unregister(&hdmiphy_platform_driver);
 >  }
 > --
 > 1.7.10.4
