@@ -1,336 +1,167 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH 4/7] drm/exynos: add support for exynos5420 hdmiphy
-Date: Tue, 3 Sep 2013 12:15:44 -0400
-Message-ID: <CAOw6vb+X9Z3QVcKcdB9snO7NPyFH_ZMRGxypgDHdst6gyo5wSw@mail.gmail.com>
-References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com> <1377845974-28373-5-git-send-email-rahul.sharma@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [RFC Patch v2 1/3] clk: add support for temporary parent clock
+ migration
+Date: Tue, 03 Sep 2013 23:47:23 +0200
+Message-ID: <522658EB.3090408@gmail.com>
+References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org> <1378208072-10173-2-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:42805 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754820Ab3ICQQH (ORCPT
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:61046 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754567Ab3ICVr1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Sep 2013 12:16:07 -0400
-Received: by mail-ob0-f181.google.com with SMTP id dn14so5962373obc.40
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 09:16:06 -0700 (PDT)
-Received: by mail-ob0-f180.google.com with SMTP id v19so6062962obq.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 09:16:04 -0700 (PDT)
-In-Reply-To: <1377845974-28373-5-git-send-email-rahul.sharma@samsung.com>
+	Tue, 3 Sep 2013 17:47:27 -0400
+Received: by mail-ee0-f48.google.com with SMTP id l10so3230287eei.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 14:47:26 -0700 (PDT)
+In-Reply-To: <1378208072-10173-2-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <rahul.sharma@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, l.stach@pengutronix.de, Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com, sunil joshi <joshi@samsung.com>, "r.sh.open" <r.sh.open@gmail.com>
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, thomas.abraham@linaro.org
 
-On Fri, Aug 30, 2013 at 2:59 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
-> Exynos5420 hdmiphy device is a platform device, unlike
-> predecessor SoCs where it used to be a I2C device. This
-> support is added to the hdmiphy driver.
+Hi Chander,
+
+On 09/03/2013 01:34 PM, Chander Kashyap wrote:
+> Some platforms use to migrate temporarily to another parent during cpu frequency
+> scaling, e.g. Exynos and Tegra. Once the frequency is changed the latch on to
+> original parent.
 >
-
-Stuffing a platform driver in the same place as your i2c driver seems
-weird. I think you should split them up.
-
-> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> The generic cpufreq-cpu0 driver use clk_set_rate API to scale cpu frequency.
+> This patch is an attempt to address the above mentioned requirement.
+>
+> This is achieved as follows:
+>
+> Add a clk flag "CLK_SET_RATE_TEMP_PARENT" for clocks which need to migrate to
+> another parent during set_rate operation on them.
+>
+> Add "temp_parent_name" and "tmp_parent" fields to clk structure i.e the name of
+> temp_parent_clock and reference to temp_parent_clock.
+>
+> Hence in clk_set_rate API check for the "CLK_SET_RATE_TEMP_PARENT" flag, then
+> latch on to alternate parent clock temporarily. Once the requested rate is set
+> on the clk, re-parent back to original parent clock.
+>
+> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
 > ---
->  drivers/gpu/drm/exynos/exynos_hdmiphy.c |  224 ++++++++++++++++++++++++++++++-
->  1 file changed, 221 insertions(+), 3 deletions(-)
+>   drivers/clk/clk-mux.c        |   13 +++++++------
+>   drivers/clk/clk.c            |   43 ++++++++++++++++++++++++++++++++++++++++--
+>   include/linux/clk-private.h  |   19 +++++++++++--------
+>   include/linux/clk-provider.h |   10 ++++++----
+>   4 files changed, 65 insertions(+), 20 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/exynos/exynos_hdmiphy.c b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> index b1b8a0f..33e89d9 100644
-> --- a/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> +++ b/drivers/gpu/drm/exynos/exynos_hdmiphy.c
-> @@ -32,6 +32,7 @@ struct hdmiphy_context {
+> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+> index 4f96ff3..854b3ac 100644
+> --- a/drivers/clk/clk-mux.c
+> +++ b/drivers/clk/clk-mux.c
+> @@ -115,8 +115,8 @@ EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
 >
->         /* hdmiphy resources */
->         void __iomem            *phy_pow_ctrl_reg;
-> +       void __iomem            *regs;
->
->         struct hdmiphy_config   *confs;
->         unsigned int            nr_confs;
-> @@ -48,6 +49,135 @@ struct hdmiphy_drv_data {
->  };
->
->  /* list of all required phy config settings */
-> +static struct hdmiphy_config hdmiphy_5420_configs[] = {
-> +       {
-> +               .pixel_clock = 25200000,
-> +               .conf = {
-> +                       0x01, 0x52, 0x3F, 0x55, 0x40, 0x01, 0x00, 0xC8,
-> +                       0x82, 0xC8, 0xBD, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x06, 0x80, 0x01, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0xF4, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 27000000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x22, 0x51, 0x40, 0x08, 0xFC, 0xE0,
-> +                       0x98, 0xE8, 0xCB, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x06, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0xE4, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 27027000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x2D, 0x72, 0x40, 0x64, 0x12, 0xC8,
-> +                       0x43, 0xE8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x06, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0xE3, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 36000000,
-> +               .conf = {
-> +                       0x01, 0x51, 0x2D, 0x55, 0x40, 0x40, 0x00, 0xC8,
-> +                       0x02, 0xC8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0xAB, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 40000000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x21, 0x31, 0x40, 0x3C, 0x28, 0xC8,
-> +                       0x87, 0xE8, 0xC8, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0x9A, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 65000000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x36, 0x34, 0x40, 0x0C, 0x04, 0xC8,
-> +                       0x82, 0xE8, 0x45, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0xBD, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 71000000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x3B, 0x35, 0x40, 0x0C, 0x04, 0xC8,
-> +                       0x85, 0xE8, 0x63, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0x57, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 74176000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x1F, 0x10, 0x40, 0x5B, 0xEF, 0xC8,
-> +                       0x81, 0xE8, 0xB9, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x56, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0xA6, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 74250000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x1F, 0x10, 0x40, 0x40, 0xF8, 0xC8,
-> +                       0x81, 0xE8, 0xBA, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x56, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0xA5, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 83500000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x23, 0x11, 0x40, 0x0C, 0xFB, 0xC8,
-> +                       0x85, 0xE8, 0xD1, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0x4A, 0x24, 0x00, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 106500000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x2C, 0x12, 0x40, 0x0C, 0x09, 0xC8,
-> +                       0x84, 0xE8, 0x0A, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0x73, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 108000000,
-> +               .conf = {
-> +                       0x01, 0x51, 0x2D, 0x15, 0x40, 0x01, 0x00, 0xC8,
-> +                       0x82, 0xC8, 0x0E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0xC7, 0x25, 0x03, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 146250000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x3D, 0x15, 0x40, 0x18, 0xFD, 0xC8,
-> +                       0x83, 0xE8, 0x6E, 0xD9, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x08, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0x54, 0x24, 0x01, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +       {
-> +               .pixel_clock = 148500000,
-> +               .conf = {
-> +                       0x01, 0xD1, 0x1F, 0x00, 0x40, 0x40, 0xF8, 0xC8,
-> +                       0x81, 0xE8, 0xBA, 0xD8, 0x45, 0xA0, 0xAC, 0x80,
-> +                       0x66, 0x80, 0x09, 0x84, 0x05, 0x02, 0x24, 0x66,
-> +                       0x54, 0x4B, 0x25, 0x03, 0x00, 0x00, 0x01, 0x80,
-> +               },
-> +       },
-> +};
+>   struct clk *clk_register_mux_table(struct device *dev, const char *name,
+>   		const char **parent_names, u8 num_parents, unsigned long flags,
+> -		void __iomem *reg, u8 shift, u32 mask,
+> -		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
+> +		const char *temp_parent_name, void __iomem *reg, u8 shift,
+> +		u32 mask, u8 clk_mux_flags, u32 *table, spinlock_t *lock)
 
-Same comment here about these being board-specific. It would be nice
-to come to consensus about putting this stuff in dt before moving too
-far forward.
+I'm not sure this is a good idea to split the changes like this. Applying
+this patch alone would cause a build break, wouldn't it ?
 
-> +
->  static struct hdmiphy_config hdmiphy_4212_configs[] = {
->         {
->                 .pixel_clock = 25200000,
-> @@ -290,7 +420,8 @@ static int hdmiphy_reg_writeb(struct hdmiphy_context *hdata,
->                         return 0;
->                 return ret;
->         } else {
-> -               return -EINVAL;
-> +               writeb(value, hdata->regs + (reg_offset<<2));
-> +               return 0;
->         }
->  }
->
-> @@ -309,7 +440,11 @@ static int hdmiphy_reg_write_buf(struct hdmiphy_context *hdata,
->                         return 0;
->                 return ret;
->         } else {
-> -               return -EINVAL;
-> +               int i;
-> +               for (i = 0; i < len; i++)
-> +                       writeb(buf[i], hdata->regs +
-> +                               ((reg_offset + i)<<2));
-> +               return 0;
->         }
->  }
->
-> @@ -457,6 +592,11 @@ int exynos_hdmiphy_conf_apply(struct device *dev)
->         return 0;
->  }
->
-> +static struct hdmiphy_drv_data exynos5420_hdmiphy_drv_data = {
-> +       .confs = hdmiphy_5420_configs,
-> +       .count = ARRAY_SIZE(hdmiphy_5420_configs)
-> +};
-> +
->  static struct hdmiphy_drv_data exynos4212_hdmiphy_drv_data = {
->         .confs = hdmiphy_4212_configs,
->         .count = ARRAY_SIZE(hdmiphy_4212_configs)
-> @@ -482,6 +622,67 @@ static struct of_device_id hdmiphy_i2c_device_match_types[] = {
->         }
->  };
->
-> +static struct of_device_id hdmiphy_platform_device_match_types[] = {
-> +       {
-> +               .compatible = "samsung,exynos5420-hdmiphy",
-> +               .data   = &exynos5420_hdmiphy_drv_data,
-> +       }, {
-> +               /* end node */
-> +       }
-> +};
-> +
-> +static int hdmiphy_platform_device_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev = &pdev->dev;
-> +       struct hdmiphy_context *hdata;
-> +       struct hdmiphy_drv_data *drv;
-> +       struct resource *res;
-> +       const struct of_device_id *match;
-> +       int ret;
-> +
-> +       DRM_DEBUG_KMS("[%d]\n", __LINE__);
-> +
-> +       hdata = devm_kzalloc(dev, sizeof(*hdata), GFP_KERNEL);
-> +       if (!hdata) {
-> +               DRM_ERROR("failed to allocate hdmiphy context.\n");
-> +               return -ENOMEM;
-> +       }
-> +
-> +       match = of_match_node(of_match_ptr(
-> +               hdmiphy_platform_device_match_types),
-> +               dev->of_node);
-> +
-> +       if (match == NULL)
+The users need to be updated in same patch, so patch 2/3 should be normally
+folded into this one.
 
-if (!match) should do the trick
+[...]
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 2db08c0..0e29a5b 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1425,8 +1425,8 @@ static void clk_change_rate(struct clk *clk)
+>    */
+>   int clk_set_rate(struct clk *clk, unsigned long rate)
+>   {
+> -	struct clk *top, *fail_clk;
+> -	int ret = 0;
+> +	struct clk *top, *fail_clk, *parent = NULL;
+> +	int ret = 0, index;
+>
+>   	if (!clk)
+>   		return 0;
+> @@ -1450,6 +1450,35 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+>   		goto out;
+>   	}
+>
+> +	/* Latch on to alternate parent temporarily if needed */
+> +	if ((clk->flags&  CLK_SET_RATE_TEMP_PARENT)&&  clk->temp_parent_name) {
+> +		/* Save current parent before latching on to alternate parent */
+> +		parent = clk->parent;
+> +
+> +		if (!clk->temp_parent) {
+> +			for (index = 0; index<  clk->num_parents; index++) {
+> +				if (!strcmp(clk->parent_names[index],
+> +						clk->temp_parent_name))
+> +					clk->temp_parent =
+> +					__clk_lookup(clk->temp_parent_name);
+> +			}
+> +
+> +			if (!clk->temp_parent) {
+> +				pr_warn("%s: wrong temp_parent_name %s",
+> +					__func__, clk->temp_parent_name);
+> +				ret = -EINVAL;
+> +				goto out;
+> +			}
+> +		}
+> +
+> +		ret = clk_set_parent(clk, clk->temp_parent);
+> +		if (ret) {
+> +			pr_warn("%s: failed to set %s parent\n",
+> +				__func__, clk->temp_parent->name);
+> +			goto out;
+> +		}
+> +	}
+> +
+>   	/* notify that we are about to change rates */
+>   	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
+>   	if (fail_clk) {
+> @@ -1464,6 +1493,14 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+>   	clk_change_rate(top);
+>
+>   out:
+> +	/* Reparent back to original parent */
+> +	if (parent) {
+> +		ret = clk_set_parent(clk, parent);
+> +		if (ret)
+> +			pr_warn("%s: failed to set %s parent\n",
+> +					__func__, parent->name);
+> +	}
+> +
+>   	clk_prepare_unlock();
+>
+>   	return ret;
+[...]
+> diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
+> index 8138c94..b70ba4d 100644
+> --- a/include/linux/clk-private.h
+> +++ b/include/linux/clk-private.h
+> @@ -47,6 +47,8 @@ struct clk {
+>   #ifdef CONFIG_COMMON_CLK_DEBUG
+>   	struct dentry		*dentry;
+>   #endif
+> +	const char		*temp_parent_name;
+> +	struct clk		*temp_parent;
 
-> +               return -ENODEV;
-> +
-> +       drv = (struct hdmiphy_drv_data *)match->data;
-> +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       if (!res) {
-> +               DRM_ERROR("failed to find phy registers\n");
-> +               return -ENOENT;
-> +       }
-> +
-> +       hdata->regs = devm_request_and_ioremap(&pdev->dev, res);
-> +       if (!hdata->regs) {
-> +               DRM_ERROR("failed to map registers\n");
-> +               return -ENXIO;
-> +       }
-> +
-> +       hdata->dev = dev;
-> +       hdata->confs = drv->confs;
-> +       hdata->nr_confs = drv->count;
-> +
-> +       platform_set_drvdata(pdev, hdata);
-> +       ret = hdmiphy_dt_parse_power_control(hdata);
-> +       if (ret) {
-> +               DRM_ERROR("failed to map hdmiphy pow control reg.\n");
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static int hdmiphy_i2c_device_probe(struct i2c_client *client,
->         const struct i2c_device_id *id)
->  {
-> @@ -538,18 +739,35 @@ struct i2c_driver hdmiphy_i2c_driver = {
->         .command                = NULL,
->  };
->
-> +struct platform_driver hdmiphy_platform_driver = {
-> +       .driver = {
-> +               .name   = "exynos-hdmiphy",
-> +               .owner  = THIS_MODULE,
-> +               .of_match_table = of_match_ptr(
-> +                               hdmiphy_platform_device_match_types),
-> +       },
-> +       .probe          = hdmiphy_platform_device_probe,
-> +};
-> +
->  int exynos_hdmiphy_driver_register(void)
->  {
->         int ret;
->
->         ret = i2c_add_driver(&hdmiphy_i2c_driver);
->         if (ret)
-> -               return ret;
-> +               goto err;
-> +
-> +       ret = platform_driver_register(&hdmiphy_platform_driver);
-> +       if (ret)
-> +               goto err;
->
->         return 0;
-> +err:
-> +       return ret;
->  }
->
->  void exynos_hdmiphy_driver_unregister(void)
->  {
->         i2c_del_driver(&hdmiphy_i2c_driver);
-> +       platform_driver_unregister(&hdmiphy_platform_driver);
->  }
-> --
-> 1.7.10.4
->
+Shouldn't such data rather be on struct clk_mux level ? It's only needed
+for _some_ mux clocks, while it's being added for all the clock types.
+
+Or wouldn't just a single "u8 temp_parent_index" field do ? The order of
+struct clk::parents and struct clk::parent_names is always same, isn't it ?
+Then if, e.g.
+
+parent_names[] = "clk_a", "clk_b", "clk_c";
+
+and "clk_c" is the temporary parent clock name, the corresponding clock
+pointer storage is clk->parents[2] ? It could be used instead of
+clk->temp_parent, couldn't it ?
+
+--
+Regards,
+Sylwester
