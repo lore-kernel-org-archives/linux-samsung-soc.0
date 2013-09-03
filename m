@@ -1,78 +1,58 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Fix gpio pin of lcd_en node for exynos4210
-Date: Tue, 03 Sep 2013 16:33:37 +0900
-Message-ID: <002401cea877$e7453490$b5cf9db0$%han@samsung.com>
-References: <001c01cea84b$5decd9e0$19c68da0$%han@samsung.com>
- <CAHbNUh0A7j95zePFL8b9nLvJNV0fJX4nmRq6rFrjk5Dd+Ba2pw@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH V4 0/4] exynos dwmmc device tree node cleanup
+Date: Tue, 03 Sep 2013 10:11:20 +0200
+Message-ID: <1530001.y8QaeTojjb@flatron>
+References: <1378188264-22382-1-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24823 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752039Ab3ICHdj (ORCPT
+Received: from mail-ea0-f174.google.com ([209.85.215.174]:54186 "EHLO
+	mail-ea0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752574Ab3ICILZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Sep 2013 03:33:39 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MSJ00IJZGZE1J30@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 03 Sep 2013 16:33:37 +0900 (KST)
-In-reply-to: <CAHbNUh0A7j95zePFL8b9nLvJNV0fJX4nmRq6rFrjk5Dd+Ba2pw@mail.gmail.com>
-Content-language: ko
+	Tue, 3 Sep 2013 04:11:25 -0400
+In-Reply-To: <1378188264-22382-1-git-send-email-yuvaraj.cd@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, t.figa@samsung.com, dianders@chromium.org, cjb@laptop.org, thomas.abraham@linaro.org, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On Tuesday, September 03, 2013 3:52 PM, Tushar Behera wrote:
-> On 3 September 2013 07:44, Jingoo Han <jg1.han@samsung.com> wrote:
-> > According to datasheet, 'lcd_en' node should use gpf0-2,
-> > instead of gpe3-4. gpe3-4 is used for MDM_DATA[4]; thus,
-> > it should be fixed.
-> >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> > index a7c2128..da5dd8d 100644
-> > --- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> > @@ -374,7 +374,7 @@
-> >                 };
-> >
-> >                 lcd_en: lcd-en {
-> > -                       samsung,pins = "gpe3-4";
-> > +                       samsung,pins = "gpf0-2";
-> >                         samsung,pin-function = <2>;
-> >                         samsung,pin-pud = <0>;
-> >                         samsung,pin-drv = <0>;
+Hi Yuvaraj,
+
+On Tuesday 03 of September 2013 11:34:20 Yuvaraj Kumar C D wrote:
+> changes from V3:
+> 	1.Added two new patch in the series
+> 		[1] ARM: dts: Move fifo-depth property from board dts
+>  		[2] ARM: dts: rename mmc dts node for exynos5 series
+> changes from V2:
+> 	1.remove from exynos5.dtsi and add in exynos5250.dtsi
+> 	  in single patch.Suggested by Tomasz Figa.
+> 	2.Separate patch for changing status property of dwmmc node
+> 	  in smdk5250 and arndale board dts file.
 > 
-> With this change, the LCD display stops working on Origen board.
-
-The smdkv310 board worked properly.
-gpe3-4 seems to be necessary for Origen board.
-Can you describe why gpe3-4 is necessary for Origen board?
-
-According to the datasheet, pin-function of gpe3-4 is defined
-as MDM_DATA[4]. So, the node name 'lcd_en' is wrong or confusing.
-
+> V1 Patches:
+> 1.[PATCH 1/2] ARM: dts: remove dwmmc nodes from exynos5 common dts file.
+> http://www.spinics.net/lists/linux-samsung-soc/msg21602.html
+> 2.[PATCH 2/2] ARM: dts: Add dwmmc nodes in SOC specific dts file
+> 	http://www.spinics.net/lists/linux-samsung-soc/msg21603.html
 > 
-> gpf0-{0,1,2,3} are defined under lcd_clk.
+> Yuvaraj Kumar C D (4):
+>   ARM: dts: Move dwmmc nodes from exynos5.dtsi to exynos5250.dtsi
+>   ARM: dts: exynos: change status property of dwmmc nodes
+>   ARM: dts: Move fifo-depth property from board dts
+>   ARM: dts: rename mmc dts node for exynos5 series
+> 
+>  arch/arm/boot/dts/cros5250-common.dtsi    |    8 +++----
+>  arch/arm/boot/dts/exynos5.dtsi            |   21 -----------------
+>  arch/arm/boot/dts/exynos5250-arndale.dts  |   16 ++++---------
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++---------
+>  arch/arm/boot/dts/exynos5250-snow.dts     |    2 +-
+>  arch/arm/boot/dts/exynos5250.dtsi         |   36
+> ++++++++++++++++++++++------- 6 files changed, 41 insertions(+), 58
+> deletions(-)
 
-Then will you test the following on Origen board?
-
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -293,7 +293,7 @@
-        };
-
-        fimd@11c00000 {
--               pinctrl-0 = <&lcd_en &lcd_clk &lcd_data24 &pwm0_out>;
-+               pinctrl-0 = <&lcd_clk &lcd_data24 &pwm0_out>;
-
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
-Jingoo Han
+Tomasz
