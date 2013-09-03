@@ -1,167 +1,60 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC Patch v2 1/3] clk: add support for temporary parent clock
- migration
-Date: Tue, 03 Sep 2013 23:47:23 +0200
-Message-ID: <522658EB.3090408@gmail.com>
-References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org> <1378208072-10173-2-git-send-email-chander.kashyap@linaro.org>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFC Patch v2 0/3] add temporary parent migration support
+Date: Wed, 04 Sep 2013 00:36:50 +0200
+Message-ID: <3927125.3UOplv4uU5@localhost>
+References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f48.google.com ([74.125.83.48]:61046 "EHLO
-	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754567Ab3ICVr1 (ORCPT
+Received: from mail-ee0-f44.google.com ([74.125.83.44]:50955 "EHLO
+	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754287Ab3ICWgz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Sep 2013 17:47:27 -0400
-Received: by mail-ee0-f48.google.com with SMTP id l10so3230287eei.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 14:47:26 -0700 (PDT)
-In-Reply-To: <1378208072-10173-2-git-send-email-chander.kashyap@linaro.org>
+	Tue, 3 Sep 2013 18:36:55 -0400
+Received: by mail-ee0-f44.google.com with SMTP id b47so3323788eek.31
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 15:36:54 -0700 (PDT)
+In-Reply-To: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, thomas.abraham@linaro.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, thomas.abraham@linaro.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org
 
 Hi Chander,
 
-On 09/03/2013 01:34 PM, Chander Kashyap wrote:
-> Some platforms use to migrate temporarily to another parent during cpu frequency
-> scaling, e.g. Exynos and Tegra. Once the frequency is changed the latch on to
-> original parent.
->
-> The generic cpufreq-cpu0 driver use clk_set_rate API to scale cpu frequency.
-> This patch is an attempt to address the above mentioned requirement.
->
-> This is achieved as follows:
->
-> Add a clk flag "CLK_SET_RATE_TEMP_PARENT" for clocks which need to migrate to
-> another parent during set_rate operation on them.
->
-> Add "temp_parent_name" and "tmp_parent" fields to clk structure i.e the name of
-> temp_parent_clock and reference to temp_parent_clock.
->
-> Hence in clk_set_rate API check for the "CLK_SET_RATE_TEMP_PARENT" flag, then
-> latch on to alternate parent clock temporarily. Once the requested rate is set
-> on the clk, re-parent back to original parent clock.
->
-> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
-> ---
->   drivers/clk/clk-mux.c        |   13 +++++++------
->   drivers/clk/clk.c            |   43 ++++++++++++++++++++++++++++++++++++++++--
->   include/linux/clk-private.h  |   19 +++++++++++--------
->   include/linux/clk-provider.h |   10 ++++++----
->   4 files changed, 65 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-> index 4f96ff3..854b3ac 100644
-> --- a/drivers/clk/clk-mux.c
-> +++ b/drivers/clk/clk-mux.c
-> @@ -115,8 +115,8 @@ EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
->
->   struct clk *clk_register_mux_table(struct device *dev, const char *name,
->   		const char **parent_names, u8 num_parents, unsigned long flags,
-> -		void __iomem *reg, u8 shift, u32 mask,
-> -		u8 clk_mux_flags, u32 *table, spinlock_t *lock)
-> +		const char *temp_parent_name, void __iomem *reg, u8 shift,
-> +		u32 mask, u8 clk_mux_flags, u32 *table, spinlock_t *lock)
+On Tuesday 03 of September 2013 17:04:28 Chander Kashyap wrote:
+> Some platform has provision to change cpu parent clock during
+> cpu frequency scaling. This patch series provides a mechanism to
+> implement the same using CCF.
+> 
+> Patch1 provides mechanism to migrate to new parent temporarily.
+> 
+> Patch2 updates the user of clk_register_mux and DEFINE_CLK_MUX which are
+> modified to add support for clk migration.
+> 
+> Patch3 adds support to Exynos5250 to use the clock parent migration
+> feature implemented in CCF.
 
-I'm not sure this is a good idea to split the changes like this. Applying
-this patch alone would cause a build break, wouldn't it ?
+I don't really like this approach. A need to change mux setting 
+temporarily is heavily platform-specific and I don't think it should be 
+handled by generic code. First of all there are many factor that you would 
+have to account for to make this solution generic, such as:
+ - board specific alternative parents,
+ - exact moment of parent change,
+ - some other platform specific conditions, like CPU voltage that must be 
+changed when mux is changed, because it changes CPU frequency,
+ - and probably a lot of more factors that only people working with all 
+the platforms supported (and unsupported yet) by Linux.
 
-The users need to be updated in same patch, so patch 2/3 should be normally
-folded into this one.
+I can see at least two solutions for this problem that don't require 
+changing core code of common clock framework:
 
-[...]
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 2db08c0..0e29a5b 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1425,8 +1425,8 @@ static void clk_change_rate(struct clk *clk)
->    */
->   int clk_set_rate(struct clk *clk, unsigned long rate)
->   {
-> -	struct clk *top, *fail_clk;
-> -	int ret = 0;
-> +	struct clk *top, *fail_clk, *parent = NULL;
-> +	int ret = 0, index;
->
->   	if (!clk)
->   		return 0;
-> @@ -1450,6 +1450,35 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
->   		goto out;
->   	}
->
-> +	/* Latch on to alternate parent temporarily if needed */
-> +	if ((clk->flags&  CLK_SET_RATE_TEMP_PARENT)&&  clk->temp_parent_name) {
-> +		/* Save current parent before latching on to alternate parent */
-> +		parent = clk->parent;
-> +
-> +		if (!clk->temp_parent) {
-> +			for (index = 0; index<  clk->num_parents; index++) {
-> +				if (!strcmp(clk->parent_names[index],
-> +						clk->temp_parent_name))
-> +					clk->temp_parent =
-> +					__clk_lookup(clk->temp_parent_name);
-> +			}
-> +
-> +			if (!clk->temp_parent) {
-> +				pr_warn("%s: wrong temp_parent_name %s",
-> +					__func__, clk->temp_parent_name);
-> +				ret = -EINVAL;
-> +				goto out;
-> +			}
-> +		}
-> +
-> +		ret = clk_set_parent(clk, clk->temp_parent);
-> +		if (ret) {
-> +			pr_warn("%s: failed to set %s parent\n",
-> +				__func__, clk->temp_parent->name);
-> +			goto out;
-> +		}
-> +	}
-> +
->   	/* notify that we are about to change rates */
->   	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
->   	if (fail_clk) {
-> @@ -1464,6 +1493,14 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
->   	clk_change_rate(top);
->
->   out:
-> +	/* Reparent back to original parent */
-> +	if (parent) {
-> +		ret = clk_set_parent(clk, parent);
-> +		if (ret)
-> +			pr_warn("%s: failed to set %s parent\n",
-> +					__func__, parent->name);
-> +	}
-> +
->   	clk_prepare_unlock();
->
->   	return ret;
-[...]
-> diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
-> index 8138c94..b70ba4d 100644
-> --- a/include/linux/clk-private.h
-> +++ b/include/linux/clk-private.h
-> @@ -47,6 +47,8 @@ struct clk {
->   #ifdef CONFIG_COMMON_CLK_DEBUG
->   	struct dentry		*dentry;
->   #endif
-> +	const char		*temp_parent_name;
-> +	struct clk		*temp_parent;
+1) Implementing a special clock type using normal mux ops, but also 
+registering a notifier for its PRE_RATE_CHANGE and POST_RATE_CHANGE events 
+to perform parent switching.
 
-Shouldn't such data rather be on struct clk_mux level ? It's only needed
-for _some_ mux clocks, while it's being added for all the clock types.
+2) Using normal mux clock, but registering such notifiers in clock 
+controller or cpufreq driver.
 
-Or wouldn't just a single "u8 temp_parent_index" field do ? The order of
-struct clk::parents and struct clk::parent_names is always same, isn't it ?
-Then if, e.g.
-
-parent_names[] = "clk_a", "clk_b", "clk_c";
-
-and "clk_c" is the temporary parent clock name, the corresponding clock
-pointer storage is clk->parents[2] ? It could be used instead of
-clk->temp_parent, couldn't it ?
-
---
-Regards,
-Sylwester
+Best regards,
+Tomasz
