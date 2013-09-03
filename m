@@ -1,67 +1,79 @@
-From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH v11 0/8] PHY framework
-Date: Tue, 3 Sep 2013 08:50:30 -0700
-Message-ID: <20130903155030.GA21525@kroah.com>
-References: <1377063973-22044-1-git-send-email-kishon@ti.com>
- <521B0E79.6060506@ti.com>
- <20130827192059.GZ3005@radagast>
- <5225FF63.6080608@ti.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH 2/7] drm/exynos: remove dummy hdmiphy clock
+Date: Tue, 3 Sep 2013 11:58:02 -0400
+Message-ID: <CAOw6vbKT9R2Cyz8F0ND2K71MvBJ3Zu1y8uCw6Cka2iLxgB54QA@mail.gmail.com>
+References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com> <1377845974-28373-3-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5225FF63.6080608-l0cyMroinI0@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Cc: Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, balbi-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balajitk-l0cyMroinI0@public.gmane.org, george.cherian-l0cyMroinI0@public.gmane.org, nsekhar-l0cyMroinI0@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:50791 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756945Ab3ICP6Z (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Sep 2013 11:58:25 -0400
+Received: by mail-ob0-f174.google.com with SMTP id wd6so5986665obb.5
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 08:58:25 -0700 (PDT)
+Received: by mail-ob0-f173.google.com with SMTP id ta17so6002868obb.18
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 08:58:22 -0700 (PDT)
+In-Reply-To: <1377845974-28373-3-git-send-email-rahul.sharma@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, l.stach@pengutronix.de, Tomasz Figa <tomasz.figa@gmail.com>, s.nawrocki@samsung.com, sunil joshi <joshi@samsung.com>, "r.sh.open" <r.sh.open@gmail.com>
 
-On Tue, Sep 03, 2013 at 08:55:23PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Greg,
-> 
-> On Wednesday 28 August 2013 12:50 AM, Felipe Balbi wrote:
-> > Hi,
-> > 
-> > On Mon, Aug 26, 2013 at 01:44:49PM +0530, Kishon Vijay Abraham I wrote:
-> >> On Wednesday 21 August 2013 11:16 AM, Kishon Vijay Abraham I wrote:
-> >>> Added a generic PHY framework that provides a set of APIs for the PHY drivers
-> >>> to create/destroy a PHY and APIs for the PHY users to obtain a reference to
-> >>> the PHY with or without using phandle.
-> >>>
-> >>> This framework will be of use only to devices that uses external PHY (PHY
-> >>> functionality is not embedded within the controller).
-> >>>
-> >>> The intention of creating this framework is to bring the phy drivers spread
-> >>> all over the Linux kernel to drivers/phy to increase code re-use and to
-> >>> increase code maintainability.
-> >>>
-> >>> Comments to make PHY as bus wasn't done because PHY devices can be part of
-> >>> other bus and making a same device attached to multiple bus leads to bad
-> >>> design.
-> >>>
-> >>> If the PHY driver has to send notification on connect/disconnect, the PHY
-> >>> driver should make use of the extcon framework. Using this susbsystem
-> >>> to use extcon framwork will have to be analysed.
-> >>>
-> >>> You can find this patch series @
-> >>> git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git testing
-> >>
-> >> Looks like there are not further comments on this series. Can you take this in
-> >> your misc tree?
-> > 
-> > Do you want me to queue these for you ? There are quite a few users for
-> > this framework already and I know of at least 2 others which will show
-> > up for v3.13.
-> 
-> Can you queue this patch series? There are quite a few users already for this
-> framework.
+On Fri, Aug 30, 2013 at 2:59 AM, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> hdmiphy is a dummy clock which actually controls the PMU bit
+> to enable/disbale hdmiphy (before CCF). This clock is cleaned
 
-It will have to wait for 3.13 as the merge window for new features has
-been closed for a week or so.  Sorry, I'll queue this up after 3.12-rc1
-is out.
+s/disbale/disable/
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> from the hdmi driver.
+>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_hdmi.c |    8 --------
+>  1 file changed, 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> index 3af4e4c..cd1d921 100644
+> --- a/drivers/gpu/drm/exynos/exynos_hdmi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+> @@ -84,7 +84,6 @@ struct hdmi_resources {
+>         struct clk                      *sclk_hdmi;
+>         struct clk                      *sclk_pixel;
+>         struct clk                      *sclk_hdmiphy;
+> -       struct clk                      *hdmiphy;
+>         struct clk                      *mout_hdmi;
+>         struct regulator_bulk_data      *regul_bulk;
+>         int                             regul_count;
+> @@ -1431,7 +1430,6 @@ static void hdmi_poweron(struct hdmi_context *hdata)
+>         if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
+>                 DRM_DEBUG_KMS("failed to enable regulator bulk\n");
+>
+> -       clk_prepare_enable(res->hdmiphy);
+>         clk_prepare_enable(res->hdmi);
+>         clk_prepare_enable(res->sclk_hdmi);
+>
+> @@ -1456,7 +1454,6 @@ static void hdmi_poweroff(struct hdmi_context *hdata)
+>
+>         clk_disable_unprepare(res->sclk_hdmi);
+>         clk_disable_unprepare(res->hdmi);
+> -       clk_disable_unprepare(res->hdmiphy);
+>         regulator_bulk_disable(res->regul_count, res->regul_bulk);
+>
+>         mutex_lock(&hdata->hdmi_mutex);
+> @@ -1549,11 +1546,6 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+>                 DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
+>                 goto fail;
+>         }
+> -       res->hdmiphy = devm_clk_get(dev, "hdmiphy");
+> -       if (IS_ERR(res->hdmiphy)) {
+> -               DRM_ERROR("failed to get clock 'hdmiphy'\n");
+> -               goto fail;
+> -       }
+>         res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
+>         if (IS_ERR(res->mout_hdmi)) {
+>                 DRM_ERROR("failed to get clock 'mout_hdmi'\n");
+> --
+> 1.7.10.4
+>
