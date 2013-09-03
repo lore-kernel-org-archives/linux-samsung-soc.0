@@ -1,51 +1,78 @@
-From: Tushar Behera <tushar.behera@linaro.org>
+From: Jingoo Han <jg1.han@samsung.com>
 Subject: Re: [PATCH] ARM: dts: Fix gpio pin of lcd_en node for exynos4210
-Date: Tue, 3 Sep 2013 12:22:07 +0530
-Message-ID: <CAHbNUh0A7j95zePFL8b9nLvJNV0fJX4nmRq6rFrjk5Dd+Ba2pw@mail.gmail.com>
+Date: Tue, 03 Sep 2013 16:33:37 +0900
+Message-ID: <002401cea877$e7453490$b5cf9db0$%han@samsung.com>
 References: <001c01cea84b$5decd9e0$19c68da0$%han@samsung.com>
+ <CAHbNUh0A7j95zePFL8b9nLvJNV0fJX4nmRq6rFrjk5Dd+Ba2pw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f177.google.com ([209.85.214.177]:52363 "EHLO
-	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753749Ab3ICGwH (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:24823 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752039Ab3ICHdj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Sep 2013 02:52:07 -0400
-Received: by mail-ob0-f177.google.com with SMTP id f8so5328730obp.22
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Sep 2013 23:52:07 -0700 (PDT)
-In-Reply-To: <001c01cea84b$5decd9e0$19c68da0$%han@samsung.com>
+	Tue, 3 Sep 2013 03:33:39 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MSJ00IJZGZE1J30@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 03 Sep 2013 16:33:37 +0900 (KST)
+In-reply-to: <CAHbNUh0A7j95zePFL8b9nLvJNV0fJX4nmRq6rFrjk5Dd+Ba2pw@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+To: 'Tushar Behera' <tushar.behera@linaro.org>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On 3 September 2013 07:44, Jingoo Han <jg1.han@samsung.com> wrote:
-> According to datasheet, 'lcd_en' node should use gpf0-2,
-> instead of gpe3-4. gpe3-4 is used for MDM_DATA[4]; thus,
-> it should be fixed.
->
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> index a7c2128..da5dd8d 100644
-> --- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
-> @@ -374,7 +374,7 @@
->                 };
->
->                 lcd_en: lcd-en {
-> -                       samsung,pins = "gpe3-4";
-> +                       samsung,pins = "gpf0-2";
->                         samsung,pin-function = <2>;
->                         samsung,pin-pud = <0>;
->                         samsung,pin-drv = <0>;
+On Tuesday, September 03, 2013 3:52 PM, Tushar Behera wrote:
+> On 3 September 2013 07:44, Jingoo Han <jg1.han@samsung.com> wrote:
+> > According to datasheet, 'lcd_en' node should use gpf0-2,
+> > instead of gpe3-4. gpe3-4 is used for MDM_DATA[4]; thus,
+> > it should be fixed.
+> >
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > ---
+> >  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+> > index a7c2128..da5dd8d 100644
+> > --- a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+> > @@ -374,7 +374,7 @@
+> >                 };
+> >
+> >                 lcd_en: lcd-en {
+> > -                       samsung,pins = "gpe3-4";
+> > +                       samsung,pins = "gpf0-2";
+> >                         samsung,pin-function = <2>;
+> >                         samsung,pin-pud = <0>;
+> >                         samsung,pin-drv = <0>;
+> 
+> With this change, the LCD display stops working on Origen board.
 
-With this change, the LCD display stops working on Origen board.
+The smdkv310 board worked properly.
+gpe3-4 seems to be necessary for Origen board.
+Can you describe why gpe3-4 is necessary for Origen board?
 
-gpf0-{0,1,2,3} are defined under lcd_clk.
+According to the datasheet, pin-function of gpe3-4 is defined
+as MDM_DATA[4]. So, the node name 'lcd_en' is wrong or confusing.
 
--- 
-Tushar Behera
+> 
+> gpf0-{0,1,2,3} are defined under lcd_clk.
+
+Then will you test the following on Origen board?
+
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -293,7 +293,7 @@
+        };
+
+        fimd@11c00000 {
+-               pinctrl-0 = <&lcd_en &lcd_clk &lcd_data24 &pwm0_out>;
++               pinctrl-0 = <&lcd_clk &lcd_data24 &pwm0_out>;
+
+
+Best regards,
+Jingoo Han
