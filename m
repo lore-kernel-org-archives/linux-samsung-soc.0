@@ -1,79 +1,104 @@
-From: Josh Boyer <jwboyer@fedoraproject.org>
-Subject: Re: 3.12 merge window exynos cpufreq driver fails to build
-Date: Wed, 4 Sep 2013 11:08:15 -0400
-Message-ID: <CA+5PVA5mz-420Rnuf8KD3xoKf8zYs9gP_8r3_QNCdo7mKEsczA@mail.gmail.com>
-References: <CA+5PVA6SQ9JGBD3F=u5ysch-agp91oTK8ZbKsdQkz57yZ8OUHQ@mail.gmail.com>
-	<7035644.8Kb1gDYsCf@amdc1227>
-	<CA+5PVA7T4P9vMH0r8p78aZYUrL8gzbpY9MmW9=nV3X0tE-e4NA@mail.gmail.com>
-	<1480759.MNj1g1yX4l@amdc1227>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [RFC Patch v2 0/3] add temporary parent migration support
+Date: Wed, 04 Sep 2013 10:43:28 -0700
+Message-ID: <20130904174328.10934.18433@quantum>
+References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
+ <3927125.3UOplv4uU5@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1480759.MNj1g1yX4l@amdc1227>
-Sender: cpufreq-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Peter Robinson <pbrobinson@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:62596 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756932Ab3IDRnk convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Sep 2013 13:43:40 -0400
+Received: by mail-pa0-f48.google.com with SMTP id kp13so718873pab.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Sep 2013 10:43:37 -0700 (PDT)
+In-Reply-To: <3927125.3UOplv4uU5@localhost>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, thomas.abraham@linaro.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 4, 2013 at 11:04 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> On Wednesday 04 of September 2013 10:41:31 Josh Boyer wrote:
->> On Wed, Sep 4, 2013 at 10:36 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->> > Hi Josh,
->> >
->> > On Wednesday 04 of September 2013 10:13:16 Josh Boyer wrote:
->> >> Using Linus' tree as of this morning (v3.11-2654-g458c3f6), the
->> >> exynos-cpufreq driver doesn't build because it includes a file that
->> >> doesn't exist.
->> >>
->> >> + make -s ARCH=arm V=1 -j4 bzImage KALLSYMS_EXTRA_PASS=1
->> >> arch/arm/kernel/return_address.c:63:2: warning: #warning "TODO:
->> >> return_address should use unwind tables" [-Wcpp]
->> >>
->> >>  #warning "TODO: return_address should use unwind tables"
->> >>
->> >>   ^
->> >>
->> >> arch/arm/mm/dma-mapping.c:253:2: warning: #warning ARM Coherent DMA
->> >> allocator does not (yet) support huge TLB [-Wcpp]
->> >>
->> >>  #warning ARM Coherent DMA allocator does not (yet) support huge TLB
->> >>
->> >>   ^
->> >>
->> >> drivers/cpufreq/exynos-cpufreq.c:21:22: fatal error: plat/cpu.h: No
->> >> such file or directory
->> >>
->> >>  #include <plat/cpu.h>
->> >>
->> >>                       ^
->> >>
->> >> compilation terminated.
->> >> make[2]: *** [drivers/cpufreq/exynos-cpufreq.o] Error 1
->> >>
->> >> I'm guessing that <plat/cpu.h> file is supposed to come from
->> >> arch/arm/plat-samsung/include/plat/, but I don't see anything that
->> >> specifies a -I there.
->> >>
->> >> Thoughts?
->> >
->> > Could you attach config that could be used to trigger this? Thanks in
->> > advance.
->>
->> Attached.
->
-> Hmm, this does not look like config for kernel neither from Linus' nor
-> linux-next tree. The first thing I can see is CONFIG_ARCH_EXYNOS_MULTI
-> selected, which is not available in any mainline tree.
+Quoting Tomasz Figa (2013-09-03 15:36:50)
+> Hi Chander,
+> 
+> On Tuesday 03 of September 2013 17:04:28 Chander Kashyap wrote:
+> > Some platform has provision to change cpu parent clock during
+> > cpu frequency scaling. This patch series provides a mechanism to
+> > implement the same using CCF.
+> > 
+> > Patch1 provides mechanism to migrate to new parent temporarily.
+> > 
+> > Patch2 updates the user of clk_register_mux and DEFINE_CLK_MUX which are
+> > modified to add support for clk migration.
+> > 
+> > Patch3 adds support to Exynos5250 to use the clock parent migration
+> > feature implemented in CCF.
+> 
+> I don't really like this approach. A need to change mux setting 
+> temporarily is heavily platform-specific and I don't think it should be 
+> handled by generic code.
 
-Sigh.  Yes, I see the issue now.
+I agree with Tomasz.
 
-> As for the build error itself, headers from plat/ are available for drivers
-> only in single platform builds, they can't be included when multiplatform
-> is enabled. The exynos-cpufreq driver is not multiplatform-aware yet and so
-> you get the failure.
+> First of all there are many factor that you would 
+> have to account for to make this solution generic, such as:
+>  - board specific alternative parents,
+>  - exact moment of parent change,
+>  - some other platform specific conditions, like CPU voltage that must be 
+> changed when mux is changed, because it changes CPU frequency,
+>  - and probably a lot of more factors that only people working with all 
+> the platforms supported (and unsupported yet) by Linux.
+> 
+> I can see at least two solutions for this problem that don't require 
+> changing core code of common clock framework:
+> 
+> 1) Implementing a special clock type using normal mux ops, but also 
+> registering a notifier for its PRE_RATE_CHANGE and POST_RATE_CHANGE events 
+> to perform parent switching.
 
-Someone added some exynos multiplatform patches to the Fedora kernel.
-That seems to have caused these build failures.  Our mistake and my
-apologies for the inconvenience.  Thank you for the quick response.
+Creating a custom clock type is the way to go here. It is possible to
+wrap the mux clk_ops to re-use that code, or just write a custom clock
+type from scratch.
 
-josh
+I do not like using the clock rate-change notifiers for this purpose.
+The notifiers provide hooks to drivers that need to take care around
+clock transitions. Using the notifiers from within the clock framework
+indicates poor design.
+
+> 
+> 2) Using normal mux clock, but registering such notifiers in clock 
+> controller or cpufreq driver.
+
+This depends on what the data sheet or reference manual states. If using
+a temporary parent is a property of the clock programming sequence (e.g.
+to have a glitch-less transition) then that logic belongs in the clock
+provider driver (i.e. a custom clock type needs to be created with this
+logic).
+
+However if using a temporary parent is not required for programming the
+clock, but is instead a requirement of the clock consumer (e.g. a CPU,
+or some I/O controller) then perhaps putting this logic in that driver
+is the right way to go. In that case the logic could be explicit:
+
+	clk_set_parent(clk, temp_parent);
+	clk_set_rate(clk, target_rate);
+	clk_set_parent(clk, target_parent);
+
+Or it could implicit with the use of rate-change notifiers. Again the
+rate-change notifiers exist for clock consumer drivers to use, so this
+is OK.
+
+I have a hunch that the right way to do this is for a custom clock type
+to be created which simply calls clk_set_parent from within the clock's
+.set_rate callback, but I'll wait on feedback from Chander on the needs
+of his platform.
+
+Regards,
+Mike
+
+> 
+> Best regards,
+> Tomasz
