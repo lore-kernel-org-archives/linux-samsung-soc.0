@@ -1,60 +1,68 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFC Patch v2 0/3] add temporary parent migration support
-Date: Wed, 04 Sep 2013 00:36:50 +0200
-Message-ID: <3927125.3UOplv4uU5@localhost>
-References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: Fix style in s3c-hsotg.c
+Date: Wed, 04 Sep 2013 10:33:52 +0900
+Message-ID: <000701cea90e$cff0e3b0$6fd2ab10$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f44.google.com ([74.125.83.44]:50955 "EHLO
-	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754287Ab3ICWgz (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:16921 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755007Ab3IDBdy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Sep 2013 18:36:55 -0400
-Received: by mail-ee0-f44.google.com with SMTP id b47so3323788eek.31
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 15:36:54 -0700 (PDT)
-In-Reply-To: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
+	Tue, 3 Sep 2013 21:33:54 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Chander Kashyap <chander.kashyap@linaro.org>, thomas.abraham@linaro.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org
+To: 'Pavel Machek' <pavel@ucw.cz>
+Cc: linux-usb@vger.kernel.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Felipe Balbi' <balbi@ti.com>, 'Jingoo Han' <jg1.han@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Hi Chander,
+On 09/02/2013 05:58 PM, Pavel Machek wrote:
+> Hi!
+>
+> checkpatch.pl has some valid complaints about style in s3c-hsotg.c :
+> macro with if should be really enclosed in do {} while, and puts is
+> going to be slightly faster.
+>
+> Here's suggested patch. I don't have the hardware, so it is completely
+> untested.
 
-On Tuesday 03 of September 2013 17:04:28 Chander Kashyap wrote:
-> Some platform has provision to change cpu parent clock during
-> cpu frequency scaling. This patch series provides a mechanism to
-> implement the same using CCF.
-> 
-> Patch1 provides mechanism to migrate to new parent temporarily.
-> 
-> Patch2 updates the user of clk_register_mux and DEFINE_CLK_MUX which are
-> modified to add support for clk migration.
-> 
-> Patch3 adds support to Exynos5250 to use the clock parent migration
-> feature implemented in CCF.
+CC'ed linux-samsung-soc@vger.kernel.org, Kukjin Kim
 
-I don't really like this approach. A need to change mux setting 
-temporarily is heavily platform-specific and I don't think it should be 
-handled by generic code. First of all there are many factor that you would 
-have to account for to make this solution generic, such as:
- - board specific alternative parents,
- - exact moment of parent change,
- - some other platform specific conditions, like CPU voltage that must be 
-changed when mux is changed, because it changes CPU frequency,
- - and probably a lot of more factors that only people working with all 
-the platforms supported (and unsupported yet) by Linux.
+Hi Pavel Machek,
 
-I can see at least two solutions for this problem that don't require 
-changing core code of common clock framework:
+I have the hardware. :-)
+Also, I am developing USB stuff of Samsung SoCs.
 
-1) Implementing a special clock type using normal mux ops, but also 
-registering a notifier for its PRE_RATE_CHANGE and POST_RATE_CHANGE events 
-to perform parent switching.
 
-2) Using normal mux clock, but registering such notifiers in clock 
-controller or cpufreq driver.
+>
+> Signed-off-by: Pavel Machek, <pavel@ucw.cz>
+>
+> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+> index af22f24..f8e762a 100644
+> --- a/drivers/usb/gadget/s3c-hsotg.c
+> +++ b/drivers/usb/gadget/s3c-hsotg.c
+> @@ -2091,12 +2091,14 @@ static void kill_all_requests(struct s3c_hsotg *hsotg,
+>  }
+>  
+>  #define call_gadget(_hs, _entry) \
+> +do { \
+>  	if ((_hs)->gadget.speed != USB_SPEED_UNKNOWN &&	\
+>  	    (_hs)->driver && (_hs)->driver->_entry) { \
+>  		spin_unlock(&_hs->lock); \
+>  		(_hs)->driver->_entry(&(_hs)->gadget); \
+>  		spin_lock(&_hs->lock); \
+>  		}
+> +} while (0)
+
+It makes build error.
+Thus, it should be fixed as below:
+
+	} \
+} while(0)
+
+Other things look good.
+Thank you for sending the patch. :)
 
 Best regards,
-Tomasz
+Jingoo Han
