@@ -1,123 +1,120 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [RFC Patch v2 0/3] add temporary parent migration support
-Date: Wed, 04 Sep 2013 20:01:51 +0200
-Message-ID: <8013969.VJd4Ll2ItG@localhost>
-References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org> <3927125.3UOplv4uU5@localhost> <20130904174328.10934.18433@quantum>
+From: Dinh Nguyen <dinguyen@altera.com>
+Subject: RE: [RFC V3 2/4] mmc: dw_mmc: socfpga: move socfpga private init
+Date: Wed, 4 Sep 2013 14:31:06 -0500
+Message-ID: <1378323066.9054.3.camel@linux-builds1>
+References: <1377691731-7226-1-git-send-email-yuvaraj.cd@samsung.com>
+	 <1377691731-7226-3-git-send-email-yuvaraj.cd@samsung.com>
+	 <001601cea4af$42e662f0$c8b328d0$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f170.google.com ([209.85.215.170]:38251 "EHLO
-	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752354Ab3IDSB4 (ORCPT
+Received: from va3ehsobe006.messaging.microsoft.com ([216.32.180.16]:59572
+	"EHLO va3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756445Ab3IDTbL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Sep 2013 14:01:56 -0400
-Received: by mail-ea0-f170.google.com with SMTP id h14so367529eak.15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Sep 2013 11:01:55 -0700 (PDT)
-In-Reply-To: <20130904174328.10934.18433@quantum>
+	Wed, 4 Sep 2013 15:31:11 -0400
+In-Reply-To: <001601cea4af$42e662f0$c8b328d0$%jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, Chander Kashyap <chander.kashyap@linaro.org>, thomas.abraham@linaro.org, linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: 'Yuvaraj Kumar C D' <yuvaraj.cd@gmail.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, jh80.chung@samsung.com, ks.giri@samsung.com, t.figa@samsung.com, alim.akhtar@samsung.com, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>
 
-On Wednesday 04 of September 2013 10:43:28 Mike Turquette wrote:
-> Quoting Tomasz Figa (2013-09-03 15:36:50)
-> 
-> > Hi Chander,
-> > 
-> > On Tuesday 03 of September 2013 17:04:28 Chander Kashyap wrote:
-> > > Some platform has provision to change cpu parent clock during
-> > > cpu frequency scaling. This patch series provides a mechanism to
-> > > implement the same using CCF.
-> > > 
-> > > Patch1 provides mechanism to migrate to new parent temporarily.
-> > > 
-> > > Patch2 updates the user of clk_register_mux and DEFINE_CLK_MUX which
-> > > are modified to add support for clk migration.
-> > > 
-> > > Patch3 adds support to Exynos5250 to use the clock parent migration
-> > > feature implemented in CCF.
-> > 
-> > I don't really like this approach. A need to change mux setting
-> > temporarily is heavily platform-specific and I don't think it should
-> > be
-> > handled by generic code.
-> 
-> I agree with Tomasz.
-> 
-> > First of all there are many factor that you would
-> > 
-> > have to account for to make this solution generic, such as:
-> >  - board specific alternative parents,
-> >  - exact moment of parent change,
-> >  - some other platform specific conditions, like CPU voltage that must
-> >  be> 
-> > changed when mux is changed, because it changes CPU frequency,
-> > 
-> >  - and probably a lot of more factors that only people working with
-> >  all
-> > 
-> > the platforms supported (and unsupported yet) by Linux.
-> > 
-> > I can see at least two solutions for this problem that don't require
-> > changing core code of common clock framework:
-> > 
-> > 1) Implementing a special clock type using normal mux ops, but also
-> > registering a notifier for its PRE_RATE_CHANGE and POST_RATE_CHANGE
-> > events to perform parent switching.
-> 
-> Creating a custom clock type is the way to go here. It is possible to
-> wrap the mux clk_ops to re-use that code, or just write a custom clock
-> type from scratch.
-> 
-> I do not like using the clock rate-change notifiers for this purpose.
-> The notifiers provide hooks to drivers that need to take care around
-> clock transitions. Using the notifiers from within the clock framework
-> indicates poor design.
+On Thu, 2013-08-29 at 20:59 +0900, Seungwon Jeon wrote:
+> On Wed, August 28, 2013, Yuvaraj Kumar C D wrote:
+> > Currently platform specific private data initialisation is done by
+> > dw_mci_socfpga_priv_init and dw_mci_socfpga_parse_dt.As we already have
+> > separate platform specific device tree parser dw_mci_socfpga_parse_dt,
+> > move the dw_mci_socfpga_priv_init code to dw_mci_socfpga_parse_dt.
+> > We can use the dw_mci_socfpga_priv_init to do some actual platform
+> > specific initialisation.
 
-I was not sure how a .set_parent() from inside a .set_rate() would 
-interact with rate setting, so I mentioned notifiers here, but now as I 
-think of it, CCF is supposed to be re-entrant, so things should be fine.
+I am looking to remove all of dw_mmc-socfpga file. The only reason for
+this file is to set the sdr timing values. But since the register that
+controls these SDR values are located out of the IP, it is probably best
+to implement the settings in platform specific code.
 
-> > 2) Using normal mux clock, but registering such notifiers in clock
-> > controller or cpufreq driver.
+Dinh
+> > 
+> > This patch is compile tested only.
+> CC'ed Dinh Nguyen
 > 
-> This depends on what the data sheet or reference manual states. If using
-> a temporary parent is a property of the clock programming sequence
-> (e.g. to have a glitch-less transition) then that logic belongs in the
-> clock provider driver (i.e. a custom clock type needs to be created
-> with this logic).
+> Thanks,
+> Seungwon Jeon
 > 
-> However if using a temporary parent is not required for programming the
-> clock, but is instead a requirement of the clock consumer (e.g. a CPU,
-> or some I/O controller) then perhaps putting this logic in that driver
-> is the right way to go. In that case the logic could be explicit:
+> > 
+> > changes since V2: none
+> > 
+> > Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> > ---
+> >  drivers/mmc/host/dw_mmc-socfpga.c |   29 ++++++++++++++---------------
+> >  1 file changed, 14 insertions(+), 15 deletions(-)
+> > 
+> > diff --git a/drivers/mmc/host/dw_mmc-socfpga.c b/drivers/mmc/host/dw_mmc-socfpga.c
+> > index 14b5961..953f260 100644
+> > --- a/drivers/mmc/host/dw_mmc-socfpga.c
+> > +++ b/drivers/mmc/host/dw_mmc-socfpga.c
+> > @@ -38,20 +38,6 @@ struct dw_mci_socfpga_priv_data {
+> > 
+> >  static int dw_mci_socfpga_priv_init(struct dw_mci *host)
+> >  {
+> > -	struct dw_mci_socfpga_priv_data *priv;
+> > -
+> > -	priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+> > -	if (!priv) {
+> > -		dev_err(host->dev, "mem alloc failed for private data\n");
+> > -		return -ENOMEM;
+> > -	}
+> > -
+> > -	priv->sysreg = syscon_regmap_lookup_by_compatible("altr,sys-mgr");
+> > -	if (IS_ERR(priv->sysreg)) {
+> > -		dev_err(host->dev, "regmap for altr,sys-mgr lookup failed.\n");
+> > -		return PTR_ERR(priv->sysreg);
+> > -	}
+> > -	host->priv = priv;
+> > 
+> >  	return 0;
+> >  }
+> > @@ -79,12 +65,24 @@ static void dw_mci_socfpga_prepare_command(struct dw_mci *host, u32 *cmdr)
+> > 
+> >  static int dw_mci_socfpga_parse_dt(struct dw_mci *host)
+> >  {
+> > -	struct dw_mci_socfpga_priv_data *priv = host->priv;
+> > +	struct dw_mci_socfpga_priv_data *priv;
+> >  	struct device_node *np = host->dev->of_node;
+> >  	u32 timing[2];
+> >  	u32 div = 0;
+> >  	int ret;
+> > 
+> > +	priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv) {
+> > +		dev_err(host->dev, "mem alloc failed for private data\n");
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	priv->sysreg = syscon_regmap_lookup_by_compatible("altr,sys-mgr");
+> > +	if (IS_ERR(priv->sysreg)) {
+> > +		dev_err(host->dev, "regmap for altr,sys-mgr lookup failed.\n");
+> > +		return PTR_ERR(priv->sysreg);
+> > +	}
+> > +
+> >  	ret = of_property_read_u32(np, "altr,dw-mshc-ciu-div", &div);
+> >  	if (ret)
+> >  		dev_info(host->dev, "No dw-mshc-ciu-div specified, assuming 1");
+> > @@ -96,6 +94,7 @@ static int dw_mci_socfpga_parse_dt(struct dw_mci *host)
+> >  		return ret;
+> > 
+> >  	priv->hs_timing = SYSMGR_SDMMC_CTRL_SET(timing[0], timing[1]);
+> > +	host->priv = priv;
+> >  	return 0;
+> >  }
+> > 
+> > --
+> > 1.7.9.5
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> 	clk_set_parent(clk, temp_parent);
-> 	clk_set_rate(clk, target_rate);
-> 	clk_set_parent(clk, target_parent);
 > 
-> Or it could implicit with the use of rate-change notifiers. Again the
-> rate-change notifiers exist for clock consumer drivers to use, so this
-> is OK.
-> 
-> I have a hunch that the right way to do this is for a custom clock type
-> to be created which simply calls clk_set_parent from within the clock's
-> .set_rate callback, but I'll wait on feedback from Chander on the needs
-> of his platform.
-
-I believe Chander has exactly the same use case for this as we have for 
-Exynos 4210 and 4x12.
-
-On these SoCs, CPU frequency is being scaled by reconfiguring PLL, which 
-needs to be masked for locking time. To let the CPU operate normally, a 
-mux that allows switching CPU clock domain between two PLLs can be 
-switched to the other PLL (MPLL) until the main ARM PLL (APLL) starts 
-operating again.
-
-However this issue is not limited to clocks, because there must be also a 
-voltage transition involved if the utility PLL has frequency higher than 
-the one currently being reconfigured.
-
-Best regards,
-Tomasz
