@@ -1,158 +1,91 @@
-From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Subject: Re: [PATCH V5] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
-Date: Wed, 4 Sep 2013 11:23:13 +0530
-Message-ID: <CAKuRcOJvvKC=Lhj9LHQL7J-h9w6wrgN81MyD8rDa2oRiw2DnyQ@mail.gmail.com>
-References: <1377691386-7085-1-git-send-email-yuvaraj.cd@samsung.com>
-	<CAKuRcO+qhfry4KT2gJmB5DGgPF7=0WrEJH=7quVOj3tobnPv=A@mail.gmail.com>
-	<CAKuRcO+EF12mbx-EyptWKmuAiabw4Cx7TqUMTmUAgVFWkwMr=w@mail.gmail.com>
-	<11882414.uDVzNviTV8@amdc1227>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [RFC Patch v2 0/3] add temporary parent migration support
+Date: Wed, 4 Sep 2013 11:32:22 +0530
+Message-ID: <CANuQgHFCJ=4xukQ8xBySu1yue6s7eRB70At9C7KyxFg425u7Zg@mail.gmail.com>
+References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
+	<3927125.3UOplv4uU5@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:33147 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755930Ab3IDFxN (ORCPT
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:61790 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761399Ab3IDGCX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Sep 2013 01:53:13 -0400
-In-Reply-To: <11882414.uDVzNviTV8@amdc1227>
+	Wed, 4 Sep 2013 02:02:23 -0400
+Received: by mail-ob0-f182.google.com with SMTP id wo10so7022696obc.27
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Sep 2013 23:02:23 -0700 (PDT)
+In-Reply-To: <3927125.3UOplv4uU5@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Doug Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, Thomas Abraham <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Kumar Gala <galak@codeaurora.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>
 
-On Mon, Sep 2, 2013 at 5:51 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> On Monday 02 of September 2013 16:45:41 Yuvaraj Kumar wrote:
->> On Fri, Aug 30, 2013 at 12:29 PM, Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-> wrote:
->> > On Wed, Aug 28, 2013 at 5:52 PM, Tomasz Figa <t.figa@samsung.com>
-> wrote:
->> >> Hi Yuvaraj,
->> >>
->> >> On Wednesday 28 of August 2013 17:33:06 Yuvaraj Kumar C D wrote:
->> >>> This patch adds the device tree node entries for exynos5420 SOC.
->> >>> Exynos5420 has a different version of DWMMC controller,so a new
->> >>> compatible string is used to distinguish it from the prior SOC's.
->> >>>
->> >>> This patch depends on
->> >>>
->> >>>       mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
->> >>>
->> >>> changes since v4:
->> >>>       1.Droppped the bypass-smu binding property.
->> >>>       2.Used compatible string "samsung,exynos5250-dw-mshc"
->> >>>
->> >>>         for controller instance which does not have SMU.
->> >>>
->> >>> changes since V3:
->> >>>       1.change fifo-depth size from 0x80 to 0x40
->> >>>       2.Move the below properties
->> >>>
->> >>>               a.card-detect-delay
->> >>>               b.samsung,dw-mshc-ciu-div
->> >>>               c.samsung,dw-mshc-sdr-timing
->> >>>               d.samsung,dw-mshc-ddr-timing
->> >>>
->> >>>       from SOC dts to board dts file as suggested by Doug Anderson
->> >>>
->> >>> changes since V2:
->> >>>       1.dropped num-slots property from node as its not required
->> >>>
->> >>>         if number of card slots available is 1.
->> >>>
->> >>>       2.Move the below properties
->> >>>
->> >>>               a.fifo-depth
->> >>>               b.card-detect-delay
->> >>>               c.samsung,dw-mshc-ciu-div
->> >>>               d.samsung,dw-mshc-sdr-timing
->> >>>               e.samsung,dw-mshc-ddr-timing
->> >>>
->> >>>       from board dts to SOC dts,as these are not board specific
->> >>>       properties.
->> >>>
->> >>>       3.Updated the binding document exynos-dw-mshc.txt.
->> >>>
->> >>> changes since V1:
->> >>>       1.disable node by status = disabled in SOC file
->> >>>       2.enable node by status = okay in board specific file
->> >>>
->> >>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->> >>> ---
->> >>>
->> >>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
->> >>>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33
->> >>>
->> >>> +++++++++++++++++ arch/arm/boot/dts/exynos5420.dtsi
->> >>> |
->> >>> 39 ++++++++++++++++++++ 3 files changed, 74 insertions(+)
->> >>
->> >> This patch looks good to me now, except some minor comments below.
->> >>
->> >>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> >>> b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt index
->> >>> 6d1c098..84cd56f 100644
->> >>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> >>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> >>>
->> >>> @@ -16,6 +16,8 @@ Required Properties:
->> >>>         specific extensions.
->> >>>
->> >>>       - "samsung,exynos5250-dw-mshc": for controllers with Samsung
->> >>>       Exynos5250
->> >>>
->> >>> specific extensions.
->> >>> +     - "samsung,exynos5420-dw-mshc": for controllers with Samsung
->> >>> Exynos5420 +       specific extensions.
->> >>>
->> >>>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card
->> >>>
->> >>> interface unit (ciu) clock. This property is applicable only for
->> >>> Exynos5
->> >>> SoC's and diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> >>> b/arch/arm/boot/dts/exynos5420-smdk5420.dts index bafba25..3ce5c97
->> >>> 100644
->> >>> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> >>> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
->> >>> @@ -31,6 +31,39 @@
->> >>>
->> >>>               };
->> >>>
->> >>>       };
->> >>>
->> >>> +     dwmmc0@12200000 {
->> >>
->> >> Node name should not contain instance index. Instead, according to
->> >> ePAPR
->> >> recommendation, I would opt for a generic name such as mmc, mshc or
->> >> sdio- host. mshc is already used on Exynos 4 so it might be a good
->> >> idea to use it for consistency.
->> >
->> > If we change node name's to mshc, debug statements are look like below:
->> > dwmmc_exynos 12200000.mshc: num-slots property not found, assuming 1
->> > slot is available
->> > dwmmc_exynos 12200000.mshc: no vmmc regulator found: -19
->> > dwmmc_exynos 12200000.mshc: Using internal DMA controller.
->> > dwmmc_exynos 12200000.mshc: Version ID is 250a
->> > dwmmc_exynos 12200000.mshc: DW MMC controller at irq 107, 64 bit host
->> > data width, 64 deep fifo
->> >
->> > "dwmmc_exynos" is platform driver name and "12200000.mshc" from dt
->> > node.Is'nt it look like bit confusing?
+On 4 September 2013 04:06, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Chander,
 >
-> Well, device tree should be written in an OS-agnostic way, so it's not a
-> valid reason to use node names not complying to the recommendations.
+> On Tuesday 03 of September 2013 17:04:28 Chander Kashyap wrote:
+>> Some platform has provision to change cpu parent clock during
+>> cpu frequency scaling. This patch series provides a mechanism to
+>> implement the same using CCF.
+>>
+>> Patch1 provides mechanism to migrate to new parent temporarily.
+>>
+>> Patch2 updates the user of clk_register_mux and DEFINE_CLK_MUX which are
+>> modified to add support for clk migration.
+>>
+>> Patch3 adds support to Exynos5250 to use the clock parent migration
+>> feature implemented in CCF.
 >
-> Also, I don't see anything wrong in this name. There is a lot of devices
-> named this way, like 13920000.spi, 139d0000.pwm or 13800000.serial.
+> I don't really like this approach. A need to change mux setting
+> temporarily is heavily platform-specific and I don't think it should be
+> handled by generic code.
+
+
+As of now beside samsung  platforms, tegra is doing temporary parent
+migration. That why i opted to implement this feature in generic code.
+Here only set_parent operation is called on mux_clk. which is again
+implemented in generic framework. So i dont think any other platform
+specific requirements need to be taken care.
+
+>First of all there are many factor that you would
+> have to account for to make this solution generic, such as:
+>  - board specific alternative parents,
+
+Yes true, that's why,  that information is passed during registration time.
+
+>  - exact moment of parent change,
+
+Here it is only during set rate operation.
+
+>  - some other platform specific conditions, like CPU voltage that must be
+
+That will be handled separately when actual migration of cpufreq
+driver will be done.
+
+> changed when mux is changed, because it changes CPU frequency,
+>  - and probably a lot of more factors that only people working with all
+> the platforms supported (and unsupported yet) by Linux.
 >
-> Looking at other dts(i) files around the kernel, mmc is the most commonly
-> used node name for MMC controllers (after sdhci, but it's used for the
-> whole class of controllers compatible with standard SDHCI).
+> I can see at least two solutions for this problem that don't require
+> changing core code of common clock framework:
 >
-> So, for me, just go with "mmc" and it should be fine.
-I have renamed the node from "mshc" to "mmc" in next version and posted
-[PATCH V7] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+> 1) Implementing a special clock type using normal mux ops, but also
+> registering a notifier for its PRE_RATE_CHANGE and POST_RATE_CHANGE events
+> to perform parent switching.
 >
+> 2) Using normal mux clock, but registering such notifiers in clock
+> controller or cpufreq driver.
+>
+
+I agree with you, but i am attempting through generic framework be
+keeping in mind the future usage of this feature by other platforms.
+
 > Best regards,
 > Tomasz
 >
+
+
+
+-- 
+with warm regards,
+Chander Kashyap
