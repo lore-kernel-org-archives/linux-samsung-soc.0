@@ -1,19 +1,20 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 04/12] ARM: exynos5250: create a DT header defining CLK IDs
-Date: Thu, 05 Sep 2013 14:36:23 +0200
-Message-ID: <1378384594-4807-6-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 12/12] clk: exynos5440: replace clock ID private enums with IDs
+ from DT header
+Date: Thu, 05 Sep 2013 14:36:34 +0200
+Message-ID: <1378384594-4807-17-git-send-email-a.hajda@samsung.com>
 References: <1378384594-4807-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50084 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757698Ab3IEMh2 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:45552 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761731Ab3IEMhd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Sep 2013 08:37:28 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
+	Thu, 5 Sep 2013 08:37:33 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MSN00KDJKE1ZW60@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Sep 2013 13:37:24 +0100 (BST)
+ 17 2011)) with ESMTP id <0MSN003O5KEA9960@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 05 Sep 2013 13:37:28 +0100 (BST)
 In-reply-to: <1378384594-4807-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -21,165 +22,147 @@ To: linux-arm-kernel@lists.infradead.org
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:OPEN FIRMWARE
 	AND..." <devicetree-discuss@lists.ozlabs.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-The patch adds header file defining clock IDs.
-This allows to use macros instead of magic numbers in DT bindings.
+The patch replaces private enum clock IDs in the driver with macros provided
+by the DT header.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- include/dt-bindings/clock/exynos5250.h | 144 +++++++++++++++++++++++++++++++++
- 1 file changed, 144 insertions(+)
- create mode 100644 include/dt-bindings/clock/exynos5250.h
+ drivers/clk/samsung/clk-exynos5440.c | 81 +++++++++++++++---------------------
+ 1 file changed, 34 insertions(+), 47 deletions(-)
 
-diff --git a/include/dt-bindings/clock/exynos5250.h b/include/dt-bindings/clock/exynos5250.h
-new file mode 100644
-index 0000000..f23aa75
---- /dev/null
-+++ b/include/dt-bindings/clock/exynos5250.h
-@@ -0,0 +1,144 @@
-+#ifndef _DT_BINDINGS_CLOCK_EXYNOS_5250_H
-+#define _DT_BINDINGS_CLOCK_EXYNOS_5250_H
-+
-+/* core clocks */
-+#define CLK_FIN_PLL 1
-+#define CLK_FOUT_APLL 2
-+#define CLK_FOUT_MPLL 3
-+#define CLK_FOUT_BPLL 4
-+#define CLK_FOUT_GPLL 5
-+#define CLK_FOUT_CPLL 6
-+#define CLK_FOUT_EPLL 7
-+#define CLK_FOUT_VPLL 8
-+
-+/* gate for special clocks (sclk) */
-+#define CLK_SCLK_CAM_BAYER 128
-+#define CLK_SCLK_CAM0 129
-+#define CLK_SCLK_CAM1 130
-+#define CLK_SCLK_GSCL_WA 131
-+#define CLK_SCLK_GSCL_WB 132
-+#define CLK_SCLK_FIMD1 133
-+#define CLK_SCLK_MIPI1 134
-+#define CLK_SCLK_DP 135
-+#define CLK_SCLK_HDMI 136
-+#define CLK_SCLK_PIXEL 137
-+#define CLK_SCLK_AUDIO0 138
-+#define CLK_SCLK_MMC0 139
-+#define CLK_SCLK_MMC1 140
-+#define CLK_SCLK_MMC2 141
-+#define CLK_SCLK_MMC3 142
-+#define CLK_SCLK_SATA 143
-+#define CLK_SCLK_USB3 144
-+#define CLK_SCLK_JPEG 145
-+#define CLK_SCLK_UART0 146
-+#define CLK_SCLK_UART1 147
-+#define CLK_SCLK_UART2 148
-+#define CLK_SCLK_UART3 149
-+#define CLK_SCLK_PWM 150
-+#define CLK_SCLK_AUDIO1 151
-+#define CLK_SCLK_AUDIO2 152
-+#define CLK_SCLK_SPDIF 153
-+#define CLK_SCLK_SPI0 154
-+#define CLK_SCLK_SPI1 155
-+#define CLK_SCLK_SPI2 156
-+#define CLK_DIV_I2S1 157
-+#define CLK_DIV_I2S2 158
-+#define CLK_SCLK_HDMIPHY 159
-+
-+/* gate clocks */
-+#define CLK_GSCL0 256
-+#define CLK_GSCL1 257
-+#define CLK_GSCL2 258
-+#define CLK_GSCL3 259
-+#define CLK_GSCL_WA 260
-+#define CLK_GSCL_WB 261
-+#define CLK_SMMU_GSCL0 262
-+#define CLK_SMMU_GSCL1 263
-+#define CLK_SMMU_GSCL2 264
-+#define CLK_SMMU_GSCL3 265
-+#define CLK_MFC 266
-+#define CLK_SMMU_MFCL 267
-+#define CLK_SMMU_MFCR 268
-+#define CLK_ROTATOR 269
-+#define CLK_JPEG 270
-+#define CLK_MDMA1 271
-+#define CLK_SMMU_ROTATOR 272
-+#define CLK_SMMU_JPEG 273
-+#define CLK_SMMU_MDMA1 274
-+#define CLK_PDMA0 275
-+#define CLK_PDMA1 276
-+#define CLK_SATA 277
-+#define CLK_USBOTG 278
-+#define CLK_MIPI_HSI 279
-+#define CLK_SDMMC0 280
-+#define CLK_SDMMC1 281
-+#define CLK_SDMMC2 282
-+#define CLK_SDMMC3 283
-+#define CLK_SROMC 284
-+#define CLK_USB2 285
-+#define CLK_USB3 286
-+#define CLK_SATA_PHYCTRL 287
-+#define CLK_SATA_PHYI2C 288
-+#define CLK_UART0 289
-+#define CLK_UART1 290
-+#define CLK_UART2 291
-+#define CLK_UART3 292
-+#define CLK_UART4 293
-+#define CLK_I2C0 294
-+#define CLK_I2C1 295
-+#define CLK_I2C2 296
-+#define CLK_I2C3 297
-+#define CLK_I2C4 298
-+#define CLK_I2C5 299
-+#define CLK_I2C6 300
-+#define CLK_I2C7 301
-+#define CLK_I2C_HDMI 302
-+#define CLK_ADC 303
-+#define CLK_SPI0 304
-+#define CLK_SPI1 305
-+#define CLK_SPI2 306
-+#define CLK_I2S1 307
-+#define CLK_I2S2 308
-+#define CLK_PCM1 309
-+#define CLK_PCM2 310
-+#define CLK_PWM 311
-+#define CLK_SPDIF 312
-+#define CLK_AC97 313
-+#define CLK_HSI2C0 314
-+#define CLK_HSI2C1 315
-+#define CLK_HSI2C2 316
-+#define CLK_HSI2C3 317
-+#define CLK_CHIPID 318
-+#define CLK_SYSREG 319
-+#define CLK_PMU 320
-+#define CLK_CMU_TOP 321
-+#define CLK_CMU_CORE 322
-+#define CLK_CMU_MEM 323
-+#define CLK_TZPC0 324
-+#define CLK_TZPC1 325
-+#define CLK_TZPC2 326
-+#define CLK_TZPC3 327
-+#define CLK_TZPC4 328
-+#define CLK_TZPC5 329
-+#define CLK_TZPC6 330
-+#define CLK_TZPC7 331
-+#define CLK_TZPC8 332
-+#define CLK_TZPC9 333
-+#define CLK_HDMI_CEC 334
-+#define CLK_MCT 335
-+#define CLK_WDT 336
-+#define CLK_RTC 337
-+#define CLK_TMU 338
-+#define CLK_FIMD1 339
-+#define CLK_MIE1 340
-+#define CLK_DSIM0 341
-+#define CLK_DP 342
-+#define CLK_MIXER 343
-+#define CLK_HDMI 344
-+#define CLK_G2D 345
-+
-+/* mux clocks */
-+#define CLK_MOUT_HDMI 1024
-+#define CLK_NR_CLKS 1025
-+
-+#endif /* _DT_BINDINGS_CLOCK_EXYNOS_5250_H */
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index 4ef38e0..7a08b2d 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -9,6 +9,7 @@
+  * Common Clock Framework support for Exynos5440 SoC.
+ */
+ 
++#include <dt-bindings/clock/exynos5440.h>
+ #include <linux/clk.h>
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+@@ -22,79 +23,65 @@
+ #define CPU_CLK_STATUS		0xfc
+ #define MISC_DOUT1		0x558
+ 
+-/*
+- * Let each supported clock get a unique id. This id is used to lookup the clock
+- * for device tree based platforms.
+- */
+-enum exynos5440_clks {
+-	none, xtal, arm_clk,
+-
+-	spi_baud = 16, pb0_250, pr0_250, pr1_250, b_250, b_125, b_200, sata,
+-	usb, gmac0, cs250, pb0_250_o, pr0_250_o, pr1_250_o, b_250_o, b_125_o,
+-	b_200_o, sata_o, usb_o, gmac0_o, cs250_o,
+-
+-	nr_clks,
+-};
+-
+ /* parent clock name list */
+ PNAME(mout_armclk_p)	= { "cplla", "cpllb" };
+ PNAME(mout_spi_p)	= { "div125", "div200" };
+ 
+ /* fixed rate clocks generated outside the soc */
+ static struct samsung_fixed_rate_clock exynos5440_fixed_rate_ext_clks[] __initdata = {
+-	FRATE(none, "xtal", NULL, CLK_IS_ROOT, 0),
++	FRATE(0, "xtal", NULL, CLK_IS_ROOT, 0),
+ };
+ 
+ /* fixed rate clocks */
+ static struct samsung_fixed_rate_clock exynos5440_fixed_rate_clks[] __initdata = {
+-	FRATE(none, "ppll", NULL, CLK_IS_ROOT, 1000000000),
+-	FRATE(none, "usb_phy0", NULL, CLK_IS_ROOT, 60000000),
+-	FRATE(none, "usb_phy1", NULL, CLK_IS_ROOT, 60000000),
+-	FRATE(none, "usb_ohci12", NULL, CLK_IS_ROOT, 12000000),
+-	FRATE(none, "usb_ohci48", NULL, CLK_IS_ROOT, 48000000),
++	FRATE(0, "ppll", NULL, CLK_IS_ROOT, 1000000000),
++	FRATE(0, "usb_phy0", NULL, CLK_IS_ROOT, 60000000),
++	FRATE(0, "usb_phy1", NULL, CLK_IS_ROOT, 60000000),
++	FRATE(0, "usb_ohci12", NULL, CLK_IS_ROOT, 12000000),
++	FRATE(0, "usb_ohci48", NULL, CLK_IS_ROOT, 48000000),
+ };
+ 
+ /* fixed factor clocks */
+ static struct samsung_fixed_factor_clock exynos5440_fixed_factor_clks[] __initdata = {
+-	FFACTOR(none, "div250", "ppll", 1, 4, 0),
+-	FFACTOR(none, "div200", "ppll", 1, 5, 0),
+-	FFACTOR(none, "div125", "div250", 1, 2, 0),
++	FFACTOR(0, "div250", "ppll", 1, 4, 0),
++	FFACTOR(0, "div200", "ppll", 1, 5, 0),
++	FFACTOR(0, "div125", "div250", 1, 2, 0),
+ };
+ 
+ /* mux clocks */
+ static struct samsung_mux_clock exynos5440_mux_clks[] __initdata = {
+-	MUX(none, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
+-	MUX_A(arm_clk, "arm_clk", mout_armclk_p,
++	MUX(0, "mout_spi", mout_spi_p, MISC_DOUT1, 5, 1),
++	MUX_A(CLK_ARM_CLK, "arm_clk", mout_armclk_p,
+ 			CPU_CLK_STATUS, 0, 1, "armclk"),
+ };
+ 
+ /* divider clocks */
+ static struct samsung_div_clock exynos5440_div_clks[] __initdata = {
+-	DIV(spi_baud, "div_spi", "mout_spi", MISC_DOUT1, 3, 2),
++	DIV(CLK_SPI_BAUD, "div_spi", "mout_spi", MISC_DOUT1, 3, 2),
+ };
+ 
+ /* gate clocks */
+ static struct samsung_gate_clock exynos5440_gate_clks[] __initdata = {
+-	GATE(pb0_250, "pb0_250", "div250", CLKEN_OV_VAL, 3, 0, 0),
+-	GATE(pr0_250, "pr0_250", "div250", CLKEN_OV_VAL, 4, 0, 0),
+-	GATE(pr1_250, "pr1_250", "div250", CLKEN_OV_VAL, 5, 0, 0),
+-	GATE(b_250, "b_250", "div250", CLKEN_OV_VAL, 9, 0, 0),
+-	GATE(b_125, "b_125", "div125", CLKEN_OV_VAL, 10, 0, 0),
+-	GATE(b_200, "b_200", "div200", CLKEN_OV_VAL, 11, 0, 0),
+-	GATE(sata, "sata", "div200", CLKEN_OV_VAL, 12, 0, 0),
+-	GATE(usb, "usb", "div200", CLKEN_OV_VAL, 13, 0, 0),
+-	GATE(gmac0, "gmac0", "div200", CLKEN_OV_VAL, 14, 0, 0),
+-	GATE(cs250, "cs250", "div250", CLKEN_OV_VAL, 19, 0, 0),
+-	GATE(pb0_250_o, "pb0_250_o", "pb0_250", CLKEN_OV_VAL, 3, 0, 0),
+-	GATE(pr0_250_o, "pr0_250_o", "pr0_250", CLKEN_OV_VAL, 4, 0, 0),
+-	GATE(pr1_250_o, "pr1_250_o", "pr1_250", CLKEN_OV_VAL, 5, 0, 0),
+-	GATE(b_250_o, "b_250_o", "b_250", CLKEN_OV_VAL, 9, 0, 0),
+-	GATE(b_125_o, "b_125_o", "b_125", CLKEN_OV_VAL, 10, 0, 0),
+-	GATE(b_200_o, "b_200_o", "b_200", CLKEN_OV_VAL, 11, 0, 0),
+-	GATE(sata_o, "sata_o", "sata", CLKEN_OV_VAL, 12, 0, 0),
+-	GATE(usb_o, "usb_o", "usb", CLKEN_OV_VAL, 13, 0, 0),
+-	GATE(gmac0_o, "gmac0_o", "gmac", CLKEN_OV_VAL, 14, 0, 0),
+-	GATE(cs250_o, "cs250_o", "cs250", CLKEN_OV_VAL, 19, 0, 0),
++	GATE(CLK_PB0_250, "pb0_250", "div250", CLKEN_OV_VAL, 3, 0, 0),
++	GATE(CLK_PR0_250, "pr0_250", "div250", CLKEN_OV_VAL, 4, 0, 0),
++	GATE(CLK_PR1_250, "pr1_250", "div250", CLKEN_OV_VAL, 5, 0, 0),
++	GATE(CLK_B_250, "b_250", "div250", CLKEN_OV_VAL, 9, 0, 0),
++	GATE(CLK_B_125, "b_125", "div125", CLKEN_OV_VAL, 10, 0, 0),
++	GATE(CLK_B_200, "b_200", "div200", CLKEN_OV_VAL, 11, 0, 0),
++	GATE(CLK_SATA, "sata", "div200", CLKEN_OV_VAL, 12, 0, 0),
++	GATE(CLK_USB, "usb", "div200", CLKEN_OV_VAL, 13, 0, 0),
++	GATE(CLK_GMAC0, "gmac0", "div200", CLKEN_OV_VAL, 14, 0, 0),
++	GATE(CLK_CS250, "cs250", "div250", CLKEN_OV_VAL, 19, 0, 0),
++	GATE(CLK_PB0_250_O, "pb0_250_o", "pb0_250", CLKEN_OV_VAL, 3, 0, 0),
++	GATE(CLK_PR0_250_O, "pr0_250_o", "pr0_250", CLKEN_OV_VAL, 4, 0, 0),
++	GATE(CLK_PR1_250_O, "pr1_250_o", "pr1_250", CLKEN_OV_VAL, 5, 0, 0),
++	GATE(CLK_B_250_O, "b_250_o", "b_250", CLKEN_OV_VAL, 9, 0, 0),
++	GATE(CLK_B_125_O, "b_125_o", "b_125", CLKEN_OV_VAL, 10, 0, 0),
++	GATE(CLK_B_200_O, "b_200_o", "b_200", CLKEN_OV_VAL, 11, 0, 0),
++	GATE(CLK_SATA_O, "sata_o", "sata", CLKEN_OV_VAL, 12, 0, 0),
++	GATE(CLK_USB_O, "usb_o", "usb", CLKEN_OV_VAL, 13, 0, 0),
++	GATE(CLK_GMAC0_O, "gmac0_o", "gmac", CLKEN_OV_VAL, 14, 0, 0),
++	GATE(CLK_CS250_O, "cs250_o", "cs250", CLKEN_OV_VAL, 19, 0, 0),
+ };
+ 
+ static struct of_device_id ext_clk_match[] __initdata = {
+@@ -114,7 +101,7 @@ static void __init exynos5440_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, nr_clks, NULL, 0, NULL, 0);
++	samsung_clk_init(np, reg_base, CLK_NR_CLKS, NULL, 0, NULL, 0);
+ 	samsung_clk_of_register_fixed_ext(exynos5440_fixed_rate_ext_clks,
+ 		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
+ 
 -- 
 1.8.1.2
