@@ -1,46 +1,96 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmiphy driver
-Date: Thu, 05 Sep 2013 18:31:47 +0200
-Message-ID: <5228B1F3.5080604@samsung.com>
-References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com>
- <1377845974-28373-2-git-send-email-rahul.sharma@samsung.com>
- <CAOw6vb+2gspWDcTgqt24Mf-Bxusoi5_jr2GR+i=gmG+nmCdNzg@mail.gmail.com>
- <CAPdUM4Px=yoZeGTVVtaKexuBerhQYH08nZYn81QkT9v_vm0i7Q@mail.gmail.com>
- <011901cea941$91853e40$b48fbac0$%dae@samsung.com>
- <CAOw6vb+32WsEY0px-iZaSv-AYj9NS6OX9hqpH-y6VQ77SpHymw@mail.gmail.com>
- <00bf01cea9ee$bcda5960$368f0c20$%dae@samsung.com>
- <CAPdUM4PT4cpXSe6sLgFaQnsycgY9AvYXPtgTMywYT0oePwPWwA@mail.gmail.com>
- <00ca01cea9f7$f5ee3b50$e1cab1f0$%dae@samsung.com>
- <CAPdUM4MxLBoiE6DpUbkn2-Sji89RM1+yHeAS1c2OREB+=BfdVg@mail.gmail.com>
- <00cf01cea9ff$dc9749a0$95c5dce0$%dae@samsung.com>
- <CAOw6vbLAuJyFU55wP1+Akm6PZepxaS_UuwFYe9LWcM3sKFmWwA@mail.gmail.com>
- <011601ceaa3e$d08e8b20$71aba160$%dae@samsung.com>
+From: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+Subject: Re: [Xen-devel] [PATCH v5 02/13] arm: introduce a global dma_ops
+ pointer
+Date: Thu, 5 Sep 2013 17:39:43 +0100
+Message-ID: <alpine.DEB.2.02.1309051736130.6397@kaball.uk.xensource.com>
+References: <alpine.DEB.2.02.1308291917290.6397@kaball.uk.xensource.com> <1377801154-29215-2-git-send-email-stefano.stabellini@eu.citrix.com> <5224A47A.3010704@citrix.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:60977 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752241Ab3IEQbu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Sep 2013 12:31:50 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MSN00KLHV8UZW90@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Sep 2013 17:31:48 +0100 (BST)
-In-reply-to: <011601ceaa3e$d08e8b20$71aba160$%dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="US-ASCII"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5224A47A.3010704@citrix.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Julien Grall <julien.grall@citrix.com>
+Cc: Stefano Stabellini <stefano.stabellini@eu.citrix.com>, xen-devel@lists.xensource.com, linux@arm.linux.org.uk, Ian.Campbell@citrix.com, will.deacon@arm.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, 'Sean Paul' <seanpaul@chromium.org>, 'Rahul Sharma' <r.sh.open@gmail.com>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'dri-devel' <dri-devel@lists.freedesktop.org>, "'kgene.kim'" <kgene.kim@samsung.com>, "'sw0312.kim'" <sw0312.kim@samsung.com>, 'Lucas Stach' <l.stach@pengutronix.de>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'sunil joshi' <joshi@samsung.com>, 'Shirish S' <shirish@chromium.org>
+
+On Mon, 2 Sep 2013, Julien Grall wrote:
+> On 08/29/2013 07:32 PM, Stefano Stabellini wrote:
+> > Initially set dma_ops to arm_dma_ops.
+> > 
+> > 
+> > Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
+> > Acked-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> > CC: will.deacon@arm.com
+> > CC: linux@arm.linux.org.uk
+> > 
+> > 
+> > Changes in v3:
+> > -  keep using arm_dma_ops in dmabounce.
+> > ---
+> >  arch/arm/include/asm/dma-mapping.h |    3 ++-
+> >  arch/arm/mm/dma-mapping.c          |    3 +++
+> >  2 files changed, 5 insertions(+), 1 deletions(-)
+> > 
+> > diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
+> > index 0982206..7d6e4f9 100644
+> > --- a/arch/arm/include/asm/dma-mapping.h
+> > +++ b/arch/arm/include/asm/dma-mapping.h
+> > @@ -13,6 +13,7 @@
+> >  #include <asm/cacheflush.h>
+> >  
+> >  #define DMA_ERROR_CODE	(~0)
+> > +extern struct dma_map_ops *dma_ops;
+> 
+> Hi,
+> 
+> I tried to build your swiotlb patch series for the Arndale. I have a compilation
+> error because dma_ops is already used in samsung sound driver (sound/soc/samsung/dma.c).
+> 
+> This small fix allow me to built this serie for the Arndale.
+> Do I need to send it separately?
+
+This looks like a good fix, I'll append it to the series
 
 
-Can you please quote only related part of e-mails when replying ?
-It discourages to read such discussions when you have to scroll
-through few pages of "garbage" before getting to the actual reply
-text.
-
---
-Thanks,
-Sylwester
+> =======================================================================
+> commit 73d4ceded87f52fa958b92d8d8d65be485e90857
+> Author: Julien Grall <julien.grall@linaro.org>
+> Date:   Mon Sep 2 15:36:35 2013 +0100
+> 
+>     ASoC: Samsung: Rename dma_ops by samsung_dma_ops
+>     
+>     The commit "arm: introduce a global dma_ops pointer" introduce compilation issue
+>     when CONFIG_SND_SOC_SAMSUNG is enabled.
+>     
+>     sound/soc/samsung/dma.c:345:27: error: conflicting types for 'dma_ops'
+>     /local/home/julien/works/arndale/linux/arch/arm/include/asm/dma-mapping.h:16:28:
+>     note: previous declaration of 'dma_ops' was here
+>     
+>     Signed-off-by: Julien Grall <julien.grall@linaro.org>
+> 
+> diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
+> index ddea134..c341603 100644
+> --- a/sound/soc/samsung/dma.c
+> +++ b/sound/soc/samsung/dma.c
+> @@ -342,7 +342,7 @@ static int dma_mmap(struct snd_pcm_substream *substream,
+>                                      runtime->dma_bytes);
+>  }
+>  
+> -static struct snd_pcm_ops dma_ops = {
+> +static struct snd_pcm_ops samsung_dma_ops = {
+>         .open           = dma_open,
+>         .close          = dma_close,
+>         .ioctl          = snd_pcm_lib_ioctl,
+> @@ -429,7 +429,7 @@ out:
+>  }
+>  
+>  static struct snd_soc_platform_driver samsung_asoc_platform = {
+> -       .ops            = &dma_ops,
+> +       .ops            = &samsung_dma_ops,
+>         .pcm_new        = dma_new,
+>         .pcm_free       = dma_free_dma_buffers,
+>  };
+> 
+> -- 
+> Julien Grall
+> 
