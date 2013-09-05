@@ -1,221 +1,266 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 11/12] ARM: dts: exynos5440: convert magic numbers to macros in
- clock bindings
-Date: Thu, 05 Sep 2013 14:36:32 +0200
-Message-ID: <1378384594-4807-15-git-send-email-a.hajda@samsung.com>
-References: <1378384594-4807-1-git-send-email-a.hajda@samsung.com>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmiphy driver
+Date: Thu, 5 Sep 2013 09:19:39 -0400
+Message-ID: <CAOw6vbLAuJyFU55wP1+Akm6PZepxaS_UuwFYe9LWcM3sKFmWwA@mail.gmail.com>
+References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com>
+ <1377845974-28373-2-git-send-email-rahul.sharma@samsung.com>
+ <CAOw6vb+2gspWDcTgqt24Mf-Bxusoi5_jr2GR+i=gmG+nmCdNzg@mail.gmail.com>
+ <CAPdUM4Px=yoZeGTVVtaKexuBerhQYH08nZYn81QkT9v_vm0i7Q@mail.gmail.com>
+ <011901cea941$91853e40$b48fbac0$%dae@samsung.com> <CAOw6vb+32WsEY0px-iZaSv-AYj9NS6OX9hqpH-y6VQ77SpHymw@mail.gmail.com>
+ <00bf01cea9ee$bcda5960$368f0c20$%dae@samsung.com> <CAPdUM4PT4cpXSe6sLgFaQnsycgY9AvYXPtgTMywYT0oePwPWwA@mail.gmail.com>
+ <00ca01cea9f7$f5ee3b50$e1cab1f0$%dae@samsung.com> <CAPdUM4MxLBoiE6DpUbkn2-Sji89RM1+yHeAS1c2OREB+=BfdVg@mail.gmail.com>
+ <00cf01cea9ff$dc9749a0$95c5dce0$%dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:45552 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759680Ab3IEMhc (ORCPT
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:48462 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752779Ab3IENUD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Sep 2013 08:37:32 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MSN003O5KEA9960@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Sep 2013 13:37:27 +0100 (BST)
-In-reply-to: <1378384594-4807-1-git-send-email-a.hajda@samsung.com>
+	Thu, 5 Sep 2013 09:20:03 -0400
+Received: by mail-oa0-f44.google.com with SMTP id l17so2181063oag.31
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Sep 2013 06:20:02 -0700 (PDT)
+Received: by mail-ob0-f177.google.com with SMTP id f8so1908760obp.22
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Sep 2013 06:20:00 -0700 (PDT)
+In-Reply-To: <00cf01cea9ff$dc9749a0$95c5dce0$%dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:OPEN FIRMWARE
-	AND..." <devicetree-discuss@lists.ozlabs.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Rahul Sharma <r.sh.open@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, Lucas Stach <l.stach@pengutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sunil joshi <joshi@samsung.com>, Shirish S <shirish@chromium.org>
 
-The patch replaces magic numbers with macros defined in DT header
-in exynos5440 clock bindings.
+On Thu, Sep 5, 2013 at 2:19 AM, Inki Dae <inki.dae@samsung.com> wrote:
+>
+>
+>> -----Original Message-----
+>> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
+>> owner@vger.kernel.org] On Behalf Of Rahul Sharma
+>> Sent: Thursday, September 05, 2013 3:04 PM
+>> To: Inki Dae
+>> Cc: Sean Paul; Rahul Sharma; linux-samsung-soc; dri-devel; kgene.kim;
+>> sw0312.kim; Lucas Stach; Tomasz Figa; Sylwester Nawrocki; sunil joshi;
+>> Shirish S
+>> Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmiphy
+>> driver
+>>
+>> On 5 September 2013 10:52, Inki Dae <inki.dae@samsung.com> wrote:
+>> >> >> >> >> +static struct hdmiphy_config hdmiphy_4210_configs[] = {
+>> >> >> >> >> +       {
+>> >> >> >> >> +               .pixel_clock = 27000000,
+>> >> >> >> >> +               .conf = {
+>> >> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x1C,
+> 0x30,
+>> >> > 0x40,
+>> >> >> >> >> +                       0x6B, 0x10, 0x02, 0x51, 0xDF, 0xF2,
+> 0x54,
+>> >> > 0x87,
+>> >> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08,
+> 0x10,
+>> >> > 0xE0,
+>> >> >> >> >> +                       0x22, 0x40, 0xE3, 0x26, 0x00, 0x00,
+> 0x00,
+>> >> > 0x00,
+>> >> >> >> >> +               },
+>> >> >> >> >> +       },
+>> >> >> >> >> +       {
+>> >> >> >> >> +               .pixel_clock = 27027000,
+>> >> >> >> >> +               .conf = {
+>> >> >> >> >> +                       0x01, 0x05, 0x00, 0xD4, 0x10, 0x9C,
+> 0x09,
+>> >> > 0x64,
+>> >> >> >> >> +                       0x6B, 0x10, 0x02, 0x51, 0xDF, 0xF2,
+> 0x54,
+>> >> > 0x87,
+>> >> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08,
+> 0x10,
+>> >> > 0xE0,
+>> >> >> >> >> +                       0x22, 0x40, 0xE3, 0x26, 0x00, 0x00,
+> 0x00,
+>> >> > 0x00,
+>> >> >> >> >> +               },
+>> >> >> >> >> +       },
+>> >> >> >> >> +       {
+>> >> >> >> >> +               .pixel_clock = 74176000,
+>> >> >> >> >> +               .conf = {
+>> >> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x9C,
+> 0xef,
+>> >> > 0x5B,
+>> >> >> >> >> +                       0x6D, 0x10, 0x01, 0x51, 0xef, 0xF3,
+> 0x54,
+>> >> > 0xb9,
+>> >> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08,
+> 0x10,
+>> >> > 0xE0,
+>> >> >> >> >> +                       0x22, 0x40, 0xa5, 0x26, 0x01, 0x00,
+> 0x00,
+>> >> > 0x00,
+>> >> >> >> >> +               },
+>> >> >> >> >> +       },
+>> >> >> >> >> +       {
+>> >> >> >> >> +               .pixel_clock = 74250000,
+>> >> >> >> >> +               .conf = {
+>> >> >> >> >> +                       0x01, 0x05, 0x00, 0xd8, 0x10, 0x9c,
+> 0xf8,
+>> >> > 0x40,
+>> >> >> >> >> +                       0x6a, 0x10, 0x01, 0x51, 0xff, 0xf1,
+> 0x54,
+>> >> > 0xba,
+>> >> >> >> >> +                       0x84, 0x00, 0x10, 0x38, 0x00, 0x08,
+> 0x10,
+>> >> > 0xe0,
+>> >> >> >> >> +                       0x22, 0x40, 0xa4, 0x26, 0x01, 0x00,
+> 0x00,
+>> >> > 0x00,
+>> >> >> >> >> +               },
+>> >> >> >> >> +       },
+>> >> >> >> >> +       {
+>> >> >> >> >> +               .pixel_clock = 148500000,
+>> >> >> >> >> +               .conf = {
+>> >> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x9C,
+> 0xf8,
+>> >> > 0x40,
+>> >> >> >> >> +                       0x6A, 0x18, 0x00, 0x51, 0xff, 0xF1,
+> 0x54,
+>> >> > 0xba,
+>> >> >> >> >> +                       0x84, 0x00, 0x10, 0x38, 0x00, 0x08,
+> 0x10,
+>> >> > 0xE0,
+>> >> >> >> >> +                       0x22, 0x40, 0xa4, 0x26, 0x02, 0x00,
+> 0x00,
+>> >> > 0x00,
+>> >> >> >> >> +               },
+>> >> >> >> >> +       },
+>> >> >> >> >> +};
+>> >> >> >> >> +
+>> >> >> >> >
+>> >> >> >> > Are you aware of the effort to move these to dt? Since these
+>> are
+>> >> >> >> > board-specific values, it seems incorrect to apply them
+>> >> universally.
+>> >> >> >> > Shirish has uploaded a patch to the chromium review site to
+>> push
+>> >> >> these
+>> >> >> >> > into dt (https://chromium-review.googlesource.com/#/c/65581).
+>> >> Maybe
+>> >> >> >> > you can work that into your patch set?
+>> >> >> >> >
+>> >> >> >
+>> >> >> > Are these really board-specific values?
+>> >> >>
+>> >> >> According to your hardware people:
+>> >> >>
+>> >> >> "If the signal pattern doesn't change for new board, the phy setting
+>> >> >> is same as the current board. But if changed, you need to confirm
+>> with
+>> >> >> measurement of signals, because it may vary slightly by resistance
+>> of
+>> >> >> board pattern"
+>> >> >>
+>> >> >
+>> >> > Right. it seems that the phy configuration should be adjusted
+>> according
+>> >> to
+>> >> > PCB environment: OSC clock rate, 24MHz or 27MHz, could be decided by
+>> PCB
+>> >> > even though most PCBs use 27MHz.
+>> >> >
+>> >> >> That indicates to me that we might need to tweak these on a per-
+>> board
+>> >> >> basis.
+>> >> >>
+>> >> >> In the 5420 datasheet, there are a few register descriptions
+>> available
+>> >> >> for the phy. 0x145D0004 is CLK_SEL which seems like it would be
+>> >> >> board-specific, same with TX_* registers.
+>> >> >>
+>> >> >
+>> >> > And we can select HDMI Tx PHY internal PLL input clock by setting
+>> >> CLK_SEL.
+>> >> > Ok, Shirish's patch set is reasonable to me. However, that patch set
+>> >> should
+>> >> > be rebased on top of Rahul's patch set. Shirish and Rahul, please re-
+>> >> post
+>> >> > your patch set after discussing how to rebase these patch set.
+>> >> >
+>> >> > Thanks,
+>> >> > Inki Dae
+>> >> >
+>> >>
+>> >> In that case, we need to test the phy confs for all the exynos boards,
+>> >> supported in
+>> >> mainline. Probably needs a analyser as well to precisely compare the
+>> >> deviation.
+>> >
+>> > Shirish patch adds phy config data only to arndale and smdk5250 boards,
+>> and
+>> > these config data should have each board specific values. Therefore, for
+>> > other boards, shouldn't correct phy config data suitable to their boards
+>> be
+>> > added to their board dts files? Is the above analyzer really needed?
+>> >
+>>
+>> Sorry, I had only seen his patches for chromium tree. In mainline
+>> version, he added for 5250 as well. But both sets (for arndale and
+>> smdk) are exactly same as original 5250 configs which also works
+>> with 4412 origen.
+>>
+>> Some problem has been identified during conformance testing for
+>> 5420 peach board, which happens with analyser. It was always
+>> working fine on the TV sets that I have. @Shirish/Sean please
+>> correct me if wrong.
+>>
+>> >> Shirish patch is only for 5420 Peach board. Else, to start with we can
+>> >> mark
+>> >> phyconf as optional property which overrides the default Phy Confs for
+>> >> given SoC.
+>> >
+>> > Hm.... you mean that hdmiphy driver use the default phy config data in
+>> > driver; most boards use the same data, and only in special case; a board
+>> > uses different OSC clock rate, the hdmiphy driver use phy config data
+>> from
+>> > dts file checking hdmiphy-confs property?
+>> >
+>>
+>> Yes. I meant same. I don't see the real need to duplicate so much
+>> of data in all board dts files. We can add it for a particular board, if
+>> really required.
+>>
+>
+> Yes, reasonable to me. It's not good that board dts files have same phy
+> config data. How about using the phy config data from dts file if
+> hdmiphy-confs property exists, otherwise using default phy config data then?
+> This means that we don't need to remove the phy config data from driver;
+> that will be used as default values.
+>
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- .../devicetree/bindings/clock/exynos5440-clock.txt | 45 +++-------------------
- arch/arm/boot/dts/exynos5440.dtsi                  | 27 ++++++-------
- 2 files changed, 20 insertions(+), 52 deletions(-)
+Can you add the "default" configs to exynos5250.dtsi and
+exynos5420.dtsi, then overwrite it in the board file if it needs to be
+different?
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5440-clock.txt b/Documentation/devicetree/bindings/clock/exynos5440-clock.txt
-index 4499e99..56a0269b 100644
---- a/Documentation/devicetree/bindings/clock/exynos5440-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos5440-clock.txt
-@@ -12,45 +12,12 @@ Required Properties:
- 
- - #clock-cells: should be 1.
- 
--The following is the list of clocks generated by the controller. Each clock is
--assigned an identifier and client nodes use this identifier to specify the
--clock which they consume.
--
--
--       [Core Clocks]
--
--  Clock			ID
--  ----------------------------
--
--  xtal			1
--  arm_clk		2
--
--   [Peripheral Clock Gates]
--
--  Clock			ID
--  ----------------------------
--
--  spi_baud		16
--  pb0_250		17
--  pr0_250		18
--  pr1_250		19
--  b_250			20
--  b_125			21
--  b_200			22
--  sata			23
--  usb			24
--  gmac0			25
--  cs250			26
--  pb0_250_o		27
--  pr0_250_o		28
--  pr1_250_o		29
--  b_250_o		30
--  b_125_o		31
--  b_200_o		32
--  sata_o		33
--  usb_o			34
--  gmac0_o		35
--  cs250_o		36
-+Each clock is assigned an identifier and client nodes can use this identifier
-+to specify the clock which they consume.
-+
-+All available clocks are defined as preprocessor macros in
-+dt-bindings/clock/exynos5440.h header and can be used in device
-+tree sources.
- 
- Example: An example of a clock controller node is listed below.
- 
-diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-index ff7f5d8..bf22d98 100644
---- a/arch/arm/boot/dts/exynos5440.dtsi
-+++ b/arch/arm/boot/dts/exynos5440.dtsi
-@@ -9,6 +9,7 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <dt-bindings/clock/exynos5440.h>
- #include "skeleton.dtsi"
- 
- / {
-@@ -102,7 +103,7 @@
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0xB0000 0x1000>;
- 		interrupts = <0 2 0>;
--		clocks = <&clock 21>, <&clock 21>;
-+		clocks = <&clock CLK_B_125>, <&clock CLK_B_125>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
-@@ -110,7 +111,7 @@
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0xC0000 0x1000>;
- 		interrupts = <0 3 0>;
--		clocks = <&clock 21>, <&clock 21>;
-+		clocks = <&clock CLK_B_125>, <&clock CLK_B_125>;
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
-@@ -122,7 +123,7 @@
- 		#size-cells = <0>;
- 		samsung,spi-src-clk = <0>;
- 		num-cs = <1>;
--		clocks = <&clock 21>, <&clock 16>;
-+		clocks = <&clock CLK_B_125>, <&clock CLK_SPI_BAUD>;
- 		clock-names = "spi", "spi_busclk0";
- 	};
- 
-@@ -158,7 +159,7 @@
- 		interrupts = <0 5 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		clocks = <&clock 21>;
-+		clocks = <&clock CLK_B_125>;
- 		clock-names = "i2c";
- 	};
- 
-@@ -168,7 +169,7 @@
- 		interrupts = <0 6 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
--		clocks = <&clock 21>;
-+		clocks = <&clock CLK_B_125>;
- 		clock-names = "i2c";
- 	};
- 
-@@ -176,7 +177,7 @@
- 		compatible = "samsung,s3c2410-wdt";
- 		reg = <0x110000 0x1000>;
- 		interrupts = <0 1 0>;
--		clocks = <&clock 21>;
-+		clocks = <&clock CLK_B_125>;
- 		clock-names = "watchdog";
- 	};
- 
-@@ -187,7 +188,7 @@
- 		interrupts = <0 31 4>;
- 		interrupt-names = "macirq";
- 		phy-mode = "sgmii";
--		clocks = <&clock 25>;
-+		clocks = <&clock CLK_GMAC0>;
- 		clock-names = "stmmaceth";
- 	};
- 
-@@ -203,7 +204,7 @@
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x130000 0x1000>;
- 		interrupts = <0 17 0>, <0 16 0>;
--		clocks = <&clock 21>;
-+		clocks = <&clock CLK_B_125>;
- 		clock-names = "rtc";
- 	};
- 
-@@ -211,7 +212,7 @@
- 		compatible = "snps,exynos5440-ahci";
- 		reg = <0x210000 0x10000>;
- 		interrupts = <0 30 0>;
--		clocks = <&clock 23>;
-+		clocks = <&clock CLK_SATA>;
- 		clock-names = "sata";
- 	};
- 
-@@ -219,7 +220,7 @@
- 		compatible = "samsung,exynos5440-ohci";
- 		reg = <0x220000 0x1000>;
- 		interrupts = <0 29 0>;
--		clocks = <&clock 24>;
-+		clocks = <&clock CLK_USB>;
- 		clock-names = "usbhost";
- 	};
- 
-@@ -227,7 +228,7 @@
- 		compatible = "samsung,exynos5440-ehci";
- 		reg = <0x221000 0x1000>;
- 		interrupts = <0 29 0>;
--		clocks = <&clock 24>;
-+		clocks = <&clock CLK_USB>;
- 		clock-names = "usbhost";
- 	};
- 
-@@ -237,7 +238,7 @@
- 			0x270000 0x1000
- 			0x271000 0x40>;
- 		interrupts = <0 20 0>, <0 21 0>, <0 22 0>;
--		clocks = <&clock 28>, <&clock 27>;
-+		clocks = <&clock CLK_PR0_250_O>, <&clock CLK_PB0_250_O>;
- 		clock-names = "pcie", "pcie_bus";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
-@@ -256,7 +257,7 @@
- 			0x272000 0x1000
- 			0x271040 0x40>;
- 		interrupts = <0 23 0>, <0 24 0>, <0 25 0>;
--		clocks = <&clock 29>, <&clock 27>;
-+		clocks = <&clock CLK_PR1_250_O>, <&clock CLK_PB0_250_O>;
- 		clock-names = "pcie", "pcie_bus";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
--- 
-1.8.1.2
+Sean
+
+
+
+> Rahul, let's go if there is other opinion. we SHOULD MERGE these this
+> time.:)
+>
+> Thanks,
+> Inki Dae
+>
+>> Regards,
+>> Rahul Sharma.
+>>
+>> >
+>> >>
+>> >> regards,
+>> >> Rahul Sharma.
+>> >>
+>> >> >> Sean
+>> >> >>
+>> >> >>
+>> >
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-
+>> soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
