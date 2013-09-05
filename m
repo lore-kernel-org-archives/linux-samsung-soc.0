@@ -1,176 +1,129 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmiphy driver
-Date: Thu, 05 Sep 2013 14:22:48 +0900
-Message-ID: <00ca01cea9f7$f5ee3b50$e1cab1f0$%dae@samsung.com>
-References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com>
- <1377845974-28373-2-git-send-email-rahul.sharma@samsung.com>
- <CAOw6vb+2gspWDcTgqt24Mf-Bxusoi5_jr2GR+i=gmG+nmCdNzg@mail.gmail.com>
- <CAPdUM4Px=yoZeGTVVtaKexuBerhQYH08nZYn81QkT9v_vm0i7Q@mail.gmail.com>
- <011901cea941$91853e40$b48fbac0$%dae@samsung.com>
- <CAOw6vb+32WsEY0px-iZaSv-AYj9NS6OX9hqpH-y6VQ77SpHymw@mail.gmail.com>
- <00bf01cea9ee$bcda5960$368f0c20$%dae@samsung.com>
- <CAPdUM4PT4cpXSe6sLgFaQnsycgY9AvYXPtgTMywYT0oePwPWwA@mail.gmail.com>
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [RFC V3 2/4] mmc: dw_mmc: socfpga: move socfpga private init
+Date: Thu, 5 Sep 2013 11:11:16 +0530
+Message-ID: <CAKuRcOJtpvjJGTiPgJ4fcLiGwGZN2ruHODEBZytz2cwuWBAPDQ@mail.gmail.com>
+References: <1377691731-7226-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1377691731-7226-3-git-send-email-yuvaraj.cd@samsung.com>
+	<001601cea4af$42e662f0$c8b328d0$%jun@samsung.com>
+	<1378323066.9054.3.camel@linux-builds1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:26212 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755450Ab3IEFWv (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:52722 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755169Ab3IEFlR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Sep 2013 01:22:51 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MSN00GY30A1B0N0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Sep 2013 14:22:49 +0900 (KST)
-In-reply-to: <CAPdUM4PT4cpXSe6sLgFaQnsycgY9AvYXPtgTMywYT0oePwPWwA@mail.gmail.com>
-Content-language: ko
+	Thu, 5 Sep 2013 01:41:17 -0400
+In-Reply-To: <1378323066.9054.3.camel@linux-builds1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Rahul Sharma' <r.sh.open@gmail.com>
-Cc: 'Sean Paul' <seanpaul@chromium.org>, 'Rahul Sharma' <rahul.sharma@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'dri-devel' <dri-devel@lists.freedesktop.org>, "'kgene.kim'" <kgene.kim@samsung.com>, "'sw0312.kim'" <sw0312.kim@samsung.com>, 'Lucas Stach' <l.stach@pengutronix.de>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'sunil joshi' <joshi@samsung.com>, 'Shirish S' <shirish@chromium.org>
+To: Dinh Nguyen <dinguyen@altera.com>
+Cc: Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-> >> >> >> +static struct hdmiphy_config hdmiphy_4210_configs[] = {
-> >> >> >> +       {
-> >> >> >> +               .pixel_clock = 27000000,
-> >> >> >> +               .conf = {
-> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x1C, 0x30,
-> > 0x40,
-> >> >> >> +                       0x6B, 0x10, 0x02, 0x51, 0xDF, 0xF2, 0x54,
-> > 0x87,
-> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08, 0x10,
-> > 0xE0,
-> >> >> >> +                       0x22, 0x40, 0xE3, 0x26, 0x00, 0x00, 0x00,
-> > 0x00,
-> >> >> >> +               },
-> >> >> >> +       },
-> >> >> >> +       {
-> >> >> >> +               .pixel_clock = 27027000,
-> >> >> >> +               .conf = {
-> >> >> >> +                       0x01, 0x05, 0x00, 0xD4, 0x10, 0x9C, 0x09,
-> > 0x64,
-> >> >> >> +                       0x6B, 0x10, 0x02, 0x51, 0xDF, 0xF2, 0x54,
-> > 0x87,
-> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08, 0x10,
-> > 0xE0,
-> >> >> >> +                       0x22, 0x40, 0xE3, 0x26, 0x00, 0x00, 0x00,
-> > 0x00,
-> >> >> >> +               },
-> >> >> >> +       },
-> >> >> >> +       {
-> >> >> >> +               .pixel_clock = 74176000,
-> >> >> >> +               .conf = {
-> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x9C, 0xef,
-> > 0x5B,
-> >> >> >> +                       0x6D, 0x10, 0x01, 0x51, 0xef, 0xF3, 0x54,
-> > 0xb9,
-> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08, 0x10,
-> > 0xE0,
-> >> >> >> +                       0x22, 0x40, 0xa5, 0x26, 0x01, 0x00, 0x00,
-> > 0x00,
-> >> >> >> +               },
-> >> >> >> +       },
-> >> >> >> +       {
-> >> >> >> +               .pixel_clock = 74250000,
-> >> >> >> +               .conf = {
-> >> >> >> +                       0x01, 0x05, 0x00, 0xd8, 0x10, 0x9c, 0xf8,
-> > 0x40,
-> >> >> >> +                       0x6a, 0x10, 0x01, 0x51, 0xff, 0xf1, 0x54,
-> > 0xba,
-> >> >> >> +                       0x84, 0x00, 0x10, 0x38, 0x00, 0x08, 0x10,
-> > 0xe0,
-> >> >> >> +                       0x22, 0x40, 0xa4, 0x26, 0x01, 0x00, 0x00,
-> > 0x00,
-> >> >> >> +               },
-> >> >> >> +       },
-> >> >> >> +       {
-> >> >> >> +               .pixel_clock = 148500000,
-> >> >> >> +               .conf = {
-> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x9C, 0xf8,
-> > 0x40,
-> >> >> >> +                       0x6A, 0x18, 0x00, 0x51, 0xff, 0xF1, 0x54,
-> > 0xba,
-> >> >> >> +                       0x84, 0x00, 0x10, 0x38, 0x00, 0x08, 0x10,
-> > 0xE0,
-> >> >> >> +                       0x22, 0x40, 0xa4, 0x26, 0x02, 0x00, 0x00,
-> > 0x00,
-> >> >> >> +               },
-> >> >> >> +       },
-> >> >> >> +};
-> >> >> >> +
-> >> >> >
-> >> >> > Are you aware of the effort to move these to dt? Since these are
-> >> >> > board-specific values, it seems incorrect to apply them
-> universally.
-> >> >> > Shirish has uploaded a patch to the chromium review site to push
-> >> these
-> >> >> > into dt (https://chromium-review.googlesource.com/#/c/65581).
-> Maybe
-> >> >> > you can work that into your patch set?
-> >> >> >
-> >> >
-> >> > Are these really board-specific values?
-> >>
-> >> According to your hardware people:
-> >>
-> >> "If the signal pattern doesn't change for new board, the phy setting
-> >> is same as the current board. But if changed, you need to confirm with
-> >> measurement of signals, because it may vary slightly by resistance of
-> >> board pattern"
-> >>
-> >
-> > Right. it seems that the phy configuration should be adjusted according
-> to
-> > PCB environment: OSC clock rate, 24MHz or 27MHz, could be decided by PCB
-> > even though most PCBs use 27MHz.
-> >
-> >> That indicates to me that we might need to tweak these on a per-board
-> >> basis.
-> >>
-> >> In the 5420 datasheet, there are a few register descriptions available
-> >> for the phy. 0x145D0004 is CLK_SEL which seems like it would be
-> >> board-specific, same with TX_* registers.
-> >>
-> >
-> > And we can select HDMI Tx PHY internal PLL input clock by setting
-> CLK_SEL.
-> > Ok, Shirish's patch set is reasonable to me. However, that patch set
-> should
-> > be rebased on top of Rahul's patch set. Shirish and Rahul, please re-
-> post
-> > your patch set after discussing how to rebase these patch set.
-> >
-> > Thanks,
-> > Inki Dae
-> >
-> 
-> In that case, we need to test the phy confs for all the exynos boards,
-> supported in
-> mainline. Probably needs a analyser as well to precisely compare the
-> deviation.
-
-Shirish patch adds phy config data only to arndale and smdk5250 boards, and
-these config data should have each board specific values. Therefore, for
-other boards, shouldn't correct phy config data suitable to their boards be
-added to their board dts files? Is the above analyzer really needed?
-
-> Shirish patch is only for 5420 Peach board. Else, to start with we can
-> mark
-> phyconf as optional property which overrides the default Phy Confs for
-> given SoC.
-
-Hm.... you mean that hdmiphy driver use the default phy config data in
-driver; most boards use the same data, and only in special case; a board
-uses different OSC clock rate, the hdmiphy driver use phy config data from
-dts file checking hdmiphy-confs property?
-
-
-> 	
-> regards,
-> Rahul Sharma.
-> 
-> >> Sean
-> >>
-> >>
+On Thu, Sep 5, 2013 at 1:01 AM, Dinh Nguyen <dinguyen@altera.com> wrote:
+> On Thu, 2013-08-29 at 20:59 +0900, Seungwon Jeon wrote:
+>> On Wed, August 28, 2013, Yuvaraj Kumar C D wrote:
+>> > Currently platform specific private data initialisation is done by
+>> > dw_mci_socfpga_priv_init and dw_mci_socfpga_parse_dt.As we already have
+>> > separate platform specific device tree parser dw_mci_socfpga_parse_dt,
+>> > move the dw_mci_socfpga_priv_init code to dw_mci_socfpga_parse_dt.
+>> > We can use the dw_mci_socfpga_priv_init to do some actual platform
+>> > specific initialisation.
+>
+> I am looking to remove all of dw_mmc-socfpga file. The only reason for
+> this file is to set the sdr timing values. But since the register that
+> controls these SDR values are located out of the IP, it is probably best
+> to implement the settings in platform specific code.
+Well,This patch is included in this series becuase PATCHV4 3/4 of this
+sereis will affect
+dw_mmc-socfpga driver. However, if you are planning to remove the
+whole file,still you can do
+on top of this patch. :)
+>
+> Dinh
+>> >
+>> > This patch is compile tested only.
+>> CC'ed Dinh Nguyen
+>>
+>> Thanks,
+>> Seungwon Jeon
+>>
+>> >
+>> > changes since V2: none
+>> >
+>> > Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> > ---
+>> >  drivers/mmc/host/dw_mmc-socfpga.c |   29 ++++++++++++++---------------
+>> >  1 file changed, 14 insertions(+), 15 deletions(-)
+>> >
+>> > diff --git a/drivers/mmc/host/dw_mmc-socfpga.c b/drivers/mmc/host/dw_mmc-socfpga.c
+>> > index 14b5961..953f260 100644
+>> > --- a/drivers/mmc/host/dw_mmc-socfpga.c
+>> > +++ b/drivers/mmc/host/dw_mmc-socfpga.c
+>> > @@ -38,20 +38,6 @@ struct dw_mci_socfpga_priv_data {
+>> >
+>> >  static int dw_mci_socfpga_priv_init(struct dw_mci *host)
+>> >  {
+>> > -   struct dw_mci_socfpga_priv_data *priv;
+>> > -
+>> > -   priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+>> > -   if (!priv) {
+>> > -           dev_err(host->dev, "mem alloc failed for private data\n");
+>> > -           return -ENOMEM;
+>> > -   }
+>> > -
+>> > -   priv->sysreg = syscon_regmap_lookup_by_compatible("altr,sys-mgr");
+>> > -   if (IS_ERR(priv->sysreg)) {
+>> > -           dev_err(host->dev, "regmap for altr,sys-mgr lookup failed.\n");
+>> > -           return PTR_ERR(priv->sysreg);
+>> > -   }
+>> > -   host->priv = priv;
+>> >
+>> >     return 0;
+>> >  }
+>> > @@ -79,12 +65,24 @@ static void dw_mci_socfpga_prepare_command(struct dw_mci *host, u32 *cmdr)
+>> >
+>> >  static int dw_mci_socfpga_parse_dt(struct dw_mci *host)
+>> >  {
+>> > -   struct dw_mci_socfpga_priv_data *priv = host->priv;
+>> > +   struct dw_mci_socfpga_priv_data *priv;
+>> >     struct device_node *np = host->dev->of_node;
+>> >     u32 timing[2];
+>> >     u32 div = 0;
+>> >     int ret;
+>> >
+>> > +   priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+>> > +   if (!priv) {
+>> > +           dev_err(host->dev, "mem alloc failed for private data\n");
+>> > +           return -ENOMEM;
+>> > +   }
+>> > +
+>> > +   priv->sysreg = syscon_regmap_lookup_by_compatible("altr,sys-mgr");
+>> > +   if (IS_ERR(priv->sysreg)) {
+>> > +           dev_err(host->dev, "regmap for altr,sys-mgr lookup failed.\n");
+>> > +           return PTR_ERR(priv->sysreg);
+>> > +   }
+>> > +
+>> >     ret = of_property_read_u32(np, "altr,dw-mshc-ciu-div", &div);
+>> >     if (ret)
+>> >             dev_info(host->dev, "No dw-mshc-ciu-div specified, assuming 1");
+>> > @@ -96,6 +94,7 @@ static int dw_mci_socfpga_parse_dt(struct dw_mci *host)
+>> >             return ret;
+>> >
+>> >     priv->hs_timing = SYSMGR_SDMMC_CTRL_SET(timing[0], timing[1]);
+>> > +   host->priv = priv;
+>> >     return 0;
+>> >  }
+>> >
+>> > --
+>> > 1.7.9.5
+>> >
+>> > --
+>> > To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> > the body of a message to majordomo@vger.kernel.org
+>> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>>
+>
+>
+>
