@@ -1,164 +1,44 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [RFC Patch v2 0/3] add temporary parent migration support
-Date: Thu, 5 Sep 2013 11:32:25 -0700
-Message-ID: <CAPtuhTgxizdFp2paS-y+Ecaqnm9WnnoF3dV7x=t6UAQ_nBTZng@mail.gmail.com>
-References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
- <3927125.3UOplv4uU5@localhost> <20130904174328.10934.18433@quantum> <8013969.VJd4Ll2ItG@localhost>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v3 2/2] arm: dt: Exynos5420: populate cpu node enteries
+ to 8 cpus
+Date: Thu, 05 Sep 2013 21:22:59 +0200
+Message-ID: <5228DA13.1020901@gmail.com>
+References: <1378380593-5305-1-git-send-email-chander.kashyap@linaro.org> <1378380593-5305-3-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:59475 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751659Ab3IEScq (ORCPT
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:33188 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752843Ab3IETXE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Sep 2013 14:32:46 -0400
-Received: by mail-wg0-f43.google.com with SMTP id z12so2077921wgg.22
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Sep 2013 11:32:45 -0700 (PDT)
-In-Reply-To: <8013969.VJd4Ll2ItG@localhost>
+	Thu, 5 Sep 2013 15:23:04 -0400
+Received: by mail-ee0-f50.google.com with SMTP id d51so1137206eek.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Sep 2013 12:23:02 -0700 (PDT)
+In-Reply-To: <1378380593-5305-3-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chander Kashyap <chander.kashyap@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org
 
-On Wed, Sep 4, 2013 at 11:01 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Wednesday 04 of September 2013 10:43:28 Mike Turquette wrote:
->> Quoting Tomasz Figa (2013-09-03 15:36:50)
->>
->> > Hi Chander,
->> >
->> > On Tuesday 03 of September 2013 17:04:28 Chander Kashyap wrote:
->> > > Some platform has provision to change cpu parent clock during
->> > > cpu frequency scaling. This patch series provides a mechanism to
->> > > implement the same using CCF.
->> > >
->> > > Patch1 provides mechanism to migrate to new parent temporarily.
->> > >
->> > > Patch2 updates the user of clk_register_mux and DEFINE_CLK_MUX which
->> > > are modified to add support for clk migration.
->> > >
->> > > Patch3 adds support to Exynos5250 to use the clock parent migration
->> > > feature implemented in CCF.
->> >
->> > I don't really like this approach. A need to change mux setting
->> > temporarily is heavily platform-specific and I don't think it should
->> > be
->> > handled by generic code.
->>
->> I agree with Tomasz.
->>
->> > First of all there are many factor that you would
->> >
->> > have to account for to make this solution generic, such as:
->> >  - board specific alternative parents,
->> >  - exact moment of parent change,
->> >  - some other platform specific conditions, like CPU voltage that must
->> >  be>
->> > changed when mux is changed, because it changes CPU frequency,
->> >
->> >  - and probably a lot of more factors that only people working with
->> >  all
->> >
->> > the platforms supported (and unsupported yet) by Linux.
->> >
->> > I can see at least two solutions for this problem that don't require
->> > changing core code of common clock framework:
->> >
->> > 1) Implementing a special clock type using normal mux ops, but also
->> > registering a notifier for its PRE_RATE_CHANGE and POST_RATE_CHANGE
->> > events to perform parent switching.
->>
->> Creating a custom clock type is the way to go here. It is possible to
->> wrap the mux clk_ops to re-use that code, or just write a custom clock
->> type from scratch.
->>
->> I do not like using the clock rate-change notifiers for this purpose.
->> The notifiers provide hooks to drivers that need to take care around
->> clock transitions. Using the notifiers from within the clock framework
->> indicates poor design.
->
-> I was not sure how a .set_parent() from inside a .set_rate() would
-> interact with rate setting, so I mentioned notifiers here, but now as I
-> think of it, CCF is supposed to be re-entrant, so things should be fine.
->
->> > 2) Using normal mux clock, but registering such notifiers in clock
->> > controller or cpufreq driver.
->>
->> This depends on what the data sheet or reference manual states. If using
->> a temporary parent is a property of the clock programming sequence
->> (e.g. to have a glitch-less transition) then that logic belongs in the
->> clock provider driver (i.e. a custom clock type needs to be created
->> with this logic).
->>
->> However if using a temporary parent is not required for programming the
->> clock, but is instead a requirement of the clock consumer (e.g. a CPU,
->> or some I/O controller) then perhaps putting this logic in that driver
->> is the right way to go. In that case the logic could be explicit:
->>
->>       clk_set_parent(clk, temp_parent);
->>       clk_set_rate(clk, target_rate);
->>       clk_set_parent(clk, target_parent);
->>
->> Or it could implicit with the use of rate-change notifiers. Again the
->> rate-change notifiers exist for clock consumer drivers to use, so this
->> is OK.
->>
->> I have a hunch that the right way to do this is for a custom clock type
->> to be created which simply calls clk_set_parent from within the clock's
->> .set_rate callback, but I'll wait on feedback from Chander on the needs
->> of his platform.
->
-> I believe Chander has exactly the same use case for this as we have for
-> Exynos 4210 and 4x12.
->
-> On these SoCs, CPU frequency is being scaled by reconfiguring PLL, which
-> needs to be masked for locking time. To let the CPU operate normally, a
-> mux that allows switching CPU clock domain between two PLLs can be
-> switched to the other PLL (MPLL) until the main ARM PLL (APLL) starts
-> operating again.
+On 09/05/2013 01:29 PM, Chander Kashyap wrote:
+> Exynos5420 is octacore SoC from samsung.
 
-Right, this is the "glitchless" operation I mentioned earlier and it
-is not uncommon in PLLs.
+s/octacore/octa-core ?
+s/samsung/Samsung
 
->
-> However this issue is not limited to clocks, because there must be also a
-> voltage transition involved if the utility PLL has frequency higher than
-> the one currently being reconfigured.
+> Hence populate all the cpu node enteries.
 
-Right, that is an altogether different issue. What I would like to see
-is the temporary parent managed by calls to clk_set_parent from within
-a custom .set_rate callback.
+s/cpu/CPU ?
+s/enteries/entries
 
-As for the voltage scaling, it would be cool to see this working with
-the voltage notifier series I posted recently. Both parents of the
-PLLs can have their own operating point tables and each transition
-would fire off notifiers that scale voltage. Something like this:
+> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
 
-clk_set_rate(pll, rate)
--> enter .set_rate
-  -> clk_set_parent(pll, temp_parent)
-    -> temp_parent PRE_RATE_CHANGE notifier is triggered, maybe scale voltage
-    -> .set_parent callback
-    -> temp_parent POST_RATE_CHANGE notifier is triggered, maybe scale voltage
-  -> pll PRE_RATE_CHANGE notifier is triggered, maybe scale voltage
-  -> .set_rate callback
-  -> pll POST_RATE_CHANGE notifier is triggered, maybe scale voltage
-  -> clk_set_parent(pll, original_parent)
-    -> original_parent PRE_RATE_CHANGE notifier is triggered, maybe
-scale voltage
-    -> .set_parent callback
-    -> original_parent POST_RATE_CHANGE notifier is triggered, maybe
-scale voltage
+Subjects of the dts patches normally start with "ARM: dts:".
 
-There is some inefficiency in calling the notifiers three times, but
-the solution is generic.
+I guess this all could be corrected while the patch is being applied
+to the platform maitainter's tree.
 
-I'm sending this from the gmail web interface so hopefully the spacing
-is preserved...
-
-Regards,
-Mike
-
->
-> Best regards,
-> Tomasz
->
+--
+Thanks,
+Sylwester
