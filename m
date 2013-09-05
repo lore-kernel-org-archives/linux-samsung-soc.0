@@ -1,205 +1,121 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v7 01/13] [media] exynos5-is: Adding media device driver
- for exynos5
-Date: Thu, 05 Sep 2013 21:44:50 +0200
-Message-ID: <5228DF32.4000909@gmail.com>
-References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com> <1377066881-5423-2-git-send-email-arun.kk@samsung.com>
+Subject: Re: [PATCH v7 13/13] V4L: Add driver for s5k4e5 image sensor
+Date: Thu, 05 Sep 2013 22:02:19 +0200
+Message-ID: <5228E34B.307@gmail.com>
+References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com> <1377066881-5423-14-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f182.google.com ([209.85.215.182]:46841 "EHLO
-	mail-ea0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756282Ab3IETpA (ORCPT
+Received: from mail-ee0-f52.google.com ([74.125.83.52]:46170 "EHLO
+	mail-ee0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752968Ab3IEUC0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Sep 2013 15:45:00 -0400
-In-Reply-To: <1377066881-5423-2-git-send-email-arun.kk@samsung.com>
+	Thu, 5 Sep 2013 16:02:26 -0400
+In-Reply-To: <1377066881-5423-14-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org
-Cc: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
 On 08/21/2013 08:34 AM, Arun Kumar K wrote:
-> From: Shaik Ameer Basha<shaik.ameer@samsung.com>
+> This patch adds subdev driver for Samsung S5K4E5 raw image sensor.
+> Like s5k6a3, it is also another fimc-is firmware controlled
+> sensor. This minimal sensor driver doesn't do any I2C communications
+> as its done by ISP firmware. It can be updated if needed to a
+> regular sensor driver by adding the I2C communication.
 >
-> This patch adds support for media device for EXYNOS5 SoCs.
-> The current media device supports the following ips to connect
-> through the media controller framework.
->
-> * MIPI-CSIS
->    Support interconnection(subdev interface) between devices
->
-> * FIMC-LITE
->    Support capture interface from device(Sensor, MIPI-CSIS) to memory
->    Support interconnection(subdev interface) between devices
->
-> * FIMC-IS
->    Camera post-processing IP having multiple sub-nodes.
->
-> G-Scaler will be added later to the current media device.
->
-> The media device creates two kinds of pipelines for connecting
-> the above mentioned IPs.
-> The pipeline0 is uses Sensor, MIPI-CSIS and FIMC-LITE which captures
-> image data and dumps to memory.
-> Pipeline1 uses FIMC-IS components for doing post-processing
-> operations on the captured image and give scaled YUV output.
->
-> Pipeline0
->    +--------+     +-----------+     +-----------+     +--------+
->    | Sensor | -->  | MIPI-CSIS | -->  | FIMC-LITE | -->  | Memory |
->    +--------+     +-----------+     +-----------+     +--------+
->
-> Pipeline1
->   +--------+      +--------+     +-----------+     +-----------+
->   | Memory | -->   |  ISP   | -->  |    SCC    | -->  |    SCP    |
->   +--------+      +--------+     +-----------+     +-----------+
->
-> Signed-off-by: Shaik Ameer Basha<shaik.ameer@samsung.com>
 > Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+> Reviewed-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
 > ---
->   .../bindings/media/exynos5250-camera.txt           |  126 ++
->   drivers/media/platform/exynos5-is/exynos5-mdev.c   | 1210 ++++++++++++++++++++
->   drivers/media/platform/exynos5-is/exynos5-mdev.h   |  126 ++
->   3 files changed, 1462 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
->   create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.c
->   create mode 100644 drivers/media/platform/exynos5-is/exynos5-mdev.h
+>   .../devicetree/bindings/media/i2c/s5k4e5.txt       |   43 +++
+>   drivers/media/i2c/Kconfig                          |    8 +
+>   drivers/media/i2c/Makefile                         |    1 +
+>   drivers/media/i2c/s5k4e5.c                         |  361 ++++++++++++++++++++
+>   4 files changed, 413 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+>   create mode 100644 drivers/media/i2c/s5k4e5.c
 >
-> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> diff --git a/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
 > new file mode 100644
-> index 0000000..09420ba
+> index 0000000..5af462c
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
-> @@ -0,0 +1,126 @@
-> +Samsung EXYNOS5 SoC Camera Subsystem
-> +------------------------------------
+> +++ b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+> @@ -0,0 +1,43 @@
+> +* Samsung S5K4E5 Raw Image Sensor
 > +
-> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
-> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
-> +MIPI CSIS and FIMC-IS.
+> +S5K4E5 is a raw image sensor with maximum resolution of 2560x1920
+> +pixels. Data transfer is carried out via MIPI CSI-2 port and controls
+> +via I2C bus.
 > +
-> +The sub-device nodes are referenced using phandles in the common 'camera' node
-> +which also includes common properties of the whole subsystem not really
-> +specific to any single sub-device, like common camera port pins or the common
-> +camera bus clocks.
+> +Required Properties:
+> +- compatible	: must be "samsung,s5k4e5"
+> +- reg		: I2C device address
+> +- gpios		: reset gpio pin
+
+I guess this should be "reset-gpios". How about changing description to:
+
+- reset-gpios	: specifier of a GPIO connected to the RESET pin;
+
+?
+> +- clocks	: clock specifier for the clock-names property
+
+Perhaps something along the lines of:
+
+- clocks : "should contain the sensor's MCLK clock specifier, from
+		  the common clock bindings"
+?
+> +- clock-names	: must contain "mclk" entry
+
+Is name of the clock input pin really MCLK ?
+
+> +- svdda-supply	: core voltage supply
+> +- svddio-supply	: I/O voltage supply
 > +
-> +Common 'camera' node
-> +--------------------
-> +
-> +Required properties:
-> +
-> +- compatible		: must be "samsung,exynos5250-fimc"
-> +- clocks		: list of clock specifiers, corresponding to entries in
-> +                          the clock-names property
-> +- clock-names		: must contain "sclk_bayer" entry
-> +- samsung,csis		: list of phandles to the mipi-csis device nodes
-> +- samsung,fimc-lite	: list of phandles to the fimc-lite device nodes
-> +- samsung,fimc-is	: phandle to the fimc-is device node
-> +
-> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
-> +to define a required pinctrl state named "default".
-> +
-> +'parallel-ports' node
-> +---------------------
-> +
-> +This node should contain child 'port' nodes specifying active parallel video
-> +input ports. It includes camera A, camera B and RGB bay inputs.
-> +'reg' property in the port nodes specifies the input type:
-> + 1 - parallel camport A
-> + 2 - parallel camport B
-> + 5 - RGB camera bay
-> +
-> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
-> +
-> +Image sensor nodes
-> +------------------
-> +
-> +The sensor device nodes should be added to their control bus controller (e.g.
-> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
-> +using the common video interfaces bindings, defined in video-interfaces.txt.
-> +
+> +Optional Properties:
+> +- clock-frequency : operating frequency for the sensor
+> +                    default value will be taken if not provided.
+
+How about clarifying it a bit, as Stephen suggested, e.g.:
+
+- clock-frequency : the frequency at which the "mclk" clock should be
+		    configured to operate, in Hz; if this property is not
+		    specified default 24 MHz value will be used.
+
+> +The device node should be added to respective control bus controller
+> +(e.g. I2C0) nodes and linked to the csis port node, using the common
+> +video interfaces bindings, defined in video-interfaces.txt.
+
+This seems misplaced, S5K4E5 image sensor has nothingto do with csis nodes.
+How about something like this instead:
+
+"The common video interfaces bindings (see video-interfaces.txt) should be
+used to specify link to the image data receiver. The S5K6A3(YX) device
+node should contain one 'port' child node with an 'endpoint' subnode.
+
+Following properties are valid for the endpoint node:
+..."
+
 > +Example:
 > +
-> +	aliases {
-> +		fimc-lite0 =&fimc_lite_0
-> +	};
-> +
-> +	/* Parallel bus IF sensor */
-> +	i2c_0: i2c@13860000 {
-> +		s5k6aa: sensor@3c {
-> +			compatible = "samsung,s5k6aafx";
-> +			reg =<0x3c>;
-> +			vddio-supply =<...>;
-> +
+> +	i2c-isp@13130000 {
+> +		s5k4e5@20 {
+> +			compatible = "samsung,s5k4e5";
+> +			reg =<0x20>;
+> +			gpios =<&gpx1 2 1>;
 > +			clock-frequency =<24000000>;
-> +			clocks =<...>;
+> +			clocks =<&clock 129>;
 > +			clock-names = "mclk";
-> +
+> +			svdda-supply =<...>;
+> +			svddio-supply =<...>;
 > +			port {
-> +				s5k6aa_ep: endpoint {
-> +					remote-endpoint =<&fimc0_ep>;
-> +					bus-width =<8>;
-> +					hsync-active =<0>;
-> +					vsync-active =<1>;
-> +					pclk-sample =<1>;
+> +				is_s5k4e5_ep: endpoint {
+> +					data-lanes =<1 2 3 4>;
+> +					remote-endpoint =<&csis0_ep>;
 > +				};
 > +			};
 > +		};
 > +	};
-> +
-> +	/* MIPI CSI-2 bus IF sensor */
-> +	s5c73m3: sensor@1a {
-> +		compatible = "samsung,s5c73m3";
-> +		reg =<0x1a>;
-> +		vddio-supply =<...>;
-> +
-> +		clock-frequency =<24000000>;
-> +		clocks =<...>;
-> +		clock-names = "mclk";
-> +
-> +		port {
-> +			s5c73m3_1: endpoint {
-> +				data-lanes =<1 2 3 4>;
-> +				remote-endpoint =<&csis0_ep>;
-> +			};
-> +		};
-> +	};
-> +
-> +	camera {
-> +		compatible = "samsung,exynos5250-fimc";
-> +		#address-cells =<1>;
-> +		#size-cells =<1>;
-> +		status = "okay";
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 =<&cam_port_a_clk_active>;
-> +
-> +		samsung,csis =<&csis_0>,<&csis_1>;
-> +		samsung,fimc-lite =<&fimc_lite_0>,<&fimc_lite_1>,<&fimc_lite_2>;
-> +		samsung,fimc-is =<&fimc_is>;
-> +
-> +		/* parallel camera ports */
-> +		parallel-ports {
-> +			/* camera A input */
-> +			port@1 {
-> +				reg =<1>;
-> +				camport_a_ep: endpoint {
-> +					remote-endpoint =<&s5k6aa_ep>;
-> +					bus-width =<8>;
-> +					hsync-active =<0>;
-> +					vsync-active =<1>;
-> +					pclk-sample =<1>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +MIPI-CSIS device binding is defined in samsung-mipi-csis.txt, FIMC-LITE
-> +device binding is defined in exynos-fimc-lite.txt and FIMC-IS binding
-> +is defined in exynos5-fimc-is.txt.
-
-Does this binding look OK, can I have a DT maintainer Ack for that ?
 
 --
 Thanks,
