@@ -1,146 +1,168 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v7 13/13] V4L: Add driver for s5k4e5 image sensor
-Date: Fri, 6 Sep 2013 10:03:31 +0530
-Message-ID: <CALt3h7_ZjAfqdDbMzW8Ge++3cAGrodZkBwvwQLWMMRda=G=qGQ@mail.gmail.com>
-References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com>
-	<1377066881-5423-14-git-send-email-arun.kk@samsung.com>
-	<5228E34B.307@gmail.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH 2/3] thermal: samsung: change base_common to more
+ meaningful base_second
+Date: Fri, 6 Sep 2013 10:08:49 +0530
+Message-ID: <CADGdYn5MVpSrdVhioEesy=5=r6a7cz4yvkiLfavxhcDAjY02OQ@mail.gmail.com>
+References: <1377668719-8602-2-git-send-email-ch.naveen@samsung.com>
+	<1378268629-2886-1-git-send-email-ch.naveen@samsung.com>
+	<1378268629-2886-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <5228E34B.307@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, kilyeon.im@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:62115 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750705Ab3IFEiu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Sep 2013 00:38:50 -0400
+In-Reply-To: <1378268629-2886-2-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, "Valentin, Eduardo" <eduardo.valentin@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna <naveenkrishna.ch@gmail.com>, devicetree@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Hi Sylwester,
+On Wed, Sep 4, 2013 at 9:53 AM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> On Exynos5440 and Exynos5420 there are registers common
+> across the TMU channels.
+>
+> To support that, we introduced a ADDRESS_MULTIPLE flag in the
+> driver and the 2nd set of register base and size are provided
+> in the "reg" property of the node.
+>
+> As per Amit's suggestion, this patch changes the base_common
+> to base_second and SHARED_MEMORY to ADDRESS_MULTIPLE.
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+The changes look good. For all the 3 patches in the series,
 
-Will make the changes you suggested.
-Will re-spin this entire series with some more minor fixes after more
-rigorous testing.
+Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Reviewed-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
 
-Regards
-Arun
-
-On Fri, Sep 6, 2013 at 1:32 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> On 08/21/2013 08:34 AM, Arun Kumar K wrote:
->>
->> This patch adds subdev driver for Samsung S5K4E5 raw image sensor.
->> Like s5k6a3, it is also another fimc-is firmware controlled
->> sensor. This minimal sensor driver doesn't do any I2C communications
->> as its done by ISP firmware. It can be updated if needed to a
->> regular sensor driver by adding the I2C communication.
->>
->> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
->> Reviewed-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
->> ---
->>   .../devicetree/bindings/media/i2c/s5k4e5.txt       |   43 +++
->>   drivers/media/i2c/Kconfig                          |    8 +
->>   drivers/media/i2c/Makefile                         |    1 +
->>   drivers/media/i2c/s5k4e5.c                         |  361
->> ++++++++++++++++++++
->>   4 files changed, 413 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
->>   create mode 100644 drivers/media/i2c/s5k4e5.c
->>
->> diff --git a/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
->> b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
->> new file mode 100644
->> index 0000000..5af462c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
->> @@ -0,0 +1,43 @@
->> +* Samsung S5K4E5 Raw Image Sensor
->> +
->> +S5K4E5 is a raw image sensor with maximum resolution of 2560x1920
->> +pixels. Data transfer is carried out via MIPI CSI-2 port and controls
->> +via I2C bus.
->> +
->> +Required Properties:
->> +- compatible   : must be "samsung,s5k4e5"
->> +- reg          : I2C device address
->> +- gpios                : reset gpio pin
+Thanks,
+Amit Daniel
+> ---
+> Changes since v2:
+> Changed the flag name from SHARED_MEMORY to ADDRESS_MULTIPLE.
+> https://lkml.org/lkml/2013/8/1/38
 >
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |    4 ++--
+>  drivers/thermal/samsung/exynos_tmu.c               |   12 ++++++------
+>  drivers/thermal/samsung/exynos_tmu.h               |    4 ++--
+>  drivers/thermal/samsung/exynos_tmu_data.c          |    2 +-
+>  4 files changed, 11 insertions(+), 11 deletions(-)
 >
-> I guess this should be "reset-gpios". How about changing description to:
+> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> index 284f530..116cca0 100644
+> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> @@ -11,8 +11,8 @@
+>  - reg : Address range of the thermal registers. For soc's which has multiple
+>         instances of TMU and some registers are shared across all TMU's like
+>         interrupt related then 2 set of register has to supplied. First set
+> -       belongs to each instance of TMU and second set belongs to common TMU
+> -       registers.
+> +       belongs to each instance of TMU and second set belongs to second set
+> +       of common TMU registers.
+>  - interrupts : Should contain interrupt for thermal system
+>  - clocks : The main clock for TMU device
+>  - clock-names : Thermal system clock name
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index d201ed8..3a55caf 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -41,7 +41,7 @@
+>   * @id: identifier of the one instance of the TMU controller.
+>   * @pdata: pointer to the tmu platform/configuration data
+>   * @base: base address of the single instance of the TMU controller.
+> - * @base_common: base address of the common registers of the TMU controller.
+> + * @base_second: base address of the common registers of the TMU controller.
+>   * @irq: irq number of the TMU controller.
+>   * @soc: id of the SOC type.
+>   * @irq_work: pointer to the irq work structure.
+> @@ -56,7 +56,7 @@ struct exynos_tmu_data {
+>         int id;
+>         struct exynos_tmu_platform_data *pdata;
+>         void __iomem *base;
+> -       void __iomem *base_common;
+> +       void __iomem *base_second;
+>         int irq;
+>         enum soc_type soc;
+>         struct work_struct irq_work;
+> @@ -297,7 +297,7 @@ skip_calib_data:
+>         }
+>         /*Clear the PMIN in the common TMU register*/
+>         if (reg->tmu_pmin && !data->id)
+> -               writel(0, data->base_common + reg->tmu_pmin);
+> +               writel(0, data->base_second + reg->tmu_pmin);
+>  out:
+>         clk_disable(data->clk);
+>         mutex_unlock(&data->lock);
+> @@ -451,7 +451,7 @@ static void exynos_tmu_work(struct work_struct *work)
 >
-> - reset-gpios   : specifier of a GPIO connected to the RESET pin;
+>         /* Find which sensor generated this interrupt */
+>         if (reg->tmu_irqstatus) {
+> -               val_type = readl(data->base_common + reg->tmu_irqstatus);
+> +               val_type = readl(data->base_second + reg->tmu_irqstatus);
+>                 if (!((val_type >> data->id) & 0x1))
+>                         goto out;
+>         }
+> @@ -582,7 +582,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>          * Check if the TMU shares some registers and then try to map the
+>          * memory of common registers.
+>          */
+> -       if (!TMU_SUPPORTS(pdata, SHARED_MEMORY))
+> +       if (!TMU_SUPPORTS(pdata, ADDRESS_MULTIPLE))
+>                 return 0;
 >
+>         if (of_address_to_resource(pdev->dev.of_node, 1, &res)) {
+> @@ -590,7 +590,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>                 return -ENODEV;
+>         }
 >
-> ?
->>
->> +- clocks       : clock specifier for the clock-names property
+> -       data->base_common = devm_ioremap(&pdev->dev, res.start,
+> +       data->base_second = devm_ioremap(&pdev->dev, res.start,
+>                                         resource_size(&res));
+>         if (!data->base) {
+>                 dev_err(&pdev->dev, "Failed to ioremap memory\n");
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+> index 7c6c34a..ebd2ec1 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -59,7 +59,7 @@ enum soc_type {
+>   *                     state(active/idle) can be checked.
+>   * TMU_SUPPORT_EMUL_TIME - This features allows to set next temp emulation
+>   *                     sample time.
+> - * TMU_SUPPORT_SHARED_MEMORY - This feature tells that the different TMU
+> + * TMU_SUPPORT_ADDRESS_MULTIPLE - This feature tells that the different TMU
+>   *                     sensors shares some common registers.
+>   * TMU_SUPPORT - macro to compare the above features with the supplied.
+>   */
+> @@ -69,7 +69,7 @@ enum soc_type {
+>  #define TMU_SUPPORT_FALLING_TRIP               BIT(3)
+>  #define TMU_SUPPORT_READY_STATUS               BIT(4)
+>  #define TMU_SUPPORT_EMUL_TIME                  BIT(5)
+> -#define TMU_SUPPORT_SHARED_MEMORY              BIT(6)
+> +#define TMU_SUPPORT_ADDRESS_MULTIPLE           BIT(6)
 >
+>  #define TMU_SUPPORTS(a, b)     (a->features & TMU_SUPPORT_ ## b)
 >
-> Perhaps something along the lines of:
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+> index 23fea23..58570d0 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> @@ -239,7 +239,7 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+>         .type = SOC_ARCH_EXYNOS5440, \
+>         .registers = &exynos5440_tmu_registers, \
+>         .features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
+> -                       TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_SHARED_MEMORY),
+> +                       TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_ADDRESS_MULTIPLE),
 >
-> - clocks : "should contain the sensor's MCLK clock specifier, from
->                   the common clock bindings"
->
-> ?
->>
->> +- clock-names  : must contain "mclk" entry
->
->
-> Is name of the clock input pin really MCLK ?
->
->
->> +- svdda-supply : core voltage supply
->> +- svddio-supply        : I/O voltage supply
->> +
->> +Optional Properties:
->> +- clock-frequency : operating frequency for the sensor
->> +                    default value will be taken if not provided.
->
->
-> How about clarifying it a bit, as Stephen suggested, e.g.:
->
-> - clock-frequency : the frequency at which the "mclk" clock should be
->                     configured to operate, in Hz; if this property is not
->                     specified default 24 MHz value will be used.
->
->
->> +The device node should be added to respective control bus controller
->> +(e.g. I2C0) nodes and linked to the csis port node, using the common
->> +video interfaces bindings, defined in video-interfaces.txt.
->
->
-> This seems misplaced, S5K4E5 image sensor has nothingto do with csis nodes.
-> How about something like this instead:
->
-> "The common video interfaces bindings (see video-interfaces.txt) should be
-> used to specify link to the image data receiver. The S5K6A3(YX) device
-> node should contain one 'port' child node with an 'endpoint' subnode.
->
-> Following properties are valid for the endpoint node:
-> ..."
->
->
->> +Example:
->> +
->> +       i2c-isp@13130000 {
->> +               s5k4e5@20 {
->> +                       compatible = "samsung,s5k4e5";
->> +                       reg =<0x20>;
->> +                       gpios =<&gpx1 2 1>;
->> +                       clock-frequency =<24000000>;
->> +                       clocks =<&clock 129>;
->> +                       clock-names = "mclk";
->> +                       svdda-supply =<...>;
->> +                       svddio-supply =<...>;
->> +                       port {
->> +                               is_s5k4e5_ep: endpoint {
->> +                                       data-lanes =<1 2 3 4>;
->> +                                       remote-endpoint =<&csis0_ep>;
->> +                               };
->> +                       };
->> +               };
->> +       };
->
+>  struct exynos_tmu_init_data const exynos5440_default_tmu_data = {
+>         .tmu_data = {
+> --
+> 1.7.9.5
 >
 > --
-> Thanks,
-> Sylwester
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
