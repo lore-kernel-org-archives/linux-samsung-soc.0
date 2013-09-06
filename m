@@ -1,99 +1,219 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] ARM: dts: Disable Exynos5250 I2S controllers by default
-Date: Fri,  6 Sep 2013 19:17:15 +0100
-Message-ID: <1378491435-15624-1-git-send-email-broonie@kernel.org>
+From: al.stone@linaro.org
+Subject: [PATCH] ARM: dts: Correct typo in use of samsung,pin-drv for exynos5250
+Date: Fri,  6 Sep 2013 14:09:52 -0600
+Message-ID: <1378498192-5163-1-git-send-email-al.stone@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:55722 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751326Ab3IFSRs (ORCPT
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:65203 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751024Ab3IFUKI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Sep 2013 14:17:48 -0400
+	Fri, 6 Sep 2013 16:10:08 -0400
+Received: by mail-ob0-f173.google.com with SMTP id ta17so3950324obb.18
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Sep 2013 13:10:08 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linaro-kernel@lists.linaro.org, linaro-acpi@lists.linaro.org, Al Stone <ahs3@redhat.com>, Al Stone <al.stone@linaro.org>
 
-From: Mark Brown <broonie@linaro.org>
+From: Al Stone <ahs3@redhat.com>
 
-Rather than requiring each board to explicitly disable the I2S controllers
-it is not using instead require boards to enable those that they are using.
+   Corrects an obvious typo in the Arndale pinctrl descriptions in DT.
+   The samsung-pinctrl driver uses the correct name.
 
-This is required for audio operation on Arndale, one of the unused I2S
-controllers is pinmuxed with the LDO enable GPIOs for the WM1811A.
-
-Signed-off-by: Mark Brown <broonie@linaro.org>
+Signed-off-by: Al Stone <al.stone@linaro.org>
 ---
+ arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 44 +++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-This seems like a more robust approach to handling the externally
-visible IPs - if this is OK I can go through and do further updates for
-other devices.
-
- arch/arm/boot/dts/exynos5250-arndale.dts  | 4 ++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts | 8 --------
- arch/arm/boot/dts/exynos5250.dtsi         | 3 +++
- 3 files changed, 7 insertions(+), 8 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index cee55fa..4687fa0 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -412,6 +412,10 @@
- 		status = "disabled";
+diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+index 656e381..031e198 100644
+--- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+@@ -210,21 +210,21 @@
+ 			samsung,pins = "gpa0-2", "gpa0-3";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		i2c2_bus: i2c2-bus {
+ 			samsung,pins = "gpa0-6", "gpa0-7";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		i2c2_hs_bus: i2c2-hs-bus {
+ 			samsung,pins = "gpa0-6", "gpa0-7";
+ 			samsung,pin-function = <4>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		uart2_data: uart2-data {
+@@ -238,21 +238,21 @@
+ 			samsung,pins = "gpa1-2", "gpa1-3";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		i2c3_bus: i2c3-bus {
+ 			samsung,pins = "gpa1-2", "gpa1-3";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		i2c3_hs_bus: i2c3-hs-bus {
+ 			samsung,pins = "gpa1-2", "gpa1-3";
+ 			samsung,pin-function = <4>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		uart3_data: uart3-data {
+@@ -273,14 +273,14 @@
+ 			samsung,pins = "gpa2-0", "gpa2-1";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		i2c5_bus: i2c5-bus {
+ 			samsung,pins = "gpa2-2", "gpa2-3";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		spi1_bus: spi1-bus {
+@@ -376,14 +376,14 @@
+ 			samsung,pins = "gpb3-0", "gpb3-1";
+ 			samsung,pin-function = <4>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		i2c1_hs_bus: i2c1-hs-bus {
+ 			samsung,pins = "gpb3-2", "gpb3-3";
+ 			samsung,pin-function = <4>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		sd0_clk: sd0-clk {
+@@ -551,14 +551,14 @@
+ 			samsung,pins = "gpd0-2", "gpd0-3";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		dp_hpd: dp_hpd {
+ 			samsung,pins = "gpx0-7";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
  	};
  
-+	i2s0: i2s@03830000 {
-+		status = "okay";
-+	};
-+
- 	spi_0: spi@12d20000 {
- 		status = "disabled";
+@@ -650,42 +650,42 @@
+ 				       "gpf1-0", "gpf1-1", "gpf1-2", "gpf1-3";
+ 			samsung,pin-function = <3>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		cam_i2c2_bus: cam-i2c2-bus {
+ 			samsung,pins = "gpe0-6", "gpe1-0";
+ 			samsung,pin-function = <4>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		cam_spi1_bus: cam-spi1-bus {
+ 			samsung,pins = "gpe0-4", "gpe0-5", "gpf0-2", "gpf0-3";
+ 			samsung,pin-function = <4>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		cam_i2c1_bus: cam-i2c1-bus {
+ 			samsung,pins = "gpf0-2", "gpf0-3";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		cam_i2c0_bus: cam-i2c0-bus {
+ 			samsung,pins = "gpf0-0", "gpf0-1";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <3>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		cam_spi0_bus: cam-spi0-bus {
+ 			samsung,pins = "gpf1-0", "gpf1-1", "gpf1-2", "gpf1-3";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		cam_bayrgb_bus: cam-bayrgb-bus {
+@@ -696,7 +696,7 @@
+ 				       "gpg2-0", "gpg2-1";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		cam_port_a: cam-port-a {
+@@ -705,7 +705,7 @@
+ 				       "gph1-4", "gph1-5", "gph1-6", "gph1-7";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
  	};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 2538b32..f86d567 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -231,14 +231,6 @@
- 		status = "okay";
+ 
+@@ -757,7 +757,7 @@
+ 				       "gpv1-4", "gpv1-5", "gpv1-6", "gpv1-7";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
+ 
+ 		c2c_txd: c2c-txd {
+@@ -767,7 +767,7 @@
+ 				       "gpv3-4", "gpv3-5", "gpv3-6", "gpv3-7";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <0>;
+-			samaung,pin-drv = <0>;
++			samsung,pin-drv = <0>;
+ 		};
  	};
  
--	i2s1: i2s@12D60000 {
--		status = "disabled";
--	};
--
--	i2s2: i2s@12D70000 {
--		status = "disabled";
--	};
--
- 	sound {
- 		compatible = "samsung,smdk-wm8994";
- 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 7d7cc77..c863113 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -417,6 +417,7 @@
- 
- 	i2s0: i2s@03830000 {
- 		compatible = "samsung,s5pv210-i2s";
-+		status = "disabled";
- 		reg = <0x03830000 0x100>;
- 		dmas = <&pdma0 10
- 			&pdma0 9
-@@ -433,6 +434,7 @@
- 
- 	i2s1: i2s@12D60000 {
- 		compatible = "samsung,s3c6410-i2s";
-+		status = "disabled";
- 		reg = <0x12D60000 0x100>;
- 		dmas = <&pdma1 12
- 			&pdma1 11>;
-@@ -445,6 +447,7 @@
- 
- 	i2s2: i2s@12D70000 {
- 		compatible = "samsung,s3c6410-i2s";
-+		status = "disabled";
- 		reg = <0x12D70000 0x100>;
- 		dmas = <&pdma0 12
- 			&pdma0 11>;
 -- 
-1.8.4.rc3
+1.8.3.1
