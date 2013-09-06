@@ -1,168 +1,448 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH 2/3] thermal: samsung: change base_common to more
- meaningful base_second
-Date: Fri, 6 Sep 2013 10:08:49 +0530
-Message-ID: <CADGdYn5MVpSrdVhioEesy=5=r6a7cz4yvkiLfavxhcDAjY02OQ@mail.gmail.com>
-References: <1377668719-8602-2-git-send-email-ch.naveen@samsung.com>
-	<1378268629-2886-1-git-send-email-ch.naveen@samsung.com>
-	<1378268629-2886-2-git-send-email-ch.naveen@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH V3] PCI: exynos: add support for MSI
+Date: Fri, 06 Sep 2013 15:54:59 +0900
+Message-ID: <001a01ceaace$013ec980$03bc5c80$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:62115 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750705Ab3IFEiu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Sep 2013 00:38:50 -0400
-In-Reply-To: <1378268629-2886-2-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Pratyush Anand <pratyush.anand@st.com>, Mohit KUMAR <Mohit.KUMAR@st.com>, Siva Reddy Kallam <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, Arnd Bergmann <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, "Valentin, Eduardo" <eduardo.valentin@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Naveen Krishna <naveenkrishna.ch@gmail.com>, devicetree@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Sep 4, 2013 at 9:53 AM, Naveen Krishna Chatradhi
-<ch.naveen@samsung.com> wrote:
-> On Exynos5440 and Exynos5420 there are registers common
-> across the TMU channels.
->
-> To support that, we introduced a ADDRESS_MULTIPLE flag in the
-> driver and the 2nd set of register base and size are provided
-> in the "reg" property of the node.
->
-> As per Amit's suggestion, this patch changes the base_common
-> to base_second and SHARED_MEMORY to ADDRESS_MULTIPLE.
->
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-The changes look good. For all the 3 patches in the series,
+This patch adds support for Message Signaled Interrupt in the
+Exynos PCIe diver using Synopsys designware PCIe core IP.
 
-Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Reviewed-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
+Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+Signed-off-by: Srikanth T Shivanand <ts.srikanth@samsung.com>
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Cc: Pratyush Anand <pratyush.anand@st.com>
+Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+---
+Changes since v2:
+- fixed MAX_MSI_CTRLS because MAX_MSI_IRQS is 32 only
+- used __get_free_pages() to allocate msi_data
+- used one msi_data and msi_irq_in_use per one RC
+- used irq_domain to represent the MSI controller
+- removed msi-base irq number from device tree because this is not
+  a hardware property.
 
-Thanks,
-Amit Daniel
-> ---
-> Changes since v2:
-> Changed the flag name from SHARED_MEMORY to ADDRESS_MULTIPLE.
-> https://lkml.org/lkml/2013/8/1/38
->
->  .../devicetree/bindings/thermal/exynos-thermal.txt |    4 ++--
->  drivers/thermal/samsung/exynos_tmu.c               |   12 ++++++------
->  drivers/thermal/samsung/exynos_tmu.h               |    4 ++--
->  drivers/thermal/samsung/exynos_tmu_data.c          |    2 +-
->  4 files changed, 11 insertions(+), 11 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> index 284f530..116cca0 100644
-> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> @@ -11,8 +11,8 @@
->  - reg : Address range of the thermal registers. For soc's which has multiple
->         instances of TMU and some registers are shared across all TMU's like
->         interrupt related then 2 set of register has to supplied. First set
-> -       belongs to each instance of TMU and second set belongs to common TMU
-> -       registers.
-> +       belongs to each instance of TMU and second set belongs to second set
-> +       of common TMU registers.
->  - interrupts : Should contain interrupt for thermal system
->  - clocks : The main clock for TMU device
->  - clock-names : Thermal system clock name
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index d201ed8..3a55caf 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -41,7 +41,7 @@
->   * @id: identifier of the one instance of the TMU controller.
->   * @pdata: pointer to the tmu platform/configuration data
->   * @base: base address of the single instance of the TMU controller.
-> - * @base_common: base address of the common registers of the TMU controller.
-> + * @base_second: base address of the common registers of the TMU controller.
->   * @irq: irq number of the TMU controller.
->   * @soc: id of the SOC type.
->   * @irq_work: pointer to the irq work structure.
-> @@ -56,7 +56,7 @@ struct exynos_tmu_data {
->         int id;
->         struct exynos_tmu_platform_data *pdata;
->         void __iomem *base;
-> -       void __iomem *base_common;
-> +       void __iomem *base_second;
->         int irq;
->         enum soc_type soc;
->         struct work_struct irq_work;
-> @@ -297,7 +297,7 @@ skip_calib_data:
->         }
->         /*Clear the PMIN in the common TMU register*/
->         if (reg->tmu_pmin && !data->id)
-> -               writel(0, data->base_common + reg->tmu_pmin);
-> +               writel(0, data->base_second + reg->tmu_pmin);
->  out:
->         clk_disable(data->clk);
->         mutex_unlock(&data->lock);
-> @@ -451,7 +451,7 @@ static void exynos_tmu_work(struct work_struct *work)
->
->         /* Find which sensor generated this interrupt */
->         if (reg->tmu_irqstatus) {
-> -               val_type = readl(data->base_common + reg->tmu_irqstatus);
-> +               val_type = readl(data->base_second + reg->tmu_irqstatus);
->                 if (!((val_type >> data->id) & 0x1))
->                         goto out;
->         }
-> @@ -582,7 +582,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
->          * Check if the TMU shares some registers and then try to map the
->          * memory of common registers.
->          */
-> -       if (!TMU_SUPPORTS(pdata, SHARED_MEMORY))
-> +       if (!TMU_SUPPORTS(pdata, ADDRESS_MULTIPLE))
->                 return 0;
->
->         if (of_address_to_resource(pdev->dev.of_node, 1, &res)) {
-> @@ -590,7 +590,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
->                 return -ENODEV;
->         }
->
-> -       data->base_common = devm_ioremap(&pdev->dev, res.start,
-> +       data->base_second = devm_ioremap(&pdev->dev, res.start,
->                                         resource_size(&res));
->         if (!data->base) {
->                 dev_err(&pdev->dev, "Failed to ioremap memory\n");
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-> index 7c6c34a..ebd2ec1 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -59,7 +59,7 @@ enum soc_type {
->   *                     state(active/idle) can be checked.
->   * TMU_SUPPORT_EMUL_TIME - This features allows to set next temp emulation
->   *                     sample time.
-> - * TMU_SUPPORT_SHARED_MEMORY - This feature tells that the different TMU
-> + * TMU_SUPPORT_ADDRESS_MULTIPLE - This feature tells that the different TMU
->   *                     sensors shares some common registers.
->   * TMU_SUPPORT - macro to compare the above features with the supplied.
->   */
-> @@ -69,7 +69,7 @@ enum soc_type {
->  #define TMU_SUPPORT_FALLING_TRIP               BIT(3)
->  #define TMU_SUPPORT_READY_STATUS               BIT(4)
->  #define TMU_SUPPORT_EMUL_TIME                  BIT(5)
-> -#define TMU_SUPPORT_SHARED_MEMORY              BIT(6)
-> +#define TMU_SUPPORT_ADDRESS_MULTIPLE           BIT(6)
->
->  #define TMU_SUPPORTS(a, b)     (a->features & TMU_SUPPORT_ ## b)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-> index 23fea23..58570d0 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> @@ -239,7 +239,7 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
->         .type = SOC_ARCH_EXYNOS5440, \
->         .registers = &exynos5440_tmu_registers, \
->         .features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
-> -                       TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_SHARED_MEMORY),
-> +                       TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_ADDRESS_MULTIPLE),
->
->  struct exynos_tmu_init_data const exynos5440_default_tmu_data = {
->         .tmu_data = {
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes since v1:
+- removed unnecessary exynos_pcie_clear_irq_level()
+- updated the bindings documentation
+- used new msi_chip infrastructure
+- removed ARCH_SUPPORTS_MSI
+- replaced #ifdef guards with IS_ENABLED(CONFIG_PCI_MSI)
+
+ drivers/pci/host/pci-exynos.c      |   44 +++++++
+ drivers/pci/host/pcie-designware.c |  240 ++++++++++++++++++++++++++++++++++++
+ drivers/pci/host/pcie-designware.h |   14 +++
+ 3 files changed, 298 insertions(+)
+
+diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+index 94e096b..f062aca 100644
+--- a/drivers/pci/host/pci-exynos.c
++++ b/drivers/pci/host/pci-exynos.c
+@@ -48,6 +48,7 @@ struct exynos_pcie {
+ #define PCIE_IRQ_SPECIAL		0x008
+ #define PCIE_IRQ_EN_PULSE		0x00c
+ #define PCIE_IRQ_EN_LEVEL		0x010
++#define IRQ_MSI_ENABLE			(0x1 << 2)
+ #define PCIE_IRQ_EN_SPECIAL		0x014
+ #define PCIE_PWR_RESET			0x018
+ #define PCIE_CORE_RESET			0x01c
+@@ -342,9 +343,36 @@ static irqreturn_t exynos_pcie_irq_handler(int irq, void *arg)
+ 	return IRQ_HANDLED;
+ }
+ 
++static irqreturn_t exynos_pcie_msi_irq_handler(int irq, void *arg)
++{
++	struct pcie_port *pp = arg;
++
++	dw_handle_msi_irq(pp);
++
++	return IRQ_HANDLED;
++}
++
++static void exynos_pcie_msi_init(struct pcie_port *pp)
++{
++	u32 val;
++	struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
++
++	dw_pcie_msi_init(pp);
++
++	/* enable MSI interrupt */
++	val = exynos_elb_readl(exynos_pcie, PCIE_IRQ_EN_LEVEL);
++	val |= IRQ_MSI_ENABLE;
++	exynos_elb_writel(exynos_pcie, val, PCIE_IRQ_EN_LEVEL);
++	return;
++}
++
+ static void exynos_pcie_enable_interrupts(struct pcie_port *pp)
+ {
+ 	exynos_pcie_enable_irq_pulse(pp);
++
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		exynos_pcie_msi_init(pp);
++
+ 	return;
+ }
+ 
+@@ -430,6 +458,22 @@ static int add_pcie_port(struct pcie_port *pp, struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	if (IS_ENABLED(CONFIG_PCI_MSI)) {
++		pp->msi_irq = platform_get_irq(pdev, 0);
++		if (!pp->msi_irq) {
++			dev_err(&pdev->dev, "failed to get msi irq\n");
++			return -ENODEV;
++		}
++
++		ret = devm_request_irq(&pdev->dev, pp->msi_irq,
++					exynos_pcie_msi_irq_handler,
++					IRQF_SHARED, "exynos-pcie", pp);
++		if (ret) {
++			dev_err(&pdev->dev, "failed to request msi irq\n");
++			return ret;
++		}
++	}
++
+ 	pp->root_bus_nr = -1;
+ 	pp->ops = &exynos_pcie_host_ops;
+ 
+diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+index c10e9ac..8963017 100644
+--- a/drivers/pci/host/pcie-designware.c
++++ b/drivers/pci/host/pcie-designware.c
+@@ -11,8 +11,11 @@
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
++#include <linux/msi.h>
+ #include <linux/of_address.h>
+ #include <linux/pci.h>
+ #include <linux/pci_regs.h>
+@@ -142,6 +145,204 @@ int dw_pcie_wr_own_conf(struct pcie_port *pp, int where, int size,
+ 	return ret;
+ }
+ 
++static struct irq_chip dw_msi_irq_chip = {
++	.name = "PCI-MSI",
++	.irq_enable = unmask_msi_irq,
++	.irq_disable = mask_msi_irq,
++	.irq_mask = mask_msi_irq,
++	.irq_unmask = unmask_msi_irq,
++};
++
++/* MSI int handler */
++void dw_handle_msi_irq(struct pcie_port *pp)
++{
++	unsigned long val;
++	int i, pos;
++
++	for (i = 0; i < MAX_MSI_CTRLS; i++) {
++		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
++				(u32 *)&val);
++		if (val) {
++			pos = 0;
++			while ((pos = find_next_bit(&val, 32, pos)) != 32) {
++				generic_handle_irq(pp->msi_irq_start
++					+ (i * 32) + pos);
++				pos++;
++			}
++		}
++		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4, val);
++	}
++}
++
++void dw_pcie_msi_init(struct pcie_port *pp)
++{
++	pp->msi_data = __get_free_pages(GFP_KERNEL, 0);
++
++	/* program the msi_data */
++	dw_pcie_wr_own_conf(pp, PCIE_MSI_ADDR_LO, 4,
++			virt_to_phys((void *)pp->msi_data));
++	dw_pcie_wr_own_conf(pp, PCIE_MSI_ADDR_HI, 4, 0);
++}
++
++static int find_valid_pos0(struct pcie_port *pp, int msgvec, int pos, int *pos0)
++{
++	int flag = 1;
++
++	do {
++		pos = find_next_zero_bit(pp->msi_irq_in_use,
++				MAX_MSI_IRQS, pos);
++		/*if you have reached to the end then get out from here.*/
++		if (pos == MAX_MSI_IRQS)
++			return -ENOSPC;
++		/*
++		 * Check if this position is at correct offset.nvec is always a
++		 * power of two. pos0 must be nvec bit alligned.
++		 */
++		if (pos % msgvec)
++			pos += msgvec - (pos % msgvec);
++		else
++			flag = 0;
++	} while (flag);
++
++	*pos0 = pos;
++	return 0;
++}
++
++static int assign_irq(int no_irqs, struct msi_desc *desc, int *pos)
++{
++	int res, bit, irq, pos0, pos1, i;
++	u32 val;
++	struct pcie_port *pp = sys_to_pcie(desc->dev->bus->sysdata);
++
++	if (!pp) {
++		BUG();
++		return -EINVAL;
++	}
++
++	pos0 = find_first_zero_bit(pp->msi_irq_in_use,
++			MAX_MSI_IRQS);
++	if (pos0 % no_irqs) {
++		if (find_valid_pos0(pp, no_irqs, pos0, &pos0))
++			goto no_valid_irq;
++	}
++	if (no_irqs > 1) {
++		pos1 = find_next_bit(pp->msi_irq_in_use,
++				MAX_MSI_IRQS, pos0);
++		/* there must be nvec number of consecutive free bits */
++		while ((pos1 - pos0) < no_irqs) {
++			if (find_valid_pos0(pp, no_irqs, pos1, &pos0))
++				goto no_valid_irq;
++			pos1 = find_next_bit(pp->msi_irq_in_use,
++					MAX_MSI_IRQS, pos0);
++		}
++	}
++
++	irq = (pp->msi_irq_start + pos0);
++
++	if ((irq + no_irqs) > (pp->msi_irq_start + MAX_MSI_IRQS-1))
++		goto no_valid_irq;
++
++	i = 0;
++	while (i < no_irqs) {
++		set_bit(pos0 + i, pp->msi_irq_in_use);
++		irq_alloc_descs((irq + i), (irq + i), 1, 0);
++		irq_set_msi_desc(irq + i, desc);
++		/*Enable corresponding interrupt in MSI interrupt controller */
++		res = ((pos0 + i) / 32) * 12;
++		bit = (pos0 + i) % 32;
++		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4, &val);
++		val |= 1 << bit;
++		dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4, val);
++		i++;
++	}
++
++	*pos = pos0;
++	return irq;
++
++no_valid_irq:
++	*pos = pos0;
++	return -ENOSPC;
++}
++
++static void clear_irq(unsigned int irq)
++{
++	int res, bit, val, pos;
++	struct irq_desc *desc;
++	struct msi_desc *msi;
++	struct pcie_port *pp;
++
++	/* get the port structure */
++	desc = irq_to_desc(irq);
++	msi = irq_desc_get_msi_desc(desc);
++	pp = sys_to_pcie(msi->dev->bus->sysdata);
++	if (!pp) {
++		BUG();
++		return;
++	}
++
++	pos = irq - pp->msi_irq_start;
++
++	irq_free_desc(irq);
++
++	clear_bit(pos, pp->msi_irq_in_use);
++
++	/* Disable corresponding interrupt on MSI interrupt controller */
++	res = (pos / 32) * 12;
++	bit = pos % 32;
++	dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4, &val);
++	val &= ~(1 << bit);
++	dw_pcie_wr_own_conf(pp, PCIE_MSI_INTR0_ENABLE + res, 4, val);
++}
++
++static int dw_msi_setup_irq(struct msi_chip *chip, struct pci_dev *pdev,
++			struct msi_desc *desc)
++{
++	int irq, pos, msgvec;
++	u16 msg_ctr;
++	struct msi_msg msg;
++	struct pcie_port *pp = sys_to_pcie(pdev->bus->sysdata);
++
++	if (!pp) {
++		BUG();
++		return -EINVAL;
++	}
++
++	pci_read_config_word(pdev, desc->msi_attrib.pos+PCI_MSI_FLAGS,
++				&msg_ctr);
++	msgvec = (msg_ctr&PCI_MSI_FLAGS_QSIZE) >> 4;
++	if (msgvec == 0)
++		msgvec = (msg_ctr & PCI_MSI_FLAGS_QMASK) >> 1;
++	if (msgvec > 5)
++		msgvec = 0;
++
++	irq = assign_irq((1 << msgvec), desc, &pos);
++	if (irq < 0)
++		return irq;
++
++	msg_ctr &= ~PCI_MSI_FLAGS_QSIZE;
++	msg_ctr |= msgvec << 4;
++	pci_write_config_word(pdev, desc->msi_attrib.pos + PCI_MSI_FLAGS,
++				msg_ctr);
++	desc->msi_attrib.multiple = msgvec;
++
++	msg.address_lo = virt_to_phys((void *)pp->msi_data);
++	msg.address_hi = 0x0;
++	msg.data = pos;
++	write_msi_msg(irq, &msg);
++
++	return 0;
++}
++
++static void dw_msi_teardown_irq(struct msi_chip *chip, unsigned int irq)
++{
++	clear_irq(irq);
++}
++
++static struct msi_chip dw_pcie_msi_chip = {
++	.setup_irq = dw_msi_setup_irq,
++	.teardown_irq = dw_msi_teardown_irq,
++};
++
+ int dw_pcie_link_up(struct pcie_port *pp)
+ {
+ 	if (pp->ops->link_up)
+@@ -150,6 +351,20 @@ int dw_pcie_link_up(struct pcie_port *pp)
+ 		return 0;
+ }
+ 
++static int dw_pcie_msi_map(struct irq_domain *domain, unsigned int irq,
++			irq_hw_number_t hwirq)
++{
++	irq_set_chip_and_handler(irq, &dw_msi_irq_chip, handle_simple_irq);
++	irq_set_chip_data(irq, domain->host_data);
++	set_irq_flags(irq, IRQF_VALID);
++
++	return 0;
++}
++
++static const struct irq_domain_ops msi_domain_ops = {
++	.map = dw_pcie_msi_map,
++};
++
+ int __init dw_pcie_host_init(struct pcie_port *pp)
+ {
+ 	struct device_node *np = pp->dev->of_node;
+@@ -157,6 +372,8 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
+ 	struct of_pci_range_parser parser;
+ 	u32 val;
+ 
++	struct irq_domain *irq_domain;
++
+ 	if (of_pci_range_parser_init(&parser, np)) {
+ 		dev_err(pp->dev, "missing ranges property\n");
+ 		return -EINVAL;
+@@ -223,6 +440,18 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
+ 		return -EINVAL;
+ 	}
+ 
++	if (IS_ENABLED(CONFIG_PCI_MSI)) {
++		irq_domain = irq_domain_add_linear(pp->dev->of_node,
++					MAX_MSI_IRQS, &msi_domain_ops,
++					&dw_pcie_msi_chip);
++		if (!irq_domain) {
++			dev_err(pp->dev, "irq domain init failed\n");
++			return -ENXIO;
++		}
++
++		pp->msi_irq_start = irq_find_mapping(irq_domain, 0);
++	}
++
+ 	if (pp->ops->host_init)
+ 		pp->ops->host_init(pp);
+ 
+@@ -485,10 +714,21 @@ int dw_pcie_map_irq(const struct pci_dev *dev, u8 slot, u8 pin)
+ 	return pp->irq;
+ }
+ 
++static void dw_pcie_add_bus(struct pci_bus *bus)
++{
++	if (IS_ENABLED(CONFIG_PCI_MSI)) {
++		struct pcie_port *pp = sys_to_pcie(bus->sysdata);
++
++		dw_pcie_msi_chip.dev = pp->dev;
++		bus->msi = &dw_pcie_msi_chip;
++	}
++}
++
+ static struct hw_pci dw_pci = {
+ 	.setup		= dw_pcie_setup,
+ 	.scan		= dw_pcie_scan_bus,
+ 	.map_irq	= dw_pcie_map_irq,
++	.add_bus	= dw_pcie_add_bus,
+ };
+ 
+ void dw_pcie_setup_rc(struct pcie_port *pp)
+diff --git a/drivers/pci/host/pcie-designware.h b/drivers/pci/host/pcie-designware.h
+index 133820f..faccbbf 100644
+--- a/drivers/pci/host/pcie-designware.h
++++ b/drivers/pci/host/pcie-designware.h
+@@ -20,6 +20,14 @@ struct pcie_port_info {
+ 	phys_addr_t	mem_bus_addr;
+ };
+ 
++/*
++ * Maximum number of MSI IRQs can be 256 per controller. But keep
++ * it 32 as of now. Probably we will never need more than 32. If needed,
++ * then increment it in multiple of 32.
++ */
++#define MAX_MSI_IRQS			32
++#define MAX_MSI_CTRLS			(MAX_MSI_IRQS / 32)
++
+ struct pcie_port {
+ 	struct device		*dev;
+ 	u8			root_bus_nr;
+@@ -38,6 +46,10 @@ struct pcie_port {
+ 	int			irq;
+ 	u32			lanes;
+ 	struct pcie_host_ops	*ops;
++	int			msi_irq;
++	int			msi_irq_start;
++	unsigned long		msi_data;
++	DECLARE_BITMAP(msi_irq_in_use, MAX_MSI_IRQS);
+ };
+ 
+ struct pcie_host_ops {
+@@ -57,6 +69,8 @@ int cfg_read(void __iomem *addr, int where, int size, u32 *val);
+ int cfg_write(void __iomem *addr, int where, int size, u32 val);
+ int dw_pcie_wr_own_conf(struct pcie_port *pp, int where, int size, u32 val);
+ int dw_pcie_rd_own_conf(struct pcie_port *pp, int where, int size, u32 *val);
++void dw_handle_msi_irq(struct pcie_port *pp);
++void dw_pcie_msi_init(struct pcie_port *pp);
+ int dw_pcie_link_up(struct pcie_port *pp);
+ void dw_pcie_setup_rc(struct pcie_port *pp);
+ int dw_pcie_host_init(struct pcie_port *pp);
+-- 
+1.7.10.4
