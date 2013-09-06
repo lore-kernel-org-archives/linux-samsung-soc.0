@@ -1,139 +1,89 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH] PCI: exynos: turn off power of phy block when link failed
-Date: Fri, 06 Sep 2013 17:21:45 +0900
-Message-ID: <002301ceaada$1ffa8fb0$5fefaf10$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Bjorn Helgaas' <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
+Date: Fri, 06 Sep 2013 12:12:29 +0200
+Message-ID: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:25636 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750882Ab3IFKOR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Sep 2013 06:14:17 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-When link failed, there is no need to turn on phy block. Also,
-turning on phy block is added, in order to turn on phy block
-regardless of the default value of phy registers.
+Hi,
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-Tested on Exynos5440.
+This patch set adds headers with defines of exynos clocks.
+Then it converts dts files and drivers to use macros instead
+of magic numbers/enums to describe clock bindings.
 
- drivers/pci/host/pci-exynos.c |   68 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+The patch set is based on the latest mturquette/clk-next branch.
 
-diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index 94e096b..974f091 100644
---- a/drivers/pci/host/pci-exynos.c
-+++ b/drivers/pci/host/pci-exynos.c
-@@ -77,18 +77,28 @@ struct exynos_pcie {
- #define PCIE_PHY_PLL_BIAS		0x00c
- #define PCIE_PHY_DCC_FEEDBACK		0x014
- #define PCIE_PHY_PLL_DIV_1		0x05c
-+#define PCIE_PHY_COMMON_POWER		0x064
-+#define PCIE_PHY_COMMON_PD_CMN		(0x1 << 3)
- #define PCIE_PHY_TRSV0_EMP_LVL		0x084
- #define PCIE_PHY_TRSV0_DRV_LVL		0x088
- #define PCIE_PHY_TRSV0_RXCDR		0x0ac
-+#define PCIE_PHY_TRSV0_POWER		0x0c4
-+#define PCIE_PHY_TRSV0_PD_TSV		(0x1 << 7)
- #define PCIE_PHY_TRSV0_LVCC		0x0dc
- #define PCIE_PHY_TRSV1_EMP_LVL		0x144
- #define PCIE_PHY_TRSV1_RXCDR		0x16c
-+#define PCIE_PHY_TRSV1_POWER		0x184
-+#define PCIE_PHY_TRSV1_PD_TSV		(0x1 << 7)
- #define PCIE_PHY_TRSV1_LVCC		0x19c
- #define PCIE_PHY_TRSV2_EMP_LVL		0x204
- #define PCIE_PHY_TRSV2_RXCDR		0x22c
-+#define PCIE_PHY_TRSV2_POWER		0x244
-+#define PCIE_PHY_TRSV2_PD_TSV		(0x1 << 7)
- #define PCIE_PHY_TRSV2_LVCC		0x25c
- #define PCIE_PHY_TRSV3_EMP_LVL		0x2c4
- #define PCIE_PHY_TRSV3_RXCDR		0x2ec
-+#define PCIE_PHY_TRSV3_POWER		0x304
-+#define PCIE_PHY_TRSV3_PD_TSV		(0x1 << 7)
- #define PCIE_PHY_TRSV3_LVCC		0x31c
- 
- static inline void exynos_elb_writel(struct exynos_pcie *pcie, u32 val, u32 reg)
-@@ -202,6 +212,58 @@ static void exynos_pcie_deassert_phy_reset(struct pcie_port *pp)
- 	exynos_blk_writel(exynos_pcie, 0, PCIE_PHY_TRSV_RESET);
- }
- 
-+static void exynos_pcie_power_on_phy(struct pcie_port *pp)
-+{
-+	u32 val;
-+	struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_COMMON_POWER);
-+	val &= ~PCIE_PHY_COMMON_PD_CMN;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_COMMON_POWER);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_TRSV0_POWER);
-+	val &= ~PCIE_PHY_TRSV0_PD_TSV;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_TRSV0_POWER);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_TRSV1_POWER);
-+	val &= ~PCIE_PHY_TRSV1_PD_TSV;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_TRSV1_POWER);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_TRSV2_POWER);
-+	val &= ~PCIE_PHY_TRSV2_PD_TSV;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_TRSV2_POWER);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_TRSV3_POWER);
-+	val &= ~PCIE_PHY_TRSV3_PD_TSV;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_TRSV3_POWER);
-+}
-+
-+static void exynos_pcie_power_off_phy(struct pcie_port *pp)
-+{
-+	u32 val;
-+	struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_COMMON_POWER);
-+	val |= PCIE_PHY_COMMON_PD_CMN;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_COMMON_POWER);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_TRSV0_POWER);
-+	val |= PCIE_PHY_TRSV0_PD_TSV;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_TRSV0_POWER);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_TRSV1_POWER);
-+	val |= PCIE_PHY_TRSV1_PD_TSV;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_TRSV1_POWER);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_TRSV2_POWER);
-+	val |= PCIE_PHY_TRSV2_PD_TSV;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_TRSV2_POWER);
-+
-+	val = exynos_phy_readl(exynos_pcie, PCIE_PHY_TRSV3_POWER);
-+	val |= PCIE_PHY_TRSV3_PD_TSV;
-+	exynos_phy_writel(exynos_pcie, val, PCIE_PHY_TRSV3_POWER);
-+}
-+
- static void exynos_pcie_init_phy(struct pcie_port *pp)
- {
- 	struct exynos_pcie *exynos_pcie = to_exynos_pcie(pp);
-@@ -270,6 +332,9 @@ static int exynos_pcie_establish_link(struct pcie_port *pp)
- 	/* de-assert phy reset */
- 	exynos_pcie_deassert_phy_reset(pp);
- 
-+	/* power on phy */
-+	exynos_pcie_power_on_phy(pp);
-+
- 	/* initialize phy */
- 	exynos_pcie_init_phy(pp);
- 
-@@ -302,6 +367,9 @@ static int exynos_pcie_establish_link(struct pcie_port *pp)
- 						       PCIE_PHY_PLL_LOCKED);
- 				dev_info(pp->dev, "PLL Locked: 0x%x\n", val);
- 			}
-+			/* power off phy */
-+			exynos_pcie_power_off_phy(pp);
-+
- 			dev_err(pp->dev, "PCIe Link Fail\n");
- 			return -EINVAL;
- 		}
+The patches are generated by script.
+I have verified random clocks by hand.
+I have also tested it on exynos4 based board.
+
+This is the 2nd version of the patchset.
+Changes:
+- corrected devicetree mailing list,
+- added comments to include/dt-bindings/clock/exynos4.h for
+  clocks present only in particular chip,
+- added tab alignement in headers,
+- added comment to CLK_NR_CLKS,
+- added copyright headers,
+- split long lines in dts,
+- corrected example in bindings/clock/exynos5250-clock.txt, to point
+  appropriate clocks.
+
+Regards
+Andrzej
+
+Andrzej Hajda (12):
+  ARM: exynos4: create a DT header defining CLK IDs
+  ARM: dts: exynos4: convert magic numbers to macros in clock bindings
+  clk: exynos4: replace clock ID private enums with IDs from DT header
+  ARM: exynos5250: create a DT header defining CLK IDs
+  ARM: dts: exynos5250: convert magic numbers to macros in clock
+    bindings
+  clk: exynos5250: replace clock ID private enums with IDs from DT
+    header
+  ARM: exynos5420: create a DT header defining CLK IDs
+  ARM: dts: exynos5420: convert magic numbers to macros in clock
+    bindings
+  clk: exynos5420: replace clock ID private enums with IDs from DT
+    header
+  ARM: exynos5440: create a DT header defining CLK IDs
+  ARM: dts: exynos5440: convert magic numbers to macros in clock
+    bindings
+  clk: exynos5440: replace clock ID private enums with IDs from DT
+    header
+
+ .../devicetree/bindings/clock/exynos4-clock.txt    | 259 +------
+ .../devicetree/bindings/clock/exynos5250-clock.txt | 160 +---
+ .../devicetree/bindings/clock/exynos5420-clock.txt | 184 +----
+ .../devicetree/bindings/clock/exynos5440-clock.txt |  45 +-
+ arch/arm/boot/dts/exynos4.dtsi                     |  55 +-
+ arch/arm/boot/dts/exynos4210.dtsi                  |   6 +-
+ arch/arm/boot/dts/exynos4412.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   2 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |  92 +--
+ arch/arm/boot/dts/exynos5420.dtsi                  |  13 +-
+ arch/arm/boot/dts/exynos5440.dtsi                  |  27 +-
+ drivers/clk/samsung/clk-exynos4.c                  | 857 ++++++++++-----------
+ drivers/clk/samsung/clk-exynos5250.c               | 501 ++++++------
+ drivers/clk/samsung/clk-exynos5420.c               | 648 ++++++++--------
+ drivers/clk/samsung/clk-exynos5440.c               |  81 +-
+ include/dt-bindings/clock/exynos4.h                | 244 ++++++
+ include/dt-bindings/clock/exynos5250.h             | 157 ++++
+ include/dt-bindings/clock/exynos5420.h             | 188 +++++
+ include/dt-bindings/clock/exynos5440.h             |  42 +
+ 19 files changed, 1734 insertions(+), 1829 deletions(-)
+ create mode 100644 include/dt-bindings/clock/exynos4.h
+ create mode 100644 include/dt-bindings/clock/exynos5250.h
+ create mode 100644 include/dt-bindings/clock/exynos5420.h
+ create mode 100644 include/dt-bindings/clock/exynos5440.h
+
 -- 
-1.7.10.4
+1.8.1.2
