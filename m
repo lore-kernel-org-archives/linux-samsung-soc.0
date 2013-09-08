@@ -1,221 +1,409 @@
-From: Saravana Kannan <skannan@codeaurora.org>
-Subject: Re: [RFC Patch v2 1/3] clk: add support for temporary parent clock
- migration
-Date: Fri, 06 Sep 2013 20:37:46 -0700
-Message-ID: <522A9F8A.1060407@codeaurora.org>
-References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org> <1378208072-10173-2-git-send-email-chander.kashyap@linaro.org> <522658EB.3090408@gmail.com> <CANuQgHHPYYwsqrmW8ehhXjnw06YT9eLjiSDcXRvnp1hXg_nf6w@mail.gmail.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH] i2c: exynos5: add High Speed I2C controller driver
+Date: Sun, 8 Sep 2013 19:03:56 +0200
+Message-ID: <20130908170355.GA3154@katana>
+References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
+ <1377077077-20896-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:35924 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750793Ab3IGDht (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Sep 2013 23:37:49 -0400
-In-Reply-To: <CANuQgHHPYYwsqrmW8ehhXjnw06YT9eLjiSDcXRvnp1hXg_nf6w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="M9NhX3UHpAaciwkO"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1377077077-20896-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 09/03/2013 11:06 PM, Chander Kashyap wrote:
-> On 4 September 2013 03:17, Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com> wrote:
->> Hi Chander,
->>
->>
->> On 09/03/2013 01:34 PM, Chander Kashyap wrote:
->>>
->>> Some platforms use to migrate temporarily to another parent during cpu
->>> frequency
->>> scaling, e.g. Exynos and Tegra. Once the frequency is changed the latch on
->>> to
->>> original parent.
->>>
->>> The generic cpufreq-cpu0 driver use clk_set_rate API to scale cpu
->>> frequency.
->>> This patch is an attempt to address the above mentioned requirement.
->>>
->>> This is achieved as follows:
->>>
->>> Add a clk flag "CLK_SET_RATE_TEMP_PARENT" for clocks which need to migrate
->>> to
->>> another parent during set_rate operation on them.
->>>
->>> Add "temp_parent_name" and "tmp_parent" fields to clk structure i.e the
->>> name of
->>> temp_parent_clock and reference to temp_parent_clock.
->>>
->>> Hence in clk_set_rate API check for the "CLK_SET_RATE_TEMP_PARENT" flag,
->>> then
->>> latch on to alternate parent clock temporarily. Once the requested rate is
->>> set
->>> on the clk, re-parent back to original parent clock.
->>>
->>> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
->>> ---
->>>    drivers/clk/clk-mux.c        |   13 +++++++------
->>>    drivers/clk/clk.c            |   43
->>> ++++++++++++++++++++++++++++++++++++++++--
->>>    include/linux/clk-private.h  |   19 +++++++++++--------
->>>    include/linux/clk-provider.h |   10 ++++++----
->>>    4 files changed, 65 insertions(+), 20 deletions(-)
->>>
->>> diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
->>> index 4f96ff3..854b3ac 100644
->>> --- a/drivers/clk/clk-mux.c
->>> +++ b/drivers/clk/clk-mux.c
->>> @@ -115,8 +115,8 @@ EXPORT_SYMBOL_GPL(clk_mux_ro_ops);
->>>
->>>    struct clk *clk_register_mux_table(struct device *dev, const char *name,
->>>                  const char **parent_names, u8 num_parents, unsigned long
->>> flags,
->>> -               void __iomem *reg, u8 shift, u32 mask,
->>> -               u8 clk_mux_flags, u32 *table, spinlock_t *lock)
->>> +               const char *temp_parent_name, void __iomem *reg, u8 shift,
->>> +               u32 mask, u8 clk_mux_flags, u32 *table, spinlock_t *lock)
->>
->>
->> I'm not sure this is a good idea to split the changes like this. Applying
->> this patch alone would cause a build break, wouldn't it ?
->
-> Yes this will build break if patch 1 is applied only.
->>
->> The users need to be updated in same patch, so patch 2/3 should be normally
->> folded into this one.
->
-> ok
->
->>
->> [...]
->>>
->>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->>> index 2db08c0..0e29a5b 100644
->>> --- a/drivers/clk/clk.c
->>> +++ b/drivers/clk/clk.c
->>> @@ -1425,8 +1425,8 @@ static void clk_change_rate(struct clk *clk)
->>>     */
->>>    int clk_set_rate(struct clk *clk, unsigned long rate)
->>>    {
->>> -       struct clk *top, *fail_clk;
->>> -       int ret = 0;
->>> +       struct clk *top, *fail_clk, *parent = NULL;
->>> +       int ret = 0, index;
->>>
->>>          if (!clk)
->>>                  return 0;
->>> @@ -1450,6 +1450,35 @@ int clk_set_rate(struct clk *clk, unsigned long
->>> rate)
->>>                  goto out;
->>>          }
->>>
->>> +       /* Latch on to alternate parent temporarily if needed */
->>> +       if ((clk->flags&  CLK_SET_RATE_TEMP_PARENT)&&
->>> clk->temp_parent_name) {
->>>
->>> +               /* Save current parent before latching on to alternate
->>> parent */
->>> +               parent = clk->parent;
->>> +
->>> +               if (!clk->temp_parent) {
->>> +                       for (index = 0; index<  clk->num_parents; index++)
->>> {
->>> +                               if (!strcmp(clk->parent_names[index],
->>> +                                               clk->temp_parent_name))
->>> +                                       clk->temp_parent =
->>> +
->>> __clk_lookup(clk->temp_parent_name);
->>> +                       }
->>> +
->>> +                       if (!clk->temp_parent) {
->>> +                               pr_warn("%s: wrong temp_parent_name %s",
->>> +                                       __func__, clk->temp_parent_name);
->>> +                               ret = -EINVAL;
->>> +                               goto out;
->>> +                       }
->>> +               }
->>> +
->>> +               ret = clk_set_parent(clk, clk->temp_parent);
->>> +               if (ret) {
->>> +                       pr_warn("%s: failed to set %s parent\n",
->>> +                               __func__, clk->temp_parent->name);
->>> +                       goto out;
->>> +               }
->>> +       }
->>> +
->>>          /* notify that we are about to change rates */
->>>          fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
->>>          if (fail_clk) {
->>> @@ -1464,6 +1493,14 @@ int clk_set_rate(struct clk *clk, unsigned long
->>> rate)
->>>          clk_change_rate(top);
->>>
->>>    out:
->>> +       /* Reparent back to original parent */
->>> +       if (parent) {
->>> +               ret = clk_set_parent(clk, parent);
->>> +               if (ret)
->>> +                       pr_warn("%s: failed to set %s parent\n",
->>> +                                       __func__, parent->name);
->>> +       }
->>> +
->>>          clk_prepare_unlock();
->>>
->>>          return ret;
->>
->> [...]
->>
->>> diff --git a/include/linux/clk-private.h b/include/linux/clk-private.h
->>> index 8138c94..b70ba4d 100644
->>> --- a/include/linux/clk-private.h
->>> +++ b/include/linux/clk-private.h
->>> @@ -47,6 +47,8 @@ struct clk {
->>>    #ifdef CONFIG_COMMON_CLK_DEBUG
->>>          struct dentry           *dentry;
->>>    #endif
->>> +       const char              *temp_parent_name;
->>> +       struct clk              *temp_parent;
->>
->>
->> Shouldn't such data rather be on struct clk_mux level ? It's only needed
->> for _some_ mux clocks, while it's being added for all the clock types.
->>
->> Or wouldn't just a single "u8 temp_parent_index" field do ? The order of
->> struct clk::parents and struct clk::parent_names is always same, isn't it ?
->> Then if, e.g.
->>
->> parent_names[] = "clk_a", "clk_b", "clk_c";
->>
->> and "clk_c" is the temporary parent clock name, the corresponding clock
->> pointer storage is clk->parents[2] ? It could be used instead of
->> clk->temp_parent, couldn't it ?
->>
->
-> Yes can be.
-> The mentioned approach provides sanity check, i.e when parent exists
-> and properly registered.
->
 
-NACK.
+--M9NhX3UHpAaciwkO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The client of a leaf clock should not have to care about the internals 
-of the clock tree. Nor should the clock framework.
 
-At a high level, any clock that needs something like this has a mux 
-component. If the clock is prepared and enabled, it should guarantee 
-changing rates without gating the output. If that can't be done, then it 
-needs to see the SET_RATE_GATE flag.
+On Wed, Aug 21, 2013 at 02:54:37PM +0530, Naveen Krishna Ch wrote:
+> Adds support for High Speed I2C driver found in Exynos5 and
+> later SoCs from Samsung.
+>=20
+> Highspeed mode is a minor change in the i2c protocol.
+> Starts with
+> 1. start condition,
+> 2. 8-bit master ID code (00001xxx)
+> 3. followed by a NACK bit
+> Once the above conditions are met, the bus is now operates in highspeed m=
+ode.
+> The rest of the I2C protocol applies the same.
 
-And if it can ensure that the clock remains clocking while it's changing 
-the rate, that's an internal implementation detail of that specific 
-clock/clock driver. That specific implementation should switch the HW to 
-a temporary parent (doesn't need any clk->parent update), do whatever it 
-needs for the new parent, then switch back to it and then return.
+The description is correct, but it is not a change in the protocol. This
+is fully specified in the I2C specs.
 
-Thanks,
-Saravana
+> Driver only supports Device Tree method.
+>=20
+> Changes since v1:
+> 1. Added FIFO functionality
+> 2. Added High speed mode functionality
+> 3. Remove SMBUS_QUICK
+> 4. Remove the debugfs functionality
+> 5. Use devm_* functions where ever possible
+> 6. Driver is free from GPIO configs
+> 7. Use OF data string "clock-frequency" to get the bus operating frequenc=
+ies
+> 8. Split the clock divisor calculation function
+> 9. Add resets for the failed transacton cases
+> 10. Removed retries as core does retries if -EAGAIN is returned
+> 11. Removed mode from device tree info (use speed to distinguish
+>     the mode of operation)
+> 12. Use wait_for_completion_timeout as the interruptible case is not test=
+ed well
+> 13. few other bug fixes and cosmetic changes
+> 14. Removed the untested runtime_pm code
+> 15. Removed the retries as core does that
+> 16. Use adap.nr instead of alias
+> 17. Added spinlocks around the irq code
+> 18. Use i2c_add_numbered_adapter() instead of using aliases
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-hosted by The Linux Foundation
+Changes since v1 are irrelevant for the patch description.
+
+>=20
+> Signed-off-by: Taekgyun Ko <taeggyun.ko-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Simon Glass <sjg-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> Tested-by: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+>=20
+> ---
+> Wolfram and Thomas Figa thanks for reviewing the code.
+>=20
+> Changes since v10:
+> 1. Remove the incomplete runtime_pm code
+> 2. Correct the error checks as suggested by Thomas
+> 3. Use i2c_add_numbered_adapter() as suggested
+> 4. Modified the irq routine to handle the specific interrupts
+> 5. Added spinlocks around the irq code
+> 6. Remove the "mode" of operation field from device tree node and use the
+>    clock-frequency to decide the mode.
+>=20
+>  .../devicetree/bindings/i2c/i2c-exynos5.txt        |   44 ++
+>  drivers/i2c/busses/Kconfig                         |    7 +
+>  drivers/i2c/busses/Makefile                        |    1 +
+>  drivers/i2c/busses/i2c-exynos5.c                   |  799 ++++++++++++++=
+++++++
+>  4 files changed, 851 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+>  create mode 100644 drivers/i2c/busses/i2c-exynos5.c
+>=20
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Docu=
+mentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> new file mode 100644
+> index 0000000..805e018
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+> @@ -0,0 +1,44 @@
+> +* Samsung's High Speed I2C controller
+> +
+> +The Samsung's High Speed I2C controller is used to interface with I2C de=
+vices
+> +at various speeds ranging from 100khz to 3.4Mhz.
+> +
+> +Required properties:
+> +  - compatible: value should be.
+> +      -> "samsung,exynos5-hsi2c", for i2c compatible with exynos5 hsi2c.
+> +  - reg: physical base address of the controller and length of memory ma=
+pped
+> +    region.
+> +  - interrupts: interrupt number to the cpu.
+> +  - #address-cells: always 1 (for i2c addresses)
+> +  - #size-cells: always 0
+> +
+> +  - Pinctrl:
+> +    - pinctrl-0: Pin control group to be used for this controller.
+> +    - pinctrl-names: Should contain only one value - "default".
+> +
+> +Optional properties:
+> +  - clock-frequency: Desired operating frequency in Hz of the bus.
+> +    -> If not specified, the default value is 100khz in fast-speed mode =
+and
+> +       1Mhz in high-speed mode.
+
+Description doesn't match the current code.
+
+> +    -> If specified, The bus operates in high-speed mode only if the
+> +       clock-frequency is >=3D 1Mhz.
+
+s/The/the/
+
+=2E..
+
+> +/*
+> + * exynos5_i2c_init: configures the controller for I2C functionality
+> + * Programs I2C controller for Master mode operation
+> + */
+> +static void exynos5_i2c_init(struct exynos5_i2c *i2c)
+> +{
+> +	u32 i2c_conf =3D readl(i2c->regs + HSI2C_CONF);
+> +	u32 i2c_timeout =3D readl(i2c->regs + HSI2C_TIMEOUT);
+> +
+> +	/* Disable timeout */
+> +	i2c_timeout &=3D ~HSI2C_TIMEOUT_EN;
+> +	writel(i2c_timeout, i2c->regs + HSI2C_TIMEOUT);
+
+Just curious: Can't you use HSI2C_TIMEOUT and wait_for_completion
+instead of wait_for_completion_timeout? If so, it might save you a
+little bit of overhead.
+
+> +
+> +	writel((HSI2C_FUNC_MODE_I2C | HSI2C_MASTER),
+> +					i2c->regs + HSI2C_CTL);
+> +	writel(HSI2C_TRAILING_COUNT, i2c->regs + HSI2C_TRAILIG_CTL);
+> +
+> +	if (i2c->speed_mode =3D=3D HSI2C_HIGH_SPD) {
+> +		writel(HSI2C_MASTER_ID(MASTER_ID(i2c->adap.nr)),
+> +					i2c->regs + HSI2C_ADDR);
+> +		i2c_conf |=3D HSI2C_HS_MODE;
+> +	}
+> +
+> +	writel(i2c_conf | HSI2C_AUTO_MODE, i2c->regs + HSI2C_CONF);
+> +}
+> +
+> +
+> +	if ((i2c->msg->flags & I2C_M_RD) && (int_status &
+> +			(HSI2C_INT_TRAILING | HSI2C_INT_RX_ALMOSTFULL))) {
+> +		fifo_status =3D readl(i2c->regs + HSI2C_FIFO_STATUS);
+> +		fifo_level =3D HSI2C_RX_FIFO_LVL(fifo_status);
+> +		len =3D min(fifo_level, i2c->msg->len - i2c->msg_ptr);
+> +
+> +		while (len > 0) {
+> +			byte =3D (unsigned char)
+> +				readl(i2c->regs + HSI2C_RX_DATA);
+> +			i2c->msg->buf[i2c->msg_ptr++] =3D byte;
+> +			len--;
+> +		}
+
+With all this copying going on, this should be threaded irq probably.
+
+> +		i2c->state =3D 0;
+> +	} else if (int_status & HSI2C_INT_TX_ALMOSTEMPTY) {
+> +		fifo_status =3D readl(i2c->regs + HSI2C_FIFO_STATUS);
+> +		fifo_level =3D HSI2C_TX_FIFO_LVL(fifo_status);
+> +
+> +		len =3D HSI2C_FIFO_MAX - fifo_level;
+> +		if (len > (i2c->msg->len - i2c->msg_ptr))
+> +			len =3D i2c->msg->len - i2c->msg_ptr;
+> +
+> +		while (len > 0) {
+> +			byte =3D i2c->msg->buf[i2c->msg_ptr++];
+> +			writel(byte, i2c->regs + HSI2C_TX_DATA);
+> +			len--;
+> +		}
+> +		i2c->state =3D 0;
+> +	}
+> +
+> + stop:
+> +	if ((i2c->msg_ptr =3D=3D i2c->msg->len) || (i2c->state < 0)) {
+> +		writel(0, i2c->regs + HSI2C_INT_ENABLE);
+> +		exynos5_i2c_clr_pend_irq(i2c);
+> +		complete(&i2c->msg_complete);
+> +	} else {
+> +		exynos5_i2c_clr_pend_irq(i2c);
+> +	}
+> +
+> +	spin_unlock_irqrestore(&i2c->lock, flags);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+
+=2E..
+
+> +static int exynos5_i2c_xfer_msg(struct exynos5_i2c *i2c,
+> +			      struct i2c_msg *msgs, int stop)
+> +{
+> +	unsigned long timeout;
+> +	int ret;
+> +
+> +	INIT_COMPLETION(i2c->msg_complete);
+> +
+> +	spin_lock_irq(&i2c->lock);
+> +	i2c->msg =3D msgs;
+> +	i2c->msg_ptr =3D 0;
+> +	i2c->trans_done =3D 0;
+> +
+> +	exynos5_i2c_message_start(i2c, stop);
+> +
+> +	spin_unlock_irq(&i2c->lock);
+> +	timeout =3D wait_for_completion_timeout(&i2c->msg_complete,
+> +					      EXYNOS5_I2C_TIMEOUT);
+> +	if (timeout =3D=3D 0)
+> +		ret =3D -ETIMEDOUT;
+> +	else
+> +		ret =3D i2c->state;
+> +
+> +	if (ret < 0) {
+> +		exynos5_i2c_reset(i2c);
+
+Do you really need to reset the core after a failed transaction?
+
+> +		if (ret =3D=3D -ETIMEDOUT) {
+> +			dev_warn(i2c->dev, "%s timeout\n",
+> +				 (msgs->flags & I2C_M_RD) ? "rx" : "tx");
+> +			return ret;
+> +		} else if (ret =3D=3D -EAGAIN) {
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * If this is the last message to be transfered (stop =3D=3D 1)
+> +	 * Then check if the bus can be brought back to idle.
+> +	 *
+> +	 * Return -EBUSY if the bus still busy.
+> +	 */
+> +	if (exynos5_i2c_wait_bus_idle(i2c, stop))
+> +		return -EBUSY;
+
+Why do you need this after the transaction?
+
+> +
+> +	/* Return the state as in interrupt routine */
+> +	return ret;
+> +}
+> +
+> +static int exynos5_i2c_xfer(struct i2c_adapter *adap,
+> +			struct i2c_msg *msgs, int num)
+> +{
+> +	struct exynos5_i2c *i2c =3D (struct exynos5_i2c *)adap->algo_data;
+> +	int i =3D 0, ret =3D 0, stop =3D 0;
+> +
+> +	if (i2c->suspended) {
+> +		dev_err(i2c->dev, "HS-I2C is not initialzed.\n");
+> +		return -EIO;
+> +	}
+> +
+> +	clk_prepare_enable(i2c->clk);
+> +
+> +	for (i =3D 0; i < num; i++) {
+> +		stop =3D (i =3D=3D num - 1);
+> +
+> +		if (msgs->len =3D=3D 0) {
+
+Did you need that? It shouldn't happen since you are not advertising
+SMBUS_QUICK.
+
+> +			msgs++;
+> +			continue;
+> +		}
+> +
+> +		ret =3D exynos5_i2c_xfer_msg(i2c, msgs, stop);
+> +		if (!stop)
+> +			msgs++;
+
+Probably better put in the for-body (i.e. i++, msgs++).
+
+> +
+> +		if (ret < 0)
+> +			goto out;
+> +	}
+> +
+> +	if (i =3D=3D num) {
+> +		ret =3D num;
+> +	} else {
+> +		/* Only one message, cannot access the device */
+> +		if (i =3D=3D 1)
+> +			ret =3D -EREMOTEIO;
+> +		else
+> +			ret =3D i;
+> +
+> +		dev_warn(i2c->dev, "xfer message failed\n");
+> +	}
+> +
+> + out:
+> +	clk_disable_unprepare(i2c->clk);
+> +	return ret;
+> +}
+> +
+> +static u32 exynos5_i2c_func(struct i2c_adapter *adap)
+> +{
+> +	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
+> +}
+> +
+> +static const struct i2c_algorithm exynos5_i2c_algorithm =3D {
+> +	.master_xfer		=3D exynos5_i2c_xfer,
+> +	.functionality		=3D exynos5_i2c_func,
+> +};
+> +
+> +static int exynos5_i2c_probe(struct platform_device *pdev)
+> +{
+> +	struct device_node *np =3D pdev->dev.of_node;
+> +	struct exynos5_i2c *i2c;
+> +	struct resource *mem;
+> +	unsigned int op_clock;
+> +	int ret;
+> +
+> +	if (!np) {
+> +		dev_err(&pdev->dev, "no device node\n");
+> +		return -ENOENT;
+> +	}
+
+How should this happen?
+
+> +
+> +	i2c =3D devm_kzalloc(&pdev->dev, sizeof(struct exynos5_i2c), GFP_KERNEL=
+);
+> +	if (!i2c) {
+> +		dev_err(&pdev->dev, "no memory for state\n");
+> +		return -ENOMEM;
+> +	}
+> +
+
+=2E..
+
+> +	i2c->adap.nr =3D -1;
+> +	ret =3D i2c_add_numbered_adapter(&i2c->adap);
+
+Just use i2c_add_adapter and skip setting nr to -1.
+
+=2E..
+
+> +static const struct dev_pm_ops exynos5_i2c_dev_pm_ops =3D {
+> +	.suspend_noirq =3D exynos5_i2c_suspend_noirq,
+> +	.resume_noirq	=3D exynos5_i2c_resume_noirq,
+> +};
+> +
+> +#define EXYNOS5_DEV_PM_OPS (&exynos5_i2c_dev_pm_ops)
+> +#else
+> +#define EXYNOS5_DEV_PM_OPS NULL
+> +#endif
+
+Isn't there a macro for this? SIMPLE_DEV_PM_OPS*? Not sure, I always mix
+them up...
+
+Regards,
+
+   Wolfram
+
+
+--M9NhX3UHpAaciwkO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSLK37AAoJEBQN5MwUoCm2DwYQAKTpBWt/A3gu6tRYjE/0p5FJ
+MGJzMVqfuAwmcLMXx4cnYRpjffXls5Txd11ZiSbZQmshbFVMijnXTywHTq6lfDNY
+gnY0r1KKFiw+Pl8k/kdyzDY5jt1ERAN0M6n6zEG4zqmigSWxAWEBtiwbcJLc9N45
+zFWU7FzX9Kz8Z9jzkAuNE6dKUN3QZnm0+xuwQAhCDZ+/wQ5nV9e2BRq3aC95uL4s
+n2yoMfpAWVptdyCa1qTgCkrpOIcyU67UvB7bncmNyTMAEBzF2XpXNFyy+e9LYcso
+9QCCiWvTSLvPGtdHY+9GhFJ5WViGCZbOlaZxEhOb4QLniOuU2GVrdc5rRvIrq+uO
+RNqSiMrY8nTSC+vGqD6bsRK5dImnZb9blqCmlnKw5y/2F4ntluBccvFb7x6h71SP
+doXYzej2D9yIn7a0gFKfLYrM0WxtGBUX+WrxF5wJ96Y42xEIaFzjpc9GU5ud6i39
+EehAwlvJfqHaIwXfwJ/As0ZW+mvUA2s/Qw/T0LF24BOrVlkrk2cPz4fX9F3YScxa
+KPLqFQQIHpmRjjtgYTFnZhIC/k+1iisjE39LFuliI6WOM/7aSg3TROqatWCLHlLi
+jpfCZVPeo8LoWE+yRUAY7nNSwna09Iu0Zk9GD9KxiZ96xP92maPs2ePNlXUec8t0
+aPmavOpQhL85SgGRC7Fx
+=FVcj
+-----END PGP SIGNATURE-----
+
+--M9NhX3UHpAaciwkO--
