@@ -1,54 +1,58 @@
-From: Jingoo Han <jg1.han@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
 Subject: Re: [PATCH] ARM: dts: Correct typo in use of samsung,pin-drv for
  exynos5250
-Date: Mon, 09 Sep 2013 09:24:05 +0900
-Message-ID: <003301ceacf2$e4964700$adc2d500$%han@samsung.com>
+Date: Mon, 09 Sep 2013 11:00:30 +0200
+Message-ID: <6027618.yAIjZoXqyG@amdc1227>
 References: <1378498192-5163-1-git-send-email-al.stone@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48477 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750835Ab3IIAYI (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:10725 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751646Ab3IIJAf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Sep 2013 20:24:08 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MSU0041A146W1A0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 09 Sep 2013 09:24:06 +0900 (KST)
+	Mon, 9 Sep 2013 05:00:35 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MSU005PJOZCX240@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 09 Sep 2013 10:00:34 +0100 (BST)
 In-reply-to: <1378498192-5163-1-git-send-email-al.stone@linaro.org>
-Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Al Stone' <al.stone@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linaro-acpi@lists.linaro.org, 'Al Stone' <ahs3@redhat.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: al.stone@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linaro-acpi@lists.linaro.org, Al Stone <ahs3@redhat.com>
 
-On Saturday, September 07, 2013 5:10 AM, Al Stone wrote:
-> 
+Hi Al,
+
+On Friday 06 of September 2013 14:09:52 al.stone@linaro.org wrote:
 > From: Al Stone <ahs3@redhat.com>
 > 
 >    Corrects an obvious typo in the Arndale pinctrl descriptions in DT.
 >    The samsung-pinctrl driver uses the correct name.
-> 
-> Signed-off-by: Al Stone <al.stone@linaro.org>
 
-CC'ed Kukjin Kim (Samsung-SoC Maintainer)
+Thanks for spotting this. The patch looks good to me, but is it tested on 
+some Exynos 5250 based board?
 
-It looks good.
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+With this typo activating configuration of these pinctrl groups just kept 
+pin-drv at default value, as set up by bootloader, while after this patch 
+it will be reconfigured with new values.
+
+I'll try to test this patch on an Arndale later today.
 
 Best regards,
-Jingoo Han
+Tomasz
 
+> Signed-off-by: Al Stone <al.stone@linaro.org>
 > ---
->  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 44 +++++++++++++++----------------
->  1 file changed, 22 insertions(+), 22 deletions(-)
+>  arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 44
+> +++++++++++++++---------------- 1 file changed, 22 insertions(+), 22
+> deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
-> index 656e381..031e198 100644
+> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
+> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi index 656e381..031e198
+> 100644
 > --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
 > +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
 > @@ -210,21 +210,21 @@
@@ -236,7 +240,3 @@ Jingoo Han
 > +			samsung,pin-drv = <0>;
 >  		};
 >  	};
-> 
-> --
-> 1.8.3.1
-> 
