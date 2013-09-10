@@ -1,255 +1,359 @@
-From: Al Stone <ahs3@redhat.com>
-Subject: Re: [PATCH] ARM: dts: Correct typo in use of samsung,pin-drv for
- exynos5250
-Date: Mon, 09 Sep 2013 09:11:11 -0600
-Message-ID: <522DE50F.7030602@redhat.com>
-References: <1378498192-5163-1-git-send-email-al.stone@linaro.org> <6027618.yAIjZoXqyG@amdc1227>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmiphy driver
+Date: Tue, 10 Sep 2013 13:57:51 +0530
+Message-ID: <CAPdUM4PpFbc9utAsHnqyF9OJdipdgq036fqFM_SeG0O+M3N5jA@mail.gmail.com>
+References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com>
+	<1377845974-28373-2-git-send-email-rahul.sharma@samsung.com>
+	<CAOw6vb+2gspWDcTgqt24Mf-Bxusoi5_jr2GR+i=gmG+nmCdNzg@mail.gmail.com>
+	<CAPdUM4Px=yoZeGTVVtaKexuBerhQYH08nZYn81QkT9v_vm0i7Q@mail.gmail.com>
+	<011901cea941$91853e40$b48fbac0$%dae@samsung.com>
+	<CAOw6vb+32WsEY0px-iZaSv-AYj9NS6OX9hqpH-y6VQ77SpHymw@mail.gmail.com>
+	<00bf01cea9ee$bcda5960$368f0c20$%dae@samsung.com>
+	<CAPdUM4PT4cpXSe6sLgFaQnsycgY9AvYXPtgTMywYT0oePwPWwA@mail.gmail.com>
+	<00ca01cea9f7$f5ee3b50$e1cab1f0$%dae@samsung.com>
+	<CAPdUM4MxLBoiE6DpUbkn2-Sji89RM1+yHeAS1c2OREB+=BfdVg@mail.gmail.com>
+	<00cf01cea9ff$dc9749a0$95c5dce0$%dae@samsung.com>
+	<CAOw6vbLAuJyFU55wP1+Akm6PZepxaS_UuwFYe9LWcM3sKFmWwA@mail.gmail.com>
+	<011601ceaa3e$d08e8b20$71aba160$%dae@samsung.com>
+	<CAPdUM4OoicU76Tw-gkuvAGGvOHM-x1DfYLUEFKa3KaEAtwLAvw@mail.gmail.com>
+	<CAOw6vbLrgigGHdwGQHRWJAF=N-ZaL+6VSyUfP37B-4baU-+jBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mx1.redhat.com ([209.132.183.28]:10997 "EHLO mx1.redhat.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752199Ab3IIPLQ (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:43672 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753107Ab3IJI1x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Sep 2013 11:11:16 -0400
-In-Reply-To: <6027618.yAIjZoXqyG@amdc1227>
+	Tue, 10 Sep 2013 04:27:53 -0400
+Received: by mail-wg0-f46.google.com with SMTP id k14so6158306wgh.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Sep 2013 01:27:52 -0700 (PDT)
+In-Reply-To: <CAOw6vbLrgigGHdwGQHRWJAF=N-ZaL+6VSyUfP37B-4baU-+jBQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: al.stone@linaro.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linaro-acpi@lists.linaro.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, "sw0312.kim" <sw0312.kim@samsung.com>, Lucas Stach <l.stach@pengutronix.de>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sunil joshi <joshi@samsung.com>, Shirish S <shirish@chromium.org>
 
-On 09/09/2013 03:00 AM, Tomasz Figa wrote:
-> Hi Al,
->
-> On Friday 06 of September 2013 14:09:52 al.stone@linaro.org wrote:
->> From: Al Stone <ahs3@redhat.com>
+On 6 September 2013 19:21, Sean Paul <seanpaul@chromium.org> wrote:
+> On Thu, Sep 5, 2013 at 11:37 PM, Rahul Sharma <r.sh.open@gmail.com> wrote:
+>> On 5 September 2013 19:20, Inki Dae <inki.dae@samsung.com> wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Sean Paul [mailto:seanpaul@chromium.org]
+>>>> Sent: Thursday, September 05, 2013 10:20 PM
+>>>> To: Inki Dae
+>>>> Cc: Rahul Sharma; Rahul Sharma; linux-samsung-soc; dri-devel; kgene.kim;
+>>>> sw0312.kim; Lucas Stach; Tomasz Figa; Sylwester Nawrocki; sunil joshi;
+>>>> Shirish S
+>>>> Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmiphy
+>>>> driver
+>>>>
+>>>> On Thu, Sep 5, 2013 at 2:19 AM, Inki Dae <inki.dae@samsung.com> wrote:
+>>>> >
+>>>> >
+>>>> >> -----Original Message-----
+>>>> >> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-
+>>>> soc-
+>>>> >> owner@vger.kernel.org] On Behalf Of Rahul Sharma
+>>>> >> Sent: Thursday, September 05, 2013 3:04 PM
+>>>> >> To: Inki Dae
+>>>> >> Cc: Sean Paul; Rahul Sharma; linux-samsung-soc; dri-devel; kgene.kim;
+>>>> >> sw0312.kim; Lucas Stach; Tomasz Figa; Sylwester Nawrocki; sunil joshi;
+>>>> >> Shirish S
+>>>> >> Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to
+>>>> hdmiphy
+>>>> >> driver
+>>>> >>
+>>>> >> On 5 September 2013 10:52, Inki Dae <inki.dae@samsung.com> wrote:
+>>>> >> >> >> >> >> +static struct hdmiphy_config hdmiphy_4210_configs[] = {
+>>>> >> >> >> >> >> +       {
+>>>> >> >> >> >> >> +               .pixel_clock = 27000000,
+>>>> >> >> >> >> >> +               .conf = {
+>>>> >> >> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x1C,
+>>>> > 0x30,
+>>>> >> >> > 0x40,
+>>>> >> >> >> >> >> +                       0x6B, 0x10, 0x02, 0x51, 0xDF, 0xF2,
+>>>> > 0x54,
+>>>> >> >> > 0x87,
+>>>> >> >> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08,
+>>>> > 0x10,
+>>>> >> >> > 0xE0,
+>>>> >> >> >> >> >> +                       0x22, 0x40, 0xE3, 0x26, 0x00, 0x00,
+>>>> > 0x00,
+>>>> >> >> > 0x00,
+>>>> >> >> >> >> >> +               },
+>>>> >> >> >> >> >> +       },
+>>>> >> >> >> >> >> +       {
+>>>> >> >> >> >> >> +               .pixel_clock = 27027000,
+>>>> >> >> >> >> >> +               .conf = {
+>>>> >> >> >> >> >> +                       0x01, 0x05, 0x00, 0xD4, 0x10, 0x9C,
+>>>> > 0x09,
+>>>> >> >> > 0x64,
+>>>> >> >> >> >> >> +                       0x6B, 0x10, 0x02, 0x51, 0xDF, 0xF2,
+>>>> > 0x54,
+>>>> >> >> > 0x87,
+>>>> >> >> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08,
+>>>> > 0x10,
+>>>> >> >> > 0xE0,
+>>>> >> >> >> >> >> +                       0x22, 0x40, 0xE3, 0x26, 0x00, 0x00,
+>>>> > 0x00,
+>>>> >> >> > 0x00,
+>>>> >> >> >> >> >> +               },
+>>>> >> >> >> >> >> +       },
+>>>> >> >> >> >> >> +       {
+>>>> >> >> >> >> >> +               .pixel_clock = 74176000,
+>>>> >> >> >> >> >> +               .conf = {
+>>>> >> >> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x9C,
+>>>> > 0xef,
+>>>> >> >> > 0x5B,
+>>>> >> >> >> >> >> +                       0x6D, 0x10, 0x01, 0x51, 0xef, 0xF3,
+>>>> > 0x54,
+>>>> >> >> > 0xb9,
+>>>> >> >> >> >> >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08,
+>>>> > 0x10,
+>>>> >> >> > 0xE0,
+>>>> >> >> >> >> >> +                       0x22, 0x40, 0xa5, 0x26, 0x01, 0x00,
+>>>> > 0x00,
+>>>> >> >> > 0x00,
+>>>> >> >> >> >> >> +               },
+>>>> >> >> >> >> >> +       },
+>>>> >> >> >> >> >> +       {
+>>>> >> >> >> >> >> +               .pixel_clock = 74250000,
+>>>> >> >> >> >> >> +               .conf = {
+>>>> >> >> >> >> >> +                       0x01, 0x05, 0x00, 0xd8, 0x10, 0x9c,
+>>>> > 0xf8,
+>>>> >> >> > 0x40,
+>>>> >> >> >> >> >> +                       0x6a, 0x10, 0x01, 0x51, 0xff, 0xf1,
+>>>> > 0x54,
+>>>> >> >> > 0xba,
+>>>> >> >> >> >> >> +                       0x84, 0x00, 0x10, 0x38, 0x00, 0x08,
+>>>> > 0x10,
+>>>> >> >> > 0xe0,
+>>>> >> >> >> >> >> +                       0x22, 0x40, 0xa4, 0x26, 0x01, 0x00,
+>>>> > 0x00,
+>>>> >> >> > 0x00,
+>>>> >> >> >> >> >> +               },
+>>>> >> >> >> >> >> +       },
+>>>> >> >> >> >> >> +       {
+>>>> >> >> >> >> >> +               .pixel_clock = 148500000,
+>>>> >> >> >> >> >> +               .conf = {
+>>>> >> >> >> >> >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x9C,
+>>>> > 0xf8,
+>>>> >> >> > 0x40,
+>>>> >> >> >> >> >> +                       0x6A, 0x18, 0x00, 0x51, 0xff, 0xF1,
+>>>> > 0x54,
+>>>> >> >> > 0xba,
+>>>> >> >> >> >> >> +                       0x84, 0x00, 0x10, 0x38, 0x00, 0x08,
+>>>> > 0x10,
+>>>> >> >> > 0xE0,
+>>>> >> >> >> >> >> +                       0x22, 0x40, 0xa4, 0x26, 0x02, 0x00,
+>>>> > 0x00,
+>>>> >> >> > 0x00,
+>>>> >> >> >> >> >> +               },
+>>>> >> >> >> >> >> +       },
+>>>> >> >> >> >> >> +};
+>>>> >> >> >> >> >> +
+>>>> >> >> >> >> >
+>>>> >> >> >> >> > Are you aware of the effort to move these to dt? Since these
+>>>> >> are
+>>>> >> >> >> >> > board-specific values, it seems incorrect to apply them
+>>>> >> >> universally.
+>>>> >> >> >> >> > Shirish has uploaded a patch to the chromium review site to
+>>>> >> push
+>>>> >> >> >> these
+>>>> >> >> >> >> > into dt
+>>> (https://chromium-review.googlesource.com/#/c/65581).
+>>>> >> >> Maybe
+>>>> >> >> >> >> > you can work that into your patch set?
+>>>> >> >> >> >> >
+>>>> >> >> >> >
+>>>> >> >> >> > Are these really board-specific values?
+>>>> >> >> >>
+>>>> >> >> >> According to your hardware people:
+>>>> >> >> >>
+>>>> >> >> >> "If the signal pattern doesn't change for new board, the phy
+>>>> setting
+>>>> >> >> >> is same as the current board. But if changed, you need to confirm
+>>>> >> with
+>>>> >> >> >> measurement of signals, because it may vary slightly by
+>>>> resistance
+>>>> >> of
+>>>> >> >> >> board pattern"
+>>>> >> >> >>
+>>>> >> >> >
+>>>> >> >> > Right. it seems that the phy configuration should be adjusted
+>>>> >> according
+>>>> >> >> to
+>>>> >> >> > PCB environment: OSC clock rate, 24MHz or 27MHz, could be decided
+>>>> by
+>>>> >> PCB
+>>>> >> >> > even though most PCBs use 27MHz.
+>>>> >> >> >
+>>>> >> >> >> That indicates to me that we might need to tweak these on a per-
+>>>> >> board
+>>>> >> >> >> basis.
+>>>> >> >> >>
+>>>> >> >> >> In the 5420 datasheet, there are a few register descriptions
+>>>> >> available
+>>>> >> >> >> for the phy. 0x145D0004 is CLK_SEL which seems like it would be
+>>>> >> >> >> board-specific, same with TX_* registers.
+>>>> >> >> >>
+>>>> >> >> >
+>>>> >> >> > And we can select HDMI Tx PHY internal PLL input clock by setting
+>>>> >> >> CLK_SEL.
+>>>> >> >> > Ok, Shirish's patch set is reasonable to me. However, that patch
+>>>> set
+>>>> >> >> should
+>>>> >> >> > be rebased on top of Rahul's patch set. Shirish and Rahul, please
+>>>> re-
+>>>> >> >> post
+>>>> >> >> > your patch set after discussing how to rebase these patch set.
+>>>> >> >> >
+>>>> >> >> > Thanks,
+>>>> >> >> > Inki Dae
+>>>> >> >> >
+>>>> >> >>
+>>>> >> >> In that case, we need to test the phy confs for all the exynos
+>>>> boards,
+>>>> >> >> supported in
+>>>> >> >> mainline. Probably needs a analyser as well to precisely compare the
+>>>> >> >> deviation.
+>>>> >> >
+>>>> >> > Shirish patch adds phy config data only to arndale and smdk5250
+>>>> boards,
+>>>> >> and
+>>>> >> > these config data should have each board specific values. Therefore,
+>>>> for
+>>>> >> > other boards, shouldn't correct phy config data suitable to their
+>>>> boards
+>>>> >> be
+>>>> >> > added to their board dts files? Is the above analyzer really needed?
+>>>> >> >
+>>>> >>
+>>>> >> Sorry, I had only seen his patches for chromium tree. In mainline
+>>>> >> version, he added for 5250 as well. But both sets (for arndale and
+>>>> >> smdk) are exactly same as original 5250 configs which also works
+>>>> >> with 4412 origen.
+>>>> >>
+>>>> >> Some problem has been identified during conformance testing for
+>>>> >> 5420 peach board, which happens with analyser. It was always
+>>>> >> working fine on the TV sets that I have. @Shirish/Sean please
+>>>> >> correct me if wrong.
+>>>> >>
+>>>> >> >> Shirish patch is only for 5420 Peach board. Else, to start with we
+>>>> can
+>>>> >> >> mark
+>>>> >> >> phyconf as optional property which overrides the default Phy Confs
+>>>> for
+>>>> >> >> given SoC.
+>>>> >> >
+>>>> >> > Hm.... you mean that hdmiphy driver use the default phy config data
+>>>> in
+>>>> >> > driver; most boards use the same data, and only in special case; a
+>>>> board
+>>>> >> > uses different OSC clock rate, the hdmiphy driver use phy config data
+>>>> >> from
+>>>> >> > dts file checking hdmiphy-confs property?
+>>>> >> >
+>>>> >>
+>>>> >> Yes. I meant same. I don't see the real need to duplicate so much
+>>>> >> of data in all board dts files. We can add it for a particular board,
+>>>> if
+>>>> >> really required.
+>>>> >>
+>>>> >
+>>>> > Yes, reasonable to me. It's not good that board dts files have same phy
+>>>> > config data. How about using the phy config data from dts file if
+>>>> > hdmiphy-confs property exists, otherwise using default phy config data
+>>>> then?
+>>>> > This means that we don't need to remove the phy config data from driver;
+>>>> > that will be used as default values.
+>>>> >
+>>>>
+>>>> Can you add the "default" configs to exynos5250.dtsi and
+>>>> exynos5420.dtsi, then overwrite it in the board file if it needs to be
+>>>> different?
+>>>>
 >>
->>     Corrects an obvious typo in the Arndale pinctrl descriptions in DT.
->>     The samsung-pinctrl driver uses the correct name.
+>> This will still introduce some duplication as 4412 and 5250 share same
+>> phy confs and have no common dtsi. Similar situation can arise for later
+>> SoCs in exynos series.
+>>
+>>>
+>>> Good idea but how about adding default-hdmiphy-config property to each board
+>>> dts file and removing phy config data from board dts file if they are same
+>>> as default one of driver? With this, hdmiphy driver checks if
+>>> default-hdmiphy-config property exists, and then use default config data if
+>>> exists. And if not exists, hdmiphy driver gets and uses board specific phy
+>>> config data from board dts file.
+>>> And it seems that the phy config values of Shirish's patch set are same as
+>>> default ones of driver. So we can remove the phy config data from each board
+>>> dts files and add default-hdmiphy-config property to there so that default
+>>> data of driver can be used.
+>>>
+>>>
+>>> Thanks,
+>>> Inki Dae
+>>>
+>>
+>> We can simplify it further by letting the driver use phy-conf
+>> property from DT. If phy-conf property is not available switch to
+>> default confs, provided in the driver. This way we don't need to add
+>> default-hdmiphy-config property to all board files.
+>>
 >
-> Thanks for spotting this. The patch looks good to me, but is it tested on
-> some Exynos 5250 based board?
+> This is probably a worthwhile discussion to have on Shirish's patch
+> with devicetree-discuss. I'm unsure which is the preferred way to do
+> something like this.
 
-Only with a simple boot test on an Arndale, and making sure that dtc
-could actually build the dtb.  I did not test the driver code.  I did
-read through the code and it appeared to be doing the right things,
-based on the content of the DT, but I did not do an active test of that.
+I agree.
 
-> With this typo activating configuration of these pinctrl groups just kept
-> pin-drv at default value, as set up by bootloader, while after this patch
-> it will be reconfigured with new values.
->
-> I'll try to test this patch on an Arndale later today.
->
-> Best regards,
-> Tomasz
->
->> Signed-off-by: Al Stone <al.stone@linaro.org>
->> ---
->>   arch/arm/boot/dts/exynos5250-pinctrl.dtsi | 44
->> +++++++++++++++---------------- 1 file changed, 22 insertions(+), 22
->> deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->> b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi index 656e381..031e198
->> 100644
->> --- a/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250-pinctrl.dtsi
->> @@ -210,21 +210,21 @@
->>   			samsung,pins = "gpa0-2", "gpa0-3";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		i2c2_bus: i2c2-bus {
->>   			samsung,pins = "gpa0-6", "gpa0-7";
->>   			samsung,pin-function = <3>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		i2c2_hs_bus: i2c2-hs-bus {
->>   			samsung,pins = "gpa0-6", "gpa0-7";
->>   			samsung,pin-function = <4>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		uart2_data: uart2-data {
->> @@ -238,21 +238,21 @@
->>   			samsung,pins = "gpa1-2", "gpa1-3";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		i2c3_bus: i2c3-bus {
->>   			samsung,pins = "gpa1-2", "gpa1-3";
->>   			samsung,pin-function = <3>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		i2c3_hs_bus: i2c3-hs-bus {
->>   			samsung,pins = "gpa1-2", "gpa1-3";
->>   			samsung,pin-function = <4>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		uart3_data: uart3-data {
->> @@ -273,14 +273,14 @@
->>   			samsung,pins = "gpa2-0", "gpa2-1";
->>   			samsung,pin-function = <3>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		i2c5_bus: i2c5-bus {
->>   			samsung,pins = "gpa2-2", "gpa2-3";
->>   			samsung,pin-function = <3>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		spi1_bus: spi1-bus {
->> @@ -376,14 +376,14 @@
->>   			samsung,pins = "gpb3-0", "gpb3-1";
->>   			samsung,pin-function = <4>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		i2c1_hs_bus: i2c1-hs-bus {
->>   			samsung,pins = "gpb3-2", "gpb3-3";
->>   			samsung,pin-function = <4>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		sd0_clk: sd0-clk {
->> @@ -551,14 +551,14 @@
->>   			samsung,pins = "gpd0-2", "gpd0-3";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		dp_hpd: dp_hpd {
->>   			samsung,pins = "gpx0-7";
->>   			samsung,pin-function = <3>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>   	};
->>
->> @@ -650,42 +650,42 @@
->>   				       "gpf1-0", "gpf1-1", "gpf1-2", "gpf1-3";
->>   			samsung,pin-function = <3>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		cam_i2c2_bus: cam-i2c2-bus {
->>   			samsung,pins = "gpe0-6", "gpe1-0";
->>   			samsung,pin-function = <4>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		cam_spi1_bus: cam-spi1-bus {
->>   			samsung,pins = "gpe0-4", "gpe0-5", "gpf0-2", "gpf0-3";
->>   			samsung,pin-function = <4>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		cam_i2c1_bus: cam-i2c1-bus {
->>   			samsung,pins = "gpf0-2", "gpf0-3";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		cam_i2c0_bus: cam-i2c0-bus {
->>   			samsung,pins = "gpf0-0", "gpf0-1";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <3>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		cam_spi0_bus: cam-spi0-bus {
->>   			samsung,pins = "gpf1-0", "gpf1-1", "gpf1-2", "gpf1-3";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		cam_bayrgb_bus: cam-bayrgb-bus {
->> @@ -696,7 +696,7 @@
->>   				       "gpg2-0", "gpg2-1";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		cam_port_a: cam-port-a {
->> @@ -705,7 +705,7 @@
->>   				       "gph1-4", "gph1-5", "gph1-6", "gph1-7";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>   	};
->>
->> @@ -757,7 +757,7 @@
->>   				       "gpv1-4", "gpv1-5", "gpv1-6", "gpv1-7";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>
->>   		c2c_txd: c2c-txd {
->> @@ -767,7 +767,7 @@
->>   				       "gpv3-4", "gpv3-5", "gpv3-6", "gpv3-7";
->>   			samsung,pin-function = <2>;
->>   			samsung,pin-pud = <0>;
->> -			samaung,pin-drv = <0>;
->> +			samsung,pin-drv = <0>;
->>   		};
->>   	};
->
+Shall we keep those patches for "phy conf from DT" independent to this
+series? Until this phy separation patches get merged, hdmi will remain
+broken for 5250 and 5420.
 
+regards,
+Rahul Sharma.
 
--- 
-ciao,
-al
------------------------------------
-Al Stone
-Software Engineer
-Red Hat, Inc.
-ahs3@redhat.com
------------------------------------
+>
+> Sean
+>
+>> The number of exceptions where we need to override the default confs
+>> is zero (as if now). 5420 based Peach and Smdk boards work exactly
+>> the same with same set of phy confs on 3 hdmi displays, I have. It
+>> may differ on Analyser. IMO we can defer this part till we have
+>> unacceptable analyser results for any specific board.
+>>
+>> Regards,
+>> Rahul Sharma.
+>>
+>>>> Sean
+>>>>
+>>>>
+>>>>
+>>>> > Rahul, let's go if there is other opinion. we SHOULD MERGE these this
+>>>> > time.:)
+>>>> >
+>>>> > Thanks,
+>>>> > Inki Dae
+>>>> >
+>>>> >> Regards,
+>>>> >> Rahul Sharma.
+>>>> >>
+>>>> >> >
+>>>> >> >>
+>>>> >> >> regards,
+>>>> >> >> Rahul Sharma.
+>>>> >> >>
+>>>> >> >> >> Sean
+>>>> >> >> >>
+>>>> >> >> >>
+>>>> >> >
+>>>> >> --
+>>>> >> To unsubscribe from this list: send the line "unsubscribe linux-
+>>>> samsung-
+>>>> >> soc" in
+>>>> >> the body of a message to majordomo@vger.kernel.org
+>>>> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>> >
+>>>
