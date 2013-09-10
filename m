@@ -1,114 +1,61 @@
-From: Mark Rutland <mark.rutland@arm.com>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH] ARM: dts: Disable Exynos5250 I2S controllers by default
-Date: Tue, 10 Sep 2013 18:35:48 +0100
-Message-ID: <20130910173548.GA18878@e106331-lin.cambridge.arm.com>
+Date: Tue, 10 Sep 2013 18:41:13 +0100
+Message-ID: <20130910174113.GB4708@sirena.org.uk>
 References: <1378491435-15624-1-git-send-email-broonie@kernel.org>
+ <20130910173548.GA18878@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xgyAXRrhYN0wYx8y"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.21]:51077 "EHLO
-	cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753882Ab3IJRgK (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:51051 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751911Ab3IJRlU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Sep 2013 13:36:10 -0400
+	Tue, 10 Sep 2013 13:41:20 -0400
 Content-Disposition: inline
-In-Reply-To: <1378491435-15624-1-git-send-email-broonie@kernel.org>
+In-Reply-To: <20130910173548.GA18878@e106331-lin.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Mark Brown <broonie@linaro.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>
 
-On Fri, Sep 06, 2013 at 07:17:15PM +0100, Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
-> 
-> Rather than requiring each board to explicitly disable the I2S controllers
-> it is not using instead require boards to enable those that they are using.
-> 
-> This is required for audio operation on Arndale, one of the unused I2S
-> controllers is pinmuxed with the LDO enable GPIOs for the WM1811A.
-> 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
-> ---
-> 
-> This seems like a more robust approach to handling the externally
-> visible IPs - if this is OK I can go through and do further updates for
-> other devices.
 
-Acked-by: Mark Rutland <mark.rutland@arm.com>
+--xgyAXRrhYN0wYx8y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-It seems far more sensible to me to mark devices disabled by default in
-shared dtsi files and then okay them as needed in particular dts files.
-I'd be happy with more of this.
+On Tue, Sep 10, 2013 at 06:35:48PM +0100, Mark Rutland wrote:
 
-> 
->  arch/arm/boot/dts/exynos5250-arndale.dts  | 4 ++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts | 8 --------
->  arch/arm/boot/dts/exynos5250.dtsi         | 3 +++
->  3 files changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-> index cee55fa..4687fa0 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -412,6 +412,10 @@
->  		status = "disabled";
->  	};
->  
-> +	i2s0: i2s@03830000 {
-> +		status = "okay";
-> +	};
-> +
->  	spi_0: spi@12d20000 {
->  		status = "disabled";
->  	};
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 2538b32..f86d567 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -231,14 +231,6 @@
->  		status = "okay";
->  	};
->  
-> -	i2s1: i2s@12D60000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2s2: i2s@12D70000 {
-> -		status = "disabled";
-> -	};
-> -
->  	sound {
->  		compatible = "samsung,smdk-wm8994";
->  
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 7d7cc77..c863113 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -417,6 +417,7 @@
->  
->  	i2s0: i2s@03830000 {
->  		compatible = "samsung,s5pv210-i2s";
-> +		status = "disabled";
->  		reg = <0x03830000 0x100>;
->  		dmas = <&pdma0 10
->  			&pdma0 9
-> @@ -433,6 +434,7 @@
->  
->  	i2s1: i2s@12D60000 {
->  		compatible = "samsung,s3c6410-i2s";
-> +		status = "disabled";
->  		reg = <0x12D60000 0x100>;
->  		dmas = <&pdma1 12
->  			&pdma1 11>;
-> @@ -445,6 +447,7 @@
->  
->  	i2s2: i2s@12D70000 {
->  		compatible = "samsung,s3c6410-i2s";
-> +		status = "disabled";
->  		reg = <0x12D70000 0x100>;
->  		dmas = <&pdma0 12
->  			&pdma0 11>;
-> -- 
-> 1.8.4.rc3
-> 
-> 
+> It seems far more sensible to me to mark devices disabled by default in
+> shared dtsi files and then okay them as needed in particular dts files.
+> I'd be happy with more of this.
+
+Yeah, me too - though only for devices that have an external impact, for
+things that are internal only (eg, a crypto engine) it makes sense to
+enable them by default since they should normally be usable regardless
+of the system configuration.
+
+--xgyAXRrhYN0wYx8y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSL1m2AAoJELSic+t+oim90tkP/RT+a05HwQwaHjU5j9VdguDI
+H8o1HS53Vm5dYV0aSdXuhaZtgfX39VovpNiwm2urHyiqLYZla8/K/I/vRd9u1188
+vMlfGjYyhOjoOh3oZQMVbIKoWhhl/JXY1hRxhZtRFvYsC8rBgAo07LOOUIkBzwC1
+LufNN0LPeFJlzyFn6Ebd+fhKZA52VZeGiIkPBZIJL0mQO2r45mbWB+hGmAAe84H6
+xlAfHQS6dkL0x0oYnTVmrWezLAUuGtx7kwtCSYvFl6S+2OD1I3NXWmNBYiQTaPRP
+A3xeXMevxNyRFZc1aZQqQWNICHWK5GE++DZUeHNsEquM1J38QB4L/CYBxqDwTqQW
+p1fGUS3w4SDKgg7Frss5wERSviLOhJf8raNNb1FIG4uD1iaLZMmpLnZoLM70L5FZ
+hSskjfkmITdOsQmsl0ga4aRa8e6O0ATfYSWWDxqlElTxPxpNVZHzK0tOD2CTpenQ
+eRs8YOj1RmPLJlJ4iYgJl1Fu22/c9HyXVK7h6k1CChfqXLtfsiEoJTz2aNeBcxZB
+8qbnmp20SOqkonpdFkb69sURICyH4BGmmngEfHb6RxZS1P8Qc+uxFaOKNeXB9FtL
+B7vrNMU6frj2FUv7IcmesMVLgz0rOjDzy8lHusk7ww/YdIYcPfIz+yF3u608ApZN
+1uV9W8Coj126o4ub6RsZ
+=aBGa
+-----END PGP SIGNATURE-----
+
+--xgyAXRrhYN0wYx8y--
