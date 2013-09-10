@@ -1,72 +1,114 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC PATCH 6/6] spi: spi-s3c64xx: Move DMA initialization
-Date: Tue, 10 Sep 2013 17:32:48 +0100
-Message-ID: <20130910163248.GO29403@sirena.org.uk>
-References: <1378735766-12330-1-git-send-email-l.czerwinski@samsung.com>
- <1378735766-12330-7-git-send-email-l.czerwinski@samsung.com>
- <20130909145351.GD29403@sirena.org.uk>
- <522F0151.50905@samsung.com>
- <20130910120358.GG29403@sirena.org.uk>
- <522F1BCB.1000400@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] ARM: dts: Disable Exynos5250 I2S controllers by default
+Date: Tue, 10 Sep 2013 18:35:48 +0100
+Message-ID: <20130910173548.GA18878@e106331-lin.cambridge.arm.com>
+References: <1378491435-15624-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KbRlJ7rsgYPVCYDX"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:50118 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751911Ab3IJQdM (ORCPT
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.21]:51077 "EHLO
+	cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753882Ab3IJRgK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Sep 2013 12:33:12 -0400
+	Tue, 10 Sep 2013 13:36:10 -0400
 Content-Disposition: inline
-In-Reply-To: <522F1BCB.1000400@samsung.com>
+In-Reply-To: <1378491435-15624-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?Q?=C5=81ukasz_Czerwi=C5=84ski?= <l.czerwinski@samsung.com>
-Cc: s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Mark Brown <broonie@linaro.org>
 
+On Fri, Sep 06, 2013 at 07:17:15PM +0100, Mark Brown wrote:
+> From: Mark Brown <broonie@linaro.org>
+> 
+> Rather than requiring each board to explicitly disable the I2S controllers
+> it is not using instead require boards to enable those that they are using.
+> 
+> This is required for audio operation on Arndale, one of the unused I2S
+> controllers is pinmuxed with the LDO enable GPIOs for the WM1811A.
+> 
+> Signed-off-by: Mark Brown <broonie@linaro.org>
+> ---
+> 
+> This seems like a more robust approach to handling the externally
+> visible IPs - if this is OK I can go through and do further updates for
+> other devices.
 
---KbRlJ7rsgYPVCYDX
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-On Tue, Sep 10, 2013 at 03:16:59PM +0200, =C5=81ukasz Czerwi=C5=84ski wrote:
-> On 09/10/2013 02:03 PM, Mark Brown wrote:
-> >On Tue, Sep 10, 2013 at 01:24:01PM +0200, =C5=81ukasz Czerwi=C5=84ski wr=
-ote:
+It seems far more sensible to me to mark devices disabled by default in
+shared dtsi files and then okay them as needed in particular dts files.
+I'd be happy with more of this.
 
-> >>For 16kB buffer upload time is reduced from ~90ms to ~80ms (I tested
-> >>with S5C73M3 355560B transfer). If you think that performance
-> >>increase isn't valuable we should skip that patch.
-
-> >That does seem worthwhile.  Is that just a single transfer in isolation?
-
-> I gave you summary time when firmware is transferred via 22x16kB blocks.
-> Each transfer was isolated.
-
-OK, so that's the per-transfer number?  I'm just wondering if moving it
-to prepare/unprepare would achieve the same effect here.
-
---KbRlJ7rsgYPVCYDX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSL0mtAAoJELSic+t+oim9CN4P/24vyoq2uw5gSAabJFGds0yz
-IM0eke2yeHXYn4xbNp/2CFdCuIO+A9DoBoUZMMS9ijrpta1Ilfy2uylyERgAxjFe
-N95O1nMlRlady5bcJACWWHk/EOwSYBoChCRzJTNStx6RQ/O+i95TGU95qoaO1YUS
-rhIM0bA2rB69tpuZdCeBq0s2pEk4kp+BO9I1lK4fpOqJ8a6SwrHv+6bTlcDBAlTm
-3MOB2GhlO+um8KRRlxCmzhBfikhzbq5BPk6e6zGtB2tePIEwLb7jjekQMb9VfNfT
-c4uuFUarehURK5UCd8vUsz4HCK4CTG66GyESjkzHiGlx0ZcHHtq/001W3vi4MyAi
-DgQN0Rpa+R1/TR2RsfVQhI9I+a5hkiHnkx9zLFK+o+d86VXGPPtKCPnVRhFP7/c2
-Mlwf4RH+mt/cCEzxAGW6dOR5dJzKNkQpy8yF+ibA0+lxMTD/649ENQbI/Fi+xIh5
-+4nQ3g03FnF4nQDxoFa6vroBT/OC/DG5fWRaoSeg7GnzH0zZBufps+f8bFENylbK
-XTjufohb2vWzF6PVyuk9+sq2iSiVnmMajYCOMoNcjIKcSwa+1cUPmPu26F6PSLKW
-K6MIQw9ysqqpRpa1OBJiWAG9kFd27suN/zbvQvEO+uEcHwLozpBIGM2dpDCilD5U
-/8jIJFSxMIwq16ApstO7
-=ZCfW
------END PGP SIGNATURE-----
-
---KbRlJ7rsgYPVCYDX--
+> 
+>  arch/arm/boot/dts/exynos5250-arndale.dts  | 4 ++++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts | 8 --------
+>  arch/arm/boot/dts/exynos5250.dtsi         | 3 +++
+>  3 files changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+> index cee55fa..4687fa0 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -412,6 +412,10 @@
+>  		status = "disabled";
+>  	};
+>  
+> +	i2s0: i2s@03830000 {
+> +		status = "okay";
+> +	};
+> +
+>  	spi_0: spi@12d20000 {
+>  		status = "disabled";
+>  	};
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index 2538b32..f86d567 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -231,14 +231,6 @@
+>  		status = "okay";
+>  	};
+>  
+> -	i2s1: i2s@12D60000 {
+> -		status = "disabled";
+> -	};
+> -
+> -	i2s2: i2s@12D70000 {
+> -		status = "disabled";
+> -	};
+> -
+>  	sound {
+>  		compatible = "samsung,smdk-wm8994";
+>  
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 7d7cc77..c863113 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -417,6 +417,7 @@
+>  
+>  	i2s0: i2s@03830000 {
+>  		compatible = "samsung,s5pv210-i2s";
+> +		status = "disabled";
+>  		reg = <0x03830000 0x100>;
+>  		dmas = <&pdma0 10
+>  			&pdma0 9
+> @@ -433,6 +434,7 @@
+>  
+>  	i2s1: i2s@12D60000 {
+>  		compatible = "samsung,s3c6410-i2s";
+> +		status = "disabled";
+>  		reg = <0x12D60000 0x100>;
+>  		dmas = <&pdma1 12
+>  			&pdma1 11>;
+> @@ -445,6 +447,7 @@
+>  
+>  	i2s2: i2s@12D70000 {
+>  		compatible = "samsung,s3c6410-i2s";
+> +		status = "disabled";
+>  		reg = <0x12D70000 0x100>;
+>  		dmas = <&pdma0 12
+>  			&pdma0 11>;
+> -- 
+> 1.8.4.rc3
+> 
+> 
