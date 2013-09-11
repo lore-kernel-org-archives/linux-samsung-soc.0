@@ -1,72 +1,29 @@
-From: =?UTF-8?q?Jos=C3=A9=20Miguel=20Gon=C3=A7alves?=
-	<jose.goncalves@inov.pt>
-Subject: [PATCH] serial: samsung: add support for manual RTS setting
-Date: Wed, 11 Sep 2013 11:08:27 +0100
-Message-ID: <1378894107-7904-1-git-send-email-jose.goncalves@inov.pt>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v7 13/13] V4L: Add driver for s5k4e5 image sensor
+Date: Wed, 11 Sep 2013 12:16:16 +0200
+Message-ID: <523042F0.8030603@samsung.com>
+References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com>
+ <1377066881-5423-14-git-send-email-arun.kk@samsung.com>
+ <5228E34B.307@gmail.com>
+ <CALt3h78uVgjBKuc-++HVajwTKekFTPinAZ14BMKJmEGrg6OUyQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, =?UTF-8?q?Jos=C3=A9=20Miguel=20Gon=C3=A7alves?= <jose.goncalves@inov.pt>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <CALt3h78uVgjBKuc-++HVajwTKekFTPinAZ14BMKJmEGrg6OUyQ@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arunkk.samsung@gmail.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, kilyeon.im@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The Samsung serial driver currently does not support setting the
-RTS pin with an ioctl(TIOCMSET) call. This patch adds this support.
+Hi Arun,
 
-Signed-off-by: Jos=C3=A9 Miguel Gon=C3=A7alves <jose.goncalves@inov.pt>
----
- drivers/tty/serial/samsung.c |   17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+On 09/11/2013 07:10 AM, Arun Kumar K wrote:
+> If I name it to reset-gpios, the function of_get_gpio_flags() in the driver
+> fails. This function searches for the entry with name "gpios". Is it still
+> recommended to use a custom name and parse it explicitly?
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.=
-c
-index f3dfa19..e5dd808 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -407,7 +407,14 @@ static unsigned int s3c24xx_serial_get_mctrl(struc=
-t uart_port *port)
-=20
- static void s3c24xx_serial_set_mctrl(struct uart_port *port, unsigned =
-int mctrl)
- {
--	/* todo - possibly remove AFC and do manual CTS */
-+	unsigned int umcon =3D rd_regl(port, S3C2410_UMCON);
-+
-+	if (mctrl & TIOCM_RTS)
-+		umcon |=3D S3C2410_UMCOM_RTS_LOW;
-+	else
-+		umcon &=3D ~S3C2410_UMCOM_RTS_LOW;
-+
-+	wr_regl(port, S3C2410_UMCON, umcon);
- }
-=20
- static void s3c24xx_serial_break_ctl(struct uart_port *port, int break=
-_state)
-@@ -774,8 +781,6 @@ static void s3c24xx_serial_set_termios(struct uart_=
-port *port,
- 	if (termios->c_cflag & CSTOPB)
- 		ulcon |=3D S3C2410_LCON_STOPB;
-=20
--	umcon =3D (termios->c_cflag & CRTSCTS) ? S3C2410_UMCOM_AFC : 0;
--
- 	if (termios->c_cflag & PARENB) {
- 		if (termios->c_cflag & PARODD)
- 			ulcon |=3D S3C2410_LCON_PODD;
-@@ -792,6 +797,12 @@ static void s3c24xx_serial_set_termios(struct uart=
-_port *port,
-=20
- 	wr_regl(port, S3C2410_ULCON, ulcon);
- 	wr_regl(port, S3C2410_UBRDIV, quot);
-+
-+	if (termios->c_cflag & CRTSCTS)
-+		umcon =3D S3C2410_UMCOM_AFC;
-+	else
-+		umcon =3D rd_regb(port, S3C2410_UMCON) & ~S3C2410_UMCOM_AFC;
-+
- 	wr_regl(port, S3C2410_UMCON, umcon);
-=20
- 	if (ourport->info->has_divslot)
---=20
-1.7.10.4
+I guess so, you could just use of_get_named_gpio_flags().
+
+Regards,
+Sylwester
