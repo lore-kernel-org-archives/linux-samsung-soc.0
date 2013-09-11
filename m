@@ -1,7 +1,7 @@
 From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [RFC 2/4] power: asv: Add a common asv driver for exynos SoCs.
-Date: Wed, 11 Sep 2013 16:44:06 +0530
-Message-ID: <1378898048-25205-3-git-send-email-yadi.brar@samsung.com>
+Subject: [RFC 3/4] power: asv: Add support for exynos5250
+Date: Wed, 11 Sep 2013 16:44:07 +0530
+Message-ID: <1378898048-25205-4-git-send-email-yadi.brar@samsung.com>
 References: <1378898048-25205-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1378898048-25205-1-git-send-email-yadi.brar@samsung.com>
@@ -10,54 +10,66 @@ To: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds a common platform driver to register ASV members for exynos
-SoCs.
+This patch adds basic support (only for ARM ASV) for exynos5250 chips which
+have fused ASV group.
 
 Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
 ---
- drivers/power/asv/Kconfig      |   13 +++++++
- drivers/power/asv/Makefile     |    1 +
- drivers/power/asv/exynos-asv.c |   72 ++++++++++++++++++++++++++++++++++++++++
- drivers/power/asv/exynos-asv.h |   21 +++++++++++
- 4 files changed, 107 insertions(+), 0 deletions(-)
- create mode 100644 drivers/power/asv/exynos-asv.c
- create mode 100644 drivers/power/asv/exynos-asv.h
+ drivers/power/asv/Makefile         |    2 +-
+ drivers/power/asv/exynos-asv.c     |    9 +++
+ drivers/power/asv/exynos-asv.h     |    1 +
+ drivers/power/asv/exynos5250-asv.c |  141 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 152 insertions(+), 1 deletions(-)
+ create mode 100644 drivers/power/asv/exynos5250-asv.c
 
-diff --git a/drivers/power/asv/Kconfig b/drivers/power/asv/Kconfig
-index 7cd84bd..6104b09 100644
---- a/drivers/power/asv/Kconfig
-+++ b/drivers/power/asv/Kconfig
-@@ -9,3 +9,16 @@ menuconfig POWER_ASV
- 	  manufacturing process.
- 
- 	  Say Y here to enable Adaptive Supply voltage support.
-+
-+if POWER_ASV
-+
-+config POWER_EXYNOS_ASV
-+	bool "Adaptive Supply Voltage for Exynos"
-+	help
-+	  Exynos supports ASV depending upon the ASV group fused on chip.
-+	  Users can request ASV specific to a frequency for a particular member
-+	  from corresponding DVFS driver.
-+
-+	  Say Y here to enable Exynos Adaptive Voltage Scaling.
-+
-+endif
 diff --git a/drivers/power/asv/Makefile b/drivers/power/asv/Makefile
-index 62921da..9a94868 100644
+index 9a94868..a471c8e 100644
 --- a/drivers/power/asv/Makefile
 +++ b/drivers/power/asv/Makefile
-@@ -1 +1,2 @@
+@@ -1,2 +1,2 @@
  obj-$(CONFIG_POWER_ASV)			+= asv.o
-+obj-$(CONFIG_POWER_EXYNOS_ASV)		+= exynos-asv.o
+-obj-$(CONFIG_POWER_EXYNOS_ASV)		+= exynos-asv.o
++obj-$(CONFIG_POWER_EXYNOS_ASV)		+= exynos-asv.o exynos5250-asv.o
 diff --git a/drivers/power/asv/exynos-asv.c b/drivers/power/asv/exynos-asv.c
-new file mode 100644
-index 0000000..d3f43a4
---- /dev/null
+index d3f43a4..7449b55 100644
+--- a/drivers/power/asv/exynos-asv.c
 +++ b/drivers/power/asv/exynos-asv.c
-@@ -0,0 +1,72 @@
-+/* Common Exynos ASV(Adaptive Supply Voltage) driver
+@@ -46,9 +46,18 @@ static int exynos_asv_probe(struct platform_device *pdev)
+ 	exynos_asv_info->base = base;
+ 
+ 	/* call SoC specific intialisation routine */
++	if (of_machine_is_compatible("samsung,exynos5250")) {
++		ret = exynos5250_asv_init(exynos_asv_info);
++		if (ret) {
++			pr_err("%s: exynos5250_asv_init failed : %d\n",
++				__func__, ret);
++			goto err;
++		}
++	}
+ 
+ 	register_asv_member(exynos_asv_info->asv_list, exynos_asv_info->nr_mem);
+ 
++err:
+ 	iounmap(base);
+ err_map:
+ 	of_node_put(chip_id);
+diff --git a/drivers/power/asv/exynos-asv.h b/drivers/power/asv/exynos-asv.h
+index 89a1ae8..a31becb 100644
+--- a/drivers/power/asv/exynos-asv.h
++++ b/drivers/power/asv/exynos-asv.h
+@@ -18,4 +18,5 @@ struct exynos_asv_common {
+ 	void __iomem *base;
+ };
+ 
++extern int exynos5250_asv_init(struct exynos_asv_common *exynos_info);
+ #endif	/* __EXYNOS_ASV_D_H */
+diff --git a/drivers/power/asv/exynos5250-asv.c b/drivers/power/asv/exynos5250-asv.c
+new file mode 100644
+index 0000000..293b3f1
+--- /dev/null
++++ b/drivers/power/asv/exynos5250-asv.c
+@@ -0,0 +1,141 @@
++/* exynos5250 - ASV(Adaptive Supply Voltage)
 + *
 + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com/
@@ -70,91 +82,133 @@ index 0000000..d3f43a4
 +#include <linux/err.h>
 +#include <linux/io.h>
 +#include <linux/slab.h>
-+#include <linux/of_address.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
 +#include <linux/power/asv-driver.h>
 +#include "exynos-asv.h"
 +
-+static int exynos_asv_probe(struct platform_device *pdev)
++#define FUSED_SG_OFFSET		3
++#define ORIG_SG_OFFSET		17
++#define ORIG_SG_MASK		0xF
++#define MOD_SG_OFFSET		21
++#define MOD_SG_MASK		0x7
++
++#define ARM_LEVEL_NR		16
++#define ARM_GRP_NR		12
++
++#define CHIP_ID_OFFSET		0x4
++
++struct exynos5250_asv_info {
++	unsigned int package_id;
++	/* we may need more info as global data */
++};
++
++static struct exynos5250_asv_info asv_group __initdata;
++
++static unsigned int asv_voltage[ARM_LEVEL_NR][ARM_GRP_NR + 1] __initdata = {
++	{ 1700000, 1300000, 1275000, 1275000, 1262500, 1250000, 1225000,
++	1212500, 1200000, 1187500, 1175000, 1150000, 1125000 },	/* L0 */
++	{ 1600000, 1250000, 1225000, 1225000, 1212500, 1200000, 1187500,
++	1175000, 1162500, 1150000, 1137500, 1112500, 1100000 },	/* L1 */
++	{ 1500000, 1225000, 1187500, 1175000, 1162500, 1150000, 1137500,
++	1125000, 1112500, 1100000, 1087500, 1075000, 1062500 },	/* L2 */
++	{ 1400000, 1200000, 1125000, 1125000, 1125000, 1112500, 1100000,
++	1087500, 1075000, 1062500, 1050000, 1037500, 1025000 },	/* L3 */
++	{ 1300000, 1150000, 1100000, 1100000, 1100000, 1087500, 1075000,
++	1062500, 1050000, 1037500, 1025000, 1012500, 1000000 },	/* L4 */
++	{ 1200000, 1125000, 1075000, 1075000, 1062500, 1050000, 1037500,
++	1025000, 1012500, 1000000,  987500,  975000,  975000 },	/* L5 */
++	{ 1100000, 1100000, 1050000, 1050000, 1037500, 1025000, 1012500,
++	1000000,  987500,  975000,  962500,  950000,  925000 },	/* L6 */
++	{ 1000000, 1075000, 1037500, 1037500, 1012500, 1000000,  987500,
++	975000,  962500,  950000,  937500,  925000,  912500 },	/* L7 */
++	{ 900000, 1050000, 1025000, 1012500,  987500,  975000,  962500,
++	950000,  937500,  925000,  912500,  912500,  900000 },	/* L8 */
++	{ 800000, 1025000, 1000000,  987500,  975000,  962500,  950000,
++	937500,  925000,  912500,  900000,  900000,  900000 },	/* L9 */
++	{ 700000, 1012500,  975000,  962500,  950000,  937500,  925000,
++	912500,  900000,  900000,  900000,  900000,  900000 },	/* L10 */
++	{ 600000, 1000000,  962500,  950000,  937500,  925000,  912500,
++	900000,  900000,  900000,  900000,  900000,  900000 },	/* L11 */
++	{ 500000, 975000,  950000,  937500,  925000,  912500,  900000,
++	900000,  900000,  900000,  900000,  900000,  887500 },	/* L12 */
++	{ 400000, 950000,  937500,  925000,  912500,  900000,  900000,
++	900000,  900000,  900000,  900000,  887500,  887500 },	/* L13 */
++	{ 300000, 937500,  925000,  912500,  900000,  900000,  900000,
++	900000,  900000,  900000,  887500,  887500,  875000 },	/* L14 */
++	{ 200000, 925000,  912500,  900000,  900000,  900000,  900000,
++	900000,  900000,  887500,  887500,  875000,  875000 },	/* L15 */
++};
++
++static int __init exynos5250_get_asv_group(struct asv_info *asv_info)
 +{
-+	struct device_node *chip_id;
-+	struct exynos_asv_common *exynos_asv_info;
-+	void __iomem *base;
-+	int ret = 0;
++	int exynos_asv_grp;
++	u32 exynos_orig_sp;
++	u32 exynos_mod_sp;
++	u32 package_id = asv_group.package_id;
 +
-+	exynos_asv_info = kzalloc(sizeof(struct exynos_asv_common), GFP_KERNEL);
-+	if (!exynos_asv_info)
-+		return -ENOMEM;
++	/* If ASV group is fused then retrieve it */
++	if ((package_id >> FUSED_SG_OFFSET) & 0x1) {
++		exynos_orig_sp = (package_id >> ORIG_SG_OFFSET) & ORIG_SG_MASK;
++		exynos_mod_sp = (package_id >> MOD_SG_OFFSET) & MOD_SG_MASK;
 +
-+	chip_id = of_find_compatible_node(NULL, NULL,
-+						"samsung,exynos4210-chipid");
-+	if (!chip_id) {
-+		pr_err("%s: unable to find chipid\n", __func__);
-+		ret = -ENODEV;
-+		goto err_node;
++		exynos_asv_grp = exynos_orig_sp - exynos_mod_sp;
++		if (exynos_asv_grp < 0) {
++			pr_warn("%s: Invalid ASV group: %d\n", __func__,
++				exynos_asv_grp);
++			exynos_asv_grp = 0;	/* go for default */
++		}
++	} else {
++		pr_warn("%s: ASV group not fused for : %s\n", __func__,
++			asv_info->name);
++		exynos_asv_grp = 0;		/* go for default */
 +	}
 +
-+	base = of_iomap(chip_id, 0);
-+	if (!base) {
-+		pr_err("%s: unable to map chip_id register\n", __func__);
-+		ret = -ENOMEM;
-+		goto err_map;
-+	}
-+
-+	exynos_asv_info->base = base;
-+
-+	/* call SoC specific intialisation routine */
-+
-+	register_asv_member(exynos_asv_info->asv_list, exynos_asv_info->nr_mem);
-+
-+	iounmap(base);
-+err_map:
-+	of_node_put(chip_id);
-+err_node:
-+	kfree(exynos_asv_info);
-+
-+	return ret;
++	asv_info->asv_grp = exynos_asv_grp;
++	return 0;
 +}
 +
-+static struct platform_driver exynos_asv_platdrv = {
-+	.driver = {
-+		.name	= "exynos-asv",
-+		.owner	= THIS_MODULE,
++static int __init exynos5250_init_arm_asv_table(struct asv_info *asv_info)
++{
++	struct asv_freq_table *dvfs_table;
++	int i, asv_grp = asv_info->asv_grp;
++
++	dvfs_table = kzalloc(sizeof(struct asv_freq_table) * ARM_LEVEL_NR,
++			GFP_KERNEL);
++	if (!dvfs_table)
++		return -ENOMEM;
++
++	for (i = 0; i < ARM_LEVEL_NR; i++) {
++		dvfs_table[i].freq = asv_voltage[i][0];
++		dvfs_table[i].volt = asv_voltage[i][asv_grp + 1];
++	}
++
++	asv_info->dvfs_table = dvfs_table;
++	return 0;
++}
++
++/* TODO: Implement .init_asv callback to set ABB value */
++
++static struct asv_ops exynos5250_arm_asv_ops __initdata = {
++	.get_asv_group = exynos5250_get_asv_group,
++	.init_asv_table = exynos5250_init_arm_asv_table,
++};
++
++static struct asv_info exynos5250_asv_member[] __initdata = {
++	{
++		.type		= ASV_ARM,
++		.name		= "VDD_ARM",
++		.ops		= &exynos5250_arm_asv_ops,
++		.nr_dvfs_level	= ARM_LEVEL_NR,
 +	},
-+	.probe		= exynos_asv_probe,
-+};
-+module_platform_driver(exynos_asv_platdrv);
-+
-+MODULE_AUTHOR("Yadwinder Singh Brar<yadi.brar@samsung.com>");
-+MODULE_DESCRIPTION("Common Exynos ASV driver");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/power/asv/exynos-asv.h b/drivers/power/asv/exynos-asv.h
-new file mode 100644
-index 0000000..89a1ae8
---- /dev/null
-+++ b/drivers/power/asv/exynos-asv.h
-@@ -0,0 +1,21 @@
-+/*
-+ * Exynos - Adaptive Supply Voltage Driver Header File
-+ *
-+ * copyright (c) 2013 samsung electronics co., ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * this program is free software; you can redistribute it and/or modify
-+ * it under the terms of the gnu general public license version 2 as
-+ * published by the free software foundation.
-+*/
-+
-+#ifndef __EXYNOS_ASV_D_H
-+#define __EXYNOS_ASV_D_H __FILE__
-+
-+struct exynos_asv_common {
-+	struct asv_info *asv_list;
-+	unsigned int nr_mem;
-+	void __iomem *base;
 +};
 +
-+#endif	/* __EXYNOS_ASV_D_H */
++int __init exynos5250_asv_init(struct exynos_asv_common *exynos_info)
++{
++	asv_group.package_id = readl(exynos_info->base + CHIP_ID_OFFSET);
++
++	exynos_info->asv_list = exynos5250_asv_member;
++	exynos_info->nr_mem = ARRAY_SIZE(exynos5250_asv_member);
++
++	return 0;
++}
 -- 
 1.7.0.4
