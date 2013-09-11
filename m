@@ -1,89 +1,44 @@
-From: =?UTF-8?q?Jos=C3=A9=20Miguel=20Gon=C3=A7alves?=
-	<jose.goncalves@inov.pt>
-Subject: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
-Date: Wed, 11 Sep 2013 09:46:13 +0100
-Message-ID: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 3/5] [media] exynos-mscl: Add m2m functionality for the
+ M-Scaler driver
+Date: Wed, 11 Sep 2013 11:36:08 +0200
+Message-ID: <52303988.40100@samsung.com>
+References: <1376909932-23644-1-git-send-email-shaik.ameer@samsung.com>
+ <1376909932-23644-4-git-send-email-shaik.ameer@samsung.com>
+ <521F4ACD.3020302@samsung.com>
+ <CAOD6ATpnYsh+EqH8_d2Dk8Y5r1x8OHQESkBiZFU4kt0fsNFSFA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from lmv.inov.pt ([146.193.64.2]:52612 "EHLO lmv.inov.pt"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751150Ab3IKIyN (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40108 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751126Ab3IKJgL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Sep 2013 04:54:13 -0400
+	Wed, 11 Sep 2013 05:36:11 -0400
+In-reply-to: <CAOD6ATpnYsh+EqH8_d2Dk8Y5r1x8OHQESkBiZFU4kt0fsNFSFA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Jos=C3=A9=20Miguel=20Gon=C3=A7alves?= <jose.goncalves@inov.pt>
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, posciak@google.com, Arun Kumar K <arun.kk@samsung.com>
 
-Some GPIO line limits are incorrectly set which, for instance,
-does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
+Hi Shaik,
 
-Signed-off-by: Jos=C3=A9 Miguel Gon=C3=A7alves <jose.goncalves@inov.pt>
----
- arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
- drivers/gpio/gpio-samsung.c               |    6 +++---
- 2 files changed, 8 insertions(+), 8 deletions(-)
+On 09/10/2013 02:37 PM, Shaik Ameer Basha wrote:
+> Hi Sylwester,
+> 
+> Almost all of the comments are already addressed.
+> Will try to post the v3 by tomorrow.
+> 
+> I have one doubt?
+> Do I need to rebase this driver on m2m-helpers-v2 or once the driver
+> is merged we can take this up?
 
-diff --git a/arch/arm/mach-s3c24xx/include/mach/gpio.h b/arch/arm/mach-=
-s3c24xx/include/mach/gpio.h
-index 1459156..a1435bc 100644
---- a/arch/arm/mach-s3c24xx/include/mach/gpio.h
-+++ b/arch/arm/mach-s3c24xx/include/mach/gpio.h
-@@ -31,17 +31,17 @@
-  *   2410 2412 2440 2443 2416
-  *             2442
-  *   ---- ---- ---- ---- ----
-- * A  23   22   25   16   25
-- * B  11   11   11   11   9
-- * C  16   15   16   16   16
-+ * A  23   22   25   16   27
-+ * B  11   11   11   11   11
-+ * C  16   16   16   16   16
-  * D  16   16   16   16   16
-  * E  16   16   16   16   16
-  * F  8    8    8    8    8
-  * G  16   16   16   16   8
-- * H  11   11   9    15   15
-+ * H  11   11   11   15   15
-  * J  --   --   13   16   --
-  * K  --   --   --   --   16
-- * L  --   --   --   15   7
-+ * L  --   --   --   15   14
-  * M  --   --   --   2    2
-  */
-=20
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index 358a21c..29c428b 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -1053,7 +1053,7 @@ struct samsung_gpio_chip s3c24xx_gpios[] =3D {
- 			.base			=3D S3C2410_GPA(0),
- 			.owner			=3D THIS_MODULE,
- 			.label			=3D "GPIOA",
--			.ngpio			=3D 24,
-+			.ngpio			=3D 27,
- 			.direction_input	=3D s3c24xx_gpiolib_banka_input,
- 			.direction_output	=3D s3c24xx_gpiolib_banka_output,
- 		},
-@@ -1062,7 +1062,7 @@ struct samsung_gpio_chip s3c24xx_gpios[] =3D {
- 			.base	=3D S3C2410_GPB(0),
- 			.owner	=3D THIS_MODULE,
- 			.label	=3D "GPIOB",
--			.ngpio	=3D 16,
-+			.ngpio	=3D 11,
- 		},
- 	}, {
- 		.chip	=3D {
-@@ -1107,7 +1107,7 @@ struct samsung_gpio_chip s3c24xx_gpios[] =3D {
- 			.base	=3D S3C2410_GPH(0),
- 			.owner	=3D THIS_MODULE,
- 			.label	=3D "GPIOH",
--			.ngpio	=3D 11,
-+			.ngpio	=3D 15,
- 		},
- 	},
- 		/* GPIOS for the S3C2443 and later devices. */
---=20
-1.7.10.4
+Sorry, I didn't even post an RFC for those helpers, I'll try to do it
+today. Nevertheless this is something that isn't yet in mainline nor
+in any stable branch, so don't worry about it. It can be handled easily
+by a follow up patch, it would be mostly code deletion anyway.
+
+--
+Regards,
+Sylwester
