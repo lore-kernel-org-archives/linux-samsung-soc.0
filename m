@@ -1,86 +1,71 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 2/3] ARM: SAMSUNG: Add residue DMA operation.
-Date: Wed, 11 Sep 2013 11:38:04 +0530
-Message-ID: <1378879685-5352-3-git-send-email-padma.v@samsung.com>
-References: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
+From: =?UTF-8?B?xYF1a2FzeiBDemVyd2nFhHNraQ==?= <l.czerwinski@samsung.com>
+Subject: Re: [RFC PATCH 6/6] spi: spi-s3c64xx: Move DMA initialization
+Date: Wed, 11 Sep 2013 09:45:58 +0200
+Message-ID: <52301FB6.6060601@samsung.com>
+References: <1378735766-12330-1-git-send-email-l.czerwinski@samsung.com>
+ <1378735766-12330-7-git-send-email-l.czerwinski@samsung.com>
+ <20130909145351.GD29403@sirena.org.uk> <522F0151.50905@samsung.com>
+ <20130910120358.GG29403@sirena.org.uk> <522F1BCB.1000400@samsung.com>
+ <20130910163248.GO29403@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9717 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755229Ab3IKGIn (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:32558 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751376Ab3IKHqB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Sep 2013 02:08:43 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MSY0071S6C0AYP0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Sep 2013 15:08:38 +0900 (KST)
-In-reply-to: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
+	Wed, 11 Sep 2013 03:46:01 -0400
+In-reply-to: <20130910163248.GO29403@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: sbkim73@samsung.com, broonie@kernel.org, vinod.koul@intel.com, kgene.kim@samsung.com, arnd@arndb.de, dgreid@chromium.org, olofj@chromium.org
+To: Mark Brown <broonie@kernel.org>
+Cc: s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
-From: Dylan Reid <dgreid@chromium.org>
 
-Add a new dma op, residue.  It returns the count of bytes left to be
-transfered by the dma.  This is useful for Audio, the Samsung dma ASoC
-layer will use this to provide an accurate update to the hw_ptr that is
-exported to user space.  ASoC wants large transfers to reduce the amount
-of wakeups, but needs to be able to know how much audio has been played
-for latency estimates.
 
-Signed-off-by: Dylan Reid <dgreid@chromium.org>
-Reviewed-by: Olof Johansson <olofj@chromium.org>
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/plat-samsung/dma-ops.c              |   14 ++++++++++++++
- arch/arm/plat-samsung/include/plat/dma-ops.h |    1 +
- 2 files changed, 15 insertions(+), 0 deletions(-)
+On 09/10/2013 06:32 PM, Mark Brown wrote:
+> On Tue, Sep 10, 2013 at 03:16:59PM +0200, =C5=81ukasz Czerwi=C5=84ski=
+ wrote:
+>> On 09/10/2013 02:03 PM, Mark Brown wrote:
+>>> On Tue, Sep 10, 2013 at 01:24:01PM +0200, =C5=81ukasz Czerwi=C5=84s=
+ki wrote:
+>
+>>>> For 16kB buffer upload time is reduced from ~90ms to ~80ms (I test=
+ed
+>>>> with S5C73M3 355560B transfer). If you think that performance
+>>>> increase isn't valuable we should skip that patch.
+>
+>>> That does seem worthwhile.  Is that just a single transfer in isola=
+tion?
+>
+>> I gave you summary time when firmware is transferred via 22x16kB blo=
+cks.
+>> Each transfer was isolated.
+>
+> OK, so that's the per-transfer number?  I'm just wondering if moving =
+it
+> to prepare/unprepare would achieve the same effect here.
+>
+Yes
 
-diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-index ec0d731..bfc6c1a 100644
---- a/arch/arm/plat-samsung/dma-ops.c
-+++ b/arch/arm/plat-samsung/dma-ops.c
-@@ -122,6 +122,19 @@ static inline int samsung_dmadev_flush(unsigned ch)
- 	return dmaengine_terminate_all((struct dma_chan *)ch);
- }
- 
-+static unsigned samsung_dmadev_residue(unsigned ch)
-+{
-+	struct dma_chan *chan = (struct dma_chan *)ch;
-+	enum dma_status ret;
-+	struct dma_tx_state state;
-+
-+	ret = chan->device->device_tx_status(chan, chan->cookie, &state);
-+	if (ret == DMA_SUCCESS) /* Transfer complete. */
-+		return 0;
-+
-+	return state.residue;
-+}
-+
- static struct samsung_dma_ops dmadev_ops = {
- 	.request	= samsung_dmadev_request,
- 	.release	= samsung_dmadev_release,
-@@ -131,6 +144,7 @@ static struct samsung_dma_ops dmadev_ops = {
- 	.started	= NULL,
- 	.flush		= samsung_dmadev_flush,
- 	.stop		= samsung_dmadev_flush,
-+	.residue	= samsung_dmadev_residue,
- };
- 
- void *samsung_dmadev_get_ops(void)
-diff --git a/arch/arm/plat-samsung/include/plat/dma-ops.h b/arch/arm/plat-samsung/include/plat/dma-ops.h
-index ce6d763..82eac53 100644
---- a/arch/arm/plat-samsung/include/plat/dma-ops.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-ops.h
-@@ -47,6 +47,7 @@ struct samsung_dma_ops {
- 	int (*started)(unsigned ch);
- 	int (*flush)(unsigned ch);
- 	int (*stop)(unsigned ch);
-+	unsigned (*residue)(unsigned ch);
- };
- 
- extern void *samsung_dmadev_get_ops(void);
--- 
-1.7.4.4
+You are right.
+
+S5C73M3 splits firmware into several spi_messages with single SPI=20
+transfer.  It caused for each single spi_message transfer=20
+prepare/unprepare.  I tried mistakenly optimize through moving=20
+dma_channel_request(in prepare) from prepare to probe(do it once).
+
+I based my patch on the spi-tegra114.c driver. 	There is=20
+dma_chanel_request at the beginning in the probe function.
+I really should correct S5C73M3 firmware upload function.
+
+When I added small modification into S5C73M3 driver I achieved the same=
+=20
+effect.
+
+Sorry for wasting your time.
+
+Thanks
+Lukasz
