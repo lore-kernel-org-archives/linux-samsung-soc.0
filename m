@@ -1,179 +1,78 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [RFC Patch v2 0/3] add temporary parent migration support
-Date: Wed, 11 Sep 2013 09:52:22 +0530
-Message-ID: <CANuQgHGThWpeBnuQNi9t=LnOsaVFVF_=TOnF7TXUvaJeum7hfw@mail.gmail.com>
-References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
-	<3927125.3UOplv4uU5@localhost>
-	<20130904174328.10934.18433@quantum>
-	<8013969.VJd4Ll2ItG@localhost>
-	<CAPtuhTgxizdFp2paS-y+Ecaqnm9WnnoF3dV7x=t6UAQ_nBTZng@mail.gmail.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH v7 13/13] V4L: Add driver for s5k4e5 image sensor
+Date: Wed, 11 Sep 2013 10:40:26 +0530
+Message-ID: <CALt3h78uVgjBKuc-++HVajwTKekFTPinAZ14BMKJmEGrg6OUyQ@mail.gmail.com>
+References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com>
+	<1377066881-5423-14-git-send-email-arun.kk@samsung.com>
+	<5228E34B.307@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:42374 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752003Ab3IKEWZ (ORCPT
+Received: from mail-vc0-f180.google.com ([209.85.220.180]:52065 "EHLO
+	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753573Ab3IKFK2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Sep 2013 00:22:25 -0400
-Received: by mail-lb0-f173.google.com with SMTP id o14so7082358lbi.32
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Sep 2013 21:22:22 -0700 (PDT)
-In-Reply-To: <CAPtuhTgxizdFp2paS-y+Ecaqnm9WnnoF3dV7x=t6UAQ_nBTZng@mail.gmail.com>
+	Wed, 11 Sep 2013 01:10:28 -0400
+In-Reply-To: <5228E34B.307@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, kilyeon.im@samsung.com
 
-On 6 September 2013 00:02, Mike Turquette <mturquette@linaro.org> wrote:
-> On Wed, Sep 4, 2013 at 11:01 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> On Wednesday 04 of September 2013 10:43:28 Mike Turquette wrote:
->>> Quoting Tomasz Figa (2013-09-03 15:36:50)
->>>
->>> > Hi Chander,
->>> >
->>> > On Tuesday 03 of September 2013 17:04:28 Chander Kashyap wrote:
->>> > > Some platform has provision to change cpu parent clock during
->>> > > cpu frequency scaling. This patch series provides a mechanism to
->>> > > implement the same using CCF.
->>> > >
->>> > > Patch1 provides mechanism to migrate to new parent temporarily.
->>> > >
->>> > > Patch2 updates the user of clk_register_mux and DEFINE_CLK_MUX which
->>> > > are modified to add support for clk migration.
->>> > >
->>> > > Patch3 adds support to Exynos5250 to use the clock parent migration
->>> > > feature implemented in CCF.
->>> >
->>> > I don't really like this approach. A need to change mux setting
->>> > temporarily is heavily platform-specific and I don't think it should
->>> > be
->>> > handled by generic code.
->>>
->>> I agree with Tomasz.
->>>
->>> > First of all there are many factor that you would
->>> >
->>> > have to account for to make this solution generic, such as:
->>> >  - board specific alternative parents,
->>> >  - exact moment of parent change,
->>> >  - some other platform specific conditions, like CPU voltage that must
->>> >  be>
->>> > changed when mux is changed, because it changes CPU frequency,
->>> >
->>> >  - and probably a lot of more factors that only people working with
->>> >  all
->>> >
->>> > the platforms supported (and unsupported yet) by Linux.
->>> >
->>> > I can see at least two solutions for this problem that don't require
->>> > changing core code of common clock framework:
->>> >
->>> > 1) Implementing a special clock type using normal mux ops, but also
->>> > registering a notifier for its PRE_RATE_CHANGE and POST_RATE_CHANGE
->>> > events to perform parent switching.
->>>
->>> Creating a custom clock type is the way to go here. It is possible to
->>> wrap the mux clk_ops to re-use that code, or just write a custom clock
->>> type from scratch.
->>>
->>> I do not like using the clock rate-change notifiers for this purpose.
->>> The notifiers provide hooks to drivers that need to take care around
->>> clock transitions. Using the notifiers from within the clock framework
->>> indicates poor design.
->>
->> I was not sure how a .set_parent() from inside a .set_rate() would
->> interact with rate setting, so I mentioned notifiers here, but now as I
->> think of it, CCF is supposed to be re-entrant, so things should be fine.
->>
->>> > 2) Using normal mux clock, but registering such notifiers in clock
->>> > controller or cpufreq driver.
->>>
->>> This depends on what the data sheet or reference manual states. If using
->>> a temporary parent is a property of the clock programming sequence
->>> (e.g. to have a glitch-less transition) then that logic belongs in the
->>> clock provider driver (i.e. a custom clock type needs to be created
->>> with this logic).
->>>
->>> However if using a temporary parent is not required for programming the
->>> clock, but is instead a requirement of the clock consumer (e.g. a CPU,
->>> or some I/O controller) then perhaps putting this logic in that driver
->>> is the right way to go. In that case the logic could be explicit:
->>>
->>>       clk_set_parent(clk, temp_parent);
->>>       clk_set_rate(clk, target_rate);
->>>       clk_set_parent(clk, target_parent);
->>>
->>> Or it could implicit with the use of rate-change notifiers. Again the
->>> rate-change notifiers exist for clock consumer drivers to use, so this
->>> is OK.
->>>
->>> I have a hunch that the right way to do this is for a custom clock type
->>> to be created which simply calls clk_set_parent from within the clock's
->>> .set_rate callback, but I'll wait on feedback from Chander on the needs
->>> of his platform.
->>
->> I believe Chander has exactly the same use case for this as we have for
->> Exynos 4210 and 4x12.
->>
->> On these SoCs, CPU frequency is being scaled by reconfiguring PLL, which
->> needs to be masked for locking time. To let the CPU operate normally, a
->> mux that allows switching CPU clock domain between two PLLs can be
->> switched to the other PLL (MPLL) until the main ARM PLL (APLL) starts
->> operating again.
->
-> Right, this is the "glitchless" operation I mentioned earlier and it
-> is not uncommon in PLLs.
->
->>
->> However this issue is not limited to clocks, because there must be also a
->> voltage transition involved if the utility PLL has frequency higher than
->> the one currently being reconfigured.
->
-> Right, that is an altogether different issue. What I would like to see
-> is the temporary parent managed by calls to clk_set_parent from within
-> a custom .set_rate callback.
->
-> As for the voltage scaling, it would be cool to see this working with
-> the voltage notifier series I posted recently. Both parents of the
-> PLLs can have their own operating point tables and each transition
-> would fire off notifiers that scale voltage. Something like this:
->
-> clk_set_rate(pll, rate)
-> -> enter .set_rate
->   -> clk_set_parent(pll, temp_parent)
->     -> temp_parent PRE_RATE_CHANGE notifier is triggered, maybe scale voltage
->     -> .set_parent callback
->     -> temp_parent POST_RATE_CHANGE notifier is triggered, maybe scale voltage
->   -> pll PRE_RATE_CHANGE notifier is triggered, maybe scale voltage
->   -> .set_rate callback
->   -> pll POST_RATE_CHANGE notifier is triggered, maybe scale voltage
->   -> clk_set_parent(pll, original_parent)
->     -> original_parent PRE_RATE_CHANGE notifier is triggered, maybe
-> scale voltage
->     -> .set_parent callback
->     -> original_parent POST_RATE_CHANGE notifier is triggered, maybe
-> scale voltage
->
-> There is some inefficiency in calling the notifiers three times, but
-> the solution is generic.
->
-> I'm sending this from the gmail web interface so hopefully the spacing
-> is preserved...
->
+Hi Sylwester,
 
-Thanks Mike. Looking at the feedback it seems doing this in generic
-way is not clean enough.
-I will redesign it within platform and resend.
-
-> Regards,
-> Mike
+On Fri, Sep 6, 2013 at 1:32 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> On 08/21/2013 08:34 AM, Arun Kumar K wrote:
+>>
+>> This patch adds subdev driver for Samsung S5K4E5 raw image sensor.
+>> Like s5k6a3, it is also another fimc-is firmware controlled
+>> sensor. This minimal sensor driver doesn't do any I2C communications
+>> as its done by ISP firmware. It can be updated if needed to a
+>> regular sensor driver by adding the I2C communication.
+>>
+>> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+>> Reviewed-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+>> ---
+>>   .../devicetree/bindings/media/i2c/s5k4e5.txt       |   43 +++
+>>   drivers/media/i2c/Kconfig                          |    8 +
+>>   drivers/media/i2c/Makefile                         |    1 +
+>>   drivers/media/i2c/s5k4e5.c                         |  361
+>> ++++++++++++++++++++
+>>   4 files changed, 413 insertions(+)
+>>   create mode 100644
+>> Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+>>   create mode 100644 drivers/media/i2c/s5k4e5.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+>> b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+>> new file mode 100644
+>> index 0000000..5af462c
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+>> @@ -0,0 +1,43 @@
+>> +* Samsung S5K4E5 Raw Image Sensor
+>> +
+>> +S5K4E5 is a raw image sensor with maximum resolution of 2560x1920
+>> +pixels. Data transfer is carried out via MIPI CSI-2 port and controls
+>> +via I2C bus.
+>> +
+>> +Required Properties:
+>> +- compatible   : must be "samsung,s5k4e5"
+>> +- reg          : I2C device address
+>> +- gpios                : reset gpio pin
 >
->>
->> Best regards,
->> Tomasz
->>
+>
+> I guess this should be "reset-gpios". How about changing description to:
+>
+> - reset-gpios   : specifier of a GPIO connected to the RESET pin;
+>
+>
+> ?
 
+If I name it to reset-gpios, the function of_get_gpio_flags() in the driver
+fails. This function searches for the entry with name "gpios". Is it still
+recommended to use a custom name and parse it explicitly?
 
-
--- 
-with warm regards,
-Chander Kashyap
+Regards
+Arun
