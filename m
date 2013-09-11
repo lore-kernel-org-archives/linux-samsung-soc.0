@@ -1,50 +1,33 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: [PATCH] ASoC: SAMSUNG: Allow mono in i2s driver
-Date: Wed, 11 Sep 2013 15:27:29 +0100
-Message-ID: <1378909649-8985-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [RFC PATCH 1/6] spi: spi-s3c64xx: Remove platform dependent code
+Date: Wed, 11 Sep 2013 18:21:58 +0200
+Message-ID: <201309111821.59206.heiko@sntech.de>
+References: <1378735766-12330-1-git-send-email-l.czerwinski@samsung.com> <1378735766-12330-2-git-send-email-l.czerwinski@samsung.com> <20130909143801.GA29403@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: kgene.kim@samsung.com, broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, lgirdwood@gmail.com, ben-linux@fluff.org, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:39265 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753959Ab3IKQVr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Sep 2013 12:21:47 -0400
+In-Reply-To: <20130909143801.GA29403@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Lukasz Czerwinski <l.czerwinski@samsung.com>, s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
----
-I can't see any reason to not allow mono playback in the
-i2s driver and indeed it seems to work well on our test
-system here. However, I am fairly unfamilar with the code
-in this part of the tree so apologies if I am missing some
-constraint.
+Am Montag, 9. September 2013, 16:38:01 schrieb Mark Brown:
+> On Mon, Sep 09, 2013 at 04:09:21PM +0200, Lukasz Czerwinski wrote:
+> > Since support for generic DMA engine has beed added, there is no need
+> > to keep platform specific code (behind the #ifdef CONFIG_S3C_DMA).
+> 
+> This would break s3c64xx at least until Tomasz's dmaengine conversion
+> for that gets merged (hopefully this time around...).  Given that one
+> of my main development systems is based on s3c64xx I'm even more keen
+> to keep that working than otherwise.
 
-Thanks,
-Charles
-
- sound/soc/samsung/i2s.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
-
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 959c702..70d08d7 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -991,7 +991,7 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
- 	i2s->i2s_dai_drv.ops = &samsung_i2s_dai_ops;
- 	i2s->i2s_dai_drv.suspend = i2s_suspend;
- 	i2s->i2s_dai_drv.resume = i2s_resume;
--	i2s->i2s_dai_drv.playback.channels_min = 2;
-+	i2s->i2s_dai_drv.playback.channels_min = 1;
- 	i2s->i2s_dai_drv.playback.channels_max = 2;
- 	i2s->i2s_dai_drv.playback.rates = SAMSUNG_I2S_RATES;
- 	i2s->i2s_dai_drv.playback.formats = SAMSUNG_I2S_FMTS;
--- 
-1.7.2.5
+Just for completenes sake, the same is true for the s3c2416 and s3c2443 using 
+this controller - and similarily with a pending migration to dmaengine.
