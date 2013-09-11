@@ -1,46 +1,138 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH] drm/exynos: fix return value check in lowlevel_buffer_allocate()
-Date: Wed, 11 Sep 2013 06:56:35 +0800
-Message-ID: <CAPgLHd-vMjfQEBfun=c8j7x-FPx_pGoTvOBBwKtmF+LTQjVNQw@mail.gmail.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [RFC Patch v2 0/3] add temporary parent migration support
+Date: Wed, 11 Sep 2013 09:49:31 +0530
+Message-ID: <CANuQgHFu_2=DbsCH6Q918My=9ekLGxDmc7xBmc7R4NRmq_qDPg@mail.gmail.com>
+References: <1378208072-10173-1-git-send-email-chander.kashyap@linaro.org>
+	<3927125.3UOplv4uU5@localhost>
+	<20130904174328.10934.18433@quantum>
+	<8013969.VJd4Ll2ItG@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f47.google.com ([209.85.214.47]:58892 "EHLO
-	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751470Ab3IJW4g (ORCPT
+Received: from mail-lb0-f169.google.com ([209.85.217.169]:46300 "EHLO
+	mail-lb0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750741Ab3IKETd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Sep 2013 18:56:36 -0400
-Received: by mail-bk0-f47.google.com with SMTP id mx12so3212875bkb.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Sep 2013 15:56:35 -0700 (PDT)
+	Wed, 11 Sep 2013 00:19:33 -0400
+Received: by mail-lb0-f169.google.com with SMTP id z5so7154549lbh.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Sep 2013 21:19:32 -0700 (PDT)
+In-Reply-To: <8013969.VJd4Ll2ItG@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, airlied@linux.ie, kgene.kim@samsung.com
-Cc: yongjun_wei@trendmicro.com.cn, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+On 4 September 2013 23:31, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Wednesday 04 of September 2013 10:43:28 Mike Turquette wrote:
+>> Quoting Tomasz Figa (2013-09-03 15:36:50)
+>>
+>> > Hi Chander,
+>> >
+>> > On Tuesday 03 of September 2013 17:04:28 Chander Kashyap wrote:
+>> > > Some platform has provision to change cpu parent clock during
+>> > > cpu frequency scaling. This patch series provides a mechanism to
+>> > > implement the same using CCF.
+>> > >
+>> > > Patch1 provides mechanism to migrate to new parent temporarily.
+>> > >
+>> > > Patch2 updates the user of clk_register_mux and DEFINE_CLK_MUX which
+>> > > are modified to add support for clk migration.
+>> > >
+>> > > Patch3 adds support to Exynos5250 to use the clock parent migration
+>> > > feature implemented in CCF.
+>> >
+>> > I don't really like this approach. A need to change mux setting
+>> > temporarily is heavily platform-specific and I don't think it should
+>> > be
+>> > handled by generic code.
+>>
+>> I agree with Tomasz.
+>>
+>> > First of all there are many factor that you would
+>> >
+>> > have to account for to make this solution generic, such as:
+>> >  - board specific alternative parents,
+>> >  - exact moment of parent change,
+>> >  - some other platform specific conditions, like CPU voltage that must
+>> >  be>
+>> > changed when mux is changed, because it changes CPU frequency,
+>> >
+>> >  - and probably a lot of more factors that only people working with
+>> >  all
+>> >
+>> > the platforms supported (and unsupported yet) by Linux.
+>> >
+>> > I can see at least two solutions for this problem that don't require
+>> > changing core code of common clock framework:
+>> >
+>> > 1) Implementing a special clock type using normal mux ops, but also
+>> > registering a notifier for its PRE_RATE_CHANGE and POST_RATE_CHANGE
+>> > events to perform parent switching.
+>>
+>> Creating a custom clock type is the way to go here. It is possible to
+>> wrap the mux clk_ops to re-use that code, or just write a custom clock
+>> type from scratch.
+>>
+>> I do not like using the clock rate-change notifiers for this purpose.
+>> The notifiers provide hooks to drivers that need to take care around
+>> clock transitions. Using the notifiers from within the clock framework
+>> indicates poor design.
+>
+> I was not sure how a .set_parent() from inside a .set_rate() would
+> interact with rate setting, so I mentioned notifiers here, but now as I
+> think of it, CCF is supposed to be re-entrant, so things should be fine.
+>
+>> > 2) Using normal mux clock, but registering such notifiers in clock
+>> > controller or cpufreq driver.
+>>
+>> This depends on what the data sheet or reference manual states. If using
+>> a temporary parent is a property of the clock programming sequence
+>> (e.g. to have a glitch-less transition) then that logic belongs in the
+>> clock provider driver (i.e. a custom clock type needs to be created
+>> with this logic).
+>>
+>> However if using a temporary parent is not required for programming the
+>> clock, but is instead a requirement of the clock consumer (e.g. a CPU,
+>> or some I/O controller) then perhaps putting this logic in that driver
+>> is the right way to go. In that case the logic could be explicit:
+>>
+>>       clk_set_parent(clk, temp_parent);
+>>       clk_set_rate(clk, target_rate);
+>>       clk_set_parent(clk, target_parent);
+>>
+>> Or it could implicit with the use of rate-change notifiers. Again the
+>> rate-change notifiers exist for clock consumer drivers to use, so this
+>> is OK.
+>>
+>> I have a hunch that the right way to do this is for a custom clock type
+>> to be created which simply calls clk_set_parent from within the clock's
+>> .set_rate callback, but I'll wait on feedback from Chander on the needs
+>> of his platform.
+>
+> I believe Chander has exactly the same use case for this as we have for
+> Exynos 4210 and 4x12.
 
-In case of error, the function drm_prime_pages_to_sg() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check should
-be replaced with IS_ERR().
+Yes Tomasz,
+I am trying to address the same issue. As this was requirement for
+more than one platform so thought of making it generic.
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- drivers/gpu/drm/exynos/exynos_drm_buf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> On these SoCs, CPU frequency is being scaled by reconfiguring PLL, which
+> needs to be masked for locking time. To let the CPU operate normally, a
+> mux that allows switching CPU clock domain between two PLLs can be
+> switched to the other PLL (MPLL) until the main ARM PLL (APLL) starts
+> operating again.
+>
+> However this issue is not limited to clocks, because there must be also a
+> voltage transition involved if the utility PLL has frequency higher than
+> the one currently being reconfigured.
+>
+> Best regards,
+> Tomasz
+>
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_buf.c b/drivers/gpu/drm/exynos/exynos_drm_buf.c
-index 3445a0f..e3ee833 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_buf.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_buf.c
-@@ -90,9 +90,9 @@ static int lowlevel_buffer_allocate(struct drm_device *dev,
- 	}
- 
- 	buf->sgt = drm_prime_pages_to_sg(buf->pages, nr_pages);
--	if (!buf->sgt) {
-+	if (IS_ERR(buf->sgt)) {
- 		DRM_ERROR("failed to get sg table.\n");
--		ret = -ENOMEM;
-+		ret = PTR_ERR(buf->sgt);
- 		goto err_free_attrs;
- 	}
- 
+
+
+-- 
+with warm regards,
+Chander Kashyap
