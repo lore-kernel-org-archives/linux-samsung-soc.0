@@ -1,41 +1,84 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: dts: Disable Exynos5250 I2S controllers by default
-Date: Thu, 12 Sep 2013 19:42:57 +0900
-Message-ID: <06ff01ceafa4$d81671d0$88435570$@org>
-References: <1378491435-15624-1-git-send-email-broonie@kernel.org>
- <20130910173548.GA18878@e106331-lin.cambridge.arm.com>
- <20130910174113.GB4708@sirena.org.uk>
+From: Pratyush Anand <pratyush.anand@st.com>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
+ part and Exynos part
+Date: Thu, 12 Sep 2013 16:16:02 +0530
+Message-ID: <20130912104602.GC5995@pratyush-vbox>
+References: <000701ce8741$fe47deb0$fad79c10$@samsung.com>
+ <51EE22DF.6090902@ti.com>
+ <001301ce8772$522dfc50$f689f4f0$@samsung.com>
+ <5231607C.10702@ti.com>
+ <003501ceaf87$cda45db0$68ed1910$%han@samsung.com>
+ <20130912093018.GA2124@pratyush-vbox>
+ <52318CCC.4040604@ti.com>
+ <20130912095213.GA5995@pratyush-vbox>
+ <5231925B.3030104@ti.com>
+ <20130912101803.GB5995@pratyush-vbox>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52397 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752943Ab3ILKm7 (ORCPT
+Received: from eu1sys200aog113.obsmtp.com ([207.126.144.135]:38470 "EHLO
+	eu1sys200aog113.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751780Ab3ILKqX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 06:42:59 -0400
-In-reply-to: <20130910174113.GB4708@sirena.org.uk>
-Content-language: ko
+	Thu, 12 Sep 2013 06:46:23 -0400
+Content-Disposition: inline
+In-Reply-To: <20130912101803.GB5995@pratyush-vbox>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>
-Cc: rob.herring@calxeda.com, 'Pawel Moll' <Pawel.Moll@arm.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, 'devicetree' <devicetree@vger.kernel.org>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Mark Brown wrote:
+On Thu, Sep 12, 2013 at 03:48:03PM +0530, Pratyush Anand wrote:
+> On Thu, Sep 12, 2013 at 06:07:23PM +0800, Kishon Vijay Abraham I wrote:
+> > Hi,
+> > 
+> > On Thursday 12 September 2013 03:22 PM, Pratyush Anand wrote:
+> > > Hi Kishon,
+> > > 
+> > > On Thu, Sep 12, 2013 at 05:43:40PM +0800, Kishon Vijay Abraham I wrote:
+> > >> Hi,
+> > >>
+> > >> On Thursday 12 September 2013 03:00 PM, Pratyush Anand wrote:
+> > >>> Hi Jingoo,
+> > >>>
+> > >>>
+> > >>> On Thu, Sep 12, 2013 at 03:15:04PM +0800, Jingoo Han wrote:
+> > >>>> On Tuesday 23 July 2013 12:30 PM, Kishon Vijay Abraham I wrote:
+> > >>>>>>> .
+> > >>>>>>> .
 > 
-> On Tue, Sep 10, 2013 at 06:35:48PM +0100, Mark Rutland wrote:
+> [...]
 > 
-> > It seems far more sensible to me to mark devices disabled by default in
-> > shared dtsi files and then okay them as needed in particular dts files.
-> > I'd be happy with more of this.
+> > >> when I do ifconfig eth0 up, I get *r8169 0000:01:00.0 eth0: link up.*
+> > >> But I dont receive any packets and ping also fails and the tx and rx packet
+> > >> count is also 0. Could it be related to inbound translation?
+> > > 
+> > > A PCIe analyser log would tell a definite cause. Most likely either
+> > > inbound translation is not working or INTx/MSI is not working.
+> > 
+> > I have enabled only legacy interrupts. Whenever I connect or disconnect
+> > ethernet cable I get link up/link down message and also the interrupt count for
+> > eth0 increases. So I'm not doubting INTx interrupts as such.
+
+Just a question, what is the MRRS of your RC? if it is 128, can you
+try with passing pci=pcie_bus_peer2peer  in your bootargs.
+
+Again, analyser will help a lot in diagnosing such issues.
+
+Regards
+Pratyush
+> > 
+> > btw configuring inbound translation once in dw_pcie_host_init enough is it? I
+> > mean we use the same registers for configuring outbound translation also no? So
+> > doesn't the inbound configuration gets lost?
 > 
-> Yeah, me too - though only for devices that have an external impact, for
-> things that are internal only (eg, a crypto engine) it makes sense to
-> enable them by default since they should normally be usable regardless
-> of the system configuration.
-
-(+ DT ML)
-
-Makes sense but I need to get the opinions from DT guys...
-
-- Kukjin
+> No, you write at the same register, but you program direction as
+> inbound. There are different resources for each viewport in inbound
+> and outbound direction.
+> 
+> Regards
+> Pratyush
+> 
+> > 
+> > Thanks
+> > Kishon
