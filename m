@@ -1,51 +1,70 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: dts: Fix a typo on Exynos5440 DTS files
-Date: Thu, 12 Sep 2013 19:17:44 +0900
-Message-ID: <06f201ceafa1$527751f0$f765f5d0$@org>
-References: <005501ceaf8f$2483bac0$6d8b3040$%nam@samsung.com>
- <CAK9yfHx+Cg=kiqqFgpxE5e8LLnNR8Wu4L=rXNvV6Xf=SqSJ4gg@mail.gmail.com>
- <009201ceaf95$c871eb60$5955c220$%lee@samsung.com>
+From: Pratyush Anand <pratyush.anand@st.com>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
+ part and Exynos part
+Date: Thu, 12 Sep 2013 15:48:03 +0530
+Message-ID: <20130912101803.GB5995@pratyush-vbox>
+References: <51ED49D6.9050209@ti.com>
+ <000701ce8741$fe47deb0$fad79c10$@samsung.com>
+ <51EE22DF.6090902@ti.com>
+ <001301ce8772$522dfc50$f689f4f0$@samsung.com>
+ <5231607C.10702@ti.com>
+ <003501ceaf87$cda45db0$68ed1910$%han@samsung.com>
+ <20130912093018.GA2124@pratyush-vbox>
+ <52318CCC.4040604@ti.com>
+ <20130912095213.GA5995@pratyush-vbox>
+ <5231925B.3030104@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12992 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752489Ab3ILKRr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 06:17:47 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MT000206CLLY6Y0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Sep 2013 19:17:45 +0900 (KST)
-In-reply-to: <009201ceaf95$c871eb60$5955c220$%lee@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5231925B.3030104@ti.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jungseok Lee' <jays.lee@samsung.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Youngmin Nam' <youngmin.nam@samsung.com>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Jungseok Lee wrote:
+On Thu, Sep 12, 2013 at 06:07:23PM +0800, Kishon Vijay Abraham I wrote:
+> Hi,
 > 
-> On Thursday, September 12, 2013 5:15 PM, Sachin Kamat
-> <sachin.kamat@linaro.org> wrote:
-> > On 12 September 2013 13:37, Youngmin Nam <youngmin.nam@samsung.com>
-> wrote:
-> > > This patch removes '_' from "early_prink" on Exynos5440 DTS files
-> > > in according to kernel-parameters document.
-> > >
-> > > Signed-off-by: Youngmin Nam <youngmin.nam@samsung.com>
-> >
-> > Good catch.
-> > Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >
+> On Thursday 12 September 2013 03:22 PM, Pratyush Anand wrote:
+> > Hi Kishon,
+> > 
+> > On Thu, Sep 12, 2013 at 05:43:40PM +0800, Kishon Vijay Abraham I wrote:
+> >> Hi,
+> >>
+> >> On Thursday 12 September 2013 03:00 PM, Pratyush Anand wrote:
+> >>> Hi Jingoo,
+> >>>
+> >>>
+> >>> On Thu, Sep 12, 2013 at 03:15:04PM +0800, Jingoo Han wrote:
+> >>>> On Tuesday 23 July 2013 12:30 PM, Kishon Vijay Abraham I wrote:
+> >>>>>>> .
+> >>>>>>> .
+
+[...]
+
+> >> when I do ifconfig eth0 up, I get *r8169 0000:01:00.0 eth0: link up.*
+> >> But I dont receive any packets and ping also fails and the tx and rx packet
+> >> count is also 0. Could it be related to inbound translation?
+> > 
+> > A PCIe analyser log would tell a definite cause. Most likely either
+> > inbound translation is not working or INTx/MSI is not working.
 > 
-> I've tested it on Exynos5440. It works fine.
-> Tested-by: Jungseok Lee <jays.lee@samsung.com>
+> I have enabled only legacy interrupts. Whenever I connect or disconnect
+> ethernet cable I get link up/link down message and also the interrupt count for
+> eth0 increases. So I'm not doubting INTx interrupts as such.
+> 
+> btw configuring inbound translation once in dw_pcie_host_init enough is it? I
+> mean we use the same registers for configuring outbound translation also no? So
+> doesn't the inbound configuration gets lost?
 
-Thanks, you guys.
+No, you write at the same register, but you program direction as
+inbound. There are different resources for each viewport in inbound
+and outbound direction.
 
-Will apply.
-- Kukjin
+Regards
+Pratyush
+
+> 
+> Thanks
+> Kishon
