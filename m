@@ -1,49 +1,34 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 3/3] ARM: dts: Disable I2C controllers by default on Exynos5250
-Date: Thu, 12 Sep 2013 09:03:23 -0600
-Message-ID: <5231D7BB.6050702@wwwdotorg.org>
-References: <1378982427-5802-1-git-send-email-broonie@kernel.org> <1378982427-5802-3-git-send-email-broonie@kernel.org> <2175767.kktjrZWOAr@amdc1227>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: dts: Leave Exynos5250 SPI controller disabled by
+ default
+Date: Thu, 12 Sep 2013 17:51:58 +0200
+Message-ID: <3266701.1laYrVSaLy@amdc1227>
+References: <1378982427-5802-1-git-send-email-broonie@kernel.org>
+ <10382663.35TJtu8bGt@amdc1227> <20130912135028.GR29403@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:47132 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752053Ab3ILPD1 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49539 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753558Ab3ILPwI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 11:03:27 -0400
-In-Reply-To: <2175767.kktjrZWOAr@amdc1227>
+	Thu, 12 Sep 2013 11:52:08 -0400
+In-reply-to: <20130912135028.GR29403@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@vger.kernel.org
 
-On 09/12/2013 06:58 AM, Tomasz Figa wrote:
-> Hi Mark,
-> 
-> On Thursday 12 of September 2013 11:40:27 Mark Brown wrote:
->> From: Mark Brown <broonie@linaro.org>
->>
->> Ensure that unused I2C controllers are not activated, causing problems
->> due to inappropriate pinmuxing or similar, by marking the controllers as
->> disabled by default and requiring boards to explicitly enable those that
->> are in use.
+On Thursday 12 of September 2013 14:50:28 Mark Brown wrote:
+> On Thu, Sep 12, 2013 at 01:56:44PM +0200, Tomasz Figa wrote:
+> > I wonder if exynos5250-arndale shouldn't be also considered in this
+> > patch.
+> There are no SPI devices on that board (at least not ones that are
+> currently instantiated by the DT).
 
->> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
+I can see a bunch of nodes simply adding status = "disabled" in dts of 
+arndale.
 
->>  	i2c@12C60000 {
->> +		status = "okay";
-> 
-> I would keep the status properties at the end of all properties, indicating 
-> that at this point the description is complete and also to be consistent 
-> with other dts files around.
-
-DT doesn't define any kind of ordering for the properties AFAIK, so the
-order shouldn't matter in practice; it conveys no semantic
-representation as far as the parsing code is concerned even if a human
-may be influenced otherwise:-)
-
-Just as an FYI, the rule I've been trying to follow in Tegra DT files is
-that properties that are overridden from any included .dtsi file come
-first, followed by any new properties. Still, there's no particular
-reason anyone else has to follow that layout.
+Best regards,
+Tomasz
