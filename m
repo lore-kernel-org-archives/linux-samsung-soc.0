@@ -1,59 +1,67 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/3] ARM: dts: Leave Exynos5250 SPI controller disabled
- by default
-Date: Thu, 12 Sep 2013 14:50:28 +0100
-Message-ID: <20130912135028.GR29403@sirena.org.uk>
+Subject: Re: [PATCH 3/3] ARM: dts: Disable I2C controllers by default on
+ Exynos5250
+Date: Thu, 12 Sep 2013 14:52:33 +0100
+Message-ID: <20130912135233.GS29403@sirena.org.uk>
 References: <1378982427-5802-1-git-send-email-broonie@kernel.org>
- <1378982427-5802-2-git-send-email-broonie@kernel.org>
- <10382663.35TJtu8bGt@amdc1227>
+ <1378982427-5802-3-git-send-email-broonie@kernel.org>
+ <2175767.kktjrZWOAr@amdc1227>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XfgxuImQih7pKHD1"
+	protocol="application/pgp-signature"; boundary="wlp6b3zZ5qAEpghO"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:58045 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:58079 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750901Ab3ILNui (ORCPT
+	with ESMTP id S1750899Ab3ILNxA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 09:50:38 -0400
+	Thu, 12 Sep 2013 09:53:00 -0400
 Content-Disposition: inline
-In-Reply-To: <10382663.35TJtu8bGt@amdc1227>
+In-Reply-To: <2175767.kktjrZWOAr@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@vger.kernel.org
 
 
---XfgxuImQih7pKHD1
+--wlp6b3zZ5qAEpghO
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Sep 12, 2013 at 01:56:44PM +0200, Tomasz Figa wrote:
+On Thu, Sep 12, 2013 at 02:58:59PM +0200, Tomasz Figa wrote:
+> On Thursday 12 of September 2013 11:40:27 Mark Brown wrote:
 
-> I wonder if exynos5250-arndale shouldn't be also considered in this patch.
+Please delete unneeded context from your mails, it makes it much easier
+to find the new content.
 
-There are no SPI devices on that board (at least not ones that are
-currently instantiated by the DT).
+> > +	i2c@12CA0000 {
+> > +		status = "okay";
 
---XfgxuImQih7pKHD1
+> Hmm, no other properties needed here?
+
+Apparently not, it looks like the binding for the aribtrator doesn't sit
+as a child of the bus it's arbitrating - this is the controller
+referenced from the arbitrator node.
+
+--wlp6b3zZ5qAEpghO
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSMcahAAoJELSic+t+oim9vGcQAJ1yXG/0Nl3/7nHDCutWRjOQ
-oKG+DeeMC/hu0qZ+MoEAxDg0ofdLk6l5Szbrkzp6X60nB7WGXodaRe2dSwBuT++d
-hh5jtB8Siu0VsyzOx4k/Q1cSMQY8/1ZGXMj3jUGxxn2GaikFGqZp+PvqVhJKxab+
-D2EpL7XsQcMF5uLabbjnRpBr407/2bz0ZuH9kaMLYHFcxSQRFxBWU/+ijpdtxSkm
-Vk6sY2wUpaLc1Jl0M9ktWifeRflIaNZj9QgK2xz4vdcJg3JcN45BDBKrC6CEwrC7
-zHh+r0p6OBIKogjZ95ElPbl+0LDMQbmlWGvbHZWIhPviShYRRUSWJOKRe2bUQLbF
-mzwNC0P3HjKuV2sjqxnKvREyaIxZ/FkOmlZJA07aonfMV+liShBhFemlblv7xhmm
-r26/tV5bqL5jJbASu+pn7Bx0UnryKAy+Mt603ODVh1dqS28UWEHEiDqSot8PsBp8
-MeIn52ROQbsG7qQhR7W1F/ro1JLPiNfPfZQ7Eyv4v/egYfk/AkcM7COdsAOLJ+hG
-pzh1uqn2gd/l2TRVMrftC9KARcykYwd/0OA5V7EOQr0enccCRf+npw6D+OQtlapd
-I709k0Ep5I0Df+sQaOlsej/gzJ00A7V6cP/lnjFZFcTPzlvZQC54lAKr9ikWyoe3
-CMi978p76M1eI0aEp+oC
-=IwAY
+iQIcBAEBAgAGBQJSMcceAAoJELSic+t+oim9CQwP/A88jugOE9SpfRhwAhNYOP82
+s1PxSKBleihDGwU+ReuJUzBz59BpgTzAKZGDy36q25O+uWUL0nQiN5vhgfFjX8Is
+Y/0NQMBYG5AEhPNqNuI5H1IhuaRGYwJq8SMH+xMmLZXMYXjG5OSy8QDJCUuwclJV
+3vlvGE9ZcF78cjndYFEsnaRcZysxBRvMmEnkipX2IhB6cxTpzz69ErWGvgLqlasj
+E9nT5BTjfDkjMgNPbb6SfI9yqM6vc5ojsTgMghW7qhOavSYcoMDl/iYnnj+V0KxM
+/yP6dcVGBHlUnrKFcFnpgw7TRzBjOSYeQFdg1SlZ/Ap1Ey3ZHLtXgt40lyJvQ8pt
+5b9hoe/L/2QGzDIKYVx1WDruD8iJd1NaGbtdwAg5icvR6SIRAk8dYWE9/Fgq/pQc
+a3f7UCEvkjaNYnVHAnpXMlzPATHHYmlrM4JiKcAtPQfc6Hj/rthIu9hc3rjYGvuH
+GSfyDwWyvLKBpNYCKSAU0R9K6Mf+nz6+CJ3b/RLBuxJztQp/T9xqai+8NOSz1RaG
+4jYFAO0+TtdqY3y8rswEocIlstIqnYAbZdR/4fD+D4pibzl5S2JQE2WVv/AAEdAb
+NDENGJLjOOEq46pIpl/lMa8TCnwvOHF8KdDMr5zEcni3kSxzFdeM1ok8uBhDPt/w
+3fH5iFEakj7AnYuEG+wv
+=WMvk
 -----END PGP SIGNATURE-----
 
---XfgxuImQih7pKHD1--
+--wlp6b3zZ5qAEpghO--
