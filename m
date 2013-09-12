@@ -1,46 +1,46 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: dts: Disable Exynos5250 I2S controllers by default
-Date: Thu, 12 Sep 2013 13:24:28 +0200
-Message-ID: <1905951.GCMqAyg6ym@amdc1227>
-References: <1378982427-5802-1-git-send-email-broonie@kernel.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH] MAINTAINERS: add maintainer entry for Samsung Exynos PCIe
+ driver
+Date: Thu, 12 Sep 2013 20:29:24 +0900
+Message-ID: <000001ceafab$5529e340$ff7da9c0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36179 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754497Ab3ILLYf (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:34531 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751545Ab3ILL3Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 07:24:35 -0400
-In-reply-to: <1378982427-5802-1-git-send-email-broonie@kernel.org>
+	Thu, 12 Sep 2013 07:29:25 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: 'Bjorn Helgaas' <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene@kernel.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Mark,
+Add myself as maintainer for Samsung Exynos PCIe driver.
 
-On Thursday 12 of September 2013 11:40:25 Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
-> 
-> Rather than requiring each board to explicitly disable the I2S
-> controllers it is not using instead require boards to enable those that
-> they are using.
-> 
-> This is required for audio operation on Arndale, one of the unused I2S
-> controllers is pinmuxed with the LDO enable GPIOs for the WM1811A.
-> 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
-> ---
->  arch/arm/boot/dts/exynos5250-arndale.dts  | 4 ++++
->  arch/arm/boot/dts/exynos5250-smdk5250.dts | 8 --------
->  arch/arm/boot/dts/exynos5250.dtsi         | 3 +++
->  3 files changed, 7 insertions(+), 8 deletions(-)
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ MAINTAINERS |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Looks reasonably.
-
-Acked-by: Tomasz Figa <t.figa@samsung.com>
-
-Best regards,
-Tomasz
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6d0dabe..f00c469 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6346,6 +6346,12 @@ S:	Supported
+ F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+ F:	drivers/pci/host/pci-tegra.c
+ 
++PCI DRIVER FOR SAMSUNG EXYNOS
++M:	Jingoo Han <jg1.han@samsung.com>
++L:	linux-pci@vger.kernel.org
++S:	Maintained
++F:	drivers/pci/host/pci-exynos.c
++
+ PCMCIA SUBSYSTEM
+ P:	Linux PCMCIA Team
+ L:	linux-pcmcia@lists.infradead.org
+-- 
+1.7.10.4
