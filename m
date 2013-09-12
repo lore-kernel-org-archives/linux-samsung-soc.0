@@ -1,205 +1,93 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: Disable I2C controllers by default on
- Exynos5250
-Date: Thu, 12 Sep 2013 14:58:59 +0200
-Message-ID: <2175767.kktjrZWOAr@amdc1227>
-References: <1378982427-5802-1-git-send-email-broonie@kernel.org>
- <1378982427-5802-3-git-send-email-broonie@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v3 0/4] Exynos5 Series SCALER Driver
+Date: Thu, 12 Sep 2013 18:39:27 +0530
+Message-ID: <1378991371-24428-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41376 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753854Ab3ILM7b (ORCPT
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:50365 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751414Ab3ILNGJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 08:59:31 -0400
-In-reply-to: <1378982427-5802-3-git-send-email-broonie@kernel.org>
+	Thu, 12 Sep 2013 09:06:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl, shaik.ameer@samsung.com
 
-Hi Mark,
+This patch adds support for SCALER device which is a
+new device for scaling, blending, color fill  and color space
+conversion on EXYNOS5410/5420 SoCs.
 
-On Thursday 12 of September 2013 11:40:27 Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
-> 
-> Ensure that unused I2C controllers are not activated, causing problems
-> due to inappropriate pinmuxing or similar, by marking the controllers as
-> disabled by default and requiring boards to explicitly enable those that
-> are in use.
-> 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5250-arndale.dts  | 31
-> ++-----------------------------
-> arch/arm/boot/dts/exynos5250-smdk5250.dts | 25 +++++--------------------
-> arch/arm/boot/dts/exynos5250-snow.dts     |  4 ++++
->  arch/arm/boot/dts/exynos5250.dtsi         | 10 ++++++++++
->  4 files changed, 21 insertions(+), 49 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts
-> b/arch/arm/boot/dts/exynos5250-arndale.dts index 4687fa0..4c10901 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -31,6 +31,7 @@
->  	};
-> 
->  	i2c@12C60000 {
-> +		status = "okay";
+This device supports the following as key features.
+    input image format
+        - YCbCr420 2P(UV/VU), 3P
+        - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+        - YCbCr444 2P(UV,VU), 3P
+        - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+        - Pre-multiplexed ARGB8888, L8A8 and L8
+    output image format
+        - YCbCr420 2P(UV/VU), 3P
+        - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+        - YCbCr444 2P(UV,VU), 3P
+        - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+        - Pre-multiplexed ARGB8888
+    input rotation
+        - 0/90/180/270 degree, X/Y/XY Flip
+    scale ratio
+        - 1/4 scale down to 16 scale up
+    color space conversion
+        - RGB to YUV / YUV to RGB
+    Size - Exynos5420
+        - Input : 16x16 to 8192x8192
+        - Output:   4x4 to 8192x8192
+    Size - Exynos5410
+        - Input/Output: 4x4 to 4096x4096
+    alpha blending, color fill
 
-I would keep the status properties at the end of all properties, indicating 
-that at this point the description is complete and also to be consistent 
-with other dts files around.
+Rebased on:
+-----------
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
 
->  		samsung,i2c-sda-delay = <100>;
->  		samsung,i2c-max-bus-freq = <20000>;
->  		samsung,i2c-slave-addr = <0x66>;
-> @@ -319,16 +320,8 @@
->  		};
->  	};
-> 
-> -	i2c@12C70000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@12C80000 {
-> -		status = "disabled";
-> -	};
-> -
->  	i2c@12C90000 {
-> -		wm1811a@1a {
-> +		status = "okay";
+Changes from v2:
+---------------
+Addressed review comments from, Inki Dae, Hans Verkuil and Sylwester Nawrocki
+Links to the review comments:
+	1] https://linuxtv.org/patch/19783/
+	2] https://linuxtv.org/patch/19784/
+	3] https://linuxtv.org/patch/19785/
+	4] https://linuxtv.org/patch/19786/
+	5] https://linuxtv.org/patch/19787/
 
-Hmm, I sense something wrong going on here.
+Changes from v1:
+---------------
+1] Split the previous single patch into multiple patches.
+2] Added DT binding documentation.
+3] Removed the unnecessary header file inclusions.
+4] Fix the condition check in mscl_prepare_address for swapping cb/cr addresses.
 
->  			compatible = "wlf,wm1811";
->  			reg = <0x1a>;
-> 
-> @@ -346,26 +339,6 @@
->  		};
->  	};
-> 
-> -	i2c@12CA0000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@12CB0000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@12CC0000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@12CD0000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@121D0000 {
-> -		status = "disabled";
-> -	};
-> -
->  	dwmmc_0: dwmmc0@12200000 {
->  		num-slots = <1>;
->  		supports-highspeed;
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index 67d3c43..90127e3
-> 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -28,6 +28,7 @@
->  	};
-> 
->  	i2c@12C60000 {
-> +		status = "okay";
->  		samsung,i2c-sda-delay = <100>;
->  		samsung,i2c-max-bus-freq = <20000>;
-> 
-> @@ -62,6 +63,7 @@
->  	};
-> 
->  	i2c@12C70000 {
-> +		status = "okay";
->  		samsung,i2c-sda-delay = <100>;
->  		samsung,i2c-max-bus-freq = <20000>;
-> 
-> @@ -86,6 +88,7 @@
->  	};
-> 
->  	i2c@121D0000 {
-> +		status = "okay";
->  		samsung,i2c-sda-delay = <100>;
->  		samsung,i2c-max-bus-freq = <40000>;
->  		samsung,i2c-slave-addr = <0x38>;
-> @@ -101,6 +104,7 @@
->  	};
-> 
->  	i2c@12C80000 {
-> +		status = "okay";
->  		samsung,i2c-sda-delay = <100>;
->  		samsung,i2c-max-bus-freq = <66000>;
-> 
-> @@ -110,27 +114,8 @@
->  		};
->  	};
-> 
-> -	i2c@12C90000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@12CA0000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@12CB0000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@12CC0000 {
-> -		status = "disabled";
-> -	};
-> -
-> -	i2c@12CD0000 {
-> -		status = "disabled";
-> -	};
-> -
->  	i2c@12CE0000 {
-> +		status = "okay";
->  		samsung,i2c-sda-delay = <100>;
->  		samsung,i2c-max-bus-freq = <66000>;
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts
-> b/arch/arm/boot/dts/exynos5250-snow.dts index fd711e2..b7674d5 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -48,6 +48,10 @@
->  		};
->  	};
-> 
-> +	i2c@12CA0000 {
-> +		status = "okay";
 
-Hmm, no other properties needed here?
+Shaik Ameer Basha (4):
+  [media] exynos-scaler: Add new driver for Exynos5 SCALER
+  [media] exynos-scaler: Add core functionality for the SCALER driver
+  [media] exynos-scaler: Add m2m functionality for the SCALER driver
+  [media] exynos-scaler: Add DT bindings for SCALER driver
 
-> +	};
-> +
->  	i2c-arbitrator {
->  		compatible = "i2c-arb-gpio-challenge";
->  		#address-cells = <1>;
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi index a886ee4..4d6312e 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -229,6 +229,7 @@
-> 
->  	i2c_0: i2c@12C60000 {
->  		compatible = "samsung,s3c2440-i2c";
-> +		status = "disabled";
+ .../devicetree/bindings/media/exynos5-scaler.txt   |   22 +
+ drivers/media/platform/Kconfig                     |    8 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/exynos-scaler/Makefile      |    3 +
+ drivers/media/platform/exynos-scaler/scaler-m2m.c  |  781 ++++++++++++
+ drivers/media/platform/exynos-scaler/scaler-regs.c |  334 ++++++
+ drivers/media/platform/exynos-scaler/scaler-regs.h |  331 +++++
+ drivers/media/platform/exynos-scaler/scaler.c      | 1261 ++++++++++++++++++++
+ drivers/media/platform/exynos-scaler/scaler.h      |  385 ++++++
+ 9 files changed, 3126 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
+ create mode 100644 drivers/media/platform/exynos-scaler/Makefile
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-regs.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-regs.h
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler.h
 
-For the sake of consistency, I would place the status property as last here 
-as well.
-
-Best regards,
-Tomasz
+-- 
+1.7.9.5
