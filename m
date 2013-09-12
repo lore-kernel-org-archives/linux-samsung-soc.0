@@ -1,47 +1,53 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Disable Exynos5250 I2S controllers by default
-Date: Thu, 12 Sep 2013 13:15:15 +0200
-Message-ID: <3071955.IukkWJSFK6@amdc1227>
-References: <1378491435-15624-1-git-send-email-broonie@kernel.org>
- <20130910174113.GB4708@sirena.org.uk> <06ff01ceafa4$d81671d0$88435570$@org>
+Subject: Re: [PATCH] ARM: dts: Correct typo in use of samsung,pin-drv for
+ exynos5250
+Date: Thu, 12 Sep 2013 13:18:50 +0200
+Message-ID: <2142402.fOjkrj57SH@amdc1227>
+References: <1378498192-5163-1-git-send-email-al.stone@linaro.org>
+ <6027618.yAIjZoXqyG@amdc1227> <522DE50F.7030602@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:30998 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752125Ab3ILLPX (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:35958 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751533Ab3ILLS5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 07:15:23 -0400
-In-reply-to: <06ff01ceafa4$d81671d0$88435570$@org>
+	Thu, 12 Sep 2013 07:18:57 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MT0003OJFFDQ480@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Sep 2013 12:18:56 +0100 (BST)
+In-reply-to: <522DE50F.7030602@redhat.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Mark Brown' <broonie@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, rob.herring@calxeda.com, 'Pawel Moll' <Pawel.Moll@arm.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, 'devicetree' <devicetree@vger.kernel.org>
+To: Al Stone <ahs3@redhat.com>
+Cc: al.stone@linaro.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linaro-acpi@lists.linaro.org
 
-Hi Kukjin,
-
-On Thursday 12 of September 2013 19:42:57 Kukjin Kim wrote:
-> Mark Brown wrote:
-> > On Tue, Sep 10, 2013 at 06:35:48PM +0100, Mark Rutland wrote:
-> > > It seems far more sensible to me to mark devices disabled by default
-> > > in
-> > > shared dtsi files and then okay them as needed in particular dts
-> > > files.
-> > > I'd be happy with more of this.
+On Monday 09 of September 2013 09:11:11 Al Stone wrote:
+> On 09/09/2013 03:00 AM, Tomasz Figa wrote:
+> > Hi Al,
 > > 
-> > Yeah, me too - though only for devices that have an external impact,
-> > for
-> > things that are internal only (eg, a crypto engine) it makes sense to
-> > enable them by default since they should normally be usable regardless
-> > of the system configuration.
+> > On Friday 06 of September 2013 14:09:52 al.stone@linaro.org wrote:
+> >> From: Al Stone <ahs3@redhat.com>
+> >> 
+> >>     Corrects an obvious typo in the Arndale pinctrl descriptions in
+> >>     DT.
+> >>     The samsung-pinctrl driver uses the correct name.
+> > 
+> > Thanks for spotting this. The patch looks good to me, but is it tested
+> > on some Exynos 5250 based board?
 > 
-> (+ DT ML)
-> 
-> Makes sense but I need to get the opinions from DT guys...
+> Only with a simple boot test on an Arndale, and making sure that dtc
+> could actually build the dtb.  I did not test the driver code.  I did
+> read through the code and it appeared to be doing the right things,
+> based on the content of the DT, but I did not do an active test of that.
 
-Yes, this patch should have been posted to the DT ML indeed, but it has 
-been already acked by Mark Rutland, one of DT binding maintainers.
+OK. I'm able to do exactly the same testing as you did, so let's say I'm 
+fine with this patch.
+
+Acked-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
