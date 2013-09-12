@@ -1,138 +1,81 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v8 00/12] Exynos5 IS driver
-Date: Thu, 12 Sep 2013 17:37:37 +0530
-Message-ID: <1378987669-10870-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
+Subject: [PATCH v8 01/12] [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device tree bindings documentation
+Date: Thu, 12 Sep 2013 17:37:38 +0530
+Message-ID: <1378987669-10870-2-git-send-email-arun.kk@samsung.com>
+References: <1378987669-10870-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:50284 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753964Ab3ILMHc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Sep 2013 08:07:32 -0400
+In-Reply-To: <1378987669-10870-1-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch series add support for Exynos5 camera subsystem. It
-re-uses mipi-csis and fimc-lite from exynos4-is and adds a new
-media device and fimc-is device drivers for exynos5.
-The media device supports asynchronos subdev registration for the
-fimc-is sensors and is tested on top of the patch series from Sylwester
-for exynos4-is [1].
+The patch adds the DT binding documentation for Samsung
+Exynos5 SoC series imaging subsystem (FIMC-IS).
 
-[1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg64653.html
-
-Changes from v7
----------------
-- Addressed few DT related review comments from Sylwester
-http://www.mail-archive.com/linux-media@vger.kernel.org/msg66403.html
-- Few fixes added after some regression testing
-
-Changes from v6
----------------
-- Addressed DT binding doc review comments from Sylwester
-http://www.mail-archive.com/linux-media@vger.kernel.org/msg65771.html
-http://www.mail-archive.com/linux-media@vger.kernel.org/msg65772.html
-
-Changes from v5
----------------
-- Addressed review comments from Sylwester
-http://www.mail-archive.com/linux-media@vger.kernel.org/msg65578.html
-http://www.mail-archive.com/linux-media@vger.kernel.org/msg65605.html
-
-Changes from v4
----------------
-- Addressed all review comments from Sylwester
-- Added separate PMU node as suggested by Stephen Warren
-- Added phandle based discovery of subdevs instead of node name
-
-Changes from v3
----------------
-- Dropped the RFC tag
-- Addressed all review comments from Sylwester and Sachin
-- Removed clock provider for media dev
-- Added s5k4e5 sensor devicetree binding doc
-
-Changes from v2
----------------
-- Added exynos5 media device driver from Shaik to this series
-- Added ISP pipeline support in media device driver
-- Based on Sylwester's latest exynos4-is development
-- Asynchronos registration of sensor subdevs
-- Made independent IS-sensor support
-- Add s5k4e5 sensor driver
-- Addressed review comments from Sylwester, Hans, Andrzej, Sachin
-
-Changes from v1
----------------
-- Addressed all review comments from Sylwester
-- Made sensor subdevs as independent i2c devices
-- Lots of cleanup
-- Debugfs support added
-- Removed PMU global register access
-
-Arun Kumar K (12):
-  [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device tree bindings
-    documentation
-  [media] exynos5-fimc-is: Add driver core files
-  [media] exynos5-fimc-is: Add common driver header files
-  [media] exynos5-fimc-is: Add register definition and context header
-  [media] exynos5-fimc-is: Add isp subdev
-  [media] exynos5-fimc-is: Add scaler subdev
-  [media] exynos5-fimc-is: Add sensor interface
-  [media] exynos5-fimc-is: Add the hardware pipeline control
-  [media] exynos5-fimc-is: Add the hardware interface module
-  [media] exynos5-is: Add Kconfig and Makefile
-  V4L: s5k6a3: Change sensor min/max resolutions
-  V4L: Add driver for s5k4e5 image sensor
-
- .../devicetree/bindings/media/exynos5-fimc-is.txt  |   46 +
- .../devicetree/bindings/media/i2c/s5k4e5.txt       |   45 +
- drivers/media/i2c/Kconfig                          |    8 +
- drivers/media/i2c/Makefile                         |    1 +
- drivers/media/i2c/s5k4e5.c                         |  347 ++++
- drivers/media/i2c/s5k6a3.c                         |   10 +-
- drivers/media/platform/Kconfig                     |    1 +
- drivers/media/platform/Makefile                    |    1 +
- drivers/media/platform/exynos5-is/Kconfig          |   20 +
- drivers/media/platform/exynos5-is/Makefile         |    7 +
- drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  187 +++
- drivers/media/platform/exynos5-is/fimc-is-core.c   |  413 +++++
- drivers/media/platform/exynos5-is/fimc-is-core.h   |  132 ++
- drivers/media/platform/exynos5-is/fimc-is-err.h    |  257 +++
- .../media/platform/exynos5-is/fimc-is-interface.c  |  810 ++++++++++
- .../media/platform/exynos5-is/fimc-is-interface.h  |  124 ++
- drivers/media/platform/exynos5-is/fimc-is-isp.c    |  534 ++++++
- drivers/media/platform/exynos5-is/fimc-is-isp.h    |   90 ++
- .../media/platform/exynos5-is/fimc-is-metadata.h   |  767 +++++++++
- drivers/media/platform/exynos5-is/fimc-is-param.h  | 1159 +++++++++++++
- .../media/platform/exynos5-is/fimc-is-pipeline.c   | 1708 ++++++++++++++++++++
- .../media/platform/exynos5-is/fimc-is-pipeline.h   |  129 ++
- drivers/media/platform/exynos5-is/fimc-is-regs.h   |  105 ++
- drivers/media/platform/exynos5-is/fimc-is-scaler.c |  476 ++++++
- drivers/media/platform/exynos5-is/fimc-is-scaler.h |  106 ++
- drivers/media/platform/exynos5-is/fimc-is-sensor.c |   45 +
- drivers/media/platform/exynos5-is/fimc-is-sensor.h |   65 +
- drivers/media/platform/exynos5-is/fimc-is.h        |  160 ++
- 28 files changed, 7749 insertions(+), 4 deletions(-)
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ .../devicetree/bindings/media/exynos5-fimc-is.txt  |   46 ++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
- create mode 100644 drivers/media/i2c/s5k4e5.c
- create mode 100644 drivers/media/platform/exynos5-is/Kconfig
- create mode 100644 drivers/media/platform/exynos5-is/Makefile
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-regs.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is.h
 
+diff --git a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+new file mode 100644
+index 0000000..5611401
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+@@ -0,0 +1,46 @@
++Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
++------------------------------------------------------
++
++The camera subsystem on Samsung Exynos5 SoC has some changes relative
++to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
++FIMC-LITE IPs but has a much improved version of FIMC-IS which can
++handle sensor controls and camera post-processing operations. The
++Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
++post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
++dedicated scalers (SCC and SCP).
++
++fimc-is node
++------------
++
++Required properties:
++
++- compatible        : must be "samsung,exynos5250-fimc-is"
++- reg               : physical base address and size of the memory mapped
++                      registers
++- interrupt-parent  : parent interrupt controller
++- interrupts        : fimc-is interrupt to the parent interrupt controller
++- clocks            : list of clock specifiers, corresponding to entries in
++                      clock-names property
++- clock-names       : must contain "isp", "mcu_isp", "isp_div0", "isp_div1",
++                      "isp_divmpwm", "mcu_isp_div0", "mcu_isp_div1" entries,
++                      matching entries in the clocks property
++- samsung,pmu       : phandle to the Power Management Unit (PMU) node
++
++i2c-isp (ISP I2C bus controller) nodes
++------------------------------------------
++
++Required properties:
++
++- compatible	: should be "samsung,exynos4212-i2c-isp" for Exynos4212,
++		  Exynos4412 and Exynos5250 SoCs
++- reg		: physical base address and length of the registers set
++- clocks	: must contain gate clock specifier for this controller
++- clock-names	: must contain "i2c_isp" entry
++
++For the i2c-isp node, it is required to specify a pinctrl state named "default",
++according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
++
++Device tree nodes of the image sensors controlled directly by the FIMC-IS
++firmware must be child nodes of their corresponding ISP I2C bus controller node.
++The data link of these image sensors must be specified using the common video
++interfaces bindings, defined in video-interfaces.txt.
 -- 
 1.7.9.5
