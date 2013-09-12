@@ -1,114 +1,255 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v2 5/7] ARM: dts: Update DP controller DT Node for Exynos5
- based SoCs
-Date: Thu, 12 Sep 2013 19:36:56 +0900
-Message-ID: <06f501ceafa4$00ed4490$02c7cdb0$@org>
-References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
- <1375183178-8201-6-git-send-email-vikas.sajjan@linaro.org>
- <002d01cea207$ff2c57d0$fd850770$%han@samsung.com>
- <CAD025yQ62VW4ou67GEi5=WwQy+j5r80haBp--ioPiw9U0o-e=Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 3/3] ARM: dts: Disable I2C controllers by default on Exynos5250
+Date: Thu, 12 Sep 2013 11:40:27 +0100
+Message-ID: <1378982427-5802-3-git-send-email-broonie@kernel.org>
+References: <1378982427-5802-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47808 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753216Ab3ILKg6 (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:42041 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751685Ab3ILKkn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 06:36:58 -0400
-In-reply-to: <CAD025yQ62VW4ou67GEi5=WwQy+j5r80haBp--ioPiw9U0o-e=Q@mail.gmail.com>
-Content-language: ko
+	Thu, 12 Sep 2013 06:40:43 -0400
+In-Reply-To: <1378982427-5802-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vikas Sajjan' <vikas.sajjan@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>, 'devicetree' <devicetree@vger.kernel.org>, 'InKi Dae' <inki.dae@samsung.com>, 'Ajay kumar' <ajaynumb@gmail.com>, 'Patch Tracking' <patches@linaro.org>, linaro-kernel@lists.linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@vger.kernel.org, Mark Brown <broonie@linaro.org>
 
-Vikas Sajjan wrote:
-> 
-> Hi Mr. Jingoo Han,
-> 
-> On 26 August 2013 08:27, Jingoo Han <jg1.han@samsung.com> wrote:
-> > On Tuesday, July 30, 2013 8:20 PM, Vikas Sajjan wrote:
-> >>
-> >> Moves the properties of DP controller to exynos5.dtsi which are common
-> >> across exynos5 SoCs like Exynos5250 and Exynos5420.
-> >>
-> >> The PHY DP Node is based on Jingoo Han's <jg1.han@samsung.com> patch at
-> >> https://patchwork.linuxtv.org/patch/19189/
-> >>
-> >> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
-> >> ---
-> >>  arch/arm/boot/dts/exynos5.dtsi            |   11 +++++++++++
-> >>  arch/arm/boot/dts/exynos5250-arndale.dts  |    3 ++-
-> >>  arch/arm/boot/dts/exynos5250-smdk5250.dts |    3 ++-
-> >>  arch/arm/boot/dts/exynos5250.dtsi         |   21 +++++++++------------
-> >>  4 files changed, 24 insertions(+), 14 deletions(-)
-> >>
-> >
-> > [....]
-> >
-> >> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> >> index 238bdb2..1c017dc 100644
-> >> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> >> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> >> @@ -614,20 +614,17 @@
-> >>               interrupts = <0 94 0>;
-> >>       };
-> >>
-> >> -     dp-controller {
-> >> -             compatible = "samsung,exynos5-dp";
-> >> -             reg = <0x145b0000 0x1000>;
-> >> -             interrupts = <10 3>;
-> >> -             interrupt-parent = <&combiner>;
-> >> +     dp_phy: video-phy@10040720 {
-> >> +             compatible = "samsung,exynos5250-dp-video-phy";
-> >> +             reg = <0x10040720 4>;
-> >> +             #phy-cells = <0>;
-> >> +     };
-> >
-> > Oops!!!
-> >
-> > This patch should be reverted.
-> > Or, fix patch should be re-sent.
-> > 'dp phy' driver is not yet merged to mainline kernel.
-> >
-> 
-> As you suggest, since the DP-PHY driver is NOT yet in mainline, we may
-> have to keep this patch reverted till your patch series gets merged to
-> have DP working on exynos5 .
-> 
-OK, got it. Please send patch fixing this issue for v3.12. Of course, we
-need this from v3.13 which will be including the DP-PHY driver.
+From: Mark Brown <broonie@linaro.org>
 
-Thanks,
-Kukjin
+Ensure that unused I2C controllers are not activated, causing problems due
+to inappropriate pinmuxing or similar, by marking the controllers as
+disabled by default and requiring boards to explicitly enable those that
+are in use.
 
-> >
-> >> +
-> >> +     dp-controller@145b0000 {
-> >>               clocks = <&clock 342>;
-> >>               clock-names = "dp";
-> >> -             #address-cells = <1>;
-> >> -             #size-cells = <0>;
-> >> -
-> >> -             dptx-phy {
-> >> -                     reg = <0x10040720>;
-> >> -                     samsung,enable-mask = <1>;
-> >> -             };
-> >> +             phys = <&dp_phy>;
-> >> +             phy-names = "dp";
-> >>       };
-> >
-> > Thus, 'dptx-phy' node should be used until dp phy driver is merged.
-> >
-> > Vikas Sajjan,
-> > Please test your patch on real boards when you send your patch.
-> >
-> 
-> I tested the patch before sending on Exynos5250-SMDK5250 using  Kishon
-> Vijay Abraham's series at http://lwn.net/Articles/559487/
->  which contains DP-PHY driver posted by you
->  1.  phy: Add driver for Exynos DP PHY
->  2.  video: exynos_dp: remove non-DT support for Exynos Display Port
->  3.  video: exynos_dp: Use the generic PHY driver
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ arch/arm/boot/dts/exynos5250-arndale.dts  | 31 ++-----------------------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts | 25 +++++--------------------
+ arch/arm/boot/dts/exynos5250-snow.dts     |  4 ++++
+ arch/arm/boot/dts/exynos5250.dtsi         | 10 ++++++++++
+ 4 files changed, 21 insertions(+), 49 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index 4687fa0..4c10901 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -31,6 +31,7 @@
+ 	};
+ 
+ 	i2c@12C60000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <20000>;
+ 		samsung,i2c-slave-addr = <0x66>;
+@@ -319,16 +320,8 @@
+ 		};
+ 	};
+ 
+-	i2c@12C70000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12C80000 {
+-		status = "disabled";
+-	};
+-
+ 	i2c@12C90000 {
+-		wm1811a@1a {
++		status = "okay";
+ 			compatible = "wlf,wm1811";
+ 			reg = <0x1a>;
+ 
+@@ -346,26 +339,6 @@
+ 		};
+ 	};
+ 
+-	i2c@12CA0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CB0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CC0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CD0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@121D0000 {
+-		status = "disabled";
+-	};
+-
+ 	dwmmc_0: dwmmc0@12200000 {
+ 		num-slots = <1>;
+ 		supports-highspeed;
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 67d3c43..90127e3 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -28,6 +28,7 @@
+ 	};
+ 
+ 	i2c@12C60000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <20000>;
+ 
+@@ -62,6 +63,7 @@
+ 	};
+ 
+ 	i2c@12C70000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <20000>;
+ 
+@@ -86,6 +88,7 @@
+ 	};
+ 
+ 	i2c@121D0000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <40000>;
+ 		samsung,i2c-slave-addr = <0x38>;
+@@ -101,6 +104,7 @@
+ 	};
+ 
+ 	i2c@12C80000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 
+@@ -110,27 +114,8 @@
+ 		};
+ 	};
+ 
+-	i2c@12C90000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CA0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CB0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CC0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CD0000 {
+-		status = "disabled";
+-	};
+-
+ 	i2c@12CE0000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index fd711e2..b7674d5 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -48,6 +48,10 @@
+ 		};
+ 	};
+ 
++	i2c@12CA0000 {
++		status = "okay";
++	};
++
+ 	i2c-arbitrator {
+ 		compatible = "i2c-arb-gpio-challenge";
+ 		#address-cells = <1>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index a886ee4..4d6312e 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -229,6 +229,7 @@
+ 
+ 	i2c_0: i2c@12C60000 {
+ 		compatible = "samsung,s3c2440-i2c";
++		status = "disabled";
+ 		reg = <0x12C60000 0x100>;
+ 		interrupts = <0 56 0>;
+ 		#address-cells = <1>;
+@@ -241,6 +242,7 @@
+ 
+ 	i2c_1: i2c@12C70000 {
+ 		compatible = "samsung,s3c2440-i2c";
++		status = "disabled";
+ 		reg = <0x12C70000 0x100>;
+ 		interrupts = <0 57 0>;
+ 		#address-cells = <1>;
+@@ -253,6 +255,7 @@
+ 
+ 	i2c_2: i2c@12C80000 {
+ 		compatible = "samsung,s3c2440-i2c";
++		status = "disabled";
+ 		reg = <0x12C80000 0x100>;
+ 		interrupts = <0 58 0>;
+ 		#address-cells = <1>;
+@@ -265,6 +268,7 @@
+ 
+ 	i2c_3: i2c@12C90000 {
+ 		compatible = "samsung,s3c2440-i2c";
++		status = "disabled";
+ 		reg = <0x12C90000 0x100>;
+ 		interrupts = <0 59 0>;
+ 		#address-cells = <1>;
+@@ -277,6 +281,7 @@
+ 
+ 	i2c_4: i2c@12CA0000 {
+ 		compatible = "samsung,s3c2440-i2c";
++		status = "disabled";
+ 		reg = <0x12CA0000 0x100>;
+ 		interrupts = <0 60 0>;
+ 		#address-cells = <1>;
+@@ -289,6 +294,7 @@
+ 
+ 	i2c_5: i2c@12CB0000 {
+ 		compatible = "samsung,s3c2440-i2c";
++		status = "disabled";
+ 		reg = <0x12CB0000 0x100>;
+ 		interrupts = <0 61 0>;
+ 		#address-cells = <1>;
+@@ -301,6 +307,7 @@
+ 
+ 	i2c_6: i2c@12CC0000 {
+ 		compatible = "samsung,s3c2440-i2c";
++		status = "disabled";
+ 		reg = <0x12CC0000 0x100>;
+ 		interrupts = <0 62 0>;
+ 		#address-cells = <1>;
+@@ -313,6 +320,7 @@
+ 
+ 	i2c_7: i2c@12CD0000 {
+ 		compatible = "samsung,s3c2440-i2c";
++		status = "disabled";
+ 		reg = <0x12CD0000 0x100>;
+ 		interrupts = <0 63 0>;
+ 		#address-cells = <1>;
+@@ -325,6 +333,7 @@
+ 
+ 	i2c_8: i2c@12CE0000 {
+ 		compatible = "samsung,s3c2440-hdmiphy-i2c";
++		status = "disabled";
+ 		reg = <0x12CE0000 0x1000>;
+ 		interrupts = <0 64 0>;
+ 		#address-cells = <1>;
+@@ -335,6 +344,7 @@
+ 
+ 	i2c@121D0000 {
+                 compatible = "samsung,exynos5-sata-phy-i2c";
++		status = "disabled";
+                 reg = <0x121D0000 0x100>;
+                 #address-cells = <1>;
+                 #size-cells = <0>;
+-- 
+1.8.4.rc3
