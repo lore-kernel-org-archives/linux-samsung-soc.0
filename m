@@ -1,61 +1,74 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: dts: Disable I2C controllers by default on Exynos5250
-Date: Fri, 13 Sep 2013 01:02:11 +0200
-Message-ID: <1462876.u3JagxpM84@flatron>
-References: <1378982427-5802-1-git-send-email-broonie@kernel.org> <1657964.f1bIFjAZ98@amdc1227> <20130912200013.GU29403@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 3/3] ARM: dts: Disable I2C controllers by default on
+ Exynos5250
+Date: Fri, 13 Sep 2013 00:42:25 +0100
+Message-ID: <20130912234225.GZ29403@sirena.org.uk>
+References: <1378982427-5802-1-git-send-email-broonie@kernel.org>
+ <1657964.f1bIFjAZ98@amdc1227>
+ <20130912200013.GU29403@sirena.org.uk>
+ <1462876.u3JagxpM84@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20130912200013.GU29403-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="18II17TkgouCCESf"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:41672 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753406Ab3ILXme (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Sep 2013 19:42:34 -0400
+Content-Disposition: inline
+In-Reply-To: <1462876.u3JagxpM84@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@vger.kernel.org
 
-On Thursday 12 of September 2013 21:00:13 Mark Brown wrote:
-> On Thu, Sep 12, 2013 at 05:55:59PM +0200, Tomasz Figa wrote:
-> > On Thursday 12 of September 2013 14:52:33 Mark Brown wrote:
-> > > Please delete unneeded context from your mails, it makes it much
-> > > easier
-> > > to find the new content.
-> > 
-> > I always snip unnecessary parts of quoted message if its really long,
-> > but if its length is in acceptable range then I try to keep the whole
-> > message just for reference.
-> 
-> I tend to say that when I find myself paging through entire screens of
-> quote and can't see the relevance to any content I eventually find.
 
-Hmm, looking at it here from my desktop, I could have dropped some of the 
-context between second and third reply indeed.
+--18II17TkgouCCESf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > i2c@12CA0000 does look like a normal hardware I2C controller, which
-> > needs some extra properties like samsung,i2c-sda-delay or
-> > samsung,i2c-max-bus-
-> Shouldn't these have sane defaults?
+On Fri, Sep 13, 2013 at 01:02:11AM +0200, Tomasz Figa wrote:
+> On Thursday 12 of September 2013 21:00:13 Mark Brown wrote:
 
-AFAIK those parameters are highly board specific so it would be hard to 
-set any reasonable default for them.
+> > > i2c@12CA0000 does look like a normal hardware I2C controller, which
+> > > needs some extra properties like samsung,i2c-sda-delay or
+> > > samsung,i2c-max-bus-
 
-> > freq. However they are specified in cros5250-common.dtsi, so I'd say
-> > that this might be better place for the status override as well.
-> 
-> Can we rename that file to something like exynos5250-cros-common.dtsi
-> so that it's obvious it's relevant to exynos?  I had completely failed
-> to notice that it was anything to do with Exynos when I was searching
-> for affected DTS files.
-> 
-> Especially given that it's included in exactly one DTS at the minute...
+> > Shouldn't these have sane defaults?
 
-Yes, it would surely make sense to do so, unless there is another cros 
-board that could use this dtsi and is based on another SoC, which I doubt, 
-because there are multiple SoC specific values specified inside it.
+> AFAIK those parameters are highly board specific so it would be hard to=
+=20
+> set any reasonable default for them.
 
-Best regards,
-Tomasz
+At least the maximum bus frequency should be able to be set to 100Hz by
+default, that's the minimum from the I2C spec though pretty much
+everything does at least 400Hz.  sda-delay should really be able to
+default to either zero or something per-SoC, I don't remember having to
+tune it when using board files and I2C is generally pretty robust so
+it'd be surprising if it were that sensitive to system design.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--18II17TkgouCCESf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSMlFeAAoJELSic+t+oim9i74P/0YEIR+jiGrQvHn3XlDpDHyY
+qyD/Wpavhdyciv7wEiXzsY3VHlSJeGtSFZd3OIIXZ8SOJDLpdDwAKqW8MYbkmku5
+xoMqRWO66wW4aHHeIlKcRxlb5/uYmw54G65hOxpUYMH9G/iCgC6kuacrGrGpVAX6
+gI6+Dfcr7tUS1vmJmrrHWoEEEZDwBJM5kYiKLh8pewhwUFJtCU6fqEJ41Zrkc8VO
+LPflMBh37Mtj2leA/JPNxUOOSlSUcJy7FBn+uq1nh+qR0cPiyPmylNM5UJlQpRIu
+g23Cr/nfxyw/Rw9KuY05UjjObdV32h2NHWbaVfDXAOCnNTTINygKU36M7J0xTbiu
+NpiOJHFcDkv63+p+CL2m5ezjn+RHwDhZQnyOLAX3muOhD9iShEfvAnn5phdhsPnn
+wunA0QcB+qe1egdKkVHO4p36E+km5hmfTbXsJEChRcSj+g+jN5Gr8733ttxX9xdM
+YQwsdHdaLRzU20TVvU0zLYqr/c2aBAmdz77t/NshqRdq9xfcMJsxjn5ZCOz1D87c
+HwKLjjq4hBSWagOFdhUxgoQhT/gYDODKunPD3jy5NmeQf9tuKRQ93Npq4QKS+DgQ
+2xWFGyanMz/efugkBLSs64MLMQ8qQq+FtJDccCofktACYsHJ7bZeKrdtNcJoD4ys
+D012RfkpJ9lR4HhYDrkK
+=zSkz
+-----END PGP SIGNATURE-----
+
+--18II17TkgouCCESf--
