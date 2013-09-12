@@ -1,60 +1,47 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
- part and Exynos part
-Date: Thu, 12 Sep 2013 16:44:02 +0530
-Message-ID: <5231A1FA.5040705@ti.com>
-References: <000701ce8741$fe47deb0$fad79c10$@samsung.com> <51EE22DF.6090902@ti.com> <001301ce8772$522dfc50$f689f4f0$@samsung.com> <5231607C.10702@ti.com> <003501ceaf87$cda45db0$68ed1910$%han@samsung.com> <20130912093018.GA2124@pratyush-vbox> <52318CCC.4040604@ti.com> <20130912095213.GA5995@pratyush-vbox> <5231925B.3030104@ti.com> <20130912101803.GB5995@pratyush-vbox> <20130912104602.GC5995@pratyush-vbox>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Disable Exynos5250 I2S controllers by default
+Date: Thu, 12 Sep 2013 13:15:15 +0200
+Message-ID: <3071955.IukkWJSFK6@amdc1227>
+References: <1378491435-15624-1-git-send-email-broonie@kernel.org>
+ <20130910174113.GB4708@sirena.org.uk> <06ff01ceafa4$d81671d0$88435570$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130912104602.GC5995@pratyush-vbox>
-Sender: linux-pci-owner@vger.kernel.org
-To: Pratyush Anand <pratyush.anand@st.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:30998 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752125Ab3ILLPX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Sep 2013 07:15:23 -0400
+In-reply-to: <06ff01ceafa4$d81671d0$88435570$@org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Mark Brown' <broonie@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>, rob.herring@calxeda.com, 'Pawel Moll' <Pawel.Moll@arm.com>, 'Stephen Warren' <swarren@wwwdotorg.org>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, 'devicetree' <devicetree@vger.kernel.org>
 
-On Thursday 12 September 2013 04:16 PM, Pratyush Anand wrote:
-> On Thu, Sep 12, 2013 at 03:48:03PM +0530, Pratyush Anand wrote:
->> On Thu, Sep 12, 2013 at 06:07:23PM +0800, Kishon Vijay Abraham I wrote:
->>> Hi,
->>>
->>> On Thursday 12 September 2013 03:22 PM, Pratyush Anand wrote:
->>>> Hi Kishon,
->>>>
->>>> On Thu, Sep 12, 2013 at 05:43:40PM +0800, Kishon Vijay Abraham I wrote:
->>>>> Hi,
->>>>>
->>>>> On Thursday 12 September 2013 03:00 PM, Pratyush Anand wrote:
->>>>>> Hi Jingoo,
->>>>>>
->>>>>>
->>>>>> On Thu, Sep 12, 2013 at 03:15:04PM +0800, Jingoo Han wrote:
->>>>>>> On Tuesday 23 July 2013 12:30 PM, Kishon Vijay Abraham I wrote:
->>>>>>>>>> .
->>>>>>>>>> .
->>
->> [...]
->>
->>>>> when I do ifconfig eth0 up, I get *r8169 0000:01:00.0 eth0: link up.*
->>>>> But I dont receive any packets and ping also fails and the tx and rx packet
->>>>> count is also 0. Could it be related to inbound translation?
->>>>
->>>> A PCIe analyser log would tell a definite cause. Most likely either
->>>> inbound translation is not working or INTx/MSI is not working.
->>>
->>> I have enabled only legacy interrupts. Whenever I connect or disconnect
->>> ethernet cable I get link up/link down message and also the interrupt count for
->>> eth0 increases. So I'm not doubting INTx interrupts as such.
+Hi Kukjin,
+
+On Thursday 12 of September 2013 19:42:57 Kukjin Kim wrote:
+> Mark Brown wrote:
+> > On Tue, Sep 10, 2013 at 06:35:48PM +0100, Mark Rutland wrote:
+> > > It seems far more sensible to me to mark devices disabled by default
+> > > in
+> > > shared dtsi files and then okay them as needed in particular dts
+> > > files.
+> > > I'd be happy with more of this.
+> > 
+> > Yeah, me too - though only for devices that have an external impact,
+> > for
+> > things that are internal only (eg, a crypto engine) it makes sense to
+> > enable them by default since they should normally be usable regardless
+> > of the system configuration.
 > 
-> Just a question, what is the MRRS of your RC? if it is 128, can you
-
-it's 512.
-> try with passing pci=pcie_bus_peer2peer  in your bootargs.
+> (+ DT ML)
 > 
-> Again, analyser will help a lot in diagnosing such issues.
+> Makes sense but I need to get the opinions from DT guys...
 
-dont have a analyser here :-(
+Yes, this patch should have been posted to the DT ML indeed, but it has 
+been already acked by Mark Rutland, one of DT binding maintainers.
 
-Thanks
-Kishon
+Best regards,
+Tomasz
