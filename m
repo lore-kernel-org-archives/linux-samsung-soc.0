@@ -1,49 +1,114 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys part
- and Exynos part
-Date: Thu, 12 Sep 2013 19:25:59 +0900
-Message-ID: <000701ceafa2$792d7cb0$6b887610$%han@samsung.com>
-References: <002801ce8376$a807dbf0$f81793d0$@samsung.com>
- <51ED49D6.9050209@ti.com> <000701ce8741$fe47deb0$fad79c10$@samsung.com>
- <51EE22DF.6090902@ti.com> <001301ce8772$522dfc50$f689f4f0$@samsung.com>
- <5231607C.10702@ti.com> <003501ceaf87$cda45db0$68ed1910$%han@samsung.com>
- <20130912093018.GA2124@pratyush-vbox> <52318CCC.4040604@ti.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH v2 5/7] ARM: dts: Update DP controller DT Node for Exynos5
+ based SoCs
+Date: Thu, 12 Sep 2013 19:36:56 +0900
+Message-ID: <06f501ceafa4$00ed4490$02c7cdb0$@org>
+References: <1375183178-8201-1-git-send-email-vikas.sajjan@linaro.org>
+ <1375183178-8201-6-git-send-email-vikas.sajjan@linaro.org>
+ <002d01cea207$ff2c57d0$fd850770$%han@samsung.com>
+ <CAD025yQ62VW4ou67GEi5=WwQy+j5r80haBp--ioPiw9U0o-e=Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <52318CCC.4040604@ti.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:47808 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753216Ab3ILKg6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Sep 2013 06:36:58 -0400
+In-reply-to: <CAD025yQ62VW4ou67GEi5=WwQy+j5r80haBp--ioPiw9U0o-e=Q@mail.gmail.com>
 Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Pratyush Anand' <pratyush.anand@st.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mohit KUMAR DCG' <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Vikas Sajjan' <vikas.sajjan@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>, 'devicetree' <devicetree@vger.kernel.org>, 'InKi Dae' <inki.dae@samsung.com>, 'Ajay kumar' <ajaynumb@gmail.com>, 'Patch Tracking' <patches@linaro.org>, linaro-kernel@lists.linaro.org
 
-On Thursday, September 12, 2013 6:44 PM, Kishon Vijay Abraham I wrote:
-> On Thursday 12 September 2013 03:00 PM, Pratyush Anand wrote:
+Vikas Sajjan wrote:
+> 
+> Hi Mr. Jingoo Han,
+> 
+> On 26 August 2013 08:27, Jingoo Han <jg1.han@samsung.com> wrote:
+> > On Tuesday, July 30, 2013 8:20 PM, Vikas Sajjan wrote:
+> >>
+> >> Moves the properties of DP controller to exynos5.dtsi which are common
+> >> across exynos5 SoCs like Exynos5250 and Exynos5420.
+> >>
+> >> The PHY DP Node is based on Jingoo Han's <jg1.han@samsung.com> patch at
+> >> https://patchwork.linuxtv.org/patch/19189/
+> >>
+> >> Signed-off-by: Vikas Sajjan <vikas.sajjan@linaro.org>
+> >> ---
+> >>  arch/arm/boot/dts/exynos5.dtsi            |   11 +++++++++++
+> >>  arch/arm/boot/dts/exynos5250-arndale.dts  |    3 ++-
+> >>  arch/arm/boot/dts/exynos5250-smdk5250.dts |    3 ++-
+> >>  arch/arm/boot/dts/exynos5250.dtsi         |   21 +++++++++------------
+> >>  4 files changed, 24 insertions(+), 14 deletions(-)
+> >>
 > >
-> > From this conversation, It seems that you
-> > have tested this driver and it works fine without inbound translation
-> > function. I am sure that you would have tested a PCIe card with DMA
-> > capability such as PCIe2USB or PCIe2Ethernet. Since it worked, it
-> > means that by default your controller is supporting one to one mapping
-> > in case of inbound transaction even when address translation is enabled.
+> > [....]
+> >
+> >> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> >> index 238bdb2..1c017dc 100644
+> >> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> >> @@ -614,20 +614,17 @@
+> >>               interrupts = <0 94 0>;
+> >>       };
+> >>
+> >> -     dp-controller {
+> >> -             compatible = "samsung,exynos5-dp";
+> >> -             reg = <0x145b0000 0x1000>;
+> >> -             interrupts = <10 3>;
+> >> -             interrupt-parent = <&combiner>;
+> >> +     dp_phy: video-phy@10040720 {
+> >> +             compatible = "samsung,exynos5250-dp-video-phy";
+> >> +             reg = <0x10040720 4>;
+> >> +             #phy-cells = <0>;
+> >> +     };
+> >
+> > Oops!!!
+> >
+> > This patch should be reverted.
+> > Or, fix patch should be re-sent.
+> > 'dp phy' driver is not yet merged to mainline kernel.
+> >
 > 
-> btw, I'm testing Ethernet controller: Realtek Semiconductor Co., Ltd.
-> RTL8111/8168B PCI Express Gigabit Ethernet controller.
+> As you suggest, since the DP-PHY driver is NOT yet in mainline, we may
+> have to keep this patch reverted till your patch series gets merged to
+> have DP working on exynos5 .
 > 
-> when I do ifconfig eth0 up, I get *r8169 0000:01:00.0 eth0: link up.*
-> But I dont receive any packets and ping also fails and the tx and rx packet
-> count is also 0. Could it be related to inbound translation?
+OK, got it. Please send patch fixing this issue for v3.12. Of course, we
+need this from v3.13 which will be including the DP-PHY driver.
+
+Thanks,
+Kukjin
+
+> >
+> >> +
+> >> +     dp-controller@145b0000 {
+> >>               clocks = <&clock 342>;
+> >>               clock-names = "dp";
+> >> -             #address-cells = <1>;
+> >> -             #size-cells = <0>;
+> >> -
+> >> -             dptx-phy {
+> >> -                     reg = <0x10040720>;
+> >> -                     samsung,enable-mask = <1>;
+> >> -             };
+> >> +             phys = <&dp_phy>;
+> >> +             phy-names = "dp";
+> >>       };
+> >
+> > Thus, 'dptx-phy' node should be used until dp phy driver is merged.
+> >
+> > Vikas Sajjan,
+> > Please test your patch on real boards when you send your patch.
+> >
 > 
-
-Hi Kishon,
-
-I have tested Ethernet controller: Intel Corporation 82574L PCI Express
-Gigabit Ethernet controller.
-
-Without inbound translation, it works properly with both legacy interrupt
-mode and MSI mode.
-
-Best regards,
-Jingoo Han
+> I tested the patch before sending on Exynos5250-SMDK5250 using  Kishon
+> Vijay Abraham's series at http://lwn.net/Articles/559487/
+>  which contains DP-PHY driver posted by you
+>  1.  phy: Add driver for Exynos DP PHY
+>  2.  video: exynos_dp: remove non-DT support for Exynos Display Port
+>  3.  video: exynos_dp: Use the generic PHY driver
