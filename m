@@ -1,182 +1,208 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC 2/7] mem2mem_testdev: Use mem-to-mem ioctl and vb2 helpers
-Date: Fri, 13 Sep 2013 14:56:21 +0200
-Message-ID: <1379076986-10446-3-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC 3/7] exynos4-is: Use mem-to-mem ioctl helpers
+Date: Fri, 13 Sep 2013 14:56:22 +0200
+Message-ID: <1379076986-10446-4-git-send-email-s.nawrocki@samsung.com>
 References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:63988 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751847Ab3IMM6F (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Sep 2013 08:58:05 -0400
 In-reply-to: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: hverkuil@xs4all.nl, kyungmin.park@samsung.com, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Simplify the driver by using the m2m ioctl and vb2 helpers.
+Simplify the FIMC mem-to-mem driver by using the m2m ioctl and vb2 helpers.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyugmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/platform/mem2mem_testdev.c |   94 ++++--------------------------
- 1 file changed, 11 insertions(+), 83 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-m2m.c |  119 +++-----------------------
+ 1 file changed, 14 insertions(+), 105 deletions(-)
 
-diff --git a/drivers/media/platform/mem2mem_testdev.c b/drivers/media/platform/mem2mem_testdev.c
-index 6a17676..73df44f 100644
---- a/drivers/media/platform/mem2mem_testdev.c
-+++ b/drivers/media/platform/mem2mem_testdev.c
-@@ -359,21 +359,6 @@ static void job_abort(void *priv)
- 	ctx->aborting = 1;
+diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
+index 8d33b68..71ee871 100644
+--- a/drivers/media/platform/exynos4-is/fimc-m2m.c
++++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
+@@ -226,24 +226,12 @@ static void fimc_buf_queue(struct vb2_buffer *vb)
+ 		v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
  }
  
--static void m2mtest_lock(void *priv)
+-static void fimc_lock(struct vb2_queue *vq)
 -{
--	struct m2mtest_ctx *ctx = priv;
--	struct m2mtest_dev *dev = ctx->dev;
--	mutex_lock(&dev->dev_mutex);
+-	struct fimc_ctx *ctx = vb2_get_drv_priv(vq);
+-	mutex_lock(&ctx->fimc_dev->lock);
 -}
 -
--static void m2mtest_unlock(void *priv)
+-static void fimc_unlock(struct vb2_queue *vq)
 -{
--	struct m2mtest_ctx *ctx = priv;
--	struct m2mtest_dev *dev = ctx->dev;
--	mutex_unlock(&dev->dev_mutex);
+-	struct fimc_ctx *ctx = vb2_get_drv_priv(vq);
+-	mutex_unlock(&ctx->fimc_dev->lock);
 -}
 -
--
- /* device_run() - prepares and starts the device
-  *
-  * This simulates all the immediate preparations required before starting
-@@ -648,52 +633,6 @@ static int vidioc_s_fmt_vid_out(struct file *file, void *priv,
- 	return ret;
+ static struct vb2_ops fimc_qops = {
+ 	.queue_setup	 = fimc_queue_setup,
+ 	.buf_prepare	 = fimc_buf_prepare,
+ 	.buf_queue	 = fimc_buf_queue,
+-	.wait_prepare	 = fimc_unlock,
+-	.wait_finish	 = fimc_lock,
++	.wait_prepare	 = vb2_ops_wait_prepare,
++	.wait_finish	 = vb2_ops_wait_finish,
+ 	.stop_streaming	 = stop_streaming,
+ 	.start_streaming = start_streaming,
+ };
+@@ -410,56 +398,6 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *fh,
+ 	return 0;
  }
  
--static int vidioc_reqbufs(struct file *file, void *priv,
--			  struct v4l2_requestbuffers *reqbufs)
+-static int fimc_m2m_reqbufs(struct file *file, void *fh,
+-			    struct v4l2_requestbuffers *reqbufs)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
--
+-	struct fimc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
 -}
 -
--static int vidioc_querybuf(struct file *file, void *priv,
--			   struct v4l2_buffer *buf)
+-static int fimc_m2m_querybuf(struct file *file, void *fh,
+-			     struct v4l2_buffer *buf)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
--
+-	struct fimc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf);
 -}
 -
--static int vidioc_qbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
+-static int fimc_m2m_qbuf(struct file *file, void *fh,
+-			 struct v4l2_buffer *buf)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
--
+-	struct fimc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf);
 -}
 -
--static int vidioc_dqbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
+-static int fimc_m2m_dqbuf(struct file *file, void *fh,
+-			  struct v4l2_buffer *buf)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
--
+-	struct fimc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf);
 -}
 -
--static int vidioc_streamon(struct file *file, void *priv,
--			   enum v4l2_buf_type type)
+-static int fimc_m2m_expbuf(struct file *file, void *fh,
+-			    struct v4l2_exportbuffer *eb)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
+-	struct fimc_ctx *ctx = fh_to_ctx(fh);
+-	return v4l2_m2m_expbuf(file, ctx->m2m_ctx, eb);
+-}
 -
+-
+-static int fimc_m2m_streamon(struct file *file, void *fh,
+-			     enum v4l2_buf_type type)
+-{
+-	struct fimc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
 -}
 -
--static int vidioc_streamoff(struct file *file, void *priv,
+-static int fimc_m2m_streamoff(struct file *file, void *fh,
 -			    enum v4l2_buf_type type)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
--
+-	struct fimc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
 -}
 -
- static int m2mtest_s_ctrl(struct v4l2_ctrl *ctrl)
+ static int fimc_m2m_cropcap(struct file *file, void *fh,
+ 			    struct v4l2_cropcap *cr)
  {
- 	struct m2mtest_ctx *ctx =
-@@ -748,14 +687,14 @@ static const struct v4l2_ioctl_ops m2mtest_ioctl_ops = {
- 	.vidioc_try_fmt_vid_out	= vidioc_try_fmt_vid_out,
- 	.vidioc_s_fmt_vid_out	= vidioc_s_fmt_vid_out,
- 
--	.vidioc_reqbufs		= vidioc_reqbufs,
--	.vidioc_querybuf	= vidioc_querybuf,
-+	.vidioc_reqbufs		= v4l2_m2m_ioctl_reqbufs,
-+	.vidioc_querybuf	= v4l2_m2m_ioctl_querybuf,
-+	.vidioc_qbuf		= v4l2_m2m_ioctl_qbuf,
-+	.vidioc_dqbuf		= v4l2_m2m_ioctl_dqbuf,
- 
--	.vidioc_qbuf		= vidioc_qbuf,
--	.vidioc_dqbuf		= vidioc_dqbuf,
-+	.vidioc_streamon	= v4l2_m2m_ioctl_streamon,
-+	.vidioc_streamoff	= v4l2_m2m_ioctl_streamoff,
- 
--	.vidioc_streamon	= vidioc_streamon,
--	.vidioc_streamoff	= vidioc_streamoff,
- 	.vidioc_subscribe_event = v4l2_ctrl_subscribe_event,
- 	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
- };
-@@ -821,24 +760,12 @@ static void m2mtest_buf_queue(struct vb2_buffer *vb)
- 	v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
- }
- 
--static void m2mtest_wait_prepare(struct vb2_queue *q)
--{
--	struct m2mtest_ctx *ctx = vb2_get_drv_priv(q);
--	m2mtest_unlock(ctx);
--}
--
--static void m2mtest_wait_finish(struct vb2_queue *q)
--{
--	struct m2mtest_ctx *ctx = vb2_get_drv_priv(q);
--	m2mtest_lock(ctx);
--}
--
- static struct vb2_ops m2mtest_qops = {
- 	.queue_setup	 = m2mtest_queue_setup,
- 	.buf_prepare	 = m2mtest_buf_prepare,
- 	.buf_queue	 = m2mtest_buf_queue,
--	.wait_prepare	 = m2mtest_wait_prepare,
--	.wait_finish	 = m2mtest_wait_finish,
-+	.wait_prepare	 = vb2_ops_wait_prepare,
-+	.wait_finish	 = vb2_ops_wait_finish,
- };
- 
- static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq)
-@@ -853,6 +780,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
- 	src_vq->ops = &m2mtest_qops;
- 	src_vq->mem_ops = &vb2_vmalloc_memops;
+@@ -598,13 +536,13 @@ static const struct v4l2_ioctl_ops fimc_m2m_ioctl_ops = {
+ 	.vidioc_try_fmt_vid_out_mplane	= fimc_m2m_try_fmt_mplane,
+ 	.vidioc_s_fmt_vid_cap_mplane	= fimc_m2m_s_fmt_mplane,
+ 	.vidioc_s_fmt_vid_out_mplane	= fimc_m2m_s_fmt_mplane,
+-	.vidioc_reqbufs			= fimc_m2m_reqbufs,
+-	.vidioc_querybuf		= fimc_m2m_querybuf,
+-	.vidioc_qbuf			= fimc_m2m_qbuf,
+-	.vidioc_dqbuf			= fimc_m2m_dqbuf,
+-	.vidioc_expbuf			= fimc_m2m_expbuf,
+-	.vidioc_streamon		= fimc_m2m_streamon,
+-	.vidioc_streamoff		= fimc_m2m_streamoff,
++	.vidioc_reqbufs			= v4l2_m2m_ioctl_reqbufs,
++	.vidioc_querybuf		= v4l2_m2m_ioctl_querybuf,
++	.vidioc_qbuf			= v4l2_m2m_ioctl_qbuf,
++	.vidioc_dqbuf			= v4l2_m2m_ioctl_dqbuf,
++	.vidioc_expbuf			= v4l2_m2m_ioctl_expbuf,
++	.vidioc_streamon		= v4l2_m2m_ioctl_streamon,
++	.vidioc_streamoff		= v4l2_m2m_ioctl_streamoff,
+ 	.vidioc_g_crop			= fimc_m2m_g_crop,
+ 	.vidioc_s_crop			= fimc_m2m_s_crop,
+ 	.vidioc_cropcap			= fimc_m2m_cropcap
+@@ -624,6 +562,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+ 	src_vq->mem_ops = &vb2_dma_contig_memops;
+ 	src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
  	src_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-+	src_vq->lock = &ctx->dev->dev_mutex;
++	src_vq->lock = &ctx->fimc_dev->lock;
  
  	ret = vb2_queue_init(src_vq);
  	if (ret)
-@@ -865,6 +793,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
- 	dst_vq->ops = &m2mtest_qops;
- 	dst_vq->mem_ops = &vb2_vmalloc_memops;
+@@ -636,6 +575,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+ 	dst_vq->mem_ops = &vb2_dma_contig_memops;
+ 	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
  	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-+	dst_vq->lock = &ctx->dev->dev_mutex;
++	dst_vq->lock = &ctx->fimc_dev->lock;
  
  	return vb2_queue_init(dst_vq);
  }
-@@ -945,6 +874,7 @@ static int m2mtest_open(struct file *file)
- 		kfree(ctx);
- 		goto open_unlock;
+@@ -713,6 +653,7 @@ static int fimc_m2m_open(struct file *file)
+ 		ret = PTR_ERR(ctx->m2m_ctx);
+ 		goto error_c;
  	}
 +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
  
- 	v4l2_fh_add(&ctx->fh);
- 	atomic_inc(&dev->num_inst);
-@@ -1019,8 +949,6 @@ static struct v4l2_m2m_ops m2m_ops = {
- 	.device_run	= device_run,
- 	.job_ready	= job_ready,
- 	.job_abort	= job_abort,
--	.lock		= m2mtest_lock,
--	.unlock		= m2mtest_unlock,
+ 	if (fimc->m2m.refcnt++ == 0)
+ 		set_bit(ST_M2M_RUN, &fimc->state);
+@@ -760,45 +701,13 @@ static int fimc_m2m_release(struct file *file)
+ 	return 0;
+ }
+ 
+-static unsigned int fimc_m2m_poll(struct file *file,
+-				  struct poll_table_struct *wait)
+-{
+-	struct fimc_ctx *ctx = fh_to_ctx(file->private_data);
+-	struct fimc_dev *fimc = ctx->fimc_dev;
+-	int ret;
+-
+-	if (mutex_lock_interruptible(&fimc->lock))
+-		return -ERESTARTSYS;
+-
+-	ret = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
+-	mutex_unlock(&fimc->lock);
+-
+-	return ret;
+-}
+-
+-
+-static int fimc_m2m_mmap(struct file *file, struct vm_area_struct *vma)
+-{
+-	struct fimc_ctx *ctx = fh_to_ctx(file->private_data);
+-	struct fimc_dev *fimc = ctx->fimc_dev;
+-	int ret;
+-
+-	if (mutex_lock_interruptible(&fimc->lock))
+-		return -ERESTARTSYS;
+-
+-	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
+-	mutex_unlock(&fimc->lock);
+-
+-	return ret;
+-}
+-
+ static const struct v4l2_file_operations fimc_m2m_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.open		= fimc_m2m_open,
+ 	.release	= fimc_m2m_release,
+-	.poll		= fimc_m2m_poll,
++	.poll		= v4l2_m2m_fop_poll,
+ 	.unlocked_ioctl	= video_ioctl2,
+-	.mmap		= fimc_m2m_mmap,
++	.mmap		= v4l2_m2m_fop_mmap,
  };
  
- static int m2mtest_probe(struct platform_device *pdev)
+ static struct v4l2_m2m_ops m2m_ops = {
 -- 
 1.7.9.5
