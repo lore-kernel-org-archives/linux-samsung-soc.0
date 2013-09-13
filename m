@@ -1,48 +1,139 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: [PATCH 4/4] ARM: dts: Rename Exynos5250 ChromeOS common file to have exynos prefix
-Date: Fri, 13 Sep 2013 13:09:56 +0100
-Message-ID: <1379074196-9834-4-git-send-email-broonie@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 2/4] ARM: dts: Leave Exynos5250 SPI controller disabled by default
+Date: Fri, 13 Sep 2013 13:09:54 +0100
+Message-ID: <1379074196-9834-2-git-send-email-broonie@kernel.org>
 References: <1379074196-9834-1-git-send-email-broonie@kernel.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379074196-9834-1-git-send-email-broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:49973 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754085Ab3IMMKO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Sep 2013 08:10:14 -0400
+In-Reply-To: <1379074196-9834-1-git-send-email-broonie@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-From: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Mark Brown <broonie@linaro.org>
 
-Make it easier to notice the common file for ChromeOS devices based on
-the Exynos5250 by giving it the exynos5250 prefix that the boards have.
+Rather than requiring each board to explicitly disable the SPI controllers
+it is not using instead require boards to enable those that they are using.
+This is less work overall since normally at most one of the controllers is
+in use and avoids issues caused by inappropriate pinmuxing.
 
-Signed-off-by: Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Mark Brown <broonie@linaro.org>
 ---
- arch/arm/boot/dts/{cros5250-common.dtsi => exynos5250-cros-common.dtsi} | 0
- arch/arm/boot/dts/exynos5250-snow.dts                                   | 2 +-
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename arch/arm/boot/dts/{cros5250-common.dtsi => exynos5250-cros-common.dtsi} (100%)
+ arch/arm/boot/dts/cros5250-common.dtsi    |  9 +--------
+ arch/arm/boot/dts/exynos5250-arndale.dts  | 12 ------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts | 10 ++--------
+ arch/arm/boot/dts/exynos5250.dtsi         |  3 +++
+ 4 files changed, 6 insertions(+), 28 deletions(-)
 
-diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
-similarity index 100%
-rename from arch/arm/boot/dts/cros5250-common.dtsi
-rename to arch/arm/boot/dts/exynos5250-cros-common.dtsi
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index fd711e2..7e2669c 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -10,7 +10,7 @@
+diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
+index dc259e8b..0fcca29 100644
+--- a/arch/arm/boot/dts/cros5250-common.dtsi
++++ b/arch/arm/boot/dts/cros5250-common.dtsi
+@@ -286,19 +286,12 @@
+ 		};
+ 	};
  
- /dts-v1/;
- #include "exynos5250.dtsi"
--#include "cros5250-common.dtsi"
-+#include "exynos5250-cros-common.dtsi"
+-	spi_0: spi@12d20000 {
+-		status = "disabled";
+-	};
+-
+ 	spi_1: spi@12d30000 {
++		status = "okay";
+ 		samsung,spi-src-clk = <0>;
+ 		num-cs = <1>;
+ 	};
  
- / {
- 	model = "Google Snow";
+-	spi_2: spi@12d40000 {
+-		status = "disabled";
+-	};
+-
+ 	hdmi {
+ 		hpd-gpio = <&gpx3 7 0>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index 4687fa0..1141939 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -416,18 +416,6 @@
+ 		status = "okay";
+ 	};
+ 
+-	spi_0: spi@12d20000 {
+-		status = "disabled";
+-	};
+-
+-	spi_1: spi@12d30000 {
+-		status = "disabled";
+-	};
+-
+-	spi_2: spi@12d40000 {
+-		status = "disabled";
+-	};
+-
+ 	gpio_keys {
+ 		compatible = "gpio-keys";
+ 
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index f86d567..67d3c43 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -184,11 +184,9 @@
+ 		status = "disabled";
+ 	};
+ 
+-	spi_0: spi@12d20000 {
+-		status = "disabled";
+-	};
+-
+ 	spi_1: spi@12d30000 {
++		status = "okay";
++
+ 		w25q80bw@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+@@ -214,10 +212,6 @@
+ 		};
+ 	};
+ 
+-	spi_2: spi@12d40000 {
+-		status = "disabled";
+-	};
+-
+ 	hdmi {
+ 		hpd-gpio = <&gpx3 7 0>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index c863113..a886ee4 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -344,6 +344,7 @@
+ 
+ 	spi_0: spi@12d20000 {
+ 		compatible = "samsung,exynos4210-spi";
++		status = "disabled";
+ 		reg = <0x12d20000 0x100>;
+ 		interrupts = <0 66 0>;
+ 		dmas = <&pdma0 5
+@@ -359,6 +360,7 @@
+ 
+ 	spi_1: spi@12d30000 {
+ 		compatible = "samsung,exynos4210-spi";
++		status = "disabled";
+ 		reg = <0x12d30000 0x100>;
+ 		interrupts = <0 67 0>;
+ 		dmas = <&pdma1 5
+@@ -374,6 +376,7 @@
+ 
+ 	spi_2: spi@12d40000 {
+ 		compatible = "samsung,exynos4210-spi";
++		status = "disabled";
+ 		reg = <0x12d40000 0x100>;
+ 		interrupts = <0 68 0>;
+ 		dmas = <&pdma0 7
 -- 
 1.8.4.rc3
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
