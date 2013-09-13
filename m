@@ -1,136 +1,55 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: remove CONFIG_MACH_EXYNOS[4,5]_DT config options
-Date: Fri, 13 Sep 2013 11:28:31 +0200
-Message-ID: <3809234.0NkWBIjRC9@amdc1032>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: SAMSUNG: Allow mono in i2s driver
+Date: Fri, 13 Sep 2013 11:33:22 +0100
+Message-ID: <20130913103322.GF29403@sirena.org.uk>
+References: <1378909649-8985-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SGSxvnK+1Z2m6Yvc"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:40805 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754701Ab3IMJ2q (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:56762 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751735Ab3IMKdb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Sep 2013 05:28:46 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MT2009RN4ZIX3L0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Sep 2013 18:28:44 +0900 (KST)
+	Fri, 13 Sep 2013 06:33:31 -0400
+Content-Disposition: inline
+In-Reply-To: <1378909649-8985-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, lgirdwood@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com
 
-EXYNOS is now Device Tree (DT) only platform so it makes no sense to have
-config options responsible for enabling platform specific DT support.
 
-Moreover the kernel image won't even link if neither CONFIG_MACH_EXYNOS4_DT
-nor CONFIG_MACH_EXYNOS5_DT config option is enabled (linker fails with "no
-machine record defined" error).
+--SGSxvnK+1Z2m6Yvc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Remove CONFIG_MACH_EXYNOS[4,5]_DT config options and just use the standard
-CONFIG_ARCH_EXYNOS[4,5] ones instead.
+On Wed, Sep 11, 2013 at 03:27:29PM +0100, Charles Keepax wrote:
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/configs/exynos_defconfig |  1 -
- arch/arm/mach-exynos/Kconfig      | 38 +++++++++-----------------------------
- arch/arm/mach-exynos/Makefile     |  4 ++--
- 3 files changed, 11 insertions(+), 32 deletions(-)
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index ad7dfbb..5181d0d 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -11,7 +11,6 @@ CONFIG_ARCH_EXYNOS=y
- CONFIG_S3C_LOWLEVEL_UART_PORT=3
- CONFIG_S3C24XX_PWM=y
- CONFIG_ARCH_EXYNOS5=y
--CONFIG_MACH_EXYNOS4_DT=y
- CONFIG_SMP=y
- CONFIG_NR_CPUS=2
- CONFIG_PREEMPT=y
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index cb36807..b810f2f 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -14,19 +14,28 @@ menu "SAMSUNG EXYNOS SoCs Support"
- config ARCH_EXYNOS4
- 	bool "SAMSUNG EXYNOS4"
- 	default y
-+	select ARM_AMBA
-+	select CLKSRC_OF
-+	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
-+	select CPU_EXYNOS4210
- 	select GIC_NON_BANKED
-+	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_SMP
- 	select MIGHT_HAVE_CACHE_L2X0
- 	select PINCTRL
-+	select S5P_DEV_MFC
- 	help
- 	  Samsung EXYNOS4 SoCs based systems
- 
- config ARCH_EXYNOS5
- 	bool "SAMSUNG EXYNOS5"
-+	select ARM_AMBA
-+	select CLKSRC_OF
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_SMP
- 	select PINCTRL
-+	select USB_ARCH_HAS_XHCI
- 	help
- 	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
- 
-@@ -110,35 +119,6 @@ config SOC_EXYNOS5440
- 	help
- 	  Enable EXYNOS5440 SoC support
- 
--comment "Flattened Device Tree based board for EXYNOS SoCs"
--
--config MACH_EXYNOS4_DT
--	bool "Samsung Exynos4 Machine using device tree"
--	default y
--	depends on ARCH_EXYNOS4
--	select ARM_AMBA
--	select CLKSRC_OF
--	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
--	select CPU_EXYNOS4210
--	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
--	select S5P_DEV_MFC
--	help
--	  Machine support for Samsung Exynos4 machine with device tree enabled.
--	  Select this if a fdt blob is available for the Exynos4 SoC based board.
--	  Note: This is under development and not all peripherals can be supported
--	  with this machine file.
--
--config MACH_EXYNOS5_DT
--	bool "SAMSUNG EXYNOS5 Machine using device tree"
--	default y
--	depends on ARCH_EXYNOS5
--	select ARM_AMBA
--	select CLKSRC_OF
--	select USB_ARCH_HAS_XHCI
--	help
--	  Machine support for Samsung EXYNOS5 machine with device tree enabled.
--	  Select this if a fdt blob is available for the EXYNOS5 SoC based board.
--
- endmenu
- 
- endif
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 5369615..8930b66 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -32,5 +32,5 @@ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
- 
- # machine support
- 
--obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
--obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
-+obj-$(CONFIG_ARCH_EXYNOS4)	+= mach-exynos4-dt.o
-+obj-$(CONFIG_ARCH_EXYNOS5)	+= mach-exynos5-dt.o
--- 
-1.8.2.3
+APPLIED, THANKS.  Please also remember to CC maintainers on patches.
+
+--SGSxvnK+1Z2m6Yvc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSMunvAAoJELSic+t+oim9MVgP/A2KWsWqgGLGH/ubYKi3k6ut
+xC1HBYs06ROEe9Oqoj3vF76lvtkCPJsPM4f0VfCWl+uYVnJyW6LN1fTjO2ybWyRT
+GUqb91T7MBUh/Vy9x6RSr0Gaj5md9gBLKfAK+3X1iI1zwDRn2KK6j4JybI5apzbh
+kBjv2/QOWVBBLJSuFAB5FADZEnVBRW4aRGWsJJSFgyH1Wy3w8iHfV+dTSQkvBsAn
+Ls8Y/zBPQnlo964GWBpVDdl9WDEWYLAX0tll1eW99XJM17Ezb2vRDNO279/DF4+E
+OAZd116GEgo03dIpDF1uX2cJpJGJOnaiL0qRUy6FCdac5mQE3W6Bpceq3lUfMIAt
+VuL/inUv3QIFQ1arY1svTyGyMVi8gRNAgmORojMsKaFuwmaE56hCiylB1KDgDmac
+hIx4mHIS9yYg2eKGexVc53rJ/v5lrz1pryF47raMuEljG1qqJ6nRjsZ8VJZaspac
+VckNOIoyhR+LPv04lTEBwfcC0b76i501E6CxrOb2Hblc2S1foJhs4CRQsHEMf0wK
+E0xNXHPDbx5xXAKmuIPCIoHSHBjJIU2KYtRAMXysPT9UGe42SMAMGcrJMo5XyRCr
+Ltq98q64VhL8KMcy8EPB5AQBw29wlsinwrp8f1HX9I2nQtdOb6IXquqF33Dctu5n
+6zxLxk2dbS/MR2KMtjgC
+=rW2H
+-----END PGP SIGNATURE-----
+
+--SGSxvnK+1Z2m6Yvc--
