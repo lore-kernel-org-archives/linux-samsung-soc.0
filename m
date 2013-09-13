@@ -1,137 +1,136 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status callback.
-Date: Fri, 13 Sep 2013 08:33:13 +0530
-Message-ID: <CAAgF-BctHjFaSM7N4Nrpyixv_sLpUMxfMnFcnZqTvymN4hVanw@mail.gmail.com>
-References: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
-	<1378879685-5352-2-git-send-email-padma.v@samsung.com>
-	<00b401ceafac$e3a88170$aaf98450$@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: remove CONFIG_MACH_EXYNOS[4,5]_DT config options
+Date: Fri, 13 Sep 2013 11:28:31 +0200
+Message-ID: <3809234.0NkWBIjRC9@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:35066 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750867Ab3IMDDO (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:40805 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754701Ab3IMJ2q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Sep 2013 23:03:14 -0400
-Received: by mail-wi0-f173.google.com with SMTP id hq15so194096wib.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Sep 2013 20:03:13 -0700 (PDT)
-In-Reply-To: <00b401ceafac$e3a88170$aaf98450$@samsung.com>
+	Fri, 13 Sep 2013 05:28:46 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MT2009RN4ZIX3L0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Sep 2013 18:28:44 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <chanho61.park@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, Vinod Koul <vinod.koul@intel.com>, "broonie@kernel.org" <broonie@kernel.org>, dgreid@chromium.org, olofj@chromium.org
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com
 
-Hi Chanho,
+EXYNOS is now Device Tree (DT) only platform so it makes no sense to have
+config options responsible for enabling platform specific DT support.
 
-On Thu, Sep 12, 2013 at 5:10 PM, Chanho Park <chanho61.park@samsung.com> wrote:
-> Hi Padmavathi,
->
->> -----Original Message-----
->> From: linux-arm-kernel [mailto:linux-arm-kernel-
->> bounces@lists.infradead.org] On Behalf Of Padmavathi Venna
->> Sent: Wednesday, September 11, 2013 3:08 PM
->> To: linux-samsung-soc@vger.kernel.org; linux-arm-
->> kernel@lists.infradead.org; padma.v@samsung.com; padma.kvr@gmail.com
->> Cc: kgene.kim@samsung.com; arnd@arndb.de; sbkim73@samsung.com;
->> vinod.koul@intel.com; broonie@kernel.org; dgreid@chromium.org;
->> olofj@chromium.org
->> Subject: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status callback.
->>
->> From: Dylan Reid <dgreid@chromium.org>
->>
->> Fill txstate.residue with the amount of bytes remaining in the current
->> transfer if the transfer is not complete.  This will be of particular use
->> to i2s DMA transfers, providing more accurate hw_ptr values to ASoC.
->>
->> Signed-off-by: Dylan Reid <dgreid@chromium.org>
->> Reviewed-by: Olof Johansson <olofj@chromium.org>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->> ---
->>  drivers/dma/pl330.c |   55
->> ++++++++++++++++++++++++++++++++++++++++++++++++++-
->>  1 files changed, 54 insertions(+), 1 deletions(-)
->>
->> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c index
->> 593827b..7ab9136 100644
->> --- a/drivers/dma/pl330.c
->> +++ b/drivers/dma/pl330.c
->> @@ -2476,11 +2476,64 @@ static void pl330_free_chan_resources(struct
->> dma_chan *chan)
->>       spin_unlock_irqrestore(&pch->lock, flags);  }
->>
->> +static inline int
->> +pl330_src_addr_in_desc(struct dma_pl330_desc *desc, unsigned int sar) {
->> +     return ((desc->px.src_addr <= sar) &&
->> +             (sar <= (desc->px.src_addr + desc->px.bytes))); }
->> +
->> +static inline int
->> +pl330_dst_addr_in_desc(struct dma_pl330_desc *desc, unsigned int dar) {
->> +     return ((desc->px.dst_addr <= dar) &&
->> +             (dar <= (desc->px.dst_addr + desc->px.bytes))); }
->> +
->> +static unsigned int pl330_tx_residue(struct dma_chan *chan) {
->> +     struct dma_pl330_chan *pch = to_pchan(chan);
->> +     void __iomem *regs = pch->dmac->pif.base;
->> +     struct pl330_thread *thrd = pch->pl330_chid;
->> +     struct dma_pl330_desc *desc;
->> +     unsigned int sar, dar;
->> +     unsigned int residue = 0;
->> +     unsigned long flags;
->> +
->> +     sar = readl(regs + SA(thrd->id));
->> +     dar = readl(regs + DA(thrd->id));
->> +
->> +     spin_lock_irqsave(&pch->lock, flags);
->> +
->> +     /* Find the desc related to the current buffer. */
->> +     list_for_each_entry(desc, &pch->work_list, node) {
->> +             if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc,
->> sar)) {
->> +                     residue = desc->px.bytes - (sar -
-> desc->px.src_addr);
->> +                     goto found_unlock;
->> +             }
->> +             if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc,
->> dar)) {
->> +                     residue = desc->px.bytes - (dar -
-> desc->px.dst_addr);
->> +                     goto found_unlock;
->> +             }
->> +     }
->> +
->> +found_unlock:
->> +     spin_unlock_irqrestore(&pch->lock, flags);
->> +
->> +     return residue;
->> +}
->> +
->>  static enum dma_status
->>  pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
->>                struct dma_tx_state *txstate)
->>  {
->> -     return dma_cookie_status(chan, cookie, txstate);
->> +     enum dma_status ret;
->> +
->> +     ret = dma_cookie_status(chan, cookie, txstate);
->> +     if (ret != DMA_SUCCESS) /* Not complete, check amount left. */
->> +             dma_set_residue(txstate, pl330_tx_residue(chan));
->> +
->> +     return ret;
->
-> Why didn't you use a cookie value to track the request?
-> The cookie is assigned when each transfer is submitted.
-> If you save the value in the desc, we can find the request easily.
+Moreover the kernel image won't even link if neither CONFIG_MACH_EXYNOS4_DT
+nor CONFIG_MACH_EXYNOS5_DT config option is enabled (linker fails with "no
+machine record defined" error).
 
-Ok. I will check this and modify the code in the next version of patches.
+Remove CONFIG_MACH_EXYNOS[4,5]_DT config options and just use the standard
+CONFIG_ARCH_EXYNOS[4,5] ones instead.
 
-Thanks for the suggestion.
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig |  1 -
+ arch/arm/mach-exynos/Kconfig      | 38 +++++++++-----------------------------
+ arch/arm/mach-exynos/Makefile     |  4 ++--
+ 3 files changed, 11 insertions(+), 32 deletions(-)
 
->
-> Thanks,
->
-> Best  Regards,
-> Chanho Park
->
-
-Best Regards
-Padma
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index ad7dfbb..5181d0d 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -11,7 +11,6 @@ CONFIG_ARCH_EXYNOS=y
+ CONFIG_S3C_LOWLEVEL_UART_PORT=3
+ CONFIG_S3C24XX_PWM=y
+ CONFIG_ARCH_EXYNOS5=y
+-CONFIG_MACH_EXYNOS4_DT=y
+ CONFIG_SMP=y
+ CONFIG_NR_CPUS=2
+ CONFIG_PREEMPT=y
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index cb36807..b810f2f 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -14,19 +14,28 @@ menu "SAMSUNG EXYNOS SoCs Support"
+ config ARCH_EXYNOS4
+ 	bool "SAMSUNG EXYNOS4"
+ 	default y
++	select ARM_AMBA
++	select CLKSRC_OF
++	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
++	select CPU_EXYNOS4210
+ 	select GIC_NON_BANKED
++	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_SMP
+ 	select MIGHT_HAVE_CACHE_L2X0
+ 	select PINCTRL
++	select S5P_DEV_MFC
+ 	help
+ 	  Samsung EXYNOS4 SoCs based systems
+ 
+ config ARCH_EXYNOS5
+ 	bool "SAMSUNG EXYNOS5"
++	select ARM_AMBA
++	select CLKSRC_OF
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_SMP
+ 	select PINCTRL
++	select USB_ARCH_HAS_XHCI
+ 	help
+ 	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
+ 
+@@ -110,35 +119,6 @@ config SOC_EXYNOS5440
+ 	help
+ 	  Enable EXYNOS5440 SoC support
+ 
+-comment "Flattened Device Tree based board for EXYNOS SoCs"
+-
+-config MACH_EXYNOS4_DT
+-	bool "Samsung Exynos4 Machine using device tree"
+-	default y
+-	depends on ARCH_EXYNOS4
+-	select ARM_AMBA
+-	select CLKSRC_OF
+-	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
+-	select CPU_EXYNOS4210
+-	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
+-	select S5P_DEV_MFC
+-	help
+-	  Machine support for Samsung Exynos4 machine with device tree enabled.
+-	  Select this if a fdt blob is available for the Exynos4 SoC based board.
+-	  Note: This is under development and not all peripherals can be supported
+-	  with this machine file.
+-
+-config MACH_EXYNOS5_DT
+-	bool "SAMSUNG EXYNOS5 Machine using device tree"
+-	default y
+-	depends on ARCH_EXYNOS5
+-	select ARM_AMBA
+-	select CLKSRC_OF
+-	select USB_ARCH_HAS_XHCI
+-	help
+-	  Machine support for Samsung EXYNOS5 machine with device tree enabled.
+-	  Select this if a fdt blob is available for the EXYNOS5 SoC based board.
+-
+ endmenu
+ 
+ endif
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 5369615..8930b66 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -32,5 +32,5 @@ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
+ 
+ # machine support
+ 
+-obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
+-obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
++obj-$(CONFIG_ARCH_EXYNOS4)	+= mach-exynos4-dt.o
++obj-$(CONFIG_ARCH_EXYNOS5)	+= mach-exynos5-dt.o
+-- 
+1.8.2.3
