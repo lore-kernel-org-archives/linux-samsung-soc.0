@@ -1,45 +1,94 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH RFC 2/7] mem2mem_testdev: Use mem-to-mem ioctl and vb2
- helpers
-Date: Sun, 15 Sep 2013 22:58:09 +0200
-Message-ID: <52361F61.8050207@gmail.com>
-References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com>  <1379076986-10446-3-git-send-email-s.nawrocki@samsung.com> <1379077699.4396.16.camel@pizza.hi.pengutronix.de>
+Subject: Re: [PATCH RFC 1/7] V4L: Add mem2mem ioctl and file operation helpers
+Date: Sun, 15 Sep 2013 23:11:11 +0200
+Message-ID: <5236226F.40901@gmail.com>
+References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com>  <1379076986-10446-2-git-send-email-s.nawrocki@samsung.com> <1379078027.4396.20.camel@pizza.hi.pengutronix.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1379077699.4396.16.camel@pizza.hi.pengutronix.de>
-Sender: linux-media-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f50.google.com ([74.125.83.50]:49504 "EHLO
+	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753365Ab3IOVLP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 15 Sep 2013 17:11:15 -0400
+In-Reply-To: <1379078027.4396.20.camel@pizza.hi.pengutronix.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Philipp Zabel <p.zabel@pengutronix.de>
 Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, hverkuil@xs4all.nl, kyungmin.park@samsung.com, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Philipp,
 
-On 09/13/2013 03:08 PM, Philipp Zabel wrote:
+On 09/13/2013 03:13 PM, Philipp Zabel wrote:
 > Am Freitag, den 13.09.2013, 14:56 +0200 schrieb Sylwester Nawrocki:
-[...]
->> @@ -865,6 +793,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
->>   	dst_vq->ops =&m2mtest_qops;
->>   	dst_vq->mem_ops =&vb2_vmalloc_memops;
->>   	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
->> +	dst_vq->lock =&ctx->dev->dev_mutex;
->>
->>   	return vb2_queue_init(dst_vq);
->>   }
->> @@ -945,6 +874,7 @@ static int m2mtest_open(struct file *file)
->>   		kfree(ctx);
->>   		goto open_unlock;
->>   	}
->> +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
+>> This patch adds ioctl helpers to the V4L2 mem-to-mem API, so we
+>> can avoid several ioctl handlers in the mem-to-mem video node
+>> drivers that are simply a pass-through to the v4l2_m2m_* calls.
+>> These helpers will only be useful for drivers that use same mutex
+>> for both OUTPUT and CAPTURE queue, which is the case for all
+>> currently in tree v4l2 m2m drivers.
+>> In order to use the helpers the driver are required to use
+>> struct v4l2_fh.
 >
-> Since you added m2m_ctx to v4l2_fh, why not drop ctx->m2m_ctx altogether
-> and always use ctx->fh.m2m_ctx instead?
+> this looks good to me.
 
-Yes, that might make it a bit cleaner. I guess I wanted to minimize
-the necessary changes. I'll amend that in all drivers in this series
-for the next iteration, as they all look very similar. Thanks for the
-suggestion.
+Thank you for the review.
+
+>> diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c b/drivers/media/v4l2-core/v4l2-mem2mem.c
+>> index 7c43712..dddad5b 100644
+>> --- a/drivers/media/v4l2-core/v4l2-mem2mem.c
+>> +++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
+[...]
+>> +/* Videobuf2 ioctl helpers */
+>> +
+>> +int v4l2_m2m_ioctl_reqbufs(struct file *file, void *priv,
+>> +				struct v4l2_requestbuffers *rb)
+>> +{
+>> +	struct v4l2_fh *fh = file->private_data;
+>> +	return v4l2_m2m_reqbufs(file, fh->m2m_ctx, rb);
+>> +}
+>> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_reqbufs);
+>> +
+>> +int v4l2_m2m_ioctl_querybuf(struct file *file, void *priv,
+>> +				struct v4l2_buffer *buf)
+>> +{
+>> +	struct v4l2_fh *fh = file->private_data;
+>> +	return v4l2_m2m_querybuf(file, fh->m2m_ctx, buf);
+>> +}
+>> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_querybuf);
+>> +
+>> +int v4l2_m2m_ioctl_qbuf(struct file *file, void *priv,
+>> +				struct v4l2_buffer *buf)
+>> +{
+>> +	struct v4l2_fh *fh = file->private_data;
+>> +	return v4l2_m2m_qbuf(file, fh->m2m_ctx, buf);
+>> +}
+>> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_qbuf);
+>> +
+>> +int v4l2_m2m_ioctl_dqbuf(struct file *file, void *priv,
+>> +				struct v4l2_buffer *buf)
+>> +{
+>> +	struct v4l2_fh *fh = file->private_data;
+>> +	return v4l2_m2m_dqbuf(file, fh->m2m_ctx, buf);
+>> +}
+>> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_dqbuf);
+>> +
+>
+> Here I'm missing one
+>
+> +int v4l2_m2m_ioctl_create_bufs(struct file *file, void *priv,
+> +			       struct v4l2_create_buffers *create)
+> +{
+> +	struct v4l2_fh *fh = file->private_data;
+> +	return v4l2_m2m_create_bufs(file, fh->m2m_ctx, create);
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_create_bufs);
+
+OK, I'll add that in the next iteration. I thought I would need to
+add v4l2_m2m_ioctl_prepare_buf() similarly, but it's not necessary,
+since vidioc_create_buf() calls directly to videobuf2, so that's
+even simpler.
 
 --
 Regards,
