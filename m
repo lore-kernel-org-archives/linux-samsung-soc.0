@@ -1,98 +1,46 @@
-From: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] Input: gpio-keys - update to devm_* API
-Date: Sun, 15 Sep 2013 01:22:23 +0530
-Message-ID: <1379188343-18904-1-git-send-email-badarkhe.manish@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH RFC 2/7] mem2mem_testdev: Use mem-to-mem ioctl and vb2
+ helpers
+Date: Sun, 15 Sep 2013 22:58:09 +0200
+Message-ID: <52361F61.8050207@gmail.com>
+References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com>  <1379076986-10446-3-git-send-email-s.nawrocki@samsung.com> <1379077699.4396.16.camel@pizza.hi.pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1379077699.4396.16.camel@pizza.hi.pengutronix.de>
+Sender: linux-media-owner@vger.kernel.org
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, hverkuil@xs4all.nl, kyungmin.park@samsung.com, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Update the code to use devm_* API so that driver core will manage
-resources.
+Hi Philipp,
 
-Signed-off-by: Manish Badarkhe <badarkhe.manish-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
-:100644 100644 440ce32... b4db721... M	drivers/input/keyboard/gpio_keys.c
- drivers/input/keyboard/gpio_keys.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+On 09/13/2013 03:08 PM, Philipp Zabel wrote:
+> Am Freitag, den 13.09.2013, 14:56 +0200 schrieb Sylwester Nawrocki:
+[...]
+>> @@ -865,6 +793,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
+>>   	dst_vq->ops =&m2mtest_qops;
+>>   	dst_vq->mem_ops =&vb2_vmalloc_memops;
+>>   	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+>> +	dst_vq->lock =&ctx->dev->dev_mutex;
+>>
+>>   	return vb2_queue_init(dst_vq);
+>>   }
+>> @@ -945,6 +874,7 @@ static int m2mtest_open(struct file *file)
+>>   		kfree(ctx);
+>>   		goto open_unlock;
+>>   	}
+>> +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
+>
+> Since you added m2m_ctx to v4l2_fh, why not drop ctx->m2m_ctx altogether
+> and always use ctx->fh.m2m_ctx instead?
 
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index 440ce32..b4db721 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -588,7 +588,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
- 		goto err_out;
- 	}
- 
--	pdata = kzalloc(sizeof(*pdata) + nbuttons * (sizeof *button),
-+	pdata = devm_kzalloc(dev, sizeof(*pdata) + nbuttons * (sizeof(*button)),
- 			GFP_KERNEL);
- 	if (!pdata) {
- 		error = -ENOMEM;
-@@ -618,7 +618,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
- 				dev_err(dev,
- 					"Failed to get gpio flags, error: %d\n",
- 					error);
--			goto err_free_pdata;
-+			goto err_out;
- 		}
- 
- 		button = &pdata->buttons[i++];
-@@ -630,7 +630,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
- 			dev_err(dev, "Button without keycode: 0x%x\n",
- 				button->gpio);
- 			error = -EINVAL;
--			goto err_free_pdata;
-+			goto err_out;
- 		}
- 
- 		button->desc = of_get_property(pp, "label", NULL);
-@@ -647,13 +647,11 @@ gpio_keys_get_devtree_pdata(struct device *dev)
- 
- 	if (pdata->nbuttons == 0) {
- 		error = -EINVAL;
--		goto err_free_pdata;
-+		goto err_out;
- 	}
- 
- 	return pdata;
- 
--err_free_pdata:
--	kfree(pdata);
- err_out:
- 	return ERR_PTR(error);
- }
-@@ -699,10 +697,10 @@ static int gpio_keys_probe(struct platform_device *pdev)
- 			return PTR_ERR(pdata);
- 	}
- 
--	ddata = kzalloc(sizeof(struct gpio_keys_drvdata) +
-+	ddata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_keys_drvdata) +
- 			pdata->nbuttons * sizeof(struct gpio_button_data),
- 			GFP_KERNEL);
--	input = input_allocate_device();
-+	input = devm_input_allocate_device(&pdev->dev);
- 	if (!ddata || !input) {
- 		dev_err(dev, "failed to allocate state\n");
- 		error = -ENOMEM;
-@@ -768,8 +766,6 @@ static int gpio_keys_probe(struct platform_device *pdev)
- 		gpio_remove_key(&ddata->data[i]);
- 
-  fail1:
--	input_free_device(input);
--	kfree(ddata);
- 	/* If we have no platform data, we allocated pdata dynamically. */
- 	if (!dev_get_platdata(&pdev->dev))
- 		kfree(pdata);
-@@ -796,8 +792,6 @@ static int gpio_keys_remove(struct platform_device *pdev)
- 	if (!dev_get_platdata(&pdev->dev))
- 		kfree(ddata->pdata);
- 
--	kfree(ddata);
--
- 	return 0;
- }
- 
--- 
-1.7.10.4
+Yes, that might make it a bit cleaner. I guess I wanted to minimize
+the necessary changes. I'll amend that in all drivers in this series
+for the next iteration, as they all look very similar. Thanks for the
+suggestion.
+
+--
+Regards,
+Sylwester
