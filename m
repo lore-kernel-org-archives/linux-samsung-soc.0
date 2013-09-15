@@ -1,94 +1,102 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH RFC 1/7] V4L: Add mem2mem ioctl and file operation helpers
-Date: Sun, 15 Sep 2013 23:11:11 +0200
-Message-ID: <5236226F.40901@gmail.com>
-References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com>  <1379076986-10446-2-git-send-email-s.nawrocki@samsung.com> <1379078027.4396.20.camel@pizza.hi.pengutronix.de>
+Subject: Re: [PATCH RFC 6/7] exynos-gsc: Use mem-to-mem ioctl helpers
+Date: Sun, 15 Sep 2013 23:40:55 +0200
+Message-ID: <52362967.1030806@gmail.com>
+References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com> <1379076986-10446-7-git-send-email-s.nawrocki@samsung.com> <CAOD6AToYrpdQtEs7qDkfDG63Dg4kZZNCjeCA+u5UDNdjgUtDvA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f50.google.com ([74.125.83.50]:49504 "EHLO
-	mail-ee0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753365Ab3IOVLP (ORCPT
+Received: from mail-ee0-f54.google.com ([74.125.83.54]:33522 "EHLO
+	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753590Ab3IOVlB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 15 Sep 2013 17:11:15 -0400
-In-Reply-To: <1379078027.4396.20.camel@pizza.hi.pengutronix.de>
+	Sun, 15 Sep 2013 17:41:01 -0400
+In-Reply-To: <CAOD6AToYrpdQtEs7qDkfDG63Dg4kZZNCjeCA+u5UDNdjgUtDvA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, hverkuil@xs4all.nl, kyungmin.park@samsung.com, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, LMML <linux-media@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, kyungmin.park@samsung.com, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arun Kumar K <arun.kk@samsung.com>, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org
 
-Hi Philipp,
+Hi Shaik,
 
-On 09/13/2013 03:13 PM, Philipp Zabel wrote:
-> Am Freitag, den 13.09.2013, 14:56 +0200 schrieb Sylwester Nawrocki:
->> This patch adds ioctl helpers to the V4L2 mem-to-mem API, so we
->> can avoid several ioctl handlers in the mem-to-mem video node
->> drivers that are simply a pass-through to the v4l2_m2m_* calls.
->> These helpers will only be useful for drivers that use same mutex
->> for both OUTPUT and CAPTURE queue, which is the case for all
->> currently in tree v4l2 m2m drivers.
->> In order to use the helpers the driver are required to use
->> struct v4l2_fh.
->
-> this looks good to me.
-
-Thank you for the review.
-
->> diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c b/drivers/media/v4l2-core/v4l2-mem2mem.c
->> index 7c43712..dddad5b 100644
->> --- a/drivers/media/v4l2-core/v4l2-mem2mem.c
->> +++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
+On 09/13/2013 04:12 PM, Shaik Ameer Basha wrote:
 [...]
->> +/* Videobuf2 ioctl helpers */
+>> -static int gsc_m2m_streamon(struct file *file, void *fh,
+>> -                          enum v4l2_buf_type type)
+>> -{
+>> -       struct gsc_ctx *ctx = fh_to_ctx(fh);
+>> -
+>> -       /* The source and target color format need to be set */
+>> -       if (V4L2_TYPE_IS_OUTPUT(type)) {
+>> -               if (!gsc_ctx_state_is_set(GSC_SRC_FMT, ctx))
+>> -                       return -EINVAL;
+>> -       } else if (!gsc_ctx_state_is_set(GSC_DST_FMT, ctx)) {
+>> -               return -EINVAL;
+>> -       }
+>> -
+>> -       return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
+>> -}
+>> -
+>> -static int gsc_m2m_streamoff(struct file *file, void *fh,
+>> -                           enum v4l2_buf_type type)
+>> -{
+>> -       struct gsc_ctx *ctx = fh_to_ctx(fh);
+>> -       return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
+>> -}
+>> -
+>>   /* Return 1 if rectangle a is enclosed in rectangle b, or 0 otherwise. */
+>>   static int is_rectangle_enclosed(struct v4l2_rect *a, struct v4l2_rect *b)
+>>   {
+>> @@ -563,13 +512,15 @@ static const struct v4l2_ioctl_ops gsc_m2m_ioctl_ops = {
+>>          .vidioc_try_fmt_vid_out_mplane  = gsc_m2m_try_fmt_mplane,
+>>          .vidioc_s_fmt_vid_cap_mplane    = gsc_m2m_s_fmt_mplane,
+>>          .vidioc_s_fmt_vid_out_mplane    = gsc_m2m_s_fmt_mplane,
+>> -       .vidioc_reqbufs                 = gsc_m2m_reqbufs,
+>> -       .vidioc_expbuf                  = gsc_m2m_expbuf,
+>> -       .vidioc_querybuf                = gsc_m2m_querybuf,
+>> -       .vidioc_qbuf                    = gsc_m2m_qbuf,
+>> -       .vidioc_dqbuf                   = gsc_m2m_dqbuf,
+>> -       .vidioc_streamon                = gsc_m2m_streamon,
+>> -       .vidioc_streamoff               = gsc_m2m_streamoff,
 >> +
->> +int v4l2_m2m_ioctl_reqbufs(struct file *file, void *priv,
->> +				struct v4l2_requestbuffers *rb)
->> +{
->> +	struct v4l2_fh *fh = file->private_data;
->> +	return v4l2_m2m_reqbufs(file, fh->m2m_ctx, rb);
->> +}
->> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_reqbufs);
->> +
->> +int v4l2_m2m_ioctl_querybuf(struct file *file, void *priv,
->> +				struct v4l2_buffer *buf)
->> +{
->> +	struct v4l2_fh *fh = file->private_data;
->> +	return v4l2_m2m_querybuf(file, fh->m2m_ctx, buf);
->> +}
->> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_querybuf);
->> +
->> +int v4l2_m2m_ioctl_qbuf(struct file *file, void *priv,
->> +				struct v4l2_buffer *buf)
->> +{
->> +	struct v4l2_fh *fh = file->private_data;
->> +	return v4l2_m2m_qbuf(file, fh->m2m_ctx, buf);
->> +}
->> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_qbuf);
->> +
->> +int v4l2_m2m_ioctl_dqbuf(struct file *file, void *priv,
->> +				struct v4l2_buffer *buf)
->> +{
->> +	struct v4l2_fh *fh = file->private_data;
->> +	return v4l2_m2m_dqbuf(file, fh->m2m_ctx, buf);
->> +}
->> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_dqbuf);
->> +
+>> +       .vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
 >
-> Here I'm missing one
+> I think your intention was not to replace gsc_m2m_reqbufs() with
+> v4l2_m2m_ioctl_reqbufs().
+> you didn't remove the gsc_m2m_reqbufs() function :)
 >
-> +int v4l2_m2m_ioctl_create_bufs(struct file *file, void *priv,
-> +			       struct v4l2_create_buffers *create)
-> +{
-> +	struct v4l2_fh *fh = file->private_data;
-> +	return v4l2_m2m_create_bufs(file, fh->m2m_ctx, create);
-> +}
-> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_create_bufs);
+> On top of that,  gsc_m2m_reqbufs() has some buffer count related checks.
 
-OK, I'll add that in the next iteration. I thought I would need to
-add v4l2_m2m_ioctl_prepare_buf() similarly, but it's not necessary,
-since vidioc_create_buf() calls directly to videobuf2, so that's
-even simpler.
+Thanks for the review. Sorry, I actually left this patch halfway done.
+There is some clean up required before we can actually benefit from those
+m2m helpers. First of all the driver should have set valid default format
+right when the video device is opened. Then the hack with *{SRC, DST}_FMT
+flags should be removed.
+
+The fact that the selection API on mem-to-mem video nodes and its
+interaction with VIDIOC_S_FMT is not well defined doesn't of course help
+here.
+
+I thought I'd drop exynos-gsc from this series but I had a look at it and
+it didn't take much time to make those cleanups, so there will be two more
+patches for exynos-gsc, unfortunately not tested yet.
+
+Regarding gsc_m2m_reqbufs(), it currently behaves incorrectly. It should
+adjust reqbufs->count to a supported value, rather than returning EINVAL.
+
+Moreover, the buffer count limit is currently 32 for both CAPTURE and OUTPUT
+queue. I don't know when this number comes from, the driver always uses
+DMA buffer descriptor 0 for all transactions (GSC_M2M_BUF_NUM). Maybe this
+code was inherited from the initial BSP gsc-capture driver, where the buffer
+masking feature was actually used.
+
+Besides that, the number of requested buffer per vb2 buffer queue is
+always being limited to VIDEO_MAX_FRAME in videobuf2, which is also 32.
+
+So I think gsc_m2m_reqbufs() can be pretty much optimized, including
+removal of an unused 'frame' variable, and we can safely replace it with
+v4l2_m2m_ioctl_reqbufs().
 
 --
 Regards,
