@@ -1,74 +1,38 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH] irqchip: exynos-combiner: remove hard-coded irq_base value
-Date: Mon, 16 Sep 2013 11:01:22 +0530
-Message-ID: <1379309482-19779-1-git-send-email-chander.kashyap@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f180.google.com ([209.85.192.180]:64873 "EHLO
-	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752384Ab3IPFbh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Sep 2013 01:31:37 -0400
-Received: by mail-pd0-f180.google.com with SMTP id y10so3668784pdj.11
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Sep 2013 22:31:37 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arun Kumar K <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v8 12/12] V4L: Add driver for s5k4e5 image sensor
+Date: Mon, 16 Sep 2013 11:29:14 +0530
+Message-ID: <CALt3h78TezzNoET+st6RBUH6Fefj_HX5A6NkeTit5SYb2EQ_Rw@mail.gmail.com>
+References: <1378987669-10870-1-git-send-email-arun.kk@samsung.com>
+	<1378987669-10870-13-git-send-email-arun.kk@samsung.com>
+	<1379076935.4396.13.camel@pizza.hi.pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379076935.4396.13.camel-/rZezPiN1rtR6QfukMTsflXZhhPuCNm+@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: LMML <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kilyeon.im-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tglx@linutronix.de, thomas.ab@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-Pass '0' in place of hardcoded "irq_base" value as "first_irq" parameter to
-"irq_domain_add_simple" in order to use linear irq domain.
+Hi Philipp,
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
----
- drivers/irqchip/exynos-combiner.c |   15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+>> +Example:
+>> +
+>> +     i2c-isp@13130000 {
+>> +             s5k4e5@20 {
+>> +                     compatible = "samsung,s5k4e5";
+>> +                     reg = <0x20>;
+>> +                     gpios = <&gpx1 2 1>;
+>
+> This probably should be 'reset-gpios', too.
+>
 
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-index 4c68265..b4ed356 100644
---- a/drivers/irqchip/exynos-combiner.c
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -206,8 +206,7 @@ static unsigned int combiner_lookup_irq(int group)
- 
- static void __init combiner_init(void __iomem *combiner_base,
- 				 struct device_node *np,
--				 unsigned int max_nr,
--				 int irq_base)
-+				 unsigned int max_nr)
- {
- 	int i, irq;
- 	unsigned int nr_irq;
-@@ -221,7 +220,7 @@ static void __init combiner_init(void __iomem *combiner_base,
- 		return;
- 	}
- 
--	combiner_irq_domain = irq_domain_add_simple(np, nr_irq, irq_base,
-+	combiner_irq_domain = irq_domain_add_simple(np, nr_irq, 0,
- 				&combiner_irq_domain_ops, combiner_data);
- 	if (WARN_ON(!combiner_irq_domain)) {
- 		pr_warning("%s: irq domain init failed\n", __func__);
-@@ -248,7 +247,6 @@ static int __init combiner_of_init(struct device_node *np,
- {
- 	void __iomem *combiner_base;
- 	unsigned int max_nr = 20;
--	int irq_base = -1;
- 
- 	combiner_base = of_iomap(np, 0);
- 	if (!combiner_base) {
-@@ -262,14 +260,7 @@ static int __init combiner_of_init(struct device_node *np,
- 			__func__, max_nr);
- 	}
- 
--	/* 
--	 * FIXME: This is a hardwired COMBINER_IRQ(0,0). Once all devices
--	 * get their IRQ from DT, remove this in order to get dynamic
--	 * allocation.
--	 */
--	irq_base = 160;
--
--	combiner_init(combiner_base, np, max_nr, irq_base);
-+	combiner_init(combiner_base, np, max_nr);
- 
- 	return 0;
- }
--- 
-1.7.9.5
+Yes thats right. I missed updating the example.
+Thanks for pointing out.
+
+Regards
+Arun
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
