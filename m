@@ -1,38 +1,57 @@
-From: Arun Kumar K <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v8 12/12] V4L: Add driver for s5k4e5 image sensor
-Date: Mon, 16 Sep 2013 11:29:14 +0530
-Message-ID: <CALt3h78TezzNoET+st6RBUH6Fefj_HX5A6NkeTit5SYb2EQ_Rw@mail.gmail.com>
-References: <1378987669-10870-1-git-send-email-arun.kk@samsung.com>
-	<1378987669-10870-13-git-send-email-arun.kk@samsung.com>
-	<1379076935.4396.13.camel@pizza.hi.pengutronix.de>
+From: Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH RFC 2/7] mem2mem_testdev: Use mem-to-mem ioctl and vb2
+ helpers
+Date: Mon, 16 Sep 2013 09:24:28 +0200
+Message-ID: <1379316268.3967.4.camel@pizza.hi.pengutronix.de>
+References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com>
+	  <1379076986-10446-3-git-send-email-s.nawrocki@samsung.com>
+	 <1379077699.4396.16.camel@pizza.hi.pengutronix.de>
+	 <52361F61.8050207@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1379076935.4396.13.camel-/rZezPiN1rtR6QfukMTsflXZhhPuCNm+@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: LMML <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kilyeon.im-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <52361F61.8050207@gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, hverkuil@xs4all.nl, kyungmin.park@samsung.com, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Philipp,
+Hi Sylwester,
 
->> +Example:
->> +
->> +     i2c-isp@13130000 {
->> +             s5k4e5@20 {
->> +                     compatible = "samsung,s5k4e5";
->> +                     reg = <0x20>;
->> +                     gpios = <&gpx1 2 1>;
->
-> This probably should be 'reset-gpios', too.
->
+Am Sonntag, den 15.09.2013, 22:58 +0200 schrieb Sylwester Nawrocki:
+> Hi Philipp,
+> 
+> On 09/13/2013 03:08 PM, Philipp Zabel wrote:
+> > Am Freitag, den 13.09.2013, 14:56 +0200 schrieb Sylwester Nawrocki:
+> [...]
+> >> @@ -865,6 +793,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
+> >>   	dst_vq->ops =&m2mtest_qops;
+> >>   	dst_vq->mem_ops =&vb2_vmalloc_memops;
+> >>   	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+> >> +	dst_vq->lock =&ctx->dev->dev_mutex;
+> >>
+> >>   	return vb2_queue_init(dst_vq);
+> >>   }
+> >> @@ -945,6 +874,7 @@ static int m2mtest_open(struct file *file)
+> >>   		kfree(ctx);
+> >>   		goto open_unlock;
+> >>   	}
+> >> +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
+> >
+> > Since you added m2m_ctx to v4l2_fh, why not drop ctx->m2m_ctx altogether
+> > and always use ctx->fh.m2m_ctx instead?
+> 
+> Yes, that might make it a bit cleaner. I guess I wanted to minimize
+> the necessary changes.
 
-Yes thats right. I missed updating the example.
-Thanks for pointing out.
+You are right. Converting the coda driver, I notice that depending on
+how many occurences of ctx->m2m_ctx there are, it might be better to do
+this in a separate patch.
 
-Regards
-Arun
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> I'll amend that in all drivers in this series
+> for the next iteration, as they all look very similar. Thanks for the
+> suggestion.
+
+regards
+Philipp
