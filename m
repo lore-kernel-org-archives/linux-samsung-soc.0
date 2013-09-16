@@ -1,30 +1,41 @@
-From: Liam Girdwood <liam.r.girdwood@linux.intel.com>
-Subject: Re: [alsa-devel] [PATCH 1/2] ASoC: core: Add
- devm_snd_soc_register_card()
-Date: Mon, 16 Sep 2013 18:48:50 +0100
-Message-ID: <1379353730.3215.59.camel@loki>
-References: <1379351023-28996-1-git-send-email-broonie@kernel.org>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
+Date: Mon, 16 Sep 2013 12:37:09 -0700
+Message-ID: <20130916193709.27384.86101@quantum>
+References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
+ <8412301.YP2zzplWoe@amdc1227>
+ <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com>
+ <523716C9.3000204@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:10470 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751579Ab3IPRsx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Sep 2013 13:48:53 -0400
-In-Reply-To: <1379351023-28996-1-git-send-email-broonie@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <523716C9.3000204-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Andrzej Hajda' <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-On Mon, 2013-09-16 at 18:03 +0100, Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
+Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
+> On 09/12/2013 12:50 PM, Kukjin Kim wrote:
+> > Well...I'm not sure changing to use macro is better or not at this moment...
 > 
-> Simplify error handling and remove repetitive (and rarely executed) code
-> for unregistration by providing a devm_snd_soc_register() card.
-> 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
+> I think it is. ;) It's really less error prone to have symbolic names instead
+> of the plain numbers. The clock ids are defined in one place and it is more
+> clear what a clock is by looking at symbolic name. It's especially annoying 
+> to use plain numbers where are are many clock in a single node, like 10 or 
+> more. What are you main concerns with this ?
 
-Acked-by: Liam Girdwood <liam.r.girdwood@linux.intel.com>
+I think having the symbolic names is a win for readability.
+
+Regards,
+Mike
+
+> 
+> --
+> Regards,
+> Sylwester
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
