@@ -1,177 +1,161 @@
-From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v7 01/13] [media] exynos5-is: Adding media device driver
- for exynos5
-Date: Mon, 16 Sep 2013 23:53:41 +0200
-Message-ID: <52377DE5.3070808@gmail.com>
-References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com> <1377066881-5423-2-git-send-email-arun.kk@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v8 02/12] [media] exynos5-fimc-is: Add driver core files
+Date: Mon, 16 Sep 2013 23:59:24 +0200
+Message-ID: <52377F3C.5070508@gmail.com>
+References: <1378987669-10870-1-git-send-email-arun.kk@samsung.com> <1378987669-10870-3-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1377066881-5423-2-git-send-email-arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, Pawel.Moll-5wv7dgnIgG8@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kilyeon.im-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f177.google.com ([209.85.215.177]:39665 "EHLO
+	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751382Ab3IPV7y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 Sep 2013 17:59:54 -0400
+In-Reply-To: <1378987669-10870-3-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-Hi,
+On 09/12/2013 02:07 PM, Arun Kumar K wrote:
+>
+> +static int fimc_is_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =&pdev->dev;
+> +	struct resource *res;
+> +	struct fimc_is *is;
+> +	void __iomem *regs;
+> +	struct device_node *node;
+> +	int irq, ret;
+> +	int i;
+> +
+> +	dev_dbg(dev, "FIMC-IS Probe Enter\n");
+> +
+> +	if (!pdev->dev.of_node)
 
-On 08/21/2013 08:34 AM, Arun Kumar K wrote:
-> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
-> @@ -0,0 +1,126 @@
-> +Samsung EXYNOS5 SoC Camera Subsystem
-> +------------------------------------
+nit: Could be simplified to:
+
+  	if (!dev->of_node)
+
+> +		return -ENODEV;
 > +
-> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
-> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
-> +MIPI CSIS and FIMC-IS.
+> +	is = devm_kzalloc(&pdev->dev, sizeof(*is), GFP_KERNEL);
+> +	if (!is)
+> +		return -ENOMEM;
 > +
-> +The sub-device nodes are referenced using phandles in the common 'camera' node
-> +which also includes common properties of the whole subsystem not really
-> +specific to any single sub-device, like common camera port pins or the common
-> +camera bus clocks.
+> +	is->pdev = pdev;
 > +
-> +Common 'camera' node
-> +--------------------
+> +	is->drvdata = fimc_is_get_drvdata(pdev);
 > +
-> +Required properties:
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	regs = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(regs))
+> +		return PTR_ERR(regs);
 > +
-> +- compatible		: must be "samsung,exynos5250-fimc"
-> +- clocks		: list of clock specifiers, corresponding to entries in
-> +                          the clock-names property
-> +- clock-names	: must contain "sclk_bayer" entry
-> +- samsung,csis	: list of phandles to the mipi-csis device nodes
-> +- samsung,fimc-lite	: list of phandles to the fimc-lite device nodes
-> +- samsung,fimc-is	: phandle to the fimc-is device node
+> +	/* Get the PMU base */
+> +	node = of_parse_phandle(dev->of_node, "samsung,pmu", 0);
+> +	if (!node)
+> +		return -ENODEV;
+> +	is->pmu_regs = of_iomap(node, 0);
+> +	if (!is->pmu_regs)
+> +		return -ENOMEM;
 > +
-> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
-> +to define a required pinctrl state named "default".
+> +	irq = irq_of_parse_and_map(dev->of_node, 0);
+> +	if (irq<  0) {
+> +		dev_err(dev, "Failed to get IRQ\n");
+> +		return irq;
+> +	}
 > +
-> +'parallel-ports' node
-> +---------------------
+> +	ret = fimc_is_configure_clocks(is);
+> +	if (ret<  0) {
+> +		dev_err(dev, "clocks configuration failed\n");
+> +		goto err_clk;
+> +	}
 > +
-> +This node should contain child 'port' nodes specifying active parallel video
-> +input ports. It includes camera A, camera B and RGB bay inputs.
-> +'reg' property in the port nodes specifies the input type:
-> + 1 - parallel camport A
-> + 2 - parallel camport B
-> + 5 - RGB camera bay
+> +	platform_set_drvdata(pdev, is);
+> +	pm_runtime_enable(dev);
 > +
-> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
+> +	ret = pm_runtime_get_sync(dev);
+> +	if (ret<  0)
+> +		goto err_pm;
+
+Is activating the device at this point really needed ? Perhaps you
+could drop the pm_runtime_get/put calls ?
+
+> +	is->alloc_ctx = vb2_dma_contig_init_ctx(dev);
+> +	if (IS_ERR(is->alloc_ctx)) {
+> +		ret = PTR_ERR(is->alloc_ctx);
+> +		goto err_vb;
+> +	}
 > +
-> +Image sensor nodes
-> +------------------
+> +	/* Get IS-sensor contexts */
+> +	ret = fimc_is_parse_sensor(is);
+> +	if (ret<  0)
+> +		goto err_vb;
 > +
-> +The sensor device nodes should be added to their control bus controller (e.g.
-> +I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
-> +using the common video interfaces bindings, defined in video-interfaces.txt.
+> +	/* Initialize FIMC Pipeline */
+> +	for (i = 0; i<  is->drvdata->num_instances; i++) {
+> +		ret = fimc_is_pipeline_init(&is->pipeline[i], i, is);
+> +		if (ret<  0)
+> +			goto err_sd;
+> +	}
 > +
-> +Example:
+> +	/* Initialize FIMC Interface */
+> +	ret = fimc_is_interface_init(&is->interface, regs, irq);
+> +	if (ret<  0)
+> +		goto err_sd;
+> +
+> +	pm_runtime_put(dev);
+> +
+> +	dev_dbg(dev, "FIMC-IS registered successfully\n");
+> +
+> +	return 0;
+> +
+> +err_sd:
+> +	fimc_is_pipelines_destroy(is);
+> +err_vb:
+> +	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
+> +err_pm:
+> +	pm_runtime_put(dev);
+> +err_clk:
+> +	fimc_is_put_clocks(is);
+> +
+> +	return ret;
+> +}
+> +
+> +int fimc_is_clk_enable(struct fimc_is *is)
+> +{
+> +	int ret;
+> +
+> +	ret = clk_enable(is->clock[IS_CLK_ISP]);
+> +	if (ret)
+> +		return ret;
+> +	ret = clk_enable(is->clock[IS_CLK_MCU_ISP]);
+
+Shouldn't you disable the first enabled clock when this call fails ?
+
+> +	return ret;
+> +}
 [...]
-> +	/* MIPI CSI-2 bus IF sensor */
-> +	s5c73m3: sensor@1a {
-		...
-> +		port {
-> +			s5c73m3_1: endpoint {
-> +				data-lanes =<1 2 3 4>;
-> +				remote-endpoint =<&csis0_ep>;
-> +			};
-> +		};
-> +	};
+> +static void *fimc_is_get_drvdata(struct platform_device *pdev)
+> +{
+> +	struct fimc_is_drvdata *driver_data = NULL;
 > +
-> +	camera {
-> +		compatible = "samsung,exynos5250-fimc";
-> +		#address-cells =<1>;
-> +		#size-cells =<1>;
-> +		status = "okay";
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 =<&cam_port_a_clk_active>;
-> +
-> +		samsung,csis =<&csis_0>,<&csis_1>;
-> +		samsung,fimc-lite =<&fimc_lite_0>,<&fimc_lite_1>,<&fimc_lite_2>;
-> +		samsung,fimc-is =<&fimc_is>;
-> +
-> +		/* parallel camera ports */
-> +		parallel-ports {
-> +			/* camera A input */
-> +			port@1 {
-> +				reg =<1>;
-> +				camport_a_ep: endpoint {
-> +					remote-endpoint =<&s5k6aa_ep>;
-> +					bus-width =<8>;
-> +					hsync-active =<0>;
-> +					vsync-active =<1>;
-> +					pclk-sample =<1>;
-> +				};
-> +			};
-> +		};
-> +	};
+> +	if (pdev->dev.of_node) {
 
-I'd like to propose a little re-design of this binding. The reason is that
-I've noticed issues related to the power domain and FIMC-LITE, FIMC-IS 
-clocks
-handling sequences. This lead to a failure to disable the ISP power domain
-and to complete the system suspend/resume cycle. Not sure if this happens on
-Exynos5 SoCs, nevertheless IMHO it would be more reasonable to make 
-FIMC-LITE
-device nodes child nodes of FIMC-IS. FIMC-LITE seems to be an integral part
-of the FIMC-IS subsystem.
+pdev->dev.of_node is being tested against NULL before call to this
+function, you could make this code slightly simpler with that assumption.
 
-Then fimc-is node would be placed at root level, with fimc-lite nodes as its
-subnodes:
-
-fimc-is {
-	compatible = "exynos5250-fimc-is";
-	reg = <...>;
-	...
-	#address-cells = <1>;
-	#size-cells = <1>;
-	ranges;
-	
-	fimc_lite_0: fimc-lite@12390000 {
-		compatible = "samsung,exynos4212-fimc-lite";
-		...
-	};
-
-	fimc_lite_1: fimc-lite@123A0000 {
-		compatible = "samsung,exynos4212-fimc-lite";
-		...
-	};
-
-	fimc_lite_2: fimc-lite@123B0000 {
-		compatible = "samsung,exynos4212-fimc-lite";
-		...
-	};
-
-	i2c0_isp: i2c-isp@12130000 {
-		...
-	};
-
-	...
-};
-
-Once FIMC-IS driver has probed it would call of_platform_populate() and
-would instantiate all FIMC-IS subsystem sub-devices, including FIMC-LITEs.
-
-I think it's more correct from the hardware structure point of view and it
-would allow us to have the required control on the initialization and power/
-clock sequences. Especially that you might not be able to control the order
-of registration of the exynos5250-fimc-is and fimc-is-i2c drivers, once the
-I2C bus controller is outside of the exynos5-fimc-is module.
-
-Besides, I would propose to make mipi-csis nodes subnodes of the camera
-node. Then the top level camera driver would call of_platform_populate()
-to instantiate MIPI-CSIS devices. That feels better than using samsung,csis
-property pointing to mipi-csis nodes.
-
-Sorry about somewhat going in circles with that, hopefully this is the
-last change before this driver can be queued upstream.
+> +		const struct of_device_id *match;
+> +		match = of_match_node(exynos5_fimc_is_match,
+> +				pdev->dev.of_node);
+> +		if (match)
+> +			driver_data = (struct fimc_is_drvdata *)match->data;
+> +	}
+> +	return driver_data;
+> +}
 
 --
 Thanks,
 Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
