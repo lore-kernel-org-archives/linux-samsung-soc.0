@@ -1,92 +1,93 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register
- handling
-Date: Tue, 17 Sep 2013 10:56:49 -0500
-Message-ID: <20130917155648.GN15645@radagast>
-References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
- <CAODwPW8KG2ZxOFf936H233g35KVPjDp+f8e3qgkd4Z7NN9RAtQ@mail.gmail.com>
- <20130917153616.GG15645@radagast>
- <2133285.Y3nsFRsUq0@amdc1227>
-Reply-To: <balbi@ti.com>
+From: Kim Phillips <kim.phillips@linaro.org>
+Subject: [PATCH] i2c: s3c2410: fix clk_disable/clk_unprepare warnings
+Date: Tue, 17 Sep 2013 11:31:53 -0500
+Message-ID: <20130917113153.41b0305d6892170ba8e1ecf7@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CUrluEZVXmx7ezWQ"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:44413 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752751Ab3IQP55 (ORCPT
+Received: from mail-ye0-f178.google.com ([209.85.213.178]:50867 "EHLO
+	mail-ye0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753260Ab3IQQcJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Sep 2013 11:57:57 -0400
-Content-Disposition: inline
-In-Reply-To: <2133285.Y3nsFRsUq0@amdc1227>
+	Tue, 17 Sep 2013 12:32:09 -0400
+Received: by mail-ye0-f178.google.com with SMTP id m5so2371163yen.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Sep 2013 09:32:08 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: balbi@ti.com, Julius Werner <jwerner@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Wolfram Sang <wsa@the-dreams.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
---CUrluEZVXmx7ezWQ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+commit d16933b33914a6dff38a4ecbe8edce44a17898e8 "i2c: s3c2410: Move
+location of clk_prepare_enable() call in probe function" refactored
+clk_enable and clk_disable calls yet neglected to remove the
+clk_disable_unprepare call in the module's remove().
 
-On Tue, Sep 17, 2013 at 05:53:31PM +0200, Tomasz Figa wrote:
-> Hi Felipe,
->=20
-> On Tuesday 17 of September 2013 10:36:16 Felipe Balbi wrote:
-> > Hi,
-> >=20
-> > On Tue, Aug 27, 2013 at 01:27:48PM -0700, Julius Werner wrote:
-> > > *Ping!*
-> > >=20
-> > > Are there still unanswered concerns left with this patch? I hope my
-> > > prior mails could clear up why I think that the PMU register
-> > > description in the device tree for a specific PHY is represents the
-> > > hardware more accurately after my patch, and my analysis of the
-> > > Exynos4 situation currently not being implemented (and therefore not
-> > > needing to be addressed by this patch) was correct. Please let me know
-> > > if you have further objections... and if not, could we agree to have
-> > > this picked up somewhere?
-> >=20
-> > I need acks for DTS part...
->=20
-> This patch breaks Exynos 4, so it's a NAK from me.
->=20
-> Anyway, a new, completely redesigned PHY driver supporting most of the PH=
-Y=20
-> features (as opposed to only the basic subset currently) developed by Kam=
-il=20
-> Debski should show up soon, so I don't think there is any reason to apply=
-=20
-> any patches to this old driver.
+It helps remove warnings on an arndale during unbind:
 
-awesome, then I espect to see a patch deleting the old driver shortly
-:-)
+echo 12c90000.i2c > /sys/bus/platform/devices/12c90000.i2c/driver/unbind
 
-cheers
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 2548 at drivers/clk/clk.c:842 clk_disable+0x18/0x24()
+Modules linked in:
+CPU: 0 PID: 2548 Comm: bash Not tainted 3.11.0-next-20130916-00003-gf4bddbc #6
+[<c0014d48>] (unwind_backtrace+0x0/0xf8) from [<c00117d0>] (show_stack+0x10/0x14)
+[<c00117d0>] (show_stack+0x10/0x14) from [<c0361be8>] (dump_stack+0x6c/0xac)
+[<c0361be8>] (dump_stack+0x6c/0xac) from [<c001d864>] (warn_slowpath_common+0x64/0x88)
+[<c001d864>] (warn_slowpath_common+0x64/0x88) from [<c001d8a4>] (warn_slowpath_null+0x1c/0x24)
+[<c001d8a4>] (warn_slowpath_null+0x1c/0x24) from [<c02c4a64>] (clk_disable+0x18/0x24)
+[<c02c4a64>] (clk_disable+0x18/0x24) from [<c028d0b0>] (s3c24xx_i2c_remove+0x28/0x70)
+[<c028d0b0>] (s3c24xx_i2c_remove+0x28/0x70) from [<c0217a10>] (platform_drv_remove+0x18/0x1c)
+[<c0217a10>] (platform_drv_remove+0x18/0x1c) from [<c0216358>] (__device_release_driver+0x58/0xb4)
+[<c0216358>] (__device_release_driver+0x58/0xb4) from [<c02163d0>] (device_release_driver+0x1c/0x28)
+[<c02163d0>] (device_release_driver+0x1c/0x28) from [<c02153c0>] (unbind_store+0x58/0x90)
+[<c02153c0>] (unbind_store+0x58/0x90) from [<c0214c90>] (drv_attr_store+0x20/0x2c)
+[<c0214c90>] (drv_attr_store+0x20/0x2c) from [<c01032c0>] (sysfs_write_file+0x168/0x198)
+[<c01032c0>] (sysfs_write_file+0x168/0x198) from [<c00ae1c0>] (vfs_write+0xb0/0x194)
+[<c00ae1c0>] (vfs_write+0xb0/0x194) from [<c00ae594>] (SyS_write+0x3c/0x70)
+[<c00ae594>] (SyS_write+0x3c/0x70) from [<c000e3e0>] (ret_fast_syscall+0x0/0x30)
+---[ end trace 4c9f9403066f57a6 ]---
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 2548 at drivers/clk/clk.c:751 clk_unprepare+0x14/0x1c()
+Modules linked in:
+CPU: 0 PID: 2548 Comm: bash Tainted: G        W    3.11.0-next-20130916-00003-gf4bddbc #6
+[<c0014d48>] (unwind_backtrace+0x0/0xf8) from [<c00117d0>] (show_stack+0x10/0x14)
+[<c00117d0>] (show_stack+0x10/0x14) from [<c0361be8>] (dump_stack+0x6c/0xac)
+[<c0361be8>] (dump_stack+0x6c/0xac) from [<c001d864>] (warn_slowpath_common+0x64/0x88)
+[<c001d864>] (warn_slowpath_common+0x64/0x88) from [<c001d8a4>] (warn_slowpath_null+0x1c/0x24)
+[<c001d8a4>] (warn_slowpath_null+0x1c/0x24) from [<c02c5834>] (clk_unprepare+0x14/0x1c)
+[<c02c5834>] (clk_unprepare+0x14/0x1c) from [<c028d0b8>] (s3c24xx_i2c_remove+0x30/0x70)
+[<c028d0b8>] (s3c24xx_i2c_remove+0x30/0x70) from [<c0217a10>] (platform_drv_remove+0x18/0x1c)
+[<c0217a10>] (platform_drv_remove+0x18/0x1c) from [<c0216358>] (__device_release_driver+0x58/0xb4)
+[<c0216358>] (__device_release_driver+0x58/0xb4) from [<c02163d0>] (device_release_driver+0x1c/0x28)
+[<c02163d0>] (device_release_driver+0x1c/0x28) from [<c02153c0>] (unbind_store+0x58/0x90)
+[<c02153c0>] (unbind_store+0x58/0x90) from [<c0214c90>] (drv_attr_store+0x20/0x2c)
+[<c0214c90>] (drv_attr_store+0x20/0x2c) from [<c01032c0>] (sysfs_write_file+0x168/0x198)
+[<c01032c0>] (sysfs_write_file+0x168/0x198) from [<c00ae1c0>] (vfs_write+0xb0/0x194)
+[<c00ae1c0>] (vfs_write+0xb0/0x194) from [<c00ae594>] (SyS_write+0x3c/0x70)
+[<c00ae594>] (SyS_write+0x3c/0x70) from [<c000e3e0>] (ret_fast_syscall+0x0/0x30)
+---[ end trace 4c9f9403066f57a7 ]---
 
---=20
-balbi
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Kim Phillips <kim.phillips@linaro.org>
+---
+ drivers/i2c/busses/i2c-s3c2410.c | 2 --
+ 1 file changed, 2 deletions(-)
 
---CUrluEZVXmx7ezWQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSOHu+AAoJEIaOsuA1yqREXOIP/it9cJA/Tt+XMDMF5hGv6RoP
-VTjiJl15j7XSF45cgzD/8GD4Mv+vOUqqv44x0mppYR09Bvh/dcpvbBBDDLh4iiS9
-qd4BmxmRFHsZjft8cgdoudfritSaObDNIgelMlJkNv7iu5vlj1FzQICtRysZYx8h
-aXSzwlCgHcGfXcTXx6qiejZd8lvxRCBK1g+liTqCYbbbtaxuh04glMMamwAcCSh0
-f3my8J0buHZTpoUKUa7zf/KLXx5N0XnmQ3ej1x5iX2zMBkvOx3+NYPelAL9X9AFv
-8sWZWUACVMI+JDVC93IvLWHKgo/RZGgDWZBw6xussWDt0cSRdDLUPXqLLa/Hj3kq
-O5pV/5Ak9pLiLu8I3K5D0J1Qt+M22VVGJjpDruf5LNd6GuoYCtr8FEvxNHeMXQIt
-W+qgt3Ny40SkNCgvnuLcQKH6v2ZVSxnll+0ghSgaoty74aYZjTDEZAtbZ6cNI2AD
-Hpp+2rkvnaZaduaH/hNmApFMpCaCiJ2lKgDMz6WHSQPY9wqhu1ZJVSvJL0zCbueY
-lhfXYlUV00LpALQ7AoBfF1gfocRdIfYUNxkUTyJ6aeo55wPTfOKMWGUGz+CKqypU
-oTZ/DN6KOGfir0oeVJq74y1cOMQ2bI/FEbRXpTDN1XE0KkPW1nnfqPX3oW6G++yR
-ig9mj3hSMGgEv7juRZ9G
-=Zb+P
------END PGP SIGNATURE-----
-
---CUrluEZVXmx7ezWQ--
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 3535f3c..3747b9b 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -1178,8 +1178,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+ 
+ 	i2c_del_adapter(&i2c->adap);
+ 
+-	clk_disable_unprepare(i2c->clk);
+-
+ 	if (pdev->dev.of_node && IS_ERR(i2c->pctrl))
+ 		s3c24xx_i2c_dt_gpio_free(i2c);
+ 
+-- 
+1.8.4
