@@ -1,61 +1,131 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] MAINTAINERS: Add DTS files to patterns for Samsung
- platform
-Date: Tue, 17 Sep 2013 12:05:45 +0100
-Message-ID: <20130917110545.GS21013@sirena.org.uk>
-References: <1378983449-6205-1-git-send-email-broonie@kernel.org>
- <1466354.6bhNY3vCLP@amdc1227>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] Input: gpio-keys - update to devm_* API
+Date: Tue, 17 Sep 2013 13:19:39 +0200
+Message-ID: <4083416.Q4nm27K4Qq@amdc1227>
+References: <1379188343-18904-1-git-send-email-badarkhe.manish@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="O3bhLwMadv7h6/J9"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:53497 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752207Ab3IQLFu (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:53399 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751907Ab3IQLTs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Sep 2013 07:05:50 -0400
-Content-Disposition: inline
-In-Reply-To: <1466354.6bhNY3vCLP@amdc1227>
+	Tue, 17 Sep 2013 07:19:48 -0400
+In-reply-to: <1379188343-18904-1-git-send-email-badarkhe.manish@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org
+To: Manish Badarkhe <badarkhe.manish@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dmitry.torokhov@gmail.com
 
+Hi Manish,
 
---O3bhLwMadv7h6/J9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks for the patch. I have few comments inline, though.
 
-On Tue, Sep 17, 2013 at 12:31:20PM +0200, Tomasz Figa wrote:
+On Sunday 15 of September 2013 01:22:23 Manish Badarkhe wrote:
+> Update the code to use devm_* API so that driver core will manage
+> resources.
+> 
+> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
+> ---
+> 
+> :100644 100644 440ce32... b4db721... M	drivers/input/keyboard/gpio_keys.c
+> 
+>  drivers/input/keyboard/gpio_keys.c |   18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/input/keyboard/gpio_keys.c
+> b/drivers/input/keyboard/gpio_keys.c index 440ce32..b4db721 100644
+> --- a/drivers/input/keyboard/gpio_keys.c
+> +++ b/drivers/input/keyboard/gpio_keys.c
+> @@ -588,7 +588,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
+>  		goto err_out;
+>  	}
+> 
+> -	pdata = kzalloc(sizeof(*pdata) + nbuttons * (sizeof *button),
+> +	pdata = devm_kzalloc(dev, sizeof(*pdata) + nbuttons *
+> (sizeof(*button)), GFP_KERNEL);
+>  	if (!pdata) {
+>  		error = -ENOMEM;
+> @@ -618,7 +618,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
+>  				dev_err(dev,
+>  					"Failed to get gpio flags, error: %d\n",
+>  					error);
+> -			goto err_free_pdata;
+> +			goto err_out;
 
-> > +F:	arch/arm/boot/s3c*
-> > +F:	arch/arm/boot/exynos*
+Since the only thing done after err_out label is returning the error, you 
+can simply return the error here.
 
-> I believe it should be arch/arm/boot/dts/.
+>  		}
+> 
+>  		button = &pdata->buttons[i++];
+> @@ -630,7 +630,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
+>  			dev_err(dev, "Button without keycode: 0x%x\n",
+>  				button->gpio);
+>  			error = -EINVAL;
+> -			goto err_free_pdata;
+> +			goto err_out;
 
-Bah, so it should.  I wonder why I did actually start seeing the
-appropriate things turning up after I did this patch then?
+Ditto.
 
---O3bhLwMadv7h6/J9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+>  		}
+> 
+>  		button->desc = of_get_property(pp, "label", NULL);
+> @@ -647,13 +647,11 @@ gpio_keys_get_devtree_pdata(struct device *dev)
+> 
+>  	if (pdata->nbuttons == 0) {
+>  		error = -EINVAL;
+> -		goto err_free_pdata;
+> +		goto err_out;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+Ditto.
 
-iQIcBAEBAgAGBQJSODeGAAoJELSic+t+oim9XQIP/0PcuXJ3V40p1c6zB74oons0
-NuV4UDUupsI8+ab0k2/yeLWz7YFX2XMT1Pa3wr83hFjzGVX5yewbyi8TPt6416Yj
-e8iUOLShXT37k0G/IE+9jD0LHdXHjM1mfwJyO/1y/2hag8Zz8O6CwwKdA8cOhfHu
-7eSn1ra2bTZigSt22rA1cEz4Z93u2ShP7W7lNRLJZArlPefoAdyp0tq3Fg/yB+zG
-+aYYSSkYZ4aflWOs0pWXlbuMmua8g4m8p7ueDmACdQBcIsEO6RcqPOxeDs/F49mi
-v3UYJZfy/pVcZrUo3Y6u/20/5mDM+C0n5ATl/0ZxMr0iT6Ewj9dcx2Xy6T1hMdea
-Tjhnharl3YgWFZKdkqS2b3+OG/a/15hvxPJzwm0yUfg61rsunaSgGgZ9AR/vMkT9
-+LglPWzqNdzG3CnnMlpmq8KbWaL3yppuII80C2HEgU6J80GDfUje2E/LDxwjNAID
-eHgq1hOMkWS5BJjSRhB8+ZAXJ9DjynklnGdpOdU30JhGRtuDw69yFFuD8HHCUc8K
-qJCen7Pt9AINRZ5nj8LAdBKpu83wP2QZ5lLlbq8YF6oYoL1Esabsn98wT2JAPmcQ
-cwwvhILrXdtO+auRid4GyPRwRk/ORkqRi0xDTWZlUuPE29PD38u0yrM/5XSCvpoT
-tw2pgmcMe5jsgDKKWYGq
-=Pxir
------END PGP SIGNATURE-----
+>  	}
+> 
+>  	return pdata;
+> 
+> -err_free_pdata:
+> -	kfree(pdata);
+>  err_out:
+>  	return ERR_PTR(error);
 
---O3bhLwMadv7h6/J9--
+Then the whole error path here can be dropped.
+
+>  }
+> @@ -699,10 +697,10 @@ static int gpio_keys_probe(struct platform_device
+> *pdev) return PTR_ERR(pdata);
+>  	}
+> 
+> -	ddata = kzalloc(sizeof(struct gpio_keys_drvdata) +
+> +	ddata = devm_kzalloc(&pdev->dev, sizeof(struct gpio_keys_drvdata) +
+>  			pdata->nbuttons * sizeof(struct gpio_button_data),
+>  			GFP_KERNEL);
+> -	input = input_allocate_device();
+> +	input = devm_input_allocate_device(&pdev->dev);
+>  	if (!ddata || !input) {
+>  		dev_err(dev, "failed to allocate state\n");
+>  		error = -ENOMEM;
+> @@ -768,8 +766,6 @@ static int gpio_keys_probe(struct platform_device
+> *pdev) gpio_remove_key(&ddata->data[i]);
+> 
+>   fail1:
+> -	input_free_device(input);
+> -	kfree(ddata);
+>  	/* If we have no platform data, we allocated pdata dynamically. */
+>  	if (!dev_get_platdata(&pdev->dev))
+>  		kfree(pdata);
+
+This is incorrect and unnecessary. Since pdata was allocated using devm_ 
+helper it will be freed automatically. As a side note, if you want to 
+explicitly free memory allocated using devm_ helpers, you need to do it 
+using their devm_ free counterparts, not directly.
+
+> @@ -796,8 +792,6 @@ static int gpio_keys_remove(struct platform_device
+> *pdev) if (!dev_get_platdata(&pdev->dev))
+>  		kfree(ddata->pdata);
+
+Same here.
+
+Best regards,
+Tomasz
