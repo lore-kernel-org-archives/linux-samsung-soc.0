@@ -1,142 +1,45 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v11 0/8] PHY framework
-Date: Tue, 17 Sep 2013 10:41:07 -0500
-Message-ID: <20130917154107.GH15645@radagast>
-References: <1377063973-22044-1-git-send-email-kishon@ti.com>
- <521B0E79.6060506@ti.com> <20130827192059.GZ3005@radagast>
- <5225FF63.6080608@ti.com> <20130903155030.GA21525@kroah.com>
- <5226F5E2.5010409@ti.com>
-Reply-To: balbi@ti.com
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/3 v5] usb: phy-samsung-usb: Simplify PMU register handling
+Date: Tue, 17 Sep 2013 17:53:31 +0200
+Message-ID: <2133285.Y3nsFRsUq0@amdc1227>
+References: <1375812017-6287-1-git-send-email-jwerner@chromium.org>
+ <CAODwPW8KG2ZxOFf936H233g35KVPjDp+f8e3qgkd4Z7NN9RAtQ@mail.gmail.com>
+ <20130917153616.GG15645@radagast>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0949962772359670020=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <5226F5E2.5010409@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-fbdev@vger.kernel.org, linux-doc@vger.kernel.org, tony@atomide.com, nsekhar@ti.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, swarren@nvidia.com, jg1.han@samsung.com, stern@rowland.harvard.edu, grant.likely@linaro.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, george.cherian@ti.com, arnd@arndb.de, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, balajitk@ti.com, Greg KH <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, broonie@kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20130917153616.GG15645@radagast>
+Sender: linux-kernel-owner@vger.kernel.org
+To: balbi@ti.com
+Cc: Julius Werner <jwerner@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Mark Rutland <mark.rutland@arm.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============0949962772359670020==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="YPJ8CVbwFUtL7OFW"
-Content-Disposition: inline
+Hi Felipe,
 
---YPJ8CVbwFUtL7OFW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tuesday 17 of September 2013 10:36:16 Felipe Balbi wrote:
+> Hi,
+> 
+> On Tue, Aug 27, 2013 at 01:27:48PM -0700, Julius Werner wrote:
+> > *Ping!*
+> > 
+> > Are there still unanswered concerns left with this patch? I hope my
+> > prior mails could clear up why I think that the PMU register
+> > description in the device tree for a specific PHY is represents the
+> > hardware more accurately after my patch, and my analysis of the
+> > Exynos4 situation currently not being implemented (and therefore not
+> > needing to be addressed by this patch) was correct. Please let me know
+> > if you have further objections... and if not, could we agree to have
+> > this picked up somewhere?
+> 
+> I need acks for DTS part...
 
-On Wed, Sep 04, 2013 at 02:27:06PM +0530, Kishon Vijay Abraham I wrote:
-> On Tuesday 03 September 2013 09:20 PM, Greg KH wrote:
-> > On Tue, Sep 03, 2013 at 08:55:23PM +0530, Kishon Vijay Abraham I wrote:
-> >> Hi Greg,
-> >>
-> >> On Wednesday 28 August 2013 12:50 AM, Felipe Balbi wrote:
-> >>> Hi,
-> >>>
-> >>> On Mon, Aug 26, 2013 at 01:44:49PM +0530, Kishon Vijay Abraham I wrot=
-e:
-> >>>> On Wednesday 21 August 2013 11:16 AM, Kishon Vijay Abraham I wrote:
-> >>>>> Added a generic PHY framework that provides a set of APIs for the P=
-HY drivers
-> >>>>> to create/destroy a PHY and APIs for the PHY users to obtain a refe=
-rence to
-> >>>>> the PHY with or without using phandle.
-> >>>>>
-> >>>>> This framework will be of use only to devices that uses external PH=
-Y (PHY
-> >>>>> functionality is not embedded within the controller).
-> >>>>>
-> >>>>> The intention of creating this framework is to bring the phy driver=
-s spread
-> >>>>> all over the Linux kernel to drivers/phy to increase code re-use an=
-d to
-> >>>>> increase code maintainability.
-> >>>>>
-> >>>>> Comments to make PHY as bus wasn't done because PHY devices can be =
-part of
-> >>>>> other bus and making a same device attached to multiple bus leads t=
-o bad
-> >>>>> design.
-> >>>>>
-> >>>>> If the PHY driver has to send notification on connect/disconnect, t=
-he PHY
-> >>>>> driver should make use of the extcon framework. Using this susbsyst=
-em
-> >>>>> to use extcon framwork will have to be analysed.
-> >>>>>
-> >>>>> You can find this patch series @
-> >>>>> git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git =
-testing
-> >>>>
-> >>>> Looks like there are not further comments on this series. Can you ta=
-ke this in
-> >>>> your misc tree?
-> >>>
-> >>> Do you want me to queue these for you ? There are quite a few users f=
-or
-> >>> this framework already and I know of at least 2 others which will show
-> >>> up for v3.13.
-> >>
-> >> Can you queue this patch series? There are quite a few users already f=
-or this
-> >> framework.
-> >=20
-> > It will have to wait for 3.13 as the merge window for new features has
-> > been closed for a week or so.  Sorry, I'll queue this up after 3.12-rc1
-> > is out.
->=20
-> Alright, thanks.
+This patch breaks Exynos 4, so it's a NAK from me.
 
-Just a gentle ping on this one...
+Anyway, a new, completely redesigned PHY driver supporting most of the PHY 
+features (as opposed to only the basic subset currently) developed by Kamil 
+Debski should show up soon, so I don't think there is any reason to apply 
+any patches to this old driver.
 
-cheers
-
---=20
-balbi
-
---YPJ8CVbwFUtL7OFW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSOHgTAAoJEIaOsuA1yqREH7QP/RrRhj27omVfupAPeHzOVlYD
-HtXIlK9wsVeD36xJP+ZjCgLWCuzLCz2lR0rXYjJDwcTw6+RiJHxVUrhdrO8dIeXT
-jvGjSmz+QtV7dSrN7vQtsNRUdYxOgvV9IOtnKRz1EgepcvDcrri16y9xz0hxH8b+
-jS1fp7shRuF5vz+/mk1hryyKmhMH34T8HK2uEz/XTQuw58V8CNP0dxNPXXeprIXv
-IGCubSvWr2igiQBmRpsKiyczoH1YgovXE3mY4VcrTLuu/M8PwcpCtddrJUP4j8vI
-jAyU2NZ3B4IsjcbQzA56R72FcXfk00D90oyg3KF1CM7ABcH9jFBkYNLNXVV87v9P
-BeZOEiGoSCZvPOyPqQ2i0sOMTrFLsqDZOSv5dIL+Ai9VT80qo1aZHz21QWJ9J522
-S/ez8SbWeuEBcqE6gqyA0CgwwubSWQEqUZYFi2ryXGBMi09JE10SOBdlhWcXMXQp
-WXMBAK/J2cFsn9iWEXgAr1tF4NdQlZyqvZ4cgppbKsy+ImpfMUXgME948Yp49fnn
-EoRXpb6BgS6cZUeazoaVWSC38lDdVdYOIvERcWLu3oxUwOE3ykQq0E6IeKjxXnHW
-21S1vvGfwFN2ODw1nYUW10UFGuFz16OfHZJ5T1Uehl1zks6UFOWcA0kdsKjheOlZ
-iWGOFMZF6lEMV8/o+A+h
-=1Rub
------END PGP SIGNATURE-----
-
---YPJ8CVbwFUtL7OFW--
-
-
---===============0949962772359670020==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0949962772359670020==--
+Best regards,
+Tomasz
