@@ -1,119 +1,140 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status
- callback.
-Date: Tue, 17 Sep 2013 12:31:34 +0530
-Message-ID: <20130917070134.GR17188@intel.com>
-References: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
- <1378879685-5352-2-git-send-email-padma.v@samsung.com>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [PATCH v3 2/4] [media] exynos-scaler: Add core functionality for
+ the SCALER driver
+Date: Tue, 17 Sep 2013 15:40:59 +0530
+Message-ID: <CAOD6ATpg8M9M=b+8czdVo+oUA2iVFXdvBUTVPOKncBr2Bzac6Q@mail.gmail.com>
+References: <1378991371-24428-1-git-send-email-shaik.ameer@samsung.com>
+	<1378991371-24428-3-git-send-email-shaik.ameer@samsung.com>
+	<52363487.6010408@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:49186 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751429Ab3IQHuu (ORCPT
+Received: from mail-qc0-f179.google.com ([209.85.216.179]:37808 "EHLO
+	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751763Ab3IQKLD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Sep 2013 03:50:50 -0400
-Content-Disposition: inline
-In-Reply-To: <1378879685-5352-2-git-send-email-padma.v@samsung.com>
+	Tue, 17 Sep 2013 06:11:03 -0400
+In-Reply-To: <52363487.6010408@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, sbkim73@samsung.com, broonie@kernel.org, kgene.kim@samsung.com, arnd@arndb.de, dgreid@chromium.org, olofj@chromium.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>
 
-On Wed, Sep 11, 2013 at 11:38:03AM +0530, Padmavathi Venna wrote:
-> From: Dylan Reid <dgreid@chromium.org>
-> 
-> Fill txstate.residue with the amount of bytes remaining in the current
-> transfer if the transfer is not complete.  This will be of particular
-> use to i2s DMA transfers, providing more accurate hw_ptr values to ASoC.
-> 
-> Signed-off-by: Dylan Reid <dgreid@chromium.org>
-> Reviewed-by: Olof Johansson <olofj@chromium.org>
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
->  drivers/dma/pl330.c |   55 ++++++++++++++++++++++++++++++++++++++++++++++++++-
->  1 files changed, 54 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 593827b..7ab9136 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -2476,11 +2476,64 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
->  	spin_unlock_irqrestore(&pch->lock, flags);
->  }
->  
-> +static inline int
-> +pl330_src_addr_in_desc(struct dma_pl330_desc *desc, unsigned int sar)
-> +{
-> +	return ((desc->px.src_addr <= sar) &&
-> +		(sar <= (desc->px.src_addr + desc->px.bytes)));
-> +}
-> +
-> +static inline int
-> +pl330_dst_addr_in_desc(struct dma_pl330_desc *desc, unsigned int dar)
-> +{
-> +	return ((desc->px.dst_addr <= dar) &&
-> +		(dar <= (desc->px.dst_addr + desc->px.bytes)));
-> +}
-> +
-> +static unsigned int pl330_tx_residue(struct dma_chan *chan)
-> +{
-> +	struct dma_pl330_chan *pch = to_pchan(chan);
-> +	void __iomem *regs = pch->dmac->pif.base;
-> +	struct pl330_thread *thrd = pch->pl330_chid;
-> +	struct dma_pl330_desc *desc;
-> +	unsigned int sar, dar;
-> +	unsigned int residue = 0;
-> +	unsigned long flags;
-> +
-> +	sar = readl(regs + SA(thrd->id));
-> +	dar = readl(regs + DA(thrd->id));
-> +
-> +	spin_lock_irqsave(&pch->lock, flags);
-> +
-> +	/* Find the desc related to the current buffer. */
-> +	list_for_each_entry(desc, &pch->work_list, node) {
-> +		if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc, sar)) {
-> +			residue = desc->px.bytes - (sar - desc->px.src_addr);
-> +			goto found_unlock;
-> +		}
-> +		if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc, dar)) {
-> +			residue = desc->px.bytes - (dar - desc->px.dst_addr);
-> +			goto found_unlock;
-> +		}
-> +	}
-> +
-> +found_unlock:
-> +	spin_unlock_irqrestore(&pch->lock, flags);
-> +
-> +	return residue;
-> +}
-> +
->  static enum dma_status
->  pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
->  		 struct dma_tx_state *txstate)
->  {
-> -	return dma_cookie_status(chan, cookie, txstate);
-> +	enum dma_status ret;
-> +
-> +	ret = dma_cookie_status(chan, cookie, txstate);
-> +	if (ret != DMA_SUCCESS) /* Not complete, check amount left. */
-if will return DMA_IN_PROGRESS for two cases
-a) when the descriptor is in queue
-b) when the descriptor is submitted and running
+Hi Sylwester,
 
-You need to take different paths for these two cases. For former just return residue
-as complete size of descriptor. For latter you cna read sar/dar and check
-remaining bytes in sg_list.
+Thanks for the comments.
 
-Hint: use the cookie values to find the state
+On Mon, Sep 16, 2013 at 3:58 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> Hi Shaik,
+>
+> Thanks for addressing my comments, it really looks much better now.
+> I have few more comments, mostly minor issues.
 
-> +		dma_set_residue(txstate, pl330_tx_residue(chan));
-> +
-> +	return ret;
->  }
->  
->  static void pl330_issue_pending(struct dma_chan *chan)
+[...]
 
-~Vinod
--- 
+>> +
+>> +const struct scaler_fmt *scaler_find_fmt(u32 *pixelformat,
+>> +                               u32 *mbus_code, u32 index)
+>> +{
+>> +       const struct scaler_fmt *fmt, *def_fmt = NULL;
+>> +       unsigned int i;
+>> +
+>> +       if (index>= ARRAY_SIZE(scaler_formats))
+>> +               return NULL;
+>> +
+>> +       for (i = 0; i<  ARRAY_SIZE(scaler_formats); ++i) {
+>> +               fmt = scaler_get_format(i);
+>> +               if (pixelformat&&  fmt->pixelformat == *pixelformat)
+>> +                       return fmt;
+>
+>
+>> +               if (mbus_code&&  fmt->mbus_code == *mbus_code)
+>> +                       return fmt;
+>
+>
+> is mbus_code ever used ?
+
+Yes. Currently not used. Will remove this field for now..
+
+>
+>> +               if (index == i)
+>> +                       def_fmt = fmt;
+>> +       }
+>> +
+>> +       return def_fmt;
+>> +}
+
+[...]
+
+>> +
+>> +int scaler_try_fmt_mplane(struct scaler_ctx *ctx, struct v4l2_format *f)
+>> +{
+>> +       struct scaler_dev *scaler = ctx->scaler_dev;
+>> +       struct device *dev =&scaler->pdev->dev;
+>>
+>> +       struct scaler_variant *variant = scaler->variant;
+>> +       struct v4l2_pix_format_mplane *pix_mp =&f->fmt.pix_mp;
+>>
+
+[...]
+
+>> +
+>> +       /*
+>> +        * Nothing mentioned about the colorspace in SCALER. Default value
+>> is
+>> +        * set to V4L2_COLORSPACE_REC709.
+>> +        */
+>
+>
+> Isn't scaler_hw_set_csc_coef() function configuring the colorspace ?
+
+Actually speaking this function should do the color space setting part.
+What the SCALER ip supports is CSC offset value for Y
+
+YCbCr to RGB : Zero offset of -16 offset for input
+RGB to YCbCr : Zero offset of +16 offset for output
+
+I think user should provide this information through some controls.
+Anyways, will take it later.
+
+>
+>> +       pix_mp->colorspace = V4L2_COLORSPACE_REC709;
+>> +
+>> +       for (i = 0; i<  pix_mp->num_planes; ++i) {
+>> +               int bpl = (pix_mp->width * fmt->depth[i])>>  3;
+>> +               pix_mp->plane_fmt[i].bytesperline = bpl;
+>> +               pix_mp->plane_fmt[i].sizeimage = bpl * pix_mp->height;
+>> +
+>> +               scaler_dbg(scaler, "[%d]: bpl: %d, sizeimage: %d",
+>> +                               i, bpl, pix_mp->plane_fmt[i].sizeimage);
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+
+[...]
+
+>> +static int scaler_runtime_resume(struct device *dev)
+>> +{
+>> +       struct scaler_dev *scaler = dev_get_drvdata(dev);
+>> +       int ret = 0;
+>> +       scaler_dbg(scaler, "state: 0x%lx", scaler->state);
+>> +
+>> +       ret = clk_enable(scaler->clock);
+>> +       if (ret<  0)
+>> +               return ret;
+>> +
+>> +       scaler_sw_reset(scaler);
+>> +
+>> +       return scaler_m2m_resume(scaler);
+>
+>
+> Shouldn't there be clk_disable() when this function fails ?
+
+this funciton scaler_m2m_resume() never fails.
+
+
+Regards,
+Shaik Ameer Basha
