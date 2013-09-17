@@ -1,161 +1,118 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v8 02/12] [media] exynos5-fimc-is: Add driver core files
-Date: Mon, 16 Sep 2013 23:59:24 +0200
-Message-ID: <52377F3C.5070508@gmail.com>
-References: <1378987669-10870-1-git-send-email-arun.kk@samsung.com> <1378987669-10870-3-git-send-email-arun.kk@samsung.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH v4 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
+Date: Tue, 17 Sep 2013 12:11:23 +0530
+Message-ID: <20130917064123.GQ17188@intel.com>
+References: <201309050033.50333.heiko@sntech.de>
+ <201309050035.24237.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f177.google.com ([209.85.215.177]:39665 "EHLO
-	mail-ea0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751382Ab3IPV7y (ORCPT
+Received: from mga09.intel.com ([134.134.136.24]:34590 "EHLO mga09.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751434Ab3IQHah (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Sep 2013 17:59:54 -0400
-In-Reply-To: <1378987669-10870-3-git-send-email-arun.kk@samsung.com>
+	Tue, 17 Sep 2013 03:30:37 -0400
+Content-Disposition: inline
+In-Reply-To: <201309050035.24237.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: kgene.kim@samsung.com, Dan Williams <djbw@fb.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 09/12/2013 02:07 PM, Arun Kumar K wrote:
->
-> +static int fimc_is_probe(struct platform_device *pdev)
+On Thu, Sep 05, 2013 at 12:35:23AM +0200, Heiko St=FCbner wrote:
+> This adds a new driver to support the s3c24xx dma using the dmaengine
+> and makes the old one in mach-s3c24xx obsolete in the long run.
+>=20
+> Conceptually the s3c24xx-dma feels like a distant relative of the pl0=
+8x
+> with numerous virtual channels being mapped to a lot less physical on=
+es.
+> The driver therefore borrows a lot from the amba-pl08x driver in this
+> regard. Functionality-wise the driver gains a memcpy ability in addit=
+ion
+> to the slave_sg one.
+>=20
+> The driver supports both the method for requesting the peripheral use=
+d
+> by SoCs before the S3C2443 and the different method for S3C2443 and l=
+ater.
+>=20
+> On earlier SoCs the hardware channels usable for specific peripherals=
+ is
+> constrainted while on later SoCs all channels can be used for any per=
+ipheral.
+>=20
+> Tested on a s3c2416-based board, memcpy using the dmatest module and
+> slave_sg partially using the spi-s3c64xx driver.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> +static enum dma_status s3c24xx_dma_tx_status(struct dma_chan *chan,
+> +		dma_cookie_t cookie, struct dma_tx_state *txstate)
 > +{
-> +	struct device *dev =&pdev->dev;
-> +	struct resource *res;
-> +	struct fimc_is *is;
-> +	void __iomem *regs;
-> +	struct device_node *node;
-> +	int irq, ret;
-> +	int i;
+> +	struct s3c24xx_dma_chan *s3cchan =3D to_s3c24xx_dma_chan(chan);
+> +	struct virt_dma_desc *vd;
+> +	unsigned long flags;
+> +	enum dma_status ret;
+> +	size_t bytes =3D 0;
 > +
-> +	dev_dbg(dev, "FIMC-IS Probe Enter\n");
-> +
-> +	if (!pdev->dev.of_node)
-
-nit: Could be simplified to:
-
-  	if (!dev->of_node)
-
-> +		return -ENODEV;
-> +
-> +	is = devm_kzalloc(&pdev->dev, sizeof(*is), GFP_KERNEL);
-> +	if (!is)
-> +		return -ENOMEM;
-> +
-> +	is->pdev = pdev;
-> +
-> +	is->drvdata = fimc_is_get_drvdata(pdev);
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	regs = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(regs))
-> +		return PTR_ERR(regs);
-> +
-> +	/* Get the PMU base */
-> +	node = of_parse_phandle(dev->of_node, "samsung,pmu", 0);
-> +	if (!node)
-> +		return -ENODEV;
-> +	is->pmu_regs = of_iomap(node, 0);
-> +	if (!is->pmu_regs)
-> +		return -ENOMEM;
-> +
-> +	irq = irq_of_parse_and_map(dev->of_node, 0);
-> +	if (irq<  0) {
-> +		dev_err(dev, "Failed to get IRQ\n");
-> +		return irq;
-> +	}
-> +
-> +	ret = fimc_is_configure_clocks(is);
-> +	if (ret<  0) {
-> +		dev_err(dev, "clocks configuration failed\n");
-> +		goto err_clk;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, is);
-> +	pm_runtime_enable(dev);
-> +
-> +	ret = pm_runtime_get_sync(dev);
-> +	if (ret<  0)
-> +		goto err_pm;
-
-Is activating the device at this point really needed ? Perhaps you
-could drop the pm_runtime_get/put calls ?
-
-> +	is->alloc_ctx = vb2_dma_contig_init_ctx(dev);
-> +	if (IS_ERR(is->alloc_ctx)) {
-> +		ret = PTR_ERR(is->alloc_ctx);
-> +		goto err_vb;
-> +	}
-> +
-> +	/* Get IS-sensor contexts */
-> +	ret = fimc_is_parse_sensor(is);
-> +	if (ret<  0)
-> +		goto err_vb;
-> +
-> +	/* Initialize FIMC Pipeline */
-> +	for (i = 0; i<  is->drvdata->num_instances; i++) {
-> +		ret = fimc_is_pipeline_init(&is->pipeline[i], i, is);
-> +		if (ret<  0)
-> +			goto err_sd;
-> +	}
-> +
-> +	/* Initialize FIMC Interface */
-> +	ret = fimc_is_interface_init(&is->interface, regs, irq);
-> +	if (ret<  0)
-> +		goto err_sd;
-> +
-> +	pm_runtime_put(dev);
-> +
-> +	dev_dbg(dev, "FIMC-IS registered successfully\n");
-> +
-> +	return 0;
-> +
-> +err_sd:
-> +	fimc_is_pipelines_destroy(is);
-> +err_vb:
-> +	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
-> +err_pm:
-> +	pm_runtime_put(dev);
-> +err_clk:
-> +	fimc_is_put_clocks(is);
-> +
-> +	return ret;
-> +}
-> +
-> +int fimc_is_clk_enable(struct fimc_is *is)
-> +{
-> +	int ret;
-> +
-> +	ret = clk_enable(is->clock[IS_CLK_ISP]);
-> +	if (ret)
+> +	ret =3D dma_cookie_status(chan, cookie, txstate);
+> +	if (ret =3D=3D DMA_SUCCESS)
 > +		return ret;
-> +	ret = clk_enable(is->clock[IS_CLK_MCU_ISP]);
-
-Shouldn't you disable the first enabled clock when this call fails ?
-
-> +	return ret;
-> +}
-[...]
-> +static void *fimc_is_get_drvdata(struct platform_device *pdev)
-> +{
-> +	struct fimc_is_drvdata *driver_data = NULL;
 > +
-> +	if (pdev->dev.of_node) {
+> +	/*
+> +	 * There's no point calculating the residue if there's
+> +	 * no txstate to store the value.
+> +	 */
+> +	if (!txstate)
+> +		return ret;
+> +
+> +	spin_lock_irqsave(&s3cchan->vc.lock, flags);
+> +	ret =3D dma_async_is_complete(cookie, txstate->last, txstate->used)=
+;
+Did you see what dma_cookie_status() does. There is no need to call
+dma_async_is_complete() here!
 
-pdev->dev.of_node is being tested against NULL before call to this
-function, you could make this code slightly simpler with that assumption.
-
-> +		const struct of_device_id *match;
-> +		match = of_match_node(exynos5_fimc_is_match,
-> +				pdev->dev.of_node);
-> +		if (match)
-> +			driver_data = (struct fimc_is_drvdata *)match->data;
+> +	if (ret !=3D DMA_SUCCESS) {
+> +		struct s3c24xx_txd *txd;
+> +		struct s3c24xx_sg *dsg;
+> +
+> +		vd =3D vchan_find_desc(&s3cchan->vc, cookie);
+> +		if (vd) {
+> +			/* On the issued list, so hasn't been processed yet */
+> +			txd =3D to_s3c24xx_txd(&vd->tx);
+> +
+> +			list_for_each_entry(dsg, &txd->dsg_list, node)
+> +				bytes +=3D dsg->len;
+> +		} else {
+> +			/*
+> +			 * Currently running, so sum over the pending sg's and
+> +			 * the currently active one.
+> +			 */
+> +			txd =3D s3cchan->at;
+> +
+> +			dsg =3D list_entry(txd->at, struct s3c24xx_sg, node);
+> +			list_for_each_entry_from(dsg, &txd->dsg_list, node);
+> +				bytes +=3D dsg->len;
+> +
+> +			bytes +=3D s3c24xx_dma_getbytes_chan(s3cchan);
+> +		}
 > +	}
-> +	return driver_data;
-> +}
+> +	spin_unlock_irqrestore(&s3cchan->vc.lock, flags);
+> +
+> +	/*
+> +	 * This cookie not complete yet
+> +	 * Get number of bytes left in the active transactions and queue
+> +	 */
+> +	dma_set_residue(txstate, bytes);
+> +
+> +	/* Whether waiting or running, we're in progress */
+> +	return ret;
 
---
-Thanks,
-Sylwester
+Aprt form this driver looks fine to me...
+
+~Vinod
+
+--=20
