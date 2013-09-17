@@ -1,73 +1,48 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v7 01/13] [media] exynos5-is: Adding media device driver
- for exynos5
-Date: Tue, 17 Sep 2013 16:59:26 +0530
-Message-ID: <CALt3h79YMgdkju17SF8M3NKLkJ+6Gjzy2vwXDYTXc8B-GaecyQ@mail.gmail.com>
-References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com>
-	<1377066881-5423-2-git-send-email-arun.kk@samsung.com>
-	<52377DE5.3070808@gmail.com>
+From: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Subject: Re: [PATCH v3 2/4] [media] exynos-scaler: Add core functionality for
+ the SCALER driver
+Date: Tue, 17 Sep 2013 17:17:20 +0530
+Message-ID: <CAOD6ATosxtTKBw0T6QqKanLAhaWeEbpj0aC0qRRT+VQoGsr9qg@mail.gmail.com>
+References: <1378991371-24428-1-git-send-email-shaik.ameer@samsung.com>
+	<1378991371-24428-3-git-send-email-shaik.ameer@samsung.com>
+	<52363487.6010408@gmail.com>
+	<CAOD6ATpg8M9M=b+8czdVo+oUA2iVFXdvBUTVPOKncBr2Bzac6Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <52377DE5.3070808@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, kilyeon.im@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qe0-f49.google.com ([209.85.128.49]:32944 "EHLO
+	mail-qe0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752434Ab3IQLrV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 17 Sep 2013 07:47:21 -0400
+In-Reply-To: <CAOD6ATpg8M9M=b+8czdVo+oUA2iVFXdvBUTVPOKncBr2Bzac6Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>
 
-Hi Sylwester,
+Hi sylwester,
+
+>>
+>>
+>> Isn't scaler_hw_set_csc_coef() function configuring the colorspace ?
+>
+> Actually speaking this function should do the color space setting part.
+> What the SCALER ip supports is CSC offset value for Y
+>
+> YCbCr to RGB : Zero offset of -16 offset for input
+> RGB to YCbCr : Zero offset of +16 offset for output
+
+small spelling mistake here..
+
+YCbCr to RGB : Zero offset or -16 offset for input
+RGB to YCbCr : Zero offset or +16 offset for output
+
+Regards,
+Shaik Ameer Basha
 
 >
+> I think user should provide this information through some controls.
+> Anyways, will take it later.
 >
-> I'd like to propose a little re-design of this binding. The reason is that
-> I've noticed issues related to the power domain and FIMC-LITE, FIMC-IS
-> clocks
-> handling sequences. This lead to a failure to disable the ISP power domain
-> and to complete the system suspend/resume cycle. Not sure if this happens on
-> Exynos5 SoCs, nevertheless IMHO it would be more reasonable to make
-> FIMC-LITE
-> device nodes child nodes of FIMC-IS. FIMC-LITE seems to be an integral part
-> of the FIMC-IS subsystem.
->
-> Then fimc-is node would be placed at root level, with fimc-lite nodes as its
-> subnodes:
->
-> fimc-is {
->         compatible = "exynos5250-fimc-is";
->         reg = <...>;
->         ...
->         #address-cells = <1>;
->         #size-cells = <1>;
->         ranges;
->
->         fimc_lite_0: fimc-lite@12390000 {
->                 compatible = "samsung,exynos4212-fimc-lite";
->                 ...
->         };
->
->         fimc_lite_1: fimc-lite@123A0000 {
->                 compatible = "samsung,exynos4212-fimc-lite";
->                 ...
->         };
->
->         fimc_lite_2: fimc-lite@123B0000 {
->                 compatible = "samsung,exynos4212-fimc-lite";
->                 ...
->         };
->
->         i2c0_isp: i2c-isp@12130000 {
->                 ...
->         };
->
->         ...
-> };
->
-
-Wont this make fimc-is to be enabled to use fimc-lite?
-As such there is no dependency like that in hardware and we can
-use fimc-lite alone in DMA out mode without fimc-is.
-If its modified as per your suggestion, how will the scenario of
-sensor -> mipi-csis -> fimc-lite -> memory look like without fimc-is?
-
-Regards
-Arun
+>>
