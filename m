@@ -1,51 +1,63 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v7 01/13] [media] exynos5-is: Adding media device driver
- for exynos5
-Date: Tue, 17 Sep 2013 22:50:24 +0200
-Message-ID: <5238C090.6090201@gmail.com>
-References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com> <1377066881-5423-2-git-send-email-arun.kk@samsung.com> <52377DE5.3070808@gmail.com> <CALt3h79YMgdkju17SF8M3NKLkJ+6Gjzy2vwXDYTXc8B-GaecyQ@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 3/4] watchdog: s3c2410_wdt: parse watchdog dt node to read
+ PMU registers adresses
+Date: Tue, 17 Sep 2013 21:34:31 -0700
+Message-ID: <CAD=FV=XQSLULsYanJCCFehxrs9LESZ=KO8XgyzZaacL4GNeXPA@mail.gmail.com>
+References: <1379414623-26329-1-git-send-email-l.krishna@samsung.com>
+	<1379414623-26329-4-git-send-email-l.krishna@samsung.com>
+	<3395282.rv7qzo3E3P@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f43.google.com ([74.125.83.43]:51526 "EHLO
-	mail-ee0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753288Ab3IQUu3 (ORCPT
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:35887 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751296Ab3IREec (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Sep 2013 16:50:29 -0400
-In-Reply-To: <CALt3h79YMgdkju17SF8M3NKLkJ+6Gjzy2vwXDYTXc8B-GaecyQ@mail.gmail.com>
+	Wed, 18 Sep 2013 00:34:32 -0400
+Received: by mail-ob0-f176.google.com with SMTP id uy5so6845710obc.35
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Sep 2013 21:34:32 -0700 (PDT)
+In-Reply-To: <3395282.rv7qzo3E3P@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arunkk.samsung@gmail.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, kilyeon.im@samsung.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org
 
-Hi Arun,
+Tomasz,
 
-On 09/17/2013 01:29 PM, Arun Kumar K wrote:
-> Wont this make fimc-is to be enabled to use fimc-lite?
+On Tue, Sep 17, 2013 at 6:30 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+>> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+>> @@ -7,8 +7,20 @@ occurred.
+>>  Required properties:
+>>  - compatible : should be "samsung,s3c2410-wdt"
+>
+> Since the WDT block of Exynos 5420 needs some extra configuration in PMU
+> registers, it is no longer compatible with samsung.s3c2410-wdt. Please
+> introduce separate compatible ("samsung,exynos5420-wdt") and make the
+> driver handle the additional configuration only if running on a device with
+> this compatible value.
+>
+> I'd suggest introducing quirk system to the driver and adding a
+> NEEDS_PMU_CONFIG quirk selected by DT match entry with "samsung,exynos5420-
+> wdt" compatible.
+>
+>>  - reg : base physical address of the controller and length of memory
+>> mapped -      region.
+>> +     region and the optional (addresses and length of memory mapped regions
+>> +     of) PMU registers for masking/unmasking WDT.
+>>  - interrupts : interrupt number to the cpu.
+>>
+>>  Optional properties:
+>>  - timeout-sec : contains the watchdog timeout in seconds.
+>> +- reset-mask-bit: bit number in the PMU registers to program mask/unmask
+>> WDT. +
+>
+> I believe this is mandatory on Exynos 5420 and unused on previous SoCs. It
+> should be handled depending on compatible value.
 
-Hmm, it would be runtime PM active, yes. But it doesn't mean the
-Cortex-A5's firmware would need to be running.
+I think at least 5250 needs something similar.  I believe we got away
+with it in the past since other (non-WDT) code was tweaking with this
+bit, but that was a little bit gross.  Leela Krishna can correct me if
+I'm wrong.
 
-> As such there is no dependency like that in hardware and we can
-> use fimc-lite alone in DMA out mode without fimc-is.
-
-If you are sure about it, then fimc-lite nodes could stay at root level.
-Still, it would be more appropriate IMO to have the FIMC-IS sub-/peripheral
-devices, like I2C or SPI bus controllers, instantiated by the FIMC-IS 
-driver.
-
-And what about "glue logic" linking FIMC-LITEs with the rest of the
-imaging subsystem ? Are you sure the is no some weird inter-dependencies ?
-Note that there is no board files any more, where we could hack some
-details.
-
-> If its modified as per your suggestion, how will the scenario of
-> sensor ->  mipi-csis ->  fimc-lite ->  memory look like without fimc-is?
-
-The exynos5-fimc-is module would need to be loaded for that. If you're
-sure the hardware can work independently, we could leave out the fimc-lite
-nodes at root level.
-
-Regards,
-Sylwester
+-Doug
