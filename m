@@ -1,100 +1,105 @@
-From: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 3/4] watchdog: s3c2410_wdt: parse watchdog dt node to read
- PMU registers adresses
-Date: Wed, 18 Sep 2013 12:20:31 +0530
-Message-ID: <CAL1wa8eWKNL3kdfjqxqaLsAtc8nqgiPW34SBk4gozAR1jnRaSg@mail.gmail.com>
-References: <1379414623-26329-1-git-send-email-l.krishna@samsung.com>
- <1379414623-26329-4-git-send-email-l.krishna@samsung.com> <3395282.rv7qzo3E3P@amdc1227>
- <CAD=FV=XQSLULsYanJCCFehxrs9LESZ=KO8XgyzZaacL4GNeXPA@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] serial: samsung: add support for manual RTS setting
+Date: Wed, 18 Sep 2013 11:40:51 +0200
+Message-ID: <2325055.YfxTctqBtd@amdc1227>
+References: <1378894107-7904-1-git-send-email-jose.goncalves@inov.pt>
+ <2486439.1yKjlWu5X1@amdc1227> <5238A8B1.9080105@inov.pt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=XQSLULsYanJCCFehxrs9LESZ=KO8XgyzZaacL4GNeXPA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-reply-to: <5238A8B1.9080105@inov.pt>
+Sender: linux-serial-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Tomasz,
+On Tuesday 17 of September 2013 20:08:33 Jos=E9 Miguel Gon=E7alves wrot=
+e:
+> On 17-09-2013 16:21, Tomasz Figa wrote:
+> > I had the following scenario in mind:
+> > 1) enable CRTSCTS,
+> > 2) set RTS status using the IOCTL,
+> > 3) disable CRTSCTS,
+> > 4) do something,
+> > 5) enable CRTSCTS again.
+> >=20
+> > I would expect that the value set in point 2 would be still valid a=
+fter
+> > point 5, while it will be reset.
+>=20
+> Maybe I'm missing something but, as I see it, as soon as you enable A=
+=46C
+> in the UART controller the RTS pin is no more manually controllable, =
+so
+> after point 5 the pin is set automattically by the controller accordi=
+ng
+> with the Rx FIFO contents. Don't you want to say instead that the val=
+ue
+> set in 2) will be valid in 4)?
 
-On Wed, Sep 18, 2013 at 10:04 AM, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Tomasz,
->
-> On Tue, Sep 17, 2013 at 6:30 AM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->>> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
->>> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
->>> @@ -7,8 +7,20 @@ occurred.
->>>  Required properties:
->>>  - compatible : should be "samsung,s3c2410-wdt"
->>
->> Since the WDT block of Exynos 5420 needs some extra configuration in PMU
->> registers, it is no longer compatible with samsung.s3c2410-wdt. Please
->> introduce separate compatible ("samsung,exynos5420-wdt") and make the
->> driver handle the additional configuration only if running on a device with
->> this compatible value.
->>
->> I'd suggest introducing quirk system to the driver and adding a
->> NEEDS_PMU_CONFIG quirk selected by DT match entry with "samsung,exynos5420-
->> wdt" compatible.
->>
->>>  - reg : base physical address of the controller and length of memory
->>> mapped -      region.
->>> +     region and the optional (addresses and length of memory mapped regions
->>> +     of) PMU registers for masking/unmasking WDT.
->>>  - interrupts : interrupt number to the cpu.
->>>
->>>  Optional properties:
->>>  - timeout-sec : contains the watchdog timeout in seconds.
->>> +- reset-mask-bit: bit number in the PMU registers to program mask/unmask
->>> WDT. +
->>
->> I believe this is mandatory on Exynos 5420 and unused on previous SoCs. It
->> should be handled depending on compatible value.
->
-> I think at least 5250 needs something similar.  I believe we got away
-> with it in the past since other (non-WDT) code was tweaking with this
-> bit, but that was a little bit gross.  Leela Krishna can correct me if
-> I'm wrong.
->
+Ahh, right, I inverted CRTSCTS bit polarity in points 1, 3 and 5. It sh=
+ould=20
+be:
+1) disable CRTSCTS,
+2) set RTS status using the IOCTL,
+3) enable CRTSCTS,
+4) do something,
+5) disable CRTSCTS again.
 
-Yes, 5250 also needs this reset-mask-bit, but not required by SoCs
-other than Exynos5xxx.
-Hence I kept it as optional parameter.
+> >> Regarding port capability, if it's decided to validate it in
+> >> s3c24xx_serial_get_mctrl() and s3c24xx_serial_set_mctrl() it shoul=
+d
+> >> also
+> >> be validated here. The question is how to validate for the full
+> >> spectrum
+> >> of SoCs that this driver supports?
+> >=20
+> > Hmm, since the driver is already broken in this aspect, ignoring th=
+is
+> > in
+> > your patch might be fine for now. A follow up patch fixing this wou=
+ld
+> > be
+> > welcome, though. However I don't have any good idea how to implemen=
+t
+> > this at the moment.
+> >=20
+> > First thing that comes to my mind is using the variant data structu=
+res
+> > to store information about per port capability (different port FIFO
+> > sizes are already handled like this), but this would imply splittin=
+g
+> > some of the groups, as S5PC100 supports modem control for different
+> > subset of ports than S3C64xx, while they both use the same variant
+> > data.
+> >=20
+> > Using device tree, this could be passed as an extra property, but s=
+ome
+> > of the platforms using samsung serial driver can be booted without
+> > device tree, so it wouldn't cover all the cases.
+>=20
+> So, as I understand, for now is enough to resubmit the patch with the
+> UMCON register setting in s3c24xx_serial_set_termios() preserving the
+> previous manual setting of the RTS pin, correct? I was thinking in
+> something like this:
+>=20
+>      umcon =3D rd_regb(port, S3C2410_UMCON);
+>      if (termios->c_cflag & CRTSCTS) {
+>          umcon |=3D S3C2410_UMCOM_AFC;
+>          umcon &=3D ~S3C2412_UMCON_AFC_8; // Disable RTS when RX FIFO
+> contains 63 bytes } else {
+>          umcon &=3D ~S3C2410_UMCOM_AFC;
+>      }
+>      wr_regl(port, S3C2410_UMCON, umcon);
 
-I took care of this code such that it won't break on older SoCs.
+Yes, this looks fine.
 
-If you notice the code in probe function, I used the check condition
+Best regards,
+Tomasz
 
-if (!IS_ERR(wdt->pmu_disable_reg) && !IS_ERR(wdt->pmu_mask_reset_reg)) {
-}
-
-i.e., if any of the PMU register address is not mentioned in the DT
-node it simply skips reading reset-mask-bit
-and continues execution (which may happen in older SoC DT node).
-
-..also, in s3c2410wdt_mask_and_disable_reset() function, below
-condition check is happening
-
-if (IS_ERR(wdt->pmu_disable_reg) || IS_ERR(wdt->pmu_mask_reset_reg)
-                                || (wdt->pmu_mask_bit < 0))
-        return;
-
-i.e., if any of the registers is not specified in DT node simply
-return without programming
-PMU registers(which is true in case of older SoCs).
-
-If you think this doesn't sounds good way of handling older SoCs.
-I'll add new compatible string for Exynos5xxx and do like what you said. :)
-
-Best Wishes,
-Leela Krishna Amudala
-
-> -Doug
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-serial"=
+ in
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
