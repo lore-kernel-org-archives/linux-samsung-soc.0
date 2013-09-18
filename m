@@ -1,111 +1,112 @@
 From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: [PATCH 09/26] ARM: call of_clk_init from default time_init handler
-Date: Wed, 18 Sep 2013 19:53:42 +0200
-Message-ID: <1379526839-14798-10-git-send-email-sebastian.hesselbarth@gmail.com>
+Subject: [PATCH 12/26] ARM: exynos: remove custom .init_time hook
+Date: Wed, 18 Sep 2013 19:53:45 +0200
+Message-ID: <1379526839-14798-13-git-send-email-sebastian.hesselbarth@gmail.com>
 References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, kernel@stlinux.com, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-rpi-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Most DT ARM machs require common clock providers initialized before timers.
-Currently, arch/arm machs use .init_time to call of_clk_init right before
-clocksource_of_init. This prevents to remove that callback and use the default
-one instead.
-
-This patch adds a call to of_clk_init() to the default .init_time callback
-to allow to remove custom callbacks where applicable. While at it, also
-reorder includes alphabetically.
+With arch/arm calling of_clk_init(NULL) from time_init(), we can now
+remove custom .init_time hooks. While at it, also remove some now
+redundant includes.
 
 Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
 ---
-Changelog:
-RFCv2->v1:
-- only call of_clk_init(NULL) when no custom .init_time is set
-  (Suggested by Soeren Brinkmann)
-RFCv1->RFCv2:
-- reorder includes alphabetically
-
 Cc: Olof Johansson <olof@lixom.net>
 Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Russell King <linux@arm.linux.org.uk>
-Cc: STEricsson <STEricsson_nomadik_linux@list.st.com>
-Cc: linux-tegra@vger.kernel.org
-Cc: linux-rpi-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: kernel@stlinux.com
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/arm/kernel/time.c |   27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ arch/arm/mach-exynos/common.c          |    8 --------
+ arch/arm/mach-exynos/common.h          |    1 -
+ arch/arm/mach-exynos/mach-exynos4-dt.c |    2 --
+ arch/arm/mach-exynos/mach-exynos5-dt.c |    2 --
+ 4 files changed, 13 deletions(-)
 
-diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
-index 98aee32..bc0468b 100644
---- a/arch/arm/kernel/time.c
-+++ b/arch/arm/kernel/time.c
-@@ -11,25 +11,26 @@
-  *  This file contains the ARM-specific time handling details:
-  *  reading the RTC at bootup, etc...
-  */
-+#include <linux/clk-provider.h>
-+#include <linux/clocksource.h>
-+#include <linux/errno.h>
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index ba95e5d..a4e7ba8 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -26,8 +26,6 @@
  #include <linux/export.h>
--#include <linux/kernel.h>
--#include <linux/interrupt.h>
--#include <linux/time.h>
- #include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/kernel.h>
-+#include <linux/profile.h>
- #include <linux/sched.h>
-+#include <linux/sched_clock.h>
- #include <linux/smp.h>
-+#include <linux/time.h>
- #include <linux/timex.h>
--#include <linux/errno.h>
--#include <linux/profile.h>
- #include <linux/timer.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_address.h>
 -#include <linux/clocksource.h>
--#include <linux/irq.h>
--#include <linux/sched_clock.h>
+-#include <linux/clk-provider.h>
+ #include <linux/irqchip/arm-gic.h>
+ #include <linux/irqchip/chained_irq.h>
  
--#include <asm/thread_info.h>
--#include <asm/stacktrace.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/time.h>
-+#include <asm/stacktrace.h>
-+#include <asm/thread_info.h>
- 
- #if defined(CONFIG_RTC_DRV_CMOS) || defined(CONFIG_RTC_DRV_CMOS_MODULE) || \
-     defined(CONFIG_NVRAM) || defined(CONFIG_NVRAM_MODULE)
-@@ -116,8 +117,10 @@ int __init register_persistent_clock(clock_access_fn read_boot,
- 
- void __init time_init(void)
- {
--	if (machine_desc->init_time)
-+	if (machine_desc->init_time) {
- 		machine_desc->init_time();
--	else
-+	} else {
-+		of_clk_init(NULL);
- 		clocksource_of_init();
-+	}
+@@ -367,12 +365,6 @@ static void __init exynos5_map_io(void)
+ 		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
  }
+ 
+-void __init exynos_init_time(void)
+-{
+-	of_clk_init(NULL);
+-	clocksource_of_init();
+-}
+-
+ struct bus_type exynos_subsys = {
+ 	.name		= "exynos-core",
+ 	.dev_name	= "exynos-core",
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 8646a14..f0fa205 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -16,7 +16,6 @@
+ #include <linux/of.h>
+ 
+ void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+-void exynos_init_time(void);
+ 
+ struct map_desc;
+ void exynos_init_io(void);
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index 0099c6c..6858d73 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -16,7 +16,6 @@
+ #include <linux/of_fdt.h>
+ #include <linux/serial_core.h>
+ #include <linux/memblock.h>
+-#include <linux/clocksource.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <plat/mfc.h>
+@@ -54,7 +53,6 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
+ 	.init_early	= exynos_firmware_init,
+ 	.init_machine	= exynos4_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos_init_time,
+ 	.dt_compat	= exynos4_dt_compat,
+ 	.restart        = exynos4_restart,
+ 	.reserve	= exynos4_reserve,
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index f874b77..bac2105 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -13,7 +13,6 @@
+ #include <linux/of_fdt.h>
+ #include <linux/memblock.h>
+ #include <linux/io.h>
+-#include <linux/clocksource.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <mach/regs-pmu.h>
+@@ -76,7 +75,6 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+ 	.map_io		= exynos_init_io,
+ 	.init_machine	= exynos5_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+-	.init_time	= exynos_init_time,
+ 	.dt_compat	= exynos5_dt_compat,
+ 	.restart        = exynos5_restart,
+ 	.reserve	= exynos5_reserve,
 -- 
 1.7.10.4
