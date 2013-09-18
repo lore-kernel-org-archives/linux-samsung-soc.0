@@ -1,58 +1,98 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v5 4/4] ARM: SAMSUNG: set s3c24xx_dma_filter for s3c64xx-spi0 device
-Date: Wed, 18 Sep 2013 21:21:01 +0200
-Message-ID: <201309182121.01553.heiko@sntech.de>
-References: <201309182118.28391.heiko@sntech.de>
+From: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+Subject: Re: [PATCH 00/26] ARM: provide common arch init for DT clocks
+Date: Wed, 18 Sep 2013 15:47:11 -0400
+Message-ID: <20130918194711.GR19937@titan.lakedaemon.net>
+References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:58090 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752580Ab3IRTUu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Sep 2013 15:20:50 -0400
-In-Reply-To: <201309182118.28391.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1379526839-14798-1-git-send-email-sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, STEricsson <STEricsson_nomadik_linux-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-The spi-s3c64xx device is also used on the s3c2416 and s3c2443 SoCs.
-The driver also already uses only generic dma-engine operations.
+Sebastian,
 
-Therefore add another elif to set the s3c24xx filter.
+On Wed, Sep 18, 2013 at 07:53:33PM +0200, Sebastian Hesselbarth wrote:
+...
+> Sebastian Hesselbarth (26):
+>   ARM: nomadik: move mtu setup to clocksource init
+>   clk: nomadik: move src init out of nomadik_clk_init
+>   clk: nomadik: declare OF clock provider
+>   clk: prima2: declare OF clock provider
+>   ARM: socfgpa: prepare for arch-wide .init_time callback
+>   clk: sunxi: declare OF clock provider
+>   clk: vt8500: parse pmc_base from clock driver
+>   ARM: vt8500: prepare for arch-wide .init_time callback
+>   ARM: call of_clk_init from default time_init handler
+>   ARM: bcm2835: remove custom .init_time hook
+>   ARM: dove: remove custom .init_time hook
+>   ARM: exynos: remove custom .init_time hook
+>   ARM: highbank: remove custom .init_time hook
+>   ARM: imx: remove custom .init_time hook
+>   ARM: kirkwood: remove custom .init_time hook
+>   ARM: mxs: remove custom .init_time hook
+>   ARM: nomadik: remove custom .init_time hook
+>   ARM: nspire: remove custom .init_time hook
+>   ARM: prima2: remove custom .init_time hook
+>   ARM: rockchip: remove custom .init_time hook
+>   ARM: socfpga: remove custom .init_time hook
+>   ARM: sti: remove custom .init_time hook
+>   ARM: sunxi: remove custom .init_time hook
+>   ARM: tegra: remove custom .init_time hook
+>   ARM: vexpress: remove custom .init_time hook
+>   ARM: vt8500: remove custom .init_time hook
+> 
+>  arch/arm/kernel/time.c                    |   27 ++---
+>  arch/arm/mach-bcm2835/bcm2835.c           |    2 -
+>  arch/arm/mach-dove/board-dt.c             |   11 --
+>  arch/arm/mach-exynos/common.c             |    8 --
+>  arch/arm/mach-exynos/common.h             |    1 -
+>  arch/arm/mach-exynos/mach-exynos4-dt.c    |    2 -
+>  arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 -
+>  arch/arm/mach-highbank/highbank.c         |   23 ++---
+>  arch/arm/mach-imx/clk-imx51-imx53.c       |   29 ++----
+>  arch/arm/mach-imx/common.h                |    4 -
+>  arch/arm/mach-imx/imx51-dt.c              |    6 --
+>  arch/arm/mach-imx/mach-imx53.c            |    6 --
+>  arch/arm/mach-imx/mach-imx6q.c            |   14 +--
+>  arch/arm/mach-imx/mach-imx6sl.c           |    7 --
+>  arch/arm/mach-imx/mach-vf610.c            |    9 --
+>  arch/arm/mach-kirkwood/board-dt.c         |    8 --
+>  arch/arm/mach-mxs/mach-mxs.c              |   13 ---
+>  arch/arm/mach-nomadik/cpu-8815.c          |   36 -------
+>  arch/arm/mach-nspire/nspire.c             |    9 --
+>  arch/arm/mach-prima2/common.c             |   11 --
+>  arch/arm/mach-prima2/common.h             |    1 -
+>  arch/arm/mach-rockchip/rockchip.c         |    9 --
+>  arch/arm/mach-socfpga/socfpga.c           |    2 -
+>  arch/arm/mach-sti/board-dt.c              |   10 +-
+>  arch/arm/mach-sunxi/sunxi.c               |   10 --
+>  arch/arm/mach-tegra/tegra.c               |    9 --
+>  arch/arm/mach-vexpress/v2m.c              |   14 +--
+>  arch/arm/mach-vt8500/common.h             |   24 -----
+>  arch/arm/mach-vt8500/vt8500.c             |    6 --
+>  drivers/clk/clk-bcm2835.c                 |    8 --
+>  drivers/clk/clk-highbank.c                |   10 +-
+>  drivers/clk/clk-nomadik.c                 |  161 ++++++++++++++---------------
+>  drivers/clk/clk-prima2.c                  |   29 ++----
+>  drivers/clk/clk-vt8500.c                  |   31 ++++--
+>  drivers/clk/mxs/clk-imx23.c               |   15 +--
+>  drivers/clk/mxs/clk-imx28.c               |   16 +--
+>  drivers/clk/sunxi/clk-sunxi.c             |   11 +-
+>  drivers/clocksource/nomadik-mtu.c         |   11 ++
+>  include/linux/clk/mxs.h                   |    2 -
+>  include/linux/clk/sunxi.h                 |   22 ----
+>  include/linux/platform_data/clk-nomadik.h |    2 -
+>  41 files changed, 182 insertions(+), 449 deletions(-)
+>  delete mode 100644 arch/arm/mach-vt8500/common.h
+>  delete mode 100644 include/linux/clk/sunxi.h
+>  delete mode 100644 include/linux/platform_data/clk-nomadik.h
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- arch/arm/plat-samsung/devs.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+How would you like to handle this series?
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 8ce0ac0..a7b9b9e 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -32,6 +32,7 @@
- #include <linux/ioport.h>
- #include <linux/platform_data/s3c-hsudc.h>
- #include <linux/platform_data/s3c-hsotg.h>
-+#include <linux/platform_data/dma-s3c24xx.h>
- 
- #include <media/s5p_hdmi.h>
- 
-@@ -1499,8 +1500,10 @@ void __init s3c64xx_spi0_set_platdata(int (*cfg_gpio)(void), int src_clk_nr,
- 	pd.num_cs = num_cs;
- 	pd.src_clk_nr = src_clk_nr;
- 	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
--#ifdef CONFIG_PL330_DMA
-+#if defined(CONFIG_PL330_DMA)
- 	pd.filter = pl330_filter;
-+#elif defined(CONFIG_S3C24XX_DMAC)
-+	pd.filter = s3c24xx_dma_filter;
- #endif
- 
- 	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
--- 
-1.7.10.4
+thx,
+
+Jason.
