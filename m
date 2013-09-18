@@ -1,105 +1,48 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] serial: samsung: add support for manual RTS setting
-Date: Wed, 18 Sep 2013 11:40:51 +0200
-Message-ID: <2325055.YfxTctqBtd@amdc1227>
-References: <1378894107-7904-1-git-send-email-jose.goncalves@inov.pt>
- <2486439.1yKjlWu5X1@amdc1227> <5238A8B1.9080105@inov.pt>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-reply-to: <5238A8B1.9080105@inov.pt>
-Sender: linux-serial-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: dts: Update arch timer node with clock frequency
+Date: Wed, 18 Sep 2013 15:41:53 +0530
+Message-ID: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 17 of September 2013 20:08:33 Jos=E9 Miguel Gon=E7alves wrot=
-e:
-> On 17-09-2013 16:21, Tomasz Figa wrote:
-> > I had the following scenario in mind:
-> > 1) enable CRTSCTS,
-> > 2) set RTS status using the IOCTL,
-> > 3) disable CRTSCTS,
-> > 4) do something,
-> > 5) enable CRTSCTS again.
-> >=20
-> > I would expect that the value set in point 2 would be still valid a=
-fter
-> > point 5, while it will be reset.
->=20
-> Maybe I'm missing something but, as I see it, as soon as you enable A=
-=46C
-> in the UART controller the RTS pin is no more manually controllable, =
-so
-> after point 5 the pin is set automattically by the controller accordi=
-ng
-> with the Rx FIFO contents. Don't you want to say instead that the val=
-ue
-> set in 2) will be valid in 4)?
+Without the "clock-frequency" property in arch timer node, could able
+to see the below crash dump.
 
-Ahh, right, I inverted CRTSCTS bit polarity in points 1, 3 and 5. It sh=
-ould=20
-be:
-1) disable CRTSCTS,
-2) set RTS status using the IOCTL,
-3) enable CRTSCTS,
-4) do something,
-5) disable CRTSCTS again.
+[<c0014e28>] (unwind_backtrace+0x0/0xf4) from [<c0011808>] (show_stack+0x10/0x14)
+[<c0011808>] (show_stack+0x10/0x14) from [<c036ac1c>] (dump_stack+0x7c/0xb0)
+[<c036ac1c>] (dump_stack+0x7c/0xb0) from [<c01ab760>] (Ldiv0_64+0x8/0x18)
+[<c01ab760>] (Ldiv0_64+0x8/0x18) from [<c0062f60>] (clockevents_config.part.2+0x1c/0x74)
+[<c0062f60>] (clockevents_config.part.2+0x1c/0x74) from [<c0062fd8>] (clockevents_config_and_register+0x20/0x2c)
+[<c0062fd8>] (clockevents_config_and_register+0x20/0x2c) from [<c02b8e8c>] (arch_timer_setup+0xa8/0x134)
+[<c02b8e8c>] (arch_timer_setup+0xa8/0x134) from [<c04b47b4>] (arch_timer_init+0x1f4/0x24c)
+[<c04b47b4>] (arch_timer_init+0x1f4/0x24c) from [<c04b40d8>] (clocksource_of_init+0x34/0x58)
+[<c04b40d8>] (clocksource_of_init+0x34/0x58) from [<c049ed8c>] (time_init+0x20/0x2c)
+[<c049ed8c>] (time_init+0x20/0x2c) from [<c049b95c>] (start_kernel+0x1e0/0x39c)
 
-> >> Regarding port capability, if it's decided to validate it in
-> >> s3c24xx_serial_get_mctrl() and s3c24xx_serial_set_mctrl() it shoul=
-d
-> >> also
-> >> be validated here. The question is how to validate for the full
-> >> spectrum
-> >> of SoCs that this driver supports?
-> >=20
-> > Hmm, since the driver is already broken in this aspect, ignoring th=
-is
-> > in
-> > your patch might be fine for now. A follow up patch fixing this wou=
-ld
-> > be
-> > welcome, though. However I don't have any good idea how to implemen=
-t
-> > this at the moment.
-> >=20
-> > First thing that comes to my mind is using the variant data structu=
-res
-> > to store information about per port capability (different port FIFO
-> > sizes are already handled like this), but this would imply splittin=
-g
-> > some of the groups, as S5PC100 supports modem control for different
-> > subset of ports than S3C64xx, while they both use the same variant
-> > data.
-> >=20
-> > Using device tree, this could be passed as an extra property, but s=
-ome
-> > of the platforms using samsung serial driver can be booted without
-> > device tree, so it wouldn't cover all the cases.
->=20
-> So, as I understand, for now is enough to resubmit the patch with the
-> UMCON register setting in s3c24xx_serial_set_termios() preserving the
-> previous manual setting of the RTS pin, correct? I was thinking in
-> something like this:
->=20
->      umcon =3D rd_regb(port, S3C2410_UMCON);
->      if (termios->c_cflag & CRTSCTS) {
->          umcon |=3D S3C2410_UMCOM_AFC;
->          umcon &=3D ~S3C2412_UMCON_AFC_8; // Disable RTS when RX FIFO
-> contains 63 bytes } else {
->          umcon &=3D ~S3C2410_UMCOM_AFC;
->      }
->      wr_regl(port, S3C2410_UMCON, umcon);
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |    1 +
+ 1 file changed, 1 insertion(+)
 
-Yes, this looks fine.
-
-Best regards,
-Tomasz
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 7d7cc77..668ce5d 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -96,6 +96,7 @@
+ 			     <1 14 0xf08>,
+ 			     <1 11 0xf08>,
+ 			     <1 10 0xf08>;
++		clock-frequency = <24000000>;
+ 	};
+ 
+ 	mct@101C0000 {
+-- 
+1.7.9.5
 
 --
-To unsubscribe from this list: send the line "unsubscribe linux-serial"=
- in
-the body of a message to majordomo@vger.kernel.org
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
