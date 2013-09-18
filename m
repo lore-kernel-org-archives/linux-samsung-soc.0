@@ -1,43 +1,111 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2] serial: samsung: add support for manual RTS setting
-Date: Wed, 18 Sep 2013 19:17:30 +0200
-Message-ID: <1396773.mUrBgMlKxN@flatron>
-References: <1379519569-7266-1-git-send-email-jose.goncalves@inov.pt>
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: [PATCH 09/26] ARM: call of_clk_init from default time_init handler
+Date: Wed, 18 Sep 2013 19:53:42 +0200
+Message-ID: <1379526839-14798-10-git-send-email-sebastian.hesselbarth@gmail.com>
+References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <1379519569-7266-1-git-send-email-jose.goncalves@inov.pt>
-Sender: linux-serial-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>
-Cc: t.figa@samsung.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, heiko@sntech.de, s.nawrocki@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, kernel@stlinux.com, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-rpi-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Jos=E9,
+Most DT ARM machs require common clock providers initialized before timers.
+Currently, arch/arm machs use .init_time to call of_clk_init right before
+clocksource_of_init. This prevents to remove that callback and use the default
+one instead.
 
-On Wednesday 18 of September 2013 16:52:49 Jos=E9 Miguel Gon=E7alves wr=
-ote:
-> The Samsung serial driver currently does not support setting the
-> RTS pin with an ioctl(TIOCMSET) call. This patch adds this support.
->=20
-> Changes in v2:
->  - Preserve the RTS pin's manual setting  in set_termios() also when
->    enabling CRTSCTS.
->=20
-> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
-> ---
->  drivers/tty/serial/samsung.c |   20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
+This patch adds a call to of_clk_init() to the default .init_time callback
+to allow to remove custom callbacks where applicable. While at it, also
+reorder includes alphabetically.
 
-Looks good.
+Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+---
+Changelog:
+RFCv2->v1:
+- only call of_clk_init(NULL) when no custom .init_time is set
+  (Suggested by Soeren Brinkmann)
+RFCv1->RFCv2:
+- reorder includes alphabetically
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: STEricsson <STEricsson_nomadik_linux@list.st.com>
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: kernel@stlinux.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/arm/kernel/time.c |   27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-Best regards,
-Tomasz
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-serial"=
- in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
+index 98aee32..bc0468b 100644
+--- a/arch/arm/kernel/time.c
++++ b/arch/arm/kernel/time.c
+@@ -11,25 +11,26 @@
+  *  This file contains the ARM-specific time handling details:
+  *  reading the RTC at bootup, etc...
+  */
++#include <linux/clk-provider.h>
++#include <linux/clocksource.h>
++#include <linux/errno.h>
+ #include <linux/export.h>
+-#include <linux/kernel.h>
+-#include <linux/interrupt.h>
+-#include <linux/time.h>
+ #include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/kernel.h>
++#include <linux/profile.h>
+ #include <linux/sched.h>
++#include <linux/sched_clock.h>
+ #include <linux/smp.h>
++#include <linux/time.h>
+ #include <linux/timex.h>
+-#include <linux/errno.h>
+-#include <linux/profile.h>
+ #include <linux/timer.h>
+-#include <linux/clocksource.h>
+-#include <linux/irq.h>
+-#include <linux/sched_clock.h>
+ 
+-#include <asm/thread_info.h>
+-#include <asm/stacktrace.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
++#include <asm/stacktrace.h>
++#include <asm/thread_info.h>
+ 
+ #if defined(CONFIG_RTC_DRV_CMOS) || defined(CONFIG_RTC_DRV_CMOS_MODULE) || \
+     defined(CONFIG_NVRAM) || defined(CONFIG_NVRAM_MODULE)
+@@ -116,8 +117,10 @@ int __init register_persistent_clock(clock_access_fn read_boot,
+ 
+ void __init time_init(void)
+ {
+-	if (machine_desc->init_time)
++	if (machine_desc->init_time) {
+ 		machine_desc->init_time();
+-	else
++	} else {
++		of_clk_init(NULL);
+ 		clocksource_of_init();
++	}
+ }
+-- 
+1.7.10.4
