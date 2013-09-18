@@ -1,69 +1,77 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Update arch timer node with clock frequency
-Date: Wed, 18 Sep 2013 11:23:19 +0100
-Message-ID: <20130918102319.GF26737@e106331-lin.cambridge.arm.com>
-References: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Arun Kumar K <arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v7 01/13] [media] exynos5-is: Adding media device driver
+ for exynos5
+Date: Wed, 18 Sep 2013 17:18:21 +0530
+Message-ID: <CALt3h7_JgsuNyzVvL1eZ=zThk_22V0bLARxkhtLGJ2PQG1Qf4Q@mail.gmail.com>
+References: <1377066881-5423-1-git-send-email-arun.kk@samsung.com>
+	<1377066881-5423-2-git-send-email-arun.kk@samsung.com>
+	<52377DE5.3070808@gmail.com>
+	<CALt3h79YMgdkju17SF8M3NKLkJ+6Gjzy2vwXDYTXc8B-GaecyQ@mail.gmail.com>
+	<5238C090.6090201@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1379499113-20342-1-git-send-email-yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <5238C090.6090201-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org" <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+To: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: LMML <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kilyeon.im-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-[adding lakml]
+Hi Sylwester,
 
-On Wed, Sep 18, 2013 at 11:11:53AM +0100, Yuvaraj Kumar C D wrote:
-> Without the "clock-frequency" property in arch timer node, could able
-> to see the below crash dump.
+On Wed, Sep 18, 2013 at 2:20 AM, Sylwester Nawrocki
+<sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Hi Arun,
+>
+>
+> On 09/17/2013 01:29 PM, Arun Kumar K wrote:
+>>
+>> Wont this make fimc-is to be enabled to use fimc-lite?
+>
+>
+> Hmm, it would be runtime PM active, yes. But it doesn't mean the
+> Cortex-A5's firmware would need to be running.
+>
+>
+>> As such there is no dependency like that in hardware and we can
+>> use fimc-lite alone in DMA out mode without fimc-is.
+>
+>
+> If you are sure about it, then fimc-lite nodes could stay at root level.
+> Still, it would be more appropriate IMO to have the FIMC-IS sub-/peripheral
+> devices, like I2C or SPI bus controllers, instantiated by the FIMC-IS
+> driver.
+>
 
-Why does this cause the below crash specifically? What is CNTFRQ reading
-as?
+Yes I2C and SPI bus controllers are part of FIMC-IS and it can be
+instantiated within the FIMC-IS driver.
 
-Your firmware or bootloader should set CNTFRQ -- setting the
-clock-frequency is a work-around for buggy firmware/bootloaders that
-should be avoided as far as possible.
+> And what about "glue logic" linking FIMC-LITEs with the rest of the
+> imaging subsystem ? Are you sure the is no some weird inter-dependencies ?
+> Note that there is no board files any more, where we could hack some
+> details.
+>
 
-Is it not possible to fix your firmware or bootlaoder to set CNTFRQ?
+There is no dependency like that which I am aware of and we have tested
+here mipi & fimc-lite without fimc-is and it worked well.
 
-Thanks,
-Mark.
+>
+>> If its modified as per your suggestion, how will the scenario of
+>> sensor ->  mipi-csis ->  fimc-lite ->  memory look like without fimc-is?
+>
+>
+> The exynos5-fimc-is module would need to be loaded for that. If you're
+> sure the hardware can work independently, we could leave out the fimc-lite
+> nodes at root level.
+>
 
-> 
-> [<c0014e28>] (unwind_backtrace+0x0/0xf4) from [<c0011808>] (show_stack+0x10/0x14)
-> [<c0011808>] (show_stack+0x10/0x14) from [<c036ac1c>] (dump_stack+0x7c/0xb0)
-> [<c036ac1c>] (dump_stack+0x7c/0xb0) from [<c01ab760>] (Ldiv0_64+0x8/0x18)
-> [<c01ab760>] (Ldiv0_64+0x8/0x18) from [<c0062f60>] (clockevents_config.part.2+0x1c/0x74)
-> [<c0062f60>] (clockevents_config.part.2+0x1c/0x74) from [<c0062fd8>] (clockevents_config_and_register+0x20/0x2c)
-> [<c0062fd8>] (clockevents_config_and_register+0x20/0x2c) from [<c02b8e8c>] (arch_timer_setup+0xa8/0x134)
-> [<c02b8e8c>] (arch_timer_setup+0xa8/0x134) from [<c04b47b4>] (arch_timer_init+0x1f4/0x24c)
-> [<c04b47b4>] (arch_timer_init+0x1f4/0x24c) from [<c04b40d8>] (clocksource_of_init+0x34/0x58)
-> [<c04b40d8>] (clocksource_of_init+0x34/0x58) from [<c049ed8c>] (time_init+0x20/0x2c)
-> [<c049ed8c>] (time_init+0x20/0x2c) from [<c049b95c>] (start_kernel+0x1e0/0x39c)
-> 
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 7d7cc77..668ce5d 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -96,6 +96,7 @@
->  			     <1 14 0xf08>,
->  			     <1 11 0xf08>,
->  			     <1 10 0xf08>;
-> +		clock-frequency = <24000000>;
->  	};
->  
->  	mct@101C0000 {
-> -- 
-> 1.7.9.5
-> 
-> 
+Yes sensor-> mipi -> fimc-lite -> memory without fimc-is is very well possible
+in Exynos5 and its tested.
+
+So I will make the remaining changes you suggested and send new patchset.
+
+Regards
+Arun
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
