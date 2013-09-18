@@ -1,68 +1,85 @@
-From: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] ARM: dts: exynos5: add pwm DT nodes to Exynos5250 and
- Exynos5420
-Date: Wed, 18 Sep 2013 17:59:16 +0530
-Message-ID: <1379507356-16866-1-git-send-email-l.krishna@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
+From: =?UTF-8?q?Jos=C3=A9=20Miguel=20Gon=C3=A7alves?=
+	<jose.goncalves@inov.pt>
+Subject: [PATCH v2] serial: samsung: add support for manual RTS setting
+Date: Wed, 18 Sep 2013 16:52:49 +0100
+Message-ID: <1379519569-7266-1-git-send-email-jose.goncalves@inov.pt>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-serial-owner@vger.kernel.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: t.figa@samsung.com
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, heiko@sntech.de, s.nawrocki@samsung.com, =?UTF-8?q?Jos=C3=A9=20Miguel=20Gon=C3=A7alves?= <jose.goncalves@inov.pt>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add the device-tree binding for the PWM controller to Exynos5250 and Exynos5420
+The Samsung serial driver currently does not support setting the
+RTS pin with an ioctl(TIOCMSET) call. This patch adds this support.
 
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Changes in v2:
+ - Preserve the RTS pin's manual setting  in set_termios() also when
+   enabling CRTSCTS.
+
+Signed-off-by: Jos=C3=A9 Miguel Gon=C3=A7alves <jose.goncalves@inov.pt>
 ---
- arch/arm/boot/dts/exynos5250.dtsi |    9 +++++++++
- arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
- 2 files changed, 18 insertions(+)
+ drivers/tty/serial/samsung.c |   20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 864ae90..99abc72 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -521,6 +521,15 @@
- 		};
- 	};
- 
-+	pwm: pwm@12dd0000 {
-+		compatible = "samsung,exynos4210-pwm";
-+		reg = <0x12dd0000 0x100>;
-+		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+		#pwm-cells = <3>;
-+		clocks = <&clock 311>;
-+		clock-names = "timers";
-+	};
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.=
+c
+index f3dfa19..401ef4f 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -407,7 +407,14 @@ static unsigned int s3c24xx_serial_get_mctrl(struc=
+t uart_port *port)
+=20
+ static void s3c24xx_serial_set_mctrl(struct uart_port *port, unsigned =
+int mctrl)
+ {
+-	/* todo - possibly remove AFC and do manual CTS */
++	unsigned int umcon =3D rd_regl(port, S3C2410_UMCON);
 +
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index d537cd7..80afc8b 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -206,6 +206,15 @@
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
-+	pwm: pwm@12dd0000 {
-+		compatible = "samsung,exynos4210-pwm";
-+		reg = <0x12dd0000 0x100>;
-+		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+		#pwm-cells = <3>;
-+		clocks = <&clock 279>;
-+		clock-names = "timers";
-+	};
++	if (mctrl & TIOCM_RTS)
++		umcon |=3D S3C2410_UMCOM_RTS_LOW;
++	else
++		umcon &=3D ~S3C2410_UMCOM_RTS_LOW;
 +
- 	dp_phy: video-phy@10040728 {
- 		compatible = "samsung,exynos5250-dp-video-phy";
- 		reg = <0x10040728 4>;
--- 
++	wr_regl(port, S3C2410_UMCON, umcon);
+ }
+=20
+ static void s3c24xx_serial_break_ctl(struct uart_port *port, int break=
+_state)
+@@ -774,8 +781,6 @@ static void s3c24xx_serial_set_termios(struct uart_=
+port *port,
+ 	if (termios->c_cflag & CSTOPB)
+ 		ulcon |=3D S3C2410_LCON_STOPB;
+=20
+-	umcon =3D (termios->c_cflag & CRTSCTS) ? S3C2410_UMCOM_AFC : 0;
+-
+ 	if (termios->c_cflag & PARENB) {
+ 		if (termios->c_cflag & PARODD)
+ 			ulcon |=3D S3C2410_LCON_PODD;
+@@ -792,6 +797,15 @@ static void s3c24xx_serial_set_termios(struct uart=
+_port *port,
+=20
+ 	wr_regl(port, S3C2410_ULCON, ulcon);
+ 	wr_regl(port, S3C2410_UBRDIV, quot);
++
++	umcon =3D rd_regl(port, S3C2410_UMCON);
++	if (termios->c_cflag & CRTSCTS) {
++		umcon |=3D S3C2410_UMCOM_AFC;
++		/* Disable RTS when RX FIFO contains 63 bytes */
++		umcon &=3D ~S3C2412_UMCON_AFC_8;
++	} else {
++		umcon &=3D ~S3C2410_UMCOM_AFC;
++	}
+ 	wr_regl(port, S3C2410_UMCON, umcon);
+=20
+ 	if (ourport->info->has_divslot)
+--=20
 1.7.10.4
 
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To unsubscribe from this list: send the line "unsubscribe linux-serial"=
+ in
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
