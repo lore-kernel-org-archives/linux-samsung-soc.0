@@ -1,135 +1,60 @@
-From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-Subject: Re: [PATCH 00/26] ARM: provide common arch init for DT clocks
-Date: Wed, 18 Sep 2013 23:04:03 +0200
-Message-ID: <523A1543.8040201@gmail.com>
-References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com> <20130918194711.GR19937@titan.lakedaemon.net> <523A046E.6040804@gmail.com> <CAOesGMguF33+-mXScLmUy1Kr9JkL36Ah1_ShW_ZuGy4Q0gJefg@mail.gmail.com>
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+From: Nishanth Menon <nm@ti.com>
+Subject: [PATCH 0/3] PM / OPP: rename to dev_pm_opp * equivalents
+Date: Thu, 19 Sep 2013 16:03:49 -0500
+Message-ID: <1379624632-17356-1-git-send-email-nm@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMguF33+-mXScLmUy1Kr9JkL36Ah1_ShW_ZuGy4Q0gJefg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Jason Cooper <jason@lakedaemon.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, kernel@stlinux.com, Arnd Bergmann <arnd@arndb.de>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-rpi-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>, linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Nishanth Menon <nm@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Rob Landley <rob@landley.net>, Tony Lindgren <tony@atomide.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Randy Dunlap <rdunlap@infradead.org>, Kevin Hilman <khilman@deeprootsystems.com>, Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Sascha Hauer <kernel@pengutronix.de>, Viresh Kumar <viresh.kumar@linaro.org>, Shawn Guo <shawn.guo@linaro.org>, Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/18/2013 10:48 PM, Olof Johansson wrote:
-> On Wed, Sep 18, 2013 at 12:52 PM, Sebastian Hesselbarth
-> <sebastian.hesselbarth@gmail.com> wrote:
->> On 09/18/2013 09:47 PM, Jason Cooper wrote:
->>>
->>> On Wed, Sep 18, 2013 at 07:53:33PM +0200, Sebastian Hesselbarth wrote:
->>> ...
->>>>
->>>> Sebastian Hesselbarth (26):
->>>>     ARM: nomadik: move mtu setup to clocksource init
->>>>     clk: nomadik: move src init out of nomadik_clk_init
->>>>     clk: nomadik: declare OF clock provider
->>>>     clk: prima2: declare OF clock provider
->>>>     ARM: socfgpa: prepare for arch-wide .init_time callback
->>>>     clk: sunxi: declare OF clock provider
->>>>     clk: vt8500: parse pmc_base from clock driver
->>>>     ARM: vt8500: prepare for arch-wide .init_time callback
->>>>     ARM: call of_clk_init from default time_init handler
->>>>     ARM: bcm2835: remove custom .init_time hook
->>>>     ARM: dove: remove custom .init_time hook
->>>>     ARM: exynos: remove custom .init_time hook
->>>>     ARM: highbank: remove custom .init_time hook
->>>>     ARM: imx: remove custom .init_time hook
->>>>     ARM: kirkwood: remove custom .init_time hook
->>>>     ARM: mxs: remove custom .init_time hook
->>>>     ARM: nomadik: remove custom .init_time hook
->>>>     ARM: nspire: remove custom .init_time hook
->>>>     ARM: prima2: remove custom .init_time hook
->>>>     ARM: rockchip: remove custom .init_time hook
->>>>     ARM: socfpga: remove custom .init_time hook
->>>>     ARM: sti: remove custom .init_time hook
->>>>     ARM: sunxi: remove custom .init_time hook
->>>>     ARM: tegra: remove custom .init_time hook
->>>>     ARM: vexpress: remove custom .init_time hook
->>>>     ARM: vt8500: remove custom .init_time hook
->>>>
->>>>    arch/arm/kernel/time.c                    |   27 ++---
->>>>    arch/arm/mach-bcm2835/bcm2835.c           |    2 -
->>>>    arch/arm/mach-dove/board-dt.c             |   11 --
->>>>    arch/arm/mach-exynos/common.c             |    8 --
->>>>    arch/arm/mach-exynos/common.h             |    1 -
->>>>    arch/arm/mach-exynos/mach-exynos4-dt.c    |    2 -
->>>>    arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 -
->>>>    arch/arm/mach-highbank/highbank.c         |   23 ++---
->>>>    arch/arm/mach-imx/clk-imx51-imx53.c       |   29 ++----
->>>>    arch/arm/mach-imx/common.h                |    4 -
->>>>    arch/arm/mach-imx/imx51-dt.c              |    6 --
->>>>    arch/arm/mach-imx/mach-imx53.c            |    6 --
->>>>    arch/arm/mach-imx/mach-imx6q.c            |   14 +--
->>>>    arch/arm/mach-imx/mach-imx6sl.c           |    7 --
->>>>    arch/arm/mach-imx/mach-vf610.c            |    9 --
->>>>    arch/arm/mach-kirkwood/board-dt.c         |    8 --
->>>>    arch/arm/mach-mxs/mach-mxs.c              |   13 ---
->>>>    arch/arm/mach-nomadik/cpu-8815.c          |   36 -------
->>>>    arch/arm/mach-nspire/nspire.c             |    9 --
->>>>    arch/arm/mach-prima2/common.c             |   11 --
->>>>    arch/arm/mach-prima2/common.h             |    1 -
->>>>    arch/arm/mach-rockchip/rockchip.c         |    9 --
->>>>    arch/arm/mach-socfpga/socfpga.c           |    2 -
->>>>    arch/arm/mach-sti/board-dt.c              |   10 +-
->>>>    arch/arm/mach-sunxi/sunxi.c               |   10 --
->>>>    arch/arm/mach-tegra/tegra.c               |    9 --
->>>>    arch/arm/mach-vexpress/v2m.c              |   14 +--
->>>>    arch/arm/mach-vt8500/common.h             |   24 -----
->>>>    arch/arm/mach-vt8500/vt8500.c             |    6 --
->>>>    drivers/clk/clk-bcm2835.c                 |    8 --
->>>>    drivers/clk/clk-highbank.c                |   10 +-
->>>>    drivers/clk/clk-nomadik.c                 |  161
->>>> ++++++++++++++---------------
->>>>    drivers/clk/clk-prima2.c                  |   29 ++----
->>>>    drivers/clk/clk-vt8500.c                  |   31 ++++--
->>>>    drivers/clk/mxs/clk-imx23.c               |   15 +--
->>>>    drivers/clk/mxs/clk-imx28.c               |   16 +--
->>>>    drivers/clk/sunxi/clk-sunxi.c             |   11 +-
->>>>    drivers/clocksource/nomadik-mtu.c         |   11 ++
->>>>    include/linux/clk/mxs.h                   |    2 -
->>>>    include/linux/clk/sunxi.h                 |   22 ----
->>>>    include/linux/platform_data/clk-nomadik.h |    2 -
->>>>    41 files changed, 182 insertions(+), 449 deletions(-)
->>>>    delete mode 100644 arch/arm/mach-vt8500/common.h
->>>>    delete mode 100644 include/linux/clk/sunxi.h
->>>>    delete mode 100644 include/linux/platform_data/clk-nomadik.h
->>>
->>>
->>> How would you like to handle this series?
->>
->>
->> Jason,
->>
->> honestly I don't really know, yet. I was hoping for Arnd and Olof
->> decide on that. Maybe they also create a topic branch up to where
->> arch-wide of_clk_init is introduced. Then each removal patch can
->> go through the independent sub-trees. There may be more machs
->> introduced before, that can then also depend on the common branch.
->
-> I'd like to see this merged early into arm-soc and have it as a base
-> branch for other platform branches if there will be much conflicts
-> (for trivial or small conflicts we can resolve, of course). So please
-> collect acks and prepare a branch for me to merge, Sebastian. Or if
-> it's easier I can just apply the patches directly -- just let me know.
-> But given the tegra dependency it's probably easier to take a branch.
+Hi,
 
-Actually, I'd be happy if you make a decision. It would be my first
-pull request and maybe it should go guided by more experienced devs
-from now on. Although I am willing to learn.
+Based on [1], Randy rightly pointed out that OPP functions and data
+structures could be a bit specific to Power management.
 
-> The long tail might be the cases where you rewrote some of the init
-> code, since that'll need to be tested on those platforms. I wonder if
-> we can pick up most of the other pieces if that ends up taking a
-> while.
+So, the following series is based on v3.12-rc1 tag.
 
-True, for an early merge that was a bad decision. I looked again into
-patches 1-8 and if there are concerns:
-- nomadik can be dropped as it still has custom .init_time.
-- prima2 and sunxi are quite straight forward but also have custom
-   .init_time that protect them from the arch-wide call.
-- socfpga needs some new custom .init_time then.
-- vt8500 is a little bit more changes but has .init_time call to
-   clocksource_of_init alone.
+If folks like it broken in a different way, I am open to suggestions.
 
-Sebastian
+Nishanth Menon (3):
+  PM / OPP: rename functions to dev_pm_opp*
+  PM / OPP: rename data structures to dev_pm equivalents
+  PM / OPP: rename header to linux/pm_opp.h
+
+ Documentation/power/opp.txt             |  108 ++++++++++++------------
+ arch/arm/mach-imx/mach-imx6q.c          |    4 +-
+ arch/arm/mach-omap2/board-omap3beagle.c |   10 +--
+ arch/arm/mach-omap2/omap-pm.h           |    2 +-
+ arch/arm/mach-omap2/opp.c               |    6 +-
+ arch/arm/mach-omap2/pm.c                |    8 +-
+ drivers/base/power/opp.c                |  115 ++++++++++++-------------
+ drivers/cpufreq/arm_big_little.c        |    8 +-
+ drivers/cpufreq/arm_big_little_dt.c     |    2 +-
+ drivers/cpufreq/cpufreq-cpu0.c          |   24 +++---
+ drivers/cpufreq/exynos5440-cpufreq.c    |   17 ++--
+ drivers/cpufreq/imx6q-cpufreq.c         |   26 +++---
+ drivers/cpufreq/omap-cpufreq.c          |   12 +--
+ drivers/devfreq/devfreq.c               |   25 +++---
+ drivers/devfreq/exynos/exynos4_bus.c    |   29 +++----
+ drivers/devfreq/exynos/exynos5_bus.c    |   28 +++----
+ include/linux/devfreq.h                 |    6 +-
+ include/linux/opp.h                     |  134 -----------------------------
+ include/linux/pm_opp.h                  |  139 +++++++++++++++++++++++++++++++
+ 19 files changed, 357 insertions(+), 346 deletions(-)
+ delete mode 100644 include/linux/opp.h
+ create mode 100644 include/linux/pm_opp.h
+
+-- 
+1.7.9.5
