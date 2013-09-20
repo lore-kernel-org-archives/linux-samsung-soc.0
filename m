@@ -1,64 +1,92 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH 1/3] PM / OPP: rename functions to dev_pm_opp*
-Date: Fri, 20 Sep 2013 14:07:17 -0500
-Message-ID: <523C9CE5.9040009@ti.com>
-References: <1379624632-17356-1-git-send-email-nm@ti.com>	<1379624632-17356-2-git-send-email-nm@ti.com>	<CAKohpoku7n6b2dDKD=+3DqG4pHtmWoeXZnAt3EoFRp+rNFofYA@mail.gmail.com>	<20130920123808.GA22176@kahuna>
- <CAKohpoktS4ZSQAeKvu3hdVsKkzcbKFvHvR2=wCA3qeB6moPphA@mail.gmail.com>
+From: Matt Porter <matt.porter@linaro.org>
+Subject: Re: [PATCH 00/26] ARM: provide common arch init for DT clocks
+Date: Fri, 20 Sep 2013 15:16:14 -0400
+Message-ID: <20130920191613.GA25191@ohporter.com>
+References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAKohpoktS4ZSQAeKvu3hdVsKkzcbKFvHvR2=wCA3qeB6moPphA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Sudeep KarkadaNagesha <sudeep.karkadanagesha@arm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Sascha Hauer <kernel@pengutronix.de>, linux-doc@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Shawn Guo <shawn.guo@linaro.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Kevin Hilman <khilman@deeprootsystems.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Randy Dunlap <rdunlap@infradead.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Rob Landley <rob@landley.net>, linux-omap@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ye0-f182.google.com ([209.85.213.182]:51302 "EHLO
+	mail-ye0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752419Ab3ITTQT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Sep 2013 15:16:19 -0400
+Content-Disposition: inline
+In-Reply-To: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Christian Daudt <csd@broadcom.com>, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-tegra@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kernel@stlinux.com, linux-arm-kernel@lists.infradead.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On 09/20/2013 11:51 AM, Viresh Kumar wrote:
-> On 20 September 2013 18:08, Nishanth Menon <nm@ti.com> wrote:
+On Wed, Sep 18, 2013 at 07:53:33PM +0200, Sebastian Hesselbarth wrote:
+> This is a patch set based on an RFC [1][2] sent earlier to provide a common
+> arch/arm init for DT clock providers. Currently, the call to of_clk_init(NULL)
+> to initialize DT clock providers is spread among several mach-dirs. Since most
+> machs require DT clocks initialized before timers, no initcall can be used.
 > 
->> I am open to suggestions if any one feels we can improve this better.
+> By adding of_clk_init(NULL) to arch/arm time_init(), we can remove all
+> mach-specific .init_time hooks that basically called of_clk_init and
+> clocksource_of_init.
 > 
-> I didn't really had one.. I thought of pm_opp** instead of dev_pm_opp**
-> though..
+> In contrast to the RFC version, of_clk_init(NULL) is now only called if no
+> custom .init_time callback is set. This allows some machs to still call clock
+> init themselves, as not all can be converted now. Therefore, this patch sets
+> drops conversion of mach-mvebu and mach-zynq. New machs that were introduced
+> with v3.12-rc1 are also converted, except mach-u300 that requires clocks
+> before irqs.
+> 
+> The patch set is based on v3.12-rc1 and further depends on a topic branch
+> created by Stephen Warren for mach-tegra [3]. It is now split into preparation
+> and removal patches to not break bisectability. I added all Acked-by/Tested-by's
+> where applicable or dropped them, if the patch was separated into two.
+> It has been compile tested for all machs involved with the following defconfigs
+> (multi_v7, bcm2835, dove, exynos, kirkwood, mxs, nhk8815) and nspire selected
+> on multi_v4_v5.
+> 
+> Patches 1-8 comprise preparation patches that convert machs nomadik, prima2,
+> socfpga, sunxi, tegra, and vt8500 to usual .init_time callbacks calling only
+> of_clk_init and clocksource_of_init.
+> 
+> Patch 9 then introduces of_clk_init(NULL) to the arch-wide default .init_time
+> callback.
+> 
+> Patches 10-26 finally remove custom .init_time callbacks from the machs involved.
 
-I had proposed this earlier, however, had gone with Rafael's
-suggestion [1] to have the right context to the usage.
+Hi Sebastian,
 
-> 
->> I believe that change was from Patch #2[1]
-> 
-> Yeah.. I just replied on a single patch :)
-> 
->> yes, you are right, I had squashed this patch in to squelch checkpatch
->> warnings:
-> 
-> I see..
-> 
->> I had added a comment:
->> " Minor checkpatch warning fixes as a result of this change was fixed as
->> well."
-> 
-> I really missed that..
-no problems..
+Could you pick up the following patch for mach-bcm/ into this series?
 
-> 
->> Would you suggest I split the change off to a separate patch or improve
->>  the comment a little more?
-> 
-> don't really know, maybe leave those as is and let checkpatch warn you..
-> 
-that is fair as well. i can split it off seperately in the next respin.
+Thanks,
+Matt
 
-[1] http://marc.info/?l=linaro-kernel&m=137645747511725&w=2
+>From f65d048b3453447bb3e693cb21701c4d0c6375ed Mon Sep 17 00:00:00 2001
+From: Matt Porter <matt.porter@linaro.org>
+Date: Fri, 20 Sep 2013 13:41:06 -0400
+Subject: [PATCH] ARM: bcm: Remove custom .time_init hook
+
+With arch/arm calling of_clk_init(NULL) and clocksource_of_init()
+this is no longer needed. The former is useful because we can make
+use of dummy fixed clocks for drivers until the bcm281xx common
+clock driver is ready.
+
+Signed-off-by: Matt Porter <matt.porter@linaro.org>
+Reviewed-by: Markus Mayer <markus.mayer@linaro.org>
+Reviewed-by: Christian Daudt <csd@broadcom.com>
+---
+ arch/arm/mach-bcm/board_bcm281xx.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm/mach-bcm/board_bcm281xx.c b/arch/arm/mach-bcm/board_bcm281xx.c
+index 8d9f931..26b2390 100644
+--- a/arch/arm/mach-bcm/board_bcm281xx.c
++++ b/arch/arm/mach-bcm/board_bcm281xx.c
+@@ -68,7 +68,6 @@ static void __init board_init(void)
+ static const char * const bcm11351_dt_compat[] = { "brcm,bcm11351", NULL, };
+ 
+ DT_MACHINE_START(BCM11351_DT, "Broadcom Application Processor")
+-	.init_time = clocksource_of_init,
+ 	.init_machine = board_init,
+ 	.restart = bcm_kona_restart,
+ 	.dt_compat = bcm11351_dt_compat,
 -- 
-Regards,
-Nishanth Menon
+1.8.4
