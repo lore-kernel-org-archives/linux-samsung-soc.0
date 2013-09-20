@@ -1,112 +1,74 @@
 From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH] [media] exynos-gsc: Handle ctx job finish when aborted
-Date: Fri, 20 Sep 2013 11:56:17 +0530
-Message-ID: <1379658378-31163-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
+Subject: [PATCH] [media] v4l2-mem2mem: Don't schedule the context if abort job is called
+Date: Fri, 20 Sep 2013 11:56:18 +0530
+Message-ID: <1379658378-31163-2-git-send-email-shaik.ameer@samsung.com>
+References: <1379658378-31163-1-git-send-email-shaik.ameer@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:52576 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754051Ab3ITGXR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Sep 2013 02:23:17 -0400
+In-Reply-To: <1379658378-31163-1-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: s.nawrocki@samsung.com, posciak@google.com, shaik.ameer@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
 When the current context is running,
-1] If release() or streamoff() is called on the current context,
-   it waits until the job is aborted or finished.
-2] If the job is finished, driver will call the v4l2_m2m_job_finish().
-3] If the job is aborted inside device_run callback, then driver
-   has to inform the v4l2 mem2mem framework about the same by calling
-   v4l2_m2m_job_finish() with VB2_BUF_STATE_ERROR.
+1] If release is called, it waits until the job is finished.
+2] As soon as the job is finished, v4l2_mem_ctx_release()tries to
+   release the vb2 queues.
+3] But if the current context can be scheduled in the v4l2_m2m_job_finish()
+   it schedules the context and tries to call device_run().
+4] As the release() and device_run() sequence can't be predicted sometimes
+   device_run() may get empty vb2 buffers.
 
-The current code doesn't call v4l2_m2m_job_finish() in the case, where
-the job is aborted from the device_run callback. This scenerio is
-producing a hang as the other queued contexts are not getting scheduled.
-
-By adding the ABORT state, driver can understand the current job
-is aborted and not finished. By checking this flag, driver can call
-v4l2_m2m_job_finish() with VB2_BUF_STATE_ERROR.
+This patch adds the ABORT state to the job_flags. Once the job_abort() or
+release() is called on the context, the same context will not be scheduled in
+the v4l2_m2m_job_finish().
 
 Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Signed-off-by: avnd kiran <avnd.kiran@samsung.com>
 ---
- drivers/media/platform/exynos-gsc/gsc-core.h |    1 +
- drivers/media/platform/exynos-gsc/gsc-m2m.c  |   29 ++++++++++++++------------
- 2 files changed, 17 insertions(+), 13 deletions(-)
+ drivers/media/v4l2-core/v4l2-mem2mem.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.h b/drivers/media/platform/exynos-gsc/gsc-core.h
-index 76435d3..ef0a656 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.h
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.h
-@@ -45,6 +45,7 @@
- #define GSC_DST_FMT			(1 << 2)
- #define GSC_CTX_M2M			(1 << 3)
- #define GSC_CTX_STOP_REQ		(1 << 6)
-+#define	GSC_CTX_ABORT			(1 << 7)
+diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c b/drivers/media/v4l2-core/v4l2-mem2mem.c
+index 7c43712..d5741be 100644
+--- a/drivers/media/v4l2-core/v4l2-mem2mem.c
++++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
+@@ -41,6 +41,8 @@ module_param(debug, bool, 0644);
+ #define TRANS_QUEUED		(1 << 0)
+ /* Instance is currently running in hardware */
+ #define TRANS_RUNNING		(1 << 1)
++/* Instance is currently aborting */
++#define TRANS_ABORT		(1 << 2)
  
- enum gsc_dev_flags {
- 	/* for global */
-diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-index e576ff2..810c3e1 100644
---- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
-@@ -46,6 +46,17 @@ static int gsc_m2m_ctx_stop_req(struct gsc_ctx *ctx)
- 	return ret == 0 ? -ETIMEDOUT : ret;
- }
  
-+static void __gsc_m2m_job_abort(struct gsc_ctx *ctx)
-+{
-+	int ret;
+ /* Offset base for buffers on the destination queue - used to distinguish
+@@ -221,6 +223,14 @@ static void v4l2_m2m_try_schedule(struct v4l2_m2m_ctx *m2m_ctx)
+ 	}
+ 
+ 	spin_lock_irqsave(&m2m_dev->job_spinlock, flags_job);
 +
-+	ret = gsc_m2m_ctx_stop_req(ctx);
-+	if ((ret == -ETIMEDOUT) || (ctx->state & GSC_CTX_ABORT)) {
-+		gsc_ctx_state_lock_clear(GSC_CTX_STOP_REQ | GSC_CTX_ABORT, ctx);
-+		gsc_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
++	/* If the context is aborted then don't schedule it */
++	if (m2m_ctx->job_flags & TRANS_ABORT) {
++		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags_job);
++		dprintk("Aborted context\n");
++		return;
 +	}
-+}
 +
- static int gsc_m2m_start_streaming(struct vb2_queue *q, unsigned int count)
- {
- 	struct gsc_ctx *ctx = q->drv_priv;
-@@ -58,11 +69,8 @@ static int gsc_m2m_start_streaming(struct vb2_queue *q, unsigned int count)
- static int gsc_m2m_stop_streaming(struct vb2_queue *q)
- {
- 	struct gsc_ctx *ctx = q->drv_priv;
--	int ret;
+ 	if (m2m_ctx->job_flags & TRANS_QUEUED) {
+ 		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags_job);
+ 		dprintk("On job queue already\n");
+@@ -280,6 +290,8 @@ static void v4l2_m2m_cancel_job(struct v4l2_m2m_ctx *m2m_ctx)
  
--	ret = gsc_m2m_ctx_stop_req(ctx);
--	if (ret == -ETIMEDOUT)
--		gsc_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
-+	__gsc_m2m_job_abort(ctx);
- 
- 	pm_runtime_put(&ctx->gsc_dev->pdev->dev);
- 
-@@ -91,15 +99,9 @@ void gsc_m2m_job_finish(struct gsc_ctx *ctx, int vb_state)
- 	}
- }
- 
--
- static void gsc_m2m_job_abort(void *priv)
- {
--	struct gsc_ctx *ctx = priv;
--	int ret;
--
--	ret = gsc_m2m_ctx_stop_req(ctx);
--	if (ret == -ETIMEDOUT)
--		gsc_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
-+	__gsc_m2m_job_abort((struct gsc_ctx *)priv);
- }
- 
- static int gsc_get_bufs(struct gsc_ctx *ctx)
-@@ -150,9 +152,10 @@ static void gsc_m2m_device_run(void *priv)
- 		gsc->m2m.ctx = ctx;
- 	}
- 
--	is_set = (ctx->state & GSC_CTX_STOP_REQ) ? 1 : 0;
--	ctx->state &= ~GSC_CTX_STOP_REQ;
-+	is_set = ctx->state & GSC_CTX_STOP_REQ;
- 	if (is_set) {
-+		ctx->state &= ~GSC_CTX_STOP_REQ;
-+		ctx->state |= GSC_CTX_ABORT;
- 		wake_up(&gsc->irq_queue);
- 		goto put_device;
- 	}
+ 	m2m_dev = m2m_ctx->m2m_dev;
+ 	spin_lock_irqsave(&m2m_dev->job_spinlock, flags);
++
++	m2m_ctx->job_flags |= TRANS_ABORT;
+ 	if (m2m_ctx->job_flags & TRANS_RUNNING) {
+ 		spin_unlock_irqrestore(&m2m_dev->job_spinlock, flags);
+ 		m2m_dev->m2m_ops->job_abort(m2m_ctx->priv);
 -- 
 1.7.9.5
