@@ -1,106 +1,53 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
- part and Exynos part
-Date: Sat, 21 Sep 2013 20:26:11 +0530
-Message-ID: <523DB38B.4070307@ti.com>
-References: <000701ce8741$fe47deb0$fad79c10$@samsung.com> <51EE22DF.6090902@ti.com> <001301ce8772$522dfc50$f689f4f0$@samsung.com> <5231607C.10702@ti.com> <003501ceaf87$cda45db0$68ed1910$%han@samsung.com> <20130912093018.GA2124@pratyush-vbox> <52318CCC.4040604@ti.com> <20130912095213.GA5995@pratyush-vbox> <5231925B.3030104@ti.com> <20130912101803.GB5995@pratyush-vbox> <20130912104602.GC5995@pratyush-vbox>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/6] clk: exynos-audss: allow input clocks to be specified in device tree
+Date: Sat, 21 Sep 2013 17:12:04 +0200
+Message-ID: <9856196.dhfL7qQoq1@flatron>
+References: <1379711637-5226-1-git-send-email-abrestic@chromium.org> <1379711637-5226-2-git-send-email-abrestic@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20130912104602.GC5995@pratyush-vbox>
-Sender: linux-pci-owner@vger.kernel.org
-To: Pratyush Anand <pratyush.anand@st.com>, Jingoo Han <jg1.han@samsung.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379711637-5226-2-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Yadwinder Singh Brar <yadi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Leela
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Andrew,
 
-On Thursday 12 September 2013 04:16 PM, Pratyush Anand wrote:
-> On Thu, Sep 12, 2013 at 03:48:03PM +0530, Pratyush Anand wrote:
->> On Thu, Sep 12, 2013 at 06:07:23PM +0800, Kishon Vijay Abraham I wrote:
->>> Hi,
->>>
->>> On Thursday 12 September 2013 03:22 PM, Pratyush Anand wrote:
->>>> Hi Kishon,
->>>>
->>>> On Thu, Sep 12, 2013 at 05:43:40PM +0800, Kishon Vijay Abraham I wrote:
->>>>> Hi,
->>>>>
->>>>> On Thursday 12 September 2013 03:00 PM, Pratyush Anand wrote:
->>>>>> Hi Jingoo,
->>>>>>
->>>>>>
->>>>>> On Thu, Sep 12, 2013 at 03:15:04PM +0800, Jingoo Han wrote:
->>>>>>> On Tuesday 23 July 2013 12:30 PM, Kishon Vijay Abraham I wrote:
->>>>>>>>>> .
->>>>>>>>>> .
->>
->> [...]
->>
->>>>> when I do ifconfig eth0 up, I get *r8169 0000:01:00.0 eth0: link up.*
->>>>> But I dont receive any packets and ping also fails and the tx and rx packet
->>>>> count is also 0. Could it be related to inbound translation?
->>>>
->>>> A PCIe analyser log would tell a definite cause. Most likely either
->>>> inbound translation is not working or INTx/MSI is not working.
->>>
->>> I have enabled only legacy interrupts. Whenever I connect or disconnect
->>> ethernet cable I get link up/link down message and also the interrupt count for
->>> eth0 increases. So I'm not doubting INTx interrupts as such.
-> 
-> Just a question, what is the MRRS of your RC? if it is 128, can you
-> try with passing pci=pcie_bus_peer2peer  in your bootargs.
-> 
-> Again, analyser will help a lot in diagnosing such issues.
-> 
-> Regards
-> Pratyush
->>>
->>> btw configuring inbound translation once in dw_pcie_host_init enough is it? I
->>> mean we use the same registers for configuring outbound translation also no? So
->>> doesn't the inbound configuration gets lost?
->>
->> No, you write at the same register, but you program direction as
->> inbound. There are different resources for each viewport in inbound
->> and outbound direction.
+On Friday 20 of September 2013 14:13:53 Andrew Bresticker wrote:
+> This allows the input clocks to the Exynos AudioSS block to be
+> specified via device-tree bindings.  Default names will be used
+> when an input clock is not given.
+[snip]
+> +Optional Properties:
+> +
+> +- clocks:
+> +  - pll_ref: Fixed rate PLL reference clock, parent of mout_audss.
+> "fin_pll" +    is used if not specified.
+> +  - pll_in: Input PLL to the AudioSS block, parent of mout_audss.
+> "fout_epll" +    is used if not specified.
+> +  - cdclk: External i2s clock, parent of mout_i2s. "cdclk0" is used if
+> not +    specified.
+> +  - sclk_audio: Audio bus clock, parent of mout_i2s. "sclk_audio0" is
+> used if +    not specified.
+> +  - sclk_pcm_in: PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if
+> not +    specified.
+> +
+> +- clock-names: Aliases for the above clocks. They should be "pll_ref",
+> +  "pll_in", "cdclk", "sclk_audio", and "sclk_pcm_in" respectively.
 
-I did inbound translation programming like
-static void dw_pcie_prog_viewport_mem_inbound(struct pcie_port *pp)
-{
-	u32 val;
-	void __iomem *val1;
-	void __iomem *dbi_base = pp->dbi_base;
+I'd say that it should be preferred to specify all the input clocks 
+appropriate for particular SoCs to fully represent the hardware. So the 
+properties above should be marked as required (depending on SoC probably).
 
-	/* Program viewport 0 : INBOUND : MEMORY*/
-	val = PCIE_ATU_REGION_INBOUND | (0 & 0xF);
-	dw_pcie_writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-	val1 = ioremap(0x80000000, 0x5fffffff);
-	dw_pcie_writel_rc(pp, 0x80000000, dbi_base + PCIE_ATU_LOWER_BASE);
-	dw_pcie_writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-	/* in_mem_size must be in power of 2 */
-	dw_pcie_writel_rc(pp, 0x5FFFFFFF, dbi_base + PCIE_ATU_LIMIT);
-	dw_pcie_writel_rc(pp, 0x80000000, dbi_base + PCIE_ATU_LOWER_TARGET);
-	dw_pcie_writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-	dw_pcie_writel_rc(pp, PCIE_ATU_TYPE_MEM, dbi_base + PCIE_ATU_CR1);
-	val = PCIE_ATU_ENABLE;
-	dw_pcie_writel_rc(pp, val, dbi_base + PCIE_ATU_CR2);
-}
+The fallback to default names in the driver should stay, though, to 
+support older device trees.
 
-I'm using Realtek Semiconductor Co., Ltd. RTL8111/8168B PCI Express
-Gigabit Ethernet controller (TP-LINK TG-3468) (it uses r8169 driver).
+Best regards,
+Tomasz
 
-whenever I do a ifconfig ethp up, I get a non fatal error interrupt (after
-Transmitter/Receiver Enable in r8169 driver).
-
-I somehow starting to doubt the DMA address programmed in the ethernet card
-which is in my RAM address range (0x80000000 to 0xBFFFFFFF). Should this
-address be programmed in the BAR of the ethernet card? How should it be done?
-
-My pcie dt data looks like this.
-ranges = <0x00000800 0 0x20000000 0x20000000 0 0x00001000 /* configuration space */
-	  0x81000000 0 0	 0x20001000 0 0x00010000 /* io */
-	  0x82000000 0 0x20011000 0x20011000 0 0x0ffef000>; /* memory */
-
-Thanks
-Kishon
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
