@@ -1,35 +1,69 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 24/51] DMA-API: dma: pl330:
-	add	dma_set_mask_and_coherent() call
-Date: Sat, 21 Sep 2013 21:00:00 +0100
-Message-ID: <20130921200000.GS25647@n2100.arm.linux.org.uk>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMm5t-0007i5-V7@rmk-PC.arm.linux.org.uk>
- <201309201926.29084.heiko@sntech.de>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys part and Exynos part
+Date: Sun, 22 Sep 2013 00:03:34 +0200
+Message-ID: <201309220003.34732.arnd@arndb.de>
+References: <000701ce8741$fe47deb0$fad79c10$@samsung.com> <20130912104602.GC5995@pratyush-vbox> <523DB38B.4070307@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <201309201926.29084.heiko@sntech.de>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, linux-ide@vger.kernel.org, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, netdev@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, linux-crypto@vger.kernel.org, uclinux-dist-devel@blackfin.uclinux.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <523DB38B.4070307-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Pratyush Anand <pratyush.anand-qxv4g6HH51o@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mohit KUMAR DCG <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, 'Sean Cross' <xobs-nXMMniAx+RbQT0dZR+AlfA@public.gmane.org>, 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 20, 2013 at 07:26:27PM +0200, Heiko St=FCbner wrote:
-> Am Donnerstag, 19. September 2013, 23:49:01 schrieb Russell King:
-> > The DMA API requires drivers to call the appropriate dma_set_mask()
-> > functions before doing any DMA mapping.  Add this required call to
-> > the AMBA PL08x driver.
-> 			^--- copy and paste error - should of course be PL330
+On Saturday 21 September 2013, Kishon Vijay Abraham I wrote:
+> {
+>         u32 val;
+>         void __iomem *val1;
+>         void __iomem *dbi_base = pp->dbi_base;
+> 
+>         /* Program viewport 0 : INBOUND : MEMORY*/
+>         val = PCIE_ATU_REGION_INBOUND | (0 & 0xF);
+>         dw_pcie_writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
+>         val1 = ioremap(0x80000000, 0x5fffffff);
 
-Fixed, thanks.
+The ioremap here makes no sense at all, and I suspect it will fail anyway,
+because you exhaust the vmalloc area size, but since the value is not
+used anywhere, it won't matter.
+
+>         dw_pcie_writel_rc(pp, 0x80000000, dbi_base + PCIE_ATU_LOWER_BASE);
+>         dw_pcie_writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
+>         /* in_mem_size must be in power of 2 */
+>         dw_pcie_writel_rc(pp, 0x5FFFFFFF, dbi_base + PCIE_ATU_LIMIT);
+>         dw_pcie_writel_rc(pp, 0x80000000, dbi_base + PCIE_ATU_LOWER_TARGET);
+>         dw_pcie_writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
+
+These numbers need to come from somewhere, you shouldn't just hardcode them, 
+
+I guess you should either program an inbound window covering the entire 64-bit
+address space, or you should look at the top-level "memory" nodes to find
+the location of physical RAM.
+
+I can't see anything wrong with the way it's set up though, unless you have
+an IOMMU. Can you confirm that there is no IOMMU (aka SMMU) in your system
+that handles the PCIe root complex?
+
+> I somehow starting to doubt the DMA address programmed in the ethernet card
+> which is in my RAM address range (0x80000000 to 0xBFFFFFFF). Should this
+> address be programmed in the BAR of the ethernet card? How should it be done?
+
+No, it should not be in the BAR. The ethernet device driver calls dma_map_*
+or pci_map_* interfaces to get a valid token that can be passed into the
+device registers that are starting the DMA. You have to ensure that the
+dma_map_ops for the device return the value that is set up in the translation.
+
+The normal case is an identity mapping between device DMA space and host
+memory space, i.e. PCIE_ATU_LOWER_TARGET == PCIE_ATU_LOWER_BASE, so
+in the dma_map_single implementation, phys_addr_t == dma_addr_t.
+
+If you set up the dma_addr_t space to start at 0 instead, you have to add
+the offset in the dma_map_ops.
+
+	Arnd
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
