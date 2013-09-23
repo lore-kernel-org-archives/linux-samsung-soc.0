@@ -1,43 +1,47 @@
 From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH] spi: s3c64xx: Add missing compatibles
-Date: Mon, 23 Sep 2013 11:45:45 +0200
-Message-ID: <1379929545-27517-1-git-send-email-m.krawczuk@partner.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: broonie@kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Subject: [PATCH] DT: S5P: If detected device tree skip irq init
+Date: Mon, 23 Sep 2013 12:13:42 +0200
+Message-ID: <1379931222-29307-1-git-send-email-m.krawczuk@partner.samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:21843 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753390Ab3IWKN4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Sep 2013 06:13:56 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: ben-linux@fluff.org, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, t.figa@samsung.com, m.szyprowski@samsung.com, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Add compatibles for s3c6410, s5pc100 and s5pc110/s5pv210 boards.
+It prevents from executing code already called by device tree.
 
 Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/spi/spi-s3c64xx.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm/plat-samsung/s5p-irq-eint.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 8bed27a..84cc6ac 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1612,6 +1612,18 @@ static struct platform_device_id s3c64xx_spi_driver_ids[] = {
- };
+diff --git a/arch/arm/plat-samsung/s5p-irq-eint.c b/arch/arm/plat-samsung/s5p-irq-eint.c
+index faa6516..ebee4dc 100644
+--- a/arch/arm/plat-samsung/s5p-irq-eint.c
++++ b/arch/arm/plat-samsung/s5p-irq-eint.c
+@@ -16,6 +16,7 @@
+ #include <linux/device.h>
+ #include <linux/gpio.h>
+ #include <linux/irqchip/arm-vic.h>
++#include <linux/of.h>
  
- static const struct of_device_id s3c64xx_spi_dt_match[] = {
-+	{ .compatible = "samsung,s3c2443-spi",
-+			.data = (void *)&s3c2443_spi_port_config,
-+	},
-+	{ .compatible = "samsung,s3c6410-spi",
-+			.data = (void *)&s3c6410_spi_port_config,
-+	},
-+	{ .compatible = "samsung,s5pc100-spi",
-+			.data = (void *)&s5pc100_spi_port_config,
-+	},
-+	{ .compatible = "samsung,s5pv210-spi",
-+			.data = (void *)&s5pv210_spi_port_config,
-+	},
- 	{ .compatible = "samsung,exynos4210-spi",
- 			.data = (void *)&exynos4_spi_port_config,
- 	},
+ #include <plat/regs-irqtype.h>
+ 
+@@ -202,6 +203,9 @@ static int __init s5p_init_irq_eint(void)
+ {
+ 	int irq;
+ 
++	if (of_have_populated_dt())
++		return -ENODEV;
++
+ 	for (irq = IRQ_EINT(0); irq <= IRQ_EINT(15); irq++)
+ 		irq_set_chip(irq, &s5p_irq_vic_eint);
+ 
 -- 
 1.8.1.2
