@@ -1,53 +1,65 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Update arch timer node with clock frequency
-Date: Mon, 23 Sep 2013 15:15:04 +0100
-Message-ID: <20130923141504.GD16069@e106331-lin.cambridge.arm.com>
-References: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
- <3887347.Oxs1qQnt5k@flatron>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: fix PL330 MDMA1 address in DT for Universal
+ C210 board
+Date: Mon, 23 Sep 2013 18:01:14 +0200
+Message-ID: <5328103.I4Op9muCR3@amdc1032>
+References: <8667689.9TcYbn9cHO@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <3887347.Oxs1qQnt5k@flatron>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org" <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:30697 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752448Ab3IWQBT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Sep 2013 12:01:19 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MTL0091N5U6KZS0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Sep 2013 01:01:18 +0900 (KST)
+In-reply-to: <8667689.9TcYbn9cHO@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Sat, Sep 21, 2013 at 04:24:59PM +0100, Tomasz Figa wrote:
-> Hi Yuvaraj,
-> 
-> On Wednesday 18 of September 2013 15:41:53 Yuvaraj Kumar C D wrote:
-> > Without the "clock-frequency" property in arch timer node, could able
-> > to see the below crash dump.
-> [snip]
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> > b/arch/arm/boot/dts/exynos5250.dtsi index 7d7cc77..668ce5d 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -96,6 +96,7 @@
-> >  			     <1 14 0xf08>,
-> >  			     <1 11 0xf08>,
-> >  			     <1 10 0xf08>;
-> > +		clock-frequency = <24000000>;
-> 
-> Shouldn't it rather come from some clock provided by some clock controller 
-> instead?
-> 
-> The frequency would be then retrieved using clk_get_rate() on a clock 
-> received by clk_get(), specified in device tree using generic clock 
-> bindings.
 
-If the bootloader has initialised the generic timer correctly, the
-CNTFRQ register should contain the clock frequency, independent of any
-external clock.
+Hi Kukjin,
 
-Having the bootloader set CNTFRQ is by far the preferable solution, it
-is architected for this purpose.
+Could you please apply this patch?
 
-Thanks,
-Mark.
+Best regards,
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+On Tuesday, August 20, 2013 01:22:45 PM Bartlomiej Zolnierkiewicz wrote:
+> Revision 0 of Exynos4210 SoC (used on Universal C210 board) requires
+> 'secure' PL330 MDMA1 address (0x12840000) instead of 'non-secure' one
+> (0x12850000). Fix it by overriding the default PL330 MDMA1 address in
+> exynos4210-universal_c210.dts.
+> 
+> This is a Device Tree (DT) version of commit 91280e7 ("ARM: EXYNOS:
+> PL330 MDMA1 fix for revision 0 of Exynos4210 SOC") and fixes recent
+> regression caused by conversion to DT-only setup on ARM EXYNOS.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> index 889cdad..d2e3f5f 100644
+> --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> @@ -350,3 +350,7 @@
+>  		status = "okay";
+>  	};
+>  };
+> +
+> +&mdma1 {
+> +	reg = <0x12840000 0x1000>;
+> +};
