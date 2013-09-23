@@ -1,88 +1,53 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/4] watchdog: s3c2410_wdt: parse watchdog dt node to read
- PMU registers adresses
-Date: Mon, 23 Sep 2013 19:11:11 +0200
-Message-ID: <3933206.EMuKSi641Y@amdc1227>
-References: <1379414623-26329-1-git-send-email-l.krishna@samsung.com>
- <CAL1wa8eWKNL3kdfjqxqaLsAtc8nqgiPW34SBk4gozAR1jnRaSg@mail.gmail.com>
- <1918747.quF8QJoP6D@amdc1032>
+From: Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 00/26] ARM: provide common arch init for DT clocks
+Date: Mon, 23 Sep 2013 13:45:14 -0400
+Message-ID: <52407E2A.7030001@linaro.org>
+References: <20130920191613.GA25191@ohporter.com> <523EDF16.10102@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:24373 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752393Ab3IWRLY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Sep 2013 13:11:24 -0400
-In-reply-to: <1918747.quF8QJoP6D@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <523EDF16.10102-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Christian Daudt <csd-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, STEricsson <STEricsson_nomadik_linux-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org
 
-On Monday 23 of September 2013 19:03:10 Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Wednesday, September 18, 2013 12:20:31 PM Leela Krishna Amudala wrote:
-> > Tomasz,
-> > 
-> > On Wed, Sep 18, 2013 at 10:04 AM, Doug Anderson <dianders@chromium.org> wrote:
-> > > Tomasz,
-> > >
-> > > On Tue, Sep 17, 2013 at 6:30 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > >> I believe this is mandatory on Exynos 5420 and unused on previous SoCs. It
-> > >> should be handled depending on compatible value.
-> > >
-> > > I think at least 5250 needs something similar.  I believe we got away
-> > > with it in the past since other (non-WDT) code was tweaking with this
-> > > bit, but that was a little bit gross.  Leela Krishna can correct me if
-> > > I'm wrong.
-> > >
-> > 
-> > Yes, 5250 also needs this reset-mask-bit, but not required by SoCs
-> > other than Exynos5xxx.
-> > Hence I kept it as optional parameter.
-> > 
-> > I took care of this code such that it won't break on older SoCs.
-> > 
-> > If you notice the code in probe function, I used the check condition
-> > 
-> > if (!IS_ERR(wdt->pmu_disable_reg) && !IS_ERR(wdt->pmu_mask_reset_reg)) {
-> > }
-> > 
-> > i.e., if any of the PMU register address is not mentioned in the DT
-> > node it simply skips reading reset-mask-bit
-> > and continues execution (which may happen in older SoC DT node).
-> > 
-> > ..also, in s3c2410wdt_mask_and_disable_reset() function, below
-> > condition check is happening
-> > 
-> > if (IS_ERR(wdt->pmu_disable_reg) || IS_ERR(wdt->pmu_mask_reset_reg)
-> >                                 || (wdt->pmu_mask_bit < 0))
-> >         return;
-> > 
-> > i.e., if any of the registers is not specified in DT node simply
-> > return without programming
-> > PMU registers(which is true in case of older SoCs).
-> > 
-> > If you think this doesn't sounds good way of handling older SoCs.
-> > I'll add new compatible string for Exynos5xxx and do like what you said. :)
-> 
-> Yes, please re-do the code per Tomasz's suggestions.
-> 
-> This would also allow you to check return values of devm_ioremap_resource()
-> calls in the probe method and require them to succeed in order to register
-> watchdog device (which is unfortunately not what happens currently).
+On 09/22/2013 08:14 AM, Sebastian Hesselbarth wrote:
+> On 09/20/2013 09:16 PM, Matt Porter wrote:
+>> On Wed, Sep 18, 2013 at 07:53:33PM +0200, Sebastian Hesselbarth wrote:
+>>> This is a patch set based on an RFC [1][2] sent earlier to provide a
+>>> common
+>>> arch/arm init for DT clock providers. Currently, the call to
+>>> of_clk_init(NULL)
+>>> to initialize DT clock providers is spread among several mach-dirs.
+>>> Since most
+>>> machs require DT clocks initialized before timers, no initcall can be
+>>> used.
+> [...]
+>> Could you pick up the following patch for mach-bcm/ into this series?
+>>
+>> Thanks,
+>> Matt
+>>
+>>  From f65d048b3453447bb3e693cb21701c4d0c6375ed Mon Sep 17 00:00:00 2001
+>> From: Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Date: Fri, 20 Sep 2013 13:41:06 -0400
+>> Subject: [PATCH] ARM: bcm: Remove custom .time_init hook
+>>
+>> With arch/arm calling of_clk_init(NULL) and clocksource_of_init()
+>> this is no longer needed. The former is useful because we can make
+>> use of dummy fixed clocks for drivers until the bcm281xx common
+>> clock driver is ready.
+>>
+>> Signed-off-by: Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Reviewed-by: Markus Mayer <markus.mayer-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Reviewed-by: Christian Daudt <csd-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+>
+> As a v2 is required due to calling of_clk_init() breaks non-DT builds,
+> I will include this _if_ Christian actually gives his Acked-By.
 
-Now as I think of it, the driver doesn't seem to reconfigure those PMU
-registers in any watchdog API callback, only in probe, remove, suspend
-and resume.
+Understood. Ccing Christian's new email as it just changed.
 
-Since we already have PMU "driver" in mach-exynos, which already has
-suspend/resume syscore ops, what about placing such configuration there
-instead?
-
-Best regards,
-Tomasz
+Thanks,
+Matt
