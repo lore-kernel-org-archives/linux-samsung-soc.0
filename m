@@ -1,175 +1,78 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 05/10] ARM: SAMSUNG: Initialize PWM backlight enable_gpio field
-Date: Mon, 23 Sep 2013 23:41:02 +0200
-Message-ID: <1379972467-11243-6-git-send-email-treding@nvidia.com>
-References: <1379972467-11243-1-git-send-email-treding@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1379972467-11243-1-git-send-email-treding@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tony Lindgren <tony@atomide.com>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, openezx-devel@lists.openezx.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/6] clk: exynos-audss: convert to platform device
+Date: Tue, 24 Sep 2013 00:50:29 +0200
+Message-ID: <5240C5B5.4090702@gmail.com>
+References: <1379711637-5226-1-git-send-email-abrestic@chromium.org> <1530327.jvk44KuFQA@flatron> <CAL1qeaGjUTrfDaAr1rgsgDaZscjaV7tqi3Jd_-zo2sMtCCFSAQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAL1qeaGjUTrfDaAr1rgsgDaZscjaV7tqi3Jd_-zo2sMtCCFSAQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Yadwinder Singh Brar <yadi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma@samsung.>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The GPIO API defines 0 as being a valid GPIO number, so this field needs
-to be initialized explicitly.
+Hi,
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- arch/arm/mach-s3c24xx/mach-h1940.c    | 1 +
- arch/arm/mach-s3c24xx/mach-rx1950.c   | 1 +
- arch/arm/mach-s3c64xx/mach-crag6410.c | 1 +
- arch/arm/mach-s3c64xx/mach-hmt.c      | 1 +
- arch/arm/mach-s3c64xx/mach-smartq.c   | 1 +
- arch/arm/mach-s3c64xx/mach-smdk6410.c | 1 +
- arch/arm/mach-s5p64x0/mach-smdk6440.c | 1 +
- arch/arm/mach-s5p64x0/mach-smdk6450.c | 1 +
- arch/arm/mach-s5pc100/mach-smdkc100.c | 1 +
- arch/arm/mach-s5pv210/mach-smdkv210.c | 1 +
- arch/arm/plat-samsung/dev-backlight.c | 5 +++++
- 11 files changed, 15 insertions(+)
+On 09/23/2013 11:25 PM, Andrew Bresticker wrote:
+>>> +static int exynos_audss_clk_remove(struct platform_device *pdev)
+>>> +{
+>>> +     of_clk_del_provider(pdev->dev.of_node);
+>>> +
+>>> +     return 0;
+>>>   }
+>>
+>> Don't we need to unregister all the registered clocks in remove? This also
+>> leads to another question: Do we even need removal support for this
+>> driver?
+>
+> Agreed - I don't think we should support removal of this device, but
+> it looks like __device_release_driver() just ignores the lack of a
+> remove callback or the return value from remove.  I suppose we could
+> just yell that removal is not supported if it is ever attempted.
 
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index 74dd479..952b6a0 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -504,6 +504,7 @@ static struct platform_pwm_backlight_data backlight_data = {
- 	.dft_brightness = 50,
- 	/* tcnt = 0x31 */
- 	.pwm_period_ns  = 36296,
-+	.enable_gpio    = -1,
- 	.init           = h1940_backlight_init,
- 	.notify		= h1940_backlight_notify,
- 	.exit           = h1940_backlight_exit,
-diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
-index 206b1f7..034b7fe 100644
---- a/arch/arm/mach-s3c24xx/mach-rx1950.c
-+++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
-@@ -522,6 +522,7 @@ static struct platform_pwm_backlight_data rx1950_backlight_data = {
- 	.max_brightness = 24,
- 	.dft_brightness = 4,
- 	.pwm_period_ns = 48000,
-+	.enable_gpio = -1,
- 	.init = rx1950_backlight_init,
- 	.notify = rx1950_backlight_notify,
- 	.exit = rx1950_backlight_exit,
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 1a911df..b319bf9 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -114,6 +114,7 @@ static struct platform_pwm_backlight_data crag6410_backlight_data = {
- 	.max_brightness	= 1000,
- 	.dft_brightness	= 600,
- 	.pwm_period_ns	= 100000,	/* about 1kHz */
-+	.enable_gpio	= -1,
- };
- 
- static struct platform_device crag6410_backlight_device = {
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index e806404..614a03a 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -114,6 +114,7 @@ static struct platform_pwm_backlight_data hmt_backlight_data = {
- 	.max_brightness	= 100 * 256,
- 	.dft_brightness	= 40 * 256,
- 	.pwm_period_ns	= 1000000000 / (100 * 256 * 20),
-+	.enable_gpio	= -1,
- 	.init		= hmt_bl_init,
- 	.notify		= hmt_bl_notify,
- 	.exit		= hmt_bl_exit,
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index 0f47237..a6b338f 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -151,6 +151,7 @@ static struct platform_pwm_backlight_data smartq_backlight_data = {
- 	.max_brightness	= 1000,
- 	.dft_brightness	= 600,
- 	.pwm_period_ns	= 1000000000 / (1000 * 20),
-+	.enable_gpio	= -1,
- 	.init		= smartq_bl_init,
- };
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 2a7b32c..d5ea938 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -625,6 +625,7 @@ static struct samsung_bl_gpio_info smdk6410_bl_gpio_info = {
- 
- static struct platform_pwm_backlight_data smdk6410_bl_data = {
- 	.pwm_id = 1,
-+	.enable_gpio = -1,
- };
- 
- static struct s3c_hsotg_plat smdk6410_hsotg_pdata;
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-index 0b00304..9efdcc0 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
-@@ -223,6 +223,7 @@ static struct samsung_bl_gpio_info smdk6440_bl_gpio_info = {
- 
- static struct platform_pwm_backlight_data smdk6440_bl_data = {
- 	.pwm_id = 1,
-+	.enable_gpio = -1,
- };
- 
- static void __init smdk6440_map_io(void)
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-index 5949296..c3cacc0 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-@@ -242,6 +242,7 @@ static struct samsung_bl_gpio_info smdk6450_bl_gpio_info = {
- 
- static struct platform_pwm_backlight_data smdk6450_bl_data = {
- 	.pwm_id = 1,
-+	.enable_gpio = -1,
- };
- 
- static void __init smdk6450_map_io(void)
-diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
-index 7c57a22..9e256b9 100644
---- a/arch/arm/mach-s5pc100/mach-smdkc100.c
-+++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
-@@ -216,6 +216,7 @@ static struct samsung_bl_gpio_info smdkc100_bl_gpio_info = {
- 
- static struct platform_pwm_backlight_data smdkc100_bl_data = {
- 	.pwm_id = 0,
-+	.enable_gpio = -1,
- };
- 
- static void __init smdkc100_map_io(void)
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index 6d72bb99..f52cc15 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -279,6 +279,7 @@ static struct samsung_bl_gpio_info smdkv210_bl_gpio_info = {
- static struct platform_pwm_backlight_data smdkv210_bl_data = {
- 	.pwm_id = 3,
- 	.pwm_period_ns = 1000,
-+	.enable_gpio = -1,
- };
- 
- static void __init smdkv210_map_io(void)
-diff --git a/arch/arm/plat-samsung/dev-backlight.c b/arch/arm/plat-samsung/dev-backlight.c
-index d51f956..80e7450 100644
---- a/arch/arm/plat-samsung/dev-backlight.c
-+++ b/arch/arm/plat-samsung/dev-backlight.c
-@@ -70,6 +70,7 @@ static struct samsung_bl_drvdata samsung_dfl_bl_data __initdata = {
- 		.max_brightness = 255,
- 		.dft_brightness = 255,
- 		.pwm_period_ns  = 78770,
-+		.enable_gpio    = -1,
- 		.init           = samsung_bl_init,
- 		.exit           = samsung_bl_exit,
- 	},
-@@ -121,6 +122,10 @@ void __init samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
- 		samsung_bl_data->lth_brightness = bl_data->lth_brightness;
- 	if (bl_data->pwm_period_ns)
- 		samsung_bl_data->pwm_period_ns = bl_data->pwm_period_ns;
-+	if (bl_data->enable_gpio)
-+		samsung_bl_data->enable_gpio = bl_data->enable_gpio;
-+	if (bl_data->enable_gpio_flags)
-+		samsung_bl_data->enable_gpio_flags = bl_data->enable_gpio_flags;
- 	if (bl_data->init)
- 		samsung_bl_data->init = bl_data->init;
- 	if (bl_data->notify)
--- 
-1.8.4
+That might be a good idea, without proper remove() method deferred
+probing will also not work. I'd assume there should be only, e.g.
+WARN() in the remove() callback or it should be properly implemented,
+with clk_unregister() call for each currently registered clock.
+
+Note that clk_unregister() is currently not implemented and removal
+of this driver cannot be properly supported at the moment anyway.
+
+Not sure what's more appropriate, it's probably better to add
+clk_unregister() calls. This would be effectively a dead code though,
+as long as core_initcall is used.
+
+>>> +static int __init exynos_audss_clk_init(void)
+>>> +{
+>>> +     return platform_driver_register(&exynos_audss_clk_driver);
+>>> +}
+>>> +core_initcall(exynos_audss_clk_init);
+>>
+>> Does it need to be core_initcall? Drivers depending on clocks provided by
+>> this driver should be able to defer probing if they are probed before this
+>> driver.
+>
+> Unfortunately there are a couple of issues with making this a module_initcall:
+>      1. On the Exynos5420, the AudioSS block provides the apb_pclk gate
+> for the ADMA bus, which is probed at postcore_initcall time and does
+> not support deferred probing, and
+>      2. the common clock framework doesn't differentiate between the
+> clock not being specified at all and the clock being specified, but
+> the provider not being registered yet (i.e. the case where probe
+> deferral would be appropriate) - it just returns ENOENT in both cases.
+
+AFAICS this shouldn't be difficult to improve. I guess it has not been
+properly addressed so far because there is currently no properly working
+modular clock provider drivers, using the common clock framework, yet.
+Unless someone bits me to it, I might have a look at that, as I also found
+it a bit it inconvenient.
+
+--
+Regards,
+Sylwester
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
