@@ -1,144 +1,105 @@
-From: Pratyush Anand <pratyush.anand-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
- part and Exynos part
-Date: Mon, 23 Sep 2013 12:20:41 +0530
-Message-ID: <20130923065041.GB5288@pratyush-vbox>
-References: <000701ce8741$fe47deb0$fad79c10$@samsung.com>
- <20130912104602.GC5995@pratyush-vbox>
- <523DB38B.4070307@ti.com>
- <201309220003.34732.arnd@arndb.de>
- <523ED192.901@ti.com>
- <20130923041427.GC2246@pratyush-vbox>
- <523FD286.608@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <523FD286.608-l0cyMroinI0@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mohit KUMAR DCG <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, 'Sean Cross' <xobs-nXMMniAx+RbQT0dZR+AlfA@public.gmane.org>, 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 09/26] ARM: call of_clk_init from default time_init handler
+Date: Mon, 23 Sep 2013 09:54:30 +0200
+Message-ID: <1379922870-2325-1-git-send-email-sebastian.hesselbarth@gmail.com>
+References: <1379526839-14798-10-git-send-email-sebastian.hesselbarth@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1379526839-14798-10-git-send-email-sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, STEricsson <STEricsson_nomadik_linux-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 23, 2013 at 01:32:54PM +0800, Kishon Vijay Abraham I wrote:
-> Hi Pratyush,
-> 
-> On Monday 23 September 2013 09:44 AM, Pratyush Anand wrote:
-> > Hi Kishon,
-> > 
-> > 
-> > On Sun, Sep 22, 2013 at 07:16:34PM +0800, Kishon Vijay Abraham I wrote:
-> >> Hi Arnd,
-> >>
-> >> Thanks for replying :-)
-> >>
-> >> On Sunday 22 September 2013 03:33 AM, Arnd Bergmann wrote:
-> >>> On Saturday 21 September 2013, Kishon Vijay Abraham I wrote:
-> >>>> {
-> >>>>         u32 val;
-> >>>>         void __iomem *val1;
-> >>>>         void __iomem *dbi_base = pp->dbi_base;
-> >>>>
-> >>>>         /* Program viewport 0 : INBOUND : MEMORY*/
-> >>>>         val = PCIE_ATU_REGION_INBOUND | (0 & 0xF);
-> >>>>         dw_pcie_writel_rc(pp, val, dbi_base + PCIE_ATU_VIEWPORT);
-> >>>>         val1 = ioremap(0x80000000, 0x5fffffff);
-> >>>
-> >>> The ioremap here makes no sense at all, and I suspect it will fail anyway,
-> >>> because you exhaust the vmalloc area size, but since the value is not
-> >>> used anywhere, it won't matter.
-> >>>
-> >>>>         dw_pcie_writel_rc(pp, 0x80000000, dbi_base + PCIE_ATU_LOWER_BASE);
-> >>>>         dw_pcie_writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_BASE);
-> >>>>         /* in_mem_size must be in power of 2 */
-> >>>>         dw_pcie_writel_rc(pp, 0x5FFFFFFF, dbi_base + PCIE_ATU_LIMIT);
-> > 
-> > This is wrong. You should program here 0xBFFFFFFF.
-> 
-> That dint help :-(
-> 
-> Btw if we hadn't programmed inbound translation table, the address will go
-> untranslated (according to the data book). I guess that's how it was working
-> for Jingoo Han.
-> 
-> **
-> 3.10.4
-> Inbound iATU Operation
-> 
-> When there is no match, then the address is untranslated
-> **
-> 
+Most DT ARM machs require common clock providers initialized before timers.
+Currently, arch/arm machs use .init_time to call of_clk_init right before
+clocksource_of_init. This prevents to remove that callback and use the default
+one instead.
 
-ok.. so it seems that you might not be getting non-fatal error because
-of address translation. I am not working with PCIe for a long time,
-but if I remember correctly other reason for getting this error were
-unsupported read/write request size. Although, you have said that MRRS
-is 512 for your RC. Can you cross check both programmed MPS and MRRS
-in your RC as well as your EP (ethernet card). May be you can share
-Content of PCIe Capability Device Control Register (Offset 08h) for
-both RC and EP.
+This patch adds a call to of_clk_init() to the default .init_time callback
+for COMMON_CLK enabled machs to allow to remove custom callbacks where applicable.
+While at it, also reorder includes alphabetically.
 
-Regards
-Pratyush
+Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+Changelog:
+v1->v2:
+- protect call to of_clk_init which is only available for COMMON_CLK to
+  not break !COMMON_CLK machs. (Reported by Olof Johanssen)
+RFCv2->v1:
+- only call of_clk_init(NULL) when no custom .init_time is set
+  (Suggested by Soeren Brinkmann)
+RFCv1->RFCv2:
+- reorder includes alphabetically
 
+Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: STEricsson <STEricsson_nomadik_linux-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+---
+ arch/arm/kernel/time.c |   29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-
-> > 
-> > Translation rule is as follows:
-> > 
-> > Region between "Start Address" and "End Address" is translated to
-> > "Target Address" with region size = "End Address" - "Start Address".
-> > Where: Start Address = (PCIE_ATU_UPPER_BASE | PCIE_ATU_LOWER_BASE)
-> >         End Address = (PCIE_ATU_UPPER_BASE | PCIE_ATU_LIMIT)
-> >         Target Address = (PCIE_ATU_UPPER_TARGET | PCIE_ATU_LOWER_TARGET) 
-> > 
-> >>>>         dw_pcie_writel_rc(pp, 0x80000000, dbi_base + PCIE_ATU_LOWER_TARGET);
-> >>>>         dw_pcie_writel_rc(pp, 0, dbi_base + PCIE_ATU_UPPER_TARGET);
-> >>>
-> >>> These numbers need to come from somewhere, you shouldn't just hardcode them, 
-> >>
-> >> right. I'm still in the process of getting it work ;-)
-> >>>
-> >>> I guess you should either program an inbound window covering the entire 64-bit
-> >>> address space, or you should look at the top-level "memory" nodes to find
-> >>> the location of physical RAM.
-> >>>
-> >>> I can't see anything wrong with the way it's set up though, unless you have
-> >>> an IOMMU. Can you confirm that there is no IOMMU (aka SMMU) in your system
-> >>> that handles the PCIe root complex?
-> >>
-> >> There is a MMU for PCIe root complex but that's disabled.
-> >>>
-> >>>> I somehow starting to doubt the DMA address programmed in the ethernet card
-> >>>> which is in my RAM address range (0x80000000 to 0xBFFFFFFF). Should this
-> >>>> address be programmed in the BAR of the ethernet card? How should it be done?
-> >>>
-> >>> No, it should not be in the BAR. The ethernet device driver calls dma_map_*
-> >>> or pci_map_* interfaces to get a valid token that can be passed into the
-> >>> device registers that are starting the DMA. You have to ensure that the
-> >>> dma_map_ops for the device return the value that is set up in the translation.
-> >>>
-> >>> The normal case is an identity mapping between device DMA space and host
-> >>> memory space, i.e. PCIE_ATU_LOWER_TARGET == PCIE_ATU_LOWER_BASE, so
-> >>> in the dma_map_single implementation, phys_addr_t == dma_addr_t.
-> >>>
-> >>> If you set up the dma_addr_t space to start at 0 instead, you have to add
-> >>> the offset in the dma_map_ops.
-> >>
-> >> My DMA address is in 0x80000000 to 0xBFFFFFFF range and I program my inbound
-> >> translation for this range. Not sure what is missing still :-(
-> > 
-> > Hope, above modification helps. Let me know.
-> > 
-> > Regards
-> > Pratyush
-> >>
-> >> Thanks
-> >> Kishon
-> 
-> Thanks
-> Kishon
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/kernel/time.c b/arch/arm/kernel/time.c
+index 98aee32..829a96d 100644
+--- a/arch/arm/kernel/time.c
++++ b/arch/arm/kernel/time.c
+@@ -11,25 +11,26 @@
+  *  This file contains the ARM-specific time handling details:
+  *  reading the RTC at bootup, etc...
+  */
++#include <linux/clk-provider.h>
++#include <linux/clocksource.h>
++#include <linux/errno.h>
+ #include <linux/export.h>
+-#include <linux/kernel.h>
+-#include <linux/interrupt.h>
+-#include <linux/time.h>
+ #include <linux/init.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/kernel.h>
++#include <linux/profile.h>
+ #include <linux/sched.h>
++#include <linux/sched_clock.h>
+ #include <linux/smp.h>
++#include <linux/time.h>
+ #include <linux/timex.h>
+-#include <linux/errno.h>
+-#include <linux/profile.h>
+ #include <linux/timer.h>
+-#include <linux/clocksource.h>
+-#include <linux/irq.h>
+-#include <linux/sched_clock.h>
+ 
+-#include <asm/thread_info.h>
+-#include <asm/stacktrace.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
++#include <asm/stacktrace.h>
++#include <asm/thread_info.h>
+ 
+ #if defined(CONFIG_RTC_DRV_CMOS) || defined(CONFIG_RTC_DRV_CMOS_MODULE) || \
+     defined(CONFIG_NVRAM) || defined(CONFIG_NVRAM_MODULE)
+@@ -116,8 +117,12 @@ int __init register_persistent_clock(clock_access_fn read_boot,
+ 
+ void __init time_init(void)
+ {
+-	if (machine_desc->init_time)
++	if (machine_desc->init_time) {
+ 		machine_desc->init_time();
+-	else
++	} else {
++#ifdef CONFIG_COMMON_CLK
++		of_clk_init(NULL);
++#endif
+ 		clocksource_of_init();
++	}
+ }
+-- 
+1.7.10.4
