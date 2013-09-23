@@ -1,78 +1,35 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base value
-Date: Mon, 23 Sep 2013 17:33:35 +0530
-Message-ID: <1379937815-21746-1-git-send-email-chander.kashyap@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:48155 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753740Ab3IWMD4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Sep 2013 08:03:56 -0400
-Received: by mail-pb0-f42.google.com with SMTP id un15so3144949pbc.29
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Sep 2013 05:03:56 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base
+ value
+Date: Mon, 23 Sep 2013 14:10:55 +0200
+Message-ID: <28750420.TCzZ6UT49K@amdc1227>
+References: <1379937815-21746-1-git-send-email-chander.kashyap@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1379937815-21746-1-git-send-email-chander.kashyap@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, tglx@linutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, tglx@linutronix.de, t.figa@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-Replace irq_domain_add_simple with "irq_domain_add_linear" in order to use
-linear irq domain, and to remove hardcoded irq_base_value.
+Hi Chander,
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
----
-Changes since v1:
-	- Replaced irq_domain_add_simple with irq_domain_add_linear,
-	  as suggested by Tomasz
+On Monday 23 of September 2013 17:33:35 Chander Kashyap wrote:
+> Replace irq_domain_add_simple with "irq_domain_add_linear" in order to
+> use linear irq domain, and to remove hardcoded irq_base_value.
+> 
+> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> ---
+> Changes since v1:
+> 	- Replaced irq_domain_add_simple with irq_domain_add_linear,
+> 	  as suggested by Tomasz
+> 
+>  drivers/irqchip/exynos-combiner.c |   15 +++------------
+>  1 file changed, 3 insertions(+), 12 deletions(-)
 
- drivers/irqchip/exynos-combiner.c |   15 +++------------
- 1 file changed, 3 insertions(+), 12 deletions(-)
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-index 4c68265..2551046 100644
---- a/drivers/irqchip/exynos-combiner.c
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -206,8 +206,7 @@ static unsigned int combiner_lookup_irq(int group)
- 
- static void __init combiner_init(void __iomem *combiner_base,
- 				 struct device_node *np,
--				 unsigned int max_nr,
--				 int irq_base)
-+				 unsigned int max_nr)
- {
- 	int i, irq;
- 	unsigned int nr_irq;
-@@ -221,7 +220,7 @@ static void __init combiner_init(void __iomem *combiner_base,
- 		return;
- 	}
- 
--	combiner_irq_domain = irq_domain_add_simple(np, nr_irq, irq_base,
-+	combiner_irq_domain = irq_domain_add_linear(np, nr_irq,
- 				&combiner_irq_domain_ops, combiner_data);
- 	if (WARN_ON(!combiner_irq_domain)) {
- 		pr_warning("%s: irq domain init failed\n", __func__);
-@@ -248,7 +247,6 @@ static int __init combiner_of_init(struct device_node *np,
- {
- 	void __iomem *combiner_base;
- 	unsigned int max_nr = 20;
--	int irq_base = -1;
- 
- 	combiner_base = of_iomap(np, 0);
- 	if (!combiner_base) {
-@@ -262,14 +260,7 @@ static int __init combiner_of_init(struct device_node *np,
- 			__func__, max_nr);
- 	}
- 
--	/* 
--	 * FIXME: This is a hardwired COMBINER_IRQ(0,0). Once all devices
--	 * get their IRQ from DT, remove this in order to get dynamic
--	 * allocation.
--	 */
--	irq_base = 160;
--
--	combiner_init(combiner_base, np, max_nr, irq_base);
-+	combiner_init(combiner_base, np, max_nr);
- 
- 	return 0;
- }
--- 
-1.7.9.5
+Best regards,
+Tomasz
