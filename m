@@ -1,70 +1,58 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] usb: dwc3: Remove additional delay of 100ms when resuming
-Date: Mon, 23 Sep 2013 15:26:44 +0900
-Message-ID: <000001ceb825$dfae0eb0$9f0a2c10$%han@samsung.com>
-References: <1379907508-22492-1-git-send-email-gautam.vivek@samsung.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: s3c2410: fix clk_disable/clk_unprepare warnings
+Date: Mon, 23 Sep 2013 08:48:16 +0200
+Message-ID: <20130923064816.GA3051@katana>
+References: <20130917113153.41b0305d6892170ba8e1ecf7@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:31920 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751944Ab3IWG0q (ORCPT
+Received: from sauhun.de ([89.238.76.85]:51244 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752335Ab3IWGsY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Sep 2013 02:26:46 -0400
-In-reply-to: <1379907508-22492-1-git-send-email-gautam.vivek@samsung.com>
-Content-language: ko
+	Mon, 23 Sep 2013 02:48:24 -0400
+Content-Disposition: inline
+In-Reply-To: <20130917113153.41b0305d6892170ba8e1ecf7@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Felipe Balbi' <balbi@ti.com>, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Kim Phillips <kim.phillips@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Monday, September 23, 2013 12:38 PM, Vivek Gautam wrote:
-> 
-> This delay got introduced in:
-> "7415f17 usb: dwc3: core: add power management support"
-> which reflected similar code in dwc3_core_soft_reset() function.
-> However, originally the delay of 100ms in dwc3_core_soft_reset() was
-> meant to assist USB2PHY and USB3PHY reset, not for usb_phy_init()
-> sequence.
-> 
-> We should get rid of this delay, since things will still work
-> fine without this.
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-OK, I see.
-There is no reason to add msleep(100) to dwc3_resume();
-thus, this msleep(100) can be removed.
+On Tue, Sep 17, 2013 at 11:31:53AM -0500, Kim Phillips wrote:
+> commit d16933b33914a6dff38a4ecbe8edce44a17898e8 "i2c: s3c2410: Move
+> location of clk_prepare_enable() call in probe function" refactored
+> clk_enable and clk_disable calls yet neglected to remove the
+> clk_disable_unprepare call in the module's remove().
 
-Best regards,
-Jingoo Han
+Applied to for-current, thanks!
 
-> ---
-> 
-> Hi Felipe,
-> 
-> I remember this change for phy_init including msleep(100) was
-> suggested by me, after testing the patch-series for PM support
-> to dwc3.
-> Sorry for that !!
-> 
->  drivers/usb/dwc3/core.c |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 474162e..e88ffae 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -691,7 +691,6 @@ static int dwc3_resume(struct device *dev)
-> 
->  	usb_phy_init(dwc->usb3_phy);
->  	usb_phy_init(dwc->usb2_phy);
-> -	msleep(100);
-> 
->  	spin_lock_irqsave(&dwc->lock, flags);
-> 
-> --
-> 1.7.6.5
+
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSP+QwAAoJEBQN5MwUoCm2mEsQAKEpcOn4TWEgAqqmdZfmoerp
+W4j7k2MyF/JtFz9f2ynwtjdslutSIwHVrPv0eS6xxclIzhuEupOQ+yBSd4wQbogU
+9KpZlds621VEpGT15DDlbjkF2Dgr0BHvaHWl7Efu5R61KNLFsdnf8QIElTfDJvXx
+OLoXFnLqhNC+wpAwZgrPYGYi3lUyrf73k8eY1ofe2oMe3bTFzMSewE9+5MivgNkG
+wEuJ063QZqlULIBEGUZOggQQ03YGjfxbGsDTGo+hOeWGgHu92Zu3IMm+omc4KbEz
+4CYyyS96OW9aQbQPaS2jVevnHkjtxkyjk36oCkwFbQpYSqhZWGkzqgzBB6K+QQhf
+yYCLZicrQgPXkfaB33W+2yRR4dBoob/xiHLn9C0hJSpxsrqViOWTN3HmnkTiFHpx
+HS0mlkkfE45x08i1nWam+7ylWjZAFkGHiLBoAj5aC4CBR+XMU1aE/XwJboY9kUOT
+AXliVuF/RQHNbT7zROXHNkftvOaAqcYzGqjR21aZZZJB/Qu+zTZrpTKDSilejECf
+rEw5f1Gc2BOoxAQAikN3VCVkJHe2lKjVoe2k7GMchWMfJD+6gjn/eC3ox7Q2FIdv
+BOSJS1FdkYkcfHijJBWHod2HNFw4ZrU/EeltBpsnFzhLnPECmaIjH/jaXDvDMmcV
+RZkipqux0nM4s62DVb8n
+=CgPl
+-----END PGP SIGNATURE-----
+
+--J2SCkAp4GZ/dPZZf--
