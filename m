@@ -1,63 +1,184 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: Add missing compatibles
-Date: Mon, 23 Sep 2013 14:50:42 +0100
-Message-ID: <20130923135042.GH21013@sirena.org.uk>
-References: <1379929545-27517-1-git-send-email-m.krawczuk@partner.samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2] MTD: Onenand: Add device tree support for samsung
+ onenand
+Date: Mon, 23 Sep 2013 16:00:05 +0200
+Message-ID: <1552206.KhB7jIjAI2@amdc1227>
+References: <1379941608-5068-1-git-send-email-m.krawczuk@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="eY8wQnuu3RZDiCQc"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:35618 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753497Ab3IWNvX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Sep 2013 09:51:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1379929545-27517-1-git-send-email-m.krawczuk@partner.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
-
-
---eY8wQnuu3RZDiCQc
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1379941608-5068-1-git-send-email-m.krawczuk-GrGkmOP51GdLN7c7dRTbYkEOCMrvLtNR@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mateusz Krawczuk <m.krawczuk-GrGkmOP51GdLN7c7dRTbYkEOCMrvLtNR@public.gmane.org>
+Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 23, 2013 at 11:45:45AM +0200, Mateusz Krawczuk wrote:
-> Add compatibles for s3c6410, s5pc100 and s5pc110/s5pv210 boards.
+Hi Mateusz,
 
->  static const struct of_device_id s3c64xx_spi_dt_match[] = {
-> +	{ .compatible = "samsung,s3c2443-spi",
-> +			.data = (void *)&s3c2443_spi_port_config,
-> +	},
-> +	{ .compatible = "samsung,s3c6410-spi",
-> +			.data = (void *)&s3c6410_spi_port_config,
-> +	},
+On Monday 23 of September 2013 15:06:48 Mateusz Krawczuk wrote:
+> This patch add clk and device tree nodes for samsung onenand driver.
+> 
+> since v1:
+> Updated Documentation according to Mark Rutland notes.
+> 
+> Signed-off-by: Mateusz Krawczuk <m.krawczuk-GrGkmOP51GdLN7c7dRTbYkEOCMrvLtNR@public.gmane.org>
+> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../devicetree/bindings/mtd/samsung-onenand.txt    | 44 ++++++++++++++++++++++
+>  drivers/mtd/onenand/samsung.c                      | 37 +++++++++++++++++-
+>  2 files changed, 80 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/mtd/samsung-onenand.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mtd/samsung-onenand.txt b/Documentation/devicetree/bindings/mtd/samsung-onenand.txt
+> new file mode 100644
+> index 0000000..5bf931c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mtd/samsung-onenand.txt
+> @@ -0,0 +1,44 @@
+> +Device tree bindings for Samsung Onenand
+> +
+> +Required properties:
+> +  - compatible: value should be either of the following.
+> +      (a) "samsung,s3c6400-onenand",
+> +		for onenand controller compatible with s3c6400.
+> +      (b) "samsung,s3c6410-onenand",
+> +		for onenand controller compatible with s3c6410.
+> +      (c) "samsung,s5pc100-onenand",
+> +		for onenand controller compatible with s5pc100.
+> +      (d) "samsung,s5pc110-onenand",
 
-This is missing s3c6400 and at least one other s3c24xx I think.  They
-can be added later though so applied, thanks.
+For consistency with other bindings, I would use s5pv210 here, even if
+existing driver code refers to it as s5pc110. Device tree bindings are
+independent from driver internals.
 
---eY8wQnuu3RZDiCQc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +      for s5pc100-like onenand controller used on s5pc110 which supports DMA.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+nit: inconsistent indentation of (d) case
 
-iQIcBAEBAgAGBQJSQEcvAAoJELSic+t+oim99NkQAJ3onBLT5qwGPqvgkTbHRguh
-j88tNPkcN6C/C82SwrVWOVQRByzhrqcoVbZP8xEXIPyHFjvPUJKCObi+/ztc3UHe
-9sMQ3hx2RcT5IQ3LLUSr993+deStRdu0Yc9MN4pHXJiYd9dclY7RCpAnHl6y8VKU
-BGDijajF/JkLREUSPfVvxq7whVrHrlmODow21zStGPUILmXXLVq8QOEyYrW06rB/
-HU7I8RSuuXhzUAbQzDw5th8+/ebWzwgJxdEzdx/6yHLK2lu0o6kEjB07vuoQ4Rt0
-PSqQ+hjm5BtRy8CfjJhwe34YFLrIGWJ/8igpaUI0u9qsmp7VaVCy6hTiGHzx7+j3
-492HmdGOC/H9WBiWufJSkssCrkSnAcVv9k3ML3/k/YCvKTxoAjgUXTig1u8p1QUB
-dZQ4Pf7QaLsdujjY97VriEw2G2A6116bQF/bERLhcH10sN1MRnSMQZpAoYr6cBp0
-vNZ9YGqtlg1CRBOZ/3ZPx51CgzVdDQafc3J8e3s4nXxy0fVVft8fqU5M3A6rvJOZ
-wHFJL6owMEOUkSPrP2mXxEZ54yBIrA3sk3t2ePzjPtn7uicoTV2o5GX2/Nu9p2Ab
-8Tw5Y5AudsWtt40ky5XKtycbAMeZ8h3eW+L81cjSgxW1cOiH+IVAyd94cWgUQ0ZP
-gi3h0QffMqzNwvvuaU+v
-=cNpF
------END PGP SIGNATURE-----
+nit2: each subsequent indentation level should use higher indentation:
 
---eY8wQnuu3RZDiCQc--
+	- compatible: value should be either of the following.
+		(a) "samsung,s3c6400-onenand",
+			for onenand controller compatible with s3c6400.
+
+> +
+> +Required properties for s5pc110:
+> +
+> + - reg: the offset and length of the control registers. First region describes
+> +	OneNAND interface, second control registers.
+> + - interrupt-parent, interrupts		Onenand memory interrupts
+
+Inconsistent formatting of property description. The reg property above
+used "property: description", while this one uses a single tab.
+
+Also please describe both properties separately and specify how many
+interrupts are required.
+
+> +
+> +Required properties for others:
+> +
+> + - reg: the offset and length of the control registers. First region describes
+> +	control registers, second OneNAND interface.
+> +
+> +Clocks:
+> + - gate - clock which output is supplied to external OneNAND flash memory.
+
+Inconsistent formatting of property description.
+
+> +
+> +
+> +For partiton table parsing (optional) please refer to:
+> + [1] Documentation/devicetree/bindings/mtd/partition.txt
+> +
+> +Example for an s5pv210 board:
+> +
+> +		onenand@b0000000 {
+> +			compatible = "samsung,s5pc110-onenand";
+> +			reg = <0xb0000000 0x20000>, <0xb0600000 0x2000>;
+> +			interrupt-parent = <&vic1>;
+> +			interrupts = <31>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			clocks = <&clocks NANDXL>;
+> +			clock-names = "gate";
+> +			status = "okay";
+
+This status property is not a part of this binding, so it can be safely
+dropped.
+
+> +		};
+> diff --git a/drivers/mtd/onenand/samsung.c b/drivers/mtd/onenand/samsung.c
+> index df7400d..5a2cc4b 100644
+> --- a/drivers/mtd/onenand/samsung.c
+> +++ b/drivers/mtd/onenand/samsung.c
+> @@ -14,6 +14,7 @@
+>   *	S5PC110: use DMA
+>   */
+>  
+> +#include <linux/clk.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/sched.h>
+> @@ -24,6 +25,7 @@
+>  #include <linux/dma-mapping.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/io.h>
+> +#include <linux/of.h>
+>  
+>  #include <asm/mach/flash.h>
+>  
+> @@ -133,6 +135,7 @@ enum soc_type {
+>  struct s3c_onenand {
+>  	struct mtd_info	*mtd;
+>  	struct platform_device	*pdev;
+> +	struct clk *gate;
+>  	enum soc_type	type;
+>  	void __iomem	*base;
+>  	struct resource *base_res;
+> @@ -859,6 +862,19 @@ static void s3c_onenand_setup(struct mtd_info *mtd)
+>  	this->write_bufferram = onenand_write_bufferram;
+>  }
+>  
+> +static const struct of_device_id onenand_s3c_dt_match[] = {
+> +	{ .compatible = "samsung,s3c6400-onenand",
+> +		.data = (void *)TYPE_S3C6400 },
+> +	{ .compatible = "samsung,s3c6410-onenand",
+> +		.data = (void *)TYPE_S3C6410 },
+> +	{ .compatible = "samsung,s5pc100-onenand",
+> +		.data = (void *)TYPE_S5PC100 },
+> +	{ .compatible = "samsung,s5pc110-onenand",
+> +		.data = (void *)TYPE_S5PC110 },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, onenand_s3c_dt_match);
+> +
+>  static int s3c_onenand_probe(struct platform_device *pdev)
+>  {
+>  	struct onenand_platform_data *pdata;
+> @@ -883,12 +899,26 @@ static int s3c_onenand_probe(struct platform_device *pdev)
+>  		goto onenand_fail;
+>  	}
+>  
+> +	onenand->gate = clk_get(&pdev->dev, "gate");
+
+You can use devm_clk_get() here to remove the need to explicitly put the
+clock at remove.
+
+> +	if (IS_ERR(onenand->gate))
+> +		return PTR_ERR(onenand->gate);
+> +	clk_prepare_enable(onenand->gate);
+> +
+
+This is a separate change that should be submitted as a separate patch.
+
+Also you need to add a clk_disable_unprepare() in error path at the
+bottom of this function.
+
+Best regards,
+Tomasz
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
