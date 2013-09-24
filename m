@@ -1,54 +1,107 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
+From: Tomasz Figa <t.figa@samsung.com>
 Subject: Re: [RFC/PATCH] spi: s3c64xx: Enable Word transfer
-Date: Tue, 24 Sep 2013 20:29:04 +0530
-Message-ID: <CAK9yfHyv4QHYPXpkPz5ikfRz_OOUry56jDsJppzUvSJVWaQ5qg@mail.gmail.com>
+Date: Tue, 24 Sep 2013 16:59:02 +0200
+Message-ID: <1555800.vSI857jMHi@amdc1227>
 References: <1380031235-4065-1-git-send-email-rajeshwari.s@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f50.google.com ([209.85.219.50]:42602 "EHLO
-	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754000Ab3IXO7F (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:61199 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754000Ab3IXO7Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Sep 2013 10:59:05 -0400
-Received: by mail-oa0-f50.google.com with SMTP id j1so2296856oag.9
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Sep 2013 07:59:05 -0700 (PDT)
-In-Reply-To: <1380031235-4065-1-git-send-email-rajeshwari.s@samsung.com>
+	Tue, 24 Sep 2013 10:59:16 -0400
+In-reply-to: <1380031235-4065-1-git-send-email-rajeshwari.s@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-spi@vger.kernel.org, sjg@chromium.org, Alim Akhtar <alim.akhtar@samsung.com>, Douglas Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, sjg@chromium.org, alim.akhtar@samsung.com, dianders@google.com, broonie@linaro.org
 
-+cc: Mark
+Hi Rajeshwari,
 
-On 24 September 2013 19:30, Rajeshwari S Shinde
-<rajeshwari.s@samsung.com> wrote:
+[Ccing Mark Brown]
+
+On Tuesday 24 of September 2013 19:30:35 Rajeshwari S Shinde wrote:
 > This patch enables word transfer for s3c64xx spi driver.
 > User can set bits_per_word to 32 before calling spi_setup,
 > which would enable the word transfer mode.
->
-> +       if(sdd->cur_bpw == 32) {
+> 
+> Signed-off-by: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
+> ---
+>  drivers/spi/spi-s3c64xx.c | 28 ++++++++++++++++++----------
+>  1 file changed, 18 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 512b889..893361b 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -498,6 +498,17 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+>  	chcfg = readl(regs + S3C64XX_SPI_CH_CFG);
+>  	chcfg &= ~S3C64XX_SPI_CH_TXCH_ON;
+>  
+> +	if(sdd->cur_bpw == 32) {
+> +		/* For word transfer we need to swap bytes */
+> +		u32 swapcfg = (S3C64XX_SPI_SWAP_TX_EN | S3C64XX_SPI_SWAP_TX_BYTE |
+> +				S3C64XX_SPI_SWAP_TX_HALF_WORD |
+> +				S3C64XX_SPI_SWAP_RX_EN |
+> +				S3C64XX_SPI_SWAP_RX_BYTE |
+> +				S3C64XX_SPI_SWAP_RX_HALF_WORD);
+> +		writel(swapcfg, regs + S3C64XX_SPI_SWAP_CFG);
 
-Space needed after if, else checkpatch will complain.
+Wasn't this driver already supposed to support 16 and 32 bits per word
+transfers? I fail to see any mention in the documentation about the need
+to enable these swaps in these cases.
 
-> +               /* For word transfer we need to swap bytes */
-> +               u32 swapcfg = (S3C64XX_SPI_SWAP_TX_EN | S3C64XX_SPI_SWAP_TX_BYTE |
-> +                               S3C64XX_SPI_SWAP_TX_HALF_WORD |
-> +                               S3C64XX_SPI_SWAP_RX_EN |
-> +                               S3C64XX_SPI_SWAP_RX_BYTE |
-> +                               S3C64XX_SPI_SWAP_RX_HALF_WORD);
-> +               writel(swapcfg, regs + S3C64XX_SPI_SWAP_CFG);
-> +       } else
-> +               writel(0, regs + S3C64XX_SPI_SWAP_CFG);
+In this case, wouldn't 16 bits per word transfers also need swapping?
 
-Braces necessary around else as the if block has it.
+> +	} else
+> +		writel(0, regs + S3C64XX_SPI_SWAP_CFG);
 
-> +               if (speed != sdd->cur_speed) {
-> +                       sdd->cur_speed = speed;
->                 }
+nit: Coding style. If you use braces for one branch, then you should use
+them for the other one as well.
 
-Braces are not necessary here.
+> +
+>  	if (dma_mode) {
+>  		chcfg &= ~S3C64XX_SPI_CH_RXCH_ON;
+>  	} else {
+> @@ -905,19 +916,16 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
+>  		bpw = xfer->bits_per_word;
+>  		speed = xfer->speed_hz ? : spi->max_speed_hz;
+>  
+> -		if (xfer->len % (bpw / 8)) {
+> -			dev_err(&spi->dev,
+> -				"Xfer length(%u) not a multiple of word size(%u)\n",
+> -				xfer->len, bpw / 8);
+> -			status = -EIO;
+> -			goto out;
 
--- 
-With warm regards,
-Sachin
+Why is this check removed in this patch?
+
+> +		if (speed != sdd->cur_speed) {
+> +			sdd->cur_speed = speed;
+
+This change does not seem to be related to $subject.
+
+>  		}
+>  
+> -		if (bpw != sdd->cur_bpw || speed != sdd->cur_speed) {
+> +		if (xfer->len % (bpw / 8))
+> +			sdd->cur_bpw = 8;
+> +		else
+>  			sdd->cur_bpw = bpw;
+> -			sdd->cur_speed = speed;
+> -			s3c64xx_spi_config(sdd);
+> -		}
+> +
+> +		s3c64xx_spi_config(sdd);
+
+Why s3c64xx_spi_config() can't be called only if one of the parameters
+changed, as it was before this patch?
+
+Best regards,
+Tomasz
+
+P.S. Please remember to always add respective maintainers on Cc. You can
+use scripts/get_maintainer.pl script to quickly get a list of people
+potentially interested in a patch.
