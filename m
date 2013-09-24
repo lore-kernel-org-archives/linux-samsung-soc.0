@@ -1,47 +1,76 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V2 1/6] clk: exynos-audss: convert to platform device
-Date: Tue, 24 Sep 2013 11:47:45 +0200
-Message-ID: <52415FC1.4070400@samsung.com>
-References: <1379711637-5226-1-git-send-email-abrestic@chromium.org>
- <1379982078-23381-1-git-send-email-abrestic@chromium.org>
- <3549301.xmRx49e0Zc@amdc1227>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS: fix PL330 MDMA1 address in DT for Universal
+ C210 board
+Date: Tue, 24 Sep 2013 19:38:13 +0900
+Message-ID: <000001ceb912$2df4a240$89dde6c0$%kim@samsung.com>
+References: <8667689.9TcYbn9cHO@amdc1032> <5328103.I4Op9muCR3@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <3549301.xmRx49e0Zc@amdc1227>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-doc@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Leela Krishna Amudala <l.krishna@samsung.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org, Rahul Sharma <rahul.sharma@samsung.com>, Jiri Kosina <jkosina@suse.cz>, Stephen Boyd <sboyd@codeaurora.org>, Doug Anderson <dianders@chromium.org>, Sachin Kamat <sachin.kamat@linaro>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:36805 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750771Ab3IXKiT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Sep 2013 06:38:19 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MTM000P0LJBJKG0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Sep 2013 19:38:17 +0900 (KST)
+In-reply-to: <5328103.I4Op9muCR3@amdc1032>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On 24/09/13 11:20, Tomasz Figa wrote:
->> +static int exynos_audss_clk_remove(struct platform_device *pdev)
->> +{
->> +	int i;
->> +
->> +	for (i = 0; i < EXYNOS_AUDSS_MAX_CLKS; i++) {
->> +		if (clk_table[i])
+Bartlomiej Zolnierkiewicz wrote:
 > 
-> I believe clk_register_* functions return ERR_PTR() in case of failure,
-> not NULL, so this should be accounted for either here or at probe time.
-> Possibly checking for registration error in probe() would be the best
-> solution, although bloating the code a bit (but what error path isn't?).
+> 
+> Hi Kukjin,
+> 
+Hi Bart,
 
-After registering all clocks a loop iterating over all entries of the
-clk_table[] array could be added and if any of the entries is ERR_PTR()
-either an error could be just logged or the successfully registered
-clocks could be freed and probe() could fail. It doesn't really seems
-much additional code.
+> Could you please apply this patch?
+> 
+Can you make sure there is no rev1 for universal c210 board?
 
---
-Thanks,
-Sylwester
+- Kukjin
+
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> On Tuesday, August 20, 2013 01:22:45 PM Bartlomiej Zolnierkiewicz wrote:
+> > Revision 0 of Exynos4210 SoC (used on Universal C210 board) requires
+> > 'secure' PL330 MDMA1 address (0x12840000) instead of 'non-secure' one
+> > (0x12850000). Fix it by overriding the default PL330 MDMA1 address in
+> > exynos4210-universal_c210.dts.
+> >
+> > This is a Device Tree (DT) version of commit 91280e7 ("ARM: EXYNOS:
+> > PL330 MDMA1 fix for revision 0 of Exynos4210 SOC") and fixes recent
+> > regression caused by conversion to DT-only setup on ARM EXYNOS.
+> >
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  arch/arm/boot/dts/exynos4210-universal_c210.dts | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> > index 889cdad..d2e3f5f 100644
+> > --- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> > +++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+> > @@ -350,3 +350,7 @@
+> >  		status = "okay";
+> >  	};
+> >  };
+> > +
+> > +&mdma1 {
+> > +	reg = <0x12840000 0x1000>;
+> > +};
