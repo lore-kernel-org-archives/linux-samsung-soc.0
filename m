@@ -1,160 +1,65 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH V3 2/6] clk: exynos-audss: allow input clocks to be specified
- in device tree
-Date: Tue, 24 Sep 2013 11:06:52 -0700
-Message-ID: <1380046016-5811-2-git-send-email-abrestic@chromium.org>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH V3 3/6] clk: exynos5250: add clock ID for div_pcm0
+Date: Tue, 24 Sep 2013 11:06:53 -0700
+Message-ID: <1380046016-5811-3-git-send-email-abrestic@chromium.org>
 References: <1379982078-23381-1-git-send-email-abrestic@chromium.org>
  <1380046016-5811-1-git-send-email-abrestic@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1380046016-5811-1-git-send-email-abrestic@chromium.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-samsung-soc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-doc@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, linux-kernel@vger.kernel.org, Tushar Behera <tushar.behera@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sachin Kamat <sachin.kamat@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <rob.herring@calxeda.com>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Rahul Sharma <rahul.sharma@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, Jiri Kosina <jkosina@suse.cz>, Stephen Boyd <sboyd@codeaurora.org>, Doug Anderson <dianders@chromium.org>, Leela Krishna Amudala <l.krishna@samsung.com>, Rob Landley <rob@landley.net>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380046016-5811-1-git-send-email-abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This allows the input clocks to the Exynos AudioSS block to be
-specified via device-tree bindings.  Default names will be used
-when an input clock is not given.
+There is no gate for the PCM clock input to the AudioSS block, so
+the parent of sclk_pcm is div_pcm0.  Add a clock ID for it so that
+we can reference it in device trees.
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
-Changes since v1:
- - listed input clocks as required properties
----
- .../devicetree/bindings/clock/clk-exynos-audss.txt | 32 ++++++++++++++++++++--
- drivers/clk/samsung/clk-exynos-audss.c             | 25 +++++++++++++----
- 2 files changed, 50 insertions(+), 7 deletions(-)
+ Documentation/devicetree/bindings/clock/exynos5250-clock.txt | 1 +
+ drivers/clk/samsung/clk-exynos5250.c                         | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-index 75e2e19..85b9e28 100644
---- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-+++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-@@ -14,6 +14,21 @@ Required Properties:
+diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+index 24765c1..67e9a47 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+@@ -62,6 +62,7 @@ clock which they consume.
+   div_i2s1		157
+   div_i2s2		158
+   sclk_hdmiphy		159
++  div_pcm0		160
  
- - #clock-cells: should be 1.
  
-+- clocks:
-+  - pll_ref: Fixed rate PLL reference clock, parent of mout_audss. "fin_pll"
-+    is used if not specified.
-+  - pll_in: Input PLL to the AudioSS block, parent of mout_audss. "fout_epll"
-+    is used if not specified.
-+  - cdclk: External i2s clock, parent of mout_i2s. "cdclk0" is used if not
-+    specified.
-+  - sclk_audio: Audio bus clock, parent of mout_i2s. "sclk_audio0" is used if
-+    not specified.
-+  - sclk_pcm_in: PCM clock, parent of sclk_pcm.  "sclk_pcm0" is used if not
-+    specified.
-+
-+- clock-names: Aliases for the above clocks. They should be "pll_ref",
-+  "pll_in", "cdclk", "sclk_audio", and "sclk_pcm_in" respectively.
-+
- The following is the list of clocks generated by the controller. Each clock is
- assigned an identifier and client nodes use this identifier to specify the
- clock which they consume. Some of the clocks are available only on a particular
-@@ -35,15 +50,28 @@ sclk_i2s        7
- pcm_bus         8
- sclk_pcm        9
+    [Peripheral Clock Gates]
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index adf3234..dec5376 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -108,7 +108,7 @@ enum exynos5250_clks {
+ 	sclk_mmc0, sclk_mmc1, sclk_mmc2, sclk_mmc3, sclk_sata, sclk_usb3,
+ 	sclk_jpeg, sclk_uart0, sclk_uart1, sclk_uart2, sclk_uart3, sclk_pwm,
+ 	sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
+-	div_i2s1, div_i2s2, sclk_hdmiphy,
++	div_i2s1, div_i2s2, sclk_hdmiphy, div_pcm0,
  
--Example 1: An example of a clock controller node is listed below.
-+Example 1: An example of a clock controller node using the default input
-+	   clock names is listed below.
-+
-+clock_audss: audss-clock-controller@3810000 {
-+	compatible = "samsung,exynos5250-audss-clock";
-+	reg = <0x03810000 0x0C>;
-+	#clock-cells = <1>;
-+};
-+
-+Example 2: An example of a clock controller node with the input clocks
-+           specified.
- 
- clock_audss: audss-clock-controller@3810000 {
- 	compatible = "samsung,exynos5250-audss-clock";
- 	reg = <0x03810000 0x0C>;
- 	#clock-cells = <1>;
-+	clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>,
-+		<&ext_i2s_clk>;
-+	clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in", "cdclk";
- };
- 
--Example 2: I2S controller node that consumes the clock generated by the clock
-+Example 3: I2S controller node that consumes the clock generated by the clock
-            controller. Refer to the standard clock bindings for information
-            about 'clocks' and 'clock-names' property.
- 
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 319c6e4..e7e800a 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -34,10 +34,6 @@ static unsigned long reg_save[][2] = {
- 	{ASS_CLK_GATE, 0},
- };
- 
--/* list of all parent clock list */
--static const char *mout_audss_p[] = { "fin_pll", "fout_epll" };
--static const char *mout_i2s_p[] = { "mout_audss", "cdclk0", "sclk_audio0" };
--
- #ifdef CONFIG_PM_SLEEP
- static int exynos_audss_clk_suspend(void)
- {
-@@ -68,6 +64,10 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- {
- 	int i, ret = 0;
- 	struct resource *res;
-+	const char *mout_audss_p[] = {"fin_pll", "fout_epll"};
-+	const char *mout_i2s_p[] = {"mout_audss", "cdclk0", "sclk_audio0"};
-+	const char *sclk_pcm_p = "sclk_pcm0";
-+	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg_base = devm_ioremap_resource(&pdev->dev, res);
-@@ -82,11 +82,23 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	if (!clk_table)
- 		return -ENOMEM;
- 
-+	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
-+	pll_in = devm_clk_get(&pdev->dev, "pll_in");
-+	if (!IS_ERR(pll_ref))
-+		mout_audss_p[0] = __clk_get_name(pll_ref);
-+	if (!IS_ERR(pll_in))
-+		mout_audss_p[1] = __clk_get_name(pll_in);
- 	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
- 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
- 				CLK_SET_RATE_NO_REPARENT,
- 				reg_base + ASS_CLK_SRC, 0, 1, 0, &lock);
- 
-+	cdclk = devm_clk_get(&pdev->dev, "cdclk");
-+	sclk_audio = devm_clk_get(&pdev->dev, "sclk_audio");
-+	if (!IS_ERR(cdclk))
-+		mout_i2s_p[1] = __clk_get_name(cdclk);
-+	if (!IS_ERR(sclk_audio))
-+		mout_i2s_p[2] = __clk_get_name(sclk_audio);
- 	clk_table[EXYNOS_MOUT_I2S] = clk_register_mux(NULL, "mout_i2s",
- 				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
- 				CLK_SET_RATE_NO_REPARENT,
-@@ -120,8 +132,11 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				 "sclk_pcm", CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 4, 0, &lock);
- 
-+	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
-+	if (!IS_ERR(sclk_pcm_in))
-+		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
- 	clk_table[EXYNOS_SCLK_PCM] = clk_register_gate(NULL, "sclk_pcm",
--				"div_pcm0", CLK_SET_RATE_PARENT,
-+				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
- 
- 	for (i = 0; i < EXYNOS_AUDSS_MAX_CLKS; i++) {
+ 	/* gate clocks */
+ 	gscl0 = 256, gscl1, gscl2, gscl3, gscl_wa, gscl_wb, smmu_gscl0,
+@@ -301,7 +301,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
+ 	DIV(none, "div_dp", "mout_dp", DIV_DISP1_0, 24, 4),
+ 	DIV(none, "div_jpeg", "mout_jpeg", DIV_GEN, 4, 4),
+ 	DIV(none, "div_audio0", "mout_audio0", DIV_MAU, 0, 4),
+-	DIV(none, "div_pcm0", "sclk_audio0", DIV_MAU, 4, 8),
++	DIV(div_pcm0, "div_pcm0", "sclk_audio0", DIV_MAU, 4, 8),
+ 	DIV(none, "div_sata", "mout_sata", DIV_FSYS0, 20, 4),
+ 	DIV(none, "div_usb3", "mout_usb3", DIV_FSYS0, 24, 4),
+ 	DIV(none, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
 -- 
 1.8.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
