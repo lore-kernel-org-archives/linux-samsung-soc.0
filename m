@@ -1,195 +1,136 @@
-From: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Subject: [PATCH v5 3/3] ARM: s5pv210: Migrate clock handling to Common Clock
- Framework
-Date: Tue, 24 Sep 2013 14:50:09 +0200
-Message-ID: <1380027009-2239-4-git-send-email-m.krawczuk@partner.samsung.com>
-References: <1380027009-2239-1-git-send-email-m.krawczuk@partner.samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1380027009-2239-1-git-send-email-m.krawczuk@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@sisk.pl, kgene.kim@samsung.com
-Cc: viresh.kumar@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, rob@landley.net, mturquette@linaro.org, tomasz.figa@gmail.com, thomas.abraham@linaro.org, s.nawrocki@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, t.stanislaws@samsung.com, m.szyprowski@samsung.com, b.zolnierkie@samsung.com, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2] MTD: Onenand: Add device tree support for samsung
+ onenand
+Date: Tue, 24 Sep 2013 15:00:01 +0200
+Message-ID: <2086340.RrXQX9ib0T@amdc1227>
+References: <1379941608-5068-1-git-send-email-m.krawczuk@partner.samsung.com>
+ <20130923140823.GC16069@e106331-lin.cambridge.arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20130923140823.GC16069-NuALmloUBlrZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Mateusz Krawczuk <m.krawczuk-GrGkmOP51GdLN7c7dRTbYkEOCMrvLtNR@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org" <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org" <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch migrates the s5pv210 platform to use new clock driver
-using Common Clock Framework.
+Hi Mateusz, Mark,
 
-Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-s5pv210/Kconfig         |  9 +++++++++
- arch/arm/mach-s5pv210/Makefile        |  4 ++--
- arch/arm/mach-s5pv210/common.c        | 17 +++++++++++++++++
- arch/arm/mach-s5pv210/common.h        | 10 ++++++++++
- arch/arm/mach-s5pv210/mach-goni.c     |  2 +-
- arch/arm/mach-s5pv210/mach-smdkv210.c |  2 +-
- arch/arm/plat-samsung/Kconfig         |  2 +-
- 7 files changed, 41 insertions(+), 5 deletions(-)
+On Monday 23 of September 2013 15:08:23 Mark Rutland wrote:
+> On Mon, Sep 23, 2013 at 02:06:48PM +0100, Mateusz Krawczuk wrote:
+> > +
+> > +Required properties:
+> > +  - compatible: value should be either of the following.
+> > +      (a) "samsung,s3c6400-onenand",
+> > +		for onenand controller compatible with s3c6400.
+> > +      (b) "samsung,s3c6410-onenand",
+> > +		for onenand controller compatible with s3c6410.
+> > +      (c) "samsung,s5pc100-onenand",
+> > +		for onenand controller compatible with s5pc100.
+> > +      (d) "samsung,s5pc110-onenand",
+> > +      for s5pc100-like onenand controller used on s5pc110 which supports DMA.
+> > +
+> 
+> As I asked on the last posting, what are the differences between these
+> implementations?
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index caaedaf..abad41f 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -11,6 +11,7 @@ if ARCH_S5PV210
- 
- config CPU_S5PV210
- 	bool
-+	select S5P_CLOCK if !COMMON_CLK
- 	select S5P_EXT_INT
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
-@@ -69,6 +70,14 @@ config S5PV210_SETUP_USB_PHY
- 	help
- 	  Common setup code for USB PHY controller
- 
-+config COMMON_CLK_S5PV210
-+	bool "Common Clock Framework support"
-+	default y
-+	select COMMON_CLK
-+	help
-+	  Enable this option to use new clock driver
-+	  based on Common Clock Framework.
-+
- menu "S5PC110 Machines"
- 
- config MACH_AQUILA
-diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
-index 1c4e419..0c67fe2 100644
---- a/arch/arm/mach-s5pv210/Makefile
-+++ b/arch/arm/mach-s5pv210/Makefile
-@@ -12,8 +12,8 @@ obj-				:=
- 
- # Core
- 
--obj-y				+= common.o clock.o
--
-+obj-y					+= common.o
-+obj-$(CONFIG_S5P_CLOCK)			+= clock.o
- obj-$(CONFIG_PM)		+= pm.o
- 
- obj-y				+= dma.o
-diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/common.c
-index 26027a2..48ce5f8 100644
---- a/arch/arm/mach-s5pv210/common.c
-+++ b/arch/arm/mach-s5pv210/common.c
-@@ -24,6 +24,7 @@
- #include <linux/sched.h>
- #include <linux/dma-mapping.h>
- #include <linux/serial_core.h>
-+#include <linux/of.h>
- 
- #include <asm/proc-fns.h>
- #include <asm/mach/arch.h>
-@@ -34,7 +35,13 @@
- #include <mach/regs-clock.h>
- 
- #include <plat/cpu.h>
-+
-+#ifdef CONFIG_S5P_CLOCK
- #include <plat/clock.h>
-+#else
-+#include <linux/clk-provider.h>
-+#endif
-+
- #include <plat/devs.h>
- #include <plat/sdhci.h>
- #include <plat/adc-core.h>
-@@ -50,6 +57,9 @@
- 
- #include "common.h"
- 
-+/* External clock frequency */
-+static unsigned long xusbxti_f;
-+
- static const char name_s5pv210[] = "S5PV210/S5PC110";
- 
- static struct cpu_table cpu_ids[] __initdata = {
-@@ -229,12 +239,16 @@ void __init s5pv210_map_io(void)
- 
- void __init s5pv210_init_clocks(int xtal)
- {
-+#ifdef CONFIG_S5P_CLOCK
- 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
- 
- 	s3c24xx_register_baseclocks(xtal);
- 	s5p_register_clocks(xtal);
- 	s5pv210_register_clocks();
- 	s5pv210_setup_clocks();
-+#else
-+	xusbxti_f = xtal;
-+#endif
- }
- 
- void __init s5pv210_init_irq(void)
-@@ -248,6 +262,9 @@ void __init s5pv210_init_irq(void)
- 	vic[3] = ~0;
- 
- 	s5p_init_irq(vic, ARRAY_SIZE(vic));
-+
-+	if (!of_have_populated_dt())
-+		s5pv210_clk_init(NULL, 0, xusbxti_f, S3C_VA_SYS);
- }
- 
- struct bus_type s5pv210_subsys = {
-diff --git a/arch/arm/mach-s5pv210/common.h b/arch/arm/mach-s5pv210/common.h
-index fe1beb5..cf3136a 100644
---- a/arch/arm/mach-s5pv210/common.h
-+++ b/arch/arm/mach-s5pv210/common.h
-@@ -14,6 +14,16 @@
- 
- #include <linux/reboot.h>
- 
-+#ifdef CONFIG_COMMON_CLK_S5PV210
-+void s5pv210_clk_init(struct device_node *np,
-+			    unsigned long xxti_f, unsigned long xusbxti_f,
-+			    void __iomem *reg_base);
-+#else
-+static inline void s5pv210_clk_init(struct device_node *np,
-+			    unsigned long xxti_f, unsigned long xusbxti_f,
-+			    void __iomem *reg_base) {}
-+#endif
-+
- void s5pv210_init_io(struct map_desc *mach_desc, int size);
- void s5pv210_init_irq(void);
- 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 282d714..4c9681b 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -966,7 +966,7 @@ static void __init goni_sound_init(void)
- static void __init goni_map_io(void)
- {
- 	s5pv210_init_io(NULL, 0);
--	s3c24xx_init_clocks(clk_xusbxti.rate);
-+	s3c24xx_init_clocks(24000000);
- 	s3c24xx_init_uarts(goni_uartcfgs, ARRAY_SIZE(goni_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM3, SAMSUNG_PWM4);
- }
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index 6d72bb99..f13aa99 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -284,7 +284,7 @@ static struct platform_pwm_backlight_data smdkv210_bl_data = {
- static void __init smdkv210_map_io(void)
- {
- 	s5pv210_init_io(NULL, 0);
--	s3c24xx_init_clocks(clk_xusbxti.rate);
-+	s3c24xx_init_clocks(24000000);
- 	s3c24xx_init_uarts(smdkv210_uartcfgs, ARRAY_SIZE(smdkv210_uartcfgs));
- 	samsung_set_timer_source(SAMSUNG_PWM2, SAMSUNG_PWM4);
- }
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 7dfba93..2a98613 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -91,7 +91,7 @@ config SAMSUNG_CLKSRC
- 	  used by newer systems such as the S3C64XX.
- 
- config S5P_CLOCK
--	def_bool (ARCH_S5P64X0 || ARCH_S5PC100 || ARCH_S5PV210)
-+	def_bool (ARCH_S5P64X0 || ARCH_S5PC100)
- 	help
- 	  Support common clock part for ARCH_S5P and ARCH_EXYNOS SoCs
- 
--- 
-1.8.1.2
+(d) is a completely different controller than (a), (b) and (c). They
+have completely different register layouts. Also see below.
+
+> > +Required properties for s5pc110:
+> > +
+> > + - reg: the offset and length of the control registers. First region describes
+> > +	OneNAND interface, second control registers.
+> 
+> Also, the complete reg description is a bit confusing. How about
+> something like:
+> 
+>  - reg: two register specifiers:
+>         [0] - The OneNAND interface
+> 	[1] - The control registers
+
+This looks much better, although I wouldn't be afraid of using words
+instead of symbols to write this as follows instead:
+
+  - reg: two memory mapped register regions:
+    - first entry: memory mapped OneNAND chip,
+    - second entry: control registers.
+
+But... The controller in theory supports more than one OneNAND chip, each
+mapped at different, so I'd suggest reordering the entries:
+
+  - reg: memory mapped register regions:
+    - first entry: control registers.
+    - second entry: memory mapped OneNAND chip 0,
+    - ...
+    - Nth entry: memory mapped OneNAND chip (N-2).
+
+> Do we expect future OneNAND devices which may require more reg entries
+> to describe?
+
+Nope. In age of eMMC I wouldn't even expect any new OneNAND controller
+to be handled by these bindings.
+
+> > + - interrupt-parent, interrupts		Onenand memory interrupts
+> 
+> As it's a common property, I don't think interrupt-parent needs to
+> be described.
+> 
+> Is there more than one interrupt? What's it called on the manual?
+
+There is one interrupt per OneNAND chip, so this is what should be
+represented in the binding.
+
+> > +
+> > +Required properties for others:
+> > +
+> > + - reg: the offset and length of the control registers. First region describes
+> > +	control registers, second OneNAND interface.
+> 
+> Why does the s5pc110 OneNAND binding take its registers in the opposite
+> order to the rest of these? Can we not fix up the driver first to make
+> it consistent? Then we only need to describe this once and it's going to
+> be far less of a headache to support.
+
+Both areas in both "major" hardware variants have completely different
+meaning:
+ - in case of SoCs earlier or equal to S5PC100, first entry represents
+   controller registers that are used to control various operating
+   parameters, while second entry is a command/data interface, which is
+   used to trigger read/write/etc. operations in the controller and
+   push/pull data through it. In this variant there is no direct mapping
+   of OneNAND chip in CPU address space. This variant supports only
+   one memory chip per controller instance,
+ - in case of S5PC110, each OneNAND chip is directly mapped into CPU
+   address space. In addition there is a block of control registers that
+   are used to configure the interface and control internal DMA engine
+   (which is not present in <= S5PC100 variants). This variant supports
+   multiple memory chips per controller instance (2 in case of S5PV210,
+   but current driver handles only one AFAIK).
+
+> > +
+> > +Clocks:
+> > + - gate - clock which output is supplied to external OneNAND flash memory.
+> 
+> How about the following (without the Clocks header):
+> 
+> - clocks: clock-specifiers for the clocks named in clock-names, per the
+>           common clock bindings.
+> 
+> - clock-names: should contain "gate" for the clock to the OneNAND flash
+>                memory.
+> 
+> Is this the only clock that might be necessary on all platforms?
+
+S3C64xx SoCs have only one OneNAND gate clock per controller.
+S5PC100 SoC has one IP gate clock and one memory chip gate clock.
+S5PC110 SoC has one gate that gates both IP and all memory chips.
+
+Best regards,
+Tomasz
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
