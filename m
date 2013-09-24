@@ -1,152 +1,117 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH 2/6] thermal: exynos: Provide separate TMU data for Exynos4412
-Date: Tue, 24 Sep 2013 10:08:18 +0200
-Message-ID: <1380010102-25817-3-git-send-email-l.majewski@samsung.com>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 00/10] pwm-backlight: Add GPIO and power supply support
+Date: Tue, 24 Sep 2013 17:14:46 +0900
+Message-ID: <20130924081446.GA11981@verge.net.au>
+References: <1379972467-11243-1-git-send-email-treding@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44855 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751083Ab3IXIIq (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:48091 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750730Ab3IXIOt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Sep 2013 04:08:46 -0400
-In-reply-to: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+	Tue, 24 Sep 2013 04:14:49 -0400
+Content-Disposition: inline
+In-Reply-To: <1379972467-11243-1-git-send-email-treding@nvidia.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tony Lindgren <tony@atomide.com>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, openezx-devel@lists.openezx.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@deeprootsystems.com>, Arnd Bergmann <arnd@arndb.de>
 
-Up till now Exynos5250 and Exynos4412 had the same definitions for TMU
-data. Following commit changes that, by introducing separate
-exynos4412_default_tmu_data structure.
+[ Cc: Olof Johansson, Kevin Hilman and Arnd Bergman: arm-soc maintainers ]
 
-Since Exynos4412 was chronologically first, the corresponding name for
-TMU registers and default data was renamed.
+On Mon, Sep 23, 2013 at 11:40:57PM +0200, Thierry Reding wrote:
+> This series adds the ability to specify a GPIO and a power supply to
+> enable a backlight.
+> 
+> Patch 1 refactors the power on and power off sequences into separate
+> functions in preparation for subsequent patches.
+> 
+> Patch 2 adds an optional GPIO to enable a backlight. This patch only
+> includes the field within the platform data so that it can be properly
+> setup before actually being put to use.
+> 
+> Patches 3 to 7 convert all users of the pwm-backlight driver to use the
+> new field. For most of them, this just initializes the field to -1,
+> marking the field as unused.
+>
+> Patch 8 uses the new field within the pwm-backlight driver and at the
+> same time allows it to be parsed from device tree.
+> 
+> Patch 9 implements support for an optional power supply. This relies on
+> the regulator core to return a dummy regulator when no supply has been
+> otherwise setup so the driver doesn't have to handle that specially nor
+> require all users to be updated.
+> 
+> Patch 10 adds a way to keep a backlight turned off at boot. This is
+> useful when hooking up a backlight with a subsystem such as DRM which
+> has more explicit semantics as to when a backlight should be turned on.
+> 
+> Due to the dependencies within the series, I propose to take all these
+> patches through the PWM tree, so I'll need acks from OMAP, PXA, Samsung,
+> shmobile and Unicore32 maintainers.
 
-Additionally, new SOC_ARCH_EXYNOS4412 type has been defined.
+I received some feedback regarding shmobile conflicts when
+arm-soc was merged between v3.11 and v3.12-rc1. With this
+in mind I now have a strong preference for changes inside
+arch/arm/mach-shmobile/ to be taken through my renesas
+tree and thus more importantly through arm-soc if possible.
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c      |    7 ++++---
- drivers/thermal/samsung/exynos_tmu.h      |    1 +
- drivers/thermal/samsung/exynos_tmu_data.c |   26 ++++++++++++++++++++------
- drivers/thermal/samsung/exynos_tmu_data.h |    9 ++++++++-
- 4 files changed, 33 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index b43afda..a858cc4 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -488,7 +488,7 @@ static const struct of_device_id exynos_tmu_match[] = {
- 	},
- 	{
- 		.compatible = "samsung,exynos4412-tmu",
--		.data = (void *)EXYNOS5250_TMU_DRV_DATA,
-+		.data = (void *)EXYNOS4412_TMU_DRV_DATA,
- 	},
- 	{
- 		.compatible = "samsung,exynos5250-tmu",
-@@ -630,8 +630,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	if (pdata->type == SOC_ARCH_EXYNOS ||
--		pdata->type == SOC_ARCH_EXYNOS4210 ||
--				pdata->type == SOC_ARCH_EXYNOS5440)
-+	    pdata->type == SOC_ARCH_EXYNOS4210 ||
-+	    pdata->type == SOC_ARCH_EXYNOS4412 ||
-+	    pdata->type == SOC_ARCH_EXYNOS5440)
- 		data->soc = pdata->type;
- 	else {
- 		ret = -EINVAL;
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index b364c9e..db37df0 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -41,6 +41,7 @@ enum calibration_mode {
- 
- enum soc_type {
- 	SOC_ARCH_EXYNOS4210 = 1,
-+	SOC_ARCH_EXYNOS4412,
- 	SOC_ARCH_EXYNOS,
- 	SOC_ARCH_EXYNOS5440,
- };
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index 9002499..bd08093 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -90,8 +90,8 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
- };
- #endif
- 
--#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
--static const struct exynos_tmu_registers exynos5250_tmu_registers = {
-+#if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
-+static const struct exynos_tmu_registers exynos4412_tmu_registers = {
- 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
- 	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
- 	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-@@ -128,7 +128,7 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
- 	.emul_time_mask = EXYNOS_EMUL_TIME_MASK,
- };
- 
--#define EXYNOS5250_TMU_DATA \
-+#define EXYNOS4412_TMU_DATA \
- 	.threshold_falling = 10, \
- 	.trigger_levels[0] = 85, \
- 	.trigger_levels[1] = 103, \
-@@ -162,15 +162,29 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
- 		.temp_level = 103, \
- 	}, \
- 	.freq_tab_count = 2, \
--	.type = SOC_ARCH_EXYNOS, \
--	.registers = &exynos5250_tmu_registers, \
-+	.registers = &exynos4412_tmu_registers, \
- 	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
- 			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
- 			TMU_SUPPORT_EMUL_TIME)
-+#endif
- 
-+#if defined(CONFIG_SOC_EXYNOS4412)
-+struct exynos_tmu_init_data const exynos4412_default_tmu_data = {
-+	.tmu_data = {
-+		{ EXYNOS4412_TMU_DATA,
-+		.type = SOC_ARCH_EXYNOS4412,
-+		},
-+	},
-+	.tmu_count = 1,
-+};
-+#endif
-+
-+#if defined(CONFIG_SOC_EXYNOS5250)
- struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
- 	.tmu_data = {
--		{ EXYNOS5250_TMU_DATA },
-+		{ EXYNOS4412_TMU_DATA,
-+		.type = SOC_ARCH_EXYNOS,
-+		},
- 	},
- 	.tmu_count = 1,
- };
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-index dc7feb5..b130b1e 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.h
-+++ b/drivers/thermal/samsung/exynos_tmu_data.h
-@@ -138,7 +138,14 @@ extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
- #define EXYNOS4210_TMU_DRV_DATA (NULL)
- #endif
- 
--#if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))
-+#if defined(CONFIG_SOC_EXYNOS4412)
-+extern struct exynos_tmu_init_data const exynos4412_default_tmu_data;
-+#define EXYNOS4412_TMU_DRV_DATA (&exynos4412_default_tmu_data)
-+#else
-+#define EXYNOS4412_TMU_DRV_DATA (NULL)
-+#endif
-+
-+#if defined(CONFIG_SOC_EXYNOS5250)
- extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
- #define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
- #else
--- 
-1.7.10.4
+> Thierry
+> 
+> Thierry Reding (10):
+>   pwm-backlight: Refactor backlight power on/off
+>   pwm-backlight: Add optional enable GPIO
+>   ARM: OMAP: Initialize PWM backlight enable_gpio field
+>   ARM: pxa: Initialize PWM backlight enable_gpio field
+>   ARM: SAMSUNG: Initialize PWM backlight enable_gpio field
+>   ARM: shmobile: Initialize PWM backlight enable_gpio field
+>   unicore32: Initialize PWM backlight enable_gpio field
+>   pwm-backlight: Use new enable_gpio field
+>   pwm-backlight: Use an optional power supply
+>   pwm-backlight: Allow backlight to remain disabled on boot
+> 
+>  .../bindings/video/backlight/pwm-backlight.txt     |   6 +
+>  arch/arm/mach-omap2/board-zoom-peripherals.c       |   1 +
+>  arch/arm/mach-pxa/cm-x300.c                        |   1 +
+>  arch/arm/mach-pxa/colibri-pxa270-income.c          |   1 +
+>  arch/arm/mach-pxa/ezx.c                            |   1 +
+>  arch/arm/mach-pxa/hx4700.c                         |   1 +
+>  arch/arm/mach-pxa/lpd270.c                         |   1 +
+>  arch/arm/mach-pxa/magician.c                       |   1 +
+>  arch/arm/mach-pxa/mainstone.c                      |   1 +
+>  arch/arm/mach-pxa/mioa701.c                        |   1 +
+>  arch/arm/mach-pxa/palm27x.c                        |   1 +
+>  arch/arm/mach-pxa/palmtc.c                         |  35 +----
+>  arch/arm/mach-pxa/palmte2.c                        |   1 +
+>  arch/arm/mach-pxa/pcm990-baseboard.c               |   1 +
+>  arch/arm/mach-pxa/raumfeld.c                       |   1 +
+>  arch/arm/mach-pxa/tavorevb.c                       |   2 +
+>  arch/arm/mach-pxa/viper.c                          |   1 +
+>  arch/arm/mach-pxa/z2.c                             |   2 +
+>  arch/arm/mach-pxa/zylonite.c                       |   1 +
+>  arch/arm/mach-s3c24xx/mach-h1940.c                 |   1 +
+>  arch/arm/mach-s3c24xx/mach-rx1950.c                |   1 +
+>  arch/arm/mach-s3c64xx/mach-crag6410.c              |   1 +
+>  arch/arm/mach-s3c64xx/mach-hmt.c                   |   1 +
+>  arch/arm/mach-s3c64xx/mach-smartq.c                |   1 +
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c              |   1 +
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c              |   1 +
+>  arch/arm/mach-s5p64x0/mach-smdk6450.c              |   1 +
+>  arch/arm/mach-s5pc100/mach-smdkc100.c              |   1 +
+>  arch/arm/mach-s5pv210/mach-smdkv210.c              |   1 +
+>  arch/arm/mach-shmobile/board-armadillo800eva.c     |   1 +
+>  arch/arm/plat-samsung/dev-backlight.c              |   5 +
+>  arch/unicore32/kernel/puv3-nb0916.c                |   1 +
+>  drivers/video/backlight/pwm_bl.c                   | 142 ++++++++++++++++-----
+>  include/linux/pwm_backlight.h                      |   7 +
+>  34 files changed, 162 insertions(+), 64 deletions(-)
+> 
+> -- 
+> 1.8.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
