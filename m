@@ -1,55 +1,85 @@
-From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 1/6] clk: exynos-audss: convert to platform device
-Date: Wed, 25 Sep 2013 00:31:25 +0200
-Message-ID: <524212BD.9070204@gmail.com>
-References: <1379982078-23381-1-git-send-email-abrestic@chromium.org> <1380046016-5811-1-git-send-email-abrestic@chromium.org> <524200FB.8010004@gmail.com> <CAL1qeaEpu=YRasZpSvrCTNwC6OGWZgECjwDSFgkAN07eWObmrg@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 00/10] pwm-backlight: Add GPIO and power supply support
+Date: Wed, 25 Sep 2013 14:39:22 +0900
+Message-ID: <20130925053922.GE1916@verge.net.au>
+References: <1379972467-11243-1-git-send-email-treding@nvidia.com>
+ <20130924081446.GA11981@verge.net.au>
+ <20130924090023.GA13971@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL1qeaEpu=YRasZpSvrCTNwC6OGWZgECjwDSFgkAN07eWObmrg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jiri Kosina <jkosina-AlSwsSmVLrQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:45167 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750772Ab3IYFjZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Sep 2013 01:39:25 -0400
+Content-Disposition: inline
+In-Reply-To: <20130924090023.GA13971@ulmo>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tony Lindgren <tony@atomide.com>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, openezx-devel@lists.openezx.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@deeprootsystems.com>, Arnd Bergmann <arnd@arndb.de>
 
-On 09/25/2013 12:12 AM, Andrew Bresticker wrote:
->>> +static int exynos_audss_clk_remove(struct platform_device *pdev)
->>> +{
->>> +       int i;
->>> +
->>> +       of_clk_del_provider(pdev->dev.of_node);
->>> +
->>> +       for (i = 0; i<   EXYNOS_AUDSS_MAX_CLKS; i++) {
->>> +               if (!IS_ERR_OR_NULL(clk_table[i]))
->>> +                       clk_unregister(clk_table[i]);
->>> +       }
->>
->>
->> Since we only get here if all the clocks are registered properly and we
->> always register EXYNOS_AUDSS_MAX_CLKS clocks, couldn't this simply be:
->>
->>
->>          for (i = 0; i<  EXYNOS_AUDSS_MAX_CLKS; i++)
->>                  clk_unregister(clk_table[i]);
->>
->> ?
->
-> Once support is added for Exynos5420, we won't always register
-> EXYNOS_AUDSS_MAX_CLKS clocks, so we'd still need the NULL check.
+On Tue, Sep 24, 2013 at 11:00:24AM +0200, Thierry Reding wrote:
+> On Tue, Sep 24, 2013 at 05:14:46PM +0900, Simon Horman wrote:
+> > [ Cc: Olof Johansson, Kevin Hilman and Arnd Bergman: arm-soc maintainers ]
+> > 
+> > On Mon, Sep 23, 2013 at 11:40:57PM +0200, Thierry Reding wrote:
+> > > This series adds the ability to specify a GPIO and a power supply to
+> > > enable a backlight.
+> > > 
+> > > Patch 1 refactors the power on and power off sequences into separate
+> > > functions in preparation for subsequent patches.
+> > > 
+> > > Patch 2 adds an optional GPIO to enable a backlight. This patch only
+> > > includes the field within the platform data so that it can be properly
+> > > setup before actually being put to use.
+> > > 
+> > > Patches 3 to 7 convert all users of the pwm-backlight driver to use the
+> > > new field. For most of them, this just initializes the field to -1,
+> > > marking the field as unused.
+> > >
+> > > Patch 8 uses the new field within the pwm-backlight driver and at the
+> > > same time allows it to be parsed from device tree.
+> > > 
+> > > Patch 9 implements support for an optional power supply. This relies on
+> > > the regulator core to return a dummy regulator when no supply has been
+> > > otherwise setup so the driver doesn't have to handle that specially nor
+> > > require all users to be updated.
+> > > 
+> > > Patch 10 adds a way to keep a backlight turned off at boot. This is
+> > > useful when hooking up a backlight with a subsystem such as DRM which
+> > > has more explicit semantics as to when a backlight should be turned on.
+> > > 
+> > > Due to the dependencies within the series, I propose to take all these
+> > > patches through the PWM tree, so I'll need acks from OMAP, PXA, Samsung,
+> > > shmobile and Unicore32 maintainers.
+> > 
+> > I received some feedback regarding shmobile conflicts when
+> > arm-soc was merged between v3.11 and v3.12-rc1. With this
+> > in mind I now have a strong preference for changes inside
+> > arch/arm/mach-shmobile/ to be taken through my renesas
+> > tree and thus more importantly through arm-soc if possible.
+> 
+> I understand. Unfortunately the nature of patche series such as this is
+> that they require the whole series to be applied atomically (or at least
+> in a very specific order). So the patch that uses the new enable_gpio
+> field can only be applied after all previous patches. The only
+> reasonable way to ensure that is to take all of the patches through one
+> tree. Furthermore this patch is tiny (it adds a single line) and touches
+> code that's unlikely to be modified by anyone else.
+> 
+> But if it makes you more comfortable, I could provide a stable branch
+> that contains this series for you to merge into the shmobile tree. That
+> should enable you to handle all conflict resolution prior to submitting
+> to arm-soc.
 
-Then couldn't you use clk_data.clk_num in this loop instead of
-EXYNOS_AUDSS_MAX_CLKS ? What I'm trying to avoid is assuming NULL as
-an invalid clock. It's not correct, clock pointers should be only tested
-with ERR_PTR(). Alternatively you could set the whole clk_table array to,
-e.g. ERR_PTR(-EINVAL) beforehand, but that shouldn't be necessary when
-clk_data.clk_num is used, unless there are holes in the array.
+After some further thought I have reasoned that:
 
---
-Regards,
-Sylwester
+1. It is only a one line change on the shmobile side
+2. It is to a file that is not seeing much chainge and in
+   a block of code that is seeing even less change.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+And thus the chance of a conflict is small.
+
+With this in mind I will ack the shmobile patch.
