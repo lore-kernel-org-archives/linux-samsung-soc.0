@@ -1,80 +1,117 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH RESEND REGRESSION] ARM: dts: exynos4210: Work around lack of
- cpufreq regulator lookup
-Date: Wed, 25 Sep 2013 16:10:06 +0200
-Message-ID: <1547192.40oE87agjP@amdc1227>
-References: <1377020136-14838-1-git-send-email-t.figa@samsung.com>
- <2243476.800bKojdAz@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Ming Lei <tom.leiming@gmail.com>
+Subject: [PATCH] clockevent: exynos_mct: fix lockdep warning
+Date: Wed, 25 Sep 2013 22:49:38 +0800
+Message-ID: <1380120578-17458-1-git-send-email-tom.leiming@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:46004 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755270Ab3IYOKU (ORCPT
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:40069 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755962Ab3IYOuB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Sep 2013 10:10:20 -0400
-In-reply-to: <2243476.800bKojdAz@amdc1227>
+	Wed, 25 Sep 2013 10:50:01 -0400
+Received: by mail-pd0-f172.google.com with SMTP id z10so6183905pdj.31
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Sep 2013 07:50:00 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Kumar Gala <galak@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Ming Lei <tom.leiming@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Exynos cpufreq drivers does not support device tree based regulator
-lookup, so it can get the VDD ARM regulator only by its name. To get
-cpufreq working for now, this patch works this around by renaming the
-regulator in board dts files to vdd_arm, which is the name expected by
-the driver.
+This patch moves request_irq() out of cpu notifier callback
+to fix below lockdep warning:
 
-This fixes a regression introduced by dropping support of board file
-based bootup of Exynos 4210 boards that rendered cpufreq inoperable on
-Trats and Origen boards.
+[    0.249513] ------------[ cut here ]------------
+[    0.249525] WARNING: CPU: 1 PID: 0 at kernel/lockdep.c:2740 lockdep_trace_alloc+0xc8/0x10c()
+[    0.249534] DEBUG_LOCKS_WARN_ON(irqs_disabled_flags(flags))
+[    0.249538] Modules linked in:
+[    0.249548] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.12.0-rc1-next-20130923+ #338
+[    0.249564] [<c00165d0>] (unwind_backtrace+0x0/0xec) from [<c0012b48>] (show_stack+0x20/0x24)
+[    0.249577] [<c0012b48>] (show_stack+0x20/0x24) from [<c04ebf0c>] (dump_stack+0x74/0xb4)
+[    0.249591] [<c04ebf0c>] (dump_stack+0x74/0xb4) from [<c00237a8>] (warn_slowpath_common+0x78/0x9c)
+[    0.249604] [<c00237a8>] (warn_slowpath_common+0x78/0x9c) from [<c0023888>] (warn_slowpath_fmt+0x40/0x48)
+[    0.249615] [<c0023888>] (warn_slowpath_fmt+0x40/0x48) from [<c007f194>] (lockdep_trace_alloc+0xc8/0x10c)
+[    0.249626] [<c007f194>] (lockdep_trace_alloc+0xc8/0x10c) from [<c01173b0>] (kmem_cache_alloc_trace+0x38/0x2
+24)
+[    0.249638] [<c01173b0>] (kmem_cache_alloc_trace+0x38/0x224) from [<c006bc4c>] (request_threaded_irq+0x90/0x130)
+[    0.249651] [<c006bc4c>] (request_threaded_irq+0x90/0x130) from [<c0408c60>] (exynos4_local_timer_setup+0xdc/0x140)
+[    0.249663] [<c0408c60>] (exynos4_local_timer_setup+0xdc/0x140) from [<c0408d78>] (exynos4_mct_cpu_notify+0x40/0xb0)
+[    0.249675] [<c0408d78>] (exynos4_mct_cpu_notify+0x40/0xb0) from [<c04f4e18>] (notifier_call_chain+0x48/0x78)
+[    0.249688] [<c04f4e18>] (notifier_call_chain+0x48/0x78) from [<c004abb0>] (__raw_notifier_call_chain+0x24/0x2c)
+[    0.249700] [<c004abb0>] (__raw_notifier_call_chain+0x24/0x2c) from [<c0023908>] (__cpu_notify+0x3c/0x58)
+[    0.249713] [<c0023908>] (__cpu_notify+0x3c/0x58) from [<c0023944>] (cpu_notify+0x20/0x24)
+[    0.249725] [<c0023944>] (cpu_notify+0x20/0x24) from [<c002407c>] (notify_cpu_starting+0x58/0x60)
+[    0.249737] [<c002407c>] (notify_cpu_starting+0x58/0x60) from [<c00143cc>] (secondary_start_kernel+0xec/0x13
+8)
+[    0.249748] [<c00143cc>] (secondary_start_kernel+0xec/0x138) from [<40008664>] (0x40008664)
+[    0.249767] ---[ end trace 3406ff24bd97382e ]---
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Ming Lei <tom.leiming@gmail.com>
 ---
- arch/arm/boot/dts/exynos4210-origen.dts | 7 ++++++-
- arch/arm/boot/dts/exynos4210-trats.dts  | 7 ++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ drivers/clocksource/exynos_mct.c |   34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
 
-Resending again, since my mail client previously freaked out and reset
-message format to HTML...
-
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 382d8c7..46378fe 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -192,7 +192,12 @@
- 				};
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 5b34768..94b35aa 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -419,19 +419,10 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
  
- 				buck1_reg: BUCK1 {
--					regulator-name = "VDD_ARM_1.2V";
-+					/*
-+					* HACK: The real name is VDD_ARM_1.2V,
-+					* but exynos-cpufreq does not support
-+					* DT-based regulator lookup yet.
-+					*/
-+					regulator-name = "vdd_arm";
- 					regulator-min-microvolt = <950000>;
- 					regulator-max-microvolt	= <1350000>;
- 					regulator-always-on;
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 1c164f2..63cc571 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -290,7 +290,12 @@
- 				};
+ 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
  
- 				varm_breg: BUCK1 {
--				     regulator-name = "VARM_1.2V_C210";
-+				     /*
-+				      * HACK: The real name is VARM_1.2V_C210,
-+				      * but exynos-cpufreq does not support
-+				      * DT-based regulator lookup yet.
-+				      */
-+				     regulator-name = "vdd_arm";
- 				     regulator-min-microvolt = <900000>;
- 				     regulator-max-microvolt = <1350000>;
- 				     regulator-always-on;
+-	if (mct_int_type == MCT_INT_SPI) {
+-		evt->irq = mct_irqs[MCT_L0_IRQ + cpu];
+-		if (request_irq(evt->irq, exynos4_mct_tick_isr,
+-				IRQF_TIMER | IRQF_NOBALANCING,
+-				evt->name, mevt)) {
+-			pr_err("exynos-mct: cannot register IRQ %d\n",
+-				evt->irq);
+-			return -EIO;
+-		}
+-		irq_set_affinity(evt->irq, cpumask_of(cpu));
+-	} else {
++	if (mct_int_type == MCT_INT_PPI)
+ 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+-	}
++	else
++		enable_irq(evt->irq);
+ 
+ 	return 0;
+ }
+@@ -440,7 +431,7 @@ static void exynos4_local_timer_stop(struct clock_event_device *evt)
+ {
+ 	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
+ 	if (mct_int_type == MCT_INT_SPI)
+-		free_irq(evt->irq, this_cpu_ptr(&percpu_mct_tick));
++		disable_irq(evt->irq);
+ 	else
+ 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+ }
+@@ -500,6 +491,23 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
+ 					 &percpu_mct_tick);
+ 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+ 		     mct_irqs[MCT_L0_IRQ], err);
++	} else {
++		int cpu;
++
++		for_each_possible_cpu(cpu) {
++			struct mct_clock_event_device *mevt =
++				&per_cpu(percpu_mct_tick, cpu);
++
++			mevt->evt.irq = mct_irqs[MCT_L0_IRQ + cpu];
++			if (request_irq(mevt->evt.irq, exynos4_mct_tick_isr,
++					IRQF_TIMER | IRQF_NOBALANCING,
++					mevt->evt.name, mevt)) {
++				WARN(1, "exynos-mct: cannot register IRQ %d\n",
++				     mevt->evt.irq);
++			}
++			irq_set_affinity(mevt->evt.irq, cpumask_of(cpu));
++			disable_irq(mevt->evt.irq);
++		}
+ 	}
+ 
+ 	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
 -- 
-1.8.3.2
+1.7.9.5
