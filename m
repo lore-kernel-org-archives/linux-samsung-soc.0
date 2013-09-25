@@ -1,75 +1,154 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH 2/2] cpufreq: exynos4210: Use the common clock framework to set
- APLL clock rate
-Date: Wed, 25 Sep 2013 13:22:18 +0200
-Message-ID: <1380108138-30402-3-git-send-email-l.majewski@samsung.com>
-References: <1380108138-30402-1-git-send-email-l.majewski@samsung.com>
+From: Rajeshwari Birje <rajeshwari.birje@gmail.com>
+Subject: Re: [RFC/PATCH] spi: s3c64xx: Enable Word transfer
+Date: Wed, 25 Sep 2013 16:59:25 +0530
+Message-ID: <CAPs=JDeYaE4RZxCpttgrC+9hWbj6pbaNqx7KGtc9di+6OMNTOg@mail.gmail.com>
+References: <1380031235-4065-1-git-send-email-rajeshwari.s@samsung.com>
+	<1555800.vSI857jMHi@amdc1227>
+	<CAPs=JDe6XoyqM=iJWgAZF+tU0p_4K=9K4Kx6ANpCcUV9rBd82Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44015 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755153Ab3IYLWk (ORCPT
+Received: from mail-la0-f53.google.com ([209.85.215.53]:54894 "EHLO
+	mail-la0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755040Ab3IYL31 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Sep 2013 07:22:40 -0400
-In-reply-to: <1380108138-30402-1-git-send-email-l.majewski@samsung.com>
+	Wed, 25 Sep 2013 07:29:27 -0400
+In-Reply-To: <CAPs=JDe6XoyqM=iJWgAZF+tU0p_4K=9K4Kx6ANpCcUV9rBd82Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, dianders@google.com, broonie@linaro.org
 
-In the exynos4210_set_apll() function, the APLL frequency is set with
-direct register manipulation.
+Hi Tomasz
 
-Such approach is not allowed in the common clock framework. The frequency
-is changed, but the corresponding clock value is not updated. This causes
-wrong frequency read from cpufreq's cpuinfo_cur_freq sysfs attribute.
+Sorry for the previous mail with incomplete comments, sent the same by mistake.
 
-Tested at:
-- Exynos4210 - Trats board (linux 3.12-rc1)
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
----
- drivers/cpufreq/exynos4210-cpufreq.c |   20 ++++----------------
- 1 file changed, 4 insertions(+), 16 deletions(-)
+On Wed, Sep 25, 2013 at 4:33 PM, Rajeshwari Birje
+<rajeshwari.birje@gmail.com> wrote:
+>
+> Hi Tomasz
+>
+>
+> On Tue, Sep 24, 2013 at 8:29 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>>
+>> Hi Rajeshwari,
+>>
+>> [Ccing Mark Brown]
+>>
+>> On Tuesday 24 of September 2013 19:30:35 Rajeshwari S Shinde wrote:
+>> > This patch enables word transfer for s3c64xx spi driver.
+>> > User can set bits_per_word to 32 before calling spi_setup,
+>> > which would enable the word transfer mode.
+>> >
+>> > Signed-off-by: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
+>> > ---
+>> >  drivers/spi/spi-s3c64xx.c | 28 ++++++++++++++++++----------
+>> >  1 file changed, 18 insertions(+), 10 deletions(-)
+>> >
+>> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+>> > index 512b889..893361b 100644
+>> > --- a/drivers/spi/spi-s3c64xx.c
+>> > +++ b/drivers/spi/spi-s3c64xx.c
+>> > @@ -498,6 +498,17 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+>> >       chcfg = readl(regs + S3C64XX_SPI_CH_CFG);
+>> >       chcfg &= ~S3C64XX_SPI_CH_TXCH_ON;
+>> >
+>> > +     if(sdd->cur_bpw == 32) {
+>> > +             /* For word transfer we need to swap bytes */
+>> > +             u32 swapcfg = (S3C64XX_SPI_SWAP_TX_EN | S3C64XX_SPI_SWAP_TX_BYTE |
+>> > +                             S3C64XX_SPI_SWAP_TX_HALF_WORD |
+>> > +                             S3C64XX_SPI_SWAP_RX_EN |
+>> > +                             S3C64XX_SPI_SWAP_RX_BYTE |
+>> > +                             S3C64XX_SPI_SWAP_RX_HALF_WORD);
+>> > +             writel(swapcfg, regs + S3C64XX_SPI_SWAP_CFG);
+>>
+>> Wasn't this driver already supposed to support 16 and 32 bits per word
+>> transfers? I fail to see any mention in the documentation about the need
+>> to enable these swaps in these cases.
 
-diff --git a/drivers/cpufreq/exynos4210-cpufreq.c b/drivers/cpufreq/exynos4210-cpufreq.c
-index add7fbe..363c658 100644
---- a/drivers/cpufreq/exynos4210-cpufreq.c
-+++ b/drivers/cpufreq/exynos4210-cpufreq.c
-@@ -81,9 +81,9 @@ static void exynos4210_set_clkdiv(unsigned int div_index)
- 
- static void exynos4210_set_apll(unsigned int index)
- {
--	unsigned int tmp;
-+	unsigned int tmp, freq = apll_freq_4210[index].freq;
- 
--	/* 1. MUX_CORE_SEL = MPLL, ARMCLK uses MPLL for lock time */
-+	/* MUX_CORE_SEL = MPLL, ARMCLK uses MPLL for lock time */
- 	clk_set_parent(moutcore, mout_mpll);
- 
- 	do {
-@@ -92,21 +92,9 @@ static void exynos4210_set_apll(unsigned int index)
- 		tmp &= 0x7;
- 	} while (tmp != 0x2);
- 
--	/* 2. Set APLL Lock time */
--	__raw_writel(EXYNOS4_APLL_LOCKTIME, EXYNOS4_APLL_LOCK);
--
--	/* 3. Change PLL PMS values */
--	tmp = __raw_readl(EXYNOS4_APLL_CON0);
--	tmp &= ~((0x3ff << 16) | (0x3f << 8) | (0x7 << 0));
--	tmp |= apll_freq_4210[index].mps;
--	__raw_writel(tmp, EXYNOS4_APLL_CON0);
--
--	/* 4. wait_lock_time */
--	do {
--		tmp = __raw_readl(EXYNOS4_APLL_CON0);
--	} while (!(tmp & (0x1 << EXYNOS4_APLLCON0_LOCKED_SHIFT)));
-+	clk_set_rate(mout_apll, freq * 1000);
- 
--	/* 5. MUX_CORE_SEL = APLL */
-+	/* MUX_CORE_SEL = APLL */
- 	clk_set_parent(moutcore, mout_apll);
- 
- 	do {
+I get errors when I try 32 bits per word transfers.
+There is no clear documentation for this swap config register but without this
+word transfer is not working fine.
+>
+>
+>>
+>> In this case, wouldn't 16 bits per word transfers also need swapping?
+
+Yes it would need, have not tested for half word transfer.
+>>
+>>
+>> > +     } else
+>> > +             writel(0, regs + S3C64XX_SPI_SWAP_CFG);
+>>
+>> nit: Coding style. If you use braces for one branch, then you should use
+>> them for the other one as well.
+>
+ will correct this.
+>>
+>>
+>> > +
+>> >       if (dma_mode) {
+>> >               chcfg &= ~S3C64XX_SPI_CH_RXCH_ON;
+>> >       } else {
+>> > @@ -905,19 +916,16 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
+>> >               bpw = xfer->bits_per_word;
+>> >               speed = xfer->speed_hz ? : spi->max_speed_hz;
+>> >
+>> > -             if (xfer->len % (bpw / 8)) {
+>> > -                     dev_err(&spi->dev,
+>> > -                             "Xfer length(%u) not a multiple of word size(%u)\n",
+>> > -                             xfer->len, bpw / 8);
+>> > -                     status = -EIO;
+>> > -                     goto out;
+>>
+>> Why is this check removed in this patch?
+
+I get "Xfer length(%u) not a multiple of word size(%u)\n" error for
+word transfer
+ex: when if bpw is 32 and len 74 the above condition fails
+>
+>
+>>
+>> > +             if (speed != sdd->cur_speed) {
+>> > +                     sdd->cur_speed = speed;
+>>
+>> This change does not seem to be related to $subject.
+
+have split the if condition to accommodate the above error condition.
+>>
+>>
+>> >               }
+>> >
+>> > -             if (bpw != sdd->cur_bpw || speed != sdd->cur_speed) {
+>> > +             if (xfer->len % (bpw / 8))
+>> > +                     sdd->cur_bpw = 8;
+>> > +             else
+>> >                       sdd->cur_bpw = bpw;
+>> > -                     sdd->cur_speed = speed;
+>> > -                     s3c64xx_spi_config(sdd);
+>> > -             }
+>> > +
+>> > +             s3c64xx_spi_config(sdd);
+>>
+>> Why s3c64xx_spi_config() can't be called only if one of the parameters
+>> changed, as it was before this patch?
+
+Will correct this.
+>>
+>>
+>> Best regards,
+>> Tomasz
+>>
+>> P.S. Please remember to always add respective maintainers on Cc. You can
+>> use scripts/get_maintainer.pl script to quickly get a list of people
+>> potentially interested in a patch.
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
 -- 
-1.7.10.4
+Regards,
+Rajeshwari Shinde
