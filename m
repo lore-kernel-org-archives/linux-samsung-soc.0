@@ -1,156 +1,40 @@
 From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH V4 5/6] clk: exynos-audss: add support for Exynos 5420
-Date: Wed, 25 Sep 2013 14:12:51 -0700
-Message-ID: <1380143572-11741-5-git-send-email-abrestic@chromium.org>
+Subject: [PATCH V4 4/6] ARM: dts: exynos5250: add input clocks to audss clock controller
+Date: Wed, 25 Sep 2013 14:12:50 -0700
+Message-ID: <1380143572-11741-4-git-send-email-abrestic@chromium.org>
 References: <1380046016-5811-1-git-send-email-abrestic@chromium.org>
  <1380143572-11741-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
 In-Reply-To: <1380143572-11741-1-git-send-email-abrestic@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Sender: linux-doc-owner@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
 Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mike Turquette <mturquette@linaro.org>, Grant Likely <grant.likely@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Rahul Sharma <rahul.sharma@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Doug Anderson <dianders@chromium.org>, Padmavathi Venna <padma.v@samsung.com>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The AudioSS block on Exynos 5420 has an additional clock gate for the
-ADMA bus clock.
+Specify pll_ref, pll_in, sclk_audio, and sclk_pcm_in for the AudioSS
+clock controller.
 
 Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 ---
-Changes since v3:
- - set clk_data.clk_num to correct value in non-5420 case
 Changes since v1:
- - added type enum and made comparison against that instead of compatibility
-   string
+ - specified additional input clocks
 ---
- .../devicetree/bindings/clock/clk-exynos-audss.txt |  7 ++--
- drivers/clk/samsung/clk-exynos-audss.c             | 40 ++++++++++++++++++----
- include/dt-bindings/clk/exynos-audss-clk.h         |  3 +-
- 3 files changed, 40 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/exynos5250.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-index 85b9e28..180e883 100644
---- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-+++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
-@@ -8,8 +8,10 @@ Required Properties:
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 7d7cc77..2d6a93d 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -88,6 +88,8 @@
+ 		compatible = "samsung,exynos5250-audss-clock";
+ 		reg = <0x03810000 0x0C>;
+ 		#clock-cells = <1>;
++		clocks = <&clock 1>, <&clock 7>, <&clock 138>, <&clock 160>;
++		clock-names = "pll_ref", "pll_in", "sclk_audio", "sclk_pcm_in";
+ 	};
  
- - compatible: should be one of the following:
-   - "samsung,exynos4210-audss-clock" - controller compatible with all Exynos4 SoCs.
--  - "samsung,exynos5250-audss-clock" - controller compatible with all Exynos5 SoCs.
--
-+  - "samsung,exynos5250-audss-clock" - controller compatible with Exynos5250
-+    SoCs.
-+  - "samsung,exynos5420-audss-clock" - controller compatible with Exynos5420
-+    SoCs.
- - reg: physical base address and length of the controller's register set.
- 
- - #clock-cells: should be 1.
-@@ -49,6 +51,7 @@ i2s_bus         6
- sclk_i2s        7
- pcm_bus         8
- sclk_pcm        9
-+adma            10      Exynos5420
- 
- Example 1: An example of a clock controller node using the default input
- 	   clock names is listed below.
-diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
-index 7cb10f2..e607176 100644
---- a/drivers/clk/samsung/clk-exynos-audss.c
-+++ b/drivers/clk/samsung/clk-exynos-audss.c
-@@ -19,6 +19,12 @@
- 
- #include <dt-bindings/clk/exynos-audss-clk.h>
- 
-+enum exynos_audss_clk_type {
-+	TYPE_EXYNOS4210,
-+	TYPE_EXYNOS5250,
-+	TYPE_EXYNOS5420,
-+};
-+
- static DEFINE_SPINLOCK(lock);
- static struct clk **clk_table;
- static void __iomem *reg_base;
-@@ -59,6 +65,16 @@ static struct syscore_ops exynos_audss_clk_syscore_ops = {
- };
- #endif /* CONFIG_PM_SLEEP */
- 
-+static const struct of_device_id exynos_audss_clk_of_match[] = {
-+	{ .compatible = "samsung,exynos4210-audss-clock",
-+	  .data = (void *)TYPE_EXYNOS4210, },
-+	{ .compatible = "samsung,exynos5250-audss-clock",
-+	  .data = (void *)TYPE_EXYNOS5250, },
-+	{ .compatible = "samsung,exynos5420-audss-clock",
-+	  .data = (void *)TYPE_EXYNOS5420, },
-+	{},
-+};
-+
- /* register exynos_audss clocks */
- static int exynos_audss_clk_probe(struct platform_device *pdev)
- {
-@@ -68,6 +84,13 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 	const char *mout_i2s_p[] = {"mout_audss", "cdclk0", "sclk_audio0"};
- 	const char *sclk_pcm_p = "sclk_pcm0";
- 	struct clk *pll_ref, *pll_in, *cdclk, *sclk_audio, *sclk_pcm_in;
-+	const struct of_device_id *match;
-+	enum exynos_audss_clk_type variant;
-+
-+	match = of_match_node(exynos_audss_clk_of_match, pdev->dev.of_node);
-+	if (!match)
-+		return -EINVAL;
-+	variant = (enum exynos_audss_clk_type)match->data;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg_base = devm_ioremap_resource(&pdev->dev, res);
-@@ -83,7 +106,10 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	clk_data.clks = clk_table;
--	clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
-+	if (variant == TYPE_EXYNOS5420)
-+		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
-+	else
-+		clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS - 1;
- 
- 	pll_ref = devm_clk_get(&pdev->dev, "pll_ref");
- 	pll_in = devm_clk_get(&pdev->dev, "pll_in");
-@@ -142,6 +168,12 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
- 				sclk_pcm_p, CLK_SET_RATE_PARENT,
- 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
- 
-+	if (variant == TYPE_EXYNOS5420) {
-+		clk_table[EXYNOS_ADMA] = clk_register_gate(NULL, "adma",
-+				"dout_srp", CLK_SET_RATE_PARENT,
-+				reg_base + ASS_CLK_GATE, 9, 0, &lock);
-+	}
-+
- 	for (i = 0; i < clk_data.clk_num; i++) {
- 		if (IS_ERR(clk_table[i])) {
- 			dev_err(&pdev->dev, "failed to register clock %d\n", i);
-@@ -188,12 +220,6 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static const struct of_device_id exynos_audss_clk_of_match[] = {
--	{ .compatible = "samsung,exynos4210-audss-clock", },
--	{ .compatible = "samsung,exynos5250-audss-clock", },
--	{},
--};
--
- static struct platform_driver exynos_audss_clk_driver = {
- 	.driver	= {
- 		.name = "exynos-audss-clk",
-diff --git a/include/dt-bindings/clk/exynos-audss-clk.h b/include/dt-bindings/clk/exynos-audss-clk.h
-index 8279f42..0ae6f5a 100644
---- a/include/dt-bindings/clk/exynos-audss-clk.h
-+++ b/include/dt-bindings/clk/exynos-audss-clk.h
-@@ -19,7 +19,8 @@
- #define EXYNOS_SCLK_I2S	7
- #define EXYNOS_PCM_BUS		8
- #define EXYNOS_SCLK_PCM	9
-+#define EXYNOS_ADMA		10
- 
--#define EXYNOS_AUDSS_MAX_CLKS	10
-+#define EXYNOS_AUDSS_MAX_CLKS	11
- 
- #endif
+ 	timer {
 -- 
 1.8.4
+
