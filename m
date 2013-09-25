@@ -1,64 +1,96 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/2] cpufreq: exynos4x12: Use the common clock framework to
- set APLL clock rate
-Date: Wed, 25 Sep 2013 16:03:22 +0200
-Message-ID: <3068635.myUg9qMyJN@amdc1227>
-References: <1380108138-30402-1-git-send-email-l.majewski@samsung.com>
- <1380108138-30402-2-git-send-email-l.majewski@samsung.com>
- <CAKew6eW9-QHL5NKHV8roER_yuoLEiCoS53Gby8zC841fr=whqQ@mail.gmail.com>
+Subject: [PATCH RESEND CRITICAL] clocksource: exynos_mct: Set IRQ affinity when
+ the CPU goes online
+Date: Wed, 25 Sep 2013 16:05:28 +0200
+Message-ID: <30004270.5bGcANHqs4@amdc1227>
+References: <1377534836-21682-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35090 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755464Ab3IYODh (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:45803 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755547Ab3IYOFm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Sep 2013 10:03:37 -0400
-In-reply-to: <CAKew6eW9-QHL5NKHV8roER_yuoLEiCoS53Gby8zC841fr=whqQ@mail.gmail.com>
+	Wed, 25 Sep 2013 10:05:42 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MTO00KCKPRYYK20@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Sep 2013 15:05:40 +0100 (BST)
+In-reply-to: <1377534836-21682-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Kyungmin Park <kyungmin.park@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 
-Hi Yadwinder,
+Some variants of Exynos MCT, namely exynos4210-mct at the moment, use
+normal, shared interrupts for local timers. This means that each
+interrupt must have correct affinity set to fire only on CPU
+corresponding to given local timer.
 
-[resending in plain text, as my mail client somehow reset message 
-format from plain back to HTML...]
+However after recent conversion of clocksource drivers to not use the
+local timer API for local timer initialization any more, the point of
+time when local timers get initialized changed and irq_set_affinity()
+fails because the CPU is not marked as online yet.
 
-On Wednesday 25 of September 2013 19:25:54 Yadwinder Singh Brar wrote:
-> Hi Lukasz,
-> 
-> On Wed, Sep 25, 2013 at 4:52 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> > In the exynos4x12_set_apll() function, the APLL frequency is set with
-> > direct register manipulation.
-> >
-> > Such approach is not allowed in the common clock framework. The frequency
-> > is changed, but the corresponding clock value is not updated. This causes
-> > wrong frequency read from cpufreq's cpuinfo_cur_freq sysfs attribute.
-> >
-> 
-> This patch looks incomplete, leaving the driver in untidy state, perhaps its
-> doesn't fix the above stated problem completely. what about
-> if (!exynos4x12_pms_change(old_index, new_index)) becomes true?
-> 
-> IMHO, this driver needs lot more work in addition to this patch to cleanly and
-> completely move the cpufreq driver to common clock framework.
+This patch fixes this by moving the call to irq_set_affinity() to
+CPU_ONLINE notification, so the affinity is being set when the CPU goes
+online.
 
-I agree that the other case needs to be handled as well. Basically the
-whole conditional block dependent on exynos4x12_pms_change() can be safely
-dropped, because this condition is already handled in PLL driver.
+This fixes a problem with Exynos4210 failing to boot, present since commit
+	ee98d27df6 ARM: EXYNOS4: Divorce mct from local timer API
+due to failing irq_set_affinity().
 
-Lukasz is already working on further rework of this driver to clean it up
-from legacy code, but this will have to wait for 3.13, as 3.12 is already
-in rc stage and only fixes can be accepted for it.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ drivers/clocksource/exynos_mct.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-> For fixing this issue urgently, setting CLK_GET_RATE_NOCACHE for apll
-> in clk driver can also be quicker fix.
+Resending again, since my mail client previously freaked out and reset
+message format to HTML...
 
-Unfortunately this is not how this flag works. It only makes
-clk_get_rate() call ->recalc_rate() operation of the clock instead of
-instantly returning cached rate - it doesn't seem to work recursively.
-
-Best regards,
-Tomasz
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 5b34768..62b0de6 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -428,7 +428,6 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+ 				evt->irq);
+ 			return -EIO;
+ 		}
+-		irq_set_affinity(evt->irq, cpumask_of(cpu));
+ 	} else {
+ 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+ 	}
+@@ -449,6 +448,7 @@ static int exynos4_mct_cpu_notify(struct notifier_block *self,
+ 					   unsigned long action, void *hcpu)
+ {
+ 	struct mct_clock_event_device *mevt;
++	unsigned int cpu;
+ 
+ 	/*
+ 	 * Grab cpu pointer in each case to avoid spurious
+@@ -459,6 +459,12 @@ static int exynos4_mct_cpu_notify(struct notifier_block *self,
+ 		mevt = this_cpu_ptr(&percpu_mct_tick);
+ 		exynos4_local_timer_setup(&mevt->evt);
+ 		break;
++	case CPU_ONLINE:
++		cpu = (unsigned long)hcpu;
++		if (mct_int_type == MCT_INT_SPI)
++			irq_set_affinity(mct_irqs[MCT_L0_IRQ + cpu],
++						cpumask_of(cpu));
++		break;
+ 	case CPU_DYING:
+ 		mevt = this_cpu_ptr(&percpu_mct_tick);
+ 		exynos4_local_timer_stop(&mevt->evt);
+@@ -500,6 +506,8 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
+ 					 &percpu_mct_tick);
+ 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+ 		     mct_irqs[MCT_L0_IRQ], err);
++	} else {
++		irq_set_affinity(mct_irqs[MCT_L0_IRQ], cpumask_of(0));
+ 	}
+ 
+ 	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
+-- 
+1.8.3.2
