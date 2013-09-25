@@ -1,117 +1,180 @@
-From: Ming Lei <tom.leiming@gmail.com>
-Subject: [PATCH] clockevent: exynos_mct: fix lockdep warning
-Date: Wed, 25 Sep 2013 22:49:38 +0800
-Message-ID: <1380120578-17458-1-git-send-email-tom.leiming@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:40069 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755962Ab3IYOuB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Sep 2013 10:50:01 -0400
-Received: by mail-pd0-f172.google.com with SMTP id z10so6183905pdj.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Sep 2013 07:50:00 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: [PATCH V4 1/6] clk: exynos-audss: convert to platform device
+Date: Wed, 25 Sep 2013 14:12:47 -0700
+Message-ID: <1380143572-11741-1-git-send-email-abrestic@chromium.org>
+References: <1380046016-5811-1-git-send-email-abrestic@chromium.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1380046016-5811-1-git-send-email-abrestic@chromium.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mike Turquette <mturquette@linaro.org>, Grant Likely <grant.likely@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Rahul Sharma <rahul.sharma@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Doug Anderson <dianders@chromium.org>, Padmavathi Venna <padma.v@samsung.com>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Ming Lei <tom.leiming@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-This patch moves request_irq() out of cpu notifier callback
-to fix below lockdep warning:
+The Exynos AudioSS clock controller will later be modified to allow
+input clocks to be specified via device-tree in order to support
+multiple Exynos SoCs.  This will introduce a dependency on the core
+SoC clock controller being initialized first so that the AudioSS driver
+can look up its input clocks, but the order in which clock providers
+are probed in of_clk_init() is not guaranteed.  Since deferred probing
+is not supported in of_clk_init() and the AudioSS block is not the core
+controller, we can initialize it later as a platform device.
 
-[    0.249513] ------------[ cut here ]------------
-[    0.249525] WARNING: CPU: 1 PID: 0 at kernel/lockdep.c:2740 lockdep_trace_alloc+0xc8/0x10c()
-[    0.249534] DEBUG_LOCKS_WARN_ON(irqs_disabled_flags(flags))
-[    0.249538] Modules linked in:
-[    0.249548] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.12.0-rc1-next-20130923+ #338
-[    0.249564] [<c00165d0>] (unwind_backtrace+0x0/0xec) from [<c0012b48>] (show_stack+0x20/0x24)
-[    0.249577] [<c0012b48>] (show_stack+0x20/0x24) from [<c04ebf0c>] (dump_stack+0x74/0xb4)
-[    0.249591] [<c04ebf0c>] (dump_stack+0x74/0xb4) from [<c00237a8>] (warn_slowpath_common+0x78/0x9c)
-[    0.249604] [<c00237a8>] (warn_slowpath_common+0x78/0x9c) from [<c0023888>] (warn_slowpath_fmt+0x40/0x48)
-[    0.249615] [<c0023888>] (warn_slowpath_fmt+0x40/0x48) from [<c007f194>] (lockdep_trace_alloc+0xc8/0x10c)
-[    0.249626] [<c007f194>] (lockdep_trace_alloc+0xc8/0x10c) from [<c01173b0>] (kmem_cache_alloc_trace+0x38/0x2
-24)
-[    0.249638] [<c01173b0>] (kmem_cache_alloc_trace+0x38/0x224) from [<c006bc4c>] (request_threaded_irq+0x90/0x130)
-[    0.249651] [<c006bc4c>] (request_threaded_irq+0x90/0x130) from [<c0408c60>] (exynos4_local_timer_setup+0xdc/0x140)
-[    0.249663] [<c0408c60>] (exynos4_local_timer_setup+0xdc/0x140) from [<c0408d78>] (exynos4_mct_cpu_notify+0x40/0xb0)
-[    0.249675] [<c0408d78>] (exynos4_mct_cpu_notify+0x40/0xb0) from [<c04f4e18>] (notifier_call_chain+0x48/0x78)
-[    0.249688] [<c04f4e18>] (notifier_call_chain+0x48/0x78) from [<c004abb0>] (__raw_notifier_call_chain+0x24/0x2c)
-[    0.249700] [<c004abb0>] (__raw_notifier_call_chain+0x24/0x2c) from [<c0023908>] (__cpu_notify+0x3c/0x58)
-[    0.249713] [<c0023908>] (__cpu_notify+0x3c/0x58) from [<c0023944>] (cpu_notify+0x20/0x24)
-[    0.249725] [<c0023944>] (cpu_notify+0x20/0x24) from [<c002407c>] (notify_cpu_starting+0x58/0x60)
-[    0.249737] [<c002407c>] (notify_cpu_starting+0x58/0x60) from [<c00143cc>] (secondary_start_kernel+0xec/0x13
-8)
-[    0.249748] [<c00143cc>] (secondary_start_kernel+0xec/0x138) from [<40008664>] (0x40008664)
-[    0.249767] ---[ end trace 3406ff24bd97382e ]---
-
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Ming Lei <tom.leiming@gmail.com>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Acked-by: Tomasz Figa <t.figa@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/clocksource/exynos_mct.c |   34 +++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 13 deletions(-)
+Changes since v3:
+ - __init -> __exit for module exit function
+ - fixed nits from Sylwester
+Changes since v2:
+ - add error handling to probe callback
+ - fixed ordering of of_clk_{add,del}_provider
+ - fixed nits from Tomasz and Sylwester
+Changes since v1:
+ - add clk_unregister() calls to remove callback
+ - fixed minor nits from Tomasz
+---
+ drivers/clk/samsung/clk-exynos-audss.c | 104 ++++++++++++++++++++++++++++-----
+ 1 file changed, 88 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 5b34768..94b35aa 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -419,19 +419,10 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 39b40aa..742dabc 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -14,6 +14,8 @@
+ #include <linux/clk-provider.h>
+ #include <linux/of_address.h>
+ #include <linux/syscore_ops.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
  
- 	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+ #include <dt-bindings/clk/exynos-audss-clk.h>
  
--	if (mct_int_type == MCT_INT_SPI) {
--		evt->irq = mct_irqs[MCT_L0_IRQ + cpu];
--		if (request_irq(evt->irq, exynos4_mct_tick_isr,
--				IRQF_TIMER | IRQF_NOBALANCING,
--				evt->name, mevt)) {
--			pr_err("exynos-mct: cannot register IRQ %d\n",
--				evt->irq);
--			return -EIO;
--		}
--		irq_set_affinity(evt->irq, cpumask_of(cpu));
--	} else {
-+	if (mct_int_type == MCT_INT_PPI)
- 		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
--	}
-+	else
-+		enable_irq(evt->irq);
+@@ -62,24 +64,26 @@ static struct syscore_ops exynos_audss_clk_syscore_ops = {
+ #endif /* CONFIG_PM_SLEEP */
  
- 	return 0;
- }
-@@ -440,7 +431,7 @@ static void exynos4_local_timer_stop(struct clock_event_device *evt)
+ /* register exynos_audss clocks */
+-static void __init exynos_audss_clk_init(struct device_node *np)
++static int exynos_audss_clk_probe(struct platform_device *pdev)
  {
- 	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
- 	if (mct_int_type == MCT_INT_SPI)
--		free_irq(evt->irq, this_cpu_ptr(&percpu_mct_tick));
-+		disable_irq(evt->irq);
- 	else
- 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
- }
-@@ -500,6 +491,23 @@ static void __init exynos4_timer_resources(struct device_node *np, void __iomem
- 					 &percpu_mct_tick);
- 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
- 		     mct_irqs[MCT_L0_IRQ], err);
-+	} else {
-+		int cpu;
+-	reg_base = of_iomap(np, 0);
+-	if (!reg_base) {
+-		pr_err("%s: failed to map audss registers\n", __func__);
+-		return;
++	int i, ret = 0;
++	struct resource *res;
 +
-+		for_each_possible_cpu(cpu) {
-+			struct mct_clock_event_device *mevt =
-+				&per_cpu(percpu_mct_tick, cpu);
-+
-+			mevt->evt.irq = mct_irqs[MCT_L0_IRQ + cpu];
-+			if (request_irq(mevt->evt.irq, exynos4_mct_tick_isr,
-+					IRQF_TIMER | IRQF_NOBALANCING,
-+					mevt->evt.name, mevt)) {
-+				WARN(1, "exynos-mct: cannot register IRQ %d\n",
-+				     mevt->evt.irq);
-+			}
-+			irq_set_affinity(mevt->evt.irq, cpumask_of(cpu));
-+			disable_irq(mevt->evt.irq);
-+		}
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	reg_base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(reg_base)) {
++		dev_err(&pdev->dev, "failed to map audss registers\n");
++		return PTR_ERR(reg_base);
  	}
  
- 	err = register_cpu_notifier(&exynos4_mct_cpu_nb);
+-	clk_table = kzalloc(sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
++	clk_table = devm_kzalloc(&pdev->dev,
++				sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
+ 				GFP_KERNEL);
+-	if (!clk_table) {
+-		pr_err("%s: could not allocate clk lookup table\n", __func__);
+-		return;
+-	}
++	if (!clk_table)
++		return -ENOMEM;
+ 
+ 	clk_data.clks = clk_table;
+ 	clk_data.clk_num = EXYNOS_AUDSS_MAX_CLKS;
+-	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+ 
+ 	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
+ 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+@@ -123,13 +127,81 @@ static void __init exynos_audss_clk_init(struct device_node *np)
+ 				"div_pcm0", CLK_SET_RATE_PARENT,
+ 				reg_base + ASS_CLK_GATE, 5, 0, &lock);
+ 
++	for (i = 0; i < clk_data.clk_num; i++) {
++		if (IS_ERR(clk_table[i])) {
++			dev_err(&pdev->dev, "failed to register clock %d\n", i);
++			ret = PTR_ERR(clk_table[i]);
++			goto unregister;
++		}
++	}
++
++	ret = of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
++					&clk_data);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to add clock provider\n");
++		goto unregister;
++	}
++
+ #ifdef CONFIG_PM_SLEEP
+ 	register_syscore_ops(&exynos_audss_clk_syscore_ops);
+ #endif
+ 
+-	pr_info("Exynos: Audss: clock setup completed\n");
++	dev_info(&pdev->dev, "setup completed\n");
++
++	return 0;
++
++unregister:
++	for (i = 0; i < clk_data.clk_num; i++) {
++		if (!IS_ERR(clk_table[i]))
++			clk_unregister(clk_table[i]);
++	}
++
++	return ret;
++}
++
++static int exynos_audss_clk_remove(struct platform_device *pdev)
++{
++	int i;
++
++	of_clk_del_provider(pdev->dev.of_node);
++
++	for (i = 0; i < clk_data.clk_num; i++) {
++		if (!IS_ERR(clk_table[i]))
++			clk_unregister(clk_table[i]);
++	}
++
++	return 0;
+ }
+-CLK_OF_DECLARE(exynos4210_audss_clk, "samsung,exynos4210-audss-clock",
+-		exynos_audss_clk_init);
+-CLK_OF_DECLARE(exynos5250_audss_clk, "samsung,exynos5250-audss-clock",
+-		exynos_audss_clk_init);
++
++static const struct of_device_id exynos_audss_clk_of_match[] = {
++	{ .compatible = "samsung,exynos4210-audss-clock", },
++	{ .compatible = "samsung,exynos5250-audss-clock", },
++	{},
++};
++
++static struct platform_driver exynos_audss_clk_driver = {
++	.driver	= {
++		.name = "exynos-audss-clk",
++		.owner = THIS_MODULE,
++		.of_match_table = exynos_audss_clk_of_match,
++	},
++	.probe = exynos_audss_clk_probe,
++	.remove = exynos_audss_clk_remove,
++};
++
++static int __init exynos_audss_clk_init(void)
++{
++	return platform_driver_register(&exynos_audss_clk_driver);
++}
++core_initcall(exynos_audss_clk_init);
++
++static void __exit exynos_audss_clk_exit(void)
++{
++	platform_driver_unregister(&exynos_audss_clk_driver);
++}
++module_exit(exynos_audss_clk_exit);
++
++MODULE_AUTHOR("Padmavathi Venna <padma.v@samsung.com>");
++MODULE_DESCRIPTION("Exynos Audio Subsystem Clock Controller");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:exynos-audss-clk");
 -- 
-1.7.9.5
+1.8.4
+
