@@ -1,50 +1,58 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] ARM: SAMSUNG: S5P: If detected device tree skip irq init
-Date: Thu, 26 Sep 2013 14:29:13 +0900
-Message-ID: <02c901ceba79$55b382c0$011a8840$%kim@samsung.com>
-References: <1380038363-487-1-git-send-email-m.krawczuk@partner.samsung.com>
- <2123658.6S6hP57GRg@flatron>
+Subject: RE: [RFC] clk: samsung:  Remove old clock drivers for s5pc100 and
+ s5pv210
+Date: Thu, 26 Sep 2013 14:44:12 +0900
+Message-ID: <02f401ceba7b$6dc16e20$49444a60$%kim@samsung.com>
+References: <1380043160-16824-1-git-send-email-m.krawczuk@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14026 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750795Ab3IZF3R (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:57203 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891Ab3IZFoO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 01:29:17 -0400
-In-reply-to: <2123658.6S6hP57GRg@flatron>
+	Thu, 26 Sep 2013 01:44:14 -0400
+In-reply-to: <1380043160-16824-1-git-send-email-m.krawczuk@partner.samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
-Cc: 'Mateusz Krawczuk' <m.krawczuk@partner.samsung.com>, t.stanislaws@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, s.nawrocki@samsung.com, b.zolnierkie@samsung.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, ben-linux@fluff.org, m.szyprowski@samsung.com
+To: 'Mateusz Krawczuk' <m.krawczuk@partner.samsung.com>
+Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, t.figa@samsung.com, m.szyprowski@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Tomasz Figa wrote:
+Mateusz Krawczuk wrote:
 > 
-> Hi Mateusz,
+> This patch removes old clock management code for S5PC100 and
+> S5PC110/S5PV210,
+> since the platform has been already moved to the new clock driver
+> using Common Clock Framework.
 > 
-> On Tuesday 24 of September 2013 17:59:23 Mateusz Krawczuk wrote:
-> > It prevents from executing things already handled by pinctrl-exynos
-> > driver, when device tree is available.
-> >
-> > Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  arch/arm/plat-samsung/s5p-irq-eint.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
+> Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> This patch series require
+> S5PC100 and S5PV210 patch series moving to common clock framework.
 > 
-> Acked-by: Tomasz Figa <t.figa@samsung.com>
+>  arch/arm/mach-s5pc100/Kconfig  |    2 +-
+>  arch/arm/mach-s5pc100/Makefile |    1 -
+>  arch/arm/mach-s5pc100/clock.c  | 1361 -----------------------------------
+> ----
+>  arch/arm/mach-s5pv210/Kconfig  |    2 +-
+>  arch/arm/mach-s5pv210/Makefile |    1 -
+>  arch/arm/mach-s5pv210/clock.c  | 1365 -----------------------------------
+> -----
+>  6 files changed, 2 insertions(+), 2730 deletions(-)
+>  delete mode 100644 arch/arm/mach-s5pc100/clock.c
+>  delete mode 100644 arch/arm/mach-s5pv210/clock.c
 > 
-> [as a temporary solution until we move all the users of this code to
-> device tree]
-> 
-Yes, agreed.
+In this case, would be easier to review with using "-D" for format-patch.
 
-The 'skip irq init' in subject would be changed to 'skip eint init' for
-clear meaning.
+And this should be followed by moving common clk series for s5pc100/s5pv210.
+See s3c64xx common clk patches in v3.13-next/common-clk-s3c64xx branch as a
+reference.
 
-Applied.
+And I have never seen common clk stuff for s5pc100. In addition, I'm not
+sure we _still_ need to support s5pc100 in mainline.
 
 Thanks,
-Kukjin
+- Kukjin
