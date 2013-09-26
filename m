@@ -1,90 +1,51 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 1/2] cpufreq: exynos4x12: Use the common clock framework to
- set APLL clock rate
-Date: Thu, 26 Sep 2013 11:16:25 +0200
-Message-ID: <20130926111625.09cb2071@amdc308.digital.local>
-References: <1380108138-30402-1-git-send-email-l.majewski@samsung.com>
- <1380108138-30402-2-git-send-email-l.majewski@samsung.com>
- <CAKew6eW9-QHL5NKHV8roER_yuoLEiCoS53Gby8zC841fr=whqQ@mail.gmail.com>
- <3068635.myUg9qMyJN@amdc1227>
- <CAKew6eVXw5qUuZ=Oc6ko3BkJj=iYqvN-NsrfmOHPQmMkxiv-nA@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys part and Exynos part
+Date: Thu, 26 Sep 2013 11:51:41 +0200
+Message-ID: <201309261151.42034.arnd@arndb.de>
+References: <000701ce8741$fe47deb0$fad79c10$@samsung.com> <201309242323.55323.arnd@arndb.de> <5243C0E5.7020508@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAKew6eVXw5qUuZ=Oc6ko3BkJj=iYqvN-NsrfmOHPQmMkxiv-nA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.17.9]:58663 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750933Ab3IZJvz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Sep 2013 05:51:55 -0400
+In-Reply-To: <5243C0E5.7020508@ti.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Pratyush Anand <pratyush.anand@st.com>, Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Hi Yadwinder,
-
-> Hi Tomasz,
-> 
-> >> On Wed, Sep 25, 2013 at 4:52 PM, Lukasz Majewski
-> >> <l.majewski@samsung.com> wrote:
-> >> > In the exynos4x12_set_apll() function, the APLL frequency is set
-> >> > with direct register manipulation.
-> >> >
-> >> > Such approach is not allowed in the common clock framework. The
-> >> > frequency is changed, but the corresponding clock value is not
-> >> > updated. This causes wrong frequency read from cpufreq's
-> >> > cpuinfo_cur_freq sysfs attribute.
-> >> >
+On Thursday 26 September 2013, Kishon Vijay Abraham I wrote:
+> On Wednesday 25 September 2013 02:53 AM, Arnd Bergmann wrote:
+> > On Monday 23 September 2013, Kishon Vijay Abraham I wrote:
+> >> Btw if we hadn't programmed inbound translation table, the address will go
+> >> untranslated (according to the data book). I guess that's how it was working
+> >> for Jingoo Han.
 > >>
-> >> This patch looks incomplete, leaving the driver in untidy state,
-> >> perhaps its doesn't fix the above stated problem completely. what
-> >> about if (!exynos4x12_pms_change(old_index, new_index)) becomes
-> >> true?
+> >> **
+> >> 3.10.4
+> >> Inbound iATU Operation
 > >>
-> >> IMHO, this driver needs lot more work in addition to this patch to
-> >> cleanly and completely move the cpufreq driver to common clock
-> >> framework.
-> >
-> > I agree that the other case needs to be handled as well. Basically
-> > the whole conditional block dependent on exynos4x12_pms_change()
-> > can be safely dropped, because this condition is already handled in
-> > PLL driver.
-> >
+> >> When there is no match, then the address is untranslated
+> >> **
+> >>
+> > 
+> > Well, that should work just as well, since you have a 1:1 translation anyway.
+> > Do you get the same error without the translation?
 > 
-> Exactly!
+> Yes. I get the same non-fatal error interrupt in RC.
 
-After more corner case testing, I admit that corner cases with PLL s
-parameter change are still broken (e.g. 1400000 -> 700000).
+Ok, then I guess the translation is actually not at fault here but something
+else. I would recommend looking at the IOMMU as the potential culprit. Maybe
+having it disabled means that no DMA is going through, rather than all DMA
+going through untranslated. Another possibility is that the IOMMU is set up
+so that when disabled, it maps DMA address 0 to the start of RAM, rather
+than identity mapping DMA address 0x80000000 there. If that's the case,
+you either have to use the IOMMU, or set up the mapping in the root
+complex to revert it.
 
-I will prepare v2 for it.
-
-If I manage I will push it into -rc. If not those changes will be
-included to exynos cpufreq rework. 
-
-Thanks guys for a thorough review.
-
-> 
-> > Lukasz is already working on further rework of this driver to clean
-> > it up from legacy code, but this will have to wait for 3.13, as
-> > 3.12 is already in rc stage and only fixes can be accepted for it.
-> >
-> >> For fixing this issue urgently, setting CLK_GET_RATE_NOCACHE for
-> >> apll in clk driver can also be quicker fix.
-> >
-> > Unfortunately this is not how this flag works. It only makes
-> > clk_get_rate() call ->recalc_rate() operation of the clock instead
-> > of instantly returning cached rate - it doesn't seem to work
-> > recursively.
-> >
-> 
-> hmm.. yes it can't help in our case as it recursively walks only the
-> subtree of clk but in our case we are changing rate of parent.
-> 
-> Regards,
-> Yadwinder
-
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+	Arnd
