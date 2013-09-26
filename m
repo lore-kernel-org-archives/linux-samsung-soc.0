@@ -1,56 +1,76 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
- part and Exynos part
-Date: Thu, 26 Sep 2013 15:42:27 +0530
-Message-ID: <5244088B.20807@ti.com>
-References: <000701ce8741$fe47deb0$fad79c10$@samsung.com> <201309242323.55323.arnd@arndb.de> <5243C0E5.7020508@ti.com> <201309261151.42034.arnd@arndb.de>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] clockevent: exynos_mct: fix lockdep warning
+Date: Thu, 26 Sep 2013 12:32:26 +0200
+Message-ID: <17472486.7GQJa9ux9F@amdc1227>
+References: <1380120578-17458-1-git-send-email-tom.leiming@gmail.com>
+ <5243823D.4040208@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201309261151.42034.arnd-r2nGTMty4D4@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Pratyush Anand <pratyush.anand-qxv4g6HH51o@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Bjorn Helgaas' <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mohit KUMAR DCG <Mohit.KUMAR-qxv4g6HH51o@public.gmane.org>, 'Sean Cross' <xobs-nXMMniAx+RbQT0dZR+AlfA@public.gmane.org>, 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:19312 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756114Ab3IZKcs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Sep 2013 06:32:48 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MTQ00FMQAM0J740@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 26 Sep 2013 11:32:39 +0100 (BST)
+In-reply-to: <5243823D.4040208@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Ming Lei <tom.leiming@gmail.com>, linux-arm-kernel@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Arnd,
+Hi Daniel,
 
-On Thursday 26 September 2013 03:21 PM, Arnd Bergmann wrote:
-> On Thursday 26 September 2013, Kishon Vijay Abraham I wrote:
->> On Wednesday 25 September 2013 02:53 AM, Arnd Bergmann wrote:
->>> On Monday 23 September 2013, Kishon Vijay Abraham I wrote:
->>>> Btw if we hadn't programmed inbound translation table, the address will go
->>>> untranslated (according to the data book). I guess that's how it was working
->>>> for Jingoo Han.
->>>>
->>>> **
->>>> 3.10.4
->>>> Inbound iATU Operation
->>>>
->>>> When there is no match, then the address is untranslated
->>>> **
->>>>
->>>
->>> Well, that should work just as well, since you have a 1:1 translation anyway.
->>> Do you get the same error without the translation?
->>
->> Yes. I get the same non-fatal error interrupt in RC.
+On Thursday 26 of September 2013 02:39:25 Daniel Lezcano wrote:
+> On 09/25/2013 04:49 PM, Ming Lei wrote:
+> > This patch moves request_irq() out of cpu notifier callback
+> > to fix below lockdep warning:
+> > 
+> > [    0.249513] ------------[ cut here ]------------
+> > [    0.249525] WARNING: CPU: 1 PID: 0 at kernel/lockdep.c:2740 lockdep_trace_alloc+0xc8/0x10c()
+> > [    0.249534] DEBUG_LOCKS_WARN_ON(irqs_disabled_flags(flags))
+> > [    0.249538] Modules linked in:
+> > [    0.249548] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.12.0-rc1-next-20130923+ #338
+> > [    0.249564] [<c00165d0>] (unwind_backtrace+0x0/0xec) from [<c0012b48>] (show_stack+0x20/0x24)
+> > [    0.249577] [<c0012b48>] (show_stack+0x20/0x24) from [<c04ebf0c>] (dump_stack+0x74/0xb4)
+> > [    0.249591] [<c04ebf0c>] (dump_stack+0x74/0xb4) from [<c00237a8>] (warn_slowpath_common+0x78/0x9c)
+> > [    0.249604] [<c00237a8>] (warn_slowpath_common+0x78/0x9c) from [<c0023888>] (warn_slowpath_fmt+0x40/0x48)
+> > [    0.249615] [<c0023888>] (warn_slowpath_fmt+0x40/0x48) from [<c007f194>] (lockdep_trace_alloc+0xc8/0x10c)
+> > [    0.249626] [<c007f194>] (lockdep_trace_alloc+0xc8/0x10c) from [<c01173b0>] (kmem_cache_alloc_trace+0x38/0x2
+> > 24)
+> > [    0.249638] [<c01173b0>] (kmem_cache_alloc_trace+0x38/0x224) from [<c006bc4c>] (request_threaded_irq+0x90/0x130)
+> > [    0.249651] [<c006bc4c>] (request_threaded_irq+0x90/0x130) from [<c0408c60>] (exynos4_local_timer_setup+0xdc/0x140)
+> > [    0.249663] [<c0408c60>] (exynos4_local_timer_setup+0xdc/0x140) from [<c0408d78>] (exynos4_mct_cpu_notify+0x40/0xb0)
+> > [    0.249675] [<c0408d78>] (exynos4_mct_cpu_notify+0x40/0xb0) from [<c04f4e18>] (notifier_call_chain+0x48/0x78)
+> > [    0.249688] [<c04f4e18>] (notifier_call_chain+0x48/0x78) from [<c004abb0>] (__raw_notifier_call_chain+0x24/0x2c)
+> > [    0.249700] [<c004abb0>] (__raw_notifier_call_chain+0x24/0x2c) from [<c0023908>] (__cpu_notify+0x3c/0x58)
+> > [    0.249713] [<c0023908>] (__cpu_notify+0x3c/0x58) from [<c0023944>] (cpu_notify+0x20/0x24)
+> > [    0.249725] [<c0023944>] (cpu_notify+0x20/0x24) from [<c002407c>] (notify_cpu_starting+0x58/0x60)
+> > [    0.249737] [<c002407c>] (notify_cpu_starting+0x58/0x60) from [<c00143cc>] (secondary_start_kernel+0xec/0x13
+> > 8)
+> > [    0.249748] [<c00143cc>] (secondary_start_kernel+0xec/0x138) from [<40008664>] (0x40008664)
+> > [    0.249767] ---[ end trace 3406ff24bd97382e ]---
+> > 
+> > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Kukjin Kim <kgene.kim@samsung.com>
+> > Cc: linux-arm-kernel@lists.infradead.org
+> > Cc: linux-samsung-soc@vger.kernel.org
+> > Signed-off-by: Ming Lei <tom.leiming@gmail.com>
+> > ---
 > 
-> Ok, then I guess the translation is actually not at fault here but something
-> else. I would recommend looking at the IOMMU as the potential culprit. Maybe
-> having it disabled means that no DMA is going through, rather than all DMA
-> going through untranslated. Another possibility is that the IOMMU is set up
-> so that when disabled, it maps DMA address 0 to the start of RAM, rather
-> than identity mapping DMA address 0x80000000 there. If that's the case,
-> you either have to use the IOMMU, or set up the mapping in the root
-> complex to revert it.
+> Tomasz, what do you think ?
 
-Thanks for your inputs. I'll check if that's the problem.
+This is a fix that we may want to have, but it must be modified to take
+my regression fix[1] into account.
 
-Thanks
-Kishon
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[1] clocksource: exynos_mct: Set IRQ affinity when the CPU goes online
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/22511/focus=23418
+
+Best regards,
+Tomasz
