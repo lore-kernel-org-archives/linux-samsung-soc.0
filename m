@@ -1,37 +1,84 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH V3] PCI: exynos: add support for MSI
-Date: Wed, 25 Sep 2013 22:43:23 -0600
-Message-ID: <CAErSpo4ECRheinv_BAG6MMKeftDS-TBD2kTfkTnTo6P_EfOH4g@mail.gmail.com>
-References: <001a01ceaace$013ec980$03bc5c80$%han@samsung.com> <001b01ceba71$62ca02c0$285e0840$%han@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH] ARM: EXYNOS: remove unnecessary header inclusions from
+ exynos4/5 dt machine file
+Date: Thu, 26 Sep 2013 13:45:27 +0900
+Message-ID: <02c301ceba73$38f44120$aadcc360$@org>
+References: <000001ceb2b9$e1936430$a4ba2c90$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <001b01ceba71$62ca02c0$285e0840$%han@samsung.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Pratyush Anand <pratyush.anand@st.com>, Mohit KUMAR <Mohit.KUMAR@st.com>, Siva Reddy Kallam <siva.kallam@samsung.com>, SRIKANTH TUMKUR SHIVANAND <ts.srikanth@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Sean Cross <xobs@kosagi.com>, Kishon Vijay Abraham I <kishon@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:45672 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891Ab3IZEp3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Sep 2013 00:45:29 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MTP002YLUJDAU90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 26 Sep 2013 13:45:28 +0900 (KST)
+In-reply-to: <000001ceb2b9$e1936430$a4ba2c90$%han@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Jingoo Han' <jg1.han@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 25, 2013 at 10:32 PM, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Friday, September 06, 2013 3:55 PM, Jingoo Han wrote:
->>
->> This patch adds support for Message Signaled Interrupt in the
->> Exynos PCIe diver using Synopsys designware PCIe core IP.
->>
->> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
->> Signed-off-by: Srikanth T Shivanand <ts.srikanth@samsung.com>
->> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
->> Cc: Pratyush Anand <pratyush.anand@st.com>
->> Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
->
-> Hi Bjorn Helgaas,
->
-> There is no comment for last 3 weeks.
-> Would you merge this patch to your tree?
+Jingoo Han wrote:
+> 
+> mach-exynos{4,5}-dt.c include several header files that are not
+> really used.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+>  arch/arm/mach-exynos/mach-exynos4-dt.c |    4 ----
+>  arch/arm/mach-exynos/mach-exynos5-dt.c |    4 ----
+>  2 files changed, 8 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-
+> exynos/mach-exynos4-dt.c
+> index 0099c6c..3fc338f 100644
+> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> @@ -11,12 +11,8 @@
+>   * published by the Free Software Foundation.
+>  */
+> 
+> -#include <linux/kernel.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/of_fdt.h>
+> -#include <linux/serial_core.h>
+> -#include <linux/memblock.h>
+> -#include <linux/clocksource.h>
+> 
+>  #include <asm/mach/arch.h>
+>  #include <plat/mfc.h>
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-
+> exynos/mach-exynos5-dt.c
+> index f874b77..217e84f 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> @@ -11,14 +11,10 @@
+> 
+>  #include <linux/of_platform.h>
+>  #include <linux/of_fdt.h>
+> -#include <linux/memblock.h>
+>  #include <linux/io.h>
+> -#include <linux/clocksource.h>
+> 
+>  #include <asm/mach/arch.h>
+>  #include <mach/regs-pmu.h>
+> -
+> -#include <plat/cpu.h>
+>  #include <plat/mfc.h>
+> 
+>  #include "common.h"
+> --
+> 1.7.10.4
 
-I worked on merging your patches today, which is what prompted my
-message about how to manage the exynos, mvebu, tegra, etc., host
-drivers.  Assuming we come to a consensus about that, they should
-appear in -next by the end of this week.
+Looks good to me, applied.
 
-Bjorn
+Thanks,
+Kukjin
