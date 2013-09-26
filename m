@@ -1,42 +1,56 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/2] Samsung DT for S3C64XX
-Date: Wed, 25 Sep 2013 21:21:18 -0700
-Message-ID: <CAOesGMhoOLAjDRWKmW8HYneOwQCiuP2_ppvK2x09EHFiBzQsGA@mail.gmail.com>
-References: <0c4501ceb8be$9f064b90$dd12e2b0$%kim@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V3] PCI: exynos: add support for MSI
+Date: Thu, 26 Sep 2013 13:32:18 +0900
+Message-ID: <001b01ceba71$62ca02c0$285e0840$%han@samsung.com>
+References: <001a01ceaace$013ec980$03bc5c80$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f48.google.com ([209.85.216.48]:53923 "EHLO
-	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750782Ab3IZEVT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 00:21:19 -0400
-Received: by mail-qa0-f48.google.com with SMTP id hu16so521583qab.0
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Sep 2013 21:21:18 -0700 (PDT)
-In-Reply-To: <0c4501ceb8be$9f064b90$dd12e2b0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <001a01ceaace$013ec980$03bc5c80$%han@samsung.com>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Bjorn Helgaas' <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@ti.com>
 
-On Mon, Sep 23, 2013 at 5:40 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> The following changes since commit 66fcbe6b7c2827866100837611c9838298a28486:
->
->   ARM: S3C64XX: Remove old clock management code (2013-09-17 06:47:36 +0900)
->
-> are available in the git repository at:
->
->   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-dt-s3c64xx
->
-> for you to fetch changes up to 2ec35a4252eae3d5277af041bd1b5ae4f6183cad:
->
->   ARM: dts: Add dts file for S3C6410-based SMDK6410 board (2013-09-17
-> 06:48:29 +0900)
+On Friday, September 06, 2013 3:55 PM, Jingoo Han wrote:
+> 
+> This patch adds support for Message Signaled Interrupt in the
+> Exynos PCIe diver using Synopsys designware PCIe core IP.
+> 
+> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> Signed-off-by: Srikanth T Shivanand <ts.srikanth@samsung.com>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> Cc: Pratyush Anand <pratyush.anand@st.com>
+> Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
 
-Pulled into next/dt.
+Hi Bjorn Helgaas,
 
+There is no comment for last 3 weeks.
+Would you merge this patch to your tree?
+Thank you.
 
-Thanks
+Best regards,
+Jingoo Han
 
--Olof
+> ---
+> Changes since v2:
+> - fixed MAX_MSI_CTRLS because MAX_MSI_IRQS is 32 only
+> - used __get_free_pages() to allocate msi_data
+> - used one msi_data and msi_irq_in_use per one RC
+> - used irq_domain to represent the MSI controller
+> - removed msi-base irq number from device tree because this is not
+>   a hardware property.
+> 
+> Changes since v1:
+> - removed unnecessary exynos_pcie_clear_irq_level()
+> - updated the bindings documentation
+> - used new msi_chip infrastructure
+> - removed ARCH_SUPPORTS_MSI
+> - replaced #ifdef guards with IS_ENABLED(CONFIG_PCI_MSI)
+> 
+>  drivers/pci/host/pci-exynos.c      |   44 +++++++
+>  drivers/pci/host/pcie-designware.c |  240 ++++++++++++++++++++++++++++++++++++
+>  drivers/pci/host/pcie-designware.h |   14 +++
+>  3 files changed, 298 insertions(+)
