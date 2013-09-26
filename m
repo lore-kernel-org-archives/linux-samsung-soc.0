@@ -1,70 +1,65 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [RFC] clk: samsung:  Remove old clock drivers for s5pc100 and
- s5pv210
-Date: Thu, 26 Sep 2013 14:48:12 +0900
-Message-ID: <02fb01ceba7b$fd0e9c60$f72bd520$%kim@samsung.com>
-References: <1380043160-16824-1-git-send-email-m.krawczuk@partner.samsung.com>
- <02f401ceba7b$6dc16e20$49444a60$%kim@samsung.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH 1/2] cpufreq: exynos4x12: Use the common clock framework
+ to set APLL clock rate
+Date: Thu, 26 Sep 2013 11:44:56 +0530
+Message-ID: <CAKew6eVXw5qUuZ=Oc6ko3BkJj=iYqvN-NsrfmOHPQmMkxiv-nA@mail.gmail.com>
+References: <1380108138-30402-1-git-send-email-l.majewski@samsung.com>
+	<1380108138-30402-2-git-send-email-l.majewski@samsung.com>
+	<CAKew6eW9-QHL5NKHV8roER_yuoLEiCoS53Gby8zC841fr=whqQ@mail.gmail.com>
+	<3068635.myUg9qMyJN@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17625 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750933Ab3IZFsO (ORCPT
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:47459 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751060Ab3IZGO5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 01:48:14 -0400
-In-reply-to: <02f401ceba7b$6dc16e20$49444a60$%kim@samsung.com>
-Content-language: ko
+	Thu, 26 Sep 2013 02:14:57 -0400
+In-Reply-To: <3068635.myUg9qMyJN@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mateusz Krawczuk' <m.krawczuk@partner.samsung.com>
-Cc: linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, t.figa@samsung.com, m.szyprowski@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Kukjin Kim wrote:
-> 
-> Mateusz Krawczuk wrote:
-> >
-> > This patch removes old clock management code for S5PC100 and
-> > S5PC110/S5PV210,
-> > since the platform has been already moved to the new clock driver
-> > using Common Clock Framework.
-> >
-> > Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> > This patch series require
-> > S5PC100 and S5PV210 patch series moving to common clock framework.
-> >
-> >  arch/arm/mach-s5pc100/Kconfig  |    2 +-
-> >  arch/arm/mach-s5pc100/Makefile |    1 -
-> >  arch/arm/mach-s5pc100/clock.c  | 1361
-----------------------------------
-> -
-> > ----
-> >  arch/arm/mach-s5pv210/Kconfig  |    2 +-
-> >  arch/arm/mach-s5pv210/Makefile |    1 -
-> >  arch/arm/mach-s5pv210/clock.c  | 1365
-----------------------------------
-> -
-> > -----
-> >  6 files changed, 2 insertions(+), 2730 deletions(-)
-> >  delete mode 100644 arch/arm/mach-s5pc100/clock.c
-> >  delete mode 100644 arch/arm/mach-s5pv210/clock.c
-> >
-> In this case, would be easier to review with using "-D" for format-patch.
-> 
-> And this should be followed by moving common clk series for
-> s5pc100/s5pv210.
-> See s3c64xx common clk patches in v3.13-next/common-clk-s3c64xx branch as
-> a
-> reference.
-> 
-> And I have never seen common clk stuff for s5pc100. In addition, I'm not
+Hi Tomasz,
 
-Oh, I found, there is series for common clk s5pc100 :)
+>> On Wed, Sep 25, 2013 at 4:52 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+>> > In the exynos4x12_set_apll() function, the APLL frequency is set with
+>> > direct register manipulation.
+>> >
+>> > Such approach is not allowed in the common clock framework. The frequency
+>> > is changed, but the corresponding clock value is not updated. This causes
+>> > wrong frequency read from cpufreq's cpuinfo_cur_freq sysfs attribute.
+>> >
+>>
+>> This patch looks incomplete, leaving the driver in untidy state, perhaps its
+>> doesn't fix the above stated problem completely. what about
+>> if (!exynos4x12_pms_change(old_index, new_index)) becomes true?
+>>
+>> IMHO, this driver needs lot more work in addition to this patch to cleanly and
+>> completely move the cpufreq driver to common clock framework.
+>
+> I agree that the other case needs to be handled as well. Basically the
+> whole conditional block dependent on exynos4x12_pms_change() can be safely
+> dropped, because this condition is already handled in PLL driver.
+>
 
-> sure we _still_ need to support s5pc100 in mainline.
-> 
-Thanks,
-Kukjin
+Exactly!
+
+> Lukasz is already working on further rework of this driver to clean it up
+> from legacy code, but this will have to wait for 3.13, as 3.12 is already
+> in rc stage and only fixes can be accepted for it.
+>
+>> For fixing this issue urgently, setting CLK_GET_RATE_NOCACHE for apll
+>> in clk driver can also be quicker fix.
+>
+> Unfortunately this is not how this flag works. It only makes
+> clk_get_rate() call ->recalc_rate() operation of the clock instead of
+> instantly returning cached rate - it doesn't seem to work recursively.
+>
+
+hmm.. yes it can't help in our case as it recursively walks only the subtree
+of clk but in our case we are changing rate of parent.
+
+Regards,
+Yadwinder
