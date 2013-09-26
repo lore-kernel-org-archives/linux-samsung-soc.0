@@ -1,25 +1,24 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: EXYNOS: remove unnecessary header inclusions from
- exynos4/5 dt machine file
-Date: Thu, 26 Sep 2013 13:45:27 +0900
-Message-ID: <02c301ceba73$38f44120$aadcc360$@org>
-References: <000001ceb2b9$e1936430$a4ba2c90$%han@samsung.com>
+Subject: RE: [PATCH] ARM: dts: disable PCIe for SD5v1 board
+Date: Thu, 26 Sep 2013 13:48:48 +0900
+Message-ID: <02c401ceba73$b0add230$12097690$@org>
+References: <000301cea9fe$619d2900$24d77b00$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:45672 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891Ab3IZEp3 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:63498 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891Ab3IZEsu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 00:45:29 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Thu, 26 Sep 2013 00:48:50 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MTP002YLUJDAU90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Sep 2013 13:45:28 +0900 (KST)
-In-reply-to: <000001ceb2b9$e1936430$a4ba2c90$%han@samsung.com>
+ with ESMTP id <0MTP000KCUPDI9F0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 26 Sep 2013 13:48:49 +0900 (KST)
+In-reply-to: <000301cea9fe$619d2900$24d77b00$%han@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -28,57 +27,37 @@ Cc: linux-samsung-soc@vger.kernel.org
 
 Jingoo Han wrote:
 > 
-> mach-exynos{4,5}-dt.c include several header files that are not
-> really used.
+> Disable PCIe for SD5v1 board, because there is no PCIe slot
+> on SD5v1 board.
 > 
 > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 > ---
->  arch/arm/mach-exynos/mach-exynos4-dt.c |    4 ----
->  arch/arm/mach-exynos/mach-exynos5-dt.c |    4 ----
->  2 files changed, 8 deletions(-)
+> Tested on SD5v1 board.
 > 
-> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-
-> exynos/mach-exynos4-dt.c
-> index 0099c6c..3fc338f 100644
-> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> @@ -11,12 +11,8 @@
->   * published by the Free Software Foundation.
->  */
+>  arch/arm/boot/dts/exynos5440-sd5v1.dts |    7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> -#include <linux/kernel.h>
->  #include <linux/of_platform.h>
->  #include <linux/of_fdt.h>
-> -#include <linux/serial_core.h>
-> -#include <linux/memblock.h>
-> -#include <linux/clocksource.h>
+> diff --git a/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> index 5b22508..78a239d 100644
+> --- a/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> +++ b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> @@ -36,4 +36,11 @@
+>  		status = "disabled";
+>  	};
 > 
->  #include <asm/mach/arch.h>
->  #include <plat/mfc.h>
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-
-> exynos/mach-exynos5-dt.c
-> index f874b77..217e84f 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -11,14 +11,10 @@
-> 
->  #include <linux/of_platform.h>
->  #include <linux/of_fdt.h>
-> -#include <linux/memblock.h>
->  #include <linux/io.h>
-> -#include <linux/clocksource.h>
-> 
->  #include <asm/mach/arch.h>
->  #include <mach/regs-pmu.h>
-> -
-> -#include <plat/cpu.h>
->  #include <plat/mfc.h>
-> 
->  #include "common.h"
+> +	pcie@290000 {
+> +		status = "disabled";
+> +	};
+> +
+> +	pcie@2a0000 {
+> +		status = "disabled";
+> +	};
+>  };
 > --
 > 1.7.10.4
 
-Looks good to me, applied.
+OK, applied.
 
 Thanks,
 Kukjin
