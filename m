@@ -1,65 +1,126 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH 1/2] cpufreq: exynos4x12: Use the common clock framework
- to set APLL clock rate
-Date: Thu, 26 Sep 2013 11:44:56 +0530
-Message-ID: <CAKew6eVXw5qUuZ=Oc6ko3BkJj=iYqvN-NsrfmOHPQmMkxiv-nA@mail.gmail.com>
-References: <1380108138-30402-1-git-send-email-l.majewski@samsung.com>
-	<1380108138-30402-2-git-send-email-l.majewski@samsung.com>
-	<CAKew6eW9-QHL5NKHV8roER_yuoLEiCoS53Gby8zC841fr=whqQ@mail.gmail.com>
-	<3068635.myUg9qMyJN@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH 12/26] ARM: exynos: remove custom .init_time hook
+Date: Thu, 26 Sep 2013 08:21:27 +0200
+Message-ID: <5243D267.3010704@gmail.com>
+References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com> <1379526839-14798-13-git-send-email-sebastian.hesselbarth@gmail.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:47459 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751060Ab3IZGO5 (ORCPT
+Received: from mail-ee0-f51.google.com ([74.125.83.51]:61055 "EHLO
+	mail-ee0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751063Ab3IZGVk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 02:14:57 -0400
-In-Reply-To: <3068635.myUg9qMyJN@amdc1227>
+	Thu, 26 Sep 2013 02:21:40 -0400
+In-Reply-To: <1379526839-14798-13-git-send-email-sebastian.hesselbarth@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Tomasz,
-
->> On Wed, Sep 25, 2013 at 4:52 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
->> > In the exynos4x12_set_apll() function, the APLL frequency is set with
->> > direct register manipulation.
->> >
->> > Such approach is not allowed in the common clock framework. The frequency
->> > is changed, but the corresponding clock value is not updated. This causes
->> > wrong frequency read from cpufreq's cpuinfo_cur_freq sysfs attribute.
->> >
->>
->> This patch looks incomplete, leaving the driver in untidy state, perhaps its
->> doesn't fix the above stated problem completely. what about
->> if (!exynos4x12_pms_change(old_index, new_index)) becomes true?
->>
->> IMHO, this driver needs lot more work in addition to this patch to cleanly and
->> completely move the cpufreq driver to common clock framework.
+On 09/18/2013 07:53 PM, Sebastian Hesselbarth wrote:
+> With arch/arm calling of_clk_init(NULL) from time_init(), we can now
+> remove custom .init_time hooks. While at it, also remove some now
+> redundant includes.
 >
-> I agree that the other case needs to be handled as well. Basically the
-> whole conditional block dependent on exynos4x12_pms_change() can be safely
-> dropped, because this condition is already handled in PLL driver.
->
+> Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> ---
 
-Exactly!
+Ping,
 
-> Lukasz is already working on further rework of this driver to clean it up
-> from legacy code, but this will have to wait for 3.13, as 3.12 is already
-> in rc stage and only fixes can be accepted for it.
->
->> For fixing this issue urgently, setting CLK_GET_RATE_NOCACHE for apll
->> in clk driver can also be quicker fix.
->
-> Unfortunately this is not how this flag works. It only makes
-> clk_get_rate() call ->recalc_rate() operation of the clock instead of
-> instantly returning cached rate - it doesn't seem to work recursively.
->
+Kukjin can you please comment on this patch?
 
-hmm.. yes it can't help in our case as it recursively walks only the subtree
-of clk but in our case we are changing rate of parent.
+Thanks!
 
-Regards,
-Yadwinder
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>   arch/arm/mach-exynos/common.c          |    8 --------
+>   arch/arm/mach-exynos/common.h          |    1 -
+>   arch/arm/mach-exynos/mach-exynos4-dt.c |    2 --
+>   arch/arm/mach-exynos/mach-exynos5-dt.c |    2 --
+>   4 files changed, 13 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index ba95e5d..a4e7ba8 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -26,8 +26,6 @@
+>   #include <linux/export.h>
+>   #include <linux/irqdomain.h>
+>   #include <linux/of_address.h>
+> -#include <linux/clocksource.h>
+> -#include <linux/clk-provider.h>
+>   #include <linux/irqchip/arm-gic.h>
+>   #include <linux/irqchip/chained_irq.h>
+>
+> @@ -367,12 +365,6 @@ static void __init exynos5_map_io(void)
+>   		iotable_init(exynos5250_iodesc, ARRAY_SIZE(exynos5250_iodesc));
+>   }
+>
+> -void __init exynos_init_time(void)
+> -{
+> -	of_clk_init(NULL);
+> -	clocksource_of_init();
+> -}
+> -
+>   struct bus_type exynos_subsys = {
+>   	.name		= "exynos-core",
+>   	.dev_name	= "exynos-core",
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 8646a14..f0fa205 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -16,7 +16,6 @@
+>   #include <linux/of.h>
+>
+>   void mct_init(void __iomem *base, int irq_g0, int irq_l0, int irq_l1);
+> -void exynos_init_time(void);
+>
+>   struct map_desc;
+>   void exynos_init_io(void);
+> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> index 0099c6c..6858d73 100644
+> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> @@ -16,7 +16,6 @@
+>   #include <linux/of_fdt.h>
+>   #include <linux/serial_core.h>
+>   #include <linux/memblock.h>
+> -#include <linux/clocksource.h>
+>
+>   #include <asm/mach/arch.h>
+>   #include <plat/mfc.h>
+> @@ -54,7 +53,6 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
+>   	.init_early	= exynos_firmware_init,
+>   	.init_machine	= exynos4_dt_machine_init,
+>   	.init_late	= exynos_init_late,
+> -	.init_time	= exynos_init_time,
+>   	.dt_compat	= exynos4_dt_compat,
+>   	.restart        = exynos4_restart,
+>   	.reserve	= exynos4_reserve,
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> index f874b77..bac2105 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> @@ -13,7 +13,6 @@
+>   #include <linux/of_fdt.h>
+>   #include <linux/memblock.h>
+>   #include <linux/io.h>
+> -#include <linux/clocksource.h>
+>
+>   #include <asm/mach/arch.h>
+>   #include <mach/regs-pmu.h>
+> @@ -76,7 +75,6 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+>   	.map_io		= exynos_init_io,
+>   	.init_machine	= exynos5_dt_machine_init,
+>   	.init_late	= exynos_init_late,
+> -	.init_time	= exynos_init_time,
+>   	.dt_compat	= exynos5_dt_compat,
+>   	.restart        = exynos5_restart,
+>   	.reserve	= exynos5_reserve,
+>
