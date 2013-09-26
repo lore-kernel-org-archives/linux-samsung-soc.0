@@ -1,61 +1,43 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 28/51] DMA-API: sound: fix dma mask handling in a lot
- of drivers
-Date: Thu, 26 Sep 2013 08:54:25 +0100
-Message-ID: <20130926075425.GX25647@n2100.arm.linux.org.uk>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMm9m-0007ij-ER@rmk-PC.arm.linux.org.uk> <s5h1u4cf2bo.wl%tiwai@suse.de>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 12/26] ARM: exynos: remove custom .init_time hook
+Date: Thu, 26 Sep 2013 10:08:03 +0200
+Message-ID: <1573378.EKN2gyy8Sh@flatron>
+References: <1379526839-14798-1-git-send-email-sebastian.hesselbarth@gmail.com> <1379526839-14798-13-git-send-email-sebastian.hesselbarth@gmail.com> <5243D267.3010704@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-Content-Disposition: inline
-In-Reply-To: <s5h1u4cf2bo.wl%tiwai@suse.de>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: driverdev-devel-bounces@linuxdriverproject.org
-To: Takashi Iwai <tiwai@suse.de>
-Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, linux-mmc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-nvme@lists.infradead.org, Jaroslav Kysela <perex@perex.cz>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-ide@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, devel@driverdev.osuosl.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, e1000-devel@lists.sourceforge.net, b43-dev@lists.infradead.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, Haojian Zhuang <haojian.zhuang@gmail.com>, Timur Tabi <timur@tabi.org>, Mark Brown <broonie@kernel.org>, dri-devel@lists.freedesktop.org, Ben Dooks <ben-linux@fluff.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, Eric Miao <eric.y.miao@gmail.com>, Sangbeom Kim <sbkim73@sa>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f172.google.com ([209.85.215.172]:59875 "EHLO
+	mail-ea0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751198Ab3IZIII (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Sep 2013 04:08:08 -0400
+In-Reply-To: <5243D267.3010704@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>
 
-On Thu, Sep 26, 2013 at 09:51:23AM +0200, Takashi Iwai wrote:
-> Hi,
-> 
-> sorry for the lat response, as I've been traveling in the last weeks.
-> 
-> At Thu, 19 Sep 2013 22:53:02 +0100,
-> Russell King wrote:
-> > 
-> > This code sequence is unsafe in modules:
-> > 
-> > static u64 mask = DMA_BIT_MASK(something);
-> > ...
-> > 	if (!dev->dma_mask)
-> > 		dev->dma_mask = &mask;
-> > 
-> > as if a module is reloaded, the mask will be pointing at the original
-> > module's mask address, and this can lead to oopses.  Moreover, they
-> > all follow this with:
-> > 
-> > 	if (!dev->coherent_dma_mask)
-> > 		dev->coherent_dma_mask = mask;
-> > 
-> > where 'mask' is the same value as the statically defined mask, and this
-> > bypasses the architecture's check on whether the DMA mask is possible.
-> > 
-> > Fix these issues by using the new dma_coerce_coherent_and_mask()
-> > function.
-> > 
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> 
-> Applied with Mark's ack now.
+Hi Sebastian,
 
-Which is a very stupid thing to do because you won't have
-dma_coerce_coherent_and_mask() in your tree, so all these drivers
-will fail to build for you.
+On Thursday 26 of September 2013 08:21:27 Sebastian Hesselbarth wrote:
+> On 09/18/2013 07:53 PM, Sebastian Hesselbarth wrote:
+> > With arch/arm calling of_clk_init(NULL) from time_init(), we can now
+> > remove custom .init_time hooks. While at it, also remove some now
+> > redundant includes.
+> > 
+> > Signed-off-by: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> > ---
+> 
+> Ping,
+
+This patch looks fine to me (as the whole series).
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
+I don't see any reason why this series could introduce a regression on
+Exynos SoCs, but just in case let me test it on selected Exynos4 and 
+Exynos5 boards.
+
+Best regards,
+Tomasz
