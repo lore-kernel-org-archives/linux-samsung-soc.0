@@ -1,164 +1,203 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2] MTD: Onenand: Add device tree support for samsung
- onenand
-Date: Thu, 26 Sep 2013 11:59:19 +0100
-Message-ID: <20130926105919.GG2411@e106331-lin.cambridge.arm.com>
-References: <1379941608-5068-1-git-send-email-m.krawczuk@partner.samsung.com>
- <20130923140823.GC16069@e106331-lin.cambridge.arm.com>
- <2086340.RrXQX9ib0T@amdc1227>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH 2/3] clk: samsung: Add clock driver for s5pc100
+Date: Thu, 26 Sep 2013 17:38:58 +0530
+Message-ID: <CAKew6eUgpnqvZUCsWGpqwDXtp6ARmhd-Nw-BXiod8=MK-k0fUA@mail.gmail.com>
+References: <1380041605-15736-1-git-send-email-m.krawczuk@partner.samsung.com>
+	<1380041605-15736-2-git-send-email-m.krawczuk@partner.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:48779 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756042Ab3IZK7Y (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:52511 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756831Ab3IZMJA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 06:59:24 -0400
-Content-Disposition: inline
-In-Reply-To: <2086340.RrXQX9ib0T@amdc1227>
+	Thu, 26 Sep 2013 08:09:00 -0400
+In-Reply-To: <1380041605-15736-2-git-send-email-m.krawczuk@partner.samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "rob@landley.net" <rob@landley.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>
+To: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree <devicetree@vger.kernel.org>, Yadwinder Singh <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, rob@landley.net, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, ijc+devicetree@hellion.org.uk, linux-kernel <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, ben-linux@fluff.org, s.nawrocki@samsung.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Sep 24, 2013 at 02:00:01PM +0100, Tomasz Figa wrote:
-> Hi Mateusz, Mark,
+Hi Mateusz,
 
-Hi,
 
-> 
-> On Monday 23 of September 2013 15:08:23 Mark Rutland wrote:
-> > On Mon, Sep 23, 2013 at 02:06:48PM +0100, Mateusz Krawczuk wrote:
-> > > +
-> > > +Required properties:
-> > > +  - compatible: value should be either of the following.
-> > > +      (a) "samsung,s3c6400-onenand",
-> > > +		for onenand controller compatible with s3c6400.
-> > > +      (b) "samsung,s3c6410-onenand",
-> > > +		for onenand controller compatible with s3c6410.
-> > > +      (c) "samsung,s5pc100-onenand",
-> > > +		for onenand controller compatible with s5pc100.
-> > > +      (d) "samsung,s5pc110-onenand",
-> > > +      for s5pc100-like onenand controller used on s5pc110 which supports DMA.
-> > > +
-> > 
-> > As I asked on the last posting, what are the differences between these
-> > implementations?
-> 
-> (d) is a completely different controller than (a), (b) and (c). They
-> have completely different register layouts. Also see below.
+After a quick view, just few things regarding coding styles.
 
-Ok.
+[...]
+> +#define        GENERAL_STATUS          0x0104
+> +#define        CAM_MUX_SEL             0x0300
+> +#define        MIXER_OUT_SEL           0x0304
+> +#define        LPMP3_MODE_SEL          0x0308
+> +#define MIPI_PHY_CON0          0x0400
+> +#define MIPI_PHY_CON1          0x0414
+> +#define HDMI_PHY_CON0          0x0420
 
-> 
-> > > +Required properties for s5pc110:
-> > > +
-> > > + - reg: the offset and length of the control registers. First region describes
-> > > +	OneNAND interface, second control registers.
-> > 
-> > Also, the complete reg description is a bit confusing. How about
-> > something like:
-> > 
-> >  - reg: two register specifiers:
-> >         [0] - The OneNAND interface
-> > 	[1] - The control registers
-> 
-> This looks much better, although I wouldn't be afraid of using words
-> instead of symbols to write this as follows instead:
-> 
->   - reg: two memory mapped register regions:
->     - first entry: memory mapped OneNAND chip,
->     - second entry: control registers.
+How about aligning all above with same no. of tabs?
 
-I'm also happy with that.
+> +
+> +/* Helper macros to define clock arrays. */
+> +#define FIXED_RATE_CLOCKS(name)        \
+> +               static struct samsung_fixed_rate_clock name[]
+> +#define MUX_CLOCKS(name)       \
+> +               static struct samsung_mux_clock name[]
+> +#define DIV_CLOCKS(name)       \
+> +               static struct samsung_div_clock name[]
+> +#define GATE_CLOCKS(name)      \
+> +               static struct samsung_gate_clock name[]
+> +
 
-> 
-> But... The controller in theory supports more than one OneNAND chip, each
-> mapped at different, so I'd suggest reordering the entries:
-> 
->   - reg: memory mapped register regions:
->     - first entry: control registers.
->     - second entry: memory mapped OneNAND chip 0,
->     - ...
->     - Nth entry: memory mapped OneNAND chip (N-2).
+These macros seems little bit odd in our common practice,
+perhaps these are making code harder to read below.
 
-I agree on the reordering, hence the questions I had below.
+> +/* Helper macros for gate types present on S5PC100. */
+> +#define GATE_BUS(_id, cname, pname, o, b) \
+> +               GATE(_id, cname, pname, o, b, 0, 0)
+> +#define GATE_SCLK(_id, cname, pname, o, b) \
+> +               GATE(_id, cname, pname, o, b, CLK_SET_RATE_PARENT, 0)
+> +#define GATE_ON(_id, cname, pname, o, b) \
+> +               GATE(_id, cname, pname, o, b, CLK_IGNORE_UNUSED, 0)
+> +
+[...]
+> +PNAME(mout_hclk_2_p) = {
+> +       "fout_epll",
+> +       "i2scdclk0"
+> +};
+> +
+> +PNAME(mout_i2s_2_p) = {
+> +       "fout_epll",
+> +       "i2scdclk0",
+> +       "dout_audio0",
+> +       "none"
+> +};
+> +
 
-> 
-> > Do we expect future OneNAND devices which may require more reg entries
-> > to describe?
-> 
-> Nope. In age of eMMC I wouldn't even expect any new OneNAND controller
-> to be handled by these bindings.
+Using one line per parent isn't increasing length of file unnecessarily?
 
-Ok.
+[ ... ]
+> +
+> +/* list of all parent clock list */
+> +static struct samsung_clock_alias s5pc100_clock_aliases[] = {
+> +       ALIAS(FIMC0, "s5pc100-fimc.0", "fimc"),
+> +       ALIAS(FIMC1, "s5pc100-fimc.1", "fimc"),
+> +       ALIAS(FIMC2, "s5pc100-fimc.2", "fimc"),
+> +       ALIAS(MOUT_FIMC2, NULL, "mout_fimc2"),
+> +       ALIAS(MOUT_FIMC1, NULL, "mout_fimc1"),
+> +       ALIAS(MOUT_FIMC0, NULL, "mout_fimc0"),
+> +       ALIAS(SCLK_FIMC0, "s5pc100-fimc.0", "sclk_fimc"),
+> +       ALIAS(SCLK_FIMC1, "s5pc100-fimc.1", "sclk_fimc"),
+> +       ALIAS(SCLK_FIMC2, "s5pc100-fimc.2", "sclk_fimc"),
+> +
+> +       ALIAS(MOUT_APLL, NULL, "mout_apll"),
+> +       ALIAS(MOUT_MPLL, NULL, "mout_mpll"),
+> +       ALIAS(MOUT_EPLL, NULL, "mout_epll"),
+> +       ALIAS(MOUT_HPLL, NULL, "mout_hpll"),
+> +       ALIAS(MOUT_HPLL, NULL, "sclk_hpll"),
+> +       ALIAS(UART0, "s3c6400-uart.0", "uart"),
+> +       ALIAS(UART1, "s3c6400-uart.1", "uart"),
+> +       ALIAS(UART2, "s3c6400-uart.2", "uart"),
+> +       ALIAS(UART3, "s3c6400-uart.3", "uart"),
+> +       ALIAS(UART0, "s3c6400-uart.0", "clk_uart_baud0"),
+> +       ALIAS(UART1, "s3c6400-uart.1", "clk_uart_baud0"),
+> +       ALIAS(UART2, "s3c6400-uart.2", "clk_uart_baud0"),
+> +       ALIAS(UART3, "s3c6400-uart.3", "clk_uart_baud0"),
+> +       ALIAS(UART0, "s3c6400-uart.0", "clk_uart_baud2"),
+> +       ALIAS(UART1, "s3c6400-uart.1", "clk_uart_baud2"),
+> +       ALIAS(UART2, "s3c6400-uart.2", "clk_uart_baud2"),
+> +       ALIAS(UART3, "s3c6400-uart.3", "clk_uart_baud2"),
+> +       ALIAS(SCLK_UART, "s3c6400-uart.0", "clk_uart_baud3"),
+> +       ALIAS(SCLK_UART, "s3c6400-uart.1", "clk_uart_baud3"),
+> +       ALIAS(SCLK_UART, "s3c6400-uart.2", "clk_uart_baud3"),
+> +       ALIAS(SCLK_UART, "s3c6400-uart.3", "clk_uart_baud3"),
+> +
+> +       ALIAS(HSMMC0, "s3c-sdhci.0", "hsmmc"),
+> +       ALIAS(HSMMC1, "s3c-sdhci.1", "hsmmc"),
+> +       ALIAS(HSMMC2, "s3c-sdhci.2", "hsmmc"),
+> +       ALIAS(HSMMC0, "s3c-sdhci.0", "mmc_busclk.0"),
+> +       ALIAS(HSMMC1, "s3c-sdhci.1", "mmc_busclk.0"),
+> +       ALIAS(HSMMC2, "s3c-sdhci.2", "mmc_busclk.0"),
+> +       ALIAS(SCLK_MMC0, "s3c-sdhci.0", "mmc_busclk.2"),
+> +       ALIAS(SCLK_MMC1, "s3c-sdhci.1", "mmc_busclk.2"),
+> +       ALIAS(SCLK_MMC2, "s3c-sdhci.2", "mmc_busclk.2"),
+> +       ALIAS(SCLK_MMC0_48, "s3c-sdhci.0", "mmc_busclk.3"),
+> +       ALIAS(SCLK_MMC1_48, "s3c-sdhci.1", "mmc_busclk.3"),
+> +       ALIAS(SCLK_MMC2_48, "s3c-sdhci.2", "mmc_busclk.3"),
+> +
+> +       ALIAS(SPI0, "s5pc100-spi.0", "spi"),
+> +       ALIAS(SPI1, "s5pc100-spi.1", "spi"),
+> +       ALIAS(SPI2, "s5pc100-spi.2", "spi"),
+> +       ALIAS(SPI0, "s5pc100-spi.0", "spi_busclk0"),
+> +       ALIAS(SPI1, "s5pc100-spi.1", "spi_busclk0"),
+> +       ALIAS(SPI2, "s5pc100-spi.2", "spi_busclk0"),
+> +       ALIAS(SCLK_SPI0_48, "s5pc100-spi.0", "spi_busclk1"),
+> +       ALIAS(SCLK_SPI1_48, "s5pc100-spi.1", "spi_busclk1"),
+> +       ALIAS(SCLK_SPI2_48, "s5pc100-spi.2", "spi_busclk1"),
+> +       ALIAS(SCLK_SPI0, "s5pc100-spi.0", "spi_busclk2"),
+> +       ALIAS(SCLK_SPI1, "s5pc100-spi.1", "spi_busclk2"),
+> +       ALIAS(SCLK_SPI2, "s5pc100-spi.2", "spi_busclk2"),
+> +       ALIAS(PDMA0, "dma-pl330.0", "apb_pclk"),
+> +       ALIAS(PDMA1, "dma-pl330.1", "apb_pclk"),
+> +       ALIAS(PWM, NULL, "timers"),
+> +
+> +       ALIAS(JPEG, NULL, "jpeg"),
+> +       ALIAS(MFC, "s5p-mfc", "mfc"),
+> +       ALIAS(TV, "s5p-sdo", "dac"),
+> +       ALIAS(MIXER, "s5p-mixer", "mixer"),
+> +       ALIAS(VP, "s5p-mixer", "vp"),
+> +       ALIAS(HDMI, "s5p-hdmi", "hdmi"),
+> +       ALIAS(SCLK_HDMI, "s5p-hdmi", "hdmiphy"),
+> +
+> +       ALIAS(USB_OTG, NULL, "otg"),
+> +       ALIAS(USB_HOST, NULL, "usb-host"),
+> +       ALIAS(USB_HOST, NULL, "usbhost"),
+> +       ALIAS(LCDCON, "s5pc100-fb", "lcd"),
+> +       ALIAS(CFCON, NULL, "cfcon"),
+> +       ALIAS(SYSTIMER, NULL, "systimer"),
+> +       ALIAS(WDT, NULL, "watchdog"),
+> +       ALIAS(RTC, NULL, "rtc"),
+> +       ALIAS(I2C, "s3c2440-i2c.0", "i2c"),
+> +       ALIAS(CCAN0, NULL, "ccan"),
+> +       ALIAS(CCAN1, NULL, "ccan"),
+> +       ALIAS(I2C_HDMI, "s3c2440-i2c.1", "i2c"),
+> +       ALIAS(HSITX, NULL, "hsitx"),
+> +       ALIAS(HSIRX, NULL, "hsirx"),
+> +       ALIAS(TSADC, NULL, "adc"),
+> +       ALIAS(KEYIF, "s5pc100-keypad", "keypad"),
+> +       ALIAS(I2S0, "samsung-i2s.0", "iis"),
+> +       ALIAS(I2S1, "samsung-i2s.1", "iis"),
+> +       ALIAS(I2S2, "samsung-i2s.2", "iis"),
+> +       ALIAS(SPDIF, NULL, "spdif"),
+> +       ALIAS(ROTATOR, NULL, "rot"),
+> +       ALIAS(DOUT_ARM, NULL, "armclk"),
+> +       ALIAS(SCLK_AUDIO0, "soc-audio.0", "sclk_audio"),
+> +       ALIAS(SCLK_AUDIO1, "soc-audio.1", "sclk_audio"),
+> +       ALIAS(SCLK_AUDIO2, "soc-audio.2", "sclk_audio"),
+> +       ALIAS(KEYIF, NULL, "keypad"),
+> +
+> +       ALIAS(MFC, "s5p-mfc", "sclk_mfc"),
+> +       ALIAS(G2D, "s5p-g2d", "fimg2d"),
+> +
+> +};
+> +
 
-> 
-> > > + - interrupt-parent, interrupts		Onenand memory interrupts
-> > 
-> > As it's a common property, I don't think interrupt-parent needs to
-> > be described.
-> > 
-> > Is there more than one interrupt? What's it called on the manual?
-> 
-> There is one interrupt per OneNAND chip, so this is what should be
-> represented in the binding.
+Any reason/hidden advantage for using a separate of ALIAS,
+instead of using MUX_A/GATE_A ?
 
-Ah. That should be mentioned explicitly, with the required ordering.
+[ ... ]
+> +       s5pc100_clk_register_finpll(xom);
+> +
+> +       /* Register PLLs. */
 
-> 
-> > > +
-> > > +Required properties for others:
-> > > +
-> > > + - reg: the offset and length of the control registers. First region describes
-> > > +	control registers, second OneNAND interface.
-> > 
-> > Why does the s5pc110 OneNAND binding take its registers in the opposite
-> > order to the rest of these? Can we not fix up the driver first to make
-> > it consistent? Then we only need to describe this once and it's going to
-> > be far less of a headache to support.
-> 
-> Both areas in both "major" hardware variants have completely different
-> meaning:
->  - in case of SoCs earlier or equal to S5PC100, first entry represents
->    controller registers that are used to control various operating
->    parameters, while second entry is a command/data interface, which is
->    used to trigger read/write/etc. operations in the controller and
->    push/pull data through it. In this variant there is no direct mapping
->    of OneNAND chip in CPU address space. This variant supports only
->    one memory chip per controller instance,
->  - in case of S5PC110, each OneNAND chip is directly mapped into CPU
->    address space. In addition there is a block of control registers that
->    are used to configure the interface and control internal DMA engine
->    (which is not present in <= S5PC100 variants). This variant supports
->    multiple memory chips per controller instance (2 in case of S5PV210,
->    but current driver handles only one AFAIK).
+Why this special comment/treatment for PLLs :) ?
+Others below doesn't get such treatment.
 
-Ok. Even with that, I think the suggestion to reorder the reg entries
-above still makes this more consistent, with the controller registers
-first, then an entry per-chip (which is either the chip itself or the
-related command/data interface depending on the particular controller).
+> +       samsung_clk_register_pll(s5pc100_pll_clks,
+> +                               ARRAY_SIZE(s5pc100_pll_clks), reg_base);
+> +
+> +       samsung_clk_register_fixed_rate(s5pc100_fixed_rate_clks,
+> +                       ARRAY_SIZE(s5pc100_fixed_rate_clks));
+> +
+>
 
-> 
-> > > +
-> > > +Clocks:
-> > > + - gate - clock which output is supplied to external OneNAND flash memory.
-> > 
-> > How about the following (without the Clocks header):
-> > 
-> > - clocks: clock-specifiers for the clocks named in clock-names, per the
-> >           common clock bindings.
-> > 
-> > - clock-names: should contain "gate" for the clock to the OneNAND flash
-> >                memory.
-> > 
-> > Is this the only clock that might be necessary on all platforms?
-> 
-> S3C64xx SoCs have only one OneNAND gate clock per controller.
-> S5PC100 SoC has one IP gate clock and one memory chip gate clock.
-> S5PC110 SoC has one gate that gates both IP and all memory chips.
 
-Good to know. Thanks for the thorough description.
-
-Cheers,
-Mark.
+Regards,
+Yadwinder
