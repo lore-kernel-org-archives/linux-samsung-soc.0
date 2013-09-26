@@ -1,42 +1,56 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [RFC 3/3] Samsung: DT: Add Device tree for S5PC110/S5PV210 Boards
-Date: Thu, 26 Sep 2013 20:14:16 +0200
-Message-ID: <4009668.rmW0ykQNyc@amdc1032>
-References: <1380214769-7685-1-git-send-email-m.krawczuk@partner.samsung.com>
- <1380214769-7685-4-git-send-email-m.krawczuk@partner.samsung.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v11 2/8] usb: phy: omap-usb2: use the new generic PHY
+ framework
+Date: Thu, 26 Sep 2013 11:51:51 -0700
+Message-ID: <20130926185151.GA8689@kroah.com>
+References: <1377063973-22044-1-git-send-email-kishon@ti.com>
+ <1377063973-22044-3-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:65122 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753202Ab3IZSOY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 14:14:24 -0400
-In-reply-to: <1380214769-7685-4-git-send-email-m.krawczuk@partner.samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1377063973-22044-3-git-send-email-kishon@ti.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-fbdev@vger.kernel.org, linux-doc@vger.kernel.org, tony@atomide.com, nsekhar@ti.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, kgene.kim@samsung.com, swarren@nvidia.com, jg1.han@samsung.com, stern@rowland.harvard.edu, grant.likely@linaro.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, george.cherian@ti.com, arnd@arndb.de, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, balajitk@ti.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, balbi@ti.com, kyungmin.park@samsung.com, broonie@kernel.org, akpm@linux-foundation.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, devicetree@vger.kernel.org, t.figa@samsung.com, m.szyprowski@samsung.com, k.debski@samsung.com, s.nawrocki@samsung.com, t.stanislaws@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
 
+On Wed, Aug 21, 2013 at 11:16:07AM +0530, Kishon Vijay Abraham I wrote:
+> Used the generic PHY framework API to create the PHY. Now the power off and
+> power on are done in omap_usb_power_off and omap_usb_power_on respectively.
+> The omap-usb2 driver is also moved to driver/phy.
+> 
+> However using the old USB PHY library cannot be completely removed
+> because OTG is intertwined with PHY and moving to the new framework
+> will break OTG. Once we have a separate OTG state machine, we
+> can get rid of the USB PHY library.
+> 
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Acked-by: Felipe Balbi <balbi@ti.com>
+> ---
+>  drivers/phy/Kconfig                   |   12 +++++++++
+>  drivers/phy/Makefile                  |    1 +
+>  drivers/{usb => }/phy/phy-omap-usb2.c |   45 ++++++++++++++++++++++++++++++---
+>  drivers/usb/phy/Kconfig               |   10 --------
+>  drivers/usb/phy/Makefile              |    1 -
+>  5 files changed, 54 insertions(+), 15 deletions(-)
+>  rename drivers/{usb => }/phy/phy-omap-usb2.c (88%)
 
-Hi Mateusz,
+I tried to apply this to my USB branch, but it fails.
 
-On Thursday, September 26, 2013 06:59:29 PM Mateusz Krawczuk wrote:
-> Add DTS for s5pc110 boards: goni, aquila, smdkc110
-> s5pv210: smdkv210, tiny210
-> Torbreck is replaced by FriendlyARM Tiny210 board.
+Kishon, you were going to refresh this patch series, right?  Please do,
+because as-is, I can't take it.
 
-Could you please explain what do you mean by "replaced" here?
+thanks,
 
-Looking at the current board code it should be pretty easy to add
-device tree support for Torbreck if needed (it is just a subset of
-smdkc110 support + mmc). Then you would have all mach-s5pv210 boards
-covered by the device tree and could plan for the removal of non-DT
-code in the near future.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+greg k-h
