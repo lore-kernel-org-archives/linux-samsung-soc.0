@@ -1,162 +1,39 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: remove CONFIG_MACH_EXYNOS[4,5]_DT config
- options
-Date: Thu, 26 Sep 2013 13:09:53 +0900
-Message-ID: <029701ceba6e$40ca9430$c25fbc90$%kim@samsung.com>
-References: <3809234.0NkWBIjRC9@amdc1032>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/2] Samsung Common CLK for S3C64XX
+Date: Wed, 25 Sep 2013 21:20:30 -0700
+Message-ID: <CAOesGMiQarQ3TqmEbJ4cwFp26wNeJ6yDdLFPseT-uL1AbqkPFA@mail.gmail.com>
+References: <0c4401ceb8be$99274df0$cb75e9d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56287 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750795Ab3IZEJz (ORCPT
+Received: from mail-qa0-f52.google.com ([209.85.216.52]:47049 "EHLO
+	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750782Ab3IZEUb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 00:09:55 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MTP0008TSVKXLJ0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Sep 2013 13:09:53 +0900 (KST)
-In-reply-to: <3809234.0NkWBIjRC9@amdc1032>
-Content-language: ko
+	Thu, 26 Sep 2013 00:20:31 -0400
+Received: by mail-qa0-f52.google.com with SMTP id k4so512640qaq.18
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Sep 2013 21:20:30 -0700 (PDT)
+In-Reply-To: <0c4401ceb8be$99274df0$cb75e9d0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@ti.com>
 
-Bartlomiej Zolnierkiewicz wrote:
-> 
-> EXYNOS is now Device Tree (DT) only platform so it makes no sense to have
-> config options responsible for enabling platform specific DT support.
-> 
-> Moreover the kernel image won't even link if neither
-> CONFIG_MACH_EXYNOS4_DT
-> nor CONFIG_MACH_EXYNOS5_DT config option is enabled (linker fails with "no
-> machine record defined" error).
-> 
-> Remove CONFIG_MACH_EXYNOS[4,5]_DT config options and just use the standard
-> CONFIG_ARCH_EXYNOS[4,5] ones instead.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/configs/exynos_defconfig |  1 -
->  arch/arm/mach-exynos/Kconfig      | 38
-+++++++++--------------------------
-> ---
->  arch/arm/mach-exynos/Makefile     |  4 ++--
->  3 files changed, 11 insertions(+), 32 deletions(-)
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig
-> b/arch/arm/configs/exynos_defconfig
-> index ad7dfbb..5181d0d 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -11,7 +11,6 @@ CONFIG_ARCH_EXYNOS=y
->  CONFIG_S3C_LOWLEVEL_UART_PORT=3
->  CONFIG_S3C24XX_PWM=y
->  CONFIG_ARCH_EXYNOS5=y
-> -CONFIG_MACH_EXYNOS4_DT=y
->  CONFIG_SMP=y
->  CONFIG_NR_CPUS=2
->  CONFIG_PREEMPT=y
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index cb36807..b810f2f 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -14,19 +14,28 @@ menu "SAMSUNG EXYNOS SoCs Support"
->  config ARCH_EXYNOS4
->  	bool "SAMSUNG EXYNOS4"
->  	default y
-> +	select ARM_AMBA
-> +	select CLKSRC_OF
-> +	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
-> +	select CPU_EXYNOS4210
->  	select GIC_NON_BANKED
-> +	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
->  	select HAVE_ARM_SCU if SMP
->  	select HAVE_SMP
->  	select MIGHT_HAVE_CACHE_L2X0
->  	select PINCTRL
-> +	select S5P_DEV_MFC
->  	help
->  	  Samsung EXYNOS4 SoCs based systems
-> 
->  config ARCH_EXYNOS5
->  	bool "SAMSUNG EXYNOS5"
-> +	select ARM_AMBA
-> +	select CLKSRC_OF
->  	select HAVE_ARM_SCU if SMP
->  	select HAVE_SMP
->  	select PINCTRL
-> +	select USB_ARCH_HAS_XHCI
->  	help
->  	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
-> 
-> @@ -110,35 +119,6 @@ config SOC_EXYNOS5440
->  	help
->  	  Enable EXYNOS5440 SoC support
-> 
-> -comment "Flattened Device Tree based board for EXYNOS SoCs"
-> -
-> -config MACH_EXYNOS4_DT
-> -	bool "Samsung Exynos4 Machine using device tree"
-> -	default y
-> -	depends on ARCH_EXYNOS4
-> -	select ARM_AMBA
-> -	select CLKSRC_OF
-> -	select CLKSRC_SAMSUNG_PWM if CPU_EXYNOS4210
-> -	select CPU_EXYNOS4210
-> -	select KEYBOARD_SAMSUNG if INPUT_KEYBOARD
-> -	select S5P_DEV_MFC
-> -	help
-> -	  Machine support for Samsung Exynos4 machine with device tree
-> enabled.
-> -	  Select this if a fdt blob is available for the Exynos4 SoC based
-> board.
-> -	  Note: This is under development and not all peripherals can be
-> supported
-> -	  with this machine file.
-> -
-> -config MACH_EXYNOS5_DT
-> -	bool "SAMSUNG EXYNOS5 Machine using device tree"
-> -	default y
-> -	depends on ARCH_EXYNOS5
-> -	select ARM_AMBA
-> -	select CLKSRC_OF
-> -	select USB_ARCH_HAS_XHCI
-> -	help
-> -	  Machine support for Samsung EXYNOS5 machine with device tree
-> enabled.
-> -	  Select this if a fdt blob is available for the EXYNOS5 SoC based
-> board.
-> -
->  endmenu
-> 
->  endif
-> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-> index 5369615..8930b66 100644
-> --- a/arch/arm/mach-exynos/Makefile
-> +++ b/arch/arm/mach-exynos/Makefile
-> @@ -32,5 +32,5 @@ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-
-> a$(plus_sec)
-> 
->  # machine support
-> 
-> -obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
-> -obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
-> +obj-$(CONFIG_ARCH_EXYNOS4)	+= mach-exynos4-dt.o
-> +obj-$(CONFIG_ARCH_EXYNOS5)	+= mach-exynos5-dt.o
-> --
-> 1.8.2.3
+On Mon, Sep 23, 2013 at 5:39 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> The following changes since commit 272b98c6455f00884f0350f775c5342358ebb73f:
+>
+>   Linux 3.12-rc1 (2013-09-16 16:17:51 -0400)
+>
+> are available in the git repository at:
+>
+>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-clk-s3c64xx
+>
+> for you to fetch changes up to 66fcbe6b7c2827866100837611c9838298a28486:
+>
+>   ARM: S3C64XX: Remove old clock management code (2013-09-17 06:47:36 +0900)
 
-OK, this cleanup looks good to me but updating defconfig is not required in
-this patch because it should be updated separately according to updating
-other stuff...
+Pulled into next/soc, thanks.
 
-Will apply except updating defconfig.
 
-Thanks,
-Kukjin
+-Olof
