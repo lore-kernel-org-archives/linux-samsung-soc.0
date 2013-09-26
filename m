@@ -1,70 +1,50 @@
-From: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
-Subject: Re: [PATCH V4 0/4] exynos dwmmc device tree node cleanup
-Date: Thu, 26 Sep 2013 10:51:07 +0530
-Message-ID: <CA+NduCDRJwt=583ETOM0Tb+eNHJi-Pr7+-AwrAtFgvi+gi6JFA@mail.gmail.com>
-References: <1378188264-22382-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1530001.y8QaeTojjb@flatron>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2] ARM: SAMSUNG: S5P: If detected device tree skip irq init
+Date: Thu, 26 Sep 2013 14:29:13 +0900
+Message-ID: <02c901ceba79$55b382c0$011a8840$%kim@samsung.com>
+References: <1380038363-487-1-git-send-email-m.krawczuk@partner.samsung.com>
+ <2123658.6S6hP57GRg@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:54612 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751018Ab3IZFVJ (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:14026 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750795Ab3IZF3R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 01:21:09 -0400
-In-Reply-To: <1530001.y8QaeTojjb@flatron>
+	Thu, 26 Sep 2013 01:29:17 -0400
+In-reply-to: <2123658.6S6hP57GRg@flatron>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, Tomasz Figa <t.figa@samsung.com>, Douglas Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, Thomas Abraham <thomas.abraham@linaro.org>, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: 'Mateusz Krawczuk' <m.krawczuk@partner.samsung.com>, t.stanislaws@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, s.nawrocki@samsung.com, b.zolnierkie@samsung.com, t.figa@samsung.com, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-Hi Kukjin,
- Can you please take this series to your tree?
+Tomasz Figa wrote:
+> 
+> Hi Mateusz,
+> 
+> On Tuesday 24 of September 2013 17:59:23 Mateusz Krawczuk wrote:
+> > It prevents from executing things already handled by pinctrl-exynos
+> > driver, when device tree is available.
+> >
+> > Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  arch/arm/plat-samsung/s5p-irq-eint.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> 
+> Acked-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> [as a temporary solution until we move all the users of this code to
+> device tree]
+> 
+Yes, agreed.
 
-Best Regards
-Yuvaraj
+The 'skip irq init' in subject would be changed to 'skip eint init' for
+clear meaning.
 
-On Tue, Sep 3, 2013 at 1:41 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Yuvaraj,
->
-> On Tuesday 03 of September 2013 11:34:20 Yuvaraj Kumar C D wrote:
->> changes from V3:
->>       1.Added two new patch in the series
->>               [1] ARM: dts: Move fifo-depth property from board dts
->>               [2] ARM: dts: rename mmc dts node for exynos5 series
->> changes from V2:
->>       1.remove from exynos5.dtsi and add in exynos5250.dtsi
->>         in single patch.Suggested by Tomasz Figa.
->>       2.Separate patch for changing status property of dwmmc node
->>         in smdk5250 and arndale board dts file.
->>
->> V1 Patches:
->> 1.[PATCH 1/2] ARM: dts: remove dwmmc nodes from exynos5 common dts file.
->> http://www.spinics.net/lists/linux-samsung-soc/msg21602.html
->> 2.[PATCH 2/2] ARM: dts: Add dwmmc nodes in SOC specific dts file
->>       http://www.spinics.net/lists/linux-samsung-soc/msg21603.html
->>
->> Yuvaraj Kumar C D (4):
->>   ARM: dts: Move dwmmc nodes from exynos5.dtsi to exynos5250.dtsi
->>   ARM: dts: exynos: change status property of dwmmc nodes
->>   ARM: dts: Move fifo-depth property from board dts
->>   ARM: dts: rename mmc dts node for exynos5 series
->>
->>  arch/arm/boot/dts/cros5250-common.dtsi    |    8 +++----
->>  arch/arm/boot/dts/exynos5.dtsi            |   21 -----------------
->>  arch/arm/boot/dts/exynos5250-arndale.dts  |   16 ++++---------
->>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++---------
->>  arch/arm/boot/dts/exynos5250-snow.dts     |    2 +-
->>  arch/arm/boot/dts/exynos5250.dtsi         |   36
->> ++++++++++++++++++++++------- 6 files changed, 41 insertions(+), 58
->> deletions(-)
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
-> Best regards,
-> Tomasz
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Applied.
+
+Thanks,
+Kukjin
