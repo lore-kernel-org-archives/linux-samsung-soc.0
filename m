@@ -1,94 +1,42 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base
- value
-Date: Thu, 26 Sep 2013 14:05:09 +0900
-Message-ID: <02c701ceba75$f95b1900$ec114b00$@org>
-References: <1379937815-21746-1-git-send-email-chander.kashyap@linaro.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
+ part and Exynos part
+Date: Thu, 26 Sep 2013 10:36:45 +0530
+Message-ID: <5243C0E5.7020508@ti.com>
+References: <000701ce8741$fe47deb0$fad79c10$@samsung.com> <20130923041427.GC2246@pratyush-vbox> <523FD286.608@ti.com> <201309242323.55323.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53424 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751217Ab3IZFFL (ORCPT
+Received: from comal.ext.ti.com ([198.47.26.152]:49155 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751018Ab3IZFHA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 01:05:11 -0400
-In-reply-to: <1379937815-21746-1-git-send-email-chander.kashyap@linaro.org>
-Content-language: ko
+	Thu, 26 Sep 2013 01:07:00 -0400
+In-Reply-To: <201309242323.55323.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chander Kashyap' <chander.kashyap@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: thomas.abraham@linaro.org, tglx@linutronix.de, t.figa@samsung.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Pratyush Anand <pratyush.anand@st.com>, Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Chander Kashyap wrote:
+On Wednesday 25 September 2013 02:53 AM, Arnd Bergmann wrote:
+> On Monday 23 September 2013, Kishon Vijay Abraham I wrote:
+>> Btw if we hadn't programmed inbound translation table, the address will go
+>> untranslated (according to the data book). I guess that's how it was working
+>> for Jingoo Han.
+>>
+>> **
+>> 3.10.4
+>> Inbound iATU Operation
+>>
+>> When there is no match, then the address is untranslated
+>> **
+>>
 > 
-> Replace irq_domain_add_simple with "irq_domain_add_linear" in order to use
-> linear irq domain, and to remove hardcoded irq_base_value.
-> 
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> ---
-> Changes since v1:
-> 	- Replaced irq_domain_add_simple with irq_domain_add_linear,
-> 	  as suggested by Tomasz
-> 
->  drivers/irqchip/exynos-combiner.c |   15 +++------------
->  1 file changed, 3 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-
-> combiner.c
-> index 4c68265..2551046 100644
-> --- a/drivers/irqchip/exynos-combiner.c
-> +++ b/drivers/irqchip/exynos-combiner.c
-> @@ -206,8 +206,7 @@ static unsigned int combiner_lookup_irq(int group)
-> 
->  static void __init combiner_init(void __iomem *combiner_base,
->  				 struct device_node *np,
-> -				 unsigned int max_nr,
-> -				 int irq_base)
-> +				 unsigned int max_nr)
->  {
->  	int i, irq;
->  	unsigned int nr_irq;
-> @@ -221,7 +220,7 @@ static void __init combiner_init(void __iomem
-> *combiner_base,
->  		return;
->  	}
-> 
-> -	combiner_irq_domain = irq_domain_add_simple(np, nr_irq, irq_base,
-> +	combiner_irq_domain = irq_domain_add_linear(np, nr_irq,
->  				&combiner_irq_domain_ops, combiner_data);
->  	if (WARN_ON(!combiner_irq_domain)) {
->  		pr_warning("%s: irq domain init failed\n", __func__);
-> @@ -248,7 +247,6 @@ static int __init combiner_of_init(struct device_node
-> *np,
->  {
->  	void __iomem *combiner_base;
->  	unsigned int max_nr = 20;
-> -	int irq_base = -1;
-> 
->  	combiner_base = of_iomap(np, 0);
->  	if (!combiner_base) {
-> @@ -262,14 +260,7 @@ static int __init combiner_of_init(struct device_node
-> *np,
->  			__func__, max_nr);
->  	}
-> 
-> -	/*
-> -	 * FIXME: This is a hardwired COMBINER_IRQ(0,0). Once all devices
-> -	 * get their IRQ from DT, remove this in order to get dynamic
-> -	 * allocation.
-> -	 */
-> -	irq_base = 160;
-> -
-> -	combiner_init(combiner_base, np, max_nr, irq_base);
-> +	combiner_init(combiner_base, np, max_nr);
-> 
->  	return 0;
->  }
-> --
-> 1.7.9.5
+> Well, that should work just as well, since you have a 1:1 translation anyway.
+> Do you get the same error without the translation?
 
-Looks nice to me, applied with Tomasz's review.
+Yes. I get the same non-fatal error interrupt in RC.
 
-Thanks,
-Kukjin
+Thanks
+Kishon
