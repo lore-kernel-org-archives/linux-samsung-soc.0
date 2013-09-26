@@ -1,45 +1,90 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH v2] clk: exynos5420: fix cpll clock register offsets
-Date: Thu, 26 Sep 2013 14:36:35 +0530
-Message-ID: <1380186395-28814-1-git-send-email-chander.kashyap@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:60273 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756358Ab3IZJGz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 05:06:55 -0400
-Received: by mail-pa0-f46.google.com with SMTP id fa1so1027737pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 26 Sep 2013 02:06:54 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH 1/2] cpufreq: exynos4x12: Use the common clock framework to
+ set APLL clock rate
+Date: Thu, 26 Sep 2013 11:16:25 +0200
+Message-ID: <20130926111625.09cb2071@amdc308.digital.local>
+References: <1380108138-30402-1-git-send-email-l.majewski@samsung.com>
+ <1380108138-30402-2-git-send-email-l.majewski@samsung.com>
+ <CAKew6eW9-QHL5NKHV8roER_yuoLEiCoS53Gby8zC841fr=whqQ@mail.gmail.com>
+ <3068635.myUg9qMyJN@amdc1227>
+ <CAKew6eVXw5qUuZ=Oc6ko3BkJj=iYqvN-NsrfmOHPQmMkxiv-nA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <CAKew6eVXw5qUuZ=Oc6ko3BkJj=iYqvN-NsrfmOHPQmMkxiv-nA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@sisk.pl>, Viresh Kumar <viresh.kumar@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, yadi.brar@samsung.com, t.figa@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-Fixes cpll control and lock register offset values for Exynos5420 SoC.
+Hi Yadwinder,
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Changes Since v1:
-	- Fixed patch subject as per Kukgin suggestion.
+> Hi Tomasz,
+> 
+> >> On Wed, Sep 25, 2013 at 4:52 PM, Lukasz Majewski
+> >> <l.majewski@samsung.com> wrote:
+> >> > In the exynos4x12_set_apll() function, the APLL frequency is set
+> >> > with direct register manipulation.
+> >> >
+> >> > Such approach is not allowed in the common clock framework. The
+> >> > frequency is changed, but the corresponding clock value is not
+> >> > updated. This causes wrong frequency read from cpufreq's
+> >> > cpuinfo_cur_freq sysfs attribute.
+> >> >
+> >>
+> >> This patch looks incomplete, leaving the driver in untidy state,
+> >> perhaps its doesn't fix the above stated problem completely. what
+> >> about if (!exynos4x12_pms_change(old_index, new_index)) becomes
+> >> true?
+> >>
+> >> IMHO, this driver needs lot more work in addition to this patch to
+> >> cleanly and completely move the cpufreq driver to common clock
+> >> framework.
+> >
+> > I agree that the other case needs to be handled as well. Basically
+> > the whole conditional block dependent on exynos4x12_pms_change()
+> > can be safely dropped, because this condition is already handled in
+> > PLL driver.
+> >
+> 
+> Exactly!
 
- drivers/clk/samsung/clk-exynos5420.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+After more corner case testing, I admit that corner cases with PLL s
+parameter change are still broken (e.g. 1400000 -> 700000).
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 86dfc64..892aac0 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -730,8 +730,8 @@ struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
- struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
- 	[apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
- 		APLL_CON0, NULL),
--	[cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
--		MPLL_CON0, NULL),
-+	[cpll] = PLL(pll_2550, fout_cpll, "fout_cpll", "fin_pll", CPLL_LOCK,
-+		CPLL_CON0, NULL),
- 	[dpll] = PLL(pll_2550, fout_dpll, "fout_dpll", "fin_pll", DPLL_LOCK,
- 		DPLL_CON0, NULL),
- 	[epll] = PLL(pll_2650, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
+I will prepare v2 for it.
+
+If I manage I will push it into -rc. If not those changes will be
+included to exynos cpufreq rework. 
+
+Thanks guys for a thorough review.
+
+> 
+> > Lukasz is already working on further rework of this driver to clean
+> > it up from legacy code, but this will have to wait for 3.13, as
+> > 3.12 is already in rc stage and only fixes can be accepted for it.
+> >
+> >> For fixing this issue urgently, setting CLK_GET_RATE_NOCACHE for
+> >> apll in clk driver can also be quicker fix.
+> >
+> > Unfortunately this is not how this flag works. It only makes
+> > clk_get_rate() call ->recalc_rate() operation of the clock instead
+> > of instantly returning cached rate - it doesn't seem to work
+> > recursively.
+> >
+> 
+> hmm.. yes it can't help in our case as it recursively walks only the
+> subtree of clk but in our case we are changing rate of parent.
+> 
+> Regards,
+> Yadwinder
+
+
+
 -- 
-1.7.9.5
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
