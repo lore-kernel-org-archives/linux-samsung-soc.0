@@ -1,61 +1,157 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: [PATCH V4 3/6] clk: exynos5250: add clock ID for div_pcm0
-Date: Wed, 25 Sep 2013 14:12:49 -0700
-Message-ID: <1380143572-11741-3-git-send-email-abrestic@chromium.org>
-References: <1380046016-5811-1-git-send-email-abrestic@chromium.org>
- <1380143572-11741-1-git-send-email-abrestic@chromium.org>
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1380143572-11741-1-git-send-email-abrestic@chromium.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mike Turquette <mturquette@linaro.org>, Grant Likely <grant.likely@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Jiri Kosina <jkosina@suse.cz>, Rahul Sharma <rahul.sharma@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Doug Anderson <dianders@chromium.org>, Padmavathi Venna <padma.v@samsung.com>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH] clockevent: exynos_mct: fix lockdep warning
+Date: Thu, 26 Sep 2013 02:39:25 +0200
+Message-ID: <5243823D.4040208@linaro.org>
+References: <1380120578-17458-1-git-send-email-tom.leiming@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:53369 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754761Ab3IZAj2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Sep 2013 20:39:28 -0400
+Received: by mail-wi0-f173.google.com with SMTP id hq15so6288904wib.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Sep 2013 17:39:27 -0700 (PDT)
+In-Reply-To: <1380120578-17458-1-git-send-email-tom.leiming@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ming Lei <tom.leiming@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-There is no gate for the PCM clock input to the AudioSS block, so
-the parent of sclk_pcm is div_pcm0.  Add a clock ID for it so that
-we can reference it in device trees.
+On 09/25/2013 04:49 PM, Ming Lei wrote:
+> This patch moves request_irq() out of cpu notifier callback
+> to fix below lockdep warning:
+>=20
+> [    0.249513] ------------[ cut here ]------------
+> [    0.249525] WARNING: CPU: 1 PID: 0 at kernel/lockdep.c:2740 lockde=
+p_trace_alloc+0xc8/0x10c()
+> [    0.249534] DEBUG_LOCKS_WARN_ON(irqs_disabled_flags(flags))
+> [    0.249538] Modules linked in:
+> [    0.249548] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.12.0-rc1-n=
+ext-20130923+ #338
+> [    0.249564] [<c00165d0>] (unwind_backtrace+0x0/0xec) from [<c0012b=
+48>] (show_stack+0x20/0x24)
+> [    0.249577] [<c0012b48>] (show_stack+0x20/0x24) from [<c04ebf0c>] =
+(dump_stack+0x74/0xb4)
+> [    0.249591] [<c04ebf0c>] (dump_stack+0x74/0xb4) from [<c00237a8>] =
+(warn_slowpath_common+0x78/0x9c)
+> [    0.249604] [<c00237a8>] (warn_slowpath_common+0x78/0x9c) from [<c=
+0023888>] (warn_slowpath_fmt+0x40/0x48)
+> [    0.249615] [<c0023888>] (warn_slowpath_fmt+0x40/0x48) from [<c007=
+f194>] (lockdep_trace_alloc+0xc8/0x10c)
+> [    0.249626] [<c007f194>] (lockdep_trace_alloc+0xc8/0x10c) from [<c=
+01173b0>] (kmem_cache_alloc_trace+0x38/0x2
+> 24)
+> [    0.249638] [<c01173b0>] (kmem_cache_alloc_trace+0x38/0x224) from =
+[<c006bc4c>] (request_threaded_irq+0x90/0x130)
+> [    0.249651] [<c006bc4c>] (request_threaded_irq+0x90/0x130) from [<=
+c0408c60>] (exynos4_local_timer_setup+0xdc/0x140)
+> [    0.249663] [<c0408c60>] (exynos4_local_timer_setup+0xdc/0x140) fr=
+om [<c0408d78>] (exynos4_mct_cpu_notify+0x40/0xb0)
+> [    0.249675] [<c0408d78>] (exynos4_mct_cpu_notify+0x40/0xb0) from [=
+<c04f4e18>] (notifier_call_chain+0x48/0x78)
+> [    0.249688] [<c04f4e18>] (notifier_call_chain+0x48/0x78) from [<c0=
+04abb0>] (__raw_notifier_call_chain+0x24/0x2c)
+> [    0.249700] [<c004abb0>] (__raw_notifier_call_chain+0x24/0x2c) fro=
+m [<c0023908>] (__cpu_notify+0x3c/0x58)
+> [    0.249713] [<c0023908>] (__cpu_notify+0x3c/0x58) from [<c0023944>=
+] (cpu_notify+0x20/0x24)
+> [    0.249725] [<c0023944>] (cpu_notify+0x20/0x24) from [<c002407c>] =
+(notify_cpu_starting+0x58/0x60)
+> [    0.249737] [<c002407c>] (notify_cpu_starting+0x58/0x60) from [<c0=
+0143cc>] (secondary_start_kernel+0xec/0x13
+> 8)
+> [    0.249748] [<c00143cc>] (secondary_start_kernel+0xec/0x138) from =
+[<40008664>] (0x40008664)
+> [    0.249767] ---[ end trace 3406ff24bd97382e ]---
+>=20
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Ming Lei <tom.leiming@gmail.com>
+> ---
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- Documentation/devicetree/bindings/clock/exynos5250-clock.txt | 1 +
- drivers/clk/samsung/clk-exynos5250.c                         | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+Tomasz, what do you think ?
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-index 24765c1..67e9a47 100644
---- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-@@ -62,6 +62,7 @@ clock which they consume.
-   div_i2s1		157
-   div_i2s2		158
-   sclk_hdmiphy		159
-+  div_pcm0		160
- 
- 
-    [Peripheral Clock Gates]
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index adf3234..dec5376 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -108,7 +108,7 @@ enum exynos5250_clks {
- 	sclk_mmc0, sclk_mmc1, sclk_mmc2, sclk_mmc3, sclk_sata, sclk_usb3,
- 	sclk_jpeg, sclk_uart0, sclk_uart1, sclk_uart2, sclk_uart3, sclk_pwm,
- 	sclk_audio1, sclk_audio2, sclk_spdif, sclk_spi0, sclk_spi1, sclk_spi2,
--	div_i2s1, div_i2s2, sclk_hdmiphy,
-+	div_i2s1, div_i2s2, sclk_hdmiphy, div_pcm0,
- 
- 	/* gate clocks */
- 	gscl0 = 256, gscl1, gscl2, gscl3, gscl_wa, gscl_wb, smmu_gscl0,
-@@ -301,7 +301,7 @@ static struct samsung_div_clock exynos5250_div_clks[] __initdata = {
- 	DIV(none, "div_dp", "mout_dp", DIV_DISP1_0, 24, 4),
- 	DIV(none, "div_jpeg", "mout_jpeg", DIV_GEN, 4, 4),
- 	DIV(none, "div_audio0", "mout_audio0", DIV_MAU, 0, 4),
--	DIV(none, "div_pcm0", "sclk_audio0", DIV_MAU, 4, 8),
-+	DIV(div_pcm0, "div_pcm0", "sclk_audio0", DIV_MAU, 4, 8),
- 	DIV(none, "div_sata", "mout_sata", DIV_FSYS0, 20, 4),
- 	DIV(none, "div_usb3", "mout_usb3", DIV_FSYS0, 24, 4),
- 	DIV(none, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
--- 
-1.8.4
+>  drivers/clocksource/exynos_mct.c |   34 +++++++++++++++++++++-------=
+------
+>  1 file changed, 21 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/e=
+xynos_mct.c
+> index 5b34768..94b35aa 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -419,19 +419,10 @@ static int exynos4_local_timer_setup(struct clo=
+ck_event_device *evt)
+> =20
+>  	exynos4_mct_write(TICK_BASE_CNT, mevt->base + MCT_L_TCNTB_OFFSET);
+> =20
+> -	if (mct_int_type =3D=3D MCT_INT_SPI) {
+> -		evt->irq =3D mct_irqs[MCT_L0_IRQ + cpu];
+> -		if (request_irq(evt->irq, exynos4_mct_tick_isr,
+> -				IRQF_TIMER | IRQF_NOBALANCING,
+> -				evt->name, mevt)) {
+> -			pr_err("exynos-mct: cannot register IRQ %d\n",
+> -				evt->irq);
+> -			return -EIO;
+> -		}
+> -		irq_set_affinity(evt->irq, cpumask_of(cpu));
+> -	} else {
+> +	if (mct_int_type =3D=3D MCT_INT_PPI)
+>  		enable_percpu_irq(mct_irqs[MCT_L0_IRQ], 0);
+> -	}
+> +	else
+> +		enable_irq(evt->irq);
+> =20
+>  	return 0;
+>  }
+> @@ -440,7 +431,7 @@ static void exynos4_local_timer_stop(struct clock=
+_event_device *evt)
+>  {
+>  	evt->set_mode(CLOCK_EVT_MODE_UNUSED, evt);
+>  	if (mct_int_type =3D=3D MCT_INT_SPI)
+> -		free_irq(evt->irq, this_cpu_ptr(&percpu_mct_tick));
+> +		disable_irq(evt->irq);
+>  	else
+>  		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
+>  }
+> @@ -500,6 +491,23 @@ static void __init exynos4_timer_resources(struc=
+t device_node *np, void __iomem
+>  					 &percpu_mct_tick);
+>  		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+>  		     mct_irqs[MCT_L0_IRQ], err);
+> +	} else {
+> +		int cpu;
+> +
+> +		for_each_possible_cpu(cpu) {
+> +			struct mct_clock_event_device *mevt =3D
+> +				&per_cpu(percpu_mct_tick, cpu);
+> +
+> +			mevt->evt.irq =3D mct_irqs[MCT_L0_IRQ + cpu];
+> +			if (request_irq(mevt->evt.irq, exynos4_mct_tick_isr,
+> +					IRQF_TIMER | IRQF_NOBALANCING,
+> +					mevt->evt.name, mevt)) {
+> +				WARN(1, "exynos-mct: cannot register IRQ %d\n",
+> +				     mevt->evt.irq);
+> +			}
+> +			irq_set_affinity(mevt->evt.irq, cpumask_of(cpu));
+> +			disable_irq(mevt->evt.irq);
+> +		}
+>  	}
+> =20
+>  	err =3D register_cpu_notifier(&exynos4_mct_cpu_nb);
+>=20
 
+
+--=20
+ <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for=
+ ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
