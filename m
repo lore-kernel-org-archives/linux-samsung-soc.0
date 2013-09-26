@@ -1,42 +1,70 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V3] pci: exynos: split into two parts such as Synopsys
- part and Exynos part
-Date: Thu, 26 Sep 2013 10:36:45 +0530
-Message-ID: <5243C0E5.7020508@ti.com>
-References: <000701ce8741$fe47deb0$fad79c10$@samsung.com> <20130923041427.GC2246@pratyush-vbox> <523FD286.608@ti.com> <201309242323.55323.arnd@arndb.de>
+From: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
+Subject: Re: [PATCH V4 0/4] exynos dwmmc device tree node cleanup
+Date: Thu, 26 Sep 2013 10:51:07 +0530
+Message-ID: <CA+NduCDRJwt=583ETOM0Tb+eNHJi-Pr7+-AwrAtFgvi+gi6JFA@mail.gmail.com>
+References: <1378188264-22382-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1530001.y8QaeTojjb@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:49155 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751018Ab3IZFHA (ORCPT
+Received: from mail-wi0-f181.google.com ([209.85.212.181]:54612 "EHLO
+	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751018Ab3IZFVJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 01:07:00 -0400
-In-Reply-To: <201309242323.55323.arnd@arndb.de>
+	Thu, 26 Sep 2013 01:21:09 -0400
+In-Reply-To: <1530001.y8QaeTojjb@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Pratyush Anand <pratyush.anand@st.com>, Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, Mohit KUMAR DCG <Mohit.KUMAR@st.com>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, Tomasz Figa <t.figa@samsung.com>, Douglas Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, Thomas Abraham <thomas.abraham@linaro.org>, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On Wednesday 25 September 2013 02:53 AM, Arnd Bergmann wrote:
-> On Monday 23 September 2013, Kishon Vijay Abraham I wrote:
->> Btw if we hadn't programmed inbound translation table, the address will go
->> untranslated (according to the data book). I guess that's how it was working
->> for Jingoo Han.
->>
->> **
->> 3.10.4
->> Inbound iATU Operation
->>
->> When there is no match, then the address is untranslated
->> **
->>
-> 
-> Well, that should work just as well, since you have a 1:1 translation anyway.
-> Do you get the same error without the translation?
+Hi Kukjin,
+ Can you please take this series to your tree?
 
-Yes. I get the same non-fatal error interrupt in RC.
+Best Regards
+Yuvaraj
 
-Thanks
-Kishon
+On Tue, Sep 3, 2013 at 1:41 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Yuvaraj,
+>
+> On Tuesday 03 of September 2013 11:34:20 Yuvaraj Kumar C D wrote:
+>> changes from V3:
+>>       1.Added two new patch in the series
+>>               [1] ARM: dts: Move fifo-depth property from board dts
+>>               [2] ARM: dts: rename mmc dts node for exynos5 series
+>> changes from V2:
+>>       1.remove from exynos5.dtsi and add in exynos5250.dtsi
+>>         in single patch.Suggested by Tomasz Figa.
+>>       2.Separate patch for changing status property of dwmmc node
+>>         in smdk5250 and arndale board dts file.
+>>
+>> V1 Patches:
+>> 1.[PATCH 1/2] ARM: dts: remove dwmmc nodes from exynos5 common dts file.
+>> http://www.spinics.net/lists/linux-samsung-soc/msg21602.html
+>> 2.[PATCH 2/2] ARM: dts: Add dwmmc nodes in SOC specific dts file
+>>       http://www.spinics.net/lists/linux-samsung-soc/msg21603.html
+>>
+>> Yuvaraj Kumar C D (4):
+>>   ARM: dts: Move dwmmc nodes from exynos5.dtsi to exynos5250.dtsi
+>>   ARM: dts: exynos: change status property of dwmmc nodes
+>>   ARM: dts: Move fifo-depth property from board dts
+>>   ARM: dts: rename mmc dts node for exynos5 series
+>>
+>>  arch/arm/boot/dts/cros5250-common.dtsi    |    8 +++----
+>>  arch/arm/boot/dts/exynos5.dtsi            |   21 -----------------
+>>  arch/arm/boot/dts/exynos5250-arndale.dts  |   16 ++++---------
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++---------
+>>  arch/arm/boot/dts/exynos5250-snow.dts     |    2 +-
+>>  arch/arm/boot/dts/exynos5250.dtsi         |   36
+>> ++++++++++++++++++++++------- 6 files changed, 41 insertions(+), 58
+>> deletions(-)
+>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>
+> Best regards,
+> Tomasz
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
