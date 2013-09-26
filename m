@@ -1,99 +1,164 @@
-From: Archit Taneja <archit@ti.com>
-Subject: Re: [PATCH 39/51] DMA-API: others: use dma_set_coherent_mask()
-Date: Thu, 26 Sep 2013 16:21:36 +0530
-Message-ID: <524411B8.4070000@ti.com>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
- <E1VMnNq-0007s4-HN@rmk-PC.arm.linux.org.uk>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2] MTD: Onenand: Add device tree support for samsung
+ onenand
+Date: Thu, 26 Sep 2013 11:59:19 +0100
+Message-ID: <20130926105919.GG2411@e106331-lin.cambridge.arm.com>
+References: <1379941608-5068-1-git-send-email-m.krawczuk@partner.samsung.com>
+ <20130923140823.GC16069@e106331-lin.cambridge.arm.com>
+ <2086340.RrXQX9ib0T@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1VMnNq-0007s4-HN@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>, alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, David Airlie <airlied@linux.ie>, Seung-Woo Kim <sw0312.kim@samsung.com>, Rob Clark <robdclark@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "Valkeinen, Tomi" <tomi.valkeinen@ti.com>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:48779 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756042Ab3IZK7Y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Sep 2013 06:59:24 -0400
+Content-Disposition: inline
+In-Reply-To: <2086340.RrXQX9ib0T@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>, "grant.likely@linaro.org" <grant.likely@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ijc+devicetree@hellion.org.uk" <ijc+devicetree@hellion.org.uk>, "rob@landley.net" <rob@landley.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>
+
+On Tue, Sep 24, 2013 at 02:00:01PM +0100, Tomasz Figa wrote:
+> Hi Mateusz, Mark,
 
 Hi,
 
-On Friday 20 September 2013 04:41 AM, Russell King wrote:
-> The correct way for a driver to specify the coherent DMA mask is
-> not to directly access the field in the struct device, but to use
-> dma_set_coherent_mask().  Only arch and bus code should access this
-> member directly.
->
-> Convert all direct write accesses to using the correct API.
->
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
->   drivers/ata/pata_ixp4xx_cf.c             |    5 ++++-
->   drivers/gpu/drm/exynos/exynos_drm_drv.c  |    6 +++++-
->   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    5 +++--
->   3 files changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/ata/pata_ixp4xx_cf.c b/drivers/ata/pata_ixp4xx_cf.c
-> index 1ec53f8..ddf470c 100644
-> --- a/drivers/ata/pata_ixp4xx_cf.c
-> +++ b/drivers/ata/pata_ixp4xx_cf.c
-> @@ -144,6 +144,7 @@ static int ixp4xx_pata_probe(struct platform_device *pdev)
->   	struct ata_host *host;
->   	struct ata_port *ap;
->   	struct ixp4xx_pata_data *data = dev_get_platdata(&pdev->dev);
-> +	int ret;
->
->   	cs0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->   	cs1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> @@ -157,7 +158,9 @@ static int ixp4xx_pata_probe(struct platform_device *pdev)
->   		return -ENOMEM;
->
->   	/* acquire resources and fill host */
-> -	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> +	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
-> +	if (ret)
-> +		return ret;
->
->   	data->cs0 = devm_ioremap(&pdev->dev, cs0->start, 0x1000);
->   	data->cs1 = devm_ioremap(&pdev->dev, cs1->start, 0x1000);
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index bb82ef7..81192d0 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -286,7 +286,11 @@ static struct drm_driver exynos_drm_driver = {
->
->   static int exynos_drm_platform_probe(struct platform_device *pdev)
->   {
-> -	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> +	int ret;
-> +
-> +	ret = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
-> +	if (ret)
-> +		return ret;
->
->   	return drm_platform_init(&exynos_drm_driver, pdev);
->   }
-> diff --git a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-> index acf6678..701c4c1 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
-> @@ -664,8 +664,9 @@ static int omap_dmm_probe(struct platform_device *dev)
->   	}
->
->   	/* set dma mask for device */
-> -	/* NOTE: this is a workaround for the hwmod not initializing properly */
-> -	dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> +	ret = dma_set_coherent_mask(&dev->dev, DMA_BIT_MASK(32));
-> +	if (ret)
-> +		goto fail;
+> 
+> On Monday 23 of September 2013 15:08:23 Mark Rutland wrote:
+> > On Mon, Sep 23, 2013 at 02:06:48PM +0100, Mateusz Krawczuk wrote:
+> > > +
+> > > +Required properties:
+> > > +  - compatible: value should be either of the following.
+> > > +      (a) "samsung,s3c6400-onenand",
+> > > +		for onenand controller compatible with s3c6400.
+> > > +      (b) "samsung,s3c6410-onenand",
+> > > +		for onenand controller compatible with s3c6410.
+> > > +      (c) "samsung,s5pc100-onenand",
+> > > +		for onenand controller compatible with s5pc100.
+> > > +      (d) "samsung,s5pc110-onenand",
+> > > +      for s5pc100-like onenand controller used on s5pc110 which supports DMA.
+> > > +
+> > 
+> > As I asked on the last posting, what are the differences between these
+> > implementations?
+> 
+> (d) is a completely different controller than (a), (b) and (c). They
+> have completely different register layouts. Also see below.
 
-Tested with omapdrm on omap4 panda es board.
+Ok.
 
-Thanks,
-Archit
+> 
+> > > +Required properties for s5pc110:
+> > > +
+> > > + - reg: the offset and length of the control registers. First region describes
+> > > +	OneNAND interface, second control registers.
+> > 
+> > Also, the complete reg description is a bit confusing. How about
+> > something like:
+> > 
+> >  - reg: two register specifiers:
+> >         [0] - The OneNAND interface
+> > 	[1] - The control registers
+> 
+> This looks much better, although I wouldn't be afraid of using words
+> instead of symbols to write this as follows instead:
+> 
+>   - reg: two memory mapped register regions:
+>     - first entry: memory mapped OneNAND chip,
+>     - second entry: control registers.
+
+I'm also happy with that.
+
+> 
+> But... The controller in theory supports more than one OneNAND chip, each
+> mapped at different, so I'd suggest reordering the entries:
+> 
+>   - reg: memory mapped register regions:
+>     - first entry: control registers.
+>     - second entry: memory mapped OneNAND chip 0,
+>     - ...
+>     - Nth entry: memory mapped OneNAND chip (N-2).
+
+I agree on the reordering, hence the questions I had below.
+
+> 
+> > Do we expect future OneNAND devices which may require more reg entries
+> > to describe?
+> 
+> Nope. In age of eMMC I wouldn't even expect any new OneNAND controller
+> to be handled by these bindings.
+
+Ok.
+
+> 
+> > > + - interrupt-parent, interrupts		Onenand memory interrupts
+> > 
+> > As it's a common property, I don't think interrupt-parent needs to
+> > be described.
+> > 
+> > Is there more than one interrupt? What's it called on the manual?
+> 
+> There is one interrupt per OneNAND chip, so this is what should be
+> represented in the binding.
+
+Ah. That should be mentioned explicitly, with the required ordering.
+
+> 
+> > > +
+> > > +Required properties for others:
+> > > +
+> > > + - reg: the offset and length of the control registers. First region describes
+> > > +	control registers, second OneNAND interface.
+> > 
+> > Why does the s5pc110 OneNAND binding take its registers in the opposite
+> > order to the rest of these? Can we not fix up the driver first to make
+> > it consistent? Then we only need to describe this once and it's going to
+> > be far less of a headache to support.
+> 
+> Both areas in both "major" hardware variants have completely different
+> meaning:
+>  - in case of SoCs earlier or equal to S5PC100, first entry represents
+>    controller registers that are used to control various operating
+>    parameters, while second entry is a command/data interface, which is
+>    used to trigger read/write/etc. operations in the controller and
+>    push/pull data through it. In this variant there is no direct mapping
+>    of OneNAND chip in CPU address space. This variant supports only
+>    one memory chip per controller instance,
+>  - in case of S5PC110, each OneNAND chip is directly mapped into CPU
+>    address space. In addition there is a block of control registers that
+>    are used to configure the interface and control internal DMA engine
+>    (which is not present in <= S5PC100 variants). This variant supports
+>    multiple memory chips per controller instance (2 in case of S5PV210,
+>    but current driver handles only one AFAIK).
+
+Ok. Even with that, I think the suggestion to reorder the reg entries
+above still makes this more consistent, with the controller registers
+first, then an entry per-chip (which is either the chip itself or the
+related command/data interface depending on the particular controller).
+
+> 
+> > > +
+> > > +Clocks:
+> > > + - gate - clock which output is supplied to external OneNAND flash memory.
+> > 
+> > How about the following (without the Clocks header):
+> > 
+> > - clocks: clock-specifiers for the clocks named in clock-names, per the
+> >           common clock bindings.
+> > 
+> > - clock-names: should contain "gate" for the clock to the OneNAND flash
+> >                memory.
+> > 
+> > Is this the only clock that might be necessary on all platforms?
+> 
+> S3C64xx SoCs have only one OneNAND gate clock per controller.
+> S5PC100 SoC has one IP gate clock and one memory chip gate clock.
+> S5PC110 SoC has one gate that gates both IP and all memory chips.
+
+Good to know. Thanks for the thorough description.
+
+Cheers,
+Mark.
