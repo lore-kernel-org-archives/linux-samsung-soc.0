@@ -1,56 +1,73 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V3] PCI: exynos: add support for MSI
-Date: Thu, 26 Sep 2013 13:32:18 +0900
-Message-ID: <001b01ceba71$62ca02c0$285e0840$%han@samsung.com>
-References: <001a01ceaace$013ec980$03bc5c80$%han@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] pinctrl: Correct number of pins for s5pv210
+Date: Thu, 26 Sep 2013 13:36:33 +0900
+Message-ID: <02bc01ceba71$fa8bcda0$efa368e0$%kim@samsung.com>
+References: <1380035051-24526-1-git-send-email-m.krawczuk@partner.samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <001a01ceaace$013ec980$03bc5c80$%han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:44008 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750795Ab3IZEgf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 26 Sep 2013 00:36:35 -0400
+In-reply-to: <1380035051-24526-1-git-send-email-m.krawczuk@partner.samsung.com>
 Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Bjorn Helgaas' <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mateusz Krawczuk' <m.krawczuk@partner.samsung.com>, t.figa@samsung.com, linus.walleij@linaro.org
+Cc: thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On Friday, September 06, 2013 3:55 PM, Jingoo Han wrote:
+Mateusz Krawczuk wrote:
 > 
-> This patch adds support for Message Signaled Interrupt in the
-> Exynos PCIe diver using Synopsys designware PCIe core IP.
+> Values of pins in table s5pv210 bank are incorrect. This patch correct
+> values.
 > 
-> Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
-> Signed-off-by: Srikanth T Shivanand <ts.srikanth@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> Cc: Pratyush Anand <pratyush.anand@st.com>
-> Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+> Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Bjorn Helgaas,
+This fix is correct,
 
-There is no comment for last 3 weeks.
-Would you merge this patch to your tree?
-Thank you.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Best regards,
-Jingoo Han
+Thanks,
+Kukjin
 
 > ---
-> Changes since v2:
-> - fixed MAX_MSI_CTRLS because MAX_MSI_IRQS is 32 only
-> - used __get_free_pages() to allocate msi_data
-> - used one msi_data and msi_irq_in_use per one RC
-> - used irq_domain to represent the MSI controller
-> - removed msi-base irq number from device tree because this is not
->   a hardware property.
+>  drivers/pinctrl/pinctrl-exynos.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
 > 
-> Changes since v1:
-> - removed unnecessary exynos_pcie_clear_irq_level()
-> - updated the bindings documentation
-> - used new msi_chip infrastructure
-> - removed ARCH_SUPPORTS_MSI
-> - replaced #ifdef guards with IS_ENABLED(CONFIG_PCI_MSI)
-> 
->  drivers/pci/host/pci-exynos.c      |   44 +++++++
->  drivers/pci/host/pcie-designware.c |  240 ++++++++++++++++++++++++++++++++++++
->  drivers/pci/host/pcie-designware.h |   14 +++
->  3 files changed, 298 insertions(+)
+> diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-
+> exynos.c
+> index 2689f8d..155b1b3 100644
+> --- a/drivers/pinctrl/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/pinctrl-exynos.c
+> @@ -663,18 +663,18 @@ static void exynos_pinctrl_resume(struct
+> samsung_pinctrl_drv_data *drvdata)
+>  /* pin banks of s5pv210 pin-controller */
+>  static struct samsung_pin_bank s5pv210_pin_bank[] = {
+>  	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+> -	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
+> +	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpa1", 0x04),
+>  	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb", 0x08),
+>  	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
+>  	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
+>  	EXYNOS_PIN_BANK_EINTG(4, 0x0a0, "gpd0", 0x14),
+> -	EXYNOS_PIN_BANK_EINTG(4, 0x0c0, "gpd1", 0x18),
+> -	EXYNOS_PIN_BANK_EINTG(5, 0x0e0, "gpe0", 0x1c),
+> -	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpe1", 0x20),
+> -	EXYNOS_PIN_BANK_EINTG(6, 0x120, "gpf0", 0x24),
+> +	EXYNOS_PIN_BANK_EINTG(6, 0x0c0, "gpd1", 0x18),
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x0e0, "gpe0", 0x1c),
+> +	EXYNOS_PIN_BANK_EINTG(5, 0x100, "gpe1", 0x20),
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpf0", 0x24),
+>  	EXYNOS_PIN_BANK_EINTG(8, 0x140, "gpf1", 0x28),
+>  	EXYNOS_PIN_BANK_EINTG(8, 0x160, "gpf2", 0x2c),
+> -	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf3", 0x30),
+> +	EXYNOS_PIN_BANK_EINTG(6, 0x180, "gpf3", 0x30),
+>  	EXYNOS_PIN_BANK_EINTG(7, 0x1a0, "gpg0", 0x34),
+>  	EXYNOS_PIN_BANK_EINTG(7, 0x1c0, "gpg1", 0x38),
+>  	EXYNOS_PIN_BANK_EINTG(7, 0x1e0, "gpg2", 0x3c),
+> --
+> 1.8.1.2
