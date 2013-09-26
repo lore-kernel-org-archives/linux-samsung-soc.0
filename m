@@ -1,65 +1,74 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] clk: samsung: fix cpll clock register offsets for
- exynos5420 SoC
-Date: Thu, 26 Sep 2013 13:59:13 +0900
-Message-ID: <02c601ceba75$24c763b0$6e562b10$@org>
-References: <1380099864-32031-1-git-send-email-chander.kashyap@linaro.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: dts: exynos4210-origen: Add fixed voltage
+ regulator to simple bus
+Date: Thu, 26 Sep 2013 10:32:01 +0530
+Message-ID: <CAK9yfHy_3aun5D5FitGPdABjfo_pBhNvTq9vLL00bwhWDU97oA@mail.gmail.com>
+References: <1374834657-29088-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:52222 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750795Ab3IZE7O (ORCPT
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:60387 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751142Ab3IZFCC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Sep 2013 00:59:14 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MTP005N4V4AQUK0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Sep 2013 13:59:13 +0900 (KST)
-In-reply-to: <1380099864-32031-1-git-send-email-chander.kashyap@linaro.org>
-Content-language: ko
+	Thu, 26 Sep 2013 01:02:02 -0400
+Received: by mail-ob0-f177.google.com with SMTP id wp18so1294015obc.22
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Sep 2013 22:02:01 -0700 (PDT)
+In-Reply-To: <1374834657-29088-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chander Kashyap' <chander.kashyap@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: mturquette@linaro.org, thomas.abraham@linaro.org, yadi.brar@samsung.com
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Patch Tracking <patches@linaro.org>, Kukjin Kim <kgene@kernel.org>
 
-Chander Kashyap wrote:
-> 
-> Fixes cpll control and lock register offset values for Exynos5420 SoC.
-> 
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+Hi Kukjin,
 
-Just nit in the subject,
-'clk: exynos5420: ...' or 'clk/exynos5420: ...' would be nice...
-
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Thanks,
-Kukjin
-
+On 26 July 2013 16:00, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> This has been done for Arndale board vide commit aa3edb65
+> ("ARM: dts: Put Arndale fixed voltage regulators on a simple-bus").
+> Replicate here for consistency and correctness.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
->  drivers/clk/samsung/clk-exynos5420.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c
-> b/drivers/clk/samsung/clk-exynos5420.c
-> index 86dfc64..892aac0 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -730,8 +730,8 @@ struct samsung_gate_clock exynos5420_gate_clks[]
-> __initdata = {
->  struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
->  	[apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
->  		APLL_CON0, NULL),
-> -	[cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
-> -		MPLL_CON0, NULL),
-> +	[cpll] = PLL(pll_2550, fout_cpll, "fout_cpll", "fin_pll", CPLL_LOCK,
-> +		CPLL_CON0, NULL),
->  	[dpll] = PLL(pll_2550, fout_dpll, "fout_dpll", "fin_pll", DPLL_LOCK,
->  		DPLL_CON0, NULL),
->  	[epll] = PLL(pll_2650, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
+>  arch/arm/boot/dts/exynos4210-origen.dts |   20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 5537af8..ae2653e 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -32,13 +32,19 @@
+>                 bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
+>         };
+>
+> -       mmc_reg: voltage-regulator {
+> -               compatible = "regulator-fixed";
+> -               regulator-name = "VMEM_VDD_2.8V";
+> -               regulator-min-microvolt = <2800000>;
+> -               regulator-max-microvolt = <2800000>;
+> -               gpio = <&gpx1 1 0>;
+> -               enable-active-high;
+> +       regulators {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               mmc_reg: voltage-regulator {
+> +                       compatible = "regulator-fixed";
+> +                       regulator-name = "VMEM_VDD_2.8V";
+> +                       regulator-min-microvolt = <2800000>;
+> +                       regulator-max-microvolt = <2800000>;
+> +                       gpio = <&gpx1 1 0>;
+> +                       enable-active-high;
+> +               };
+>         };
+>
+>         tmu@100C0000 {
 > --
 > 1.7.9.5
+>
+
+These 2 patches pending since long time. Can you please check.
+
+-- 
+With warm regards,
+Sachin
