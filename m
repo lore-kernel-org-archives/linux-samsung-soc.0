@@ -1,15 +1,17 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v2 1/3] ARM: dts: exynos4210-origen: Add fixed voltage regulator to simple bus
-Date: Fri, 27 Sep 2013 15:59:38 +0530
-Message-ID: <1380277780-10903-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH v2 2/3] ARM: dts: exynos4412-origen: Add fixed voltage regulator to simple bus
+Date: Fri, 27 Sep 2013 15:59:39 +0530
+Message-ID: <1380277780-10903-2-git-send-email-sachin.kamat@linaro.org>
+References: <1380277780-10903-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f41.google.com ([209.85.160.41]:60813 "EHLO
-	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751605Ab3I0K3t (ORCPT
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:46663 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751616Ab3I0K3v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Sep 2013 06:29:49 -0400
-Received: by mail-pb0-f41.google.com with SMTP id rp2so2397875pbb.14
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 03:29:48 -0700 (PDT)
+	Fri, 27 Sep 2013 06:29:51 -0400
+Received: by mail-pb0-f44.google.com with SMTP id xa7so2387370pbc.31
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 03:29:51 -0700 (PDT)
+In-Reply-To: <1380277780-10903-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -25,20 +27,19 @@ Based on Kukjin's for-next branch.
 Changes since v1:
 * Added reg property and renamed the node
 ---
-
- arch/arm/boot/dts/exynos4210-origen.dts |   21 ++++++++++++++-------
+ arch/arm/boot/dts/exynos4412-origen.dts |   21 ++++++++++++++-------
  1 file changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 6906e8a..a6d9c32 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index 923bcd7..9520155 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
 @@ -32,13 +32,20 @@
- 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
+ 		reg = <0x0203F000 0x1000>;
  	};
  
 -	mmc_reg: voltage-regulator {
--	        compatible = "regulator-fixed";
+-		compatible = "regulator-fixed";
 -		regulator-name = "VMEM_VDD_2.8V";
 -		regulator-min-microvolt = <2800000>;
 -		regulator-max-microvolt = <2800000>;
@@ -60,6 +61,6 @@ index 6906e8a..a6d9c32 100644
 +		};
  	};
  
- 	tmu@100C0000 {
+ 	pinctrl@11000000 {
 -- 
 1.7.9.5
