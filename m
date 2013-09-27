@@ -1,53 +1,56 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
-Date: Fri, 27 Sep 2013 16:17:49 +0200
-Message-ID: <CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
-References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 3/4] watchdog: s3c2410_wdt: parse watchdog dt node to read
+ PMU registers adresses
+Date: Fri, 27 Sep 2013 08:20:25 -0700
+Message-ID: <CAD=FV=WZBrJ5Qhky6VQqfu59LVQcKMTdLa+gJwnnFM85bEzzNQ@mail.gmail.com>
+References: <1379414623-26329-1-git-send-email-l.krishna@samsung.com>
+	<9721965.AJ5fjDQ1RM@amdc1227>
+	<CAL1wa8cDAui8AJXvmYPpPEWtUum-ZNpW2hQWjwKLpzXBFLv=eA@mail.gmail.com>
+	<2333262.vSzLePxk45@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:57268 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751185Ab3I0ORt convert rfc822-to-8bit (ORCPT
+Received: from mail-qa0-f50.google.com ([209.85.216.50]:42235 "EHLO
+	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752155Ab3I0PU0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Sep 2013 10:17:49 -0400
-Received: by mail-ob0-f181.google.com with SMTP id gq1so3233984obb.12
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 07:17:49 -0700 (PDT)
-In-Reply-To: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+	Fri, 27 Sep 2013 11:20:26 -0400
+Received: by mail-qa0-f50.google.com with SMTP id j7so564095qaq.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 08:20:25 -0700 (PDT)
+In-Reply-To: <2333262.vSzLePxk45@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, mark.rutland@arm.com, galak@codeaurora.org, pawel.moll@arm.com, Rob Herring <rob.herring@calxeda.com>
 
-On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
-<jose.goncalves@inov.pt> wrote:
+Tomasz
 
-> Some GPIO line limits are incorrectly set which, for instance,
-> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
+On Fri, Sep 27, 2013 at 4:25 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> >> Since we already have PMU "driver" in mach-exynos, which already has
+>> >> suspend/resume syscore ops, what about placing such configuration there
+>> >> instead?
+>> >
+>> > Any opinions on this?
+>> >
+>>
+>> In PMU we have control registers for other IPs (like USB, MIPI etc.,)
+>> also and I'm not sure where those registers are getting configured.
+>> If we want to configure WDT register in PMU driver then we have to
+>> consider configuring control regs for other IPs also and the DT node
+>> has to have all these control bit numbers. So instead of that I feel
+>> configuring it in WDT driver looks fine.
 >
-> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
-> ---
->  arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
+> I believe this depends on possible use cases, not the IP block itself.
+> If this is just a low level initial (and SoC specific) initialization
+> that doesn't require any co-operation with high level kernel/userspace
+> APIs, then I think there is no need to entangle the driver for watchdog
+> IP with SoC specific details outside the IP itself.
+>
+> [Adding more people on Cc for further discussion.]
 
-OK but grrrr!
+So isn't the register in the PMU there to save power in the case that
+the watchdog timer isn't being used?  How is the PMU "driver" to know
+whether the watchdog is being used?  Better IMHO that the watchdog
+driver knows to enable and disable itself as needed, right?
 
-What needs to happen to the s3c24xx is to get rid of this file.
-
-- Define ARCH_NR_GPIOS in arch/arm/Kconfig entry
-  ARCH_NR_GPIO like everyone else
-
-- Get rid of the config symbol NEED_MACH_GPIO_H
-
--  Move this file down into arch/arm/mach-s3c24xx/s3c24xx-gpio.h
-  or whatever and make it local...
-
-I will try to do this myself if noone else helps out, so I'd like to
-carry this patch in the GPIO tree provided I can get an ACK from
-the S3C24xx maintainer. Tomasz, is that you or Kukjin?
-
-(BTW the above maybe goes for S3c64xx as well .. and S5P
-oh well I will get to it.)
-
-Yours,
-Linus Walleij
+-Doug
