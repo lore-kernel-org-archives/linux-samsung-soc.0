@@ -1,64 +1,49 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 3/3] ARM: dts: Add reg property to regulator nodes in exynos5250-arndale
-Date: Fri, 27 Sep 2013 15:59:40 +0530
-Message-ID: <1380277780-10903-3-git-send-email-sachin.kamat@linaro.org>
-References: <1380277780-10903-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] spi/s3c64x: Ensure runtime PM is enabled prior to registration
+Date: Fri, 27 Sep 2013 11:53:05 +0100
+Message-ID: <1380279185-10354-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:51358 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751619Ab3I0K3y (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:34273 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750871Ab3I0Kxf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Sep 2013 06:29:54 -0400
-Received: by mail-pd0-f182.google.com with SMTP id r10so2419305pdi.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 03:29:53 -0700 (PDT)
-In-Reply-To: <1380277780-10903-1-git-send-email-sachin.kamat@linaro.org>
+	Fri, 27 Sep 2013 06:53:35 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, sachin.kamat@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linaro-kernel@lists.linaro.rog, Mark Brown <broonie@linaro.org>
 
-For consistency and correctness, since this is a bus, even if not
-physical, it is worth to add 'reg' property and unit-address to subnodes.
-The 'reg' property would merely be an index. Also for consistency, use
-"regulator" as node name as used most commonly across other dts files.
+From: Mark Brown <broonie@linaro.org>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Otherwise we may try to start transfers immediately and then fail to
+runtime resume the device causing us not to have clocks enabled.
+
+Signed-off-by: Mark Brown <broonie@linaro.org>
 ---
- arch/arm/boot/dts/exynos5250-arndale.dts |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/spi/spi-s3c64xx.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index cee55fa..0c42547 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -482,13 +482,15 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 84cc6ac..229c6b9 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1428,6 +1428,8 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 	       S3C64XX_SPI_INT_TX_OVERRUN_EN | S3C64XX_SPI_INT_TX_UNDERRUN_EN,
+ 	       sdd->regs + S3C64XX_SPI_INT_EN);
  
--		main_dc_reg: fixedregulator@1 {
-+		main_dc_reg: regulator@0 {
- 			compatible = "regulator-fixed";
-+			reg = <0>;
- 			regulator-name = "MAIN_DC";
- 		};
++	pm_runtime_enable(&pdev->dev);
++
+ 	ret = devm_spi_register_master(&pdev->dev, master);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "cannot register SPI master: %d\n", ret);
+@@ -1440,8 +1442,6 @@ static int s3c64xx_spi_probe(struct platform_device *pdev)
+ 					mem_res,
+ 					sdd->rx_dma.dmach, sdd->tx_dma.dmach);
  
--		mmc_reg: voltage-regulator {
-+		mmc_reg: regulator@1 {
- 			compatible = "regulator-fixed";
-+			reg = <1>;
- 			regulator-name = "VDD_33ON_2.8V";
- 			regulator-min-microvolt = <2800000>;
- 			regulator-max-microvolt = <2800000>;
-@@ -496,8 +498,9 @@
- 			enable-active-high;
- 		};
+-	pm_runtime_enable(&pdev->dev);
+-
+ 	return 0;
  
--		reg_hdmi_en: fixedregulator@0 {
-+		reg_hdmi_en: regulator@2 {
- 			compatible = "regulator-fixed";
-+			reg = <2>;
- 			regulator-name = "hdmi-en";
- 		};
- 	};
+ err3:
 -- 
-1.7.9.5
+1.8.4.rc3
