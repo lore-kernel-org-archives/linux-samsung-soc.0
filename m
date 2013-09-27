@@ -1,98 +1,36 @@
-From: Yadwinder Singh Brar <yadi.brar01-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/3] clk: samsung: Add clock driver for s5pc100
-Date: Fri, 27 Sep 2013 18:37:56 +0530
-Message-ID: <CAKew6eXvXZ==auq8E9bYnHsrrVgqKsK7A9ad12ERBPR++cQUHg@mail.gmail.com>
-References: <1380041605-15736-1-git-send-email-m.krawczuk@partner.samsung.com>
-	<1380041605-15736-2-git-send-email-m.krawczuk@partner.samsung.com>
-	<CAKew6eUgpnqvZUCsWGpqwDXtp6ARmhd-Nw-BXiod8=MK-k0fUA@mail.gmail.com>
-	<3392871.UAAWoO4asY@amdc1227>
+From: Ming Lei <tom.leiming@gmail.com>
+Subject: Re: [PATCH] clockevent: exynos_mct: fix lockdep warning
+Date: Fri, 27 Sep 2013 21:09:14 +0800
+Message-ID: <CACVXFVO=k-wJ2SrjVQ_k1JhtAOo0-rZ_M780rqGWCbKA8_1qBQ@mail.gmail.com>
+References: <1380120578-17458-1-git-send-email-tom.leiming@gmail.com>
+	<5243823D.4040208@linaro.org>
+	<17472486.7GQJa9ux9F@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3392871.UAAWoO4asY@amdc1227>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Mateusz Krawczuk <m.krawczuk-GrGkmOP51GdLN7c7dRTbYkEOCMrvLtNR@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Yadwinder Singh <yadi.brar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vb0-f41.google.com ([209.85.212.41]:49564 "EHLO
+	mail-vb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751321Ab3I0NJQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Sep 2013 09:09:16 -0400
+Received: by mail-vb0-f41.google.com with SMTP id g17so1883854vbg.28
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 06:09:15 -0700 (PDT)
+In-Reply-To: <17472486.7GQJa9ux9F@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Tomasz,
+On Thu, Sep 26, 2013 at 6:32 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>
+> This is a fix that we may want to have, but it must be modified to take
+> my regression fix[1] into account.
+>
+> [1] clocksource: exynos_mct: Set IRQ affinity when the CPU goes online
+> http://thread.gmane.org/gmane.linux.kernel.samsung-soc/22511/focus=23418
 
-On Thu, Sep 26, 2013 at 7:30 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Hi Yadwinder,
->
-> I haven't reviewed this series yet, but let me clarify some things from
-> your comments.
->
-> On Thursday 26 of September 2013 17:38:58 Yadwinder Singh Brar wrote:
->> > +
->> > +/* Helper macros to define clock arrays. */
->> > +#define FIXED_RATE_CLOCKS(name)        \
->> > +               static struct samsung_fixed_rate_clock name[]
->> > +#define MUX_CLOCKS(name)       \
->> > +               static struct samsung_mux_clock name[]
->> > +#define DIV_CLOCKS(name)       \
->> > +               static struct samsung_div_clock name[]
->> > +#define GATE_CLOCKS(name)      \
->> > +               static struct samsung_gate_clock name[]
->> > +
->>
->> These macros seems little bit odd in our common practice,
->> perhaps these are making code harder to read below.
->>
->
-> They allow array declaration to fit into single line. I agree that it is
-> not particularly easy to read at first sight, but shouldn't really be
-> much of nuisance.
+OK, I will write and submit v1 against your patch.
 
-Defining a macro just to use once/twice, especially hiding the
-definition of some array, doesn't looks justified.
-
->In addition, most of this driver is based on macros
-> like this, e.g. GATE(), MUX(), PNAME(), etc.
->
->> > +PNAME(mout_i2s_2_p) = {
->> > +       "fout_epll",
->> > +       "i2scdclk0",
->> > +       "dout_audio0",
->> > +       "none"
->> > +};
->> > +
->>
->> Using one line per parent isn't increasing length of file unnecessarily?
->
-> I believe this improves readability. Do we really care about size of
-> source code that much, over readability?
->
-
-yes, its looks little bit clean but in this case I felt, its making
-the traversability in file difficult due to length of file.
-
->> > +       ALIAS(SCLK_AUDIO0, "soc-audio.0", "sclk_audio"),
->> > +       ALIAS(SCLK_AUDIO1, "soc-audio.1", "sclk_audio"),
->> > +       ALIAS(SCLK_AUDIO2, "soc-audio.2", "sclk_audio"),
->> > +       ALIAS(KEYIF, NULL, "keypad"),
->> > +
->> > +       ALIAS(MFC, "s5p-mfc", "sclk_mfc"),
->> > +       ALIAS(G2D, "s5p-g2d", "fimg2d"),
->> > +
->> > +};
->> > +
->>
->> Any reason/hidden advantage for using a separate of ALIAS,
->> instead of using MUX_A/GATE_A ?
->
-> Yes, not even hidden. Alias is not a property of clock. One clock can
-> have multiple aliases, e.g. the same clock being input to multiple
-> devices.
->
-
-Yes, its required if same clk has different alias for different devices,
-but while using same alias for different(all, in this case) devices,
-doesn't seems advantageous.
-
-Regards,
-Yadwinder
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+-- 
+Ming Lei
