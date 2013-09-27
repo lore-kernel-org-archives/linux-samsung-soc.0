@@ -1,90 +1,65 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/4] watchdog: s3c2410_wdt: parse watchdog dt node to read
- PMU registers adresses
-Date: Fri, 27 Sep 2013 12:12:13 +0200
-Message-ID: <9721965.AJ5fjDQ1RM@amdc1227>
-References: <1379414623-26329-1-git-send-email-l.krishna@samsung.com>
- <1918747.quF8QJoP6D@amdc1032> <3933206.EMuKSi641Y@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH v2 1/3] ARM: dts: exynos4210-origen: Add fixed voltage regulator to simple bus
+Date: Fri, 27 Sep 2013 15:59:38 +0530
+Message-ID: <1380277780-10903-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:13519 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871Ab3I0KM2 (ORCPT
+Received: from mail-pb0-f41.google.com ([209.85.160.41]:60813 "EHLO
+	mail-pb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751605Ab3I0K3t (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Sep 2013 06:12:28 -0400
-In-reply-to: <3933206.EMuKSi641Y@amdc1227>
+	Fri, 27 Sep 2013 06:29:49 -0400
+Received: by mail-pb0-f41.google.com with SMTP id rp2so2397875pbb.14
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 03:29:48 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, sachin.kamat@linaro.org
 
-On Monday 23 of September 2013 19:11:11 Tomasz Figa wrote:
-> On Monday 23 of September 2013 19:03:10 Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On Wednesday, September 18, 2013 12:20:31 PM Leela Krishna Amudala wrote:
-> > > Tomasz,
-> > > 
-> > > On Wed, Sep 18, 2013 at 10:04 AM, Doug Anderson <dianders@chromium.org> wrote:
-> > > > Tomasz,
-> > > >
-> > > > On Tue, Sep 17, 2013 at 6:30 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > > >> I believe this is mandatory on Exynos 5420 and unused on previous SoCs. It
-> > > >> should be handled depending on compatible value.
-> > > >
-> > > > I think at least 5250 needs something similar.  I believe we got away
-> > > > with it in the past since other (non-WDT) code was tweaking with this
-> > > > bit, but that was a little bit gross.  Leela Krishna can correct me if
-> > > > I'm wrong.
-> > > >
-> > > 
-> > > Yes, 5250 also needs this reset-mask-bit, but not required by SoCs
-> > > other than Exynos5xxx.
-> > > Hence I kept it as optional parameter.
-> > > 
-> > > I took care of this code such that it won't break on older SoCs.
-> > > 
-> > > If you notice the code in probe function, I used the check condition
-> > > 
-> > > if (!IS_ERR(wdt->pmu_disable_reg) && !IS_ERR(wdt->pmu_mask_reset_reg)) {
-> > > }
-> > > 
-> > > i.e., if any of the PMU register address is not mentioned in the DT
-> > > node it simply skips reading reset-mask-bit
-> > > and continues execution (which may happen in older SoC DT node).
-> > > 
-> > > ..also, in s3c2410wdt_mask_and_disable_reset() function, below
-> > > condition check is happening
-> > > 
-> > > if (IS_ERR(wdt->pmu_disable_reg) || IS_ERR(wdt->pmu_mask_reset_reg)
-> > >                                 || (wdt->pmu_mask_bit < 0))
-> > >         return;
-> > > 
-> > > i.e., if any of the registers is not specified in DT node simply
-> > > return without programming
-> > > PMU registers(which is true in case of older SoCs).
-> > > 
-> > > If you think this doesn't sounds good way of handling older SoCs.
-> > > I'll add new compatible string for Exynos5xxx and do like what you said. :)
-> > 
-> > Yes, please re-do the code per Tomasz's suggestions.
-> > 
-> > This would also allow you to check return values of devm_ioremap_resource()
-> > calls in the probe method and require them to succeed in order to register
-> > watchdog device (which is unfortunately not what happens currently).
-> 
-> Now as I think of it, the driver doesn't seem to reconfigure those PMU
-> registers in any watchdog API callback, only in probe, remove, suspend
-> and resume.
-> 
-> Since we already have PMU "driver" in mach-exynos, which already has
-> suspend/resume syscore ops, what about placing such configuration there
-> instead?
+This has been done for Arndale board vide commit aa3edb65
+("ARM: dts: Put Arndale fixed voltage regulators on a simple-bus").
+Replicate here for consistency and correctness.
 
-Any opinions on this?
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+Based on Kukjin's for-next branch.
+Changes since v1:
+* Added reg property and renamed the node
+---
 
-Best regards,
-Tomasz
+ arch/arm/boot/dts/exynos4210-origen.dts |   21 ++++++++++++++-------
+ 1 file changed, 14 insertions(+), 7 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index 6906e8a..a6d9c32 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -32,13 +32,20 @@
+ 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
+ 	};
+ 
+-	mmc_reg: voltage-regulator {
+-	        compatible = "regulator-fixed";
+-		regulator-name = "VMEM_VDD_2.8V";
+-		regulator-min-microvolt = <2800000>;
+-		regulator-max-microvolt = <2800000>;
+-		gpio = <&gpx1 1 0>;
+-		enable-active-high;
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		mmc_reg: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "VMEM_VDD_2.8V";
++			regulator-min-microvolt = <2800000>;
++			regulator-max-microvolt = <2800000>;
++			gpio = <&gpx1 1 0>;
++			enable-active-high;
++		};
+ 	};
+ 
+ 	tmu@100C0000 {
+-- 
+1.7.9.5
