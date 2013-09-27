@@ -1,26 +1,53 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: Correct number of pins for s5pv210
-Date: Fri, 27 Sep 2013 15:51:28 +0200
-Message-ID: <CACRpkdbrBRagZ01w+OFbAdf+xX6zfqEBYPRY9OxRtxCH5Ln1og@mail.gmail.com>
-References: <1380035051-24526-1-git-send-email-m.krawczuk@partner.samsung.com>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix configuration of gpio port sizes on S3C24XX.
+Date: Fri, 27 Sep 2013 16:17:49 +0200
+Message-ID: <CACRpkdYbCzOJ9k8AyriM9quafx=dseK6w1DYjyrJ9F53ka8TEw@mail.gmail.com>
+References: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1380035051-24526-1-git-send-email-m.krawczuk@partner.samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:57268 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751185Ab3I0ORt convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 27 Sep 2013 10:17:49 -0400
+Received: by mail-ob0-f181.google.com with SMTP id gq1so3233984obb.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 07:17:49 -0700 (PDT)
+In-Reply-To: <1378889173-7437-1-git-send-email-jose.goncalves@inov.pt>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?ISO-8859-1?Q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 
-On Tue, Sep 24, 2013 at 5:04 PM, Mateusz Krawczuk
-<m.krawczuk@partner.samsung.com> wrote:
+On Wed, Sep 11, 2013 at 10:46 AM, Jos=E9 Miguel Gon=E7alves
+<jose.goncalves@inov.pt> wrote:
 
-> Values of pins in table s5pv210 bank are incorrect. This patch correct values.
+> Some GPIO line limits are incorrectly set which, for instance,
+> does not allow nRTS1 (GPH11) configuration on a S3C2416 chip.
 >
-> Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Jos=E9 Miguel Gon=E7alves <jose.goncalves@inov.pt>
+> ---
+>  arch/arm/mach-s3c24xx/include/mach/gpio.h |   10 +++++-----
 
-Patch applied for fixes with the ACKs from Tomasz and Kukjin.
+OK but grrrr!
+
+What needs to happen to the s3c24xx is to get rid of this file.
+
+- Define ARCH_NR_GPIOS in arch/arm/Kconfig entry
+  ARCH_NR_GPIO like everyone else
+
+- Get rid of the config symbol NEED_MACH_GPIO_H
+
+-  Move this file down into arch/arm/mach-s3c24xx/s3c24xx-gpio.h
+  or whatever and make it local...
+
+I will try to do this myself if noone else helps out, so I'd like to
+carry this patch in the GPIO tree provided I can get an ACK from
+the S3C24xx maintainer. Tomasz, is that you or Kukjin?
+
+(BTW the above maybe goes for S3c64xx as well .. and S5P
+oh well I will get to it.)
 
 Yours,
 Linus Walleij
