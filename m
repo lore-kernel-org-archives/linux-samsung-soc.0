@@ -1,31 +1,38 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] PCI: exynos: turn off power of phy block when link failed
-Date: Fri, 27 Sep 2013 13:10:36 -0600
-Message-ID: <CAErSpo5nQ56Hz2xyuNfA=PDnekWZTOx6UoEtc6-duv8ackEj=Q@mail.gmail.com>
-References: <002301ceaada$1ffa8fb0$5fefaf10$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 3/6] spi/s3c64xx: Remove unused gpios field from driver data
+Date: Fri, 27 Sep 2013 20:44:06 +0100
+Message-ID: <1380311049-973-3-git-send-email-broonie@kernel.org>
+References: <1380311049-973-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:58197 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754338Ab3I0TK4 (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:57313 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750981Ab3I0Ton (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Sep 2013 15:10:56 -0400
-Received: by mail-ie0-f173.google.com with SMTP id ar20so4862356iec.4
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Sep 2013 12:10:56 -0700 (PDT)
-In-Reply-To: <002301ceaada$1ffa8fb0$5fefaf10$%han@samsung.com>
+	Fri, 27 Sep 2013 15:44:43 -0400
+In-Reply-To: <1380311049-973-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linaro-kernel@lists.linaro.org, =?UTF-8?q?=C5=81ukasz=20Czerwi=C5=84ski?= <l.czerwinski@samsung.com>, Mark Brown <broonie@linaro.org>
 
-On Fri, Sep 6, 2013 at 2:21 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> When link failed, there is no need to turn on phy block. Also,
-> turning on phy block is added, in order to turn on phy block
-> regardless of the default value of phy registers.
->
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+From: Mark Brown <broonie@linaro.org>
 
-Applied to my pci/host-exynos branch for v3.13.  Thanks!
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ drivers/spi/spi-s3c64xx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Bjorn
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index dd5ed13..7f960db 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -205,7 +205,6 @@ struct s3c64xx_spi_driver_data {
+ #endif
+ 	struct s3c64xx_spi_port_config	*port_conf;
+ 	unsigned int			port_id;
+-	unsigned long			gpios[4];
+ 	bool				cs_gpio;
+ };
+ 
+-- 
+1.8.4.rc3
