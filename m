@@ -1,75 +1,81 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH 2/5] gpio: samsung: Use CONFIG_ARCH_S3C64XX to
-	check for S3C64xx support
-Date: Sat, 28 Sep 2013 20:21:34 +0200
-Message-ID: <1380392497-27406-2-git-send-email-tomasz.figa@gmail.com>
-References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Takashi Iwai <tiwai@suse.de>, linux-kernel@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Ben Dooks <ben-linux@fluff.org>, Olof Johansson <olof@lixom.net>, Martin Schwidefsky <schwidefsky@de.ibm.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: [PATCH V5 0/5] Generic PHY driver for the Exynos SoC MIPI CSI-2/DSI DPHYs
+Date: Sat, 28 Sep 2013 21:27:42 +0200
+Message-ID: <1380396467-29278-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: kishon@ti.com
+Cc: gregkh@linuxfoundation.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, tomi.valkeinen@ti.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Since CONFIG_PLAT_S3C64XX is going to be removed, this patch modifies
-the gpio-samsung driver to use the proper way of checking for S3C64xx
-support - CONFIG_ARCH_S3C64XX.
+This patch series adds a simple driver for the Samsung S5P/Exynos SoC
+series MIPI CSI-2 receiver (MIPI CSIS) and MIPI DSI transmitter (MIPI
+DSIM) DPHYs, using the generic PHY framework. Previously the MIPI
+CSIS and MIPI DSIM used a platform callback to control the PHY power
+enable and reset bits. This non-generic platform code supporting only
+limited set of SoCs is now removed.
+This completes migration to the device tree of the Exynos/S5P MIPI CSI
+slave device driver.
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/gpio/gpio-samsung.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Changes since v4:
+ - updated to the latest version of the generic PHY framework - removed
+   PHY labels from the platform data structure. There is already no need
+   for non-dt support in this PHY driver so the platform data where any
+   struct phy_init_data would be passed is not added.
 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index 29b5d67..76e02b9 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -1033,7 +1033,7 @@ static int s3c24xx_gpiolib_fbank_to_irq(struct gpio_chip *chip, unsigned offset)
- }
- #endif
- 
--#ifdef CONFIG_PLAT_S3C64XX
-+#ifdef CONFIG_ARCH_S3C64XX
- static int s3c64xx_gpiolib_mbank_to_irq(struct gpio_chip *chip, unsigned pin)
- {
- 	return pin < 5 ? IRQ_EINT(23) + pin : -ENXIO;
-@@ -1174,7 +1174,7 @@ struct samsung_gpio_chip s3c24xx_gpios[] = {
-  */
- 
- static struct samsung_gpio_chip s3c64xx_gpios_4bit[] = {
--#ifdef CONFIG_PLAT_S3C64XX
-+#ifdef CONFIG_ARCH_S3C64XX
- 	{
- 		.chip	= {
- 			.base	= S3C64XX_GPA(0),
-@@ -1227,7 +1227,7 @@ static struct samsung_gpio_chip s3c64xx_gpios_4bit[] = {
- };
- 
- static struct samsung_gpio_chip s3c64xx_gpios_4bit2[] = {
--#ifdef CONFIG_PLAT_S3C64XX
-+#ifdef CONFIG_ARCH_S3C64XX
- 	{
- 		.base	= S3C64XX_GPH_BASE + 0x4,
- 		.chip	= {
-@@ -1257,7 +1257,7 @@ static struct samsung_gpio_chip s3c64xx_gpios_4bit2[] = {
- };
- 
- static struct samsung_gpio_chip s3c64xx_gpios_2bit[] = {
--#ifdef CONFIG_PLAT_S3C64XX
-+#ifdef CONFIG_ARCH_S3C64XX
- 	{
- 		.base	= S3C64XX_GPF_BASE,
- 		.config	= &samsung_gpio_cfgs[6],
--- 
-1.8.3.2
+Changes since v3 (only patch 1/5):
+ - replaced spin_(un)lock_irq_{save,restore} with spin_{lock,unlock}.
+ - DT binding file renamed to samsung-phy.txt, so it can be used for
+   other PHYs as well,
+ - removed <linux/delay.h> inclusion,
+ - added missing spin_lock_init().
+
+Changes since v2:
+ - adapted to the generic PHY API v9: use phy_set/get_drvdata(),
+ - fixed of_xlate callback to return ERR_PTR() instead of NULL,
+ - namespace cleanup, put "GPL v2" as MODULE_LICENSE, removed pr_debug,
+ - removed phy id check in __set_phy_state().
+
+Changes since v1:
+ - enabled build as module and with CONFIG_OF disabled,
+ - added phy_id enum,
+ - of_address_to_resource() replaced with platform_get_resource(),
+ - adapted to changes in the PHY API v7, v8 - added phy labels,
+ - added MODULE_DEVICE_TABLE() entry,
+ - the driver file renamed to phy-exynos-mipi-video.c,
+ - changed DT compatible string to "samsung,s5pv210-mipi-video-phy",
+ - corrected the compatible property's description.
+ - patch 3/5 "video: exynos_dsi: Use generic PHY driver" replaced
+   with a patch modifying the MIPI DSIM driver which is currently
+   in mainline.
+
+Sylwester Nawrocki (5):
+  ARM: dts: Add MIPI PHY node to exynos4.dtsi
+  phy: Add driver for Exynos MIPI CSIS/DSIM DPHYs
+  [media] exynos4-is: Use the generic MIPI CSIS PHY driver
+  video: exynos_mipi_dsim: Use the generic PHY driver
+  ARM: Samsung: Remove the MIPI PHY setup code
+
+ .../devicetree/bindings/phy/samsung-phy.txt        |   14 ++
+ arch/arm/boot/dts/exynos4.dtsi                     |   10 +
+ arch/arm/mach-exynos/include/mach/regs-pmu.h       |    5 -
+ arch/arm/mach-s5pv210/include/mach/regs-clock.h    |    4 -
+ arch/arm/plat-samsung/Kconfig                      |    5 -
+ arch/arm/plat-samsung/Makefile                     |    1 -
+ arch/arm/plat-samsung/setup-mipiphy.c              |   60 -------
+ drivers/media/platform/exynos4-is/Kconfig          |    2 +-
+ drivers/media/platform/exynos4-is/mipi-csis.c      |   13 +-
+ drivers/phy/Kconfig                                |    6 +
+ drivers/phy/Makefile                               |    7 +-
+ drivers/phy/phy-exynos-mipi-video.c                |  176 ++++++++++++++++++++
+ drivers/video/exynos/Kconfig                       |    1 +
+ drivers/video/exynos/exynos_mipi_dsi.c             |   19 +-
+ include/linux/platform_data/mipi-csis.h            |    9 -
+ include/video/exynos_mipi_dsim.h                   |    5 +-
+ 16 files changed, 234 insertions(+), 103 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung-phy.txt
+ delete mode 100644 arch/arm/plat-samsung/setup-mipiphy.c
+ create mode 100644 drivers/phy/phy-exynos-mipi-video.c
+
+--
+1.7.4.1
