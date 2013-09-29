@@ -1,62 +1,66 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH] PCI: exynos: missing clk_disable_unprepare() on error in exynos_pcie_probe()
-Date: Sun, 29 Sep 2013 10:29:11 +0800
-Message-ID: <CAPgLHd_RTNxi-OYhmTZ35NttjnAg-gQ_WKHkUQr5ueMhXVLTMg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
+Date: Sun, 29 Sep 2013 18:12:01 +0200
+Message-ID: <1380471121-9478-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f49.google.com ([209.85.214.49]:62186 "EHLO
-	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753466Ab3I2C3N (ORCPT
+Received: from mail-ee0-f47.google.com ([74.125.83.47]:41079 "EHLO
+	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752675Ab3I2QMJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 28 Sep 2013 22:29:13 -0400
+	Sun, 29 Sep 2013 12:12:09 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: bhelgaas@google.com, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, jg1.han@samsung.com, tgih.jun@samsung.com
-Cc: yongjun_wei@trendmicro.com.cn, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, augulis.darius@gmail.com, =?UTF-8?q?J=C3=BCrgen=20Beisert?= <jbe@pengutronix.de>, oselas@community.pengutronix.de, Tomasz Figa <tomasz.figa@gmail.com>
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+According to board schematics, for HSMMC1 a GPIO line is used to detect
+card presence, while currently it is being configured for internal card
+detect line, which is multiplexed with card detect line of HSMMC0 and
+thus breaking it.
 
-Add the missing clk_disable_unprepare() before return
-from exynos_pcie_probe() in the error handling case.
+This patch adds proper sdhci platform data setting card detect type to
+external GPIO and fixing operation of HSMMC0.
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
 ---
- drivers/pci/host/pci-exynos.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ arch/arm/mach-s3c64xx/mach-mini6410.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-index 94e096b..e25598a 100644
---- a/drivers/pci/host/pci-exynos.c
-+++ b/drivers/pci/host/pci-exynos.c
-@@ -487,18 +487,24 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
+index 58d46a3..97ae470 100644
+--- a/arch/arm/mach-s3c64xx/mach-mini6410.c
++++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+@@ -36,7 +36,9 @@
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+ #include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/mmc-sdhci-s3c.h>
+ #include <plat/regs-serial.h>
++#include <plat/sdhci.h>
+ #include <linux/platform_data/touchscreen-s3c2410.h>
  
- 	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	exynos_pcie->elbi_base = devm_ioremap_resource(&pdev->dev, elbi_base);
--	if (IS_ERR(exynos_pcie->elbi_base))
--		return PTR_ERR(exynos_pcie->elbi_base);
-+	if (IS_ERR(exynos_pcie->elbi_base)) {
-+		ret = PTR_ERR(exynos_pcie->elbi_base);
-+		goto fail_bus_clk;
-+	}
+ #include <video/platform_lcd.h>
+@@ -214,6 +216,13 @@ static struct platform_device mini6410_lcd_powerdev = {
+ 	.dev.platform_data	= &mini6410_lcd_power_data,
+ };
  
- 	phy_base = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 	exynos_pcie->phy_base = devm_ioremap_resource(&pdev->dev, phy_base);
--	if (IS_ERR(exynos_pcie->phy_base))
--		return PTR_ERR(exynos_pcie->phy_base);
-+	if (IS_ERR(exynos_pcie->phy_base)) {
-+		ret = PTR_ERR(exynos_pcie->phy_base);
-+		goto fail_bus_clk;
-+	}
++static struct s3c_sdhci_platdata mini6410_hsmmc1_pdata = {
++	.max_width		= 4,
++	.cd_type		= S3C_SDHCI_CD_GPIO,
++	.ext_cd_gpio		= S3C64XX_GPN(10),
++	.ext_cd_gpio_invert	= true,
++};
++
+ static struct platform_device *mini6410_devices[] __initdata = {
+ 	&mini6410_device_eth,
+ 	&s3c_device_hsmmc0,
+@@ -321,6 +330,7 @@ static void __init mini6410_machine_init(void)
  
- 	block_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
- 	exynos_pcie->block_base = devm_ioremap_resource(&pdev->dev, block_base);
--	if (IS_ERR(exynos_pcie->block_base))
--		return PTR_ERR(exynos_pcie->block_base);
-+	if (IS_ERR(exynos_pcie->block_base)) {
-+		ret = PTR_ERR(exynos_pcie->block_base);
-+		goto fail_bus_clk;
-+	}
+ 	s3c_nand_set_platdata(&mini6410_nand_info);
+ 	s3c_fb_set_platdata(&mini6410_lcd_pdata[features.lcd_index]);
++	s3c_sdhci1_set_platdata(&mini6410_hsmmc1_pdata);
+ 	s3c24xx_ts_set_platdata(NULL);
  
- 	ret = add_pcie_port(pp, pdev);
- 	if (ret < 0)
+ 	/* configure nCS1 width to 16 bits */
+-- 
+1.8.3.2
