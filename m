@@ -1,83 +1,62 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/4] watchdog: s3c2410_wdt: parse watchdog dt node to read PMU registers adresses
-Date: Sun, 29 Sep 2013 03:49:51 +0200
-Message-ID: <13147351.I7ksvhO9sb@flatron>
-References: <1379414623-26329-1-git-send-email-l.krishna@samsung.com> <2201944.6vg4a9ttux@flatron> <CAD=FV=Wa0BpmE7mQoAk-RC_g9QCCz2T_7=Pd46CDSN8Z9KQ8jg@mail.gmail.com>
+From: Wei Yongjun <weiyj.lk@gmail.com>
+Subject: [PATCH] PCI: exynos: missing clk_disable_unprepare() on error in exynos_pcie_probe()
+Date: Sun, 29 Sep 2013 10:29:11 +0800
+Message-ID: <CAPgLHd_RTNxi-OYhmTZ35NttjnAg-gQ_WKHkUQr5ueMhXVLTMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=Wa0BpmE7mQoAk-RC_g9QCCz2T_7=Pd46CDSN8Z9KQ8jg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, galak <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, pawel.moll-5wv7dgnIgG8@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f49.google.com ([209.85.214.49]:62186 "EHLO
+	mail-bk0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753466Ab3I2C3N (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 28 Sep 2013 22:29:13 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: bhelgaas@google.com, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, jg1.han@samsung.com, tgih.jun@samsung.com
+Cc: yongjun_wei@trendmicro.com.cn, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Friday 27 of September 2013 11:48:53 Doug Anderson wrote:
-> Tomasz,
-> 
-> On Fri, Sep 27, 2013 at 11:14 AM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> 
-wrote:
-> >> So isn't the register in the PMU there to save power in the case that
-> >> the watchdog timer isn't being used?  How is the PMU "driver" to know
-> >> whether the watchdog is being used?  Better IMHO that the watchdog
-> >> driver knows to enable and disable itself as needed, right?
-> > 
-> > How much power can you save on one low frequency counter? Anyway,
-> > those
-> > bits look more like reset signal masks to me, unrelated to any power
-> > saving and even if, this driver switches them on at probe regardless
-> > of
-> > whether the watchdog is actually used or not.
-> 
-> I don't know for sure how much power it saves if any.  The description
-> I have of those fields is also definitely a little on the confusing
-> side.  The fact that they are in the PMU leads me to believe that they
-> save power, but perhaps that's not the case here.
-> 
-> It still does seem nice to keep watchdog related code in the watchdog
-> driver, though...  
+From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-For me, this thing looks more related to PMU than watchdog, since the code 
-writes to PMU registers and does this only on system power state 
-transitions, i.e. once per boot, suspend, resume and shutdown.
+Add the missing clk_disable_unprepare() before return
+from exynos_pcie_probe() in the error handling case.
 
-> I guess I could also imagine ordering problems if
-> we tweaked this bit in the PMU driver, though I don't have actual
-> evidence of this.  Maybe cases where enabling at the wrong time could
-> cause spurious watchdog resets depending on how the BIOS left the
-> state of things.
+Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+---
+ drivers/pci/host/pci-exynos.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-Even if you put this code in watchdog driver you don't have any warranties 
-that the firmware leaves both the watchdog and PMU bits sets correctly. 
-I'm not sure what would be the point of firmware existence if you can't 
-trust it to set up at least the basic working environment for you and I 
-consider watchdog to be part of such.
-
-> It would be unfortunate if we found we needed to
-> reach into the watchdog register bank from the PMU driver to "pet" the
-> watchdog before enabling it.
-
-If you find any such need in future, then with the solution I proposed 
-there will be no problem in changing things to be done as you and Leela 
-propose. The other way around would not be that simple, because the 
-introduced binding would still have to be supported and the code touching 
-PMU would have to be kept in watchdog code...
-
-However, if you really insist on handling this in watchdog driver, please 
-consider using something smarter to access the PMU. I believe that device 
-node of watchdog should not represent parts of PMU, which should be 
-represented as a separate node instead.
-
-Could you use the syscon driver instead to handle PMU register accesses in 
-a centralized way, put the PMU register offset and respective bit masks 
-inside the watchdog driver (preferrably in a struct bound to respective OF 
-match entry) and access the registers using the regmap API?
-
-Best regards,
-Tomasz
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+index 94e096b..e25598a 100644
+--- a/drivers/pci/host/pci-exynos.c
++++ b/drivers/pci/host/pci-exynos.c
+@@ -487,18 +487,24 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+ 
+ 	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	exynos_pcie->elbi_base = devm_ioremap_resource(&pdev->dev, elbi_base);
+-	if (IS_ERR(exynos_pcie->elbi_base))
+-		return PTR_ERR(exynos_pcie->elbi_base);
++	if (IS_ERR(exynos_pcie->elbi_base)) {
++		ret = PTR_ERR(exynos_pcie->elbi_base);
++		goto fail_bus_clk;
++	}
+ 
+ 	phy_base = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+ 	exynos_pcie->phy_base = devm_ioremap_resource(&pdev->dev, phy_base);
+-	if (IS_ERR(exynos_pcie->phy_base))
+-		return PTR_ERR(exynos_pcie->phy_base);
++	if (IS_ERR(exynos_pcie->phy_base)) {
++		ret = PTR_ERR(exynos_pcie->phy_base);
++		goto fail_bus_clk;
++	}
+ 
+ 	block_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+ 	exynos_pcie->block_base = devm_ioremap_resource(&pdev->dev, block_base);
+-	if (IS_ERR(exynos_pcie->block_base))
+-		return PTR_ERR(exynos_pcie->block_base);
++	if (IS_ERR(exynos_pcie->block_base)) {
++		ret = PTR_ERR(exynos_pcie->block_base);
++		goto fail_bus_clk;
++	}
+ 
+ 	ret = add_pcie_port(pp, pdev);
+ 	if (ret < 0)
