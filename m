@@ -1,124 +1,72 @@
-From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v3 3/4] [media] exynos-scaler: Add m2m functionality for
- the SCALER driver
-Date: Mon, 30 Sep 2013 15:02:43 +0530
-Message-ID: <CAOD6ATpssyY_955-VMYPBzQOqHWgE0OZvU0xvU62+Q2e90JW8g@mail.gmail.com>
-References: <1378991371-24428-1-git-send-email-shaik.ameer@samsung.com>
-	<1378991371-24428-4-git-send-email-shaik.ameer@samsung.com>
-	<52493160.5030401@xs4all.nl>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Ask for help on SPI slave side driver support
+Date: Mon, 30 Sep 2013 10:33:17 +0100
+Message-ID: <20130930093317.GX19304@sirena.org.uk>
+References: <23ff6b10.bf1d.1416a88321f.Coremail.youshenghui0322@163.com>
+ <4025277.bhF6fFGQqq@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <52493160.5030401@xs4all.nl>
-Sender: linux-media-owner@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yQ6PUHtvLgXN2OhJ"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:38869 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751809Ab3I3Jdm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Sep 2013 05:33:42 -0400
+Content-Disposition: inline
+In-Reply-To: <4025277.bhF6fFGQqq@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-Hi Hans,
-
-Thanks for pointing it out.
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: YouShenghui <youshenghui0322@163.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
 
-On Mon, Sep 30, 2013 at 1:38 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> Hi Shaik,
->
-> I have a few questions regarding the selection part...
->
-> On 09/12/2013 03:09 PM, Shaik Ameer Basha wrote:
->> This patch adds the Makefile and memory to memory (m2m) interface
->> functionality for the SCALER driver.
->>
->> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->> ---
->>  drivers/media/platform/Kconfig                    |    8 +
->>  drivers/media/platform/Makefile                   |    1 +
->>  drivers/media/platform/exynos-scaler/Makefile     |    3 +
->>  drivers/media/platform/exynos-scaler/scaler-m2m.c |  781 +++++++++++++++++++++
->>  4 files changed, 793 insertions(+)
->>  create mode 100644 drivers/media/platform/exynos-scaler/Makefile
->>  create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
->>
->
+--yQ6PUHtvLgXN2OhJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Sep 30, 2013 at 01:20:42AM +0200, Tomasz Figa wrote:
 
-[...]
+> Mark will probably know better, but AFAIK there is no API for slave mode=
+=20
+> SPI available in Linux kernel. Please correct me if I'm wrong.
 
+That's correct.
 
->> +
->> +static int scaler_m2m_s_selection(struct file *file, void *fh,
->> +                             struct v4l2_selection *s)
->> +{
->> +     struct scaler_frame *frame;
->> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
->> +     struct v4l2_crop cr;
->> +     struct scaler_variant *variant = ctx->scaler_dev->variant;
->> +     int ret;
->> +
->> +     cr.type = s->type;
->> +     cr.c = s->r;
->> +
->> +     if ((s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
->> +         (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE))
->> +             return -EINVAL;
->> +
->> +     ret = scaler_try_crop(ctx, &cr);
->> +     if (ret < 0)
->> +             return ret;
->> +
->> +     if (s->flags & V4L2_SEL_FLAG_LE &&
->> +         !is_rectangle_enclosed(&cr.c, &s->r))
->> +             return -ERANGE;
->> +
->> +     if (s->flags & V4L2_SEL_FLAG_GE &&
->> +         !is_rectangle_enclosed(&s->r, &cr.c))
->> +             return -ERANGE;
->> +
->> +     s->r = cr.c;
->> +
->> +     switch (s->target) {
->> +     case V4L2_SEL_TGT_COMPOSE_BOUNDS:
->> +     case V4L2_SEL_TGT_COMPOSE_DEFAULT:
->> +     case V4L2_SEL_TGT_COMPOSE:
->> +             frame = &ctx->s_frame;
->> +             break;
->> +
->> +     case V4L2_SEL_TGT_CROP_BOUNDS:
->> +     case V4L2_SEL_TGT_CROP:
->> +     case V4L2_SEL_TGT_CROP_DEFAULT:
->> +             frame = &ctx->d_frame;
->> +             break;
->
-> Similar problems as with g_selection above. Tomasz mentioned to me that the selection
-> API is not implemented correctly in m2m Samsung drivers. It looks like this code is
-> copied-and-pasted from other drivers, so it seems he was right.
+> The code mentioned in the post from your link was some internal vendor=20
+> code, which is unlikely to be available publicly. However support for=20
+> slave mode from hardware side seems more or less similar to master mode,=
+=20
+> which means that assuming you can add some kernel API for it, the=20
+> modification to the spi-s3c64xx wouldn't be too big.
 
-Sorry, after going through the documentation, I have to agree with you...
-As you mentioned, this part of the code was copied while implementing
-the G-Scaler driver :)
+There were some people working on slave mode (or at least talking about
+it) but I don't think they ever sent it.  It'd probably just be the same
+as master mode but with transfers triggered from /CS instead of from
+driver action.  The biggest trick would be making sure the transfer is
+running before the master actually starts sending data.
 
-I will change the above implementation for M2M devices (GScaler and
-SCALER) as below,
-I will only allow all V4L2_SEL_TGT_COMPOSE_* target requests if
-'s->type' is equal to "V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE".
-and all V4L2_SEL_TGT_CROP_* target requests if 's->type' is equal to
-"V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE".
+--yQ6PUHtvLgXN2OhJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-I hope with the above two checkings taken in to care, there should not
-be any issues with using selection APIs here.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-Thanks,
-Shaik Ameer Basha
+iQIcBAEBAgAGBQJSSUVaAAoJELSic+t+oim9uygP/Rz0qmicpf6CogtUOY6FL9gM
+iJFxetg9EUyoII0fwI2yhioW5pjU1yRefr4baXq8lW3cFqKVnRmfjA7TIa1QGzRn
+D2dBHRvwxvMfIpOsTmFA1hBdPcj/5GgarerHFpr+gpRbkBqliLLC1EN9WDHoMJjn
+wD4q6Gwc0t87f+GhlXt+GH54MgYLno0Jm0wp93brSXtZOs08OxD0eSdsnOPfAqKu
+1gmMBv2Jm9smrbGPpNGFXE2Ei7P9RSACUvS1TWNYufkLDrGO7HOJVztn7DUkXpbJ
+nUdko+106EfbvopcCDsREv6MvNZBUDaJilWx0t4ZfCWabKprL5FM90g1pl8vXkeD
+xku5qzfXm0a1ZFfziwYmbHFzlft8nblQ/xeNk+c+LwCNWiW8MDrAC1MBPDv+HyKS
+b1t8F5BMZn+plahxVrVZG7m6pkL5DRdrnx/26rbmvFJAbjcpt/yEfRrwNYrAcvWC
+mD8VyX+Vhwycv5PlJM25IsFXWUlltJDkDW0dtYYlaDvTY1EAiUJR7+oQCrLfQ+D4
+ExKTY1niQxbMv02/V5QncI1fPcDDpSbpaauS6rmlj8KiyiJnjPeEPls8JX9vEx7t
+dNL91Z1wwgVjYuCpK5OEz6erMm12OV9ooZYsmLMKToPACJEzkdONvFZuFOI+3J8/
+KmGEBrQK4O2LHfWzsVX0
+=nvC5
+-----END PGP SIGNATURE-----
 
->
-> The selection API for m2m devices will be discussed during the upcoming V4L2 mini-summit
-> since the API may actually need some adjustments to have it work the way it should.
->
-> As requested above, if you can explain the exact functionality you are trying to
-> implement here, then I can look over this code carefully and see how it should be done.
->
-> Thanks!
->
->         Hans
->
-[...]
+--yQ6PUHtvLgXN2OhJ--
