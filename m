@@ -1,181 +1,61 @@
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v9 09/13] [media] exynos5-fimc-is: Add the hardware pipeline
- control
-Date: Mon, 30 Sep 2013 14:43:40 +0200
-Message-ID: <524971FC.5030907@xs4all.nl>
-References: <1380279558-21651-1-git-send-email-arun.kk@samsung.com> <1380279558-21651-10-git-send-email-arun.kk@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC/PATCH] spi: s3c64xx: Enable Word transfer
+Date: Mon, 30 Sep 2013 16:15:08 +0100
+Message-ID: <20130930151508.GC19304@sirena.org.uk>
+References: <1380031235-4065-1-git-send-email-rajeshwari.s@samsung.com>
+ <1555800.vSI857jMHi@amdc1227>
+ <CAPs=JDe6XoyqM=iJWgAZF+tU0p_4K=9K4Kx6ANpCcUV9rBd82Q@mail.gmail.com>
+ <CAPs=JDeYaE4RZxCpttgrC+9hWbj6pbaNqx7KGtc9di+6OMNTOg@mail.gmail.com>
+ <CAPs=JDe1zwqpcTVaq2ZrQCAOAstQBy-4XnjnghGhqTz=9Zfwdg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1380279558-21651-10-git-send-email-arun.kk@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Fc4/uDQsB6b9dq2q"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:55655 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755685Ab3I3PPM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Sep 2013 11:15:12 -0400
+Content-Disposition: inline
+In-Reply-To: <CAPs=JDe1zwqpcTVaq2ZrQCAOAstQBy-4XnjnghGhqTz=9Zfwdg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rajeshwari Birje <rajeshwari.birje@gmail.com>
+Cc: Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, dianders@google.com, Tomasz Figa <t.figa@samsung.com>
 
-On 09/27/2013 12:59 PM, Arun Kumar K wrote:
-> This patch adds the crucial hardware pipeline control for the
-> fimc-is driver. All the subdev nodes will call this pipeline
-> interfaces to reach the hardware. Responsibilities of this module
-> involves configuring and maintaining the hardware pipeline involving
-> multiple sub-ips like ISP, DRC, Scalers, ODC, 3DNR, FD etc.
-> 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../media/platform/exynos5-is/fimc-is-pipeline.c   | 1708 ++++++++++++++++++++
->  .../media/platform/exynos5-is/fimc-is-pipeline.h   |  129 ++
->  2 files changed, 1837 insertions(+)
->  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.c
->  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.h
-> 
-> diff --git a/drivers/media/platform/exynos5-is/fimc-is-pipeline.c b/drivers/media/platform/exynos5-is/fimc-is-pipeline.c
-> new file mode 100644
-> index 0000000..a73d952
-> --- /dev/null
-> +++ b/drivers/media/platform/exynos5-is/fimc-is-pipeline.c
 
-<snip>
+--Fc4/uDQsB6b9dq2q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> +int fimc_is_pipeline_open(struct fimc_is_pipeline *pipeline,
-> +			struct fimc_is_sensor *sensor)
-> +{
-> +	struct fimc_is *is = pipeline->is;
-> +	struct is_region *region;
-> +	unsigned long index[2] = {0};
-> +	int ret;
-> +
-> +	if (!sensor)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&pipeline->pipe_lock);
-> +
-> +	if (test_bit(PIPELINE_OPEN, &pipeline->state)) {
-> +		dev_err(pipeline->dev, "Pipeline already open\n");
-> +		ret = -EINVAL;
-> +		goto err_exit;
-> +	}
-> +
-> +	pipeline->fcount = 0;
-> +	pipeline->sensor = sensor;
-> +
-> +	if (is->num_pipelines == 0) {
-> +		/* Init memory */
-> +		ret = fimc_is_pipeline_initmem(pipeline);
-> +		if (ret) {
-> +			dev_err(pipeline->dev, "Pipeline memory init failed\n");
-> +			goto err_exit;
-> +		}
-> +
-> +		/* Load firmware */
-> +		ret = fimc_is_pipeline_load_firmware(pipeline);
-> +		if (ret) {
-> +			dev_err(pipeline->dev, "Firmware load failed\n");
-> +			goto err_fw;
-> +		}
-> +
-> +		/* Power ON */
-> +		ret = fimc_is_pipeline_power(pipeline, 1);
-> +		if (ret) {
-> +			dev_err(pipeline->dev, "A5 power on failed\n");
-> +			goto err_fw;
-> +		}
-> +
-> +		/* Wait for FW Init to complete */
-> +		ret = fimc_is_itf_wait_init_state(&is->interface);
-> +		if (ret) {
-> +			dev_err(pipeline->dev, "FW init failed\n");
-> +			goto err_fw;
-> +		}
-> +	}
-> +
-> +	/* Open Sensor */
-> +	region = pipeline->is_region;
-> +	ret = fimc_is_itf_open_sensor(&is->interface,
-> +			pipeline->instance,
-> +			sensor->drvdata->id,
-> +			sensor->i2c_bus,
-> +			pipeline->minfo->shared.paddr);
-> +	if (ret) {
-> +		dev_err(pipeline->dev, "Open sensor failed\n");
-> +		goto err_exit;
-> +	}
-> +
-> +	/* Load setfile */
-> +	ret = fimc_is_pipeline_setfile(pipeline);
-> +	if (ret)
-> +		goto err_exit;
-> +
-> +	/* Stream off */
-> +	ret = fimc_is_itf_stream_off(&is->interface, pipeline->instance);
-> +	if (ret)
-> +		goto err_exit;
-> +
-> +	/* Process off */
-> +	ret = fimc_is_itf_process_off(&is->interface, pipeline->instance);
-> +	if (ret)
-> +		goto err_exit;
-> +
-> +	if (is->num_pipelines == 0) {
-> +		/* Copy init params to FW region */
-> +		memset(&region->parameter, 0x0, sizeof(struct is_param_region));
-> +
-> +		memcpy(&region->parameter.sensor, &init_sensor_param,
-> +				sizeof(struct sensor_param));
+On Mon, Sep 30, 2013 at 01:32:43PM +0530, Rajeshwari Birje wrote:
 
-How about:
+> Please do let me know if you have any comments on this patch.
 
-		region->parameter.sensor = init_sensor_param;
+Don't top post.  You need to follow Tomasz's advice and send the patch
+to me (using the above address from get_maintainer.pl) after addressing
+the issues he identified.  His advice looked good.
 
-Shorter and type-safe.
+--Fc4/uDQsB6b9dq2q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Ditto for the memcpy's below.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.21 (GNU/Linux)
 
-> +		memcpy(&region->parameter.isp, &init_isp_param,
-> +				sizeof(struct isp_param));
-> +		memcpy(&region->parameter.drc, &init_drc_param,
-> +				sizeof(struct drc_param));
-> +		memcpy(&region->parameter.scalerc, &init_scalerc_param,
-> +				sizeof(struct scalerc_param));
-> +		memcpy(&region->parameter.odc, &init_odc_param,
-> +				sizeof(struct odc_param));
-> +		memcpy(&region->parameter.dis, &init_dis_param,
-> +				sizeof(struct dis_param));
-> +		memcpy(&region->parameter.tdnr, &init_tdnr_param,
-> +				sizeof(struct tdnr_param));
-> +		memcpy(&region->parameter.scalerp, &init_scalerp_param,
-> +				sizeof(struct scalerp_param));
-> +		memcpy(&region->parameter.fd, &init_fd_param,
-> +				sizeof(struct fd_param));
-> +		wmb();
-> +
-> +		/* Set all init params to FW */
-> +		index[0] = 0xffffffff;
-> +		index[1] = 0xffffffff;
-> +		ret = fimc_is_itf_set_param(&is->interface, pipeline->instance,
-> +				index[0], index[1]);
-> +		if (ret) {
-> +			dev_err(pipeline->dev, "%s failed\n", __func__);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +
-> +	/* Set state to OPEN */
-> +	set_bit(PIPELINE_OPEN, &pipeline->state);
-> +	is->num_pipelines++;
-> +
-> +	mutex_unlock(&pipeline->pipe_lock);
-> +	return 0;
-> +
-> +err_fw:
-> +	fimc_is_pipeline_freemem(pipeline);
-> +err_exit:
-> +	mutex_unlock(&pipeline->pipe_lock);
-> +	return ret;
-> +}
+iQIcBAEBAgAGBQJSSZV5AAoJELSic+t+oim9xzcP/3m2JtRnTloYNsmJASrcif3X
+zYQ1Q+zKuiUU7LXapJUBzwpHAcXDulQu1l2ZxQPPBXMSf3tmzg+V3Gk2902ZeWZT
+4pfOQ1W34YVB925Z7lNlJ6J7V5wESc1PW+pQE8y7V58h0L/ZSTAyMfDJYqQTmtZC
+lJupazTrdaZAOe2TV26yvAiBtMr2ebyRFkUpGr+XW7kZbKfBPHsM2i7S4uNKAOyP
+x+aK66d/7Xm9PDVFCdOl/jbUHmRl6RM+Bns2TgibAgCXBhoKdz52RV9F3v53wkoo
+8gLCuZEebUAcBBfkIHHiIWIqbM5viyWVWi6wQ2YWhY0Cz8vw8fxaILbbNo4JYvB+
+YmPcuPJTxvXhzL/7AqcTRIt5poktuE9ruYiLDFV4JGXMsMIPFqi2NNne+L6mk60F
+5+zp6no2/Tvr0WTgHKM+Bs6LEQCQg0b0DQgsyJVsl+vB8Ox/OsYv86IXCbAfdIJC
+etGxJL9AA4YOj+9q0UCVjjXC4EmFxNDuAtD6iJcqHnAN/+fr/nlfjxCmujvB2Ess
+wl9aQBDoPZIZvC/YhEeTZ/ONGnK+J2hili/j6FYJhlb7IB9SstAKCpdXeGFNHmPJ
+5JUlluII+sZ3SLj2I2/fmflCXKcFPtb92zs480OQzLzbXHEHQNI/2q4u+2IKkPgU
+qiGUYs/89BsKkDvdhP8Z
+=AWks
+-----END PGP SIGNATURE-----
 
-Regards,
-
-	Hans
+--Fc4/uDQsB6b9dq2q--
