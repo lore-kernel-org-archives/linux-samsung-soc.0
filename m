@@ -1,26 +1,74 @@
-From: YouShenghui <youshenghui0322@163.com>
-Subject: Re:Re: Ask for help on SPI slave side driver support
-Date: Mon, 30 Sep 2013 13:38:07 +0800 (CST)
-Message-ID: <1245d970.18185.1416d5fa72a.Coremail.youshenghui0322@163.com>
-References: <23ff6b10.bf1d.1416a88321f.Coremail.youshenghui0322@163.com>
- <4025277.bhF6fFGQqq@flatron>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH 1/5] ARM: Kconfig: Move if ARCH_S3C64XX statement to
+ mach-s3c64xx/Kconfig
+Date: Mon, 30 Sep 2013 16:22:51 +0900
+Message-ID: <069301cebdad$df658f90$9e30aeb0$@org>
+References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=GBK
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from m13-146.163.com ([220.181.13.146]:44555 "EHLO m13-146.163.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750825Ab3I3Fy0 convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25152 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751137Ab3I3HXz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 01:54:26 -0400
-In-Reply-To: <4025277.bhF6fFGQqq@flatron>
+	Mon, 30 Sep 2013 03:23:55 -0400
+In-reply-to: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, broonie@kernel.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Mauro Carvalho Chehab' <m.chehab@samsung.com>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Liam Girdwood' <lgirdwood@gmail.com>, 'Mark Brown' <broonie@kernel.org>, 'Jaroslav Kysela' <perex@perex.cz>, 'Takashi Iwai' <tiwai@suse.de>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Geert Uytterhoeven' <geert@linux-m68k.org>, 'Martin Schwidefsky' <schwidefsky@de.ibm.com>
 
-At 2013-09-30 07:20:42,"Tomasz Figa" <tomasz.figa@gmail.com> wrote: >Hi, > >[Ccing Mark Brown, maintainer of Linux SPI subsystem] > >On Monday 30 of September 2013 00:23:32 YouShenghui wrote: >> Hi Samsung expert, >> I am working a project that need spi slave side driver support in >> smdk6410 in linux. I am connecting two 6410 board with spi bus, one >> side as master, the other as slave. Data is passed from one side to the >> other. I looked over spi related code in kernel and only find spi >> master support. I see >> http://www.spinics.net/lists/arm-kernel/msg73403.html that said there >> was already spi slave support in Samsungs current code. Could you give >> me a suggestion where I could find that code? I would like to port >> slave side support code to my code though it's not upstre
- am yet. > >Mark will probably know better, but AFAIK there is no API for slave mode >SPI available in Linux kernel. Please correct me if I'm wrong. > >The code mentioned in the post from your link was some internal vendor >code, which is unlikely to be available publicly. However support for >slave mode from hardware side seems more or less similar to master mode, >which means that assuming you can add some kernel API for it, the >modification to the spi-s3c64xx wouldn't be too big. > >Best regards, >Tomasz >
-Thanks for your answer.
-Yes, It will not be a big patch. But I feel hard to add the support as a application developer so I want if they could send me a small patch to make it work.
-ysh
+Tomasz Figa wrote:
+> 
+> All other platforms have this condition checked inside their own Kconfig
+> files, so for consistency this patch makes it this way for mach-s3c64xx
+> as well.
+> 
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  arch/arm/Kconfig              | 2 --
+>  arch/arm/mach-s3c64xx/Kconfig | 4 ++++
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index b766dad..dc51f8a 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -995,9 +995,7 @@ source "arch/arm/mach-sti/Kconfig"
+> 
+>  source "arch/arm/mach-s3c24xx/Kconfig"
+> 
+> -if ARCH_S3C64XX
+>  source "arch/arm/mach-s3c64xx/Kconfig"
+> -endif
+> 
+>  source "arch/arm/mach-s5p64x0/Kconfig"
+> 
+> diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+> index bd14e3a..0e23910 100644
+> --- a/arch/arm/mach-s3c64xx/Kconfig
+> +++ b/arch/arm/mach-s3c64xx/Kconfig
+> @@ -3,6 +3,8 @@
+>  #
+>  # Licensed under GPLv2
+> 
+> +if ARCH_S3C64XX
+> +
+>  # temporary until we can eliminate all drivers using it.
+>  config PLAT_S3C64XX
+>  	bool
+> @@ -322,3 +324,5 @@ config MACH_S3C64XX_DT
+>  	  board.
+>  	  Note: This is under development and not all peripherals can be
+>  	  supported with this machine file.
+> +
+> +endif
+> --
+> 1.8.3.2
+
+Looks good to me, applied 1 to 5 patches into cleanup.
+
+Thanks,
+Kukjin
