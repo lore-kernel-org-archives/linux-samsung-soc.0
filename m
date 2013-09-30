@@ -1,161 +1,180 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH v3 3/4] [media] exynos-scaler: Add m2m functionality for
- the SCALER driver
-Date: Mon, 30 Sep 2013 14:14:12 +0200
-Message-ID: <52496B14.1060804@xs4all.nl>
-References: <1378991371-24428-1-git-send-email-shaik.ameer@samsung.com> <1378991371-24428-4-git-send-email-shaik.ameer@samsung.com> <52493160.5030401@xs4all.nl> <CAOD6ATpssyY_955-VMYPBzQOqHWgE0OZvU0xvU62+Q2e90JW8g@mail.gmail.com> <52495337.4040309@xs4all.nl> <CAOD6ATpY66-nx0T6XaoT3YT8trUwt=hdr-ToZv4PH3xnxGET_g@mail.gmail.com>
+Subject: Re: [PATCH v9 09/13] [media] exynos5-fimc-is: Add the hardware pipeline
+ control
+Date: Mon, 30 Sep 2013 14:43:40 +0200
+Message-ID: <524971FC.5030907@xs4all.nl>
+References: <1380279558-21651-1-git-send-email-arun.kk@samsung.com> <1380279558-21651-10-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-vbr6.xs4all.nl ([194.109.24.26]:1476 "EHLO
-	smtp-vbr6.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754044Ab3I3MO0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 08:14:26 -0400
-In-Reply-To: <CAOD6ATpY66-nx0T6XaoT3YT8trUwt=hdr-ToZv4PH3xnxGET_g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1380279558-21651-10-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-On 09/30/2013 12:48 PM, Shaik Ameer Basha wrote:
-> Hi Hans,
+On 09/27/2013 12:59 PM, Arun Kumar K wrote:
+> This patch adds the crucial hardware pipeline control for the
+> fimc-is driver. All the subdev nodes will call this pipeline
+> interfaces to reach the hardware. Responsibilities of this module
+> involves configuring and maintaining the hardware pipeline involving
+> multiple sub-ips like ISP, DRC, Scalers, ODC, 3DNR, FD etc.
 > 
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  .../media/platform/exynos5-is/fimc-is-pipeline.c   | 1708 ++++++++++++++++++++
+>  .../media/platform/exynos5-is/fimc-is-pipeline.h   |  129 ++
+>  2 files changed, 1837 insertions(+)
+>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.c
+>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.h
 > 
-> On Mon, Sep 30, 2013 at 4:02 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> On 09/30/2013 11:32 AM, Shaik Ameer Basha wrote:
->>> Hi Hans,
->>>
->>> Thanks for pointing it out.
->>>
->>>
->>> On Mon, Sep 30, 2013 at 1:38 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>> Hi Shaik,
->>>>
->>>> I have a few questions regarding the selection part...
->>>>
->>>> On 09/12/2013 03:09 PM, Shaik Ameer Basha wrote:
->>>>> This patch adds the Makefile and memory to memory (m2m) interface
->>>>> functionality for the SCALER driver.
->>>>>
->>>>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->>>>> ---
->>>>>  drivers/media/platform/Kconfig                    |    8 +
->>>>>  drivers/media/platform/Makefile                   |    1 +
->>>>>  drivers/media/platform/exynos-scaler/Makefile     |    3 +
->>>>>  drivers/media/platform/exynos-scaler/scaler-m2m.c |  781 +++++++++++++++++++++
->>>>>  4 files changed, 793 insertions(+)
->>>>>  create mode 100644 drivers/media/platform/exynos-scaler/Makefile
->>>>>  create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
->>>>>
->>>>
->>>
->>>
->>> [...]
->>>
->>>
->>>>> +
->>>>> +static int scaler_m2m_s_selection(struct file *file, void *fh,
->>>>> +                             struct v4l2_selection *s)
->>>>> +{
->>>>> +     struct scaler_frame *frame;
->>>>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
->>>>> +     struct v4l2_crop cr;
->>>>> +     struct scaler_variant *variant = ctx->scaler_dev->variant;
->>>>> +     int ret;
->>>>> +
->>>>> +     cr.type = s->type;
->>>>> +     cr.c = s->r;
->>>>> +
->>>>> +     if ((s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
->>>>> +         (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE))
->>>>> +             return -EINVAL;
->>>>> +
->>>>> +     ret = scaler_try_crop(ctx, &cr);
->>>>> +     if (ret < 0)
->>>>> +             return ret;
->>>>> +
->>>>> +     if (s->flags & V4L2_SEL_FLAG_LE &&
->>>>> +         !is_rectangle_enclosed(&cr.c, &s->r))
->>>>> +             return -ERANGE;
->>>>> +
->>>>> +     if (s->flags & V4L2_SEL_FLAG_GE &&
->>>>> +         !is_rectangle_enclosed(&s->r, &cr.c))
->>>>> +             return -ERANGE;
->>>>> +
->>>>> +     s->r = cr.c;
->>>>> +
->>>>> +     switch (s->target) {
->>>>> +     case V4L2_SEL_TGT_COMPOSE_BOUNDS:
->>>>> +     case V4L2_SEL_TGT_COMPOSE_DEFAULT:
->>>>> +     case V4L2_SEL_TGT_COMPOSE:
->>>>> +             frame = &ctx->s_frame;
->>>>> +             break;
->>>>> +
->>>>> +     case V4L2_SEL_TGT_CROP_BOUNDS:
->>>>> +     case V4L2_SEL_TGT_CROP:
->>>>> +     case V4L2_SEL_TGT_CROP_DEFAULT:
->>>>> +             frame = &ctx->d_frame;
->>>>> +             break;
->>>>
->>>> Similar problems as with g_selection above. Tomasz mentioned to me that the selection
->>>> API is not implemented correctly in m2m Samsung drivers. It looks like this code is
->>>> copied-and-pasted from other drivers, so it seems he was right.
->>>
->>> Sorry, after going through the documentation, I have to agree with you...
->>> As you mentioned, this part of the code was copied while implementing
->>> the G-Scaler driver :)
->>>
->>> I will change the above implementation for M2M devices (GScaler and
->>> SCALER) as below,
->>> I will only allow all V4L2_SEL_TGT_COMPOSE_* target requests if
->>> 's->type' is equal to "V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE".
->>> and all V4L2_SEL_TGT_CROP_* target requests if 's->type' is equal to
->>> "V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE".
->>>
->>> I hope with the above two checkings taken in to care, there should not
->>> be any issues with using selection APIs here.
->>
->> Well, that depends on what the hardware does.
->>
->> Using compose with a capture buffer means that the frame as delivered by
->> the hardware is composed into a larger buffer. E.g. the hardware gives
->> you 1280x720 which is composed into a buffer of size 1920x1080.
->>
->> Using crop with an output buffer means that the hardware gets a cropped
->> part of a larger frame. E.g. you give a 1280x720 crop from a larger 1920x1080
->> buffer.
->>
->> I suspect however, that in this case the hardware does the opposite for
->> capture: you really want to crop with a capture buffer (e.g. the hardware
->> delivers a 1280x720 frame which is cropped before DMA to 640x360).
->>
->> I'm not sure what you want to do with an output buffer: cropping or composing.
->>
->> Tomasz mentioned that the M2M + selection API was screwy, and this seems to
->> be to be the case indeed.
->>
->> Which is also why I would like to know exactly what this hardware does.
-> 
-> This hardware is just a M2M device.
-> It accepts one source buffer at a time and does some operations on
-> that and saves to the destination buffer.
-> Operations like Rotation, Cropping, Scaling, Color Space Conversion
-> etc are possible.
-> 
-> Here when I provide the Output buffer (source buffer), I can apply all
-> V4L2_SEL_TGT_CROP_* targets on it.
-> That means I can select the whole buffer for processing or apply some
-> crop and select that area for further processing.
-> 
-> similarly, On the capture buffer (output buffer), I can apply
-> V4L2_SEL_TGT_COMPOSE_* targets.
-> That means I can compose the final output to the complete capture
-> frame (dst frame), or I can choose some part of the destination frame.
+> diff --git a/drivers/media/platform/exynos5-is/fimc-is-pipeline.c b/drivers/media/platform/exynos5-is/fimc-is-pipeline.c
+> new file mode 100644
+> index 0000000..a73d952
+> --- /dev/null
+> +++ b/drivers/media/platform/exynos5-is/fimc-is-pipeline.c
 
-OK, in that case your proposed changes are indeed correct. Sorry, I had
-to check this carefully since it is so easy to get confused :-)
+<snip>
+
+> +int fimc_is_pipeline_open(struct fimc_is_pipeline *pipeline,
+> +			struct fimc_is_sensor *sensor)
+> +{
+> +	struct fimc_is *is = pipeline->is;
+> +	struct is_region *region;
+> +	unsigned long index[2] = {0};
+> +	int ret;
+> +
+> +	if (!sensor)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&pipeline->pipe_lock);
+> +
+> +	if (test_bit(PIPELINE_OPEN, &pipeline->state)) {
+> +		dev_err(pipeline->dev, "Pipeline already open\n");
+> +		ret = -EINVAL;
+> +		goto err_exit;
+> +	}
+> +
+> +	pipeline->fcount = 0;
+> +	pipeline->sensor = sensor;
+> +
+> +	if (is->num_pipelines == 0) {
+> +		/* Init memory */
+> +		ret = fimc_is_pipeline_initmem(pipeline);
+> +		if (ret) {
+> +			dev_err(pipeline->dev, "Pipeline memory init failed\n");
+> +			goto err_exit;
+> +		}
+> +
+> +		/* Load firmware */
+> +		ret = fimc_is_pipeline_load_firmware(pipeline);
+> +		if (ret) {
+> +			dev_err(pipeline->dev, "Firmware load failed\n");
+> +			goto err_fw;
+> +		}
+> +
+> +		/* Power ON */
+> +		ret = fimc_is_pipeline_power(pipeline, 1);
+> +		if (ret) {
+> +			dev_err(pipeline->dev, "A5 power on failed\n");
+> +			goto err_fw;
+> +		}
+> +
+> +		/* Wait for FW Init to complete */
+> +		ret = fimc_is_itf_wait_init_state(&is->interface);
+> +		if (ret) {
+> +			dev_err(pipeline->dev, "FW init failed\n");
+> +			goto err_fw;
+> +		}
+> +	}
+> +
+> +	/* Open Sensor */
+> +	region = pipeline->is_region;
+> +	ret = fimc_is_itf_open_sensor(&is->interface,
+> +			pipeline->instance,
+> +			sensor->drvdata->id,
+> +			sensor->i2c_bus,
+> +			pipeline->minfo->shared.paddr);
+> +	if (ret) {
+> +		dev_err(pipeline->dev, "Open sensor failed\n");
+> +		goto err_exit;
+> +	}
+> +
+> +	/* Load setfile */
+> +	ret = fimc_is_pipeline_setfile(pipeline);
+> +	if (ret)
+> +		goto err_exit;
+> +
+> +	/* Stream off */
+> +	ret = fimc_is_itf_stream_off(&is->interface, pipeline->instance);
+> +	if (ret)
+> +		goto err_exit;
+> +
+> +	/* Process off */
+> +	ret = fimc_is_itf_process_off(&is->interface, pipeline->instance);
+> +	if (ret)
+> +		goto err_exit;
+> +
+> +	if (is->num_pipelines == 0) {
+> +		/* Copy init params to FW region */
+> +		memset(&region->parameter, 0x0, sizeof(struct is_param_region));
+> +
+> +		memcpy(&region->parameter.sensor, &init_sensor_param,
+> +				sizeof(struct sensor_param));
+
+How about:
+
+		region->parameter.sensor = init_sensor_param;
+
+Shorter and type-safe.
+
+Ditto for the memcpy's below.
+
+> +		memcpy(&region->parameter.isp, &init_isp_param,
+> +				sizeof(struct isp_param));
+> +		memcpy(&region->parameter.drc, &init_drc_param,
+> +				sizeof(struct drc_param));
+> +		memcpy(&region->parameter.scalerc, &init_scalerc_param,
+> +				sizeof(struct scalerc_param));
+> +		memcpy(&region->parameter.odc, &init_odc_param,
+> +				sizeof(struct odc_param));
+> +		memcpy(&region->parameter.dis, &init_dis_param,
+> +				sizeof(struct dis_param));
+> +		memcpy(&region->parameter.tdnr, &init_tdnr_param,
+> +				sizeof(struct tdnr_param));
+> +		memcpy(&region->parameter.scalerp, &init_scalerp_param,
+> +				sizeof(struct scalerp_param));
+> +		memcpy(&region->parameter.fd, &init_fd_param,
+> +				sizeof(struct fd_param));
+> +		wmb();
+> +
+> +		/* Set all init params to FW */
+> +		index[0] = 0xffffffff;
+> +		index[1] = 0xffffffff;
+> +		ret = fimc_is_itf_set_param(&is->interface, pipeline->instance,
+> +				index[0], index[1]);
+> +		if (ret) {
+> +			dev_err(pipeline->dev, "%s failed\n", __func__);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	/* Set state to OPEN */
+> +	set_bit(PIPELINE_OPEN, &pipeline->state);
+> +	is->num_pipelines++;
+> +
+> +	mutex_unlock(&pipeline->pipe_lock);
+> +	return 0;
+> +
+> +err_fw:
+> +	fimc_is_pipeline_freemem(pipeline);
+> +err_exit:
+> +	mutex_unlock(&pipeline->pipe_lock);
+> +	return ret;
+> +}
 
 Regards,
 
