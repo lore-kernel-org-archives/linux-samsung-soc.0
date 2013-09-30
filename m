@@ -1,79 +1,52 @@
-From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: RE: [PATCH v2 1/3] ARM: dts: exynos4210-origen: Add fixed voltage
- regulator to simple bus
-Date: Mon, 30 Sep 2013 18:51:50 +0900
-Message-ID: <06c001cebdc2$afb3bbe0$0f1b33a0$@org>
-References: <1380277780-10903-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
+Date: Mon, 30 Sep 2013 19:11:41 +0900
+Message-ID: <06c101cebdc5$75a83d10$60f8b730$%kim@samsung.com>
+References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
+ <8412301.YP2zzplWoe@amdc1227>
+ <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com>
+ <523716C9.3000204@samsung.com> <20130916193709.27384.86101@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1380277780-10903-1-git-send-email-sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <20130916193709.27384.86101@quantum>
 Content-language: ko
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Mike Turquette' <mturquette@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: 'devicetree' <devicetree@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Andrzej Hajda' <a.hajda@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Sachin Kamat wrote:
+Mike Turquette wrote:
 > 
-> This has been done for Arndale board vide commit aa3edb65
-> ("ARM: dts: Put Arndale fixed voltage regulators on a simple-bus").
-> Replicate here for consistency and correctness.
+> Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
+> > On 09/12/2013 12:50 PM, Kukjin Kim wrote:
+> > > Well...I'm not sure changing to use macro is better or not at this
+> moment...
+> >
+> > I think it is. ;) It's really less error prone to have symbolic names
+> instead
+> > of the plain numbers. The clock ids are defined in one place and it is
+> more
+> > clear what a clock is by looking at symbolic name. It's especially
+> annoying
+> > to use plain numbers where are are many clock in a single node, like 10
+> or
+> > more. What are you main concerns with this ?
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
-> Based on Kukjin's for-next branch.
-> Changes since v1:
-> * Added reg property and renamed the node
-> ---
+> I think having the symbolic names is a win for readability.
 > 
->  arch/arm/boot/dts/exynos4210-origen.dts |   21 ++++++++++++++-------
->  1 file changed, 14 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
-> b/arch/arm/boot/dts/exynos4210-origen.dts
-> index 6906e8a..a6d9c32 100644
-> --- a/arch/arm/boot/dts/exynos4210-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> @@ -32,13 +32,20 @@
->  		bootargs ="root=/dev/ram0 rw ramdisk=8192
-> initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
->  	};
-> 
-> -	mmc_reg: voltage-regulator {
-> -	        compatible = "regulator-fixed";
-> -		regulator-name = "VMEM_VDD_2.8V";
-> -		regulator-min-microvolt = <2800000>;
-> -		regulator-max-microvolt = <2800000>;
-> -		gpio = <&gpx1 1 0>;
-> -		enable-active-high;
-> +	regulators {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		mmc_reg: regulator@0 {
-> +			compatible = "regulator-fixed";
-> +			reg = <0>;
-> +			regulator-name = "VMEM_VDD_2.8V";
-> +			regulator-min-microvolt = <2800000>;
-> +			regulator-max-microvolt = <2800000>;
-> +			gpio = <&gpx1 1 0>;
-> +			enable-active-high;
-> +		};
->  	};
-> 
->  	tmu@100C0000 {
-> --
-> 1.7.9.5
+Hmm...since Mike who is a maintainer for ccf agrees with Sylwester's opinion, so I agree. Actually, I had no strong objection on this but still I'm not sure using macro is really better because sometimes the name doesn't give readability really I think though.
 
-Looks good to me but will squash with 2nd one when I apply.
+Mike, can you give me your ack on clk stuff?
 
 Thanks,
 Kukjin
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
