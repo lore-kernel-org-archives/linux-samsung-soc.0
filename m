@@ -1,136 +1,170 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V8 3/3] video: exynos_dp: Use the generic PHY driver
-Date: Mon, 30 Sep 2013 17:00:28 +0900
-Message-ID: <001b01cebdb3$209e3d40$61dab7c0$%han@samsung.com>
-References: <000f01cebdb2$d1a20e10$74e62a30$%han@samsung.com>
+From: Rajeshwari Birje <rajeshwari.birje@gmail.com>
+Subject: Re: [RFC/PATCH] spi: s3c64xx: Enable Word transfer
+Date: Mon, 30 Sep 2013 13:32:43 +0530
+Message-ID: <CAPs=JDe1zwqpcTVaq2ZrQCAOAstQBy-4XnjnghGhqTz=9Zfwdg@mail.gmail.com>
+References: <1380031235-4065-1-git-send-email-rajeshwari.s@samsung.com>
+	<1555800.vSI857jMHi@amdc1227>
+	<CAPs=JDe6XoyqM=iJWgAZF+tU0p_4K=9K4Kx6ANpCcUV9rBd82Q@mail.gmail.com>
+	<CAPs=JDeYaE4RZxCpttgrC+9hWbj6pbaNqx7KGtc9di+6OMNTOg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30757 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752041Ab3I3IAa (ORCPT
+Received: from mail-la0-f52.google.com ([209.85.215.52]:43555 "EHLO
+	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753562Ab3I3ICp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 04:00:30 -0400
-In-reply-to: <000f01cebdb2$d1a20e10$74e62a30$%han@samsung.com>
-Content-language: ko
+	Mon, 30 Sep 2013 04:02:45 -0400
+In-Reply-To: <CAPs=JDeYaE4RZxCpttgrC+9hWbj6pbaNqx7KGtc9di+6OMNTOg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Mark Brown <broonie@linaro.org>
+Cc: Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, dianders@google.com, Tomasz Figa <t.figa@samsung.com>
 
-Use the generic PHY API to control the DP PHY.
+Hi Mark Brown,
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
----
- Documentation/devicetree/bindings/video/exynos_dp.txt |   17 +++++++++--------
- drivers/video/exynos/exynos_dp_core.c                 |   16 ++++++++++++----
- drivers/video/exynos/exynos_dp_core.h                 |    1 +
- 3 files changed, 22 insertions(+), 12 deletions(-)
+Please do let me know if you have any comments on this patch.
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-index 84f10c1..3289d76 100644
---- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -6,10 +6,10 @@ We use two nodes:
- 	-dptx-phy node(defined inside dp-controller node)
- 
- For the DP-PHY initialization, we use the dptx-phy node.
--Required properties for dptx-phy:
--	-reg:
-+Required properties for dptx-phy: deprecated, use phys and phy-names
-+	-reg: deprecated
- 		Base address of DP PHY register.
--	-samsung,enable-mask:
-+	-samsung,enable-mask: deprecated
- 		The bit-mask used to enable/disable DP PHY.
- 
- For the Panel initialization, we read data from dp-controller node.
-@@ -27,6 +27,10 @@ Required properties for dp-controller:
- 		from common clock binding: Shall be "dp".
- 	-interrupt-parent:
- 		phandle to Interrupt combiner node.
-+	-phys:
-+		from general PHY binding: the phandle for the PHY device.
-+	-phy-names:
-+		from general PHY binding: Should be "dp".
- 	-samsung,color-space:
- 		input video data format.
- 			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
-@@ -68,11 +72,8 @@ SOC specific portion:
- 		clocks = <&clock 342>;
- 		clock-names = "dp";
- 
--		dptx-phy {
--			reg = <0x10040720>;
--			samsung,enable-mask = <1>;
--		};
--
-+		phys = <&dp_phy>;
-+		phy-names = "dp";
- 	};
- 
- Board Specific portion:
-diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
-index 05fed7d..5e1a715 100644
---- a/drivers/video/exynos/exynos_dp_core.c
-+++ b/drivers/video/exynos/exynos_dp_core.c
-@@ -19,6 +19,7 @@
- #include <linux/interrupt.h>
- #include <linux/delay.h>
- #include <linux/of.h>
-+#include <linux/phy/phy.h>
- 
- #include "exynos_dp_core.h"
- 
-@@ -960,8 +961,11 @@ static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
- 
- 	dp_phy_node = of_find_node_by_name(dp_phy_node, "dptx-phy");
- 	if (!dp_phy_node) {
--		dev_err(dp->dev, "could not find dptx-phy node\n");
--		return -ENODEV;
-+		dp->phy = devm_phy_get(dp->dev, "dp");
-+		if (IS_ERR(dp->phy))
-+			return PTR_ERR(dp->phy);
-+		else
-+			return 0;
- 	}
- 
- 	if (of_property_read_u32(dp_phy_node, "reg", &phy_base)) {
-@@ -992,7 +996,9 @@ err:
- 
- static void exynos_dp_phy_init(struct exynos_dp_device *dp)
- {
--	if (dp->phy_addr) {
-+	if (dp->phy) {
-+		phy_power_on(dp->phy);
-+	} else if (dp->phy_addr) {
- 		u32 reg;
- 
- 		reg = __raw_readl(dp->phy_addr);
-@@ -1003,7 +1009,9 @@ static void exynos_dp_phy_init(struct exynos_dp_device *dp)
- 
- static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
- {
--	if (dp->phy_addr) {
-+	if (dp->phy) {
-+		phy_power_off(dp->phy);
-+	} else if (dp->phy_addr) {
- 		u32 reg;
- 
- 		reg = __raw_readl(dp->phy_addr);
-diff --git a/drivers/video/exynos/exynos_dp_core.h b/drivers/video/exynos/exynos_dp_core.h
-index 56cfec8..607e36d 100644
---- a/drivers/video/exynos/exynos_dp_core.h
-+++ b/drivers/video/exynos/exynos_dp_core.h
-@@ -151,6 +151,7 @@ struct exynos_dp_device {
- 	struct video_info	*video_info;
- 	struct link_train	link_train;
- 	struct work_struct	hotplug_work;
-+	struct phy		*phy;
- };
- 
- /* exynos_dp_reg.c */
+Regards,
+Rajeshwari  Shinde.
+
+On Wed, Sep 25, 2013 at 4:59 PM, Rajeshwari Birje
+<rajeshwari.birje@gmail.com> wrote:
+> Hi Tomasz
+>
+> Sorry for the previous mail with incomplete comments, sent the same by mistake.
+>
+>
+> On Wed, Sep 25, 2013 at 4:33 PM, Rajeshwari Birje
+> <rajeshwari.birje@gmail.com> wrote:
+>>
+>> Hi Tomasz
+>>
+>>
+>> On Tue, Sep 24, 2013 at 8:29 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>>>
+>>> Hi Rajeshwari,
+>>>
+>>> [Ccing Mark Brown]
+>>>
+>>> On Tuesday 24 of September 2013 19:30:35 Rajeshwari S Shinde wrote:
+>>> > This patch enables word transfer for s3c64xx spi driver.
+>>> > User can set bits_per_word to 32 before calling spi_setup,
+>>> > which would enable the word transfer mode.
+>>> >
+>>> > Signed-off-by: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
+>>> > ---
+>>> >  drivers/spi/spi-s3c64xx.c | 28 ++++++++++++++++++----------
+>>> >  1 file changed, 18 insertions(+), 10 deletions(-)
+>>> >
+>>> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+>>> > index 512b889..893361b 100644
+>>> > --- a/drivers/spi/spi-s3c64xx.c
+>>> > +++ b/drivers/spi/spi-s3c64xx.c
+>>> > @@ -498,6 +498,17 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+>>> >       chcfg = readl(regs + S3C64XX_SPI_CH_CFG);
+>>> >       chcfg &= ~S3C64XX_SPI_CH_TXCH_ON;
+>>> >
+>>> > +     if(sdd->cur_bpw == 32) {
+>>> > +             /* For word transfer we need to swap bytes */
+>>> > +             u32 swapcfg = (S3C64XX_SPI_SWAP_TX_EN | S3C64XX_SPI_SWAP_TX_BYTE |
+>>> > +                             S3C64XX_SPI_SWAP_TX_HALF_WORD |
+>>> > +                             S3C64XX_SPI_SWAP_RX_EN |
+>>> > +                             S3C64XX_SPI_SWAP_RX_BYTE |
+>>> > +                             S3C64XX_SPI_SWAP_RX_HALF_WORD);
+>>> > +             writel(swapcfg, regs + S3C64XX_SPI_SWAP_CFG);
+>>>
+>>> Wasn't this driver already supposed to support 16 and 32 bits per word
+>>> transfers? I fail to see any mention in the documentation about the need
+>>> to enable these swaps in these cases.
+>
+> I get errors when I try 32 bits per word transfers.
+> There is no clear documentation for this swap config register but without this
+> word transfer is not working fine.
+>>
+>>
+>>>
+>>> In this case, wouldn't 16 bits per word transfers also need swapping?
+>
+> Yes it would need, have not tested for half word transfer.
+>>>
+>>>
+>>> > +     } else
+>>> > +             writel(0, regs + S3C64XX_SPI_SWAP_CFG);
+>>>
+>>> nit: Coding style. If you use braces for one branch, then you should use
+>>> them for the other one as well.
+>>
+>  will correct this.
+>>>
+>>>
+>>> > +
+>>> >       if (dma_mode) {
+>>> >               chcfg &= ~S3C64XX_SPI_CH_RXCH_ON;
+>>> >       } else {
+>>> > @@ -905,19 +916,16 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
+>>> >               bpw = xfer->bits_per_word;
+>>> >               speed = xfer->speed_hz ? : spi->max_speed_hz;
+>>> >
+>>> > -             if (xfer->len % (bpw / 8)) {
+>>> > -                     dev_err(&spi->dev,
+>>> > -                             "Xfer length(%u) not a multiple of word size(%u)\n",
+>>> > -                             xfer->len, bpw / 8);
+>>> > -                     status = -EIO;
+>>> > -                     goto out;
+>>>
+>>> Why is this check removed in this patch?
+>
+> I get "Xfer length(%u) not a multiple of word size(%u)\n" error for
+> word transfer
+> ex: when if bpw is 32 and len 74 the above condition fails
+>>
+>>
+>>>
+>>> > +             if (speed != sdd->cur_speed) {
+>>> > +                     sdd->cur_speed = speed;
+>>>
+>>> This change does not seem to be related to $subject.
+>
+> have split the if condition to accommodate the above error condition.
+>>>
+>>>
+>>> >               }
+>>> >
+>>> > -             if (bpw != sdd->cur_bpw || speed != sdd->cur_speed) {
+>>> > +             if (xfer->len % (bpw / 8))
+>>> > +                     sdd->cur_bpw = 8;
+>>> > +             else
+>>> >                       sdd->cur_bpw = bpw;
+>>> > -                     sdd->cur_speed = speed;
+>>> > -                     s3c64xx_spi_config(sdd);
+>>> > -             }
+>>> > +
+>>> > +             s3c64xx_spi_config(sdd);
+>>>
+>>> Why s3c64xx_spi_config() can't be called only if one of the parameters
+>>> changed, as it was before this patch?
+>
+> Will correct this.
+>>>
+>>>
+>>> Best regards,
+>>> Tomasz
+>>>
+>>> P.S. Please remember to always add respective maintainers on Cc. You can
+>>> use scripts/get_maintainer.pl script to quickly get a list of people
+>>> potentially interested in a patch.
+>>>
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> --
+> Regards,
+> Rajeshwari Shinde
+
+
+
 -- 
-1.7.10.4
+Regards,
+Rajeshwari Shinde
