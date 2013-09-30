@@ -1,18 +1,18 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH RFC 5/7] mx2-emmaprp: Use mem-to-mem ioctl helpers
-Date: Mon, 30 Sep 2013 11:47:55 +0200
-Message-ID: <524948CB.8010807@xs4all.nl>
-References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com> <1379076986-10446-6-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC 7/7] s5p-g2d: Use mem-to-mem ioctl helpers
+Date: Mon, 30 Sep 2013 11:49:13 +0200
+Message-ID: <52494919.4000907@xs4all.nl>
+References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com> <1379076986-10446-8-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-vbr6.xs4all.nl ([194.109.24.26]:1680 "EHLO
+Received: from smtp-vbr6.xs4all.nl ([194.109.24.26]:3913 "EHLO
 	smtp-vbr6.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753174Ab3I3JsU (ORCPT
+	with ESMTP id S1753128Ab3I3Jta (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 05:48:20 -0400
-In-Reply-To: <1379076986-10446-6-git-send-email-s.nawrocki@samsung.com>
+	Mon, 30 Sep 2013 05:49:30 -0400
+In-Reply-To: <1379076986-10446-8-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
@@ -23,189 +23,187 @@ On 09/13/2013 02:56 PM, Sylwester Nawrocki wrote:
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Kyugmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/media/platform/mx2_emmaprp.c |  108 ++++------------------------------
->  1 file changed, 11 insertions(+), 97 deletions(-)
-> 
-> diff --git a/drivers/media/platform/mx2_emmaprp.c b/drivers/media/platform/mx2_emmaprp.c
-> index c690435..a531862 100644
-> --- a/drivers/media/platform/mx2_emmaprp.c
-> +++ b/drivers/media/platform/mx2_emmaprp.c
-> @@ -253,20 +253,6 @@ static void emmaprp_job_abort(void *priv)
->  	v4l2_m2m_job_finish(pcdev->m2m_dev, ctx->m2m_ctx);
->  }
->  
-> -static void emmaprp_lock(void *priv)
-> -{
-> -	struct emmaprp_ctx *ctx = priv;
-> -	struct emmaprp_dev *pcdev = ctx->dev;
-> -	mutex_lock(&pcdev->dev_mutex);
-> -}
-> -
-> -static void emmaprp_unlock(void *priv)
-> -{
-> -	struct emmaprp_ctx *ctx = priv;
-> -	struct emmaprp_dev *pcdev = ctx->dev;
-> -	mutex_unlock(&pcdev->dev_mutex);
-> -}
-> -
->  static inline void emmaprp_dump_regs(struct emmaprp_dev *pcdev)
->  {
->  	dprintk(pcdev,
-> @@ -617,52 +603,6 @@ static int vidioc_s_fmt_vid_out(struct file *file, void *priv,
->  	return vidioc_s_fmt(priv, f);
->  }
->  
-> -static int vidioc_reqbufs(struct file *file, void *priv,
-> -			  struct v4l2_requestbuffers *reqbufs)
-> -{
-> -	struct emmaprp_ctx *ctx = priv;
-> -
-> -	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
-> -}
-> -
-> -static int vidioc_querybuf(struct file *file, void *priv,
-> -			   struct v4l2_buffer *buf)
-> -{
-> -	struct emmaprp_ctx *ctx = priv;
-> -
-> -	return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf);
-> -}
-> -
-> -static int vidioc_qbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
-> -{
-> -	struct emmaprp_ctx *ctx = priv;
-> -
-> -	return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf);
-> -}
-> -
-> -static int vidioc_dqbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
-> -{
-> -	struct emmaprp_ctx *ctx = priv;
-> -
-> -	return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf);
-> -}
-> -
-> -static int vidioc_streamon(struct file *file, void *priv,
-> -			   enum v4l2_buf_type type)
-> -{
-> -	struct emmaprp_ctx *ctx = priv;
-> -
-> -	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
-> -}
-> -
-> -static int vidioc_streamoff(struct file *file, void *priv,
-> -			    enum v4l2_buf_type type)
-> -{
-> -	struct emmaprp_ctx *ctx = priv;
-> -
-> -	return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
-> -}
-> -
->  static const struct v4l2_ioctl_ops emmaprp_ioctl_ops = {
->  	.vidioc_querycap	= vidioc_querycap,
->  
-> @@ -676,14 +616,13 @@ static const struct v4l2_ioctl_ops emmaprp_ioctl_ops = {
->  	.vidioc_try_fmt_vid_out	= vidioc_try_fmt_vid_out,
->  	.vidioc_s_fmt_vid_out	= vidioc_s_fmt_vid_out,
->  
-> -	.vidioc_reqbufs		= vidioc_reqbufs,
-> -	.vidioc_querybuf	= vidioc_querybuf,
-> -
-> -	.vidioc_qbuf		= vidioc_qbuf,
-> -	.vidioc_dqbuf		= vidioc_dqbuf,
-> +	.vidioc_reqbufs		= v4l2_m2m_ioctl_reqbufs,
-> +	.vidioc_querybuf	= v4l2_m2m_ioctl_querybuf,
-> +	.vidioc_qbuf		= v4l2_m2m_ioctl_qbuf,
-> +	.vidioc_dqbuf		= v4l2_m2m_ioctl_dqbuf,
->  
-> -	.vidioc_streamon	= vidioc_streamon,
-> -	.vidioc_streamoff	= vidioc_streamoff,
-> +	.vidioc_streamon	= v4l2_m2m_ioctl_streamon,
-> +	.vidioc_streamoff	= v4l2_m2m_ioctl_streamoff,
->  };
->  
->  
-> @@ -767,6 +706,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
->  	src_vq->ops = &emmaprp_qops;
->  	src_vq->mem_ops = &vb2_dma_contig_memops;
->  	src_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-> +	src_vq->lock = &ctx->dev->dev_mutex;
->  
->  	ret = vb2_queue_init(src_vq);
->  	if (ret)
-> @@ -779,6 +719,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
->  	dst_vq->ops = &emmaprp_qops;
->  	dst_vq->mem_ops = &vb2_dma_contig_memops;
->  	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-> +	dst_vq->lock = &ctx->dev->dev_mutex;
->  
->  	return vb2_queue_init(dst_vq);
->  }
-> @@ -812,6 +753,7 @@ static int emmaprp_open(struct file *file)
->  		kfree(ctx);
->  		return ret;
->  	}
-> +	/* TODO: Assign fh->m2m_ctx, needs conversion to struct v4l2_fh first */
 
-What's the point of adding this patch if it won't work yet?
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
 Regards,
 
 	Hans
 
+> ---
+>  drivers/media/platform/s5p-g2d/g2d.c |  103 ++++------------------------------
+>  1 file changed, 11 insertions(+), 92 deletions(-)
+> 
+> diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
+> index 553d87e..d59d546 100644
+> --- a/drivers/media/platform/s5p-g2d/g2d.c
+> +++ b/drivers/media/platform/s5p-g2d/g2d.c
+> @@ -139,7 +139,6 @@ static void g2d_buf_queue(struct vb2_buffer *vb)
+>  	v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
+>  }
 >  
->  	clk_prepare_enable(pcdev->clk_emma_ipg);
->  	clk_prepare_enable(pcdev->clk_emma_ahb);
-> @@ -841,39 +783,13 @@ static int emmaprp_release(struct file *file)
+> -
+>  static struct vb2_ops g2d_qops = {
+>  	.queue_setup	= g2d_queue_setup,
+>  	.buf_prepare	= g2d_buf_prepare,
+> @@ -159,6 +158,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+>  	src_vq->mem_ops = &vb2_dma_contig_memops;
+>  	src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
+>  	src_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+> +	src_vq->lock = &ctx->dev->mutex;
+>  
+>  	ret = vb2_queue_init(src_vq);
+>  	if (ret)
+> @@ -171,6 +171,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+>  	dst_vq->mem_ops = &vb2_dma_contig_memops;
+>  	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
+>  	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+> +	dst_vq->lock = &ctx->dev->mutex;
+>  
+>  	return vb2_queue_init(dst_vq);
+>  }
+> @@ -263,6 +264,7 @@ static int g2d_open(struct file *file)
+>  	v4l2_fh_init(&ctx->fh, video_devdata(file));
+>  	file->private_data = &ctx->fh;
+>  	v4l2_fh_add(&ctx->fh);
+> +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
+>  
+>  	g2d_setup_ctrls(ctx);
+>  
+> @@ -410,72 +412,6 @@ static int vidioc_s_fmt(struct file *file, void *prv, struct v4l2_format *f)
 >  	return 0;
 >  }
 >  
-> -static unsigned int emmaprp_poll(struct file *file,
-> -				 struct poll_table_struct *wait)
+> -static unsigned int g2d_poll(struct file *file, struct poll_table_struct *wait)
 > -{
-> -	struct emmaprp_dev *pcdev = video_drvdata(file);
-> -	struct emmaprp_ctx *ctx = file->private_data;
+> -	struct g2d_ctx *ctx = fh2ctx(file->private_data);
+> -	struct g2d_dev *dev = ctx->dev;
 > -	unsigned int res;
 > -
-> -	mutex_lock(&pcdev->dev_mutex);
+> -	mutex_lock(&dev->mutex);
 > -	res = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
-> -	mutex_unlock(&pcdev->dev_mutex);
+> -	mutex_unlock(&dev->mutex);
 > -	return res;
 > -}
 > -
-> -static int emmaprp_mmap(struct file *file, struct vm_area_struct *vma)
+> -static int g2d_mmap(struct file *file, struct vm_area_struct *vma)
 > -{
-> -	struct emmaprp_dev *pcdev = video_drvdata(file);
-> -	struct emmaprp_ctx *ctx = file->private_data;
+> -	struct g2d_ctx *ctx = fh2ctx(file->private_data);
+> -	struct g2d_dev *dev = ctx->dev;
 > -	int ret;
 > -
-> -	if (mutex_lock_interruptible(&pcdev->dev_mutex))
+> -	if (mutex_lock_interruptible(&dev->mutex))
 > -		return -ERESTARTSYS;
 > -	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
-> -	mutex_unlock(&pcdev->dev_mutex);
+> -	mutex_unlock(&dev->mutex);
 > -	return ret;
 > -}
 > -
->  static const struct v4l2_file_operations emmaprp_fops = {
+> -static int vidioc_reqbufs(struct file *file, void *priv,
+> -			struct v4l2_requestbuffers *reqbufs)
+> -{
+> -	struct g2d_ctx *ctx = priv;
+> -	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
+> -}
+> -
+> -static int vidioc_querybuf(struct file *file, void *priv,
+> -			struct v4l2_buffer *buf)
+> -{
+> -	struct g2d_ctx *ctx = priv;
+> -	return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf);
+> -}
+> -
+> -static int vidioc_qbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
+> -{
+> -	struct g2d_ctx *ctx = priv;
+> -	return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf);
+> -}
+> -
+> -static int vidioc_dqbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
+> -{
+> -	struct g2d_ctx *ctx = priv;
+> -	return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf);
+> -}
+> -
+> -
+> -static int vidioc_streamon(struct file *file, void *priv,
+> -					enum v4l2_buf_type type)
+> -{
+> -	struct g2d_ctx *ctx = priv;
+> -	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
+> -}
+> -
+> -static int vidioc_streamoff(struct file *file, void *priv,
+> -					enum v4l2_buf_type type)
+> -{
+> -	struct g2d_ctx *ctx = priv;
+> -	return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
+> -}
+> -
+>  static int vidioc_cropcap(struct file *file, void *priv,
+>  					struct v4l2_cropcap *cr)
+>  {
+> @@ -551,20 +487,6 @@ static int vidioc_s_crop(struct file *file, void *prv, const struct v4l2_crop *c
+>  	return 0;
+>  }
+>  
+> -static void g2d_lock(void *prv)
+> -{
+> -	struct g2d_ctx *ctx = prv;
+> -	struct g2d_dev *dev = ctx->dev;
+> -	mutex_lock(&dev->mutex);
+> -}
+> -
+> -static void g2d_unlock(void *prv)
+> -{
+> -	struct g2d_ctx *ctx = prv;
+> -	struct g2d_dev *dev = ctx->dev;
+> -	mutex_unlock(&dev->mutex);
+> -}
+> -
+>  static void job_abort(void *prv)
+>  {
+>  	struct g2d_ctx *ctx = prv;
+> @@ -653,9 +575,9 @@ static const struct v4l2_file_operations g2d_fops = {
 >  	.owner		= THIS_MODULE,
->  	.open		= emmaprp_open,
->  	.release	= emmaprp_release,
-> -	.poll		= emmaprp_poll,
+>  	.open		= g2d_open,
+>  	.release	= g2d_release,
+> -	.poll		= g2d_poll,
 > +	.poll		= v4l2_m2m_fop_poll,
 >  	.unlocked_ioctl	= video_ioctl2,
-> -	.mmap		= emmaprp_mmap,
+> -	.mmap		= g2d_mmap,
 > +	.mmap		= v4l2_m2m_fop_mmap,
 >  };
 >  
->  static struct video_device emmaprp_videodev = {
-> @@ -888,8 +804,6 @@ static struct video_device emmaprp_videodev = {
->  static struct v4l2_m2m_ops m2m_ops = {
->  	.device_run	= emmaprp_device_run,
->  	.job_abort	= emmaprp_job_abort,
-> -	.lock		= emmaprp_lock,
-> -	.unlock		= emmaprp_unlock,
+>  static const struct v4l2_ioctl_ops g2d_ioctl_ops = {
+> @@ -671,14 +593,13 @@ static const struct v4l2_ioctl_ops g2d_ioctl_ops = {
+>  	.vidioc_try_fmt_vid_out		= vidioc_try_fmt,
+>  	.vidioc_s_fmt_vid_out		= vidioc_s_fmt,
+>  
+> -	.vidioc_reqbufs			= vidioc_reqbufs,
+> -	.vidioc_querybuf		= vidioc_querybuf,
+> -
+> -	.vidioc_qbuf			= vidioc_qbuf,
+> -	.vidioc_dqbuf			= vidioc_dqbuf,
+> +	.vidioc_reqbufs			= v4l2_m2m_ioctl_reqbufs,
+> +	.vidioc_querybuf		= v4l2_m2m_ioctl_querybuf,
+> +	.vidioc_qbuf			= v4l2_m2m_ioctl_qbuf,
+> +	.vidioc_dqbuf			= v4l2_m2m_ioctl_dqbuf,
+>  
+> -	.vidioc_streamon		= vidioc_streamon,
+> -	.vidioc_streamoff		= vidioc_streamoff,
+> +	.vidioc_streamon		= v4l2_m2m_ioctl_streamon,
+> +	.vidioc_streamoff		= v4l2_m2m_ioctl_streamoff,
+>  
+>  	.vidioc_g_crop			= vidioc_g_crop,
+>  	.vidioc_s_crop			= vidioc_s_crop,
+> @@ -697,8 +618,6 @@ static struct video_device g2d_videodev = {
+>  static struct v4l2_m2m_ops g2d_m2m_ops = {
+>  	.device_run	= device_run,
+>  	.job_abort	= job_abort,
+> -	.lock		= g2d_lock,
+> -	.unlock		= g2d_unlock,
 >  };
 >  
->  static int emmaprp_probe(struct platform_device *pdev)
+>  static const struct of_device_id exynos_g2d_match[];
 > 
