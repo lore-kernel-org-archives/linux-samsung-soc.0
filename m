@@ -1,52 +1,160 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
-Date: Mon, 30 Sep 2013 19:11:41 +0900
-Message-ID: <06c101cebdc5$75a83d10$60f8b730$%kim@samsung.com>
-References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
- <8412301.YP2zzplWoe@amdc1227>
- <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com>
- <523716C9.3000204@samsung.com> <20130916193709.27384.86101@quantum>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v3 3/4] [media] exynos-scaler: Add m2m functionality for
+ the SCALER driver
+Date: Mon, 30 Sep 2013 12:32:23 +0200
+Message-ID: <52495337.4040309@xs4all.nl>
+References: <1378991371-24428-1-git-send-email-shaik.ameer@samsung.com> <1378991371-24428-4-git-send-email-shaik.ameer@samsung.com> <52493160.5030401@xs4all.nl> <CAOD6ATpssyY_955-VMYPBzQOqHWgE0OZvU0xvU62+Q2e90JW8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20130916193709.27384.86101@quantum>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Mike Turquette' <mturquette@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: 'devicetree' <devicetree@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Andrzej Hajda' <a.hajda@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp-vbr15.xs4all.nl ([194.109.24.35]:1802 "EHLO
+	smtp-vbr15.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756193Ab3I3Kci (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Sep 2013 06:32:38 -0400
+In-Reply-To: <CAOD6ATpssyY_955-VMYPBzQOqHWgE0OZvU0xvU62+Q2e90JW8g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-Mike Turquette wrote:
+On 09/30/2013 11:32 AM, Shaik Ameer Basha wrote:
+> Hi Hans,
 > 
-> Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
-> > On 09/12/2013 12:50 PM, Kukjin Kim wrote:
-> > > Well...I'm not sure changing to use macro is better or not at this
-> moment...
-> >
-> > I think it is. ;) It's really less error prone to have symbolic names
-> instead
-> > of the plain numbers. The clock ids are defined in one place and it is
-> more
-> > clear what a clock is by looking at symbolic name. It's especially
-> annoying
-> > to use plain numbers where are are many clock in a single node, like 10
-> or
-> > more. What are you main concerns with this ?
+> Thanks for pointing it out.
 > 
-> I think having the symbolic names is a win for readability.
 > 
-Hmm...since Mike who is a maintainer for ccf agrees with Sylwester's opinion, so I agree. Actually, I had no strong objection on this but still I'm not sure using macro is really better because sometimes the name doesn't give readability really I think though.
+> On Mon, Sep 30, 2013 at 1:38 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
+>> Hi Shaik,
+>>
+>> I have a few questions regarding the selection part...
+>>
+>> On 09/12/2013 03:09 PM, Shaik Ameer Basha wrote:
+>>> This patch adds the Makefile and memory to memory (m2m) interface
+>>> functionality for the SCALER driver.
+>>>
+>>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>>> ---
+>>>  drivers/media/platform/Kconfig                    |    8 +
+>>>  drivers/media/platform/Makefile                   |    1 +
+>>>  drivers/media/platform/exynos-scaler/Makefile     |    3 +
+>>>  drivers/media/platform/exynos-scaler/scaler-m2m.c |  781 +++++++++++++++++++++
+>>>  4 files changed, 793 insertions(+)
+>>>  create mode 100644 drivers/media/platform/exynos-scaler/Makefile
+>>>  create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
+>>>
+>>
+> 
+> 
+> [...]
+> 
+> 
+>>> +
+>>> +static int scaler_m2m_s_selection(struct file *file, void *fh,
+>>> +                             struct v4l2_selection *s)
+>>> +{
+>>> +     struct scaler_frame *frame;
+>>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>>> +     struct v4l2_crop cr;
+>>> +     struct scaler_variant *variant = ctx->scaler_dev->variant;
+>>> +     int ret;
+>>> +
+>>> +     cr.type = s->type;
+>>> +     cr.c = s->r;
+>>> +
+>>> +     if ((s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
+>>> +         (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE))
+>>> +             return -EINVAL;
+>>> +
+>>> +     ret = scaler_try_crop(ctx, &cr);
+>>> +     if (ret < 0)
+>>> +             return ret;
+>>> +
+>>> +     if (s->flags & V4L2_SEL_FLAG_LE &&
+>>> +         !is_rectangle_enclosed(&cr.c, &s->r))
+>>> +             return -ERANGE;
+>>> +
+>>> +     if (s->flags & V4L2_SEL_FLAG_GE &&
+>>> +         !is_rectangle_enclosed(&s->r, &cr.c))
+>>> +             return -ERANGE;
+>>> +
+>>> +     s->r = cr.c;
+>>> +
+>>> +     switch (s->target) {
+>>> +     case V4L2_SEL_TGT_COMPOSE_BOUNDS:
+>>> +     case V4L2_SEL_TGT_COMPOSE_DEFAULT:
+>>> +     case V4L2_SEL_TGT_COMPOSE:
+>>> +             frame = &ctx->s_frame;
+>>> +             break;
+>>> +
+>>> +     case V4L2_SEL_TGT_CROP_BOUNDS:
+>>> +     case V4L2_SEL_TGT_CROP:
+>>> +     case V4L2_SEL_TGT_CROP_DEFAULT:
+>>> +             frame = &ctx->d_frame;
+>>> +             break;
+>>
+>> Similar problems as with g_selection above. Tomasz mentioned to me that the selection
+>> API is not implemented correctly in m2m Samsung drivers. It looks like this code is
+>> copied-and-pasted from other drivers, so it seems he was right.
+> 
+> Sorry, after going through the documentation, I have to agree with you...
+> As you mentioned, this part of the code was copied while implementing
+> the G-Scaler driver :)
+> 
+> I will change the above implementation for M2M devices (GScaler and
+> SCALER) as below,
+> I will only allow all V4L2_SEL_TGT_COMPOSE_* target requests if
+> 's->type' is equal to "V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE".
+> and all V4L2_SEL_TGT_CROP_* target requests if 's->type' is equal to
+> "V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE".
+> 
+> I hope with the above two checkings taken in to care, there should not
+> be any issues with using selection APIs here.
 
-Mike, can you give me your ack on clk stuff?
+Well, that depends on what the hardware does.
 
-Thanks,
-Kukjin
+Using compose with a capture buffer means that the frame as delivered by
+the hardware is composed into a larger buffer. E.g. the hardware gives
+you 1280x720 which is composed into a buffer of size 1920x1080.
+
+Using crop with an output buffer means that the hardware gets a cropped
+part of a larger frame. E.g. you give a 1280x720 crop from a larger 1920x1080
+buffer.
+
+I suspect however, that in this case the hardware does the opposite for
+capture: you really want to crop with a capture buffer (e.g. the hardware
+delivers a 1280x720 frame which is cropped before DMA to 640x360).
+
+I'm not sure what you want to do with an output buffer: cropping or composing.
+
+Tomasz mentioned that the M2M + selection API was screwy, and this seems to
+be to be the case indeed.
+
+Which is also why I would like to know exactly what this hardware does.
+
+Regards,
+
+	Hans
+
+> 
+> Thanks,
+> Shaik Ameer Basha
+> 
+>>
+>> The selection API for m2m devices will be discussed during the upcoming V4L2 mini-summit
+>> since the API may actually need some adjustments to have it work the way it should.
+>>
+>> As requested above, if you can explain the exact functionality you are trying to
+>> implement here, then I can look over this code carefully and see how it should be done.
+>>
+>> Thanks!
+>>
+>>         Hans
+>>
+> [...]
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
