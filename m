@@ -1,18 +1,18 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH RFC 7/7] s5p-g2d: Use mem-to-mem ioctl helpers
-Date: Mon, 30 Sep 2013 11:49:13 +0200
-Message-ID: <52494919.4000907@xs4all.nl>
-References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com> <1379076986-10446-8-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC 6/7] exynos-gsc: Use mem-to-mem ioctl helpers
+Date: Mon, 30 Sep 2013 11:50:18 +0200
+Message-ID: <5249495A.6010101@xs4all.nl>
+References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com> <1379076986-10446-7-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-vbr6.xs4all.nl ([194.109.24.26]:3913 "EHLO
-	smtp-vbr6.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753128Ab3I3Jta (ORCPT
+Received: from smtp-vbr10.xs4all.nl ([194.109.24.30]:2076 "EHLO
+	smtp-vbr10.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751390Ab3I3Jum (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 05:49:30 -0400
-In-Reply-To: <1379076986-10446-8-git-send-email-s.nawrocki@samsung.com>
+	Mon, 30 Sep 2013 05:50:42 -0400
+In-Reply-To: <1379076986-10446-7-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
@@ -21,189 +21,213 @@ Cc: linux-media@vger.kernel.org, kyungmin.park@samsung.com, pawel@osciak.com, ja
 On 09/13/2013 02:56 PM, Sylwester Nawrocki wrote:
 > Simplify the driver by using the m2m ioctl and vb2 helpers.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyugmin Park <kyungmin.park@samsung.com>
+> TODO: Add setting of default initial format.
 
-Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+So this patch can't be applied yet.
+
+Other than that it looks good, but I won't ack it since it introduces a regression
+as long as the TODO isn't addressed.
 
 Regards,
 
 	Hans
 
-> ---
->  drivers/media/platform/s5p-g2d/g2d.c |  103 ++++------------------------------
->  1 file changed, 11 insertions(+), 92 deletions(-)
 > 
-> diff --git a/drivers/media/platform/s5p-g2d/g2d.c b/drivers/media/platform/s5p-g2d/g2d.c
-> index 553d87e..d59d546 100644
-> --- a/drivers/media/platform/s5p-g2d/g2d.c
-> +++ b/drivers/media/platform/s5p-g2d/g2d.c
-> @@ -139,7 +139,6 @@ static void g2d_buf_queue(struct vb2_buffer *vb)
->  	v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyugmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/media/platform/exynos-gsc/gsc-core.h |   12 ---
+>  drivers/media/platform/exynos-gsc/gsc-m2m.c  |  109 ++++----------------------
+>  2 files changed, 16 insertions(+), 105 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.h b/drivers/media/platform/exynos-gsc/gsc-core.h
+> index cc19bba..1afad32 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-core.h
+> +++ b/drivers/media/platform/exynos-gsc/gsc-core.h
+> @@ -464,18 +464,6 @@ static inline void gsc_hw_clear_irq(struct gsc_dev *dev, int irq)
+>  	writel(cfg, dev->regs + GSC_IRQ);
 >  }
 >  
+> -static inline void gsc_lock(struct vb2_queue *vq)
+> -{
+> -	struct gsc_ctx *ctx = vb2_get_drv_priv(vq);
+> -	mutex_lock(&ctx->gsc_dev->lock);
+> -}
 > -
->  static struct vb2_ops g2d_qops = {
->  	.queue_setup	= g2d_queue_setup,
->  	.buf_prepare	= g2d_buf_prepare,
-> @@ -159,6 +158,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
->  	src_vq->mem_ops = &vb2_dma_contig_memops;
->  	src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
->  	src_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-> +	src_vq->lock = &ctx->dev->mutex;
->  
->  	ret = vb2_queue_init(src_vq);
->  	if (ret)
-> @@ -171,6 +171,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
->  	dst_vq->mem_ops = &vb2_dma_contig_memops;
->  	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
->  	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-> +	dst_vq->lock = &ctx->dev->mutex;
->  
->  	return vb2_queue_init(dst_vq);
+> -static inline void gsc_unlock(struct vb2_queue *vq)
+> -{
+> -	struct gsc_ctx *ctx = vb2_get_drv_priv(vq);
+> -	mutex_unlock(&ctx->gsc_dev->lock);
+> -}
+> -
+>  static inline bool gsc_ctx_state_is_set(u32 mask, struct gsc_ctx *ctx)
+>  {
+>  	unsigned long flags;
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> index 40a73f7..4f5d6cb 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+> @@ -262,8 +262,8 @@ static struct vb2_ops gsc_m2m_qops = {
+>  	.queue_setup	 = gsc_m2m_queue_setup,
+>  	.buf_prepare	 = gsc_m2m_buf_prepare,
+>  	.buf_queue	 = gsc_m2m_buf_queue,
+> -	.wait_prepare	 = gsc_unlock,
+> -	.wait_finish	 = gsc_lock,
+> +	.wait_prepare	 = vb2_ops_wait_prepare,
+> +	.wait_finish	 = vb2_ops_wait_finish,
+>  	.stop_streaming	 = gsc_m2m_stop_streaming,
+>  	.start_streaming = gsc_m2m_start_streaming,
+>  };
+> @@ -376,57 +376,6 @@ static int gsc_m2m_reqbufs(struct file *file, void *fh,
+>  	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
 >  }
-> @@ -263,6 +264,7 @@ static int g2d_open(struct file *file)
->  	v4l2_fh_init(&ctx->fh, video_devdata(file));
->  	file->private_data = &ctx->fh;
->  	v4l2_fh_add(&ctx->fh);
-> +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
 >  
->  	g2d_setup_ctrls(ctx);
->  
-> @@ -410,72 +412,6 @@ static int vidioc_s_fmt(struct file *file, void *prv, struct v4l2_format *f)
->  	return 0;
->  }
->  
-> -static unsigned int g2d_poll(struct file *file, struct poll_table_struct *wait)
+> -static int gsc_m2m_expbuf(struct file *file, void *fh,
+> -				struct v4l2_exportbuffer *eb)
 > -{
-> -	struct g2d_ctx *ctx = fh2ctx(file->private_data);
-> -	struct g2d_dev *dev = ctx->dev;
-> -	unsigned int res;
-> -
-> -	mutex_lock(&dev->mutex);
-> -	res = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
-> -	mutex_unlock(&dev->mutex);
-> -	return res;
+> -	struct gsc_ctx *ctx = fh_to_ctx(fh);
+> -	return v4l2_m2m_expbuf(file, ctx->m2m_ctx, eb);
 > -}
 > -
-> -static int g2d_mmap(struct file *file, struct vm_area_struct *vma)
+> -static int gsc_m2m_querybuf(struct file *file, void *fh,
+> -					struct v4l2_buffer *buf)
 > -{
-> -	struct g2d_ctx *ctx = fh2ctx(file->private_data);
-> -	struct g2d_dev *dev = ctx->dev;
-> -	int ret;
-> -
-> -	if (mutex_lock_interruptible(&dev->mutex))
-> -		return -ERESTARTSYS;
-> -	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
-> -	mutex_unlock(&dev->mutex);
-> -	return ret;
-> -}
-> -
-> -static int vidioc_reqbufs(struct file *file, void *priv,
-> -			struct v4l2_requestbuffers *reqbufs)
-> -{
-> -	struct g2d_ctx *ctx = priv;
-> -	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
-> -}
-> -
-> -static int vidioc_querybuf(struct file *file, void *priv,
-> -			struct v4l2_buffer *buf)
-> -{
-> -	struct g2d_ctx *ctx = priv;
+> -	struct gsc_ctx *ctx = fh_to_ctx(fh);
 > -	return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf);
 > -}
 > -
-> -static int vidioc_qbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
+> -static int gsc_m2m_qbuf(struct file *file, void *fh,
+> -			  struct v4l2_buffer *buf)
 > -{
-> -	struct g2d_ctx *ctx = priv;
+> -	struct gsc_ctx *ctx = fh_to_ctx(fh);
 > -	return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf);
 > -}
 > -
-> -static int vidioc_dqbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
+> -static int gsc_m2m_dqbuf(struct file *file, void *fh,
+> -			   struct v4l2_buffer *buf)
 > -{
-> -	struct g2d_ctx *ctx = priv;
+> -	struct gsc_ctx *ctx = fh_to_ctx(fh);
 > -	return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf);
 > -}
 > -
-> -
-> -static int vidioc_streamon(struct file *file, void *priv,
-> -					enum v4l2_buf_type type)
+> -static int gsc_m2m_streamon(struct file *file, void *fh,
+> -			   enum v4l2_buf_type type)
 > -{
-> -	struct g2d_ctx *ctx = priv;
+> -	struct gsc_ctx *ctx = fh_to_ctx(fh);
+> -
+> -	/* The source and target color format need to be set */
+> -	if (V4L2_TYPE_IS_OUTPUT(type)) {
+> -		if (!gsc_ctx_state_is_set(GSC_SRC_FMT, ctx))
+> -			return -EINVAL;
+> -	} else if (!gsc_ctx_state_is_set(GSC_DST_FMT, ctx)) {
+> -		return -EINVAL;
+> -	}
+> -
 > -	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
 > -}
 > -
-> -static int vidioc_streamoff(struct file *file, void *priv,
-> -					enum v4l2_buf_type type)
+> -static int gsc_m2m_streamoff(struct file *file, void *fh,
+> -			    enum v4l2_buf_type type)
 > -{
-> -	struct g2d_ctx *ctx = priv;
+> -	struct gsc_ctx *ctx = fh_to_ctx(fh);
 > -	return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
 > -}
 > -
->  static int vidioc_cropcap(struct file *file, void *priv,
->  					struct v4l2_cropcap *cr)
+>  /* Return 1 if rectangle a is enclosed in rectangle b, or 0 otherwise. */
+>  static int is_rectangle_enclosed(struct v4l2_rect *a, struct v4l2_rect *b)
 >  {
-> @@ -551,20 +487,6 @@ static int vidioc_s_crop(struct file *file, void *prv, const struct v4l2_crop *c
+> @@ -563,13 +512,15 @@ static const struct v4l2_ioctl_ops gsc_m2m_ioctl_ops = {
+>  	.vidioc_try_fmt_vid_out_mplane	= gsc_m2m_try_fmt_mplane,
+>  	.vidioc_s_fmt_vid_cap_mplane	= gsc_m2m_s_fmt_mplane,
+>  	.vidioc_s_fmt_vid_out_mplane	= gsc_m2m_s_fmt_mplane,
+> -	.vidioc_reqbufs			= gsc_m2m_reqbufs,
+> -	.vidioc_expbuf                  = gsc_m2m_expbuf,
+> -	.vidioc_querybuf		= gsc_m2m_querybuf,
+> -	.vidioc_qbuf			= gsc_m2m_qbuf,
+> -	.vidioc_dqbuf			= gsc_m2m_dqbuf,
+> -	.vidioc_streamon		= gsc_m2m_streamon,
+> -	.vidioc_streamoff		= gsc_m2m_streamoff,
+> +
+> +	.vidioc_reqbufs			= v4l2_m2m_ioctl_reqbufs,
+> +	.vidioc_querybuf		= v4l2_m2m_ioctl_querybuf,
+> +	.vidioc_expbuf			= v4l2_m2m_ioctl_expbuf,
+> +	.vidioc_qbuf			= v4l2_m2m_ioctl_qbuf,
+> +	.vidioc_dqbuf			= v4l2_m2m_ioctl_dqbuf,
+> +
+> +	.vidioc_streamon		= v4l2_m2m_ioctl_streamon,
+> +	.vidioc_streamoff		= v4l2_m2m_ioctl_streamoff,
+>  	.vidioc_g_selection		= gsc_m2m_g_selection,
+>  	.vidioc_s_selection		= gsc_m2m_s_selection
+>  };
+> @@ -588,6 +539,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+>  	src_vq->mem_ops = &vb2_dma_contig_memops;
+>  	src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
+>  	src_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+> +	src_vq->lock = &ctx->gsc_dev->lock;
+>  
+>  	ret = vb2_queue_init(src_vq);
+>  	if (ret)
+> @@ -601,6 +553,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+>  	dst_vq->mem_ops = &vb2_dma_contig_memops;
+>  	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
+>  	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
+> +	dst_vq->lock = &ctx->gsc_dev->lock;
+>  
+>  	return vb2_queue_init(dst_vq);
+>  }
+> @@ -648,6 +601,7 @@ static int gsc_m2m_open(struct file *file)
+>  		ret = PTR_ERR(ctx->m2m_ctx);
+>  		goto error_ctrls;
+>  	}
+> +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
+>  
+>  	if (gsc->m2m.refcnt++ == 0)
+>  		set_bit(ST_M2M_OPEN, &gsc->state);
+> @@ -691,44 +645,13 @@ static int gsc_m2m_release(struct file *file)
 >  	return 0;
 >  }
 >  
-> -static void g2d_lock(void *prv)
+> -static unsigned int gsc_m2m_poll(struct file *file,
+> -					struct poll_table_struct *wait)
 > -{
-> -	struct g2d_ctx *ctx = prv;
-> -	struct g2d_dev *dev = ctx->dev;
-> -	mutex_lock(&dev->mutex);
+> -	struct gsc_ctx *ctx = fh_to_ctx(file->private_data);
+> -	struct gsc_dev *gsc = ctx->gsc_dev;
+> -	int ret;
+> -
+> -	if (mutex_lock_interruptible(&gsc->lock))
+> -		return -ERESTARTSYS;
+> -
+> -	ret = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
+> -	mutex_unlock(&gsc->lock);
+> -
+> -	return ret;
 > -}
 > -
-> -static void g2d_unlock(void *prv)
+> -static int gsc_m2m_mmap(struct file *file, struct vm_area_struct *vma)
 > -{
-> -	struct g2d_ctx *ctx = prv;
-> -	struct g2d_dev *dev = ctx->dev;
-> -	mutex_unlock(&dev->mutex);
+> -	struct gsc_ctx *ctx = fh_to_ctx(file->private_data);
+> -	struct gsc_dev *gsc = ctx->gsc_dev;
+> -	int ret;
+> -
+> -	if (mutex_lock_interruptible(&gsc->lock))
+> -		return -ERESTARTSYS;
+> -
+> -	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
+> -	mutex_unlock(&gsc->lock);
+> -
+> -	return ret;
 > -}
 > -
->  static void job_abort(void *prv)
->  {
->  	struct g2d_ctx *ctx = prv;
-> @@ -653,9 +575,9 @@ static const struct v4l2_file_operations g2d_fops = {
+>  static const struct v4l2_file_operations gsc_m2m_fops = {
 >  	.owner		= THIS_MODULE,
->  	.open		= g2d_open,
->  	.release	= g2d_release,
-> -	.poll		= g2d_poll,
+>  	.open		= gsc_m2m_open,
+>  	.release	= gsc_m2m_release,
+> -	.poll		= gsc_m2m_poll,
 > +	.poll		= v4l2_m2m_fop_poll,
 >  	.unlocked_ioctl	= video_ioctl2,
-> -	.mmap		= g2d_mmap,
+> -	.mmap		= gsc_m2m_mmap,
 > +	.mmap		= v4l2_m2m_fop_mmap,
 >  };
 >  
->  static const struct v4l2_ioctl_ops g2d_ioctl_ops = {
-> @@ -671,14 +593,13 @@ static const struct v4l2_ioctl_ops g2d_ioctl_ops = {
->  	.vidioc_try_fmt_vid_out		= vidioc_try_fmt,
->  	.vidioc_s_fmt_vid_out		= vidioc_s_fmt,
->  
-> -	.vidioc_reqbufs			= vidioc_reqbufs,
-> -	.vidioc_querybuf		= vidioc_querybuf,
-> -
-> -	.vidioc_qbuf			= vidioc_qbuf,
-> -	.vidioc_dqbuf			= vidioc_dqbuf,
-> +	.vidioc_reqbufs			= v4l2_m2m_ioctl_reqbufs,
-> +	.vidioc_querybuf		= v4l2_m2m_ioctl_querybuf,
-> +	.vidioc_qbuf			= v4l2_m2m_ioctl_qbuf,
-> +	.vidioc_dqbuf			= v4l2_m2m_ioctl_dqbuf,
->  
-> -	.vidioc_streamon		= vidioc_streamon,
-> -	.vidioc_streamoff		= vidioc_streamoff,
-> +	.vidioc_streamon		= v4l2_m2m_ioctl_streamon,
-> +	.vidioc_streamoff		= v4l2_m2m_ioctl_streamoff,
->  
->  	.vidioc_g_crop			= vidioc_g_crop,
->  	.vidioc_s_crop			= vidioc_s_crop,
-> @@ -697,8 +618,6 @@ static struct video_device g2d_videodev = {
->  static struct v4l2_m2m_ops g2d_m2m_ops = {
->  	.device_run	= device_run,
->  	.job_abort	= job_abort,
-> -	.lock		= g2d_lock,
-> -	.unlock		= g2d_unlock,
->  };
->  
->  static const struct of_device_id exynos_g2d_match[];
+>  static struct v4l2_m2m_ops gsc_m2m_ops = {
 > 
