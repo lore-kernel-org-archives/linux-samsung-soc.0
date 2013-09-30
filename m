@@ -1,195 +1,302 @@
-From: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Subject: Re: [PATCH v3 3/4] [media] exynos-scaler: Add m2m functionality for
- the SCALER driver
-Date: Mon, 30 Sep 2013 16:43:36 +0530
-Message-ID: <CAOD6ATrAQgoExnEKU-i0gOh3LiBAOddL02D+uaw67+D=54p2QA@mail.gmail.com>
-References: <1378991371-24428-1-git-send-email-shaik.ameer@samsung.com>
-	<1378991371-24428-4-git-send-email-shaik.ameer@samsung.com>
-	<52493160.5030401@xs4all.nl>
-	<CAOD6ATpssyY_955-VMYPBzQOqHWgE0OZvU0xvU62+Q2e90JW8g@mail.gmail.com>
-	<52495337.4040309@xs4all.nl>
-	<CAOD6ATpY66-nx0T6XaoT3YT8trUwt=hdr-ToZv4PH3xnxGET_g@mail.gmail.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH 2/6] thermal: exynos: Provide separate TMU data for Exynos4412
+Date: Mon, 30 Sep 2013 17:13:47 +0530
+Message-ID: <CADGdYn68zEoqgHJO8XG-YKoEJ66h7FopHNomka-4-u6PS7MDNQ@mail.gmail.com>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+	<1380010102-25817-3-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f41.google.com ([209.85.128.41]:58549 "EHLO
-	mail-qe0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753590Ab3I3LNh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 07:13:37 -0400
-In-Reply-To: <CAOD6ATpY66-nx0T6XaoT3YT8trUwt=hdr-ToZv4PH3xnxGET_g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1380010102-25817-3-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, posciak@google.com, Inki Dae <inki.dae@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-On Mon, Sep 30, 2013 at 4:18 PM, Shaik Ameer Basha
-<shaik.samsung@gmail.com> wrote:
-> Hi Hans,
+On Tue, Sep 24, 2013 at 1:38 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Up till now Exynos5250 and Exynos4412 had the same definitions for TMU
+> data. Following commit changes that, by introducing separate
+> exynos4412_default_tmu_data structure.
 >
+> Since Exynos4412 was chronologically first, the corresponding name for
+> TMU registers and default data was renamed.
 >
-> On Mon, Sep 30, 2013 at 4:02 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->> On 09/30/2013 11:32 AM, Shaik Ameer Basha wrote:
->>> Hi Hans,
->>>
->>> Thanks for pointing it out.
->>>
->>>
->>> On Mon, Sep 30, 2013 at 1:38 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
->>>> Hi Shaik,
->>>>
->>>> I have a few questions regarding the selection part...
->>>>
->>>> On 09/12/2013 03:09 PM, Shaik Ameer Basha wrote:
->>>>> This patch adds the Makefile and memory to memory (m2m) interface
->>>>> functionality for the SCALER driver.
->>>>>
->>>>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
->>>>> ---
->>>>>  drivers/media/platform/Kconfig                    |    8 +
->>>>>  drivers/media/platform/Makefile                   |    1 +
->>>>>  drivers/media/platform/exynos-scaler/Makefile     |    3 +
->>>>>  drivers/media/platform/exynos-scaler/scaler-m2m.c |  781 +++++++++++++++++++++
->>>>>  4 files changed, 793 insertions(+)
->>>>>  create mode 100644 drivers/media/platform/exynos-scaler/Makefile
->>>>>  create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
->>>>>
->>>>
->>>
->>>
->>> [...]
->>>
->>>
->>>>> +
->>>>> +static int scaler_m2m_s_selection(struct file *file, void *fh,
->>>>> +                             struct v4l2_selection *s)
->>>>> +{
->>>>> +     struct scaler_frame *frame;
->>>>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
->>>>> +     struct v4l2_crop cr;
->>>>> +     struct scaler_variant *variant = ctx->scaler_dev->variant;
->>>>> +     int ret;
->>>>> +
->>>>> +     cr.type = s->type;
->>>>> +     cr.c = s->r;
->>>>> +
->>>>> +     if ((s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
->>>>> +         (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE))
->>>>> +             return -EINVAL;
->>>>> +
->>>>> +     ret = scaler_try_crop(ctx, &cr);
->>>>> +     if (ret < 0)
->>>>> +             return ret;
->>>>> +
->>>>> +     if (s->flags & V4L2_SEL_FLAG_LE &&
->>>>> +         !is_rectangle_enclosed(&cr.c, &s->r))
->>>>> +             return -ERANGE;
->>>>> +
->>>>> +     if (s->flags & V4L2_SEL_FLAG_GE &&
->>>>> +         !is_rectangle_enclosed(&s->r, &cr.c))
->>>>> +             return -ERANGE;
->>>>> +
->>>>> +     s->r = cr.c;
->>>>> +
->>>>> +     switch (s->target) {
->>>>> +     case V4L2_SEL_TGT_COMPOSE_BOUNDS:
->>>>> +     case V4L2_SEL_TGT_COMPOSE_DEFAULT:
->>>>> +     case V4L2_SEL_TGT_COMPOSE:
->>>>> +             frame = &ctx->s_frame;
->>>>> +             break;
->>>>> +
->>>>> +     case V4L2_SEL_TGT_CROP_BOUNDS:
->>>>> +     case V4L2_SEL_TGT_CROP:
->>>>> +     case V4L2_SEL_TGT_CROP_DEFAULT:
->>>>> +             frame = &ctx->d_frame;
->>>>> +             break;
->>>>
->>>> Similar problems as with g_selection above. Tomasz mentioned to me that the selection
->>>> API is not implemented correctly in m2m Samsung drivers. It looks like this code is
->>>> copied-and-pasted from other drivers, so it seems he was right.
->>>
->>> Sorry, after going through the documentation, I have to agree with you...
->>> As you mentioned, this part of the code was copied while implementing
->>> the G-Scaler driver :)
->>>
->>> I will change the above implementation for M2M devices (GScaler and
->>> SCALER) as below,
->>> I will only allow all V4L2_SEL_TGT_COMPOSE_* target requests if
->>> 's->type' is equal to "V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE".
->>> and all V4L2_SEL_TGT_CROP_* target requests if 's->type' is equal to
->>> "V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE".
->>>
->>> I hope with the above two checkings taken in to care, there should not
->>> be any issues with using selection APIs here.
->>
->> Well, that depends on what the hardware does.
->>
->> Using compose with a capture buffer means that the frame as delivered by
->> the hardware is composed into a larger buffer. E.g. the hardware gives
->> you 1280x720 which is composed into a buffer of size 1920x1080.
->>
->> Using crop with an output buffer means that the hardware gets a cropped
->> part of a larger frame. E.g. you give a 1280x720 crop from a larger 1920x1080
->> buffer.
->>
->> I suspect however, that in this case the hardware does the opposite for
->> capture: you really want to crop with a capture buffer (e.g. the hardware
->> delivers a 1280x720 frame which is cropped before DMA to 640x360).
->>
->> I'm not sure what you want to do with an output buffer: cropping or composing.
->>
->> Tomasz mentioned that the M2M + selection API was screwy, and this seems to
->> be to be the case indeed.
->>
->> Which is also why I would like to know exactly what this hardware does.
+> Additionally, new SOC_ARCH_EXYNOS4412 type has been defined.
 >
-> This hardware is just a M2M device.
-> It accepts one source buffer at a time and does some operations on
-> that and saves to the destination buffer.
-> Operations like Rotation, Cropping, Scaling, Color Space Conversion
-> etc are possible.
->
-> Here when I provide the Output buffer (source buffer), I can apply all
-> V4L2_SEL_TGT_CROP_* targets on it.
-> That means I can select the whole buffer for processing or apply some
-> crop and select that area for further processing.
->
-> similarly, On the capture buffer (output buffer), I can apply
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Reviewed-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
 
-similarly, On the capture buffer (destination buffer), I can apply
+Thanks,
+Amit Daniel
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c      |    7 ++++---
+>  drivers/thermal/samsung/exynos_tmu.h      |    1 +
+>  drivers/thermal/samsung/exynos_tmu_data.c |   26 ++++++++++++++++++++------
+>  drivers/thermal/samsung/exynos_tmu_data.h |    9 ++++++++-
+>  4 files changed, 33 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index b43afda..a858cc4 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -488,7 +488,7 @@ static const struct of_device_id exynos_tmu_match[] = {
+>         },
+>         {
+>                 .compatible = "samsung,exynos4412-tmu",
+> -               .data = (void *)EXYNOS5250_TMU_DRV_DATA,
+> +               .data = (void *)EXYNOS4412_TMU_DRV_DATA,
+>         },
+>         {
+>                 .compatible = "samsung,exynos5250-tmu",
+> @@ -630,8 +630,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>                 return ret;
+>
+>         if (pdata->type == SOC_ARCH_EXYNOS ||
+> -               pdata->type == SOC_ARCH_EXYNOS4210 ||
+> -                               pdata->type == SOC_ARCH_EXYNOS5440)
+> +           pdata->type == SOC_ARCH_EXYNOS4210 ||
+> +           pdata->type == SOC_ARCH_EXYNOS4412 ||
+> +           pdata->type == SOC_ARCH_EXYNOS5440)
+>                 data->soc = pdata->type;
+>         else {
+>                 ret = -EINVAL;
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+> index b364c9e..db37df0 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -41,6 +41,7 @@ enum calibration_mode {
+>
+>  enum soc_type {
+>         SOC_ARCH_EXYNOS4210 = 1,
+> +       SOC_ARCH_EXYNOS4412,
+>         SOC_ARCH_EXYNOS,
+>         SOC_ARCH_EXYNOS5440,
+>  };
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+> index 9002499..bd08093 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> @@ -90,8 +90,8 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
+>  };
+>  #endif
+>
+> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
+> -static const struct exynos_tmu_registers exynos5250_tmu_registers = {
+> +#if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
+> +static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+>         .triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+>         .triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+>         .triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+> @@ -128,7 +128,7 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
+>         .emul_time_mask = EXYNOS_EMUL_TIME_MASK,
+>  };
+>
+> -#define EXYNOS5250_TMU_DATA \
+> +#define EXYNOS4412_TMU_DATA \
+>         .threshold_falling = 10, \
+>         .trigger_levels[0] = 85, \
+>         .trigger_levels[1] = 103, \
+> @@ -162,15 +162,29 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
+>                 .temp_level = 103, \
+>         }, \
+>         .freq_tab_count = 2, \
+> -       .type = SOC_ARCH_EXYNOS, \
+> -       .registers = &exynos5250_tmu_registers, \
+> +       .registers = &exynos4412_tmu_registers, \
+>         .features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
+>                         TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+>                         TMU_SUPPORT_EMUL_TIME)
+> +#endif
+>
+> +#if defined(CONFIG_SOC_EXYNOS4412)
+> +struct exynos_tmu_init_data const exynos4412_default_tmu_data = {
+> +       .tmu_data = {
+> +               { EXYNOS4412_TMU_DATA,
+> +               .type = SOC_ARCH_EXYNOS4412,
+> +               },
+> +       },
+> +       .tmu_count = 1,
+> +};
+> +#endif
+> +
+> +#if defined(CONFIG_SOC_EXYNOS5250)
+>  struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
+>         .tmu_data = {
+> -               { EXYNOS5250_TMU_DATA },
+> +               { EXYNOS4412_TMU_DATA,
+> +               .type = SOC_ARCH_EXYNOS,
+> +               },
+>         },
+>         .tmu_count = 1,
+>  };
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+> index dc7feb5..b130b1e 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> @@ -138,7 +138,14 @@ extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
+>  #define EXYNOS4210_TMU_DRV_DATA (NULL)
+>  #endif
+>
+> -#if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))
+> +#if defined(CONFIG_SOC_EXYNOS4412)
+> +extern struct exynos_tmu_init_data const exynos4412_default_tmu_data;
+> +#define EXYNOS4412_TMU_DRV_DATA (&exynos4412_default_tmu_data)
+> +#else
+> +#define EXYNOS4412_TMU_DRV_DATA (NULL)
+> +#endif
+> +
+> +#if defined(CONFIG_SOC_EXYNOS5250)
+>  extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
+>  #define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
+>  #else
+> --
+> 1.7.10.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-> V4L2_SEL_TGT_COMPOSE_* targets.
-> That means I can compose the final output to the complete capture
-> frame (dst frame), or I can choose some part of the destination frame.
+On Tue, Sep 24, 2013 at 1:38 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Up till now Exynos5250 and Exynos4412 had the same definitions for TMU
+> data. Following commit changes that, by introducing separate
+> exynos4412_default_tmu_data structure.
 >
-> Regards,
-> Shaik Ameer Basha
+> Since Exynos4412 was chronologically first, the corresponding name for
+> TMU registers and default data was renamed.
 >
+> Additionally, new SOC_ARCH_EXYNOS4412 type has been defined.
 >
->>
->> Regards,
->>
->>         Hans
->>
->>>
->>> Thanks,
->>> Shaik Ameer Basha
->>>
->>>>
->>>> The selection API for m2m devices will be discussed during the upcoming V4L2 mini-summit
->>>> since the API may actually need some adjustments to have it work the way it should.
->>>>
->>>> As requested above, if you can explain the exact functionality you are trying to
->>>> implement here, then I can look over this code carefully and see how it should be done.
->>>>
->>>> Thanks!
->>>>
->>>>         Hans
->>>>
->>> [...]
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-media" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c      |    7 ++++---
+>  drivers/thermal/samsung/exynos_tmu.h      |    1 +
+>  drivers/thermal/samsung/exynos_tmu_data.c |   26 ++++++++++++++++++++------
+>  drivers/thermal/samsung/exynos_tmu_data.h |    9 ++++++++-
+>  4 files changed, 33 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index b43afda..a858cc4 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -488,7 +488,7 @@ static const struct of_device_id exynos_tmu_match[] = {
+>         },
+>         {
+>                 .compatible = "samsung,exynos4412-tmu",
+> -               .data = (void *)EXYNOS5250_TMU_DRV_DATA,
+> +               .data = (void *)EXYNOS4412_TMU_DRV_DATA,
+>         },
+>         {
+>                 .compatible = "samsung,exynos5250-tmu",
+> @@ -630,8 +630,9 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>                 return ret;
+>
+>         if (pdata->type == SOC_ARCH_EXYNOS ||
+> -               pdata->type == SOC_ARCH_EXYNOS4210 ||
+> -                               pdata->type == SOC_ARCH_EXYNOS5440)
+> +           pdata->type == SOC_ARCH_EXYNOS4210 ||
+> +           pdata->type == SOC_ARCH_EXYNOS4412 ||
+> +           pdata->type == SOC_ARCH_EXYNOS5440)
+>                 data->soc = pdata->type;
+>         else {
+>                 ret = -EINVAL;
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+> index b364c9e..db37df0 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -41,6 +41,7 @@ enum calibration_mode {
+>
+>  enum soc_type {
+>         SOC_ARCH_EXYNOS4210 = 1,
+> +       SOC_ARCH_EXYNOS4412,
+>         SOC_ARCH_EXYNOS,
+>         SOC_ARCH_EXYNOS5440,
+>  };
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+> index 9002499..bd08093 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> @@ -90,8 +90,8 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
+>  };
+>  #endif
+>
+> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
+> -static const struct exynos_tmu_registers exynos5250_tmu_registers = {
+> +#if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
+> +static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+>         .triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+>         .triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+>         .triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+> @@ -128,7 +128,7 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
+>         .emul_time_mask = EXYNOS_EMUL_TIME_MASK,
+>  };
+>
+> -#define EXYNOS5250_TMU_DATA \
+> +#define EXYNOS4412_TMU_DATA \
+>         .threshold_falling = 10, \
+>         .trigger_levels[0] = 85, \
+>         .trigger_levels[1] = 103, \
+> @@ -162,15 +162,29 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
+>                 .temp_level = 103, \
+>         }, \
+>         .freq_tab_count = 2, \
+> -       .type = SOC_ARCH_EXYNOS, \
+> -       .registers = &exynos5250_tmu_registers, \
+> +       .registers = &exynos4412_tmu_registers, \
+>         .features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
+>                         TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+>                         TMU_SUPPORT_EMUL_TIME)
+> +#endif
+>
+> +#if defined(CONFIG_SOC_EXYNOS4412)
+> +struct exynos_tmu_init_data const exynos4412_default_tmu_data = {
+> +       .tmu_data = {
+> +               { EXYNOS4412_TMU_DATA,
+> +               .type = SOC_ARCH_EXYNOS4412,
+> +               },
+> +       },
+> +       .tmu_count = 1,
+> +};
+> +#endif
+> +
+> +#if defined(CONFIG_SOC_EXYNOS5250)
+>  struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
+>         .tmu_data = {
+> -               { EXYNOS5250_TMU_DATA },
+> +               { EXYNOS4412_TMU_DATA,
+> +               .type = SOC_ARCH_EXYNOS,
+> +               },
+>         },
+>         .tmu_count = 1,
+>  };
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+> index dc7feb5..b130b1e 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> @@ -138,7 +138,14 @@ extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
+>  #define EXYNOS4210_TMU_DRV_DATA (NULL)
+>  #endif
+>
+> -#if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))
+> +#if defined(CONFIG_SOC_EXYNOS4412)
+> +extern struct exynos_tmu_init_data const exynos4412_default_tmu_data;
+> +#define EXYNOS4412_TMU_DRV_DATA (&exynos4412_default_tmu_data)
+> +#else
+> +#define EXYNOS4412_TMU_DRV_DATA (NULL)
+> +#endif
+> +
+> +#if defined(CONFIG_SOC_EXYNOS5250)
+>  extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
+>  #define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
+>  #else
+> --
+> 1.7.10.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
