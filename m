@@ -1,28 +1,24 @@
 From: Hans Verkuil <hverkuil@xs4all.nl>
-Subject: Re: [PATCH RFC 3/7] exynos4-is: Use mem-to-mem ioctl helpers
-Date: Mon, 30 Sep 2013 11:44:34 +0200
-Message-ID: <52494802.6020805@xs4all.nl>
-References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com> <1379076986-10446-4-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC 4/7] s5p-jpeg: Use mem-to-mem ioctl helpers
+Date: Mon, 30 Sep 2013 11:45:42 +0200
+Message-ID: <52494846.2000702@xs4all.nl>
+References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com> <1379076986-10446-5-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-vbr8.xs4all.nl ([194.109.24.28]:3923 "EHLO
-	smtp-vbr8.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755030Ab3I3Jov (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 05:44:51 -0400
-In-Reply-To: <1379076986-10446-4-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1379076986-10446-5-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: linux-media@vger.kernel.org, kyungmin.park@samsung.com, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On 09/13/2013 02:56 PM, Sylwester Nawrocki wrote:
-> Simplify the FIMC mem-to-mem driver by using the m2m ioctl and vb2 helpers.
+> Simplify the driver by using the m2m ioctl and vb2 helpers.
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Kyugmin Park <kyungmin.park@samsung.com>
+
 
 Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
@@ -31,188 +27,184 @@ Regards,
 	Hans
 
 > ---
->  drivers/media/platform/exynos4-is/fimc-m2m.c |  119 +++-----------------------
->  1 file changed, 14 insertions(+), 105 deletions(-)
+>  drivers/media/platform/s5p-jpeg/jpeg-core.c |  111 ++++-----------------------
+>  1 file changed, 13 insertions(+), 98 deletions(-)
 > 
-> diff --git a/drivers/media/platform/exynos4-is/fimc-m2m.c b/drivers/media/platform/exynos4-is/fimc-m2m.c
-> index 8d33b68..71ee871 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-m2m.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-m2m.c
-> @@ -226,24 +226,12 @@ static void fimc_buf_queue(struct vb2_buffer *vb)
->  		v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
->  }
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> index 88c5beb..66f7519 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> @@ -322,6 +322,7 @@ static int s5p_jpeg_open(struct file *file)
+>  		ret = PTR_ERR(ctx->m2m_ctx);
+>  		goto error;
+>  	}
+> +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
 >  
-> -static void fimc_lock(struct vb2_queue *vq)
-> -{
-> -	struct fimc_ctx *ctx = vb2_get_drv_priv(vq);
-> -	mutex_lock(&ctx->fimc_dev->lock);
-> -}
-> -
-> -static void fimc_unlock(struct vb2_queue *vq)
-> -{
-> -	struct fimc_ctx *ctx = vb2_get_drv_priv(vq);
-> -	mutex_unlock(&ctx->fimc_dev->lock);
-> -}
-> -
->  static struct vb2_ops fimc_qops = {
->  	.queue_setup	 = fimc_queue_setup,
->  	.buf_prepare	 = fimc_buf_prepare,
->  	.buf_queue	 = fimc_buf_queue,
-> -	.wait_prepare	 = fimc_unlock,
-> -	.wait_finish	 = fimc_lock,
-> +	.wait_prepare	 = vb2_ops_wait_prepare,
-> +	.wait_finish	 = vb2_ops_wait_finish,
->  	.stop_streaming	 = stop_streaming,
->  	.start_streaming = start_streaming,
->  };
-> @@ -410,56 +398,6 @@ static int fimc_m2m_s_fmt_mplane(struct file *file, void *fh,
+>  	ctx->out_q.fmt = out_fmt;
+>  	ctx->cap_q.fmt = s5p_jpeg_find_format(ctx->mode, V4L2_PIX_FMT_YUYV);
+> @@ -353,39 +354,13 @@ static int s5p_jpeg_release(struct file *file)
 >  	return 0;
 >  }
 >  
-> -static int fimc_m2m_reqbufs(struct file *file, void *fh,
-> -			    struct v4l2_requestbuffers *reqbufs)
+> -static unsigned int s5p_jpeg_poll(struct file *file,
+> -				 struct poll_table_struct *wait)
 > -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(fh);
+> -	struct s5p_jpeg *jpeg = video_drvdata(file);
+> -	struct s5p_jpeg_ctx *ctx = fh_to_ctx(file->private_data);
+> -	unsigned int res;
+> -
+> -	mutex_lock(&jpeg->lock);
+> -	res = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
+> -	mutex_unlock(&jpeg->lock);
+> -	return res;
+> -}
+> -
+> -static int s5p_jpeg_mmap(struct file *file, struct vm_area_struct *vma)
+> -{
+> -	struct s5p_jpeg *jpeg = video_drvdata(file);
+> -	struct s5p_jpeg_ctx *ctx = fh_to_ctx(file->private_data);
+> -	int ret;
+> -
+> -	if (mutex_lock_interruptible(&jpeg->lock))
+> -		return -ERESTARTSYS;
+> -	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
+> -	mutex_unlock(&jpeg->lock);
+> -	return ret;
+> -}
+> -
+>  static const struct v4l2_file_operations s5p_jpeg_fops = {
+>  	.owner		= THIS_MODULE,
+>  	.open		= s5p_jpeg_open,
+>  	.release	= s5p_jpeg_release,
+> -	.poll		= s5p_jpeg_poll,
+> +	.poll		= v4l2_m2m_fop_poll,
+>  	.unlocked_ioctl	= video_ioctl2,
+> -	.mmap		= s5p_jpeg_mmap,
+> +	.mmap		= v4l2_m2m_fop_mmap,
+>  };
+>  
+>  /*
+> @@ -793,53 +768,6 @@ static int s5p_jpeg_s_fmt_vid_out(struct file *file, void *priv,
+>  	return s5p_jpeg_s_fmt(fh_to_ctx(priv), f);
+>  }
+>  
+> -static int s5p_jpeg_reqbufs(struct file *file, void *priv,
+> -			  struct v4l2_requestbuffers *reqbufs)
+> -{
+> -	struct s5p_jpeg_ctx *ctx = fh_to_ctx(priv);
+> -
 > -	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
 > -}
 > -
-> -static int fimc_m2m_querybuf(struct file *file, void *fh,
-> -			     struct v4l2_buffer *buf)
+> -static int s5p_jpeg_querybuf(struct file *file, void *priv,
+> -			   struct v4l2_buffer *buf)
 > -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(fh);
+> -	struct s5p_jpeg_ctx *ctx = fh_to_ctx(priv);
+> -
 > -	return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf);
 > -}
 > -
-> -static int fimc_m2m_qbuf(struct file *file, void *fh,
-> -			 struct v4l2_buffer *buf)
+> -static int s5p_jpeg_qbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
 > -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(fh);
+> -	struct s5p_jpeg_ctx *ctx = fh_to_ctx(priv);
+> -
 > -	return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf);
 > -}
 > -
-> -static int fimc_m2m_dqbuf(struct file *file, void *fh,
+> -static int s5p_jpeg_dqbuf(struct file *file, void *priv,
 > -			  struct v4l2_buffer *buf)
 > -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(fh);
+> -	struct s5p_jpeg_ctx *ctx = fh_to_ctx(priv);
+> -
 > -	return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf);
 > -}
 > -
-> -static int fimc_m2m_expbuf(struct file *file, void *fh,
-> -			    struct v4l2_exportbuffer *eb)
+> -static int s5p_jpeg_streamon(struct file *file, void *priv,
+> -			   enum v4l2_buf_type type)
 > -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(fh);
-> -	return v4l2_m2m_expbuf(file, ctx->m2m_ctx, eb);
-> -}
+> -	struct s5p_jpeg_ctx *ctx = fh_to_ctx(priv);
 > -
-> -
-> -static int fimc_m2m_streamon(struct file *file, void *fh,
-> -			     enum v4l2_buf_type type)
-> -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(fh);
 > -	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
 > -}
 > -
-> -static int fimc_m2m_streamoff(struct file *file, void *fh,
+> -static int s5p_jpeg_streamoff(struct file *file, void *priv,
 > -			    enum v4l2_buf_type type)
 > -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(fh);
+> -	struct s5p_jpeg_ctx *ctx = fh_to_ctx(priv);
+> -
 > -	return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
 > -}
 > -
->  static int fimc_m2m_cropcap(struct file *file, void *fh,
->  			    struct v4l2_cropcap *cr)
+>  static int s5p_jpeg_g_selection(struct file *file, void *priv,
+>  			 struct v4l2_selection *s)
 >  {
-> @@ -598,13 +536,13 @@ static const struct v4l2_ioctl_ops fimc_m2m_ioctl_ops = {
->  	.vidioc_try_fmt_vid_out_mplane	= fimc_m2m_try_fmt_mplane,
->  	.vidioc_s_fmt_vid_cap_mplane	= fimc_m2m_s_fmt_mplane,
->  	.vidioc_s_fmt_vid_out_mplane	= fimc_m2m_s_fmt_mplane,
-> -	.vidioc_reqbufs			= fimc_m2m_reqbufs,
-> -	.vidioc_querybuf		= fimc_m2m_querybuf,
-> -	.vidioc_qbuf			= fimc_m2m_qbuf,
-> -	.vidioc_dqbuf			= fimc_m2m_dqbuf,
-> -	.vidioc_expbuf			= fimc_m2m_expbuf,
-> -	.vidioc_streamon		= fimc_m2m_streamon,
-> -	.vidioc_streamoff		= fimc_m2m_streamoff,
+> @@ -973,14 +901,13 @@ static const struct v4l2_ioctl_ops s5p_jpeg_ioctl_ops = {
+>  	.vidioc_s_fmt_vid_cap		= s5p_jpeg_s_fmt_vid_cap,
+>  	.vidioc_s_fmt_vid_out		= s5p_jpeg_s_fmt_vid_out,
+>  
+> -	.vidioc_reqbufs			= s5p_jpeg_reqbufs,
+> -	.vidioc_querybuf		= s5p_jpeg_querybuf,
+> -
+> -	.vidioc_qbuf			= s5p_jpeg_qbuf,
+> -	.vidioc_dqbuf			= s5p_jpeg_dqbuf,
 > +	.vidioc_reqbufs			= v4l2_m2m_ioctl_reqbufs,
 > +	.vidioc_querybuf		= v4l2_m2m_ioctl_querybuf,
 > +	.vidioc_qbuf			= v4l2_m2m_ioctl_qbuf,
 > +	.vidioc_dqbuf			= v4l2_m2m_ioctl_dqbuf,
-> +	.vidioc_expbuf			= v4l2_m2m_ioctl_expbuf,
+>  
+> -	.vidioc_streamon		= s5p_jpeg_streamon,
+> -	.vidioc_streamoff		= s5p_jpeg_streamoff,
 > +	.vidioc_streamon		= v4l2_m2m_ioctl_streamon,
 > +	.vidioc_streamoff		= v4l2_m2m_ioctl_streamoff,
->  	.vidioc_g_crop			= fimc_m2m_g_crop,
->  	.vidioc_s_crop			= fimc_m2m_s_crop,
->  	.vidioc_cropcap			= fimc_m2m_cropcap
-> @@ -624,6 +562,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+>  
+>  	.vidioc_g_selection		= s5p_jpeg_g_selection,
+>  };
+> @@ -1175,20 +1102,6 @@ static void s5p_jpeg_buf_queue(struct vb2_buffer *vb)
+>  		v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
+>  }
+>  
+> -static void s5p_jpeg_wait_prepare(struct vb2_queue *vq)
+> -{
+> -	struct s5p_jpeg_ctx *ctx = vb2_get_drv_priv(vq);
+> -
+> -	mutex_unlock(&ctx->jpeg->lock);
+> -}
+> -
+> -static void s5p_jpeg_wait_finish(struct vb2_queue *vq)
+> -{
+> -	struct s5p_jpeg_ctx *ctx = vb2_get_drv_priv(vq);
+> -
+> -	mutex_lock(&ctx->jpeg->lock);
+> -}
+> -
+>  static int s5p_jpeg_start_streaming(struct vb2_queue *q, unsigned int count)
+>  {
+>  	struct s5p_jpeg_ctx *ctx = vb2_get_drv_priv(q);
+> @@ -1212,8 +1125,8 @@ static struct vb2_ops s5p_jpeg_qops = {
+>  	.queue_setup		= s5p_jpeg_queue_setup,
+>  	.buf_prepare		= s5p_jpeg_buf_prepare,
+>  	.buf_queue		= s5p_jpeg_buf_queue,
+> -	.wait_prepare		= s5p_jpeg_wait_prepare,
+> -	.wait_finish		= s5p_jpeg_wait_finish,
+> +	.wait_prepare		= vb2_ops_wait_prepare,
+> +	.wait_finish		= vb2_ops_wait_finish,
+>  	.start_streaming	= s5p_jpeg_start_streaming,
+>  	.stop_streaming		= s5p_jpeg_stop_streaming,
+>  };
+> @@ -1231,6 +1144,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+>  	src_vq->ops = &s5p_jpeg_qops;
 >  	src_vq->mem_ops = &vb2_dma_contig_memops;
->  	src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
 >  	src_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-> +	src_vq->lock = &ctx->fimc_dev->lock;
+> +	src_vq->lock = &ctx->jpeg->lock;
 >  
 >  	ret = vb2_queue_init(src_vq);
 >  	if (ret)
-> @@ -636,6 +575,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+> @@ -1243,6 +1157,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+>  	dst_vq->ops = &s5p_jpeg_qops;
 >  	dst_vq->mem_ops = &vb2_dma_contig_memops;
->  	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
 >  	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-> +	dst_vq->lock = &ctx->fimc_dev->lock;
+> +	dst_vq->lock = &ctx->jpeg->lock;
 >  
 >  	return vb2_queue_init(dst_vq);
 >  }
-> @@ -713,6 +653,7 @@ static int fimc_m2m_open(struct file *file)
->  		ret = PTR_ERR(ctx->m2m_ctx);
->  		goto error_c;
->  	}
-> +	ctx->fh.m2m_ctx = ctx->m2m_ctx;
->  
->  	if (fimc->m2m.refcnt++ == 0)
->  		set_bit(ST_M2M_RUN, &fimc->state);
-> @@ -760,45 +701,13 @@ static int fimc_m2m_release(struct file *file)
->  	return 0;
->  }
->  
-> -static unsigned int fimc_m2m_poll(struct file *file,
-> -				  struct poll_table_struct *wait)
-> -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(file->private_data);
-> -	struct fimc_dev *fimc = ctx->fimc_dev;
-> -	int ret;
-> -
-> -	if (mutex_lock_interruptible(&fimc->lock))
-> -		return -ERESTARTSYS;
-> -
-> -	ret = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
-> -	mutex_unlock(&fimc->lock);
-> -
-> -	return ret;
-> -}
-> -
-> -
-> -static int fimc_m2m_mmap(struct file *file, struct vm_area_struct *vma)
-> -{
-> -	struct fimc_ctx *ctx = fh_to_ctx(file->private_data);
-> -	struct fimc_dev *fimc = ctx->fimc_dev;
-> -	int ret;
-> -
-> -	if (mutex_lock_interruptible(&fimc->lock))
-> -		return -ERESTARTSYS;
-> -
-> -	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
-> -	mutex_unlock(&fimc->lock);
-> -
-> -	return ret;
-> -}
-> -
->  static const struct v4l2_file_operations fimc_m2m_fops = {
->  	.owner		= THIS_MODULE,
->  	.open		= fimc_m2m_open,
->  	.release	= fimc_m2m_release,
-> -	.poll		= fimc_m2m_poll,
-> +	.poll		= v4l2_m2m_fop_poll,
->  	.unlocked_ioctl	= video_ioctl2,
-> -	.mmap		= fimc_m2m_mmap,
-> +	.mmap		= v4l2_m2m_fop_mmap,
->  };
->  
->  static struct v4l2_m2m_ops m2m_ops = {
 > 
