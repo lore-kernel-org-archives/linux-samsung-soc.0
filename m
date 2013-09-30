@@ -1,107 +1,100 @@
-From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: RE: [PATCH v7 0/6] ARM: dts: add support for exynos hdmi subsystem
-Date: Mon, 30 Sep 2013 16:51:31 +0900
-Message-ID: <069c01cebdb1$e0e79ee0$a2b6dca0$@org>
-References: <1377784377-28426-1-git-send-email-rahul.sharma@samsung.com>
- <1620695.hYygFk0Iax@amdc1227>
- <CAPdUM4N7DeBkO8Dt859toB92SRskBc8wkGDCNJXt4Fz=YXSOBg@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH V8 0/3] Generic PHY driver for the Exynos SoC DP PHY
+Date: Mon, 30 Sep 2013 16:58:15 +0900
+Message-ID: <000f01cebdb2$d1a20e10$74e62a30$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAPdUM4N7DeBkO8Dt859toB92SRskBc8wkGDCNJXt4Fz=YXSOBg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:15619 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751496Ab3I3H6S (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Sep 2013 03:58:18 -0400
 Content-language: ko
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Rahul Sharma' <r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Rahul Sharma' <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'linux-samsung-soc' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "'sw0312.kim'" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Inki Dae' <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Tomasz Figa' <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'sunil joshi' <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kishon Vijay Abraham I' <kishon@ti.com>
+Cc: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomi Valkeinen' <tomi.valkeinen@ti.com>, 'Jean-Christophe Plagniol-Villard' <plagnioj@jcrosoft.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Rahul Sharma wrote:
-> 
-> On 29 August 2013 19:05, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> > Hi Rahul,
-> >
-> > On Thursday 29 of August 2013 19:22:51 Rahul Sharma wrote:
-> >> It adds Device tree nodes and clocks information for HDMI subsystem
-> >> for exynos5420 and exynos5250 SoCs. It adds pinctrl node for hdmi
-> >> hpd gpio and update binding documents.
-> >>
-> >> This set is based on kukjin's for-next branch at
-> >> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git.
-> >>
-> >> v7:
-> >> 1) Minor change in of-documentation.
-> >> 2) Squash gpio pin-ctrl and ddc patch to one patch.
-> >>
-> >> v6:
-> >> 1) Update clock numbers as per change in mux and divider clocks.
-> >> 2) Isolate board changes from SoC patch and add a different patch for
-> >> ddc.
-> >>
-> >> v5:
-> >> 1) Merged Clock addition patch to DT nmde addition patch.
-> >> 2) Add dout_pixel clock for hdmi in place of sclk_pixel.
-> >> 3) Enable mixer node in soc dtsi file.
-> >>
-> >> v4:
-> >> 1) Remove the movement of common properties to Exynos5.dtsi for
-> >> I2C and hdmi subsystem.
-> >> 2) Change the title of the patches.
-> >>
-> >> v3:
-> >> 1) Rebase to kgene for-next based on 3.11-rc1.
-> >> 2) Changes clock numbers as per updated clocks file for
-> >> exyno5250 and exynos5420.
-> >> 3) Dropped Sachin patch as already got merged.
-> >>
-> >> v2:
-> >> 1) Added patch for moving common i2c properties to exynos5.dtsi
-> >> 2) Added patch for moving common hdmi, mixer properties to exynos5.dtsi
-> >> 3) moved hpd pinctrl node to board file.
-> >> 4) Added Sachin's patch to update binding document for hdmi with hpd
-> >> information.
-> >>
-> >> Andrew Bresticker (1):
-> >>   ARM: dts: add i2c device nodes for Exynos5420
-> >>
-> >> Rahul Sharma (4):
-> >>   of/documentation: update with clock information for exynos hdmi
-> >>     subsystem
-> >>   ARM: dts: add clocks to hdmi dt node for exynos5250
-> >>   ARM: dts: add dt nodes for hdmi subsystem for exynos5420
-> >>   ARM: dts: enable hdmi subsystem for exynos5420 smdk board
-> >>
-> >> Sean Paul (1):
-> >>   ARM: dts: add mixer clocks to mixer node for Exynos5250
-> >>
-> >>  .../devicetree/bindings/video/exynos_hdmi.txt      |   14 +++-
-> >>  .../devicetree/bindings/video/exynos_mixer.txt     |    4 ++
-> >>  arch/arm/boot/dts/exynos5250.dtsi                  |    8 ++-
-> >>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |   26 +++++++
-> >>  arch/arm/boot/dts/exynos5420.dtsi                  |   75
-> >> ++++++++++++++++++++ 5 files changed, 123 insertions(+), 4 deletions(-)
-> >
-> > The whole series looks good to me now. Thanks for keeping up with all
-> the
-> > comments.
-> 
-> Thanks Tomasz.
-> 
-> >
-> > Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >
-Tomasz, thanks for your review.
-> 
-> Hi Mr. Kim,
-> 
-> Please consider this series for your for-next branch.
-> 
-Yeah, looks good to me as well. Applied this whole series.
+This patch series adds a simple driver for the Samsung Exynos SoC
+series DP transmitter PHY, using the generic PHY framework [1].
+Previously the DP PHY used an internal DT node to control the PHY
+power enable bit.
 
-Thanks,
-Kukjin
+This PATCH v8 follows:
+ * PATCH v7, sent on August, 26th 2013
+ * PATCH v6, sent on July, 9th 2013
+ * PATCH v5, sent on July, 8th 2013
+ * PATCH v4, sent on July, 2nd 2013
+ * PATCH v3, sent on July, 1st 2013
+ * PATCH v2, sent on June, 28th 2013
+ * PATCH v1, sent on June, 28th 2013
 
+Changes from v7:
+  * Re-based on git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git next
+ 
+Changes from v6:
+  * Re-based on git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git
+
+Changes from v5:
+  * Re-based on git://gitorious.org/linuxphy/linuxphy.git
+
+Changes from v4:
+  * Marked original bindings as deprecated in 'exynos_dp.txt'
+  * Fixed typo of commit message.
+  * Added Tomasz Figa's Reviewed-by.
+
+Changes from v3:
+  * Added OF dependancy.
+  * Removed redundant local variable 'void __iomem *addr'.
+  * Removed unnecessary dev_set_drvdata().
+  * Added a patch that remove non-DT support for Exynos
+    Display Port driver.
+  * Removed unnecessary 'struct exynos_dp_platdata'.
+  * Kept supporting the original bindings for DT compatibility.
+
+Changes from v2:
+  * Removed redundant spinlock
+  * Removed 'struct phy' from 'struct exynos_dp_video_phy'
+  * Updated 'samsung-phy.txt', instead of creating
+    'samsung,exynos5250-dp-video-phy.txt'.
+  * Removed unnecessary additional specifier from 'phys'
+    DT property.
+  * Added 'phys', 'phy-names' properties to 'exynos_dp.txt' file.
+  * Added Felipe Balbi's Acked-by.
+
+Changes from v1:
+  * Replaced exynos_dp_video_phy_xlate() with of_phy_simple_xlate(),
+    as Kishon Vijay Abraham I guided.
+  * Set the value of phy-cells as 0, because the phy_provider implements
+    only one PHY.
+  * Removed unnecessary header include.
+  * Added '#ifdef CONFIG_OF' and of_match_ptr macro.
+
+This series depends on the generic PHY framework [1]. These patches
+refer to Sylwester Nawrocki's patches about Exynos MIPI [2].
+
+[1] http://www.spinics.net/lists/kernel/msg1609491.html
+[2] http://www.spinics.net/lists/linux-samsung-soc/msg23073.html
+
+Jingoo Han (3):
+  phy: Add driver for Exynos DP PHY
+  video: exynos_dp: remove non-DT support for Exynos Display Port
+  video: exynos_dp: Use the generic PHY driver
+
+ .../devicetree/bindings/phy/samsung-phy.txt        |    8 ++
+ .../devicetree/bindings/video/exynos_dp.txt        |   17 +--
+ drivers/phy/Kconfig                                |    7 ++
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/phy-exynos-dp-video.c                  |  111 ++++++++++++++++
+ drivers/video/exynos/Kconfig                       |    2 +-
+ drivers/video/exynos/exynos_dp_core.c              |  132 ++++++--------------
+ drivers/video/exynos/exynos_dp_core.h              |  110 ++++++++++++++++
+ drivers/video/exynos/exynos_dp_reg.c               |    2 -
+ include/video/exynos_dp.h                          |  131 -------------------
+ 10 files changed, 284 insertions(+), 237 deletions(-)
+ create mode 100644 drivers/phy/phy-exynos-dp-video.c
+ delete mode 100644 include/video/exynos_dp.h
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.10.4
