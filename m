@@ -1,161 +1,115 @@
-From: Bhushan Bharat-R65777 <R65777-KZfg59tc24xl57MIdRCFDg@public.gmane.org>
-Subject: RE: [PATCH 3/7] Return info for device and its memory regions and
-	interrupts
-Date: Mon, 30 Sep 2013 15:49:55 +0000
-Message-ID: <6A3DF150A5B70D4F9B66A25E3F7C888D0718A526@039-SN2MPN1-011.039d.mgd.msft.net>
-References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
-	<1380554923-17818-4-git-send-email-a.motakis@virtualopensystems.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 3/4] watchdog: s3c2410_wdt: parse watchdog dt node to read
+ PMU registers adresses
+Date: Mon, 30 Sep 2013 09:54:33 -0700
+Message-ID: <CAD=FV=U35jtZBMjx3te9+2brd0KDQHJr0c6u8y1ucQtDQfMTDQ@mail.gmail.com>
+References: <1379414623-26329-1-git-send-email-l.krishna@samsung.com>
+	<2201944.6vg4a9ttux@flatron>
+	<CAD=FV=Wa0BpmE7mQoAk-RC_g9QCCz2T_7=Pd46CDSN8Z9KQ8jg@mail.gmail.com>
+	<13147351.I7ksvhO9sb@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <1380554923-17818-4-git-send-email-a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org" <kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org>, "alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org" <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "agraf-l3A5Bk7waGM@public.gmane.org" <agraf-l3A5Bk7waGM@public.gmane.org>, Yoder Stuart-B08248 <B08248-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, "tech-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <tech-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:64673 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755078Ab3I3Qyf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Sep 2013 12:54:35 -0400
+Received: by mail-qc0-f169.google.com with SMTP id c9so3842637qcz.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Sep 2013 09:54:34 -0700 (PDT)
+In-Reply-To: <13147351.I7ksvhO9sb@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, mark.rutland@arm.com, galak <galak@codeaurora.org>, pawel.moll@arm.com, Rob Herring <rob.herring@calxeda.com>
+
+Tomasz,
+
+On Sat, Sep 28, 2013 at 6:49 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> On Fri, Sep 27, 2013 at 11:14 AM, Tomasz Figa <tomasz.figa@gmail.com>
+> wrote:
+>> >> So isn't the register in the PMU there to save power in the case that
+>> >> the watchdog timer isn't being used?  How is the PMU "driver" to know
+>> >> whether the watchdog is being used?  Better IMHO that the watchdog
+>> >> driver knows to enable and disable itself as needed, right?
+>> >
+>> > How much power can you save on one low frequency counter? Anyway,
+>> > those
+>> > bits look more like reset signal masks to me, unrelated to any power
+>> > saving and even if, this driver switches them on at probe regardless
+>> > of
+>> > whether the watchdog is actually used or not.
+>>
+>> I don't know for sure how much power it saves if any.  The description
+>> I have of those fields is also definitely a little on the confusing
+>> side.  The fact that they are in the PMU leads me to believe that they
+>> save power, but perhaps that's not the case here.
+>>
+>> It still does seem nice to keep watchdog related code in the watchdog
+>> driver, though...
+>
+> For me, this thing looks more related to PMU than watchdog, since the code
+> writes to PMU registers and does this only on system power state
+> transitions, i.e. once per boot, suspend, resume and shutdown.
+
+I wonder if there is any reason that it shouldn't be put in the
+s3c2410wdt_start() and s3c2410wdt_stop() functions?
 
 
+>> I guess I could also imagine ordering problems if
+>> we tweaked this bit in the PMU driver, though I don't have actual
+>> evidence of this.  Maybe cases where enabling at the wrong time could
+>> cause spurious watchdog resets depending on how the BIOS left the
+>> state of things.
+>
+> Even if you put this code in watchdog driver you don't have any warranties
+> that the firmware leaves both the watchdog and PMU bits sets correctly.
+> I'm not sure what would be the point of firmware existence if you can't
+> trust it to set up at least the basic working environment for you and I
+> consider watchdog to be part of such.
 
-> -----Original Message-----
-> From: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org [mailto:iommu-
-> bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org] On Behalf Of Antonios Motakis
-> Sent: Monday, September 30, 2013 8:59 PM
-> To: kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org; alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org
-> Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; agraf-l3A5Bk7waGM@public.gmane.org; Yoder
-> Stuart-B08248; iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org; Antonios Motakis;
-> tech-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org
-> Subject: [PATCH 3/7] Return info for device and its memory regions and
-> interrupts
-> 
-> A VFIO userspace driver will start by opening the VFIO device that corresponds
-> to an IOMMU group, and will use the ioctl interface to get the basic device
-> info, such as number of memory regions and interrupts, and their properties.
-> 
-> This patch implements the IOCTLs:
->  - VFIO_DEVICE_GET_INFO
->  - VFIO_DEVICE_GET_REGION_INFO
->  - VFIO_DEVICE_GET_IRQ_INFO
-> 
-> Signed-off-by: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
-> ---
->  drivers/vfio/vfio_platform.c | 60 ++++++++++++++++++++++++++++++++++++++------
->  1 file changed, 53 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/vfio/vfio_platform.c b/drivers/vfio/vfio_platform.c index
-> b9686b0..a0abcfa 100644
-> --- a/drivers/vfio/vfio_platform.c
-> +++ b/drivers/vfio/vfio_platform.c
-> @@ -28,6 +28,10 @@
->  #include <linux/types.h>
->  #include <linux/uaccess.h>
->  #include <linux/vfio.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/of_platform.h>
-> 
->  #define DRIVER_VERSION  "0.1"
->  #define DRIVER_AUTHOR   "Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>"
-> @@ -54,10 +58,13 @@ static long vfio_platform_ioctl(void *device_data,
->  			   unsigned int cmd, unsigned long arg)  {
->  	struct vfio_platform_device *vdev = device_data;
-> +	struct device_node *of_node = vdev->pdev->dev.of_node;
->  	unsigned long minsz;
-> 
->  	if (cmd == VFIO_DEVICE_GET_INFO) {
->  		struct vfio_device_info info;
-> +		struct resource res;
-> +		int cnt = 0;
-> 
->  		minsz = offsetofend(struct vfio_device_info, num_irqs);
-> 
-> @@ -68,18 +75,57 @@ static long vfio_platform_ioctl(void *device_data,
->  			return -EINVAL;
-> 
->  		info.flags = VFIO_DEVICE_FLAGS_PLATFORM;
-> -		info.num_regions = 0;
-> -		info.num_irqs = 0;
-> +
-> +		while (!of_address_to_resource(of_node, cnt, &res))
-> +			cnt++;
-> +
-> +		info.num_regions = cnt;
-> +
-> +		info.num_irqs = of_irq_count(of_node);
-> 
->  		return copy_to_user((void __user *)arg, &info, minsz);
-> 
-> -	} else if (cmd == VFIO_DEVICE_GET_REGION_INFO)
-> -		return -EINVAL;
-> +	} else if (cmd == VFIO_DEVICE_GET_REGION_INFO) {
-> +		struct vfio_region_info info;
-> +		struct resource res;
-> 
-> -	else if (cmd == VFIO_DEVICE_GET_IRQ_INFO)
-> -		return -EINVAL;
-> +		minsz = offsetofend(struct vfio_region_info, offset);
-> +
-> +		if (copy_from_user(&info, (void __user *)arg, minsz))
-> +			return -EFAULT;
-> +
-> +		if (info.argsz < minsz)
-> +			return -EINVAL;
-> +
-> +		if(of_address_to_resource(of_node, info.index, &res))
-> +			return -EINVAL;
-> +
-> +		info.offset = res.start;	/* map phys addr with offset */
-> +		info.size = resource_size(&res);
-> +		info.flags = 0;
-> +
-> +		return copy_to_user((void __user *)arg, &info, minsz);
-> +
-> +	} else if (cmd == VFIO_DEVICE_GET_IRQ_INFO) {
-> +		struct vfio_irq_info info;
-> +		struct resource res;
-> +
-> +		minsz = offsetofend(struct vfio_irq_info, count);
-> +
-> +		if (copy_from_user(&info, (void __user *)arg, minsz))
-> +			return -EFAULT;
-> +
-> +		if (info.argsz < minsz)
-> +			return -EINVAL;
-> +
-> +		of_irq_to_resource(of_node, info.index, &res);
+I trust it to leave the system in some state that is safe.  ...but I
+don't trust the firmware of all exynos-based products to have the same
+idea of what "safe" is.  I could imagine some of them disabling the
+watchdog before booting linux by tweaking the settings in the PMU (and
+leaving the reset of the watchdog configured and running) and some of
+them disabling the watchdog by leaving the PMU settings alone and
+turning off the enable bit.  I could also imagine some of them
+actually leaving the watchdog fully configured and running to try to
+catch the case where the kernel crashes at bootup.  I don't know of
+any official rules here, which means that the kernel needs to be
+flexible enough.
 
-Why are we calling the above function if not using res?
 
-> +
-> +		info.flags = 0;
-> +		info.count = 1;
+>> It would be unfortunate if we found we needed to
+>> reach into the watchdog register bank from the PMU driver to "pet" the
+>> watchdog before enabling it.
+>
+> If you find any such need in future, then with the solution I proposed
+> there will be no problem in changing things to be done as you and Leela
+> propose. The other way around would not be that simple, because the
+> introduced binding would still have to be supported and the code touching
+> PMU would have to be kept in watchdog code...
+>
+> However, if you really insist on handling this in watchdog driver,
 
-I believe count here is number of interrupts, and we can have devices with more than 1 interrupt.
+I certainly don't insist.  I have not contributed nearly enough to the
+community to insist on anything.  At this point I'm merely stating my
+opinion.  Feel free to take it into consideration or ignore it.  I
+will not be offended if you choose to ignore my opinion here.  It is
+really up to Leela Krishna and the maintainer of the subsystem if I
+understand correctly.
 
--Bharat
 
-> +
-> +		return copy_to_user((void __user *)arg, &info, minsz);
-> 
-> -	else if (cmd == VFIO_DEVICE_SET_IRQS)
-> +	} else if (cmd == VFIO_DEVICE_SET_IRQS)
->  		return -EINVAL;
-> 
->  	else if (cmd == VFIO_DEVICE_RESET)
-> --
-> 1.8.1.2
-> 
-> _______________________________________________
-> iommu mailing list
-> iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> please
+> consider using something smarter to access the PMU. I believe that device
+> node of watchdog should not represent parts of PMU, which should be
+> represented as a separate node instead.
+
+We've already had this discussion before.  Assuming I'm understanding
+him correctly, Olof weighed in and suggested that he preferred to do
+the simpler thing in this case (AKA: what Leela Krishna is doing):
+
+http://www.spinics.net/lists/devicetree/msg00812.html
+
+-Doug
