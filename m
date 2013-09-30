@@ -1,61 +1,88 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC/PATCH] spi: s3c64xx: Enable Word transfer
-Date: Mon, 30 Sep 2013 16:15:08 +0100
-Message-ID: <20130930151508.GC19304@sirena.org.uk>
-References: <1380031235-4065-1-git-send-email-rajeshwari.s@samsung.com>
- <1555800.vSI857jMHi@amdc1227>
- <CAPs=JDe6XoyqM=iJWgAZF+tU0p_4K=9K4Kx6ANpCcUV9rBd82Q@mail.gmail.com>
- <CAPs=JDeYaE4RZxCpttgrC+9hWbj6pbaNqx7KGtc9di+6OMNTOg@mail.gmail.com>
- <CAPs=JDe1zwqpcTVaq2ZrQCAOAstQBy-4XnjnghGhqTz=9Zfwdg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Fc4/uDQsB6b9dq2q"
+From: Antonios Motakis <a.motakis@virtualopensystems.com>
+Subject: [RFC PATCH v2 0/7] VFIO for device tree based platform devices (work in progress)
+Date: Mon, 30 Sep 2013 17:28:36 +0200
+Message-ID: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:55655 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755685Ab3I3PPM (ORCPT
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:55840 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755347Ab3I3P3M (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 11:15:12 -0400
-Content-Disposition: inline
-In-Reply-To: <CAPs=JDe1zwqpcTVaq2ZrQCAOAstQBy-4XnjnghGhqTz=9Zfwdg@mail.gmail.com>
+	Mon, 30 Sep 2013 11:29:12 -0400
+Received: by mail-wg0-f48.google.com with SMTP id n12so5903530wgh.27
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Sep 2013 08:29:11 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rajeshwari Birje <rajeshwari.birje@gmail.com>
-Cc: Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, dianders@google.com, Tomasz Figa <t.figa@samsung.com>
+To: kvmarm@lists.cs.columbia.edu, alex.williamson@redhat.com
+Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, kvm@vger.kernel.org, agraf@suse.de, B08248@freescale.com, tech@virtualopensystems.com, Antonios Motakis <a.motakis@virtualopensystems.com>
 
+This is a preview of the base work, towards VFIO support on ARM platforms
+with an IOMMU. It forms a base on to which to implement the functionality
+necessary to enable using device tree devices on ARM (and other platforms
+based on device trees) with VFIO.
 
---Fc4/uDQsB6b9dq2q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch series has been subjected to limited testing on the Arndale board
+(with the Exynos 5250 System MMU). More extensive testing will follow as more
+features are implemented.
 
-On Mon, Sep 30, 2013 at 01:32:43PM +0530, Rajeshwari Birje wrote:
+It depends on Cho KyongHo's patch series "iommu/exynos: Fixes and Enhancements
+of System MMU driver with DT", applied on a Linux 3.10.1 kernel, and also my
+own "iommu/exynos: add devices attached to the System MMU to an IOMMU group".
+Those patches are required at least in order to test the proposed module on
+Arndale.
 
-> Please do let me know if you have any comments on this patch.
+The API used is identical to the existing VFIO API that is also used with
+PCI devices. Only devices that include a basic set of IRQs and memory regions
+are targeted; devices with complicated relationships with other devices on the
+device tree are not taken into account at this stage.
 
-Don't top post.  You need to follow Tomasz's advice and send the patch
-to me (using the above address from get_maintainer.pl) after addressing
-the issues he identified.  His advice looked good.
+The following IOCTLs have been found to be working on the Arndale with no
+changes to VFIO:
+ - VFIO_GET_API_VERSION
+ - VFIO_CHECK_EXTENSION
+The TYPE1 fix proposed here enables the following IOCTLs:
+ - VFIO_GROUP_GET_STATUS
+ - VFIO_GROUP_SET_CONTAINER
+ - VFIO_SET_IOMMU
+ - VFIO_IOMMU_GET_INFO
+ - VFIO_IOMMU_MAP_DMA
+The VFIO platform driver proposed here implements the following:
+ - VFIO_GROUP_GET_DEVICE_FD
+ - VFIO_DEVICE_GET_INFO
+ - VFIO_DEVICE_GET_REGION_INFO
+ - VFIO_DEVICE_GET_IRQ_INFO
+In addition, the VFIO platform driver implements the following through
+the VFIO device file descriptor:
+ - MMAPing memory regions to the virtual address space of the VFIO user.
+ - Read / write of memory regions directly through the file descriptor.
 
---Fc4/uDQsB6b9dq2q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+What still needs to be done, includes:
+ - IRQs / IRQFD support.
+ - The API is not currently extended with device tree specific information.
+ - Proper binding of the VFIO_DT driver to devices; currently to test the
+   driver, one has to edit the device tree and add "vfio" to the
+   compatible property. However Linux does not support OF drivers that
+   can be dynamically bound to any device.
+ - More extensive testing with a functioning device doing DMA.
+ - QEMU / KVM support.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+Antonios Motakis (7):
+  VFIO_IOMMU_TYPE1 workaround to build for platform devices
+  Initial skeleton of VFIO support for Device Tree based devices
+  Return info for device and its memory regions and interrupts
+  VFIO: DT: Support MMAP of MMIO regions
+  VFIO: DT: Read and write support for the device fd
+  VFIO: Update documentation for VFIO_IOMMU_TYPE1 driver
+  VFIO: VFIO_PLATFORM: Update documentation for platform specific
+    devices
 
-iQIcBAEBAgAGBQJSSZV5AAoJELSic+t+oim9xzcP/3m2JtRnTloYNsmJASrcif3X
-zYQ1Q+zKuiUU7LXapJUBzwpHAcXDulQu1l2ZxQPPBXMSf3tmzg+V3Gk2902ZeWZT
-4pfOQ1W34YVB925Z7lNlJ6J7V5wESc1PW+pQE8y7V58h0L/ZSTAyMfDJYqQTmtZC
-lJupazTrdaZAOe2TV26yvAiBtMr2ebyRFkUpGr+XW7kZbKfBPHsM2i7S4uNKAOyP
-x+aK66d/7Xm9PDVFCdOl/jbUHmRl6RM+Bns2TgibAgCXBhoKdz52RV9F3v53wkoo
-8gLCuZEebUAcBBfkIHHiIWIqbM5viyWVWi6wQ2YWhY0Cz8vw8fxaILbbNo4JYvB+
-YmPcuPJTxvXhzL/7AqcTRIt5poktuE9ruYiLDFV4JGXMsMIPFqi2NNne+L6mk60F
-5+zp6no2/Tvr0WTgHKM+Bs6LEQCQg0b0DQgsyJVsl+vB8Ox/OsYv86IXCbAfdIJC
-etGxJL9AA4YOj+9q0UCVjjXC4EmFxNDuAtD6iJcqHnAN/+fr/nlfjxCmujvB2Ess
-wl9aQBDoPZIZvC/YhEeTZ/ONGnK+J2hili/j6FYJhlb7IB9SstAKCpdXeGFNHmPJ
-5JUlluII+sZ3SLj2I2/fmflCXKcFPtb92zs480OQzLzbXHEHQNI/2q4u+2IKkPgU
-qiGUYs/89BsKkDvdhP8Z
-=AWks
------END PGP SIGNATURE-----
+ Documentation/vfio.txt          |  25 +++-
+ drivers/vfio/Kconfig            |  13 +-
+ drivers/vfio/Makefile           |   1 +
+ drivers/vfio/vfio_iommu_type1.c |  22 ++-
+ drivers/vfio/vfio_platform.c    | 308 ++++++++++++++++++++++++++++++++++++++++
+ include/uapi/linux/vfio.h       |   1 +
+ 6 files changed, 361 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/vfio/vfio_platform.c
 
---Fc4/uDQsB6b9dq2q--
+-- 
+1.8.1.2
