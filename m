@@ -1,170 +1,178 @@
-From: Rajeshwari Birje <rajeshwari.birje@gmail.com>
-Subject: Re: [RFC/PATCH] spi: s3c64xx: Enable Word transfer
-Date: Mon, 30 Sep 2013 13:32:43 +0530
-Message-ID: <CAPs=JDe1zwqpcTVaq2ZrQCAOAstQBy-4XnjnghGhqTz=9Zfwdg@mail.gmail.com>
-References: <1380031235-4065-1-git-send-email-rajeshwari.s@samsung.com>
-	<1555800.vSI857jMHi@amdc1227>
-	<CAPs=JDe6XoyqM=iJWgAZF+tU0p_4K=9K4Kx6ANpCcUV9rBd82Q@mail.gmail.com>
-	<CAPs=JDeYaE4RZxCpttgrC+9hWbj6pbaNqx7KGtc9di+6OMNTOg@mail.gmail.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v3 3/4] [media] exynos-scaler: Add m2m functionality for
+ the SCALER driver
+Date: Mon, 30 Sep 2013 10:08:00 +0200
+Message-ID: <52493160.5030401@xs4all.nl>
+References: <1378991371-24428-1-git-send-email-shaik.ameer@samsung.com> <1378991371-24428-4-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f52.google.com ([209.85.215.52]:43555 "EHLO
-	mail-la0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753562Ab3I3ICp (ORCPT
+Received: from smtp-vbr10.xs4all.nl ([194.109.24.30]:3207 "EHLO
+	smtp-vbr10.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753229Ab3I3IIT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Sep 2013 04:02:45 -0400
-In-Reply-To: <CAPs=JDeYaE4RZxCpttgrC+9hWbj6pbaNqx7KGtc9di+6OMNTOg@mail.gmail.com>
+	Mon, 30 Sep 2013 04:08:19 -0400
+In-Reply-To: <1378991371-24428-4-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@linaro.org>
-Cc: Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, dianders@google.com, Tomasz Figa <t.figa@samsung.com>
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, s.nawrocki@samsung.com, posciak@google.com, inki.dae@samsung.com, Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-Hi Mark Brown,
+Hi Shaik,
 
-Please do let me know if you have any comments on this patch.
+I have a few questions regarding the selection part...
 
-Regards,
-Rajeshwari  Shinde.
+On 09/12/2013 03:09 PM, Shaik Ameer Basha wrote:
+> This patch adds the Makefile and memory to memory (m2m) interface
+> functionality for the SCALER driver.
+> 
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> ---
+>  drivers/media/platform/Kconfig                    |    8 +
+>  drivers/media/platform/Makefile                   |    1 +
+>  drivers/media/platform/exynos-scaler/Makefile     |    3 +
+>  drivers/media/platform/exynos-scaler/scaler-m2m.c |  781 +++++++++++++++++++++
+>  4 files changed, 793 insertions(+)
+>  create mode 100644 drivers/media/platform/exynos-scaler/Makefile
+>  create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
+> 
 
-On Wed, Sep 25, 2013 at 4:59 PM, Rajeshwari Birje
-<rajeshwari.birje@gmail.com> wrote:
-> Hi Tomasz
->
-> Sorry for the previous mail with incomplete comments, sent the same by mistake.
->
->
-> On Wed, Sep 25, 2013 at 4:33 PM, Rajeshwari Birje
-> <rajeshwari.birje@gmail.com> wrote:
->>
->> Hi Tomasz
->>
->>
->> On Tue, Sep 24, 2013 at 8:29 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->>>
->>> Hi Rajeshwari,
->>>
->>> [Ccing Mark Brown]
->>>
->>> On Tuesday 24 of September 2013 19:30:35 Rajeshwari S Shinde wrote:
->>> > This patch enables word transfer for s3c64xx spi driver.
->>> > User can set bits_per_word to 32 before calling spi_setup,
->>> > which would enable the word transfer mode.
->>> >
->>> > Signed-off-by: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
->>> > ---
->>> >  drivers/spi/spi-s3c64xx.c | 28 ++++++++++++++++++----------
->>> >  1 file changed, 18 insertions(+), 10 deletions(-)
->>> >
->>> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
->>> > index 512b889..893361b 100644
->>> > --- a/drivers/spi/spi-s3c64xx.c
->>> > +++ b/drivers/spi/spi-s3c64xx.c
->>> > @@ -498,6 +498,17 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
->>> >       chcfg = readl(regs + S3C64XX_SPI_CH_CFG);
->>> >       chcfg &= ~S3C64XX_SPI_CH_TXCH_ON;
->>> >
->>> > +     if(sdd->cur_bpw == 32) {
->>> > +             /* For word transfer we need to swap bytes */
->>> > +             u32 swapcfg = (S3C64XX_SPI_SWAP_TX_EN | S3C64XX_SPI_SWAP_TX_BYTE |
->>> > +                             S3C64XX_SPI_SWAP_TX_HALF_WORD |
->>> > +                             S3C64XX_SPI_SWAP_RX_EN |
->>> > +                             S3C64XX_SPI_SWAP_RX_BYTE |
->>> > +                             S3C64XX_SPI_SWAP_RX_HALF_WORD);
->>> > +             writel(swapcfg, regs + S3C64XX_SPI_SWAP_CFG);
->>>
->>> Wasn't this driver already supposed to support 16 and 32 bits per word
->>> transfers? I fail to see any mention in the documentation about the need
->>> to enable these swaps in these cases.
->
-> I get errors when I try 32 bits per word transfers.
-> There is no clear documentation for this swap config register but without this
-> word transfer is not working fine.
->>
->>
->>>
->>> In this case, wouldn't 16 bits per word transfers also need swapping?
->
-> Yes it would need, have not tested for half word transfer.
->>>
->>>
->>> > +     } else
->>> > +             writel(0, regs + S3C64XX_SPI_SWAP_CFG);
->>>
->>> nit: Coding style. If you use braces for one branch, then you should use
->>> them for the other one as well.
->>
->  will correct this.
->>>
->>>
->>> > +
->>> >       if (dma_mode) {
->>> >               chcfg &= ~S3C64XX_SPI_CH_RXCH_ON;
->>> >       } else {
->>> > @@ -905,19 +916,16 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
->>> >               bpw = xfer->bits_per_word;
->>> >               speed = xfer->speed_hz ? : spi->max_speed_hz;
->>> >
->>> > -             if (xfer->len % (bpw / 8)) {
->>> > -                     dev_err(&spi->dev,
->>> > -                             "Xfer length(%u) not a multiple of word size(%u)\n",
->>> > -                             xfer->len, bpw / 8);
->>> > -                     status = -EIO;
->>> > -                     goto out;
->>>
->>> Why is this check removed in this patch?
->
-> I get "Xfer length(%u) not a multiple of word size(%u)\n" error for
-> word transfer
-> ex: when if bpw is 32 and len 74 the above condition fails
->>
->>
->>>
->>> > +             if (speed != sdd->cur_speed) {
->>> > +                     sdd->cur_speed = speed;
->>>
->>> This change does not seem to be related to $subject.
->
-> have split the if condition to accommodate the above error condition.
->>>
->>>
->>> >               }
->>> >
->>> > -             if (bpw != sdd->cur_bpw || speed != sdd->cur_speed) {
->>> > +             if (xfer->len % (bpw / 8))
->>> > +                     sdd->cur_bpw = 8;
->>> > +             else
->>> >                       sdd->cur_bpw = bpw;
->>> > -                     sdd->cur_speed = speed;
->>> > -                     s3c64xx_spi_config(sdd);
->>> > -             }
->>> > +
->>> > +             s3c64xx_spi_config(sdd);
->>>
->>> Why s3c64xx_spi_config() can't be called only if one of the parameters
->>> changed, as it was before this patch?
->
-> Will correct this.
->>>
->>>
->>> Best regards,
->>> Tomasz
->>>
->>> P.S. Please remember to always add respective maintainers on Cc. You can
->>> use scripts/get_maintainer.pl script to quickly get a list of people
->>> potentially interested in a patch.
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-> --
-> Regards,
-> Rajeshwari Shinde
+...
 
+> +
+> +static int scaler_m2m_g_selection(struct file *file, void *fh,
+> +			struct v4l2_selection *s)
+> +{
+> +	struct scaler_frame *frame;
+> +	struct scaler_ctx *ctx = fh_to_ctx(fh);
+> +
+> +	if ((s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
+> +	    (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE))
+> +		return -EINVAL;
+> +
+> +	frame = ctx_get_frame(ctx, s->type);
+> +	if (IS_ERR(frame))
+> +		return PTR_ERR(frame);
+> +
+> +	switch (s->target) {
+> +	case V4L2_SEL_TGT_COMPOSE_DEFAULT:
+> +	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
+> +	case V4L2_SEL_TGT_CROP_BOUNDS:
+> +	case V4L2_SEL_TGT_CROP_DEFAULT:
 
+This can't be right: depending on s->type you either support compose or crop,
+I'm pretty sure you are not supporting both composing and cropping for both
+capture and output directions.
 
--- 
-Regards,
-Rajeshwari Shinde
+What exactly is the functionality you attempt to implement here?
+
+I'm CC-ing Tomasz as well as I discussed the selection API for m2m devices with
+him during the LPC.
+
+> +		s->r.left = 0;
+> +		s->r.top = 0;
+> +		s->r.width = frame->f_width;
+> +		s->r.height = frame->f_height;
+> +		return 0;
+> +
+> +	case V4L2_SEL_TGT_COMPOSE:
+> +	case V4L2_SEL_TGT_CROP:
+
+Ditto.
+
+> +		s->r.left = frame->crop.left;
+> +		s->r.top = frame->crop.top;
+> +		s->r.width = frame->crop.width;
+> +		s->r.height = frame->crop.height;
+> +		return 0;
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int scaler_m2m_s_selection(struct file *file, void *fh,
+> +				struct v4l2_selection *s)
+> +{
+> +	struct scaler_frame *frame;
+> +	struct scaler_ctx *ctx = fh_to_ctx(fh);
+> +	struct v4l2_crop cr;
+> +	struct scaler_variant *variant = ctx->scaler_dev->variant;
+> +	int ret;
+> +
+> +	cr.type = s->type;
+> +	cr.c = s->r;
+> +
+> +	if ((s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
+> +	    (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE))
+> +		return -EINVAL;
+> +
+> +	ret = scaler_try_crop(ctx, &cr);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	if (s->flags & V4L2_SEL_FLAG_LE &&
+> +	    !is_rectangle_enclosed(&cr.c, &s->r))
+> +		return -ERANGE;
+> +
+> +	if (s->flags & V4L2_SEL_FLAG_GE &&
+> +	    !is_rectangle_enclosed(&s->r, &cr.c))
+> +		return -ERANGE;
+> +
+> +	s->r = cr.c;
+> +
+> +	switch (s->target) {
+> +	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
+> +	case V4L2_SEL_TGT_COMPOSE_DEFAULT:
+> +	case V4L2_SEL_TGT_COMPOSE:
+> +		frame = &ctx->s_frame;
+> +		break;
+> +
+> +	case V4L2_SEL_TGT_CROP_BOUNDS:
+> +	case V4L2_SEL_TGT_CROP:
+> +	case V4L2_SEL_TGT_CROP_DEFAULT:
+> +		frame = &ctx->d_frame;
+> +		break;
+
+Similar problems as with g_selection above. Tomasz mentioned to me that the selection
+API is not implemented correctly in m2m Samsung drivers. It looks like this code is
+copied-and-pasted from other drivers, so it seems he was right.
+
+The selection API for m2m devices will be discussed during the upcoming V4L2 mini-summit
+since the API may actually need some adjustments to have it work the way it should.
+
+As requested above, if you can explain the exact functionality you are trying to
+implement here, then I can look over this code carefully and see how it should be done.
+
+Thanks!
+
+	Hans
+
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Check to see if scaling ratio is within supported range */
+> +	if (s->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+> +		ret = scaler_check_scaler_ratio(variant, cr.c.width,
+> +			cr.c.height, ctx->d_frame.crop.width,
+> +			ctx->d_frame.crop.height,
+> +			ctx->ctrls_scaler.rotate->val);
+> +	} else {
+> +		ret = scaler_check_scaler_ratio(variant,
+> +			ctx->s_frame.crop.width,
+> +			ctx->s_frame.crop.height, cr.c.width,
+> +			cr.c.height, ctx->ctrls_scaler.rotate->val);
+> +	}
+> +
+> +	if (ret < 0) {
+> +		scaler_dbg(ctx->scaler_dev, "Out of scaler range");
+> +		return -EINVAL;
+> +	}
+> +
+> +	frame->crop = cr.c;
+> +
+> +	scaler_ctx_state_lock_set(SCALER_PARAMS, ctx);
+> +	return 0;
+> +}
