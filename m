@@ -1,101 +1,50 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: [PATCH 4/5] drm/exynos: Initialize ptn3460 if present
-Date: Tue,  1 Oct 2013 19:40:59 -0400
-Message-ID: <1380670860-17621-5-git-send-email-seanpaul@chromium.org>
-References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com
-Cc: airlied@linux.ie, Sean Paul <seanpaul@chromium.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] PCI: exynos: missing clk_disable_unprepare() on error in
+ exynos_pcie_probe()
+Date: Wed, 02 Oct 2013 08:44:01 +0900
+Message-ID: <003501cebf00$1b57fee0$5207fca0$%han@samsung.com>
+References: <CAPgLHd_RTNxi-OYhmTZ35NttjnAg-gQ_WKHkUQr5ueMhXVLTMg@mail.gmail.com>
+ <000301cebe46$42e86e00$c8b94a00$%han@samsung.com> <524AD2E3.9010808@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-reply-to: <524AD2E3.9010808@gmail.com>
+Content-language: ko
+Sender: linux-pci-owner@vger.kernel.org
+To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Grant Likely' <grant.likely@linaro.org>, 'Rob Herring' <rob.herring@calxeda.com>, 'Seungwon Jeon' <tgih.jun@samsung.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds code to look for the ptn3460 in the device tree file on
-exynos initialization. If ptn node is found, the driver will initialize
-the ptn3460 driver and skip creating a DP connector (since the bridge
-driver will register its own connector).
+On Tuesday, October 01, 2013 10:49 PM, Sylwester Nawrocki wrote:
+> On 10/01/2013 03:33 AM, Jingoo Han wrote:
+> > On Sunday, September 29, 2013 11:29 AM, Wei Yongjun wrote:
+> >>
+> >> From: Wei Yongjun<yongjun_wei@trendmicro.com.cn>
+> >>
+> >> Add the missing clk_disable_unprepare() before return
+> >> from exynos_pcie_probe() in the error handling case.
+> >>
+> >> Signed-off-by: Wei Yongjun<yongjun_wei@trendmicro.com.cn>
+> >
+> > Acked-by: Jingoo Han<jg1.han@samsung.com>
+> >
+> > However, the commit name should be fixed as below:
+> > [PATCH] PCI: exynos: use missing clk_disable_unprepare() on error in exynos_pcie_probe()
+> 
+> Perhaps just:
+> 
+> "PCI: exynos: Add missing clk_disable_unprepare() on error path
+> 
+> How can something that is missing be used ? :)
 
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
----
- drivers/gpu/drm/exynos/exynos_drm_core.c | 44 +++++++++++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+Hi Sylwester Nawrocki,
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_core.c b/drivers/gpu/drm/exynos/exynos_drm_core.c
-index 1bef6dc..9cf4476 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_core.c
-@@ -12,7 +12,9 @@
-  * option) any later version.
-  */
- 
-+#include <linux/of_i2c.h>
- #include <drm/drmP.h>
-+#include <drm/bridge/ptn3460.h>
- #include "exynos_drm_drv.h"
- #include "exynos_drm_encoder.h"
- #include "exynos_drm_connector.h"
-@@ -20,6 +22,40 @@
- 
- static LIST_HEAD(exynos_drm_subdrv_list);
- 
-+struct bridge_init {
-+	struct i2c_client *client;
-+	struct device_node *node;
-+};
-+
-+static bool find_bridge(const char *name, struct bridge_init *bridge)
-+{
-+	bridge->client = NULL;
-+	bridge->node = of_find_node_by_name(NULL, name);
-+	if (!bridge->node)
-+		return false;
-+
-+	bridge->client = of_find_i2c_device_by_node(bridge->node);
-+	if (!bridge->client)
-+		return false;
-+
-+	return true;
-+}
-+
-+/* returns the number of bridges attached */
-+static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
-+		struct drm_encoder *encoder)
-+{
-+	struct bridge_init bridge;
-+	int ret;
-+
-+	if (find_bridge("ptn3460-bridge", &bridge)) {
-+		ret = ptn3460_init(dev, encoder, bridge.client, bridge.node);
-+		if (!ret)
-+			return 1;
-+	}
-+	return 0;
-+}
-+
- static int exynos_drm_create_enc_conn(struct drm_device *dev,
- 					struct exynos_drm_subdrv *subdrv)
- {
-@@ -36,6 +72,13 @@ static int exynos_drm_create_enc_conn(struct drm_device *dev,
- 		DRM_ERROR("failed to create encoder\n");
- 		return -EFAULT;
- 	}
-+	subdrv->encoder = encoder;
-+
-+	if (subdrv->manager->display_ops->type == EXYNOS_DISPLAY_TYPE_LCD) {
-+		ret = exynos_drm_attach_lcd_bridge(dev, encoder);
-+		if (ret)
-+			return 0;
-+	}
- 
- 	/*
- 	 * create and initialize a connector for this sub driver and
-@@ -48,7 +91,6 @@ static int exynos_drm_create_enc_conn(struct drm_device *dev,
- 		goto err_destroy_encoder;
- 	}
- 
--	subdrv->encoder = encoder;
- 	subdrv->connector = connector;
- 
- 	return 0;
--- 
-1.8.4
+OK, I see.
+The following looks good, as you mentioned.
+[PATCH] PCI: exynos: Add missing clk_disable_unprepare() on error path
+
+Thank you for your comment. :-)
+
+Best regards,
+Jingoo Han
