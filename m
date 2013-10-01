@@ -1,184 +1,327 @@
-From: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] i2c: s3c2410 : Add polling mode support
-Date: Tue,  1 Oct 2013 16:03:40 +0530
-Message-ID: <1380623620-31901-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH 1/3] ahci: exynos: add ahci sata support on Exynos platform
+Date: Tue, 1 Oct 2013 18:06:03 +0530
+Message-ID: <524AC1B3.5070203@ti.com>
+References: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com> <1380609183-21430-2-git-send-email-yuvaraj.cd@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380609183-21430-2-git-send-email-yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, aditya.ps-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vasanth Ananthan <vasanthananthan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vasanth Ananthan <vasanth.a-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ks.giri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, aditya.ps-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Vasanth Ananthan <vasanthananthan-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Tuesday 01 October 2013 12:03 PM, Yuvaraj Kumar C D wrote:
+> Exynos5250 contains one Synopsys AHCI SATA controller.The avalaible
+> ahci_platform driver is not sufficient to handle the AHCI PHY and PHY
+> clock related initialization.
+> 
+> This patch adds exynos specific ahci sata driver,contained the exynos
+> specific initialized codes, re-use the generic ahci_platform driver, and
+> keep the generic ahci_platform driver clean as much as possible.
+> 
+> This patch depends on the below patch
+> 	[1].drivers: phy: add generic PHY framework
+> 		by Kishon Vijay Abraham I<kishon-l0cyMroinI0@public.gmane.org>
+> 
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/ata/Kconfig       |    9 ++
+>  drivers/ata/Makefile      |    1 +
+>  drivers/ata/ahci_exynos.c |  226 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 236 insertions(+)
+>  create mode 100644 drivers/ata/ahci_exynos.c
+> 
+> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+> index 4e73772..99b2392 100644
+> --- a/drivers/ata/Kconfig
+> +++ b/drivers/ata/Kconfig
+> @@ -106,6 +106,15 @@ config AHCI_IMX
+>  
+>  	  If unsure, say N.
+>  
+> +config AHCI_EXYNOS
+> +	tristate "Samsung Exynos AHCI SATA support"
+> +	depends on SATA_AHCI_PLATFORM
 
-This patch adds polling mode support for i2c-s3c2410 driver.The
-SATA PHY controller's CMU and TRSV block's are of I2C register
-map in exynos5250.These blocks can be configured using i2c.
+Can we select GENERIC_PHY here?
+> +	help
+> +	  This option enables support for the Samsung's Exynos SoC's
+> +	  onboard AHCI SATA.
+> +
+> +	  If unsure, say N.
+> +
+>  config SATA_FSL
+>  	tristate "Freescale 3.0Gbps SATA support"
+>  	depends on FSL_SOC
+> diff --git a/drivers/ata/Makefile b/drivers/ata/Makefile
+> index 46518c6..0e1f420f 100644
+> --- a/drivers/ata/Makefile
+> +++ b/drivers/ata/Makefile
+> @@ -11,6 +11,7 @@ obj-$(CONFIG_SATA_SIL24)	+= sata_sil24.o
+>  obj-$(CONFIG_SATA_DWC)		+= sata_dwc_460ex.o
+>  obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o libahci.o
+>  obj-$(CONFIG_AHCI_IMX)		+= ahci_imx.o
+> +obj-$(CONFIG_AHCI_EXYNOS)	+= ahci_exynos.o
+>  
+>  # SFF w/ custom DMA
+>  obj-$(CONFIG_PDC_ADMA)		+= pdc_adma.o
+> diff --git a/drivers/ata/ahci_exynos.c b/drivers/ata/ahci_exynos.c
+> new file mode 100644
+> index 0000000..7f0af00
+> --- /dev/null
+> +++ b/drivers/ata/ahci_exynos.c
+> @@ -0,0 +1,226 @@
+> +/*
+> + * Samsung AHCI SATA platform driver
+> + * Copyright 2013 Samsung Electronics Co., Ltd.
+> + *
+> + * based on the AHCI SATA platform driver by Jeff Garzik and Anton Vorontsov
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along with
+> + * this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/i2c.h>
+> +#include <linux/io.h>
+> +#include <linux/ahci_platform.h>
+> +#include <linux/of_device.h>
+> +#include <linux/phy/phy.h>
+> +#include "ahci.h"
+> +
+> +#define MHZ             (1000 * 1000)
+> +
+> +struct exynos_ahci_priv {
+> +	struct platform_device *ahci_pdev;
+> +	struct clk *sclk;
+> +	unsigned int freq;
+> +	struct phy *phy;
+> +};
+> +
+> +static int exynos_sata_init(struct device *dev, void __iomem *mmio)
+> +{
+> +	struct exynos_ahci_priv *priv = dev_get_drvdata(dev->parent);
+> +	int ret;
+> +
+> +	priv->phy = devm_phy_get(dev , "sata-phy");
+                                    ^^
+                             spurious space here
 
-But i2c controller instance on which these block's sits lacks an
-interrupt line.Also the current i2c-s3c2410 driver is only interrupt
-driven, thus a polling mode support is required in the driver for
-supporting this controller. This patch adds this support to the driver.
+phy_get should be called from probe.
+> +	if (IS_ERR(priv->phy))
+> +		return PTR_ERR(priv->phy);
+> +
+> +	ret = phy_init(priv->phy);
+> +	if (ret < 0) {
+> +			dev_err(dev, "failed to init SATA PHY\n");
+single tab is sufficient here and below.
+> +			return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(priv->sclk);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to enable source clk\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_set_rate(priv->sclk, priv->freq * MHZ);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to set clk frequency\n");
+> +		clk_disable_unprepare(priv->sclk);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void exynos_sata_exit(struct device *dev)
+> +{
+> +	struct exynos_ahci_priv *priv = dev_get_drvdata(dev->parent);
+> +	if (!IS_ERR(priv->sclk))
 
-Signed-off-by: Vasanth Ananthan <vasanth.a-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- .../devicetree/bindings/i2c/i2c-s3c2410.txt        |    2 +
- drivers/i2c/busses/i2c-s3c2410.c                   |   68 ++++++++++++++++----
- 2 files changed, 59 insertions(+), 11 deletions(-)
+This error check is not needed. You fail probe if you dont get clock anyways.
+> +		clk_disable_unprepare(priv->sclk);
+> +}
+> +
+> +static int exynos_sata_suspend(struct device *dev)
+> +{
+> +	struct exynos_ahci_priv *priv = dev_get_drvdata(dev->parent);
+> +
+> +	if (!IS_ERR(priv->sclk))
+ditto..
+> +		clk_disable_unprepare(priv->sclk);
+> +	phy_power_off(priv->phy);
+> +	return 0;
+> +}
+> +
+> +static int exynos_sata_resume(struct device *dev)
+> +{
+> +	struct exynos_ahci_priv *priv = dev_get_drvdata(dev->parent);
+> +	phy_power_on(priv->phy);
+> +	exynos_sata_init(dev, NULL);
+> +	return 0;
+> +}
+> +
+> +static struct ahci_platform_data exynos_sata_pdata = {
+> +	.init = exynos_sata_init,
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-index 296eb45..bc928a0 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
-@@ -10,6 +10,8 @@ Required properties:
-           inside HDMIPHY block found on several samsung SoCs
-       (d) "samsung, exynos5440-i2c", for s3c2440-like i2c used
- 	   on EXYNOS5440 which does not need GPIO configuration.
-+      (e) "samsung,exynos5-sata-phy-i2c", for s3c2440-like i2c used as
-+	   a host to SATA PHY controller on an internal bus.
-   - reg: physical base address of the controller and length of memory mapped
-     region.
-   - interrupts: interrupt number to the cpu.
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 3535f3c..2b279d0 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -85,6 +85,7 @@
- #define QUIRK_S3C2440		(1 << 0)
- #define QUIRK_HDMIPHY		(1 << 1)
- #define QUIRK_NO_GPIO		(1 << 2)
-+#define QUIRK_POLL		(1 << 3)
- 
- /* Max time to wait for bus to become idle after a xfer (in us) */
- #define S3C2410_IDLE_TIMEOUT	5000
-@@ -141,6 +142,8 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
- };
- MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
- 
-+static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat);
-+
- #ifdef CONFIG_OF
- static const struct of_device_id s3c24xx_i2c_match[] = {
- 	{ .compatible = "samsung,s3c2410-i2c", .data = (void *)0 },
-@@ -149,6 +152,8 @@ static const struct of_device_id s3c24xx_i2c_match[] = {
- 	  .data = (void *)(QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO) },
- 	{ .compatible = "samsung,exynos5440-i2c",
- 	  .data = (void *)(QUIRK_S3C2440 | QUIRK_NO_GPIO) },
-+	{ .compatible = "samsung,exynos5-sata-phy-i2c",
-+	  .data = (void *)(QUIRK_S3C2440 | QUIRK_POLL | QUIRK_NO_GPIO) },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
-@@ -187,7 +192,8 @@ static inline void s3c24xx_i2c_master_complete(struct s3c24xx_i2c *i2c, int ret)
- 	if (ret)
- 		i2c->msg_idx = ret;
- 
--	wake_up(&i2c->wait);
-+	if (!(i2c->quirks & QUIRK_POLL))
-+		wake_up(&i2c->wait);
- }
- 
- static inline void s3c24xx_i2c_disable_ack(struct s3c24xx_i2c *i2c)
-@@ -224,6 +230,22 @@ static inline void s3c24xx_i2c_enable_irq(struct s3c24xx_i2c *i2c)
- 	writel(tmp | S3C2410_IICCON_IRQEN, i2c->regs + S3C2410_IICCON);
- }
- 
-+static bool is_ack(struct s3c24xx_i2c *i2c)
-+{
-+	u32 time_out = i2c->tx_setup;
-+
-+	while (--time_out) {
-+		if (readl(i2c->regs + S3C2410_IICCON)
-+			& S3C2410_IICCON_IRQPEND) {
-+			if (!(readl(i2c->regs + S3C2410_IICSTAT)
-+				& S3C2410_IICSTAT_LASTBIT))
-+				return true;
-+		}
-+		udelay(time_out);
-+	}
-+
-+	return false;
-+}
- 
- /* s3c24xx_i2c_message_start
-  *
-@@ -268,6 +290,16 @@ static void s3c24xx_i2c_message_start(struct s3c24xx_i2c *i2c,
- 
- 	stat |= S3C2410_IICSTAT_START;
- 	writel(stat, i2c->regs + S3C2410_IICSTAT);
-+
-+	if (i2c->quirks & QUIRK_POLL) {
-+		while ((i2c->msg_num != 0) && is_ack(i2c)) {
-+			i2c_s3c_irq_nextbyte(i2c, stat);
-+			stat = readl(i2c->regs + S3C2410_IICSTAT);
-+
-+			if (stat & S3C2410_IICSTAT_ARBITR)
-+				dev_err(i2c->dev, "deal with arbitration loss\n");
-+		}
-+	}
- }
- 
- static inline void s3c24xx_i2c_stop(struct s3c24xx_i2c *i2c, int ret)
-@@ -675,6 +707,15 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
- 	s3c24xx_i2c_enable_irq(i2c);
- 	s3c24xx_i2c_message_start(i2c, msgs);
- 
-+	if (i2c->quirks & QUIRK_POLL) {
-+		ret = i2c->msg_idx;
-+
-+		if (ret != num)
-+			dev_dbg(i2c->dev, "incomplete xfer (%d)\n", ret);
-+
-+		goto out;
-+	}
-+
- 	timeout = wait_event_timeout(i2c->wait, i2c->msg_num == 0, HZ * 5);
- 
- 	ret = i2c->msg_idx;
-@@ -820,6 +861,9 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
- 	if (div1 == 512)
- 		iiccon |= S3C2410_IICCON_TXDIV_512;
- 
-+	if (i2c->quirks & QUIRK_POLL)
-+		iiccon |= S3C2410_IICCON_SCALE(2);
-+
- 	writel(iiccon, i2c->regs + S3C2410_IICCON);
- 
- 	if (i2c->quirks & QUIRK_S3C2440) {
-@@ -1117,18 +1161,20 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	 * ensure no current IRQs pending
- 	 */
- 
--	i2c->irq = ret = platform_get_irq(pdev, 0);
--	if (ret <= 0) {
--		dev_err(&pdev->dev, "cannot find IRQ\n");
--		return ret;
--	}
-+	if (!(i2c->quirks & QUIRK_POLL)) {
-+		i2c->irq = ret = platform_get_irq(pdev, 0);
-+		if (ret <= 0) {
-+			dev_err(&pdev->dev, "cannot find IRQ\n");
-+			return ret;
-+		}
- 
--	ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
--			       dev_name(&pdev->dev), i2c);
-+		ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
-+				dev_name(&pdev->dev), i2c);
- 
--	if (ret != 0) {
--		dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
--		return ret;
-+		if (ret != 0) {
-+			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
-+			return ret;
-+		}
- 	}
- 
- 	ret = s3c24xx_i2c_register_cpufreq(i2c);
--- 
-1.7.9.5
+Why is exynos_sata_init given as callback and also in exynos_sata_resume?
+> +	.exit = exynos_sata_exit,
+> +	.suspend = exynos_sata_suspend,
+> +	.resume = exynos_sata_resume,
 
+Can't we use this in runtime_suspend/runtime_resume or suspend/resume pm ops?
+> +};
+> +
+> +static const struct of_device_id exynos_ahci_of_match[] = {
+> +	{ .compatible = "samsung,exynos5250-sata-ahci",
+> +		.data = &exynos_sata_pdata},
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos_ahci_of_match);
+> +
+> +static int exynos_sata_parse_dt(struct device_node *np,
+> +				struct exynos_ahci_priv *priv)
+> +{
+> +	if (!np)
+> +		return -EINVAL;
+> +	return of_property_read_u32(np, "samsung,sata-freq",
+> +						&priv->freq);
+> +}
+> +
+> +static int exynos_ahci_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *mem, *irq, res[2];
+> +	const struct of_device_id *of_id;
+> +	const struct ahci_platform_data *pdata = NULL;
+> +	struct exynos_ahci_priv *priv;
+> +	struct device *ahci_dev;
+> +	struct platform_device *ahci_pdev;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv) {
+> +		dev_err(dev, "can't alloc ahci_host_priv\n");
+
+error message not needed. kzalloc will give a dump if it fails.
+> +		return -ENOMEM;
+> +	}
+> +
+> +	ahci_pdev = platform_device_alloc("ahci", -1);
+
+Should be using PLATFORM_DEVID_AUTO unless it is absolutely necessary.
+> +	if (!ahci_pdev)
+> +		return -ENODEV;
+> +
+> +	ahci_dev = &ahci_pdev->dev;
+> +	ahci_dev->parent = dev;
+> +
+> +	ret = exynos_sata_parse_dt(dev->of_node, priv);
+> +	if (ret < 0) {
+> +			dev_err(dev, "failed to parse device tree\n");
+> +			goto err_out;
+> +	}
+> +
+> +	priv->sclk = devm_clk_get(dev, "sclk_sata");
+> +	if (IS_ERR(priv->sclk)) {
+> +		dev_err(dev, "failed to get sclk_sata\n");
+> +		ret = PTR_ERR(priv->sclk);
+> +		goto err_out;
+> +	}
+> +	priv->ahci_pdev = ahci_pdev;
+> +	platform_set_drvdata(pdev, priv);
+> +
+> +	of_id = of_match_device(exynos_ahci_of_match, dev);
+> +	if (of_id) {
+> +		pdata = of_id->data;
+> +	} else {
+> +		ret = -EINVAL;
+> +		goto err_out;
+> +	}
+> +
+> +	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> +	if (!mem || !irq) {
+> +		dev_err(dev, "no mmio/irq resource\n");
+> +		ret = -ENOMEM;
+> +		goto err_out;
+> +	}
+> +
+> +	res[0] = *mem;
+> +	res[1] = *irq;
+> +
+> +	ahci_dev->coherent_dma_mask = DMA_BIT_MASK(32);
+> +	ahci_dev->dma_mask = &ahci_dev->coherent_dma_mask;
+> +	ahci_dev->of_node = dev->of_node;
+> +
+> +	ret = platform_device_add_resources(ahci_pdev, res, 2);
+> +	if (ret)
+> +		goto err_out;
+> +
+> +	ret = platform_device_add_data(ahci_pdev, pdata, sizeof(*pdata));
+> +	if (ret)
+> +		goto err_out;
+> +
+> +	ret = platform_device_add(ahci_pdev);
+> +	if (ret) {
+> +
+> +
+> +err_out:
+> +		platform_set_drvdata(pdev, NULL);
+> +		platform_device_put(ahci_pdev);
+> +		return ret;
+Move this to the end of this function and then goto err_out for better readability.
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int exynos_ahci_remove(struct platform_device *pdev)
+> +{
+> +	struct exynos_ahci_priv *priv = platform_get_drvdata(pdev);
+> +	struct platform_device *ahci_pdev = priv->ahci_pdev;
+> +
+> +	platform_device_unregister(ahci_pdev);
+> +	platform_set_drvdata(pdev, NULL);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver exynos_ahci_driver = {
+> +	.probe = exynos_ahci_probe,
+> +	.remove = exynos_ahci_remove,
+> +	.driver = {
+> +		.name = "sata-exynos",
+> +		.owner = THIS_MODULE,
+> +		.of_match_table = exynos_ahci_of_match,
+> +	},
+> +};
+> +module_platform_driver(exynos_ahci_driver);
+> +
+> +MODULE_DESCRIPTION("Samsung Exynos AHCI SATA platform driver");
+> +MODULE_AUTHOR("Yuvaraj C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
+> +MODULE_LICENSE("GPL");
+
+GPL v2?
+
+Thanks
+Kishon
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
