@@ -1,135 +1,99 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 08/10] pwm-backlight: Use new enable_gpio field
-Date: Tue, 1 Oct 2013 22:49:26 +0200
-Message-ID: <20131001204925.GC9201@ulmo.nvidia.com>
+Subject: Re: [PATCH 09/10] pwm-backlight: Use an optional power supply
+Date: Tue, 1 Oct 2013 22:53:11 +0200
+Message-ID: <20131001205310.GD9201@ulmo.nvidia.com>
 References: <1379972467-11243-1-git-send-email-treding@nvidia.com>
- <1379972467-11243-9-git-send-email-treding@nvidia.com>
- <524B16E8.5080506@wwwdotorg.org>
+ <1379972467-11243-10-git-send-email-treding@nvidia.com>
+ <524B17ED.1080806@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RIYY1s2vRbPFwWeW"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="Qrgsu6vtpU/OV/zm"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f51.google.com ([209.85.214.51]:47243 "EHLO
+	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750881Ab3JAUy5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Oct 2013 16:54:57 -0400
 Content-Disposition: inline
-In-Reply-To: <524B16E8.5080506@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <524B17ED.1080806@wwwdotorg.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>
 Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tony Lindgren <tony@atomide.com>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, openezx-devel@lists.openezx.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
 
---RIYY1s2vRbPFwWeW
+--Qrgsu6vtpU/OV/zm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 01, 2013 at 12:39:36PM -0600, Stephen Warren wrote:
+On Tue, Oct 01, 2013 at 12:43:57PM -0600, Stephen Warren wrote:
 > On 09/23/2013 03:41 PM, Thierry Reding wrote:
-> > Make use of the new enable_gpio field and allow it to be set from DT as
-> > well. Now that all legacy users of platform data have been converted to
-> > initialize this field to an invalid value, it is safe to use the field
-> > from the driver.
+> > Many backlights require a power supply to work properly. This commit
+> > uses a power-supply regulator, if available, to power up and power down
+> > the panel.
 >=20
-> > diff --git a/Documentation/devicetree/bindings/video/backlight/pwm-back=
-light.txt b/Documentation/devicetree/bindings/video/backlight/pwm-backlight=
-=2Etxt
->=20
-> >  Optional properties:
->=20
-> > +  - enable-gpios: a list of GPIOs to enable and disable the backlight
->=20
-> That seems to imply that multiple GPIOs are legal. Was that intended? If
-> not, I would suggest:
->=20
-> - enable-gpios: contains a single GPIO specifier for the GPIO which
-> 		enables/disables the backlight. See [1] for the format.
->=20
-> > =20
-> >  [0]: Documentation/devicetree/bindings/pwm/pwm.txt
-> + [1]: Documentation/devicetree/bindings/gpio/gpio.txt
+> I think that all backlights require a power supply, albeit the supply
+> may not be SW-controllable. Hence, shouldn't the regulator be mandatory
+> in the binding, yet the driver be defensively coded such that if one
+> isn't specified, the driver continues to work?
 
-Yes, that sounds better. Indeed only a single GPIO is supported. Adding
-more than one would require representing the timing between the two and
-that will take us back to where we left off with the power sequences.
+That has already changed in my local version of this patch.
 
 > > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight=
 /pwm_bl.c
 >=20
-> > @@ -51,12 +55,27 @@ static void pwm_backlight_power_on(struct pwm_bl_da=
-ta *pb, int brightness,
-> >  		     pb->lth_brightness;
+> > @@ -253,6 +264,16 @@ static int pwm_backlight_probe(struct platform_dev=
+ice *pdev)
+> >  		}
+> >  	}
 > > =20
-> >  	pwm_config(pb->pwm, duty_cycle, pb->period);
+> > +	pb->power_supply =3D devm_regulator_get_optional(&pdev->dev, "power");
+>=20
+> ... so I think that should be devm_regulator_get(), since the regulator
+> isn't really optional.
+>=20
+> > +	if (IS_ERR(pb->power_supply)) {
+> > +		if (PTR_ERR(pb->power_supply) !=3D -ENODEV) {
+> > +			ret =3D PTR_ERR(pb->power_supply);
+> > +			goto err_gpio;
+> > +		}
 > > +
-> > +	if (gpio_is_valid(pb->enable_gpio)) {
-> > +		if (pb->enable_gpio_flags & PWM_BACKLIGHT_GPIO_ACTIVE_LOW)
-> > +			gpio_set_value(pb->enable_gpio, 0);
-> > +		else
-> > +			gpio_set_value(pb->enable_gpio, 1);
-> > +	}
+> > +		pb->power_supply =3D NULL;
 >=20
-> Feel completely free to ignore this, but when the difference in two
-> code-paths is solely in function parameters, I prefer to calculate the
-> parameter inside the if statement, then call the function outside the
-> conditional code, to highlight the common/different parts:
->=20
-> int value;
->=20
-> /* or an if statement for the next 1 line, if you don't like ?: */
-> value =3D (pb->enable_gpio_flags & PWM_BACKLIGHT_GPIO_ACTIVE_LOW) ? 0 : 1;
-> gpio_set_value((pb->enable_gpio, value);
+> If devm_regulator_get_optional() returns an error value or a valid
+> value, then I don't think that this driver should transmute error values
+> into NULL; NULL might be a perfectly valid regulator value. Related, I
+> think the if (pb->power_supply) tests should be replaced with if
+> (!IS_ERR(pb->power_supply)) instead.
 
-I actually tried that, but it looked cluttered, so I opted for the
-alternative. Not that this matters all that much, because beginning with
-3.13 the GPIO subsystem should be able to handle the active low flag
-internally using the new gpiod_*() API. I plan on converting the driver
-to use that during the next cycle.
-
-> > @@ -148,11 +168,10 @@ static int pwm_backlight_parse_dt(struct device *=
-dev,
->=20
-> > +	data->enable_gpio =3D of_get_named_gpio_flags(node, "enable-gpios", 0,
-> > +						    &flags);
-> > +	if (gpio_is_valid(data->enable_gpio) && (flags & OF_GPIO_ACTIVE_LOW))
-> > +		data->enable_gpio_flags |=3D PWM_BACKLIGHT_GPIO_ACTIVE_LOW;
->=20
-> This doesn't seem to handle deferred probe correctly; I would expect
-> something more like:
->=20
-> 	data->enable_gpio =3D of_get_named_gpio_flags(...);
-> 	if (data->enable_gpio =3D=3D -EPROBE_DEFERRED)
-> 		return data->enable_gpio;
-> 	if (gpio_is_valid(...))
-> 		...
-> 	return 0;
->=20
-> I suppose it's possible that the value filters down to
-> gpio_request_one() and this actually does work out OK, but that feels
-> very accidental/implicit to me.
-
-Yes, I think it does indeed propagate to gpio_request_one(), but you're
-right, it should be caught explicitly.
+All of that is already done in my local tree. This actually turns out to
+work rather smoothly with the new support for optional regulators. The
+regulator core will give you a dummy regulator (assuming it's there
+physically but hasn't been wired up in software) that's always on, so
+the driver doesn't even have to special case it anymore.
 
 Thierry
 
---RIYY1s2vRbPFwWeW
+--Qrgsu6vtpU/OV/zm
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.21 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSSzVVAAoJEN0jrNd/PrOhNh0P/iIzsxuvFEo9B4ZEhLN7DYDh
-vX/9LIfVXFZIwrx8ID8HDPG2LbSnZ+Z4pxVvPdYS99Buci2Qb9q8CtoZW02E7SZd
-7cW++UrdnDShub81afs3M+39IwLfqdAIGjmlbCx19fVEeoZbm53K/bOQkNRGNPke
-N4akydvbuzA71RBIQd2oadwPezmVCo9RuVr1S299VgSp8zYPOGpmpqc9UWpxMnay
-xj20eCy+WHCslBs7AL6rI+lYtQT0sK1XrxuwnjXAsXD5XBRe7PRD+Qy36hJL/KzZ
-OuXeoZMOyE0wG/fDSTQpqn/lvYXvi0wSrf8SLhkU9gHFPHQ28pn91/vf4ow5oeW/
-oYdUNb28xJTDbzsUaemy0SzENRLNK2ri/b70pWNLs/hrQ3fIwenaQI/6rOvdQ1P8
-fGTrRB69fbQGpiUSTh5zWSpNmovhdU9SG98wQvGFswQ9CPYE/uCnofet106dDSQc
-81pho5bZWVuQ9LCITP03b9w6s4DrzEiFBcC6BKXUE19w+Z0/i3GAbTGkkztSyrCu
-y+0YSkXqvwmdComtBV5oIgkSI48+NAyYcpE7SaWdwI+arkru/c1aTvsfNvQyqsXA
-FWZuwO+oe3ArV32vM59i58gJwpkeJ1Hw1ZJeYelIWsFUBRQmNS7tSRRflCDB0uyw
-6UFVAxfserLZmKPQi2Vl
-=4zYP
+iQIcBAEBAgAGBQJSSzY2AAoJEN0jrNd/PrOhbosQAI8JpuY1LGvyC3O93TMjpk2Y
+JicLAk8h13WtQR+o1efNd0XkNJZ3rCX3qSr4aneLVKu0IdppFATnuD4rfd9z+R/u
+ZD9Gb5CUBGKFGJWdi2K7awNQff7XWtCtwGRw0B8DXl1fWe6gCwtnvc41OZgRyJcB
+icoatpV4xjRrIWYx44WS0uyC3vjhuxOIqMM3/nkfGLpzWySq+awyz4qzXrVP/cN9
+Tl6WJtjlozamsq7Gx6ywqUrTiyJdZsPpu8k88f9phDlVMNxJkkehw+uOqqu8C1pt
+GEt+6DbeyPxDkgueeWHI20FJeK1wF26xHtpHaY5iy14veH5rSFqqBgtN9/0ONujQ
+XfudBxC8ZxF/lMpuTDVoo6O3GaplSNvsmO6iyeG79bvuHxpqE0VQYoiB25V6wG01
+mZyuLs5qX2WS8gumzNxJeNJWPO85eKdCPuOd2OKEAMJTQCguruwEfJHuuLUe3tkU
+Kqi2H8pGu7SQhYom/CR9wtfMEz3ypHWBo/qoCC/ZCgaA7Q7iUOJMYfUsJYTvwG/u
+SOqoFWBeicJXLW1qfeUZ6veksTyDu3gtsx6Rqgbd8ca/B5cK2C99zqsZhyvKKA4U
+QNUk0esD29BtCyTVx+UeHNd6YEBPjq9S1wWYGeykx8u7Zxf2onkqAcX13G3ZQ3AD
+eKYYhEPMdTQmC+NOt7Uy
+=9gdD
 -----END PGP SIGNATURE-----
 
---RIYY1s2vRbPFwWeW--
+--Qrgsu6vtpU/OV/zm--
