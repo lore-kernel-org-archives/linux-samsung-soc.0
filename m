@@ -1,74 +1,48 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH V5 1/5] ARM: dts: Add MIPI PHY node to exynos4.dtsi
-Date: Tue, 1 Oct 2013 10:58:08 +0530
-Message-ID: <524A5D68.8080904@ti.com>
-References: <1380396467-29278-1-git-send-email-s.nawrocki@samsung.com> <1380396467-29278-2-git-send-email-s.nawrocki@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH 0/3] Exynos5250 SATA Support
+Date: Tue,  1 Oct 2013 12:03:00 +0530
+Message-ID: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:53323 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751077Ab3JAF2o (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:49119 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750871Ab3JAGdh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Oct 2013 01:28:44 -0400
-In-Reply-To: <1380396467-29278-2-git-send-email-s.nawrocki@samsung.com>
+	Tue, 1 Oct 2013 02:33:37 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, tomi.valkeinen@ti.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: tj@kernel.org, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kishon@ti.com
+Cc: s.nawrocki@samsung.com, ks.giri@samsung.com, aditya.ps@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Hi,
+This series adds the SATA support on exynos5250 SOC.Also it 
+uses generic phy framework patch[1] posted by Kishon Vijay 
+Abraham I. 
+	[1].drivers: phy: add generic PHY framework.
 
+Yuvaraj Kumar C D (3):
+  ahci: exynos: add ahci sata support on Exynos platform
+  Phy: Exynos: Add Exynos5250 sata phy driver
+  ARM: dts: Enable ahci sata and sata phy
 
-On Sunday 29 September 2013 12:57 AM, Sylwester Nawrocki wrote:
-> Add PHY provider node for the MIPI CSIS and MIPI DSIM PHYs.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Acked-by: Felipe Balbi <balbi@ti.com>
+ arch/arm/boot/dts/exynos5250-arndale.dts  |    9 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |    6 +-
+ arch/arm/boot/dts/exynos5250.dtsi         |   21 ++-
+ drivers/ata/Kconfig                       |    9 ++
+ drivers/ata/Makefile                      |    1 +
+ drivers/ata/ahci_exynos.c                 |  226 ++++++++++++++++++++++++++
+ drivers/phy/Kconfig                       |    6 +
+ drivers/phy/Makefile                      |    1 +
+ drivers/phy/exynos/Kconfig                |    5 +
+ drivers/phy/exynos/Makefile               |    5 +
+ drivers/phy/exynos/exynos5250_phy_i2c.c   |   53 ++++++
+ drivers/phy/exynos/sata_phy_exynos5250.c  |  248 +++++++++++++++++++++++++++++
+ drivers/phy/exynos/sata_phy_exynos5250.h  |   33 ++++
+ 13 files changed, 613 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/ata/ahci_exynos.c
+ create mode 100644 drivers/phy/exynos/Kconfig
+ create mode 100644 drivers/phy/exynos/Makefile
+ create mode 100644 drivers/phy/exynos/exynos5250_phy_i2c.c
+ create mode 100644 drivers/phy/exynos/sata_phy_exynos5250.c
+ create mode 100644 drivers/phy/exynos/sata_phy_exynos5250.h
 
-Can this patch be taken through exynos dt tree?
-
-Thanks
-Kishon
-> ---
->  arch/arm/boot/dts/exynos4.dtsi |   10 ++++++++++
->  1 files changed, 10 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index caadc02..a73eeb5 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -49,6 +49,12 @@
->  		reg = <0x10000000 0x100>;
->  	};
->  
-> +	mipi_phy: video-phy@10020710 {
-> +		compatible = "samsung,s5pv210-mipi-video-phy";
-> +		reg = <0x10020710 8>;
-> +		#phy-cells = <1>;
-> +	};
-> +
->  	pd_mfc: mfc-power-domain@10023C40 {
->  		compatible = "samsung,exynos4210-pd";
->  		reg = <0x10023C40 0x20>;
-> @@ -161,6 +167,8 @@
->  			clock-names = "csis", "sclk_csis";
->  			bus-width = <4>;
->  			samsung,power-domain = <&pd_cam>;
-> +			phys = <&mipi_phy 0>;
-> +			phy-names = "csis";
->  			status = "disabled";
->  			#address-cells = <1>;
->  			#size-cells = <0>;
-> @@ -174,6 +182,8 @@
->  			clock-names = "csis", "sclk_csis";
->  			bus-width = <2>;
->  			samsung,power-domain = <&pd_cam>;
-> +			phys = <&mipi_phy 2>;
-> +			phy-names = "csis";
->  			status = "disabled";
->  			#address-cells = <1>;
->  			#size-cells = <0>;
-> 
+-- 
+1.7.9.5
