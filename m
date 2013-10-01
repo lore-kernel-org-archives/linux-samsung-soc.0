@@ -1,131 +1,156 @@
-From: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
-Subject: Re: [RFC PATCH v2 0/7] VFIO for device tree based platform devices
-	(work in progress)
-Date: Tue, 1 Oct 2013 19:13:06 +0200
-Message-ID: <CAG8rG2yqnv=13dO8kJHyfuj10DE2Qqpb3tPhGpfONBoc1g94Pw@mail.gmail.com>
-References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
-	<20131001154733.GC63102@lvm>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 5/6] ARM: EXYNOS: Minor fixes to enable EXYNOS5410 support
+Date: Tue, 01 Oct 2013 19:37:43 +0200
+Message-ID: <2138155.cI0KCUKyhh@amdc1032>
+References: <1380644227-12244-1-git-send-email-v.tyrtov@samsung.com>
+ <1380644227-12244-6-git-send-email-v.tyrtov@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20131001154733.GC63102@lvm>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Christoffer Dall <christoffer.dall-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, KVM devel mailing list <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Yoder Stuart-B08248 <B08248-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, VirtualOpenSystems Technical Team <tech-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvm-arm <kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1380644227-12244-6-git-send-email-v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Naour Romain <romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Oct 1, 2013 at 5:47 PM, Christoffer Dall
-<christoffer.dall-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Mon, Sep 30, 2013 at 05:28:36PM +0200, Antonios Motakis wrote:
->> This is a preview of the base work, towards VFIO support on ARM platforms
->> with an IOMMU. It forms a base on to which to implement the functionality
->> necessary to enable using device tree devices on ARM (and other platforms
->> based on device trees) with VFIO.
->>
->> This patch series has been subjected to limited testing on the Arndale board
->> (with the Exynos 5250 System MMU). More extensive testing will follow as more
->> features are implemented.
->
-> Which device did you access behind the system MMU?  I seem to recall
-> someone telling me that only the GPU is behind the system MMU on
-> Arndale.
 
-Hello Christoffer,
+Hi,
 
-Actually, on the Arndale you will find a few devices behind a SMMU,
-including the MFC (codec) device, etc. I've tested MMAP and DMA
-mapping functions for example, but the implementation is not yet
-complete enough to fully use the device.
+On Tuesday, October 01, 2013 08:17:06 PM Vyacheslav Tyrtov wrote:
+> From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> Configure ARM_NR_BANKS as 16 for EXYNOS SoC.
+> Enable cci_control_port_by_index for ACE_PORT.
+> Add additional irqs for Exynos MCT.
+> Set irq base as 256 for EXYNOS5410 SoC.
 
-You can take a look into arch/arm/boot/dts/exynos5250.dtsi for devices
-with an iommu entry. Unfortunately, the Arndale is not a very well
-documented board with regards to its peripherals...
+It would be better if these changes were separate patches as they touch
+different code areas.
 
-Ideally, we would have access to a device that is simple and
-documented enough, in order to write a trivial user space VFIO driver
-to verify functionality. In practice, our options for validation are
-limited, until we can finally fully assign a device at least.
+> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/Kconfig                  |  2 +-
+>  drivers/bus/arm-cci.c             |  7 +++++++
+>  drivers/clocksource/exynos_mct.c  |  8 +++++++-
+>  drivers/irqchip/exynos-combiner.c | 12 +++++++++++-
+>  4 files changed, 26 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 3f7714d..7f88896 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1080,7 +1080,7 @@ source arch/arm/mm/Kconfig
+>  
+>  config ARM_NR_BANKS
+>  	int
+> -	default 16 if ARCH_EP93XX
+> +	default 16 if ARCH_EP93XX || ARCH_EXYNOS
+>  	default 8
+>  
+>  config IWMMXT
+> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+> index 2009266..f2f5df1 100644
+> --- a/drivers/bus/arm-cci.c
+> +++ b/drivers/bus/arm-cci.c
+> @@ -363,8 +363,15 @@ int notrace __cci_control_port_by_index(u32 port, bool enable)
+>  	 * interface (ie cci_disable_port_by_cpu(); control by general purpose
+>  	 * indexing is therefore disabled for ACE ports.
+>  	 */
+> +
+> +	/*
+> +	 * Using this way to enable cci_port on EXYNOS5410 SoC
+> +	 */
+> +
+> +#ifndef CONFIG_SOC_EXYNOS5410
+>  	if (ports[port].type == ACE_PORT)
+>  		return -EPERM;
+> +#endif
 
-Antonios
+This won't work for multiplatform kernels, please detect EXYNOS5410
+at runtime using the device tree info.
 
->
->>
->> It depends on Cho KyongHo's patch series "iommu/exynos: Fixes and Enhancements
->> of System MMU driver with DT", applied on a Linux 3.10.1 kernel, and also my
->> own "iommu/exynos: add devices attached to the System MMU to an IOMMU group".
->> Those patches are required at least in order to test the proposed module on
->> Arndale.
->>
->> The API used is identical to the existing VFIO API that is also used with
->> PCI devices. Only devices that include a basic set of IRQs and memory regions
->> are targeted; devices with complicated relationships with other devices on the
->> device tree are not taken into account at this stage.
->>
->> The following IOCTLs have been found to be working on the Arndale with no
->> changes to VFIO:
->>  - VFIO_GET_API_VERSION
->>  - VFIO_CHECK_EXTENSION
->> The TYPE1 fix proposed here enables the following IOCTLs:
->>  - VFIO_GROUP_GET_STATUS
->>  - VFIO_GROUP_SET_CONTAINER
->>  - VFIO_SET_IOMMU
->>  - VFIO_IOMMU_GET_INFO
->>  - VFIO_IOMMU_MAP_DMA
->> The VFIO platform driver proposed here implements the following:
->>  - VFIO_GROUP_GET_DEVICE_FD
->>  - VFIO_DEVICE_GET_INFO
->>  - VFIO_DEVICE_GET_REGION_INFO
->>  - VFIO_DEVICE_GET_IRQ_INFO
->> In addition, the VFIO platform driver implements the following through
->> the VFIO device file descriptor:
->>  - MMAPing memory regions to the virtual address space of the VFIO user.
->>  - Read / write of memory regions directly through the file descriptor.
->>
->> What still needs to be done, includes:
->>  - IRQs / IRQFD support.
->>  - The API is not currently extended with device tree specific information.
->>  - Proper binding of the VFIO_DT driver to devices; currently to test the
->>    driver, one has to edit the device tree and add "vfio" to the
->>    compatible property. However Linux does not support OF drivers that
->>    can be dynamically bound to any device.
->>  - More extensive testing with a functioning device doing DMA.
->>  - QEMU / KVM support.
->>
->> Antonios Motakis (7):
->>   VFIO_IOMMU_TYPE1 workaround to build for platform devices
->>   Initial skeleton of VFIO support for Device Tree based devices
->>   Return info for device and its memory regions and interrupts
->>   VFIO: DT: Support MMAP of MMIO regions
->>   VFIO: DT: Read and write support for the device fd
->>   VFIO: Update documentation for VFIO_IOMMU_TYPE1 driver
->>   VFIO: VFIO_PLATFORM: Update documentation for platform specific
->>     devices
->>
->>  Documentation/vfio.txt          |  25 +++-
->>  drivers/vfio/Kconfig            |  13 +-
->>  drivers/vfio/Makefile           |   1 +
->>  drivers/vfio/vfio_iommu_type1.c |  22 ++-
->>  drivers/vfio/vfio_platform.c    | 308 ++++++++++++++++++++++++++++++++++++++++
->>  include/uapi/linux/vfio.h       |   1 +
->>  6 files changed, 361 insertions(+), 9 deletions(-)
->>  create mode 100644 drivers/vfio/vfio_platform.c
->>
->> --
->> 1.8.1.2
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe kvm" in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-> --
-> Christoffer
+>  	cci_port_control(port, enable);
+>  	return 0;
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 5b34768..33884d7 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -71,6 +71,12 @@ enum {
+>  	MCT_L1_IRQ,
+>  	MCT_L2_IRQ,
+>  	MCT_L3_IRQ,
+> +#ifdef CONFIG_ARM_CCI
+> +	MCT_L4_IRQ,
+> +	MCT_L5_IRQ,
+> +	MCT_L6_IRQ,
+> +	MCT_L7_IRQ,
+> +#endif
+>  	MCT_NR_IRQS,
+>  };
+>  
+> @@ -406,7 +412,7 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
+>  	mevt = container_of(evt, struct mct_clock_event_device, evt);
+>  
+>  	mevt->base = EXYNOS4_MCT_L_BASE(cpu);
+> -	sprintf(mevt->name, "mct_tick%d", cpu);
+> +	snprintf(mevt->name, 10, "mct_tick%d", cpu);
+
+What is the rationale behind this change?
+
+Also there is nothing about it in the patch description.
+
+>  	evt->name = mevt->name;
+>  	evt->cpumask = cpumask_of(cpu);
+> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
+> index 868ed40..2e056fc 100644
+> --- a/drivers/irqchip/exynos-combiner.c
+> +++ b/drivers/irqchip/exynos-combiner.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+>  #include <asm/mach/irq.h>
+> +#include <plat/cpu.h>
+>  
+>  #include "irqchip.h"
+>  
+> @@ -66,6 +67,11 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+>  	struct irq_chip *chip = irq_get_chip(irq);
+>  	unsigned int cascade_irq, combiner_irq;
+>  	unsigned long status;
+
+Please add a newline here.
+
+> +	if (unlikely(!chip || !chip_data)) {
+> +		printk_once(KERN_ALERT "%s: Chip not found for IRQ %d\n"
+> +				, __func__, irq);
+> +		return;
+> +	}
+
+There is nothing about this change in the patch description.
+
+>  	chained_irq_enter(chip, desc);
+>  
+> @@ -226,7 +232,11 @@ static int __init combiner_of_init(struct device_node *np,
+>  	 * get their IRQ from DT, remove this in order to get dynamic
+>  	 * allocation.
+>  	 */
+> -	irq_base = 160;
+> +
+> +	if (soc_is_exynos5410())
+> +		irq_base = 256;
+> +	else
+> +		irq_base = 160;
+>  
+>  	combiner_init(combiner_base, np, max_nr, irq_base);
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
