@@ -1,148 +1,36 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Minor fixes to enable EXYNOS5410 support
-Date: Tue, 01 Oct 2013 19:37:43 +0200
-Message-ID: <2138155.cI0KCUKyhh@amdc1032>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 6/6] ARM: smdk5410_defconfig: add defconfig for smdk5410
+Date: Tue, 01 Oct 2013 19:48:04 +0200
+Message-ID: <1556357.Ys4C5Q5WGD@amdc1032>
 References: <1380644227-12244-1-git-send-email-v.tyrtov@samsung.com>
- <1380644227-12244-6-git-send-email-v.tyrtov@samsung.com>
+ <1380644227-12244-7-git-send-email-v.tyrtov@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7Bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1380644227-12244-6-git-send-email-v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Naour Romain <romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <1380644227-12244-7-git-send-email-v.tyrtov@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
 Hi,
 
-On Tuesday, October 01, 2013 08:17:06 PM Vyacheslav Tyrtov wrote:
-> From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Tuesday, October 01, 2013 08:17:07 PM Vyacheslav Tyrtov wrote:
+> From: Tarek Dakhran <t.dakhran@samsung.com>
 > 
-> Configure ARM_NR_BANKS as 16 for EXYNOS SoC.
-> Enable cci_control_port_by_index for ACE_PORT.
-> Add additional irqs for Exynos MCT.
-> Set irq base as 256 for EXYNOS5410 SoC.
+> Since current exynos_defconfig cannot support for EXYNOS5410 because
+> of big.LITTLE architecture, MCPM and ARM_CCI bus there added
 
-It would be better if these changes were separate patches as they touch
-different code areas.
+CONFIG_MCPM and CONFIG_ARM_CCI are optional features that won't be used
+unless explicitly enabled in the device tree. CONFIG_BIG_LITTLE is not
+enabled in the new defconfig at all (I also believe that it is optional
+or at least can be made optional).
 
-> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/Kconfig                  |  2 +-
->  drivers/bus/arm-cci.c             |  7 +++++++
->  drivers/clocksource/exynos_mct.c  |  8 +++++++-
->  drivers/irqchip/exynos-combiner.c | 12 +++++++++++-
->  4 files changed, 26 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 3f7714d..7f88896 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -1080,7 +1080,7 @@ source arch/arm/mm/Kconfig
->  
->  config ARM_NR_BANKS
->  	int
-> -	default 16 if ARCH_EP93XX
-> +	default 16 if ARCH_EP93XX || ARCH_EXYNOS
->  	default 8
->  
->  config IWMMXT
-> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
-> index 2009266..f2f5df1 100644
-> --- a/drivers/bus/arm-cci.c
-> +++ b/drivers/bus/arm-cci.c
-> @@ -363,8 +363,15 @@ int notrace __cci_control_port_by_index(u32 port, bool enable)
->  	 * interface (ie cci_disable_port_by_cpu(); control by general purpose
->  	 * indexing is therefore disabled for ACE ports.
->  	 */
-> +
-> +	/*
-> +	 * Using this way to enable cci_port on EXYNOS5410 SoC
-> +	 */
-> +
-> +#ifndef CONFIG_SOC_EXYNOS5410
->  	if (ports[port].type == ACE_PORT)
->  		return -EPERM;
-> +#endif
-
-This won't work for multiplatform kernels, please detect EXYNOS5410
-at runtime using the device tree info.
-
->  	cci_port_control(port, enable);
->  	return 0;
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 5b34768..33884d7 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -71,6 +71,12 @@ enum {
->  	MCT_L1_IRQ,
->  	MCT_L2_IRQ,
->  	MCT_L3_IRQ,
-> +#ifdef CONFIG_ARM_CCI
-> +	MCT_L4_IRQ,
-> +	MCT_L5_IRQ,
-> +	MCT_L6_IRQ,
-> +	MCT_L7_IRQ,
-> +#endif
->  	MCT_NR_IRQS,
->  };
->  
-> @@ -406,7 +412,7 @@ static int exynos4_local_timer_setup(struct clock_event_device *evt)
->  	mevt = container_of(evt, struct mct_clock_event_device, evt);
->  
->  	mevt->base = EXYNOS4_MCT_L_BASE(cpu);
-> -	sprintf(mevt->name, "mct_tick%d", cpu);
-> +	snprintf(mevt->name, 10, "mct_tick%d", cpu);
-
-What is the rationale behind this change?
-
-Also there is nothing about it in the patch description.
-
->  	evt->name = mevt->name;
->  	evt->cpumask = cpumask_of(cpu);
-> diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos-combiner.c
-> index 868ed40..2e056fc 100644
-> --- a/drivers/irqchip/exynos-combiner.c
-> +++ b/drivers/irqchip/exynos-combiner.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
->  #include <asm/mach/irq.h>
-> +#include <plat/cpu.h>
->  
->  #include "irqchip.h"
->  
-> @@ -66,6 +67,11 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
->  	struct irq_chip *chip = irq_get_chip(irq);
->  	unsigned int cascade_irq, combiner_irq;
->  	unsigned long status;
-
-Please add a newline here.
-
-> +	if (unlikely(!chip || !chip_data)) {
-> +		printk_once(KERN_ALERT "%s: Chip not found for IRQ %d\n"
-> +				, __func__, irq);
-> +		return;
-> +	}
-
-There is nothing about this change in the patch description.
-
->  	chained_irq_enter(chip, desc);
->  
-> @@ -226,7 +232,11 @@ static int __init combiner_of_init(struct device_node *np,
->  	 * get their IRQ from DT, remove this in order to get dynamic
->  	 * allocation.
->  	 */
-> -	irq_base = 160;
-> +
-> +	if (soc_is_exynos5410())
-> +		irq_base = 256;
-> +	else
-> +		irq_base = 160;
->  
->  	combiner_init(combiner_base, np, max_nr, irq_base);
+Therefore please modify existing exynos_defconfig to support EXYNOS5410
+instead of adding the new defconfig. Having the common defconfig is really
+important from the long-term maintainance POV.
 
 Best regards,
 --
@@ -150,7 +38,155 @@ Bartlomiej Zolnierkiewicz
 Samsung R&D Institute Poland
 Samsung Electronics
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> smdk5410_defconfig which is tested on SMDK5410 board
+> for all 8 cpu running at the same time.
+> This defconfig enables ARM_CCI, MCPM, EDCS.
+> 
+> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
+> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+> ---
+>  arch/arm/configs/smdk5410_defconfig | 134 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 134 insertions(+)
+>  create mode 100644 arch/arm/configs/smdk5410_defconfig
+> 
+> diff --git a/arch/arm/configs/smdk5410_defconfig b/arch/arm/configs/smdk5410_defconfig
+> new file mode 100644
+> index 0000000..1c19594
+> --- /dev/null
+> +++ b/arch/arm/configs/smdk5410_defconfig
+> @@ -0,0 +1,134 @@
+> +CONFIG_SYSVIPC=y
+> +CONFIG_NO_HZ=y
+> +CONFIG_HIGH_RES_TIMERS=y
+> +CONFIG_BLK_DEV_INITRD=y
+> +CONFIG_KALLSYMS_ALL=y
+> +CONFIG_MODULES=y
+> +CONFIG_MODULE_UNLOAD=y
+> +CONFIG_PARTITION_ADVANCED=y
+> +CONFIG_ARCH_EXYNOS=y
+> +CONFIG_S3C_LOWLEVEL_UART_PORT=3
+> +CONFIG_S3C24XX_PWM=y
+> +CONFIG_ARCH_EXYNOS5=y
+> +CONFIG_SMP=y
+> +CONFIG_NR_CPUS=8
+> +CONFIG_PREEMPT=y
+> +CONFIG_AEABI=y
+> +CONFIG_HIGHMEM=y
+> +CONFIG_ZBOOT_ROM_TEXT=0x0
+> +CONFIG_ZBOOT_ROM_BSS=0x0
+> +CONFIG_ARM_APPENDED_DTB=y
+> +CONFIG_ARM_ATAG_DTB_COMPAT=y
+> +CONFIG_CMDLINE="console=ttySAC2,115200"
+> +CONFIG_VFP=y
+> +CONFIG_NEON=y
+> +CONFIG_NET=y
+> +CONFIG_PACKET=y
+> +CONFIG_UNIX=y
+> +CONFIG_NET_KEY=y
+> +CONFIG_INET=y
+> +CONFIG_RFKILL_REGULATOR=y
+> +CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
+> +CONFIG_DEVTMPFS=y
+> +CONFIG_DEVTMPFS_MOUNT=y
+> +CONFIG_PROC_DEVICETREE=y
+> +CONFIG_BLK_DEV_LOOP=y
+> +CONFIG_BLK_DEV_CRYPTOLOOP=y
+> +CONFIG_BLK_DEV_RAM=y
+> +CONFIG_BLK_DEV_RAM_SIZE=8192
+> +CONFIG_SCSI=y
+> +CONFIG_BLK_DEV_SD=y
+> +CONFIG_CHR_DEV_SG=y
+> +CONFIG_MD=y
+> +CONFIG_BLK_DEV_DM=y
+> +CONFIG_DM_CRYPT=m
+> +CONFIG_NETDEVICES=y
+> +CONFIG_SMSC911X=y
+> +CONFIG_USB_USBNET=y
+> +CONFIG_USB_NET_SMSC75XX=y
+> +CONFIG_USB_NET_SMSC95XX=y
+> +CONFIG_INPUT_EVDEV=y
+> +CONFIG_KEYBOARD_GPIO=y
+> +CONFIG_KEYBOARD_CROS_EC=y
+> +# CONFIG_MOUSE_PS2 is not set
+> +CONFIG_MOUSE_CYAPA=y
+> +CONFIG_INPUT_TOUCHSCREEN=y
+> +CONFIG_SERIAL_8250=y
+> +CONFIG_SERIAL_SAMSUNG=y
+> +CONFIG_SERIAL_SAMSUNG_CONSOLE=y
+> +CONFIG_SERIAL_OF_PLATFORM=y
+> +CONFIG_HW_RANDOM=y
+> +CONFIG_TCG_TPM=y
+> +CONFIG_TCG_TIS_I2C_INFINEON=y
+> +CONFIG_I2C=y
+> +CONFIG_I2C_MUX=y
+> +CONFIG_I2C_ARB_GPIO_CHALLENGE=y
+> +CONFIG_I2C_S3C2410=y
+> +CONFIG_DEBUG_GPIO=y
+> +# CONFIG_HWMON is not set
+> +CONFIG_MFD_CROS_EC=y
+> +CONFIG_MFD_CROS_EC_I2C=y
+> +CONFIG_MFD_MAX77686=y
+> +CONFIG_MFD_MAX8997=y
+> +CONFIG_MFD_SEC_CORE=y
+> +CONFIG_MFD_TPS65090=y
+> +CONFIG_REGULATOR=y
+> +CONFIG_REGULATOR_FIXED_VOLTAGE=y
+> +CONFIG_REGULATOR_GPIO=y
+> +CONFIG_REGULATOR_MAX8997=y
+> +CONFIG_REGULATOR_MAX77686=y
+> +CONFIG_REGULATOR_S5M8767=y
+> +CONFIG_REGULATOR_TPS65090=y
+> +CONFIG_FB=y
+> +CONFIG_FB_MODE_HELPERS=y
+> +CONFIG_FB_SIMPLE=y
+> +CONFIG_EXYNOS_VIDEO=y
+> +CONFIG_EXYNOS_MIPI_DSI=y
+> +CONFIG_EXYNOS_DP=y
+> +CONFIG_FRAMEBUFFER_CONSOLE=y
+> +CONFIG_FONTS=y
+> +CONFIG_FONT_7x14=y
+> +CONFIG_LOGO=y
+> +CONFIG_USB=y
+> +CONFIG_USB_EHCI_HCD=y
+> +CONFIG_USB_EHCI_S5P=y
+> +CONFIG_USB_STORAGE=y
+> +CONFIG_USB_DWC3=y
+> +CONFIG_USB_PHY=y
+> +CONFIG_SAMSUNG_USB2PHY=y
+> +CONFIG_SAMSUNG_USB3PHY=y
+> +CONFIG_MMC=y
+> +CONFIG_MMC_SDHCI=y
+> +CONFIG_MMC_SDHCI_S3C=y
+> +CONFIG_MMC_DW=y
+> +CONFIG_MMC_DW_IDMAC=y
+> +CONFIG_MMC_DW_EXYNOS=y
+> +CONFIG_RTC_CLASS=y
+> +CONFIG_RTC_DRV_S3C=y
+> +CONFIG_COMMON_CLK_MAX77686=y
+> +CONFIG_EXT2_FS=y
+> +CONFIG_EXT3_FS=y
+> +CONFIG_EXT4_FS=y
+> +CONFIG_MSDOS_FS=y
+> +CONFIG_VFAT_FS=y
+> +CONFIG_TMPFS=y
+> +CONFIG_TMPFS_POSIX_ACL=y
+> +CONFIG_CRAMFS=y
+> +CONFIG_ROMFS_FS=y
+> +CONFIG_NLS_CODEPAGE_437=y
+> +CONFIG_NLS_ASCII=y
+> +CONFIG_NLS_ISO8859_1=y
+> +CONFIG_PRINTK_TIME=y
+> +CONFIG_MAGIC_SYSRQ=y
+> +CONFIG_DEBUG_KERNEL=y
+> +CONFIG_DETECT_HUNG_TASK=y
+> +CONFIG_DEBUG_RT_MUTEXES=y
+> +CONFIG_DEBUG_SPINLOCK=y
+> +CONFIG_DEBUG_MUTEXES=y
+> +CONFIG_DEBUG_INFO=y
+> +CONFIG_DEBUG_USER=y
+> +CONFIG_CRYPTO_SHA256=y
+> +CONFIG_CRC_CCITT=y
+> +CONFIG_ARM_CCI=y
+> +CONFIG_MCPM=y
+> +CONFIG_CMDLINE_FORCE=y
+
