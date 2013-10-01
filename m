@@ -1,184 +1,57 @@
-From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 3/6] thermal: exynos: Provide initial setting for TMU's
- test MUX address at Exynos4412
-Date: Tue, 01 Oct 2013 08:55:02 +0200
-Message-ID: <20131001085502.187f54ab@amdc308.digital.local>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
- <1380010102-25817-4-git-send-email-l.majewski@samsung.com>
- <CADGdYn6a1jSR17v0N6kVFZFsn71FUbXJHjeSya-xy_wX9GtYpg@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/3] Phy: Exynos: Add Exynos5250 sata phy driver
+Date: Tue, 1 Oct 2013 13:45:04 +0530
+Message-ID: <CAK9yfHzpiU+ugak6escnn2ioAq8yvTjK7RzrQaUrL7cwwq_EMA@mail.gmail.com>
+References: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1380609183-21430-3-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CADGdYn6a1jSR17v0N6kVFZFsn71FUbXJHjeSya-xy_wX9GtYpg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: amit daniel kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <eduardo.valentin-l0cyMroinI0@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Myungjoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:58284 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751716Ab3JAIPG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Oct 2013 04:15:06 -0400
+Received: by mail-oa0-f53.google.com with SMTP id i7so4471422oag.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Oct 2013 01:15:05 -0700 (PDT)
+In-Reply-To: <1380609183-21430-3-git-send-email-yuvaraj.cd@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: tj@kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-ide@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, "ABRAHAM, KISHON VIJAY" <kishon@ti.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, GIRISH K S <ks.giri@samsung.com>, "aditya.ps" <aditya.ps@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Vasanth Ananthan <vasanth.a@samsung.com>
 
-Hi Amit,
+Hi Yuvaraj,
 
-> Hi,
-> 
-> On Tue, Sep 24, 2013 at 1:38 PM, Lukasz Majewski
-> <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> > The commit d0a0ce3e77c795258d47f9163e92d5031d0c5221 ("thermal:
-> > exynos: Add missing definations and code cleanup") has removed
-> > setting of test MUX address value at TMU configuration setting.
-> >
-> > This field is not present on Exynos4210 and Exynos5 SoCs. However
-> > on Exynos4412 SoC it is required to set this field after reset
-> > because without it TMU shows maximal available temperature, which
-> > causes immediate platform shutdown.
-> Right In 5250 this field is not defined so didn't catch this. The
-> changes looks fine but I have a minor comment that if this field is
-> defined in 4412 in detail then you can add a field entry in
-> exynos_tmu_registers with proper name and populate this field. 
+On 1 October 2013 12:03, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
 
-It seems, that only at Exynos4412 (and Exynos4212) this field is valid.
-When I extent exynos_tmu_registers structure, then all other Samsung
-SoCs will be aware of it.
-Define with explicit EXYNOS4412 seems more readable. 
+> +static int exynos_sata_i2c_remove(struct i2c_client *client)
+> +{
+> +       dev_info(&client->adapter->dev,
+> +               "detached %s from i2c adapter successfully\n",
+> +               client->name);
+> +
+> +       return 0;
+> +}
+> +
 
+Since this function does not do anything, this could be removed.
 
-Also at exynos_tmu_control() function we use constructs like:
-data->base + EXYNOS_TMU_REG_CONTROL, not data->base + regs->tmu_ctrl.
+> +static const struct i2c_device_id phy_i2c_device_match[] = {
+> +       { "sata-phy-i2c", 0 },
+> +};
+> +MODULE_DEVICE_TABLE(of, phy_i2c_device_match);
+> +
+> +struct i2c_driver sataphy_i2c_driver = {
+> +       .probe    = exynos_sata_i2c_probe,
+> +       .id_table = phy_i2c_device_match,
+> +       .remove         = exynos_sata_i2c_remove,
+> +       .driver   = {
+> +               .name = "sata-phy-i2c",
+> +               .owner = THIS_MODULE,
+> +               .of_match_table = (void *)phy_i2c_device_match,
 
-> The
-> good thing is that in 5250 also this field is reserved and the default
-> value is 0x6 so same TMU_DATA can be used for 5250 and 4412.
-
-I'm not keen to this kind of hacks. This field is only valid on
-Exynos4x12. And for Exynos5250 is reserved, which means that we shall
-not touch it.
-
-> The main
-> idea of this suggestion is to reduce the soc checks in the driver.
-
-Correct me if I'm wrong, but this MUX_ADDR initialization is performed
-at exynos_tmu_control() which is called at probe and thermal power
-management functions. Therefore, it seems that checking if SoC ==
-Exynos4412 there is not an overkill.
-
-If you don't mind I would leave those patches as they are and kindly
-ask thermal maintainers for pulling them to v3.12.
-
-> 
-> Thanks,
-> Amit Daniel
-> >
-> > Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c      |    3 +++
-> >  drivers/thermal/samsung/exynos_tmu_data.h |    4 ++++
-> >  2 files changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> > b/drivers/thermal/samsung/exynos_tmu.c index a858cc4..21b89e4 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -317,6 +317,9 @@ static void exynos_tmu_control(struct
-> > platform_device *pdev, bool on)
-> >
-> >         con = readl(data->base + reg->tmu_ctrl);
-> >
-> > +       if (pdata->type == SOC_ARCH_EXYNOS4412)
-> > +               con |= (EXYNOS4412_MUX_ADDR_VALUE <<
-> > EXYNOS4412_MUX_ADDR_SHIFT); +
-> >         if (pdata->reference_voltage) {
-> >                 con &= ~(reg->buf_vref_sel_mask <<
-> > reg->buf_vref_sel_shift); con |= pdata->reference_voltage <<
-> > reg->buf_vref_sel_shift; diff --git
-> > a/drivers/thermal/samsung/exynos_tmu_data.h
-> > b/drivers/thermal/samsung/exynos_tmu_data.h index b130b1e..a1ea19d
-> > 100644 --- a/drivers/thermal/samsung/exynos_tmu_data.h +++
-> > b/drivers/thermal/samsung/exynos_tmu_data.h @@ -95,6 +95,10 @@
-> >
-> >  #define EXYNOS_MAX_TRIGGER_PER_REG     4
-> >
-> > +/* Exynos4412 specific */
-> > +#define EXYNOS4412_MUX_ADDR_VALUE          6
-> > +#define EXYNOS4412_MUX_ADDR_SHIFT          20
-> > +
-> >  /*exynos5440 specific registers*/
-> >  #define EXYNOS5440_TMU_S0_7_TRIM               0x000
-> >  #define EXYNOS5440_TMU_S0_7_CTRL               0x020
-> > --
-> > 1.7.10.4
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-pm"
-> > in the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> On Tue, Sep 24, 2013 at 1:38 PM, Lukasz Majewski
-> <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> > The commit d0a0ce3e77c795258d47f9163e92d5031d0c5221 ("thermal:
-> > exynos: Add missing definations and code cleanup") has removed
-> > setting of test MUX address value at TMU configuration setting.
-> >
-> > This field is not present on Exynos4210 and Exynos5 SoCs. However
-> > on Exynos4412 SoC it is required to set this field after reset
-> > because without it TMU shows maximal available temperature, which
-> > causes immediate platform shutdown.
-> >
-> > Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c      |    3 +++
-> >  drivers/thermal/samsung/exynos_tmu_data.h |    4 ++++
-> >  2 files changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> > b/drivers/thermal/samsung/exynos_tmu.c index a858cc4..21b89e4 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -317,6 +317,9 @@ static void exynos_tmu_control(struct
-> > platform_device *pdev, bool on)
-> >
-> >         con = readl(data->base + reg->tmu_ctrl);
-> >
-> > +       if (pdata->type == SOC_ARCH_EXYNOS4412)
-> > +               con |= (EXYNOS4412_MUX_ADDR_VALUE <<
-> > EXYNOS4412_MUX_ADDR_SHIFT); +
-> >         if (pdata->reference_voltage) {
-> >                 con &= ~(reg->buf_vref_sel_mask <<
-> > reg->buf_vref_sel_shift); con |= pdata->reference_voltage <<
-> > reg->buf_vref_sel_shift; diff --git
-> > a/drivers/thermal/samsung/exynos_tmu_data.h
-> > b/drivers/thermal/samsung/exynos_tmu_data.h index b130b1e..a1ea19d
-> > 100644 --- a/drivers/thermal/samsung/exynos_tmu_data.h +++
-> > b/drivers/thermal/samsung/exynos_tmu_data.h @@ -95,6 +95,10 @@
-> >
-> >  #define EXYNOS_MAX_TRIGGER_PER_REG     4
-> >
-> > +/* Exynos4412 specific */
-> > +#define EXYNOS4412_MUX_ADDR_VALUE          6
-> > +#define EXYNOS4412_MUX_ADDR_SHIFT          20
-> > +
-> >  /*exynos5440 specific registers*/
-> >  #define EXYNOS5440_TMU_S0_7_TRIM               0x000
-> >  #define EXYNOS5440_TMU_S0_7_CTRL               0x020
-> > --
-> > 1.7.10.4
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-pm"
-> > in the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+type casting is not required.
 
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+With warm regards,
+Sachin
