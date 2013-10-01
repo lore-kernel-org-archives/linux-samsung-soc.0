@@ -1,90 +1,40 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 10/10] pwm-backlight: Allow backlight to remain disabled
- on boot
-Date: Tue, 01 Oct 2013 12:50:51 -0600
-Message-ID: <524B198B.3010609@wwwdotorg.org>
-References: <1379972467-11243-1-git-send-email-treding@nvidia.com> <1379972467-11243-11-git-send-email-treding@nvidia.com>
+From: Yoder Stuart-B08248 <B08248@freescale.com>
+Subject: RE: [PATCH 1/7] VFIO_IOMMU_TYPE1 workaround to build for platform
+ devices
+Date: Tue, 1 Oct 2013 19:21:54 +0000
+Message-ID: <9F6FE96B71CF29479FF1CDC8046E15036D37D9@039-SN1MPN1-003.039d.mgd.msft.net>
+References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
+	 <1380554923-17818-2-git-send-email-a.motakis@virtualopensystems.com>
+ <1380562782.2674.178.camel@ul30vt.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1379972467-11243-11-git-send-email-treding@nvidia.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tony Lindgren <tony@atomide.com>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, openezx-devel@lists.openezx.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from co9ehsobe003.messaging.microsoft.com ([207.46.163.26]:11277
+	"EHLO co9outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751223Ab3JATWC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 1 Oct 2013 15:22:02 -0400
+In-Reply-To: <1380562782.2674.178.camel@ul30vt.home>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alex Williamson <alex.williamson@redhat.com>, Antonios Motakis <a.motakis@virtualopensystems.com>
+Cc: "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "agraf@suse.de" <agraf@suse.de>, "tech@virtualopensystems.com" <tech@virtualopensystems.com>, "'kim.phillips@linaro.org'" <kim.phillips@linaro.org>
 
-On 09/23/2013 03:41 PM, Thierry Reding wrote:
-> The default for backlight devices is to be enabled immediately when
-> registering with the backlight core. This can be useful for setups that
-> use a simple framebuffer device and where the backlight cannot otherwise
-> be hooked up to the panel.
-> 
-> However, when dealing with more complex setups, such as those of recent
-> ARM SoCs, this can be problematic. Since the backlight is usually setup
-> separately from the display controller, the probe order is not usually
-> deterministic. That can lead to situations where the backlight will be
-> powered up and the panel will show an uninitialized framebuffer.
-> 
-> Furthermore, subsystems such as DRM have advanced functionality to set
-> the power mode of a panel. In order to allow such setups to power up the
-> panel at exactly the right moment, a way is needed to prevent the
-> backlight core from powering the backlight up automatically when it is
-> registered.
-> 
-> This commit introduces a new boot_off field in the platform data (and
-> also implements getting the same information from device tree). When set
-> the initial backlight power mode will be set to "off".
-
-> diff --git a/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt b/Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt
-
-> +  - backlight-boot-off: keep the backlight disabled on boot
-
-A few thoughts:
-
-1) Does this property indicate that:
-
-a) The current state of the backlight at boot. In which case, this will
-need bootloader involvement to modify the value in the DT at boot time
-based on whether the bootloader turned on the backlight:-(
-
-b) That the driver should not turn on the backlight immediately? That
-seems to describe driver behaviour more than HW. Is it appropriate to
-put that into DT?
-
-Your suggestion to make the backlight not turn on by default might be a
-better fix?
-
-2) Should the driver instead attempt to read the current state of the
-GPIO output to determine whether the backlight is on? This may not be
-possible on all HW.
-
-3) Doesn't the following code in probe() (added in a previous patch)
-need to be updated?
-
-> +	if (gpio_is_valid(pb->enable_gpio)) {
-> +		if (pb->enable_gpio_flags & PWM_BACKLIGHT_GPIO_ACTIVE_LOW)
-> +			gpio_set_value(pb->enable_gpio, 0);
-> +		else
-> +			gpio_set_value(pb->enable_gpio, 1);
-> +	}
-
-... That assumes that the backlight is on at boot, and hence presumably
-after this patch still always turns on the backlight, only to turn it
-off very quickly once the following code in this patch executes:
-
-(and perhaps we also need to avoid turning the backlight off then on if
-it was already on at boot)
-
-> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-
-> @@ -318,6 +320,12 @@ static int pwm_backlight_probe(struct platform_device *pdev)
->  	}
->  
->  	bl->props.brightness = data->dft_brightness;
-> +
-> +	if (data->boot_off)
-> +		bl->props.power = FB_BLANK_POWERDOWN;
-> +	else
-> +		bl->props.power = FB_BLANK_UNBLANK;
-
+PiA+ICBzdGF0aWMgaW50IF9faW5pdCB2ZmlvX2lvbW11X3R5cGUxX2luaXQodm9pZCkNCj4gPiAg
+ew0KPiA+IC0JaWYgKCFpb21tdV9wcmVzZW50KCZwY2lfYnVzX3R5cGUpKQ0KPiA+ICsjaWZkZWYg
+Q09ORklHX1BDSQ0KPiA+ICsJaWYgKGlvbW11X3ByZXNlbnQoJnBjaV9idXNfdHlwZSkpIHsNCj4g
+PiArCQlpb21tdV9idXNfdHlwZSA9ICZwY2lfYnVzX3R5cGU7DQo+ID4gKwkJLyogRm9yIFBDSSB0
+YXJnZXRzLCBJT01NVV9DQVBfSU5UUl9SRU1BUCBpcyByZXF1aXJlZCAqLw0KPiA+ICsJCXJlcXVp
+cmVfY2FwX2ludHJfcmVtYXAgPSB0cnVlOw0KPiA+ICsJfQ0KPiA+ICsjZW5kaWYNCj4gPiArCWlm
+ICghaW9tbXVfYnVzX3R5cGUgJiYgaW9tbXVfcHJlc2VudCgmcGxhdGZvcm1fYnVzX3R5cGUpKQ0K
+PiA+ICsJCWlvbW11X2J1c190eXBlID0gJnBsYXRmb3JtX2J1c190eXBlOw0KPiA+ICsNCj4gPiAr
+CWlmKCFpb21tdV9idXNfdHlwZSkNCj4gPiAgCQlyZXR1cm4gLUVOT0RFVjsNCj4gPg0KPiA+ICAJ
+cmV0dXJuIHZmaW9fcmVnaXN0ZXJfaW9tbXVfZHJpdmVyKCZ2ZmlvX2lvbW11X2RyaXZlcl9vcHNf
+dHlwZTEpOw0KPiANCj4gSXMgaXQgcG9zc2libGUgdG8gaGF2ZSBhIHN5c3RlbSB3aXRoIGJvdGgg
+UENJIGFuZCBwbGF0Zm9ybSBkZXZpY2VzPyAgSG93DQo+IHdvdWxkIHlvdSBzdXBwb3J0IHRoYXQ/
+ICBUaGFua3MsDQoNCkl0IG1vc3QgY2VydGFpbmx5IGlzIGEgcmVxdWlyZW1lbnQgdG8gc3VwcG9y
+dCBib3RoLiAgVGhpcyBpcyBob3cNCmFsbCBvZiBvdXIgKEZTTCkgU29DcyB3aWxsIGV4cGVjdCB0
+byB3b3JrLg0KDQpJIG5lZWQgdG8gdW5kZXJzdGFuZCBiZXR0ZXIgd2h5ICdpb21tdV9idXNfdHlw
+ZScgZXhpc3RzIGF0DQphbGwuLi4NCg0KU3R1YXJ0DQo=
