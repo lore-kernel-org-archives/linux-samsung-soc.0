@@ -1,108 +1,76 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 09/10] pwm-backlight: Use an optional power supply
-Date: Tue, 1 Oct 2013 23:31:27 +0200
-Message-ID: <20131001213120.GG9201@ulmo.nvidia.com>
-References: <1379972467-11243-1-git-send-email-treding@nvidia.com>
- <1379972467-11243-10-git-send-email-treding@nvidia.com>
- <524B17ED.1080806@wwwdotorg.org>
- <20131001205310.GD9201@ulmo.nvidia.com>
- <524B37BF.2090300@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 2/6] clk: exynos5410: register clocks using common clock
+ framework
+Date: Tue, 01 Oct 2013 15:44:00 -0600
+Message-ID: <524B4220.1070209@wwwdotorg.org>
+References: <1380644227-12244-1-git-send-email-v.tyrtov@samsung.com> <1380644227-12244-3-git-send-email-v.tyrtov@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FUaywKC54iCcLzqT"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <524B37BF.2090300@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Tony Lindgren <tony@atomide.com>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Guan Xuetao <gxt@mprc.pku.edu.cn>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, openezx-devel@lists.openezx.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380644227-12244-3-git-send-email-v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Naour Romain <romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On 10/01/2013 10:17 AM, Vyacheslav Tyrtov wrote:
+> From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> The EXYNOS5410 clocks are statically listed and registered
+> using the Samsung specific common clock helper functions.
 
---FUaywKC54iCcLzqT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
 
-On Tue, Oct 01, 2013 at 02:59:43PM -0600, Stephen Warren wrote:
-> On 10/01/2013 02:53 PM, Thierry Reding wrote:
-> > On Tue, Oct 01, 2013 at 12:43:57PM -0600, Stephen Warren wrote:
-> >> On 09/23/2013 03:41 PM, Thierry Reding wrote:
-> >>> Many backlights require a power supply to work properly. This
-> >>> commit uses a power-supply regulator, if available, to power up
-> >>> and power down the panel.
-> >>=20
-> >> I think that all backlights require a power supply, albeit the
-> >> supply may not be SW-controllable. Hence, shouldn't the regulator
-> >> be mandatory in the binding, yet the driver be defensively coded
-> >> such that if one isn't specified, the driver continues to work?
-> >=20
-> > That has already changed in my local version of this patch.
-> >=20
-> >>> diff --git a/drivers/video/backlight/pwm_bl.c
-> >>> b/drivers/video/backlight/pwm_bl.c
-> >>=20
-> >>> @@ -253,6 +264,16 @@ static int pwm_backlight_probe(struct
-> >>> platform_device *pdev) } }
-> >>>=20
-> >>> +	pb->power_supply =3D devm_regulator_get_optional(&pdev->dev,
-> >>> "power");
-> >>=20
-> >> ... so I think that should be devm_regulator_get(), since the
-> >> regulator isn't really optional.
-> >>=20
-> >>> +	if (IS_ERR(pb->power_supply)) { +		if
-> >>> (PTR_ERR(pb->power_supply) !=3D -ENODEV) { +			ret =3D
-> >>> PTR_ERR(pb->power_supply); +			goto err_gpio; +		} + +
-> >>> pb->power_supply =3D NULL;
-> >>=20
-> >> If devm_regulator_get_optional() returns an error value or a
-> >> valid value, then I don't think that this driver should transmute
-> >> error values into NULL; NULL might be a perfectly valid regulator
-> >> value. Related, I think the if (pb->power_supply) tests should be
-> >> replaced with if (!IS_ERR(pb->power_supply)) instead.
-> >=20
-> > All of that is already done in my local tree. This actually turns
-> > out to work rather smoothly with the new support for optional
-> > regulators. The regulator core will give you a dummy regulator
-> > (assuming it's there physically but hasn't been wired up in
-> > software) that's always on, so the driver doesn't even have to
-> > special case it anymore.
->=20
-> OK, hopefully it (the regulator core) complains about the missing DT
-> property though; I assume you're using regulator_get() not
-> regulator_get_optional(), since the supply really is not optional.
+> +       [Core Clocks]
+> +  [Clock Gate for Special Clocks]
+> +   [Peripheral Clock Gates]
 
-It doesn't always. There's a pr_warn() in _regulator_get(), but that's
-only for non-DT (since for DT, has_full_constraints is set to true in
-regulator_init_complete()). Actually that would mean that the regulator
-core will complain as long as init isn't complete. But since, like many
-other drivers, pwm-backlight could use deferred probing it's likely to
-end up being probed after init.
+These headers/titles for the sections/lists aren't consistently aligned.
 
-Cc'ing Mark Brown.
+> +  [Clock Gate for Special Clocks]
+> +
+> +  Clock			ID
+> +  ----------------------------
+> +  sclk_uart0		128
+> +  sclk_uart1		129
+> +  sclk_uart2		130
+> +  sclk_uart3		131
+> +  sclk_mmc0		132
+> +  sclk_mmc1		133
+> +  sclk_mmc2		134
+> +
+> +   [Peripheral Clock Gates]
+> +
+> +  Clock			ID
+> +  ----------------------------
+> +
+> +  uart0			257
+> +  uart1			258
+> +  uart2			259
+> +  uart3			260
+> +  mct			315
+> +  mmc0			351
+> +  mmc1			352
+> +  mmc2			353
 
-Thierry
+That's not many clocks. I assume you're planning on adding more IDs
+later, in a backwards-compatible fashion? I suppose that's OK since it
+won't break any existing usage, as long as there's no need to renumber
+any existing values.
 
---FUaywKC54iCcLzqT
-Content-Type: application/pgp-signature
+On that topic, are any of those clock IDs derived from HW, e.g. register
+numbers, or bit numbers in an array of registers? Numbering clocks in a
+HW-derived fashion would make it easier or more obvious how to add new
+clock IDs later while maintaining some consistency and without
+introducing the desire to break any ABI.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.21 (GNU/Linux)
+Finally, how about creating a header file such as
+include/dt-bindings/clock/exynos5410.h to define those clock IDs, so
+that both *.dts and the clock driver can share the values without having
+to manually write them?
 
-iQIcBAEBAgAGBQJSSz8tAAoJEN0jrNd/PrOhv0gP/ieeNUf9Ps2XqYD1G3O8YB97
-3KPaGRxbrlpvDzSkanaJ3kxrSx7ZLjRHGSFKiUF2LzKV3hMh3zi2j2RPOAGWeyIc
-dhERNIaNdaySD4uEiM3jtQSVnOXF9Cg8CeQz9vgayDXtB9GIEhSS95d4AuB0odWT
-EZ6cAXeoN7/sNNo8/POw/E3uS3X/vUGmcr1lLsFRVS8onmlCW2gvLiFn7nDpb+mE
-OCvURhEmzjcq+pyVD81qvtlWxj/D7vnvt4mexSqPVh3lDVCtX40rYC4l7hyVio2g
-VZRfhaHggWAWwHqChWgg7dY47dMO6xsL1giRCZ4BBLcLc0DlXn+vgMZjAzdDgqFC
-t3kkuXz576fHRzGaegM6WHJzMHB7oJ28+qki21ITxKqiZ2UYY1vHf2mR15DF++Cl
-jia5Zb2VjNcYMKoiHFePpzxNMKexJLhgIm+37ZpN9kN0KAuntr4bazHAe2g9RIt7
-AJQr+Rw+XGWFb04HCLml9vk/EzHgPrs9HyNwpIVO8tyj7r9A7UGmq/BGTM+ZuWLt
-pDcah1I33FMqyL/UvLvngy02539Nwla6y9flbUW/5amnvHHLlJwy1n33v3mW+IGB
-is2YdRngeXgCo4719YKAGuw4bWRoO7dzqc4e7MdOJ/bk1IMDv8O0Y1g3FyZyPIcT
-TjR4ebBaWU1ca2mvF4li
-=lgk1
------END PGP SIGNATURE-----
-
---FUaywKC54iCcLzqT--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
