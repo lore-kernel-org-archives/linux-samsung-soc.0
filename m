@@ -1,76 +1,35 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/6] clk: exynos5410: register clocks using common clock
- framework
-Date: Tue, 01 Oct 2013 15:44:00 -0600
-Message-ID: <524B4220.1070209@wwwdotorg.org>
-References: <1380644227-12244-1-git-send-email-v.tyrtov@samsung.com> <1380644227-12244-3-git-send-email-v.tyrtov@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1380644227-12244-3-git-send-email-v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Naour Romain <romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Sean Paul <seanpaul@chromium.org>
+Subject: [PATCH 0/5] Add some missing bits for exynos5250-snow
+Date: Tue,  1 Oct 2013 19:40:55 -0400
+Message-ID: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com
+Cc: airlied@linux.ie
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 10/01/2013 10:17 AM, Vyacheslav Tyrtov wrote:
-> From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> The EXYNOS5410 clocks are statically listed and registered
-> using the Samsung specific common clock helper functions.
+This set adds some missing devicetree nodes to the exynos5250-snow file as well
+as adds a drm_bridge driver for the ptn3460 DP-LVDS chip. This chip is used in
+the exynos5250-snow board.
 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+Sean
 
-> +       [Core Clocks]
-> +  [Clock Gate for Special Clocks]
-> +   [Peripheral Clock Gates]
 
-These headers/titles for the sections/lists aren't consistently aligned.
+Sean Paul (5):
+ ARM: dts: Add fimd display-timings for exynos5250-snow
+ ARM: dts: Add dp-controller node to exynos5250-snow
+ drm/bridge: Add PTN3460 bridge driver
+ drm/exynos: Initialize ptn3460 if present
+ ARM: dts: Add ptn3460 to exynos5250-snow
 
-> +  [Clock Gate for Special Clocks]
-> +
-> +  Clock			ID
-> +  ----------------------------
-> +  sclk_uart0		128
-> +  sclk_uart1		129
-> +  sclk_uart2		130
-> +  sclk_uart3		131
-> +  sclk_mmc0		132
-> +  sclk_mmc1		133
-> +  sclk_mmc2		134
-> +
-> +   [Peripheral Clock Gates]
-> +
-> +  Clock			ID
-> +  ----------------------------
-> +
-> +  uart0			257
-> +  uart1			258
-> +  uart2			259
-> +  uart3			260
-> +  mct			315
-> +  mmc0			351
-> +  mmc1			352
-> +  mmc2			353
+Documentation/devicetree/bindings/drm/bridge/ptn3460.txt |  27 +++++++++++++++++++++++++
+arch/arm/boot/dts/exynos5250-snow.dts                    |  48 ++++++++++++++++++++++++++++++++++++++++++++
+drivers/gpu/drm/Kconfig                                  |   2 ++
+drivers/gpu/drm/Makefile                                 |   1 +
+drivers/gpu/drm/bridge/Kconfig                           |   4 ++++
+drivers/gpu/drm/bridge/Makefile                          |   3 +++
+drivers/gpu/drm/bridge/ptn3460.c                         | 349 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+drivers/gpu/drm/exynos/exynos_drm_core.c                 |  44 +++++++++++++++++++++++++++++++++++++++-
+include/drm/bridge/ptn3460.h                             |  36 +++++++++++++++++++++++++++++++++
+9 files changed, 513 insertions(+), 1 deletion(-)
 
-That's not many clocks. I assume you're planning on adding more IDs
-later, in a backwards-compatible fashion? I suppose that's OK since it
-won't break any existing usage, as long as there's no need to renumber
-any existing values.
-
-On that topic, are any of those clock IDs derived from HW, e.g. register
-numbers, or bit numbers in an array of registers? Numbering clocks in a
-HW-derived fashion would make it easier or more obvious how to add new
-clock IDs later while maintaining some consistency and without
-introducing the desire to break any ABI.
-
-Finally, how about creating a header file such as
-include/dt-bindings/clock/exynos5410.h to define those clock IDs, so
-that both *.dts and the clock driver can share the values without having
-to manually write them?
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
