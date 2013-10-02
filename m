@@ -1,97 +1,62 @@
-From: Yoder Stuart-B08248 <B08248@freescale.com>
-Subject: RE: [PATCH 3/7] Return info for device and its memory regions and
- interrupts
-Date: Wed, 2 Oct 2013 13:03:10 +0000
-Message-ID: <9F6FE96B71CF29479FF1CDC8046E15036D3D3A@039-SN1MPN1-003.039d.mgd.msft.net>
-References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
-	<1380554923-17818-4-git-send-email-a.motakis@virtualopensystems.com>
-	<1380562776.2674.177.camel@ul30vt.home>
-	<CAG8rG2yPXX9WtmhJqYMNE_3x4RNGkb1BDab8F3Pk8KUhntM9fg@mail.gmail.com>
-	<9F6FE96B71CF29479FF1CDC8046E15036D3803@039-SN1MPN1-003.039d.mgd.msft.net>
- <CAG8rG2ypiSUqfhqLTxgv0+Sh9DO9KAscJy0CmCrr_oG3tmGAgA@mail.gmail.com>
+From: Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH 3/6] ARM: EXYNOS: add Exynos Dual Cluster Support
+Date: Wed, 2 Oct 2013 14:05:50 +0100
+Message-ID: <20131002130550.GB3407@localhost.localdomain>
+References: <1380644227-12244-1-git-send-email-v.tyrtov@samsung.com>
+ <1380644227-12244-4-git-send-email-v.tyrtov@samsung.com>
+ <alpine.LFD.2.03.1310011451390.21228@syhkavp.arg>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ch1ehsobe005.messaging.microsoft.com ([216.32.181.185]:49300
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753960Ab3JBNDU convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Oct 2013 09:03:20 -0400
-In-Reply-To: <CAG8rG2ypiSUqfhqLTxgv0+Sh9DO9KAscJy0CmCrr_oG3tmGAgA@mail.gmail.com>
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.03.1310011451390.21228@syhkavp.arg>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Tarek Dakhran <t.dakhran@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Rob Landley <rob@landley.net>, Heiko Stuebner <heiko@sntech.de>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Naour Romain <romain.naour@openwide.fr>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Antonios Motakis <a.motakis@virtualopensystems.com>
-Cc: Alex Williamson <alex.williamson@redhat.com>, kvm-arm <kvmarm@lists.cs.columbia.edu>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, KVM devel mailing list <kvm@vger.kernel.org>, Alexander Graf <agraf@suse.de>, VirtualOpenSystems Technical Team <tech@virtualopensystems.com>
 
-
-
-> -----Original Message-----
-> From: Antonios Motakis [mailto:a.motakis@virtualopensystems.com]
-> Sent: Wednesday, October 02, 2013 6:22 AM
-> To: Yoder Stuart-B08248
-> Cc: Alex Williamson; kvm-arm; Linux IOMMU; Linux Samsung SOC; KVM devel
-> mailing list; Alexander Graf; VirtualOpenSystems Technical Team
-> Subject: Re: [PATCH 3/7] Return info for device and its memory regions
-> and interrupts
+On Tue, Oct 01, 2013 at 03:55:24PM -0400, Nicolas Pitre wrote:
+> On Tue, 1 Oct 2013, Vyacheslav Tyrtov wrote:
 > 
-> On Tue, Oct 1, 2013 at 9:32 PM, Yoder Stuart-B08248
-> <B08248@freescale.com> wrote:
-> >> Antonios Motakis wrote
-> >> > Alex Williamson <alex.williamson@redhat.com> wrote:
-> >> > I notice all the open firmware calls here and I'm curious,
-> >> > will all platform devices be making use of open firmware?
-> >> > I don't know if this is synonymous with device tree or not.
-> >> > Thanks,
-> >>
-> >> This VFIO driver will support only devices implemented
-> >> on the device tree. While there can be platform devices
-> >> outside the device tree, I don't think it makes sense
-> >> to support them from the same driver. This is why I
-> >> originally called the driver VFIO_DT, however I renamed
-> >> it to VFIO_PLATFORM after feedback from the first
-> >> RFC. However personally, I still think the VFIO_DT name
-> >> is more appropriate since we don't support all platform
-> >> devices, only those that use the device tree.
-> >
-> > But there is no 'device tree' bus.  The bus type we're
-> > dealing with is a platform bus.
-> >
-> > vfio for platform devices should be independent of whether
-> > the device was discovered in a device tree or not.
-> > All you're doing is exposing mappable regions and IRQs
-> > to user space and it does not matter where the info originated.
-> >
-> > You should be using platform bus structs here not
-> > reparsing device tree nodes.  The struct
-> > platform_device already has resource info in the
-> > struct:
-> >
-> > struct platform_device {
-> >         const char      *name;
-> >         u32             id;
-> >         struct device   dev;
-> >         u32             num_resources;
-> >         struct resource *resource;
-> > };
-> >
-> > Stuart
-> >
+> > From: Tarek Dakhran <t.dakhran@samsung.com>
+
+[...]
+
+> > +	kfs_use_count[cpu][cluster]++;
+> > +	if (kfs_use_count[cpu][cluster] == 1) {
+> > +		++core_count[cluster];
+> > +		if (core_count[cluster] == 1) {
+> > +			ret = exynos_cluster_power_up(cluster);
+> > +			if (ret) {
+> > +				pr_err("%s: cluster %u power up error\n",
+> > +					__func__, cluster);
+> > +				return ret;
+> > +			}
+> > +			__cci_control_port_by_index(MAX_NR_CLUSTERS
+> > +					 - cluster, true);
 > 
-> I will look into this. However, can we rely to have access to all
-> device resources through platform abstractions, for every type of
-> platform device
+> This is wrong and very racy.  The state machine implemented in 
+> mcpm-head.S is there already to handle proper synchronization for you.  
 
-The only resources we care about in vfio are mappable regions
-and irqs.  So, yes I think we can rely on access to those
-resources.
+Maybe this issue didn't make itself obvious yet due to the lack of
+suspend support.
 
-> It seems to me that platform devices that are not
-> backed by a specific description mechanism (such as device tree) may
-> include a lot of hard coded values etc in their drivers.
+Moving the CCI maintenance to power_up_setup() is essential for suspend/
+resume to work, because then CPUs can power up randomly in response to
+interrupts -- exynos_lock is not sufficient protection in that case.
 
-If the platform device struct does not have reg/irq resources described
-then we can't expose them to user space with vfio.
+The TC2 code should provide a good example of what to do.
 
-Stuart
+[...]
+
+Cheers
+---Dave
