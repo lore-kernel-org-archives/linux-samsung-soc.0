@@ -1,37 +1,87 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/5] gpio: samsung: Use CONFIG_ARCH_S3C64XX to check for S3C64xx support
-Date: Wed, 02 Oct 2013 23:10:52 +0200
-Message-ID: <3903161.Vxg4RcbQZc@flatron>
-References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com> <1380392497-27406-2-git-send-email-tomasz.figa@gmail.com> <CACRpkdZXOGpTspPucd=d0=Ws9Ccx19h4UYTTdgZceoofhuq0Kw@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
+Date: Wed, 2 Oct 2013 14:20:42 -0700
+Message-ID: <CAOesGMjWi3Bk+OtfWjkgHqLk+Zb7cHRjS9S0AfpcPU3UqB+UTw@mail.gmail.com>
+References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
+	<1380670860-17621-4-git-send-email-seanpaul@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZXOGpTspPucd=d0=Ws9Ccx19h4UYTTdgZceoofhuq0Kw@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Martin
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Sean Paul <seanpaul@chromium.org>
+Cc: dri-devel@lists.freedesktop.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, airlied@linux.ie
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Linus,
+Hi,
 
-On Wednesday 02 of October 2013 12:46:51 Linus Walleij wrote:
-> On Sat, Sep 28, 2013 at 8:21 PM, Tomasz Figa <tomasz.figa@gmail.com> 
-wrote:
-> > Since CONFIG_PLAT_S3C64XX is going to be removed, this patch modifies
-> > the gpio-samsung driver to use the proper way of checking for S3C64xx
-> > support - CONFIG_ARCH_S3C64XX.
-> > 
-> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Thanks.
+On Tue, Oct 1, 2013 at 4:40 PM, Sean Paul <seanpaul@chromium.org> wrote:
+> This patch adds a drm_bridge driver for the PTN3460 DisplayPort to LVDS
+> bridge chip.
+>
+> Signed-off-by: Sean Paul <seanpaul@chromium.org>
+> ---
 
-> I assume that this will go through ARM SoC?
+[...]
 
-I think so.
+> +Example:
+> +       ptn3460-bridge@20 {
 
-Best regards,
-Tomasz
+Nit: Name is usually generic device name, i.e. "lvds-bridge" or
+something like that.
 
+> +               compatible = "nxp,ptn3460";
+> +               reg = <0x20>;
+> +               powerdown-gpio = <&gpy2 5 1 0 0>;
+> +               reset-gpio = <&gpx1 5 1 0 0>;
+> +               edid-emulation = <5>;
+> +       };
+
+[...]
+
+
+> diff --git a/include/drm/bridge/ptn3460.h b/include/drm/bridge/ptn3460.h
+> new file mode 100644
+> index 0000000..157ffa1
+> --- /dev/null
+> +++ b/include/drm/bridge/ptn3460.h
+> @@ -0,0 +1,36 @@
+> +/*
+> + * Copyright (C) 2013 Google, Inc.
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
+> +
+> +#ifndef _DRM_BRIDGE_PTN3460_H_
+> +#define _DRM_BRIDGE_PTN3460_H_
+> +
+> +struct drm_device;
+> +struct drm_encoder;
+> +struct i2c_client;
+> +struct device_node;
+> +
+> +#ifdef CONFIG_DRM_PTN3460
+> +
+> +int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
+> +               struct i2c_client *client, struct device_node *node);
+> +#else
+> +
+> +int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
+> +               struct i2c_client *client, struct device_node *node)
+
+This should be static inline int ptn3460_init(...)
+
+> +{
+> +       return 0;
+> +}
+
+
+-0Olof
