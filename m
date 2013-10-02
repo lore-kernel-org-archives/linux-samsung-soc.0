@@ -1,50 +1,58 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] PCI: exynos: missing clk_disable_unprepare() on error in
- exynos_pcie_probe()
-Date: Wed, 02 Oct 2013 08:44:01 +0900
-Message-ID: <003501cebf00$1b57fee0$5207fca0$%han@samsung.com>
-References: <CAPgLHd_RTNxi-OYhmTZ35NttjnAg-gQ_WKHkUQr5ueMhXVLTMg@mail.gmail.com>
- <000301cebe46$42e86e00$c8b94a00$%han@samsung.com> <524AD2E3.9010808@gmail.com>
+From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: RE: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
+Date: Tue, 01 Oct 2013 18:09:53 -0700
+Message-ID: <20131002010953.9338.23436@quantum>
+References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
+ <8412301.YP2zzplWoe@amdc1227>
+ <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com>
+ <523716C9.3000204@samsung.com> <20130916193709.27384.86101@quantum>
+ <06c101cebdc5$75a83d10$60f8b730$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-reply-to: <524AD2E3.9010808@gmail.com>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
-Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Grant Likely' <grant.likely@linaro.org>, 'Rob Herring' <rob.herring@calxeda.com>, 'Seungwon Jeon' <tgih.jun@samsung.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <06c101cebdc5$75a83d10$60f8b730$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Andrzej Hajda' <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'devicetree' <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'linux-samsung-soc' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, October 01, 2013 10:49 PM, Sylwester Nawrocki wrote:
-> On 10/01/2013 03:33 AM, Jingoo Han wrote:
-> > On Sunday, September 29, 2013 11:29 AM, Wei Yongjun wrote:
-> >>
-> >> From: Wei Yongjun<yongjun_wei@trendmicro.com.cn>
-> >>
-> >> Add the missing clk_disable_unprepare() before return
-> >> from exynos_pcie_probe() in the error handling case.
-> >>
-> >> Signed-off-by: Wei Yongjun<yongjun_wei@trendmicro.com.cn>
-> >
-> > Acked-by: Jingoo Han<jg1.han@samsung.com>
-> >
-> > However, the commit name should be fixed as below:
-> > [PATCH] PCI: exynos: use missing clk_disable_unprepare() on error in exynos_pcie_probe()
+Quoting Kukjin Kim (2013-09-30 03:11:41)
+> Mike Turquette wrote:
+> > 
+> > Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
+> > > On 09/12/2013 12:50 PM, Kukjin Kim wrote:
+> > > > Well...I'm not sure changing to use macro is better or not at this
+> > moment...
+> > >
+> > > I think it is. ;) It's really less error prone to have symbolic names
+> > instead
+> > > of the plain numbers. The clock ids are defined in one place and it is
+> > more
+> > > clear what a clock is by looking at symbolic name. It's especially
+> > annoying
+> > > to use plain numbers where are are many clock in a single node, like 10
+> > or
+> > > more. What are you main concerns with this ?
+> > 
+> > I think having the symbolic names is a win for readability.
+> > 
+> Hmm...since Mike who is a maintainer for ccf agrees with Sylwester's opinion, so I agree. Actually, I had no strong objection on this but still I'm not sure using macro is really better because sometimes the name doesn't give readability really I think though.
 > 
-> Perhaps just:
+> Mike, can you give me your ack on clk stuff?
+
+Yes, but I was thinking to take this change through the clk tree. The
+new branch based on -rc3 will be published tonight.
+
+Let me know if it causes problems for you for me to take it.
+
+Regards,
+Mike
+
 > 
-> "PCI: exynos: Add missing clk_disable_unprepare() on error path
-> 
-> How can something that is missing be used ? :)
-
-Hi Sylwester Nawrocki,
-
-OK, I see.
-The following looks good, as you mentioned.
-[PATCH] PCI: exynos: Add missing clk_disable_unprepare() on error path
-
-Thank you for your comment. :-)
-
-Best regards,
-Jingoo Han
+> Thanks,
+> Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
