@@ -1,58 +1,140 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: RE: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
-Date: Tue, 01 Oct 2013 18:09:53 -0700
-Message-ID: <20131002010953.9338.23436@quantum>
-References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
- <8412301.YP2zzplWoe@amdc1227>
- <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com>
- <523716C9.3000204@samsung.com> <20130916193709.27384.86101@quantum>
- <06c101cebdc5$75a83d10$60f8b730$%kim@samsung.com>
+From: Dylan Reid <dgreid@chromium.org>
+Subject: Re: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status callback.
+Date: Tue, 1 Oct 2013 21:33:55 -0700
+Message-ID: <CAEUnVG72uTzHrQCoVtdT8UmkPcz2ks_qWT8QMbhHjUW-u3WnNQ@mail.gmail.com>
+References: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
+ <1378879685-5352-2-git-send-email-padma.v@samsung.com> <00b401ceafac$e3a88170$aaf98450$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <06c101cebdc5$75a83d10$60f8b730$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Andrzej Hajda' <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'devicetree' <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, 'linux-samsung-soc' <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f50.google.com ([209.85.216.50]:61204 "EHLO
+	mail-qa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751714Ab3JBEeV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Oct 2013 00:34:21 -0400
+Received: by mail-qa0-f50.google.com with SMTP id j7so289413qaq.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Oct 2013 21:34:20 -0700 (PDT)
+In-Reply-To: <00b401ceafac$e3a88170$aaf98450$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, kgene.kim@samsung.com, arnd@arndb.de, Sangbeom Kim <sbkim73@samsung.com>, vinod.koul@intel.com, Mark Brown <broonie@kernel.org>, Olof Johansson <olofj@chromium.org>
 
-Quoting Kukjin Kim (2013-09-30 03:11:41)
-> Mike Turquette wrote:
-> > 
-> > Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
-> > > On 09/12/2013 12:50 PM, Kukjin Kim wrote:
-> > > > Well...I'm not sure changing to use macro is better or not at this
-> > moment...
-> > >
-> > > I think it is. ;) It's really less error prone to have symbolic names
-> > instead
-> > > of the plain numbers. The clock ids are defined in one place and it is
-> > more
-> > > clear what a clock is by looking at symbolic name. It's especially
-> > annoying
-> > > to use plain numbers where are are many clock in a single node, like 10
-> > or
-> > > more. What are you main concerns with this ?
-> > 
-> > I think having the symbolic names is a win for readability.
-> > 
-> Hmm...since Mike who is a maintainer for ccf agrees with Sylwester's opinion, so I agree. Actually, I had no strong objection on this but still I'm not sure using macro is really better because sometimes the name doesn't give readability really I think though.
-> 
-> Mike, can you give me your ack on clk stuff?
+On Thu, Sep 12, 2013 at 4:40 AM, Chanho Park <chanho61.park@samsung.com> wrote:
+> Hi Padmavathi,
+>
+>> -----Original Message-----
+>> From: linux-arm-kernel [mailto:linux-arm-kernel-
+>> bounces@lists.infradead.org] On Behalf Of Padmavathi Venna
+>> Sent: Wednesday, September 11, 2013 3:08 PM
+>> To: linux-samsung-soc@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org; padma.v@samsung.com; padma.kvr@gmail.com
+>> Cc: kgene.kim@samsung.com; arnd@arndb.de; sbkim73@samsung.com;
+>> vinod.koul@intel.com; broonie@kernel.org; dgreid@chromium.org;
+>> olofj@chromium.org
+>> Subject: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status callback.
+>>
+>> From: Dylan Reid <dgreid@chromium.org>
+>>
+>> Fill txstate.residue with the amount of bytes remaining in the current
+>> transfer if the transfer is not complete.  This will be of particular use
+>> to i2s DMA transfers, providing more accurate hw_ptr values to ASoC.
+>>
+>> Signed-off-by: Dylan Reid <dgreid@chromium.org>
+>> Reviewed-by: Olof Johansson <olofj@chromium.org>
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> ---
+>>  drivers/dma/pl330.c |   55
+>> ++++++++++++++++++++++++++++++++++++++++++++++++++-
+>>  1 files changed, 54 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c index
+>> 593827b..7ab9136 100644
+>> --- a/drivers/dma/pl330.c
+>> +++ b/drivers/dma/pl330.c
+>> @@ -2476,11 +2476,64 @@ static void pl330_free_chan_resources(struct
+>> dma_chan *chan)
+>>       spin_unlock_irqrestore(&pch->lock, flags);  }
+>>
+>> +static inline int
+>> +pl330_src_addr_in_desc(struct dma_pl330_desc *desc, unsigned int sar) {
+>> +     return ((desc->px.src_addr <= sar) &&
+>> +             (sar <= (desc->px.src_addr + desc->px.bytes))); }
+>> +
+>> +static inline int
+>> +pl330_dst_addr_in_desc(struct dma_pl330_desc *desc, unsigned int dar) {
+>> +     return ((desc->px.dst_addr <= dar) &&
+>> +             (dar <= (desc->px.dst_addr + desc->px.bytes))); }
+>> +
+>> +static unsigned int pl330_tx_residue(struct dma_chan *chan) {
+>> +     struct dma_pl330_chan *pch = to_pchan(chan);
+>> +     void __iomem *regs = pch->dmac->pif.base;
+>> +     struct pl330_thread *thrd = pch->pl330_chid;
+>> +     struct dma_pl330_desc *desc;
+>> +     unsigned int sar, dar;
+>> +     unsigned int residue = 0;
+>> +     unsigned long flags;
+>> +
+>> +     sar = readl(regs + SA(thrd->id));
+>> +     dar = readl(regs + DA(thrd->id));
+>> +
+>> +     spin_lock_irqsave(&pch->lock, flags);
+>> +
+>> +     /* Find the desc related to the current buffer. */
+>> +     list_for_each_entry(desc, &pch->work_list, node) {
+>> +             if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc,
+>> sar)) {
+>> +                     residue = desc->px.bytes - (sar -
+> desc->px.src_addr);
+>> +                     goto found_unlock;
+>> +             }
+>> +             if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc,
+>> dar)) {
+>> +                     residue = desc->px.bytes - (dar -
+> desc->px.dst_addr);
+>> +                     goto found_unlock;
+>> +             }
+>> +     }
+>> +
+>> +found_unlock:
+>> +     spin_unlock_irqrestore(&pch->lock, flags);
+>> +
+>> +     return residue;
+>> +}
+>> +
+>>  static enum dma_status
+>>  pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
+>>                struct dma_tx_state *txstate)
+>>  {
+>> -     return dma_cookie_status(chan, cookie, txstate);
+>> +     enum dma_status ret;
+>> +
+>> +     ret = dma_cookie_status(chan, cookie, txstate);
+>> +     if (ret != DMA_SUCCESS) /* Not complete, check amount left. */
+>> +             dma_set_residue(txstate, pl330_tx_residue(chan));
+>> +
+>> +     return ret;
+>
+> Why didn't you use a cookie value to track the request?
+> The cookie is assigned when each transfer is submitted.
+> If you save the value in the desc, we can find the request easily.
 
-Yes, but I was thinking to take this change through the clk tree. The
-new branch based on -rc3 will be published tonight.
+If there are several cyclic desc in the work list, is there a better
+way to find the "current" one?  The chan struct tracks the last
+completed and last submitted cookies, but these will be the first and
+last respectively as long as the cyclic transfer is active.  Is there
+an "active" cookie stored somewhere that I missed?
 
-Let me know if it causes problems for you for me to take it.
+Looking for the first buffer with status == BUSY is an improvement
+I'll make.  Any way to avoid looking through the list?
 
-Regards,
-Mike
+Thanks,
 
-> 
+Dylan
+
+>
 > Thanks,
-> Kukjin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Best  Regards,
+> Chanho Park
+>
