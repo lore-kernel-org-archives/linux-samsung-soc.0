@@ -1,107 +1,41 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH 4/6] thermal: exynos: Replace SOC_ARCH_EXYNOS with SOC_ARCH_EXYNOS5250
-Date: Thu, 3 Oct 2013 18:08:45 -0400
-Message-ID: <524DEAED.4030905@ti.com>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com> <1380010102-25817-5-git-send-email-l.majewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="V8GaVGtHSjeacEeEBNBxR66VnrkDC7eFq"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1380010102-25817-5-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Sean Paul <seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH v2 0/5] Add some missing bits for exynos5250-snow
+Date: Thu,  3 Oct 2013 18:28:18 -0400
+Message-ID: <1380839303-4834-1-git-send-email-seanpaul@chromium.org>
+References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1380670860-17621-1-git-send-email-seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Cc: airlied-cv59FeDIM0c@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---V8GaVGtHSjeacEeEBNBxR66VnrkDC7eFq
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+This set adds some missing devicetree nodes to the exynos5250-snow file as well
+as adds a drm_bridge driver for the ptn3460 DP-LVDS chip. This chip is used in
+the exynos5250-snow board.
 
-On 24-09-2013 04:08, Lukasz Majewski wrote:
-> The TMU data definition is now separated to Exynos4412 and Exynos5250.
->=20
-> Now SOC_ARCH_EXYNOS only refers to Exynos5250. Hence the name
-> SOC_ARCH_EXYNOS has been changed to SOC_ARCH_EXYNOS5250.
->=20
-
-How about merging this one with patch 02?
-
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c      |    4 ++--
->  drivers/thermal/samsung/exynos_tmu.h      |    2 +-
->  drivers/thermal/samsung/exynos_tmu_data.c |    2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
-sung/exynos_tmu.c
-> index 21b89e4..037cd46 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -632,9 +632,9 @@ static int exynos_tmu_probe(struct platform_device =
-*pdev)
->  	if (ret)
->  		return ret;
-> =20
-> -	if (pdata->type =3D=3D SOC_ARCH_EXYNOS ||
-> -	    pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
-> +	if (pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
->  	    pdata->type =3D=3D SOC_ARCH_EXYNOS4412 ||
-> +	    pdata->type =3D=3D SOC_ARCH_EXYNOS5250 ||
->  	    pdata->type =3D=3D SOC_ARCH_EXYNOS5440)
->  		data->soc =3D pdata->type;
->  	else {
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sam=
-sung/exynos_tmu.h
-> index db37df0..b42ece4 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -42,7 +42,7 @@ enum calibration_mode {
->  enum soc_type {
->  	SOC_ARCH_EXYNOS4210 =3D 1,
->  	SOC_ARCH_EXYNOS4412,
-> -	SOC_ARCH_EXYNOS,
-> +	SOC_ARCH_EXYNOS5250,
->  	SOC_ARCH_EXYNOS5440,
->  };
-> =20
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/therma=
-l/samsung/exynos_tmu_data.c
-> index bd08093..188223f 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> @@ -183,7 +183,7 @@ struct exynos_tmu_init_data const exynos4412_defaul=
-t_tmu_data =3D {
->  struct exynos_tmu_init_data const exynos5250_default_tmu_data =3D {
->  	.tmu_data =3D {
->  		{ EXYNOS4412_TMU_DATA,
-> -		.type =3D SOC_ARCH_EXYNOS,
-> +		.type =3D SOC_ARCH_EXYNOS5250,
->  		},
->  	},
->  	.tmu_count =3D 1,
->=20
+Sean
 
 
---=20
-You have got to be excited about what you are doing. (L. Lamport)
+Sean Paul (5):
+ ARM: dts: Add fimd display-timings for exynos5250-snow
+ ARM: dts: Add dp-controller node to exynos5250-snow
+ drm/bridge: Add PTN3460 bridge driver
+ drm/exynos: Initialize ptn3460 if present
+ ARM: dts: Add ptn3460 to exynos5250-snow
 
-Eduardo Valentin
+ Documentation/devicetree/bindings/drm/bridge/ptn3460.txt |  27 +++
+ arch/arm/boot/dts/exynos5250-snow.dts                    |  48 +++++
+ drivers/gpu/drm/Kconfig                                  |   2 +
+ drivers/gpu/drm/Makefile                                 |   1 +
+ drivers/gpu/drm/bridge/Kconfig                           |   4 +
+ drivers/gpu/drm/bridge/Makefile                          |   3 +
+ drivers/gpu/drm/bridge/ptn3460.c                         | 349 ++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_core.c                 |  44 ++++-
+ include/drm/bridge/ptn3460.h                             |  37 ++++
+ 9 files changed, 514 insertions(+), 1 deletion(-)
 
-
---V8GaVGtHSjeacEeEBNBxR66VnrkDC7eFq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlJN6vAACgkQCXcVR3XQvP2zOAD+KHplqiVgYO/xoivdybLo7bRc
-iyf16hw1pQan8fN1KJoA/jbk+7ABAF7565vSu1XVjl4TPxfDNbeKYJ5TN99JOVEw
-=MhCh
------END PGP SIGNATURE-----
-
---V8GaVGtHSjeacEeEBNBxR66VnrkDC7eFq--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
