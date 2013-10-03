@@ -1,87 +1,181 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
-Date: Wed, 2 Oct 2013 14:20:42 -0700
-Message-ID: <CAOesGMjWi3Bk+OtfWjkgHqLk+Zb7cHRjS9S0AfpcPU3UqB+UTw@mail.gmail.com>
-References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
-	<1380670860-17621-4-git-send-email-seanpaul@chromium.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH 5/6] ARM: EXYNOS: Minor fixes to enable EXYNOS5410 support
+Date: Thu, 3 Oct 2013 11:46:39 +0530
+Message-ID: <CANuQgHGd=YkGZ4peimcmq53SHBah7DNRD6HK4_M-rYFqu8GaaA@mail.gmail.com>
+References: <1380644227-12244-1-git-send-email-v.tyrtov@samsung.com>
+	<1380644227-12244-6-git-send-email-v.tyrtov@samsung.com>
+	<2780639.2cMZyXdSOA@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, airlied@linux.ie
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <2780639.2cMZyXdSOA@flatron>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tarek Dakhran <t.dakhran@samsu>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-
-On Tue, Oct 1, 2013 at 4:40 PM, Sean Paul <seanpaul@chromium.org> wrote:
-> This patch adds a drm_bridge driver for the PTN3460 DisplayPort to LVDS
-> bridge chip.
+On 3 October 2013 02:37, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Vyacheslav, Tarek,
 >
-> Signed-off-by: Sean Paul <seanpaul@chromium.org>
-> ---
+> On Tuesday 01 of October 2013 20:17:06 Vyacheslav Tyrtov wrote:
+>> From: Tarek Dakhran <t.dakhran@samsung.com>
+>>
+>> Configure ARM_NR_BANKS as 16 for EXYNOS SoC.
+>> Enable cci_control_port_by_index for ACE_PORT.
+>> Add additional irqs for Exynos MCT.
+>> Set irq base as 256 for EXYNOS5410 SoC.
+>>
+>> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+>> ---
+>>  arch/arm/Kconfig                  |  2 +-
+>>  drivers/bus/arm-cci.c             |  7 +++++++
+>>  drivers/clocksource/exynos_mct.c  |  8 +++++++-
+>>  drivers/irqchip/exynos-combiner.c | 12 +++++++++++-
+>>  4 files changed, 26 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+>> index 3f7714d..7f88896 100644
+>> --- a/arch/arm/Kconfig
+>> +++ b/arch/arm/Kconfig
+>> @@ -1080,7 +1080,7 @@ source arch/arm/mm/Kconfig
+>>
+>>  config ARM_NR_BANKS
+>>       int
+>> -     default 16 if ARCH_EP93XX
+>> +     default 16 if ARCH_EP93XX || ARCH_EXYNOS
+>
+> Could you explain why this is needed, please?
+>
+>>       default 8
+>>
+>>  config IWMMXT
+>> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+>> index 2009266..f2f5df1 100644
+>> --- a/drivers/bus/arm-cci.c
+>> +++ b/drivers/bus/arm-cci.c
+>> @@ -363,8 +363,15 @@ int notrace __cci_control_port_by_index(u32 port,
+>> bool enable) * interface (ie cci_disable_port_by_cpu(); control by
+>> general purpose * indexing is therefore disabled for ACE ports.
+>>        */
+>> +
+>> +     /*
+>> +      * Using this way to enable cci_port on EXYNOS5410 SoC
+>> +      */
+>> +
+>> +#ifndef CONFIG_SOC_EXYNOS5410
+>>       if (ports[port].type == ACE_PORT)
+>>               return -EPERM;
+>> +#endif
+>
+> Huh? Could you explain a) why this is needed b) why this can't be detected
+> at runtime? Any new code being added must be ready for multiplatform
+> builds and this clearly isn't.
+>
+> I'd recommend extending the CCI binding with a boolean property that makes
+> the driver bypass this check, but I'd like to see an answer to question a)
+> first.
+>
+>>
+>>       cci_port_control(port, enable);
+>>       return 0;
+>> diff --git a/drivers/clocksource/exynos_mct.c
+>> b/drivers/clocksource/exynos_mct.c index 5b34768..33884d7 100644
+>> --- a/drivers/clocksource/exynos_mct.c
+>> +++ b/drivers/clocksource/exynos_mct.c
+>> @@ -71,6 +71,12 @@ enum {
+>>       MCT_L1_IRQ,
+>>       MCT_L2_IRQ,
+>>       MCT_L3_IRQ,
 
-[...]
+>> +#ifdef CONFIG_ARM_CCI
+>> +     MCT_L4_IRQ,
+>> +     MCT_L5_IRQ,
+>> +     MCT_L6_IRQ,
+>> +     MCT_L7_IRQ,
+>> +#endif
 
-> +Example:
-> +       ptn3460-bridge@20 {
+The above change is not required as patches are already submitted to
+boot all eight cores, which include this change also.
 
-Nit: Name is usually generic device name, i.e. "lvds-bridge" or
-something like that.
+>
+> This #ifdef is useless.
+>
+> Basically this whole enum is, as it is a remnant of legacy non-DT support,
+> but it is a material for separate patch.
+>
+>>       MCT_NR_IRQS,
+>>  };
+>>
+>> @@ -406,7 +412,7 @@ static int exynos4_local_timer_setup(struct
+>> clock_event_device *evt) mevt = container_of(evt, struct
+>> mct_clock_event_device, evt);
+>>
+>>       mevt->base = EXYNOS4_MCT_L_BASE(cpu);
+>> -     sprintf(mevt->name, "mct_tick%d", cpu);
+>> +     snprintf(mevt->name, 10, "mct_tick%d", cpu);
+>
+> Is this really necessary to enable EXYNOS5410 support?
+>
+>>
+>>       evt->name = mevt->name;
+>>       evt->cpumask = cpumask_of(cpu);
+>> diff --git a/drivers/irqchip/exynos-combiner.c
+>> b/drivers/irqchip/exynos-combiner.c index 868ed40..2e056fc 100644
+>> --- a/drivers/irqchip/exynos-combiner.c
+>> +++ b/drivers/irqchip/exynos-combiner.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/of_address.h>
+>>  #include <linux/of_irq.h>
+>>  #include <asm/mach/irq.h>
+>> +#include <plat/cpu.h>
+>>
+>>  #include "irqchip.h"
+>>
+>> @@ -66,6 +67,11 @@ static void combiner_handle_cascade_irq(unsigned int
+>> irq, struct irq_desc *desc) struct irq_chip *chip = irq_get_chip(irq);
+>>       unsigned int cascade_irq, combiner_irq;
+>>       unsigned long status;
+>> +     if (unlikely(!chip || !chip_data)) {
+>> +             printk_once(KERN_ALERT "%s: Chip not found for IRQ %d\n"
+>> +                             , __func__, irq);
+>> +             return;
+>> +     }
+>
+> What is the reason for this change?
+>
+>>
+>>       chained_irq_enter(chip, desc);
+>>
+>> @@ -226,7 +232,11 @@ static int __init combiner_of_init(struct
+>> device_node *np, * get their IRQ from DT, remove this in order to get
+>> dynamic * allocation.
+>>        */
+>> -     irq_base = 160;
+>> +
+>> +     if (soc_is_exynos5410())
+>> +             irq_base = 256;
+>> +     else
+>> +             irq_base = 160;
+>>
+>>       combiner_init(combiner_base, np, max_nr, irq_base);
+>
+> There was a patch floating on the ML, possibly already merged, removing
+> static IRQ base assignment for combiner (which is a remnant of legacy non-
+> DT support) and moving the driver to normal linear IRQ domain. That patch
+> is what you need instead of this change.
 
-> +               compatible = "nxp,ptn3460";
-> +               reg = <0x20>;
-> +               powerdown-gpio = <&gpy2 5 1 0 0>;
-> +               reset-gpio = <&gpx1 5 1 0 0>;
-> +               edid-emulation = <5>;
-> +       };
-
-[...]
-
-
-> diff --git a/include/drm/bridge/ptn3460.h b/include/drm/bridge/ptn3460.h
-> new file mode 100644
-> index 0000000..157ffa1
-> --- /dev/null
-> +++ b/include/drm/bridge/ptn3460.h
-> @@ -0,0 +1,36 @@
-> +/*
-> + * Copyright (C) 2013 Google, Inc.
-> + *
-> + * This software is licensed under the terms of the GNU General Public
-> + * License version 2, as published by the Free Software Foundation, and
-> + * may be copied, distributed, and modified under those terms.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef _DRM_BRIDGE_PTN3460_H_
-> +#define _DRM_BRIDGE_PTN3460_H_
-> +
-> +struct drm_device;
-> +struct drm_encoder;
-> +struct i2c_client;
-> +struct device_node;
-> +
-> +#ifdef CONFIG_DRM_PTN3460
-> +
-> +int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
-> +               struct i2c_client *client, struct device_node *node);
-> +#else
-> +
-> +int ptn3460_init(struct drm_device *dev, struct drm_encoder *encoder,
-> +               struct i2c_client *client, struct device_node *node)
-
-This should be static inline int ptn3460_init(...)
-
-> +{
-> +       return 0;
-> +}
+That's right Tomasz. Patch is already merged.
+>
+> Best regards,
+> Tomasz
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 
--0Olof
+
+-- 
+with warm regards,
+Chander Kashyap
