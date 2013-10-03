@@ -1,371 +1,206 @@
-From: Shirish S <shirish@chromium.org>
-Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmiphy
-	driver
-Date: Thu, 3 Oct 2013 07:58:37 +0530
-Message-ID: <CAHvYUDC1GprC1xQcCSdRvSafe_yyihDsrzrTvfS-Ey-hELOgjA@mail.gmail.com>
-References: <1377845974-28373-1-git-send-email-rahul.sharma@samsung.com>
-	<011901cea941$91853e40$b48fbac0$%dae@samsung.com>
-	<CAOw6vb+32WsEY0px-iZaSv-AYj9NS6OX9hqpH-y6VQ77SpHymw@mail.gmail.com>
-	<00bf01cea9ee$bcda5960$368f0c20$%dae@samsung.com>
-	<CAPdUM4PT4cpXSe6sLgFaQnsycgY9AvYXPtgTMywYT0oePwPWwA@mail.gmail.com>
-	<00ca01cea9f7$f5ee3b50$e1cab1f0$%dae@samsung.com>
-	<CAPdUM4MxLBoiE6DpUbkn2-Sji89RM1+yHeAS1c2OREB+=BfdVg@mail.gmail.com>
-	<00cf01cea9ff$dc9749a0$95c5dce0$%dae@samsung.com>
-	<CAOw6vbLAuJyFU55wP1+Akm6PZepxaS_UuwFYe9LWcM3sKFmWwA@mail.gmail.com>
-	<011601ceaa3e$d08e8b20$71aba160$%dae@samsung.com>
-	<CAPdUM4OoicU76Tw-gkuvAGGvOHM-x1DfYLUEFKa3KaEAtwLAvw@mail.gmail.com>
-	<CAOw6vbLrgigGHdwGQHRWJAF=N-ZaL+6VSyUfP37B-4baU-+jBQ@mail.gmail.com>
-	<CAPdUM4PpFbc9utAsHnqyF9OJdipdgq036fqFM_SeG0O+M3N5jA@mail.gmail.com>
-	<037401ceb2d9$ea596ea0$bf0c4be0$%dae@samsung.com>
-	<CAPdUM4P0mecAGe++QELW_B7KOpABUSFvFTgCddowCM8cqtVvFA@mail.gmail.com>
-	<CAAQKjZPtxLAJOz6573+hEPZokEnvGF8BTMXoxcYUQ8zySAn-OA@mail.gmail.com>
-	<5248A4EE.9000708@samsung.com> <gmail.com@samsung.com>
-	<5248A4EE.9000708@gmail.com>
-	<053c01cebe60$2fe5a4c0$8fb0ee40$%dae@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/3] ahci: exynos: add ahci sata support on Exynos platform
+Date: Thu, 03 Oct 2013 13:32:29 +0200
+Message-ID: <1534631.KrL0vInDuc@amdc1032>
+References: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1380609183-21430-2-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0631252555=="
-Return-path: <dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org>
-In-Reply-To: <053c01cebe60$2fe5a4c0$8fb0ee40$%dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
-	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Sender: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-Errors-To: dri-devel-bounces+sf-dri-devel=m.gmane.org@lists.freedesktop.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, "sw0312.kim" <sw0312.kim@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, "kgene.kim" <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kumar Gala <galak@codeaurora.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Rahul Sharma <rahul.sharma@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============0631252555==
-Content-Type: multipart/alternative; boundary=f46d044283c07ae7fc04e7ccf1f8
-
---f46d044283c07ae7fc04e7ccf1f8
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:42710 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751634Ab3JCLeY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 3 Oct 2013 07:34:24 -0400
+In-reply-to: <1380609183-21430-2-git-send-email-yuvaraj.cd@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: tj@kernel.org, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kishon@ti.com, s.nawrocki@samsung.com, ks.giri@samsung.com, aditya.ps@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+
 
 Hi,
-First of all sorry for the late response,
 
+On Tuesday, October 01, 2013 12:03:01 PM Yuvaraj Kumar C D wrote:
+> Exynos5250 contains one Synopsys AHCI SATA controller.The avalaible
+> ahci_platform driver is not sufficient to handle the AHCI PHY and PHY
+> clock related initialization.
+> 
+> This patch adds exynos specific ahci sata driver,contained the exynos
+> specific initialized codes, re-use the generic ahci_platform driver, and
+> keep the generic ahci_platform driver clean as much as possible.
+> 
+> This patch depends on the below patch
+> 	[1].drivers: phy: add generic PHY framework
+> 		by Kishon Vijay Abraham I<kishon@ti.com>
+> 
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> ---
+>  drivers/ata/Kconfig       |    9 ++
+>  drivers/ata/Makefile      |    1 +
+>  drivers/ata/ahci_exynos.c |  226 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 236 insertions(+)
+>  create mode 100644 drivers/ata/ahci_exynos.c
+> 
+> diff --git a/drivers/ata/Kconfig b/drivers/ata/Kconfig
+> index 4e73772..99b2392 100644
+> --- a/drivers/ata/Kconfig
+> +++ b/drivers/ata/Kconfig
+> @@ -106,6 +106,15 @@ config AHCI_IMX
+>  
+>  	  If unsure, say N.
+>  
+> +config AHCI_EXYNOS
+> +	tristate "Samsung Exynos AHCI SATA support"
+> +	depends on SATA_AHCI_PLATFORM
 
-On Tue, Oct 1, 2013 at 10:09 AM, Inki Dae <inki.dae@samsung.com> wrote:
+This should also depend on SOC_EXYNOS5250.
 
->
->
-> > -----Original Message-----
-> > From: Sylwester Nawrocki [mailto:sylvester.nawrocki@gmail.com]
-> > Sent: Monday, September 30, 2013 7:09 AM
-> > To: Inki Dae
-> > Cc: Rahul Sharma; devicetree@vger.kernel.org; linux-samsung-soc;
-> > sw0312.kim; sunil joshi; dri-devel; kgene.kim; Shirish S; Sylwester
-> > Nawrocki; Rahul Sharma; Stephen Warren; Mark Rutland; Kumar Gala; Pawel
-> > Moll; Rob Herring; Sean Paul
-> > Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmiphy
-> > driver
-> >
-> > On 09/28/2013 06:10 PM, Inki Dae wrote:
-> > >> Any opinion from Device-Tree folks?
-> > >>
-> > >> IMO, we should have same consensus on Shirish patches before
-> proceeding.
-> > >
-> > > Rahul, it seems that DT people have no interest in this issue. So let's
-> > > have a consensus about this issue internally.
-> > >
-> > > To Mr. Kyungmin, Sylwester, Kukjin Kim, and Tomasz,
-> > > How about keeping hdmiphy config data in each board dts file?
-> >
-> > Please don't use HTML and quote only relevant part of e-mails. Otherwise
-> > there are good chances your messages end up in people's spam box.
-> >
->
-> Ah, I missed checking text mode. Sorry about this. :)
->
->
->
-> > It often helps to Cc a DT binding maintainer directly.
-> >
->
-> Good idea.
->
-> > Then, you consider moving the HDMI phy configuration to the device tree.
-> > As Sean suggested in this thread:
-> >
->
-> Right.
->
-> > ">> +static struct hdmiphy_config hdmiphy_4210_configs[] = {
-> > >> +       {
-> > >> +               .pixel_clock = 27000000,
-> > >> +               .conf = {
-> > >> +                       0x01, 0x05, 0x00, 0xD8, 0x10, 0x1C, 0x30,
-> 0x40,
-> > >> +                       0x6B, 0x10, 0x02, 0x51, 0xDF, 0xF2, 0x54,
-> 0x87,
-> > >> +                       0x84, 0x00, 0x30, 0x38, 0x00, 0x08, 0x10,
-> 0xE0,
-> > >> +                       0x22, 0x40, 0xE3, 0x26, 0x00, 0x00, 0x00,
-> 0x00,
-> > >> +               },
-> > >> +       },
-> > [trimmed couple more entries]
-> > >> +};
-> > >>
-> > > Are you aware of the effort to move these to dt? Since these are
-> > > board-specific values, it seems incorrect to apply them universally.
-> > > Shirish has uploaded a patch to the chromium review site to push these
-> > > into dt (https://chromium-review.googlesource.com/#/c/65581). Maybe
-> > > you can work that into your patch set?"
-> >
-> > The configuration data is 64 bytes of the register values IIUC. Would it
-> > be
-> > possible to figure out exact meaning of each byte ? Do all of these bytes
->
-> Right, but the user manual doesn't describe that enough so we might need to
-> inquire for what it means to design team.
->
-> > need to be changed per board ? Perhaps we can have per SoC static tables
-> > in
-> > the PHY driver and be overwriting only some of the bytes with values read
-> > from device tree ?
-> >
-> > AFAIR firmware-like binary blobs (register address/value pairs) are not
-> > supposed to be stored in DT.
-> >
-> > If there is no detailed documentation for theese PHY configuration tables
-> > I guess there is no choice but to put these raw 64 bytes in DT.
-> Presumably
-> > this should be a an required property defined only by board dts, since
-> > those
-> > values are PCB design dependent.
-> >
-> > However, if not all boards need tweaking this configuration data, then it
-> > could make sense to define recommended per-SoC tables in the driver and
-> > overwrite from DT only if it is specified there for a specific board.
-> > If we can come up with universal configuration for a SoC and selected
-> > pixel
-> > clock frequency then it could likely be better to store that in the
-> driver
-> > rather than in DT.
-> >
->
-> Thanks you your opinion. However, we need to make sure how we take care of
-> the PHY configuration values. So I will have two steps to merge this pages
-> set.
->
-> To Rahul,
-> Could you post only your patch set regardless of Shirish's patch? I will
-> merge your patch set first because as is, Exynos drm hdmi driver is broken.
-> And, we need more discussions about Shirish patch. So I will not merge this
-> patch until we have a consensus about it.
->
-> To Shirish,
-> For your patch, it seems that you need to make sure to figure out exact
-> meaning of each byte of the PHY configuration values first. Maybe you need
-> to inquire for that to hardware or design team. And please separate the
-> values into common and specific parts if needed.
->
-> Agreed, I shall request our hardware team to provide description about the
-phy values, and will update the patch, once i receive the same.
+> +	help
+> +	  This option enables support for the Samsung's Exynos SoC's
+> +	  onboard AHCI SATA.
+> +
+> +	  If unsure, say N.
+> +
+>  config SATA_FSL
+>  	tristate "Freescale 3.0Gbps SATA support"
+>  	depends on FSL_SOC
+> diff --git a/drivers/ata/Makefile b/drivers/ata/Makefile
+> index 46518c6..0e1f420f 100644
+> --- a/drivers/ata/Makefile
+> +++ b/drivers/ata/Makefile
+> @@ -11,6 +11,7 @@ obj-$(CONFIG_SATA_SIL24)	+= sata_sil24.o
+>  obj-$(CONFIG_SATA_DWC)		+= sata_dwc_460ex.o
+>  obj-$(CONFIG_SATA_HIGHBANK)	+= sata_highbank.o libahci.o
+>  obj-$(CONFIG_AHCI_IMX)		+= ahci_imx.o
+> +obj-$(CONFIG_AHCI_EXYNOS)	+= ahci_exynos.o
+>  
+>  # SFF w/ custom DMA
+>  obj-$(CONFIG_PDC_ADMA)		+= pdc_adma.o
+> diff --git a/drivers/ata/ahci_exynos.c b/drivers/ata/ahci_exynos.c
+> new file mode 100644
+> index 0000000..7f0af00
+> --- /dev/null
+> +++ b/drivers/ata/ahci_exynos.c
+> @@ -0,0 +1,226 @@
+> +/*
+> + * Samsung AHCI SATA platform driver
+> + * Copyright 2013 Samsung Electronics Co., Ltd.
+> + *
+> + * based on the AHCI SATA platform driver by Jeff Garzik and Anton Vorontsov
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
+> + * more details.
+> + *
+> + * You should have received a copy of the GNU General Public License along with
+> + * this program. If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/i2c.h>
 
+This include doesn't seem to be needed.
 
->
-> Thanks,
-> Inki Dae
->
-> > --
-> > Thanks,
-> > Sylwester
->
-> Thanks,
-Shirish S
+> +#include <linux/io.h>
+> +#include <linux/ahci_platform.h>
+> +#include <linux/of_device.h>
+> +#include <linux/phy/phy.h>
+> +#include "ahci.h"
+> +
+> +#define MHZ             (1000 * 1000)
+> +
+> +struct exynos_ahci_priv {
+> +	struct platform_device *ahci_pdev;
+> +	struct clk *sclk;
+> +	unsigned int freq;
+> +	struct phy *phy;
+> +};
+> +
+> +static int exynos_sata_init(struct device *dev, void __iomem *mmio)
+> +{
+> +	struct exynos_ahci_priv *priv = dev_get_drvdata(dev->parent);
+> +	int ret;
+> +
+> +	priv->phy = devm_phy_get(dev , "sata-phy");
+> +	if (IS_ERR(priv->phy))
+> +		return PTR_ERR(priv->phy);
 
---f46d044283c07ae7fc04e7ccf1f8
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+This should happen in ->probe (exynos_sata_init() is also called in
+exynos_sata_resume() so the above code will be executed on every
+resume operation which is incorrect).
 
-<div dir=3D"ltr">Hi,<div>First of all sorry for the late response,<br><div =
-class=3D"gmail_extra"><br><br><div class=3D"gmail_quote">On Tue, Oct 1, 201=
-3 at 10:09 AM, Inki Dae <span dir=3D"ltr">&lt;<a href=3D"mailto:inki.dae@sa=
-msung.com" target=3D"_blank">inki.dae@samsung.com</a>&gt;</span> wrote:<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex"><div class=3D"im"><br>
-<br>
-&gt; -----Original Message-----<br>
-&gt; From: Sylwester Nawrocki [mailto:<a href=3D"mailto:sylvester.nawrocki@=
-gmail.com">sylvester.nawrocki@gmail.com</a>]<br>
-&gt; Sent: Monday, September 30, 2013 7:09 AM<br>
-&gt; To: Inki Dae<br>
-</div><div class=3D"im">&gt; Cc: Rahul Sharma; <a href=3D"mailto:devicetree=
-@vger.kernel.org">devicetree@vger.kernel.org</a>; linux-samsung-soc;<br>
-&gt; sw0312.kim; sunil joshi; dri-devel; kgene.kim; Shirish S; Sylwester<br=
->
-&gt; Nawrocki; Rahul Sharma; Stephen Warren; Mark Rutland; Kumar Gala; Pawe=
-l<br>
-&gt; Moll; Rob Herring; Sean Paul<br>
-&gt; Subject: Re: [PATCH 1/7] drm/exynos: move hdmiphy related code to hdmi=
-phy<br>
-&gt; driver<br>
-&gt;<br>
-</div><div class=3D"im">&gt; On 09/28/2013 06:10 PM, Inki Dae wrote:<br>
-&gt; &gt;&gt; Any opinion from Device-Tree folks?<br>
-&gt; &gt;&gt;<br>
-&gt; &gt;&gt; IMO, we should have same consensus on Shirish patches before<=
-br>
-proceeding.<br>
-&gt; &gt;<br>
-&gt; &gt; Rahul, it seems that DT people have no interest in this issue. So=
- let&#39;s<br>
-&gt; &gt; have a consensus about this issue internally.<br>
-&gt; &gt;<br>
-&gt; &gt; To Mr. Kyungmin, Sylwester, Kukjin Kim, and Tomasz,<br>
-&gt; &gt; How about keeping hdmiphy config data in each board dts file?<br>
-&gt;<br>
-&gt; Please don&#39;t use HTML and quote only relevant part of e-mails. Oth=
-erwise<br>
-&gt; there are good chances your messages end up in people&#39;s spam box.<=
-br>
-&gt;<br>
-<br>
-</div>Ah, I missed checking text mode. Sorry about this. :)<br>
-<div class=3D"im"><br>
-<br>
-<br>
-&gt; It often helps to Cc a DT binding maintainer directly.<br>
-&gt;<br>
-<br>
-</div>Good idea.<br>
-<div class=3D"im"><br>
-&gt; Then, you consider moving the HDMI phy configuration to the device tre=
-e.<br>
-&gt; As Sean suggested in this thread:<br>
-&gt;<br>
-<br>
-</div>Right.<br>
-<div class=3D"im"><br>
-&gt; &quot;&gt;&gt; +static struct hdmiphy_config hdmiphy_4210_configs[] =
-=3D {<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 {<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pixel_clock =3D 27000000,<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .conf =3D {<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 0x01, 0x05, 0x0=
-0, 0xD8, 0x10, 0x1C, 0x30, 0x40,<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 0x6B, 0x10, 0x0=
-2, 0x51, 0xDF, 0xF2, 0x54, 0x87,<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 0x84, 0x00, 0x3=
-0, 0x38, 0x00, 0x08, 0x10, 0xE0,<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 0x22, 0x40, 0xE=
-3, 0x26, 0x00, 0x00, 0x00, 0x00,<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 =A0 =A0 =A0 =A0 },<br>
-&gt; &gt;&gt; + =A0 =A0 =A0 },<br>
-&gt; [trimmed couple more entries]<br>
-&gt; &gt;&gt; +};<br>
-&gt; &gt;&gt;<br>
-&gt; &gt; Are you aware of the effort to move these to dt? Since these are<=
-br>
-&gt; &gt; board-specific values, it seems incorrect to apply them universal=
-ly.<br>
-&gt; &gt; Shirish has uploaded a patch to the chromium review site to push =
-these<br>
-&gt; &gt; into dt (<a href=3D"https://chromium-review.googlesource.com/#/c/=
-65581" target=3D"_blank">https://chromium-review.googlesource.com/#/c/65581=
-</a>). Maybe<br>
-&gt; &gt; you can work that into your patch set?&quot;<br>
-&gt;<br>
-&gt; The configuration data is 64 bytes of the register values IIUC. Would =
-it<br>
-&gt; be<br>
-&gt; possible to figure out exact meaning of each byte ? Do all of these by=
-tes<br>
-<br>
-</div>Right, but the user manual doesn&#39;t describe that enough so we mig=
-ht need to<br>
-inquire for what it means to design team.<br>
-<div class=3D"im"><br>
-&gt; need to be changed per board ? Perhaps we can have per SoC static tabl=
-es<br>
-&gt; in<br>
-&gt; the PHY driver and be overwriting only some of the bytes with values r=
-ead<br>
-&gt; from device tree ?<br>
-&gt;<br>
-&gt; AFAIR firmware-like binary blobs (register address/value pairs) are no=
-t<br>
-&gt; supposed to be stored in DT.<br>
-&gt;<br>
-&gt; If there is no detailed documentation for theese PHY configuration tab=
-les<br>
-&gt; I guess there is no choice but to put these raw 64 bytes in DT. Presum=
-ably<br>
-&gt; this should be a an required property defined only by board dts, since=
-<br>
-&gt; those<br>
-&gt; values are PCB design dependent.<br>
-&gt;<br>
-&gt; However, if not all boards need tweaking this configuration data, then=
- it<br>
-&gt; could make sense to define recommended per-SoC tables in the driver an=
-d<br>
-&gt; overwrite from DT only if it is specified there for a specific board.<=
-br>
-&gt; If we can come up with universal configuration for a SoC and selected<=
-br>
-&gt; pixel<br>
-&gt; clock frequency then it could likely be better to store that in the dr=
-iver<br>
-&gt; rather than in DT.<br>
-&gt;<br>
-<br>
-</div>Thanks you your opinion. However, we need to make sure how we take ca=
-re of<br>
-the PHY configuration values. So I will have two steps to merge this pages<=
-br>
-set.<br>
-<br>
-To Rahul,<br>
-Could you post only your patch set regardless of Shirish&#39;s patch? I wil=
-l<br>
-merge your patch set first because as is, Exynos drm hdmi driver is broken.=
-<br>
-And, we need more discussions about Shirish patch. So I will not merge this=
-<br>
-patch until we have a consensus about it.<br>
-<br>
-To Shirish,<br>
-For your patch, it seems that you need to make sure to figure out exact<br>
-meaning of each byte of the PHY configuration values first. Maybe you need<=
-br>
-to inquire for that to hardware or design team. And please separate the<br>
-values into common and specific parts if needed.<br>
-<br></blockquote><div style>Agreed, I shall request our hardware team to pr=
-ovide description about the phy values, and will update the patch, once i=
-=A0receive=A0the same.</div><div style>=A0</div><blockquote class=3D"gmail_=
-quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1=
-ex">
+Also please take a look at the following patch:
 
-<br>
-Thanks,<br>
-Inki Dae<br>
-<span class=3D"HOEnZb"><font color=3D"#888888"><br>
-&gt; --<br>
-&gt; Thanks,<br>
-&gt; Sylwester<br>
-<br>
-</font></span></blockquote></div>Thanks,</div></div><div class=3D"gmail_ext=
-ra">Shirish S</div></div>
+https://lkml.org/lkml/2013/9/19/173
 
---f46d044283c07ae7fc04e7ccf1f8--
+it adds PHY support to ahci_platform driver, maybe it can be used
+for your needs as well.
 
---===============0631252555==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+> +	ret = phy_init(priv->phy);
+> +	if (ret < 0) {
+> +			dev_err(dev, "failed to init SATA PHY\n");
+> +			return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(priv->sclk);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to enable source clk\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_set_rate(priv->sclk, priv->freq * MHZ);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to set clk frequency\n");
+> +		clk_disable_unprepare(priv->sclk);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void exynos_sata_exit(struct device *dev)
+> +{
+> +	struct exynos_ahci_priv *priv = dev_get_drvdata(dev->parent);
+> +	if (!IS_ERR(priv->sclk))
+> +		clk_disable_unprepare(priv->sclk);
+> +}
+> +
+> +static int exynos_sata_suspend(struct device *dev)
+> +{
+> +	struct exynos_ahci_priv *priv = dev_get_drvdata(dev->parent);
+> +
+> +	if (!IS_ERR(priv->sclk))
+> +		clk_disable_unprepare(priv->sclk);
+> +	phy_power_off(priv->phy);
+> +	return 0;
+> +}
+> +
+> +static int exynos_sata_resume(struct device *dev)
+> +{
+> +	struct exynos_ahci_priv *priv = dev_get_drvdata(dev->parent);
+> +	phy_power_on(priv->phy);
+> +	exynos_sata_init(dev, NULL);
+> +	return 0;
 
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
+It should be:
 
---===============0631252555==--
+	return exynos_sata_init(dev, NULL);
+
+Also please fix exynos_sata_suspend() to call exynos_sata_exit().
+
+[...]
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
