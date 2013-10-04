@@ -1,217 +1,137 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH v2 4/5] drm/exynos: Initialize ptn3460 if present
-Date: Fri, 4 Oct 2013 11:04:48 -0400
-Message-ID: <CAOw6vbKm+N8ZNyL8HQNhm2TnQOD8---1DkxE-n1LxWz-Y2=MNw@mail.gmail.com>
-References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
- <1380839303-4834-1-git-send-email-seanpaul@chromium.org> <1380839303-4834-5-git-send-email-seanpaul@chromium.org>
- <CAAQKjZNKLtqKK8eoKukHwARBMBYdWfHwxdWS-aU=YjYW+KU+Gg@mail.gmail.com>
- <CAOw6vbKWjBL8jZ9iQ_Nk7-SmoTcTZ8TSMiwjOc2qT=HaJYFjAw@mail.gmail.com>
- <CAAQKjZMfP_Cgo5hPPTiwKa_+Ph+GUt2Fbdtipd5V=CQEDy3eSQ@mail.gmail.com>
- <CAOw6vbL_W-8S+htX9KB2ABbtr9+JhfxHuL2ikJG7CrqEkeo9NA@mail.gmail.com> <03d801cec112$a477f4a0$ed67dde0$%dae@samsung.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH 4/6] thermal: exynos: Replace SOC_ARCH_EXYNOS with SOC_ARCH_EXYNOS5250
+Date: Fri, 4 Oct 2013 11:07:00 -0400
+Message-ID: <524ED994.7020600@ti.com>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com> <524DEAED.4030905@ti.com> <20131004122330.47e21d24@amdc308.digital.local> <2265935.YcHunKd7UC@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <03d801cec112$a477f4a0$ed67dde0$%dae@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Dave Airlie <airlied@linux.ie>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="VxriV23ILdJdStvRGSMKosPtajFoJ5uWu"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <2265935.YcHunKd7UC@amdc1032>
+Sender: linux-pm-owner@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 4, 2013 at 11:01 AM, Inki Dae <inki.dae@samsung.com> wrote:
->
->
->> -----Original Message-----
->> From: Sean Paul [mailto:seanpaul@chromium.org]
->> Sent: Friday, October 04, 2013 11:17 PM
->> To: Inki Dae
->> Cc: Kukjin Kim; DRI mailing list; linux-samsung-soc@vger.kernel.org;
->> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
->> doc@vger.kernel.org; devicetree@vger.kernel.org; Dave Airlie
->> Subject: Re: [PATCH v2 4/5] drm/exynos: Initialize ptn3460 if present
+--VxriV23ILdJdStvRGSMKosPtajFoJ5uWu
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+On 04-10-2013 06:47, Bartlomiej Zolnierkiewicz wrote:
+> On Friday, October 04, 2013 12:23:30 PM Lukasz Majewski wrote:
+>> Hi Eduardo,
 >>
->> On Fri, Oct 4, 2013 at 12:18 AM, Inki Dae <inki.dae@samsung.com> wrote:
->> > 2013/10/4 Sean Paul <seanpaul@chromium.org>:
->> >> On Thu, Oct 3, 2013 at 10:29 PM, Inki Dae <inki.dae@samsung.com> wrote:
->> >>> 2013/10/4 Sean Paul <seanpaul@chromium.org>:
->> >>>> This patch adds code to look for the ptn3460 in the device tree file
->> on
->> >>>> exynos initialization. If ptn node is found, the driver will
->> initialize
->> >>>> the ptn3460 driver and skip creating a DP connector (since the bridge
->> >>>> driver will register its own connector).
->> >>>>
->> >>>> Signed-off-by: Sean Paul <seanpaul@chromium.org>
->> >>>> ---
->> >>>>
->> >>>> v2:
->> >>>>         - Changed include from of_i2c.h to i2c.h
->> >>>>         - Changed of_find_by_name to of_find_compatible
->> >>>>
->> >>>>  drivers/gpu/drm/exynos/exynos_drm_core.c | 44
->> +++++++++++++++++++++++++++++++-
->> >>>>  1 file changed, 43 insertions(+), 1 deletion(-)
->> >>>>
->> >>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_core.c
->> b/drivers/gpu/drm/exynos/exynos_drm_core.c
->> >>>> index 1bef6dc..08ca4f9 100644
->> >>>> --- a/drivers/gpu/drm/exynos/exynos_drm_core.c
->> >>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_core.c
->> >>>> @@ -12,7 +12,9 @@
->> >>>>   * option) any later version.
->> >>>>   */
->> >>>>
->> >>>> +#include <linux/i2c.h>
->> >>>>  #include <drm/drmP.h>
->> >>>> +#include <drm/bridge/ptn3460.h>
->> >>>>  #include "exynos_drm_drv.h"
->> >>>>  #include "exynos_drm_encoder.h"
->> >>>>  #include "exynos_drm_connector.h"
->> >>>> @@ -20,6 +22,40 @@
->> >>>>
->> >>>>  static LIST_HEAD(exynos_drm_subdrv_list);
->> >>>>
->> >>>> +struct bridge_init {
->> >>>> +       struct i2c_client *client;
->> >>>> +       struct device_node *node;
->> >>>> +};
->> >>>> +
->> >>>> +static bool find_bridge(const char *compat, struct bridge_init
->> *bridge)
->> >>>> +{
->> >>>> +       bridge->client = NULL;
->> >>>> +       bridge->node = of_find_compatible_node(NULL, NULL, compat);
->> >>>
->> >>> Then, shouldn't the lvds-bridge driver be implemented as i2c driver so
->> >>> that such tricky isn't needed? Is there any reason you use such tricky
->> >>> codes?
->> >>>
->> >>
->> >> This is what I was explaining earlier today. If the bridge driver is
->> >> just an i2c driver, it won't get a pointer to drm_device, and can't
->> >> register itself as a drm_bridge or drm_connector. To solve this, you
->> >> need the ptn3460_init callback.
->> >>
->> >
->> > No, I think you can use sub driver. how about registering to exynos
->> > drm core that driver using exynos_drm_subdrv_register function after
->> > probed? Is there something I am missing?
->> >
+>>> On 24-09-2013 04:08, Lukasz Majewski wrote:
+>>>> The TMU data definition is now separated to Exynos4412 and
+>>>> Exynos5250.
+>>>>
+>>>> Now SOC_ARCH_EXYNOS only refers to Exynos5250. Hence the name
+>>>> SOC_ARCH_EXYNOS has been changed to SOC_ARCH_EXYNOS5250.
+>>>>
+>>>
+>>> How about merging this one with patch 02?
 >>
->> The ptn driver isn't exynos-specific, so I don't think making it an
->> exynos_drm_subdrv is appropriate.
+>> I wanted to show how the work was logically split - patch 02
+>> extracts Exynos4412 from Exynos5250. Then this patch changes the name.=
+
 >>
->
-> I _really know_ that the ptn driver isn't exynos-specific. I mean that you
-> can use exynos_drm_subdrv somehow. ie. you can add a new bridge module
-> specific to exynos, and this module can register its own sub driver at end
-> of probe. Why do you try to use such tricky codes?
->
+>> I will merge those two patches. No problem.
+>=20
+> Oh, well. Looking at the patch #2 again the merge can be done without
+> sacrificing backportability.
 
-So I create a new exynos_lvds_driver which is an i2c driver. When that
-probes, all it does is register that driver as an exynos_drm_subdrv.
-Then in the subdrv probe I call into ptn3460_init?
+Please, merge them and describe that you are reworking the type and the
+enum definition. Also add your reasonings, specially if you found bugs.
+The way the descriptions are being presented, the bugs you found do not
+get properly explained.
 
-That seems a lot more tricky than just calling ptn3460_init directly...
+>=20
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>=20
+>>>
+>>>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+>>>> ---
+>>>>  drivers/thermal/samsung/exynos_tmu.c      |    4 ++--
+>>>>  drivers/thermal/samsung/exynos_tmu.h      |    2 +-
+>>>>  drivers/thermal/samsung/exynos_tmu_data.c |    2 +-
+>>>>  3 files changed, 4 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c
+>>>> b/drivers/thermal/samsung/exynos_tmu.c index 21b89e4..037cd46 100644=
 
-Sean
+>>>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>>>> @@ -632,9 +632,9 @@ static int exynos_tmu_probe(struct
+>>>> platform_device *pdev) if (ret)
+>>>>  		return ret;
+>>>> =20
+>>>> -	if (pdata->type =3D=3D SOC_ARCH_EXYNOS ||
+>>>> -	    pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
+>>>> +	if (pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
+>>>>  	    pdata->type =3D=3D SOC_ARCH_EXYNOS4412 ||
+>>>> +	    pdata->type =3D=3D SOC_ARCH_EXYNOS5250 ||
+>>>>  	    pdata->type =3D=3D SOC_ARCH_EXYNOS5440)
+>>>>  		data->soc =3D pdata->type;
+>>>>  	else {
+>>>> diff --git a/drivers/thermal/samsung/exynos_tmu.h
+>>>> b/drivers/thermal/samsung/exynos_tmu.h index db37df0..b42ece4 100644=
+
+>>>> --- a/drivers/thermal/samsung/exynos_tmu.h
+>>>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>>>> @@ -42,7 +42,7 @@ enum calibration_mode {
+>>>>  enum soc_type {
+>>>>  	SOC_ARCH_EXYNOS4210 =3D 1,
+>>>>  	SOC_ARCH_EXYNOS4412,
+>>>> -	SOC_ARCH_EXYNOS,
+>>>> +	SOC_ARCH_EXYNOS5250,
+>>>>  	SOC_ARCH_EXYNOS5440,
+>>>>  };
+>>>> =20
+>>>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c
+>>>> b/drivers/thermal/samsung/exynos_tmu_data.c index bd08093..188223f
+>>>> 100644 --- a/drivers/thermal/samsung/exynos_tmu_data.c
+>>>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+>>>> @@ -183,7 +183,7 @@ struct exynos_tmu_init_data const
+>>>> exynos4412_default_tmu_data =3D { struct exynos_tmu_init_data const
+>>>> exynos5250_default_tmu_data =3D { .tmu_data =3D {
+>>>>  		{ EXYNOS4412_TMU_DATA,
+>>>> -		.type =3D SOC_ARCH_EXYNOS,
+>>>> +		.type =3D SOC_ARCH_EXYNOS5250,
+>>>>  		},
+>>>>  	},
+>>>>  	.tmu_count =3D 1,
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
+>=20
 
 
-> Thanks,
-> Inki Dae
->
->> Sean
->>
->> >
->> >> If it's an i2c driver with the ptn3460_init callback, where it parses
->> >> the dt in probe, then you have a race between the ptn probe and the
->> >> ptn init/drm hooks. ie: it's possible drm will initialize and call
->> >> disable/post_disable/pre_enable/enable before things have been probed.
->> >
->> > And also, exynos drm core will call a probe callback of the sub driver
->> > after _drm is initialized_. Is there something I am missing?
->> >
->> >> To solve this, you need to use some global state and/or locking.
->> >>
->> >> So, to summarize. We can have this of_find_compatible with a init
->> >> callback, or we can have an i2c driver + global state/locking + init
->> >> callback. I chose the former, since it seemed easier.
->> >>
->> >> If you have a better way to achieve this, I'm definitely interested,
->> >> but I saw this as the lesser of two evils.
->> >>
->> >> Sean
->> >>
->> >>> I think you need to implement the lvds-bridge driver as i2c driver,
->> >>> and then consider how to take care of this. I mean let's find a better
->> >>> way how we could take care of the i2c based driver in exynos drm
->> >>> framework or driver. In all cases, such tricky codes are not good.
->> >>>
->> >>>> +       if (!bridge->node)
->> >>>> +               return false;
->> >>>> +
->> >>>> +       bridge->client = of_find_i2c_device_by_node(bridge->node);
->> >>>> +       if (!bridge->client)
->> >>>> +               return false;
->> >>>> +
->> >>>> +       return true;
->> >>>> +}
->> >>>> +
->> >>>> +/* returns the number of bridges attached */
->> >>>> +static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
->> >>>> +               struct drm_encoder *encoder)
->> >>>> +{
->> >>>> +       struct bridge_init bridge;
->> >>>> +       int ret;
->> >>>> +
->> >>>> +       if (find_bridge("nxp,ptn3460", &bridge)) {
->> >>>> +               ret = ptn3460_init(dev, encoder, bridge.client,
->> bridge.node);
->> >>>> +               if (!ret)
->> >>>> +                       return 1;
->> >>>> +       }
->> >>>> +       return 0;
->> >>>> +}
->> >>>> +
->> >>>>  static int exynos_drm_create_enc_conn(struct drm_device *dev,
->> >>>>                                         struct exynos_drm_subdrv
-> *subdrv)
->> >>>>  {
->> >>>> @@ -36,6 +72,13 @@ static int exynos_drm_create_enc_conn(struct
->> drm_device *dev,
->> >>>>                 DRM_ERROR("failed to create encoder\n");
->> >>>>                 return -EFAULT;
->> >>>>         }
->> >>>> +       subdrv->encoder = encoder;
->> >>>> +
->> >>>> +       if (subdrv->manager->display_ops->type ==
->> EXYNOS_DISPLAY_TYPE_LCD) {
->> >>>> +               ret = exynos_drm_attach_lcd_bridge(dev, encoder);
->> >>>> +               if (ret)
->> >>>> +                       return 0;
->> >>>> +       }
->> >>>>
->> >>>>         /*
->> >>>>          * create and initialize a connector for this sub driver and
->> >>>> @@ -48,7 +91,6 @@ static int exynos_drm_create_enc_conn(struct
->> drm_device *dev,
->> >>>>                 goto err_destroy_encoder;
->> >>>>         }
->> >>>>
->> >>>> -       subdrv->encoder = encoder;
->> >>>>         subdrv->connector = connector;
->> >>>>
->> >>>>         return 0;
->> >>>> --
->> >>>> 1.8.4
->> >>>>
->> >>>> --
->> >>>> To unsubscribe from this list: send the line "unsubscribe linux-
->> samsung-soc" in
->> >>>> the body of a message to majordomo@vger.kernel.org
->> >>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> >> --
->> >> To unsubscribe from this list: send the line "unsubscribe linux-
->> samsung-soc" in
->> >> the body of a message to majordomo@vger.kernel.org
->> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
+
+Eduardo Valentin
+
+
+--VxriV23ILdJdStvRGSMKosPtajFoJ5uWu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlJO2ZoACgkQCXcVR3XQvP0sDQD7B52MD2xoWPbCYvVisLgvmobk
+MuRwecQ+owTvny7WD/0A/1T6FMBw/dgmv5ouYybMEElHRaNuD3WYksqvtdweaUDR
+=UoWf
+-----END PGP SIGNATURE-----
+
+--VxriV23ILdJdStvRGSMKosPtajFoJ5uWu--
