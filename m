@@ -1,47 +1,78 @@
-From: Nicolas Pitre <nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/6] ARM: EXYNOS: add Exynos Dual Cluster Support
-Date: Fri, 4 Oct 2013 15:51:31 -0400 (EDT)
-Message-ID: <alpine.LFD.2.03.1310041543090.3023@syhkavp.arg>
-References: <1380644227-12244-1-git-send-email-v.tyrtov@samsung.com> <1380644227-12244-4-git-send-email-v.tyrtov@samsung.com> <20131002125458.GA3407@localhost.localdomain>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH] PCI: exynos: missing clk_disable_unprepare() on error in
+ exynos_pcie_probe()
+Date: Fri, 4 Oct 2013 16:50:39 -0600
+Message-ID: <20131004225039.GA26108@google.com>
+References: <CAPgLHd_RTNxi-OYhmTZ35NttjnAg-gQ_WKHkUQr5ueMhXVLTMg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131002125458.GA3407-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
-Cc: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Naour Romain <romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAPgLHd_RTNxi-OYhmTZ35NttjnAg-gQ_WKHkUQr5ueMhXVLTMg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: kgene.kim@samsung.com, tgih.jun@samsung.com, linux-pci@vger.kernel.org, jg1.han@samsung.com, rob.herring@calxeda.com, yongjun_wei@trendmicro.com.cn, linux-samsung-soc@vger.kernel.org, grant.likely@linaro.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 2 Oct 2013, Dave Martin wrote:
-
-> On Tue, Oct 01, 2013 at 08:17:04PM +0400, Vyacheslav Tyrtov wrote:
-> > +static int exynos_power_up(unsigned int cpu, unsigned int cluster)
-> > +{
-> > +     int ret;
-> > +     local_irq_disable();
+On Sun, Sep 29, 2013 at 10:29:11AM +0800, Wei Yongjun wrote:
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 > 
-> Should there be a local_fiq_disable() here also?
+> Add the missing clk_disable_unprepare() before return
+> from exynos_pcie_probe() in the error handling case.
+> 
+> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-No.  In fact this is paired with
+Applied with Jingoo's ack and Sylwester's subject line to
+pci/host-exynos.  Thanks!
 
-> > +     arch_spin_lock(&exynos_lock);
+Bjorn
 
-to create the equivalent of a arch_spin_lock_irq().  And the reason is:
-
-/*
- * We can't use regular spinlocks. In the switcher case, it is possible
- * for an outbound CPU to call power_down() after its inbound counterpart
- * is already live using the same logical CPU number which trips lockdep
- * debugging.
- */
-
-Otherwise we simply would have used spin_lock_irq().
-
-No FIQs are supposed to ever race with this code.
-
-
-Nicolas
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ---
+>  drivers/pci/host/pci-exynos.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+> index 94e096b..e25598a 100644
+> --- a/drivers/pci/host/pci-exynos.c
+> +++ b/drivers/pci/host/pci-exynos.c
+> @@ -487,18 +487,24 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
+>  
+>  	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	exynos_pcie->elbi_base = devm_ioremap_resource(&pdev->dev, elbi_base);
+> -	if (IS_ERR(exynos_pcie->elbi_base))
+> -		return PTR_ERR(exynos_pcie->elbi_base);
+> +	if (IS_ERR(exynos_pcie->elbi_base)) {
+> +		ret = PTR_ERR(exynos_pcie->elbi_base);
+> +		goto fail_bus_clk;
+> +	}
+>  
+>  	phy_base = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+>  	exynos_pcie->phy_base = devm_ioremap_resource(&pdev->dev, phy_base);
+> -	if (IS_ERR(exynos_pcie->phy_base))
+> -		return PTR_ERR(exynos_pcie->phy_base);
+> +	if (IS_ERR(exynos_pcie->phy_base)) {
+> +		ret = PTR_ERR(exynos_pcie->phy_base);
+> +		goto fail_bus_clk;
+> +	}
+>  
+>  	block_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+>  	exynos_pcie->block_base = devm_ioremap_resource(&pdev->dev, block_base);
+> -	if (IS_ERR(exynos_pcie->block_base))
+> -		return PTR_ERR(exynos_pcie->block_base);
+> +	if (IS_ERR(exynos_pcie->block_base)) {
+> +		ret = PTR_ERR(exynos_pcie->block_base);
+> +		goto fail_bus_clk;
+> +	}
+>  
+>  	ret = add_pcie_port(pp, pdev);
+>  	if (ret < 0)
+> 
