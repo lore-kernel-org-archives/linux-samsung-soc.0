@@ -1,35 +1,76 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v2 0/5] Add some missing bits for exynos5250-snow
-Date: Thu, 3 Oct 2013 15:35:52 -0700
-Message-ID: <CAOesGMhjBGWVXs5VXdc9mFpKWE2-MSAG6BWB0GAzxLGd6Sph=A@mail.gmail.com>
-References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
-	<1380839303-4834-1-git-send-email-seanpaul@chromium.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/3] ahci: exynos: add ahci sata support on Exynos platform
+Date: Fri, 04 Oct 2013 09:33:12 +0900
+Message-ID: <003f01cec099$4eb706b0$ec251410$%han@samsung.com>
+References: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1380609183-21430-2-git-send-email-yuvaraj.cd@samsung.com>
+ <1534631.KrL0vInDuc@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f176.google.com ([209.85.216.176]:41723 "EHLO
-	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755542Ab3JCWfx (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:40279 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753628Ab3JDAdO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Oct 2013 18:35:53 -0400
-Received: by mail-qc0-f176.google.com with SMTP id t7so2121729qcv.21
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Oct 2013 15:35:52 -0700 (PDT)
-In-Reply-To: <1380839303-4834-1-git-send-email-seanpaul@chromium.org>
+	Thu, 3 Oct 2013 20:33:14 -0400
+In-reply-to: <1534631.KrL0vInDuc@amdc1032>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sean Paul <seanpaul@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, airlied@linux.ie
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Yuvaraj Kumar C D' <yuvaraj.cd@gmail.com>
+Cc: tj@kernel.org, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kishon@ti.com, s.nawrocki@samsung.com, ks.giri@samsung.com, aditya.ps@samsung.com, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Thu, Oct 3, 2013 at 3:28 PM, Sean Paul <seanpaul@chromium.org> wrote:
-> This set adds some missing devicetree nodes to the exynos5250-snow file as well
-> as adds a drm_bridge driver for the ptn3460 DP-LVDS chip. This chip is used in
-> the exynos5250-snow board.
->
-> Sean
+On Thursday, October 03, 2013 8:32 PM, Bartlomiej Zolnierkiewicz wrote:
+> On Tuesday, October 01, 2013 12:03:01 PM Yuvaraj Kumar C D wrote:
+> > Exynos5250 contains one Synopsys AHCI SATA controller.The avalaible
+> > ahci_platform driver is not sufficient to handle the AHCI PHY and PHY
+> > clock related initialization.
+> >
+> > This patch adds exynos specific ahci sata driver,contained the exynos
+> > specific initialized codes, re-use the generic ahci_platform driver, and
+> > keep the generic ahci_platform driver clean as much as possible.
+> >
+> > This patch depends on the below patch
+> > 	[1].drivers: phy: add generic PHY framework
+> > 		by Kishon Vijay Abraham I<kishon@ti.com>
+> >
+> > Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> > ---
+> >  drivers/ata/Kconfig       |    9 ++
+> >  drivers/ata/Makefile      |    1 +
+> >  drivers/ata/ahci_exynos.c |  226 +++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 236 insertions(+)
+> >  create mode 100644 drivers/ata/ahci_exynos.c
+> >
 
-Series:
 
-Acked-by: Olof Johansson <olof@lixom.net>
+[.....]
 
+> > +	priv->phy = devm_phy_get(dev , "sata-phy");
+> > +	if (IS_ERR(priv->phy))
+> > +		return PTR_ERR(priv->phy);
 
--Olof
+[.....]
+
+> Also please take a look at the following patch:
+> 
+> https://lkml.org/lkml/2013/9/19/173
+> 
+> it adds PHY support to ahci_platform driver, maybe it can be used
+> for your needs as well.
+
+I also agree with Bartlomiej Zolnierkiewicz's opinion.
+'ahci_exynos.c' just calls PHY API, without any additional control
+for Exynos AHCI IP.
+
+Best regards,
+Jingoo Han
+
+> 
+> > +	ret = phy_init(priv->phy);
+> > +	if (ret < 0) {
+> > +			dev_err(dev, "failed to init SATA PHY\n");
+> > +			return ret;
+> > +	}
+> > +
