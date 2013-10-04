@@ -1,51 +1,40 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v4 4/4] [media] exynos-scaler: Add DT bindings for SCALER driver
-Date: Fri,  4 Oct 2013 17:56:34 +0530
-Message-ID: <1380889594-10448-5-git-send-email-shaik.ameer@samsung.com>
-References: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: s.nawrocki@samsung.com, posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl, shaik.ameer@samsung.com
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] thermal: offer Samsung thermal support only when ARCH_EXYNOS
+ is defined
+Date: Fri, 04 Oct 2013 14:36:42 +0200
+Message-ID: <2958660.aJeCDrTTOe@amdc1032>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the DT binding documentation for the
-Exynos5420/5410 based SCALER device driver.
+Menu for Samsung thermal support is visible on all Samsung
+platforms while thermal drivers are currently available only
+for EXYNOS SoCs. Fix it by replacing PLAT_SAMSUNG dependency
+with ARCH_EXYNOS one.
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/media/exynos5-scaler.txt   |   22 ++++++++++++++++++++
- 1 file changed, 22 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
+ drivers/thermal/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
-new file mode 100644
-index 0000000..f620baf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
-@@ -0,0 +1,22 @@
-+* Samsung Exynos5 SCALER device
-+
-+SCALER is used for scaling, blending, color fill and color space
-+conversion on EXYNOS[5420/5410] SoCs.
-+
-+Required properties:
-+- compatible: should be "samsung,exynos5420-scaler" or
-+			"samsung,exynos5410-scaler"
-+- reg: should contain SCALER physical address location and length.
-+- interrupts: should contain SCALER interrupt number
-+- clocks: should contain the SCALER clock specifier, from the
-+			common clock bindings
-+- clock-names: should be "scaler"
-+
-+Example:
-+	scaler_0: scaler@0x12800000 {
-+		compatible = "samsung,exynos5420-scaler";
-+		reg = <0x12800000 0x1000>;
-+		interrupts = <0 220 0>;
-+		clocks = <&clock 381>;
-+		clock-names = "scaler";
-+	};
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index a709c63..05cf95c 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -198,7 +198,7 @@ source "drivers/thermal/ti-soc-thermal/Kconfig"
+ endmenu
+ 
+ menu "Samsung thermal drivers"
+-depends on PLAT_SAMSUNG
++depends on ARCH_EXYNOS
+ source "drivers/thermal/samsung/Kconfig"
+ endmenu
+ 
 -- 
-1.7.9.5
+1.8.2.3
