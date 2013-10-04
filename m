@@ -1,61 +1,103 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] [media] s5p-mfc: call wake_up_dev if in suspend mode
-Date: Fri,  4 Oct 2013 10:17:19 +0530
-Message-ID: <1380862039-30819-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, prathyush.k@samsung.com, arun.m@samsung.com, arunkk.samsung@gmail.com
+From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 1/6] thermal: exynos: fix: Return from
+ exynos_report_trigger() when therm_dev is NULL
+Date: Fri, 04 Oct 2013 11:56:12 +0200
+Message-ID: <20131004115612.1017e0f7@amdc308.digital.local>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+ <1380010102-25817-2-git-send-email-l.majewski@samsung.com>
+ <524DE45E.1060606@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <524DE45E.1060606-l0cyMroinI0@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Eduardo Valentin <eduardo.valentin-l0cyMroinI0@public.gmane.org>
+Cc: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-KKrjLPT3xs0@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Myungjoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Prathyush K <prathyush.k@samsung.com>
+Hi Eduardo,
 
-If a frame is still decoding when system enters suspend mode, we wait
-on the device queue for a interrupt condition. This sometimes leads to a
-timeout because the device queue might not be woken up everytime.
-Usually, the context queue gets woken up when that context's frame gets
-decoded. This patch adds a condition to wake up the device queue along
-with the context queue when the system is in suspend mode.
+Thanks for reply.
 
-Since the device queue is now woken up, we don't have to check the
-context's int_cond flag while waiting. Also, we can skip calling try_run
-after waking up the device queue to ensure that we don't have to wait
-for more than one frame to be processed.
+> On 24-09-2013 04:08, Lukasz Majewski wrote:
+> > The commit 4de0bdaa9677d11406c9becb70c60887c957e1f0
+> > ("thermal: exynos: Add support for instance based
+> > register/unregister") broke check for presence of therm_dev at
+> > global thermal zone in exynos_report_trigger().
+> > 
+> > The resulting wrong test prevents thermal_zone_device_update()
+> > call, which calls handlers for situation when trip points are
+> > passed. Such behavior prevents thermal driver from proper reaction
+> > (when TMU interrupt is raised) in a situation when overheating is
+> > detected at TMU hardware. This patch fixes it.
+> > 
+> > Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > ---
+> >  drivers/thermal/samsung/exynos_thermal_common.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/thermal/samsung/exynos_thermal_common.c
+> > b/drivers/thermal/samsung/exynos_thermal_common.c index
+> > f10a6ad..55a912a 100644 ---
+> > a/drivers/thermal/samsung/exynos_thermal_common.c +++
+> > b/drivers/thermal/samsung/exynos_thermal_common.c @@ -310,7 +310,7
+> > @@ void exynos_report_trigger(struct thermal_sensor_conf *conf) }
+> >  
+> >  	th_zone = conf->pzone_data;
+> > -	if (th_zone->therm_dev)
+> > +	if (!th_zone->therm_dev)
+> 
+> Fine with this fix, as it really looks obvious. But after reading the
+> code a bit, I am considering if we can remove the above check at all.
 
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-Signed-off-by: Arun Mankuzhi <arun.m@samsung.com>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- drivers/media/platform/s5p-mfc/s5p_mfc.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+I have just preserved the old behaviour for -rcX fix.
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index 084263d..bec0f61 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -404,7 +404,11 @@ leave_handle_frame:
- 	if (test_and_clear_bit(0, &dev->hw_lock) == 0)
- 		BUG();
- 	s5p_mfc_clock_off();
--	s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
-+	/* if suspending, wake up device and do not try_run again*/
-+	if (test_bit(0, &dev->enter_suspend))
-+		wake_up_dev(dev, reason, err);
-+	else
-+		s5p_mfc_hw_call(dev->mfc_ops, try_run, dev);
- }
- 
- /* Error handling for interrupt */
-@@ -1286,9 +1290,7 @@ static int s5p_mfc_suspend(struct device *dev)
- 		/* Try and lock the HW */
- 		/* Wait on the interrupt waitqueue */
- 		ret = wait_event_interruptible_timeout(m_dev->queue,
--			m_dev->int_cond || m_dev->ctx[m_dev->curr_ctx]->int_cond,
--			msecs_to_jiffies(MFC_INT_TIMEOUT));
--
-+			m_dev->int_cond, msecs_to_jiffies(MFC_INT_TIMEOUT));
- 		if (ret == 0) {
- 			mfc_err("Waiting for hardware to finish timed out\n");
- 			return -EIO;
+> 
+> Reading the driver code piece at drivers/thermal/samsung/exynos_tmu.c,
+> by checking how exynos_register_thermal gets called, and how error is
+> handled, I assume we do not need to check for th_zone->therm_dev.
+
+It looks like we don't need this check (we will not register the
+thermal zone if therm dev is not correct).
+
+> 
+> To me looks like the driver only allows th_zone's exist only with
+> valid therm_dev, isn't it? Except for the probe sequence, maybe, at
+> run time there is a time window that we have valid th_zone with
+> invalid therm_dev. However, reading the probe, still, the irq gets
+> initialized only in very end, so the work queue don't get queue till
+> then at least.
+> 
+> So, my question before acking is, shall we remove this check
+> altogether?
+
+I think that it is up to you to decide how we proceed. 
+
+Shall this patch go into v3.12-rcX since it is "obvious" (and documents
+what and when was broken) or would you require to prepare "new" patch
+with removal of this check?
+
+> 
+> 
+> >  		return;
+> >  
+> >  	if (th_zone->bind == false) {
+> > 
+> 
+> 
+
+
+
 -- 
-1.7.9.5
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
