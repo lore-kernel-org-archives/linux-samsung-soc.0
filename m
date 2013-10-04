@@ -1,99 +1,99 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 4/6] thermal: exynos: Replace SOC_ARCH_EXYNOS with
- SOC_ARCH_EXYNOS5250
-Date: Fri, 04 Oct 2013 12:47:19 +0200
-Message-ID: <2265935.YcHunKd7UC@amdc1032>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
- <524DEAED.4030905@ti.com> <20131004122330.47e21d24@amdc308.digital.local>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7Bit
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v4 0/4] Exynos5 Series SCALER Driver
+Date: Fri,  4 Oct 2013 17:56:30 +0530
+Message-ID: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:64748 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751600Ab3JDKsA (ORCPT
+Received: from mail-pa0-f43.google.com ([209.85.220.43]:36355 "EHLO
+	mail-pa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753131Ab3JDMXd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Oct 2013 06:48:00 -0400
-In-reply-to: <20131004122330.47e21d24@amdc308.digital.local>
+	Fri, 4 Oct 2013 08:23:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: s.nawrocki@samsung.com, posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl, shaik.ameer@samsung.com
 
-On Friday, October 04, 2013 12:23:30 PM Lukasz Majewski wrote:
-> Hi Eduardo,
-> 
-> > On 24-09-2013 04:08, Lukasz Majewski wrote:
-> > > The TMU data definition is now separated to Exynos4412 and
-> > > Exynos5250.
-> > > 
-> > > Now SOC_ARCH_EXYNOS only refers to Exynos5250. Hence the name
-> > > SOC_ARCH_EXYNOS has been changed to SOC_ARCH_EXYNOS5250.
-> > > 
-> > 
-> > How about merging this one with patch 02?
-> 
-> I wanted to show how the work was logically split - patch 02
-> extracts Exynos4412 from Exynos5250. Then this patch changes the name.
-> 
-> I will merge those two patches. No problem.
+This patch adds support for SCALER device which is a
+new device for scaling, blending, color fill  and color space
+conversion on EXYNOS5410/5420 SoCs.
 
-Oh, well. Looking at the patch #2 again the merge can be done without
-sacrificing backportability.
+This device supports the following as key features.
+    input image format
+        - YCbCr420 2P(UV/VU), 3P
+        - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+        - YCbCr444 2P(UV,VU), 3P
+        - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+        - Pre-multiplexed ARGB8888, L8A8 and L8
+    output image format
+        - YCbCr420 2P(UV/VU), 3P
+        - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+        - YCbCr444 2P(UV,VU), 3P
+        - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+        - Pre-multiplexed ARGB8888
+    input rotation
+        - 0/90/180/270 degree, X/Y/XY Flip
+    scale ratio
+        - 1/4 scale down to 16 scale up
+    color space conversion
+        - RGB to YUV / YUV to RGB
+    Size - Exynos5420
+        - Input : 16x16 to 8192x8192
+        - Output:   4x4 to 8192x8192
+    Size - Exynos5410
+        - Input/Output: 4x4 to 4096x4096
+    alpha blending, color fill
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Rebased on:
+-----------
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git:master
 
-> > 
-> > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > > ---
-> > >  drivers/thermal/samsung/exynos_tmu.c      |    4 ++--
-> > >  drivers/thermal/samsung/exynos_tmu.h      |    2 +-
-> > >  drivers/thermal/samsung/exynos_tmu_data.c |    2 +-
-> > >  3 files changed, 4 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> > > b/drivers/thermal/samsung/exynos_tmu.c index 21b89e4..037cd46 100644
-> > > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > > @@ -632,9 +632,9 @@ static int exynos_tmu_probe(struct
-> > > platform_device *pdev) if (ret)
-> > >  		return ret;
-> > >  
-> > > -	if (pdata->type == SOC_ARCH_EXYNOS ||
-> > > -	    pdata->type == SOC_ARCH_EXYNOS4210 ||
-> > > +	if (pdata->type == SOC_ARCH_EXYNOS4210 ||
-> > >  	    pdata->type == SOC_ARCH_EXYNOS4412 ||
-> > > +	    pdata->type == SOC_ARCH_EXYNOS5250 ||
-> > >  	    pdata->type == SOC_ARCH_EXYNOS5440)
-> > >  		data->soc = pdata->type;
-> > >  	else {
-> > > diff --git a/drivers/thermal/samsung/exynos_tmu.h
-> > > b/drivers/thermal/samsung/exynos_tmu.h index db37df0..b42ece4 100644
-> > > --- a/drivers/thermal/samsung/exynos_tmu.h
-> > > +++ b/drivers/thermal/samsung/exynos_tmu.h
-> > > @@ -42,7 +42,7 @@ enum calibration_mode {
-> > >  enum soc_type {
-> > >  	SOC_ARCH_EXYNOS4210 = 1,
-> > >  	SOC_ARCH_EXYNOS4412,
-> > > -	SOC_ARCH_EXYNOS,
-> > > +	SOC_ARCH_EXYNOS5250,
-> > >  	SOC_ARCH_EXYNOS5440,
-> > >  };
-> > >  
-> > > diff --git a/drivers/thermal/samsung/exynos_tmu_data.c
-> > > b/drivers/thermal/samsung/exynos_tmu_data.c index bd08093..188223f
-> > > 100644 --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> > > +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> > > @@ -183,7 +183,7 @@ struct exynos_tmu_init_data const
-> > > exynos4412_default_tmu_data = { struct exynos_tmu_init_data const
-> > > exynos5250_default_tmu_data = { .tmu_data = {
-> > >  		{ EXYNOS4412_TMU_DATA,
-> > > -		.type = SOC_ARCH_EXYNOS,
-> > > +		.type = SOC_ARCH_EXYNOS5250,
-> > >  		},
-> > >  	},
-> > >  	.tmu_count = 1,
+Changes from v3:
+---------------
+Addressed review comments from, Sylwester Nawrocki and Hans Verkuil.
+Links to the review comments:
+	1] https://linuxtv.org/patch/20072/
+	2] https://linuxtv.org/patch/20073/
+
+Changes from v2:
+---------------
+Addressed review comments from, Inki Dae, Hans Verkuil and Sylwester Nawrocki.
+Links to the review comments:
+	1] https://linuxtv.org/patch/19783/
+	2] https://linuxtv.org/patch/19784/
+	3] https://linuxtv.org/patch/19785/
+	4] https://linuxtv.org/patch/19786/
+	5] https://linuxtv.org/patch/19787/
+
+Changes from v1:
+---------------
+1] Split the previous single patch into multiple patches.
+2] Added DT binding documentation.
+3] Removed the unnecessary header file inclusions.
+4] Fix the condition check in mscl_prepare_address for swapping cb/cr addresses.
+
+Shaik Ameer Basha (4):
+  [media] exynos-scaler: Add new driver for Exynos5 SCALER
+  [media] exynos-scaler: Add core functionality for the SCALER driver
+  [media] exynos-scaler: Add m2m functionality for the SCALER driver
+  [media] exynos-scaler: Add DT bindings for SCALER driver
+
+ .../devicetree/bindings/media/exynos5-scaler.txt   |   22 +
+ drivers/media/platform/Kconfig                     |    8 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/exynos-scaler/Makefile      |    3 +
+ drivers/media/platform/exynos-scaler/scaler-m2m.c  |  786 +++++++++++++
+ drivers/media/platform/exynos-scaler/scaler-regs.c |  336 ++++++
+ drivers/media/platform/exynos-scaler/scaler-regs.h |  331 ++++++
+ drivers/media/platform/exynos-scaler/scaler.c      | 1238 ++++++++++++++++++++
+ drivers/media/platform/exynos-scaler/scaler.h      |  375 ++++++
+ 9 files changed, 3100 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
+ create mode 100644 drivers/media/platform/exynos-scaler/Makefile
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-regs.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler-regs.h
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler.c
+ create mode 100644 drivers/media/platform/exynos-scaler/scaler.h
+
+-- 
+1.7.9.5
