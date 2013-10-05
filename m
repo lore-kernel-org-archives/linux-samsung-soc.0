@@ -1,78 +1,66 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] PCI: exynos: missing clk_disable_unprepare() on error in
- exynos_pcie_probe()
-Date: Fri, 4 Oct 2013 16:50:39 -0600
-Message-ID: <20131004225039.GA26108@google.com>
-References: <CAPgLHd_RTNxi-OYhmTZ35NttjnAg-gQ_WKHkUQr5ueMhXVLTMg@mail.gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH v3 2/2] arm: dt: Exynos5420: populate cpu node enteries to
+ 8 cpus
+Date: Sat, 05 Oct 2013 11:14:20 +0900
+Message-ID: <0d8801cec170$9a26e020$ce74a060$@org>
+References: <1378380593-5305-1-git-send-email-chander.kashyap@linaro.org>
+ <1378380593-5305-3-git-send-email-chander.kashyap@linaro.org>
+ <5228DA13.1020901@gmail.com>
+ <CANuQgHEv8Q0dwMXFtnwY_DdXroqwhbGxe8HwVh3N4wQMTMo7tQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAPgLHd_RTNxi-OYhmTZ35NttjnAg-gQ_WKHkUQr5ueMhXVLTMg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: kgene.kim@samsung.com, tgih.jun@samsung.com, linux-pci@vger.kernel.org, jg1.han@samsung.com, rob.herring@calxeda.com, yongjun_wei@trendmicro.com.cn, linux-samsung-soc@vger.kernel.org, grant.likely@linaro.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:53729 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751196Ab3JECOY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 4 Oct 2013 22:14:24 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MU600GD7BJTNN50@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 05 Oct 2013 11:14:21 +0900 (KST)
+In-reply-to: <CANuQgHEv8Q0dwMXFtnwY_DdXroqwhbGxe8HwVh3N4wQMTMo7tQ@mail.gmail.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Chander Kashyap' <chander.kashyap@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-On Sun, Sep 29, 2013 at 10:29:11AM +0800, Wei Yongjun wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+Chander Kashyap wrote:
 > 
-> Add the missing clk_disable_unprepare() before return
-> from exynos_pcie_probe() in the error handling case.
+> Hi Kukgin,
 > 
-> Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+> On 6 September 2013 00:52, Sylwester Nawrocki
+> <sylvester.nawrocki@gmail.com> wrote:
+> > On 09/05/2013 01:29 PM, Chander Kashyap wrote:
+> >>
+> >> Exynos5420 is octacore SoC from samsung.
+> >
+> >
+> > s/octacore/octa-core ?
+> > s/samsung/Samsung
+> >
+> >
+> >> Hence populate all the cpu node enteries.
+> >
+> >
+> > s/cpu/CPU ?
+> > s/enteries/entries
+> >
+> >> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
+> >
+> >
+> > Subjects of the dts patches normally start with "ARM: dts:".
+> >
+> > I guess this all could be corrected while the patch is being applied
+> > to the platform maitainter's tree.
+> 
+> Shall i send a version or you will take these.
+> 
+Please re-send :-)
 
-Applied with Jingoo's ack and Sylwester's subject line to
-pci/host-exynos.  Thanks!
-
-Bjorn
-
-> ---
->  drivers/pci/host/pci-exynos.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
-> index 94e096b..e25598a 100644
-> --- a/drivers/pci/host/pci-exynos.c
-> +++ b/drivers/pci/host/pci-exynos.c
-> @@ -487,18 +487,24 @@ static int __init exynos_pcie_probe(struct platform_device *pdev)
->  
->  	elbi_base = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	exynos_pcie->elbi_base = devm_ioremap_resource(&pdev->dev, elbi_base);
-> -	if (IS_ERR(exynos_pcie->elbi_base))
-> -		return PTR_ERR(exynos_pcie->elbi_base);
-> +	if (IS_ERR(exynos_pcie->elbi_base)) {
-> +		ret = PTR_ERR(exynos_pcie->elbi_base);
-> +		goto fail_bus_clk;
-> +	}
->  
->  	phy_base = platform_get_resource(pdev, IORESOURCE_MEM, 1);
->  	exynos_pcie->phy_base = devm_ioremap_resource(&pdev->dev, phy_base);
-> -	if (IS_ERR(exynos_pcie->phy_base))
-> -		return PTR_ERR(exynos_pcie->phy_base);
-> +	if (IS_ERR(exynos_pcie->phy_base)) {
-> +		ret = PTR_ERR(exynos_pcie->phy_base);
-> +		goto fail_bus_clk;
-> +	}
->  
->  	block_base = platform_get_resource(pdev, IORESOURCE_MEM, 2);
->  	exynos_pcie->block_base = devm_ioremap_resource(&pdev->dev, block_base);
-> -	if (IS_ERR(exynos_pcie->block_base))
-> -		return PTR_ERR(exynos_pcie->block_base);
-> +	if (IS_ERR(exynos_pcie->block_base)) {
-> +		ret = PTR_ERR(exynos_pcie->block_base);
-> +		goto fail_bus_clk;
-> +	}
->  
->  	ret = add_pcie_port(pp, pdev);
->  	if (ret < 0)
-> 
+Thanks,
+Kukjin
