@@ -1,32 +1,44 @@
-From: "Microsoft Iberica SL" <miciberisl@outlook.es>
-Subject: You've won a Prize
-Date: Sat, 5 Oct 2013 20:40:20 +0300 (EEST)
-Message-ID: <53496.84.120.64.153.1380994820.squirrel__3186.68218465081$1380993731$gmane$org@mail1.centrum-group.com>
-Reply-To: payingroll446@yahoo.com.hk
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH V5 1/5] ARM: dts: Add MIPI PHY node to exynos4.dtsi
+Date: Sun, 06 Oct 2013 09:09:35 +0900
+Message-ID: <5250AA3F.6030701@samsung.com>
+References: <1380396467-29278-1-git-send-email-s.nawrocki@samsung.com> <1380396467-29278-2-git-send-email-s.nawrocki@samsung.com> <524A5D68.8080904@ti.com> <524B3B04.3000704@gmail.com> <524AE9BC.6060103@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain;charset=WINDOWS-1251
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail1.centrum-group.com ([194.12.254.133]:55233 "EHLO
-	mail1.centrum-group.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752442Ab3JERVY (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:51244 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752903Ab3JFAJn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 5 Oct 2013 13:21:24 -0400
+	Sat, 5 Oct 2013 20:09:43 -0400
+In-Reply-To: <524AE9BC.6060103@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-fbdev@vger.kernel.org, kgene.kim@samsung.com, gregkh@linuxfoundation.org, jg1.han@samsung.com, dh09.lee@samsung.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, tomi.valkeinen@ti.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, plagnioj@jcrosoft.com, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
 
-You've won a Prize
-MICROSOFT IBERICA SL"
-YOU 'VE WON.
-ATTN:MICROSOFT IBERICA SL
-Your email has won (EUR244,000,00)
-(TWO HUNDRED AND FOURTY FOUR THOUSAND EURO)
-Batch number:XL73276498AM
-Ref number:QR352899526KC
-This is a millennium scientific computer game in which
-email addresses were used.It is a promotional program aimed at
-encouraging internet users,therefore you do not need to buy ticket to enter
-for it.
-For further development,clarification and procedure please
-Contact:Dr Eduardo Sanchez,
-Email contact:payingroll446@yahoo.com.hk
+
+On 10/02/13 00:26, Kishon Vijay Abraham I wrote:
+> On Wednesday 02 October 2013 02:43 AM, Sylwester Nawrocki wrote:
+>> On 10/01/2013 07:28 AM, Kishon Vijay Abraham I wrote:
+>>> On Sunday 29 September 2013 12:57 AM, Sylwester Nawrocki wrote:
+>>>>>   Add PHY provider node for the MIPI CSIS and MIPI DSIM PHYs.
+>>>>>
+>>>>>   Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+>>>>>   Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>>>>>   Acked-by: Felipe Balbi<balbi@ti.com>
+>>>
+>>> Can this patch be taken through exynos dt tree?
+>>
+>> Yes, that makes more sense indeed. Kukjin, would you mind taking
+>> this patch to your tree ?
+>
+Sure. Applied this whole series.
+
+> FWIW
+> Acked-by: Kishon Vijay Abraham I<kishon@ti.com>
+>>
+
+Thanks,
+Kukjin
