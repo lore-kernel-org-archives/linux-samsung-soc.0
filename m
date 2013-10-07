@@ -1,73 +1,100 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
-Date: Mon, 07 Oct 2013 10:46:50 +0200
-Message-ID: <525274FA.5020701@samsung.com>
-References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
- <8412301.YP2zzplWoe@amdc1227>
- <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com>
- <523716C9.3000204@samsung.com> <20130916193709.27384.86101@quantum>
- <06c101cebdc5$75a83d10$60f8b730$%kim@samsung.com>
- <20131002010953.9338.23436@quantum>
- <0d8901cec170$f7230b50$e56921f0$%kim@samsung.com>
- <20131006202709.32214.75572@quantum>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [RESEND] [PATCH V3] ARM: dts: Add DMA controller node info on
+ Exynos5420.
+Date: Mon, 07 Oct 2013 14:55:44 +0530
+Message-ID: <1381137944-30503-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:59742 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752437Ab3JGIrA (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:34546 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751556Ab3JGJFB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Oct 2013 04:47:00 -0400
-In-reply-to: <20131006202709.32214.75572@quantum>
+	Mon, 7 Oct 2013 05:05:01 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'devicetree' <devicetree@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, broonie@kernel.org, l.krishna@samsung.com, padma.kvr@gmail.com, Padmavathi Venna <padma.v@samsung.com>
 
-On 10/06/2013 10:27 PM, Mike Turquette wrote:
-> Quoting Kukjin Kim (2013-10-04 19:16:56)
->> Mike Turquette wrote:
->>> Quoting Kukjin Kim (2013-09-30 03:11:41)
->>>> Mike Turquette wrote:
->>>>> Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
->>>>>> On 09/12/2013 12:50 PM, Kukjin Kim wrote:
->>>>>>> Well...I'm not sure changing to use macro is better or not at this
->>>>> moment...
->>>>>> I think it is. ;) It's really less error prone to have symbolic
->>> names
->>>>> instead
->>>>>> of the plain numbers. The clock ids are defined in one place and it
->>> is
->>>>> more
->>>>>> clear what a clock is by looking at symbolic name. It's especially
->>>>> annoying
->>>>>> to use plain numbers where are are many clock in a single node, like
->>> 10
->>>>> or
->>>>>> more. What are you main concerns with this ?
->>>>> I think having the symbolic names is a win for readability.
->>>>>
->>>> Hmm...since Mike who is a maintainer for ccf agrees with Sylwester's
->>> opinion, so I agree. Actually, I had no strong objection on this but still
->>> I'm not sure using macro is really better because sometimes the name
->>> doesn't give readability really I think though.
->>>> Mike, can you give me your ack on clk stuff?
->>> Yes, but I was thinking to take this change through the clk tree. The
->>> new branch based on -rc3 will be published tonight.
->>>
->>> Let me know if it causes problems for you for me to take it.
->>>
->> Uhm, I think dt changes can make ugly conflicts because of spread dt changing?
-> Sure, go ahead and take the patches then.
->
-> Acked-by: Mike Turquette <mturquette@linaro.org>
->
-> Regards,
-> Mike
+From: Padmavathi Venna <padma.v@samsung.com>
 
-I can create patchset based on different git branch if neccessary.
+This patch adds dma controller node info on Exynos5420.
+Exynos5420 has adma for audio IPs. As adma clk is dependent
+on audss clk provider that will be added later.
 
-Regards
-Andrzej
->> - Kukjin
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+---
+Change since V2:
+	- Removed adma node as adma clock is dependent audss clock provider.
+
+Changes since V1:
+        - In V1, dma node common stuff was added in common exynos5.dtsi file.
+          This was removed as per Kukjin comment and added in exynos5420.dtsi.
+
+ arch/arm/boot/dts/exynos5420.dtsi |   52 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index d537cd7..15465f8 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -186,6 +186,58 @@
+ 		status = "okay";
+ 	};
+ 
++	amba {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "arm,amba-bus";
++		interrupt-parent = <&gic>;
++		ranges;
++
++		pdma0: pdma@121A0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x121A0000 0x1000>;
++			interrupts = <0 34 0>;
++			clocks = <&clock 362>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
++		};
++
++		pdma1: pdma@121B0000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x121B0000 0x1000>;
++			interrupts = <0 35 0>;
++			clocks = <&clock 363>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <32>;
++		};
++
++		mdma0: mdma@10800000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x10800000 0x1000>;
++			interrupts = <0 33 0>;
++			clocks = <&clock 473>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <1>;
++		};
++
++		mdma1: mdma@11C10000 {
++			compatible = "arm,pl330", "arm,primecell";
++			reg = <0x11C10000 0x1000>;
++			interrupts = <0 124 0>;
++			clocks = <&clock 442>;
++			clock-names = "apb_pclk";
++			#dma-cells = <1>;
++			#dma-channels = <8>;
++			#dma-requests = <1>;
++		};
++	};
++
+ 	serial@12C00000 {
+ 		clocks = <&clock 257>, <&clock 128>;
+ 		clock-names = "uart", "clk_uart_baud0";
+-- 
+1.7.10.4
