@@ -1,68 +1,53 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [Patch v4 2/2] ARM: dts: Exynos5420: populate cpu node entries to 8 cpus
-Date: Mon,  7 Oct 2013 09:47:10 +0530
-Message-ID: <1381119431-12697-3-git-send-email-chander.kashyap@linaro.org>
-References: <1381119431-12697-1-git-send-email-chander.kashyap@linaro.org>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status
+ callback.
+Date: Mon, 7 Oct 2013 09:18:46 +0530
+Message-ID: <20131007034846.GG2954@intel.com>
+References: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
+ <1378879685-5352-2-git-send-email-padma.v@samsung.com>
+ <00b401ceafac$e3a88170$aaf98450$@samsung.com>
+ <CAEUnVG72uTzHrQCoVtdT8UmkPcz2ks_qWT8QMbhHjUW-u3WnNQ@mail.gmail.com>
+ <026501cec2fe$1387c630$3a975290$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:36654 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751596Ab3JGERh (ORCPT
+Received: from mga03.intel.com ([143.182.124.21]:47819 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751683Ab3JGEk6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Oct 2013 00:17:37 -0400
-Received: by mail-pd0-f175.google.com with SMTP id q10so6595361pdj.34
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Oct 2013 21:17:37 -0700 (PDT)
-In-Reply-To: <1381119431-12697-1-git-send-email-chander.kashyap@linaro.org>
+	Mon, 7 Oct 2013 00:40:58 -0400
+Content-Disposition: inline
+In-Reply-To: <026501cec2fe$1387c630$3a975290$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, thomas.abraham@linaro.org, sylvester.nawrocki@gmail.com, Chander Kashyap <chander.kashyap@linaro.org>
+To: Chanho Park <chanho61.park@samsung.com>, 'Dylan Reid' <dgreid@chromium.org>
+Cc: 'Padmavathi Venna' <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, kgene.kim@samsung.com, arnd@arndb.de, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olofj@chromium.org>
 
-Exynos5420 is octa-core SoC from Samsung.
-Hence populate all the CPU node entries.
+On Mon, Oct 07, 2013 at 10:39:34AM +0900, Chanho Park wrote:
+> > > Why didn't you use a cookie value to track the request?
+> > > The cookie is assigned when each transfer is submitted.
+> > > If you save the value in the desc, we can find the request easily.
+> > 
+> > If there are several cyclic desc in the work list, is there a better way
+> > to find the "current" one?  The chan struct tracks the last completed and
+> > last submitted cookies, but these will be the first and last
+> > respectively as long as the cyclic transfer is active.  Is there an
+> > "active" cookie stored somewhere that I missed?
+> 
+> Assume there are three cookies. If you want to get the second cookie not
+> latest cookie, your way can be also correct in such case?
+> I think tx_status API is to get dma status of the given cookie.
+> You are only considering a cyclic case.
+For cyclic case you would have possible same descriptor running till you
+terminate.
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
----
- arch/arm/boot/dts/exynos5420.dtsi |   28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+For non cyclic, if you have 3 descriptors submitted, the cookie value can be, say
+7, 8 and 9. If you query the status of any descriptor and pass the last optional
+txstate arg then you will know the last cookie completed. so if txstate->last is
+7, then 7th was completed and 8 should be running and 9 in queue!
+> > Looking for the first buffer with status == BUSY is an improvement I'll
+> > make.  Any way to avoid looking through the list?
+Its already there :)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index e97c87b..a28cc40 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -57,6 +57,34 @@
- 			reg = <0x3>;
- 			clock-frequency = <1800000000>;
- 		};
-+
-+		cpu4: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x100>;
-+			clock-frequency = <1000000000>;
-+		};
-+
-+		cpu5: cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x101>;
-+			clock-frequency = <1000000000>;
-+		};
-+
-+		cpu6: cpu@102 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x102>;
-+			clock-frequency = <1000000000>;
-+		};
-+
-+		cpu7: cpu@103 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x103>;
-+			clock-frequency = <1000000000>;
-+		};
- 	};
- 
- 	clock: clock-controller@0x10010000 {
 -- 
-1.7.9.5
+~Vinod
