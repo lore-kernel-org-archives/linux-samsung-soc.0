@@ -1,53 +1,73 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status
- callback.
-Date: Mon, 7 Oct 2013 09:18:46 +0530
-Message-ID: <20131007034846.GG2954@intel.com>
-References: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
- <1378879685-5352-2-git-send-email-padma.v@samsung.com>
- <00b401ceafac$e3a88170$aaf98450$@samsung.com>
- <CAEUnVG72uTzHrQCoVtdT8UmkPcz2ks_qWT8QMbhHjUW-u3WnNQ@mail.gmail.com>
- <026501cec2fe$1387c630$3a975290$@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
+Date: Mon, 07 Oct 2013 10:46:50 +0200
+Message-ID: <525274FA.5020701@samsung.com>
+References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
+ <8412301.YP2zzplWoe@amdc1227>
+ <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com>
+ <523716C9.3000204@samsung.com> <20130916193709.27384.86101@quantum>
+ <06c101cebdc5$75a83d10$60f8b730$%kim@samsung.com>
+ <20131002010953.9338.23436@quantum>
+ <0d8901cec170$f7230b50$e56921f0$%kim@samsung.com>
+ <20131006202709.32214.75572@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:47819 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751683Ab3JGEk6 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:59742 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752437Ab3JGIrA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Oct 2013 00:40:58 -0400
-Content-Disposition: inline
-In-Reply-To: <026501cec2fe$1387c630$3a975290$@samsung.com>
+	Mon, 7 Oct 2013 04:47:00 -0400
+In-reply-to: <20131006202709.32214.75572@quantum>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanho Park <chanho61.park@samsung.com>, 'Dylan Reid' <dgreid@chromium.org>
-Cc: 'Padmavathi Venna' <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, padma.kvr@gmail.com, kgene.kim@samsung.com, arnd@arndb.de, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olofj@chromium.org>
+To: Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'devicetree' <devicetree@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-On Mon, Oct 07, 2013 at 10:39:34AM +0900, Chanho Park wrote:
-> > > Why didn't you use a cookie value to track the request?
-> > > The cookie is assigned when each transfer is submitted.
-> > > If you save the value in the desc, we can find the request easily.
-> > 
-> > If there are several cyclic desc in the work list, is there a better way
-> > to find the "current" one?  The chan struct tracks the last completed and
-> > last submitted cookies, but these will be the first and last
-> > respectively as long as the cyclic transfer is active.  Is there an
-> > "active" cookie stored somewhere that I missed?
-> 
-> Assume there are three cookies. If you want to get the second cookie not
-> latest cookie, your way can be also correct in such case?
-> I think tx_status API is to get dma status of the given cookie.
-> You are only considering a cyclic case.
-For cyclic case you would have possible same descriptor running till you
-terminate.
+On 10/06/2013 10:27 PM, Mike Turquette wrote:
+> Quoting Kukjin Kim (2013-10-04 19:16:56)
+>> Mike Turquette wrote:
+>>> Quoting Kukjin Kim (2013-09-30 03:11:41)
+>>>> Mike Turquette wrote:
+>>>>> Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
+>>>>>> On 09/12/2013 12:50 PM, Kukjin Kim wrote:
+>>>>>>> Well...I'm not sure changing to use macro is better or not at this
+>>>>> moment...
+>>>>>> I think it is. ;) It's really less error prone to have symbolic
+>>> names
+>>>>> instead
+>>>>>> of the plain numbers. The clock ids are defined in one place and it
+>>> is
+>>>>> more
+>>>>>> clear what a clock is by looking at symbolic name. It's especially
+>>>>> annoying
+>>>>>> to use plain numbers where are are many clock in a single node, like
+>>> 10
+>>>>> or
+>>>>>> more. What are you main concerns with this ?
+>>>>> I think having the symbolic names is a win for readability.
+>>>>>
+>>>> Hmm...since Mike who is a maintainer for ccf agrees with Sylwester's
+>>> opinion, so I agree. Actually, I had no strong objection on this but still
+>>> I'm not sure using macro is really better because sometimes the name
+>>> doesn't give readability really I think though.
+>>>> Mike, can you give me your ack on clk stuff?
+>>> Yes, but I was thinking to take this change through the clk tree. The
+>>> new branch based on -rc3 will be published tonight.
+>>>
+>>> Let me know if it causes problems for you for me to take it.
+>>>
+>> Uhm, I think dt changes can make ugly conflicts because of spread dt changing?
+> Sure, go ahead and take the patches then.
+>
+> Acked-by: Mike Turquette <mturquette@linaro.org>
+>
+> Regards,
+> Mike
 
-For non cyclic, if you have 3 descriptors submitted, the cookie value can be, say
-7, 8 and 9. If you query the status of any descriptor and pass the last optional
-txstate arg then you will know the last cookie completed. so if txstate->last is
-7, then 7th was completed and 8 should be running and 9 in queue!
-> > Looking for the first buffer with status == BUSY is an improvement I'll
-> > make.  Any way to avoid looking through the list?
-Its already there :)
+I can create patchset based on different git branch if neccessary.
 
--- 
-~Vinod
+Regards
+Andrzej
+>> - Kukjin
