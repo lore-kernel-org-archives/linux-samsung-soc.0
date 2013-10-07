@@ -1,74 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add HDMI related I2C nodes for Arndale board
-Date: Tue, 08 Oct 2013 07:15:23 +0900
-Message-ID: <5253327B.7080504@samsung.com>
-References: <1380601861-4903-1-git-send-email-tushar.behera@linaro.org>
+Subject: Re: [PATCH] MAINTAINERS: Add DTS files to patterns for Samsung platform
+Date: Tue, 08 Oct 2013 07:16:56 +0900
+Message-ID: <525332D8.6020408@samsung.com>
+References: <1379425337-24078-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:33239 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752719Ab3JGWP1 (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:43308 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751485Ab3JGWRA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Oct 2013 18:15:27 -0400
-Received: by mail-pa0-f46.google.com with SMTP id fa1so7878520pad.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Oct 2013 15:15:27 -0700 (PDT)
-In-Reply-To: <1380601861-4903-1-git-send-email-tushar.behera@linaro.org>
+	Mon, 7 Oct 2013 18:17:00 -0400
+Received: by mail-pa0-f45.google.com with SMTP id rd3so7897973pab.32
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Oct 2013 15:17:00 -0700 (PDT)
+In-Reply-To: <1379425337-24078-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
 
-On 10/01/13 13:31, Tushar Behera wrote:
-> From: Sachin Kamat<sachin.kamat@linaro.org>
+On 09/17/13 22:42, Mark Brown wrote:
+> From: Mark Brown<broonie@linaro.org>
 >
-> Updated I2C nodes for HDMI-DDC and HDMI-PHY for Arndale board.
+> Help ensure that updates to the Samsung device trees get sent to the
+> Samsung maintainers for review by adding file patterns to MAINTAINERS.
 >
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+> Signed-off-by: Mark Brown<broonie@linaro.org>
 > ---
->   arch/arm/boot/dts/exynos5250-arndale.dts |   20 +++++++++++++++++++-
->   1 file changed, 19 insertions(+), 1 deletion(-)
+>   MAINTAINERS | 2 ++
+>   1 file changed, 2 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-> index cee55fa..3a11fa0 100644
-> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
-> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-> @@ -324,7 +324,14 @@
->   	};
->
->   	i2c@12C80000 {
-> -		status = "disabled";
-> +		samsung,i2c-sda-delay =<100>;
-> +		samsung,i2c-max-bus-freq =<66000>;
-> +		samsung,i2c-slave-addr =<0x50>;
-> +
-> +		hdmiddc@50 {
-> +			compatible = "samsung,exynos4210-hdmiddc";
-> +			reg =<0x50>;
-> +		};
->   	};
->
->   	i2c@12C90000 {
-> @@ -362,6 +369,17 @@
->   		status = "disabled";
->   	};
->
-> +	i2c@12CE0000 {
-> +		samsung,i2c-sda-delay =<100>;
-> +		samsung,i2c-max-bus-freq =<66000>;
-> +		samsung,i2c-slave-addr =<0x38>;
-> +
-> +		hdmiphy@38 {
-> +			compatible = "samsung,exynos4212-hdmiphy";
-> +			reg =<0x38>;
-> +		};
-> +	};
-> +
->   	i2c@121D0000 {
->   		status = "disabled";
->   	};
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 6d0dabe..50e3b1f 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1154,6 +1154,8 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+>   L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>   W:	http://www.fluff.org/ben/linux/
+>   S:	Maintained
+> +F:	arch/arm/boot/dts/s3c*
+> +F:	arch/arm/boot/dts/exynos*
+>   F:	arch/arm/plat-samsung/
+>   F:	arch/arm/mach-s3c24*/
+>   F:	arch/arm/mach-s3c64xx/
 
 Applied, thanks.
 Kukjin
