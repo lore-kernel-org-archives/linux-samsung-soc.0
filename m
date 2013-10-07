@@ -1,45 +1,74 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: fix PL330 MDMA1 address in DT for Universal
- C210 board
-Date: Tue, 08 Oct 2013 07:11:00 +0900
-Message-ID: <52533174.90809@samsung.com>
-References: <8667689.9TcYbn9cHO@amdc1032> <5328103.I4Op9muCR3@amdc1032> <000001ceb912$2df4a240$89dde6c0$%kim@samsung.com> <6623559.ohkzlhvA2o@amdc1032>
+Subject: Re: [PATCH] ARM: dts: Add HDMI related I2C nodes for Arndale board
+Date: Tue, 08 Oct 2013 07:15:23 +0900
+Message-ID: <5253327B.7080504@samsung.com>
+References: <1380601861-4903-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:59649 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751676Ab3JGWLL (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:33239 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752719Ab3JGWP1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Oct 2013 18:11:11 -0400
-Received: by mail-pd0-f175.google.com with SMTP id q10so7711680pdj.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Oct 2013 15:11:10 -0700 (PDT)
-In-Reply-To: <6623559.ohkzlhvA2o@amdc1032>
+	Mon, 7 Oct 2013 18:15:27 -0400
+Received: by mail-pa0-f46.google.com with SMTP id fa1so7878520pad.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Oct 2013 15:15:27 -0700 (PDT)
+In-Reply-To: <1380601861-4903-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>
 
-On 09/24/13 19:41, Bartlomiej Zolnierkiewicz wrote:
+On 10/01/13 13:31, Tushar Behera wrote:
+> From: Sachin Kamat<sachin.kamat@linaro.org>
 >
-> Hi,
+> Updated I2C nodes for HDMI-DDC and HDMI-PHY for Arndale board.
 >
-> On Tuesday, September 24, 2013 07:38:13 PM Kukjin Kim wrote:
->> Bartlomiej Zolnierkiewicz wrote:
->>>
->>>
->>> Hi Kukjin,
->>>
->> Hi Bart,
->>
->>> Could you please apply this patch?
->>>
->> Can you make sure there is no rev1 for universal c210 board?
+> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+> ---
+>   arch/arm/boot/dts/exynos5250-arndale.dts |   20 +++++++++++++++++++-
+>   1 file changed, 19 insertions(+), 1 deletion(-)
 >
-> Universal C210 always used Exynos4210 rev0.
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+> index cee55fa..3a11fa0 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -324,7 +324,14 @@
+>   	};
 >
-OK, applied.
+>   	i2c@12C80000 {
+> -		status = "disabled";
+> +		samsung,i2c-sda-delay =<100>;
+> +		samsung,i2c-max-bus-freq =<66000>;
+> +		samsung,i2c-slave-addr =<0x50>;
+> +
+> +		hdmiddc@50 {
+> +			compatible = "samsung,exynos4210-hdmiddc";
+> +			reg =<0x50>;
+> +		};
+>   	};
+>
+>   	i2c@12C90000 {
+> @@ -362,6 +369,17 @@
+>   		status = "disabled";
+>   	};
+>
+> +	i2c@12CE0000 {
+> +		samsung,i2c-sda-delay =<100>;
+> +		samsung,i2c-max-bus-freq =<66000>;
+> +		samsung,i2c-slave-addr =<0x38>;
+> +
+> +		hdmiphy@38 {
+> +			compatible = "samsung,exynos4212-hdmiphy";
+> +			reg =<0x38>;
+> +		};
+> +	};
+> +
+>   	i2c@121D0000 {
+>   		status = "disabled";
+>   	};
 
-Thanks,
+Applied, thanks.
 Kukjin
