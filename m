@@ -1,82 +1,37 @@
-From: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v10 20/20] iommu/exynos: add devices attached to the System MMU
-	to an IOMMU group
-Date: Mon, 07 Oct 2013 10:58:44 +0900
-Message-ID: <20131007105844.a260f37a9a941bed894adca3@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [Patch v4 0/2] Enable all cpus in Exynos5420
+Date: Mon,  7 Oct 2013 09:47:08 +0530
+Message-ID: <1381119431-12697-1-git-send-email-chander.kashyap@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f52.google.com ([209.85.160.52]:64697 "EHLO
+	mail-pb0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751414Ab3JGERb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 Oct 2013 00:17:31 -0400
+Received: by mail-pb0-f52.google.com with SMTP id wz12so6565167pbc.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 06 Oct 2013 21:17:30 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, thomas.abraham@linaro.org, sylvester.nawrocki@gmail.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-Patch written by Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>:
+Exynos5420 is an octa-core SoC. This patch series enables the remaining 4 cores.
 
-IOMMU groups are expected by certain users of the IOMMU API,
-e.g. VFIO. Since each device is behind its own System MMU, we
-can allocate a new IOMMU group for each device.
+Changes in v2:
+	- Changed the cpu node @unit-address value to reg property value.
+Changes in v3:
+	- Removed leading 0x from @unit-address value.
+Changes in v4:
+	- Fixed typo and patch subject from "arm: dt" to "ARM: dt".
 
-Reviewd-by: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
----
- drivers/iommu/exynos-iommu.c |   28 ++++++++++++++++++++++++++++
- 1 files changed, 28 insertions(+), 0 deletions(-)
+Chander Kashyap (2):
+  clocksource: mct: extend mct to support 8 local interrupts for
+    Exynos5420
+  arm: dt: Exynos5420: populate cpu node enteries to 8 cpus
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 5025338..24505a0 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1028,6 +1028,32 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *domain,
- 	return phys;
- }
- 
-+static int exynos_iommu_add_device(struct device *dev)
-+{
-+	struct iommu_group *group;
-+	int ret;
-+
-+	group = iommu_group_get(dev);
-+
-+	if (!group) {
-+		group = iommu_group_alloc();
-+		if (IS_ERR(group)) {
-+			dev_err(dev, "Failed to allocate IOMMU group\n");
-+			return PTR_ERR(group);
-+		}
-+	}
-+
-+	ret = iommu_group_add_device(group, dev);
-+	iommu_group_put(group);
-+
-+	return ret;
-+}
-+
-+static void exynos_iommu_remove_device(struct device *dev)
-+{
-+	iommu_group_remove_device(dev);
-+}
-+
- static struct iommu_ops exynos_iommu_ops = {
- 	.domain_init = &exynos_iommu_domain_init,
- 	.domain_destroy = &exynos_iommu_domain_destroy,
-@@ -1036,6 +1062,8 @@ static struct iommu_ops exynos_iommu_ops = {
- 	.map = &exynos_iommu_map,
- 	.unmap = &exynos_iommu_unmap,
- 	.iova_to_phys = &exynos_iommu_iova_to_phys,
-+	.add_device = &exynos_iommu_add_device,
-+	.remove_device = &exynos_iommu_remove_device,
- 	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
- };
- 
+ arch/arm/boot/dts/exynos5420.dtsi |   37 +++++++++++++++++++++++++++++++++++--
+ drivers/clocksource/exynos_mct.c  |    4 ++++
+ 2 files changed, 39 insertions(+), 2 deletions(-)
+
 -- 
-1.7.2.5
+1.7.9.5
