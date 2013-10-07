@@ -1,49 +1,33 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH v5 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
-Date: Mon, 7 Oct 2013 20:03:51 +0530
-Message-ID: <20131007143351.GK2954@intel.com>
-References: <201309182118.28391.heiko@sntech.de>
- <201309182119.54560.heiko@sntech.de>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH 3/6] ARM: EXYNOS: add Exynos Dual Cluster Support
+Date: Mon, 7 Oct 2013 18:06:27 -0400 (EDT)
+Message-ID: <alpine.LFD.2.03.1310071804030.3023@syhkavp.arg>
+References: <20131007140343.GA12030@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <201309182119.54560.heiko@sntech.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: kgene.kim@samsung.com, Dan Williams <djbw@fb.com>, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20131007140343.GA12030@localhost.localdomain>
+Sender: linux-doc-owner@vger.kernel.org
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Rob Landley <rob@landley.net>, Stephen Warren <swarren@wwwdotorg.org>, Tarek Dakhran <t.dakhran@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, Mike Turquette <mturquette@linaro.org>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 18, 2013 at 09:19:54PM +0200, Heiko St=FCbner wrote:
-> This adds a new driver to support the s3c24xx dma using the dmaengine
-> and makes the old one in mach-s3c24xx obsolete in the long run.
->=20
-> Conceptually the s3c24xx-dma feels like a distant relative of the pl0=
-8x
-> with numerous virtual channels being mapped to a lot less physical on=
-es.
-> The driver therefore borrows a lot from the amba-pl08x driver in this
-> regard. Functionality-wise the driver gains a memcpy ability in addit=
-ion
-> to the slave_sg one.
->=20
-> The driver supports both the method for requesting the peripheral use=
-d
-> by SoCs before the S3C2443 and the different method for S3C2443 and l=
-ater.
->=20
-> On earlier SoCs the hardware channels usable for specific peripherals=
- is
-> constrainted while on later SoCs all channels can be used for any per=
-ipheral.
->=20
-> Tested on a s3c2416-based board, memcpy using the dmatest module and
-> slave_sg partially using the spi-s3c64xx driver.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Vinod Koul <vinod.koul@intel.com>
+On Mon, 7 Oct 2013, Dave Martin wrote:
 
---
-~Vinod
+> On Fri, Oct 04, 2013 at 03:51:31PM -0400, Nicolas Pitre wrote:
+> > No FIQs are supposed to ever race with this code.
+> 
+> There is an anomaly though: FIQ and external abort don't seem to get
+> explicitly masked anywhere, either on the suspend or powerdown paths.
+> Sometimes either or both remains unmasked (I tried some trace in the
+> TC2 MCPM backend to confirm this.)
+> 
+> Looks like a possible omission in the arch/arm/ suspend and shutdown
+> code, rather than a problem specific to MCPM.
+
+Possibly, yes.
+
+Feel free to post a patch.
+
+
+Nicolas
