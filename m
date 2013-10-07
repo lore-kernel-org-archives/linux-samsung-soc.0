@@ -1,49 +1,61 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] MAINTAINERS: Add DTS files to patterns for Samsung platform
-Date: Tue, 08 Oct 2013 07:16:56 +0900
-Message-ID: <525332D8.6020408@samsung.com>
-References: <1379425337-24078-1-git-send-email-broonie@kernel.org>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH v5 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
+Date: Tue, 08 Oct 2013 08:22:32 +0900
+Message-ID: <0f4401cec3b4$19648230$4c2d8690$@org>
+References: <201309182118.28391.heiko@sntech.de>
+ <201309182119.54560.heiko@sntech.de> <20131007143351.GK2954@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:43308 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751485Ab3JGWRA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:28835 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751197Ab3JGXWe convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Oct 2013 18:17:00 -0400
-Received: by mail-pa0-f45.google.com with SMTP id rd3so7897973pab.32
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Oct 2013 15:17:00 -0700 (PDT)
-In-Reply-To: <1379425337-24078-1-git-send-email-broonie@kernel.org>
+	Mon, 7 Oct 2013 19:22:34 -0400
+In-reply-to: <20131007143351.GK2954@intel.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: 'Vinod Koul' <vinod.koul@intel.com>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
+Cc: 'Dan Williams' <djbw@fb.com>, linus.walleij@linaro.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On 09/17/13 22:42, Mark Brown wrote:
-> From: Mark Brown<broonie@linaro.org>
->
-> Help ensure that updates to the Samsung device trees get sent to the
-> Samsung maintainers for review by adding file patterns to MAINTAINERS.
->
-> Signed-off-by: Mark Brown<broonie@linaro.org>
-> ---
->   MAINTAINERS | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6d0dabe..50e3b1f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1154,6 +1154,8 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
->   L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
->   W:	http://www.fluff.org/ben/linux/
->   S:	Maintained
-> +F:	arch/arm/boot/dts/s3c*
-> +F:	arch/arm/boot/dts/exynos*
->   F:	arch/arm/plat-samsung/
->   F:	arch/arm/mach-s3c24*/
->   F:	arch/arm/mach-s3c64xx/
+Vinod Koul wrote:
+>=20
+> On Wed, Sep 18, 2013 at 09:19:54PM +0200, Heiko St=FCbner wrote:
+> > This adds a new driver to support the s3c24xx dma using the dmaengi=
+ne
+> > and makes the old one in mach-s3c24xx obsolete in the long run.
+> >
+> > Conceptually the s3c24xx-dma feels like a distant relative of the p=
+l08x
+> > with numerous virtual channels being mapped to a lot less physical =
+ones.
+> > The driver therefore borrows a lot from the amba-pl08x driver in th=
+is
+> > regard. Functionality-wise the driver gains a memcpy ability in add=
+ition
+> > to the slave_sg one.
+> >
+> > The driver supports both the method for requesting the peripheral u=
+sed
+> > by SoCs before the S3C2443 and the different method for S3C2443 and
+> later.
+> >
+> > On earlier SoCs the hardware channels usable for specific periphera=
+ls is
+> > constrainted while on later SoCs all channels can be used for any
+> peripheral.
+> >
+> > Tested on a s3c2416-based board, memcpy using the dmatest module an=
+d
+> > slave_sg partially using the spi-s3c64xx driver.
+> >
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Acked-by: Vinod Koul <vinod.koul@intel.com>
+>=20
+Vinod, thanks for your ack :-)
 
-Applied, thanks.
+Applied this whole series.
 Kukjin
