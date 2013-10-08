@@ -1,60 +1,71 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 3/4] ARM: S3C24XX: add platform-devices for new dma
- driver for s3c2412 and s3c2443
-Date: Tue, 8 Oct 2013 13:29:47 -0700
-Message-ID: <CAOesGMjK5ZMkK8mj_+HSEjZCtfZUiLmVZThBAHacW8kp1=ThFw@mail.gmail.com>
-References: <201309182118.28391.heiko@sntech.de>
-	<201309182120.30950.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f46.google.com ([209.85.128.46]:47952 "EHLO
-	mail-qe0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754857Ab3JHU3s convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Oct 2013 16:29:48 -0400
-Received: by mail-qe0-f46.google.com with SMTP id x7so7137794qeu.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Oct 2013 13:29:47 -0700 (PDT)
-In-Reply-To: <201309182120.30950.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: [PATCH 0/9] fix deferred probing issue of platform_driver_probe
+Date: Tue,  8 Oct 2013 22:35:32 +0200
+Message-ID: <1381264542-29396-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <djbw@fb.com>, Vinod Koul <vinod.koul@intel.com>, LinusW <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+We had some issues with deferred probing in the I2C subsystem. This series
+attempts to fix a part of it. From the patch description:
 
-On Wed, Sep 18, 2013 at 12:20 PM, Heiko St=FCbner <heiko@sntech.de> wro=
-te:
-> This includes defining the mapping for the request sources.
->
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> changes since v1:
-> - follow new pdata definition
+===
 
-This showed up in -next today, and introduced:
+Subsystems like pinctrl and gpio rightfully make use of deferred probing at
+core level. Now, deferred drivers won't be retried if they don't have a .probe
+function specified in the driver struct. Fix this driver to have that, so the
+devices it supports won't get lost in a deferred probe.
 
-arch/arm/mach-s3c24xx/common.c:337:24: warning: 's3c2410_dma_resource'
-defined but not used [-Wunused-variable]
+===
 
-> +#if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2412) || \
-> +    defined(CONFIG_CPU_S3C2440) || defined(CONFIG_CPU_S3C2442)
-> +static struct resource s3c2410_dma_resource[] =3D {
-> +       [0] =3D DEFINE_RES_MEM(S3C24XX_PA_DMA, S3C24XX_SZ_DMA),
-> +       [1] =3D DEFINE_RES_IRQ(IRQ_DMA0),
-> +       [2] =3D DEFINE_RES_IRQ(IRQ_DMA1),
-> +       [3] =3D DEFINE_RES_IRQ(IRQ_DMA2),
-> +       [4] =3D DEFINE_RES_IRQ(IRQ_DMA3),
-> +};
-> +#endif
-> +
+I think it makes sense to remove platform_driver_probe from bus masters like
+i2c and spi (especially since they are dependant on pinctrl these days). This
+is what this series does. I had a look at dma drivers as well, but there are
+more things to be considered, so delayed for now.
 
-Log at:
+Please comment. If no objections are raised, I'd like to bring at least the I2C
+patches into v3.12, so deferred devices will then be correctly probed. The
+series is based on 3.12-rc4 and was compile-tested. It is available at
 
-http://arm-soc.lixom.net/buildlogs/next-thierry/v3.12-rc4-4340-g56a7390=
-/buildall.arm.mini2440_defconfig.log.passed
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git platform_driver_probe_drop
+
+Regards,
+
+   Wolfram
 
 
--Olof
+Wolfram Sang (9):
+  i2c: i2c-designware-platdrv: replace platform_driver_probe to support
+    deferred probing
+  i2c: i2c-imx: replace platform_driver_probe to support deferred
+    probing
+  i2c: i2c-mxs: replace platform_driver_probe to support deferred
+    probing
+  i2c: i2c-stu300: replace platform_driver_probe to support deferred
+    probing
+  spi: spi-au1550: replace platform_driver_probe to support deferred
+    probing
+  spi: spi-bfin5xx: replace platform_driver_probe to support deferred
+    probing
+  spi: spi-omap-uwire: replace platform_driver_probe to support deferred
+    probing
+  spi: spi-s3c64xx: replace platform_driver_probe to support deferred
+    probing
+  spi: spi-txx9: replace platform_driver_probe to support deferred
+    probing
+
+ drivers/i2c/busses/i2c-designware-platdrv.c |  5 +++--
+ drivers/i2c/busses/i2c-imx.c                | 11 ++++++-----
+ drivers/i2c/busses/i2c-mxs.c                |  3 ++-
+ drivers/i2c/busses/i2c-stu300.c             | 11 +++++------
+ drivers/spi/spi-au1550.c                    |  3 ++-
+ drivers/spi/spi-bfin5xx.c                   |  5 +++--
+ drivers/spi/spi-omap-uwire.c                |  5 +++--
+ drivers/spi/spi-s3c64xx.c                   |  3 ++-
+ drivers/spi/spi-txx9.c                      |  3 ++-
+ 9 files changed, 28 insertions(+), 21 deletions(-)
+
+-- 
+1.8.4.rc3
