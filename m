@@ -1,97 +1,82 @@
-From: Cho KyongHo <pullip.cho@samsung.com>
-Subject: Re: [PATCH v8 06/12] ARM: dts: Add description of System MMU of Exynos
- SoCs
-Date: Tue, 08 Oct 2013 13:38:53 +0900
-Message-ID: <20131008133853.8b8277b70d69e05edd011945@samsung.com>
-References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
- <CAL_JsqLny8sOgn9y0Tm9-Vq_3YPdtqkr5nTJ67Y0Zx1hDmduNQ@mail.gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2 00/16] Exynos clock clean-up for 3.12
+Date: Mon, 07 Oct 2013 22:57:30 -0700
+Message-ID: <20131008055730.7445.77726@quantum>
+References: <1377536951-9307-1-git-send-email-t.figa@samsung.com>
+ <1920907.Hu7ncHu6EC@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:35775 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751880Ab3JHEi5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Oct 2013 00:38:57 -0400
-In-reply-to: <CAL_JsqLny8sOgn9y0Tm9-Vq_3YPdtqkr5nTJ67Y0Zx1hDmduNQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1920907.Hu7ncHu6EC@amdc1227>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Doug Anderson <dianders@chromium.org>, Rob Herring <rob.herring@calxeda.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kumar Gala <galak@codeaurora.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, Tushar Behera <tushar.behera@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Hyunwoong Kim <khw0178.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Keyyoung Park <keyyoung.park@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, Rahul Sharma <rahul.sharma@samsung.com>, Will Deacon <will.deacon@arm.com>
 
-On Mon, 07 Oct 2013 08:44:54 -0500, Rob Herring wrote:
-> On Fri, Jul 26, 2013 at 6:28 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
-> > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
-> > ---
-> >  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |  103 +++++++
-> >  arch/arm/boot/dts/exynos4.dtsi                     |  122 ++++++++
-> >  arch/arm/boot/dts/exynos4210.dtsi                  |   25 ++
-> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   76 +++++
-> >  arch/arm/boot/dts/exynos5250.dtsi                  |  291 ++++++++++++++++++++
-> >  5 files changed, 617 insertions(+), 0 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
-> > b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
-> > new file mode 100644
-> > index 0000000..92f0a33
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
-> > @@ -0,0 +1,103 @@
-> > +Samsung Exynos4210 IOMMU H/W, System MMU (System Memory Management Unit)
-> > +
-> > +Samsung's Exynos architecture contains System MMU that enables scattered
-> > +physical memory chunks visible as a contiguous region to DMA-capable peripheral
-> > +devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
-> > +
-> > +System MMU is a sort of IOMMU and support identical translation table format to
-> > +ARMv7 translation tables with minimum set of page properties including access
-> > +permissions, shareability and security protection. In addition, System MMU has
-> > +another capabilities like L2 TLB or block-fetch buffers to minimize translation
-> > +latency.
-> > +
-> > +A System MMU is dedicated to a single master peripheral device.  Thus, it is
-> > +important to specify the correct System MMU in the device node of its master
-> > +device. Whereas a System MMU is dedicated to a master device, the master device
-> > +may have more than one System MMU.
-> > +
-> > +Required properties:
-> > +- compatible: Should be "samsung,exynos4210-sysmmu"
-> > +- reg: A tuple of base address and size of System MMU registers.
-> > +- interrupt-parent: The phandle of the interrupt controller of System MMU
-> > +- interrupts: A tuple of numbers that indicates the interrupt source.
-> > +- clock-names: Should be "sysmmu" if the System MMU is needed to gate its clock.
-> > +               Please refer to the following documents:
-> > +              Documentation/devicetree/bindings/clock/clock-bindings.txt
-> > +              Documentation/devicetree/bindings/clock/exynos4-clock.txt
-> > +              Documentation/devicetree/bindings/clock/exynos5250-clock.txt
-> > +              Optional "master" if the clock to the System MMU is gated by
-> > +              another gate clock other than "sysmmu". The System MMU driver
-> > +              sets "master" the parent of "sysmmu".
-> > +              Exynos4 SoCs, there needs no "master" clocks.
-> > +              Exynos5 SoCs, some System MMUs must have "master" clocks.
-> > +- clocks: Required if the System MMU is needed to gate its clock.
-> > +         Please refer to the documents listed above.
-> > +- samsung,power-domain: Required if the System MMU is needed to gate its power.
-> > +         Please refer to the following document:
-> > +         Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> > +
-> > +Required properties for the master peripheral devices:
-> > +- iommu: phandles to the System MMUs of the device
+Quoting Tomasz Figa (2013-08-30 06:51:20)
+> Hi Mike,
 > 
-> You have not addressed my comments from the last version. We do not
-> need 2 (or more) different ways to describe the connection between
-> masters and iommu's. Use mmu-masters property here to describe the
-> connection.
+> On Monday 26 of August 2013 19:08:55 Tomasz Figa wrote:
+> > This series fixes various functional and non-functional (e.g. stylistic)
+> > issues in Common Clock Framework drivers for Samsung Exynos SoCs. See
+> > particular patches for more detailed descriptions.
+> > 
+> > Changes since v1:
+> > [http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg21665.h
+> > tml] - Addressed comments from Yadwinder Singh Brar:
+> >    - added missing __initdata keywords,
+> >    - various typoes fixed,
+> >    - other minor stylistic improvements.
+> > 
+> > Tomasz Figa (16):
+> >   pwm: samsung: Update DT bindings documentation to cover clocks
+> >   ARM: dts: exynos4: Specify PWM clocks in PWM node
+> >   clocksource: samsung_pwm_timer: Get clock from device tree
+> >   clk: samsung: exynos4: Use separate aliases for cpufreq related clocks
+> >   clk: samsung: Modify _get_rate() helper to use __clk_lookup()
+> >   clk: samsung: exynos4: Remove unused static clkdev aliases
+> >   clk: samsung: exynos4: Remove checks for DT node
+> >   clk: samsung: exynos4: Rename exynos4_plls to exynos4x12_plls
+> >   clk: samsung: pll: Use new registration method for PLL45xx
+> >   clk: samsung: pll: Add support for rate configuration of PLL45xx
+> >   clk: samsung: pll: Use new registration method for PLL46xx
+> >   clk: samsung: pll: Add support for rate configuration of PLL46xx
+> >   clk: samsung: exynos4: Reorder registration of mout_vpllsrc
+> >   clk: samsung: exynos4: Register PLL rate tables for Exynos4210
+> >   clk: samsung: exynos4: Register PLL rate tables for Exynos4x12
+> >   clk: samsung: exynos5250: Simplify registration of PLL rate tables
+> > 
+> >  .../devicetree/bindings/pwm/pwm-samsung.txt        |  12 +
+> >  arch/arm/boot/dts/exynos4.dtsi                     |   2 +
+> >  drivers/clk/samsung/clk-exynos4.c                  | 539
+> > ++++++++++++--------- drivers/clk/samsung/clk-exynos5250.c              
+> > |  12 +-
+> >  drivers/clk/samsung/clk-exynos5440.c               |   2 +-
+> >  drivers/clk/samsung/clk-pll.c                      | 285 ++++++++---
+> >  drivers/clk/samsung/clk-pll.h                      |  59 ++-
+> >  drivers/clk/samsung/clk.c                          |  10 +-
+> >  drivers/clocksource/samsung_pwm_timer.c            |  12 +-
+> >  9 files changed, 602 insertions(+), 331 deletions(-)
 > 
+> Any chance to still have this merged for 3.12? AFAIK this should apply 
+> cleanly on your clk-next without any dependencies from other trees.
 
-Sorry, I forgot to reply.
-I just thought the meaning of your comment that it should be align with ARM System MMU.
-I now understand and it should be changed to mmu-masters property
-because it is now in the kernel.
+Sorry, this came a bit too late for 3.12. But just in time for 3.13!
 
-Thank you.
+Can you refresh this based on clk-next?
 
+Thanks,
+Mike
 
-> Rob
+> 
+> Best regards,
+> Tomasz
