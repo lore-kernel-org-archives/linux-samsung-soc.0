@@ -1,71 +1,45 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: [PATCH 0/9] fix deferred probing issue of platform_driver_probe
-Date: Tue,  8 Oct 2013 22:35:32 +0200
-Message-ID: <1381264542-29396-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 8/9] spi: spi-s3c64xx: replace platform_driver_probe to support deferred probing
+Date: Tue,  8 Oct 2013 22:35:40 +0200
+Message-ID: <1381264542-29396-9-git-send-email-wsa@the-dreams.de>
+References: <1381264542-29396-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1381264542-29396-1-git-send-email-wsa@the-dreams.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Wolfram Sang <wsa@the-dreams.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-We had some issues with deferred probing in the I2C subsystem. This series
-attempts to fix a part of it. From the patch description:
-
-===
 
 Subsystems like pinctrl and gpio rightfully make use of deferred probing at
 core level. Now, deferred drivers won't be retried if they don't have a .probe
 function specified in the driver struct. Fix this driver to have that, so the
 devices it supports won't get lost in a deferred probe.
 
-===
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+---
+ drivers/spi/spi-s3c64xx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I think it makes sense to remove platform_driver_probe from bus masters like
-i2c and spi (especially since they are dependant on pinctrl these days). This
-is what this series does. I had a look at dma drivers as well, but there are
-more things to be considered, so delayed for now.
-
-Please comment. If no objections are raised, I'd like to bring at least the I2C
-patches into v3.12, so deferred devices will then be correctly probed. The
-series is based on 3.12-rc4 and was compile-tested. It is available at
-
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git platform_driver_probe_drop
-
-Regards,
-
-   Wolfram
-
-
-Wolfram Sang (9):
-  i2c: i2c-designware-platdrv: replace platform_driver_probe to support
-    deferred probing
-  i2c: i2c-imx: replace platform_driver_probe to support deferred
-    probing
-  i2c: i2c-mxs: replace platform_driver_probe to support deferred
-    probing
-  i2c: i2c-stu300: replace platform_driver_probe to support deferred
-    probing
-  spi: spi-au1550: replace platform_driver_probe to support deferred
-    probing
-  spi: spi-bfin5xx: replace platform_driver_probe to support deferred
-    probing
-  spi: spi-omap-uwire: replace platform_driver_probe to support deferred
-    probing
-  spi: spi-s3c64xx: replace platform_driver_probe to support deferred
-    probing
-  spi: spi-txx9: replace platform_driver_probe to support deferred
-    probing
-
- drivers/i2c/busses/i2c-designware-platdrv.c |  5 +++--
- drivers/i2c/busses/i2c-imx.c                | 11 ++++++-----
- drivers/i2c/busses/i2c-mxs.c                |  3 ++-
- drivers/i2c/busses/i2c-stu300.c             | 11 +++++------
- drivers/spi/spi-au1550.c                    |  3 ++-
- drivers/spi/spi-bfin5xx.c                   |  5 +++--
- drivers/spi/spi-omap-uwire.c                |  5 +++--
- drivers/spi/spi-s3c64xx.c                   |  3 ++-
- drivers/spi/spi-txx9.c                      |  3 ++-
- 9 files changed, 28 insertions(+), 21 deletions(-)
-
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 512b889..3df81c6 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1633,6 +1633,7 @@ static struct platform_driver s3c64xx_spi_driver = {
+ 		.pm = &s3c64xx_spi_pm,
+ 		.of_match_table = of_match_ptr(s3c64xx_spi_dt_match),
+ 	},
++	.probe = s3c64xx_spi_probe,
+ 	.remove = s3c64xx_spi_remove,
+ 	.id_table = s3c64xx_spi_driver_ids,
+ };
+@@ -1640,7 +1641,7 @@ MODULE_ALIAS("platform:s3c64xx-spi");
+ 
+ static int __init s3c64xx_spi_init(void)
+ {
+-	return platform_driver_probe(&s3c64xx_spi_driver, s3c64xx_spi_probe);
++	return platform_driver_register(&s3c64xx_spi_driver);
+ }
+ subsys_initcall(s3c64xx_spi_init);
+ 
 -- 
 1.8.4.rc3
