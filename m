@@ -1,96 +1,94 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 1/5] ARM: dts: Disable Exynos5250 I2S controllers by default
-Date: Tue,  8 Oct 2013 12:20:05 +0100
-Message-ID: <1381231209-9273-1-git-send-email-broonie@kernel.org>
+From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Subject: Re: [PATCH 1/3] ahci: exynos: add ahci sata support on Exynos platform
+Date: Tue, 8 Oct 2013 17:14:57 +0530
+Message-ID: <CAKuRcOJi5C1C63Y41dSJ0-YsaTni1AL=d3qH2Cjz74C8ardEpQ@mail.gmail.com>
+References: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1380609183-21430-2-git-send-email-yuvaraj.cd@samsung.com>
+	<1534631.KrL0vInDuc@amdc1032>
+	<003f01cec099$4eb706b0$ec251410$%han@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:52041 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752488Ab3JHLVE (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:49001 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752050Ab3JHLo5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Oct 2013 07:21:04 -0400
+	Tue, 8 Oct 2013 07:44:57 -0400
+In-Reply-To: <003f01cec099$4eb706b0$ec251410$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, tj@kernel.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <rob.herring@calxeda.com>, linux-ide@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, kishon@ti.com, s.nawrocki@samsung.com, "ks.giri@samsung.com" <ks.giri@samsung.com>, aditya.ps@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, rogerq@ti.com
 
-From: Mark Brown <broonie@linaro.org>
+On Fri, Oct 4, 2013 at 6:03 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Thursday, October 03, 2013 8:32 PM, Bartlomiej Zolnierkiewicz wrote:
+>> On Tuesday, October 01, 2013 12:03:01 PM Yuvaraj Kumar C D wrote:
+>> > Exynos5250 contains one Synopsys AHCI SATA controller.The avalaible
+>> > ahci_platform driver is not sufficient to handle the AHCI PHY and PHY
+>> > clock related initialization.
+>> >
+>> > This patch adds exynos specific ahci sata driver,contained the exynos
+>> > specific initialized codes, re-use the generic ahci_platform driver, and
+>> > keep the generic ahci_platform driver clean as much as possible.
+>> >
+>> > This patch depends on the below patch
+>> >     [1].drivers: phy: add generic PHY framework
+>> >             by Kishon Vijay Abraham I<kishon@ti.com>
+>> >
+>> > Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> > ---
+>> >  drivers/ata/Kconfig       |    9 ++
+>> >  drivers/ata/Makefile      |    1 +
+>> >  drivers/ata/ahci_exynos.c |  226 +++++++++++++++++++++++++++++++++++++++++++++
+>> >  3 files changed, 236 insertions(+)
+>> >  create mode 100644 drivers/ata/ahci_exynos.c
+>> >
+>
+>
+> [.....]
+>
+>> > +   priv->phy = devm_phy_get(dev , "sata-phy");
+>> > +   if (IS_ERR(priv->phy))
+>> > +           return PTR_ERR(priv->phy);
+>
+> [.....]
+>
+>> Also please take a look at the following patch:
+>>
+>> https://lkml.org/lkml/2013/9/19/173
+>>
+>> it adds PHY support to ahci_platform driver, maybe it can be used
+>> for your needs as well.
+>
+> I also agree with Bartlomiej Zolnierkiewicz's opinion.
+> 'ahci_exynos.c' just calls PHY API, without any additional control
+> for Exynos AHCI IP.
+In addition to PHY handling,it also deals with the special clock
+sclk_sata which is not dealt in ahci_platform.c(certainly exynos
+specific).
 
-Rather than requiring each board to explicitly disable the I2S controllers
-it is not using instead require boards to enable those that they are using.
+Morever there is a wrapper driver to handle the platform specific
+things for the sata.Please refer the  patch[1]
+[1]ata: ti_sata: Add Texas Instruments SATA Wrapper driver
+https://lkml.org/lkml/2013/9/19/166
 
-This is required for audio operation on Arndale, one of the unused I2S
-controllers is pinmuxed with the LDO enable GPIOs for the WM1811A.
+[2]ahci_imx: add ahci sata support on imx platforms
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos5250-arndale.dts  | 4 ++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts | 8 --------
- arch/arm/boot/dts/exynos5250.dtsi         | 3 +++
- 3 files changed, 7 insertions(+), 8 deletions(-)
+I think, if we have platform specific driver like ahci_xxx.c , it
+would be better to handle the sata PHY in ahci_xxx.c so that we can
+retain and re-use the ahci_platform.c as it is.
 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index cee55fa..4687fa0 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -412,6 +412,10 @@
- 		status = "disabled";
- 	};
- 
-+	i2s0: i2s@03830000 {
-+		status = "okay";
-+	};
-+
- 	spi_0: spi@12d20000 {
- 		status = "disabled";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 2538b32..f86d567 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -231,14 +231,6 @@
- 		status = "okay";
- 	};
- 
--	i2s1: i2s@12D60000 {
--		status = "disabled";
--	};
--
--	i2s2: i2s@12D70000 {
--		status = "disabled";
--	};
--
- 	sound {
- 		compatible = "samsung,smdk-wm8994";
- 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 7d7cc77..c863113 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -417,6 +417,7 @@
- 
- 	i2s0: i2s@03830000 {
- 		compatible = "samsung,s5pv210-i2s";
-+		status = "disabled";
- 		reg = <0x03830000 0x100>;
- 		dmas = <&pdma0 10
- 			&pdma0 9
-@@ -433,6 +434,7 @@
- 
- 	i2s1: i2s@12D60000 {
- 		compatible = "samsung,s3c6410-i2s";
-+		status = "disabled";
- 		reg = <0x12D60000 0x100>;
- 		dmas = <&pdma1 12
- 			&pdma1 11>;
-@@ -445,6 +447,7 @@
- 
- 	i2s2: i2s@12D70000 {
- 		compatible = "samsung,s3c6410-i2s";
-+		status = "disabled";
- 		reg = <0x12D70000 0x100>;
- 		dmas = <&pdma0 12
- 			&pdma0 11>;
--- 
-1.8.4.rc3
+Further comments will be much appreciated.
+
+>
+> Best regards,
+> Jingoo Han
+>
+>>
+>> > +   ret = phy_init(priv->phy);
+>> > +   if (ret < 0) {
+>> > +                   dev_err(dev, "failed to init SATA PHY\n");
+>> > +                   return ret;
+>> > +   }
+>> > +
+>
