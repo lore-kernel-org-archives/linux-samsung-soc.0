@@ -1,61 +1,97 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v5 2/4] dmaengine: add driver for Samsung s3c24xx SoCs
-Date: Tue, 08 Oct 2013 08:22:32 +0900
-Message-ID: <0f4401cec3b4$19648230$4c2d8690$@org>
-References: <201309182118.28391.heiko@sntech.de>
- <201309182119.54560.heiko@sntech.de> <20131007143351.GK2954@intel.com>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: Re: [PATCH v8 06/12] ARM: dts: Add description of System MMU of Exynos
+ SoCs
+Date: Tue, 08 Oct 2013 13:38:53 +0900
+Message-ID: <20131008133853.8b8277b70d69e05edd011945@samsung.com>
+References: <003c01ce89f3$3abc4bc0$b034e340$@samsung.com>
+ <CAL_JsqLny8sOgn9y0Tm9-Vq_3YPdtqkr5nTJ67Y0Zx1hDmduNQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28835 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751197Ab3JGXWe convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:35775 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751880Ab3JHEi5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Oct 2013 19:22:34 -0400
-In-reply-to: <20131007143351.GK2954@intel.com>
-Content-language: ko
+	Tue, 8 Oct 2013 00:38:57 -0400
+In-reply-to: <CAL_JsqLny8sOgn9y0Tm9-Vq_3YPdtqkr5nTJ67Y0Zx1hDmduNQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vinod Koul' <vinod.koul@intel.com>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: 'Dan Williams' <djbw@fb.com>, linus.walleij@linaro.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Hyunwoong Kim <khw0178.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Keyyoung Park <keyyoung.park@samsung.com>, Subash Patel <supash.ramaswamy@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, kvmarm@lists.cs.columbia.edu, Rahul Sharma <rahul.sharma@samsung.com>, Will Deacon <will.deacon@arm.com>
 
-Vinod Koul wrote:
->=20
-> On Wed, Sep 18, 2013 at 09:19:54PM +0200, Heiko St=FCbner wrote:
-> > This adds a new driver to support the s3c24xx dma using the dmaengi=
-ne
-> > and makes the old one in mach-s3c24xx obsolete in the long run.
+On Mon, 07 Oct 2013 08:44:54 -0500, Rob Herring wrote:
+> On Fri, Jul 26, 2013 at 6:28 AM, Cho KyongHo <pullip.cho@samsung.com> wrote:
+> > Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+> > ---
+> >  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |  103 +++++++
+> >  arch/arm/boot/dts/exynos4.dtsi                     |  122 ++++++++
+> >  arch/arm/boot/dts/exynos4210.dtsi                  |   25 ++
+> >  arch/arm/boot/dts/exynos4x12.dtsi                  |   76 +++++
+> >  arch/arm/boot/dts/exynos5250.dtsi                  |  291 ++++++++++++++++++++
+> >  5 files changed, 617 insertions(+), 0 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
 > >
-> > Conceptually the s3c24xx-dma feels like a distant relative of the p=
-l08x
-> > with numerous virtual channels being mapped to a lot less physical =
-ones.
-> > The driver therefore borrows a lot from the amba-pl08x driver in th=
-is
-> > regard. Functionality-wise the driver gains a memcpy ability in add=
-ition
-> > to the slave_sg one.
-> >
-> > The driver supports both the method for requesting the peripheral u=
-sed
-> > by SoCs before the S3C2443 and the different method for S3C2443 and
-> later.
-> >
-> > On earlier SoCs the hardware channels usable for specific periphera=
-ls is
-> > constrainted while on later SoCs all channels can be used for any
-> peripheral.
-> >
-> > Tested on a s3c2416-based board, memcpy using the dmatest module an=
-d
-> > slave_sg partially using the spi-s3c64xx driver.
-> >
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Vinod Koul <vinod.koul@intel.com>
->=20
-Vinod, thanks for your ack :-)
+> > diff --git a/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > new file mode 100644
+> > index 0000000..92f0a33
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iommu/samsung,exynos4210-sysmmu.txt
+> > @@ -0,0 +1,103 @@
+> > +Samsung Exynos4210 IOMMU H/W, System MMU (System Memory Management Unit)
+> > +
+> > +Samsung's Exynos architecture contains System MMU that enables scattered
+> > +physical memory chunks visible as a contiguous region to DMA-capable peripheral
+> > +devices like MFC, FIMC, FIMD, GScaler, FIMC-IS and so forth.
+> > +
+> > +System MMU is a sort of IOMMU and support identical translation table format to
+> > +ARMv7 translation tables with minimum set of page properties including access
+> > +permissions, shareability and security protection. In addition, System MMU has
+> > +another capabilities like L2 TLB or block-fetch buffers to minimize translation
+> > +latency.
+> > +
+> > +A System MMU is dedicated to a single master peripheral device.  Thus, it is
+> > +important to specify the correct System MMU in the device node of its master
+> > +device. Whereas a System MMU is dedicated to a master device, the master device
+> > +may have more than one System MMU.
+> > +
+> > +Required properties:
+> > +- compatible: Should be "samsung,exynos4210-sysmmu"
+> > +- reg: A tuple of base address and size of System MMU registers.
+> > +- interrupt-parent: The phandle of the interrupt controller of System MMU
+> > +- interrupts: A tuple of numbers that indicates the interrupt source.
+> > +- clock-names: Should be "sysmmu" if the System MMU is needed to gate its clock.
+> > +               Please refer to the following documents:
+> > +              Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > +              Documentation/devicetree/bindings/clock/exynos4-clock.txt
+> > +              Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+> > +              Optional "master" if the clock to the System MMU is gated by
+> > +              another gate clock other than "sysmmu". The System MMU driver
+> > +              sets "master" the parent of "sysmmu".
+> > +              Exynos4 SoCs, there needs no "master" clocks.
+> > +              Exynos5 SoCs, some System MMUs must have "master" clocks.
+> > +- clocks: Required if the System MMU is needed to gate its clock.
+> > +         Please refer to the documents listed above.
+> > +- samsung,power-domain: Required if the System MMU is needed to gate its power.
+> > +         Please refer to the following document:
+> > +         Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> > +
+> > +Required properties for the master peripheral devices:
+> > +- iommu: phandles to the System MMUs of the device
+> 
+> You have not addressed my comments from the last version. We do not
+> need 2 (or more) different ways to describe the connection between
+> masters and iommu's. Use mmu-masters property here to describe the
+> connection.
+> 
 
-Applied this whole series.
-Kukjin
+Sorry, I forgot to reply.
+I just thought the meaning of your comment that it should be align with ARM System MMU.
+I now understand and it should be changed to mmu-masters property
+because it is now in the kernel.
+
+Thank you.
+
+
+> Rob
