@@ -1,65 +1,140 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH v2 0/2] Add GPLL, APLL, KPLL, EPLL and VPLL freq table for
- exynos5420 and exynos5250
-Date: Tue, 8 Oct 2013 15:00:27 +0530
-Message-ID: <CAGm_ybhRo0D+drRpTGniqPtCOu9Jae=QZgtkhztA_w2cSc9xgg@mail.gmail.com>
-References: <1377697198-19097-1-git-send-email-vikas.sajjan@linaro.org>
-	<20130829024244.10934.6393@quantum>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 2/5] ARM: dts: Leave Exynos5250 SPI controller disabled by default
+Date: Tue,  8 Oct 2013 12:20:06 +0100
+Message-ID: <1381231209-9273-2-git-send-email-broonie@kernel.org>
+References: <1381231209-9273-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:37125 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751869Ab3JHJa2 (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:52046 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752050Ab3JHLUp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Oct 2013 05:30:28 -0400
-Received: by mail-wi0-f170.google.com with SMTP id hi5so375418wib.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Oct 2013 02:30:27 -0700 (PDT)
-In-Reply-To: <20130829024244.10934.6393@quantum>
+	Tue, 8 Oct 2013 07:20:45 -0400
+In-Reply-To: <1381231209-9273-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, patches@linaro.org, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>
+To: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
 
-On Thu, Aug 29, 2013 at 8:12 AM, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Vikas Sajjan (2013-08-28 06:39:56)
->> Adds GPLL, APLL, KPLL, EPLL and VPLL freq table for exynos5420 and exynos5250.
->>
->> changes since v1:
->>         - addressed comments from Tomasz Figa <tomasz.figa@gmail.com>
->>
->> is rebased on Mike's
->> https://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=shortlog;h=refs/heads/clk-next
->> and on top of Tomasz Figa's clk clean-up patch series
->> http://www.spinics.net/lists/arm-kernel/msg269848.html
->
-> Looks good to me but it will have to wait until Tomasz's cleanup series
-> is merged. I'm waiting on that get to get reviewed-by's and then I'll
-> take them both in.
->
+From: Mark Brown <broonie@linaro.org>
 
+Rather than requiring each board to explicitly disable the SPI controllers
+it is not using instead require boards to enable those that they are using.
+This is less work overall since normally at most one of the controllers is
+in use and avoids issues caused by inappropriate pinmuxing.
 
-Can you take these patchset.
+Signed-off-by: Mark Brown <broonie@linaro.org>
+Acked-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/boot/dts/cros5250-common.dtsi    |  9 +--------
+ arch/arm/boot/dts/exynos5250-arndale.dts  | 12 ------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts | 10 ++--------
+ arch/arm/boot/dts/exynos5250.dtsi         |  3 +++
+ 4 files changed, 6 insertions(+), 28 deletions(-)
 
-
-
-> Regards,
-> Mike
->
->>
->>
->> Vikas Sajjan (2):
->>   clk: samsung: Add GPLL freq table for exynos5250 SoC
->>   clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420
->>     SoC
->>
->>  drivers/clk/samsung/clk-exynos5250.c |   19 ++++++++-
->>  drivers/clk/samsung/clk-exynos5420.c |   78 ++++++++++++++++++++++++++++++++++
->>  2 files changed, 96 insertions(+), 1 deletion(-)
->>
->> --
->> 1.7.9.5
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
+index dc259e8b..0fcca29 100644
+--- a/arch/arm/boot/dts/cros5250-common.dtsi
++++ b/arch/arm/boot/dts/cros5250-common.dtsi
+@@ -286,19 +286,12 @@
+ 		};
+ 	};
+ 
+-	spi_0: spi@12d20000 {
+-		status = "disabled";
+-	};
+-
+ 	spi_1: spi@12d30000 {
++		status = "okay";
+ 		samsung,spi-src-clk = <0>;
+ 		num-cs = <1>;
+ 	};
+ 
+-	spi_2: spi@12d40000 {
+-		status = "disabled";
+-	};
+-
+ 	hdmi {
+ 		hpd-gpio = <&gpx3 7 0>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index 4687fa0..1141939 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -416,18 +416,6 @@
+ 		status = "okay";
+ 	};
+ 
+-	spi_0: spi@12d20000 {
+-		status = "disabled";
+-	};
+-
+-	spi_1: spi@12d30000 {
+-		status = "disabled";
+-	};
+-
+-	spi_2: spi@12d40000 {
+-		status = "disabled";
+-	};
+-
+ 	gpio_keys {
+ 		compatible = "gpio-keys";
+ 
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index f86d567..67d3c43 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -184,11 +184,9 @@
+ 		status = "disabled";
+ 	};
+ 
+-	spi_0: spi@12d20000 {
+-		status = "disabled";
+-	};
+-
+ 	spi_1: spi@12d30000 {
++		status = "okay";
++
+ 		w25q80bw@0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+@@ -214,10 +212,6 @@
+ 		};
+ 	};
+ 
+-	spi_2: spi@12d40000 {
+-		status = "disabled";
+-	};
+-
+ 	hdmi {
+ 		hpd-gpio = <&gpx3 7 0>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index c863113..a886ee4 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -344,6 +344,7 @@
+ 
+ 	spi_0: spi@12d20000 {
+ 		compatible = "samsung,exynos4210-spi";
++		status = "disabled";
+ 		reg = <0x12d20000 0x100>;
+ 		interrupts = <0 66 0>;
+ 		dmas = <&pdma0 5
+@@ -359,6 +360,7 @@
+ 
+ 	spi_1: spi@12d30000 {
+ 		compatible = "samsung,exynos4210-spi";
++		status = "disabled";
+ 		reg = <0x12d30000 0x100>;
+ 		interrupts = <0 67 0>;
+ 		dmas = <&pdma1 5
+@@ -374,6 +376,7 @@
+ 
+ 	spi_2: spi@12d40000 {
+ 		compatible = "samsung,exynos4210-spi";
++		status = "disabled";
+ 		reg = <0x12d40000 0x100>;
+ 		interrupts = <0 68 0>;
+ 		dmas = <&pdma0 7
+-- 
+1.8.4.rc3
