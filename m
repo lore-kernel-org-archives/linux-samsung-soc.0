@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 3/5] ARM: dts: Disable I2C controllers by default on Exynos5250
-Date: Tue,  8 Oct 2013 12:20:07 +0100
-Message-ID: <1381231209-9273-3-git-send-email-broonie@kernel.org>
+Subject: [PATCH 4/5] ARM: dts: Rename Exynos5250 ChromeOS common file to have exynos prefix
+Date: Tue,  8 Oct 2013 12:20:08 +0100
+Message-ID: <1381231209-9273-4-git-send-email-broonie@kernel.org>
 References: <1381231209-9273-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:52051 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:52057 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752326Ab3JHLUq (ORCPT
+	with ESMTP id S1752050Ab3JHLUs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Oct 2013 07:20:46 -0400
+	Tue, 8 Oct 2013 07:20:48 -0400
 In-Reply-To: <1381231209-9273-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -17,293 +17,669 @@ Cc: linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
 
 From: Mark Brown <broonie@linaro.org>
 
-Ensure that unused I2C controllers are not activated, causing problems due
-to inappropriate pinmuxing or similar, by marking the controllers as
-disabled by default and requiring boards to explicitly enable those that
-are in use.
+Make it easier to notice the common file for ChromeOS devices based on
+the Exynos5250 by giving it the exynos5250 prefix that the boards have.
 
 Signed-off-by: Mark Brown <broonie@linaro.org>
 Acked-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/boot/dts/cros5250-common.dtsi    | 12 ++++++++----
- arch/arm/boot/dts/exynos5250-arndale.dts  | 32 ++++---------------------------
- arch/arm/boot/dts/exynos5250-smdk5250.dts | 25 +++++-------------------
- arch/arm/boot/dts/exynos5250.dtsi         | 10 ++++++++++
- 4 files changed, 27 insertions(+), 52 deletions(-)
+ arch/arm/boot/dts/cros5250-common.dtsi        | 313 --------------------------
+ arch/arm/boot/dts/exynos5250-cros-common.dtsi | 313 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250-snow.dts         |   2 +-
+ 3 files changed, 314 insertions(+), 314 deletions(-)
+ delete mode 100644 arch/arm/boot/dts/cros5250-common.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
 
 diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
-index 0fcca29..7dbba08 100644
+deleted file mode 100644
+index 7dbba08..0000000
 --- a/arch/arm/boot/dts/cros5250-common.dtsi
-+++ b/arch/arm/boot/dts/cros5250-common.dtsi
-@@ -30,6 +30,7 @@
- 	};
- 
- 	i2c@12C60000 {
-+		status = "okay";
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <378000>;
- 
-@@ -173,6 +174,7 @@
- 	};
- 
- 	i2c@12C70000 {
-+		status = "okay";
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <378000>;
- 
-@@ -186,6 +188,7 @@
- 	};
- 
- 	i2c@12C80000 {
-+		status = "okay";
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <66000>;
- 
-@@ -196,30 +199,31 @@
- 	};
- 
- 	i2c@12C90000 {
-+		status = "okay";
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <66000>;
- 	};
- 
- 	i2c@12CA0000 {
-+		status = "okay";
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <66000>;
- 	};
- 
- 	i2c@12CB0000 {
-+		status = "okay";
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <66000>;
- 	};
- 
--	i2c@12CC0000 {
--		status = "disabled";
++++ /dev/null
+@@ -1,313 +0,0 @@
+-/*
+- * Common device tree include for all Exynos 5250 boards based off of Daisy.
+- *
+- * Copyright (c) 2012 Google, Inc
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-/ {
+-	aliases {
 -	};
 -
- 	i2c@12CD0000 {
-+		status = "okay";
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <66000>;
- 	};
- 
- 	i2c@12CE0000 {
-+		status = "okay";
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <378000>;
- 
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 1141939..d58923f 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -34,6 +34,7 @@
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <20000>;
- 		samsung,i2c-slave-addr = <0x66>;
-+		status = "okay";
- 
- 		s5m8767_pmic@66 {
- 			compatible = "samsung,s5m8767-pmic";
-@@ -319,16 +320,11 @@
- 		};
- 	};
- 
+-	memory {
+-		reg = <0x40000000 0x80000000>;
+-	};
+-
+-	chosen {
+-	};
+-
+-	pinctrl@11400000 {
+-		/*
+-		 * Disabled pullups since external part has its own pullups and
+-		 * double-pulling gets us out of spec in some cases.
+-		 */
+-		i2c2_bus: i2c2-bus {
+-			samsung,pin-pud = <0>;
+-		};
+-	};
+-
+-	i2c@12C60000 {
+-		status = "okay";
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <378000>;
+-
+-		max77686@09 {
+-			compatible = "maxim,max77686";
+-			reg = <0x09>;
+-
+-			voltage-regulators {
+-				ldo1_reg: LDO1 {
+-					regulator-name = "P1.0V_LDO_OUT1";
+-					regulator-min-microvolt = <1000000>;
+-					regulator-max-microvolt = <1000000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo2_reg: LDO2 {
+-					regulator-name = "P1.8V_LDO_OUT2";
+-					regulator-min-microvolt = <1800000>;
+-					regulator-max-microvolt = <1800000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo3_reg: LDO3 {
+-					regulator-name = "P1.8V_LDO_OUT3";
+-					regulator-min-microvolt = <1800000>;
+-					regulator-max-microvolt = <1800000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo7_reg: LDO7 {
+-					regulator-name = "P1.1V_LDO_OUT7";
+-					regulator-min-microvolt = <1100000>;
+-					regulator-max-microvolt = <1100000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo8_reg: LDO8 {
+-					regulator-name = "P1.0V_LDO_OUT8";
+-					regulator-min-microvolt = <1000000>;
+-					regulator-max-microvolt = <1000000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo10_reg: LDO10 {
+-					regulator-name = "P1.8V_LDO_OUT10";
+-					regulator-min-microvolt = <1800000>;
+-					regulator-max-microvolt = <1800000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo12_reg: LDO12 {
+-					regulator-name = "P3.0V_LDO_OUT12";
+-					regulator-min-microvolt = <3000000>;
+-					regulator-max-microvolt = <3000000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo14_reg: LDO14 {
+-					regulator-name = "P1.8V_LDO_OUT14";
+-					regulator-min-microvolt = <1800000>;
+-					regulator-max-microvolt = <1800000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo15_reg: LDO15 {
+-					regulator-name = "P1.0V_LDO_OUT15";
+-					regulator-min-microvolt = <1000000>;
+-					regulator-max-microvolt = <1000000>;
+-					regulator-always-on;
+-				};
+-
+-				ldo16_reg: LDO16 {
+-					regulator-name = "P1.8V_LDO_OUT16";
+-					regulator-min-microvolt = <1800000>;
+-					regulator-max-microvolt = <1800000>;
+-					regulator-always-on;
+-				};
+-
+-				buck1_reg: BUCK1 {
+-					regulator-name = "vdd_mif";
+-					regulator-min-microvolt = <950000>;
+-					regulator-max-microvolt = <1300000>;
+-					regulator-always-on;
+-					regulator-boot-on;
+-				};
+-
+-				buck2_reg: BUCK2 {
+-					regulator-name = "vdd_arm";
+-					regulator-min-microvolt = <850000>;
+-					regulator-max-microvolt = <1350000>;
+-					regulator-always-on;
+-					regulator-boot-on;
+-				};
+-
+-				buck3_reg: BUCK3 {
+-					regulator-name = "vdd_int";
+-					regulator-min-microvolt = <900000>;
+-					regulator-max-microvolt = <1200000>;
+-					regulator-always-on;
+-					regulator-boot-on;
+-				};
+-
+-				buck4_reg: BUCK4 {
+-					regulator-name = "vdd_g3d";
+-					regulator-min-microvolt = <850000>;
+-					regulator-max-microvolt = <1300000>;
+-					regulator-always-on;
+-					regulator-boot-on;
+-				};
+-
+-				buck5_reg: BUCK5 {
+-					regulator-name = "P1.8V_BUCK_OUT5";
+-					regulator-min-microvolt = <1800000>;
+-					regulator-max-microvolt = <1800000>;
+-					regulator-always-on;
+-					regulator-boot-on;
+-				};
+-
+-				buck6_reg: BUCK6 {
+-					regulator-name = "P1.35V_BUCK_OUT6";
+-					regulator-min-microvolt = <1350000>;
+-					regulator-max-microvolt = <1350000>;
+-					regulator-always-on;
+-				};
+-
+-				buck7_reg: BUCK7 {
+-					regulator-name = "P2.0V_BUCK_OUT7";
+-					regulator-min-microvolt = <2000000>;
+-					regulator-max-microvolt = <2000000>;
+-					regulator-always-on;
+-				};
+-
+-				buck8_reg: BUCK8 {
+-					regulator-name = "P2.85V_BUCK_OUT8";
+-					regulator-min-microvolt = <2850000>;
+-					regulator-max-microvolt = <2850000>;
+-					regulator-always-on;
+-				};
+-			};
+-		};
+-	};
+-
 -	i2c@12C70000 {
--		status = "disabled";
+-		status = "okay";
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <378000>;
+-
+-		trackpad {
+-			reg = <0x67>;
+-			compatible = "cypress,cyapa";
+-			interrupts = <2 0>;
+-			interrupt-parent = <&gpx1>;
+-			wakeup-source;
+-		};
 -	};
 -
 -	i2c@12C80000 {
--		status = "disabled";
+-		status = "okay";
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <66000>;
+-
+-		hdmiddc@50 {
+-			compatible = "samsung,exynos4210-hdmiddc";
+-			reg = <0x50>;
+-		};
 -	};
 -
- 	i2c@12C90000 {
-+		status = "okay";
-+
- 		wm1811a@1a {
-+
- 			compatible = "wlf,wm1811";
- 			reg = <0x1a>;
- 
-@@ -346,26 +342,6 @@
- 		};
- 	};
- 
--	i2c@12CA0000 {
--		status = "disabled";
--	};
--
--	i2c@12CB0000 {
--		status = "disabled";
--	};
--
--	i2c@12CC0000 {
--		status = "disabled";
--	};
--
--	i2c@12CD0000 {
--		status = "disabled";
--	};
--
--	i2c@121D0000 {
--		status = "disabled";
--	};
--
- 	dwmmc_0: dwmmc0@12200000 {
- 		num-slots = <1>;
- 		supports-highspeed;
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 67d3c43..f594dd7 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -30,6 +30,7 @@
- 	i2c@12C60000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <20000>;
-+		status = "okay";
- 
- 		eeprom@50 {
- 			compatible = "samsung,s524ad0xd1";
-@@ -64,6 +65,7 @@
- 	i2c@12C70000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <20000>;
-+		status = "okay";
- 
- 		eeprom@51 {
- 			compatible = "samsung,s524ad0xd1";
-@@ -89,6 +91,7 @@
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <40000>;
- 		samsung,i2c-slave-addr = <0x38>;
-+		status = "okay";
- 
- 		sata-phy {
- 			compatible = "samsung,sata-phy";
-@@ -103,6 +106,7 @@
- 	i2c@12C80000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <66000>;
-+		status = "okay";
- 
- 		hdmiddc@50 {
- 			compatible = "samsung,exynos4210-hdmiddc";
-@@ -110,29 +114,10 @@
- 		};
- 	};
- 
 -	i2c@12C90000 {
--		status = "disabled";
+-		status = "okay";
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <66000>;
 -	};
 -
 -	i2c@12CA0000 {
--		status = "disabled";
+-		status = "okay";
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <66000>;
 -	};
 -
 -	i2c@12CB0000 {
--		status = "disabled";
--	};
--
--	i2c@12CC0000 {
--		status = "disabled";
+-		status = "okay";
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <66000>;
 -	};
 -
 -	i2c@12CD0000 {
+-		status = "okay";
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <66000>;
+-	};
+-
+-	i2c@12CE0000 {
+-		status = "okay";
+-		samsung,i2c-sda-delay = <100>;
+-		samsung,i2c-max-bus-freq = <378000>;
+-
+-		hdmiphy@38 {
+-			compatible = "samsung,exynos4212-hdmiphy";
+-			reg = <0x38>;
+-		};
+-	};
+-
+-	dwmmc0@12200000 {
+-		num-slots = <1>;
+-		supports-highspeed;
+-		broken-cd;
+-		fifo-depth = <0x80>;
+-		card-detect-delay = <200>;
+-		samsung,dw-mshc-ciu-div = <3>;
+-		samsung,dw-mshc-sdr-timing = <2 3>;
+-		samsung,dw-mshc-ddr-timing = <1 2>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <8>;
+-		};
+-	};
+-
+-	dwmmc1@12210000 {
 -		status = "disabled";
 -	};
 -
- 	i2c@12CE0000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <66000>;
+-	dwmmc2@12220000 {
+-		num-slots = <1>;
+-		supports-highspeed;
+-		fifo-depth = <0x80>;
+-		card-detect-delay = <200>;
+-		samsung,dw-mshc-ciu-div = <3>;
+-		samsung,dw-mshc-sdr-timing = <2 3>;
+-		samsung,dw-mshc-ddr-timing = <1 2>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <4>;
+-			wp-gpios = <&gpc2 1 0>;
+-		};
+-	};
+-
+-	dwmmc3@12230000 {
+-		num-slots = <1>;
+-		supports-highspeed;
+-		broken-cd;
+-		fifo-depth = <0x80>;
+-		card-detect-delay = <200>;
+-		samsung,dw-mshc-ciu-div = <3>;
+-		samsung,dw-mshc-sdr-timing = <2 3>;
+-		samsung,dw-mshc-ddr-timing = <1 2>;
+-		/* See board-specific dts files for pin setup */
+-
+-		slot@0 {
+-			reg = <0>;
+-			bus-width = <4>;
+-		};
+-	};
+-
+-	spi_1: spi@12d30000 {
+-		status = "okay";
+-		samsung,spi-src-clk = <0>;
+-		num-cs = <1>;
+-	};
+-
+-	hdmi {
+-		hpd-gpio = <&gpx3 7 0>;
+-	};
+-
+-	gpio-keys {
+-		compatible = "gpio-keys";
+-
+-		power {
+-			label = "Power";
+-			gpios = <&gpx1 3 1>;
+-			linux,code = <116>; /* KEY_POWER */
+-			gpio-key,wakeup;
+-		};
+-	};
+-};
+diff --git a/arch/arm/boot/dts/exynos5250-cros-common.dtsi b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+new file mode 100644
+index 0000000..7dbba08
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5250-cros-common.dtsi
+@@ -0,0 +1,313 @@
++/*
++ * Common device tree include for all Exynos 5250 boards based off of Daisy.
++ *
++ * Copyright (c) 2012 Google, Inc
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/ {
++	aliases {
++	};
++
++	memory {
++		reg = <0x40000000 0x80000000>;
++	};
++
++	chosen {
++	};
++
++	pinctrl@11400000 {
++		/*
++		 * Disabled pullups since external part has its own pullups and
++		 * double-pulling gets us out of spec in some cases.
++		 */
++		i2c2_bus: i2c2-bus {
++			samsung,pin-pud = <0>;
++		};
++	};
++
++	i2c@12C60000 {
 +		status = "okay";
- 
- 		hdmiphy@38 {
- 			compatible = "samsung,exynos4212-hdmiphy";
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index a886ee4..cbbc1bc 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -237,6 +237,7 @@
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c0_bus>;
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <378000>;
++
++		max77686@09 {
++			compatible = "maxim,max77686";
++			reg = <0x09>;
++
++			voltage-regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "P1.0V_LDO_OUT1";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo2_reg: LDO2 {
++					regulator-name = "P1.8V_LDO_OUT2";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "P1.8V_LDO_OUT3";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "P1.1V_LDO_OUT7";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <1100000>;
++					regulator-always-on;
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "P1.0V_LDO_OUT8";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "P1.8V_LDO_OUT10";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo12_reg: LDO12 {
++					regulator-name = "P3.0V_LDO_OUT12";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++					regulator-always-on;
++				};
++
++				ldo14_reg: LDO14 {
++					regulator-name = "P1.8V_LDO_OUT14";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo15_reg: LDO15 {
++					regulator-name = "P1.0V_LDO_OUT15";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo16_reg: LDO16 {
++					regulator-name = "P1.8V_LDO_OUT16";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "vdd_mif";
++					regulator-min-microvolt = <950000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck3_reg: BUCK3 {
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <900000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck4_reg: BUCK4 {
++					regulator-name = "vdd_g3d";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "P1.8V_BUCK_OUT5";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck6_reg: BUCK6 {
++					regulator-name = "P1.35V_BUCK_OUT6";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++				};
++
++				buck7_reg: BUCK7 {
++					regulator-name = "P2.0V_BUCK_OUT7";
++					regulator-min-microvolt = <2000000>;
++					regulator-max-microvolt = <2000000>;
++					regulator-always-on;
++				};
++
++				buck8_reg: BUCK8 {
++					regulator-name = "P2.85V_BUCK_OUT8";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++					regulator-always-on;
++				};
++			};
++		};
++	};
++
++	i2c@12C70000 {
++		status = "okay";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <378000>;
++
++		trackpad {
++			reg = <0x67>;
++			compatible = "cypress,cyapa";
++			interrupts = <2 0>;
++			interrupt-parent = <&gpx1>;
++			wakeup-source;
++		};
++	};
++
++	i2c@12C80000 {
++		status = "okay";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <66000>;
++
++		hdmiddc@50 {
++			compatible = "samsung,exynos4210-hdmiddc";
++			reg = <0x50>;
++		};
++	};
++
++	i2c@12C90000 {
++		status = "okay";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <66000>;
++	};
++
++	i2c@12CA0000 {
++		status = "okay";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <66000>;
++	};
++
++	i2c@12CB0000 {
++		status = "okay";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <66000>;
++	};
++
++	i2c@12CD0000 {
++		status = "okay";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <66000>;
++	};
++
++	i2c@12CE0000 {
++		status = "okay";
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <378000>;
++
++		hdmiphy@38 {
++			compatible = "samsung,exynos4212-hdmiphy";
++			reg = <0x38>;
++		};
++	};
++
++	dwmmc0@12200000 {
++		num-slots = <1>;
++		supports-highspeed;
++		broken-cd;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_cd &sd0_bus4 &sd0_bus8>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
++	dwmmc1@12210000 {
 +		status = "disabled";
- 	};
++	};
++
++	dwmmc2@12220000 {
++		num-slots = <1>;
++		supports-highspeed;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++			wp-gpios = <&gpc2 1 0>;
++		};
++	};
++
++	dwmmc3@12230000 {
++		num-slots = <1>;
++		supports-highspeed;
++		broken-cd;
++		fifo-depth = <0x80>;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		/* See board-specific dts files for pin setup */
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++		};
++	};
++
++	spi_1: spi@12d30000 {
++		status = "okay";
++		samsung,spi-src-clk = <0>;
++		num-cs = <1>;
++	};
++
++	hdmi {
++		hpd-gpio = <&gpx3 7 0>;
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		power {
++			label = "Power";
++			gpios = <&gpx1 3 1>;
++			linux,code = <116>; /* KEY_POWER */
++			gpio-key,wakeup;
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index fd711e2..7e2669c 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -10,7 +10,7 @@
  
- 	i2c_1: i2c@12C70000 {
-@@ -249,6 +250,7 @@
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c1_bus>;
-+		status = "disabled";
- 	};
+ /dts-v1/;
+ #include "exynos5250.dtsi"
+-#include "cros5250-common.dtsi"
++#include "exynos5250-cros-common.dtsi"
  
- 	i2c_2: i2c@12C80000 {
-@@ -261,6 +263,7 @@
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c2_bus>;
-+		status = "disabled";
- 	};
- 
- 	i2c_3: i2c@12C90000 {
-@@ -273,6 +276,7 @@
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c3_bus>;
-+		status = "disabled";
- 	};
- 
- 	i2c_4: i2c@12CA0000 {
-@@ -285,6 +289,7 @@
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c4_bus>;
-+		status = "disabled";
- 	};
- 
- 	i2c_5: i2c@12CB0000 {
-@@ -297,6 +302,7 @@
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c5_bus>;
-+		status = "disabled";
- 	};
- 
- 	i2c_6: i2c@12CC0000 {
-@@ -309,6 +315,7 @@
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c6_bus>;
-+		status = "disabled";
- 	};
- 
- 	i2c_7: i2c@12CD0000 {
-@@ -321,6 +328,7 @@
- 		clock-names = "i2c";
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&i2c7_bus>;
-+		status = "disabled";
- 	};
- 
- 	i2c_8: i2c@12CE0000 {
-@@ -331,6 +339,7 @@
- 		#size-cells = <0>;
- 		clocks = <&clock 302>;
- 		clock-names = "i2c";
-+		status = "disabled";
- 	};
- 
- 	i2c@121D0000 {
-@@ -340,6 +349,7 @@
-                 #size-cells = <0>;
- 		clocks = <&clock 288>;
- 		clock-names = "i2c";
-+		status = "disabled";
- 	};
- 
- 	spi_0: spi@12d20000 {
+ / {
+ 	model = "Google Snow";
 -- 
 1.8.4.rc3
