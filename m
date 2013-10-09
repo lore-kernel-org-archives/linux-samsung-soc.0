@@ -1,48 +1,81 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH] clk: samsung: Fix PLL35XX lock time
-Date: Wed, 9 Oct 2013 09:21:43 +0530
-Message-ID: <CALt3h78Lt2epHFmKeQ90839-L4XSQL+rDUTHGj681S2sTG=Jeg@mail.gmail.com>
-References: <1381215399-25394-1-git-send-email-arun.kk@samsung.com>
-	<CAD=FV=WcKpO947DgF6xwWALpVMYPOaZ=G_1+iRmFjac2bQGAMw@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V3] PCI: exynos: add support for MSI
+Date: Wed, 09 Oct 2013 14:07:36 +0900
+Message-ID: <000001cec4ad$78640450$692c0cf0$%han@samsung.com>
+References: <001a01ceaace$013ec980$03bc5c80$%han@samsung.com>
+ <5253A4DA.7090306@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f51.google.com ([209.85.212.51]:65453 "EHLO
-	mail-vb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752431Ab3JIDvn (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:27826 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751195Ab3JIFHq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Oct 2013 23:51:43 -0400
-Received: by mail-vb0-f51.google.com with SMTP id x16so133674vbf.24
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 08 Oct 2013 20:51:43 -0700 (PDT)
-In-Reply-To: <CAD=FV=WcKpO947DgF6xwWALpVMYPOaZ=G_1+iRmFjac2bQGAMw@mail.gmail.com>
+	Wed, 9 Oct 2013 01:07:46 -0400
+In-reply-to: <5253A4DA.7090306@ti.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: 'Kishon Vijay Abraham I' <kishon@ti.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Doug,
+On Tuesday, October 08, 2013 3:23 PM, Kishon Vijay Abraham I wrote:
+> On Friday 06 September 2013 12:24 PM, Jingoo Han wrote:
+> > This patch adds support for Message Signaled Interrupt in the
+> > Exynos PCIe diver using Synopsys designware PCIe core IP.
+> >
+> > Signed-off-by: Siva Reddy Kallam <siva.kallam@samsung.com>
+> > Signed-off-by: Srikanth T Shivanand <ts.srikanth@samsung.com>
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > Cc: Pratyush Anand <pratyush.anand@st.com>
+> > Cc: Mohit KUMAR <Mohit.KUMAR@st.com>
+> > ---
 
-On Tue, Oct 8, 2013 at 9:39 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Arun,
->
-> On Mon, Oct 7, 2013 at 11:56 PM, Arun Kumar K <arun.kk@samsung.com> wrote:
->> PLL35XX lock factor is 250 as per the manual whereas its
->> wrongly set as 270 now.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> ---
->>  drivers/clk/samsung/clk-pll.c |    4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> I don't think this is right.  I believe that it needs to be passed in
-> by the SoC.  On exynos5250 I see 250 in both the manual and in our
-> code.  On exynos5420 manual I actually see 200 now.  I'm not actually
-> sure where the 270 came from, now that I search for it.
->
+[.....]
 
-The manual I referred gives 250 for both 5250 and 5420 and thats why I
-concluded on this fix. I will check other versions of the manual to see if
-the value is changing.
+> >  int __init dw_pcie_host_init(struct pcie_port *pp)
+> >  {
+> >  	struct device_node *np = pp->dev->of_node;
+> > @@ -157,6 +372,8 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
+> >  	struct of_pci_range_parser parser;
+> >  	u32 val;
+> >
+> > +	struct irq_domain *irq_domain;
+> > +
+> >  	if (of_pci_range_parser_init(&parser, np)) {
+> >  		dev_err(pp->dev, "missing ranges property\n");
+> >  		return -EINVAL;
+> > @@ -223,6 +440,18 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
+> >  		return -EINVAL;
+> >  	}
+> >
+> > +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> > +		irq_domain = irq_domain_add_linear(pp->dev->of_node,
+> > +					MAX_MSI_IRQS, &msi_domain_ops,
+> > +					&dw_pcie_msi_chip);
+> > +		if (!irq_domain) {
+> > +			dev_err(pp->dev, "irq domain init failed\n");
+> > +			return -ENXIO;
+> > +		}
+> > +
+> > +		pp->msi_irq_start = irq_find_mapping(irq_domain, 0);
+> 
+> Where is the irq_create_mapping done for this irq domain? Is that not needed?
+> Without that I'm not getting the correct irq number.
 
-Regards
-Arun
+Oh, you're right.
+irq_create_mapping() is necessary!
+
+Without irq_create_mapping(), it makes the ugly NULL deference
+when two PCIe controllers are used on Exynos5440.
+It is my mistake.
+
+I will add irq_create_mapping() to dw_msi_setup_irq(), as tegra PCIe driver
+did. I will send the patch, soon.
+
+I really appreciate your comment. :-)
+Thank you.
+
+Best regards,
+Jingoo Han
