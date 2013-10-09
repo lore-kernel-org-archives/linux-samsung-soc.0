@@ -1,129 +1,133 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V2] PCI: designware: Add irq_create_mapping()
-Date: Wed, 09 Oct 2013 21:32:12 +0900
-Message-ID: <000a01cec4eb$942dc7f0$bc8957d0$%han@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/3 v4] thermal: samsung: correct the fall interrupt en,
+ status bit fields
+Date: Wed, 09 Oct 2013 16:03:54 +0200
+Message-ID: <2386580.3V2pzai3k2@amdc1032>
+References: <1378268629-2886-3-git-send-email-ch.naveen@samsung.com>
+ <1381320509-23967-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-language: ko
-Sender: linux-pci-owner@vger.kernel.org
-To: 'Bjorn Helgaas' <bhelgaas@google.com>
-Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:56427 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752088Ab3JIOED (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Oct 2013 10:04:03 -0400
+In-reply-to: <1381320509-23967-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
 
-From: Pratyush Anand <pratyush.anand@st.com>
 
-Without irq_create_mapping(), the correct irq number cannot be
-provided. In this case, it makes problems such as NULL deference.
-Thus, irq_create_mapping() should be added for MSI.
+Hi,
 
-Signed-off-by: Pratyush Anand <pratyush.anand@st.com>
-Suggested-by: Kishon Vijay Abraham I <kishon@ti.com>
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-Tested on Exynos5440.
+All patches (#1-#3) look good to me, FWIW you can add:
 
- drivers/pci/host/pcie-designware.c |   25 +++++++++++++------------
- drivers/pci/host/pcie-designware.h |    2 +-
- 2 files changed, 14 insertions(+), 13 deletions(-)
+	Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
-index 8963017..92d58fd 100644
---- a/drivers/pci/host/pcie-designware.c
-+++ b/drivers/pci/host/pcie-designware.c
-@@ -157,7 +157,7 @@ static struct irq_chip dw_msi_irq_chip = {
- void dw_handle_msi_irq(struct pcie_port *pp)
- {
- 	unsigned long val;
--	int i, pos;
-+	int i, pos, irq;
- 
- 	for (i = 0; i < MAX_MSI_CTRLS; i++) {
- 		dw_pcie_rd_own_conf(pp, PCIE_MSI_INTR0_STATUS + i * 12, 4,
-@@ -165,8 +165,9 @@ void dw_handle_msi_irq(struct pcie_port *pp)
- 		if (val) {
- 			pos = 0;
- 			while ((pos = find_next_bit(&val, 32, pos)) != 32) {
--				generic_handle_irq(pp->msi_irq_start
--					+ (i * 32) + pos);
-+				irq = irq_find_mapping(pp->irq_domain,
-+						i * 32 + pos);
-+				generic_handle_irq(irq);
- 				pos++;
- 			}
- 		}
-@@ -237,9 +238,8 @@ static int assign_irq(int no_irqs, struct msi_desc *desc, int *pos)
- 		}
- 	}
- 
--	irq = (pp->msi_irq_start + pos0);
--
--	if ((irq + no_irqs) > (pp->msi_irq_start + MAX_MSI_IRQS-1))
-+	irq = irq_find_mapping(pp->irq_domain, pos0);
-+	if (!irq)
- 		goto no_valid_irq;
- 
- 	i = 0;
-@@ -270,6 +270,7 @@ static void clear_irq(unsigned int irq)
- 	struct irq_desc *desc;
- 	struct msi_desc *msi;
- 	struct pcie_port *pp;
-+	struct irq_data *data = irq_get_irq_data(irq);
- 
- 	/* get the port structure */
- 	desc = irq_to_desc(irq);
-@@ -280,7 +281,7 @@ static void clear_irq(unsigned int irq)
- 		return;
- 	}
- 
--	pos = irq - pp->msi_irq_start;
-+	pos = data->hwirq;
- 
- 	irq_free_desc(irq);
- 
-@@ -371,8 +372,7 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
- 	struct of_pci_range range;
- 	struct of_pci_range_parser parser;
- 	u32 val;
--
--	struct irq_domain *irq_domain;
-+	int i;
- 
- 	if (of_pci_range_parser_init(&parser, np)) {
- 		dev_err(pp->dev, "missing ranges property\n");
-@@ -441,15 +441,16 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
- 	}
- 
- 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
--		irq_domain = irq_domain_add_linear(pp->dev->of_node,
-+		pp->irq_domain = irq_domain_add_linear(pp->dev->of_node,
- 					MAX_MSI_IRQS, &msi_domain_ops,
- 					&dw_pcie_msi_chip);
--		if (!irq_domain) {
-+		if (!pp->irq_domain) {
- 			dev_err(pp->dev, "irq domain init failed\n");
- 			return -ENXIO;
- 		}
- 
--		pp->msi_irq_start = irq_find_mapping(irq_domain, 0);
-+		for (i = 0; i < MAX_MSI_IRQS; i++)
-+			irq_create_mapping(pp->irq_domain, i);
- 	}
- 
- 	if (pp->ops->host_init)
-diff --git a/drivers/pci/host/pcie-designware.h b/drivers/pci/host/pcie-designware.h
-index faccbbf..1bf9fc5 100644
---- a/drivers/pci/host/pcie-designware.h
-+++ b/drivers/pci/host/pcie-designware.h
-@@ -47,7 +47,7 @@ struct pcie_port {
- 	u32			lanes;
- 	struct pcie_host_ops	*ops;
- 	int			msi_irq;
--	int			msi_irq_start;
-+	struct irq_domain	*irq_domain;
- 	unsigned long		msi_data;
- 	DECLARE_BITMAP(msi_irq_in_use, MAX_MSI_IRQS);
- };
--- 
-1.7.10.4
+Please note that (at least) patch #3 conflicts with Lukasz's EXYNOS4412
+fixup patchset:
+
+	https://lkml.org/lkml/2013/10/9/35
+
+It is up to Eduardo to resolve this but it probably would be better to
+merge EXYNOS4412 fixes first and then add EXYNOS5420 support. This would
+require you to port patch #3 over Lukasz's patchset though.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+On Wednesday, October 09, 2013 05:38:27 PM Naveen Krishna Chatradhi wrote:
+> The FALL interrupt related en, status bits are available at an offset of
+> 16 on INTEN, INTSTAT registers and at an offset of
+> 12 on INTCLEAR register.
+> 
+> This patch corrects the same for exyns5250 and exynos5440
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> ---
+> Changes since v1:
+> Changes since v2:
+> Changes since v3:
+>   None
+> 
+>  drivers/thermal/samsung/exynos_tmu.c      |    2 +-
+>  drivers/thermal/samsung/exynos_tmu.h      |    2 ++
+>  drivers/thermal/samsung/exynos_tmu_data.c |    2 ++
+>  drivers/thermal/samsung/exynos_tmu_data.h |    3 ++-
+>  4 files changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index b43afda..af69209 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -265,7 +265,7 @@ skip_calib_data:
+>  				data->base + reg->threshold_th1);
+>  
+>  		writel((reg->inten_rise_mask << reg->inten_rise_shift) |
+> -			(reg->inten_fall_mask << reg->inten_fall_shift),
+> +			(reg->inten_fall_mask << reg->intclr_fall_shift),
+>  				data->base + reg->tmu_intclear);
+>  
+>  		/* if last threshold limit is also present */
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+> index b364c9e..7c6c34a 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -134,6 +134,7 @@ enum soc_type {
+>   * @inten_fall3_shift: shift bits of falling 3 interrupt bits.
+>   * @tmu_intstat: Register containing the interrupt status values.
+>   * @tmu_intclear: Register for clearing the raised interrupt status.
+> + * @intclr_fall_shift: shift bits for interrupt clear fall 0
+>   * @emul_con: TMU emulation controller register.
+>   * @emul_temp_shift: shift bits of emulation temperature.
+>   * @emul_time_shift: shift bits of emulation time.
+> @@ -204,6 +205,7 @@ struct exynos_tmu_registers {
+>  	u32	tmu_intstat;
+>  
+>  	u32	tmu_intclear;
+> +	u32	intclr_fall_shift;
+>  
+>  	u32	emul_con;
+>  	u32	emul_temp_shift;
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+> index 9002499..23fea23 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> @@ -122,6 +122,7 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
+>  	.inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
+>  	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+>  	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
+> +	.intclr_fall_shift = EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
+>  	.emul_con = EXYNOS_EMUL_CON,
+>  	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+>  	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+> @@ -210,6 +211,7 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+>  	.inten_fall0_shift = EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
+>  	.tmu_intstat = EXYNOS5440_TMU_S0_7_IRQ,
+>  	.tmu_intclear = EXYNOS5440_TMU_S0_7_IRQ,
+> +	.intclr_fall_shift = EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
+>  	.tmu_irqstatus = EXYNOS5440_TMU_IRQ_STATUS,
+>  	.emul_con = EXYNOS5440_TMU_S0_7_DEBUG,
+>  	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+> index dc7feb5..8788a87 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> @@ -69,9 +69,10 @@
+>  #define EXYNOS_TMU_RISE_INT_MASK	0x111
+>  #define EXYNOS_TMU_RISE_INT_SHIFT	0
+>  #define EXYNOS_TMU_FALL_INT_MASK	0x111
+> -#define EXYNOS_TMU_FALL_INT_SHIFT	12
+> +#define EXYNOS_TMU_FALL_INT_SHIFT	16
+>  #define EXYNOS_TMU_CLEAR_RISE_INT	0x111
+>  #define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
+> +#define EXYNOS_TMU_CLEAR_FALL_INT_SHIFT	12
+>  #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
+>  #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
+>  #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
