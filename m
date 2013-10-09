@@ -1,38 +1,65 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: [PATCH] PM / devfreq: Remove duplicate include of opp.h
-Date: Wed,  9 Oct 2013 23:35:24 +0530
-Message-ID: <1381341924-16184-1-git-send-email-badarkhe.manish@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:40209 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752199Ab3JISFe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 14:05:34 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
+Date: Wed, 9 Oct 2013 19:29:05 +0100
+Message-ID: <20131009182905.GY21581@sirena.org.uk>
+References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
+ <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
+ <CAAQKjZN_r-=-sj=Vb-o-KUS4ab5=cjCq1ni3VZeMeVc3NL=MMg@mail.gmail.com>
+ <CAOw6vbLiJLLKn=gb1=j5TBeM0ijEK13+goG-=mw7MZTyNT1kpQ@mail.gmail.com>
+ <CAAQKjZPwyKCpju4Ndd+MB_aN24-zA5xTHFsFsun2617h7YT6dw@mail.gmail.com>
+ <CAOesGMgKastzdFHYQzyL8gxkBN=86wFZ4jbgP8BHxfkOuZvJxg@mail.gmail.com>
+ <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RJZzeD23Ed8sO2FB"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Sean Paul <seanpaul@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kyungmin.park@samsung.com, badarkhe.manish@gmail.com, kgene.kim@samsung.com, a.kesavan@samsung.com
 
-Currently, code include opp.h twice. Remove one inclusion
-of opp.h
 
-Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
----
-:100644 100644 574b16b... 93c29f4... M	drivers/devfreq/exynos/exynos5_bus.c
- drivers/devfreq/exynos/exynos5_bus.c |    1 -
- 1 file changed, 1 deletion(-)
+--RJZzeD23Ed8sO2FB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
-index 574b16b..93c29f4 100644
---- a/drivers/devfreq/exynos/exynos5_bus.c
-+++ b/drivers/devfreq/exynos/exynos5_bus.c
-@@ -18,7 +18,6 @@
- #include <linux/opp.h>
- #include <linux/slab.h>
- #include <linux/suspend.h>
--#include <linux/opp.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/platform_device.h>
--- 
-1.7.10.4
+On Fri, Oct 04, 2013 at 11:05:48AM +0900, Inki Dae wrote:
+> 2013/10/4 Olof Johansson <olof@lixom.net>:
+
+> > "If PD_N is LOW, then the device is in Deep power-down completely,
+> > even if supply rail is ON; for the device to be able to operate, the
+> > PD_N pin must be HIGH."
+
+> I still think the pin could be replaced with a regulator. But
+> lvds-bridge node has "powerdown-gpio" property - it say this board
+> will use gpio pin - specific to board.  So it seems no problem.
+
+No, don't model things that aren't regulators as regulators - it's just
+confusing from a usability standpoint and causes breakage when the pins
+don't behave like regulators.
+
+--RJZzeD23Ed8sO2FB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSVaBuAAoJELSic+t+oim9t9YP/2zdxi1e2TqVNIcxbbSYUvWy
+LySnpmymlG/Sh3k86KJwkDd+2X7kq8xm8T2hfx6SgKPw/hNFBfMvJc5rh7r0Z9d0
+Jb+kpEVEDNaLpZBHN9HN6yejQ3aMoy1NEIgkGlqmGNUG8NQmNq0nDBCmTysGpoA0
+xes+miLMs5WXRK/kpA2r/J9FnOEhlNxM5i8budaqcbJAeLRTo3ePqavTW9AGPXWH
+TLruZFFu71/UgLMDRYny42lOCdcagNZJn6/gDNEvreIaObDSZJ7kxHO41/F/to45
+gEskdwyzgfZ25M+I7pMuFlIzaBWsGtjQlSc7PVJcplCVd7KOTvtfsN+FeOzhHVHr
+s5oVn6q+kO97Hg1Al1B49wRtQFban0K42ZD717iV4nUEnMmeVlqdSz5AvjSvUK5g
+Pc52RRManESWdaSB+R3/1ZctPQZxGZMy+fCjl51+3dfJnfsWUhxE4YJBkp4hNz9v
+ooEVBPASa8VdD/KqObGyQzP74SpPuKHRfNRbSVf84I0TY0oERn/rS/xxJo2uhqWv
+8dhkS3RzfJqxVtEHSLQxbgRgKcN2vfGTb6X/VVyikA6vyfR0luvUYbu/qK3g/9ux
+JRS6HeZtkZLBN4FT08Mj46zPJMrqFSHfalXI8jY+oxPJwbLx5WifbvhlakjvjMKP
+jtx5H7T/C1tB5SGc9y3f
+=GFIi
+-----END PGP SIGNATURE-----
+
+--RJZzeD23Ed8sO2FB--
