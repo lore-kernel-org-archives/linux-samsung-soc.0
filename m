@@ -1,90 +1,73 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARM: dts: Update arch timer node with clock frequency
-Date: Wed, 9 Oct 2013 09:25:51 +0100
-Message-ID: <20131009082551.GC4981@e106331-lin.cambridge.arm.com>
-References: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
- <3887347.Oxs1qQnt5k@flatron>
- <20130923141504.GD16069@e106331-lin.cambridge.arm.com>
- <CAOesGMgaDB0ZK7LU+vZmXkpTXaMKbuNgT+vuaRbzypwtZ9eouA@mail.gmail.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH V5 4/5] video: exynos_mipi_dsim: Use the generic PHY driver
+Date: Wed, 9 Oct 2013 11:32:51 +0300
+Message-ID: <525514B3.5020101@ti.com>
+References: <1380396467-29278-1-git-send-email-s.nawrocki@samsung.com> <1380396467-29278-5-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="a8T2haWrXK6ruBtq3o4xKIJi7hRpSSLdC"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:57966 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752402Ab3JIIZ5 (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:42480 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752469Ab3JIIdY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 04:25:57 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOesGMgaDB0ZK7LU+vZmXkpTXaMKbuNgT+vuaRbzypwtZ9eouA@mail.gmail.com>
-Content-Language: en-US
+	Wed, 9 Oct 2013 04:33:24 -0400
+In-Reply-To: <1380396467-29278-5-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Tony Lindgren <tony@atomide.com>, Sean Paul <seanpaul@chromium.org>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: kishon@ti.com, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Tue, Oct 08, 2013 at 11:15:47PM +0100, Olof Johansson wrote:
-> [Adding Tony, who reported a mainline booting issue, and Sean who
-> helped me track this down]
-> 
-> On Mon, Sep 23, 2013 at 7:15 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Sat, Sep 21, 2013 at 04:24:59PM +0100, Tomasz Figa wrote:
-> >> Hi Yuvaraj,
-> >>
-> >> On Wednesday 18 of September 2013 15:41:53 Yuvaraj Kumar C D wrote:
-> >> > Without the "clock-frequency" property in arch timer node, could able
-> >> > to see the below crash dump.
-> >> [snip]
-> >> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> >> > b/arch/arm/boot/dts/exynos5250.dtsi index 7d7cc77..668ce5d 100644
-> >> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> >> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> >> > @@ -96,6 +96,7 @@
-> >> >                          <1 14 0xf08>,
-> >> >                          <1 11 0xf08>,
-> >> >                          <1 10 0xf08>;
-> >> > +           clock-frequency = <24000000>;
-> >>
-> >> Shouldn't it rather come from some clock provided by some clock controller
-> >> instead?
-> >>
-> >> The frequency would be then retrieved using clk_get_rate() on a clock
-> >> received by clk_get(), specified in device tree using generic clock
-> >> bindings.
-> >
-> > If the bootloader has initialised the generic timer correctly, the
-> > CNTFRQ register should contain the clock frequency, independent of any
-> > external clock.
-> 
-> So, we just sat here to bisect a problem on the Samsung Chromebook
-> where we hit exactly this problem. The read-only firmware on the
-> device does not set CNTFRQ at boot, so this fails.
+--a8T2haWrXK6ruBtq3o4xKIJi7hRpSSLdC
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Ouch. That's a shame.
+On 28/09/13 22:27, Sylwester Nawrocki wrote:
+> Use the generic PHY API instead of the platform callback
+> for the MIPI DSIM DPHY enable/reset control.
+>=20
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Acked-by: Felipe Balbi <balbi@ti.com>
+> Acked-by: Donghwa Lee <dh09.lee@samsung.com>
+> ---
+> Changes since v4:
+>  - PHY label removed from the platform data structure.
+> ---
+>  drivers/video/exynos/Kconfig           |    1 +
+>  drivers/video/exynos/exynos_mipi_dsi.c |   19 ++++++++++---------
+>  include/video/exynos_mipi_dsim.h       |    5 ++---
+>  3 files changed, 13 insertions(+), 12 deletions(-)
 
-A chained bootloader (like the KVM guys are using) should be able to set
-CNTFRQ, so as long as any chained loader actually does that this won't
-cause that to blow up...
+Acked-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-> 
-> Apparantly the u-boot that comes with Arndale sets it, so I haven't
-> seen this error on that platform.
-> 
-> > Having the bootloader set CNTFRQ is by far the preferable solution, it
-> > is architected for this purpose.
-> 
-> Unfortunately there is now real hardware out there that needs this due
-> to firmware bugs / missing features, so there's little other choice.
-> :(
+ Tomi
 
-Indeed :(
 
-> 
-> I'll pick this patch up in the fixes branch for 3.12, unless someone
-> complains loudly.
 
-Could you please add a note to the dts regarding why we actually need
-this? It would be nice to maintain the impression that this is not the
-preferred way of doing things...
+--a8T2haWrXK6ruBtq3o4xKIJi7hRpSSLdC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
-Cheers,
-Mark.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iQIcBAEBAgAGBQJSVRSzAAoJEPo9qoy8lh71aIUP/ip7AKSl0M3FzPosW3jPK1P/
++B9hdF8oHurGip1xB/yoqed/HCcFf7oZpv7JQ86h3mfVBEqjFym0SyMGGhBsAaDz
+PmCiw4HfvNZLH4qqvAQKBcrFYgDwBU1LH56OIqpAjP4xMZztkFOOpdLLOPsRvuO0
+zrKlvpe+gk6D66b2aebfFFdofobNeacaqmFTgvadNFkJpIR8YiXb3Bl+B7ST7tvR
+0X/UJw+5Cv2uX8vf03LKxoSrgOTFO82WhXF9qKfNleve5wQnL7awbIf/M9u9oq3K
+qbTsQNFUUX1Ny14hjhjPJSaKTG/USyCOZpZsCCyY9ssdumqF1hmZZ52O9od+fVYV
+v1+vOPNxSD2MGgt/Dr1fiqszq33q2l/Eeos18y/vRvXmidI3toURPygy6A2ARoPv
+x8ytxT9C2T3X4u7undt6lcFhDorveRlahaxZIMXpATnbwMkz+C+t+qG8iI8aeEvo
+50M+EfTZEtEs8wJZ8PYcTXq7qJ0qrB8GpoxPP5LNOjPRmPx8fjcC8QaTCZSrK9TC
+U0YcnlqT+BvN9uc9ZGeyk+ed+noWRmgKfAeLPZWlWQZtp8ihImlWzHQ88zSSz+rM
+BAVcuiDy7GosFpKsSzgUn9DGwfbp+8jn/R84MMgnyzlpDTeoZFUc45aUNyuYCTVK
+5dsAg6qGrZGfqZqO/Vx3
+=NCZf
+-----END PGP SIGNATURE-----
+
+--a8T2haWrXK6ruBtq3o4xKIJi7hRpSSLdC--
