@@ -1,73 +1,47 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH V5 4/5] video: exynos_mipi_dsim: Use the generic PHY driver
-Date: Wed, 9 Oct 2013 11:32:51 +0300
-Message-ID: <525514B3.5020101@ti.com>
-References: <1380396467-29278-1-git-send-email-s.nawrocki@samsung.com> <1380396467-29278-5-git-send-email-s.nawrocki@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] PCI: designware: Add irq_create_mapping()
+Date: Wed, 9 Oct 2013 14:35:50 +0530
+Message-ID: <52551C6E.1040404@ti.com>
+References: <000401cec4c6$dc415180$94c3f480$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="a8T2haWrXK6ruBtq3o4xKIJi7hRpSSLdC"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:42480 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752469Ab3JIIdY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 04:33:24 -0400
-In-Reply-To: <1380396467-29278-5-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000401cec4c6$dc415180$94c3f480$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: kishon@ti.com, gregkh@linuxfoundation.org, linux-media@vger.kernel.org, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, dh09.lee@samsung.com, jg1.han@samsung.com, plagnioj@jcrosoft.com, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
---a8T2haWrXK6ruBtq3o4xKIJi7hRpSSLdC
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Hi Jingoo,
 
-On 28/09/13 22:27, Sylwester Nawrocki wrote:
-> Use the generic PHY API instead of the platform callback
-> for the MIPI DSIM DPHY enable/reset control.
->=20
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Acked-by: Felipe Balbi <balbi@ti.com>
-> Acked-by: Donghwa Lee <dh09.lee@samsung.com>
+On Wednesday 09 October 2013 01:39 PM, Jingoo Han wrote:
+> Without irq_create_mapping(), the correct irq number cannot be
+> provided. In this case, it makes problem such as NULL deference.
+> Thus, irq_create_mapping() should be added for MSI.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
-> Changes since v4:
->  - PHY label removed from the platform data structure.
-> ---
->  drivers/video/exynos/Kconfig           |    1 +
->  drivers/video/exynos/exynos_mipi_dsi.c |   19 ++++++++++---------
->  include/video/exynos_mipi_dsim.h       |    5 ++---
->  3 files changed, 13 insertions(+), 12 deletions(-)
+> Tested on Exynos5440.
+> 
+>  drivers/pci/host/pcie-designware.c |   10 ++++------
+>  drivers/pci/host/pcie-designware.h |    1 +
+>  2 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+> index 8963017..e536bb6 100644
+> --- a/drivers/pci/host/pcie-designware.c
+> +++ b/drivers/pci/host/pcie-designware.c
+> @@ -237,6 +237,8 @@ static int assign_irq(int no_irqs, struct msi_desc *desc, int *pos)
+>  		}
+>  	}
+>  
+> +	pp->msi_irq_start = irq_create_mapping(pp->irq_domain, 0);
+> +
 
-Acked-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+I think irq_create_mapping should be done for all the MSI irq lines instead of
+only the first line. So you might have to do for MAX_MSI_IRQS lines.
 
- Tomi
-
-
-
---a8T2haWrXK6ruBtq3o4xKIJi7hRpSSLdC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iQIcBAEBAgAGBQJSVRSzAAoJEPo9qoy8lh71aIUP/ip7AKSl0M3FzPosW3jPK1P/
-+B9hdF8oHurGip1xB/yoqed/HCcFf7oZpv7JQ86h3mfVBEqjFym0SyMGGhBsAaDz
-PmCiw4HfvNZLH4qqvAQKBcrFYgDwBU1LH56OIqpAjP4xMZztkFOOpdLLOPsRvuO0
-zrKlvpe+gk6D66b2aebfFFdofobNeacaqmFTgvadNFkJpIR8YiXb3Bl+B7ST7tvR
-0X/UJw+5Cv2uX8vf03LKxoSrgOTFO82WhXF9qKfNleve5wQnL7awbIf/M9u9oq3K
-qbTsQNFUUX1Ny14hjhjPJSaKTG/USyCOZpZsCCyY9ssdumqF1hmZZ52O9od+fVYV
-v1+vOPNxSD2MGgt/Dr1fiqszq33q2l/Eeos18y/vRvXmidI3toURPygy6A2ARoPv
-x8ytxT9C2T3X4u7undt6lcFhDorveRlahaxZIMXpATnbwMkz+C+t+qG8iI8aeEvo
-50M+EfTZEtEs8wJZ8PYcTXq7qJ0qrB8GpoxPP5LNOjPRmPx8fjcC8QaTCZSrK9TC
-U0YcnlqT+BvN9uc9ZGeyk+ed+noWRmgKfAeLPZWlWQZtp8ihImlWzHQ88zSSz+rM
-BAVcuiDy7GosFpKsSzgUn9DGwfbp+8jn/R84MMgnyzlpDTeoZFUc45aUNyuYCTVK
-5dsAg6qGrZGfqZqO/Vx3
-=NCZf
------END PGP SIGNATURE-----
-
---a8T2haWrXK6ruBtq3o4xKIJi7hRpSSLdC--
+Thanks
+Kishon
