@@ -1,167 +1,86 @@
-From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 2/5] thermal: exynos: Provide separate TMU data for
- Exynos4412
-Date: Wed, 09 Oct 2013 08:29:51 +0200
-Message-ID: <1381300194-13134-3-git-send-email-l.majewski@samsung.com>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
- <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1381300194-13134-1-git-send-email-l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Eduardo Valentin <eduardo.valentin-l0cyMroinI0@public.gmane.org>, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonghwa Lee <jonghwa3.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Myungjoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH] PCI: designware: Add irq_create_mapping()
+Date: Wed, 09 Oct 2013 17:09:21 +0900
+Message-ID: <000401cec4c6$dc415180$94c3f480$%han@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:29612 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751798Ab3JIIKM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Oct 2013 04:10:12 -0400
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Bjorn Helgaas' <bhelgaas@google.com>
+Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Up till now Exynos5250 and Exynos4412 had the same definitions for TMU
-data. Following commit changes that, by introducing separate
-exynos4412_default_tmu_data structure.
+Without irq_create_mapping(), the correct irq number cannot be
+provided. In this case, it makes problem such as NULL deference.
+Thus, irq_create_mapping() should be added for MSI.
 
-Since Exynos4412 was chronologically first, the corresponding name for
-TMU registers and default data was renamed.
-
-Additionally, new SOC_ARCH_EXYNOS4412 type has been defined.
-
-Moreover, the SOC_ARCH_EXYNOS name has been changed to SOC_ARCH_EXYNOS5250.
-
-Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
 ---
-Changes for v2:
-- Replace SOC_ARCH_EXYNOS with SOC_ARCH_EXYNOS5250
-- Fix coding style for tmu_data elements definition
+Tested on Exynos5440.
 
- drivers/thermal/samsung/exynos_tmu.c      |    9 +++++----
- drivers/thermal/samsung/exynos_tmu.h      |    3 ++-
- drivers/thermal/samsung/exynos_tmu_data.c |   28 ++++++++++++++++++++++------
- drivers/thermal/samsung/exynos_tmu_data.h |    9 ++++++++-
- 4 files changed, 37 insertions(+), 12 deletions(-)
+ drivers/pci/host/pcie-designware.c |   10 ++++------
+ drivers/pci/host/pcie-designware.h |    1 +
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index b43afda..1312b34 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -488,7 +488,7 @@ static const struct of_device_id exynos_tmu_match[] = {
- 	},
- 	{
- 		.compatible = "samsung,exynos4412-tmu",
--		.data = (void *)EXYNOS5250_TMU_DRV_DATA,
-+		.data = (void *)EXYNOS4412_TMU_DRV_DATA,
- 	},
- 	{
- 		.compatible = "samsung,exynos5250-tmu",
-@@ -629,9 +629,10 @@ static int exynos_tmu_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+index 8963017..e536bb6 100644
+--- a/drivers/pci/host/pcie-designware.c
++++ b/drivers/pci/host/pcie-designware.c
+@@ -237,6 +237,8 @@ static int assign_irq(int no_irqs, struct msi_desc *desc, int *pos)
+ 		}
+ 	}
  
--	if (pdata->type == SOC_ARCH_EXYNOS ||
--		pdata->type == SOC_ARCH_EXYNOS4210 ||
--				pdata->type == SOC_ARCH_EXYNOS5440)
-+	if (pdata->type == SOC_ARCH_EXYNOS4210 ||
-+	    pdata->type == SOC_ARCH_EXYNOS4412 ||
-+	    pdata->type == SOC_ARCH_EXYNOS5250 ||
-+	    pdata->type == SOC_ARCH_EXYNOS5440)
- 		data->soc = pdata->type;
- 	else {
- 		ret = -EINVAL;
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index b364c9e..b42ece4 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -41,7 +41,8 @@ enum calibration_mode {
- 
- enum soc_type {
- 	SOC_ARCH_EXYNOS4210 = 1,
--	SOC_ARCH_EXYNOS,
-+	SOC_ARCH_EXYNOS4412,
-+	SOC_ARCH_EXYNOS5250,
- 	SOC_ARCH_EXYNOS5440,
- };
- 
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index 9002499..d8de5c1 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -90,8 +90,8 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
- };
- #endif
- 
--#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
--static const struct exynos_tmu_registers exynos5250_tmu_registers = {
-+#if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
-+static const struct exynos_tmu_registers exynos4412_tmu_registers = {
- 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
- 	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
- 	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-@@ -128,7 +128,7 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
- 	.emul_time_mask = EXYNOS_EMUL_TIME_MASK,
- };
- 
--#define EXYNOS5250_TMU_DATA \
-+#define EXYNOS4412_TMU_DATA \
- 	.threshold_falling = 10, \
- 	.trigger_levels[0] = 85, \
- 	.trigger_levels[1] = 103, \
-@@ -162,15 +162,31 @@ static const struct exynos_tmu_registers exynos5250_tmu_registers = {
- 		.temp_level = 103, \
- 	}, \
- 	.freq_tab_count = 2, \
--	.type = SOC_ARCH_EXYNOS, \
--	.registers = &exynos5250_tmu_registers, \
-+	.registers = &exynos4412_tmu_registers, \
- 	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
- 			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
- 			TMU_SUPPORT_EMUL_TIME)
-+#endif
- 
-+#if defined(CONFIG_SOC_EXYNOS4412)
-+struct exynos_tmu_init_data const exynos4412_default_tmu_data = {
-+	.tmu_data = {
-+		{
-+			EXYNOS4412_TMU_DATA,
-+			.type = SOC_ARCH_EXYNOS4412,
-+		},
-+	},
-+	.tmu_count = 1,
-+};
-+#endif
++	pp->msi_irq_start = irq_create_mapping(pp->irq_domain, 0);
 +
-+#if defined(CONFIG_SOC_EXYNOS5250)
- struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
- 	.tmu_data = {
--		{ EXYNOS5250_TMU_DATA },
-+		{
-+			EXYNOS4412_TMU_DATA,
-+			.type = SOC_ARCH_EXYNOS5250,
-+		},
- 	},
- 	.tmu_count = 1,
- };
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-index dc7feb5..b130b1e 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.h
-+++ b/drivers/thermal/samsung/exynos_tmu_data.h
-@@ -138,7 +138,14 @@ extern struct exynos_tmu_init_data const exynos4210_default_tmu_data;
- #define EXYNOS4210_TMU_DRV_DATA (NULL)
- #endif
+ 	irq = (pp->msi_irq_start + pos0);
  
--#if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))
-+#if defined(CONFIG_SOC_EXYNOS4412)
-+extern struct exynos_tmu_init_data const exynos4412_default_tmu_data;
-+#define EXYNOS4412_TMU_DRV_DATA (&exynos4412_default_tmu_data)
-+#else
-+#define EXYNOS4412_TMU_DRV_DATA (NULL)
-+#endif
-+
-+#if defined(CONFIG_SOC_EXYNOS5250)
- extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
- #define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
- #else
+ 	if ((irq + no_irqs) > (pp->msi_irq_start + MAX_MSI_IRQS-1))
+@@ -372,8 +374,6 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
+ 	struct of_pci_range_parser parser;
+ 	u32 val;
+ 
+-	struct irq_domain *irq_domain;
+-
+ 	if (of_pci_range_parser_init(&parser, np)) {
+ 		dev_err(pp->dev, "missing ranges property\n");
+ 		return -EINVAL;
+@@ -441,15 +441,13 @@ int __init dw_pcie_host_init(struct pcie_port *pp)
+ 	}
+ 
+ 	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+-		irq_domain = irq_domain_add_linear(pp->dev->of_node,
++		pp->irq_domain = irq_domain_add_linear(pp->dev->of_node,
+ 					MAX_MSI_IRQS, &msi_domain_ops,
+ 					&dw_pcie_msi_chip);
+-		if (!irq_domain) {
++		if (!pp->irq_domain) {
+ 			dev_err(pp->dev, "irq domain init failed\n");
+ 			return -ENXIO;
+ 		}
+-
+-		pp->msi_irq_start = irq_find_mapping(irq_domain, 0);
+ 	}
+ 
+ 	if (pp->ops->host_init)
+diff --git a/drivers/pci/host/pcie-designware.h b/drivers/pci/host/pcie-designware.h
+index faccbbf..240fc11 100644
+--- a/drivers/pci/host/pcie-designware.h
++++ b/drivers/pci/host/pcie-designware.h
+@@ -50,6 +50,7 @@ struct pcie_port {
+ 	int			msi_irq_start;
+ 	unsigned long		msi_data;
+ 	DECLARE_BITMAP(msi_irq_in_use, MAX_MSI_IRQS);
++	struct irq_domain	*irq_domain;
+ };
+ 
+ struct pcie_host_ops {
 -- 
 1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
