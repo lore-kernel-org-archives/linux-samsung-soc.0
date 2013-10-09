@@ -1,102 +1,68 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: dts: Update arch timer node with clock frequency
-Date: Wed, 9 Oct 2013 12:46:06 -0700
-Message-ID: <CAOesGMgZ7+w3NGaxjpV-f08Wt+Zh8FPRHEoR+pM1UG5vLkFMkg@mail.gmail.com>
-References: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
-	<3887347.Oxs1qQnt5k@flatron>
-	<20130923141504.GD16069@e106331-lin.cambridge.arm.com>
-	<CAOesGMgaDB0ZK7LU+vZmXkpTXaMKbuNgT+vuaRbzypwtZ9eouA@mail.gmail.com>
-	<20131009082551.GC4981@e106331-lin.cambridge.arm.com>
+From: Dylan Reid <dgreid@chromium.org>
+Subject: Re: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status callback.
+Date: Wed, 9 Oct 2013 13:37:56 -0700
+Message-ID: <CAEUnVG7Xn8+Xhnr2y5-RM6FJTQsjRrJ9g1JWf4o+6B-BtWHbPA@mail.gmail.com>
+References: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
+ <1378879685-5352-2-git-send-email-padma.v@samsung.com> <00b401ceafac$e3a88170$aaf98450$@samsung.com>
+ <CAEUnVG72uTzHrQCoVtdT8UmkPcz2ks_qWT8QMbhHjUW-u3WnNQ@mail.gmail.com>
+ <026501cec2fe$1387c630$3a975290$@samsung.com> <20131007034846.GG2954@intel.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f44.google.com ([209.85.216.44]:44452 "EHLO
-	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751897Ab3JITqH (ORCPT
+Received: from mail-qe0-f49.google.com ([209.85.128.49]:60991 "EHLO
+	mail-qe0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753965Ab3JIUiR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 15:46:07 -0400
-Received: by mail-qa0-f44.google.com with SMTP id cm18so1267115qab.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Oct 2013 12:46:06 -0700 (PDT)
-In-Reply-To: <20131009082551.GC4981@e106331-lin.cambridge.arm.com>
+	Wed, 9 Oct 2013 16:38:17 -0400
+Received: by mail-qe0-f49.google.com with SMTP id ff1so847949qeb.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Oct 2013 13:38:16 -0700 (PDT)
+In-Reply-To: <20131007034846.GG2954@intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Tony Lindgren <tony@atomide.com>, Sean Paul <seanpaul@chromium.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Chanho Park <chanho61.park@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Padma Venkat <padma.kvr@gmail.com>, kgene.kim@samsung.com, Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@kernel.org>, Olof Johansson <olofj@chromium.org>
 
-On Wed, Oct 9, 2013 at 1:25 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Tue, Oct 08, 2013 at 11:15:47PM +0100, Olof Johansson wrote:
->> [Adding Tony, who reported a mainline booting issue, and Sean who
->> helped me track this down]
->>
->> On Mon, Sep 23, 2013 at 7:15 AM, Mark Rutland <mark.rutland@arm.com> wrote:
->> > On Sat, Sep 21, 2013 at 04:24:59PM +0100, Tomasz Figa wrote:
->> >> Hi Yuvaraj,
->> >>
->> >> On Wednesday 18 of September 2013 15:41:53 Yuvaraj Kumar C D wrote:
->> >> > Without the "clock-frequency" property in arch timer node, could able
->> >> > to see the below crash dump.
->> >> [snip]
->> >> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->> >> > b/arch/arm/boot/dts/exynos5250.dtsi index 7d7cc77..668ce5d 100644
->> >> > --- a/arch/arm/boot/dts/exynos5250.dtsi
->> >> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> >> > @@ -96,6 +96,7 @@
->> >> >                          <1 14 0xf08>,
->> >> >                          <1 11 0xf08>,
->> >> >                          <1 10 0xf08>;
->> >> > +           clock-frequency = <24000000>;
->> >>
->> >> Shouldn't it rather come from some clock provided by some clock controller
->> >> instead?
->> >>
->> >> The frequency would be then retrieved using clk_get_rate() on a clock
->> >> received by clk_get(), specified in device tree using generic clock
->> >> bindings.
+On Sun, Oct 6, 2013 at 8:48 PM, Vinod Koul <vinod.koul@intel.com> wrote:
+> On Mon, Oct 07, 2013 at 10:39:34AM +0900, Chanho Park wrote:
+>> > > Why didn't you use a cookie value to track the request?
+>> > > The cookie is assigned when each transfer is submitted.
+>> > > If you save the value in the desc, we can find the request easily.
 >> >
->> > If the bootloader has initialised the generic timer correctly, the
->> > CNTFRQ register should contain the clock frequency, independent of any
->> > external clock.
+>> > If there are several cyclic desc in the work list, is there a better way
+>> > to find the "current" one?  The chan struct tracks the last completed and
+>> > last submitted cookies, but these will be the first and last
+>> > respectively as long as the cyclic transfer is active.  Is there an
+>> > "active" cookie stored somewhere that I missed?
 >>
->> So, we just sat here to bisect a problem on the Samsung Chromebook
->> where we hit exactly this problem. The read-only firmware on the
->> device does not set CNTFRQ at boot, so this fails.
+>> Assume there are three cookies. If you want to get the second cookie not
+>> latest cookie, your way can be also correct in such case?
+>> I think tx_status API is to get dma status of the given cookie.
+>> You are only considering a cyclic case.
+> For cyclic case you would have possible same descriptor running till you
+> terminate.
+
+The cyclic case that makes this interesting is when there are multiple
+cyclic descriptors in the list. The cookie and completed_cookie
+markers don't help to determine which of the descriptors in the list
+is currently active.  dma_cookie_complete isn't called for a cyclic
+desc, the desc is just pushed to the end of the list.
+
 >
-> Ouch. That's a shame.
+> For non cyclic, if you have 3 descriptors submitted, the cookie value can be, say
+> 7, 8 and 9. If you query the status of any descriptor and pass the last optional
+> txstate arg then you will know the last cookie completed. so if txstate->last is
+> 7, then 7th was completed and 8 should be running and 9 in queue!
+
+Got it, but the correct desc for cookie 8 will still have to be
+searched for, correct?
+
+Thanks for the advise.
+
+Dylan
+
+>> > Looking for the first buffer with status == BUSY is an improvement I'll
+>> > make.  Any way to avoid looking through the list?
+> Its already there :)
 >
-> A chained bootloader (like the KVM guys are using) should be able to set
-> CNTFRQ, so as long as any chained loader actually does that this won't
-> cause that to blow up...
-
-Yes, but we have cases where we want to be able to boot without a
-chained u-boot as well.
-
->> Apparantly the u-boot that comes with Arndale sets it, so I haven't
->> seen this error on that platform.
->>
->> > Having the bootloader set CNTFRQ is by far the preferable solution, it
->> > is architected for this purpose.
->>
->> Unfortunately there is now real hardware out there that needs this due
->> to firmware bugs / missing features, so there's little other choice.
->> :(
->
-> Indeed :(
->
->>
->> I'll pick this patch up in the fixes branch for 3.12, unless someone
->> complains loudly.
->
-> Could you please add a note to the dts regarding why we actually need
-> this? It would be nice to maintain the impression that this is not the
-> preferred way of doing things...
-
-s/dts/dtsi/, yes I can do that. Hopefully with that we won't get too
-much automated copy and paste to other platforms.
-
-It looks like current upstream u-boot got the timer enablement patches
-merged together with HYP support, which explains why I didn't see this
-on Arndale since it has a forked version of u-boot from Linaro
-somewhere.
-
-
--Olof
+> --
+> ~Vinod
