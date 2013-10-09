@@ -1,65 +1,102 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
-Date: Wed, 9 Oct 2013 19:29:05 +0100
-Message-ID: <20131009182905.GY21581@sirena.org.uk>
-References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
- <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
- <CAAQKjZN_r-=-sj=Vb-o-KUS4ab5=cjCq1ni3VZeMeVc3NL=MMg@mail.gmail.com>
- <CAOw6vbLiJLLKn=gb1=j5TBeM0ijEK13+goG-=mw7MZTyNT1kpQ@mail.gmail.com>
- <CAAQKjZPwyKCpju4Ndd+MB_aN24-zA5xTHFsFsun2617h7YT6dw@mail.gmail.com>
- <CAOesGMgKastzdFHYQzyL8gxkBN=86wFZ4jbgP8BHxfkOuZvJxg@mail.gmail.com>
- <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: dts: Update arch timer node with clock frequency
+Date: Wed, 9 Oct 2013 12:46:06 -0700
+Message-ID: <CAOesGMgZ7+w3NGaxjpV-f08Wt+Zh8FPRHEoR+pM1UG5vLkFMkg@mail.gmail.com>
+References: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
+	<3887347.Oxs1qQnt5k@flatron>
+	<20130923141504.GD16069@e106331-lin.cambridge.arm.com>
+	<CAOesGMgaDB0ZK7LU+vZmXkpTXaMKbuNgT+vuaRbzypwtZ9eouA@mail.gmail.com>
+	<20131009082551.GC4981@e106331-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RJZzeD23Ed8sO2FB"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, Sean Paul <seanpaul@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f44.google.com ([209.85.216.44]:44452 "EHLO
+	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751897Ab3JITqH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 9 Oct 2013 15:46:07 -0400
+Received: by mail-qa0-f44.google.com with SMTP id cm18so1267115qab.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Oct 2013 12:46:06 -0700 (PDT)
+In-Reply-To: <20131009082551.GC4981@e106331-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Tony Lindgren <tony@atomide.com>, Sean Paul <seanpaul@chromium.org>
+
+On Wed, Oct 9, 2013 at 1:25 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Tue, Oct 08, 2013 at 11:15:47PM +0100, Olof Johansson wrote:
+>> [Adding Tony, who reported a mainline booting issue, and Sean who
+>> helped me track this down]
+>>
+>> On Mon, Sep 23, 2013 at 7:15 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> > On Sat, Sep 21, 2013 at 04:24:59PM +0100, Tomasz Figa wrote:
+>> >> Hi Yuvaraj,
+>> >>
+>> >> On Wednesday 18 of September 2013 15:41:53 Yuvaraj Kumar C D wrote:
+>> >> > Without the "clock-frequency" property in arch timer node, could able
+>> >> > to see the below crash dump.
+>> >> [snip]
+>> >> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> >> > b/arch/arm/boot/dts/exynos5250.dtsi index 7d7cc77..668ce5d 100644
+>> >> > --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> >> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> >> > @@ -96,6 +96,7 @@
+>> >> >                          <1 14 0xf08>,
+>> >> >                          <1 11 0xf08>,
+>> >> >                          <1 10 0xf08>;
+>> >> > +           clock-frequency = <24000000>;
+>> >>
+>> >> Shouldn't it rather come from some clock provided by some clock controller
+>> >> instead?
+>> >>
+>> >> The frequency would be then retrieved using clk_get_rate() on a clock
+>> >> received by clk_get(), specified in device tree using generic clock
+>> >> bindings.
+>> >
+>> > If the bootloader has initialised the generic timer correctly, the
+>> > CNTFRQ register should contain the clock frequency, independent of any
+>> > external clock.
+>>
+>> So, we just sat here to bisect a problem on the Samsung Chromebook
+>> where we hit exactly this problem. The read-only firmware on the
+>> device does not set CNTFRQ at boot, so this fails.
+>
+> Ouch. That's a shame.
+>
+> A chained bootloader (like the KVM guys are using) should be able to set
+> CNTFRQ, so as long as any chained loader actually does that this won't
+> cause that to blow up...
+
+Yes, but we have cases where we want to be able to boot without a
+chained u-boot as well.
+
+>> Apparantly the u-boot that comes with Arndale sets it, so I haven't
+>> seen this error on that platform.
+>>
+>> > Having the bootloader set CNTFRQ is by far the preferable solution, it
+>> > is architected for this purpose.
+>>
+>> Unfortunately there is now real hardware out there that needs this due
+>> to firmware bugs / missing features, so there's little other choice.
+>> :(
+>
+> Indeed :(
+>
+>>
+>> I'll pick this patch up in the fixes branch for 3.12, unless someone
+>> complains loudly.
+>
+> Could you please add a note to the dts regarding why we actually need
+> this? It would be nice to maintain the impression that this is not the
+> preferred way of doing things...
+
+s/dts/dtsi/, yes I can do that. Hopefully with that we won't get too
+much automated copy and paste to other platforms.
+
+It looks like current upstream u-boot got the timer enablement patches
+merged together with HYP support, which explains why I didn't see this
+on Arndale since it has a forked version of u-boot from Linaro
+somewhere.
 
 
---RJZzeD23Ed8sO2FB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Oct 04, 2013 at 11:05:48AM +0900, Inki Dae wrote:
-> 2013/10/4 Olof Johansson <olof@lixom.net>:
-
-> > "If PD_N is LOW, then the device is in Deep power-down completely,
-> > even if supply rail is ON; for the device to be able to operate, the
-> > PD_N pin must be HIGH."
-
-> I still think the pin could be replaced with a regulator. But
-> lvds-bridge node has "powerdown-gpio" property - it say this board
-> will use gpio pin - specific to board.  So it seems no problem.
-
-No, don't model things that aren't regulators as regulators - it's just
-confusing from a usability standpoint and causes breakage when the pins
-don't behave like regulators.
-
---RJZzeD23Ed8sO2FB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSVaBuAAoJELSic+t+oim9t9YP/2zdxi1e2TqVNIcxbbSYUvWy
-LySnpmymlG/Sh3k86KJwkDd+2X7kq8xm8T2hfx6SgKPw/hNFBfMvJc5rh7r0Z9d0
-Jb+kpEVEDNaLpZBHN9HN6yejQ3aMoy1NEIgkGlqmGNUG8NQmNq0nDBCmTysGpoA0
-xes+miLMs5WXRK/kpA2r/J9FnOEhlNxM5i8budaqcbJAeLRTo3ePqavTW9AGPXWH
-TLruZFFu71/UgLMDRYny42lOCdcagNZJn6/gDNEvreIaObDSZJ7kxHO41/F/to45
-gEskdwyzgfZ25M+I7pMuFlIzaBWsGtjQlSc7PVJcplCVd7KOTvtfsN+FeOzhHVHr
-s5oVn6q+kO97Hg1Al1B49wRtQFban0K42ZD717iV4nUEnMmeVlqdSz5AvjSvUK5g
-Pc52RRManESWdaSB+R3/1ZctPQZxGZMy+fCjl51+3dfJnfsWUhxE4YJBkp4hNz9v
-ooEVBPASa8VdD/KqObGyQzP74SpPuKHRfNRbSVf84I0TY0oERn/rS/xxJo2uhqWv
-8dhkS3RzfJqxVtEHSLQxbgRgKcN2vfGTb6X/VVyikA6vyfR0luvUYbu/qK3g/9ux
-JRS6HeZtkZLBN4FT08Mj46zPJMrqFSHfalXI8jY+oxPJwbLx5WifbvhlakjvjMKP
-jtx5H7T/C1tB5SGc9y3f
-=GFIi
------END PGP SIGNATURE-----
-
---RJZzeD23Ed8sO2FB--
+-Olof
