@@ -1,105 +1,24 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARM: dts: Update arch timer node with clock frequency
-Date: Wed, 9 Oct 2013 22:51:47 +0100
-Message-ID: <20131009215147.GC2322@kartoffel>
-References: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
- <3887347.Oxs1qQnt5k@flatron>
- <20130923141504.GD16069@e106331-lin.cambridge.arm.com>
- <CAOesGMgaDB0ZK7LU+vZmXkpTXaMKbuNgT+vuaRbzypwtZ9eouA@mail.gmail.com>
- <20131009082551.GC4981@e106331-lin.cambridge.arm.com>
- <CAOesGMgZ7+w3NGaxjpV-f08Wt+Zh8FPRHEoR+pM1UG5vLkFMkg@mail.gmail.com>
+From: "tvikesl" <admin@southsrugby.com>
+Subject: =?windows-1251?B?0+Hu8OrgIMri4PDy6PD7IOgg5O7s4C4g0fP1?=
+	=?windows-1251?B?4P8g6CDi6+Dm7eD/LiDK4Pfl8fLi5e3t7i4=?=
+Date: Thu, 10 Oct 2013 01:07:14 +0200
+Message-ID: <60F08253899D4C44ABC890C2F8489E26@ufbkwv>
+Reply-To: "tvikesl" <elabieva.s@oceris.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1251;
+	format=flowed	reply-type=original
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:40940 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752433Ab3JIVvw (ORCPT
+Received: from [219.143.71.215] ([219.143.71.215]:35464 "HELO seis.ac.cn"
+	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+	id S1752136Ab3JIXHL convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 17:51:52 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOesGMgZ7+w3NGaxjpV-f08Wt+Zh8FPRHEoR+pM1UG5vLkFMkg@mail.gmail.com>
+	Wed, 9 Oct 2013 19:07:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Marc Zyngier <Marc.Zyngier@arm.com>, Tony Lindgren <tony@atomide.com>, Sean Paul <seanpaul@chromium.org>
+To: k.zvezdenkov@vniikp.ru, info@raafalina.ru, region@vivo-porte.ru, olga.b@kupi-reklamu.ru, linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 09, 2013 at 08:46:06PM +0100, Olof Johansson wrote:
-> On Wed, Oct 9, 2013 at 1:25 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Tue, Oct 08, 2013 at 11:15:47PM +0100, Olof Johansson wrote:
-> >> [Adding Tony, who reported a mainline booting issue, and Sean who
-> >> helped me track this down]
-> >>
-> >> On Mon, Sep 23, 2013 at 7:15 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >> > On Sat, Sep 21, 2013 at 04:24:59PM +0100, Tomasz Figa wrote:
-> >> >> Hi Yuvaraj,
-> >> >>
-> >> >> On Wednesday 18 of September 2013 15:41:53 Yuvaraj Kumar C D wrote:
-> >> >> > Without the "clock-frequency" property in arch timer node, could able
-> >> >> > to see the below crash dump.
-> >> >> [snip]
-> >> >> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> >> >> > b/arch/arm/boot/dts/exynos5250.dtsi index 7d7cc77..668ce5d 100644
-> >> >> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> >> >> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> >> >> > @@ -96,6 +96,7 @@
-> >> >> >                          <1 14 0xf08>,
-> >> >> >                          <1 11 0xf08>,
-> >> >> >                          <1 10 0xf08>;
-> >> >> > +           clock-frequency = <24000000>;
-> >> >>
-> >> >> Shouldn't it rather come from some clock provided by some clock controller
-> >> >> instead?
-> >> >>
-> >> >> The frequency would be then retrieved using clk_get_rate() on a clock
-> >> >> received by clk_get(), specified in device tree using generic clock
-> >> >> bindings.
-> >> >
-> >> > If the bootloader has initialised the generic timer correctly, the
-> >> > CNTFRQ register should contain the clock frequency, independent of any
-> >> > external clock.
-> >>
-> >> So, we just sat here to bisect a problem on the Samsung Chromebook
-> >> where we hit exactly this problem. The read-only firmware on the
-> >> device does not set CNTFRQ at boot, so this fails.
-> >
-> > Ouch. That's a shame.
-> >
-> > A chained bootloader (like the KVM guys are using) should be able to set
-> > CNTFRQ, so as long as any chained loader actually does that this won't
-> > cause that to blow up...
-> 
-> Yes, but we have cases where we want to be able to boot without a
-> chained u-boot as well.
-
-Sorry, that was poorly worded on my behalf. I meant that in the main case I'm
-aware of where the having the clock-frequency property wasn't good enough
-(because it doesn't get propagated to guests), we have another workaround.
-
-> 
-> >> Apparantly the u-boot that comes with Arndale sets it, so I haven't
-> >> seen this error on that platform.
-> >>
-> >> > Having the bootloader set CNTFRQ is by far the preferable solution, it
-> >> > is architected for this purpose.
-> >>
-> >> Unfortunately there is now real hardware out there that needs this due
-> >> to firmware bugs / missing features, so there's little other choice.
-> >> :(
-> >
-> > Indeed :(
-> >
-> >>
-> >> I'll pick this patch up in the fixes branch for 3.12, unless someone
-> >> complains loudly.
-> >
-> > Could you please add a note to the dts regarding why we actually need
-> > this? It would be nice to maintain the impression that this is not the
-> > preferred way of doing things...
-> 
-> s/dts/dtsi/, yes I can do that. Hopefully with that we won't get too
-> much automated copy and paste to other platforms.
-
-Cheers!
-
-Thanks,
-Mark.
+=CC=FB =F3=EC=E5=E5=EC =EF=EE=E4=F1=EE=E1=E8=F2=FC =F1 =F3=E1=EE=F0=EA=EE=
+=E9 =E0=EF=E0=F0=F2=E0=EC=E5=ED=F2=EE=E2 =E8=EB=E8 =CA=E2=E0=F0=F2=E8=F0=
+=FB =E7=E0 =ED=E5=E1=EE=EB=FC=F8=E8=E5 =E4=E5=ED=FC=E3=E8 http://74.ru/=
+go/?url=3Dhttp://m00.me/qpzd
