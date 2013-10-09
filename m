@@ -1,82 +1,54 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [RESEND PATCH 1/3] ARM: EXYNOS: Move arm core power down clock to
- exynos5250 common clock
-Date: Wed, 09 Oct 2013 11:48:19 +0200
-Message-ID: <16865865.dEQ4lomChq@amdc1032>
-References: <1363240979-1939-2-git-send-email-amit.daniel@samsung.com>
- <150e01ce6831$44d94920$ce8bdb60$%kim@samsung.com>
- <CADGdYn7sZMp13K-WcoHJ13FyXnkVbHjhg5LNcofiYPDTgxsHNg@mail.gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] PCI: designware: Add irq_create_mapping()
+Date: Wed, 9 Oct 2013 15:18:27 +0530
+Message-ID: <5255266B.6040809@ti.com>
+References: <000401cec4c6$dc415180$94c3f480$%han@samsung.com> <52551C6E.1040404@ti.com> <003901cec4d0$5d83e650$188bb2f0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:60686 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752484Ab3JIJsX (ORCPT
+Received: from comal.ext.ti.com ([198.47.26.152]:54415 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752163Ab3JIJsq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 05:48:23 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MUE00423B6E2290@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 Oct 2013 18:48:22 +0900 (KST)
-In-reply-to: <CADGdYn7sZMp13K-WcoHJ13FyXnkVbHjhg5LNcofiYPDTgxsHNg@mail.gmail.com>
+	Wed, 9 Oct 2013 05:48:46 -0400
+In-Reply-To: <003901cec4d0$5d83e650$188bb2f0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: amit daniel kachhap <amit.daniel@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, LAK <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Mohit KUMAR' <Mohit.KUMAR@st.com>, 'Siva Reddy Kallam' <siva.kallam@samsung.com>, 'SRIKANTH TUMKUR SHIVANAND' <ts.srikanth@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Sean Cross' <xobs@kosagi.com>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
+On Wednesday 09 October 2013 02:47 PM, Jingoo Han wrote:
+> On Wednesday, October 09, 2013 6:06 PM, Kishon Vijay Abraham I wrote:
+>> On Wednesday 09 October 2013 01:39 PM, Jingoo Han wrote:
+>>> Without irq_create_mapping(), the correct irq number cannot be
+>>> provided. In this case, it makes problem such as NULL deference.
+>>> Thus, irq_create_mapping() should be added for MSI.
+>>>
+>>> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+>>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+>>> ---
+>>> Tested on Exynos5440.
+>>>
+>>>  drivers/pci/host/pcie-designware.c |   10 ++++------
+>>>  drivers/pci/host/pcie-designware.h |    1 +
+>>>  2 files changed, 5 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+>>> index 8963017..e536bb6 100644
+>>> --- a/drivers/pci/host/pcie-designware.c
+>>> +++ b/drivers/pci/host/pcie-designware.c
+>>> @@ -237,6 +237,8 @@ static int assign_irq(int no_irqs, struct msi_desc *desc, int *pos)
+>>>  		}
+>>>  	}
+>>>
+>>> +	pp->msi_irq_start = irq_create_mapping(pp->irq_domain, 0);
+>>> +
+>>
+>> I think irq_create_mapping should be done for all the MSI irq lines instead of
+>> only the first line. So you might have to do for MAX_MSI_IRQS lines.
 
-Hi,
+Maybe it should be only till MAX_MSI_IRQS-1?
 
-Mike:
-
-Could you please apply this patch? It is few months overdue..
-
-Amit:
-
-This patch no longer applies to -next. Could you please refresh and resend it?
-
-You can add:
-
-	Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-while at it.
-
-Thanks.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-On Friday, August 16, 2013 10:22:44 AM amit daniel kachhap wrote:
-> Hi Mike,
-> 
-> Please merge this patch as it is pending since last merge window.
-> 
-> Thanks,
-> Amit
-> 
-> On Thu, Jun 13, 2013 at 5:56 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Amit Daniel Kachhap wrote:
-> >>
-> >> Now with common clock support added for exynos5250 it is necessary to move
-> >> this code to exynos5250 common clock driver as clock registers should be
-> >> handled there. This change is tested in exynos5250 based arndale platform.
-> >>
-> >> Cc: Abhilash Kesavan <a.kesavan@samsung.com>
-> >> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> >> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> >
-> > Hmm...I'm not sure it's better to handle the ARM core power down clock in
-> > common clock but the clock registers should be handled in one part, clock.
-> >
-> > Acked-by: Kukjin Kim <kgene.kim@samsugn.com>
-> >
-> > Mike, the mach-exynos/cpuidle.c is not touched in samsung tree at this
-> > moment, so this patch will not create any conflict between samsung and clk.
-> >
-> > Thanks,
-> > - Kukjin
+Thanks
+Kishon
