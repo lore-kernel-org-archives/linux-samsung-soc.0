@@ -1,121 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 1/2] spi: Provide per-message prepare and unprepare operations
-Date: Wed,  9 Oct 2013 18:01:43 +0100
-Message-ID: <1381338104-5550-1-git-send-email-broonie@kernel.org>
+From: Manish Badarkhe <badarkhe.manish@gmail.com>
+Subject: [PATCH] PM / devfreq: Remove duplicate include of opp.h
+Date: Wed,  9 Oct 2013 23:35:24 +0530
+Message-ID: <1381341924-16184-1-git-send-email-badarkhe.manish@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:45222 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752216Ab3JIRCO (ORCPT
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:40209 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752199Ab3JISFe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 13:02:14 -0400
+	Wed, 9 Oct 2013 14:05:34 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Lukasz Czerwinski <l.czerwinski@samsung.com>, s.nawrocki@samsung.com
-Cc: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kyungmin.park@samsung.com, badarkhe.manish@gmail.com, kgene.kim@samsung.com, a.kesavan@samsung.com
 
-From: Mark Brown <broonie@linaro.org>
+Currently, code include opp.h twice. Remove one inclusion
+of opp.h
 
-Many SPI drivers perform setup and tear down on every message, usually
-doing things like DMA mapping the message. Provide hooks for them to use
-to provide such operations.
-
-This is of limited value for drivers that implement transfer_one_message()
-but will be of much greater utility with future factoring out of standard
-implementations of that function.
-
-Signed-off-by: Mark Brown <broonie@linaro.org>
+Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
 ---
- drivers/spi/spi.c       | 22 ++++++++++++++++++++++
- include/linux/spi/spi.h | 11 +++++++++++
- 2 files changed, 33 insertions(+)
+:100644 100644 574b16b... 93c29f4... M	drivers/devfreq/exynos/exynos5_bus.c
+ drivers/devfreq/exynos/exynos5_bus.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index b86ba60..253ea3b 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -606,6 +606,18 @@ static void spi_pump_messages(struct kthread_work *work)
- 
- 	trace_spi_message_start(master->cur_msg);
- 
-+	if (master->prepare_message) {
-+		ret = master->prepare_message(master, master->cur_msg);
-+		if (ret) {
-+			dev_err(&master->dev,
-+				"failed to prepare message: %d\n", ret);
-+			master->cur_msg->status = ret;
-+			spi_finalize_current_message(master);
-+			return;
-+		}
-+		master->cur_msg_prepared = true;
-+	}
-+
- 	ret = master->transfer_one_message(master, master->cur_msg);
- 	if (ret) {
- 		dev_err(&master->dev,
-@@ -687,6 +699,7 @@ void spi_finalize_current_message(struct spi_master *master)
- {
- 	struct spi_message *mesg;
- 	unsigned long flags;
-+	int ret;
- 
- 	spin_lock_irqsave(&master->queue_lock, flags);
- 	mesg = master->cur_msg;
-@@ -695,6 +708,15 @@ void spi_finalize_current_message(struct spi_master *master)
- 	queue_kthread_work(&master->kworker, &master->pump_messages);
- 	spin_unlock_irqrestore(&master->queue_lock, flags);
- 
-+	if (master->cur_msg_prepared && master->unprepare_message) {
-+		ret = master->unprepare_message(master, mesg);
-+		if (ret) {
-+			dev_err(&master->dev,
-+				"failed to unprepare message: %d\n", ret);
-+		}
-+	}
-+	master->cur_msg_prepared = false;
-+
- 	mesg->state = NULL;
- 	if (mesg->complete)
- 		mesg->complete(mesg->context);
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index b329192..98620486 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -257,6 +257,8 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
-  * @queue_lock: spinlock to syncronise access to message queue
-  * @queue: message queue
-  * @cur_msg: the currently in-flight message
-+ * @cur_msg_prepared: spi_prepare_message was called for the currently
-+ *                    in-flight message
-  * @busy: message pump is busy
-  * @running: message pump is running
-  * @rt: whether this queue is set to run as a realtime task
-@@ -274,6 +276,10 @@ static inline void spi_unregister_driver(struct spi_driver *sdrv)
-  * @unprepare_transfer_hardware: there are currently no more messages on the
-  *	queue so the subsystem notifies the driver that it may relax the
-  *	hardware by issuing this call
-+ * @prepare_message: set up the controller to transfer a single message,
-+ *                   for example doing DMA mapping.  Called from threaded
-+ *                   context.
-+ * @unprepare_message: undo any work done by prepare_message().
-  * @cs_gpios: Array of GPIOs to use as chip select lines; one per CS
-  *	number. Any individual value may be -ENOENT for CS lines that
-  *	are not GPIOs (driven by the SPI controller itself).
-@@ -388,11 +394,16 @@ struct spi_master {
- 	bool				running;
- 	bool				rt;
- 	bool				auto_runtime_pm;
-+	bool                            cur_msg_prepared;
- 
- 	int (*prepare_transfer_hardware)(struct spi_master *master);
- 	int (*transfer_one_message)(struct spi_master *master,
- 				    struct spi_message *mesg);
- 	int (*unprepare_transfer_hardware)(struct spi_master *master);
-+	int (*prepare_message)(struct spi_master *master,
-+			       struct spi_message *message);
-+	int (*unprepare_message)(struct spi_master *master,
-+				 struct spi_message *message);
- 
- 	/* gpio chip select */
- 	int			*cs_gpios;
+diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
+index 574b16b..93c29f4 100644
+--- a/drivers/devfreq/exynos/exynos5_bus.c
++++ b/drivers/devfreq/exynos/exynos5_bus.c
+@@ -18,7 +18,6 @@
+ #include <linux/opp.h>
+ #include <linux/slab.h>
+ #include <linux/suspend.h>
+-#include <linux/opp.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/platform_device.h>
 -- 
-1.8.4.rc3
+1.7.10.4
