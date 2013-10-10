@@ -1,71 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
-Date: Thu, 10 Oct 2013 10:37:08 +0100
-Message-ID: <20131010093708.GC21581@sirena.org.uk>
-References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
- <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
- <CAAQKjZN_r-=-sj=Vb-o-KUS4ab5=cjCq1ni3VZeMeVc3NL=MMg@mail.gmail.com>
- <CAOw6vbLiJLLKn=gb1=j5TBeM0ijEK13+goG-=mw7MZTyNT1kpQ@mail.gmail.com>
- <CAAQKjZPwyKCpju4Ndd+MB_aN24-zA5xTHFsFsun2617h7YT6dw@mail.gmail.com>
- <CAOesGMgKastzdFHYQzyL8gxkBN=86wFZ4jbgP8BHxfkOuZvJxg@mail.gmail.com>
- <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
- <20131009182905.GY21581@sirena.org.uk>
- <05c701cec56f$b79eea50$26dcbef0$%dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="d03Wvsl4acTHE0IU"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <05c701cec56f$b79eea50$26dcbef0$%dae@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, 'Sean Paul' <seanpaul@chromium.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 'DRI mailing list' <dri-devel@lists.freedesktop.org>, linux-arm-kernel@lists.infradead.org
+From: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
+Subject: [RFC/PATCH V2] spi: s3c64xx: Enable Word transfer
+Date: Thu, 10 Oct 2013 16:11:37 +0530
+Message-ID: <1381401697-25992-1-git-send-email-rajeshwari.s@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:9900 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754781Ab3JJKkL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Oct 2013 06:40:11 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-spi@vger.kernel.org, sjg@chromium.org, alim.akhtar@samsung.com, dianders@google.com, t.figa@samsung.com, broonie@linaro.org
 
+This patch enables word transfer for s3c64xx spi driver.
+User can set bits_per_word to 32 before calling spi_setup,
+which would enable the word transfer mode.
 
---d03Wvsl4acTHE0IU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
+---
+Chnages in V2:
+	- Reduced the call for s3c64xx_spi_config 
+ drivers/spi/spi-s3c64xx.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
-On Thu, Oct 10, 2013 at 01:18:05PM +0900, Inki Dae wrote:
-
-> > > I still think the pin could be replaced with a regulator. But
-> > > lvds-bridge node has "powerdown-gpio" property - it say this board
-> > > will use gpio pin - specific to board.  So it seems no problem.
-
-> > No, don't model things that aren't regulators as regulators - it's just
-> > confusing from a usability standpoint and causes breakage when the pins
-> > don't behave like regulators.
-
-> It seems that there was your missing point. That _is not_ what I mentioned.
-> I mean that other boards can use a regulator instead of gpio pin.
-
-What I'm saying is no boards should use a regulator to control that
-GPIO pin, obviously if they're controlling the actual regulators that's
-fine but the reset signal should not be controlled via the regulator
-API (there are some unfortunate cases where people have done that
-already but let's not have any more).
-
---d03Wvsl4acTHE0IU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSVnVBAAoJELSic+t+oim9gEQP/1GHEMDVINGUFY2SpF1Vfzey
-hByjoMy60N6KNCTmnMryf9AE3gxMmRKKhI3yLjPObXEBIt6qhtyzBb6M8csmidNJ
-UNShBARw+LswoLGjxwWmN3XcO0+7bSJQ4KTcm6lONelZv8UG6tW5YKZRrR2viOwu
-OQ0UL17QGTiYkdSgUo1s6viD4d7AFWZL93Gcs/W0UmLVxms6K12Cu/wgsRF9g9Jl
-tnL8R2H1Ddn1uzEToALua+oM/jDNw7Lb3jeZrhYVwDbWCEPyePl9gE0Jh3fCiKYT
-jrYDceWVv4z7G1l1tU2aAA2tnwWaUKuIspUIxWCStka30HjpXc2JdSUUXC7kvdyu
-CHeVK8N7j6ETv9P+Eb+osdQ7K1bZJBMxrY6ABpUvhhWfrsrxiqOZcZXtsnzomrv4
-yhZeR99u3bG9GA+wkmdUuFeOk/u5NhyFNMxrHpeEZ6AoVFZ+ubisgLkQYtabXZLe
-4YdNuXz8ehu96YhdJ6keJJ+yu5Z4wASojpYeLxu9+XP8ZSTPsFHwd+diNwnY5YJH
-JIKfCh1R8diuw0kobiuntgw3EDQ7GgCePoxkK8ySgHlz0Ol2nPq+9oUSbl5HoBwF
-05Z6KWjj90Vbb4aOi+f75K/KzsAQhixnioJzXhnUDGcRb5WaOzy7Kdp97BjcF4Ao
-oj3JL2VHbUpEPkZzrcID
-=dV4p
------END PGP SIGNATURE-----
-
---d03Wvsl4acTHE0IU--
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 512b889..d1b0a2b 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -498,6 +498,17 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
+ 	chcfg = readl(regs + S3C64XX_SPI_CH_CFG);
+ 	chcfg &= ~S3C64XX_SPI_CH_TXCH_ON;
+ 
++	if(sdd->cur_bpw == 32) {
++		/* For word transfer we need to swap bytes */
++		u32 swapcfg = (S3C64XX_SPI_SWAP_TX_EN | S3C64XX_SPI_SWAP_TX_BYTE |
++				S3C64XX_SPI_SWAP_TX_HALF_WORD |
++				S3C64XX_SPI_SWAP_RX_EN |
++				S3C64XX_SPI_SWAP_RX_BYTE |
++				S3C64XX_SPI_SWAP_RX_HALF_WORD);
++		writel(swapcfg, regs + S3C64XX_SPI_SWAP_CFG);
++	} else
++		writel(0, regs + S3C64XX_SPI_SWAP_CFG);
++
+ 	if (dma_mode) {
+ 		chcfg &= ~S3C64XX_SPI_CH_RXCH_ON;
+ 	} else {
+@@ -905,13 +916,12 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
+ 		bpw = xfer->bits_per_word;
+ 		speed = xfer->speed_hz ? : spi->max_speed_hz;
+ 
+-		if (xfer->len % (bpw / 8)) {
+-			dev_err(&spi->dev,
+-				"Xfer length(%u) not a multiple of word size(%u)\n",
+-				xfer->len, bpw / 8);
+-			status = -EIO;
+-			goto out;
+-		}
++		/*
++		 * Enable byte tranfer if transfer length not a multiple of
++		 * word size
++		 */
++		if (xfer->len % (bpw / 8))
++			bpw = 8;
+ 
+ 		if (bpw != sdd->cur_bpw || speed != sdd->cur_speed) {
+ 			sdd->cur_bpw = bpw;
+-- 
+1.7.12.4
