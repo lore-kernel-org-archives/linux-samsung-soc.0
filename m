@@ -1,63 +1,57 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: exynos4x12: Add maudio/gps_alive power
- domain for exynos4x12
-Date: Thu, 10 Oct 2013 13:07:56 +0900
-Message-ID: <5256281C.8040706@samsung.com>
-References: <1381365007-1782-1-git-send-email-cw00.choi@samsung.com>
- <1381365007-1782-4-git-send-email-cw00.choi@samsung.com>
- <CAK9yfHxr27nsmaqkE+seDgZAkpUmOsPqdXdeogY89tAXYEEG2w@mail.gmail.com>
- <525627A2.70709@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: RE: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
+Date: Thu, 10 Oct 2013 13:18:05 +0900
+Message-ID: <05c701cec56f$b79eea50$26dcbef0$%dae@samsung.com>
+References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
+ <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
+ <CAAQKjZN_r-=-sj=Vb-o-KUS4ab5=cjCq1ni3VZeMeVc3NL=MMg@mail.gmail.com>
+ <CAOw6vbLiJLLKn=gb1=j5TBeM0ijEK13+goG-=mw7MZTyNT1kpQ@mail.gmail.com>
+ <CAAQKjZPwyKCpju4Ndd+MB_aN24-zA5xTHFsFsun2617h7YT6dw@mail.gmail.com>
+ <CAOesGMgKastzdFHYQzyL8gxkBN=86wFZ4jbgP8BHxfkOuZvJxg@mail.gmail.com>
+ <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
+ <20131009182905.GY21581@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <525627A2.70709@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, ijc+devicetree@hellion.org.uk, Russell King <linux@arm.linux.org.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:40797 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752251Ab3JJESH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Oct 2013 00:18:07 -0400
+In-reply-to: <20131009182905.GY21581@sirena.org.uk>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mark Brown' <broonie@kernel.org>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Sean Paul' <seanpaul@chromium.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 'DRI mailing list' <dri-devel@lists.freedesktop.org>, linux-arm-kernel@lists.infradead.org
 
-On 10/10/2013 01:05 PM, Chanwoo Choi wrote:
-> On 10/10/2013 12:29 PM, Sachin Kamat wrote:
->> On 10 October 2013 06:00, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->>> This patch maudio/gps_alive power domain to exynos4x12.dtsi.
->>>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>>  arch/arm/boot/dts/exynos4x12.dtsi | 10 ++++++++++
->>>  1 file changed, 10 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
->>> index ad531fe..c04418e 100644
->>> --- a/arch/arm/boot/dts/exynos4x12.dtsi
->>> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
->>> @@ -35,6 +35,16 @@
->>>                 reg = <0x10023CA0 0x20>;
->>>         };
->>>
->>> +       pd_maudio: maudio-power-domain@10023CC0 {
->>> +               compatible = "samsung,exynos4210-pd";
->>> +               reg = <0x10023CC0 0x20>;
->>> +       };
->>> +
->>> +       pd_gps_alive: gps-alive-power-domain@10023D04 {
->>> +               compatible = "samsung,exynos4210-pd";
->>> +               reg = <0x10023D00 0x20>;
->>
->> There is mismatch between node name and register value.
->>
->>
-> What is exactly mismatch?
+
+
+> -----Original Message-----
+> From: Mark Brown [mailto:broonie@kernel.org]
+> Sent: Thursday, October 10, 2013 3:29 AM
+> To: Inki Dae
+> Cc: Olof Johansson; Sean Paul; devicetree@vger.kernel.org; linux-samsung-
+> soc@vger.kernel.org; linux-doc@vger.kernel.org; linux-
+> kernel@vger.kernel.org; DRI mailing list; linux-arm-
+> kernel@lists.infradead.org
+> Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
 > 
-> I checked the register address of MAUDIO_CONFIGURATION/GPS_ALIVE_CONFIGURATION regsiter.
-> - MAUDIO_CONFIGURATION 0x1002_3CC0
-> - GPS_ALIVE_CONFIGURATION 0x1002_3D00
+> On Fri, Oct 04, 2013 at 11:05:48AM +0900, Inki Dae wrote:
+> > 2013/10/4 Olof Johansson <olof@lixom.net>:
+> 
+> > > "If PD_N is LOW, then the device is in Deep power-down completely,
+> > > even if supply rail is ON; for the device to be able to operate, the
+> > > PD_N pin must be HIGH."
+> 
+> > I still think the pin could be replaced with a regulator. But
+> > lvds-bridge node has "powerdown-gpio" property - it say this board
+> > will use gpio pin - specific to board.  So it seems no problem.
+> 
+> No, don't model things that aren't regulators as regulators - it's just
+> confusing from a usability standpoint and causes breakage when the pins
+> don't behave like regulators.
 
-My mistake. I write wrong address about gps-alive-power-domain.
-
-I will fix it.
-- gps-alive-power-domain@10023D04 -> gps-alive-power-domain@10023D00
-
-Thanks,
-Chanwoo Choi
+It seems that there was your missing point. That _is not_ what I mentioned.
+I mean that other boards can use a regulator instead of gpio pin.
