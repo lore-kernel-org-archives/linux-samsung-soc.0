@@ -1,69 +1,67 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
-Date: Thu, 10 Oct 2013 13:23:34 +0100
-Message-ID: <20131010122334.GJ21581@sirena.org.uk>
-References: <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
- <CAAQKjZN_r-=-sj=Vb-o-KUS4ab5=cjCq1ni3VZeMeVc3NL=MMg@mail.gmail.com>
- <CAOw6vbLiJLLKn=gb1=j5TBeM0ijEK13+goG-=mw7MZTyNT1kpQ@mail.gmail.com>
- <CAAQKjZPwyKCpju4Ndd+MB_aN24-zA5xTHFsFsun2617h7YT6dw@mail.gmail.com>
- <CAOesGMgKastzdFHYQzyL8gxkBN=86wFZ4jbgP8BHxfkOuZvJxg@mail.gmail.com>
- <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
- <20131009182905.GY21581@sirena.org.uk>
- <05c701cec56f$b79eea50$26dcbef0$%dae@samsung.com>
- <20131010093708.GC21581@sirena.org.uk>
- <063a01cec5ad$8afd1920$a0f74b60$%dae@samsung.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH 1/3] dmaengine: pl330: Set residue in tx_status
+ callback.
+Date: Thu, 10 Oct 2013 21:28:55 +0530
+Message-ID: <20131010155855.GA2954@intel.com>
+References: <1378879685-5352-1-git-send-email-padma.v@samsung.com>
+ <1378879685-5352-2-git-send-email-padma.v@samsung.com>
+ <00b401ceafac$e3a88170$aaf98450$@samsung.com>
+ <CAEUnVG72uTzHrQCoVtdT8UmkPcz2ks_qWT8QMbhHjUW-u3WnNQ@mail.gmail.com>
+ <026501cec2fe$1387c630$3a975290$@samsung.com>
+ <20131007034846.GG2954@intel.com>
+ <CAEUnVG7Xn8+Xhnr2y5-RM6FJTQsjRrJ9g1JWf4o+6B-BtWHbPA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yJ4qnbZIW6vSQ1qE"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:33467 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755283Ab3JJMYF (ORCPT
+Received: from mga03.intel.com ([143.182.124.21]:44963 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755838Ab3JJQvv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Oct 2013 08:24:05 -0400
+	Thu, 10 Oct 2013 12:51:51 -0400
 Content-Disposition: inline
-In-Reply-To: <063a01cec5ad$8afd1920$a0f74b60$%dae@samsung.com>
+In-Reply-To: <CAEUnVG7Xn8+Xhnr2y5-RM6FJTQsjRrJ9g1JWf4o+6B-BtWHbPA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, 'Sean Paul' <seanpaul@chromium.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 'DRI mailing list' <dri-devel@lists.freedesktop.org>, linux-arm-kernel@lists.infradead.org
+To: Dylan Reid <dgreid@chromium.org>
+Cc: Chanho Park <chanho61.park@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Padma Venkat <padma.kvr@gmail.com>, kgene.kim@samsung.com, Arnd Bergmann <arnd@arndb.de>, Sangbeom Kim <sbkim73@samsung.com>, Mark Brown <broonie@kernel.org>, Olof Johansson <olofj@chromium.org>
 
+On Wed, Oct 09, 2013 at 01:37:56PM -0700, Dylan Reid wrote:
+> On Sun, Oct 6, 2013 at 8:48 PM, Vinod Koul <vinod.koul@intel.com> wrote:
+> > On Mon, Oct 07, 2013 at 10:39:34AM +0900, Chanho Park wrote:
+> >> > > Why didn't you use a cookie value to track the request?
+> >> > > The cookie is assigned when each transfer is submitted.
+> >> > > If you save the value in the desc, we can find the request easily.
+> >> >
+> >> > If there are several cyclic desc in the work list, is there a better way
+> >> > to find the "current" one?  The chan struct tracks the last completed and
+> >> > last submitted cookies, but these will be the first and last
+> >> > respectively as long as the cyclic transfer is active.  Is there an
+> >> > "active" cookie stored somewhere that I missed?
+> >>
+> >> Assume there are three cookies. If you want to get the second cookie not
+> >> latest cookie, your way can be also correct in such case?
+> >> I think tx_status API is to get dma status of the given cookie.
+> >> You are only considering a cyclic case.
+> > For cyclic case you would have possible same descriptor running till you
+> > terminate.
+> 
+> The cyclic case that makes this interesting is when there are multiple
+> cyclic descriptors in the list. The cookie and completed_cookie
+> markers don't help to determine which of the descriptors in the list
+> is currently active.  dma_cookie_complete isn't called for a cyclic
+> desc, the desc is just pushed to the end of the list.
+Yes the cyclic is a very different case. I think driver can still return for
+cyclic case which was txstate->last and that will give clue to client which is
+getting processed now!
 
---yJ4qnbZIW6vSQ1qE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > For non cyclic, if you have 3 descriptors submitted, the cookie value can be, say
+> > 7, 8 and 9. If you query the status of any descriptor and pass the last optional
+> > txstate arg then you will know the last cookie completed. so if txstate->last is
+> > 7, then 7th was completed and 8 should be running and 9 in queue!
+> 
+> Got it, but the correct desc for cookie 8 will still have to be
+> searched for, correct?
+Yes
 
-On Thu, Oct 10, 2013 at 08:40:38PM +0900, Inki Dae wrote:
-
-> That is what I mentioned. Some boards _could control_ the actual regulator
-> for lvds-bridge, and that would be depended on how HW engineer designs the
-> board.=20
-
-For the driver this should be totally transparent - it should just
-control the regulator all the time, the regulator API will just not do
-anything if the regulator state can't actually be changed.
-
---yJ4qnbZIW6vSQ1qE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSVpxDAAoJELSic+t+oim9lGoP/iCL66+/bISG/Y/dGNV4pH17
-Y++ASeLEyHO7YJYMpy+JADrTA18r4YpFub1q6pNFEW3V9MHY0LkFmPDuZdrfSJso
-6+Pr8H1DfOF4w1GYosfGxZMv9nmfPIefeKC8KNWHYL6Yi3+GvdScHWjVKGn+daAC
-Mrmrq2ajkhlLNsgbok8MoF9UpNsbgXLwXcjc5NBuAhZ8Plh5wChhXW03yYiCAa8F
-G/kVcBSfJpWYEyehOhMuFSbbSiE8a4LTFdhvRsCgwnRQBCcb46L1vM61t9xIfJA7
-OuNbOfGonWbJEj0FN6tXtyb3JPFf/OuCKFstp5vycgb6Qnb6+SLZN456maTH3Sy4
-AL7b3WcK9m+4A2EBVYyo+OBnPmSFb5KWEFUDdt9pkp57tGy2lDudhGh/3UvsrL+z
-NGTqZCtvkjtYoCfwc4ZgMoBB91W2j3ZsUWWOcZf+7ktMaj7f50CMrqrbtISOmQVQ
-LrzRFGC0K+klrmJ0JzOOTBulJFypuwIUI9Gdo7P5H4MfbRjABqAbilPj4+UsuRGX
-OqUhI+X2XfBBOhY5JcKZDSzKEsEQda+Z4USxhueJ+xS3iAsOYdWMj6p77RCOCa5w
-1akPTkOHHrnQRTEpB0i80a9ovDl2Ur/7LN2Yx/0vQ9B7fuWqZpoVIgFvn/ARtTs2
-+fBQtUfo84DPOgwFKgdk
-=xvZv
------END PGP SIGNATURE-----
-
---yJ4qnbZIW6vSQ1qE--
+-- 
+~Vinod
