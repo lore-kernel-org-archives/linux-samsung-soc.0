@@ -1,53 +1,46 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 3/5] USB: ehci-exynos: Remove non-DT support
-Date: Thu, 10 Oct 2013 15:59:37 +0900
-Message-ID: <000001cec586$48cb84f0$da628ed0$%han@samsung.com>
-References: <000001cec582$02a6cfb0$07f46f10$%han@samsung.com>
- <000901cec582$6ba1f6c0$42e5e440$%han@samsung.com>
- <CAK9yfHx6+j7WfY077wP24_U5MAEoqySHHiWtsjjO7JtezOiz1A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Seung-Woo Kim <sw0312.kim@samsung.com>
+Subject: [PATCH] s5p-jpeg: fix uninitialized use in hdr parse
+Date: Thu, 10 Oct 2013 16:06:31 +0900
+Message-ID: <1381388791-1828-1-git-send-email-sw0312.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45417 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752049Ab3JJG7k (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16198 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751125Ab3JJHGl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Oct 2013 02:59:40 -0400
-In-reply-to: <CAK9yfHx6+j7WfY077wP24_U5MAEoqySHHiWtsjjO7JtezOiz1A@mail.gmail.com>
-Content-language: ko
+	Thu, 10 Oct 2013 03:06:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.chehab@samsung.com, s.nawrocki@samsung.com
+Cc: sw0312.kim@samsung.com
 
-On Thursday, October 10, 2013 3:49 PM, Sachin Kamat wrote:
-> On 10 October 2013 12:01, Jingoo Han <jg1.han@samsung.com> wrote:
-> > The non-DT for EXYNOS SoCs is not supported from v3.11.
-> > Thus, there is no need to support non-DT for Exynos EHCI driver.
-> >
-> > The 'include/linux/platform_data/usb-ehci-exynos.h' file has been
-> > used for non-DT support. Thus, the 'usb-ehci-exynos.h' file can
-> > be removed.
-> 
-> Wouldn't it be better to do the non-DT cleanup first and then the renaming.
-> This would avoid unnecessary code churn. For e.g., since the header file is
-> deleted in this patch, it doesn't make sense to rename the file and
-> other variable/function
-> names in the previous patch.
+For hdr parse error, it can return false without any assignments
+which cause build warning.
 
-Hi Sachin Kamat,
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+---
+ drivers/media/platform/s5p-jpeg/jpeg-core.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-OK, I see.
-I will do the non-DT cleanup first and then the renaming,
-as you mentioned.
-Then, the v2 patches will be as below:
-
-[PATCH 1/5] ARM: SAMSUNG: Remove unused s5p_device_ehci
-[PATCH 2/5] USB: ehci-s5p: Remove non-DT support
-[PATCH 3/5] USB: ohci-exynos: Remove non-DT support
-[PATCH 4/5] USB: host: Rename ehci-s5p to ehci-exynos
-[PATCH 5/5] USB: ohci-exynos: Add missing usb_put_hcd()
-
-Best regards,
-Jingoo Han
+diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+index 15d2396..7db374e 100644
+--- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -442,14 +442,14 @@ static bool s5p_jpeg_parse_hdr(struct s5p_jpeg_q_data *result,
+ 	while (notfound) {
+ 		c = get_byte(&jpeg_buffer);
+ 		if (c == -1)
+-			break;
++			return false;
+ 		if (c != 0xff)
+ 			continue;
+ 		do
+ 			c = get_byte(&jpeg_buffer);
+ 		while (c == 0xff);
+ 		if (c == -1)
+-			break;
++			return false;
+ 		if (c == 0)
+ 			continue;
+ 		length = 0;
+-- 
+1.7.4.1
