@@ -1,79 +1,55 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [RESEND] [PATCH] ARM: dts: exynos5: add pwm DT nodes to
- Exynos5250 and Exynos5420
-Date: Thu, 10 Oct 2013 11:18:00 +0530
-Message-ID: <CAK9yfHyB=Uqjg1HhMx6BXSihDmwRpmpkeLrm2YgDj2Yyo4ySuA@mail.gmail.com>
-References: <1381383731-4359-1-git-send-email-l.krishna@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH 0/5] USB: host: Remove non-DT support for Exynos EHCI and OHCI
+Date: Thu, 10 Oct 2013 15:29:01 +0900
+Message-ID: <000001cec582$02a6cfb0$07f46f10$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:52496 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754977Ab3JJFsE (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:16766 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751125Ab3JJG3G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Oct 2013 01:48:04 -0400
-Received: by mail-pd0-f178.google.com with SMTP id w10so2093894pde.9
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Oct 2013 22:48:03 -0700 (PDT)
-In-Reply-To: <1381383731-4359-1-git-send-email-l.krishna@samsung.com>
+	Thu, 10 Oct 2013 02:29:06 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, abrestic@chromium.org, olofj@chromium.org
+To: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Leela,
+This patchset removes non-DT support for Exynos EHCI and OHCI
+from arch and driver directories, because the non-DT for EXYNOS SoCs
+is not supported from v3.11.
 
-On 10 October 2013 11:12, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
-> Add the device-tree binding for the PWM controller to Exynos5250 and Exynos5420
->
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Olof Johansson <olofj@chromium.org>
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |    9 +++++++++
->  arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
->  2 files changed, 18 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 864ae90..99abc72 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -521,6 +521,15 @@
->                 };
->         };
->
-> +       pwm: pwm@12dd0000 {
-> +               compatible = "samsung,exynos4210-pwm";
-> +               reg = <0x12dd0000 0x100>;
-> +               samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-> +               #pwm-cells = <3>;
-> +               clocks = <&clock 311>;
-> +               clock-names = "timers";
-> +       };
-> +
->         amba {
->                 #address-cells = <1>;
->                 #size-cells = <1>;
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index d537cd7..80afc8b 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -206,6 +206,15 @@
->                 clock-names = "uart", "clk_uart_baud0";
->         };
->
-> +       pwm: pwm@12dd0000 {
-> +               compatible = "samsung,exynos4210-pwm";
-> +               reg = <0x12dd0000 0x100>;
-> +               samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-> +               #pwm-cells = <3>;
-> +               clocks = <&clock 279>;
-> +               clock-names = "timers";
-> +       };
-> +
+In order to keep the consistency, ehci-s5p.c is changed to
+ehci-exynos.c. So, the name of Exynos EHCI and OHCI driver is
+as below:
+ - ehci-exynos.c
+ - ohci-exynos.c
 
-Looking at the properties in the above 2 nodes, can't we have the
-common ones defined in exynos5.dtsi?
+Also, missing usb_put_hcd() is added to prevent memory leak.
 
--- 
-With warm regards,
-Sachin
+In order to prevent build error issues or merge conflict,
+this patchset includes the following patches that were
+previously submitted.
+ - [PATCH] ARM: SAMSUNG: Remove unused s5p_device_ehci
+   (http://www.spinics.net/lists/linux-samsung-soc/msg23397.html)
+ - [PATCH] USB: ohci-exynos: Add missing usb_put_hcd() to prevent memory leak
+   (http://www.spinics.net/lists/linux-usb/msg95282.html)
+
+These patches were tested on Exynos5250.
+
+---
+ arch/arm/plat-samsung/Kconfig                  |    5 -
+ arch/arm/plat-samsung/devs.c                   |   34 -----
+ arch/arm/plat-samsung/include/plat/devs.h      |    1 -
+ drivers/usb/host/Kconfig                       |    5 +-
+ drivers/usb/host/Makefile                      |    2 +-
+ drivers/usb/host/{ehci-s5p.c => ehci-exynos.c} |  165 ++++++++++--------------
+ drivers/usb/host/ohci-exynos.c                 |   17 +--
+ include/linux/platform_data/usb-ehci-s5p.h     |   21 ---
+ include/linux/platform_data/usb-ohci-exynos.h  |   21 ---
+ 9 files changed, 76 insertions(+), 195 deletions(-)
+ rename drivers/usb/host/{ehci-s5p.c => ehci-exynos.c} (55%)
+ delete mode 100644 include/linux/platform_data/usb-ehci-s5p.h
+ delete mode 100644 include/linux/platform_data/usb-ohci-exynos.h
