@@ -1,83 +1,71 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V2] ARM: dts: exynos5: add pwm DT nodes to Exynos5250 and
- Exynos5420
-Date: Thu, 10 Oct 2013 14:43:29 +0530
-Message-ID: <1381396409-10313-1-git-send-email-l.krishna@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49420 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752100Ab3JJIxD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Oct 2013 04:53:03 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
+Date: Thu, 10 Oct 2013 10:37:08 +0100
+Message-ID: <20131010093708.GC21581@sirena.org.uk>
+References: <1380670860-17621-1-git-send-email-seanpaul@chromium.org>
+ <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
+ <CAAQKjZN_r-=-sj=Vb-o-KUS4ab5=cjCq1ni3VZeMeVc3NL=MMg@mail.gmail.com>
+ <CAOw6vbLiJLLKn=gb1=j5TBeM0ijEK13+goG-=mw7MZTyNT1kpQ@mail.gmail.com>
+ <CAAQKjZPwyKCpju4Ndd+MB_aN24-zA5xTHFsFsun2617h7YT6dw@mail.gmail.com>
+ <CAOesGMgKastzdFHYQzyL8gxkBN=86wFZ4jbgP8BHxfkOuZvJxg@mail.gmail.com>
+ <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
+ <20131009182905.GY21581@sirena.org.uk>
+ <05c701cec56f$b79eea50$26dcbef0$%dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="d03Wvsl4acTHE0IU"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <05c701cec56f$b79eea50$26dcbef0$%dae@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Sean Paul' <seanpaul@chromium.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 'DRI mailing list' <dri-devel@lists.freedesktop.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, devicetree@vger.kernel.org, t.figa@samsung.com, abrestic@chromium.org, olofj@chromium.org
 
-Add the device-tree binding for the PWM controller to Exynos5250 and Exynos5420
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Olof Johansson <olofj@chromium.org>
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
----
-changes since v1:
-	- Moved the common properties in the node to exynos5.dtsi file
-	  suggested by Sachin Kamat <sachin.kamat@linaro.org>	  
+--d03Wvsl4acTHE0IU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- arch/arm/boot/dts/exynos5.dtsi    |    7 +++++++
- arch/arm/boot/dts/exynos5250.dtsi |    5 +++++
- arch/arm/boot/dts/exynos5420.dtsi |    5 +++++
- 3 files changed, 17 insertions(+)
+On Thu, Oct 10, 2013 at 01:18:05PM +0900, Inki Dae wrote:
 
-diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-index 074739d..eb74ebc 100644
---- a/arch/arm/boot/dts/exynos5.dtsi
-+++ b/arch/arm/boot/dts/exynos5.dtsi
-@@ -109,6 +109,13 @@
- 		status = "disabled";
- 	};
- 
-+	pwm: pwm@12dd0000 {
-+		compatible = "samsung,exynos4210-pwm";
-+		reg = <0x12dd0000 0x100>;
-+		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+		#pwm-cells = <3>;
-+	};
-+
- 	fimd@14400000 {
- 		compatible = "samsung,exynos5250-fimd";
- 		interrupt-parent = <&combiner>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 7cb5c4b..52bf8d2 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -521,6 +521,11 @@
- 		};
- 	};
- 
-+	pwm: pwm@12dd0000 {
-+		clocks = <&clock 311>;
-+		clock-names = "timers";
-+	};
-+
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 09aa06c..9387b15 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -210,6 +210,11 @@
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
-+	pwm: pwm@12dd0000 {
-+		clocks = <&clock 279>;
-+		clock-names = "timers";
-+	};
-+
- 	dp_phy: video-phy@10040728 {
- 		compatible = "samsung,exynos5250-dp-video-phy";
- 		reg = <0x10040728 4>;
--- 
-1.7.10.4
+> > > I still think the pin could be replaced with a regulator. But
+> > > lvds-bridge node has "powerdown-gpio" property - it say this board
+> > > will use gpio pin - specific to board.  So it seems no problem.
+
+> > No, don't model things that aren't regulators as regulators - it's just
+> > confusing from a usability standpoint and causes breakage when the pins
+> > don't behave like regulators.
+
+> It seems that there was your missing point. That _is not_ what I mentioned.
+> I mean that other boards can use a regulator instead of gpio pin.
+
+What I'm saying is no boards should use a regulator to control that
+GPIO pin, obviously if they're controlling the actual regulators that's
+fine but the reset signal should not be controlled via the regulator
+API (there are some unfortunate cases where people have done that
+already but let's not have any more).
+
+--d03Wvsl4acTHE0IU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSVnVBAAoJELSic+t+oim9gEQP/1GHEMDVINGUFY2SpF1Vfzey
+hByjoMy60N6KNCTmnMryf9AE3gxMmRKKhI3yLjPObXEBIt6qhtyzBb6M8csmidNJ
+UNShBARw+LswoLGjxwWmN3XcO0+7bSJQ4KTcm6lONelZv8UG6tW5YKZRrR2viOwu
+OQ0UL17QGTiYkdSgUo1s6viD4d7AFWZL93Gcs/W0UmLVxms6K12Cu/wgsRF9g9Jl
+tnL8R2H1Ddn1uzEToALua+oM/jDNw7Lb3jeZrhYVwDbWCEPyePl9gE0Jh3fCiKYT
+jrYDceWVv4z7G1l1tU2aAA2tnwWaUKuIspUIxWCStka30HjpXc2JdSUUXC7kvdyu
+CHeVK8N7j6ETv9P+Eb+osdQ7K1bZJBMxrY6ABpUvhhWfrsrxiqOZcZXtsnzomrv4
+yhZeR99u3bG9GA+wkmdUuFeOk/u5NhyFNMxrHpeEZ6AoVFZ+ubisgLkQYtabXZLe
+4YdNuXz8ehu96YhdJ6keJJ+yu5Z4wASojpYeLxu9+XP8ZSTPsFHwd+diNwnY5YJH
+JIKfCh1R8diuw0kobiuntgw3EDQ7GgCePoxkK8ySgHlz0Ol2nPq+9oUSbl5HoBwF
+05Z6KWjj90Vbb4aOi+f75K/KzsAQhixnioJzXhnUDGcRb5WaOzy7Kdp97BjcF4Ao
+oj3JL2VHbUpEPkZzrcID
+=dV4p
+-----END PGP SIGNATURE-----
+
+--d03Wvsl4acTHE0IU--
