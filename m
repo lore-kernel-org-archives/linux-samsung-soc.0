@@ -1,60 +1,55 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Remove unused s5p_device_ehci
-Date: Thu, 10 Oct 2013 11:40:22 +0900
-Message-ID: <000501cec562$11209d20$3361d760$%han@samsung.com>
-References: <000001cec55c$b70f0100$252d0300$%han@samsung.com>
- <52561022.603@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 3/3] ARM: dts: exynos4x12: Add maudio/gps_alive power
+ domain for exynos4x12
+Date: Thu, 10 Oct 2013 08:59:24 +0530
+Message-ID: <CAK9yfHxr27nsmaqkE+seDgZAkpUmOsPqdXdeogY89tAXYEEG2w@mail.gmail.com>
+References: <1381365007-1782-1-git-send-email-cw00.choi@samsung.com>
+	<1381365007-1782-4-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:31847 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752141Ab3JJCk7 (ORCPT
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:40100 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753882Ab3JJD30 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 22:40:59 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MUF0063TM2XY310@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 Oct 2013 11:40:22 +0900 (KST)
-In-reply-to: <52561022.603@samsung.com>
-Content-language: ko
+	Wed, 9 Oct 2013 23:29:26 -0400
+Received: by mail-pd0-f179.google.com with SMTP id v10so1926821pde.38
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Oct 2013 20:29:26 -0700 (PDT)
+In-Reply-To: <1381365007-1782-4-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, ijc+devicetree@hellion.org.uk, Russell King <linux@arm.linux.org.uk>
 
-On Thursday, October 10, 2013 11:26 AM, Sylwester Nawrocki wrote:
-> On 10/10/2013 11:02 AM, Jingoo Han wrote:
-> > Since commit ca91435 "ARM: EXYNOS: Remove unused board files",
-> > s5p_device_ehci is not used anymore. Thus, s5p_device_ehci can
-> > be removed. Also, unnecessary S5P_DEV_USB_EHCI option is removed.
-> >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> 
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> 
-> > diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> > index 8ce0ac0..25f40c9 100644
-> > --- a/arch/arm/plat-samsung/devs.c
-> > +++ b/arch/arm/plat-samsung/devs.c
-> > @@ -49,7 +49,6 @@
-> >  #include <plat/devs.h>
-> >  #include <plat/adc.h>
-> >  #include <linux/platform_data/ata-samsung_cf.h>
-> > -#include <linux/platform_data/usb-ehci-s5p.h>
-> 
-> Are you planning to remove also this file altogether ? Probably the
-> s5p-ehci driver could be cleaned up then and the platform_data handling
-> dropped from it as a follow up.
+On 10 October 2013 06:00, Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> This patch maudio/gps_alive power domain to exynos4x12.dtsi.
+>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4x12.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+> index ad531fe..c04418e 100644
+> --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> @@ -35,6 +35,16 @@
+>                 reg = <0x10023CA0 0x20>;
+>         };
+>
+> +       pd_maudio: maudio-power-domain@10023CC0 {
+> +               compatible = "samsung,exynos4210-pd";
+> +               reg = <0x10023CC0 0x20>;
+> +       };
+> +
+> +       pd_gps_alive: gps-alive-power-domain@10023D04 {
+> +               compatible = "samsung,exynos4210-pd";
+> +               reg = <0x10023D00 0x20>;
 
-Hi Sylwester Nawrocki,
+There is mismatch between node name and register value.
 
-I will rename s5p-ehci to s5p-exynos, then drop platform_data handling
-from it. These will be separate patches.
-Thank you your comment. :-)
 
-Best regards,
-Jingoo Han
+-- 
+With warm regards,
+Sachin
