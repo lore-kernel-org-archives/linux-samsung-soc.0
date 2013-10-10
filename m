@@ -1,94 +1,69 @@
-From: Leela Krishna Amudala <leelakrishna.a@gmail.com>
-Subject: Re: [RFC/PATCH V2] spi: s3c64xx: Enable Word transfer
-Date: Thu, 10 Oct 2013 17:36:26 +0530
-Message-ID: <CAL1wa8dRssZ11E62X_Gw3yn_cz=5_urBypYwAJyNc4BU5MnhEw@mail.gmail.com>
-References: <1381401697-25992-1-git-send-email-rajeshwari.s@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 3/5] drm/bridge: Add PTN3460 bridge driver
+Date: Thu, 10 Oct 2013 13:23:34 +0100
+Message-ID: <20131010122334.GJ21581@sirena.org.uk>
+References: <1380670860-17621-4-git-send-email-seanpaul@chromium.org>
+ <CAAQKjZN_r-=-sj=Vb-o-KUS4ab5=cjCq1ni3VZeMeVc3NL=MMg@mail.gmail.com>
+ <CAOw6vbLiJLLKn=gb1=j5TBeM0ijEK13+goG-=mw7MZTyNT1kpQ@mail.gmail.com>
+ <CAAQKjZPwyKCpju4Ndd+MB_aN24-zA5xTHFsFsun2617h7YT6dw@mail.gmail.com>
+ <CAOesGMgKastzdFHYQzyL8gxkBN=86wFZ4jbgP8BHxfkOuZvJxg@mail.gmail.com>
+ <CAAQKjZMhovKLxNfnXnbF-6diM2zF1cWyi+xHGyL3v83vBh4p6g@mail.gmail.com>
+ <20131009182905.GY21581@sirena.org.uk>
+ <05c701cec56f$b79eea50$26dcbef0$%dae@samsung.com>
+ <20131010093708.GC21581@sirena.org.uk>
+ <063a01cec5ad$8afd1920$a0f74b60$%dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yJ4qnbZIW6vSQ1qE"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:46098 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751791Ab3JJMGs (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:33467 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755283Ab3JJMYF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Oct 2013 08:06:48 -0400
-In-Reply-To: <1381401697-25992-1-git-send-email-rajeshwari.s@samsung.com>
+	Thu, 10 Oct 2013 08:24:05 -0400
+Content-Disposition: inline
+In-Reply-To: <063a01cec5ad$8afd1920$a0f74b60$%dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, alim.akhtar@samsung.com, dianders@google.com, Tomasz Figa <t.figa@samsung.com>, broonie@linaro.org, Sachin Kamat <sachin.kamat@linaro.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, 'Sean Paul' <seanpaul@chromium.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 'DRI mailing list' <dri-devel@lists.freedesktop.org>, linux-arm-kernel@lists.infradead.org
 
-Hi Rajeshwari,
 
-On Thu, Oct 10, 2013 at 4:11 PM, Rajeshwari S Shinde
-<rajeshwari.s@samsung.com> wrote:
-> This patch enables word transfer for s3c64xx spi driver.
-> User can set bits_per_word to 32 before calling spi_setup,
-> which would enable the word transfer mode.
->
-> Signed-off-by: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
-> ---
-> Chnages in V2:
->         - Reduced the call for s3c64xx_spi_config
->  drivers/spi/spi-s3c64xx.c | 24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 512b889..d1b0a2b 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -498,6 +498,17 @@ static void enable_datapath(struct s3c64xx_spi_driver_data *sdd,
->         chcfg = readl(regs + S3C64XX_SPI_CH_CFG);
->         chcfg &= ~S3C64XX_SPI_CH_TXCH_ON;
->
-> +       if(sdd->cur_bpw == 32) {
-> +               /* For word transfer we need to swap bytes */
-> +               u32 swapcfg = (S3C64XX_SPI_SWAP_TX_EN | S3C64XX_SPI_SWAP_TX_BYTE |
-> +                               S3C64XX_SPI_SWAP_TX_HALF_WORD |
-> +                               S3C64XX_SPI_SWAP_RX_EN |
-> +                               S3C64XX_SPI_SWAP_RX_BYTE |
-> +                               S3C64XX_SPI_SWAP_RX_HALF_WORD);
-> +               writel(swapcfg, regs + S3C64XX_SPI_SWAP_CFG);
+--yJ4qnbZIW6vSQ1qE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In s3c64xx_spi_probe() function
-sdd->cur_bpw is hard coded to 8
+On Thu, Oct 10, 2013 at 08:40:38PM +0900, Inki Dae wrote:
 
-is there any provision somehow to configure cur_bpw to 32 ?
+> That is what I mentioned. Some boards _could control_ the actual regulator
+> for lvds-bridge, and that would be depended on how HW engineer designs the
+> board.=20
 
-wouldn't 16 bits per word transfers also need swapping?
+For the driver this should be totally transparent - it should just
+control the regulator all the time, the regulator API will just not do
+anything if the regulator state can't actually be changed.
 
-Best Wishes,
-Leela Krishna.
+--yJ4qnbZIW6vSQ1qE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-> +       } else
-> +               writel(0, regs + S3C64XX_SPI_SWAP_CFG);
-> +
->         if (dma_mode) {
->                 chcfg &= ~S3C64XX_SPI_CH_RXCH_ON;
->         } else {
-> @@ -905,13 +916,12 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
->                 bpw = xfer->bits_per_word;
->                 speed = xfer->speed_hz ? : spi->max_speed_hz;
->
-> -               if (xfer->len % (bpw / 8)) {
-> -                       dev_err(&spi->dev,
-> -                               "Xfer length(%u) not a multiple of word size(%u)\n",
-> -                               xfer->len, bpw / 8);
-> -                       status = -EIO;
-> -                       goto out;
-> -               }
-> +               /*
-> +                * Enable byte tranfer if transfer length not a multiple of
-> +                * word size
-> +                */
-> +               if (xfer->len % (bpw / 8))
-> +                       bpw = 8;
->
->                 if (bpw != sdd->cur_bpw || speed != sdd->cur_speed) {
->                         sdd->cur_bpw = bpw;
-> --
-> 1.7.12.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSVpxDAAoJELSic+t+oim9lGoP/iCL66+/bISG/Y/dGNV4pH17
+Y++ASeLEyHO7YJYMpy+JADrTA18r4YpFub1q6pNFEW3V9MHY0LkFmPDuZdrfSJso
+6+Pr8H1DfOF4w1GYosfGxZMv9nmfPIefeKC8KNWHYL6Yi3+GvdScHWjVKGn+daAC
+Mrmrq2ajkhlLNsgbok8MoF9UpNsbgXLwXcjc5NBuAhZ8Plh5wChhXW03yYiCAa8F
+G/kVcBSfJpWYEyehOhMuFSbbSiE8a4LTFdhvRsCgwnRQBCcb46L1vM61t9xIfJA7
+OuNbOfGonWbJEj0FN6tXtyb3JPFf/OuCKFstp5vycgb6Qnb6+SLZN456maTH3Sy4
+AL7b3WcK9m+4A2EBVYyo+OBnPmSFb5KWEFUDdt9pkp57tGy2lDudhGh/3UvsrL+z
+NGTqZCtvkjtYoCfwc4ZgMoBB91W2j3ZsUWWOcZf+7ktMaj7f50CMrqrbtISOmQVQ
+LrzRFGC0K+klrmJ0JzOOTBulJFypuwIUI9Gdo7P5H4MfbRjABqAbilPj4+UsuRGX
+OqUhI+X2XfBBOhY5JcKZDSzKEsEQda+Z4USxhueJ+xS3iAsOYdWMj6p77RCOCa5w
+1akPTkOHHrnQRTEpB0i80a9ovDl2Ur/7LN2Yx/0vQ9B7fuWqZpoVIgFvn/ARtTs2
++fBQtUfo84DPOgwFKgdk
+=xvZv
+-----END PGP SIGNATURE-----
+
+--yJ4qnbZIW6vSQ1qE--
