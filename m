@@ -1,46 +1,83 @@
-From: Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: [PATCH] s5p-jpeg: fix encoder and decoder video dev names
-Date: Thu, 10 Oct 2013 17:45:56 +0900
-Message-ID: <1381394756-17651-1-git-send-email-sw0312.kim@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.chehab@samsung.com, s.nawrocki@samsung.com
-Cc: sw0312.kim@samsung.com
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH V2] ARM: dts: exynos5: add pwm DT nodes to Exynos5250 and
+ Exynos5420
+Date: Thu, 10 Oct 2013 14:43:29 +0530
+Message-ID: <1381396409-10313-1-git-send-email-l.krishna@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:49420 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752100Ab3JJIxD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Oct 2013 04:53:03 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, devicetree@vger.kernel.org, t.figa@samsung.com, abrestic@chromium.org, olofj@chromium.org
 
-It is hard to distinguish between decoder and encoder video device
-because their names are same. So this patch fixes the names.
+Add the device-tree binding for the PWM controller to Exynos5250 and Exynos5420
 
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Olof Johansson <olofj@chromium.org>
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 ---
- drivers/media/platform/s5p-jpeg/jpeg-core.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+changes since v1:
+	- Moved the common properties in the node to exynos5.dtsi file
+	  suggested by Sachin Kamat <sachin.kamat@linaro.org>	  
 
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-index 15d2396..d5b4a0d 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-@@ -1387,8 +1387,8 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
- 		ret = -ENOMEM;
- 		goto vb2_allocator_rollback;
- 	}
--	strlcpy(jpeg->vfd_encoder->name, S5P_JPEG_M2M_NAME,
--		sizeof(jpeg->vfd_encoder->name));
-+	snprintf(jpeg->vfd_encoder->name, sizeof(jpeg->vfd_encoder->name),
-+				"%s-enc", S5P_JPEG_M2M_NAME);
- 	jpeg->vfd_encoder->fops		= &s5p_jpeg_fops;
- 	jpeg->vfd_encoder->ioctl_ops	= &s5p_jpeg_ioctl_ops;
- 	jpeg->vfd_encoder->minor	= -1;
-@@ -1415,8 +1415,8 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
- 		ret = -ENOMEM;
- 		goto enc_vdev_register_rollback;
- 	}
--	strlcpy(jpeg->vfd_decoder->name, S5P_JPEG_M2M_NAME,
--		sizeof(jpeg->vfd_decoder->name));
-+	snprintf(jpeg->vfd_decoder->name, sizeof(jpeg->vfd_decoder->name),
-+				"%s-dec", S5P_JPEG_M2M_NAME);
- 	jpeg->vfd_decoder->fops		= &s5p_jpeg_fops;
- 	jpeg->vfd_decoder->ioctl_ops	= &s5p_jpeg_ioctl_ops;
- 	jpeg->vfd_decoder->minor	= -1;
+ arch/arm/boot/dts/exynos5.dtsi    |    7 +++++++
+ arch/arm/boot/dts/exynos5250.dtsi |    5 +++++
+ arch/arm/boot/dts/exynos5420.dtsi |    5 +++++
+ 3 files changed, 17 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index 074739d..eb74ebc 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -109,6 +109,13 @@
+ 		status = "disabled";
+ 	};
+ 
++	pwm: pwm@12dd0000 {
++		compatible = "samsung,exynos4210-pwm";
++		reg = <0x12dd0000 0x100>;
++		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
++		#pwm-cells = <3>;
++	};
++
+ 	fimd@14400000 {
+ 		compatible = "samsung,exynos5250-fimd";
+ 		interrupt-parent = <&combiner>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 7cb5c4b..52bf8d2 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -521,6 +521,11 @@
+ 		};
+ 	};
+ 
++	pwm: pwm@12dd0000 {
++		clocks = <&clock 311>;
++		clock-names = "timers";
++	};
++
+ 	amba {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 09aa06c..9387b15 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -210,6 +210,11 @@
+ 		clock-names = "uart", "clk_uart_baud0";
+ 	};
+ 
++	pwm: pwm@12dd0000 {
++		clocks = <&clock 279>;
++		clock-names = "timers";
++	};
++
+ 	dp_phy: video-phy@10040728 {
+ 		compatible = "samsung,exynos5250-dp-video-phy";
+ 		reg = <0x10040728 4>;
 -- 
-1.7.4.1
+1.7.10.4
