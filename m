@@ -1,68 +1,66 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [RESEND] [PATCH] ARM: dts: exynos5: add pwm DT nodes to Exynos5250 and
- Exynos5420
-Date: Thu, 10 Oct 2013 11:12:11 +0530
-Message-ID: <1381383731-4359-1-git-send-email-l.krishna@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: Remove unused s5p_device_ehci
+Date: Thu, 10 Oct 2013 14:29:58 +0900
+Message-ID: <000101cec579$c2c9c1c0$485d4540$%han@samsung.com>
+References: <000001cec55c$b70f0100$252d0300$%han@samsung.com>
+ <52561022.603@samsung.com> <000501cec562$11209d20$3361d760$%han@samsung.com>
+ <11324918.I3J8AgutaD@amdn883>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:25242 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752026Ab3JJFVZ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:53855 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753519Ab3JJFaA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Oct 2013 01:21:25 -0400
+	Thu, 10 Oct 2013 01:30:00 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MUF00GWJTXQSFM0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 Oct 2013 14:29:59 +0900 (KST)
+In-reply-to: <11324918.I3J8AgutaD@amdn883>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, devicetree@vger.kernel.org, t.figa@samsung.com, abrestic@chromium.org, olofj@chromium.org
+To: 'Tomasz Figa' <t.figa@samsung.com>
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Add the device-tree binding for the PWM controller to Exynos5250 and Exynos5420
+On Thursday, October 10, 2013 2:18 PM, Tomasz Figa wrote:
+> On Thursday 10 of October 2013 11:40:22 Jingoo Han wrote:
+> > On Thursday, October 10, 2013 11:26 AM, Sylwester Nawrocki wrote:
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Olof Johansson <olofj@chromium.org>
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |    9 +++++++++
- arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
- 2 files changed, 18 insertions(+)
+[....]
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 864ae90..99abc72 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -521,6 +521,15 @@
- 		};
- 	};
- 
-+	pwm: pwm@12dd0000 {
-+		compatible = "samsung,exynos4210-pwm";
-+		reg = <0x12dd0000 0x100>;
-+		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+		#pwm-cells = <3>;
-+		clocks = <&clock 311>;
-+		clock-names = "timers";
-+	};
-+
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index d537cd7..80afc8b 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -206,6 +206,15 @@
- 		clock-names = "uart", "clk_uart_baud0";
- 	};
- 
-+	pwm: pwm@12dd0000 {
-+		compatible = "samsung,exynos4210-pwm";
-+		reg = <0x12dd0000 0x100>;
-+		samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+		#pwm-cells = <3>;
-+		clocks = <&clock 279>;
-+		clock-names = "timers";
-+	};
-+
- 	dp_phy: video-phy@10040728 {
- 		compatible = "samsung,exynos5250-dp-video-phy";
- 		reg = <0x10040728 4>;
--- 
-1.7.10.4
+> > > Are you planning to remove also this file altogether ? Probably the
+> > > s5p-ehci driver could be cleaned up then and the platform_data handling
+> > > dropped from it as a follow up.
+> >
+> > Hi Sylwester Nawrocki,
+> >
+> > I will rename s5p-ehci to s5p-exynos, then drop platform_data handling
+> > from it. These will be separate patches.
+> > Thank you your comment. :-)
+> 
+> I'd recommend keeping driver name as is. S5PV210 is going to receive DT
+> support soon and it will be also able to use this driver.
+> 
+
+Hi Tomasz Figa,
+
+Now, Exynos EHCI and OHCI driver's name is different as below:
+ ehci-s5p.c
+ ohci-exynos.c
+
+I want to use same name. There is no reason to keep the different names.
+Also I want to use '-exynos.c' even though S5PV210 can support EHCI and OHCI.
+ ehci-exynos.c
+ ohci-exynos.c
+
+Then, do you want to use the following names?
+ ehci-s5p.c
+ ohci-s5p.c
+
+Best regards,
+Jingoo Han
