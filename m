@@ -1,24 +1,40 @@
-From: "tvikesl" <admin@southsrugby.com>
-Subject: =?windows-1251?B?0+Hu8OrgIMri4PDy6PD7IOgg5O7s4C4g0fP1?=
-	=?windows-1251?B?4P8g6CDi6+Dm7eD/LiDK4Pfl8fLi5e3t7i4=?=
-Date: Thu, 10 Oct 2013 01:07:14 +0200
-Message-ID: <60F08253899D4C44ABC890C2F8489E26@ufbkwv>
-Reply-To: "tvikesl" <elabieva.s@oceris.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1251;
-	format=flowed	reply-type=original
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 1/3] ARM: dts: exynos4212: Add PMU dt data for pmu-irq
+Date: Thu, 10 Oct 2013 09:30:05 +0900
+Message-ID: <1381365007-1782-2-git-send-email-cw00.choi@samsung.com>
+References: <1381365007-1782-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from [219.143.71.215] ([219.143.71.215]:35464 "HELO seis.ac.cn"
-	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-	id S1752136Ab3JIXHL convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:60758 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754088Ab3JJAaI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Oct 2013 19:07:11 -0400
+	Wed, 9 Oct 2013 20:30:08 -0400
+In-reply-to: <1381365007-1782-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: k.zvezdenkov@vniikp.ru, info@raafalina.ru, region@vivo-porte.ru, olga.b@kupi-reklamu.ru, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, kyungmin.park@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, linux@arm.linux.org.uk, Chanwoo Choi <cw00.choi@samsung.com>
 
-=CC=FB =F3=EC=E5=E5=EC =EF=EE=E4=F1=EE=E1=E8=F2=FC =F1 =F3=E1=EE=F0=EA=EE=
-=E9 =E0=EF=E0=F0=F2=E0=EC=E5=ED=F2=EE=E2 =E8=EB=E8 =CA=E2=E0=F0=F2=E8=F0=
-=FB =E7=E0 =ED=E5=E1=EE=EB=FC=F8=E8=E5 =E4=E5=ED=FC=E3=E8 http://74.ru/=
-go/?url=3Dhttp://m00.me/qpzd
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4212.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+index 6f34d7f..3081bae 100644
+--- a/arch/arm/boot/dts/exynos4212.dtsi
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -56,4 +56,10 @@
+ 					<0x5 0 &gic 1 12 0>;
+ 		};
+ 	};
++
++	pmu {
++		compatible = "arm,cortex-a9-pmu";
++		interrupt-parent = <&combiner>;
++		interrupts = <2 2>, <3 2>;
++	};
+ };
+-- 
+1.8.0
