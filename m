@@ -1,198 +1,105 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH V2] ARM: EXYNOS: Move arm core power down clock to exynos5250 common clock
-Date: Fri, 11 Oct 2013 11:12:14 +0530
-Message-ID: <1381470134-29410-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:51265 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751947Ab3JKFm3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Oct 2013 01:42:29 -0400
-Received: by mail-pd0-f176.google.com with SMTP id q10so3706010pdj.35
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Oct 2013 22:42:28 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/3] ahci: exynos: add ahci sata support on Exynos platform
+Date: Fri, 11 Oct 2013 15:49:04 +0900
+Message-ID: <000001cec64d$fa1cdca0$ee5695e0$%han@samsung.com>
+References: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1380609183-21430-2-git-send-email-yuvaraj.cd@samsung.com>
+ <1534631.KrL0vInDuc@amdc1032>
+ <003f01cec099$4eb706b0$ec251410$%han@samsung.com>
+ <CAKuRcOJi5C1C63Y41dSJ0-YsaTni1AL=d3qH2Cjz74C8ardEpQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-reply-to: <CAKuRcOJi5C1C63Y41dSJ0-YsaTni1AL=d3qH2Cjz74C8ardEpQ@mail.gmail.com>
+Content-language: ko
+Sender: linux-ide-owner@vger.kernel.org
+To: 'Yuvaraj Kumar' <yuvaraj.cd@gmail.com>
+Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, tj@kernel.org, kgene.kim@samsung.com, 'Grant Likely' <grant.likely@linaro.org>, 'Rob Herring' <rob.herring@calxeda.com>, linux-ide@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kishon@ti.com, s.nawrocki@samsung.com, ks.giri@samsung.com, aditya.ps@samsung.com, 'Yuvaraj Kumar C D' <yuvaraj.cd@samsung.com>, rogerq@ti.com, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Abhilash Kesavan <a.kesavan@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
 
-Now with common clock support added for exynos5250 it is necessary to move
-this code to exynos5250 common clock driver as clock registers should be
-handled there. This change is tested in exynos5250 based arndale platform.
+On Tuesday, October 08, 2013 8:45 PM, Yuvaraj Kumar wrote:
+> On Fri, Oct 4, 2013 at 6:03 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> > On Thursday, October 03, 2013 8:32 PM, Bartlomiej Zolnierkiewicz wrote:
+> >> On Tuesday, October 01, 2013 12:03:01 PM Yuvaraj Kumar C D wrote:
+> >> > Exynos5250 contains one Synopsys AHCI SATA controller.The avalaible
+> >> > ahci_platform driver is not sufficient to handle the AHCI PHY and PHY
+> >> > clock related initialization.
+> >> >
+> >> > This patch adds exynos specific ahci sata driver,contained the exynos
+> >> > specific initialized codes, re-use the generic ahci_platform driver, and
+> >> > keep the generic ahci_platform driver clean as much as possible.
+> >> >
+> >> > This patch depends on the below patch
+> >> >     [1].drivers: phy: add generic PHY framework
+> >> >             by Kishon Vijay Abraham I<kishon@ti.com>
+> >> >
+> >> > Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> >> > ---
+> >> >  drivers/ata/Kconfig       |    9 ++
+> >> >  drivers/ata/Makefile      |    1 +
+> >> >  drivers/ata/ahci_exynos.c |  226 +++++++++++++++++++++++++++++++++++++++++++++
+> >> >  3 files changed, 236 insertions(+)
+> >> >  create mode 100644 drivers/ata/ahci_exynos.c
+> >> >
+> >
+> >
+> > [.....]
+> >
+> >> > +   priv->phy = devm_phy_get(dev , "sata-phy");
+> >> > +   if (IS_ERR(priv->phy))
+> >> > +           return PTR_ERR(priv->phy);
+> >
+> > [.....]
+> >
+> >> Also please take a look at the following patch:
+> >>
+> >> https://lkml.org/lkml/2013/9/19/173
+> >>
+> >> it adds PHY support to ahci_platform driver, maybe it can be used
+> >> for your needs as well.
+> >
+> > I also agree with Bartlomiej Zolnierkiewicz's opinion.
+> > 'ahci_exynos.c' just calls PHY API, without any additional control
+> > for Exynos AHCI IP.
+> In addition to PHY handling,it also deals with the special clock
+> sclk_sata which is not dealt in ahci_platform.c(certainly exynos
+> specific).
 
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Acked-by: Kukjin Kim <kgene.kim@samsugn.com>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
+Handling the special clock 'sclk_sata' is another issue.
+Please, look at that other 'sclk_*'s are handled.
+Also, if possible, please add 'the code handling the special clock'
+to 'ahci_platform.c'.
 
-Changes in V2:
-* Rebased against linux-next tree.
-* Removed un-used macros in regs-clock.h
+> 
+> Morever there is a wrapper driver to handle the platform specific
+> things for the sata.Please refer the  patch[1]
+> [1]ata: ti_sata: Add Texas Instruments SATA Wrapper driver
+> https://lkml.org/lkml/2013/9/19/166
 
- arch/arm/mach-exynos/cpuidle.c                 |   35 --------------------
- arch/arm/mach-exynos/include/mach/regs-clock.h |   16 ---------
- drivers/clk/samsung/clk-exynos5250.c           |   42 ++++++++++++++++++++++++
- 3 files changed, 42 insertions(+), 51 deletions(-)
+As Roger Quadros mentioned, 'ti_sata' driver will be dropped.
 
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 1bde6ad..40963ce 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -161,46 +161,11 @@ static int exynos4_enter_lowpower(struct cpuidle_device *dev,
- 		return exynos4_enter_core0_aftr(dev, drv, new_index);
- }
- 
--static void __init exynos5_core_down_clk(void)
--{
--	unsigned int tmp;
--
--	/*
--	 * Enable arm clock down (in idle) and set arm divider
--	 * ratios in WFI/WFE state.
--	 */
--	tmp = PWR_CTRL1_CORE2_DOWN_RATIO | \
--	      PWR_CTRL1_CORE1_DOWN_RATIO | \
--	      PWR_CTRL1_DIV2_DOWN_EN	 | \
--	      PWR_CTRL1_DIV1_DOWN_EN	 | \
--	      PWR_CTRL1_USE_CORE1_WFE	 | \
--	      PWR_CTRL1_USE_CORE0_WFE	 | \
--	      PWR_CTRL1_USE_CORE1_WFI	 | \
--	      PWR_CTRL1_USE_CORE0_WFI;
--	__raw_writel(tmp, EXYNOS5_PWR_CTRL1);
--
--	/*
--	 * Enable arm clock up (on exiting idle). Set arm divider
--	 * ratios when not in idle along with the standby duration
--	 * ratios.
--	 */
--	tmp = PWR_CTRL2_DIV2_UP_EN	 | \
--	      PWR_CTRL2_DIV1_UP_EN	 | \
--	      PWR_CTRL2_DUR_STANDBY2_VAL | \
--	      PWR_CTRL2_DUR_STANDBY1_VAL | \
--	      PWR_CTRL2_CORE2_UP_RATIO	 | \
--	      PWR_CTRL2_CORE1_UP_RATIO;
--	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
--}
--
- static int __init exynos_cpuidle_probe(struct platform_device *pdev)
- {
- 	int cpu_id, ret;
- 	struct cpuidle_device *device;
- 
--	if (soc_is_exynos5250())
--		exynos5_core_down_clk();
--
- 	if (soc_is_exynos5440())
- 		exynos4_idle_driver.state_count = 1;
- 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
-index d36ad76..b59b0ad 100644
---- a/arch/arm/mach-exynos/include/mach/regs-clock.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
-@@ -347,22 +347,6 @@
- 
- #define EXYNOS5_EPLLCON0_LOCKED_SHIFT		(29)
- 
--#define PWR_CTRL1_CORE2_DOWN_RATIO		(7 << 28)
--#define PWR_CTRL1_CORE1_DOWN_RATIO		(7 << 16)
--#define PWR_CTRL1_DIV2_DOWN_EN			(1 << 9)
--#define PWR_CTRL1_DIV1_DOWN_EN			(1 << 8)
--#define PWR_CTRL1_USE_CORE1_WFE			(1 << 5)
--#define PWR_CTRL1_USE_CORE0_WFE			(1 << 4)
--#define PWR_CTRL1_USE_CORE1_WFI			(1 << 1)
--#define PWR_CTRL1_USE_CORE0_WFI			(1 << 0)
--
--#define PWR_CTRL2_DIV2_UP_EN			(1 << 25)
--#define PWR_CTRL2_DIV1_UP_EN			(1 << 24)
--#define PWR_CTRL2_DUR_STANDBY2_VAL		(1 << 16)
--#define PWR_CTRL2_DUR_STANDBY1_VAL		(1 << 8)
--#define PWR_CTRL2_CORE2_UP_RATIO		(1 << 4)
--#define PWR_CTRL2_CORE1_UP_RATIO		(1 << 0)
--
- /* Compatibility defines and inclusion */
- 
- #include <mach/regs-pmu.h>
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index adf3234..07f2f46 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -22,6 +22,8 @@
- #define APLL_CON0		0x100
- #define SRC_CPU			0x200
- #define DIV_CPU0		0x500
-+#define PWR_CTRL1		0x1020
-+#define PWR_CTRL2		0x1024
- #define MPLL_LOCK		0x4000
- #define MPLL_CON0		0x4100
- #define SRC_CORE1		0x4204
-@@ -77,6 +79,23 @@
- #define GATE_IP_DISP1		0x10928
- #define GATE_IP_ACP		0x10000
- 
-+/*Below definitions are used for PWR_CTRL settings*/
-+#define PWR_CTRL1_CORE2_DOWN_RATIO		(7 << 28)
-+#define PWR_CTRL1_CORE1_DOWN_RATIO		(7 << 16)
-+#define PWR_CTRL1_DIV2_DOWN_EN			(1 << 9)
-+#define PWR_CTRL1_DIV1_DOWN_EN			(1 << 8)
-+#define PWR_CTRL1_USE_CORE1_WFE			(1 << 5)
-+#define PWR_CTRL1_USE_CORE0_WFE			(1 << 4)
-+#define PWR_CTRL1_USE_CORE1_WFI			(1 << 1)
-+#define PWR_CTRL1_USE_CORE0_WFI			(1 << 0)
-+
-+#define PWR_CTRL2_DIV2_UP_EN			(1 << 25)
-+#define PWR_CTRL2_DIV1_UP_EN			(1 << 24)
-+#define PWR_CTRL2_DUR_STANDBY2_VAL		(1 << 16)
-+#define PWR_CTRL2_DUR_STANDBY1_VAL		(1 << 8)
-+#define PWR_CTRL2_CORE2_UP_RATIO		(1 << 4)
-+#define PWR_CTRL2_CORE1_UP_RATIO		(1 << 0)
-+
- /* list of PLLs to be registered */
- enum exynos5250_plls {
- 	apll, mpll, cpll, epll, vpll, gpll, bpll,
-@@ -135,6 +154,8 @@ enum exynos5250_clks {
- static unsigned long exynos5250_clk_regs[] __initdata = {
- 	SRC_CPU,
- 	DIV_CPU0,
-+	PWR_CTRL1,
-+	PWR_CTRL2,
- 	SRC_CORE1,
- 	SRC_TOP0,
- 	SRC_TOP2,
-@@ -543,6 +564,7 @@ static struct of_device_id ext_clk_match[] __initdata = {
- static void __init exynos5250_clk_init(struct device_node *np)
- {
- 	void __iomem *reg_base;
-+	unsigned int tmp;
- 
- 	if (np) {
- 		reg_base = of_iomap(np, 0);
-@@ -580,6 +602,26 @@ static void __init exynos5250_clk_init(struct device_node *np)
- 	samsung_clk_register_gate(exynos5250_gate_clks,
- 			ARRAY_SIZE(exynos5250_gate_clks));
- 
-+	/*
-+	 * Enable arm clock down (in idle) and set arm divider
-+	 * ratios in WFI/WFE state.
-+	 */
-+	tmp = (PWR_CTRL1_CORE2_DOWN_RATIO | PWR_CTRL1_CORE1_DOWN_RATIO |
-+		PWR_CTRL1_DIV2_DOWN_EN | PWR_CTRL1_DIV1_DOWN_EN |
-+		PWR_CTRL1_USE_CORE1_WFE | PWR_CTRL1_USE_CORE0_WFE |
-+		PWR_CTRL1_USE_CORE1_WFI | PWR_CTRL1_USE_CORE0_WFI);
-+	__raw_writel(tmp, reg_base + PWR_CTRL1);
-+
-+	/*
-+	 * Enable arm clock up (on exiting idle). Set arm divider
-+	 * ratios when not in idle along with the standby duration
-+	 * ratios.
-+	 */
-+	tmp = (PWR_CTRL2_DIV2_UP_EN | PWR_CTRL2_DIV1_UP_EN |
-+		PWR_CTRL2_DUR_STANDBY2_VAL | PWR_CTRL2_DUR_STANDBY1_VAL |
-+		PWR_CTRL2_CORE2_UP_RATIO | PWR_CTRL2_CORE1_UP_RATIO);
-+	__raw_writel(tmp, reg_base + PWR_CTRL2);
-+
- 	pr_info("Exynos5250: clock setup completed, armclk=%ld\n",
- 			_get_rate("armclk"));
- }
--- 
-1.7.1
+> [2]ahci_imx: add ahci sata support on imx platforms
+> 
+
+'ahci_imx' is necessary, because 'ahci_imx' controls some
+specific registers.
+
+However, 'ahci_exynos.c' does not control any registers.
+
+> I think, if we have platform specific driver like ahci_xxx.c , it
+> would be better to handle the sata PHY in ahci_xxx.c so that we can
+> retain and re-use the ahci_platform.c as it is.
+
+I think that the platform specific driver like ahci_xxx.c is not
+necessary, because 'ahci_exynos.c' does not control any special
+registers.
+
+Best regards,
+Jingoo Han
+
+> 
+> Further comments will be much appreciated.
+> 
+
+
