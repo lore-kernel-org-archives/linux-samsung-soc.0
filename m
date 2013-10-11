@@ -1,160 +1,48 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v3] iio: exynos_adc: use wait_for_completion_timeout instead of
- interruptible
-Date: Fri, 11 Oct 2013 13:53:41 +0530
-Message-ID: <1381479821-17276-1-git-send-email-ch.naveen@samsung.com>
-References: <1365048389-6364-1-git-send-email-naveenkrishna.ch@gmail.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH RESEND 0/3] ARM: S3C24XX: add missing dma-devices and warning fix
+Date: Fri, 11 Oct 2013 10:59:19 +0200
+Message-ID: <201310111059.19791.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:40384 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752314Ab3JKIVj (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:41522 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756198Ab3JKI7d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Oct 2013 04:21:39 -0400
-In-reply-to: <1365048389-6364-1-git-send-email-naveenkrishna.ch@gmail.com>
+	Fri, 11 Oct 2013 04:59:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, tomasz.figa@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Olof Johansson <olof@lixom.net>
 
-This patch does the following
-1. use wait_for_completion_timeout instead of
-   wait_for_completion_interruptible_timeout
-2. Reset software if a timeout happens.
-3. Also reduce the timeout to 100milli secs
+[I messed up the linux-arm-kernel list address yesterday, so I resend it
+with a fixed address, sorry for the noise]
 
-Note: submitted for review at https://patchwork.kernel.org/patch/2279591/
+When Olof reported the warning about the unused s3c2410_dma_resource, I
+thought the best way forward would be to simply implement the missing
+pieces and so it has users :-) .
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
----
-Changes since v1:
-As per discussion at
-http://marc.info/?l=linux-kernel&m=136517637228869&w=3
+Therefore this series adds the necessary platform-devices for s3c2410,
+s3c2440 and s3c2442. This especially also includes the channel-constraints
+of those socs.
 
-This patch does the following
-1. use wait_for_completion_timeout instead of
-   wait_for_completion_interruptible_timeout
-2. Reset software if a timeout happens.
-3. Also reduce the timeout to 100milli secs
+As I do not have access to any of those socs these changes are of course
+compile-tested only.
 
-Changes since v2:
-None.
-Rebased and reposting.
+Heiko Stuebner (3):
+  ARM: S3C24XX: Fix possible dma selection warning
+  dmaengine: s3c24xx-dma: add support for the s3c2410 type of controller
+  ARM: S3C24XX: add dma platformdata for s3c2410, s3c2440 and s3c2442
 
----
- drivers/iio/adc/exynos_adc.c |   66 +++++++++++++++++++++++-------------------
- 1 file changed, 36 insertions(+), 30 deletions(-)
+ arch/arm/mach-s3c24xx/Kconfig             |    3 +-
+ arch/arm/mach-s3c24xx/common.c            |  100 +++++++++++++++++++++++++++++
+ arch/arm/mach-s3c24xx/common.h            |    2 +
+ drivers/dma/s3c24xx-dma.c                 |   10 +++
+ include/linux/platform_data/dma-s3c24xx.h |    3 +
+ sound/soc/samsung/Kconfig                 |    2 +-
+ 6 files changed, 118 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index d25b262..f18ed7e 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -82,7 +82,7 @@ enum adc_version {
- #define ADC_CON_EN_START	(1u << 0)
- #define ADC_DATX_MASK		0xFFF
- 
--#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(1000))
-+#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
- 
- struct exynos_adc {
- 	void __iomem		*regs;
-@@ -112,6 +112,30 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
- 	return (unsigned int)match->data;
- }
- 
-+static void exynos_adc_hw_init(struct exynos_adc *info)
-+{
-+	u32 con1, con2;
-+
-+	if (info->version == ADC_V2) {
-+		con1 = ADC_V2_CON1_SOFT_RESET;
-+		writel(con1, ADC_V2_CON1(info->regs));
-+
-+		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
-+			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
-+		writel(con2, ADC_V2_CON2(info->regs));
-+
-+		/* Enable interrupts */
-+		writel(1, ADC_V2_INT_EN(info->regs));
-+	} else {
-+		/* set default prescaler values and Enable prescaler */
-+		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-+
-+		/* Enable 12-bit ADC resolution */
-+		con1 |= ADC_V1_CON_RES;
-+		writel(con1, ADC_V1_CON(info->regs));
-+	}
-+}
-+
- static int exynos_read_raw(struct iio_dev *indio_dev,
- 				struct iio_chan_spec const *chan,
- 				int *val,
-@@ -121,6 +145,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 	struct exynos_adc *info = iio_priv(indio_dev);
- 	unsigned long timeout;
- 	u32 con1, con2;
-+	int ret;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
- 		return -EINVAL;
-@@ -145,16 +170,21 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				ADC_V1_CON(info->regs));
- 	}
- 
--	timeout = wait_for_completion_interruptible_timeout
-+	timeout = wait_for_completion_timeout
- 			(&info->completion, EXYNOS_ADC_TIMEOUT);
-+	if (timeout == 0) {
-+		dev_warn(&indio_dev->dev, "Conversion timed out reseting\n");
-+		exynos_adc_hw_init(info);
-+		ret = -ETIMEDOUT;
-+	} else {
-+		*val = info->value;
-+		ret = IIO_VAL_INT;
-+	}
- 	*val = info->value;
- 
- 	mutex_unlock(&indio_dev->mlock);
- 
--	if (timeout == 0)
--		return -ETIMEDOUT;
--
--	return IIO_VAL_INT;
-+	return ret;
- }
- 
- static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
-@@ -226,30 +256,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
- 	return 0;
- }
- 
--static void exynos_adc_hw_init(struct exynos_adc *info)
--{
--	u32 con1, con2;
--
--	if (info->version == ADC_V2) {
--		con1 = ADC_V2_CON1_SOFT_RESET;
--		writel(con1, ADC_V2_CON1(info->regs));
--
--		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
--			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
--		writel(con2, ADC_V2_CON2(info->regs));
--
--		/* Enable interrupts */
--		writel(1, ADC_V2_INT_EN(info->regs));
--	} else {
--		/* set default prescaler values and Enable prescaler */
--		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
--
--		/* Enable 12-bit ADC resolution */
--		con1 |= ADC_V1_CON_RES;
--		writel(con1, ADC_V1_CON(info->regs));
--	}
--}
--
- static int exynos_adc_probe(struct platform_device *pdev)
- {
- 	struct exynos_adc *info = NULL;
 -- 
 1.7.10.4
