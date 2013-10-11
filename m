@@ -1,77 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC/PATCH V3] spi: s3c64xx: Enable Word transfer
-Date: Fri, 11 Oct 2013 11:57:06 +0100
-Message-ID: <20131011105706.GB21581@sirena.org.uk>
-References: <1381466868-27679-1-git-send-email-rajeshwari.s@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rSajjWT08XXIcVzz"
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] i2c: s3c2410: dont need CPU_FREQ transitions for exynos series
+Date: Fri, 11 Oct 2013 16:56:54 +0530
+Message-ID: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:42790 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751234Ab3JKK5P (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:23778 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751266Ab3JKLYn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Oct 2013 06:57:15 -0400
-Content-Disposition: inline
-In-Reply-To: <1381466868-27679-1-git-send-email-rajeshwari.s@samsung.com>
+	Fri, 11 Oct 2013 07:24:43 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, sjg@chromium.org, alim.akhtar@samsung.com, dianders@google.com, t.figa@samsung.com
+To: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: wsa@the-dreams.de, khali@linux-fr.org, ben-linux@fluff.org, grant.likely@secretlab.ca, devicetree-discuss@lists.ozlabs.org, sjg@chromium.org, naveenkrishna.ch@gmail.com, broonie@opensource.wolfsonmicro.com, diander@google.com, cpgs@samsung.com
 
+The exynos5 i2c clock is based on a fixed 66 MHz peripheral clock, and
+therefore is completely independent of the cpu frequency.
+Thus, registering for a CPU freq notifier is very wasteful.
 
---rSajjWT08XXIcVzz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch modifes the code such that, i2c bus registers to
+cpu_freq_transition only for non Exynos SoCs.
 
-On Fri, Oct 11, 2013 at 10:17:48AM +0530, Rajeshwari S Shinde wrote:
+This change should save a bunch of cpufreq transitions calls
+which does not apply to exynos SoCs.
 
-> This patch enables word transfer for s3c64xx spi driver.
-> User can set bits_per_word to 32 before calling spi_setup,
-> which would enable the word transfer mode.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-As someone mentioned on previous reviews there's nothing in this patch
-which sets bits_per_word_mask, you should be doing that.
-
-> Changes in V3:
-> 	- Corrected the coding style nits.
-
-Not all of them:
-
-> +	if(sdd->cur_bpw == 32) {
-
-checkpatch should've told you about this...  I'd also expect this to be
-a switch statement with a case for 16 bit words too?
-
-> +		/*
-> +		 * Enable byte transfer if transfer length not a multiple of
-> +		 * word size
-> +		 */
-> +		if (xfer->len % (bpw / 8))
-> +			bpw = 8;
-
-This check is redundant, the core will validate bits per word.
-
---rSajjWT08XXIcVzz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSV9l/AAoJELSic+t+oim9Ag0P/RCPATZzNSn4Wq0K7LH3r2XE
-ER24QDtwUHqHddD+Ypj7/WyMSkANXRPm8VDT9rejHAlIqy/36MV2Isu0PRUYGURZ
-Yr2LcPS7JgN5yrGfXbcWuc2RytA49ExL47/R7IhIuIrkz9Ad4pI+LZzuDGQyf8Yj
-ZzWCERFlvRw6i7jqjlS4E4ekN1oJxueGKDtsNbPD0znpsQ8/bpoKwLvQHUGLI2Js
-ryyW/Sr3N8Y9oKWXedaVMoaDNorLExhWCuVYaQGYRTJXEm2N1bNrOZnuJeAlYt5a
-+FFJwcJQA1vCKkoNwbz0IiFZfN3BMuDDr5Hu17QiTGpKGfxFk4l9SfG5dDUi99B7
-/YTlINZhqunLTNOzDORV9Q4EZNGGTd5Z3Mgd7njS/pycDorD4hvkDBUcKpDDId73
-GAZ8Jo8DjasqXJQWACcidXSgLaJtFj1YoM1M8kfokNa/MmKWFnQRPSgikekV2X1G
-7mOSYQWEpHwti6Oi7DnBtCJ+v/ou+qR1XCM0KpfyHYOu2lKhNn54xxTLZ2x4R31I
-s09cW8y/3lKgS7+Qpy/BPvgtwUZlx0qznymJbFXr9TGEqwBAP256ntJF8iXT2nnt
-EsdQKjmotGqtmYc+HFiSMDA10C5onhWx8xddgCp+/ETtkaqpN6rUzbWBJRJiHGEN
-38o3o74Re0FP7dAkULge
-=GcFb
------END PGP SIGNATURE-----
-
---rSajjWT08XXIcVzz--
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index cab1c91..d062fa7 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -123,7 +123,7 @@ struct s3c24xx_i2c {
+ 	struct s3c2410_platform_i2c	*pdata;
+ 	int			gpios[2];
+ 	struct pinctrl          *pctrl;
+-#ifdef CONFIG_CPU_FREQ
++#if defined(CONFIG_CPU_FREQ) && !defined(CONFIG_ARCH_EXYNOS)
+ 	struct notifier_block	freq_transition;
+ #endif
+ };
+@@ -843,7 +843,7 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_CPU_FREQ
++#if defined(CONFIG_CPU_FREQ) && !defined(CONFIG_ARCH_EXYNOS)
+ 
+ #define freq_to_i2c(_n) container_of(_n, struct s3c24xx_i2c, freq_transition)
+ 
+-- 
+1.7.9.5
