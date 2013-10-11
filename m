@@ -1,24 +1,170 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 3/5] [media] s3c-camif: Use CONFIG_ARCH_S3C64XX to check
- for S3C64xx support
-Date: Fri, 11 Oct 2013 15:13:39 +0200
-Message-ID: <5257F983.9060904@gmail.com>
-References: <1380392497-27406-1-git-send-email-tomasz.figa@gmail.com> <1380392497-27406-3-git-send-email-tomasz.figa@gmail.com>
+From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Subject: Re: [PATCH v3] iio: exynos_adc: use wait_for_completion_timeout instead
+ of interruptible
+Date: Fri, 11 Oct 2013 16:30:45 +0200
+Message-ID: <52580B95.5010603@metafoo.de>
+References: <1365048389-6364-1-git-send-email-naveenkrishna.ch@gmail.com> <1381479821-17276-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1380392497-27406-3-git-send-email-tomasz.figa@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-media@vger.kernel.org, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Martin Schwidefsky <schwidefsky@de.ibm.com>
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1381479821-17276-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/28/2013 08:21 PM, Tomasz Figa wrote:
-> Since CONFIG_PLAT_S3C64XX is going to be removed, this patch modifies
-> the Kconfig entry of s3c-camif driver to use the proper way of checking
-> for S3C64xx support - CONFIG_ARCH_S3C64XX.
->
-> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
+On 10/11/2013 10:23 AM, Naveen Krishna Chatradhi wrote:
+> This patch does the following
+> 1. use wait_for_completion_timeout instead of
+>    wait_for_completion_interruptible_timeout
+> 2. Reset software if a timeout happens.
+> 3. Also reduce the timeout to 100milli secs
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+It is always good to have a description of why a chance should be done in
+the commit message. It is obvious what the patch does by just looking at the
+changed lines, it is not that obvious though why those lines had to be changed.
+
+> 
+> Note: submitted for review at https://patchwork.kernel.org/patch/2279591/
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+> ---
+> Changes since v1:
+> As per discussion at
+> http://marc.info/?l=linux-kernel&m=136517637228869&w=3
+> 
+> This patch does the following
+> 1. use wait_for_completion_timeout instead of
+>    wait_for_completion_interruptible_timeout
+> 2. Reset software if a timeout happens.
+> 3. Also reduce the timeout to 100milli secs
+> 
+> Changes since v2:
+> None.
+> Rebased and reposting.
+> 
+> ---
+>  drivers/iio/adc/exynos_adc.c |   66 +++++++++++++++++++++++-------------------
+>  1 file changed, 36 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> index d25b262..f18ed7e 100644
+> --- a/drivers/iio/adc/exynos_adc.c
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -82,7 +82,7 @@ enum adc_version {
+>  #define ADC_CON_EN_START	(1u << 0)
+>  #define ADC_DATX_MASK		0xFFF
+>  
+> -#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(1000))
+> +#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
+>  
+>  struct exynos_adc {
+>  	void __iomem		*regs;
+> @@ -112,6 +112,30 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
+>  	return (unsigned int)match->data;
+>  }
+>  
+> +static void exynos_adc_hw_init(struct exynos_adc *info)
+> +{
+> +	u32 con1, con2;
+> +
+> +	if (info->version == ADC_V2) {
+> +		con1 = ADC_V2_CON1_SOFT_RESET;
+> +		writel(con1, ADC_V2_CON1(info->regs));
+> +
+> +		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
+> +			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
+> +		writel(con2, ADC_V2_CON2(info->regs));
+> +
+> +		/* Enable interrupts */
+> +		writel(1, ADC_V2_INT_EN(info->regs));
+> +	} else {
+> +		/* set default prescaler values and Enable prescaler */
+> +		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+> +
+> +		/* Enable 12-bit ADC resolution */
+> +		con1 |= ADC_V1_CON_RES;
+> +		writel(con1, ADC_V1_CON(info->regs));
+> +	}
+> +}
+> +
+>  static int exynos_read_raw(struct iio_dev *indio_dev,
+>  				struct iio_chan_spec const *chan,
+>  				int *val,
+> @@ -121,6 +145,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+>  	struct exynos_adc *info = iio_priv(indio_dev);
+>  	unsigned long timeout;
+>  	u32 con1, con2;
+> +	int ret;
+>  
+>  	if (mask != IIO_CHAN_INFO_RAW)
+>  		return -EINVAL;
+> @@ -145,16 +170,21 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
+>  				ADC_V1_CON(info->regs));
+>  	}
+>  
+> -	timeout = wait_for_completion_interruptible_timeout
+> +	timeout = wait_for_completion_timeout
+>  			(&info->completion, EXYNOS_ADC_TIMEOUT);
+
+Nitpick: It would be nice to put the &info->completion on the same line as
+the wait_for_completion...
+
+> +	if (timeout == 0) {
+> +		dev_warn(&indio_dev->dev, "Conversion timed out reseting\n");
+> +		exynos_adc_hw_init(info);
+> +		ret = -ETIMEDOUT;
+> +	} else {
+> +		*val = info->value;
+> +		ret = IIO_VAL_INT;
+> +	}
+>  	*val = info->value;
+
+This line above should probably be removed.
+
+>  
+>  	mutex_unlock(&indio_dev->mlock);
+>  
+> -	if (timeout == 0)
+> -		return -ETIMEDOUT;
+> -
+> -	return IIO_VAL_INT;
+> +	return ret;
+>  }
+>  
+>  static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
+> @@ -226,30 +256,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
+>  	return 0;
+>  }
+>  
+> -static void exynos_adc_hw_init(struct exynos_adc *info)
+> -{
+> -	u32 con1, con2;
+> -
+> -	if (info->version == ADC_V2) {
+> -		con1 = ADC_V2_CON1_SOFT_RESET;
+> -		writel(con1, ADC_V2_CON1(info->regs));
+> -
+> -		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
+> -			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
+> -		writel(con2, ADC_V2_CON2(info->regs));
+> -
+> -		/* Enable interrupts */
+> -		writel(1, ADC_V2_INT_EN(info->regs));
+> -	} else {
+> -		/* set default prescaler values and Enable prescaler */
+> -		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+> -
+> -		/* Enable 12-bit ADC resolution */
+> -		con1 |= ADC_V1_CON_RES;
+> -		writel(con1, ADC_V1_CON(info->regs));
+> -	}
+> -}
+> -
+>  static int exynos_adc_probe(struct platform_device *pdev)
+>  {
+>  	struct exynos_adc *info = NULL;
+> 
