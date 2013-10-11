@@ -1,184 +1,77 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH RESEND 3/3] ARM: S3C24XX: add dma pdata for s3c2410, s3c2440 and s3c2442
-Date: Fri, 11 Oct 2013 11:01:33 +0200
-Message-ID: <201310111101.33782.heiko@sntech.de>
-References: <201310111059.19791.heiko@sntech.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC/PATCH V3] spi: s3c64xx: Enable Word transfer
+Date: Fri, 11 Oct 2013 11:57:06 +0100
+Message-ID: <20131011105706.GB21581@sirena.org.uk>
+References: <1381466868-27679-1-git-send-email-rajeshwari.s@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rSajjWT08XXIcVzz"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:41591 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752105Ab3JKJBs (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:42790 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751234Ab3JKK5P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Oct 2013 05:01:48 -0400
-In-Reply-To: <201310111059.19791.heiko@sntech.de>
+	Fri, 11 Oct 2013 06:57:15 -0400
+Content-Disposition: inline
+In-Reply-To: <1381466868-27679-1-git-send-email-rajeshwari.s@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Olof Johansson <olof@lixom.net>
+To: Rajeshwari S Shinde <rajeshwari.s@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, sjg@chromium.org, alim.akhtar@samsung.com, dianders@google.com, t.figa@samsung.com
 
-s3c2410 and s3c2442 share the same dma channels while s3c2440 has
-slight differences. But on all three the reachable sources per dma
-channel has constraints attached and thus encodes the usable
-combinations using the S3C24XX_DMA_CHANREQ macro.
 
-This also fixes the warning about s3c2410_dma_resource being unused
-as reported by Olof Johansson.
+--rSajjWT08XXIcVzz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/common.c            |  100 +++++++++++++++++++++++++++++
- arch/arm/mach-s3c24xx/common.h            |    2 +
- include/linux/platform_data/dma-s3c24xx.h |    3 +
- 3 files changed, 105 insertions(+)
+On Fri, Oct 11, 2013 at 10:17:48AM +0530, Rajeshwari S Shinde wrote:
 
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index 16ac669..4cfe7a4 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -343,6 +343,50 @@ static struct resource s3c2410_dma_resource[] = {
- };
- #endif
- 
-+#if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2442)
-+static struct s3c24xx_dma_channel s3c2410_dma_channels[DMACH_MAX] = {
-+	[DMACH_XD0] = { S3C24XX_DMA_AHB, true, S3C24XX_DMA_CHANREQ(0, 0), },
-+	[DMACH_XD1] = { S3C24XX_DMA_AHB, true, S3C24XX_DMA_CHANREQ(0, 1), },
-+	[DMACH_SDI] = { S3C24XX_DMA_APB, false, S3C24XX_DMA_CHANREQ(2, 0) |
-+						S3C24XX_DMA_CHANREQ(2, 2) |
-+						S3C24XX_DMA_CHANREQ(1, 3),
-+	},
-+	[DMACH_SPI0] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(3, 1), },
-+	[DMACH_SPI1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(2, 3), },
-+	[DMACH_UART0] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(1, 0), },
-+	[DMACH_UART1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(1, 1), },
-+	[DMACH_UART2] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(0, 3), },
-+	[DMACH_TIMER] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(3, 0) |
-+						 S3C24XX_DMA_CHANREQ(3, 2) |
-+						 S3C24XX_DMA_CHANREQ(3, 3),
-+	},
-+	[DMACH_I2S_IN] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(2, 1) |
-+						  S3C24XX_DMA_CHANREQ(1, 2),
-+	},
-+	[DMACH_I2S_OUT] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(0, 2), },
-+	[DMACH_USB_EP1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 0), },
-+	[DMACH_USB_EP2] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 1), },
-+	[DMACH_USB_EP3] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 2), },
-+	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 3), },
-+};
-+
-+static struct s3c24xx_dma_platdata s3c2410_dma_platdata = {
-+	.num_phy_channels = 4,
-+	.channels = s3c2410_dma_channels,
-+	.num_channels = DMACH_MAX,
-+};
-+
-+struct platform_device s3c2410_device_dma = {
-+	.name		= "s3c2410-dma",
-+	.id		= 0,
-+	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
-+	.resource	= s3c2410_dma_resource,
-+	.dev	= {
-+		.platform_data	= &s3c2410_dma_platdata,
-+	},
-+};
-+#endif
-+
- #ifdef CONFIG_CPU_S3C2412
- static struct s3c24xx_dma_channel s3c2412_dma_channels[DMACH_MAX] = {
- 	[DMACH_XD0] = { S3C24XX_DMA_AHB, true, 17 },
-@@ -384,6 +428,62 @@ struct platform_device s3c2412_device_dma = {
- };
- #endif
- 
-+#if defined(CONFIG_CPU_S3C2440)
-+static struct s3c24xx_dma_channel s3c2440_dma_channels[DMACH_MAX] = {
-+	[DMACH_XD0] = { S3C24XX_DMA_AHB, true, S3C24XX_DMA_CHANREQ(0, 0), },
-+	[DMACH_XD1] = { S3C24XX_DMA_AHB, true, S3C24XX_DMA_CHANREQ(0, 1), },
-+	[DMACH_SDI] = { S3C24XX_DMA_APB, false, S3C24XX_DMA_CHANREQ(2, 0) |
-+						S3C24XX_DMA_CHANREQ(6, 1) |
-+						S3C24XX_DMA_CHANREQ(2, 2) |
-+						S3C24XX_DMA_CHANREQ(1, 3),
-+	},
-+	[DMACH_SPI0] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(3, 1), },
-+	[DMACH_SPI1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(2, 3), },
-+	[DMACH_UART0] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(1, 0), },
-+	[DMACH_UART1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(1, 1), },
-+	[DMACH_UART2] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(0, 3), },
-+	[DMACH_TIMER] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(3, 0) |
-+						 S3C24XX_DMA_CHANREQ(3, 2) |
-+						 S3C24XX_DMA_CHANREQ(3, 3),
-+	},
-+	[DMACH_I2S_IN] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(2, 1) |
-+						  S3C24XX_DMA_CHANREQ(1, 2),
-+	},
-+	[DMACH_I2S_OUT] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(5, 0) |
-+						   S3C24XX_DMA_CHANREQ(0, 2),
-+	},
-+	[DMACH_PCM_IN] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(6, 0) |
-+						  S3C24XX_DMA_CHANREQ(5, 2),
-+	},
-+	[DMACH_PCM_OUT] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(5, 1) |
-+						  S3C24XX_DMA_CHANREQ(6, 3),
-+	},
-+	[DMACH_MIC_IN] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(6, 2) |
-+						  S3C24XX_DMA_CHANREQ(5, 3),
-+	},
-+	[DMACH_USB_EP1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 0), },
-+	[DMACH_USB_EP2] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 1), },
-+	[DMACH_USB_EP3] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 2), },
-+	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 3), },
-+};
-+
-+static struct s3c24xx_dma_platdata s3c2440_dma_platdata = {
-+	.num_phy_channels = 4,
-+	.channels = s3c2440_dma_channels,
-+	.num_channels = DMACH_MAX,
-+};
-+
-+struct platform_device s3c2440_device_dma = {
-+	.name		= "s3c2410-dma",
-+	.id		= 0,
-+	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
-+	.resource	= s3c2410_dma_resource,
-+	.dev	= {
-+		.platform_data	= &s3c2440_dma_platdata,
-+	},
-+};
-+#endif
-+
- #if defined(CONFIG_CPUS_3C2443) || defined(CONFIG_CPU_S3C2416)
- static struct resource s3c2443_dma_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C24XX_PA_DMA, S3C24XX_SZ_DMA),
-diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/common.h
-index fe07189..e46c104 100644
---- a/arch/arm/mach-s3c24xx/common.h
-+++ b/arch/arm/mach-s3c24xx/common.h
-@@ -109,7 +109,9 @@ extern void s3c2443_init_irq(void);
- 
- extern struct syscore_ops s3c24xx_irq_syscore_ops;
- 
-+extern struct platform_device s3c2410_device_dma;
- extern struct platform_device s3c2412_device_dma;
-+extern struct platform_device s3c2440_device_dma;
- extern struct platform_device s3c2443_device_dma;
- 
- #endif /* __ARCH_ARM_MACH_S3C24XX_COMMON_H */
-diff --git a/include/linux/platform_data/dma-s3c24xx.h b/include/linux/platform_data/dma-s3c24xx.h
-index 5a0cfff..89ba1b0 100644
---- a/include/linux/platform_data/dma-s3c24xx.h
-+++ b/include/linux/platform_data/dma-s3c24xx.h
-@@ -9,6 +9,9 @@
-  * any later version.
-  */
- 
-+/* Helper to encode the source selection constraints for early s3c socs. */
-+#define S3C24XX_DMA_CHANREQ(src, chan)	((BIT(3) | src) << chan * 4)
-+
- enum s3c24xx_dma_bus {
- 	S3C24XX_DMA_APB,
- 	S3C24XX_DMA_AHB,
--- 
-1.7.10.4
+> This patch enables word transfer for s3c64xx spi driver.
+> User can set bits_per_word to 32 before calling spi_setup,
+> which would enable the word transfer mode.
+
+As someone mentioned on previous reviews there's nothing in this patch
+which sets bits_per_word_mask, you should be doing that.
+
+> Changes in V3:
+> 	- Corrected the coding style nits.
+
+Not all of them:
+
+> +	if(sdd->cur_bpw == 32) {
+
+checkpatch should've told you about this...  I'd also expect this to be
+a switch statement with a case for 16 bit words too?
+
+> +		/*
+> +		 * Enable byte transfer if transfer length not a multiple of
+> +		 * word size
+> +		 */
+> +		if (xfer->len % (bpw / 8))
+> +			bpw = 8;
+
+This check is redundant, the core will validate bits per word.
+
+--rSajjWT08XXIcVzz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSV9l/AAoJELSic+t+oim9Ag0P/RCPATZzNSn4Wq0K7LH3r2XE
+ER24QDtwUHqHddD+Ypj7/WyMSkANXRPm8VDT9rejHAlIqy/36MV2Isu0PRUYGURZ
+Yr2LcPS7JgN5yrGfXbcWuc2RytA49ExL47/R7IhIuIrkz9Ad4pI+LZzuDGQyf8Yj
+ZzWCERFlvRw6i7jqjlS4E4ekN1oJxueGKDtsNbPD0znpsQ8/bpoKwLvQHUGLI2Js
+ryyW/Sr3N8Y9oKWXedaVMoaDNorLExhWCuVYaQGYRTJXEm2N1bNrOZnuJeAlYt5a
++FFJwcJQA1vCKkoNwbz0IiFZfN3BMuDDr5Hu17QiTGpKGfxFk4l9SfG5dDUi99B7
+/YTlINZhqunLTNOzDORV9Q4EZNGGTd5Z3Mgd7njS/pycDorD4hvkDBUcKpDDId73
+GAZ8Jo8DjasqXJQWACcidXSgLaJtFj1YoM1M8kfokNa/MmKWFnQRPSgikekV2X1G
+7mOSYQWEpHwti6Oi7DnBtCJ+v/ou+qR1XCM0KpfyHYOu2lKhNn54xxTLZ2x4R31I
+s09cW8y/3lKgS7+Qpy/BPvgtwUZlx0qznymJbFXr9TGEqwBAP256ntJF8iXT2nnt
+EsdQKjmotGqtmYc+HFiSMDA10C5onhWx8xddgCp+/ETtkaqpN6rUzbWBJRJiHGEN
+38o3o74Re0FP7dAkULge
+=GcFb
+-----END PGP SIGNATURE-----
+
+--rSajjWT08XXIcVzz--
