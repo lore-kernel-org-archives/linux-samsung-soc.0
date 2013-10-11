@@ -1,184 +1,66 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 3/3] ARM: S3C24XX: add dma pdata for s3c2410, s3c2440 and s3c2442
-Date: Fri, 11 Oct 2013 00:56:45 +0200
-Message-ID: <201310110056.45737.heiko@sntech.de>
-References: <201310110054.23400.heiko@sntech.de>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: dts: Update display clock frequency for Origen-4210
+Date: Fri, 11 Oct 2013 09:29:40 +0530
+Message-ID: <CAK9yfHwVZ_e+JMExK8tyx3CuiMwyiBLe5M0dvVkY9k5A0V1KjA@mail.gmail.com>
+References: <1380171018-24229-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:36286 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755999Ab3JJW4w (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:47944 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752497Ab3JKD7k (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Oct 2013 18:56:52 -0400
-In-Reply-To: <201310110054.23400.heiko@sntech.de>
+	Thu, 10 Oct 2013 23:59:40 -0400
+Received: by mail-pa0-f42.google.com with SMTP id lj1so3765079pab.15
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Oct 2013 20:59:40 -0700 (PDT)
+In-Reply-To: <1380171018-24229-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.or, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-s3c2410 and s3c2442 share the same dma channels while s3c2440 has
-slight differences. But on all three the reachable sources per dma
-channel has constraints attached and thus encodes the usable
-combinations using the S3C24XX_DMA_CHANREQ macro.
+Kukjin,
 
-This also fixes the warning about s3c2410_dma_resource being unused
-as reported by Olof Johansson.
+Without these patches display is broken on these boards. Please add them.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/common.c            |  100 +++++++++++++++++++++++++++++
- arch/arm/mach-s3c24xx/common.h            |    2 +
- include/linux/platform_data/dma-s3c24xx.h |    3 +
- 3 files changed, 105 insertions(+)
 
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index 16ac669..4cfe7a4 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -343,6 +343,50 @@ static struct resource s3c2410_dma_resource[] = {
- };
- #endif
- 
-+#if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2442)
-+static struct s3c24xx_dma_channel s3c2410_dma_channels[DMACH_MAX] = {
-+	[DMACH_XD0] = { S3C24XX_DMA_AHB, true, S3C24XX_DMA_CHANREQ(0, 0), },
-+	[DMACH_XD1] = { S3C24XX_DMA_AHB, true, S3C24XX_DMA_CHANREQ(0, 1), },
-+	[DMACH_SDI] = { S3C24XX_DMA_APB, false, S3C24XX_DMA_CHANREQ(2, 0) |
-+						S3C24XX_DMA_CHANREQ(2, 2) |
-+						S3C24XX_DMA_CHANREQ(1, 3),
-+	},
-+	[DMACH_SPI0] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(3, 1), },
-+	[DMACH_SPI1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(2, 3), },
-+	[DMACH_UART0] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(1, 0), },
-+	[DMACH_UART1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(1, 1), },
-+	[DMACH_UART2] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(0, 3), },
-+	[DMACH_TIMER] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(3, 0) |
-+						 S3C24XX_DMA_CHANREQ(3, 2) |
-+						 S3C24XX_DMA_CHANREQ(3, 3),
-+	},
-+	[DMACH_I2S_IN] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(2, 1) |
-+						  S3C24XX_DMA_CHANREQ(1, 2),
-+	},
-+	[DMACH_I2S_OUT] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(0, 2), },
-+	[DMACH_USB_EP1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 0), },
-+	[DMACH_USB_EP2] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 1), },
-+	[DMACH_USB_EP3] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 2), },
-+	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 3), },
-+};
-+
-+static struct s3c24xx_dma_platdata s3c2410_dma_platdata = {
-+	.num_phy_channels = 4,
-+	.channels = s3c2410_dma_channels,
-+	.num_channels = DMACH_MAX,
-+};
-+
-+struct platform_device s3c2410_device_dma = {
-+	.name		= "s3c2410-dma",
-+	.id		= 0,
-+	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
-+	.resource	= s3c2410_dma_resource,
-+	.dev	= {
-+		.platform_data	= &s3c2410_dma_platdata,
-+	},
-+};
-+#endif
-+
- #ifdef CONFIG_CPU_S3C2412
- static struct s3c24xx_dma_channel s3c2412_dma_channels[DMACH_MAX] = {
- 	[DMACH_XD0] = { S3C24XX_DMA_AHB, true, 17 },
-@@ -384,6 +428,62 @@ struct platform_device s3c2412_device_dma = {
- };
- #endif
- 
-+#if defined(CONFIG_CPU_S3C2440)
-+static struct s3c24xx_dma_channel s3c2440_dma_channels[DMACH_MAX] = {
-+	[DMACH_XD0] = { S3C24XX_DMA_AHB, true, S3C24XX_DMA_CHANREQ(0, 0), },
-+	[DMACH_XD1] = { S3C24XX_DMA_AHB, true, S3C24XX_DMA_CHANREQ(0, 1), },
-+	[DMACH_SDI] = { S3C24XX_DMA_APB, false, S3C24XX_DMA_CHANREQ(2, 0) |
-+						S3C24XX_DMA_CHANREQ(6, 1) |
-+						S3C24XX_DMA_CHANREQ(2, 2) |
-+						S3C24XX_DMA_CHANREQ(1, 3),
-+	},
-+	[DMACH_SPI0] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(3, 1), },
-+	[DMACH_SPI1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(2, 3), },
-+	[DMACH_UART0] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(1, 0), },
-+	[DMACH_UART1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(1, 1), },
-+	[DMACH_UART2] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(0, 3), },
-+	[DMACH_TIMER] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(3, 0) |
-+						 S3C24XX_DMA_CHANREQ(3, 2) |
-+						 S3C24XX_DMA_CHANREQ(3, 3),
-+	},
-+	[DMACH_I2S_IN] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(2, 1) |
-+						  S3C24XX_DMA_CHANREQ(1, 2),
-+	},
-+	[DMACH_I2S_OUT] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(5, 0) |
-+						   S3C24XX_DMA_CHANREQ(0, 2),
-+	},
-+	[DMACH_PCM_IN] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(6, 0) |
-+						  S3C24XX_DMA_CHANREQ(5, 2),
-+	},
-+	[DMACH_PCM_OUT] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(5, 1) |
-+						  S3C24XX_DMA_CHANREQ(6, 3),
-+	},
-+	[DMACH_MIC_IN] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(6, 2) |
-+						  S3C24XX_DMA_CHANREQ(5, 3),
-+	},
-+	[DMACH_USB_EP1] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 0), },
-+	[DMACH_USB_EP2] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 1), },
-+	[DMACH_USB_EP3] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 2), },
-+	[DMACH_USB_EP4] = { S3C24XX_DMA_APB, true, S3C24XX_DMA_CHANREQ(4, 3), },
-+};
-+
-+static struct s3c24xx_dma_platdata s3c2440_dma_platdata = {
-+	.num_phy_channels = 4,
-+	.channels = s3c2440_dma_channels,
-+	.num_channels = DMACH_MAX,
-+};
-+
-+struct platform_device s3c2440_device_dma = {
-+	.name		= "s3c2410-dma",
-+	.id		= 0,
-+	.num_resources	= ARRAY_SIZE(s3c2410_dma_resource),
-+	.resource	= s3c2410_dma_resource,
-+	.dev	= {
-+		.platform_data	= &s3c2440_dma_platdata,
-+	},
-+};
-+#endif
-+
- #if defined(CONFIG_CPUS_3C2443) || defined(CONFIG_CPU_S3C2416)
- static struct resource s3c2443_dma_resource[] = {
- 	[0] = DEFINE_RES_MEM(S3C24XX_PA_DMA, S3C24XX_SZ_DMA),
-diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/common.h
-index fe07189..e46c104 100644
---- a/arch/arm/mach-s3c24xx/common.h
-+++ b/arch/arm/mach-s3c24xx/common.h
-@@ -109,7 +109,9 @@ extern void s3c2443_init_irq(void);
- 
- extern struct syscore_ops s3c24xx_irq_syscore_ops;
- 
-+extern struct platform_device s3c2410_device_dma;
- extern struct platform_device s3c2412_device_dma;
-+extern struct platform_device s3c2440_device_dma;
- extern struct platform_device s3c2443_device_dma;
- 
- #endif /* __ARCH_ARM_MACH_S3C24XX_COMMON_H */
-diff --git a/include/linux/platform_data/dma-s3c24xx.h b/include/linux/platform_data/dma-s3c24xx.h
-index 5a0cfff..89ba1b0 100644
---- a/include/linux/platform_data/dma-s3c24xx.h
-+++ b/include/linux/platform_data/dma-s3c24xx.h
-@@ -9,6 +9,9 @@
-  * any later version.
-  */
- 
-+/* Helper to encode the source selection constraints for early s3c socs. */
-+#define S3C24XX_DMA_CHANREQ(src, chan)	((BIT(3) | src) << chan * 4)
-+
- enum s3c24xx_dma_bus {
- 	S3C24XX_DMA_APB,
- 	S3C24XX_DMA_AHB,
+On 26 September 2013 10:20, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> From: Tushar Behera <tushar.behera@linaro.org>
+>
+> As per the timing information for supported panel, the value should
+> be between 47.2 MHz to 47.9 MHz for 60Hz refresh rate.
+>
+> Total horizontal pixels = 1024 (x-res) + 80 (margin) + 48 (hsync) = 1152
+> Total vertical pixels = 600 (y-res) + 80 (margin) + 3 (vsync) = 653
+>
+> Target pixel clock rate for refresh rate @60 Hz
+>         = 1152 * 653 * 60 = 47208960 Hz ~ 47.5 MHz
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4210-origen.dts |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 382d8c7..6906e8a 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -301,7 +301,7 @@
+>         display-timings {
+>                 native-mode = <&timing0>;
+>                 timing0: timing {
+> -                       clock-frequency = <50000>;
+> +                       clock-frequency = <47500000>;
+>                         hactive = <1024>;
+>                         vactive = <600>;
+>                         hfront-porch = <64>;
+> --
+> 1.7.9.5
+>
+
+
+
 -- 
-1.7.10.4
+With warm regards,
+Sachin
