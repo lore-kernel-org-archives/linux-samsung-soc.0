@@ -1,170 +1,185 @@
-From: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH v3] iio: exynos_adc: use wait_for_completion_timeout instead
- of interruptible
-Date: Fri, 11 Oct 2013 16:30:45 +0200
-Message-ID: <52580B95.5010603@metafoo.de>
-References: <1365048389-6364-1-git-send-email-naveenkrishna.ch@gmail.com> <1381479821-17276-1-git-send-email-ch.naveen@samsung.com>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH 1/3 v4] thermal: samsung: correct the fall interrupt en,
+ status bit fields
+Date: Fri, 11 Oct 2013 11:10:38 -0400
+Message-ID: <525814EE.8060700@ti.com>
+References: <1378268629-2886-3-git-send-email-ch.naveen@samsung.com> <1381320509-23967-1-git-send-email-ch.naveen@samsung.com> <2386580.3V2pzai3k2@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381479821-17276-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="PCUN8VI9REiIrqQwD6CFK86Kte3MOgKgk"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:41113 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752060Ab3JKPLA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Oct 2013 11:11:00 -0400
+In-Reply-To: <2386580.3V2pzai3k2@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
 
-On 10/11/2013 10:23 AM, Naveen Krishna Chatradhi wrote:
-> This patch does the following
-> 1. use wait_for_completion_timeout instead of
->    wait_for_completion_interruptible_timeout
-> 2. Reset software if a timeout happens.
-> 3. Also reduce the timeout to 100milli secs
+--PCUN8VI9REiIrqQwD6CFK86Kte3MOgKgk
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-It is always good to have a description of why a chance should be done in
-the commit message. It is obvious what the patch does by just looking at the
-changed lines, it is not that obvious though why those lines had to be changed.
+Hi Naveen,
 
-> 
-> Note: submitted for review at https://patchwork.kernel.org/patch/2279591/
-> 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-> ---
-> Changes since v1:
-> As per discussion at
-> http://marc.info/?l=linux-kernel&m=136517637228869&w=3
-> 
-> This patch does the following
-> 1. use wait_for_completion_timeout instead of
->    wait_for_completion_interruptible_timeout
-> 2. Reset software if a timeout happens.
-> 3. Also reduce the timeout to 100milli secs
-> 
-> Changes since v2:
-> None.
-> Rebased and reposting.
-> 
-> ---
->  drivers/iio/adc/exynos_adc.c |   66 +++++++++++++++++++++++-------------------
->  1 file changed, 36 insertions(+), 30 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index d25b262..f18ed7e 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -82,7 +82,7 @@ enum adc_version {
->  #define ADC_CON_EN_START	(1u << 0)
->  #define ADC_DATX_MASK		0xFFF
->  
-> -#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(1000))
-> +#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
->  
->  struct exynos_adc {
->  	void __iomem		*regs;
-> @@ -112,6 +112,30 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
->  	return (unsigned int)match->data;
->  }
->  
-> +static void exynos_adc_hw_init(struct exynos_adc *info)
-> +{
-> +	u32 con1, con2;
-> +
-> +	if (info->version == ADC_V2) {
-> +		con1 = ADC_V2_CON1_SOFT_RESET;
-> +		writel(con1, ADC_V2_CON1(info->regs));
-> +
-> +		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
-> +			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
-> +		writel(con2, ADC_V2_CON2(info->regs));
-> +
-> +		/* Enable interrupts */
-> +		writel(1, ADC_V2_INT_EN(info->regs));
-> +	} else {
-> +		/* set default prescaler values and Enable prescaler */
-> +		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-> +
-> +		/* Enable 12-bit ADC resolution */
-> +		con1 |= ADC_V1_CON_RES;
-> +		writel(con1, ADC_V1_CON(info->regs));
-> +	}
-> +}
-> +
->  static int exynos_read_raw(struct iio_dev *indio_dev,
->  				struct iio_chan_spec const *chan,
->  				int *val,
-> @@ -121,6 +145,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->  	struct exynos_adc *info = iio_priv(indio_dev);
->  	unsigned long timeout;
->  	u32 con1, con2;
-> +	int ret;
->  
->  	if (mask != IIO_CHAN_INFO_RAW)
->  		return -EINVAL;
-> @@ -145,16 +170,21 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->  				ADC_V1_CON(info->regs));
->  	}
->  
-> -	timeout = wait_for_completion_interruptible_timeout
-> +	timeout = wait_for_completion_timeout
->  			(&info->completion, EXYNOS_ADC_TIMEOUT);
+On 09-10-2013 10:03, Bartlomiej Zolnierkiewicz wrote:
+>=20
+> Hi,
+>=20
+> All patches (#1-#3) look good to me, FWIW you can add:
+>=20
+> 	Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>=20
+> Please note that (at least) patch #3 conflicts with Lukasz's EXYNOS4412=
 
-Nitpick: It would be nice to put the &info->completion on the same line as
-the wait_for_completion...
+> fixup patchset:
+>=20
+> 	https://lkml.org/lkml/2013/10/9/35
+>=20
+> It is up to Eduardo to resolve this but it probably would be better to
+> merge EXYNOS4412 fixes first and then add EXYNOS5420 support. This woul=
+d
+> require you to port patch #3 over Lukasz's patchset though.
 
-> +	if (timeout == 0) {
-> +		dev_warn(&indio_dev->dev, "Conversion timed out reseting\n");
-> +		exynos_adc_hw_init(info);
-> +		ret = -ETIMEDOUT;
-> +	} else {
-> +		*val = info->value;
-> +		ret = IIO_VAL_INT;
-> +	}
->  	*val = info->value;
+My question is if this fix applies also to EXYNOS4412, as it  is not
+mentioned in the patch description and the change affects all supported
+chip version deliberately. Has this change been validated on all
+supported chip versions?
 
-This line above should probably be removed.
+Amit, I saw you ack, but still, it is not clear how this change behaves
+across supported hardware.
 
->  
->  	mutex_unlock(&indio_dev->mlock);
->  
-> -	if (timeout == 0)
-> -		return -ETIMEDOUT;
-> -
-> -	return IIO_VAL_INT;
-> +	return ret;
->  }
->  
->  static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
-> @@ -226,30 +256,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
->  	return 0;
->  }
->  
-> -static void exynos_adc_hw_init(struct exynos_adc *info)
-> -{
-> -	u32 con1, con2;
-> -
-> -	if (info->version == ADC_V2) {
-> -		con1 = ADC_V2_CON1_SOFT_RESET;
-> -		writel(con1, ADC_V2_CON1(info->regs));
-> -
-> -		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
-> -			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
-> -		writel(con2, ADC_V2_CON2(info->regs));
-> -
-> -		/* Enable interrupts */
-> -		writel(1, ADC_V2_INT_EN(info->regs));
-> -	} else {
-> -		/* set default prescaler values and Enable prescaler */
-> -		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-> -
-> -		/* Enable 12-bit ADC resolution */
-> -		con1 |= ADC_V1_CON_RES;
-> -		writel(con1, ADC_V1_CON(info->regs));
-> -	}
-> -}
-> -
->  static int exynos_adc_probe(struct platform_device *pdev)
->  {
->  	struct exynos_adc *info = NULL;
-> 
+>=20
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>=20
+> On Wednesday, October 09, 2013 05:38:27 PM Naveen Krishna Chatradhi wro=
+te:
+>> The FALL interrupt related en, status bits are available at an offset =
+of
+>> 16 on INTEN, INTSTAT registers and at an offset of
+>> 12 on INTCLEAR register.
+>>
+>> This patch corrects the same for exyns5250 and exynos5440
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> ---
+>> Changes since v1:
+>> Changes since v2:
+>> Changes since v3:
+>>   None
+>>
+>>  drivers/thermal/samsung/exynos_tmu.c      |    2 +-
+>>  drivers/thermal/samsung/exynos_tmu.h      |    2 ++
+>>  drivers/thermal/samsung/exynos_tmu_data.c |    2 ++
+>>  drivers/thermal/samsung/exynos_tmu_data.h |    3 ++-
+>>  4 files changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sa=
+msung/exynos_tmu.c
+>> index b43afda..af69209 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>> @@ -265,7 +265,7 @@ skip_calib_data:
+>>  				data->base + reg->threshold_th1);
+>> =20
+>>  		writel((reg->inten_rise_mask << reg->inten_rise_shift) |
+>> -			(reg->inten_fall_mask << reg->inten_fall_shift),
+>> +			(reg->inten_fall_mask << reg->intclr_fall_shift),
+>>  				data->base + reg->tmu_intclear);
+>> =20
+>>  		/* if last threshold limit is also present */
+>> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sa=
+msung/exynos_tmu.h
+>> index b364c9e..7c6c34a 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu.h
+>> @@ -134,6 +134,7 @@ enum soc_type {
+>>   * @inten_fall3_shift: shift bits of falling 3 interrupt bits.
+>>   * @tmu_intstat: Register containing the interrupt status values.
+>>   * @tmu_intclear: Register for clearing the raised interrupt status.
+>> + * @intclr_fall_shift: shift bits for interrupt clear fall 0
+>>   * @emul_con: TMU emulation controller register.
+>>   * @emul_temp_shift: shift bits of emulation temperature.
+>>   * @emul_time_shift: shift bits of emulation time.
+>> @@ -204,6 +205,7 @@ struct exynos_tmu_registers {
+>>  	u32	tmu_intstat;
+>> =20
+>>  	u32	tmu_intclear;
+>> +	u32	intclr_fall_shift;
+>> =20
+>>  	u32	emul_con;
+>>  	u32	emul_temp_shift;
+>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/therm=
+al/samsung/exynos_tmu_data.c
+>> index 9002499..23fea23 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+>> @@ -122,6 +122,7 @@ static const struct exynos_tmu_registers exynos525=
+0_tmu_registers =3D {
+>>  	.inten_fall0_shift =3D EXYNOS_TMU_INTEN_FALL0_SHIFT,
+>>  	.tmu_intstat =3D EXYNOS_TMU_REG_INTSTAT,
+>>  	.tmu_intclear =3D EXYNOS_TMU_REG_INTCLEAR,
+>> +	.intclr_fall_shift =3D EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
+>>  	.emul_con =3D EXYNOS_EMUL_CON,
+>>  	.emul_temp_shift =3D EXYNOS_EMUL_DATA_SHIFT,
+>>  	.emul_time_shift =3D EXYNOS_EMUL_TIME_SHIFT,
+>> @@ -210,6 +211,7 @@ static const struct exynos_tmu_registers exynos544=
+0_tmu_registers =3D {
+>>  	.inten_fall0_shift =3D EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
+>>  	.tmu_intstat =3D EXYNOS5440_TMU_S0_7_IRQ,
+>>  	.tmu_intclear =3D EXYNOS5440_TMU_S0_7_IRQ,
+>> +	.intclr_fall_shift =3D EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
+>>  	.tmu_irqstatus =3D EXYNOS5440_TMU_IRQ_STATUS,
+>>  	.emul_con =3D EXYNOS5440_TMU_S0_7_DEBUG,
+>>  	.emul_temp_shift =3D EXYNOS_EMUL_DATA_SHIFT,
+>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therm=
+al/samsung/exynos_tmu_data.h
+>> index dc7feb5..8788a87 100644
+>> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+>> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+>> @@ -69,9 +69,10 @@
+>>  #define EXYNOS_TMU_RISE_INT_MASK	0x111
+>>  #define EXYNOS_TMU_RISE_INT_SHIFT	0
+>>  #define EXYNOS_TMU_FALL_INT_MASK	0x111
+>> -#define EXYNOS_TMU_FALL_INT_SHIFT	12
+>> +#define EXYNOS_TMU_FALL_INT_SHIFT	16
+>>  #define EXYNOS_TMU_CLEAR_RISE_INT	0x111
+>>  #define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
+>> +#define EXYNOS_TMU_CLEAR_FALL_INT_SHIFT	12
+>>  #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
+>>  #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
+>>  #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
+>=20
+>=20
+>=20
+
+
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
+
+Eduardo Valentin
+
+
+--PCUN8VI9REiIrqQwD6CFK86Kte3MOgKgk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
+
+iF4EAREIAAYFAlJYFPMACgkQCXcVR3XQvP3PzQEAjdUlM2AYCAZbis8xNEF0Qgxf
+T6QdlXNX2s1Yq1KYZ88A/R027+dbOKcYUq4a2MvMoMVGEEHO10uaf6YC+UcsQH2u
+=b9hp
+-----END PGP SIGNATURE-----
+
+--PCUN8VI9REiIrqQwD6CFK86Kte3MOgKgk--
