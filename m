@@ -1,185 +1,65 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH 1/3 v4] thermal: samsung: correct the fall interrupt en,
- status bit fields
-Date: Fri, 11 Oct 2013 11:10:38 -0400
-Message-ID: <525814EE.8060700@ti.com>
-References: <1378268629-2886-3-git-send-email-ch.naveen@samsung.com> <1381320509-23967-1-git-send-email-ch.naveen@samsung.com> <2386580.3V2pzai3k2@amdc1032>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] clk: samsung: Fix PLL35XX lock time
+Date: Fri, 11 Oct 2013 08:14:03 -0700
+Message-ID: <CAD=FV=V-RqREqsR-g-2=Rv5UMzwbJFbn7t5xhDp6qBkuGrJVvg@mail.gmail.com>
+References: <1381215399-25394-1-git-send-email-arun.kk@samsung.com>
+	<CAD=FV=WcKpO947DgF6xwWALpVMYPOaZ=G_1+iRmFjac2bQGAMw@mail.gmail.com>
+	<CALt3h78Lt2epHFmKeQ90839-L4XSQL+rDUTHGj681S2sTG=Jeg@mail.gmail.com>
+	<2947491.pJZ8F0UW5m@amdn883>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="PCUN8VI9REiIrqQwD6CFK86Kte3MOgKgk"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:41113 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752060Ab3JKPLA (ORCPT
+Received: from mail-vb0-f43.google.com ([209.85.212.43]:38404 "EHLO
+	mail-vb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752608Ab3JKPOF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Oct 2013 11:11:00 -0400
-In-Reply-To: <2386580.3V2pzai3k2@amdc1032>
+	Fri, 11 Oct 2013 11:14:05 -0400
+Received: by mail-vb0-f43.google.com with SMTP id h11so2869348vbh.16
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Oct 2013 08:14:04 -0700 (PDT)
+In-Reply-To: <2947491.pJZ8F0UW5m@amdn883>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Arun Kumar K <arunkk.samsung@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Andrew Bresticker <abrestic@chromium.org>
 
---PCUN8VI9REiIrqQwD6CFK86Kte3MOgKgk
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Tomasz,
 
-Hi Naveen,
-
-On 09-10-2013 10:03, Bartlomiej Zolnierkiewicz wrote:
->=20
-> Hi,
->=20
-> All patches (#1-#3) look good to me, FWIW you can add:
->=20
-> 	Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->=20
-> Please note that (at least) patch #3 conflicts with Lukasz's EXYNOS4412=
-
-> fixup patchset:
->=20
-> 	https://lkml.org/lkml/2013/10/9/35
->=20
-> It is up to Eduardo to resolve this but it probably would be better to
-> merge EXYNOS4412 fixes first and then add EXYNOS5420 support. This woul=
-d
-> require you to port patch #3 over Lukasz's patchset though.
-
-My question is if this fix applies also to EXYNOS4412, as it  is not
-mentioned in the patch description and the change affects all supported
-chip version deliberately. Has this change been validated on all
-supported chip versions?
-
-Amit, I saw you ack, but still, it is not clear how this change behaves
-across supported hardware.
-
->=20
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->=20
-> On Wednesday, October 09, 2013 05:38:27 PM Naveen Krishna Chatradhi wro=
-te:
->> The FALL interrupt related en, status bits are available at an offset =
-of
->> 16 on INTEN, INTSTAT registers and at an offset of
->> 12 on INTCLEAR register.
+On Wed, Oct 9, 2013 at 10:20 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> > I don't think this is right.  I believe that it needs to be passed in
+>> > by the SoC.  On exynos5250 I see 250 in both the manual and in our
+>> > code.  On exynos5420 manual I actually see 200 now.  I'm not actually
+>> > sure where the 270 came from, now that I search for it.
 >>
->> This patch corrects the same for exyns5250 and exynos5440
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> ---
->> Changes since v1:
->> Changes since v2:
->> Changes since v3:
->>   None
->>
->>  drivers/thermal/samsung/exynos_tmu.c      |    2 +-
->>  drivers/thermal/samsung/exynos_tmu.h      |    2 ++
->>  drivers/thermal/samsung/exynos_tmu_data.c |    2 ++
->>  drivers/thermal/samsung/exynos_tmu_data.h |    3 ++-
->>  4 files changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sa=
-msung/exynos_tmu.c
->> index b43afda..af69209 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.c
->> +++ b/drivers/thermal/samsung/exynos_tmu.c
->> @@ -265,7 +265,7 @@ skip_calib_data:
->>  				data->base + reg->threshold_th1);
->> =20
->>  		writel((reg->inten_rise_mask << reg->inten_rise_shift) |
->> -			(reg->inten_fall_mask << reg->inten_fall_shift),
->> +			(reg->inten_fall_mask << reg->intclr_fall_shift),
->>  				data->base + reg->tmu_intclear);
->> =20
->>  		/* if last threshold limit is also present */
->> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sa=
-msung/exynos_tmu.h
->> index b364c9e..7c6c34a 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.h
->> +++ b/drivers/thermal/samsung/exynos_tmu.h
->> @@ -134,6 +134,7 @@ enum soc_type {
->>   * @inten_fall3_shift: shift bits of falling 3 interrupt bits.
->>   * @tmu_intstat: Register containing the interrupt status values.
->>   * @tmu_intclear: Register for clearing the raised interrupt status.
->> + * @intclr_fall_shift: shift bits for interrupt clear fall 0
->>   * @emul_con: TMU emulation controller register.
->>   * @emul_temp_shift: shift bits of emulation temperature.
->>   * @emul_time_shift: shift bits of emulation time.
->> @@ -204,6 +205,7 @@ struct exynos_tmu_registers {
->>  	u32	tmu_intstat;
->> =20
->>  	u32	tmu_intclear;
->> +	u32	intclr_fall_shift;
->> =20
->>  	u32	emul_con;
->>  	u32	emul_temp_shift;
->> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/therm=
-al/samsung/exynos_tmu_data.c
->> index 9002499..23fea23 100644
->> --- a/drivers/thermal/samsung/exynos_tmu_data.c
->> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
->> @@ -122,6 +122,7 @@ static const struct exynos_tmu_registers exynos525=
-0_tmu_registers =3D {
->>  	.inten_fall0_shift =3D EXYNOS_TMU_INTEN_FALL0_SHIFT,
->>  	.tmu_intstat =3D EXYNOS_TMU_REG_INTSTAT,
->>  	.tmu_intclear =3D EXYNOS_TMU_REG_INTCLEAR,
->> +	.intclr_fall_shift =3D EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
->>  	.emul_con =3D EXYNOS_EMUL_CON,
->>  	.emul_temp_shift =3D EXYNOS_EMUL_DATA_SHIFT,
->>  	.emul_time_shift =3D EXYNOS_EMUL_TIME_SHIFT,
->> @@ -210,6 +211,7 @@ static const struct exynos_tmu_registers exynos544=
-0_tmu_registers =3D {
->>  	.inten_fall0_shift =3D EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
->>  	.tmu_intstat =3D EXYNOS5440_TMU_S0_7_IRQ,
->>  	.tmu_intclear =3D EXYNOS5440_TMU_S0_7_IRQ,
->> +	.intclr_fall_shift =3D EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
->>  	.tmu_irqstatus =3D EXYNOS5440_TMU_IRQ_STATUS,
->>  	.emul_con =3D EXYNOS5440_TMU_S0_7_DEBUG,
->>  	.emul_temp_shift =3D EXYNOS_EMUL_DATA_SHIFT,
->> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therm=
-al/samsung/exynos_tmu_data.h
->> index dc7feb5..8788a87 100644
->> --- a/drivers/thermal/samsung/exynos_tmu_data.h
->> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
->> @@ -69,9 +69,10 @@
->>  #define EXYNOS_TMU_RISE_INT_MASK	0x111
->>  #define EXYNOS_TMU_RISE_INT_SHIFT	0
->>  #define EXYNOS_TMU_FALL_INT_MASK	0x111
->> -#define EXYNOS_TMU_FALL_INT_SHIFT	12
->> +#define EXYNOS_TMU_FALL_INT_SHIFT	16
->>  #define EXYNOS_TMU_CLEAR_RISE_INT	0x111
->>  #define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
->> +#define EXYNOS_TMU_CLEAR_FALL_INT_SHIFT	12
->>  #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
->>  #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
->>  #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
->=20
->=20
->=20
+>> The manual I referred gives 250 for both 5250 and 5420 and thats why I
+>> concluded on this fix. I will check other versions of the manual to see if
+>> the value is changing.
+>
+> 270 is the value taken from Exynos 4412 User's Manual rev. 1.1.
+>
+> I believe we don't have to extend this to support per SoC value, because it
+> should be always safe to take the value of SoC that requires the longest
+> locking period. The differences are small enough to be insignificant, so there
+> should be no practical performance penalty.
+
+It's not _that_ small for something like APLL which can be changing
+constantly in DVFS.
+
+24MHz input clock, right?  ...and I see some P values of up to 6.
+
+That means with 270 lock time is 67.5 us, right?
+...and with 200 lock time is 50 us, right?
+
+...so that's a 17.5 us difference by using the correct multiplier.
+Overall DVFS switch time was measured recently at ~350us, so that
+would give us a 5% speedup on DVFS switching.
+
+We've had debates in-house in the past about how critical DVFS
+switching time is.  In the past there have been some who have
+advocated that it's very important, since it affects responsiveness
+(how fast can you spin up when you suddenly have something to do).
 
 
---=20
-You have got to be excited about what you are doing. (L. Lamport)
+Anyway, when it's something as simple as passing in a parameter to get
+it right, it seems worth doing.
 
-Eduardo Valentin
-
-
---PCUN8VI9REiIrqQwD6CFK86Kte3MOgKgk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlJYFPMACgkQCXcVR3XQvP3PzQEAjdUlM2AYCAZbis8xNEF0Qgxf
-T6QdlXNX2s1Yq1KYZ88A/R027+dbOKcYUq4a2MvMoMVGEEHO10uaf6YC+UcsQH2u
-=b9hp
------END PGP SIGNATURE-----
-
---PCUN8VI9REiIrqQwD6CFK86Kte3MOgKgk--
+-Doug
