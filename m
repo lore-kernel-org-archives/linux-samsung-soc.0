@@ -1,91 +1,64 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] clk: samsung: Fix PLL35XX lock time
-Date: Sat, 12 Oct 2013 04:06:21 +0200
-Message-ID: <2464757.WeV77WxV9T@amdn883>
-References: <1381215399-25394-1-git-send-email-arun.kk@samsung.com>
- <2947491.pJZ8F0UW5m@amdn883>
- <CAD=FV=V-RqREqsR-g-2=Rv5UMzwbJFbn7t5xhDp6qBkuGrJVvg@mail.gmail.com>
+Subject: Re: [PATCH] i2c: s3c2410: dont need CPU_FREQ transitions for exynos
+ series
+Date: Sat, 12 Oct 2013 04:22:04 +0200
+Message-ID: <3245175.os31ym2KFi@amdn883>
+References: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:22405 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752256Ab3JLCGZ (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:20034 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751318Ab3JLCWI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Oct 2013 22:06:25 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MUJ009T89UN2LC0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 12 Oct 2013 03:06:23 +0100 (BST)
-In-reply-to: <CAD=FV=V-RqREqsR-g-2=Rv5UMzwbJFbn7t5xhDp6qBkuGrJVvg@mail.gmail.com>
+	Fri, 11 Oct 2013 22:22:08 -0400
+In-reply-to: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Arun Kumar K <arunkk.samsung@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Andrew Bresticker <abrestic@chromium.org>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, wsa@the-dreams.de, khali@linux-fr.org, ben-linux@fluff.org, grant.likely@secretlab.ca, devicetree-discuss@lists.ozlabs.org, sjg@chromium.org, naveenkrishna.ch@gmail.com, broonie@opensource.wolfsonmicro.com, diander@google.com, cpgs@samsung.com
 
-On Friday 11 of October 2013 08:14:03 Doug Anderson wrote:
-> Tomasz,
+Hi Naveen,
+
+On Friday 11 of October 2013 16:56:54 Naveen Krishna Chatradhi wrote:
+> The exynos5 i2c clock is based on a fixed 66 MHz peripheral clock, and
+> therefore is completely independent of the cpu frequency.
+> Thus, registering for a CPU freq notifier is very wasteful.
 > 
-> On Wed, Oct 9, 2013 at 10:20 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> >> > I don't think this is right.  I believe that it needs to be passed in
-> >> > by the SoC.  On exynos5250 I see 250 in both the manual and in our
-> >> > code.  On exynos5420 manual I actually see 200 now.  I'm not actually
-> >> > sure where the 270 came from, now that I search for it.
-> >>
-> >> The manual I referred gives 250 for both 5250 and 5420 and thats why I
-> >> concluded on this fix. I will check other versions of the manual to see if
-> >> the value is changing.
-> >
-> > 270 is the value taken from Exynos 4412 User's Manual rev. 1.1.
-> >
-> > I believe we don't have to extend this to support per SoC value, because it
-> > should be always safe to take the value of SoC that requires the longest
-> > locking period. The differences are small enough to be insignificant, so there
-> > should be no practical performance penalty.
+> This patch modifes the code such that, i2c bus registers to
+> cpu_freq_transition only for non Exynos SoCs.
 > 
-> It's not _that_ small for something like APLL which can be changing
-> constantly in DVFS.
+> This change should save a bunch of cpufreq transitions calls
+> which does not apply to exynos SoCs.
+
+The idea is fine, although...
+
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> 24MHz input clock, right?  ...and I see some P values of up to 6.
-> 
-> That means with 270 lock time is 67.5 us, right?
-> ...and with 200 lock time is 50 us, right?
-> 
-> ...so that's a 17.5 us difference by using the correct multiplier.
-> Overall DVFS switch time was measured recently at ~350us, so that
-> would give us a 5% speedup on DVFS switching.
->
-> We've had debates in-house in the past about how critical DVFS
-> switching time is.  In the past there have been some who have
-> advocated that it's very important, since it affects responsiveness
-> (how fast can you spin up when you suddenly have something to do).
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index cab1c91..d062fa7 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -123,7 +123,7 @@ struct s3c24xx_i2c {
+>  	struct s3c2410_platform_i2c	*pdata;
+>  	int			gpios[2];
+>  	struct pinctrl          *pctrl;
+> -#ifdef CONFIG_CPU_FREQ
+> +#if defined(CONFIG_CPU_FREQ) && !defined(CONFIG_ARCH_EXYNOS)
 
-Well, it's some kind of difference indeed. However, how often can
-a frequency transition happen?
+...this is not a good coding practice, especially when already having
+multiplatform kernels in sight.
 
-I believe that ondemand allows minimum sampling period of
-100 * transition latency, so even without considering the PLL lock time,
-we would have at most a single delay of ~400 us every ~40 ms, during
-which remaining CPUs are operating normally, because of switching to
-MPLL temporarily.
-
-A bit more interesting case would be the Android interactive governor,
-which scales up the CPU on any wake-up event, but I don't believe any
-user would notice the extra 17,5 us from touching the screen to seeing
-a menu animation, for example.
-
-Please correct me if I'm missing something here.
-
-> Anyway, when it's something as simple as passing in a parameter to get
-> it right, it seems worth doing.
-
-Sure, any patches improving things are welcome, I was just wondering
-whether the improvement will be of any significance. Looking forward
-to respective patches, hoping that they will not complicate the code
-too much (although we already have a struct for PLL parameters, so they
-should not).
+The best way would be to check on which SoC we are running at runtime,
+but since this might need changing a lot of code, then at least I would
+change this from !defined(EXYNOS) to defined(S3C24XX), so it is not being
+compiled in when S3C24XX support is not enabled and if it's enabled then
+the notifier will be registered as a safe fallback that will run correctly
+on all platforms.
 
 Best regards,
 Tomasz
