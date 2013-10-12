@@ -1,7 +1,7 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH RFC v2 02/10] mem2mem_testdev: Use mem-to-mem ioctl and vb2 helpers
-Date: Sat, 12 Oct 2013 14:31:52 +0200
-Message-ID: <1381581120-26883-3-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH RFC v2 09/10] exynos-gsc: Use mem-to-mem ioctl helpers
+Date: Sat, 12 Oct 2013 14:31:59 +0200
+Message-ID: <1381581120-26883-10-git-send-email-s.nawrocki@samsung.com>
 References: <1381581120-26883-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1381581120-26883-1-git-send-email-s.nawrocki@samsung.com>
@@ -16,310 +16,292 @@ Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
 Changes since v1:
- - dropped now redundant struct m2mtest_ctx::m2m_ctx field.
+ - removed unused gsc_m2m_reqbufs() function.
 ---
- drivers/media/platform/mem2mem_testdev.c |  152 ++++++------------------------
- 1 files changed, 28 insertions(+), 124 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.h |   12 --
+ drivers/media/platform/exynos-gsc/gsc-m2m.c  |  152 +++++---------------------
+ 2 files changed, 27 insertions(+), 137 deletions(-)
 
-diff --git a/drivers/media/platform/mem2mem_testdev.c b/drivers/media/platform/mem2mem_testdev.c
-index 6a17676..a348c07 100644
---- a/drivers/media/platform/mem2mem_testdev.c
-+++ b/drivers/media/platform/mem2mem_testdev.c
-@@ -177,8 +177,6 @@ struct m2mtest_ctx {
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.h b/drivers/media/platform/exynos-gsc/gsc-core.h
+index c79b3cb..c4540a8 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.h
++++ b/drivers/media/platform/exynos-gsc/gsc-core.h
+@@ -463,18 +463,6 @@ static inline void gsc_hw_clear_irq(struct gsc_dev *dev, int irq)
+ 	writel(cfg, dev->regs + GSC_IRQ);
+ }
  
- 	enum v4l2_colorspace	colorspace;
- 
--	struct v4l2_m2m_ctx	*m2m_ctx;
+-static inline void gsc_lock(struct vb2_queue *vq)
+-{
+-	struct gsc_ctx *ctx = vb2_get_drv_priv(vq);
+-	mutex_lock(&ctx->gsc_dev->lock);
+-}
 -
- 	/* Source and destination queue data */
- 	struct m2mtest_q_data   q_data[2];
- };
-@@ -342,8 +340,8 @@ static int job_ready(void *priv)
+-static inline void gsc_unlock(struct vb2_queue *vq)
+-{
+-	struct gsc_ctx *ctx = vb2_get_drv_priv(vq);
+-	mutex_unlock(&ctx->gsc_dev->lock);
+-}
+-
+ static inline bool gsc_ctx_state_is_set(u32 mask, struct gsc_ctx *ctx)
  {
- 	struct m2mtest_ctx *ctx = priv;
+ 	unsigned long flags;
+diff --git a/drivers/media/platform/exynos-gsc/gsc-m2m.c b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+index 78bcb92..42da08c 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-m2m.c
++++ b/drivers/media/platform/exynos-gsc/gsc-m2m.c
+@@ -73,11 +73,11 @@ void gsc_m2m_job_finish(struct gsc_ctx *ctx, int vb_state)
+ {
+ 	struct vb2_buffer *src_vb, *dst_vb;
  
--	if (v4l2_m2m_num_src_bufs_ready(ctx->m2m_ctx) < ctx->translen
--	    || v4l2_m2m_num_dst_bufs_ready(ctx->m2m_ctx) < ctx->translen) {
-+	if (v4l2_m2m_num_src_bufs_ready(ctx->fh.m2m_ctx) < ctx->translen
-+	    || v4l2_m2m_num_dst_bufs_ready(ctx->fh.m2m_ctx) < ctx->translen) {
- 		dprintk(ctx->dev, "Not enough buffers available\n");
- 		return 0;
- 	}
-@@ -359,21 +357,6 @@ static void job_abort(void *priv)
- 	ctx->aborting = 1;
- }
- 
--static void m2mtest_lock(void *priv)
--{
--	struct m2mtest_ctx *ctx = priv;
--	struct m2mtest_dev *dev = ctx->dev;
--	mutex_lock(&dev->dev_mutex);
--}
--
--static void m2mtest_unlock(void *priv)
--{
--	struct m2mtest_ctx *ctx = priv;
--	struct m2mtest_dev *dev = ctx->dev;
--	mutex_unlock(&dev->dev_mutex);
--}
--
--
- /* device_run() - prepares and starts the device
-  *
-  * This simulates all the immediate preparations required before starting
-@@ -386,8 +369,8 @@ static void device_run(void *priv)
- 	struct m2mtest_dev *dev = ctx->dev;
- 	struct vb2_buffer *src_buf, *dst_buf;
- 
--	src_buf = v4l2_m2m_next_src_buf(ctx->m2m_ctx);
--	dst_buf = v4l2_m2m_next_dst_buf(ctx->m2m_ctx);
-+	src_buf = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
-+	dst_buf = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
- 
- 	device_process(ctx, src_buf, dst_buf);
- 
-@@ -409,8 +392,8 @@ static void device_isr(unsigned long priv)
+-	if (!ctx || !ctx->m2m_ctx)
++	if (!ctx || !ctx->fh.m2m_ctx)
  		return;
+ 
+-	src_vb = v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
+-	dst_vb = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
++	src_vb = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
++	dst_vb = v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+ 
+ 	if (src_vb && dst_vb) {
+ 		src_vb->v4l2_buf.timestamp = dst_vb->v4l2_buf.timestamp;
+@@ -87,7 +87,7 @@ void gsc_m2m_job_finish(struct gsc_ctx *ctx, int vb_state)
+ 		v4l2_m2m_buf_done(dst_vb, vb_state);
+ 
+ 		v4l2_m2m_job_finish(ctx->gsc_dev->m2m.m2m_dev,
+-				    ctx->m2m_ctx);
++				    ctx->fh.m2m_ctx);
  	}
- 
--	src_vb = v4l2_m2m_src_buf_remove(curr_ctx->m2m_ctx);
--	dst_vb = v4l2_m2m_dst_buf_remove(curr_ctx->m2m_ctx);
-+	src_vb = v4l2_m2m_src_buf_remove(curr_ctx->fh.m2m_ctx);
-+	dst_vb = v4l2_m2m_dst_buf_remove(curr_ctx->fh.m2m_ctx);
- 
- 	curr_ctx->num_processed++;
- 
-@@ -423,7 +406,7 @@ static void device_isr(unsigned long priv)
- 	    || curr_ctx->aborting) {
- 		dprintk(curr_ctx->dev, "Finishing transaction\n");
- 		curr_ctx->num_processed = 0;
--		v4l2_m2m_job_finish(m2mtest_dev->m2m_dev, curr_ctx->m2m_ctx);
-+		v4l2_m2m_job_finish(m2mtest_dev->m2m_dev, curr_ctx->fh.m2m_ctx);
- 	} else {
- 		device_run(curr_ctx);
- 	}
-@@ -491,7 +474,7 @@ static int vidioc_g_fmt(struct m2mtest_ctx *ctx, struct v4l2_format *f)
- 	struct vb2_queue *vq;
- 	struct m2mtest_q_data *q_data;
- 
--	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
-+	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
- 	if (!vq)
- 		return -EINVAL;
- 
-@@ -594,7 +577,7 @@ static int vidioc_s_fmt(struct m2mtest_ctx *ctx, struct v4l2_format *f)
- 	struct m2mtest_q_data *q_data;
- 	struct vb2_queue *vq;
- 
--	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
-+	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
- 	if (!vq)
- 		return -EINVAL;
- 
-@@ -648,52 +631,6 @@ static int vidioc_s_fmt_vid_out(struct file *file, void *priv,
- 	return ret;
  }
  
--static int vidioc_reqbufs(struct file *file, void *priv,
+@@ -111,12 +111,12 @@ static int gsc_get_bufs(struct gsc_ctx *ctx)
+ 	s_frame = &ctx->s_frame;
+ 	d_frame = &ctx->d_frame;
+ 
+-	src_vb = v4l2_m2m_next_src_buf(ctx->m2m_ctx);
++	src_vb = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
+ 	ret = gsc_prepare_addr(ctx, src_vb, s_frame, &s_frame->addr);
+ 	if (ret)
+ 		return ret;
+ 
+-	dst_vb = v4l2_m2m_next_dst_buf(ctx->m2m_ctx);
++	dst_vb = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+ 	ret = gsc_prepare_addr(ctx, dst_vb, d_frame, &d_frame->addr);
+ 	if (ret)
+ 		return ret;
+@@ -251,19 +251,15 @@ static int gsc_m2m_buf_prepare(struct vb2_buffer *vb)
+ static void gsc_m2m_buf_queue(struct vb2_buffer *vb)
+ {
+ 	struct gsc_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
+-
+-	pr_debug("ctx: %p, ctx->state: 0x%x", ctx, ctx->state);
+-
+-	if (ctx->m2m_ctx)
+-		v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
++	v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vb);
+ }
+ 
+ static struct vb2_ops gsc_m2m_qops = {
+ 	.queue_setup	 = gsc_m2m_queue_setup,
+ 	.buf_prepare	 = gsc_m2m_buf_prepare,
+ 	.buf_queue	 = gsc_m2m_buf_queue,
+-	.wait_prepare	 = gsc_unlock,
+-	.wait_finish	 = gsc_lock,
++	.wait_prepare	 = vb2_ops_wait_prepare,
++	.wait_finish	 = vb2_ops_wait_finish,
+ 	.stop_streaming	 = gsc_m2m_stop_streaming,
+ 	.start_streaming = gsc_m2m_start_streaming,
+ };
+@@ -319,7 +315,7 @@ static int gsc_m2m_s_fmt_mplane(struct file *file, void *fh,
+ 	if (ret)
+ 		return ret;
+ 
+-	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
++	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+ 
+ 	if (vb2_is_streaming(vq)) {
+ 		pr_err("queue (%d) busy", f->type);
+@@ -348,73 +344,6 @@ static int gsc_m2m_s_fmt_mplane(struct file *file, void *fh,
+ 	return 0;
+ }
+ 
+-static int gsc_m2m_reqbufs(struct file *file, void *fh,
 -			  struct v4l2_requestbuffers *reqbufs)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
+-	struct gsc_ctx *ctx = fh_to_ctx(fh);
+-	struct gsc_dev *gsc = ctx->gsc_dev;
+-	u32 max_cnt;
+-
+-	max_cnt = (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) ?
+-		gsc->variant->in_buf_cnt : gsc->variant->out_buf_cnt;
+-	if (reqbufs->count > max_cnt) {
+-		return -EINVAL;
+-	}
 -
 -	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
 -}
 -
--static int vidioc_querybuf(struct file *file, void *priv,
--			   struct v4l2_buffer *buf)
+-static int gsc_m2m_expbuf(struct file *file, void *fh,
+-				struct v4l2_exportbuffer *eb)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
+-	struct gsc_ctx *ctx = fh_to_ctx(fh);
+-	return v4l2_m2m_expbuf(file, ctx->m2m_ctx, eb);
+-}
 -
+-static int gsc_m2m_querybuf(struct file *file, void *fh,
+-					struct v4l2_buffer *buf)
+-{
+-	struct gsc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf);
 -}
 -
--static int vidioc_qbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
+-static int gsc_m2m_qbuf(struct file *file, void *fh,
+-			  struct v4l2_buffer *buf)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
--
+-	struct gsc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf);
 -}
 -
--static int vidioc_dqbuf(struct file *file, void *priv, struct v4l2_buffer *buf)
+-static int gsc_m2m_dqbuf(struct file *file, void *fh,
+-			   struct v4l2_buffer *buf)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
--
+-	struct gsc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf);
 -}
 -
--static int vidioc_streamon(struct file *file, void *priv,
+-static int gsc_m2m_streamon(struct file *file, void *fh,
 -			   enum v4l2_buf_type type)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
+-	struct gsc_ctx *ctx = fh_to_ctx(fh);
+-
+-	/* The source and target color format need to be set */
+-	if (V4L2_TYPE_IS_OUTPUT(type)) {
+-		if (!gsc_ctx_state_is_set(GSC_SRC_FMT, ctx))
+-			return -EINVAL;
+-	} else if (!gsc_ctx_state_is_set(GSC_DST_FMT, ctx)) {
+-		return -EINVAL;
+-	}
 -
 -	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
 -}
 -
--static int vidioc_streamoff(struct file *file, void *priv,
+-static int gsc_m2m_streamoff(struct file *file, void *fh,
 -			    enum v4l2_buf_type type)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
--
+-	struct gsc_ctx *ctx = fh_to_ctx(fh);
 -	return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
 -}
 -
- static int m2mtest_s_ctrl(struct v4l2_ctrl *ctrl)
+ /* Return 1 if rectangle a is enclosed in rectangle b, or 0 otherwise. */
+ static int is_rectangle_enclosed(struct v4l2_rect *a, struct v4l2_rect *b)
  {
- 	struct m2mtest_ctx *ctx =
-@@ -748,14 +685,14 @@ static const struct v4l2_ioctl_ops m2mtest_ioctl_ops = {
- 	.vidioc_try_fmt_vid_out	= vidioc_try_fmt_vid_out,
- 	.vidioc_s_fmt_vid_out	= vidioc_s_fmt_vid_out,
- 
--	.vidioc_reqbufs		= vidioc_reqbufs,
--	.vidioc_querybuf	= vidioc_querybuf,
-+	.vidioc_reqbufs		= v4l2_m2m_ioctl_reqbufs,
-+	.vidioc_querybuf	= v4l2_m2m_ioctl_querybuf,
-+	.vidioc_qbuf		= v4l2_m2m_ioctl_qbuf,
-+	.vidioc_dqbuf		= v4l2_m2m_ioctl_dqbuf,
- 
--	.vidioc_qbuf		= vidioc_qbuf,
--	.vidioc_dqbuf		= vidioc_dqbuf,
-+	.vidioc_streamon	= v4l2_m2m_ioctl_streamon,
-+	.vidioc_streamoff	= v4l2_m2m_ioctl_streamoff,
- 
--	.vidioc_streamon	= vidioc_streamon,
--	.vidioc_streamoff	= vidioc_streamoff,
- 	.vidioc_subscribe_event = v4l2_ctrl_subscribe_event,
- 	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
+@@ -549,13 +478,15 @@ static const struct v4l2_ioctl_ops gsc_m2m_ioctl_ops = {
+ 	.vidioc_try_fmt_vid_out_mplane	= gsc_m2m_try_fmt_mplane,
+ 	.vidioc_s_fmt_vid_cap_mplane	= gsc_m2m_s_fmt_mplane,
+ 	.vidioc_s_fmt_vid_out_mplane	= gsc_m2m_s_fmt_mplane,
+-	.vidioc_reqbufs			= gsc_m2m_reqbufs,
+-	.vidioc_expbuf                  = gsc_m2m_expbuf,
+-	.vidioc_querybuf		= gsc_m2m_querybuf,
+-	.vidioc_qbuf			= gsc_m2m_qbuf,
+-	.vidioc_dqbuf			= gsc_m2m_dqbuf,
+-	.vidioc_streamon		= gsc_m2m_streamon,
+-	.vidioc_streamoff		= gsc_m2m_streamoff,
++
++	.vidioc_reqbufs			= v4l2_m2m_ioctl_reqbufs,
++	.vidioc_querybuf		= v4l2_m2m_ioctl_querybuf,
++	.vidioc_expbuf			= v4l2_m2m_ioctl_expbuf,
++	.vidioc_qbuf			= v4l2_m2m_ioctl_qbuf,
++	.vidioc_dqbuf			= v4l2_m2m_ioctl_dqbuf,
++
++	.vidioc_streamon		= v4l2_m2m_ioctl_streamon,
++	.vidioc_streamoff		= v4l2_m2m_ioctl_streamoff,
+ 	.vidioc_g_selection		= gsc_m2m_g_selection,
+ 	.vidioc_s_selection		= gsc_m2m_s_selection
  };
-@@ -818,27 +755,15 @@ static int m2mtest_buf_prepare(struct vb2_buffer *vb)
- static void m2mtest_buf_queue(struct vb2_buffer *vb)
- {
- 	struct m2mtest_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
--	v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
--}
--
--static void m2mtest_wait_prepare(struct vb2_queue *q)
--{
--	struct m2mtest_ctx *ctx = vb2_get_drv_priv(q);
--	m2mtest_unlock(ctx);
--}
--
--static void m2mtest_wait_finish(struct vb2_queue *q)
--{
--	struct m2mtest_ctx *ctx = vb2_get_drv_priv(q);
--	m2mtest_lock(ctx);
-+	v4l2_m2m_buf_queue(ctx->fh.m2m_ctx, vb);
- }
- 
- static struct vb2_ops m2mtest_qops = {
- 	.queue_setup	 = m2mtest_queue_setup,
- 	.buf_prepare	 = m2mtest_buf_prepare,
- 	.buf_queue	 = m2mtest_buf_queue,
--	.wait_prepare	 = m2mtest_wait_prepare,
--	.wait_finish	 = m2mtest_wait_finish,
-+	.wait_prepare	 = vb2_ops_wait_prepare,
-+	.wait_finish	 = vb2_ops_wait_finish,
- };
- 
- static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_vq)
-@@ -853,6 +778,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
- 	src_vq->ops = &m2mtest_qops;
- 	src_vq->mem_ops = &vb2_vmalloc_memops;
+@@ -574,6 +505,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+ 	src_vq->mem_ops = &vb2_dma_contig_memops;
+ 	src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
  	src_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-+	src_vq->lock = &ctx->dev->dev_mutex;
++	src_vq->lock = &ctx->gsc_dev->lock;
  
  	ret = vb2_queue_init(src_vq);
  	if (ret)
-@@ -865,6 +791,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *ds
- 	dst_vq->ops = &m2mtest_qops;
- 	dst_vq->mem_ops = &vb2_vmalloc_memops;
+@@ -587,6 +519,7 @@ static int queue_init(void *priv, struct vb2_queue *src_vq,
+ 	dst_vq->mem_ops = &vb2_dma_contig_memops;
+ 	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
  	dst_vq->timestamp_type = V4L2_BUF_FLAG_TIMESTAMP_COPY;
-+	dst_vq->lock = &ctx->dev->dev_mutex;
++	dst_vq->lock = &ctx->gsc_dev->lock;
  
  	return vb2_queue_init(dst_vq);
  }
-@@ -936,10 +863,10 @@ static int m2mtest_open(struct file *file)
- 	ctx->q_data[V4L2_M2M_DST] = ctx->q_data[V4L2_M2M_SRC];
- 	ctx->colorspace = V4L2_COLORSPACE_REC709;
+@@ -654,10 +587,10 @@ static int gsc_m2m_open(struct file *file)
+ 	ctx->in_path = GSC_DMA;
+ 	ctx->out_path = GSC_DMA;
  
--	ctx->m2m_ctx = v4l2_m2m_ctx_init(dev->m2m_dev, ctx, &queue_init);
-+	ctx->fh.m2m_ctx = v4l2_m2m_ctx_init(dev->m2m_dev, ctx, &queue_init);
- 
+-	ctx->m2m_ctx = v4l2_m2m_ctx_init(gsc->m2m.m2m_dev, ctx, queue_init);
 -	if (IS_ERR(ctx->m2m_ctx)) {
--		rc = PTR_ERR(ctx->m2m_ctx);
++	ctx->fh.m2m_ctx = v4l2_m2m_ctx_init(gsc->m2m.m2m_dev, ctx, queue_init);
 +	if (IS_ERR(ctx->fh.m2m_ctx)) {
-+		rc = PTR_ERR(ctx->fh.m2m_ctx);
+ 		pr_err("Failed to initialize m2m context");
+-		ret = PTR_ERR(ctx->m2m_ctx);
++		ret = PTR_ERR(ctx->fh.m2m_ctx);
+ 		goto error_ctrls;
+ 	}
  
- 		v4l2_ctrl_handler_free(hdl);
- 		kfree(ctx);
-@@ -949,7 +876,8 @@ static int m2mtest_open(struct file *file)
- 	v4l2_fh_add(&ctx->fh);
- 	atomic_inc(&dev->num_inst);
+@@ -696,7 +629,7 @@ static int gsc_m2m_release(struct file *file)
  
--	dprintk(dev, "Created instance %p, m2m_ctx: %p\n", ctx, ctx->m2m_ctx);
-+	dprintk(dev, "Created instance: %p, m2m_ctx: %p\n",
-+		ctx, ctx->fh.m2m_ctx);
+ 	mutex_lock(&gsc->lock);
  
- open_unlock:
- 	mutex_unlock(&dev->dev_mutex);
-@@ -967,7 +895,7 @@ static int m2mtest_release(struct file *file)
- 	v4l2_fh_exit(&ctx->fh);
- 	v4l2_ctrl_handler_free(&ctx->hdl);
- 	mutex_lock(&dev->dev_mutex);
 -	v4l2_m2m_ctx_release(ctx->m2m_ctx);
 +	v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
- 	mutex_unlock(&dev->dev_mutex);
- 	kfree(ctx);
- 
-@@ -976,34 +904,13 @@ static int m2mtest_release(struct file *file)
+ 	gsc_ctrls_delete(ctx);
+ 	v4l2_fh_del(&ctx->fh);
+ 	v4l2_fh_exit(&ctx->fh);
+@@ -709,44 +642,13 @@ static int gsc_m2m_release(struct file *file)
  	return 0;
  }
  
--static unsigned int m2mtest_poll(struct file *file,
--				 struct poll_table_struct *wait)
+-static unsigned int gsc_m2m_poll(struct file *file,
+-					struct poll_table_struct *wait)
 -{
--	struct m2mtest_ctx *ctx = file2ctx(file);
+-	struct gsc_ctx *ctx = fh_to_ctx(file->private_data);
+-	struct gsc_dev *gsc = ctx->gsc_dev;
+-	int ret;
 -
--	return v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
--}
--
--static int m2mtest_mmap(struct file *file, struct vm_area_struct *vma)
--{
--	struct m2mtest_dev *dev = video_drvdata(file);
--	struct m2mtest_ctx *ctx = file2ctx(file);
--	int res;
--
--	if (mutex_lock_interruptible(&dev->dev_mutex))
+-	if (mutex_lock_interruptible(&gsc->lock))
 -		return -ERESTARTSYS;
--	res = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
--	mutex_unlock(&dev->dev_mutex);
--	return res;
+-
+-	ret = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
+-	mutex_unlock(&gsc->lock);
+-
+-	return ret;
 -}
 -
- static const struct v4l2_file_operations m2mtest_fops = {
+-static int gsc_m2m_mmap(struct file *file, struct vm_area_struct *vma)
+-{
+-	struct gsc_ctx *ctx = fh_to_ctx(file->private_data);
+-	struct gsc_dev *gsc = ctx->gsc_dev;
+-	int ret;
+-
+-	if (mutex_lock_interruptible(&gsc->lock))
+-		return -ERESTARTSYS;
+-
+-	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
+-	mutex_unlock(&gsc->lock);
+-
+-	return ret;
+-}
+-
+ static const struct v4l2_file_operations gsc_m2m_fops = {
  	.owner		= THIS_MODULE,
- 	.open		= m2mtest_open,
- 	.release	= m2mtest_release,
--	.poll		= m2mtest_poll,
+ 	.open		= gsc_m2m_open,
+ 	.release	= gsc_m2m_release,
+-	.poll		= gsc_m2m_poll,
 +	.poll		= v4l2_m2m_fop_poll,
  	.unlocked_ioctl	= video_ioctl2,
--	.mmap		= m2mtest_mmap,
+-	.mmap		= gsc_m2m_mmap,
 +	.mmap		= v4l2_m2m_fop_mmap,
  };
  
- static struct video_device m2mtest_videodev = {
-@@ -1019,8 +926,6 @@ static struct v4l2_m2m_ops m2m_ops = {
- 	.device_run	= device_run,
- 	.job_ready	= job_ready,
- 	.job_abort	= job_abort,
--	.lock		= m2mtest_lock,
--	.unlock		= m2mtest_unlock,
- };
- 
- static int m2mtest_probe(struct platform_device *pdev)
-@@ -1134,4 +1039,3 @@ static int __init m2mtest_init(void)
- 
- module_init(m2mtest_init);
- module_exit(m2mtest_exit);
--
+ static struct v4l2_m2m_ops gsc_m2m_ops = {
 -- 
 1.7.4.1
