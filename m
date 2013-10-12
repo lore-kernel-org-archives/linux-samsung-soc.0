@@ -1,43 +1,68 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq: fix false return check from "regulator_set_voltage"
-Date: Sat, 12 Oct 2013 08:51:22 +0530
-Message-ID: <CAKohpokPpyZNN=aH=u8kxDjiQrsE2mwu=0MN6pkWfuXLu9cZKw@mail.gmail.com>
-References: <1381331617-14703-1-git-send-email-badarkhe.manish@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <1381331617-14703-1-git-send-email-badarkhe.manish@gmail.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Manish Badarkhe <badarkhe.manish@gmail.com>
-Cc: cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, rjw@sisk.pl, kgene.kim@samsung.com
+From: Michael Opdenacker <michael.opdenacker@free-electrons.com>
+Subject: [PATCH] ARM: SAMSUNG: remove IRQF_DISABLED
+Date: Sat, 12 Oct 2013 05:36:06 +0200
+Message-ID: <1381548966-5210-1-git-send-email-michael.opdenacker@free-electrons.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from top.free-electrons.com ([176.31.233.9]:53892 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751591Ab3JLDgK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Oct 2013 23:36:10 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ben-linux@fluff.org, kgene.kim@samsung.com, linux@arm.linux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>
 
-On 09/10/2013, Manish Badarkhe <badarkhe.manish@gmail.com> wrote:
-> Currently, code checks false return value from "regulator_set_voltage"
-> to show failure message. Modify the code to check proper return
-> value from "regulator_set_voltage".
->
-> Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
-> ---
-> Based on master branch of linux-mainline.
->
-> :100644 100644 0fac344... 1537f32... M	drivers/cpufreq/exynos-cpufreq.c
->  drivers/cpufreq/exynos-cpufreq.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c
-> b/drivers/cpufreq/exynos-cpufreq.c
-> index 0fac344..1537f32 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -141,7 +141,7 @@ post_notify:
->  	if ((freqs.new < freqs.old) ||
->  	   ((freqs.new > freqs.old) && safe_arm_volt)) {
->  		/* down the voltage after frequency change */
-> -		regulator_set_voltage(arm_regulator, arm_volt,
-> +		ret = regulator_set_voltage(arm_regulator, arm_volt,
->  				arm_volt);
->  		if (ret) {
->  			pr_err("%s: failed to set cpu voltage to %d\n",
+This patch proposes to remove the use of the IRQF_DISABLED flag
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+It's a NOOP since 2.6.35 and it will be removed one day.
+
+Signed-off-by: Michael Opdenacker <michael.opdenacker@free-electrons.com>
+---
+ arch/arm/mach-s3c24xx/dma.c         | 2 +-
+ arch/arm/mach-s3c24xx/simtec-usb.c  | 3 +--
+ arch/arm/mach-s3c64xx/mach-smartq.c | 2 +-
+ 3 files changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/dma.c b/arch/arm/mach-s3c24xx/dma.c
+index 4a65cba..a8dafc1 100644
+--- a/arch/arm/mach-s3c24xx/dma.c
++++ b/arch/arm/mach-s3c24xx/dma.c
+@@ -742,7 +742,7 @@ int s3c2410_dma_request(enum dma_ch channel,
+ 		chan->irq_claimed = 1;
+ 		local_irq_restore(flags);
+ 
+-		err = request_irq(chan->irq, s3c2410_dma_irq, IRQF_DISABLED,
++		err = request_irq(chan->irq, s3c2410_dma_irq, 0,
+ 				  client->name, (void *)chan);
+ 
+ 		local_irq_save(flags);
+diff --git a/arch/arm/mach-s3c24xx/simtec-usb.c b/arch/arm/mach-s3c24xx/simtec-usb.c
+index 2ed2e32..bb3eac6 100644
+--- a/arch/arm/mach-s3c24xx/simtec-usb.c
++++ b/arch/arm/mach-s3c24xx/simtec-usb.c
+@@ -78,8 +78,7 @@ static void usb_simtec_enableoc(struct s3c2410_hcd_info *info, int on)
+ 
+ 	if (on) {
+ 		ret = request_irq(BAST_IRQ_USBOC, usb_simtec_ocirq,
+-				  IRQF_DISABLED | IRQF_TRIGGER_RISING |
+-				   IRQF_TRIGGER_FALLING,
++				  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+ 				  "USB Over-current", info);
+ 		if (ret != 0) {
+ 			printk(KERN_ERR "failed to request usb oc irq\n");
+diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
+index 86d980b..389cc49 100644
+--- a/arch/arm/mach-s3c64xx/mach-smartq.c
++++ b/arch/arm/mach-s3c64xx/mach-smartq.c
+@@ -106,7 +106,7 @@ static void smartq_usb_host_enableoc(struct s3c2410_hcd_info *info, int on)
+ 
+ 	if (on) {
+ 		ret = request_irq(gpio_to_irq(S3C64XX_GPL(10)),
+-				  smartq_usb_host_ocirq, IRQF_DISABLED |
++				  smartq_usb_host_ocirq,
+ 				  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+ 				  "USB host overcurrent", info);
+ 		if (ret != 0)
+-- 
+1.8.1.2
