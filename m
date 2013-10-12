@@ -1,41 +1,91 @@
-From: 'Greg Kroah-Hartman' <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Subject: Re: [PATCH V2 3/5] USB: ohci-exynos: Remove non-DT support
-Date: Fri, 11 Oct 2013 16:55:11 -0700
-Message-ID: <20131011235511.GA2571@kroah.com>
-References: <000101cec58b$ee8bd2f0$cba378d0$%han@samsung.com>
- <000401cec58c$2dff1c30$89fd5490$%han@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Fix PLL35XX lock time
+Date: Sat, 12 Oct 2013 04:06:21 +0200
+Message-ID: <2464757.WeV77WxV9T@amdn883>
+References: <1381215399-25394-1-git-send-email-arun.kk@samsung.com>
+ <2947491.pJZ8F0UW5m@amdn883>
+ <CAD=FV=V-RqREqsR-g-2=Rv5UMzwbJFbn7t5xhDp6qBkuGrJVvg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <000401cec58c$2dff1c30$89fd5490$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sachin Kamat' <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22405 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752256Ab3JLCGZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 Oct 2013 22:06:25 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MUJ009T89UN2LC0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 12 Oct 2013 03:06:23 +0100 (BST)
+In-reply-to: <CAD=FV=V-RqREqsR-g-2=Rv5UMzwbJFbn7t5xhDp6qBkuGrJVvg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Arun Kumar K <arunkk.samsung@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Andrew Bresticker <abrestic@chromium.org>
 
-On Thu, Oct 10, 2013 at 04:41:49PM +0900, Jingoo Han wrote:
-> The non-DT for EXYNOS SoCs is not supported from v3.11.
-> Thus, there is no need to support non-DT for Exynos OHCI driver.
+On Friday 11 of October 2013 08:14:03 Doug Anderson wrote:
+> Tomasz,
 > 
-> The 'include/linux/platform_data/usb-ohci-exynos.h' file has been
-> used for non-DT support. Thus, the 'usb-ohci-exynos.h' file can
-> be removed.
+> On Wed, Oct 9, 2013 at 10:20 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> >> > I don't think this is right.  I believe that it needs to be passed in
+> >> > by the SoC.  On exynos5250 I see 250 in both the manual and in our
+> >> > code.  On exynos5420 manual I actually see 200 now.  I'm not actually
+> >> > sure where the 270 came from, now that I search for it.
+> >>
+> >> The manual I referred gives 250 for both 5250 and 5420 and thats why I
+> >> concluded on this fix. I will check other versions of the manual to see if
+> >> the value is changing.
+> >
+> > 270 is the value taken from Exynos 4412 User's Manual rev. 1.1.
+> >
+> > I believe we don't have to extend this to support per SoC value, because it
+> > should be always safe to take the value of SoC that requires the longest
+> > locking period. The differences are small enough to be insignificant, so there
+> > should be no practical performance penalty.
 > 
-> Signed-off-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> It's not _that_ small for something like APLL which can be changing
+> constantly in DVFS.
+> 
+> 24MHz input clock, right?  ...and I see some P values of up to 6.
+> 
+> That means with 270 lock time is 67.5 us, right?
+> ...and with 200 lock time is 50 us, right?
+> 
+> ...so that's a 17.5 us difference by using the correct multiplier.
+> Overall DVFS switch time was measured recently at ~350us, so that
+> would give us a 5% speedup on DVFS switching.
+>
+> We've had debates in-house in the past about how critical DVFS
+> switching time is.  In the past there have been some who have
+> advocated that it's very important, since it affects responsiveness
+> (how fast can you spin up when you suddenly have something to do).
 
-This patch fails to apply to my tree for some reason:
-	checking file drivers/usb/host/ohci-exynos.c
-	Hunk #5 FAILED at 91.
-	1 out of 5 hunks FAILED
-	checking file include/linux/platform_data/usb-ohci-exynos.h
+Well, it's some kind of difference indeed. However, how often can
+a frequency transition happen?
 
-Can you redo it against my usb-next usb.git tree and resend it?
+I believe that ondemand allows minimum sampling period of
+100 * transition latency, so even without considering the PLL lock time,
+we would have at most a single delay of ~400 us every ~40 ms, during
+which remaining CPUs are operating normally, because of switching to
+MPLL temporarily.
 
-thanks,
+A bit more interesting case would be the Android interactive governor,
+which scales up the CPU on any wake-up event, but I don't believe any
+user would notice the extra 17,5 us from touching the screen to seeing
+a menu animation, for example.
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Please correct me if I'm missing something here.
+
+> Anyway, when it's something as simple as passing in a parameter to get
+> it right, it seems worth doing.
+
+Sure, any patches improving things are welcome, I was just wondering
+whether the improvement will be of any significance. Looking forward
+to respective patches, hoping that they will not complicate the code
+too much (although we already have a struct for PLL parameters, so they
+should not).
+
+Best regards,
+Tomasz
