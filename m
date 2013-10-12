@@ -1,68 +1,76 @@
-From: Michael Opdenacker <michael.opdenacker@free-electrons.com>
-Subject: [PATCH] ARM: SAMSUNG: remove IRQF_DISABLED
-Date: Sat, 12 Oct 2013 05:36:06 +0200
-Message-ID: <1381548966-5210-1-git-send-email-michael.opdenacker@free-electrons.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH RESEND 0/3] ARM: S3C24XX: add missing dma-devices and
+ warning fix
+Date: Sat, 12 Oct 2013 06:38:50 +0200
+Message-ID: <3315189.7g6koLM0p3@amdn883>
+References: <201310111059.19791.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:53892 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1751591Ab3JLDgK (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:24673 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750705Ab3JLEiy convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Oct 2013 23:36:10 -0400
+	Sat, 12 Oct 2013 00:38:54 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MUJ0037EGWJCHB0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 12 Oct 2013 05:38:52 +0100 (BST)
+In-reply-to: <201310111059.19791.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com, linux@arm.linux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>
+To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Olof Johansson <olof@lixom.net>
 
-This patch proposes to remove the use of the IRQF_DISABLED flag
+Hi Heiko,
 
-It's a NOOP since 2.6.35 and it will be removed one day.
+[Resending, due to my e-mail client enabling HTML formatting.
+Sorry for the noise.]
 
-Signed-off-by: Michael Opdenacker <michael.opdenacker@free-electrons.com>
----
- arch/arm/mach-s3c24xx/dma.c         | 2 +-
- arch/arm/mach-s3c24xx/simtec-usb.c  | 3 +--
- arch/arm/mach-s3c64xx/mach-smartq.c | 2 +-
- 3 files changed, 3 insertions(+), 4 deletions(-)
+On Friday 11 of October 2013 10:59:19 Heiko St=FCbner wrote:
+> [I messed up the linux-arm-kernel list address yesterday, so I resend=
+ it
+> with a fixed address, sorry for the noise]
+>=20
+> When Olof reported the warning about the unused s3c2410_dma_resource,=
+ I
+> thought the best way forward would be to simply implement the missing
+> pieces and so it has users :-) .
+>=20
+> Therefore this series adds the necessary platform-devices for s3c2410=
+,
+> s3c2440 and s3c2442. This especially also includes the channel-constr=
+aints
+> of those socs.
+>=20
+> As I do not have access to any of those socs these changes are of cou=
+rse
+> compile-tested only.
+>=20
+> Heiko Stuebner (3):
+>   ARM: S3C24XX: Fix possible dma selection warning
+>   dmaengine: s3c24xx-dma: add support for the s3c2410 type of control=
+ler
+>   ARM: S3C24XX: add dma platformdata for s3c2410, s3c2440 and s3c2442
+>=20
+>  arch/arm/mach-s3c24xx/Kconfig             |    3 +-
+>  arch/arm/mach-s3c24xx/common.c            |  100 +++++++++++++++++++=
+++++++++++
+>  arch/arm/mach-s3c24xx/common.h            |    2 +
+>  drivers/dma/s3c24xx-dma.c                 |   10 +++
+>  include/linux/platform_data/dma-s3c24xx.h |    3 +
+>  sound/soc/samsung/Kconfig                 |    2 +-
+>  6 files changed, 118 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/dma.c b/arch/arm/mach-s3c24xx/dma.c
-index 4a65cba..a8dafc1 100644
---- a/arch/arm/mach-s3c24xx/dma.c
-+++ b/arch/arm/mach-s3c24xx/dma.c
-@@ -742,7 +742,7 @@ int s3c2410_dma_request(enum dma_ch channel,
- 		chan->irq_claimed = 1;
- 		local_irq_restore(flags);
- 
--		err = request_irq(chan->irq, s3c2410_dma_irq, IRQF_DISABLED,
-+		err = request_irq(chan->irq, s3c2410_dma_irq, 0,
- 				  client->name, (void *)chan);
- 
- 		local_irq_save(flags);
-diff --git a/arch/arm/mach-s3c24xx/simtec-usb.c b/arch/arm/mach-s3c24xx/simtec-usb.c
-index 2ed2e32..bb3eac6 100644
---- a/arch/arm/mach-s3c24xx/simtec-usb.c
-+++ b/arch/arm/mach-s3c24xx/simtec-usb.c
-@@ -78,8 +78,7 @@ static void usb_simtec_enableoc(struct s3c2410_hcd_info *info, int on)
- 
- 	if (on) {
- 		ret = request_irq(BAST_IRQ_USBOC, usb_simtec_ocirq,
--				  IRQF_DISABLED | IRQF_TRIGGER_RISING |
--				   IRQF_TRIGGER_FALLING,
-+				  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
- 				  "USB Over-current", info);
- 		if (ret != 0) {
- 			printk(KERN_ERR "failed to request usb oc irq\n");
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index 86d980b..389cc49 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -106,7 +106,7 @@ static void smartq_usb_host_enableoc(struct s3c2410_hcd_info *info, int on)
- 
- 	if (on) {
- 		ret = request_irq(gpio_to_irq(S3C64XX_GPL(10)),
--				  smartq_usb_host_ocirq, IRQF_DISABLED |
-+				  smartq_usb_host_ocirq,
- 				  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
- 				  "USB host overcurrent", info);
- 		if (ret != 0)
--- 
-1.8.1.2
+Big thanks for this series and the one adding DMA engine support for
+S3C24xx. It would be great if someone could test this on affected
+platforms, so we could finally drop the old S3C-DMA nonsense.
+
+Anyway, for the whole series
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+
+Best regards,
+Tomasz
