@@ -1,83 +1,45 @@
 From: Olof Johansson <olof@lixom.net>
 Subject: Re: [PATCH] ARM: dts: Update arch timer node with clock frequency
-Date: Sat, 12 Oct 2013 15:26:59 -0700
-Message-ID: <20131012222659.GA20879@quad.lixom.net>
+Date: Sat, 12 Oct 2013 15:31:32 -0700
+Message-ID: <20131012223132.GB20879@quad.lixom.net>
 References: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
- <3887347.Oxs1qQnt5k@flatron>
- <20130923141504.GD16069@e106331-lin.cambridge.arm.com>
- <CAOesGMgaDB0ZK7LU+vZmXkpTXaMKbuNgT+vuaRbzypwtZ9eouA@mail.gmail.com>
- <CAL_JsqK5C6N6vYMp=yR-Qi3oKZZrp07SYZaWmv4c23gsq-zxnA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:43113 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752892Ab3JLW1a (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:61439 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752852Ab3JLWb6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Oct 2013 18:27:30 -0400
-Received: by mail-pa0-f50.google.com with SMTP id fb1so5978225pad.37
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Oct 2013 15:27:29 -0700 (PDT)
+	Sat, 12 Oct 2013 18:31:58 -0400
+Received: by mail-pb0-f45.google.com with SMTP id mc17so5755549pbc.4
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Oct 2013 15:31:58 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqK5C6N6vYMp=yR-Qi3oKZZrp07SYZaWmv4c23gsq-zxnA@mail.gmail.com>
+In-Reply-To: <1379499113-20342-1-git-send-email-yuvaraj.cd@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "ian.campbell@citrix.com" <ian.campbell@citrix.com>, "t.figa@samsung.com" <t.figa@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Marc Zyngier <marc.zyngier@arm.com>, Tony Lindgren <tony@atomide.com>, Sean Paul <seanpaul@chromium.org>
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, t.figa@samsung.com, thomas.abraham@linaro.org, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On Wed, Oct 09, 2013 at 04:48:32PM -0500, Rob Herring wrote:
-> On Tue, Oct 8, 2013 at 5:15 PM, Olof Johansson <olof@lixom.net> wrote:
-> > [Adding Tony, who reported a mainline booting issue, and Sean who
-> > helped me track this down]
-> >
-> > On Mon, Sep 23, 2013 at 7:15 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >> On Sat, Sep 21, 2013 at 04:24:59PM +0100, Tomasz Figa wrote:
-> >>> Hi Yuvaraj,
-> >>>
-> >>> On Wednesday 18 of September 2013 15:41:53 Yuvaraj Kumar C D wrote:
-> >>> > Without the "clock-frequency" property in arch timer node, could able
-> >>> > to see the below crash dump.
-> >>> [snip]
-> >>> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> >>> > b/arch/arm/boot/dts/exynos5250.dtsi index 7d7cc77..668ce5d 100644
-> >>> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> >>> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> >>> > @@ -96,6 +96,7 @@
-> >>> >                          <1 14 0xf08>,
-> >>> >                          <1 11 0xf08>,
-> >>> >                          <1 10 0xf08>;
-> >>> > +           clock-frequency = <24000000>;
-> >>>
-> >>> Shouldn't it rather come from some clock provided by some clock controller
-> >>> instead?
-> >>>
-> >>> The frequency would be then retrieved using clk_get_rate() on a clock
-> >>> received by clk_get(), specified in device tree using generic clock
-> >>> bindings.
-> >>
-> >> If the bootloader has initialised the generic timer correctly, the
-> >> CNTFRQ register should contain the clock frequency, independent of any
-> >> external clock.
-> >
-> > So, we just sat here to bisect a problem on the Samsung Chromebook
-> > where we hit exactly this problem. The read-only firmware on the
-> > device does not set CNTFRQ at boot, so this fails.
-> >
-> > Apparantly the u-boot that comes with Arndale sets it, so I haven't
-> > seen this error on that platform.
-> >
-> >> Having the bootloader set CNTFRQ is by far the preferable solution, it
-> >> is architected for this purpose.
-> >
-> > Unfortunately there is now real hardware out there that needs this due
-> > to firmware bugs / missing features, so there's little other choice.
-> > :(
-> >
-> > I'll pick this patch up in the fixes branch for 3.12, unless someone
-> > complains loudly.
+On Wed, Sep 18, 2013 at 03:41:53PM +0530, Yuvaraj Kumar C D wrote:
+> Without the "clock-frequency" property in arch timer node, could able
+> to see the below crash dump.
 > 
-> Perhaps the subject should say something about this only applying to exynos.
+> [<c0014e28>] (unwind_backtrace+0x0/0xf4) from [<c0011808>] (show_stack+0x10/0x14)
+> [<c0011808>] (show_stack+0x10/0x14) from [<c036ac1c>] (dump_stack+0x7c/0xb0)
+> [<c036ac1c>] (dump_stack+0x7c/0xb0) from [<c01ab760>] (Ldiv0_64+0x8/0x18)
+> [<c01ab760>] (Ldiv0_64+0x8/0x18) from [<c0062f60>] (clockevents_config.part.2+0x1c/0x74)
+> [<c0062f60>] (clockevents_config.part.2+0x1c/0x74) from [<c0062fd8>] (clockevents_config_and_register+0x20/0x2c)
+> [<c0062fd8>] (clockevents_config_and_register+0x20/0x2c) from [<c02b8e8c>] (arch_timer_setup+0xa8/0x134)
+> [<c02b8e8c>] (arch_timer_setup+0xa8/0x134) from [<c04b47b4>] (arch_timer_init+0x1f4/0x24c)
+> [<c04b47b4>] (arch_timer_init+0x1f4/0x24c) from [<c04b40d8>] (clocksource_of_init+0x34/0x58)
+> [<c04b40d8>] (clocksource_of_init+0x34/0x58) from [<c049ed8c>] (time_init+0x20/0x2c)
+> [<c049ed8c>] (time_init+0x20/0x2c) from [<c049b95c>] (start_kernel+0x1e0/0x39c)
+> 
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-Definitely, and I'll add a comment as Mark requested.
+Applied with subject:
+
+ARM: exynos: dts: Update 5250 arch timer node with clock frequency
 
 
 -Olof
