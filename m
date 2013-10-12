@@ -1,30 +1,56 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] s5p-jpeg: fix encoder and decoder video dev names
-Date: Sat, 12 Oct 2013 11:41:02 +0200
-Message-ID: <5259192E.9030304@gmail.com>
-References: <1381394756-17651-1-git-send-email-sw0312.kim@samsung.com>
+Subject: Re: [PATCH RFC 1/7] V4L: Add mem2mem ioctl and file operation helpers
+Date: Sat, 12 Oct 2013 13:02:42 +0200
+Message-ID: <52592C52.20101@gmail.com>
+References: <1379076986-10446-1-git-send-email-s.nawrocki@samsung.com> <1379076986-10446-2-git-send-email-s.nawrocki@samsung.com> <5249474E.7010400@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f169.google.com ([74.125.82.169]:56762 "EHLO
-	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752526Ab3JLJlF (ORCPT
+Received: from mail-we0-f180.google.com ([74.125.82.180]:39227 "EHLO
+	mail-we0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272Ab3JLLCq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Oct 2013 05:41:05 -0400
-In-Reply-To: <1381394756-17651-1-git-send-email-sw0312.kim@samsung.com>
+	Sat, 12 Oct 2013 07:02:46 -0400
+In-Reply-To: <5249474E.7010400@xs4all.nl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seung-Woo Kim <sw0312.kim@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.chehab@samsung.com, s.nawrocki@samsung.com
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, linux-samsung-soc@vger.kernel.org
 
-On 10/10/2013 10:45 AM, Seung-Woo Kim wrote:
-> It is hard to distinguish between decoder and encoder video device
-> because their names are same. So this patch fixes the names.
+On 09/30/2013 11:41 AM, Hans Verkuil wrote:
+> On 09/13/2013 02:56 PM, Sylwester Nawrocki wrote:
+>> This patch adds ioctl helpers to the V4L2 mem-to-mem API, so we
+>> can avoid several ioctl handlers in the mem-to-mem video node
+>> drivers that are simply a pass-through to the v4l2_m2m_* calls.
+>> These helpers will only be useful for drivers that use same mutex
+>> for both OUTPUT and CAPTURE queue, which is the case for all
+>> currently in tree v4l2 m2m drivers.
+>> In order to use the helpers the driver are required to use
+>> struct v4l2_fh.
 >
-> Signed-off-by: Seung-Woo Kim<sw0312.kim@samsung.com>
+> Looks good! I have one small comment below that you might want to address,
+> although it isn't blocking.
+>
+> Acked-by: Hans Verkuil<hans.verkuil@cisco.com>
+>
+> Regards,
+>
+> 	Hans
+>
+>> +/* Videobuf2 ioctl helpers */
+>> +
+>> +int v4l2_m2m_ioctl_reqbufs(struct file *file, void *priv,
+>> +				struct v4l2_requestbuffers *rb)
+>> +{
+>> +	struct v4l2_fh *fh = file->private_data;
+>
+> I prefer an empty line after the variable declaration. Ditto below.
 
-Patch queued for 3.13.
+Thank you for the review. All right, I will include this change in next
+iteration. Even though my feeling is that such two-liner functions look
+better without an empty line and readability is still maintained.
 
-Thanks,
+--
+Regards,
 Sylwester
