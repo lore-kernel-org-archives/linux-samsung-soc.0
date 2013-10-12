@@ -1,182 +1,26 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3] iio: exynos_adc: use wait_for_completion_timeout
- instead of interruptible
-Date: Sat, 12 Oct 2013 12:10:40 +0530
-Message-ID: <CAHfPSqCfU8OPx2BmJsUu+FGuau7wu2vEDJEad8ff7U031mMO4g@mail.gmail.com>
-References: <1365048389-6364-1-git-send-email-naveenkrishna.ch@gmail.com>
- <1381479821-17276-1-git-send-email-ch.naveen@samsung.com> <52580B95.5010603@metafoo.de>
+From: "konstantin.luka.75" <hako@yoshida-ah.com>
+Subject: =?koi8-r?B?3MvT1NLBy9Qgws/Cz9cg+sXMxc7Px88gy8/GxSDPwszB?=
+	=?koi8-r?B?xMHF1CDNz8fV3snNINbJ0s/T1snHwcDdyc0gxMXK09TX?=
+	=?koi8-r?B?ycXN?=
+Date: Sat, 12 Oct 2013 08:55:57 +0200
+Message-ID: <38AEE75844E242F4A3DB69E3F3C6DACE@ajzd>
+Reply-To: "konstantin.luka.75" <zhabrovsk@tnes.nec.co.jp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <52580B95.5010603-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain;
+	charset="koi8-r";
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 180008046120.bhb.bizhosting.net ([180.8.46.120]:3755 "EHLO
+	mtu01.ipx.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752720Ab3JLHMU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 12 Oct 2013 03:12:20 -0400
+Received: from Unknown ([124.95.155.52]:3386)
+	by mtu01.ipx.ne.jp with [XMail ESMTP Server]
+	id <S24320C> for <linux-samsung-soc@vger.kernel.org> from <hako@yoshida-ah.com>;
+	Sat, 12 Oct 2013 15:56:05 +0900
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: urn-nid-request@apps.ietf.org, sexpit@ya.ru, linux-samsung-soc@vger.kernel.org, olga.b@kupi-reklamu.ru, region@vivo-porte.ru
 
-On 11 October 2013 20:00, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org> wrote:
-> On 10/11/2013 10:23 AM, Naveen Krishna Chatradhi wrote:
->> This patch does the following
->> 1. use wait_for_completion_timeout instead of
->>    wait_for_completion_interruptible_timeout
->> 2. Reset software if a timeout happens.
->> 3. Also reduce the timeout to 100milli secs
->
-> It is always good to have a description of why a chance should be done in
-> the commit message. It is obvious what the patch does by just looking at the
-> changed lines, it is not that obvious though why those lines had to be changed.
->
->>
->> Note: submitted for review at https://patchwork.kernel.org/patch/2279591/
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
->> ---
->> Changes since v1:
->> As per discussion at
->> http://marc.info/?l=linux-kernel&m=136517637228869&w=3
->>
->> This patch does the following
->> 1. use wait_for_completion_timeout instead of
->>    wait_for_completion_interruptible_timeout
->> 2. Reset software if a timeout happens.
->> 3. Also reduce the timeout to 100milli secs
->>
->> Changes since v2:
->> None.
->> Rebased and reposting.
->>
->> ---
->>  drivers/iio/adc/exynos_adc.c |   66 +++++++++++++++++++++++-------------------
->>  1 file changed, 36 insertions(+), 30 deletions(-)
->>
->> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
->> index d25b262..f18ed7e 100644
->> --- a/drivers/iio/adc/exynos_adc.c
->> +++ b/drivers/iio/adc/exynos_adc.c
->> @@ -82,7 +82,7 @@ enum adc_version {
->>  #define ADC_CON_EN_START     (1u << 0)
->>  #define ADC_DATX_MASK                0xFFF
->>
->> -#define EXYNOS_ADC_TIMEOUT   (msecs_to_jiffies(1000))
->> +#define EXYNOS_ADC_TIMEOUT   (msecs_to_jiffies(100))
->>
->>  struct exynos_adc {
->>       void __iomem            *regs;
->> @@ -112,6 +112,30 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
->>       return (unsigned int)match->data;
->>  }
->>
->> +static void exynos_adc_hw_init(struct exynos_adc *info)
->> +{
->> +     u32 con1, con2;
->> +
->> +     if (info->version == ADC_V2) {
->> +             con1 = ADC_V2_CON1_SOFT_RESET;
->> +             writel(con1, ADC_V2_CON1(info->regs));
->> +
->> +             con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
->> +                     ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
->> +             writel(con2, ADC_V2_CON2(info->regs));
->> +
->> +             /* Enable interrupts */
->> +             writel(1, ADC_V2_INT_EN(info->regs));
->> +     } else {
->> +             /* set default prescaler values and Enable prescaler */
->> +             con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
->> +
->> +             /* Enable 12-bit ADC resolution */
->> +             con1 |= ADC_V1_CON_RES;
->> +             writel(con1, ADC_V1_CON(info->regs));
->> +     }
->> +}
->> +
->>  static int exynos_read_raw(struct iio_dev *indio_dev,
->>                               struct iio_chan_spec const *chan,
->>                               int *val,
->> @@ -121,6 +145,7 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->>       struct exynos_adc *info = iio_priv(indio_dev);
->>       unsigned long timeout;
->>       u32 con1, con2;
->> +     int ret;
->>
->>       if (mask != IIO_CHAN_INFO_RAW)
->>               return -EINVAL;
->> @@ -145,16 +170,21 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
->>                               ADC_V1_CON(info->regs));
->>       }
->>
->> -     timeout = wait_for_completion_interruptible_timeout
->> +     timeout = wait_for_completion_timeout
->>                       (&info->completion, EXYNOS_ADC_TIMEOUT);
->
-> Nitpick: It would be nice to put the &info->completion on the same line as
-> the wait_for_completion...
-I received a comment from Grant regarding the same.
-I'm away from work this weekend. Will submit the code once i get back,
->
->> +     if (timeout == 0) {
->> +             dev_warn(&indio_dev->dev, "Conversion timed out reseting\n");
->> +             exynos_adc_hw_init(info);
->> +             ret = -ETIMEDOUT;
->> +     } else {
->> +             *val = info->value;
->> +             ret = IIO_VAL_INT;
->> +     }
->>       *val = info->value;
->
-> This line above should probably be removed.
-Yes this is unnecessary. Will remove this.
->
->>
->>       mutex_unlock(&indio_dev->mlock);
->>
->> -     if (timeout == 0)
->> -             return -ETIMEDOUT;
->> -
->> -     return IIO_VAL_INT;
->> +     return ret;
->>  }
->>
->>  static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
->> @@ -226,30 +256,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
->>       return 0;
->>  }
->>
->> -static void exynos_adc_hw_init(struct exynos_adc *info)
->> -{
->> -     u32 con1, con2;
->> -
->> -     if (info->version == ADC_V2) {
->> -             con1 = ADC_V2_CON1_SOFT_RESET;
->> -             writel(con1, ADC_V2_CON1(info->regs));
->> -
->> -             con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
->> -                     ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
->> -             writel(con2, ADC_V2_CON2(info->regs));
->> -
->> -             /* Enable interrupts */
->> -             writel(1, ADC_V2_INT_EN(info->regs));
->> -     } else {
->> -             /* set default prescaler values and Enable prescaler */
->> -             con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
->> -
->> -             /* Enable 12-bit ADC resolution */
->> -             con1 |= ADC_V1_CON_RES;
->> -             writel(con1, ADC_V1_CON(info->regs));
->> -     }
->> -}
->> -
->>  static int exynos_adc_probe(struct platform_device *pdev)
->>  {
->>       struct exynos_adc *info = NULL;
->>
->
-Thanks for the review.
-
-
-
--- 
-Shine bright,
-(: Nav :)
+1dPNydLRxdQgz93V3cXOycUgx8/Mz8TBIGh0dHA6Ly90bnl1cmwudXMvMlVTDQo=
