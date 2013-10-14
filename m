@@ -1,44 +1,204 @@
-From: ysh <youshenghui0322@163.com>
-Subject: Re: Ask for help on SPI slave side driver support
-Date: Mon, 14 Oct 2013 22:51:06 +0800
-Message-ID: <525C04DA.6050409@163.com>
-References: <23ff6b10.bf1d.1416a88321f.Coremail.youshenghui0322@163.com> <4025277.bhF6fFGQqq@flatron> <20130930093317.GX19304@sirena.org.uk> <4cd52b0c.af8e.14184497bb9.Coremail.youshenghui0322@163.com> <20131007113323.GL21581@sirena.org.uk> <4e8f3999.9132.141b335ef13.Coremail.youshenghui0322@163.com> <20131014112519.GQ2443@sirena.org.uk>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 2/5] thermal: exynos: Provide separate TMU data for
+ Exynos4412
+Date: Mon, 14 Oct 2013 16:52:49 +0200
+Message-ID: <20131014165249.7b8b2f9e@amdc308.digital.local>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-3-git-send-email-l.majewski@samsung.com>
+ <525BFDC5.4000109@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from m12-15.163.com ([220.181.12.15]:38336 "EHLO m12-15.163.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755253Ab3JNOuw (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:13237 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756615Ab3JNOxF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Oct 2013 10:50:52 -0400
-In-Reply-To: <20131014112519.GQ2443@sirena.org.uk>
+	Mon, 14 Oct 2013 10:53:05 -0400
+In-reply-to: <525BFDC5.4000109@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, jassi.brar@samsung.com
+To: Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, kgene.kim@samsung.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On 2013-10-14 19:25, Mark Brown wrote:
-> On Mon, Oct 14, 2013 at 03:05:58AM +0800, YouShenghui wrote:
->
-> Please fix your mailer to word wrap within paragraphs, your messages are
-> very hard to read.
->
->> Ok, I have one question when reading drivers/spi/spi-s3c64xx.c
->> In s3c64xx_spi_setup, cs->line(S3C64XX_GPC(3)) is set to GPIOF_OUT_INIT_HIGH, that means an general output pin.
->> But the other three(clk, mosi, miso) was set to 2 by s3c64xx_spi0_cfg_gpio. This is just what is needed by SPI.
->> My question is why wasn't cs->line also set to 2 to use SPI CS0?
->
-> In common with many drivers this driver controls the chp select as a
-> GPIO.  Generally the hardware is less flexible than Linux can be if it
-> implements automatic chip select handling at all.
->
->> When I want to use spi as slave side, should I set S3C64XX_GPC(3)'s cfg of  to 0(input) or 2?
->
-> I don't think the controller has any slave support natively so you'd
-> probably need to put it into GPIO mode.
-Got it, then what about the setting of clk, mosi, miso pin in slave mode?
-Do you mean I need to simulate spi slave side using four gpios?
+Hi Eduardo,
 
-thanks
-zduan
+> On 09-10-2013 02:29, Lukasz Majewski wrote:
+> > Up till now Exynos5250 and Exynos4412 had the same definitions for
+> > TMU data. Following commit changes that, by introducing separate
+> > exynos4412_default_tmu_data structure.
+> > 
+> > Since Exynos4412 was chronologically first, the corresponding name
+> > for TMU registers and default data was renamed.
+> > 
+> > Additionally, new SOC_ARCH_EXYNOS4412 type has been defined.
+> > 
+> > Moreover, the SOC_ARCH_EXYNOS name has been changed to
+> > SOC_ARCH_EXYNOS5250.
+> > 
+> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> > 
+> > ---
+> > Changes for v2:
+> > - Replace SOC_ARCH_EXYNOS with SOC_ARCH_EXYNOS5250
+> > - Fix coding style for tmu_data elements definition
+> > 
+> >  drivers/thermal/samsung/exynos_tmu.c      |    9 +++++----
+> >  drivers/thermal/samsung/exynos_tmu.h      |    3 ++-
+> >  drivers/thermal/samsung/exynos_tmu_data.c |   28
+> > ++++++++++++++++++++++------
+> > drivers/thermal/samsung/exynos_tmu_data.h |    9 ++++++++- 4 files
+> > changed, 37 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
+> > b/drivers/thermal/samsung/exynos_tmu.c index b43afda..1312b34 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu.c
+> > @@ -488,7 +488,7 @@ static const struct of_device_id
+> > exynos_tmu_match[] = { },
+> >  	{
+> >  		.compatible = "samsung,exynos4412-tmu",
+> > -		.data = (void *)EXYNOS5250_TMU_DRV_DATA,
+> > +		.data = (void *)EXYNOS4412_TMU_DRV_DATA,
+> >  	},
+> >  	{
+> >  		.compatible = "samsung,exynos5250-tmu",
+> > @@ -629,9 +629,10 @@ static int exynos_tmu_probe(struct
+> > platform_device *pdev) if (ret)
+> >  		return ret;
+> >  
+> > -	if (pdata->type == SOC_ARCH_EXYNOS ||
+> > -		pdata->type == SOC_ARCH_EXYNOS4210 ||
+> > -				pdata->type == SOC_ARCH_EXYNOS5440)
+> > +	if (pdata->type == SOC_ARCH_EXYNOS4210 ||
+> > +	    pdata->type == SOC_ARCH_EXYNOS4412 ||
+> > +	    pdata->type == SOC_ARCH_EXYNOS5250 ||
+> > +	    pdata->type == SOC_ARCH_EXYNOS5440)
+> >  		data->soc = pdata->type;
+> >  	else {
+> >  		ret = -EINVAL;
+> > diff --git a/drivers/thermal/samsung/exynos_tmu.h
+> > b/drivers/thermal/samsung/exynos_tmu.h index b364c9e..b42ece4 100644
+> > --- a/drivers/thermal/samsung/exynos_tmu.h
+> > +++ b/drivers/thermal/samsung/exynos_tmu.h
+> > @@ -41,7 +41,8 @@ enum calibration_mode {
+> >  
+> >  enum soc_type {
+> >  	SOC_ARCH_EXYNOS4210 = 1,
+> > -	SOC_ARCH_EXYNOS,
+> > +	SOC_ARCH_EXYNOS4412,
+> > +	SOC_ARCH_EXYNOS5250,
+> >  	SOC_ARCH_EXYNOS5440,
+> >  };
+> >  
+> > diff --git a/drivers/thermal/samsung/exynos_tmu_data.c
+> > b/drivers/thermal/samsung/exynos_tmu_data.c index 9002499..d8de5c1
+> > 100644 --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> > +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> > @@ -90,8 +90,8 @@ struct exynos_tmu_init_data const
+> > exynos4210_default_tmu_data = { };
+> >  #endif
+> >  
+> > -#if defined(CONFIG_SOC_EXYNOS5250) ||
+> > defined(CONFIG_SOC_EXYNOS4412) -static const struct
+> > exynos_tmu_registers exynos5250_tmu_registers = { +#if
+> > defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
+> 
+> Below will be only 4412 definitions,right? Why should we test for
+> 5250? 
+   ^^^^^^^^ [1]
+
+Below are registers definitions for Exynos4412, which appeared first.
+
+However, the Exynos5250 is reusing those registers. 
+
+The exact separation between Exynos4412 and Exynos5250 is done when we
+assign value to .tmu_data at exynos4412_default_tmu_data and
+exynos5250_default_tmu_data.
+
+The test [1] is correct here.
+
+> 
+> > +static const struct exynos_tmu_registers exynos4412_tmu_registers
+> > = { .triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+> >  	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+> >  	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+> > @@ -128,7 +128,7 @@ static const struct exynos_tmu_registers
+> > exynos5250_tmu_registers = { .emul_time_mask =
+> > EXYNOS_EMUL_TIME_MASK, };
+> >  
+> > -#define EXYNOS5250_TMU_DATA \
+> > +#define EXYNOS4412_TMU_DATA \
+> >  	.threshold_falling = 10, \
+> >  	.trigger_levels[0] = 85, \
+> >  	.trigger_levels[1] = 103, \
+> > @@ -162,15 +162,31 @@ static const struct exynos_tmu_registers
+> > exynos5250_tmu_registers = { .temp_level = 103, \
+> >  	}, \
+> >  	.freq_tab_count = 2, \
+> > -	.type = SOC_ARCH_EXYNOS, \
+> > -	.registers = &exynos5250_tmu_registers, \
+> > +	.registers = &exynos4412_tmu_registers, \
+> >  	.features = (TMU_SUPPORT_EMULATION |
+> > TMU_SUPPORT_TRIM_RELOAD | \ TMU_SUPPORT_FALLING_TRIP |
+> > TMU_SUPPORT_READY_STATUS | \ TMU_SUPPORT_EMUL_TIME)
+> > +#endif
+> >  
+> > +#if defined(CONFIG_SOC_EXYNOS4412)
+> > +struct exynos_tmu_init_data const exynos4412_default_tmu_data = {
+> > +	.tmu_data = {
+> > +		{
+> > +			EXYNOS4412_TMU_DATA,
+> > +			.type = SOC_ARCH_EXYNOS4412,
+> > +		},
+> > +	},
+> > +	.tmu_count = 1,
+> > +};
+> > +#endif
+> > +
+> > +#if defined(CONFIG_SOC_EXYNOS5250)
+> >  struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
+> >  	.tmu_data = {
+> > -		{ EXYNOS5250_TMU_DATA },
+> > +		{
+> > +			EXYNOS4412_TMU_DATA,
+> > +			.type = SOC_ARCH_EXYNOS5250,
+> > +		},
+> >  	},
+> >  	.tmu_count = 1,
+> >  };
+> > diff --git a/drivers/thermal/samsung/exynos_tmu_data.h
+> > b/drivers/thermal/samsung/exynos_tmu_data.h index dc7feb5..b130b1e
+> > 100644 --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> > +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> > @@ -138,7 +138,14 @@ extern struct exynos_tmu_init_data const
+> > exynos4210_default_tmu_data; #define EXYNOS4210_TMU_DRV_DATA (NULL)
+> >  #endif
+> >  
+> > -#if (defined(CONFIG_SOC_EXYNOS5250) ||
+> > defined(CONFIG_SOC_EXYNOS4412)) +#if defined(CONFIG_SOC_EXYNOS4412)
+> > +extern struct exynos_tmu_init_data const
+> > exynos4412_default_tmu_data; +#define EXYNOS4412_TMU_DRV_DATA
+> > (&exynos4412_default_tmu_data) +#else
+> > +#define EXYNOS4412_TMU_DRV_DATA (NULL)
+> > +#endif
+> > +
+> > +#if defined(CONFIG_SOC_EXYNOS5250)
+> >  extern struct exynos_tmu_init_data const
+> > exynos5250_default_tmu_data; #define EXYNOS5250_TMU_DRV_DATA
+> > (&exynos5250_default_tmu_data) #else
+> > 
+> 
+> 
+
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
