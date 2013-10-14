@@ -1,69 +1,65 @@
-From: Manish Badarkhe <badarkhe.manish@gmail.com>
-Subject: [PATCH] max17042_battery: use SIMPLE_DEV_PM_OPS
-Date: Mon, 14 Oct 2013 10:56:51 +0530
-Message-ID: <1381728411-21935-1-git-send-email-badarkhe.manish@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f50.google.com ([209.85.160.50]:57222 "EHLO
-	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750722Ab3JNF05 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Oct 2013 01:26:57 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 0/5] thermal: exynos: Fixes for v3.12
+Date: Mon, 14 Oct 2013 07:46:35 +0200
+Message-ID: <20131014074635.77fd9f6e@amdc308.digital.local>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, kgene.kim@samsung.com
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, devicetree@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: badarkhe.manish@gmail.com, anton@enomsg.org, dwmw2@infradead.org
 
-Use the SIMPLE_DEV_PM_OPS macro to declare the driver's
-pm_ops.
+Hi Zhang, Eduardo,
 
-Signed-off-by: Manish Badarkhe <badarkhe.manish@gmail.com>
----
-:100644 100644 d664ef5... bd72b0f... M	drivers/power/max17042_battery.c
- drivers/power/max17042_battery.c |   16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+> This patch series is divided into two parts:
+> 1. Device tree node definition and enabelement for TMU at Exynos4412
+> (Trats2) 2. Exynos thermal subsystem regressions for v3.12-rc4.
+> Several commits were necessary to properly fix regression for TMU
+> test MUX address setting after reset.
+> 
+> Test HW:
+> - Exynos4412 - TRATS2 board (Linux v3.12-rc4)
+> SHA1: 8b5ede69d24db939f52b47effff2f6fe1e83e08b
+> 
+> 
+> Lukasz Majewski (5):
+>   thermal: exynos: Remove check for thermal device pointer at
+>     exynos_report_trigger()
+>   thermal: exynos: Provide separate TMU data for Exynos4412
+>   thermal: exynos: Provide initial setting for TMU's test MUX address
+>     at Exynos4412
+>   ARM: dts: exynos4x12: Device tree node definition for TMU on
+>     Exynos4x12
+>   ARM: dts: exynos4412-trats2: Enable TMU support at Trats2
+> 
 
-diff --git a/drivers/power/max17042_battery.c b/drivers/power/max17042_battery.c
-index d664ef5..bd72b0f 100644
---- a/drivers/power/max17042_battery.c
-+++ b/drivers/power/max17042_battery.c
-@@ -786,7 +786,7 @@ static int max17042_remove(struct i2c_client *client)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_PM_SLEEP
- static int max17042_suspend(struct device *dev)
- {
- 	struct max17042_chip *chip = dev_get_drvdata(dev);
-@@ -816,17 +816,11 @@ static int max17042_resume(struct device *dev)
- 
- 	return 0;
- }
--
--static const struct dev_pm_ops max17042_pm_ops = {
--	.suspend	= max17042_suspend,
--	.resume		= max17042_resume,
--};
--
--#define MAX17042_PM_OPS (&max17042_pm_ops)
--#else
--#define MAX17042_PM_OPS NULL
- #endif
- 
-+static SIMPLE_DEV_PM_OPS(max17042_pm_ops, max17042_suspend,
-+			max17042_resume);
-+
- #ifdef CONFIG_OF
- static const struct of_device_id max17042_dt_match[] = {
- 	{ .compatible = "maxim,max17042" },
-@@ -849,7 +843,7 @@ static struct i2c_driver max17042_i2c_driver = {
- 	.driver	= {
- 		.name	= "max17042",
- 		.of_match_table = of_match_ptr(max17042_dt_match),
--		.pm	= MAX17042_PM_OPS,
-+		.pm	= &max17042_pm_ops,
- 	},
- 	.probe		= max17042_probe,
- 	.remove		= max17042_remove,
+Zhang, Eduardo - any comments?
+
+Would it be possible to add them to v3.12 since they do fix critical
+error and regression on Exynos4412.
+
+
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |    5 ++++
+>  arch/arm/boot/dts/exynos4x12.dtsi               |   10 ++++++++
+>  drivers/thermal/samsung/exynos_thermal_common.c |    2 --
+>  drivers/thermal/samsung/exynos_tmu.c            |   12 ++++++---
+>  drivers/thermal/samsung/exynos_tmu.h            |    7 +++++-
+>  drivers/thermal/samsung/exynos_tmu_data.c       |   30
+> ++++++++++++++++++-----
+> drivers/thermal/samsung/exynos_tmu_data.h       |   13 +++++++++- 7
+> files changed, 65 insertions(+), 14 deletions(-)
+> 
+
+
+
 -- 
-1.7.10.4
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
