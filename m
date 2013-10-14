@@ -1,85 +1,51 @@
-From: "Zhang, Rui" <rui.zhang@intel.com>
-Subject: RE: [PATCH v2 0/5] thermal: exynos: Fixes for v3.12
-Date: Mon, 14 Oct 2013 05:52:19 +0000
-Message-ID: <744357E9AAD1214791ACBA4B0B90926301190077@SHSMSX101.ccr.corp.intel.com>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
- <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
- <20131014074635.77fd9f6e@amdc308.digital.local>
+From: ysh <youshenghui0322@163.com>
+Subject: Re:Re: Re:Ask for help on SPI slave side driver support
+Date: Mon, 14 Oct 2013 15:27:20 +0800
+Message-ID: <525B9CD8.1030508@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20131014074635.77fd9f6e@amdc308.digital.local>
-Content-Language: en-US
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=GB2312
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from m12-13.163.com ([220.181.12.13]:35975 "EHLO m12-13.163.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751452Ab3JNH0z (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 14 Oct 2013 03:26:55 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Eduardo,
+Ok, I have one question when reading drivers/spi/spi-s3c64xx.c
+In s3c64xx_spi_setup, cs->line(S3C64XX_GPC(3)) is set to
+GPIOF_OUT_INIT_HIGH, that means an general output pin.
+But the other three(clk, mosi, miso) was set to 2 by
+s3c64xx_spi0_cfg_gpio. This is just what is needed by SPI.
+My question is why wasn't cs->line also set to 2 to use SPI CS0?
+When I want to use spi as slave side, should I set S3C64XX_GPC(3)'s cfg
+of  to 0(input) or 2?
+In enable_cs, cs->line and SLAVE_SEL register were both actived, but
+which one really take effect?
+static inline void enable_cs(struct s3c64xx_spi_driver_data *sdd,
+                                                struct spi_device *spi)
+{
+        struct s3c64xx_spi_csinfo *cs;
+        if (sdd->tgl_spi != NULL) { /* If last device toggled after mssg */
+                if (sdd->tgl_spi != spi) { /* if last mssg on diff device */
+                        /* Deselect the last toggled device */
+                        cs = sdd->tgl_spi->controller_data;
+                        if (sdd->cs_gpio)
+                                gpio_set_value(cs->line,
+                                        spi->mode & SPI_CS_HIGH ? 0 : 1);
+                }
+                sdd->tgl_spi = NULL;
+        }
+        cs = spi->controller_data;
+        if (sdd->cs_gpio)
+                gpio_set_value(cs->line, spi->mode & SPI_CS_HIGH ? 1 : 0);
+        /* Start the signals */
+        writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
+}
 
-What's your opinion on this patch set?
-BTW, please send me all the urgent fixes for thermal soc drivers that you think should go to 3.12.
 
-Thanks,
-rui
-> -----Original Message-----
-> From: Lukasz Majewski [mailto:l.majewski@samsung.com]
-> Sent: Monday, October 14, 2013 1:47 PM
-> To: Zhang, Rui; Eduardo Valentin; kgene.kim@samsung.com
-> Cc: Lukasz Majewski; Linux PM list; Lukasz Majewski; linux-kernel;
-> Bartlomiej Zolnierkiewicz; devicetree@vger.kernel.org; Amit Daniel
-> Kachhap; linux-samsung-soc@vger.kernel.org
-> Subject: Re: [PATCH v2 0/5] thermal: exynos: Fixes for v3.12
-> Importance: High
-> 
-> Hi Zhang, Eduardo,
-> 
-> > This patch series is divided into two parts:
-> > 1. Device tree node definition and enabelement for TMU at Exynos4412
-> > (Trats2) 2. Exynos thermal subsystem regressions for v3.12-rc4.
-> > Several commits were necessary to properly fix regression for TMU
-> test
-> > MUX address setting after reset.
-> >
-> > Test HW:
-> > - Exynos4412 - TRATS2 board (Linux v3.12-rc4)
-> > SHA1: 8b5ede69d24db939f52b47effff2f6fe1e83e08b
-> >
-> >
-> > Lukasz Majewski (5):
-> >   thermal: exynos: Remove check for thermal device pointer at
-> >     exynos_report_trigger()
-> >   thermal: exynos: Provide separate TMU data for Exynos4412
-> >   thermal: exynos: Provide initial setting for TMU's test MUX address
-> >     at Exynos4412
-> >   ARM: dts: exynos4x12: Device tree node definition for TMU on
-> >     Exynos4x12
-> >   ARM: dts: exynos4412-trats2: Enable TMU support at Trats2
-> >
-> 
-> Zhang, Eduardo - any comments?
-> 
-> Would it be possible to add them to v3.12 since they do fix critical
-> error and regression on Exynos4412.
-> 
-> 
-> >  arch/arm/boot/dts/exynos4412-trats2.dts         |    5 ++++
-> >  arch/arm/boot/dts/exynos4x12.dtsi               |   10 ++++++++
-> >  drivers/thermal/samsung/exynos_thermal_common.c |    2 --
-> >  drivers/thermal/samsung/exynos_tmu.c            |   12 ++++++---
-> >  drivers/thermal/samsung/exynos_tmu.h            |    7 +++++-
-> >  drivers/thermal/samsung/exynos_tmu_data.c       |   30
-> > ++++++++++++++++++-----
-> > drivers/thermal/samsung/exynos_tmu_data.h       |   13 +++++++++- 7
-> > files changed, 65 insertions(+), 14 deletions(-)
-> >
-> 
-> 
-> 
-> --
-> Best regards,
-> 
-> Lukasz Majewski
-> 
-> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+thanks
+ysh
