@@ -1,85 +1,210 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH RESEND 0/3] ARM: S3C24XX: add missing dma-devices and
- warning fix
-Date: Mon, 14 Oct 2013 15:19:14 +0100
-Message-ID: <20131014141914.GB2443@sirena.org.uk>
-References: <201310111059.19791.heiko@sntech.de> <15184009.9QsSDOGPSA@amdn883>
- <20131012123329.GL2443@sirena.org.uk> <4125349.GMtWWSIflF@flatron>
+From: Eduardo Valentin <eduardo.valentin@ti.com>
+Subject: Re: [PATCH v2 2/5] thermal: exynos: Provide separate TMU data for
+ Exynos4412
+Date: Mon, 14 Oct 2013 10:20:53 -0400
+Message-ID: <525BFDC5.4000109@ti.com>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com> <1381300194-13134-1-git-send-email-l.majewski@samsung.com> <1381300194-13134-3-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0288180124727502185=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4125349.GMtWWSIflF@flatron>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="8QTIFGTxN50L5nUipJ46sVoC4PwddkdTs"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1381300194-13134-3-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, kgene.kim@samsung.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---===============0288180124727502185==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bqPh76xD3yWylqqJ"
-Content-Disposition: inline
-
-
---bqPh76xD3yWylqqJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--8QTIFGTxN50L5nUipJ46sVoC4PwddkdTs
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 13, 2013 at 08:29:47PM +0200, Tomasz Figa wrote:
-> On Saturday 12 of October 2013 13:33:29 Mark Brown wrote:
+On 09-10-2013 02:29, Lukasz Majewski wrote:
+> Up till now Exynos5250 and Exynos4412 had the same definitions for TMU
+> data. Following commit changes that, by introducing separate
+> exynos4412_default_tmu_data structure.
+>=20
+> Since Exynos4412 was chronologically first, the corresponding name for
+> TMU registers and default data was renamed.
+>=20
+> Additionally, new SOC_ARCH_EXYNOS4412 type has been defined.
+>=20
+> Moreover, the SOC_ARCH_EXYNOS name has been changed to SOC_ARCH_EXYNOS5=
+250.
+>=20
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>=20
+> ---
+> Changes for v2:
+> - Replace SOC_ARCH_EXYNOS with SOC_ARCH_EXYNOS5250
+> - Fix coding style for tmu_data elements definition
+>=20
+>  drivers/thermal/samsung/exynos_tmu.c      |    9 +++++----
+>  drivers/thermal/samsung/exynos_tmu.h      |    3 ++-
+>  drivers/thermal/samsung/exynos_tmu_data.c |   28 +++++++++++++++++++++=
++------
+>  drivers/thermal/samsung/exynos_tmu_data.h |    9 ++++++++-
+>  4 files changed, 37 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/sam=
+sung/exynos_tmu.c
+> index b43afda..1312b34 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -488,7 +488,7 @@ static const struct of_device_id exynos_tmu_match[]=
+ =3D {
+>  	},
+>  	{
+>  		.compatible =3D "samsung,exynos4412-tmu",
+> -		.data =3D (void *)EXYNOS5250_TMU_DRV_DATA,
+> +		.data =3D (void *)EXYNOS4412_TMU_DRV_DATA,
+>  	},
+>  	{
+>  		.compatible =3D "samsung,exynos5250-tmu",
+> @@ -629,9 +629,10 @@ static int exynos_tmu_probe(struct platform_device=
+ *pdev)
+>  	if (ret)
+>  		return ret;
+> =20
+> -	if (pdata->type =3D=3D SOC_ARCH_EXYNOS ||
+> -		pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
+> -				pdata->type =3D=3D SOC_ARCH_EXYNOS5440)
+> +	if (pdata->type =3D=3D SOC_ARCH_EXYNOS4210 ||
+> +	    pdata->type =3D=3D SOC_ARCH_EXYNOS4412 ||
+> +	    pdata->type =3D=3D SOC_ARCH_EXYNOS5250 ||
+> +	    pdata->type =3D=3D SOC_ARCH_EXYNOS5440)
+>  		data->soc =3D pdata->type;
+>  	else {
+>  		ret =3D -EINVAL;
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/sam=
+sung/exynos_tmu.h
+> index b364c9e..b42ece4 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -41,7 +41,8 @@ enum calibration_mode {
+> =20
+>  enum soc_type {
+>  	SOC_ARCH_EXYNOS4210 =3D 1,
+> -	SOC_ARCH_EXYNOS,
+> +	SOC_ARCH_EXYNOS4412,
+> +	SOC_ARCH_EXYNOS5250,
+>  	SOC_ARCH_EXYNOS5440,
+>  };
+> =20
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/therma=
+l/samsung/exynos_tmu_data.c
+> index 9002499..d8de5c1 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> @@ -90,8 +90,8 @@ struct exynos_tmu_init_data const exynos4210_default_=
+tmu_data =3D {
+>  };
+>  #endif
+> =20
+> -#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
+> -static const struct exynos_tmu_registers exynos5250_tmu_registers =3D =
+{
+> +#if defined(CONFIG_SOC_EXYNOS4412) || defined(CONFIG_SOC_EXYNOS5250)
 
-> > Did the s3c64xx pl08x stuff get merged?
+Below will be only 4412 definitions,right? Why should we test for 5250?
 
-> Most of. All the patches for the amba-pl08x driver got merged. Just the=
-=20
-> platform glue remains. I will rebase and send respective patches this=20
-> week.
+> +static const struct exynos_tmu_registers exynos4412_tmu_registers =3D =
+{
+>  	.triminfo_data =3D EXYNOS_TMU_REG_TRIMINFO,
+>  	.triminfo_25_shift =3D EXYNOS_TRIMINFO_25_SHIFT,
+>  	.triminfo_85_shift =3D EXYNOS_TRIMINFO_85_SHIFT,
+> @@ -128,7 +128,7 @@ static const struct exynos_tmu_registers exynos5250=
+_tmu_registers =3D {
+>  	.emul_time_mask =3D EXYNOS_EMUL_TIME_MASK,
+>  };
+> =20
+> -#define EXYNOS5250_TMU_DATA \
+> +#define EXYNOS4412_TMU_DATA \
+>  	.threshold_falling =3D 10, \
+>  	.trigger_levels[0] =3D 85, \
+>  	.trigger_levels[1] =3D 103, \
+> @@ -162,15 +162,31 @@ static const struct exynos_tmu_registers exynos52=
+50_tmu_registers =3D {
+>  		.temp_level =3D 103, \
+>  	}, \
+>  	.freq_tab_count =3D 2, \
+> -	.type =3D SOC_ARCH_EXYNOS, \
+> -	.registers =3D &exynos5250_tmu_registers, \
+> +	.registers =3D &exynos4412_tmu_registers, \
+>  	.features =3D (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
+>  			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+>  			TMU_SUPPORT_EMUL_TIME)
+> +#endif
+> =20
+> +#if defined(CONFIG_SOC_EXYNOS4412)
+> +struct exynos_tmu_init_data const exynos4412_default_tmu_data =3D {
+> +	.tmu_data =3D {
+> +		{
+> +			EXYNOS4412_TMU_DATA,
+> +			.type =3D SOC_ARCH_EXYNOS4412,
+> +		},
+> +	},
+> +	.tmu_count =3D 1,
+> +};
+> +#endif
+> +
+> +#if defined(CONFIG_SOC_EXYNOS5250)
+>  struct exynos_tmu_init_data const exynos5250_default_tmu_data =3D {
+>  	.tmu_data =3D {
+> -		{ EXYNOS5250_TMU_DATA },
+> +		{
+> +			EXYNOS4412_TMU_DATA,
+> +			.type =3D SOC_ARCH_EXYNOS5250,
+> +		},
+>  	},
+>  	.tmu_count =3D 1,
+>  };
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/therma=
+l/samsung/exynos_tmu_data.h
+> index dc7feb5..b130b1e 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.h
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
+> @@ -138,7 +138,14 @@ extern struct exynos_tmu_init_data const exynos421=
+0_default_tmu_data;
+>  #define EXYNOS4210_TMU_DRV_DATA (NULL)
+>  #endif
+> =20
+> -#if (defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412))=
 
-Ah, excellent - I hadn't noticed that!
+> +#if defined(CONFIG_SOC_EXYNOS4412)
+> +extern struct exynos_tmu_init_data const exynos4412_default_tmu_data;
+> +#define EXYNOS4412_TMU_DRV_DATA (&exynos4412_default_tmu_data)
+> +#else
+> +#define EXYNOS4412_TMU_DRV_DATA (NULL)
+> +#endif
+> +
+> +#if defined(CONFIG_SOC_EXYNOS5250)
+>  extern struct exynos_tmu_init_data const exynos5250_default_tmu_data;
+>  #define EXYNOS5250_TMU_DRV_DATA (&exynos5250_default_tmu_data)
+>  #else
+>=20
 
---bqPh76xD3yWylqqJ
+
+--=20
+You have got to be excited about what you are doing. (L. Lamport)
+
+Eduardo Valentin
+
+
+--8QTIFGTxN50L5nUipJ46sVoC4PwddkdTs
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
 
-iQIcBAEBAgAGBQJSW/1eAAoJELSic+t+oim9OhQP/jlOjGwHL2eLRGFE9jWF9z7W
-uLoo14IxqfWFZECh7q00lmqvODRks3g6xg9b/TJhECAic0eJrYUHofQqGEyQk6YE
-BJtoRJp3pZDbNS3amUdrXR0cRogzLeuYKIP7l9WSRY66kJdBD26XBpmpZFyqaSz7
-ltPxFoPo7oY9xOZzYAmEEzuxFg94t+9tMe3czOyJ6Ra0DAfRGDlEjDdEMylAsl0K
-EEi75xcxnykaDhzl7KBBQjdjhdeOPuY/4dP/v5H+zwdDDooqLpTwiIRZ6qKmJfr6
-l6DEbkblgFXeWMCj8/ugptDeiibBDbQAReFtPKHkqL25Fxcn8Akn7JivzFAPvBQO
-slEU/PYWwudUKC6oAobMKWliY4DdZ7isjOgt8J9Iuv0lruF6LuZluFt2pRLbQToQ
-OKR6IWOO8FDaaS6dclyomoB7mY9iOgPBA8yPeTmO5/UK/WhucrbSfRPd0N2QWqmQ
-SzYx4pr/Jmhxp+fXVSevHSI2wxPeNQyIhYNw9ouS7N2H1sNcLA4PV5Bx7RnbeaoZ
-CQjyaFZfrwx59AGWLGIi1Y+Q/QkF81HwnWUOyMwK9IBAH4mQdqwFNKmr0gplfjj7
-TWrdCzCFQrZfglwss7CqXiIs3CfyjeKm5e2a+zUgysBtDr5oJwJBOvkbAk9BNZ5h
-WHg/hyS+1YoAWGJwfGEw
-=1E3J
+iF4EAREIAAYFAlJb/c0ACgkQCXcVR3XQvP1AugEAh+JL1Uf3PyuM1lpmTYD4uIAE
+GTjhHQFUWTLC9mhYvtcA/250f0nxseUo8V34NabOXuxy+7rDkCTvbDvcXKeoTrlQ
+=sLzO
 -----END PGP SIGNATURE-----
 
---bqPh76xD3yWylqqJ--
-
-
---===============0288180124727502185==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============0288180124727502185==--
+--8QTIFGTxN50L5nUipJ46sVoC4PwddkdTs--
