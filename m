@@ -1,102 +1,73 @@
-From: Cho KyongHo <pullip.cho@samsung.com>
-Subject: Re: [PATCH v10 20/20] iommu/exynos: add devices attached to the System
- MMU to an IOMMU group
-Date: Mon, 14 Oct 2013 20:02:27 +0900
-Message-ID: <20131014200227.10964a2e57d711c23c345c10@samsung.com>
-References: <20131007105844.a260f37a9a941bed894adca3@samsung.com>
- <1381438469.2796.58.camel@ul30vt.home>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Re: Re: Ask for help on SPI slave side driver support
+Date: Mon, 14 Oct 2013 12:25:19 +0100
+Message-ID: <20131014112519.GQ2443@sirena.org.uk>
+References: <23ff6b10.bf1d.1416a88321f.Coremail.youshenghui0322@163.com>
+ <4025277.bhF6fFGQqq@flatron>
+ <20130930093317.GX19304@sirena.org.uk>
+ <4cd52b0c.af8e.14184497bb9.Coremail.youshenghui0322@163.com>
+ <20131007113323.GL21581@sirena.org.uk>
+ <4e8f3999.9132.141b335ef13.Coremail.youshenghui0322@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yFH6hwN92mUA4HK5"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55810 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753797Ab3JNLC3 (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:45748 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755704Ab3JNLZr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 Oct 2013 07:02:29 -0400
-In-reply-to: <1381438469.2796.58.camel@ul30vt.home>
+	Mon, 14 Oct 2013 07:25:47 -0400
+Content-Disposition: inline
+In-Reply-To: <4e8f3999.9132.141b335ef13.Coremail.youshenghui0322@163.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux DeviceTree <devicetree@vger.kernel.org>, Linux IOMMU <iommu@lists.linux-foundation.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, Antonios Motakis <a.motakis@virtualopensystems.com>, Grant Grundler <grundler@chromium.org>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Prathyush <prathyush.k@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Subash Patel <supash.ramaswamy@linaro.org>, Varun Sethi <Varun.Sethi@freescale.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: YouShenghui <youshenghui0322@163.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, jassi.brar@samsung.com
 
-On Thu, 10 Oct 2013 14:54:29 -0600, Alex Williamson wrote:
-> On Mon, 2013-10-07 at 10:58 +0900, Cho KyongHo wrote:
-> > Patch written by Antonios Motakis <a.motakis@virtualopensystems.com>:
-> > 
-> > IOMMU groups are expected by certain users of the IOMMU API,
-> > e.g. VFIO. Since each device is behind its own System MMU, we
-> > can allocate a new IOMMU group for each device.
-> > 
-> > Reviewd-by: Cho KyongHo <pullip.cho@samsung.com>
-> > Signed-off-by: Antonios Motakis <a.motakis@virtualopensystems.com>
-> > ---
-> >  drivers/iommu/exynos-iommu.c |   28 ++++++++++++++++++++++++++++
-> >  1 files changed, 28 insertions(+), 0 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> > index 5025338..24505a0 100644
-> > --- a/drivers/iommu/exynos-iommu.c
-> > +++ b/drivers/iommu/exynos-iommu.c
-> > @@ -1028,6 +1028,32 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *domain,
-> >  	return phys;
-> >  }
-> >  
-> > +static int exynos_iommu_add_device(struct device *dev)
-> > +{
-> > +	struct iommu_group *group;
-> > +	int ret;
-> > +
-> > +	group = iommu_group_get(dev);
-> 
-> Seems reasonable, my only nit would be whether it's really an error to
-> get a group back from the above call.  If devices are always isolated
-> and IOMMU groups are always singleton, it would be an error to find one
-> already associated with the device.  Right?  Thanks,
-> 
-Do you mean that calling iommu_group_add_device() with the group that is
-returned by the above iommu_group_get() will return -EEXIST?
 
-I didn't think about that.
+--yFH6hwN92mUA4HK5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Alex
+On Mon, Oct 14, 2013 at 03:05:58AM +0800, YouShenghui wrote:
 
-Thank you.
+Please fix your mailer to word wrap within paragraphs, your messages are
+very hard to read.
 
-KyongHo.
-> 
-> > +
-> > +	if (!group) {
-> > +		group = iommu_group_alloc();
-> > +		if (IS_ERR(group)) {
-> > +			dev_err(dev, "Failed to allocate IOMMU group\n");
-> > +			return PTR_ERR(group);
-> > +		}
-> > +	}
-> > +
-> > +	ret = iommu_group_add_device(group, dev);
-> > +	iommu_group_put(group);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static void exynos_iommu_remove_device(struct device *dev)
-> > +{
-> > +	iommu_group_remove_device(dev);
-> > +}
-> > +
-> >  static struct iommu_ops exynos_iommu_ops = {
-> >  	.domain_init = &exynos_iommu_domain_init,
-> >  	.domain_destroy = &exynos_iommu_domain_destroy,
-> > @@ -1036,6 +1062,8 @@ static struct iommu_ops exynos_iommu_ops = {
-> >  	.map = &exynos_iommu_map,
-> >  	.unmap = &exynos_iommu_unmap,
-> >  	.iova_to_phys = &exynos_iommu_iova_to_phys,
-> > +	.add_device = &exynos_iommu_add_device,
-> > +	.remove_device = &exynos_iommu_remove_device,
-> >  	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
-> >  };
-> >  
-> 
-> 
-> 
+> Ok, I have one question when reading drivers/spi/spi-s3c64xx.c
+> In s3c64xx_spi_setup, cs->line(S3C64XX_GPC(3)) is set to GPIOF_OUT_INIT_HIGH, that means an general output pin.
+> But the other three(clk, mosi, miso) was set to 2 by s3c64xx_spi0_cfg_gpio. This is just what is needed by SPI.
+> My question is why wasn't cs->line also set to 2 to use SPI CS0?
+
+In common with many drivers this driver controls the chp select as a
+GPIO.  Generally the hardware is less flexible than Linux can be if it
+implements automatic chip select handling at all.
+
+> When I want to use spi as slave side, should I set S3C64XX_GPC(3)'s cfg of  to 0(input) or 2?
+
+I don't think the controller has any slave support natively so you'd
+probably need to put it into GPIO mode.
+
+--yFH6hwN92mUA4HK5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSW9ScAAoJELSic+t+oim9cuAP/iLe1ndDgGUDcU78Z7GcHzqt
+SCXGUdEWMccfa/ol2CmjncibY2wpNHSENCs7GMvvCzKRh9080CfEa3Yq0jl2dYST
+0mn7NFuFER3sb9XM5XX1dIsxkfRdOTakFikVKGtdZfTzbHCEcEJruV6pZPhHg5oI
+6jaBXg7D0yrL1XW/Yjqn/uFMbSyHNZJG7G2Cd6ayCMPhXpeKNvGC+/jbI483K37s
+c6p5gpUPsoakAMj4YhOIKir8S7GsraTPWpbXmitZ0hvlaI9+6/A+c6+VhG7lbXuX
+NLv9NT3QCnByCkeFQl6BtsfWqWzicXcGJaJTZzIdgX9uFauZuWN9y0apu1wQ6ba3
+sF93NdDiOLo3LWZ7EJN5llvu+P6Eh20ipI3v/r+EVJGL6FokLYLminOmtx1WDhwf
+zM9nqyfd84Uhl60Mv0xJi4yNqDa/j6FDH9JRP1+RJzcMAaXy5hPrYyvj/aQl8UQ1
+DbYvHjI8e6hDRgMbCNqjeoJfsQjMmy1CiqkTrC4GQkvZ1750AW7I0u24DZsynR9x
+1uMSGepd4GkRYhrKdWjA0Tib6juhGpA9VPFmkGUNM9c+NXzC/tarFx33Tww2IV2r
+KZa7UzUp2SAPdhXDQFUmollULwPTv4qKtl6B7goCoL2SnXrXpSodPvDzD98W6JvQ
+EvXGgxKKiNis+57pEiGb
+=jdlo
+-----END PGP SIGNATURE-----
+
+--yFH6hwN92mUA4HK5--
