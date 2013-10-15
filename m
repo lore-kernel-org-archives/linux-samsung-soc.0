@@ -1,55 +1,62 @@
-From: Heiko Schocher <hs@denx.de>
-Subject: Re: [PATCH 1/3 v3] exynos: i2c: Fix i2c driver to handle NACKs properly
-Date: Tue, 15 Oct 2013 08:06:09 +0200
-Message-ID: <525CDB51.70408@denx.de>
-References: <1380799354-14460-1-git-send-email-ch.naveen@samsung.com> <1381813971-16006-1-git-send-email-ch.naveen@samsung.com>
-Reply-To: hs@denx.de
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH v2] i2c: s3c2410: dont need CPU_FREQ transitions for exynos
+ series
+Date: Tue, 15 Oct 2013 11:53:52 +0530
+Message-ID: <1381818232-12542-1-git-send-email-ch.naveen@samsung.com>
+References: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout-m0-k.invitel.net ([91.82.116.154]:54987 "EHLO
-	relay-m2-k.invitel.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758417Ab3JOGOn (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:36826 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751603Ab3JOGVs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Oct 2013 02:14:43 -0400
-In-Reply-To: <1381813971-16006-1-git-send-email-ch.naveen@samsung.com>
+	Tue, 15 Oct 2013 02:21:48 -0400
+In-reply-to: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, khali@linux-fr.org, ben-linux@fluff.org, grant.likely@secretlab.ca, sjg@chromium.org, naveenkrishna.ch@gmail.com, d.mueller@elsoft.ch, trini@ti.com, mk7.kang@samsung.com, cpgs@samsung.com
+To: linux-i2c@vger.kernel.org
+Cc: t.figa@samsung.com, sjg@chromium.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, wsa@the-dreams.de, ben-linux@fluff.org, grant.likely@secretlab.ca, broonie@kernel.org, dianders@chromium.org, cpgs@samsung.com
 
-Hello Naveen,
+For Exynos4 and Exynos5 SoCs from Samsung the i2c clock is based
+on a fixed 66 MHz peripheral clock, and therefore is completely
+independent of the cpu frequency.
+Thus, registering for a CPU freq notifier is very wasteful.
 
-Am 15.10.2013 07:12, schrieb Naveen Krishna Chatradhi:
-> The Exynos5 i2c driver does not handle NACKs properly. This change:
->
-> - fixes the NACK processing problem (do not continue transaction if
->    address cycle was NACKed)
->
-> - eliminates a fair amount of duplicate code
->
-> Signed-off-by: Vadim Bendebury<vbendeb@chromium.org>
-> Reviewed-by: Simon Glass<sjg@google.com>
-> Signed-off-by: Naveen Krishna Chatradhi<ch.naveen@samsung.com>
-> ---
-> Changes since v1:
-> Fixed complilation warning in function i2c_init()
->
-> Changes since v2:
-> None
->
->   drivers/i2c/s3c24x0_i2c.c |  214 +++++++++++++++++++--------------------------
->   1 file changed, 90 insertions(+), 124 deletions(-)
+This patch modifes the code such that, i2c bus registers to
+cpu_freq_transition only if CONFIG_CPU_FREQ_S3C24XX is enabled.
 
-Hmm.. I think your patchset is for u-boot, or? But I could not find
-the u-boot ml on cc... instead some linux ml ... if so, please resend
-to the u-boot ml ...
+This change should save a bunch of cpufreq transitions calls
+which does not apply to exynos SoCs.
 
-(matches for all three patches from you)
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+Changes since v1:
+Use CONFIG_CPU_FREQ_S3C24XX instead of (CONFIG_CPU_FREQ & !CONFIG_EXYNOS)
+As commented by Tomasz
 
-bye,
-Heiko
+ drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index cab1c91..97f14f7 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -123,7 +123,7 @@ struct s3c24xx_i2c {
+ 	struct s3c2410_platform_i2c	*pdata;
+ 	int			gpios[2];
+ 	struct pinctrl          *pctrl;
+-#ifdef CONFIG_CPU_FREQ
++#if defined(CONFIG_CPU_FREQ_S3C24XX)
+ 	struct notifier_block	freq_transition;
+ #endif
+ };
+@@ -843,7 +843,7 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_CPU_FREQ
++#if defined(CONFIG_CPU_FREQ_S3C24XX)
+ 
+ #define freq_to_i2c(_n) container_of(_n, struct s3c24xx_i2c, freq_transition)
+ 
 -- 
-DENX Software Engineering GmbH,     MD: Wolfgang Denk & Detlev Zundel
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+1.7.10.4
