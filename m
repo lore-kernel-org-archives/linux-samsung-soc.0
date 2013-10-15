@@ -1,136 +1,74 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH v2 0/5] thermal: exynos: Fixes for v3.12
-Date: Mon, 14 Oct 2013 15:22:47 -0400
-Message-ID: <525C4487.2030502@ti.com>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com> <1381300194-13134-1-git-send-email-l.majewski@samsung.com> <20131014074635.77fd9f6e@amdc308.digital.local> <744357E9AAD1214791ACBA4B0B90926301190077@SHSMSX101.ccr.corp.intel.com> <525C4242.2050306@ti.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] clk: samsung: Fix PLL35XX lock time
+Date: Mon, 14 Oct 2013 21:08:38 -0700
+Message-ID: <CAD=FV=WDN0S5atj7aqCw7iL0zTwFxvkxMwHR9-DXOAexxr5ngQ@mail.gmail.com>
+References: <1381215399-25394-1-git-send-email-arun.kk@samsung.com>
+	<2947491.pJZ8F0UW5m@amdn883>
+	<CAD=FV=V-RqREqsR-g-2=Rv5UMzwbJFbn7t5xhDp6qBkuGrJVvg@mail.gmail.com>
+	<2464757.WeV77WxV9T@amdn883>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="Hx5JMLHSnMBrj35brmWa2QDMcRJX6lVoQ"
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <525C4242.2050306@ti.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: "Zhang, Rui" <rui.zhang@intel.com>, Lukasz Majewski <l.majewski@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---Hx5JMLHSnMBrj35brmWa2QDMcRJX6lVoQ
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vb0-f41.google.com ([209.85.212.41]:62322 "EHLO
+	mail-vb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750821Ab3JOEIj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Oct 2013 00:08:39 -0400
+Received: by mail-vb0-f41.google.com with SMTP id g17so5051813vbg.28
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Oct 2013 21:08:38 -0700 (PDT)
+In-Reply-To: <2464757.WeV77WxV9T@amdn883>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Arun Kumar K <arunkk.samsung@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Sonny Rao <sonnyrao@chromium.org>
 
-On 14-10-2013 15:13, Eduardo Valentin wrote:
-> On 14-10-2013 01:52, Zhang, Rui wrote:
->> Eduardo,
->>
->> What's your opinion on this patch set?
->> BTW, please send me all the urgent fixes for thermal soc drivers that
-> you think should go to 3.12.
->>
->=20
-> I will be sending these + one fix on ti soc thermal for 3.12 soon.
->=20
-> The new chip support on exynos needs to be reworked and there are coupl=
-e
-> of new drivers that needs to be reworked too. But those I don't think
-> are ready to go now.
->=20
+Tomasz,
 
-Just to be clear, on this patch set obviously I wont be sending the DT
-changes. Those should go via the correct tree.
+On Fri, Oct 11, 2013 at 7:06 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Well, it's some kind of difference indeed. However, how often can
+> a frequency transition happen?
+>
+> I believe that ondemand allows minimum sampling period of
+> 100 * transition latency, so even without considering the PLL lock time,
+> we would have at most a single delay of ~400 us every ~40 ms, during
+> which remaining CPUs are operating normally, because of switching to
+> MPLL temporarily.
+>
+> A bit more interesting case would be the Android interactive governor,
+> which scales up the CPU on any wake-up event, but I don't believe any
+> user would notice the extra 17,5 us from touching the screen to seeing
+> a menu animation, for example.
 
->> Thanks,
->> rui
->>> -----Original Message-----
->>> From: Lukasz Majewski [mailto:l.majewski@samsung.com]
->>> Sent: Monday, October 14, 2013 1:47 PM
->>> To: Zhang, Rui; Eduardo Valentin; kgene.kim@samsung.com
->>> Cc: Lukasz Majewski; Linux PM list; Lukasz Majewski; linux-kernel;
->>> Bartlomiej Zolnierkiewicz; devicetree@vger.kernel.org; Amit Daniel
->>> Kachhap; linux-samsung-soc@vger.kernel.org
->>> Subject: Re: [PATCH v2 0/5] thermal: exynos: Fixes for v3.12
->>> Importance: High
->>>
->>> Hi Zhang, Eduardo,
->>>
->>>> This patch series is divided into two parts:
->>>> 1. Device tree node definition and enabelement for TMU at Exynos4412=
+OK.  You've clearly looked at this more than I.  :)  I was merely
+recalling conversations that others had over a year ago and
+remembering some of our engineers being concerned about latencies even
+at this level, but I'm not sure if they had hard data.  I added Sonny
+to see if he might remember more, though I don't think he was the one
+pushing for optimizations in the past.
 
->>>> (Trats2) 2. Exynos thermal subsystem regressions for v3.12-rc4.
->>>> Several commits were necessary to properly fix regression for TMU
->>> test
->>>> MUX address setting after reset.
->>>>
->>>> Test HW:
->>>> - Exynos4412 - TRATS2 board (Linux v3.12-rc4)
->>>> SHA1: 8b5ede69d24db939f52b47effff2f6fe1e83e08b
->>>>
->>>>
->>>> Lukasz Majewski (5):
->>>>   thermal: exynos: Remove check for thermal device pointer at
->>>>     exynos_report_trigger()
->>>>   thermal: exynos: Provide separate TMU data for Exynos4412
->>>>   thermal: exynos: Provide initial setting for TMU's test MUX addres=
-s
->>>>     at Exynos4412
->>>>   ARM: dts: exynos4x12: Device tree node definition for TMU on
->>>>     Exynos4x12
->>>>   ARM: dts: exynos4412-trats2: Enable TMU support at Trats2
->>>>
->>>
->>> Zhang, Eduardo - any comments?
->>>
->>> Would it be possible to add them to v3.12 since they do fix critical
->>> error and regression on Exynos4412.
->>>
->>>
->>>>  arch/arm/boot/dts/exynos4412-trats2.dts         |    5 ++++
->>>>  arch/arm/boot/dts/exynos4x12.dtsi               |   10 ++++++++
->>>>  drivers/thermal/samsung/exynos_thermal_common.c |    2 --
->>>>  drivers/thermal/samsung/exynos_tmu.c            |   12 ++++++---
->>>>  drivers/thermal/samsung/exynos_tmu.h            |    7 +++++-
->>>>  drivers/thermal/samsung/exynos_tmu_data.c       |   30
->>>> ++++++++++++++++++-----
->>>> drivers/thermal/samsung/exynos_tmu_data.h       |   13 +++++++++- 7
->>>> files changed, 65 insertions(+), 14 deletions(-)
->>>>
->>>
->>>
->>>
->>> --
->>> Best regards,
->>>
->>> Lukasz Majewski
->>>
->>> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-pm" in=
-
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->=20
->=20
+Note that we actually are using the Interactive governor in our
+systems, and it is the interactive "time to spin up on user input"
+that I'm most worried about.  ...but you're right that I think the
+user perceivable values are in the 10s of milliseconds and not in the
+10s of microseconds.
 
 
---=20
-You have got to be excited about what you are doing. (L. Lamport)
+> Please correct me if I'm missing something here.
+>
+>> Anyway, when it's something as simple as passing in a parameter to get
+>> it right, it seems worth doing.
+>
+> Sure, any patches improving things are welcome, I was just wondering
+> whether the improvement will be of any significance. Looking forward
+> to respective patches, hoping that they will not complicate the code
+> too much (although we already have a struct for PLL parameters, so they
+> should not).
 
-Eduardo Valentin
+I'd still love to see the change land that allows this to be right.
+17.5us may not matter much, but with the PLL parameter struct it
+should be pretty easy / clean.  ...and it also allows us to map the
+number back the user manual, which can make it easier to understand
+(there's currently nothing documenting why the number is 270, not 250
+or 200).
 
-
---Hx5JMLHSnMBrj35brmWa2QDMcRJX6lVoQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlJcRIcACgkQCXcVR3XQvP3fIQD9GQhnysF0but2Ykmw3iJ68uSO
-8NWW55hd3+sUgke7ZroBALx8fDNM0J2PM9UAK3UEpchsb8/7dun/vn+maQtvFdiC
-=DC9P
------END PGP SIGNATURE-----
-
---Hx5JMLHSnMBrj35brmWa2QDMcRJX6lVoQ--
+-Doug
