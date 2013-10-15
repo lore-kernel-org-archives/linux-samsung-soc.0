@@ -1,96 +1,56 @@
-From: Eduardo Valentin <eduardo.valentin@ti.com>
-Subject: Re: [PATCH v2 4/5] ARM: dts: exynos4x12: Device tree node definition
- for TMU on Exynos4x12
-Date: Tue, 15 Oct 2013 09:37:48 -0400
-Message-ID: <525D452C.4020802@ti.com>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com> <1381300194-13134-1-git-send-email-l.majewski@samsung.com> <1381300194-13134-5-git-send-email-l.majewski@samsung.com> <20131015082750.4b2f3325@amdc308.digital.local>
+From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v2] i2c: s3c2410: dont need CPU_FREQ transitions for
+ exynos series
+Date: Tue, 15 Oct 2013 08:38:32 -0700
+Message-ID: <CAD=FV=XsZoGUeppkxMq9DnVsp761s6ckStsmUxR4aEL3U7JZ1A@mail.gmail.com>
+References: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
+	<1381818232-12542-1-git-send-email-ch.naveen@samsung.com>
+	<CAH9JG2Xo2UgbP+VA=s908FSusELERh8kvSVyiyMX1H1Ue8uPSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature";
-	boundary="RwODSSp5i7fJDR9ckJemrPhl2DugWJaVT"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:55458 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758664Ab3JONiD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Oct 2013 09:38:03 -0400
-In-Reply-To: <20131015082750.4b2f3325@amdc308.digital.local>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: kgene.kim@samsung.com, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Lukasz Majewski <l.majewski@majess.pl>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, devicetree@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org
-
---RwODSSp5i7fJDR9ckJemrPhl2DugWJaVT
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAH9JG2Xo2UgbP+VA=s908FSusELERh8kvSVyiyMX1H1Ue8uPSg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 15-10-2013 02:27, Lukasz Majewski wrote:
-> Hi Kukjin,
->=20
->> The TMU device tree node definition for Exynos4x12 family of SoCs.
+Hi,
+
+On Mon, Oct 14, 2013 at 11:56 PM, Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org> wrote:
+> On Tue, Oct 15, 2013 at 3:23 PM, Naveen Krishna Chatradhi
+> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> For Exynos4 and Exynos5 SoCs from Samsung the i2c clock is based
+>> on a fixed 66 MHz peripheral clock, and therefore is completely
+>> independent of the cpu frequency.
+>> Thus, registering for a CPU freq notifier is very wasteful.
 >>
->> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
->> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
-BTW, you can add my
-
-Reviewed-by: Eduardo Valentin <eduardo.valentin@ti.com>
-
-on patch 4 and 5 of this series.
-
+>> This patch modifes the code such that, i2c bus registers to
+>> cpu_freq_transition only if CONFIG_CPU_FREQ_S3C24XX is enabled.
 >>
+>> This change should save a bunch of cpufreq transitions calls
+>> which does not apply to exynos SoCs.
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >> ---
->> Changes for v2:
->> - None
+>> Changes since v1:
+>> Use CONFIG_CPU_FREQ_S3C24XX instead of (CONFIG_CPU_FREQ & !CONFIG_EXYNOS)
+>> As commented by Tomasz
 >>
->>  arch/arm/boot/dts/exynos4x12.dtsi |   10 ++++++++++
->>  1 file changed, 10 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
->> b/arch/arm/boot/dts/exynos4x12.dtsi index ad531fe..64c0ece 100644
->> --- a/arch/arm/boot/dts/exynos4x12.dtsi
->> +++ b/arch/arm/boot/dts/exynos4x12.dtsi
->> @@ -176,4 +176,14 @@
->>  			};
->>  		};
->>  	};
->> +
->> +	tmu@100C0000 {
->> +		compatible =3D "samsung,exynos4412-tmu";
->> +		interrupt-parent =3D <&combiner>;
->> +		interrupts =3D <2 4>;
->> +		reg =3D <0x100C0000 0x100>;
->> +		clocks =3D <&clock 383>;
->> +		clock-names =3D "tmu_apbif";
->> +		status =3D "disabled";
->> +	};
->>  };
->=20
-> Can you pull this DT node definition for TMU (as a fix to v3.12)?
->=20
-> It is crucial for Exynos4412.
->=20
+>>  drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 
+Looks great to me.  Thank you for the suggestions Tomasz, as always.
 
---=20
-You have got to be excited about what you are doing. (L. Lamport)
+Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-Eduardo Valentin
+We need to come up with a solution for the CPU_FREQ stuff in
+s3c2410_wdt too.  We could use a similar solution but since the
+CPU_FREQ stuff in s3c2410_wdt is more than just an optimization it
+means that it's not good if S3C24XX is included in a multiplatform
+kernel.  (For the watchdog it's more than just an optimization since
+every frequency transition actually pets the watchdog, making it
+useless when you transition several times per second).
 
-
---RwODSSp5i7fJDR9ckJemrPhl2DugWJaVT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Thunderbird - http://www.enigmail.net/
-
-iF4EAREIAAYFAlJdRS8ACgkQCXcVR3XQvP1kvwEA4rfbYgOgcZi1caxoieyaw0vi
-oUUyE5+dK1hKwf6UlQQBALKVmudGU1+f0oesnQoXVi+xkFTPAQ4CPTrFNmQ/nF6N
-=Kvu7
------END PGP SIGNATURE-----
-
---RwODSSp5i7fJDR9ckJemrPhl2DugWJaVT--
+-Doug
