@@ -1,64 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL v2] Samsung-fixes for v3.12
-Date: Wed, 16 Oct 2013 07:30:37 +0900
-Message-ID: <525DC20D.4080302@samsung.com>
+Subject: Re: [PATCH RESEND 0/3] ARM: S3C24XX: add missing dma-devices and
+ warning fix
+Date: Wed, 16 Oct 2013 07:32:20 +0900
+Message-ID: <525DC274.8090808@samsung.com>
+References: <201310111059.19791.heiko@sntech.de> <20131013145642.GJ2954@intel.com> <201310132011.11285.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:63253 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933519Ab3JOWao (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:56898 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932802Ab3JOWcb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Oct 2013 18:30:44 -0400
-Received: by mail-pd0-f179.google.com with SMTP id v10so9591771pde.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Oct 2013 15:30:44 -0700 (PDT)
+	Tue, 15 Oct 2013 18:32:31 -0400
+Received: by mail-pa0-f47.google.com with SMTP id kp14so74429pab.34
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Oct 2013 15:32:31 -0700 (PDT)
+In-Reply-To: <201310132011.11285.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Vinod Koul <vinod.koul@intel.com>, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-The following changes since commit 272b98c6455f00884f0350f775c5342358ebb73f:
+On 10/14/13 03:11, Heiko St=FCbner wrote:
+> Am Sonntag, 13. Oktober 2013, 16:56:42 schrieb Vinod Koul:
+>> On Fri, Oct 11, 2013 at 10:59:19AM +0200, Heiko St=FCbner wrote:
+>>> [I messed up the linux-arm-kernel list address yesterday, so I rese=
+nd it
+>>> with a fixed address, sorry for the noise]
+>>>
+>>> When Olof reported the warning about the unused s3c2410_dma_resourc=
+e, I
+>>> thought the best way forward would be to simply implement the missi=
+ng
+>>> pieces and so it has users :-) .
+>>>
+>>> Therefore this series adds the necessary platform-devices for s3c24=
+10,
+>>> s3c2440 and s3c2442. This especially also includes the
+>>> channel-constraints of those socs.
+>>>
+>>> As I do not have access to any of those socs these changes are of c=
+ourse
+>>> compile-tested only.
+>>
+>> Do you want this to be applied thru dma or arm tree?
+>
+> hmm, the original series went into the samsung tree for 3.13, so mayb=
+e this
+> addition should go the same way?
+>
+I think so, let me pick this up into Samsung tree for v3.13.
 
-   Linux 3.12-rc1 (2013-09-16 16:17:51 -0400)
+Thanks,
+Kukjin
 
-are available in the git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/samsung-fixes-v2
-
-for you to fetch changes up to 22c98592094e6c149b05cc13d4d6ec495e6f5879:
-
-   ARM: dts: fix PL330 MDMA1 address in DT for Universal C210 board 
-(2013-10-16 07:25:41 +0900)
-
-----------------------------------------------------------------
-Fixes for v3.12
-- correct typo 'samsung,pin-drv'
-- correct typo 'earlyprintk'
-- cpufreq regulator lookup for exynos4210-origen and trats
-- fix PL330 MDMA1 address for universal c210 board
-
-----------------------------------------------------------------
-Al Stone (1):
-       ARM: dts: Correct typo in use of samsung,pin-drv for exynos5250
-
-Bartlomiej Zolnierkiewicz (1):
-       ARM: dts: fix PL330 MDMA1 address in DT for Universal C210 board
-
-Tomasz Figa (1):
-       ARM: dts: Work around lack of cpufreq regulator lookup for 
-exynos4210-origen and trats boards
-
-Youngmin Nam (1):
-       ARM: dts: Fix typo earlyprintk in exynos5440-sd5v1 and ssdk5440 
-boards
-
-  arch/arm/boot/dts/exynos4210-origen.dts         |  7 +++-
-  arch/arm/boot/dts/exynos4210-trats.dts          |  7 +++-
-  arch/arm/boot/dts/exynos4210-universal_c210.dts |  4 +++
-  arch/arm/boot/dts/exynos5250-pinctrl.dtsi       | 44 
-++++++++++++-------------
-  arch/arm/boot/dts/exynos5440-sd5v1.dts          |  2 +-
-  arch/arm/boot/dts/exynos5440-ssdk5440.dts       |  2 +-
-  6 files changed, 40 insertions(+), 26 deletions(-)
+>
+> Heiko
+>
+>
+>> ~Vinod
+>>
+>>> Heiko Stuebner (3):
+>>>    ARM: S3C24XX: Fix possible dma selection warning
+>>>    dmaengine: s3c24xx-dma: add support for the s3c2410 type of cont=
+roller
+>>>    ARM: S3C24XX: add dma platformdata for s3c2410, s3c2440 and s3c2=
+442
+>>>
+>>>   arch/arm/mach-s3c24xx/Kconfig             |    3 +-
+>>>   arch/arm/mach-s3c24xx/common.c            |  100
+>>>   +++++++++++++++++++++++++++++ arch/arm/mach-s3c24xx/common.h
+>>>   |    2 +
+>>>   drivers/dma/s3c24xx-dma.c                 |   10 +++
+>>>   include/linux/platform_data/dma-s3c24xx.h |    3 +
+>>>   sound/soc/samsung/Kconfig                 |    2 +-
+>>>   6 files changed, 118 insertions(+), 2 deletions(-)
