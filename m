@@ -1,74 +1,325 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] clk: samsung: Fix PLL35XX lock time
-Date: Mon, 14 Oct 2013 21:08:38 -0700
-Message-ID: <CAD=FV=WDN0S5atj7aqCw7iL0zTwFxvkxMwHR9-DXOAexxr5ngQ@mail.gmail.com>
-References: <1381215399-25394-1-git-send-email-arun.kk@samsung.com>
-	<2947491.pJZ8F0UW5m@amdn883>
-	<CAD=FV=V-RqREqsR-g-2=Rv5UMzwbJFbn7t5xhDp6qBkuGrJVvg@mail.gmail.com>
-	<2464757.WeV77WxV9T@amdn883>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f41.google.com ([209.85.212.41]:62322 "EHLO
-	mail-vb0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750821Ab3JOEIj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Oct 2013 00:08:39 -0400
-Received: by mail-vb0-f41.google.com with SMTP id g17so5051813vbg.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 Oct 2013 21:08:38 -0700 (PDT)
-In-Reply-To: <2464757.WeV77WxV9T@amdn883>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 1/3 v3] exynos: i2c: Fix i2c driver to handle NACKs properly
+Date: Tue, 15 Oct 2013 10:42:51 +0530
+Message-ID: <1381813971-16006-1-git-send-email-ch.naveen@samsung.com>
+References: <1380799354-14460-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1380799354-14460-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, hs@denx.de
+Cc: khali@linux-fr.org, ben-linux@fluff.org, grant.likely@secretlab.ca, sjg@chromium.org, naveenkrishna.ch@gmail.com, d.mueller@elsoft.ch, trini@ti.com, mk7.kang@samsung.com, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Arun Kumar K <arunkk.samsung@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Sonny Rao <sonnyrao@chromium.org>
 
-Tomasz,
+The Exynos5 i2c driver does not handle NACKs properly. This change:
 
-On Fri, Oct 11, 2013 at 7:06 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Well, it's some kind of difference indeed. However, how often can
-> a frequency transition happen?
->
-> I believe that ondemand allows minimum sampling period of
-> 100 * transition latency, so even without considering the PLL lock time,
-> we would have at most a single delay of ~400 us every ~40 ms, during
-> which remaining CPUs are operating normally, because of switching to
-> MPLL temporarily.
->
-> A bit more interesting case would be the Android interactive governor,
-> which scales up the CPU on any wake-up event, but I don't believe any
-> user would notice the extra 17,5 us from touching the screen to seeing
-> a menu animation, for example.
+- fixes the NACK processing problem (do not continue transaction if
+  address cycle was NACKed)
 
-OK.  You've clearly looked at this more than I.  :)  I was merely
-recalling conversations that others had over a year ago and
-remembering some of our engineers being concerned about latencies even
-at this level, but I'm not sure if they had hard data.  I added Sonny
-to see if he might remember more, though I don't think he was the one
-pushing for optimizations in the past.
+- eliminates a fair amount of duplicate code
 
-Note that we actually are using the Interactive governor in our
-systems, and it is the interactive "time to spin up on user input"
-that I'm most worried about.  ...but you're right that I think the
-user perceivable values are in the 10s of milliseconds and not in the
-10s of microseconds.
+Signed-off-by: Vadim Bendebury <vbendeb@chromium.org>
+Reviewed-by: Simon Glass <sjg@google.com>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+Changes since v1:
+Fixed complilation warning in function i2c_init()
 
+Changes since v2:
+None
 
-> Please correct me if I'm missing something here.
->
->> Anyway, when it's something as simple as passing in a parameter to get
->> it right, it seems worth doing.
->
-> Sure, any patches improving things are welcome, I was just wondering
-> whether the improvement will be of any significance. Looking forward
-> to respective patches, hoping that they will not complicate the code
-> too much (although we already have a struct for PLL parameters, so they
-> should not).
+ drivers/i2c/s3c24x0_i2c.c |  214 +++++++++++++++++++--------------------------
+ 1 file changed, 90 insertions(+), 124 deletions(-)
 
-I'd still love to see the change land that allows this to be right.
-17.5us may not matter much, but with the PLL parameter struct it
-should be pretty easy / clean.  ...and it also allows us to map the
-number back the user manual, which can make it easier to understand
-(there's currently nothing documenting why the number is 270, not 250
-or 200).
-
--Doug
+diff --git a/drivers/i2c/s3c24x0_i2c.c b/drivers/i2c/s3c24x0_i2c.c
+index cd09c78..c65360d 100644
+--- a/drivers/i2c/s3c24x0_i2c.c
++++ b/drivers/i2c/s3c24x0_i2c.c
+@@ -43,7 +43,7 @@
+ #define I2C_START_STOP	0x20	/* START / STOP */
+ #define I2C_TXRX_ENA	0x10	/* I2C Tx/Rx enable */
+ 
+-#define I2C_TIMEOUT 1		/* 1 second */
++#define I2C_TIMEOUT_MS 1000		/* 1 second */
+ 
+ 
+ /*
+@@ -84,22 +84,26 @@ static void SetI2CSCL(int x)
+ }
+ #endif
+ 
++/*
++ * Wait til the byte transfer is completed.
++ *
++ * @param i2c- pointer to the appropriate i2c register bank.
++ * @return I2C_OK, if transmission was ACKED
++ *         I2C_NACK, if transmission was NACKED
++ *         I2C_NOK_TIMEOUT, if transaction did not complete in I2C_TIMEOUT_MS
++ */
++
+ static int WaitForXfer(struct s3c24x0_i2c *i2c)
+ {
+-	int i;
++	ulong start_time = get_timer(0);
+ 
+-	i = I2C_TIMEOUT * 10000;
+-	while (!(readl(&i2c->iiccon) & I2CCON_IRPND) && (i > 0)) {
+-		udelay(100);
+-		i--;
+-	}
++	do {
++		if (readl(&i2c->iiccon) & I2CCON_IRPND)
++			return (readl(&i2c->iicstat) & I2CSTAT_NACK) ?
++				I2C_NACK : I2C_OK;
++	} while (get_timer(start_time) < I2C_TIMEOUT_MS);
+ 
+-	return (readl(&i2c->iiccon) & I2CCON_IRPND) ? I2C_OK : I2C_NOK_TOUT;
+-}
+-
+-static int IsACK(struct s3c24x0_i2c *i2c)
+-{
+-	return !(readl(&i2c->iicstat) & I2CSTAT_NACK);
++	return I2C_NOK_TOUT;
+ }
+ 
+ static void ReadWriteByte(struct s3c24x0_i2c *i2c)
+@@ -180,21 +184,27 @@ unsigned int i2c_get_bus_num(void)
+ 
+ void i2c_init(int speed, int slaveadd)
+ {
++	int i;
+ 	struct s3c24x0_i2c *i2c;
+ #if !(defined CONFIG_EXYNOS4 || defined CONFIG_EXYNOS5)
+ 	struct s3c24x0_gpio *gpio = s3c24x0_get_base_gpio();
+ #endif
+-	int i;
++	ulong start_time = get_timer(0);
+ 
+ 	/* By default i2c channel 0 is the current bus */
+ 	g_current_bus = 0;
+ 	i2c = get_base_i2c();
+ 
+-	/* wait for some time to give previous transfer a chance to finish */
+-	i = I2C_TIMEOUT * 1000;
+-	while ((readl(&i2c->iicstat) & I2CSTAT_BSY) && (i > 0)) {
+-		udelay(1000);
+-		i--;
++	/*
++	 * In case the previous transfer is still going, wait to give it a
++	 * chance to finish.
++	 */
++	while (readl(&i2c->iicstat) & I2CSTAT_BSY) {
++		if (get_timer(start_time) > I2C_TIMEOUT_MS) {
++			printf("%s: I2C bus busy for %p\n", __func__,
++			       &i2c->iicstat);
++			return;
++		}
+ 	}
+ 
+ #if !(defined CONFIG_EXYNOS4 || defined CONFIG_EXYNOS5)
+@@ -260,7 +270,8 @@ static int i2c_transfer(struct s3c24x0_i2c *i2c,
+ 			unsigned char data[],
+ 			unsigned short data_len)
+ {
+-	int i, result;
++	int i = 0, result;
++	ulong start_time = get_timer(0);
+ 
+ 	if (data == 0 || data_len == 0) {
+ 		/*Don't support data transfer of no length or to address 0 */
+@@ -268,128 +279,78 @@ static int i2c_transfer(struct s3c24x0_i2c *i2c,
+ 		return I2C_NOK;
+ 	}
+ 
+-	/* Check I2C bus idle */
+-	i = I2C_TIMEOUT * 1000;
+-	while ((readl(&i2c->iicstat) & I2CSTAT_BSY) && (i > 0)) {
+-		udelay(1000);
+-		i--;
++	while (readl(&i2c->iicstat) & I2CSTAT_BSY) {
++		if (get_timer(start_time) > I2C_TIMEOUT_MS)
++			return I2C_NOK_TOUT;
+ 	}
+ 
+-	if (readl(&i2c->iicstat) & I2CSTAT_BSY)
+-		return I2C_NOK_TOUT;
+-
+ 	writel(readl(&i2c->iiccon) | I2CCON_ACKGEN, &i2c->iiccon);
+-	result = I2C_OK;
+ 
+-	switch (cmd_type) {
+-	case I2C_WRITE:
+-		if (addr && addr_len) {
+-			writel(chip, &i2c->iicds);
+-			/* send START */
+-			writel(I2C_MODE_MT | I2C_TXRX_ENA | I2C_START_STOP,
+-			       &i2c->iicstat);
+-			i = 0;
+-			while ((i < addr_len) && (result == I2C_OK)) {
+-				result = WaitForXfer(i2c);
+-				writel(addr[i], &i2c->iicds);
+-				ReadWriteByte(i2c);
+-				i++;
+-			}
+-			i = 0;
+-			while ((i < data_len) && (result == I2C_OK)) {
+-				result = WaitForXfer(i2c);
+-				writel(data[i], &i2c->iicds);
+-				ReadWriteByte(i2c);
+-				i++;
+-			}
+-		} else {
+-			writel(chip, &i2c->iicds);
+-			/* send START */
+-			writel(I2C_MODE_MT | I2C_TXRX_ENA | I2C_START_STOP,
+-			       &i2c->iicstat);
+-			i = 0;
+-			while ((i < data_len) && (result == I2C_OK)) {
+-				result = WaitForXfer(i2c);
+-				writel(data[i], &i2c->iicds);
+-				ReadWriteByte(i2c);
+-				i++;
+-			}
++	/* Get the slave chip address going */
++	writel(chip, &i2c->iicds);
++	if ((cmd_type == I2C_WRITE) || (addr && addr_len))
++		writel(I2C_MODE_MT | I2C_TXRX_ENA | I2C_START_STOP,
++		       &i2c->iicstat);
++	else
++		writel(I2C_MODE_MR | I2C_TXRX_ENA | I2C_START_STOP,
++		       &i2c->iicstat);
++
++	/* Wait for chip address to transmit. */
++	result = WaitForXfer(i2c);
++	if (result != I2C_OK)
++		goto bailout;
++
++	/* If register address needs to be transmitted - do it now. */
++	if (addr && addr_len) {
++		while ((i < addr_len) && (result == I2C_OK)) {
++			writel(addr[i++], &i2c->iicds);
++			ReadWriteByte(i2c);
++			result = WaitForXfer(i2c);
+ 		}
++		i = 0;
++		if (result != I2C_OK)
++			goto bailout;
++	}
+ 
+-		if (result == I2C_OK)
++	switch (cmd_type) {
++	case I2C_WRITE:
++		while ((i < data_len) && (result == I2C_OK)) {
++			writel(data[i++], &i2c->iicds);
++			ReadWriteByte(i2c);
+ 			result = WaitForXfer(i2c);
+-
+-		/* send STOP */
+-		writel(I2C_MODE_MT | I2C_TXRX_ENA, &i2c->iicstat);
+-		ReadWriteByte(i2c);
++		}
+ 		break;
+ 
+ 	case I2C_READ:
+ 		if (addr && addr_len) {
++			/*
++			 * Register address has been sent, now send slave chip
++			 * address again to start the actual read transaction.
++			 */
+ 			writel(chip, &i2c->iicds);
+-			/* send START */
+-			writel(I2C_MODE_MT | I2C_TXRX_ENA | I2C_START_STOP,
+-				&i2c->iicstat);
+-			result = WaitForXfer(i2c);
+-			if (IsACK(i2c)) {
+-				i = 0;
+-				while ((i < addr_len) && (result == I2C_OK)) {
+-					writel(addr[i], &i2c->iicds);
+-					ReadWriteByte(i2c);
+-					result = WaitForXfer(i2c);
+-					i++;
+-				}
+-
+-				writel(chip, &i2c->iicds);
+-				/* resend START */
+-				writel(I2C_MODE_MR | I2C_TXRX_ENA |
+-				       I2C_START_STOP, &i2c->iicstat);
+-			ReadWriteByte(i2c);
+-			result = WaitForXfer(i2c);
+-				i = 0;
+-				while ((i < data_len) && (result == I2C_OK)) {
+-					/* disable ACK for final READ */
+-					if (i == data_len - 1)
+-						writel(readl(&i2c->iiccon)
+-							& ~I2CCON_ACKGEN,
+-							&i2c->iiccon);
+-				ReadWriteByte(i2c);
+-				result = WaitForXfer(i2c);
+-					data[i] = readl(&i2c->iicds);
+-					i++;
+-				}
+-			} else {
+-				result = I2C_NACK;
+-			}
+-
+-		} else {
+-			writel(chip, &i2c->iicds);
+-			/* send START */
++
++			/* Generate a re-START. */
+ 			writel(I2C_MODE_MR | I2C_TXRX_ENA | I2C_START_STOP,
+ 				&i2c->iicstat);
++			ReadWriteByte(i2c);
+ 			result = WaitForXfer(i2c);
+ 
+-			if (IsACK(i2c)) {
+-				i = 0;
+-				while ((i < data_len) && (result == I2C_OK)) {
+-					/* disable ACK for final READ */
+-					if (i == data_len - 1)
+-						writel(readl(&i2c->iiccon) &
+-							~I2CCON_ACKGEN,
+-							&i2c->iiccon);
+-					ReadWriteByte(i2c);
+-					result = WaitForXfer(i2c);
+-					data[i] = readl(&i2c->iicds);
+-					i++;
+-				}
+-			} else {
+-				result = I2C_NACK;
+-			}
++			if (result != I2C_OK)
++				goto bailout;
+ 		}
+ 
+-		/* send STOP */
+-		writel(I2C_MODE_MR | I2C_TXRX_ENA, &i2c->iicstat);
+-		ReadWriteByte(i2c);
++		while ((i < data_len) && (result == I2C_OK)) {
++			/* disable ACK for final READ */
++			if (i == data_len - 1)
++				writel(readl(&i2c->iiccon)
++				       & ~I2CCON_ACKGEN,
++				       &i2c->iiccon);
++			ReadWriteByte(i2c);
++			result = WaitForXfer(i2c);
++			data[i++] = readl(&i2c->iicds);
++		}
++		if (result == I2C_NACK)
++			result = I2C_OK; /* Normal terminated read. */
+ 		break;
+ 
+ 	default:
+@@ -398,6 +359,11 @@ static int i2c_transfer(struct s3c24x0_i2c *i2c,
+ 		break;
+ 	}
+ 
++bailout:
++	/* Send STOP. */
++	writel(I2C_MODE_MR | I2C_TXRX_ENA, &i2c->iicstat);
++	ReadWriteByte(i2c);
++
+ 	return result;
+ }
+ 
+-- 
+1.7.10.4
