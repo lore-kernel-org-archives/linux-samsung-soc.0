@@ -1,41 +1,43 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] s5p-jpeg: fix uninitialized use in hdr parse
-Date: Tue, 15 Oct 2013 09:44:17 +0200
-Message-ID: <525CF251.1040003@samsung.com>
-References: <525918C1.7090704@gmail.com>
- <1381725810-20202-1-git-send-email-sw0312.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 1/2] ARM: dts: Exynos5420: add clock entries to gsc power domain
+Date: Tue, 15 Oct 2013 16:50:53 +0530
+Message-ID: <1381836054-6590-2-git-send-email-l.krishna@samsung.com>
+References: <1381836054-6590-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39197 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751672Ab3JOHoV (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:49773 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758187Ab3JOLAR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Oct 2013 03:44:21 -0400
-In-reply-to: <1381725810-20202-1-git-send-email-sw0312.kim@samsung.com>
+	Tue, 15 Oct 2013 07:00:17 -0400
+In-reply-to: <1381836054-6590-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seung-Woo Kim <sw0312.kim@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, m.chehab@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, devicetree@vger.kernel.org, khw0178.kim@samsung.com, prathyush.k@samsung.com, cpgs@samsung.com
 
-Hi Seung-Woo,
+Add clock nodes for oscillator clock, input clocks and parents of input
+clocks to gsc power domain so that we can set/restore the input
+clocks while powering on and powering off a domain.
 
-On 14/10/13 06:43, Seung-Woo Kim wrote:
-> For hdr parse error, it can return false without any assignments
-> which cause following build warning.
-> 
-> drivers/media/platform/s5p-jpeg/jpeg-core.c: In function 's5p_jpeg_parse_hdr':
-> drivers/media/platform/s5p-jpeg/jpeg-core.c:432: warning: 'components' may be used uninitialized in this function
-> drivers/media/platform/s5p-jpeg/jpeg-core.c:433: warning: 'height' may be used uninitialized in this function
-> drivers/media/platform/s5p-jpeg/jpeg-core.c:433: warning: 'width' may be used uninitialized in this function
-> 
-> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-> ---
-> change from v1
-> - add build warning to commit message
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+---
+ arch/arm/boot/dts/exynos5420.dtsi |    3 +++
+ 1 file changed, 3 insertions(+)
 
-Thanks for amending it, the patch added to my tree for v3.13.
-
---
-Regards,
-Sylwester
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 09aa06c..7f0296c 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -116,6 +116,9 @@
+ 	gsc_pd: power-domain@10044000 {
+ 		compatible = "samsung,exynos4210-pd";
+ 		reg = <0x10044000 0x20>;
++		clocks = <&clock 1>, <&clock 1032>, <&clock 1033>,
++			 <&clock 1034>, <&clock 1035>;
++		clock-names = "oscclk", "pclk0", "clk0", "pclk1", "clk1";
+ 	};
+ 
+ 	isp_pd: power-domain@10044020 {
+-- 
+1.7.9.5
