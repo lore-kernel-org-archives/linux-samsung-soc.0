@@ -1,118 +1,89 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] ARM: exynos: Allow wake-up using GIC interrupts
-Date: Tue, 15 Oct 2013 18:42:50 +0200
-Message-ID: <1381855370-7500-1-git-send-email-t.figa@samsung.com>
+From: Sonny Rao <sonnyrao@chromium.org>
+Subject: Re: [PATCH] clk: samsung: Fix PLL35XX lock time
+Date: Tue, 15 Oct 2013 09:46:06 -0700
+Message-ID: <CAPz6YkXr_eENi+K6zF5_E8w8jEHV0JcRjxwaUG108vFhaAo_dA@mail.gmail.com>
+References: <1381215399-25394-1-git-send-email-arun.kk@samsung.com>
+ <2947491.pJZ8F0UW5m@amdn883> <CAD=FV=V-RqREqsR-g-2=Rv5UMzwbJFbn7t5xhDp6qBkuGrJVvg@mail.gmail.com>
+ <2464757.WeV77WxV9T@amdn883> <CAD=FV=WDN0S5atj7aqCw7iL0zTwFxvkxMwHR9-DXOAexxr5ngQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:23154 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932439Ab3JOQn0 (ORCPT
+Received: from mail-qa0-f45.google.com ([209.85.216.45]:39744 "EHLO
+	mail-qa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932228Ab3JOQq2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Oct 2013 12:43:26 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MUP0040JYG4YUC0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 Oct 2013 17:43:25 +0100 (BST)
+	Tue, 15 Oct 2013 12:46:28 -0400
+Received: by mail-qa0-f45.google.com with SMTP id ii20so3358285qab.18
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Oct 2013 09:46:27 -0700 (PDT)
+In-Reply-To: <CAD=FV=WDN0S5atj7aqCw7iL0zTwFxvkxMwHR9-DXOAexxr5ngQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Arnd Bergmann <arnd@arndb.de>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Vikas Sajjan <vikas.sajjan@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, Arun Kumar K <arunkk.samsung@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Andrew Bresticker <abrestic@chromium.org>
 
-This patch restores the ability to receive wake-up events from internal
-GIC interrupts, e.g. RTC tick or alarm interrupts.
+On Mon, Oct 14, 2013 at 9:08 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Tomasz,
+>
+> On Fri, Oct 11, 2013 at 7:06 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Well, it's some kind of difference indeed. However, how often can
+>> a frequency transition happen?
+>>
+>> I believe that ondemand allows minimum sampling period of
+>> 100 * transition latency, so even without considering the PLL lock time,
+>> we would have at most a single delay of ~400 us every ~40 ms, during
+>> which remaining CPUs are operating normally, because of switching to
+>> MPLL temporarily.
+>>
+>> A bit more interesting case would be the Android interactive governor,
+>> which scales up the CPU on any wake-up event, but I don't believe any
+>> user would notice the extra 17,5 us from touching the screen to seeing
+>> a menu animation, for example.
+>
+> OK.  You've clearly looked at this more than I.  :)  I was merely
+> recalling conversations that others had over a year ago and
+> remembering some of our engineers being concerned about latencies even
+> at this level, but I'm not sure if they had hard data.  I added Sonny
+> to see if he might remember more, though I don't think he was the one
+> pushing for optimizations in the past.
+>
+>
+> Note that we actually are using the Interactive governor in our
+> systems, and it is the interactive "time to spin up on user input"
+> that I'm most worried about.  ...but you're right that I think the
+> user perceivable values are in the 10s of milliseconds and not in the
+> 10s of microseconds.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/include/mach/pm-core.h |  1 -
- arch/arm/mach-exynos/pm.c                   | 55 +++++++++++++++++++++++++++++
- 2 files changed, 55 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/pm-core.h b/arch/arm/mach-exynos/include/mach/pm-core.h
-index 2b00833..be112ce 100644
---- a/arch/arm/mach-exynos/include/mach/pm-core.h
-+++ b/arch/arm/mach-exynos/include/mach/pm-core.h
-@@ -66,7 +66,6 @@ static inline void samsung_pm_saved_gpios(void)
- 
- /* Compatibility definitions to make plat-samsung/pm.c compile */
- #define IRQ_EINT_BIT(x)		1
--#define s3c_irqwake_intallow	0
- #define s3c_irqwake_eintallow	0
- 
- #endif /* __ASM_ARCH_PM_CORE_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index c679db5..1f24e7f 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -212,14 +212,69 @@ static struct subsys_interface exynos_pm_interface = {
- 	.add_dev	= exynos_pm_add,
- };
- 
-+struct exynos_wkup_irq {
-+	unsigned int hwirq;
-+	u32 mask;
-+};
-+
-+static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
-+	{ 76, BIT(1) }, /* RTC alarm */
-+	{ 77, BIT(2) }, /* RTC tick */
-+	{ /* sentinel */ },
-+};
-+
-+static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
-+	{ 75, BIT(1) }, /* RTC alarm */
-+	{ 76, BIT(2) }, /* RTC tick */
-+	{ /* sentinel */ },
-+};
-+
-+unsigned long s3c_irqwake_intallow;
-+
-+int s3c_irq_wake(struct irq_data *data, unsigned int state)
-+{
-+	const struct exynos_wkup_irq *wkup_irq;
-+
-+	if (soc_is_exynos5250())
-+		wkup_irq = exynos5250_wkup_irq;
-+	else
-+		wkup_irq = exynos4_wkup_irq;
-+
-+	while (wkup_irq->mask) {
-+		if (wkup_irq->hwirq == data->hwirq) {
-+			if (!state)
-+				s3c_irqwake_intmask |= wkup_irq->mask;
-+			else
-+				s3c_irqwake_intmask &= ~wkup_irq->mask;
-+			return 0;
-+		}
-+		++wkup_irq;
-+	}
-+
-+	return -ENOENT;
-+}
-+
- static __init int exynos_pm_drvinit(void)
- {
-+	const struct exynos_wkup_irq *wkup_irq;
- 	struct clk *pll_base;
- 	unsigned int tmp;
- 
- 	if (soc_is_exynos5440())
- 		return 0;
- 
-+	if (soc_is_exynos5250())
-+		wkup_irq = exynos5250_wkup_irq;
-+	else
-+		wkup_irq = exynos4_wkup_irq;
-+
-+	while (wkup_irq->mask) {
-+		s3c_irqwake_intallow |= wkup_irq->mask;
-+		++wkup_irq;
-+	}
-+
-+	gic_arch_extn.irq_set_wake = s3c_irq_wake;
-+
- 	s3c_pm_init();
- 
- 	/* All wakeup disable */
--- 
-1.8.3.2
+Yeah, we're using interactive, and we're typically running on the
+slowest clock frequency when a user uses an input device that causes a
+boost to happen, and I think the initial measurements (last year) of
+how long it took to complete just the voltage transition on Snow were
+something like 1 millisecond mostly because of how udelay worked by
+using a fixed number of loops.  That seemed pretty long but wasn't
+considered terrible because after we got up to a higher speed it
+wouldn't take as long to make further transitions, and I also didn't
+expect us to make that transition often enough that it would be a
+significant impact on CPU usage, and 1ms probably isn't quite enough
+for a user to notice.
+
+>
+>
+>> Please correct me if I'm missing something here.
+>>
+>>> Anyway, when it's something as simple as passing in a parameter to get
+>>> it right, it seems worth doing.
+>>
+>> Sure, any patches improving things are welcome, I was just wondering
+>> whether the improvement will be of any significance. Looking forward
+>> to respective patches, hoping that they will not complicate the code
+>> too much (although we already have a struct for PLL parameters, so they
+>> should not).
+>
+> I'd still love to see the change land that allows this to be right.
+> 17.5us may not matter much, but with the PLL parameter struct it
+> should be pretty easy / clean.  ...and it also allows us to map the
+> number back the user manual, which can make it easier to understand
+> (there's currently nothing documenting why the number is 270, not 250
+> or 200).
+>
+> -Doug
