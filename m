@@ -1,39 +1,68 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH v2 0/4] Exynos 5410 Dual cluster support
-Date: Wed, 16 Oct 2013 15:15:03 -0700
-Message-ID: <87k3hc3lso.fsf@linaro.org>
-References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] phy: exynos-mipi-video: Fix phy_power_off() callback
+Date: Thu, 17 Oct 2013 08:10:13 +0900
+Message-ID: <000401cecac4$dea1a7a0$9be4f6e0$%han@samsung.com>
+References: <1381940896-9355-1-git-send-email-kishon@ti.com>
+ <1381943025-1036-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com>
-	(Vyacheslav Tyrtov's message of "Mon, 14 Oct 2013 19:08:21 +0400")
-Sender: linux-doc-owner@vger.kernel.org
-To: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:20008 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761317Ab3JPXKP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 16 Oct 2013 19:10:15 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MUS00KDJB0TWJL0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 Oct 2013 08:10:14 +0900 (KST)
+In-reply-to: <1381943025-1036-1-git-send-email-s.nawrocki@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>
+Cc: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
+On Thursday, October 17, 2013 2:04 AM, Sylwester Nawrocki wrote:
+> 
+> Fix argument passed to the register setup helper function so
+> the phy is actually disabled. Now due to cut&paste error 1 is
+> passed to both phy_power_on() and phy_power_off().
+> 
+> Reported by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-> The series of patches represent support of Exynos 5410 SoC
->     
-> The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture.
-> Patches allow all 8 CPU cores (4 x A7 and 4 x A15) to run at the same time
->     
-> Patches add new platform description, support of clock controller,
-> dual cluster support and device tree for Exynos 5410 
->    
-> Has been build on v3.12-rc5.
-> Has been tested on Exynos 5410 reference board (exynos_defconfig).
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
-Has anyone tried this on the exynos5410 based odroid-xu yet?  
+Best regards,
+Jingoo Han
 
-I tried booting this on my recently arrived odroid-xu, but am not
-getting it to boot.
-
-I'm not yet terribly familiar with this SoC, what are the settings 
-needed for DEBUG_LL on this board?
-
-Thanks,
-
-Kevin
+> ---
+> 
+> This fixes a cut&paste typo which snicked in while doing very last
+> adaptation to latest version of the phy framework.
+> 
+> Thanks,
+> Sylwester
+> ---
+>  drivers/phy/phy-exynos-mipi-video.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
+> index b73b86a..0c5efab 100644
+> --- a/drivers/phy/phy-exynos-mipi-video.c
+> +++ b/drivers/phy/phy-exynos-mipi-video.c
+> @@ -93,7 +93,7 @@ static int exynos_mipi_video_phy_power_off(struct phy *phy)
+>  	struct video_phy_desc *phy_desc = phy_get_drvdata(phy);
+>  	struct exynos_mipi_video_phy *state = to_mipi_video_phy(phy_desc);
+> 
+> -	return __set_phy_state(state, phy_desc->index, 1);
+> +	return __set_phy_state(state, phy_desc->index, 0);
+>  }
+> 
+>  static struct phy *exynos_mipi_video_phy_xlate(struct device *dev,
+> --
+> 1.7.9.5
