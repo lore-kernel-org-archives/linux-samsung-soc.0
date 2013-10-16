@@ -1,20 +1,20 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 3/9] clk: samsung: exynos4: Move suspend/resume handling to SoC
+Subject: [PATCH 6/9] clk: samsung: s3c64xx: Move suspend/resume handling to SoC
  driver
-Date: Wed, 16 Oct 2013 13:08:12 +0200
-Message-ID: <1381921698-5060-4-git-send-email-t.figa@samsung.com>
+Date: Wed, 16 Oct 2013 13:08:15 +0200
+Message-ID: <1381921698-5060-7-git-send-email-t.figa@samsung.com>
 References: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout2.w1.samsung.com ([210.118.77.12]:55311 "EHLO
 	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760549Ab3JPLI1 (ORCPT
+	with ESMTP id S1760299Ab3JPLI2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 07:08:27 -0400
+	Wed, 16 Oct 2013 07:08:28 -0400
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
  by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MUR000ANDLJSF70@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Oct 2013 12:08:25 +0100 (BST)
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Oct 2013 12:08:26 +0100 (BST)
 In-reply-to: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -28,143 +28,134 @@ suspend/resume handlers and so this patch moves them.
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos4.c | 90 ++++++++++++++++++++++++++++++++++-----
- 1 file changed, 80 insertions(+), 10 deletions(-)
+ drivers/clk/samsung/clk-s3c64xx.c | 79 +++++++++++++++++++++++++++++++++------
+ 1 file changed, 68 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index a29bb87..1de7346 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -15,6 +15,7 @@
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index 7d2c842..3189101 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -13,6 +13,7 @@
  #include <linux/clk-provider.h>
  #include <linux/of.h>
  #include <linux/of_address.h>
 +#include <linux/syscore_ops.h>
  
- #include "clk.h"
+ #include <dt-bindings/clock/samsung,s3c64xx-clock.h>
  
-@@ -191,6 +192,16 @@ enum exynos4_clks {
- 	nr_clks,
+@@ -61,6 +62,13 @@ enum s3c64xx_plls {
+ 	apll, mpll, epll,
  };
  
 +static void __iomem *reg_base;
-+static enum exynos4_soc exynos4_soc;
++static bool is_s3c6400;
 +
-+/*
-+ * Support for CMU save/restore across system suspends
-+ */
 +#ifdef CONFIG_PM_SLEEP
-+static struct samsung_clk_reg_dump *exynos4_save_common;
-+static struct samsung_clk_reg_dump *exynos4_save_soc;
++static struct samsung_clk_reg_dump *s3c64xx_save_common;
++static struct samsung_clk_reg_dump *s3c64xx_save_soc;
 +
  /*
-  * list of controller registers to be saved and restored during a
-  * suspend/resume cycle.
-@@ -288,6 +299,70 @@ static unsigned long exynos4_clk_regs[] __initdata = {
- 	GATE_IP_CPU,
+  * List of controller registers to be saved and restored during
+  * a suspend/resume cycle.
+@@ -87,6 +95,60 @@ static unsigned long s3c6410_clk_regs[] __initdata = {
+ 	MEM0_GATE,
  };
  
-+static int exynos4_clk_suspend(void)
++static int s3c64xx_clk_suspend(void)
 +{
-+	samsung_clk_save(reg_base, exynos4_save_common,
-+				ARRAY_SIZE(exynos4_clk_regs));
++	samsung_clk_save(reg_base, s3c64xx_save_common,
++				ARRAY_SIZE(s3c64xx_clk_regs));
 +
-+	if (exynos4_soc == EXYNOS4210)
-+		samsung_clk_save(reg_base, exynos4_save_soc,
-+					ARRAY_SIZE(exynos4210_clk_save));
-+	else
-+		samsung_clk_save(reg_base, exynos4_save_soc,
-+					ARRAY_SIZE(exynos4x12_clk_save));
++	if (!is_s3c6400)
++		samsung_clk_save(reg_base, s3c64xx_save_soc,
++					ARRAY_SIZE(s3c6410_clk_regs));
 +
 +	return 0;
 +}
 +
-+static void exynos4_clk_resume(void)
++static void s3c64xx_clk_resume(void)
 +{
-+	samsung_clk_restore(reg_base, exynos4_save_common,
-+				ARRAY_SIZE(exynos4_clk_regs));
++	samsung_clk_restore(reg_base, s3c64xx_save_common,
++				ARRAY_SIZE(s3c64xx_clk_regs));
 +
-+	if (exynos4_soc == EXYNOS4210)
-+		samsung_clk_restore(reg_base, exynos4_save_soc,
-+					ARRAY_SIZE(exynos4210_clk_save));
-+	else
-+		samsung_clk_restore(reg_base, exynos4_save_soc,
-+					ARRAY_SIZE(exynos4x12_clk_save));
++	if (!is_s3c6400)
++		samsung_clk_restore(reg_base, s3c64xx_save_soc,
++					ARRAY_SIZE(s3c6410_clk_regs));
 +}
 +
-+static struct syscore_ops exynos4_clk_syscore_ops = {
-+	.suspend = exynos4_clk_suspend,
-+	.resume = exynos4_clk_resume,
++static struct syscore_ops s3c64xx_clk_syscore_ops = {
++	.suspend = s3c64xx_clk_suspend,
++	.resume = s3c64xx_clk_resume,
 +};
 +
-+static void exynos4_clk_sleep_init(void)
++static void s3c64xx_clk_sleep_init(void)
 +{
-+	exynos4_save_common = samsung_clk_alloc_reg_dump(exynos4_clk_regs,
-+					ARRAY_SIZE(exynos4_clk_regs));
-+	if (!exynos4_save_common)
++	s3c64xx_save_common = samsung_clk_alloc_reg_dump(s3c64xx_clk_regs,
++						ARRAY_SIZE(s3c64xx_clk_regs));
++	if (!s3c64xx_save_common)
 +		goto err_warn;
 +
-+	if (exynos4_soc == EXYNOS4210)
-+		exynos4_save_soc = samsung_clk_alloc_reg_dump(
-+					exynos4210_clk_save,
-+					ARRAY_SIZE(exynos4210_clk_save));
-+	else
-+		exynos4_save_soc = samsung_clk_alloc_reg_dump(
-+					exynos4x12_clk_save,
-+					ARRAY_SIZE(exynos4x12_clk_save));
-+	if (!exynos4_save_soc)
-+		goto err_common;
++	if (!is_s3c6400) {
++		s3c64xx_save_soc = samsung_clk_alloc_reg_dump(s3c6410_clk_regs,
++						ARRAY_SIZE(s3c6410_clk_regs));
++		if (!s3c64xx_save_soc)
++			goto err_soc;
++	}
 +
-+	register_syscore_ops(&exynos4_clk_syscore_ops);
++	register_syscore_ops(&s3c64xx_clk_syscore_ops);
 +	return;
 +
-+err_common:
-+	kfree(exynos4_save_common);
++err_soc:
++	kfree(s3c64xx_save_common);
 +err_warn:
 +	pr_warn("%s: failed to allocate sleep save data, no sleep support!\n",
 +		__func__);
 +}
 +#else
-+static void exynos4_clk_sleep_init(void) {}
++static void s3c64xx_clk_sleep_init(void) {}
 +#endif
 +
- /* list of all parent clock list */
- PNAME(mout_apll_p)	= { "fin_pll", "fout_apll", };
- PNAME(mout_mpll_p)	= { "fin_pll", "fout_mpll", };
-@@ -1091,22 +1166,15 @@ static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
+ /* List of parent clocks common for all S3C64xx SoCs. */
+ PNAME(spi_mmc_p)	= { "mout_epll", "dout_mpll", "fin_pll", "clk27m" };
+ PNAME(uart_p)		= { "mout_epll", "dout_mpll" };
+@@ -391,11 +453,11 @@ static void __init s3c64xx_clk_register_fixed_ext(unsigned long fin_pll_f,
  
- /* register exynos4 clocks */
- static void __init exynos4_clk_init(struct device_node *np,
--				    enum exynos4_soc exynos4_soc)
-+				    enum exynos4_soc soc)
+ /* Register s3c64xx clocks. */
+ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+-			     unsigned long xusbxti_f, bool is_s3c6400,
+-			     void __iomem *reg_base)
++			     unsigned long xusbxti_f, bool s3c6400,
++			     void __iomem *base)
  {
--	void __iomem *reg_base;
-+	exynos4_soc = soc;
+-	unsigned long *soc_regs = NULL;
+-	unsigned long nr_soc_regs = 0;
++	reg_base = base;
++	is_s3c6400 = s3c6400;
  
- 	reg_base = of_iomap(np, 0);
- 	if (!reg_base)
- 		panic("%s: failed to map registers\n", __func__);
+ 	if (np) {
+ 		reg_base = of_iomap(np, 0);
+@@ -403,13 +465,7 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+ 			panic("%s: failed to map registers\n", __func__);
+ 	}
  
--	if (exynos4_soc == EXYNOS4210)
--		samsung_clk_init(np, reg_base, nr_clks,
--			exynos4_clk_regs, ARRAY_SIZE(exynos4_clk_regs),
--			exynos4210_clk_save, ARRAY_SIZE(exynos4210_clk_save));
--	else
--		samsung_clk_init(np, reg_base, nr_clks,
--			exynos4_clk_regs, ARRAY_SIZE(exynos4_clk_regs),
--			exynos4x12_clk_save, ARRAY_SIZE(exynos4x12_clk_save));
-+	samsung_clk_init(np, reg_base, nr_clks, NULL, 0, NULL, 0);
+-	if (!is_s3c6400) {
+-		soc_regs = s3c6410_clk_regs;
+-		nr_soc_regs = ARRAY_SIZE(s3c6410_clk_regs);
+-	}
+-
+-	samsung_clk_init(np, reg_base, NR_CLKS, s3c64xx_clk_regs,
+-			ARRAY_SIZE(s3c64xx_clk_regs), soc_regs, nr_soc_regs);
++	samsung_clk_init(np, reg_base, NR_CLKS, NULL, 0, NULL, 0);
  
- 	samsung_clk_of_register_fixed_ext(exynos4_fixed_rate_ext_clks,
- 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
-@@ -1179,6 +1247,8 @@ static void __init exynos4_clk_init(struct device_node *np,
- 	samsung_clk_register_alias(exynos4_aliases,
- 			ARRAY_SIZE(exynos4_aliases));
+ 	/* Register external clocks. */
+ 	if (!np)
+@@ -452,6 +508,7 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
  
-+	exynos4_clk_sleep_init();
-+
- 	pr_info("%s clocks: sclk_apll = %ld, sclk_mpll = %ld\n"
- 		"\tsclk_epll = %ld, sclk_vpll = %ld, arm_clk = %ld\n",
- 		exynos4_soc == EXYNOS4210 ? "Exynos4210" : "Exynos4x12",
+ 	samsung_clk_register_alias(s3c64xx_clock_aliases,
+ 					ARRAY_SIZE(s3c64xx_clock_aliases));
++	s3c64xx_clk_sleep_init();
+ 
+ 	pr_info("%s clocks: apll = %lu, mpll = %lu\n"
+ 		"\tepll = %lu, arm_clk = %lu\n",
 -- 
 1.8.3.2
