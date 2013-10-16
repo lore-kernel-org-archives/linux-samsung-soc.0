@@ -1,99 +1,196 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 2/9] clk: samsung: Provide common helpers for register
- save/restore
-Date: Wed, 16 Oct 2013 13:08:11 +0200
-Message-ID: <1381921698-5060-3-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 7/9] clk: samsung: Drop old suspend/resume code
+Date: Wed, 16 Oct 2013 13:08:16 +0200
+Message-ID: <1381921698-5060-8-git-send-email-t.figa@samsung.com>
 References: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:30793 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760564Ab3JPLI1 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:55311 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760612Ab3JPLI3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 07:08:27 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+	Wed, 16 Oct 2013 07:08:29 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MUR00GEODLNYT70@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Oct 2013 12:08:24 +0100 (BST)
+ 17 2011)) with ESMTP id <0MUR000ANDLJSF70@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 Oct 2013 12:08:27 +0100 (BST)
 In-reply-to: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-As suspend/resume handlers are being moved to SoC specific code, due to
-differencies in suspend/resume handling of particular SoCs, to minimize
-code duplication this patch provides common register save/restore
-helpers that save/restore given list of registers of clock controller.
+Since all SoC drivers have been moved to local suspend/resume handling,
+the old code can be safely dropped.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/clk/samsung/clk.c | 32 ++++++++++++++++++++++++++++++++
- drivers/clk/samsung/clk.h | 10 ++++++++++
- 2 files changed, 42 insertions(+)
+ drivers/clk/samsung/clk-exynos4.c    |  2 +-
+ drivers/clk/samsung/clk-exynos5250.c |  2 +-
+ drivers/clk/samsung/clk-exynos5420.c |  2 +-
+ drivers/clk/samsung/clk-exynos5440.c |  2 +-
+ drivers/clk/samsung/clk-s3c64xx.c    |  2 +-
+ drivers/clk/samsung/clk.c            | 54 +-----------------------------------
+ drivers/clk/samsung/clk.h            |  4 +--
+ 7 files changed, 7 insertions(+), 61 deletions(-)
 
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 1de7346..694c755 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1174,7 +1174,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 	if (!reg_base)
+ 		panic("%s: failed to map registers\n", __func__);
+ 
+-	samsung_clk_init(np, reg_base, nr_clks, NULL, 0, NULL, 0);
++	samsung_clk_init(np, reg_base, nr_clks);
+ 
+ 	samsung_clk_of_register_fixed_ext(exynos4_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 8c1ce49..ee866e3 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -699,7 +699,7 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 		panic("%s: unable to determine soc\n", __func__);
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, nr_clks, NULL, 0, NULL, 0);
++	samsung_clk_init(np, reg_base, nr_clks);
+ 	samsung_clk_of_register_fixed_ext(exynos5250_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_rate_ext_clks),
+ 			ext_clk_match);
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 4ef1ee4..9de5bfd 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -816,7 +816,7 @@ static void __init exynos5420_clk_init(struct device_node *np)
+ 		panic("%s: unable to determine soc\n", __func__);
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, nr_clks, NULL, 0, NULL, 0);
++	samsung_clk_init(np, reg_base, nr_clks);
+ 	samsung_clk_of_register_fixed_ext(exynos5420_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5420_fixed_rate_ext_clks),
+ 			ext_clk_match);
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index f865894..e3e460a 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -114,7 +114,7 @@ static void __init exynos5440_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, nr_clks, NULL, 0, NULL, 0);
++	samsung_clk_init(np, reg_base, nr_clks);
+ 	samsung_clk_of_register_fixed_ext(exynos5440_fixed_rate_ext_clks,
+ 		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
+ 
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index 3189101..a43cbde 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -465,7 +465,7 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+ 			panic("%s: failed to map registers\n", __func__);
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, NR_CLKS, NULL, 0, NULL, 0);
++	samsung_clk_init(np, reg_base, NR_CLKS);
+ 
+ 	/* Register external clocks. */
+ 	if (!np)
 diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index f503f32..c0a716b 100644
+index ec761e3..91bec3e 100644
 --- a/drivers/clk/samsung/clk.c
 +++ b/drivers/clk/samsung/clk.c
-@@ -22,6 +22,38 @@ static struct clk_onecell_data clk_data;
+@@ -21,7 +21,6 @@ static void __iomem *reg_base;
+ static struct clk_onecell_data clk_data;
  #endif
  
- #ifdef CONFIG_PM_SLEEP
-+void samsung_clk_save(void __iomem *base,
-+				    struct samsung_clk_reg_dump *rd,
-+				    unsigned int num_regs)
-+{
-+	for (; num_regs > 0; --num_regs, ++rd)
-+		rd->value = readl(base + rd->offset);
-+}
-+
-+void samsung_clk_restore(void __iomem *base,
-+				      const struct samsung_clk_reg_dump *rd,
-+				      unsigned int num_regs)
-+{
-+	for (; num_regs > 0; --num_regs, ++rd)
-+		writel(rd->value, base + rd->offset);
-+}
-+
-+struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(unsigned long *rdump,
-+							unsigned long nr_rdump)
-+{
-+	struct samsung_clk_reg_dump *rd;
-+	unsigned int i;
-+
-+	rd = kcalloc(nr_rdump, sizeof(*rd), GFP_KERNEL);
-+	if (!rd)
-+		return NULL;
-+
-+	for (i = 0; i < nr_rdump; ++i)
-+		rd[i].offset = rdump[i];
-+
-+	return rd;
-+}
-+
- static struct samsung_clk_reg_dump *reg_dump;
- static unsigned long nr_reg_dump;
+-#ifdef CONFIG_PM_SLEEP
+ void samsung_clk_save(void __iomem *base,
+ 				    struct samsung_clk_reg_dump *rd,
+ 				    unsigned int num_regs)
+@@ -55,63 +54,12 @@ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
+ 	return rd;
+ }
  
+-static struct samsung_clk_reg_dump *reg_dump;
+-static unsigned long nr_reg_dump;
+-
+-static int samsung_clk_suspend(void)
+-{
+-	struct samsung_clk_reg_dump *rd = reg_dump;
+-	unsigned long i;
+-
+-	for (i = 0; i < nr_reg_dump; i++, rd++)
+-		rd->value = __raw_readl(reg_base + rd->offset);
+-
+-	return 0;
+-}
+-
+-static void samsung_clk_resume(void)
+-{
+-	struct samsung_clk_reg_dump *rd = reg_dump;
+-	unsigned long i;
+-
+-	for (i = 0; i < nr_reg_dump; i++, rd++)
+-		__raw_writel(rd->value, reg_base + rd->offset);
+-}
+-
+-static struct syscore_ops samsung_clk_syscore_ops = {
+-	.suspend	= samsung_clk_suspend,
+-	.resume		= samsung_clk_resume,
+-};
+-#endif /* CONFIG_PM_SLEEP */
+-
+ /* setup the essentials required to support clock lookup using ccf */
+ void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+-		unsigned long nr_clks, unsigned long *rdump,
+-		unsigned long nr_rdump, unsigned long *soc_rdump,
+-		unsigned long nr_soc_rdump)
++			     unsigned long nr_clks)
+ {
+ 	reg_base = base;
+ 
+-#ifdef CONFIG_PM_SLEEP
+-	if (rdump && nr_rdump) {
+-		unsigned int idx;
+-		reg_dump = kzalloc(sizeof(struct samsung_clk_reg_dump)
+-				* (nr_rdump + nr_soc_rdump), GFP_KERNEL);
+-		if (!reg_dump) {
+-			pr_err("%s: memory alloc for register dump failed\n",
+-					__func__);
+-			return;
+-		}
+-
+-		for (idx = 0; idx < nr_rdump; idx++)
+-			reg_dump[idx].offset = rdump[idx];
+-		for (idx = 0; idx < nr_soc_rdump; idx++)
+-			reg_dump[nr_rdump + idx].offset = soc_rdump[idx];
+-		nr_reg_dump = nr_rdump + nr_soc_rdump;
+-		register_syscore_ops(&samsung_clk_syscore_ops);
+-	}
+-#endif
+-
+ 	clk_table = kzalloc(sizeof(struct clk *) * nr_clks, GFP_KERNEL);
+ 	if (!clk_table)
+ 		panic("could not allocate clock lookup table\n");
 diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 31b4174..ec8d46b 100644
+index 93cb8a0..c7141ba 100644
 --- a/drivers/clk/samsung/clk.h
 +++ b/drivers/clk/samsung/clk.h
-@@ -340,4 +340,14 @@ extern void __init samsung_clk_register_pll(struct samsung_pll_clock *pll_list,
+@@ -313,9 +313,7 @@ struct samsung_pll_clock {
+ 		_lock, _con, _rtable, _alias)
  
- extern unsigned long _get_rate(const char *clk_name);
- 
-+extern void samsung_clk_save(void __iomem *base,
-+			     struct samsung_clk_reg_dump *rd,
-+			     unsigned int num_regs);
-+extern void samsung_clk_restore(void __iomem *base,
-+				const struct samsung_clk_reg_dump *rd,
-+				unsigned int num_regs);
-+extern struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
-+							unsigned long *rdump,
-+							unsigned long nr_rdump);
-+
- #endif /* __SAMSUNG_CLK_H */
+ extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+-		unsigned long nr_clks, unsigned long *rdump,
+-		unsigned long nr_rdump, unsigned long *soc_rdump,
+-		unsigned long nr_soc_rdump);
++				    unsigned long nr_clks);
+ extern void __init samsung_clk_of_register_fixed_ext(
+ 		struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 		unsigned int nr_fixed_rate_clk,
 -- 
 1.8.3.2
