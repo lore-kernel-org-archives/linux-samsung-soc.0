@@ -1,44 +1,32 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: [PATCH v2 7/8] spi: s3c64xx: Always select S3C64XX_PL080 when ARCH_S3C64XX is enabled
-Date: Wed, 16 Oct 2013 21:10:58 +0200
-Message-ID: <1381950659-12703-8-git-send-email-tomasz.figa@gmail.com>
-References: <1381950659-12703-1-git-send-email-tomasz.figa@gmail.com>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH 0/7] video phy's adaptation to *generic phy framework*
+Date: Wed, 16 Oct 2013 13:49:43 -0700
+Message-ID: <20131016204943.GA32000@kroah.com>
+References: <1381940896-9355-1-git-send-email-kishon@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f44.google.com ([74.125.83.44]:34777 "EHLO
-	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761365Ab3JPTLV (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37384 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755718Ab3JPUto (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 15:11:21 -0400
-In-Reply-To: <1381950659-12703-1-git-send-email-tomasz.figa@gmail.com>
+	Wed, 16 Oct 2013 16:49:44 -0400
+Content-Disposition: inline
+In-Reply-To: <1381940896-9355-1-git-send-email-kishon@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-spi@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Ben Dooks <ben-linux@fluff.org>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sachin Kamat <sachin.kamat@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-The legacy S3C64xx DMA driver has been removed, DMA support on
-S3C64xx is provided only by the generic PL08x driver.
+On Wed, Oct 16, 2013 at 09:58:09PM +0530, Kishon Vijay Abraham I wrote:
+> Hi Greg,
+> 
+> This series includes video PHY adaptation to Generic PHY Framework.
+> With the adaptation they were able to get rid of plat data callbacks.
+> 
+> Since you've taken the Generic PHY Framework, I think this series should
+> also go into your tree.
 
-This patch modifies the Kconfig entry of spi-s3c64xx driver, which
-relies on availability of DMA, to always select the S3C64XX_PL080
-symbol.
+All now applied, thanks.
 
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
----
- drivers/spi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 760d7b6..e2dd2fb 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -395,7 +395,7 @@ config SPI_S3C24XX_FIQ
- config SPI_S3C64XX
- 	tristate "Samsung S3C64XX series type SPI"
- 	depends on PLAT_SAMSUNG
--	select S3C64XX_DMA if ARCH_S3C64XX && !S3C64XX_PL080
-+	select S3C64XX_PL080 if ARCH_S3C64XX
- 	help
- 	  SPI driver for Samsung S3C64XX and newer SoCs.
- 
--- 
-1.8.3.2
+greg k-h
