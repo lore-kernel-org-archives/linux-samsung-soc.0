@@ -1,70 +1,58 @@
 From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH RESEND 2/3] dmaengine: s3c24xx-dma: add support for the
- s3c2410 type of controller
-Date: Wed, 16 Oct 2013 07:34:45 +0530
-Message-ID: <20131016020445.GS2954@intel.com>
+Subject: Re: [PATCH RESEND 0/3] ARM: S3C24XX: add missing dma-devices and
+ warning fix
+Date: Wed, 16 Oct 2013 07:35:16 +0530
+Message-ID: <20131016020516.GT2954@intel.com>
 References: <201310111059.19791.heiko@sntech.de>
- <201310111101.04721.heiko@sntech.de>
+ <20131013145642.GJ2954@intel.com>
+ <201310132011.11285.heiko@sntech.de>
+ <525DC274.8090808@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:62603 "EHLO mga03.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:49671 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753073Ab3JPC5s (ORCPT
+	id S1751605Ab3JPC6Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Oct 2013 22:57:48 -0400
+	Tue, 15 Oct 2013 22:58:16 -0400
 Content-Disposition: inline
-In-Reply-To: <201310111101.04721.heiko@sntech.de>
+In-Reply-To: <525DC274.8090808@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-On Fri, Oct 11, 2013 at 11:01:04AM +0200, Heiko St=FCbner wrote:
-> The earliest variants of the dma controller did not contain support f=
-or
-> controlling clocks.
-Acked-by: Vinod Koul <vinod.koul@intel.com>
+On Wed, Oct 16, 2013 at 07:32:20AM +0900, Kukjin Kim wrote:
+> On 10/14/13 03:11, Heiko St=FCbner wrote:
+> >Am Sonntag, 13. Oktober 2013, 16:56:42 schrieb Vinod Koul:
+> >>On Fri, Oct 11, 2013 at 10:59:19AM +0200, Heiko St=FCbner wrote:
+> >>>[I messed up the linux-arm-kernel list address yesterday, so I res=
+end it
+> >>>with a fixed address, sorry for the noise]
+> >>>
+> >>>When Olof reported the warning about the unused s3c2410_dma_resour=
+ce, I
+> >>>thought the best way forward would be to simply implement the miss=
+ing
+> >>>pieces and so it has users :-) .
+> >>>
+> >>>Therefore this series adds the necessary platform-devices for s3c2=
+410,
+> >>>s3c2440 and s3c2442. This especially also includes the
+> >>>channel-constraints of those socs.
+> >>>
+> >>>As I do not have access to any of those socs these changes are of =
+course
+> >>>compile-tested only.
+> >>
+> >>Do you want this to be applied thru dma or arm tree?
+> >
+> >hmm, the original series went into the samsung tree for 3.13, so may=
+be this
+> >addition should go the same way?
+> >
+> I think so, let me pick this up into Samsung tree for v3.13.
+Okay, sounds good. Ack for dmaengine patch sent
 
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  drivers/dma/s3c24xx-dma.c |   10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-> index 56c9253..4cb1279 100644
-> --- a/drivers/dma/s3c24xx-dma.c
-> +++ b/drivers/dma/s3c24xx-dma.c
-> @@ -1078,6 +1078,13 @@ static void s3c24xx_dma_free_virtual_channels(=
-struct dma_device *dmadev)
->  		list_del(&chan->vc.chan.device_node);
->  }
-> =20
-> +/* s3c2410, s3c2440 and s3c2442 have a 0x40 stride without separate =
-clocks */
-> +static struct soc_data soc_s3c2410 =3D {
-> +	.stride =3D 0x40,
-> +	.has_reqsel =3D false,
-> +	.has_clocks =3D false,
-> +};
-> +
->  /* s3c2412 and s3c2413 have a 0x40 stride and dmareqsel mechanism */
->  static struct soc_data soc_s3c2412 =3D {
->  	.stride =3D 0x40,
-> @@ -1094,6 +1101,9 @@ static struct soc_data soc_s3c2443 =3D {
-> =20
->  static struct platform_device_id s3c24xx_dma_driver_ids[] =3D {
->  	{
-> +		.name		=3D "s3c2410-dma",
-> +		.driver_data	=3D (kernel_ulong_t)&soc_s3c2410,
-> +	}, {
->  		.name		=3D "s3c2412-dma",
->  		.driver_data	=3D (kernel_ulong_t)&soc_s3c2412,
->  	}, {
-> --=20
-> 1.7.10.4
->=20
-
---=20
+~Vinod
