@@ -1,54 +1,50 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] phy: exynos-mipi-video: Fix phy_power_off() callback
-Date: Wed, 16 Oct 2013 19:03:45 +0200
-Message-ID: <1381943025-1036-1-git-send-email-s.nawrocki@samsung.com>
-References: <1381940896-9355-1-git-send-email-kishon@ti.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] ARM: s3c64xx: Select CPU_V6K instead of CPU_V6
+Date: Wed, 16 Oct 2013 20:32:53 +0200
+Message-ID: <3346618.t8I6lVv536@flatron>
+References: <1380390554-4400-1-git-send-email-tomasz.figa@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:24699 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760938Ab3JPRD4 (ORCPT
+Received: from mail-ee0-f44.google.com ([74.125.83.44]:45010 "EHLO
+	mail-ee0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761114Ab3JPSdD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 13:03:56 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MUR00KNPU2J5J70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 17 Oct 2013 02:03:55 +0900 (KST)
-In-reply-to: <1381940896-9355-1-git-send-email-kishon@ti.com>
+	Wed, 16 Oct 2013 14:33:03 -0400
+In-Reply-To: <1380390554-4400-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kishon@ti.com
-Cc: gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-Fix argument passed to the register setup helper function so
-the phy is actually disabled. Now due to cut&paste error 1 is
-passed to both phy_power_on() and phy_power_off().
+Hi Kukjin,
 
-Reported by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
+On Saturday 28 of September 2013 19:49:14 Tomasz Figa wrote:
+> All S3C64XX SoCs come with ARM1176JZF-s core, which fully supports
+> ARMv6K extensions. This patch lets the kernel use them on S3C6410 by
+> adding selection of CPU_V6K to ARCH_S3C64XX.
+> 
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> ---
+>  arch/arm/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-This fixes a cut&paste typo which snicked in while doing very last
-adaptation to latest version of the phy framework.
+What do you think about this patch?
 
-Thanks,
-Sylwester
----
- drivers/phy/phy-exynos-mipi-video.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Best regards,
+Tomasz
 
-diff --git a/drivers/phy/phy-exynos-mipi-video.c b/drivers/phy/phy-exynos-mipi-video.c
-index b73b86a..0c5efab 100644
---- a/drivers/phy/phy-exynos-mipi-video.c
-+++ b/drivers/phy/phy-exynos-mipi-video.c
-@@ -93,7 +93,7 @@ static int exynos_mipi_video_phy_power_off(struct phy *phy)
- 	struct video_phy_desc *phy_desc = phy_get_drvdata(phy);
- 	struct exynos_mipi_video_phy *state = to_mipi_video_phy(phy_desc);
- 
--	return __set_phy_state(state, phy_desc->index, 1);
-+	return __set_phy_state(state, phy_desc->index, 0);
- }
- 
- static struct phy *exynos_mipi_video_phy_xlate(struct device *dev,
--- 
-1.7.9.5
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index b766dad..3a41bbb 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -728,7 +728,7 @@ config ARCH_S3C64XX
+>  	select CLKDEV_LOOKUP
+>  	select CLKSRC_SAMSUNG_PWM
+>  	select COMMON_CLK
+> -	select CPU_V6
+> +	select CPU_V6K
+>  	select GENERIC_CLOCKEVENTS
+>  	select GPIO_SAMSUNG
+>  	select HAVE_CLK
