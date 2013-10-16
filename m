@@ -1,169 +1,267 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 8/9] clk: samsung: exynos4: Add remaining suspend/resume
- handling
-Date: Wed, 16 Oct 2013 13:08:17 +0200
-Message-ID: <1381921698-5060-9-git-send-email-t.figa@samsung.com>
-References: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: [PATCH RFC v2.1 01/10] V4L: Add mem2mem ioctl and file operation
+ helpers
+Date: Wed, 16 Oct 2013 13:31:06 +0200
+Message-ID: <064401ceca63$34ce2020$9e6a6060$%debski@samsung.com>
+References: <1381581120-26883-2-git-send-email-s.nawrocki@samsung.com>
+ <1381581518-7022-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:55311 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760299Ab3JPLIa (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48250 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932542Ab3JPLbK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 07:08:30 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MUR000ANDLJSF70@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 16 Oct 2013 12:08:27 +0100 (BST)
-In-reply-to: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
+	Wed, 16 Oct 2013 07:31:10 -0400
+In-reply-to: <1381581518-7022-1-git-send-email-s.nawrocki@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org
+Cc: hverkuil@xs4all.nl, pawel@osciak.com, javier.martin@vista-silicon.com, Marek Szyprowski <m.szyprowski@samsung.com>, shaik.ameer@samsung.com, arun.kk@samsung.com, p.zabel@pengutronix.de, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-As of now, part of Exynos4 clock suspend/resume handling is located
-in mach-exynos/pm.c, which is not where code accessing CMU registers
-should reside.
+> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+> owner@vger.kernel.org] On Behalf Of Sylwester Nawrocki
+> Sent: Saturday, October 12, 2013 2:39 PM
+> Subject: [PATCH RFC v2.1 01/10] V4L: Add mem2mem ioctl and file
+> operation helpers
+> 
+> This patch adds ioctl helpers to the V4L2 mem-to-mem API, so we can
+> avoid several ioctl handlers in the mem-to-mem video node drivers that
+> are simply a pass-through to the v4l2_m2m_* calls. These helpers will
+> only be useful for drivers that use same mutex for both OUTPUT and
+> CAPTURE queue, which is the case for all currently in tree v4l2 m2m
+> drivers. In order to use the helpers the drivers are required to use
+> struct v4l2_fh.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 
-This patch implements all the necessary suspend/resume handling code
-in Exynos4 clock driver to allow dropping that old code.
+Acked-by: Kamil Debski <k.debski@samsung.com>
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c | 74 ++++++++++++++++++++++++++++++++++-----
- 1 file changed, 66 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 694c755..ca2a940 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -201,6 +201,7 @@ static enum exynos4_soc exynos4_soc;
- #ifdef CONFIG_PM_SLEEP
- static struct samsung_clk_reg_dump *exynos4_save_common;
- static struct samsung_clk_reg_dump *exynos4_save_soc;
-+static struct samsung_clk_reg_dump *exynos4_save_pll;
- 
- /*
-  * list of controller registers to be saved and restored during a
-@@ -226,6 +227,17 @@ static unsigned long exynos4x12_clk_save[] __initdata = {
- 	E4X12_MPLL_CON0,
- };
- 
-+static unsigned long exynos4_clk_pll_regs[] __initdata = {
-+	EPLL_LOCK,
-+	VPLL_LOCK,
-+	EPLL_CON0,
-+	EPLL_CON1,
-+	EPLL_CON2,
-+	VPLL_CON0,
-+	VPLL_CON1,
-+	VPLL_CON2,
-+};
-+
- static unsigned long exynos4_clk_regs[] __initdata = {
- 	SRC_LEFTBUS,
- 	DIV_LEFTBUS,
-@@ -233,12 +245,6 @@ static unsigned long exynos4_clk_regs[] __initdata = {
- 	SRC_RIGHTBUS,
- 	DIV_RIGHTBUS,
- 	GATE_IP_RIGHTBUS,
--	EPLL_CON0,
--	EPLL_CON1,
--	EPLL_CON2,
--	VPLL_CON0,
--	VPLL_CON1,
--	VPLL_CON2,
- 	SRC_TOP0,
- 	SRC_TOP1,
- 	SRC_CAM,
-@@ -299,23 +305,68 @@ static unsigned long exynos4_clk_regs[] __initdata = {
- 	GATE_IP_CPU,
- };
- 
-+static const struct samsung_clk_reg_dump src_mask_suspend[] = {
-+	{ .offset = SRC_MASK_TOP,		.value = 0x00000001, },
-+	{ .offset = SRC_MASK_CAM,		.value = 0x11111111, },
-+	{ .offset = SRC_MASK_TV,		.value = 0x00000111, },
-+	{ .offset = SRC_MASK_LCD0,		.value = 0x00001111, },
-+	{ .offset = SRC_MASK_MAUDIO,		.value = 0x00000001, },
-+	{ .offset = SRC_MASK_FSYS,		.value = 0x01011111, },
-+	{ .offset = SRC_MASK_PERIL0,		.value = 0x01111111, },
-+	{ .offset = SRC_MASK_PERIL1,		.value = 0x01110111, },
-+	{ .offset = SRC_MASK_DMC,		.value = 0x00010000, },
-+};
-+
-+static const struct samsung_clk_reg_dump src_mask_suspend_e4210[] = {
-+	{ .offset = E4210_SRC_MASK_LCD1,	.value = 0x00001111, },
-+};
-+
-+#define PLL_ENABLED	(1 << 31)
-+#define PLL_LOCKED	(1 << 29)
-+
-+static void exynos4_clk_wait_for_pll(u32 reg)
-+{
-+	u32 pll_con;
-+
-+	pll_con = readl(reg_base + reg);
-+	if (!(pll_con & PLL_ENABLED))
-+		return;
-+
-+	while (!(pll_con & PLL_LOCKED)) {
-+		cpu_relax();
-+		pll_con = readl(reg_base + reg);
-+	}
-+}
-+
- static int exynos4_clk_suspend(void)
- {
- 	samsung_clk_save(reg_base, exynos4_save_common,
- 				ARRAY_SIZE(exynos4_clk_regs));
- 
--	if (exynos4_soc == EXYNOS4210)
-+	if (exynos4_soc == EXYNOS4210) {
- 		samsung_clk_save(reg_base, exynos4_save_soc,
- 					ARRAY_SIZE(exynos4210_clk_save));
--	else
-+		samsung_clk_restore(reg_base, src_mask_suspend_e4210,
-+					ARRAY_SIZE(src_mask_suspend_e4210));
-+	} else {
- 		samsung_clk_save(reg_base, exynos4_save_soc,
- 					ARRAY_SIZE(exynos4x12_clk_save));
-+	}
-+
-+	samsung_clk_restore(reg_base, src_mask_suspend,
-+					ARRAY_SIZE(src_mask_suspend));
- 
- 	return 0;
- }
- 
- static void exynos4_clk_resume(void)
- {
-+	samsung_clk_restore(reg_base, exynos4_save_pll,
-+				ARRAY_SIZE(exynos4_clk_pll_regs));
-+
-+	exynos4_clk_wait_for_pll(EPLL_CON0);
-+	exynos4_clk_wait_for_pll(VPLL_CON0);
-+
- 	samsung_clk_restore(reg_base, exynos4_save_common,
- 				ARRAY_SIZE(exynos4_clk_regs));
- 
-@@ -350,9 +401,16 @@ static void exynos4_clk_sleep_init(void)
- 	if (!exynos4_save_soc)
- 		goto err_common;
- 
-+	exynos4_save_pll = samsung_clk_alloc_reg_dump(exynos4_clk_pll_regs,
-+					ARRAY_SIZE(exynos4_clk_pll_regs));
-+	if (!exynos4_save_pll)
-+		goto err_soc;
-+
- 	register_syscore_ops(&exynos4_clk_syscore_ops);
- 	return;
- 
-+err_soc:
-+	kfree(exynos4_save_soc);
- err_common:
- 	kfree(exynos4_save_common);
- err_warn:
--- 
-1.8.3.2
+> ---
+> Changes since v1:
+>  - added v4l2_m2m_ioctl_create_buf().
+> 
+> This time with the whitespace adjustments I missed to merge into the
+> first patch.
+> ---
+>  drivers/media/v4l2-core/v4l2-mem2mem.c |  126
+> ++++++++++++++++++++++++++++++++
+>  include/media/v4l2-fh.h                |    4 +
+>  include/media/v4l2-mem2mem.h           |   24 ++++++
+>  3 files changed, 154 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/media/v4l2-core/v4l2-mem2mem.c
+> b/drivers/media/v4l2-core/v4l2-mem2mem.c
+> index 7c43712..7494ee3 100644
+> --- a/drivers/media/v4l2-core/v4l2-mem2mem.c
+> +++ b/drivers/media/v4l2-core/v4l2-mem2mem.c
+> @@ -544,6 +544,8 @@ unsigned int v4l2_m2m_poll(struct file *file,
+> struct v4l2_m2m_ctx *m2m_ctx,
+> 
+>  	if (m2m_ctx->m2m_dev->m2m_ops->unlock)
+>  		m2m_ctx->m2m_dev->m2m_ops->unlock(m2m_ctx->priv);
+> +	else if (m2m_ctx->q_lock)
+> +		mutex_unlock(m2m_ctx->q_lock);
+> 
+>  	if (list_empty(&src_q->done_list))
+>  		poll_wait(file, &src_q->done_wq, wait); @@ -552,6 +554,8 @@
+> unsigned int v4l2_m2m_poll(struct file *file, struct v4l2_m2m_ctx
+> *m2m_ctx,
+> 
+>  	if (m2m_ctx->m2m_dev->m2m_ops->lock)
+>  		m2m_ctx->m2m_dev->m2m_ops->lock(m2m_ctx->priv);
+> +	else if (m2m_ctx->q_lock)
+> +		mutex_lock(m2m_ctx->q_lock);
+> 
+>  	spin_lock_irqsave(&src_q->done_lock, flags);
+>  	if (!list_empty(&src_q->done_list))
+> @@ -679,6 +683,13 @@ struct v4l2_m2m_ctx *v4l2_m2m_ctx_init(struct
+> v4l2_m2m_dev *m2m_dev,
+> 
+>  	if (ret)
+>  		goto err;
+> +	/*
+> +	 * If both queues use same mutex assign it as the common buffer
+> +	 * queues lock to the m2m context. This lock is used in the
+> +	 * v4l2_m2m_ioctl_* helpers.
+> +	 */
+> +	if (out_q_ctx->q.lock == cap_q_ctx->q.lock)
+> +		m2m_ctx->q_lock = out_q_ctx->q.lock;
+> 
+>  	return m2m_ctx;
+>  err:
+> @@ -726,3 +737,118 @@ void v4l2_m2m_buf_queue(struct v4l2_m2m_ctx
+> *m2m_ctx, struct vb2_buffer *vb)  }
+> EXPORT_SYMBOL_GPL(v4l2_m2m_buf_queue);
+> 
+> +/* Videobuf2 ioctl helpers */
+> +
+> +int v4l2_m2m_ioctl_reqbufs(struct file *file, void *priv,
+> +				struct v4l2_requestbuffers *rb)
+> +{
+> +	struct v4l2_fh *fh = file->private_data;
+> +
+> +	return v4l2_m2m_reqbufs(file, fh->m2m_ctx, rb); }
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_reqbufs);
+> +
+> +int v4l2_m2m_ioctl_create_bufs(struct file *file, void *priv,
+> +				struct v4l2_create_buffers *create) {
+> +	struct v4l2_fh *fh = file->private_data;
+> +
+> +	return v4l2_m2m_create_bufs(file, fh->m2m_ctx, create); }
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_create_bufs);
+> +
+> +int v4l2_m2m_ioctl_querybuf(struct file *file, void *priv,
+> +				struct v4l2_buffer *buf)
+> +{
+> +	struct v4l2_fh *fh = file->private_data;
+> +
+> +	return v4l2_m2m_querybuf(file, fh->m2m_ctx, buf); }
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_querybuf);
+> +
+> +int v4l2_m2m_ioctl_qbuf(struct file *file, void *priv,
+> +				struct v4l2_buffer *buf)
+> +{
+> +	struct v4l2_fh *fh = file->private_data;
+> +
+> +	return v4l2_m2m_qbuf(file, fh->m2m_ctx, buf); }
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_qbuf);
+> +
+> +int v4l2_m2m_ioctl_dqbuf(struct file *file, void *priv,
+> +				struct v4l2_buffer *buf)
+> +{
+> +	struct v4l2_fh *fh = file->private_data;
+> +
+> +	return v4l2_m2m_dqbuf(file, fh->m2m_ctx, buf); }
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_dqbuf);
+> +
+> +int v4l2_m2m_ioctl_expbuf(struct file *file, void *priv,
+> +				struct v4l2_exportbuffer *eb)
+> +{
+> +	struct v4l2_fh *fh = file->private_data;
+> +
+> +	return v4l2_m2m_expbuf(file, fh->m2m_ctx, eb); }
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_expbuf);
+> +
+> +int v4l2_m2m_ioctl_streamon(struct file *file, void *priv,
+> +				enum v4l2_buf_type type)
+> +{
+> +	struct v4l2_fh *fh = file->private_data;
+> +
+> +	return v4l2_m2m_streamon(file, fh->m2m_ctx, type); }
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_streamon);
+> +
+> +int v4l2_m2m_ioctl_streamoff(struct file *file, void *priv,
+> +				enum v4l2_buf_type type)
+> +{
+> +	struct v4l2_fh *fh = file->private_data;
+> +
+> +	return v4l2_m2m_streamoff(file, fh->m2m_ctx, type); }
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_ioctl_streamoff);
+> +
+> +/*
+> + * v4l2_file_operations helpers. It is assumed here same lock is used
+> + * for the output and the capture buffer queue.
+> + */
+> +
+> +int v4l2_m2m_fop_mmap(struct file *file, struct vm_area_struct *vma) {
+> +	struct v4l2_fh *fh = file->private_data;
+> +	struct v4l2_m2m_ctx *m2m_ctx = fh->m2m_ctx;
+> +	int ret;
+> +
+> +	if (m2m_ctx->q_lock && mutex_lock_interruptible(m2m_ctx->q_lock))
+> +		return -ERESTARTSYS;
+> +
+> +	ret = v4l2_m2m_mmap(file, m2m_ctx, vma);
+> +
+> +	if (m2m_ctx->q_lock)
+> +		mutex_unlock(m2m_ctx->q_lock);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_fop_mmap);
+> +
+> +unsigned int v4l2_m2m_fop_poll(struct file *file, poll_table *wait) {
+> +	struct v4l2_fh *fh = file->private_data;
+> +	struct v4l2_m2m_ctx *m2m_ctx = fh->m2m_ctx;
+> +	unsigned int ret;
+> +
+> +	if (m2m_ctx->q_lock)
+> +		mutex_lock(m2m_ctx->q_lock);
+> +
+> +	ret = v4l2_m2m_poll(file, m2m_ctx, wait);
+> +
+> +	if (m2m_ctx->q_lock)
+> +		mutex_unlock(m2m_ctx->q_lock);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_m2m_fop_poll);
+> +
+> diff --git a/include/media/v4l2-fh.h b/include/media/v4l2-fh.h index
+> a62ee18..d942f79 100644
+> --- a/include/media/v4l2-fh.h
+> +++ b/include/media/v4l2-fh.h
+> @@ -43,6 +43,10 @@ struct v4l2_fh {
+>  	struct list_head	available; /* Dequeueable event */
+>  	unsigned int		navailable;
+>  	u32			sequence;
+> +
+> +#if IS_ENABLED(CONFIG_V4L2_MEM2MEM_DEV)
+> +	struct v4l2_m2m_ctx	*m2m_ctx;
+> +#endif
+>  };
+> 
+>  /*
+> diff --git a/include/media/v4l2-mem2mem.h b/include/media/v4l2-
+> mem2mem.h index 44542a2..12ea5a6 100644
+> --- a/include/media/v4l2-mem2mem.h
+> +++ b/include/media/v4l2-mem2mem.h
+> @@ -64,6 +64,9 @@ struct v4l2_m2m_queue_ctx {  };
+> 
+>  struct v4l2_m2m_ctx {
+> +	/* optional cap/out vb2 queues lock */
+> +	struct mutex			*q_lock;
+> +
+>  /* private: internal use only */
+>  	struct v4l2_m2m_dev		*m2m_dev;
+> 
+> @@ -229,5 +232,26 @@ static inline void *v4l2_m2m_dst_buf_remove(struct
+> v4l2_m2m_ctx *m2m_ctx)
+>  	return v4l2_m2m_buf_remove(&m2m_ctx->cap_q_ctx);
+>  }
+> 
+> +/* v4l2 ioctl helpers */
+> +
+> +int v4l2_m2m_ioctl_reqbufs(struct file *file, void *priv,
+> +				struct v4l2_requestbuffers *rb);
+> +int v4l2_m2m_ioctl_create_bufs(struct file *file, void *fh,
+> +				struct v4l2_create_buffers *create); int
+> +v4l2_m2m_ioctl_querybuf(struct file *file, void *fh,
+> +				struct v4l2_buffer *buf);
+> +int v4l2_m2m_ioctl_expbuf(struct file *file, void *fh,
+> +				struct v4l2_exportbuffer *eb);
+> +int v4l2_m2m_ioctl_qbuf(struct file *file, void *fh,
+> +				struct v4l2_buffer *buf);
+> +int v4l2_m2m_ioctl_dqbuf(struct file *file, void *fh,
+> +				struct v4l2_buffer *buf);
+> +int v4l2_m2m_ioctl_streamon(struct file *file, void *fh,
+> +				enum v4l2_buf_type type);
+> +int v4l2_m2m_ioctl_streamoff(struct file *file, void *fh,
+> +				enum v4l2_buf_type type);
+> +int v4l2_m2m_fop_mmap(struct file *file, struct vm_area_struct *vma);
+> +unsigned int v4l2_m2m_fop_poll(struct file *file, poll_table *wait);
+> +
+>  #endif /* _MEDIA_V4L2_MEM2MEM_H */
+> 
+> --
+> 1.7.4.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media"
+> in the body of a message to majordomo@vger.kernel.org More majordomo
+> info at  http://vger.kernel.org/majordomo-info.html
