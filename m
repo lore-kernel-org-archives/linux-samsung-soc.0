@@ -1,32 +1,23 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH 0/7] video phy's adaptation to *generic phy framework*
-Date: Wed, 16 Oct 2013 13:49:43 -0700
-Message-ID: <20131016204943.GA32000@kroah.com>
-References: <1381940896-9355-1-git-send-email-kishon@ti.com>
+From: "amrinaskrvobova" <thanos@stargate-vortex.com>
+Subject: =?windows-1251?Q?=F1=E2=E5=F2_=EC=EE=E6=ED=EE_=EF=EE=F1?=
+	=?windows-1251?Q?=F2=E8=E3=E0=F2=FC_=E1=E5=E7_=EA=EE=ED?=
+	=?windows-1251?Q?=F2=E0=EA=F2=ED=FB=F5_=EB=E8=ED=E7?=
+Date: Wed, 16 Oct 2013 23:18:39 +0200 (CEST)
+Message-ID: <20131016211839.8BF2D273A1@svrmail01.thanos.ch>
+Reply-To: "amrinaskrvobova" <olga40064@czbrats.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain;
+	charset="windows-1251";
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37384 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755718Ab3JPUto (ORCPT
+Received: from svrmail01.thanos.ch ([178.33.90.139]:51525 "EHLO
+	svrmail01.thanos.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755825Ab3JPV1b (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 16:49:44 -0400
-Content-Disposition: inline
-In-Reply-To: <1381940896-9355-1-git-send-email-kishon@ti.com>
+	Wed, 16 Oct 2013 17:27:31 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: info@raafalina.ru, region@vivo-porte.ru, olga.b@kupi-reklamu.ru, linux-samsung-soc@vger.kernel.org, sexpit@ya.ru
 
-On Wed, Oct 16, 2013 at 09:58:09PM +0530, Kishon Vijay Abraham I wrote:
-> Hi Greg,
-> 
-> This series includes video PHY adaptation to Generic PHY Framework.
-> With the adaptation they were able to get rid of plat data callbacks.
-> 
-> Since you've taken the Generic PHY Framework, I think this series should
-> also go into your tree.
-
-All now applied, thanks.
-
-greg k-h
+7vLq7vDw5ery6PDz6fLlIOfw5e3o5SDh5ecg7/Du4evl7CBodHRwOi8vdGVsaW5nLmJ5L2JpdHJp
+eC9pbWFnZXMvY2JxZ3AuaHRtDQo=
