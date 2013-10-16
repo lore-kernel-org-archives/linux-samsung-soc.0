@@ -1,70 +1,108 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Exynos5420: Add dt support for gscaler
-Date: Wed, 16 Oct 2013 13:52:44 +0200
-Message-ID: <2359697.iZb6YQqtY2@amdc1227>
-References: <1381920987-11095-1-git-send-email-l.krishna@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:32919 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760182Ab3JPLwr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 07:52:47 -0400
-In-reply-to: <1381920987-11095-1-git-send-email-l.krishna@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] cpufreq: exynos: Convert exynos-cpufreq to platform driver
+Date: Wed, 16 Oct 2013 18:00:38 +0200
+Message-ID: <1381939238-30398-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lukasz Majewski <l.majewski@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, khw0178.kim@samsung.com, cpgs@samsung.com
 
-Hi Leela,
+From: Lukasz Majewski <l.majewski@samsung.com>
 
-On Wednesday 16 of October 2013 16:26:26 Leela Krishna Amudala wrote:
-> Adds G-Scaler devices to the DT device list
-> 
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi |   20 ++++++++++++++++++++
->  1 file changed, 20 insertions(+)
+To make the driver multiplatform-friendly, unconditional initialization
+in an initcall is replaced with a platform driver probed only if
+respective platform device is registered.
 
-Now as I think of it, patch subject should be rather something like:
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/common.c          |  5 +++++
+ arch/arm/mach-exynos/common.h          |  1 +
+ arch/arm/mach-exynos/mach-exynos4-dt.c |  1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c |  1 +
+ drivers/cpufreq/exynos-cpufreq.c       | 11 ++++++++++-
+ 5 files changed, 18 insertions(+), 1 deletion(-)
 
-ARM: dts: Exynos5420: Add device nodes for GScaler blocks
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index c17407b..4414d70 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -305,6 +305,11 @@ void __init exynos_cpuidle_init(void)
+ 	platform_device_register(&exynos_cpuidle);
+ }
+ 
++void __init exynos_cpufreq_init(void)
++{
++	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
++}
++
+ void __init exynos_init_late(void)
+ {
+ 	if (of_machine_is_compatible("samsung,exynos5440"))
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index b2ac188..61e5f3a 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -23,6 +23,7 @@ void exynos_init_io(void);
+ void exynos4_restart(enum reboot_mode mode, const char *cmd);
+ void exynos5_restart(enum reboot_mode mode, const char *cmd);
+ void exynos_cpuidle_init(void);
++void exynos_cpufreq_init(void);
+ void exynos_init_late(void);
+ 
+ void exynos_firmware_init(void);
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index 53a3dc3..2cbaf63 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -26,6 +26,7 @@
+ static void __init exynos4_dt_machine_init(void)
+ {
+ 	exynos_cpuidle_init();
++	exynos_cpufreq_init();
+ 
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index c9f7dd1..9144549 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -48,6 +48,7 @@ static void __init exynos5_dt_machine_init(void)
+ 	}
+ 
+ 	exynos_cpuidle_init();
++	exynos_cpufreq_init();
+ 
+ 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
+ }
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index 0ef13e8..706570e 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -17,6 +17,7 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/cpufreq.h>
+ #include <linux/suspend.h>
++#include <linux/platform_device.h>
+ 
+ #include <plat/cpu.h>
+ 
+@@ -277,4 +278,12 @@ err_vdd_arm:
+ 	kfree(exynos_info);
+ 	return -EINVAL;
+ }
+-late_initcall(exynos_cpufreq_init);
++
++static struct platform_driver exynos_cpufreq_platdrv = {
++	.driver = {
++		.name	= "exynos-cpufreq",
++		.owner	= THIS_MODULE,
++	},
++	.probe = exynos_cpufreq_init,
++};
++module_platform_driver(exynos_cpufreq_platdrv);
+-- 
+1.8.3.2
 
-because the patch alone does not have anything to do with adding device
-tree support to GScaler driver.
-
-Also please see remaining comments inline.
-
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 09aa06c..c4210dc 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -31,6 +31,8 @@
->  		i2c1 = &i2c_1;
->  		i2c2 = &i2c_2;
->  		i2c3 = &i2c_3;
-> +		gsc0 = &gsc_0;
-> +		gsc1 = &gsc_1;
->  	};
->  
->  	cpus {
-> @@ -310,4 +312,22 @@
->  		clocks = <&clock 431>, <&clock 143>;
->  		clock-names = "mixer", "sclk_hdmi";
->  	};
-> +
-> +	gsc_0:  g-scaler@13e00000 {
-
-coding style: There should be just one space after the label.
-
-coding style 2: Please name the node simply video-scaler. Node name is not
-supposed to tell what exactly the device is. The name should be mostly
-used for readability, so a person reading the sources can find that this
-node represents some video scaler and then by looking at compatible value
-he would be able to state that it is an GScaler block compatible with this
-on Exynos 5 SoCs.
-
-Best regards,
-Tomasz
