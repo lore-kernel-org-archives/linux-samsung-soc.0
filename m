@@ -1,77 +1,103 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
-Date: Wed, 16 Oct 2013 20:33:59 +0200
-Message-ID: <1527511.ScaEHrLnaz@flatron>
-References: <1380471121-9478-1-git-send-email-tomasz.figa@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Subject: [PATCH v2 0/8] ARM: s3c64xx: Let amba-pl08x driver handle DMA
+Date: Wed, 16 Oct 2013 21:10:51 +0200
+Message-ID: <1381950659-12703-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f45.google.com ([74.125.83.45]:64658 "EHLO
-	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761491Ab3JPSeD (ORCPT
+Received: from mail-ea0-f175.google.com ([209.85.215.175]:37973 "EHLO
+	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757134Ab3JPTLL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 14:34:03 -0400
-In-Reply-To: <1380471121-9478-1-git-send-email-tomasz.figa@gmail.com>
+	Wed, 16 Oct 2013 15:11:11 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, augulis.darius@gmail.com, =?ISO-8859-1?Q?J=FCrgen?= Beisert <jbe@pengutronix.de>, oselas@community.pengutronix.de
+Cc: linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linux-spi@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Ben Dooks <ben-linux@fluff.org>, Jaroslav Kysela <perex@perex.cz>, Kukjin Kim <kgene.kim@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Mike Turquette <mturquette@linaro.org>, Padmavathi Venna <padma.v@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sachin Kamat <sachin.kamat@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Takashi Iwai <tiwai@suse.de>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Kukjin,
+Since the patches extending support of amba-pl08x DMA engine driver to
+PL080S DMA engine (PL080 modified by Samsung) found in Samsung S3C64xx
+SoCs got merged into Linux 3.12, it is a good time to migrate the
+platform to use this driver and drop the legacy DMA code.
 
-On Sunday 29 of September 2013 18:12:01 Tomasz Figa wrote:
-> According to board schematics, for HSMMC1 a GPIO line is used to detect
-> card presence, while currently it is being configured for internal card
-> detect line, which is multiplexed with card detect line of HSMMC0 and
-> thus breaking it.
-> 
-> This patch adds proper sdhci platform data setting card detect type to
-> external GPIO and fixing operation of HSMMC0.
-> 
-> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> ---
->  arch/arm/mach-s3c64xx/mach-mini6410.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+Due to changes scattered across different areas of kernel, patches are
+based on merged 4 branches:
+ - for-next of Kukjin Kim's Samsung tree,
+ - clk-next of Mike Turquette's clock tree,
+ - for-next of Mark Brown's SPI tree,
+ - for-next of Mark Brown's ASoC tree.
 
-Would you mind taking this patch to your tree?
+To ease testing I have prepared a branch in my private tree for anyone
+willing to check the patches out:
+	git://github.com/tom3q/linux.git s3c64xx-pl08x-patches
 
-Best regards,
-Tomasz
+On S3C64xx-based Mini6410 and SMDK6410 boards, with I2S audio
+playback and capture (including full duplex operation) and also SPI
+using spidev:
 
-> diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c
-> b/arch/arm/mach-s3c64xx/mach-mini6410.c index 58d46a3..97ae470 100644
-> --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-> @@ -36,7 +36,9 @@
->  #include <plat/devs.h>
->  #include <plat/fb.h>
->  #include <linux/platform_data/mtd-nand-s3c2410.h>
-> +#include <linux/platform_data/mmc-sdhci-s3c.h>
->  #include <plat/regs-serial.h>
-> +#include <plat/sdhci.h>
->  #include <linux/platform_data/touchscreen-s3c2410.h>
-> 
->  #include <video/platform_lcd.h>
-> @@ -214,6 +216,13 @@ static struct platform_device mini6410_lcd_powerdev
-> = { .dev.platform_data	= &mini6410_lcd_power_data,
->  };
-> 
-> +static struct s3c_sdhci_platdata mini6410_hsmmc1_pdata = {
-> +	.max_width		= 4,
-> +	.cd_type		= S3C_SDHCI_CD_GPIO,
-> +	.ext_cd_gpio		= S3C64XX_GPN(10),
-> +	.ext_cd_gpio_invert	= true,
-> +};
-> +
->  static struct platform_device *mini6410_devices[] __initdata = {
->  	&mini6410_device_eth,
->  	&s3c_device_hsmmc0,
-> @@ -321,6 +330,7 @@ static void __init mini6410_machine_init(void)
-> 
->  	s3c_nand_set_platdata(&mini6410_nand_info);
->  	s3c_fb_set_platdata(&mini6410_lcd_pdata[features.lcd_index]);
-> +	s3c_sdhci1_set_platdata(&mini6410_hsmmc1_pdata);
->  	s3c24xx_ts_set_platdata(NULL);
-> 
->  	/* configure nCS1 width to 16 bits */
+Tested-by: Tomasz Figa <tomasz.figa@gmail.com>
+
+Changes since v1:
+ - Dropped the now merged patches adding PL080s support amba-pl08x driver,
+ - Rebased onto current for-next branches of respective trees.
+ - Stopped hijacking pl330_filter() symbol to plug pl08_filter_id()
+   as channel filtering callback on S3C64xx.
+
+Changes since RFC v2:
+ - Added clkdev lookups to old clock driver.
+ - Added patches removing the old DMA driver and any remaining code
+   needed by it.
+ - Fixed DMA support for SPI.
+ - Added a word about PL080S to amba-pl08x.c file header.
+ - Changed definition of LLI words from enums to macros.
+ - Extended debugging messages to handle PL080S variant as well.
+ - Little cleanup of LLI dumping code.
+ - Added check for peripheral flow control, which is unsupported by
+   PL080S to dma_set_runtime_config.
+ - Corrected transfer size mask of PL080S.
+
+Changes since RFC v1:
+ - Returned to original way of storing quirks as booleans, as suggested
+   by Russell, Linus and Arnd.
+ - Added reg_config field to pl08x_phy_chan struct, which stores
+   variant-specific address of channel config register, as suggested
+   by Russell.
+ - Simplified handling of extended maximum transfer size of PL080S
+   (no more conditional passing of 0 as length to pl08x_cctl_bits()).
+ - Reworked LLI handling in the driver to stop casting arbitrary memory
+   to a struct and allow different word count of LLI entry, as suggested
+   by Linus.
+ - Removed AMBA ID override from S3C64xx PL080 initialization code.
+ - Fixed brokenness of Samsung DMA wrapper API, which caused cyclic buffers
+   to be queued multiple times when DMA engine is used.
+ - Included patch adding clock aliases for DMA engines (depends on
+   Common Clock Framework driver for S3C64xx).
+ - Fixed several minor stylistic issues.
+
+Tomasz Figa (8):
+  spi: s3c64xx: Do not require legacy DMA API in case of S3C64XX
+  ASoC: Samsung: Do not require legacy DMA API in case of S3C64XX
+  ARM: s3c64xx: Add support for DMA using generic amba-pl08x driver
+  clk: samsung: s3c64xx: Add aliases for DMA clocks
+  ARM: s3c64xx: Remove legacy DMA driver
+  clk: samsung: s3c64xx: Remove clock aliases of old DMA driver
+  spi: s3c64xx: Always select S3C64XX_PL080 when ARCH_S3C64XX is enabled
+  ASoC: Samsung: Always select S3C64XX_PL080 when ARCH_S3C64XX is
+    enabled
+
+ arch/arm/Kconfig                         |   1 +
+ arch/arm/mach-s3c64xx/Kconfig            |   7 +-
+ arch/arm/mach-s3c64xx/Makefile           |   2 +-
+ arch/arm/mach-s3c64xx/common.h           |   5 +
+ arch/arm/mach-s3c64xx/dma.c              | 762 -------------------------------
+ arch/arm/mach-s3c64xx/include/mach/dma.h | 144 ++----
+ arch/arm/mach-s3c64xx/pl080.c            | 244 ++++++++++
+ arch/arm/plat-samsung/devs.c             |  10 +-
+ arch/arm/plat-samsung/dma-ops.c          |   8 +-
+ drivers/clk/samsung/clk-s3c64xx.c        |   4 +-
+ drivers/spi/Kconfig                      |   2 +-
+ sound/soc/samsung/Kconfig                |   2 +-
+ 12 files changed, 316 insertions(+), 875 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c64xx/dma.c
+ create mode 100644 arch/arm/mach-s3c64xx/pl080.c
+
+-- 
+1.8.3.2
