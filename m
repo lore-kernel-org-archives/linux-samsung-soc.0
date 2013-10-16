@@ -1,58 +1,69 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v2] clk: exynos5420: fix cpll clock register offsets
-Date: Wed, 16 Oct 2013 11:10:28 +0530
-Message-ID: <CANuQgHFPB4C69C1sDFPVx6E8XjMhbqs-75R9xq1LP0=yO9C4zg@mail.gmail.com>
-References: <1380186395-28814-1-git-send-email-chander.kashyap@linaro.org>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] clk: s3c64xx: Correct spi bus clock hookups
+Date: Wed, 16 Oct 2013 09:10:35 +0100
+Message-ID: <20131016081035.GD20219@opensource.wolfsonmicro.com>
+References: <1381839982-3026-1-git-send-email-ckeepax@opensource.wolfsonmicro.com> <1785136.Xbc2LARBDy@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f41.google.com ([209.85.219.41]:56681 "EHLO
-	mail-oa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750858Ab3JPFk3 (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:52178 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755174Ab3JPIKh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 Oct 2013 01:40:29 -0400
-Received: by mail-oa0-f41.google.com with SMTP id o9so178139oag.0
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Oct 2013 22:40:29 -0700 (PDT)
-In-Reply-To: <1380186395-28814-1-git-send-email-chander.kashyap@linaro.org>
+	Wed, 16 Oct 2013 04:10:37 -0400
+Content-Disposition: inline
+In-Reply-To: <1785136.Xbc2LARBDy@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Mike Turquette <mturquette@linaro.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, yadi.brar@samsung.com, "t.figa@samsung.com" <t.figa@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-samsung-soc@vger.kernel.org
 
-On 26 September 2013 14:36, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> Fixes cpll control and lock register offset values for Exynos5420 SoC.
->
-> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> Changes Since v1:
->         - Fixed patch subject as per Kukgin suggestion.
->
->  drivers/clk/samsung/clk-exynos5420.c |    4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-> index 86dfc64..892aac0 100644
-> --- a/drivers/clk/samsung/clk-exynos5420.c
-> +++ b/drivers/clk/samsung/clk-exynos5420.c
-> @@ -730,8 +730,8 @@ struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->  struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
->         [apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
->                 APLL_CON0, NULL),
-> -       [cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
-> -               MPLL_CON0, NULL),
-> +       [cpll] = PLL(pll_2550, fout_cpll, "fout_cpll", "fin_pll", CPLL_LOCK,
-> +               CPLL_CON0, NULL),
->         [dpll] = PLL(pll_2550, fout_dpll, "fout_dpll", "fin_pll", DPLL_LOCK,
->                 DPLL_CON0, NULL),
->         [epll] = PLL(pll_2650, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
-> --
-> 1.7.9.5
->
++ samsung soc mailing list
 
+On Wed, Oct 16, 2013 at 12:52:42AM +0200, Tomasz Figa wrote:
+> Hi Charles,
+> 
+> On Tuesday 15 of October 2013 13:26:22 Charles Keepax wrote:
+> >  	ALIAS(SCLK_MMC1, "s3c-sdhci.1", "mmc_busclk.2"),
+> >  	ALIAS(SCLK_MMC0, "s3c-sdhci.0", "mmc_busclk.2"),
+> > -	ALIAS(SCLK_SPI1, "s3c6410-spi.1", "spi-bus"),
+> > -	ALIAS(SCLK_SPI0, "s3c6410-spi.0", "spi-bus"),
+> > +	ALIAS(PCLK_SPI1, "s3c6410-spi.1", "spi_busclk0"),
+> > +	ALIAS(SCLK_SPI1, "s3c6410-spi.1", "spi_busclk1"),
+> > +	ALIAS(SCLK_SPI1_48, "s3c6410-spi.1", "spi_busclk2"),
+> 
+> ...according to the documentation, the order is different. The SPI_CLKSEL 
+> field of CLK_CFG register of the SPI block can have following values:
+> 0 - PCLK (aka PCLK_SPIx)
+> 1 - USBCLK (aka SCLK_SPIx_48)
+> 2 - Epll clock (aka SCLK_SPIx)
+> 
+> The index after spi_busclk corresponds to the value written to SPI_CLKSEL 
+> field, so your patch should be adjusted accordingly.
 
-Mike, can you please take this patch.
+Hmm... will probably need to test this to see what happens the
+old clock setup was this:
 
--- 
-with warm regards,
-Chander Kashyap
+	CLKDEV_INIT(NULL, "spi_busclk0", &clk_p),
+	CLKDEV_INIT("s3c6410-spi.0", "spi_busclk1", &clk_sclk_spi0.clk),
+	CLKDEV_INIT("s3c6410-spi.0", "spi_busclk2", &clk_48m_spi0),
+	CLKDEV_INIT("s3c6410-spi.1", "spi_busclk1", &clk_sclk_spi1.clk),
+	CLKDEV_INIT("s3c6410-spi.1", "spi_busclk2", &clk_48m_spi1),
+
+Which appears to differ from the documentation, that said though
+I would wager that only the first of those has really had much
+testing.
+
+> 
+> By the way, the USBCLK case is a bit strange, because it requires USB 
+> signal mask to be unmasked, which in turn needs USB PHY to be enabled, as 
+> otherwise some "unwanted leakage" can occur. Having to enable USB just to 
+> use SPI seems rather inconvenient (especially in terms of power 
+> consumption), so the usability of this clock is rather limited and it 
+> might be better not to let the driver know about it.
+
+Seems reasonable to drop this for now and it could be added back
+in if someone specifically needed to use it.
+
+Thanks,
+Charles
