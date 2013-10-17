@@ -1,117 +1,95 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Initialize L2x0 cache controller for
- Exynos4 only
-Date: Thu, 17 Oct 2013 15:05:21 +0200
-Message-ID: <3434799.pjC3lbNE3P@amdc1227>
-References: <1382011392-18199-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Majunath Goudar <csmanjuvijay@gmail.com>
+Subject: [PATCH V3 3/6]  USB: OHCI: Properly handle ohci-s3c2410 suspend
+Date: Thu, 17 Oct 2013 19:05:10 +0530
+Message-ID: <1382016913-10872-4-git-send-email-csmanjuvijay@gmail.com>
+References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
+ <1382016913-10872-1-git-send-email-csmanjuvijay@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:26770 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753811Ab3JQNFZ (ORCPT
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:62700 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755488Ab3JQNfi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 09:05:25 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MUT00MTPDN42690@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 17 Oct 2013 14:05:23 +0100 (BST)
-In-reply-to: <1382011392-18199-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 17 Oct 2013 09:35:38 -0400
+In-Reply-To: <1382016913-10872-1-git-send-email-csmanjuvijay@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tushar.behera@linaro.org
+To: csmanjuvijay@gmail.com
+Cc: Alan Stern <stern@rowland.harvard.edu>, Greg KH <greg@kroah.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 
-Hi Sachin,
+Suspend scenario in case of ohci-s3c2410 glue was not
+properly handled as it was not suspending generic part
+of ohci controller. Alan Stern suggested, properly handle
+ohci-s3c2410 suspend scenario.
 
-On Thursday 17 of October 2013 17:33:12 Sachin Kamat wrote:
-> L2x0 cache controller is present only in Cortex-A9 based Exynos4 SoCs.
-> Thus move this function to Exynos4 early init call to avoid non-Exynos4
-> SoCs from calling this function in multi-platform support.
+Calling explicitly the ohci_suspend()
+routine in ohci_hcd_s3c2410_drv_suspend() will ensure
+proper handling of suspend scenario.
 
-I believe that at the time .init_early() is called there is no ioremap()
-infrastructure working yet and so L2 cache initialization which needs
-it will cause a kernel panic. This patch worked only because currently
-there is no L2X0 controller defined in device tree sources of Exynos 4.
+V1->V2:
+      -No changes.
+       Due to the build failure on ep93xx reverted this patch.
+       This patch is needed as Alan Stern suggestion.
 
-Other than that, it will be required to register firmware operations
-before L2X0 initialization, because on some boards it is needed to
-initialize the L2 cache through secure firmware.
+V2->V3:
+      -No changes.
+      As a build failure on "ep93xx proper suspend patch" and Linaro 
+      id bounced. Rewrote this patch on top of latest Greg usb-next 
+      branch. This patch not gives any build error. Patch is required 
+      for ohci-s3c2410 proper suspending as Alan mentioned.
 
-Please let me handle this by the way of patches adding firmware based
-L2X0 initialization.
+      Initially when I wrote this patch I was working in Linaro, now 
+      I am not part of Linaro that is why Linaro id is bouncing. Sending 
+      this patch from personal mail id.
 
-Best regards,
-Tomasz
+Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg KH <greg@kroah.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
+---
+ drivers/usb/host/ohci-s3c2410.c |   21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
-> Tested on Origen(4210), Arndale(5250) and 5420 boards.
-> ---
->  arch/arm/mach-exynos/common.c          |    3 +--
->  arch/arm/mach-exynos/common.h          |    2 +-
->  arch/arm/mach-exynos/mach-exynos4-dt.c |    9 ++++++++-
->  3 files changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 1510436..f822b226 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -396,7 +396,7 @@ static int __init exynos_core_init(void)
->  }
->  core_initcall(exynos_core_init);
->  
-> -static int __init exynos4_l2x0_cache_init(void)
-> +int __init exynos4_l2x0_cache_init(void)
->  {
->  	int ret;
->  
-> @@ -408,7 +408,6 @@ static int __init exynos4_l2x0_cache_init(void)
->  	clean_dcache_area(&l2x0_regs_phys, sizeof(unsigned long));
->  	return 0;
->  }
-> -early_initcall(exynos4_l2x0_cache_init);
->  
->  static int __init exynos_init(void)
->  {
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index 3f03334..3031321 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -24,7 +24,7 @@ void exynos5_restart(enum reboot_mode mode, const char *cmd);
->  void exynos_cpuidle_init(void);
->  void exynos_cpufreq_init(void);
->  void exynos_init_late(void);
-> -
-> +int exynos4_l2x0_cache_init(void);
->  void exynos_firmware_init(void);
->  
->  #ifdef CONFIG_PM_GENERIC_DOMAINS
-> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> index ffd19a0..2e6f51c 100644
-> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> @@ -49,11 +49,18 @@ static void __init exynos4_reserve(void)
->  				mfc_mem.lsize);
->  #endif
->  }
-> +
-> +static void __init exynos4_early_init(void)
-> +{
-> +	exynos4_l2x0_cache_init();
-> +	exynos_firmware_init();
-> +}
-> +
->  DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
->  	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
->  	.smp		= smp_ops(exynos_smp_ops),
->  	.map_io		= exynos_init_io,
-> -	.init_early	= exynos_firmware_init,
-> +	.init_early	= exynos4_early_init,
->  	.init_machine	= exynos4_dt_machine_init,
->  	.init_late	= exynos_init_late,
->  	.dt_compat	= exynos4_dt_compat,
-> 
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index be3429e..b5bf9b7 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -426,28 +426,15 @@ static int ohci_hcd_s3c2410_drv_remove(struct platform_device *pdev)
+ static int ohci_hcd_s3c2410_drv_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+-	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	unsigned long flags;
++	bool do_wakeup = device_may_wakeup(dev);
+ 	int rc = 0;
+ 
+-	/*
+-	 * Root hub was already suspended. Disable irq emission and
+-	 * mark HW unaccessible, bail out if RH has been resumed. Use
+-	 * the spinlock to properly synchronize with possible pending
+-	 * RH suspend or resume activity.
+-	 */
+-	spin_lock_irqsave(&ohci->lock, flags);
+-	if (ohci->rh_state != OHCI_RH_SUSPENDED) {
+-		rc = -EINVAL;
+-		goto bail;
+-	}
+-
+-	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
++	rc = ohci_suspend(hcd, do_wakeup);
++	if (rc)
++		return rc;
+ 
+ 	s3c2410_stop_hc(pdev);
+-bail:
+-	spin_unlock_irqrestore(&ohci->lock, flags);
+ 
+ 	return rc;
+ }
+-- 
+1.7.9.5
