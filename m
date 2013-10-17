@@ -1,109 +1,43 @@
-From: Tarek Dakhran <t.dakhran@samsung.com>
-Subject: Re: [PATCH v2 0/4] Exynos 5410 Dual cluster support
-Date: Thu, 17 Oct 2013 17:51:54 +0400
-Message-ID: <525FEB7A.6030609@samsung.com>
-References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com>
- <87k3hc3lso.fsf@linaro.org> <20131017130435.GG3061@cat.local>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH V2] ARM: dts: Exynos5420: Add device nodes for GScaler
+ blocks
+Date: Thu, 17 Oct 2013 15:58:08 +0200
+Message-ID: <1654668.cjaYLCemzK@amdc1227>
+References: <1381989300-21818-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:39015 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39306 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755708Ab3JQNxT (ORCPT
+	with ESMTP id S1756124Ab3JQN6L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 09:53:19 -0400
-In-reply-to: <20131017130435.GG3061@cat.local>
+	Thu, 17 Oct 2013 09:58:11 -0400
+In-reply-to: <1381989300-21818-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Aliaksei Katovich <aliaksei.katovich@gmail.com>, Kevin Hilman <khilman@linaro.org>
-Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, khw0178.kim@samsung.com, cpgs@samsung.com
 
-On 17.10.2013 17:04, Aliaksei Katovich wrote:
-> hi Kevin;
->
->> Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
->>
->>> The series of patches represent support of Exynos 5410 SoC
->>>      
->>> The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture.
->>> Patches allow all 8 CPU cores (4 x A7 and 4 x A15) to run at the same time
->>>      
->>> Patches add new platform description, support of clock controller,
->>> dual cluster support and device tree for Exynos 5410
->>>     
->>> Has been build on v3.12-rc5.
->>> Has been tested on Exynos 5410 reference board (exynos_defconfig).
->> Has anyone tried this on the exynos5410 based odroid-xu yet?
->>
->> I tried booting this on my recently arrived odroid-xu, but am not
->> getting it to boot.
-> 	I am able to boot my odroid-xu+e to busybox with these patches applied
-> 	against 3.12-rc5: exynos_defconfig and exynos5410-smdk5410.dtb were
-> 	used.
->
-> 	However there seem to be some issues with virq allocations, like this:
->
-> <snippet>
-> Starting kernel ...
->                     
-> [    0.000000] [<c0014d48>] (unwind_backtrace+0x0/0xf8) from [<c00117d0>] (show_stack+0x10/0x14)
-> [    0.000000] [<c00117d0>] (show_stack+0x10/0x14) from [<c0363488>] (dump_stack+0x6c/0xac)
-> [    0.000000] [<c0363488>] (dump_stack+0x6c/0xac) from [<c001e330>] (warn_slowpath_common+0x64/0x88)
-> [    0.000000] [<c001e330>] (warn_slowpath_common+0x64/0x88) from [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40)
-> [    0.000000] [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40) from [<c005a1b4>] (irq_domain_associate+0x128/0x1a8)
-> [    0.000000] [<c005a1b4>] (irq_domain_associate+0x128/0x1a8) from [<c005a508>] (irq_domain_associate_many+0x30/0x3c
-> )
-> [    0.000000] [<c005a508>] (irq_domain_associate_many+0x30/0x3c) from [<c005a768>] (irq_domain_add_simple+0x78/0x90)
-> [    0.000000] [<c005a768>] (irq_domain_add_simple+0x78/0x90) from [<c04b044c>] (combiner_of_init+0xb4/0x198)
-> [    0.000000] [<c04b044c>] (combiner_of_init+0xb4/0x198) from [<c04b6938>] (of_irq_init+0x278/0x2a0)
-> [    0.000000] [<c04b6938>] (of_irq_init+0x278/0x2a0) from [<c049b8fc>] (start_kernel+0x18c/0x384)
-> [    0.000000] [<c049b8fc>] (start_kernel+0x18c/0x384) from [<40008074>] (0x40008074)
-> [    0.000000] ---[ end trace 1b75b31a2719edcd ]---
-> [    0.000000] ------------[ cut here ]------------
-> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/irq/irqdomain.c:278 irq_domain_associate+0x128/0x1a8()
-> [    0.000000] error: virq337 is not allocated
-> [    0.000000] Modules linked in:
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W    3.12.0-rc5-00004-g1cb405f #1
-> [    0.000000] [<c0014d48>] (unwind_backtrace+0x0/0xf8) from [<c00117d0>] (show_stack+0x10/0x14)
-> [    0.000000] [<c00117d0>] (show_stack+0x10/0x14) from [<c0363488>] (dump_stack+0x6c/0xac)
-> [    0.000000] [<c0363488>] (dump_stack+0x6c/0xac) from [<c001e330>] (warn_slowpath_common+0x64/0x88)
-> [    0.000000] [<c001e330>] (warn_slowpath_common+0x64/0x88) from [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40)
-> [    0.000000] [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40) from [<c005a1b4>] (irq_domain_associate+0x128/0x1a8)
-> [    0.000000] [<c005a1b4>] (irq_domain_associate+0x128/0x1a8) from [<c005a508>] (irq_domain_associate_many+0x30/0x3c
-> )
-> [    0.000000] [<c005a508>] (irq_domain_associate_many+0x30/0x3c) from [<c005a768>] (irq_domain_add_simple+0x78/0x90)
-> [    0.000000] [<c005a768>] (irq_domain_add_simple+0x78/0x90) from [<c04b044c>] (combiner_of_init+0xb4/0x198)
-> [    0.000000] [<c04b044c>] (combiner_of_init+0xb4/0x198) from [<c04b6938>] (of_irq_init+0x278/0x2a0)
-> [    0.000000] [<c04b6938>] (of_irq_init+0x278/0x2a0) from [<c049b8fc>] (start_kernel+0x18c/0x384)
-> [    0.000000] [<c049b8fc>] (start_kernel+0x18c/0x384) from [<40008074>] (0x40008074)
-> [    0.000000] ---[ end trace 1b75b31a2719edce ]---
-> [    0.000000] ------------[ cut here ]------------
-> </snippet>
->
-> 	You can check full boot log here http://sprunge.us/NKcU
->
-> --
-> Aliaksei
->
->> I'm not yet terribly familiar with this SoC, what are the settings
->> needed for DEBUG_LL on this board?
->>
->> Thanks,
->>
->> Kevin
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
-This will be fixed in 3.13.
+Hi Leela,
 
-Now you can just change  "irq_base = 160" to  "irq_base = 256"
-in "static int __init combiner_of_init(struct device_node *np, struct 
-device_node *parent)" function
-in "drivers/irqchip/exynos-combiner.c"
+On Thursday 17 of October 2013 11:25:00 Leela Krishna Amudala wrote:
+> Adds G-Scaler device nodes to the DT device list
+> 
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> ---
+> 
+> Changes since V1:
+> 	- Changed the patch subject
+> 	- Changed the node name to video-scaler 
+> 	  suggested by Tomasz Figa <t.figa@samsung.com>
+> 
+> Note: G-scaler probe test done on Kgene's for-next branch.
+> 
+>  arch/arm/boot/dts/exynos5420.dtsi |   20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
-     Tarek Dakhran
+Tomasz
