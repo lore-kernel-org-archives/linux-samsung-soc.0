@@ -1,471 +1,640 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 6/6] exynos4-is: Add support for asynchronous subdevices
- registration
-Date: Thu, 17 Oct 2013 20:06:51 +0200
-Message-ID: <1382033211-32329-7-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 5/6] exynos4-is: Use external s5k6a3 sensor driver
+Date: Thu, 17 Oct 2013 20:06:50 +0200
+Message-ID: <1382033211-32329-6-git-send-email-s.nawrocki@samsung.com>
 References: <1382033211-32329-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.samsung.com ([203.254.224.34]:29104 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758168Ab3JQSJA (ORCPT
+	with ESMTP id S1758246Ab3JQSI7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 14:09:00 -0400
+	Thu, 17 Oct 2013 14:08:59 -0400
 In-reply-to: <1382033211-32329-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Add support for registering external sensor subdevs using
-the v4l2-async API. The async API is used only for sensor
-subdevs and only for dt platforms.
+This patch removes the common fimc-is-sensor driver for image sensors
+that are normally controlled by the FIMC-IS firmware. The FIMC-IS
+driver now contains only a table of properties specific to each sensor.
+The sensor properties required for the ISP's firmware are parsed from
+device tree and retrieved from the internal table, which is selected
+based on the compatible property of an image sensor.
+
+To use the Exynos4x12 internal ISP the S5K6A3 sensor driver (drivers/
+media/i2c/s5k6a3.c) is now required.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- .../devicetree/bindings/media/samsung-fimc.txt     |    4 +-
- drivers/media/platform/exynos4-is/media-dev.c      |  233 +++++++++++---------
- drivers/media/platform/exynos4-is/media-dev.h      |   13 +-
- 3 files changed, 146 insertions(+), 104 deletions(-)
+ drivers/media/platform/exynos4-is/fimc-is-regs.c   |    2 +-
+ drivers/media/platform/exynos4-is/fimc-is-sensor.c |  285 +-------------------
+ drivers/media/platform/exynos4-is/fimc-is-sensor.h |   49 +---
+ drivers/media/platform/exynos4-is/fimc-is.c        |   97 +++----
+ drivers/media/platform/exynos4-is/fimc-is.h        |    4 +-
+ 5 files changed, 57 insertions(+), 380 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-index 968e065..f8aaf3b 100644
---- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
-+++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
-@@ -106,8 +106,8 @@ Image sensor nodes
- The sensor device nodes should be added to their control bus controller (e.g.
- I2C0) nodes and linked to a port node in the csis or the parallel-ports node,
- using the common video interfaces bindings, defined in video-interfaces.txt.
--The implementation of this bindings requires clock-frequency property to be
--present in the sensor device nodes.
-+An optional clock-frequency property needs to be present in the sensor device
-+nodes. Default value when this property is not present is 24 MHz.
- 
- Example:
- 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
-index d78e3da..1ef6691 100644
---- a/drivers/media/platform/exynos4-is/media-dev.c
-+++ b/drivers/media/platform/exynos4-is/media-dev.c
-@@ -26,6 +26,7 @@
- #include <linux/pm_runtime.h>
- #include <linux/types.h>
- #include <linux/slab.h>
-+#include <media/v4l2-async.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-of.h>
- #include <media/media-device.h>
-@@ -220,6 +221,7 @@ static int __fimc_pipeline_open(struct exynos_media_pipeline *ep,
- 		if (ret < 0)
- 			return ret;
- 	}
-+
- 	ret = fimc_md_set_camclk(sd, true);
- 	if (ret < 0)
- 		goto err_wbclk;
-@@ -380,77 +382,18 @@ static void fimc_md_unregister_sensor(struct v4l2_subdev *sd)
- 	struct i2c_client *client = v4l2_get_subdevdata(sd);
- 	struct i2c_adapter *adapter;
- 
--	if (!client)
-+	if (!client || client->dev.of_node)
- 		return;
- 
- 	v4l2_device_unregister_subdev(sd);
- 
--	if (!client->dev.of_node) {
--		adapter = client->adapter;
--		i2c_unregister_device(client);
--		if (adapter)
--			i2c_put_adapter(adapter);
--	}
-+	adapter = client->adapter;
-+	i2c_unregister_device(client);
-+	if (adapter)
-+		i2c_put_adapter(adapter);
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-regs.c b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+index f758e26..c1bc76d 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-regs.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-regs.c
+@@ -136,7 +136,7 @@ void fimc_is_hw_set_sensor_num(struct fimc_is *is)
+ 	mcuctl_write(IH_REPLY_DONE, is, MCUCTL_REG_ISSR(0));
+ 	mcuctl_write(is->sensor_index, is, MCUCTL_REG_ISSR(1));
+ 	mcuctl_write(IHC_GET_SENSOR_NUM, is, MCUCTL_REG_ISSR(2));
+-	mcuctl_write(FIMC_IS_SENSOR_NUM, is, MCUCTL_REG_ISSR(3));
++	mcuctl_write(FIMC_IS_SENSORS_NUM, is, MCUCTL_REG_ISSR(3));
  }
  
- #ifdef CONFIG_OF
--/* Register I2C client subdev associated with @node. */
--static int fimc_md_of_add_sensor(struct fimc_md *fmd,
--				 struct device_node *node, int index)
+ void fimc_is_hw_close_sensor(struct fimc_is *is, unsigned int index)
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-sensor.c b/drivers/media/platform/exynos4-is/fimc-is-sensor.c
+index 6647421..10e82e2 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-sensor.c
++++ b/drivers/media/platform/exynos4-is/fimc-is-sensor.c
+@@ -2,276 +2,21 @@
+  * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
+  *
+  * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+- *
+  * Author: Sylwester Nawrocki <s.nawrocki@samsung.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+-#include <linux/delay.h>
+-#include <linux/device.h>
+-#include <linux/errno.h>
+-#include <linux/gpio.h>
+-#include <linux/i2c.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/of_gpio.h>
+-#include <linux/pm_runtime.h>
+-#include <linux/regulator/consumer.h>
+-#include <linux/slab.h>
+-#include <media/v4l2-subdev.h>
+ 
+-#include "fimc-is.h"
+ #include "fimc-is-sensor.h"
+ 
+-#define DRIVER_NAME "FIMC-IS-SENSOR"
+-
+-static const char * const sensor_supply_names[] = {
+-	"svdda",
+-	"svddio",
+-};
+-
+-static const struct v4l2_mbus_framefmt fimc_is_sensor_formats[] = {
+-	{
+-		.code = V4L2_MBUS_FMT_SGRBG10_1X10,
+-		.colorspace = V4L2_COLORSPACE_SRGB,
+-		.field = V4L2_FIELD_NONE,
+-	}
+-};
+-
+-static const struct v4l2_mbus_framefmt *find_sensor_format(
+-	struct v4l2_mbus_framefmt *mf)
 -{
--	struct fimc_sensor_info *si;
--	struct i2c_client *client;
--	struct v4l2_subdev *sd;
+-	int i;
+-
+-	for (i = 0; i < ARRAY_SIZE(fimc_is_sensor_formats); i++)
+-		if (mf->code == fimc_is_sensor_formats[i].code)
+-			return &fimc_is_sensor_formats[i];
+-
+-	return &fimc_is_sensor_formats[0];
+-}
+-
+-static int fimc_is_sensor_enum_mbus_code(struct v4l2_subdev *sd,
+-				  struct v4l2_subdev_fh *fh,
+-				  struct v4l2_subdev_mbus_code_enum *code)
+-{
+-	if (code->index >= ARRAY_SIZE(fimc_is_sensor_formats))
+-		return -EINVAL;
+-
+-	code->code = fimc_is_sensor_formats[code->index].code;
+-	return 0;
+-}
+-
+-static void fimc_is_sensor_try_format(struct fimc_is_sensor *sensor,
+-				      struct v4l2_mbus_framefmt *mf)
+-{
+-	const struct sensor_drv_data *dd = sensor->drvdata;
+-	const struct v4l2_mbus_framefmt *fmt;
+-
+-	fmt = find_sensor_format(mf);
+-	mf->code = fmt->code;
+-	v4l_bound_align_image(&mf->width, 16 + 8, dd->width, 0,
+-			      &mf->height, 12 + 8, dd->height, 0, 0);
+-}
+-
+-static struct v4l2_mbus_framefmt *__fimc_is_sensor_get_format(
+-		struct fimc_is_sensor *sensor, struct v4l2_subdev_fh *fh,
+-		u32 pad, enum v4l2_subdev_format_whence which)
+-{
+-	if (which == V4L2_SUBDEV_FORMAT_TRY)
+-		return fh ? v4l2_subdev_get_try_format(fh, pad) : NULL;
+-
+-	return &sensor->format;
+-}
+-
+-static int fimc_is_sensor_set_fmt(struct v4l2_subdev *sd,
+-				  struct v4l2_subdev_fh *fh,
+-				  struct v4l2_subdev_format *fmt)
+-{
+-	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
+-	struct v4l2_mbus_framefmt *mf;
+-
+-	fimc_is_sensor_try_format(sensor, &fmt->format);
+-
+-	mf = __fimc_is_sensor_get_format(sensor, fh, fmt->pad, fmt->which);
+-	if (mf) {
+-		mutex_lock(&sensor->lock);
+-		if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE)
+-			*mf = fmt->format;
+-		mutex_unlock(&sensor->lock);
+-	}
+-	return 0;
+-}
+-
+-static int fimc_is_sensor_get_fmt(struct v4l2_subdev *sd,
+-				  struct v4l2_subdev_fh *fh,
+-				  struct v4l2_subdev_format *fmt)
+-{
+-	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
+-	struct v4l2_mbus_framefmt *mf;
+-
+-	mf = __fimc_is_sensor_get_format(sensor, fh, fmt->pad, fmt->which);
+-
+-	mutex_lock(&sensor->lock);
+-	fmt->format = *mf;
+-	mutex_unlock(&sensor->lock);
+-	return 0;
+-}
+-
+-static struct v4l2_subdev_pad_ops fimc_is_sensor_pad_ops = {
+-	.enum_mbus_code	= fimc_is_sensor_enum_mbus_code,
+-	.get_fmt	= fimc_is_sensor_get_fmt,
+-	.set_fmt	= fimc_is_sensor_set_fmt,
+-};
+-
+-static int fimc_is_sensor_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+-{
+-	struct v4l2_mbus_framefmt *format = v4l2_subdev_get_try_format(fh, 0);
+-
+-	*format		= fimc_is_sensor_formats[0];
+-	format->width	= FIMC_IS_SENSOR_DEF_PIX_WIDTH;
+-	format->height	= FIMC_IS_SENSOR_DEF_PIX_HEIGHT;
+-
+-	return 0;
+-}
+-
+-static const struct v4l2_subdev_internal_ops fimc_is_sensor_sd_internal_ops = {
+-	.open = fimc_is_sensor_open,
+-};
+-
+-static int fimc_is_sensor_s_power(struct v4l2_subdev *sd, int on)
+-{
+-	struct fimc_is_sensor *sensor = sd_to_fimc_is_sensor(sd);
+-	int gpio = sensor->gpio_reset;
 -	int ret;
 -
--	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor)))
--		return -EINVAL;
--	si = &fmd->sensor[index];
+-	if (on) {
+-		ret = pm_runtime_get(sensor->dev);
+-		if (ret < 0)
+-			return ret;
 -
--	client = of_find_i2c_device_by_node(node);
--	if (!client)
--		return -EPROBE_DEFER;
+-		ret = regulator_bulk_enable(SENSOR_NUM_SUPPLIES,
+-					    sensor->supplies);
+-		if (ret < 0) {
+-			pm_runtime_put(sensor->dev);
+-			return ret;
+-		}
+-		if (gpio_is_valid(gpio)) {
+-			gpio_set_value(gpio, 1);
+-			usleep_range(600, 800);
+-			gpio_set_value(gpio, 0);
+-			usleep_range(10000, 11000);
+-			gpio_set_value(gpio, 1);
+-		}
 -
--	device_lock(&client->dev);
+-		/* A delay needed for the sensor initialization. */
+-		msleep(20);
+-	} else {
+-		if (gpio_is_valid(gpio))
+-			gpio_set_value(gpio, 0);
 -
--	if (!client->driver ||
--	    !try_module_get(client->driver->driver.owner)) {
--		ret = -EPROBE_DEFER;
--		v4l2_info(&fmd->v4l2_dev, "No driver found for %s\n",
--						node->full_name);
--		goto dev_put;
+-		ret = regulator_bulk_disable(SENSOR_NUM_SUPPLIES,
+-					     sensor->supplies);
+-		if (!ret)
+-			pm_runtime_put(sensor->dev);
 -	}
 -
--	/* Enable sensor's master clock */
--	ret = __fimc_md_set_camclk(fmd, &si->pdata, true);
--	if (ret < 0)
--		goto mod_put;
--	sd = i2c_get_clientdata(client);
+-	pr_info("%s:%d: on: %d, ret: %d\n", __func__, __LINE__, on, ret);
 -
--	ret = v4l2_device_register_subdev(&fmd->v4l2_dev, sd);
--	__fimc_md_set_camclk(fmd, &si->pdata, false);
--	if (ret < 0)
--		goto mod_put;
--
--	v4l2_set_subdev_hostdata(sd, &si->pdata);
--	if (si->pdata.fimc_bus_type == FIMC_BUS_TYPE_ISP_WRITEBACK)
--		sd->grp_id = GRP_ID_FIMC_IS_SENSOR;
--	else
--		sd->grp_id = GRP_ID_SENSOR;
--
--	si->subdev = sd;
--	v4l2_info(&fmd->v4l2_dev, "Registered sensor subdevice: %s (%d)\n",
--		  sd->name, fmd->num_sensors);
--	fmd->num_sensors++;
--
--mod_put:
--	module_put(client->driver->driver.owner);
--dev_put:
--	device_unlock(&client->dev);
--	put_device(&client->dev);
 -	return ret;
 -}
 -
- /* Parse port node and register as a sub-device any sensor specified there. */
- static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 				   struct device_node *port,
-@@ -459,7 +402,6 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	struct device_node *rem, *ep, *np;
- 	struct fimc_source_info *pd;
- 	struct v4l2_of_endpoint endpoint;
--	int ret;
- 	u32 val;
+-static struct v4l2_subdev_core_ops fimc_is_sensor_core_ops = {
+-	.s_power = fimc_is_sensor_s_power,
+-};
+-
+-static struct v4l2_subdev_ops fimc_is_sensor_subdev_ops = {
+-	.core = &fimc_is_sensor_core_ops,
+-	.pad = &fimc_is_sensor_pad_ops,
+-};
+-
+-static const struct of_device_id fimc_is_sensor_of_match[];
+-
+-static int fimc_is_sensor_probe(struct i2c_client *client,
+-				const struct i2c_device_id *id)
+-{
+-	struct device *dev = &client->dev;
+-	struct fimc_is_sensor *sensor;
+-	const struct of_device_id *of_id;
+-	struct v4l2_subdev *sd;
+-	int gpio, i, ret;
+-
+-	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
+-	if (!sensor)
+-		return -ENOMEM;
+-
+-	mutex_init(&sensor->lock);
+-	sensor->gpio_reset = -EINVAL;
+-
+-	gpio = of_get_gpio_flags(dev->of_node, 0, NULL);
+-	if (gpio_is_valid(gpio)) {
+-		ret = devm_gpio_request_one(dev, gpio, GPIOF_OUT_INIT_LOW,
+-							DRIVER_NAME);
+-		if (ret < 0)
+-			return ret;
+-	}
+-	sensor->gpio_reset = gpio;
+-
+-	for (i = 0; i < SENSOR_NUM_SUPPLIES; i++)
+-		sensor->supplies[i].supply = sensor_supply_names[i];
+-
+-	ret = devm_regulator_bulk_get(&client->dev, SENSOR_NUM_SUPPLIES,
+-				      sensor->supplies);
+-	if (ret < 0)
+-		return ret;
+-
+-	of_id = of_match_node(fimc_is_sensor_of_match, dev->of_node);
+-	if (!of_id)
+-		return -ENODEV;
+-
+-	sensor->drvdata = of_id->data;
+-	sensor->dev = dev;
+-
+-	sd = &sensor->subdev;
+-	v4l2_i2c_subdev_init(sd, client, &fimc_is_sensor_subdev_ops);
+-	snprintf(sd->name, sizeof(sd->name), sensor->drvdata->subdev_name);
+-	sensor->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+-
+-	sensor->format.code = fimc_is_sensor_formats[0].code;
+-	sensor->format.width = FIMC_IS_SENSOR_DEF_PIX_WIDTH;
+-	sensor->format.height = FIMC_IS_SENSOR_DEF_PIX_HEIGHT;
+-
+-	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
+-	ret = media_entity_init(&sd->entity, 1, &sensor->pad, 0);
+-	if (ret < 0)
+-		return ret;
+-
+-	pm_runtime_no_callbacks(dev);
+-	pm_runtime_enable(dev);
+-
+-	return ret;
+-}
+-
+-static int fimc_is_sensor_remove(struct i2c_client *client)
+-{
+-	struct v4l2_subdev *sd = i2c_get_clientdata(client);
+-	media_entity_cleanup(&sd->entity);
+-	return 0;
+-}
+-
+-static const struct i2c_device_id fimc_is_sensor_ids[] = {
+-	{ }
+-};
+-
+ static const struct sensor_drv_data s5k6a3_drvdata = {
+ 	.id		= FIMC_IS_SENSOR_ID_S5K6A3,
+-	.subdev_name	= "S5K6A3",
+-	.width		= S5K6A3_SENSOR_WIDTH,
+-	.height		= S5K6A3_SENSOR_HEIGHT,
++	.open_timeout	= S5K6A3_OPEN_TIMEOUT,
+ };
  
- 	pd = &fmd->sensor[index].pdata;
-@@ -487,6 +429,8 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
+-static const struct of_device_id fimc_is_sensor_of_match[] = {
++static const struct of_device_id fimc_is_sensor_of_ids[] = {
+ 	{
+ 		.compatible	= "samsung,s5k6a3",
+ 		.data		= &s5k6a3_drvdata,
+@@ -279,27 +24,11 @@ static const struct of_device_id fimc_is_sensor_of_match[] = {
+ 	{  }
+ };
  
- 	if (!of_property_read_u32(rem, "clock-frequency", &val))
- 		pd->clk_frequency = val;
-+	else
-+		pd->clk_frequency = DEFAULT_SENSOR_CLK_FREQ;
+-static struct i2c_driver fimc_is_sensor_driver = {
+-	.driver = {
+-		.of_match_table	= fimc_is_sensor_of_match,
+-		.name		= DRIVER_NAME,
+-		.owner		= THIS_MODULE,
+-	},
+-	.probe		= fimc_is_sensor_probe,
+-	.remove		= fimc_is_sensor_remove,
+-	.id_table	= fimc_is_sensor_ids,
+-};
+-
+-int fimc_is_register_sensor_driver(void)
++const struct sensor_drv_data *fimc_is_sensor_get_drvdata(
++			struct device_node *node)
+ {
+-	return i2c_add_driver(&fimc_is_sensor_driver);
+-}
++	const struct of_device_id *of_id;
  
- 	if (pd->clk_frequency == 0) {
- 		v4l2_err(&fmd->v4l2_dev, "Wrong clock frequency at node %s\n",
-@@ -526,10 +470,17 @@ static int fimc_md_parse_port_node(struct fimc_md *fmd,
- 	else
- 		pd->fimc_bus_type = pd->sensor_bus_type;
+-void fimc_is_unregister_sensor_driver(void)
+-{
+-	i2c_del_driver(&fimc_is_sensor_driver);
++	of_id = of_match_node(fimc_is_sensor_of_ids, node);
++	return of_id ? of_id->data : NULL;
+ }
+-
+-MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
+-MODULE_DESCRIPTION("Exynos4x12 FIMC-IS image sensor subdev driver");
+-MODULE_LICENSE("GPL");
+diff --git a/drivers/media/platform/exynos4-is/fimc-is-sensor.h b/drivers/media/platform/exynos4-is/fimc-is-sensor.h
+index 6036d49..173ccff 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is-sensor.h
++++ b/drivers/media/platform/exynos4-is/fimc-is-sensor.h
+@@ -13,24 +13,13 @@
+ #ifndef FIMC_IS_SENSOR_H_
+ #define FIMC_IS_SENSOR_H_
  
--	ret = fimc_md_of_add_sensor(fmd, rem, index);
--	of_node_put(rem);
-+	if (WARN_ON(index >= ARRAY_SIZE(fmd->sensor)))
+-#include <linux/clk.h>
+-#include <linux/device.h>
+-#include <linux/kernel.h>
+-#include <linux/platform_device.h>
+-#include <linux/regulator/consumer.h>
+-#include <linux/videodev2.h>
+-#include <media/v4l2-subdev.h>
+-
+-#define FIMC_IS_SENSOR_OPEN_TIMEOUT	2000 /* ms */
+-
+-#define FIMC_IS_SENSOR_DEF_PIX_WIDTH	1296
+-#define FIMC_IS_SENSOR_DEF_PIX_HEIGHT	732
++#include <linux/of.h>
++#include <linux/types.h>
+ 
++#define S5K6A3_OPEN_TIMEOUT		2000 /* ms */
+ #define S5K6A3_SENSOR_WIDTH		1392
+ #define S5K6A3_SENSOR_HEIGHT		1392
+ 
+-#define SENSOR_NUM_SUPPLIES		2
+-
+ enum fimc_is_sensor_id {
+ 	FIMC_IS_SENSOR_ID_S5K3H2 = 1,
+ 	FIMC_IS_SENSOR_ID_S5K6A3,
+@@ -45,45 +34,23 @@ enum fimc_is_sensor_id {
+ 
+ struct sensor_drv_data {
+ 	enum fimc_is_sensor_id id;
+-	const char * const subdev_name;
+-	unsigned int width;
+-	unsigned int height;
++	/* sensor open timeout in ms */
++	unsigned short open_timeout;
+ };
+ 
+ /**
+  * struct fimc_is_sensor - fimc-is sensor data structure
+- * @dev: pointer to this I2C client device structure
+- * @subdev: the image sensor's v4l2 subdev
+- * @pad: subdev media source pad
+- * @supplies: image sensor's voltage regulator supplies
+- * @gpio_reset: GPIO connected to the sensor's reset pin
+  * @drvdata: a pointer to the sensor's parameters data structure
+  * @i2c_bus: ISP I2C bus index (0...1)
+  * @test_pattern: true to enable video test pattern
+- * @lock: mutex protecting the structure's members below
+- * @format: media bus format at the sensor's source pad
+  */
+ struct fimc_is_sensor {
+-	struct device *dev;
+-	struct v4l2_subdev subdev;
+-	struct media_pad pad;
+-	struct regulator_bulk_data supplies[SENSOR_NUM_SUPPLIES];
+-	int gpio_reset;
+ 	const struct sensor_drv_data *drvdata;
+ 	unsigned int i2c_bus;
+-	bool test_pattern;
+-
+-	struct mutex lock;
+-	struct v4l2_mbus_framefmt format;
++	u8 test_pattern;
+ };
+ 
+-static inline
+-struct fimc_is_sensor *sd_to_fimc_is_sensor(struct v4l2_subdev *sd)
+-{
+-	return container_of(sd, struct fimc_is_sensor, subdev);
+-}
+-
+-int fimc_is_register_sensor_driver(void);
+-void fimc_is_unregister_sensor_driver(void);
++const struct sensor_drv_data *fimc_is_sensor_get_drvdata(
++				struct device_node *node);
+ 
+ #endif /* FIMC_IS_SENSOR_H_ */
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 9770fa9..f6cd25d 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -161,78 +161,66 @@ static void fimc_is_disable_clocks(struct fimc_is *is)
+ 	}
+ }
+ 
+-static int fimc_is_parse_sensor_config(struct fimc_is_sensor *sensor,
+-				       struct device_node *np)
++static int fimc_is_parse_sensor_config(struct fimc_is *is, unsigned int index,
++						struct device_node *node)
+ {
++	struct fimc_is_sensor *sensor = &is->sensor[index];
+ 	u32 tmp = 0;
+ 	int ret;
+ 
+-	np = v4l2_of_get_next_endpoint(np, NULL);
+-	if (!np)
++	sensor->drvdata = fimc_is_sensor_get_drvdata(node);
++	if (!sensor->drvdata) {
++		dev_err(&is->pdev->dev, "no driver data found for: %s\n",
++							 node->full_name);
 +		return -EINVAL;
++	}
++
++	node = v4l2_of_get_next_endpoint(node, NULL);
++	if (!node)
+ 		return -ENXIO;
+-	np = v4l2_of_get_remote_port(np);
+-	if (!np)
++
++	node = v4l2_of_get_remote_port(node);
++	if (!node)
+ 		return -ENXIO;
+ 
+ 	/* Use MIPI-CSIS channel id to determine the ISP I2C bus index. */
+-	ret = of_property_read_u32(np, "reg", &tmp);
+-	sensor->i2c_bus = tmp - FIMC_INPUT_MIPI_CSI2_0;
++	ret = of_property_read_u32(node, "reg", &tmp);
++	if (ret < 0) {
++		dev_err(&is->pdev->dev, "reg property not found at: %s\n",
++							 node->full_name);
++		return ret;
++	}
  
 -	return ret;
-+	fmd->sensor[index].asd.match_type = V4L2_ASYNC_MATCH_OF;
-+	fmd->sensor[index].asd.match.of.node = rem;
-+	fmd->async_subdevs[index] = &fmd->sensor[index].asd;
-+
-+	fmd->num_sensors++;
-+
-+	of_node_put(rem);
++	sensor->i2c_bus = tmp - FIMC_INPUT_MIPI_CSI2_0;
 +	return 0;
  }
  
- /* Register all SoC external sub-devices */
-@@ -885,11 +836,13 @@ static void fimc_md_unregister_entities(struct fimc_md *fmd)
- 		v4l2_device_unregister_subdev(fmd->csis[i].sd);
- 		fmd->csis[i].sd = NULL;
- 	}
--	for (i = 0; i < fmd->num_sensors; i++) {
--		if (fmd->sensor[i].subdev == NULL)
--			continue;
--		fimc_md_unregister_sensor(fmd->sensor[i].subdev);
--		fmd->sensor[i].subdev = NULL;
-+	if (fmd->pdev->dev.of_node == NULL) {
-+		for (i = 0; i < fmd->num_sensors; i++) {
-+			if (fmd->sensor[i].subdev == NULL)
-+				continue;
-+			fimc_md_unregister_sensor(fmd->sensor[i].subdev);
-+			fmd->sensor[i].subdev = NULL;
-+		}
- 	}
- 
- 	if (fmd->fimc_is)
-@@ -1224,6 +1177,14 @@ static int __fimc_md_set_camclk(struct fimc_md *fmd,
- 	struct fimc_camclk_info *camclk;
- 	int ret = 0;
- 
-+	/*
-+	 * When device tree is used the sensor drivers are supposed to
-+	 * control the clock themselves. This whole function will be
-+	 * removed once S5PV210 platform is converted to the device tree.
-+	 */
-+	if (fmd->pdev->dev.of_node)
-+		return 0;
-+
- 	if (WARN_ON(si->clk_id >= FIMC_MAX_CAMCLKS) || !fmd || !fmd->pmf)
- 		return -EINVAL;
- 
-@@ -1534,6 +1495,56 @@ err:
- #define fimc_md_unregister_clk_provider(fmd) (0)
- #endif
- 
-+static int subdev_notifier_bound(struct v4l2_async_notifier *notifier,
-+				 struct v4l2_subdev *subdev,
-+				 struct v4l2_async_subdev *asd)
-+{
-+	struct fimc_md *fmd = notifier_to_fimc_md(notifier);
-+	struct fimc_sensor_info *si = NULL;
-+	int i;
-+
-+	/* Find platform data for this sensor subdev */
-+	for (i = 0; i < ARRAY_SIZE(fmd->sensor); i++)
-+		if (fmd->sensor[i].asd.match.of.node == subdev->dev->of_node)
-+			si = &fmd->sensor[i];
-+
-+	if (si == NULL)
-+		return -EINVAL;
-+
-+	v4l2_set_subdev_hostdata(subdev, &si->pdata);
-+
-+	if (si->pdata.fimc_bus_type == FIMC_BUS_TYPE_ISP_WRITEBACK)
-+		subdev->grp_id = GRP_ID_FIMC_IS_SENSOR;
-+	else
-+		subdev->grp_id = GRP_ID_SENSOR;
-+
-+	si->subdev = subdev;
-+
-+	v4l2_info(&fmd->v4l2_dev, "Registered sensor subdevice: %s (%d)\n",
-+		  subdev->name, fmd->num_sensors);
-+
-+	fmd->num_sensors++;
-+
-+	return 0;
-+}
-+
-+static int subdev_notifier_complete(struct v4l2_async_notifier *notifier)
-+{
-+	struct fimc_md *fmd = notifier_to_fimc_md(notifier);
-+	int ret;
-+
-+	mutex_lock(&fmd->media_dev.graph_mutex);
-+
-+	ret = fimc_md_create_links(fmd);
-+	if (ret < 0)
-+		goto unlock;
-+
-+	ret = v4l2_device_register_subdev_nodes(&fmd->v4l2_dev);
-+unlock:
-+	mutex_unlock(&fmd->media_dev.graph_mutex);
-+	return ret;
-+}
-+
- static int fimc_md_probe(struct platform_device *pdev)
+ static int fimc_is_register_subdevs(struct fimc_is *is)
  {
- 	struct device *dev = &pdev->dev;
-@@ -1561,12 +1572,6 @@ static int fimc_md_probe(struct platform_device *pdev)
+-	struct device_node *adapter, *child;
+-	int ret;
++	struct device_node *i2c_bus, *child;
++	int ret, index = 0;
  
- 	fmd->use_isp = fimc_md_is_isp_available(dev->of_node);
+ 	ret = fimc_isp_subdev_create(&is->isp);
+ 	if (ret < 0)
+ 		return ret;
  
--	ret = fimc_md_register_clk_provider(fmd);
--	if (ret < 0) {
--		v4l2_err(v4l2_dev, "clock provider registration failed\n");
--		return ret;
--	}
+-	for_each_compatible_node(adapter, NULL, FIMC_IS_I2C_COMPATIBLE) {
+-		if (!of_find_device_by_node(adapter)) {
+-			of_node_put(adapter);
+-			return -EPROBE_DEFER;
+-		}
++	for_each_compatible_node(i2c_bus, NULL, FIMC_IS_I2C_COMPATIBLE) {
++		for_each_available_child_of_node(i2c_bus, child) {
++			ret = fimc_is_parse_sensor_config(is, index, child);
+ 
+-		for_each_available_child_of_node(adapter, child) {
+-			struct i2c_client *client;
+-			struct v4l2_subdev *sd;
 -
- 	ret = v4l2_device_register(dev, &fmd->v4l2_dev);
- 	if (ret < 0) {
- 		v4l2_err(v4l2_dev, "Failed to register v4l2_device: %d\n", ret);
-@@ -1576,64 +1581,87 @@ static int fimc_md_probe(struct platform_device *pdev)
- 	ret = media_device_register(&fmd->media_dev);
- 	if (ret < 0) {
- 		v4l2_err(v4l2_dev, "Failed to register media device: %d\n", ret);
--		goto err_md;
-+		goto err_v4l2_dev;
- 	}
- 
- 	ret = fimc_md_get_clocks(fmd);
- 	if (ret)
--		goto err_clk;
-+		goto err_md;
- 
- 	fmd->user_subdev_api = (dev->of_node != NULL);
- 
--	/* Protect the media graph while we're registering entities */
--	mutex_lock(&fmd->media_dev.graph_mutex);
+-			client = of_find_i2c_device_by_node(child);
+-			if (!client)
+-				goto e_retry;
 -
- 	ret = fimc_md_get_pinctrl(fmd);
- 	if (ret < 0) {
- 		if (ret != EPROBE_DEFER)
- 			dev_err(dev, "Failed to get pinctrl: %d\n", ret);
--		goto err_unlock;
-+		goto err_clk;
+-			sd = i2c_get_clientdata(client);
+-			if (!sd)
+-				goto e_retry;
+-
+-			/* FIXME: Add support for multiple sensors. */
+-			if (WARN_ON(is->sensor))
+-				continue;
+-
+-			is->sensor = sd_to_fimc_is_sensor(sd);
+-
+-			if (fimc_is_parse_sensor_config(is->sensor, child)) {
+-				dev_warn(&is->pdev->dev, "DT parse error: %s\n",
+-							 child->full_name);
++			if (ret < 0 || index >= FIMC_IS_SENSORS_NUM) {
++				of_node_put(child);
++				return ret;
+ 			}
+-			pr_debug("%s(): registered subdev: %p\n",
+-				 __func__, sd->name);
++			index++;
+ 		}
  	}
- 
-+	platform_set_drvdata(pdev, fmd);
-+
-+	/* Protect the media graph while we're registering entities */
-+	mutex_lock(&fmd->media_dev.graph_mutex);
-+
- 	if (dev->of_node)
- 		ret = fimc_md_register_of_platform_entities(fmd, dev->of_node);
- 	else
- 		ret = bus_for_each_dev(&platform_bus_type, NULL, fmd,
- 						fimc_md_pdev_match);
--	if (ret)
--		goto err_unlock;
-+	if (ret) {
-+		mutex_unlock(&fmd->media_dev.graph_mutex);
-+		goto err_clk;
-+	}
- 
- 	if (dev->platform_data || dev->of_node) {
- 		ret = fimc_md_register_sensor_entities(fmd);
--		if (ret)
--			goto err_unlock;
-+		if (ret) {
-+			mutex_unlock(&fmd->media_dev.graph_mutex);
-+			goto err_m_ent;
-+		}
- 	}
- 
--	ret = fimc_md_create_links(fmd);
--	if (ret)
--		goto err_unlock;
-+	mutex_unlock(&fmd->media_dev.graph_mutex);
- 
--	ret = v4l2_device_register_subdev_nodes(&fmd->v4l2_dev);
-+	ret = device_create_file(&pdev->dev, &dev_attr_subdev_conf_mode);
- 	if (ret)
--		goto err_unlock;
-+		goto err_m_ent;
-+	/*
-+	 * FIMC platform devices need to be registered before the sclk_cam
-+	 * clocks provider, as one of these devices needs to be activated
-+	 * to enable the clock.
-+	 */
-+	ret = fimc_md_register_clk_provider(fmd);
-+	if (ret < 0) {
-+		v4l2_err(v4l2_dev, "clock provider registration failed\n");
-+		goto err_attr;
-+	}
- 
--	ret = device_create_file(&pdev->dev, &dev_attr_subdev_conf_mode);
-+	fmd->subdev_notifier.subdevs = fmd->async_subdevs;
-+	fmd->subdev_notifier.num_subdevs = fmd->num_sensors;
-+	fmd->subdev_notifier.bound = subdev_notifier_bound;
-+	fmd->subdev_notifier.complete = subdev_notifier_complete;
-+	fmd->num_sensors = 0;
-+
-+	ret = v4l2_async_notifier_register(&fmd->v4l2_dev,
-+					   &fmd->subdev_notifier);
- 	if (ret)
--		goto err_unlock;
-+		goto err_clk_p;
- 
--	platform_set_drvdata(pdev, fmd);
--	mutex_unlock(&fmd->media_dev.graph_mutex);
  	return 0;
+-
+-e_retry:
+-	of_node_put(child);
+-	return -EPROBE_DEFER;
+ }
  
--err_unlock:
--	mutex_unlock(&fmd->media_dev.graph_mutex);
-+err_clk_p:
-+	fimc_md_unregister_clk_provider(fmd);
-+err_attr:
-+	device_remove_file(&pdev->dev, &dev_attr_subdev_conf_mode);
- err_clk:
- 	fimc_md_put_clocks(fmd);
-+err_m_ent:
- 	fimc_md_unregister_entities(fmd);
- 	media_device_unregister(&fmd->media_dev);
- err_md:
-+	media_device_unregister(&fmd->media_dev);
-+err_v4l2_dev:
- 	v4l2_device_unregister(&fmd->v4l2_dev);
--	fimc_md_unregister_clk_provider(fmd);
+ static int fimc_is_unregister_subdevs(struct fimc_is *is)
+ {
+ 	fimc_isp_subdev_destroy(&is->isp);
+-	is->sensor = NULL;
+ 	return 0;
+ }
+ 
+@@ -647,7 +635,7 @@ static int fimc_is_hw_open_sensor(struct fimc_is *is,
+ 	fimc_is_hw_set_intgr0_gd0(is);
+ 
+ 	return fimc_is_wait_event(is, IS_ST_OPEN_SENSOR, 1,
+-				  FIMC_IS_SENSOR_OPEN_TIMEOUT);
++				  sensor->drvdata->open_timeout);
+ }
+ 
+ 
+@@ -661,8 +649,8 @@ int fimc_is_hw_initialize(struct fimc_is *is)
+ 	u32 prev_id;
+ 	int i, ret;
+ 
+-	/* Sensor initialization. */
+-	ret = fimc_is_hw_open_sensor(is, is->sensor);
++	/* Sensor initialization. Only one sensor is currently supported. */
++	ret = fimc_is_hw_open_sensor(is, &is->sensor[0]);
+ 	if (ret < 0)
+ 		return ret;
+ 
+@@ -962,27 +950,20 @@ static int fimc_is_module_init(void)
+ {
+ 	int ret;
+ 
+-	ret = fimc_is_register_sensor_driver();
+-	if (ret < 0)
+-		return ret;
+-
+ 	ret = fimc_is_register_i2c_driver();
+ 	if (ret < 0)
+-		goto err_sens;
++		return ret;
+ 
+ 	ret = platform_driver_register(&fimc_is_driver);
+-	if (!ret)
+-		return ret;
+ 
+-	fimc_is_unregister_i2c_driver();
+-err_sens:
+-	fimc_is_unregister_sensor_driver();
++	if (ret < 0)
++		fimc_is_unregister_i2c_driver();
++
  	return ret;
  }
  
-@@ -1645,12 +1673,15 @@ static int fimc_md_remove(struct platform_device *pdev)
- 		return 0;
- 
- 	fimc_md_unregister_clk_provider(fmd);
-+	v4l2_async_notifier_unregister(&fmd->subdev_notifier);
-+
- 	v4l2_device_unregister(&fmd->v4l2_dev);
- 	device_remove_file(&pdev->dev, &dev_attr_subdev_conf_mode);
- 	fimc_md_unregister_entities(fmd);
- 	fimc_md_pipelines_free(fmd);
- 	media_device_unregister(&fmd->media_dev);
- 	fimc_md_put_clocks(fmd);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
-index 240ca71..169972a 100644
---- a/drivers/media/platform/exynos4-is/media-dev.h
-+++ b/drivers/media/platform/exynos4-is/media-dev.h
-@@ -32,8 +32,9 @@
- 
- #define PINCTRL_STATE_IDLE	"idle"
- 
--#define FIMC_MAX_SENSORS	8
-+#define FIMC_MAX_SENSORS	4
- #define FIMC_MAX_CAMCLKS	2
-+#define DEFAULT_SENSOR_CLK_FREQ	24000000U
- 
- /* LCD/ISP Writeback clocks (PIXELASYNCMx) */
- enum {
-@@ -79,6 +80,7 @@ struct fimc_camclk_info {
- /**
-  * struct fimc_sensor_info - image data source subdev information
-  * @pdata: sensor's atrributes passed as media device's platform data
-+ * @asd: asynchronous subdev registration data structure
-  * @subdev: image sensor v4l2 subdev
-  * @host: fimc device the sensor is currently linked to
-  *
-@@ -86,6 +88,7 @@ struct fimc_camclk_info {
-  */
- struct fimc_sensor_info {
- 	struct fimc_source_info pdata;
-+	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *subdev;
- 	struct fimc_dev *host;
- };
-@@ -144,6 +147,9 @@ struct fimc_md {
- 		struct cam_clk camclk[FIMC_MAX_CAMCLKS];
- 	} clk_provider;
- 
-+	struct v4l2_async_notifier subdev_notifier;
-+	struct v4l2_async_subdev *async_subdevs[FIMC_MAX_SENSORS];
-+
- 	bool user_subdev_api;
- 	spinlock_t slock;
- 	struct list_head pipelines;
-@@ -161,6 +167,11 @@ static inline struct fimc_md *entity_to_fimc_mdev(struct media_entity *me)
- 		container_of(me->parent, struct fimc_md, media_dev);
- }
- 
-+static inline struct fimc_md *notifier_to_fimc_md(struct v4l2_async_notifier *n)
-+{
-+	return container_of(n, struct fimc_md, subdev_notifier);
-+}
-+
- static inline void fimc_md_graph_lock(struct exynos_video_entity *ve)
+ static void fimc_is_module_exit(void)
  {
- 	mutex_lock(&ve->vdev.entity.parent->graph_mutex);
+-	fimc_is_unregister_sensor_driver();
+ 	fimc_is_unregister_i2c_driver();
+ 	platform_driver_unregister(&fimc_is_driver);
+ }
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.h b/drivers/media/platform/exynos4-is/fimc-is.h
+index 61bb012..01f802f 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.h
++++ b/drivers/media/platform/exynos4-is/fimc-is.h
+@@ -39,7 +39,7 @@
+ #define FIMC_IS_FW_LOAD_TIMEOUT		1000 /* ms */
+ #define FIMC_IS_POWER_ON_TIMEOUT	1000 /* us */
+ 
+-#define FIMC_IS_SENSOR_NUM		2
++#define FIMC_IS_SENSORS_NUM		2
+ 
+ /* Memory definitions */
+ #define FIMC_IS_CPU_MEM_SIZE		(0xa00000)
+@@ -253,7 +253,7 @@ struct fimc_is {
+ 	struct firmware			*f_w;
+ 
+ 	struct fimc_isp			isp;
+-	struct fimc_is_sensor		*sensor;
++	struct fimc_is_sensor		sensor[FIMC_IS_SENSORS_NUM];
+ 	struct fimc_is_setfile		setfile;
+ 
+ 	struct vb2_alloc_ctx		*alloc_ctx;
 -- 
 1.7.9.5
