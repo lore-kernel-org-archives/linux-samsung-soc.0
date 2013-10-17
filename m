@@ -1,547 +1,302 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 3/6] V4L: s5c73m3: Add device tree support
-Date: Thu, 17 Oct 2013 20:06:48 +0200
-Message-ID: <1382033211-32329-4-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH v3 4/6] exynos4-is: Add clock provider for the external clocks
+Date: Thu, 17 Oct 2013 20:06:49 +0200
+Message-ID: <1382033211-32329-5-git-send-email-s.nawrocki@samsung.com>
 References: <1382033211-32329-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15296 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:15297 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758355Ab3JQSIV (ORCPT
+	with ESMTP id S1758524Ab3JQSIW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 14:08:21 -0400
+	Thu, 17 Oct 2013 14:08:22 -0400
 In-reply-to: <1382033211-32329-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-media@vger.kernel.org
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-This patch adds the V4L2 asynchronous subdev registration and
-device tree support. Common clock API is used to control the
-sensor master clock from within the subdev.
+This patch adds clock provider to expose the sclk_cam0/1 clocks
+for external image sensor devices.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
---
-Changes since v2:
- - call clk_get() before enabling the clock and clk_put() after
-   each clk_disable().
 ---
- .../devicetree/bindings/media/samsung-s5c73m3.txt  |   95 +++++++++
- drivers/media/i2c/s5c73m3/s5c73m3-core.c           |  208 +++++++++++++++-----
- drivers/media/i2c/s5c73m3/s5c73m3-spi.c            |    6 +
- drivers/media/i2c/s5c73m3/s5c73m3.h                |    4 +
- 4 files changed, 263 insertions(+), 50 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
+Changes since v2:
+ - use 'camera' DT node drirectly as clock provider node, rather than
+  creating additional clock-controller child node.
+---
+ .../devicetree/bindings/media/samsung-fimc.txt     |   15 ++-
+ drivers/media/platform/exynos4-is/media-dev.c      |  108 ++++++++++++++++++++
+ drivers/media/platform/exynos4-is/media-dev.h      |   18 +++-
+ 3 files changed, 137 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/samsung-s5c73m3.txt b/Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
-new file mode 100644
-index 0000000..d419e4e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung-s5c73m3.txt
-@@ -0,0 +1,95 @@
-+Samsung S5C73M3 8Mp camera ISP
-+------------------------------
-+
-+The S5C73M3 camera ISP supports MIPI CSI-2 and parallel (ITU-R BT.656) video
-+data busses. The I2C bus is the main control bus and additionally the SPI bus
-+is used, mostly for transferring the firmware to and from the device. Two
-+slave device nodes corresponding to these control bus interfaces are required
-+and should be placed under respective bus controller nodes.
-+
-+I2C slave device node
-+---------------------
-+
-+Required properties:
-+
-+- compatible	    : "samsung,s5c73m3";
-+- reg		    : I2C slave address of the sensor;
-+- vdd-int-supply    : digital power supply (1.2V);
-+- vdda-supply	    : analog power supply (1.2V);
-+- vdd-reg-supply    : regulator input power supply (2.8V);
-+- vddio-host-supply : host I/O power supply (1.8V to 2.8V);
-+- vddio-cis-supply  : CIS I/O power supply (1.2V to 1.8V);
-+- vdd-af-supply	    : lens power supply (2.8V);
-+- xshutdown-gpios   : specifier of GPIO connected to the XSHUTDOWN pin;
-+- standby-gpios     : specifier of GPIO connected to the STANDBY pin;
-+- clocks	    : should contain the sensor's CIS_EXTCLK clock specifier;
-+- clock-names	    : should contain "cis_extclk" entry;
-+
+diff --git a/Documentation/devicetree/bindings/media/samsung-fimc.txt b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+index 96312f6..968e065 100644
+--- a/Documentation/devicetree/bindings/media/samsung-fimc.txt
++++ b/Documentation/devicetree/bindings/media/samsung-fimc.txt
+@@ -32,6 +32,15 @@ way around.
+ 
+ The 'camera' node must include at least one 'fimc' child node.
+ 
 +Optional properties:
 +
-+- clock-frequency   : the frequency at which the "cis_extclk" clock should be
-+		      configured to operate, in Hz; if this property is not
-+		      specified default 24 MHz value will be used.
++- #clock-cells: from the common clock bindings (../clock/clock-bindings.txt),
++  must be 1. A clock provider is associated with the camera node and it should
++  be referenced by external sensors that use clocks provided by the SoC on
++  CAM_*_CLKOUT pins. The second cell of the clock specifier is a clock's index.
++  The indexes are 0, 1 for CAM_A_CLKOUT, CAM_B_CLKOUT clocks respectively.
 +
-+The common video interfaces bindings (see video-interfaces.txt) should be used
-+to specify link from the S5C73M3 to an external image data receiver. The S5C73M3
-+device node should contain one 'port' child node with an 'endpoint' subnode for
-+this purpose. The data link from a raw image sensor to the S5C73M3 can be
-+similarly specified, but it is optional since the S5C73M3 ISP and a raw image
-+sensor are usually inseparable and form a hybrid module.
 +
-+Following properties are valid for the endpoint node(s):
-+
-+endpoint subnode
-+----------------
-+
-+- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
-+  video-interfaces.txt. This sensor doesn't support data lane remapping
-+  and physical lane indexes in subsequent elements of the array should
-+  be only consecutive ascending values.
-+
-+SPI device node
-+---------------
-+
-+Required properties:
-+
-+- compatible	    : "samsung,s5c73m3";
-+
-+For more details see description of the SPI busses bindings
-+(../spi/spi-bus.txt) and bindings of a specific bus controller.
-+
-+Example:
-+
-+i2c@138A000000 {
-+	...
-+	s5c73m3@3c {
-+		compatible = "samsung,s5c73m3";
-+		reg = <0x3c>;
-+		vdd-int-supply = <&buck9_reg>;
-+		vdda-supply = <&ldo17_reg>;
-+		vdd-reg-supply = <&cam_io_reg>;
-+		vddio-host-supply = <&ldo18_reg>;
-+		vddio-cis-supply = <&ldo9_reg>;
-+		vdd-af-supply = <&cam_af_reg>;
-+		clock-frequency = <24000000>;
-+		clocks = <&clk 0>;
-+		clock-names = "cis_extclk";
-+		reset-gpios = <&gpf1 3 1>;
-+		standby-gpios = <&gpm0 1 1>;
-+		port {
-+			s5c73m3_ep: endpoint {
-+				remote-endpoint = <&csis0_ep>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+spi@1392000 {
-+	...
-+	s5c73m3_spi: s5c73m3 {
-+		compatible = "samsung,s5c73m3";
-+		reg = <0>;
-+		...
-+	};
-+};
-diff --git a/drivers/media/i2c/s5c73m3/s5c73m3-core.c b/drivers/media/i2c/s5c73m3/s5c73m3-core.c
-index b76ec0e..9ea10c7 100644
---- a/drivers/media/i2c/s5c73m3/s5c73m3-core.c
-+++ b/drivers/media/i2c/s5c73m3/s5c73m3-core.c
-@@ -15,7 +15,7 @@
-  * GNU General Public License for more details.
+ 'fimc' device nodes
+ -------------------
+ 
+@@ -114,7 +123,7 @@ Example:
+ 			vddio-supply = <...>;
+ 
+ 			clock-frequency = <24000000>;
+-			clocks = <...>;
++			clocks = <&camera 1>;
+ 			clock-names = "mclk";
+ 
+ 			port {
+@@ -135,7 +144,7 @@ Example:
+ 			vddio-supply = <...>;
+ 
+ 			clock-frequency = <24000000>;
+-			clocks = <...>;
++			clocks = <&camera 0>;
+ 			clock-names = "mclk";
+ 
+ 			port {
+@@ -151,8 +160,8 @@ Example:
+ 		compatible = "samsung,fimc", "simple-bus";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
++		#clock-cells = <1>;
+ 		status = "okay";
+-
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&cam_port_a_clk_active>;
+ 
+diff --git a/drivers/media/platform/exynos4-is/media-dev.c b/drivers/media/platform/exynos4-is/media-dev.c
+index a835112..d78e3da 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.c
++++ b/drivers/media/platform/exynos4-is/media-dev.c
+@@ -11,6 +11,8 @@
   */
  
--#include <linux/sizes.h>
+ #include <linux/bug.h>
 +#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/gpio.h>
-@@ -23,7 +23,9 @@
- #include <linux/init.h>
- #include <linux/media.h>
- #include <linux/module.h>
-+#include <linux/of_gpio.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/sizes.h>
- #include <linux/slab.h>
- #include <linux/spi/spi.h>
- #include <linux/videodev2.h>
-@@ -33,6 +35,7 @@
- #include <media/v4l2-subdev.h>
- #include <media/v4l2-mediabus.h>
- #include <media/s5c73m3.h>
-+#include <media/v4l2-of.h>
- 
- #include "s5c73m3.h"
- 
-@@ -46,6 +49,8 @@ static int update_fw;
- module_param(update_fw, int, 0644);
- 
- #define S5C73M3_EMBEDDED_DATA_MAXLEN	SZ_4K
-+#define S5C73M3_MIPI_DATA_LANES		4
-+#define S5C73M3_CLK_NAME		"cis_extclk"
- 
- static const char * const s5c73m3_supply_names[S5C73M3_MAX_SUPPLIES] = {
- 	"vdd-int",	/* Digital Core supply (1.2V), CAM_ISP_CORE_1.2V */
-@@ -1352,12 +1357,27 @@ static int __s5c73m3_power_on(struct s5c73m3 *state)
- {
- 	int i, ret;
- 
-+	state->clock = clk_get(&state->i2c_client->dev, S5C73M3_CLK_NAME);
-+	if (IS_ERR(state->clock))
-+		return -EPROBE_DEFER;
-+
- 	for (i = 0; i < S5C73M3_MAX_SUPPLIES; i++) {
- 		ret = regulator_enable(state->supplies[i].consumer);
- 		if (ret)
--			goto err;
-+			goto err_reg_dis;
- 	}
- 
-+	ret = clk_set_rate(state->clock, state->mclk_frequency);
-+	if (ret < 0)
-+		goto err_reg_dis;
-+
-+	ret = clk_prepare_enable(state->clock);
-+	if (ret < 0)
-+		goto err_reg_dis;
-+
-+	v4l2_dbg(1, s5c73m3_dbg, &state->oif_sd, "clock frequency: %ld\n",
-+					clk_get_rate(state->clock));
-+
- 	s5c73m3_gpio_deassert(state, STBY);
- 	usleep_range(100, 200);
- 
-@@ -1365,7 +1385,8 @@ static int __s5c73m3_power_on(struct s5c73m3 *state)
- 	usleep_range(50, 100);
- 
- 	return 0;
--err:
-+
-+err_reg_dis:
- 	for (--i; i >= 0; i--)
- 		regulator_disable(state->supplies[i].consumer);
- 	return ret;
-@@ -1380,6 +1401,9 @@ static int __s5c73m3_power_off(struct s5c73m3 *state)
- 
- 	if (s5c73m3_gpio_assert(state, STBY))
- 		usleep_range(100, 200);
-+
-+	clk_disable_unprepare(state->clock);
-+
- 	state->streaming = 0;
- 	state->isp_ready = 0;
- 
-@@ -1388,6 +1412,8 @@ static int __s5c73m3_power_off(struct s5c73m3 *state)
- 		if (ret)
- 			goto err;
- 	}
-+
-+	clk_put(state->clock);
- 	return 0;
- err:
- 	for (++i; i < S5C73M3_MAX_SUPPLIES; i++) {
-@@ -1396,6 +1422,8 @@ err:
- 			v4l2_err(&state->oif_sd, "Failed to reenable %s: %d\n",
- 				 state->supplies[i].supply, r);
- 	}
-+
-+	clk_prepare_enable(state->clock);
- 	return ret;
- }
- 
-@@ -1451,17 +1479,6 @@ static int s5c73m3_oif_registered(struct v4l2_subdev *sd)
- 			S5C73M3_JPEG_PAD, &state->oif_sd.entity, OIF_JPEG_PAD,
- 			MEDIA_LNK_FL_IMMUTABLE | MEDIA_LNK_FL_ENABLED);
- 
--	mutex_lock(&state->lock);
--	ret = __s5c73m3_power_on(state);
--	if (ret == 0)
--		s5c73m3_get_fw_version(state);
--
--	__s5c73m3_power_off(state);
--	mutex_unlock(&state->lock);
--
--	v4l2_dbg(1, s5c73m3_dbg, sd, "%s: Booting %s (%d)\n",
--		 __func__, ret ? "failed" : "succeded", ret);
--
- 	return ret;
- }
- 
-@@ -1519,41 +1536,108 @@ static const struct v4l2_subdev_ops oif_subdev_ops = {
- 	.video	= &s5c73m3_oif_video_ops,
- };
- 
--static int s5c73m3_configure_gpios(struct s5c73m3 *state,
--				   const struct s5c73m3_platform_data *pdata)
-+static int s5c73m3_configure_gpios(struct s5c73m3 *state)
-+{
-+	static const char * const gpio_names[] = {
-+		"S5C73M3_STBY", "S5C73M3_RST"
-+	};
-+	struct i2c_client *c = state->i2c_client;
-+	struct s5c73m3_gpio *g = state->gpio;
-+	int ret, i;
-+
-+	for (i = 0; i < GPIO_NUM; ++i) {
-+		unsigned int flags = GPIOF_DIR_OUT;
-+		if (g[i].level)
-+			flags |= GPIOF_INIT_HIGH;
-+		ret = devm_gpio_request_one(&c->dev, g[i].gpio, flags,
-+					    gpio_names[i]);
-+		if (ret) {
-+			v4l2_err(c, "failed to request gpio %s\n",
-+				 gpio_names[i]);
-+			return ret;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int s5c73m3_parse_gpios(struct s5c73m3 *state)
-+{
-+	static const char * const prop_names[] = {
-+		"standby-gpios", "xshutdown-gpios",
-+	};
-+	struct device *dev = &state->i2c_client->dev;
-+	struct device_node *node = dev->of_node;
-+	int ret, i;
-+
-+	for (i = 0; i < GPIO_NUM; ++i) {
-+		enum of_gpio_flags of_flags;
-+
-+		ret = of_get_named_gpio_flags(node, prop_names[i],
-+					      0, &of_flags);
-+		if (ret < 0) {
-+			dev_err(dev, "failed to parse %s DT property\n",
-+				prop_names[i]);
-+			return -EINVAL;
-+		}
-+		state->gpio[i].gpio = ret;
-+		state->gpio[i].level = !(of_flags & OF_GPIO_ACTIVE_LOW);
-+	}
-+	return 0;
-+}
-+
-+static int s5c73m3_get_platform_data(struct s5c73m3 *state)
- {
- 	struct device *dev = &state->i2c_client->dev;
--	const struct s5c73m3_gpio *gpio;
--	unsigned long flags;
-+	const struct s5c73m3_platform_data *pdata = dev->platform_data;
-+	struct device_node *node = dev->of_node;
-+	struct device_node *node_ep;
-+	struct v4l2_of_endpoint ep;
- 	int ret;
- 
--	state->gpio[STBY].gpio = -EINVAL;
--	state->gpio[RST].gpio  = -EINVAL;
-+	if (!node) {
-+		if (!pdata) {
-+			dev_err(dev, "Platform data not specified\n");
-+			return -EINVAL;
-+		}
- 
--	gpio = &pdata->gpio_stby;
--	if (gpio_is_valid(gpio->gpio)) {
--		flags = (gpio->level ? GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW)
--		      | GPIOF_EXPORT;
--		ret = devm_gpio_request_one(dev, gpio->gpio, flags,
--					    "S5C73M3_STBY");
--		if (ret < 0)
--			return ret;
-+		state->mclk_frequency = pdata->mclk_frequency;
-+		state->gpio[STBY] = pdata->gpio_stby;
-+		state->gpio[RST] = pdata->gpio_reset;
-+		return 0;
-+	}
- 
--		state->gpio[STBY] = *gpio;
-+	if (of_property_read_u32(node, "clock-frequency",
-+				 &state->mclk_frequency)) {
-+		state->mclk_frequency = S5C73M3_DEFAULT_MCLK_FREQ;
-+		dev_info(dev, "using default %u Hz clock frequency\n",
-+					state->mclk_frequency);
- 	}
- 
--	gpio = &pdata->gpio_reset;
--	if (gpio_is_valid(gpio->gpio)) {
--		flags = (gpio->level ? GPIOF_OUT_INIT_HIGH : GPIOF_OUT_INIT_LOW)
--		      | GPIOF_EXPORT;
--		ret = devm_gpio_request_one(dev, gpio->gpio, flags,
--					    "S5C73M3_RST");
--		if (ret < 0)
--			return ret;
-+	ret = s5c73m3_parse_gpios(state);
-+	if (ret < 0)
-+		return -EINVAL;
- 
--		state->gpio[RST] = *gpio;
-+	node_ep = v4l2_of_get_next_endpoint(node, NULL);
-+	if (!node_ep) {
-+		dev_warn(dev, "no endpoint defined for node: %s\n",
-+						node->full_name);
-+		return 0;
- 	}
- 
-+	v4l2_of_parse_endpoint(node_ep, &ep);
-+	of_node_put(node_ep);
-+
-+	if (ep.bus_type != V4L2_MBUS_CSI2) {
-+		dev_err(dev, "unsupported bus type\n");
-+		return -EINVAL;
-+	}
-+	/*
-+	 * Number of MIPI CSI-2 data lanes is currently not configurable,
-+	 * always a default value of 4 lanes is used.
-+	 */
-+	if (ep.bus.mipi_csi2.num_data_lanes != S5C73M3_MIPI_DATA_LANES)
-+		dev_info(dev, "falling back to 4 MIPI CSI-2 data lanes\n");
-+
++#include <linux/clk-provider.h>
+ #include <linux/device.h>
+ #include <linux/errno.h>
+ #include <linux/i2c.h>
+@@ -1437,6 +1439,101 @@ static int fimc_md_get_pinctrl(struct fimc_md *fmd)
  	return 0;
  }
- 
-@@ -1561,21 +1645,20 @@ static int s5c73m3_probe(struct i2c_client *client,
- 				const struct i2c_device_id *id)
- {
- 	struct device *dev = &client->dev;
--	const struct s5c73m3_platform_data *pdata = client->dev.platform_data;
- 	struct v4l2_subdev *sd;
- 	struct v4l2_subdev *oif_sd;
- 	struct s5c73m3 *state;
- 	int ret, i;
- 
--	if (pdata == NULL) {
--		dev_err(&client->dev, "Platform data not specified\n");
--		return -EINVAL;
--	}
--
- 	state = devm_kzalloc(dev, sizeof(*state), GFP_KERNEL);
- 	if (!state)
- 		return -ENOMEM;
- 
-+	state->i2c_client = client;
-+	ret = s5c73m3_get_platform_data(state);
-+	if (ret < 0)
-+		return ret;
-+
- 	mutex_init(&state->lock);
- 	sd = &state->sensor_sd;
- 	oif_sd = &state->oif_sd;
-@@ -1613,11 +1696,7 @@ static int s5c73m3_probe(struct i2c_client *client,
- 	if (ret < 0)
- 		return ret;
- 
--	state->mclk_frequency = pdata->mclk_frequency;
--	state->bus_type = pdata->bus_type;
--	state->i2c_client = client;
--
--	ret = s5c73m3_configure_gpios(state, pdata);
-+	ret = s5c73m3_configure_gpios(state);
- 	if (ret)
- 		goto out_err;
- 
-@@ -1651,9 +1730,29 @@ static int s5c73m3_probe(struct i2c_client *client,
- 	if (ret < 0)
- 		goto out_err;
- 
-+	oif_sd->dev = dev;
-+
-+	ret = __s5c73m3_power_on(state);
-+	if (ret < 0)
-+		goto out_err1;
-+
-+	ret = s5c73m3_get_fw_version(state);
-+	__s5c73m3_power_off(state);
-+
-+	if (ret < 0) {
-+		dev_err(dev, "Device detection failed: %d\n", ret);
-+		goto out_err1;
-+	}
-+
-+	ret = v4l2_async_register_subdev(oif_sd);
-+	if (ret < 0)
-+		goto out_err1;
-+
- 	v4l2_info(sd, "%s: completed succesfully\n", __func__);
- 	return 0;
- 
-+out_err1:
-+	s5c73m3_unregister_spi_driver(state);
- out_err:
- 	media_entity_cleanup(&sd->entity);
- 	return ret;
-@@ -1665,7 +1764,7 @@ static int s5c73m3_remove(struct i2c_client *client)
- 	struct s5c73m3 *state = oif_sd_to_s5c73m3(oif_sd);
- 	struct v4l2_subdev *sensor_sd = &state->sensor_sd;
- 
--	v4l2_device_unregister_subdev(oif_sd);
-+	v4l2_async_unregister_subdev(oif_sd);
- 
- 	v4l2_ctrl_handler_free(oif_sd->ctrl_handler);
- 	media_entity_cleanup(&oif_sd->entity);
-@@ -1684,8 +1783,17 @@ static const struct i2c_device_id s5c73m3_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, s5c73m3_id);
  
 +#ifdef CONFIG_OF
-+static const struct of_device_id s5c73m3_of_match[] = {
-+	{ .compatible = "samsung,s5c73m3" },
-+	{ }
++static int cam_clk_prepare(struct clk_hw *hw)
++{
++	struct cam_clk *camclk = to_cam_clk(hw);
++	int ret;
++
++	if (camclk->fmd->pmf == NULL)
++		return -ENODEV;
++
++	ret = pm_runtime_get_sync(camclk->fmd->pmf);
++	return ret < 0 ? ret : 0;
++}
++
++static void cam_clk_unprepare(struct clk_hw *hw)
++{
++	struct cam_clk *camclk = to_cam_clk(hw);
++
++	if (camclk->fmd->pmf == NULL)
++		return;
++
++	pm_runtime_put_sync(camclk->fmd->pmf);
++}
++
++static const struct clk_ops cam_clk_ops = {
++	.prepare = cam_clk_prepare,
++	.unprepare = cam_clk_unprepare,
 +};
-+MODULE_DEVICE_TABLE(of, s5c73m3_of_match);
++
++static const char *cam_clk_p_names[] = { "sclk_cam0", "sclk_cam1" };
++
++static void fimc_md_unregister_clk_provider(struct fimc_md *fmd)
++{
++	struct cam_clk_provider *cp = &fmd->clk_provider;
++	unsigned int i;
++
++	if (cp->of_node)
++		of_clk_del_provider(cp->of_node);
++
++	for (i = 0; i < ARRAY_SIZE(cp->clks); i++)
++		if (!IS_ERR(cp->clks[i]))
++			clk_unregister(cp->clks[i]);
++}
++
++static int fimc_md_register_clk_provider(struct fimc_md *fmd)
++{
++	struct cam_clk_provider *cp = &fmd->clk_provider;
++	struct device *dev = &fmd->pdev->dev;
++	int i, ret;
++
++	for (i = 0; i < ARRAY_SIZE(cp->clks); i++)
++		cp->clks[i] = ERR_PTR(-EINVAL);
++
++	for (i = 0; i < FIMC_MAX_CAMCLKS; i++) {
++		struct cam_clk *camclk = &cp->camclk[i];
++		struct clk_init_data init;
++		char clk_name[16];
++		struct clk *clk;
++
++		snprintf(clk_name, sizeof(clk_name), "cam_clkout%d", i);
++
++		init.name = clk_name;
++		init.ops = &cam_clk_ops;
++		init.flags = CLK_SET_RATE_PARENT;
++		init.parent_names = &cam_clk_p_names[i];
++		init.num_parents = 1;
++		camclk->hw.init = &init;
++		camclk->fmd = fmd;
++
++		clk = clk_register(dev, &camclk->hw);
++		if (IS_ERR(clk)) {
++			dev_err(dev, "failed to register clock: %s (%ld)\n",
++						clk_name, PTR_ERR(clk));
++			ret = PTR_ERR(clk);
++			goto err;
++		}
++		cp->clks[i] = clk;
++	}
++
++	cp->clk_data.clks = cp->clks;
++	cp->clk_data.clk_num = i;
++	cp->of_node = dev->of_node;
++
++	ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
++				  &cp->clk_data);
++	if (!ret)
++		return 0;
++err:
++	fimc_md_unregister_clk_provider(fmd);
++	return ret;
++}
++#else
++#define fimc_md_register_clk_provider(fmd) (0)
++#define fimc_md_unregister_clk_provider(fmd) (0)
 +#endif
 +
- static struct i2c_driver s5c73m3_i2c_driver = {
- 	.driver = {
-+		.of_match_table = of_match_ptr(s5c73m3_of_match),
- 		.name	= DRIVER_NAME,
- 	},
- 	.probe		= s5c73m3_probe,
-diff --git a/drivers/media/i2c/s5c73m3/s5c73m3-spi.c b/drivers/media/i2c/s5c73m3/s5c73m3-spi.c
-index 8079e26..f60b265 100644
---- a/drivers/media/i2c/s5c73m3/s5c73m3-spi.c
-+++ b/drivers/media/i2c/s5c73m3/s5c73m3-spi.c
-@@ -27,6 +27,11 @@
+ static int fimc_md_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -1464,16 +1561,24 @@ static int fimc_md_probe(struct platform_device *pdev)
  
- #define S5C73M3_SPI_DRV_NAME "S5C73M3-SPI"
+ 	fmd->use_isp = fimc_md_is_isp_available(dev->of_node);
  
-+static const struct of_device_id s5c73m3_spi_ids[] = {
-+	{ .compatible = "samsung,s5c73m3" },
-+	{ }
-+};
++	ret = fimc_md_register_clk_provider(fmd);
++	if (ret < 0) {
++		v4l2_err(v4l2_dev, "clock provider registration failed\n");
++		return ret;
++	}
 +
- enum spi_direction {
- 	SPI_DIR_RX,
- 	SPI_DIR_TX
-@@ -146,6 +151,7 @@ int s5c73m3_register_spi_driver(struct s5c73m3 *state)
- 	spidrv->driver.name = S5C73M3_SPI_DRV_NAME;
- 	spidrv->driver.bus = &spi_bus_type;
- 	spidrv->driver.owner = THIS_MODULE;
-+	spidrv->driver.of_match_table = s5c73m3_spi_ids;
- 
- 	return spi_register_driver(spidrv);
+ 	ret = v4l2_device_register(dev, &fmd->v4l2_dev);
+ 	if (ret < 0) {
+ 		v4l2_err(v4l2_dev, "Failed to register v4l2_device: %d\n", ret);
+ 		return ret;
+ 	}
++
+ 	ret = media_device_register(&fmd->media_dev);
+ 	if (ret < 0) {
+ 		v4l2_err(v4l2_dev, "Failed to register media device: %d\n", ret);
+ 		goto err_md;
+ 	}
++
+ 	ret = fimc_md_get_clocks(fmd);
+ 	if (ret)
+ 		goto err_clk;
+@@ -1507,6 +1612,7 @@ static int fimc_md_probe(struct platform_device *pdev)
+ 	ret = fimc_md_create_links(fmd);
+ 	if (ret)
+ 		goto err_unlock;
++
+ 	ret = v4l2_device_register_subdev_nodes(&fmd->v4l2_dev);
+ 	if (ret)
+ 		goto err_unlock;
+@@ -1527,6 +1633,7 @@ err_clk:
+ 	media_device_unregister(&fmd->media_dev);
+ err_md:
+ 	v4l2_device_unregister(&fmd->v4l2_dev);
++	fimc_md_unregister_clk_provider(fmd);
+ 	return ret;
  }
-diff --git a/drivers/media/i2c/s5c73m3/s5c73m3.h b/drivers/media/i2c/s5c73m3/s5c73m3.h
-index 9d2c086..2917857 100644
---- a/drivers/media/i2c/s5c73m3/s5c73m3.h
-+++ b/drivers/media/i2c/s5c73m3/s5c73m3.h
-@@ -17,6 +17,7 @@
- #ifndef S5C73M3_H_
- #define S5C73M3_H_
  
-+#include <linux/clk.h>
- #include <linux/kernel.h>
- #include <linux/regulator/consumer.h>
- #include <media/v4l2-common.h>
-@@ -321,6 +322,7 @@ enum s5c73m3_oif_pads {
+@@ -1537,6 +1644,7 @@ static int fimc_md_remove(struct platform_device *pdev)
+ 	if (!fmd)
+ 		return 0;
  
++	fimc_md_unregister_clk_provider(fmd);
+ 	v4l2_device_unregister(&fmd->v4l2_dev);
+ 	device_remove_file(&pdev->dev, &dev_attr_subdev_conf_mode);
+ 	fimc_md_unregister_entities(fmd);
+diff --git a/drivers/media/platform/exynos4-is/media-dev.h b/drivers/media/platform/exynos4-is/media-dev.h
+index 62599fd..240ca71 100644
+--- a/drivers/media/platform/exynos4-is/media-dev.h
++++ b/drivers/media/platform/exynos4-is/media-dev.h
+@@ -10,6 +10,7 @@
+ #define FIMC_MDEVICE_H_
  
- #define S5C73M3_MAX_SUPPLIES			6
-+#define S5C73M3_DEFAULT_MCLK_FREQ		24000000U
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/platform_device.h>
+ #include <linux/mutex.h>
+ #include <linux/of.h>
+@@ -89,6 +90,12 @@ struct fimc_sensor_info {
+ 	struct fimc_dev *host;
+ };
  
- struct s5c73m3_ctrls {
- 	struct v4l2_ctrl_handler handler;
-@@ -391,6 +393,8 @@ struct s5c73m3 {
- 	struct regulator_bulk_data supplies[S5C73M3_MAX_SUPPLIES];
- 	struct s5c73m3_gpio gpio[GPIO_NUM];
- 
-+	struct clk *clock;
++struct cam_clk {
++	struct clk_hw hw;
++	struct fimc_md *fmd;
++};
++#define to_cam_clk(_hw) container_of(_hw, struct cam_clk, hw)
 +
- 	/* External master clock frequency */
- 	u32 mclk_frequency;
- 	/* Video bus type - MIPI-CSI2/paralell */
+ /**
+  * struct fimc_md - fimc media device information
+  * @csis: MIPI CSIS subdevs data
+@@ -105,6 +112,7 @@ struct fimc_sensor_info {
+  * @pinctrl: camera port pinctrl handle
+  * @state_default: pinctrl default state handle
+  * @state_idle: pinctrl idle state handle
++ * @cam_clk_provider: CAMCLK clock provider structure
+  * @user_subdev_api: true if subdevs are not configured by the host driver
+  * @slock: spinlock protecting @sensor array
+  */
+@@ -122,13 +130,21 @@ struct fimc_md {
+ 	struct media_device media_dev;
+ 	struct v4l2_device v4l2_dev;
+ 	struct platform_device *pdev;
++
+ 	struct fimc_pinctrl {
+ 		struct pinctrl *pinctrl;
+ 		struct pinctrl_state *state_default;
+ 		struct pinctrl_state *state_idle;
+ 	} pinctl;
+-	bool user_subdev_api;
+ 
++	struct cam_clk_provider {
++		struct clk *clks[FIMC_MAX_CAMCLKS];
++		struct clk_onecell_data clk_data;
++		struct device_node *of_node;
++		struct cam_clk camclk[FIMC_MAX_CAMCLKS];
++	} clk_provider;
++
++	bool user_subdev_api;
+ 	spinlock_t slock;
+ 	struct list_head pipelines;
+ };
 -- 
 1.7.9.5
