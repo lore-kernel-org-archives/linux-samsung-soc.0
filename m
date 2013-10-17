@@ -1,31 +1,47 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] spi/s3c64xx: Add missing pm_runtime_set_active() call in
- probe()
-Date: Thu, 17 Oct 2013 18:10:58 +0200
-Message-ID: <52600C12.3000606@samsung.com>
-References: <1382026006-15544-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH 0/8] clk: max77686: Clock provider implementation fixes
+Date: Thu, 17 Oct 2013 18:30:34 +0200
+Message-ID: <1382027442-1992-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:29048 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757569Ab3JQQLD (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51885 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755964Ab3JQQa7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 12:11:03 -0400
-In-reply-to: <1382026006-15544-1-git-send-email-k.kozlowski@samsung.com>
+	Thu, 17 Oct 2013 12:30:59 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-On 17/10/13 18:06, Krzysztof Kozlowski wrote:
-> Mark device as PM runtime active during initialization to reflect
-> actual device power/clocks state. This reduces the enable count for SPI
-> bus controller gate clock so it can be disabled when the bus controller
-> is not used.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+This series intends to improve clock provider impementation of max77686
+PMIC driver. First two patches are simple fixes of current implementation
+to allow correct control of provided clocks. Further patches refactor
+the driver to make the code cleaner and prepare for further patches. Then
+last two patches add registration of OF clock provider and adjust device
+tree nodes of boards containing max77686 chip to contain properties
+required by clock provider.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Tested on Exynos4412-based Trats2 board, with additional patches adding
+driver being a consumer of one of max77686 clocks.
+
+Tomasz Figa (8):
+  clk: max77686: Correct callback used for checking clock status
+  clk: max77686: Provide .recalc_rate() operation
+  clk: max77686: Refactor successful exit of probe function
+  clk: max77686: Make max77686_clk_register() return struct clk *
+  clk: max77686: Fix clean-up in error and remove paths
+  clk: max77686: Refactor driver data handling
+  clk: max77686: Register OF clock provider
+  ARM: dts: Add clock provider specific properties to max77686 node
+
+ .../devicetree/bindings/clock/maxim,max77686.txt   | 38 +++++++++
+ Documentation/devicetree/bindings/mfd/max77686.txt |  3 +
+ arch/arm/boot/dts/cros5250-common.dtsi             |  1 +
+ arch/arm/boot/dts/exynos4412-odroidx.dts           |  1 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  1 +
+ drivers/clk/clk-max77686.c                         | 97 +++++++++++++---------
+ 6 files changed, 104 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77686.txt
+
+-- 
+1.8.3.2
