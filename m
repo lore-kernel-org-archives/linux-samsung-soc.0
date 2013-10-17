@@ -1,119 +1,72 @@
-From: Dave Martin <Dave.Martin@arm.com>
-Subject: Re: [PATCH v2 3/4] ARM: EXYNOS: add Exynos Dual Cluster Support
-Date: Thu, 17 Oct 2013 17:49:33 +0100
-Message-ID: <20131017164933.GG2442@localhost.localdomain>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v9 12/13] V4L: s5k6a3: Change sensor min/max resolutions
+Date: Thu, 17 Oct 2013 19:03:40 +0200
+Message-ID: <5260186C.1040109@samsung.com>
+References: <1380279558-21651-1-git-send-email-arun.kk@samsung.com>
+ <1380279558-21651-13-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Nicolas Pitre <nicolas.pitre@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, Naour Romain <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <rob.herring@calxeda.com>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Landley <rob@landley.net>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37729 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754994Ab3JQRDp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Oct 2013 13:03:45 -0400
+In-reply-to: <1380279558-21651-13-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-On Thu, Oct 17, 2013 at 06:04:13PM +0200, Daniel Lezcano wrote:
-> On 10/17/2013 04:32 PM, Dave Martin wrote:
-> > On Thu, Oct 17, 2013 at 12:45:29PM +0200, Daniel Lezcano wrote:
-> >> On 10/14/2013 05:08 PM, Vyacheslav Tyrtov wrote:
-> >>> From: Tarek Dakhran <t.dakhran@samsung.com>
-> >>>=20
-> >>> Add EDCS(Exynos Dual Cluster Support) for Samsung Exynos5410 SoC.
-> >>> This enables all 8 cores, 4 x A7 and 4 x A15 run at the same time=
-=2E
-> >=20
-> > [...]
-> >=20
-> >>> +	__mcpm_cpu_down(cpu, cluster);
-> >>> +
-> >>> +	if (!skip_wfi) {
-> >>> +		exynos_core_power_down(cpu, cluster);
-> >>> +		wfi();
-> >>> +	}
-> >>> +}
-> >>=20
-> >> I did not looked line by line but these functions looks very simil=
-ar
-> >> than the tc2_pm.c's function. no ?
-> >=20
-> > This is true.
-> >=20
-> >> May be some code consolidation could be considered here.
-> >>=20
-> >> Added Nico and Lorenzo in Cc.
-> >>=20
-> >> Thanks
-> >>    -- Daniel
-> >=20
-> > Nico can commnent further, but I think the main concern here was th=
-at
-> > this code shouldn't be factored prematurely.
->=20
-> I do not share this opinion.
->=20
-> > There are many low-level platform specifics involved here, so it's
-> > hard to be certain that all platforms could fit into a more abstrac=
-ted
-> > framework until we have some evidence to look at.
-> >=20
-> > This could be revisited when we have a few diverse MCPM ports to
-> > compare.
->=20
-> I am worried about seeing more and more duplicated code around the AR=
-M
-> arch (eg. arm[64]/kernel/smp.c arm64/kernel/smp.c).
->=20
-> The cpuidle drivers have been duplicated and it took a while before
-> refactoring them, and it is not finished. The hotplug code have been
-> duplicated and now it is very difficult to factor it out.
->=20
-> A lot of work have been done to consolidate the code across the
-> different SoC since the last 2 years.
->=20
-> If we let duplicate code populate the different files, they will
-> belong to different maintainers, thus different trees. Each SoC
-> contributors will tend to add their small changes making the code to
-> diverge more and more and making difficult to re-factor it later.
+Hi Arun,
 
-I think this is Nico's call, since he has more experience than I do
-of how these things tend to play out in practice.
+My apologies for the delay.
 
-Cheers
----Dave
+On 27/09/13 12:59, Arun Kumar K wrote:
+> s5k6a3 sensor has actual pixel resolution of 1408x1402 against
+> the active resolution 1392x1392. The real resolution is needed
+> when raw sensor SRGB data is dumped to memory by fimc-lite.
+> 
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/media/i2c/s5k6a3.c |   10 ++++++----
+>  1 file changed, 6 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/s5k6a3.c b/drivers/media/i2c/s5k6a3.c
+> index ccbb4fc..e70e217 100644
+> --- a/drivers/media/i2c/s5k6a3.c
+> +++ b/drivers/media/i2c/s5k6a3.c
+> @@ -25,10 +25,12 @@
+>  #include <media/v4l2-async.h>
+>  #include <media/v4l2-subdev.h>
+>  
+> -#define S5K6A3_SENSOR_MAX_WIDTH		1392
+> -#define S5K6A3_SENSOR_MAX_HEIGHT	1392
+> -#define S5K6A3_SENSOR_MIN_WIDTH		32
+> -#define S5K6A3_SENSOR_MIN_HEIGHT	32
+> +#define S5K6A3_SENSOR_MAX_WIDTH		1408
+> +#define S5K6A3_SENSOR_MAX_HEIGHT	1402
 
-> I am in favor of preventing duplicate code entering in the kernel and
-> force the contributors to improve the kernel in general, not just the
-> small part they are supposed to work on. Otherwise, we are letting th=
-e
-> kernel to fork itself, internally...
->=20
-> > The low-level A15/A7 cacheflush sequence is already being factored
-> > by Nico [1].
->=20
-> Hopefully he did it :)
->=20
-> Thanks
->   -- Daniel
->=20
-> > [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2013-Octo=
-ber/205085.html
-> > [PATCH] ARM: cacheflush: consolidate single-CPU ARMv7 cache disabli=
-ng code
-> >=20
-> > [...]
-> >=20
->=20
->=20
-> --=20
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software f=
-or ARM SoCs
->=20
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->=20
->=20
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Where these numbers come from ? I digged in the datasheet and the pixel
+array size for S5K6A3YX is 1412 x 1412 pixels. I will use this value
+in my updated s5k6a3 driver patch I'm going to post today. And I will
+drop this patch from this series.
+
+> +#define S5K6A3_SENSOR_ACTIVE_WIDTH	1392
+> +#define S5K6A3_SENSOR_ACTIVE_HEIGHT	1392
+
+
+S5K6A3_SENSOR_ACTIVE_* macros are not used anywhere ? Can they be dropped ?
+Same applies to your S5K4E5 driver patch.
+
+> +#define S5K6A3_SENSOR_MIN_WIDTH		(32 + 16)
+> +#define S5K6A3_SENSOR_MIN_HEIGHT	(32 + 10)
+>  
+>  #define S5K6A3_DEF_PIX_WIDTH		1296
+>  #define S5K6A3_DEF_PIX_HEIGHT		732
+> 
+
+Thanks,
+Sylwester
