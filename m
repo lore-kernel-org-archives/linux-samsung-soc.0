@@ -1,72 +1,56 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v9 12/13] V4L: s5k6a3: Change sensor min/max resolutions
-Date: Thu, 17 Oct 2013 19:03:40 +0200
-Message-ID: <5260186C.1040109@samsung.com>
+Subject: Re: [PATCH v9 13/13] V4L: Add driver for s5k4e5 image sensor
+Date: Thu, 17 Oct 2013 19:10:08 +0200
+Message-ID: <526019F0.3070406@samsung.com>
 References: <1380279558-21651-1-git-send-email-arun.kk@samsung.com>
- <1380279558-21651-13-git-send-email-arun.kk@samsung.com>
+ <1380279558-21651-14-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37729 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754994Ab3JQRDp (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:30727 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757220Ab3JQRKN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 13:03:45 -0400
-In-reply-to: <1380279558-21651-13-git-send-email-arun.kk@samsung.com>
+	Thu, 17 Oct 2013 13:10:13 -0400
+In-reply-to: <1380279558-21651-14-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-Hi Arun,
-
-My apologies for the delay.
-
 On 27/09/13 12:59, Arun Kumar K wrote:
-> s5k6a3 sensor has actual pixel resolution of 1408x1402 against
-> the active resolution 1392x1392. The real resolution is needed
-> when raw sensor SRGB data is dumped to memory by fimc-lite.
+> This patch adds subdev driver for Samsung S5K4E5 raw image sensor.
+> Like s5k6a3, it is also another fimc-is firmware controlled
+> sensor. This minimal sensor driver doesn't do any I2C communications
+> as its done by ISP firmware. It can be updated if needed to a
+> regular sensor driver by adding the I2C communication.
 > 
 > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 > Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
->  drivers/media/i2c/s5k6a3.c |   10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+>  .../devicetree/bindings/media/i2c/s5k4e5.txt       |   45 +++
+>  drivers/media/i2c/Kconfig                          |    8 +
+>  drivers/media/i2c/Makefile                         |    1 +
+>  drivers/media/i2c/s5k4e5.c                         |  347 ++++++++++++++++++++
+>  4 files changed, 401 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+>  create mode 100644 drivers/media/i2c/s5k4e5.c
 > 
-> diff --git a/drivers/media/i2c/s5k6a3.c b/drivers/media/i2c/s5k6a3.c
-> index ccbb4fc..e70e217 100644
-> --- a/drivers/media/i2c/s5k6a3.c
-> +++ b/drivers/media/i2c/s5k6a3.c
-> @@ -25,10 +25,12 @@
->  #include <media/v4l2-async.h>
->  #include <media/v4l2-subdev.h>
->  
-> -#define S5K6A3_SENSOR_MAX_WIDTH		1392
-> -#define S5K6A3_SENSOR_MAX_HEIGHT	1392
-> -#define S5K6A3_SENSOR_MIN_WIDTH		32
-> -#define S5K6A3_SENSOR_MIN_HEIGHT	32
-> +#define S5K6A3_SENSOR_MAX_WIDTH		1408
-> +#define S5K6A3_SENSOR_MAX_HEIGHT	1402
+> diff --git a/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+> new file mode 100644
+> index 0000000..0fca087
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
 
-Where these numbers come from ? I digged in the datasheet and the pixel
-array size for S5K6A3YX is 1412 x 1412 pixels. I will use this value
-in my updated s5k6a3 driver patch I'm going to post today. And I will
-drop this patch from this series.
+Could you make a separate patch adding DT binding only ?
+And can you please rename this file to:
+Documentation/devicetree/bindings/media/samsung-s5k4e5.txt, like
+it's done in case of other sensors ?
 
-> +#define S5K6A3_SENSOR_ACTIVE_WIDTH	1392
-> +#define S5K6A3_SENSOR_ACTIVE_HEIGHT	1392
+Should I apply patches 02...11/13 already or would you like send 
+the whole series updated ? AFAICS there are minor things pointed 
+out by Hans not addressed yet ?
 
-
-S5K6A3_SENSOR_ACTIVE_* macros are not used anywhere ? Can they be dropped ?
-Same applies to your S5K4E5 driver patch.
-
-> +#define S5K6A3_SENSOR_MIN_WIDTH		(32 + 16)
-> +#define S5K6A3_SENSOR_MIN_HEIGHT	(32 + 10)
->  
->  #define S5K6A3_DEF_PIX_WIDTH		1296
->  #define S5K6A3_DEF_PIX_HEIGHT		732
-> 
-
-Thanks,
+Regards,
 Sylwester
