@@ -1,99 +1,55 @@
-From: Majunath Goudar <csmanjuvijay@gmail.com>
-Subject: [PATCH V3 5/6] USB: OHCI: Properly handle ohci-exynos suspend
-Date: Thu, 17 Oct 2013 19:05:12 +0530
-Message-ID: <1382016913-10872-6-git-send-email-csmanjuvijay@gmail.com>
-References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
- <1382016913-10872-1-git-send-email-csmanjuvijay@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382016913-10872-1-git-send-email-csmanjuvijay@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: csmanjuvijay@gmail.com
-Cc: Alan Stern <stern@rowland.harvard.edu>, Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH 3/9] clk: samsung: exynos4: Move suspend/resume handling
+ to SoC driver
+Date: Thu, 17 Oct 2013 19:12:08 +0530
+Message-ID: <CAKew6eV7Hd1x1+YLR9rjzNgYu0t=9Q8BG23VUvhPJTf77bsRXQ@mail.gmail.com>
+References: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
+	<1381921698-5060-4-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:43888 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755429Ab3JQNmJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Oct 2013 09:42:09 -0400
+Received: by mail-ie0-f173.google.com with SMTP id u16so3812950iet.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Oct 2013 06:42:08 -0700 (PDT)
+In-Reply-To: <1381921698-5060-4-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-Suspend scenario in case of ohci-exynos glue was not
-properly handled as it was not suspending generic part
-of ohci controller. Alan Stern suggested, properly handle
-ohci-exynos suspend scenario.
+Hi Tomasz,
 
-Calling explicitly the ohci_suspend() routine in
-exynos_ohci_suspend() will ensure proper handling of suspend
-scenario.
+[ ... ]
+>  /*
+>   * list of controller registers to be saved and restored during a
+>   * suspend/resume cycle.
+> @@ -288,6 +299,70 @@ static unsigned long exynos4_clk_regs[] __initdata = {
+>         GATE_IP_CPU,
+>  };
+>
+> +static int exynos4_clk_suspend(void)
+> +{
+> +       samsung_clk_save(reg_base, exynos4_save_common,
+> +                               ARRAY_SIZE(exynos4_clk_regs));
 
-V1->V2:
-      -No changes.
-       Due to the build failure on ep93xx reverted this patch.
-       This patch is needed as Alan Stern suggestion.
+a doubt here, Is sizeof(exynos4_clk_regs) works with
+exynos4_clk_regs[] as __initdata ?
 
-V2->V3:
-      -No changes.
-      As a build failure on "ep93xx proper suspend patch"
-      and Linaro id bounced. Rewrote this patch on top of latest
-      Greg usb-next branch. This patch not gives any build error. 
-      Patch is required for ohci-exynos proper suspending as Alan 
-      mentioned.
+> +
+> +       if (exynos4_soc == EXYNOS4210)
+> +               samsung_clk_save(reg_base, exynos4_save_soc,
+> +                                       ARRAY_SIZE(exynos4210_clk_save));
 
-      Initially when I wrote this patch I was working in Linaro, 
-      now I am not part of Linaro that is why Linaro id is bouncing. 
-      Sending this patch from personal mail id.
+[ ... ]
+> +static void exynos4_clk_sleep_init(void)
 
-Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg KH <greg@kroah.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
----
- drivers/usb/host/ohci-exynos.c |   22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+I think, this fuction can be placed in __init section.
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index a87baed..4b5c8bd 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -192,23 +192,14 @@ static int exynos_ohci_suspend(struct device *dev)
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
- 	struct platform_device *pdev = to_platform_device(dev);
-+	bool do_wakeup = device_may_wakeup(dev);
- 	unsigned long flags;
--	int rc = 0;
-+	int rc = ohci_suspend(hcd, do_wakeup);
- 
--	/*
--	 * Root hub was already suspended. Disable irq emission and
--	 * mark HW unaccessible, bail out if RH has been resumed. Use
--	 * the spinlock to properly synchronize with possible pending
--	 * RH suspend or resume activity.
--	 */
--	spin_lock_irqsave(&ohci->lock, flags);
--	if (ohci->rh_state != OHCI_RH_SUSPENDED &&
--			ohci->rh_state != OHCI_RH_HALTED) {
--		rc = -EINVAL;
--		goto fail;
--	}
-+	if (rc)
-+		return rc;
- 
--	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-+	spin_lock_irqsave(&ohci->lock, flags);
- 
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-@@ -217,10 +208,9 @@ static int exynos_ohci_suspend(struct device *dev)
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
--fail:
- 	spin_unlock_irqrestore(&ohci->lock, flags);
- 
--	return rc;
-+	return 0;
- }
- 
- static int exynos_ohci_resume(struct device *dev)
--- 
-1.7.9.5
+Same in other patches as well.
+
+Regards,
+Yadwinder
