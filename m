@@ -1,56 +1,90 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v9 13/13] V4L: Add driver for s5k4e5 image sensor
-Date: Thu, 17 Oct 2013 19:10:08 +0200
-Message-ID: <526019F0.3070406@samsung.com>
-References: <1380279558-21651-1-git-send-email-arun.kk@samsung.com>
- <1380279558-21651-14-git-send-email-arun.kk@samsung.com>
+Subject: Re: [PATCH RFC v2 00/10] V4L2 mem-to-mem ioctl helpers
+Date: Thu, 17 Oct 2013 19:19:23 +0200
+Message-ID: <52601C1B.6080802@samsung.com>
+References: <1381581120-26883-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:30727 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757220Ab3JQRKN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 13:10:13 -0400
-In-reply-to: <1380279558-21651-14-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1381581120-26883-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: hverkuil@xs4all.nl
+Cc: linux-media@vger.kernel.org, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, p.zabel@pengutronix.de, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-On 27/09/13 12:59, Arun Kumar K wrote:
-> This patch adds subdev driver for Samsung S5K4E5 raw image sensor.
-> Like s5k6a3, it is also another fimc-is firmware controlled
-> sensor. This minimal sensor driver doesn't do any I2C communications
-> as its done by ISP firmware. It can be updated if needed to a
-> regular sensor driver by adding the I2C communication.
-> 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../devicetree/bindings/media/i2c/s5k4e5.txt       |   45 +++
->  drivers/media/i2c/Kconfig                          |    8 +
->  drivers/media/i2c/Makefile                         |    1 +
->  drivers/media/i2c/s5k4e5.c                         |  347 ++++++++++++++++++++
->  4 files changed, 401 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
->  create mode 100644 drivers/media/i2c/s5k4e5.c
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
-> new file mode 100644
-> index 0000000..0fca087
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/s5k4e5.txt
+Hi Hans,
 
-Could you make a separate patch adding DT binding only ?
-And can you please rename this file to:
-Documentation/devicetree/bindings/media/samsung-s5k4e5.txt, like
-it's done in case of other sensors ?
+Can I still add your Ack to updated patches 2, 3, 4, 10 ?
 
-Should I apply patches 02...11/13 already or would you like send 
-the whole series updated ? AFAICS there are minor things pointed 
-out by Hans not addressed yet ?
-
-Regards,
+Thanks,
 Sylwester
+
+On 12/10/13 14:31, Sylwester Nawrocki wrote:
+> Hello,
+> 
+> This patch set adds ioctl helpers to the v4l2-mem2mem module so the
+> video mem-to-mem drivers can be simplified by removing functions that
+> are only a pass-through to the v4l2_m2m_* calls. In addition some of
+> the vb2 helper functions can be used as well.
+> 
+> These helpers are similar to the videobuf2 ioctl helpers introduced
+> in commit 4c1ffcaad5 "[media] videobuf2-core: add helper functions".
+> 
+> Currently the requirements to use helper function introduced in this
+> patch set is that both OUTPUT and CAPTURE vb2 buffer queues must use
+> same lock and the driver uses struct v4l2_fh.
+> 
+> I have only tested the first four patches in this series, Tested-by
+> for the mx2-emmaprp, exynos-gsc, s5p-g2d drivers are appreciated.
+> 
+> This patch series can be also found at:
+>  git://linuxtv.org/snawrocki/samsung.git m2m-helpers-v3
+> 
+> Changes since original version include addition of related cleanup
+> patches, added helper function for create_buf ioctl and m2m context
+> pointer from struct v4l2_fh is now reused and related field from the
+> drivers' private data structure is removed.
+> 
+> Thank you for all reviews. I plan to queue the first four patches for
+> next kernel release early this week. For the mx2-emmaprp, exynos-gsc,
+> s5p-g2d driver feedback is needed from someone who can actually test
+> the changes. Any Tested-by for those drivers would be appreciated.
+> 
+> Thanks,
+> Sylwester
+> 
+> Sylwester Nawrocki (10):
+>   V4L: Add mem2mem ioctl and file operation helpers
+>   mem2mem_testdev: Use mem-to-mem ioctl and vb2 helpers
+>   exynos4-is: Use mem-to-mem ioctl helpers
+>   s5p-jpeg: Use mem-to-mem ioctl helpers
+>   mx2-emmaprp: Use struct v4l2_fh
+>   mx2-emmaprp: Use mem-to-mem ioctl helpers
+>   exynos-gsc: Configure default image format at device open()
+>   exynos-gsc: Remove GSC_{SRC, DST}_FMT flags
+>   exynos-gsc: Use mem-to-mem ioctl helpers
+>   s5p-g2d: Use mem-to-mem ioctl helpers
+> 
+>  drivers/media/platform/exynos-gsc/gsc-core.c  |   10 +-
+>  drivers/media/platform/exynos-gsc/gsc-core.h  |   14 --
+>  drivers/media/platform/exynos-gsc/gsc-m2m.c   |  232 ++++++++-----------------
+>  drivers/media/platform/exynos4-is/fimc-core.h |    2 -
+>  drivers/media/platform/exynos4-is/fimc-m2m.c  |  148 +++-------------
+>  drivers/media/platform/mem2mem_testdev.c      |  152 +++-------------
+>  drivers/media/platform/mx2_emmaprp.c          |  185 ++++++--------------
+>  drivers/media/platform/s5p-g2d/g2d.c          |  124 +++-----------
+>  drivers/media/platform/s5p-g2d/g2d.h          |    1 -
+>  drivers/media/platform/s5p-jpeg/jpeg-core.c   |  134 +++------------
+>  drivers/media/platform/s5p-jpeg/jpeg-core.h   |    2 -
+>  drivers/media/v4l2-core/v4l2-mem2mem.c        |  118 +++++++++++++
+>  include/media/v4l2-fh.h                       |    4 +
+>  include/media/v4l2-mem2mem.h                  |   24 +++
+>  14 files changed, 382 insertions(+), 768 deletions(-)
+> 
+> --
+> 1.7.4.1
+
+-- 
+Sylwester Nawrocki
+Samsung R&D Institute Poland
