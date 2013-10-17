@@ -1,48 +1,92 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] cpufreq: exynos: Convert exynos-cpufreq to platform driver
-Date: Thu, 17 Oct 2013 17:31:52 +0900
-Message-ID: <001d01cecb13$54ccd410$fe667c30$%han@samsung.com>
-References: <1381939238-30398-1-git-send-email-t.figa@samsung.com>
- <CAK9yfHwW+ofX5f8hHF=MYQn=CUMyiHvg4iAH-cHFW7JQ5Qnscw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-reply-to: <CAK9yfHwW+ofX5f8hHF=MYQn=CUMyiHvg4iAH-cHFW7JQ5Qnscw@mail.gmail.com>
-Content-language: ko
-Sender: cpufreq-owner@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH] ARM: dts: Exynos5420: Add device nodes for TMU blocks
+Date: Thu, 17 Oct 2013 15:34:00 +0530
+Message-ID: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:32276 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754352Ab3JQJn0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Oct 2013 05:43:26 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, amit.daniel@samsung.com, cpgs@samsung.com
 
-On Thursday, October 17, 2013 2:00 PM, Sachin Kamat wrote:
-> On 16 October 2013 21:30, Tomasz Figa <t.figa@samsung.com> wrote:
-> > From: Lukasz Majewski <l.majewski@samsung.com>
-> >
-> > +static struct platform_driver exynos_cpufreq_platdrv = {
-> > +       .driver = {
-> > +               .name   = "exynos-cpufreq",
-> > +               .owner  = THIS_MODULE,
-> > +       },
-> > +       .probe = exynos_cpufreq_init,
-> 
-> I think the prototype of this function should be changed to:
-> static int __init exynos_cpufreq_init(struct platform_device *pdev)
-> 
-> to avoid compilation warnings.
+Exynos5420 SoC has per core thermal management unit, this patch adds
+tmu device nodes to the DT device list.
 
-Hi Tomasz Figa,
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+---
 
-One more thing. :-)
+Note: This patch has been tested on kgene's for-next branch 
+after applying Naveen's patchset
 
-It makes section mismatch warning. Also, module_platform_driver()
-is used. Then, '__init' annotation can be removed in order to fix
-the section mismatch warning.
+[1/3,v6] thermal: samsung: add intclr_fall_shift bit in exynos_tmu_register
+https://patchwork.kernel.org/patch/3058501/
+[2/3,v6] thermal: samsung: change base_common to more meaningful base_second
+https://patchwork.kernel.org/patch/3058541/
+[3/3,v6] thermal: samsung: Add TMU support for Exynos5420 SoCs
+https://patchwork.kernel.org/patch/3058571/
 
-static int exynos_cpufreq_init(struct platform_device *pdev)
+ arch/arm/boot/dts/exynos5420.dtsi |   45 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-Thank you.
-
-Best regards,
-Jingoo Han
-
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 09aa06c..c6270cd 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -190,6 +190,51 @@
+ 		status = "okay";
+ 	};
+ 
++	/* tmu for CPU0 */
++	tmu@10060000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x10060000 0x100>;
++		interrupts = <0 65 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
++	/* tmu for CPU1 */
++	tmu@10064000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x10064000 0x100>;
++		interrupts = <0 183 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
++	/* tmu for CPU2 */
++	tmu@10068000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x10068000 0x100>;
++		interrupts = <0 184 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
++	/* tmu for CPU3 */
++	tmu@1006c000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x1006c000 0x100>;
++		interrupts = <0 185 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
++	/* tmu for GPU */
++	tmu@100a0000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x100a0000 0x100>;
++		interrupts = <0 215 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
+ 	serial@12C00000 {
+ 		clocks = <&clock 257>, <&clock 128>;
+ 		clock-names = "uart", "clk_uart_baud0";
+-- 
+1.7.10.4
