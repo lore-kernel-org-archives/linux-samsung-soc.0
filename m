@@ -1,103 +1,45 @@
-From: "Hans Verkuil" <hverkuil@xs4all.nl>
-Subject: Re: [PATCH RFC v2 00/10] V4L2 mem-to-mem ioctl helpers
-Date: Thu, 17 Oct 2013 19:27:33 +0200
-Message-ID: <5b441bfc95ea3d9500c0eb7b68134c51.squirrel@webmail.xs4all.nl>
-References: <1381581120-26883-1-git-send-email-s.nawrocki@samsung.com>
-    <52601C1B.6080802@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base value
+Date: Thu, 17 Oct 2013 10:53:02 -0700 (PDT)
+Message-ID: <1949846.N3fAUHQ1Nx@flatron>
+References: <1379937815-21746-1-git-send-email-chander.kashyap@linaro.org> <02c701ceba75$f95b1900$ec114b00$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <52601C1B.6080802@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org, pawel@osciak.com, javier.martin@vista-silicon.com, m.szyprowski@samsung.com, shaik.ameer@samsung.com, arun.kk@samsung.com, k.debski@samsung.com, p.zabel@pengutronix.de, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f175.google.com ([209.85.215.175]:40250 "EHLO
+	mail-ea0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757608Ab3JQRxF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Oct 2013 13:53:05 -0400
+In-Reply-To: <02c701ceba75$f95b1900$ec114b00$@org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, 'Chander Kashyap' <chander.kashyap@linaro.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tglx@linutronix.de, thomas.abraham@linaro.org, t.figa@samsung.com
 
-Hi Sylwester,
+Hi Kukjin,
 
-> Hi Hans,
->
-> Can I still add your Ack to updated patches 2, 3, 4, 10 ?
+On Thursday 26 of September 2013 14:05:09 Kukjin Kim wrote:
+> Chander Kashyap wrote:
+> > Replace irq_domain_add_simple with "irq_domain_add_linear" in order to
+> > use linear irq domain, and to remove hardcoded irq_base_value.
+> > 
+> > Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+> > ---
+> > 
+> > Changes since v1:
+> > 	- Replaced irq_domain_add_simple with irq_domain_add_linear,
+> > 	
+> > 	  as suggested by Tomasz
+> >  
+> >  drivers/irqchip/exynos-combiner.c |   15 +++------------
+> >  1 file changed, 3 insertions(+), 12 deletions(-)
+[snip]
+> 
+> Looks nice to me, applied with Tomasz's review.
 
-Yes, that's OK.
+I don't see this patch in your tree. Did you apply it in the end?
 
-Regards,
-
-    Hans
-
->
-> Thanks,
-> Sylwester
->
-> On 12/10/13 14:31, Sylwester Nawrocki wrote:
->> Hello,
->>
->> This patch set adds ioctl helpers to the v4l2-mem2mem module so the
->> video mem-to-mem drivers can be simplified by removing functions that
->> are only a pass-through to the v4l2_m2m_* calls. In addition some of
->> the vb2 helper functions can be used as well.
->>
->> These helpers are similar to the videobuf2 ioctl helpers introduced
->> in commit 4c1ffcaad5 "[media] videobuf2-core: add helper functions".
->>
->> Currently the requirements to use helper function introduced in this
->> patch set is that both OUTPUT and CAPTURE vb2 buffer queues must use
->> same lock and the driver uses struct v4l2_fh.
->>
->> I have only tested the first four patches in this series, Tested-by
->> for the mx2-emmaprp, exynos-gsc, s5p-g2d drivers are appreciated.
->>
->> This patch series can be also found at:
->>  git://linuxtv.org/snawrocki/samsung.git m2m-helpers-v3
->>
->> Changes since original version include addition of related cleanup
->> patches, added helper function for create_buf ioctl and m2m context
->> pointer from struct v4l2_fh is now reused and related field from the
->> drivers' private data structure is removed.
->>
->> Thank you for all reviews. I plan to queue the first four patches for
->> next kernel release early this week. For the mx2-emmaprp, exynos-gsc,
->> s5p-g2d driver feedback is needed from someone who can actually test
->> the changes. Any Tested-by for those drivers would be appreciated.
->>
->> Thanks,
->> Sylwester
->>
->> Sylwester Nawrocki (10):
->>   V4L: Add mem2mem ioctl and file operation helpers
->>   mem2mem_testdev: Use mem-to-mem ioctl and vb2 helpers
->>   exynos4-is: Use mem-to-mem ioctl helpers
->>   s5p-jpeg: Use mem-to-mem ioctl helpers
->>   mx2-emmaprp: Use struct v4l2_fh
->>   mx2-emmaprp: Use mem-to-mem ioctl helpers
->>   exynos-gsc: Configure default image format at device open()
->>   exynos-gsc: Remove GSC_{SRC, DST}_FMT flags
->>   exynos-gsc: Use mem-to-mem ioctl helpers
->>   s5p-g2d: Use mem-to-mem ioctl helpers
->>
->>  drivers/media/platform/exynos-gsc/gsc-core.c  |   10 +-
->>  drivers/media/platform/exynos-gsc/gsc-core.h  |   14 --
->>  drivers/media/platform/exynos-gsc/gsc-m2m.c   |  232
->> ++++++++-----------------
->>  drivers/media/platform/exynos4-is/fimc-core.h |    2 -
->>  drivers/media/platform/exynos4-is/fimc-m2m.c  |  148 +++-------------
->>  drivers/media/platform/mem2mem_testdev.c      |  152 +++-------------
->>  drivers/media/platform/mx2_emmaprp.c          |  185
->> ++++++--------------
->>  drivers/media/platform/s5p-g2d/g2d.c          |  124 +++-----------
->>  drivers/media/platform/s5p-g2d/g2d.h          |    1 -
->>  drivers/media/platform/s5p-jpeg/jpeg-core.c   |  134 +++------------
->>  drivers/media/platform/s5p-jpeg/jpeg-core.h   |    2 -
->>  drivers/media/v4l2-core/v4l2-mem2mem.c        |  118 +++++++++++++
->>  include/media/v4l2-fh.h                       |    4 +
->>  include/media/v4l2-mem2mem.h                  |   24 +++
->>  14 files changed, 382 insertions(+), 768 deletions(-)
->>
->> --
->> 1.7.4.1
->
-> --
-> Sylwester Nawrocki
-> Samsung R&D Institute Poland
->
+Best regards,
+Tomasz
