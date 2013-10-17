@@ -1,68 +1,48 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V2] ARM: dts: Exynos5420: Add device nodes for GScaler blocks
-Date: Thu, 17 Oct 2013 11:25:00 +0530
-Message-ID: <1381989300-21818-1-git-send-email-l.krishna@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:48512 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751110Ab3JQFe1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 01:34:27 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] cpufreq: exynos: Convert exynos-cpufreq to platform driver
+Date: Thu, 17 Oct 2013 17:31:52 +0900
+Message-ID: <001d01cecb13$54ccd410$fe667c30$%han@samsung.com>
+References: <1381939238-30398-1-git-send-email-t.figa@samsung.com>
+ <CAK9yfHwW+ofX5f8hHF=MYQn=CUMyiHvg4iAH-cHFW7JQ5Qnscw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <CAK9yfHwW+ofX5f8hHF=MYQn=CUMyiHvg4iAH-cHFW7JQ5Qnscw@mail.gmail.com>
+Content-language: ko
+Sender: cpufreq-owner@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, 'Lukasz Majewski' <l.majewski@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, khw0178.kim@samsung.com, cpgs@samsung.com
 
-Adds G-Scaler device nodes to the DT device list
+On Thursday, October 17, 2013 2:00 PM, Sachin Kamat wrote:
+> On 16 October 2013 21:30, Tomasz Figa <t.figa@samsung.com> wrote:
+> > From: Lukasz Majewski <l.majewski@samsung.com>
+> >
+> > +static struct platform_driver exynos_cpufreq_platdrv = {
+> > +       .driver = {
+> > +               .name   = "exynos-cpufreq",
+> > +               .owner  = THIS_MODULE,
+> > +       },
+> > +       .probe = exynos_cpufreq_init,
+> 
+> I think the prototype of this function should be changed to:
+> static int __init exynos_cpufreq_init(struct platform_device *pdev)
+> 
+> to avoid compilation warnings.
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
----
+Hi Tomasz Figa,
 
-Changes since V1:
-	- Changed the patch subject
-	- Changed the node name to video-scaler 
-	  suggested by Tomasz Figa <t.figa@samsung.com>
+One more thing. :-)
 
-Note: G-scaler probe test done on Kgene's for-next branch.
+It makes section mismatch warning. Also, module_platform_driver()
+is used. Then, '__init' annotation can be removed in order to fix
+the section mismatch warning.
 
- arch/arm/boot/dts/exynos5420.dtsi |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+static int exynos_cpufreq_init(struct platform_device *pdev)
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 09aa06c..2c45986 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -31,6 +31,8 @@
- 		i2c1 = &i2c_1;
- 		i2c2 = &i2c_2;
- 		i2c3 = &i2c_3;
-+		gsc0 = &gsc_0;
-+		gsc1 = &gsc_1;
- 	};
- 
- 	cpus {
-@@ -310,4 +312,22 @@
- 		clocks = <&clock 431>, <&clock 143>;
- 		clock-names = "mixer", "sclk_hdmi";
- 	};
-+
-+	gsc_0: video-scaler@13e00000 {
-+		compatible = "samsung,exynos5-gsc";
-+		reg = <0x13e00000 0x1000>;
-+		interrupts = <0 85 0>;
-+		clocks = <&clock 465>;
-+		clock-names = "gscl";
-+		samsung,power-domain = <&gsc_pd>;
-+	};
-+
-+	gsc_1: video-scaler@13e10000 {
-+		compatible = "samsung,exynos5-gsc";
-+		reg = <0x13e10000 0x1000>;
-+		interrupts = <0 86 0>;
-+		clocks = <&clock 466>;
-+		clock-names = "gscl";
-+		samsung,power-domain = <&gsc_pd>;
-+	};
- };
--- 
-1.7.9.5
+Thank you.
+
+Best regards,
+Jingoo Han
+
