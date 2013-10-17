@@ -1,55 +1,109 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH 3/9] clk: samsung: exynos4: Move suspend/resume handling
- to SoC driver
-Date: Thu, 17 Oct 2013 19:12:08 +0530
-Message-ID: <CAKew6eV7Hd1x1+YLR9rjzNgYu0t=9Q8BG23VUvhPJTf77bsRXQ@mail.gmail.com>
-References: <1381921698-5060-1-git-send-email-t.figa@samsung.com>
-	<1381921698-5060-4-git-send-email-t.figa@samsung.com>
+From: Tarek Dakhran <t.dakhran@samsung.com>
+Subject: Re: [PATCH v2 0/4] Exynos 5410 Dual cluster support
+Date: Thu, 17 Oct 2013 17:51:54 +0400
+Message-ID: <525FEB7A.6030609@samsung.com>
+References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com>
+ <87k3hc3lso.fsf@linaro.org> <20131017130435.GG3061@cat.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:43888 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755429Ab3JQNmJ (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:39015 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755708Ab3JQNxT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 09:42:09 -0400
-Received: by mail-ie0-f173.google.com with SMTP id u16so3812950iet.4
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Oct 2013 06:42:08 -0700 (PDT)
-In-Reply-To: <1381921698-5060-4-git-send-email-t.figa@samsung.com>
+	Thu, 17 Oct 2013 09:53:19 -0400
+In-reply-to: <20131017130435.GG3061@cat.local>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tushar Behera <tushar.behera@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: Aliaksei Katovich <aliaksei.katovich@gmail.com>, Kevin Hilman <khilman@linaro.org>
+Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
 
-Hi Tomasz,
-
-[ ... ]
->  /*
->   * list of controller registers to be saved and restored during a
->   * suspend/resume cycle.
-> @@ -288,6 +299,70 @@ static unsigned long exynos4_clk_regs[] __initdata = {
->         GATE_IP_CPU,
->  };
+On 17.10.2013 17:04, Aliaksei Katovich wrote:
+> hi Kevin;
 >
-> +static int exynos4_clk_suspend(void)
-> +{
-> +       samsung_clk_save(reg_base, exynos4_save_common,
-> +                               ARRAY_SIZE(exynos4_clk_regs));
+>> Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
+>>
+>>> The series of patches represent support of Exynos 5410 SoC
+>>>      
+>>> The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture.
+>>> Patches allow all 8 CPU cores (4 x A7 and 4 x A15) to run at the same time
+>>>      
+>>> Patches add new platform description, support of clock controller,
+>>> dual cluster support and device tree for Exynos 5410
+>>>     
+>>> Has been build on v3.12-rc5.
+>>> Has been tested on Exynos 5410 reference board (exynos_defconfig).
+>> Has anyone tried this on the exynos5410 based odroid-xu yet?
+>>
+>> I tried booting this on my recently arrived odroid-xu, but am not
+>> getting it to boot.
+> 	I am able to boot my odroid-xu+e to busybox with these patches applied
+> 	against 3.12-rc5: exynos_defconfig and exynos5410-smdk5410.dtb were
+> 	used.
+>
+> 	However there seem to be some issues with virq allocations, like this:
+>
+> <snippet>
+> Starting kernel ...
+>                     
+> [    0.000000] [<c0014d48>] (unwind_backtrace+0x0/0xf8) from [<c00117d0>] (show_stack+0x10/0x14)
+> [    0.000000] [<c00117d0>] (show_stack+0x10/0x14) from [<c0363488>] (dump_stack+0x6c/0xac)
+> [    0.000000] [<c0363488>] (dump_stack+0x6c/0xac) from [<c001e330>] (warn_slowpath_common+0x64/0x88)
+> [    0.000000] [<c001e330>] (warn_slowpath_common+0x64/0x88) from [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40)
+> [    0.000000] [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40) from [<c005a1b4>] (irq_domain_associate+0x128/0x1a8)
+> [    0.000000] [<c005a1b4>] (irq_domain_associate+0x128/0x1a8) from [<c005a508>] (irq_domain_associate_many+0x30/0x3c
+> )
+> [    0.000000] [<c005a508>] (irq_domain_associate_many+0x30/0x3c) from [<c005a768>] (irq_domain_add_simple+0x78/0x90)
+> [    0.000000] [<c005a768>] (irq_domain_add_simple+0x78/0x90) from [<c04b044c>] (combiner_of_init+0xb4/0x198)
+> [    0.000000] [<c04b044c>] (combiner_of_init+0xb4/0x198) from [<c04b6938>] (of_irq_init+0x278/0x2a0)
+> [    0.000000] [<c04b6938>] (of_irq_init+0x278/0x2a0) from [<c049b8fc>] (start_kernel+0x18c/0x384)
+> [    0.000000] [<c049b8fc>] (start_kernel+0x18c/0x384) from [<40008074>] (0x40008074)
+> [    0.000000] ---[ end trace 1b75b31a2719edcd ]---
+> [    0.000000] ------------[ cut here ]------------
+> [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/irq/irqdomain.c:278 irq_domain_associate+0x128/0x1a8()
+> [    0.000000] error: virq337 is not allocated
+> [    0.000000] Modules linked in:
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W    3.12.0-rc5-00004-g1cb405f #1
+> [    0.000000] [<c0014d48>] (unwind_backtrace+0x0/0xf8) from [<c00117d0>] (show_stack+0x10/0x14)
+> [    0.000000] [<c00117d0>] (show_stack+0x10/0x14) from [<c0363488>] (dump_stack+0x6c/0xac)
+> [    0.000000] [<c0363488>] (dump_stack+0x6c/0xac) from [<c001e330>] (warn_slowpath_common+0x64/0x88)
+> [    0.000000] [<c001e330>] (warn_slowpath_common+0x64/0x88) from [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40)
+> [    0.000000] [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40) from [<c005a1b4>] (irq_domain_associate+0x128/0x1a8)
+> [    0.000000] [<c005a1b4>] (irq_domain_associate+0x128/0x1a8) from [<c005a508>] (irq_domain_associate_many+0x30/0x3c
+> )
+> [    0.000000] [<c005a508>] (irq_domain_associate_many+0x30/0x3c) from [<c005a768>] (irq_domain_add_simple+0x78/0x90)
+> [    0.000000] [<c005a768>] (irq_domain_add_simple+0x78/0x90) from [<c04b044c>] (combiner_of_init+0xb4/0x198)
+> [    0.000000] [<c04b044c>] (combiner_of_init+0xb4/0x198) from [<c04b6938>] (of_irq_init+0x278/0x2a0)
+> [    0.000000] [<c04b6938>] (of_irq_init+0x278/0x2a0) from [<c049b8fc>] (start_kernel+0x18c/0x384)
+> [    0.000000] [<c049b8fc>] (start_kernel+0x18c/0x384) from [<40008074>] (0x40008074)
+> [    0.000000] ---[ end trace 1b75b31a2719edce ]---
+> [    0.000000] ------------[ cut here ]------------
+> </snippet>
+>
+> 	You can check full boot log here http://sprunge.us/NKcU
+>
+> --
+> Aliaksei
+>
+>> I'm not yet terribly familiar with this SoC, what are the settings
+>> needed for DEBUG_LL on this board?
+>>
+>> Thanks,
+>>
+>> Kevin
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
+This will be fixed in 3.13.
 
-a doubt here, Is sizeof(exynos4_clk_regs) works with
-exynos4_clk_regs[] as __initdata ?
+Now you can just change  "irq_base = 160" to  "irq_base = 256"
+in "static int __init combiner_of_init(struct device_node *np, struct 
+device_node *parent)" function
+in "drivers/irqchip/exynos-combiner.c"
 
-> +
-> +       if (exynos4_soc == EXYNOS4210)
-> +               samsung_clk_save(reg_base, exynos4_save_soc,
-> +                                       ARRAY_SIZE(exynos4210_clk_save));
-
-[ ... ]
-> +static void exynos4_clk_sleep_init(void)
-
-I think, this fuction can be placed in __init section.
-
-Same in other patches as well.
-
-Regards,
-Yadwinder
+Best regards,
+     Tarek Dakhran
