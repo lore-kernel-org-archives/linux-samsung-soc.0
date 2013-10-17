@@ -1,44 +1,97 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Initialize L2x0 cache controller for
- Exynos4 only
-Date: Thu, 17 Oct 2013 18:24:45 +0530
-Message-ID: <CAKew6eUFfgU+3_ezaBkdis8N_s1t+AE4Y=_z11yJLJbDPi-Caw@mail.gmail.com>
-References: <1382011392-18199-1-git-send-email-sachin.kamat@linaro.org>
+From: Aliaksei Katovich <aliaksei.katovich@gmail.com>
+Subject: Re: [PATCH v2 0/4] Exynos 5410 Dual cluster support
+Date: Thu, 17 Oct 2013 16:04:35 +0300
+Message-ID: <20131017130435.GG3061@cat.local>
+References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com>
+ <87k3hc3lso.fsf@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f177.google.com ([209.85.223.177]:56549 "EHLO
-	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755204Ab3JQMyq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 08:54:46 -0400
-Received: by mail-ie0-f177.google.com with SMTP id e14so3783239iej.36
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Oct 2013 05:54:45 -0700 (PDT)
-In-Reply-To: <1382011392-18199-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <87k3hc3lso.fsf@linaro.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Tarek Dakhran <t.dakhran@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>
 
-Hi Sachin,
+hi Kevin;
 
+> Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
+> 
+> > The series of patches represent support of Exynos 5410 SoC
+> >     
+> > The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture.
+> > Patches allow all 8 CPU cores (4 x A7 and 4 x A15) to run at the same time
+> >     
+> > Patches add new platform description, support of clock controller,
+> > dual cluster support and device tree for Exynos 5410 
+> >    
+> > Has been build on v3.12-rc5.
+> > Has been tested on Exynos 5410 reference board (exynos_defconfig).
+> 
+> Has anyone tried this on the exynos5410 based odroid-xu yet?  
+> 
+> I tried booting this on my recently arrived odroid-xu, but am not
+> getting it to boot.
 
-> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-> @@ -49,11 +49,18 @@ static void __init exynos4_reserve(void)
->                                 mfc_mem.lsize);
->  #endif
->  }
-> +
-> +static void __init exynos4_early_init(void)
-> +{
-> +       exynos4_l2x0_cache_init();
-> +       exynos_firmware_init();
+	I am able to boot my odroid-xu+e to busybox with these patches applied
+	against 3.12-rc5: exynos_defconfig and exynos5410-smdk5410.dtb were
+	used.
 
-I think, exynos4_l2xO_cache_init() should be called after
-exynos_firmware_init(),
-though support for l2x0_cache_init through firmware is not their yet
-but firmware_init should be done earlier that that.
+	However there seem to be some issues with virq allocations, like this:
 
-Regards,
-Yadwinder
+<snippet>
+Starting kernel ...
+                   
+[    0.000000] [<c0014d48>] (unwind_backtrace+0x0/0xf8) from [<c00117d0>] (show_stack+0x10/0x14)
+[    0.000000] [<c00117d0>] (show_stack+0x10/0x14) from [<c0363488>] (dump_stack+0x6c/0xac)
+[    0.000000] [<c0363488>] (dump_stack+0x6c/0xac) from [<c001e330>] (warn_slowpath_common+0x64/0x88)
+[    0.000000] [<c001e330>] (warn_slowpath_common+0x64/0x88) from [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40)
+[    0.000000] [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40) from [<c005a1b4>] (irq_domain_associate+0x128/0x1a8)
+[    0.000000] [<c005a1b4>] (irq_domain_associate+0x128/0x1a8) from [<c005a508>] (irq_domain_associate_many+0x30/0x3c
+)
+[    0.000000] [<c005a508>] (irq_domain_associate_many+0x30/0x3c) from [<c005a768>] (irq_domain_add_simple+0x78/0x90)
+[    0.000000] [<c005a768>] (irq_domain_add_simple+0x78/0x90) from [<c04b044c>] (combiner_of_init+0xb4/0x198)
+[    0.000000] [<c04b044c>] (combiner_of_init+0xb4/0x198) from [<c04b6938>] (of_irq_init+0x278/0x2a0)
+[    0.000000] [<c04b6938>] (of_irq_init+0x278/0x2a0) from [<c049b8fc>] (start_kernel+0x18c/0x384)
+[    0.000000] [<c049b8fc>] (start_kernel+0x18c/0x384) from [<40008074>] (0x40008074)
+[    0.000000] ---[ end trace 1b75b31a2719edcd ]---
+[    0.000000] ------------[ cut here ]------------
+[    0.000000] WARNING: CPU: 0 PID: 0 at kernel/irq/irqdomain.c:278 irq_domain_associate+0x128/0x1a8()
+[    0.000000] error: virq337 is not allocated
+[    0.000000] Modules linked in:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W    3.12.0-rc5-00004-g1cb405f #1
+[    0.000000] [<c0014d48>] (unwind_backtrace+0x0/0xf8) from [<c00117d0>] (show_stack+0x10/0x14)
+[    0.000000] [<c00117d0>] (show_stack+0x10/0x14) from [<c0363488>] (dump_stack+0x6c/0xac)
+[    0.000000] [<c0363488>] (dump_stack+0x6c/0xac) from [<c001e330>] (warn_slowpath_common+0x64/0x88)
+[    0.000000] [<c001e330>] (warn_slowpath_common+0x64/0x88) from [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40)
+[    0.000000] [<c001e3e8>] (warn_slowpath_fmt+0x30/0x40) from [<c005a1b4>] (irq_domain_associate+0x128/0x1a8)
+[    0.000000] [<c005a1b4>] (irq_domain_associate+0x128/0x1a8) from [<c005a508>] (irq_domain_associate_many+0x30/0x3c
+)
+[    0.000000] [<c005a508>] (irq_domain_associate_many+0x30/0x3c) from [<c005a768>] (irq_domain_add_simple+0x78/0x90)
+[    0.000000] [<c005a768>] (irq_domain_add_simple+0x78/0x90) from [<c04b044c>] (combiner_of_init+0xb4/0x198)
+[    0.000000] [<c04b044c>] (combiner_of_init+0xb4/0x198) from [<c04b6938>] (of_irq_init+0x278/0x2a0)
+[    0.000000] [<c04b6938>] (of_irq_init+0x278/0x2a0) from [<c049b8fc>] (start_kernel+0x18c/0x384)
+[    0.000000] [<c049b8fc>] (start_kernel+0x18c/0x384) from [<40008074>] (0x40008074)
+[    0.000000] ---[ end trace 1b75b31a2719edce ]---
+[    0.000000] ------------[ cut here ]------------
+</snippet>
+
+	You can check full boot log here http://sprunge.us/NKcU
+
+--
+Aliaksei
+
+> 
+> I'm not yet terribly familiar with this SoC, what are the settings 
+> needed for DEBUG_LL on this board?
+> 
+> Thanks,
+> 
+> Kevin
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
