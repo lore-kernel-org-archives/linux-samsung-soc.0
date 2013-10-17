@@ -1,47 +1,53 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 0/8] clk: max77686: Clock provider implementation fixes
-Date: Thu, 17 Oct 2013 18:30:34 +0200
-Message-ID: <1382027442-1992-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:51885 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755964Ab3JQQa7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 12:30:59 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 1/8] clk: max77686: Correct callback used for checking clock
+ status
+Date: Thu, 17 Oct 2013 18:30:35 +0200
+Message-ID: <1382027442-1992-2-git-send-email-t.figa@samsung.com>
+References: <1382027442-1992-1-git-send-email-t.figa@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1382027442-1992-1-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Tomasz Figa <t.figa@samsung.com>
 
-This series intends to improve clock provider impementation of max77686
-PMIC driver. First two patches are simple fixes of current implementation
-to allow correct control of provided clocks. Further patches refactor
-the driver to make the code cleaner and prepare for further patches. Then
-last two patches add registration of OF clock provider and adjust device
-tree nodes of boards containing max77686 chip to contain properties
-required by clock provider.
+Changing status of clock gates in max77686 requires i2c transfers, which
+can sleep, so this is done in prepare and unprepare callbacks. Due to
+this, checking whether whether the clock is ungated must be done
+in is_prepared() callback as well, for consistency.
 
-Tested on Exynos4412-based Trats2 board, with additional patches adding
-driver being a consumer of one of max77686 clocks.
+Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/clk/clk-max77686.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Tomasz Figa (8):
-  clk: max77686: Correct callback used for checking clock status
-  clk: max77686: Provide .recalc_rate() operation
-  clk: max77686: Refactor successful exit of probe function
-  clk: max77686: Make max77686_clk_register() return struct clk *
-  clk: max77686: Fix clean-up in error and remove paths
-  clk: max77686: Refactor driver data handling
-  clk: max77686: Register OF clock provider
-  ARM: dts: Add clock provider specific properties to max77686 node
-
- .../devicetree/bindings/clock/maxim,max77686.txt   | 38 +++++++++
- Documentation/devicetree/bindings/mfd/max77686.txt |  3 +
- arch/arm/boot/dts/cros5250-common.dtsi             |  1 +
- arch/arm/boot/dts/exynos4412-odroidx.dts           |  1 +
- arch/arm/boot/dts/exynos4412-trats2.dts            |  1 +
- drivers/clk/clk-max77686.c                         | 97 +++++++++++++---------
- 6 files changed, 104 insertions(+), 37 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77686.txt
-
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index 9f57bc3..e39d463 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -66,7 +66,7 @@ static void max77686_clk_unprepare(struct clk_hw *hw)
+ 		MAX77686_REG_32KHZ, max77686->mask, ~max77686->mask);
+ }
+ 
+-static int max77686_clk_is_enabled(struct clk_hw *hw)
++static int max77686_clk_is_prepared(struct clk_hw *hw)
+ {
+ 	struct max77686_clk *max77686 = to_max77686_clk(hw);
+ 	int ret;
+@@ -84,7 +84,7 @@ static int max77686_clk_is_enabled(struct clk_hw *hw)
+ static struct clk_ops max77686_clk_ops = {
+ 	.prepare	= max77686_clk_prepare,
+ 	.unprepare	= max77686_clk_unprepare,
+-	.is_enabled	= max77686_clk_is_enabled,
++	.is_prepared	= max77686_clk_is_prepared,
+ };
+ 
+ static struct clk_init_data max77686_clks_init[MAX77686_CLKS_NUM] = {
 -- 
 1.8.3.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
