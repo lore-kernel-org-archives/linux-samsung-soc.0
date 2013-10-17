@@ -1,56 +1,51 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 2/2] ASoC: samsung: Initialise DMA data at device probe time
-Date: Thu, 17 Oct 2013 22:34:13 +0100
-Message-ID: <1382045653-14807-2-git-send-email-broonie@kernel.org>
-References: <1382045653-14807-1-git-send-email-broonie@kernel.org>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH V2] ARM: dts: Exynos5420: Add device nodes for GScaler
+ blocks
+Date: Fri, 18 Oct 2013 08:31:21 +0900
+Message-ID: <1e0401cecb90$fceb6ee0$f6c24ca0$@org>
+References: <1381989300-21818-1-git-send-email-l.krishna@samsung.com>
+ <1654668.cjaYLCemzK@amdc1227>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:40722 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762379Ab3JQVei (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:50932 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753253Ab3JQXbZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 17:34:38 -0400
-In-Reply-To: <1382045653-14807-1-git-send-email-broonie@kernel.org>
+	Thu, 17 Oct 2013 19:31:25 -0400
+In-reply-to: <1654668.cjaYLCemzK@amdc1227>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Sangbeom Kim <sbkim73@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+To: 'Tomasz Figa' <t.figa@samsung.com>, 'Leela Krishna Amudala' <l.krishna@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, khw0178.kim@samsung.com, cpgs@samsung.com
 
-From: Mark Brown <broonie@linaro.org>
+Tomasz Figa wrote:
+> 
+> Hi Leela,
+> 
+> On Thursday 17 of October 2013 11:25:00 Leela Krishna Amudala wrote:
+> > Adds G-Scaler device nodes to the DT device list
+> >
+> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> > ---
+> >
+> > Changes since V1:
+> > 	- Changed the patch subject
+> > 	- Changed the node name to video-scaler
+> > 	  suggested by Tomasz Figa <t.figa@samsung.com>
+> >
+> > Note: G-scaler probe test done on Kgene's for-next branch.
+> >
+> >  arch/arm/boot/dts/exynos5420.dtsi |   20 ++++++++++++++++++++
+> >  1 file changed, 20 insertions(+)
+> 
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> 
+Tomasz, thanks for your review.
 
-This is a minor simplification and will help with converting the platform
-to use the dmaengine helpers.
+Leela, looks good to me too, applied.
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- sound/soc/samsung/i2s.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 32956df..2c4d250 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -702,13 +702,6 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- 	}
- 	writel(mod, i2s->addr + I2SMOD);
- 
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--		snd_soc_dai_set_dma_data(dai, substream,
--			(void *)&i2s->dma_playback);
--	else
--		snd_soc_dai_set_dma_data(dai, substream,
--			(void *)&i2s->dma_capture);
--
- 	i2s->frmclk = params_rate(params);
- 
- 	return 0;
-@@ -970,6 +963,8 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 	}
- 	clk_prepare_enable(i2s->clk);
- 
-+	snd_soc_dai_init_dma_data(dai, &i2s->dma_playback, &i2s->dma_capture);
-+
- 	if (other) {
- 		other->addr = i2s->addr;
- 		other->clk = i2s->clk;
--- 
-1.8.4.rc3
+Thanks,
+Kukjin
