@@ -1,116 +1,483 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH v2 3/4] ARM: EXYNOS: add Exynos Dual Cluster Support
-Date: Thu, 17 Oct 2013 14:16:44 -0400 (EDT)
-Message-ID: <alpine.LFD.2.03.1310171345300.1873@syhkavp.arg>
-References: <20131017143204.GE2442@localhost.localdomain> <52600A7D.2000809@linaro.org>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <52600A7D.2000809@linaro.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Dave Martin <Dave.Martin@arm.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Tarek Dakhran <t.dakhran@samsung.com>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v4 2/6] V4L: Add driver for s5k6a3 image sensor
+Date: Thu, 17 Oct 2013 20:42:16 +0200
+Message-ID: <1382035336-20297-1-git-send-email-s.nawrocki@samsung.com>
+References: <1382033211-32329-3-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:46752 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758121Ab3JQSmg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 Oct 2013 14:42:36 -0400
+In-reply-to: <1382033211-32329-3-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu, 17 Oct 2013, Daniel Lezcano wrote:
+This patch adds subdev driver for Samsung S5K6A3 raw image sensor.
+As it is intended at the moment to be used only with the Exynos
+FIMC-IS (camera ISP) subsystem it is pretty minimal subdev driver.
+It doesn't do any I2C communication since the sensor is controlled
+by the ISP and its own firmware.
+This driver can be updated in future, should anyone need it to be
+a regular subdev driver where the main CPU communicates with the
+sensor directly.
 
-> On 10/17/2013 04:32 PM, Dave Martin wrote:
-> > On Thu, Oct 17, 2013 at 12:45:29PM +0200, Daniel Lezcano wrote:
-> > > On 10/14/2013 05:08 PM, Vyacheslav Tyrtov wrote:
-> > > > From: Tarek Dakhran <t.dakhran@samsung.com>
-> > > > 
-> > > > Add EDCS(Exynos Dual Cluster Support) for Samsung Exynos5410 SoC.
-> > > > This enables all 8 cores, 4 x A7 and 4 x A15 run at the same time.
-> > 
-> > [...]
-> > 
-> > > > +	__mcpm_cpu_down(cpu, cluster);
-> > > > +
-> > > > +	if (!skip_wfi) {
-> > > > +		exynos_core_power_down(cpu, cluster);
-> > > > +		wfi();
-> > > > +	}
-> > > > +}
-> > > 
-> > > I did not looked line by line but these functions looks very similar
-> > > than the tc2_pm.c's function. no ?
-> > 
-> > This is true.
-> > 
-> > > May be some code consolidation could be considered here.
-> > > 
-> > > Added Nico and Lorenzo in Cc.
-> > > 
-> > > Thanks
-> > >    -- Daniel
-> > 
-> > Nico can commnent further, but I think the main concern here was that
-> > this code shouldn't be factored prematurely.
-> 
-> I do not share this opinion.
-> 
-> > There are many low-level platform specifics involved here, so it's
-> > hard to be certain that all platforms could fit into a more abstracted
-> > framework until we have some evidence to look at.
-> > 
-> > This could be revisited when we have a few diverse MCPM ports to
-> > compare.
-> 
-> I am worried about seeing more and more duplicated code around the ARM arch
-> (eg. arm[64]/kernel/smp.c arm64/kernel/smp.c).
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+v3 was a wrong untested version I sent by mistake.
 
-I didn't look too closely at those files so can't comment much on them.
+Changes since v2:
+ - reset GPIO made mandatory as it is required for proper power
+   on/off sequences and all known boards use it,
+ - maximum image size is now 1412x1412 pixels, as specified in
+   in the S5K6A3YX datasheet.
+ - regulator_enable()/disable() used instead of the regulator bulk
+   API to ensure proper regulators enable/disable sequences.
 
-> The cpuidle drivers have been duplicated and it took a while before
-> refactoring them, and it is not finished. The hotplug code have been
-> duplicated and now it is very difficult to factor it out.
-> 
-> A lot of work have been done to consolidate the code across the different SoC
-> since the last 2 years.
-> 
-> If we let duplicate code populate the different files, they will belong to
-> different maintainers, thus different trees. Each SoC contributors will tend
-> to add their small changes making the code to diverge more and more and making
-> difficult to re-factor it later.
-> 
-> I am in favor of preventing duplicate code entering in the kernel and force
-> the contributors to improve the kernel in general, not just the small part
-> they are supposed to work on. Otherwise, we are letting the kernel to fork
-> itself, internally...
+Changes since v1:
+ - added missing pm_runtime_disable(),
+ - removed subdev name overriding,
+ - s/S5K6A3_DEF_PIX/S5K6A3_DEFAULT_,
+ - merged patch adding v4l2-async API support,
+ - clock-frequency property is now optional and a default frequency
+   value will be used when it is missing, rather than bailing out,
+---
+ drivers/media/i2c/Kconfig  |    8 +
+ drivers/media/i2c/Makefile |    1 +
+ drivers/media/i2c/s5k6a3.c |  391 ++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 400 insertions(+)
+ create mode 100644 drivers/media/i2c/s5k6a3.c
 
-Now I'm going to comment.
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index d18be19..c3619a5 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -587,6 +587,14 @@ config VIDEO_S5K6AA
+ 	  This is a V4L2 sensor-level driver for Samsung S5K6AA(FX) 1.3M
+ 	  camera sensor with an embedded SoC image signal processor.
 
-What you say above is perfectly right.  As a general principle, we want 
-good consolidation.  That's the theory.
-
-However you need to know what needs to be consolidated in the first 
-place.  In practice you cannot consolidate duplicated code if that code 
-doesn't exist. In the cpuidle and hotplug cases it is very easy now to 
-see what kind of consolidation should have been done after the facts.  
-I'm sure that 10 years ago that wasn't as obvious.
-
-In the MCPM case we didn't know up front what exactly would end up being 
-duplicated in each machine specific backend.  And to some extent we 
-still don't know as there is very few backends merged into mainline at 
-this point (I know more of them exist out of tree but I didn't see the 
-code yet). Right now we have only 2 such backends and some duplication 
-was already identified, hence the patch to abstract the v7 cache 
-flushing I posted recently.
-
-Another possibility for consolidation in the MCPM backends is the last 
-man determination.  However we've seen that the PSCI compatibility 
-backend doesn't need that and abstracting that just yet might be 
-premature, possibly making interaction with PSCI very awkward.
-
-So it is very important to get the right balance between code 
-duplication and over-engineering.  Premature abstractions do fall into 
-the over-engineering category and it is just as bad.  Above all it is 
-most important to be vigilant and take care of duplicated code before it 
-gets too big.
-
-In the past we've seen bad code duplication in some subsystems because 
-no one was looking at the big picture.  In the MCPM case I'm watching. 
-And in this case we're far from being in a critical situation.
-
-
-Nicolas
++config VIDEO_S5K6A3
++	tristate "Samsung S5K6A3 sensor support"
++	depends on MEDIA_CAMERA_SUPPORT
++	depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && OF
++	---help---
++	  This is a V4L2 sensor-level driver for Samsung S5K6A3 raw
++	  camera sensor.
++
+ config VIDEO_S5K4ECGX
+         tristate "Samsung S5K4ECGX sensor support"
+         depends on I2C && VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
+index 9f462df..e7be364 100644
+--- a/drivers/media/i2c/Makefile
++++ b/drivers/media/i2c/Makefile
+@@ -66,6 +66,7 @@ obj-$(CONFIG_VIDEO_MT9V032) += mt9v032.o
+ obj-$(CONFIG_VIDEO_SR030PC30)	+= sr030pc30.o
+ obj-$(CONFIG_VIDEO_NOON010PC30)	+= noon010pc30.o
+ obj-$(CONFIG_VIDEO_S5K6AA)	+= s5k6aa.o
++obj-$(CONFIG_VIDEO_S5K6A3)	+= s5k6a3.o
+ obj-$(CONFIG_VIDEO_S5K4ECGX)	+= s5k4ecgx.o
+ obj-$(CONFIG_VIDEO_S5C73M3)	+= s5c73m3/
+ obj-$(CONFIG_VIDEO_ADP1653)	+= adp1653.o
+diff --git a/drivers/media/i2c/s5k6a3.c b/drivers/media/i2c/s5k6a3.c
+new file mode 100644
+index 0000000..43c1fc4
+--- /dev/null
++++ b/drivers/media/i2c/s5k6a3.c
+@@ -0,0 +1,391 @@
++/*
++ * Samsung S5K6A3 image sensor driver
++ *
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Author: Sylwester Nawrocki <s.nawrocki@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/gpio.h>
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_gpio.h>
++#include <linux/pm_runtime.h>
++#include <linux/regulator/consumer.h>
++#include <linux/slab.h>
++#include <linux/videodev2.h>
++#include <media/v4l2-async.h>
++#include <media/v4l2-subdev.h>
++
++#define S5K6A3_SENSOR_MAX_WIDTH		1412
++#define S5K6A3_SENSOR_MAX_HEIGHT	1412
++#define S5K6A3_SENSOR_MIN_WIDTH		32
++#define S5K6A3_SENSOR_MIN_HEIGHT	32
++
++#define S5K6A3_DEFAULT_WIDTH		1296
++#define S5K6A3_DEFAULT_HEIGHT		732
++
++#define S5K6A3_DRV_NAME			"S5K6A3"
++#define S5K6A3_CLK_NAME			"extclk"
++#define S5K6A3_DEFAULT_CLK_FREQ		24000000U
++
++enum {
++	S5K6A3_SUPP_VDDA,
++	S5K6A3_SUPP_VDDIO,
++	S5K6A3_SUPP_AFVDD,
++	S5K6A3_NUM_SUPPLIES,
++};
++
++/**
++ * struct s5k6a3 - fimc-is sensor data structure
++ * @dev: pointer to this I2C client device structure
++ * @subdev: the image sensor's v4l2 subdev
++ * @pad: subdev media source pad
++ * @supplies: image sensor's voltage regulator supplies
++ * @gpio_reset: GPIO connected to the sensor's reset pin
++ * @lock: mutex protecting the structure's members below
++ * @format: media bus format at the sensor's source pad
++ */
++struct s5k6a3 {
++	struct device *dev;
++	struct v4l2_subdev subdev;
++	struct media_pad pad;
++	struct regulator_bulk_data supplies[S5K6A3_NUM_SUPPLIES];
++	int gpio_reset;
++	struct mutex lock;
++	struct v4l2_mbus_framefmt format;
++	struct clk *clock;
++	u32 clock_frequency;
++	int power_count;
++};
++
++static const char * const s5k6a3_supply_names[] = {
++	[S5K6A3_SUPP_VDDA]	= "svdda",
++	[S5K6A3_SUPP_VDDIO]	= "svddio",
++	[S5K6A3_SUPP_AFVDD]	= "afvdd",
++};
++
++static inline struct s5k6a3 *sd_to_s5k6a3(struct v4l2_subdev *sd)
++{
++	return container_of(sd, struct s5k6a3, subdev);
++}
++
++static const struct v4l2_mbus_framefmt s5k6a3_formats[] = {
++	{
++		.code = V4L2_MBUS_FMT_SGRBG10_1X10,
++		.colorspace = V4L2_COLORSPACE_SRGB,
++		.field = V4L2_FIELD_NONE,
++	}
++};
++
++static const struct v4l2_mbus_framefmt *find_sensor_format(
++	struct v4l2_mbus_framefmt *mf)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(s5k6a3_formats); i++)
++		if (mf->code == s5k6a3_formats[i].code)
++			return &s5k6a3_formats[i];
++
++	return &s5k6a3_formats[0];
++}
++
++static int s5k6a3_enum_mbus_code(struct v4l2_subdev *sd,
++				  struct v4l2_subdev_fh *fh,
++				  struct v4l2_subdev_mbus_code_enum *code)
++{
++	if (code->index >= ARRAY_SIZE(s5k6a3_formats))
++		return -EINVAL;
++
++	code->code = s5k6a3_formats[code->index].code;
++	return 0;
++}
++
++static void s5k6a3_try_format(struct v4l2_mbus_framefmt *mf)
++{
++	const struct v4l2_mbus_framefmt *fmt;
++
++	fmt = find_sensor_format(mf);
++	mf->code = fmt->code;
++	v4l_bound_align_image(&mf->width, S5K6A3_SENSOR_MIN_WIDTH,
++			      S5K6A3_SENSOR_MAX_WIDTH, 0,
++			      &mf->height, S5K6A3_SENSOR_MIN_HEIGHT,
++			      S5K6A3_SENSOR_MAX_HEIGHT, 0, 0);
++}
++
++static struct v4l2_mbus_framefmt *__s5k6a3_get_format(
++		struct s5k6a3 *sensor, struct v4l2_subdev_fh *fh,
++		u32 pad, enum v4l2_subdev_format_whence which)
++{
++	if (which == V4L2_SUBDEV_FORMAT_TRY)
++		return fh ? v4l2_subdev_get_try_format(fh, pad) : NULL;
++
++	return &sensor->format;
++}
++
++static int s5k6a3_set_fmt(struct v4l2_subdev *sd,
++				  struct v4l2_subdev_fh *fh,
++				  struct v4l2_subdev_format *fmt)
++{
++	struct s5k6a3 *sensor = sd_to_s5k6a3(sd);
++	struct v4l2_mbus_framefmt *mf;
++
++	s5k6a3_try_format(&fmt->format);
++
++	mf = __s5k6a3_get_format(sensor, fh, fmt->pad, fmt->which);
++	if (mf) {
++		mutex_lock(&sensor->lock);
++		if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE)
++			*mf = fmt->format;
++		mutex_unlock(&sensor->lock);
++	}
++	return 0;
++}
++
++static int s5k6a3_get_fmt(struct v4l2_subdev *sd,
++				  struct v4l2_subdev_fh *fh,
++				  struct v4l2_subdev_format *fmt)
++{
++	struct s5k6a3 *sensor = sd_to_s5k6a3(sd);
++	struct v4l2_mbus_framefmt *mf;
++
++	mf = __s5k6a3_get_format(sensor, fh, fmt->pad, fmt->which);
++
++	mutex_lock(&sensor->lock);
++	fmt->format = *mf;
++	mutex_unlock(&sensor->lock);
++	return 0;
++}
++
++static struct v4l2_subdev_pad_ops s5k6a3_pad_ops = {
++	.enum_mbus_code	= s5k6a3_enum_mbus_code,
++	.get_fmt	= s5k6a3_get_fmt,
++	.set_fmt	= s5k6a3_set_fmt,
++};
++
++static int s5k6a3_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
++{
++	struct v4l2_mbus_framefmt *format = v4l2_subdev_get_try_format(fh, 0);
++
++	*format		= s5k6a3_formats[0];
++	format->width	= S5K6A3_DEFAULT_WIDTH;
++	format->height	= S5K6A3_DEFAULT_HEIGHT;
++
++	return 0;
++}
++
++static const struct v4l2_subdev_internal_ops s5k6a3_sd_internal_ops = {
++	.open = s5k6a3_open,
++};
++
++static int __s5k6a3_power_on(struct s5k6a3 *sensor)
++{
++	int i = S5K6A3_SUPP_VDDA;
++	int ret;
++
++	sensor->clock = clk_get(sensor->dev, S5K6A3_CLK_NAME);
++	if (IS_ERR(sensor->clock))
++		return PTR_ERR(sensor->clock);
++
++	ret = clk_set_rate(sensor->clock, sensor->clock_frequency);
++	if (ret < 0)
++		goto error_clk_put;
++
++	ret = pm_runtime_get(sensor->dev);
++	if (ret < 0)
++		goto error_clk_put;
++
++	ret = regulator_enable(sensor->supplies[i].consumer);
++	if (ret < 0)
++		goto error_rpm_put;
++
++	ret = clk_prepare_enable(sensor->clock);
++	if (ret < 0)
++		goto error_reg_dis;
++
++	for (i++; i < S5K6A3_NUM_SUPPLIES; i++) {
++		ret = regulator_enable(sensor->supplies[i].consumer);
++		if (ret < 0)
++			goto error_reg_dis;
++	}
++
++	gpio_set_value(sensor->gpio_reset, 1);
++	usleep_range(600, 800);
++	gpio_set_value(sensor->gpio_reset, 0);
++	usleep_range(600, 800);
++	gpio_set_value(sensor->gpio_reset, 1);
++
++	/* Delay needed for the sensor initialization */
++	msleep(20);
++	return 0;
++
++error_reg_dis:
++	for (--i; i >= 0; --i)
++		regulator_disable(sensor->supplies[i].consumer);
++error_rpm_put:
++	pm_runtime_put(sensor->dev);
++error_clk_put:
++	clk_put(sensor->clock);
++	return ret;
++}
++
++static int __s5k6a3_power_off(struct s5k6a3 *sensor)
++{
++	int i;
++
++	gpio_set_value(sensor->gpio_reset, 0);
++
++	for (i = S5K6A3_NUM_SUPPLIES - 1; i >= 0; i--)
++		regulator_disable(sensor->supplies[i].consumer);
++
++	clk_disable_unprepare(sensor->clock);
++	pm_runtime_put(sensor->dev);
++	clk_put(sensor->clock);
++	return 0;
++}
++
++static int s5k6a3_s_power(struct v4l2_subdev *sd, int on)
++{
++	struct s5k6a3 *sensor = sd_to_s5k6a3(sd);
++	int ret = 0;
++
++	mutex_lock(&sensor->lock);
++
++	if (sensor->power_count == !on) {
++		if (on)
++			ret = __s5k6a3_power_on(sensor);
++		else
++			ret = __s5k6a3_power_off(sensor);
++
++		if (ret == 0)
++			sensor->power_count += on ? 1 : -1;
++	}
++
++	mutex_unlock(&sensor->lock);
++	return ret;
++}
++
++static struct v4l2_subdev_core_ops s5k6a3_core_ops = {
++	.s_power = s5k6a3_s_power,
++};
++
++static struct v4l2_subdev_ops s5k6a3_subdev_ops = {
++	.core = &s5k6a3_core_ops,
++	.pad = &s5k6a3_pad_ops,
++};
++
++static int s5k6a3_probe(struct i2c_client *client,
++				const struct i2c_device_id *id)
++{
++	struct device *dev = &client->dev;
++	struct s5k6a3 *sensor;
++	struct v4l2_subdev *sd;
++	int gpio, i, ret;
++
++	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
++	if (!sensor)
++		return -ENOMEM;
++
++	mutex_init(&sensor->lock);
++	sensor->gpio_reset = -EINVAL;
++	sensor->clock = ERR_PTR(-EINVAL);
++	sensor->dev = dev;
++
++	gpio = of_get_gpio_flags(dev->of_node, 0, NULL);
++	if (!gpio_is_valid(gpio))
++		return gpio;
++
++	ret = devm_gpio_request_one(dev, gpio, GPIOF_OUT_INIT_LOW,
++						S5K6A3_DRV_NAME);
++	if (ret < 0)
++		return ret;
++
++	sensor->gpio_reset = gpio;
++
++	if (of_property_read_u32(dev->of_node, "clock-frequency",
++				 &sensor->clock_frequency)) {
++		sensor->clock_frequency = S5K6A3_DEFAULT_CLK_FREQ;
++		dev_info(dev, "using default %u Hz clock frequency\n",
++					sensor->clock_frequency);
++	}
++
++	for (i = 0; i < S5K6A3_NUM_SUPPLIES; i++)
++		sensor->supplies[i].supply = s5k6a3_supply_names[i];
++
++	ret = devm_regulator_bulk_get(&client->dev, S5K6A3_NUM_SUPPLIES,
++				      sensor->supplies);
++	if (ret < 0)
++		return ret;
++
++	sd = &sensor->subdev;
++	v4l2_i2c_subdev_init(sd, client, &s5k6a3_subdev_ops);
++	sensor->subdev.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
++
++	sensor->format.code = s5k6a3_formats[0].code;
++	sensor->format.width = S5K6A3_DEFAULT_WIDTH;
++	sensor->format.height = S5K6A3_DEFAULT_HEIGHT;
++
++	sensor->pad.flags = MEDIA_PAD_FL_SOURCE;
++	ret = media_entity_init(&sd->entity, 1, &sensor->pad, 0);
++	if (ret < 0)
++		return ret;
++
++	pm_runtime_no_callbacks(dev);
++	pm_runtime_enable(dev);
++
++	ret = v4l2_async_register_subdev(sd);
++
++	if (ret < 0) {
++		pm_runtime_disable(&client->dev);
++		media_entity_cleanup(&sd->entity);
++	}
++
++	return ret;
++}
++
++static int s5k6a3_remove(struct i2c_client *client)
++{
++	struct v4l2_subdev *sd = i2c_get_clientdata(client);
++
++	pm_runtime_disable(&client->dev);
++	v4l2_async_unregister_subdev(sd);
++	media_entity_cleanup(&sd->entity);
++	return 0;
++}
++
++static const struct i2c_device_id s5k6a3_ids[] = {
++	{ }
++};
++
++#ifdef CONFIG_OF
++static const struct of_device_id s5k6a3_of_match[] = {
++	{ .compatible = "samsung,s5k6a3" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, s5k6a3_of_match);
++#endif
++
++static struct i2c_driver s5k6a3_driver = {
++	.driver = {
++		.of_match_table	= of_match_ptr(s5k6a3_of_match),
++		.name		= S5K6A3_DRV_NAME,
++		.owner		= THIS_MODULE,
++	},
++	.probe		= s5k6a3_probe,
++	.remove		= s5k6a3_remove,
++	.id_table	= s5k6a3_ids,
++};
++
++module_i2c_driver(s5k6a3_driver);
++
++MODULE_DESCRIPTION("S5K6A3 image sensor subdev driver");
++MODULE_AUTHOR("Sylwester Nawrocki <s.nawrocki@samsung.com>");
++MODULE_LICENSE("GPL v2");
+--
+1.7.9.5
