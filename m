@@ -1,153 +1,114 @@
-From: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v10 00/12] Exynos5 IS driver
-Date: Fri, 18 Oct 2013 11:07:27 +0530
-Message-ID: <1382074659-31130-1-git-send-email-arun.kk@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, Pawel.Moll-5wv7dgnIgG8@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kilyeon.im-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, arunkk.samsung-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v10 01/12] exynos5-fimc-is: Add Exynos5 FIMC-IS device tree bindings documentation
+Date: Fri, 18 Oct 2013 11:07:28 +0530
+Message-ID: <1382074659-31130-2-git-send-email-arun.kk@samsung.com>
+References: <1382074659-31130-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <1382074659-31130-1-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch series adds support for exynos5 fimc-is driver and a
-new sensor s5k4e5. The media driver part is omitted form this series
-as it is already applied.
+The patch adds the DT binding documentation for Samsung
+Exynos5 SoC series imaging subsystem (FIMC-IS).
 
-Changes from v9
----------------
-
-- Addressed review comments from Hans and Sylwester
-http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg67102.html
-http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg67624.html
-http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg67623.html
-- Skipped already applied media driver
-
-Changes from v8
----------------
-- Moved i2c-isp device nodes into the fimc-is node as suggested
-  by Sylwester
-- Addressed comments given by Sylwester and Philipp Zabel
-
-Changes from v7
----------------
-- Addressed few DT related review comments from Sylwester
-  http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg66403.html
-- Few fixes added after some regression testing
-
-Changes from v6
----------------
-- Addressed DT binding doc review comments from Sylwester
-  http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg65771.html
-  http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg65772.html
-
-Changes from v5
----------------
-- Addressed review comments from Sylwester
-  http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg65578.html
-  http://www.mail-archive.com/linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg65605.html
-
-Changes from v4
----------------
-- Addressed all review comments from Sylwester
-- Added separate PMU node as suggested by Stephen Warren
-- Added phandle based discovery of subdevs instead of node name
-
-Changes from v3
----------------
-- Dropped the RFC tag
-- Addressed all review comments from Sylwester and Sachin
-- Removed clock provider for media dev
-- Added s5k4e5 sensor devicetree binding doc
-
-Changes from v2
----------------
-- Added exynos5 media device driver from Shaik to this series
-- Added ISP pipeline support in media device driver
-- Based on Sylwester's latest exynos4-is development
-- Asynchronos registration of sensor subdevs
-- Made independent IS-sensor support
-- Add s5k4e5 sensor driver
-- Addressed review comments from Sylwester, Hans, Andrzej, Sachin
-
-Changes from v1
----------------
-- Addressed all review comments from Sylwester
-- Made sensor subdevs as independent i2c devices
-- Lots of cleanup
-- Debugfs support added
-- Removed PMU global register access
-
-
-Arun Kumar K (12):
-  exynos5-fimc-is: Add Exynos5 FIMC-IS device tree bindings
-    documentation
-  exynos5-fimc-is: Add driver core files
-  exynos5-fimc-is: Add common driver header files
-  exynos5-fimc-is: Add register definition and context header
-  exynos5-fimc-is: Add isp subdev
-  exynos5-fimc-is: Add scaler subdev
-  exynos5-fimc-is: Add sensor interface
-  exynos5-fimc-is: Add the hardware pipeline control
-  exynos5-fimc-is: Add the hardware interface module
-  exynos5-is: Add Kconfig and Makefile
-  V4L: Add DT binding doc for s5k4e5 image sensor
-  V4L: Add s5k4e5 sensor driver
-
- .../devicetree/bindings/media/exynos5-fimc-is.txt  |   84 +
- .../devicetree/bindings/media/samsung-s5k4e5.txt   |   45 +
- drivers/media/i2c/Kconfig                          |    8 +
- drivers/media/i2c/Makefile                         |    1 +
- drivers/media/i2c/s5k4e5.c                         |  344 ++++
- drivers/media/platform/Kconfig                     |    1 +
- drivers/media/platform/Makefile                    |    1 +
- drivers/media/platform/exynos5-is/Kconfig          |   20 +
- drivers/media/platform/exynos5-is/Makefile         |    7 +
- drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  187 +++
- drivers/media/platform/exynos5-is/fimc-is-core.c   |  410 +++++
- drivers/media/platform/exynos5-is/fimc-is-core.h   |  132 ++
- drivers/media/platform/exynos5-is/fimc-is-err.h    |  257 +++
- .../media/platform/exynos5-is/fimc-is-interface.c  |  810 ++++++++++
- .../media/platform/exynos5-is/fimc-is-interface.h  |  124 ++
- drivers/media/platform/exynos5-is/fimc-is-isp.c    |  534 ++++++
- drivers/media/platform/exynos5-is/fimc-is-isp.h    |   90 ++
- .../media/platform/exynos5-is/fimc-is-metadata.h   |  767 +++++++++
- drivers/media/platform/exynos5-is/fimc-is-param.h  | 1159 +++++++++++++
- .../media/platform/exynos5-is/fimc-is-pipeline.c   | 1699 ++++++++++++++++++++
- .../media/platform/exynos5-is/fimc-is-pipeline.h   |  129 ++
- drivers/media/platform/exynos5-is/fimc-is-regs.h   |  105 ++
- drivers/media/platform/exynos5-is/fimc-is-scaler.c |  476 ++++++
- drivers/media/platform/exynos5-is/fimc-is-scaler.h |  106 ++
- drivers/media/platform/exynos5-is/fimc-is-sensor.c |   45 +
- drivers/media/platform/exynos5-is/fimc-is-sensor.h |   65 +
- drivers/media/platform/exynos5-is/fimc-is.h        |  160 ++
- 27 files changed, 7766 insertions(+)
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ .../devicetree/bindings/media/exynos5-fimc-is.txt  |   84 ++++++++++++++++++++
+ 1 file changed, 84 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
- create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k4e5.txt
- create mode 100644 drivers/media/i2c/s5k4e5.c
- create mode 100644 drivers/media/platform/exynos5-is/Kconfig
- create mode 100644 drivers/media/platform/exynos5-is/Makefile
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-regs.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.h
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is.h
 
+diff --git a/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+new file mode 100644
+index 0000000..0525417
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+@@ -0,0 +1,84 @@
++Samsung EXYNOS5 SoC series Imaging Subsystem (FIMC-IS)
++------------------------------------------------------
++
++The camera subsystem on Samsung Exynos5 SoC has some changes relative
++to previous SoC versions. Exynos5 has almost similar MIPI-CSIS and
++FIMC-LITE IPs but has a much improved version of FIMC-IS which can
++handle sensor controls and camera post-processing operations. The
++Exynos5 FIMC-IS has a dedicated ARM Cortex A5 processor, many
++post-processing blocks (ISP, DRC, FD, ODC, DIS, 3DNR) and two
++dedicated scalers (SCC and SCP).
++
++fimc-is node
++------------
++
++Required properties:
++
++- compatible        : must be "samsung,exynos5250-fimc-is"
++- reg               : physical base address and size of the memory mapped
++                      registers
++- interrupt-parent  : parent interrupt controller
++- interrupts        : fimc-is interrupt to the parent interrupt controller
++- clocks            : list of clock specifiers, corresponding to entries in
++                      clock-names property
++- clock-names       : must contain "isp", "mcu_isp", "isp_div0", "isp_div1",
++                      "isp_divmpwm", "mcu_isp_div0", "mcu_isp_div1" entries,
++                      matching entries in the clocks property
++- samsung,pmu       : phandle to the Power Management Unit (PMU) node
++
++i2c-isp (ISP I2C bus controller) nodes
++--------------------------------------
++The i2c-isp node is defined as the child node of fimc-is.
++
++Required properties:
++
++- compatible	: should be "samsung,exynos4212-i2c-isp" for Exynos4212,
++		  Exynos4412 and Exynos5250 SoCs
++- reg		: physical base address and length of the registers set
++- clocks	: must contain gate clock specifier for this controller
++- clock-names	: must contain "i2c_isp" entry
++
++For the i2c-isp node, it is required to specify a pinctrl state named "default",
++according to the pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt.
++
++Device tree nodes of the image sensors controlled directly by the FIMC-IS
++firmware must be child nodes of their corresponding ISP I2C bus controller node.
++The data link of these image sensors must be specified using the common video
++interfaces bindings, defined in video-interfaces.txt.
++
++Example:
++
++	fimc_is: fimc-is@13000000 {
++		compatible = "samsung,exynos5250-fimc-is";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++		reg = <0x13000000 0x200000>;
++		interrupt-parent = <&combiner>;
++		interrupts = <19 1>;
++		clocks = <&clock 346>, <&clock 347>, <&clock 512>,
++			<&clock 513>, <&clock 514>, <&clock 515>,
++			<&clock 516>;
++		clock-names = "isp", "mcu_isp", "isp_div0", "isp_div1",
++				"isp_divmpwm", "mcu_isp_div0",
++				"mcu_isp_div1";
++		samsung,pmu = <&pmu>;
++
++		i2c0_isp: i2c-isp@13130000 {
++			compatible = "samsung,exynos4212-i2c-isp";
++			reg = <0x13130000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&clock 352>;
++			clock-names = "i2c_isp";
++		};
++
++		i2c1_isp: i2c-isp@13140000 {
++			compatible = "samsung,exynos4212-i2c-isp";
++			reg = <0x13140000 0x100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			clocks = <&clock 353>;
++			clock-names = "i2c_isp";
++		};
++	};
 -- 
 1.7.9.5
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
