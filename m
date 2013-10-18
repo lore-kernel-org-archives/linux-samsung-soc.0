@@ -1,367 +1,207 @@
-From: Tarek Dakhran <t.dakhran@samsung.com>
-Subject: Re: [PATCH v2 3/4] ARM: EXYNOS: add Exynos Dual Cluster Support
-Date: Fri, 18 Oct 2013 12:29:03 +0400
-Message-ID: <5260F14F.2060603@samsung.com>
-References: <20131017154640.GF2442@localhost.localdomain>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v4 1/4] [media] exynos-scaler: Add new driver for Exynos5
+ SCALER
+Date: Fri, 18 Oct 2013 10:57:23 +0200
+Message-ID: <5260F7F3.20802@samsung.com>
+References: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
+ <1380889594-10448-2-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47155 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751430Ab3JRI3H (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:8549 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752162Ab3JRI52 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Oct 2013 04:29:07 -0400
-In-reply-to: <20131017154640.GF2442@localhost.localdomain>
+	Fri, 18 Oct 2013 04:57:28 -0400
+In-reply-to: <1380889594-10448-2-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dave Martin <Dave.Martin@arm.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Arun Kumar K' <arun.kk@samsung.com>
+Cc: posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl
 
-On 17.10.2013 19:46, Dave Martin wrote:
-> On Mon, Oct 14, 2013 at 07:08:24PM +0400, Vyacheslav Tyrtov wrote:
->> From: Tarek Dakhran <t.dakhran@samsung.com>
->>
->> Add EDCS(Exynos Dual Cluster Support) for Samsung Exynos5410 SoC.
->> This enables all 8 cores, 4 x A7 and 4 x A15 run at the same time.
->>
->> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
->> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
->> ---
->>   arch/arm/mach-exynos/Makefile |   2 +
->>   arch/arm/mach-exynos/edcs.c   | 270 ++++++++++++++++++++++++++++++++++++++++++
->>   2 files changed, 272 insertions(+)
->>   create mode 100644 arch/arm/mach-exynos/edcs.c
->>
->> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
->> index 5369615..ba6efdb 100644
->> --- a/arch/arm/mach-exynos/Makefile
->> +++ b/arch/arm/mach-exynos/Makefile
->> @@ -34,3 +34,5 @@ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
->>   
->>   obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
->>   obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
->> +
->> +obj-$(CONFIG_SOC_EXYNOS5410)		+= edcs.o
->> diff --git a/arch/arm/mach-exynos/edcs.c b/arch/arm/mach-exynos/edcs.c
->> new file mode 100644
->> index 0000000..e304bd9
->> --- /dev/null
->> +++ b/arch/arm/mach-exynos/edcs.c
->> @@ -0,0 +1,270 @@
->> +/*
->> + * arch/arm/mach-exynos/edcs.c - exynos dual cluster power management support
->> + *
->> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->> + * Author: Tarek Dakhran <t.dakhran@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + * EDCS(exynos dual cluster support) for Exynos5410 SoC.
->> + */
->> +
-[snip]
->> +#define EDCS_CORE_STATUS(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x4)
->> +#define EDCS_CORE_OPTION(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x8)
->> +
->> +#define REG_CPU_STATE_ADDR0		(S5P_VA_SYSRAM_NS + 0x28)
-> Is there any reason why S5P_VA_SYSRAM_NS needs to be a static mapping?
-What do you mean by "static mapping"?
->
->> +#define REG_CPU_STATE_ADDR(_nr)		(REG_CPU_STATE_ADDR0 +	\
->> +						 _nr * EDCS_CPUS_PER_CLUSTER)
->> +
->> +static arch_spinlock_t edcs_lock = __ARCH_SPIN_LOCK_UNLOCKED;
->> +
->> +static int edcs_use_count[EDCS_CPUS_PER_CLUSTER][EDCS_CLUSTERS];
->> +static int core_count[EDCS_CLUSTERS];
->> +
->> +static void exynos_core_power_control(unsigned int cpu, unsigned int cluster,
->> +				bool enable)
->> +{
->> +	unsigned int offset = cluster * EDCS_CPUS_PER_CLUSTER + cpu;
->> +	int value = enable ? S5P_CORE_LOCAL_PWR_EN : 0;
->> +
->> +	if ((__raw_readl(EDCS_CORE_STATUS(offset)) & 0x3) != value)
->> +		__raw_writel(value, EDCS_CORE_CONFIGURATION(offset));
-> I think you need to replace all the __raw_readl() / __raw_writel() calls
-> in this file with readl_relaxed() / writel_relaxed().
->
-> This ensures little-endian byte order, so that BE8 kernels will work.
->
-Will be done.
->> +}
->> +
->> +static void exynos_core_power_up(unsigned int cpu, unsigned int cluster)
->> +{
->> +	exynos_core_power_control(cpu, cluster, true);
->> +}
-[snip]
->> +
->> +	edcs_use_count[cpu][cluster]++;
->> +	if (edcs_use_count[cpu][cluster] == 1) {
->> +		++core_count[cluster];
->> +		set_boot_flag(cpu, 0x2);
-> 0x2 looks like a magic number.  Can we have a #define for that?
-Will be done.
-> If the boot flag is read by the inbound CPU or by a peripheral then
-> there are memory ordering issues to take into account.  Otherwise, can't
-> the inbound CPU come online and race with the write to the boot flag?
-Inbound CPU doesn't write the boot flag.
-> What is the memory type of REG_STATE_ADDR()?
-Same type as S5P_VA_SYSRAM_NS.
-This 4K region is mapped as follows:
+Hi,
 
-static struct map_desc exynos5410_iodesc[] __initdata = {
-	{
-		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
-		.pfn		= __phys_to_pfn(EXYNOS5410_PA_SYSRAM_NS),
-		.length		= SZ_4K,
-		.type		= MT_DEVICE,
-	},
-};
+I have couple minor comments. These could be addressed in follow up
+patches, it you won't manage to do it today. Sorry for being late with
+this.
 
+On 04/10/13 14:26, Shaik Ameer Basha wrote:
+> This patch adds support for SCALER device which is a new device
+> for scaling, blending, color fill  and color space conversion
+> on EXYNOS5410 and EXYNOS5420 SoCs.
+> 
+> This device supports the followings as key feature.
+>     input image format
+>         - YCbCr420 2P(UV/VU), 3P
+>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+>         - YCbCr444 2P(UV,VU), 3P
+>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+>         - Pre-multiplexed ARGB8888, L8A8 and L8
+>     output image format
+>         - YCbCr420 2P(UV/VU), 3P
+>         - YCbCr422 1P(YUYV/UYVY/YVYU), 2P(UV,VU), 3P
+>         - YCbCr444 2P(UV,VU), 3P
+>         - RGB565, ARGB1555, ARGB4444, ARGB8888, RGBA8888
+>         - Pre-multiplexed ARGB8888
+>     input rotation
+>         - 0/90/180/270 degree, X/Y/XY Flip
+>     scale ratio
+>         - 1/4 scale down to 16 scale up
+>     color space conversion
+>         - RGB to YUV / YUV to RGB
+>     Size - Exynos5420
+>         - Input : 16x16 to 8192x8192
+>         - Output:   4x4 to 8192x8192
+>     Size - Exynos5410
+>         - Input/Output: 4x4 to 4096x4096
+>     alpha blending, color fill
+> 
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 
->> +		exynos_core_power_up(cpu, cluster);
->> +	} else if (edcs_use_count[cpu][cluster] != 2) {
->> +		/*
->> +		 * The only possible values are:
->> +		 * 0 = CPU down
->> +		 * 1 = CPU (still) up
->> +		 * 2 = CPU requested to be up before it had a chance
->> +		 *     to actually make itself down.
->> +		 * Any other value is a bug.
->> +		 */
->> +		BUG();
->> +	}
->> +
->> +	arch_spin_unlock(&edcs_lock);
->> +	local_irq_enable();
->> +
->> +	return 0;
->> +}
->> +static void exynos_power_down(void)
->> +{
->> +	unsigned int mpidr, cpu, cluster;
->> +	bool last_man = false, skip_wfi = false;
->> +
->> +	mpidr = read_cpuid_mpidr();
->> +	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
->> +	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
->> +
->> +	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
->> +	BUG_ON(cpu >= EDCS_CPUS_PER_CLUSTER  || cluster >= EDCS_CLUSTERS);
->> +
->> +	__mcpm_cpu_going_down(cpu, cluster);
->> +
->> +	arch_spin_lock(&edcs_lock);
->> +	BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
->> +	edcs_use_count[cpu][cluster]--;
->> +	if (edcs_use_count[cpu][cluster] == 0) {
->> +		--core_count[cluster];
->> +		if (core_count[cluster] == 0)
->> +			last_man = true;
->> +	} else if (edcs_use_count[cpu][cluster] == 1) {
->> +		/*
->> +		 * A power_up request went ahead of us.
->> +		 * Even if we do not want to shut this CPU down,
->> +		 * the caller expects a certain state as if the WFI
->> +		 * was aborted.  So let's continue with cache cleaning.
->> +		 */
->> +		skip_wfi = true;
->> +	} else
->> +		BUG();
-> For TC2, Lorenzo discovered need to disable the GIC CPU interface, so
-> that no suprious wakeups can happen once the power controller is
-> configured to power the CPU down.
->
-> The problem is that a spurious wakeup can trigger a race in the power
-> controller when the last man powers down, where the power controller
-> continues to wait for the cluster to power down, but it never happens.
->
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-September/200917.html
-> ([PATCH v2] arm: vexpress: tc2: fix hotplug/idle/kexec race on cluster power down)
->
->
-> This might not be a problem for Exynos5410 -- it depends on the way the
-> power control logic works.
->
-> On the other hand, disabling the GIC CPU interface here is cheap to do,
-> even if it's not really needed.
->
->> +
->> +	if (last_man && __mcpm_outbound_enter_critical(cpu, cluster)) {
->> +		arch_spin_unlock(&edcs_lock);
->> +
->> +		if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A15) {
->> +			/*
->> +			 * On the Cortex-A15 we need to disable
->> +			 * L2 prefetching before flushing the cache.
->> +			 */
->> +			asm volatile(
->> +			"mcr	p15, 1, %0, c15, c0, 3\n\t"
->> +			"isb\n\t"
->> +			"dsb"
->> +			: : "r" (0x400));
->> +		}
->> +
->> +		/*
->> +		 * We need to disable and flush the whole (L1 and L2) cache.
->> +		 * Let's do it in the safest possible way i.e. with
->> +		 * no memory access within the following sequence
->> +		 * including the stack.
->> +		 *
->> +		 * Note: fp is preserved to the stack explicitly prior doing
->> +		 * this since adding it to the clobber list is incompatible
->> +		 * with having CONFIG_FRAME_POINTER=y.
->> +		 */
->> +		asm volatile(
->> +		"str	fp, [sp, #-4]!\n\t"
->> +		"mrc	p15, 0, r0, c1, c0, 0	@ get CR\n\t"
->> +		"bic	r0, r0, #"__stringify(CR_C)"\n\t"
->> +		"mcr	p15, 0, r0, c1, c0, 0	@ set CR\n\t"
->> +		"isb\n\t"
->> +		"bl	v7_flush_dcache_all\n\t"
->> +		"clrex\n\t"
->> +		"mrc	p15, 0, r0, c1, c0, 1	@ get AUXCR\n\t"
->> +		"bic	r0, r0, #(1 << 6)	@ disable local coherency\n\t"
->> +		"mcr	p15, 0, r0, c1, c0, 1	@ set AUXCR\n\t"
->> +		"isb\n\t"
->> +		"dsb\n\t"
->> +		"ldr	fp, [sp], #4"
->> +		: : : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
->> +			"r9", "r10", "lr", "memory");
-> For these code sequences, please take a look at
->
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-October/205085.html
-> [PATCH] ARM: cacheflush: consolidate single-CPU ARMv7 cache disabling code
->
-> The aim is to consolidate on a macro that can be shared between
-> backends.
-Will be done right after Nicolases patch will be applied to the mainline.
->
->> +
->> +		cci_disable_port_by_cpu(mpidr);
->> +
->> +		__mcpm_outbound_leave_critical(cluster, CLUSTER_DOWN);
->> +
->> +	} else {
->> +		arch_spin_unlock(&edcs_lock);
->> +		/*
->> +			* We need to disable and flush only the L1 cache.
->> +			* Let's do it in the safest possible way as above.
->> +		*/
->> +		asm volatile(
->> +		"str	fp, [sp, #-4]!\n\t"
->> +		"mrc	p15, 0, r0, c1, c0, 0	@ get CR\n\t"
->> +		"bic	r0, r0, #"__stringify(CR_C)"\n\t"
->> +		"mcr	p15, 0, r0, c1, c0, 0	@ set CR\n\t"
->> +		"isb\n\t"
->> +		"bl	v7_flush_dcache_louis\n\t"
->> +		"clrex\n\t"
->> +		"mrc	p15, 0, r0, c1, c0, 1	@ get AUXCR\n\t"
->> +		"bic	r0, r0, #(1 << 6)	@ disable local coherency\n\t"
->> +		"mcr	p15, 0, r0, c1, c0, 1	@ set AUXCR\n\t"
->> +		"isb\n\t"
->> +		"dsb\n\t"
->> +		"ldr	fp, [sp], #4"
->> +		: : : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
->> +		      "r9", "r10", "lr", "memory");
->> +
->> +	}
->> +	__mcpm_cpu_down(cpu, cluster);
->> +
->> +	if (!skip_wfi) {
->> +		exynos_core_power_down(cpu, cluster);
->> +		wfi();
->> +	}
->> +}
->> +
->> +static const struct mcpm_platform_ops exynos_power_ops = {
->> +	.power_up	= exynos_power_up,
->> +	.power_down	= exynos_power_down,
->> +};
->> +
->> +static void __init edcs_data_init(void)
->> +{
->> +	unsigned int mpidr, cpu, cluster;
->> +
->> +	mpidr = read_cpuid_mpidr();
->> +	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
->> +	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
->> +
->> +	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
->> +	BUG_ON(cpu >= EDCS_CPUS_PER_CLUSTER  || cluster >= EDCS_CLUSTERS);
->> +	edcs_use_count[cpu][cluster] = 1;
->> +	++core_count[cluster];
->> +}
->> +
->> +/*
->> + * Enable cluster-level coherency, in preparation for turning on the MMU.
->> + */
->> +static void __naked edcs_power_up_setup(unsigned int affinity_level)
->> +{
->> +	asm volatile ("\n"
->> +	"b	cci_enable_port_for_self");
->> +}
->> +
->> +static int __init edcs_init(void)
->> +{
->> +	int ret;
->> +	struct device_node *node;
->> +
->> +	node = of_find_compatible_node(NULL, NULL, "samsung,exynos5410");
->> +	if (!node)
->> +		return -ENODEV;
->> +
->> +	if (!cci_probed())
->> +		return -ENODEV;
->> +
->> +	/*
->> +	 * Future entries into the kernel can now go
->> +	 * through the cluster entry vectors.
->> +	 */
->> +	__raw_writel(virt_to_phys(mcpm_entry_point),
->> +				S5P_VA_SYSRAM_NS + 0x1c);
-> It would me more readable to have a #define to describe what
-> S5P_VA_SYSRAM_NS + 0x1c is.
-Will be done.
-> Also, what is the memory type of S5P_VA_SYSRAM_NS?  How is the entry
-> point address value read?  Does the inbound CPU's boot ROM or firmware
-> read it?
-The former (i.e. boot ROM reads it).
-> If it is read via some non-coherent side-channel, or if S5P_VA_SYSRAM_NS
-> is mapped as normal memory then we would need some explicit
-> synchronisation, but I suspect this is not the case (?)
->
-> Cheers
-> ---Dave
->
->> +
->> +	edcs_data_init();
->> +	mcpm_smp_set_ops();
->> +
->> +	ret = mcpm_platform_register(&exynos_power_ops);
->> +	if (!ret) {
->> +		mcpm_sync_init(edcs_power_up_setup);
->> +		pr_info("EDCS power management initialized\n");
->> +	}
->> +	return ret;
->> +}
->> +
->> +early_initcall(edcs_init);
->> -- 
->> 1.8.1.5
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Thanks for your comments.
+> +void scaler_hw_set_in_size(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	struct scaler_frame *frame = &ctx->s_frame;
+> +	u32 cfg;
+> +
+> +	/* set input pixel offset */
+> +	cfg = (frame->selection.left & SCALER_SRC_YH_POS_MASK) <<
+> +				  SCALER_SRC_YH_POS_SHIFT;
+> +	cfg |= ((frame->selection.top & SCALER_SRC_YV_POS_MASK) <<
+> +				   SCALER_SRC_YV_POS_SHIFT);
+> +	scaler_write(dev, SCALER_SRC_Y_POS, cfg);
+> +
+> +	/* TODO: calculate 'C' plane h/v offset using 'Y' plane h/v offset */
+> +
+> +	/* Set input span */
+> +	cfg = (frame->f_width & SCALER_SRC_Y_SPAN_MASK) <<
+> +				SCALER_SRC_Y_SPAN_SHIFT;
+> +	if (is_yuv420_2p(frame->fmt))
+> +		cfg |= ((frame->f_width & SCALER_SRC_C_SPAN_MASK) <<
+> +					  SCALER_SRC_C_SPAN_SHIFT);
+> +	else /* TODO: Verify */
+> +		cfg |= ((frame->f_width & SCALER_SRC_C_SPAN_MASK) <<
+> +					  SCALER_SRC_C_SPAN_SHIFT);
+> +
+> +	scaler_write(dev, SCALER_SRC_SPAN, cfg);
+> +
+> +	/* Set input cropped size */
+> +	cfg = (frame->selection.width & SCALER_SRC_WIDTH_MASK) <<
+> +				   SCALER_SRC_WIDTH_SHIFT;
+> +	cfg |= ((frame->selection.height & SCALER_SRC_HEIGHT_MASK) <<
+> +				      SCALER_SRC_HEIGHT_SHIFT);
+> +	scaler_write(dev, SCALER_SRC_WH, cfg);
+> +
+> +	scaler_dbg(dev, "src: posx: %d, posY: %d, spanY: %d, spanC: %d, cropX: %d, cropY: %d\n",
 
-Sincerely yours,
-     Tarek Dakhran
+This could be broken into two lines, it's just a debug print.
+
+> +		frame->selection.left, frame->selection.top,
+> +		frame->f_width, frame->f_width, frame->selection.width,
+> +		frame->selection.height);
+> +}
+> +
+> +void scaler_hw_set_in_image_format(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	struct scaler_frame *frame = &ctx->s_frame;
+> +	u32 cfg;
+> +
+> +	cfg = scaler_read(dev, SCALER_SRC_CFG);
+> +	cfg &= ~(SCALER_SRC_COLOR_FORMAT_MASK << SCALER_SRC_COLOR_FORMAT_SHIFT);
+> +	cfg |= ((frame->fmt->scaler_color & SCALER_SRC_COLOR_FORMAT_MASK) <<
+> +					   SCALER_SRC_COLOR_FORMAT_SHIFT);
+> +
+> +	/* Setting tiled/linear format */
+> +	if (is_tiled_fmt(frame->fmt))
+> +		cfg |= SCALER_SRC_TILE_EN;
+> +	else
+> +		cfg &= ~SCALER_SRC_TILE_EN;
+> +
+> +	scaler_write(dev, SCALER_SRC_CFG, cfg);
+> +}
+> +
+> +void scaler_hw_set_out_size(struct scaler_ctx *ctx)
+> +{
+> +	struct scaler_dev *dev = ctx->scaler_dev;
+> +	struct scaler_frame *frame = &ctx->d_frame;
+> +	u32 cfg;
+> +
+> +	/* Set output pixel offset */
+> +	cfg = (frame->selection.left & SCALER_DST_H_POS_MASK) <<
+> +				  SCALER_DST_H_POS_SHIFT;
+> +	cfg |= (frame->selection.top & SCALER_DST_V_POS_MASK) <<
+> +				  SCALER_DST_V_POS_SHIFT;
+> +	scaler_write(dev, SCALER_DST_POS, cfg);
+> +
+> +	/* Set output span */
+> +	cfg = (frame->f_width & SCALER_DST_Y_SPAN_MASK) <<
+> +				SCALER_DST_Y_SPAN_SHIFT;
+> +	if (is_yuv420_2p(frame->fmt))
+> +		cfg |= (((frame->f_width / 2) & SCALER_DST_C_SPAN_MASK) <<
+> +					     SCALER_DST_C_SPAN_SHIFT);
+> +	else
+> +		cfg |= (((frame->f_width) & SCALER_DST_C_SPAN_MASK) <<
+> +					     SCALER_DST_C_SPAN_SHIFT);
+> +	scaler_write(dev, SCALER_DST_SPAN, cfg);
+> +
+> +	/* Set output scaled size */
+> +	cfg = (frame->selection.width & SCALER_DST_WIDTH_MASK) <<
+> +				   SCALER_DST_WIDTH_SHIFT;
+> +	cfg |= (frame->selection.height & SCALER_DST_HEIGHT_MASK) <<
+> +				     SCALER_DST_HEIGHT_SHIFT;
+> +	scaler_write(dev, SCALER_DST_WH, cfg);
+> +
+> +	scaler_dbg(dev, "dst: pos X: %d, pos Y: %d, span Y: %d, span C: %d, crop X: %d, crop Y: %d\n",
+
+Ditto.
+
+> +		frame->selection.left, frame->selection.top,
+> +		frame->f_width, frame->f_width, frame->selection.width,
+> +		frame->selection.height);
+> +}
+[...]
+> +struct scaler_error {
+> +	u32 irq_num;
+> +	const char * const name;
+> +};
+> +
+> +static const struct scaler_error scaler_errors[] = {
+> +	{SCALER_INT_TIMEOUT,			"Timeout"},
+
+Please add spaces after { and before } for all these entries.
+
+> +	{SCALER_INT_ILLEGAL_BLEND,		"Illegal Blend setting"},
+> +	{SCALER_INT_ILLEGAL_RATIO,		"Illegal Scale ratio setting"},
+> +	{SCALER_INT_ILLEGAL_DST_HEIGHT,		"Illegal Dst Height"},
+> +	{SCALER_INT_ILLEGAL_DST_WIDTH,		"Illegal Dst Width"},
+> +	{SCALER_INT_ILLEGAL_DST_V_POS,		"Illegal Dst V-Pos"},
+> +	{SCALER_INT_ILLEGAL_DST_H_POS,		"Illegal Dst H-Pos"},
+> +	{SCALER_INT_ILLEGAL_DST_C_SPAN,		"Illegal Dst C-Span"},
+> +	{SCALER_INT_ILLEGAL_DST_Y_SPAN,		"Illegal Dst Y-span"},
+> +	{SCALER_INT_ILLEGAL_DST_CR_BASE,	"Illegal Dst Cr-base"},
+> +	{SCALER_INT_ILLEGAL_DST_CB_BASE,	"Illegal Dst Cb-base"},
+> +	{SCALER_INT_ILLEGAL_DST_Y_BASE,		"Illegal Dst Y-base"},
+> +	{SCALER_INT_ILLEGAL_DST_COLOR,		"Illegal Dst Color"},
+> +	{SCALER_INT_ILLEGAL_SRC_HEIGHT,		"Illegal Src Height"},
+> +	{SCALER_INT_ILLEGAL_SRC_WIDTH,		"Illegal Src Width"},
+> +	{SCALER_INT_ILLEGAL_SRC_CV_POS,		"Illegal Src Chroma V-pos"},
+> +	{SCALER_INT_ILLEGAL_SRC_CH_POS,		"Illegal Src Chroma H-pos"},
+> +	{SCALER_INT_ILLEGAL_SRC_YV_POS,		"Illegal Src Luma V-pos"},
+> +	{SCALER_INT_ILLEGAL_SRC_YH_POS,		"Illegal Src Luma H-pos"},
+> +	{SCALER_INT_ILLEGAL_SRC_C_SPAN,		"Illegal Src C-span"},
+> +	{SCALER_INT_ILLEGAL_SRC_Y_SPAN,		"Illegal Src Y-span"},
+> +	{SCALER_INT_ILLEGAL_SRC_CR_BASE,	"Illegal Src Cr-base"},
+> +	{SCALER_INT_ILLEGAL_SRC_CB_BASE,	"Illegal Src Cb-base"},
+> +	{SCALER_INT_ILLEGAL_SRC_Y_BASE,		"Illegal Src Y-base"},
+> +	{SCALER_INT_ILLEGAL_SRC_COLOR,		"Illegal Src Color setting"},
+
+You could remove remove word "Illegal" and add it when printing
+the error string for all entries except the first one. This will
+slightly decrease code section size of this module.
+
+Thanks,
+Sylwester
