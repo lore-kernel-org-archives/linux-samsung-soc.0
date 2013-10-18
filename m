@@ -1,73 +1,95 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v4 4/4] [media] exynos-scaler: Add DT bindings for SCALER
- driver
-Date: Fri, 18 Oct 2013 11:14:05 +0200
-Message-ID: <5260FBDD.4020205@samsung.com>
-References: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
- <1380889594-10448-5-git-send-email-shaik.ameer@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Majunath Goudar <csmanjuvijay@gmail.com>
+Subject: [PATCH V3 3/6]  USB: OHCI: Properly handle ohci-s3c2410 suspend
+Date: Fri, 18 Oct 2013 16:36:13 +0530
+Message-ID: <1382094376-31016-4-git-send-email-csmanjuvijay@gmail.com>
+References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
+ <1382094376-31016-1-git-send-email-csmanjuvijay@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:58322 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751643Ab3JRJOK (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:58247 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753018Ab3JRLGo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Oct 2013 05:14:10 -0400
-In-reply-to: <1380889594-10448-5-git-send-email-shaik.ameer@samsung.com>
+	Fri, 18 Oct 2013 07:06:44 -0400
+In-Reply-To: <1382094376-31016-1-git-send-email-csmanjuvijay@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-media@vger.kernel.org, 'Arun Kumar K' <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl
+To: csmanjuvijay@gmail.com
+Cc: Greg KH <greg@kroah.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 
-On 04/10/13 14:26, Shaik Ameer Basha wrote:
-> This patch adds the DT binding documentation for the
-> Exynos5420/5410 based SCALER device driver.
-> 
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Suspend scenario in case of ohci-s3c2410 glue was not
+properly handled as it was not suspending generic part
+of ohci controller. Alan Stern suggested, properly handle
+ohci-s3c2410 suspend scenario.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Calling explicitly the ohci_suspend()
+routine in ohci_hcd_s3c2410_drv_suspend() will ensure
+proper handling of suspend scenario.
 
-> ---
->  .../devicetree/bindings/media/exynos5-scaler.txt   |   22 ++++++++++++++++++++
->  1 file changed, 22 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
-> new file mode 100644
-> index 0000000..f620baf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
-> @@ -0,0 +1,22 @@
-> +* Samsung Exynos5 SCALER device
-> +
-> +SCALER is used for scaling, blending, color fill and color space
-> +conversion on EXYNOS[5420/5410] SoCs.
-> +
-> +Required properties:
-> +- compatible: should be "samsung,exynos5420-scaler" or
-> +			"samsung,exynos5410-scaler"
-> +- reg: should contain SCALER physical address location and length.
+Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg KH <greg@kroah.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
+---
+V2->V3:
+      -No changes.
+      As a build failure on "ep93xx proper suspend patch" and Linaro
+      id bounced. Rewrote this patch on top of latest Greg usb-next
+      branch. This patch not gives any build error. Patch is required
+      for ohci-s3c2410 proper suspending as Alan mentioned.
 
-nit: the dot should be probably removed for consistency.
+      Initially when I wrote this patch I was working in Linaro, now
+      I am not part of Linaro that is why Linaro id is bouncing. Sending
+      this patch from personal mail id.
 
-> +- interrupts: should contain SCALER interrupt number
-> +- clocks: should contain the SCALER clock specifier, from the
-> +			common clock bindings
-> +- clock-names: should be "scaler"
-> +
-> +Example:
-> +	scaler_0: scaler@0x12800000 {
+V1->V2:
+      -No changes.
+       Due to the build failure on ep93xx reverted this patch.
+       This patch is needed as Alan Stern suggestion.
 
-There should be no '0x' in node name.
+ drivers/usb/host/ohci-s3c2410.c |   21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-> +		compatible = "samsung,exynos5420-scaler";
-> +		reg = <0x12800000 0x1000>;
-> +		interrupts = <0 220 0>;
-> +		clocks = <&clock 381>;
-> +		clock-names = "scaler";
-> +	};
-> 
-
-Thanks,
-Sylwester
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index be3429e..b5bf9b7 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -426,28 +426,15 @@ static int ohci_hcd_s3c2410_drv_remove(struct platform_device *pdev)
+ static int ohci_hcd_s3c2410_drv_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+-	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	unsigned long flags;
++	bool do_wakeup = device_may_wakeup(dev);
+ 	int rc = 0;
+ 
+-	/*
+-	 * Root hub was already suspended. Disable irq emission and
+-	 * mark HW unaccessible, bail out if RH has been resumed. Use
+-	 * the spinlock to properly synchronize with possible pending
+-	 * RH suspend or resume activity.
+-	 */
+-	spin_lock_irqsave(&ohci->lock, flags);
+-	if (ohci->rh_state != OHCI_RH_SUSPENDED) {
+-		rc = -EINVAL;
+-		goto bail;
+-	}
+-
+-	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
++	rc = ohci_suspend(hcd, do_wakeup);
++	if (rc)
++		return rc;
+ 
+ 	s3c2410_stop_hc(pdev);
+-bail:
+-	spin_unlock_irqrestore(&ohci->lock, flags);
+ 
+ 	return rc;
+ }
+-- 
+1.7.9.5
