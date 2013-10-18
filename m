@@ -1,7 +1,7 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v10 10/12] exynos5-is: Add Kconfig and Makefile
-Date: Fri, 18 Oct 2013 11:07:37 +0530
-Message-ID: <1382074659-31130-11-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH v10 11/12] V4L: Add DT binding doc for s5k4e5 image sensor
+Date: Fri, 18 Oct 2013 11:07:38 +0530
+Message-ID: <1382074659-31130-12-git-send-email-arun.kk@samsung.com>
 References: <1382074659-31130-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1382074659-31130-1-git-send-email-arun.kk@samsung.com>
@@ -10,82 +10,66 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@v
 Cc: s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adds Kconfig and Makefile for exynos5-is driver files.
+S5K4E5 is a Samsung raw image sensor controlled via I2C.
+This patch adds the DT binding documentation for the same.
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/media/platform/Kconfig             |    1 +
- drivers/media/platform/Makefile            |    1 +
- drivers/media/platform/exynos5-is/Kconfig  |   20 ++++++++++++++++++++
- drivers/media/platform/exynos5-is/Makefile |    7 +++++++
- 4 files changed, 29 insertions(+)
- create mode 100644 drivers/media/platform/exynos5-is/Kconfig
- create mode 100644 drivers/media/platform/exynos5-is/Makefile
+ .../devicetree/bindings/media/samsung-s5k4e5.txt   |   45 ++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k4e5.txt
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index c7caf94..4d76065 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -123,6 +123,7 @@ config VIDEO_S3C_CAMIF
- 
- source "drivers/media/platform/soc_camera/Kconfig"
- source "drivers/media/platform/exynos4-is/Kconfig"
-+source "drivers/media/platform/exynos5-is/Kconfig"
- source "drivers/media/platform/s5p-tv/Kconfig"
- 
- endif # V4L_PLATFORM_DRIVERS
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index 4e4da48..712151a 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_TV)	+= s5p-tv/
- 
- obj-$(CONFIG_VIDEO_SAMSUNG_S5P_G2D)	+= s5p-g2d/
- obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)	+= exynos-gsc/
-+obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS5_CAMERA) += exynos5-is/
- 
- obj-$(CONFIG_BLACKFIN)                  += blackfin/
- 
-diff --git a/drivers/media/platform/exynos5-is/Kconfig b/drivers/media/platform/exynos5-is/Kconfig
+diff --git a/Documentation/devicetree/bindings/media/samsung-s5k4e5.txt b/Documentation/devicetree/bindings/media/samsung-s5k4e5.txt
 new file mode 100644
-index 0000000..b67d11a
+index 0000000..0fca087
 --- /dev/null
-+++ b/drivers/media/platform/exynos5-is/Kconfig
-@@ -0,0 +1,20 @@
-+config VIDEO_SAMSUNG_EXYNOS5_CAMERA
-+	bool "Samsung Exynos5 SoC Camera Media Device driver"
-+	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API && PM_RUNTIME
-+	depends on VIDEO_SAMSUNG_EXYNOS4_IS
-+	help
-+	  This is a V4L2 media device driver for Exynos5 SoC series
-+	  camera subsystem.
++++ b/Documentation/devicetree/bindings/media/samsung-s5k4e5.txt
+@@ -0,0 +1,45 @@
++* Samsung S5K4E5 Raw Image Sensor
 +
-+if VIDEO_SAMSUNG_EXYNOS5_CAMERA
++S5K4E5 is a raw image sensor with maximum resolution of 2560x1920
++pixels. Data transfer is carried out via MIPI CSI-2 port and controls
++via I2C bus.
 +
-+config VIDEO_SAMSUNG_EXYNOS5_FIMC_IS
-+	tristate "Samsung Exynos5 SoC FIMC-IS driver"
-+	depends on I2C && OF
-+	depends on VIDEO_EXYNOS4_FIMC_IS
-+	select VIDEOBUF2_DMA_CONTIG
-+	help
-+	  This is a V4L2 driver for Samsung Exynos5 SoC series Imaging
-+	  Subsystem known as FIMC-IS.
++Required Properties:
++- compatible	: must be "samsung,s5k4e5"
++- reg		: I2C device address
++- reset-gpios	: specifier of a GPIO connected to the RESET pin
++- clocks	: should contain the sensor's EXTCLK clock specifier, from
++		  the common clock bindings
++- clock-names	: should contain "extclk" entry
++- svdda-supply	: core voltage supply
++- svddio-supply	: I/O voltage supply
 +
-+endif #VIDEO_SAMSUNG_EXYNOS5_MDEV
-diff --git a/drivers/media/platform/exynos5-is/Makefile b/drivers/media/platform/exynos5-is/Makefile
-new file mode 100644
-index 0000000..6cdb037
---- /dev/null
-+++ b/drivers/media/platform/exynos5-is/Makefile
-@@ -0,0 +1,7 @@
-+ccflags-y += -Idrivers/media/platform/exynos4-is
-+exynos5-fimc-is-objs := fimc-is-core.o fimc-is-isp.o fimc-is-scaler.o
-+exynos5-fimc-is-objs += fimc-is-pipeline.o fimc-is-interface.o fimc-is-sensor.o
-+exynos-mdevice-objs := exynos5-mdev.o
++Optional Properties:
++- clock-frequency : the frequency at which the "extclk" clock should be
++		    configured to operate, in Hz; if this property is not
++		    specified default 24 MHz value will be used
 +
-+obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS5_FIMC_IS) += exynos5-fimc-is.o
-+obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS5_CAMERA) += exynos-mdevice.o
++The device node should be added to respective control bus controller
++(e.g. I2C0) nodes and linked to the csis port node, using the common
++video interfaces bindings, defined in video-interfaces.txt.
++
++Example:
++
++	i2c-isp@13130000 {
++		s5k4e5@20 {
++			compatible = "samsung,s5k4e5";
++			reg = <0x20>;
++			reset-gpios = <&gpx1 2 1>;
++			clock-frequency = <24000000>;
++			clocks = <&clock 129>;
++			clock-names = "extclk"
++			svdda-supply = <...>;
++			svddio-supply = <...>;
++			port {
++				is_s5k4e5_ep: endpoint {
++					data-lanes = <1 2 3 4>;
++					remote-endpoint = <&csis0_ep>;
++				};
++			};
++		};
++	};
 -- 
 1.7.9.5
