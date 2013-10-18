@@ -1,875 +1,367 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v5] exynos-scaler: Add m2m functionality for the SCALER driver
-Date: Fri, 18 Oct 2013 11:19:24 +0530
-Message-ID: <1382075364-4233-1-git-send-email-arun.kk@samsung.com>
+From: Tarek Dakhran <t.dakhran@samsung.com>
+Subject: Re: [PATCH v2 3/4] ARM: EXYNOS: add Exynos Dual Cluster Support
+Date: Fri, 18 Oct 2013 12:29:03 +0400
+Message-ID: <5260F14F.2060603@samsung.com>
+References: <20131017154640.GF2442@localhost.localdomain>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:65522 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750864Ab3JRFtb (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47155 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751430Ab3JRI3H (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Oct 2013 01:49:31 -0400
+	Fri, 18 Oct 2013 04:29:07 -0400
+In-reply-to: <20131017154640.GF2442@localhost.localdomain>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: k.debski@samsung.com, s.nawrocki@samsung.com, posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl, shaik.ameer@samsung.com, arun.kk@samsung.com
+To: Dave Martin <Dave.Martin@arm.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
 
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+On 17.10.2013 19:46, Dave Martin wrote:
+> On Mon, Oct 14, 2013 at 07:08:24PM +0400, Vyacheslav Tyrtov wrote:
+>> From: Tarek Dakhran <t.dakhran@samsung.com>
+>>
+>> Add EDCS(Exynos Dual Cluster Support) for Samsung Exynos5410 SoC.
+>> This enables all 8 cores, 4 x A7 and 4 x A15 run at the same time.
+>>
+>> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
+>> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+>> ---
+>>   arch/arm/mach-exynos/Makefile |   2 +
+>>   arch/arm/mach-exynos/edcs.c   | 270 ++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 272 insertions(+)
+>>   create mode 100644 arch/arm/mach-exynos/edcs.c
+>>
+>> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+>> index 5369615..ba6efdb 100644
+>> --- a/arch/arm/mach-exynos/Makefile
+>> +++ b/arch/arm/mach-exynos/Makefile
+>> @@ -34,3 +34,5 @@ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
+>>   
+>>   obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
+>>   obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
+>> +
+>> +obj-$(CONFIG_SOC_EXYNOS5410)		+= edcs.o
+>> diff --git a/arch/arm/mach-exynos/edcs.c b/arch/arm/mach-exynos/edcs.c
+>> new file mode 100644
+>> index 0000000..e304bd9
+>> --- /dev/null
+>> +++ b/arch/arm/mach-exynos/edcs.c
+>> @@ -0,0 +1,270 @@
+>> +/*
+>> + * arch/arm/mach-exynos/edcs.c - exynos dual cluster power management support
+>> + *
+>> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+>> + * Author: Tarek Dakhran <t.dakhran@samsung.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + *
+>> + * EDCS(exynos dual cluster support) for Exynos5410 SoC.
+>> + */
+>> +
+[snip]
+>> +#define EDCS_CORE_STATUS(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x4)
+>> +#define EDCS_CORE_OPTION(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x8)
+>> +
+>> +#define REG_CPU_STATE_ADDR0		(S5P_VA_SYSRAM_NS + 0x28)
+> Is there any reason why S5P_VA_SYSRAM_NS needs to be a static mapping?
+What do you mean by "static mapping"?
+>
+>> +#define REG_CPU_STATE_ADDR(_nr)		(REG_CPU_STATE_ADDR0 +	\
+>> +						 _nr * EDCS_CPUS_PER_CLUSTER)
+>> +
+>> +static arch_spinlock_t edcs_lock = __ARCH_SPIN_LOCK_UNLOCKED;
+>> +
+>> +static int edcs_use_count[EDCS_CPUS_PER_CLUSTER][EDCS_CLUSTERS];
+>> +static int core_count[EDCS_CLUSTERS];
+>> +
+>> +static void exynos_core_power_control(unsigned int cpu, unsigned int cluster,
+>> +				bool enable)
+>> +{
+>> +	unsigned int offset = cluster * EDCS_CPUS_PER_CLUSTER + cpu;
+>> +	int value = enable ? S5P_CORE_LOCAL_PWR_EN : 0;
+>> +
+>> +	if ((__raw_readl(EDCS_CORE_STATUS(offset)) & 0x3) != value)
+>> +		__raw_writel(value, EDCS_CORE_CONFIGURATION(offset));
+> I think you need to replace all the __raw_readl() / __raw_writel() calls
+> in this file with readl_relaxed() / writel_relaxed().
+>
+> This ensures little-endian byte order, so that BE8 kernels will work.
+>
+Will be done.
+>> +}
+>> +
+>> +static void exynos_core_power_up(unsigned int cpu, unsigned int cluster)
+>> +{
+>> +	exynos_core_power_control(cpu, cluster, true);
+>> +}
+[snip]
+>> +
+>> +	edcs_use_count[cpu][cluster]++;
+>> +	if (edcs_use_count[cpu][cluster] == 1) {
+>> +		++core_count[cluster];
+>> +		set_boot_flag(cpu, 0x2);
+> 0x2 looks like a magic number.  Can we have a #define for that?
+Will be done.
+> If the boot flag is read by the inbound CPU or by a peripheral then
+> there are memory ordering issues to take into account.  Otherwise, can't
+> the inbound CPU come online and race with the write to the boot flag?
+Inbound CPU doesn't write the boot flag.
+> What is the memory type of REG_STATE_ADDR()?
+Same type as S5P_VA_SYSRAM_NS.
+This 4K region is mapped as follows:
 
-This patch adds the Makefile and memory to memory (m2m) interface
-functionality for the SCALER driver.
+static struct map_desc exynos5410_iodesc[] __initdata = {
+	{
+		.virtual	= (unsigned long)S5P_VA_SYSRAM_NS,
+		.pfn		= __phys_to_pfn(EXYNOS5410_PA_SYSRAM_NS),
+		.length		= SZ_4K,
+		.type		= MT_DEVICE,
+	},
+};
 
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
-This patch is part of the Exynos5 Series SCALER Driver patchset [1]
-with the compilation error corrected for this patch alone.
 
-[1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg67256.html
+>> +		exynos_core_power_up(cpu, cluster);
+>> +	} else if (edcs_use_count[cpu][cluster] != 2) {
+>> +		/*
+>> +		 * The only possible values are:
+>> +		 * 0 = CPU down
+>> +		 * 1 = CPU (still) up
+>> +		 * 2 = CPU requested to be up before it had a chance
+>> +		 *     to actually make itself down.
+>> +		 * Any other value is a bug.
+>> +		 */
+>> +		BUG();
+>> +	}
+>> +
+>> +	arch_spin_unlock(&edcs_lock);
+>> +	local_irq_enable();
+>> +
+>> +	return 0;
+>> +}
+>> +static void exynos_power_down(void)
+>> +{
+>> +	unsigned int mpidr, cpu, cluster;
+>> +	bool last_man = false, skip_wfi = false;
+>> +
+>> +	mpidr = read_cpuid_mpidr();
+>> +	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
+>> +	BUG_ON(cpu >= EDCS_CPUS_PER_CLUSTER  || cluster >= EDCS_CLUSTERS);
+>> +
+>> +	__mcpm_cpu_going_down(cpu, cluster);
+>> +
+>> +	arch_spin_lock(&edcs_lock);
+>> +	BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
+>> +	edcs_use_count[cpu][cluster]--;
+>> +	if (edcs_use_count[cpu][cluster] == 0) {
+>> +		--core_count[cluster];
+>> +		if (core_count[cluster] == 0)
+>> +			last_man = true;
+>> +	} else if (edcs_use_count[cpu][cluster] == 1) {
+>> +		/*
+>> +		 * A power_up request went ahead of us.
+>> +		 * Even if we do not want to shut this CPU down,
+>> +		 * the caller expects a certain state as if the WFI
+>> +		 * was aborted.  So let's continue with cache cleaning.
+>> +		 */
+>> +		skip_wfi = true;
+>> +	} else
+>> +		BUG();
+> For TC2, Lorenzo discovered need to disable the GIC CPU interface, so
+> that no suprious wakeups can happen once the power controller is
+> configured to power the CPU down.
+>
+> The problem is that a spurious wakeup can trigger a race in the power
+> controller when the last man powers down, where the power controller
+> continues to wait for the cluster to power down, but it never happens.
+>
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-September/200917.html
+> ([PATCH v2] arm: vexpress: tc2: fix hotplug/idle/kexec race on cluster power down)
+>
+>
+> This might not be a problem for Exynos5410 -- it depends on the way the
+> power control logic works.
+>
+> On the other hand, disabling the GIC CPU interface here is cheap to do,
+> even if it's not really needed.
+>
+>> +
+>> +	if (last_man && __mcpm_outbound_enter_critical(cpu, cluster)) {
+>> +		arch_spin_unlock(&edcs_lock);
+>> +
+>> +		if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A15) {
+>> +			/*
+>> +			 * On the Cortex-A15 we need to disable
+>> +			 * L2 prefetching before flushing the cache.
+>> +			 */
+>> +			asm volatile(
+>> +			"mcr	p15, 1, %0, c15, c0, 3\n\t"
+>> +			"isb\n\t"
+>> +			"dsb"
+>> +			: : "r" (0x400));
+>> +		}
+>> +
+>> +		/*
+>> +		 * We need to disable and flush the whole (L1 and L2) cache.
+>> +		 * Let's do it in the safest possible way i.e. with
+>> +		 * no memory access within the following sequence
+>> +		 * including the stack.
+>> +		 *
+>> +		 * Note: fp is preserved to the stack explicitly prior doing
+>> +		 * this since adding it to the clobber list is incompatible
+>> +		 * with having CONFIG_FRAME_POINTER=y.
+>> +		 */
+>> +		asm volatile(
+>> +		"str	fp, [sp, #-4]!\n\t"
+>> +		"mrc	p15, 0, r0, c1, c0, 0	@ get CR\n\t"
+>> +		"bic	r0, r0, #"__stringify(CR_C)"\n\t"
+>> +		"mcr	p15, 0, r0, c1, c0, 0	@ set CR\n\t"
+>> +		"isb\n\t"
+>> +		"bl	v7_flush_dcache_all\n\t"
+>> +		"clrex\n\t"
+>> +		"mrc	p15, 0, r0, c1, c0, 1	@ get AUXCR\n\t"
+>> +		"bic	r0, r0, #(1 << 6)	@ disable local coherency\n\t"
+>> +		"mcr	p15, 0, r0, c1, c0, 1	@ set AUXCR\n\t"
+>> +		"isb\n\t"
+>> +		"dsb\n\t"
+>> +		"ldr	fp, [sp], #4"
+>> +		: : : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
+>> +			"r9", "r10", "lr", "memory");
+> For these code sequences, please take a look at
+>
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-October/205085.html
+> [PATCH] ARM: cacheflush: consolidate single-CPU ARMv7 cache disabling code
+>
+> The aim is to consolidate on a macro that can be shared between
+> backends.
+Will be done right after Nicolases patch will be applied to the mainline.
+>
+>> +
+>> +		cci_disable_port_by_cpu(mpidr);
+>> +
+>> +		__mcpm_outbound_leave_critical(cluster, CLUSTER_DOWN);
+>> +
+>> +	} else {
+>> +		arch_spin_unlock(&edcs_lock);
+>> +		/*
+>> +			* We need to disable and flush only the L1 cache.
+>> +			* Let's do it in the safest possible way as above.
+>> +		*/
+>> +		asm volatile(
+>> +		"str	fp, [sp, #-4]!\n\t"
+>> +		"mrc	p15, 0, r0, c1, c0, 0	@ get CR\n\t"
+>> +		"bic	r0, r0, #"__stringify(CR_C)"\n\t"
+>> +		"mcr	p15, 0, r0, c1, c0, 0	@ set CR\n\t"
+>> +		"isb\n\t"
+>> +		"bl	v7_flush_dcache_louis\n\t"
+>> +		"clrex\n\t"
+>> +		"mrc	p15, 0, r0, c1, c0, 1	@ get AUXCR\n\t"
+>> +		"bic	r0, r0, #(1 << 6)	@ disable local coherency\n\t"
+>> +		"mcr	p15, 0, r0, c1, c0, 1	@ set AUXCR\n\t"
+>> +		"isb\n\t"
+>> +		"dsb\n\t"
+>> +		"ldr	fp, [sp], #4"
+>> +		: : : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
+>> +		      "r9", "r10", "lr", "memory");
+>> +
+>> +	}
+>> +	__mcpm_cpu_down(cpu, cluster);
+>> +
+>> +	if (!skip_wfi) {
+>> +		exynos_core_power_down(cpu, cluster);
+>> +		wfi();
+>> +	}
+>> +}
+>> +
+>> +static const struct mcpm_platform_ops exynos_power_ops = {
+>> +	.power_up	= exynos_power_up,
+>> +	.power_down	= exynos_power_down,
+>> +};
+>> +
+>> +static void __init edcs_data_init(void)
+>> +{
+>> +	unsigned int mpidr, cpu, cluster;
+>> +
+>> +	mpidr = read_cpuid_mpidr();
+>> +	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
+>> +	BUG_ON(cpu >= EDCS_CPUS_PER_CLUSTER  || cluster >= EDCS_CLUSTERS);
+>> +	edcs_use_count[cpu][cluster] = 1;
+>> +	++core_count[cluster];
+>> +}
+>> +
+>> +/*
+>> + * Enable cluster-level coherency, in preparation for turning on the MMU.
+>> + */
+>> +static void __naked edcs_power_up_setup(unsigned int affinity_level)
+>> +{
+>> +	asm volatile ("\n"
+>> +	"b	cci_enable_port_for_self");
+>> +}
+>> +
+>> +static int __init edcs_init(void)
+>> +{
+>> +	int ret;
+>> +	struct device_node *node;
+>> +
+>> +	node = of_find_compatible_node(NULL, NULL, "samsung,exynos5410");
+>> +	if (!node)
+>> +		return -ENODEV;
+>> +
+>> +	if (!cci_probed())
+>> +		return -ENODEV;
+>> +
+>> +	/*
+>> +	 * Future entries into the kernel can now go
+>> +	 * through the cluster entry vectors.
+>> +	 */
+>> +	__raw_writel(virt_to_phys(mcpm_entry_point),
+>> +				S5P_VA_SYSRAM_NS + 0x1c);
+> It would me more readable to have a #define to describe what
+> S5P_VA_SYSRAM_NS + 0x1c is.
+Will be done.
+> Also, what is the memory type of S5P_VA_SYSRAM_NS?  How is the entry
+> point address value read?  Does the inbound CPU's boot ROM or firmware
+> read it?
+The former (i.e. boot ROM reads it).
+> If it is read via some non-coherent side-channel, or if S5P_VA_SYSRAM_NS
+> is mapped as normal memory then we would need some explicit
+> synchronisation, but I suspect this is not the case (?)
+>
+> Cheers
+> ---Dave
+>
+>> +
+>> +	edcs_data_init();
+>> +	mcpm_smp_set_ops();
+>> +
+>> +	ret = mcpm_platform_register(&exynos_power_ops);
+>> +	if (!ret) {
+>> +		mcpm_sync_init(edcs_power_up_setup);
+>> +		pr_info("EDCS power management initialized\n");
+>> +	}
+>> +	return ret;
+>> +}
+>> +
+>> +early_initcall(edcs_init);
+>> -- 
+>> 1.8.1.5
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-Changes from v4
----------------
-- Addressed compilation error pointed out by Kamil
----
- drivers/media/platform/Kconfig                    |    8 +
- drivers/media/platform/Makefile                   |    1 +
- drivers/media/platform/exynos-scaler/Makefile     |    3 +
- drivers/media/platform/exynos-scaler/scaler-m2m.c |  787 +++++++++++++++++++++
- 4 files changed, 799 insertions(+)
- create mode 100644 drivers/media/platform/exynos-scaler/Makefile
- create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
+Thanks for your comments.
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index c7caf94..1ba31ea2 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -201,6 +201,14 @@ config VIDEO_SAMSUNG_EXYNOS_GSC
- 	help
- 	  This is a v4l2 driver for Samsung EXYNOS5 SoC G-Scaler.
- 
-+config VIDEO_SAMSUNG_EXYNOS_SCALER
-+	tristate "Samsung Exynos SCALER driver"
-+	depends on OF && VIDEO_DEV && VIDEO_V4L2 && ARCH_EXYNOS5
-+	select VIDEOBUF2_DMA_CONTIG
-+	select V4L2_MEM2MEM_DEV
-+	help
-+	  This is a v4l2 driver for Samsung EXYNOS5410/5420 SoC SCALER.
-+
- config VIDEO_SH_VEU
- 	tristate "SuperH VEU mem2mem video processing driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2 && HAS_DMA
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index 4e4da48..14cdad5 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_TV)	+= s5p-tv/
- 
- obj-$(CONFIG_VIDEO_SAMSUNG_S5P_G2D)	+= s5p-g2d/
- obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)	+= exynos-gsc/
-+obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_SCALER)	+= exynos-scaler/
- 
- obj-$(CONFIG_BLACKFIN)                  += blackfin/
- 
-diff --git a/drivers/media/platform/exynos-scaler/Makefile b/drivers/media/platform/exynos-scaler/Makefile
-new file mode 100644
-index 0000000..6c8a25b
---- /dev/null
-+++ b/drivers/media/platform/exynos-scaler/Makefile
-@@ -0,0 +1,3 @@
-+exynos-scaler-objs := scaler.o scaler-m2m.o scaler-regs.o
-+
-+obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_SCALER)	+= exynos-scaler.o
-diff --git a/drivers/media/platform/exynos-scaler/scaler-m2m.c b/drivers/media/platform/exynos-scaler/scaler-m2m.c
-new file mode 100644
-index 0000000..987f314
---- /dev/null
-+++ b/drivers/media/platform/exynos-scaler/scaler-m2m.c
-@@ -0,0 +1,787 @@
-+/*
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Samsung EXYNOS5 SoC series SCALER driver
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/slab.h>
-+
-+#include <media/v4l2-ioctl.h>
-+
-+#include "scaler-regs.h"
-+
-+#define SCALER_DEF_PIX_FMT	V4L2_PIX_FMT_RGB32
-+#define SCALER_DEF_WIDTH	1280
-+#define SCALER_DEF_HEIGHT	720
-+
-+static int scaler_m2m_ctx_stop_req(struct scaler_ctx *ctx)
-+{
-+	struct scaler_ctx *curr_ctx;
-+	struct scaler_dev *scaler = ctx->scaler_dev;
-+	int ret;
-+
-+	curr_ctx = v4l2_m2m_get_curr_priv(scaler->m2m.m2m_dev);
-+	if (!scaler_m2m_pending(scaler) || (curr_ctx != ctx))
-+		return 0;
-+
-+	scaler_ctx_state_lock_set(SCALER_CTX_STOP_REQ, ctx);
-+	ret = wait_event_timeout(scaler->irq_queue,
-+			!scaler_ctx_state_is_set(SCALER_CTX_STOP_REQ, ctx),
-+			SCALER_SHUTDOWN_TIMEOUT);
-+
-+	return ret == 0 ? -ETIMEDOUT : ret;
-+}
-+
-+static int scaler_m2m_start_streaming(struct vb2_queue *q, unsigned int count)
-+{
-+	struct scaler_ctx *ctx = q->drv_priv;
-+	int ret;
-+
-+	ret = pm_runtime_get_sync(&ctx->scaler_dev->pdev->dev);
-+
-+	return ret > 0 ? 0 : ret;
-+}
-+
-+static int scaler_m2m_stop_streaming(struct vb2_queue *q)
-+{
-+	struct scaler_ctx *ctx = q->drv_priv;
-+	int ret;
-+
-+	ret = scaler_m2m_ctx_stop_req(ctx);
-+	if (ret < 0)
-+		scaler_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
-+
-+	pm_runtime_put(&ctx->scaler_dev->pdev->dev);
-+
-+	return 0;
-+}
-+
-+void scaler_m2m_job_finish(struct scaler_ctx *ctx, int vb_state)
-+{
-+	struct vb2_buffer *src_vb, *dst_vb;
-+
-+	if (!ctx || !ctx->m2m_ctx)
-+		return;
-+
-+	src_vb = v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
-+	dst_vb = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
-+
-+	if (src_vb && dst_vb) {
-+		v4l2_m2m_buf_done(src_vb, vb_state);
-+		v4l2_m2m_buf_done(dst_vb, vb_state);
-+
-+		v4l2_m2m_job_finish(ctx->scaler_dev->m2m.m2m_dev,
-+							ctx->m2m_ctx);
-+	}
-+}
-+
-+static void scaler_m2m_job_abort(void *priv)
-+{
-+	struct scaler_ctx *ctx = priv;
-+	int ret;
-+
-+	ret = scaler_m2m_ctx_stop_req(ctx);
-+	if (ret < 0)
-+		scaler_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
-+}
-+
-+static int scaler_get_bufs(struct scaler_ctx *ctx)
-+{
-+	struct scaler_frame *s_frame, *d_frame;
-+	struct vb2_buffer *src_vb, *dst_vb;
-+	int ret;
-+
-+	s_frame = &ctx->s_frame;
-+	d_frame = &ctx->d_frame;
-+
-+	src_vb = v4l2_m2m_next_src_buf(ctx->m2m_ctx);
-+	ret = scaler_prepare_addr(ctx, src_vb, s_frame, &s_frame->addr);
-+	if (ret < 0)
-+		return ret;
-+
-+	dst_vb = v4l2_m2m_next_dst_buf(ctx->m2m_ctx);
-+	ret = scaler_prepare_addr(ctx, dst_vb, d_frame, &d_frame->addr);
-+	if (ret < 0)
-+		return ret;
-+
-+	dst_vb->v4l2_buf.timestamp = src_vb->v4l2_buf.timestamp;
-+
-+	return 0;
-+}
-+
-+static void scaler_m2m_device_run(void *priv)
-+{
-+	struct scaler_ctx *ctx = priv;
-+	struct scaler_dev *scaler;
-+	unsigned long flags;
-+	int ret;
-+	bool is_stopped;
-+
-+	if (WARN(!ctx, "Null hardware context\n"))
-+		return;
-+
-+	scaler = ctx->scaler_dev;
-+	spin_lock_irqsave(&scaler->slock, flags);
-+
-+	set_bit(ST_M2M_PEND, &scaler->state);
-+
-+	/* Reconfigure hardware if the context has changed. */
-+	if (scaler->m2m.ctx != ctx) {
-+		scaler_dbg(scaler, "scaler->m2m.ctx = 0x%p, current_ctx = 0x%p",
-+				scaler->m2m.ctx, ctx);
-+		ctx->state |= SCALER_PARAMS;
-+		scaler->m2m.ctx = ctx;
-+	}
-+
-+	is_stopped = ctx->state & SCALER_CTX_STOP_REQ;
-+	ctx->state &= ~SCALER_CTX_STOP_REQ;
-+	if (is_stopped) {
-+		wake_up(&scaler->irq_queue);
-+		goto unlock;
-+	}
-+
-+	ret = scaler_get_bufs(ctx);
-+	if (ret < 0) {
-+		scaler_dbg(scaler, "Wrong address\n");
-+		goto unlock;
-+	}
-+
-+	scaler_hw_address_queue_reset(ctx);
-+	scaler_set_prefbuf(scaler, &ctx->s_frame);
-+	scaler_hw_set_input_addr(scaler, &ctx->s_frame.addr);
-+	scaler_hw_set_output_addr(scaler, &ctx->d_frame.addr);
-+	scaler_hw_set_csc_coeff(ctx);
-+
-+	if (ctx->state & SCALER_PARAMS) {
-+		scaler_hw_set_irq(scaler, SCALER_INT_FRAME_END, false);
-+		if (scaler_set_scaler_info(ctx)) {
-+			scaler_dbg(scaler, "Scaler setup error");
-+			goto unlock;
-+		}
-+
-+		scaler_hw_set_in_size(ctx);
-+		scaler_hw_set_in_image_format(ctx);
-+
-+		scaler_hw_set_out_size(ctx);
-+		scaler_hw_set_out_image_format(ctx);
-+
-+		scaler_hw_set_scaler_ratio(ctx);
-+		scaler_hw_set_rotation(ctx);
-+	}
-+
-+	ctx->state &= ~SCALER_PARAMS;
-+	scaler_hw_enable_control(scaler, true);
-+
-+	spin_unlock_irqrestore(&scaler->slock, flags);
-+	return;
-+
-+unlock:
-+	ctx->state &= ~SCALER_PARAMS;
-+	spin_unlock_irqrestore(&scaler->slock, flags);
-+}
-+
-+static int scaler_m2m_queue_setup(struct vb2_queue *vq,
-+			const struct v4l2_format *fmt,
-+			unsigned int *num_buffers, unsigned int *num_planes,
-+			unsigned int sizes[], void *allocators[])
-+{
-+	struct scaler_ctx *ctx = vb2_get_drv_priv(vq);
-+	struct scaler_frame *frame;
-+	int i;
-+
-+	frame = ctx_get_frame(ctx, vq->type);
-+	if (IS_ERR(frame))
-+		return PTR_ERR(frame);
-+
-+	if (!frame->fmt)
-+		return -EINVAL;
-+
-+	*num_planes = frame->fmt->num_planes;
-+	for (i = 0; i < frame->fmt->num_planes; i++) {
-+		sizes[i] = frame->payload[i];
-+		allocators[i] = ctx->scaler_dev->alloc_ctx;
-+	}
-+	return 0;
-+}
-+
-+static int scaler_m2m_buf_prepare(struct vb2_buffer *vb)
-+{
-+	struct scaler_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
-+	struct scaler_frame *frame;
-+	int i;
-+
-+	frame = ctx_get_frame(ctx, vb->vb2_queue->type);
-+	if (IS_ERR(frame))
-+		return PTR_ERR(frame);
-+
-+	for (i = 0; i < frame->fmt->num_planes; i++)
-+		vb2_set_plane_payload(vb, i, frame->payload[i]);
-+
-+	return 0;
-+}
-+
-+static void scaler_m2m_buf_queue(struct vb2_buffer *vb)
-+{
-+	struct scaler_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
-+
-+	scaler_dbg(ctx->scaler_dev, "ctx: %p, ctx->state: 0x%x",
-+				     ctx, ctx->state);
-+
-+	if (ctx->m2m_ctx)
-+		v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
-+}
-+
-+static void scaler_lock(struct vb2_queue *vq)
-+{
-+	struct scaler_ctx *ctx = vb2_get_drv_priv(vq);
-+	mutex_lock(&ctx->scaler_dev->lock);
-+}
-+
-+static void scaler_unlock(struct vb2_queue *vq)
-+{
-+	struct scaler_ctx *ctx = vb2_get_drv_priv(vq);
-+	mutex_unlock(&ctx->scaler_dev->lock);
-+}
-+
-+static struct vb2_ops scaler_m2m_qops = {
-+	.queue_setup	 = scaler_m2m_queue_setup,
-+	.buf_prepare	 = scaler_m2m_buf_prepare,
-+	.buf_queue	 = scaler_m2m_buf_queue,
-+	.wait_prepare	 = scaler_unlock,
-+	.wait_finish	 = scaler_lock,
-+	.stop_streaming	 = scaler_m2m_stop_streaming,
-+	.start_streaming = scaler_m2m_start_streaming,
-+};
-+
-+static int scaler_m2m_querycap(struct file *file, void *fh,
-+			   struct v4l2_capability *cap)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	struct scaler_dev *scaler = ctx->scaler_dev;
-+
-+	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_M2M_MPLANE;
-+	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
-+
-+	strlcpy(cap->driver, scaler->pdev->name, sizeof(cap->driver));
-+	strlcpy(cap->card, scaler->pdev->name, sizeof(cap->card));
-+	strlcpy(cap->bus_info, "platform:exynos5-scaler",
-+					sizeof(cap->bus_info));
-+
-+	return 0;
-+}
-+
-+static int scaler_m2m_enum_fmt_mplane(struct file *file, void *priv,
-+				struct v4l2_fmtdesc *f)
-+{
-+	return scaler_enum_fmt_mplane(f);
-+}
-+
-+static int scaler_m2m_g_fmt_mplane(struct file *file, void *fh,
-+			     struct v4l2_format *f)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+
-+	return scaler_g_fmt_mplane(ctx, f);
-+}
-+
-+static int scaler_m2m_try_fmt_mplane(struct file *file, void *fh,
-+				  struct v4l2_format *f)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+
-+	return scaler_try_fmt_mplane(ctx, f);
-+}
-+
-+static int scaler_m2m_set_default_format(struct scaler_ctx *ctx)
-+{
-+	struct scaler_frame *frame;
-+	u32 def_pixformat = SCALER_DEF_PIX_FMT;
-+	int i;
-+
-+	frame = &ctx->s_frame;
-+
-+	frame->colorspace = V4L2_COLORSPACE_REC709;
-+	frame->fmt = scaler_find_fmt(&def_pixformat, -1);
-+	if (!frame->fmt)
-+		return -EINVAL;
-+
-+	scaler_set_frame_size(frame, SCALER_DEF_WIDTH, SCALER_DEF_HEIGHT);
-+	for (i = 0; i < frame->fmt->num_planes; i++)
-+		frame->payload[i] = SCALER_DEF_WIDTH * SCALER_DEF_HEIGHT *
-+					(frame->fmt->depth[i] / 8);
-+
-+	scaler_ctx_state_lock_set(SCALER_PARAMS, ctx);
-+
-+	/* Apply the same src frame settings to dst frame */
-+	ctx->d_frame = ctx->s_frame;
-+
-+	return 0;
-+}
-+
-+
-+static int scaler_m2m_s_fmt_mplane(struct file *file, void *fh,
-+				 struct v4l2_format *f)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	struct vb2_queue *vq;
-+	struct scaler_frame *frame;
-+	struct v4l2_pix_format_mplane *pix;
-+	int i, ret = 0;
-+
-+	ret = scaler_m2m_try_fmt_mplane(file, fh, f);
-+	if (ret < 0)
-+		return ret;
-+
-+	vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
-+
-+	if (vb2_is_streaming(vq)) {
-+		scaler_dbg(ctx->scaler_dev, "queue (%d) busy", f->type);
-+		return -EBUSY;
-+	}
-+
-+	if (V4L2_TYPE_IS_OUTPUT(f->type))
-+		frame = &ctx->s_frame;
-+	else
-+		frame = &ctx->d_frame;
-+
-+	pix = &f->fmt.pix_mp;
-+	frame->colorspace = pix->colorspace;
-+	frame->fmt = scaler_find_fmt(&pix->pixelformat, -1);
-+	if (!frame->fmt)
-+		return -EINVAL;
-+
-+	for (i = 0; i < frame->fmt->num_planes; i++)
-+		frame->payload[i] = pix->plane_fmt[i].sizeimage;
-+
-+	scaler_set_frame_size(frame, pix->width, pix->height);
-+	scaler_ctx_state_lock_set(SCALER_PARAMS, ctx);
-+
-+	scaler_dbg(ctx->scaler_dev, "f_w: %d, f_h: %d",
-+				frame->f_width, frame->f_height);
-+
-+	return 0;
-+}
-+
-+static int scaler_m2m_reqbufs(struct file *file, void *fh,
-+			  struct v4l2_requestbuffers *reqbufs)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	struct scaler_dev *scaler = ctx->scaler_dev;
-+	u32 max_cnt;
-+
-+	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-+		max_cnt = scaler->variant->in_buf_cnt;
-+	else
-+		max_cnt = scaler->variant->out_buf_cnt;
-+
-+	if (reqbufs->count > max_cnt) {
-+		/* Adjust the count value as per driver supports */
-+		reqbufs->count = max_cnt;
-+	}
-+
-+	return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs);
-+}
-+
-+static int scaler_m2m_expbuf(struct file *file, void *fh,
-+				struct v4l2_exportbuffer *eb)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	return v4l2_m2m_expbuf(file, ctx->m2m_ctx, eb);
-+}
-+
-+static int scaler_m2m_querybuf(struct file *file, void *fh,
-+					struct v4l2_buffer *buf)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf);
-+}
-+
-+static int scaler_m2m_qbuf(struct file *file, void *fh,
-+			  struct v4l2_buffer *buf)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf);
-+}
-+
-+static int scaler_m2m_dqbuf(struct file *file, void *fh,
-+			   struct v4l2_buffer *buf)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf);
-+}
-+
-+static int scaler_m2m_streamon(struct file *file, void *fh,
-+			   enum v4l2_buf_type type)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	return v4l2_m2m_streamon(file, ctx->m2m_ctx, type);
-+}
-+
-+static int scaler_m2m_streamoff(struct file *file, void *fh,
-+			    enum v4l2_buf_type type)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type);
-+}
-+
-+/* Return 1 if rectangle a is enclosed in rectangle b, or 0 otherwise. */
-+static int is_rectangle_enclosed(struct v4l2_rect *a, struct v4l2_rect *b)
-+{
-+	return !((a->left < b->left) ||
-+		 (a->top < b->top) ||
-+		 (a->left + a->width > b->left + b->width) ||
-+		 (a->top + a->height > b->top + b->height));
-+}
-+
-+static int scaler_m2m_g_selection(struct file *file, void *fh,
-+			struct v4l2_selection *s)
-+{
-+	struct scaler_frame *frame;
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+
-+	if ((s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
-+	    (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE))
-+		return -EINVAL;
-+
-+	frame = ctx_get_frame(ctx, s->type);
-+	if (IS_ERR(frame))
-+		return PTR_ERR(frame);
-+
-+	if (s->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-+		if ((s->target == V4L2_SEL_TGT_CROP_DEFAULT) ||
-+		    (s->target == V4L2_SEL_TGT_CROP_BOUNDS)) {
-+			s->r.left = 0;
-+			s->r.top = 0;
-+			s->r.width = frame->f_width;
-+			s->r.height = frame->f_height;
-+			return 0;
-+		}
-+
-+		if (s->target == V4L2_SEL_TGT_CROP) {
-+			s->r.left = frame->selection.left;
-+			s->r.top = frame->selection.top;
-+			s->r.width = frame->selection.width;
-+			s->r.height = frame->selection.height;
-+			return 0;
-+		}
-+	} else {
-+		if ((s->target == V4L2_SEL_TGT_COMPOSE_DEFAULT) ||
-+		    (s->target == V4L2_SEL_TGT_COMPOSE_BOUNDS)) {
-+			s->r.left = 0;
-+			s->r.top = 0;
-+			s->r.width = frame->f_width;
-+			s->r.height = frame->f_height;
-+			return 0;
-+		}
-+
-+		if (s->target == V4L2_SEL_TGT_COMPOSE) {
-+			s->r.left = frame->selection.left;
-+			s->r.top = frame->selection.top;
-+			s->r.width = frame->selection.width;
-+			s->r.height = frame->selection.height;
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int scaler_m2m_s_selection(struct file *file, void *fh,
-+				struct v4l2_selection *s)
-+{
-+	struct scaler_frame *frame;
-+	struct scaler_ctx *ctx = fh_to_ctx(fh);
-+	struct v4l2_crop cr;
-+	struct scaler_variant *variant = ctx->scaler_dev->variant;
-+	int ret;
-+
-+	cr.type = s->type;
-+	cr.c = s->r;
-+
-+	if (!(((s->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) &&
-+	       (s->target == V4L2_SEL_TGT_CROP)) ||
-+	      ((s->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
-+	       (s->target == V4L2_SEL_TGT_COMPOSE))))
-+		return -EINVAL;
-+
-+	frame = ctx_get_frame(ctx, s->type);
-+
-+	ret = scaler_try_crop(ctx, &cr);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (s->flags & V4L2_SEL_FLAG_LE &&
-+	    !is_rectangle_enclosed(&cr.c, &s->r))
-+		return -ERANGE;
-+
-+	if (s->flags & V4L2_SEL_FLAG_GE &&
-+	    !is_rectangle_enclosed(&s->r, &cr.c))
-+		return -ERANGE;
-+
-+	s->r = cr.c;
-+
-+	/* Check to see if scaling ratio is within supported range */
-+	if (s->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-+		ret = scaler_check_scaler_ratio(variant,
-+			cr.c.width, cr.c.height,
-+			ctx->d_frame.selection.width,
-+			ctx->d_frame.selection.height,
-+			ctx->ctrls_scaler.rotate->val);
-+	else
-+		ret = scaler_check_scaler_ratio(variant,
-+			ctx->s_frame.selection.width,
-+			ctx->s_frame.selection.height,
-+			cr.c.width, cr.c.height,
-+			ctx->ctrls_scaler.rotate->val);
-+
-+	if (ret < 0) {
-+		scaler_dbg(ctx->scaler_dev, "Out of scaler range");
-+		return -EINVAL;
-+	}
-+
-+	frame->selection = cr.c;
-+
-+	scaler_ctx_state_lock_set(SCALER_PARAMS, ctx);
-+	return 0;
-+}
-+
-+static const struct v4l2_ioctl_ops scaler_m2m_ioctl_ops = {
-+	.vidioc_querycap		= scaler_m2m_querycap,
-+	.vidioc_enum_fmt_vid_cap_mplane	= scaler_m2m_enum_fmt_mplane,
-+	.vidioc_enum_fmt_vid_out_mplane	= scaler_m2m_enum_fmt_mplane,
-+	.vidioc_g_fmt_vid_cap_mplane	= scaler_m2m_g_fmt_mplane,
-+	.vidioc_g_fmt_vid_out_mplane	= scaler_m2m_g_fmt_mplane,
-+	.vidioc_try_fmt_vid_cap_mplane	= scaler_m2m_try_fmt_mplane,
-+	.vidioc_try_fmt_vid_out_mplane	= scaler_m2m_try_fmt_mplane,
-+	.vidioc_s_fmt_vid_cap_mplane	= scaler_m2m_s_fmt_mplane,
-+	.vidioc_s_fmt_vid_out_mplane	= scaler_m2m_s_fmt_mplane,
-+	.vidioc_reqbufs			= scaler_m2m_reqbufs,
-+	.vidioc_expbuf                  = scaler_m2m_expbuf,
-+	.vidioc_querybuf		= scaler_m2m_querybuf,
-+	.vidioc_qbuf			= scaler_m2m_qbuf,
-+	.vidioc_dqbuf			= scaler_m2m_dqbuf,
-+	.vidioc_streamon		= scaler_m2m_streamon,
-+	.vidioc_streamoff		= scaler_m2m_streamoff,
-+	.vidioc_g_selection		= scaler_m2m_g_selection,
-+	.vidioc_s_selection		= scaler_m2m_s_selection
-+};
-+
-+static int queue_init(void *priv, struct vb2_queue *src_vq,
-+			struct vb2_queue *dst_vq)
-+{
-+	struct scaler_ctx *ctx = priv;
-+	int ret;
-+
-+	memset(src_vq, 0, sizeof(*src_vq));
-+	src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
-+	src_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
-+	src_vq->drv_priv = ctx;
-+	src_vq->ops = &scaler_m2m_qops;
-+	src_vq->mem_ops = &vb2_dma_contig_memops;
-+	src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
-+
-+	ret = vb2_queue_init(src_vq);
-+	if (ret < 0)
-+		return ret;
-+
-+	memset(dst_vq, 0, sizeof(*dst_vq));
-+	dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-+	dst_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
-+	dst_vq->drv_priv = ctx;
-+	dst_vq->ops = &scaler_m2m_qops;
-+	dst_vq->mem_ops = &vb2_dma_contig_memops;
-+	dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
-+
-+	return vb2_queue_init(dst_vq);
-+}
-+
-+static int scaler_m2m_open(struct file *file)
-+{
-+	struct scaler_dev *scaler = video_drvdata(file);
-+	struct scaler_ctx *ctx = NULL;
-+	int ret;
-+
-+	scaler_dbg(scaler, "pid: %d, state: 0x%lx",
-+			task_pid_nr(current), scaler->state);
-+
-+	if (mutex_lock_interruptible(&scaler->lock))
-+		return -ERESTARTSYS;
-+
-+	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx) {
-+		ret = -ENOMEM;
-+		goto unlock;
-+	}
-+
-+	v4l2_fh_init(&ctx->fh, scaler->m2m.vfd);
-+	ret = scaler_ctrls_create(ctx);
-+	if (ret < 0)
-+		goto error_fh;
-+
-+	/* Use separate control handler per file handle */
-+	ctx->fh.ctrl_handler = &ctx->ctrl_handler;
-+	file->private_data = &ctx->fh;
-+	v4l2_fh_add(&ctx->fh);
-+
-+	ctx->scaler_dev = scaler;
-+	/* Default color format */
-+	ctx->s_frame.fmt = scaler_get_format(0);
-+	ctx->d_frame.fmt = scaler_get_format(0);
-+	ctx->flags = 0;
-+
-+	ctx->m2m_ctx = v4l2_m2m_ctx_init(scaler->m2m.m2m_dev, ctx, queue_init);
-+	if (IS_ERR(ctx->m2m_ctx)) {
-+		scaler_dbg(scaler, "Failed to initialize m2m context");
-+		ret = PTR_ERR(ctx->m2m_ctx);
-+		goto error_ctrls;
-+	}
-+
-+	/* Apply default format settings */
-+	ret = scaler_m2m_set_default_format(ctx);
-+	if (ret < 0) {
-+		scaler_dbg(scaler, "Failed to set default format settings");
-+		goto error_ctrls;
-+	}
-+
-+	if (v4l2_fh_is_singular_file(file))
-+		set_bit(ST_M2M_OPEN, &scaler->state);
-+
-+	scaler_dbg(scaler, "scaler m2m driver is opened, ctx(0x%p)", ctx);
-+
-+	mutex_unlock(&scaler->lock);
-+	return 0;
-+
-+error_ctrls:
-+	scaler_ctrls_delete(ctx);
-+error_fh:
-+	v4l2_fh_del(&ctx->fh);
-+	v4l2_fh_exit(&ctx->fh);
-+	kfree(ctx);
-+unlock:
-+	mutex_unlock(&scaler->lock);
-+	return ret;
-+}
-+
-+static int scaler_m2m_release(struct file *file)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(file->private_data);
-+	struct scaler_dev *scaler = ctx->scaler_dev;
-+
-+	scaler_dbg(scaler, "pid: %d, state: 0x%lx",
-+			task_pid_nr(current), scaler->state);
-+
-+	mutex_lock(&scaler->lock);
-+
-+	if (v4l2_fh_is_singular_file(file))
-+		clear_bit(ST_M2M_OPEN, &scaler->state);
-+
-+	v4l2_m2m_ctx_release(ctx->m2m_ctx);
-+	scaler_ctrls_delete(ctx);
-+	v4l2_fh_del(&ctx->fh);
-+	v4l2_fh_exit(&ctx->fh);
-+
-+	kfree(ctx);
-+
-+	mutex_unlock(&scaler->lock);
-+	return 0;
-+}
-+
-+static unsigned int scaler_m2m_poll(struct file *file,
-+					struct poll_table_struct *wait)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(file->private_data);
-+	struct scaler_dev *scaler = ctx->scaler_dev;
-+	int ret;
-+
-+	if (mutex_lock_interruptible(&scaler->lock))
-+		return -ERESTARTSYS;
-+
-+	ret = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
-+	mutex_unlock(&scaler->lock);
-+
-+	return ret;
-+}
-+
-+static int scaler_m2m_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	struct scaler_ctx *ctx = fh_to_ctx(file->private_data);
-+	struct scaler_dev *scaler = ctx->scaler_dev;
-+	int ret;
-+
-+	if (mutex_lock_interruptible(&scaler->lock))
-+		return -ERESTARTSYS;
-+
-+	ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
-+	mutex_unlock(&scaler->lock);
-+
-+	return ret;
-+}
-+
-+static const struct v4l2_file_operations scaler_m2m_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= scaler_m2m_open,
-+	.release	= scaler_m2m_release,
-+	.poll		= scaler_m2m_poll,
-+	.unlocked_ioctl	= video_ioctl2,
-+	.mmap		= scaler_m2m_mmap,
-+};
-+
-+static struct v4l2_m2m_ops scaler_m2m_ops = {
-+	.device_run	= scaler_m2m_device_run,
-+	.job_abort	= scaler_m2m_job_abort,
-+};
-+
-+int scaler_register_m2m_device(struct scaler_dev *scaler)
-+{
-+	struct platform_device *pdev;
-+	int ret;
-+
-+	if (!scaler)
-+		return -ENODEV;
-+
-+	pdev = scaler->pdev;
-+
-+	scaler->vdev.fops	= &scaler_m2m_fops;
-+	scaler->vdev.ioctl_ops	= &scaler_m2m_ioctl_ops;
-+	scaler->vdev.release	= video_device_release_empty;
-+	scaler->vdev.lock	= &scaler->lock;
-+	scaler->vdev.vfl_dir	= VFL_DIR_M2M;
-+	snprintf(scaler->vdev.name, sizeof(scaler->vdev.name), "%s:m2m",
-+					SCALER_MODULE_NAME);
-+
-+	video_set_drvdata(&scaler->vdev, scaler);
-+
-+	scaler->m2m.vfd = &scaler->vdev;
-+	scaler->m2m.m2m_dev = v4l2_m2m_init(&scaler_m2m_ops);
-+	if (IS_ERR(scaler->m2m.m2m_dev)) {
-+		dev_err(&pdev->dev, "failed to initialize v4l2-m2m device\n");
-+		return PTR_ERR(scaler->m2m.m2m_dev);
-+	}
-+
-+	ret = video_register_device(&scaler->vdev, VFL_TYPE_GRABBER, -1);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev,
-+			 "%s(): failed to register video device\n", __func__);
-+		v4l2_m2m_release(scaler->m2m.m2m_dev);
-+		return ret;
-+	}
-+
-+	dev_info(&pdev->dev, "scaler m2m driver registered as /dev/video%d",
-+			     scaler->vdev.num);
-+	return 0;
-+}
-+
-+void scaler_unregister_m2m_device(struct scaler_dev *scaler)
-+{
-+	if (scaler) {
-+		video_unregister_device(scaler->m2m.vfd);
-+		v4l2_m2m_release(scaler->m2m.m2m_dev);
-+	}
-+}
--- 
-1.7.9.5
+Sincerely yours,
+     Tarek Dakhran
