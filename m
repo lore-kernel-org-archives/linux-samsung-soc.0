@@ -1,86 +1,79 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for HSMMC1
-Date: Fri, 18 Oct 2013 08:38:22 +0900
-Message-ID: <1e2a01cecb91$f790c700$e6b25500$@org>
-References: <1380471121-9478-1-git-send-email-tomasz.figa@gmail.com>
- <1527511.ScaEHrLnaz@flatron>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH v9 12/13] V4L: s5k6a3: Change sensor min/max resolutions
+Date: Fri, 18 Oct 2013 08:15:20 +0530
+Message-ID: <CALt3h7_pMQsfXcEtr6VRUU1P561qAV=2XtfUfQXD-3zpdn1T+g@mail.gmail.com>
+References: <1380279558-21651-1-git-send-email-arun.kk@samsung.com>
+	<1380279558-21651-13-git-send-email-arun.kk@samsung.com>
+	<5260186C.1040109@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63444 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753937Ab3JQXiZ (ORCPT
+Received: from mail-vb0-f44.google.com ([209.85.212.44]:37519 "EHLO
+	mail-vb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755783Ab3JRCpV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Oct 2013 19:38:25 -0400
-In-reply-to: <1527511.ScaEHrLnaz@flatron>
-Content-language: ko
+	Thu, 17 Oct 2013 22:45:21 -0400
+In-Reply-To: <5260186C.1040109@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, augulis.darius@gmail.com, =?ISO-8859-1?Q?'J=FCrgen_Beisert'?= <jbe@pengutronix.de>, oselas@community.pengutronix.de
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, kilyeon.im@samsung.com
 
-Tomasz Figa wrote:
-> 
-> Hi Kukjin,
-> 
-Hi,
+Hi Sylwester,
 
-> On Sunday 29 of September 2013 18:12:01 Tomasz Figa wrote:
-> > According to board schematics, for HSMMC1 a GPIO line is used to detect
-> > card presence, while currently it is being configured for internal card
-> > detect line, which is multiplexed with card detect line of HSMMC0 and
-> > thus breaking it.
-> >
-> > This patch adds proper sdhci platform data setting card detect type to
-> > external GPIO and fixing operation of HSMMC0.
-> >
-> > Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-> > ---
-> >  arch/arm/mach-s3c64xx/mach-mini6410.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> 
-> Would you mind taking this patch to your tree?
-> 
-Applied, thanks.
-Kukjin
+On Thu, Oct 17, 2013 at 10:33 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi Arun,
+>
+> My apologies for the delay.
+>
+> On 27/09/13 12:59, Arun Kumar K wrote:
+>> s5k6a3 sensor has actual pixel resolution of 1408x1402 against
+>> the active resolution 1392x1392. The real resolution is needed
+>> when raw sensor SRGB data is dumped to memory by fimc-lite.
+>>
+>> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+>> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> ---
+>>  drivers/media/i2c/s5k6a3.c |   10 ++++++----
+>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/media/i2c/s5k6a3.c b/drivers/media/i2c/s5k6a3.c
+>> index ccbb4fc..e70e217 100644
+>> --- a/drivers/media/i2c/s5k6a3.c
+>> +++ b/drivers/media/i2c/s5k6a3.c
+>> @@ -25,10 +25,12 @@
+>>  #include <media/v4l2-async.h>
+>>  #include <media/v4l2-subdev.h>
+>>
+>> -#define S5K6A3_SENSOR_MAX_WIDTH              1392
+>> -#define S5K6A3_SENSOR_MAX_HEIGHT     1392
+>> -#define S5K6A3_SENSOR_MIN_WIDTH              32
+>> -#define S5K6A3_SENSOR_MIN_HEIGHT     32
+>> +#define S5K6A3_SENSOR_MAX_WIDTH              1408
+>> +#define S5K6A3_SENSOR_MAX_HEIGHT     1402
+>
+> Where these numbers come from ? I digged in the datasheet and the pixel
+> array size for S5K6A3YX is 1412 x 1412 pixels. I will use this value
+> in my updated s5k6a3 driver patch I'm going to post today. And I will
+> drop this patch from this series.
+>
 
-> Best regards,
-> Tomasz
-> 
-> > diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c
-> > b/arch/arm/mach-s3c64xx/mach-mini6410.c index 58d46a3..97ae470 100644
-> > --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-> > +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-> > @@ -36,7 +36,9 @@
-> >  #include <plat/devs.h>
-> >  #include <plat/fb.h>
-> >  #include <linux/platform_data/mtd-nand-s3c2410.h>
-> > +#include <linux/platform_data/mmc-sdhci-s3c.h>
-> >  #include <plat/regs-serial.h>
-> > +#include <plat/sdhci.h>
-> >  #include <linux/platform_data/touchscreen-s3c2410.h>
-> >
-> >  #include <video/platform_lcd.h>
-> > @@ -214,6 +216,13 @@ static struct platform_device mini6410_lcd_powerdev
-> > = { .dev.platform_data	= &mini6410_lcd_power_data,
-> >  };
-> >
-> > +static struct s3c_sdhci_platdata mini6410_hsmmc1_pdata = {
-> > +	.max_width		= 4,
-> > +	.cd_type		= S3C_SDHCI_CD_GPIO,
-> > +	.ext_cd_gpio		= S3C64XX_GPN(10),
-> > +	.ext_cd_gpio_invert	= true,
-> > +};
-> > +
-> >  static struct platform_device *mini6410_devices[] __initdata = {
-> >  	&mini6410_device_eth,
-> >  	&s3c_device_hsmmc0,
-> > @@ -321,6 +330,7 @@ static void __init mini6410_machine_init(void)
-> >
-> >  	s3c_nand_set_platdata(&mini6410_nand_info);
-> >  	s3c_fb_set_platdata(&mini6410_lcd_pdata[features.lcd_index]);
-> > +	s3c_sdhci1_set_platdata(&mini6410_hsmmc1_pdata);
-> >  	s3c24xx_ts_set_platdata(NULL);
-> >
-> >  	/* configure nCS1 width to 16 bits */
+These are the numbers used in the the reference driver. I will check if
+the values 1412x1412 works or not. There are also limitations imposed by the
+fimc-is firmware too as we just pass on the sensor_id to the firmware and I can
+see from the firmware log that it assumes max size of 1408x1402 for 6a3.
+
+>> +#define S5K6A3_SENSOR_ACTIVE_WIDTH   1392
+>> +#define S5K6A3_SENSOR_ACTIVE_HEIGHT  1392
+>
+>
+> S5K6A3_SENSOR_ACTIVE_* macros are not used anywhere ? Can they be dropped ?
+> Same applies to your S5K4E5 driver patch.
+>
+
+Yes I will drop them.
+In my next series, I will drop this 6a3 patch and keep only 4e5 sensor.
+
+Regards
+Arun
