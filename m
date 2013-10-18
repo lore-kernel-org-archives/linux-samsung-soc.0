@@ -1,43 +1,73 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v4 3/4] [media] exynos-scaler: Add m2m functionality for
- the SCALER driver
-Date: Fri, 18 Oct 2013 11:11:36 +0200
-Message-ID: <5260FB48.5030306@samsung.com>
+Subject: Re: [PATCH v4 4/4] [media] exynos-scaler: Add DT bindings for SCALER
+ driver
+Date: Fri, 18 Oct 2013 11:14:05 +0200
+Message-ID: <5260FBDD.4020205@samsung.com>
 References: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
- <1380889594-10448-4-git-send-email-shaik.ameer@samsung.com>
+ <1380889594-10448-5-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1380889594-10448-4-git-send-email-shaik.ameer@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Arun Kumar K' <arun.kk@samsung.com>
-Cc: posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:58322 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751643Ab3JRJOK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 18 Oct 2013 05:14:10 -0400
+In-reply-to: <1380889594-10448-5-git-send-email-shaik.ameer@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-media@vger.kernel.org, 'Arun Kumar K' <arun.kk@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, posciak@google.com, inki.dae@samsung.com, hverkuil@xs4all.nl
 
 On 04/10/13 14:26, Shaik Ameer Basha wrote:
-> This patch adds the Makefile and memory to memory (m2m) interface
-> functionality for the SCALER driver.
+> This patch adds the DT binding documentation for the
+> Exynos5420/5410 based SCALER device driver.
 > 
 > Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 
 Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-
-> +static void scaler_m2m_buf_queue(struct vb2_buffer *vb)
-> +{
-> +	struct scaler_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
+> ---
+>  .../devicetree/bindings/media/exynos5-scaler.txt   |   22 ++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/exynos5-scaler.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/exynos5-scaler.txt b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
+> new file mode 100644
+> index 0000000..f620baf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5-scaler.txt
+> @@ -0,0 +1,22 @@
+> +* Samsung Exynos5 SCALER device
 > +
-> +	scaler_dbg(ctx->scaler_dev, "ctx: %p, ctx->state: 0x%x",
-> +				     ctx, ctx->state);
+> +SCALER is used for scaling, blending, color fill and color space
+> +conversion on EXYNOS[5420/5410] SoCs.
 > +
-> +	if (ctx->m2m_ctx)
+> +Required properties:
+> +- compatible: should be "samsung,exynos5420-scaler" or
+> +			"samsung,exynos5410-scaler"
+> +- reg: should contain SCALER physical address location and length.
 
-You can remove this line.
+nit: the dot should be probably removed for consistency.
 
-> +		v4l2_m2m_buf_queue(ctx->m2m_ctx, vb);
-> +}
+> +- interrupts: should contain SCALER interrupt number
+> +- clocks: should contain the SCALER clock specifier, from the
+> +			common clock bindings
+> +- clock-names: should be "scaler"
+> +
+> +Example:
+> +	scaler_0: scaler@0x12800000 {
 
+There should be no '0x' in node name.
+
+> +		compatible = "samsung,exynos5420-scaler";
+> +		reg = <0x12800000 0x1000>;
+> +		interrupts = <0 220 0>;
+> +		clocks = <&clock 381>;
+> +		clock-names = "scaler";
+> +	};
+> 
 
 Thanks,
 Sylwester
