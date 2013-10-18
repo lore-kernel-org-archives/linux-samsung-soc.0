@@ -1,979 +1,901 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v10 09/12] exynos5-fimc-is: Add the hardware interface module
-Date: Fri, 18 Oct 2013 11:07:36 +0530
-Message-ID: <1382074659-31130-10-git-send-email-arun.kk@samsung.com>
-References: <1382074659-31130-1-git-send-email-arun.kk@samsung.com>
+From: Arun Kumar K <arunkk.samsung@gmail.com>
+Subject: Re: [PATCH v4 3/4] [media] exynos-scaler: Add m2m functionality for
+ the SCALER driver
+Date: Fri, 18 Oct 2013 11:11:26 +0530
+Message-ID: <CALt3h79qCGZLVVAT6bJQq2t_EjuQeEH_2_R-xN3roNiVH7AMHA@mail.gmail.com>
+References: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com>
+	<1380889594-10448-4-git-send-email-shaik.ameer@samsung.com>
+	<064301ceca55$f5809a40$e081cec0$%debski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:53544 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751365Ab3JRFih (ORCPT
+Received: from mail-ve0-f170.google.com ([209.85.128.170]:45170 "EHLO
+	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751009Ab3JRFl1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 Oct 2013 01:38:37 -0400
-In-Reply-To: <1382074659-31130-1-git-send-email-arun.kk@samsung.com>
+	Fri, 18 Oct 2013 01:41:27 -0400
+In-Reply-To: <064301ceca55$f5809a40$e081cec0$%debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+To: Kamil Debski <k.debski@samsung.com>
+Cc: Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pawel Osciak <posciak@google.com>, inki.dae@samsung.com, Hans Verkuil <hverkuil@xs4all.nl>
 
-The hardware interface module finally sends the commands to the
-FIMC-IS firmware and runs the interrupt handler for getting the
-responses.
+Hi Kamil,
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- .../media/platform/exynos5-is/fimc-is-interface.c  |  810 ++++++++++++++++++++
- .../media/platform/exynos5-is/fimc-is-interface.h  |  124 +++
- 2 files changed, 934 insertions(+)
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.h
+As Shaik is on travel, I will correct this patch and post the updated version.
+Hope its ok for you to take the corrected version of this patch alone
+without re-spinning the whole series.
 
-diff --git a/drivers/media/platform/exynos5-is/fimc-is-interface.c b/drivers/media/platform/exynos5-is/fimc-is-interface.c
-new file mode 100644
-index 0000000..c5da6ff
---- /dev/null
-+++ b/drivers/media/platform/exynos5-is/fimc-is-interface.c
-@@ -0,0 +1,810 @@
-+/*
-+ * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
-+*
-+ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ * Kil-yeon Lim <kilyeon.im@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/debugfs.h>
-+#include <linux/seq_file.h>
-+#include "fimc-is.h"
-+#include "fimc-is-cmd.h"
-+#include "fimc-is-regs.h"
-+
-+#define init_request_barrier(itf) mutex_init(&itf->request_barrier)
-+#define enter_request_barrier(itf) mutex_lock(&itf->request_barrier)
-+#define exit_request_barrier(itf) mutex_unlock(&itf->request_barrier)
-+
-+static inline void itf_get_cmd(struct fimc_is_interface *itf,
-+	struct fimc_is_msg *msg, unsigned int index)
-+{
-+	struct is_common_reg __iomem *com_regs = itf->com_regs;
-+
-+	memset(msg, 0, sizeof(*msg));
-+
-+	switch (index) {
-+	case INTR_GENERAL:
-+		msg->command = com_regs->ihcmd;
-+		msg->instance = com_regs->ihc_sensorid;
-+		memcpy(msg->param, com_regs->ihc_param,
-+				4 * sizeof(msg->param[0]));
-+		break;
-+	case INTR_SCC_FDONE:
-+		msg->command = IHC_FRAME_DONE;
-+		msg->instance = com_regs->scc_sensor_id;
-+		memcpy(msg->param, com_regs->scc_param,
-+				3 * sizeof(msg->param[0]));
-+		break;
-+	case INTR_SCP_FDONE:
-+		msg->command = IHC_FRAME_DONE;
-+		msg->instance = com_regs->scp_sensor_id;
-+		memcpy(msg->param, com_regs->scp_param,
-+				3 * sizeof(msg->param[0]));
-+		break;
-+	case INTR_META_DONE:
-+		msg->command = IHC_FRAME_DONE;
-+		msg->instance = com_regs->meta_sensor_id;
-+		msg->param[0] = com_regs->meta_param1;
-+		break;
-+	case INTR_SHOT_DONE:
-+		msg->command = IHC_FRAME_DONE;
-+		msg->instance = com_regs->shot_sensor_id;
-+		memcpy(msg->param, com_regs->shot_param,
-+				2 * sizeof(msg->param[0]));
-+		break;
-+	default:
-+		dev_err(itf->dev, "%s Unknown command\n", __func__);
-+		break;
-+	}
-+}
-+
-+static inline unsigned int itf_get_intr(struct fimc_is_interface *itf)
-+{
-+	unsigned int status;
-+	struct is_common_reg __iomem *com_regs = itf->com_regs;
-+
-+	status = readl(itf->regs + INTMSR1) | com_regs->ihcmd_iflag |
-+		com_regs->scc_iflag |
-+		com_regs->scp_iflag |
-+		com_regs->meta_iflag |
-+		com_regs->shot_iflag;
-+
-+	return status;
-+}
-+
-+static void itf_set_state(struct fimc_is_interface *itf,
-+		unsigned long state)
-+{
-+	unsigned long flags;
-+	spin_lock_irqsave(&itf->slock_state, flags);
-+	__set_bit(state, &itf->state);
-+	spin_unlock_irqrestore(&itf->slock_state, flags);
-+}
-+
-+static void itf_clr_state(struct fimc_is_interface *itf,
-+		unsigned long state)
-+{
-+	unsigned long flags;
-+	spin_lock_irqsave(&itf->slock_state, flags);
-+	__clear_bit(state, &itf->state);
-+	spin_unlock_irqrestore(&itf->slock_state, flags);
-+}
-+
-+static int itf_get_state(struct fimc_is_interface *itf,
-+		unsigned long state)
-+{
-+	int ret = 0;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&itf->slock_state, flags);
-+	ret = test_bit(state, &itf->state);
-+	spin_unlock_irqrestore(&itf->slock_state, flags);
-+	return ret;
-+}
-+
-+static void itf_init_wakeup(struct fimc_is_interface *itf)
-+{
-+	itf_set_state(itf, IS_IF_STATE_INIT);
-+	wake_up(&itf->irq_queue);
-+}
-+
-+void itf_busy_wakeup(struct fimc_is_interface *itf)
-+{
-+	itf_clr_state(itf, IS_IF_STATE_BUSY);
-+	wake_up(&itf->irq_queue);
-+}
-+
-+static int itf_wait_hw_ready(struct fimc_is_interface *itf)
-+{
-+	int t;
-+	for (t = TRY_RECV_AWARE_COUNT; t >= 0; t--) {
-+		unsigned int cfg = readl(itf->regs + INTMSR0);
-+		if (INTMSR0_GET_INTMSD(0, cfg) == 0)
-+			return 0;
-+	}
-+	dev_err(itf->dev, "INTMSR0's 0 bit is not cleared.\n");
-+	return -EINVAL;
-+}
-+
-+static int itf_wait_idlestate(struct fimc_is_interface *itf)
-+{
-+	int ret;
-+
-+	ret = wait_event_timeout(itf->irq_queue,
-+			!itf_get_state(itf, IS_IF_STATE_BUSY),
-+			FIMC_IS_COMMAND_TIMEOUT);
-+	if (!ret) {
-+		dev_err(itf->dev, "%s Timeout\n", __func__);
-+		return -ETIME;
-+	}
-+	return 0;
-+}
-+
-+int fimc_is_itf_wait_init_state(struct fimc_is_interface *itf)
-+{
-+	int ret;
-+
-+	ret = wait_event_timeout(itf->irq_queue,
-+		itf_get_state(itf, IS_IF_STATE_INIT),
-+		FIMC_IS_STARTUP_TIMEOUT);
-+
-+	if (!ret) {
-+		dev_err(itf->dev, "%s Timeout\n", __func__);
-+		return -ETIME;
-+	}
-+	return 0;
-+}
-+
-+/* Send Host to IS command interrupt */
-+static void itf_hic_interrupt(struct fimc_is_interface *itf)
-+{
-+	writel(INTGR0_INTGD(0), itf->regs + INTGR0);
-+}
-+
-+static int itf_send_sensor_number(struct fimc_is_interface *itf)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = ISR_DONE,
-+		.param = { IHC_GET_SENSOR_NUMBER, 1 },
-+	};
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&itf->slock, flags);
-+	itf->com_regs->hicmd = msg.command;
-+	itf->com_regs->hic_sensorid = msg.instance;
-+	memcpy(itf->com_regs->hic_param, msg.param,
-+		4 * sizeof(itf->com_regs->hic_param[0]));
-+	itf_hic_interrupt(itf);
-+	spin_unlock_irqrestore(&itf->slock, flags);
-+
-+	return 0;
-+}
-+
-+static int fimc_is_itf_set_cmd(struct fimc_is_interface *itf,
-+	struct fimc_is_msg *msg)
-+{
-+	int ret = 0;
-+	bool block_io = true;
-+	unsigned long flags;
-+
-+	enter_request_barrier(itf);
-+
-+	switch (msg->command) {
-+	case HIC_STREAM_ON:
-+		if (itf->streaming == IS_IF_STREAMING_ON)
-+			goto exit;
-+		break;
-+	case HIC_STREAM_OFF:
-+		if (itf->streaming == IS_IF_STREAMING_OFF)
-+			goto exit;
-+		break;
-+	case HIC_PROCESS_START:
-+		if (itf->processing == IS_IF_PROCESSING_ON)
-+			goto exit;
-+		break;
-+	case HIC_PROCESS_STOP:
-+		if (itf->processing == IS_IF_PROCESSING_OFF)
-+			goto exit;
-+		break;
-+	case HIC_POWER_DOWN:
-+		if (itf->pdown_ready == IS_IF_POWER_DOWN_READY)
-+			goto exit;
-+		break;
-+	case HIC_SHOT:
-+	case ISR_DONE:
-+		block_io = false;
-+		break;
-+	}
-+
-+	ret = itf_wait_hw_ready(itf);
-+	if (ret) {
-+		dev_err(itf->dev, "%s: itf_wait_hw_ready() failed", __func__);
-+		ret = -EBUSY;
-+		goto exit;
-+	}
-+
-+	spin_lock_irqsave(&itf->slock, flags);
-+	itf_set_state(itf, IS_IF_STATE_BUSY);
-+	itf->com_regs->hicmd = msg->command;
-+	itf->com_regs->hic_sensorid = msg->instance;
-+	memcpy(itf->com_regs->hic_param, msg->param,
-+			4 * sizeof(itf->com_regs->hic_param[0]));
-+	itf_hic_interrupt(itf);
-+	spin_unlock_irqrestore(&itf->slock, flags);
-+
-+	if (!block_io)
-+		goto exit;
-+
-+	ret = itf_wait_idlestate(itf);
-+	if (ret) {
-+		dev_err(itf->dev, "%d command is timeout\n", msg->command);
-+		itf_clr_state(itf, IS_IF_STATE_BUSY);
-+		ret = -ETIME;
-+		goto exit;
-+	}
-+
-+	if (itf->reply.command == ISR_DONE) {
-+		switch (msg->command) {
-+		case HIC_STREAM_ON:
-+			itf->streaming = IS_IF_STREAMING_ON;
-+			break;
-+		case HIC_STREAM_OFF:
-+			itf->streaming = IS_IF_STREAMING_OFF;
-+			break;
-+		case HIC_PROCESS_START:
-+			itf->processing = IS_IF_PROCESSING_ON;
-+			break;
-+		case HIC_PROCESS_STOP:
-+			itf->processing = IS_IF_PROCESSING_OFF;
-+			break;
-+		case HIC_POWER_DOWN:
-+			itf->pdown_ready = IS_IF_POWER_DOWN_READY;
-+			break;
-+		case HIC_OPEN_SENSOR:
-+			if (itf->reply.param[0] == HIC_POWER_DOWN) {
-+				dev_err(itf->dev, "firmware power down");
-+				itf->pdown_ready = IS_IF_POWER_DOWN_READY;
-+				ret = -ECANCELED;
-+				goto exit;
-+			} else
-+				itf->pdown_ready = IS_IF_POWER_DOWN_NREADY;
-+			break;
-+		default:
-+			break;
-+		}
-+	} else {
-+		dev_err(itf->dev, "ISR_NDONE occured");
-+		ret = -EINVAL;
-+	}
-+exit:
-+	exit_request_barrier(itf);
-+
-+	if (ret)
-+		dev_err(itf->dev, "Error returned from FW. See debugfs for error log\n");
-+
-+	return ret;
-+}
-+
-+static int fimc_is_itf_set_cmd_shot(struct fimc_is_interface *itf,
-+		struct fimc_is_msg *msg)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&itf->slock, flags);
-+	itf->com_regs->hicmd = msg->command;
-+	itf->com_regs->hic_sensorid = msg->instance;
-+	memcpy(itf->com_regs->hic_param, msg->param,
-+			4 * sizeof(itf->com_regs->hic_param[0]));
-+	itf->com_regs->fcount = msg->param[2];
-+	itf_hic_interrupt(itf);
-+	spin_unlock_irqrestore(&itf->slock, flags);
-+
-+	return 0;
-+}
-+
-+static void itf_handle_general(struct fimc_is_interface *itf,
-+		struct fimc_is_msg *msg)
-+{
-+	bool is_blocking = true;
-+
-+	switch (msg->command) {
-+
-+	case IHC_GET_SENSOR_NUMBER:
-+		pr_debug("IS version : %d.%d\n",
-+			ISDRV_VERSION, msg->param[0]);
-+		/* Respond with sensor number */
-+		itf_send_sensor_number(itf);
-+		itf_init_wakeup(itf);
-+		break;
-+	case ISR_DONE:
-+		switch (msg->param[0]) {
-+		case HIC_OPEN_SENSOR:
-+			pr_debug("open done\n");
-+			break;
-+		case HIC_GET_SET_FILE_ADDR:
-+			pr_debug("saddr(%p) done\n",
-+				(void *)msg->param[1]);
-+			break;
-+		case HIC_LOAD_SET_FILE:
-+			pr_debug("setfile done\n");
-+			break;
-+		case HIC_SET_A5_MEM_ACCESS:
-+			pr_debug("cfgmem done\n");
-+			break;
-+		case HIC_PROCESS_START:
-+			pr_debug("process_on done\n");
-+			break;
-+		case HIC_PROCESS_STOP:
-+			pr_debug("process_off done\n");
-+			break;
-+		case HIC_STREAM_ON:
-+			pr_debug("stream_on done\n");
-+			break;
-+		case HIC_STREAM_OFF:
-+			pr_debug("stream_off done\n");
-+			break;
-+		case HIC_SET_PARAMETER:
-+			pr_debug("s_param done\n");
-+			break;
-+		case HIC_GET_STATIC_METADATA:
-+			pr_debug("g_capability done\n");
-+			break;
-+		case HIC_PREVIEW_STILL:
-+			pr_debug("a_param(%dx%d) done\n",
-+					msg->param[1], msg->param[2]);
-+			break;
-+		case HIC_POWER_DOWN:
-+			pr_debug("powerdown done\n");
-+			break;
-+		/* Non-blocking command */
-+		case HIC_SHOT:
-+			is_blocking = false;
-+			dev_err(itf->dev, "shot done is not acceptable\n");
-+			break;
-+		case HIC_SET_CAM_CONTROL:
-+			is_blocking = false;
-+			dev_err(itf->dev, "camctrl is not acceptable\n");
-+			break;
-+		default:
-+			is_blocking = false;
-+			dev_err(itf->dev, "unknown done is invokded\n");
-+			break;
-+		}
-+		break;
-+	case ISR_NDONE:
-+		switch (msg->param[0]) {
-+		case HIC_SHOT:
-+			is_blocking = false;
-+			dev_err(itf->dev, "shot NOT done is not acceptable\n");
-+			break;
-+		case HIC_SET_CAM_CONTROL:
-+			is_blocking = false;
-+			pr_debug("camctrl NOT done\n");
-+			break;
-+		case HIC_SET_PARAMETER:
-+			dev_err(itf->dev, "s_param NOT done\n");
-+			dev_err(itf->dev, "param2 : 0x%08X\n", msg->param[1]);
-+			dev_err(itf->dev, "param3 : 0x%08X\n", msg->param[2]);
-+			dev_err(itf->dev, "param4 : 0x%08X\n", msg->param[3]);
-+			break;
-+		default:
-+			dev_err(itf->dev, "command(%d) not done",
-+					msg->param[0]);
-+			break;
-+		}
-+		break;
-+	case IHC_SET_FACE_MARK:
-+		is_blocking = false;
-+		dev_err(itf->dev, "FACE_MARK(%d,%d,%d) is not acceptable\n",
-+			msg->param[0], msg->param[1], msg->param[2]);
-+		break;
-+	case IHC_AA_DONE:
-+		is_blocking = false;
-+		dev_err(itf->dev, "AA_DONE(%d,%d,%d) is not acceptable\n",
-+			msg->param[0], msg->param[1], msg->param[2]);
-+		break;
-+	case IHC_FLASH_READY:
-+		is_blocking = false;
-+		dev_err(itf->dev, "IHC_FLASH_READY is not acceptable");
-+		break;
-+	case IHC_NOT_READY:
-+		is_blocking = false;
-+		dev_err(itf->dev, "IHC_NOT_READY is occured, need reset");
-+		break;
-+	default:
-+		is_blocking = false;
-+		dev_err(itf->dev, "%s: unknown (#%08X) command\n",
-+				__func__, msg->command);
-+		break;
-+	}
-+
-+	if (is_blocking) {
-+		memcpy(&itf->reply, msg, sizeof(struct fimc_is_msg));
-+		itf_busy_wakeup(itf);
-+	}
-+}
-+
-+static void itf_handle_scaler_done(struct fimc_is_interface *itf,
-+		struct fimc_is_msg *msg)
-+{
-+	struct fimc_is *is = fimc_interface_to_is(itf);
-+	struct fimc_is_pipeline *pipeline = &is->pipeline[msg->instance];
-+	struct fimc_is_buf *buf;
-+	struct fimc_is_scaler *scl;
-+	const struct fimc_is_fmt *fmt;
-+	struct timeval *tv;
-+	struct timespec ts;
-+	unsigned int wh, i;
-+	unsigned int fcount = msg->param[0];
-+	unsigned long *comp_state;
-+
-+	if (msg->param[3] == SCALER_SCC) {
-+		scl = &pipeline->scaler[SCALER_SCC];
-+		comp_state = &pipeline->comp_state[IS_SCC];
-+	} else {
-+		scl = &pipeline->scaler[SCALER_SCP];
-+		comp_state = &pipeline->comp_state[IS_SCP];
-+	}
-+
-+	fmt = scl->fmt;
-+
-+	fimc_is_pipeline_buf_lock(pipeline);
-+	if (!list_empty(&scl->run_queue)) {
-+
-+		wh = scl->width * scl->height;
-+		buf = fimc_is_scaler_run_queue_get(scl);
-+		for (i = 0; i < fmt->num_planes; i++)
-+			vb2_set_plane_payload(&buf->vb, i,
-+					(wh * fmt->depth[i]) / 8);
-+
-+		/* Set timestamp */
-+		ktime_get_ts(&ts);
-+		tv = &buf->vb.v4l2_buf.timestamp;
-+		tv->tv_sec = ts.tv_sec;
-+		tv->tv_usec = ts.tv_nsec / NSEC_PER_USEC;
-+		buf->vb.v4l2_buf.sequence = fcount;
-+
-+		pr_debug("SCP buffer done %d/%d\n",
-+				msg->param[0], msg->param[2]);
-+		vb2_buffer_done(&buf->vb, VB2_BUF_STATE_DONE);
-+	}
-+	fimc_is_pipeline_buf_unlock(pipeline);
-+	clear_bit(COMP_RUN, comp_state);
-+	wake_up(&scl->event_q);
-+}
-+
-+static void itf_handle_shot_done(struct fimc_is_interface *itf,
-+		struct fimc_is_msg *msg)
-+{
-+	struct fimc_is *is = fimc_interface_to_is(itf);
-+	struct fimc_is_pipeline *pipeline = &is->pipeline[msg->instance];
-+	unsigned int status = msg->param[1];
-+	struct fimc_is_buf *bayer_buf;
-+	int ret;
-+
-+	if (status != ISR_DONE)
-+		dev_err(itf->dev, "Shot done is invalid(0x%08X)\n", status);
-+
-+	/* DQ the bayer input buffer */
-+	fimc_is_pipeline_buf_lock(pipeline);
-+	bayer_buf = fimc_is_isp_run_queue_get(&pipeline->isp);
-+	if (bayer_buf) {
-+		vb2_buffer_done(&bayer_buf->vb, VB2_BUF_STATE_DONE);
-+		pr_debug("Bayer buffer done.\n");
-+	}
-+	fimc_is_pipeline_buf_unlock(pipeline);
-+
-+	/* Clear state & call shot again */
-+	clear_bit(PIPELINE_RUN, &pipeline->state);
-+
-+	ret = fimc_is_pipeline_shot(pipeline);
-+	if (ret)
-+		dev_err(itf->dev, "Shot failed\n");
-+}
-+
-+/* Main FIMC-IS interrupt handler */
-+static irqreturn_t itf_irq_handler(int irq, void *data)
-+{
-+	struct fimc_is_interface *itf = data;
-+	struct fimc_is_msg msg;
-+	unsigned int status, intr;
-+	struct is_common_reg __iomem *com_regs;
-+
-+	com_regs = itf->com_regs;
-+	status = itf_get_intr(itf);
-+
-+	for (intr = INTR_GENERAL; intr < INTR_MAX_MAP; intr++) {
-+
-+		if (status & BIT(intr)) {
-+			itf_get_cmd(itf, &msg, intr);
-+
-+			switch (intr) {
-+			case INTR_GENERAL:
-+				itf_handle_general(itf, &msg);
-+				com_regs->ihcmd_iflag = 0;
-+				break;
-+			case INTR_SHOT_DONE:
-+				itf_handle_shot_done(itf, &msg);
-+				com_regs->shot_iflag = 0;
-+				break;
-+			case INTR_SCC_FDONE:
-+				msg.param[3] = SCALER_SCC;
-+				itf_handle_scaler_done(itf, &msg);
-+				com_regs->scc_iflag = 0;
-+				break;
-+			case INTR_SCP_FDONE:
-+				msg.param[3] = SCALER_SCP;
-+				itf_handle_scaler_done(itf, &msg);
-+				com_regs->scp_iflag = 0;
-+				break;
-+			case INTR_META_DONE:
-+				com_regs->meta_iflag = 0;
-+				break;
-+			}
-+			status &= ~BIT(intr);
-+			writel(BIT(intr), itf->regs + INTCR1);
-+		}
-+	}
-+
-+	if (status != 0)
-+		dev_err(itf->dev, "status is NOT all clear(0x%08X)", status);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+int fimc_is_itf_open_sensor(struct fimc_is_interface *itf,
-+		unsigned int instance,
-+		unsigned int sensor_id,
-+		unsigned int i2c_channel,
-+		unsigned int sensor_ext)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_OPEN_SENSOR,
-+		.instance = instance,
-+		.param = { sensor_id, i2c_channel, sensor_ext },
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_get_setfile_addr(struct fimc_is_interface *itf,
-+		unsigned int instance, unsigned int *setfile_addr)
-+{
-+	int ret;
-+	struct fimc_is_msg msg = {
-+		.command = HIC_GET_SET_FILE_ADDR,
-+		.instance = instance,
-+	};
-+
-+	ret = fimc_is_itf_set_cmd(itf, &msg);
-+	*setfile_addr = itf->reply.param[1];
-+
-+	return ret;
-+}
-+
-+int fimc_is_itf_load_setfile(struct fimc_is_interface *itf,
-+		unsigned int instance)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_LOAD_SET_FILE,
-+		.instance = instance,
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_stream_on(struct fimc_is_interface *itf,
-+		unsigned int instance)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_STREAM_ON,
-+		.instance = instance,
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_stream_off(struct fimc_is_interface *itf,
-+		unsigned int instance)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_STREAM_OFF,
-+		.instance = instance,
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_process_on(struct fimc_is_interface *itf,
-+		unsigned int instance)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_PROCESS_START,
-+		.instance = instance,
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_process_off(struct fimc_is_interface *itf,
-+		unsigned int instance)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_PROCESS_STOP,
-+		.instance = instance,
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_set_param(struct fimc_is_interface *itf,
-+		unsigned int instance,
-+		unsigned int lindex,
-+		unsigned int hindex)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_SET_PARAMETER,
-+		.instance = instance,
-+		.param = { ISS_PREVIEW_STILL, 0, lindex, hindex },
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_preview_still(struct fimc_is_interface *itf,
-+		unsigned int instance)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_PREVIEW_STILL,
-+		.instance = instance,
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_get_capability(struct fimc_is_interface *itf,
-+	unsigned int instance, unsigned int address)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_GET_STATIC_METADATA,
-+		.instance = instance,
-+		.param[0] = address,
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_cfg_mem(struct fimc_is_interface *itf,
-+		unsigned int instance, unsigned int address,
-+		unsigned int size)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_SET_A5_MEM_ACCESS,
-+		.instance = instance,
-+		.param = { address, size },
-+	};
-+
-+	return fimc_is_itf_set_cmd(itf, &msg);
-+}
-+
-+int fimc_is_itf_shot_nblk(struct fimc_is_interface *itf,
-+		unsigned int instance, unsigned int bayer,
-+		unsigned int shot, unsigned int fcount, unsigned int rcount)
-+{
-+	struct fimc_is_msg msg = {
-+		.command = HIC_SHOT,
-+		.instance = instance,
-+		.param = { bayer, shot, fcount, rcount },
-+	};
-+
-+	return fimc_is_itf_set_cmd_shot(itf, &msg);
-+}
-+
-+int fimc_is_itf_power_down(struct fimc_is_interface *itf,
-+		unsigned int instance)
-+{
-+	int ret;
-+	struct fimc_is_msg msg = {
-+		.command = HIC_POWER_DOWN,
-+		.instance = instance,
-+	};
-+
-+	ret = fimc_is_itf_set_cmd(itf, &msg);
-+	itf_clr_state(itf, IS_IF_STATE_INIT);
-+
-+	return ret;
-+}
-+
-+/* Debugfs for showing FW debug messages */
-+static int fimc_is_log_show(struct seq_file *s, void *data)
-+{
-+	struct fimc_is_interface *itf = s->private;
-+	struct fimc_is *is = fimc_interface_to_is(itf);
-+
-+	const u8 *buf = (u8 *) (is->minfo.fw.vaddr + DEBUG_OFFSET);
-+
-+	if (is->minfo.fw.vaddr == 0) {
-+		dev_err(itf->dev, "Firmware memory is not initialized\n");
-+		return -EIO;
-+	}
-+
-+	seq_printf(s, "%s\n", buf);
-+	return 0;
-+}
-+
-+static int fimc_is_debugfs_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, fimc_is_log_show, inode->i_private);
-+}
-+
-+static const struct file_operations fimc_is_debugfs_fops = {
-+	.open		= fimc_is_debugfs_open,
-+	.read		= seq_read,
-+	.llseek		= seq_lseek,
-+	.release	= single_release,
-+};
-+
-+static void fimc_is_debugfs_remove(struct fimc_is_interface *itf)
-+{
-+	debugfs_remove(itf->debugfs_entry);
-+	itf->debugfs_entry = NULL;
-+}
-+
-+static int fimc_is_debugfs_create(struct fimc_is_interface *itf)
-+{
-+	struct dentry *dentry;
-+
-+	itf->debugfs_entry = debugfs_create_dir("fimc_is", NULL);
-+
-+	dentry = debugfs_create_file("fw_log", S_IRUGO, itf->debugfs_entry,
-+					itf, &fimc_is_debugfs_fops);
-+	if (!dentry)
-+		fimc_is_debugfs_remove(itf);
-+
-+	return itf->debugfs_entry == NULL ? -EIO : 0;
-+}
-+
-+int fimc_is_interface_init(struct fimc_is_interface *itf,
-+		void __iomem *regs, int irq)
-+{
-+	struct fimc_is *is = fimc_interface_to_is(itf);
-+	struct device *dev = &is->pdev->dev;
-+	int ret;
-+
-+	if (!regs || !irq) {
-+		dev_err(itf->dev, "Invalid args\n");
-+		return -EINVAL;
-+	}
-+
-+	itf->regs = regs;
-+	itf->com_regs = (struct is_common_reg *)(regs + ISSR(0));
-+	itf->dev = &is->pdev->dev;
-+
-+	init_waitqueue_head(&itf->irq_queue);
-+	spin_lock_init(&itf->slock_state);
-+	spin_lock_init(&itf->slock);
-+
-+	/* Register interrupt handler */
-+	ret = devm_request_irq(dev, irq, itf_irq_handler,
-+			       0, dev_name(dev), itf);
-+	if (ret) {
-+		dev_err(dev, "Failed to install irq (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	/* Initialize context vars */
-+	itf->streaming = IS_IF_STREAMING_INIT;
-+	itf->processing = IS_IF_PROCESSING_INIT;
-+	itf->pdown_ready = IS_IF_POWER_DOWN_READY;
-+	itf->debug_cnt = 0;
-+	init_request_barrier(itf);
-+
-+	/* Debugfs for FW debug log */
-+	fimc_is_debugfs_create(itf);
-+
-+	return 0;
-+}
-diff --git a/drivers/media/platform/exynos5-is/fimc-is-interface.h b/drivers/media/platform/exynos5-is/fimc-is-interface.h
-new file mode 100644
-index 0000000..44b641b
---- /dev/null
-+++ b/drivers/media/platform/exynos5-is/fimc-is-interface.h
-@@ -0,0 +1,124 @@
-+/*
-+ * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
-+ *
-+ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ *  Arun Kumar K <arun.kk@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef FIMC_IS_INTERFACE_H_
-+#define FIMC_IS_INTERFACE_H_
-+
-+#include "fimc-is-core.h"
-+
-+#define TRY_RECV_AWARE_COUNT    100
-+
-+#define ISDRV_VERSION		111
-+
-+enum interrupt_map {
-+	INTR_GENERAL            = 0,
-+	INTR_ISP_FDONE          = 1,
-+	INTR_SCC_FDONE          = 2,
-+	INTR_DNR_FDONE          = 3,
-+	INTR_SCP_FDONE          = 4,
-+	INTR_ISP_YUV_DONE	= 5,
-+	INTR_META_DONE          = 6,
-+	INTR_SHOT_DONE          = 7,
-+	INTR_MAX_MAP
-+};
-+
-+enum fimc_is_interface_state {
-+	IS_IF_STATE_INIT,
-+	IS_IF_STATE_OPEN,
-+	IS_IF_STATE_START,
-+	IS_IF_STATE_BUSY
-+};
-+
-+enum streaming_state {
-+	IS_IF_STREAMING_INIT,
-+	IS_IF_STREAMING_OFF,
-+	IS_IF_STREAMING_ON
-+};
-+
-+enum processing_state {
-+	IS_IF_PROCESSING_INIT,
-+	IS_IF_PROCESSING_OFF,
-+	IS_IF_PROCESSING_ON
-+};
-+
-+enum pdown_ready_state {
-+	IS_IF_POWER_DOWN_READY,
-+	IS_IF_POWER_DOWN_NREADY
-+};
-+
-+struct fimc_is_msg {
-+	u32 id;
-+	u32 command;
-+	u32 instance;
-+	u32 param[4];
-+};
-+
-+struct fimc_is_interface {
-+	unsigned long			state;
-+
-+	void __iomem			*regs;
-+	struct is_common_reg __iomem    *com_regs;
-+	/* Lock for writing into MCUCTL registers */
-+	spinlock_t			slock;
-+	/* Lock for context state variable */
-+	spinlock_t			slock_state;
-+	wait_queue_head_t		irq_queue;
-+	struct device			*dev;
-+	/* Held while sending commands to FW */
-+	struct mutex			request_barrier;
-+
-+	enum streaming_state		streaming;
-+	enum processing_state		processing;
-+	enum pdown_ready_state		pdown_ready;
-+
-+	struct fimc_is_msg		reply;
-+
-+	int				debug_cnt;
-+	struct dentry                   *debugfs_entry;
-+
-+};
-+
-+int fimc_is_interface_init(struct fimc_is_interface *itf,
-+		void __iomem *regs, int irq);
-+int fimc_is_itf_wait_init_state(struct fimc_is_interface *itf);
-+int fimc_is_itf_open_sensor(struct fimc_is_interface *itf,
-+		unsigned int instance,
-+		unsigned int sensor_id,
-+		unsigned int i2c_channel,
-+		unsigned int sensor_ext);
-+int fimc_is_itf_get_setfile_addr(struct fimc_is_interface *this,
-+		unsigned int instance, unsigned int *setfile_addr);
-+int fimc_is_itf_load_setfile(struct fimc_is_interface *itf,
-+		unsigned int instance);
-+int fimc_is_itf_stream_on(struct fimc_is_interface *itf,
-+		unsigned int instance);
-+int fimc_is_itf_stream_off(struct fimc_is_interface *itf,
-+		unsigned int instance);
-+int fimc_is_itf_process_on(struct fimc_is_interface *itf,
-+		unsigned int instance);
-+int fimc_is_itf_process_off(struct fimc_is_interface *itf,
-+		unsigned int instance);
-+int fimc_is_itf_set_param(struct fimc_is_interface *this,
-+		unsigned int instance,
-+		unsigned int lindex,
-+		unsigned int hindex);
-+int fimc_is_itf_preview_still(struct fimc_is_interface *itf,
-+		unsigned int instance);
-+int fimc_is_itf_get_capability(struct fimc_is_interface *itf,
-+	unsigned int instance, unsigned int address);
-+int fimc_is_itf_cfg_mem(struct fimc_is_interface *itf,
-+		unsigned int instance, unsigned int address,
-+		unsigned int size);
-+int fimc_is_itf_shot_nblk(struct fimc_is_interface *itf,
-+		unsigned int instance, unsigned int bayer,
-+		unsigned int shot, unsigned int fcount, unsigned int rcount);
-+int fimc_is_itf_power_down(struct fimc_is_interface *itf,
-+		unsigned int instance);
-+#endif
--- 
-1.7.9.5
+Regards
+Arun
+
+On Wed, Oct 16, 2013 at 3:26 PM, Kamil Debski <k.debski@samsung.com> wrote:
+> Hi Shaik,
+>
+> I tried to build your driver. It does not compile, so please fix it.
+>
+>   CC      drivers/media/platform/exynos-scaler/scaler-m2m.o
+> drivers/media/platform/exynos-scaler/scaler-m2m.c: In function
+> 'scaler_m2m_open':
+> drivers/media/platform/exynos-scaler/scaler-m2m.c:616:2: error: implicit
+> declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+> drivers/media/platform/exynos-scaler/scaler-m2m.c:616:6: warning: assignment
+> makes pointer from integer without a cast [enabled by default]
+> drivers/media/platform/exynos-scaler/scaler-m2m.c:665:2: error: implicit
+> declaration of function 'kfree' [-Werror=implicit-function-declaration]
+>
+> Best wishes,
+> --
+> Kamil Debski
+> Linux Kernel Developer
+> Samsung R&D Institute Poland
+>
+>
+>> -----Original Message-----
+>> From: linux-media-owner@vger.kernel.org [mailto:linux-media-
+>> owner@vger.kernel.org] On Behalf Of Shaik Ameer Basha
+>> Sent: Friday, October 04, 2013 2:27 PM
+>> To: linux-media@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+>> Cc: s.nawrocki@samsung.com; posciak@google.com; inki.dae@samsung.com;
+>> hverkuil@xs4all.nl; shaik.ameer@samsung.com
+>> Subject: [PATCH v4 3/4] [media] exynos-scaler: Add m2m functionality
+>> for the SCALER driver
+>>
+>> This patch adds the Makefile and memory to memory (m2m) interface
+>> functionality for the SCALER driver.
+>>
+>> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+>> ---
+>>  drivers/media/platform/Kconfig                    |    8 +
+>>  drivers/media/platform/Makefile                   |    1 +
+>>  drivers/media/platform/exynos-scaler/Makefile     |    3 +
+>>  drivers/media/platform/exynos-scaler/scaler-m2m.c |  786
+>> +++++++++++++++++++++
+>>  4 files changed, 798 insertions(+)
+>>  create mode 100644 drivers/media/platform/exynos-scaler/Makefile
+>>  create mode 100644 drivers/media/platform/exynos-scaler/scaler-m2m.c
+>>
+>> diff --git a/drivers/media/platform/Kconfig
+>> b/drivers/media/platform/Kconfig index 8068d7b..339d3ba 100644
+>> --- a/drivers/media/platform/Kconfig
+>> +++ b/drivers/media/platform/Kconfig
+>> @@ -201,6 +201,14 @@ config VIDEO_SAMSUNG_EXYNOS_GSC
+>>       help
+>>         This is a v4l2 driver for Samsung EXYNOS5 SoC G-Scaler.
+>>
+>> +config VIDEO_SAMSUNG_EXYNOS_SCALER
+>> +     tristate "Samsung Exynos SCALER driver"
+>> +     depends on OF && VIDEO_DEV && VIDEO_V4L2 && ARCH_EXYNOS5
+>> +     select VIDEOBUF2_DMA_CONTIG
+>> +     select V4L2_MEM2MEM_DEV
+>> +     help
+>> +       This is a v4l2 driver for Samsung EXYNOS5410/5420 SoC SCALER.
+>> +
+>>  config VIDEO_SH_VEU
+>>       tristate "SuperH VEU mem2mem video processing driver"
+>>       depends on VIDEO_DEV && VIDEO_V4L2 && GENERIC_HARDIRQS && HAS_DMA
+>> diff --git a/drivers/media/platform/Makefile
+>> b/drivers/media/platform/Makefile index 4e4da48..14cdad5 100644
+>> --- a/drivers/media/platform/Makefile
+>> +++ b/drivers/media/platform/Makefile
+>> @@ -37,6 +37,7 @@ obj-$(CONFIG_VIDEO_SAMSUNG_S5P_TV)  += s5p-tv/
+>>
+>>  obj-$(CONFIG_VIDEO_SAMSUNG_S5P_G2D)  += s5p-g2d/
+>>  obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC)       += exynos-gsc/
+>> +obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_SCALER)    += exynos-scaler/
+>>
+>>  obj-$(CONFIG_BLACKFIN)                  += blackfin/
+>>
+>> diff --git a/drivers/media/platform/exynos-scaler/Makefile
+>> b/drivers/media/platform/exynos-scaler/Makefile
+>> new file mode 100644
+>> index 0000000..6c8a25b
+>> --- /dev/null
+>> +++ b/drivers/media/platform/exynos-scaler/Makefile
+>> @@ -0,0 +1,3 @@
+>> +exynos-scaler-objs := scaler.o scaler-m2m.o scaler-regs.o
+>> +
+>> +obj-$(CONFIG_VIDEO_SAMSUNG_EXYNOS_SCALER)    += exynos-scaler.o
+>> diff --git a/drivers/media/platform/exynos-scaler/scaler-m2m.c
+>> b/drivers/media/platform/exynos-scaler/scaler-m2m.c
+>> new file mode 100644
+>> index 0000000..eb3af85
+>> --- /dev/null
+>> +++ b/drivers/media/platform/exynos-scaler/scaler-m2m.c
+>> @@ -0,0 +1,786 @@
+>> +/*
+>> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+>> + *           http://www.samsung.com
+>> + *
+>> + * Samsung EXYNOS5 SoC series SCALER driver
+>> + *
+>> + * This program is free software; you can redistribute it and/or
+>> modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/pm_runtime.h>
+>> +
+>> +#include <media/v4l2-ioctl.h>
+>> +
+>> +#include "scaler-regs.h"
+>> +
+>> +#define SCALER_DEF_PIX_FMT   V4L2_PIX_FMT_RGB32
+>> +#define SCALER_DEF_WIDTH     1280
+>> +#define SCALER_DEF_HEIGHT    720
+>> +
+>> +static int scaler_m2m_ctx_stop_req(struct scaler_ctx *ctx) {
+>> +     struct scaler_ctx *curr_ctx;
+>> +     struct scaler_dev *scaler = ctx->scaler_dev;
+>> +     int ret;
+>> +
+>> +     curr_ctx = v4l2_m2m_get_curr_priv(scaler->m2m.m2m_dev);
+>> +     if (!scaler_m2m_pending(scaler) || (curr_ctx != ctx))
+>> +             return 0;
+>> +
+>> +     scaler_ctx_state_lock_set(SCALER_CTX_STOP_REQ, ctx);
+>> +     ret = wait_event_timeout(scaler->irq_queue,
+>> +                     !scaler_ctx_state_is_set(SCALER_CTX_STOP_REQ, ctx),
+>> +                     SCALER_SHUTDOWN_TIMEOUT);
+>> +
+>> +     return ret == 0 ? -ETIMEDOUT : ret;
+>> +}
+>> +
+>> +static int scaler_m2m_start_streaming(struct vb2_queue *q, unsigned
+>> int
+>> +count) {
+>> +     struct scaler_ctx *ctx = q->drv_priv;
+>> +     int ret;
+>> +
+>> +     ret = pm_runtime_get_sync(&ctx->scaler_dev->pdev->dev);
+>> +
+>> +     return ret > 0 ? 0 : ret;
+>> +}
+>> +
+>> +static int scaler_m2m_stop_streaming(struct vb2_queue *q) {
+>> +     struct scaler_ctx *ctx = q->drv_priv;
+>> +     int ret;
+>> +
+>> +     ret = scaler_m2m_ctx_stop_req(ctx);
+>> +     if (ret < 0)
+>> +             scaler_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR);
+>> +
+>> +     pm_runtime_put(&ctx->scaler_dev->pdev->dev);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +void scaler_m2m_job_finish(struct scaler_ctx *ctx, int vb_state) {
+>> +     struct vb2_buffer *src_vb, *dst_vb;
+>> +
+>> +     if (!ctx || !ctx->m2m_ctx)
+>> +             return;
+>> +
+>> +     src_vb = v4l2_m2m_src_buf_remove(ctx->m2m_ctx);
+>> +     dst_vb = v4l2_m2m_dst_buf_remove(ctx->m2m_ctx);
+>> +
+>> +     if (src_vb && dst_vb) {
+>> +             v4l2_m2m_buf_done(src_vb, vb_state);
+>> +             v4l2_m2m_buf_done(dst_vb, vb_state);
+>> +
+>> +             v4l2_m2m_job_finish(ctx->scaler_dev->m2m.m2m_dev,
+>> +                                                     ctx->m2m_ctx);
+>> +     }
+>> +}
+>> +
+>> +static void scaler_m2m_job_abort(void *priv) {
+>> +     struct scaler_ctx *ctx = priv;
+>> +     int ret;
+>> +
+>> +     ret = scaler_m2m_ctx_stop_req(ctx);
+>> +     if (ret < 0)
+>> +             scaler_m2m_job_finish(ctx, VB2_BUF_STATE_ERROR); }
+>> +
+>> +static int scaler_get_bufs(struct scaler_ctx *ctx) {
+>> +     struct scaler_frame *s_frame, *d_frame;
+>> +     struct vb2_buffer *src_vb, *dst_vb;
+>> +     int ret;
+>> +
+>> +     s_frame = &ctx->s_frame;
+>> +     d_frame = &ctx->d_frame;
+>> +
+>> +     src_vb = v4l2_m2m_next_src_buf(ctx->m2m_ctx);
+>> +     ret = scaler_prepare_addr(ctx, src_vb, s_frame, &s_frame->addr);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     dst_vb = v4l2_m2m_next_dst_buf(ctx->m2m_ctx);
+>> +     ret = scaler_prepare_addr(ctx, dst_vb, d_frame, &d_frame->addr);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     dst_vb->v4l2_buf.timestamp = src_vb->v4l2_buf.timestamp;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static void scaler_m2m_device_run(void *priv) {
+>> +     struct scaler_ctx *ctx = priv;
+>> +     struct scaler_dev *scaler;
+>> +     unsigned long flags;
+>> +     int ret;
+>> +     bool is_stopped;
+>> +
+>> +     if (WARN(!ctx, "Null hardware context\n"))
+>> +             return;
+>> +
+>> +     scaler = ctx->scaler_dev;
+>> +     spin_lock_irqsave(&scaler->slock, flags);
+>> +
+>> +     set_bit(ST_M2M_PEND, &scaler->state);
+>> +
+>> +     /* Reconfigure hardware if the context has changed. */
+>> +     if (scaler->m2m.ctx != ctx) {
+>> +             scaler_dbg(scaler, "scaler->m2m.ctx = 0x%p, current_ctx =
+>> 0x%p",
+>> +                             scaler->m2m.ctx, ctx);
+>> +             ctx->state |= SCALER_PARAMS;
+>> +             scaler->m2m.ctx = ctx;
+>> +     }
+>> +
+>> +     is_stopped = ctx->state & SCALER_CTX_STOP_REQ;
+>> +     ctx->state &= ~SCALER_CTX_STOP_REQ;
+>> +     if (is_stopped) {
+>> +             wake_up(&scaler->irq_queue);
+>> +             goto unlock;
+>> +     }
+>> +
+>> +     ret = scaler_get_bufs(ctx);
+>> +     if (ret < 0) {
+>> +             scaler_dbg(scaler, "Wrong address\n");
+>> +             goto unlock;
+>> +     }
+>> +
+>> +     scaler_hw_address_queue_reset(ctx);
+>> +     scaler_set_prefbuf(scaler, &ctx->s_frame);
+>> +     scaler_hw_set_input_addr(scaler, &ctx->s_frame.addr);
+>> +     scaler_hw_set_output_addr(scaler, &ctx->d_frame.addr);
+>> +     scaler_hw_set_csc_coeff(ctx);
+>> +
+>> +     if (ctx->state & SCALER_PARAMS) {
+>> +             scaler_hw_set_irq(scaler, SCALER_INT_FRAME_END, false);
+>> +             if (scaler_set_scaler_info(ctx)) {
+>> +                     scaler_dbg(scaler, "Scaler setup error");
+>> +                     goto unlock;
+>> +             }
+>> +
+>> +             scaler_hw_set_in_size(ctx);
+>> +             scaler_hw_set_in_image_format(ctx);
+>> +
+>> +             scaler_hw_set_out_size(ctx);
+>> +             scaler_hw_set_out_image_format(ctx);
+>> +
+>> +             scaler_hw_set_scaler_ratio(ctx);
+>> +             scaler_hw_set_rotation(ctx);
+>> +     }
+>> +
+>> +     ctx->state &= ~SCALER_PARAMS;
+>> +     scaler_hw_enable_control(scaler, true);
+>> +
+>> +     spin_unlock_irqrestore(&scaler->slock, flags);
+>> +     return;
+>> +
+>> +unlock:
+>> +     ctx->state &= ~SCALER_PARAMS;
+>> +     spin_unlock_irqrestore(&scaler->slock, flags); }
+>> +
+>> +static int scaler_m2m_queue_setup(struct vb2_queue *vq,
+>> +                     const struct v4l2_format *fmt,
+>> +                     unsigned int *num_buffers, unsigned int *num_planes,
+>> +                     unsigned int sizes[], void *allocators[]) {
+>> +     struct scaler_ctx *ctx = vb2_get_drv_priv(vq);
+>> +     struct scaler_frame *frame;
+>> +     int i;
+>> +
+>> +     frame = ctx_get_frame(ctx, vq->type);
+>> +     if (IS_ERR(frame))
+>> +             return PTR_ERR(frame);
+>> +
+>> +     if (!frame->fmt)
+>> +             return -EINVAL;
+>> +
+>> +     *num_planes = frame->fmt->num_planes;
+>> +     for (i = 0; i < frame->fmt->num_planes; i++) {
+>> +             sizes[i] = frame->payload[i];
+>> +             allocators[i] = ctx->scaler_dev->alloc_ctx;
+>> +     }
+>> +     return 0;
+>> +}
+>> +
+>> +static int scaler_m2m_buf_prepare(struct vb2_buffer *vb) {
+>> +     struct scaler_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
+>> +     struct scaler_frame *frame;
+>> +     int i;
+>> +
+>> +     frame = ctx_get_frame(ctx, vb->vb2_queue->type);
+>> +     if (IS_ERR(frame))
+>> +             return PTR_ERR(frame);
+>> +
+>> +     for (i = 0; i < frame->fmt->num_planes; i++)
+>> +             vb2_set_plane_payload(vb, i, frame->payload[i]);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static void scaler_m2m_buf_queue(struct vb2_buffer *vb) {
+>> +     struct scaler_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
+>> +
+>> +     scaler_dbg(ctx->scaler_dev, "ctx: %p, ctx->state: 0x%x",
+>> +                                  ctx, ctx->state);
+>> +
+>> +     if (ctx->m2m_ctx)
+>> +             v4l2_m2m_buf_queue(ctx->m2m_ctx, vb); }
+>> +
+>> +static void scaler_lock(struct vb2_queue *vq) {
+>> +     struct scaler_ctx *ctx = vb2_get_drv_priv(vq);
+>> +     mutex_lock(&ctx->scaler_dev->lock);
+>> +}
+>> +
+>> +static void scaler_unlock(struct vb2_queue *vq) {
+>> +     struct scaler_ctx *ctx = vb2_get_drv_priv(vq);
+>> +     mutex_unlock(&ctx->scaler_dev->lock);
+>> +}
+>> +
+>> +static struct vb2_ops scaler_m2m_qops = {
+>> +     .queue_setup     = scaler_m2m_queue_setup,
+>> +     .buf_prepare     = scaler_m2m_buf_prepare,
+>> +     .buf_queue       = scaler_m2m_buf_queue,
+>> +     .wait_prepare    = scaler_unlock,
+>> +     .wait_finish     = scaler_lock,
+>> +     .stop_streaming  = scaler_m2m_stop_streaming,
+>> +     .start_streaming = scaler_m2m_start_streaming, };
+>> +
+>> +static int scaler_m2m_querycap(struct file *file, void *fh,
+>> +                        struct v4l2_capability *cap)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     struct scaler_dev *scaler = ctx->scaler_dev;
+>> +
+>> +     cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_M2M_MPLANE;
+>> +     cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+>> +
+>> +     strlcpy(cap->driver, scaler->pdev->name, sizeof(cap->driver));
+>> +     strlcpy(cap->card, scaler->pdev->name, sizeof(cap->card));
+>> +     strlcpy(cap->bus_info, "platform:exynos5-scaler",
+>> +                                     sizeof(cap->bus_info));
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int scaler_m2m_enum_fmt_mplane(struct file *file, void *priv,
+>> +                             struct v4l2_fmtdesc *f)
+>> +{
+>> +     return scaler_enum_fmt_mplane(f);
+>> +}
+>> +
+>> +static int scaler_m2m_g_fmt_mplane(struct file *file, void *fh,
+>> +                          struct v4l2_format *f)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +
+>> +     return scaler_g_fmt_mplane(ctx, f);
+>> +}
+>> +
+>> +static int scaler_m2m_try_fmt_mplane(struct file *file, void *fh,
+>> +                               struct v4l2_format *f)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +
+>> +     return scaler_try_fmt_mplane(ctx, f);
+>> +}
+>> +
+>> +static int scaler_m2m_set_default_format(struct scaler_ctx *ctx) {
+>> +     struct scaler_frame *frame;
+>> +     u32 def_pixformat = SCALER_DEF_PIX_FMT;
+>> +     int i;
+>> +
+>> +     frame = &ctx->s_frame;
+>> +
+>> +     frame->colorspace = V4L2_COLORSPACE_REC709;
+>> +     frame->fmt = scaler_find_fmt(&def_pixformat, -1);
+>> +     if (!frame->fmt)
+>> +             return -EINVAL;
+>> +
+>> +     scaler_set_frame_size(frame, SCALER_DEF_WIDTH, SCALER_DEF_HEIGHT);
+>> +     for (i = 0; i < frame->fmt->num_planes; i++)
+>> +             frame->payload[i] = SCALER_DEF_WIDTH * SCALER_DEF_HEIGHT *
+>> +                                     (frame->fmt->depth[i] / 8);
+>> +
+>> +     scaler_ctx_state_lock_set(SCALER_PARAMS, ctx);
+>> +
+>> +     /* Apply the same src frame settings to dst frame */
+>> +     ctx->d_frame = ctx->s_frame;
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +
+>> +static int scaler_m2m_s_fmt_mplane(struct file *file, void *fh,
+>> +                              struct v4l2_format *f)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     struct vb2_queue *vq;
+>> +     struct scaler_frame *frame;
+>> +     struct v4l2_pix_format_mplane *pix;
+>> +     int i, ret = 0;
+>> +
+>> +     ret = scaler_m2m_try_fmt_mplane(file, fh, f);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     vq = v4l2_m2m_get_vq(ctx->m2m_ctx, f->type);
+>> +
+>> +     if (vb2_is_streaming(vq)) {
+>> +             scaler_dbg(ctx->scaler_dev, "queue (%d) busy", f->type);
+>> +             return -EBUSY;
+>> +     }
+>> +
+>> +     if (V4L2_TYPE_IS_OUTPUT(f->type))
+>> +             frame = &ctx->s_frame;
+>> +     else
+>> +             frame = &ctx->d_frame;
+>> +
+>> +     pix = &f->fmt.pix_mp;
+>> +     frame->colorspace = pix->colorspace;
+>> +     frame->fmt = scaler_find_fmt(&pix->pixelformat, -1);
+>> +     if (!frame->fmt)
+>> +             return -EINVAL;
+>> +
+>> +     for (i = 0; i < frame->fmt->num_planes; i++)
+>> +             frame->payload[i] = pix->plane_fmt[i].sizeimage;
+>> +
+>> +     scaler_set_frame_size(frame, pix->width, pix->height);
+>> +     scaler_ctx_state_lock_set(SCALER_PARAMS, ctx);
+>> +
+>> +     scaler_dbg(ctx->scaler_dev, "f_w: %d, f_h: %d",
+>> +                             frame->f_width, frame->f_height);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +static int scaler_m2m_reqbufs(struct file *file, void *fh,
+>> +                       struct v4l2_requestbuffers *reqbufs) {
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     struct scaler_dev *scaler = ctx->scaler_dev;
+>> +     u32 max_cnt;
+>> +
+>> +     if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+>> +             max_cnt = scaler->variant->in_buf_cnt;
+>> +     else
+>> +             max_cnt = scaler->variant->out_buf_cnt;
+>> +
+>> +     if (reqbufs->count > max_cnt) {
+>> +             /* Adjust the count value as per driver supports */
+>> +             reqbufs->count = max_cnt;
+>> +     }
+>> +
+>> +     return v4l2_m2m_reqbufs(file, ctx->m2m_ctx, reqbufs); }
+>> +
+>> +static int scaler_m2m_expbuf(struct file *file, void *fh,
+>> +                             struct v4l2_exportbuffer *eb)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     return v4l2_m2m_expbuf(file, ctx->m2m_ctx, eb); }
+>> +
+>> +static int scaler_m2m_querybuf(struct file *file, void *fh,
+>> +                                     struct v4l2_buffer *buf)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     return v4l2_m2m_querybuf(file, ctx->m2m_ctx, buf); }
+>> +
+>> +static int scaler_m2m_qbuf(struct file *file, void *fh,
+>> +                       struct v4l2_buffer *buf)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     return v4l2_m2m_qbuf(file, ctx->m2m_ctx, buf); }
+>> +
+>> +static int scaler_m2m_dqbuf(struct file *file, void *fh,
+>> +                        struct v4l2_buffer *buf)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     return v4l2_m2m_dqbuf(file, ctx->m2m_ctx, buf); }
+>> +
+>> +static int scaler_m2m_streamon(struct file *file, void *fh,
+>> +                        enum v4l2_buf_type type)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     return v4l2_m2m_streamon(file, ctx->m2m_ctx, type); }
+>> +
+>> +static int scaler_m2m_streamoff(struct file *file, void *fh,
+>> +                         enum v4l2_buf_type type)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     return v4l2_m2m_streamoff(file, ctx->m2m_ctx, type); }
+>> +
+>> +/* Return 1 if rectangle a is enclosed in rectangle b, or 0 otherwise.
+>> +*/ static int is_rectangle_enclosed(struct v4l2_rect *a, struct
+>> +v4l2_rect *b) {
+>> +     return !((a->left < b->left) ||
+>> +              (a->top < b->top) ||
+>> +              (a->left + a->width > b->left + b->width) ||
+>> +              (a->top + a->height > b->top + b->height)); }
+>> +
+>> +static int scaler_m2m_g_selection(struct file *file, void *fh,
+>> +                     struct v4l2_selection *s)
+>> +{
+>> +     struct scaler_frame *frame;
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +
+>> +     if ((s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
+>> +         (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE))
+>> +             return -EINVAL;
+>> +
+>> +     frame = ctx_get_frame(ctx, s->type);
+>> +     if (IS_ERR(frame))
+>> +             return PTR_ERR(frame);
+>> +
+>> +     if (s->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
+>> +             if ((s->target == V4L2_SEL_TGT_CROP_DEFAULT) ||
+>> +                 (s->target == V4L2_SEL_TGT_CROP_BOUNDS)) {
+>> +                     s->r.left = 0;
+>> +                     s->r.top = 0;
+>> +                     s->r.width = frame->f_width;
+>> +                     s->r.height = frame->f_height;
+>> +                     return 0;
+>> +             }
+>> +
+>> +             if (s->target == V4L2_SEL_TGT_CROP) {
+>> +                     s->r.left = frame->selection.left;
+>> +                     s->r.top = frame->selection.top;
+>> +                     s->r.width = frame->selection.width;
+>> +                     s->r.height = frame->selection.height;
+>> +                     return 0;
+>> +             }
+>> +     } else {
+>> +             if ((s->target == V4L2_SEL_TGT_COMPOSE_DEFAULT) ||
+>> +                 (s->target == V4L2_SEL_TGT_COMPOSE_BOUNDS)) {
+>> +                     s->r.left = 0;
+>> +                     s->r.top = 0;
+>> +                     s->r.width = frame->f_width;
+>> +                     s->r.height = frame->f_height;
+>> +                     return 0;
+>> +             }
+>> +
+>> +             if (s->target == V4L2_SEL_TGT_COMPOSE) {
+>> +                     s->r.left = frame->selection.left;
+>> +                     s->r.top = frame->selection.top;
+>> +                     s->r.width = frame->selection.width;
+>> +                     s->r.height = frame->selection.height;
+>> +                     return 0;
+>> +             }
+>> +     }
+>> +
+>> +     return -EINVAL;
+>> +}
+>> +
+>> +static int scaler_m2m_s_selection(struct file *file, void *fh,
+>> +                             struct v4l2_selection *s)
+>> +{
+>> +     struct scaler_frame *frame;
+>> +     struct scaler_ctx *ctx = fh_to_ctx(fh);
+>> +     struct v4l2_crop cr;
+>> +     struct scaler_variant *variant = ctx->scaler_dev->variant;
+>> +     int ret;
+>> +
+>> +     cr.type = s->type;
+>> +     cr.c = s->r;
+>> +
+>> +     if (!(((s->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) &&
+>> +            (s->target == V4L2_SEL_TGT_CROP)) ||
+>> +           ((s->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) &&
+>> +            (s->target == V4L2_SEL_TGT_COMPOSE))))
+>> +             return -EINVAL;
+>> +
+>> +     frame = ctx_get_frame(ctx, s->type);
+>> +
+>> +     ret = scaler_try_crop(ctx, &cr);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     if (s->flags & V4L2_SEL_FLAG_LE &&
+>> +         !is_rectangle_enclosed(&cr.c, &s->r))
+>> +             return -ERANGE;
+>> +
+>> +     if (s->flags & V4L2_SEL_FLAG_GE &&
+>> +         !is_rectangle_enclosed(&s->r, &cr.c))
+>> +             return -ERANGE;
+>> +
+>> +     s->r = cr.c;
+>> +
+>> +     /* Check to see if scaling ratio is within supported range */
+>> +     if (s->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+>> +             ret = scaler_check_scaler_ratio(variant,
+>> +                     cr.c.width, cr.c.height,
+>> +                     ctx->d_frame.selection.width,
+>> +                     ctx->d_frame.selection.height,
+>> +                     ctx->ctrls_scaler.rotate->val);
+>> +     else
+>> +             ret = scaler_check_scaler_ratio(variant,
+>> +                     ctx->s_frame.selection.width,
+>> +                     ctx->s_frame.selection.height,
+>> +                     cr.c.width, cr.c.height,
+>> +                     ctx->ctrls_scaler.rotate->val);
+>> +
+>> +     if (ret < 0) {
+>> +             scaler_dbg(ctx->scaler_dev, "Out of scaler range");
+>> +             return -EINVAL;
+>> +     }
+>> +
+>> +     frame->selection = cr.c;
+>> +
+>> +     scaler_ctx_state_lock_set(SCALER_PARAMS, ctx);
+>> +     return 0;
+>> +}
+>> +
+>> +static const struct v4l2_ioctl_ops scaler_m2m_ioctl_ops = {
+>> +     .vidioc_querycap                = scaler_m2m_querycap,
+>> +     .vidioc_enum_fmt_vid_cap_mplane = scaler_m2m_enum_fmt_mplane,
+>> +     .vidioc_enum_fmt_vid_out_mplane = scaler_m2m_enum_fmt_mplane,
+>> +     .vidioc_g_fmt_vid_cap_mplane    = scaler_m2m_g_fmt_mplane,
+>> +     .vidioc_g_fmt_vid_out_mplane    = scaler_m2m_g_fmt_mplane,
+>> +     .vidioc_try_fmt_vid_cap_mplane  = scaler_m2m_try_fmt_mplane,
+>> +     .vidioc_try_fmt_vid_out_mplane  = scaler_m2m_try_fmt_mplane,
+>> +     .vidioc_s_fmt_vid_cap_mplane    = scaler_m2m_s_fmt_mplane,
+>> +     .vidioc_s_fmt_vid_out_mplane    = scaler_m2m_s_fmt_mplane,
+>> +     .vidioc_reqbufs                 = scaler_m2m_reqbufs,
+>> +     .vidioc_expbuf                  = scaler_m2m_expbuf,
+>> +     .vidioc_querybuf                = scaler_m2m_querybuf,
+>> +     .vidioc_qbuf                    = scaler_m2m_qbuf,
+>> +     .vidioc_dqbuf                   = scaler_m2m_dqbuf,
+>> +     .vidioc_streamon                = scaler_m2m_streamon,
+>> +     .vidioc_streamoff               = scaler_m2m_streamoff,
+>> +     .vidioc_g_selection             = scaler_m2m_g_selection,
+>> +     .vidioc_s_selection             = scaler_m2m_s_selection
+>> +};
+>> +
+>> +static int queue_init(void *priv, struct vb2_queue *src_vq,
+>> +                     struct vb2_queue *dst_vq)
+>> +{
+>> +     struct scaler_ctx *ctx = priv;
+>> +     int ret;
+>> +
+>> +     memset(src_vq, 0, sizeof(*src_vq));
+>> +     src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
+>> +     src_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
+>> +     src_vq->drv_priv = ctx;
+>> +     src_vq->ops = &scaler_m2m_qops;
+>> +     src_vq->mem_ops = &vb2_dma_contig_memops;
+>> +     src_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
+>> +
+>> +     ret = vb2_queue_init(src_vq);
+>> +     if (ret < 0)
+>> +             return ret;
+>> +
+>> +     memset(dst_vq, 0, sizeof(*dst_vq));
+>> +     dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+>> +     dst_vq->io_modes = VB2_MMAP | VB2_USERPTR | VB2_DMABUF;
+>> +     dst_vq->drv_priv = ctx;
+>> +     dst_vq->ops = &scaler_m2m_qops;
+>> +     dst_vq->mem_ops = &vb2_dma_contig_memops;
+>> +     dst_vq->buf_struct_size = sizeof(struct v4l2_m2m_buffer);
+>> +
+>> +     return vb2_queue_init(dst_vq);
+>> +}
+>> +
+>> +static int scaler_m2m_open(struct file *file) {
+>> +     struct scaler_dev *scaler = video_drvdata(file);
+>> +     struct scaler_ctx *ctx = NULL;
+>> +     int ret;
+>> +
+>> +     scaler_dbg(scaler, "pid: %d, state: 0x%lx",
+>> +                     task_pid_nr(current), scaler->state);
+>> +
+>> +     if (mutex_lock_interruptible(&scaler->lock))
+>> +             return -ERESTARTSYS;
+>> +
+>> +     ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
+>> +     if (!ctx) {
+>> +             ret = -ENOMEM;
+>> +             goto unlock;
+>> +     }
+>> +
+>> +     v4l2_fh_init(&ctx->fh, scaler->m2m.vfd);
+>> +     ret = scaler_ctrls_create(ctx);
+>> +     if (ret < 0)
+>> +             goto error_fh;
+>> +
+>> +     /* Use separate control handler per file handle */
+>> +     ctx->fh.ctrl_handler = &ctx->ctrl_handler;
+>> +     file->private_data = &ctx->fh;
+>> +     v4l2_fh_add(&ctx->fh);
+>> +
+>> +     ctx->scaler_dev = scaler;
+>> +     /* Default color format */
+>> +     ctx->s_frame.fmt = scaler_get_format(0);
+>> +     ctx->d_frame.fmt = scaler_get_format(0);
+>> +     ctx->flags = 0;
+>> +
+>> +     ctx->m2m_ctx = v4l2_m2m_ctx_init(scaler->m2m.m2m_dev, ctx,
+>> queue_init);
+>> +     if (IS_ERR(ctx->m2m_ctx)) {
+>> +             scaler_dbg(scaler, "Failed to initialize m2m context");
+>> +             ret = PTR_ERR(ctx->m2m_ctx);
+>> +             goto error_ctrls;
+>> +     }
+>> +
+>> +     /* Apply default format settings */
+>> +     ret = scaler_m2m_set_default_format(ctx);
+>> +     if (ret < 0) {
+>> +             scaler_dbg(scaler, "Failed to set default format settings");
+>> +             goto error_ctrls;
+>> +     }
+>> +
+>> +     if (v4l2_fh_is_singular_file(file))
+>> +             set_bit(ST_M2M_OPEN, &scaler->state);
+>> +
+>> +     scaler_dbg(scaler, "scaler m2m driver is opened, ctx(0x%p)", ctx);
+>> +
+>> +     mutex_unlock(&scaler->lock);
+>> +     return 0;
+>> +
+>> +error_ctrls:
+>> +     scaler_ctrls_delete(ctx);
+>> +error_fh:
+>> +     v4l2_fh_del(&ctx->fh);
+>> +     v4l2_fh_exit(&ctx->fh);
+>> +     kfree(ctx);
+>> +unlock:
+>> +     mutex_unlock(&scaler->lock);
+>> +     return ret;
+>> +}
+>> +
+>> +static int scaler_m2m_release(struct file *file) {
+>> +     struct scaler_ctx *ctx = fh_to_ctx(file->private_data);
+>> +     struct scaler_dev *scaler = ctx->scaler_dev;
+>> +
+>> +     scaler_dbg(scaler, "pid: %d, state: 0x%lx",
+>> +                     task_pid_nr(current), scaler->state);
+>> +
+>> +     mutex_lock(&scaler->lock);
+>> +
+>> +     if (v4l2_fh_is_singular_file(file))
+>> +             clear_bit(ST_M2M_OPEN, &scaler->state);
+>> +
+>> +     v4l2_m2m_ctx_release(ctx->m2m_ctx);
+>> +     scaler_ctrls_delete(ctx);
+>> +     v4l2_fh_del(&ctx->fh);
+>> +     v4l2_fh_exit(&ctx->fh);
+>> +
+>> +     kfree(ctx);
+>> +
+>> +     mutex_unlock(&scaler->lock);
+>> +     return 0;
+>> +}
+>> +
+>> +static unsigned int scaler_m2m_poll(struct file *file,
+>> +                                     struct poll_table_struct *wait)
+>> +{
+>> +     struct scaler_ctx *ctx = fh_to_ctx(file->private_data);
+>> +     struct scaler_dev *scaler = ctx->scaler_dev;
+>> +     int ret;
+>> +
+>> +     if (mutex_lock_interruptible(&scaler->lock))
+>> +             return -ERESTARTSYS;
+>> +
+>> +     ret = v4l2_m2m_poll(file, ctx->m2m_ctx, wait);
+>> +     mutex_unlock(&scaler->lock);
+>> +
+>> +     return ret;
+>> +}
+>> +
+>> +static int scaler_m2m_mmap(struct file *file, struct vm_area_struct
+>> +*vma) {
+>> +     struct scaler_ctx *ctx = fh_to_ctx(file->private_data);
+>> +     struct scaler_dev *scaler = ctx->scaler_dev;
+>> +     int ret;
+>> +
+>> +     if (mutex_lock_interruptible(&scaler->lock))
+>> +             return -ERESTARTSYS;
+>> +
+>> +     ret = v4l2_m2m_mmap(file, ctx->m2m_ctx, vma);
+>> +     mutex_unlock(&scaler->lock);
+>> +
+>> +     return ret;
+>> +}
+>> +
+>> +static const struct v4l2_file_operations scaler_m2m_fops = {
+>> +     .owner          = THIS_MODULE,
+>> +     .open           = scaler_m2m_open,
+>> +     .release        = scaler_m2m_release,
+>> +     .poll           = scaler_m2m_poll,
+>> +     .unlocked_ioctl = video_ioctl2,
+>> +     .mmap           = scaler_m2m_mmap,
+>> +};
+>> +
+>> +static struct v4l2_m2m_ops scaler_m2m_ops = {
+>> +     .device_run     = scaler_m2m_device_run,
+>> +     .job_abort      = scaler_m2m_job_abort,
+>> +};
+>> +
+>> +int scaler_register_m2m_device(struct scaler_dev *scaler) {
+>> +     struct platform_device *pdev;
+>> +     int ret;
+>> +
+>> +     if (!scaler)
+>> +             return -ENODEV;
+>> +
+>> +     pdev = scaler->pdev;
+>> +
+>> +     scaler->vdev.fops       = &scaler_m2m_fops;
+>> +     scaler->vdev.ioctl_ops  = &scaler_m2m_ioctl_ops;
+>> +     scaler->vdev.release    = video_device_release_empty;
+>> +     scaler->vdev.lock       = &scaler->lock;
+>> +     scaler->vdev.vfl_dir    = VFL_DIR_M2M;
+>> +     snprintf(scaler->vdev.name, sizeof(scaler->vdev.name), "%s:m2m",
+>> +                                     SCALER_MODULE_NAME);
+>> +
+>> +     video_set_drvdata(&scaler->vdev, scaler);
+>> +
+>> +     scaler->m2m.vfd = &scaler->vdev;
+>> +     scaler->m2m.m2m_dev = v4l2_m2m_init(&scaler_m2m_ops);
+>> +     if (IS_ERR(scaler->m2m.m2m_dev)) {
+>> +             dev_err(&pdev->dev, "failed to initialize v4l2-m2m
+>> device\n");
+>> +             return PTR_ERR(scaler->m2m.m2m_dev);
+>> +     }
+>> +
+>> +     ret = video_register_device(&scaler->vdev, VFL_TYPE_GRABBER, -1);
+>> +     if (ret < 0) {
+>> +             dev_err(&pdev->dev,
+>> +                      "%s(): failed to register video device\n",
+> __func__);
+>> +             v4l2_m2m_release(scaler->m2m.m2m_dev);
+>> +             return ret;
+>> +     }
+>> +
+>> +     dev_info(&pdev->dev, "scaler m2m driver registered as
+>> /dev/video%d",
+>> +                          scaler->vdev.num);
+>> +     return 0;
+>> +}
+>> +
+>> +void scaler_unregister_m2m_device(struct scaler_dev *scaler) {
+>> +     if (scaler) {
+>> +             video_unregister_device(scaler->m2m.vfd);
+>> +             v4l2_m2m_release(scaler->m2m.m2m_dev);
+>> +     }
+>> +}
+>> --
+>> 1.7.9.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-media"
+>> in the body of a message to majordomo@vger.kernel.org More majordomo
+>> info at  http://vger.kernel.org/majordomo-info.html
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
