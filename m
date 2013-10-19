@@ -1,172 +1,63 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v2] videobuf2: Add missing lock held on vb2_fop_relase
-Date: Sat, 19 Oct 2013 20:27:02 +0200
-Message-ID: <5262CEF6.1040003@gmail.com>
-References: <1382198877-27164-1-git-send-email-ricardo.ribalda@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
+Date: Sat, 19 Oct 2013 21:04:47 +0100
+Message-ID: <20131019200447.GF2443@sirena.org.uk>
+References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
+ <20131019162504.GA1863@sirena.org.uk>
+ <CAPnjgZ1A335KstnpTRwpxEbBArtqh1sYSPQJBw6LX5zUeptpfA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FxX07ZGw9of/ANg3"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:32915 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752448Ab3JSS1I (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:55479 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750859Ab3JSUFN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Oct 2013 14:27:08 -0400
-In-Reply-To: <1382198877-27164-1-git-send-email-ricardo.ribalda@gmail.com>
+	Sat, 19 Oct 2013 16:05:13 -0400
+Content-Disposition: inline
+In-Reply-To: <CAPnjgZ1A335KstnpTRwpxEbBArtqh1sYSPQJBw6LX5zUeptpfA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ricardo Ribalda <ricardo.ribalda@gmail.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Simon Glass <sjg@chromium.org>
+Cc: Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, ALIM AKHTAR <alim.akhtar@samsung.com>, Doug Anderson <dianders@google.com>, t.figa@samsung.com
 
-On 10/19/2013 06:07 PM, Ricardo Ribalda wrote:
-[...]
-> ---
->   drivers/media/platform/exynos4-is/fimc-capture.c |  2 +-
->   drivers/media/platform/exynos4-is/fimc-lite.c    |  2 +-
->   drivers/media/usb/em28xx/em28xx-video.c          |  2 +-
->   drivers/media/v4l2-core/videobuf2-core.c         | 18 +++++++++++++++++-
->   include/media/videobuf2-core.h                   |  2 ++
->   5 files changed, 22 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-> index fb27ff7..c38d247c 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-capture.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-> @@ -549,7 +549,7 @@ static int fimc_capture_release(struct file *file)
->   		vc->streaming = false;
->   	}
->
-> -	ret = vb2_fop_release(file);
-> +	ret = __vb2_fop_release(file, true);
->
->   	if (close) {
->   		clear_bit(ST_CAPT_BUSY,&fimc->state);
-> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-> index e5798f7..021d804 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-> @@ -546,7 +546,7 @@ static int fimc_lite_release(struct file *file)
->   		mutex_unlock(&entity->parent->graph_mutex);
->   	}
->
-> -	vb2_fop_release(file);
-> +	__vb2_fop_release(file, true);
->   	pm_runtime_put(&fimc->pdev->dev);
->   	clear_bit(ST_FLITE_SUSPENDED,&fimc->state);
->
-> diff --git a/drivers/media/usb/em28xx/em28xx-video.c b/drivers/media/usb/em28xx/em28xx-video.c
-> index 9d10334..6a5c147 100644
-> --- a/drivers/media/usb/em28xx/em28xx-video.c
-> +++ b/drivers/media/usb/em28xx/em28xx-video.c
-> @@ -1664,7 +1664,7 @@ static int em28xx_v4l2_close(struct file *filp)
->   	em28xx_videodbg("users=%d\n", dev->users);
->
->   	mutex_lock(&dev->lock);
-> -	vb2_fop_release(filp);
-> +	__vb2_fop_release(filp, false);
 
-I believe no modifications are needed for this driver.
+--FxX07ZGw9of/ANg3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->   	if (dev->users == 1) {
->   		/* the device is already disconnect,
-> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
-> index 594c75e..ce309a8 100644
-> --- a/drivers/media/v4l2-core/videobuf2-core.c
-> +++ b/drivers/media/v4l2-core/videobuf2-core.c
-> @@ -2619,16 +2619,32 @@ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma)
->   }
->   EXPORT_SYMBOL_GPL(vb2_fop_mmap);
->
-> -int vb2_fop_release(struct file *file)
-> +int __vb2_fop_release(struct file *file, bool lock_is_held)
->   {
->   	struct video_device *vdev = video_devdata(file);
-> +	struct mutex *lock;
->
->   	if (file->private_data == vdev->queue->owner) {
-> +		if (lock_is_held)
-> +			lock = NULL;
-> +		else
-> +			lock = vdev->queue->lock ?
-> +				vdev->queue->lock : vdev->lock;
-> +		if (lock)
-> +			mutex_lock(lock);
->   		vb2_queue_release(vdev->queue);
->   		vdev->queue->owner = NULL;
-> +		if (lock)
-> +			mutex_unlock(lock);
->   	}
->   	return v4l2_fh_release(file);
->   }
-> +EXPORT_SYMBOL_GPL(__vb2_fop_release);
-> +
-> +int vb2_fop_release(struct file *file)
-> +{
-> +	return __vb2_fop_release(file, false);
-> +}
->   EXPORT_SYMBOL_GPL(vb2_fop_release);
+On Sat, Oct 19, 2013 at 10:58:47AM -0600, Simon Glass wrote:
 
-It might be better to make it something like:
+> If it helps, patman (tools/patman in U-Boot tree) will strip this
+> automatically (along with other Gerrit and Chrome OS stuff), run checkpatch
+> and Doug has added features to automatically cc the relevant maintainers
+> for Linux. I got sick of trying to remember to do all these steps.
 
-static int _vb2_fop_release(struct file *file, bool locked)
-{
-   	struct video_device *vdev = video_devdata(file);
-	struct mutex *lock;
+Watch out for the automatic identification of MAINTAINERS though - you
+do need to pay attention to what gets set and check it, get_maintainers
+isn't 100% reliable.  You should check what it does and make sure you
+understand why each person there is getting CCed.
 
-   	if (file->private_data == vdev->queue->owner) {
-		lock = vdev->queue->lock ?
-			vdev->queue->lock : vdev->lock;
+--FxX07ZGw9of/ANg3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-		if (lock && !locked)
-			mutex_lock(lock);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
 
-   		vb2_queue_release(vdev->queue);
-    		vdev->queue->owner = NULL;
-		if (lock && !locked)
-			mutex_unlock(lock);
-   	}
-    	return v4l2_fh_release(file);
-}
+iQIcBAEBAgAGBQJSYuXcAAoJELSic+t+oim9qnYP/3G9u/iv38TCTyvJ2rKeGftG
+dd9NRvZwVOK9Q06rcPVOSH2ct37VU/yiNJ0ULiMo7H43k9OinJSQsBQaNU7u+7Tf
+4fkg9l9fb+m+o7Uq8wUcsRflGt8hIZEACg/gBWIFgDnsR8lvYAIYsyGgpipapUmT
+Y2uIr6HVhy1NrHZSgjTdtQCkQKKXpSc0QCaUjcu+e7xWwlB/cGQVQ0DBgGRKo5bp
+X/JdLW2vz8gDI8k+ywcErl6Fk+Rfmcwbs+M/djDay2NjGKALYH029Fnt/wIbXz0d
+XJGfTxv26o5f40i5UKgcSt8tX6yz/60Z9dC/QRNuqNZbtD9jGxh+uB5TIxNdqYVY
+hHmt6JRDhyQdfWIROj2Q14jFN5RZqEAHxam5s68AVbtQ0pDa2wzb2W03zq2zH0cL
+3fRGV1s324S/Wd+TP1fuLKlYKN5RZgtcW7JDggrksu2Y+v8hrDLywfOSQFD3ujjC
+/5xRrbhLVg/7iBUEpGK6hRQnR8+3szW9xxgShKpBtgLlLZ1dLm/+AXjHkZqSKeqm
+pB4p+NKAYdmJjD2YK66efMneBMa3Np66j+prjJhLFMqgNGlnylkwrNonA/k5daDE
+WmbJRlAEzrW6Ju/r41Hdj8TEcihxx5KzubXhxQ6RyeVKo3LKTzsyb9Xxa3P9c8DZ
+CY5XaSh9YTEJqrOk/Kjx
+=zrgN
+-----END PGP SIGNATURE-----
 
-int vb2_fop_release(struct file *file)
-{
-	return _vb2_fop_release(file, false);
-}
-EXPORT_SYMBOL_GPL(vb2_fop_release);
-
-/*
-  * This function should be used instead of vb2_fop_release()
-  * if the caller already holds the video queue mutex.
-  */
-int __vb2_fop_release(struct file *file)
-{
-	return _vb2_fop_release(file, true);
-}
-EXPORT_SYMBOL_GPL(__vb2_fop_release);
-
-since __vb2_fop_release(file, false); is basically useless, it is same
-as vb2_fop_release(file);
-
->   ssize_t vb2_fop_write(struct file *file, char __user *buf,
-> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
-> index 6781258..cd1e4d5 100644
-> --- a/include/media/videobuf2-core.h
-> +++ b/include/media/videobuf2-core.h
-> @@ -491,6 +491,8 @@ int vb2_ioctl_expbuf(struct file *file, void *priv,
->
->   int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma);
->   int vb2_fop_release(struct file *file);
-> +/* must be used if the lock is held. */
-
-Let's put any comments at the function body, not here.
-
-> +int __vb2_fop_release(struct file *file, bool lock_is_held);
-
-int __vb2_fop_release(struct file *file);
-
->   ssize_t vb2_fop_write(struct file *file, char __user *buf,
->   		size_t count, loff_t *ppos);
->   ssize_t vb2_fop_read(struct file *file, char __user *buf,
-
-Thanks,
-Sylwester
+--FxX07ZGw9of/ANg3--
