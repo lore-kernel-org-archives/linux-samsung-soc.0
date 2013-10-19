@@ -1,101 +1,172 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 2/3] ASoC: dmaengine: Support custom channel names
-Date: Sat, 19 Oct 2013 17:43:51 +0100
-Message-ID: <1382201032-13538-2-git-send-email-broonie@kernel.org>
-References: <1382201032-13538-1-git-send-email-broonie@kernel.org>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v2] videobuf2: Add missing lock held on vb2_fop_relase
+Date: Sat, 19 Oct 2013 20:27:02 +0200
+Message-ID: <5262CEF6.1040003@gmail.com>
+References: <1382198877-27164-1-git-send-email-ricardo.ribalda@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:54710 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751401Ab3JSQoa (ORCPT
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:32915 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752448Ab3JSS1I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 Oct 2013 12:44:30 -0400
-In-Reply-To: <1382201032-13538-1-git-send-email-broonie@kernel.org>
+	Sat, 19 Oct 2013 14:27:08 -0400
+In-Reply-To: <1382198877-27164-1-git-send-email-ricardo.ribalda@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+To: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-From: Mark Brown <broonie@linaro.org>
+On 10/19/2013 06:07 PM, Ricardo Ribalda wrote:
+[...]
+> ---
+>   drivers/media/platform/exynos4-is/fimc-capture.c |  2 +-
+>   drivers/media/platform/exynos4-is/fimc-lite.c    |  2 +-
+>   drivers/media/usb/em28xx/em28xx-video.c          |  2 +-
+>   drivers/media/v4l2-core/videobuf2-core.c         | 18 +++++++++++++++++-
+>   include/media/videobuf2-core.h                   |  2 ++
+>   5 files changed, 22 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+> index fb27ff7..c38d247c 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-capture.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+> @@ -549,7 +549,7 @@ static int fimc_capture_release(struct file *file)
+>   		vc->streaming = false;
+>   	}
+>
+> -	ret = vb2_fop_release(file);
+> +	ret = __vb2_fop_release(file, true);
+>
+>   	if (close) {
+>   		clear_bit(ST_CAPT_BUSY,&fimc->state);
+> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+> index e5798f7..021d804 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> @@ -546,7 +546,7 @@ static int fimc_lite_release(struct file *file)
+>   		mutex_unlock(&entity->parent->graph_mutex);
+>   	}
+>
+> -	vb2_fop_release(file);
+> +	__vb2_fop_release(file, true);
+>   	pm_runtime_put(&fimc->pdev->dev);
+>   	clear_bit(ST_FLITE_SUSPENDED,&fimc->state);
+>
+> diff --git a/drivers/media/usb/em28xx/em28xx-video.c b/drivers/media/usb/em28xx/em28xx-video.c
+> index 9d10334..6a5c147 100644
+> --- a/drivers/media/usb/em28xx/em28xx-video.c
+> +++ b/drivers/media/usb/em28xx/em28xx-video.c
+> @@ -1664,7 +1664,7 @@ static int em28xx_v4l2_close(struct file *filp)
+>   	em28xx_videodbg("users=%d\n", dev->users);
+>
+>   	mutex_lock(&dev->lock);
+> -	vb2_fop_release(filp);
+> +	__vb2_fop_release(filp, false);
 
-Some devices have more than just simple TX and RX DMA channels, for example
-modern Samsung I2S IPs support a secondary transmit DMA stream which is
-mixed into the primary stream during playback. Allow such devices to
-specify the names of the channels to be requested in their dma_data.
+I believe no modifications are needed for this driver.
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- include/sound/dmaengine_pcm.h         |  6 ++++++
- sound/soc/soc-generic-dmaengine-pcm.c | 13 ++++++++++++-
- 2 files changed, 18 insertions(+), 1 deletion(-)
+>   	if (dev->users == 1) {
+>   		/* the device is already disconnect,
+> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+> index 594c75e..ce309a8 100644
+> --- a/drivers/media/v4l2-core/videobuf2-core.c
+> +++ b/drivers/media/v4l2-core/videobuf2-core.c
+> @@ -2619,16 +2619,32 @@ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma)
+>   }
+>   EXPORT_SYMBOL_GPL(vb2_fop_mmap);
+>
+> -int vb2_fop_release(struct file *file)
+> +int __vb2_fop_release(struct file *file, bool lock_is_held)
+>   {
+>   	struct video_device *vdev = video_devdata(file);
+> +	struct mutex *lock;
+>
+>   	if (file->private_data == vdev->queue->owner) {
+> +		if (lock_is_held)
+> +			lock = NULL;
+> +		else
+> +			lock = vdev->queue->lock ?
+> +				vdev->queue->lock : vdev->lock;
+> +		if (lock)
+> +			mutex_lock(lock);
+>   		vb2_queue_release(vdev->queue);
+>   		vdev->queue->owner = NULL;
+> +		if (lock)
+> +			mutex_unlock(lock);
+>   	}
+>   	return v4l2_fh_release(file);
+>   }
+> +EXPORT_SYMBOL_GPL(__vb2_fop_release);
+> +
+> +int vb2_fop_release(struct file *file)
+> +{
+> +	return __vb2_fop_release(file, false);
+> +}
+>   EXPORT_SYMBOL_GPL(vb2_fop_release);
 
-diff --git a/include/sound/dmaengine_pcm.h b/include/sound/dmaengine_pcm.h
-index 83b2c3e..1501731 100644
---- a/include/sound/dmaengine_pcm.h
-+++ b/include/sound/dmaengine_pcm.h
-@@ -61,6 +61,7 @@ struct dma_chan *snd_dmaengine_pcm_get_chan(struct snd_pcm_substream *substream)
-  * @slave_id: Slave requester id for the DMA channel.
-  * @filter_data: Custom DMA channel filter data, this will usually be used when
-  * requesting the DMA channel.
-+ * @chan_name: Custom channel name to use when requesting DMA channel.
-  * @fifo_size: FIFO size of the DAI controller in bytes
+It might be better to make it something like:
+
+static int _vb2_fop_release(struct file *file, bool locked)
+{
+   	struct video_device *vdev = video_devdata(file);
+	struct mutex *lock;
+
+   	if (file->private_data == vdev->queue->owner) {
+		lock = vdev->queue->lock ?
+			vdev->queue->lock : vdev->lock;
+
+		if (lock && !locked)
+			mutex_lock(lock);
+
+   		vb2_queue_release(vdev->queue);
+    		vdev->queue->owner = NULL;
+		if (lock && !locked)
+			mutex_unlock(lock);
+   	}
+    	return v4l2_fh_release(file);
+}
+
+int vb2_fop_release(struct file *file)
+{
+	return _vb2_fop_release(file, false);
+}
+EXPORT_SYMBOL_GPL(vb2_fop_release);
+
+/*
+  * This function should be used instead of vb2_fop_release()
+  * if the caller already holds the video queue mutex.
   */
- struct snd_dmaengine_dai_dma_data {
-@@ -69,6 +70,7 @@ struct snd_dmaengine_dai_dma_data {
- 	u32 maxburst;
- 	unsigned int slave_id;
- 	void *filter_data;
-+	const char *chan_name;
- 	unsigned int fifo_size;
- };
- 
-@@ -98,6 +100,10 @@ void snd_dmaengine_pcm_set_config_from_dai_data(
-  * playback.
-  */
- #define SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX BIT(3)
-+/*
-+ * The PCM streams have custom channel names specified.
-+ */
-+#define SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME BIT(4)
- 
- /**
-  * struct snd_dmaengine_pcm_config - Configuration data for dmaengine based PCM
-diff --git a/sound/soc/soc-generic-dmaengine-pcm.c b/sound/soc/soc-generic-dmaengine-pcm.c
-index 2eea2e0..0c469cb 100644
---- a/sound/soc/soc-generic-dmaengine-pcm.c
-+++ b/sound/soc/soc-generic-dmaengine-pcm.c
-@@ -186,6 +186,8 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
- {
- 	struct dmaengine_pcm *pcm = soc_platform_to_pcm(rtd->platform);
- 	const struct snd_dmaengine_pcm_config *config = pcm->config;
-+	struct device *dev = rtd->platform->dev;
-+	struct snd_dmaengine_dai_dma_data *dma_data;
- 	struct snd_pcm_substream *substream;
- 	size_t prealloc_buffer_size;
- 	size_t max_buffer_size;
-@@ -206,6 +208,13 @@ static int dmaengine_pcm_new(struct snd_soc_pcm_runtime *rtd)
- 		if (!substream)
- 			continue;
- 
-+		dma_data = snd_soc_dai_get_dma_data(rtd->cpu_dai, substream);
-+
-+		if (!pcm->chan[i] &&
-+		    (pcm->flags & SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME))
-+			pcm->chan[i] = dma_request_slave_channel(dev,
-+				dma_data->chan_name);
-+
- 		if (!pcm->chan[i] && (pcm->flags & SND_DMAENGINE_PCM_FLAG_COMPAT)) {
- 			pcm->chan[i] = dmaengine_pcm_compat_request_channel(rtd,
- 				substream);
-@@ -278,7 +287,9 @@ static void dmaengine_pcm_request_chan_of(struct dmaengine_pcm *pcm,
- {
- 	unsigned int i;
- 
--	if ((pcm->flags & SND_DMAENGINE_PCM_FLAG_NO_DT) || !dev->of_node)
-+	if ((pcm->flags & (SND_DMAENGINE_PCM_FLAG_NO_DT |
-+			   SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME)) ||
-+	    !dev->of_node)
- 		return;
- 
- 	if (pcm->flags & SND_DMAENGINE_PCM_FLAG_HALF_DUPLEX) {
--- 
-1.8.4.rc3
+int __vb2_fop_release(struct file *file)
+{
+	return _vb2_fop_release(file, true);
+}
+EXPORT_SYMBOL_GPL(__vb2_fop_release);
+
+since __vb2_fop_release(file, false); is basically useless, it is same
+as vb2_fop_release(file);
+
+>   ssize_t vb2_fop_write(struct file *file, char __user *buf,
+> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+> index 6781258..cd1e4d5 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -491,6 +491,8 @@ int vb2_ioctl_expbuf(struct file *file, void *priv,
+>
+>   int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma);
+>   int vb2_fop_release(struct file *file);
+> +/* must be used if the lock is held. */
+
+Let's put any comments at the function body, not here.
+
+> +int __vb2_fop_release(struct file *file, bool lock_is_held);
+
+int __vb2_fop_release(struct file *file);
+
+>   ssize_t vb2_fop_write(struct file *file, char __user *buf,
+>   		size_t count, loff_t *ppos);
+>   ssize_t vb2_fop_read(struct file *file, char __user *buf,
+
+Thanks,
+Sylwester
