@@ -1,81 +1,68 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 6/6] Samsung update for v3.13
-Date: Mon, 21 Oct 2013 07:15:39 +0900
-Message-ID: <5264560B.504@samsung.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: s3c64xx: mini6410: Correct card detect
+	type for HSMMC1
+Date: Mon, 21 Oct 2013 00:42:48 +0200
+Message-ID: <1538561.RlaZEsIrlT@thinkpad>
+References: <1380471121-9478-1-git-send-email-tomasz.figa@gmail.com>
+	<1e2a01cecb91$f790c700$e6b25500$@org>
+	<5264529C.1000601@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:63173 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752171Ab3JTWPo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Oct 2013 18:15:44 -0400
-Received: by mail-pa0-f42.google.com with SMTP id kx10so7096390pab.29
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Oct 2013 15:15:43 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <oselas-bounces+gcepoc-oselas=m.gmane.org-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org>
+In-Reply-To: <5264529C.1000601-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <http://metis.pengutronix.de/cgi-bin/mailman/options/oselas>,
+	<mailto:oselas-request-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://metis.pengutronix.de/pipermail/oselas>
+List-Post: <mailto:oselas-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org>
+List-Help: <mailto:oselas-request-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org?subject=help>
+List-Subscribe: <http://metis.pengutronix.de/cgi-bin/mailman/listinfo/oselas>,
+	<mailto:oselas-request-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org?subject=subscribe>
+Sender: oselas-bounces-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org
+Errors-To: oselas-bounces+gcepoc-oselas=m.gmane.org-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Russell King - ARM Linux' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, oselas-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, augulis.darius-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org
 
-The following changes since commit 4a10c2ac2f368583138b774ca41fac4207911983:
+Hi Kukjin,
 
-   Linux 3.12-rc2 (2013-09-23 15:41:09 -0700)
+On Monday 21 of October 2013 07:01:00 Kukjin Kim wrote:
+> On 10/18/13 08:38, Kukjin Kim wrote:
+> > Tomasz Figa wrote:
+> >> Hi Kukjin,
+> > 
+> > Hi,
+> > 
+> >> On Sunday 29 of September 2013 18:12:01 Tomasz Figa wrote:
+> >>> According to board schematics, for HSMMC1 a GPIO line is used to
+> >>> detect
+> >>> card presence, while currently it is being configured for internal
+> >>> card
+> >>> detect line, which is multiplexed with card detect line of HSMMC0 and
+> >>> thus breaking it.
+> >>> 
+> >>> This patch adds proper sdhci platform data setting card detect type
+> >>> to
+> >>> external GPIO and fixing operation of HSMMC0.
+> >>> 
+> >>> Signed-off-by: Tomasz Figa<tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> >>> ---
+> >>> 
+> >>>   arch/arm/mach-s3c64xx/mach-mini6410.c | 10 ++++++++++
+> >>>   1 file changed, 10 insertions(+)
+> >> 
+> >> Would you mind taking this patch to your tree?
+> > 
+> > Applied, thanks.
+> > Kukjin
+> 
+> Uhm...just small concern...it's possible to support dt for mini6410 but
+> basic. I need to hold this on...
 
-are available in the git repository at:
+May I ask you to explain your concern about this?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/exynos-dt
+I believe this bug fix is fine, since we still support board files for 
+s3c64xx and DT based support is experimental at the moment.
 
-for you to fetch changes up to c6ad2259c629bef992be5ee82d3e74cd1e90c440:
-
-   ARM: dts: disable PCIe for SD5v1 board (2013-10-08 06:58:01 +0900)
-
-----------------------------------------------------------------
-update device tree for exynos
-- add MIPI PHY node for exynos4
-- update regulator for origen and exynos5250-arndale
-- add support HDMI for exynos5250, exynos5420
-- disable PCIe for exynos5440-sd5v1
-
-----------------------------------------------------------------
-Andrew Bresticker (1):
-       ARM: dts: add i2c device nodes for Exynos5420
-
-Jingoo Han (1):
-       ARM: dts: disable PCIe for SD5v1 board
-
-Mark Brown (1):
-       ARM: dts: Disable Exynos5250 I2S controllers by default
-
-Rahul Sharma (4):
-       of/documentation: update with clock information for exynos hdmi 
-subsystem
-       ARM: dts: add clocks to hdmi dt node for exynos5250
-       ARM: dts: add dt nodes for hdmi subsystem for exynos5420
-       ARM: dts: enable hdmi subsystem for exynos5420 smdk board
-
-Sachin Kamat (3):
-       ARM: dts: Add fixed voltage regulator to simple bus for origen
-       ARM: dts: Add reg property to regulator nodes in exynos5250-arndale
-       ARM: dts: Add HDMI related I2C nodes for Arndale board
-
-Sean Paul (1):
-       ARM: dts: add mixer clocks to mixer node for Exynos5250
-
-Sylwester Nawrocki (1):
-       ARM: dts: Add MIPI PHY node to exynos4.dtsi
-
-  .../devicetree/bindings/video/exynos_hdmi.txt      | 14 +++-
-  .../devicetree/bindings/video/exynos_mixer.txt     |  4 ++
-  arch/arm/boot/dts/exynos4.dtsi                     | 10 +++
-  arch/arm/boot/dts/exynos4210-origen.dts            | 21 ++++--
-  arch/arm/boot/dts/exynos4412-origen.dts            | 21 ++++--
-  arch/arm/boot/dts/exynos5250-arndale.dts           | 33 ++++++++--
-  arch/arm/boot/dts/exynos5250-smdk5250.dts          |  8 ---
-  arch/arm/boot/dts/exynos5250.dtsi                  | 11 +++-
-  arch/arm/boot/dts/exynos5420-smdk5420.dts          | 26 ++++++++
-  arch/arm/boot/dts/exynos5420.dtsi                  | 75 
-++++++++++++++++++++++
-  arch/arm/boot/dts/exynos5440-sd5v1.dts             |  7 ++
-  11 files changed, 200 insertions(+), 30 deletions(-)
+Best regards,
+Tomasz
