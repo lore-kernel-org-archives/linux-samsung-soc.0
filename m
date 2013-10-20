@@ -1,93 +1,65 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for
- HSMMC1
-Date: Mon, 21 Oct 2013 07:01:00 +0900
-Message-ID: <5264529C.1000601@samsung.com>
-References: <1380471121-9478-1-git-send-email-tomasz.figa@gmail.com>
- <1527511.ScaEHrLnaz@flatron> <1e2a01cecb91$f790c700$e6b25500$@org>
+Subject: [GIT PULL 1/6] Samsung cleanup for v3.13
+Date: Mon, 21 Oct 2013 07:14:35 +0900
+Message-ID: <526455CB.6050507@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1e2a01cecb91$f790c700$e6b25500$@org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, oselas@community.pengutronix.de, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, augulis.darius@gmail.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f48.google.com ([209.85.160.48]:58383 "EHLO
+	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751861Ab3JTWOk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 20 Oct 2013 18:14:40 -0400
+Received: by mail-pb0-f48.google.com with SMTP id ma3so6053381pbc.7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Oct 2013 15:14:39 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org
 
-On 10/18/13 08:38, Kukjin Kim wrote:
-> Tomasz Figa wrote:
->>
->> Hi Kukjin,
->>
-> Hi,
->
->> On Sunday 29 of September 2013 18:12:01 Tomasz Figa wrote:
->>> According to board schematics, for HSMMC1 a GPIO line is used to detect
->>> card presence, while currently it is being configured for internal card
->>> detect line, which is multiplexed with card detect line of HSMMC0 and
->>> thus breaking it.
->>>
->>> This patch adds proper sdhci platform data setting card detect type to
->>> external GPIO and fixing operation of HSMMC0.
->>>
->>> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
->>> ---
->>>   arch/arm/mach-s3c64xx/mach-mini6410.c | 10 ++++++++++
->>>   1 file changed, 10 insertions(+)
->>
->> Would you mind taking this patch to your tree?
->>
-> Applied, thanks.
-> Kukjin
->
-Uhm...just small concern...it's possible to support dt for mini6410 but 
-basic. I need to hold this on...
+The following changes since commit 4a10c2ac2f368583138b774ca41fac4207911983:
 
->> Best regards,
->> Tomasz
->>
->>> diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c
->>> b/arch/arm/mach-s3c64xx/mach-mini6410.c index 58d46a3..97ae470 100644
->>> --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
->>> +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
->>> @@ -36,7 +36,9 @@
->>>   #include<plat/devs.h>
->>>   #include<plat/fb.h>
->>>   #include<linux/platform_data/mtd-nand-s3c2410.h>
->>> +#include<linux/platform_data/mmc-sdhci-s3c.h>
->>>   #include<plat/regs-serial.h>
->>> +#include<plat/sdhci.h>
->>>   #include<linux/platform_data/touchscreen-s3c2410.h>
->>>
->>>   #include<video/platform_lcd.h>
->>> @@ -214,6 +216,13 @@ static struct platform_device mini6410_lcd_powerdev
->>> = { .dev.platform_data	=&mini6410_lcd_power_data,
->>>   };
->>>
->>> +static struct s3c_sdhci_platdata mini6410_hsmmc1_pdata = {
->>> +	.max_width		= 4,
->>> +	.cd_type		= S3C_SDHCI_CD_GPIO,
->>> +	.ext_cd_gpio		= S3C64XX_GPN(10),
->>> +	.ext_cd_gpio_invert	= true,
->>> +};
->>> +
->>>   static struct platform_device *mini6410_devices[] __initdata = {
->>>   	&mini6410_device_eth,
->>>   	&s3c_device_hsmmc0,
->>> @@ -321,6 +330,7 @@ static void __init mini6410_machine_init(void)
->>>
->>>   	s3c_nand_set_platdata(&mini6410_nand_info);
->>>   	s3c_fb_set_platdata(&mini6410_lcd_pdata[features.lcd_index]);
->>> +	s3c_sdhci1_set_platdata(&mini6410_hsmmc1_pdata);
->>>   	s3c24xx_ts_set_platdata(NULL);
->>>
->>>   	/* configure nCS1 width to 16 bits */
+   Linux 3.12-rc2 (2013-09-23 15:41:09 -0700)
+
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-cleanup
+
+for you to fetch changes up to ae3c5d74ea0d5e2f1c32c527e5de36c7614525af:
+
+   ARM: EXYNOS: remove CONFIG_MACH_EXYNOS[4, 5]_DT config options 
+(2013-10-21 06:35:47 +0900)
+
+----------------------------------------------------------------
+Samsung Cleanup for v3.13
+- remove unnecessary config options and header inclusions
+- use CONFIG_ARCH_S3C64XX instead of PLAT_S3C64XX
+
+----------------------------------------------------------------
+Bartlomiej Zolnierkiewicz (1):
+       ARM: EXYNOS: remove CONFIG_MACH_EXYNOS[4, 5]_DT config options
+
+Jingoo Han (1):
+       ARM: EXYNOS: remove unnecessary header inclusions from exynos4/5 
+dt machine file
+
+Tomasz Figa (5):
+       ARM: S3C64XX: Move if ARCH_S3C64XX statement into mach-s3c64xx
+       gpio: samsung: Use CONFIG_ARCH_S3C64XX to check for S3C64XX support
+       s3c-camif: Use CONFIG_ARCH_S3C64XX to check for S3C64XX support
+       ASoC: samsung: Use CONFIG_ARCH_S3C64XX to check for S3C64XX support
+       ARM: S3C64XX: Kill CONFIG_PLAT_S3C64XX
+
+  arch/arm/Kconfig                       |  4 ++--
+  arch/arm/mach-exynos/Kconfig           | 38 
+++++++++--------------------------
+  arch/arm/mach-exynos/Makefile          |  4 ++--
+  arch/arm/mach-exynos/mach-exynos4-dt.c |  4 ----
+  arch/arm/mach-exynos/mach-exynos5-dt.c |  4 ----
+  arch/arm/mach-s3c64xx/Kconfig          | 13 +++---------
+  drivers/gpio/gpio-samsung.c            |  8 +++----
+  drivers/media/platform/Kconfig         |  2 +-
+  sound/soc/samsung/s3c-i2s-v2.c         |  6 +-----
+  9 files changed, 22 insertions(+), 61 deletions(-)
