@@ -1,58 +1,93 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH V2] ARM: EXYNOS: Move arm core power down clock to exynos5250
- common clock
-Date: Mon, 21 Oct 2013 06:34:29 +0900
-Message-ID: <52644C65.3040805@samsung.com>
-References: <1381470134-29410-1-git-send-email-amit.daniel@samsung.com> <4953642.S7P9jyspGP@amdn883>
+Subject: Re: [PATCH] ARM: s3c64xx: mini6410: Correct card detect type for
+ HSMMC1
+Date: Mon, 21 Oct 2013 07:01:00 +0900
+Message-ID: <5264529C.1000601@samsung.com>
+References: <1380471121-9478-1-git-send-email-tomasz.figa@gmail.com>
+ <1527511.ScaEHrLnaz@flatron> <1e2a01cecb91$f790c700$e6b25500$@org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:39172 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751800Ab3JTVee (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Oct 2013 17:34:34 -0400
-Received: by mail-pa0-f44.google.com with SMTP id fb1so4271569pad.17
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Oct 2013 14:34:34 -0700 (PDT)
-In-Reply-To: <4953642.S7P9jyspGP@amdn883>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1e2a01cecb91$f790c700$e6b25500$@org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, oselas@community.pengutronix.de, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, augulis.darius@gmail.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On 10/11/13 16:33, Tomasz Figa wrote:
-> Hi Amit,
->
-> On Friday 11 of October 2013 11:12:14 Amit Daniel Kachhap wrote:
->> Now with common clock support added for exynos5250 it is necessary to move
->> this code to exynos5250 common clock driver as clock registers should be
->> handled there. This change is tested in exynos5250 based arndale platform.
+On 10/18/13 08:38, Kukjin Kim wrote:
+> Tomasz Figa wrote:
 >>
->> Cc: Abhilash Kesavan<a.kesavan@samsung.com>
->> Cc: Thomas Abraham<thomas.abraham@linaro.org>
->> Acked-by: Kukjin Kim<kgene.kim@samsugn.com>
->
-> nit: Typo in samsung. Probably something that Kukjin can fix up when
-> applying, though.
->
->> Reviewed-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
->> Signed-off-by: Amit Daniel Kachhap<amit.daniel@samsung.com>
->> ---
+>> Hi Kukjin,
 >>
->> Changes in V2:
->> * Rebased against linux-next tree.
->> * Removed un-used macros in regs-clock.h
+> Hi,
+>
+>> On Sunday 29 of September 2013 18:12:01 Tomasz Figa wrote:
+>>> According to board schematics, for HSMMC1 a GPIO line is used to detect
+>>> card presence, while currently it is being configured for internal card
+>>> detect line, which is multiplexed with card detect line of HSMMC0 and
+>>> thus breaking it.
+>>>
+>>> This patch adds proper sdhci platform data setting card detect type to
+>>> external GPIO and fixing operation of HSMMC0.
+>>>
+>>> Signed-off-by: Tomasz Figa<tomasz.figa@gmail.com>
+>>> ---
+>>>   arch/arm/mach-s3c64xx/mach-mini6410.c | 10 ++++++++++
+>>>   1 file changed, 10 insertions(+)
 >>
->>   arch/arm/mach-exynos/cpuidle.c                 |   35 --------------------
->>   arch/arm/mach-exynos/include/mach/regs-clock.h |   16 ---------
->>   drivers/clk/samsung/clk-exynos5250.c           |   42 ++++++++++++++++++++++++
->>   3 files changed, 42 insertions(+), 51 deletions(-)
+>> Would you mind taking this patch to your tree?
+>>
+> Applied, thanks.
+> Kukjin
 >
-> Otherwise
->
-> Acked-by: Tomasz Figa<t.figa@samsung.com>
->
-Mike, do you want me to pick this patch into Samsung tree?
+Uhm...just small concern...it's possible to support dt for mini6410 but 
+basic. I need to hold this on...
 
-- Kukjin
+>> Best regards,
+>> Tomasz
+>>
+>>> diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c
+>>> b/arch/arm/mach-s3c64xx/mach-mini6410.c index 58d46a3..97ae470 100644
+>>> --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
+>>> +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+>>> @@ -36,7 +36,9 @@
+>>>   #include<plat/devs.h>
+>>>   #include<plat/fb.h>
+>>>   #include<linux/platform_data/mtd-nand-s3c2410.h>
+>>> +#include<linux/platform_data/mmc-sdhci-s3c.h>
+>>>   #include<plat/regs-serial.h>
+>>> +#include<plat/sdhci.h>
+>>>   #include<linux/platform_data/touchscreen-s3c2410.h>
+>>>
+>>>   #include<video/platform_lcd.h>
+>>> @@ -214,6 +216,13 @@ static struct platform_device mini6410_lcd_powerdev
+>>> = { .dev.platform_data	=&mini6410_lcd_power_data,
+>>>   };
+>>>
+>>> +static struct s3c_sdhci_platdata mini6410_hsmmc1_pdata = {
+>>> +	.max_width		= 4,
+>>> +	.cd_type		= S3C_SDHCI_CD_GPIO,
+>>> +	.ext_cd_gpio		= S3C64XX_GPN(10),
+>>> +	.ext_cd_gpio_invert	= true,
+>>> +};
+>>> +
+>>>   static struct platform_device *mini6410_devices[] __initdata = {
+>>>   	&mini6410_device_eth,
+>>>   	&s3c_device_hsmmc0,
+>>> @@ -321,6 +330,7 @@ static void __init mini6410_machine_init(void)
+>>>
+>>>   	s3c_nand_set_platdata(&mini6410_nand_info);
+>>>   	s3c_fb_set_platdata(&mini6410_lcd_pdata[features.lcd_index]);
+>>> +	s3c_sdhci1_set_platdata(&mini6410_hsmmc1_pdata);
+>>>   	s3c24xx_ts_set_platdata(NULL);
+>>>
+>>>   	/* configure nCS1 width to 16 bits */
