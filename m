@@ -1,49 +1,35 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base
- value
-Date: Mon, 21 Oct 2013 06:02:29 +0900
-Message-ID: <526444E5.5000405@samsung.com>
-References: <1379937815-21746-1-git-send-email-chander.kashyap@linaro.org> <02c701ceba75$f95b1900$ec114b00$@org> <1949846.N3fAUHQ1Nx@flatron>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 0/8] ARM: s3c64xx: Let amba-pl08x driver handle DMA
+Date: Mon, 21 Oct 2013 06:04:35 +0900
+Message-ID: <52644563.1000203@samsung.com>
+References: <1381950659-12703-1-git-send-email-tomasz.figa@gmail.com> <20131017102201.GK2443@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f169.google.com ([209.85.192.169]:39995 "EHLO
-	mail-pd0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751783Ab3JTVCf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Oct 2013 17:02:35 -0400
-In-Reply-To: <1949846.N3fAUHQ1Nx@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131017102201.GK2443-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, t.figa@samsung.com, linux-kernel@vger.kernel.org, 'Chander Kashyap' <chander.kashyap@linaro.org>, Kukjin Kim <kgene@kernel.org>, thomas.abraham@linaro.org, tglx@linutronix.de
 
-On 10/18/13 02:53, Tomasz Figa wrote:
-> Hi Kukjin,
+On 10/17/13 19:22, Mark Brown wrote:
+> On Wed, Oct 16, 2013 at 09:10:51PM +0200, Tomasz Figa wrote:
+>> Since the patches extending support of amba-pl08x DMA engine driver to
+>> PL080S DMA engine (PL080 modified by Samsung) found in Samsung S3C64xx
+>> SoCs got merged into Linux 3.12, it is a good time to migrate the
+>> platform to use this driver and drop the legacy DMA code.
 >
-> On Thursday 26 of September 2013 14:05:09 Kukjin Kim wrote:
->> Chander Kashyap wrote:
->>> Replace irq_domain_add_simple with "irq_domain_add_linear" in order to
->>> use linear irq domain, and to remove hardcoded irq_base_value.
->>>
->>> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
->>> ---
->>>
->>> Changes since v1:
->>> 	- Replaced irq_domain_add_simple with irq_domain_add_linear,
->>> 	
->>> 	  as suggested by Tomasz
->>>
->>>   drivers/irqchip/exynos-combiner.c |   15 +++------------
->>>   1 file changed, 3 insertions(+), 12 deletions(-)
-> [snip]
->>
->> Looks nice to me, applied with Tomasz's review.
->
-> I don't see this patch in your tree. Did you apply it in the end?
->
-Thanks for your gentle reminder.
+Tomasz, very nice :-) Thanks.
 
-Applied.
+> Tested-by: Mark Brown<broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>
+Mark, thanks for your test.
+
+Applied this whole series.
+
 - Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
