@@ -1,114 +1,74 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH V4 1/4] ARM: dts: Move dwmmc nodes from exynos5.dtsi to
- exynos5250.dtsi
-Date: Mon, 21 Oct 2013 05:50:06 +0900
-Message-ID: <526441FE.406@samsung.com>
-References: <1378188264-22382-1-git-send-email-yuvaraj.cd@samsung.com> <1378188264-22382-2-git-send-email-yuvaraj.cd@samsung.com>
+Subject: Re: [PATCH v5 0/3] ARM: S5PV210: move to common clk framework
+Date: Mon, 21 Oct 2013 05:51:42 +0900
+Message-ID: <5264425E.4040301@samsung.com>
+References: <1380027009-2239-1-git-send-email-m.krawczuk@partner.samsung.com> <1816869.ggMDlA1qNY@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:52526 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751654Ab3JTUuN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Oct 2013 16:50:13 -0400
-In-Reply-To: <1378188264-22382-2-git-send-email-yuvaraj.cd@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1816869.ggMDlA1qNY@flatron>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: rjw@sisk.pl, kgene.kim@samsung.com, mturquette@linaro.org, mark.rutland@arm.com, swarren@wwwdotorg.org, linux-doc@vger.kernel.org, viresh.kumar@linaro.org, s.nawrocki@samsung.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, linux-pm@vger.kernel.org, cpufreq@vger.kernel.org, thomas.abraham@linaro.org, b.zolnierkie@samsung.com, t.stanislaws@samsung.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, rob.herring@calxeda.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, rob@landley.net
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, t.figa@samsung.com, dianders@chromium.org, cjb@laptop.org, thomas.abraham@linaro.org, ks.giri@samsung.com, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On 09/03/13 15:04, Yuvaraj Kumar C D wrote:
-> Exynos5 series SOC's 5250 and 5420 have different versions of
-> DWMMC controller.So there is a new compatible string to distinguish
-> between them.So these nodes should be moved out of Exynos5 series
-> common device tree source to SOC specific device tree source.
+On 10/20/13 01:03, Tomasz Figa wrote:
+> Hi Mike, Kukjin, Rafael,
 >
-> Changes since V3: none
+> On Tuesday 24 of September 2013 14:50:06 Mateusz Krawczuk wrote:
+>> This patch series is the new s5pv210 clock implementation
+>> (using common clk framework).
+>>
+>> This implementation is compatible with device tree definition and board
+>> files.
+>>
+>> This patch series is based on linux-next and has been tested on goni and
+>> aquila
+>> boards using board file.
+>>
+>> Since v4:
+>> Corrected mux flags for finpll.
+>>
+>> Since v3:
+>>
+>> Replace s5pv210_clk_register_finpll, by creating mux finpll
+>> with xusbxti and xxti as parrents.
+>>
+>>
+>> Mateusz Krawczuk (3):
+>>    clk: samsung: Add clock driver for s5pc110/s5pv210
+>>    Cpufreq: s5pv210 cpufreq fixes for CCF
+>>    ARM: s5pv210: Migrate clock handling to Common Clock Framework
+>>
+>>   .../bindings/clock/samsung,s5pv210-clock.txt       |  75 +++
+>>   arch/arm/mach-s5pv210/Kconfig                      |   9 +
+>>   arch/arm/mach-s5pv210/Makefile                     |   4 +-
+>>   arch/arm/mach-s5pv210/common.c                     |  17 +
+>>   arch/arm/mach-s5pv210/common.h                     |  10 +
+>>   arch/arm/mach-s5pv210/mach-goni.c                  |   2 +-
+>>   arch/arm/mach-s5pv210/mach-smdkv210.c              |   2 +-
+>>   arch/arm/plat-samsung/Kconfig                      |   2 +-
+>>   drivers/clk/samsung/Makefile                       |   3 +
+>>   drivers/clk/samsung/clk-s5pv210.c                  | 673
+>> +++++++++++++++++++++ drivers/cpufreq/s5pv210-cpufreq.c
+>>   |   6 +-
+>>   include/dt-bindings/clock/samsung,s5pv210-clock.h  | 224 +++++++
+>>   12 files changed, 1019 insertions(+), 8 deletions(-)
+>>   create mode 100644
+>> Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
+>> create mode 100644 drivers/clk/samsung/clk-s5pv210.c
+>>   create mode 100644 include/dt-bindings/clock/samsung,s5pv210-clock.h
 >
-> Changes since V2:
-> 	1.remove from exynos5.dtsi and add in exynos5250.dtsi
-> 	  in single patch.
+> I believe this series is reasonable to be applied. Could we agree on
+> the tree it would go through and get all tne required acks?
 >
-> Changes since V1: none
->
-BTW, above changes should be under '---' because the changes are not 
-needed in git log. I modified when I applied.
+> Best regards,
+> Tomasz
 
-Thanks,
-Kukjin
+I agree.
 
-> Signed-off-by: Yuvaraj Kumar C D<yuvaraj.cd@samsung.com>
-> ---
->   arch/arm/boot/dts/exynos5.dtsi    |   21 ---------------------
->   arch/arm/boot/dts/exynos5250.dtsi |   12 ++++++++++++
->   2 files changed, 12 insertions(+), 21 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
-> index 074739d..e52b038 100644
-> --- a/arch/arm/boot/dts/exynos5.dtsi
-> +++ b/arch/arm/boot/dts/exynos5.dtsi
-> @@ -50,27 +50,6 @@
->   		interrupts =<1 9 0xf04>;
->   	};
->
-> -	dwmmc_0: dwmmc0@12200000 {
-> -		compatible = "samsung,exynos5250-dw-mshc";
-> -		interrupts =<0 75 0>;
-> -		#address-cells =<1>;
-> -		#size-cells =<0>;
-> -	};
-> -
-> -	dwmmc_1: dwmmc1@12210000 {
-> -		compatible = "samsung,exynos5250-dw-mshc";
-> -		interrupts =<0 76 0>;
-> -		#address-cells =<1>;
-> -		#size-cells =<0>;
-> -	};
-> -
-> -	dwmmc_2: dwmmc2@12220000 {
-> -		compatible = "samsung,exynos5250-dw-mshc";
-> -		interrupts =<0 77 0>;
-> -		#address-cells =<1>;
-> -		#size-cells =<0>;
-> -	};
-> -
->   	serial@12C00000 {
->   		compatible = "samsung,exynos4210-uart";
->   		reg =<0x12C00000 0x100>;
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 864ae90..d42844b 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -388,18 +388,30 @@
->   	};
->
->   	dwmmc_0: dwmmc0@12200000 {
-> +		compatible = "samsung,exynos5250-dw-mshc";
-> +		interrupts =<0 75 0>;
-> +		#address-cells =<1>;
-> +		#size-cells =<0>;
->   		reg =<0x12200000 0x1000>;
->   		clocks =<&clock 280>,<&clock 139>;
->   		clock-names = "biu", "ciu";
->   	};
->
->   	dwmmc_1: dwmmc1@12210000 {
-> +		compatible = "samsung,exynos5250-dw-mshc";
-> +		interrupts =<0 76 0>;
-> +		#address-cells =<1>;
-> +		#size-cells =<0>;
->   		reg =<0x12210000 0x1000>;
->   		clocks =<&clock 281>,<&clock 140>;
->   		clock-names = "biu", "ciu";
->   	};
->
->   	dwmmc_2: dwmmc2@12220000 {
-> +		compatible = "samsung,exynos5250-dw-mshc";
-> +		interrupts =<0 77 0>;
-> +		#address-cells =<1>;
-> +		#size-cells =<0>;
->   		reg =<0x12220000 0x1000>;
->   		clocks =<&clock 282>,<&clock 141>;
->   		clock-names = "biu", "ciu";
+Mike, how do you think the common clk stuff for s5pv210?
+
+- Kukjin
+
