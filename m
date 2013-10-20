@@ -1,74 +1,100 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v5 0/3] ARM: S5PV210: move to common clk framework
-Date: Mon, 21 Oct 2013 05:51:42 +0900
-Message-ID: <5264425E.4040301@samsung.com>
-References: <1380027009-2239-1-git-send-email-m.krawczuk@partner.samsung.com> <1816869.ggMDlA1qNY@flatron>
+Subject: Re: [PATCH V7] ARM: dts: Add dwmmc DT nodes for exynos5420 SOC
+Date: Mon, 21 Oct 2013 05:56:15 +0900
+Message-ID: <5264436F.20205@samsung.com>
+References: <1378188001-22216-1-git-send-email-yuvaraj.cd@samsung.com>	<CAKuRcOLyEjxGjHR6ff_Fe8sXwKW2Qdm1gOM-YyhMOr0964GLMA@mail.gmail.com> <CAKuRcOK5x021VxTfHNRs5SK4oOmwM+WyxYVZfSQXi6g5V5-RQg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1816869.ggMDlA1qNY@flatron>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: rjw@sisk.pl, kgene.kim@samsung.com, mturquette@linaro.org, mark.rutland@arm.com, swarren@wwwdotorg.org, linux-doc@vger.kernel.org, viresh.kumar@linaro.org, s.nawrocki@samsung.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, linux-pm@vger.kernel.org, cpufreq@vger.kernel.org, thomas.abraham@linaro.org, b.zolnierkie@samsung.com, t.stanislaws@samsung.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, rob.herring@calxeda.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, rob@landley.net
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:53350 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751654Ab3JTU4V (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 20 Oct 2013 16:56:21 -0400
+In-Reply-To: <CAKuRcOK5x021VxTfHNRs5SK4oOmwM+WyxYVZfSQXi6g5V5-RQg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Tomasz Figa <t.figa@samsung.com>, Douglas Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, Thomas Abraham <thomas.abraham@linaro.org>, "ks.giri@samsung.com" <ks.giri@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On 10/20/13 01:03, Tomasz Figa wrote:
-> Hi Mike, Kukjin, Rafael,
+On 10/18/13 20:07, Yuvaraj Kumar wrote:
+> Gentle Ping...
 >
-> On Tuesday 24 of September 2013 14:50:06 Mateusz Krawczuk wrote:
->> This patch series is the new s5pv210 clock implementation
->> (using common clk framework).
+> On Thu, Sep 26, 2013 at 12:13 PM, Yuvaraj Kumar<yuvaraj.cd@gmail.com>  wrote:
+>> Hi Kukjin,
+>>   Can you please take this patch to your tree?
 >>
->> This implementation is compatible with device tree definition and board
->> files.
+>> Best Regards
+>> Yuvaraj
 >>
->> This patch series is based on linux-next and has been tested on goni and
->> aquila
->> boards using board file.
->>
->> Since v4:
->> Corrected mux flags for finpll.
->>
->> Since v3:
->>
->> Replace s5pv210_clk_register_finpll, by creating mux finpll
->> with xusbxti and xxti as parrents.
->>
->>
->> Mateusz Krawczuk (3):
->>    clk: samsung: Add clock driver for s5pc110/s5pv210
->>    Cpufreq: s5pv210 cpufreq fixes for CCF
->>    ARM: s5pv210: Migrate clock handling to Common Clock Framework
->>
->>   .../bindings/clock/samsung,s5pv210-clock.txt       |  75 +++
->>   arch/arm/mach-s5pv210/Kconfig                      |   9 +
->>   arch/arm/mach-s5pv210/Makefile                     |   4 +-
->>   arch/arm/mach-s5pv210/common.c                     |  17 +
->>   arch/arm/mach-s5pv210/common.h                     |  10 +
->>   arch/arm/mach-s5pv210/mach-goni.c                  |   2 +-
->>   arch/arm/mach-s5pv210/mach-smdkv210.c              |   2 +-
->>   arch/arm/plat-samsung/Kconfig                      |   2 +-
->>   drivers/clk/samsung/Makefile                       |   3 +
->>   drivers/clk/samsung/clk-s5pv210.c                  | 673
->> +++++++++++++++++++++ drivers/cpufreq/s5pv210-cpufreq.c
->>   |   6 +-
->>   include/dt-bindings/clock/samsung,s5pv210-clock.h  | 224 +++++++
->>   12 files changed, 1019 insertions(+), 8 deletions(-)
->>   create mode 100644
->> Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
->> create mode 100644 drivers/clk/samsung/clk-s5pv210.c
->>   create mode 100644 include/dt-bindings/clock/samsung,s5pv210-clock.h
->
-> I believe this series is reasonable to be applied. Could we agree on
-> the tree it would go through and get all tne required acks?
->
-> Best regards,
-> Tomasz
+>> On Tue, Sep 3, 2013 at 11:30 AM, Yuvaraj Kumar C D<yuvaraj.cd@gmail.com>  wrote:
+>>> This patch adds the mmc device tree node entries for exynos5420 SOC.
+>>> Exynos5420 has a different version of DWMMC controller,so a new
+>>> compatible string is used to distinguish it from the prior SOC's.
+>>>
+>>> This patch depends on
+>>>          [1]mmc: dw_mmc: exynos: configure SMU in exynos5420
+>>>          [2]mmc: dw_mmc: exynos: Add a new compatible string for exynos5420
+>>>          [3]mmc: dw_mmc: update binding document exynos-dw-mshc.txt
+>>>
 
-I agree.
+Yuvaraj,
 
-Mike, how do you think the common clk stuff for s5pv210?
+Looks good to me, applied but please make sure above patches are merged 
+into mmc tree for upcoming merge window.
 
-- Kukjin
+Thanks,
+Kukjin
 
+
+>>> changes since v6:
+>>>          1.renamed node name to mmc
+>>>          2.Used compatible string "samsung,exynos5420-dw-mshc"
+>>>            for controller instance which does not have SMU.
+>>>          3.Used compatible string "samsung,exynos5420-dw-mshc-smu"
+>>>            for controller instance which has SMU.
+>>>
+>>> changes since v5:
+>>>          1.removed instance index from node name.
+>>>          2.changed the node name to mshc.
+>>>          3.changed the reg property value for mshc_2.
+>>>
+>>> changes since v4:
+>>>          1.Droppped the bypass-smu binding property.
+>>>          2.Used compatible string "samsung,exynos5250-dw-mshc"
+>>>            for controller instance which does not have SMU.
+>>>
+>>> changes since V3:
+>>>          1.change fifo-depth size from 0x80 to 0x40
+>>>          2.Move the below properties
+>>>                  a.card-detect-delay
+>>>                  b.samsung,dw-mshc-ciu-div
+>>>                  c.samsung,dw-mshc-sdr-timing
+>>>                  d.samsung,dw-mshc-ddr-timing
+>>>          from SOC dts to board dts file as suggested by Doug Anderson
+>>>
+>>> changes since V2:
+>>>          1.dropped num-slots property from node as its not required
+>>>            if number of card slots available is 1.
+>>>
+>>>          2.Move the below properties
+>>>                  a.fifo-depth
+>>>                  b.card-detect-delay
+>>>                  c.samsung,dw-mshc-ciu-div
+>>>                  d.samsung,dw-mshc-sdr-timing
+>>>                  e.samsung,dw-mshc-ddr-timing
+>>>          from board dts to SOC dts,as these are not board specific properties.
+>>>
+>>>          3.Updated the binding document exynos-dw-mshc.txt.
+>>>
+>>> changes since V1:
+>>>          1.disable node by status = disabled in SOC file
+>>>          2.enable node by status = okay in board specific file
+>>>
+>>> Signed-off-by: Yuvaraj Kumar C D<yuvaraj.cd@samsung.com>
+>>> ---
+>>>   .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    2 +
+>>>   arch/arm/boot/dts/exynos5420-smdk5420.dts          |   33 +++++++++++++++++
+>>>   arch/arm/boot/dts/exynos5420.dtsi                  |   39 ++++++++++++++++++++
+>>>   3 files changed, 74 insertions(+)
