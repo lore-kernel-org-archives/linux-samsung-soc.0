@@ -1,47 +1,60 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v4 1/4] [media] exynos-scaler: Add new driver for Exynos5
- SCALER
-Date: Sun, 20 Oct 2013 20:25:18 +0200
-Message-ID: <5264200E.5060706@gmail.com>
-References: <1380889594-10448-1-git-send-email-shaik.ameer@samsung.com> <1380889594-10448-2-git-send-email-shaik.ameer@samsung.com> <5260F7F3.20802@samsung.com> <CAOD6ATqPrt8FsTFA-YR8-AJDrwFmQ=vYCGYO_bVi3rt-Ra7Ocg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH RESEND 0/3] ARM: S3C24XX: add missing dma-devices and
+ warning fix
+Date: Mon, 21 Oct 2013 05:27:20 +0900
+Message-ID: <52643CA8.2020902@samsung.com>
+References: <201310111059.19791.heiko@sntech.de> <20131013145642.GJ2954@intel.com> <201310132011.11285.heiko@sntech.de> <525DC274.8090808@samsung.com> <20131016020516.GT2954@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:47460 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751258Ab3JTSZ2 (ORCPT
+Received: from mail-pb0-f44.google.com ([209.85.160.44]:54386 "EHLO
+	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751654Ab3JTU12 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Oct 2013 14:25:28 -0400
-In-Reply-To: <CAOD6ATqPrt8FsTFA-YR8-AJDrwFmQ=vYCGYO_bVi3rt-Ra7Ocg@mail.gmail.com>
+	Sun, 20 Oct 2013 16:27:28 -0400
+Received: by mail-pb0-f44.google.com with SMTP id xa7so6049112pbc.17
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Oct 2013 13:27:27 -0700 (PDT)
+In-Reply-To: <20131016020516.GT2954@intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Arun Kumar K <arun.kk@samsung.com>, Pawel Osciak <posciak@google.com>, Inki Dae <inki.dae@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Kamil Debski <k.debski@samsung.com>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-Hi Shaik,
-
-On 10/20/2013 02:33 PM, Shaik Ameer Basha wrote:
-> On Fri, Oct 18, 2013 at 5:57 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com>  wrote:
->> >  Hi,
->> >
->> >  I have couple minor comments. These could be addressed in follow up
->> >  patches, it you won't manage to do it today. Sorry for being late with
->> >  this.
+On 10/16/13 11:05, Vinod Koul wrote:
+> On Wed, Oct 16, 2013 at 07:32:20AM +0900, Kukjin Kim wrote:
+>> On 10/14/13 03:11, Heiko St=FCbner wrote:
+>>> Am Sonntag, 13. Oktober 2013, 16:56:42 schrieb Vinod Koul:
+>>>> On Fri, Oct 11, 2013 at 10:59:19AM +0200, Heiko St=FCbner wrote:
+>>>>> [I messed up the linux-arm-kernel list address yesterday, so I re=
+send it
+>>>>> with a fixed address, sorry for the noise]
+>>>>>
+>>>>> When Olof reported the warning about the unused s3c2410_dma_resou=
+rce, I
+>>>>> thought the best way forward would be to simply implement the mis=
+sing
+>>>>> pieces and so it has users :-) .
+>>>>>
+>>>>> Therefore this series adds the necessary platform-devices for s3c=
+2410,
+>>>>> s3c2440 and s3c2442. This especially also includes the
+>>>>> channel-constraints of those socs.
+>>>>>
+>>>>> As I do not have access to any of those socs these changes are of=
+ course
+>>>>> compile-tested only.
+>>>>
+>>>> Do you want this to be applied thru dma or arm tree?
+>>>
+>>> hmm, the original series went into the samsung tree for 3.13, so ma=
+ybe this
+>>> addition should go the same way?
+>>>
+>> I think so, let me pick this up into Samsung tree for v3.13.
+> Okay, sounds good. Ack for dmaengine patch sent
 >
-> Sorry for the late reply.
->
-> Currently I am on travel and I don't have the environment to rebase
-> and test this driver.
-> I will address your comments in follow up patches.
->
-> Can you please queue this driver to your branch and send a pull
-> request for 3.13 ?
+Applied with Vinod's ack, thanks.
 
-The driver seems to be in quite a good shape now and I think it would
-have been bad not to merge it in this release. I'll let Kamil handle
-it as he's a sub-maintainer of the v4l2 mem-to-mem drivers.
-
-Regards,
-Sylwester
+- Kukjin
