@@ -1,7 +1,8 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [RFC 05/12] phy: use of_phy_simple_xlate for NULL xlate function
-Date: Mon, 21 Oct 2013 16:18:24 +0200
-Message-ID: <1382365111-6533-6-git-send-email-t.stanislaws@samsung.com>
+Subject: [RFC 09/12] drm: exynos: add compatibles for HDMI and Mixer chips and
+ exynos4210 SoC
+Date: Mon, 21 Oct 2013 16:18:28 +0200
+Message-ID: <1382365111-6533-10-git-send-email-t.stanislaws@samsung.com>
 References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
@@ -10,26 +11,42 @@ To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@
 Cc: dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, t.figa@samsung.com, kishon@ti.com, sw0312.kim@samsung.com, inki.dae@samsung.com, rahul.sharma@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, Tomasz Stanislawski <t.stanislaws@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Use default handler of_phy_simple_xlate() when NULL is passed as argument to
-of_phy_provider_register().
+This patch add proper compatibles for Mixer and HDMI chip
+available on exynos4210 SoCs.
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 ---
- drivers/phy/phy-core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c  |    3 +++
+ drivers/gpu/drm/exynos/exynos_mixer.c |    3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index 03cf8fb..c38ae1e7 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -575,7 +575,7 @@ struct phy_provider *__of_phy_provider_register(struct device *dev,
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 5adb5c1..ae21fa5 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1874,6 +1874,9 @@ static struct s5p_hdmi_platform_data *drm_hdmi_dt_parse_pdata
  
- 	phy_provider->dev = dev;
- 	phy_provider->owner = owner;
--	phy_provider->of_xlate = of_xlate;
-+	phy_provider->of_xlate = of_xlate ? of_xlate : of_phy_simple_xlate;
+ static struct of_device_id hdmi_match_types[] = {
+ 	{
++		.compatible = "samsung,exynos4210-hdmi",
++		.data	= (void	*)HDMI_TYPE13,
++	}, {
+ 		.compatible = "samsung,exynos5-hdmi",
+ 		.data	= (void	*)HDMI_TYPE14,
+ 	}, {
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 63bc5f9..892afb5 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -1161,6 +1161,9 @@ static struct platform_device_id mixer_driver_types[] = {
  
- 	mutex_lock(&phy_provider_mutex);
- 	list_add_tail(&phy_provider->list, &phy_provider_list);
+ static struct of_device_id mixer_match_types[] = {
+ 	{
++		.compatible = "samsung,exynos4-mixer",
++		.data	= &exynos4_mxr_drv_data,
++	}, {
+ 		.compatible = "samsung,exynos5-mixer",
+ 		.data	= &exynos5250_mxr_drv_data,
+ 	}, {
 -- 
 1.7.9.5
