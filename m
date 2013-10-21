@@ -1,93 +1,55 @@
-From: Majunath Goudar <csmanjuvijay@gmail.com>
-Subject: [PATCH V4 3/6]  USB: OHCI: Properly handle ohci-s3c2410 suspend
-Date: Mon, 21 Oct 2013 19:48:53 +0530
-Message-ID: <1382365136-24472-4-git-send-email-csmanjuvijay@gmail.com>
-References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
- <1382365136-24472-1-git-send-email-csmanjuvijay@gmail.com>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: [RFC 10/12] arm: dts: exynos4: add i2c controller for HDMIPHY
+Date: Mon, 21 Oct 2013 16:18:29 +0200
+Message-ID: <1382365111-6533-11-git-send-email-t.stanislaws@samsung.com>
+References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382365136-24472-1-git-send-email-csmanjuvijay@gmail.com>
+In-reply-to: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: csmanjuvijay@gmail.com
-Cc: Greg KH <greg@kroah.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, t.figa@samsung.com, kishon@ti.com, sw0312.kim@samsung.com, inki.dae@samsung.com, rahul.sharma@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, Tomasz Stanislawski <t.stanislaws@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Suspend scenario in case of ohci-s3c2410 glue was not
-properly handled as it was not suspending generic part
-of ohci controller. Alan Stern suggested, properly handle
-ohci-s3c2410 suspend scenario.
+This patch adds DT nodes for I2C controller dedicated for HDMIPHY.
 
-Calling explicitly the ohci_suspend()
-routine in ohci_hcd_s3c2410_drv_suspend() will ensure
-proper handling of suspend scenario.
-
-Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg KH <greg@kroah.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
+Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 ---
-V3->V4:
-      -No changes, only added Alan Acked-by.
+ arch/arm/boot/dts/exynos4.dtsi |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-V2->V3:
-      -No changes.
-      As a build failure on "ep93xx proper suspend patch" and Linaro
-      id bounced. Rewrote this patch on top of latest Greg usb-next
-      branch. This patch not gives any build error. Patch is required
-      for ohci-s3c2410 proper suspending as Alan mentioned.
-
-      Initially when I wrote this patch I was working in Linaro, now
-      I am not part of Linaro that is why Linaro id is bouncing. Sending
-      this patch from personal mail id.
-
-V1->V2:
-      -No changes.
-       Due to the build failure on ep93xx reverted this patch.
-       This patch is needed as Alan Stern suggestion.
-
- drivers/usb/host/ohci-s3c2410.c |   21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
-index be3429e..b5bf9b7 100644
---- a/drivers/usb/host/ohci-s3c2410.c
-+++ b/drivers/usb/host/ohci-s3c2410.c
-@@ -426,28 +426,15 @@ static int ohci_hcd_s3c2410_drv_remove(struct platform_device *pdev)
- static int ohci_hcd_s3c2410_drv_suspend(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
--	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
- 	struct platform_device *pdev = to_platform_device(dev);
--	unsigned long flags;
-+	bool do_wakeup = device_may_wakeup(dev);
- 	int rc = 0;
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index caadc02..a5f6b8b 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -36,6 +36,7 @@
+ 		i2c5 = &i2c_5;
+ 		i2c6 = &i2c_6;
+ 		i2c7 = &i2c_7;
++		i2c8 = &i2c_8;
+ 		csis0 = &csis_0;
+ 		csis1 = &csis_1;
+ 		fimc0 = &fimc_0;
+@@ -399,6 +400,21 @@
+ 		status = "disabled";
+ 	};
  
--	/*
--	 * Root hub was already suspended. Disable irq emission and
--	 * mark HW unaccessible, bail out if RH has been resumed. Use
--	 * the spinlock to properly synchronize with possible pending
--	 * RH suspend or resume activity.
--	 */
--	spin_lock_irqsave(&ohci->lock, flags);
--	if (ohci->rh_state != OHCI_RH_SUSPENDED) {
--		rc = -EINVAL;
--		goto bail;
--	}
--
--	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-+	rc = ohci_suspend(hcd, do_wakeup);
-+	if (rc)
-+		return rc;
- 
- 	s3c2410_stop_hc(pdev);
--bail:
--	spin_unlock_irqrestore(&ohci->lock, flags);
- 
- 	return rc;
- }
++	i2c_8: i2c@138E0000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "samsung,s3c2440-hdmiphy-i2c";
++		reg = <0x138E0000 0x100>;
++		interrupts = <0 93 0>;
++		clocks = <&clock 325>;
++		clock-names = "i2c";
++
++		hdmiphy@38 {
++			compatible = "samsung,exynos5-hdmiphy";
++			reg = <0x38>;
++		};
++	};
++
+ 	spi_0: spi@13920000 {
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x13920000 0x100>;
 -- 
 1.7.9.5
