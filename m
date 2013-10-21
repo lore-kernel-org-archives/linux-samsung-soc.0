@@ -1,63 +1,70 @@
-From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] spi/s3c64xx: Fix doubled clock disable on suspend
-Date: Mon, 21 Oct 2013 11:42:33 +0200
-Message-ID: <5264F709.2000409@samsung.com>
-References: <1382348117-6666-1-git-send-email-k.kozlowski@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: Arndale boot broken in -next
+Date: Mon, 21 Oct 2013 15:50:10 +0530
+Message-ID: <CAHbNUh2WLphNT3JCVdDFd=6AjCvROh-wCtgJhWv-q5b7q17vZw@mail.gmail.com>
+References: <20131019163545.GB2443@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1382348117-6666-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:54874 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752461Ab3JUKUL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Oct 2013 06:20:11 -0400
+Received: by mail-wi0-f175.google.com with SMTP id hm4so3662231wib.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2013 03:20:10 -0700 (PDT)
+In-Reply-To: <20131019163545.GB2443@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, Stephen Boyd <sboyd@codeaurora.org>
 
-On 21/10/13 11:35, Krzysztof Kozlowski wrote:
-> Fix doubled clock disable and unprepare during PM suspend which triggered
-> the warnings:
-[...]
-> The clocks are already disabled before suspending.
-> 
-> Additionally add PM runtime get() and put() during resume so device
-> won't sleep for the time of s3c64xx_spi_hwinit().
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/spi/spi-s3c64xx.c |   15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index a80376d..374be7d 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -1482,10 +1482,6 @@ static int s3c64xx_spi_suspend(struct device *dev)
->  
->  	spi_master_suspend(master);
->  
-> -	/* Disable the clock */
-> -	clk_disable_unprepare(sdd->src_clk);
-> -	clk_disable_unprepare(sdd->clk);
-> -
->  	sdd->cur_speed = 0; /* Output Clock is stopped */
->  
->  	return 0;
-> @@ -1496,16 +1492,19 @@ static int s3c64xx_spi_resume(struct device *dev)
->  	struct spi_master *master = dev_get_drvdata(dev);
->  	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
->  	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
-> +	int ret;
->  
-> +	ret = pm_runtime_get_sync(dev);
+On 19 October 2013 22:05, Mark Brown <broonie@kernel.org> wrote:
+> Hi,
+>
+> I've not yet had a chance to bisect this but it appears that Arndale
+> boot has broken for me recently in -next; I'm getting absolutely no
+> serial output at all afther the bootloader hands off to Linux so no
+> useful diagnostics.  Is this a known issue?
+>
 
-pm_runtime_{get,put}* must not be called from drivers's system suspend/resume
-callbacks. Please use pm_runtime_suspended() to check device runtime PM status
-in s3c64xx_spi_{suspend,resume} callbacks and handle the clocks appropriately.
+On next-20131018, bisect points to following commit.
 
-Thanks,
-Sylwester
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+commit 65cd4f6c99c1170bd0114dbd71b978012ea44d28
+Author: Stephen Boyd <sboyd@codeaurora.org>
+Date:   Thu Jul 18 16:21:18 2013 -0700
+Subject: arch_timer: Move to generic sched_clock framework
+
+
+I don't know if this is a fix, but removing armv7-timer DT node brings
+Arndale back to booting state.
+
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+b/arch/arm/boot/dts/exynos5250.dtsi
+index 9db5047..bb583f6 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -90,19 +90,6 @@
+                #clock-cells = <1>;
+        };
+
+-       timer {
+-               compatible = "arm,armv7-timer";
+-               interrupts = <1 13 0xf08>,
+-                            <1 14 0xf08>,
+-                            <1 11 0xf08>,
+-                            <1 10 0xf08>;
+-               /* Unfortunately we need this since some versions of U-Boot
+-                * on Exynos don't set the CNTFRQ register, so we need the
+-                * value from DT.
+-                */
+-               clock-frequency = <24000000>;
+-       };
+-
+        mct@101C0000 {
+                compatible = "samsung,exynos4210-mct";
+                reg = <0x101C0000 0x800>;
+
+
+-- 
+Tushar Behera
