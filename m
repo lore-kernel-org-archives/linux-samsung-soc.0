@@ -1,63 +1,63 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 3/8] clk: max77686: Refactor successful exit of probe function
-Date: Mon, 21 Oct 2013 15:11:21 +0530
-Message-ID: <CAK9yfHxesuwz-+ERYJ2joHZ4_O04E7e3ZSjYWQUDxfV7Wxoebw@mail.gmail.com>
-References: <1382027442-1992-1-git-send-email-t.figa@samsung.com>
-	<1382027442-1992-4-git-send-email-t.figa@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] spi/s3c64xx: Fix doubled clock disable on suspend
+Date: Mon, 21 Oct 2013 11:42:33 +0200
+Message-ID: <5264F709.2000409@samsung.com>
+References: <1382348117-6666-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f48.google.com ([209.85.160.48]:55675 "EHLO
-	mail-pb0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752846Ab3JUJlW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Oct 2013 05:41:22 -0400
-Received: by mail-pb0-f48.google.com with SMTP id ma3so6740325pbc.35
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2013 02:41:21 -0700 (PDT)
-In-Reply-To: <1382027442-1992-4-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1382348117-6666-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Tomasz,
-
-On 17 October 2013 22:00, Tomasz Figa <t.figa@samsung.com> wrote:
-> The function can simply return 0, without jumping to a separate label,
-> which does exactly the same. This patch does not introduce any
-> functional change, just a clean-up.
->
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+On 21/10/13 11:35, Krzysztof Kozlowski wrote:
+> Fix doubled clock disable and unprepare during PM suspend which triggered
+> the warnings:
+[...]
+> The clocks are already disabled before suspending.
+> 
+> Additionally add PM runtime get() and put() during resume so device
+> won't sleep for the time of s3c64xx_spi_hwinit().
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  drivers/clk/clk-max77686.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-> index e40ecdb..5d78460 100644
-> --- a/drivers/clk/clk-max77686.c
-> +++ b/drivers/clk/clk-max77686.c
-> @@ -178,7 +178,7 @@ static int max77686_clk_probe(struct platform_device *pdev)
->
->         platform_set_drvdata(pdev, max77686_clks);
->
-> -       goto out;
-> +       return 0;
->
->  err_clk_pmic:
->         clkdev_drop(max77686_clks[MAX77686_CLK_CP]->lookup);
-> @@ -187,7 +187,6 @@ err_clk_cp:
->         clkdev_drop(max77686_clks[MAX77686_CLK_AP]->lookup);
->         kfree(max77686_clks[MAX77686_CLK_AP]->hw.clk);
->  err_clk_ap:
+>  drivers/spi/spi-s3c64xx.c |   15 +++++++--------
+>  1 file changed, 7 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index a80376d..374be7d 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -1482,10 +1482,6 @@ static int s3c64xx_spi_suspend(struct device *dev)
+>  
+>  	spi_master_suspend(master);
+>  
+> -	/* Disable the clock */
+> -	clk_disable_unprepare(sdd->src_clk);
+> -	clk_disable_unprepare(sdd->clk);
+> -
+>  	sdd->cur_speed = 0; /* Output Clock is stopped */
+>  
+>  	return 0;
+> @@ -1496,16 +1492,19 @@ static int s3c64xx_spi_resume(struct device *dev)
+>  	struct spi_master *master = dev_get_drvdata(dev);
+>  	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+>  	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+> +	int ret;
+>  
+> +	ret = pm_runtime_get_sync(dev);
 
-You could probably do the same for this label too.
+pm_runtime_{get,put}* must not be called from drivers's system suspend/resume
+callbacks. Please use pm_runtime_suspended() to check device runtime PM status
+in s3c64xx_spi_{suspend,resume} callbacks and handle the clocks appropriately.
 
-> -out:
->         return ret;
->  }
->
-
--- 
-With warm regards,
-Sachin
+Thanks,
+Sylwester
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
