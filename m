@@ -1,76 +1,93 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [RFC 07/12] drm: exynos: hdmi: use hdmiphy as PHY
-Date: Mon, 21 Oct 2013 16:18:26 +0200
-Message-ID: <1382365111-6533-8-git-send-email-t.stanislaws@samsung.com>
-References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
+From: Majunath Goudar <csmanjuvijay@gmail.com>
+Subject: [PATCH V4 3/6]  USB: OHCI: Properly handle ohci-s3c2410 suspend
+Date: Mon, 21 Oct 2013 19:48:53 +0530
+Message-ID: <1382365136-24472-4-git-send-email-csmanjuvijay@gmail.com>
+References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
+ <1382365136-24472-1-git-send-email-csmanjuvijay@gmail.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
+In-Reply-To: <1382365136-24472-1-git-send-email-csmanjuvijay@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, t.figa@samsung.com, kishon@ti.com, sw0312.kim@samsung.com, inki.dae@samsung.com, rahul.sharma@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, Tomasz Stanislawski <t.stanislaws@samsung.com>
+To: csmanjuvijay@gmail.com
+Cc: Greg KH <greg@kroah.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The HDMIPHY (physical interface) is controlled by a single
-bit in a power controller's regiter. It was implemented
-as clock. It was a simple but effective hack.
+Suspend scenario in case of ohci-s3c2410 glue was not
+properly handled as it was not suspending generic part
+of ohci controller. Alan Stern suggested, properly handle
+ohci-s3c2410 suspend scenario.
 
-This patch makes HDMI driver to control HDMIPHY via PHY interface.
+Calling explicitly the ohci_suspend()
+routine in ohci_hcd_s3c2410_drv_suspend() will ensure
+proper handling of suspend scenario.
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg KH <greg@kroah.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c |   11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+V3->V4:
+      -No changes, only added Alan Acked-by.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index fcfa23a..e36588a 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -34,6 +34,7 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-+#include <linux/phy/phy.h>
+V2->V3:
+      -No changes.
+      As a build failure on "ep93xx proper suspend patch" and Linaro
+      id bounced. Rewrote this patch on top of latest Greg usb-next
+      branch. This patch not gives any build error. Patch is required
+      for ohci-s3c2410 proper suspending as Alan mentioned.
+
+      Initially when I wrote this patch I was working in Linaro, now
+      I am not part of Linaro that is why Linaro id is bouncing. Sending
+      this patch from personal mail id.
+
+V1->V2:
+      -No changes.
+       Due to the build failure on ep93xx reverted this patch.
+       This patch is needed as Alan Stern suggestion.
+
+ drivers/usb/host/ohci-s3c2410.c |   21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index be3429e..b5bf9b7 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -426,28 +426,15 @@ static int ohci_hcd_s3c2410_drv_remove(struct platform_device *pdev)
+ static int ohci_hcd_s3c2410_drv_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+-	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	unsigned long flags;
++	bool do_wakeup = device_may_wakeup(dev);
+ 	int rc = 0;
  
- #include <drm/exynos_drm.h>
+-	/*
+-	 * Root hub was already suspended. Disable irq emission and
+-	 * mark HW unaccessible, bail out if RH has been resumed. Use
+-	 * the spinlock to properly synchronize with possible pending
+-	 * RH suspend or resume activity.
+-	 */
+-	spin_lock_irqsave(&ohci->lock, flags);
+-	if (ohci->rh_state != OHCI_RH_SUSPENDED) {
+-		rc = -EINVAL;
+-		goto bail;
+-	}
+-
+-	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
++	rc = ohci_suspend(hcd, do_wakeup);
++	if (rc)
++		return rc;
  
-@@ -82,7 +83,7 @@ struct hdmi_resources {
- 	struct clk			*sclk_hdmi;
- 	struct clk			*sclk_pixel;
- 	struct clk			*sclk_hdmiphy;
--	struct clk			*hdmiphy;
-+	struct phy			*hdmiphy;
- 	struct regulator_bulk_data	*regul_bulk;
- 	int				regul_count;
- };
-@@ -1685,7 +1686,7 @@ static void hdmi_poweron(struct hdmi_context *hdata)
- 	if (regulator_bulk_enable(res->regul_count, res->regul_bulk))
- 		DRM_DEBUG_KMS("failed to enable regulator bulk\n");
+ 	s3c2410_stop_hc(pdev);
+-bail:
+-	spin_unlock_irqrestore(&ohci->lock, flags);
  
--	clk_prepare_enable(res->hdmiphy);
-+	phy_power_on(res->hdmiphy);
- 	clk_prepare_enable(res->hdmi);
- 	clk_prepare_enable(res->sclk_hdmi);
- 
-@@ -1710,7 +1711,7 @@ static void hdmi_poweroff(struct hdmi_context *hdata)
- 
- 	clk_disable_unprepare(res->sclk_hdmi);
- 	clk_disable_unprepare(res->hdmi);
--	clk_disable_unprepare(res->hdmiphy);
-+	phy_power_off(res->hdmiphy);
- 	regulator_bulk_disable(res->regul_count, res->regul_bulk);
- 
- 	mutex_lock(&hdata->hdmi_mutex);
-@@ -1809,9 +1810,9 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
- 		DRM_ERROR("failed to get clock 'sclk_hdmiphy'\n");
- 		goto fail;
- 	}
--	res->hdmiphy = devm_clk_get(dev, "hdmiphy");
-+	res->hdmiphy = devm_phy_get(dev, "hdmiphy");
- 	if (IS_ERR(res->hdmiphy)) {
--		DRM_ERROR("failed to get clock 'hdmiphy'\n");
-+		DRM_ERROR("failed to get phy 'hdmiphy'\n");
- 		goto fail;
- 	}
- 
+ 	return rc;
+ }
 -- 
 1.7.9.5
