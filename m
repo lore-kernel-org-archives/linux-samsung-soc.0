@@ -1,49 +1,88 @@
-From: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 6/8] clk: samsung: s3c64xx: Remove clock aliases of old DMA
- driver
-Date: Mon, 21 Oct 2013 05:12:00 -0700
-Message-ID: <20131021121200.11944.16288@quantum>
-References: <1381950659-12703-1-git-send-email-tomasz.figa@gmail.com>
- <1381950659-12703-7-git-send-email-tomasz.figa@gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v5 0/3] ARM: S5PV210: move to common clk framework
+Date: Mon, 21 Oct 2013 05:16:05 -0700
+Message-ID: <20131021121605.11944.74007@quantum>
+References: <1380027009-2239-1-git-send-email-m.krawczuk@partner.samsung.com>
+ <1816869.ggMDlA1qNY@flatron> <5264425E.4040301@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1381950659-12703-7-git-send-email-tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:48927 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753273Ab3JUMQO convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Oct 2013 08:16:14 -0400
+Received: by mail-pd0-f174.google.com with SMTP id y13so8268283pdi.5
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2013 05:16:14 -0700 (PDT)
+In-Reply-To: <5264425E.4040301@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: rjw@sisk.pl, kgene.kim@samsung.com, mark.rutland@arm.com, swarren@wwwdotorg.org, linux-doc@vger.kernel.org, viresh.kumar@linaro.org, s.nawrocki@samsung.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, linux-pm@vger.kernel.org, cpufreq@vger.kernel.org, thomas.abraham@linaro.org, b.zolnierkie@samsung.com, t.stanislaws@samsung.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, rob.herring@calxeda.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, rob@landley.net
 
-Quoting Tomasz Figa (2013-10-16 12:10:57)
-> Since the old DMA driver got removed, these aliases are no longer
-> necessary.
+Quoting Kukjin Kim (2013-10-20 13:51:42)
+> On 10/20/13 01:03, Tomasz Figa wrote:
+> > Hi Mike, Kukjin, Rafael,
+> >
+> > On Tuesday 24 of September 2013 14:50:06 Mateusz Krawczuk wrote:
+> >> This patch series is the new s5pv210 clock implementation
+> >> (using common clk framework).
+> >>
+> >> This implementation is compatible with device tree definition and board
+> >> files.
+> >>
+> >> This patch series is based on linux-next and has been tested on goni and
+> >> aquila
+> >> boards using board file.
+> >>
+> >> Since v4:
+> >> Corrected mux flags for finpll.
+> >>
+> >> Since v3:
+> >>
+> >> Replace s5pv210_clk_register_finpll, by creating mux finpll
+> >> with xusbxti and xxti as parrents.
+> >>
+> >>
+> >> Mateusz Krawczuk (3):
+> >>    clk: samsung: Add clock driver for s5pc110/s5pv210
+> >>    Cpufreq: s5pv210 cpufreq fixes for CCF
+> >>    ARM: s5pv210: Migrate clock handling to Common Clock Framework
+> >>
+> >>   .../bindings/clock/samsung,s5pv210-clock.txt       |  75 +++
+> >>   arch/arm/mach-s5pv210/Kconfig                      |   9 +
+> >>   arch/arm/mach-s5pv210/Makefile                     |   4 +-
+> >>   arch/arm/mach-s5pv210/common.c                     |  17 +
+> >>   arch/arm/mach-s5pv210/common.h                     |  10 +
+> >>   arch/arm/mach-s5pv210/mach-goni.c                  |   2 +-
+> >>   arch/arm/mach-s5pv210/mach-smdkv210.c              |   2 +-
+> >>   arch/arm/plat-samsung/Kconfig                      |   2 +-
+> >>   drivers/clk/samsung/Makefile                       |   3 +
+> >>   drivers/clk/samsung/clk-s5pv210.c                  | 673
+> >> +++++++++++++++++++++ drivers/cpufreq/s5pv210-cpufreq.c
+> >>   |   6 +-
+> >>   include/dt-bindings/clock/samsung,s5pv210-clock.h  | 224 +++++++
+> >>   12 files changed, 1019 insertions(+), 8 deletions(-)
+> >>   create mode 100644
+> >> Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
+> >> create mode 100644 drivers/clk/samsung/clk-s5pv210.c
+> >>   create mode 100644 include/dt-bindings/clock/samsung,s5pv210-clock.h
+> >
+> > I believe this series is reasonable to be applied. Could we agree on
+> > the tree it would go through and get all tne required acks?
+> >
+> > Best regards,
+> > Tomasz
 > 
-> Signed-off-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-
-Acked-by: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
-> ---
->  drivers/clk/samsung/clk-s3c64xx.c | 2 --
->  1 file changed, 2 deletions(-)
+> I agree.
 > 
-> diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
-> index 06cf105..8e27aee 100644
-> --- a/drivers/clk/samsung/clk-s3c64xx.c
-> +++ b/drivers/clk/samsung/clk-s3c64xx.c
-> @@ -331,9 +331,7 @@ static struct samsung_clock_alias s3c64xx_clock_aliases[] = {
->         ALIAS(HCLK_HSMMC1, "s3c-sdhci.1", "mmc_busclk.0"),
->         ALIAS(HCLK_HSMMC0, "s3c-sdhci.0", "hsmmc"),
->         ALIAS(HCLK_HSMMC0, "s3c-sdhci.0", "mmc_busclk.0"),
-> -       ALIAS(HCLK_DMA1, NULL, "dma1"),
->         ALIAS(HCLK_DMA1, "dma-pl080s.1", "apb_pclk"),
-> -       ALIAS(HCLK_DMA0, NULL, "dma0"),
->         ALIAS(HCLK_DMA0, "dma-pl080s.0", "apb_pclk"),
->         ALIAS(HCLK_CAMIF, "s3c-camif", "camif"),
->         ALIAS(HCLK_LCD, "s3c-fb", "lcd"),
-> -- 
-> 1.8.3.2
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Mike, how do you think the common clk stuff for s5pv210?
+
+Clock code looks good to me. Which tree do you want to take it through?
+
+Regards,
+Mike
+
+> 
+> - Kukjin
