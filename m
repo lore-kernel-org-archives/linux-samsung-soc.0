@@ -1,69 +1,61 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [RFC 01/12] clk: propagate parent change up one level
-Date: Mon, 21 Oct 2013 16:18:20 +0200
-Message-ID: <1382365111-6533-2-git-send-email-t.stanislaws@samsung.com>
+Subject: [RFC 02/12] clk: exynos4: export sclk_hdmiphy clock
+Date: Mon, 21 Oct 2013 16:18:21 +0200
+Message-ID: <1382365111-6533-3-git-send-email-t.stanislaws@samsung.com>
 References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:11927 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752626Ab3JUOSx (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:64583 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753618Ab3JUOS7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Oct 2013 10:18:53 -0400
+	Mon, 21 Oct 2013 10:18:59 -0400
 In-reply-to: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, t.figa@samsung.com, kishon@ti.com, sw0312.kim@samsung.com, inki.dae@samsung.com, rahul.sharma@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-This patch adds support for propagation of setup of clock's parent one level
-up.
-
-This feature is helpful when a driver changes topology of its clocks using
-clk_set_parent().  The problem occurs when on one platform/SoC driver's clock
-is located at MUX output but on the other platform/SoC there is a gated proxy
-clock between the MUX and driver's clock.  In such a case, driver's code has to
-be modified to use one clock for enabling and the other clock for setup of a
-parent.
-
-The code updates are avoided by propagating setup of a parent up one level.
-
-Additionally, this patch adds CLK_SET_PARENT_PARENT (sorry for naming) flag to
-inform clk-core that clk_set_parent() should be propagated.
+Export sclk_hdmiphy clock to be usable from DT.
 
 Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
 ---
- drivers/clk/clk.c            |    6 ++++++
- include/linux/clk-provider.h |    1 +
- 2 files changed, 7 insertions(+)
+ .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
+ drivers/clk/samsung/clk-exynos4.c                  |    4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a004769..14eda80 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1595,6 +1595,12 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+index c6bf8a6..cb08f5d 100644
+--- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
+@@ -46,6 +46,7 @@ Exynos4 SoC and this is specified where applicable.
+   mout_mpll_user_c    18      Exynos4x12
+   mout_core           19
+   mout_apll           20
++  sclk_hdmiphy        21
  
- 	/* try finding the new parent index */
- 	if (parent) {
-+		if ((clk->flags & CLK_SET_PARENT_PARENT)
-+		    && clk->num_parents == 1) {
-+			ret = clk_set_parent(clk->parent, parent);
-+			goto out;
-+		}
-+
- 		p_index = clk_fetch_parent_index(clk, parent);
- 		p_rate = parent->rate;
- 		if (p_index == clk->num_parents) {
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 73bdb69..83c98d5 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -29,6 +29,7 @@
- #define CLK_IS_BASIC		BIT(5) /* Basic clk, can't do a to_clk_foo() */
- #define CLK_GET_RATE_NOCACHE	BIT(6) /* do not use the cached clk rate */
- #define CLK_SET_RATE_NO_REPARENT BIT(7) /* don't re-parent on rate change */
-+#define CLK_SET_PARENT_PARENT	BIT(8) /* propagate parent change up one level */
  
- struct clk_hw;
+             [Clock Gate for Special Clocks]
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index ad5ff50..df79ca6 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -148,7 +148,7 @@ enum exynos4_clks {
+ 	xxti, xusbxti, fin_pll, fout_apll, fout_mpll, fout_epll, fout_vpll,
+ 	sclk_apll, sclk_mpll, sclk_epll, sclk_vpll, arm_clk, aclk200, aclk100,
+ 	aclk160, aclk133, mout_mpll_user_t, mout_mpll_user_c, mout_core,
+-	mout_apll, /* 20 */
++	mout_apll, sclk_hdmiphy, /* 21 */
+ 
+ 	/* gate for special clocks (sclk) */
+ 	sclk_fimc0 = 128, sclk_fimc1, sclk_fimc2, sclk_fimc3, sclk_cam0,
+@@ -354,7 +354,7 @@ static struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata
+ /* fixed rate clocks generated inside the soc */
+ static struct samsung_fixed_rate_clock exynos4_fixed_rate_clks[] __initdata = {
+ 	FRATE(none, "sclk_hdmi24m", NULL, CLK_IS_ROOT, 24000000),
+-	FRATE(none, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
++	FRATE(sclk_hdmiphy, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
+ 	FRATE(none, "sclk_usbphy0", NULL, CLK_IS_ROOT, 48000000),
+ };
  
 -- 
 1.7.9.5
