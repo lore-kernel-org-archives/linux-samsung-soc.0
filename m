@@ -1,88 +1,65 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v5 0/3] ARM: S5PV210: move to common clk framework
-Date: Mon, 21 Oct 2013 05:16:05 -0700
-Message-ID: <20131021121605.11944.74007@quantum>
-References: <1380027009-2239-1-git-send-email-m.krawczuk@partner.samsung.com>
- <1816869.ggMDlA1qNY@flatron> <5264425E.4040301@samsung.com>
+From: Vikas Sajjan <sajjan.linux@gmail.com>
+Subject: Re: [PATCH v2 0/2] Add GPLL, APLL, KPLL, EPLL and VPLL freq table for
+ exynos5420 and exynos5250
+Date: Mon, 21 Oct 2013 18:55:52 +0530
+Message-ID: <CAGm_ybi_y84kCS_wE1a5_d=h1SnrN5zF3UVvkoYRdw4NOyfoNA@mail.gmail.com>
+References: <1377697198-19097-1-git-send-email-vikas.sajjan@linaro.org>
+	<20130829024244.10934.6393@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:48927 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753273Ab3JUMQO convert rfc822-to-8bit (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:32920 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752779Ab3JUNZy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Oct 2013 08:16:14 -0400
-Received: by mail-pd0-f174.google.com with SMTP id y13so8268283pdi.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2013 05:16:14 -0700 (PDT)
-In-Reply-To: <5264425E.4040301@samsung.com>
+	Mon, 21 Oct 2013 09:25:54 -0400
+Received: by mail-wi0-f180.google.com with SMTP id ey11so3975527wid.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Oct 2013 06:25:53 -0700 (PDT)
+In-Reply-To: <20130829024244.10934.6393@quantum>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: rjw@sisk.pl, kgene.kim@samsung.com, mark.rutland@arm.com, swarren@wwwdotorg.org, linux-doc@vger.kernel.org, viresh.kumar@linaro.org, s.nawrocki@samsung.com, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Mateusz Krawczuk <m.krawczuk@partner.samsung.com>, linux-pm@vger.kernel.org, cpufreq@vger.kernel.org, thomas.abraham@linaro.org, b.zolnierkie@samsung.com, t.stanislaws@samsung.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, rob.herring@calxeda.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, rob@landley.net
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, patches@linaro.org, linaro-kernel@lists.linaro.org, sunil joshi <joshi@samsung.com>
 
-Quoting Kukjin Kim (2013-10-20 13:51:42)
-> On 10/20/13 01:03, Tomasz Figa wrote:
-> > Hi Mike, Kukjin, Rafael,
-> >
-> > On Tuesday 24 of September 2013 14:50:06 Mateusz Krawczuk wrote:
-> >> This patch series is the new s5pv210 clock implementation
-> >> (using common clk framework).
-> >>
-> >> This implementation is compatible with device tree definition and board
-> >> files.
-> >>
-> >> This patch series is based on linux-next and has been tested on goni and
-> >> aquila
-> >> boards using board file.
-> >>
-> >> Since v4:
-> >> Corrected mux flags for finpll.
-> >>
-> >> Since v3:
-> >>
-> >> Replace s5pv210_clk_register_finpll, by creating mux finpll
-> >> with xusbxti and xxti as parrents.
-> >>
-> >>
-> >> Mateusz Krawczuk (3):
-> >>    clk: samsung: Add clock driver for s5pc110/s5pv210
-> >>    Cpufreq: s5pv210 cpufreq fixes for CCF
-> >>    ARM: s5pv210: Migrate clock handling to Common Clock Framework
-> >>
-> >>   .../bindings/clock/samsung,s5pv210-clock.txt       |  75 +++
-> >>   arch/arm/mach-s5pv210/Kconfig                      |   9 +
-> >>   arch/arm/mach-s5pv210/Makefile                     |   4 +-
-> >>   arch/arm/mach-s5pv210/common.c                     |  17 +
-> >>   arch/arm/mach-s5pv210/common.h                     |  10 +
-> >>   arch/arm/mach-s5pv210/mach-goni.c                  |   2 +-
-> >>   arch/arm/mach-s5pv210/mach-smdkv210.c              |   2 +-
-> >>   arch/arm/plat-samsung/Kconfig                      |   2 +-
-> >>   drivers/clk/samsung/Makefile                       |   3 +
-> >>   drivers/clk/samsung/clk-s5pv210.c                  | 673
-> >> +++++++++++++++++++++ drivers/cpufreq/s5pv210-cpufreq.c
-> >>   |   6 +-
-> >>   include/dt-bindings/clock/samsung,s5pv210-clock.h  | 224 +++++++
-> >>   12 files changed, 1019 insertions(+), 8 deletions(-)
-> >>   create mode 100644
-> >> Documentation/devicetree/bindings/clock/samsung,s5pv210-clock.txt
-> >> create mode 100644 drivers/clk/samsung/clk-s5pv210.c
-> >>   create mode 100644 include/dt-bindings/clock/samsung,s5pv210-clock.h
-> >
-> > I believe this series is reasonable to be applied. Could we agree on
-> > the tree it would go through and get all tne required acks?
-> >
-> > Best regards,
-> > Tomasz
-> 
-> I agree.
-> 
-> Mike, how do you think the common clk stuff for s5pv210?
+Hi Mike,
 
-Clock code looks good to me. Which tree do you want to take it through?
+On Thu, Aug 29, 2013 at 8:12 AM, Mike Turquette <mturquette@linaro.org> wrote:
+> Quoting Vikas Sajjan (2013-08-28 06:39:56)
+>> Adds GPLL, APLL, KPLL, EPLL and VPLL freq table for exynos5420 and exynos5250.
+>>
+>> changes since v1:
+>>         - addressed comments from Tomasz Figa <tomasz.figa@gmail.com>
+>>
+>> is rebased on Mike's
+>> https://git.linaro.org/gitweb?p=people/mturquette/linux.git;a=shortlog;h=refs/heads/clk-next
+>> and on top of Tomasz Figa's clk clean-up patch series
+>> http://www.spinics.net/lists/arm-kernel/msg269848.html
+>
+> Looks good to me but it will have to wait until Tomasz's cleanup series
+> is merged. I'm waiting on that get to get reviewed-by's and then I'll
+> take them both in.
+>
 
-Regards,
-Mike
+Can you apply these patches.
 
-> 
-> - Kukjin
+
+> Regards,
+> Mike
+>
+>>
+>>
+>> Vikas Sajjan (2):
+>>   clk: samsung: Add GPLL freq table for exynos5250 SoC
+>>   clk: samsung: Add APLL, KPLL, EPLL and VPLL freq table for exynos5420
+>>     SoC
+>>
+>>  drivers/clk/samsung/clk-exynos5250.c |   19 ++++++++-
+>>  drivers/clk/samsung/clk-exynos5420.c |   78 ++++++++++++++++++++++++++++++++++
+>>  2 files changed, 96 insertions(+), 1 deletion(-)
+>>
+>> --
+>> 1.7.9.5
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
