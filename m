@@ -1,61 +1,74 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [RFC 02/12] clk: exynos4: export sclk_hdmiphy clock
-Date: Mon, 21 Oct 2013 16:18:21 +0200
-Message-ID: <1382365111-6533-3-git-send-email-t.stanislaws@samsung.com>
+Subject: [RFC 06/12] Revert
+ "drm/exynos: add mout_hdmi clock in hdmi driver to change parent"
+Date: Mon, 21 Oct 2013 16:18:25 +0200
+Message-ID: <1382365111-6533-7-git-send-email-t.stanislaws@samsung.com>
 References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:64583 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753618Ab3JUOS7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Oct 2013 10:18:59 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, t.figa@samsung.com, kishon@ti.com, sw0312.kim@samsung.com, inki.dae@samsung.com, rahul.sharma@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, Tomasz Stanislawski <t.stanislaws@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Export sclk_hdmiphy clock to be usable from DT.
-
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+This reverts commit 59956d35a8618235ea715280b49447bb36f2c975.
 ---
- .../devicetree/bindings/clock/exynos4-clock.txt    |    1 +
- drivers/clk/samsung/clk-exynos4.c                  |    4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c |   14 ++++----------
+ 1 file changed, 4 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos4-clock.txt b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-index c6bf8a6..cb08f5d 100644
---- a/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos4-clock.txt
-@@ -46,6 +46,7 @@ Exynos4 SoC and this is specified where applicable.
-   mout_mpll_user_c    18      Exynos4x12
-   mout_core           19
-   mout_apll           20
-+  sclk_hdmiphy        21
- 
- 
-             [Clock Gate for Special Clocks]
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index ad5ff50..df79ca6 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -148,7 +148,7 @@ enum exynos4_clks {
- 	xxti, xusbxti, fin_pll, fout_apll, fout_mpll, fout_epll, fout_vpll,
- 	sclk_apll, sclk_mpll, sclk_epll, sclk_vpll, arm_clk, aclk200, aclk100,
- 	aclk160, aclk133, mout_mpll_user_t, mout_mpll_user_c, mout_core,
--	mout_apll, /* 20 */
-+	mout_apll, sclk_hdmiphy, /* 21 */
- 
- 	/* gate for special clocks (sclk) */
- 	sclk_fimc0 = 128, sclk_fimc1, sclk_fimc2, sclk_fimc3, sclk_cam0,
-@@ -354,7 +354,7 @@ static struct samsung_fixed_rate_clock exynos4_fixed_rate_ext_clks[] __initdata
- /* fixed rate clocks generated inside the soc */
- static struct samsung_fixed_rate_clock exynos4_fixed_rate_clks[] __initdata = {
- 	FRATE(none, "sclk_hdmi24m", NULL, CLK_IS_ROOT, 24000000),
--	FRATE(none, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
-+	FRATE(sclk_hdmiphy, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
- 	FRATE(none, "sclk_usbphy0", NULL, CLK_IS_ROOT, 48000000),
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index a0e10ae..fcfa23a 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -83,7 +83,6 @@ struct hdmi_resources {
+ 	struct clk			*sclk_pixel;
+ 	struct clk			*sclk_hdmiphy;
+ 	struct clk			*hdmiphy;
+-	struct clk			*mout_hdmi;
+ 	struct regulator_bulk_data	*regul_bulk;
+ 	int				regul_count;
  };
+@@ -1113,7 +1112,7 @@ static void hdmi_v13_mode_apply(struct hdmi_context *hdata)
+ 	}
  
+ 	clk_disable_unprepare(hdata->res.sclk_hdmi);
+-	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
++	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_hdmiphy);
+ 	clk_prepare_enable(hdata->res.sclk_hdmi);
+ 
+ 	/* enable HDMI and timing generator */
+@@ -1280,7 +1279,7 @@ static void hdmi_v14_mode_apply(struct hdmi_context *hdata)
+ 	}
+ 
+ 	clk_disable_unprepare(hdata->res.sclk_hdmi);
+-	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_hdmiphy);
++	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_hdmiphy);
+ 	clk_prepare_enable(hdata->res.sclk_hdmi);
+ 
+ 	/* enable HDMI and timing generator */
+@@ -1306,7 +1305,7 @@ static void hdmiphy_conf_reset(struct hdmi_context *hdata)
+ 	u32 reg;
+ 
+ 	clk_disable_unprepare(hdata->res.sclk_hdmi);
+-	clk_set_parent(hdata->res.mout_hdmi, hdata->res.sclk_pixel);
++	clk_set_parent(hdata->res.sclk_hdmi, hdata->res.sclk_pixel);
+ 	clk_prepare_enable(hdata->res.sclk_hdmi);
+ 
+ 	/* operation mode */
+@@ -1815,13 +1814,8 @@ static int hdmi_resources_init(struct hdmi_context *hdata)
+ 		DRM_ERROR("failed to get clock 'hdmiphy'\n");
+ 		goto fail;
+ 	}
+-	res->mout_hdmi = devm_clk_get(dev, "mout_hdmi");
+-	if (IS_ERR(res->mout_hdmi)) {
+-		DRM_ERROR("failed to get clock 'mout_hdmi'\n");
+-		goto fail;
+-	}
+ 
+-	clk_set_parent(res->mout_hdmi, res->sclk_pixel);
++	clk_set_parent(res->sclk_hdmi, res->sclk_pixel);
+ 
+ 	res->regul_bulk = devm_kzalloc(dev, ARRAY_SIZE(supply) *
+ 		sizeof(res->regul_bulk[0]), GFP_KERNEL);
 -- 
 1.7.9.5
