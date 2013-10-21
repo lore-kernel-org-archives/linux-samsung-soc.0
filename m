@@ -1,76 +1,113 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [RFC 11/12] arm: dts: exynos4: add HDMI devices
-Date: Mon, 21 Oct 2013 16:18:30 +0200
-Message-ID: <1382365111-6533-12-git-send-email-t.stanislaws@samsung.com>
-References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49971 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753875Ab3JUOTp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Oct 2013 10:19:45 -0400
-In-reply-to: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Majunath Goudar <csmanjuvijay@gmail.com>
+Subject: [PATCH V4 5/6] USB: OHCI: Properly handle ohci-exynos suspend
+Date: Mon, 21 Oct 2013 19:48:55 +0530
+Message-ID: <1382365136-24472-6-git-send-email-csmanjuvijay@gmail.com>
+References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
+ <1382365136-24472-1-git-send-email-csmanjuvijay@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1382365136-24472-1-git-send-email-csmanjuvijay@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: csmanjuvijay@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, t.figa@samsung.com, kishon@ti.com, sw0312.kim@samsung.com, inki.dae@samsung.com, rahul.sharma@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org, Tomasz Stanislawski <t.stanislaws@samsung.com>
 
-This patch adds DT nodes for HDMI related devices on SoCs from Exynos4 family.
+Suspend scenario in case of ohci-exynos glue was not
+properly handled as it was not suspending generic part
+of ohci controller. Alan Stern suggested, properly handle
+ohci-exynos suspend scenario.
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Calling explicitly the ohci_suspend() routine in
+exynos_ohci_suspend() will ensure proper handling of suspend
+scenario.
+
+Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg KH <greg@kroah.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
 ---
- arch/arm/boot/dts/exynos4.dtsi    |   27 +++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi |    4 ++++
- 2 files changed, 31 insertions(+)
+V3->V4:
+      -No changes, only added Alan Acked-by.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index a5f6b8b..a5df9fe 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -522,4 +522,31 @@
- 		samsung,power-domain = <&pd_lcd0>;
- 		status = "disabled";
- 	};
-+
-+	hdmi_phy: hdmi-phy@10020700 {
-+		compatible = "simple-phy";
-+		reg = <0x10020700 0x4>;
-+		mask = <1>;
-+		#phy-cells = <0>;
-+	};
-+
-+	hdmi: hdmi@12D00000 {
-+		reg = <0x12D00000 0x70000>;
-+		interrupts = <0 92 0>;
-+		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy";
-+		clocks = <&clock 271>, <&clock 136>, <&clock 139>, <&clock 21>;
-+		phys = <&hdmi_phy>;
-+		phy-names = "hdmiphy";
-+		status = "disabled";
-+		samsung,power-domain = <&pd_tv>;
-+	};
-+
-+	mixer: mixer@12C10000 {
-+		compatible = "samsung,exynos4-mixer";
-+		interrupts = <0 91 0>;
-+		reg = <0x12C10000 0x2100>, <0x12c00000 0x300>;
-+		clock-names = "mixer", "sclk_hdmi", "vp", "sclk_dac", "sclk_mixer";
-+		clocks = <&clock 269>, <&clock 136>, <&clock 268>, <&clock 138>, <&clock 137>;
-+		samsung,power-domain = <&pd_tv>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 057d682..75fd845 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -155,4 +155,8 @@
- 			samsung,lcd-wb;
- 		};
- 	};
-+
-+	hdmi: hdmi@12D00000 {
-+		compatible = "samsung,exynos4210-hdmi";
-+	};
- };
+V2->V3:
+      -No changes.
+      As a build failure on "ep93xx proper suspend patch"
+      and Linaro id bounced. Rewrote this patch on top of latest
+      Greg usb-next branch. This patch not gives any build error.
+      Patch is required for ohci-exynos proper suspending as Alan
+      mentioned.
+
+      Initially when I wrote this patch I was working in Linaro,
+      now I am not part of Linaro that is why Linaro id is bouncing.
+      Sending this patch from personal mail id.
+
+V1->V2:
+      -No changes.
+       Due to the build failure on ep93xx reverted this patch.
+       This patch is needed as Alan Stern suggestion.
+
+ drivers/usb/host/ohci-exynos.c |   22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index a87baed..4b5c8bd 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -192,23 +192,14 @@ static int exynos_ohci_suspend(struct device *dev)
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+ 	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
+ 	struct platform_device *pdev = to_platform_device(dev);
++	bool do_wakeup = device_may_wakeup(dev);
+ 	unsigned long flags;
+-	int rc = 0;
++	int rc = ohci_suspend(hcd, do_wakeup);
+ 
+-	/*
+-	 * Root hub was already suspended. Disable irq emission and
+-	 * mark HW unaccessible, bail out if RH has been resumed. Use
+-	 * the spinlock to properly synchronize with possible pending
+-	 * RH suspend or resume activity.
+-	 */
+-	spin_lock_irqsave(&ohci->lock, flags);
+-	if (ohci->rh_state != OHCI_RH_SUSPENDED &&
+-			ohci->rh_state != OHCI_RH_HALTED) {
+-		rc = -EINVAL;
+-		goto fail;
+-	}
++	if (rc)
++		return rc;
+ 
+-	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
++	spin_lock_irqsave(&ohci->lock, flags);
+ 
+ 	if (exynos_ohci->otg)
+ 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+@@ -217,10 +208,9 @@ static int exynos_ohci_suspend(struct device *dev)
+ 
+ 	clk_disable_unprepare(exynos_ohci->clk);
+ 
+-fail:
+ 	spin_unlock_irqrestore(&ohci->lock, flags);
+ 
+-	return rc;
++	return 0;
+ }
+ 
+ static int exynos_ohci_resume(struct device *dev)
 -- 
 1.7.9.5
