@@ -1,49 +1,64 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH 2/2] ARM: EXYNOS: Remove incorrect __init annotation from
- cpuidle driver
-Date: Mon, 21 Oct 2013 10:53:03 +0900
-Message-ID: <003701cece00$479e6d90$d6db48b0$%han@samsung.com>
-References: <003601cece00$2affeba0$80ffc2e0$%han@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: dts: Update display clock frequency for Origen-4210
+Date: Mon, 21 Oct 2013 08:34:01 +0530
+Message-ID: <CAK9yfHyubbu+Y4Spd7rMO9rFBYWhhfhBGS96gy-bSJWvOQdBXQ@mail.gmail.com>
+References: <1380171018-24229-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55625 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752101Ab3JUBxk (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:53749 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752267Ab3JUDEC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 Oct 2013 21:53:40 -0400
-In-reply-to: <003601cece00$2affeba0$80ffc2e0$%han@samsung.com>
-Content-language: ko
+	Sun, 20 Oct 2013 23:04:02 -0400
+Received: by mail-pb0-f45.google.com with SMTP id mc17so6340523pbc.32
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 20 Oct 2013 20:04:01 -0700 (PDT)
+In-Reply-To: <1380171018-24229-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "'Rafael J. Wysocki'" <rjw@sisk.pl>, linux-pm@vger.kernel.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Daniel Lezcano' <daniel.lezcano@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Patch Tracking <patches@linaro.org>
 
-When platform_driver_probe() is not used, bind/unbind via sysfs is
-enabled.  Thus, __init annotation should be removed from probe().
-Also, this patch fixes section mismatch warning.
+Hi Kukjin,
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-- Based against pm-cpuidle branch
-- Tested on Exynos5440
+On 26 September 2013 10:20, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> From: Tushar Behera <tushar.behera@linaro.org>
+>
+> As per the timing information for supported panel, the value should
+> be between 47.2 MHz to 47.9 MHz for 60Hz refresh rate.
+>
+> Total horizontal pixels = 1024 (x-res) + 80 (margin) + 48 (hsync) = 1152
+> Total vertical pixels = 600 (y-res) + 80 (margin) + 3 (vsync) = 653
+>
+> Target pixel clock rate for refresh rate @60 Hz
+>         = 1152 * 653 * 60 = 47208960 Hz ~ 47.5 MHz
+>
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4210-origen.dts |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 382d8c7..6906e8a 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -301,7 +301,7 @@
+>         display-timings {
+>                 native-mode = <&timing0>;
+>                 timing0: timing {
+> -                       clock-frequency = <50000>;
+> +                       clock-frequency = <47500000>;
+>                         hactive = <1024>;
+>                         vactive = <600>;
+>                         hfront-porch = <64>;
+> --
+> 1.7.9.5
+>
 
- arch/arm/mach-exynos/cpuidle.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since these patches are essential fixes, can you please apply these.
 
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 6616e0f..ddbfe87 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -193,7 +193,7 @@ static void __init exynos5_core_down_clk(void)
- 	__raw_writel(tmp, EXYNOS5_PWR_CTRL2);
- }
- 
--static int __init exynos_cpuidle_probe(struct platform_device *pdev)
-+static int exynos_cpuidle_probe(struct platform_device *pdev)
- {
- 	int cpu_id, ret;
- 	struct cpuidle_device *device;
+
 -- 
-1.7.10.4
+With warm regards,
+Sachin
