@@ -1,51 +1,63 @@
-From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH v2 5/7] exynos/drm: fix ddc i2c device probe failure
-Date: Tue, 22 Oct 2013 15:41:06 +0530
-Message-ID: <1382436668-15813-6-git-send-email-rahul.sharma@samsung.com>
+From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 7/7] ARM: dts: update hdmiphy dt node for exynos5420
+Date: Tue, 22 Oct 2013 15:41:08 +0530
+Message-ID: <1382436668-15813-8-git-send-email-rahul.sharma@samsung.com>
 References: <1382436668-15813-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12552 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752370Ab3JVJvA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 Oct 2013 05:51:00 -0400
-In-reply-to: <1382436668-15813-1-git-send-email-rahul.sharma@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1382436668-15813-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, seanpaul@chromium.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, joshi@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-Exynos hdmi ddc is a I2C device and if we register hdmi ddc
-driver with id_table as NULL, cause failure in probing.
+hdmiphy dt node needs a child node called 'phy-power-control'
+which represents the PMU register for power controlling the
+hdmiphy.
 
-id_table field should not be NULL for i2c_driver registeration.
+hdmi driver dt node provides phy property which points to
+the hdmiphy dt node.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/gpu/drm/exynos/exynos_ddc.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos5420.dtsi |   14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_ddc.c b/drivers/gpu/drm/exynos/exynos_ddc.c
-index 6a8c84e..54ead55 100644
---- a/drivers/gpu/drm/exynos/exynos_ddc.c
-+++ b/drivers/gpu/drm/exynos/exynos_ddc.c
-@@ -51,12 +51,17 @@ static struct of_device_id hdmiddc_match_types[] = {
- 	}
- };
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index ed687ac..f7fb337 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -207,7 +207,7 @@
+ 	};
  
-+static struct i2c_device_id ddc_idtable[] = {
-+	{ },
-+};
+ 	hdmi@14530000 {
+-		compatible = "samsung,exynos4212-hdmi";
++		compatible = "samsung,exynos5420-hdmi";
+ 		reg = <0x14530000 0x70000>;
+ 		interrupts = <0 95 0>;
+ 		clocks = <&clock 413>, <&clock 143>, <&clock 768>,
+@@ -215,6 +215,18 @@
+ 		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
+ 			"sclk_hdmiphy", "mout_hdmi";
+ 		status = "disabled";
++		phy = <&hdmiphy>;
++	};
 +
- struct i2c_driver ddc_driver = {
- 	.driver = {
- 		.name = "exynos-hdmiddc",
- 		.owner = THIS_MODULE,
- 		.of_match_table = hdmiddc_match_types,
- 	},
-+	.id_table	= ddc_idtable,
- 	.probe		= s5p_ddc_probe,
- 	.remove		= s5p_ddc_remove,
- 	.command		= NULL,
++	hdmiphy: hdmiphy@145D0000 {
++		compatible = "samsung,exynos5420-hdmiphy";
++		reg = <0x145D0000 0x20>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		phy-power-control {
++			reg = <0x10040700 0x04>;
++		};
+ 	};
+ 
+ 	mixer@14450000 {
 -- 
 1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
