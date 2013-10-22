@@ -1,63 +1,60 @@
-From: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 7/7] ARM: dts: update hdmiphy dt node for exynos5420
-Date: Tue, 22 Oct 2013 15:41:08 +0530
-Message-ID: <1382436668-15813-8-git-send-email-rahul.sharma@samsung.com>
-References: <1382436668-15813-1-git-send-email-rahul.sharma@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1382436668-15813-1-git-send-email-rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, seanpaul-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, r.sh.open-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Arndale boot broken in -next
+Date: Tue, 22 Oct 2013 11:16:59 +0100
+Message-ID: <20131022101659.GB2883@sirena.org.uk>
+References: <20131019163545.GB2443@sirena.org.uk>
+ <CAHbNUh2WLphNT3JCVdDFd=6AjCvROh-wCtgJhWv-q5b7q17vZw@mail.gmail.com>
+ <CAHbNUh0qRjwk3EfZM1dZxbF5NOQCVOfDST8tS+X1R0MjD3Feiw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:34432 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751928Ab3JVKRG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Oct 2013 06:17:06 -0400
+Content-Disposition: inline
+In-Reply-To: <CAHbNUh0qRjwk3EfZM1dZxbF5NOQCVOfDST8tS+X1R0MjD3Feiw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, Stephen Boyd <sboyd@codeaurora.org>
 
-hdmiphy dt node needs a child node called 'phy-power-control'
-which represents the PMU register for power controlling the
-hdmiphy.
 
-hdmi driver dt node provides phy property which points to
-the hdmiphy dt node.
+--61jdw2sOBCFtR2d/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos5420.dtsi |   14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+On Mon, Oct 21, 2013 at 04:09:17PM +0530, Tushar Behera wrote:
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index ed687ac..f7fb337 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -207,7 +207,7 @@
- 	};
- 
- 	hdmi@14530000 {
--		compatible = "samsung,exynos4212-hdmi";
-+		compatible = "samsung,exynos5420-hdmi";
- 		reg = <0x14530000 0x70000>;
- 		interrupts = <0 95 0>;
- 		clocks = <&clock 413>, <&clock 143>, <&clock 768>,
-@@ -215,6 +215,18 @@
- 		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel",
- 			"sclk_hdmiphy", "mout_hdmi";
- 		status = "disabled";
-+		phy = <&hdmiphy>;
-+	};
-+
-+	hdmiphy: hdmiphy@145D0000 {
-+		compatible = "samsung,exynos5420-hdmiphy";
-+		reg = <0x145D0000 0x20>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+
-+		phy-power-control {
-+			reg = <0x10040700 0x04>;
-+		};
- 	};
- 
- 	mixer@14450000 {
--- 
-1.7.10.4
+> I had missed this e-mail thread till now, where the issue is being
+> already discussed. [1]
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> [1] http://www.spinics.net/lists/linux-arm-msm/msg07218.html
+
+Thanks!
+
+--61jdw2sOBCFtR2d/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSZlCYAAoJELSic+t+oim91V0P/2JB30CUVte78P3DiKnna+lV
+SY3WA6pII7kS6iIiLylYg2vz1E3qQ8pjffOLZ7BoFky4eMdL1QZdHn5dL3mmDspI
+7GHVxYgpB3zoBMNg4PaNcGsdVi+dawXNsVqKwmSA3rjNZj6tpkuwn9F3NxzoHUja
+jhWqzDQ8E4/yszIgGz4pYmIrrqIdY6HAWpODjaT/lYdb9rD2T4KBv/GungNJvz71
+26c0vmCFYES64wt3cs474fA1ncldz9WyOJ8xwVNoglvqzkISp28S8VkmEZoRv2qz
+GeVbxx8iVEnadmHRzG7QKMSj3CbwiXDwr1dnhvTd7vj0jWytvhSWW6DgzajjLKLm
+O8/PJ2rBJpZo1uYQM0AkczPRK2X8QB5khwKmqm/uJnqYe7fyPv8LHb6Z4V4Rumq5
+SpnsyGAkcRKZvxgXDJ87DWYNE7qnQ4V59ul5MRYrxznrLB0DLyDk+NfQB0seoh8W
+D+7lYIl+NJS+K97lzfQbh2QSAJ6VDidJgA7eVcLe8BVM0BaWbc/iMEsgK7ro49y8
+fm6exDhLcIU1ppf8PfU/4OB9AloTDgwVoFBUJ4IIFbt+7gRIAk8eGx29+YOuBcJZ
+xAb83uG6Si74jEsKX2/gv+aWmefxWJAw5LL1VmlDIRkln8gl+JUdz+J+e9yaHZ6O
+QFC33gbi1CEsxCMoJZIS
+=4flC
+-----END PGP SIGNATURE-----
+
+--61jdw2sOBCFtR2d/--
