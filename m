@@ -1,59 +1,111 @@
-From: Julien Grall <julien.grall@linaro.org>
-Subject: Re: [PATCH v8 14/19] ASoC: Samsung: Rename dma_ops by samsung_dma_ops
-Date: Wed, 23 Oct 2013 15:39:09 +0100
-Message-ID: <5267DF8D.70800@linaro.org>
-References: <alpine.DEB.2.02.1310171833520.26077@kaball.uk.xensource.com> <1382031814-8782-14-git-send-email-stefano.stabellini@eu.citrix.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382031814-8782-14-git-send-email-stefano.stabellini@eu.citrix.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stefano Stabellini <stefano.stabellini@eu.citrix.com>, xen-devel@lists.xensource.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, konrad.wilk@oracle.com, Ian.Campbell@citrix.com, ben-linux@fluff.org, kgene.kim@samsung.com, sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org
+From: Joe Perches <joe@perches.com>
+Subject: [PATCH 0/8] treewide: Remove OOM message after input_alloc_device
+Date: Wed, 23 Oct 2013 12:14:46 -0700
+Message-ID: <cover.1382555436.git.joe@perches.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, cbe-oss-dev@lists.ozlabs.org, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, acpi4asus-user@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, ibm-acpi-devel@lists.sourceforge.net, devel@driverdev.osuosl.org, linux-iio@vger.kernel.org, alsa-devel@alsa-project.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-(Add samsung sounds maintainers)
+Joe Perches (8):
+  Documentation: Remove OOM message after input_allocate_device
+  cell: Remove OOM message after input_allocate_device
+  hid: Remove OOM message after input_allocate_device
+  input: Remove OOM message after input_allocate_device
+  media: Remove OOM message after input_allocate_device
+  platform:x86: Remove OOM message after input_allocate_device
+  staging: Remove OOM message after input_allocate_device
+  sound: Remove OOM message after input_allocate_device
 
-On 10/17/2013 06:43 PM, Stefano Stabellini wrote:
-> From: Julien Grall <julien.grall@linaro.org>
->
-> The commit "arm: introduce a global dma_ops pointer" introduce compilation issue
-> when CONFIG_SND_SOC_SAMSUNG is enabled.
->
-> sound/soc/samsung/dma.c:345:27: error: conflicting types for 'dma_ops'
-> /local/home/julien/works/arndale/linux/arch/arm/include/asm/dma-mapping.h:16:28:
-> note: previous declaration of 'dma_ops' was here
->
-> Signed-off-by: Julien Grall <julien.grall@linaro.org>
-> Signed-off-by: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-> ---
->   sound/soc/samsung/dma.c |    4 ++--
->   1 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
-> index 21b7926..827c0d8 100644
-> --- a/sound/soc/samsung/dma.c
-> +++ b/sound/soc/samsung/dma.c
-> @@ -341,7 +341,7 @@ static int dma_mmap(struct snd_pcm_substream *substream,
->   				     runtime->dma_bytes);
->   }
->
-> -static struct snd_pcm_ops dma_ops = {
-> +static struct snd_pcm_ops samsung_dma_ops = {
->   	.open		= dma_open,
->   	.close		= dma_close,
->   	.ioctl		= snd_pcm_lib_ioctl,
-> @@ -428,7 +428,7 @@ out:
->   }
->
->   static struct snd_soc_platform_driver samsung_asoc_platform = {
-> -	.ops		= &dma_ops,
-> +	.ops		= &samsung_dma_ops,
->   	.pcm_new	= dma_new,
->   	.pcm_free	= dma_free_dma_buffers,
->   };
->
+ Documentation/input/input-programming.txt     | 1 -
+ arch/powerpc/platforms/cell/cbe_powerbutton.c | 1 -
+ drivers/hid/hid-input.c                       | 1 -
+ drivers/hid/hid-picolcd_core.c                | 5 ++---
+ drivers/input/joystick/as5011.c               | 2 --
+ drivers/input/joystick/db9.c                  | 1 -
+ drivers/input/joystick/gamecon.c              | 4 +---
+ drivers/input/joystick/turbografx.c           | 1 -
+ drivers/input/joystick/walkera0701.c          | 1 -
+ drivers/input/keyboard/amikbd.c               | 4 +---
+ drivers/input/keyboard/davinci_keyscan.c      | 1 -
+ drivers/input/keyboard/gpio_keys.c            | 1 -
+ drivers/input/keyboard/lpc32xx-keys.c         | 1 -
+ drivers/input/keyboard/max7359_keypad.c       | 1 -
+ drivers/input/keyboard/mcs_touchkey.c         | 1 -
+ drivers/input/keyboard/mpr121_touchkey.c      | 1 -
+ drivers/input/keyboard/nomadik-ske-keypad.c   | 1 -
+ drivers/input/keyboard/opencores-kbd.c        | 1 -
+ drivers/input/keyboard/pmic8xxx-keypad.c      | 1 -
+ drivers/input/keyboard/pxa27x_keypad.c        | 1 -
+ drivers/input/keyboard/pxa930_rotary.c        | 1 -
+ drivers/input/keyboard/qt1070.c               | 1 -
+ drivers/input/keyboard/qt2160.c               | 1 -
+ drivers/input/keyboard/sh_keysc.c             | 1 -
+ drivers/input/keyboard/tc3589x-keypad.c       | 1 -
+ drivers/input/keyboard/tnetv107x-keypad.c     | 1 -
+ drivers/input/keyboard/w90p910_keypad.c       | 1 -
+ drivers/input/misc/88pm80x_onkey.c            | 1 -
+ drivers/input/misc/88pm860x_onkey.c           | 1 -
+ drivers/input/misc/arizona-haptics.c          | 4 +---
+ drivers/input/misc/atlas_btns.c               | 4 +---
+ drivers/input/misc/da9052_onkey.c             | 1 -
+ drivers/input/misc/da9055_onkey.c             | 4 +---
+ drivers/input/misc/ideapad_slidebar.c         | 1 -
+ drivers/input/misc/ims-pcu.c                  | 7 +------
+ drivers/input/misc/kxtj9.c                    | 4 +---
+ drivers/input/misc/max8997_haptic.c           | 1 -
+ drivers/input/misc/mc13783-pwrbutton.c        | 4 +---
+ drivers/input/misc/mpu3050.c                  | 1 -
+ drivers/input/misc/pcf8574_keypad.c           | 1 -
+ drivers/input/misc/pm8xxx-vibrator.c          | 1 -
+ drivers/input/misc/pmic8xxx-pwrkey.c          | 1 -
+ drivers/input/misc/pwm-beeper.c               | 1 -
+ drivers/input/misc/twl4030-pwrbutton.c        | 4 +---
+ drivers/input/misc/twl6040-vibra.c            | 1 -
+ drivers/input/mouse/appletouch.c              | 4 +---
+ drivers/input/mouse/bcm5974.c                 | 4 +---
+ drivers/input/mouse/cyapa.c                   | 4 +---
+ drivers/input/mouse/inport.c                  | 1 -
+ drivers/input/mouse/logibm.c                  | 1 -
+ drivers/input/mouse/pc110pad.c                | 1 -
+ drivers/input/mouse/pxa930_trkball.c          | 1 -
+ drivers/input/tablet/aiptek.c                 | 5 +----
+ drivers/input/tablet/gtco.c                   | 1 -
+ drivers/input/touchscreen/88pm860x-ts.c       | 1 -
+ drivers/input/touchscreen/atmel_mxt_ts.c      | 1 -
+ drivers/input/touchscreen/atmel_tsadcc.c      | 1 -
+ drivers/input/touchscreen/bu21013_ts.c        | 1 -
+ drivers/input/touchscreen/cyttsp4_core.c      | 2 --
+ drivers/input/touchscreen/da9034-ts.c         | 1 -
+ drivers/input/touchscreen/edt-ft5x06.c        | 1 -
+ drivers/input/touchscreen/eeti_ts.c           | 5 +----
+ drivers/input/touchscreen/htcpen.c            | 1 -
+ drivers/input/touchscreen/intel-mid-touch.c   | 1 -
+ drivers/input/touchscreen/lpc32xx_ts.c        | 1 -
+ drivers/input/touchscreen/mcs5000_ts.c        | 1 -
+ drivers/input/touchscreen/migor_ts.c          | 1 -
+ drivers/input/touchscreen/mk712.c             | 1 -
+ drivers/input/touchscreen/pixcir_i2c_ts.c     | 1 -
+ drivers/input/touchscreen/s3c2410_ts.c        | 1 -
+ drivers/input/touchscreen/ti_am335x_tsc.c     | 1 -
+ drivers/input/touchscreen/tnetv107x-ts.c      | 1 -
+ drivers/media/rc/imon.c                       | 8 ++------
+ drivers/media/usb/em28xx/em28xx-input.c       | 4 +---
+ drivers/media/usb/pwc/pwc-if.c                | 1 -
+ drivers/platform/x86/asus-laptop.c            | 5 ++---
+ drivers/platform/x86/eeepc-laptop.c           | 4 +---
+ drivers/platform/x86/ideapad-laptop.c         | 4 +---
+ drivers/platform/x86/intel_mid_powerbtn.c     | 4 +---
+ drivers/platform/x86/panasonic-laptop.c       | 5 +----
+ drivers/platform/x86/thinkpad_acpi.c          | 1 -
+ drivers/platform/x86/topstar-laptop.c         | 4 +---
+ drivers/platform/x86/toshiba_acpi.c           | 4 +---
+ drivers/staging/cptm1217/clearpad_tm1217.c    | 2 --
+ drivers/staging/iio/adc/mxs-lradc.c           | 4 +---
+ drivers/staging/ste_rmi4/synaptics_i2c_rmi4.c | 2 --
+ sound/pci/hda/hda_beep.c                      | 4 +---
+ 87 files changed, 29 insertions(+), 152 deletions(-)
 
 -- 
-Julien Grall
+1.8.1.2.459.gbcd45b4.dirty
