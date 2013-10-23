@@ -1,53 +1,85 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH] hwmon: ntc_thermistor: Fix typo (pullup-uV -> pullup-uv)
-Date: Wed, 23 Oct 2013 08:21:23 +0530
-Message-ID: <CAHfPSqAEY+e9wF403xrJSR5Y7=PgJ1McnKMxd6HECXFPV7ZoeA@mail.gmail.com>
-References: <1382492690-4056-1-git-send-email-cw00.choi@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/3] ASoC: dmaengine: Support custom
+ channel names
+Date: Wed, 23 Oct 2013 12:30:28 +0100
+Message-ID: <20131023113028.GP9388@sirena.org.uk>
+References: <1382201032-13538-1-git-send-email-broonie@kernel.org>
+ <1382201032-13538-2-git-send-email-broonie@kernel.org>
+ <5266654D.30200@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1382492690-4056-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, rob@landley.net, Kukjin Kim <kgene.kim@samsung.com>, jic23@kernel.org, My self <ch.naveen@samsung.com>, dianders@chromium.org, lars@metafoo.de, sachin.kamat@linaro.org, kyungmin.park@samsung.com
+Content-Type: multipart/mixed; boundary="===============8762327211302515734=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <5266654D.30200@metafoo.de>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 23 October 2013 07:14, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patch fix typo of property name from 'pullup-uV' to 'pullup-uv'.
-> The ntc_thermistor.c use 'pullup-uv' when parsing dt data.
->
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks for the correction.
-
-Acked-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> ---
->  Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> index 47ada1d..5d49f2b 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> @@ -49,7 +49,7 @@ adc@12D10000 {
->         /* NTC thermistor is a hwmon device */
->         ncp15wb473@0 {
->                 compatible = "ntc,ncp15wb473";
-> -               pullup-uV = <1800000>;
-> +               pullup-uv = <1800000>;
->                 pullup-ohm = <47000>;
->                 pulldown-ohm = <0>;
->                 io-channels = <&adc 4>;
-> --
-> 1.8.0
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--===============8762327211302515734==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IihjUyvzd0n5Ehsu"
+Content-Disposition: inline
 
 
+--IihjUyvzd0n5Ehsu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Shine bright,
-(: Nav :)
+On Tue, Oct 22, 2013 at 01:45:17PM +0200, Lars-Peter Clausen wrote:
+> On 10/19/2013 06:43 PM, Mark Brown wrote:
+
+> > Some devices have more than just simple TX and RX DMA channels, for example
+> > modern Samsung I2S IPs support a secondary transmit DMA stream which is
+> > mixed into the primary stream during playback. Allow such devices to
+> > specify the names of the channels to be requested in their dma_data.
+
+> As shortly discussed yesterday, I think the general idea is fine. But it
+> might be better to have the names available at PCM creation time, since this
+> allows us to e.g. do proper probe referral and will also have the code take
+> the same path in the DT case, no matter if it uses the default names or not.
+
+I agree, but I'm thinking that the way to do this is to get the entire
+struct provided earlier so that the compat drivers get to use this stuff
+too.  Is there any great reason not to do that?
+
+--IihjUyvzd0n5Ehsu
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSZ7NRAAoJELSic+t+oim9q/cP/3GoDrtzO+N6XQ8DMeXeCQct
+rjoRRptujeWjRlwtxr5ukTaTgVWFbPgrzHE+UCi6GJB5w6F3whP4kMmIPYjPtHi7
+k0I/6E0lg0OlAdQtP/3EklepJCKUyvl96sYLiDR3iclxGvZnsOqFk1vSh6h2Yo2Z
+chRhfEwUrjEDzH0DahpIYwrHiFzhJnY3KY9xQ+IMo/pxRdXLGMLT/qYGW3MXQDDu
+/QgcmSo9QWnY2IHn+JyC+QGeuj0/GpsaHIkFfo2XwLQA0kthxvZwJIJ7y/jAIIfB
+6HfkV6Kg3I7MpzykJJZmE1Iik/izWHxQlNSK7jUT5hpoRjjZ+vEPrfXSzA/+EG1c
+UVsah+32i8ij9tM81xJ+4d3Yx6KEob5TwTZb5QNlhKQ01xPt2J3FDoZSGu7BOU5U
+SOrwg8Jl4aPsQZVHGEreOt9s2/iSkY8h43bS6sOHF+inp/Qt7Eqj0v3oQWTakMBT
+QrBP/DCkAjLUEOZXDPDzwifMXtU9EKLu5CyZpYr71FfHiAG3c9bi/RmgJRdmQT6M
+dLIrZQjG/dkNWDiSeSPR/WWF15wZAfhKZi38vZy9cGRIB433vJhA0YZ0k/hazbKl
+P17OzoTritKuiAIG4LcfnCWOtQ5EiIBldVq/LTKimFkUbZxgr+Z9EikFtrml7njt
+TujpNKsaV+fHccBv6XFc
+=E16e
+-----END PGP SIGNATURE-----
+
+--IihjUyvzd0n5Ehsu--
+
+--===============8762327211302515734==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============8762327211302515734==--
