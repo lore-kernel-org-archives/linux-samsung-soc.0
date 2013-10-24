@@ -1,97 +1,67 @@
-From: Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 4/8] input: Remove OOM message after
- input_allocate_device
-Date: Thu, 24 Oct 2013 12:20:25 -0700
-Message-ID: <1382642425.22433.79.camel@joe-AO722>
-References: <cover.1382555436.git.joe@perches.com>
-	 <cc5e6a317bc9ef33cfdfae3ed9d3a47b5319a47b.1382555436.git.joe@perches.com>
-	 <20131024183707.GA5281@core.coreip.homeip.net>
-	 <1382640339.22433.73.camel@joe-AO722>
-	 <20131024191032.GA5553@core.coreip.homeip.net>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 3/7] video: exynos_mipi_dsim: Use the generic PHY driver
+Date: Thu, 24 Oct 2013 23:57:16 +0200
+Message-ID: <526997BC.8070602@gmail.com>
+References: <1381940896-9355-1-git-send-email-kishon@ti.com> <1381940896-9355-4-git-send-email-kishon@ti.com> <CAOesGMhwotSY-1WQmt+wtsrsH2m30VE=j-MwyhpYU3mt_PSPPw@mail.gmail.com> <CAK9yfHxaLsdFGXiCxvs+HpMSuY6xWd=CGPv-YfSkJqWSxE+f-w@mail.gmail.com> <52694354.6030603@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay0058.hostedemail.com ([216.40.44.58]:58055 "EHLO
-	smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754844Ab3JXTUa (ORCPT
+Received: from mail-we0-f181.google.com ([74.125.82.181]:40819 "EHLO
+	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754092Ab3JXV5W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Oct 2013 15:20:30 -0400
-In-Reply-To: <20131024191032.GA5553@core.coreip.homeip.net>
+	Thu, 24 Oct 2013 17:57:22 -0400
+In-Reply-To: <52694354.6030603@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Wan ZongShun <mcuos.com@gmail.com>, Andrey Moiseev <o2g.org.ru@gmail.com>, Henrik Rydberg <rydberg@euromail.se>, Josh Wu <josh.wu@atmel.com>, Ferruh Yigit <fery@cypress.com>, Pau Oliva Fora <pof@eslack.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>, Sachin Kamat <sachin.kamat@linaro.org>, Olof Johansson <olof@lixom.net>
+Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 
-On Thu, 2013-10-24 at 12:10 -0700, Dmitry Torokhov wrote:
-> On Thu, Oct 24, 2013 at 11:45:39AM -0700, Joe Perches wrote:
-> > On Thu, 2013-10-24 at 11:37 -0700, Dmitry Torokhov wrote:
-> > > Hi Joe,
-> > > 
-> > > On Wed, Oct 23, 2013 at 12:14:50PM -0700, Joe Perches wrote:
-> > > > Emitting an OOM message isn't necessary after input_allocate_device
-> > > > as there's a generic OOM and a dump_stack already done.
-> > > 
-> > > No, please don't. The kzalloc may get changed in the future to not dump
-> > > stack (that was added originally because not everyone was handling OOM
-> > > properly, right?), input core might get changed to use something else
-> > > than kzalloc, etc, etc.
-> > > 
-> > > The majority of errors use dev_err so we also get idea what device
-> > > failed (if there are several), and more.
-> > 
-> > I think that's not valuable as input_allocate_device already has
-> > dozens of locations that don't emit a specific OOM and centralizing
-> > the location for any generic message would work anyway.
-> 
-> Not having diagnostic messages in some of the drivers is hardly a
-> justification to remove them from everywhere else.
+On 10/24/2013 05:57 PM, Kishon Vijay Abraham I wrote:
+> On Thursday 24 October 2013 09:12 PM, Sachin Kamat wrote:
+>> On 24 October 2013 20:00, Olof Johansson<olof@lixom.net>  wrote:
+>>> On Wed, Oct 16, 2013 at 9:28 AM, Kishon Vijay Abraham I<kishon@ti.com>  wrote:
+>>>> diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
+>>>> index 32e5406..00b3a52 100644
+>>>> --- a/drivers/video/exynos/exynos_mipi_dsi.c
+>>>> +++ b/drivers/video/exynos/exynos_mipi_dsi.c
+>>>> @@ -156,8 +157,7 @@ static int exynos_mipi_dsi_blank_mode(struct mipi_dsim_device *dsim, int power)
+>>>>                  exynos_mipi_regulator_enable(dsim);
+>>>>
+>>>>                  /* enable MIPI-DSI PHY. */
+>>>> -               if (dsim->pd->phy_enable)
+>>>> -                       dsim->pd->phy_enable(pdev, true);
+>>>> +               phy_power_on(dsim->phy);
+>>>>
+>>>>                  clk_enable(dsim->clock);
+>>>>
+>>>
+>>> This introduces the below with exynos_defconfig:
+>>>
+>>> ../../drivers/video/exynos/exynos_mipi_dsi.c: In function
+>>> 'exynos_mipi_dsi_blank_mode':
+>>> ../../drivers/video/exynos/exynos_mipi_dsi.c:144:26: warning: unused
+>>> variable 'pdev' [-Wunused-variable]
+>>>    struct platform_device *pdev = to_platform_device(dsim->dev);
 
-But standardization is.
+Sorry about missing that, I only noticed this warning recently and didn't
+get around to submit a patch.
 
-If a diagnostic message is really desired
-without the already existing dump_stack(),
-it's a small matter of adding something like:
+>> I have already submitted a patch to fix this [1]
 
- drivers/input/input.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+Thanks a lot guys for fixing this.
 
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index c044699..98570c2 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -1736,19 +1736,23 @@ struct input_dev *input_allocate_device(void)
- {
- 	struct input_dev *dev;
- 
--	dev = kzalloc(sizeof(struct input_dev), GFP_KERNEL);
--	if (dev) {
--		dev->dev.type = &input_dev_type;
--		dev->dev.class = &input_class;
--		device_initialize(&dev->dev);
--		mutex_init(&dev->mutex);
--		spin_lock_init(&dev->event_lock);
--		INIT_LIST_HEAD(&dev->h_list);
--		INIT_LIST_HEAD(&dev->node);
--
--		__module_get(THIS_MODULE);
-+	dev = kzalloc(sizeof(struct input_dev), GFP_KERNEL | __GFP_NOWARN);
-+	if (!dev) {
-+		pr_err("%pf: input_allocate_device failed\n",
-+		       __builtin_return_address(1));
-+		return NULL;
- 	}
- 
-+	dev->dev.type = &input_dev_type;
-+	dev->dev.class = &input_class;
-+	device_initialize(&dev->dev);
-+	mutex_init(&dev->mutex);
-+	spin_lock_init(&dev->event_lock);
-+	INIT_LIST_HEAD(&dev->h_list);
-+	INIT_LIST_HEAD(&dev->node);
-+
-+	__module_get(THIS_MODULE);
-+
- 	return dev;
- }
- EXPORT_SYMBOL(input_allocate_device);
+>> [1] http://marc.info/?l=linux-fbdev&m=138233359617936&w=2
+>
+> Sorry, missed that :-(
+
+This MIPI DSIM driver is affectively a dead code in the mainline now, once
+Exynos become a dt-only platform. I guess it can be deleted for 3.14, once
+S5P gets converted to the device tree. The new driver using CDF is basically
+a complete rewrite. Or device tree support should be added to that driver,
+but I believe it doesn't make sense without CDF.
+
+--
+Regards,
+Sylwester
