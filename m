@@ -1,34 +1,30 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Olof Johansson <olof@lixom.net>
 Subject: Re: [PATCH 3/7] video: exynos_mipi_dsim: Use the generic PHY driver
-Date: Thu, 24 Oct 2013 21:27:08 +0530
-Message-ID: <52694354.6030603@ti.com>
+Date: Thu, 24 Oct 2013 10:06:15 -0700
+Message-ID: <CAOesGMgbGvZB--uaJ2EowPFDYqGZb3iG9SZs9d0UVcJQLAZW3g@mail.gmail.com>
 References: <1381940896-9355-1-git-send-email-kishon@ti.com>
- <1381940896-9355-4-git-send-email-kishon@ti.com>
- <CAOesGMhwotSY-1WQmt+wtsrsH2m30VE=j-MwyhpYU3mt_PSPPw@mail.gmail.com>
- <CAK9yfHxaLsdFGXiCxvs+HpMSuY6xWd=CGPv-YfSkJqWSxE+f-w@mail.gmail.com>
+	<1381940896-9355-4-git-send-email-kishon@ti.com>
+	<CAOesGMhwotSY-1WQmt+wtsrsH2m30VE=j-MwyhpYU3mt_PSPPw@mail.gmail.com>
+	<CAK9yfHxaLsdFGXiCxvs+HpMSuY6xWd=CGPv-YfSkJqWSxE+f-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qe0-f53.google.com ([209.85.128.53]:52174 "EHLO
+	mail-qe0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752230Ab3JXRGR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Oct 2013 13:06:17 -0400
+Received: by mail-qe0-f53.google.com with SMTP id cy11so1619368qeb.26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Oct 2013 10:06:15 -0700 (PDT)
 In-Reply-To: <CAK9yfHxaLsdFGXiCxvs+HpMSuY6xWd=CGPv-YfSkJqWSxE+f-w@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
-
-On Thursday 24 October 2013 09:12 PM, Sachin Kamat wrote:
+On Thu, Oct 24, 2013 at 8:42 AM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
 > Hi Olof,
-> 
+>
 > On 24 October 2013 20:00, Olof Johansson <olof@lixom.net> wrote:
 >> Hi Kishon,
 >>
@@ -56,14 +52,14 @@ On Thursday 24 October 2013 09:12 PM, Sachin Kamat wrote:
 >> variable 'pdev' [-Wunused-variable]
 >>   struct platform_device *pdev = to_platform_device(dsim->dev);
 >>
-> 
+>
 > I have already submitted a patch to fix this [1]
-> 
+>
 > [1] http://marc.info/?l=linux-fbdev&m=138233359617936&w=2
 
-Sorry, missed that :-(
+Ah, I'm not subscribed to the fbdev list. Next time it might be a good
+idea to cc the same lists as the original patch. But thanks for fixing
+it!
 
-Thanks
-Kishon
-> 
-> 
+
+-Olof
