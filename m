@@ -1,43 +1,52 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 3/7] video: exynos_mipi_dsim: Use the generic PHY driver
-Date: Thu, 24 Oct 2013 07:30:28 -0700
-Message-ID: <CAOesGMhwotSY-1WQmt+wtsrsH2m30VE=j-MwyhpYU3mt_PSPPw@mail.gmail.com>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: Re: [PATCH 5/7] phy: Add driver for Exynos DP PHY
+Date: Thu, 24 Oct 2013 17:13:55 +0200
+Message-ID: <52693933.8040809@samsung.com>
 References: <1381940896-9355-1-git-send-email-kishon@ti.com>
-	<1381940896-9355-4-git-send-email-kishon@ti.com>
+ <1381940896-9355-6-git-send-email-kishon@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1381940896-9355-4-git-send-email-kishon@ti.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:50662 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753324Ab3JXPOA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Oct 2013 11:14:00 -0400
+In-reply-to: <1381940896-9355-6-git-send-email-kishon@ti.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: gregkh@linuxfoundation.org, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
 Hi Kishon,
+Recently, I posted 'simple-phy' driver.
+It is a part of patchset for HDMI enabling on Exynos4 using Device Tree.
 
-On Wed, Oct 16, 2013 at 9:28 AM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
-> index 32e5406..00b3a52 100644
-> --- a/drivers/video/exynos/exynos_mipi_dsi.c
-> +++ b/drivers/video/exynos/exynos_mipi_dsi.c
-> @@ -156,8 +157,7 @@ static int exynos_mipi_dsi_blank_mode(struct mipi_dsim_device *dsim, int power)
->                 exynos_mipi_regulator_enable(dsim);
->
->                 /* enable MIPI-DSI PHY. */
-> -               if (dsim->pd->phy_enable)
-> -                       dsim->pd->phy_enable(pdev, true);
-> +               phy_power_on(dsim->phy);
->
->                 clk_enable(dsim->clock);
->
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg23655.html
 
-This introduces the below with exynos_defconfig:
+The simple-phy was dedicated for single register PHYs like HDMI or DP.
+Using such a generic phy may help to avoid code duplication.
 
-../../drivers/video/exynos/exynos_mipi_dsi.c: In function
-'exynos_mipi_dsi_blank_mode':
-../../drivers/video/exynos/exynos_mipi_dsi.c:144:26: warning: unused
-variable 'pdev' [-Wunused-variable]
-  struct platform_device *pdev = to_platform_device(dsim->dev);
+Regards,
+Tomasz Stanislawski
 
 
--Olof
+On 10/16/2013 06:28 PM, Kishon Vijay Abraham I wrote:
+> From: Jingoo Han <jg1.han@samsung.com>
+> 
+> Add a PHY provider driver for the Samsung Exynos SoC Display Port PHY.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Acked-by: Felipe Balbi <balbi@ti.com>
+> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  .../devicetree/bindings/phy/samsung-phy.txt        |    8 ++
+>  drivers/phy/Kconfig                                |    7 ++
+>  drivers/phy/Makefile                               |    1 +
+>  drivers/phy/phy-exynos-dp-video.c                  |  111 ++++++++++++++++++++
+>  4 files changed, 127 insertions(+)
+>  create mode 100644 drivers/phy/phy-exynos-dp-video.c
+> 
