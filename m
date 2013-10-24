@@ -1,182 +1,69 @@
 From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [RFC 04/12] phy: Add simple-phy driver
-Date: Thu, 24 Oct 2013 21:22:24 +0530
-Message-ID: <52694238.7050607@ti.com>
-References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com> <1382365111-6533-5-git-send-email-t.stanislaws@samsung.com>
+Subject: Re: [PATCH 3/7] video: exynos_mipi_dsim: Use the generic PHY driver
+Date: Thu, 24 Oct 2013 21:27:08 +0530
+Message-ID: <52694354.6030603@ti.com>
+References: <1381940896-9355-1-git-send-email-kishon@ti.com>
+ <1381940896-9355-4-git-send-email-kishon@ti.com>
+ <CAOesGMhwotSY-1WQmt+wtsrsH2m30VE=j-MwyhpYU3mt_PSPPw@mail.gmail.com>
+ <CAK9yfHxaLsdFGXiCxvs+HpMSuY6xWd=CGPv-YfSkJqWSxE+f-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1382365111-6533-5-git-send-email-t.stanislaws@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, t.figa@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, rahul.sharma@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAK9yfHxaLsdFGXiCxvs+HpMSuY6xWd=CGPv-YfSkJqWSxE+f-w@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On Monday 21 October 2013 07:48 PM, Tomasz Stanislawski wrote:
-> Add simple-phy driver to support a single register
-> PHY interfaces present on Exynos4 SoC.
-
-How are these PHY interfaces modelled in the SoC? Where does the register
-actually reside?
+On Thursday 24 October 2013 09:12 PM, Sachin Kamat wrote:
+> Hi Olof,
 > 
-> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-> ---
->  drivers/phy/Kconfig      |    5 ++
->  drivers/phy/Makefile     |    1 +
->  drivers/phy/phy-simple.c |  128 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 134 insertions(+)
->  create mode 100644 drivers/phy/phy-simple.c
+> On 24 October 2013 20:00, Olof Johansson <olof@lixom.net> wrote:
+>> Hi Kishon,
+>>
+>> On Wed, Oct 16, 2013 at 9:28 AM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>> diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
+>>> index 32e5406..00b3a52 100644
+>>> --- a/drivers/video/exynos/exynos_mipi_dsi.c
+>>> +++ b/drivers/video/exynos/exynos_mipi_dsi.c
+>>> @@ -156,8 +157,7 @@ static int exynos_mipi_dsi_blank_mode(struct mipi_dsim_device *dsim, int power)
+>>>                 exynos_mipi_regulator_enable(dsim);
+>>>
+>>>                 /* enable MIPI-DSI PHY. */
+>>> -               if (dsim->pd->phy_enable)
+>>> -                       dsim->pd->phy_enable(pdev, true);
+>>> +               phy_power_on(dsim->phy);
+>>>
+>>>                 clk_enable(dsim->clock);
+>>>
+>>
+>> This introduces the below with exynos_defconfig:
+>>
+>> ../../drivers/video/exynos/exynos_mipi_dsi.c: In function
+>> 'exynos_mipi_dsi_blank_mode':
+>> ../../drivers/video/exynos/exynos_mipi_dsi.c:144:26: warning: unused
+>> variable 'pdev' [-Wunused-variable]
+>>   struct platform_device *pdev = to_platform_device(dsim->dev);
+>>
 > 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index ac239ac..619c657 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -38,4 +38,9 @@ config TWL4030_USB
->  	  This transceiver supports high and full speed devices plus,
->  	  in host mode, low speed.
->  
-> +config PHY_SIMPLE
-> +	tristate "Simple PHY driver"
+> I have already submitted a patch to fix this [1]
+> 
+> [1] http://marc.info/?l=linux-fbdev&m=138233359617936&w=2
 
-This is too generic a name to be used. Lets name it something specific to what
-it is used for (EXYNOS/HDMI.. ?).
-> +	help
-> +	  Support for PHY controllers configured using single register.
-> +
->  endmenu
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index 0dd8a98..3d68e19 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -5,3 +5,4 @@
->  obj-$(CONFIG_GENERIC_PHY)	+= phy-core.o
->  obj-$(CONFIG_OMAP_USB2)		+= phy-omap-usb2.o
->  obj-$(CONFIG_TWL4030_USB)	+= phy-twl4030-usb.o
-> +obj-$(CONFIG_PHY_SIMPLE)	+= phy-simple.o
-> diff --git a/drivers/phy/phy-simple.c b/drivers/phy/phy-simple.c
-> new file mode 100644
-> index 0000000..4a28af7
-> --- /dev/null
-> +++ b/drivers/phy/phy-simple.c
-> @@ -0,0 +1,128 @@
-> +/*
-> + * Simple PHY driver
-> + *
-> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + * Author: Tomasz Stanislawski <t.stanislaws@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/spinlock.h>
-> +
-> +struct simple_phy {
-> +	spinlock_t slock;
-> +	u32 on_value;
-> +	u32 off_value;
-> +	u32 mask;
-> +	void __iomem *regs;
-> +};
-> +
-> +static int sphy_set(struct simple_phy *sphy, bool on)
-> +{
-> +	u32 reg;
-> +
-> +	spin_lock(&sphy->slock);
-
-Lets add spin_lock only when it is absolutely necessary. When your PHY provider
-implements only a single PHY, it is not needed. phy_power_on and phy_power_off
-is already protected by the framework.
-> +
-> +	reg = readl(sphy->regs);
-> +	reg &= ~sphy->mask;
-> +	reg |= sphy->mask & (on ? sphy->on_value : sphy->off_value);
-> +	writel(reg, sphy->regs);
-> +
-> +	spin_unlock(&sphy->slock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int simple_phy_power_on(struct phy *phy)
-> +{
-> +	return sphy_set(phy_get_drvdata(phy), 1);
-> +}
-> +
-> +static int simple_phy_power_off(struct phy *phy)
-> +{
-> +	return sphy_set(phy_get_drvdata(phy), 0);
-> +}
-> +
-> +static struct phy_ops simple_phy_ops = {
-> +	.power_on	= simple_phy_power_on,
-> +	.power_off	= simple_phy_power_off,
-> +	.owner		= THIS_MODULE,
-> +};
-> +
-> +static int simple_phy_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct simple_phy *sphy;
-> +	struct resource *res;
-> +	struct phy_provider *phy_provider;
-> +	struct phy *phy;
-> +
-> +	sphy = devm_kzalloc(dev, sizeof(*sphy), GFP_KERNEL);
-> +	if (!sphy)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +
-> +	sphy->regs = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(sphy->regs)) {
-> +		dev_err(dev, "failed to ioremap registers\n");
-> +		return PTR_ERR(sphy->regs);
-> +	}
-> +
-> +	spin_lock_init(&sphy->slock);
-> +
-> +	phy_provider = devm_of_phy_provider_register(dev, NULL);
-
-pass 'of_phy_simple_xlate' instead of NULL.
-> +	if (IS_ERR(phy_provider)) {
-> +		dev_err(dev, "failed to register PHY provider\n");
-> +		return PTR_ERR(phy_provider);
-> +	}
-> +
-> +	phy = devm_phy_create(dev, &simple_phy_ops, NULL);
-> +	if (IS_ERR(phy)) {
-> +		dev_err(dev, "failed to create PHY\n");
-> +		return PTR_ERR(phy);
-> +	}
-> +
-> +	sphy->mask = 1;
-> +	sphy->on_value = ~0;
-> +	sphy->off_value = 0;
-> +
-> +	of_property_read_u32(dev->of_node, "mask", &sphy->mask);
-
-This means your driver will depend on dt data to describe how the register
-should look like. Not a good idea.
-> +	of_property_read_u32(dev->of_node, "on-value", &sphy->on_value);
-> +	of_property_read_u32(dev->of_node, "off-value", &sphy->off_value);
-> +
-> +	phy_set_drvdata(phy, sphy);
-> +
-> +	dev_info(dev, "probe successful\n");
-Lets not make the boot noisy.
+Sorry, missed that :-(
 
 Thanks
 Kishon
+> 
+> 
