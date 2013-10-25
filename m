@@ -1,8 +1,8 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH 4/5] usb: ehci-s5p: Change to use phy provided by the generic
- phy framework
-Date: Fri, 25 Oct 2013 16:15:28 +0200
-Message-ID: <1382710529-12082-5-git-send-email-k.debski@samsung.com>
+Subject: [PATCH 5/5] usb: s3c-hsotg: Use the new Exynos USB phy driver with the
+ generic phy framework
+Date: Fri, 25 Oct 2013 16:15:29 +0200
+Message-ID: <1382710529-12082-6-git-send-email-k.debski@samsung.com>
 References: <1382710529-12082-1-git-send-email-k.debski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1382710529-12082-1-git-send-email-k.debski@samsung.com>
@@ -11,118 +11,82 @@ To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@v
 Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, Kamil Debski <k.debski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Change the phy provider used from the old usb phy specific to a new one
-using the generic phy framework.
+Change the used phy driver to the new Exynos USB phy driver that uses the
+generic phy framework.
 
 Signed-off-by: Kamil Debski <k.debski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/usb/host/ehci-s5p.c |   21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/usb/gadget/s3c-hsotg.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-index 7cc26e6..76606ff 100644
---- a/drivers/usb/host/ehci-s5p.c
-+++ b/drivers/usb/host/ehci-s5p.c
-@@ -19,6 +19,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index 7705c41..2ce84a5 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -29,6 +29,7 @@
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ #include <linux/regulator/consumer.h>
 +#include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/platform_data/usb-ehci-s5p.h>
- #include <linux/usb/phy.h>
-@@ -45,7 +46,7 @@ static struct hc_driver __read_mostly s5p_ehci_hc_driver;
  
- struct s5p_ehci_hcd {
- 	struct clk *clk;
--	struct usb_phy *phy;
-+	struct phy *phy;
- 	struct usb_otg *otg;
- 	struct s5p_ehci_platdata *pdata;
- };
-@@ -77,10 +78,11 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
+@@ -131,6 +132,7 @@ struct s3c_hsotg_ep {
+ /**
+  * struct s3c_hsotg - driver state.
+  * @dev: The parent device supplied to the probe function
++
+  * @driver: USB gadget driver
+  * @phy: The otg phy transceiver structure for phy control.
+  * @plat: The platform specific configuration data. This can be removed once
+@@ -154,7 +156,7 @@ struct s3c_hsotg_ep {
+ struct s3c_hsotg {
+ 	struct device		 *dev;
+ 	struct usb_gadget_driver *driver;
+-	struct usb_phy		*phy;
++	struct phy		 *phy;
+ 	struct s3c_hsotg_plat	 *plat;
+ 
+ 	spinlock_t              lock;
+@@ -2858,9 +2860,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
+ 	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
+ 
+ 	if (hsotg->phy)
+-		usb_phy_init(hsotg->phy);
++		phy_power_on(hsotg->phy);
+ 	else if (hsotg->plat->phy_init)
+ 		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
++
+ }
+ 
+ /**
+@@ -2875,7 +2878,7 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
+ 	struct platform_device *pdev = to_platform_device(hsotg->dev);
+ 
+ 	if (hsotg->phy)
+-		usb_phy_shutdown(hsotg->phy);
++		phy_power_off(hsotg->phy);
+ 	else if (hsotg->plat->phy_exit)
+ 		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
+ }
+@@ -3485,7 +3488,7 @@ static void s3c_hsotg_delete_debug(struct s3c_hsotg *hsotg)
+ static int s3c_hsotg_probe(struct platform_device *pdev)
  {
- 	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
- 	struct s5p_ehci_hcd *s5p_ehci;
-+	struct phy *phy;
- 	struct usb_hcd *hcd;
- 	struct ehci_hcd *ehci;
- 	struct resource *res;
+ 	struct s3c_hsotg_plat *plat = pdev->dev.platform_data;
 -	struct usb_phy *phy;
-+	const char *phy_name;
- 	int irq;
- 	int err;
- 
-@@ -103,14 +105,14 @@ static int s5p_ehci_probe(struct platform_device *pdev)
++	struct phy *phy;
+ 	struct device *dev = &pdev->dev;
+ 	struct s3c_hsotg_ep *eps;
+ 	struct s3c_hsotg *hsotg;
+@@ -3500,7 +3503,7 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
  		return -ENOMEM;
  	}
- 	s5p_ehci = to_s5p_ehci(hcd);
--
-+	phy_name = of_get_property(pdev->dev.of_node, "phy-names", NULL);
-+	phy =  devm_phy_get(&pdev->dev, phy_name);
- 	if (of_device_is_compatible(pdev->dev.of_node,
- 					"samsung,exynos5440-ehci")) {
- 		s5p_ehci->pdata = &empty_platdata;
- 		goto skip_phy;
- 	}
  
--	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+-	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
++	phy = devm_phy_get(&pdev->dev, "device");
  	if (IS_ERR(phy)) {
- 		/* Fallback to pdata */
- 		if (!pdata) {
-@@ -122,7 +124,6 @@ static int s5p_ehci_probe(struct platform_device *pdev)
- 		}
- 	} else {
- 		s5p_ehci->phy = phy;
--		s5p_ehci->otg = phy->otg;
- 	}
- 
- skip_phy:
-@@ -166,7 +167,7 @@ skip_phy:
- 		s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
- 
- 	if (s5p_ehci->phy)
--		usb_phy_init(s5p_ehci->phy);
-+		phy_power_on(s5p_ehci->phy);
- 	else if (s5p_ehci->pdata->phy_init)
- 		s5p_ehci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
- 
-@@ -188,7 +189,7 @@ skip_phy:
- 
- fail_add_hcd:
- 	if (s5p_ehci->phy)
--		usb_phy_shutdown(s5p_ehci->phy);
-+		phy_power_off(s5p_ehci->phy);
- 	else if (s5p_ehci->pdata->phy_exit)
- 		s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
- fail_io:
-@@ -209,7 +210,7 @@ static int s5p_ehci_remove(struct platform_device *pdev)
- 		s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
- 
- 	if (s5p_ehci->phy)
--		usb_phy_shutdown(s5p_ehci->phy);
-+		phy_power_off(s5p_ehci->phy);
- 	else if (s5p_ehci->pdata->phy_exit)
- 		s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
- 
-@@ -244,7 +245,7 @@ static int s5p_ehci_suspend(struct device *dev)
- 		s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
- 
- 	if (s5p_ehci->phy)
--		usb_phy_shutdown(s5p_ehci->phy);
-+		phy_power_off(s5p_ehci->phy);
- 	else if (s5p_ehci->pdata->phy_exit)
- 		s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
- 
-@@ -265,7 +266,7 @@ static int s5p_ehci_resume(struct device *dev)
- 		s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
- 
- 	if (s5p_ehci->phy)
--		usb_phy_init(s5p_ehci->phy);
-+		phy_power_on(s5p_ehci->phy);
- 	else if (s5p_ehci->pdata->phy_init)
- 		s5p_ehci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
- 
+ 		/* Fallback for pdata */
+ 		plat = pdev->dev.platform_data;
 -- 
 1.7.9.5
