@@ -1,43 +1,60 @@
-From: Wei Yongjun <weiyj.lk@gmail.com>
-Subject: [PATCH] ASoC: Samsung: I2S: fix return value check in i2s_alloc_dai()
-Date: Fri, 25 Oct 2013 17:06:24 +0800
-Message-ID: <CAPgLHd8nzO9Q1fF1KsuJna_JVJDd+cimBC3ipd3nTP9Sz=fE9g@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: Samsung: I2S: fix return value check in
+ i2s_alloc_dai()
+Date: Fri, 25 Oct 2013 10:26:30 +0100
+Message-ID: <20131025092630.GQ18506@sirena.org.uk>
+References: <CAPgLHd8nzO9Q1fF1KsuJna_JVJDd+cimBC3ipd3nTP9Sz=fE9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WZLuFERxa6Y0cbOt"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:36405 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751967Ab3JYJG1 (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:55755 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751524Ab3JYJ0s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Oct 2013 05:06:27 -0400
-Received: by mail-ee0-f46.google.com with SMTP id c1so1748170eek.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2013 02:06:26 -0700 (PDT)
+	Fri, 25 Oct 2013 05:26:48 -0400
+Content-Disposition: inline
+In-Reply-To: <CAPgLHd8nzO9Q1fF1KsuJna_JVJDd+cimBC3ipd3nTP9Sz=fE9g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.de, grant.likely@linaro.org, rob.herring@calxeda.com
-Cc: yongjun_wei@trendmicro.com.cn, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.de, grant.likely@linaro.org, rob.herring@calxeda.com, yongjun_wei@trendmicro.com.cn, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
 
-In case of error, the function platform_device_alloc() returns NULL
-pointer not ERR_PTR(). The IS_ERR() test in the return value check
-should be replaced with NULL test.
+--WZLuFERxa6Y0cbOt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
----
- sound/soc/samsung/i2s.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Oct 25, 2013 at 05:06:24PM +0800, Wei Yongjun wrote:
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>=20
+> In case of error, the function platform_device_alloc() returns NULL
+> pointer not ERR_PTR(). The IS_ERR() test in the return value check
+> should be replaced with NULL test.
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index b302f3b..b721443 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1073,7 +1073,7 @@ static struct i2s_dai *i2s_alloc_dai(struct platform_device *pdev, bool sec)
- 		dev_set_drvdata(&i2s->pdev->dev, i2s);
- 	} else {	/* Create a new platform_device for Secondary */
- 		i2s->pdev = platform_device_alloc("samsung-i2s-sec", -1);
--		if (IS_ERR(i2s->pdev))
-+		if (!i2s->pdev)
- 			return NULL;
- 
- 		i2s->pdev->dev.parent = &pdev->dev;
+Applied, thanks.
+
+--WZLuFERxa6Y0cbOt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSajlDAAoJELSic+t+oim9RD4P/RaDW/rZuPlo2zALckMmWgPM
+Ws6VQDmYeR2fxq+cuzxJD4QpSKrtPEw9UbprWYoMf8EMfilbVjys79OK8bjvKGVR
+Yotc05XUXCMOs+OnZEuex0J9x9uung+UhxyahSdXwysyAd8VGVEPDhj6RGbol6ca
++KaqPejbQp9pmeN1wqeOG4ZDvRNC38WhNG0aGW2pfFkTIBCmZYbp6JF1VSPaA24R
+kP72LeZZ0XiwiZ28f8/Jcnizt7opGVXmqXIPSxq5wGe9GIsENwfWIthnRvyZUbAX
+E3ecDpDUQLxLmIYuUxYaHLEtZTgKc9EBHqvVdxDfI1lGHjM6zDfif4ivA2Yf5LZX
+ehdPY5I3E9r+Mq0U6pKp3yd5/5wG5wicJOnZTK5nRPV17fVSx81epOgqq2PUdul8
+w1CGs+iAeVCSWucFN1VBIdbduf2F71zxlH6Tshv99lPURv/4z0O3lI2Bu++kYC0A
+5yWtNfmK/abPD7EdsrHOVcDtN1ECOE7djw3Kf3+yama8u50a8PLjoWFbrkKcorcm
+BbnKtVpnF0I41niPBXu+t5JPVjNlxsA2b4w96YpsAV76l5yy71iC9EkPe24Ao3hC
+0tYizYJkxJJmf3Vm2a83+6CiSEwDkOE8DM5Vcg2ZRHnqSWEiy5NoIYLONEbMZnKB
+akiYdZMyhT+zxAXXGMk5
+=viAv
+-----END PGP SIGNATURE-----
+
+--WZLuFERxa6Y0cbOt--
