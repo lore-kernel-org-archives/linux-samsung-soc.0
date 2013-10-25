@@ -1,58 +1,47 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: dts: Add missing GPIO entries for sd_bus in
-Date: Fri, 25 Oct 2013 16:52:48 +0530
-Message-ID: <1382700168-12527-1-git-send-email-sachin.kamat@linaro.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: dts: Add fixed-voltage regulator for vmmc supply on SMDK5420
+Date: Fri, 25 Oct 2013 17:13:25 +0530
+Message-ID: <1382701405-28589-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:61467 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751492Ab3JYLX5 (ORCPT
+Received: from mail-pb0-f50.google.com ([209.85.160.50]:35161 "EHLO
+	mail-pb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751691Ab3JYLof (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Oct 2013 07:23:57 -0400
-Received: by mail-pa0-f41.google.com with SMTP id bj1so4989523pad.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2013 04:23:57 -0700 (PDT)
+	Fri, 25 Oct 2013 07:44:35 -0400
+Received: by mail-pb0-f50.google.com with SMTP id uo5so1311705pbc.37
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2013 04:44:35 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org
+Cc: kgene.kim@samsung.com
 
-Adds missing GPIO entries for sd_bus nodes in exynos5420-pinctrl.
+Add vmmc regulator node, required for mmc driver.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/exynos5420-smdk5420.dts |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-index e695aba..fcb8206 100644
---- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
-@@ -181,7 +181,7 @@
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index fb5a1e2..f9ca17f 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -120,4 +120,16 @@
+ 			reg = <0x50>;
  		};
- 
- 		sd0_bus4: sd0-bus-width4 {
--			samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
-+			samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5", "gpc0-6";
- 			samsung,pin-function = <2>;
- 			samsung,pin-pud = <3>;
- 			samsung,pin-drv = <3>;
-@@ -230,7 +230,7 @@
- 		};
- 
- 		sd1_bus4: sd1-bus-width4 {
--			samsung,pins = "gpc1-4", "gpc1-5", "gpc1-6";
-+			samsung,pins = "gpc1-3", "gpc1-4", "gpc1-5", "gpc1-6";
- 			samsung,pin-function = <2>;
- 			samsung,pin-pud = <3>;
- 			samsung,pin-drv = <3>;
-@@ -272,7 +272,7 @@
- 		};
- 
- 		sd2_bus4: sd2-bus-width4 {
--			samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
-+			samsung,pins = "gpc2-3", "gpc2-4", "gpc2-5", "gpc2-6";
- 			samsung,pin-function = <2>;
- 			samsung,pin-pud = <3>;
- 			samsung,pin-drv = <3>;
+ 	};
++
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		mmc_reg: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "vmmc";
++		};
++	};
+ };
 -- 
 1.7.9.5
