@@ -1,67 +1,172 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 3/7] video: exynos_mipi_dsim: Use the generic PHY driver
-Date: Thu, 24 Oct 2013 23:57:16 +0200
-Message-ID: <526997BC.8070602@gmail.com>
-References: <1381940896-9355-1-git-send-email-kishon@ti.com> <1381940896-9355-4-git-send-email-kishon@ti.com> <CAOesGMhwotSY-1WQmt+wtsrsH2m30VE=j-MwyhpYU3mt_PSPPw@mail.gmail.com> <CAK9yfHxaLsdFGXiCxvs+HpMSuY6xWd=CGPv-YfSkJqWSxE+f-w@mail.gmail.com> <52694354.6030603@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 1/2] ARM: s3c64xx: cpuidle: convert to platform driver
+Date: Fri, 25 Oct 2013 09:11:13 +0200
+Message-ID: <1382685074-16502-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f181.google.com ([74.125.82.181]:40819 "EHLO
-	mail-we0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754092Ab3JXV5W (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:35773 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751182Ab3JYHLQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 Oct 2013 17:57:22 -0400
-In-Reply-To: <52694354.6030603@ti.com>
+	Fri, 25 Oct 2013 03:11:16 -0400
+Received: by mail-wi0-f172.google.com with SMTP id ez12so606093wid.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2013 00:11:15 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, Sachin Kamat <sachin.kamat@linaro.org>, Olof Johansson <olof@lixom.net>
-Cc: "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>
+To: ben-linux@fluff.org, kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 10/24/2013 05:57 PM, Kishon Vijay Abraham I wrote:
-> On Thursday 24 October 2013 09:12 PM, Sachin Kamat wrote:
->> On 24 October 2013 20:00, Olof Johansson<olof@lixom.net>  wrote:
->>> On Wed, Oct 16, 2013 at 9:28 AM, Kishon Vijay Abraham I<kishon@ti.com>  wrote:
->>>> diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
->>>> index 32e5406..00b3a52 100644
->>>> --- a/drivers/video/exynos/exynos_mipi_dsi.c
->>>> +++ b/drivers/video/exynos/exynos_mipi_dsi.c
->>>> @@ -156,8 +157,7 @@ static int exynos_mipi_dsi_blank_mode(struct mipi_dsim_device *dsim, int power)
->>>>                  exynos_mipi_regulator_enable(dsim);
->>>>
->>>>                  /* enable MIPI-DSI PHY. */
->>>> -               if (dsim->pd->phy_enable)
->>>> -                       dsim->pd->phy_enable(pdev, true);
->>>> +               phy_power_on(dsim->phy);
->>>>
->>>>                  clk_enable(dsim->clock);
->>>>
->>>
->>> This introduces the below with exynos_defconfig:
->>>
->>> ../../drivers/video/exynos/exynos_mipi_dsi.c: In function
->>> 'exynos_mipi_dsi_blank_mode':
->>> ../../drivers/video/exynos/exynos_mipi_dsi.c:144:26: warning: unused
->>> variable 'pdev' [-Wunused-variable]
->>>    struct platform_device *pdev = to_platform_device(dsim->dev);
+The driver is tied with the pm low level code making difficult to split the
+driver into a more arch independent code. The platform driver allows to move
+the standby callback into the platform data field and use a simple driver with
+no more dependency on the low level code.
 
-Sorry about missing that, I only noticed this warning recently and didn't
-get around to submit a patch.
+The standby callback has a portion of code to set the standby method and the
+effective cpu_do_idle switching the cpu to the right mode. As this code is
+redundant in the cpu suspend code, it has been factored out when implementing
+the standby methdod.
 
->> I have already submitted a patch to fix this [1]
+By this way, the driver is ready to be moved out to the drivers/cpuidle.
 
-Thanks a lot guys for fixing this.
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ arch/arm/mach-s3c64xx/cpuidle.c |   38 ++++++++++++++++----------------------
+ arch/arm/mach-s3c64xx/pm.c      |   33 ++++++++++++++++++++++++++-------
+ 2 files changed, 42 insertions(+), 29 deletions(-)
 
->> [1] http://marc.info/?l=linux-fbdev&m=138233359617936&w=2
->
-> Sorry, missed that :-(
-
-This MIPI DSIM driver is affectively a dead code in the mainline now, once
-Exynos become a dt-only platform. I guess it can be deleted for 3.14, once
-S5P gets converted to the device tree. The new driver using CDF is basically
-a complete rewrite. Or device tree support should be added to that driver,
-but I believe it doesn't make sense without CDF.
-
---
-Regards,
-Sylwester
+diff --git a/arch/arm/mach-s3c64xx/cpuidle.c b/arch/arm/mach-s3c64xx/cpuidle.c
+index 3c8ab07..8022f5f 100644
+--- a/arch/arm/mach-s3c64xx/cpuidle.c
++++ b/arch/arm/mach-s3c64xx/cpuidle.c
+@@ -9,33 +9,16 @@
+  * published by the Free Software Foundation.
+ */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+ #include <linux/cpuidle.h>
+-#include <linux/io.h>
+-#include <linux/export.h>
+-#include <linux/time.h>
++#include <linux/platform_device.h>
+ 
+-#include <asm/proc-fns.h>
+-
+-#include <mach/map.h>
+-
+-#include "regs-sys.h"
+-#include "regs-syscon-power.h"
++static void (*s3c64xx_standby)(void);
+ 
+ static int s3c64xx_enter_idle(struct cpuidle_device *dev,
+ 			      struct cpuidle_driver *drv,
+ 			      int index)
+ {
+-	unsigned long tmp;
+-
+-	/* Setup PWRCFG to enter idle mode */
+-	tmp = __raw_readl(S3C64XX_PWR_CFG);
+-	tmp &= ~S3C64XX_PWRCFG_CFG_WFI_MASK;
+-	tmp |= S3C64XX_PWRCFG_CFG_WFI_IDLE;
+-	__raw_writel(tmp, S3C64XX_PWR_CFG);
+-
+-	cpu_do_idle();
++	s3c64xx_standby();
+ 
+ 	return index;
+ }
+@@ -56,8 +39,19 @@ static struct cpuidle_driver s3c64xx_cpuidle_driver = {
+ 	.state_count = 1,
+ };
+ 
+-static int __init s3c64xx_init_cpuidle(void)
++static int s3c64xx_cpuidle_probe(struct platform_device *dev)
+ {
++	s3c64xx_standby =  (void *)(dev->dev.platform_data);
++
+ 	return cpuidle_register(&s3c64xx_cpuidle_driver, NULL);
+ }
+-device_initcall(s3c64xx_init_cpuidle);
++
++static struct platform_driver s3c64xx_driver_cpuidle = {
++	.driver = {
++		.name = "cpuidle-s3c64xx",
++		.owner = THIS_MODULE,
++	},
++	.probe = s3c64xx_cpuidle_probe,
++};
++
++module_platform_driver(s3c64xx_driver_cpuidle);
+diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
+index 6a1f91f..534fb4e 100644
+--- a/arch/arm/mach-s3c64xx/pm.c
++++ b/arch/arm/mach-s3c64xx/pm.c
+@@ -18,6 +18,7 @@
+ #include <linux/io.h>
+ #include <linux/gpio.h>
+ #include <linux/pm_domain.h>
++#include <linux/platform_device.h>
+ 
+ #include <mach/map.h>
+ #include <mach/irqs.h>
+@@ -259,6 +260,22 @@ void s3c_pm_save_core(void)
+ 	s3c_pm_do_save(core_save, ARRAY_SIZE(core_save));
+ }
+ 
++static void s3c64xx_set_standby(void)
++{
++	unsigned long tmp;
++
++	tmp = __raw_readl(S3C64XX_PWR_CFG);
++	tmp &= ~S3C64XX_PWRCFG_CFG_WFI_MASK;
++	tmp |= S3C64XX_PWRCFG_CFG_WFI_SLEEP;
++	__raw_writel(tmp, S3C64XX_PWR_CFG);
++}
++
++static void s3c64xx_standby(void)
++{
++	s3c64xx_set_standby();
++	cpu_do_idle();
++}
++
+ /* since both s3c6400 and s3c6410 share the same sleep pm calls, we
+  * put the per-cpu code in here until any new cpu comes along and changes
+  * this.
+@@ -269,11 +286,7 @@ static int s3c64xx_cpu_suspend(unsigned long arg)
+ 	unsigned long tmp;
+ 
+ 	/* set our standby method to sleep */
+-
+-	tmp = __raw_readl(S3C64XX_PWR_CFG);
+-	tmp &= ~S3C64XX_PWRCFG_CFG_WFI_MASK;
+-	tmp |= S3C64XX_PWRCFG_CFG_WFI_SLEEP;
+-	__raw_writel(tmp, S3C64XX_PWR_CFG);
++	s3c64xx_set_standby();
+ 
+ 	/* clear any old wakeup */
+ 
+@@ -348,6 +361,13 @@ int __init s3c64xx_pm_init(void)
+ 	return 0;
+ }
+ 
++static struct platform_device s3c64xx_cpuidle_device = {
++	.name = "cpuidle-s3c64xx",
++	.dev = {
++		.platform_data = s3c64xx_standby,
++	},
++};
++
+ static __init int s3c64xx_pm_initcall(void)
+ {
+ 	pm_cpu_prep = s3c64xx_pm_prepare;
+@@ -364,8 +384,7 @@ static __init int s3c64xx_pm_initcall(void)
+ 	gpio_direction_output(S3C64XX_GPN(14), 0);
+ 	gpio_direction_output(S3C64XX_GPN(15), 0);
+ #endif
+-
+-	return 0;
++	return platform_device_register(&s3c64xx_cpuidle_device);
+ }
+ arch_initcall(s3c64xx_pm_initcall);
+ 
+-- 
+1.7.9.5
