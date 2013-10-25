@@ -1,114 +1,151 @@
-From: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH v2 1/5] phy: Add new Exynos USB PHY driver
-Date: Fri, 25 Oct 2013 16:36:23 -0500
-Message-ID: <1A9F8795-C8EC-443C-9396-49BBA589C8B7@codeaurora.org>
-References: <1382710529-12082-1-git-send-email-k.debski@samsung.com> <1382710529-12082-2-git-send-email-k.debski@samsung.com>
-Mime-Version: 1.0 (Apple Message framework v1283)
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1382710529-12082-2-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: s3c64xx: cpuidle: convert to platform driver
+Date: Sat, 26 Oct 2013 00:23:39 +0200
+Message-ID: <526AEF6B.2000404@linaro.org>
+References: <1382685074-16502-1-git-send-email-daniel.lezcano@linaro.org> <6431720.IUjkN7MGOG@thinkpad> <526AC2DF.2020904@linaro.org> <1953577.TBW5ixuUM5@thinkpad>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f54.google.com ([74.125.82.54]:36460 "EHLO
+	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751328Ab3JYWXn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 Oct 2013 18:23:43 -0400
+Received: by mail-wg0-f54.google.com with SMTP id c11so4457671wgh.33
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2013 15:23:42 -0700 (PDT)
+In-Reply-To: <1953577.TBW5ixuUM5@thinkpad>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+
+On 10/25/2013 10:52 PM, Tomasz Figa wrote:
+> On Friday 25 of October 2013 21:13:35 Daniel Lezcano wrote:
+>> On 10/25/2013 12:39 PM, Tomasz Figa wrote:
+>>> Hi Daniel,
+>>>
+>>> [Sending again, without HTML part. Sorry for the noise.]
+>>>
+>>> On Friday 25 of October 2013 09:11:13 Daniel Lezcano wrote:
+>>>> The driver is tied with the pm low level code making difficult to
+>>>> split
+>>>> the driver into a more arch independent code. The platform driver
+>>>> allows
+>>>> to move the standby callback into the platform data field and use =
+a
+>>>> simple driver with no more dependency on the low level code.
+>>>>
+>>>> The standby callback has a portion of code to set the standby meth=
+od
+>>>> and
+>>>> the effective cpu_do_idle switching the cpu to the right mode. As =
+this
+>>>> code is redundant in the cpu suspend code, it has been factored ou=
+t
+>>>> when
+>>>> implementing the standby methdod.
+>>>>
+>>>> By this way, the driver is ready to be moved out to the
+>>>> drivers/cpuidle.
+>>>
+>>> The idea itself is quite good, but unfortunately I have to NAK this=
+=2E
+>>> Please see details in comments below.
+>>>
+>>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>> ---
+>>>>
+>>>>    arch/arm/mach-s3c64xx/cpuidle.c |   38
+>>>>
+>>>> ++++++++++++++++---------------------- arch/arm/mach-s3c64xx/pm.c
+>>>> |
+>>>>
+>>>>     33 ++++++++++++++++++++++++++------- 2 files changed, 42
+>>>>
+>>>> insertions(+), 29 deletions(-)
+>>
+>> [ ... ]
+>>
+>>>> -
+>>>> -	tmp =3D __raw_readl(S3C64XX_PWR_CFG);
+>>>> -	tmp &=3D ~S3C64XX_PWRCFG_CFG_WFI_MASK;
+>>>> -	tmp |=3D S3C64XX_PWRCFG_CFG_WFI_SLEEP;
+>>>
+>>> Finally note the S3C64XX_PWRCFG_CFG_WFI_SLEEP flag here again.
+>>
+>> Ouch ! I missed it. Thanks for spotting the problem.
+>>
+>>> I believe it should be visible now what's wrong with this patch. To
+>>> make
+>>> sure it is, let me explain how the system controller of S3C64xx han=
+dles
+>>> WFI requests.
+>>>
+>>> When the CPU issues WFI request to the syscon, it takes an action
+>>> depending on how it is configured. A bit field is there in one of
+>>> syscon registers (S3C64XX_PWR_CFG) that selects what action to perf=
+orm
+>>> in case of WFI request.
+>>>
+>>> You can program the syscon to ignore the request, enter IDLE mode,
+>>> enter
+>>> STOP mode or enter SLEEP mode. As the names suggest, for cpuidle, i=
+t
+>>> needs to be programmed for IDLE mode and for system-wide sleep it
+>>> needs to be set to SLEEP mode. STOP mode is not very useful as it h=
+as
+>>> mostly the same effect that can be achieved by performing fine-grai=
+ned
+>>> clock and power gating of peripherals manually, so it is unused by
+>>> Linux.
+>>
+>> Yes, this is what I assumed but I missed the CFG_WFI_SLEEP flag, my =
+eyes
+>> read CFG_WFI_IDLE.
+>>
+>>> Now, my take on the issue you are trying to solve would be a bit
+>>> different. Since the S3C64xx does not have any interesting cpuidle
+>>> modes, just a normal, clock-gated WFI mode, it does not need to hav=
+e a
+>>> cpuidle driver at all. All that is needed is simply setting up the
+>>> S3C64XX_PWRCFG_CFG_WFI field to S3C64XX_PWRCFG_CFG_WFI_IDLE early a=
+t
+>>> boot-up, then set it to S3C64XX_PWRCFG_CFG_WFI_SLEEP just before
+>>> entering the sleep mode and restore it back to
+>>> S3C64XX_PWRCFG_CFG_WFI_IDLE after waking up.
+>> So you are suggesting to remove the cpuidle driver ?
+>
+> Exactly.
+
+I see.
+
+>> Won't it be worth to add a new WFI_SLEEP state to the cpuidle driver=
+ ?
+>
+> I don't think so. How a suspend-to-RAM specific thing like WFI_SLEEP =
+could
+> be relevant to a cpuidle driver? (Unless there are some plans to
+> consolidate STR with cpuidle that I haven't heard about...)
+
+I finally found a documentation for the s3c6410x and the description of=
+=20
+the different modes. Indeed, the sleep mode is not adequate for a=20
+cpuidle state. What about the 'stop' and 'deep stop' state ?
+
+What is 'STR' ?
+
+Thanks
+   -- Daniel
 
 
-On Oct 25, 2013, at 9:15 AM, Kamil Debski wrote:
 
-> Add a new driver for the Exynos USB PHY. The new driver uses the generic
-> PHY framework. The driver includes support for the Exynos 4x10 and 4x12
-> SoC families.
-> 
-> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> .../devicetree/bindings/phy/samsung-usbphy.txt     |   51 +++
-> drivers/phy/Kconfig                                |   21 ++
-> drivers/phy/Makefile                               |    3 +
-> drivers/phy/phy-exynos-usb.c                       |  245 ++++++++++++++
-> drivers/phy/phy-exynos-usb.h                       |   94 ++++++
-> drivers/phy/phy-exynos4210-usb.c                   |  295 +++++++++++++++++
-> drivers/phy/phy-exynos4212-usb.c                   |  343 ++++++++++++++++++++
-> 7 files changed, 1052 insertions(+)
-> create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
-> create mode 100644 drivers/phy/phy-exynos-usb.c
-> create mode 100644 drivers/phy/phy-exynos-usb.h
-> create mode 100644 drivers/phy/phy-exynos4210-usb.c
-> create mode 100644 drivers/phy/phy-exynos4212-usb.c
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-usbphy.txt b/Documentation/devicetree/bindings/phy/samsung-usbphy.txt
-> new file mode 100644
-> index 0000000..f112b37
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/samsung-usbphy.txt
-> @@ -0,0 +1,51 @@
-> +Samsung S5P/EXYNOS SoC series USB PHY
-> +-------------------------------------------------
-> +
-> +Required properties:
-> +- compatible : should be one of the listed compatibles:
-> +	- "samsung,exynos4210-usbphy"
-> +	- "samsung,exynos4212-usbphy"
-> +- reg : a list of registers used by phy driver
-> +	- first and obligatory is the location of phy modules registers
-> +	- second and also required is the location of isolation registers
-> +	  (isolation registers control the physical connection between the in
-> +	  SoC modules and outside of the SoC, this also can be called enable
-> +	  control in the documentation of the SoC)
-> +	- third is the location of the mode switch register, this only applies
-> +	  to SoCs that have such a feature; mode switching enables to have
-> +	  both host and device used the same SoC pins and is commonly used
-> +	  when OTG is supported
-> +- #phy-cells : from the generic phy bindings, must be 1;
 
-Please add if clock & clock-names are required properties.
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
 
-> +
-> +The second cell in the PHY specifier identifies the PHY its meaning is SoC
-> +dependent. For the currently supported SoCs (Exynos 4210 and Exynos 4212) it
-> +is as follows:
-
-Can we say instead of 'its meaning is SoC dependent...' something like 'its meaning is compatible dependent"?
-
-> +  0 - USB device,
-> +  1 - USB host,
-> +  2 - HSIC0,
-> +  3 - HSIC1,
-> +
-> +Example:
-> +
-> +For Exynos 4412 (compatible with Exynos 4212):
-> +
-> +exynos_usbphy: exynos-usbphy@125B0000 {
-> +	compatible = "samsung,exynos4212-usbphy";
-> +	reg = <0x125B0000 0x100 0x10020704 0x0c 0x1001021c 0x4>;
-> +	ranges;
-> +	#address-cells = <1>;
-> +	#size-cells = <1>;
-
-Why do you have ranges, and #address-cells & #size-cells here?
-
-> +	clocks = <&clock 305>, <&clock 2>, <&clock 2>, <&clock 2>,
-> +							<&clock 2>;
-> +	clock-names = "phy", "device", "host", "hsic0", "hsic1";
-> +	status = "okay";
-> +	#phy-cells = <1>;
-> +};
-> +
-> +Then the PHY can be used in other nodes such as:
-> +
-> +ehci@12580000 {
-> +	status = "okay";
-> +	phys = <&exynos_usbphy 2>;
-> +	phy-names = "hsic0";
-> +};
-
--- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, hosted by The Linux Foundation
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
