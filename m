@@ -1,138 +1,58 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: s3c64xx: cpuidle: convert to platform driver
-Date: Fri, 25 Oct 2013 12:39:39 +0200
-Message-ID: <6431720.IUjkN7MGOG@thinkpad>
-References: <1382685074-16502-1-git-send-email-daniel.lezcano@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: dts: Add missing GPIO entries for sd_bus in
+Date: Fri, 25 Oct 2013 16:52:48 +0530
+Message-ID: <1382700168-12527-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:34701 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752486Ab3JYKjh (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:61467 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751492Ab3JYLX5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Oct 2013 06:39:37 -0400
-Received: by mail-wi0-f182.google.com with SMTP id ez12so877256wid.9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2013 03:39:36 -0700 (PDT)
-In-Reply-To: <1382685074-16502-1-git-send-email-daniel.lezcano@linaro.org>
+	Fri, 25 Oct 2013 07:23:57 -0400
+Received: by mail-pa0-f41.google.com with SMTP id bj1so4989523pad.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2013 04:23:57 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org
 
-Hi Daniel,
+Adds missing GPIO entries for sd_bus nodes in exynos5420-pinctrl.
 
-[Sending again, without HTML part. Sorry for the noise.]
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Friday 25 of October 2013 09:11:13 Daniel Lezcano wrote:
-> The driver is tied with the pm low level code making difficult to split
-> the driver into a more arch independent code. The platform driver allows
-> to move the standby callback into the platform data field and use a
-> simple driver with no more dependency on the low level code.
-> 
-> The standby callback has a portion of code to set the standby method and
-> the effective cpu_do_idle switching the cpu to the right mode. As this
-> code is redundant in the cpu suspend code, it has been factored out when
-> implementing the standby methdod.
-> 
-> By this way, the driver is ready to be moved out to the drivers/cpuidle.
-
-The idea itself is quite good, but unfortunately I have to NAK this. Please 
-see details in comments below.
-
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  arch/arm/mach-s3c64xx/cpuidle.c |   38
-> ++++++++++++++++---------------------- arch/arm/mach-s3c64xx/pm.c      |
->   33 ++++++++++++++++++++++++++------- 2 files changed, 42
-> insertions(+), 29 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c64xx/cpuidle.c
-> b/arch/arm/mach-s3c64xx/cpuidle.c index 3c8ab07..8022f5f 100644
-> --- a/arch/arm/mach-s3c64xx/cpuidle.c
-> +++ b/arch/arm/mach-s3c64xx/cpuidle.c
-> @@ -9,33 +9,16 @@
->   * published by the Free Software Foundation.
->  */
-[snip]
->  static int s3c64xx_enter_idle(struct cpuidle_device *dev,
->  			      struct cpuidle_driver *drv,
->  			      int index)
->  {
-> -	unsigned long tmp;
-> -
-> -	/* Setup PWRCFG to enter idle mode */
-> -	tmp = __raw_readl(S3C64XX_PWR_CFG);
-> -	tmp &= ~S3C64XX_PWRCFG_CFG_WFI_MASK;
-> -	tmp |= S3C64XX_PWRCFG_CFG_WFI_IDLE;
-
-Note the S3C64XX_PWRCFG_CFG_WFI_IDLE flag here.
-
-> -	__raw_writel(tmp, S3C64XX_PWR_CFG);
-> -
-> -	cpu_do_idle();
-> +	s3c64xx_standby();
-> 
->  	return index;
->  }
-[snip]
-> +static void s3c64xx_set_standby(void)
-> +{
-> +	unsigned long tmp;
-> +
-> +	tmp = __raw_readl(S3C64XX_PWR_CFG);
-> +	tmp &= ~S3C64XX_PWRCFG_CFG_WFI_MASK;
-> +	tmp |= S3C64XX_PWRCFG_CFG_WFI_SLEEP;
-
-Note the S3C64XX_PWRCFG_CFG_WFI_SLEEP flag here, which is different from 
-the S3C64XX_PWRCFG_CFG_WFI_IDLE flag above.
-
-> +	__raw_writel(tmp, S3C64XX_PWR_CFG);
-> +}
-> +
-> +static void s3c64xx_standby(void)
-> +{
-> +	s3c64xx_set_standby();
-> +	cpu_do_idle();
-> +}
-> +
->  /* since both s3c6400 and s3c6410 share the same sleep pm calls, we
->   * put the per-cpu code in here until any new cpu comes along and
-> changes * this.
-> @@ -269,11 +286,7 @@ static int s3c64xx_cpu_suspend(unsigned long arg)
->  	unsigned long tmp;
-> 
->  	/* set our standby method to sleep */
-> -
-> -	tmp = __raw_readl(S3C64XX_PWR_CFG);
-> -	tmp &= ~S3C64XX_PWRCFG_CFG_WFI_MASK;
-> -	tmp |= S3C64XX_PWRCFG_CFG_WFI_SLEEP;
-
-Finally note the S3C64XX_PWRCFG_CFG_WFI_SLEEP flag here again.
-
-I believe it should be visible now what's wrong with this patch. To make 
-sure it is, let me explain how the system controller of S3C64xx handles WFI 
-requests.
-
-When the CPU issues WFI request to the syscon, it takes an action depending 
-on how it is configured. A bit field is there in one of syscon registers 
-(S3C64XX_PWR_CFG) that selects what action to perform in case of WFI 
-request.
-
-You can program the syscon to ignore the request, enter IDLE mode, enter 
-STOP mode or enter SLEEP mode. As the names suggest, for cpuidle, it needs 
-to be programmed for IDLE mode and for system-wide sleep it needs to be set 
-to SLEEP mode. STOP mode is not very useful as it has mostly the same 
-effect that can be achieved by performing fine-grained clock and power 
-gating of peripherals manually, so it is unused by Linux.
-
-Now, my take on the issue you are trying to solve would be a bit different. 
-Since the S3C64xx does not have any interesting cpuidle modes, just a 
-normal, clock-gated WFI mode, it does not need to have a cpuidle driver at 
-all. All that is needed is simply setting up the S3C64XX_PWRCFG_CFG_WFI 
-field to S3C64XX_PWRCFG_CFG_WFI_IDLE early at boot-up, then set it to 
-S3C64XX_PWRCFG_CFG_WFI_SLEEP just before entering the sleep mode and 
-restore it back to S3C64XX_PWRCFG_CFG_WFI_IDLE after waking up.
-
-Best regards,
-Tomasz
+diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+index e695aba..fcb8206 100644
+--- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+@@ -181,7 +181,7 @@
+ 		};
+ 
+ 		sd0_bus4: sd0-bus-width4 {
+-			samsung,pins = "gpc0-4", "gpc0-5", "gpc0-6";
++			samsung,pins = "gpc0-3", "gpc0-4", "gpc0-5", "gpc0-6";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <3>;
+ 			samsung,pin-drv = <3>;
+@@ -230,7 +230,7 @@
+ 		};
+ 
+ 		sd1_bus4: sd1-bus-width4 {
+-			samsung,pins = "gpc1-4", "gpc1-5", "gpc1-6";
++			samsung,pins = "gpc1-3", "gpc1-4", "gpc1-5", "gpc1-6";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <3>;
+ 			samsung,pin-drv = <3>;
+@@ -272,7 +272,7 @@
+ 		};
+ 
+ 		sd2_bus4: sd2-bus-width4 {
+-			samsung,pins = "gpc2-4", "gpc2-5", "gpc2-6";
++			samsung,pins = "gpc2-3", "gpc2-4", "gpc2-5", "gpc2-6";
+ 			samsung,pin-function = <2>;
+ 			samsung,pin-pud = <3>;
+ 			samsung,pin-drv = <3>;
+-- 
+1.7.9.5
