@@ -1,106 +1,124 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 5/5] usb: s3c-hsotg: Use the new Exynos USB phy driver
- with the generic phy framework
-Date: Fri, 25 Oct 2013 21:23:56 +0530
-Message-ID: <526A9414.6070000@ti.com>
-References: <1382710529-12082-1-git-send-email-k.debski@samsung.com> <1382710529-12082-6-git-send-email-k.debski@samsung.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: s3c64xx: cpuidle: convert to platform driver
+Date: Fri, 25 Oct 2013 21:13:35 +0200
+Message-ID: <526AC2DF.2020904@linaro.org>
+References: <1382685074-16502-1-git-send-email-daniel.lezcano@linaro.org> <6431720.IUjkN7MGOG@thinkpad>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:37305 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751568Ab3JYPyF (ORCPT
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:52288 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753309Ab3JYTNk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Oct 2013 11:54:05 -0400
-In-Reply-To: <1382710529-12082-6-git-send-email-k.debski@samsung.com>
+	Fri, 25 Oct 2013 15:13:40 -0400
+Received: by mail-wi0-f173.google.com with SMTP id ey11so1558213wid.6
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 Oct 2013 12:13:39 -0700 (PDT)
+In-Reply-To: <6431720.IUjkN7MGOG@thinkpad>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org, kyungmin.park@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Friday 25 October 2013 07:45 PM, Kamil Debski wrote:
-> Change the used phy driver to the new Exynos USB phy driver that uses the
-> generic phy framework.
-> 
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/usb/gadget/s3c-hsotg.c |   13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-> index 7705c41..2ce84a5 100644
-> --- a/drivers/usb/gadget/s3c-hsotg.c
-> +++ b/drivers/usb/gadget/s3c-hsotg.c
-> @@ -29,6 +29,7 @@
->  #include <linux/slab.h>
->  #include <linux/clk.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/phy/phy.h>
->  
->  #include <linux/usb/ch9.h>
->  #include <linux/usb/gadget.h>
-> @@ -131,6 +132,7 @@ struct s3c_hsotg_ep {
->  /**
->   * struct s3c_hsotg - driver state.
->   * @dev: The parent device supplied to the probe function
-> +
+On 10/25/2013 12:39 PM, Tomasz Figa wrote:
+> Hi Daniel,
+>
+> [Sending again, without HTML part. Sorry for the noise.]
+>
+> On Friday 25 of October 2013 09:11:13 Daniel Lezcano wrote:
+>> The driver is tied with the pm low level code making difficult to sp=
+lit
+>> the driver into a more arch independent code. The platform driver al=
+lows
+>> to move the standby callback into the platform data field and use a
+>> simple driver with no more dependency on the low level code.
+>>
+>> The standby callback has a portion of code to set the standby method=
+ and
+>> the effective cpu_do_idle switching the cpu to the right mode. As th=
+is
+>> code is redundant in the cpu suspend code, it has been factored out =
+when
+>> implementing the standby methdod.
+>>
+>> By this way, the driver is ready to be moved out to the drivers/cpui=
+dle.
+>
+> The idea itself is quite good, but unfortunately I have to NAK this. =
+Please
+> see details in comments below.
+>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>   arch/arm/mach-s3c64xx/cpuidle.c |   38
+>> ++++++++++++++++---------------------- arch/arm/mach-s3c64xx/pm.c   =
+   |
+>>    33 ++++++++++++++++++++++++++------- 2 files changed, 42
+>> insertions(+), 29 deletions(-)
 
-empty blank line.
->   * @driver: USB gadget driver
->   * @phy: The otg phy transceiver structure for phy control.
->   * @plat: The platform specific configuration data. This can be removed once
-> @@ -154,7 +156,7 @@ struct s3c_hsotg_ep {
->  struct s3c_hsotg {
->  	struct device		 *dev;
->  	struct usb_gadget_driver *driver;
-> -	struct usb_phy		*phy;
-> +	struct phy		 *phy;
->  	struct s3c_hsotg_plat	 *plat;
->  
->  	spinlock_t              lock;
-> @@ -2858,9 +2860,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
->  	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
->  
->  	if (hsotg->phy)
-> -		usb_phy_init(hsotg->phy);
-> +		phy_power_on(hsotg->phy);
->  	else if (hsotg->plat->phy_init)
->  		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
-> +
->  }
->  
->  /**
-> @@ -2875,7 +2878,7 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
->  	struct platform_device *pdev = to_platform_device(hsotg->dev);
->  
->  	if (hsotg->phy)
-> -		usb_phy_shutdown(hsotg->phy);
-> +		phy_power_off(hsotg->phy);
->  	else if (hsotg->plat->phy_exit)
->  		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
->  }
-> @@ -3485,7 +3488,7 @@ static void s3c_hsotg_delete_debug(struct s3c_hsotg *hsotg)
->  static int s3c_hsotg_probe(struct platform_device *pdev)
->  {
->  	struct s3c_hsotg_plat *plat = pdev->dev.platform_data;
-> -	struct usb_phy *phy;
-> +	struct phy *phy;
->  	struct device *dev = &pdev->dev;
->  	struct s3c_hsotg_ep *eps;
->  	struct s3c_hsotg *hsotg;
-> @@ -3500,7 +3503,7 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	}
->  
-> -	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-> +	phy = devm_phy_get(&pdev->dev, "device");
->  	if (IS_ERR(phy)) {
->  		/* Fallback for pdata */
->  		plat = pdev->dev.platform_data;
+[ ... ]
 
-Apart from that one minor comment, this patch looks good.
+>> -
+>> -	tmp =3D __raw_readl(S3C64XX_PWR_CFG);
+>> -	tmp &=3D ~S3C64XX_PWRCFG_CFG_WFI_MASK;
+>> -	tmp |=3D S3C64XX_PWRCFG_CFG_WFI_SLEEP;
+>
+> Finally note the S3C64XX_PWRCFG_CFG_WFI_SLEEP flag here again.
 
-Thanks
-Kishon
+Ouch ! I missed it. Thanks for spotting the problem.
+
+> I believe it should be visible now what's wrong with this patch. To m=
+ake
+> sure it is, let me explain how the system controller of S3C64xx handl=
+es WFI
+> requests.
+>
+> When the CPU issues WFI request to the syscon, it takes an action dep=
+ending
+> on how it is configured. A bit field is there in one of syscon regist=
+ers
+> (S3C64XX_PWR_CFG) that selects what action to perform in case of WFI
+> request.
+>
+> You can program the syscon to ignore the request, enter IDLE mode, en=
+ter
+> STOP mode or enter SLEEP mode. As the names suggest, for cpuidle, it =
+needs
+> to be programmed for IDLE mode and for system-wide sleep it needs to =
+be set
+> to SLEEP mode. STOP mode is not very useful as it has mostly the same
+> effect that can be achieved by performing fine-grained clock and powe=
+r
+> gating of peripherals manually, so it is unused by Linux.
+
+Yes, this is what I assumed but I missed the CFG_WFI_SLEEP flag, my eye=
+s=20
+read CFG_WFI_IDLE.
+
+> Now, my take on the issue you are trying to solve would be a bit diff=
+erent.
+> Since the S3C64xx does not have any interesting cpuidle modes, just a
+> normal, clock-gated WFI mode, it does not need to have a cpuidle driv=
+er at
+> all. All that is needed is simply setting up the S3C64XX_PWRCFG_CFG_W=
+=46I
+> field to S3C64XX_PWRCFG_CFG_WFI_IDLE early at boot-up, then set it to
+> S3C64XX_PWRCFG_CFG_WFI_SLEEP just before entering the sleep mode and
+> restore it back to S3C64XX_PWRCFG_CFG_WFI_IDLE after waking up.
+
+So you are suggesting to remove the cpuidle driver ?
+
+Won't it be worth to add a new WFI_SLEEP state to the cpuidle driver ?
+
+Thanks for the review.
+
+   -- Daniel
+
+--=20
+  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
+r ARM SoCs
+
+=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
