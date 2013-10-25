@@ -1,59 +1,89 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Initialize L2x0 cache controller for
- Exynos4 only
-Date: Fri, 25 Oct 2013 14:48:52 +0100
-Message-ID: <20131025134852.GA10286@mudshark.cambridge.arm.com>
-References: <1382011392-18199-1-git-send-email-sachin.kamat@linaro.org>
- <3434799.pjC3lbNE3P@amdc1227>
- <CAK9yfHxNPKeRPpxPjoeUs1Xbu9pibn=dLK2U=7atpxEmKY1k1Q@mail.gmail.com>
- <1947285.WNu0Q66K3g@thinkpad>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:49636 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753323Ab3JYNtO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 Oct 2013 09:49:14 -0400
-Content-Disposition: inline
-In-Reply-To: <1947285.WNu0Q66K3g@thinkpad>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/5] phy: Add new Exynos USB PHY driver
+Date: Fri, 25 Oct 2013 16:15:24 +0200
+Message-ID: <1382710529-12082-1-git-send-email-k.debski@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>
 
-On Sat, Oct 19, 2013 at 03:04:22PM +0100, Tomasz Figa wrote:
-> On Saturday 19 of October 2013 18:09:15 Sachin Kamat wrote:
-> > Hi Tomasz,
-> > 
-> > On 17 October 2013 18:35, Tomasz Figa <t.figa@samsung.com> wrote:
-> > > Hi Sachin,
-> > > 
-> > > On Thursday 17 of October 2013 17:33:12 Sachin Kamat wrote:
-> > >> L2x0 cache controller is present only in Cortex-A9 based Exynos4 SoCs.
-> > >> Thus move this function to Exynos4 early init call to avoid non-Exynos4
-> > >> SoCs from calling this function in multi-platform support.
-> > > 
-> > > I believe that at the time .init_early() is called there is no ioremap()
-> > > infrastructure working yet and so L2 cache initialization which needs
-> > > it will cause a kernel panic. This patch worked only because currently
-> > > there is no L2X0 controller defined in device tree sources of Exynos 4.
-> > 
-> > It is not clear to me as to why device tree entry is required for this
-> > to work in current form
-> > as we call the  L2X0 init function explicitly.
-> 
-> L2x0 controller is just another IP block on the SoC. In addition its
-> registers are memory mapped and the driver needs some way to get their
-> location. The function being called explicitly simply scans device tree
-> for applicable node and performs rest of the setup only if it finds one.
-> 
-> Ideally there should be no need to call this function explicitly, as it
-> should be called by some code based on presence of applicable device tree
-> node.
+Hi,
 
-It's a nice idea, but you need to be careful if you start deferring this
-stuff. Aside from the potential performance loss during early boot, I'm not
-even sure that the l2x0_init function is safe to run with IRQs enabled.
+This is the second version of the patch adding support for USB PHY module
+of the Exynos series of SoCs by Samsung. The driver is utilising the newly
+added Generic PHY Framework by Kishon Vijay Abraham I [1].
 
-Will
+In addition to the PHY driver this patchset contains:
+- work in progress support for Exynos 5250
+  (based on the drivers/usb/phy/phy-samsung-usb2.c driver)
+- support for S5PV210 added by Mateusz Krawczuk during his summer internship at
+  Samsung
+- change to the ehci-s5p driver which modifies the driver to use the General
+  PHY Framework
+- change to the s3c-hsotg driver which modifies the driver to use the General
+  PHY Framework
+
+Best wishes,
+Kamil Debski
+----------------
+Changes from v1:
+- the changes include minor fixes of the hardware initialization of the PHY
+  module
+- some other minor fixes were introduced
+
+----------------------
+Original cover letter:
+
+Hi,
+
+This patch adds a new drive for USB PHYs for Samsung SoCs. The driver is using
+the Generic PHY Framework created by Kishon Vijay Abrahan I. It can be found
+here https://lkml.org/lkml/2013/8/21/29. This patch adds support to Exynos4
+family of SoCs. Support for Exynos3 and Exynos5 is planned to be added in the
+near future.
+
+I welcome your comments.
+
+----------------------
+
+[1] https://lkml.org/lkml/2013/8/21/29
+
+Kamil Debski (4):
+  phy: Add new Exynos USB PHY driver
+  phy: Add WIP Exynos 5250 support to the Exynos USB PHY driver
+  usb: ehci-s5p: Change to use phy provided by the generic phy
+    framework
+  usb: s3c-hsotg: Use the new Exynos USB phy driver with the generic
+    phy framework
+
+Mateusz Krawczuk (1):
+  phy: Add support for S5PV210 to the Exynos USB PHY driver
+
+ .../devicetree/bindings/phy/samsung-usbphy.txt     |   51 +++
+ drivers/phy/Kconfig                                |   35 ++
+ drivers/phy/Makefile                               |    4 +
+ drivers/phy/phy-exynos-usb.c                       |  265 +++++++++++++
+ drivers/phy/phy-exynos-usb.h                       |   96 +++++
+ drivers/phy/phy-exynos4210-usb.c                   |  295 ++++++++++++++
+ drivers/phy/phy-exynos4212-usb.c                   |  343 ++++++++++++++++
+ drivers/phy/phy-exynos5250-usb.c                   |  411 ++++++++++++++++++++
+ drivers/phy/phy-s5pv210-usb.c                      |  236 +++++++++++
+ drivers/usb/gadget/s3c-hsotg.c                     |   13 +-
+ drivers/usb/host/ehci-s5p.c                        |   21 +-
+ 11 files changed, 1755 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+ create mode 100644 drivers/phy/phy-exynos-usb.c
+ create mode 100644 drivers/phy/phy-exynos-usb.h
+ create mode 100644 drivers/phy/phy-exynos4210-usb.c
+ create mode 100644 drivers/phy/phy-exynos4212-usb.c
+ create mode 100644 drivers/phy/phy-exynos5250-usb.c
+ create mode 100644 drivers/phy/phy-s5pv210-usb.c
+
+-- 
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
