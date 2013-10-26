@@ -1,74 +1,169 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 3/5] phy: Add support for S5PV210 to the Exynos USB PHY
- driver
-Date: Sat, 26 Oct 2013 10:40:02 +0900
-Message-ID: <003701ced1ec$4a511d40$def357c0$%han@samsung.com>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/5] usb: ehci-s5p: Change to use phy provided by the
+ generic phy framework
+Date: Sat, 26 Oct 2013 15:11:29 +0530
+Message-ID: <CAFp+6iExOPunF=ND7_17PZXA217K_4im4ZJvR=mW2Ym_gnA0GQ@mail.gmail.com>
 References: <1382710529-12082-1-git-send-email-k.debski@samsung.com>
- <1382710529-12082-4-git-send-email-k.debski@samsung.com>
- <526A933C.4020904@ti.com>
+	<1382710529-12082-5-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <526A933C.4020904-l0cyMroinI0@public.gmane.org>
-Content-language: ko
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Kishon Vijay Abraham I' <kishon-l0cyMroinI0@public.gmane.org>, 'Kamil Debski' <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Marek Szyprowski' <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Mateusz Krawczuk' <mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Praveen Paneri' <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Yulgon Kim' <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Anton Tikhomirov' <av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1382710529-12082-5-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Saturday, October 26, 2013 12:50 AM, Kishon Vijay Abraham I wrote:
-> On Friday 25 October 2013 07:45 PM, Kamil Debski wrote:
-> > From: Mateusz Krawczuk <m.krawczuk-GrGkmOP51GdLN7c7dRTbYkEOCMrvLtNR@public.gmane.org>
-> >
-> > Add support for the Samsung's S5PV210 SoC to the Exynos USB PHY driver.
-> >
-> > Signed-off-by: Mateusz Krawczuk <m.krawczuk-GrGkmOP51GdLN7c7dRTbYkEOCMrvLtNR@public.gmane.org>
-> > [k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org: whitespace cleanup and commit description]
-> > Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  drivers/phy/Kconfig           |    7 ++
-> >  drivers/phy/phy-exynos-usb.c  |   10 ++
-> >  drivers/phy/phy-exynos-usb.h  |    1 +
-> >  drivers/phy/phy-s5pv210-usb.c |  236 +++++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 254 insertions(+)
-> >  create mode 100644 drivers/phy/phy-s5pv210-usb.c
+Hi Kamil,
 
-[.....]
 
-> > diff --git a/drivers/phy/phy-s5pv210-usb.c b/drivers/phy/phy-s5pv210-usb.c
-> > new file mode 100644
-> > index 0000000..575275d
-> > --- /dev/null
-> > +++ b/drivers/phy/phy-s5pv210-usb.c
-> 
-> how different is this IP different from the previous ones? Does it deserve a
-> separate driver or the previous drivers can be re-used?
+On Fri, Oct 25, 2013 at 7:45 PM, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Change the phy provider used from the old usb phy specific to a new one
+> using the generic phy framework.
+>
+> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/usb/host/ehci-s5p.c |   21 +++++++++++----------
+>  1 file changed, 11 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+> index 7cc26e6..76606ff 100644
+> --- a/drivers/usb/host/ehci-s5p.c
+> +++ b/drivers/usb/host/ehci-s5p.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_gpio.h>
+> +#include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/platform_data/usb-ehci-s5p.h>
+>  #include <linux/usb/phy.h>
+> @@ -45,7 +46,7 @@ static struct hc_driver __read_mostly s5p_ehci_hc_driver;
+>
+>  struct s5p_ehci_hcd {
+>         struct clk *clk;
+> -       struct usb_phy *phy;
+> +       struct phy *phy;
+>         struct usb_otg *otg;
+>         struct s5p_ehci_platdata *pdata;
+>  };
+> @@ -77,10 +78,11 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+>  {
+>         struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+>         struct s5p_ehci_hcd *s5p_ehci;
+> +       struct phy *phy;
 
-[.....]
+just a nit here:
+Lets keep the pointer to 'phy' and 'phy_name' together ?
+and move this above phy_name ?
 
-> > +const struct uphy_config s5pv210_uphy_config = {
-> > +	.cpu		= TYPE_S5PV210,
-> > +	.num_phys	= S5PV210_NUM_PHYS,
-> > +	.phys		= s5pv210_phys,
-> > +};
-> 
-> IMO this looks similar to the other drivers. Please re-use the drivers wherever
-> possible.
-> 
+>         struct usb_hcd *hcd;
+>         struct ehci_hcd *ehci;
+>         struct resource *res;
+> -       struct usb_phy *phy;
+> +       const char *phy_name;
+>         int irq;
+>         int err;
+>
+> @@ -103,14 +105,14 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+>                 return -ENOMEM;
+>         }
+>         s5p_ehci = to_s5p_ehci(hcd);
+> -
+> +       phy_name = of_get_property(pdev->dev.of_node, "phy-names", NULL);
+> +       phy =  devm_phy_get(&pdev->dev, phy_name);
 
-+cc Praveen Paneri(Author of Samsung PHY driver), Yulgon Kim, Anton Tikhomirov
+Below check for exynos5440 was supposed to skip any request phy.
+So shouldn't we place above two assignments to the original place
+where devm_usb_get_phy()
+was called ?
+May be i am not getting you intention of changing the place.
 
-I agree with Kishon's opinion.
+>         if (of_device_is_compatible(pdev->dev.of_node,
+>                                         "samsung,exynos5440-ehci")) {
+>                 s5p_ehci->pdata = &empty_platdata;
+>                 goto skip_phy;
+>         }
+>
+> -       phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+>         if (IS_ERR(phy)) {
+>                 /* Fallback to pdata */
+>                 if (!pdata) {
+> @@ -122,7 +124,6 @@ static int s5p_ehci_probe(struct platform_device *pdev)
+>                 }
+>         } else {
+>                 s5p_ehci->phy = phy;
+> -               s5p_ehci->otg = phy->otg;
+>         }
+>
+>  skip_phy:
+> @@ -166,7 +167,7 @@ skip_phy:
+>                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
 
-Actually, all Exynos USB PHY controllers are not different IPs.
-However, the differences between Exynos USB PHY controllers are
-not little.
+Lets remove this line and similar calls to 'set_host()' in the driver,
+since we don't have
+s5p_ehci->otg anymore after the same is removed above.
+Anyways this was helping the old phy-samsung-usb2 driver, and not needed now.
 
-Best regards,
-Jingoo Han
+>
+>         if (s5p_ehci->phy)
+> -               usb_phy_init(s5p_ehci->phy);
+> +               phy_power_on(s5p_ehci->phy);
+>         else if (s5p_ehci->pdata->phy_init)
+>                 s5p_ehci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+> @@ -188,7 +189,7 @@ skip_phy:
+>
+>  fail_add_hcd:
+>         if (s5p_ehci->phy)
+> -               usb_phy_shutdown(s5p_ehci->phy);
+> +               phy_power_off(s5p_ehci->phy);
+>         else if (s5p_ehci->pdata->phy_exit)
+>                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>  fail_io:
+> @@ -209,7 +210,7 @@ static int s5p_ehci_remove(struct platform_device *pdev)
+>                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
 
+ditto
+
+>
+>         if (s5p_ehci->phy)
+> -               usb_phy_shutdown(s5p_ehci->phy);
+> +               phy_power_off(s5p_ehci->phy);
+>         else if (s5p_ehci->pdata->phy_exit)
+>                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+> @@ -244,7 +245,7 @@ static int s5p_ehci_suspend(struct device *dev)
+>                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
+ditto
+
+>
+>         if (s5p_ehci->phy)
+> -               usb_phy_shutdown(s5p_ehci->phy);
+> +               phy_power_off(s5p_ehci->phy);
+>         else if (s5p_ehci->pdata->phy_exit)
+>                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>
+> @@ -265,7 +266,7 @@ static int s5p_ehci_resume(struct device *dev)
+>                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
+ditto
+
+>
+>         if (s5p_ehci->phy)
+> -               usb_phy_init(s5p_ehci->phy);
+> +               phy_power_on(s5p_ehci->phy);
+>         else if (s5p_ehci->pdata->phy_init)
+>                 s5p_ehci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>
+[..] Rest looks good. :-)
+
+
+
+-- 
+Best Regards
+Vivek
 --
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
