@@ -1,77 +1,77 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
-Date: Mon, 28 Oct 2013 08:03:56 -0700
-Message-ID: <526E7CDC.3070306@samsung.com>
-References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com> <8412301.YP2zzplWoe@amdc1227> <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com> <523716C9.3000204@samsung.com> <20130916193709.27384.86101@quantum> <06c101cebdc5$75a83d10$60f8b730$%kim@samsung.com> <20131002010953.9338.23436@quantum> <0d8901cec170$f7230b50$e56921f0$%kim@samsung.com> <20131006202709.32214.75572@quantum> <525274FA.5020701@samsung.com> <526E7553.8030607@samsung.com>
+Subject: Re: [PATCH] ARM: dts: disable PCIe for SD5v1 board
+Date: Mon, 28 Oct 2013 08:12:54 -0700
+Message-ID: <526E7EF6.3020400@samsung.com>
+References: <000301cea9fe$619d2900$24d77b00$%han@samsung.com>	<CAOesGMjuzKxi_j5pASteHaNXoNQ=nURLPRk5b6pbNLmCPC+txw@mail.gmail.com>	<000101ced39f$b553ec80$1ffbc580$%han@samsung.com> <CAOesGMgCgZuAdnYHKGoBNLNCrCX0mERHMsuLOuoTPs=RWPsWMA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f43.google.com ([209.85.219.43]:49774 "EHLO
-	mail-oa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756454Ab3J1Pod (ORCPT
+Received: from mail-oa0-f44.google.com ([209.85.219.44]:35904 "EHLO
+	mail-oa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756004Ab3J1Pxb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Oct 2013 11:44:33 -0400
-In-Reply-To: <526E7553.8030607@samsung.com>
+	Mon, 28 Oct 2013 11:53:31 -0400
+Received: by mail-oa0-f44.google.com with SMTP id l20so3813832oag.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Oct 2013 08:53:31 -0700 (PDT)
+In-Reply-To: <CAOesGMgCgZuAdnYHKGoBNLNCrCX0mERHMsuLOuoTPs=RWPsWMA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'devicetree' <devicetree@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 10/28/13 07:31, Andrzej Hajda wrote:
-> Ping
->
-> Regards
-> Andrzej
->
-> On 10/07/2013 10:46 AM, Andrzej Hajda wrote:
->> On 10/06/2013 10:27 PM, Mike Turquette wrote:
->>> Quoting Kukjin Kim (2013-10-04 19:16:56)
->>>> Mike Turquette wrote:
->>>>> Quoting Kukjin Kim (2013-09-30 03:11:41)
->>>>>> Mike Turquette wrote:
->>>>>>> Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
->>>>>>>> On 09/12/2013 12:50 PM, Kukjin Kim wrote:
->>>>>>>>> Well...I'm not sure changing to use macro is better or not at this
->>>>>>> moment...
->>>>>>>> I think it is. ;) It's really less error prone to have symbolic
->>>>> names
->>>>>>> instead
->>>>>>>> of the plain numbers. The clock ids are defined in one place and it
->>>>> is
->>>>>>> more
->>>>>>>> clear what a clock is by looking at symbolic name. It's especially
->>>>>>> annoying
->>>>>>>> to use plain numbers where are are many clock in a single node, like
->>>>> 10
->>>>>>> or
->>>>>>>> more. What are you main concerns with this ?
->>>>>>> I think having the symbolic names is a win for readability.
->>>>>>>
->>>>>> Hmm...since Mike who is a maintainer for ccf agrees with Sylwester's
->>>>> opinion, so I agree. Actually, I had no strong objection on this but still
->>>>> I'm not sure using macro is really better because sometimes the name
->>>>> doesn't give readability really I think though.
->>>>>> Mike, can you give me your ack on clk stuff?
->>>>> Yes, but I was thinking to take this change through the clk tree. The
->>>>> new branch based on -rc3 will be published tonight.
->>>>>
->>>>> Let me know if it causes problems for you for me to take it.
->>>>>
->>>> Uhm, I think dt changes can make ugly conflicts because of spread dt changing?
->>> Sure, go ahead and take the patches then.
+On 10/28/13 08:15, Olof Johansson wrote:
+> On Sun, Oct 27, 2013 at 10:36 PM, Jingoo Han<jg1.han@samsung.com>  wrote:
+>> On Monday, October 28, 2013 1:52 PM, Olof Johansson wrote:
+>>> On Wed, Sep 4, 2013 at 11:08 PM, Jingoo Han<jg1.han@samsung.com>  wrote:
+>>>> Disable PCIe for SD5v1 board, because there is no PCIe slot
+>>>> on SD5v1 board.
+>>>>
+>>>> Signed-off-by: Jingoo Han<jg1.han@samsung.com>
+>>>> ---
+>>>> Tested on SD5v1 board.
+>>>>
+>>>>   arch/arm/boot/dts/exynos5440-sd5v1.dts |    7 +++++++
+>>>>   1 file changed, 7 insertions(+)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/exynos5440-sd5v1.dts b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+>>>> index 5b22508..78a239d 100644
+>>>> --- a/arch/arm/boot/dts/exynos5440-sd5v1.dts
+>>>> +++ b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+>>>> @@ -36,4 +36,11 @@
+>>>>                  status = "disabled";
+>>>>          };
+>>>>
+>>>> +       pcie@290000 {
+>>>> +               status = "disabled";
+>>>> +       };
+>>>> +
+>>>> +       pcie@2a0000 {
+>>>> +               status = "disabled";
+>>>> +       };
+>>>>   };
 >>>
->>> Acked-by: Mike Turquette<mturquette@linaro.org>
->>>
->>> Regards,
->>> Mike
+>>> Usually IP blocks like these are always left disabled in the dtsi, and
+>>> explicitly _enabled_ in the DTS on boards that make use of that part
+>>> of the chip.
+>>> So the real solution here should be to move the disabling to the 5440
+>>> .dtsi instead.
 >>
->> I can create patchset based on different git branch if neccessary.
+>> OK, right.
+>> Thank you for your guidance.
 >>
-Hi
+>> Then, do you mean the following?
+>> If it is right, I will send the v2 patch.
+>
+> Yes, exactly!
+>
 
-Unfortunately, this changes would be merged after release of next rc1 
-because of too many conflicts with other DT changes in Samsung tree.
+Hmm...I thought both ways (#1 disabling something in soc dt, enabling in 
+board dt if required, #2 enabling in soc dt, disabling in board dt if 
+required) are possible but I have no strong objection with your 
+suggestion. In addition, just one way is more clear to us :)
+
+OK, I will keep the way for Samsung stuff.
 
 Thanks,
 Kukjin
