@@ -1,80 +1,222 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2 00/12] clk/exynos convert clock IDs to macros
-Date: Mon, 28 Oct 2013 15:31:47 +0100
-Message-ID: <526E7553.8030607@samsung.com>
-References: <1378462361-13680-1-git-send-email-a.hajda@samsung.com>
- <8412301.YP2zzplWoe@amdc1227>
- <070001ceafa5$d4d81a40$7e884ec0$%kim@samsung.com>
- <523716C9.3000204@samsung.com> <20130916193709.27384.86101@quantum>
- <06c101cebdc5$75a83d10$60f8b730$%kim@samsung.com>
- <20131002010953.9338.23436@quantum>
- <0d8901cec170$f7230b50$e56921f0$%kim@samsung.com>
- <20131006202709.32214.75572@quantum> <525274FA.5020701@samsung.com>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 4/5] usb: ehci-s5p: Change to use phy provided by the
+ generic phy framework
+Date: Mon, 28 Oct 2013 20:06:06 +0530
+Message-ID: <CAFp+6iFhhZO+uY+W_HwU0BBfdSAAf==_a+W9CKznt1NmpJDfQA@mail.gmail.com>
+References: <1382710529-12082-1-git-send-email-k.debski@samsung.com>
+	<1382710529-12082-5-git-send-email-k.debski@samsung.com>
+	<CAFp+6iExOPunF=ND7_17PZXA217K_4im4ZJvR=mW2Ym_gnA0GQ@mail.gmail.com>
+	<025f01ced3e5$0660ecf0$1322c6d0$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:37442 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755395Ab3J1Obv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Oct 2013 10:31:51 -0400
-In-reply-to: <525274FA.5020701@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <025f01ced3e5$0660ecf0$1322c6d0$%debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'devicetree' <devicetree@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Ping
+Hi Kamil,
 
-Regards
-Andrzej
 
-On 10/07/2013 10:46 AM, Andrzej Hajda wrote:
-> On 10/06/2013 10:27 PM, Mike Turquette wrote:
->> Quoting Kukjin Kim (2013-10-04 19:16:56)
->>> Mike Turquette wrote:
->>>> Quoting Kukjin Kim (2013-09-30 03:11:41)
->>>>> Mike Turquette wrote:
->>>>>> Quoting Sylwester Nawrocki (2013-09-16 07:33:45)
->>>>>>> On 09/12/2013 12:50 PM, Kukjin Kim wrote:
->>>>>>>> Well...I'm not sure changing to use macro is better or not at this
->>>>>> moment...
->>>>>>> I think it is. ;) It's really less error prone to have symbolic
->>>> names
->>>>>> instead
->>>>>>> of the plain numbers. The clock ids are defined in one place and it
->>>> is
->>>>>> more
->>>>>>> clear what a clock is by looking at symbolic name. It's especially
->>>>>> annoying
->>>>>>> to use plain numbers where are are many clock in a single node, like
->>>> 10
->>>>>> or
->>>>>>> more. What are you main concerns with this ?
->>>>>> I think having the symbolic names is a win for readability.
->>>>>>
->>>>> Hmm...since Mike who is a maintainer for ccf agrees with Sylwester's
->>>> opinion, so I agree. Actually, I had no strong objection on this but still
->>>> I'm not sure using macro is really better because sometimes the name
->>>> doesn't give readability really I think though.
->>>>> Mike, can you give me your ack on clk stuff?
->>>> Yes, but I was thinking to take this change through the clk tree. The
->>>> new branch based on -rc3 will be published tonight.
->>>>
->>>> Let me know if it causes problems for you for me to take it.
->>>>
->>> Uhm, I think dt changes can make ugly conflicts because of spread dt changing?
->> Sure, go ahead and take the patches then.
+On Mon, Oct 28, 2013 at 7:23 PM, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Hi Vivek,
+>
+>> From: Vivek Gautam [mailto:gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org]
+>> Sent: Saturday, October 26, 2013 11:41 AM
 >>
->> Acked-by: Mike Turquette <mturquette@linaro.org>
+>> Hi Kamil,
 >>
->> Regards,
->> Mike
-> 
-> I can create patchset based on different git branch if neccessary.
-> 
-> Regards
-> Andrzej
->>> - Kukjin
-> 
+>>
+>> On Fri, Oct 25, 2013 at 7:45 PM, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> wrote:
+>> > Change the phy provider used from the old usb phy specific to a new
+>> > one using the generic phy framework.
+>> >
+>> > Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> > Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> > ---
+
+Similar change for ohci-exynos too ?
+
+>> >  drivers/usb/host/ehci-s5p.c |   21 +++++++++++----------
+>> >  1 file changed, 11 insertions(+), 10 deletions(-)
+>> >
+>> > diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-
+>> s5p.c
+>> > index 7cc26e6..76606ff 100644
+>> > --- a/drivers/usb/host/ehci-s5p.c
+>> > +++ b/drivers/usb/host/ehci-s5p.c
+>> > @@ -19,6 +19,7 @@
+>> >  #include <linux/module.h>
+>> >  #include <linux/of.h>
+>> >  #include <linux/of_gpio.h>
+>> > +#include <linux/phy/phy.h>
+>> >  #include <linux/platform_device.h>
+>> >  #include <linux/platform_data/usb-ehci-s5p.h>
+>> >  #include <linux/usb/phy.h>
+>> > @@ -45,7 +46,7 @@ static struct hc_driver __read_mostly
+>> > s5p_ehci_hc_driver;
+>> >
+>> >  struct s5p_ehci_hcd {
+>> >         struct clk *clk;
+>> > -       struct usb_phy *phy;
+>> > +       struct phy *phy;
+>> >         struct usb_otg *otg;
+
+This can also be removed.
+
+>> >         struct s5p_ehci_platdata *pdata;  }; @@ -77,10 +78,11 @@
+>> > static int s5p_ehci_probe(struct platform_device *pdev)  {
+>> >         struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+>> >         struct s5p_ehci_hcd *s5p_ehci;
+>> > +       struct phy *phy;
+>>
+>> just a nit here:
+>> Lets keep the pointer to 'phy' and 'phy_name' together ?
+>> and move this above phy_name ?
+>
+> Thanks for pointing this out.
+>
+>> >         struct usb_hcd *hcd;
+>> >         struct ehci_hcd *ehci;
+>> >         struct resource *res;
+>> > -       struct usb_phy *phy;
+>> > +       const char *phy_name;
+>> >         int irq;
+>> >         int err;
+>> >
+>> > @@ -103,14 +105,14 @@ static int s5p_ehci_probe(struct
+>> platform_device *pdev)
+>> >                 return -ENOMEM;
+>> >         }
+>> >         s5p_ehci = to_s5p_ehci(hcd);
+>> > -
+>> > +       phy_name = of_get_property(pdev->dev.of_node, "phy-names",
+>> NULL);
+
+Sorry one more doubt here :-)
+Now that we have HOST, DEVICE, HSIC0, HSIC1 as different PHYs,
+and i think EHCI will be the candidate to request HSIC phy too (once
+we have HSIC phy
+initialization code available for each SoC);
+shouldn't we be using of_count_phandle_with_args() to get HOST, and HSIC phys
+and then request multiple phys here ?
+
+>> > +       phy =  devm_phy_get(&pdev->dev, phy_name);
+>>
+>> Below check for exynos5440 was supposed to skip any request phy.
+>> So shouldn't we place above two assignments to the original place where
+>> devm_usb_get_phy() was called ?
+>> May be i am not getting you intention of changing the place.
+>
+> Hm... You are right - if we want to leave this check and skip phy request
+> for
+> 5450 then I should leave the order as it was. And if we want to use the new
+> phy driver for 5450 then the check to skip phy requesting should be simply
+> removed.
+>
+>>
+>> >         if (of_device_is_compatible(pdev->dev.of_node,
+>> >                                         "samsung,exynos5440-ehci")) {
+>> >                 s5p_ehci->pdata = &empty_platdata;
+>> >                 goto skip_phy;
+>> >         }
+>> >
+>> > -       phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+>> >         if (IS_ERR(phy)) {
+>> >                 /* Fallback to pdata */
+>> >                 if (!pdata) {
+>> > @@ -122,7 +124,6 @@ static int s5p_ehci_probe(struct platform_device
+>> *pdev)
+>> >                 }
+>> >         } else {
+>> >                 s5p_ehci->phy = phy;
+>> > -               s5p_ehci->otg = phy->otg;
+>> >         }
+>> >
+>> >  skip_phy:
+>> > @@ -166,7 +167,7 @@ skip_phy:
+>> >                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
+>>
+>> Lets remove this line and similar calls to 'set_host()' in the driver,
+>> since we don't have s5p_ehci->otg anymore after the same is removed
+>> above.
+>> Anyways this was helping the old phy-samsung-usb2 driver, and not
+>> needed now.
+>
+> Ok, I will.
+>
+>>
+>> >
+>> >         if (s5p_ehci->phy)
+>> > -               usb_phy_init(s5p_ehci->phy);
+>> > +               phy_power_on(s5p_ehci->phy);
+>> >         else if (s5p_ehci->pdata->phy_init)
+>> >                 s5p_ehci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>> >
+>> > @@ -188,7 +189,7 @@ skip_phy:
+>> >
+>> >  fail_add_hcd:
+>> >         if (s5p_ehci->phy)
+>> > -               usb_phy_shutdown(s5p_ehci->phy);
+>> > +               phy_power_off(s5p_ehci->phy);
+>> >         else if (s5p_ehci->pdata->phy_exit)
+>> >                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>> >  fail_io:
+>> > @@ -209,7 +210,7 @@ static int s5p_ehci_remove(struct platform_device
+>> *pdev)
+>> >                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
+>>
+>> ditto
+>>
+>> >
+>> >         if (s5p_ehci->phy)
+>> > -               usb_phy_shutdown(s5p_ehci->phy);
+>> > +               phy_power_off(s5p_ehci->phy);
+>> >         else if (s5p_ehci->pdata->phy_exit)
+>> >                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>> >
+>> > @@ -244,7 +245,7 @@ static int s5p_ehci_suspend(struct device *dev)
+>> >                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
+>> ditto
+>>
+>> >
+>> >         if (s5p_ehci->phy)
+>> > -               usb_phy_shutdown(s5p_ehci->phy);
+>> > +               phy_power_off(s5p_ehci->phy);
+>> >         else if (s5p_ehci->pdata->phy_exit)
+>> >                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
+>> >
+>> > @@ -265,7 +266,7 @@ static int s5p_ehci_resume(struct device *dev)
+>> >                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
+>> ditto
+>>
+>> >
+>> >         if (s5p_ehci->phy)
+>> > -               usb_phy_init(s5p_ehci->phy);
+>> > +               phy_power_on(s5p_ehci->phy);
+>> >         else if (s5p_ehci->pdata->phy_init)
+>> >                 s5p_ehci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
+>> >
+>> [..] Rest looks good. :-)
+>>
+>
+> Thank you!
+>
+> Best wishes,
+> --
+> Kamil Debski
+> Samsung R&D Institute Poland
+>
+>
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
