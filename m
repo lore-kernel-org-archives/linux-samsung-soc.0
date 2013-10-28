@@ -1,82 +1,27 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 3/7] video: exynos_mipi_dsim: Use the generic PHY driver
-Date: Mon, 28 Oct 2013 13:24:31 +0100
-Message-ID: <23467785.uRr31aFEN8@amdc1227>
-References: <1381940896-9355-1-git-send-email-kishon@ti.com>
- <526997BC.8070602@gmail.com> <526E0038.7050805@samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] Documentation/watchdog: Update node name in samsung-wdt
+ example
+Date: Mon, 28 Oct 2013 06:28:27 -0700
+Message-ID: <526E667B.5010606@roeck-us.net>
+References: <1382941457-2826-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <526E0038.7050805@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Donghwa Lee <dh09.lee@samsung.com>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>, Sachin Kamat <sachin.kamat@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, inki.dae@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.active-venture.com ([67.228.131.205]:55096 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756509Ab3J1N2c (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Oct 2013 09:28:32 -0400
+In-Reply-To: <1382941457-2826-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>, linux-doc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, wim@iguana.be, rob@landley.net, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Hi Donghwa,
+On 10/27/2013 11:24 PM, Sachin Kamat wrote:
+> Update the name as per DT naming convention.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 
-On Monday 28 of October 2013 15:12:08 Donghwa Lee wrote:
-> On Fri, OCT 25, 2013 06:57, Sylwester Nawrocki wrote:
-> > On 10/24/2013 05:57 PM, Kishon Vijay Abraham I wrote:
-> >> On Thursday 24 October 2013 09:12 PM, Sachin Kamat wrote:
-> >>> On 24 October 2013 20:00, Olof Johansson<olof@lixom.net>  wrote:
-> >>>> On Wed, Oct 16, 2013 at 9:28 AM, Kishon Vijay Abraham I<kishon@ti.com>  wrote:
-> >>>>> diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
-> >>>>> index 32e5406..00b3a52 100644
-> >>>>> --- a/drivers/video/exynos/exynos_mipi_dsi.c
-> >>>>> +++ b/drivers/video/exynos/exynos_mipi_dsi.c
-> >>>>> @@ -156,8 +157,7 @@ static int exynos_mipi_dsi_blank_mode(struct mipi_dsim_device *dsim, int power)
-> >>>>>                  exynos_mipi_regulator_enable(dsim);
-> >>>>>
-> >>>>>                  /* enable MIPI-DSI PHY. */
-> >>>>> -               if (dsim->pd->phy_enable)
-> >>>>> -                       dsim->pd->phy_enable(pdev, true);
-> >>>>> +               phy_power_on(dsim->phy);
-> >>>>>
-> >>>>>                  clk_enable(dsim->clock);
-> >>>>>
-> >>>>
-> >>>> This introduces the below with exynos_defconfig:
-> >>>>
-> >>>> ../../drivers/video/exynos/exynos_mipi_dsi.c: In function
-> >>>> 'exynos_mipi_dsi_blank_mode':
-> >>>> ../../drivers/video/exynos/exynos_mipi_dsi.c:144:26: warning: unused
-> >>>> variable 'pdev' [-Wunused-variable]
-> >>>>    struct platform_device *pdev = to_platform_device(dsim->dev);
-> >
-> > Sorry about missing that, I only noticed this warning recently and didn't
-> > get around to submit a patch.
-> >
-> >>> I have already submitted a patch to fix this [1]
-> >
-> > Thanks a lot guys for fixing this.
-> >
-> >>> [1] http://marc.info/?l=linux-fbdev&m=138233359617936&w=2
-> >>
-> >> Sorry, missed that :-(
-> >
-> > This MIPI DSIM driver is affectively a dead code in the mainline now, once
-> > Exynos become a dt-only platform. I guess it can be deleted for 3.14, once
-> > S5P gets converted to the device tree. The new driver using CDF is basically
-> > a complete rewrite. Or device tree support should be added to that driver,
-> > but I believe it doesn't make sense without CDF.
-> >
-> 
-> MIPI DSIM driver is not a dead code. There is a steady trickle of patches.
-> It's kind of late, but, I will update it as DT based drivers as soon as possible.
-> And Why do you think that DT support of existing MIPI DSIM is something less
-> than great?
-
-First of all, the exynos_mipi_dsim driver has currently no users in
-mainline kernel, so it is essentially dead code. In addition, on
-a platform that is the primary candidate for using it, which is Exynos,
-there is no way to use it, due to no DT support.
-
-As for the driver itself, it is not really a great example of good code.
-It contains a hacks, like calling msleep() without any clear reason and
-also many coding style issues. I'd prefer to replace it with the new
-exynos-dsi driver rewritten completely in SRPOL, when CDF is finished.
-
-Best regards,
-Tomasz
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
