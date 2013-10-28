@@ -1,172 +1,84 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v5] iio: exynos_adc: use wait_for_completion_timeout instead of
- interruptible
-Date: Mon, 28 Oct 2013 11:11:05 +0530
-Message-ID: <1382938865-3779-1-git-send-email-ch.naveen@samsung.com>
-References: <1381479821-17276-1-git-send-email-ch.naveen@samsung.com>
+From: Donghwa Lee <dh09.lee@samsung.com>
+Subject: Re: [PATCH 3/7] video: exynos_mipi_dsim: Use the generic PHY driver
+Date: Mon, 28 Oct 2013 15:12:08 +0900
+Message-ID: <526E0038.7050805@samsung.com>
+References: <1381940896-9355-1-git-send-email-kishon@ti.com>
+ <1381940896-9355-4-git-send-email-kishon@ti.com>
+ <CAOesGMhwotSY-1WQmt+wtsrsH2m30VE=j-MwyhpYU3mt_PSPPw@mail.gmail.com>
+ <CAK9yfHxaLsdFGXiCxvs+HpMSuY6xWd=CGPv-YfSkJqWSxE+f-w@mail.gmail.com>
+ <52694354.6030603@ti.com> <526997BC.8070602@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33708 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752188Ab3J1FjS (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47163 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751857Ab3J1GMP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Oct 2013 01:39:18 -0400
-In-reply-to: <1381479821-17276-1-git-send-email-ch.naveen@samsung.com>
+	Mon, 28 Oct 2013 02:12:15 -0400
+In-reply-to: <526997BC.8070602@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, grundler@chromium.org, cpgs@samsung.com
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Sachin Kamat <sachin.kamat@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, inki.dae@samsung.com, dh09.lee@samsung.com
 
-1. The irq routine is so simple (just one register read) shouldn't be long
-   Hence, reduce the timeout to 100milli secs,
-2. With 100ms of wait time, interruptible is very much unnecessary.
-   Hence, use wait_for_completion_timeout instead of
-   wait_for_completion_interruptible_timeout
-3. Reset software if a timeout happens.
-4. Add INIT_COMPLETION before the wait_for_completion_timeout in raw_read()
+On Fri, OCT 25, 2013 06:57, Sylwester Nawrocki wrote:
+> On 10/24/2013 05:57 PM, Kishon Vijay Abraham I wrote:
+>> On Thursday 24 October 2013 09:12 PM, Sachin Kamat wrote:
+>>> On 24 October 2013 20:00, Olof Johansson<olof@lixom.net>  wrote:
+>>>> On Wed, Oct 16, 2013 at 9:28 AM, Kishon Vijay Abraham I<kishon@ti.com>  wrote:
+>>>>> diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
+>>>>> index 32e5406..00b3a52 100644
+>>>>> --- a/drivers/video/exynos/exynos_mipi_dsi.c
+>>>>> +++ b/drivers/video/exynos/exynos_mipi_dsi.c
+>>>>> @@ -156,8 +157,7 @@ static int exynos_mipi_dsi_blank_mode(struct mipi_dsim_device *dsim, int power)
+>>>>>                  exynos_mipi_regulator_enable(dsim);
+>>>>>
+>>>>>                  /* enable MIPI-DSI PHY. */
+>>>>> -               if (dsim->pd->phy_enable)
+>>>>> -                       dsim->pd->phy_enable(pdev, true);
+>>>>> +               phy_power_on(dsim->phy);
+>>>>>
+>>>>>                  clk_enable(dsim->clock);
+>>>>>
+>>>>
+>>>> This introduces the below with exynos_defconfig:
+>>>>
+>>>> ../../drivers/video/exynos/exynos_mipi_dsi.c: In function
+>>>> 'exynos_mipi_dsi_blank_mode':
+>>>> ../../drivers/video/exynos/exynos_mipi_dsi.c:144:26: warning: unused
+>>>> variable 'pdev' [-Wunused-variable]
+>>>>    struct platform_device *pdev = to_platform_device(dsim->dev);
+>
+> Sorry about missing that, I only noticed this warning recently and didn't
+> get around to submit a patch.
+>
+>>> I have already submitted a patch to fix this [1]
+>
+> Thanks a lot guys for fixing this.
+>
+>>> [1] http://marc.info/?l=linux-fbdev&m=138233359617936&w=2
+>>
+>> Sorry, missed that :-(
+>
+> This MIPI DSIM driver is affectively a dead code in the mainline now, once
+> Exynos become a dt-only platform. I guess it can be deleted for 3.14, once
+> S5P gets converted to the device tree. The new driver using CDF is basically
+> a complete rewrite. Or device tree support should be added to that driver,
+> but I believe it doesn't make sense without CDF.
+>
 
-Note: submitted for review at https://patchwork.kernel.org/patch/2279591/
-
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Reviewed-on: https://chromium-review.googlesource.com/172724
-Reviewed-by: Doug Anderson <dianders@chromium.org>
----
-Changes since v1:
-As per discussion at
-http://marc.info/?l=linux-kernel&m=136517637228869&w=3
-
-Changes since v2:
-None.
-Rebased and reposting.
-
-Changes since v3:
-1. commit message change and
-2. removed an unncessary assignment
-
-Changes since v4:
-Moved INIT_COMPLETION call to the starting of the function
+MIPI DSIM driver is not a dead code. There is a steady trickle of patches.
+It's kind of late, but, I will update it as DT based drivers as soon as possible.
+And Why do you think that DT support of existing MIPI DSIM is something less
+than great?
 
 
- drivers/iio/adc/exynos_adc.c | 69 ++++++++++++++++++++++++--------------------
- 1 file changed, 38 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 0f2ca60..a675751 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -81,7 +81,7 @@ enum adc_version {
- #define ADC_CON_EN_START	(1u << 0)
- #define ADC_DATX_MASK		0xFFF
- 
--#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(1000))
-+#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
- 
- struct exynos_adc {
- 	void __iomem		*regs;
-@@ -111,6 +111,30 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
- 	return (unsigned int)match->data;
- }
- 
-+static void exynos_adc_hw_init(struct exynos_adc *info)
-+{
-+	u32 con1, con2;
-+
-+	if (info->version == ADC_V2) {
-+		con1 = ADC_V2_CON1_SOFT_RESET;
-+		writel(con1, ADC_V2_CON1(info->regs));
-+
-+		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
-+			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
-+		writel(con2, ADC_V2_CON2(info->regs));
-+
-+		/* Enable interrupts */
-+		writel(1, ADC_V2_INT_EN(info->regs));
-+	} else {
-+		/* set default prescaler values and Enable prescaler */
-+		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-+
-+		/* Enable 12-bit ADC resolution */
-+		con1 |= ADC_V1_CON_RES;
-+		writel(con1, ADC_V1_CON(info->regs));
-+	}
-+}
-+
- static int exynos_read_raw(struct iio_dev *indio_dev,
- 				struct iio_chan_spec const *chan,
- 				int *val,
-@@ -120,11 +144,13 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 	struct exynos_adc *info = iio_priv(indio_dev);
- 	unsigned long timeout;
- 	u32 con1, con2;
-+	int ret;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
- 		return -EINVAL;
- 
- 	mutex_lock(&indio_dev->mlock);
-+	INIT_COMPLETION(info->completion);
- 
- 	/* Select the channel to be used and Trigger conversion */
- 	if (info->version == ADC_V2) {
-@@ -144,16 +170,21 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				ADC_V1_CON(info->regs));
- 	}
- 
--	timeout = wait_for_completion_interruptible_timeout
-+	timeout = wait_for_completion_timeout
- 			(&info->completion, EXYNOS_ADC_TIMEOUT);
--	*val = info->value;
-+	if (timeout == 0) {
-+		dev_warn(&indio_dev->dev, "Conversion timed out! Resetting\n");
-+		exynos_adc_hw_init(info);
-+		ret = -ETIMEDOUT;
-+	} else {
-+		*val = info->value;
-+		*val2 = 0;
-+		ret = IIO_VAL_INT;
-+	}
- 
- 	mutex_unlock(&indio_dev->mlock);
- 
--	if (timeout == 0)
--		return -ETIMEDOUT;
--
--	return IIO_VAL_INT;
-+	return ret;
- }
- 
- static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
-@@ -225,30 +256,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
- 	return 0;
- }
- 
--static void exynos_adc_hw_init(struct exynos_adc *info)
--{
--	u32 con1, con2;
--
--	if (info->version == ADC_V2) {
--		con1 = ADC_V2_CON1_SOFT_RESET;
--		writel(con1, ADC_V2_CON1(info->regs));
--
--		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
--			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
--		writel(con2, ADC_V2_CON2(info->regs));
--
--		/* Enable interrupts */
--		writel(1, ADC_V2_INT_EN(info->regs));
--	} else {
--		/* set default prescaler values and Enable prescaler */
--		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
--
--		/* Enable 12-bit ADC resolution */
--		con1 |= ADC_V1_CON_RES;
--		writel(con1, ADC_V1_CON(info->regs));
--	}
--}
--
- static int exynos_adc_probe(struct platform_device *pdev)
- {
- 	struct exynos_adc *info = NULL;
--- 
-1.7.12.4
+> -- 
+> Regards,
+> Sylwester
+> -- 
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
