@@ -1,42 +1,74 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [RFC 00/12] Add DRM Exynos HDMI on SoCs from Exynos4 family
-Date: Tue, 29 Oct 2013 02:19:30 +0900
-Message-ID: <CAAQKjZP4WBUsKnFMo1twHLWJWzgNoE-n1MnF5ky68ekN1vommQ@mail.gmail.com>
-References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com>
-	<CAAQKjZNmmn0rs10456GQ20zZJLp0Qh3Q4i2_eRqERmxyhLZWSQ@mail.gmail.com>
-	<526E8A09.7090709@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 1/5] phy: Add new Exynos USB PHY driver
+Date: Mon, 28 Oct 2013 21:00:01 +0100
+Message-ID: <1548448.GBuE52miBt@flatron>
+References: <1382710529-12082-1-git-send-email-k.debski@samsung.com> <526A90B9.3040501@ti.com> <025b01ced3e4$ec685db0$c5391910$%debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <526E8A09.7090709@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, mturquette@linaro.org, Seung-Woo Kim <sw0312.kim@samsung.com>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f45.google.com ([74.125.83.45]:56801 "EHLO
+	mail-ee0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755810Ab3J1UAE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Oct 2013 16:00:04 -0400
+In-Reply-To: <025b01ced3e4$ec685db0$c5391910$%debski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>
+Cc: 'Kishon Vijay Abraham I' <kishon@ti.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org, kyungmin.park@samsung.com, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, mat.krawczuk@gmail.com
 
-2013/10/29 Kukjin Kim <kgene.kim@samsung.com>:
-> On 10/28/13 06:42, Inki Dae wrote:
->>
->> Hi Tomasz,
->>
->> I have merged the re-factoring patch set from Sean Paul. Can you
->> re-base your patch set at top of exynos-drm-next?
->>
-> Basically, RFC is not patch for merge. So Tomasz needs to re-submit after
-> addressing comments from RFC.
->
+Hi Kamil,
 
-There must definitely be your misunderstanding. I have never merged
-this RFC patch set. For review, shouldn't this RFC patch set be
-rebased at top of latest exynos-drm-next? :)
+On Monday 28 of October 2013 14:52:19 Kamil Debski wrote:
+> Hi Kishon,
+> 
+> Thank you for your review! I will answer your comments below.
+[snip]
+> > > +
+> > > +	switch (drv->cfg->cpu) {
+> > > +	case TYPE_EXYNOS4210:
+> > 
+> > > +	case TYPE_EXYNOS4212:
+> > Lets not add such cpu checks inside driver.
+> 
+> Some SoC have a special register, which switches the OTG lines between
+> device and host modes. I understand that it might not be the prettiest
+> code. I see this as a good compromise between having a single huge
+> driver for all Exynos SoCs and having a multiple drivers for each SoC
+> version. PHY IPs in these chips very are similar but have to be handled
+> differently. Any other ideas to solve this issue?
 
-Thanks,
-Inki Dae
+Maybe adding a flag in drv->cfg called, for example, .has_mode_switch 
+could solve this problem without having to check the SoC type explicitly?
 
-> Thanks,
-> Kukjin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[snip]
+> > > +#ifdef CONFIG_PHY_EXYNOS4210_USB
+> > 
+> > Do we really need this?
+> 
+> No we don't. The driver can always support all Exynos SoC versions.
+> These config options were added for flexibility.
+> 
+> > > +extern const struct uphy_config exynos4210_uphy_config; #endif
+> > > +
+> > > +#ifdef CONFIG_PHY_EXYNOS4212_USB
+> > 
+> > Same here.
+> > 
+> > > +extern const struct uphy_config exynos4212_uphy_config; #endif
+> > > +
+> > > +static const struct of_device_id exynos_uphy_of_match[] = { #ifdef
+> > > +CONFIG_PHY_EXYNOS4210_USB
+> > 
+> > #if not needed here.
+> 
+> If the #ifdef CONFIG_PHY_EXYNOS4210_USB is removed then yes. Otherwise
+> it is necessary - exynos4210_uphy_config may be undefined.
+
+I believe this and other ifdefs below are needed, otherwise, with support
+for one of the SoCs disabled, the driver could still bind to its 
+compatible value.
+
+Best regards,
+Tomasz
