@@ -1,169 +1,43 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 4/5] usb: ehci-s5p: Change to use phy provided by the
- generic phy framework
-Date: Sat, 26 Oct 2013 15:11:29 +0530
-Message-ID: <CAFp+6iExOPunF=ND7_17PZXA217K_4im4ZJvR=mW2Ym_gnA0GQ@mail.gmail.com>
-References: <1382710529-12082-1-git-send-email-k.debski@samsung.com>
-	<1382710529-12082-5-git-send-email-k.debski@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 1/6] Samsung cleanup for v3.13
+Date: Sun, 27 Oct 2013 21:33:11 -0700
+Message-ID: <20131028043311.GG22890@quad.lixom.net>
+References: <526455CB.6050507@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1382710529-12082-5-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:55432 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750998Ab3J1Edc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Oct 2013 00:33:32 -0400
+Received: by mail-pd0-f180.google.com with SMTP id p10so6458866pdj.25
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Oct 2013 21:33:32 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <526455CB.6050507@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org
 
-Hi Kamil,
+On Mon, Oct 21, 2013 at 07:14:35AM +0900, Kukjin Kim wrote:
+> The following changes since commit 4a10c2ac2f368583138b774ca41fac4207911983:
+> 
+>   Linux 3.12-rc2 (2013-09-23 15:41:09 -0700)
+> 
+> are available in the git repository at:
+> 
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-cleanup
+> 
+> for you to fetch changes up to ae3c5d74ea0d5e2f1c32c527e5de36c7614525af:
+> 
+>   ARM: EXYNOS: remove CONFIG_MACH_EXYNOS[4, 5]_DT config options
+> (2013-10-21 06:35:47 +0900)
 
-On Fri, Oct 25, 2013 at 7:45 PM, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> Change the phy provider used from the old usb phy specific to a new one
-> using the generic phy framework.
->
-> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/usb/host/ehci-s5p.c |   21 +++++++++++----------
->  1 file changed, 11 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-> index 7cc26e6..76606ff 100644
-> --- a/drivers/usb/host/ehci-s5p.c
-> +++ b/drivers/usb/host/ehci-s5p.c
-> @@ -19,6 +19,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/of_gpio.h>
-> +#include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/platform_data/usb-ehci-s5p.h>
->  #include <linux/usb/phy.h>
-> @@ -45,7 +46,7 @@ static struct hc_driver __read_mostly s5p_ehci_hc_driver;
->
->  struct s5p_ehci_hcd {
->         struct clk *clk;
-> -       struct usb_phy *phy;
-> +       struct phy *phy;
->         struct usb_otg *otg;
->         struct s5p_ehci_platdata *pdata;
->  };
-> @@ -77,10 +78,11 @@ static int s5p_ehci_probe(struct platform_device *pdev)
->  {
->         struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
->         struct s5p_ehci_hcd *s5p_ehci;
-> +       struct phy *phy;
-
-just a nit here:
-Lets keep the pointer to 'phy' and 'phy_name' together ?
-and move this above phy_name ?
-
->         struct usb_hcd *hcd;
->         struct ehci_hcd *ehci;
->         struct resource *res;
-> -       struct usb_phy *phy;
-> +       const char *phy_name;
->         int irq;
->         int err;
->
-> @@ -103,14 +105,14 @@ static int s5p_ehci_probe(struct platform_device *pdev)
->                 return -ENOMEM;
->         }
->         s5p_ehci = to_s5p_ehci(hcd);
-> -
-> +       phy_name = of_get_property(pdev->dev.of_node, "phy-names", NULL);
-> +       phy =  devm_phy_get(&pdev->dev, phy_name);
-
-Below check for exynos5440 was supposed to skip any request phy.
-So shouldn't we place above two assignments to the original place
-where devm_usb_get_phy()
-was called ?
-May be i am not getting you intention of changing the place.
-
->         if (of_device_is_compatible(pdev->dev.of_node,
->                                         "samsung,exynos5440-ehci")) {
->                 s5p_ehci->pdata = &empty_platdata;
->                 goto skip_phy;
->         }
->
-> -       phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
->         if (IS_ERR(phy)) {
->                 /* Fallback to pdata */
->                 if (!pdata) {
-> @@ -122,7 +124,6 @@ static int s5p_ehci_probe(struct platform_device *pdev)
->                 }
->         } else {
->                 s5p_ehci->phy = phy;
-> -               s5p_ehci->otg = phy->otg;
->         }
->
->  skip_phy:
-> @@ -166,7 +167,7 @@ skip_phy:
->                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
-
-Lets remove this line and similar calls to 'set_host()' in the driver,
-since we don't have
-s5p_ehci->otg anymore after the same is removed above.
-Anyways this was helping the old phy-samsung-usb2 driver, and not needed now.
-
->
->         if (s5p_ehci->phy)
-> -               usb_phy_init(s5p_ehci->phy);
-> +               phy_power_on(s5p_ehci->phy);
->         else if (s5p_ehci->pdata->phy_init)
->                 s5p_ehci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
->
-> @@ -188,7 +189,7 @@ skip_phy:
->
->  fail_add_hcd:
->         if (s5p_ehci->phy)
-> -               usb_phy_shutdown(s5p_ehci->phy);
-> +               phy_power_off(s5p_ehci->phy);
->         else if (s5p_ehci->pdata->phy_exit)
->                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
->  fail_io:
-> @@ -209,7 +210,7 @@ static int s5p_ehci_remove(struct platform_device *pdev)
->                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
-
-ditto
-
->
->         if (s5p_ehci->phy)
-> -               usb_phy_shutdown(s5p_ehci->phy);
-> +               phy_power_off(s5p_ehci->phy);
->         else if (s5p_ehci->pdata->phy_exit)
->                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
->
-> @@ -244,7 +245,7 @@ static int s5p_ehci_suspend(struct device *dev)
->                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
-ditto
-
->
->         if (s5p_ehci->phy)
-> -               usb_phy_shutdown(s5p_ehci->phy);
-> +               phy_power_off(s5p_ehci->phy);
->         else if (s5p_ehci->pdata->phy_exit)
->                 s5p_ehci->pdata->phy_exit(pdev, USB_PHY_TYPE_HOST);
->
-> @@ -265,7 +266,7 @@ static int s5p_ehci_resume(struct device *dev)
->                 s5p_ehci->otg->set_host(s5p_ehci->otg, &hcd->self);
-ditto
-
->
->         if (s5p_ehci->phy)
-> -               usb_phy_init(s5p_ehci->phy);
-> +               phy_power_on(s5p_ehci->phy);
->         else if (s5p_ehci->pdata->phy_init)
->                 s5p_ehci->pdata->phy_init(pdev, USB_PHY_TYPE_HOST);
->
-[..] Rest looks good. :-)
+Thanks, pulled into next/cleanup. Trivial add/add conflict when merging
+into for-next due to the 64xx DT platform, no big deal.
 
 
-
--- 
-Best Regards
-Vivek
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-Olof
