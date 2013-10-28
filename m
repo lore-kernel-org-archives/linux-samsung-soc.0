@@ -1,56 +1,91 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 6/6] Samsung update for v3.13
-Date: Sun, 27 Oct 2013 21:53:10 -0700
-Message-ID: <20131028045310.GL22890@quad.lixom.net>
-References: <5264560B.504@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] ARM: dts: disable PCIe for SD5v1 board
+Date: Mon, 28 Oct 2013 14:36:53 +0900
+Message-ID: <000101ced39f$b553ec80$1ffbc580$%han@samsung.com>
+References: <000301cea9fe$619d2900$24d77b00$%han@samsung.com>
+ <CAOesGMjuzKxi_j5pASteHaNXoNQ=nURLPRk5b6pbNLmCPC+txw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:64993 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751337Ab3J1Exc (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:10114 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751381Ab3J1Fgz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Oct 2013 00:53:32 -0400
-Received: by mail-pa0-f41.google.com with SMTP id rd3so1896801pab.14
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 27 Oct 2013 21:53:31 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <5264560B.504@samsung.com>
+	Mon, 28 Oct 2013 01:36:55 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MVD004VA69HITQ0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Oct 2013 14:36:53 +0900 (KST)
+In-reply-to: <CAOesGMjuzKxi_j5pASteHaNXoNQ=nURLPRk5b6pbNLmCPC+txw@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Mon, Oct 21, 2013 at 07:15:39AM +0900, Kukjin Kim wrote:
-> The following changes since commit 4a10c2ac2f368583138b774ca41fac4207911983:
+On Monday, October 28, 2013 1:52 PM, Olof Johansson wrote:
+> On Wed, Sep 4, 2013 at 11:08 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+> > Disable PCIe for SD5v1 board, because there is no PCIe slot
+> > on SD5v1 board.
+> >
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > ---
+> > Tested on SD5v1 board.
+> >
+> >  arch/arm/boot/dts/exynos5440-sd5v1.dts |    7 +++++++
+> >  1 file changed, 7 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/exynos5440-sd5v1.dts b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> > index 5b22508..78a239d 100644
+> > --- a/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> > +++ b/arch/arm/boot/dts/exynos5440-sd5v1.dts
+> > @@ -36,4 +36,11 @@
+> >                 status = "disabled";
+> >         };
+> >
+> > +       pcie@290000 {
+> > +               status = "disabled";
+> > +       };
+> > +
+> > +       pcie@2a0000 {
+> > +               status = "disabled";
+> > +       };
+> >  };
 > 
->   Linux 3.12-rc2 (2013-09-23 15:41:09 -0700)
-> 
-> are available in the git repository at:
-> 
+> Usually IP blocks like these are always left disabled in the dtsi, and
+> explicitly _enabled_ in the DTS on boards that make use of that part
+> of the chip.
+> So the real solution here should be to move the disabling to the 5440
+> .dtsi instead.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/exynos-dt
-> 
-> for you to fetch changes up to c6ad2259c629bef992be5ee82d3e74cd1e90c440:
-> 
->   ARM: dts: disable PCIe for SD5v1 board (2013-10-08 06:58:01 +0900)
-> 
-> ----------------------------------------------------------------
-> update device tree for exynos
-> - add MIPI PHY node for exynos4
-> - update regulator for origen and exynos5250-arndale
-> - add support HDMI for exynos5250, exynos5420
-> - disable PCIe for exynos5440-sd5v1
+OK, right.
+Thank you for your guidance.
 
-Hi,
+Then, do you mean the following?
+If it is right, I will send the v2 patch.
 
-The last patch on this branch should be done differently (the disable should be
-in the dtsi instead).
+./arch/arm/boot/dts/exynos5440.dtsi
+	pcie@290000 {
+		.....
+		status = "disabled";
+	};
+	pcie@2a0000 {
+		.....
+		status = "disabled";
+	};
 
-Since that patch is at the very end of the branch, I'll pull in everything
-but that in next/dt. You can send the patch for 5440 PCIe separately (even
-as a patch instead of in a branch) and I can apply it later -- ideally
-before -rc1 but at least not too long after.
+./arch/arm/boot/dts/exynos5440-ssdk5440.dts
+	pcie@290000 {
+		.....
+		status = "okay";
+	};
+	pcie@2a0000 {
+		.....
+		status = "okay";
+	};
 
-
--Olof
+Best regards,
+Jingoo Han
