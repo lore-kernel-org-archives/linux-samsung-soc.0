@@ -1,63 +1,93 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v10 11/12] V4L: Add DT binding doc for s5k4e5 image sensor
-Date: Mon, 28 Oct 2013 23:54:23 +0000
-Message-ID: <20131028235423.GD4763@kartoffel>
-References: <1382074659-31130-1-git-send-email-arun.kk@samsung.com>
- <1382074659-31130-12-git-send-email-arun.kk@samsung.com>
+From: Rahul Sharma <r.sh.open@gmail.com>
+Subject: Re: [PATCH v2 0/7] drm/exynos: move hdmiphy related code to hdmiphy driver
+Date: Tue, 29 Oct 2013 09:06:20 +0530
+Message-ID: <CAPdUM4MhTvdz8nH20j6DxqwN_yYac3pvfwgDn21gjrxR+sCZHg@mail.gmail.com>
+References: <1382436668-15813-1-git-send-email-rahul.sharma@samsung.com>
+	<CAAQKjZOnZi_=V6ZL_SmamiG_Gbo7TxsRUv5VtSvJGpqkyvH_ug@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:61609 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932171Ab3J1Xyt (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:51606 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757559Ab3J2DgV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Oct 2013 19:54:49 -0400
-Content-Disposition: inline
-In-Reply-To: <1382074659-31130-12-git-send-email-arun.kk@samsung.com>
+	Mon, 28 Oct 2013 23:36:21 -0400
+In-Reply-To: <CAAQKjZOnZi_=V6ZL_SmamiG_Gbo7TxsRUv5VtSvJGpqkyvH_ug@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, Pawel Moll <Pawel.Moll@arm.com>, "galak@codeaurora.org" <galak@codeaurora.org>, "a.hajda@samsung.com" <a.hajda@samsung.com>, "sachin.kamat@linaro.org" <sachin.kamat@linaro.org>, "shaik.ameer@samsung.com" <shaik.ameer@samsung.com>, "kilyeon.im@samsung.com" <kilyeon.im@samsung.com>, "arunkk.samsung@gmail.com" <arunkk.samsung@gmail.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Rahul Sharma <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sunil joshi <joshi@samsung.com>
 
-On Fri, Oct 18, 2013 at 06:37:38AM +0100, Arun Kumar K wrote:
-> S5K4E5 is a Samsung raw image sensor controlled via I2C.
-> This patch adds the DT binding documentation for the same.
-> 
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  .../devicetree/bindings/media/samsung-s5k4e5.txt   |   45 ++++++++++++++++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k4e5.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/samsung-s5k4e5.txt b/Documentation/devicetree/bindings/media/samsung-s5k4e5.txt
-> new file mode 100644
-> index 0000000..0fca087
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/samsung-s5k4e5.txt
-> @@ -0,0 +1,45 @@
-> +* Samsung S5K4E5 Raw Image Sensor
-> +
-> +S5K4E5 is a raw image sensor with maximum resolution of 2560x1920
-> +pixels. Data transfer is carried out via MIPI CSI-2 port and controls
-> +via I2C bus.
-> +
-> +Required Properties:
-> +- compatible	: must be "samsung,s5k4e5"
+On 28 October 2013 19:10, Inki Dae <inki.dae@samsung.com> wrote:
+> Hi Rahul,
+>
+> I have merged the re-factoring patch set from Sean Paul to
+> exynos-drm-next except eDP related patch set that these need more
+> reviews. Can you re-base at top of exynos-drm-next?
+>
 
-s/must be/should contain/
+Ok. I will rebase and post it again.
 
-> +- reg		: I2C device address
-> +- reset-gpios	: specifier of a GPIO connected to the RESET pin
-> +- clocks	: should contain the sensor's EXTCLK clock specifier, from
-> +		  the common clock bindings
+regards,
+Rahul Sharma.
 
-I would reword this to reference clock-names so as to make the ordering
-relationship explicit.
-
-With that, as everything else looks sane:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Thanks
-Mark.
+> Thanks,
+> Inki Dae
+>
+> 2013/10/22 Rahul Sharma <rahul.sharma@samsung.com>:
+>> Currently, exynos hdmiphy operations and configs are kept
+>> inside the hdmi driver. Hdmiphy related code is very tightly
+>> coupled with hdmi IP driver. With these patches, hdmiphy
+>> related stuff is moved to hdmiphy i2c driver for exynos4 and
+>> exynos5250 socs. hdmi driver, being the phy controller, calls
+>> exynos hdmiphy interfaces.
+>>
+>> This series also removes hdmiphy dummy clock for hdmiphy
+>> and replace it with Phy PMU Control from the hdmiphy driver.
+>>
+>> At the end, support for exynos5420 hdmiphy is added to the
+>> hdmiphy platform driver.
+>>
+>> Drm related paches are based on exynos-drm-next branch at
+>> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+>>
+>> Arch related paches are based on for-next branch at
+>> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git
+>>
+>> Rahul Sharma (7):
+>>   drm/exynos: move hdmiphy code to hdmiphy i2c driver
+>>   drm/exynos: remove dummy hdmiphy clock
+>>   drm/exynos: add hdmiphy platform driver for exynos5420
+>>   drm/exynos: add hdmiphy pmu bit control in hdmiphy drivers
+>>   exynos/drm: fix ddc i2c device probe failure
+>>   ARM: dts: update hdmiphy dt node for exynos5250
+>>   ARM: dts: update hdmiphy dt node for exynos5420
+>>
+>>  .../devicetree/bindings/video/exynos_hdmi.txt      |    2 +
+>>  .../devicetree/bindings/video/exynos_hdmiphy.txt   |    8 +-
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    9 +-
+>>  arch/arm/boot/dts/exynos5420.dtsi                  |   14 +-
+>>  drivers/gpu/drm/exynos/Makefile                    |    3 +-
+>>  drivers/gpu/drm/exynos/exynos_ddc.c                |    5 +
+>>  drivers/gpu/drm/exynos/exynos_hdmi.c               |  407 +++++-----------
+>>  drivers/gpu/drm/exynos/exynos_hdmiphy.c            |   65 ---
+>>  drivers/gpu/drm/exynos/exynos_hdmiphy.h            |   46 ++
+>>  drivers/gpu/drm/exynos/exynos_hdmiphy_i2c.c        |  484 ++++++++++++++++++++
+>>  drivers/gpu/drm/exynos/exynos_hdmiphy_platform.c   |  418 +++++++++++++++++
+>>  drivers/gpu/drm/exynos/exynos_hdmiphy_priv.h       |   36 ++
+>>  drivers/gpu/drm/exynos/regs-hdmiphy.h              |   37 ++
+>>  13 files changed, 1174 insertions(+), 360 deletions(-)
+>>  delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy.c
+>>  create mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy.h
+>>  create mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy_i2c.c
+>>  create mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy_platform.c
+>>  create mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy_priv.h
+>>  create mode 100644 drivers/gpu/drm/exynos/regs-hdmiphy.h
+>>
+>> --
+>> 1.7.10.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
