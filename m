@@ -1,81 +1,71 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: dts: use 'status' property for PCIe nodes
-Date: Tue, 29 Oct 2013 08:50:14 -0700
-Message-ID: <526FD936.8040604@samsung.com>
-References: <002601ced46d$dbfa97c0$93efc740$%han@samsung.com>
+From: Yoder Stuart-B08248 <B08248@freescale.com>
+Subject: RE: [PATCH 1/7] VFIO_IOMMU_TYPE1 workaround to build for platform
+ devices
+Date: Tue, 29 Oct 2013 15:57:50 +0000
+Message-ID: <9F6FE96B71CF29479FF1CDC8046E15036EE62C@039-SN1MPN1-002.039d.mgd.msft.net>
+References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
+	<1380554923-17818-2-git-send-email-a.motakis@virtualopensystems.com>
+	<1380562782.2674.178.camel@ul30vt.home>
+	<9F6FE96B71CF29479FF1CDC8046E15036D37D9@039-SN1MPN1-003.039d.mgd.msft.net>
+ <CAG8rG2yAp2+RhUcHb78VD0GoiT6NBftX1JCqSmyNf+iP5N3now@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f53.google.com ([209.85.128.53]:33376 "EHLO
-	mail-qe0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753264Ab3J2PuT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Oct 2013 11:50:19 -0400
-Received: by mail-qe0-f53.google.com with SMTP id cy11so23830qeb.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2013 08:50:18 -0700 (PDT)
-In-Reply-To: <002601ced46d$dbfa97c0$93efc740$%han@samsung.com>
+Received: from tx2ehsobe001.messaging.microsoft.com ([65.55.88.11]:10551 "EHLO
+	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758129Ab3J2P54 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 29 Oct 2013 11:57:56 -0400
+In-Reply-To: <CAG8rG2yAp2+RhUcHb78VD0GoiT6NBftX1JCqSmyNf+iP5N3now@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Olof Johansson' <olof@lixom.net>
+To: Antonios Motakis <a.motakis@virtualopensystems.com>
+Cc: Alex Williamson <alex.williamson@redhat.com>, "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "agraf@suse.de" <agraf@suse.de>, "tech@virtualopensystems.com" <tech@virtualopensystems.com>, "kim.phillips@linaro.org" <kim.phillips@linaro.org>
 
-On 10/28/13 23:12, Jingoo Han wrote:
-> Set the default status for PCIe to disabled in the exynos5440.dtsi
-> file and let the board dts files such as exynos5440-ssdk5440.dts
-> enable the PCIe. However, keep the PCIe for SD5v1 board disabled,
-> because there is no PCIe slot on SD5v1 board.
->
-> Signed-off-by: Jingoo Han<jg1.han@samsung.com>
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Olof, please pick this into your tree directly :-)
+> -----Original Message-----
+> From: Antonios Motakis [mailto:a.motakis@virtualopensystems.com]
+> Sent: Wednesday, October 02, 2013 6:14 AM
+> To: Yoder Stuart-B08248
+> Cc: Alex Williamson; kvmarm@lists.cs.columbia.edu; iommu@lists.linux-
+> foundation.org; linux-samsung-soc@vger.kernel.org; kvm@vger.kernel.org;
+> agraf@suse.de; tech@virtualopensystems.com; kim.phillips@linaro.org
+> Subject: Re: [PATCH 1/7] VFIO_IOMMU_TYPE1 workaround to build for
+> platform devices
+> 
+> On Tue, Oct 1, 2013 at 9:21 PM, Yoder Stuart-B08248
+> <B08248@freescale.com> wrote:
+> >> >  static int __init vfio_iommu_type1_init(void)
+> >> >  {
+> >> > -   if (!iommu_present(&pci_bus_type))
+> >> > +#ifdef CONFIG_PCI
+> >> > +   if (iommu_present(&pci_bus_type)) {
+> >> > +           iommu_bus_type = &pci_bus_type;
+> >> > +           /* For PCI targets, IOMMU_CAP_INTR_REMAP is required */
+> >> > +           require_cap_intr_remap = true;
+> >> > +   }
+> >> > +#endif
+> >> > +   if (!iommu_bus_type && iommu_present(&platform_bus_type))
+> >> > +           iommu_bus_type = &platform_bus_type;
+> >> > +
+> >> > +   if(!iommu_bus_type)
+> >> >             return -ENODEV;
+> >> >
+> >> >     return vfio_register_iommu_driver(&vfio_iommu_driver_ops_type1);
+> >>
+> >> Is it possible to have a system with both PCI and platform devices?
+> How
+> >> would you support that?  Thanks,
+> >
+> > It most certainly is a requirement to support both.  This is how
+> > all of our (FSL) SoCs will expect to work.
+> >
+> 
+> Both with an IOMMU present?
 
-If any problems, please kindly let me know.
+Yes.
 
-Thanks,
-Kukjin
-
-> ---
-> Tested on SSDK5440 board.
->
->   arch/arm/boot/dts/exynos5440-ssdk5440.dts |    2 ++
->   arch/arm/boot/dts/exynos5440.dtsi         |    2 ++
->   2 files changed, 4 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos5440-ssdk5440.dts b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-> index a7cb848..d58cb78 100644
-> --- a/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-> +++ b/arch/arm/boot/dts/exynos5440-ssdk5440.dts
-> @@ -68,9 +68,11 @@
->
->   	pcie@290000 {
->   		reset-gpio =<&pin_ctrl 5 0>;
-> +		status = "okay";
->   	};
->
->   	pcie@2a0000 {
->   		reset-gpio =<&pin_ctrl 22 0>;
-> +		status = "okay";
->   	};
->   };
-> diff --git a/arch/arm/boot/dts/exynos5440.dtsi b/arch/arm/boot/dts/exynos5440.dtsi
-> index 5d6cf49..8da1070 100644
-> --- a/arch/arm/boot/dts/exynos5440.dtsi
-> +++ b/arch/arm/boot/dts/exynos5440.dtsi
-> @@ -276,6 +276,7 @@
->   		interrupt-map-mask =<0 0 0 0>;
->   		interrupt-map =<0x0 0&gic 53>;
->   		num-lanes =<4>;
-> +		status = "disabled";
->   	};
->
->   	pcie@2a0000 {
-> @@ -296,5 +297,6 @@
->   		interrupt-map-mask =<0 0 0 0>;
->   		interrupt-map =<0x0 0&gic 56>;
->   		num-lanes =<4>;
-> +		status = "disabled";
->   	};
->   };
+Stuart
