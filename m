@@ -1,93 +1,56 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH v2 0/7] drm/exynos: move hdmiphy related code to hdmiphy driver
-Date: Tue, 29 Oct 2013 09:06:20 +0530
-Message-ID: <CAPdUM4MhTvdz8nH20j6DxqwN_yYac3pvfwgDn21gjrxR+sCZHg@mail.gmail.com>
-References: <1382436668-15813-1-git-send-email-rahul.sharma@samsung.com>
-	<CAAQKjZOnZi_=V6ZL_SmamiG_Gbo7TxsRUv5VtSvJGpqkyvH_ug@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] pwm: samsung: Fix kernel warning while unexporting a channel
+Date: Tue, 29 Oct 2013 10:27:43 +0530
+Message-ID: <1383022663-22315-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:51606 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757559Ab3J2DgV (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:47938 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751162Ab3J2E7D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 28 Oct 2013 23:36:21 -0400
-In-Reply-To: <CAAQKjZOnZi_=V6ZL_SmamiG_Gbo7TxsRUv5VtSvJGpqkyvH_ug@mail.gmail.com>
+	Tue, 29 Oct 2013 00:59:03 -0400
+Received: by mail-pa0-f52.google.com with SMTP id bj1so2069781pad.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 28 Oct 2013 21:59:02 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, DRI mailing list <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Sean Paul <seanpaul@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, sunil joshi <joshi@samsung.com>
+To: linux-pwm@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, thierry.reding@gmail.com, tomasz.figa@gmail.com, sachin.kamat@linaro.org
 
-On 28 October 2013 19:10, Inki Dae <inki.dae@samsung.com> wrote:
-> Hi Rahul,
->
-> I have merged the re-factoring patch set from Sean Paul to
-> exynos-drm-next except eDP related patch set that these need more
-> reviews. Can you re-base at top of exynos-drm-next?
->
+PWM channel data was set to NULL before freeing it. This caused the
+following kernel warning while unexporting the channel. Set the channel
+data to NULL after freeing it.
 
-Ok. I will rebase and post it again.
+[   70.495000] WARNING: CPU: 0 PID: 1 at drivers/base/devres.c:805 pwm_put+0x48/0x80()
+[   70.505000] Modules linked in:
+[   70.505000] CPU: 0 PID: 1 Comm: sh Not tainted 3.12.0-rc6-next-20131024-00012-gd4aec04-dirty #58
+[   70.515000] [<c0014ddc>] (unwind_backtrace+0x0/0xf4) from [<c0011784>] (show_stack+0x10/0x14)
+[   70.525000] [<c0011784>] (show_stack+0x10/0x14) from [<c03a3cbc>] (dump_stack+0x7c/0xb0)
+[   70.530000] [<c03a3cbc>] (dump_stack+0x7c/0xb0) from [<c001de68>] (warn_slowpath_common+0x6c/0x88)
+[   70.540000] [<c001de68>] (warn_slowpath_common+0x6c/0x88) from [<c001df20>] (warn_slowpath_null+0x1c/0x24)
+[   70.550000] [<c001df20>] (warn_slowpath_null+0x1c/0x24) from [<c01d1af8>] (pwm_put+0x48/0x80)
+[   70.560000] [<c01d1af8>] (pwm_put+0x48/0x80) from [<c01d21c8>] (pwm_unexport_store+0x94/0xac)
+[   70.565000] [<c01d21c8>] (pwm_unexport_store+0x94/0xac) from [<c010991c>] (sysfs_write_file+0x148/0x1d8)
+[   70.575000] [<c010991c>] (sysfs_write_file+0x148/0x1d8) from [<c00b2a80>] (vfs_write+0xb4/0x1a0)
+[   70.585000] [<c00b2a80>] (vfs_write+0xb4/0x1a0) from [<c00b3068>] (SyS_write+0x3c/0x78)
+[   70.595000] [<c00b3068>] (SyS_write+0x3c/0x78) from [<c000e2e0>] (ret_fast_syscall+0x0/0x30)
 
-regards,
-Rahul Sharma.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/pwm/pwm-samsung.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Thanks,
-> Inki Dae
->
-> 2013/10/22 Rahul Sharma <rahul.sharma@samsung.com>:
->> Currently, exynos hdmiphy operations and configs are kept
->> inside the hdmi driver. Hdmiphy related code is very tightly
->> coupled with hdmi IP driver. With these patches, hdmiphy
->> related stuff is moved to hdmiphy i2c driver for exynos4 and
->> exynos5250 socs. hdmi driver, being the phy controller, calls
->> exynos hdmiphy interfaces.
->>
->> This series also removes hdmiphy dummy clock for hdmiphy
->> and replace it with Phy PMU Control from the hdmiphy driver.
->>
->> At the end, support for exynos5420 hdmiphy is added to the
->> hdmiphy platform driver.
->>
->> Drm related paches are based on exynos-drm-next branch at
->> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
->>
->> Arch related paches are based on for-next branch at
->> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git
->>
->> Rahul Sharma (7):
->>   drm/exynos: move hdmiphy code to hdmiphy i2c driver
->>   drm/exynos: remove dummy hdmiphy clock
->>   drm/exynos: add hdmiphy platform driver for exynos5420
->>   drm/exynos: add hdmiphy pmu bit control in hdmiphy drivers
->>   exynos/drm: fix ddc i2c device probe failure
->>   ARM: dts: update hdmiphy dt node for exynos5250
->>   ARM: dts: update hdmiphy dt node for exynos5420
->>
->>  .../devicetree/bindings/video/exynos_hdmi.txt      |    2 +
->>  .../devicetree/bindings/video/exynos_hdmiphy.txt   |    8 +-
->>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    9 +-
->>  arch/arm/boot/dts/exynos5420.dtsi                  |   14 +-
->>  drivers/gpu/drm/exynos/Makefile                    |    3 +-
->>  drivers/gpu/drm/exynos/exynos_ddc.c                |    5 +
->>  drivers/gpu/drm/exynos/exynos_hdmi.c               |  407 +++++-----------
->>  drivers/gpu/drm/exynos/exynos_hdmiphy.c            |   65 ---
->>  drivers/gpu/drm/exynos/exynos_hdmiphy.h            |   46 ++
->>  drivers/gpu/drm/exynos/exynos_hdmiphy_i2c.c        |  484 ++++++++++++++++++++
->>  drivers/gpu/drm/exynos/exynos_hdmiphy_platform.c   |  418 +++++++++++++++++
->>  drivers/gpu/drm/exynos/exynos_hdmiphy_priv.h       |   36 ++
->>  drivers/gpu/drm/exynos/regs-hdmiphy.h              |   37 ++
->>  13 files changed, 1174 insertions(+), 360 deletions(-)
->>  delete mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy.c
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy.h
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy_i2c.c
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy_platform.c
->>  create mode 100644 drivers/gpu/drm/exynos/exynos_hdmiphy_priv.h
->>  create mode 100644 drivers/gpu/drm/exynos/regs-hdmiphy.h
->>
->> --
->> 1.7.10.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index b2c54c8..6d23eb3 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -226,8 +226,8 @@ static int pwm_samsung_request(struct pwm_chip *chip, struct pwm_device *pwm)
+ 
+ static void pwm_samsung_free(struct pwm_chip *chip, struct pwm_device *pwm)
+ {
+-	pwm_set_chip_data(pwm, NULL);
+ 	devm_kfree(chip->dev, pwm_get_chip_data(pwm));
++	pwm_set_chip_data(pwm, NULL);
+ }
+ 
+ static int pwm_samsung_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+-- 
+1.7.9.5
