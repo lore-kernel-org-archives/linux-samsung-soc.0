@@ -1,71 +1,68 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 1/1] pwm: samsung: Fix kernel warning while unexporting a
- channel
-Date: Tue, 29 Oct 2013 14:04:48 +0900
-Message-ID: <002301ced464$6448bdf0$2cda39d0$%han@samsung.com>
-References: <1383022663-22315-1-git-send-email-sachin.kamat@linaro.org>
+From: Don Dutile <ddutile-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/7] VFIO_IOMMU_TYPE1 workaround to build for platform
+	devices
+Date: Mon, 28 Oct 2013 21:17:26 -0400
+Message-ID: <526F0CA6.5080307@redhat.com>
+References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
+	<1380554923-17818-2-git-send-email-a.motakis@virtualopensystems.com>
+	<1380562782.2674.178.camel@ul30vt.home>
+	<9F6FE96B71CF29479FF1CDC8046E15036D37D9@039-SN1MPN1-003.039d.mgd.msft.net>
+	<170DCB6D-6185-4C8A-977A-4DADF82DB274@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33712 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750719Ab3J2FEu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Oct 2013 01:04:50 -0400
-In-reply-to: <1383022663-22315-1-git-send-email-sachin.kamat@linaro.org>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <170DCB6D-6185-4C8A-977A-4DADF82DB274-l3A5Bk7waGM@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "'kim.phillips-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org'" <kim.phillips-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Yoder Stuart-B08248 <B08248-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "tech-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org" <tech-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, "kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org" <kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Thierry Reding' <thierry.reding@gmail.com>
-Cc: linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Tuesday, October 29, 2013 1:58 PM, Sachin Kamat wrote:
-> 
-> PWM channel data was set to NULL before freeing it. This caused the
-> following kernel warning while unexporting the channel. Set the channel
-> data to NULL after freeing it.
-> 
-> [   70.495000] WARNING: CPU: 0 PID: 1 at drivers/base/devres.c:805 pwm_put+0x48/0x80()
-> [   70.505000] Modules linked in:
-> [   70.505000] CPU: 0 PID: 1 Comm: sh Not tainted 3.12.0-rc6-next-20131024-00012-gd4aec04-dirty #58
-> [   70.515000] [<c0014ddc>] (unwind_backtrace+0x0/0xf4) from [<c0011784>] (show_stack+0x10/0x14)
-> [   70.525000] [<c0011784>] (show_stack+0x10/0x14) from [<c03a3cbc>] (dump_stack+0x7c/0xb0)
-> [   70.530000] [<c03a3cbc>] (dump_stack+0x7c/0xb0) from [<c001de68>] (warn_slowpath_common+0x6c/0x88)
-> [   70.540000] [<c001de68>] (warn_slowpath_common+0x6c/0x88) from [<c001df20>]
-> (warn_slowpath_null+0x1c/0x24)
-> [   70.550000] [<c001df20>] (warn_slowpath_null+0x1c/0x24) from [<c01d1af8>] (pwm_put+0x48/0x80)
-> [   70.560000] [<c01d1af8>] (pwm_put+0x48/0x80) from [<c01d21c8>] (pwm_unexport_store+0x94/0xac)
-> [   70.565000] [<c01d21c8>] (pwm_unexport_store+0x94/0xac) from [<c010991c>]
-> (sysfs_write_file+0x148/0x1d8)
-> [   70.575000] [<c010991c>] (sysfs_write_file+0x148/0x1d8) from [<c00b2a80>] (vfs_write+0xb4/0x1a0)
-> [   70.585000] [<c00b2a80>] (vfs_write+0xb4/0x1a0) from [<c00b3068>] (SyS_write+0x3c/0x78)
-> [   70.595000] [<c00b3068>] (SyS_write+0x3c/0x78) from [<c000e2e0>] (ret_fast_syscall+0x0/0x30)
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+On 10/02/2013 08:14 AM, Alexander Graf wrote:
+>
+> On 01.10.2013, at 21:21, Yoder Stuart-B08248 wrote:
+>
+>>>> static int __init vfio_iommu_type1_init(void)
+>>>> {
+>>>> -	if (!iommu_present(&pci_bus_type))
+>>>> +#ifdef CONFIG_PCI
+>>>> +	if (iommu_present(&pci_bus_type)) {
+>>>> +		iommu_bus_type =&pci_bus_type;
+>>>> +		/* For PCI targets, IOMMU_CAP_INTR_REMAP is required */
+>>>> +		require_cap_intr_remap = true;
+>>>> +	}
+>>>> +#endif
+>>>> +	if (!iommu_bus_type&&  iommu_present(&platform_bus_type))
+>>>> +		iommu_bus_type =&platform_bus_type;
+>>>> +
+>>>> +	if(!iommu_bus_type)
+>>>> 		return -ENODEV;
+>>>>
+>>>> 	return vfio_register_iommu_driver(&vfio_iommu_driver_ops_type1);
+>>>
+>>> Is it possible to have a system with both PCI and platform devices?  How
+>>> would you support that?  Thanks,
+>>
+>> It most certainly is a requirement to support both.  This is how
+>> all of our (FSL) SoCs will expect to work.
+>
+> I thought the PCI bus emits a cookie that the system wide IOMMU can then use to differentiate the origin of the transaction? So the same IOMMU can be used for PCI as well as platform routing.
+>
+*can* be the same IOMMU, yes;
+have to, no, so there can be multiple IOMMUs of different types.
 
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
-
-Best regards,
-Jingoo Han
-
-> ---
->  drivers/pwm/pwm-samsung.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-> index b2c54c8..6d23eb3 100644
-> --- a/drivers/pwm/pwm-samsung.c
-> +++ b/drivers/pwm/pwm-samsung.c
-> @@ -226,8 +226,8 @@ static int pwm_samsung_request(struct pwm_chip *chip, struct pwm_device *pwm)
-> 
->  static void pwm_samsung_free(struct pwm_chip *chip, struct pwm_device *pwm)
->  {
-> -	pwm_set_chip_data(pwm, NULL);
->  	devm_kfree(chip->dev, pwm_get_chip_data(pwm));
-> +	pwm_set_chip_data(pwm, NULL);
->  }
-> 
->  static int pwm_samsung_enable(struct pwm_chip *chip, struct pwm_device *pwm)
-> --
-> 1.7.9.5
+>
+> Alex
+>
+> _______________________________________________
+> iommu mailing list
+> iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
