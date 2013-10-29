@@ -1,53 +1,41 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [Patch v4 0/2] Enable all cpus in Exynos5420
-Date: Wed, 30 Oct 2013 00:32:01 +0530
-Message-ID: <CANuQgHEx+pNdaybeJ_dpQ5kWYpA44hrYj4ikW9d60a3hEZZPDA@mail.gmail.com>
-References: <1381119431-12697-1-git-send-email-chander.kashyap@linaro.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: dts: use 'status' property for PCIe nodes
+Date: Tue, 29 Oct 2013 12:46:35 -0700
+Message-ID: <20131029194635.GB19870@quad.lixom.net>
+References: <002601ced46d$dbfa97c0$93efc740$%han@samsung.com>
+ <526FD936.8040604@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f45.google.com ([209.85.219.45]:50669 "EHLO
-	mail-oa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753087Ab3J2TCD (ORCPT
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:54900 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751379Ab3J2Tq4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Oct 2013 15:02:03 -0400
-Received: by mail-oa0-f45.google.com with SMTP id i4so355945oah.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2013 12:02:02 -0700 (PDT)
-In-Reply-To: <1381119431-12697-1-git-send-email-chander.kashyap@linaro.org>
+	Tue, 29 Oct 2013 15:46:56 -0400
+Received: by mail-pa0-f53.google.com with SMTP id kx10so495648pab.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2013 12:46:55 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <526FD936.8040604@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Chander Kashyap <chander.kashyap@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin,
+On Tue, Oct 29, 2013 at 08:50:14AM -0700, Kukjin Kim wrote:
+> On 10/28/13 23:12, Jingoo Han wrote:
+> >Set the default status for PCIe to disabled in the exynos5440.dtsi
+> >file and let the board dts files such as exynos5440-ssdk5440.dts
+> >enable the PCIe. However, keep the PCIe for SD5v1 board disabled,
+> >because there is no PCIe slot on SD5v1 board.
+> >
+> >Signed-off-by: Jingoo Han<jg1.han@samsung.com>
+> 
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> Olof, please pick this into your tree directly :-)
+> 
+> If any problems, please kindly let me know.
 
-On 7 October 2013 09:47, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> Exynos5420 is an octa-core SoC. This patch series enables the remaining 4 cores.
->
-> Changes in v2:
->         - Changed the cpu node @unit-address value to reg property value.
-> Changes in v3:
->         - Removed leading 0x from @unit-address value.
-> Changes in v4:
->         - Fixed typo and patch subject from "arm: dt" to "ARM: dt".
->
-> Chander Kashyap (2):
->   clocksource: mct: extend mct to support 8 local interrupts for
->     Exynos5420
->   arm: dt: Exynos5420: populate cpu node enteries to 8 cpus
->
->  arch/arm/boot/dts/exynos5420.dtsi |   37 +++++++++++++++++++++++++++++++++++--
->  drivers/clocksource/exynos_mct.c  |    4 ++++
->  2 files changed, 39 insertions(+), 2 deletions(-)
->
-> --
-> 1.7.9.5
->
+Done, thanks.
 
-?
-
-Can you please take these patches?
-
--- 
-with warm regards,
-Chander Kashyap
+-Olof
