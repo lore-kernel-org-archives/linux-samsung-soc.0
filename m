@@ -1,43 +1,59 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH Resend 1/1] Documentation/watchdog: Add binding example in samsung-wdt
-Date: Wed, 30 Oct 2013 10:56:37 +0530
-Message-ID: <1383110797-26225-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:56283 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750757Ab3J3F2N (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Oct 2013 01:28:13 -0400
-Received: by mail-pa0-f49.google.com with SMTP id lj1so413987pab.8
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 29 Oct 2013 22:28:13 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Rajeshwari Birje <rajeshwari.birje-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
+Date: Wed, 30 Oct 2013 11:52:54 +0530
+Message-ID: <CAPs=JDeDbevjOtMH0y+9aVSbNSV4zmEQxWygtB-f69XzooSinQ@mail.gmail.com>
+References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
+	<20131019162504.GA1863@sirena.org.uk>
+	<CAPs=JDeOqkJT32quBH1tF9FtFUOt=CHP7m6ZqzhfASM2uPj-dw@mail.gmail.com>
+	<CAPs=JDdzvnM5BzgRLhLsJrdwcVSwxd6x8_kFz0EvB=OjFfVszw@mail.gmail.com>
+	<20131029163926.GA6776@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131029163926.GA6776-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Rajeshwari S Shinde <rajeshwari.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-watchdog@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, wim@iguana.be, linux@roeck-us.net, sachin.kamat@linaro.org
 
-Added an example for reference.
+Hi Mark Brown,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- .../devicetree/bindings/watchdog/samsung-wdt.txt   |    9 +++++++++
- 1 file changed, 9 insertions(+)
+On Tue, Oct 29, 2013 at 10:09 PM, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Tue, Oct 29, 2013 at 04:59:11PM +0530, Rajeshwari Birje wrote:
+>> On Tue, Oct 29, 2013 at 4:29 PM, Rajeshwari Birje
+>
+>> >> This patch is still not setting bits_per_word_mask as far as I can see?
+>
+>> > Will send new version of patch including this.
+>
+>> I had some confusion regarding this bits_per_word_mask, where do you
+>> want me to mask the bpw.
+>> bits_per_word is something which comes from the user, do we need to mask it?
+>
+> Have you looked at the code and documentation for this feature - if it's
+> not clear can you please explain in more detail what needs clarifying?
 
-diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-index 2aa486c..7ddf461 100644
---- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-@@ -12,3 +12,12 @@ Required properties:
- 
- Optional properties:
- - timeout-sec : contains the watchdog timeout in seconds.
-+
-+Example:
-+
-+watchdog@101D0000 {
-+	compatible = "samsung,s3c2410-wdt";
-+	reg = <0x101D0000 0x100>;
-+	interrupts = <0 42 0>;
-+	status = "disabled";
-+};
+The following patch already sets bits_per_word_mask for
+drivers/spi/spi-s3c64xx.c in s3c64xx_spi_probe, hence I had a doubt do
+I need to set the same again.
+
+commit e761f4236e94f2dd36316f9892583b29ce986031
+Author: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Date:   Mon Apr 1 14:17:37 2013 +0100
+
+    spi/s3c64xx: Convert to bits_per_word_mask
+
+    The core can do the validation for us.
+
+    Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+
+It is already present as follows in s3c64xx_spi_probe
+master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
+                                        SPI_BPW_MASK(8);
 -- 
-1.7.9.5
+Regards,
+Rajeshwari Shinde
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
