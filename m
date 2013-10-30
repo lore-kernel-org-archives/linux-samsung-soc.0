@@ -1,144 +1,53 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: add watchdog device nodes for Exynos5250
- and Exynos5420
-Date: Wed, 30 Oct 2013 13:44:32 +0530
-Message-ID: <CAL1wa8fpiJ5QYefLzUUDsoyLm9vDMOQ4tkJMJPfOvbkGT0Jcww@mail.gmail.com>
-References: <1383116025-5638-1-git-send-email-l.krishna@samsung.com>
- <1383116025-5638-2-git-send-email-l.krishna@samsung.com> <CAK9yfHzcDcL7EUVd2_EWoG1Qd=aqXXOh+Zb8MAB0kN1b1_cArA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH V4 0/3] Add watchdog DT nodes and use syscon regmap interfac to
+ configure pmu registers
+Date: Wed, 30 Oct 2013 15:21:10 +0530
+Message-ID: <1383126673-29033-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:39351 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752143Ab3J3IOy (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47974 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753558Ab3J3Ja6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Oct 2013 04:14:54 -0400
-In-Reply-To: <CAK9yfHzcDcL7EUVd2_EWoG1Qd=aqXXOh+Zb8MAB0kN1b1_cArA@mail.gmail.com>
+	Wed, 30 Oct 2013 05:30:58 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-watchdog@vger.kernel.org, cpgs@samsung.com
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, wim@iguana.be
+Cc: t.figa@samsung.com, devicetree@vger.kernel.org, dianders@chromium.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, sachin.kamat@linaro.org
 
-Hi,
+This patchset does the following things
+	- Adds pmusysreg device node to exynos5.dtsi file
+	- Adds watchdog DT nodes to Exynos5250 and 5420
+	- Uses syscon regmap interface to configure pmu registers
+	  to mask/unmask enable/disable of watchdog.
+	
+This patch set is rebased on Kgene's for-next branch and tested on SMDK5420
 
-On Wed, Oct 30, 2013 at 12:20 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Leela,
->
-> On 30 October 2013 12:23, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
->> Adds watchdog device nodes to the DT device list for Exynos5250 and Exynos5420
->>
->> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> ---
->>  arch/arm/boot/dts/exynos5.dtsi    |   12 +++++-------
->>  arch/arm/boot/dts/exynos5250.dtsi |    7 ++++++-
->>  arch/arm/boot/dts/exynos5420.dtsi |   10 ++++++++++
->>  3 files changed, 21 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
->> index e52b038..e7b6dbd 100644
->> --- a/arch/arm/boot/dts/exynos5.dtsi
->> +++ b/arch/arm/boot/dts/exynos5.dtsi
->> @@ -81,13 +81,6 @@
->>                 status = "disabled";
->>         };
->>
->> -       watchdog {
->> -               compatible = "samsung,s3c2410-wdt";
->> -               reg = <0x101D0000 0x100>;
->> -               interrupts = <0 42 0>;
->> -               status = "disabled";
->> -       };
->> -
->>         fimd@14400000 {
->>                 compatible = "samsung,exynos5250-fimd";
->>                 interrupt-parent = <&combiner>;
->> @@ -106,4 +99,9 @@
->>                 #size-cells = <0>;
->>                 status = "disabled";
->>         };
->> +
->> +       pmu_sys_reg: pmusysreg {
->
-> Make this pmusysreg@10040000.
->
+Changes since V3:
+	- changed the compatible strings for watchdog node
+	- splitted up adding pmusysreg node and made it separate patch
+	- Addressed comments given by Sachin Kamat <sachin.kamat@linaro.org>
 
-Okay, will do it
+Changes since V2:
+	- used syscon regmap interface to configure pmu registers in WDT driver
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
 
->> +               compatible = "samsung,exynos5-pmureg", "syscon";
->
-> I do not see any reference to "samsung,exynos5-pmureg" in the tree.
->
+Changes since V1:
+        - Added new compatible string for Exynos5 SoCs
+        - Introduced quirk mechanism to program PMU registers
+        - Addressed comments given by Tomasz Figa <t.figa@samsung.com>
 
-Okay, will take care of it
+Leela Krishna Amudala (3):
+  ARM: dts: Add pmu sysreg node to Exynos5 dtsi file
+  ARM: dts: add watchdog device nodes for Exynos5250 and Exynos5420
+  watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu
+    register
 
->> +               reg = <0x10040000 0x5000>;
->> +       };
->
-> Since this is a separate node, IMO it could be added in a separate patch.
->
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |   19 +++-
+ arch/arm/boot/dts/exynos5.dtsi                     |   12 +--
+ arch/arm/boot/dts/exynos5250.dtsi                  |    7 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |   10 ++
+ drivers/watchdog/s3c2410_wdt.c                     |  112 ++++++++++++++++++--
+ 5 files changed, 143 insertions(+), 17 deletions(-)
 
-Okay, will do it
-
->>  };
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
->> index c4a8662..3ccd150 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -158,9 +158,14 @@
->>                 interrupts = <0 47 0>;
->>         };
->>
->> -       watchdog {
->> +       watchdog@101D0000 {
->> +               compatible = "samsung,s3c5250-wdt";
->
-> Exynos5 does not belong to S3C series. Please change this to
-> exynos5250-wdt instead.
->
-
-My mistake, will change it
-
->> +               reg = <0x101D0000 0x100>;
->> +               interrupts = <0 42 0>;
->>                 clocks = <&clock 336>;
->>                 clock-names = "watchdog";
->> +               samsung,sysreg = <&pmu_sys_reg>;
->> +               status = "okay";
->>         };
->>
->>         g2d@10850000 {
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
->> index 6ffefd1..5fb7ae2 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -369,4 +369,14 @@
->>                 clock-names = "gscl";
->>                 samsung,power-domain = <&gsc_pd>;
->>         };
->> +
->> +        watchdog@101D0000 {
->> +               compatible = "samsung,s3c5420-wdt";
->
-> ditto
->
->> +               reg = <0x101D0000 0x100>;
->> +               interrupts = <0 42 0>;
->> +               clocks = <&clock 316>;
->> +               clock-names = "watchdog";
->> +               samsung,sysreg = <&pmu_sys_reg>;
->> +               status = "okay";
->> +        };
->>  };
->> --
->> 1.7.10.4
->>
->
->
->
-> --
-> With warm regards,
-> Sachin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+1.7.10.4
