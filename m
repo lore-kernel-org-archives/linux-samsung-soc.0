@@ -1,59 +1,46 @@
-From: Rajeshwari Birje <rajeshwari.birje-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
-Date: Wed, 30 Oct 2013 11:52:54 +0530
-Message-ID: <CAPs=JDeDbevjOtMH0y+9aVSbNSV4zmEQxWygtB-f69XzooSinQ@mail.gmail.com>
-References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
-	<20131019162504.GA1863@sirena.org.uk>
-	<CAPs=JDeOqkJT32quBH1tF9FtFUOt=CHP7m6ZqzhfASM2uPj-dw@mail.gmail.com>
-	<CAPs=JDdzvnM5BzgRLhLsJrdwcVSwxd6x8_kFz0EvB=OjFfVszw@mail.gmail.com>
-	<20131029163926.GA6776@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20131029163926.GA6776-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Rajeshwari S Shinde <rajeshwari.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 0/2] Add watchdog DT nodes and use syscon regmap interface to
+ configure pmu registers
+Date: Wed, 30 Oct 2013 12:23:43 +0530
+Message-ID: <1383116025-5638-1-git-send-email-l.krishna@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:43672 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750766Ab3J3Gdb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 30 Oct 2013 02:33:31 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, wim@iguana.be
+Cc: t.figa@samsung.com, devicetree@vger.kernel.org, dianders@chromium.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, sachin.kamat@linaro.org
 
-Hi Mark Brown,
+This patchset does the following things
+	- Adds watchdog DT nodes to Exynos5250 and 5420
+	- Uses syscon regmap interface to configure pmu registers
+	  to mask/unmask enable/disable of watchdog.
+	
+This patch set is rebased on Kgene's for-next branch and tested on SMDK5420
 
-On Tue, Oct 29, 2013 at 10:09 PM, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Tue, Oct 29, 2013 at 04:59:11PM +0530, Rajeshwari Birje wrote:
->> On Tue, Oct 29, 2013 at 4:29 PM, Rajeshwari Birje
->
->> >> This patch is still not setting bits_per_word_mask as far as I can see?
->
->> > Will send new version of patch including this.
->
->> I had some confusion regarding this bits_per_word_mask, where do you
->> want me to mask the bpw.
->> bits_per_word is something which comes from the user, do we need to mask it?
->
-> Have you looked at the code and documentation for this feature - if it's
-> not clear can you please explain in more detail what needs clarifying?
+Changes since V2:
+	- used syscon regmap interface to configure pmu registers in WDT driver
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
 
-The following patch already sets bits_per_word_mask for
-drivers/spi/spi-s3c64xx.c in s3c64xx_spi_probe, hence I had a doubt do
-I need to set the same again.
+Changes since V1:
+        - Added new compatible string for Exynos5 SoCs
+        - Introduced quirk mechanism to program PMU registers
+        - Addressed comments given by Tomasz Figa <t.figa@samsung.com>
 
-commit e761f4236e94f2dd36316f9892583b29ce986031
-Author: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Date:   Mon Apr 1 14:17:37 2013 +0100
+Leela Krishna Amudala (2):
+  ARM: dts: add watchdog device nodes for Exynos5250 and Exynos5420
+  watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu
+    register
 
-    spi/s3c64xx: Convert to bits_per_word_mask
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |   13 ++-
+ arch/arm/boot/dts/exynos5.dtsi                     |   12 +--
+ arch/arm/boot/dts/exynos5250.dtsi                  |    7 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |   10 ++
+ drivers/watchdog/s3c2410_wdt.c                     |  114 ++++++++++++++++++--
+ 5 files changed, 139 insertions(+), 17 deletions(-)
 
-    The core can do the validation for us.
-
-    Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-
-It is already present as follows in s3c64xx_spi_probe
-master->bits_per_word_mask = SPI_BPW_MASK(32) | SPI_BPW_MASK(16) |
-                                        SPI_BPW_MASK(8);
 -- 
-Regards,
-Rajeshwari Shinde
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.10.4
