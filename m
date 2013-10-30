@@ -1,100 +1,126 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: s3c64xx: cpuidle: convert to platform driver
-Date: Wed, 30 Oct 2013 15:50:24 -0700
-Message-ID: <52718D30.8010509@linaro.org>
-References: <1382685074-16502-1-git-send-email-daniel.lezcano@linaro.org> <526AEF6B.2000404@linaro.org> <52717D97.8090905@linaro.org> <1807659.lxGmRkUGnf@flatron>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH v2 0/4] Exynos 5410 Dual cluster support
+Date: Wed, 30 Oct 2013 16:57:31 -0700
+Message-ID: <87fvrinwgk.fsf@linaro.org>
+References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com>
+	<87k3hc3lso.fsf@linaro.org> <20131017130435.GG3061@cat.local>
+	<87zjq71xcq.fsf@linaro.org>
+	<CAGc3s_cbCgdPdbCPF2XN+p-O5RfM-4pNZT49=_4MOVy=Lz8d=Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:56539 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751848Ab3J3Wu0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Oct 2013 18:50:26 -0400
-Received: by mail-oa0-f53.google.com with SMTP id n12so2193415oag.26
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2013 15:50:26 -0700 (PDT)
-In-Reply-To: <1807659.lxGmRkUGnf@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAGc3s_cbCgdPdbCPF2XN+p-O5RfM-4pNZT49=_4MOVy=Lz8d=Q@mail.gmail.com>
+	(Mauro Ribeiro's message of "Tue, 29 Oct 2013 07:23:33 -0200")
+Sender: linux-doc-owner@vger.kernel.org
+To: Mauro Ribeiro <mdrjr0@gmail.com>
+Cc: Aliaksei Katovich <aliaksei.katovich@gmail.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Tarek Dakhran <t.dakhran@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 10/30/2013 03:40 PM, Tomasz Figa wrote:
-> Hi Daniel,
->
-> On Wednesday 30 of October 2013 14:43:51 Daniel Lezcano wrote:
->> On 10/25/2013 03:23 PM, Daniel Lezcano wrote:
->>
->> [ ... ]
->>
->>>>> Won't it be worth to add a new WFI_SLEEP state to the cpuidle dri=
-ver
->>>>> ?
->>>>
->>>> I don't think so. How a suspend-to-RAM specific thing like WFI_SLE=
-EP
->>>> could
->>>> be relevant to a cpuidle driver? (Unless there are some plans to
->>>> consolidate STR with cpuidle that I haven't heard about...)
->>>
->>> I finally found a documentation for the s3c6410x and the descriptio=
-n
->>> of
->>> the different modes. Indeed, the sleep mode is not adequate for a
->>> cpuidle state. What about the 'stop' and 'deep stop' state ?
->>
->> Hi Thomas,
->>
->> just a reminder about the question above, so I can go ahead: fix wha=
-t
->> you pointed out or remove the driver directly.
->>
->> You mentionned in the previous email the STOP is not usful because i=
-t
->> can be controlled by manually outside of the cpuidle driver. But I s=
-ee
->> in the documentation, the stop states power gates the cpu and deep-s=
-top
->> stops the regulator.
->
-> STOP clock-gates the CPU and DEEP-STOP power-gates it by stopping the
-> regulator.
->
-> There are some interesting aspects of those modes, like memory self-
-> refresh, PLL power-off and system-wide down clocking, but I believe t=
-hey
-> are too tricky to handle (coupling with device PM, stopped timers) an=
-d
-> with too little possible power saving to justify the effort of adding
-> support for them.
->
-> In the end, I haven't seen support for them implemented even in stran=
-ge
-> vendor kernels used even on production devices, like Android phones.
->
->>
->> If these states have to been added later, still it worth to remove t=
-he
->> driver ?
->
-> I don't think that anybody is even going to add support for them and =
-by
-> anybody I should probably mean myself, since I'm currently the only p=
-erson
-> actively adding new code for this platform, as a part of my hobby.
+Hi Mauro,
 
-Ok, I will kill the driver then.
+Mauro Ribeiro <mdrjr0@gmail.com> writes:
 
-Thanks
-   -- Daniel
+> Kevin,
+>
+> https://github.com/hardkernel/u-boot/tree/odroid-v2012.07
 
+Yes, this is the one I'm using, but USB networking doesn't seem to work
+with that.  Do you have USB networking working with that u-boot?  If so,
+what changes to the config did you make?
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+Kevin
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>
+> On Thu, Oct 17, 2013 at 5:00 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>
+>> Aliaksei Katovich <aliaksei.katovich@gmail.com> writes:
+>>
+>> > hi Kevin;
+>> >
+>> >> Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
+>> >>
+>> >> > The series of patches represent support of Exynos 5410 SoC
+>> >> >
+>> >> > The Exynos 5410 is the first Samsung SoC based on bigLITTLE
+>> architecture.
+>> >> > Patches allow all 8 CPU cores (4 x A7 and 4 x A15) to run at the same
+>> time
+>> >> >
+>> >> > Patches add new platform description, support of clock controller,
+>> >> > dual cluster support and device tree for Exynos 5410
+>> >> >
+>> >> > Has been build on v3.12-rc5.
+>> >> > Has been tested on Exynos 5410 reference board (exynos_defconfig).
+>> >>
+>> >> Has anyone tried this on the exynos5410 based odroid-xu yet?
+>> >>
+>> >> I tried booting this on my recently arrived odroid-xu, but am not
+>> >> getting it to boot.
+>> >
+>> >       I am able to boot my odroid-xu+e to busybox with these patches
+>> applied
+>> >       against 3.12-rc5: exynos_defconfig and exynos5410-smdk5410.dtb were
+>> >       used.
+>> >
+>> >       However there seem to be some issues with virq allocations, like
+>> this:
+>>
+>> Ah, I've seen the same thing, but for me it doesn't boot reliably.
+>> Sometimes there's an immediate fault like this[1], and once in a rare
+>> while, it starts to boot and I see the same virq errors.
+>>
+>> Curious what you guys are using for boot loaders.  I found some
+>> pre-build u-boot binaries along with the necessary BL1/2 binary blobs in
+>> the hardkernel kernel repo: https://github.com/hardkernel/linux.git
+>> branch: origin/odroidxu-3.4.y
+>> path: tools/hardkernel/u-boot-pre-built
+>>
+>> Unfortunatly, that u-boot doesn't have usb networking support built in
+>> so I couln't use u-boot to tftp the kernel, so I was able to use fasboot
+>> to load the kernel/ramdisk, but it's very flaky.
+>>
+>> Do you have an pointers of where to get a known working bootloader.
+>> Ideally, a u-boot with networking/tftp support would be ideal.
+>>
+>> Thanks,
+>>
+>> Kevin
+>>
+>> [1]
+>> USB cable Connected![0x4]
+>> Starting download of 10008576 bytes
+>> .........
+>> downloading of 10008576 bytes finished
+>> Kernel size: 00296bc5
+>> Ramdisk size: 006f3c00
+>> Booting kernel..
+>> ## Booting kernel from Legacy Image at 40008000 ...
+>>    Image Name:   Linux
+>>    Image Type:   ARM Linux Kernel Image (uncompressed)
+>>    Data Size:    2714501 Bytes = 2.6 MiB
+>>    Load Address: 40008000
+>>    Entry Point:  40008000
+>>    Verifying Checksum ... OK
+>>    XIP Kernel Image ... OK
+>> OK
+>>
+>> Starting kernel ...
+>>
+>> undefined instruction
+>> pc : [<4000800c>]          lr : [<bfc65df4>]
+>> sp : bfb5bbc8  ip : 00000000     fp : 00001251
+>> r10: 00000000  r9 : 00000000     r8 : bfb5bf30
+>> r7 : 00000000  r6 : 00000000     r5 : 40008000  r4 : bfcabac0
+>> r3 : bfb5bfa8  r2 : 40000100     r1 : 00001251  r0 : 00000000
+>> Flags: nZCv  IRQs off  FIQs off  Mode SVC_32
+>> Resetting CPU ...
+>>
+>> emmc resetting ...
+>> resetting ...
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe
+>> linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
