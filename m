@@ -1,39 +1,55 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
-Date: Wed, 30 Oct 2013 18:06:30 +0100
-Message-ID: <6043727.WVyVGYjJys@amdc1227>
-References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
- <CAPs=JDeDbevjOtMH0y+9aVSbNSV4zmEQxWygtB-f69XzooSinQ@mail.gmail.com>
- <20131030170029.GK2493@sirena.org.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 29/51] DMA-API: ata: pata_octeon_cf: convert to use
+	dma_coerce_mask_and_coherent()
+Date: Wed, 30 Oct 2013 20:08:54 +0100
+Message-ID: <CAMuHMdWqAL6MN5VJrpAPC1fq3QtRWZ3UUMG3+6W5vEKSEm5N9g@mail.gmail.com>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+	<E1VMmAk-0007iq-IU@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:13895 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750882Ab3J3RGd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Oct 2013 13:06:33 -0400
-In-reply-to: <20131030170029.GK2493@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <E1VMmAk-0007iq-IU@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+	<mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Sender: dri-devel-bounces@lists.freedesktop.org
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: alsa-devel@alsa-project.org, linux-doc@vger.kernel.org, Linux MMC List <linux-mmc@vger.kernel.org>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, linux-nvme@lists.infradead.org, "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>, driverdevel <devel@driverdev.osuosl.org>, linux-samsung-soc@vger.kernel.org, scsi <linux-scsi@vger.kernel.org>, e1000-devel@lists.sourceforge.net, Linux-Next <linux-next@vger.kernel.org>, b43-dev@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>, devicetree@vger.kernel.org, DRI Development <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.o>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Rajeshwari Birje <rajeshwari.birje@gmail.com>
-Cc: Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Doug Anderson <dianders@google.com>
 
-On Wednesday 30 of October 2013 10:00:29 Mark Brown wrote:
-> On Wed, Oct 30, 2013 at 11:52:54AM +0530, Rajeshwari Birje wrote:
-> 
-> > The following patch already sets bits_per_word_mask for
-> > drivers/spi/spi-s3c64xx.c in s3c64xx_spi_probe, hence I had a doubt do
-> > I need to set the same again.
-> 
-> OK, so how did this work before then?  You're just adding new code but
-> the driver was previously claiming to support different bits per word
-> (and now I look at the code there is some handling for that in code).
-> Is this a bug fix?
+On Thu, Sep 19, 2013 at 11:54 PM, Russell King
+<rmk+kernel@arm.linux.org.uk> wrote:
+> diff --git a/drivers/ata/pata_octeon_cf.c b/drivers/ata/pata_octeon_cf.c
+> index c51bbb9..6231d43 100644
+> --- a/drivers/ata/pata_octeon_cf.c
+> +++ b/drivers/ata/pata_octeon_cf.c
+> @@ -1014,8 +1014,9 @@ static int octeon_cf_probe(struct platform_device *pdev)
+>         }
+>         cf_port->c0 = ap->ioaddr.ctl_addr;
+>
+> -       pdev->dev.coherent_dma_mask = DMA_BIT_MASK(64);
+> -       pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+> +       rv = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
+> +       if (rv)
+> +               return ret;
 
-That's a good question. Rajeshwari, what SPI device did you test this
-patch with? Does it have a driver in mainline kernel?
+return rv;
 
-Best regards,
-Tomasz
+http://kisskb.ellerman.id.au/kisskb/buildresult/9959184/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
