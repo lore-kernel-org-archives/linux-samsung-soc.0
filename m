@@ -1,62 +1,33 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 3/7] video: exynos_mipi_dsim: Use the generic PHY driver
-Date: Wed, 30 Oct 2013 01:43:38 +0100
-Message-ID: <5270563A.5080605@gmail.com>
-References: <1381940896-9355-1-git-send-email-kishon@ti.com> <526997BC.8070602@gmail.com> <526E0038.7050805@samsung.com> <23467785.uRr31aFEN8@amdc1227> <526F7412.60004@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f171.google.com ([74.125.82.171]:60639 "EHLO
-	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751086Ab3J3Ann (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Oct 2013 20:43:43 -0400
-In-Reply-To: <526F7412.60004@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] Documentation/pwm: Update supported SoC name for pwm-samsung
+Date: Wed, 30 Oct 2013 10:09:41 +0530
+Message-ID: <1383107981-6638-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-pwm@vger.kernel.org
+Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Donghwa Lee <dh09.lee@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>, Sachin Kamat <sachin.kamat@linaro.org>, Olof Johansson <olof@lixom.net>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Media Mailing List <linux-media@vger.kernel.org>, inki.dae@samsung.com
 
-On 10/29/2013 09:38 AM, Donghwa Lee wrote:
-> On Tue, OCT 28, 2013 21:24, Tomasz Figa wrote:
->> On Monday 28 of October 2013 15:12:08 Donghwa Lee wrote:
-[...]
->> First of all, the exynos_mipi_dsim driver has currently no users in
->> mainline kernel, so it is essentially dead code. In addition, on
->> a platform that is the primary candidate for using it, which is Exynos,
->> there is no way to use it, due to no DT support.
->
-> As I mentioned above, patches are submitted sometimes and I will update
-> this driver as soon as possible to support DT.
->
->> As for the driver itself, it is not really a great example of good code.
->> It contains a hacks, like calling msleep() without any clear reason and
->> also many coding style issues. I'd prefer to replace it with the new
->> exynos-dsi driver rewritten completely in SRPOL, when CDF is finished.
->
-> Yes, I know this drivers had been changed about only minor issues and
-> it is not really good code style. And CDF is more good and light.
-> But discussion for CDF is still remaining a kind of requests. If it is merged
-> into linux kernel and many users use it, existing MIPI DSI drivers will be
-> replaced with the new drivers naturally, isn't it?
+Updated supported SoC name for pwm-samsung.
 
-Not necessarily. Our goal should be to have fairly stable DT binding at the
-SoC side so all available panels can possibly be used with any SoC without
-problems.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ .../devicetree/bindings/pwm/pwm-samsung.txt        |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Then please refrain for a while from pushing entirely vendor specific DT
-bindings upstream. Let's focus instead on an as much as possible common
-framework and the DT bindings. Whether the CDF will be part of DRM or not
-the DT bindings are supposed to be generic, so they work with whatever
-driver architecture.
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+index d61fccd..5538de9 100644
+--- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
++++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+@@ -15,7 +15,7 @@ Required properties:
+     samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+ 			  Exynos4210 rev0 SoCs
+     samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
+-                          Exynos4x12 and Exynos5250 SoCs
++                          Exynos4x12, Exynos5250 and Exynos5420 SoCs
+ - reg: base address and size of register area
+ - interrupts: list of timer interrupts (one interrupt per timer, starting at
+   timer 0)
+-- 
+1.7.9.5
 
-I guess you could try to come up with an unstable DT binding for the
-MIPI DSIM and display panels it is used with, but at this stage it seems
-just a waste of time.
-If there were no SoC specific panel drivers in the kernel there would be
-now much less trouble with DT support.
-
---
-Thanks,
-Sylwester
