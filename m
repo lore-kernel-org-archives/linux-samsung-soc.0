@@ -1,42 +1,75 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/2] ARM: dts: Update Samsung sysreg binding document
-Date: Wed, 30 Oct 2013 15:35:54 +0530
-Message-ID: <1383127554-13854-2-git-send-email-sachin.kamat@linaro.org>
-References: <1383127554-13854-1-git-send-email-sachin.kamat@linaro.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V4 1/3] ARM: dts: Add pmu sysreg node to Exynos5 dtsi file
+Date: Wed, 30 Oct 2013 15:39:09 +0530
+Message-ID: <CAL1wa8dwa3roUwC-KUy2N4fdFEj3tY9V4m_9O+vQWq4T59zxcA@mail.gmail.com>
+References: <1383126673-29033-1-git-send-email-l.krishna@samsung.com>
+ <1383126673-29033-2-git-send-email-l.krishna@samsung.com> <CAK9yfHwHw7esBObW=VATrgweNwqAKu82DGp6miGP0-O7v76c9w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:40740 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753763Ab3J3KHT (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:46792 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751272Ab3J3KJa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Oct 2013 06:07:19 -0400
-Received: by mail-pb0-f43.google.com with SMTP id md4so1157475pbc.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2013 03:07:19 -0700 (PDT)
-In-Reply-To: <1383127554-13854-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 30 Oct 2013 06:09:30 -0400
+In-Reply-To: <CAK9yfHwHw7esBObW=VATrgweNwqAKu82DGp6miGP0-O7v76c9w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-watchdog@vger.kernel.org, cpgs@samsung.com
 
-Added a binding example for reference.
+Hi,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- .../devicetree/bindings/arm/samsung/sysreg.txt     |    6 ++++++
- 1 file changed, 6 insertions(+)
+On Wed, Oct 30, 2013 at 3:22 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Hi Leela,
+>
+> On 30 October 2013 15:21, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
+>> This patch adds pmusysreg node to Exynos5 dtsi file to handle PMU
+>> register accesses in a centralized way using syscon driver
+>>
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5.dtsi |    5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+>> index e52b038..918e732 100644
+>> --- a/arch/arm/boot/dts/exynos5.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5.dtsi
+>> @@ -106,4 +106,9 @@
+>>                 #size-cells = <0>;
+>>                 status = "disabled";
+>>         };
+>> +
+>> +       pmu_sys_reg: pmusysreg@1004000 {
+>> +               compatible = "syscon";
+>> +               reg = <0x10040000 0x5000>;
+>> +       };
+>>  };
+>
+> Had a look at this in a bit detail and found the following.
+> The register base address for this block on 5250 and 5420 as per the
+> TRM is 0x10050000.
+>
+> Also, the binding document specifies the naming convention. According
+> to it this node
+> should like:
+>
+> sys_reg: sysreg@10050000 {
+>            compatible = "samsung,exynos5-sysreg", "syscon";
+>            reg = <0x10050000 0x500>;
+> };
+>
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-index 5039c0a..7090178 100644
---- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-@@ -5,3 +5,9 @@ Properties:
-  - compatible : should contain "samsung,<chip name>-sysreg", "syscon";
-    For Exynos4 SoC series it should be "samsung,exynos4-sysreg", "syscon";
-  - reg : offset and length of the register set.
-+
-+Example:
-+	sys_reg: sysreg@10010000 {
-+		compatible = "samsung,exynos4-sysreg", "syscon";
-+		reg = <0x10010000 0x400>;
-+	};
--- 
-1.7.9.5
+I know, but here my intention is not to regmap system register (0x10050000),
+but instead PMU register (0x10040000), Hence created this node.
+
+~Leela Krishna
+
+> --
+> With warm regards,
+> Sachin
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
