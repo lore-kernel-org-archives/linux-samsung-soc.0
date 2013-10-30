@@ -1,65 +1,61 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: s3c64xx: cpuidle: convert to platform driver
-Date: Wed, 30 Oct 2013 14:43:51 -0700
-Message-ID: <52717D97.8090905@linaro.org>
-References: <1382685074-16502-1-git-send-email-daniel.lezcano@linaro.org> <6431720.IUjkN7MGOG@thinkpad> <526AC2DF.2020904@linaro.org> <1953577.TBW5ixuUM5@thinkpad> <526AEF6B.2000404@linaro.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: Use dev_err() instead of printk() for cpuidle driver
+Date: Wed, 30 Oct 2013 23:12:47 +0100
+Message-ID: <6595279.ZNOtcCAkvT@vostro.rjw.lan>
+References: <003601cece00$2affeba0$80ffc2e0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f180.google.com ([209.85.214.180]:56447 "EHLO
-	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751885Ab3J3Vnx (ORCPT
+Received: from hydra.sisk.pl ([212.160.235.94]:57472 "EHLO hydra.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754406Ab3J3WAj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 Oct 2013 17:43:53 -0400
-Received: by mail-ob0-f180.google.com with SMTP id wo20so2103141obc.25
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2013 14:43:52 -0700 (PDT)
-In-Reply-To: <526AEF6B.2000404@linaro.org>
+	Wed, 30 Oct 2013 18:00:39 -0400
+In-Reply-To: <003601cece00$2affeba0$80ffc2e0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-pm@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Daniel Lezcano' <daniel.lezcano@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 10/25/2013 03:23 PM, Daniel Lezcano wrote:
+On Monday, October 21, 2013 10:52:15 AM Jingoo Han wrote:
+> Change raw printk() call to dev_err() to provide a better message
+> to userspace so it can properly identify the device.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 
-[ ... ]
+Both [1-2/2] queued up for 3.13, thanks!
 
->>> Won't it be worth to add a new WFI_SLEEP state to the cpuidle drive=
-r ?
->>
->> I don't think so. How a suspend-to-RAM specific thing like WFI_SLEEP
->> could
->> be relevant to a cpuidle driver? (Unless there are some plans to
->> consolidate STR with cpuidle that I haven't heard about...)
->
-> I finally found a documentation for the s3c6410x and the description =
-of
-> the different modes. Indeed, the sleep mode is not adequate for a
-> cpuidle state. What about the 'stop' and 'deep stop' state ?
-
-Hi Thomas,
-
-just a reminder about the question above, so I can go ahead: fix what=20
-you pointed out or remove the driver directly.
-
-You mentionned in the previous email the STOP is not usful because it=20
-can be controlled by manually outside of the cpuidle driver. But I see=20
-in the documentation, the stop states power gates the cpu and deep-stop=
-=20
-stops the regulator.
-
-If these states have to been added later, still it worth to remove the=20
-driver ?
-
-Thanks!
-   -- Daniel
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> ---
+> - Based against pm-cpuidle branch
+> - Tested on Exynos5440
+> 
+>  arch/arm/mach-exynos/cpuidle.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+> index 1bde6ad..6616e0f 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -206,7 +206,7 @@ static int __init exynos_cpuidle_probe(struct platform_device *pdev)
+>  
+>  	ret = cpuidle_register_driver(&exynos4_idle_driver);
+>  	if (ret) {
+> -		printk(KERN_ERR "CPUidle failed to register driver\n");
+> +		dev_err(&pdev->dev, "failed to register cpuidle driver\n");
+>  		return ret;
+>  	}
+>  
+> @@ -220,7 +220,7 @@ static int __init exynos_cpuidle_probe(struct platform_device *pdev)
+>  
+>  		ret = cpuidle_register_device(device);
+>  		if (ret) {
+> -			printk(KERN_ERR "CPUidle register device failed\n");
+> +			dev_err(&pdev->dev, "failed to register cpuidle device\n");
+>  			return ret;
+>  		}
+>  	}
+> 
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
