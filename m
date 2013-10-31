@@ -1,48 +1,42 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v2 2/2] ARM: dts: Update Samsung sysreg binding document
-Date: Thu, 31 Oct 2013 10:16:54 +0530
-Message-ID: <1383194814-18897-2-git-send-email-sachin.kamat@linaro.org>
-References: <1383194814-18897-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f171.google.com ([209.85.223.171]:59533 "EHLO
-	mail-ie0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751120Ab3JaEsU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Oct 2013 00:48:20 -0400
-Received: by mail-ie0-f171.google.com with SMTP id tp5so4031476ieb.16
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2013 21:48:20 -0700 (PDT)
-In-Reply-To: <1383194814-18897-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH v2 1/2] ARM: dts: Fix sysreg node name in exynos4.dtsi
+Date: Thu, 31 Oct 2013 10:16:53 +0530
+Message-ID: <1383194814-18897-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, t.figa@samsung.com, sachin.kamat@linaro.org
 
-Added a binding example for reference and updated the
-node name.
+Fix the name as per DT node naming convention.
+- rename the node to syscon which is a more generic name.
+- append the register value to the node name.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- .../devicetree/bindings/arm/samsung/sysreg.txt     |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Changes since v1:
+ * Renamed the node to syscon as suggested by Tomasz Figa.
+---
+ arch/arm/boot/dts/exynos4.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-index 5039c0a12f55..f165567a9df0 100644
---- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-@@ -1,7 +1,13 @@
- SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e2629464376f..ce24edba7f6d 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -99,7 +99,7 @@
+ 		reg = <0x10440000 0x1000>;
+ 	};
  
- Properties:
-- - name : should be 'sysreg';
-+ - name : should be 'syscon';
-  - compatible : should contain "samsung,<chip name>-sysreg", "syscon";
-    For Exynos4 SoC series it should be "samsung,exynos4-sysreg", "syscon";
-  - reg : offset and length of the register set.
-+
-+Example:
-+	syscon@10010000 {
-+		compatible = "samsung,exynos4-sysreg", "syscon";
-+		reg = <0x10010000 0x400>;
-+	};
+-	sys_reg: sysreg {
++	sys_reg: syscon@10010000 {
+ 		compatible = "samsung,exynos4-sysreg", "syscon";
+ 		reg = <0x10010000 0x400>;
+ 	};
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
