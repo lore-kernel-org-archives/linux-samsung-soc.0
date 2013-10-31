@@ -1,416 +1,212 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH V5 3/3] watchdog: s3c2410_wdt: use syscon regmap interface
- to configure pmu register
-Date: Thu, 31 Oct 2013 06:29:03 -0700
-Message-ID: <52725B1F.4040107@roeck-us.net>
-References: <1383199250-15405-1-git-send-email-l.krishna@samsung.com> <1383199250-15405-4-git-send-email-l.krishna@samsung.com> <2427917.T2x6X1TJ2k@amdc1227>
+From: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Subject: Re: [PATCH v2] videobuf2: Add missing lock held on vb2_fop_relase
+Date: Thu, 31 Oct 2013 11:42:43 -0200
+Message-ID: <20131031114243.2416bc88@samsung.com>
+References: <1382198877-27164-1-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:56933 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754232Ab3JaN3F (ORCPT
+Received: from mailout4.w2.samsung.com ([211.189.100.14]:30165 "EHLO
+	usmailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753819Ab3JaNmv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Oct 2013 09:29:05 -0400
-In-Reply-To: <2427917.T2x6X1TJ2k@amdc1227>
+	Thu, 31 Oct 2013 09:42:51 -0400
+In-reply-to: <1382198877-27164-1-git-send-email-ricardo.ribalda@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, wim@iguana.be, devicetree@vger.kernel.org, dianders@chromium.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, sachin.kamat@linaro.org
+To: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:SAMSUNG S5P/EXYNO..." <linux-media@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS
+	AR..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-On 10/31/2013 05:29 AM, Tomasz Figa wrote:
-> Hi Leela,
->
-> On Thursday 31 of October 2013 11:30:50 Leela Krishna Amudala wrote:
->> The syscon regmap interface is used to configure AUTOMATIC_WDT_RESET_DISABLE
->> and MASK_WDT_RESET_REQUEST registers of PMU to mask/unmask enable/disable of
->> watchdog in probe and s2r scenarios.
->>
->> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> ---
->>   .../devicetree/bindings/watchdog/samsung-wdt.txt   |   22 ++-
->>   drivers/watchdog/s3c2410_wdt.c                     |  150 +++++++++++++++++---
->>   2 files changed, 154 insertions(+), 18 deletions(-)
->
-> This patch looks better now, but there are still several issues remaining.
-> Please see my comments inline.
->
->> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
->> index 2aa486c..0b8aa4b 100644
->> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
->> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
->> @@ -5,10 +5,30 @@ after a preset amount of time during which the WDT reset event has not
->>   occurred.
->>
->>   Required properties:
->> -- compatible : should be "samsung,s3c2410-wdt"
->> +- compatible : should be one among the following
->> +	(a) "samsung,s3c2410-wdt" for Exynos4 and previous SoCs
->> +	(b) "samsung,exynos5250-wdt" for Exynos5250
->> +	(c) "samsung,exynos5420-wdt" for Exynos5420
->> +
->>   - reg : base physical address of the controller and length of memory mapped
->>   	region.
->>   - interrupts : interrupt number to the cpu.
->> +- samsung,syscon-phandle : reference to syscon node (This property required only
->> +	in case of compatible being "samsung,exynos5250-wdt" or "samsung,exynos5420-wdt".
->> +	In case of Exynos5250 and 5420 this property points to syscon node holding the PMU
->> +	base address)
->>
->>   Optional properties:
->>   - timeout-sec : contains the watchdog timeout in seconds.
->> +
->> +Example:
->> +
->> +watchdog@101D0000 {
->> +	compatible = "samsung,exynos5250-wdt";
->> +	reg = <0x101D0000 0x100>;
->> +	interrupts = <0 42 0>;
->> +	clocks = <&clock 336>;
->> +	clock-names = "watchdog";
->> +	samsung,sysreg = <&pmu_sys_reg>;
->
-> Shouldn't it be samsung,syscon-phandle?
->
->> +	status = "okay";
->
-> The status property is not a part of this binding, so can be dropped
-> from the example.
->
->> +};
->> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
->> index 23aad7c..235d160 100644
->> --- a/drivers/watchdog/s3c2410_wdt.c
->> +++ b/drivers/watchdog/s3c2410_wdt.c
->> @@ -41,6 +41,8 @@
->>   #include <linux/slab.h>
->>   #include <linux/err.h>
->>   #include <linux/of.h>
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/regmap.h>
->>
->>   #define S3C2410_WTCON		0x00
->>   #define S3C2410_WTDAT		0x04
->> @@ -61,6 +63,10 @@
->>   #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
->>   #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
->>
->> +#define WDT_DISABLE_REG_OFFSET		0x0408
->> +#define WDT_MASK_RESET_REG_OFFSET	0x040c
->> +#define QUIRK_NEEDS_PMU_CONFIG		(1 << 0)
->> +
->>   static bool nowayout	= WATCHDOG_NOWAYOUT;
->>   static int tmr_margin;
->>   static int tmr_atboot	= CONFIG_S3C2410_WATCHDOG_ATBOOT;
->> @@ -84,18 +90,61 @@ MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
->>   			"0 to reboot (default 0)");
->>   MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
->>
->> +struct s3c2410_wdt_variant {
->> +	int	disable_reg;
->> +	int	mask_reset_reg;
->> +	int	mask_bit;
->> +	u32	quirks;
->
-> nit: To avoid the need of changing the indentation in future, if fields
-> with longer types gets added, I would simply separate type name from field
-> name using a single space.
->
->> +};
->> +
->>   struct s3c2410_wdt {
->> -	struct device		*dev;
->> -	struct clk		*clock;
->> -	void __iomem		*reg_base;
->> -	unsigned int		count;
->> -	spinlock_t		lock;
->> -	unsigned long		wtcon_save;
->> -	unsigned long		wtdat_save;
->> -	struct watchdog_device	wdt_device;
->> -	struct notifier_block	freq_transition;
->> +	struct device			*dev;
->> +	struct clk			*clock;
->> +	void __iomem			*reg_base;
->> +	unsigned int			count;
->> +	spinlock_t			lock;
->> +	unsigned long			wtcon_save;
->> +	unsigned long			wtdat_save;
->> +	struct watchdog_device		wdt_device;
->> +	struct notifier_block		freq_transition;
->> +	struct s3c2410_wdt_variant	*pmu_config;
->> +	struct regmap			*pmureg;
->
-> And here's an example of such (unnecessary) change. I believe it would
-> be better to keep indendation of other fields as is, use single space for
-> the new field and then change remaining fields in a separate patch,
-> outside of this series.
->
->> +};
->> +
->> +#ifdef CONFIG_OF
->> +static struct s3c2410_wdt_variant pmu_config_s3c2410 = {
->
-> static const struct
->
->> +	.disable_reg = 0x0,
->> +	.mask_reset_reg = 0x0,
->> +	.mask_bit = 0,
->
-> nit: I would simply omit the three fields above, since they are irrelevant
-> when QUIRK_NEEDS_PMU_CONFIG flag is not set. Not even saying that when
-> unspecified, they default to zero.
->
-checkpatch used to complain about that ... in general, static variables
-should not be initialized to 0. That is just unnecessary extra code.
+Em Sat, 19 Oct 2013 18:07:57 +0200
+Ricardo Ribalda <ricardo.ribalda@gmail.com> escreveu:
 
-Guenter
+> vb2_fop_relase does not held the lock although it is modifying the
+> queue->owner field.
+> 
+> This could lead to race conditions on the vb2_perform_io function
+> when multiple applications are accessing the video device via
+> read/write API:
+> 
+> [ 308.297741] BUG: unable to handle kernel NULL pointer dereference at
+> 0000000000000260
+> [ 308.297759] IP: [<ffffffffa07a9fd2>] vb2_perform_fileio+0x372/0x610
+> [videobuf2_core]
+> [ 308.297794] PGD 159719067 PUD 158119067 PMD 0
+> [ 308.297812] Oops: 0000 #1 SMP
+> [ 308.297826] Modules linked in: qt5023_video videobuf2_dma_sg
+> qtec_xform videobuf2_vmalloc videobuf2_memops videobuf2_core
+> qtec_white qtec_mem gpio_xilinx qtec_cmosis qtec_pcie fglrx(PO)
+> spi_xilinx spi_bitbang qt5023
+> [ 308.297888] CPU: 1 PID: 2189 Comm: java Tainted: P O 3.11.0-qtec-standard #1
+> [ 308.297919] Hardware name: QTechnology QT5022/QT5022, BIOS
+> PM_2.1.0.309 X64 05/23/2013
+> [ 308.297952] task: ffff8801564e1690 ti: ffff88014dc02000 task.ti:
+> ffff88014dc02000
+> [ 308.297962] RIP: 0010:[<ffffffffa07a9fd2>] [<ffffffffa07a9fd2>]
+> vb2_perform_fileio+0x372/0x610 [videobuf2_core]
+> [ 308.297985] RSP: 0018:ffff88014dc03df8 EFLAGS: 00010202
+> [ 308.297995] RAX: 0000000000000000 RBX: ffff880158a23000 RCX: dead000000100100
+> [ 308.298003] RDX: 0000000000000000 RSI: dead000000200200 RDI: 0000000000000000
+> [ 308.298012] RBP: ffff88014dc03e58 R08: 0000000000000000 R09: 0000000000000001
+> [ 308.298020] R10: ffffea00051e8380 R11: ffff88014dc03fd8 R12: ffff880158a23070
+> [ 308.298029] R13: ffff8801549040b8 R14: 0000000000198000 R15: 0000000001887e60
+> [ 308.298040] FS: 00007f65130d5700(0000) GS:ffff88015ed00000(0000)
+> knlGS:0000000000000000
+> [ 308.298049] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 308.298057] CR2: 0000000000000260 CR3: 0000000159630000 CR4: 00000000000007e0
+> [ 308.298064] Stack:
+> [ 308.298071] ffff880156416c00 0000000000198000 0000000000000000
+> ffff880100000001
+> [ 308.298087] ffff88014dc03f50 00000000810a79ca 0002000000000001
+> ffff880154904718
+> [ 308.298101] ffff880156416c00 0000000000198000 ffff880154904338
+> ffff88014dc03f50
+> [ 308.298116] Call Trace:
+> [ 308.298143] [<ffffffffa07aa3c4>] vb2_read+0x14/0x20 [videobuf2_core]
+> [ 308.298198] [<ffffffffa07aa494>] vb2_fop_read+0xc4/0x120 [videobuf2_core]
+> [ 308.298252] [<ffffffff8154ee9e>] v4l2_read+0x7e/0xc0
+> [ 308.298296] [<ffffffff8116e639>] vfs_read+0xa9/0x160
+> [ 308.298312] [<ffffffff8116e882>] SyS_read+0x52/0xb0
+> [ 308.298328] [<ffffffff81784179>] tracesys+0xd0/0xd5
+> [ 308.298335] Code: e5 d6 ff ff 83 3d be 24 00 00 04 89 c2 4c 8b 45 b0
+> 44 8b 4d b8 0f 8f 20 02 00 00 85 d2 75 32 83 83 78 03 00 00 01 4b 8b
+> 44 c5 48 <8b> 88 60 02 00 00 85 c9 0f 84 b0 00 00 00 8b 40 58 89 c2 41
+> 89
+> [ 308.298487] RIP [<ffffffffa07a9fd2>] vb2_perform_fileio+0x372/0x610
+> [videobuf2_core]
+> [ 308.298507] RSP <ffff88014dc03df8>
+> [ 308.298514] CR2: 0000000000000260
+> [ 308.298526] ---[ end trace e8f01717c96d1e41 ]---
+> 
+> v2: Add bug found by Sylvester Nawrocki
+> 
+> fimc-capture and fimc-lite where calling vb2_fop_release with the lock held.
+> Therefore a new __vb2_fop_release function has been created to be used by
+> drivers that overload the release function.
+> 
+> Signed-off-by: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+> ---
+>  drivers/media/platform/exynos4-is/fimc-capture.c |  2 +-
+>  drivers/media/platform/exynos4-is/fimc-lite.c    |  2 +-
+>  drivers/media/usb/em28xx/em28xx-video.c          |  2 +-
+>  drivers/media/v4l2-core/videobuf2-core.c         | 18 +++++++++++++++++-
+>  include/media/videobuf2-core.h                   |  2 ++
+>  5 files changed, 22 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+> index fb27ff7..c38d247c 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-capture.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+> @@ -549,7 +549,7 @@ static int fimc_capture_release(struct file *file)
+>  		vc->streaming = false;
+>  	}
+>  
+> -	ret = vb2_fop_release(file);
+> +	ret = __vb2_fop_release(file, true);
+>  
+>  	if (close) {
+>  		clear_bit(ST_CAPT_BUSY, &fimc->state);
+> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+> index e5798f7..021d804 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> @@ -546,7 +546,7 @@ static int fimc_lite_release(struct file *file)
+>  		mutex_unlock(&entity->parent->graph_mutex);
+>  	}
+>  
+> -	vb2_fop_release(file);
+> +	__vb2_fop_release(file, true);
+>  	pm_runtime_put(&fimc->pdev->dev);
+>  	clear_bit(ST_FLITE_SUSPENDED, &fimc->state);
+>  
+> diff --git a/drivers/media/usb/em28xx/em28xx-video.c b/drivers/media/usb/em28xx/em28xx-video.c
+> index 9d10334..6a5c147 100644
+> --- a/drivers/media/usb/em28xx/em28xx-video.c
+> +++ b/drivers/media/usb/em28xx/em28xx-video.c
+> @@ -1664,7 +1664,7 @@ static int em28xx_v4l2_close(struct file *filp)
+>  	em28xx_videodbg("users=%d\n", dev->users);
+>  
+>  	mutex_lock(&dev->lock);
+> -	vb2_fop_release(filp);
+> +	__vb2_fop_release(filp, false);
+>  
+>  	if (dev->users == 1) {
+>  		/* the device is already disconnect,
+> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+> index 594c75e..ce309a8 100644
+> --- a/drivers/media/v4l2-core/videobuf2-core.c
+> +++ b/drivers/media/v4l2-core/videobuf2-core.c
+> @@ -2619,16 +2619,32 @@ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma)
+>  }
+>  EXPORT_SYMBOL_GPL(vb2_fop_mmap);
+>  
+> -int vb2_fop_release(struct file *file)
+> +int __vb2_fop_release(struct file *file, bool lock_is_held)
+>  {
+>  	struct video_device *vdev = video_devdata(file);
+> +	struct mutex *lock;
+>  
+>  	if (file->private_data == vdev->queue->owner) {
+> +		if (lock_is_held)
+> +			lock = NULL;
+> +		else
+> +			lock = vdev->queue->lock ?
+> +				vdev->queue->lock : vdev->lock;
+> +		if (lock)
+> +			mutex_lock(lock);
+>  		vb2_queue_release(vdev->queue);
+>  		vdev->queue->owner = NULL;
+> +		if (lock)
+> +			mutex_unlock(lock);
+>  	}
+>  	return v4l2_fh_release(file);
+>  }
+> +EXPORT_SYMBOL_GPL(__vb2_fop_release);
+> +
+> +int vb2_fop_release(struct file *file)
+> +{
+> +	return __vb2_fop_release(file, false);
+> +}
+>  EXPORT_SYMBOL_GPL(vb2_fop_release);
 
->> +	.quirks = 0
->>   };
->>
->> +static struct s3c2410_wdt_variant pmu_config_5250  = {
->
-> static const struct
->
->> +	.disable_reg = WDT_DISABLE_REG_OFFSET,
->> +	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
->> +	.mask_bit = 20,
->> +	.quirks = QUIRK_NEEDS_PMU_CONFIG
->> +};
->> +
->> +static struct s3c2410_wdt_variant pmu_config_5420 = {
->
-> static const struct
->
->> +	.disable_reg = WDT_DISABLE_REG_OFFSET,
->> +	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
->> +	.mask_bit = 0,
->> +	.quirks = QUIRK_NEEDS_PMU_CONFIG
->> +};
->> +
->> +static const struct of_device_id s3c2410_wdt_match[] = {
->> +	{ .compatible = "samsung,s3c2410-wdt",
->> +	  .data = (struct s3c2410_wdt_variant *) &pmu_config_s3c2410 },
->
-> No need for the cast.
->
->> +	{ .compatible = "samsung,exynos5250-wdt",
->> +	  .data = (struct s3c2410_wdt_variant *) &pmu_config_5250 },
->
-> Ditto.
->
->> +	{ .compatible = "samsung,exynos5420-wdt",
->> +	  .data = (struct s3c2410_wdt_variant *) &pmu_config_5420 },
->
-> Ditto.
->
->> +	{},
->> +};
->> +MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
->> +#endif
->> +
->>   /* watchdog control routines */
->>
->>   #define DBG(fmt, ...)					\
->> @@ -111,6 +160,47 @@ static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
->>   	return container_of(nb, struct s3c2410_wdt, freq_transition);
->>   }
->>
->> +static void s3c2410wdt_mask_and_disable_reset(int mask, struct s3c2410_wdt *wdt)
->
-> This function should return int and propagate possible errors to the caller.
->
-> Also the order of arguments is rather strange. The main context structure
-> is usually passed as first argument.
->
-> In addition, bool probably would make more sense for mask argument than int.
->
->> +{
->> +	int ret;
->> +
->> +	if (mask) {
->> +		ret = regmap_update_bits(wdt->pmureg,
->> +					wdt->pmu_config->disable_reg,
->> +					(1 << wdt->pmu_config->mask_bit),
->> +					(1 << wdt->pmu_config->mask_bit));
->> +		if (ret < 0) {
->> +			dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
->> +			return;
->> +		}
->> +		ret = regmap_update_bits(wdt->pmureg,
->> +					wdt->pmu_config->mask_reset_reg,
->> +					(1 << wdt->pmu_config->mask_bit),
->> +					(1 << wdt->pmu_config->mask_bit));
->> +		if (ret < 0) {
->> +			dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
->> +			return;
->> +		}
->> +	} else {
->> +		ret = regmap_update_bits(wdt->pmureg,
->> +					wdt->pmu_config->disable_reg,
->> +					(1 << wdt->pmu_config->mask_bit),
->> +					(0 << wdt->pmu_config->mask_bit));
->> +		if (ret < 0) {
->> +			dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
->> +			return;
->> +		}
->> +		ret = regmap_update_bits(wdt->pmureg,
->> +					wdt->pmu_config->mask_reset_reg,
->> +					(1 << wdt->pmu_config->mask_bit),
->> +					(0 << wdt->pmu_config->mask_bit));
->> +		if (ret < 0) {
->> +			dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
->> +			return;
->> +		}
->> +	}
->
-> This is not really what I imagined. You can greatly simplify this code
-> by refactoring it as follows:
->
-> static int s3c2410wdt_mask_and_disable_reset(struct s3c2410_wdt *wdt, bool mask)
-> {
-> 	int ret;
-> 	u32 mask_val = 1 << wdt->pmu_config->mask_bit;
-> 	u32 val = 0;
->
-> 	if (mask)
-> 		val = mask_val;
->
-> 	ret = regmap_update_bits(wdt->pmureg,
-> 				wdt->pmu_config->disable_reg,
-> 				mask_val, val);
-> 	if (ret < 0) {
-> 		dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
-> 		return ret;
-> 	}
->
-> 	ret = regmap_update_bits(wdt->pmureg,
-> 				wdt->pmu_config->mask_reset_reg,
-> 				mask_val, val);
-> 	if (ret < 0) {
-> 		dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
-> 		return ret;
-> 	}
->
-> 	return 0;
-> }
->
->> +}
->> +
->>   static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
->>   {
->>   	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
->> @@ -332,6 +422,15 @@ static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
->>   }
->>   #endif
->>
->> +/* s3c2410_get_wdt_driver_data */
->> +static inline struct s3c2410_wdt_variant *
->
-> const struct
->
->> +get_wdt_drv_data(struct platform_device *pdev)
->> +{
->> +	const struct of_device_id *match;
->> +	match = of_match_node(s3c2410_wdt_match, pdev->dev.of_node);
->> +	return (struct s3c2410_wdt_variant *)match->data;
->
-> This function does not handle non-DT cases, which will cause a NULL pointer
-> dereference when the device is instantiated from a board file.
->
->> +}
->> +
->>   static int s3c2410wdt_probe(struct platform_device *pdev)
->>   {
->>   	struct device *dev;
->> @@ -354,6 +453,16 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->>   	spin_lock_init(&wdt->lock);
->>   	wdt->wdt_device = s3c2410_wdd;
->>
->> +	wdt->pmu_config = (struct s3c2410_wdt_variant *) get_wdt_drv_data(pdev);
->
-> No need for type cast here.
->
->> +	if (wdt->pmu_config->quirks & QUIRK_NEEDS_PMU_CONFIG) {
->> +		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
->> +							"samsung,syscon-phandle");
->> +		if (IS_ERR(wdt->pmureg)) {
->> +			dev_err(dev, "syscon regmap lookup failed.\n");
->> +			return PTR_ERR(wdt->pmureg);
->> +		}
->> +	}
->> +
->>   	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
->>   	if (wdt_irq == NULL) {
->>   		dev_err(dev, "no irq resource specified\n");
->> @@ -444,6 +553,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->>   		 (wtcon & S3C2410_WTCON_RSTEN) ? "en" : "dis",
->>   		 (wtcon & S3C2410_WTCON_INTEN) ? "en" : "dis");
->>
->> +	if (wdt->pmu_config->quirks & QUIRK_NEEDS_PMU_CONFIG)
->> +		s3c2410wdt_mask_and_disable_reset(0, wdt);
->
-> Error should be handled here. Also false would be better than 0 here.
->
->> +
->>   	return 0;
->>
->>    err_cpufreq:
->> @@ -461,6 +573,9 @@ static int s3c2410wdt_remove(struct platform_device *dev)
->>   {
->>   	struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
->>
->> +	if (wdt->pmu_config->quirks & QUIRK_NEEDS_PMU_CONFIG)
->> +		s3c2410wdt_mask_and_disable_reset(1, wdt);
->
-> Error should be handled here. Also true would be better than 1 here.
->
->> +
->>   	watchdog_unregister_device(&wdt->wdt_device);
->>
->>   	s3c2410wdt_cpufreq_deregister(wdt);
->> @@ -475,6 +590,9 @@ static void s3c2410wdt_shutdown(struct platform_device *dev)
->>   {
->>   	struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
->>
->> +	if (wdt->pmu_config->quirks & QUIRK_NEEDS_PMU_CONFIG)
->> +		s3c2410wdt_mask_and_disable_reset(1, wdt);
->
-> Error should be handled here. Also true would be better than 1 here.
->
->> +
->>   	s3c2410wdt_stop(&wdt->wdt_device);
->>   }
->>
->> @@ -488,6 +606,9 @@ static int s3c2410wdt_suspend(struct device *dev)
->>   	wdt->wtcon_save = readl(wdt->reg_base + S3C2410_WTCON);
->>   	wdt->wtdat_save = readl(wdt->reg_base + S3C2410_WTDAT);
->>
->> +	if (wdt->pmu_config->quirks & QUIRK_NEEDS_PMU_CONFIG)
->> +		s3c2410wdt_mask_and_disable_reset(1, wdt);
->
-> Error should be handled here. Also true would be better than 1 here.
->
->> +
->>   	/* Note that WTCNT doesn't need to be saved. */
->>   	s3c2410wdt_stop(&wdt->wdt_device);
->>
->> @@ -503,6 +624,9 @@ static int s3c2410wdt_resume(struct device *dev)
->>   	writel(wdt->wtdat_save, wdt->reg_base + S3C2410_WTCNT);/* Reset count */
->>   	writel(wdt->wtcon_save, wdt->reg_base + S3C2410_WTCON);
->>
->> +	if (wdt->pmu_config->quirks & QUIRK_NEEDS_PMU_CONFIG)
->> +		s3c2410wdt_mask_and_disable_reset(0, wdt);
->
-> Error should be handled here. Also false would be better than 0 here.
->
-> Best regards,
-> Tomasz
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
+In general, when a symbol has both locked/unlocked versions, we
+use the __symbol for unlocked versions (as the usage of the __symbol
+requires the caller do do additional protection).
+
+On this patch, (and on  Sylwester's version) you're seeming to be doing 
+just the opposite. That sounds inconsistent with other Kernel symbols.
+
+Please either use that version or add a suffix (like _locked / __unlocked)
+to allow a clearer understanding about what's the locked version.
+
+Btw, Does it even make sense to have both options, or wouldn't be better
+to just make sure that all drivers will do the same? My concern here is
+with race conditions that may happen at device removal, if the lock is
+released/retaken inside the routine that unbinds the driver.
+
+Regards,
+Mauro
+
+>  
+>  ssize_t vb2_fop_write(struct file *file, char __user *buf,
+> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+> index 6781258..cd1e4d5 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -491,6 +491,8 @@ int vb2_ioctl_expbuf(struct file *file, void *priv,
+>  
+>  int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma);
+>  int vb2_fop_release(struct file *file);
+> +/* must be used if the lock is held. */
+> +int __vb2_fop_release(struct file *file, bool lock_is_held);
+>  ssize_t vb2_fop_write(struct file *file, char __user *buf,
+>  		size_t count, loff_t *ppos);
+>  ssize_t vb2_fop_read(struct file *file, char __user *buf,
+
+
+-- 
+
+Cheers,
+Mauro
