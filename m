@@ -1,19 +1,20 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V5 1/3] ARM: dts: Add pmu sysreg node to Exynos5 dtsi file
-Date: Thu, 31 Oct 2013 13:06:57 +0100
-Message-ID: <10983407.dYU06WVDXy@amdc1227>
+Subject: Re: [PATCH V5 2/3] ARM: dts: add watchdog device nodes for Exynos5250
+ and Exynos5420
+Date: Thu, 31 Oct 2013 13:09:50 +0100
+Message-ID: <7363021.FRzpFKVCjA@amdc1227>
 References: <1383199250-15405-1-git-send-email-l.krishna@samsung.com>
- <1383199250-15405-2-git-send-email-l.krishna@samsung.com>
+ <1383199250-15405-3-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:21630 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751817Ab3JaMHP (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:42128 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751536Ab3JaMJy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Oct 2013 08:07:15 -0400
-In-reply-to: <1383199250-15405-2-git-send-email-l.krishna@samsung.com>
+	Thu, 31 Oct 2013 08:09:54 -0400
+In-reply-to: <1383199250-15405-3-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Leela Krishna Amudala <l.krishna@samsung.com>
@@ -21,16 +22,65 @@ Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, wim@iguana.be, dev
 
 Hi Leela,
 
-On Thursday 31 of October 2013 11:30:48 Leela Krishna Amudala wrote:
-> This patch adds pmusysreg node to Exynos5 dtsi file to handle PMU
-> register accesses in a centralized way using syscon driver
+On Thursday 31 of October 2013 11:30:49 Leela Krishna Amudala wrote:
+> Adds watchdog device nodes to the DT device list for Exynos5250 and Exynos5420
 > 
 > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5.dtsi |    5 +++++
->  1 file changed, 5 insertions(+)
+>  arch/arm/boot/dts/exynos5.dtsi    |    7 -------
+>  arch/arm/boot/dts/exynos5250.dtsi |    7 ++++++-
+>  arch/arm/boot/dts/exynos5420.dtsi |   10 ++++++++++
+>  3 files changed, 16 insertions(+), 8 deletions(-)
+[snip]
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index c4a8662..7e4867f 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -158,9 +158,14 @@
+>  		interrupts = <0 47 0>;
+>  	};
+>  
+> -	watchdog {
+> +	watchdog@101D0000 {
+> +		compatible = "samsung,exynos5250-wdt";
+> +		reg = <0x101D0000 0x100>;
+> +		interrupts = <0 42 0>;
+>  		clocks = <&clock 336>;
+>  		clock-names = "watchdog";
+> +		samsung,syscon-phandle = <&pmu_syscon>;
+> +		status = "okay";
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+You can drop the status property here, as it's "okay" by default.
+
+>  	};
+>  
+>  	g2d@10850000 {
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 6ffefd1..8585fe7 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -369,4 +369,14 @@
+>  		clock-names = "gscl";
+>  		samsung,power-domain = <&gsc_pd>;
+>  	};
+> +
+> +        watchdog@101D0000 {
+
+Is it just my mail client or there is an indentation issue here?
+
+> +		compatible = "samsung,exynos5420-wdt";
+> +		reg = <0x101D0000 0x100>;
+> +		interrupts = <0 42 0>;
+> +		clocks = <&clock 316>;
+> +		clock-names = "watchdog";
+> +		samsung,syscon-phandle = <&pmu_syscon>;
+> +		status = "okay";
+
+Status property can be dropped.
+
+> +        };
+
+Wrong indentation?
 
 Best regards,
 Tomasz
