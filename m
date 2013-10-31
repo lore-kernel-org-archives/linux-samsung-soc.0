@@ -1,51 +1,83 @@
-From: Rajeshwari Birje <rajeshwari.birje-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
-Date: Thu, 31 Oct 2013 16:17:15 +0530
-Message-ID: <CAPs=JDcVXpJJnWxRFpq7aoW98LKmHq0jo-oTVqSUasnO_1My3g@mail.gmail.com>
-References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
-	<CAPs=JDeDbevjOtMH0y+9aVSbNSV4zmEQxWygtB-f69XzooSinQ@mail.gmail.com>
-	<20131030170029.GK2493@sirena.org.uk>
-	<6043727.WVyVGYjJys@amdc1227>
+From: Mauro Carvalho Chehab <m.chehab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 19/51] DMA-API: media: dt3155v4l: replace
+ dma_set_mask()+dma_set_coherent_mask() with new helper
+Date: Thu, 31 Oct 2013 09:46:40 -0200
+Message-ID: <20131031094640.205840a2@samsung.com>
+References: <20130919212235.GD12758@n2100.arm.linux.org.uk>
+ <E1VMm13-0007hO-9l@rmk-PC.arm.linux.org.uk> <5249673B.5020705@xs4all.nl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6043727.WVyVGYjJys@amdc1227>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rajeshwari S Shinde <rajeshwari.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <5249673B.5020705-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
+Cc: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, b43-dev-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, e1000-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-crypto-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-nvme-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Solarflare linux maintainers <linux-net-drivers-s/n/eUQHGBpZroRs9YW3xA@public.gmane.org>, uclinux-dist-devel-ZG0+EudsQA8dtHy/vicBwGD2FQJk+8+b@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Russell King <rmk+kernel@ar>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mark Brown ,
+Hi Russell,
 
-On Wed, Oct 30, 2013 at 10:36 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> On Wednesday 30 of October 2013 10:00:29 Mark Brown wrote:
->> On Wed, Oct 30, 2013 at 11:52:54AM +0530, Rajeshwari Birje wrote:
->>
->> > The following patch already sets bits_per_word_mask for
->> > drivers/spi/spi-s3c64xx.c in s3c64xx_spi_probe, hence I had a doubt do
->> > I need to set the same again.
->>
->> OK, so how did this work before then?  You're just adding new code but
->> the driver was previously claiming to support different bits per word
->> (and now I look at the code there is some handling for that in code).
->> Is this a bug fix?
-No idea if it worked before, but now if I try to do 16 bit transfer
-without my patch, I get following error.
-"Xfer length(1) not a multiple of word size(2)"
-I guess we can consider this as a bug fix then for word transfer.
->
-> That's a good question. Rajeshwari, what SPI device did you test this
-> patch with? Does it have a driver in mainline kernel?
-@Tomasz: I tested it for W25Q32DW Winbond device which is already has
-a driver in mainline Kernel
->
-> Best regards,
-> Tomasz
->
+Em Mon, 30 Sep 2013 13:57:47 +0200
+Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org> escreveu:
+
+> On 09/19/2013 11:44 PM, Russell King wrote:
+> > Replace the following sequence:
+> > 
+> > 	dma_set_mask(dev, mask);
+> > 	dma_set_coherent_mask(dev, mask);
+> > 
+> > with a call to the new helper dma_set_mask_and_coherent().
+> > 
+> > Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> 
+> Acked-by: Hans Verkuil <hans.verkuil-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org>
+
+Somehow, I lost your original post (I got unsubscribed on a few days 
+from all vger mailing lists at the end of september).
+
+I suspect that you want to sent this via your tree, right?
+If so:
+
+Acked-by: Mauro Carvalho Chehab <m.chehab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+> 
+> Regards,
+> 
+> 	Hans
+> 
+> > ---
+> >  drivers/staging/media/dt3155v4l/dt3155v4l.c |    5 +----
+> >  1 files changed, 1 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/staging/media/dt3155v4l/dt3155v4l.c b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+> > index 90d6ac4..081407b 100644
+> > --- a/drivers/staging/media/dt3155v4l/dt3155v4l.c
+> > +++ b/drivers/staging/media/dt3155v4l/dt3155v4l.c
+> > @@ -901,10 +901,7 @@ dt3155_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> >  	int err;
+> >  	struct dt3155_priv *pd;
+> >  
+> > -	err = dma_set_mask(&pdev->dev, DMA_BIT_MASK(32));
+> > -	if (err)
+> > -		return -ENODEV;
+> > -	err = dma_set_coherent_mask(&pdev->dev, DMA_BIT_MASK(32));
+> > +	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> >  	if (err)
+> >  		return -ENODEV;
+> >  	pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+> > 
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-media" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
 -- 
-Regards,
-Rajeshwari Shinde
+
+Cheers,
+Mauro
 --
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
