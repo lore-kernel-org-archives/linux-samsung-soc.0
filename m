@@ -1,47 +1,56 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH RFC 0/4] Add Exynos5 USB 3.0 phy driver based on generic PHY
- framework
-Date: Thu, 31 Oct 2013 13:15:40 +0530
-Message-ID: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH 2/4] dt: exynos5250: Enable support for generic USB 3.0 phy
+Date: Thu, 31 Oct 2013 13:15:42 +0530
+Message-ID: <1383205544-32244-3-git-send-email-gautam.vivek@samsung.com>
+References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, kishon@ti.com, kgene.kim@samsung.com, k.debski@samsung.com, s.nawrocki@samsung.com, t.figa@samsung.com, balbi@ti.com, jwerner@chromium.org, jg1.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Adding a phy driver for USB 3.0 PHY controller present on Exynos5
-series of SoCs alongwith DWC3 controller for USB 3.0 operations.
+Update device tree bindings for DWC3 controller and
+USB 3.0 phy present on Exynos 5250 SoC, to start using
+the phy driver based on generic phy framework.
 
-This driver is inline with Kamil's USB 2.0 phy driver. [1]
-Few functions used to translate ref clock rate are common to
-Kamil's changes. So we can figure out how to re-use them across
-these drivers.
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |   17 ++++++-----------
+ 1 files changed, 6 insertions(+), 11 deletions(-)
 
-Theses patches are based on usb-next branch and tested with
-Kishon's patches for adapting DWC3 to generic phy framework, [2]
-on smdk5250 as well as smdk5420 board.
-
-[1] [PATCH 0/5] phy: Add new Exynos USB PHY driver
-    https://lkml.org/lkml/2013/10/25/230
-[2] [PATCH v2 1/7] usb: dwc3: get "usb_phy" only if the platform indicates the presence of PHY's
-    (http://www.spinics.net/lists/linux-usb/msg95733.html)
-    [PATCH v2 2/7] usb: dwc3: adapt dwc3 core to use Generic PHY Framework
-    (http://www.spinics.net/lists/linux-usb/msg95734.html)
-
-Vivek Gautam (4):
-  phy: Add new Exynos5 USB 3.0 PHY driver
-  dt: exynos5250: Enable support for generic USB 3.0 phy
-  dt: exynos5420: Enable support for USB 3.0 PHY controller
-  dt: exynos5420: Enable support for DWC3 controller
-
- .../devicetree/bindings/phy/samsung-phy.txt        |   20 +
- arch/arm/boot/dts/exynos5250.dtsi                  |   17 +-
- arch/arm/boot/dts/exynos5420.dtsi                  |   50 ++
- drivers/phy/Kconfig                                |    7 +
- drivers/phy/Makefile                               |    1 +
- drivers/phy/phy-exynos5-usb3.c                     |  562 ++++++++++++++++++++
- 6 files changed, 646 insertions(+), 11 deletions(-)
- create mode 100644 drivers/phy/phy-exynos5-usb3.c
-
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index bbac42a..31a6595 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -472,22 +472,17 @@
+ 			compatible = "synopsys,dwc3";
+ 			reg = <0x12000000 0x10000>;
+ 			interrupts = <0 72 0>;
+-			usb-phy = <&usb2_phy &usb3_phy>;
++			phys = <&usb3_phy>;
++			phy-names = "usb3-phy";
+ 		};
+ 	};
+ 
+ 	usb3_phy: usbphy@12100000 {
+ 		compatible = "samsung,exynos5250-usb3phy";
+-		reg = <0x12100000 0x100>;
+-		clocks = <&clock 1>, <&clock 286>;
+-		clock-names = "ext_xtal", "usbdrd30";
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		ranges;
+-
+-		usbphy-sys {
+-			reg = <0x10040704 0x8>;
+-		};
++		reg = <0x12100000 0x100 0x10040704 0x4>;
++		clocks = <&clock 286>, <&clock 1>;
++		clock-names = "phy", "usb3drd";
++		#phy-cells = <0>;
+ 	};
+ 
+ 	usb@12110000 {
 -- 
 1.7.6.5
