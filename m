@@ -1,55 +1,37 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
-Date: Thu, 31 Oct 2013 13:37:52 +0100
-Message-ID: <1586287.qm633XfQbK@amdc1227>
-References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
- <6043727.WVyVGYjJys@amdc1227>
- <CAPs=JDcVXpJJnWxRFpq7aoW98LKmHq0jo-oTVqSUasnO_1My3g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ARM: dts: Fix sysreg node name in exynos4.dtsi
+Date: Thu, 31 Oct 2013 13:39:20 +0100
+Message-ID: <2265629.DOt1PljUhC@amdc1227>
+References: <1383194814-18897-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:43692 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753500Ab3JaMh4 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22920 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752866Ab3JaMjY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Oct 2013 08:37:56 -0400
-In-reply-to: <CAPs=JDcVXpJJnWxRFpq7aoW98LKmHq0jo-oTVqSUasnO_1My3g@mail.gmail.com>
+	Thu, 31 Oct 2013 08:39:24 -0400
+In-reply-to: <1383194814-18897-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rajeshwari Birje <rajeshwari.birje@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Doug Anderson <dianders@google.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com
 
-Hi Rajeshwari,
-
-On Thursday 31 of October 2013 16:17:15 Rajeshwari Birje wrote:
-> Hi Mark Brown ,
+On Thursday 31 of October 2013 10:16:53 Sachin Kamat wrote:
+> Fix the name as per DT node naming convention.
+> - rename the node to syscon which is a more generic name.
+> - append the register value to the node name.
 > 
-> On Wed, Oct 30, 2013 at 10:36 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> > On Wednesday 30 of October 2013 10:00:29 Mark Brown wrote:
-> >> On Wed, Oct 30, 2013 at 11:52:54AM +0530, Rajeshwari Birje wrote:
-> >>
-> >> > The following patch already sets bits_per_word_mask for
-> >> > drivers/spi/spi-s3c64xx.c in s3c64xx_spi_probe, hence I had a doubt do
-> >> > I need to set the same again.
-> >>
-> >> OK, so how did this work before then?  You're just adding new code but
-> >> the driver was previously claiming to support different bits per word
-> >> (and now I look at the code there is some handling for that in code).
-> >> Is this a bug fix?
-> No idea if it worked before, but now if I try to do 16 bit transfer
-> without my patch, I get following error.
-> "Xfer length(1) not a multiple of word size(2)"
-> I guess we can consider this as a bug fix then for word transfer.
-> >
-> > That's a good question. Rajeshwari, what SPI device did you test this
-> > patch with? Does it have a driver in mainline kernel?
-> @Tomasz: I tested it for W25Q32DW Winbond device which is already has
-> a driver in mainline Kernel
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+> Changes since v1:
+>  * Renamed the node to syscon as suggested by Tomasz Figa.
+> ---
+>  arch/arm/boot/dts/exynos4.dtsi |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-The driver as of today's linux-next does not seem to support word
-transfers. Do you have some additional, out of tree patches that add
-such support?
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
