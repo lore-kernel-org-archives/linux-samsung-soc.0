@@ -1,74 +1,81 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 2/4] clk: clk-s2mps11: Add support for clocks in S5M8767 MFD
-Date: Thu, 31 Oct 2013 12:18:42 +0530
-Message-ID: <1383202124-1775-3-git-send-email-tushar.behera@linaro.org>
-References: <1383202124-1775-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1383202124-1775-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: mturquette@linaro.org, lee.jones@linaro.org, kgene.kim@samsung.com, patches@linaro.org, Yadwinder Singh Brar <yadi.brar@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH V5 0/3] Add watchdog DT nodes and use syscon regmap
+ interfac to configure pmu registers
+Date: Thu, 31 Oct 2013 12:27:23 +0530
+Message-ID: <CAK9yfHzyzVzQ7DWCAB+HabQLWTi1KeKae5YK9JK5D9LT6az3ag@mail.gmail.com>
+References: <1383199250-15405-1-git-send-email-l.krishna@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oa0-f50.google.com ([209.85.219.50]:54847 "EHLO
+	mail-oa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753599Ab3JaG5Y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 31 Oct 2013 02:57:24 -0400
+Received: by mail-oa0-f50.google.com with SMTP id j6so2645409oag.37
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2013 23:57:24 -0700 (PDT)
+In-Reply-To: <1383199250-15405-1-git-send-email-l.krishna@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, linux-watchdog@vger.kernel.org
 
-Since clock operation within S2MPS11 and S5M8767 are similar, we can
-support both the devices within a single driver.
+Hi Leela,
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-CC: Yadwinder Singh Brar <yadi.brar@samsung.com>
-CC: Mike Turquette <mturquette@linaro.org>
----
- drivers/clk/Kconfig       |    6 ++++--
- drivers/clk/clk-s2mps11.c |    5 +++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
+On 31 October 2013 11:30, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
+> This patchset does the following things
+>         - Adds pmusysreg device node to exynos5.dtsi file
+>         - Adds watchdog DT nodes to Exynos5250 and 5420
+>         - Uses syscon regmap interface to configure pmu registers
+>           to mask/unmask enable/disable of watchdog.
+>
+> This patch set is rebased on Kgene's for-next branch and tested on SMDK5420
+>
+> Changes since V4:
+>         - changed the node name from pmusysreg to syscon and node label from pmu_sys_reg to pmu_syscon
+>         - changed the property name from samsung,pmusysreg to samsung,syscon-phandle
+>         - used regmap_update_bits instead of remap_read/regmap_write
+>         - Addressed other comments given by Tomasz Figa <t.figa@samsung.com>
+>
+> Changes since V3:
+>         - changed the compatible strings for watchdog node
+>         - splitted up adding pmusysreg node and made it separate patch
+>         - Addressed comments given by Sachin Kamat <sachin.kamat@linaro.org>
+>
+> Changes since V2:
+>         - used syscon regmap interface to configure pmu registers in WDT driver
+>           (suggested by Tomasz Figa <t.figa@samsung.com>)
+>
+> Changes since V1:
+>         - Added new compatible string for Exynos5 SoCs
+>         - Introduced quirk mechanism to program PMU registers
+>         - Addressed comments given by Tomasz Figa <t.figa@samsung.com>
+>
+> Leela Krishna Amudala (3):
+>   ARM: dts: Add pmu sysreg node to Exynos5 dtsi file
+>   ARM: dts: add watchdog device nodes for Exynos5250 and Exynos5420
+>   watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu
+>     register
+>
+>  .../devicetree/bindings/watchdog/samsung-wdt.txt   |   22 ++-
+>  arch/arm/boot/dts/exynos5.dtsi                     |   12 +-
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    7 +-
+>  arch/arm/boot/dts/exynos5420.dtsi                  |   10 ++
+>  drivers/watchdog/s3c2410_wdt.c                     |  150 +++++++++++++++++---
+>  5 files changed, 175 insertions(+), 26 deletions(-)
+>
+> --
+> 1.7.10.4
+>
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 5c51115..7f2aef2 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -65,10 +65,12 @@ config COMMON_CLK_SI5351
- 	  generators.
- 
- config COMMON_CLK_S2MPS11
--	tristate "Clock driver for S2MPS11 MFD"
-+	tristate "Clock driver for S2MPS11/S5M8767 MFD"
- 	depends on MFD_SEC_CORE
- 	---help---
--	  This driver supports S2MPS11 crystal oscillator clock.
-+	  This driver supports S2MPS11/S5M8767 crystal oscillator clock. These
-+	  multi-function devices have 3 fixed-rate oscillators, clocked at
-+	  32KHz each.
- 
- config CLK_TWL6040
- 	tristate "External McPDM functional clock from twl6040"
-diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 2262cb4..19c075c 100644
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -27,6 +27,7 @@
- #include <linux/clk-provider.h>
- #include <linux/platform_device.h>
- #include <linux/mfd/samsung/s2mps11.h>
-+#include <linux/mfd/samsung/s5m8767.h>
- #include <linux/mfd/samsung/core.h>
- 
- #define s2mps11_name(a) (a->hw.init->name)
-@@ -175,6 +176,9 @@ static int s2mps11_clk_probe(struct platform_device *pdev)
- 	case S2MPS11X:
- 		s2mps11_reg = S2MPS11_REG_RTC_CTRL;
- 		break;
-+	case S5M8767X:
-+		s2mps11_reg = S5M8767_REG_CTRL1;
-+		break;
- 	default:
- 		dev_err(&pdev->dev, "Invalid device type\n");
- 		return -EINVAL;
-@@ -254,6 +258,7 @@ static int s2mps11_clk_remove(struct platform_device *pdev)
- 
- static const struct platform_device_id s2mps11_clk_id[] = {
- 	{ "s2mps11-clk", S2MPS11X},
-+	{ "s5m8767-clk", S5M8767X},
- 	{ },
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+Series looks good. However, you would need to add select MFD_SYSCON option to
+watchdog Kconfig for ARCH_EXYNOS5.
+
+Tested this series on Origen (4210), Arndale (5250) and SMDK5420 boards.
+
+Tested-by: Sachin Kamat <sachin.kamat@linaro.org>
+Reviewed-by: Sachin Kamat <sachin.kamat@linaro.org>
+
 -- 
-1.7.9.5
+With warm regards,
+Sachin
