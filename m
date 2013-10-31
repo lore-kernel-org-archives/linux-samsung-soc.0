@@ -1,61 +1,51 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: dts: Update display clock frequency for Origen-4210
-Date: Thu, 31 Oct 2013 14:15:18 +0530
-Message-ID: <CAK9yfHwq1RjPSrhMtYATiNUiQ2dBOeBdBSr_dKC0DvVq454C=A@mail.gmail.com>
-References: <1380171018-24229-1-git-send-email-sachin.kamat@linaro.org>
+From: Rajeshwari Birje <rajeshwari.birje-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
+Date: Thu, 31 Oct 2013 16:17:15 +0530
+Message-ID: <CAPs=JDcVXpJJnWxRFpq7aoW98LKmHq0jo-oTVqSUasnO_1My3g@mail.gmail.com>
+References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
+	<CAPs=JDeDbevjOtMH0y+9aVSbNSV4zmEQxWygtB-f69XzooSinQ@mail.gmail.com>
+	<20131030170029.GK2493@sirena.org.uk>
+	<6043727.WVyVGYjJys@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:61519 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750703Ab3JaIpT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Oct 2013 04:45:19 -0400
-Received: by mail-ob0-f170.google.com with SMTP id wp18so2730236obc.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 Oct 2013 01:45:18 -0700 (PDT)
-In-Reply-To: <1380171018-24229-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6043727.WVyVGYjJys@amdc1227>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rajeshwari S Shinde <rajeshwari.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Patch Tracking <patches@linaro.org>
 
-On 26 September 2013 10:20, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> From: Tushar Behera <tushar.behera@linaro.org>
->
-> As per the timing information for supported panel, the value should
-> be between 47.2 MHz to 47.9 MHz for 60Hz refresh rate.
->
-> Total horizontal pixels = 1024 (x-res) + 80 (margin) + 48 (hsync) = 1152
-> Total vertical pixels = 600 (y-res) + 80 (margin) + 3 (vsync) = 653
->
-> Target pixel clock rate for refresh rate @60 Hz
->         = 1152 * 653 * 60 = 47208960 Hz ~ 47.5 MHz
->
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos4210-origen.dts |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-> index 382d8c7..6906e8a 100644
-> --- a/arch/arm/boot/dts/exynos4210-origen.dts
-> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> @@ -301,7 +301,7 @@
->         display-timings {
->                 native-mode = <&timing0>;
->                 timing0: timing {
-> -                       clock-frequency = <50000>;
-> +                       clock-frequency = <47500000>;
->                         hactive = <1024>;
->                         vactive = <600>;
->                         hfront-porch = <64>;
-> --
-> 1.7.9.5
->
+Hi Mark Brown ,
 
-Ping Kukjin.
-
+On Wed, Oct 30, 2013 at 10:36 PM, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> On Wednesday 30 of October 2013 10:00:29 Mark Brown wrote:
+>> On Wed, Oct 30, 2013 at 11:52:54AM +0530, Rajeshwari Birje wrote:
+>>
+>> > The following patch already sets bits_per_word_mask for
+>> > drivers/spi/spi-s3c64xx.c in s3c64xx_spi_probe, hence I had a doubt do
+>> > I need to set the same again.
+>>
+>> OK, so how did this work before then?  You're just adding new code but
+>> the driver was previously claiming to support different bits per word
+>> (and now I look at the code there is some handling for that in code).
+>> Is this a bug fix?
+No idea if it worked before, but now if I try to do 16 bit transfer
+without my patch, I get following error.
+"Xfer length(1) not a multiple of word size(2)"
+I guess we can consider this as a bug fix then for word transfer.
+>
+> That's a good question. Rajeshwari, what SPI device did you test this
+> patch with? Does it have a driver in mainline kernel?
+@Tomasz: I tested it for W25Q32DW Winbond device which is already has
+a driver in mainline Kernel
+>
+> Best regards,
+> Tomasz
+>
 -- 
-With warm regards,
-Sachin
+Regards,
+Rajeshwari Shinde
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
