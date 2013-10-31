@@ -1,51 +1,66 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] dmaengine: s3c24xx-dma: use DMA_COMPLETE for dma completion status
-Date: Thu, 31 Oct 2013 10:48:09 +0530
-Message-ID: <1383196690-28307-1-git-send-email-sachin.kamat@linaro.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V4 1/3] ARM: dts: Add pmu sysreg node to Exynos5 dtsi file
+Date: Thu, 31 Oct 2013 10:59:23 +0530
+Message-ID: <CAL1wa8fDcewih3x9B-JoYnY6-1xtCUkDRYp6AO0TAQsrHqHiOg@mail.gmail.com>
+References: <1383126673-29033-1-git-send-email-l.krishna@samsung.com>
+ <1383126673-29033-2-git-send-email-l.krishna@samsung.com> <1713455.GWPmumZDIq@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f170.google.com ([209.85.223.170]:60414 "EHLO
-	mail-ie0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751904Ab3JaFTg (ORCPT
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:36772 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750845Ab3JaF3p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 Oct 2013 01:19:36 -0400
-Received: by mail-ie0-f170.google.com with SMTP id at1so4231012iec.29
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Oct 2013 22:19:36 -0700 (PDT)
+	Thu, 31 Oct 2013 01:29:45 -0400
+In-Reply-To: <1713455.GWPmumZDIq@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dmaengine@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, dan.j.williams@intel.com, kgene.kim@samsung.com, sachin.kamat@linaro.org, Heiko Stuebner <heiko@sntech.de>, Vinod Koul <vinod.koul@intel.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Wim Van Sebroeck <wim@iguana.be>, devicetree@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, linux-watchdog@vger.kernel.org, cpgs@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>
 
-Use the recently introduced DMA_COMPLETE instead of DMA_SUCCESS.
-Without this patch we get the following build error:
-drivers/dma/s3c24xx-dma.c: In function =E2=80=98s3c24xx_dma_tx_status=E2=
-=80=99:
-drivers/dma/s3c24xx-dma.c:798:13: error: =E2=80=98DMA_SUCCESS=E2=80=99 =
-undeclared
-(first use in this function)
+Hi Tomasz,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Vinod Koul <vinod.koul@intel.com>
----
- drivers/dma/s3c24xx-dma.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Oct 30, 2013 at 8:12 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Leela,
+>
+> On Wednesday 30 of October 2013 15:21:11 Leela Krishna Amudala wrote:
+>> This patch adds pmusysreg node to Exynos5 dtsi file to handle PMU
+>> register accesses in a centralized way using syscon driver
+>>
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> ---
+>>  arch/arm/boot/dts/exynos5.dtsi |    5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+>> index e52b038..918e732 100644
+>> --- a/arch/arm/boot/dts/exynos5.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5.dtsi
+>> @@ -106,4 +106,9 @@
+>>               #size-cells = <0>;
+>>               status = "disabled";
+>>       };
+>> +
+>> +     pmu_sys_reg: pmusysreg@1004000 {
+>
+> Please keep the node name generic, syscon should be fine. Also there is
+> a typo in unit-address suffix. The label could also have a better name,
+> like pmu_syscon.
+>
 
-diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-index 4cb127978636..085da4fe6613 100644
---- a/drivers/dma/s3c24xx-dma.c
-+++ b/drivers/dma/s3c24xx-dma.c
-@@ -795,7 +795,7 @@ static enum dma_status s3c24xx_dma_tx_status(struct=
- dma_chan *chan,
-=20
- 	spin_lock_irqsave(&s3cchan->vc.lock, flags);
- 	ret =3D dma_cookie_status(chan, cookie, txstate);
--	if (ret =3D=3D DMA_SUCCESS) {
-+	if (ret =3D=3D DMA_COMPLETE) {
- 		spin_unlock_irqrestore(&s3cchan->vc.lock, flags);
- 		return ret;
- 	}
---=20
-1.7.9.5
+Okay, will change it.
+/Leela Krishna
+
+> Best regards,
+> Tomasz
+>
+>> +             compatible = "syscon";
+>> +             reg = <0x10040000 0x5000>;
+>> +     };
+>>  };
+>>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
