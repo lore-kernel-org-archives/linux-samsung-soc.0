@@ -1,80 +1,40 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2 2/4] clk: exynos5410: register clocks using common clock framework
-Date: Fri, 01 Nov 2013 17:58:34 +0100
-Message-ID: <1421095.b3lQaz2kV9@flatron>
-References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com> <1381763305-7085-3-git-send-email-v.tyrtov@samsung.com>
+Subject: Re: [PATCH v2 1/4] ARM: EXYNOS: Add support for EXYNOS5410 SoC
+Date: Fri, 01 Nov 2013 18:08:59 +0100
+Message-ID: <8049244.xSqsotZorc@flatron>
+References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com> <1381763305-7085-2-git-send-email-v.tyrtov@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1381763305-7085-3-git-send-email-v.tyrtov@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f45.google.com ([209.85.214.45]:38483 "EHLO
+	mail-bk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752704Ab3KARI7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 1 Nov 2013 13:08:59 -0400
+In-Reply-To: <1381763305-7085-2-git-send-email-v.tyrtov@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Tarek Dakhran <t.dakhran@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, Heiko Stuebner <heiko@sntech.de>
 
-Hi,
-
-On Monday 14 of October 2013 19:08:23 Vyacheslav Tyrtov wrote:
+On Monday 14 of October 2013 19:08:22 Vyacheslav Tyrtov wrote:
 > From: Tarek Dakhran <t.dakhran@samsung.com>
 > 
-> The EXYNOS5410 clocks are statically listed and registered
-> using the Samsung specific common clock helper functions.
+> EXYNOS5410 is SoC in Samsung's Exynos5 SoC series.
+> Add initial support for this SoC.
 > 
 > Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
 > Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
 > ---
->  .../devicetree/bindings/clock/exynos5410-clock.txt |  37 +++
->  drivers/clk/samsung/Makefile                       |   1 +
->  drivers/clk/samsung/clk-exynos5410.c               | 251
-> +++++++++++++++++++++ include/dt-bindings/clock/exynos5410.h           
->  | 175 ++++++++++++++ 4 files changed, 464 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/clock/exynos5410-clock.txt create
-> mode 100644 drivers/clk/samsung/clk-exynos5410.c
->  create mode 100644 include/dt-bindings/clock/exynos5410.h
+>  arch/arm/mach-exynos/Kconfig             | 12 ++++++++++++
+>  arch/arm/mach-exynos/common.c            | 18 ++++++++++++++++++
+>  arch/arm/mach-exynos/include/mach/map.h  |  1 +
+>  arch/arm/mach-exynos/mach-exynos5-dt.c   |  1 +
+>  arch/arm/plat-samsung/include/plat/cpu.h |  8 ++++++++
+>  5 files changed, 40 insertions(+)
 
-The driver looks pretty good now, thanks for addressing my comments to 
-previous version. There are still few issues remaining, though. Please see 
-my comments inline.
-
-[snip]
-> diff --git a/drivers/clk/samsung/clk-exynos5410.c
-> b/drivers/clk/samsung/clk-exynos5410.c new file mode 100644
-> index 0000000..c5eba08
-> --- /dev/null
-> +++ b/drivers/clk/samsung/clk-exynos5410.c
-[snip]
-> +static struct of_device_id ext_clk_match[] __initdata = {
-> +	{ .compatible = "samsung,clock-oscclk", .data = (void *)0, },
-> +	{ },
-> +};
-
-I don't see anything in binding documentation mentioning this compatible 
-value. Anyway, since there is already a generic binding for fixed rate 
-clocks, this shouldn't be needed at all.
-
-> +
-> +/* register exynos5410 clocks */
-> +static void __init exynos5410_clk_init(struct device_node *np)
-> +{
-> +	void __iomem *reg_base;
-> +
-> +	reg_base = of_iomap(np, 0);
-> +	if (!reg_base)
-> +		panic("%s: failed to map registers\n", __func__);
-> +
-> +	samsung_clk_init(np, reg_base, CLK_NR_CLKS,
-> +			exynos5410_clk_regs, 
-ARRAY_SIZE(exynos5410_clk_regs),
-> +			NULL, 0);
-> +	samsung_clk_of_register_fixed_ext(exynos5410_frt_ext_clks,
-> +			ARRAY_SIZE(exynos5410_frt_ext_clks),
-> +			ext_clk_match);
-
-This call could be dropped after moving to generic fixed rate clock 
-bindings.
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
-
