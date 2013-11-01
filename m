@@ -1,134 +1,40 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [[PATCH v3]] videobuf2: Add missing lock held on vb2_fop_relase
-Date: Fri, 01 Nov 2013 23:36:48 +0100
-Message-ID: <52742D00.7090805@gmail.com>
-References: <1383252859-24221-1-git-send-email-ricardo.ribalda@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 1/4] ARM: EXYNOS: Add support for EXYNOS5410 SoC
+Date: Sat, 02 Nov 2013 00:02:36 +0100
+Message-ID: <2801293.Bp2raaCeuk@flatron>
+References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com> <1381763305-7085-2-git-send-email-v.tyrtov@samsung.com> <527422AC.1050105@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1383252859-24221-1-git-send-email-ricardo.ribalda@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:SAMSUNG S5P/EXYNO..." <linux-media@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <527422AC.1050105@gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Rob Herring <robherring2@gmail.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, "arm@kernel.org" <arm@kernel.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Ben Dooks <ben-linux@fluff.org>, Tarek Dakhran <t.dakhran@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, Mike Turquette <mturquette@linaro.org>, Heiko Stuebner <heiko@sntech.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Ricardo,
+Hi Rob,
 
-On 10/31/2013 09:54 PM, Ricardo Ribalda Delgado wrote:
-> From: Ricardo Ribalda<ricardo.ribalda@gmail.com>
->
-> vb2_fop_relase does not held the lock although it is modifying the
-> queue->owner field.
->
-> This could lead to race conditions on the vb2_perform_io function
-> when multiple applications are accessing the video device via
-> read/write API:
-[...]
-> v2: Add bug found by Sylvester Nawrocki
+On Friday 01 of November 2013 16:52:44 Rob Herring wrote:
+> On 10/14/2013 10:08 AM, Vyacheslav Tyrtov wrote:
+> > From: Tarek Dakhran <t.dakhran@samsung.com>
+> > 
+> > EXYNOS5410 is SoC in Samsung's Exynos5 SoC series.
+> > Add initial support for this SoC.
+> 
+> I think this entire patch is mostly unnecessary and this information
+> should all be coming from DT. I'll leave it to arm-soc maintainers
+> whether they want to accept this addition rather than see some clean-up
+> here.
 
-"v2: Add fix for a bug found..." ? :)
+The clean-up here is already in plans, but this is much more than can be 
+seen just from this patch, so it needs some time.
 
-> fimc-capture and fimc-lite where calling vb2_fop_release with the lock held.
-> Therefore a new __vb2_fop_release function has been created to be used by
-> drivers that overload the release function.
->
-> v3: Comments by Sylvester Nawrocki and Mauro Carvalho Chehab
->
-> Use vb2_fop_release_locked instead of __vb2_fop_release
+> 
+> "samsung,exynos5410" does need to be documented though.
 
-Such notes normally go after the scissors line ("---") after Signed-off-by
-lines.
+Right.
 
-> Signed-off-by: Ricardo Ribalda<ricardo.ribalda@gmail.com>
-> Signed-off-by: Ricardo Ribalda Delgado<ricardo.ribalda@gmail.com>
+Best regards,
+Tomasz
 
-Is this duplication really needed ?
-
-> ---
-
->   drivers/media/platform/exynos4-is/fimc-capture.c |  2 +-
->   drivers/media/platform/exynos4-is/fimc-lite.c    |  2 +-
->   drivers/media/v4l2-core/videobuf2-core.c         | 24 +++++++++++++++++++++++-
->   include/media/videobuf2-core.h                   |  1 +
->   4 files changed, 26 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
-> index fb27ff7..c3c3b3b 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-capture.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
-> @@ -549,7 +549,7 @@ static int fimc_capture_release(struct file *file)
->   		vc->streaming = false;
->   	}
->
-> -	ret = vb2_fop_release(file);
-> +	ret = vb2_fop_release_locked(file);
-
-I'm personally not happy with such a change. It is still not obvious
-if "locked" means that this function takes the lock internally or it
-should be called with the lock held. How about sticking to the common
-practice and instead naming it __vb2_fop_release() ?
-
->   	if (close) {
->   		clear_bit(ST_CAPT_BUSY,&fimc->state);
-> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
-> index e5798f7..b8d417f 100644
-> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
-> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
-> @@ -546,7 +546,7 @@ static int fimc_lite_release(struct file *file)
->   		mutex_unlock(&entity->parent->graph_mutex);
->   	}
->
-> -	vb2_fop_release(file);
-> +	vb2_fop_release_locked(file);
->   	pm_runtime_put(&fimc->pdev->dev);
->   	clear_bit(ST_FLITE_SUSPENDED,&fimc->state);
->
-> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
-> index 594c75e..06e6dbd 100644
-> --- a/drivers/media/v4l2-core/videobuf2-core.c
-> +++ b/drivers/media/v4l2-core/videobuf2-core.c
-> @@ -2619,18 +2619,40 @@ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma)
->   }
->   EXPORT_SYMBOL_GPL(vb2_fop_mmap);
->
-> -int vb2_fop_release(struct file *file)
-> +int __vb2_fop_release(struct file *file, bool lock_is_held)
->   {
->   	struct video_device *vdev = video_devdata(file);
-> +	struct mutex *lock;
->
->   	if (file->private_data == vdev->queue->owner) {
-> +		if (lock_is_held)
-> +			lock = NULL;
-> +		else
-> +			lock = vdev->queue->lock ?
-> +				vdev->queue->lock : vdev->lock;
-> +		if (lock)
-> +			mutex_lock(lock);
->   		vb2_queue_release(vdev->queue);
->   		vdev->queue->owner = NULL;
-> +		if (lock)
-> +			mutex_unlock(lock);
->   	}
->   	return v4l2_fh_release(file);
->   }
-> +EXPORT_SYMBOL_GPL(__vb2_fop_release);
-
-We don't need to export this function, do we ?
-
-> +int vb2_fop_release(struct file *file)
-> +{
-> +	return __vb2_fop_release(file, false);
-> +}
->   EXPORT_SYMBOL_GPL(vb2_fop_release);
->
-> +int vb2_fop_release_locked(struct file *file)
-> +{
-> +	return __vb2_fop_release(file, true);
-> +}
-> +EXPORT_SYMBOL_GPL(vb2_fop_release_locked);
-
---
-Thanks,
-Sylwester
