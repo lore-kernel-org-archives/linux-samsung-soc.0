@@ -1,67 +1,68 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v12] i2c: exynos5: add High Speed I2C controller driver
-Date: Fri, 1 Nov 2013 12:35:09 +0100
-Message-ID: <20131101113509.GA6734@katana>
-References: <1354021236-28596-2-git-send-email-ch.naveen@samsung.com>
- <1381901442-29222-1-git-send-email-ch.naveen@samsung.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v10 00/20] iommu/exynos: Fixes and Enhancements of System
+	MMU driver with DT
+Date: Fri, 1 Nov 2013 12:42:24 +0100
+Message-ID: <20131101114224.GG17455@8bytes.org>
+References: <20131007105212.1c2a9e29166ff4b4a33468f8@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="+QahgC5+KEYLbs62"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:39824 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751919Ab3KALfQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 1 Nov 2013 07:35:16 -0400
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1381901442-29222-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20131007105212.1c2a9e29166ff4b4a33468f8-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Linux DeviceTree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Prathyush <prathyush.k-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Grant Grundler <grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <supash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Varun Sethi <Varun.Sethi-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Linux ARM Kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rahul Sharma <rahul.sharma-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-i2c@vger.kernel.org, sjg@chromium.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, grant.likely@secretlab.ca, broonie@kernel.org, dianders@chromium.org, cpgs@samsung.com
+
+On Mon, Oct 07, 2013 at 10:52:12AM +0900, Cho KyongHo wrote:
+> Patch summary:
+> [PATCH 01/20] iommu/exynos: do not include removed header
+> [PATCH 02/20] iommu/exynos: add missing cache flush for removed page table entries
+> [PATCH 03/20] iommu/exynos: change error handling when page table update is failed
+> [PATCH 04/20] iommu/exynos: fix L2TLB invalidation
+> [PATCH 05/20] iommu/exynos: allocate lv2 page table from own slab
+> [PATCH 06/20] iommu/exynos: always enable runtime PM
+> [PATCH 07/20] iommu/exynos: always use a single clock descriptor
+> [PATCH 08/20] iommu/exynos: remove dbgname from drvdata of a System MMU
+> [PATCH 09/20] iommu/exynos: use managed device helper functions
+> [PATCH 10/20] clk: exynos: add gate clock descriptions of System MMU
+> [PATCH 11/20] ARM: dts: Add description of System MMU of Exynos SoCs
+> [PATCH 12/20] iommu/exynos: support for device tree
+> [PATCH 13/20] iommu/exynos: gating clocks of master H/W
+> [PATCH 14/20] iommu/exynos: remove custom fault handler
+> [PATCH 15/20] iommu/exynos: remove calls to Runtime PM API functions
+> [PATCH 16/20] iommu/exynos: turn on useful configuration options
+> [PATCH 17/20] iommu/exynos: add support for power management subsystems.
+> [PATCH 18/20] iommu/exynos: change rwlock to spinlock
+> [PATCH 19/20] iommu/exynos: return 0 if iommu_attach_device() successes
+> [PATCH 20/20] iommu/exynos: add devices attached to the System MMU to an IOMMU group
+> 
+> Diffstats:
+>  .../devicetree/bindings/clock/exynos5250-clock.txt |   28 +
+>  .../devicetree/bindings/clock/exynos5420-clock.txt |    3 +
+>  .../bindings/iommu/samsung,exynos4210-sysmmu.txt   |   76 ++
+>  arch/arm/boot/dts/exynos4.dtsi                     |  105 ++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |   21 +
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |   82 ++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |  262 +++++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |  296 ++++++
+>  drivers/clk/samsung/clk-exynos5250.c               |   49 +-
+>  drivers/clk/samsung/clk-exynos5420.c               |   12 +-
+>  drivers/iommu/Kconfig                              |    5 +-
+>  drivers/iommu/exynos-iommu.c                       | 1033 +++++++++++++-------
+>  12 files changed, 1585 insertions(+), 387 deletions(-)
+
+What is the state of this series? It would be good to have some
+Acked-bys and/or Reviewed-bys on it.
 
 
---+QahgC5+KEYLbs62
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Oct 16, 2013 at 11:00:42AM +0530, Naveen Krishna Chatradhi wrote:
-> Adds support for High Speed I2C driver found in Exynos5 and
-> later SoCs from Samsung.
->=20
-> Driver only supports Device Tree method.
->=20
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Signed-off-by: Taekgyun Ko <taeggyun.ko@samsung.com>
-> Reviewed-by: Simon Glass <sjg@google.com>
-> Tested-by: Andrew Bresticker <abrestic@google.com>
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> Signed-off-by: Andrew Bresticker <abrestic@google.com>
-
-Rebased to v3.12-rc4 and Applied to for-next, thanks!
-
-
---+QahgC5+KEYLbs62
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.14 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSc5HtAAoJEBQN5MwUoCm2G+wQAKOUy1Box1K1WRim36Z0LZfA
-35OE0VmGBlO/YcviO4IXApuPZ8SKZI6HAE5V5fvpJtwu+LZDZshuh/XVOZTgeH6i
-SDowmDAVkBKRo3odCQXEuoNOM0adtUDDunP492YBmnuSRdXBt59rQcSDlDsmRYg9
-ftp+dTJBnwGjN/tYsAyVx51+f4KeEFEgX/Tf790cSYySHNVc0EKeObJN+vBVXP1u
-Xd/PDfkYArCWaEOEMtvNHdUCAmk6JrtHdYJ0+BUdEN03W8iA6v9UhAn1E2cuccAl
-odXS8rKzUFYW3wzoLSKunJDiVk8LuPpRZm90wPfLHIlP1n12BeYkIM1MabtKYTtw
-QBDndkVHSbaOXotLaiGqSEb0ARmT86tH1sKC1PODytDrpi+OHrwKt2o6QngWRMXR
-fxq1rhYwOtMTxbbYCsZmlb7ylt04YGGeh7HiZH/TneuqwvVOtN+ZZLhdwHsQtbuN
-qKNjTV452Ep69PixwMELdgQ8tAp/kfRyAIlImjIVtFYS55NEIqvCalG/OLRmxj2H
-hux+QcRTqS4g6EuNe4DWN+tnW/zWj7HsmFIebTnNyAzBICbOWt5r0u0Xd4iXUl93
-oV7agsOeFkgIPvWxUVgadT+ui3XNz8jOzPOdJRz2y+/wVgniRahz/lhdlwPb6H6s
-NASfvrkJi6nUe0/Wq+rQ
-=Vpe6
------END PGP SIGNATURE-----
-
---+QahgC5+KEYLbs62--
+	Joerg
