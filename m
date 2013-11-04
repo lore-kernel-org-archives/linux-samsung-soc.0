@@ -1,51 +1,63 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [RFC 04/12] phy: Add simple-phy driver
-Date: Mon, 4 Nov 2013 12:38:49 +0530
-Message-ID: <52774801.6030207@ti.com>
-References: <1382365111-6533-1-git-send-email-t.stanislaws@samsung.com> <1382365111-6533-5-git-send-email-t.stanislaws@samsung.com> <52694238.7050607@ti.com> <526A231E.2090504@samsung.com>
+From: Michael Opdenacker <michael.opdenacker@free-electrons.com>
+Subject: Re: [PATCH] ARM: S3C24XX: remove unused Kconfig parameter
+Date: Mon, 04 Nov 2013 10:15:40 +0100
+Message-ID: <527765BC.5010904@free-electrons.com>
+References: <1383463529-3113-1-git-send-email-michael.opdenacker@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:57454 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750829Ab3KDHJD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 4 Nov 2013 02:09:03 -0500
-In-Reply-To: <526A231E.2090504@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1383463529-3113-1-git-send-email-michael.opdenacker@free-electrons.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: ben-linux@fluff.org, kgene.kim@samsung.com, linux@arm.linux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kyungmin.park@samsung.com, t.figa@samsung.com, sw0312.kim@samsung.com, inki.dae@samsung.com, rahul.sharma@samsung.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, mturquette@linaro.org
 
-Hi,
-
-On Friday 25 October 2013 01:21 PM, Tomasz Stanislawski wrote:
-> Hi,
-> Please refer to the comments below.
+On 11/03/2013 08:25 AM, Michael Opdenacker wrote:
+> This removes the MACH_S3C2413 Kconfig parameter,
+> which was no longer used anywhere in the source code
+> and Makefiles.
 >
-> On 10/24/2013 05:52 PM, Kishon Vijay Abraham I wrote:
->> Hi,
->>
->> On Monday 21 October 2013 07:48 PM, Tomasz Stanislawski wrote:
->>> Add simple-phy driver to support a single register
->>> PHY interfaces present on Exynos4 SoC.
->>
->> How are these PHY interfaces modelled in the SoC? Where does the register
->> actually reside?
+> Signed-off-by: Michael Opdenacker <michael.opdenacker@free-electrons.com>
+> ---
+>  arch/arm/mach-s3c24xx/Kconfig | 7 -------
+>  1 file changed, 7 deletions(-)
 >
-> Initially, I was planning to add PHY for HDMI_PHY register in
-> power management register set on s5pv310 soc.
+> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+> index dba2173e70f3..9d90dd06cf2f 100644
+> --- a/arch/arm/mach-s3c24xx/Kconfig
+> +++ b/arch/arm/mach-s3c24xx/Kconfig
+> @@ -415,13 +415,6 @@ config MACH_JIVE_SHOW_BOOTLOADER
+>  	bool "Allow access to bootloader partitions in MTD"
+>  	depends on MACH_JIVE
+>  
+> -config MACH_S3C2413
+> -	bool
+> -	help
+> -	  Internal node for S3C2413 version of SMDK2413, so that
+> -	  machine_is_s3c2413() will work when MACH_SMDK2413 is
+> -	  selected
+> -
+>  config MACH_SMDK2412
+>  	bool "SMDK2412"
+>  	select MACH_SMDK2413
 
-If that register is part of the power management register space, I don't 
-think it justifies creating a PHY driver for it.
->
-> However other PHYs use very similar interface (setting bit 0).
-> This includes DAC_PHY, ADC_PHY, PCIe_PHY, SATA_PHY.
-> Moreover it suits well to USBDEVICE_PHY, USBHOST_PHY.
+Actually, in another thread, Sascha Hauer made me realize that this
+symbol is actually used to make machine_is_s3c2413() become true when
+the kernel is started with the corresponding machine id.
 
-How is it currently being done for these drivers? Is it being done in 
-the patches sent by Kamil or Vivek?
+However, this patch doesn't hurt as machine_is_s3c2413() isn't used in
+the code.
 
-Thanks
-Kishon
+You can either keep it or wait for s3c2413 support to be removed or to
+be converted to the device tree.
+
+Cheers,
+
+Michael.
+
+-- 
+Michael Opdenacker, CEO, Free Electrons
+Embedded Linux, Kernel and Android engineering
+http://free-electrons.com
++33 484 258 098
