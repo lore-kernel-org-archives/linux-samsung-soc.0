@@ -1,43 +1,236 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 04 Nov 2013 13:26:44 +0100
-Message-ID: <1539581.zprt32081v@amdc1227>
-References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
- <1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
- <527744B2.4090303@ti.com>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH v4] videobuf2: Add missing lock held on vb2_fop_relase
+Date: Mon, 04 Nov 2013 13:37:04 +0100
+Message-ID: <527794F0.40901@xs4all.nl>
+References: <1383385994-11422-1-git-send-email-ricardo.ribalda@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <527744B2.4090303@ti.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, kgene.kim@samsung.com, k.debski@samsung.com, s.nawrocki@samsung.com, balbi@ti.com, jwerner@chromium.org, jg1.han@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1383385994-11422-1-git-send-email-ricardo.ribalda@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, "open list:SAMSUNG S5P/EXYNO..." <linux-media@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Kishon,
-
-On Monday 04 of November 2013 12:24:42 Kishon Vijay Abraham I wrote:
-> Hi Vivek,
+On 11/02/2013 10:53 AM, Ricardo Ribalda Delgado wrote:
+> From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
 > 
-> On Thursday 31 October 2013 01:15 PM, Vivek Gautam wrote:
-> > Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
-> > The new driver uses the generic PHY framework and will interact
-> > with DWC3 controller present on Exynos5 series of SoCs.
+> vb2_fop_relase does not held the lock although it is modifying the
+> queue->owner field.
 > 
-> In Exynos, you have a single IP that supports both USB3 and USB2 PHY 
-> right? I think that needs to be mentioned here.
+> This could lead to race conditions on the vb2_perform_io function
+> when multiple applications are accessing the video device via
+> read/write API:
 
-Nope. There are two separate, different IPs.
+It's also called directly by drivers/media/usb/em28xx/em28xx-video.c!
 
-> Do you have separate registers that should be used for 
-> initializing/powerin_on/powering_off etc.. for usb2 phy and usb3 phy? If 
-> so, then you should model this driver as a single driver that supports 
-> two PHYs similar to what Sylwester has done before?
+> 
+> [ 308.297741] BUG: unable to handle kernel NULL pointer dereference at
+> 0000000000000260
+> [ 308.297759] IP: [<ffffffffa07a9fd2>] vb2_perform_fileio+0x372/0x610
+> [videobuf2_core]
+> [ 308.297794] PGD 159719067 PUD 158119067 PMD 0
+> [ 308.297812] Oops: 0000 #1 SMP
+> [ 308.297826] Modules linked in: qt5023_video videobuf2_dma_sg
+> qtec_xform videobuf2_vmalloc videobuf2_memops videobuf2_core
+> qtec_white qtec_mem gpio_xilinx qtec_cmosis qtec_pcie fglrx(PO)
+> spi_xilinx spi_bitbang qt5023
+> [ 308.297888] CPU: 1 PID: 2189 Comm: java Tainted: P O 3.11.0-qtec-standard #1
+> [ 308.297919] Hardware name: QTechnology QT5022/QT5022, BIOS
+> PM_2.1.0.309 X64 05/23/2013
+> [ 308.297952] task: ffff8801564e1690 ti: ffff88014dc02000 task.ti:
+> ffff88014dc02000
+> [ 308.297962] RIP: 0010:[<ffffffffa07a9fd2>] [<ffffffffa07a9fd2>]
+> vb2_perform_fileio+0x372/0x610 [videobuf2_core]
+> [ 308.297985] RSP: 0018:ffff88014dc03df8 EFLAGS: 00010202
+> [ 308.297995] RAX: 0000000000000000 RBX: ffff880158a23000 RCX: dead000000100100
+> [ 308.298003] RDX: 0000000000000000 RSI: dead000000200200 RDI: 0000000000000000
+> [ 308.298012] RBP: ffff88014dc03e58 R08: 0000000000000000 R09: 0000000000000001
+> [ 308.298020] R10: ffffea00051e8380 R11: ffff88014dc03fd8 R12: ffff880158a23070
+> [ 308.298029] R13: ffff8801549040b8 R14: 0000000000198000 R15: 0000000001887e60
+> [ 308.298040] FS: 00007f65130d5700(0000) GS:ffff88015ed00000(0000)
+> knlGS:0000000000000000
+> [ 308.298049] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 308.298057] CR2: 0000000000000260 CR3: 0000000159630000 CR4: 00000000000007e0
+> [ 308.298064] Stack:
+> [ 308.298071] ffff880156416c00 0000000000198000 0000000000000000
+> ffff880100000001
+> [ 308.298087] ffff88014dc03f50 00000000810a79ca 0002000000000001
+> ffff880154904718
+> [ 308.298101] ffff880156416c00 0000000000198000 ffff880154904338
+> ffff88014dc03f50
+> [ 308.298116] Call Trace:
+> [ 308.298143] [<ffffffffa07aa3c4>] vb2_read+0x14/0x20 [videobuf2_core]
+> [ 308.298198] [<ffffffffa07aa494>] vb2_fop_read+0xc4/0x120 [videobuf2_core]
+> [ 308.298252] [<ffffffff8154ee9e>] v4l2_read+0x7e/0xc0
+> [ 308.298296] [<ffffffff8116e639>] vfs_read+0xa9/0x160
+> [ 308.298312] [<ffffffff8116e882>] SyS_read+0x52/0xb0
+> [ 308.298328] [<ffffffff81784179>] tracesys+0xd0/0xd5
+> [ 308.298335] Code: e5 d6 ff ff 83 3d be 24 00 00 04 89 c2 4c 8b 45 b0
+> 44 8b 4d b8 0f 8f 20 02 00 00 85 d2 75 32 83 83 78 03 00 00 01 4b 8b
+> 44 c5 48 <8b> 88 60 02 00 00 85 c9 0f 84 b0 00 00 00 8b 40 58 89 c2 41
+> 89
+> [ 308.298487] RIP [<ffffffffa07a9fd2>] vb2_perform_fileio+0x372/0x610
+> [videobuf2_core]
+> [ 308.298507] RSP <ffff88014dc03df8>
+> [ 308.298514] CR2: 0000000000000260
+> [ 308.298526] ---[ end trace e8f01717c96d1e41 ]---
+> 
+> Signed-off-by: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+> ---
+> v2: Comments by Sylvester Nawrocki
+> 
+> fimc-capture and fimc-lite where calling vb2_fop_release with the lock held.
+> Therefore a new __vb2_fop_release function has been created to be used by
+> drivers that overload the release function.
+> 
+> v3: Comments by Sylvester Nawrocki and Mauro Carvalho Chehab
+> 
+> Use vb2_fop_release_locked instead of __vb2_fop_release
+> 
+> v4: Comments by Sylvester Nawrocki
+> 
+> Rename vb2_fop_release_locked to __vb2_fop_release and fix patch format
+> 
+>  drivers/media/platform/exynos4-is/fimc-capture.c |  2 +-
+>  drivers/media/platform/exynos4-is/fimc-lite.c    |  2 +-
+>  drivers/media/v4l2-core/videobuf2-core.c         | 23 ++++++++++++++++++++++-
+>  include/media/videobuf2-core.h                   |  1 +
+>  4 files changed, 25 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+> index fb27ff7..8192fe0 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-capture.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+> @@ -549,7 +549,7 @@ static int fimc_capture_release(struct file *file)
+>  		vc->streaming = false;
+>  	}
+>  
+> -	ret = vb2_fop_release(file);
+> +	ret = __vb2_fop_release(file);
+>  
+>  	if (close) {
+>  		clear_bit(ST_CAPT_BUSY, &fimc->state);
+> diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+> index e5798f7..cbe51cd 100644
+> --- a/drivers/media/platform/exynos4-is/fimc-lite.c
+> +++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+> @@ -546,7 +546,7 @@ static int fimc_lite_release(struct file *file)
+>  		mutex_unlock(&entity->parent->graph_mutex);
+>  	}
+>  
+> -	vb2_fop_release(file);
+> +	__vb2_fop_release(file);
+>  	pm_runtime_put(&fimc->pdev->dev);
+>  	clear_bit(ST_FLITE_SUSPENDED, &fimc->state);
+>  
+> diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+> index 594c75e..f48d72a 100644
+> --- a/drivers/media/v4l2-core/videobuf2-core.c
+> +++ b/drivers/media/v4l2-core/videobuf2-core.c
+> @@ -2619,18 +2619,39 @@ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma)
+>  }
+>  EXPORT_SYMBOL_GPL(vb2_fop_mmap);
+>  
+> -int vb2_fop_release(struct file *file)
+> +static int _vb2_fop_release(struct file *file, bool lock_is_held)
+>  {
+>  	struct video_device *vdev = video_devdata(file);
+> +	struct mutex *lock;
+>  
+>  	if (file->private_data == vdev->queue->owner) {
+> +		if (lock_is_held)
+> +			lock = NULL;
+> +		else
+> +			lock = vdev->queue->lock ?
+> +				vdev->queue->lock : vdev->lock;
+> +		if (lock)
+> +			mutex_lock(lock);
+>  		vb2_queue_release(vdev->queue);
+>  		vdev->queue->owner = NULL;
+> +		if (lock)
+> +			mutex_unlock(lock);
+>  	}
+>  	return v4l2_fh_release(file);
+>  }
+> +
+> +int vb2_fop_release(struct file *file)
+> +{
+> +	return _vb2_fop_release(file, false);
+> +}
+>  EXPORT_SYMBOL_GPL(vb2_fop_release);
+>  
+> +int __vb2_fop_release(struct file *file)
+> +{
+> +	return _vb2_fop_release(file, true);
+> +}
+> +EXPORT_SYMBOL_GPL(__vb2_fop_release);
 
-Sylwester's MIPI PHY uses such model because it has a single register
-that controls both PHYs.
+Sorry for introducing yet another opinion, but I think this is very confusing.
 
-Best regards,
-Tomasz
+I would do this:
 
+static int __vb2_fop_release(struct file *file, struct mutex *lock)
+{       
+        struct video_device *vdev = video_devdata(file);
+        
+        if (file->private_data == vdev->queue->owner) {
+		if (lock)
+			mutex_lock(lock);
+                vb2_queue_release(vdev->queue);
+                vdev->queue->owner = NULL;
+		if (lock)
+			mutex_unlock(lock);
+        }
+        return v4l2_fh_release(file); 
+}       
+
+int vb2_fop_release(struct file *file)
+{
+	struct video_device *vdev = video_devdata(file);
+	struct mutex *lock = vdev->queue->lock ?
+				vdev->queue->lock : vdev->lock;
+
+	return __vb2_fop_release(file, lock);
+}
+EXPORT_SYMBOL_GPL(vb2_fop_release);
+
+int vb2_fop_release_unlock(struct file *file)
+{
+	return __vb2_fop_release(file, NULL);
+}
+EXPORT_SYMBOL_GPL(vb2_fop_release_unlock);
+
+Optionally, __vb2_fop_release can be exported and then vb2_fop_release_unlock
+isn't necessary.
+
+Regards,
+
+	Hans
+
+> +
+>  ssize_t vb2_fop_write(struct file *file, char __user *buf,
+>  		size_t count, loff_t *ppos)
+>  {
+> diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+> index 6781258..76400fa 100644
+> --- a/include/media/videobuf2-core.h
+> +++ b/include/media/videobuf2-core.h
+> @@ -491,6 +491,7 @@ int vb2_ioctl_expbuf(struct file *file, void *priv,
+>  
+>  int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma);
+>  int vb2_fop_release(struct file *file);
+> +int __vb2_fop_release(struct file *file);
+>  ssize_t vb2_fop_write(struct file *file, char __user *buf,
+>  		size_t count, loff_t *ppos);
+>  ssize_t vb2_fop_read(struct file *file, char __user *buf,
+> 
