@@ -1,627 +1,142 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v11 02/12] [media] exynos5-fimc-is: Add driver core files
-Date: Tue, 5 Nov 2013 17:00:03 +0530
-Message-ID: <CALt3h780WOdD6NRA_hZpKwCqADVE-HKJxZbQJ=MBN4yRNQr38g@mail.gmail.com>
-References: <1383631964-26514-1-git-send-email-arun.kk@samsung.com>
-	<1383631964-26514-3-git-send-email-arun.kk@samsung.com>
-	<20131105112154.GE23061@valkosipuli.retiisi.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: Add hs-i2c nodes to exynos5420
+Date: Tue,  5 Nov 2013 17:09:20 +0530
+Message-ID: <1383651560-322-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f179.google.com ([209.85.220.179]:57787 "EHLO
-	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753911Ab3KELaF (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:34135 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753957Ab3KELkz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Nov 2013 06:30:05 -0500
-In-Reply-To: <20131105112154.GE23061@valkosipuli.retiisi.org.uk>
+	Tue, 5 Nov 2013 06:40:55 -0500
+Received: by mail-pa0-f47.google.com with SMTP id lf10so8567581pab.34
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Nov 2013 03:40:55 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, "kilyeon.im@samsung.com" <kilyeon.im@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-Hi Sakari,
+Added high speed I2C nodes to Exynos5420 DT file.
 
-Thank you for the review.
-Will make the required changes.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420.dtsi |   98 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
-Thanks
-Arun
-
-On Tue, Nov 5, 2013 at 4:51 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> Hi Arun,
->
-> Thanks for the patch. A few comments below.
->
-> On Tue, Nov 05, 2013 at 11:42:33AM +0530, Arun Kumar K wrote:
->> This driver is for the FIMC-IS IP available in Samsung Exynos5
->> SoC onwards. This patch adds the core files for the new driver.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
->> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  drivers/media/platform/exynos5-is/fimc-is-core.c |  410 ++++++++++++++++++++++
->>  drivers/media/platform/exynos5-is/fimc-is-core.h |  132 +++++++
->>  2 files changed, 542 insertions(+)
->>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.c
->>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.h
->>
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-core.c b/drivers/media/platform/exynos5-is/fimc-is-core.c
->> new file mode 100644
->> index 0000000..2b116d0
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-core.c
->> @@ -0,0 +1,410 @@
->> +/*
->> + * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
->> +*
->> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->> + * Arun Kumar K <arun.kk@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <linux/bug.h>
->> +#include <linux/ctype.h>
->> +#include <linux/device.h>
->> +#include <linux/debugfs.h>
->> +#include <linux/delay.h>
->> +#include <linux/errno.h>
->> +#include <linux/err.h>
->> +#include <linux/firmware.h>
->> +#include <linux/fs.h>
->> +#include <linux/gpio.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/kernel.h>
->> +#include <linux/list.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +#include <linux/of_gpio.h>
->> +#include <linux/of_address.h>
->> +#include <linux/of_platform.h>
->> +#include <linux/of_irq.h>
->> +#include <linux/pinctrl/consumer.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/slab.h>
->> +#include <linux/types.h>
->> +#include <linux/videodev2.h>
->> +
->> +#include <media/v4l2-device.h>
->> +#include <media/v4l2-ioctl.h>
->> +#include <media/v4l2-mem2mem.h>
->> +#include <media/v4l2-of.h>
->> +#include <media/videobuf2-core.h>
->> +#include <media/videobuf2-dma-contig.h>
->
-> Do you really need all these headers?
->
->> +#include "fimc-is.h"
->> +#include "fimc-is-i2c.h"
->> +
->> +#define CLK_MCU_ISP_DIV0_FREQ        (200 * 1000000)
->> +#define CLK_MCU_ISP_DIV1_FREQ        (100 * 1000000)
->> +#define CLK_ISP_DIV0_FREQ    (134 * 1000000)
->> +#define CLK_ISP_DIV1_FREQ    (68 * 1000000)
->> +#define CLK_ISP_DIVMPWM_FREQ (34 * 1000000)
->> +
->> +static const char * const fimc_is_clock_name[] = {
->> +     [IS_CLK_ISP]            = "isp",
->> +     [IS_CLK_MCU_ISP]        = "mcu_isp",
->> +     [IS_CLK_ISP_DIV0]       = "isp_div0",
->> +     [IS_CLK_ISP_DIV1]       = "isp_div1",
->> +     [IS_CLK_ISP_DIVMPWM]    = "isp_divmpwm",
->> +     [IS_CLK_MCU_ISP_DIV0]   = "mcu_isp_div0",
->> +     [IS_CLK_MCU_ISP_DIV1]   = "mcu_isp_div1",
->> +};
->> +
->> +static void fimc_is_put_clocks(struct fimc_is *is)
->> +{
->> +     int i;
->> +
->> +     for (i = 0; i < IS_CLK_MAX_NUM; i++) {
->> +             if (IS_ERR(is->clock[i]))
->> +                     continue;
->> +             clk_unprepare(is->clock[i]);
->> +             clk_put(is->clock[i]);
->> +             is->clock[i] = ERR_PTR(-EINVAL);
->> +     }
->> +}
->> +
->> +static int fimc_is_get_clocks(struct fimc_is *is)
->> +{
->> +     struct device *dev = &is->pdev->dev;
->> +     int i, ret;
->> +
->> +     for (i = 0; i < IS_CLK_MAX_NUM; i++) {
->> +             is->clock[i] = clk_get(dev, fimc_is_clock_name[i]);
->> +             if (IS_ERR(is->clock[i]))
->> +                     goto err;
->> +             ret = clk_prepare(is->clock[i]);
->> +             if (ret < 0) {
->> +                     clk_put(is->clock[i]);
->> +                     is->clock[i] = ERR_PTR(-EINVAL);
->> +                     goto err;
->> +             }
->> +     }
->> +     return 0;
->> +err:
->> +     fimc_is_put_clocks(is);
->> +     pr_err("Failed to get clock: %s\n", fimc_is_clock_name[i]);
->
-> How about dev_err() instead?
->
->> +     return -ENXIO;
->> +}
->> +
->> +static int fimc_is_configure_clocks(struct fimc_is *is)
->> +{
->> +     int i, ret;
->> +
->> +     for (i = 0; i < IS_CLK_MAX_NUM; i++)
->> +             is->clock[i] = ERR_PTR(-EINVAL);
->> +
->> +     ret = fimc_is_get_clocks(is);
->> +     if (ret)
->> +             return ret;
->> +
->> +     /* Set rates */
->> +     ret = clk_set_rate(is->clock[IS_CLK_MCU_ISP_DIV0],
->> +                     CLK_MCU_ISP_DIV0_FREQ);
->> +     if (ret)
->> +             return ret;
->> +     ret = clk_set_rate(is->clock[IS_CLK_MCU_ISP_DIV1],
->> +                     CLK_MCU_ISP_DIV1_FREQ);
->> +     if (ret)
->> +             return ret;
->> +     ret = clk_set_rate(is->clock[IS_CLK_ISP_DIV0], CLK_ISP_DIV0_FREQ);
->> +     if (ret)
->> +             return ret;
->> +     ret = clk_set_rate(is->clock[IS_CLK_ISP_DIV1], CLK_ISP_DIV1_FREQ);
->> +     if (ret)
->> +             return ret;
->> +     ret = clk_set_rate(is->clock[IS_CLK_ISP_DIVMPWM],
->> +                     CLK_ISP_DIVMPWM_FREQ);
->> +     return ret;
->
-> You can return the return value from clk_set_rate() directly here.
->
->> +}
->> +
->> +static void fimc_is_pipelines_destroy(struct fimc_is *is)
->> +{
->> +     int i;
->> +
->> +     for (i = 0; i < is->drvdata->num_instances; i++)
->> +             fimc_is_pipeline_destroy(&is->pipeline[i]);
->> +}
->> +
->> +static int fimc_is_parse_sensor_config(struct fimc_is *is, unsigned int index,
->> +                                             struct device_node *node)
->> +{
->> +     struct fimc_is_sensor *sensor = &is->sensor[index];
->> +     u32 tmp = 0;
->> +     int ret;
->> +
->> +     sensor->drvdata = exynos5_is_sensor_get_drvdata(node);
->> +     if (!sensor->drvdata) {
->> +             dev_err(&is->pdev->dev, "no driver data found for: %s\n",
->> +                                                      node->full_name);
->> +             return -EINVAL;
->> +     }
->> +
->> +     node = v4l2_of_get_next_endpoint(node, NULL);
->> +     if (!node)
->> +             return -ENXIO;
->> +
->> +     node = v4l2_of_get_remote_port(node);
->> +     if (!node)
->> +             return -ENXIO;
->> +
->> +     /* Use MIPI-CSIS channel id to determine the ISP I2C bus index. */
->> +     ret = of_property_read_u32(node, "reg", &tmp);
->> +     if (ret < 0) {
->> +             dev_err(&is->pdev->dev, "reg property not found at: %s\n",
->> +                                                      node->full_name);
->> +             return ret;
->> +     }
->> +
->> +     sensor->i2c_bus = tmp - FIMC_INPUT_MIPI_CSI2_0;
->> +     return 0;
->> +}
->> +
->> +static int fimc_is_parse_sensor(struct fimc_is *is)
->> +{
->> +     struct device_node *i2c_bus, *child;
->> +     int ret, index = 0;
->
-> You could define ret in the inner loop. Up to you.
->
->> +
->> +     for_each_compatible_node(i2c_bus, NULL, FIMC_IS_I2C_COMPATIBLE) {
->> +             for_each_available_child_of_node(i2c_bus, child) {
->> +                     ret = fimc_is_parse_sensor_config(is, index, child);
->> +
->> +                     if (ret < 0 || index >= FIMC_IS_NUM_SENSORS) {
->> +                             of_node_put(child);
->> +                             return ret;
->> +                     }
->> +                     index++;
->> +             }
->> +     }
->> +     return 0;
->> +}
->> +
->> +static void *fimc_is_get_drvdata(struct platform_device *pdev);
->
-> By moving the function here, you could avoid having an "extra" prototype for
-> a local function.
->
->> +static int fimc_is_probe(struct platform_device *pdev)
->> +{
->> +     struct device *dev = &pdev->dev;
->> +     struct resource *res;
->> +     struct fimc_is *is;
->> +     void __iomem *regs;
->> +     struct device_node *node;
->> +     int irq, ret;
->> +     int i;
->> +
->> +     dev_dbg(dev, "FIMC-IS Probe Enter\n");
->> +
->> +     if (!dev->of_node)
->> +             return -ENODEV;
->> +
->> +     is = devm_kzalloc(&pdev->dev, sizeof(*is), GFP_KERNEL);
->> +     if (!is)
->> +             return -ENOMEM;
->> +
->> +     is->pdev = pdev;
->> +
->> +     is->drvdata = fimc_is_get_drvdata(pdev);
->> +
->> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +     regs = devm_ioremap_resource(dev, res);
->> +     if (IS_ERR(regs))
->> +             return PTR_ERR(regs);
->> +
->> +     /* Get the PMU base */
->> +     node = of_parse_phandle(dev->of_node, "samsung,pmu", 0);
->> +     if (!node)
->> +             return -ENODEV;
->> +     is->pmu_regs = of_iomap(node, 0);
->> +     if (!is->pmu_regs)
->> +             return -ENOMEM;
->> +
->> +     irq = irq_of_parse_and_map(dev->of_node, 0);
->
-> irq_of_parse_and_map() returns zero on error.
->
->> +     if (irq < 0) {
->> +             dev_err(dev, "Failed to get IRQ\n");
->> +             return irq;
->> +     }
->> +
->> +     ret = fimc_is_configure_clocks(is);
->> +     if (ret < 0) {
->> +             dev_err(dev, "clocks configuration failed\n");
->> +             goto err_clk;
->> +     }
->> +
->> +     platform_set_drvdata(pdev, is);
->> +     pm_runtime_enable(dev);
->> +
->> +     is->alloc_ctx = vb2_dma_contig_init_ctx(dev);
->> +     if (IS_ERR(is->alloc_ctx)) {
->> +             ret = PTR_ERR(is->alloc_ctx);
->> +             goto err_vb;
->> +     }
->> +
->> +     /* Get IS-sensor contexts */
->> +     ret = fimc_is_parse_sensor(is);
->> +     if (ret < 0)
->> +             goto err_vb;
->> +
->> +     /* Initialize FIMC Pipeline */
->> +     for (i = 0; i < is->drvdata->num_instances; i++) {
->> +             ret = fimc_is_pipeline_init(&is->pipeline[i], i, is);
->> +             if (ret < 0)
->> +                     goto err_sd;
->> +     }
->> +
->> +     /* Initialize FIMC Interface */
->> +     ret = fimc_is_interface_init(&is->interface, regs, irq);
->> +     if (ret < 0)
->> +             goto err_sd;
->> +
->> +     /* Probe the peripheral devices  */
->> +     ret = of_platform_populate(dev->of_node, NULL, NULL, dev);
->> +     if (ret < 0)
->> +             goto err_sd;
->> +
->> +     dev_dbg(dev, "FIMC-IS registered successfully\n");
->> +
->> +     return 0;
->> +
->> +err_sd:
->> +     fimc_is_pipelines_destroy(is);
->> +err_vb:
->> +     vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
->> +err_clk:
->> +     fimc_is_put_clocks(is);
->> +
->> +     return ret;
->> +}
->> +
->> +int fimc_is_clk_enable(struct fimc_is *is)
->> +{
->> +     int ret;
->> +
->> +     ret = clk_enable(is->clock[IS_CLK_ISP]);
->> +     if (ret)
->> +             return ret;
->> +     ret = clk_enable(is->clock[IS_CLK_MCU_ISP]);
->> +     if (ret)
->> +             clk_disable(is->clock[IS_CLK_ISP]);
->> +     return ret;
->> +}
->> +
->> +void fimc_is_clk_disable(struct fimc_is *is)
->> +{
->> +     clk_disable(is->clock[IS_CLK_ISP]);
->> +     clk_disable(is->clock[IS_CLK_MCU_ISP]);
->> +}
->> +
->> +static int fimc_is_pm_resume(struct device *dev)
->> +{
->> +     struct fimc_is *is = dev_get_drvdata(dev);
->> +     int ret;
->> +
->> +     ret = fimc_is_clk_enable(is);
->> +     if (ret < 0) {
->> +             dev_err(dev, "Could not enable clocks\n");
->> +             return ret;
->> +     }
->> +     return 0;
->> +}
->> +
->> +static int fimc_is_pm_suspend(struct device *dev)
->> +{
->> +     struct fimc_is *is = dev_get_drvdata(dev);
->> +
->> +     fimc_is_clk_disable(is);
->> +     return 0;
->> +}
->> +
->> +static int fimc_is_runtime_resume(struct device *dev)
->> +{
->> +     return fimc_is_pm_resume(dev);
->> +}
->> +
->> +static int fimc_is_runtime_suspend(struct device *dev)
->> +{
->> +     return fimc_is_pm_suspend(dev);
->> +}
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +static int fimc_is_resume(struct device *dev)
->> +{
->> +     /* TODO */
->> +     return 0;
->> +}
->> +
->> +static int fimc_is_suspend(struct device *dev)
->> +{
->> +     /* TODO */
->> +     return 0;
->> +}
->> +#endif /* CONFIG_PM_SLEEP */
->> +
->> +static int fimc_is_remove(struct platform_device *pdev)
->> +{
->> +     struct fimc_is *is = platform_get_drvdata(pdev);
->> +     struct device *dev = &pdev->dev;
->> +
->> +     pm_runtime_disable(dev);
->> +     pm_runtime_set_suspended(dev);
->> +     fimc_is_pipelines_destroy(is);
->> +     vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
->> +     fimc_is_put_clocks(is);
->> +     return 0;
->> +}
->> +
->> +static const struct dev_pm_ops fimc_is_pm_ops = {
->> +     SET_SYSTEM_SLEEP_PM_OPS(fimc_is_suspend, fimc_is_resume)
->> +     SET_RUNTIME_PM_OPS(fimc_is_runtime_suspend, fimc_is_runtime_resume,
->> +                        NULL)
->> +};
->> +
->> +static struct fimc_is_drvdata exynos5250_drvdata = {
->> +     .num_instances  = 1,
->> +     .fw_name        = "exynos5_fimc_is_fw.bin",
->> +};
->> +
->> +static const struct of_device_id exynos5_fimc_is_match[] = {
->> +     {
->> +             .compatible = "samsung,exynos5250-fimc-is",
->> +             .data = &exynos5250_drvdata,
->> +     },
->> +     {},
->> +};
->> +MODULE_DEVICE_TABLE(of, exynos5_fimc_is_match);
->> +
->> +static void *fimc_is_get_drvdata(struct platform_device *pdev)
->> +{
->> +     struct fimc_is_drvdata *driver_data = NULL;
->> +     const struct of_device_id *match;
->> +
->> +     match = of_match_node(exynos5_fimc_is_match,
->> +                     pdev->dev.of_node);
->> +     if (match)
->> +             driver_data = (struct fimc_is_drvdata *)match->data;
->> +     return driver_data;
->> +}
->> +
->> +static struct platform_driver fimc_is_driver = {
->> +     .probe          = fimc_is_probe,
->> +     .remove         = fimc_is_remove,
->> +     .driver = {
->> +             .name   = FIMC_IS_DRV_NAME,
->> +             .owner  = THIS_MODULE,
->> +             .pm     = &fimc_is_pm_ops,
->> +             .of_match_table = exynos5_fimc_is_match,
->> +     }
->> +};
->> +module_platform_driver(fimc_is_driver);
->> +
->> +MODULE_LICENSE("GPL");
->> +MODULE_AUTHOR("Arun Kumar K <arun.kk@samsung.com>");
->> +MODULE_DESCRIPTION("Samsung Exynos5 (FIMC-IS) Imaging Subsystem driver");
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-core.h b/drivers/media/platform/exynos5-is/fimc-is-core.h
->> new file mode 100644
->> index 0000000..c27b603
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-core.h
->> @@ -0,0 +1,132 @@
->> +/*
->> + * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
->> + *
->> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->> + *  Arun Kumar K <arun.kk@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +#ifndef FIMC_IS_CORE_H_
->> +#define FIMC_IS_CORE_H_
->> +
->> +#include <asm/barrier.h>
->> +#include <linux/bug.h>
->> +#include <linux/clk.h>
->> +#include <linux/device.h>
->> +#include <linux/errno.h>
->> +#include <linux/firmware.h>
->> +#include <linux/interrupt.h>
->> +#include <linux/io.h>
->> +#include <linux/irqreturn.h>
->> +#include <linux/kernel.h>
->> +#include <linux/list.h>
->> +#include <linux/module.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/sched.h>
->> +#include <linux/sizes.h>
->> +#include <linux/slab.h>
->> +#include <linux/spinlock.h>
->> +#include <linux/types.h>
->> +#include <linux/videodev2.h>
->> +
->> +#include <media/media-entity.h>
->> +#include <media/s5p_fimc.h>
->> +#include <media/videobuf2-core.h>
->> +#include <media/v4l2-ctrls.h>
->> +#include <media/v4l2-device.h>
->> +#include <media/v4l2-mem2mem.h>
->> +#include <media/v4l2-mediabus.h>
->
-> Same here: do you really need all these headers here?
->
->> +#define FIMC_IS_DRV_NAME             "exynos5-fimc-is"
->> +
->> +#define FIMC_IS_COMMAND_TIMEOUT              (10 * HZ)
->> +#define FIMC_IS_STARTUP_TIMEOUT              (3 * HZ)
->> +#define FIMC_IS_SHUTDOWN_TIMEOUT     (10 * HZ)
->> +
->> +#define FW_SHARED_OFFSET             (0x8c0000)
->> +#define DEBUG_CNT                    (500 * 1024)
->> +#define DEBUG_OFFSET                 (0x840000)
->> +#define DEBUGCTL_OFFSET                      (0x8bd000)
->> +#define DEBUG_FCOUNT                 (0x8c64c0)
->> +
->> +#define FIMC_IS_MAX_INSTANCES                1
->> +
->> +#define FIMC_IS_NUM_SENSORS          2
->> +#define FIMC_IS_NUM_PIPELINES                1
->> +
->> +#define FIMC_IS_MAX_PLANES           3
->> +#define FIMC_IS_NUM_SCALERS          2
->> +
->> +enum fimc_is_clks {
->> +     IS_CLK_ISP,
->> +     IS_CLK_MCU_ISP,
->> +     IS_CLK_ISP_DIV0,
->> +     IS_CLK_ISP_DIV1,
->> +     IS_CLK_ISP_DIVMPWM,
->> +     IS_CLK_MCU_ISP_DIV0,
->> +     IS_CLK_MCU_ISP_DIV1,
->> +     IS_CLK_MAX_NUM
->> +};
->> +
->> +/* Video capture states */
->> +enum fimc_is_video_state {
->> +     STATE_INIT,
->> +     STATE_BUFS_ALLOCATED,
->> +     STATE_RUNNING,
->> +};
->> +
->> +enum fimc_is_scaler_id {
->> +     SCALER_SCC,
->> +     SCALER_SCP
->> +};
->> +
->> +enum fimc_is_sensor_pos {
->> +     SENSOR_CAM0,
->> +     SENSOR_CAM1
->> +};
->> +
->> +struct fimc_is_buf {
->> +     struct vb2_buffer vb;
->> +     struct list_head list;
->> +     unsigned int paddr[FIMC_IS_MAX_PLANES];
->> +};
->> +
->> +struct fimc_is_memory {
->> +     /* physical base address */
->> +     dma_addr_t paddr;
->> +     /* virtual base address */
->> +     void *vaddr;
->> +     /* total length */
->> +     unsigned int size;
->> +};
->> +
->> +struct fimc_is_meminfo {
->> +     struct fimc_is_memory   fw;
->> +     struct fimc_is_memory   shot;
->> +     struct fimc_is_memory   region;
->> +     struct fimc_is_memory   shared;
->> +};
->> +
->> +struct fimc_is_drvdata {
->> +     unsigned int    num_instances;
->> +     char            *fw_name;
->> +};
->> +
->> +/**
->> + * struct fimc_is_fmt - the driver's internal color format data
->> + * @name: format description
->> + * @fourcc: the fourcc code for this format
->> + * @depth: number of bytes per pixel
->> + * @num_planes: number of planes for this color format
->> + */
->> +struct fimc_is_fmt {
->> +     char            *name;
->> +     unsigned int    fourcc;
->> +     unsigned int    depth[FIMC_IS_MAX_PLANES];
->> +     unsigned int    num_planes;
->> +};
->> +
->> +#endif
->
-> --
-> Kind regards,
->
-> Sakari Ailus
-> e-mail: sakari.ailus@iki.fi     XMPP: sailus@retiisi.org.uk
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 9ce5f82..469769a 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -34,6 +34,13 @@
+ 		i2c1 = &i2c_1;
+ 		i2c2 = &i2c_2;
+ 		i2c3 = &i2c_3;
++		i2c4 = &hsi2c_4;
++		i2c5 = &hsi2c_5;
++		i2c6 = &hsi2c_6;
++		i2c7 = &hsi2c_7;
++		i2c8 = &hsi2c_8;
++		i2c9 = &hsi2c_9;
++		i2c10 = &hsi2c_10;
+ 		gsc0 = &gsc_0;
+ 		gsc1 = &gsc_1;
+ 	};
+@@ -339,6 +346,97 @@
+ 		status = "disabled";
+ 	};
+ 
++	hsi2c_4: hsi2c@12CA0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CA0000 0x1000>;
++		interrupts = <0 60 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c4_hs_bus>;
++		clocks = <&clock 265>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_5: hsi2c@12CB0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CB0000 0x1000>;
++		interrupts = <0 61 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c5_hs_bus>;
++		clocks = <&clock 266>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_6: hsi2c@12CC0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CC0000 0x1000>;
++		interrupts = <0 62 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c6_hs_bus>;
++		clocks = <&clock 267>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_7: hsi2c@12CD0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CD0000 0x1000>;
++		interrupts = <0 63 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c7_hs_bus>;
++		clocks = <&clock 268>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_8: hsi2c@12E00000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E00000 0x1000>;
++		interrupts = <0 87 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c8_hs_bus>;
++		clocks = <&clock 281>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_9: hsi2c@12E10000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E10000 0x1000>;
++		interrupts = <0 88 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c9_hs_bus>;
++		clocks = <&clock 282>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_10: hsi2c@12E20000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E20000 0x1000>;
++		interrupts = <0 203 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c10_hs_bus>;
++		clocks = <&clock 283>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
+ 	hdmi@14530000 {
+ 		compatible = "samsung,exynos4212-hdmi";
+ 		reg = <0x14530000 0x70000>;
+-- 
+1.7.9.5
