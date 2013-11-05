@@ -1,142 +1,113 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: dts: Add hs-i2c nodes to exynos5420
-Date: Tue,  5 Nov 2013 17:09:20 +0530
-Message-ID: <1383651560-322-1-git-send-email-sachin.kamat@linaro.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Tue, 05 Nov 2013 21:03:19 +0900
+Message-ID: <000101ceda1f$04ca6f20$0e5f4d60$%han@samsung.com>
+References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
+ <1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
+ <527744B2.4090303@ti.com> <030d01ced946$d6e23490$84a69db0$%debski@samsung.com>
+ <52779D28.9000905@ti.com>
+ <CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
+ <00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
+ <000001ceda17$f41c2030$dc546090$%han@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:34135 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753957Ab3KELkz (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:49932 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753728Ab3KEMDW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Nov 2013 06:40:55 -0500
-Received: by mail-pa0-f47.google.com with SMTP id lf10so8567581pab.34
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 05 Nov 2013 03:40:55 -0800 (PST)
+	Tue, 5 Nov 2013 07:03:22 -0500
+In-reply-to: <000001ceda17$f41c2030$dc546090$%han@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
+To: 'Kamil Debski' <k.debski@samsung.com>, 'Vivek Gautam' <gautamvivek1987@gmail.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>
+Cc: 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 'Greg KH' <gregkh@linuxfoundation.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Julius Werner' <jwerner@chromium.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Added high speed I2C nodes to Exynos5420 DT file.
+On Tuesday, November 05, 2013 8:13 PM, Jingoo Han wrote:
+> On Tuesday, November 05, 2013 6:37 PM, Kamil Debski wrote:
+> > On Tuesday, November 05, 2013 8:20 AM, Vivek Gautam wrote:
+> > > On Mon, Nov 4, 2013 at 6:42 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> > > > On Monday 04 November 2013 03:45 PM, Kamil Debski wrote:
+> > > >> On Monday, November 04, 2013 7:55 AM, Kishon Vijay Abraham I wrote:
+> > > >>> On Thursday 31 October 2013 01:15 PM, Vivek Gautam wrote:
+> > > >>>>
+> > > >>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+> > > >>>> The new driver uses the generic PHY framework and will interact
+> > > >>>> with
+> > > >>>> DWC3 controller present on Exynos5 series of SoCs.
+> > > >>>
+> > > >>>
+> > > >>> In Exynos, you have a single IP that supports both USB3 and USB2
+> > > PHY
+> > > >>> right? I think that needs to be mentioned here.
+> > > >>
+> > > >>
+> > > >> As far as I know the IP is different.
+> > > >
+> > > >
+> > > > Ok. Sometime back Vivek was mentioning about a single IP for both
+> > > USB3
+> > > > and USB2. Thought it should be this driver. Anyway thanks for the
+> > > clarification.
+> > >
+> > > Right Kishon, I had mentioned that Exynos5's dwc3 controller have a
+> > > single IP for USB2 and USB3 phy.
+> > > From what i see, on exynos5 systems the dwc3 controller uses a combo of
+> > > usb 2 (utmi+) and usb 3 (pipe 3) phy (with base address starting
+> > > 0x12100000).
+> > >
+> > > Kamil, Tomasz,
+> > >
+> > > Please correct me if i am wrong.
+> >
+> > I have the Exynos 5250 documentation and I found two phy register ranges:
+> > 1) USB 2.0 PHY having the base address of 0x1213 0000
+> > 	Chapter 33. USB 2.0 Host Controller
+> > 	Subchapter 33.5.2 Phy Control Register p. 1696
+> > 	First register's description is
+> > 	"USB2.0 phy control register"
+> > 2) USB 3.0 PHY (I guess) with the base address 0x1210 0000
+> > 	Chapter 35. USB 3.0 DRD Controller
+> > 	Subchapter 35.4.6 PHY Control Register p. 1872
+> >
+> > Jingoo, could you comment on the above? You may know more than we do :)
+> 
+> Hi Kamil,
+> 
+> Thank you for trusting me. :-)
+> I just asked my validation engineer about 5250 USB PHY.
+> As I know, she has the best knowledge about Samsung SoC USB hardware.
+> She said that there are 2 PHY controllers such as USB 2.0 PHY, USB 3.0 PHY.
+> 
+>   1) USB2.0 PHY: USB2.0 HOST, USB2.0 Device
+>   2) USB3.0 PHY: USB3.0 DRD (3.0 HOST & 3.0 Device)
+> 
+> > In addition, I have a question to you Vivek - does your USB 3.0
+> > PHY support both host and device?
+> 
+> According to her, USB3.0 PHY can support both 3.0 Host and 3.0 Device.
+> Thank you.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/boot/dts/exynos5420.dtsi |   98 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+In addition to this,
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 9ce5f82..469769a 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -34,6 +34,13 @@
- 		i2c1 = &i2c_1;
- 		i2c2 = &i2c_2;
- 		i2c3 = &i2c_3;
-+		i2c4 = &hsi2c_4;
-+		i2c5 = &hsi2c_5;
-+		i2c6 = &hsi2c_6;
-+		i2c7 = &hsi2c_7;
-+		i2c8 = &hsi2c_8;
-+		i2c9 = &hsi2c_9;
-+		i2c10 = &hsi2c_10;
- 		gsc0 = &gsc_0;
- 		gsc1 = &gsc_1;
- 	};
-@@ -339,6 +346,97 @@
- 		status = "disabled";
- 	};
- 
-+	hsi2c_4: hsi2c@12CA0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CA0000 0x1000>;
-+		interrupts = <0 60 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c4_hs_bus>;
-+		clocks = <&clock 265>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_5: hsi2c@12CB0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CB0000 0x1000>;
-+		interrupts = <0 61 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c5_hs_bus>;
-+		clocks = <&clock 266>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_6: hsi2c@12CC0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CC0000 0x1000>;
-+		interrupts = <0 62 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c6_hs_bus>;
-+		clocks = <&clock 267>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_7: hsi2c@12CD0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CD0000 0x1000>;
-+		interrupts = <0 63 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c7_hs_bus>;
-+		clocks = <&clock 268>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_8: hsi2c@12E00000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E00000 0x1000>;
-+		interrupts = <0 87 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c8_hs_bus>;
-+		clocks = <&clock 281>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_9: hsi2c@12E10000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E10000 0x1000>;
-+		interrupts = <0 88 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c9_hs_bus>;
-+		clocks = <&clock 282>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_10: hsi2c@12E20000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E20000 0x1000>;
-+		interrupts = <0 203 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c10_hs_bus>;
-+		clocks = <&clock 283>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
- 	hdmi@14530000 {
- 		compatible = "samsung,exynos4212-hdmi";
- 		reg = <0x14530000 0x70000>;
--- 
-1.7.9.5
+Vivek's comment is also right. :-)
+A few minutes ago, I asked one of my USB S/W engineers.
+
+USB3.0 PHY consists of two blocks such as 3.0 block and 2.0 block.
+This USB3.0 PHY can support UTMI+ and PIPE3 interface for 3.0 block
+and 2.0 block, respectively.
+
+Conclusion:
+
+   1) USB2.0 PHY: USB2.0 HOST, USB2.0 Device
+                       Base address: 0x1213 0000
+
+   2) USB3.0 PHY: USB3.0 DRD (3.0 HOST & 3.0 Device)
+                       Base address: 0x1210 0000
+                       2.0 block(UTMI+) & 3.0 block(PIPE3)
+
+
+Best regards,
+Jingoo Han
