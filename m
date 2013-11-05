@@ -1,94 +1,58 @@
-From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] clk: exynos5410: register clocks using common clock
- framework
-Date: Tue, 05 Nov 2013 13:15:43 +0400
-Message-ID: <5278B73F.1090508@samsung.com>
-References: <1381763305-7085-1-git-send-email-v.tyrtov@samsung.com>
- <1381763305-7085-3-git-send-email-v.tyrtov@samsung.com>
- <1421095.b3lQaz2kV9@flatron>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Tue, 05 Nov 2013 10:34:07 +0100
+Message-ID: <230638605.rENrU3ufJZ@flatron>
+References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com> <52779D28.9000905@ti.com> <CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1421095.b3lQaz2kV9@flatron>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Naour Romain <romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Vivek Gautam <gautamvivek1987@gmail.com>, Kishon Vijay Abraham I <kishon@ti.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Julius Werner <jwerner@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Tuesday 05 of November 2013 12:50:18 Vivek Gautam wrote:
+> Hi Kishon,
+> 
+> On Mon, Nov 4, 2013 at 6:42 PM, Kishon Vijay Abraham I <kishon@ti.com> 
+wrote:
+> > Hi,
+> > 
+> > On Monday 04 November 2013 03:45 PM, Kamil Debski wrote:
+> >> Hi Kishon,
+> >> 
+> >>> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
+> >>> Sent: Monday, November 04, 2013 7:55 AM
+> >>> 
+> >>> Hi Vivek,
+> >>> 
+> >>> On Thursday 31 October 2013 01:15 PM, Vivek Gautam wrote:
+> >>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+> >>>> The new driver uses the generic PHY framework and will interact
+> >>>> with
+> >>>> DWC3 controller present on Exynos5 series of SoCs.
+> >>> 
+> >>> In Exynos, you have a single IP that supports both USB3 and USB2 PHY
+> >>> right? I think that needs to be mentioned here.
+> >> 
+> >> As far as I know the IP is different.
+> > 
+> > Ok. Sometime back Vivek was mentioning about a single IP for both USB3
+> > and USB2. Thought it should be this driver. Anyway thanks for the
+> > clarification.
+> Right Kishon, I had mentioned that Exynos5's dwc3 controller have a
+> single IP for USB2 and USB3 phy.
+> From what i see, on exynos5 systems the dwc3 controller uses a combo
+> of usb 2 (utmi+) and usb 3 (pipe 3) phy
+> (with base address starting 0x12100000).
 
-On 01.11.2013 20:58, Tomasz Figa wrote:
-> Hi,
->
-> On Monday 14 of October 2013 19:08:23 Vyacheslav Tyrtov wrote:
->> From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
->> The EXYNOS5410 clocks are statically listed and registered
->> using the Samsung specific common clock helper functions.
->>
->> Signed-off-by: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>   .../devicetree/bindings/clock/exynos5410-clock.txt |  37 +++
->>   drivers/clk/samsung/Makefile                       |   1 +
->>   drivers/clk/samsung/clk-exynos5410.c               | 251
->> +++++++++++++++++++++ include/dt-bindings/clock/exynos5410.h
->>   | 175 ++++++++++++++ 4 files changed, 464 insertions(+)
->>   create mode 100644
->> Documentation/devicetree/bindings/clock/exynos5410-clock.txt create
->> mode 100644 drivers/clk/samsung/clk-exynos5410.c
->>   create mode 100644 include/dt-bindings/clock/exynos5410.h
-> The driver looks pretty good now, thanks for addressing my comments to
-> previous version. There are still few issues remaining, though. Please see
-> my comments inline.
->
-> [snip]
->> diff --git a/drivers/clk/samsung/clk-exynos5410.c
->> b/drivers/clk/samsung/clk-exynos5410.c new file mode 100644
->> index 0000000..c5eba08
->> --- /dev/null
->> +++ b/drivers/clk/samsung/clk-exynos5410.c
-> [snip]
->> +static struct of_device_id ext_clk_match[] __initdata = {
->> +	{ .compatible = "samsung,clock-oscclk", .data = (void *)0, },
->> +	{ },
->> +};
-> I don't see anything in binding documentation mentioning this compatible
-> value. Anyway, since there is already a generic binding for fixed rate
-> clocks, this shouldn't be needed at all.
->
->> +
->> +/* register exynos5410 clocks */
->> +static void __init exynos5410_clk_init(struct device_node *np)
->> +{
->> +	void __iomem *reg_base;
->> +
->> +	reg_base = of_iomap(np, 0);
->> +	if (!reg_base)
->> +		panic("%s: failed to map registers\n", __func__);
->> +
->> +	samsung_clk_init(np, reg_base, CLK_NR_CLKS,
->> +			exynos5410_clk_regs,
-> ARRAY_SIZE(exynos5410_clk_regs),
->> +			NULL, 0);
->> +	samsung_clk_of_register_fixed_ext(exynos5410_frt_ext_clks,
->> +			ARRAY_SIZE(exynos5410_frt_ext_clks),
->> +			ext_clk_match);
-> This call could be dropped after moving to generic fixed rate clock
-> bindings.
->
-> Best regards,
-> Tomasz
-
-Already done. Will be added in patch v3.
-
-
-Thank you for comments, Tomasz.
+I meant there is a single PHY used with the USB 3.0 controller (dwc3) and 
+it is different from the PHY used with the USB 2.0 controller (s3c-hsotg 
+aka dwc2). The USB 3.0 PHY and controller blocks also support USB 2.0 
+operation, though. So we were both right. ;)
 
 Best regards,
-     Tarek Dakhran
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Tomasz
+
