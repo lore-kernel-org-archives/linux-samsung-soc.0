@@ -1,63 +1,163 @@
-From: Chen Gang <gang.chen@asianux.com>
-Subject: Re: [PATCH trivial] include: uapi: standard all files' macro prefix
-	and suffix, excluding "linux/" sub-directory
-Date: Tue, 05 Nov 2013 20:05:12 +0800
-Message-ID: <5278DEF8.2030101@asianux.com>
-References: <52786742.1080509@asianux.com> <51FB6216.6010008@asianux.com>
-	<11907.1383602624@warthog.procyon.org.uk>
-	<13981.1383649896@warthog.procyon.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <virtualization-bounces@lists.linux-foundation.org>
-In-Reply-To: <13981.1383649896@warthog.procyon.org.uk>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
-List-Post: <mailto:virtualization@lists.linux-foundation.org>
-List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
-	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
-Sender: virtualization-bounces@lists.linux-foundation.org
-Errors-To: virtualization-bounces@lists.linux-foundation.org
-To: David Howells <dhowells@redhat.com>
-Cc: xen-devel@lists.xensource.com, jeremy@goop.org, airlied@linux.ie, daniel.vetter@ffwll.ch, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, perex@perex.cz, thierry.reding@gmail.com, linux-mtd@lists.infradead.org, sean.hefty@intel.com, virtualization@lists.linux-foundation.org, Linux-Arch <linux-arch@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, tbergstrom@nvidia.com, jy0922.shim@samsung.com, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, roland@purestorage.com, Takashi Iwai <tiwai@suse.de>, Tomi Valkeinen <tomi.valkeinen@ti.com>, mtk.manpages@gmail.com, fcoe-devel@open-fcoe.org, Paul McKenney <paulmck@linux.vnet.ibm.com>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, Arnd Bergmann <arnd@arndb.de>, swarren@wwwdotorg.org, intel-gfx@lists.freedesktop.org, inki.dae@samsung.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v12 00/12] Exynos5 IS driver
+Date: Tue,  5 Nov 2013 17:43:17 +0530
+Message-ID: <1383653610-11835-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:41665 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753728Ab3KEMNc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Nov 2013 07:13:32 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: s.nawrocki@samsung.com, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-On 11/05/2013 07:11 PM, David Howells wrote:
-> Chen Gang <gang.chen@asianux.com> wrote:
-> 
->>> Userspace sometimes depends on the name in the guard macro:-/
->>
->> "the guard macro" is only for prevent itself from being included by
->> multiple times (an id used by itself -- like a handle), it is not an id
->> to let other files know about it (it is not a normal using way).
-> 
-> Whilst that *should* be true, it isn't actually true.  See:
-> 
-> 	grep -r _LINUX_.*_H /usr/include/ | grep -v ^/usr/include/linux/
-> 
-> for example.  Also who knows what all those autoconf scripts out there look
-> for?
-> 
+The patch series adds support for exynos5 fimc-is driver and a
+new sensor s5k4e5. The media driver part is omitted form this series
+as it is already applied.
 
-Oh... the real world is really not quite perfect. :-/
+Changes from v11
+----------------
+- Addressed review comments from Sakari Ailus
+http://www.mail-archive.com/linux-media@vger.kernel.org/msg68134.html
+
+Changes from v10
+---------------
+- Addressed DT binding review comments from Mark Rutland
+https://www.mail-archive.com/linux-media@vger.kernel.org/msg67806.html
+https://www.mail-archive.com/linux-media@vger.kernel.org/msg67808.html
+
+Changes from v9
+---------------
+- Addressed review comments from Hans and Sylwester
+http://www.mail-archive.com/linux-media@vger.kernel.org/msg67102.html
+http://www.mail-archive.com/linux-media@vger.kernel.org/msg67624.html
+http://www.mail-archive.com/linux-media@vger.kernel.org/msg67623.html
+- Skipped already applied media driver
+
+Changes from v8
+---------------
+- Moved i2c-isp device nodes into the fimc-is node as suggested
+  by Sylwester
+- Addressed comments given by Sylwester and Philipp Zabel
+
+Changes from v7
+---------------
+- Addressed few DT related review comments from Sylwester
+  http://www.mail-archive.com/linux-media@vger.kernel.org/msg66403.html
+- Few fixes added after some regression testing
+
+Changes from v6
+---------------
+- Addressed DT binding doc review comments from Sylwester
+  http://www.mail-archive.com/linux-media@vger.kernel.org/msg65771.html
+  http://www.mail-archive.com/linux-media@vger.kernel.org/msg65772.html
+
+Changes from v5
+---------------
+- Addressed review comments from Sylwester
+  http://www.mail-archive.com/linux-media@vger.kernel.org/msg65578.html
+  http://www.mail-archive.com/linux-media@vger.kernel.org/msg65605.html
+
+Changes from v4
+---------------
+- Addressed all review comments from Sylwester
+- Added separate PMU node as suggested by Stephen Warren
+- Added phandle based discovery of subdevs instead of node name
+
+Changes from v3
+---------------
+- Dropped the RFC tag
+- Addressed all review comments from Sylwester and Sachin
+- Removed clock provider for media dev
+- Added s5k4e5 sensor devicetree binding doc
+
+Changes from v2
+---------------
+- Added exynos5 media device driver from Shaik to this series
+- Added ISP pipeline support in media device driver
+- Based on Sylwester's latest exynos4-is development
+- Asynchronos registration of sensor subdevs
+- Made independent IS-sensor support
+- Add s5k4e5 sensor driver
+- Addressed review comments from Sylwester, Hans, Andrzej, Sachin
+
+Changes from v1
+---------------
+- Addressed all review comments from Sylwester
+- Made sensor subdevs as independent i2c devices
+- Lots of cleanup
+- Debugfs support added
+- Removed PMU global register access
 
 
-> However, thinking about it some more, you're probably safe with respect to
-> userspace as scripts/headers_install.h strips off the _UAPI prefix on the
-> guard macros - just as long as you don't change the rest of the macro name.
-> 
+Arun Kumar K (12):
+  [media] exynos5-fimc-is: Add Exynos5 FIMC-IS device tree bindings
+    documentation
+  [media] exynos5-fimc-is: Add driver core files
+  [media] exynos5-fimc-is: Add common driver header files
+  [media] exynos5-fimc-is: Add register definition and context header
+  [media] exynos5-fimc-is: Add isp subdev
+  [media] exynos5-fimc-is: Add scaler subdev
+  [media] exynos5-fimc-is: Add sensor interface
+  [media] exynos5-fimc-is: Add the hardware pipeline control
+  [media] exynos5-fimc-is: Add the hardware interface module
+  [media] exynos5-is: Add Kconfig and Makefile
+  V4L: Add DT binding doc for s5k4e5 image sensor
+  V4L: Add s5k4e5 sensor driver
 
-In honest, I really did not think more about it.
+ .../devicetree/bindings/media/exynos5-fimc-is.txt  |  113 ++
+ .../devicetree/bindings/media/samsung-s5k4e5.txt   |   45 +
+ drivers/media/i2c/Kconfig                          |    8 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/s5k4e5.c                         |  344 ++++
+ drivers/media/platform/Kconfig                     |    1 +
+ drivers/media/platform/Makefile                    |    1 +
+ drivers/media/platform/exynos5-is/Kconfig          |   20 +
+ drivers/media/platform/exynos5-is/Makefile         |    7 +
+ drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  187 +++
+ drivers/media/platform/exynos5-is/fimc-is-core.c   |  387 +++++
+ drivers/media/platform/exynos5-is/fimc-is-core.h   |  117 ++
+ drivers/media/platform/exynos5-is/fimc-is-err.h    |  257 +++
+ .../media/platform/exynos5-is/fimc-is-interface.c  |  810 ++++++++++
+ .../media/platform/exynos5-is/fimc-is-interface.h  |  124 ++
+ drivers/media/platform/exynos5-is/fimc-is-isp.c    |  534 ++++++
+ drivers/media/platform/exynos5-is/fimc-is-isp.h    |   90 ++
+ .../media/platform/exynos5-is/fimc-is-metadata.h   |  767 +++++++++
+ drivers/media/platform/exynos5-is/fimc-is-param.h  | 1159 +++++++++++++
+ .../media/platform/exynos5-is/fimc-is-pipeline.c   | 1699 ++++++++++++++++++++
+ .../media/platform/exynos5-is/fimc-is-pipeline.h   |  129 ++
+ drivers/media/platform/exynos5-is/fimc-is-regs.h   |  105 ++
+ drivers/media/platform/exynos5-is/fimc-is-scaler.c |  476 ++++++
+ drivers/media/platform/exynos5-is/fimc-is-scaler.h |  106 ++
+ drivers/media/platform/exynos5-is/fimc-is-sensor.c |   45 +
+ drivers/media/platform/exynos5-is/fimc-is-sensor.h |   65 +
+ drivers/media/platform/exynos5-is/fimc-is.h        |  160 ++
+ 27 files changed, 7757 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-fimc-is.txt
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k4e5.txt
+ create mode 100644 drivers/media/i2c/s5k4e5.c
+ create mode 100644 drivers/media/platform/exynos5-is/Kconfig
+ create mode 100644 drivers/media/platform/exynos5-is/Makefile
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-core.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-interface.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-isp.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-pipeline.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-regs.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-scaler.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.c
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.h
+ create mode 100644 drivers/media/platform/exynos5-is/fimc-is.h
 
-Only adding _UAPI (not touch others) can completely fix one style issue:
-separate "uapi/*" from other sub-directories in "include/*"
-
-So for me, we can continue improve this patch: add "_UAPI" for all guard
-macro under "include/uapi/*" (also include "include/uapi/linux").
-
-
-Thanks.
 -- 
-Chen Gang
+1.7.9.5
