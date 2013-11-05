@@ -1,150 +1,373 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v12 07/12] [media] exynos5-fimc-is: Add sensor interface
-Date: Tue,  5 Nov 2013 17:43:24 +0530
-Message-ID: <1383653610-11835-8-git-send-email-arun.kk@samsung.com>
-References: <1383653610-11835-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <1383653610-11835-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: s.nawrocki@samsung.com, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v11 03/12] [media] exynos5-fimc-is: Add common driver
+ header files
+Date: Tue, 5 Nov 2013 14:51:08 +0200
+Message-ID: <20131105125108.GF23061@valkosipuli.retiisi.org.uk>
+References: <1383631964-26514-1-git-send-email-arun.kk@samsung.com>
+ <1383631964-26514-4-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:48484 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1754607Ab3KEMvO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Nov 2013 07:51:14 -0500
+Content-Disposition: inline
+In-Reply-To: <1383631964-26514-4-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, s.nawrocki@samsung.com, hverkuil@xs4all.nl, swarren@wwwdotorg.org, mark.rutland@arm.com, Pawel.Moll@arm.com, galak@codeaurora.org, a.hajda@samsung.com, sachin.kamat@linaro.org, shaik.ameer@samsung.com, kilyeon.im@samsung.com, arunkk.samsung@gmail.com
 
-Some sensors to be used with fimc-is are exclusively controlled
-by the fimc-is firmware. This minimal sensor driver provides
-the required info for the firmware to configure the sensors
-sitting on I2C bus.
+Hi Arun,
 
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/media/platform/exynos5-is/fimc-is-sensor.c |   45 ++++++++++++++
- drivers/media/platform/exynos5-is/fimc-is-sensor.h |   65 ++++++++++++++++++++
- 2 files changed, 110 insertions(+)
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.c
- create mode 100644 drivers/media/platform/exynos5-is/fimc-is-sensor.h
+On Tue, Nov 05, 2013 at 11:42:34AM +0530, Arun Kumar K wrote:
+> This patch adds all the common header files used by the fimc-is
+> driver. It includes the commands for interfacing with the firmware
+> and error codes from IS firmware, metadata and command parameter
+> definitions.
+> 
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
+> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  187 ++++
+>  drivers/media/platform/exynos5-is/fimc-is-err.h    |  257 +++++
+>  .../media/platform/exynos5-is/fimc-is-metadata.h   |  767 +++++++++++++
+>  drivers/media/platform/exynos5-is/fimc-is-param.h  | 1159 ++++++++++++++++++++
+>  4 files changed, 2370 insertions(+)
+>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
+>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
+>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
+>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
+> 
+> diff --git a/drivers/media/platform/exynos5-is/fimc-is-cmd.h b/drivers/media/platform/exynos5-is/fimc-is-cmd.h
+> new file mode 100644
+> index 0000000..6250280
+> --- /dev/null
+> +++ b/drivers/media/platform/exynos5-is/fimc-is-cmd.h
+> @@ -0,0 +1,187 @@
+> +/*
+> + * Samsung Exynos5 SoC series FIMC-IS driver
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd
+> + * Kil-yeon Lim <kilyeon.im@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef FIMC_IS_CMD_H
+> +#define FIMC_IS_CMD_H
+> +
+> +#define IS_COMMAND_VER 122 /* IS COMMAND VERSION 1.22 */
+> +
+> +enum is_cmd {
+> +	/* HOST -> IS */
+> +	HIC_PREVIEW_STILL = 0x1,
+> +	HIC_PREVIEW_VIDEO,
+> +	HIC_CAPTURE_STILL,
+> +	HIC_CAPTURE_VIDEO,
+> +	HIC_PROCESS_START,
+> +	HIC_PROCESS_STOP,
+> +	HIC_STREAM_ON,
+> +	HIC_STREAM_OFF,
+> +	HIC_SHOT,
+> +	HIC_GET_STATIC_METADATA,
+> +	HIC_SET_CAM_CONTROL,
+> +	HIC_GET_CAM_CONTROL,
+> +	HIC_SET_PARAMETER,
+> +	HIC_GET_PARAMETER,
+> +	HIC_SET_A5_MEM_ACCESS,
+> +	RESERVED2,
+> +	HIC_GET_STATUS,
+> +	/* SENSOR PART*/
+> +	HIC_OPEN_SENSOR,
+> +	HIC_CLOSE_SENSOR,
+> +	HIC_SIMMIAN_INIT,
+> +	HIC_SIMMIAN_WRITE,
+> +	HIC_SIMMIAN_READ,
+> +	HIC_POWER_DOWN,
+> +	HIC_GET_SET_FILE_ADDR,
+> +	HIC_LOAD_SET_FILE,
+> +	HIC_MSG_CONFIG,
+> +	HIC_MSG_TEST,
+> +	/* IS -> HOST */
+> +	IHC_GET_SENSOR_NUMBER = 0x1000,
+> +	/* Parameter1 : Address of space to copy a setfile */
+> +	/* Parameter2 : Space szie */
+> +	IHC_SET_SHOT_MARK,
+> +	/* PARAM1 : a frame number */
+> +	/* PARAM2 : confidence level(smile 0~100) */
+> +	/* PARMA3 : confidence level(blink 0~100) */
+> +	IHC_SET_FACE_MARK,
+> +	/* PARAM1 : coordinate count */
+> +	/* PARAM2 : coordinate buffer address */
+> +	IHC_FRAME_DONE,
+> +	/* PARAM1 : frame start number */
+> +	/* PARAM2 : frame count */
+> +	IHC_AA_DONE,
+> +	IHC_NOT_READY,
+> +	IHC_FLASH_READY
+> +};
+> +
+> +enum is_reply {
+> +	ISR_DONE	= 0x2000,
+> +	ISR_NDONE
+> +};
+> +
+> +enum is_scenario_id {
+> +	ISS_PREVIEW_STILL,
+> +	ISS_PREVIEW_VIDEO,
+> +	ISS_CAPTURE_STILL,
+> +	ISS_CAPTURE_VIDEO,
+> +	ISS_END
+> +};
+> +
+> +enum is_subscenario_id {
+> +	ISS_SUB_SCENARIO_STILL,
+> +	ISS_SUB_SCENARIO_VIDEO,
+> +	ISS_SUB_SCENARIO_SCENE1,
+> +	ISS_SUB_SCENARIO_SCENE2,
+> +	ISS_SUB_SCENARIO_SCENE3,
+> +	ISS_SUB_END
+> +};
+> +
+> +struct is_setfile_header_element {
+> +	u32 binary_addr;
+> +	u32 binary_size;
+> +};
+> +
+> +struct is_setfile_header {
+> +	struct is_setfile_header_element isp[ISS_END];
+> +	struct is_setfile_header_element drc[ISS_END];
+> +	struct is_setfile_header_element fd[ISS_END];
+> +};
+> +
+> +struct is_common_reg {
+> +	u32 hicmd;
+> +	u32 hic_sensorid;
+> +	u32 hic_param[4];
+> +
+> +	u32 reserved1[3];
+> +
+> +	u32 ihcmd_iflag;
+> +	u32 ihcmd;
+> +	u32 ihc_sensorid;
+> +	u32 ihc_param[4];
+> +
+> +	u32 reserved2[3];
+> +
+> +	u32 isp_bayer_iflag;
+> +	u32 isp_bayer_sensor_id;
+> +	u32 isp_bayer_param[2];
+> +
+> +	u32 reserved3[4];
+> +
+> +	u32 scc_iflag;
+> +	u32 scc_sensor_id;
+> +	u32 scc_param[3];
+> +
+> +	u32 reserved4[3];
+> +
+> +	u32 dnr_iflag;
+> +	u32 dnr_sensor_id;
+> +	u32 dnr_param[2];
+> +
+> +	u32 reserved5[4];
+> +
+> +	u32 scp_iflag;
+> +	u32 scp_sensor_id;
+> +	u32 scp_param[3];
+> +
+> +	u32 reserved6[1];
+> +
+> +	u32 isp_yuv_iflag;
+> +	u32 isp_yuv_sensor_id;
+> +	u32 isp_yuv_param[2];
+> +
+> +	u32 reserved7[1];
+> +
+> +	u32 shot_iflag;
+> +	u32 shot_sensor_id;
+> +	u32 shot_param[2];
+> +
+> +	u32 reserved8[1];
+> +
+> +	u32 meta_iflag;
+> +	u32 meta_sensor_id;
+> +	u32 meta_param1;
+> +
+> +	u32 reserved9[1];
+> +
+> +	u32 fcount;
 
-diff --git a/drivers/media/platform/exynos5-is/fimc-is-sensor.c b/drivers/media/platform/exynos5-is/fimc-is-sensor.c
-new file mode 100644
-index 0000000..475f1c3
---- /dev/null
-+++ b/drivers/media/platform/exynos5-is/fimc-is-sensor.c
-@@ -0,0 +1,45 @@
-+/*
-+ * Samsung EXYNOS5250 FIMC-IS (Imaging Subsystem) driver
-+ *
-+ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ * Author: Arun Kumar K <arun.kk@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include "fimc-is-sensor.h"
-+
-+static const struct sensor_drv_data s5k6a3_drvdata = {
-+	.id		= FIMC_IS_SENSOR_ID_S5K6A3,
-+	.open_timeout	= S5K6A3_OPEN_TIMEOUT,
-+	.setfile_name	= "exynos5_s5k6a3_setfile.bin",
-+};
-+
-+static const struct sensor_drv_data s5k4e5_drvdata = {
-+	.id		= FIMC_IS_SENSOR_ID_S5K4E5,
-+	.open_timeout	= S5K4E5_OPEN_TIMEOUT,
-+	.setfile_name	= "exynos5_s5k4e5_setfile.bin",
-+};
-+
-+static const struct of_device_id fimc_is_sensor_of_ids[] = {
-+	{
-+		.compatible	= "samsung,s5k6a3",
-+		.data		= &s5k6a3_drvdata,
-+	},
-+	{
-+		.compatible	= "samsung,s5k4e5",
-+		.data		= &s5k4e5_drvdata,
-+	},
-+	{  }
-+};
-+
-+const struct sensor_drv_data *exynos5_is_sensor_get_drvdata(
-+			struct device_node *node)
-+{
-+	const struct of_device_id *of_id;
-+
-+	of_id = of_match_node(fimc_is_sensor_of_ids, node);
-+	return of_id ? of_id->data : NULL;
-+}
-diff --git a/drivers/media/platform/exynos5-is/fimc-is-sensor.h b/drivers/media/platform/exynos5-is/fimc-is-sensor.h
-new file mode 100644
-index 0000000..0ba5733
---- /dev/null
-+++ b/drivers/media/platform/exynos5-is/fimc-is-sensor.h
-@@ -0,0 +1,65 @@
-+/*
-+ * Samsung EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver
-+ *
-+ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ * Author: Arun Kumar K <arun.kk@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+#ifndef FIMC_IS_SENSOR_H_
-+#define FIMC_IS_SENSOR_H_
-+
-+#include <linux/of.h>
-+#include <linux/types.h>
-+
-+#define S5K6A3_OPEN_TIMEOUT		2000 /* ms */
-+#define S5K6A3_SENSOR_WIDTH		1392
-+#define S5K6A3_SENSOR_HEIGHT		1392
-+
-+#define S5K4E5_OPEN_TIMEOUT		2000 /* ms */
-+#define S5K4E5_SENSOR_WIDTH		2560
-+#define S5K4E5_SENSOR_HEIGHT		1920
-+
-+#define SENSOR_WIDTH_PADDING		16
-+#define SENSOR_HEIGHT_PADDING		10
-+
-+enum fimc_is_sensor_id {
-+	FIMC_IS_SENSOR_ID_S5K3H2 = 1,
-+	FIMC_IS_SENSOR_ID_S5K6A3,
-+	FIMC_IS_SENSOR_ID_S5K4E5,
-+	FIMC_IS_SENSOR_ID_S5K3H7,
-+	FIMC_IS_SENSOR_ID_CUSTOM,
-+	FIMC_IS_SENSOR_ID_END
-+};
-+
-+struct sensor_drv_data {
-+	enum fimc_is_sensor_id id;
-+	/* sensor open timeout in ms */
-+	unsigned short open_timeout;
-+	char *setfile_name;
-+};
-+
-+/**
-+ * struct fimc_is_sensor - fimc-is sensor data structure
-+ * @drvdata: a pointer to the sensor's parameters data structure
-+ * @i2c_bus: ISP I2C bus index (0...1)
-+ * @width: sensor active width
-+ * @height: sensor active height
-+ * @pixel_width: sensor effective pixel width (width + padding)
-+ * @pixel_height: sensor effective pixel height (height + padding)
-+ */
-+struct fimc_is_sensor {
-+	const struct sensor_drv_data *drvdata;
-+	unsigned int i2c_bus;
-+	unsigned int width;
-+	unsigned int height;
-+	unsigned int pixel_width;
-+	unsigned int pixel_height;
-+};
-+
-+const struct sensor_drv_data *exynos5_is_sensor_get_drvdata(
-+			struct device_node *node);
-+
-+#endif /* FIMC_IS_SENSOR_H_ */
+If these structs define an interface that's not used by the driver only it
+might be a good idea to use __packed to ensure no padding is added.
+
+> +};
+> +
+> +struct is_mcuctl_reg {
+> +	u32 mcuctl;
+> +	u32 bboar;
+> +
+> +	u32 intgr0;
+> +	u32 intcr0;
+> +	u32 intmr0;
+> +	u32 intsr0;
+> +	u32 intmsr0;
+> +
+> +	u32 intgr1;
+> +	u32 intcr1;
+> +	u32 intmr1;
+> +	u32 intsr1;
+> +	u32 intmsr1;
+> +
+> +	u32 intcr2;
+> +	u32 intmr2;
+> +	u32 intsr2;
+> +	u32 intmsr2;
+> +
+> +	u32 gpoctrl;
+> +	u32 cpoenctlr;
+> +	u32 gpictlr;
+> +
+> +	u32 pad[0xD];
+> +
+> +	struct is_common_reg common_reg;
+> +};
+> +#endif
+...
+> diff --git a/drivers/media/platform/exynos5-is/fimc-is-metadata.h b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
+> new file mode 100644
+> index 0000000..02367c4
+> --- /dev/null
+> +++ b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
+> @@ -0,0 +1,767 @@
+> +/*
+> + * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
+> + *
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> + * Kil-yeon Lim <kilyeon.im@samsung.com>
+> + * Arun Kumar K <arun.kk@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef FIMC_IS_METADATA_H_
+> +#define FIMC_IS_METADATA_H_
+> +
+> +struct rational {
+> +	uint32_t num;
+> +	uint32_t den;
+> +};
+> +
+> +#define CAMERA2_MAX_AVAILABLE_MODE	21
+> +#define CAMERA2_MAX_FACES		16
+> +
+> +/*
+> + * Controls/dynamic metadata
+> + */
+> +
+> +enum metadata_mode {
+> +	METADATA_MODE_NONE,
+> +	METADATA_MODE_FULL
+> +};
+> +
+> +struct camera2_request_ctl {
+> +	uint32_t		id;
+> +	enum metadata_mode	metadatamode;
+> +	uint8_t			outputstreams[16];
+> +	uint32_t		framecount;
+> +};
+> +
+> +struct camera2_request_dm {
+> +	uint32_t		id;
+> +	enum metadata_mode	metadatamode;
+> +	uint32_t		framecount;
+> +};
+> +
+> +
+> +
+> +enum optical_stabilization_mode {
+> +	OPTICAL_STABILIZATION_MODE_OFF,
+> +	OPTICAL_STABILIZATION_MODE_ON
+> +};
+> +
+> +enum lens_facing {
+> +	LENS_FACING_BACK,
+> +	LENS_FACING_FRONT
+> +};
+> +
+> +struct camera2_lens_ctl {
+> +	uint32_t				focus_distance;
+> +	float					aperture;
+
+Floating point numbers? Really? :-)
+
+> +	float					focal_length;
+> +	float					filter_density;
+> +	enum optical_stabilization_mode		optical_stabilization_mode;
+> +};
+> +
+> +struct camera2_lens_dm {
+> +	uint32_t				focus_distance;
+> +	float					aperture;
+> +	float					focal_length;
+> +	float					filter_density;
+> +	enum optical_stabilization_mode		optical_stabilization_mode;
+> +	float					focus_range[2];
+> +};
+> +
+> +struct camera2_lens_sm {
+> +	float				minimum_focus_distance;
+> +	float				hyper_focal_distance;
+> +	float				available_focal_length[2];
+> +	float				available_apertures;
+> +	/* assuming 1 aperture */
+> +	float				available_filter_densities;
+> +	/* assuming 1 ND filter value */
+> +	enum optical_stabilization_mode	available_optical_stabilization;
+> +	/* assuming 1 */
+> +	uint32_t			shading_map_size;
+> +	float				shading_map[3][40][30];
+> +	uint32_t			geometric_correction_map_size;
+> +	float				geometric_correction_map[2][3][40][30];
+> +	enum lens_facing		facing;
+> +	float				position[2];
+> +};
+
+...
+
+> diff --git a/drivers/media/platform/exynos5-is/fimc-is-param.h b/drivers/media/platform/exynos5-is/fimc-is-param.h
+> new file mode 100644
+> index 0000000..015cc13
+> --- /dev/null
+> +++ b/drivers/media/platform/exynos5-is/fimc-is-param.h
+...
+> +struct param_control {
+> +	u32 cmd;
+
+You use uint32_t in some other headers. It's not wrong to use both C99 and
+Linux types but I'd try to stick to either one.
+
+> +	u32 bypass;
+> +	u32 buffer_address;
+> +	u32 buffer_number;
+> +	/* 0: continuous, 1: single */
+> +	u32 run_mode;
+> +	u32 reserved[PARAMETER_MAX_MEMBER - 6];
+> +	u32 err;
+> +};
+
+...
+
 -- 
-1.7.9.5
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
