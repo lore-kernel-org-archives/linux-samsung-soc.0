@@ -1,227 +1,101 @@
-From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH v11 03/12] [media] exynos5-fimc-is: Add common driver
- header files
-Date: Tue, 5 Nov 2013 18:46:06 +0530
-Message-ID: <CALt3h7_BCj7yJi6sy=KVOHoET4aWm_a-N=u63R8-bZ-uQ=AGag@mail.gmail.com>
-References: <1383631964-26514-1-git-send-email-arun.kk@samsung.com>
-	<1383631964-26514-4-git-send-email-arun.kk@samsung.com>
-	<20131105125108.GF23061@valkosipuli.retiisi.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <20131105125108.GF23061@valkosipuli.retiisi.org.uk>
-Sender: linux-media-owner@vger.kernel.org
-To: Sakari Ailus <sakari.ailus@iki.fi>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, "kilyeon.im@samsung.com" <kilyeon.im@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: [PATCH v3 0/3] phy: Add new Exynos USB 2.0 PHY driver
+Date: Tue, 05 Nov 2013 17:13:18 +0100
+Message-ID: <1383668001-19141-1-git-send-email-k.debski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:49745 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754208Ab3KEQOR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Nov 2013 11:14:17 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org
+Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, Kamil Debski <k.debski@samsung.com>
 
-Hi Sakari,
+Hi,
 
-Thank you for the review.
+This is the third version of the patchset adding the new Exynos USB 2.0 PHY
+driver, which uses the Generic PHY Framework.
 
-On Tue, Nov 5, 2013 at 6:21 PM, Sakari Ailus <sakari.ailus@iki.fi> wrote:
-> Hi Arun,
->
-> On Tue, Nov 05, 2013 at 11:42:34AM +0530, Arun Kumar K wrote:
->> This patch adds all the common header files used by the fimc-is
->> driver. It includes the commands for interfacing with the firmware
->> and error codes from IS firmware, metadata and command parameter
->> definitions.
->>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->> Signed-off-by: Kilyeon Im <kilyeon.im@samsung.com>
->> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> ---
->>  drivers/media/platform/exynos5-is/fimc-is-cmd.h    |  187 ++++
->>  drivers/media/platform/exynos5-is/fimc-is-err.h    |  257 +++++
->>  .../media/platform/exynos5-is/fimc-is-metadata.h   |  767 +++++++++++++
->>  drivers/media/platform/exynos5-is/fimc-is-param.h  | 1159 ++++++++++++++++++++
->>  4 files changed, 2370 insertions(+)
->>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-cmd.h
->>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-err.h
->>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-metadata.h
->>  create mode 100644 drivers/media/platform/exynos5-is/fimc-is-param.h
->>
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-cmd.h b/drivers/media/platform/exynos5-is/fimc-is-cmd.h
->> new file mode 100644
->> index 0000000..6250280
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-cmd.h
->> @@ -0,0 +1,187 @@
->> +/*
+It contains numerous fixes and cleanups, which are the results of the feedback
+to the second version.
 
-[snip]
+Best wishes,
+Kamil Debski
 
->> +struct is_common_reg {
->> +     u32 hicmd;
->> +     u32 hic_sensorid;
->> +     u32 hic_param[4];
->> +
->> +     u32 reserved1[3];
->> +
->> +     u32 ihcmd_iflag;
->> +     u32 ihcmd;
->> +     u32 ihc_sensorid;
->> +     u32 ihc_param[4];
->> +
->> +     u32 reserved2[3];
->> +
->> +     u32 isp_bayer_iflag;
->> +     u32 isp_bayer_sensor_id;
->> +     u32 isp_bayer_param[2];
->> +
->> +     u32 reserved3[4];
->> +
->> +     u32 scc_iflag;
->> +     u32 scc_sensor_id;
->> +     u32 scc_param[3];
->> +
->> +     u32 reserved4[3];
->> +
->> +     u32 dnr_iflag;
->> +     u32 dnr_sensor_id;
->> +     u32 dnr_param[2];
->> +
->> +     u32 reserved5[4];
->> +
->> +     u32 scp_iflag;
->> +     u32 scp_sensor_id;
->> +     u32 scp_param[3];
->> +
->> +     u32 reserved6[1];
->> +
->> +     u32 isp_yuv_iflag;
->> +     u32 isp_yuv_sensor_id;
->> +     u32 isp_yuv_param[2];
->> +
->> +     u32 reserved7[1];
->> +
->> +     u32 shot_iflag;
->> +     u32 shot_sensor_id;
->> +     u32 shot_param[2];
->> +
->> +     u32 reserved8[1];
->> +
->> +     u32 meta_iflag;
->> +     u32 meta_sensor_id;
->> +     u32 meta_param1;
->> +
->> +     u32 reserved9[1];
->> +
->> +     u32 fcount;
->
-> If these structs define an interface that's not used by the driver only it
-> might be a good idea to use __packed to ensure no padding is added.
->
+----------------
+Changes from v2:
+- rebase all patches to the usb-next branch
+- fixes in the documentation file
+  - remove wrong entries in the phy node (ranges, and #address- & #size-cells)
+  - add clocks and clock-names as required properites
+  - rephrase a few sentences
+- fixes in the ehci-exynos.c file
+  - move phy_name variable next to phy in exynos_ehci_hcd
+  - remove otg from exynos_ehci_hcd as it was no longer used
+  - move devm_phy_get after the Exynos5440 skip_phy check
+- fixes in the s3c-hsotg.c file
+  - cosmetic fixes (remove empty line that was wrongfully added)
+- fixes in the main driver
+  - remove cpu_type in favour for a boolean flag matched with the compatible
+    value
+  - rename files, structures, variables and Kconfig entires - change from simple
+    "uphy" to "usb2_phy"
+  - fix multiline comments style
+  - simplify #ifdefs in of_device_id
+  - fix Kconfig description
+  - change dev_info to dev_dbg where reasonable
+  - cosmetic changes (remove wrongful blank lines)
+  - remove unnecessary reference counting
 
-The same structure is used as is in the firmware code and so it is retained
-in the driver.
+----------------
+Changes from v1:
+- the changes include minor fixes of the hardware initialization of the PHY
+  module
+- some other minor fixes were introduced
 
->> +};
->> +
->> +struct is_mcuctl_reg {
->> +     u32 mcuctl;
->> +     u32 bboar;
->> +
->> +     u32 intgr0;
->> +     u32 intcr0;
->> +     u32 intmr0;
->> +     u32 intsr0;
->> +     u32 intmsr0;
->> +
->> +     u32 intgr1;
->> +     u32 intcr1;
->> +     u32 intmr1;
->> +     u32 intsr1;
->> +     u32 intmsr1;
->> +
->> +     u32 intcr2;
->> +     u32 intmr2;
->> +     u32 intsr2;
->> +     u32 intmsr2;
->> +
->> +     u32 gpoctrl;
->> +     u32 cpoenctlr;
->> +     u32 gpictlr;
->> +
->> +     u32 pad[0xD];
->> +
->> +     struct is_common_reg common_reg;
->> +};
->> +#endif
-> ...
->> diff --git a/drivers/media/platform/exynos5-is/fimc-is-metadata.h b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
->> new file mode 100644
->> index 0000000..02367c4
->> --- /dev/null
->> +++ b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
->> @@ -0,0 +1,767 @@
->> +/*
->> + * Samsung EXYNOS5 FIMC-IS (Imaging Subsystem) driver
->> + *
->> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
->> + * Kil-yeon Lim <kilyeon.im@samsung.com>
->> + * Arun Kumar K <arun.kk@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#ifndef FIMC_IS_METADATA_H_
->> +#define FIMC_IS_METADATA_H_
->> +
->> +struct rational {
->> +     uint32_t num;
->> +     uint32_t den;
->> +};
->> +
->> +#define CAMERA2_MAX_AVAILABLE_MODE   21
->> +#define CAMERA2_MAX_FACES            16
->> +
->> +/*
->> + * Controls/dynamic metadata
->> + */
->> +
->> +enum metadata_mode {
->> +     METADATA_MODE_NONE,
->> +     METADATA_MODE_FULL
->> +};
->> +
->> +struct camera2_request_ctl {
->> +     uint32_t                id;
->> +     enum metadata_mode      metadatamode;
->> +     uint8_t                 outputstreams[16];
->> +     uint32_t                framecount;
->> +};
->> +
->> +struct camera2_request_dm {
->> +     uint32_t                id;
->> +     enum metadata_mode      metadatamode;
->> +     uint32_t                framecount;
->> +};
->> +
->> +
->> +
->> +enum optical_stabilization_mode {
->> +     OPTICAL_STABILIZATION_MODE_OFF,
->> +     OPTICAL_STABILIZATION_MODE_ON
->> +};
->> +
->> +enum lens_facing {
->> +     LENS_FACING_BACK,
->> +     LENS_FACING_FRONT
->> +};
->> +
->> +struct camera2_lens_ctl {
->> +     uint32_t                                focus_distance;
->> +     float                                   aperture;
->
-> Floating point numbers? Really? :-)
->
+----------------------
+Original cover letter:
 
-Yes as mentioned, the same structure is used by the firmware and
-so it is used as is in the kernel.
+Hi,
 
-Regards
-Arun
+This patch adds a new drive for USB PHYs for Samsung SoCs. The driver is
+using the Generic PHY Framework created by Kishon Vijay Abrahan I. It can
+be found here https://lkml.org/lkml/2013/8/21/29. This patch adds support
+to Exynos4 family of SoCs. Support for Exynos3 and Exynos5 is planned to
+be added in the near future.
+
+I welcome your comments.
+
+----------------------
+
+[1] https://lkml.org/lkml/2013/8/21/29
+
+*** BLURB HERE ***
+
+Kamil Debski (3):
+  phy: Add new Exynos USB PHY driver
+  usb: ehci-s5p: Change to use phy provided by the generic phy
+    framework
+  usb: s3c-hsotg: Use the new Exynos USB phy driver with the generic
+    phy framework
+
+ .../devicetree/bindings/phy/samsung-usbphy.txt     |   52 ++++
+ drivers/phy/Kconfig                                |   23 +-
+ drivers/phy/Makefile                               |    4 +
+ drivers/phy/phy-exynos-usb2.c                      |  234 ++++++++++++++
+ drivers/phy/phy-exynos-usb2.h                      |   87 ++++++
+ drivers/phy/phy-exynos4210-usb2.c                  |  272 ++++++++++++++++
+ drivers/phy/phy-exynos4212-usb2.c                  |  324 ++++++++++++++++++++
+ drivers/usb/gadget/s3c-hsotg.c                     |   12 +-
+ drivers/usb/host/ehci-exynos.c                     |   34 +-
+ 9 files changed, 1013 insertions(+), 29 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+ create mode 100644 drivers/phy/phy-exynos-usb2.c
+ create mode 100644 drivers/phy/phy-exynos-usb2.h
+ create mode 100644 drivers/phy/phy-exynos4210-usb2.c
+ create mode 100644 drivers/phy/phy-exynos4212-usb2.c
+
+-- 
+1.7.9.5
