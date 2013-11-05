@@ -1,89 +1,120 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH v3 3/3] usb: s3c-hsotg: Use the new Exynos USB phy driver with
- the generic phy framework
-Date: Tue, 05 Nov 2013 17:13:21 +0100
-Message-ID: <1383668001-19141-4-git-send-email-k.debski@samsung.com>
-References: <1383668001-19141-1-git-send-email-k.debski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49882 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752812Ab3KEQQz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Nov 2013 11:16:55 -0500
-In-reply-to: <1383668001-19141-1-git-send-email-k.debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Tue, 5 Nov 2013 23:26:01 +0530
+Message-ID: <CAFp+6iE_EgPJCSHqRrNDMhmc6ODtM=LogVyfG8SpR6TPH0MicA@mail.gmail.com>
+References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
+	<1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
+	<527744B2.4090303@ti.com>
+	<030d01ced946$d6e23490$84a69db0$%debski@samsung.com>
+	<52779D28.9000905@ti.com>
+	<CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
+	<00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Felipe Balbi <balbi@ti.com>, Julius Werner <jwerner@chromium.org>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org
-Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, Kamil Debski <k.debski@samsung.com>
 
-Change the used phy driver to the new Exynos USB phy driver that uses the
-generic phy framework.
+Hi Kamil,
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/usb/gadget/s3c-hsotg.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-index bb31262..dc7f20c 100644
---- a/drivers/usb/gadget/s3c-hsotg.c
-+++ b/drivers/usb/gadget/s3c-hsotg.c
-@@ -31,6 +31,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
-+#include <linux/phy/phy.h>
- 
- #include <linux/usb/ch9.h>
- #include <linux/usb/gadget.h>
-@@ -162,7 +163,7 @@ struct s3c_hsotg_ep {
- struct s3c_hsotg {
- 	struct device		 *dev;
- 	struct usb_gadget_driver *driver;
--	struct usb_phy		*phy;
-+	struct phy		 *phy;
- 	struct s3c_hsotg_plat	 *plat;
- 
- 	spinlock_t              lock;
-@@ -2905,9 +2906,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
- 	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
- 
- 	if (hsotg->phy)
--		usb_phy_init(hsotg->phy);
-+		phy_power_on(hsotg->phy);
- 	else if (hsotg->plat->phy_init)
- 		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
-+
- }
- 
- /**
-@@ -2922,7 +2924,7 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
- 	struct platform_device *pdev = to_platform_device(hsotg->dev);
- 
- 	if (hsotg->phy)
--		usb_phy_shutdown(hsotg->phy);
-+		phy_power_off(hsotg->phy);
- 	else if (hsotg->plat->phy_exit)
- 		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
- }
-@@ -3529,7 +3531,7 @@ static void s3c_hsotg_delete_debug(struct s3c_hsotg *hsotg)
- static int s3c_hsotg_probe(struct platform_device *pdev)
- {
- 	struct s3c_hsotg_plat *plat = dev_get_platdata(&pdev->dev);
--	struct usb_phy *phy;
-+	struct phy *phy;
- 	struct device *dev = &pdev->dev;
- 	struct s3c_hsotg_ep *eps;
- 	struct s3c_hsotg *hsotg;
-@@ -3544,7 +3546,7 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-+	phy = devm_phy_get(&pdev->dev, "device");
- 	if (IS_ERR(phy)) {
- 		/* Fallback for pdata */
- 		plat = dev_get_platdata(&pdev->dev);
+On Tue, Nov 5, 2013 at 3:06 PM, Kamil Debski <k.debski@samsung.com> wrote:
+> Hi,
+>
+>> From: Vivek Gautam [mailto:gautamvivek1987@gmail.com]
+>> Sent: Tuesday, November 05, 2013 8:20 AM
+>> To: Kishon Vijay Abraham I
+>> Cc: Kamil Debski; Vivek Gautam; Linux USB Mailing List; linux-samsung-
+>> soc@vger.kernel.org; linux-kernel@vger.kernel.org;
+>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> linux-doc@vger.kernel.org; Greg KH; Kukjin Kim; Sylwester Nawrocki;
+>> Tomasz Figa; Felipe Balbi; Julius Werner; Jingoo Han
+>> Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
+>>
+>> Hi Kishon,
+>>
+>>
+>>
+>> On Mon, Nov 4, 2013 at 6:42 PM, Kishon Vijay Abraham I <kishon@ti.com>
+>> wrote:
+>> > Hi,
+>> >
+>> >
+>> > On Monday 04 November 2013 03:45 PM, Kamil Debski wrote:
+>> >>
+>> >> Hi Kishon,
+>> >>
+>> >>> From: Kishon Vijay Abraham I [mailto:kishon@ti.com]
+>> >>> Sent: Monday, November 04, 2013 7:55 AM
+>> >>>
+>> >>> Hi Vivek,
+>> >>>
+>> >>> On Thursday 31 October 2013 01:15 PM, Vivek Gautam wrote:
+>> >>>>
+>> >>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+>> >>>> The new driver uses the generic PHY framework and will interact
+>> >>>> with
+>> >>>> DWC3 controller present on Exynos5 series of SoCs.
+>> >>>
+>> >>>
+>> >>> In Exynos, you have a single IP that supports both USB3 and USB2
+>> PHY
+>> >>> right? I think that needs to be mentioned here.
+>> >>
+>> >>
+>> >> As far as I know the IP is different.
+>> >
+>> >
+>> > Ok. Sometime back Vivek was mentioning about a single IP for both
+>> USB3
+>> > and USB2. Thought it should be this driver. Anyway thanks for the
+>> clarification.
+>>
+>> Right Kishon, I had mentioned that Exynos5's dwc3 controller have a
+>> single IP for USB2 and USB3 phy.
+>> From what i see, on exynos5 systems the dwc3 controller uses a combo of
+>> usb 2 (utmi+) and usb 3 (pipe 3) phy (with base address starting
+>> 0x12100000).
+>>
+>> Kamil, Tomasz,
+>>
+>> Please correct me if i am wrong.
+>
+> I have the Exynos 5250 documentation and I found two phy register ranges:
+> 1) USB 2.0 PHY having the base address of 0x1213 0000
+>         Chapter 33. USB 2.0 Host Controller
+>         Subchapter 33.5.2 Phy Control Register p. 1696
+>         First register's description is
+>         "USB2.0 phy control register"
+> 2) USB 3.0 PHY (I guess) with the base address 0x1210 0000
+>         Chapter 35. USB 3.0 DRD Controller
+>         Subchapter 35.4.6 PHY Control Register p. 1872
+>
+> Jingoo, could you comment on the above? You may know more than we do :)
+>
+> In addition, I have a question to you Vivek - does your USB 3.0
+> PHY support both host and device?
+
+Yes, this PHY driver supports both Host as well as device type of
+operations of DWC3 controller.
+This driver is a straight port from older driver available at
+drivers/usb/phy/phy-samsung-usb3.c which also had been tested
+for host as well as device operation of DWC3.
+
+>
+> [snip]
+>
+> Best wishes,
+> Kamil Debski
+>
+
+
+
 -- 
-1.7.9.5
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
