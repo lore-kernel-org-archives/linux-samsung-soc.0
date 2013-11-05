@@ -1,178 +1,88 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v6] iio: exynos_adc: use wait_for_completion_timeout instead of
- interruptible
-Date: Tue, 05 Nov 2013 15:15:30 +0530
-Message-ID: <1383644730-23228-1-git-send-email-ch.naveen@samsung.com>
-References: <1381479821-17276-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:59708 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752072Ab3KEJnv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Nov 2013 04:43:51 -0500
-In-reply-to: <1381479821-17276-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Tue, 05 Nov 2013 20:12:45 +0900
+Message-ID: <000001ceda17$f41c2030$dc546090$%han@samsung.com>
+References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
+ <1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
+ <527744B2.4090303@ti.com> <030d01ced946$d6e23490$84a69db0$%debski@samsung.com>
+ <52779D28.9000905@ti.com>
+ <CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
+ <00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
+Content-language: ko
+Sender: linux-doc-owner@vger.kernel.org
+To: 'Kamil Debski' <k.debski@samsung.com>, 'Vivek Gautam' <gautamvivek1987@gmail.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>
+Cc: 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 'Greg KH' <gregkh@linuxfoundation.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Julius Werner' <jwerner@chromium.org>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-iio@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, grundler@chromium.org, cpgs@samsung.com
 
-1. The irq routine is so simple (just one register read) shouldn't be long
-   Hence, reduce the timeout to 100milli secs,
-2. With 100ms of wait time, interruptible is very much unnecessary.
-   Hence, use wait_for_completion_timeout instead of
-   wait_for_completion_interruptible_timeout
-3. Reset software if a timeout happens.
-4. Add reinit_completion() before the wait_for_completion_timeout in raw_read()
+On Tuesday, November 05, 2013 6:37 PM, Kamil Debski wrote:
+> On Tuesday, November 05, 2013 8:20 AM, Vivek Gautam wrote:
+> > On Mon, Nov 4, 2013 at 6:42 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> > > On Monday 04 November 2013 03:45 PM, Kamil Debski wrote:
+> > >> On Monday, November 04, 2013 7:55 AM, Kishon Vijay Abraham I wrote:
+> > >>> On Thursday 31 October 2013 01:15 PM, Vivek Gautam wrote:
+> > >>>>
+> > >>>> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
+> > >>>> The new driver uses the generic PHY framework and will interact
+> > >>>> with
+> > >>>> DWC3 controller present on Exynos5 series of SoCs.
+> > >>>
+> > >>>
+> > >>> In Exynos, you have a single IP that supports both USB3 and USB2
+> > PHY
+> > >>> right? I think that needs to be mentioned here.
+> > >>
+> > >>
+> > >> As far as I know the IP is different.
+> > >
+> > >
+> > > Ok. Sometime back Vivek was mentioning about a single IP for both
+> > USB3
+> > > and USB2. Thought it should be this driver. Anyway thanks for the
+> > clarification.
+> >
+> > Right Kishon, I had mentioned that Exynos5's dwc3 controller have a
+> > single IP for USB2 and USB3 phy.
+> > From what i see, on exynos5 systems the dwc3 controller uses a combo of
+> > usb 2 (utmi+) and usb 3 (pipe 3) phy (with base address starting
+> > 0x12100000).
+> >
+> > Kamil, Tomasz,
+> >
+> > Please correct me if i am wrong.
+> 
+> I have the Exynos 5250 documentation and I found two phy register ranges:
+> 1) USB 2.0 PHY having the base address of 0x1213 0000
+> 	Chapter 33. USB 2.0 Host Controller
+> 	Subchapter 33.5.2 Phy Control Register p. 1696
+> 	First register's description is
+> 	"USB2.0 phy control register"
+> 2) USB 3.0 PHY (I guess) with the base address 0x1210 0000
+> 	Chapter 35. USB 3.0 DRD Controller
+> 	Subchapter 35.4.6 PHY Control Register p. 1872
+> 
+> Jingoo, could you comment on the above? You may know more than we do :)
 
-Note: submitted for review at https://patchwork.kernel.org/patch/2279591/
+Hi Kamil,
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>
-Reviewed-on: https://chromium-review.googlesource.com/172724
-Reviewed-by: Doug Anderson <dianders@chromium.org>
----
-Changes since v1:
-As per discussion at
-http://marc.info/?l=linux-kernel&m=136517637228869&w=3
+Thank you for trusting me. :-)
+I just asked my validation engineer about 5250 USB PHY.
+As I know, she has the best knowledge about Samsung SoC USB hardware.
+She said that there are 2 PHY controllers such as USB 2.0 PHY, USB 3.0 PHY.
 
-Changes since v2:
-None.
-Rebased and reposting.
+  1) USB2.0 PHY: USB2.0 HOST, USB2.0 Device
+  2) USB3.0 PHY: USB3.0 DRD (3.0 HOST & 3.0 Device)
 
-Changes since v3:
-1. commit message change and
-2. removed an unncessary assignment
+> In addition, I have a question to you Vivek - does your USB 3.0
+> PHY support both host and device?
 
-Changes since v4:
-Moved INIT_COMPLETION call to the starting of the function
+According to her, USB3.0 PHY can support both 3.0 Host and 3.0 Device.
+Thank you.
 
-Changes since v5:
-INIT_COMPLETION was replaced by reinit_completion
-("tree-wide: use reinit_completion instead of INIT_COMPLETION").
-Use it to avoid the following build error:
-undefined identifier 'INIT_COMPLETION'
+Best regards,
+Jingoo Han
 
-
- drivers/iio/adc/exynos_adc.c | 69 ++++++++++++++++++++++++--------------------
- 1 file changed, 38 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 0f2ca60..a675751 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -81,7 +81,7 @@ enum adc_version {
- #define ADC_CON_EN_START	(1u << 0)
- #define ADC_DATX_MASK		0xFFF
- 
--#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(1000))
-+#define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
- 
- struct exynos_adc {
- 	void __iomem		*regs;
-@@ -111,6 +111,30 @@ static inline unsigned int exynos_adc_get_version(struct platform_device *pdev)
- 	return (unsigned int)match->data;
- }
- 
-+static void exynos_adc_hw_init(struct exynos_adc *info)
-+{
-+	u32 con1, con2;
-+
-+	if (info->version == ADC_V2) {
-+		con1 = ADC_V2_CON1_SOFT_RESET;
-+		writel(con1, ADC_V2_CON1(info->regs));
-+
-+		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
-+			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
-+		writel(con2, ADC_V2_CON2(info->regs));
-+
-+		/* Enable interrupts */
-+		writel(1, ADC_V2_INT_EN(info->regs));
-+	} else {
-+		/* set default prescaler values and Enable prescaler */
-+		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-+
-+		/* Enable 12-bit ADC resolution */
-+		con1 |= ADC_V1_CON_RES;
-+		writel(con1, ADC_V1_CON(info->regs));
-+	}
-+}
-+
- static int exynos_read_raw(struct iio_dev *indio_dev,
- 				struct iio_chan_spec const *chan,
- 				int *val,
-@@ -120,11 +144,13 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 	struct exynos_adc *info = iio_priv(indio_dev);
- 	unsigned long timeout;
- 	u32 con1, con2;
-+	int ret;
- 
- 	if (mask != IIO_CHAN_INFO_RAW)
- 		return -EINVAL;
- 
- 	mutex_lock(&indio_dev->mlock);
-+	reinit_completion(&info->completion);
- 
- 	/* Select the channel to be used and Trigger conversion */
- 	if (info->version == ADC_V2) {
-@@ -144,16 +170,21 @@ static int exynos_read_raw(struct iio_dev *indio_dev,
- 				ADC_V1_CON(info->regs));
- 	}
- 
--	timeout = wait_for_completion_interruptible_timeout
-+	timeout = wait_for_completion_timeout
- 			(&info->completion, EXYNOS_ADC_TIMEOUT);
--	*val = info->value;
-+	if (timeout == 0) {
-+		dev_warn(&indio_dev->dev, "Conversion timed out! Resetting\n");
-+		exynos_adc_hw_init(info);
-+		ret = -ETIMEDOUT;
-+	} else {
-+		*val = info->value;
-+		*val2 = 0;
-+		ret = IIO_VAL_INT;
-+	}
- 
- 	mutex_unlock(&indio_dev->mlock);
- 
--	if (timeout == 0)
--		return -ETIMEDOUT;
--
--	return IIO_VAL_INT;
-+	return ret;
- }
- 
- static irqreturn_t exynos_adc_isr(int irq, void *dev_id)
-@@ -225,30 +256,6 @@ static int exynos_adc_remove_devices(struct device *dev, void *c)
- 	return 0;
- }
- 
--static void exynos_adc_hw_init(struct exynos_adc *info)
--{
--	u32 con1, con2;
--
--	if (info->version == ADC_V2) {
--		con1 = ADC_V2_CON1_SOFT_RESET;
--		writel(con1, ADC_V2_CON1(info->regs));
--
--		con2 = ADC_V2_CON2_OSEL | ADC_V2_CON2_ESEL |
--			ADC_V2_CON2_HIGHF | ADC_V2_CON2_C_TIME(0);
--		writel(con2, ADC_V2_CON2(info->regs));
--
--		/* Enable interrupts */
--		writel(1, ADC_V2_INT_EN(info->regs));
--	} else {
--		/* set default prescaler values and Enable prescaler */
--		con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
--
--		/* Enable 12-bit ADC resolution */
--		con1 |= ADC_V1_CON_RES;
--		writel(con1, ADC_V1_CON(info->regs));
--	}
--}
--
- static int exynos_adc_probe(struct platform_device *pdev)
- {
- 	struct exynos_adc *info = NULL;
--- 
-1.7.12.4
