@@ -1,51 +1,57 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v3 2/2] ARM: dts: Update Samsung sysreg binding document
-Date: Tue,  5 Nov 2013 11:48:22 +0530
-Message-ID: <1383632302-23535-2-git-send-email-sachin.kamat@linaro.org>
-References: <1383632302-23535-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:48410 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013Ab3KEGT7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Nov 2013 01:19:59 -0500
-Received: by mail-pd0-f175.google.com with SMTP id g10so7792591pdj.34
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 04 Nov 2013 22:19:59 -0800 (PST)
-In-Reply-To: <1383632302-23535-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 3/4] mfd: sec-core: Add cells for S5M8767-clocks
+Date: Tue, 5 Nov 2013 11:59:54 +0530
+Message-ID: <CAHbNUh2GRv3bQD30PtBcoW9-K8PFm4FYWUNXBQEDUH-iVb_JOw@mail.gmail.com>
+References: <1383202124-1775-1-git-send-email-tushar.behera@linaro.org>
+	<1383202124-1775-4-git-send-email-tushar.behera@linaro.org>
+	<20131031161603.GB9587@lee--X1>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131031161603.GB9587@lee--X1>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: lkml <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, t.figa@samsung.com
 
-Added a binding example for reference and updated the
-node name. While at it also removed the name description
-as it is not necessary.
+On 31 October 2013 21:46, Lee Jones <lee.jones@linaro.org> wrote:
+> On Thu, 31 Oct 2013, Tushar Behera wrote:
+>
+>> S5M8767 chip has 3 crystal oscillators running at 32KHz. These are
+>> supported by s2mps11-clk driver.
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> CC: Lee Jones <lee.jones@linaro.org>
+>> ---
+>>  drivers/mfd/sec-core.c |    4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+>> index 34c18fb..020b86b 100644
+>> --- a/drivers/mfd/sec-core.c
+>> +++ b/drivers/mfd/sec-core.c
+>> @@ -56,7 +56,9 @@ static struct mfd_cell s5m8767_devs[] = {
+>>               .name = "s5m8767-pmic",
+>>       }, {
+>>               .name = "s5m-rtc",
+>> -     },
+>> +     }, {
+>> +             .name = "s5m8767-clk",
+>> +     }
+>>  };
+>>
+>>  static struct mfd_cell s2mps11_devs[] = {
+>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Changes since v2:
-* Removed node name description as suggested by Tomasz Figa.
----
- .../devicetree/bindings/arm/samsung/sysreg.txt     |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Thanks.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-index 5039c0a12f55..0ab3251a6ec2 100644
---- a/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/sysreg.txt
-@@ -1,7 +1,12 @@
- SAMSUNG S5P/Exynos SoC series System Registers (SYSREG)
- 
- Properties:
-- - name : should be 'sysreg';
-  - compatible : should contain "samsung,<chip name>-sysreg", "syscon";
-    For Exynos4 SoC series it should be "samsung,exynos4-sysreg", "syscon";
-  - reg : offset and length of the register set.
-+
-+Example:
-+	syscon@10010000 {
-+		compatible = "samsung,exynos4-sysreg", "syscon";
-+		reg = <0x10010000 0x400>;
-+	};
+> I'd prefer to take this patch in via the MFD tree once you have
+> support from the other maintainers for the set.
+>
+
+Ok. I will let you know once I get the clock patches through.
+
 -- 
-1.7.9.5
+Tushar Behera
