@@ -1,54 +1,72 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Wed, 06 Nov 2013 09:07:00 +0900
-Message-ID: <000301ceda84$1d648bf0$582da3d0$%han@samsung.com>
-References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
- <1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
- <527744B2.4090303@ti.com> <030d01ced946$d6e23490$84a69db0$%debski@samsung.com>
- <52779D28.9000905@ti.com>
- <CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
- <00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
- <000001ceda17$f41c2030$dc546090$%han@samsung.com>
- <000101ceda1f$04ca6f20$0e5f4d60$%han@samsung.com>
- <CAFp+6iFAZab35F-MOOZHcHpzSEOL=51gWBK2KZbOJS+0731GJQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] phy: Add new Exynos USB PHY driver
+Date: Wed, 06 Nov 2013 10:02:42 +0900
+Message-ID: <000c01ceda8b$e54dbef0$afe93cd0$%han@samsung.com>
+References: <1383668001-19141-1-git-send-email-k.debski@samsung.com>
+ <1383668001-19141-2-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <CAFp+6iFAZab35F-MOOZHcHpzSEOL=51gWBK2KZbOJS+0731GJQ@mail.gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:39710 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755636Ab3KFBCo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 5 Nov 2013 20:02:44 -0500
+In-reply-to: <1383668001-19141-2-git-send-email-k.debski@samsung.com>
 Content-language: ko
-Sender: linux-doc-owner@vger.kernel.org
-To: 'Vivek Gautam' <gautamvivek1987@gmail.com>
-Cc: 'Kamil Debski' <k.debski@samsung.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 'Greg KH' <gregkh@linuxfoundation.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Julius Werner' <jwerner@chromium.org>, 'Jingoo Han' <jg1.han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kamil Debski' <k.debski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org, kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, galak@codeaurora.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Wednesday, November 06, 2013 2:58 AM, Vivek Gautam wrote:
-> On Tue, Nov 5, 2013 at 5:33 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+On Wednesday, November 06, 2013 1:13 AM, Kamil Debski wrote:
+> 
+> Add a new driver for the Exynos USB PHY. The new driver uses the generic
+> PHY framework. The driver includes support for the Exynos 4x10 and 4x12
+> SoC families.
+> 
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  .../devicetree/bindings/phy/samsung-usbphy.txt     |   52 ++++
+>  drivers/phy/Kconfig                                |   23 +-
+>  drivers/phy/Makefile                               |    4 +
+>  drivers/phy/phy-exynos-usb2.c                      |  234 ++++++++++++++
+>  drivers/phy/phy-exynos-usb2.h                      |   87 ++++++
+>  drivers/phy/phy-exynos4210-usb2.c                  |  272 ++++++++++++++++
+>  drivers/phy/phy-exynos4212-usb2.c                  |  324 ++++++++++++++++++++
+>  7 files changed, 995 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+>  create mode 100644 drivers/phy/phy-exynos-usb2.c
+>  create mode 100644 drivers/phy/phy-exynos-usb2.h
+>  create mode 100644 drivers/phy/phy-exynos4210-usb2.c
+>  create mode 100644 drivers/phy/phy-exynos4212-usb2.c
 
-[.....]
+[....]
 
->> USB3.0 PHY consists of two blocks such as 3.0 block and 2.0 block.
->> This USB3.0 PHY can support UTMI+ and PIPE3 interface for 3.0 block
->> and 2.0 block, respectively.
->>
->> Conclusion:
->>
->>    1) USB2.0 PHY: USB2.0 HOST, USB2.0 Device
->>                        Base address: 0x1213 0000
->>
->>    2) USB3.0 PHY: USB3.0 DRD (3.0 HOST & 3.0 Device)
->>                        Base address: 0x1210 0000
->>                        2.0 block(UTMI+) & 3.0 block(PIPE3)
->
-> And this is of course the PHY used by DWC3 controller, which works at
-> both High speed as well as Super Speed.
-> Right ?
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index d0caae9..c87bc65 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -7,3 +7,7 @@ obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-video.o
+>  obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)	+= phy-exynos-mipi-video.o
+>  obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
+>  obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
+> +obj-$(CONFIG_PHY_EXYNOS5250_USB)	+= phy-exynos5250-usb.o
 
-Right.
+Hi Kamil,
 
-While 3.0 block(PIPE3) can be used for Super Speed, 2.0 block(UTMI+)
-can be used for High speed.
+Would you add 'phy-exynos5250-usb.c' file? :-)
+
+Now, I am testing Exynos5250 USB HOST with your patchset.
+However, it makes error because there is no PHY driver for
+Exynos5250.
+
+  WARNING: CPU: 0 PID: 18 at drivers/phy/phy-core.c:366 phy_get+0x1e8/0x224()
+  Device: exynos-ehci
+  missing string
+  .....
 
 Best regards,
 Jingoo Han
-
