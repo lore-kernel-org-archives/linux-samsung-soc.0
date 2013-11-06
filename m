@@ -1,63 +1,251 @@
-From: Rajeshwari Birje <rajeshwari.birje@gmail.com>
-Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
-Date: Wed, 6 Nov 2013 10:23:07 +0530
-Message-ID: <CAPs=JDcHVe4q7R-3f3SBu8g=Ebkz57AbPN8e2jspVTGYnZ1vqA@mail.gmail.com>
-References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
-	<6043727.WVyVGYjJys@amdc1227>
-	<CAPs=JDcVXpJJnWxRFpq7aoW98LKmHq0jo-oTVqSUasnO_1My3g@mail.gmail.com>
-	<1586287.qm633XfQbK@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: Add regulator entries to Exynos5420 SMDK board
+Date: Wed,  6 Nov 2013 13:46:21 +0530
+Message-ID: <1383725781-2429-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f180.google.com ([209.85.217.180]:37434 "EHLO
-	mail-lb0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753174Ab3KFExJ (ORCPT
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:46073 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932074Ab3KFIR6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Nov 2013 23:53:09 -0500
-In-Reply-To: <1586287.qm633XfQbK@amdc1227>
+	Wed, 6 Nov 2013 03:17:58 -0500
+Received: by mail-pd0-f172.google.com with SMTP id w10so9863597pde.31
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Nov 2013 00:17:57 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Doug Anderson <dianders@google.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-Hi Tomasz,
+Added regulator entries to Exynos5420 SMDK board.
 
-On Thu, Oct 31, 2013 at 6:07 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Rajeshwari,
->
-> On Thursday 31 of October 2013 16:17:15 Rajeshwari Birje wrote:
->> Hi Mark Brown ,
->>
->> On Wed, Oct 30, 2013 at 10:36 PM, Tomasz Figa <t.figa@samsung.com> wrote:
->> > On Wednesday 30 of October 2013 10:00:29 Mark Brown wrote:
->> >> On Wed, Oct 30, 2013 at 11:52:54AM +0530, Rajeshwari Birje wrote:
->> >>
->> >> > The following patch already sets bits_per_word_mask for
->> >> > drivers/spi/spi-s3c64xx.c in s3c64xx_spi_probe, hence I had a doubt do
->> >> > I need to set the same again.
->> >>
->> >> OK, so how did this work before then?  You're just adding new code but
->> >> the driver was previously claiming to support different bits per word
->> >> (and now I look at the code there is some handling for that in code).
->> >> Is this a bug fix?
->> No idea if it worked before, but now if I try to do 16 bit transfer
->> without my patch, I get following error.
->> "Xfer length(1) not a multiple of word size(2)"
->> I guess we can consider this as a bug fix then for word transfer.
->> >
->> > That's a good question. Rajeshwari, what SPI device did you test this
->> > patch with? Does it have a driver in mainline kernel?
->> @Tomasz: I tested it for W25Q32DW Winbond device which is already has
->> a driver in mainline Kernel
->
-> The driver as of today's linux-next does not seem to support word
-> transfers. Do you have some additional, out of tree patches that add
-> such support?
-Yes I set the bits_per_word to 32/16 in drivers/mtd/devices/m25p80.c
-m25p_probe function and the call spi_setup(spi).
-> Best regards,
-> Tomasz
->
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420-smdk5420.dts |  216 +++++++++++++++++++++++++++++
+ 1 file changed, 216 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+index fb5a1e25c632..758e466d1bdf 100644
+--- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
++++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
+@@ -120,4 +120,220 @@
+ 			reg = <0x50>;
+ 		};
+ 	};
++
++	hsi2c_4: hsi2c@12CA0000 {
++		status = "okay";
++
++		s2mps11_pmic@66 {
++			compatible = "samsung,s2mps11-pmic";
++			reg = <0x66>;
++			s2mps11,buck2-ramp-delay = <12>;
++			s2mps11,buck34-ramp-delay = <12>;
++			s2mps11,buck16-ramp-delay = <12>;
++			s2mps11,buck6-ramp-enable = <1>;
++			s2mps11,buck2-ramp-enable = <1>;
++			s2mps11,buck3-ramp-enable = <1>;
++			s2mps11,buck4-ramp-enable = <1>;
++
++			s2mps11_osc: clocks {
++				#clock-cells = <1>;
++				clock-output-names = "s2mps11_ap",
++						"s2mps11_cp", "s2mps11_bt";
++			};
++
++			regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "vdd_ldo1";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "vdd_ldo3";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo5_reg: LDO5 {
++					regulator-name = "vdd_ldo5";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo6_reg: LDO6 {
++					regulator-name = "vdd_ldo6";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "vdd_ldo7";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "vdd_ldo8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo9_reg: LDO9 {
++					regulator-name = "vdd_ldo9";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++					regulator-always-on;
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "vdd_ldo10";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo11_reg: LDO11 {
++					regulator-name = "vdd_ldo11";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo12_reg: LDO12 {
++					regulator-name = "vdd_ldo12";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo13_reg: LDO13 {
++					regulator-name = "vdd_ldo13";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo15_reg: LDO15 {
++					regulator-name = "vdd_ldo15";
++					regulator-min-microvolt = <3100000>;
++					regulator-max-microvolt = <3100000>;
++					regulator-always-on;
++				};
++
++				ldo16_reg: LDO16 {
++					regulator-name = "vdd_ldo16";
++					regulator-min-microvolt = <2200000>;
++					regulator-max-microvolt = <2200000>;
++					regulator-always-on;
++				};
++
++				ldo17_reg: LDO17 {
++					regulator-name = "tsp_avdd";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				ldo19_reg: LDO19 {
++					regulator-name = "vdd_sd";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo24_reg: LDO24 {
++					regulator-name = "tsp_io";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "vdd_mif";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck3_reg: BUCK3 {
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck4_reg: BUCK4 {
++					regulator-name = "vdd_g3d";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "vdd_mem";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck6_reg: BUCK6 {
++					regulator-name = "vdd_kfc";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck7_reg: BUCK7 {
++					regulator-name = "vdd_1.0v_ldo";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck8_reg: BUCK8 {
++					regulator-name = "vdd_1.8v_ldo";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck9_reg: BUCK9 {
++					regulator-name = "vdd_2.8v_ldo";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3750000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck10_reg: BUCK10 {
++					regulator-name = "vdd_vmem";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++			};
++		};
++	};
+ };
 -- 
-Regards,
-Rajeshwari Shinde
+1.7.9.5
