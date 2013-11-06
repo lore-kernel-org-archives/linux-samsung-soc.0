@@ -1,84 +1,150 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH v3 1/3] phy: Add new Exynos USB PHY driver
-Date: Wed, 06 Nov 2013 11:56:48 +0100
-Message-ID: <000001cedade$e534a2f0$af9de8d0$%debski@samsung.com>
-References: <1383668001-19141-1-git-send-email-k.debski@samsung.com>
- <1383668001-19141-2-git-send-email-k.debski@samsung.com>
- <000c01ceda8b$e54dbef0$afe93cd0$%han@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v11 03/12] [media] exynos5-fimc-is: Add common driver
+ header files
+Date: Wed, 06 Nov 2013 12:23:07 +0100
+Message-ID: <527A269B.5040007@samsung.com>
+References: <1383631964-26514-1-git-send-email-arun.kk@samsung.com>
+ <1383631964-26514-4-git-send-email-arun.kk@samsung.com>
+ <20131105125108.GF23061@valkosipuli.retiisi.org.uk>
+ <CALt3h7_BCj7yJi6sy=KVOHoET4aWm_a-N=u63R8-bZ-uQ=AGag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <000c01ceda8b$e54dbef0$afe93cd0$%han@samsung.com>
-Content-language: pl
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org, kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, galak@codeaurora.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <CALt3h7_BCj7yJi6sy=KVOHoET4aWm_a-N=u63R8-bZ-uQ=AGag@mail.gmail.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arunkk.samsung@gmail.com>, Sakari Ailus <sakari.ailus@iki.fi>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, "kilyeon.im@samsung.com" <kilyeon.im@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-> From: Jingoo Han [mailto:jg1.han@samsung.com]
-> Sent: Wednesday, November 06, 2013 2:03 AM
+On 05/11/13 14:16, Arun Kumar K wrote:
+>>> +struct is_common_reg {
+>>> +     u32 hicmd;
+>>> +     u32 hic_sensorid;
+>>> +     u32 hic_param[4];
+>>> +
+>>> +     u32 reserved1[3];
+[...]
+>>> +     u32 meta_iflag;
+>>> +     u32 meta_sensor_id;
+>>> +     u32 meta_param1;
+>>> +
+>>> +     u32 reserved9[1];
+>>> +
+>>> +     u32 fcount;
+>>
+>> If these structs define an interface that's not used by the driver only it
+>> might be a good idea to use __packed to ensure no padding is added.
+>>
 > 
-> On Wednesday, November 06, 2013 1:13 AM, Kamil Debski wrote:
-> >
-> > Add a new driver for the Exynos USB PHY. The new driver uses the
-> > generic PHY framework. The driver includes support for the Exynos
-> 4x10
-> > and 4x12 SoC families.
-> >
-> > Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  .../devicetree/bindings/phy/samsung-usbphy.txt     |   52 ++++
-> >  drivers/phy/Kconfig                                |   23 +-
-> >  drivers/phy/Makefile                               |    4 +
-> >  drivers/phy/phy-exynos-usb2.c                      |  234
-> ++++++++++++++
-> >  drivers/phy/phy-exynos-usb2.h                      |   87 ++++++
-> >  drivers/phy/phy-exynos4210-usb2.c                  |  272
-> ++++++++++++++++
-> >  drivers/phy/phy-exynos4212-usb2.c                  |  324
-> ++++++++++++++++++++
-> >  7 files changed, 995 insertions(+), 1 deletion(-)  create mode
-> 100644
-> > Documentation/devicetree/bindings/phy/samsung-usbphy.txt
-> >  create mode 100644 drivers/phy/phy-exynos-usb2.c  create mode 100644
-> > drivers/phy/phy-exynos-usb2.h  create mode 100644
-> > drivers/phy/phy-exynos4210-usb2.c  create mode 100644
-> > drivers/phy/phy-exynos4212-usb2.c
-> 
-> [....]
-> 
-> > diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile index
-> > d0caae9..c87bc65 100644
-> > --- a/drivers/phy/Makefile
-> > +++ b/drivers/phy/Makefile
-> > @@ -7,3 +7,7 @@ obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-
-> video.o
-> >  obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)	+= phy-exynos-mipi-video.o
-> >  obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
-> >  obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
-> > +obj-$(CONFIG_PHY_EXYNOS5250_USB)	+= phy-exynos5250-usb.o
-> 
-> Hi Kamil,
-> 
-> Would you add 'phy-exynos5250-usb.c' file? :-)
-> 
-> Now, I am testing Exynos5250 USB HOST with your patchset.
-> However, it makes error because there is no PHY driver for Exynos5250.
-> 
->   WARNING: CPU: 0 PID: 18 at drivers/phy/phy-core.c:366
-> phy_get+0x1e8/0x224()
->   Device: exynos-ehci
->   missing string
->   .....
+> The same structure is used as is in the firmware code and so it is retained
+> in the driver.
 
-I have to rewrite the power_on/power_off function in Exynos 5250 and I will
-include it in the next version.
+I agree it makes sense to use __packed attribute to ensure no padding is
+added by the compiler. The firmware source and the driver will likely be 
+compiled with different toolchains, and in both cases we should ensure
+no padding is added.
 
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
+>>> diff --git a/drivers/media/platform/exynos5-is/fimc-is-metadata.h b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
+>>> new file mode 100644
+>>> index 0000000..02367c4
+>>> --- /dev/null
+>>> +++ b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
+>>> @@ -0,0 +1,767 @@
+[..]
+>>> +enum metadata_mode {
+>>> +     METADATA_MODE_NONE,
+>>> +     METADATA_MODE_FULL
+>>> +};
+>>> +
+>>> +struct camera2_request_ctl {
+>>> +     uint32_t                id;
+>>> +     enum metadata_mode      metadatamode;
+>>> +     uint8_t                 outputstreams[16];
+>>> +     uint32_t                framecount;
+>>> +};
+>>> +
+>>> +struct camera2_request_dm {
+>>> +     uint32_t                id;
+>>> +     enum metadata_mode      metadatamode;
+>>> +     uint32_t                framecount;
+>>> +};
+[...]
+>>> +struct camera2_lens_ctl {
+>>> +     uint32_t                                focus_distance;
+>>> +     float                                   aperture;
+>>
+>> Floating point numbers? Really? :-)
+>>
+> 
+> Yes as mentioned, the same structure is used by the firmware and
+> so it is used as is in the kernel.
+
+These floating numbers are pretty painful, but I don't think they can
+be avoided unless the firmware is changed. I hope there is no need to 
+touch those in the kernel.
+
+There are already precedents of using floating point numbers in driver's
+public interface, e.g. some gpu/drm drivers. 
+
+I noticed there is another issue in this firmware/kernel interface, i.e. 
+some data structures contain enums in them, e.g.
+
+struct camera2_lens_ctl {
+	uint32_t				focus_distance;
+	float					aperture;
+	float					focal_length;
+	float					filter_density;
+	enum optical_stabilization_mode		optical_stabilization_mode;
+};
+
+It looks like a mistake in the interface design, as size of an enum is
+implementation specific.
+
+I guess size of those enum types is supposed to be 4 bytes ? Presumably
+you should, e.g. use fixed data type like uin32_t or __u32 instead of those 
+enums. It looks pretty fragile as it is now.
+
+In addition all those data structures should be declared with __packed
+attribute, to ensure a specific data structure layout and to avoid 
+an unexpected padding.
+
+>> diff --git a/drivers/media/platform/exynos5-is/fimc-is-param.h b/drivers/media/platform/exynos5-is/fimc-is-param.h
+>> new file mode 100644
+>> index 0000000..015cc13
+>> --- /dev/null
+>> +++ b/drivers/media/platform/exynos5-is/fimc-is-param.h
+> ...
+>> +struct param_control {
+>> +	u32 cmd;
+> 
+> You use uint32_t in some other headers. It's not wrong to use both C99 and
+> Linux types but I'd try to stick to either one.
+
+I tend to agree with that, it's probably better to use one convention, u32
+for kernel internal structures and __u32 for any public interfaces. I don't
+think it is e requirement but would be nice to keep it more consistent.
+
+Even if we wanted to keep the firmware defined data structures in sync with
+the Linux driver, there are already some Linux types used within the firmware
+interface. if I understood things correctly.
+
+>> +	u32 bypass;
+>> +	u32 buffer_address;
+>> +	u32 buffer_number;
+>> +	/* 0: continuous, 1: single */
+>> +	u32 run_mode;
+>> +	u32 reserved[PARAMETER_MAX_MEMBER - 6];
+>> +	u32 err;
+>> +};
+
+Can you please address those issues in follow up patches ?
+I will be sending these patches for inclusion in the media tree,
+I would prefer to avoid keeping it on the ML for more than those
+7 months already passed.
+
+--
+Regards,
+Sylwester
