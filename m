@@ -1,109 +1,158 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 1/3] phy: Add new Exynos USB PHY driver
-Date: Wed, 06 Nov 2013 13:58:45 +0100
-Message-ID: <2413995.ezl3Ca2YTh@amdc1227>
-References: <1383668001-19141-1-git-send-email-k.debski@samsung.com>
- <2656549.jVSier62Qi@amdc1227> <527A3B1C.50200@ti.com>
+From: Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v11 03/12] [media] exynos5-fimc-is: Add common driver
+ header files
+Date: Wed, 6 Nov 2013 15:01:47 +0200
+Message-ID: <20131106130146.GC24988@valkosipuli.retiisi.org.uk>
+References: <1383631964-26514-1-git-send-email-arun.kk@samsung.com>
+ <1383631964-26514-4-git-send-email-arun.kk@samsung.com>
+ <20131105125108.GF23061@valkosipuli.retiisi.org.uk>
+ <CALt3h7_BCj7yJi6sy=KVOHoET4aWm_a-N=u63R8-bZ-uQ=AGag@mail.gmail.com>
+ <527A269B.5040007@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:61351 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756152Ab3KFM6x (ORCPT
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:52827 "EHLO
+	hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1756365Ab3KFNBw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Nov 2013 07:58:53 -0500
-In-reply-to: <527A3B1C.50200@ti.com>
+	Wed, 6 Nov 2013 08:01:52 -0500
+Content-Disposition: inline
+In-Reply-To: <527A269B.5040007@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org, kyungmin.park@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Arun Kumar K <arunkk.samsung@gmail.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <Pawel.Moll@arm.com>, Kumar Gala <galak@codeaurora.org>, Andrzej Hajda <a.hajda@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, "kilyeon.im@samsung.com" <kilyeon.im@samsung.com>
 
-On Wednesday 06 of November 2013 18:20:36 Kishon Vijay Abraham I wrote:
+Hi Sylwester and Arun,
+
+On Wed, Nov 06, 2013 at 12:23:07PM +0100, Sylwester Nawrocki wrote:
 > Hi,
 > 
-> On Wednesday 06 November 2013 05:08 PM, Tomasz Figa wrote:
-> > Hi Kishon
-> >
-> > On Wednesday 06 of November 2013 13:48:13 Kishon Vijay Abraham I wrote:
-> >> Hi,
+> On 05/11/13 14:16, Arun Kumar K wrote:
+> >>> +struct is_common_reg {
+> >>> +     u32 hicmd;
+> >>> +     u32 hic_sensorid;
+> >>> +     u32 hic_param[4];
+> >>> +
+> >>> +     u32 reserved1[3];
+> [...]
+> >>> +     u32 meta_iflag;
+> >>> +     u32 meta_sensor_id;
+> >>> +     u32 meta_param1;
+> >>> +
+> >>> +     u32 reserved9[1];
+> >>> +
+> >>> +     u32 fcount;
 > >>
-> >> On Tuesday 05 November 2013 09:43 PM, Kamil Debski wrote:
-> >>> Add a new driver for the Exynos USB PHY. The new driver uses the generic
-> >>> PHY framework. The driver includes support for the Exynos 4x10 and 4x12
-> >>> SoC families.
-> >>>
-> >>> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> >>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >>> ---
-> >>>    .../devicetree/bindings/phy/samsung-usbphy.txt     |   52 ++++
-> >>>    drivers/phy/Kconfig                                |   23 +-
-> >>>    drivers/phy/Makefile                               |    4 +
-> >>>    drivers/phy/phy-exynos-usb2.c                      |  234 ++++++++++++++
-> >>>    drivers/phy/phy-exynos-usb2.h                      |   87 ++++++
-> >>>    drivers/phy/phy-exynos4210-usb2.c                  |  272 ++++++++++++++++
-> >>>    drivers/phy/phy-exynos4212-usb2.c                  |  324 ++++++++++++++++++++
-> >>>    7 files changed, 995 insertions(+), 1 deletion(-)
-> >>>    create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
-> >>>    create mode 100644 drivers/phy/phy-exynos-usb2.c
-> >>>    create mode 100644 drivers/phy/phy-exynos-usb2.h
-> >>>    create mode 100644 drivers/phy/phy-exynos4210-usb2.c
-> >>>    create mode 100644 drivers/phy/phy-exynos4212-usb2.c
-> > [snip]
-> >>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> >>> index a344f3d..bdf0fab 100644
-> >>> --- a/drivers/phy/Kconfig
-> >>> +++ b/drivers/phy/Kconfig
-> > [snip]
-> >>> @@ -51,4 +51,25 @@ config PHY_EXYNOS_DP_VIDEO
-> >>>    	help
-> >>>    	  Support for Display Port PHY found on Samsung EXYNOS SoCs.
-> >>>
-> >>> +config PHY_EXYNOS_USB2
-> >>> +	tristate "Samsung USB 2.0 PHY driver"
-> >>> +	help
-> >>> +	  Enable this to support Samsung USB phy helper driver for Samsung SoCs.
-> >>> +	  This driver provides common interface to interact, for Samsung
-> >>> +	  USB 2.0 PHY driver.
+> >> If these structs define an interface that's not used by the driver only it
+> >> might be a good idea to use __packed to ensure no padding is added.
 > >>
-> >> I still think we can get rid of this helper driver and have a single
-> >> driver for both PHY_EXYNOS4210_USB2 and PHY_EXYNOS4212_USB2.
-> >
-> > This helper driver is a really nice way to avoid code duplication, while
-> > still leaving the code clean and readable.
-> >
-> > All the Samsung USB 2.0 PHYs require exactly the same semantics
-> > (isolation, reference rate configuration, power up, power on), but each
-> > one has completely different layout of registers and bits inside
-> > registers.
+> > 
+> > The same structure is used as is in the firmware code and so it is retained
+> > in the driver.
 > 
-> I just did a diff of registers in exynos 4210 and 4212 PHY drivers [1] 
-> and couldn't find that big a difference in register layout. Of course 
-> there are a few changes in HSIC bit fields and PHYFSEL but that's only 
-> minimal and could well be handled in a single driver.
+> I agree it makes sense to use __packed attribute to ensure no padding is
+> added by the compiler. The firmware source and the driver will likely be 
+> compiled with different toolchains, and in both cases we should ensure
+> no padding is added.
+
+Agreed.
+
+> >>> diff --git a/drivers/media/platform/exynos5-is/fimc-is-metadata.h b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
+> >>> new file mode 100644
+> >>> index 0000000..02367c4
+> >>> --- /dev/null
+> >>> +++ b/drivers/media/platform/exynos5-is/fimc-is-metadata.h
+> >>> @@ -0,0 +1,767 @@
+> [..]
+> >>> +enum metadata_mode {
+> >>> +     METADATA_MODE_NONE,
+> >>> +     METADATA_MODE_FULL
+> >>> +};
+> >>> +
+> >>> +struct camera2_request_ctl {
+> >>> +     uint32_t                id;
+> >>> +     enum metadata_mode      metadatamode;
+> >>> +     uint8_t                 outputstreams[16];
+> >>> +     uint32_t                framecount;
+> >>> +};
+> >>> +
+> >>> +struct camera2_request_dm {
+> >>> +     uint32_t                id;
+> >>> +     enum metadata_mode      metadatamode;
+> >>> +     uint32_t                framecount;
+> >>> +};
+> [...]
+> >>> +struct camera2_lens_ctl {
+> >>> +     uint32_t                                focus_distance;
+> >>> +     float                                   aperture;
+> >>
+> >> Floating point numbers? Really? :-)
+> >>
+> > 
+> > Yes as mentioned, the same structure is used by the firmware and
+> > so it is used as is in the kernel.
 > 
-> [1] -> http://diffchecker.com/py3tp68m
-
-This is quite a lot of differences, especially including shifted
-bitfields... In addition there is another set of available PHYs
-and inter-dependencies between them.
-
-> >
-> > Making a big single driver would end up being identical to the old Exynos
-> > USB2PHY driver with a lot of if and switch statements inside most of
-> > functions, which is not only ugly but makes any further extension hard.
+> These floating numbers are pretty painful, but I don't think they can
+> be avoided unless the firmware is changed. I hope there is no need to 
+> touch those in the kernel.
 > 
-> Probably we shouldn't try to over design and just convert the old exynos 
-> usb2 phy driver to the generic phy framework to begin with?
+> There are already precedents of using floating point numbers in driver's
+> public interface, e.g. some gpu/drm drivers. 
 
-The old exynos USB2 PHY driver is incomplete and has very limited
-functionality. It needs a complete redesign to support remaining features
-and this is the reason we decided to develop a new driver from scratch.
+As long as you can somehow ensure these will never end up to FPU registers,
+I think that should be fine. Just copying the struct elsewhere using
+memcpy() will be good, I believe.
 
-I believe the way Kamil's driver is designed is definitely the way to go
-with Samsung's USB2 PHY drivers, especially considering that support for
-more SoCs using the same framework will be added - S3C64xx, S5PV210,
-and Exynos5250.
+> I noticed there is another issue in this firmware/kernel interface, i.e. 
+> some data structures contain enums in them, e.g.
+> 
+> struct camera2_lens_ctl {
+> 	uint32_t				focus_distance;
+> 	float					aperture;
+> 	float					focal_length;
+> 	float					filter_density;
+> 	enum optical_stabilization_mode		optical_stabilization_mode;
+> };
+> 
+> It looks like a mistake in the interface design, as size of an enum is
+> implementation specific.
+> 
+> I guess size of those enum types is supposed to be 4 bytes ? Presumably
+> you should, e.g. use fixed data type like uin32_t or __u32 instead of those 
+> enums. It looks pretty fragile as it is now.
 
-Best regards.
-Tomasz
+Good point; I agree.
+
+> In addition all those data structures should be declared with __packed
+> attribute, to ensure a specific data structure layout and to avoid 
+> an unexpected padding.
+> 
+> >> diff --git a/drivers/media/platform/exynos5-is/fimc-is-param.h b/drivers/media/platform/exynos5-is/fimc-is-param.h
+> >> new file mode 100644
+> >> index 0000000..015cc13
+> >> --- /dev/null
+> >> +++ b/drivers/media/platform/exynos5-is/fimc-is-param.h
+> > ...
+> >> +struct param_control {
+> >> +	u32 cmd;
+> > 
+> > You use uint32_t in some other headers. It's not wrong to use both C99 and
+> > Linux types but I'd try to stick to either one.
+> 
+> I tend to agree with that, it's probably better to use one convention, u32
+> for kernel internal structures and __u32 for any public interfaces. I don't
+> think it is e requirement but would be nice to keep it more consistent.
+> 
+> Even if we wanted to keep the firmware defined data structures in sync with
+> the Linux driver, there are already some Linux types used within the firmware
+> interface. if I understood things correctly.
+
+I guess it wouldn't hurt to use uint32_t there instead of u32 (and __u32).
+entirely up to you.
+
+-- 
+Kind regards,
+
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi	XMPP: sailus@retiisi.org.uk
