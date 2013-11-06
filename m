@@ -1,359 +1,187 @@
 From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Subject: [PATCH v2] videodev2: Set vb2_rect's width and height as unsigned
-Date: Wed,  6 Nov 2013 16:31:05 +0100
-Message-ID: <1383751865-25712-1-git-send-email-ricardo.ribalda@gmail.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:SAMSUNG S5P/EXYNO..." <linux-media@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
+Subject: [PATCH v7] videobuf2: Add missing lock held on vb2_fop_relase
+Date: Wed,  6 Nov 2013 16:41:47 +0100
+Message-ID: <1383752507-25902-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f54.google.com ([209.85.215.54]:63798 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754579Ab3KFPly (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Nov 2013 10:41:54 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:SAMSUNG S5P/EXYNO..." <linux-media@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-As addressed on the media summit 2013, there is no reason for the width
-and height to be signed.
+From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
 
-Therefore this patch is an attempt to convert those fields into unsigned.
+vb2_fop_release does not held the lock although it is modifying the
+queue->owner field.
 
+This could lead to race conditions on the vb2_perform_io function
+when multiple applications are accessing the video device via
+read/write API:
+
+[ 308.297741] BUG: unable to handle kernel NULL pointer dereference at
+0000000000000260
+[ 308.297759] IP: [<ffffffffa07a9fd2>] vb2_perform_fileio+0x372/0x610
+[videobuf2_core]
+[ 308.297794] PGD 159719067 PUD 158119067 PMD 0
+[ 308.297812] Oops: 0000 #1 SMP
+[ 308.297826] Modules linked in: qt5023_video videobuf2_dma_sg
+qtec_xform videobuf2_vmalloc videobuf2_memops videobuf2_core
+qtec_white qtec_mem gpio_xilinx qtec_cmosis qtec_pcie fglrx(PO)
+spi_xilinx spi_bitbang qt5023
+[ 308.297888] CPU: 1 PID: 2189 Comm: java Tainted: P O 3.11.0-qtec-standard #1
+[ 308.297919] Hardware name: QTechnology QT5022/QT5022, BIOS
+PM_2.1.0.309 X64 05/23/2013
+[ 308.297952] task: ffff8801564e1690 ti: ffff88014dc02000 task.ti:
+ffff88014dc02000
+[ 308.297962] RIP: 0010:[<ffffffffa07a9fd2>] [<ffffffffa07a9fd2>]
+vb2_perform_fileio+0x372/0x610 [videobuf2_core]
+[ 308.297985] RSP: 0018:ffff88014dc03df8 EFLAGS: 00010202
+[ 308.297995] RAX: 0000000000000000 RBX: ffff880158a23000 RCX: dead000000100100
+[ 308.298003] RDX: 0000000000000000 RSI: dead000000200200 RDI: 0000000000000000
+[ 308.298012] RBP: ffff88014dc03e58 R08: 0000000000000000 R09: 0000000000000001
+[ 308.298020] R10: ffffea00051e8380 R11: ffff88014dc03fd8 R12: ffff880158a23070
+[ 308.298029] R13: ffff8801549040b8 R14: 0000000000198000 R15: 0000000001887e60
+[ 308.298040] FS: 00007f65130d5700(0000) GS:ffff88015ed00000(0000)
+knlGS:0000000000000000
+[ 308.298049] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 308.298057] CR2: 0000000000000260 CR3: 0000000159630000 CR4: 00000000000007e0
+[ 308.298064] Stack:
+[ 308.298071] ffff880156416c00 0000000000198000 0000000000000000
+ffff880100000001
+[ 308.298087] ffff88014dc03f50 00000000810a79ca 0002000000000001
+ffff880154904718
+[ 308.298101] ffff880156416c00 0000000000198000 ffff880154904338
+ffff88014dc03f50
+[ 308.298116] Call Trace:
+[ 308.298143] [<ffffffffa07aa3c4>] vb2_read+0x14/0x20 [videobuf2_core]
+[ 308.298198] [<ffffffffa07aa494>] vb2_fop_read+0xc4/0x120 [videobuf2_core]
+[ 308.298252] [<ffffffff8154ee9e>] v4l2_read+0x7e/0xc0
+[ 308.298296] [<ffffffff8116e639>] vfs_read+0xa9/0x160
+[ 308.298312] [<ffffffff8116e882>] SyS_read+0x52/0xb0
+[ 308.298328] [<ffffffff81784179>] tracesys+0xd0/0xd5
+[ 308.298335] Code: e5 d6 ff ff 83 3d be 24 00 00 04 89 c2 4c 8b 45 b0
+44 8b 4d b8 0f 8f 20 02 00 00 85 d2 75 32 83 83 78 03 00 00 01 4b 8b
+44 c5 48 <8b> 88 60 02 00 00 85 c9 0f 84 b0 00 00 00 8b 40 58 89 c2 41
+89
+[ 308.298487] RIP [<ffffffffa07a9fd2>] vb2_perform_fileio+0x372/0x610
+[videobuf2_core]
+[ 308.298507] RSP <ffff88014dc03df8>
+[ 308.298514] CR2: 0000000000000260
+[ 308.298526] ---[ end trace e8f01717c96d1e41 ]---
+
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
 Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 ---
-v2: Comments by Sakari Ailus and Laurent Pinchart
 
--Fix alignment on all drivers
--Replace min with min_t where possible and remove unneeded checks
+v2: Comments by Sylvester Nawrocki
 
- drivers/media/i2c/mt9m032.c                        | 16 +++++-----
- drivers/media/i2c/mt9p031.c                        | 28 ++++++++++--------
- drivers/media/i2c/mt9t001.c                        | 26 ++++++++++-------
- drivers/media/i2c/mt9v032.c                        | 34 ++++++++++++----------
- drivers/media/i2c/smiapp/smiapp-core.c             |  8 ++---
- drivers/media/i2c/soc_camera/mt9m111.c             |  4 +--
- drivers/media/i2c/tvp5150.c                        | 14 ++++-----
- drivers/media/pci/bt8xx/bttv-driver.c              |  6 ++--
- drivers/media/pci/saa7134/saa7134-video.c          |  4 ---
- drivers/media/platform/soc_camera/soc_scale_crop.c |  4 +--
- include/uapi/linux/videodev2.h                     |  4 +--
- 11 files changed, 79 insertions(+), 69 deletions(-)
+fimc-capture and fimc-lite where calling vb2_fop_release with the lock held.
+Therefore a new __vb2_fop_release function has been created to be used by
+drivers that overload the release function.
 
-diff --git a/drivers/media/i2c/mt9m032.c b/drivers/media/i2c/mt9m032.c
-index 846b15f..85ec3ba 100644
---- a/drivers/media/i2c/mt9m032.c
-+++ b/drivers/media/i2c/mt9m032.c
-@@ -459,13 +459,15 @@ static int mt9m032_set_pad_crop(struct v4l2_subdev *subdev,
- 			  MT9M032_COLUMN_START_MAX);
- 	rect.top = clamp(ALIGN(crop->rect.top, 2), MT9M032_ROW_START_MIN,
- 			 MT9M032_ROW_START_MAX);
--	rect.width = clamp(ALIGN(crop->rect.width, 2), MT9M032_COLUMN_SIZE_MIN,
--			   MT9M032_COLUMN_SIZE_MAX);
--	rect.height = clamp(ALIGN(crop->rect.height, 2), MT9M032_ROW_SIZE_MIN,
--			    MT9M032_ROW_SIZE_MAX);
--
--	rect.width = min(rect.width, MT9M032_PIXEL_ARRAY_WIDTH - rect.left);
--	rect.height = min(rect.height, MT9M032_PIXEL_ARRAY_HEIGHT - rect.top);
-+	rect.width = clamp_t(unsigned int, ALIGN(crop->rect.width, 2),
-+			     MT9M032_COLUMN_SIZE_MIN, MT9M032_COLUMN_SIZE_MAX);
-+	rect.height = clamp_t(unsigned int, ALIGN(crop->rect.height, 2),
-+			      MT9M032_ROW_SIZE_MIN, MT9M032_ROW_SIZE_MAX);
-+
-+	rect.width = min_t(unsigned int, rect.width,
-+			   MT9M032_PIXEL_ARRAY_WIDTH - rect.left);
-+	rect.height = min_t(unsigned int, rect.height,
-+			    MT9M032_PIXEL_ARRAY_HEIGHT - rect.top);
- 
- 	__crop = __mt9m032_get_pad_crop(sensor, fh, crop->which);
- 
-diff --git a/drivers/media/i2c/mt9p031.c b/drivers/media/i2c/mt9p031.c
-index 4734836..722f78a 100644
---- a/drivers/media/i2c/mt9p031.c
-+++ b/drivers/media/i2c/mt9p031.c
-@@ -518,11 +518,13 @@ static int mt9p031_set_format(struct v4l2_subdev *subdev,
- 
- 	/* Clamp the width and height to avoid dividing by zero. */
- 	width = clamp_t(unsigned int, ALIGN(format->format.width, 2),
--			max(__crop->width / 7, MT9P031_WINDOW_WIDTH_MIN),
-+			max_t(unsigned int, __crop->width / 7,
-+			      MT9P031_WINDOW_WIDTH_MIN),
- 			__crop->width);
- 	height = clamp_t(unsigned int, ALIGN(format->format.height, 2),
--			max(__crop->height / 8, MT9P031_WINDOW_HEIGHT_MIN),
--			__crop->height);
-+			 max_t(unsigned int, __crop->height / 8,
-+			       MT9P031_WINDOW_HEIGHT_MIN),
-+			 __crop->height);
- 
- 	hratio = DIV_ROUND_CLOSEST(__crop->width, width);
- 	vratio = DIV_ROUND_CLOSEST(__crop->height, height);
-@@ -564,15 +566,17 @@ static int mt9p031_set_crop(struct v4l2_subdev *subdev,
- 			  MT9P031_COLUMN_START_MAX);
- 	rect.top = clamp(ALIGN(crop->rect.top, 2), MT9P031_ROW_START_MIN,
- 			 MT9P031_ROW_START_MAX);
--	rect.width = clamp(ALIGN(crop->rect.width, 2),
--			   MT9P031_WINDOW_WIDTH_MIN,
--			   MT9P031_WINDOW_WIDTH_MAX);
--	rect.height = clamp(ALIGN(crop->rect.height, 2),
--			    MT9P031_WINDOW_HEIGHT_MIN,
--			    MT9P031_WINDOW_HEIGHT_MAX);
--
--	rect.width = min(rect.width, MT9P031_PIXEL_ARRAY_WIDTH - rect.left);
--	rect.height = min(rect.height, MT9P031_PIXEL_ARRAY_HEIGHT - rect.top);
-+	rect.width = clamp_t(unsigned int, ALIGN(crop->rect.width, 2),
-+			     MT9P031_WINDOW_WIDTH_MIN,
-+			     MT9P031_WINDOW_WIDTH_MAX);
-+	rect.height = clamp_t(unsigned int, ALIGN(crop->rect.height, 2),
-+			      MT9P031_WINDOW_HEIGHT_MIN,
-+			      MT9P031_WINDOW_HEIGHT_MAX);
-+
-+	rect.width = min_t(unsigned int, rect.width,
-+			   MT9P031_PIXEL_ARRAY_WIDTH - rect.left);
-+	rect.height = min_t(unsigned int, rect.height,
-+			    MT9P031_PIXEL_ARRAY_HEIGHT - rect.top);
- 
- 	__crop = __mt9p031_get_pad_crop(mt9p031, fh, crop->pad, crop->which);
- 
-diff --git a/drivers/media/i2c/mt9t001.c b/drivers/media/i2c/mt9t001.c
-index 7964634..d41c70e 100644
---- a/drivers/media/i2c/mt9t001.c
-+++ b/drivers/media/i2c/mt9t001.c
-@@ -291,10 +291,12 @@ static int mt9t001_set_format(struct v4l2_subdev *subdev,
- 
- 	/* Clamp the width and height to avoid dividing by zero. */
- 	width = clamp_t(unsigned int, ALIGN(format->format.width, 2),
--			max(__crop->width / 8, MT9T001_WINDOW_HEIGHT_MIN + 1),
-+			max_t(unsigned int, __crop->width / 8,
-+			      MT9T001_WINDOW_HEIGHT_MIN + 1),
- 			__crop->width);
- 	height = clamp_t(unsigned int, ALIGN(format->format.height, 2),
--			 max(__crop->height / 8, MT9T001_WINDOW_HEIGHT_MIN + 1),
-+			 max_t(unsigned int, __crop->height / 8,
-+			       MT9T001_WINDOW_HEIGHT_MIN + 1),
- 			 __crop->height);
- 
- 	hratio = DIV_ROUND_CLOSEST(__crop->width, width);
-@@ -339,15 +341,17 @@ static int mt9t001_set_crop(struct v4l2_subdev *subdev,
- 	rect.top = clamp(ALIGN(crop->rect.top, 2),
- 			 MT9T001_ROW_START_MIN,
- 			 MT9T001_ROW_START_MAX);
--	rect.width = clamp(ALIGN(crop->rect.width, 2),
--			   MT9T001_WINDOW_WIDTH_MIN + 1,
--			   MT9T001_WINDOW_WIDTH_MAX + 1);
--	rect.height = clamp(ALIGN(crop->rect.height, 2),
--			    MT9T001_WINDOW_HEIGHT_MIN + 1,
--			    MT9T001_WINDOW_HEIGHT_MAX + 1);
--
--	rect.width = min(rect.width, MT9T001_PIXEL_ARRAY_WIDTH - rect.left);
--	rect.height = min(rect.height, MT9T001_PIXEL_ARRAY_HEIGHT - rect.top);
-+	rect.width = clamp_t(unsigned int, ALIGN(crop->rect.width, 2),
-+			     MT9T001_WINDOW_WIDTH_MIN + 1,
-+			     MT9T001_WINDOW_WIDTH_MAX + 1);
-+	rect.height = clamp_t(unsigned int, ALIGN(crop->rect.height, 2),
-+			      MT9T001_WINDOW_HEIGHT_MIN + 1,
-+			      MT9T001_WINDOW_HEIGHT_MAX + 1);
-+
-+	rect.width = min_t(unsigned int, rect.width,
-+			   MT9T001_PIXEL_ARRAY_WIDTH - rect.left);
-+	rect.height = min_t(unsigned int, rect.height,
-+			    MT9T001_PIXEL_ARRAY_HEIGHT - rect.top);
- 
- 	__crop = __mt9t001_get_pad_crop(mt9t001, fh, crop->pad, crop->which);
- 
-diff --git a/drivers/media/i2c/mt9v032.c b/drivers/media/i2c/mt9v032.c
-index 2c50eff..ba8da9b 100644
---- a/drivers/media/i2c/mt9v032.c
-+++ b/drivers/media/i2c/mt9v032.c
-@@ -420,12 +420,14 @@ static int mt9v032_set_format(struct v4l2_subdev *subdev,
- 					format->which);
- 
- 	/* Clamp the width and height to avoid dividing by zero. */
--	width = clamp_t(unsigned int, ALIGN(format->format.width, 2),
--			max(__crop->width / 8, MT9V032_WINDOW_WIDTH_MIN),
--			__crop->width);
--	height = clamp_t(unsigned int, ALIGN(format->format.height, 2),
--			 max(__crop->height / 8, MT9V032_WINDOW_HEIGHT_MIN),
--			 __crop->height);
-+	width = clamp(ALIGN(format->format.width, 2),
-+		      max_t(unsigned int, __crop->width / 8,
-+			    MT9V032_WINDOW_WIDTH_MIN),
-+		      __crop->width);
-+	height = clamp(ALIGN(format->format.height, 2),
-+		       max_t(unsigned int, __crop->height / 8,
-+			     MT9V032_WINDOW_HEIGHT_MIN),
-+		       __crop->height);
- 
- 	hratio = DIV_ROUND_CLOSEST(__crop->width, width);
- 	vratio = DIV_ROUND_CLOSEST(__crop->height, height);
-@@ -471,15 +473,17 @@ static int mt9v032_set_crop(struct v4l2_subdev *subdev,
- 	rect.top = clamp(ALIGN(crop->rect.top + 1, 2) - 1,
- 			 MT9V032_ROW_START_MIN,
- 			 MT9V032_ROW_START_MAX);
--	rect.width = clamp(ALIGN(crop->rect.width, 2),
--			   MT9V032_WINDOW_WIDTH_MIN,
--			   MT9V032_WINDOW_WIDTH_MAX);
--	rect.height = clamp(ALIGN(crop->rect.height, 2),
--			    MT9V032_WINDOW_HEIGHT_MIN,
--			    MT9V032_WINDOW_HEIGHT_MAX);
--
--	rect.width = min(rect.width, MT9V032_PIXEL_ARRAY_WIDTH - rect.left);
--	rect.height = min(rect.height, MT9V032_PIXEL_ARRAY_HEIGHT - rect.top);
-+	rect.width = clamp_t(unsigned int, ALIGN(crop->rect.width, 2),
-+			     MT9V032_WINDOW_WIDTH_MIN,
-+			     MT9V032_WINDOW_WIDTH_MAX);
-+	rect.height = clamp_t(unsigned int, ALIGN(crop->rect.height, 2),
-+			      MT9V032_WINDOW_HEIGHT_MIN,
-+			      MT9V032_WINDOW_HEIGHT_MAX);
-+
-+	rect.width = min_t(unsigned int,
-+			   rect.width, MT9V032_PIXEL_ARRAY_WIDTH - rect.left);
-+	rect.height = min_t(unsigned int,
-+			    rect.height, MT9V032_PIXEL_ARRAY_HEIGHT - rect.top);
- 
- 	__crop = __mt9v032_get_pad_crop(mt9v032, fh, crop->pad, crop->which);
- 
-diff --git a/drivers/media/i2c/smiapp/smiapp-core.c b/drivers/media/i2c/smiapp/smiapp-core.c
-index ae66d91..3fadb9e 100644
---- a/drivers/media/i2c/smiapp/smiapp-core.c
-+++ b/drivers/media/i2c/smiapp/smiapp-core.c
-@@ -2028,8 +2028,8 @@ static int smiapp_set_crop(struct v4l2_subdev *subdev,
- 	sel->r.width = min(sel->r.width, src_size->width);
- 	sel->r.height = min(sel->r.height, src_size->height);
- 
--	sel->r.left = min(sel->r.left, src_size->width - sel->r.width);
--	sel->r.top = min(sel->r.top, src_size->height - sel->r.height);
-+	sel->r.left = min_t(int, sel->r.left, src_size->width - sel->r.width);
-+	sel->r.top = min_t(int, sel->r.top, src_size->height - sel->r.height);
- 
- 	*crops[sel->pad] = sel->r;
- 
-@@ -2121,8 +2121,8 @@ static int smiapp_set_selection(struct v4l2_subdev *subdev,
- 
- 	sel->r.left = max(0, sel->r.left & ~1);
- 	sel->r.top = max(0, sel->r.top & ~1);
--	sel->r.width = max(0, SMIAPP_ALIGN_DIM(sel->r.width, sel->flags));
--	sel->r.height = max(0, SMIAPP_ALIGN_DIM(sel->r.height, sel->flags));
-+	sel->r.width = SMIAPP_ALIGN_DIM(sel->r.width, sel->flags);
-+	sel->r.height =	SMIAPP_ALIGN_DIM(sel->r.height, sel->flags);
- 
- 	sel->r.width = max_t(unsigned int,
- 			     sensor->limits[SMIAPP_LIMIT_MIN_X_OUTPUT_SIZE],
-diff --git a/drivers/media/i2c/soc_camera/mt9m111.c b/drivers/media/i2c/soc_camera/mt9m111.c
-index 6f40566..ccf5940 100644
---- a/drivers/media/i2c/soc_camera/mt9m111.c
-+++ b/drivers/media/i2c/soc_camera/mt9m111.c
-@@ -208,8 +208,8 @@ struct mt9m111 {
- 	struct mt9m111_context *ctx;
- 	struct v4l2_rect rect;	/* cropping rectangle */
- 	struct v4l2_clk *clk;
--	int width;		/* output */
--	int height;		/* sizes */
-+	unsigned int width;	/* output */
-+	unsigned int height;	/* sizes */
- 	struct mutex power_lock; /* lock to protect power_count */
- 	int power_count;
- 	const struct mt9m111_datafmt *fmt;
-diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
-index 89c0b13..7b8962e 100644
---- a/drivers/media/i2c/tvp5150.c
-+++ b/drivers/media/i2c/tvp5150.c
-@@ -867,7 +867,7 @@ static int tvp5150_s_crop(struct v4l2_subdev *sd, const struct v4l2_crop *a)
- 	struct v4l2_rect rect = a->c;
- 	struct tvp5150 *decoder = to_tvp5150(sd);
- 	v4l2_std_id std;
--	int hmax;
-+	unsigned int hmax;
- 
- 	v4l2_dbg(1, debug, sd, "%s left=%d, top=%d, width=%d, height=%d\n",
- 		__func__, rect.left, rect.top, rect.width, rect.height);
-@@ -877,9 +877,9 @@ static int tvp5150_s_crop(struct v4l2_subdev *sd, const struct v4l2_crop *a)
- 
- 	/* tvp5150 has some special limits */
- 	rect.left = clamp(rect.left, 0, TVP5150_MAX_CROP_LEFT);
--	rect.width = clamp(rect.width,
--			   TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
--			   TVP5150_H_MAX - rect.left);
-+	rect.width = clamp_t(unsigned int, rect.width,
-+			     TVP5150_H_MAX - TVP5150_MAX_CROP_LEFT - rect.left,
-+			     TVP5150_H_MAX - rect.left);
- 	rect.top = clamp(rect.top, 0, TVP5150_MAX_CROP_TOP);
- 
- 	/* Calculate height based on current standard */
-@@ -893,9 +893,9 @@ static int tvp5150_s_crop(struct v4l2_subdev *sd, const struct v4l2_crop *a)
- 	else
- 		hmax = TVP5150_V_MAX_OTHERS;
- 
--	rect.height = clamp(rect.height,
--			    hmax - TVP5150_MAX_CROP_TOP - rect.top,
--			    hmax - rect.top);
-+	rect.height = clamp_t(unsigned int, rect.height,
-+			      hmax - TVP5150_MAX_CROP_TOP - rect.top,
-+			      hmax - rect.top);
- 
- 	tvp5150_write(sd, TVP5150_VERT_BLANKING_START, rect.top);
- 	tvp5150_write(sd, TVP5150_VERT_BLANKING_STOP,
-diff --git a/drivers/media/pci/bt8xx/bttv-driver.c b/drivers/media/pci/bt8xx/bttv-driver.c
-index c6532de..41ec4fa 100644
---- a/drivers/media/pci/bt8xx/bttv-driver.c
-+++ b/drivers/media/pci/bt8xx/bttv-driver.c
-@@ -1126,9 +1126,9 @@ bttv_crop_calc_limits(struct bttv_crop *c)
- 		c->min_scaled_height = 32;
- 	} else {
- 		c->min_scaled_width =
--			(max(48, c->rect.width >> 4) + 3) & ~3;
-+			(max_t(unsigned int, 48, c->rect.width >> 4) + 3) & ~3;
- 		c->min_scaled_height =
--			max(32, c->rect.height >> 4);
-+			max_t(unsigned int, 32, c->rect.height >> 4);
+v3: Comments by Sylvester Nawrocki and Mauro Carvalho Chehab
+
+Use vb2_fop_release_locked instead of __vb2_fop_release
+
+v4: Comments by Sylvester Nawrocki
+
+Rename vb2_fop_release_locked to __vb2_fop_release and fix patch format
+
+v5: Comments by Sylvester Nawrocki and Hans Verkuil
+
+Rename __vb2_fop_release to vb2_fop_release_unlock and rearrange
+arguments
+
+v6: Comments by Hans Verkuil
+
+Fix typo on description
+Rename vb2_fop_release_locked to vb2_fop_release_no_lock
+
+v7: Comments by Hans Verkuil and Sylvester Nawrocki
+
+Export _vb2_fop_release instead of using vb2_fop_release_no_lock
+
+ drivers/media/platform/exynos4-is/fimc-capture.c |  2 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c    |  2 +-
+ drivers/media/v4l2-core/videobuf2-core.c         | 15 ++++++++++++++-
+ include/media/videobuf2-core.h                   |  1 +
+ 4 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+index fb27ff7..8a712ca 100644
+--- a/drivers/media/platform/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+@@ -549,7 +549,7 @@ static int fimc_capture_release(struct file *file)
+ 		vc->streaming = false;
  	}
  
- 	c->max_scaled_width  = c->rect.width & ~3;
-@@ -2024,7 +2024,7 @@ limit_scaled_size_lock       (struct bttv_fh *               fh,
- 		/* We cannot scale up. When the scaled image is larger
- 		   than crop.rect we adjust the crop.rect as required
- 		   by the V4L2 spec, hence cropcap.bounds are our limit. */
--		max_width = min(b->width, (__s32) MAX_HACTIVE);
-+		max_width = min_t(unsigned int, b->width, MAX_HACTIVE);
- 		max_height = b->height;
+-	ret = vb2_fop_release(file);
++	ret = _vb2_fop_release(file, NULL);
  
- 		/* We cannot capture the same line as video and VBI data.
-diff --git a/drivers/media/pci/saa7134/saa7134-video.c b/drivers/media/pci/saa7134/saa7134-video.c
-index fb60da8..bdbd805 100644
---- a/drivers/media/pci/saa7134/saa7134-video.c
-+++ b/drivers/media/pci/saa7134/saa7134-video.c
-@@ -1979,10 +1979,6 @@ static int saa7134_s_crop(struct file *file, void *f, const struct v4l2_crop *cr
- 	if (crop->type != V4L2_BUF_TYPE_VIDEO_CAPTURE &&
- 	    crop->type != V4L2_BUF_TYPE_VIDEO_OVERLAY)
- 		return -EINVAL;
--	if (crop->c.height < 0)
--		return -EINVAL;
--	if (crop->c.width < 0)
--		return -EINVAL;
+ 	if (close) {
+ 		clear_bit(ST_CAPT_BUSY, &fimc->state);
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index e5798f7..d3b32b6 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -546,7 +546,7 @@ static int fimc_lite_release(struct file *file)
+ 		mutex_unlock(&entity->parent->graph_mutex);
+ 	}
  
- 	if (res_locked(fh->dev, RESOURCE_OVERLAY))
- 		return -EBUSY;
-diff --git a/drivers/media/platform/soc_camera/soc_scale_crop.c b/drivers/media/platform/soc_camera/soc_scale_crop.c
-index cbd3a34..8e74fb7 100644
---- a/drivers/media/platform/soc_camera/soc_scale_crop.c
-+++ b/drivers/media/platform/soc_camera/soc_scale_crop.c
-@@ -141,8 +141,8 @@ int soc_camera_client_s_crop(struct v4l2_subdev *sd,
- 	 * Popular special case - some cameras can only handle fixed sizes like
- 	 * QVGA, VGA,... Take care to avoid infinite loop.
- 	 */
--	width = max(cam_rect->width, 2);
--	height = max(cam_rect->height, 2);
-+	width = max_t(unsigned int, cam_rect->width, 2);
-+	height = max_t(unsigned int, cam_rect->height, 2);
+-	vb2_fop_release(file);
++	_vb2_fop_release(file, NULL);
+ 	pm_runtime_put(&fimc->pdev->dev);
+ 	clear_bit(ST_FLITE_SUSPENDED, &fimc->state);
  
- 	/*
- 	 * Loop as long as sensor is not covering the requested rectangle and
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 437f1b0..6ae7bbe 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -207,8 +207,8 @@ enum v4l2_priority {
- struct v4l2_rect {
- 	__s32   left;
- 	__s32   top;
--	__s32   width;
--	__s32   height;
-+	__u32   width;
-+	__u32   height;
- };
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index 594c75e..52dbe2f 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -2619,16 +2619,29 @@ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma)
+ }
+ EXPORT_SYMBOL_GPL(vb2_fop_mmap);
  
- struct v4l2_fract {
+-int vb2_fop_release(struct file *file)
++int _vb2_fop_release(struct file *file, struct mutex *lock)
+ {
+ 	struct video_device *vdev = video_devdata(file);
+ 
+ 	if (file->private_data == vdev->queue->owner) {
++		if (lock)
++			mutex_lock(lock);
+ 		vb2_queue_release(vdev->queue);
+ 		vdev->queue->owner = NULL;
++		if (lock)
++			mutex_unlock(lock);
+ 	}
+ 	return v4l2_fh_release(file);
+ }
++EXPORT_SYMBOL_GPL(_vb2_fop_release);
++
++int vb2_fop_release(struct file *file)
++{
++	struct video_device *vdev = video_devdata(file);
++	struct mutex *lock = vdev->queue->lock ? vdev->queue->lock : vdev->lock;
++
++	return _vb2_fop_release(file, lock);
++}
+ EXPORT_SYMBOL_GPL(vb2_fop_release);
+ 
+ ssize_t vb2_fop_write(struct file *file, char __user *buf,
+diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+index 6781258..5a9e239 100644
+--- a/include/media/videobuf2-core.h
++++ b/include/media/videobuf2-core.h
+@@ -491,6 +491,7 @@ int vb2_ioctl_expbuf(struct file *file, void *priv,
+ 
+ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma);
+ int vb2_fop_release(struct file *file);
++int _vb2_fop_release(struct file *file, struct mutex *lock)
+ ssize_t vb2_fop_write(struct file *file, char __user *buf,
+ 		size_t count, loff_t *ppos);
+ ssize_t vb2_fop_read(struct file *file, char __user *buf,
 -- 
 1.8.4.rc3
