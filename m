@@ -1,160 +1,68 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Exynos5420: Add device nodes for HSI2C blocks
-Date: Thu, 7 Nov 2013 18:53:44 +0530
-Message-ID: <CAHfPSqBpPoLqF+8+qjtL_zRA2+tdeqt=+zA+VfTOcvv2kq+5bg@mail.gmail.com>
-References: <1383830523-1767-1-git-send-email-ch.naveen@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: dts: Add hs-i2c nodes to exynos5420
+Date: Thu, 07 Nov 2013 14:37:37 +0100
+Message-ID: <9545471.VCNkjpVQx6@amdc1227>
+References: <1383651560-322-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:48970 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750964Ab3KGNYG (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:23660 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753577Ab3KGNhp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Nov 2013 08:24:06 -0500
-In-Reply-To: <1383830523-1767-1-git-send-email-ch.naveen@samsung.com>
+	Thu, 7 Nov 2013 08:37:45 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MVW00DVNB5I3NA0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 07 Nov 2013 13:37:43 +0000 (GMT)
+In-reply-to: <1383651560-322-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 7 November 2013 18:52, Naveen Krishna Chatradhi
-<ch.naveen@samsung.com> wrote:
-> Exynos5420 SoC has 7 High speed I2C channels, This patch adds
-> the device tree nodes to the DT device list.
->
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Hi Sachin,
+
+Please see my comments inline.
+
+On Tuesday 05 of November 2013 17:09:20 Sachin Kamat wrote:
+> Added high speed I2C nodes to Exynos5420 DT file.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
 >  arch/arm/boot/dts/exynos5420.dtsi |   98 +++++++++++++++++++++++++++++++++++++
 >  1 file changed, 98 insertions(+)
->
+> 
 > diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 6ffefd1..12f612d 100644
+> index 9ce5f82..469769a 100644
 > --- a/arch/arm/boot/dts/exynos5420.dtsi
 > +++ b/arch/arm/boot/dts/exynos5420.dtsi
 > @@ -34,6 +34,13 @@
->                 i2c1 = &i2c_1;
->                 i2c2 = &i2c_2;
->                 i2c3 = &i2c_3;
-> +               i2c4 = &hsi2c_4;
-> +               i2c5 = &hsi2c_5;
-> +               i2c6 = &hsi2c_6;
-> +               i2c7 = &hsi2c_7;
-> +               i2c8 = &hsi2c_8;
-> +               i2c9 = &hsi2c_9;
-> +               i2c10 = &hsi2c_10;
->                 gsc0 = &gsc_0;
->                 gsc1 = &gsc_1;
->         };
-> @@ -333,6 +340,97 @@
->                 status = "disabled";
->         };
->
-> +       hsi2c_4: hsi2c@12CA0000 {
-> +               compatible = "samsung,exynos5-hsi2c";
-> +               reg = <0x12CA0000 0x1000>;
-> +               interrupts = <0 60 0>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&i2c4_hs_bus>;
-> +               clocks = <&clock 265>;
-> +               clock-names = "hsi2c";
-> +               status = "disabled";
-> +       };
-> +
-> +       hsi2c_5: hsi2c@12CB0000 {
-> +               compatible = "samsung,exynos5-hsi2c";
-> +               reg = <0x12CB0000 0x1000>;
-> +               interrupts = <0 61 0>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&i2c5_hs_bus>;
-> +               clocks = <&clock 266>;
-> +               clock-names = "hsi2c";
-> +               status = "disabled";
-> +       };
-> +
-> +       hsi2c_6: hsi2c@12CC0000 {
-> +               compatible = "samsung,exynos5-hsi2c";
-> +               reg = <0x12CC0000 0x1000>;
-> +               interrupts = <0 62 0>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&i2c6_hs_bus>;
-> +               clocks = <&clock 267>;
-> +               clock-names = "hsi2c";
-> +               status = "disabled";
-> +       };
-> +
-> +       hsi2c_7: hsi2c@12CD0000 {
-> +               compatible = "samsung,exynos5-hsi2c";
-> +               reg = <0x12CD0000 0x1000>;
-> +               interrupts = <0 63 0>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&i2c7_hs_bus>;
-> +               clocks = <&clock 268>;
-> +               clock-names = "hsi2c";
-> +               status = "disabled";
-> +       };
-> +
-> +       hsi2c_8: hsi2c@12E00000 {
-> +               compatible = "samsung,exynos5-hsi2c";
-> +               reg = <0x12E00000 0x1000>;
-> +               interrupts = <0 87 0>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&i2c8_hs_bus>;
-> +               clocks = <&clock 281>;
-> +               clock-names = "hsi2c";
-> +               status = "disabled";
-> +       };
-> +
-> +       hsi2c_9: hsi2c@12E10000 {
-> +               compatible = "samsung,exynos5-hsi2c";
-> +               reg = <0x12E10000 0x1000>;
-> +               interrupts = <0 88 0>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&i2c9_hs_bus>;
-> +               clocks = <&clock 282>;
-> +               clock-names = "hsi2c";
-> +               status = "disabled";
-> +       };
-> +
-> +       hsi2c_10: hsi2c@12E20000 {
-> +               compatible = "samsung,exynos5-hsi2c";
-> +               reg = <0x12E20000 0x1000>;
-> +               interrupts = <0 203 0>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +               pinctrl-names = "default";
-> +               pinctrl-0 = <&i2c10_hs_bus>;
-> +               clocks = <&clock 283>;
-> +               clock-names = "hsi2c";
-> +               status = "disabled";
-> +       };
-> +
->         hdmi@14530000 {
->                 compatible = "samsung,exynos4212-hdmi";
->                 reg = <0x14530000 0x70000>;
-> --
-> 1.7.10.4
->
-Just found that Sachin Kamat already tried to post a similar patch.
-http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/24581
+>  		i2c1 = &i2c_1;
+>  		i2c2 = &i2c_2;
+>  		i2c3 = &i2c_3;
+> +		i2c4 = &hsi2c_4;
+> +		i2c5 = &hsi2c_5;
+> +		i2c6 = &hsi2c_6;
+> +		i2c7 = &hsi2c_7;
+> +		i2c8 = &hsi2c_8;
+> +		i2c9 = &hsi2c_9;
+> +		i2c10 = &hsi2c_10;
+>  		gsc0 = &gsc_0;
+>  		gsc1 = &gsc_1;
+>  	};
+> @@ -339,6 +346,97 @@
+>  		status = "disabled";
+>  	};
+>  
+> +	hsi2c_4: hsi2c@12CA0000 {
 
-I was actually waiting for the High speed I2C driver to get merged
-before adding the device tree nodes.
+nit: Node name should be generic, so simply i2c@unit-address should be
+enough.
 
-The High speed I2C driver was accepted only a couple of days ago.
+The same for remaining instances.
 
--- 
-Shine bright,
-(: Nav :)
+Best regards,
+Tomasz
