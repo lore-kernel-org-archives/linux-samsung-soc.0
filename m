@@ -1,96 +1,142 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v2] ARM: dts: Exynos5420: Add device nodes for TMU blocks
-Date: Thu, 07 Nov 2013 18:37:49 +0530
-Message-ID: <1383829669-1271-1-git-send-email-ch.naveen@samsung.com>
-References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+Subject: [PATCH] ARM: dts: Exynos5420: Add device nodes for HSI2C blocks
+Date: Thu, 07 Nov 2013 18:52:03 +0530
+Message-ID: <1383830523-1767-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:40591 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725Ab3KGNGO (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:15426 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751121Ab3KGNU1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Nov 2013 08:06:14 -0500
-In-reply-to: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+	Thu, 7 Nov 2013 08:20:27 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: t.figa@samsung.com, naveenkrishna.ch@gmail.com, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, cpgs@samsung.com
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com
 
-Exynos5420 SoC has per core thermal management unit.
-5 TMU channels 4 for CPUs and 5th for GPU.
+Exynos5420 SoC has 7 High speed I2C channels, This patch adds
+the device tree nodes to the DT device list.
 
-This patch adds the device tree nodes to the DT device list.
-
-Nodes carry the misplaced second base address and the second
-clock to access the misplaced base address.
-
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 ---
-Changes since v1:
-1. Nodes carry the misplaced second base address and the second
-   clock to access the misplaced base address.
-2. Correct the clock number for the TMU4
-
- arch/arm/boot/dts/exynos5420.dtsi |   48 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ arch/arm/boot/dts/exynos5420.dtsi |   98 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
 diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 6ffefd1..d736b40 100644
+index 6ffefd1..12f612d 100644
 --- a/arch/arm/boot/dts/exynos5420.dtsi
 +++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -369,4 +369,52 @@
- 		clock-names = "gscl";
- 		samsung,power-domain = <&gsc_pd>;
+@@ -34,6 +34,13 @@
+ 		i2c1 = &i2c_1;
+ 		i2c2 = &i2c_2;
+ 		i2c3 = &i2c_3;
++		i2c4 = &hsi2c_4;
++		i2c5 = &hsi2c_5;
++		i2c6 = &hsi2c_6;
++		i2c7 = &hsi2c_7;
++		i2c8 = &hsi2c_8;
++		i2c9 = &hsi2c_9;
++		i2c10 = &hsi2c_10;
+ 		gsc0 = &gsc_0;
+ 		gsc1 = &gsc_1;
  	};
-+
-+	/* tmu for CPU0 */
-+	tmu@10060000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10060000 0x100>;
-+		interrupts = <0 65 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
+@@ -333,6 +340,97 @@
+ 		status = "disabled";
+ 	};
+ 
++	hsi2c_4: hsi2c@12CA0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CA0000 0x1000>;
++		interrupts = <0 60 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c4_hs_bus>;
++		clocks = <&clock 265>;
++		clock-names = "hsi2c";
++		status = "disabled";
 +	};
 +
-+	/* tmu for CPU1 */
-+	tmu@10064000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10064000 0x100>;
-+		interrupts = <0 183 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
++	hsi2c_5: hsi2c@12CB0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CB0000 0x1000>;
++		interrupts = <0 61 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c5_hs_bus>;
++		clocks = <&clock 266>;
++		clock-names = "hsi2c";
++		status = "disabled";
 +	};
 +
-+	/* tmu for CPU2 */
-+	tmu@10068000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		/* 2nd reg is for the misplaced TRIMINFO register */
-+		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-+		interrupts = <0 184 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
++	hsi2c_6: hsi2c@12CC0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CC0000 0x1000>;
++		interrupts = <0 62 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c6_hs_bus>;
++		clocks = <&clock 267>;
++		clock-names = "hsi2c";
++		status = "disabled";
 +	};
 +
-+	/* tmu for CPU3 */
-+	tmu@1006c000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		/* 2nd reg is for the misplaced TRIMINFO register */
-+		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-+		interrupts = <0 185 0>;
-+		clocks = <&clock 318>, <&clock 319>;
-+		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
++	hsi2c_7: hsi2c@12CD0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CD0000 0x1000>;
++		interrupts = <0 63 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c7_hs_bus>;
++		clocks = <&clock 268>;
++		clock-names = "hsi2c";
++		status = "disabled";
 +	};
 +
-+	/* tmu for GPU */
-+	tmu@100a0000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		/* 2nd reg is for the misplaced TRIMINFO register */
-+		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
-+		interrupts = <0 215 0>;
-+		clocks = <&clock 319>, <&clock 318>;
-+		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
++	hsi2c_8: hsi2c@12E00000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E00000 0x1000>;
++		interrupts = <0 87 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c8_hs_bus>;
++		clocks = <&clock 281>;
++		clock-names = "hsi2c";
++		status = "disabled";
 +	};
- };
++
++	hsi2c_9: hsi2c@12E10000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E10000 0x1000>;
++		interrupts = <0 88 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c9_hs_bus>;
++		clocks = <&clock 282>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_10: hsi2c@12E20000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E20000 0x1000>;
++		interrupts = <0 203 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c10_hs_bus>;
++		clocks = <&clock 283>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
+ 	hdmi@14530000 {
+ 		compatible = "samsung,exynos4212-hdmi";
+ 		reg = <0x14530000 0x70000>;
 -- 
 1.7.10.4
