@@ -1,160 +1,166 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: Exynos5420: Add device nodes for TMU blocks
-Date: Thu, 07 Nov 2013 17:45:16 +0100
-Message-ID: <6654895.bR12A8qC1P@amdc1227>
-References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
- <22321712.GIyJDTupbe@amdc1227>
- <CAHfPSqARSJqbXv9F+Fgro_=k3P2xE3XNsF-KYOW43WdVtKeSEA@mail.gmail.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH v3 3/4] ARM: EXYNOS: add Exynos Dual Cluster Support
+Date: Thu, 7 Nov 2013 11:46:06 -0500 (EST)
+Message-ID: <alpine.LFD.2.03.1311071123560.18068@syhkavp.arg>
+References: <1383811969-32712-1-git-send-email-v.tyrtov@samsung.com>
+ <1383811969-32712-4-git-send-email-v.tyrtov@samsung.com>
+ <20131107130141.GA3129@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:61141 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753820Ab3KGQpY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Nov 2013 11:45:24 -0500
-In-reply-to: <CAHfPSqARSJqbXv9F+Fgro_=k3P2xE3XNsF-KYOW43WdVtKeSEA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20131107130141.GA3129@localhost.localdomain>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Heiko Stuebner <heiko@sntech.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Naour Romain <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm->
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, cpgs@samsung.com
 
-Hi Naveen,
+On Thu, 7 Nov 2013, Dave Martin wrote:
 
-On Thursday 07 of November 2013 22:02:10 Naveen Krishna Ch wrote:
-> Hello Tomasz,
+> On Thu, Nov 07, 2013 at 08:12:48AM +0000, Vyacheslav Tyrtov wrote:
+> > From: Tarek Dakhran <t.dakhran@samsung.com>
+> > 
+> > Add EDCS(Exynos Dual Cluster Support) for Samsung Exynos5410 SoC.
+> > This enables all 8 cores, 4 x A7 and 4 x A15 run at the same time.
+> > 
+> > Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
+> > Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/Makefile |   2 +
+> >  arch/arm/mach-exynos/edcs.c   | 278 ++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 280 insertions(+)
+> >  create mode 100644 arch/arm/mach-exynos/edcs.c
+> > 
+> > diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> > index 5369615..ba6efdb 100644
+> > --- a/arch/arm/mach-exynos/Makefile
+> > +++ b/arch/arm/mach-exynos/Makefile
+> > @@ -34,3 +34,5 @@ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
+> >  
+> >  obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
+> >  obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
+> > +
+> > +obj-$(CONFIG_SOC_EXYNOS5410)		+= edcs.o
+> > diff --git a/arch/arm/mach-exynos/edcs.c b/arch/arm/mach-exynos/edcs.c
+> > new file mode 100644
+> > index 0000000..980bfdd
+> > --- /dev/null
+> > +++ b/arch/arm/mach-exynos/edcs.c
+> > @@ -0,0 +1,278 @@
+> > +/*
+> > + * arch/arm/mach-exynos/edcs.c - exynos dual cluster power management support
+> > + *
+> > + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> > + * Author: Tarek Dakhran <t.dakhran@samsung.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + *
+> > + * EDCS(exynos dual cluster support) for Exynos5410 SoC.
+> > + */
+> > +
+> > +#include <linux/init.h>
+> > +#include <linux/io.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/spinlock.h>
+> > +#include <linux/errno.h>
+> > +#include <linux/irqchip/arm-gic.h>
+> > +
+> > +#include <asm/mcpm.h>
+> > +#include <asm/proc-fns.h>
+> > +#include <asm/cacheflush.h>
+> > +#include <asm/cputype.h>
+> > +#include <asm/cp15.h>
+> > +
+> > +#include <linux/arm-cci.h>
+> > +#include <mach/regs-pmu.h>
+> > +
+> > +#define EDCS_CPUS_PER_CLUSTER	4
+> > +#define EDCS_CLUSTERS		2
+> > +
+> > +/* Exynos5410 power management registers */
+> > +#define EDCS_CORE_CONFIGURATION(_nr)	(S5P_ARM_CORE0_CONFIGURATION	\
+> > +						+ ((_nr) * 0x80))
+> > +#define EDCS_CORE_STATUS(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x4)
+> > +#define EDCS_CORE_OPTION(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x8)
+> > +
+> > +#define REG_CPU_STATE_ADDR0		(S5P_VA_SYSRAM_NS + 0x28)
+> > +#define REG_CPU_STATE_ADDR(_nr)		(REG_CPU_STATE_ADDR0 +	\
+> > +						 (_nr) * EDCS_CPUS_PER_CLUSTER)
+> > +
+> > +#define SECONDARY_RESET		(1 << 1)
+> > +#define REG_ENTRY_ADDR		(S5P_VA_SYSRAM_NS + 0x1c)
+> > +
+> > +static arch_spinlock_t edcs_lock = __ARCH_SPIN_LOCK_UNLOCKED;
+> > +
+> > +static int edcs_use_count[EDCS_CPUS_PER_CLUSTER][EDCS_CLUSTERS];
+> > +static int core_count[EDCS_CLUSTERS];
+> > +
+> > +static void exynos_core_power_control(unsigned int cpu, unsigned int cluster,
+> > +				bool enable)
+> > +{
+> > +	unsigned int offset = cluster * MAX_CPUS_PER_CLUSTER + cpu;
+
+You should use EDCS_CPUS_PER_CLUSTER here, not MAX_CPUS_PER_CLUSTER.
+
+> > +	int value = enable ? S5P_CORE_LOCAL_PWR_EN : 0;
+> > +
+> > +	if ((readl_relaxed(EDCS_CORE_STATUS(offset)) & 0x3) != value) {
 > 
-> On 7 November 2013 19:53, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Naveen,
-> >
-> > On Thursday 07 of November 2013 18:37:49 Naveen Krishna Chatradhi wrote:
-> >> Exynos5420 SoC has per core thermal management unit.
-> >> 5 TMU channels 4 for CPUs and 5th for GPU.
-> >>
-> >> This patch adds the device tree nodes to the DT device list.
-> >>
-> >> Nodes carry the misplaced second base address and the second
-> >> clock to access the misplaced base address.
-> >>
-> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> >> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> >> ---
-> >> Changes since v1:
-> >> 1. Nodes carry the misplaced second base address and the second
-> >>    clock to access the misplaced base address.
-> >> 2. Correct the clock number for the TMU4
-> >
-> > First of all, this patch should be a part of the whole series adding
-> > support for thermal on Exynos 5420.
-> Right, Reason why i posted this patch myself fixing the nits (As Leela
-> and i work closely)
-> Should have been along with the set.
+> I wonder if there is a race here.
 
-OK.
+It is racy.
 
-> >
-> > In addition, see my comment below.
-> >
-> >>  arch/arm/boot/dts/exynos5420.dtsi |   48 +++++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 48 insertions(+)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> >> index 6ffefd1..d736b40 100644
-> >> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> >> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> >> @@ -369,4 +369,52 @@
-> >>               clock-names = "gscl";
-> >>               samsung,power-domain = <&gsc_pd>;
-> >>       };
-> >> +
-> >> +     /* tmu for CPU0 */
-> >> +     tmu@10060000 {
-> >> +             compatible = "samsung,exynos5420-tmu";
-> >> +             reg = <0x10060000 0x100>;
-> >> +             interrupts = <0 65 0>;
-> >> +             clocks = <&clock 318>;
-> >> +             clock-names = "tmu_apbif";
-> >> +     };
-> >> +
-> >> +     /* tmu for CPU1 */
-> >> +     tmu@10064000 {
-> >> +             compatible = "samsung,exynos5420-tmu";
-> >> +             reg = <0x10064000 0x100>;
-> >> +             interrupts = <0 183 0>;
-> >> +             clocks = <&clock 318>;
-> >> +             clock-names = "tmu_apbif";
-> >> +     };
-> >> +
-> >> +     /* tmu for CPU2 */
-> >> +     tmu@10068000 {
-> >> +             compatible = "samsung,exynos5420-tmu";
-> >> +             /* 2nd reg is for the misplaced TRIMINFO register */
-> >
-> > Instead of this comment, such broken TMU variant should use a separate
-> > compatible value, like "samsung,exynos5420-tmu-broken-triminfo", like
-> > I mentioned in my comments to your other patch.
-> Will make a note of it.
-
-OK.
-
-> >
-> > For this compatible value, both second reg entry and second clock would
-> > be required.
-> >
-> >> +             reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-> >> +             interrupts = <0 184 0>;
-> >> +             clocks = <&clock 318>;
-> >> +             clock-names = "tmu_apbif";
-> >> +     };
-> >> +
-> >> +     /* tmu for CPU3 */
-> >> +     tmu@1006c000 {
-> >> +             compatible = "samsung,exynos5420-tmu";
-> >> +             /* 2nd reg is for the misplaced TRIMINFO register */
-> >> +             reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-> >> +             interrupts = <0 185 0>;
-> >> +             clocks = <&clock 318>, <&clock 319>;
-> >> +             clock-names = "tmu_apbif", "tmu_apbif_triminfo";
-> >
-> > The "tmu_apbif_triminfo" clock is not specified in exynos-thermal binding
-> > documentation. In addition, the patch of yours adding support for second
-> > clock uses another name - "tmu_apbif_sec".
-> >
-> > As for the name itself, I would prefer "tmu_apbif_triminfo" as it's more
-> > meaningful.
-> TMU hardware on Exynos5440 and Exynos5420 has two different abnormalities
-> On Exynos5440 Some registers are interleaved between the channels
-> On Exynos5420, TRIMINFO is misplaced between, channels 2, 3 and 4.
-
-I know that those cases are different, but my point was not about it.
-
-In your patch adding support for this second clock, you add following call
-to devm_clk_get():
-
-	data->clk_sec = devm_clk_get(&pdev->dev, "tmu_apbif_sec");
-
-However in device tree nodes added by this patch, you have
-
-	clock-names = "tmu_apbif", "tmu_apbif_triminfo";
-
-and this where my confusion comes from.
-
-> having second_base was for the fix by Amit to address Exynos5440 problem,
-> Which was already merged.
-> After several reviews i tried to solve it by reusing the second_base
-> for Exynos5420 aswell.
-> Hence, I tried to use the "clk_sec" or "clk_second" which will rhyme
-> along with the
-> "second_base" in the driver.
+> If there is a pending powerdown which has reached the __mcpm_cpu_down()
+> stage, then the kernel has no way to know what is still pending.  This
+> means that when calling exynos_power_up(cpu, cluster) after a successful
+> call to exynos_power_down(same cpu, cluster), there is a chance that
+> the CPU still gets powered down, because of the pending
+> exynos_core_power_control() on the outbound side.
 > 
-> I'm still not sure this having second clock is needed for Exynos5440 aswell.
-> Will figure it out tomorrow.
+> This isn't an issue for TC2, because TC2's power controller queues
+> requests and services them in order, so a new powerup request cannot
+> race with a powerdown request in that way.
 
-Even if Exynos 5440 does not need the second clock, it uses a different
-compatible value, so you can easily distinguish the cases when the second
-clock is required or not.
+The reason why this isn't an issue for TC2 is because the request to 
+power down request is sent from within the spinlock protected area which 
+serializes all requests.  Here exynos_core_power_down() is invoked where 
+there is no such protection.
 
-Best regards,
-Tomasz
+The simple fix would be to simply move this call up, assuming that the 
+power is actually turned off only when the WFI signal is asserted.
+
+> I think that for correct behaviour we would need to wait for the race to
+> be resolved here, but only if a powerdown might be pending.
+> 
+> This implies that something like a call to the power_down_finish()
+> method (which you would need to write -- see my comments below) is
+> needed in exynos_core_power_up().
+> 
+> 
+> It might make sense to have a per-cpu flag that tracks whether a
+> powerdown is pending.  The flag could be set after
+> __mcpm_cpu_going_down() is called, and cleared in the powered_up()
+> method (which you would need to add).
+> 
+> 
+> Maybe we should always just poll and wait, though.  exynos_power_up()
+> should never be called for a CPU that the kernel thinks is already up,
+> so it should either be down already (in which case we will poll the
+> status once and then continue), or a power down is pending (in which
+> case we must wait, but we know the wait will terminate).  This would
+> be simpler than tracking a "power down pending" flag for each CPU.
+
+That is also a good way to avoid the race.
+
+
+Nicolas
