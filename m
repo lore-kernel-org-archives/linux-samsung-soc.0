@@ -1,38 +1,59 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH v3 3/4] ARM: EXYNOS: add Exynos Dual Cluster Support
-Date: Thu, 7 Nov 2013 12:05:37 -0500 (EST)
-Message-ID: <alpine.LFD.2.03.1311071204510.18068@syhkavp.arg>
-References: <1383811969-32712-1-git-send-email-v.tyrtov@samsung.com>
- <1383811969-32712-4-git-send-email-v.tyrtov@samsung.com>
- <20131107130141.GA3129@localhost.localdomain>
- <alpine.LFD.2.03.1311071147480.18068@syhkavp.arg>
+From: Stuart Yoder <b08248@gmail.com>
+Subject: Re: [PATCH 3/7] Return info for device and its memory regions and interrupts
+Date: Thu, 7 Nov 2013 14:38:29 -0600
+Message-ID: <CALRxmdA_7CtNWSc5Uaq0TH2Q9C4uUn-fZj2WweszhdDmbyvaWg@mail.gmail.com>
+References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
+	<1380554923-17818-4-git-send-email-a.motakis@virtualopensystems.com>
+	<1380562776.2674.177.camel@ul30vt.home>
+	<CAG8rG2yPXX9WtmhJqYMNE_3x4RNGkb1BDab8F3Pk8KUhntM9fg@mail.gmail.com>
+	<9F6FE96B71CF29479FF1CDC8046E15036D3803@039-SN1MPN1-003.039d.mgd.msft.net>
+	<CAG8rG2ypiSUqfhqLTxgv0+Sh9DO9KAscJy0CmCrr_oG3tmGAgA@mail.gmail.com>
+	<9F6FE96B71CF29479FF1CDC8046E15036D3D3A@039-SN1MPN1-003.039d.mgd.msft.net>
+	<CAG8rG2xA=LWAp0DR=_WdJSEC33yZXfP6LJ+oZW8WBr_HLNiarg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <alpine.LFD.2.03.1311071147480.18068@syhkavp.arg>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Dave Martin <Dave.Martin@arm.com>
-Cc: Mark Rutland <Mark.Rutland@arm.com>, Heiko Stuebner <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Naour Romain <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Daniel Lezcano <daniel.lezcano@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm->
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:57965 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751336Ab3KGUia (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 7 Nov 2013 15:38:30 -0500
+In-Reply-To: <CAG8rG2xA=LWAp0DR=_WdJSEC33yZXfP6LJ+oZW8WBr_HLNiarg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Antonios Motakis <a.motakis@virtualopensystems.com>
+Cc: Yoder Stuart-B08248 <B08248@freescale.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, KVM devel mailing list <kvm@vger.kernel.org>, Alexander Graf <agraf@suse.de>, Linux IOMMU <iommu@lists.linux-foundation.org>, VirtualOpenSystems Technical Team <tech@virtualopensystems.com>, kvm-arm <kvmarm@lists.cs.columbia.edu>
 
-On Thu, 7 Nov 2013, Nicolas Pitre wrote:
+>>> I will look into this. However, can we rely to have access to all
+>>> device resources through platform abstractions, for every type of
+>>> platform device
+>>
+>> The only resources we care about in vfio are mappable regions
+>> and irqs.  So, yes I think we can rely on access to those
+>> resources.
+>>
+>>> It seems to me that platform devices that are not
+>>> backed by a specific description mechanism (such as device tree) may
+>>> include a lot of hard coded values etc in their drivers.
+>>
+>> If the platform device struct does not have reg/irq resources described
+>> then we can't expose them to user space with vfio.
+>
+> Which is my concern actually. If the struct does not describe reg/irq
+> resources, or even worse if it describes them partially, do we want to
+> let the user shoot himself on the foot?
+>
+> Granted this might happen with device tree too, but I find it much
+> more likely with generic platform devices.
+>
+> Maybe we should adopt a whitelist instead?
 
-> On Thu, 7 Nov 2013, Dave Martin wrote:
-> 
-> > On Thu, Nov 07, 2013 at 08:12:48AM +0000, Vyacheslav Tyrtov wrote:
+Just realize I never replied to this query...
 
-[...]
+If there are no IRQs in the platform device struct we should
+just return 0x0 for number of interrupts.
+If the information in the platform device struct is only partially
+complete, we should just return an error to the caller of the
+ioctl.
 
-Gah.  Sorry for the triplicates.
-
-
-Nicolas
+Stuart
