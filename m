@@ -1,110 +1,113 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: EXYNOS: Add enable property to power domains
-Date: Thu,  7 Nov 2013 12:12:55 +0530
-Message-ID: <1383806575-28401-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:54843 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753075Ab3KGGom (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Nov 2013 01:44:42 -0500
-Received: by mail-pa0-f41.google.com with SMTP id rd3so160736pab.14
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 06 Nov 2013 22:44:41 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+Subject: [PATCH v3 0/4] Exynos 5410 Dual cluster support
+Date: Thu, 07 Nov 2013 12:12:45 +0400
+Message-ID: <1383811969-32712-1-git-send-email-v.tyrtov@samsung.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>, Tyrtov Vyacheslav <v.tyrtov@samsung.com>, Dave.Martin@arm.com, nicolas.pitre@linaro.org, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org, Prathyush K <prathyush.k@samsung.com>
 
-From: Prathyush K <prathyush.k@samsung.com>
+The series of patches represent support of Exynos 5410 SoC
 
-Different power domains of Exynos SOCs have different enable values.
-E.g. Exynos5250:
-ROTATOR_MEM_CONFIGURATION -> 0x3
-GSCL_CONFIGURATION -> 0x7
-Currently, there is no way to differentiate between these power domains
-and we write default value of 0x7 to turn on all the power domains.
+The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
+Patches allow all 8 CPU cores (4 x A7 and 4 x A15) to run at the same time
 
-This patch adds a new 'enable' property to the power domain structure.
-This enable value can be set from the device tree by adding a property
-'enable' in the device node. If no such property is found, the default
-value of 0x7 is used as enable value.
+Patches add new platform description, support of clock controller,
+dual cluster support and device tree for Exynos 5410
 
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- .../bindings/arm/exynos/power_domain.txt           |    5 +++++
- arch/arm/mach-exynos/pm_domains.c                  |   10 +++++++---
- 2 files changed, 12 insertions(+), 3 deletions(-)
+Has been build on v3.12.
+Has been tested on Exynos 5410 reference board (exynos_defconfig).
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 5216b419016a..6b24b234617c 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -9,6 +9,10 @@ Required Properties:
- - reg: physical base address of the controller and length of memory mapped
-     region.
- 
-+Optional Properties:
-+- enable: enable value of the register which is used to turn on the power
-+    domain. If no enable is specificed, default value of 0x7 is used.
-+
- Node of a device using power domains must have a samsung,power-domain property
- defined with a phandle to respective power domain.
- 
-@@ -17,6 +21,7 @@ Example:
- 	lcd0: power-domain-lcd0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023C00 0x10>;
-+		enable = <0x1>;
- 	};
- 
- Example of the node using power domain:
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 1703593e366c..84e0483a0500 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -33,6 +33,7 @@ struct exynos_pm_domain {
- 	char const *name;
- 	bool is_off;
- 	struct generic_pm_domain pd;
-+	u32 enable;
- };
- 
- static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
-@@ -45,13 +46,13 @@ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	base = pd->base;
- 
--	pwr = power_on ? S5P_INT_LOCAL_PWR_EN : 0;
-+	pwr = power_on ? pd->enable : 0;
- 	__raw_writel(pwr, base);
- 
- 	/* Wait max 1ms */
- 	timeout = 10;
- 
--	while ((__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN)	!= pwr) {
-+	while ((__raw_readl(base + 0x4) & pd->enable) != pwr) {
- 		if (!timeout) {
- 			op = (power_on) ? "enable" : "disable";
- 			pr_err("Power domain %s %s failed\n", domain->name, op);
-@@ -164,6 +165,9 @@ static __init int exynos4_pm_init_power_domain(void)
- 			return -ENOMEM;
- 		}
- 
-+		if (of_property_read_u32(np, "enable", &pd->enable))
-+			pd->enable = S5P_INT_LOCAL_PWR_EN;
-+
- 		pd->pd.name = kstrdup(np->name, GFP_KERNEL);
- 		pd->name = pd->pd.name;
- 		pd->base = of_iomap(np, 0);
-@@ -173,7 +177,7 @@ static __init int exynos4_pm_init_power_domain(void)
- 
- 		platform_set_drvdata(pdev, pd);
- 
--		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
-+		on = __raw_readl(pd->base + 0x4) & pd->enable;
- 
- 		pm_genpd_init(&pd->pd, NULL, !on);
- 	}
+Thanks,
+        Vyacheslav.
+
+
+Changelog:
+
+v3:
+	In drivers/clk/samsung/clk-exynos5410.c
+1. Fixed rate clock "samsung,clock-oscclk" removed.
+	In arch/arm/boot/dts/exynos5410.dtsi
+1. In mct node clock CLK_FIN_PLL replaced with generic fixed rate oscclk.
+	In arch/arm/boot/dts/exynos5410-smdk5410.dts
+1. Fixed rate oscclk clock added.
+	In arch/arm/mach-exynos/edcs.c
+1. Added write memory barrier in exynos_core_power_control function.
+2. __raw_readl/__raw_writel replaced with readl_relaxed/writel_relaxed.
+3. #define added for some magic constants.
+4. Disabled the GIC CPU interface in exynos_power_down function.
+
+v2:
+	In drivers/clk/samsung/clk-exynos5410.c
+1. Clock driver converted to use preprocessor macros instead of enums.
+   Clock IDs now defined in include/dt-bindings/clock/exynos5410.h.
+2. Unused spinlock removed.
+3. Function exynos5410_clk_init defined as static.
+   Struct exynos5410_fixed_rate_ext_clks defined as static.
+   Struct exynos5410_mux_clks defined as static.
+   Struct exynos5410_div_clks defined as static.
+   Struct exynos5410_gate_clks defined as static.
+4. Removed aliases.
+5. Pll's magic register offsets defined as preprocessor macros.
+6. Redundant check of device_node pointer removed.
+	
+	In arch/arm/boot/dts/exynos5410.dtsi
+1. dwmmcX nodes renamed to mmc.
+   dwmmc_X renamed to mmc_X.
+   dwmmc status="disabled" field added.
+   fifo-depth field moved from arch/arm/boot/dts/exynos5410-smdk5410.dts
+2. Blank lines added where necessary.
+3. cpu@ suffixes corrected.
+4. edcs node removed.
+5. Hexadecimal characters case corrected.
+6. Clock IDs replaced with preprocessor macros.
+	
+	In arch/arm/boot/dts/exynos5410-smdk5410.dts
+1. status = "okay" field added to mmc nodes.
+	
+	In arch/arm/mach-exynos/edcs.c
+1. "kfs_" prefix replaced with "edcs_"
+2. EDCS_CPUS_PER_CLUSTER and EDCS_CLUSTERS defined instead of MCPM's values.
+3. Cache handling sequence borrowed from arch/arm/mach-vexpress/tc2_pm.c
+4. mcpm_sync_init() call added.
+5. power management functions reworked.
+	
+	Other
+1. Documentation/devicetree/bindings/clock/exynos5410-clock.txt corrected.
+2. Removed smdk5410_defconfig. Instead SOC_EXYNOS5410 now selects MCPM and
+   ARM_CCI in arch/arm/mach-exynos/Kconfig.
+3. edcs_status driver removed.
+
+
+Tarek Dakhran (4):
+  ARM: EXYNOS: Add support for EXYNOS5410 SoC
+  clk: exynos5410: register clocks using common clock framework
+  ARM: EXYNOS: add Exynos Dual Cluster Support
+  ARM: dts: Add initial device tree support for EXYNOS5410
+
+ .../devicetree/bindings/clock/exynos5410-clock.txt |  37 +++
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |  65 +++++
+ arch/arm/boot/dts/exynos5410.dtsi                  | 209 ++++++++++++++++
+ arch/arm/mach-exynos/Kconfig                       |  12 +
+ arch/arm/mach-exynos/Makefile                      |   2 +
+ arch/arm/mach-exynos/common.c                      |  18 ++
+ arch/arm/mach-exynos/edcs.c                        | 278 +++++++++++++++++++++
+ arch/arm/mach-exynos/include/mach/map.h            |   1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |   1 +
+ arch/arm/plat-samsung/include/plat/cpu.h           |   8 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-exynos5410.c               | 239 ++++++++++++++++++
+ include/dt-bindings/clock/exynos5410.h             | 175 +++++++++++++
+ 14 files changed, 1047 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+ create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
+ create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
+ create mode 100644 arch/arm/mach-exynos/edcs.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5410.c
+ create mode 100644 include/dt-bindings/clock/exynos5410.h
+
 -- 
-1.7.9.5
+1.8.1.5
+
