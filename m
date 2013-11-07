@@ -1,68 +1,63 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: dts: Add hs-i2c nodes to exynos5420
-Date: Thu, 07 Nov 2013 14:37:37 +0100
-Message-ID: <9545471.VCNkjpVQx6@amdc1227>
-References: <1383651560-322-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH] thermal: exynos: handle gate clock for misplaced TRIMINFO
+ register
+Date: Thu, 07 Nov 2013 15:18:57 +0100
+Message-ID: <1695605.pk9l7dqkqm@amdc1227>
+References: <1383828154-428-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:23660 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753577Ab3KGNhp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Nov 2013 08:37:45 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MVW00DVNB5I3NA0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 07 Nov 2013 13:37:43 +0000 (GMT)
-In-reply-to: <1383651560-322-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1383828154-428-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Hi Sachin,
+Hi Naveen,
 
-Please see my comments inline.
-
-On Tuesday 05 of November 2013 17:09:20 Sachin Kamat wrote:
-> Added high speed I2C nodes to Exynos5420 DT file.
+On Thursday 07 of November 2013 18:12:34 Naveen Krishna Chatradhi wrote:
+> On Exynos5420 the TMU(4) for GPU has a seperate clock enable bit from
+> the other TMU channels(0 ~ 3). Hence, accessing TRIMINFO for base_second
+> should be acompanied by enabling the respective clock.
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> This patch which allow for a "clk_sec" clock to be specified in the
+> device-tree which will be ungated when accessing the TRIMINFO register.
+> 
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos5420.dtsi |   98 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 98 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> index 9ce5f82..469769a 100644
-> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> @@ -34,6 +34,13 @@
->  		i2c1 = &i2c_1;
->  		i2c2 = &i2c_2;
->  		i2c3 = &i2c_3;
-> +		i2c4 = &hsi2c_4;
-> +		i2c5 = &hsi2c_5;
-> +		i2c6 = &hsi2c_6;
-> +		i2c7 = &hsi2c_7;
-> +		i2c8 = &hsi2c_8;
-> +		i2c9 = &hsi2c_9;
-> +		i2c10 = &hsi2c_10;
->  		gsc0 = &gsc_0;
->  		gsc1 = &gsc_1;
->  	};
-> @@ -339,6 +346,97 @@
->  		status = "disabled";
->  	};
+>  drivers/thermal/samsung/exynos_tmu.c |   24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
+
+This patch modifies the device binding, but fails to mention anything
+about the modification in respective documentation. Please do not do that.
+
+In addition, since the series adding support for Exynos 5420 has not been
+merged yet, I would rather make this patch a part of that series.
+
+Also please see my comment below.
+
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index b54825a..33edd1a 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+[snip]
+> @@ -641,6 +650,15 @@ static int exynos_tmu_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
 >  
-> +	hsi2c_4: hsi2c@12CA0000 {
+> +	data->clk_sec = devm_clk_get(&pdev->dev, "tmu_apbif_sec");
+> +	if (!IS_ERR(data->clk_sec)) {
 
-nit: Node name should be generic, so simply i2c@unit-address should be
-enough.
+This code does not check if the clock was specified for TMU channels that
+require it, i.e. the driver will not fail if you don't specify this clock.
 
-The same for remaining instances.
+Instead, it would be better create a separate compatible value for such
+channels, like "samsung,exynos5420-tmu-broken-triminfo", for which this
+clock would be mandatory and for which, if this clock is not specified,
+the driver would fail.
 
 Best regards,
 Tomasz
+
