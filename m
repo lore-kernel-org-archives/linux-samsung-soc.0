@@ -1,78 +1,127 @@
 From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH] thermal: exynos: handle gate clock for misplaced TRIMINFO register
-Date: Thu, 7 Nov 2013 20:41:57 +0530
-Message-ID: <CAHfPSqDrkn5nPfP17bMRQUQTHSc48nGXu4_+XVBBixfx+Wvj5g@mail.gmail.com>
-References: <1383828154-428-1-git-send-email-ch.naveen@samsung.com> <1695605.pk9l7dqkqm@amdc1227>
+Subject: Re: [PATCH v2] ARM: dts: Exynos5420: Add device nodes for TMU blocks
+Date: Thu, 7 Nov 2013 22:02:10 +0530
+Message-ID: <CAHfPSqARSJqbXv9F+Fgro_=k3P2xE3XNsF-KYOW43WdVtKeSEA@mail.gmail.com>
+References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+ <1383829669-1271-1-git-send-email-ch.naveen@samsung.com> <22321712.GIyJDTupbe@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:50337 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751010Ab3KGPMS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Nov 2013 10:12:18 -0500
-In-Reply-To: <1695605.pk9l7dqkqm@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <22321712.GIyJDTupbe@amdc1227>
+Sender: linux-pm-owner@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, cpgs@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 7 November 2013 19:48, Tomasz Figa <t.figa@samsung.com> wrote:
+Hello Tomasz,
+
+On 7 November 2013 19:53, Tomasz Figa <t.figa@samsung.com> wrote:
 > Hi Naveen,
 >
-> On Thursday 07 of November 2013 18:12:34 Naveen Krishna Chatradhi wrote:
->> On Exynos5420 the TMU(4) for GPU has a seperate clock enable bit from
->> the other TMU channels(0 ~ 3). Hence, accessing TRIMINFO for base_second
->> should be acompanied by enabling the respective clock.
+> On Thursday 07 of November 2013 18:37:49 Naveen Krishna Chatradhi wrote:
+>> Exynos5420 SoC has per core thermal management unit.
+>> 5 TMU channels 4 for CPUs and 5th for GPU.
 >>
->> This patch which allow for a "clk_sec" clock to be specified in the
->> device-tree which will be ungated when accessing the TRIMINFO register.
+>> This patch adds the device tree nodes to the DT device list.
 >>
->> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>> Nodes carry the misplaced second base address and the second
+>> clock to access the misplaced base address.
+>>
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 >> ---
->>  drivers/thermal/samsung/exynos_tmu.c |   24 +++++++++++++++++++++++-
->>  1 file changed, 23 insertions(+), 1 deletion(-)
+>> Changes since v1:
+>> 1. Nodes carry the misplaced second base address and the second
+>>    clock to access the misplaced base address.
+>> 2. Correct the clock number for the TMU4
 >
-> This patch modifies the device binding, but fails to mention anything
-> about the modification in respective documentation. Please do not do that.
-Will make a note to update Documentation from now on.
-
+> First of all, this patch should be a part of the whole series adding
+> support for thermal on Exynos 5420.
+Right, Reason why i posted this patch myself fixing the nits (As Leela
+and i work closely)
+Should have been along with the set.
 >
-> In addition, since the series adding support for Exynos 5420 has not been
-> merged yet, I would rather make this patch a part of that series.
-Will merge and upload the whole set, first thing tomorrow.
+> In addition, see my comment below.
 >
-> Also please see my comment below.
->
->> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
->> index b54825a..33edd1a 100644
->> --- a/drivers/thermal/samsung/exynos_tmu.c
->> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> [snip]
->> @@ -641,6 +650,15 @@ static int exynos_tmu_probe(struct platform_device *pdev)
->>       if (ret)
->>               return ret;
+>>  arch/arm/boot/dts/exynos5420.dtsi |   48 +++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 48 insertions(+)
 >>
->> +     data->clk_sec = devm_clk_get(&pdev->dev, "tmu_apbif_sec");
->> +     if (!IS_ERR(data->clk_sec)) {
+>> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> index 6ffefd1..d736b40 100644
+>> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> @@ -369,4 +369,52 @@
+>>               clock-names = "gscl";
+>>               samsung,power-domain = <&gsc_pd>;
+>>       };
+>> +
+>> +     /* tmu for CPU0 */
+>> +     tmu@10060000 {
+>> +             compatible = "samsung,exynos5420-tmu";
+>> +             reg = <0x10060000 0x100>;
+>> +             interrupts = <0 65 0>;
+>> +             clocks = <&clock 318>;
+>> +             clock-names = "tmu_apbif";
+>> +     };
+>> +
+>> +     /* tmu for CPU1 */
+>> +     tmu@10064000 {
+>> +             compatible = "samsung,exynos5420-tmu";
+>> +             reg = <0x10064000 0x100>;
+>> +             interrupts = <0 183 0>;
+>> +             clocks = <&clock 318>;
+>> +             clock-names = "tmu_apbif";
+>> +     };
+>> +
+>> +     /* tmu for CPU2 */
+>> +     tmu@10068000 {
+>> +             compatible = "samsung,exynos5420-tmu";
+>> +             /* 2nd reg is for the misplaced TRIMINFO register */
 >
-> This code does not check if the clock was specified for TMU channels that
-> require it, i.e. the driver will not fail if you don't specify this clock.
-I thought of making it mandatory, And TMU on Exynos5440 may not need
-second clock for accessing the second base. I Will confirm with the Exynso5440
-specs and update accordingly.
+> Instead of this comment, such broken TMU variant should use a separate
+> compatible value, like "samsung,exynos5420-tmu-broken-triminfo", like
+> I mentioned in my comments to your other patch.
+Will make a note of it.
 >
-> Instead, it would be better create a separate compatible value for such
-> channels, like "samsung,exynos5420-tmu-broken-triminfo", for which this
-> clock would be mandatory and for which, if this clock is not specified,
-> the driver would fail.
-Right
+> For this compatible value, both second reg entry and second clock would
+> be required.
+>
+>> +             reg = <0x10068000 0x100>, <0x1006c000 0x4>;
+>> +             interrupts = <0 184 0>;
+>> +             clocks = <&clock 318>;
+>> +             clock-names = "tmu_apbif";
+>> +     };
+>> +
+>> +     /* tmu for CPU3 */
+>> +     tmu@1006c000 {
+>> +             compatible = "samsung,exynos5420-tmu";
+>> +             /* 2nd reg is for the misplaced TRIMINFO register */
+>> +             reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
+>> +             interrupts = <0 185 0>;
+>> +             clocks = <&clock 318>, <&clock 319>;
+>> +             clock-names = "tmu_apbif", "tmu_apbif_triminfo";
+>
+> The "tmu_apbif_triminfo" clock is not specified in exynos-thermal binding
+> documentation. In addition, the patch of yours adding support for second
+> clock uses another name - "tmu_apbif_sec".
+>
+> As for the name itself, I would prefer "tmu_apbif_triminfo" as it's more
+> meaningful.
+TMU hardware on Exynos5440 and Exynos5420 has two different abnormalities
+On Exynos5440 Some registers are interleaved between the channels
+On Exynos5420, TRIMINFO is misplaced between, channels 2, 3 and 4.
 
-Sure Tomasz,
-Creating a new compatible makes handling this case really simple
+having second_base was for the fix by Amit to address Exynos5440 problem,
+Which was already merged.
+After several reviews i tried to solve it by reusing the second_base
+for Exynos5420 aswell.
+Hence, I tried to use the "clk_sec" or "clk_second" which will rhyme
+along with the
+"second_base" in the driver.
 
-Thanks for reviewing.
+I'm still not sure this having second clock is needed for Exynos5440 aswell.
+Will figure it out tomorrow.
 >
 > Best regards,
 > Tomasz
