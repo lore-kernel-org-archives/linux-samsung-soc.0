@@ -1,199 +1,79 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH v2] ARM: dts: Exynos5420: Add device nodes for TMU blocks
-Date: Fri, 8 Nov 2013 08:27:52 +0530
-Message-ID: <CAHfPSqDFd2d77gY028cFZgPE=kEmXKw2_AQHBbig25mLq9b+5Q@mail.gmail.com>
-References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
- <22321712.GIyJDTupbe@amdc1227> <CAHfPSqARSJqbXv9F+Fgro_=k3P2xE3XNsF-KYOW43WdVtKeSEA@mail.gmail.com>
- <6654895.bR12A8qC1P@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <6654895.bR12A8qC1P@amdc1227>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, cpgs@samsung.com
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: EXYNOS: Add default latency values for Device and Power Domain
+Date: Fri,  8 Nov 2013 11:57:05 +0530
+Message-ID: <1383892025-14759-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:52229 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750995Ab3KHG2s (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 Nov 2013 01:28:48 -0500
+Received: by mail-pd0-f174.google.com with SMTP id z10so1707149pdj.33
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 07 Nov 2013 22:28:47 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, prathyush.k@samsung.com, sachin.kamat@linaro.org, Prasanna Kumar <prasanna.ps@samsung.com>
 
-Hello Tomasz,
+From: Prasanna Kumar <prasanna.ps@samsung.com>
 
-On 7 November 2013 22:15, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Naveen,
->
-> On Thursday 07 of November 2013 22:02:10 Naveen Krishna Ch wrote:
->> Hello Tomasz,
->>
->> On 7 November 2013 19:53, Tomasz Figa <t.figa@samsung.com> wrote:
->> > Hi Naveen,
->> >
->> > On Thursday 07 of November 2013 18:37:49 Naveen Krishna Chatradhi wrote:
->> >> Exynos5420 SoC has per core thermal management unit.
->> >> 5 TMU channels 4 for CPUs and 5th for GPU.
->> >>
->> >> This patch adds the device tree nodes to the DT device list.
->> >>
->> >> Nodes carry the misplaced second base address and the second
->> >> clock to access the misplaced base address.
->> >>
->> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> >> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->> >> ---
->> >> Changes since v1:
->> >> 1. Nodes carry the misplaced second base address and the second
->> >>    clock to access the misplaced base address.
->> >> 2. Correct the clock number for the TMU4
->> >
->> > First of all, this patch should be a part of the whole series adding
->> > support for thermal on Exynos 5420.
->> Right, Reason why i posted this patch myself fixing the nits (As Leela
->> and i work closely)
->> Should have been along with the set.
->
-> OK.
->
->> >
->> > In addition, see my comment below.
->> >
->> >>  arch/arm/boot/dts/exynos5420.dtsi |   48 +++++++++++++++++++++++++++++++++++++
->> >>  1 file changed, 48 insertions(+)
->> >>
->> >> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
->> >> index 6ffefd1..d736b40 100644
->> >> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> >> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> >> @@ -369,4 +369,52 @@
->> >>               clock-names = "gscl";
->> >>               samsung,power-domain = <&gsc_pd>;
->> >>       };
->> >> +
->> >> +     /* tmu for CPU0 */
->> >> +     tmu@10060000 {
->> >> +             compatible = "samsung,exynos5420-tmu";
->> >> +             reg = <0x10060000 0x100>;
->> >> +             interrupts = <0 65 0>;
->> >> +             clocks = <&clock 318>;
->> >> +             clock-names = "tmu_apbif";
->> >> +     };
->> >> +
->> >> +     /* tmu for CPU1 */
->> >> +     tmu@10064000 {
->> >> +             compatible = "samsung,exynos5420-tmu";
->> >> +             reg = <0x10064000 0x100>;
->> >> +             interrupts = <0 183 0>;
->> >> +             clocks = <&clock 318>;
->> >> +             clock-names = "tmu_apbif";
->> >> +     };
->> >> +
->> >> +     /* tmu for CPU2 */
->> >> +     tmu@10068000 {
->> >> +             compatible = "samsung,exynos5420-tmu";
->> >> +             /* 2nd reg is for the misplaced TRIMINFO register */
->> >
->> > Instead of this comment, such broken TMU variant should use a separate
->> > compatible value, like "samsung,exynos5420-tmu-broken-triminfo", like
->> > I mentioned in my comments to your other patch.
->> Will make a note of it.
->
-> OK.
->
->> >
->> > For this compatible value, both second reg entry and second clock would
->> > be required.
->> >
->> >> +             reg = <0x10068000 0x100>, <0x1006c000 0x4>;
->> >> +             interrupts = <0 184 0>;
->> >> +             clocks = <&clock 318>;
->> >> +             clock-names = "tmu_apbif";
->> >> +     };
->> >> +
->> >> +     /* tmu for CPU3 */
->> >> +     tmu@1006c000 {
->> >> +             compatible = "samsung,exynos5420-tmu";
->> >> +             /* 2nd reg is for the misplaced TRIMINFO register */
->> >> +             reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
->> >> +             interrupts = <0 185 0>;
->> >> +             clocks = <&clock 318>, <&clock 319>;
->> >> +             clock-names = "tmu_apbif", "tmu_apbif_triminfo";
->> >
->> > The "tmu_apbif_triminfo" clock is not specified in exynos-thermal binding
->> > documentation. In addition, the patch of yours adding support for second
->> > clock uses another name - "tmu_apbif_sec".
->> >
->> > As for the name itself, I would prefer "tmu_apbif_triminfo" as it's more
->> > meaningful.
->> TMU hardware on Exynos5440 and Exynos5420 has two different abnormalities
->> On Exynos5440 Some registers are interleaved between the channels
->> On Exynos5420, TRIMINFO is misplaced between, channels 2, 3 and 4.
->
-> I know that those cases are different, but my point was not about it.
->
-> In your patch adding support for this second clock, you add following call
-> to devm_clk_get():
->
->         data->clk_sec = devm_clk_get(&pdev->dev, "tmu_apbif_sec");
->
-> However in device tree nodes added by this patch, you have
->
->         clock-names = "tmu_apbif", "tmu_apbif_triminfo";
->
-> and this where my confusion comes from.
-Sure will use one name in DTS, Documentation and the driver.
-tmu_apbif_triminfo makes correct sense for Exyns5420, But, for Exynos5440
-I prefer something that rhymes with the second_XXX.
-Will confirm with the Exynos5440 spec first.
+Power domain and device timing data are intialized with default
+values to avoid dump of warnings from various power domains
+during power gating.
 
->
->> having second_base was for the fix by Amit to address Exynos5440 problem,
->> Which was already merged.
->> After several reviews i tried to solve it by reusing the second_base
->> for Exynos5420 aswell.
->> Hence, I tried to use the "clk_sec" or "clk_second" which will rhyme
->> along with the
->> "second_base" in the driver.
->>
->> I'm still not sure this having second clock is needed for Exynos5440 aswell.
->> Will figure it out tomorrow.
->
-> Even if Exynos 5440 does not need the second clock, it uses a different
-> compatible value, so you can easily distinguish the cases when the second
-> clock is required or not.
+Signed-off-by: Prasanna Kumar <prasanna.ps@samsung.com>
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/pm_domains.c |   15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-Distinction became tough for the TMU-(channel 2) on Exynos5420 has a
-misplaced address
-But, Both the base addresses can be accessed with the same clock. Unlike the
-TMU channel 3 and 4.
-
-For Ex:
-+       /* tmu for CPU2 */
-+       tmu@10068000 {
-+               compatible = "samsung,exynos5420-tmu";
-+               /* 2nd reg is for the misplaced TRIMINFO register */
-+               reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-+               interrupts = <0 184 0>;
-+               clocks = <&clock 318>;
-+               clock-names = "tmu_apbif";
-+       };
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 84e0483a0500..9bbb4ac23980 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -25,6 +25,10 @@
+ #include <mach/regs-pmu.h>
+ #include <plat/devs.h>
+ 
++#define DEFAULT_DEV_LATENCY_NS			1000000UL
++#define DEFAULT_PD_PWRON_LATENCY_NS		10000000UL
++#define DEFAULT_PD_PWROFF_LATENCY_NS		10000000UL
 +
-+       /* tmu for CPU3 */
-+       tmu@1006c000 {
-+               compatible = "samsung,exynos5420-tmu";
-+               /* 2nd reg is for the misplaced TRIMINFO register */
-+               reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-+               interrupts = <0 185 0>;
-+               clocks = <&clock 318>, <&clock 319>;
-+               clock-names = "tmu_apbif", "tmu_apbif_triminfo";
-+       };
-
-Providing the same clock name again for TMU-2 might handle this case
-without any races right.
-Kindly, suggest me a better way out here.
->
-> Best regards,
-> Tomasz
->
-
-
-
+ /*
+  * Exynos specific wrapper around the generic power domain
+  */
+@@ -36,6 +40,13 @@ struct exynos_pm_domain {
+ 	u32 enable;
+ };
+ 
++static struct gpd_timing_data dev_latencies = {
++	.stop_latency_ns = DEFAULT_DEV_LATENCY_NS,
++	.start_latency_ns = DEFAULT_DEV_LATENCY_NS,
++	.save_state_latency_ns = DEFAULT_DEV_LATENCY_NS,
++	.restore_state_latency_ns = DEFAULT_DEV_LATENCY_NS,
++};
++
+ static int exynos_pd_power(struct generic_pm_domain *domain, bool power_on)
+ {
+ 	struct exynos_pm_domain *pd;
+@@ -83,7 +94,7 @@ static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
+ 	dev_dbg(dev, "adding to power domain %s\n", pd->pd.name);
+ 
+ 	while (1) {
+-		ret = pm_genpd_add_device(&pd->pd, dev);
++		ret = __pm_genpd_add_device(&pd->pd, dev, &dev_latencies);
+ 		if (ret != -EAGAIN)
+ 			break;
+ 		cond_resched();
+@@ -173,6 +184,8 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		pd->base = of_iomap(np, 0);
+ 		pd->pd.power_off = exynos_pd_power_off;
+ 		pd->pd.power_on = exynos_pd_power_on;
++		pd->pd.power_off_latency_ns = DEFAULT_PD_PWROFF_LATENCY_NS;
++		pd->pd.power_on_latency_ns = DEFAULT_PD_PWRON_LATENCY_NS;
+ 		pd->pd.of_node = np;
+ 
+ 		platform_set_drvdata(pdev, pd);
 -- 
-Shine bright,
-(: Nav :)
+1.7.9.5
