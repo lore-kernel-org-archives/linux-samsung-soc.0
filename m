@@ -1,71 +1,151 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
-Date: Fri, 8 Nov 2013 11:05:17 +0000
-Message-ID: <20131108110517.GK2493@sirena.org.uk>
-References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
- <20131106082141.GA11602@sirena.org.uk>
- <CAPs=JDctq1yRbuwnFH40dnQJJHF0C_D1p3iVokSPusPXA27Qeg@mail.gmail.com>
- <1546740.qqSm3Pi1hO@flatron>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HHj6mHPeUinss9N+"
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1546740.qqSm3Pi1hO@flatron>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rajeshwari Birje <rajeshwari.birje-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rajeshwari S Shinde <rajeshwari.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Czerwinski <l.czerwinski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/2] mfd: sec: reorder params in API for regmap consistency
+Date: Fri, 08 Nov 2013 16:05:17 +0100
+Message-ID: <1383923118-26921-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+The last two parameters of certain register access functions were in
+different order than regmap API. This was confusing and error-prone.
 
---HHj6mHPeUinss9N+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reorder parameters for register access API to match regmap API:
+ - sec_bulk_read() reorder count and buf,
+ - sec_bulk_write() reorder count and buf,
+ - sec_reg_update() reorder val and mask.
 
-On Thu, Nov 07, 2013 at 10:39:37AM +0100, Tomasz Figa wrote:
-> On Thursday 07 of November 2013 14:52:36 Rajeshwari Birje wrote:
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/mfd/sec-core.c           |    6 +++---
+ drivers/regulator/s5m8767.c      |   26 +++++++++++++-------------
+ include/linux/mfd/samsung/core.h |    6 +++---
+ 3 files changed, 19 insertions(+), 19 deletions(-)
 
-> > The reordering of the words is taken care by the Swap configuration
-> > (swap_cfg) register, which I have set for both 16 and 32 bits_per_word
-> > case. I have tested this patch and works fine for me and also has
-> > improved the timing performance.
-
-> This driver seems to have already worked fine with 32 bits per word,
-> using the s5c73m3 camera sensor, which uses SPI for firmware upload.
-
-This is all sounding very confused.  Either this patch is a bug fix or
-it's breaking the driver but I can't tell without more information about
-what it's supposed to do.  Can someone explain in concrete terms what
-the intended effect of the patch is on wire behaviour?
-
-It is possible that the s5c73m3 driver is buggy here if it's only been
-tested with the s3c64xx driver (which seems likely) since the author
-could have worked around the driver behaviour.
-
---HHj6mHPeUinss9N+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSfMVqAAoJELSic+t+oim9N50QAJ5iTk3wSiHvSKPQfv1UO0LO
-0TJi38N2wB+EJIgPre2mftMgxE1htIHG0Bnfuo6PUrpEbIT93TQ+xMTVPO8Mpx31
-yI0I2U65MntCTHKr7KEK2Pg/dLSFt7VXqYC1aVIjkxSTnEeuP06rsJOsct7HNTvO
-Qolk6M00xl6ESlfXYc1hQYJ7AGHbHhrot7OHiAVyI/VgJzeM2cML4pLolse24Xbj
-dvRVELzWf1MW99lciZJGrH+B0cl1Gpr0eZJxKrf5hENAQyFxPhSMf9R7g4yC+2Xq
-Bb0ILZsiKWiB4VU91CMs+UB+00Hboa/S7HAt+oW0p+lgF7lGjCb4ykX3UIFRSesY
-XgXXa5PHu/OEnYlpzokV7g6BjFnH5S/auu5Bg4OIrhr9X7QFzgomzzvifkLwz3FC
-jf3ETYpq1fqev8DOpeLmWJXlES22x6dxcTokIInL7E9dDFW3lGyoRw9eQ1pL8CGo
-nOS0RHJrfkwz8U6vm3LIrv1QStSE16bISFr3PB/re92Cqq1ntJyUwgBl0alofR6E
-Zi4HU7cox762kL61YTykiQfrAWAwzcHC5iYymFFReFyzIGmoI3pK5BtAWKoGq6HY
-yW83aSUWth3AAHAy4LGkWib9eCpGs8K2IB6Da5+jzCDoAlEGJpEsNQIm6+IM7gnf
-bHg02GaxBjj7V4C6QGOM
-=S6FQ
------END PGP SIGNATURE-----
-
---HHj6mHPeUinss9N+--
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+index f530e4b..039814e 100644
+--- a/drivers/mfd/sec-core.c
++++ b/drivers/mfd/sec-core.c
+@@ -84,7 +84,7 @@ int sec_reg_read(struct sec_pmic_dev *sec_pmic, u8 reg, void *dest)
+ }
+ EXPORT_SYMBOL_GPL(sec_reg_read);
+ 
+-int sec_bulk_read(struct sec_pmic_dev *sec_pmic, u8 reg, int count, u8 *buf)
++int sec_bulk_read(struct sec_pmic_dev *sec_pmic, u8 reg, u8 *buf, int count)
+ {
+ 	return regmap_bulk_read(sec_pmic->regmap, reg, buf, count);
+ }
+@@ -96,13 +96,13 @@ int sec_reg_write(struct sec_pmic_dev *sec_pmic, u8 reg, u8 value)
+ }
+ EXPORT_SYMBOL_GPL(sec_reg_write);
+ 
+-int sec_bulk_write(struct sec_pmic_dev *sec_pmic, u8 reg, int count, u8 *buf)
++int sec_bulk_write(struct sec_pmic_dev *sec_pmic, u8 reg, u8 *buf, int count)
+ {
+ 	return regmap_raw_write(sec_pmic->regmap, reg, buf, count);
+ }
+ EXPORT_SYMBOL_GPL(sec_bulk_write);
+ 
+-int sec_reg_update(struct sec_pmic_dev *sec_pmic, u8 reg, u8 val, u8 mask)
++int sec_reg_update(struct sec_pmic_dev *sec_pmic, u8 reg, u8 mask, u8 val)
+ {
+ 	return regmap_update_bits(sec_pmic->regmap, reg, mask, val);
+ }
+diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
+index c24448b..ac10db4 100644
+--- a/drivers/regulator/s5m8767.c
++++ b/drivers/regulator/s5m8767.c
+@@ -243,7 +243,7 @@ static int s5m8767_reg_enable(struct regulator_dev *rdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return sec_reg_update(s5m8767->iodev, reg, enable_ctrl, mask);
++	return sec_reg_update(s5m8767->iodev, reg, mask, enable_ctrl);
+ }
+ 
+ static int s5m8767_reg_disable(struct regulator_dev *rdev)
+@@ -256,7 +256,7 @@ static int s5m8767_reg_disable(struct regulator_dev *rdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	return sec_reg_update(s5m8767->iodev, reg, ~mask, mask);
++	return sec_reg_update(s5m8767->iodev, reg, mask, ~mask);
+ }
+ 
+ static int s5m8767_get_vsel_reg(int reg_id, struct s5m8767_info *s5m8767)
+@@ -820,14 +820,14 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
+ 	   pdata->buck4_gpiodvs) {
+ 		sec_reg_update(s5m8767->iodev, S5M8767_REG_BUCK2CTRL,
+-				(pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1),
+-				1 << 1);
++				1 << 1,
++				(pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1));
+ 		sec_reg_update(s5m8767->iodev, S5M8767_REG_BUCK3CTRL,
+-				(pdata->buck3_gpiodvs) ? (1 << 1) : (0 << 1),
+-				1 << 1);
++				1 << 1,
++				(pdata->buck3_gpiodvs) ? (1 << 1) : (0 << 1));
+ 		sec_reg_update(s5m8767->iodev, S5M8767_REG_BUCK4CTRL,
+-				(pdata->buck4_gpiodvs) ? (1 << 1) : (0 << 1),
+-				1 << 1);
++				1 << 1,
++				(pdata->buck4_gpiodvs) ? (1 << 1) : (0 << 1));
+ 	}
+ 
+ 	/* Initialize GPIO DVS registers */
+@@ -862,19 +862,19 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 		switch (s5m8767->ramp_delay) {
+ 		case 5:
+ 			sec_reg_update(s5m8767->iodev, S5M8767_REG_DVSRAMP,
+-					0x40, 0xf0);
++					0xf0, 0x40);
+ 			break;
+ 		case 10:
+ 			sec_reg_update(s5m8767->iodev, S5M8767_REG_DVSRAMP,
+-					0x90, 0xf0);
++					0xf0, 0x90);
+ 			break;
+ 		case 25:
+ 			sec_reg_update(s5m8767->iodev, S5M8767_REG_DVSRAMP,
+-					0xd0, 0xf0);
++					0xf0, 0xd0);
+ 			break;
+ 		case 50:
+ 			sec_reg_update(s5m8767->iodev, S5M8767_REG_DVSRAMP,
+-					0xe0, 0xf0);
++					0xf0, 0xe0);
+ 			break;
+ 		case 100:
+ 			sec_reg_update(s5m8767->iodev, S5M8767_REG_DVSRAMP,
+@@ -882,7 +882,7 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
+ 			break;
+ 		default:
+ 			sec_reg_update(s5m8767->iodev, S5M8767_REG_DVSRAMP,
+-					0x90, 0xf0);
++					0xf0, 0x90);
+ 		}
+ 	}
+ 
+diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
+index 378ae8a..b04509e 100644
+--- a/include/linux/mfd/samsung/core.h
++++ b/include/linux/mfd/samsung/core.h
+@@ -58,10 +58,10 @@ void sec_irq_exit(struct sec_pmic_dev *sec_pmic);
+ int sec_irq_resume(struct sec_pmic_dev *sec_pmic);
+ 
+ extern int sec_reg_read(struct sec_pmic_dev *sec_pmic, u8 reg, void *dest);
+-extern int sec_bulk_read(struct sec_pmic_dev *sec_pmic, u8 reg, int count, u8 *buf);
++extern int sec_bulk_read(struct sec_pmic_dev *sec_pmic, u8 reg, u8 *buf, int count);
+ extern int sec_reg_write(struct sec_pmic_dev *sec_pmic, u8 reg, u8 value);
+-extern int sec_bulk_write(struct sec_pmic_dev *sec_pmic, u8 reg, int count, u8 *buf);
+-extern int sec_reg_update(struct sec_pmic_dev *sec_pmic, u8 reg, u8 val, u8 mask);
++extern int sec_bulk_write(struct sec_pmic_dev *sec_pmic, u8 reg, u8 *buf, int count);
++extern int sec_reg_update(struct sec_pmic_dev *sec_pmic, u8 reg, u8 mask, u8 val);
+ 
+ struct sec_platform_data {
+ 	struct sec_regulator_data	*regulators;
+-- 
+1.7.9.5
