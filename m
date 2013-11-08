@@ -1,44 +1,48 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] [media] exynos4-is: cleanup a define
-Date: Fri, 8 Nov 2013 01:52:24 -0800 (PST)
-Message-ID: <20131108095224.GJ27977@elgon.mountain>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, kernel-janitors@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grant Likely <grant.likely@linaro.org>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 2/3] clk: exynos5250: fix sysmmu_mfc{l,r} gate clocks
+Date: Fri,  8 Nov 2013 15:44:07 +0530
+Message-ID: <1383905648-23733-2-git-send-email-sachin.kamat@linaro.org>
+References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f49.google.com ([209.85.160.49]:58240 "EHLO
+	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752830Ab3KHKPx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 8 Nov 2013 05:15:53 -0500
+Received: by mail-pb0-f49.google.com with SMTP id um15so1951004pbc.22
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 08 Nov 2013 02:15:53 -0800 (PST)
+In-Reply-To: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, t.figa@samsung.com, sachin.kamat@linaro.org, Andrew Bresticker <abrestic@chromium.org>
 
-This define is only used in s5pcsis_irq_handler():
+From: Andrew Bresticker <abrestic@chromium.org>
 
-	if ((status & S5PCSIS_INTSRC_NON_IMAGE_DATA) && pktbuf->data) {
+The gate clocks for the MFC sysmmus appear to be flipped, i.e.
+GATE_IP_MFC[2] gates sysmmu_mfcl and GATE_IP_MFC[1] gates sysmmu_mfcr.
+Fix this so that the MFC will start up.
 
-The problem is that "status" is a 32 bit and (0xff << 28) is larger than
-32 bits and that sets off a static checker warning.  I consulted with
-Sylwester Nawrocki and the define should actually be (0xf << 28).
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/clk/samsung/clk-exynos5250.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-diff --git a/drivers/media/platform/exynos4-is/mipi-csis.c b/drivers/media/platform/exynos4-is/mipi-csis.c
-index 9fc2af6..31dfc50 100644
---- a/drivers/media/platform/exynos4-is/mipi-csis.c
-+++ b/drivers/media/platform/exynos4-is/mipi-csis.c
-@@ -91,7 +91,7 @@ MODULE_PARM_DESC(debug, "Debug level (0-2)");
- #define S5PCSIS_INTSRC_ODD_BEFORE	(1 << 29)
- #define S5PCSIS_INTSRC_ODD_AFTER	(1 << 28)
- #define S5PCSIS_INTSRC_ODD		(0x3 << 28)
--#define S5PCSIS_INTSRC_NON_IMAGE_DATA	(0xff << 28)
-+#define S5PCSIS_INTSRC_NON_IMAGE_DATA	(0xf << 28)
- #define S5PCSIS_INTSRC_FRAME_START	(1 << 27)
- #define S5PCSIS_INTSRC_FRAME_END	(1 << 26)
- #define S5PCSIS_INTSRC_ERR_SOT_HS	(0xf << 12)
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 6767635dc895..986464c2339a 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -562,8 +562,8 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 	GATE(hdmi, "hdmi", "mout_aclk200_disp1_sub", GATE_IP_DISP1, 6, 0, 0),
+ 
+ 	GATE(mfc, "mfc", "mout_aclk333_sub", GATE_IP_MFC, 0, 0, 0),
+-	GATE(smmu_mfcl, "smmu_mfcl", "mout_aclk333_sub", GATE_IP_MFC, 1, 0, 0),
+-	GATE(smmu_mfcr, "smmu_mfcr", "mout_aclk333_sub", GATE_IP_MFC, 2, 0, 0),
++	GATE(smmu_mfcl, "smmu_mfcl", "mout_aclk333_sub", GATE_IP_MFC, 2, 0, 0),
++	GATE(smmu_mfcr, "smmu_mfcr", "mout_aclk333_sub", GATE_IP_MFC, 1, 0, 0),
+ 
+ 	GATE(rotator, "rotator", "div_aclk266", GATE_IP_GEN, 1, 0, 0),
+ 	GATE(jpeg, "jpeg", "div_aclk166", GATE_IP_GEN, 2, 0, 0),
+-- 
+1.7.9.5
