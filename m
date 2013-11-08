@@ -1,59 +1,199 @@
-From: Stuart Yoder <b08248@gmail.com>
-Subject: Re: [PATCH 3/7] Return info for device and its memory regions and interrupts
-Date: Thu, 7 Nov 2013 14:38:29 -0600
-Message-ID: <CALRxmdA_7CtNWSc5Uaq0TH2Q9C4uUn-fZj2WweszhdDmbyvaWg@mail.gmail.com>
-References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
-	<1380554923-17818-4-git-send-email-a.motakis@virtualopensystems.com>
-	<1380562776.2674.177.camel@ul30vt.home>
-	<CAG8rG2yPXX9WtmhJqYMNE_3x4RNGkb1BDab8F3Pk8KUhntM9fg@mail.gmail.com>
-	<9F6FE96B71CF29479FF1CDC8046E15036D3803@039-SN1MPN1-003.039d.mgd.msft.net>
-	<CAG8rG2ypiSUqfhqLTxgv0+Sh9DO9KAscJy0CmCrr_oG3tmGAgA@mail.gmail.com>
-	<9F6FE96B71CF29479FF1CDC8046E15036D3D3A@039-SN1MPN1-003.039d.mgd.msft.net>
-	<CAG8rG2xA=LWAp0DR=_WdJSEC33yZXfP6LJ+oZW8WBr_HLNiarg@mail.gmail.com>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: Exynos5420: Add device nodes for TMU blocks
+Date: Fri, 8 Nov 2013 08:27:52 +0530
+Message-ID: <CAHfPSqDFd2d77gY028cFZgPE=kEmXKw2_AQHBbig25mLq9b+5Q@mail.gmail.com>
+References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+ <22321712.GIyJDTupbe@amdc1227> <CAHfPSqARSJqbXv9F+Fgro_=k3P2xE3XNsF-KYOW43WdVtKeSEA@mail.gmail.com>
+ <6654895.bR12A8qC1P@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:57965 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751336Ab3KGUia (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 7 Nov 2013 15:38:30 -0500
-In-Reply-To: <CAG8rG2xA=LWAp0DR=_WdJSEC33yZXfP6LJ+oZW8WBr_HLNiarg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <6654895.bR12A8qC1P@amdc1227>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-pm@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Antonios Motakis <a.motakis@virtualopensystems.com>
-Cc: Yoder Stuart-B08248 <B08248@freescale.com>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, KVM devel mailing list <kvm@vger.kernel.org>, Alexander Graf <agraf@suse.de>, Linux IOMMU <iommu@lists.linux-foundation.org>, VirtualOpenSystems Technical Team <tech@virtualopensystems.com>, kvm-arm <kvmarm@lists.cs.columbia.edu>
 
->>> I will look into this. However, can we rely to have access to all
->>> device resources through platform abstractions, for every type of
->>> platform device
->>
->> The only resources we care about in vfio are mappable regions
->> and irqs.  So, yes I think we can rely on access to those
->> resources.
->>
->>> It seems to me that platform devices that are not
->>> backed by a specific description mechanism (such as device tree) may
->>> include a lot of hard coded values etc in their drivers.
->>
->> If the platform device struct does not have reg/irq resources described
->> then we can't expose them to user space with vfio.
+Hello Tomasz,
+
+On 7 November 2013 22:15, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Naveen,
 >
-> Which is my concern actually. If the struct does not describe reg/irq
-> resources, or even worse if it describes them partially, do we want to
-> let the user shoot himself on the foot?
+> On Thursday 07 of November 2013 22:02:10 Naveen Krishna Ch wrote:
+>> Hello Tomasz,
+>>
+>> On 7 November 2013 19:53, Tomasz Figa <t.figa@samsung.com> wrote:
+>> > Hi Naveen,
+>> >
+>> > On Thursday 07 of November 2013 18:37:49 Naveen Krishna Chatradhi wrote:
+>> >> Exynos5420 SoC has per core thermal management unit.
+>> >> 5 TMU channels 4 for CPUs and 5th for GPU.
+>> >>
+>> >> This patch adds the device tree nodes to the DT device list.
+>> >>
+>> >> Nodes carry the misplaced second base address and the second
+>> >> clock to access the misplaced base address.
+>> >>
+>> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> >> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>> >> ---
+>> >> Changes since v1:
+>> >> 1. Nodes carry the misplaced second base address and the second
+>> >>    clock to access the misplaced base address.
+>> >> 2. Correct the clock number for the TMU4
+>> >
+>> > First of all, this patch should be a part of the whole series adding
+>> > support for thermal on Exynos 5420.
+>> Right, Reason why i posted this patch myself fixing the nits (As Leela
+>> and i work closely)
+>> Should have been along with the set.
 >
-> Granted this might happen with device tree too, but I find it much
-> more likely with generic platform devices.
+> OK.
 >
-> Maybe we should adopt a whitelist instead?
+>> >
+>> > In addition, see my comment below.
+>> >
+>> >>  arch/arm/boot/dts/exynos5420.dtsi |   48 +++++++++++++++++++++++++++++++++++++
+>> >>  1 file changed, 48 insertions(+)
+>> >>
+>> >> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+>> >> index 6ffefd1..d736b40 100644
+>> >> --- a/arch/arm/boot/dts/exynos5420.dtsi
+>> >> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+>> >> @@ -369,4 +369,52 @@
+>> >>               clock-names = "gscl";
+>> >>               samsung,power-domain = <&gsc_pd>;
+>> >>       };
+>> >> +
+>> >> +     /* tmu for CPU0 */
+>> >> +     tmu@10060000 {
+>> >> +             compatible = "samsung,exynos5420-tmu";
+>> >> +             reg = <0x10060000 0x100>;
+>> >> +             interrupts = <0 65 0>;
+>> >> +             clocks = <&clock 318>;
+>> >> +             clock-names = "tmu_apbif";
+>> >> +     };
+>> >> +
+>> >> +     /* tmu for CPU1 */
+>> >> +     tmu@10064000 {
+>> >> +             compatible = "samsung,exynos5420-tmu";
+>> >> +             reg = <0x10064000 0x100>;
+>> >> +             interrupts = <0 183 0>;
+>> >> +             clocks = <&clock 318>;
+>> >> +             clock-names = "tmu_apbif";
+>> >> +     };
+>> >> +
+>> >> +     /* tmu for CPU2 */
+>> >> +     tmu@10068000 {
+>> >> +             compatible = "samsung,exynos5420-tmu";
+>> >> +             /* 2nd reg is for the misplaced TRIMINFO register */
+>> >
+>> > Instead of this comment, such broken TMU variant should use a separate
+>> > compatible value, like "samsung,exynos5420-tmu-broken-triminfo", like
+>> > I mentioned in my comments to your other patch.
+>> Will make a note of it.
+>
+> OK.
+>
+>> >
+>> > For this compatible value, both second reg entry and second clock would
+>> > be required.
+>> >
+>> >> +             reg = <0x10068000 0x100>, <0x1006c000 0x4>;
+>> >> +             interrupts = <0 184 0>;
+>> >> +             clocks = <&clock 318>;
+>> >> +             clock-names = "tmu_apbif";
+>> >> +     };
+>> >> +
+>> >> +     /* tmu for CPU3 */
+>> >> +     tmu@1006c000 {
+>> >> +             compatible = "samsung,exynos5420-tmu";
+>> >> +             /* 2nd reg is for the misplaced TRIMINFO register */
+>> >> +             reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
+>> >> +             interrupts = <0 185 0>;
+>> >> +             clocks = <&clock 318>, <&clock 319>;
+>> >> +             clock-names = "tmu_apbif", "tmu_apbif_triminfo";
+>> >
+>> > The "tmu_apbif_triminfo" clock is not specified in exynos-thermal binding
+>> > documentation. In addition, the patch of yours adding support for second
+>> > clock uses another name - "tmu_apbif_sec".
+>> >
+>> > As for the name itself, I would prefer "tmu_apbif_triminfo" as it's more
+>> > meaningful.
+>> TMU hardware on Exynos5440 and Exynos5420 has two different abnormalities
+>> On Exynos5440 Some registers are interleaved between the channels
+>> On Exynos5420, TRIMINFO is misplaced between, channels 2, 3 and 4.
+>
+> I know that those cases are different, but my point was not about it.
+>
+> In your patch adding support for this second clock, you add following call
+> to devm_clk_get():
+>
+>         data->clk_sec = devm_clk_get(&pdev->dev, "tmu_apbif_sec");
+>
+> However in device tree nodes added by this patch, you have
+>
+>         clock-names = "tmu_apbif", "tmu_apbif_triminfo";
+>
+> and this where my confusion comes from.
+Sure will use one name in DTS, Documentation and the driver.
+tmu_apbif_triminfo makes correct sense for Exyns5420, But, for Exynos5440
+I prefer something that rhymes with the second_XXX.
+Will confirm with the Exynos5440 spec first.
 
-Just realize I never replied to this query...
+>
+>> having second_base was for the fix by Amit to address Exynos5440 problem,
+>> Which was already merged.
+>> After several reviews i tried to solve it by reusing the second_base
+>> for Exynos5420 aswell.
+>> Hence, I tried to use the "clk_sec" or "clk_second" which will rhyme
+>> along with the
+>> "second_base" in the driver.
+>>
+>> I'm still not sure this having second clock is needed for Exynos5440 aswell.
+>> Will figure it out tomorrow.
+>
+> Even if Exynos 5440 does not need the second clock, it uses a different
+> compatible value, so you can easily distinguish the cases when the second
+> clock is required or not.
 
-If there are no IRQs in the platform device struct we should
-just return 0x0 for number of interrupts.
-If the information in the platform device struct is only partially
-complete, we should just return an error to the caller of the
-ioctl.
+Distinction became tough for the TMU-(channel 2) on Exynos5420 has a
+misplaced address
+But, Both the base addresses can be accessed with the same clock. Unlike the
+TMU channel 3 and 4.
 
-Stuart
+For Ex:
++       /* tmu for CPU2 */
++       tmu@10068000 {
++               compatible = "samsung,exynos5420-tmu";
++               /* 2nd reg is for the misplaced TRIMINFO register */
++               reg = <0x10068000 0x100>, <0x1006c000 0x4>;
++               interrupts = <0 184 0>;
++               clocks = <&clock 318>;
++               clock-names = "tmu_apbif";
++       };
++
++       /* tmu for CPU3 */
++       tmu@1006c000 {
++               compatible = "samsung,exynos5420-tmu";
++               /* 2nd reg is for the misplaced TRIMINFO register */
++               reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
++               interrupts = <0 185 0>;
++               clocks = <&clock 318>, <&clock 319>;
++               clock-names = "tmu_apbif", "tmu_apbif_triminfo";
++       };
+
+Providing the same clock name again for TMU-2 might handle this case
+without any races right.
+Kindly, suggest me a better way out here.
+>
+> Best regards,
+> Tomasz
+>
+
+
+
+-- 
+Shine bright,
+(: Nav :)
