@@ -1,137 +1,173 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 2/4] clk: exynos5410: register clocks using common clock framework
-Date: Sun, 10 Nov 2013 18:41:28 +0100
-Message-ID: <6379094.zWymlDc09O@flatron>
-References: <1383811969-32712-1-git-send-email-v.tyrtov@samsung.com> <1383811969-32712-3-git-send-email-v.tyrtov@samsung.com>
+Subject: Re: [PATCH v3 4/4] ARM: dts: Add initial device tree support for EXYNOS5410
+Date: Sun, 10 Nov 2013 19:02:50 +0100
+Message-ID: <19495187.Nrl1zS8Kog@flatron>
+References: <1383811969-32712-1-git-send-email-v.tyrtov@samsung.com> <1383811969-32712-5-git-send-email-v.tyrtov@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f54.google.com ([74.125.83.54]:54789 "EHLO
-	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751416Ab3KJRlb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Nov 2013 12:41:31 -0500
-In-Reply-To: <1383811969-32712-3-git-send-email-v.tyrtov@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1383811969-32712-5-git-send-email-v.tyrtov@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
 To: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
 Cc: linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>, Dave.Martin@arm.com, nicolas.pitre@linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On Thursday 07 of November 2013 12:12:47 Vyacheslav Tyrtov wrote:
+Please see my comments inline.
+
+On Thursday 07 of November 2013 12:12:49 Vyacheslav Tyrtov wrote:
 > From: Tarek Dakhran <t.dakhran@samsung.com>
 > 
-> The EXYNOS5410 clocks are statically listed and registered
-> using the Samsung specific common clock helper functions.
-
-Thanks for keeping up with addressing the comments. However there are
-still few things that need to be corrected. Please see my comments inline.
-
+> Add initial device tree nodes for EXYNOS5410 SoC and SMDK5410 board.
+> 
 > Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
 > Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
 > ---
->  .../devicetree/bindings/clock/exynos5410-clock.txt |  37 ++++
->  drivers/clk/samsung/Makefile                       |   1 +
->  drivers/clk/samsung/clk-exynos5410.c               | 239 +++++++++++++++++++++
->  include/dt-bindings/clock/exynos5410.h             | 175 +++++++++++++++
->  4 files changed, 452 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
->  create mode 100644 drivers/clk/samsung/clk-exynos5410.c
->  create mode 100644 include/dt-bindings/clock/exynos5410.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos5410-clock.txt b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+>  arch/arm/boot/dts/Makefile                |   1 +
+>  arch/arm/boot/dts/exynos5410-smdk5410.dts |  65 ++++++++++
+>  arch/arm/boot/dts/exynos5410.dtsi         | 209 ++++++++++++++++++++++++++++++
+>  3 files changed, 275 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
+>  create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
+[snip]
+> diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
 > new file mode 100644
-> index 0000000..a462da231
+> index 0000000..06ae479
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/exynos5410-clock.txt
-> @@ -0,0 +1,37 @@
-> +* Samsung Exynos5410 Clock Controller
+> +++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+> @@ -0,0 +1,65 @@
+> +/*
+> + * SAMSUNG SMDK5410 board device tree source
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
 > +
-> +The Exynos5410 clock controller generates and supplies clock to various
-> +controllers within the Exynos5410 SoC.
+> +/dts-v1/;
+> +#include "exynos5410.dtsi"
+> +/ {
+> +	model = "Samsung SMDK5410 board based on EXYNOS5410";
+> +	compatible = "samsung,smdk5410", "samsung,exynos5410";
 > +
-> +Required Properties:
+> +	memory {
+> +		reg = <0x40000000 0x80000000>;
+> +	};
 > +
-> +- compatible: should be "samsung,exynos5410-clock"
+> +	chosen {
+> +		bootargs = "console=ttySAC2,115200";
+> +	};
 > +
-> +- reg: physical base address of the controller and length of memory mapped
-> +  region.
-> +
-> +- #clock-cells: should be 1.
+> +	oscclk: oscclk {
 
-If there are any external clocks that need to be provided (and I believe
-there are), you should mention them in the documentation.
+coding style: According to ePAPR recommendation, node name should
+represent hardware type, not particular instance of hardware.
 
-Also, to make this more future-proof, I would add clock-names and clocks
-properties to the binding, listing all those external clocks. It's just
-about the binding definition - you don't have to implement this in the
-driver yet, as we don't have the framework to handle this at early system
-initialization. However, when we finally implement this in the Common
-Clock Framework, we will not have to change existing DT bindings.
+So instead, the preferred way would be to specify the clock using
+following layout:
 
+	clocks {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		oscclk: clock@0 {
+			compatible = "fixed-clock";
+			reg = <0>;
+			#clock-cells = <0>;
+			clock-frequency = <24000000>;
+			clock-output-names = "fin_pll";
+		};
+	};
+
+> +		compatible = "fixed-clock";
+> +		#clock-cells = <0>;
+> +		clock-frequency = <24000000>;
+> +		clock-output-names = "fin_pll";
+> +	};
+[snip]
 > +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/exynos5410.h header and can be used in device
-> +tree sources.
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
+> new file mode 100644
+> index 0000000..9921b66
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos5410.dtsi
+> @@ -0,0 +1,209 @@
+> +/*
+> + * SAMSUNG EXYNOS5410 SoC device tree source
+> + *
+> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * SAMSUNG EXYNOS5410 SoC device nodes are listed in this file.
+> + * EXYNOS5410 based board files can include this file and provide
+> + * values for board specfic bindings.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
 > +
-> +Example 1: An example of a clock controller node is listed below.
-> +
-> +	clock: clock-controller@0x10010000 {
+> +#include <dt-bindings/clock/exynos5410.h>
+> +#include "exynos5.dtsi"
+> +/ {
+[snip]
+> +	clock: clock-controller@10010000 {
 > +		compatible = "samsung,exynos5410-clock";
 > +		reg = <0x10010000 0x30000>;
 > +		#clock-cells = <1>;
 > +	};
 > +
-> +Example 2: UART controller node that consumes the clock generated by the clock
-> +	   controller. Refer to the standard clock bindings for information
-> +	   about 'clocks' and 'clock-names' property.
+> +	mct@101C0000 {
+
+A generic name would be: timer@101C0000
+
+> +		compatible = "samsung,exynos4210-mct";
+> +		reg = <0x101C0000 0xB00>;
+> +		interrupt-controller;
+> +		#interrups-cells = <1>;
+
+MCT is not an interrupt controller, so both interrupt-controller and
+#interrupt-cells properties are incorrect. I guess that's due to the
+broken example in the documentation, that I already posted patches to fix.
+
+> +		interrupt-parent = <&mct_map>;
+> +		interrupts = <0>, <1>, <2>, <3>,
+> +			<4>, <5>, <6>, <7>,
+> +			<8>, <9>, <10>, <11>;
+> +		clocks = <&oscclk>, <&clock CLK_MCT>;
+> +		clock-names = "fin_pll", "mct";
 > +
-> +	serial@12C20000 {
-> +		compatible = "samsung,exynos4210-uart";
-> +		reg = <0x12C00000 0x100>;
-> +		interrupts = <0 51 0>;
-> +		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
-> +		clock-names = "uart", "clk_uart_baud0";
+> +		mct_map: mct-map {
+
+Again, interrupt-map would be a better name for this node.
+
+> +			#interrupt-cells = <1>;
+> +			#address-cells = <0>;
+> +			#size-cells = <0>;
+> +			interrupt-map = <0 &combiner 23 3>,
+> +					<1 &combiner 23 4>,
+> +					<2 &combiner 25 2>,
+> +					<3 &combiner 25 3>,
+> +					<4 &gic 0 120 0>,
+> +					<5 &gic 0 121 0>,
+> +					<6 &gic 0 122 0>,
+> +					<7 &gic 0 123 0>,
+> +					<8 &gic 0 128 0>,
+> +					<9 &gic 0 129 0>,
+> +					<10 &gic 0 130 0>,
+> +					<11 &gic 0 131 0>;
+> +		};
 > +	};
-[snip]
-> diff --git a/include/dt-bindings/clock/exynos5410.h b/include/dt-bindings/clock/exynos5410.h
-> new file mode 100644
-> index 0000000..9b4a58b
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/exynos5410.h
-> @@ -0,0 +1,175 @@
-> +#ifndef _DT_BINDINGS_CLOCK_EXYNOS_5410_H
-> +#define _DT_BINDINGS_CLOCK_EXYNOS_5410_H
-> +
-> +/* core clocks */
-> +#define CLK_FIN_PLL 1
 
-This is external clock, not provided by this clock controller, isn't it?
-
-> +#define CLK_FOUT_APLL 2
-> +#define CLK_FOUT_CPLL 3
-> +#define CLK_FOUT_DPLL 4
-> +#define CLK_FOUT_EPLL 5
-[snip]
-> +#define CLK_ACLK_G3D 500
-> +#define CLK_G3D 501
-> +#define CLK_SMMU_MIXER 502
-> +
-> +/* mux clocks */
-> +#define CLK_MOUT_HDMI 640
-
-This definition does not seem to be used anywhere in the driver itself.
-
-> +
-> +/* divider clocks */
-> +#define CLK_DOUT_PIXEL 768
-
-Ditto.
-
-Please don't define IDs for clocks that are not yet provided by the
-driver.
+Otherwise, the patch looks good.
 
 Best regards,
 Tomasz
+
