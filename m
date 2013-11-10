@@ -1,103 +1,65 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 2/3] usb: ehci-s5p: Change to use phy provided by the generic phy framework
-Date: Sun, 10 Nov 2013 17:44:06 +0100
-Message-ID: <1812380.ydpHiWF2nC@flatron>
-References: <1383668001-19141-1-git-send-email-k.debski@samsung.com> <1383668001-19141-3-git-send-email-k.debski@samsung.com>
+Subject: Re: [PATCH v3 3/3] usb: s3c-hsotg: Use the new Exynos USB phy driver with the generic phy framework
+Date: Sun, 10 Nov 2013 17:46:10 +0100
+Message-ID: <3111070.aXvW5a8oaK@flatron>
+References: <1383668001-19141-1-git-send-email-k.debski@samsung.com> <1383668001-19141-4-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:42016 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751531Ab3KJQoJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Nov 2013 11:44:09 -0500
-In-Reply-To: <1383668001-19141-3-git-send-email-k.debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1383668001-19141-4-git-send-email-k.debski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org, kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Kamil,
 
-On Tuesday 05 of November 2013 17:13:20 Kamil Debski wrote:
-> Change the phy provider used from the old usb phy specific to a new one
-> using the generic phy framework.
+This patch is changing a DT binding, but you haven't updated relevant
+documentation. Please remember about it in next version.
 
-I believe that until Exynos5250 also gets converted to the new PHY driver,
-support for the old USB PHY API should remain in this driver.
-
-As for the patch itself, please see my comments inline.
-
+On Tuesday 05 of November 2013 17:13:21 Kamil Debski wrote:
+> Change the used phy driver to the new Exynos USB phy driver that uses the
+> generic phy framework.
 > 
 > Signed-off-by: Kamil Debski <k.debski@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  drivers/usb/host/ehci-exynos.c |   34 +++++++++++-----------------------
->  1 file changed, 11 insertions(+), 23 deletions(-)
+>  drivers/usb/gadget/s3c-hsotg.c |   12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
 > 
-
-This patch is changing a DT binding, but there is no update to the
-documentation.
-
-> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-> index 8898c01..974001b 100644
-> --- a/drivers/usb/host/ehci-exynos.c
-> +++ b/drivers/usb/host/ehci-exynos.c
-> @@ -19,12 +19,12 @@
->  #include <linux/module.h>
+> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+> index bb31262..dc7f20c 100644
+> --- a/drivers/usb/gadget/s3c-hsotg.c
+> +++ b/drivers/usb/gadget/s3c-hsotg.c
+> @@ -31,6 +31,7 @@
+>  #include <linux/regulator/consumer.h>
 >  #include <linux/of.h>
->  #include <linux/of_gpio.h>
+>  #include <linux/of_platform.h>
 > +#include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/usb/phy.h>
->  #include <linux/usb/samsung_usb_phy.h>
->  #include <linux/usb.h>
->  #include <linux/usb/hcd.h>
-> -#include <linux/usb/otg.h>
 >  
->  #include "ehci.h"
+>  #include <linux/usb/ch9.h>
+>  #include <linux/usb/gadget.h>
+> @@ -162,7 +163,7 @@ struct s3c_hsotg_ep {
+>  struct s3c_hsotg {
+>  	struct device		 *dev;
+>  	struct usb_gadget_driver *driver;
+> -	struct usb_phy		*phy;
+> +	struct phy		 *phy;
+>  	struct s3c_hsotg_plat	 *plat;
 >  
-> @@ -44,8 +44,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+>  	spinlock_t              lock;
+> @@ -2905,9 +2906,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
+>  	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
 >  
->  struct exynos_ehci_hcd {
->  	struct clk *clk;
-> -	struct usb_phy *phy;
-> -	struct usb_otg *otg;
-> +	struct phy *phy;
->  };
->  
->  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
-> @@ -75,7 +74,8 @@ static int exynos_ehci_probe(struct platform_device *pdev)
->  	struct usb_hcd *hcd;
->  	struct ehci_hcd *ehci;
->  	struct resource *res;
-> -	struct usb_phy *phy;
-> +	struct phy *phy;
-> +	const char *phy_name;
->  	int irq;
->  	int err;
->  
-> @@ -98,12 +98,12 @@ static int exynos_ehci_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  	}
->  	exynos_ehci = to_exynos_ehci(hcd);
-> -
->  	if (of_device_is_compatible(pdev->dev.of_node,
->  					"samsung,exynos5440-ehci"))
->  		goto skip_phy;
->  
-> -	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-> +	phy_name = of_get_property(pdev->dev.of_node, "phy-names", NULL);
-> +	phy =  devm_phy_get(&pdev->dev, phy_name);
+>  	if (hsotg->phy)
+> -		usb_phy_init(hsotg->phy);
+> +		phy_power_on(hsotg->phy);
+>  	else if (hsotg->plat->phy_init)
+>  		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
+> +
 
-This is definitely not the way you should parse PHY DT bindings. PHY names
-are supposed to be fixed in the binding for each compatible value, which
-means that you should call here devm_phy_get() with a static name.
-
-Moreover, this driver needs one PHY per port, not just one PHY, so the
-design needs to be completely changed and this patch is not really enough
-to correctly support USB 2.0 on Exynos.
+nit: Stray blank line.
 
 Best regards,
 Tomasz
