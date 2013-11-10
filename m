@@ -1,43 +1,53 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 3/3] clk: exynos5250: register APLL rate table
-Date: Sun, 10 Nov 2013 18:14:37 +0100
-Message-ID: <1713728.JoffI8rva3@flatron>
-References: <1383905648-23733-1-git-send-email-sachin.kamat@linaro.org> <1383905648-23733-3-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
+Date: Sun, 10 Nov 2013 18:26:34 +0100
+Message-ID: <3104102.55j2C8XQ5u@flatron>
+References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com> <1546740.qqSm3Pi1hO@flatron> <20131108110517.GK2493@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:54730 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751159Ab3KJROi (ORCPT
+Received: from mail-ea0-f170.google.com ([209.85.215.170]:61610 "EHLO
+	mail-ea0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751762Ab3KJR0h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Nov 2013 12:14:38 -0500
-Received: by mail-ee0-f53.google.com with SMTP id e51so1974200eek.40
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Nov 2013 09:14:37 -0800 (PST)
-In-Reply-To: <1383905648-23733-3-git-send-email-sachin.kamat@linaro.org>
+	Sun, 10 Nov 2013 12:26:37 -0500
+In-Reply-To: <20131108110517.GK2493@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, Andrew Bresticker <abrestic@chromium.org>, t.figa@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Rajeshwari Birje <rajeshwari.birje@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Rajeshwari S Shinde <rajeshwari.s@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-spi@vger.kernel.org, Simon Glass <sjg@chromium.org>, Alim Akhtar <alim.akhtar@samsung.com>, Doug Anderson <dianders@google.com>, Andrzej Hajda <a.hajda@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lukasz Czerwinski <l.czerwinski@samsung.com>
 
-Hi Sachin, Andrew,
-
-On Friday 08 of November 2013 15:44:08 Sachin Kamat wrote:
-> From: Andrew Bresticker <abrestic@chromium.org>
+On Friday 08 of November 2013 11:05:17 Mark Brown wrote:
+> On Thu, Nov 07, 2013 at 10:39:37AM +0100, Tomasz Figa wrote:
+> > On Thursday 07 of November 2013 14:52:36 Rajeshwari Birje wrote:
 > 
-> Register the APLL rate table so that we can set the APLL rate from
-> the cpufreq driver.
+> > > The reordering of the words is taken care by the Swap configuration
+> > > (swap_cfg) register, which I have set for both 16 and 32 bits_per_word
+> > > case. I have tested this patch and works fine for me and also has
+> > > improved the timing performance.
 > 
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  drivers/clk/samsung/clk-exynos5250.c |   25 ++++++++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
+> > This driver seems to have already worked fine with 32 bits per word,
+> > using the s5c73m3 camera sensor, which uses SPI for firmware upload.
+> 
+> This is all sounding very confused.  Either this patch is a bug fix or
+> it's breaking the driver but I can't tell without more information about
+> what it's supposed to do.  Can someone explain in concrete terms what
+> the intended effect of the patch is on wire behaviour?
+> 
+> It is possible that the s5c73m3 driver is buggy here if it's only been
+> tested with the s3c64xx driver (which seems likely) since the author
+> could have worked around the driver behaviour.
 
-You know that you still need to fix the cpufreq driver to use these,
-don't you? Anyway:
+I'm confused here as well.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Looking at the W25Q32DW datasheet[1], it does not really support 32 bit
+words and using such with it seems more like an abuse of this feature.
+
+As for the s5c73m3 sensor, we should ask Andrzej or Sylwester to look
+at the datasheet and see how SPI transfer are supposed to work there.
+
+[1] http://www.winbond.com.tw/NR/rdonlyres/D35D5D04-4CE9-46A1-8950-AEA573045507/0/W25Q32DW.pdf
 
 Best regards,
 Tomasz
