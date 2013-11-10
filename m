@@ -1,35 +1,65 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V6 2/3] ARM: dts: add watchdog device nodes for Exynos5250 and Exynos5420
-Date: Sun, 10 Nov 2013 20:27:30 +0100
-Message-ID: <1741749.lLZhaDvyuy@flatron>
-References: <1383825078-24515-1-git-send-email-l.krishna@samsung.com> <1383825078-24515-3-git-send-email-l.krishna@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] MAINTAINERS: Add entry for Samsung SoC clock drivers
+Date: Mon, 11 Nov 2013 08:14:51 +0900
+Message-ID: <002201cede6a$a8a183a0$f9e48ae0$%han@samsung.com>
+References: <1383963454-2749-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f173.google.com ([209.85.215.173]:42446 "EHLO
-	mail-ea0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751690Ab3KJT1d (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:56927 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752448Ab3KJXOx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Nov 2013 14:27:33 -0500
-In-Reply-To: <1383825078-24515-3-git-send-email-l.krishna@samsung.com>
+	Sun, 10 Nov 2013 18:14:53 -0500
+In-reply-to: <1383963454-2749-1-git-send-email-tomasz.figa@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, wim@iguana.be, t.figa@samsung.com, devicetree@vger.kernel.org, dianders@chromium.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, sachin.kamat@linaro.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Leela,
+On Saturday, November 09, 2013 11:18 AM, Tomasz Figa wrote:
+> 
+> From: Tomasz Figa <t.figa@samsung.com>
+> 
+> This patch adds an entry for Samsung SoC clock drivers located under
+> drivers/clk/samsung/ directory, with me taking the maintainer role.
+> 
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Acked-by: Mike Turquette <mturquette@linaro.org>
+> Acked-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-On Thursday 07 of November 2013 17:21:17 Leela Krishna Amudala wrote:
-> Adds watchdog device nodes to the DT device list for Exynos5250 and Exynos5420
+It looks good.
 
-s/add/update/ since there was already a device tree node in exynos5.dtsi.
-
-Also, patch description should mention all the changes done in the patch
-and I see more changes than described by your description. This patch also
-makes the watchdog node enabled by default.
-
-Otherwise the patch looks good.
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 
 Best regards,
-Tomasz
+Jingoo Han
+
+> ---
+>  MAINTAINERS | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 61b8757..df7e1bf 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7319,6 +7319,12 @@ L:	linux-media@vger.kernel.org
+>  S:	Supported
+>  F:	drivers/media/i2c/s5c73m3/*
+> 
+> +SAMSUNG SOC CLOCK DRIVERS
+> +M:	Tomasz Figa <t.figa@samsung.com>
+> +S:	Supported
+> +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> +F:	drivers/clk/samsung/
+> +
+>  SERIAL DRIVERS
+>  M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>  L:	linux-serial@vger.kernel.org
+> --
+> 1.8.4.2
