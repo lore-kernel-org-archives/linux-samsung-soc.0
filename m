@@ -1,47 +1,46 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] hwmon: ntc_thermistor: Fix typo (pullup-uV -> pullup-uv)
-Date: Sun, 10 Nov 2013 19:18:11 +0100
-Message-ID: <1404489.sfyjHCEcVN@flatron>
-References: <1382492690-4056-1-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
+Date: Sun, 10 Nov 2013 19:20:46 +0100
+Message-ID: <11439635.3nLj0DE42O@flatron>
+References: <1383797386-29458-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:51636 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751159Ab3KJSSN (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:62988 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751773Ab3KJSUr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Nov 2013 13:18:13 -0500
-In-Reply-To: <1382492690-4056-1-git-send-email-cw00.choi@samsung.com>
+	Sun, 10 Nov 2013 13:20:47 -0500
+Received: by mail-ee0-f46.google.com with SMTP id b57so2005488eek.33
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Nov 2013 10:20:46 -0800 (PST)
+In-Reply-To: <1383797386-29458-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, rob@landley.net, kgene.kim@samsung.com, jic23@kernel.org, ch.naveen@samsung.com, dianders@chromium.org, lars@metafoo.de, sachin.kamat@linaro.org, kyungmin.park@samsung.com
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Hi Chanwoo,
-
-On Wednesday 23 of October 2013 10:44:50 Chanwoo Choi wrote:
-> This patch fix typo of property name from 'pullup-uV' to 'pullup-uv'.
-> The ntc_thermistor.c use 'pullup-uv' when parsing dt data.
+On Thursday 07 of November 2013 09:39:46 Sachin Kamat wrote:
+> Fixed samaung -> samsung in property name.
 > 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
->  Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt | 2 +-
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> index 47ada1d..5d49f2b 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-> @@ -49,7 +49,7 @@ adc@12D10000 {
->  	/* NTC thermistor is a hwmon device */
->  	ncp15wb473@0 {
->  		compatible = "ntc,ncp15wb473";
-> -		pullup-uV = <1800000>;
-> +		pullup-uv = <1800000>;
->  		pullup-ohm = <47000>;
->  		pulldown-ohm = <0>;
->  		io-channels = <&adc 4>;
+> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> index e695aba5f73c..e62c8eb57438 100644
+> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+> @@ -64,7 +64,7 @@
+>  			samsung,pins = "gpx0-7";
+>  			samsung,pin-function = <3>;
+>  			samsung,pin-pud = <0>;
+> -			samaung,pin-drv = <0>;
+> +			samsung,pin-drv = <0>;
+>  		};
+>  	};
+>  
 > 
 
 Good catch.
