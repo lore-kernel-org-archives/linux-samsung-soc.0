@@ -1,57 +1,227 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/1] Documentation/pwm: Update supported SoC name for
- pwm-samsung
-Date: Mon, 11 Nov 2013 10:25:35 +0100
-Message-ID: <20131111092534.GG3884@ulmo.nvidia.com>
-References: <1383107981-6638-1-git-send-email-sachin.kamat@linaro.org>
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Subject: Re: [PATCH] [media] s5p-mfc: Add QP setting support for vp8 encoder
+Date: Mon, 11 Nov 2013 10:31:25 +0100
+Message-ID: <5280A3ED.1040802@xs4all.nl>
+References: <1384161580-18674-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="m0vRWufqUC70IDnR"
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1383107981-6638-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-doc-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, mark.rutland@arm.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp-vbr7.xs4all.nl ([194.109.24.27]:3426 "EHLO
+	smtp-vbr7.xs4all.nl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752614Ab3KKJbr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 11 Nov 2013 04:31:47 -0500
+In-Reply-To: <1384161580-18674-1-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, k.debski@samsung.com, s.nawrocki@samsung.com, avnd.kiran@samsung.com, arunkk.samsung@gmail.com
 
+Hi Arun,
 
---m0vRWufqUC70IDnR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/11/2013 10:19 AM, Arun Kumar K wrote:
+> Adds v4l2 controls to set MIN, MAX QP values and
+> I, P frame QP for vp8 encoder.
 
-On Wed, Oct 30, 2013 at 10:09:41AM +0530, Sachin Kamat wrote:
-> Updated supported SoC name for pwm-samsung.
->=20
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+I assume these parameters and their ranges are all defined by the VP8 standard?
+Or are they HW specific?
+
+Regards,
+
+	Hans
+
+> 
+> Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 > ---
->  .../devicetree/bindings/pwm/pwm-samsung.txt        |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Applied, thanks.
-
-Thierry
-
---m0vRWufqUC70IDnR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSgKKOAAoJEN0jrNd/PrOhWPgP/ji9x1nG6a453brTYFw2UEPw
-KnOQ+4U6DXLB05ij/eFi0dufGpPGOqXyaviOwVjZuGDgMyvn6b1oE16/eH9Tgtyp
-YdSKgEc+XZ1iz8OJXIuChDZ6mkc0HvxeW/dQYvy2MxFBPl7E6uYKekKLOdufdxcx
-Jzc3KsocGSearAx95fVEfR9kDCUJ+1KSL/2pbkqhszH7nNhYfahfh+40E8+BTHu8
-Q8cLVN69lXW5oE4FKFit0gxytRPWi1dHCA2kVA8krT09jIREsljzaIcSfE+cZQZo
-M0UDR3uXat61KV69Orrv/b9LISJn9TCYbp0+IP+tQkDIeYbiI3kH9hCsovTlKuA5
-5FS8eGkJsQ/MFFQ1Sg23DxAIALKRoMAqK95Q2rvhlbXJVhbddK0vXjmhB7IZoqGi
-l3jN7EXR9zteLJ4bkqUbT1uneP1tg8ZpDY2ytXIwmNsgR4GhXodFfOoGVI0+SD40
-KfxB2hCF4LuS4ryEw/fxv0wQuXeUv1Go5ZAcdPpy641ZxR8Tt32Ju8SBJ46J2gU1
-WYEfKlEIPz5Smvas92DpCgkeqA8vfQK8CLJFrGY/4b+Mf/oZw1H6qpAGYM1CRMAZ
-BqVlz2/v/cHOCb9pKDSeDlw6Jh0bVta9FDPLt0XVsgUPYGmKr9nXaYLk6rCo+5vQ
-0JrHhW1UH3B+5ogNeh4C
-=oTUe
------END PGP SIGNATURE-----
-
---m0vRWufqUC70IDnR--
+>  Documentation/DocBook/media/v4l/controls.xml    |   32 +++++++++++++++++
+>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    4 +++
+>  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   44 +++++++++++++++++++++++
+>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |   20 +++++++++++
+>  drivers/media/v4l2-core/v4l2-ctrls.c            |    4 +++
+>  include/uapi/linux/v4l2-controls.h              |    4 +++
+>  6 files changed, 108 insertions(+)
+> 
+> diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
+> index 7a3b49b..091aa4d 100644
+> --- a/Documentation/DocBook/media/v4l/controls.xml
+> +++ b/Documentation/DocBook/media/v4l/controls.xml
+> @@ -3161,6 +3161,38 @@ V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_REF_PERIOD as a golden frame.</entry>
+>  		</entrytbl>
+>  	      </row>
+>  
+> +	      <row><entry></entry></row>
+> +	      <row>
+> +		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_MIN_QP</constant></entry>
+> +		<entry>integer</entry>
+> +	      </row>
+> +	      <row><entry spanname="descr">Minimum quantization parameter for VP8. Valid range: from 0 to 11.</entry>
+> +	      </row>
+> +
+> +	      <row><entry></entry></row>
+> +	      <row>
+> +		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_MAX_QP</constant></entry>
+> +		<entry>integer</entry>
+> +	      </row>
+> +	      <row><entry spanname="descr">Maximum quantization parameter for VP8. Valid range: from 0 to 127.</entry>
+> +	      </row>
+> +
+> +	      <row><entry></entry></row>
+> +	      <row>
+> +		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP</constant>&nbsp;</entry>
+> +		<entry>integer</entry>
+> +	      </row>
+> +	      <row><entry spanname="descr">Quantization parameter for an I frame for VP8. Valid range: from 0 to 127.</entry>
+> +	      </row>
+> +
+> +	      <row><entry></entry></row>
+> +	      <row>
+> +		<entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP</constant>&nbsp;</entry>
+> +		<entry>integer</entry>
+> +	      </row>
+> +	      <row><entry spanname="descr">Quantization parameter for a P frame for VP8. Valid range: from 0 to 127.</entry>
+> +	      </row>
+> +
+>            <row><entry></entry></row>
+>          </tbody>
+>        </tgroup>
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> index 6920b54..d91f757 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
+> @@ -422,6 +422,10 @@ struct s5p_mfc_vp8_enc_params {
+>  	enum v4l2_vp8_golden_frame_sel golden_frame_sel;
+>  	u8 hier_layer;
+>  	u8 hier_layer_qp[3];
+> +	u8 rc_min_qp;
+> +	u8 rc_max_qp;
+> +	u8 rc_frame_qp;
+> +	u8 rc_p_frame_qp;
+>  };
+>  
+>  /**
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> index 4ff3b6c..33e8ae3 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> @@ -618,6 +618,38 @@ static struct mfc_control controls[] = {
+>  		.default_value = V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_USE_PREV,
+>  		.menu_skip_mask = 0,
+>  	},
+> +	{
+> +		.id = V4L2_CID_MPEG_VIDEO_VPX_MAX_QP,
+> +		.type = V4L2_CTRL_TYPE_INTEGER,
+> +		.minimum = 0,
+> +		.maximum = 127,
+> +		.step = 1,
+> +		.default_value = 127,
+> +	},
+> +	{
+> +		.id = V4L2_CID_MPEG_VIDEO_VPX_MIN_QP,
+> +		.type = V4L2_CTRL_TYPE_INTEGER,
+> +		.minimum = 0,
+> +		.maximum = 11,
+> +		.step = 1,
+> +		.default_value = 0,
+> +	},
+> +	{
+> +		.id = V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP,
+> +		.type = V4L2_CTRL_TYPE_INTEGER,
+> +		.minimum = 0,
+> +		.maximum = 127,
+> +		.step = 1,
+> +		.default_value = 10,
+> +	},
+> +	{
+> +		.id = V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP,
+> +		.type = V4L2_CTRL_TYPE_INTEGER,
+> +		.minimum = 0,
+> +		.maximum = 127,
+> +		.step = 1,
+> +		.default_value = 10,
+> +	},
+>  };
+>  
+>  #define NUM_CTRLS ARRAY_SIZE(controls)
+> @@ -1557,6 +1589,18 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl *ctrl)
+>  	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
+>  		p->codec.vp8.golden_frame_sel = ctrl->val;
+>  		break;
+> +	case V4L2_CID_MPEG_VIDEO_VPX_MIN_QP:
+> +		p->codec.vp8.rc_min_qp = ctrl->val;
+> +		break;
+> +	case V4L2_CID_MPEG_VIDEO_VPX_MAX_QP:
+> +		p->codec.vp8.rc_max_qp = ctrl->val;
+> +		break;
+> +	case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:
+> +		p->codec.vp8.rc_frame_qp = ctrl->val;
+> +		break;
+> +	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:
+> +		p->codec.vp8.rc_p_frame_qp = ctrl->val;
+> +		break;
+>  	default:
+>  		v4l2_err(&dev->v4l2_dev, "Invalid control, id=%d, val=%d\n",
+>  							ctrl->id, ctrl->val);
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> index 461358c..b4886d6 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c
+> @@ -1218,6 +1218,26 @@ static int s5p_mfc_set_enc_params_vp8(struct s5p_mfc_ctx *ctx)
+>  		WRITEL(reg, S5P_FIMV_E_RC_FRAME_RATE_V6);
+>  	}
+>  
+> +	/* frame QP */
+> +	reg &= ~(0x7F);
+> +	reg |= p_vp8->rc_frame_qp & 0x7F;
+> +	WRITEL(reg, S5P_FIMV_E_RC_CONFIG_V6);
+> +
+> +	/* other QPs */
+> +	WRITEL(0x0, S5P_FIMV_E_FIXED_PICTURE_QP_V6);
+> +	if (!p->rc_frame && !p->rc_mb) {
+> +		reg = 0;
+> +		reg |= ((p_vp8->rc_p_frame_qp & 0x7F) << 8);
+> +		reg |= p_vp8->rc_frame_qp & 0x7F;
+> +		WRITEL(reg, S5P_FIMV_E_FIXED_PICTURE_QP_V6);
+> +	}
+> +
+> +	/* max QP */
+> +	reg = ((p_vp8->rc_max_qp & 0x7F) << 8);
+> +	/* min QP */
+> +	reg |= p_vp8->rc_min_qp & 0x7F;
+> +	WRITEL(reg, S5P_FIMV_E_RC_QP_BOUND_V6);
+> +
+>  	/* vbv buffer size */
+>  	if (p->frame_skip_mode ==
+>  			V4L2_MPEG_MFC51_VIDEO_FRAME_SKIP_MODE_BUF_LIMIT) {
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index 60dcc0f..99a89ad 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -745,6 +745,10 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MPEG_VIDEO_VPX_FILTER_SHARPNESS:		return "VPX Deblocking Effect Control";
+>  	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_REF_PERIOD:	return "VPX Golden Frame Refresh Period";
+>  	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:		return "VPX Golden Frame Indicator";
+> +	case V4L2_CID_MPEG_VIDEO_VPX_MIN_QP:			return "VPX Minimum QP Value";
+> +	case V4L2_CID_MPEG_VIDEO_VPX_MAX_QP:			return "VPX Maximum QP Value";
+> +	case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:		return "VPX I-Frame QP Value";
+> +	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:		return "VPX P-Frame QP Value";
+>  
+>  	/* CAMERA controls */
+>  	/* Keep the order of the 'case's the same as in videodev2.h! */
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 1666aab..5b9dfc8 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -554,6 +554,10 @@ enum v4l2_vp8_golden_frame_sel {
+>  	V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_USE_PREV		= 0,
+>  	V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_USE_REF_PERIOD	= 1,
+>  };
+> +#define V4L2_CID_MPEG_VIDEO_VPX_MIN_QP			(V4L2_CID_MPEG_BASE+507)
+> +#define V4L2_CID_MPEG_VIDEO_VPX_MAX_QP			(V4L2_CID_MPEG_BASE+508)
+> +#define V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP		(V4L2_CID_MPEG_BASE+509)
+> +#define V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP		(V4L2_CID_MPEG_BASE+510)
+>  
+>  /*  MPEG-class control IDs specific to the CX2341x driver as defined by V4L2 */
+>  #define V4L2_CID_MPEG_CX2341X_BASE 				(V4L2_CTRL_CLASS_MPEG | 0x1000)
+> 
