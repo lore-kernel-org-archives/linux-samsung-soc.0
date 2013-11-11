@@ -1,22 +1,62 @@
-From: Inness Babbitt <innessdqe367@yahoo.com>
-Subject: hi
-Date: Sun, 10 Nov 2013 15:24:32 -0800 (PST)
-Message-ID: <1384125872.65418.YahooMailNeo@web161005.mail.bf1.yahoo.com>
-Reply-To: Inness Babbitt <Myorozov78@nm.ru>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 0/4] Add support for clocks in S5M8767
+Date: Mon, 11 Nov 2013 08:28:15 +0530
+Message-ID: <CAHbNUh2-WTc2myFbzYDmV=aSYUvO03pj3ZwNAen3j_GiGsRJkg@mail.gmail.com>
+References: <1383202124-1775-1-git-send-email-tushar.behera@linaro.org>
+	<18704605.0nz1OWeNy9@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from nm37.bullet.mail.ne1.yahoo.com ([98.138.229.30]:29935 "EHLO
-	nm37.bullet.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752362Ab3KJX1d (ORCPT
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:45427 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751074Ab3KKC6P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 10 Nov 2013 18:27:33 -0500
+	Sun, 10 Nov 2013 21:58:15 -0500
+Received: by mail-ob0-f178.google.com with SMTP id va2so3708984obc.23
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 10 Nov 2013 18:58:15 -0800 (PST)
+In-Reply-To: <18704605.0nz1OWeNy9@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, lkml <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>
 
-FIRST I HAVE PICTURES POSTED -- IF YOU DO NOT PLEASE DO NOT EMAIL!!I AM SEEKING A "MALE"..NO OFFENSE LADIES.. SOMEHOW MY PROFILE WAS CHANGED!!! LOLI love football--FSU Seminoles and Tampa Bay Bucs!!!! I love the beach, the mountains, going for Harley rides, stay home and cuddling on the couch watching a good movie. I can go from an evening gown to jean and a ball cap in 5 seconds.!!! LOL. I enjoy most music but not loud-rock. I enjoy walks and romantic evenings.I tend to over dress for everything but I am so down to earth and love to enjoy life. A persons apperance says alot about them..But when Im home or its a lazy day I'm in my sweats and t-shirt and a pony tail..LOL I LOVE TO SMILE AND MAKE OTHERS SMILE....
-qbpywrfz fztyvmx xsulqyciy
-biqdpszft ggryn wszqniuh
-hgwzsen N G E A Q A Z T
-unsocvtyz U W A S W P K X C A
+On 10 November 2013 18:04, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Tushar,
+>
+> On Thursday 31 of October 2013 12:18:40 Tushar Behera wrote:
+>> S5M8767 chip has 3 crystal oscillators which are operated in the same
+>> as the crystal oscillators in S2MPS11. Extend s2mps11-clk driver to
+>> support clocks in S5M8767.
+>>
+>> The patches are based on next-20131030.
+>>
+>> Tushar Behera (4):
+>>   clk: clk-s2mps11: Refactor for including support for other MFD clocks
+>>   clk: clk-s2mps11: Add support for clocks in S5M8767 MFD
+>>   mfd: sec-core: Add cells for S5M8767-clocks
+>>   ARM: dts: Add S5M8767 clock nodes on Arndale board
+>>
+>>  arch/arm/boot/dts/exynos5250-arndale.dts |    7 +++++++
+>>  drivers/clk/Kconfig                      |    6 ++++--
+>>  drivers/clk/clk-s2mps11.c                |   25
+>> +++++++++++++++++++++---- drivers/mfd/sec-core.c                   |
+>> 4 +++-
+>>  4 files changed, 35 insertions(+), 7 deletions(-)
+>
+> For the whole series:
+>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>
+> Best regards,
+> Tomasz
+>
+
+Thanks Tomasz.
+
+Mike,
+
+Would you please pick up patches 1 and 2? Lee would pick up patch 3
+after these patches are merged.
+
+-- 
+Tushar Behera
