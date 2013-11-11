@@ -1,111 +1,150 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Add enable property to power domains
-Date: Mon, 11 Nov 2013 15:28:44 +0100
-Message-ID: <2964665.KKjuSDVdEA@flatron>
-References: <1B.DE.05666.EC070825@epcpsbgx2.samsung.com>
+From: Tarek Dakhran <t.dakhran@samsung.com>
+Subject: Re: [PATCH v3 3/4] ARM: EXYNOS: add Exynos Dual Cluster Support
+Date: Mon, 11 Nov 2013 19:45:30 +0400
+Message-ID: <5280FB9A.7030500@samsung.com>
+References: <20131108184036.GD2602@localhost.localdomain>
+ <alpine.LFD.2.03.1311081356300.15571@syhkavp.arg>
+ <52808E09.9060902@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f41.google.com ([74.125.83.41]:40734 "EHLO
-	mail-ee0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753345Ab3KKO2s (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:23674 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753904Ab3KKPpf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 11 Nov 2013 09:28:48 -0500
-In-Reply-To: <1B.DE.05666.EC070825@epcpsbgx2.samsung.com>
+	Mon, 11 Nov 2013 10:45:35 -0500
+In-reply-to: <52808E09.9060902@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: prathyush.k@samsung.com
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Nicolas Pitre <nicolas.pitre@linaro.org>, Dave Martin <Dave.Martin@arm.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Heiko Stuebner <heiko@sntech.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Naour Romain <romain.naour@openwide.fr>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Prathyush,
+Hi,
 
-Thanks for your reply. However, please do not use HTML messages to reply
-to mailing lists, as many of them filter out such.
+On 11.11.2013 11:58, Tarek Dakhran wrote:
+>
+>> On Thu, Nov 07, 2013 at 11:51:49AM -0500, Nicolas Pitre wrote:
+>> Samsung people: could you give us more info on the behavior of the power
+>> controller please?
+>>
+>>
+>> Nicolas
+>>
+> This is how the power controller works on exynos5410. For example for 
+> CORE0.
+>
+> ARM_CORE0_STATUS register indicates the power state of Core 0 part of 
+> processor core.
+> 0x3 indicates that power to Core 0 is turned-on. 0x0 indicates that 
+> power to Core 0 is turned-off.
+> All other values indicate that the power On/Off sequence of Core 0 in 
+> progress.
+>
+> To turn Off the power of Core 0 power domain:
+>
+> 1. Set the LOCAL_POWER_CFG field of ARM_CORE0_CONFIGURATION register 
+> to 0x3.
+> 2. After PMU detects a change in the LOCAL_POWER_CFG field, it waits 
+> for the execution of WFI.
+> 3. After Core 0 executes the WFI instruction, PMU starts the 
+> power-down sequence.
+> 4. The Status field of ARM_CORE0_STATUS register indicates the 
+> completion of the sequence.
+>
+> That's why in the v1 of this patch exynos_core_power_control function 
+> was implemented as:
+>
+> static int exynos_core_power_control(unsigned int cpu, unsigned int 
+> cluster,  int enable)
+> {
+>        unsigned long timeout = jiffies + msecs_to_jiffies(10);
+>        unsigned int offset = cluster * MAX_CPUS_PER_CLUSTER + cpu;
+>        int value = enable ? S5P_CORE_LOCAL_PWR_EN : 0;
+>
+>        if ((__raw_readl(EXYNOS5410_CORE_STATUS(offset)) & 0x3) == value)
+>                return 0;
+>
+>        __raw_writel(value, EXYNOS5410_CORE_CONFIGURATION(offset));
+>        do {
+>                if ((__raw_readl(EXYNOS5410_CORE_STATUS(offset)) & 0x3)
+>                                == value)
+>                        return 0;
+>        } while (time_before(jiffies, timeout));
+>
+>        return -EDEADLK;
+> }
+>
+> But, as i mentioned, this is no good using while here.
+> Now thinking about the problem.
+>
+> Thank you,
+>         Tarek Dakhran
 
-On Monday 11 of November 2013 05:53:18 Prathyush Kalashwaram wrote:
-> Hi Tomasz,
->  
-> The enable values for some configuration registers are not 0x7.
-> Though there is no issue observed (so far) in using 0x7, it is better to use the correct enable values.
-> Thats the reason for this patch.
+What do you think about this way of solving the problem with races?
 
-Well, this means that the patch does not fix or improve anything, just
-introduces changes that are not needed for anything. This is especially
-bad, because it introduces a change in DT binding that is not needed yet
-and might turn out to be insufficient for future SoCs.
+Add new edcs_power_controller_wait function.
 
-This patch will be okay, if a need for explicit mask specification shows
-up in future, though.
+static void edcs_power_controller_wait(unsigned int cpu, unsigned int 
+cluster){
+
+         unsigned long timeout = jiffies + msecs_to_jiffies(10);
+         unsigned int offset = cluster * EDCS_CPUS_PER_CLUSTER + cpu;
+         void __iomem *status_reg = EDCS_CORE_STATUS(offset);
+
+         /* wait till core power controller finish the work */
+
+         do {
+                 if ((readl_relaxed(status_reg) & 3) == 
+edcs_use_count[cpu][cluster] ? 3 : 0)
+                         return;
+         } while (time_before(jiffies, timeout));
+
+         /* Should never get here */
+         BUG();
+}
+
+Use it in:
+
+static void exynos_core_power_up(unsigned int cpu, unsigned int cluster)
+{
+         exynos_core_power_control(cpu, cluster, true);
+         edcs_power_controller_wait(cpu, cluster);
+}
+
+and in:
+
+static void exynos_power_down(void)
+{
+         bool last_man = false, skip_wfi = false;
+         unsigned int mpidr = read_cpuid_mpidr();
+         unsigned int cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+         unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+
+
+         pr_debug("%s: CORE%d on CLUSTER %d\n", __func__, cpu, cluster);
+         BUG_ON(cpu >= EDCS_CPUS_PER_CLUSTER  || cluster >= EDCS_CLUSTERS);
+
+         __mcpm_cpu_going_down(cpu, cluster);
+
+         arch_spin_lock(&edcs_lock);
+         BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
+         edcs_use_count[cpu][cluster]--;
+         if (edcs_use_count[cpu][cluster] == 0) {
+                 exynos_core_power_down(cpu, cluster);
+                 --core_count[cluster];
+                 if (core_count[cluster] == 0)
+                         last_man = true;
+[snip]
+         __mcpm_cpu_down(cpu, cluster);
+
+         if (!skip_wfi){
+                 wfi();
+         }
+         edcs_power_controller_wait(cpu, cluster);
+}
+
+Comments appreciated. Thanks.
 
 Best regards,
-Tomasz
-
-> And you're right. Using "samsung,enable-bit-mask" makes more sense. I will change and update with v2.
->  
-> Regards,
-> Prathyush
->  
-> ------- Original Message -------
-> Sender : Tomasz Figa<tomasz.figa@gmail.com>
-> Date : Nov 11, 2013 00:36 (GMT+05:30)
-> Title : Re: [PATCH 1/1] ARM: EXYNOS: Add enable property to power domains
->  
-> Hi Sachin,
-> 
-> On Thursday 07 of November 2013 12:12:55 Sachin Kamat wrote:
-> > From: Prathyush K
-> >
-> > Different power domains of Exynos SOCs have different enable values.
-> > E.g. Exynos5250:
-> > ROTATOR_MEM_CONFIGURATION -> 0x3
-> > GSCL_CONFIGURATION -> 0x7
-> > Currently, there is no way to differentiate between these power domains
-> > and we write default value of 0x7 to turn on all the power domains.
-> >
-> > This patch adds a new 'enable' property to the power domain structure.
-> > This enable value can be set from the device tree by adding a property
-> > 'enable' in the device node. If no such property is found, the default
-> > value of 0x7 is used as enable value.
-> 
-> Is this patch really needed? Is there any problem with simply using 0x7?
-> Patch description should always include rationale behind the change.
-> 
-> >
-> > Signed-off-by: Prathyush K
-> > Signed-off-by: Sachin Kamat
-> > ---
-> >  .../bindings/arm/exynos/power_domain.txt           |    5 +++++
-> >  arch/arm/mach-exynos/pm_domains.c                  |   10 +++++++---
-> >  2 files changed, 12 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> > index 5216b419016a..6b24b234617c 100644
-> > --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> > +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> > @@ -9,6 +9,10 @@ Required Properties:
-> >  - reg: physical base address of the controller and length of memory mapped
-> >      region.
-> >  
-> > +Optional Properties:
-> > +- enable: enable value of the register which is used to turn on the power
-> > +    domain. If no enable is specificed, default value of 0x7 is used.
-> 
-> Vendor-specific properties should have vendor prefix added, so this one
-> should be called samsung,enable instead. Also enable is not a very
-> specific name.
-> 
-> So in the end, if it turns out that we really need such patch, I'd prefer
-> something like:
-> 
-> - samsung,enable-bit-mask: Mask of power control register bits that need
->     to be set to enable the power domain. If omitted, it defaults to 0x7.
-> 
-> Best regards,
-> Tomasz
-> 
->  
->  
->  
-> 
-> 
+     Tarek Dakhran.
