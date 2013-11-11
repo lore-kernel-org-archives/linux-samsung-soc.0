@@ -1,50 +1,184 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Mon, 11 Nov 2013 16:41:33 +0530
-Message-ID: <5280BB65.5040305@ti.com>
-References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com> <1383205544-32244-2-git-send-email-gautam.vivek@samsung.com> <527744B2.4090303@ti.com> <030d01ced946$d6e23490$84a69db0$%debski@samsung.com> <52779D28.9000905@ti.com> <CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com> <00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com> <000001ceda17$f41c2030$dc546090$%han@samsung.com> <000101ceda1f$04ca6f20$0e5f4d60$%han@samsung.com> <CAFp+6iFAZab35F-MOOZHcHpzSEOL=51gWBK2KZbOJS+0731GJQ@mail.gmail.com> <000301ceda84$1d648bf0$582da3d0$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH V2] i2c: s3c2410 : Add polling mode support
+Date: Mon, 11 Nov 2013 16:50:20 +0530
+Message-ID: <1384168820-2986-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <000301ceda84$1d648bf0$582da3d0$%han@samsung.com>
 Sender: linux-doc-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Vivek Gautam' <gautamvivek1987@gmail.com>, 'Kamil Debski' <k.debski@samsung.com>, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 'Greg KH' <gregkh@linuxfoundation.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Julius Werner' <jwerner@chromium.org>
+To: wsa@the-dreams.de, ben-linux@fluff.org, kgene.kim@samsung.com, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, rob.herring@calxeda.com, ks.giri@samsung.com, aditya.ps@samsung.com
+Cc: mark.rutland@arm.com, swarren@wwwdotorg.org, linux-arm-kernel@lists.infradead.org, Vasanth Ananthan <vasanthananthan@gmail.com>, Vasanth Ananthan <vasanth.a@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+From: Vasanth Ananthan <vasanthananthan@gmail.com>
 
-On Wednesday 06 November 2013 05:37 AM, Jingoo Han wrote:
-> On Wednesday, November 06, 2013 2:58 AM, Vivek Gautam wrote:
->> On Tue, Nov 5, 2013 at 5:33 PM, Jingoo Han <jg1.han@samsung.com> wrote:
-> 
-> [.....]
-> 
->>> USB3.0 PHY consists of two blocks such as 3.0 block and 2.0 block.
->>> This USB3.0 PHY can support UTMI+ and PIPE3 interface for 3.0 block
->>> and 2.0 block, respectively.
->>>
->>> Conclusion:
->>>
->>>    1) USB2.0 PHY: USB2.0 HOST, USB2.0 Device
->>>                        Base address: 0x1213 0000
->>>
->>>    2) USB3.0 PHY: USB3.0 DRD (3.0 HOST & 3.0 Device)
->>>                        Base address: 0x1210 0000
->>>                        2.0 block(UTMI+) & 3.0 block(PIPE3)
->>
->> And this is of course the PHY used by DWC3 controller, which works at
->> both High speed as well as Super Speed.
->> Right ?
-> 
-> Right.
-> 
-> While 3.0 block(PIPE3) can be used for Super Speed, 2.0 block(UTMI+)
-> can be used for High speed.
+This patch adds polling mode support for i2c-s3c2410 driver.The
+SATA PHY controller's CMU and TRSV block's are of I2C register
+map in exynos5250.These blocks can be configured using i2c.
 
-It should then come under *single IP muliple PHY* category similar to what
-Sylwester has done.
+But i2c controller instance on which these block's sits lacks an
+interrupt line.Also the current i2c-s3c2410 driver is only interrupt
+driven, thus a polling mode support is required in the driver for
+supporting this controller. This patch adds this support to the driver.
 
-Thanks
-Kishon
+Changes from V1:
+	1.Changed the is_ack() to have even period b/w polls and
+	  used usleep_range() instead of udelay().
+
+Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ .../devicetree/bindings/i2c/i2c-s3c2410.txt        |    2 +
+ drivers/i2c/busses/i2c-s3c2410.c                   |   66 +++++++++++++++++---
+ 2 files changed, 58 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+index 296eb45..278de8e 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-s3c2410.txt
+@@ -10,6 +10,8 @@ Required properties:
+           inside HDMIPHY block found on several samsung SoCs
+       (d) "samsung, exynos5440-i2c", for s3c2440-like i2c used
+ 	   on EXYNOS5440 which does not need GPIO configuration.
++      (e) "samsung, exynos5-sata-phy-i2c", for s3c2440-like i2c used as
++	   a host to SATA PHY controller on an internal bus.
+   - reg: physical base address of the controller and length of memory mapped
+     region.
+   - interrupts: interrupt number to the cpu.
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 3747b9b..08ed126 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -85,6 +85,7 @@
+ #define QUIRK_S3C2440		(1 << 0)
+ #define QUIRK_HDMIPHY		(1 << 1)
+ #define QUIRK_NO_GPIO		(1 << 2)
++#define QUIRK_POLL		(1 << 3)
+ 
+ /* Max time to wait for bus to become idle after a xfer (in us) */
+ #define S3C2410_IDLE_TIMEOUT	5000
+@@ -141,6 +142,8 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
+ 
++static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat);
++
+ #ifdef CONFIG_OF
+ static const struct of_device_id s3c24xx_i2c_match[] = {
+ 	{ .compatible = "samsung,s3c2410-i2c", .data = (void *)0 },
+@@ -149,6 +152,8 @@ static const struct of_device_id s3c24xx_i2c_match[] = {
+ 	  .data = (void *)(QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO) },
+ 	{ .compatible = "samsung,exynos5440-i2c",
+ 	  .data = (void *)(QUIRK_S3C2440 | QUIRK_NO_GPIO) },
++	{ .compatible = "samsung,exynos5-sata-phy-i2c",
++	  .data = (void *)(QUIRK_S3C2440 | QUIRK_POLL | QUIRK_NO_GPIO) },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+@@ -187,7 +192,8 @@ static inline void s3c24xx_i2c_master_complete(struct s3c24xx_i2c *i2c, int ret)
+ 	if (ret)
+ 		i2c->msg_idx = ret;
+ 
+-	wake_up(&i2c->wait);
++	if (!(i2c->quirks & QUIRK_POLL))
++		wake_up(&i2c->wait);
+ }
+ 
+ static inline void s3c24xx_i2c_disable_ack(struct s3c24xx_i2c *i2c)
+@@ -224,6 +230,22 @@ static inline void s3c24xx_i2c_enable_irq(struct s3c24xx_i2c *i2c)
+ 	writel(tmp | S3C2410_IICCON_IRQEN, i2c->regs + S3C2410_IICCON);
+ }
+ 
++static bool is_ack(struct s3c24xx_i2c *i2c)
++{
++	int tries;
++
++	for (tries = 50; tries; --tries) {
++		if (readl(i2c->regs + S3C2410_IICCON)
++			& S3C2410_IICCON_IRQPEND) {
++			if (!(readl(i2c->regs + S3C2410_IICSTAT)
++				& S3C2410_IICSTAT_LASTBIT))
++				return true;
++		}
++		usleep_range(1000, 2000);
++	}
++	dev_err(i2c->dev, "ack was not recieved\n");
++	return false;
++}
+ 
+ /* s3c24xx_i2c_message_start
+  *
+@@ -268,6 +290,16 @@ static void s3c24xx_i2c_message_start(struct s3c24xx_i2c *i2c,
+ 
+ 	stat |= S3C2410_IICSTAT_START;
+ 	writel(stat, i2c->regs + S3C2410_IICSTAT);
++
++	if (i2c->quirks & QUIRK_POLL) {
++		while ((i2c->msg_num != 0) && is_ack(i2c)) {
++			i2c_s3c_irq_nextbyte(i2c, stat);
++			stat = readl(i2c->regs + S3C2410_IICSTAT);
++
++			if (stat & S3C2410_IICSTAT_ARBITR)
++				dev_err(i2c->dev, "deal with arbitration loss\n");
++		}
++	}
+ }
+ 
+ static inline void s3c24xx_i2c_stop(struct s3c24xx_i2c *i2c, int ret)
+@@ -675,6 +707,15 @@ static int s3c24xx_i2c_doxfer(struct s3c24xx_i2c *i2c,
+ 	s3c24xx_i2c_enable_irq(i2c);
+ 	s3c24xx_i2c_message_start(i2c, msgs);
+ 
++	if (i2c->quirks & QUIRK_POLL) {
++		ret = i2c->msg_idx;
++
++		if (ret != num)
++			dev_dbg(i2c->dev, "incomplete xfer (%d)\n", ret);
++
++		goto out;
++	}
++
+ 	timeout = wait_event_timeout(i2c->wait, i2c->msg_num == 0, HZ * 5);
+ 
+ 	ret = i2c->msg_idx;
+@@ -820,6 +861,9 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
+ 	if (div1 == 512)
+ 		iiccon |= S3C2410_IICCON_TXDIV_512;
+ 
++	if (i2c->quirks & QUIRK_POLL)
++		iiccon |= S3C2410_IICCON_SCALE(2);
++
+ 	writel(iiccon, i2c->regs + S3C2410_IICCON);
+ 
+ 	if (i2c->quirks & QUIRK_S3C2440) {
+@@ -1117,18 +1161,20 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	 * ensure no current IRQs pending
+ 	 */
+ 
+-	i2c->irq = ret = platform_get_irq(pdev, 0);
+-	if (ret <= 0) {
+-		dev_err(&pdev->dev, "cannot find IRQ\n");
+-		return ret;
+-	}
++	if (!(i2c->quirks & QUIRK_POLL)) {
++		i2c->irq = ret = platform_get_irq(pdev, 0);
++		if (ret <= 0) {
++			dev_err(&pdev->dev, "cannot find IRQ\n");
++			return ret;
++		}
+ 
+ 	ret = devm_request_irq(&pdev->dev, i2c->irq, s3c24xx_i2c_irq, 0,
+-			       dev_name(&pdev->dev), i2c);
++				dev_name(&pdev->dev), i2c);
+ 
+-	if (ret != 0) {
+-		dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+-		return ret;
++		if (ret != 0) {
++			dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
++			return ret;
++		}
+ 	}
+ 
+ 	ret = s3c24xx_i2c_register_cpufreq(i2c);
+-- 
+1.7.9.5
+
