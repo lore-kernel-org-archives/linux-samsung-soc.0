@@ -1,180 +1,348 @@
-From: Tarek Dakhran <t.dakhran@samsung.com>
-Subject: Re: [PATCH v3 4/4] ARM: dts: Add initial device tree support for
- EXYNOS5410
-Date: Mon, 11 Nov 2013 12:03:07 +0400
-Message-ID: <52808F3B.2000804@samsung.com>
+From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 3/4] ARM: EXYNOS: add Exynos Dual Cluster Support
+Date: Mon, 11 Nov 2013 12:13:25 +0400
+Message-ID: <528091A5.6030205@samsung.com>
 References: <1383811969-32712-1-git-send-email-v.tyrtov@samsung.com>
- <1383811969-32712-5-git-send-email-v.tyrtov@samsung.com>
- <19495187.Nrl1zS8Kog@flatron>
+ <1383811969-32712-4-git-send-email-v.tyrtov@samsung.com>
+ <20131107130141.GA3129@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <19495187.Nrl1zS8Kog@flatron>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Dave.Martin@arm.com, nicolas.pitre@linaro.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20131107130141.GA3129-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>, Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <Pawel.Moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <Mark.Rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Naour Romain <romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 10.11.2013 22:02, Tomasz Figa wrote:
-> Hi,
->
-> Please see my comments inline.
->
-> On Thursday 07 of November 2013 12:12:49 Vyacheslav Tyrtov wrote:
->> From: Tarek Dakhran <t.dakhran@samsung.com>
+On 07.11.2013 17:01, Dave Martin wrote:
+> On Thu, Nov 07, 2013 at 08:12:48AM +0000, Vyacheslav Tyrtov wrote:
+>> From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >>
->> Add initial device tree nodes for EXYNOS5410 SoC and SMDK5410 board.
+>> Add EDCS(Exynos Dual Cluster Support) for Samsung Exynos5410 SoC.
+>> This enables all 8 cores, 4 x A7 and 4 x A15 run at the same time.
 >>
->> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
->> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+>> Signed-off-by: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >> ---
->>   arch/arm/boot/dts/Makefile                |   1 +
->>   arch/arm/boot/dts/exynos5410-smdk5410.dts |  65 ++++++++++
->>   arch/arm/boot/dts/exynos5410.dtsi         | 209 ++++++++++++++++++++++++++++++
->>   3 files changed, 275 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
->>   create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
-> [snip]
->> diff --git a/arch/arm/boot/dts/exynos5410-smdk5410.dts b/arch/arm/boot/dts/exynos5410-smdk5410.dts
+>>   arch/arm/mach-exynos/Makefile |   2 +
+>>   arch/arm/mach-exynos/edcs.c   | 278 ++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 280 insertions(+)
+>>   create mode 100644 arch/arm/mach-exynos/edcs.c
+>>
+>> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+>> index 5369615..ba6efdb 100644
+>> --- a/arch/arm/mach-exynos/Makefile
+>> +++ b/arch/arm/mach-exynos/Makefile
+>> @@ -34,3 +34,5 @@ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
+>>   
+>>   obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
+>>   obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
+>> +
+>> +obj-$(CONFIG_SOC_EXYNOS5410)		+= edcs.o
+>> diff --git a/arch/arm/mach-exynos/edcs.c b/arch/arm/mach-exynos/edcs.c
 >> new file mode 100644
->> index 0000000..06ae479
+>> index 0000000..980bfdd
 >> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos5410-smdk5410.dts
->> @@ -0,0 +1,65 @@
+>> +++ b/arch/arm/mach-exynos/edcs.c
+>> @@ -0,0 +1,278 @@
 >> +/*
->> + * SAMSUNG SMDK5410 board device tree source
+>> + * arch/arm/mach-exynos/edcs.c - exynos dual cluster power management support
 >> + *
 >> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->> + *		http://www.samsung.com
+>> + * Author: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 >> + *
 >> + * This program is free software; you can redistribute it and/or modify
 >> + * it under the terms of the GNU General Public License version 2 as
 >> + * published by the Free Software Foundation.
->> +*/
->> +
->> +/dts-v1/;
->> +#include "exynos5410.dtsi"
->> +/ {
->> +	model = "Samsung SMDK5410 board based on EXYNOS5410";
->> +	compatible = "samsung,smdk5410", "samsung,exynos5410";
->> +
->> +	memory {
->> +		reg = <0x40000000 0x80000000>;
->> +	};
->> +
->> +	chosen {
->> +		bootargs = "console=ttySAC2,115200";
->> +	};
->> +
->> +	oscclk: oscclk {
-> coding style: According to ePAPR recommendation, node name should
-> represent hardware type, not particular instance of hardware.
->
-> So instead, the preferred way would be to specify the clock using
-> following layout:
->
-> 	clocks {
-> 		compatible = "simple-bus";
-> 		#address-cells = <1>;
-> 		#size-cells = <0>;
->
-> 		oscclk: clock@0 {
-> 			compatible = "fixed-clock";
-> 			reg = <0>;
-> 			#clock-cells = <0>;
-> 			clock-frequency = <24000000>;
-> 			clock-output-names = "fin_pll";
-> 		};
-> 	};
->
->> +		compatible = "fixed-clock";
->> +		#clock-cells = <0>;
->> +		clock-frequency = <24000000>;
->> +		clock-output-names = "fin_pll";
->> +	};
-> [snip]
->> +
->> +};
->> diff --git a/arch/arm/boot/dts/exynos5410.dtsi b/arch/arm/boot/dts/exynos5410.dtsi
->> new file mode 100644
->> index 0000000..9921b66
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos5410.dtsi
->> @@ -0,0 +1,209 @@
->> +/*
->> + * SAMSUNG EXYNOS5410 SoC device tree source
 >> + *
->> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
->> + *		http://www.samsung.com
->> + *
->> + * SAMSUNG EXYNOS5410 SoC device nodes are listed in this file.
->> + * EXYNOS5410 based board files can include this file and provide
->> + * values for board specfic bindings.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
+>> + * EDCS(exynos dual cluster support) for Exynos5410 SoC.
 >> + */
 >> +
->> +#include <dt-bindings/clock/exynos5410.h>
->> +#include "exynos5.dtsi"
->> +/ {
-> [snip]
->> +	clock: clock-controller@10010000 {
->> +		compatible = "samsung,exynos5410-clock";
->> +		reg = <0x10010000 0x30000>;
->> +		#clock-cells = <1>;
->> +	};
+>> +#include <linux/init.h>
+>> +#include <linux/io.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/spinlock.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/irqchip/arm-gic.h>
 >> +
->> +	mct@101C0000 {
-> A generic name would be: timer@101C0000
->
->> +		compatible = "samsung,exynos4210-mct";
->> +		reg = <0x101C0000 0xB00>;
->> +		interrupt-controller;
->> +		#interrups-cells = <1>;
-> MCT is not an interrupt controller, so both interrupt-controller and
-> #interrupt-cells properties are incorrect. I guess that's due to the
-> broken example in the documentation, that I already posted patches to fix.
->
->> +		interrupt-parent = <&mct_map>;
->> +		interrupts = <0>, <1>, <2>, <3>,
->> +			<4>, <5>, <6>, <7>,
->> +			<8>, <9>, <10>, <11>;
->> +		clocks = <&oscclk>, <&clock CLK_MCT>;
->> +		clock-names = "fin_pll", "mct";
+>> +#include <asm/mcpm.h>
+>> +#include <asm/proc-fns.h>
+>> +#include <asm/cacheflush.h>
+>> +#include <asm/cputype.h>
+>> +#include <asm/cp15.h>
 >> +
->> +		mct_map: mct-map {
-> Again, interrupt-map would be a better name for this node.
+>> +#include <linux/arm-cci.h>
+>> +#include <mach/regs-pmu.h>
+>> +
+>> +#define EDCS_CPUS_PER_CLUSTER	4
+>> +#define EDCS_CLUSTERS		2
+>> +
+>> +/* Exynos5410 power management registers */
+>> +#define EDCS_CORE_CONFIGURATION(_nr)	(S5P_ARM_CORE0_CONFIGURATION	\
+>> +						+ ((_nr) * 0x80))
+>> +#define EDCS_CORE_STATUS(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x4)
+>> +#define EDCS_CORE_OPTION(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x8)
+>> +
+>> +#define REG_CPU_STATE_ADDR0		(S5P_VA_SYSRAM_NS + 0x28)
+>> +#define REG_CPU_STATE_ADDR(_nr)		(REG_CPU_STATE_ADDR0 +	\
+>> +						 (_nr) * EDCS_CPUS_PER_CLUSTER)
+>> +
+>> +#define SECONDARY_RESET		(1 << 1)
+>> +#define REG_ENTRY_ADDR		(S5P_VA_SYSRAM_NS + 0x1c)
+>> +
+>> +static arch_spinlock_t edcs_lock = __ARCH_SPIN_LOCK_UNLOCKED;
+>> +
+>> +static int edcs_use_count[EDCS_CPUS_PER_CLUSTER][EDCS_CLUSTERS];
+>> +static int core_count[EDCS_CLUSTERS];
+>> +
+>> +static void exynos_core_power_control(unsigned int cpu, unsigned int cluster,
+>> +				bool enable)
+>> +{
+>> +	unsigned int offset = cluster * MAX_CPUS_PER_CLUSTER + cpu;
+>> +	int value = enable ? S5P_CORE_LOCAL_PWR_EN : 0;
+>> +
+>> +	if ((readl_relaxed(EDCS_CORE_STATUS(offset)) & 0x3) != value) {
+> I wonder if there is a race here.
 >
->> +			#interrupt-cells = <1>;
->> +			#address-cells = <0>;
->> +			#size-cells = <0>;
->> +			interrupt-map = <0 &combiner 23 3>,
->> +					<1 &combiner 23 4>,
->> +					<2 &combiner 25 2>,
->> +					<3 &combiner 25 3>,
->> +					<4 &gic 0 120 0>,
->> +					<5 &gic 0 121 0>,
->> +					<6 &gic 0 122 0>,
->> +					<7 &gic 0 123 0>,
->> +					<8 &gic 0 128 0>,
->> +					<9 &gic 0 129 0>,
->> +					<10 &gic 0 130 0>,
->> +					<11 &gic 0 131 0>;
->> +		};
->> +	};
-> Otherwise, the patch looks good.
+> If there is a pending powerdown which has reached the __mcpm_cpu_down()
+> stage, then the kernel has no way to know what is still pending.  This
+> means that when calling exynos_power_up(cpu, cluster) after a successful
+> call to exynos_power_down(same cpu, cluster), there is a chance that
+> the CPU still gets powered down, because of the pending
+> exynos_core_power_control() on the outbound side.
 >
-> Best regards,
-> Tomasz
+> This isn't an issue for TC2, because TC2's power controller queues
+> requests and services them in order, so a new powerup request cannot
+> race with a powerdown request in that way.
+>
+> For exynos5410, it looks like the kernel needs to do that sequencing,
+> based on my guess about what the EDCS_CORE_STATUS() bits tell us.
 >
 >
-Thanks a lot, Tomasz.
-All will be corrected in v4.
+> I think that for correct behaviour we would need to wait for the race to
+> be resolved here, but only if a powerdown might be pending.
+>
+> This implies that something like a call to the power_down_finish()
+> method (which you would need to write -- see my comments below) is
+> needed in exynos_core_power_up().
+>
+>
+> It might make sense to have a per-cpu flag that tracks whether a
+> powerdown is pending.  The flag could be set after
+> __mcpm_cpu_going_down() is called, and cleared in the powered_up()
+> method (which you would need to add).
+>
+>
+> Maybe we should always just poll and wait, though.  exynos_power_up()
+> should never be called for a CPU that the kernel thinks is already up,
+> so it should either be down already (in which case we will poll the
+> status once and then continue), or a power down is pending (in which
+> case we must wait, but we know the wait will terminate).  This would
+> be simpler than tracking a "power down pending" flag for each CPU.
+>
+>> +		wmb();
+>> +		writel_relaxed(value, EDCS_CORE_CONFIGURATION(offset));
+>> +	}
+>> +}
+>> +
+>> +static void exynos_core_power_up(unsigned int cpu, unsigned int cluster)
+>> +{
+>> +	exynos_core_power_control(cpu, cluster, true);
+>> +}
+>> +
+>> +static void exynos_core_power_down(unsigned int cpu, unsigned int cluster)
+>> +{
+>> +	exynos_core_power_control(cpu, cluster, false);
+>> +}
+>> +
+>> +void set_boot_flag(unsigned int cpu, unsigned int mode)
+>> +{
+>> +	writel_relaxed(mode, REG_CPU_STATE_ADDR(cpu));
+>> +}
+>> +
+>> +static int exynos_power_up(unsigned int cpu, unsigned int cluster)
+>> +{
+>> +	pr_debug("%s: cpu %u cluster %u\n", __func__, cpu, cluster);
+>> +	BUG_ON(cpu >= EDCS_CPUS_PER_CLUSTER || cluster >= EDCS_CLUSTERS);
+>> +
+>> +	local_irq_disable();
+>> +	arch_spin_lock(&edcs_lock);
+>> +
+>> +	edcs_use_count[cpu][cluster]++;
+>> +	if (edcs_use_count[cpu][cluster] == 1) {
+>> +		++core_count[cluster];
+>> +		set_boot_flag(cpu, SECONDARY_RESET);
+>> +		exynos_core_power_up(cpu, cluster);
+>> +	} else if (edcs_use_count[cpu][cluster] != 2) {
+>> +		/*
+>> +		 * The only possible values are:
+>> +		 * 0 = CPU down
+>> +		 * 1 = CPU (still) up
+>> +		 * 2 = CPU requested to be up before it had a chance
+>> +		 *     to actually make itself down.
+>> +		 * Any other value is a bug.
+>> +		 */
+>> +		BUG();
+>> +	}
+>> +
+>> +	arch_spin_unlock(&edcs_lock);
+>> +	local_irq_enable();
+>> +
+>> +	return 0;
+>> +}
+>> +static void exynos_power_down(void)
+>> +{
+>> +	unsigned int mpidr, cpu, cluster;
+>> +	bool last_man = false, skip_wfi = false;
+>> +
+>> +	mpidr = read_cpuid_mpidr();
+>> +	cpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+>> +	cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>> +
+>> +	pr_debug("%s: CORE%d on CLUSTER %d\n", __func__, cpu, cluster);
+>> +	BUG_ON(cpu >= EDCS_CPUS_PER_CLUSTER  || cluster >= EDCS_CLUSTERS);
+>> +
+>> +	__mcpm_cpu_going_down(cpu, cluster);
+>> +
+>> +	arch_spin_lock(&edcs_lock);
+>> +	BUG_ON(__mcpm_cluster_state(cluster) != CLUSTER_UP);
+>> +	edcs_use_count[cpu][cluster]--;
+>> +	if (edcs_use_count[cpu][cluster] == 0) {
+>> +		--core_count[cluster];
+>> +		if (core_count[cluster] == 0)
+>> +			last_man = true;
+>> +	} else if (edcs_use_count[cpu][cluster] == 1) {
+>> +		/*
+>> +		 * A power_up request went ahead of us.
+>> +		 * Even if we do not want to shut this CPU down,
+>> +		 * the caller expects a certain state as if the WFI
+>> +		 * was aborted.  So let's continue with cache cleaning.
+>> +		 */
+>> +		skip_wfi = true;
+>> +	} else
+>> +		BUG();
+>> +
+>> +	if (!skip_wfi)
+>> +		gic_cpu_if_down();
+>> +
+>> +	if (last_man && __mcpm_outbound_enter_critical(cpu, cluster)) {
+>> +		arch_spin_unlock(&edcs_lock);
+>> +
+>> +		if (read_cpuid_part_number() == ARM_CPU_PART_CORTEX_A15) {
+>> +			/*
+>> +			 * On the Cortex-A15 we need to disable
+>> +			 * L2 prefetching before flushing the cache.
+>> +			 */
+>> +			asm volatile(
+>> +			"mcr	p15, 1, %0, c15, c0, 3\n\t"
+>> +			"isb\n\t"
+>> +			"dsb"
+>> +			: : "r" (0x400));
+>> +		}
+>> +
+>> +		/*
+>> +		 * We need to disable and flush the whole (L1 and L2) cache.
+>> +		 * Let's do it in the safest possible way i.e. with
+>> +		 * no memory access within the following sequence
+>> +		 * including the stack.
+>> +		 *
+>> +		 * Note: fp is preserved to the stack explicitly prior doing
+>> +		 * this since adding it to the clobber list is incompatible
+>> +		 * with having CONFIG_FRAME_POINTER=y.
+>> +		 */
+>> +		asm volatile(
+>> +		"str	fp, [sp, #-4]!\n\t"
+>> +		"mrc	p15, 0, r0, c1, c0, 0	@ get CR\n\t"
+>> +		"bic	r0, r0, #"__stringify(CR_C)"\n\t"
+>> +		"mcr	p15, 0, r0, c1, c0, 0	@ set CR\n\t"
+>> +		"isb\n\t"
+>> +		"bl	v7_flush_dcache_all\n\t"
+>> +		"clrex\n\t"
+>> +		"mrc	p15, 0, r0, c1, c0, 1	@ get AUXCR\n\t"
+>> +		"bic	r0, r0, #(1 << 6)	@ disable local coherency\n\t"
+>> +		"mcr	p15, 0, r0, c1, c0, 1	@ set AUXCR\n\t"
+>> +		"isb\n\t"
+>> +		"dsb\n\t"
+>> +		"ldr	fp, [sp], #4"
+> The v7_exit_coherency_flush() macro is now in linux-next, so
+> you can now use it to replace these sequences.
+>
+> This can be replaced by v7_exit_coherency_flush(all).
+>
+>> +		: : : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
+>> +			"r9", "r10", "lr", "memory");
+>> +
+>> +		cci_disable_port_by_cpu(mpidr);
+>> +
+>> +		__mcpm_outbound_leave_critical(cluster, CLUSTER_DOWN);
+>> +
+>> +	} else {
+>> +		arch_spin_unlock(&edcs_lock);
+>> +		/*
+>> +			* We need to disable and flush only the L1 cache.
+>> +			* Let's do it in the safest possible way as above.
+>> +		*/
+>> +		asm volatile(
+>> +		"str	fp, [sp, #-4]!\n\t"
+>> +		"mrc	p15, 0, r0, c1, c0, 0	@ get CR\n\t"
+>> +		"bic	r0, r0, #"__stringify(CR_C)"\n\t"
+>> +		"mcr	p15, 0, r0, c1, c0, 0	@ set CR\n\t"
+>> +		"isb\n\t"
+>> +		"bl	v7_flush_dcache_louis\n\t"
+>> +		"clrex\n\t"
+>> +		"mrc	p15, 0, r0, c1, c0, 1	@ get AUXCR\n\t"
+>> +		"bic	r0, r0, #(1 << 6)	@ disable local coherency\n\t"
+>> +		"mcr	p15, 0, r0, c1, c0, 1	@ set AUXCR\n\t"
+>> +		"isb\n\t"
+>> +		"dsb\n\t"
+>> +		"ldr	fp, [sp], #4"
+> v7_exit_coherency_flush(louis) should work here.
+>
+> arch/arm/mach-vexpress/tc2_pm.c (in linux-next) shows how to use it.
+>
+>> +		: : : "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7",
+>> +		      "r9", "r10", "lr", "memory");
+>> +
+>> +	}
+>> +	__mcpm_cpu_down(cpu, cluster);
+>> +
+>> +	if (!skip_wfi) {
+>> +		exynos_core_power_down(cpu, cluster);
+>> +		wfi();
+>> +	}
+>> +}
+>> +
+>> +static const struct mcpm_platform_ops exynos_power_ops = {
+>> +	.power_up	= exynos_power_up,
+>> +	.power_down	= exynos_power_down,
+>> +};
+> The new mcpm_power_down_finish() call is also present in linux-next now,
+> so it should get merged into v3.13.
+>
+> One effect of this is that you should provide a power_down_finish()
+> method in your mcpm_platform_ops, to provide the kernel with a way to
+> check that a CPU has finished powering down.  This would usually involve
+> checking some status bits in the power controller.  See the comments for
+> mcpm_power_down_finish() in arch/arm/include/asm/mcpm.h for details.
+>
+> No platform backend for power_down_finish() is merged yet.  The most
+> recent patch for TC2 was posted here -- I need to follow up on it.
+>
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2013-October/201619.html
+> [PATCH v3 3/3] ARM: vexpress/TC2: Implement MCPM power_down_finish()
+>
+> This may look quite different for exynos5410.
+>
+> Cheers
+> ---Dave
+>
+Thanks Dave.
+I'm working on this problem.
 
 Best regards,
-     Tarek Dakhran
+     Tarek Dakhran.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
