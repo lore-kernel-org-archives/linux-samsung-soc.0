@@ -1,130 +1,128 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add SPI nodes to the exynos5420 device tree file
-Date: Tue, 12 Nov 2013 17:32:25 +0530
-Message-ID: <CAL1wa8cP_nrHxdF-abpL-M-arb5SdVCAmgqipVAgZEGzXpbrDw@mail.gmail.com>
-References: <1377856637-7595-1-git-send-email-l.krishna@samsung.com> <086701cedf98$ab9d9f60$02d8de20$@org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Add enable property to power domains
+Date: Tue, 12 Nov 2013 14:21:38 +0100
+Message-ID: <2066181.Dnml2sjdAl@amdc1032>
+References: <1B.DE.05666.EC070825@epcpsbgx2.samsung.com>
+ <2964665.KKjuSDVdEA@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:60428 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755101Ab3KLMCr (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:34146 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753792Ab3KLNV5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Nov 2013 07:02:47 -0500
-In-Reply-To: <086701cedf98$ab9d9f60$02d8de20$@org>
+	Tue, 12 Nov 2013 08:21:57 -0500
+In-reply-to: <2964665.KKjuSDVdEA@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, abrestic@chromium.org, Tomasz Figa <t.figa@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: prathyush.k@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Kukjin,
 
-Thanks for reviewing the patch.
+Hi,
 
-On Tue, Nov 12, 2013 at 4:46 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> Leela Krishna Amudala  wrote:
->>
->> Add SPI device tree nodes to Exynos5420 SoC
->>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> Reviewed-by: Andrew Bresticker <abrestic@chromium.org>
->> ---
->> Note: This patch is rebased on Kgene's for-next branch and is dependent on
->> [V3] ARM: dts: Add DMA controller node info on Exynos5420.
->> https://patchwork.kernel.org/patch/2851790/
->>
->>  arch/arm/boot/dts/exynos5420.dtsi |   51
->> +++++++++++++++++++++++++++++++++++++
->>  1 file changed, 51 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
->> b/arch/arm/boot/dts/exynos5420.dtsi
->> index 15465f8..8d9e980 100644
->> --- a/arch/arm/boot/dts/exynos5420.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420.dtsi
->> @@ -27,6 +27,9 @@
->>               pinctrl2 = &pinctrl_2;
->>               pinctrl3 = &pinctrl_3;
->>               pinctrl4 = &pinctrl_4;
->> +             spi0 = &spi_0;
->> +             spi1 = &spi_1;
->> +             spi2 = &spi_2;
->>       };
->>
->>       cpus {
->> @@ -238,6 +241,54 @@
->>               };
->>       };
->>
->> +     spi_0: spi@12d20000 {
->> +             compatible = "samsung,exynos4210-spi";
->> +             reg = <0x12d20000 0x100>;
->> +             interrupts = <0 66 0>;
->> +             dmas = <&pdma0 5
->> +                     &pdma0 4>;
->> +             dma-names = "tx", "rx";
->> +             #address-cells = <1>;
->> +             #size-cells = <0>;
->> +             pinctrl-names = "default";
->> +             pinctrl-0 = <&spi0_bus>;
->> +             clocks = <&clock 271>, <&clock 135>;
->> +             clock-names = "spi", "spi_busclk0";
->> +             status = "disabled";
->> +     };
->> +
->> +     spi_1: spi@12d30000 {
->> +             compatible = "samsung,exynos4210-spi";
->> +             reg = <0x12d30000 0x100>;
->> +             interrupts = <0 67 0>;
->> +             dmas = <&pdma1 5
->> +                     &pdma1 4>;
->> +             dma-names = "tx", "rx";
->> +             #address-cells = <1>;
->> +             #size-cells = <0>;
->> +             pinctrl-names = "default";
->> +             pinctrl-0 = <&spi1_bus>;
->> +             clocks = <&clock 272>, <&clock 136>;
->> +             clock-names = "spi", "spi_busclk0";
->> +             status = "disabled";
->> +     };
->> +
->> +     spi_2: spi@12d40000 {
->> +             compatible = "samsung,exynos4210-spi";
->> +             reg = <0x12d40000 0x100>;
->> +             interrupts = <0 68 0>;
->> +             dmas = <&pdma0 7
->> +                     &pdma0 6>;
->> +             dma-names = "tx", "rx";
->> +             #address-cells = <1>;
->> +             #size-cells = <0>;
->> +             pinctrl-names = "default";
->> +             pinctrl-0 = <&spi2_bus>;
->> +             clocks = <&clock 273>, <&clock 137>;
->> +             clock-names = "spi", "spi_busclk0";
->> +             status = "disabled";
->> +     };
->> +
->>       serial@12C00000 {
->>               clocks = <&clock 257>, <&clock 128>;
->>               clock-names = "uart", "clk_uart_baud0";
->> --
->> 1.7.10.4
->
-> Leela, do you still want to keep the status 'disabled' for SPIs?
->
+On Monday, November 11, 2013 03:28:44 PM Tomasz Figa wrote:
+> Hi Prathyush,
+> 
+> Thanks for your reply. However, please do not use HTML messages to reply
+> to mailing lists, as many of them filter out such.
+> 
+> On Monday 11 of November 2013 05:53:18 Prathyush Kalashwaram wrote:
+> > Hi Tomasz,
+> >  
+> > The enable values for some configuration registers are not 0x7.
+> > Though there is no issue observed (so far) in using 0x7, it is better to use the correct enable values.
+> > Thats the reason for this patch.
+> 
+> Well, this means that the patch does not fix or improve anything, just
+> introduces changes that are not needed for anything. This is especially
 
-Yes, the SPI client nodes will make status = "okay" in board file.
+Writing reserved bits of hardware registers is not a good practice and
+such behavior should be fixed.  However in this particular case of power
+domains I don't see a need for fixing anything.  After looking at the
+documentation and the code I see no improper use of currently supported
+power domains.
 
-Best Wishes,
-Leela Krishna.
+Prathyush, could you please confirm that there are no currently supported
+power domains (defined in exynos*.dtsi device tree files) that need fixing?
 
-> Others look good to me.
->
-> Thanks,
-> Kukjin
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> bad, because it introduces a change in DT binding that is not needed yet
+> and might turn out to be insufficient for future SoCs.
+> 
+> This patch will be okay, if a need for explicit mask specification shows
+> up in future, though.
+
+Agreed.
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> Best regards,
+> Tomasz
+> 
+> > And you're right. Using "samsung,enable-bit-mask" makes more sense. I will change and update with v2.
+> >  
+> > Regards,
+> > Prathyush
+> >  
+> > ------- Original Message -------
+> > Sender : Tomasz Figa<tomasz.figa@gmail.com>
+> > Date : Nov 11, 2013 00:36 (GMT+05:30)
+> > Title : Re: [PATCH 1/1] ARM: EXYNOS: Add enable property to power domains
+> >  
+> > Hi Sachin,
+> > 
+> > On Thursday 07 of November 2013 12:12:55 Sachin Kamat wrote:
+> > > From: Prathyush K
+> > >
+> > > Different power domains of Exynos SOCs have different enable values.
+> > > E.g. Exynos5250:
+> > > ROTATOR_MEM_CONFIGURATION -> 0x3
+> > > GSCL_CONFIGURATION -> 0x7
+> > > Currently, there is no way to differentiate between these power domains
+> > > and we write default value of 0x7 to turn on all the power domains.
+> > >
+> > > This patch adds a new 'enable' property to the power domain structure.
+> > > This enable value can be set from the device tree by adding a property
+> > > 'enable' in the device node. If no such property is found, the default
+> > > value of 0x7 is used as enable value.
+> > 
+> > Is this patch really needed? Is there any problem with simply using 0x7?
+> > Patch description should always include rationale behind the change.
+> > 
+> > >
+> > > Signed-off-by: Prathyush K
+> > > Signed-off-by: Sachin Kamat
+> > > ---
+> > >  .../bindings/arm/exynos/power_domain.txt           |    5 +++++
+> > >  arch/arm/mach-exynos/pm_domains.c                  |   10 +++++++---
+> > >  2 files changed, 12 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> > > index 5216b419016a..6b24b234617c 100644
+> > > --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> > > +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> > > @@ -9,6 +9,10 @@ Required Properties:
+> > >  - reg: physical base address of the controller and length of memory mapped
+> > >      region.
+> > >  
+> > > +Optional Properties:
+> > > +- enable: enable value of the register which is used to turn on the power
+> > > +    domain. If no enable is specificed, default value of 0x7 is used.
+> > 
+> > Vendor-specific properties should have vendor prefix added, so this one
+> > should be called samsung,enable instead. Also enable is not a very
+> > specific name.
+> > 
+> > So in the end, if it turns out that we really need such patch, I'd prefer
+> > something like:
+> > 
+> > - samsung,enable-bit-mask: Mask of power control register bits that need
+> >     to be set to enable the power domain. If omitted, it defaults to 0x7.
+> > 
+> > Best regards,
+> > Tomasz
