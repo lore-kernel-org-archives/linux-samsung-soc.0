@@ -1,100 +1,62 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [RESEND] [PATCH] ARM: dts: exynos5: add pwm DT nodes to Exynos5250
- and Exynos5420
-Date: Tue, 12 Nov 2013 20:39:12 +0900
-Message-ID: <086801cedf9b$cef3c450$6cdb4cf0$@org>
-References: <1381383731-4359-1-git-send-email-l.krishna@samsung.com>
- <CAK9yfHyB=Uqjg1HhMx6BXSihDmwRpmpkeLrm2YgDj2Yyo4ySuA@mail.gmail.com>
- <CAL1wa8e0e1NwrntEPTnm8=_bSXj3k=Gk+jenphYPEAh8tXKwiA@mail.gmail.com>
+Subject: RE: [Patch v4 0/2] Enable all cpus in Exynos5420
+Date: Tue, 12 Nov 2013 20:42:42 +0900
+Message-ID: <086901cedf9c$4c1ffca0$e45ff5e0$@org>
+References: <1381119431-12697-1-git-send-email-chander.kashyap@linaro.org>
+ <CANuQgHEx+pNdaybeJ_dpQ5kWYpA44hrYj4ikW9d60a3hEZZPDA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40879 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751559Ab3KLLjO (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:51365 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751559Ab3KLLmo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Nov 2013 06:39:14 -0500
-In-reply-to: <CAL1wa8e0e1NwrntEPTnm8=_bSXj3k=Gk+jenphYPEAh8tXKwiA@mail.gmail.com>
+	Tue, 12 Nov 2013 06:42:44 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MW5004D8F68SO40@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 12 Nov 2013 20:42:42 +0900 (KST)
+In-reply-to: <CANuQgHEx+pNdaybeJ_dpQ5kWYpA44hrYj4ikW9d60a3hEZZPDA@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>, abrestic@chromium.org, olofj@chromium.org
+To: 'Chander Kashyap' <chander.kashyap@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
 
-Leela Krishna Amudala wrote:
+Chander Kashyap wrote:
 > 
-> Hi Sachin,
+> Hi Kukjin,
 > 
-> On Thu, Oct 10, 2013 at 11:18 AM, Sachin Kamat <sachin.kamat@linaro.org>
+> On 7 October 2013 09:47, Chander Kashyap <chander.kashyap@linaro.org>
 > wrote:
-> > Hi Leela,
+> > Exynos5420 is an octa-core SoC. This patch series enables the remaining
+> 4 cores.
 > >
-> > On 10 October 2013 11:12, Leela Krishna Amudala <l.krishna@samsung.com>
-> wrote:
-> >> Add the device-tree binding for the PWM controller to Exynos5250 and
-> Exynos5420
-> >>
-> >> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> >> Signed-off-by: Olof Johansson <olofj@chromium.org>
-> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> >> ---
-> >>  arch/arm/boot/dts/exynos5250.dtsi |    9 +++++++++
-> >>  arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
-> >>  2 files changed, 18 insertions(+)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> >> index 864ae90..99abc72 100644
-> >> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> >> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> >> @@ -521,6 +521,15 @@
-> >>                 };
-> >>         };
-> >>
-> >> +       pwm: pwm@12dd0000 {
-> >> +               compatible = "samsung,exynos4210-pwm";
-> >> +               reg = <0x12dd0000 0x100>;
-> >> +               samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-> >> +               #pwm-cells = <3>;
-> >> +               clocks = <&clock 311>;
-> >> +               clock-names = "timers";
-> >> +       };
-> >> +
-> >>         amba {
-> >>                 #address-cells = <1>;
-> >>                 #size-cells = <1>;
-> >> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
-> b/arch/arm/boot/dts/exynos5420.dtsi
-> >> index d537cd7..80afc8b 100644
-> >> --- a/arch/arm/boot/dts/exynos5420.dtsi
-> >> +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> >> @@ -206,6 +206,15 @@
-> >>                 clock-names = "uart", "clk_uart_baud0";
-> >>         };
-> >>
-> >> +       pwm: pwm@12dd0000 {
-> >> +               compatible = "samsung,exynos4210-pwm";
-> >> +               reg = <0x12dd0000 0x100>;
-> >> +               samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-> >> +               #pwm-cells = <3>;
-> >> +               clocks = <&clock 279>;
-> >> +               clock-names = "timers";
-> >> +       };
-> >> +
+> > Changes in v2:
+> >         - Changed the cpu node @unit-address value to reg property
+value.
+> > Changes in v3:
+> >         - Removed leading 0x from @unit-address value.
+> > Changes in v4:
+> >         - Fixed typo and patch subject from "arm: dt" to "ARM: dt".
 > >
-> > Looking at the properties in the above 2 nodes, can't we have the
-> > common ones defined in exynos5.dtsi?
+> > Chander Kashyap (2):
+> >   clocksource: mct: extend mct to support 8 local interrupts for
+> >     Exynos5420
+> >   arm: dt: Exynos5420: populate cpu node enteries to 8 cpus
 > >
-> 
-Sorry for late, I missed...
+> >  arch/arm/boot/dts/exynos5420.dtsi |   37
+> +++++++++++++++++++++++++++++++++++--
+> >  drivers/clocksource/exynos_mct.c  |    4 ++++
+> >  2 files changed, 39 insertions(+), 2 deletions(-)
+> >
+> > --
+> > 1.7.9.5
 
-Well, upcoming exynos5 SoC has different properties so would be better if we
-could keep current version for pwm.
-
-> Yes, we can do it, will change and post the next version
-> 
-Let me ignore your v2 patch and take this one.
+Looks OK to me, applied.
 
 Thanks,
 Kukjin
