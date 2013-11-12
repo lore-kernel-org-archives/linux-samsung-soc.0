@@ -1,55 +1,121 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH 1/1] ARM: dts: Enable watchdog in Exynos4
-Date: Tue, 12 Nov 2013 20:03:17 +0900
-Message-ID: <086501cedf96$cab39be0$601ad3a0$@org>
-References: <1383208845-17227-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [RESEND] [PATCH V3] ARM: dts: Add DMA controller node info on
+ Exynos5420.
+Date: Tue, 12 Nov 2013 20:13:11 +0900
+Message-ID: <086601cedf98$2cb9f310$862dd930$@org>
+References: <1381137944-30503-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47414 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751328Ab3KLLDT (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50478 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754696Ab3KLLNN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Nov 2013 06:03:19 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MW5009MZDDE6G00@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 12 Nov 2013 20:03:18 +0900 (KST)
-In-reply-to: <1383208845-17227-1-git-send-email-sachin.kamat@linaro.org>
+	Tue, 12 Nov 2013 06:13:13 -0500
+In-reply-to: <1381137944-30503-1-git-send-email-l.krishna@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, broonie@kernel.org, padma.kvr@gmail.com, 'Padmavathi Venna' <padma.v@samsung.com>
 
-Sachin Kamat wrote:
+Leela Krishna Amudala wrote:
 > 
-> Enabled watchdog in Exynos4.
++ dt ml.
+
+> From: Padmavathi Venna <padma.v@samsung.com>
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> This patch adds dma controller node info on Exynos5420.
+> Exynos5420 has adma for audio IPs. As adma clk is dependent
+> on audss clk provider that will be added later.
+> 
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos4.dtsi |    1 -
->  1 file changed, 1 deletion(-)
+> Change since V2:
+> 	- Removed adma node as adma clock is dependent audss clock provider.
 > 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi
-> b/arch/arm/boot/dts/exynos4.dtsi
-> index ce24edba7f6d..b7378154c0a1 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -196,7 +196,6 @@
->  		interrupts = <0 43 0>;
->  		clocks = <&clock 345>;
->  		clock-names = "watchdog";
-> -		status = "disabled";
+> Changes since V1:
+>         - In V1, dma node common stuff was added in common exynos5.dtsi
+file.
+>           This was removed as per Kukjin comment and added in
+> exynos5420.dtsi.
+> 
+>  arch/arm/boot/dts/exynos5420.dtsi |   52
+> +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi
+> b/arch/arm/boot/dts/exynos5420.dtsi
+> index d537cd7..15465f8 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -186,6 +186,58 @@
+>  		status = "okay";
 >  	};
 > 
->  	rtc@10070000 {
+> +	amba {
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		compatible = "arm,amba-bus";
+> +		interrupt-parent = <&gic>;
+> +		ranges;
+> +
+> +		pdma0: pdma@121A0000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x121A0000 0x1000>;
+> +			interrupts = <0 34 0>;
+> +			clocks = <&clock 362>;
+> +			clock-names = "apb_pclk";
+> +			#dma-cells = <1>;
+> +			#dma-channels = <8>;
+> +			#dma-requests = <32>;
+> +		};
+> +
+> +		pdma1: pdma@121B0000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x121B0000 0x1000>;
+> +			interrupts = <0 35 0>;
+> +			clocks = <&clock 363>;
+> +			clock-names = "apb_pclk";
+> +			#dma-cells = <1>;
+> +			#dma-channels = <8>;
+> +			#dma-requests = <32>;
+> +		};
+> +
+> +		mdma0: mdma@10800000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x10800000 0x1000>;
+> +			interrupts = <0 33 0>;
+> +			clocks = <&clock 473>;
+> +			clock-names = "apb_pclk";
+> +			#dma-cells = <1>;
+> +			#dma-channels = <8>;
+> +			#dma-requests = <1>;
+> +		};
+> +
+> +		mdma1: mdma@11C10000 {
+> +			compatible = "arm,pl330", "arm,primecell";
+> +			reg = <0x11C10000 0x1000>;
+> +			interrupts = <0 124 0>;
+> +			clocks = <&clock 442>;
+> +			clock-names = "apb_pclk";
+> +			#dma-cells = <1>;
+> +			#dma-channels = <8>;
+> +			#dma-requests = <1>;
+> +		};
+> +	};
+> +
+>  	serial@12C00000 {
+>  		clocks = <&clock 257>, <&clock 128>;
+>  		clock-names = "uart", "clk_uart_baud0";
 > --
-> 1.7.9.5
+> 1.7.10.4
 
-Sachin, please see my comments on your RTC enabling patch.
+Sorry for late response.
 
-Thanks,
-Kukjin
+Looks OK to me, many properties for dma are same with 5250 though...
+
+Applied, thanks.
+- Kukjin
