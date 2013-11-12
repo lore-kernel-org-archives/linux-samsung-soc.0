@@ -1,202 +1,140 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code where possible
-Date: Tue, 12 Nov 2013 13:48:40 +0000
-Message-ID: <1384264120-24750-2-git-send-email-broonie@kernel.org>
-References: <1384264120-24750-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:48660 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754978Ab3KLNtb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Nov 2013 08:49:31 -0500
-In-Reply-To: <1384264120-24750-1-git-send-email-broonie@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alex Ling <kasimling-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: ARM: dts: add board dts file for EXYNOS4412 based TINY4412 board
+Date: Tue, 12 Nov 2013 23:02:52 +0800
+Message-ID: <1384268572-27055-1-git-send-email-kasimling@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alex Ling <kasimling-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, alsa-devel@alsa-project.org, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@linaro.org>
 
-From: Mark Brown <broonie@linaro.org>
+Add a minimal board dts file for EXYNOS4412 based FriendlyARM's
+TINY4412 board. This patch including adds the node to support
+peripherals like UART, SD card on SDMMC2 port, and this patch
+adds GPIO connected LEDS and configure its properties like
+following:
+LED1: use 'heartbeat' trigger, blinking while the board is running.
+LED4: use 'mmc0' trigger, on when mmc0 is accessing.
+LED2 and LED3 can be controlled from userspace.
 
-Since all Exynos platforms have been converted to dmaengine and many of
-the older platforms are in the process of conversion they do not need to
-use the legacy s3c-dma APIs for DMA but can instead use the standard ASoC
-dmaengine helpers. This both allows them to benefit from improvements
-implemented in the generic code and supports multiplatform.
-
-Signed-off-by: Mark Brown <broonie@linaro.org>
+Signed-off-by: Alex Ling <kasimling-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
+ arch/arm/boot/dts/Makefile                |    1 +
+ arch/arm/boot/dts/exynos4412-tiny4412.dts |   89 +++++++++++++++++++++++++++++
+ 2 files changed, 90 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4412-tiny4412.dts
 
-This depends on Tomasz's s3c64xx dmaengine conversion since that is how
-I've tested it - if possible I'd like to get that merged into ASoC and
-SPI early after -rc1, since I maintian both trees it's possibly easiest
-if I go ahead any apply it?
-
- sound/soc/samsung/Kconfig     | 13 +++++--
- sound/soc/samsung/Makefile    |  6 ++--
- sound/soc/samsung/dma.h       |  3 ++
- sound/soc/samsung/dmaengine.c | 82 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 100 insertions(+), 4 deletions(-)
- create mode 100644 sound/soc/samsung/dmaengine.c
-
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 6afcf9d..cd21a8e 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -1,13 +1,22 @@
- config SND_SOC_SAMSUNG
- 	tristate "ASoC support for Samsung"
- 	depends on PLAT_SAMSUNG || COMPILE_TEST
--	select S3C64XX_DMA if ARCH_S3C64XX
--	select S3C24XX_DMA if ARCH_S3C24XX
-+	select S3C2410_DMA if ARCH_S3C24XX
-+	select S3C64XX_PL080 if ARCH_S3C64XX
-+	select SND_S3C_DMA if !ARCH_S3C24XX
-+	select SND_S3C_DMA_LEGACY if ARCH_S3C24XX
-+	select SND_SOC_GENERIC_DMAENGINE_PCM if !ARCH_S3C24XX
- 	help
- 	  Say Y or M if you want to add support for codecs attached to
- 	  the Samsung SoCs' Audio interfaces. You will also need to
- 	  select the audio interfaces to support below.
- 
-+config SND_S3C_DMA
-+	tristate
-+
-+config SND_S3C_DMA_LEGACY
-+	tristate
-+
- config SND_S3C24XX_I2S
- 	tristate
- 	select S3C2410_DMA
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index 709f605..86715d8 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -1,5 +1,6 @@
- # S3c24XX Platform Support
--snd-soc-s3c24xx-objs := dma.o
-+snd-soc-s3c-dma-objs := dmaengine.o
-+snd-soc-s3c-dma-legacy-objs := dma.o
- snd-soc-idma-objs := idma.o
- snd-soc-s3c24xx-i2s-objs := s3c24xx-i2s.o
- snd-soc-s3c2412-i2s-objs := s3c2412-i2s.o
-@@ -9,7 +10,8 @@ snd-soc-samsung-spdif-objs := spdif.o
- snd-soc-pcm-objs := pcm.o
- snd-soc-i2s-objs := i2s.o
- 
--obj-$(CONFIG_SND_SOC_SAMSUNG) += snd-soc-s3c24xx.o
-+obj-$(CONFIG_SND_S3C_DMA) += snd-soc-s3c-dma.o
-+obj-$(CONFIG_SND_S3C_DMA_LEGACY) += snd-soc-s3c-dma-legacy.o
- obj-$(CONFIG_SND_S3C24XX_I2S) += snd-soc-s3c24xx-i2s.o
- obj-$(CONFIG_SND_SAMSUNG_AC97) += snd-soc-ac97.o
- obj-$(CONFIG_SND_S3C2412_SOC_I2S) += snd-soc-s3c2412-i2s.o
-diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
-index fb09a1c..225e537 100644
---- a/sound/soc/samsung/dma.h
-+++ b/sound/soc/samsung/dma.h
-@@ -12,6 +12,8 @@
- #ifndef _S3C_AUDIO_H
- #define _S3C_AUDIO_H
- 
-+#include <sound/dmaengine_pcm.h>
-+
- struct s3c_dma_params {
- 	struct s3c2410_dma_client *client;	/* stream identifier */
- 	int channel;				/* Channel ID */
-@@ -20,6 +22,7 @@ struct s3c_dma_params {
- 	unsigned ch;
- 	struct samsung_dma_ops *ops;
- 	char *ch_name;
-+	struct snd_dmaengine_dai_dma_data dma_data;
- };
- 
- void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
-diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 802720e..91671a2 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4412-odroidx.dtb \
+ 	exynos4412-origen.dtb \
+ 	exynos4412-smdk4412.dtb \
++	exynos4412-tiny4412.dtb \
+ 	exynos4412-trats2.dtb \
+ 	exynos5250-arndale.dtb \
+ 	exynos5250-smdk5250.dtb \
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
 new file mode 100644
-index 0000000..ad0a371
+index 0000000..78ace14
 --- /dev/null
-+++ b/sound/soc/samsung/dmaengine.c
-@@ -0,0 +1,82 @@
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -0,0 +1,89 @@
 +/*
-+ * dmaengine.c - Samsung dmaengine wrapper
++ * FriendlyARM's Exynos4412 based TINY4412 board device tree source
 + *
-+ * Author: Mark Brown <broonie@linaro.org>
-+ * Copyright 2013 Linaro
++ * Copyright (c) 2013 Alex Ling <kasimling-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 + *
-+ * This program is free software; you can redistribute it and/or
-+ * modify it under the terms of the GNU General Public License
-+ * version 2 as published by the Free Software Foundation.
++ * Device tree source file for FriendlyARM's TINY4412 board which is based on
++ * Samsung's Exynos4412 SoC.
 + *
-+ * This program is distributed in the hope that it will be useful, but
-+ * WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-+ * General Public License for more details.
-+ *
-+ */
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#include <linux/module.h>
-+#include <linux/amba/pl08x.h>
++/dts-v1/;
++#include "exynos4412.dtsi"
 +
-+#include <sound/core.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+#include <sound/dmaengine_pcm.h>
-+#include <sound/soc.h>
-+#include <sound/soc-dai.h>
++/ {
++	model = "FriendlyARM TINY4412 board based on Exynos4412";
++	compatible = "friendlyarm,tiny4412", "samsung,exynos4412";
 +
-+#include "dma.h"
++	memory {
++		reg = <0x40000000 0x40000000>;
++	};
 +
-+#ifdef CONFIG_ARCH_S3C64XX
-+#define filter_fn pl08x_filter_id
-+#else
-+#define filter_fn NULL
-+#endif
++	leds {
++		compatible = "gpio-leds";
++		led1 {
++			label = "led1:heart";
++			gpios = <&gpm4 0 1>;
++			default-state = "off";
++			linux,default-trigger = "heartbeat";
++		};
++		led2 {
++			label = "led2";
++			gpios = <&gpm4 1 1>;
++			default-state = "off";
++		};
++		led3 {
++			label = "led3";
++			gpios = <&gpm4 2 1>;
++			default-state = "off";
++		};
++		led4 {
++			label = "led4:mmc0";
++			gpios = <&gpm4 3 1>;
++			default-state = "off";
++			linux,default-trigger = "mmc0";
++		};
++	};
 +
-+static const struct snd_dmaengine_pcm_config samsung_dmaengine_pcm_config = {
-+	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
-+	.compat_filter_fn = filter_fn,
++	rtc@10070000 {
++		status = "okay";
++	};
++
++	sdhci@12530000 {
++		bus-width = <4>;
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++
++	serial@13800000 {
++		status = "okay";
++	};
++
++	serial@13810000 {
++		status = "okay";
++	};
++
++	serial@13820000 {
++		status = "okay";
++	};
++
++	serial@13830000 {
++		status = "okay";
++	};
++
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti";
++			clock-frequency = <0>;
++		};
++
++		xusbxti {
++			compatible = "samsung,clock-xusbxti";
++			clock-frequency = <24000000>;
++		};
++	};
 +};
-+
-+void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
-+				struct s3c_dma_params *playback,
-+				struct s3c_dma_params *capture)
-+{
-+	struct snd_dmaengine_dai_dma_data *playback_data = NULL;
-+	struct snd_dmaengine_dai_dma_data *capture_data = NULL;
-+
-+	if (playback) {
-+		playback_data = &playback->dma_data;
-+		playback_data->filter_data = (void *)playback->channel;
-+		playback_data->chan_name = playback->ch_name;
-+		playback_data->addr = playback->dma_addr;
-+		playback_data->addr_width = playback->dma_size;
-+	}
-+	if (capture) {
-+		capture_data = &capture->dma_data;
-+		capture_data->filter_data = (void *)capture->channel;
-+		capture_data->chan_name = capture->ch_name;
-+		capture_data->addr = capture->dma_addr;
-+		capture_data->addr_width = capture->dma_size;
-+	}
-+
-+	snd_soc_dai_init_dma_data(dai, playback_data, capture_data);
-+}
-+EXPORT_SYMBOL_GPL(samsung_asoc_init_dma_data);
-+
-+int samsung_asoc_dma_platform_register(struct device *dev)
-+{
-+	return snd_dmaengine_pcm_register(dev, &samsung_dmaengine_pcm_config,
-+					  SND_DMAENGINE_PCM_FLAG_COMPAT);
-+}
-+EXPORT_SYMBOL_GPL(samsung_asoc_dma_platform_register);
-+
-+void samsung_asoc_dma_platform_unregister(struct device *dev)
-+{
-+	return snd_dmaengine_pcm_unregister(dev);
-+}
-+EXPORT_SYMBOL_GPL(samsung_asoc_dma_platform_unregister);
-+
-+MODULE_AUTHOR("Mark Brown <broonie@linaro.org>");
-+MODULE_DESCRIPTION("Samsung dmaengine ASoC driver");
-+MODULE_LICENSE("GPL");
 -- 
-1.8.4.3
+1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
