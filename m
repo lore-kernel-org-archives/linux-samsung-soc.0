@@ -1,160 +1,71 @@
-From: kasim ling <kasimling@gmail.com>
-Subject: Re: ARM: dts: add board dts file for EXYNOS4412 based TINY4412 board
-Date: Wed, 13 Nov 2013 13:20:17 +0800
-Message-ID: <CAHaF_kgg5uizqQOBvG4a_PBXjgsafdq7Jsw+LP97d=h3z1baoQ@mail.gmail.com>
-References: <1384268572-27055-1-git-send-email-kasimling@gmail.com> <52827DBC.9040606@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: Enable RTC node in exynos4.dtsi file
+Date: Wed, 13 Nov 2013 09:08:51 +0100
+Message-ID: <1895231.F4mtKgSWc9@flatron>
+References: <1382438215-13215-1-git-send-email-sachin.kamat@linaro.org> <086401cedf96$933b0450$b9b10cf0$@org> <CAK9yfHzj+bA1mbZP3KJsU=XiAm+6GaXryDKphPX=UKaaOkXpNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:33449 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750899Ab3KMFUi (ORCPT
+Received: from mail-ea0-f180.google.com ([209.85.215.180]:43329 "EHLO
+	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758743Ab3KMIIx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Nov 2013 00:20:38 -0500
-In-Reply-To: <52827DBC.9040606@gmail.com>
+	Wed, 13 Nov 2013 03:08:53 -0500
+In-Reply-To: <CAK9yfHzj+bA1mbZP3KJsU=XiAm+6GaXryDKphPX=UKaaOkXpNw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: mark.rutland@arm.com, linux@arm.linux.org.uk, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, kgene.kim@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wed, Nov 13, 2013 at 3:13 AM, Rob Herring <robherring2@gmail.com> wrote:
-> On 11/12/2013 09:02 AM, Alex Ling wrote:
->> Add a minimal board dts file for EXYNOS4412 based FriendlyARM's
->> TINY4412 board. This patch including adds the node to support
->> peripherals like UART, SD card on SDMMC2 port, and this patch
->> adds GPIO connected LEDS and configure its properties like
->> following:
->> LED1: use 'heartbeat' trigger, blinking while the board is running.
->> LED4: use 'mmc0' trigger, on when mmc0 is accessing.
->> LED2 and LED3 can be controlled from userspace.
->
-> Please send patches with [PATCH] prefix.
-Well noted. Thanks.
->
->> Signed-off-by: Alex Ling <kasimling@gmail.com>
->> ---
->>  arch/arm/boot/dts/Makefile                |    1 +
->>  arch/arm/boot/dts/exynos4412-tiny4412.dts |   89 +++++++++++++++++++++++++++++
->>  2 files changed, 90 insertions(+)
->>  create mode 100644 arch/arm/boot/dts/exynos4412-tiny4412.dts
->>
->> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
->> index 802720e..91671a2 100644
->> --- a/arch/arm/boot/dts/Makefile
->> +++ b/arch/arm/boot/dts/Makefile
->> @@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->>       exynos4412-odroidx.dtb \
->>       exynos4412-origen.dtb \
->>       exynos4412-smdk4412.dtb \
->> +     exynos4412-tiny4412.dtb \
->>       exynos4412-trats2.dtb \
->>       exynos5250-arndale.dtb \
->>       exynos5250-smdk5250.dtb \
->> diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
->> new file mode 100644
->> index 0000000..78ace14
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
->> @@ -0,0 +1,89 @@
->> +/*
->> + * FriendlyARM's Exynos4412 based TINY4412 board device tree source
->> + *
->> + * Copyright (c) 2013 Alex Ling <kasimling@gmail.com>
->> + *
->> + * Device tree source file for FriendlyARM's TINY4412 board which is based on
->> + * Samsung's Exynos4412 SoC.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> +*/
->> +
->> +/dts-v1/;
->> +#include "exynos4412.dtsi"
->> +
->> +/ {
->> +     model = "FriendlyARM TINY4412 board based on Exynos4412";
->> +     compatible = "friendlyarm,tiny4412", "samsung,exynos4412";
->
-> The compatible string needs to be documented.
-Could you please advise where this should be documented to? I'm not
-sure if "Documentation/devicetree/bindings/arm/samsung-boards.txt" is
-a proper place or not.
->
-> Rob
->
->> +
->> +     memory {
->> +             reg = <0x40000000 0x40000000>;
->> +     };
->> +
->> +     leds {
->> +             compatible = "gpio-leds";
->> +             led1 {
->> +                     label = "led1:heart";
->> +                     gpios = <&gpm4 0 1>;
->> +                     default-state = "off";
->> +                     linux,default-trigger = "heartbeat";
->> +             };
->> +             led2 {
->> +                     label = "led2";
->> +                     gpios = <&gpm4 1 1>;
->> +                     default-state = "off";
->> +             };
->> +             led3 {
->> +                     label = "led3";
->> +                     gpios = <&gpm4 2 1>;
->> +                     default-state = "off";
->> +             };
->> +             led4 {
->> +                     label = "led4:mmc0";
->> +                     gpios = <&gpm4 3 1>;
->> +                     default-state = "off";
->> +                     linux,default-trigger = "mmc0";
->> +             };
->> +     };
->> +
->> +     rtc@10070000 {
->> +             status = "okay";
->> +     };
->> +
->> +     sdhci@12530000 {
->> +             bus-width = <4>;
->> +             pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
->> +             pinctrl-names = "default";
->> +             status = "okay";
->> +     };
->> +
->> +     serial@13800000 {
->> +             status = "okay";
->> +     };
->> +
->> +     serial@13810000 {
->> +             status = "okay";
->> +     };
->> +
->> +     serial@13820000 {
->> +             status = "okay";
->> +     };
->> +
->> +     serial@13830000 {
->> +             status = "okay";
->> +     };
->> +
->> +     fixed-rate-clocks {
->> +             xxti {
->> +                     compatible = "samsung,clock-xxti";
->> +                     clock-frequency = <0>;
->> +             };
->> +
->> +             xusbxti {
->> +                     compatible = "samsung,clock-xusbxti";
->> +                     clock-frequency = <24000000>;
->> +             };
->> +     };
->> +};
->>
->
+On Wednesday 13 of November 2013 09:01:36 Sachin Kamat wrote:
+> Hi Kukjin,
+> 
+> On 12 November 2013 16:31, Kukjin Kim <kgene@kernel.org> wrote:
+> > Sachin Kamat wrote:
+> >>
+> >> Since there are no board specific properties for the RTC node,
+> >> keep it enabled in the dtsi file.
+> >>
+> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> >> ---
+> >>  arch/arm/boot/dts/exynos4.dtsi |    1 -
+> >>  1 file changed, 1 deletion(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos4.dtsi
+> >> b/arch/arm/boot/dts/exynos4.dtsi
+> >> index a73eeb5..e262946 100644
+> >> --- a/arch/arm/boot/dts/exynos4.dtsi
+> >> +++ b/arch/arm/boot/dts/exynos4.dtsi
+> >> @@ -205,7 +205,6 @@
+> >>               interrupts = <0 44 0>, <0 45 0>;
+> >>               clocks = <&clock 346>;
+> >>               clock-names = "rtc";
+> >> -             status = "disabled";
+> >>       };
+> >>
+> >>       keypad@100A0000 {
+> >> --
+> >> 1.7.9.5
+> >
+> > Well, I don't think every exynos4 boards want to make the default
+> > enabled...so I don't want to take this. If any opinions, please let me know.
+> >
+> 
+> As was discussed earlier too, status field of DT node is not supposed
+> to be used for
+> keeping an IP enabled or disabled. That should be done via the kernel
+> config. The DT status
+> is mostly to indicate the hardware status of the IP on the SoC/board.
+> If the node fully defines the hardware,
+> then it should be kept enabled by default unless such enabling causes
+> some issues with other IPs due to
+> pin sharing conflicts, etc. In the above case the node completely
+> defines the hardware and hence there is no
+> reason to keep it disabled.
 
-BR,
-Alex
+That's correct. (Unless I'm missing some board specific dependency of RTC.
+If so, please correct me.)
+
+Best regards,
+Tomasz
