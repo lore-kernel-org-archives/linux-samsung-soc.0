@@ -1,7 +1,7 @@
 From: Majunath Goudar <csmanjuvijay@gmail.com>
-Subject: [PATCH 3/6]  USB: OHCI: Properly handle ohci-s3c2410 suspend
-Date: Wed, 13 Nov 2013 17:40:18 +0530
-Message-ID: <1384344621-6981-4-git-send-email-csmanjuvijay@gmail.com>
+Subject: [PATCH 5/6] USB: OHCI: Properly handle ohci-exynos suspend
+Date: Wed, 13 Nov 2013 17:40:20 +0530
+Message-ID: <1384344621-6981-6-git-send-email-csmanjuvijay@gmail.com>
 References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
  <1384344621-6981-1-git-send-email-csmanjuvijay@gmail.com>
 Mime-Version: 1.0
@@ -19,44 +19,43 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Greg KH <greg@kroah.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Majunath Goudar <csmanjuvijay@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, nataraja.km@lge.com
+Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Majunath Goudar <csmanjuvijay@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, nataraja.km@lge.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Suspend scenario in case of ohci-s3c2410 glue was not
+Suspend scenario in case of ohci-exynos glue was not
 properly handled as it was not suspending generic part
 of ohci controller. Alan Stern suggested, properly handle
-ohci-s3c2410 suspend scenario.
+ohci-exynos suspend scenario.
 
-Calling explicitly the ohci_suspend()
-routine in ohci_hcd_s3c2410_drv_suspend() will ensure
-proper handling of suspend scenario.
+Calling explicitly the ohci_suspend() routine in
+exynos_ohci_suspend() will ensure proper handling of suspend
+scenario.
 
 Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
 Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: Greg KH <greg@kroah.com>
-Cc: Ben Dooks <ben-linux@fluff.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-usb@vger.kernel.org
 ---
- drivers/usb/host/ohci-s3c2410.c |   21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
+ drivers/usb/host/ohci-exynos.c |   22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
-index be3429e..b5bf9b7 100644
---- a/drivers/usb/host/ohci-s3c2410.c
-+++ b/drivers/usb/host/ohci-s3c2410.c
-@@ -426,28 +426,15 @@ static int ohci_hcd_s3c2410_drv_remove(struct platform_device *pdev)
- static int ohci_hcd_s3c2410_drv_suspend(struct device *dev)
- {
- 	struct usb_hcd *hcd = dev_get_drvdata(dev);
--	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index a87baed..4b5c8bd 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -192,23 +192,14 @@ static int exynos_ohci_suspend(struct device *dev)
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+ 	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
  	struct platform_device *pdev = to_platform_device(dev);
--	unsigned long flags;
 +	bool do_wakeup = device_may_wakeup(dev);
- 	int rc = 0;
+ 	unsigned long flags;
+-	int rc = 0;
++	int rc = ohci_suspend(hcd, do_wakeup);
  
 -	/*
 -	 * Root hub was already suspended. Disable irq emission and
@@ -65,21 +64,30 @@ index be3429e..b5bf9b7 100644
 -	 * RH suspend or resume activity.
 -	 */
 -	spin_lock_irqsave(&ohci->lock, flags);
--	if (ohci->rh_state != OHCI_RH_SUSPENDED) {
+-	if (ohci->rh_state != OHCI_RH_SUSPENDED &&
+-			ohci->rh_state != OHCI_RH_HALTED) {
 -		rc = -EINVAL;
--		goto bail;
+-		goto fail;
 -	}
--
--	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-+	rc = ohci_suspend(hcd, do_wakeup);
 +	if (rc)
 +		return rc;
  
- 	s3c2410_stop_hc(pdev);
--bail:
--	spin_unlock_irqrestore(&ohci->lock, flags);
+-	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
++	spin_lock_irqsave(&ohci->lock, flags);
  
- 	return rc;
+ 	if (exynos_ohci->otg)
+ 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+@@ -217,10 +208,9 @@ static int exynos_ohci_suspend(struct device *dev)
+ 
+ 	clk_disable_unprepare(exynos_ohci->clk);
+ 
+-fail:
+ 	spin_unlock_irqrestore(&ohci->lock, flags);
+ 
+-	return rc;
++	return 0;
  }
+ 
+ static int exynos_ohci_resume(struct device *dev)
 -- 
 1.7.9.5
