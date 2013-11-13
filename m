@@ -1,93 +1,115 @@
-From: Majunath Goudar <csmanjuvijay@gmail.com>
-Subject: [PATCH 5/6] USB: OHCI: Properly handle ohci-exynos suspend
-Date: Wed, 13 Nov 2013 17:40:20 +0530
-Message-ID: <1384344621-6981-6-git-send-email-csmanjuvijay@gmail.com>
-References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
- <1384344621-6981-1-git-send-email-csmanjuvijay@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: Enable RTC node in exynos4.dtsi file
+Date: Wed, 13 Nov 2013 13:21:53 +0100
+Message-ID: <2781292.vINFB8v7mM@flatron>
+References: <1382438215-13215-1-git-send-email-sachin.kamat@linaro.org> <528353F7.4050004@samsung.com> <1764307.sx88zLt93L@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1384344621-6981-1-git-send-email-csmanjuvijay@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg KH <greg@kroah.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Majunath Goudar <csmanjuvijay@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, nataraja.km@lge.com
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ea0-f181.google.com ([209.85.215.181]:38465 "EHLO
+	mail-ea0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758983Ab3KMMVz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 13 Nov 2013 07:21:55 -0500
+In-Reply-To: <1764307.sx88zLt93L@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>
 
-Suspend scenario in case of ohci-exynos glue was not
-properly handled as it was not suspending generic part
-of ohci controller. Alan Stern suggested, properly handle
-ohci-exynos suspend scenario.
+On Wednesday 13 of November 2013 12:52:05 Bartlomiej Zolnierkiewicz wrote:
 
-Calling explicitly the ohci_suspend() routine in
-exynos_ohci_suspend() will ensure proper handling of suspend
-scenario.
+[+ DT maintainers]
 
-Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Greg KH <greg@kroah.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-usb@vger.kernel.org
----
- drivers/usb/host/ohci-exynos.c |   22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+> 
+> Hi,
+> 
+> On Wednesday, November 13, 2013 11:27:03 AM Sylwester Nawrocki wrote:
+> > On 13/11/13 09:08, Tomasz Figa wrote:
+> > >> As was discussed earlier too, status field of DT node is not supposed
+> > >> > to be used for
+> > >> > keeping an IP enabled or disabled. That should be done via the kernel
+> > >> > config. The DT status
+> > >> > is mostly to indicate the hardware status of the IP on the SoC/board.
+> > >> > If the node fully defines the hardware,
+> > >> > then it should be kept enabled by default unless such enabling causes
+> > >> > some issues with other IPs due to
+> > >> > pin sharing conflicts, etc. In the above case the node completely
+> > >> > defines the hardware and hence there is no
+> > >> > reason to keep it disabled.
+> > >
+> > > That's correct. (Unless I'm missing some board specific dependency of RTC.
+> > > If so, please correct me.)
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index a87baed..4b5c8bd 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -192,23 +192,14 @@ static int exynos_ohci_suspend(struct device *dev)
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
- 	struct platform_device *pdev = to_platform_device(dev);
-+	bool do_wakeup = device_may_wakeup(dev);
- 	unsigned long flags;
--	int rc = 0;
-+	int rc = ohci_suspend(hcd, do_wakeup);
- 
--	/*
--	 * Root hub was already suspended. Disable irq emission and
--	 * mark HW unaccessible, bail out if RH has been resumed. Use
--	 * the spinlock to properly synchronize with possible pending
--	 * RH suspend or resume activity.
--	 */
--	spin_lock_irqsave(&ohci->lock, flags);
--	if (ohci->rh_state != OHCI_RH_SUSPENDED &&
--			ohci->rh_state != OHCI_RH_HALTED) {
--		rc = -EINVAL;
--		goto fail;
--	}
-+	if (rc)
-+		return rc;
- 
--	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-+	spin_lock_irqsave(&ohci->lock, flags);
- 
- 	if (exynos_ohci->otg)
- 		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-@@ -217,10 +208,9 @@ static int exynos_ohci_suspend(struct device *dev)
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
- 
--fail:
- 	spin_unlock_irqrestore(&ohci->lock, flags);
- 
--	return rc;
-+	return 0;
- }
- 
- static int exynos_ohci_resume(struct device *dev)
--- 
-1.7.9.5
+Well, I was missing one indeed. RTC requires an external 32.768KHz clock,
+which must be provided by an oscillator or any other clock source on the
+board. However...
+
+> > 
+> > I don't really like this argument. Why not allow the firmware to decide
+> > which devices are relevant and should be handled by the kernel ?
+> > And since we are aiming at single kernel config, if I understand things
+> > correctly, I can't see anything else than dts that could hold the machine
+> > *configuration*.
+> > 
+> > So let's not make all stuff enabled by default, that's not something we
+> > want on those mobile device SoCs. We should not be making fine system
+> > tuning more difficult than necessary.
+> > 
+> > I'm with Kukjin on this matter and would prefer patches like the $subject
+> > patch not be merged.
+> 
+> I generally agree with Sylwester and Kukjin that devices should not be
+> enabled by default in dtsi files.  However in a particular case of RTC
+> support there should be an exception from the generic rule and RTC
+> should be enabled for all EXYNOS boards (we have RTC driver config
+> option already enabled in our exynos_defconfig and we are also already
+> enabling RTC device explicitly in EXYNOS5250 dtsi file).
+
+I believe the rule is clear and we already went through enough discussion
+about this. To clarify again:
+
+Device Tree should not restrict possible use cases of particular hardware
+that are allowed by particular integration of such hardware on particular
+board. This means that if there are no technical reasons to mark such
+hardware as disabled on particular board, this should not be done. Let
+me show you this on several examples:
+
+1. SoC X has an MMC controller, which needs N pins of the SoC to be
+routed to an MMC slot. Our board X1 does _not_ have necessary traces on
+its PCB. In this case the MMC controller must be marked as disabled.
+
+2. SoC X has an MMC controller, which needs N pins of the SoC to be
+routed to an MMC slot. Our board X2 _does_ have necessary traces on its
+PCB, so when user inserts an MMC card into the slot he expects that the
+system detects it. In this case the MMC controller must _not_ be marked
+as disabled.
+
+3. SoC X has a built-in 2D graphics accelerator. It does not have any
+output pads nor any requirements with respect to the board - it's purely
+a mem-to-mem device. A user might want to run a rootfs that uses it to
+accelerate his applications, so this device must _not_ be marked as
+disabled.
+
+4. SoC X has a image processing block, consisting of two functions:
+ - a camera interface, that requires SoC pads to be connected to a camera
+   sensor,
+ - general-purpose image scaler and format converter, that can operate
+   either on input of camera interface or on images stored in memory.
+This case is more interesting. Even if board does not have a physical
+camera interface, the binding should be designed in a way that allows
+enabling only the memory-to-memory scaler. Then such IP must be marked
+okay regardless of board support, because the camera interface will be
+used only if relevant board-specific properties are provided.
+
+To sum up, I would not interpret the "disabled" value of "status" property
+as the opposite of "enabled", but rather as "disabled" in "disabled
+person".
+
+Anyway, I'd like to get a confirmation (or denial) from other Device Tree
+maintainers and if what I've written above is correct, maybe we should
+put this somewhere in kernel documentation.
+
+Best regards,
+Tomasz
