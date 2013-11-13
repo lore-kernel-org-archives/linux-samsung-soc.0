@@ -1,66 +1,85 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Enable RTC node in exynos4.dtsi file
-Date: Wed, 13 Nov 2013 12:52:05 +0100
-Message-ID: <1764307.sx88zLt93L@amdc1032>
-References: <1382438215-13215-1-git-send-email-sachin.kamat@linaro.org>
- <1895231.F4mtKgSWc9@flatron> <528353F7.4050004@samsung.com>
+From: Majunath Goudar <csmanjuvijay@gmail.com>
+Subject: [PATCH 3/6]  USB: OHCI: Properly handle ohci-s3c2410 suspend
+Date: Wed, 13 Nov 2013 17:40:18 +0530
+Message-ID: <1384344621-6981-4-git-send-email-csmanjuvijay@gmail.com>
+References: <1380708947-15966-1-git-send-email-csmanjuvijay@gmail.com>
+ <1384344621-6981-1-git-send-email-csmanjuvijay@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58669 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758943Ab3KMLwT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Nov 2013 06:52:19 -0500
-In-reply-to: <528353F7.4050004@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1384344621-6981-1-git-send-email-csmanjuvijay@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Greg KH <greg@kroah.com>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Majunath Goudar <csmanjuvijay@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, nataraja.km@lge.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
 
+Suspend scenario in case of ohci-s3c2410 glue was not
+properly handled as it was not suspending generic part
+of ohci controller. Alan Stern suggested, properly handle
+ohci-s3c2410 suspend scenario.
 
-Hi,
+Calling explicitly the ohci_suspend()
+routine in ohci_hcd_s3c2410_drv_suspend() will ensure
+proper handling of suspend scenario.
 
-On Wednesday, November 13, 2013 11:27:03 AM Sylwester Nawrocki wrote:
-> On 13/11/13 09:08, Tomasz Figa wrote:
-> >> As was discussed earlier too, status field of DT node is not supposed
-> >> > to be used for
-> >> > keeping an IP enabled or disabled. That should be done via the kernel
-> >> > config. The DT status
-> >> > is mostly to indicate the hardware status of the IP on the SoC/board.
-> >> > If the node fully defines the hardware,
-> >> > then it should be kept enabled by default unless such enabling causes
-> >> > some issues with other IPs due to
-> >> > pin sharing conflicts, etc. In the above case the node completely
-> >> > defines the hardware and hence there is no
-> >> > reason to keep it disabled.
-> >
-> > That's correct. (Unless I'm missing some board specific dependency of RTC.
-> > If so, please correct me.)
-> 
-> I don't really like this argument. Why not allow the firmware to decide
-> which devices are relevant and should be handled by the kernel ?
-> And since we are aiming at single kernel config, if I understand things
-> correctly, I can't see anything else than dts that could hold the machine
-> *configuration*.
-> 
-> So let's not make all stuff enabled by default, that's not something we
-> want on those mobile device SoCs. We should not be making fine system
-> tuning more difficult than necessary.
-> 
-> I'm with Kukjin on this matter and would prefer patches like the $subject
-> patch not be merged.
+Signed-off-by: Manjunath Goudar <csmanjuvijay@gmail.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: Greg KH <greg@kroah.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-usb@vger.kernel.org
+---
+ drivers/usb/host/ohci-s3c2410.c |   21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
-I generally agree with Sylwester and Kukjin that devices should not be
-enabled by default in dtsi files.  However in a particular case of RTC
-support there should be an exception from the generic rule and RTC
-should be enabled for all EXYNOS boards (we have RTC driver config
-option already enabled in our exynos_defconfig and we are also already
-enabling RTC device explicitly in EXYNOS5250 dtsi file).
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index be3429e..b5bf9b7 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -426,28 +426,15 @@ static int ohci_hcd_s3c2410_drv_remove(struct platform_device *pdev)
+ static int ohci_hcd_s3c2410_drv_suspend(struct device *dev)
+ {
+ 	struct usb_hcd *hcd = dev_get_drvdata(dev);
+-	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
+ 	struct platform_device *pdev = to_platform_device(dev);
+-	unsigned long flags;
++	bool do_wakeup = device_may_wakeup(dev);
+ 	int rc = 0;
+ 
+-	/*
+-	 * Root hub was already suspended. Disable irq emission and
+-	 * mark HW unaccessible, bail out if RH has been resumed. Use
+-	 * the spinlock to properly synchronize with possible pending
+-	 * RH suspend or resume activity.
+-	 */
+-	spin_lock_irqsave(&ohci->lock, flags);
+-	if (ohci->rh_state != OHCI_RH_SUSPENDED) {
+-		rc = -EINVAL;
+-		goto bail;
+-	}
+-
+-	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
++	rc = ohci_suspend(hcd, do_wakeup);
++	if (rc)
++		return rc;
+ 
+ 	s3c2410_stop_hc(pdev);
+-bail:
+-	spin_unlock_irqrestore(&ohci->lock, flags);
+ 
+ 	return rc;
+ }
+-- 
+1.7.9.5
