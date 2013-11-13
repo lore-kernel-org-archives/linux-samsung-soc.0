@@ -1,71 +1,61 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Enable RTC node in exynos4.dtsi file
-Date: Wed, 13 Nov 2013 09:08:51 +0100
-Message-ID: <1895231.F4mtKgSWc9@flatron>
-References: <1382438215-13215-1-git-send-email-sachin.kamat@linaro.org> <086401cedf96$933b0450$b9b10cf0$@org> <CAK9yfHzj+bA1mbZP3KJsU=XiAm+6GaXryDKphPX=UKaaOkXpNw@mail.gmail.com>
+From: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH V4] spi: s3c64xx: Enable Word transfer
+Date: Wed, 13 Nov 2013 09:28:59 +0100
+Message-ID: <5283384B.504@samsung.com>
+References: <1382074356-28430-1-git-send-email-rajeshwari.s@samsung.com>
+ <1546740.qqSm3Pi1hO@flatron> <20131108110517.GK2493@sirena.org.uk>
+ <3104102.55j2C8XQ5u@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f180.google.com ([209.85.215.180]:43329 "EHLO
-	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758743Ab3KMIIx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Nov 2013 03:08:53 -0500
-In-Reply-To: <CAK9yfHzj+bA1mbZP3KJsU=XiAm+6GaXryDKphPX=UKaaOkXpNw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <3104102.55j2C8XQ5u@flatron>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Rajeshwari Birje <rajeshwari.birje-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rajeshwari S Shinde <rajeshwari.s-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Lukasz Czerwinski <l.czerwinski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On Wednesday 13 of November 2013 09:01:36 Sachin Kamat wrote:
-> Hi Kukjin,
-> 
-> On 12 November 2013 16:31, Kukjin Kim <kgene@kernel.org> wrote:
-> > Sachin Kamat wrote:
-> >>
-> >> Since there are no board specific properties for the RTC node,
-> >> keep it enabled in the dtsi file.
-> >>
-> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >> ---
-> >>  arch/arm/boot/dts/exynos4.dtsi |    1 -
-> >>  1 file changed, 1 deletion(-)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos4.dtsi
-> >> b/arch/arm/boot/dts/exynos4.dtsi
-> >> index a73eeb5..e262946 100644
-> >> --- a/arch/arm/boot/dts/exynos4.dtsi
-> >> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> >> @@ -205,7 +205,6 @@
-> >>               interrupts = <0 44 0>, <0 45 0>;
-> >>               clocks = <&clock 346>;
-> >>               clock-names = "rtc";
-> >> -             status = "disabled";
-> >>       };
-> >>
-> >>       keypad@100A0000 {
-> >> --
-> >> 1.7.9.5
-> >
-> > Well, I don't think every exynos4 boards want to make the default
-> > enabled...so I don't want to take this. If any opinions, please let me know.
-> >
-> 
-> As was discussed earlier too, status field of DT node is not supposed
-> to be used for
-> keeping an IP enabled or disabled. That should be done via the kernel
-> config. The DT status
-> is mostly to indicate the hardware status of the IP on the SoC/board.
-> If the node fully defines the hardware,
-> then it should be kept enabled by default unless such enabling causes
-> some issues with other IPs due to
-> pin sharing conflicts, etc. In the above case the node completely
-> defines the hardware and hence there is no
-> reason to keep it disabled.
+On 11/10/2013 06:26 PM, Tomasz Figa wrote:
+> On Friday 08 of November 2013 11:05:17 Mark Brown wrote:
+>> On Thu, Nov 07, 2013 at 10:39:37AM +0100, Tomasz Figa wrote:
+>>> On Thursday 07 of November 2013 14:52:36 Rajeshwari Birje wrote:
+>>>> The reordering of the words is taken care by the Swap configuration
+>>>> (swap_cfg) register, which I have set for both 16 and 32 bits_per_word
+>>>> case. I have tested this patch and works fine for me and also has
+>>>> improved the timing performance.
+>>> This driver seems to have already worked fine with 32 bits per word,
+>>> using the s5c73m3 camera sensor, which uses SPI for firmware upload.
+>> This is all sounding very confused.  Either this patch is a bug fix or
+>> it's breaking the driver but I can't tell without more information about
+>> what it's supposed to do.  Can someone explain in concrete terms what
+>> the intended effect of the patch is on wire behaviour?
+>>
+>> It is possible that the s5c73m3 driver is buggy here if it's only been
+>> tested with the s3c64xx driver (which seems likely) since the author
+>> could have worked around the driver behaviour.
+> I'm confused here as well.
+>
+> Looking at the W25Q32DW datasheet[1], it does not really support 32 bit
+> words and using such with it seems more like an abuse of this feature.
+>
+> As for the s5c73m3 sensor, we should ask Andrzej or Sylwester to look
+> at the datasheet and see how SPI transfer are supposed to work there.
+Hi all,
 
-That's correct. (Unless I'm missing some board specific dependency of RTC.
-If so, please correct me.)
+s5c73m3 sensor specs we have access to say nothing about the subject.
+Driver is based on internal code, which is also not helpful in this matter.
 
-Best regards,
-Tomasz
+Regards
+Andrzej
+>
+> [1] http://www.winbond.com.tw/NR/rdonlyres/D35D5D04-4CE9-46A1-8950-AEA573045507/0/W25Q32DW.pdf
+>
+> Best regards,
+> Tomasz
+>
+>
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
