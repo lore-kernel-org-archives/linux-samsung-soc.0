@@ -1,46 +1,45 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: [PATCH] video: exynos_mipi_dsim: Remove unused variable
-Date: Thu, 14 Nov 2013 13:09:24 -0800
-Message-ID: <1384463364-28864-1-git-send-email-olof@lixom.net>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [RFC 0/4] Add basic support for ASV
+Date: Fri, 15 Nov 2013 08:15:52 +0900
+Message-ID: <CAKew6eVJiXNWpyE8E69MminsHjr+ip8syX6kx8wuY3R78QW=iA@mail.gmail.com>
+References: <1378898048-25205-1-git-send-email-yadi.brar@samsung.com>
+	<CAKew6eUK9ZtoVgVu_b13Bn20iMNWzHnWjSHMjxD1Y+zDtvoCWw@mail.gmail.com>
+	<1906951.EFsdgbeaob@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:34510 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754766Ab3KNVIm (ORCPT
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:61235 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751427Ab3KNXPx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 14 Nov 2013 16:08:42 -0500
-Received: by mail-pa0-f54.google.com with SMTP id lj1so2648427pab.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 14 Nov 2013 13:08:41 -0800 (PST)
+	Thu, 14 Nov 2013 18:15:53 -0500
+In-Reply-To: <1906951.EFsdgbeaob@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Sachin Kamat <sachin.kamat@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, MyungJoo Ham <myungjoo.ham@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-commit 7e0be9f9f7cba3356f75b86737dbe3a005da067e ('video: exynos_mipi_dsim:
-Use the generic PHY driver') resulted in a warning about an unused
-variable:
+[adding Sachin]
 
-drivers/video/exynos/exynos_mipi_dsi.c:144:26: warning: unused variable
-    'pdev' [-Wunused-variable]
+Hi Tomasz,
 
-It is indeed unused; remove it.
+On Fri, Nov 15, 2013 at 12:06 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Yadwinder,
+>
+> On Monday 11 of November 2013 23:27:08 Yadwinder Singh Brar wrote:
+>> gentle ping for suggestions/reviews ..
+>
+> Hmm, I must have somehow missed this series when you orignally sent it.
+> Can I ask you to resend it, as I don't have it in my e-mail client archive
+> any longer?
+>
+> While at it, I would also ask you to add my private e-mail address
+> (this one) and linux-pm mailing list to Cc list.
+>
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- drivers/video/exynos/exynos_mipi_dsi.c |    1 -
- 1 file changed, 1 deletion(-)
+hmm, I am on travel still for few more days, so it may be difficult for me
+to resend it quickly. But I think Sachin may help me here.
+Sachin can you please rebase and repost it ?
 
-diff --git a/drivers/video/exynos/exynos_mipi_dsi.c b/drivers/video/exynos/exynos_mipi_dsi.c
-index 00b3a52..cee9602 100644
---- a/drivers/video/exynos/exynos_mipi_dsi.c
-+++ b/drivers/video/exynos/exynos_mipi_dsi.c
-@@ -141,7 +141,6 @@ static int exynos_mipi_dsi_early_blank_mode(struct mipi_dsim_device *dsim,
- 
- static int exynos_mipi_dsi_blank_mode(struct mipi_dsim_device *dsim, int power)
- {
--	struct platform_device *pdev = to_platform_device(dsim->dev);
- 	struct mipi_dsim_lcd_driver *client_drv = dsim->dsim_lcd_drv;
- 	struct mipi_dsim_lcd_device *client_dev = dsim->dsim_lcd_dev;
- 
--- 
-1.7.10.4
+Regards,
+Yadwinder
