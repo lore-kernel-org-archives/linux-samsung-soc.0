@@ -1,171 +1,138 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 2/3] Phy: Exynos: Add Exynos5250 sata phy driver
-Date: Thu, 14 Nov 2013 11:18:50 +0530
-Message-ID: <52846442.2020307@ti.com>
-References: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com>	<1380609183-21430-3-git-send-email-yuvaraj.cd@samsung.com>	<524AC56C.1060501@ti.com> <CA+NduCAwnqz4_YNoVnpfV3O6fn=2QTdv4zgEdYRv4qjMRvWeag@mail.gmail.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [RFC 0/4] Add basic support for ASV
+Date: Thu, 14 Nov 2013 23:06:47 +0900
+Message-ID: <CAKew6eVgKXJdpn06fZQ7Q0EEotx2+-L5JoiLuF_j50rUOqK=pg@mail.gmail.com>
+References: <1378898048-25205-1-git-send-email-yadi.brar@samsung.com>
+	<CAKew6eUK9ZtoVgVu_b13Bn20iMNWzHnWjSHMjxD1Y+zDtvoCWw@mail.gmail.com>
+	<CAJ0PZbSe9dXdaRewwFP5UjNeOCby2EsayU4vDcQEKi5Z4SqtvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <CA+NduCAwnqz4_YNoVnpfV3O6fn=2QTdv4zgEdYRv4qjMRvWeag@mail.gmail.com>
-Sender: linux-ide-owner@vger.kernel.org
-To: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-ide@vger.kernel.org, ks.giri@samsung.com, Vasanth Ananthan <vasanth.a@samsung.com>, Rob Herring <rob.herring@calxeda.com>, aditya.ps@samsung.com, grant.likely@linaro.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, s.nawrocki@samsung.com, tj@kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:47103 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752466Ab3KNOGs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 14 Nov 2013 09:06:48 -0500
+In-Reply-To: <CAJ0PZbSe9dXdaRewwFP5UjNeOCby2EsayU4vDcQEKi5Z4SqtvA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@gmail.com>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jean Pihet <j-pihet@ti.com>
 
-Hi,
+Hi MyungJoo,
 
-On Monday 07 October 2013 07:35 PM, Yuvaraj Cd wrote:
-> On Tue, Oct 1, 2013 at 6:21 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->> On Tuesday 01 October 2013 12:03 PM, Yuvaraj Kumar C D wrote:
->>> This patch adds the sata phy driver for Exynos5250.Exynos5250 sata
->>> phy comprises of CMU and TRSV blocks which are of I2C register Map.
->>> So this patch also adds a i2c client driver, which is used configure
->>> the CMU and TRSV block of exynos5250 SATA PHY.
->>
->> Why not make the Exynos5250 sata phy as a i2c client driver instead?
->>>
->>> This patch incorporates the generic phy framework to deal with sata
->>> phy.
->>>
->>> This patch depends on the below patch
->>>       [1].drivers: phy: add generic PHY framework
->>>               by Kishon Vijay Abraham I<kishon@ti.com>
->>>
->>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->>> Signed-off-by: Girish K S <ks.giri@samsung.com>
->>> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
->>> ---
->>>  drivers/phy/Kconfig                      |    6 +
->>>  drivers/phy/Makefile                     |    1 +
->>>  drivers/phy/exynos/Kconfig               |    5 +
->>>  drivers/phy/exynos/Makefile              |    5 +
->>>  drivers/phy/exynos/exynos5250_phy_i2c.c  |   53 +++++++
->>>  drivers/phy/exynos/sata_phy_exynos5250.c |  248 ++++++++++++++++++++++++++++++
->>>  drivers/phy/exynos/sata_phy_exynos5250.h |   33 ++++
->>>  7 files changed, 351 insertions(+)
->>>  create mode 100644 drivers/phy/exynos/Kconfig
->>>  create mode 100644 drivers/phy/exynos/Makefile
->>>  create mode 100644 drivers/phy/exynos/exynos5250_phy_i2c.c
->>>  create mode 100644 drivers/phy/exynos/sata_phy_exynos5250.c
->>>  create mode 100644 drivers/phy/exynos/sata_phy_exynos5250.h
->>>
->>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
->>> index 5f85909..ab3d1c6 100644
->>> --- a/drivers/phy/Kconfig
->>> +++ b/drivers/phy/Kconfig
->>> @@ -11,3 +11,9 @@ menuconfig GENERIC_PHY
->>>         devices present in the kernel. This layer will have the generic
->>>         API by which phy drivers can create PHY using the phy framework and
->>>         phy users can obtain reference to the PHY.
->>> +
->>> +if GENERIC_PHY
->>
->> NAK. Just select GENERIC_PHY from your driver Kconfig.
->>> +
->>> +source "drivers/phy/exynos/Kconfig"
->>> +
->>> +endif
->>> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
->>> index 9e9560f..e0223d7 100644
->>> --- a/drivers/phy/Makefile
->>> +++ b/drivers/phy/Makefile
->>> @@ -3,3 +3,4 @@
->>>  #
->>>
->>>  obj-$(CONFIG_GENERIC_PHY)    += phy-core.o
->>> +obj-$(CONFIG_PHY_SAMSUNG_SATA)       += exynos/
->>
->> simply have phy-exynos5250 in drivers/phy.
-> ok.
->>> diff --git a/drivers/phy/exynos/Kconfig b/drivers/phy/exynos/Kconfig
->>> new file mode 100644
->>> index 0000000..fa125fb
->>> --- /dev/null
->>> +++ b/drivers/phy/exynos/Kconfig
->>> @@ -0,0 +1,5 @@
->>> +config PHY_SAMSUNG_SATA
->>> +     tristate "Samsung Sata SerDes/PHY driver"
->>> +     help
->>> +       Support for Samsung sata SerDes/Phy found on Samsung
->>> +       SoCs.
->>> diff --git a/drivers/phy/exynos/Makefile b/drivers/phy/exynos/Makefile
->>> new file mode 100644
->>> index 0000000..50dc7eb
->>> --- /dev/null
->>> +++ b/drivers/phy/exynos/Makefile
->>> @@ -0,0 +1,5 @@
->>> +#
->>> +# Makefile for the exynos phy drivers.
->>> +#
->>> +ccflags-y := -Idrivers/phy/exynos
->>> +obj-$(CONFIG_PHY_SAMSUNG_SATA)       += sata_phy_exynos5250.o exynos5250_phy_i2c.o
->>> diff --git a/drivers/phy/exynos/exynos5250_phy_i2c.c b/drivers/phy/exynos/exynos5250_phy_i2c.c
->>> new file mode 100644
->>> index 0000000..9c75d3b
->>> --- /dev/null
->>> +++ b/drivers/phy/exynos/exynos5250_phy_i2c.c
->>> @@ -0,0 +1,53 @@
->>> +/*
->>> + * Copyright (C) 2013 Samsung Electronics Co.Ltd
->>> + * Author:
->>> + *   Yuvaraj C D <yuvaraj.cd@samsung.com>
->>> + *
->>> + * This program is free software; you can redistribute  it and/or modify it
->>> + * under  the terms of  the GNU General  Public License as published by the
->>> + * Free Software Foundation;  either version 2 of the  License, or (at your
->>> + * option) any later version.
->>> + *
->>> + */
->>> +
->>> +#include <linux/kernel.h>
->>> +#include <linux/i2c.h>
->>> +#include <linux/module.h>
->>> +#include "sata_phy_exynos5250.h"
->>> +
->>> +static int exynos_sata_i2c_probe(struct i2c_client *client,
->>> +             const struct i2c_device_id *i2c_id)
->>> +{
->>> +     sataphy_attach_i2c_client(client);
->>> +
->>> +     dev_info(&client->adapter->dev,
->>> +             "attached %s into i2c adapter successfully\n",
->>> +             client->name);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static int exynos_sata_i2c_remove(struct i2c_client *client)
->>> +{
->>> +     dev_info(&client->adapter->dev,
->>> +             "detached %s from i2c adapter successfully\n",
->>> +             client->name);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static const struct i2c_device_id phy_i2c_device_match[] = {
->>> +     { "sata-phy-i2c", 0 },
->>> +};
->>> +MODULE_DEVICE_TABLE(of, phy_i2c_device_match);
->>> +
->>> +struct i2c_driver sataphy_i2c_driver = {
->>> +     .probe    = exynos_sata_i2c_probe,
->>> +     .id_table = phy_i2c_device_match,
->>> +     .remove         = exynos_sata_i2c_remove,
->>> +     .driver   = {
->>> +             .name = "sata-phy-i2c",
->>> +             .owner = THIS_MODULE,
->>> +             .of_match_table = (void *)phy_i2c_device_match,
->>> +             },
->>> +};
->>
->> As I just mentioned above, we can merge this driver with the below one.
-> True, Initially it was merged.But already existing drivers of which
-> are of similar to this kind were done in this way.
-> Please refer  /drivers/gpu/drm//exynos/exynos_hdmiphy.c
+Thanks for your review.
 
-Can you point to any discussions where it was decided to go with this approach?
+On Wed, Nov 13, 2013 at 11:33 AM, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
+> On Mon, Nov 11, 2013 at 11:27 PM, Yadwinder Singh Brar
+> <yadi.brar01@gmail.com> wrote:
+>> gentle ping for suggestions/reviews ..
+>>
+>>
+>> On Wed, Sep 11, 2013 at 8:14 PM, Yadwinder Singh Brar
+>> <yadi.brar@samsung.com> wrote:
+>>> This series is to add basic common infrastructure for ASV.
+>>>  Basically ASV is a technique used on samsung SoCs, which provides the
+>>> recommended supply voltage for dvfs of arm, mif etc. For a given operating
+>>> frequency, the voltage is recommended based on SoC's ASV group.
+>>> ASV group gets fussed on SoCs during process of mass production.
+>
+> ASV is an instance of AVS. Please recondier and try to reuse
+> what's already there (drivers/power/avs)
+>
+> Quote from drivers/power/avs/Kconfig:
+>           "At a given operating point the voltage is adapted depending on
+>           static factors (chip manufacturing process) and dynamic factors
+>           (temperature depending performance)."
+> It seems that the current ASV is subset of AVS.
 
-Thanks
-Kishon
+Yes, both seems to be for similar purpose but  still significantly
+different from each other. I would like to describe/differentiate it
+little bit here
+for explanation for others, that it is AVS(adaptive voltage scaling) which
+seems to be an IP/module doing adaptive voltage scaling where as
+ours is ASV(Adaptive scaling voltage), it provides only (adaptive) voltage
+for scaling to other drivers.
+
+> Although the current implementation of AVS does not provide significant
+> infrastructure to its sisters, we may start by sharing the directory.
+>
+
+Yes, we can just share directory only right now, other then that i
+didn't see any thing can be common.
+Firstly i had put in that directory itself, later being doubtful i
+moved it to new directory but we can share directory.
+Any ideas/comments from others ?
+
+Regards,
+Yadwinder
+
+>
+> Added Jean Pihet, who has submitted AVS (TI).
+>
+> Cheers,
+> MyungJoo.
+>
+>>>
+>>> This series includes:
+>>>  - basic common infrastructue for ASV. It provides common APIs for user drivers
+>>> like cpufreq & devfreq and and an interface for SoC specific drivers to
+>>> register ASV members(instances)
+>>>  - a common platform driver to register ASV members for exynos SoCs
+>>>  - an example providing minimal support (only for ARM ASV) for exynos5250 chips
+>>>
+>>> Its just basic skelton which I wanted to get it reviewed or discussed in
+>>> early stage, before going ahead on further development based on it.
+>>>  Presently example is based on static ASV table provided in SoC specific file,
+>>> which I expects to go into DT. But exactly how and where needs to be discussed,
+>>> may be in next revisions once we get through the basic skelton.
+>>>  Also the location of driver in kernel may also seem odd to someone and
+>>> many more things :).
+>>>
+>>> Looking for your valuable reviews and suggestions.
+>>>
+>>> Thanks
+>>>
+>>> Yadwinder Singh Brar (4):
+>>>   power: asv: Add common ASV support for samsung SoCs
+>>>   power: asv: Add a common asv driver for exynos SoCs.
+>>>   power: asv: Add support for exynos5250
+>>>   arm: exynos5: Register static platform device for ASV.
+>>>
+>>>  arch/arm/mach-exynos/mach-exynos5-dt.c   |    3 +
+>>>  drivers/power/Kconfig                    |    1 +
+>>>  drivers/power/Makefile                   |    1 +
+>>>  drivers/power/asv/Kconfig                |   24 ++++
+>>>  drivers/power/asv/Makefile               |    2 +
+>>>  drivers/power/asv/exynos-asv.c           |   81 ++++++++++++++
+>>>  drivers/power/asv/exynos-asv.h           |   22 ++++
+>>>  drivers/power/asv/exynos5250-asv.c       |  141 ++++++++++++++++++++++++
+>>>  drivers/power/asv/samsung-asv.c          |  175 ++++++++++++++++++++++++++++++
+>>>  include/linux/power/samsung-asv-driver.h |   61 +++++++++++
+>>>  include/linux/power/samsung-asv.h        |   37 +++++++
+>>>  11 files changed, 548 insertions(+), 0 deletions(-)
+>>>  create mode 100644 drivers/power/asv/Kconfig
+>>>  create mode 100644 drivers/power/asv/Makefile
+>>>  create mode 100644 drivers/power/asv/exynos-asv.c
+>>>  create mode 100644 drivers/power/asv/exynos-asv.h
+>>>  create mode 100644 drivers/power/asv/exynos5250-asv.c
+>>>  create mode 100644 drivers/power/asv/samsung-asv.c
+>>>  create mode 100644 include/linux/power/samsung-asv-driver.h
+>>>  create mode 100644 include/linux/power/samsung-asv.h
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
+>
+> --
+> MyungJoo Ham, Ph.D.
+> System S/W Lab, S/W Center, Samsung Electronics
