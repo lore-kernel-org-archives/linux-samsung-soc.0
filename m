@@ -1,100 +1,171 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: EXYNOS: Initialize L2x0 cache controller for Exynos4 only
-Date: Thu, 14 Nov 2013 02:07:07 +0100
-Message-ID: <1991908.0kMUaR4gV4@flatron>
-References: <1382011392-18199-1-git-send-email-sachin.kamat@linaro.org> <2638150.ifpQGYh5Gk@flatron> <52841E44.8040703@gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 2/3] Phy: Exynos: Add Exynos5250 sata phy driver
+Date: Thu, 14 Nov 2013 11:18:50 +0530
+Message-ID: <52846442.2020307@ti.com>
+References: <1380609183-21430-1-git-send-email-yuvaraj.cd@samsung.com>	<1380609183-21430-3-git-send-email-yuvaraj.cd@samsung.com>	<524AC56C.1060501@ti.com> <CA+NduCAwnqz4_YNoVnpfV3O6fn=2QTdv4zgEdYRv4qjMRvWeag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f47.google.com ([74.125.83.47]:61861 "EHLO
-	mail-ee0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751544Ab3KNBHJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Nov 2013 20:07:09 -0500
-Received: by mail-ee0-f47.google.com with SMTP id c50so20237eek.20
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Nov 2013 17:07:08 -0800 (PST)
-In-Reply-To: <52841E44.8040703@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-ide-owner@vger.kernel.org>
+In-Reply-To: <CA+NduCAwnqz4_YNoVnpfV3O6fn=2QTdv4zgEdYRv4qjMRvWeag@mail.gmail.com>
+Sender: linux-ide-owner@vger.kernel.org
+To: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-ide@vger.kernel.org, ks.giri@samsung.com, Vasanth Ananthan <vasanth.a@samsung.com>, Rob Herring <rob.herring@calxeda.com>, aditya.ps@samsung.com, grant.likely@linaro.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, s.nawrocki@samsung.com, tj@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Will Deacon <will.deacon@arm.com>, Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>
 
-Hi Rob,
+Hi,
 
-On Wednesday 13 of November 2013 18:50:12 Rob Herring wrote:
-> On 11/13/2013 06:41 PM, Tomasz Figa wrote:
-> > Hi Will,
-> > 
-> > On Friday 25 of October 2013 14:48:52 Will Deacon wrote:
-> >> On Sat, Oct 19, 2013 at 03:04:22PM +0100, Tomasz Figa wrote:
-> >>> On Saturday 19 of October 2013 18:09:15 Sachin Kamat wrote:
-> >>>> Hi Tomasz,
-> >>>>
-> >>>> On 17 October 2013 18:35, Tomasz Figa <t.figa@samsung.com> wrote:
-> >>>>> Hi Sachin,
-> >>>>>
-> >>>>> On Thursday 17 of October 2013 17:33:12 Sachin Kamat wrote:
-> >>>>>> L2x0 cache controller is present only in Cortex-A9 based Exynos4 SoCs.
-> >>>>>> Thus move this function to Exynos4 early init call to avoid non-Exynos4
-> >>>>>> SoCs from calling this function in multi-platform support.
-> >>>>>
-> >>>>> I believe that at the time .init_early() is called there is no ioremap()
-> >>>>> infrastructure working yet and so L2 cache initialization which needs
-> >>>>> it will cause a kernel panic. This patch worked only because currently
-> >>>>> there is no L2X0 controller defined in device tree sources of Exynos 4.
-> >>>>
-> >>>> It is not clear to me as to why device tree entry is required for this
-> >>>> to work in current form
-> >>>> as we call the  L2X0 init function explicitly.
-> >>>
-> >>> L2x0 controller is just another IP block on the SoC. In addition its
-> >>> registers are memory mapped and the driver needs some way to get their
-> >>> location. The function being called explicitly simply scans device tree
-> >>> for applicable node and performs rest of the setup only if it finds one.
-> >>>
-> >>> Ideally there should be no need to call this function explicitly, as it
-> >>> should be called by some code based on presence of applicable device tree
-> >>> node.
-> >>
-> >> It's a nice idea, but you need to be careful if you start deferring this
-> >> stuff. Aside from the potential performance loss during early boot, I'm not
-> >> even sure that the l2x0_init function is safe to run with IRQs enabled.
-> >>
-> >> Will
-> > 
-> > I just realised that I have not replied to your message, sorry for that.
-> > 
-> > So, my intention was not deferring this, but rather making this more
-> > generic. In case of Exynos, we call l2x0_of_init() from an early_initcall
-> > which is long time already after enabling interrupts, but still before
-> > SMP is initialized.
-> 
-> I believe SMP is enabled before any initcalls.
+On Monday 07 October 2013 07:35 PM, Yuvaraj Cd wrote:
+> On Tue, Oct 1, 2013 at 6:21 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>> On Tuesday 01 October 2013 12:03 PM, Yuvaraj Kumar C D wrote:
+>>> This patch adds the sata phy driver for Exynos5250.Exynos5250 sata
+>>> phy comprises of CMU and TRSV blocks which are of I2C register Map.
+>>> So this patch also adds a i2c client driver, which is used configure
+>>> the CMU and TRSV block of exynos5250 SATA PHY.
+>>
+>> Why not make the Exynos5250 sata phy as a i2c client driver instead?
+>>>
+>>> This patch incorporates the generic phy framework to deal with sata
+>>> phy.
+>>>
+>>> This patch depends on the below patch
+>>>       [1].drivers: phy: add generic PHY framework
+>>>               by Kishon Vijay Abraham I<kishon@ti.com>
+>>>
+>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>> Signed-off-by: Girish K S <ks.giri@samsung.com>
+>>> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
+>>> ---
+>>>  drivers/phy/Kconfig                      |    6 +
+>>>  drivers/phy/Makefile                     |    1 +
+>>>  drivers/phy/exynos/Kconfig               |    5 +
+>>>  drivers/phy/exynos/Makefile              |    5 +
+>>>  drivers/phy/exynos/exynos5250_phy_i2c.c  |   53 +++++++
+>>>  drivers/phy/exynos/sata_phy_exynos5250.c |  248 ++++++++++++++++++++++++++++++
+>>>  drivers/phy/exynos/sata_phy_exynos5250.h |   33 ++++
+>>>  7 files changed, 351 insertions(+)
+>>>  create mode 100644 drivers/phy/exynos/Kconfig
+>>>  create mode 100644 drivers/phy/exynos/Makefile
+>>>  create mode 100644 drivers/phy/exynos/exynos5250_phy_i2c.c
+>>>  create mode 100644 drivers/phy/exynos/sata_phy_exynos5250.c
+>>>  create mode 100644 drivers/phy/exynos/sata_phy_exynos5250.h
+>>>
+>>> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+>>> index 5f85909..ab3d1c6 100644
+>>> --- a/drivers/phy/Kconfig
+>>> +++ b/drivers/phy/Kconfig
+>>> @@ -11,3 +11,9 @@ menuconfig GENERIC_PHY
+>>>         devices present in the kernel. This layer will have the generic
+>>>         API by which phy drivers can create PHY using the phy framework and
+>>>         phy users can obtain reference to the PHY.
+>>> +
+>>> +if GENERIC_PHY
+>>
+>> NAK. Just select GENERIC_PHY from your driver Kconfig.
+>>> +
+>>> +source "drivers/phy/exynos/Kconfig"
+>>> +
+>>> +endif
+>>> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+>>> index 9e9560f..e0223d7 100644
+>>> --- a/drivers/phy/Makefile
+>>> +++ b/drivers/phy/Makefile
+>>> @@ -3,3 +3,4 @@
+>>>  #
+>>>
+>>>  obj-$(CONFIG_GENERIC_PHY)    += phy-core.o
+>>> +obj-$(CONFIG_PHY_SAMSUNG_SATA)       += exynos/
+>>
+>> simply have phy-exynos5250 in drivers/phy.
+> ok.
+>>> diff --git a/drivers/phy/exynos/Kconfig b/drivers/phy/exynos/Kconfig
+>>> new file mode 100644
+>>> index 0000000..fa125fb
+>>> --- /dev/null
+>>> +++ b/drivers/phy/exynos/Kconfig
+>>> @@ -0,0 +1,5 @@
+>>> +config PHY_SAMSUNG_SATA
+>>> +     tristate "Samsung Sata SerDes/PHY driver"
+>>> +     help
+>>> +       Support for Samsung sata SerDes/Phy found on Samsung
+>>> +       SoCs.
+>>> diff --git a/drivers/phy/exynos/Makefile b/drivers/phy/exynos/Makefile
+>>> new file mode 100644
+>>> index 0000000..50dc7eb
+>>> --- /dev/null
+>>> +++ b/drivers/phy/exynos/Makefile
+>>> @@ -0,0 +1,5 @@
+>>> +#
+>>> +# Makefile for the exynos phy drivers.
+>>> +#
+>>> +ccflags-y := -Idrivers/phy/exynos
+>>> +obj-$(CONFIG_PHY_SAMSUNG_SATA)       += sata_phy_exynos5250.o exynos5250_phy_i2c.o
+>>> diff --git a/drivers/phy/exynos/exynos5250_phy_i2c.c b/drivers/phy/exynos/exynos5250_phy_i2c.c
+>>> new file mode 100644
+>>> index 0000000..9c75d3b
+>>> --- /dev/null
+>>> +++ b/drivers/phy/exynos/exynos5250_phy_i2c.c
+>>> @@ -0,0 +1,53 @@
+>>> +/*
+>>> + * Copyright (C) 2013 Samsung Electronics Co.Ltd
+>>> + * Author:
+>>> + *   Yuvaraj C D <yuvaraj.cd@samsung.com>
+>>> + *
+>>> + * This program is free software; you can redistribute  it and/or modify it
+>>> + * under  the terms of  the GNU General  Public License as published by the
+>>> + * Free Software Foundation;  either version 2 of the  License, or (at your
+>>> + * option) any later version.
+>>> + *
+>>> + */
+>>> +
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/i2c.h>
+>>> +#include <linux/module.h>
+>>> +#include "sata_phy_exynos5250.h"
+>>> +
+>>> +static int exynos_sata_i2c_probe(struct i2c_client *client,
+>>> +             const struct i2c_device_id *i2c_id)
+>>> +{
+>>> +     sataphy_attach_i2c_client(client);
+>>> +
+>>> +     dev_info(&client->adapter->dev,
+>>> +             "attached %s into i2c adapter successfully\n",
+>>> +             client->name);
+>>> +
+>>> +     return 0;
+>>> +}
+>>> +
+>>> +static int exynos_sata_i2c_remove(struct i2c_client *client)
+>>> +{
+>>> +     dev_info(&client->adapter->dev,
+>>> +             "detached %s from i2c adapter successfully\n",
+>>> +             client->name);
+>>> +
+>>> +     return 0;
+>>> +}
+>>> +
+>>> +static const struct i2c_device_id phy_i2c_device_match[] = {
+>>> +     { "sata-phy-i2c", 0 },
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, phy_i2c_device_match);
+>>> +
+>>> +struct i2c_driver sataphy_i2c_driver = {
+>>> +     .probe    = exynos_sata_i2c_probe,
+>>> +     .id_table = phy_i2c_device_match,
+>>> +     .remove         = exynos_sata_i2c_remove,
+>>> +     .driver   = {
+>>> +             .name = "sata-phy-i2c",
+>>> +             .owner = THIS_MODULE,
+>>> +             .of_match_table = (void *)phy_i2c_device_match,
+>>> +             },
+>>> +};
+>>
+>> As I just mentioned above, we can merge this driver with the below one.
+> True, Initially it was merged.But already existing drivers of which
+> are of similar to this kind were done in this way.
+> Please refer  /drivers/gpu/drm//exynos/exynos_hdmiphy.c
 
-You're almost right. Before any initcalls, except early_initcalls. This is
-a misleading label in init/main.c in an array of initcall names, calling
-initcall level 0 "early", but that should be "pure". early_initcalls are
-called from a different place in code - see do_pre_smp_initcalls().
+Can you point to any discussions where it was decided to go with this approach?
 
-> > My idea was to create a generic early_initcall in arch/arm/mm/cache-l2x0.c
-> > that would scan DT for applicable node, parse aux_val and aux_mask from
-> > such node (if found) and then initialize L2X0 without any need for
-> > having platform-specific code.
-> > 
-> > However my concern here is whether on some platforms such platform code
-> > wouldn't be needed anyway. Unfortunately I don't really know enough
-> > about L2X0 to be able to answer this myself, at least at the moment.
-> 
-> Unfortunately, non-secure mode platforms like highbank and omap have to
-> make platform specific smc calls.
-
-This is what I was afraid of. Still, I don't think there is no way we
-could mitigate this. Maybe firmware_ops infrastructure could be used for
-this?
-
-I need to know more about requirements of such platforms w.r.t. L2 cache
-initialization to be able to say anything more, though.
-
-Best regards,
-Tomasz
+Thanks
+Kishon
