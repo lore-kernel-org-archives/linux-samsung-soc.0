@@ -1,115 +1,79 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Enable RTC node in exynos4.dtsi file
-Date: Wed, 13 Nov 2013 13:21:53 +0100
-Message-ID: <2781292.vINFB8v7mM@flatron>
-References: <1382438215-13215-1-git-send-email-sachin.kamat@linaro.org> <528353F7.4050004@samsung.com> <1764307.sx88zLt93L@amdc1032>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Initialize L2x0 cache controller for Exynos4 only
+Date: Thu, 14 Nov 2013 01:41:29 +0100
+Message-ID: <2638150.ifpQGYh5Gk@flatron>
+References: <1382011392-18199-1-git-send-email-sachin.kamat@linaro.org> <1947285.WNu0Q66K3g@thinkpad> <20131025134852.GA10286@mudshark.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f181.google.com ([209.85.215.181]:38465 "EHLO
-	mail-ea0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758983Ab3KMMVz (ORCPT
+Received: from mail-ea0-f178.google.com ([209.85.215.178]:33440 "EHLO
+	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752185Ab3KNAlb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 13 Nov 2013 07:21:55 -0500
-In-Reply-To: <1764307.sx88zLt93L@amdc1032>
+	Wed, 13 Nov 2013 19:41:31 -0500
+Received: by mail-ea0-f178.google.com with SMTP id d10so300590eaj.23
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 13 Nov 2013 16:41:30 -0800 (PST)
+In-Reply-To: <20131025134852.GA10286@mudshark.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Sachin Kamat <sachin.kamat@linaro.org>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Santosh Shilimkar <santosh.shilimkar@ti.com>, Gregory CLEMENT <gregory.clement@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>
 
-On Wednesday 13 of November 2013 12:52:05 Bartlomiej Zolnierkiewicz wrote:
+Hi Will,
 
-[+ DT maintainers]
-
-> 
-> Hi,
-> 
-> On Wednesday, November 13, 2013 11:27:03 AM Sylwester Nawrocki wrote:
-> > On 13/11/13 09:08, Tomasz Figa wrote:
-> > >> As was discussed earlier too, status field of DT node is not supposed
-> > >> > to be used for
-> > >> > keeping an IP enabled or disabled. That should be done via the kernel
-> > >> > config. The DT status
-> > >> > is mostly to indicate the hardware status of the IP on the SoC/board.
-> > >> > If the node fully defines the hardware,
-> > >> > then it should be kept enabled by default unless such enabling causes
-> > >> > some issues with other IPs due to
-> > >> > pin sharing conflicts, etc. In the above case the node completely
-> > >> > defines the hardware and hence there is no
-> > >> > reason to keep it disabled.
-> > >
-> > > That's correct. (Unless I'm missing some board specific dependency of RTC.
-> > > If so, please correct me.)
-
-Well, I was missing one indeed. RTC requires an external 32.768KHz clock,
-which must be provided by an oscillator or any other clock source on the
-board. However...
-
+On Friday 25 of October 2013 14:48:52 Will Deacon wrote:
+> On Sat, Oct 19, 2013 at 03:04:22PM +0100, Tomasz Figa wrote:
+> > On Saturday 19 of October 2013 18:09:15 Sachin Kamat wrote:
+> > > Hi Tomasz,
+> > > 
+> > > On 17 October 2013 18:35, Tomasz Figa <t.figa@samsung.com> wrote:
+> > > > Hi Sachin,
+> > > > 
+> > > > On Thursday 17 of October 2013 17:33:12 Sachin Kamat wrote:
+> > > >> L2x0 cache controller is present only in Cortex-A9 based Exynos4 SoCs.
+> > > >> Thus move this function to Exynos4 early init call to avoid non-Exynos4
+> > > >> SoCs from calling this function in multi-platform support.
+> > > > 
+> > > > I believe that at the time .init_early() is called there is no ioremap()
+> > > > infrastructure working yet and so L2 cache initialization which needs
+> > > > it will cause a kernel panic. This patch worked only because currently
+> > > > there is no L2X0 controller defined in device tree sources of Exynos 4.
+> > > 
+> > > It is not clear to me as to why device tree entry is required for this
+> > > to work in current form
+> > > as we call the  L2X0 init function explicitly.
 > > 
-> > I don't really like this argument. Why not allow the firmware to decide
-> > which devices are relevant and should be handled by the kernel ?
-> > And since we are aiming at single kernel config, if I understand things
-> > correctly, I can't see anything else than dts that could hold the machine
-> > *configuration*.
+> > L2x0 controller is just another IP block on the SoC. In addition its
+> > registers are memory mapped and the driver needs some way to get their
+> > location. The function being called explicitly simply scans device tree
+> > for applicable node and performs rest of the setup only if it finds one.
 > > 
-> > So let's not make all stuff enabled by default, that's not something we
-> > want on those mobile device SoCs. We should not be making fine system
-> > tuning more difficult than necessary.
-> > 
-> > I'm with Kukjin on this matter and would prefer patches like the $subject
-> > patch not be merged.
+> > Ideally there should be no need to call this function explicitly, as it
+> > should be called by some code based on presence of applicable device tree
+> > node.
 > 
-> I generally agree with Sylwester and Kukjin that devices should not be
-> enabled by default in dtsi files.  However in a particular case of RTC
-> support there should be an exception from the generic rule and RTC
-> should be enabled for all EXYNOS boards (we have RTC driver config
-> option already enabled in our exynos_defconfig and we are also already
-> enabling RTC device explicitly in EXYNOS5250 dtsi file).
+> It's a nice idea, but you need to be careful if you start deferring this
+> stuff. Aside from the potential performance loss during early boot, I'm not
+> even sure that the l2x0_init function is safe to run with IRQs enabled.
+> 
+> Will
 
-I believe the rule is clear and we already went through enough discussion
-about this. To clarify again:
+I just realised that I have not replied to your message, sorry for that.
 
-Device Tree should not restrict possible use cases of particular hardware
-that are allowed by particular integration of such hardware on particular
-board. This means that if there are no technical reasons to mark such
-hardware as disabled on particular board, this should not be done. Let
-me show you this on several examples:
+So, my intention was not deferring this, but rather making this more
+generic. In case of Exynos, we call l2x0_of_init() from an early_initcall
+which is long time already after enabling interrupts, but still before
+SMP is initialized.
 
-1. SoC X has an MMC controller, which needs N pins of the SoC to be
-routed to an MMC slot. Our board X1 does _not_ have necessary traces on
-its PCB. In this case the MMC controller must be marked as disabled.
+My idea was to create a generic early_initcall in arch/arm/mm/cache-l2x0.c
+that would scan DT for applicable node, parse aux_val and aux_mask from
+such node (if found) and then initialize L2X0 without any need for
+having platform-specific code.
 
-2. SoC X has an MMC controller, which needs N pins of the SoC to be
-routed to an MMC slot. Our board X2 _does_ have necessary traces on its
-PCB, so when user inserts an MMC card into the slot he expects that the
-system detects it. In this case the MMC controller must _not_ be marked
-as disabled.
-
-3. SoC X has a built-in 2D graphics accelerator. It does not have any
-output pads nor any requirements with respect to the board - it's purely
-a mem-to-mem device. A user might want to run a rootfs that uses it to
-accelerate his applications, so this device must _not_ be marked as
-disabled.
-
-4. SoC X has a image processing block, consisting of two functions:
- - a camera interface, that requires SoC pads to be connected to a camera
-   sensor,
- - general-purpose image scaler and format converter, that can operate
-   either on input of camera interface or on images stored in memory.
-This case is more interesting. Even if board does not have a physical
-camera interface, the binding should be designed in a way that allows
-enabling only the memory-to-memory scaler. Then such IP must be marked
-okay regardless of board support, because the camera interface will be
-used only if relevant board-specific properties are provided.
-
-To sum up, I would not interpret the "disabled" value of "status" property
-as the opposite of "enabled", but rather as "disabled" in "disabled
-person".
-
-Anyway, I'd like to get a confirmation (or denial) from other Device Tree
-maintainers and if what I've written above is correct, maybe we should
-put this somewhere in kernel documentation.
+However my concern here is whether on some platforms such platform code
+wouldn't be needed anyway. Unfortunately I don't really know enough
+about L2X0 to be able to answer this myself, at least at the moment.
 
 Best regards,
 Tomasz
