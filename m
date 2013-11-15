@@ -1,221 +1,140 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [RFC v2 3/4] power: asv: Add support for Exynos5250
-Date: Fri, 15 Nov 2013 17:11:30 +0530
-Message-ID: <1384515691-26299-4-git-send-email-sachin.kamat@linaro.org>
-References: <1384515691-26299-1-git-send-email-sachin.kamat@linaro.org>
+From: Alex Ling <kasimling@gmail.com>
+Subject: [PATCH] ARM: dts: add board dts file for EXYNOS4412 based TINY4412 board
+Date: Fri, 15 Nov 2013 21:09:29 +0800
+Message-ID: <1384520969-2450-1-git-send-email-kasimling@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:41017 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758321Ab3KOLnn (ORCPT
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:46553 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751046Ab3KONKW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Nov 2013 06:43:43 -0500
-Received: by mail-pb0-f54.google.com with SMTP id ro12so3475075pbb.13
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Nov 2013 03:43:42 -0800 (PST)
-In-Reply-To: <1384515691-26299-1-git-send-email-sachin.kamat@linaro.org>
+	Fri, 15 Nov 2013 08:10:22 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rjw@rjwysocki.net, kgene.kim@samsung.com, tomasz.figa@gmail.com, yadi.brar01@gmail.com, sachin.kamat@linaro.org, myungjoo.ham@samsung.com, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: rob.herring@calxeda.com, mark.rutland@arm.com, linux@arm.linux.org.uk, swarren@wwwdotorg.org, ijc+devicetree@hellion.org.uk, kgene.kim@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Alex Ling <kasimling@gmail.com>
 
-From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Add a minimal board dts file for EXYNOS4412 based FriendlyARM's
+TINY4412 board. This patch including adds the node to support
+peripherals like UART, SD card on SDMMC2 port, and this patch
+adds GPIO connected LEDS and configure its properties like
+following:
+LED1: use 'heartbeat' trigger, blinking while the board is running.
+LED4: use 'mmc0' trigger, on when mmc0 is accessing.
+LED2 and LED3 can be controlled from userspace.
 
-This patch adds basic support (only for ARM ASV) for exynos5250 chips
-which have fused ASV group.
-
-Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+Signed-off-by: Alex Ling <kasimling@gmail.com>
 ---
- drivers/power/asv/Makefile         |    2 +-
- drivers/power/asv/exynos-asv.c     |    8 +++
- drivers/power/asv/exynos-asv.h     |    1 +
- drivers/power/asv/exynos5250-asv.c |  139 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 149 insertions(+), 1 deletion(-)
- create mode 100644 drivers/power/asv/exynos5250-asv.c
+ arch/arm/boot/dts/Makefile                |    1 +
+ arch/arm/boot/dts/exynos4412-tiny4412.dts |   89 +++++++++++++++++++++++++++++
+ 2 files changed, 90 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4412-tiny4412.dts
 
-diff --git a/drivers/power/asv/Makefile b/drivers/power/asv/Makefile
-index 9d0e0cc32cb5..a73544445c9a 100644
---- a/drivers/power/asv/Makefile
-+++ b/drivers/power/asv/Makefile
-@@ -1,2 +1,2 @@
- obj-$(CONFIG_POWER_ASV)			+= asv.o
--obj-$(CONFIG_POWER_EXYNOS_ASV)		+= exynos-asv.o
-+obj-$(CONFIG_POWER_EXYNOS_ASV)		+= exynos-asv.o exynos5250-asv.o
-diff --git a/drivers/power/asv/exynos-asv.c b/drivers/power/asv/exynos-asv.c
-index 50efb0b6af85..f2cd04d1ce95 100644
---- a/drivers/power/asv/exynos-asv.c
-+++ b/drivers/power/asv/exynos-asv.c
-@@ -46,9 +46,17 @@ static int exynos_asv_probe(struct platform_device *pdev)
- 	exynos_asv_info->base = base;
- 
- 	/* call SoC specific intialisation routine */
-+	if (of_machine_is_compatible("samsung,exynos5250")) {
-+		ret = exynos5250_asv_init(exynos_asv_info);
-+		if (ret) {
-+			pr_err("exynos5250_asv_init failed : %d\n", ret);
-+			goto err;
-+		}
-+	}
- 
- 	register_asv_member(exynos_asv_info->asv_list, exynos_asv_info->nr_mem);
- 
-+err:
- 	iounmap(base);
- err_map:
- 	of_node_put(chip_id);
-diff --git a/drivers/power/asv/exynos-asv.h b/drivers/power/asv/exynos-asv.h
-index 89a1ae8b5e19..a31becb7478f 100644
---- a/drivers/power/asv/exynos-asv.h
-+++ b/drivers/power/asv/exynos-asv.h
-@@ -18,4 +18,5 @@ struct exynos_asv_common {
- 	void __iomem *base;
- };
- 
-+extern int exynos5250_asv_init(struct exynos_asv_common *exynos_info);
- #endif	/* __EXYNOS_ASV_D_H */
-diff --git a/drivers/power/asv/exynos5250-asv.c b/drivers/power/asv/exynos5250-asv.c
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 802720e..91671a2 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -59,6 +59,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos4412-odroidx.dtb \
+ 	exynos4412-origen.dtb \
+ 	exynos4412-smdk4412.dtb \
++	exynos4412-tiny4412.dtb \
+ 	exynos4412-trats2.dtb \
+ 	exynos5250-arndale.dtb \
+ 	exynos5250-smdk5250.dtb \
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
 new file mode 100644
-index 000000000000..7746c7d2d987
+index 0000000..78ace14
 --- /dev/null
-+++ b/drivers/power/asv/exynos5250-asv.c
-@@ -0,0 +1,139 @@
-+/* exynos5250 - ASV(Adaptive Supply Voltage)
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -0,0 +1,89 @@
++/*
++ * FriendlyARM's Exynos4412 based TINY4412 board device tree source
 + *
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
++ * Copyright (c) 2013 Alex Ling <kasimling@gmail.com>
++ *
++ * Device tree source file for FriendlyARM's TINY4412 board which is based on
++ * Samsung's Exynos4412 SoC.
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 +*/
 +
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <linux/power/asv-driver.h>
-+#include "exynos-asv.h"
++/dts-v1/;
++#include "exynos4412.dtsi"
 +
-+#define FUSED_SG_OFFSET		3
-+#define ORIG_SG_OFFSET		17
-+#define ORIG_SG_MASK		0xF
-+#define MOD_SG_OFFSET		21
-+#define MOD_SG_MASK		0x7
++/ {
++	model = "FriendlyARM TINY4412 board based on Exynos4412";
++	compatible = "friendlyarm,tiny4412", "samsung,exynos4412";
 +
-+#define ARM_LEVEL_NR		16
-+#define ARM_GRP_NR		12
++	memory {
++		reg = <0x40000000 0x40000000>;
++	};
 +
-+#define CHIP_ID_OFFSET		0x4
++	leds {
++		compatible = "gpio-leds";
++		led1 {
++			label = "led1:heart";
++			gpios = <&gpm4 0 1>;
++			default-state = "off";
++			linux,default-trigger = "heartbeat";
++		};
++		led2 {
++			label = "led2";
++			gpios = <&gpm4 1 1>;
++			default-state = "off";
++		};
++		led3 {
++			label = "led3";
++			gpios = <&gpm4 2 1>;
++			default-state = "off";
++		};
++		led4 {
++			label = "led4:mmc0";
++			gpios = <&gpm4 3 1>;
++			default-state = "off";
++			linux,default-trigger = "mmc0";
++		};
++	};
 +
-+struct exynos5250_asv_info {
-+	unsigned int package_id;
-+	/* we may need more info as global data */
++	rtc@10070000 {
++		status = "okay";
++	};
++
++	sdhci@12530000 {
++		bus-width = <4>;
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++		pinctrl-names = "default";
++		status = "okay";
++	};
++
++	serial@13800000 {
++		status = "okay";
++	};
++
++	serial@13810000 {
++		status = "okay";
++	};
++
++	serial@13820000 {
++		status = "okay";
++	};
++
++	serial@13830000 {
++		status = "okay";
++	};
++
++	fixed-rate-clocks {
++		xxti {
++			compatible = "samsung,clock-xxti";
++			clock-frequency = <0>;
++		};
++
++		xusbxti {
++			compatible = "samsung,clock-xusbxti";
++			clock-frequency = <24000000>;
++		};
++	};
 +};
-+
-+static struct exynos5250_asv_info asv_group __initdata;
-+
-+static unsigned int asv_voltage[ARM_LEVEL_NR][ARM_GRP_NR + 1] __initdata = {
-+	{ 1700000, 1300000, 1275000, 1275000, 1262500, 1250000, 1225000,
-+	1212500, 1200000, 1187500, 1175000, 1150000, 1125000 },	/* L0 */
-+	{ 1600000, 1250000, 1225000, 1225000, 1212500, 1200000, 1187500,
-+	1175000, 1162500, 1150000, 1137500, 1112500, 1100000 },	/* L1 */
-+	{ 1500000, 1225000, 1187500, 1175000, 1162500, 1150000, 1137500,
-+	1125000, 1112500, 1100000, 1087500, 1075000, 1062500 },	/* L2 */
-+	{ 1400000, 1200000, 1125000, 1125000, 1125000, 1112500, 1100000,
-+	1087500, 1075000, 1062500, 1050000, 1037500, 1025000 },	/* L3 */
-+	{ 1300000, 1150000, 1100000, 1100000, 1100000, 1087500, 1075000,
-+	1062500, 1050000, 1037500, 1025000, 1012500, 1000000 },	/* L4 */
-+	{ 1200000, 1125000, 1075000, 1075000, 1062500, 1050000, 1037500,
-+	1025000, 1012500, 1000000,  987500,  975000,  975000 },	/* L5 */
-+	{ 1100000, 1100000, 1050000, 1050000, 1037500, 1025000, 1012500,
-+	1000000,  987500,  975000,  962500,  950000,  925000 },	/* L6 */
-+	{ 1000000, 1075000, 1037500, 1037500, 1012500, 1000000,  987500,
-+	975000,  962500,  950000,  937500,  925000,  912500 },	/* L7 */
-+	{ 900000, 1050000, 1025000, 1012500,  987500,  975000,  962500,
-+	950000,  937500,  925000,  912500,  912500,  900000 },	/* L8 */
-+	{ 800000, 1025000, 1000000,  987500,  975000,  962500,  950000,
-+	937500,  925000,  912500,  900000,  900000,  900000 },	/* L9 */
-+	{ 700000, 1012500,  975000,  962500,  950000,  937500,  925000,
-+	912500,  900000,  900000,  900000,  900000,  900000 },	/* L10 */
-+	{ 600000, 1000000,  962500,  950000,  937500,  925000,  912500,
-+	900000,  900000,  900000,  900000,  900000,  900000 },	/* L11 */
-+	{ 500000, 975000,  950000,  937500,  925000,  912500,  900000,
-+	900000,  900000,  900000,  900000,  900000,  887500 },	/* L12 */
-+	{ 400000, 950000,  937500,  925000,  912500,  900000,  900000,
-+	900000,  900000,  900000,  900000,  887500,  887500 },	/* L13 */
-+	{ 300000, 937500,  925000,  912500,  900000,  900000,  900000,
-+	900000,  900000,  900000,  887500,  887500,  875000 },	/* L14 */
-+	{ 200000, 925000,  912500,  900000,  900000,  900000,  900000,
-+	900000,  900000,  887500,  887500,  875000,  875000 },	/* L15 */
-+};
-+
-+static int __init exynos5250_get_asv_group(struct asv_info *asv_info)
-+{
-+	int exynos_asv_grp;
-+	u32 exynos_orig_sp;
-+	u32 exynos_mod_sp;
-+	u32 package_id = asv_group.package_id;
-+
-+	/* If ASV group is fused then retrieve it */
-+	if ((package_id >> FUSED_SG_OFFSET) & 0x1) {
-+		exynos_orig_sp = (package_id >> ORIG_SG_OFFSET) & ORIG_SG_MASK;
-+		exynos_mod_sp = (package_id >> MOD_SG_OFFSET) & MOD_SG_MASK;
-+
-+		exynos_asv_grp = exynos_orig_sp - exynos_mod_sp;
-+		if (exynos_asv_grp < 0) {
-+			pr_warn("%s: Invalid ASV group: %d\n", __func__,
-+				exynos_asv_grp);
-+			exynos_asv_grp = 0;	/* go for default */
-+		}
-+	} else {
-+		pr_warn("%s: ASV group not fused for : %s\n", __func__,
-+			asv_info->name);
-+		exynos_asv_grp = 0;		/* go for default */
-+	}
-+
-+	asv_info->asv_grp = exynos_asv_grp;
-+	return 0;
-+}
-+
-+static int __init exynos5250_init_arm_asv_table(struct asv_info *asv_info)
-+{
-+	struct asv_freq_table *dvfs_table;
-+	int i, asv_grp = asv_info->asv_grp;
-+
-+	dvfs_table = kzalloc(sizeof(*dvfs_table) * ARM_LEVEL_NR, GFP_KERNEL);
-+	if (!dvfs_table)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARM_LEVEL_NR; i++) {
-+		dvfs_table[i].freq = asv_voltage[i][0];
-+		dvfs_table[i].volt = asv_voltage[i][asv_grp + 1];
-+	}
-+
-+	asv_info->dvfs_table = dvfs_table;
-+	return 0;
-+}
-+
-+/* TODO: Implement .init_asv callback to set ABB value */
-+
-+static struct asv_ops exynos5250_arm_asv_ops __initdata = {
-+	.get_asv_group = exynos5250_get_asv_group,
-+	.init_asv_table = exynos5250_init_arm_asv_table,
-+};
-+
-+static struct asv_info exynos5250_asv_member[] __initdata = {
-+	{
-+		.type		= ASV_ARM,
-+		.name		= "VDD_ARM",
-+		.ops		= &exynos5250_arm_asv_ops,
-+		.nr_dvfs_level	= ARM_LEVEL_NR,
-+	},
-+};
-+
-+int __init exynos5250_asv_init(struct exynos_asv_common *exynos_info)
-+{
-+	asv_group.package_id = readl(exynos_info->base + CHIP_ID_OFFSET);
-+	exynos_info->asv_list = exynos5250_asv_member;
-+	exynos_info->nr_mem = ARRAY_SIZE(exynos5250_asv_member);
-+
-+	return 0;
-+}
 -- 
 1.7.9.5
