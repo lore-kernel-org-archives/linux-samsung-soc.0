@@ -1,75 +1,60 @@
-From: Cedric Le Goater <clg@fr.ibm.com>
-Subject: Re: [PATCH 16/51] DMA-API: ppc: vio.c: replace dma_set_mask()+dma_set_coherent_mask()
- with new helper
-Date: Fri, 15 Nov 2013 17:16:55 +0100
-Message-ID: <528648F7.20900@fr.ibm.com>
-References: <20130919212235.GD12758@n2100.arm.linux.org.uk> <E1VMly8-0007gy-Ru@rmk-PC.arm.linux.org.uk>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH V8 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi files
+Date: Sat, 16 Nov 2013 00:43:19 +0100
+Message-ID: <1736135.JdedDOBENL@flatron>
+References: <1384238088-9862-1-git-send-email-l.krishna@samsung.com> <1384238088-9862-2-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-crypto-owner@vger.kernel.org>
-In-Reply-To: <E1VMly8-0007gy-Ru@rmk-PC.arm.linux.org.uk>
-Sender: linux-crypto-owner@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: alsa-devel@alsa-project.org, b43-dev@lists.infradead.org, devel@driverdev.osuosl.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, e1000-devel@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-ide@vger.kernel.org, linux-media@vger.kernel.org, linux-mmc@vger.kernel.org, linux-nvme@lists.infradead.org, linux-omap@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-scsi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, Solarflare linux maintainers <linux-net-drivers@solarflare.com>, uclinux-dist-devel@blackfin.uclinux.org, Paul Mackerras <paulus@samba.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ee0-f48.google.com ([74.125.83.48]:52636 "EHLO
+	mail-ee0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753486Ab3KOXnU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 15 Nov 2013 18:43:20 -0500
+In-Reply-To: <1384238088-9862-2-git-send-email-l.krishna@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, wim@iguana.be, t.figa@samsung.com, devicetree@vger.kernel.org, dianders@chromium.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, sachin.kamat@linaro.org
 
-Hi,=20
-
-On 09/19/2013 11:41 PM, Russell King wrote:
-> Replace the following sequence:
->=20
-> 	dma_set_mask(dev, mask);
-> 	dma_set_coherent_mask(dev, mask);
->=20
-> with a call to the new helper dma_set_mask_and_coherent().
->=20
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+On Tuesday 12 of November 2013 12:04:46 Leela Krishna Amudala wrote:
+> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
+> handle PMU register accesses in a centralized way using syscon driver
+> 
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 > ---
->  arch/powerpc/kernel/vio.c |    3 +--
->  1 files changed, 1 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/powerpc/kernel/vio.c b/arch/powerpc/kernel/vio.c
-> index 78a3506..96b6c97 100644
-> --- a/arch/powerpc/kernel/vio.c
-> +++ b/arch/powerpc/kernel/vio.c
-> @@ -1413,8 +1413,7 @@ struct vio_dev *vio_register_device_node(struct=
- device_node *of_node)
->=20
->  		/* needed to ensure proper operation of coherent allocations
->  		 * later, in case driver doesn't set it explicitly */
-> -		dma_set_mask(&viodev->dev, DMA_BIT_MASK(64));
-> -		dma_set_coherent_mask(&viodev->dev, DMA_BIT_MASK(64));
-> +		dma_set_mask_and_coherent(&viodev->dev, DMA_BIT_MASK(64));
->  	}
->=20
->  	/* register with generic device framework */
->=20
+>  Documentation/devicetree/bindings/arm/samsung/pmu.txt |   13 +++++++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
+>  arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
+>  3 files changed, 23 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> new file mode 100644
+> index 0000000..90f975d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> @@ -0,0 +1,13 @@
+> +SAMSUNG Exynos SoC series PMU Registers
+> +
+> +Properties:
+> + - name : should be 'syscon';
+> + - compatible : should contain "samsung,<chip name>-pmu", "syscon";
 
-The new helper routine dma_set_mask_and_coherent() breaks the=20
-initialization of the pseries vio devices which do not have an=20
-initial dev->dma_mask. I think we need to use dma_coerce_mask_and_coher=
-ent()
-instead.
+AFAIR there was a discussion about using <chip name> wildcards some
+time ago and if I remember correctly, the conclusion was that the list
+of all supported compatible values should be provided anyway, so there
+is no point in using such wildcards.
 
-Signed-off-by: C=E9dric Le Goater <clg@fr.ibm.com>
----
- arch/powerpc/kernel/vio.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This is how I would write this:
 
-diff --git a/arch/powerpc/kernel/vio.c b/arch/powerpc/kernel/vio.c
-index e7d0c88f..76a6482 100644
---- a/arch/powerpc/kernel/vio.c
-+++ b/arch/powerpc/kernel/vio.c
-@@ -1419,7 +1419,7 @@ struct vio_dev *vio_register_device_node(struct d=
-evice_node *of_node)
-=20
- 		/* needed to ensure proper operation of coherent allocations
- 		 * later, in case driver doesn't set it explicitly */
--		dma_set_mask_and_coherent(&viodev->dev, DMA_BIT_MASK(64));
-+		dma_coerce_mask_and_coherent(&viodev->dev, DMA_BIT_MASK(64));
- 	}
-=20
- 	/* register with generic device framework */
---=20
-1.7.10.4
+ - compatible : should contain two values. First value must be one from
+   following list:
+     - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+     - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+   Second value must be always "syscon".
+
+Best regards,
+Tomasz
