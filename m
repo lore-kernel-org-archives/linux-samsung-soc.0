@@ -1,42 +1,61 @@
-From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] spi: s3c64xx: fix reference leak to master in s3c64xx_spi_remove()
-Date: Fri, 15 Nov 2013 15:54:16 +0800
-Message-ID: <CAPgLHd_-cpipSk5+SVPwZ0_Jzx2P5tJVFaj8Rxkbb_+yFVqvEg@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] spi: s3c64xx: fix reference leak to master in
+ s3c64xx_spi_remove()
+Date: Fri, 15 Nov 2013 10:34:43 +0000
+Message-ID: <20131115103443.GC26614@sirena.org.uk>
+References: <CAPgLHd_-cpipSk5+SVPwZ0_Jzx2P5tJVFaj8Rxkbb_+yFVqvEg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MvEh5MSbieV/1Yst"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:57139 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752703Ab3KOKfN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 15 Nov 2013 05:35:13 -0500
+Content-Disposition: inline
+In-Reply-To: <CAPgLHd_-cpipSk5+SVPwZ0_Jzx2P5tJVFaj8Rxkbb_+yFVqvEg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, jg1.han@samsung.com, yongjun_wei@trendmicro.com.cn, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
-From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-Once a spi_master_get() call succeeds, we need an additional
-spi_master_put() call to free the memory, otherwise we will
-leak a reference to master. Fix by removing the unnecessary
-spi_master_get() call.
+--MvEh5MSbieV/1Yst
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
----
- drivers/spi/spi-s3c64xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Nov 15, 2013 at 03:54:16PM +0800, Wei Yongjun wrote:
+> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
+>=20
+> Once a spi_master_get() call succeeds, we need an additional
+> spi_master_put() call to free the memory, otherwise we will
+> leak a reference to master. Fix by removing the unnecessary
+> spi_master_get() call.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 9e2020d..9c82d7b 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1439,7 +1439,7 @@ err0:
- 
- static int s3c64xx_spi_remove(struct platform_device *pdev)
- {
--	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
-+	struct spi_master *master = platform_get_drvdata(pdev);
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
- 
- 	pm_runtime_disable(&pdev->dev);
+Applied, thanks.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--MvEh5MSbieV/1Yst
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJShfjAAAoJELSic+t+oim9BFMP/jJXDUABGrvU/t4QEcdL7PQs
+CkuxjCD6dD1MlHFeuBk2bnycqCMS7u9Z7tJPH9JgXVX6QAdYcKHaPtlXpd4Zdx3o
+vxx3mN1/loz2x957sz9hYXJfR7XQqoMtDSK9TH5eb5Lb3Uy2gUFp5xbZKF8JY7Qh
+hSSVtrXV64LRtDyPznzOGUsH++SKo6Iqz8P7L+0Xpc4OMznd7N+NE3vfElbGw6Xs
+A+Rz7uV2k0hrTc5bt9XdR26ejuEfW0z8bDYP51PZPcy2WAVuBT4nNk1UYJmG1q6V
+Le3PQK3SiZiSDCdv7rSevSTS6JKtwyYFatOJzQKT7EsYjOXgw6uDlQPLwED2XaRS
+KeQHt5hrBKcslsByH1HKbr5WbepNcw0ZOFYtLW2HjxGDTTBeYy8lopMJWG5Y8veD
+Sz7/J5jRuM1tRC2zShtJIj+df6qmPlv1BmJleL34SikGtg33ZUhzTU0yDmcBAvoj
+g3m6Ooj0tKP7MtwuwwPcqzEGqKu3Xvlh7HYXq+viiceYqlxGPG9ZEIbKxnVoXtAG
+0iUg3+d1OBXN8Opiah5j2lAKN9FtiH8dkGsdK47zHOObk4bvMrbaotcawf5Y04wk
+40unU4rStUC9IMfM2we4VusE1GOQEnIpwiku/2lJ2ZdSiuREVdu5Lsf5DZM6oxgB
+i/OW6q5IeHwoGMsG8nR/
+=IWPN
+-----END PGP SIGNATURE-----
+
+--MvEh5MSbieV/1Yst--
