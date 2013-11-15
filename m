@@ -1,61 +1,76 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: fix reference leak to master in
- s3c64xx_spi_remove()
-Date: Fri, 15 Nov 2013 10:34:43 +0000
-Message-ID: <20131115103443.GC26614@sirena.org.uk>
-References: <CAPgLHd_-cpipSk5+SVPwZ0_Jzx2P5tJVFaj8Rxkbb_+yFVqvEg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MvEh5MSbieV/1Yst"
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [RFC v2 0/4] Add basic support for ASV
+Date: Fri, 15 Nov 2013 17:11:27 +0530
+Message-ID: <1384515691-26299-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:57139 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752703Ab3KOKfN (ORCPT
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:34659 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753930Ab3KOLn3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Nov 2013 05:35:13 -0500
-Content-Disposition: inline
-In-Reply-To: <CAPgLHd_-cpipSk5+SVPwZ0_Jzx2P5tJVFaj8Rxkbb_+yFVqvEg@mail.gmail.com>
+	Fri, 15 Nov 2013 06:43:29 -0500
+Received: by mail-pa0-f51.google.com with SMTP id fb1so3560258pad.10
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 15 Nov 2013 03:43:28 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wei Yongjun <weiyj.lk@gmail.com>
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, jg1.han@samsung.com, yongjun_wei@trendmicro.com.cn, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rjw@rjwysocki.net, kgene.kim@samsung.com, tomasz.figa@gmail.com, yadi.brar01@gmail.com, sachin.kamat@linaro.org, myungjoo.ham@samsung.com
 
+Original cover letter from Yadwinder:
+This series is to add basic common infrastructure for ASV.
+ Basically ASV is a technique used on samsung SoCs, which provides the
+recommended supply voltage for dvfs of arm, mif etc. For a given operating
+frequency, the voltage is recommended based on SoC's ASV group.
+ASV group gets fussed on SoCs during process of mass production.
 
---MvEh5MSbieV/1Yst
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series includes:
+ - basic common infrastructue for ASV. It provides common APIs for user drivers
+like cpufreq & devfreq and and an interface for SoC specific drivers to
+register ASV members(instances)
+ - a common platform driver to register ASV members for exynos SoCs
+ - an example providing minimal support (only for ARM ASV) for exynos5250 chips
 
-On Fri, Nov 15, 2013 at 03:54:16PM +0800, Wei Yongjun wrote:
-> From: Wei Yongjun <yongjun_wei@trendmicro.com.cn>
->=20
-> Once a spi_master_get() call succeeds, we need an additional
-> spi_master_put() call to free the memory, otherwise we will
-> leak a reference to master. Fix by removing the unnecessary
-> spi_master_get() call.
+Its just basic skelton which I wanted to get it reviewed or discussed in
+early stage, before going ahead on further development based on it.
+ Presently example is based on static ASV table provided in SoC specific file,
+which I expects to go into DT. But exactly how and where needs to be discussed,
+may be in next revisions once we get through the basic skelton.
+ Also the location of driver in kernel may also seem odd to someone and
+many more things :).
 
-Applied, thanks.
+Looking for your valuable reviews and suggestions.
 
---MvEh5MSbieV/1Yst
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Changes since v1:
+* Rebased onto the latest linux-next
+* Used devm* and *opp APIs
+* Code cleanup and some fixes
+* Updated kernel doc and Kconfig text
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+Yadwinder Singh Brar (4):
+  power: asv: Add common ASV support for Samsung SoCs
+  power: asv: Add a common ASV driver for Exynos SoCs.
+  power: asv: Add support for Exynos5250
+  ARM: SAMSUNG: Register static platform device for ASV for Exynos5
 
-iQIcBAEBAgAGBQJShfjAAAoJELSic+t+oim9BFMP/jJXDUABGrvU/t4QEcdL7PQs
-CkuxjCD6dD1MlHFeuBk2bnycqCMS7u9Z7tJPH9JgXVX6QAdYcKHaPtlXpd4Zdx3o
-vxx3mN1/loz2x957sz9hYXJfR7XQqoMtDSK9TH5eb5Lb3Uy2gUFp5xbZKF8JY7Qh
-hSSVtrXV64LRtDyPznzOGUsH++SKo6Iqz8P7L+0Xpc4OMznd7N+NE3vfElbGw6Xs
-A+Rz7uV2k0hrTc5bt9XdR26ejuEfW0z8bDYP51PZPcy2WAVuBT4nNk1UYJmG1q6V
-Le3PQK3SiZiSDCdv7rSevSTS6JKtwyYFatOJzQKT7EsYjOXgw6uDlQPLwED2XaRS
-KeQHt5hrBKcslsByH1HKbr5WbepNcw0ZOFYtLW2HjxGDTTBeYy8lopMJWG5Y8veD
-Sz7/J5jRuM1tRC2zShtJIj+df6qmPlv1BmJleL34SikGtg33ZUhzTU0yDmcBAvoj
-g3m6Ooj0tKP7MtwuwwPcqzEGqKu3Xvlh7HYXq+viiceYqlxGPG9ZEIbKxnVoXtAG
-0iUg3+d1OBXN8Opiah5j2lAKN9FtiH8dkGsdK47zHOObk4bvMrbaotcawf5Y04wk
-40unU4rStUC9IMfM2we4VusE1GOQEnIpwiku/2lJ2ZdSiuREVdu5Lsf5DZM6oxgB
-i/OW6q5IeHwoGMsG8nR/
-=IWPN
------END PGP SIGNATURE-----
+ arch/arm/mach-exynos/mach-exynos5-dt.c |    2 +
+ drivers/power/Kconfig                  |    1 +
+ drivers/power/Makefile                 |    1 +
+ drivers/power/asv/Kconfig              |   23 +++++
+ drivers/power/asv/Makefile             |    2 +
+ drivers/power/asv/asv.c                |  176 ++++++++++++++++++++++++++++++++
+ drivers/power/asv/exynos-asv.c         |   78 ++++++++++++++
+ drivers/power/asv/exynos-asv.h         |   22 ++++
+ drivers/power/asv/exynos5250-asv.c     |  139 +++++++++++++++++++++++++
+ include/linux/power/asv-driver.h       |   62 +++++++++++
+ include/linux/power/asv.h              |   37 +++++++
+ 11 files changed, 543 insertions(+)
+ create mode 100644 drivers/power/asv/Kconfig
+ create mode 100644 drivers/power/asv/Makefile
+ create mode 100644 drivers/power/asv/asv.c
+ create mode 100644 drivers/power/asv/exynos-asv.c
+ create mode 100644 drivers/power/asv/exynos-asv.h
+ create mode 100644 drivers/power/asv/exynos5250-asv.c
+ create mode 100644 include/linux/power/asv-driver.h
+ create mode 100644 include/linux/power/asv.h
 
---MvEh5MSbieV/1Yst--
+-- 
+1.7.9.5
