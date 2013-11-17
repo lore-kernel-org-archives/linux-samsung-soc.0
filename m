@@ -1,182 +1,600 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V8 2/3] watchdog: s3c2410_wdt: add device tree support and use syscon regmap interface to configure pmu register
-Date: Sat, 16 Nov 2013 00:57:32 +0100
-Message-ID: <1624293.Me8KZc3LAK@flatron>
-References: <1384238088-9862-1-git-send-email-l.krishna@samsung.com> <1384238088-9862-3-git-send-email-l.krishna@samsung.com> <52858BBE.5030800@roeck-us.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f54.google.com ([74.125.83.54]:57238 "EHLO
-	mail-ee0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752060Ab3KOX5j (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Nov 2013 18:57:39 -0500
-In-Reply-To: <52858BBE.5030800@roeck-us.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH] ARM: move firmware_ops to drivers/firmware
+Date: Sun, 17 Nov 2013 17:49:29 +0900
+Message-ID: <1384678169-28228-1-git-send-email-acourbot@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Olof Johansson <olof@lixom.net>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, wim@iguana.be, t.figa@samsung.com, devicetree@vger.kernel.org, dianders@chromium.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, sachin.kamat@linaro.org
 
-On Thursday 14 of November 2013 18:49:34 Guenter Roeck wrote:
-> On 11/11/2013 10:34 PM, Leela Krishna Amudala wrote:
-> > Add device tree support and use syscon regmap interface to configure
-> > AUTOMATIC_WDT_RESET_DISABLE and MASK_WDT_RESET_REQUEST registers of PMU
-> > to mask/unmask enable/disable of watchdog in probe and s2r scenarios.
-> >
-> If the driver didn't support devicetree before, why did it have #ifdef CONFIG_OF, and
-> why does its devicetree bindings file already exist ?
-> 
-> Seems to me the description does not match the patch; it appears that you are really
-> adding Exynos5 support to the driver.
+The ARM tree includes a firmware_ops interface that is designed to
+implement support for simple, TrustZone-based firmwares but could
+also cover other use-cases. It has been suggested that this
+interface might be useful to other architectures (e.g. arm64) and
+that it should be moved out of arch/arm.
 
-Yes, the driver did support Device Tree before. Patch description needs
-to be corrected.
+This patch takes care of this by performing the following:
+* Move the ARM firmware interface into drivers/firmware/ and rename
+  it to platform_firmware,
+* Update its documentation accordingly,
+* Update the only user of the API to date (Exynos secure firmware
+  support) to use the new API.
 
-> > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> > index 23aad7c..ccf755d 100644
-> > --- a/drivers/watchdog/s3c2410_wdt.c
-> > +++ b/drivers/watchdog/s3c2410_wdt.c
-[snip]
-> > +
-> > +static const struct platform_device_id s3c2410_wdt_ids[] = {
-> > +	{
-> > +		.name = "s3c2410-wdt",
-> > +		.driver_data = (unsigned long)&pmu_config_s3c2410,
-> > +	},
-> > +	{}
-> > +};
-> > +MODULE_DEVICE_TABLE(platform, s3c2410_wdt_ids);
-> > +
-> 
-> What is this second device ID and MODULE_DEVICE_TABLE for ?
-> I assume it is to provide driver_data. If so, you should probably remove the
-> platform MODULE_ALIAS at the end of the driver.
+The ARM architecture's Kconfig now needs to include the Kconfig of
+drivers/firmware, which will result in an empty menu for most platforms
+that don't make use of any firmware. To avoid this, a new invisible
+ARCH_SUPPORTS_FIRMWARE configuration variable is also defined for ARM,
+that should explicitly be set by platforms that support firmware so that
+the firmware menu is included.
 
-Yes. I suggested adding it to simplify the code a bit by having driver
-data supplied even when booting without DT. Good catch with MODULE_ALIAS,
-though.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ Documentation/arm/firmware.txt               | 88 ---------------------------
+ Documentation/firmware/platform_firmware.txt | 89 ++++++++++++++++++++++++++++
+ arch/arm/Kconfig                             |  9 +++
+ arch/arm/common/Makefile                     |  2 -
+ arch/arm/common/firmware.c                   | 18 ------
+ arch/arm/include/asm/firmware.h              | 66 ---------------------
+ arch/arm/mach-exynos/Makefile                |  2 +-
+ arch/arm/mach-exynos/firmware.c              |  7 +--
+ arch/arm/mach-exynos/platsmp.c               | 10 ++--
+ drivers/firmware/Kconfig                     |  8 +++
+ drivers/firmware/Makefile                    |  1 +
+ drivers/firmware/platform_firmware.c         | 17 ++++++
+ include/linux/platform_firmware.h            | 69 +++++++++++++++++++++
+ 13 files changed, 203 insertions(+), 183 deletions(-)
+ delete mode 100644 Documentation/arm/firmware.txt
+ create mode 100644 Documentation/firmware/platform_firmware.txt
+ delete mode 100644 arch/arm/common/firmware.c
+ delete mode 100644 arch/arm/include/asm/firmware.h
+ create mode 100644 drivers/firmware/platform_firmware.c
+ create mode 100644 include/linux/platform_firmware.h
 
-> 
-> >   /* watchdog control routines */
-> >
-> >   #define DBG(fmt, ...)					\
-> > @@ -111,6 +166,30 @@ static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
-> >   	return container_of(nb, struct s3c2410_wdt, freq_transition);
-> >   }
-> >
-> > +static int s3c2410wdt_mask_and_disable_reset(struct s3c2410_wdt *wdt, bool mask)
-> > +{
-> > +	int ret;
-> > +	u32 mask_val = 1 << wdt->pmu_config->mask_bit;
-> > +	u32 val = 0;
-> > +
-> > +	if (mask)
-> > +		val = mask_val;
-> > +
-> > +	ret = regmap_update_bits(wdt->pmureg,
-> > +			wdt->pmu_config->disable_reg,
-> > +			mask_val, val);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	ret = regmap_update_bits(wdt->pmureg,
-> > +			wdt->pmu_config->mask_reset_reg,
-> > +			mask_val, val);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	return 0;
-> 
-> The above code is identical to
-> 	return ret;
-
-I'd even say that the above code is identical to
-
-	return regmap_update_bits(wdt->pmureg,
-			wdt->pmu_config->mask_reset_reg,
-			mask_val, val);
-
-> 
-> > +}
-> > +
-> >   static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
-> >   {
-> >   	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
-> > @@ -332,6 +411,20 @@ static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
-> >   }
-> >   #endif
-> >
-> > +/* s3c2410_get_wdt_driver_data */
-> > +static inline struct s3c2410_wdt_variant *
-> > +get_wdt_drv_data(struct platform_device *pdev)
-> > +{
-> > +	if (pdev->dev.of_node) {
-> > +		const struct of_device_id *match;
-> > +		match = of_match_node(s3c2410_wdt_match, pdev->dev.of_node);
-> > +		return (struct s3c2410_wdt_variant *)match->data;
-> > +	} else {
-> > +		return (struct s3c2410_wdt_variant *)
-> > +			platform_get_device_id(pdev)->driver_data;
-> > +	}
-> > +}
-> > +
-> >   static int s3c2410wdt_probe(struct platform_device *pdev)
-> >   {
-> >   	struct device *dev;
-> > @@ -354,6 +447,16 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >   	spin_lock_init(&wdt->lock);
-> >   	wdt->wdt_device = s3c2410_wdd;
-> >
-> > +	wdt->pmu_config = get_wdt_drv_data(pdev);
-> > +	if (wdt->pmu_config->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-> > +		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
-> > +							"samsung,syscon-phandle");
-> > +		if (IS_ERR(wdt->pmureg)) {
-> > +			dev_err(dev, "syscon regmap lookup failed.\n");
-> > +			return PTR_ERR(wdt->pmureg);
-> > +		}
-> > +	}
-> > +
-> >   	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-> >   	if (wdt_irq == NULL) {
-> >   		dev_err(dev, "no irq resource specified\n");
-> > @@ -444,6 +547,14 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
-> >   		 (wtcon & S3C2410_WTCON_RSTEN) ? "en" : "dis",
-> >   		 (wtcon & S3C2410_WTCON_INTEN) ? "en" : "dis");
-> >
-> > +	if (wdt->pmu_config->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-> 
-> Might be easier to check for wdt->pmureg in all those secondary conditionals.
-
-IMHO not really much easier and less meaningful. Furthermore, in case of
-other quirks showing up in future that wouldn't have alternative way
-of checking, they will have consistent style of checks.
-
-However, I think I missed to point out the ugly field name in my previous
-reviews. Instead of calling it "pmu_config", "drv_data" would be much
-better.
-
-> 
-> > +		ret = s3c2410wdt_mask_and_disable_reset(wdt, false);
-> > +		if (ret < 0) {
-> > +			dev_warn(wdt->dev, "failed to update pmu register");
-> 
-> Is this a warning or an error ?
-> 
-> If it is (only) a warning, why do you bail out ?
-> 
-> On a side note, I am not sure if all those errors can really happen in practice.
-> Becasue if not, all you do is to increase code size with no real benefit.
-
-Yes, that's a good point. I was under impression that returned error codes
-should not be ignored, but maybe I was a bit too strict over this.
-
-Generally on currently supported platforms that will end up as a simple
-MMIO register access locked with a spinlock, so really no way to fail.
-
-Anyway, a failure to write these PMU registers would end up with the
-watchdog not generating the reset, so IMHO it would be an error.
-
-Best regards,
-Tomasz
+diff --git a/Documentation/arm/firmware.txt b/Documentation/arm/firmware.txt
+deleted file mode 100644
+index c2e468f..0000000
+--- a/Documentation/arm/firmware.txt
++++ /dev/null
+@@ -1,88 +0,0 @@
+-Interface for registering and calling firmware-specific operations for ARM.
+-----
+-Written by Tomasz Figa <t.figa@samsung.com>
+-
+-Some boards are running with secure firmware running in TrustZone secure
+-world, which changes the way some things have to be initialized. This makes
+-a need to provide an interface for such platforms to specify available firmware
+-operations and call them when needed.
+-
+-Firmware operations can be specified using struct firmware_ops
+-
+-	struct firmware_ops {
+-		/*
+-		* Enters CPU idle mode
+-		*/
+-		int (*do_idle)(void);
+-		/*
+-		* Sets boot address of specified physical CPU
+-		*/
+-		int (*set_cpu_boot_addr)(int cpu, unsigned long boot_addr);
+-		/*
+-		* Boots specified physical CPU
+-		*/
+-		int (*cpu_boot)(int cpu);
+-		/*
+-		* Initializes L2 cache
+-		*/
+-		int (*l2x0_init)(void);
+-	};
+-
+-and then registered with register_firmware_ops function
+-
+-	void register_firmware_ops(const struct firmware_ops *ops)
+-
+-the ops pointer must be non-NULL.
+-
+-There is a default, empty set of operations provided, so there is no need to
+-set anything if platform does not require firmware operations.
+-
+-To call a firmware operation, a helper macro is provided
+-
+-	#define call_firmware_op(op, ...)				\
+-		((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
+-
+-the macro checks if the operation is provided and calls it or otherwise returns
+--ENOSYS to signal that given operation is not available (for example, to allow
+-fallback to legacy operation).
+-
+-Example of registering firmware operations:
+-
+-	/* board file */
+-
+-	static int platformX_do_idle(void)
+-	{
+-		/* tell platformX firmware to enter idle */
+-		return 0;
+-	}
+-
+-	static int platformX_cpu_boot(int i)
+-	{
+-		/* tell platformX firmware to boot CPU i */
+-		return 0;
+-	}
+-
+-	static const struct firmware_ops platformX_firmware_ops = {
+-		.do_idle        = exynos_do_idle,
+-		.cpu_boot       = exynos_cpu_boot,
+-		/* other operations not available on platformX */
+-	};
+-
+-	/* init_early callback of machine descriptor */
+-	static void __init board_init_early(void)
+-	{
+-		register_firmware_ops(&platformX_firmware_ops);
+-	}
+-
+-Example of using a firmware operation:
+-
+-	/* some platform code, e.g. SMP initialization */
+-
+-	__raw_writel(virt_to_phys(exynos4_secondary_startup),
+-		CPU1_BOOT_REG);
+-
+-	/* Call Exynos specific smc call */
+-	if (call_firmware_op(cpu_boot, cpu) == -ENOSYS)
+-		cpu_boot_legacy(...); /* Try legacy way */
+-
+-	gic_raise_softirq(cpumask_of(cpu), 1);
+diff --git a/Documentation/firmware/platform_firmware.txt b/Documentation/firmware/platform_firmware.txt
+new file mode 100644
+index 0000000..db2a3e7
+--- /dev/null
++++ b/Documentation/firmware/platform_firmware.txt
+@@ -0,0 +1,89 @@
++Interface for registering and calling firmware-specific operations.
++----
++Written by Tomasz Figa <t.figa@samsung.com>
++
++Some boards are running with secure firmware running in secure world, which
++changes the way some things have to be initialized. This makes a need to provide
++an interface for such platforms to specify available firmware operations and
++call them when needed.
++
++Firmware operations can be specified using struct platform_firmware_ops
++
++	struct platform_firmware_ops {
++		/*
++		* Enters CPU idle mode
++		*/
++		int (*do_idle)(void);
++		/*
++		* Sets boot address of specified physical CPU
++		*/
++		int (*set_cpu_boot_addr)(int cpu, unsigned long boot_addr);
++		/*
++		* Boots specified physical CPU
++		*/
++		int (*cpu_boot)(int cpu);
++		/*
++		* Initializes L2 cache
++		*/
++		int (*l2x0_init)(void);
++	};
++
++and then registered with register_platform_firmware_ops function
++
++void register_platform_firmware_ops(const struct platform_firmware_ops *ops)
++
++the ops pointer must be non-NULL.
++
++There is a default, empty set of operations provided, so there is no need to
++set anything if platform does not require firmware operations.
++
++To call a firmware operation, a helper macro is provided
++
++	#define call_platform_firmware_op(op, ...)				\
++		((platform_firmware_ops->op) ?
++		platform_firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
++
++the macro checks if the operation is provided and calls it or otherwise returns
++-ENOSYS to signal that given operation is not available (for example, to allow
++fallback to legacy operation).
++
++Example of registering firmware operations:
++
++	/* board file */
++
++	static int platformX_do_idle(void)
++	{
++		/* tell platformX firmware to enter idle */
++		return 0;
++	}
++
++	static int platformX_cpu_boot(int i)
++	{
++		/* tell platformX firmware to boot CPU i */
++		return 0;
++	}
++
++	static const struct platform_firmware_ops platformX_firmware_ops = {
++		.do_idle        = exynos_do_idle,
++		.cpu_boot       = exynos_cpu_boot,
++		/* other operations not available on platformX */
++	};
++
++	/* init_early callback of machine descriptor */
++	static void __init board_init_early(void)
++	{
++		register_platform_firmware_ops(&platformX_firmware_ops);
++	}
++
++Example of using a firmware operation:
++
++	/* some platform code, e.g. SMP initialization */
++
++	__raw_writel(virt_to_phys(exynos4_secondary_startup),
++		CPU1_BOOT_REG);
++
++	/* Call Exynos specific smc call */
++	if (call_platform_firmware_op(cpu_boot, cpu) == -ENOSYS)
++		cpu_boot_legacy(...); /* Try legacy way */
++
++	gic_raise_softirq(cpumask_of(cpu), 1);
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index cc68e6d..9026af0 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -218,6 +218,9 @@ config NEED_RET_TO_USER
+ config ARCH_MTD_XIP
+ 	bool
+ 
++config ARCH_SUPPORTS_FIRMWARE
++	bool
++
+ config VECTORS_BASE
+ 	hex
+ 	default 0xffff0000 if MMU || CPU_HIGH_VECTOR
+@@ -806,6 +809,8 @@ config ARCH_EXYNOS
+ 	select ARCH_HAS_HOLES_MEMORYMODEL
+ 	select ARCH_REQUIRE_GPIOLIB
+ 	select ARCH_SPARSEMEM_ENABLE
++	select ARCH_SUPPORTS_FIRMWARE
++	select EXYNOS_FIRMWARE
+ 	select ARM_GIC
+ 	select COMMON_CLK
+ 	select CPU_V7
+@@ -2256,6 +2261,10 @@ source "net/Kconfig"
+ 
+ source "drivers/Kconfig"
+ 
++if ARCH_SUPPORTS_FIRMWARE
++source "drivers/firmware/Kconfig"
++endif
++
+ source "fs/Kconfig"
+ 
+ source "arch/arm/Kconfig.debug"
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index 4bdc416..f98a991 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -2,8 +2,6 @@
+ # Makefile for the linux kernel.
+ #
+ 
+-obj-y				+= firmware.o
+-
+ obj-$(CONFIG_ICST)		+= icst.o
+ obj-$(CONFIG_SA1111)		+= sa1111.o
+ obj-$(CONFIG_DMABOUNCE)		+= dmabounce.o
+diff --git a/arch/arm/common/firmware.c b/arch/arm/common/firmware.c
+deleted file mode 100644
+index 27ddccb..0000000
+--- a/arch/arm/common/firmware.c
++++ /dev/null
+@@ -1,18 +0,0 @@
+-/*
+- * Copyright (C) 2012 Samsung Electronics.
+- * Kyungmin Park <kyungmin.park@samsung.com>
+- * Tomasz Figa <t.figa@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/suspend.h>
+-
+-#include <asm/firmware.h>
+-
+-static const struct firmware_ops default_firmware_ops;
+-
+-const struct firmware_ops *firmware_ops = &default_firmware_ops;
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+deleted file mode 100644
+index 1563130..0000000
+--- a/arch/arm/include/asm/firmware.h
++++ /dev/null
+@@ -1,66 +0,0 @@
+-/*
+- * Copyright (C) 2012 Samsung Electronics.
+- * Kyungmin Park <kyungmin.park@samsung.com>
+- * Tomasz Figa <t.figa@samsung.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#ifndef __ASM_ARM_FIRMWARE_H
+-#define __ASM_ARM_FIRMWARE_H
+-
+-#include <linux/bug.h>
+-
+-/*
+- * struct firmware_ops
+- *
+- * A structure to specify available firmware operations.
+- *
+- * A filled up structure can be registered with register_firmware_ops().
+- */
+-struct firmware_ops {
+-	/*
+-	 * Enters CPU idle mode
+-	 */
+-	int (*do_idle)(void);
+-	/*
+-	 * Sets boot address of specified physical CPU
+-	 */
+-	int (*set_cpu_boot_addr)(int cpu, unsigned long boot_addr);
+-	/*
+-	 * Boots specified physical CPU
+-	 */
+-	int (*cpu_boot)(int cpu);
+-	/*
+-	 * Initializes L2 cache
+-	 */
+-	int (*l2x0_init)(void);
+-};
+-
+-/* Global pointer for current firmware_ops structure, can't be NULL. */
+-extern const struct firmware_ops *firmware_ops;
+-
+-/*
+- * call_firmware_op(op, ...)
+- *
+- * Checks if firmware operation is present and calls it,
+- * otherwise returns -ENOSYS
+- */
+-#define call_firmware_op(op, ...)					\
+-	((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
+-
+-/*
+- * register_firmware_ops(ops)
+- *
+- * A function to register platform firmware_ops struct.
+- */
+-static inline void register_firmware_ops(const struct firmware_ops *ops)
+-{
+-	BUG_ON(!ops);
+-
+-	firmware_ops = ops;
+-}
+-
+-#endif
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 8930b66..7132d03 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -25,7 +25,7 @@ obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
+ obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
+ 
+ obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-smc.o
+-obj-$(CONFIG_ARCH_EXYNOS)	+= firmware.o
++obj-$(CONFIG_EXYNOS_FIRMWARE)	+= firmware.o
+ 
+ plus_sec := $(call as-instr,.arch_extension sec,+sec)
+ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 932129e..6dc4938 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -13,8 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-
+-#include <asm/firmware.h>
++#include <linux/platform_firmware.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -40,7 +39,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 	return 0;
+ }
+ 
+-static const struct firmware_ops exynos_firmware_ops = {
++static const struct platform_firmware_ops exynos_firmware_ops = {
+ 	.do_idle		= exynos_do_idle,
+ 	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
+ 	.cpu_boot		= exynos_cpu_boot,
+@@ -64,5 +63,5 @@ void __init exynos_firmware_init(void)
+ 
+ 	pr_info("Running under secure firmware.\n");
+ 
+-	register_firmware_ops(&exynos_firmware_ops);
++	register_platform_firmware_ops(&exynos_firmware_ops);
+ }
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 58b43e6..132d21c 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -20,11 +20,11 @@
+ #include <linux/jiffies.h>
+ #include <linux/smp.h>
+ #include <linux/io.h>
++#include <linux/platform_firmware.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/smp_plat.h>
+ #include <asm/smp_scu.h>
+-#include <asm/firmware.h>
+ 
+ #include <mach/hardware.h>
+ #include <mach/regs-clock.h>
+@@ -150,10 +150,11 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 		 * Try to set boot address using firmware first
+ 		 * and fall back to boot register if it fails.
+ 		 */
+-		if (call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr))
++		if (call_platform_firmware_op(set_cpu_boot_addr, phys_cpu,
++					      boot_addr))
+ 			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+ 
+-		call_firmware_op(cpu_boot, phys_cpu);
++		call_platform_firmware_op(cpu_boot, phys_cpu);
+ 
+ 		arch_send_wakeup_ipi_mask(cpumask_of(cpu));
+ 
+@@ -225,7 +226,8 @@ static void __init exynos_smp_prepare_cpus(unsigned int max_cpus)
+ 		phys_cpu = cpu_logical_map(i);
+ 		boot_addr = virt_to_phys(exynos4_secondary_startup);
+ 
+-		if (call_firmware_op(set_cpu_boot_addr, phys_cpu, boot_addr))
++		if (call_platform_firmware_op(set_cpu_boot_addr, phys_cpu,
++					      boot_addr))
+ 			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+ 	}
+ }
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index 0747872..1fb9da6 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -129,6 +129,14 @@ config ISCSI_IBFT
+ 	  detect iSCSI boot parameters dynamically during system boot, say Y.
+ 	  Otherwise, say N.
+ 
++config PLATFORM_FIRMWARE
++	bool
++
++config EXYNOS_FIRMWARE
++	bool "Support for Exynos secure firmware"
++	select PLATFORM_FIRMWARE
++	depends on ARM && ARCH_EXYNOS
++
+ source "drivers/firmware/google/Kconfig"
+ source "drivers/firmware/efi/Kconfig"
+ 
+diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+index 299fad6..9cd2231 100644
+--- a/drivers/firmware/Makefile
++++ b/drivers/firmware/Makefile
+@@ -11,6 +11,7 @@ obj-$(CONFIG_DMIID)		+= dmi-id.o
+ obj-$(CONFIG_ISCSI_IBFT_FIND)	+= iscsi_ibft_find.o
+ obj-$(CONFIG_ISCSI_IBFT)	+= iscsi_ibft.o
+ obj-$(CONFIG_FIRMWARE_MEMMAP)	+= memmap.o
++obj-$(CONFIG_PLATFORM_FIRMWARE) += platform_firmware.o
+ 
+ obj-$(CONFIG_GOOGLE_FIRMWARE)	+= google/
+ obj-$(CONFIG_EFI)		+= efi/
+diff --git a/drivers/firmware/platform_firmware.c b/drivers/firmware/platform_firmware.c
+new file mode 100644
+index 0000000..1644df2
+--- /dev/null
++++ b/drivers/firmware/platform_firmware.c
+@@ -0,0 +1,17 @@
++/*
++ * Copyright (C) 2012 Samsung Electronics.
++ * Kyungmin Park <kyungmin.park@samsung.com>
++ * Tomasz Figa <t.figa@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/suspend.h>
++#include <linux/platform_firmware.h>
++
++static const struct platform_firmware_ops default_ops;
++
++const struct platform_firmware_ops *platform_firmware_ops = &default_ops;
+diff --git a/include/linux/platform_firmware.h b/include/linux/platform_firmware.h
+new file mode 100644
+index 0000000..601e3fd
+--- /dev/null
++++ b/include/linux/platform_firmware.h
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (C) 2012 Samsung Electronics.
++ * Kyungmin Park <kyungmin.park@samsung.com>
++ * Tomasz Figa <t.figa@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef _PLATFORM_FIRMWARE_H
++#define _PLATFORM_FIRMWARE_H
++
++#include <linux/bug.h>
++
++/*
++ * struct platform_firmware_ops
++ *
++ * A structure to specify available firmware operations.
++ *
++ * A filled up structure can be registered with
++ * register_platform_firmware_ops().
++ */
++struct platform_firmware_ops {
++	/*
++	 * Enters CPU idle mode
++	 */
++	int (*do_idle)(void);
++	/*
++	 * Sets boot address of specified physical CPU
++	 */
++	int (*set_cpu_boot_addr)(int cpu, unsigned long boot_addr);
++	/*
++	 * Boots specified physical CPU
++	 */
++	int (*cpu_boot)(int cpu);
++	/*
++	 * Initializes L2 cache
++	 */
++	int (*l2x0_init)(void);
++};
++
++/* Global pointer for current firmware_ops structure, can't be NULL. */
++extern const struct platform_firmware_ops *platform_firmware_ops;
++
++/*
++ * call_platform_firmware_op(op, ...)
++ *
++ * Checks if firmware operation is present and calls it,
++ * otherwise returns -ENOSYS
++ */
++#define call_platform_firmware_op(op, ...)				\
++	((platform_firmware_ops->op) ?					\
++	platform_firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
++
++/*
++ * register_platform_firmware_ops(ops)
++ *
++ * A function to register platform firmware_ops struct.
++ */
++static inline
++void register_platform_firmware_ops(const struct platform_firmware_ops *ops)
++{
++	BUG_ON(!ops);
++
++	platform_firmware_ops = ops;
++}
++
++#endif
+-- 
+1.8.4.2
