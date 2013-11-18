@@ -1,152 +1,98 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 3/4 v9] thermal: samsung: Add TMU support for
- Exynos5420 SoCs
-Date: Mon, 18 Nov 2013 11:27:12 +0000
-Message-ID: <20131118112712.GB30853@e106331-lin.cambridge.arm.com>
-References: <1378268629-2886-3-git-send-email-ch.naveen@samsung.com>
- <1384238225-24632-1-git-send-email-ch.naveen@samsung.com>
- <CAHfPSqAxs7qpx8pv_CnbtQBMrooyXzs7SBKPe7xrK-qmSELp=g@mail.gmail.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] ARM: move firmware_ops to drivers/firmware
+Date: Mon, 18 Nov 2013 11:58:42 +0000
+Message-ID: <20131118115842.GE4050@arm.com>
+References: <1384678169-28228-1-git-send-email-acourbot@nvidia.com>
+ <CAHkRjk5LBOFx3ir49RgEsaFwvp5UCpTjYFWto+URXebAsOP0RA@mail.gmail.com>
+ <52898417.80601@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:48168 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751171Ab3KRL1X (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Nov 2013 06:27:23 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <CAHfPSqAxs7qpx8pv_CnbtQBMrooyXzs7SBKPe7xrK-qmSELp=g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <52898417.80601@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@nvidia.com>, Tomasz Figa <t.figa@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "eduardo.valentin@ti.com" <eduardo.valentin@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "amit.daniel@samsung.com" <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "b.zolnierkie@samsung.com" <b.zolnierkie@samsung.com>, "cpgs@samsung.com" <cpgs@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>
 
-On Mon, Nov 18, 2013 at 03:22:57AM +0000, Naveen Krishna Ch wrote:
-> Hello All,
+On Mon, Nov 18, 2013 at 03:05:59AM +0000, Alex Courbot wrote:
+> On 11/18/2013 12:59 AM, Catalin Marinas wrote:
+> > On 17 November 2013 08:49, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> >> The ARM tree includes a firmware_ops interface that is designed to
+> >> implement support for simple, TrustZone-based firmwares but could
+> >> also cover other use-cases. It has been suggested that this
+> >> interface might be useful to other architectures (e.g. arm64) and
+> >> that it should be moved out of arch/arm.
+> >
+> > NAK. I'm for code sharing with arm via common locations but this API
+> > goes against the ARMv8 firmware standardisation efforts like PSCI,
+> > encouraging each platform to define there own non-standard interface.
 > 
-> On 12 November 2013 12:07, Naveen Krishna Chatradhi
-> <ch.naveen@samsung.com> wrote:
-> > Exynos5420 has 5 TMU channels, the TRIMINFO register is
-> > misplaced for TMU channels 2, 3 and 4
-> > TRIMINFO at 0x1006c000 contains data for TMU channel 3
-> > TRIMINFO at 0x100a0000 contains data for TMU channel 4
-> > TRIMINFO at 0x10068000 contains data for TMU channel 2
-> >
-> > This patch
-> > 1 Adds the neccessary register changes and arch information
-> >    to support Exynos5420 SoCs.
-> > 2. Handles the gate clock for misplaced TRIMINFO register
-> > 3. Updates the Documentation at
-> >    Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> >
-> > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> > ---
-> > Changes since v8:
-> > 1. rewrote the Documentation for device tree bindings
-> > 2. Merged the https://lkml.org/lkml/2013/11/7/262 (as this is a fix)
-> > 3. introduces "samsung,exynos5420-tmu-triminfo" and
-> >    "samsung,exynos5420-tmu-triminfo-clk" to handle the TMU channels on
-> >    Exynos5420 more appropriately
-> >
-> >  .../devicetree/bindings/thermal/exynos-thermal.txt |   45 +++++++++
-> >  drivers/thermal/samsung/exynos_tmu.c               |   58 ++++++++++-
-> >  drivers/thermal/samsung/exynos_tmu.h               |    2 +
-> >  drivers/thermal/samsung/exynos_tmu_data.c          |  106 ++++++++++++++++++++
-> >  drivers/thermal/samsung/exynos_tmu_data.h          |    8 ++
-> >  5 files changed, 215 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> > index 116cca0..5055b31 100644
-> > --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> > +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
-> > @@ -6,6 +6,11 @@
-> >                "samsung,exynos4412-tmu"
-> >                "samsung,exynos4210-tmu"
-> >                "samsung,exynos5250-tmu"
-> > +              "samsung,exynos5420-tmu" for TMU channel 0, 1 on Exynos5420
-> > +              "samsung,exynos5420-tmu-triminfo" for TMU channel 2 Exynos5420
-> > +                       (Must pass triminfo base)
-> > +              "samsung,exynos5420-tmu-triminfo-clk" for TMU channel 3 and 4
-> > +                       Exynos5420 (Must pass triminfo base and triminfo clock)
+> I have to say, I pretty much agree with your NAK.
+> 
+> The reason for this patch is that the suggestion to move firmware_ops 
+> out of arch/arm is the last (I hope) thing that prevents my Trusted 
+> Foundation support series from being merged.
 
-While this mentions what the differences the binding expects to, what is
-fundamentally different about these blocks?
+Moving it into drivers shouldn't be a workaround. Nice try ;).
 
-> >                "samsung,exynos5440-tmu"
-> >  - interrupt-parent : The phandle for the interrupt controller
-> >  - reg : Address range of the thermal registers. For soc's which has multiple
-> > @@ -13,6 +18,18 @@
-> >         interrupt related then 2 set of register has to supplied. First set
-> >         belongs to each instance of TMU and second set belongs to second set
-> >         of common TMU registers.
-> > +
-> > +  NOTE: On Exynos5420, the TRIMINFO register is misplaced for TMU
-> > +       channels 2, 3 and 4
-> > +       Use "samsung,exynos5420-tmu-triminfo" in cases, there is a misplaced
-> > +       register but no need of another clock to access that base.
-> > +       Use "samsung,exynos5420-tmu-triminfo-clk" in cases where there is a misplaced
-> > +       register and we need another clock to access that base.
+> Now if we can all agree:
+> 
+> * that ARMv8 will only use PSCI
 
-This would have made more sense to have next to the compatible strings.
+Or spin-table (which does not require secure calls). Otherwise, if
+secure firmware is present, SoCs should use PSCI (as the only firmware
+standard currently supported in the arm64 kernel).
 
-Instead of this, you could have a boolean property
-("samsung,misplaced-triminfo") to describe the misplaced triminfo
-register(s), and the presence of an additional clock would imlpy that
-it's required for accessing triminfo register(s).
+However, things evolve and we may have other needs in the future or PSCI
+may not be sufficient or we get newer PSCI revisions. This can be
+extended but my requirement is to decouple booting standard from SoC
+support (together with the aim of having no SoC-specific code under
+arch/arm64). I really don't see why SoCs can't agree on one (or very
+few) standard booting protocol (and legacy argument doesn't work since
+the ARMv8 firmware needs to be converted to AArch64 anyway).
 
-> > +
-> > +       TRIMINFO at 0x1006c000 contains data for TMU channel 3
-> > +       TRIMINFO at 0x100a0000 contains data for TMU channel 4
-> > +       TRIMINFO at 0x10068000 contains data for TMU channel 2
-> > +
-> >  - interrupts : Should contain interrupt for thermal system
-> >  - clocks : The main clock for TMU device
-> >  - clock-names : Thermal system clock name
-> > @@ -43,6 +60,34 @@ Example 2):
-> >                 clock-names = "tmu_apbif";
-> >         };
+> * that there is no use-case of this interface outside of arch/arm as of 
+> today (and none foreseen in the near future)
 
-I'd have expected the clock-names to have an addition. The names of the
-clock inputs are presumably well known, or you should be able to come up
-with some sensible names...
+The firmware_ops are only used under arch/arm so far, I don't see any
+drivers doing anything with it. Also, l2x0_init is ARMv7 only.
 
-> >
-> > +Example 3): (In case of Exynos5420 "with misplaced TRIMINFO register")
-> > +       /* tmu for CPU2 */
-> > +       tmu@10068000 {
-> > +               compatible = "samsung,exynos5420-tmu-triminfo";
-> > +               reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-> > +               interrupts = <0 184 0>;
-> > +               clocks = <&clock 318>;
-> > +               clock-names = "tmu_apbif";
-> > +       };
-> > +
-> > +       /* tmu for CPU3 */
-> > +       tmu@1006c000 {
-> > +               compatible = "samsung,exynos5420-tmu-triminfo-clk";
-> > +               reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-> > +               interrupts = <0 185 0>;
-> > +               clocks = <&clock 318>;
-> > +               clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+On arm64, support for PSCI is handled via cpu_operations in the latest
+kernel. That's an arm64 abstraction and is extensible (but we want to
+keep tight control of this, hence no register_cpu_ops function).
 
-Each clock-names entry should correspond to an entry in clocks. The
-"tmu_triminfo_apbif" entry here doesn't correspond to anything. I assume
-a copy-paste error?
+> * that the firmware_ops interface is quite ARMv7-specific anyway,
 
-The "tmu_triminfo_apbif" clock name should be documented in the binding.
+This was introduced to allow SoC code to enable hooks for SoC-specific
+firmware calls like cpu_idle, l2x0_init. By standardising the interface
+and decoupling it from SoC code on arm64, we don't need per-SoC
+firmware_ops.
 
-> > +       };
-> > +
-> > +       /* tmu for GPU */
-> > +       tmu@100a0000 {
-> > +               compatible = "samsung,exynos5420-tmu-triminfo-clk";
-> > +               reg = <0x100a0000 0x100>, <0x10068000 0x4>;
-> > +               interrupts = <0 215 0>;
-> > +               clocks = <&clock 318>;
-> > +               clock-names = "tmu_apbif", "tmu_triminfo_apbif";
+Of course, trusted foundations interface could be plugged into cpu_ops
+on arm64 but I will NAK it on the grounds of not using the PSCI API, nor
+the SMC calling convention (and it's easy to fix when porting to ARMv8).
+If a supported standard API is used, then there is no need for
+additional code in the kernel.
 
-Similarly here...
+BTW, is legacy code the reason for not converting the SMC # to PSCI?
+It's already supported on ARMv7, so you may not have much code left to
+merge in the kernel ;).
 
-Thanks,
-Mark.
+> * that should a need to move it (for whatever reason) occur later, it 
+> will be easy to do (as this patch hopefully demonstrates).
+
+I agree, it's not hard to unify this but so far I haven't seen a good
+reason.
+
+-- 
+Catalin
