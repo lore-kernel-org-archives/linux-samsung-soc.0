@@ -1,87 +1,75 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [RFC v2 0/4] Add basic support for ASV
-Date: Mon, 18 Nov 2013 09:37:49 +0530
-Message-ID: <CAK9yfHzUAnBMB2Bp+eKzR3NH1iRguJn4K45gss5psWzG4Lc7tw@mail.gmail.com>
-References: <1384515691-26299-1-git-send-email-sachin.kamat@linaro.org>
-	<CAJ0PZbS8FxRA_sPTOnWbZcNfUMp=k5Jf_tZHLg1fh6gsAGJ=Gw@mail.gmail.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V8 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Mon, 18 Nov 2013 14:47:11 +0530
+Message-ID: <CAL1wa8fxa4h8rxDk4NjovUgJyNOUbfoentPbKsS5-zktKzpa2w@mail.gmail.com>
+References: <1384238088-9862-1-git-send-email-l.krishna@samsung.com>
+ <1384238088-9862-2-git-send-email-l.krishna@samsung.com> <1736135.JdedDOBENL@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:58644 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751064Ab3KREHu convert rfc822-to-8bit (ORCPT
+Received: from mail-qa0-f48.google.com ([209.85.216.48]:52075 "EHLO
+	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751171Ab3KRJRc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 Nov 2013 23:07:50 -0500
-Received: by mail-ob0-f182.google.com with SMTP id wo20so1739541obc.13
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 17 Nov 2013 20:07:49 -0800 (PST)
-In-Reply-To: <CAJ0PZbS8FxRA_sPTOnWbZcNfUMp=k5Jf_tZHLg1fh6gsAGJ=Gw@mail.gmail.com>
+	Mon, 18 Nov 2013 04:17:32 -0500
+In-Reply-To: <1736135.JdedDOBENL@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, linux-watchdog@vger.kernel.org, cpgs@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>
 
-Hi MyungJoo,
+Hi Tomasz,
 
-On 18 November 2013 08:07, MyungJoo Ham <myungjoo.ham@samsung.com> wrot=
-e:
->
-> 2013. 11. 15. =BF=C0=C8=C4 8:44=BF=A1 "Sachin Kamat" <sachin.kamat@li=
-naro.org>=B4=D4=C0=CC =C0=DB=BC=BA:
->
->
+On Sat, Nov 16, 2013 at 5:13 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Tuesday 12 of November 2013 12:04:46 Leela Krishna Amudala wrote:
+>> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
+>> handle PMU register accesses in a centralized way using syscon driver
 >>
->> Original cover letter from Yadwinder:
->> This series is to add basic common infrastructure for ASV.
->>  Basically ASV is a technique used on samsung SoCs, which provides t=
-he
->> recommended supply voltage for dvfs of arm, mif etc. For a given ope=
-rating
->> frequency, the voltage is recommended based on SoC's ASV group.
->> ASV group gets fussed on SoCs during process of mass production.
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>> ---
+>>  Documentation/devicetree/bindings/arm/samsung/pmu.txt |   13 +++++++++++++
+>>  arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
+>>  arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
+>>  3 files changed, 23 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
 >>
->> This series includes:
->>  - basic common infrastructue for ASV. It provides common APIs for u=
-ser
->> drivers
->> like cpufreq & devfreq and and an interface for SoC specific drivers=
- to
->> register ASV members(instances)
->>  - a common platform driver to register ASV members for exynos SoCs
->>  - an example providing minimal support (only for ARM ASV) for exyno=
-s5250
->> chips
->>
->> Its just basic skelton which I wanted to get it reviewed or discusse=
-d in
->> early stage, before going ahead on further development based on it.
->>  Presently example is based on static ASV table provided in SoC spec=
-ific
->> file,
->> which I expects to go into DT. But exactly how and where needs to be
->> discussed,
->> may be in next revisions once we get through the basic skelton.
->>  Also the location of driver in kernel may also seem odd to someone =
-and
->> many more things :).
->>
->> Looking for your valuable reviews and suggestions.
+>> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>> new file mode 100644
+>> index 0000000..90f975d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>> @@ -0,0 +1,13 @@
+>> +SAMSUNG Exynos SoC series PMU Registers
+>> +
+>> +Properties:
+>> + - name : should be 'syscon';
+>> + - compatible : should contain "samsung,<chip name>-pmu", "syscon";
 >
-> Hi,
+> AFAIR there was a discussion about using <chip name> wildcards some
+> time ago and if I remember correctly, the conclusion was that the list
+> of all supported compatible values should be provided anyway, so there
+> is no point in using such wildcards.
 >
-> As I have commented on the previous thread of Yadwinder, please share=
- the
-> directory woth AVS, which is conceptually a superset of ASV.
+> This is how I would write this:
 >
-> Ultimately, it would be best if you can supply an infra that can be s=
-hared
-> with the current AVS, which does not have any currently.
+>  - compatible : should contain two values. First value must be one from
+>    following list:
+>      - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+>      - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+>    Second value must be always "syscon".
 >
 
-Yadwinder has already replied to your suggestion about his concerns. Pl=
-ease
-share your comments.
+Okay, will change it
 
---=20
-With warm regards,
-Sachin
+Best Wishes,
+Leela Krishna
+
+> Best regards,
+> Tomasz
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
