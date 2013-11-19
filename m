@@ -1,99 +1,45 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 4/4 v4] ARM: dts: Exynos5420: Add device nodes for TMU blocks
-Date: Tue, 19 Nov 2013 18:35:59 +0530
-Message-ID: <1384866359-16157-1-git-send-email-ch.naveen@samsung.com>
-References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
+From: Jonghwan Choi <jhbird.choi@gmail.com>
+Subject: [PATCH 2/4] cpufreq: exynos: Consider hibernation in pm notifier
+Date: Tue, 19 Nov 2013 22:29:18 +0900
+Message-ID: <1384867758-15276-1-git-send-email-jhbird.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:34047 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752367Ab3KSN3Z (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Nov 2013 08:29:25 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>
 
-Exynos5420 SoC has per core thermal management unit.
-5 TMU channels 4 for CPUs and 5th for GPU.
+Frequency lock should be considered in suspend/hibernation.
 
-This patch adds the device tree nodes to the DT device list.
-
-Nodes carry the misplaced second base address and the second
-clock to access the misplaced base address.
-
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 ---
-Changes since v3:
-None, Just respinning
+ drivers/cpufreq/exynos-cpufreq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Changes since v2:
-3. uses the new compatible strings introduced along with adding
-   support for Exynso5420.
-
-Changes since v1:
-1. Nodes carry the misplaced second base address and the second
-   clock to access the misplaced base address.
-2. Correct the clock number for the TMU4
-
- arch/arm/boot/dts/exynos5420.dtsi |   48 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 6ffefd1..d736b40 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -369,4 +369,52 @@
- 		clock-names = "gscl";
- 		samsung,power-domain = <&gsc_pd>;
- 	};
-+
-+	/* tmu for CPU0 */
-+	tmu@10060000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10060000 0x100>;
-+		interrupts = <0 65 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	/* tmu for CPU1 */
-+	tmu@10064000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10064000 0x100>;
-+		interrupts = <0 183 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	/* tmu for CPU2 */
-+	tmu@10068000 {
-+		compatible = "samsung,exynos5420-tmu-triminfo";
-+		/* 2nd reg is for the misplaced TRIMINFO register */
-+		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-+		interrupts = <0 184 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	/* tmu for CPU3 */
-+	tmu@1006c000 {
-+		compatible = "samsung,exynos5420-tmu-triminfo-clk";
-+		/* 2nd reg is for the misplaced TRIMINFO register */
-+		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-+		interrupts = <0 185 0>;
-+		clocks = <&clock 318>, <&clock 319>;
-+		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
-+	};
-+
-+	/* tmu for GPU */
-+	tmu@100a0000 {
-+		compatible = "samsung,exynos5420-tmu-triminfo-clk";
-+		/* 2nd reg is for the misplaced TRIMINFO register */
-+		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
-+		interrupts = <0 215 0>;
-+		clocks = <&clock 319>, <&clock 318>;
-+		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
-+	};
- };
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index f3c2287..cd05b0a 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -187,6 +187,7 @@ static int exynos_cpufreq_pm_notifier(struct notifier_block *notifier,
+ 	int ret;
+ 
+ 	switch (pm_event) {
++	case PM_HIBERNATION_PREPARE:
+ 	case PM_SUSPEND_PREPARE:
+ 		mutex_lock(&cpufreq_lock);
+ 		frequency_locked = true;
+@@ -198,6 +199,8 @@ static int exynos_cpufreq_pm_notifier(struct notifier_block *notifier,
+ 
+ 		break;
+ 
++	case PM_POST_HIBERNATION:
++	case PM_POST_RESTORE:
+ 	case PM_POST_SUSPEND:
+ 		mutex_lock(&cpufreq_lock);
+ 		frequency_locked = false;
 -- 
-1.7.10.4
-
+1.8.1.2
