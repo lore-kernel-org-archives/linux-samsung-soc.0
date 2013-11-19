@@ -1,124 +1,214 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] ARM: move firmware_ops to drivers/firmware
-Date: Tue, 19 Nov 2013 12:26:56 +0000
-Message-ID: <20131119122656.GF26487@arm.com>
-References: <1384678169-28228-1-git-send-email-acourbot@nvidia.com>
- <CAHkRjk5LBOFx3ir49RgEsaFwvp5UCpTjYFWto+URXebAsOP0RA@mail.gmail.com>
- <52898417.80601@nvidia.com> <20131118115842.GE4050@arm.com>
- <528AD11F.7060009@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <528AD11F.7060009@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Alex Courbot <acourbot@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@nvidia.com>, Tomasz Figa <t.figa@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 1/4 v10] thermal: samsung: replace inten_ bit fields with
+ intclr_
+Date: Tue, 19 Nov 2013 18:34:19 +0530
+Message-ID: <1384866259-15983-1-git-send-email-ch.naveen@samsung.com>
+References: <1384238168-24561-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1384238168-24561-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-pm@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 19, 2013 at 02:46:55AM +0000, Alex Courbot wrote:
-> On 11/18/2013 08:58 PM, Catalin Marinas wrote:
-> > On Mon, Nov 18, 2013 at 03:05:59AM +0000, Alex Courbot wrote:
-> >> On 11/18/2013 12:59 AM, Catalin Marinas wrote:
-> >>> On 17 November 2013 08:49, Alexandre Courbot <acourbot@nvidia.com> wrote:
-> >>>> The ARM tree includes a firmware_ops interface that is designed to
-> >>>> implement support for simple, TrustZone-based firmwares but could
-> >>>> also cover other use-cases. It has been suggested that this
-> >>>> interface might be useful to other architectures (e.g. arm64) and
-> >>>> that it should be moved out of arch/arm.
-> >>>
-> >>> NAK. I'm for code sharing with arm via common locations but this API
-> >>> goes against the ARMv8 firmware standardisation efforts like PSCI,
-> >>> encouraging each platform to define there own non-standard interface.
-> >>
-> >> I have to say, I pretty much agree with your NAK.
-> >>
-> >> The reason for this patch is that the suggestion to move firmware_ops
-> >> out of arch/arm is the last (I hope) thing that prevents my Trusted
-> >> Foundation support series from being merged.
-> >
-> > Moving it into drivers shouldn't be a workaround. Nice try ;).
-> 
-> Hehe. I thought that just sending a patch would settle the issue one way 
-> or the other and avoid a huge discussion. Woke up this morning to see 
-> how wrong I was.
+This patch replaces the inten_rise_shift/mask and inten_fall_shift/mask
+with intclr_rise_shift/mask and intclr_fall_shift/mask respectively.
+Currently, inten_rise_shift/mask and inten_fall_shift/mask bits are only used
+to configure intclr related registers.
 
-It's a sensitive topic ;).
+Description of H/W:
+The offset for the bits in the CLEAR register are not consistent across TMU
+modules in Exynso5250, 5420 and 5440.
 
-> > BTW, is legacy code the reason for not converting the SMC # to PSCI?
-> > It's already supported on ARMv7, so you may not have much code left to
-> > merge in the kernel ;).
-> 
-> The problem here is twofold:
-> 
-> 1) we are just consumers of the TrustZone secure monitor who receive a 
-> binary and do not have any control over its calling conventions. I agree 
-> that it would be trivial to make it compatible with PSCI, but it's just 
-> not something we can make by ourselves (TF does not even follow the SMC 
-> calling convention). If this problem is to be addressed, it should be 
-> done by forcing the TrustZone secure monitors providers to follow PSCI.
+On Exynos5250, the FALL interrupt related en, status and clear bits are
+available at an offset of
+16 in INTEN, INTSTAT registers and at an offset of
+12 in INTCLEAR register.
 
-I agree and such discussions do happen ('forcing' is a bit harder, more
-like 'strongly recommending'). On my side, I voice this message via the
-Linux channels, so SoC vendors can also encourage their secure provider
-in this direction. The benefit is that the Linux changes are minimal
-afterwards, single image is easier.
+On Exynos5420, the FALL interrupt related en, status and clear bits are
+available at an offset of
+16 in INTEN, INTSTAT and INTCLEAR registers.
 
-But as I replied to Stephen, make sure you separate the secure OS (EL1)
-from the secure firmware (EL3). The latter (or parts of it) are provided
-by the SoC vendor (e.g. NVidia) and may be eventually linked into a big
-blob by the secure OS provider. ARM is encouraging separation here and a
-multi-stage firmware loading approach (and ARM started a public generic
-firmware project, it's in the early days now).
+On Exynos5440,
+the FALL_IRQEN bits are at an offset of 4
+and the RISE_IRQEN bits are at an offset of 0
 
-> 2) devices have already shipped with this firmware. Are we going to just 
-> renounce supporting them, even though the necessary support is 
-> lightweight and fits within already existing interfaces?
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+Changes since v9:
+Just respinning
 
-I'm talking only about ARMv8 here. Please see my reply to Stephen for
-the details of (not) reusing existing firmware.
+Changes since v8:
+1. Modified the patch description,
+2. replaces the inten_rise/fall_shift/mask with intclr_rise/fall_shift/mask
 
-> I certainly do hope that for ARMv8 things will be different and more 
-> standardized. But that's not something that can be guaranteed unless ARM 
-> strongly enforces it to firmware vendors. In case such a non-standard 
-> firmware gets used again, I *do* hope that using cpu_ops will be 
-> preferred over saying "this device cannot be supported in mainline, ever".
+ drivers/thermal/samsung/exynos_tmu.c      |    6 +++---
+ drivers/thermal/samsung/exynos_tmu.h      |   16 ++++++++--------
+ drivers/thermal/samsung/exynos_tmu_data.c |   18 +++++++++---------
+ drivers/thermal/samsung/exynos_tmu_data.h |    4 ++--
+ 4 files changed, 22 insertions(+), 22 deletions(-)
 
-cpu_ops or firmware_ops is just a name and can be unified (TBD what
-common functionality it contains). What I don't want to encourage is
-each SoC registering its own firmware interface.
-
-> The kernel already supports non-standard hardware, BIOS, ACPI through 
-> hacks that are *way* more horrible than that. This should certainly not 
-> be encouraged, but that's not a valid reason to forbid otherwise 
-> perfectly fine devices to run mainline IMHO.
-
-So you say we should just stop trying to standardise anything because
-people don't care anyway. Why do we even bother with DT (or ACPI) since
-board files were fine in the past (with a bit more code)?
-
-> >> * that should a need to move it (for whatever reason) occur later, it
-> >> will be easy to do (as this patch hopefully demonstrates).
-> >
-> > I agree, it's not hard to unify this but so far I haven't seen a good
-> > reason.
-> 
-> Same here. arm64 has its own cpu_operations. Other archs have different 
-> needs and if we move this to a common place it will just become a messy 
-> placeholder for function pointers from which each arch will only use a 
-> subset.
-
-That was my initial point but it turned into a thread against PSCI
-(again ;)).
-
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 32f38b9..c493245 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -237,7 +237,7 @@ skip_calib_data:
+ 			writeb(pdata->trigger_levels[i], data->base +
+ 			reg->threshold_th0 + i * sizeof(reg->threshold_th0));
+ 
+-		writel(reg->inten_rise_mask, data->base + reg->tmu_intclear);
++		writel(reg->intclr_rise_mask, data->base + reg->tmu_intclear);
+ 	} else {
+ 		/* Write temperature code for rising and falling threshold */
+ 		for (i = 0;
+@@ -264,8 +264,8 @@ skip_calib_data:
+ 		writel(falling_threshold,
+ 				data->base + reg->threshold_th1);
+ 
+-		writel((reg->inten_rise_mask << reg->inten_rise_shift) |
+-			(reg->inten_fall_mask << reg->inten_fall_shift),
++		writel((reg->intclr_rise_mask << reg->intclr_rise_shift) |
++			(reg->intclr_fall_mask << reg->intclr_fall_shift),
+ 				data->base + reg->tmu_intclear);
+ 
+ 		/* if last threshold limit is also present */
+diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+index 3fb6554..980859a 100644
+--- a/drivers/thermal/samsung/exynos_tmu.h
++++ b/drivers/thermal/samsung/exynos_tmu.h
+@@ -122,10 +122,6 @@ enum soc_type {
+  * @threshold_th3_l0_shift: shift bits of level0 threshold temperature.
+  * @tmu_inten: register containing the different threshold interrupt
+ 	enable bits.
+- * @inten_rise_shift: shift bits of all rising interrupt bits.
+- * @inten_rise_mask: mask bits of all rising interrupt bits.
+- * @inten_fall_shift: shift bits of all rising interrupt bits.
+- * @inten_fall_mask: mask bits of all rising interrupt bits.
+  * @inten_rise0_shift: shift bits of rising 0 interrupt bits.
+  * @inten_rise1_shift: shift bits of rising 1 interrupt bits.
+  * @inten_rise2_shift: shift bits of rising 2 interrupt bits.
+@@ -136,6 +132,10 @@ enum soc_type {
+  * @inten_fall3_shift: shift bits of falling 3 interrupt bits.
+  * @tmu_intstat: Register containing the interrupt status values.
+  * @tmu_intclear: Register for clearing the raised interrupt status.
++ * @intclr_fall_shift: shift bits for interrupt clear fall 0
++ * @intclr_rise_shift: shift bits of all rising interrupt bits.
++ * @intclr_rise_mask: mask bits of all rising interrupt bits.
++ * @intclr_fall_mask: mask bits of all rising interrupt bits.
+  * @emul_con: TMU emulation controller register.
+  * @emul_temp_shift: shift bits of emulation temperature.
+  * @emul_time_shift: shift bits of emulation time.
+@@ -191,10 +191,6 @@ struct exynos_tmu_registers {
+ 	u32	threshold_th3_l0_shift;
+ 
+ 	u32	tmu_inten;
+-	u32	inten_rise_shift;
+-	u32	inten_rise_mask;
+-	u32	inten_fall_shift;
+-	u32	inten_fall_mask;
+ 	u32	inten_rise0_shift;
+ 	u32	inten_rise1_shift;
+ 	u32	inten_rise2_shift;
+@@ -207,6 +203,10 @@ struct exynos_tmu_registers {
+ 	u32	tmu_intstat;
+ 
+ 	u32	tmu_intclear;
++	u32	intclr_fall_shift;
++	u32	intclr_rise_shift;
++	u32	intclr_fall_mask;
++	u32	intclr_rise_mask;
+ 
+ 	u32	emul_con;
+ 	u32	emul_temp_shift;
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+index 073c292..7cdb04e 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.c
++++ b/drivers/thermal/samsung/exynos_tmu_data.c
+@@ -40,13 +40,13 @@ static const struct exynos_tmu_registers exynos4210_tmu_registers = {
+ 	.threshold_temp = EXYNOS4210_TMU_REG_THRESHOLD_TEMP,
+ 	.threshold_th0 = EXYNOS4210_TMU_REG_TRIG_LEVEL0,
+ 	.tmu_inten = EXYNOS_TMU_REG_INTEN,
+-	.inten_rise_mask = EXYNOS4210_TMU_TRIG_LEVEL_MASK,
+ 	.inten_rise0_shift = EXYNOS_TMU_INTEN_RISE0_SHIFT,
+ 	.inten_rise1_shift = EXYNOS_TMU_INTEN_RISE1_SHIFT,
+ 	.inten_rise2_shift = EXYNOS_TMU_INTEN_RISE2_SHIFT,
+ 	.inten_rise3_shift = EXYNOS_TMU_INTEN_RISE3_SHIFT,
+ 	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+ 	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
++	.intclr_rise_mask = EXYNOS4210_TMU_TRIG_LEVEL_MASK,
+ };
+ 
+ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
+@@ -112,10 +112,6 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+ 	.threshold_th0 = EXYNOS_THD_TEMP_RISE,
+ 	.threshold_th1 = EXYNOS_THD_TEMP_FALL,
+ 	.tmu_inten = EXYNOS_TMU_REG_INTEN,
+-	.inten_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
+-	.inten_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
+-	.inten_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
+-	.inten_fall_shift = EXYNOS_TMU_FALL_INT_SHIFT,
+ 	.inten_rise0_shift = EXYNOS_TMU_INTEN_RISE0_SHIFT,
+ 	.inten_rise1_shift = EXYNOS_TMU_INTEN_RISE1_SHIFT,
+ 	.inten_rise2_shift = EXYNOS_TMU_INTEN_RISE2_SHIFT,
+@@ -123,6 +119,10 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+ 	.inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
+ 	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+ 	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
++	.intclr_fall_shift = EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
++	.intclr_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
++	.intclr_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
++	.intclr_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
+ 	.emul_con = EXYNOS_EMUL_CON,
+ 	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+ 	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+@@ -217,10 +217,6 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+ 	.threshold_th2 = EXYNOS5440_TMU_S0_7_TH2,
+ 	.threshold_th3_l0_shift = EXYNOS5440_TMU_TH_RISE4_SHIFT,
+ 	.tmu_inten = EXYNOS5440_TMU_S0_7_IRQEN,
+-	.inten_rise_mask = EXYNOS5440_TMU_RISE_INT_MASK,
+-	.inten_rise_shift = EXYNOS5440_TMU_RISE_INT_SHIFT,
+-	.inten_fall_mask = EXYNOS5440_TMU_FALL_INT_MASK,
+-	.inten_fall_shift = EXYNOS5440_TMU_FALL_INT_SHIFT,
+ 	.inten_rise0_shift = EXYNOS5440_TMU_INTEN_RISE0_SHIFT,
+ 	.inten_rise1_shift = EXYNOS5440_TMU_INTEN_RISE1_SHIFT,
+ 	.inten_rise2_shift = EXYNOS5440_TMU_INTEN_RISE2_SHIFT,
+@@ -228,6 +224,10 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+ 	.inten_fall0_shift = EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
+ 	.tmu_intstat = EXYNOS5440_TMU_S0_7_IRQ,
+ 	.tmu_intclear = EXYNOS5440_TMU_S0_7_IRQ,
++	.intclr_fall_shift = EXYNOS5440_TMU_CLEAR_FALL_INT_SHIFT,
++	.intclr_rise_shift = EXYNOS5440_TMU_RISE_INT_SHIFT,
++	.intclr_rise_mask = EXYNOS5440_TMU_RISE_INT_MASK,
++	.intclr_fall_mask = EXYNOS5440_TMU_FALL_INT_MASK,
+ 	.tmu_irqstatus = EXYNOS5440_TMU_IRQ_STATUS,
+ 	.emul_con = EXYNOS5440_TMU_S0_7_DEBUG,
+ 	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+index a1ea19d..d9495a4 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.h
++++ b/drivers/thermal/samsung/exynos_tmu_data.h
+@@ -69,9 +69,10 @@
+ #define EXYNOS_TMU_RISE_INT_MASK	0x111
+ #define EXYNOS_TMU_RISE_INT_SHIFT	0
+ #define EXYNOS_TMU_FALL_INT_MASK	0x111
+-#define EXYNOS_TMU_FALL_INT_SHIFT	12
+ #define EXYNOS_TMU_CLEAR_RISE_INT	0x111
+ #define EXYNOS_TMU_CLEAR_FALL_INT	(0x111 << 12)
++#define EXYNOS_TMU_CLEAR_FALL_INT_SHIFT	12
++#define EXYNOS5440_TMU_CLEAR_FALL_INT_SHIFT	4
+ #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
+ #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
+ #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
+@@ -119,7 +120,6 @@
+ #define EXYNOS5440_TMU_RISE_INT_MASK		0xf
+ #define EXYNOS5440_TMU_RISE_INT_SHIFT		0
+ #define EXYNOS5440_TMU_FALL_INT_MASK		0xf
+-#define EXYNOS5440_TMU_FALL_INT_SHIFT		4
+ #define EXYNOS5440_TMU_INTEN_RISE0_SHIFT	0
+ #define EXYNOS5440_TMU_INTEN_RISE1_SHIFT	1
+ #define EXYNOS5440_TMU_INTEN_RISE2_SHIFT	2
 -- 
-Catalin
+1.7.10.4
+
