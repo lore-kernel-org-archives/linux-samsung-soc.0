@@ -1,38 +1,131 @@
-From: Christopher Covington <cov@codeaurora.org>
+From: Alex Courbot <acourbot@nvidia.com>
 Subject: Re: [PATCH] ARM: move firmware_ops to drivers/firmware
-Date: Mon, 18 Nov 2013 14:04:50 -0500
-Message-ID: <528A64D2.4020107@codeaurora.org>
-References: <1384678169-28228-1-git-send-email-acourbot@nvidia.com> <CAHkRjk5LBOFx3ir49RgEsaFwvp5UCpTjYFWto+URXebAsOP0RA@mail.gmail.com> <52898417.80601@nvidia.com> <20131118115842.GE4050@arm.com> <528A4869.2020701@wwwdotorg.org> <20131118173047.GF9838@arm.com>
+Date: Tue, 19 Nov 2013 11:46:55 +0900
+Message-ID: <528AD11F.7060009@nvidia.com>
+References: <1384678169-28228-1-git-send-email-acourbot@nvidia.com> <CAHkRjk5LBOFx3ir49RgEsaFwvp5UCpTjYFWto+URXebAsOP0RA@mail.gmail.com> <52898417.80601@nvidia.com> <20131118115842.GE4050@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.codeaurora.org ([198.145.11.231]:56584 "EHLO
-	smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752067Ab3KRTEx (ORCPT
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5036 "EHLO
+	hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751421Ab3KSCrA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Nov 2013 14:04:53 -0500
-In-Reply-To: <20131118173047.GF9838@arm.com>
+	Mon, 18 Nov 2013 21:47:00 -0500
+In-Reply-To: <20131118115842.GE4050@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@nvidia.com>, Tomasz Figa <t.figa@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Alex Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Catalin,
+On 11/18/2013 08:58 PM, Catalin Marinas wrote:
+> On Mon, Nov 18, 2013 at 03:05:59AM +0000, Alex Courbot wrote:
+>> On 11/18/2013 12:59 AM, Catalin Marinas wrote:
+>>> On 17 November 2013 08:49, Alexandre Courbot <acourbot@nvidia.com> wrote:
+>>>> The ARM tree includes a firmware_ops interface that is designed to
+>>>> implement support for simple, TrustZone-based firmwares but could
+>>>> also cover other use-cases. It has been suggested that this
+>>>> interface might be useful to other architectures (e.g. arm64) and
+>>>> that it should be moved out of arch/arm.
+>>>
+>>> NAK. I'm for code sharing with arm via common locations but this API
+>>> goes against the ARMv8 firmware standardisation efforts like PSCI,
+>>> encouraging each platform to define there own non-standard interface.
+>>
+>> I have to say, I pretty much agree with your NAK.
+>>
+>> The reason for this patch is that the suggestion to move firmware_ops
+>> out of arch/arm is the last (I hope) thing that prevents my Trusted
+>> Foundation support series from being merged.
+>
+> Moving it into drivers shouldn't be a workaround. Nice try ;).
 
-On 11/18/2013 12:30 PM, Catalin Marinas wrote:
-[...]
-> You can't run legacy AArch32 code at EL3 and have lower levels in AArch64
-> mode (architectural constraint).
+Hehe. I thought that just sending a patch would settle the issue one way 
+or the other and avoid a huge discussion. Woke up this morning to see 
+how wrong I was.
 
-What prevents AArch32 code from running at EL3 and then requesting a reset to
-AArch64 by writing to the Reset Management Register before sliding down to
-lower exception levels?
+>
+>> Now if we can all agree:
+>>
+>> * that ARMv8 will only use PSCI
+>
+> Or spin-table (which does not require secure calls). Otherwise, if
+> secure firmware is present, SoCs should use PSCI (as the only firmware
+> standard currently supported in the arm64 kernel).
+>
+> However, things evolve and we may have other needs in the future or PSCI
+> may not be sufficient or we get newer PSCI revisions. This can be
+> extended but my requirement is to decouple booting standard from SoC
+> support (together with the aim of having no SoC-specific code under
+> arch/arm64). I really don't see why SoCs can't agree on one (or very
+> few) standard booting protocol (and legacy argument doesn't work since
+> the ARMv8 firmware needs to be converted to AArch64 anyway).
+>
+>> * that there is no use-case of this interface outside of arch/arm as of
+>> today (and none foreseen in the near future)
+>
+> The firmware_ops are only used under arch/arm so far, I don't see any
+> drivers doing anything with it. Also, l2x0_init is ARMv7 only.
+>
+> On arm64, support for PSCI is handled via cpu_operations in the latest
+> kernel. That's an arm64 abstraction and is extensible (but we want to
+> keep tight control of this, hence no register_cpu_ops function).
+>
+>> * that the firmware_ops interface is quite ARMv7-specific anyway,
+>
+> This was introduced to allow SoC code to enable hooks for SoC-specific
+> firmware calls like cpu_idle, l2x0_init. By standardising the interface
+> and decoupling it from SoC code on arm64, we don't need per-SoC
+> firmware_ops.
+>
+> Of course, trusted foundations interface could be plugged into cpu_ops
+> on arm64 but I will NAK it on the grounds of not using the PSCI API, nor
+> the SMC calling convention (and it's easy to fix when porting to ARMv8).
+> If a supported standard API is used, then there is no need for
+> additional code in the kernel.
+>
+> BTW, is legacy code the reason for not converting the SMC # to PSCI?
+> It's already supported on ARMv7, so you may not have much code left to
+> merge in the kernel ;).
 
-Thanks,
-Christopher
+The problem here is twofold:
 
--- 
-Employee of Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by the Linux Foundation.
+1) we are just consumers of the TrustZone secure monitor who receive a 
+binary and do not have any control over its calling conventions. I agree 
+that it would be trivial to make it compatible with PSCI, but it's just 
+not something we can make by ourselves (TF does not even follow the SMC 
+calling convention). If this problem is to be addressed, it should be 
+done by forcing the TrustZone secure monitors providers to follow PSCI.
+
+2) devices have already shipped with this firmware. Are we going to just 
+renounce supporting them, even though the necessary support is 
+lightweight and fits within already existing interfaces?
+
+I certainly do hope that for ARMv8 things will be different and more 
+standardized. But that's not something that can be guaranteed unless ARM 
+strongly enforces it to firmware vendors. In case such a non-standard 
+firmware gets used again, I *do* hope that using cpu_ops will be 
+preferred over saying "this device cannot be supported in mainline, ever".
+
+The kernel already supports non-standard hardware, BIOS, ACPI through 
+hacks that are *way* more horrible than that. This should certainly not 
+be encouraged, but that's not a valid reason to forbid otherwise 
+perfectly fine devices to run mainline IMHO.
+
+>
+>> * that should a need to move it (for whatever reason) occur later, it
+>> will be easy to do (as this patch hopefully demonstrates).
+>
+> I agree, it's not hard to unify this but so far I haven't seen a good
+> reason.
+
+Same here. arm64 has its own cpu_operations. Other archs have different 
+needs and if we move this to a common place it will just become a messy 
+placeholder for function pointers from which each arch will only use a 
+subset.
+
+Not to mention that if we follow the logic completely, we should then 
+implement PCSI on top of cpu_ops and cpu_ops on top of firmware_ops (or 
+the other way around ;)).
+
+Alex.
