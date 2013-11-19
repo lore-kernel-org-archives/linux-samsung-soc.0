@@ -1,64 +1,126 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 4/4] PM / devfreq: Consider hibernation in pm notifier
-Date: Tue, 19 Nov 2013 15:50:05 +0100
-Message-ID: <27161890.Zx6CiZOMr8@amdc1032>
-References: <1384867831-15383-1-git-send-email-jhbird.choi@samsung.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] ARM: move firmware_ops to drivers/firmware
+Date: Tue, 19 Nov 2013 15:07:43 +0000
+Message-ID: <20131119150743.GG26487@arm.com>
+References: <1384678169-28228-1-git-send-email-acourbot@nvidia.com>
+ <CAHkRjk5LBOFx3ir49RgEsaFwvp5UCpTjYFWto+URXebAsOP0RA@mail.gmail.com>
+ <52898417.80601@nvidia.com> <20131118115842.GE4050@arm.com>
+ <528AD11F.7060009@nvidia.com> <20131119122656.GF26487@arm.com>
+ <CAAVeFuLkGGfUqVV88U44f1gN_3umD=PoTgHw241hLVLy4FRoLQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:57031 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752427Ab3KSOuM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Nov 2013 09:50:12 -0500
-In-reply-to: <1384867831-15383-1-git-send-email-jhbird.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAAVeFuLkGGfUqVV88U44f1gN_3umD=PoTgHw241hLVLy4FRoLQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Alex Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, Stephen Warren <swarren@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jonghwan Choi <jhbird.choi@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>
 
-
-Hi,
-
-Are you planning to add hibernation support to ARM?
-
-If so then this should be stated somewhere in the patch description.
-
-OTOH if you are not going to add hibernation support to ARM I see
-a little sense in adding hibernation support to ARM-only drivers..
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-On Tuesday, November 19, 2013 10:30:31 PM Jonghwan Choi wrote:
-> Frequency lock should be considered in suspend/hibernation.
+On Tue, Nov 19, 2013 at 02:29:39PM +0000, Alexandre Courbot wrote:
+> On Tue, Nov 19, 2013 at 9:26 PM, Catalin Marinas
+> <catalin.marinas@arm.com> wrote:
+> > On Tue, Nov 19, 2013 at 02:46:55AM +0000, Alex Courbot wrote:
+> >> 2) devices have already shipped with this firmware. Are we going to just
+> >> renounce supporting them, even though the necessary support is
+> >> lightweight and fits within already existing interfaces?
+> >
+> > I'm talking only about ARMv8 here. Please see my reply to Stephen for
+> > the details of (not) reusing existing firmware.
+> >
+> >> I certainly do hope that for ARMv8 things will be different and more
+> >> standardized. But that's not something that can be guaranteed unless ARM
+> >> strongly enforces it to firmware vendors. In case such a non-standard
+> >> firmware gets used again, I *do* hope that using cpu_ops will be
+> >> preferred over saying "this device cannot be supported in mainline, ever".
+> >
+> > cpu_ops or firmware_ops is just a name and can be unified (TBD what
+> > common functionality it contains). What I don't want to encourage is
+> > each SoC registering its own firmware interface.
 > 
-> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-> ---
->  drivers/devfreq/exynos/exynos5_bus.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Sorry, are you talking about interface as in SMC interface, or as in
+> cpu_operations/firmware_ops?
+
+Both. I don't want to see platforms defining their own SMC interface for
+no good reason. The cpu_ops/firmware_ops handling in the kernel is just
+some naming but the key is having standard SMC interfaces for CPU
+operations.
+
+> >> The kernel already supports non-standard hardware, BIOS, ACPI through
+> >> hacks that are *way* more horrible than that. This should certainly not
+> >> be encouraged, but that's not a valid reason to forbid otherwise
+> >> perfectly fine devices to run mainline IMHO.
+> >
+> > So you say we should just stop trying to standardise anything because
+> > people don't care anyway. Why do we even bother with DT (or ACPI) since
+> > board files were fine in the past (with a bit more code)?
 > 
-> diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
-> index a60da3c..bd672de0 100644
-> --- a/drivers/devfreq/exynos/exynos5_bus.c
-> +++ b/drivers/devfreq/exynos/exynos5_bus.c
-> @@ -268,6 +268,7 @@ static int exynos5_busfreq_int_pm_notifier_event(struct notifier_block *this,
->  	int err = 0;
->  
->  	switch (event) {
-> +	case PM_HIBERNATION_PREPARE:
->  	case PM_SUSPEND_PREPARE:
->  		/* Set Fastest and Deactivate DVFS */
->  		mutex_lock(&data->lock);
-> @@ -300,6 +301,7 @@ unlock:
->  		if (err)
->  			return NOTIFY_BAD;
->  		return NOTIFY_OK;
-> +	case PM_POST_HIBERNATION:
->  	case PM_POST_RESTORE:
->  	case PM_POST_SUSPEND:
->  		/* Reactivate */
+> Oh no, that's not what I am saying at all. Standardization is good.
+> PSCI is good. Of course I would prefer that the secure monitor we use
+> follow established conventions - that'd be less work to support it and
+> less hassle to get my patches merged.
+> 
+> I may have misunderstood you, but I felt your mail sounded a bit like
+> "we won't merge support for firmwares that do not follow PSCI".
+
+Just to clarify it: I won't merge support for _ARMv8_ firmware that does
+not follow a standard CPU booting/power protocol supported by Linux.
+Currently we only support PSCI. If there is a need for another protocol
+and a good proposal, I'm open for discussions.
+
+The above is all related to having no SoC code under arch/arm64 (or
+board files, whatever you want to call them).
+
+> I
+> agree that whenever it is possible to support a firmware through a
+> standard interface, this should be done - no discussion. But right now
+> I have two devices that are good representatives of Tegra 4 and
+> available in stores, which I would like to see supported in mainline
+> to satisfy requests from the community for Tegra development
+> platforms, and also initiate the habit to support future
+> NVIDIA-branded devices in mainline. Their secure monitor unfortunately
+> does not follow PSCI or the SMC convention and needs a custom
+> firmware_ops. Are they unworthy of mainline?
+
+Are they ARMv8? Since we didn't have any such rules on ARMv7 and
+earlier, standard secure interface is nice to have but should not
+prevent upstreaming. I made this clear already that it is ARMv8 only,
+please don't try to generalise it.
+
+> And if, by sheer misfortune, the same thing happened on an ARMv8
+> device (despite the EL1/EL3 separation), what would be the outcome?
+
+If some people get it wrong and they have to work around firmware bugs
+for devices already in the field, we may need to bend the rules (bugs do
+happen, both in software and hardware). But definitely _not_ when people
+don't even bother.
+
+> IMHO, more devices in mainline is beneficial to everybody, and
+> actually *encourages* SoC vendors/firmware providers to follow
+> conventions. Banning devices is what triggers the kind of "screw it"
+> reactions mentioned earlier,
+
+By following some rules and doing things in a standard way (firmware
+interface in this case), it is more likely that their SoC support
+requires minimal kernel code and it's easier to upstream and maintain.
+
+> and on the contrary once a device is in,
+> you tend to make sure the next ones follow the kernel trends because
+> you know you will need to support them in mainline as well and it will
+> make your life easier.
+
+Not really. The next device won't follow the kernel trends but just the
+same non-standard way of doing things that were accepted in the first
+place.
+
+-- 
+Catalin
