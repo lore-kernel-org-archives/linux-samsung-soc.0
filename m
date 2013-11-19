@@ -1,56 +1,64 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 2/4] cpufreq: exynos: Consider hibernation in pm notifier
-Date: Tue, 19 Nov 2013 20:02:56 +0530
-Message-ID: <CAKohpo=kELQ+7pcWkTYnDOds8YktQMD4F-=gL3jywaWfNe6CNA@mail.gmail.com>
-References: <1384867758-15276-1-git-send-email-jhbird.choi@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 4/4] PM / devfreq: Consider hibernation in pm notifier
+Date: Tue, 19 Nov 2013 15:50:05 +0100
+Message-ID: <27161890.Zx6CiZOMr8@amdc1032>
+References: <1384867831-15383-1-git-send-email-jhbird.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f170.google.com ([209.85.214.170]:37687 "EHLO
-	mail-ob0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752199Ab3KSOc5 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:57031 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752427Ab3KSOuM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Nov 2013 09:32:57 -0500
-Received: by mail-ob0-f170.google.com with SMTP id wp18so3989990obc.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Nov 2013 06:32:56 -0800 (PST)
-In-Reply-To: <1384867758-15276-1-git-send-email-jhbird.choi@samsung.com>
+	Tue, 19 Nov 2013 09:50:12 -0500
+In-reply-to: <1384867831-15383-1-git-send-email-jhbird.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Jonghwan Choi <jhbird.choi@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>
 
-On 19 November 2013 18:59, Jonghwan Choi <jhbird.choi@gmail.com> wrote:
+
+Hi,
+
+Are you planning to add hibernation support to ARM?
+
+If so then this should be stated somewhere in the patch description.
+
+OTOH if you are not going to add hibernation support to ARM I see
+a little sense in adding hibernation support to ARM-only drivers..
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+On Tuesday, November 19, 2013 10:30:31 PM Jonghwan Choi wrote:
 > Frequency lock should be considered in suspend/hibernation.
-
-These could turn out to be important logs for future. Please write
-with more effort..
-
+> 
 > Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 > ---
->  drivers/cpufreq/exynos-cpufreq.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-> index f3c2287..cd05b0a 100644
-> --- a/drivers/cpufreq/exynos-cpufreq.c
-> +++ b/drivers/cpufreq/exynos-cpufreq.c
-> @@ -187,6 +187,7 @@ static int exynos_cpufreq_pm_notifier(struct notifier_block *notifier,
->         int ret;
->
->         switch (pm_event) {
-> +       case PM_HIBERNATION_PREPARE:
->         case PM_SUSPEND_PREPARE:
->                 mutex_lock(&cpufreq_lock);
->                 frequency_locked = true;
-> @@ -198,6 +199,8 @@ static int exynos_cpufreq_pm_notifier(struct notifier_block *notifier,
->
->                 break;
->
-> +       case PM_POST_HIBERNATION:
-> +       case PM_POST_RESTORE:
->         case PM_POST_SUSPEND:
->                 mutex_lock(&cpufreq_lock);
->                 frequency_locked = false;
-
-@Rafael: So we have few more drivers which are already doing such
-stuff (even tegra as well)..
+>  drivers/devfreq/exynos/exynos5_bus.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/devfreq/exynos/exynos5_bus.c b/drivers/devfreq/exynos/exynos5_bus.c
+> index a60da3c..bd672de0 100644
+> --- a/drivers/devfreq/exynos/exynos5_bus.c
+> +++ b/drivers/devfreq/exynos/exynos5_bus.c
+> @@ -268,6 +268,7 @@ static int exynos5_busfreq_int_pm_notifier_event(struct notifier_block *this,
+>  	int err = 0;
+>  
+>  	switch (event) {
+> +	case PM_HIBERNATION_PREPARE:
+>  	case PM_SUSPEND_PREPARE:
+>  		/* Set Fastest and Deactivate DVFS */
+>  		mutex_lock(&data->lock);
+> @@ -300,6 +301,7 @@ unlock:
+>  		if (err)
+>  			return NOTIFY_BAD;
+>  		return NOTIFY_OK;
+> +	case PM_POST_HIBERNATION:
+>  	case PM_POST_RESTORE:
+>  	case PM_POST_SUSPEND:
+>  		/* Reactivate */
