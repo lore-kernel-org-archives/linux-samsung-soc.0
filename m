@@ -1,18 +1,17 @@
 From: Catalin Marinas <catalin.marinas@arm.com>
 Subject: Re: [PATCH] ARM: move firmware_ops to drivers/firmware
-Date: Tue, 19 Nov 2013 11:38:58 +0000
-Message-ID: <20131119113858.GE26487@arm.com>
+Date: Tue, 19 Nov 2013 12:26:56 +0000
+Message-ID: <20131119122656.GF26487@arm.com>
 References: <1384678169-28228-1-git-send-email-acourbot@nvidia.com>
  <CAHkRjk5LBOFx3ir49RgEsaFwvp5UCpTjYFWto+URXebAsOP0RA@mail.gmail.com>
  <52898417.80601@nvidia.com> <20131118115842.GE4050@arm.com>
- <528A4869.2020701@wwwdotorg.org> <20131118173047.GF9838@arm.com>
- <528A53E4.90401@wwwdotorg.org>
+ <528AD11F.7060009@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <528A53E4.90401@wwwdotorg.org>
+In-Reply-To: <528AD11F.7060009@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,72 +21,104 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@nvidia.com>, Tomasz Figa <t.figa@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Alex Courbot <acourbot@nvidia.com>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Alex Courbot <acourbot@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Warren <swarren@nvidia.com>, Tomasz Figa <t.figa@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Nov 18, 2013 at 05:52:36PM +0000, Stephen Warren wrote:
-> On 11/18/2013 10:30 AM, Catalin Marinas wrote:
-> > On Mon, Nov 18, 2013 at 05:03:37PM +0000, Stephen Warren wrote:
-> >> On 11/18/2013 04:58 AM, Catalin Marinas wrote:
-> >> ...
-> >>> Of course, trusted foundations interface could be plugged into cpu_ops
-> >>> on arm64 but I will NAK it on the grounds of not using the PSCI API, nor
-> >>> the SMC calling convention (and it's easy to fix when porting to ARMv8).
-> >>> If a supported standard API is used, then there is no need for
-> >>> additional code in the kernel.
+On Tue, Nov 19, 2013 at 02:46:55AM +0000, Alex Courbot wrote:
+> On 11/18/2013 08:58 PM, Catalin Marinas wrote:
+> > On Mon, Nov 18, 2013 at 03:05:59AM +0000, Alex Courbot wrote:
+> >> On 11/18/2013 12:59 AM, Catalin Marinas wrote:
+> >>> On 17 November 2013 08:49, Alexandre Courbot <acourbot@nvidia.com> wrote:
+> >>>> The ARM tree includes a firmware_ops interface that is designed to
+> >>>> implement support for simple, TrustZone-based firmwares but could
+> >>>> also cover other use-cases. It has been suggested that this
+> >>>> interface might be useful to other architectures (e.g. arm64) and
+> >>>> that it should be moved out of arch/arm.
+> >>>
+> >>> NAK. I'm for code sharing with arm via common locations but this API
+> >>> goes against the ARMv8 firmware standardisation efforts like PSCI,
+> >>> encouraging each platform to define there own non-standard interface.
 > >>
-> >> What happens when someone takes an existing working secure-mode SW stack
-> >> and simply re-uses it on some new ARMv8 SoC. Are you going to force
-> >> people working on upstream to re-write the secure mode firmware in
-> >> shipped hardware before allowing upstream kernel support?
-> > 
-> > Don't confuse the secure stack with the secure monitor running at EL3.
-> > If you want AArch64 support for lower levels (EL2, EL1, EL0), your
-> > monitor _must_ be AArch64. You can't run legacy AArch32 code at EL3 and
-> > have lower levels in AArch64 mode (architectural constraint).
+> >> I have to say, I pretty much agree with your NAK.
+> >>
+> >> The reason for this patch is that the suggestion to move firmware_ops
+> >> out of arch/arm is the last (I hope) thing that prevents my Trusted
+> >> Foundation support series from being merged.
+> >
+> > Moving it into drivers shouldn't be a workaround. Nice try ;).
 > 
-> I was assuming that vendors would take the existing source code and
-> simply rebuild it to create the AArch64 secure world.
+> Hehe. I thought that just sending a patch would settle the issue one way 
+> or the other and avoid a huge discussion. Woke up this morning to see 
+> how wrong I was.
 
-Some C code can probably be reused but not the EL3 entry/exit code,
-world switching and AArch64 initialisation. The main differences in
-ARMv8 EL3 is that it has its own MMU and it can only be entered via SMC
-and exit via ERET (you can no longer switch from/to secure SVC by
-writing to CPSR). So apart from a different instruction set, the new
-exception model requires a rewrite of the secure monitor logic used to
-handle SMCs, switch worlds, pass arguments between worlds.
+It's a sensitive topic ;).
 
-> As such, the same SMC IDs, same structures, etc. would be used. The
-> only source difference would be to perhaps change some 32-bit
-> registers/struct-fields up to 64-bit. Naively that sounds like the
-> lowest-effort way to get an AArch64 secure world, so I'm purely
-> guessing that that's what vendors will do.
-
-It looks simpler in theory until you hit the new exception model and
-realise the clear separation between EL3 (previously secure monitor) and
-secure EL1 (previously secure SVC). I'm not referring to the whole
-secure stack here, just the things I mentioned above.
-
-> > You can
-> > still keep the secure services at S-EL1 in AArch32, only that the SMCs
-> > are handled by EL3 (and that's another aspect the SMC calling convention
-> > spec is trying to address, mixed register-width secure/non-secure OSes).
+> > BTW, is legacy code the reason for not converting the SMC # to PSCI?
+> > It's already supported on ARMv7, so you may not have much code left to
+> > merge in the kernel ;).
 > 
-> I'm not sure of the implications of that statement. Since you mention
-> SMCs being handled by EL3, I think the quick-and-dirty conversion I
-> mention above is still likely to be used.
+> The problem here is twofold:
+> 
+> 1) we are just consumers of the TrustZone secure monitor who receive a 
+> binary and do not have any control over its calling conventions. I agree 
+> that it would be trivial to make it compatible with PSCI, but it's just 
+> not something we can make by ourselves (TF does not even follow the SMC 
+> calling convention). If this problem is to be addressed, it should be 
+> done by forcing the TrustZone secure monitors providers to follow PSCI.
 
-What I meant is that a secure OS (providing cryptography, banking etc.
-services) can run in secure EL1 in AArch32 mode, it does not need to be
-converted (though it helps from a performance perspective, new
-instructions). But the world switching (which is pretty tightly coupled
-with secure SVC on ARMv7) and SMC handling need to be rewritten.
+I agree and such discussions do happen ('forcing' is a bit harder, more
+like 'strongly recommending'). On my side, I voice this message via the
+Linux channels, so SoC vendors can also encourage their secure provider
+in this direction. The benefit is that the Linux changes are minimal
+afterwards, single image is easier.
 
-And it's usually EL3 where you would place power management firmware on
-ARMv8 (cache/TLB maintenance, power controller access). This is usually
-done by the SoC vendor and not the secure OS provider (the latter may do
-the final link).
+But as I replied to Stephen, make sure you separate the secure OS (EL1)
+from the secure firmware (EL3). The latter (or parts of it) are provided
+by the SoC vendor (e.g. NVidia) and may be eventually linked into a big
+blob by the secure OS provider. ARM is encouraging separation here and a
+multi-stage firmware loading approach (and ARM started a public generic
+firmware project, it's in the early days now).
+
+> 2) devices have already shipped with this firmware. Are we going to just 
+> renounce supporting them, even though the necessary support is 
+> lightweight and fits within already existing interfaces?
+
+I'm talking only about ARMv8 here. Please see my reply to Stephen for
+the details of (not) reusing existing firmware.
+
+> I certainly do hope that for ARMv8 things will be different and more 
+> standardized. But that's not something that can be guaranteed unless ARM 
+> strongly enforces it to firmware vendors. In case such a non-standard 
+> firmware gets used again, I *do* hope that using cpu_ops will be 
+> preferred over saying "this device cannot be supported in mainline, ever".
+
+cpu_ops or firmware_ops is just a name and can be unified (TBD what
+common functionality it contains). What I don't want to encourage is
+each SoC registering its own firmware interface.
+
+> The kernel already supports non-standard hardware, BIOS, ACPI through 
+> hacks that are *way* more horrible than that. This should certainly not 
+> be encouraged, but that's not a valid reason to forbid otherwise 
+> perfectly fine devices to run mainline IMHO.
+
+So you say we should just stop trying to standardise anything because
+people don't care anyway. Why do we even bother with DT (or ACPI) since
+board files were fine in the past (with a bit more code)?
+
+> >> * that should a need to move it (for whatever reason) occur later, it
+> >> will be easy to do (as this patch hopefully demonstrates).
+> >
+> > I agree, it's not hard to unify this but so far I haven't seen a good
+> > reason.
+> 
+> Same here. arm64 has its own cpu_operations. Other archs have different 
+> needs and if we move this to a common place it will just become a messy 
+> placeholder for function pointers from which each arch will only use a 
+> subset.
+
+That was my initial point but it turned into a thread against PSCI
+(again ;)).
 
 -- 
 Catalin
