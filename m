@@ -1,66 +1,61 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 4/4] PM / devfreq: Consider hibernation in pm notifier
-Date: Wed, 20 Nov 2013 18:51:41 +0900
-Message-ID: <CAJ0PZbSkDegFSwJoEHsZGGbXxtTDt419rdK+cn+E+bzmux9U7w@mail.gmail.com>
-References: <1384867831-15383-1-git-send-email-jhbird.choi@samsung.com>
-	<27161890.Zx6CiZOMr8@amdc1032>
-	<20131119220829.27502.62997@capellas-linux>
-Reply-To: myungjoo.ham@gmail.com
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 0/8] ARM: s3c64xx: Let amba-pl08x driver handle DMA
+Date: Wed, 20 Nov 2013 12:31:52 +0000
+Message-ID: <20131120123152.GZ2674@sirena.org.uk>
+References: <1381950659-12703-1-git-send-email-tomasz.figa@gmail.com>
+ <20131017102201.GK2443@sirena.org.uk>
+ <52644563.1000203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f182.google.com ([209.85.128.182]:40150 "EHLO
-	mail-ve0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752357Ab3KTJvl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Nov 2013 04:51:41 -0500
-In-Reply-To: <20131119220829.27502.62997@capellas-linux>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="YNEMMPJXay2VNSoy"
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <52644563.1000203-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sangbeom Kim <sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sebastian Capella <sebastian.capella@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jonghwan Choi <jhbird.choi@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Linux Samsung SoC <linux-samsung-soc@vger.kernel.org>, Jonghwan Choi <jhbird.choi@samsung.com>
-
-On Wed, Nov 20, 2013 at 7:08 AM, Sebastian Capella
-<sebastian.capella@linaro.org> wrote:
-> Quoting Bartlomiej Zolnierkiewicz (2013-11-19 06:50:05)
->> Hi,
->>
->> Are you planning to add hibernation support to ARM?
->>
->> If so then this should be stated somewhere in the patch description.
->>
->> OTOH if you are not going to add hibernation support to ARM I see
->> a little sense in adding hibernation support to ARM-only drivers..
->
-> FYI, we at Linaro and a few others have been working on adding
-> hibernation support for ARM.  I have not coordinated with Jonghwan
-> however.
-
-That is great.
-
-We once tried to upstream hibernation support and forgot it for a while, too.
-http://lists.infradead.org/pipermail/linux-arm-kernel/2010-December/036101.html
-
-I have not coordinated with Jonghwan Choi, either.
-However, it appears that some others are trying now, too.
 
 
-Cheers,
-MyungJoo
+--YNEMMPJXay2VNSoy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->
-> Apoligies for the earlier toppost.
->
-> Thanks,
->
-> Sebastian Capella
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Mon, Oct 21, 2013 at 06:04:35AM +0900, Kukjin Kim wrote:
 
+> Applied this whole series.
 
+This didn't seem to make it into -next or your tree, it'd be really
+helpful to be able to merge into both ASoC and SPI so they can be used
+for some framework work (I already have some patches for ASoC).  Would
+it be possible to get the changes published on a separate branch or
+signed tag so I can pull it into those subsystems for the next merge
+window?
 
--- 
-MyungJoo Ham, Ph.D.
-System S/W Lab, S/W Center, Samsung Electronics
+--YNEMMPJXay2VNSoy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSjKu0AAoJELSic+t+oim9uQwQAJaqm3gH0lG3H8u4ljnv3H9T
+JntYWgAT8Vn5XqPKAbAJjLGhSNAFn423efSeIOv6XeOcDVbbXBZzxi731IbBXdOt
+NdAA7nZmY09TdGdb/s3FYu8xi66yqvLTAT6jct3ov6Mm3s+xkKozerwUUmM21Uy0
+Itydavphmn8XpdieQJVaYWSk0iKdb+HcPq865xsKgF9wU6F6sLtILkw9qf/Ly0IF
+EFWnNa13e67sRwOnQOKT1mcWjaLJ5UWVmHtF1AvQ87QP9U0kkdHanyLYJTqC556I
++rN6euxf/MhthlRN/SooJNwf4mqEQafYqntc9zoY2hcUoM1ncrPf9GdoSZB/6jRQ
+BGPQEIyCGHl6GArWLr51TBiD5KeEeu92kvvb6ybNkD/G9tpIZ+k/gvsP8Z+tYrJX
+hVI4n9M7FNyGeIa4swhImt6AHANVHSB8lYxyWTyMs69KHoIdv4Q6yl5XT5A4buf2
+bbuIF9zJ4949S6NmM2CtYxrYSPMBS3qYhO7Qc9hvvUVgQQAqPU4aMM/6Eg6nQzqm
+tFrFYkBj40Gix7Do9wZlWFpeQTV7LdvrqXlcwUcK+QvOxwJTj577dPpQsGkBOFQq
+OqAmmo35OqvYUV5tKnXYKzju4Wk5puj2wKqrSha1XmqF9OLZ1KbSxMuR/Ea5MqVn
+fojeHEFQ7KWfASg2E9Cd
+=dwHS
+-----END PGP SIGNATURE-----
+
+--YNEMMPJXay2VNSoy--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
