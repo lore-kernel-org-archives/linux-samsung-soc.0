@@ -1,17 +1,17 @@
 From: NOKIA <massimo@smesitalia.com>
 Subject: FINAL RESULT
-Date: Thu, 21 Nov 2013 03:33:36 +0530
-Message-ID: <20131120220238.E1E3C1E62D4B__2473.84580220587$1384985568$gmane$org@eco.unipv.it>
+Date: Thu, 21 Nov 2013 04:52:25 +0530
+Message-ID: <20131120232133.A61A41E6333B__6592.851461801$1384990007$gmane$org@eco.unipv.it>
 Reply-To: nokiaukoffice@nokiamail.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from eco.unipv.it ([193.204.32.11]:36777 "EHLO eco.unipv.it"
+Received: from eco.unipv.it ([193.204.32.11]:54202 "EHLO eco.unipv.it"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754858Ab3KTWMg convert rfc822-to-8bit (ORCPT
+	id S1754793Ab3KTX0M convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Nov 2013 17:12:36 -0500
+	Wed, 20 Nov 2013 18:26:12 -0500
 Content-Description: Mail message body
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
