@@ -1,70 +1,67 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized
- using pinfunc.
-Date: Wed, 20 Nov 2013 12:51:21 +0000
-Message-ID: <20131120125121.GB2674@sirena.org.uk>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using
+ pinfunc.
+Date: Wed, 20 Nov 2013 14:38:57 +0100
+Message-ID: <1751377.1AvsyJs1NG@amdc1227>
 References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
  <528BB1F2.4080107@wwwdotorg.org>
- <CAD=FV=XS0dbE7zfgDGVdp84h4fHH6tfO8aN_HNh1LbOjYy51aQ@mail.gmail.com>
- <528BB913.6080409@wwwdotorg.org>
- <CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>
- <528BFD28.3050909@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Ghfi4GlmwTrWkODx"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:59086 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751608Ab3KTMvx (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34059 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751967Ab3KTNjM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Nov 2013 07:51:53 -0500
-Content-Disposition: inline
-In-Reply-To: <528BFD28.3050909@wwwdotorg.org>
+	Wed, 20 Nov 2013 08:39:12 -0500
+In-reply-to: <528BB1F2.4080107@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Kyungmin Park <kmpark@infradead.org>, Doug Anderson <dianders@chromium.org>, devicetree@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Doug Anderson <dianders@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
+Hi Stephen,
 
---Ghfi4GlmwTrWkODx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tuesday 19 of November 2013 11:46:10 Stephen Warren wrote:
+> On 11/19/2013 10:15 AM, Tomasz Figa wrote:
+> > This patch extends the range of settings configurable via pinfunc API
+> > to cover pin value as well. This allows configuration of default values
+> > of pins.
+> 
+> Shouldn't there be a driver that acquires the GPIO that's output to the
+> pin, and configures the output value? IIRC there have been previous
+> discussions re: having a list of e.g. initial GPIO output values in DT,
+> and that was rejected, and this patch seems to be doing almost the exact
+> same thing, just at the pinctrl level rather than GPIO level.
 
-On Tue, Nov 19, 2013 at 05:07:04PM -0700, Stephen Warren wrote:
-> On 11/19/2013 05:02 PM, Kyungmin Park wrote:
+Well, on the contrary, I remember a discussion about specifying initial
+clock tree configuration in DT (on Linaro Connect in Dublin, but AFAIR
+also on the ML before. Through analogy, I would extend this to initial
+pin settins. However maybe the use cases behind this will make things
+clearer.
 
-> > Some pins are not connected (NC). At that cases, there's no drivers to
-> > handle it. To reduce power leakage, it sets proper configuration with
-> > values instead of reset values.
+> 
+> That all said, I admit this could be a useful feature...
 
-> Hmm. Shouldn't board firmware configure that kind of thing?
+Two specific things I had in mind with this have been:
 
-> (Of course, some firmware is starting to use DT to configure itself, so
-> that just shifts the DT discussion, but anyway).
+ - pins of the SoC unused on particular boards, which often need different
+   configuration depending on pin bank, SoC revision and so on. I know
+   that _ideally_ this should be done by "firmware", but I believe we
+   have enough historic experience to know that we shouldn't expect from
+   the bootloader more than that it just loads us, as the name would
+   suggest (and I have even had experience with bootloaders that couldn't
+   properly do this basic task, screwing up, for example, by leaving MMU
+   turned on before jumping to the kernel).
 
-Even if it's not sometimes the firmware is intended to be thin with
-configuration punted to the OS.
+ - initializing safe default state of all pins on the board, to cope with
+   configurations when not all drivers are enabled. As an example, take an
+   embedded board with a little of flash storage, where the kernel has to
+   be really small, so not all SoC drivers can be compiled into it. Moving
+   the responsibility of setting initial pin states to drivers would leave
+   pins of inexistent drivers unconfigured.
 
---Ghfi4GlmwTrWkODx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+I don't think I need to explain why misconfigured pins are a bad thing.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSjLBGAAoJELSic+t+oim9O3kQAIvdeY7tzGmzEuyfDcnqDUZ4
-y9t9LFMCjDRDyT+m8ggfFId66s1bx8U4HAvXygMo/M56ThVZ2AjdzNc0pbSvC1+e
-kYGxfmXv2yYDcypmqQQZndZuIhCHBDOOjbFskkHYfqe588wzdFsBMjdo9hPAzxF1
-T9eXKSADHLMcthw/cCsLGkgzn64uIQS1S0faNOle82Vzc1qqL63/HktAfnp95gwc
-d1WxvdGbr5pUekFrdPDzisir5L5GKfBc0LC+dogWBqU0LWhDRSl6RgBJpHjilfnJ
-KLdpo3TcIcLNxAOEGqZuR/tF3FP1yCk8LHZiGjqFTJ6svKio8HYtdXMDiY2Wjua0
-qLhpwSobBpVLIUO5o46ytj28f49lKwL9yYt8riWr8aZmQTvlWGSrjR2H6cx/7KZf
-RgO9GAdcRGbSzL3Ax1Oz9yGN2S8AOVsvPkyt3Yiph/8R42xu4t51DpyC99cku5CO
-Lklh7HX2tfIRXPzQrPSzzmt2Pj8wUmEbl5Et0WrtmI3TKTSOwc7NUQc4yqlB468T
-Y/PmooXeWIk7a/ZLYHFSvfAZoqsUggxmg1tIIDh3Dt3vzGkEmnEepQ+S0ce3MGxy
-Phj+kQrC4BDrzi5czymLIORG5IEcYvFwCfzDJyf13QaD1glbdX7neZOAq9rwKy8P
-zcTkxZI7R2nYVKbbHnrF
-=f5LR
------END PGP SIGNATURE-----
-
---Ghfi4GlmwTrWkODx--
+Best regards,
+Tomasz
