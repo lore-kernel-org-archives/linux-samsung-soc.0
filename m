@@ -1,98 +1,92 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Wed, 20 Nov 2013 21:14:44 +0530
-Message-ID: <528CD8EC.9050403@ti.com>
-References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>	<1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>	<527744B2.4090303@ti.com>	<030d01ced946$d6e23490$84a69db0$%debski@samsung.com>	<52779D28.9000905@ti.com>	<CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>	<00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>	<000001ceda17$f41c2030$dc546090$%han@samsung.com>	<000101ceda1f$04ca6f20$0e5f4d60$%han@samsung.com>	<CAFp+6iFAZab35F-MOOZHcHpzSEOL=51gWBK2KZbOJS+0731GJQ@mail.gmail.com>	<000301ceda84$1d648bf0$582da3d0$%han@samsung.com>	<5280BB65.5040305@ti.com>	<CAFp+6iGKpzOHjwnSMvSgTehzPLQMB8madoYqMk5JPSAZfSGSTg@mail.gmail.com>	<528C7B0E.3080401@ti.com>
- <CAFp+6iF3UnV-w2pYQE2THQZBGma8xpp6pqSuwXzjUN3emJnftQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAFp+6iF3UnV-w2pYQE2THQZBGma8xpp6pqSuwXzjUN3emJnftQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Tomasz Figa <t.figa@samsung.com>, Jingoo Han <jg1.han@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Julius Werner <jwerner@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Daniel Kurtz <djkurtz@chromium.org>
+Subject: [PATCH 1/3] ARM: EXYNOS: pmu: Constify data tables
+Date: Thu, 21 Nov 2013 02:21:24 +0800
+Message-ID: <1384971686-7208-1-git-send-email-djkurtz@chromium.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:44524 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753716Ab3KTSVm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 Nov 2013 13:21:42 -0500
+Received: by mail-pd0-f179.google.com with SMTP id r10so7008646pdi.38
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Nov 2013 10:21:41 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Andersen <dianders@chromium.org>, Daniel Kurtz <djkurtz@chromium.org>
 
-Hi,
+These tables are all immutable, make them const to save 4416 bytes of RAM.
 
-On Wednesday 20 November 2013 03:02 PM, Vivek Gautam wrote:
-> On Wed, Nov 20, 2013 at 2:34 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->> On Wednesday 20 November 2013 02:27 PM, Vivek Gautam wrote:
->>> Hi Kishon,
->>>
->>>
->>> On Mon, Nov 11, 2013 at 4:41 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
->>>> Hi,
->>> sorry for the delayed response.
->>>
->>>>
->>>> On Wednesday 06 November 2013 05:37 AM, Jingoo Han wrote:
->>>>> On Wednesday, November 06, 2013 2:58 AM, Vivek Gautam wrote:
->>>>>> On Tue, Nov 5, 2013 at 5:33 PM, Jingoo Han <jg1.han@samsung.com> wrote:
->>>>>
->>>>> [.....]
->>>>>
->>>>>>> USB3.0 PHY consists of two blocks such as 3.0 block and 2.0 block.
->>>>>>> This USB3.0 PHY can support UTMI+ and PIPE3 interface for 3.0 block
->>>>>>> and 2.0 block, respectively.
->>>>>>>
->>>>>>> Conclusion:
->>>>>>>
->>>>>>>    1) USB2.0 PHY: USB2.0 HOST, USB2.0 Device
->>>>>>>                        Base address: 0x1213 0000
->>>>>>>
->>>>>>>    2) USB3.0 PHY: USB3.0 DRD (3.0 HOST & 3.0 Device)
->>>>>>>                        Base address: 0x1210 0000
->>>>>>>                        2.0 block(UTMI+) & 3.0 block(PIPE3)
->>>>>>
->>>>>> And this is of course the PHY used by DWC3 controller, which works at
->>>>>> both High speed as well as Super Speed.
->>>>>> Right ?
->>>>>
->>>>> Right.
->>>>>
->>>>> While 3.0 block(PIPE3) can be used for Super Speed, 2.0 block(UTMI+)
->>>>> can be used for High speed.
->>>>
->>>> It should then come under *single IP muliple PHY* category similar to what
->>>> Sylwester has done.
->>>
->>> Do you mean that i should be including PHY IDs for UTMI+ phy and PIPE3
->>> phy present in this PHY block ?
->>> AFAICS the two phys (UTMI+ and PIPE3) do not really have separate
->>> registers to program, and that's the reason
->>> we program the entire PHY in a shot.
->>
->> you mean you program the same set of bits for UTMI+ and PIPE3?
-> 
-> No, looking closely into PHY datasheet as well as Exynos5250 manual, i
-> can see that UTMI+ and PIPE3
-> phys have separate bit settings. So i think we should be able to
-> segregate the two PHYs (UTMI+ and PIPE3).
-> Pardon me for my earlier observations.
+size arch/arm/mach-exynos/pmu.o
+   text	   data	    bss
+    848	   4420	      4		// before
+   5264	      4	      4		// after
 
-no problem..
-> Let me clarify more with our h/w team also on this and then i will
-> confirm with this.
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+---
+ arch/arm/mach-exynos/pmu.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-sure, thanks.
-
-Cheers
-Kishon
-
-> 
->>
->> Thanks
->> Kishon
-> 
-> 
-> 
+diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+index 97d6885..6609145 100644
+--- a/arch/arm/mach-exynos/pmu.c
++++ b/arch/arm/mach-exynos/pmu.c
+@@ -17,9 +17,9 @@
+ 
+ #include "common.h"
+ 
+-static struct exynos_pmu_conf *exynos_pmu_config;
++static const struct exynos_pmu_conf *exynos_pmu_config;
+ 
+-static struct exynos_pmu_conf exynos4210_pmu_config[] = {
++static const struct exynos_pmu_conf exynos4210_pmu_config[] = {
+ 	/* { .reg = address, .val = { AFTR, LPA, SLEEP } */
+ 	{ S5P_ARM_CORE0_LOWPWR,			{ 0x0, 0x0, 0x2 } },
+ 	{ S5P_DIS_IRQ_CORE0,			{ 0x0, 0x0, 0x0 } },
+@@ -95,7 +95,7 @@ static struct exynos_pmu_conf exynos4210_pmu_config[] = {
+ 	{ PMU_TABLE_END,},
+ };
+ 
+-static struct exynos_pmu_conf exynos4x12_pmu_config[] = {
++static const struct exynos_pmu_conf exynos4x12_pmu_config[] = {
+ 	{ S5P_ARM_CORE0_LOWPWR,			{ 0x0, 0x0, 0x2 } },
+ 	{ S5P_DIS_IRQ_CORE0,			{ 0x0, 0x0, 0x0 } },
+ 	{ S5P_DIS_IRQ_CENTRAL0,			{ 0x0, 0x0, 0x0 } },
+@@ -203,7 +203,7 @@ static struct exynos_pmu_conf exynos4x12_pmu_config[] = {
+ 	{ PMU_TABLE_END,},
+ };
+ 
+-static struct exynos_pmu_conf exynos4412_pmu_config[] = {
++static const struct exynos_pmu_conf exynos4412_pmu_config[] = {
+ 	{ S5P_ARM_CORE2_LOWPWR,			{ 0x0, 0x0, 0x2 } },
+ 	{ S5P_DIS_IRQ_CORE2,			{ 0x0, 0x0, 0x0 } },
+ 	{ S5P_DIS_IRQ_CENTRAL2,			{ 0x0, 0x0, 0x0 } },
+@@ -213,7 +213,7 @@ static struct exynos_pmu_conf exynos4412_pmu_config[] = {
+ 	{ PMU_TABLE_END,},
+ };
+ 
+-static struct exynos_pmu_conf exynos5250_pmu_config[] = {
++static const struct exynos_pmu_conf exynos5250_pmu_config[] = {
+ 	/* { .reg = address, .val = { AFTR, LPA, SLEEP } */
+ 	{ EXYNOS5_ARM_CORE0_SYS_PWR_REG,		{ 0x0, 0x0, 0x2} },
+ 	{ EXYNOS5_DIS_IRQ_ARM_CORE0_LOCAL_SYS_PWR_REG,	{ 0x0, 0x0, 0x0} },
+@@ -317,7 +317,7 @@ static struct exynos_pmu_conf exynos5250_pmu_config[] = {
+ 	{ PMU_TABLE_END,},
+ };
+ 
+-static void __iomem *exynos5_list_both_cnt_feed[] = {
++static void __iomem * const exynos5_list_both_cnt_feed[] = {
+ 	EXYNOS5_ARM_CORE0_OPTION,
+ 	EXYNOS5_ARM_CORE1_OPTION,
+ 	EXYNOS5_ARM_COMMON_OPTION,
+@@ -331,7 +331,7 @@ static void __iomem *exynos5_list_both_cnt_feed[] = {
+ 	EXYNOS5_TOP_PWR_SYSMEM_OPTION,
+ };
+ 
+-static void __iomem *exynos5_list_diable_wfi_wfe[] = {
++static void __iomem * const exynos5_list_diable_wfi_wfe[] = {
+ 	EXYNOS5_ARM_CORE1_OPTION,
+ 	EXYNOS5_FSYS_ARM_OPTION,
+ 	EXYNOS5_ISP_ARM_OPTION,
+-- 
+1.8.4.1
