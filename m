@@ -1,43 +1,53 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 1/1] cpufreq: exynos5250: Set APLL rate using CCF API
-Date: Thu, 21 Nov 2013 11:02:51 +0530
-Message-ID: <CAKohpomksAg4RpgTJ=mgtRnKHCidzEjfYHVeLQku1Jck_URmxg@mail.gmail.com>
-References: <1385009046-22070-1-git-send-email-sachin.kamat@linaro.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: exynos_defconfig: increase CONFIG_NR_CPUS value to 8
+Date: Thu, 21 Nov 2013 13:06:06 +0100
+Message-ID: <1511364.Pd4tSi34z7@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f48.google.com ([209.85.219.48]:33982 "EHLO
-	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751086Ab3KUFcv (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:55785 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753177Ab3KUMGP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Nov 2013 00:32:51 -0500
-Received: by mail-oa0-f48.google.com with SMTP id l6so1814713oag.21
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Nov 2013 21:32:51 -0800 (PST)
-In-Reply-To: <1385009046-22070-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 21 Nov 2013 07:06:15 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MWM00GPP4AE9P10@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Nov 2013 21:06:14 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 21 November 2013 10:14, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Use common clock framework (CCF) APIs to set the clock rates
-> instead of direct register manipulation. This now updates the
-> sysfs entry (cpuinfo_cur_freq) correctly which did not reflect
-> the correct value until now. While at it clean up the PLL s-div
-> parameter setting as it is handled by the PLL driver.
->
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
-> To fully test this, the following 2 patches would be necessary:
-> * clk: exynos5250: register APLL rate table
-> http://www.spinics.net/lists/arm-kernel/msg285103.html
-> * clk: exynos5250: Add CLK_SET_RATE_PARENT flag to mout_apll
-> http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/24906
-> ---
->
->  drivers/cpufreq/exynos5250-cpufreq.c |   74 +++++-----------------------------
->  1 file changed, 10 insertions(+), 64 deletions(-)
+Current CONFIG_NR_CPUS value (2) is too small for:
+- EXYNOS4412 (4 cores)
+- EXYNOS5440 (4 cores)
+- EXYNOS5410 (8 cores)
+- EXYNOS5420 (8 cores)
 
-Nice cleanup..
+Set CONFIG_NR_CPUS to 8 so it is correct for all currently
+supported SoCs.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index ad7dfbb..aec8a3e 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -13,7 +13,7 @@ CONFIG_S3C24XX_PWM=y
+ CONFIG_ARCH_EXYNOS5=y
+ CONFIG_MACH_EXYNOS4_DT=y
+ CONFIG_SMP=y
+-CONFIG_NR_CPUS=2
++CONFIG_NR_CPUS=8
+ CONFIG_PREEMPT=y
+ CONFIG_AEABI=y
+ CONFIG_HIGHMEM=y
+-- 
+1.8.2.3
