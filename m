@@ -1,48 +1,43 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH V9 0/3] Add watchdog DT nodes and use syscon regmap
- interface to configure pmu registers
-Date: Thu, 21 Nov 2013 10:49:25 +0530
-Message-ID: <CAL1wa8c98vBNVKz081dBNHXfd8RvGohgFJPwJ0vJihYeMGmr2w@mail.gmail.com>
-References: <1384768189-2839-1-git-send-email-l.krishna@samsung.com> <1552959.6e3zcBLbjf@amdc1227>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 1/1] cpufreq: exynos5250: Set APLL rate using CCF API
+Date: Thu, 21 Nov 2013 11:02:51 +0530
+Message-ID: <CAKohpomksAg4RpgTJ=mgtRnKHCidzEjfYHVeLQku1Jck_URmxg@mail.gmail.com>
+References: <1385009046-22070-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f171.google.com ([74.125.82.171]:50484 "EHLO
-	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750724Ab3KUFTr (ORCPT
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:33982 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751086Ab3KUFcv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Nov 2013 00:19:47 -0500
-In-Reply-To: <1552959.6e3zcBLbjf@amdc1227>
+	Thu, 21 Nov 2013 00:32:51 -0500
+Received: by mail-oa0-f48.google.com with SMTP id l6so1814713oag.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Nov 2013 21:32:51 -0800 (PST)
+In-Reply-To: <1385009046-22070-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Wim Van Sebroeck <wim@iguana.be>, devicetree@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, linux-watchdog@vger.kernel.org, cpgs@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, Guenter Roeck <linux@roeck-us.net>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-Hello Wim Van Sebroeck,
+On 21 November 2013 10:14, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Use common clock framework (CCF) APIs to set the clock rates
+> instead of direct register manipulation. This now updates the
+> sysfs entry (cpuinfo_cur_freq) correctly which did not reflect
+> the correct value until now. While at it clean up the PLL s-div
+> parameter setting as it is handled by the PLL driver.
+>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+> To fully test this, the following 2 patches would be necessary:
+> * clk: exynos5250: register APLL rate table
+> http://www.spinics.net/lists/arm-kernel/msg285103.html
+> * clk: exynos5250: Add CLK_SET_RATE_PARENT flag to mout_apll
+> http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/24906
+> ---
+>
+>  drivers/cpufreq/exynos5250-cpufreq.c |   74 +++++-----------------------------
+>  1 file changed, 10 insertions(+), 64 deletions(-)
 
-Can you please review this series and take necessary action.
+Nice cleanup..
 
-Best Wishes,
-Leela Krishna.
-
-On Mon, Nov 18, 2013 at 4:35 PM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Leela,
->
-> On Monday 18 of November 2013 15:19:46 Leela Krishna Amudala wrote:
->> This patchset does the following things
->>       - Adds pmusysreg device node to exynos5.dtsi file
->>       - Adds watchdog DT nodes to Exynos5250 and 5420
->>       - Uses syscon regmap interface to configure pmu registers
->>         to mask/unmask enable/disable of watchdog.
->
-> For the whole series:
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
-> Best regards,
-> Tomasz
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
