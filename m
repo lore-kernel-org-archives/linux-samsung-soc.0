@@ -1,101 +1,160 @@
-From: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
-Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
-Date: Thu, 21 Nov 2013 17:56:45 +0530
-Message-ID: <CA+NduCCeyPwq4pJJ51m6TTffwPTjUovkYQvGvCEOy=0tZtE54Q@mail.gmail.com>
-References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
-	<1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
+From: Yuvaraj Cd <yuvaraj.lkml-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 1/3] phy: Add new Exynos USB PHY driver
+Date: Thu, 21 Nov 2013 19:06:57 +0530
+Message-ID: <CA+NduCAPZz=7=avt45_sCqQDV9qvwEgEhz7fWN=+nZWQHXP5ww@mail.gmail.com>
+References: <1383668001-19141-1-git-send-email-k.debski@samsung.com>
+	<1383668001-19141-2-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:35701 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750844Ab3KUM0s (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Nov 2013 07:26:48 -0500
-In-Reply-To: <1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1383668001-19141-2-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, k.debski@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, linux-doc@vger.kernel.org, gregkh@linuxfoundation.org, Tomasz Figa <t.figa@samsung.com>, jg1.han@samsung.com, linux-kernel@vger.kernel.org, balbi@ti.com, Kishon Vijay Abraham I <kishon@ti.com>, s.nawrocki@samsung.com, jwerner@chromium.org, linux-arm-kernel@lists.infradead.org
 
-On Thu, Oct 31, 2013 at 1:15 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Add a new driver for the USB 3.0 PHY on Exynos5 series of SoCs.
-> The new driver uses the generic PHY framework and will interact
-> with DWC3 controller present on Exynos5 series of SoCs.
+On Tue, Nov 5, 2013 at 9:43 PM, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Add a new driver for the Exynos USB PHY. The new driver uses the generic
+> PHY framework. The driver includes support for the Exynos 4x10 and 4x12
+> SoC families.
 >
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->  .../devicetree/bindings/phy/samsung-phy.txt        |   20 +
->  drivers/phy/Kconfig                                |    7 +
->  drivers/phy/Makefile                               |    1 +
->  drivers/phy/phy-exynos5-usb3.c                     |  562 ++++++++++++++++++++
->  4 files changed, 590 insertions(+), 0 deletions(-)
->  create mode 100644 drivers/phy/phy-exynos5-usb3.c
+>  .../devicetree/bindings/phy/samsung-usbphy.txt     |   52 ++++
+>  drivers/phy/Kconfig                                |   23 +-
+>  drivers/phy/Makefile                               |    4 +
+>  drivers/phy/phy-exynos-usb2.c                      |  234 ++++++++++++++
+>  drivers/phy/phy-exynos-usb2.h                      |   87 ++++++
+>  drivers/phy/phy-exynos4210-usb2.c                  |  272 ++++++++++++++++
+>  drivers/phy/phy-exynos4212-usb2.c                  |  324 ++++++++++++++++++++
+>  7 files changed, 995 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+>  create mode 100644 drivers/phy/phy-exynos-usb2.c
+>  create mode 100644 drivers/phy/phy-exynos-usb2.h
+>  create mode 100644 drivers/phy/phy-exynos4210-usb2.c
+>  create mode 100644 drivers/phy/phy-exynos4212-usb2.c
 >
-> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> index c0fccaa..9b5c111 100644
-> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-> @@ -20,3 +20,23 @@ Required properties:
->  - compatible : should be "samsung,exynos5250-dp-video-phy";
->  - reg : offset and length of the Display Port PHY register set;
->  - #phy-cells : from the generic PHY bindings, must be 0;
-> +
-> +Samsung Exynos5 SoC seiries USB 3.0 PHY controller
-> +--------------------------------------------------
+> diff --git a/Documentation/devicetree/bindings/phy/samsung-usbphy.txt b/Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+> new file mode 100644
+> index 0000000..c8fbc70
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+> @@ -0,0 +1,52 @@
+> +Samsung S5P/EXYNOS SoC series USB PHY
+> +-------------------------------------------------
 > +
 > +Required properties:
-> +- compatible :
-> +       should be "samsung,exynos5250-usb3phy" for exynos5250 SoC
-> +       should be "samsung,exynos5420-usb3phy" for exynos5420 SoC
-> +- reg : Register offset and length array
-> +       - first field corresponds to USB 3.0 PHY register set;
-> +       - second field corresponds to PHY power isolation register
-> +         present in PMU;
-> +- clocks: Clock IDs array as required by the controller
-> +- clock-names: names of clocks correseponding to IDs in the clock property;
-> +       Required clocks:
-> +       - first clock is main PHY clock (same as USB 3.0 controller IP clock)
-> +       - second clock is reference clock (usually crystal clock)
-> +       optional clock:
-> +       - third clock is special clock used by PHY for operation
-> +- #phy-cells : from the generic PHY bindings, must be 0;
+> +- compatible : should be one of the listed compatibles:
+> +       - "samsung,exynos4210-usbphy"
+> +       - "samsung,exynos4212-usbphy"
+> +- reg : a list of registers used by phy driver
+> +       - first and obligatory is the location of phy modules registers
+> +       - second and also required is the location of isolation registers
+> +         (isolation registers control the physical connection between the in
+> +         SoC modules and outside of the SoC, this also can be called enable
+> +         control in the documentation of the SoC)
+> +       - third is the location of the mode switch register, this only applies
+> +         to SoCs that have such a feature; mode switching enables to have
+> +         both host and device used the same SoC pins and is commonly used
+> +         when OTG is supported
+> +- #phy-cells : from the generic phy bindings, must be 1;
+> +- clocks and clock-names:
+> +       - the "phy" clocks is required by the phy module
+> +       - other clocks are associated by name with their respective phys and
+> +         are used to determine the value of the clock settings register
+> +
+> +The second cell in the PHY specifier identifies the PHY, its  meaning is
+> +compatible dependent. For the currently supported SoCs (Exynos 4210 and
+> +Exynos 4212) it is as follows:
+> +  0 - USB device,
+> +  1 - USB host,
+> +  2 - HSIC0,
+> +  3 - HSIC1,
+> +
+> +Example:
+> +
+> +For Exynos 4412 (compatible with Exynos 4212):
+> +
+> +exynos_usbphy: exynos-usbphy@125B0000 {
+> +       compatible = "samsung,exynos4212-usbphy";
+> +       reg = <0x125B0000 0x100 0x10020704 0x0c 0x1001021c 0x4>;
+> +       clocks = <&clock 305>, <&clock 2>, <&clock 2>, <&clock 2>,
+> +                                                       <&clock 2>;
+> +       clock-names = "phy", "device", "host", "hsic0", "hsic1";
+> +       status = "okay";
+> +       #phy-cells = <1>;
+> +};
+> +
+> +Then the PHY can be used in other nodes such as:
+> +
+> +ehci@12580000 {
+> +       status = "okay";
+> +       phys = <&exynos_usbphy 2>;
+> +       phy-names = "hsic0";
+> +};
 > diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index a344f3d..9a100c6 100644
+> index a344f3d..bdf0fab 100644
 > --- a/drivers/phy/Kconfig
 > +++ b/drivers/phy/Kconfig
-> @@ -51,4 +51,11 @@ config PHY_EXYNOS_DP_VIDEO
+> @@ -14,7 +14,7 @@ config GENERIC_PHY
+>           API by which phy drivers can create PHY using the phy framework and
+>           phy users can obtain reference to the PHY. All the users of this
+>           framework should select this config.
+> -
+> +
+>  config PHY_EXYNOS_MIPI_VIDEO
+>         tristate "S5P/EXYNOS SoC series MIPI CSI-2/DSI PHY driver"
+>         help
+> @@ -51,4 +51,25 @@ config PHY_EXYNOS_DP_VIDEO
 >         help
 >           Support for Display Port PHY found on Samsung EXYNOS SoCs.
 >
-> +config PHY_EXYNOS5_USB3
-> +       tristate "Exynos5 SoC series USB 3.0 PHY driver"
-> +       depends on ARCH_EXYNOS5
-> +       select GENERIC_PHY
+> +config PHY_EXYNOS_USB2
+> +       tristate "Samsung USB 2.0 PHY driver"
 > +       help
-> +         Enable USB 3.0 PHY support for Exynos 5 SoC series
+> +         Enable this to support Samsung USB phy helper driver for Samsung SoCs.
+> +         This driver provides common interface to interact, for Samsung
+> +         USB 2.0 PHY driver.
+> +
+> +config PHY_EXYNOS4210_USB2
+> +       bool "Support for Exynos 4210"
+> +       depends on PHY_EXYNOS_USB2
+> +       depends on CPU_EXYNOS4210
+> +       help
+> +         Enable USB PHY support for Exynos 4210
+> +
+> +config PHY_EXYNOS4212_USB2
+> +       bool "Support for Exynos 4212"
+> +       depends on PHY_EXYNOS_USB2
+> +       depends on (SOC_EXYNOS4212 || SOC_EXYNOS4412)
+> +       help
+> +         Enable USB PHY support for Exynos 4212
 > +
 >  endmenu
 > diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index d0caae9..9c06a61 100644
+> index d0caae9..c87bc65 100644
 > --- a/drivers/phy/Makefile
 > +++ b/drivers/phy/Makefile
-> @@ -7,3 +7,4 @@ obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)       += phy-exynos-dp-video.o
+> @@ -7,3 +7,7 @@ obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)       += phy-exynos-dp-video.o
 >  obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)    += phy-exynos-mipi-video.o
 >  obj-$(CONFIG_OMAP_USB2)                        += phy-omap-usb2.o
 >  obj-$(CONFIG_TWL4030_USB)              += phy-twl4030-usb.o
-> +obj-$(CONFIG_PHY_EXYNOS5_USB3)         += phy-exynos5-usb3.o
-> diff --git a/drivers/phy/phy-exynos5-usb3.c b/drivers/phy/phy-exynos5-usb3.c
+> +obj-$(CONFIG_PHY_EXYNOS5250_USB)       += phy-exynos5250-usb.o
+> +obj-$(CONFIG_PHY_EXYNOS_USB2)          += phy-exynos-usb2.o
+> +obj-$(CONFIG_PHY_EXYNOS4210_USB2)      += phy-exynos4210-usb2.o
+> +obj-$(CONFIG_PHY_EXYNOS4212_USB2)      += phy-exynos4212-usb2.o
+> diff --git a/drivers/phy/phy-exynos-usb2.c b/drivers/phy/phy-exynos-usb2.c
 > new file mode 100644
-> index 0000000..b9a2674
+> index 0000000..3e9d525
 > --- /dev/null
-> +++ b/drivers/phy/phy-exynos5-usb3.c
-> @@ -0,0 +1,562 @@
+> +++ b/drivers/phy/phy-exynos-usb2.c
+> @@ -0,0 +1,234 @@
 > +/*
-> + * Samsung EXYNOS5 SoC series USB 3.0 PHY driver
+> + * Samsung S5P/EXYNOS SoC series USB PHY driver
 > + *
 > + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-> + * Author: Vivek Gautam <gautam.vivek@samsung.com>
+> + * Author: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
@@ -111,427 +170,86 @@ On Thu, Oct 31, 2013 at 1:15 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
 > +#include <linux/of_address.h>
 > +#include <linux/phy/phy.h>
 > +#include <linux/platform_device.h>
-> +#include <linux/mutex.h>
+> +#include <linux/spinlock.h>
+> +#include "phy-exynos-usb2.h"
 > +
-> +/* Exynos USB PHY registers */
-> +#define EXYNOS5_FSEL_9MHZ6             0x0
-> +#define EXYNOS5_FSEL_10MHZ             0x1
-> +#define EXYNOS5_FSEL_12MHZ             0x2
-> +#define EXYNOS5_FSEL_19MHZ2            0x3
-> +#define EXYNOS5_FSEL_20MHZ             0x4
-> +#define EXYNOS5_FSEL_24MHZ             0x5
-> +#define EXYNOS5_FSEL_50MHZ             0x7
-> +
-> +/* EXYNOS5: USB 3.0 DRD PHY registers */
-> +#define EXYNOS5_DRD_LINKSYSTEM                 (0x04)
-> +
-> +#define LINKSYSTEM_FLADJ_MASK                  (0x3f << 1)
-> +#define LINKSYSTEM_FLADJ(_x)                   ((_x) << 1)
-> +#define LINKSYSTEM_XHCI_VERSION_CONTROL                (0x1 << 27)
-> +
-> +#define EXYNOS5_DRD_PHYUTMI                    (0x08)
-> +
-> +#define PHYUTMI_OTGDISABLE                     (0x1 << 6)
-> +#define PHYUTMI_FORCESUSPEND                   (0x1 << 1)
-> +#define PHYUTMI_FORCESLEEP                     (0x1 << 0)
-> +
-> +#define EXYNOS5_DRD_PHYPIPE                    (0x0c)
-> +
-> +#define EXYNOS5_DRD_PHYCLKRST                  (0x10)
-> +
-> +#define PHYCLKRST_SSC_REFCLKSEL_MASK           (0xff << 23)
-> +#define PHYCLKRST_SSC_REFCLKSEL(_x)            ((_x) << 23)
-> +
-> +#define PHYCLKRST_SSC_RANGE_MASK               (0x03 << 21)
-> +#define PHYCLKRST_SSC_RANGE(_x)                        ((_x) << 21)
-> +
-> +#define PHYCLKRST_SSC_EN                       (0x1 << 20)
-> +#define PHYCLKRST_REF_SSP_EN                   (0x1 << 19)
-> +#define PHYCLKRST_REF_CLKDIV2                  (0x1 << 18)
-> +
-> +#define PHYCLKRST_MPLL_MULTIPLIER_MASK         (0x7f << 11)
-> +#define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF   (0x19 << 11)
-> +#define PHYCLKRST_MPLL_MULTIPLIER_50M_REF      (0x02 << 11)
-> +#define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF    (0x68 << 11)
-> +#define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF    (0x7d << 11)
-> +#define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF (0x02 << 11)
-> +
-> +#define PHYCLKRST_FSEL_MASK                    (0x3f << 5)
-> +#define PHYCLKRST_FSEL(_x)                     ((_x) << 5)
-> +#define PHYCLKRST_FSEL_PAD_100MHZ              (0x27 << 5)
-> +#define PHYCLKRST_FSEL_PAD_24MHZ               (0x2a << 5)
-> +#define PHYCLKRST_FSEL_PAD_20MHZ               (0x31 << 5)
-> +#define PHYCLKRST_FSEL_PAD_19_2MHZ             (0x38 << 5)
-> +
-> +#define PHYCLKRST_RETENABLEN                   (0x1 << 4)
-> +
-> +#define PHYCLKRST_REFCLKSEL_MASK               (0x03 << 2)
-> +#define PHYCLKRST_REFCLKSEL_PAD_REFCLK         (0x2 << 2)
-> +#define PHYCLKRST_REFCLKSEL_EXT_REFCLK         (0x3 << 2)
-> +
-> +#define PHYCLKRST_PORTRESET                    (0x1 << 1)
-> +#define PHYCLKRST_COMMONONN                    (0x1 << 0)
-> +
-> +#define EXYNOS5_DRD_PHYREG0                    (0x14)
-> +#define EXYNOS5_DRD_PHYREG1                    (0x18)
-> +
-> +#define EXYNOS5_DRD_PHYPARAM0                  (0x1c)
-> +
-> +#define PHYPARAM0_REF_USE_PAD                  (0x1 << 31)
-> +#define PHYPARAM0_REF_LOSLEVEL_MASK            (0x1f << 26)
-> +#define PHYPARAM0_REF_LOSLEVEL                 (0x9 << 26)
-> +
-> +#define EXYNOS5_DRD_PHYPARAM1                  (0x20)
-> +
-> +#define PHYPARAM1_PCS_TXDEEMPH_MASK            (0x1f << 0)
-> +#define PHYPARAM1_PCS_TXDEEMPH                 (0x1c)
-> +
-> +#define EXYNOS5_DRD_PHYTERM                    (0x24)
-> +
-> +#define EXYNOS5_DRD_PHYTEST                    (0x28)
-> +
-> +#define PHYTEST_POWERDOWN_SSP                  (0x1 << 3)
-> +#define PHYTEST_POWERDOWN_HSP                  (0x1 << 2)
-> +
-> +#define EXYNOS5_DRD_PHYADP                     (0x2c)
-> +
-> +#define EXYNOS5_DRD_PHYBATCHG                  (0x30)
-> +
-> +#define PHYBATCHG_UTMI_CLKSEL                  (0x1 << 2)
-> +
-> +#define EXYNOS5_DRD_PHYRESUME                  (0x34)
-> +#define EXYNOS5_DRD_LINKPORT                   (0x44)
-> +
-> +
-> +/* Isolation, configured in the power management unit */
-> +#define EXYNOS5_USB_ISOL_DRD           (1 << 0)
-> +
-> +#define CLKSEL_ERROR                       -1
-> +
-> +#ifndef KHZ
-> +#define KHZ 1000
-> +#endif
-> +
-> +#ifndef MHZ
-> +#define MHZ (KHZ * KHZ)
-> +#endif
-> +
-> +enum samsung_cpu_type {
-> +       TYPE_EXYNOS5250,
-> +       TYPE_EXYNOS5420,
-> +};
-> +
-> +enum usb3phy_state {
-> +       STATE_OFF,
-> +       STATE_ON,
-> +};
-> +
-> +struct usb3phy_config {
-> +       enum samsung_cpu_type cpu;
-> +       bool has_sclk_usbphy30;
-> +};
-> +
-> +struct usb3phy_instance {
-> +       char *label;
-> +       struct usb3phy_driver *drv;
-> +       struct phy *phy;
-> +       enum usb3phy_state state;
-> +       u32 clk;
-> +       unsigned long rate;
-> +};
-> +
-> +struct usb3phy_driver {
-> +       struct device *dev;
-> +       void __iomem *reg_phy;
-> +       void __iomem *reg_isol;
-> +       struct clk *clk;
-> +       struct clk *sclk_usbphy30;
-> +       struct usb3phy_instance instance;
-> +};
-> +
-> +/*
-> + * exynos5_rate_to_clk() converts the supplied clock rate to the value that
-> + * can be written to the phy register.
-> + */
-> +static u32 exynos5_rate_to_clk(unsigned long rate)
+> +static int exynos_usb2_phy_power_on(struct phy *phy)
 > +{
-> +       unsigned int clksel;
-> +
-> +       /* EXYNOS5_FSEL_MASK */
-> +
-> +       switch (rate) {
-> +       case 9600 * KHZ:
-> +               clksel = EXYNOS5_FSEL_9MHZ6;
-> +               break;
-> +       case 10 * MHZ:
-> +               clksel = EXYNOS5_FSEL_10MHZ;
-> +               break;
-> +       case 12 * MHZ:
-> +               clksel = EXYNOS5_FSEL_12MHZ;
-> +               break;
-> +       case 19200 * KHZ:
-> +               clksel = EXYNOS5_FSEL_19MHZ2;
-> +               break;
-> +       case 20 * MHZ:
-> +               clksel = EXYNOS5_FSEL_20MHZ;
-> +               break;
-> +       case 24 * MHZ:
-> +               clksel = EXYNOS5_FSEL_24MHZ;
-> +               break;
-> +       case 50 * MHZ:
-> +               clksel = EXYNOS5_FSEL_50MHZ;
-> +               break;
-> +       default:
-> +               clksel = CLKSEL_ERROR;
-> +       }
-> +
-> +       return clksel;
-> +}
-> +
-> +static void exynos5_usb3phy_isol(struct usb3phy_instance *inst, bool on)
-> +{
-> +       struct usb3phy_driver *drv = inst->drv;
-> +       u32 tmp;
-> +
-> +       if (!drv->reg_isol)
-> +               return;
-> +
-> +       tmp = readl(drv->reg_isol);
-> +       if (on)
-> +               tmp &= ~EXYNOS5_USB_ISOL_DRD;
-> +       else
-> +               tmp |= EXYNOS5_USB_ISOL_DRD;
-> +       writel(tmp, drv->reg_isol);
-> +}
-> +
-> +/*
-> + * Sets the phy clk as EXTREFCLK (XXTI) which is internal clock from clock core.
-> + */
-> +static u32 exynos5_usb3phy_set_refclk(struct usb3phy_instance *inst)
-> +{
-> +       u32 reg;
-> +       u32 refclk;
-> +
-> +       refclk = inst->clk;
-> +
-> +       reg = PHYCLKRST_REFCLKSEL_EXT_REFCLK |
-> +               PHYCLKRST_FSEL(refclk);
-> +
-> +       switch (refclk) {
-> +       case EXYNOS5_FSEL_50MHZ:
-> +               reg |= (PHYCLKRST_MPLL_MULTIPLIER_50M_REF |
-> +                       PHYCLKRST_SSC_REFCLKSEL(0x00));
-> +               break;
-> +       case EXYNOS5_FSEL_20MHZ:
-> +               reg |= (PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF |
-> +                       PHYCLKRST_SSC_REFCLKSEL(0x00));
-> +               break;
-> +       case EXYNOS5_FSEL_19MHZ2:
-> +               reg |= (PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF |
-> +                       PHYCLKRST_SSC_REFCLKSEL(0x88));
-> +               break;
-> +       case EXYNOS5_FSEL_24MHZ:
-> +       default:
-> +               reg |= (PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF |
-> +                       PHYCLKRST_SSC_REFCLKSEL(0x88));
-> +               break;
-> +       }
-> +
-> +       return reg;
-> +}
-> +
-> +static void exynos5_usb3phy_init(struct usb3phy_instance *inst)
-> +{
-> +       struct usb3phy_driver *drv = inst->drv;
-> +       u32 phyparam0;
-> +       u32 phyparam1;
-> +       u32 linksystem;
-> +       u32 phybatchg;
-> +       u32 phytest;
-> +       u32 phyclkrst;
-> +
-> +       /* Reset USB 3.0 PHY */
-> +       writel(0x0, drv->reg_phy + EXYNOS5_DRD_PHYREG0);
-> +
-> +       phyparam0 = readl(drv->reg_phy + EXYNOS5_DRD_PHYPARAM0);
-> +       /* Select PHY CLK source */
-> +       phyparam0 &= ~PHYPARAM0_REF_USE_PAD;
-> +       /* Set Loss-of-Signal Detector sensitivity */
-> +       phyparam0 &= ~PHYPARAM0_REF_LOSLEVEL_MASK;
-> +       phyparam0 |= PHYPARAM0_REF_LOSLEVEL;
-> +       writel(phyparam0, drv->reg_phy + EXYNOS5_DRD_PHYPARAM0);
-> +
-> +       writel(0x0, drv->reg_phy + EXYNOS5_DRD_PHYRESUME);
-> +
-> +       /*
-> +        * Setting the Frame length Adj value[6:1] to default 0x20
-> +        * See xHCI 1.0 spec, 5.2.4
-> +        */
-> +       linksystem = LINKSYSTEM_XHCI_VERSION_CONTROL |
-> +                    LINKSYSTEM_FLADJ(0x20);
-> +       writel(linksystem, drv->reg_phy + EXYNOS5_DRD_LINKSYSTEM);
-> +
-> +       phyparam1 = readl(drv->reg_phy + EXYNOS5_DRD_PHYPARAM1);
-> +       /* Set Tx De-Emphasis level */
-> +       phyparam1 &= ~PHYPARAM1_PCS_TXDEEMPH_MASK;
-> +       phyparam1 |= PHYPARAM1_PCS_TXDEEMPH;
-> +       writel(phyparam1, drv->reg_phy + EXYNOS5_DRD_PHYPARAM1);
-> +
-> +       phybatchg = readl(drv->reg_phy + EXYNOS5_DRD_PHYBATCHG);
-> +       phybatchg |= PHYBATCHG_UTMI_CLKSEL;
-> +       writel(phybatchg, drv->reg_phy + EXYNOS5_DRD_PHYBATCHG);
-> +
-> +       /* PHYTEST POWERDOWN Control */
-> +       phytest = readl(drv->reg_phy + EXYNOS5_DRD_PHYTEST);
-> +       phytest &= ~(PHYTEST_POWERDOWN_SSP |
-> +                    PHYTEST_POWERDOWN_HSP);
-> +       writel(phytest, drv->reg_phy + EXYNOS5_DRD_PHYTEST);
-> +
-> +       /* UTMI Power Control */
-> +       writel(PHYUTMI_OTGDISABLE, drv->reg_phy + EXYNOS5_DRD_PHYUTMI);
-> +
-> +       phyclkrst = exynos5_usb3phy_set_refclk(inst);
-> +
-> +       phyclkrst |= PHYCLKRST_PORTRESET |
-> +                    /* Digital power supply in normal operating mode */
-> +                    PHYCLKRST_RETENABLEN |
-> +                    /* Enable ref clock for SS function */
-> +                    PHYCLKRST_REF_SSP_EN |
-> +                    /* Enable spread spectrum */
-> +                    PHYCLKRST_SSC_EN |
-> +                    /* Power down HS Bias and PLL blocks in suspend mode */
-> +                    PHYCLKRST_COMMONONN;
-> +
-> +       writel(phyclkrst, drv->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-> +
-> +       udelay(10);
-> +
-> +       phyclkrst &= ~PHYCLKRST_PORTRESET;
-> +       writel(phyclkrst, drv->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-> +
-> +}
-> +
-> +static void exynos5_usb3phy_exit(struct usb3phy_instance *inst)
-> +{
-> +       struct usb3phy_driver *drv = inst->drv;
-> +       u32 phyutmi;
-> +       u32 phyclkrst;
-> +       u32 phytest;
-> +
-> +       phyutmi = PHYUTMI_OTGDISABLE |
-> +                 PHYUTMI_FORCESUSPEND |
-> +                 PHYUTMI_FORCESLEEP;
-> +       writel(phyutmi, drv->reg_phy + EXYNOS5_DRD_PHYUTMI);
-> +
-> +       /* Resetting the PHYCLKRST enable bits to reduce leakage current */
-> +       phyclkrst = readl(drv->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-> +       phyclkrst &= ~(PHYCLKRST_REF_SSP_EN |
-> +                      PHYCLKRST_SSC_EN |
-> +                      PHYCLKRST_COMMONONN);
-> +       writel(phyclkrst, drv->reg_phy + EXYNOS5_DRD_PHYCLKRST);
-> +
-> +       /* Control PHYTEST to remove leakage current */
-> +       phytest = readl(drv->reg_phy + EXYNOS5_DRD_PHYTEST);
-> +       phytest |= PHYTEST_POWERDOWN_SSP |
-> +                  PHYTEST_POWERDOWN_HSP;
-> +       writel(phytest, drv->reg_phy + EXYNOS5_DRD_PHYTEST);
-> +}
-> +
-> +static int exynos5_usb3phy_power_on(struct phy *phy)
-> +{
-> +       struct usb3phy_instance *inst = phy_get_drvdata(phy);
-> +       struct usb3phy_driver *drv = inst->drv;
+> +       struct usb2_phy_instance *inst = phy_get_drvdata(phy);
+> +       struct usb2_phy_driver *drv = inst->drv;
 > +       int ret;
 > +
-> +       dev_info(drv->dev, "Request to power_on \"%s\" usb phy\n",
-> +                                                       inst->label);
-> +
-> +       if (drv->sclk_usbphy30)
-> +               clk_prepare_enable(drv->sclk_usbphy30);
-> +
+> +       dev_dbg(drv->dev, "Request to power_on \"%s\" usb phy\n",
+> +                                                       inst->cfg->label);
 > +       ret = clk_prepare_enable(drv->clk);
 > +       if (ret)
 > +               return ret;
-> +
-> +       if (inst->state == STATE_ON) {
-> +               dev_err(drv->dev, "usb phy \"%s\" already on",
-> +                                                       inst->label);
-> +               ret = -ENODEV;
-> +               goto err0;
+> +       if (inst->cfg->power_on) {
+> +               spin_lock(&drv->lock);
+> +               ret = inst->cfg->power_on(inst);
+> +               spin_unlock(&drv->lock);
 > +       }
-> +
-> +       inst->state = STATE_ON;
-> +
-> +       /* Initialize the PHY and power it ON */
-> +       exynos5_usb3phy_init(inst);
-
-I think with the above one, we are deviating from the generic PHY framework.
-phy init supposed to be called  from actual dwc3 core driver. dwc3
-core driver has
-phy_ops->init to do this .
-@Kishon: Please correct me if i am wrong.
-
-> +       exynos5_usb3phy_isol(inst, 0);
-> +
-> +err0:
 > +       clk_disable_unprepare(drv->clk);
-> +
 > +       return ret;
 > +}
 > +
-> +static int exynos5_usb3phy_power_off(struct phy *phy)
+> +static int exynos_usb2_phy_power_off(struct phy *phy)
 > +{
-> +       struct usb3phy_instance *inst = phy_get_drvdata(phy);
-> +       struct usb3phy_driver *drv = inst->drv;
+> +       struct usb2_phy_instance *inst = phy_get_drvdata(phy);
+> +       struct usb2_phy_driver *drv = inst->drv;
 > +       int ret;
 > +
-> +       dev_info(drv->dev, "Request to power_off \"%s\" usb phy\n",
-> +                                                       inst->label);
+> +       dev_dbg(drv->dev, "Request to power_off \"%s\" usb phy\n",
+> +                                                       inst->cfg->label);
 > +       ret = clk_prepare_enable(drv->clk);
 > +       if (ret)
 > +               return ret;
-> +
-> +       if (inst->state == STATE_OFF) {
-> +               dev_err(drv->dev, "usb phy \"%s\" already off",
-> +                                                       inst->label);
-> +               ret = -ENODEV;
-> +               goto err0;
+> +       if (inst->cfg->power_off) {
+> +               spin_lock(&drv->lock);
+> +               ret = inst->cfg->power_off(inst);
+> +               spin_unlock(&drv->lock);
 > +       }
-> +
-> +       inst->state = STATE_OFF;
-> +
-> +       /* Power-off the PHY and de-initialize it */
-> +       exynos5_usb3phy_isol(inst, 1);
-> +       exynos5_usb3phy_exit(inst);
-> +
-> +err0:
 > +       clk_disable_unprepare(drv->clk);
-> +       if (drv->sclk_usbphy30)
-> +               clk_disable_unprepare(drv->sclk_usbphy30);
-> +
 > +       return ret;
 > +}
 > +
-> +static struct phy_ops exynos5_usb3phy_ops = {
-> +       .power_on       = exynos5_usb3phy_power_on,
-> +       .power_off      = exynos5_usb3phy_power_off,
+> +static struct phy_ops exynos_usb2_phy_ops = {
+> +       .power_on       = exynos_usb2_phy_power_on,
+> +       .power_off      = exynos_usb2_phy_power_off,
 > +       .owner          = THIS_MODULE,
 > +};
 > +
-> +static const struct of_device_id exynos5_usb3phy_of_match[];
-> +
-> +static int exynos5_usb3phy_probe(struct platform_device *pdev)
+> +static struct phy *exynos_usb2_phy_xlate(struct device *dev,
+> +                                       struct of_phandle_args *args)
 > +{
-> +       struct device *dev = &pdev->dev;
-> +       struct usb3phy_driver *drv;
-> +       struct usb3phy_instance *inst;
-> +       struct phy_provider *phy_provider;
-> +       struct resource *res;
-> +       struct clk *clk;
-> +       const struct of_device_id *match;
-> +       const struct usb3phy_config *cfg;
+> +       struct usb2_phy_driver *drv;
 > +
-> +       match = of_match_node(exynos5_usb3phy_of_match, pdev->dev.of_node);
+> +       drv = dev_get_drvdata(dev);
+> +       if (!drv)
+> +               return ERR_PTR(-EINVAL);
+> +
+> +       if (WARN_ON(args->args[0] >= drv->cfg->num_phys))
+> +               return ERR_PTR(-ENODEV);
+> +
+> +       return drv->usb2_phy_instances[args->args[0]].phy;
+> +}
+> +
+> +static const struct of_device_id exynos_usb2_phy_of_match[];
+> +
+> +static int exynos_usb2_phy_probe(struct platform_device *pdev)
+> +{
+> +       struct usb2_phy_driver *drv;
+> +       struct device *dev = &pdev->dev;
+> +       struct resource *mem;
+> +       struct phy_provider *phy_provider;
+> +
+> +       const struct of_device_id *match;
+> +       const struct usb2_phy_config *cfg;
+> +       struct clk *clk;
+> +
+> +       int i;
+> +
+> +       match = of_match_node(exynos_usb2_phy_of_match, pdev->dev.of_node);
 > +       if (!match) {
 > +               dev_err(dev, "of_match_node() failed\n");
 > +               return -EINVAL;
@@ -542,30 +260,45 @@ phy_ops->init to do this .
 > +               return -EINVAL;
 > +       }
 > +
-> +       drv = devm_kzalloc(dev, sizeof(struct usb3phy_driver), GFP_KERNEL);
+> +       drv = devm_kzalloc(dev, sizeof(struct usb2_phy_driver) +
+> +               cfg->num_phys * sizeof(struct usb2_phy_instance), GFP_KERNEL);
+> +
 > +       if (!drv) {
 > +               dev_err(dev, "Failed to allocate memory\n");
 > +               return -ENOMEM;
 > +       }
 > +
 > +       dev_set_drvdata(dev, drv);
+> +       spin_lock_init(&drv->lock);
+> +
+> +       drv->cfg = cfg;
 > +       drv->dev = dev;
 > +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +       drv->reg_phy = devm_ioremap_resource(dev, res);
+> +       mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       drv->reg_phy = devm_ioremap_resource(dev, mem);
 > +       if (IS_ERR(drv->reg_phy)) {
 > +               dev_err(dev, "Failed to map register memory (phy)\n");
 > +               return PTR_ERR(drv->reg_phy);
 > +       }
 > +
-> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> +       drv->reg_isol = devm_ioremap_resource(dev, res);
+> +       mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +       drv->reg_isol = devm_ioremap_resource(dev, mem);
 > +       if (IS_ERR(drv->reg_isol)) {
 > +               dev_err(dev, "Failed to map register memory (isolation)\n");
 > +               return PTR_ERR(drv->reg_isol);
 > +       }
 > +
-> +       phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +       if (drv->cfg->has_mode_switch) {
+> +               mem = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> +               drv->reg_mode = devm_ioremap_resource(dev, mem);
+> +               if (IS_ERR(drv->reg_mode)) {
+> +                       dev_err(dev, "Failed to map register memory (mode switch)\n");
+> +                       return PTR_ERR(drv->reg_mode);
+> +               }
+> +       }
+> +
+> +       phy_provider = devm_of_phy_provider_register(dev,
+> +                                                       exynos_usb2_phy_xlate);
 > +       if (IS_ERR(phy_provider)) {
 > +               dev_err(drv->dev, "Failed to register phy provider\n");
 > +               return PTR_ERR(phy_provider);
@@ -577,94 +310,798 @@ phy_ops->init to do this .
 > +               return PTR_ERR(drv->clk);
 > +       }
 > +
-> +       /*
-> +        * Exysno5420 SoC has an additional special clock, used for
-> +        * for USB 3.0 PHY operation, this clock goes to the PHY block
-> +        * as a reference clock to clock generation block of the controller.
-> +        */
-> +       if (cfg->has_sclk_usbphy30) {
-> +               drv->sclk_usbphy30 = devm_clk_get(dev, "sclk_usbphy30");
-> +               if (IS_ERR(drv->clk)) {
-> +                       dev_err(dev, "Failed to get phy reference clock\n");
-> +                       return PTR_ERR(drv->clk);
+> +       for (i = 0; i < drv->cfg->num_phys; i++) {
+> +               char *label = drv->cfg->phys[i].label;
+> +               struct usb2_phy_instance *p = &drv->usb2_phy_instances[i];
+> +
+> +               dev_dbg(dev, "Creating phy \"%s\"\n", label);
+> +               p->phy = devm_phy_create(dev, &exynos_usb2_phy_ops, NULL);
+> +               if (IS_ERR(p->phy)) {
+> +                       dev_err(drv->dev, "Failed to create usb2_phy \"%s\"\n",
+> +                                               label);
+> +                       return PTR_ERR(p->phy);
 > +               }
-> +       }
 > +
-> +       inst            = &drv->instance;
-> +       inst->drv       = drv;
-> +       inst->label     = "usb3drd";
+> +               p->cfg = &drv->cfg->phys[i];
+> +               p->drv = drv;
+> +               phy_set_drvdata(p->phy, p);
 > +
-> +       dev_info(dev, "Creating phy \"%s\"\n", inst->label);
-> +       inst->phy = devm_phy_create(dev, &exynos5_usb3phy_ops, NULL);
-> +       if (IS_ERR(inst->phy)) {
-> +               dev_err(drv->dev, "Failed to create usb3phy \"%s\"\n",
-> +                                       inst->label);
-> +               return PTR_ERR(inst->phy);
-> +       }
+> +               clk = clk_get(dev, p->cfg->label);
+> +               if (IS_ERR(clk)) {
+> +                       dev_err(dev, "Failed to get clock of \"%s\" phy\n",
+> +                                                               p->cfg->label);
+> +                       return PTR_ERR(clk);
+> +               }
 > +
-> +       phy_set_drvdata(inst->phy, inst);
+> +               p->rate = clk_get_rate(clk);
 > +
-> +       clk = clk_get(dev, inst->label);
-> +       if (IS_ERR(clk)) {
-> +               dev_err(dev, "Failed to get clock of \"%s\" phy\n",
-> +                                                       inst->label);
-> +               return PTR_ERR(clk);
-> +       }
-> +
-> +       inst->rate = clk_get_rate(clk);
-> +
-> +       inst->clk = exynos5_rate_to_clk(inst->rate);
-> +       if (inst->clk == CLKSEL_ERROR) {
-> +               dev_err(dev, "Clock rate (%ld) not supported\n",
-> +                                               inst->rate);
+> +               if (p->cfg->rate_to_clk) {
+> +                       p->clk = p->cfg->rate_to_clk(p->rate);
+> +                       if (p->clk == CLKSEL_ERROR) {
+> +                               dev_err(dev, "Clock rate (%ld) not supported\n",
+> +                                                               p->rate);
+> +                               clk_put(clk);
+> +                               return -EINVAL;
+> +                       }
+> +               }
 > +               clk_put(clk);
-> +               return -EINVAL;
 > +       }
-> +       clk_put(clk);
 > +
 > +       return 0;
 > +}
 > +
-> +const struct usb3phy_config exynos5420_usb3phy_cfg = {
-> +       .cpu               = TYPE_EXYNOS5420,
-> +       .has_sclk_usbphy30 = true,
-> +};
+> +extern const struct usb2_phy_config exynos4210_usb2_phy_config;
+> +extern const struct usb2_phy_config exynos4212_usb2_phy_config;
 > +
-> +const struct usb3phy_config exynos5250_usb3phy_cfg = {
-> +       .cpu               = TYPE_EXYNOS5250,
-> +       .has_sclk_usbphy30 = false,
-> +};
-> +
-> +static const struct of_device_id exynos5_usb3phy_of_match[] = {
+> +static const struct of_device_id exynos_usb2_phy_of_match[] = {
+> +#ifdef CONFIG_PHY_EXYNOS4210_USB2
 > +       {
-> +               .compatible = "samsung,exynos5250-usb3phy",
-> +               .data = &exynos5250_usb3phy_cfg
-> +       }, {
-> +               .compatible = "samsung,exynos5420-usb3phy",
-> +               .data = &exynos5420_usb3phy_cfg
+> +               .compatible = "samsung,exynos4210-usb2-phy",
+> +               .data = &exynos4210_usb2_phy_config,
 > +       },
+> +#endif
+> +#ifdef CONFIG_PHY_EXYNOS4212_USB2
+> +       {
+> +               .compatible = "samsung,exynos4212-usb2-phy",
+> +               .data = &exynos4212_usb2_phy_config,
+> +       },
+> +#endif
 > +       { },
 > +};
 > +
-> +static struct platform_driver exynos5_usb3phy_driver = {
-> +       .probe  = exynos5_usb3phy_probe,
+> +static struct platform_driver exynos_usb2_phy_driver = {
+> +       .probe  = exynos_usb2_phy_probe,
 > +       .driver = {
-> +               .of_match_table = exynos5_usb3phy_of_match,
-> +               .name           = "exynos5-usb3phy",
+> +               .of_match_table = exynos_usb2_phy_of_match,
+> +               .name           = "exynos-usb2-phy",
 > +               .owner          = THIS_MODULE,
 > +       }
 > +};
 > +
-> +module_platform_driver(exynos5_usb3phy_driver);
-> +MODULE_DESCRIPTION("Samsung EXYNOS5 series SoC USB 3.0 PHY driver");
-> +MODULE_AUTHOR("Vivek Gautam <gautam.vivek@samsung.com>");
+> +module_platform_driver(exynos_usb2_phy_driver);
+> +MODULE_DESCRIPTION("Samsung S5P/EXYNOS SoC USB PHY driver");
+> +MODULE_AUTHOR("Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>");
 > +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:exynos5-usb3phy");
+> +MODULE_ALIAS("platform:exynos-usb2-phy");
+> +
+> diff --git a/drivers/phy/phy-exynos-usb2.h b/drivers/phy/phy-exynos-usb2.h
+> new file mode 100644
+> index 0000000..91e4f73
+> --- /dev/null
+> +++ b/drivers/phy/phy-exynos-usb2.h
+> @@ -0,0 +1,87 @@
+> +/*
+> + * Samsung S5P/EXYNOS SoC series USB PHY driver
+> + *
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> + * Author: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef _PHY_EXYNOS_USB2_H
+> +#define _PHY_EXYNOS_USB2_H
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +
+> +#define CLKSEL_ERROR                       -1
+> +
+> +#ifndef KHZ
+> +#define KHZ 1000
+> +#endif
+> +
+> +#ifndef MHZ
+> +#define MHZ (KHZ * KHZ)
+> +#endif
+> +
+> +enum phy_type {
+> +       PHY_DEVICE,
+> +       PHY_HOST,
+> +};
+> +
+> +enum usb2_phy_state {
+> +       STATE_OFF,
+> +       STATE_ON,
+> +};
+> +
+> +struct usb2_phy_driver;
+> +struct usb2_phy_instance;
+> +struct usb2_phy_config;
+> +
+> +struct usb2_phy_instance {
+> +       struct usb2_phy_driver *drv;
+> +       struct phy *phy;
+> +       const struct common_phy *cfg;
+> +       enum usb2_phy_state state;
+> +       u32 clk;
+> +       unsigned long rate;
+> +};
+> +
+> +struct usb2_phy_driver {
+> +       struct device *dev;
+> +       spinlock_t lock;
+> +       void __iomem *reg_phy;
+> +       void __iomem *reg_isol;
+> +       void __iomem *reg_mode;
+> +       const struct usb2_phy_config *cfg;
+> +       struct clk *clk;
+> +       struct usb2_phy_instance usb2_phy_instances[0];
+> +};
+> +
+> +struct common_phy {
+> +       char *label;
+> +       enum phy_type type;
+> +       unsigned int id;
+> +       u32 (*rate_to_clk)(unsigned long);
+> +       int (*power_on)(struct usb2_phy_instance*);
+> +       int (*power_off)(struct usb2_phy_instance*);
+> +};
+> +
+> +
+> +struct usb2_phy_config {
+> +       int num_phys;
+> +       const struct common_phy *phys;
+> +       char has_mode_switch;
+> +};
+> +
+> +#endif
+> +
+> diff --git a/drivers/phy/phy-exynos4210-usb2.c b/drivers/phy/phy-exynos4210-usb2.c
+> new file mode 100644
+> index 0000000..d04ee8e
+> --- /dev/null
+> +++ b/drivers/phy/phy-exynos4210-usb2.c
+> @@ -0,0 +1,272 @@
+> +/*
+> + * Samsung S5P/EXYNOS SoC series USB PHY driver
+> + *
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> + * Author: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +#include "phy-exynos-usb2.h"
+> +
+> +/* Exynos USB PHY registers */
+> +
+> +/* PHY power control */
+> +#define EXYNOS_4210_UPHYPWR                    0x0
+> +
+> +#define EXYNOS_4210_UPHYPWR_PHY0_SUSPEND       (1 << 0)
+> +#define EXYNOS_4210_UPHYPWR_PHY0_PWR           (1 << 3)
+> +#define EXYNOS_4210_UPHYPWR_PHY0_OTG_PWR       (1 << 4)
+> +#define EXYNOS_4210_UPHYPWR_PHY0_SLEEP         (1 << 5)
+> +#define EXYNOS_4210_UPHYPWR_PHY0       ( \
+> +       EXYNOS_4210_UPHYPWR_PHY0_SUSPEND | \
+> +       EXYNOS_4210_UPHYPWR_PHY0_PWR | \
+> +       EXYNOS_4210_UPHYPWR_PHY0_OTG_PWR | \
+> +       EXYNOS_4210_UPHYPWR_PHY0_SLEEP)
+> +
+> +#define EXYNOS_4210_UPHYPWR_PHY1_SUSPEND       (1 << 6)
+> +#define EXYNOS_4210_UPHYPWR_PHY1_PWR           (1 << 7)
+> +#define EXYNOS_4210_UPHYPWR_PHY1_SLEEP         (1 << 8)
+> +#define EXYNOS_4210_UPHYPWR_PHY1 ( \
+> +       EXYNOS_4210_UPHYPWR_PHY1_SUSPEND | \
+> +       EXYNOS_4210_UPHYPWR_PHY1_PWR | \
+> +       EXYNOS_4210_UPHYPWR_PHY1_SLEEP)
+> +
+> +#define EXYNOS_4210_UPHYPWR_HSCI0_SUSPEND      (1 << 9)
+> +#define EXYNOS_4210_UPHYPWR_HSCI0_SLEEP                (1 << 10)
+> +#define EXYNOS_4210_UPHYPWR_HSCI0 ( \
+> +       EXYNOS_4210_UPHYPWR_HSCI0_SUSPEND | \
+> +       EXYNOS_4210_UPHYPWR_HSCI0_SLEEP)
+> +
+> +#define EXYNOS_4210_UPHYPWR_HSCI1_SUSPEND      (1 << 11)
+> +#define EXYNOS_4210_UPHYPWR_HSCI1_SLEEP                (1 << 12)
+> +#define EXYNOS_4210_UPHYPWR_HSCI1 ( \
+> +       EXYNOS_4210_UPHYPWR_HSCI1_SUSPEND | \
+> +       EXYNOS_4210_UPHYPWR_HSCI1_SLEEP)
+> +
+> +/* PHY clock control */
+> +#define EXYNOS_4210_UPHYCLK                    0x4
+> +
+> +#define EXYNOS_4210_UPHYCLK_PHYFSEL_MASK       (0x3 << 0)
+> +#define EXYNOS_4210_UPHYCLK_PHYFSEL_48MHZ      (0x0 << 0)
+> +#define EXYNOS_4210_UPHYCLK_PHYFSEL_24MHZ      (0x3 << 0)
+> +#define EXYNOS_4210_UPHYCLK_PHYFSEL_12MHZ      (0x2 << 0)
+> +
+> +#define EXYNOS_4210_UPHYCLK_PHY0_ID_PULLUP     (0x1 << 2)
+> +#define EXYNOS_4210_UPHYCLK_PHY0_COMMON_ON     (0x1 << 4)
+> +#define EXYNOS_4210_UPHYCLK_PHY1_COMMON_ON     (0x1 << 7)
+> +
+> +/* PHY reset control */
+> +#define EXYNOS_4210_UPHYRST                    0x8
+> +
+> +#define EXYNOS_4210_URSTCON_PHY0               (1 << 0)
+> +#define EXYNOS_4210_URSTCON_OTG_HLINK          (1 << 1)
+> +#define EXYNOS_4210_URSTCON_OTG_PHYLINK                (1 << 2)
+> +#define EXYNOS_4210_URSTCON_PHY1_ALL           (1 << 3)
+> +#define EXYNOS_4210_URSTCON_PHY1_P0            (1 << 4)
+> +#define EXYNOS_4210_URSTCON_PHY1_P1P2          (1 << 5)
+> +#define EXYNOS_4210_URSTCON_HOST_LINK_ALL      (1 << 6)
+> +#define EXYNOS_4210_URSTCON_HOST_LINK_P0       (1 << 7)
+> +#define EXYNOS_4210_URSTCON_HOST_LINK_P1       (1 << 8)
+> +#define EXYNOS_4210_URSTCON_HOST_LINK_P2       (1 << 9)
+> +
+> +/* Isolation, configured in the power management unit */
+> +#define EXYNOS_4210_USB_ISOL_DEVICE_OFFSET     0x0
+> +#define EXYNOS_4210_USB_ISOL_DEVICE            (1 << 0)
+> +#define EXYNOS_4210_USB_ISOL_HOST_OFFSET       0x4
+> +#define EXYNOS_4210_USB_ISOL_HOST              (1 << 0)
+> +
+> +/* USBYPHY1 Floating prevention */
+> +#define EXYNOS_4210_UPHY1CON                   0x34
+> +#define EXYNOS_4210_UPHY1CON_FLOAT_PREVENTION  0x1
+> +
+> +enum exynos4210_phy_id {
+> +       EXYNOS4210_DEVICE,
+> +       EXYNOS4210_HOST,
+> +       EXYNOS4210_HSIC0,
+> +       EXYNOS4210_HSIC1,
+> +       EXYNOS4210_NUM_PHYS,
+> +};
+> +
+> +/*
+> + * exynos4210_rate_to_clk() converts the supplied clock rate to the value that
+> + * can be written to the phy register.
+> + */
+> +static u32 exynos4210_rate_to_clk(unsigned long rate)
+> +{
+> +       unsigned int clksel;
+> +
+> +       switch (rate) {
+> +       case 12 * MHZ:
+> +               clksel = EXYNOS_4210_UPHYCLK_PHYFSEL_12MHZ;
+> +               break;
+> +       case 24 * MHZ:
+> +               clksel = EXYNOS_4210_UPHYCLK_PHYFSEL_24MHZ;
+> +               break;
+> +       case 48 * MHZ:
+> +               clksel = EXYNOS_4210_UPHYCLK_PHYFSEL_48MHZ;
+> +               break;
+> +       default:
+> +               clksel = CLKSEL_ERROR;
+> +       }
+> +
+> +       return clksel;
+> +}
+> +
+> +static void exynos4210_isol(struct usb2_phy_instance *inst, bool on)
+Can we have this functionality as xxxx_pwr_on and plugged into generic phy ops?
+> +{
+> +       struct usb2_phy_driver *drv = inst->drv;
+> +       u32 offset;
+> +       u32 mask;
+> +       u32 tmp;
+> +
+> +       if (!drv->reg_isol)
+> +               return;
+> +
+> +       switch (inst->cfg->id) {
+> +       case EXYNOS4210_DEVICE:
+> +               offset = EXYNOS_4210_USB_ISOL_DEVICE_OFFSET;
+> +               mask = EXYNOS_4210_USB_ISOL_DEVICE;
+> +               break;
+> +       case EXYNOS4210_HOST:
+> +               offset = EXYNOS_4210_USB_ISOL_HOST_OFFSET;
+> +               mask = EXYNOS_4210_USB_ISOL_HOST;
+> +               break;
+> +       default:
+> +               return;
+> +       };
+> +
+> +       tmp = readl(drv->reg_isol + offset);
+> +       if (on)
+> +               tmp &= ~mask;
+> +       else
+> +               tmp |= mask;
+> +       writel(tmp, drv->reg_isol + offset);
+> +}
+> +
+> +static void exynos4210_phy_pwr(struct usb2_phy_instance *inst, bool on)
+
+It would be better to rename this as xxxx_phy_init and plugged into
+phy_ops .init routine.
+With this, we can use phy_ops->init in ehci-exynos driver to do the
+init and power_on which
+would be more aligned with the generic PHY framework.
+@Kishon: Please correct me if i am wrong.
+
+> +{
+> +       struct usb2_phy_driver *drv = inst->drv;
+> +       u32 rstbits = 0;
+> +       u32 phypwr = 0;
+> +       u32 rst;
+> +       u32 pwr;
+> +
+> +       switch (inst->cfg->id) {
+> +       case EXYNOS4210_DEVICE:
+> +               phypwr =        EXYNOS_4210_UPHYPWR_PHY0;
+> +               rstbits =       EXYNOS_4210_URSTCON_PHY0;
+> +               break;
+> +       case EXYNOS4210_HOST:
+> +               phypwr =        EXYNOS_4210_UPHYPWR_PHY1;
+> +               rstbits =       EXYNOS_4210_URSTCON_PHY1_ALL |
+> +                               EXYNOS_4210_URSTCON_PHY1_P0 |
+> +                               EXYNOS_4210_URSTCON_PHY1_P1P2 |
+> +                               EXYNOS_4210_URSTCON_HOST_LINK_ALL |
+> +                               EXYNOS_4210_URSTCON_HOST_LINK_P0;
+> +               writel(on, drv->reg_phy + EXYNOS_4210_UPHY1CON);
+> +               break;
+> +       case EXYNOS4210_HSIC0:
+> +               phypwr =        EXYNOS_4210_UPHYPWR_HSCI0;
+> +               rstbits =       EXYNOS_4210_URSTCON_PHY1_P1P2 |
+> +                               EXYNOS_4210_URSTCON_HOST_LINK_P1;
+> +               break;
+> +       case EXYNOS4210_HSIC1:
+> +               phypwr =        EXYNOS_4210_UPHYPWR_HSCI1;
+> +               rstbits =       EXYNOS_4210_URSTCON_PHY1_P1P2 |
+> +                               EXYNOS_4210_URSTCON_HOST_LINK_P2;
+> +               break;
+> +       };
+> +
+> +       if (on) {
+> +               writel(inst->clk, drv->reg_phy + EXYNOS_4210_UPHYCLK);
+> +
+> +               pwr = readl(drv->reg_phy + EXYNOS_4210_UPHYPWR);
+> +               pwr &= ~phypwr;
+> +               writel(pwr, drv->reg_phy + EXYNOS_4210_UPHYPWR);
+> +
+> +               rst = readl(drv->reg_phy + EXYNOS_4210_UPHYRST);
+> +               rst |= rstbits;
+> +               writel(rst, drv->reg_phy + EXYNOS_4210_UPHYRST);
+> +               udelay(10);
+> +               rst &= ~rstbits;
+> +               writel(rst, drv->reg_phy + EXYNOS_4210_UPHYRST);
+> +       } else {
+> +               pwr = readl(drv->reg_phy + EXYNOS_4210_UPHYPWR);
+> +               pwr |= phypwr;
+> +               writel(pwr, drv->reg_phy + EXYNOS_4210_UPHYPWR);
+> +       }
+> +}
+> +
+> +static int exynos4210_power_on(struct usb2_phy_instance *inst)
+> +{
+> +       /* Order of initialisation is important - first power then isolation */
+> +       exynos4210_phy_pwr(inst, 1);
+> +       exynos4210_isol(inst, 0);
+> +
+> +       return 0;
+> +}
+> +
+> +static int exynos4210_power_off(struct usb2_phy_instance *inst)
+> +{
+> +       exynos4210_isol(inst, 1);
+> +       exynos4210_phy_pwr(inst, 0);
+> +
+> +       return 0;
+> +}
+> +
+> +
+> +static const struct common_phy exynos4210_phys[] = {
+> +       {
+> +               .label          = "device",
+> +               .type           = PHY_DEVICE,
+> +               .id             = EXYNOS4210_DEVICE,
+> +               .rate_to_clk    = exynos4210_rate_to_clk,
+> +               .power_on       = exynos4210_power_on,
+> +               .power_off      = exynos4210_power_off,
+> +       },
+> +       {
+> +               .label          = "host",
+> +               .type           = PHY_HOST,
+> +               .id             = EXYNOS4210_HOST,
+> +               .rate_to_clk    = exynos4210_rate_to_clk,
+> +               .power_on       = exynos4210_power_on,
+> +               .power_off      = exynos4210_power_off,
+> +       },
+> +       {
+> +               .label          = "hsic0",
+> +               .type           = PHY_HOST,
+> +               .id             = EXYNOS4210_HSIC0,
+> +               .rate_to_clk    = exynos4210_rate_to_clk,
+> +               .power_on       = exynos4210_power_on,
+> +               .power_off      = exynos4210_power_off,
+> +       },
+> +       {
+> +               .label          = "hsic1",
+> +               .type           = PHY_HOST,
+> +               .id             = EXYNOS4210_HSIC1,
+> +               .rate_to_clk    = exynos4210_rate_to_clk,
+> +               .power_on       = exynos4210_power_on,
+> +               .power_off      = exynos4210_power_off,
+> +       },
+> +       {},
+> +};
+> +
+> +const struct usb2_phy_config exynos4210_usb2_phy_config = {
+> +       .num_phys               = EXYNOS4210_NUM_PHYS,
+> +       .phys                   = exynos4210_phys,
+> +       .has_mode_switch        = 1,
+> +};
+> +
+> diff --git a/drivers/phy/phy-exynos4212-usb2.c b/drivers/phy/phy-exynos4212-usb2.c
+> new file mode 100644
+> index 0000000..654efe0
+> --- /dev/null
+> +++ b/drivers/phy/phy-exynos4212-usb2.c
+> @@ -0,0 +1,324 @@
+> +/*
+> + * Samsung S5P/EXYNOS SoC series USB PHY driver
+> + *
+> + * Copyright (C) 2013 Samsung Electronics Co., Ltd.
+> + * Author: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/io.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/spinlock.h>
+> +#include "phy-exynos-usb2.h"
+> +
+> +/* Exynos USB PHY registers */
+> +
+> +/* PHY power control */
+> +#define EXYNOS_4212_UPHYPWR                    0x0
+> +
+> +#define EXYNOS_4212_UPHYPWR_DEV_SUSPEND                (1 << 0)
+> +#define EXYNOS_4212_UPHYPWR_DEV_PWR            (1 << 3)
+> +#define EXYNOS_4212_UPHYPWR_DEV_OTG_PWR                (1 << 4)
+> +#define EXYNOS_4212_UPHYPWR_DEV_SLEEP          (1 << 5)
+> +#define EXYNOS_4212_UPHYPWR_DEV        ( \
+> +       EXYNOS_4212_UPHYPWR_DEV_SUSPEND | \
+> +       EXYNOS_4212_UPHYPWR_DEV_PWR | \
+> +       EXYNOS_4212_UPHYPWR_DEV_OTG_PWR | \
+> +       EXYNOS_4212_UPHYPWR_DEV_SLEEP)
+> +
+> +#define EXYNOS_4212_UPHYPWR_HOST_SUSPEND       (1 << 6)
+> +#define EXYNOS_4212_UPHYPWR_HOST_PWR           (1 << 7)
+> +#define EXYNOS_4212_UPHYPWR_HOST_SLEEP         (1 << 8)
+> +#define EXYNOS_4212_UPHYPWR_HOST ( \
+> +       EXYNOS_4212_UPHYPWR_HOST_SUSPEND | \
+> +       EXYNOS_4212_UPHYPWR_HOST_PWR | \
+> +       EXYNOS_4212_UPHYPWR_HOST_SLEEP)
+> +
+> +#define EXYNOS_4212_UPHYPWR_HSCI0_SUSPEND      (1 << 9)
+> +#define EXYNOS_4212_UPHYPWR_HSCI0_PWR          (1 << 10)
+> +#define EXYNOS_4212_UPHYPWR_HSCI0_SLEEP                (1 << 11)
+> +#define EXYNOS_4212_UPHYPWR_HSCI0 ( \
+> +       EXYNOS_4212_UPHYPWR_HSCI0_SUSPEND | \
+> +       EXYNOS_4212_UPHYPWR_HSCI0_PWR | \
+> +       EXYNOS_4212_UPHYPWR_HSCI0_SLEEP)
+> +
+> +#define EXYNOS_4212_UPHYPWR_HSCI1_SUSPEND      (1 << 12)
+> +#define EXYNOS_4212_UPHYPWR_HSCI1_PWR          (1 << 13)
+> +#define EXYNOS_4212_UPHYPWR_HSCI1_SLEEP                (1 << 14)
+> +#define EXYNOS_4212_UPHYPWR_HSCI1 ( \
+> +       EXYNOS_4212_UPHYPWR_HSCI1_SUSPEND | \
+> +       EXYNOS_4212_UPHYPWR_HSCI1_PWR | \
+> +       EXYNOS_4212_UPHYPWR_HSCI1_SLEEP)
+> +
+> +/* PHY clock control */
+> +#define EXYNOS_4212_UPHYCLK                    0x4
+> +
+> +#define EXYNOS_4212_UPHYCLK_PHYFSEL_MASK       (0x7 << 0)
+> +#define EXYNOS_4212_UPHYCLK_PHYFSEL_9MHZ6      (0x0 << 0)
+> +#define EXYNOS_4212_UPHYCLK_PHYFSEL_10MHZ      (0x1 << 0)
+> +#define EXYNOS_4212_UPHYCLK_PHYFSEL_12MHZ      (0x2 << 0)
+> +#define EXYNOS_4212_UPHYCLK_PHYFSEL_19MHZ2     (0x3 << 0)
+> +#define EXYNOS_4212_UPHYCLK_PHYFSEL_20MHZ      (0x4 << 0)
+> +#define EXYNOS_4212_UPHYCLK_PHYFSEL_24MHZ      (0x5 << 0)
+> +#define EXYNOS_4212_UPHYCLK_PHYFSEL_50MHZ      (0x7 << 0)
+> +
+> +#define EXYNOS_4212_UPHYCLK_PHY0_ID_PULLUP     (0x1 << 3)
+> +#define EXYNOS_4212_UPHYCLK_PHY0_COMMON_ON     (0x1 << 4)
+> +#define EXYNOS_4212_UPHYCLK_PHY1_COMMON_ON     (0x1 << 7)
+> +
+> +#define EXYNOS_4212_UPHYCLK_HSIC_REFCLK_MASK   (0x7f << 10)
+> +#define EXYNOS_4212_UPHYCLK_HSIC_REFCLK_12MHZ  (0x24 << 10)
+> +#define EXYNOS_4212_UPHYCLK_HSIC_REFCLK_15MHZ  (0x1c << 10)
+> +#define EXYNOS_4212_UPHYCLK_HSIC_REFCLK_16MHZ  (0x1a << 10)
+> +#define EXYNOS_4212_UPHYCLK_HSIC_REFCLK_19MHZ2 (0x15 << 10)
+> +#define EXYNOS_4212_UPHYCLK_HSIC_REFCLK_20MHZ  (0x14 << 10)
+> +
+> +/* PHY reset control */
+> +#define EXYNOS_4212_UPHYRST                    0x8
+> +
+> +#define EXYNOS_4212_URSTCON_DEVICE             (1 << 0)
+> +#define EXYNOS_4212_URSTCON_OTG_HLINK          (1 << 1)
+> +#define EXYNOS_4212_URSTCON_OTG_PHYLINK                (1 << 2)
+> +#define EXYNOS_4212_URSTCON_HOST_PHY           (1 << 3)
+> +#define EXYNOS_4212_URSTCON_PHY1               (1 << 4)
+> +#define EXYNOS_4212_URSTCON_HSIC0              (1 << 5)
+> +#define EXYNOS_4212_URSTCON_HSIC1              (1 << 6)
+> +#define EXYNOS_4212_URSTCON_HOST_LINK_ALL      (1 << 7)
+> +#define EXYNOS_4212_URSTCON_HOST_LINK_P0       (1 << 8)
+> +#define EXYNOS_4212_URSTCON_HOST_LINK_P1       (1 << 9)
+> +#define EXYNOS_4212_URSTCON_HOST_LINK_P2       (1 << 10)
+> +
+> +/* Isolation, configured in the power management unit */
+> +#define EXYNOS_4212_USB_ISOL_OFFSET            0x0
+> +#define EXYNOS_4212_USB_ISOL_OTG               (1 << 0)
+> +#define EXYNOS_4212_USB_ISOL_HSIC0_OFFSET      0x4
+> +#define EXYNOS_4212_USB_ISOL_HSIC0             (1 << 0)
+> +#define EXYNOS_4212_USB_ISOL_HSIC1_OFFSET      0x8
+> +#define EXYNOS_4212_USB_ISOL_HSIC1             (1 << 0)
+> +
+> +enum exynos4x12_phy_id {
+> +       EXYNOS4212_DEVICE,
+> +       EXYNOS4212_HOST,
+> +       EXYNOS4212_HSIC0,
+> +       EXYNOS4212_HSIC1,
+> +       EXYNOS4212_NUM_PHYS,
+> +};
+> +
+> +/*
+> + * exynos4212_rate_to_clk() converts the supplied clock rate to the value that
+> + * can be written to the phy register.
+> + */
+> +static u32 exynos4212_rate_to_clk(unsigned long rate)
+> +{
+> +       unsigned int clksel;
+> +
+> +       /* EXYNOS_4212_UPHYCLK_PHYFSEL_MASK */
+> +
+> +       switch (rate) {
+> +       case 9600 * KHZ:
+> +               clksel = EXYNOS_4212_UPHYCLK_PHYFSEL_9MHZ6;
+> +               break;
+> +       case 10 * MHZ:
+> +               clksel = EXYNOS_4212_UPHYCLK_PHYFSEL_10MHZ;
+> +               break;
+> +       case 12 * MHZ:
+> +               clksel = EXYNOS_4212_UPHYCLK_PHYFSEL_12MHZ;
+> +               break;
+> +       case 19200 * KHZ:
+> +               clksel = EXYNOS_4212_UPHYCLK_PHYFSEL_19MHZ2;
+> +               break;
+> +       case 20 * MHZ:
+> +               clksel = EXYNOS_4212_UPHYCLK_PHYFSEL_20MHZ;
+> +               break;
+> +       case 24 * MHZ:
+> +               clksel = EXYNOS_4212_UPHYCLK_PHYFSEL_24MHZ;
+> +               break;
+> +       case 50 * MHZ:
+> +               clksel = EXYNOS_4212_UPHYCLK_PHYFSEL_50MHZ;
+> +               break;
+> +       default:
+> +               clksel = CLKSEL_ERROR;
+> +       }
+> +
+> +       return clksel;
+> +}
+> +
+> +static void exynos4212_isol(struct usb2_phy_instance *inst, bool on)
+> +{
+> +       struct usb2_phy_driver *drv = inst->drv;
+> +       u32 offset;
+> +       u32 mask;
+> +       u32 tmp;
+> +
+> +       if (!drv->reg_isol)
+> +               return;
+> +
+> +       switch (inst->cfg->id) {
+> +       case EXYNOS4212_DEVICE:
+> +               offset = EXYNOS_4212_USB_ISOL_OFFSET;
+> +               mask = EXYNOS_4212_USB_ISOL_OTG;
+> +               break;
+> +       case EXYNOS4212_HOST:
+> +               offset = EXYNOS_4212_USB_ISOL_OFFSET;
+> +               mask = EXYNOS_4212_USB_ISOL_OTG;
+> +               break;
+> +       case EXYNOS4212_HSIC0:
+> +               offset = EXYNOS_4212_USB_ISOL_HSIC0_OFFSET;
+> +               mask = EXYNOS_4212_USB_ISOL_HSIC0;
+> +               break;
+> +       case EXYNOS4212_HSIC1:
+> +               offset = EXYNOS_4212_USB_ISOL_HSIC1_OFFSET;
+> +               mask = EXYNOS_4212_USB_ISOL_HSIC1;
+> +               break;
+> +       default:
+> +               return;
+> +       };
+> +
+> +       tmp = readl(drv->reg_isol + offset);
+> +       if (on)
+> +               tmp &= ~mask;
+> +       else
+> +               tmp |= mask;
+> +       writel(tmp, drv->reg_isol + offset);
+> +}
+> +
+> +static void exynos4212_phy_pwr(struct usb2_phy_instance *inst, bool on)
+> +{
+> +       struct usb2_phy_driver *drv = inst->drv;
+> +       u32 rstbits = 0;
+> +       u32 phypwr = 0;
+> +       u32 rst;
+> +       u32 pwr;
+> +
+> +       switch (inst->cfg->id) {
+> +       case EXYNOS4212_DEVICE:
+> +               phypwr =        EXYNOS_4212_UPHYPWR_DEV;
+> +               rstbits =       EXYNOS_4212_URSTCON_DEVICE;
+> +               break;
+> +       case EXYNOS4212_HOST:
+> +               phypwr =        EXYNOS_4212_UPHYPWR_HOST;
+> +               rstbits =       EXYNOS_4212_URSTCON_HOST_PHY;
+> +               break;
+> +       case EXYNOS4212_HSIC0:
+> +               phypwr =        EXYNOS_4212_UPHYPWR_HSCI0;
+> +               rstbits =       EXYNOS_4212_URSTCON_HSIC1 |
+> +                               EXYNOS_4212_URSTCON_HOST_LINK_P0 |
+> +                               EXYNOS_4212_URSTCON_HOST_PHY;
+> +               break;
+> +       case EXYNOS4212_HSIC1:
+> +               phypwr =        EXYNOS_4212_UPHYPWR_HSCI1;
+> +               rstbits =       EXYNOS_4212_URSTCON_HSIC1 |
+> +                               EXYNOS_4212_URSTCON_HOST_LINK_P1;
+> +               break;
+> +       };
+> +
+> +       if (on) {
+> +               writel(inst->clk, drv->reg_phy + EXYNOS_4212_UPHYCLK);
+> +
+> +               pwr = readl(drv->reg_phy + EXYNOS_4212_UPHYPWR);
+> +               pwr &= ~phypwr;
+> +               writel(pwr, drv->reg_phy + EXYNOS_4212_UPHYPWR);
+> +
+> +               rst = readl(drv->reg_phy + EXYNOS_4212_UPHYRST);
+> +               rst |= rstbits;
+> +               writel(rst, drv->reg_phy + EXYNOS_4212_UPHYRST);
+> +               udelay(10);
+> +               rst &= ~rstbits;
+> +               writel(rst, drv->reg_phy + EXYNOS_4212_UPHYRST);
+> +       } else {
+> +               pwr = readl(drv->reg_phy + EXYNOS_4212_UPHYPWR);
+> +               pwr |= phypwr;
+> +               writel(pwr, drv->reg_phy + EXYNOS_4212_UPHYPWR);
+> +       }
+> +}
+> +
+> +static int exynos4212_power_on(struct usb2_phy_instance *inst)
+> +{
+> +       struct usb2_phy_driver *drv = inst->drv;
+> +
+> +       inst->state = STATE_ON;
+> +       exynos4212_phy_pwr(inst, 1);
+> +       exynos4212_isol(inst, 0);
+> +
+> +       /* Power on the device, as it is necessary for HSIC to work */
+> +       if (inst->cfg->id == EXYNOS4212_HSIC0) {
+> +               struct usb2_phy_instance *device =
+> +                                       &drv->usb2_phy_instances[EXYNOS4212_DEVICE];
+> +               exynos4212_phy_pwr(device, 1);
+> +               exynos4212_isol(device, 0);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static int exynos4212_power_off(struct usb2_phy_instance *inst)
+> +{
+> +       struct usb2_phy_driver *drv = inst->drv;
+> +       struct usb2_phy_instance *device =
+> +               &drv->usb2_phy_instances[EXYNOS4212_DEVICE];
+> +
+> +       inst->state = STATE_OFF;
+> +       exynos4212_isol(inst, 1);
+> +       exynos4212_phy_pwr(inst, 0);
+> +
+> +       if (inst->cfg->id == EXYNOS4212_HSIC0 && device->state != STATE_ON) {
+> +               exynos4212_isol(device, 1);
+> +               exynos4212_phy_pwr(device, 0);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +
+> +static const struct common_phy exynos4212_phys[] = {
+> +       {
+> +               .label          = "device",
+> +               .type           = PHY_DEVICE,
+> +               .id             = EXYNOS4212_DEVICE,
+> +               .rate_to_clk    = exynos4212_rate_to_clk,
+> +               .power_on       = exynos4212_power_on,
+> +               .power_off      = exynos4212_power_off,
+> +       },
+> +       {
+> +               .label          = "host",
+> +               .type           = PHY_HOST,
+> +               .id             = EXYNOS4212_HOST,
+> +               .rate_to_clk    = exynos4212_rate_to_clk,
+> +               .power_on       = exynos4212_power_on,
+> +               .power_off      = exynos4212_power_off,
+> +       },
+> +       {
+> +               .label          = "hsic0",
+> +               .type           = PHY_HOST,
+> +               .id             = EXYNOS4212_HSIC0,
+> +               .rate_to_clk    = exynos4212_rate_to_clk,
+> +               .power_on       = exynos4212_power_on,
+> +               .power_off      = exynos4212_power_off,
+> +       },
+> +       {
+> +               .label          = "hsic1",
+> +               .type           = PHY_HOST,
+> +               .id             = EXYNOS4212_HSIC1,
+> +               .rate_to_clk    = exynos4212_rate_to_clk,
+> +               .power_on       = exynos4212_power_on,
+> +               .power_off      = exynos4212_power_off,
+> +       },
+> +       {},
+> +};
+> +
+> +const struct usb2_phy_config exynos4212_usb2_phy_config = {
+> +       .num_phys               = EXYNOS4212_NUM_PHYS,
+> +       .phys                   = exynos4212_phys,
+> +       .has_mode_switch        = 1,
+> +};
+> +
 > --
-> 1.7.6.5
+> 1.7.9.5
 >
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
