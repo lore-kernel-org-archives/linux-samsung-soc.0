@@ -1,138 +1,165 @@
-From: randy <lxr1234@hotmail.com>
-Subject: I want to add dts for a exynos4412 board but usb doesn't work
-Date: Fri, 22 Nov 2013 15:38:31 +0800
-Message-ID: <BLU0-SMTP429D46FE5027B79CFA0D286ADE00@phx.gbl>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH 2/4 v10] thermal: samsung: change base_common to more
+ meaningful base_second
+Date: Fri, 22 Nov 2013 14:26:48 +0530
+Message-ID: <CAHfPSqA9w_2FoycJnKGosuTLi6R+0Bwpe_+zx-tp-0JegD7smw@mail.gmail.com>
+References: <1378268629-2886-2-git-send-email-ch.naveen@samsung.com> <1384866291-16034-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed;
-	boundary="------------010405000201080404020708"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from blu0-omc4-s32.blu0.hotmail.com ([65.55.111.171]:52599 "EHLO
-	blu0-omc4-s32.blu0.hotmail.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750808Ab3KVHoj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Nov 2013 02:44:39 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1384866291-16034-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, rui.zhang@intel.com, eduardo.valentin@ti.com, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
---------------010405000201080404020708
-Content-Type: text/plain; charset="GB2312"
-Content-Transfer-Encoding: 7bit
+Hello All,
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On 19 November 2013 18:34, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
+> On Exynos5440 and Exynos5420 there are registers common
+> across the TMU channels.
+>
+> To support that, we introduced a ADDRESS_MULTIPLE flag in the
+> driver and the 2nd set of register base and size are provided
+> in the "reg" property of the node.
+>
+> As per Amit's suggestion, this patch changes the base_common
+> to base_second and SHARED_MEMORY to ADDRESS_MULTIPLE.
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+> Changes since v9:
+> Just respinning
+>
+> Changes since v8:
+>  None
+>  .../devicetree/bindings/thermal/exynos-thermal.txt       |    4 ++--
+>  drivers/thermal/samsung/exynos_tmu.c                     |   14 +++++++-------
+>  drivers/thermal/samsung/exynos_tmu.h                     |    4 ++--
+>  drivers/thermal/samsung/exynos_tmu_data.c                |    2 +-
+>  4 files changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> index 284f530..116cca0 100644
+> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> @@ -11,8 +11,8 @@
+>  - reg : Address range of the thermal registers. For soc's which has multiple
+>         instances of TMU and some registers are shared across all TMU's like
+>         interrupt related then 2 set of register has to supplied. First set
+> -       belongs to each instance of TMU and second set belongs to common TMU
+> -       registers.
+> +       belongs to each instance of TMU and second set belongs to second set
+> +       of common TMU registers.
+>  - interrupts : Should contain interrupt for thermal system
+>  - clocks : The main clock for TMU device
+>  - clock-names : Thermal system clock name
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index c493245..bbd0fc3 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -41,7 +41,7 @@
+>   * @id: identifier of the one instance of the TMU controller.
+>   * @pdata: pointer to the tmu platform/configuration data
+>   * @base: base address of the single instance of the TMU controller.
+> - * @base_common: base address of the common registers of the TMU controller.
+> + * @base_second: base address of the common registers of the TMU controller.
+>   * @irq: irq number of the TMU controller.
+>   * @soc: id of the SOC type.
+>   * @irq_work: pointer to the irq work structure.
+> @@ -56,7 +56,7 @@ struct exynos_tmu_data {
+>         int id;
+>         struct exynos_tmu_platform_data *pdata;
+>         void __iomem *base;
+> -       void __iomem *base_common;
+> +       void __iomem *base_second;
+>         int irq;
+>         enum soc_type soc;
+>         struct work_struct irq_work;
+> @@ -297,7 +297,7 @@ skip_calib_data:
+>         }
+>         /*Clear the PMIN in the common TMU register*/
+>         if (reg->tmu_pmin && !data->id)
+> -               writel(0, data->base_common + reg->tmu_pmin);
+> +               writel(0, data->base_second + reg->tmu_pmin);
+>  out:
+>         clk_disable(data->clk);
+>         mutex_unlock(&data->lock);
+> @@ -454,7 +454,7 @@ static void exynos_tmu_work(struct work_struct *work)
+>
+>         /* Find which sensor generated this interrupt */
+>         if (reg->tmu_irqstatus) {
+> -               val_type = readl(data->base_common + reg->tmu_irqstatus);
+> +               val_type = readl(data->base_second + reg->tmu_irqstatus);
+>                 if (!((val_type >> data->id) & 0x1))
+>                         goto out;
+>         }
+> @@ -579,7 +579,7 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>          * Check if the TMU shares some registers and then try to map the
+>          * memory of common registers.
+>          */
+> -       if (!TMU_SUPPORTS(pdata, SHARED_MEMORY))
+> +       if (!TMU_SUPPORTS(pdata, ADDRESS_MULTIPLE))
+>                 return 0;
+>
+>         if (of_address_to_resource(pdev->dev.of_node, 1, &res)) {
+> @@ -587,9 +587,9 @@ static int exynos_map_dt_data(struct platform_device *pdev)
+>                 return -ENODEV;
+>         }
+>
+> -       data->base_common = devm_ioremap(&pdev->dev, res.start,
+> +       data->base_second = devm_ioremap(&pdev->dev, res.start,
+>                                         resource_size(&res));
+> -       if (!data->base_common) {
+> +       if (!data->base_second) {
+>                 dev_err(&pdev->dev, "Failed to ioremap memory\n");
+>                 return -ENOMEM;
+>         }
+> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+> index 980859a..0d6b32f 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.h
+> +++ b/drivers/thermal/samsung/exynos_tmu.h
+> @@ -60,7 +60,7 @@ enum soc_type {
+>   *                     state(active/idle) can be checked.
+>   * TMU_SUPPORT_EMUL_TIME - This features allows to set next temp emulation
+>   *                     sample time.
+> - * TMU_SUPPORT_SHARED_MEMORY - This feature tells that the different TMU
+> + * TMU_SUPPORT_ADDRESS_MULTIPLE - This feature tells that the different TMU
+>   *                     sensors shares some common registers.
+>   * TMU_SUPPORT - macro to compare the above features with the supplied.
+>   */
+> @@ -70,7 +70,7 @@ enum soc_type {
+>  #define TMU_SUPPORT_FALLING_TRIP               BIT(3)
+>  #define TMU_SUPPORT_READY_STATUS               BIT(4)
+>  #define TMU_SUPPORT_EMUL_TIME                  BIT(5)
+> -#define TMU_SUPPORT_SHARED_MEMORY              BIT(6)
+> +#define TMU_SUPPORT_ADDRESS_MULTIPLE           BIT(6)
+>
+>  #define TMU_SUPPORTS(a, b)     (a->features & TMU_SUPPORT_ ## b)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+> index 7cdb04e..1d27069 100644
+> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+> @@ -255,7 +255,7 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+>         .type = SOC_ARCH_EXYNOS5440, \
+>         .registers = &exynos5440_tmu_registers, \
+>         .features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
+> -                       TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_SHARED_MEMORY),
+> +                       TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_ADDRESS_MULTIPLE),
+>
+>  struct exynos_tmu_init_data const exynos5440_default_tmu_data = {
+>         .tmu_data = {
+> --
+> 1.7.10.4
+>
+Any update on this patch set, its been
+Acked by Amit and Reviewed-by Bartlomiej Zolnierkiewicz
 
-The board is FriendlyArm tiny4412 ver.1306.
-I have made the mmc2(sd slot) work and place rootfs in it.
-But I failed in usbhost part(not otg which has been broken by me),
-which works properly in manufacturer's kernel.
-I can't find the ehci controller and root hub at all.
-In this board, the usb host is conntected to a external hub to change
-voltage level.
-in dmesg, log shows as below:
-[    1.075000] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
-[    1.075000] ehci-exynos: EHCI EXYNOS driver
-[    1.075000] unable to find transceiver of type USB2 PHY
-[    1.075000] exynos-ehci 12580000.ehci: no platform data or
-transceiver defined
-[    1.085000] platform 12580000.ehci: Driver exynos-ehci requests
-probe deferral
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
 
-iQEcBAEBAgAGBQJSjwn3AAoJEPb4VsMIzTziaFIH/0wxwYrSp0HCSQtCN8v4g9Vj
-2YxATdQ/SeTLN6F+h6ggooIlaWOUyH2H+yz73T4YYnh+swqPUGyBoXa6KZNep2na
-O9xCNWSntELXHKJqrVFPBOBSWkhqf71q4DbApWHZYMvVCa1UhAYqg6AFy5M3gMWl
-jbMd5SBDwKjIioJhgOgqGa1w2HUp8QNmCACtKl+YagTBNAdv3BJr7egKhWoRqOQR
-INk2kb3UeptmKeTL08uUcgxMxEAn/W+r53FBjbvuU+TKMccj48kpWpZ513hfKKva
-W9NmaLWDiuV73kz135o/955lCO7wdrs2cVtp37g6BCc0U+RdUI3tqwyswYFWwg4=
-=suW2
------END PGP SIGNATURE-----
-
---------------010405000201080404020708
-Content-Type: text/plain; name="exynos4412-tiny4412.dts"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="exynos4412-tiny4412.dts"
-
-LyoKICogSGFyZGtlcm5lbCdzIEV4eW5vczQ0MTIgYmFzZWQgdGlueTQ0MTIgMTMwNiBib2Fy
-ZCBkZXZpY2UgdHJlZSBzb3VyY2UKICoKICogQ29weXJpZ2h0IChjKSAyMDEzIFRvbW95YSBH
-aXRzdWZ1a2kgPGF5YWthQG1haWwuc291bGlrLmluZm8+CiAqCiAqIERldmljZSB0cmVlIHNv
-dXJjZSBmaWxlIGZvciBGcmllbmR5YXJtIHRpbnk0NDEyIDEzMDYgYm9hcmQgd2hpY2ggaXMg
-YmFzZWQgb24KICogU2Ftc3VuZydzIEV4eW5vczQ0MTIgU29DLgogKgogKiBUaGlzIHByb2dy
-YW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1v
-ZGlmeQogKiBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBM
-aWNlbnNlIHZlcnNpb24gMiBhcwogKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUg
-Rm91bmRhdGlvbi4KKi8KCi9kdHMtdjEvOwojaW5jbHVkZSAiZXh5bm9zNDQxMi5kdHNpIgoK
-LyB7Cgltb2RlbCA9ICJGcmllbmRseSBBcm0gVGlueTQ0MTIgMTMwNiBib2FyZCBiYXNlZCBv
-biBFeHlub3M0NDEyIjsKCWNvbXBhdGlibGUgPSAiZnJpZW5kbHlhcm0sdGlueTQ0MTItMTMw
-NiIsICJzYW1zdW5nLGV4eW5vczQ0MTIiOwoKCW1lbW9yeSB7CgkJcmVnID0gPDB4NDAwMDAw
-MDAgMHg0MDAwMDAwMD47Cgl9OwoKCWNob3NlbiB7CgkJYm9vdGFyZ3MgPSJyb290PS9kZXYv
-bW1jYmxrMHAxIHJvb3Rmc3R5cGU9ZXh0NCBydyBjb25zb2xlPXR0eVNBQzAsMTE1MjAwIGlu
-aXQ9L3NiaW4vaW5pdCI7Cgl9OwoKCWxlZHMgewoJCWNvbXBhdGlibGUgPSAiZ3Bpby1sZWRz
-IjsKCQlsZWQxIHsKCQkJbGFiZWwgPSAibGVkMTpoZWFydCI7CgkJCWdwaW9zID0gPCZncG00
-IDAgMT47CgkJCWRlZmF1bHQtc3RhdGUgPSAib24iOwoJCQlsaW51eCxkZWZhdWx0LXRyaWdn
-ZXIgPSAiaGVhcnRiZWF0IjsKCQl9OwoJCWxlZDIgewoJCQlsYWJlbCA9ICJsZWQyOm1tYzAi
-OwoJCQlncGlvcyA9IDwmZ3BtNCAxIDE+OwoJCQlkZWZhdWx0LXN0YXRlID0gIm9uIjsKCQkJ
-bGludXgsZGVmYXVsdC10cmlnZ2VyID0gIm1tYzAiOwoJCX07CgoJfTsKCglyZWd1bGF0b3Jz
-IHsKCQljb21wYXRpYmxlID0gInNpbXBsZS1idXMiOwoJCSNhZGRyZXNzLWNlbGxzID0gPDE+
-OwoKCQl2ZW1tY19yZWc6IHJlZ3VsYXRvci0wIHsKCQkJY29tcGF0aWJsZSA9ICJyZWd1bGF0
-b3ItZml4ZWQiOwoJCQlyZWd1bGF0b3ItbmFtZSA9ICJWTUVNX1ZERF8yLjhWIjsKCQkJcmVn
-dWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MjgwMDAwMD47CgkJCXJlZ3VsYXRvci1taW4tbWlj
-cm92b2x0ID0gPDI4MDAwMDA+OwoJCQlncGlvID0gPCZncGswIDIgMD47CgkJCWVuYWJsZS1h
-Y3RpdmUtaGlnaDsKCQl9OwoKCX07CgovKgoJbXNoY0AxMjU1MDAwMCB7CgkJI2FkZHJlc3Mt
-Y2VsbHMgPSA8MT47CgkJI3NpemUtY2VsbHMgPSA8MD47CgkJcGluY3RybC0wID0gPCZzZDRf
-Y2xrICZzZDRfY21kICZzZDRfYnVzNCAmc2Q0X2J1czg+OwoJCXBpbmN0cmwtbmFtZXMgPSAi
-ZGVmYXVsdCI7CgkJc3RhdHVzID0gIm9rYXkiOwoJCXZtbWMtc3VwcGx5ID0gPCZ2ZW1tY19y
-ZWc+OwoJCWNsb2NrcyA9IDwmY2xvY2sgMzAxPiwgPCZjbG9jayAxNDk+OwoJCWNsb2Nrcy1u
-YW1lID0gImR3bWNpIiwgInNjbGtfZHdtY2kiOwoJCWNsb2NrLWZyZXF1ZW5jeSA9IDw0MDAw
-MDAwMDA+OwoKCQludW0tc2xvdHMgPSA8MT47CgkJc3VwcG9ydHMtaGlnaHNwZWVkOwoJCWJy
-b2tlbi1jZDsKCQlmaWZvLWRlcHRoID0gPDB4ODA+OwoJCWNhcmQtZGV0ZWN0LWRlbGF5ID0g
-PDIwMD47CgkJc2Ftc3VuZyxkdy1tc2hjLXNkci10aW1pbmcgPSA8MiAzPjsKCQlzYW1zdW5n
-LGR3LW1zaGMtZGRyLXRpbWluZyA9IDwxIDI+OwoKCQlzbG90QDAgewoJCQlyZWcgPSA8MD47
-CgkJCWJ1cy13aWR0aCA9IDw4PjsKCQl9OwoJfTsKKi8KCglydGNAMTAwNzAwMDAgewoJCXN0
-YXR1cyA9ICJva2F5IjsKCX07CgoJc2RoY2lAMTI1MzAwMDAgewoJCWJ1cy13aWR0aCA9IDw0
-PjsKCQlwaW5jdHJsLTAgPSA8JnNkMl9jbGsgJnNkMl9jbWQgJnNkMl9idXM0ICZzZDJfY2Q+
-OwoJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CgkJc3RhdHVzID0gIm9rYXkiOwoJfTsK
-CXNkaGNpQDEyNTQwMDAgewoJCWJ1cy13aWR0aCA9IDw0PjsKCQlwaW5jdHJsLTAgPSA8JnNk
-M19jbGsgJnNkM19jbWQgJnNkM19idXM0ICZzZDNfY2Q+OwoJCXBpbmN0cmwtbmFtZXMgPSAi
-ZGVmYXVsdCI7CgkJc3RhdHVzID0gIm9rYXkiOwoJfTsKCXVzYmhvc3QwQDEyNTgwMDAwIHsK
-CQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKCQkjc2l6ZS1jZWxscyA9IDwxPjsKCQljb21wYXRp
-YmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMC11c2JwaHkiOwoJCXJlZyA9IDwweDEyNTgwMDAw
-IDB4MTAwPjsKCQlyYW5nZXM7CgoJCWNsb2NrcyA9IDwmY2xvY2sgMj4sIDwmY2xvY2sgMzA0
-PjsKCQljbG9jay1uYW1lcyA9ICJ4dXNieHRpIiwgInVzYmhvc3QiOwoJCXVzYnBoeS1zeXMg
-ewoJCQkvKiBVU0IgZGV2aWNlIGFuZCBob3N0IFBIWV9DT05UUk9MIHJlZ2lzdGVycyAqLwoJ
-CQlyZWcgPSA8MHgxMDAyMDcwOCAweDg+OwoJCX07Cgl9OwoKCglvdGdAMTI1QjAwMDAgewoJ
-CSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCSNzaXplLWNlbGxzID0gPDE+OwoJCWNvbXBhdGli
-bGUgPSAic2Ftc3VuZyxleHlub3M0MjEwLXVzYnBoeSI7CgkJcmVnID0gPDB4MTI1QjAwMDAg
-MHgxMDA+OwoJCXJhbmdlczsKCgkJY2xvY2tzID0gPCZjbG9jayAyPiwgPCZjbG9jayAzMDU+
-OwoJCWNsb2NrLW5hbWVzID0gInh1c2J4dGkiLCAib3RnIjsKCQl1c2JwaHktc3lzIHsKCQkJ
-LyogVVNCIGRldmljZSBhbmQgaG9zdCBQSFlfQ09OVFJPTCByZWdpc3RlcnMgKi8KCQkJcmVn
-ID0gPDB4MTAwMjA3MDQgMHg4PjsKCQl9OwoJfTsKCgllaGNpQDEyNTgwMDAwIHsKCQlzdGF0
-dXMgPSAib2theSI7Cgl9OwoJCglvaGNpQDEyNTkwMDAwIHsKCQlzdGF0dXMgPSAib2theSI7
-Cgl9OwoKCgljb2RlY0AxMzQwMDAwMCB7CgkJc2Ftc3VuZyxtZmMtciA9IDwweDQzMDAwMDAw
-IDB4ODAwMDAwPjsKCQlzYW1zdW5nLG1mYy1sID0gPDB4NTEwMDAwMDAgMHg4MDAwMDA+OwoJ
-CXN0YXR1cyA9ICJva2F5IjsKCX07CgoJc2VyaWFsQDEzODAwMDAwIHsKCQlzdGF0dXMgPSAi
-b2theSI7Cgl9OwoKCXNlcmlhbEAxMzgxMDAwMCB7CgkJc3RhdHVzID0gIm9rYXkiOwoJfTsK
-CglzZXJpYWxAMTM4MjAwMDAgewoJCXN0YXR1cyA9ICJva2F5IjsKCX07CgoJc2VyaWFsQDEz
-ODMwMDAwIHsKCQlzdGF0dXMgPSAib2theSI7Cgl9OwoKCWZpeGVkLXJhdGUtY2xvY2tzIHsK
-CQl4eHRpIHsKCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGNsb2NrLXh4dGkiOwoJCQljbG9j
-ay1mcmVxdWVuY3kgPSA8MD47CgkJfTsKCgkJeHVzYnh0aSB7CgkJCWNvbXBhdGlibGUgPSAi
-c2Ftc3VuZyxjbG9jay14dXNieHRpIjsKCQkJY2xvY2stZnJlcXVlbmN5ID0gPDI0MDAwMDAw
-PjsKCQl9OwoJfTsKCglpMmNAMTM4NjAwMDAgewoJCXN0YXR1cyA9ICJva2F5IjsKCQlzYW1z
-dW5nLGkyYy1zZGEtZGVsYXkgPSA8MTAwPjsKCQlzYW1zdW5nLGkyYy1tYXgtYnVzLWZyZXEg
-PSA8MjAwMDAwPjsKCQlncGlvcyA9IDwmZ3BkMSAyIDAgLyogU0RBICovCgkJCSZncGQxIDMg
-MCAvKiBTQ0wgKi8+OwoKCQl3bTg5NjBAMTAgewoJCQljb21wYXRpYmxlID0gIndsZix3bTg5
-NjAiOwoJCQlyZWcgPSA8MHgxMD47CgkJfTsKCX07Cn07Cg==
---------------010405000201080404020708
-Content-Type: application/pgp-signature; name="exynos4412-tiny4412.dts.sig"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="exynos4412-tiny4412.dts.sig"
-
-iQEcBAABAgAGBQJSjwn3AAoJEPb4VsMIzTzi44kIAIKc/JvgEL4PiY5ItKKbJ9sySBF9+hYx
-IsCbZ7uSqzvZZw8xRMl2ygh4TYhKKJ6K5Q/2mTavuwH1fUS/aMSajri39fNX5ftBK9YPIk5r
-KHXpQvot3ZXg/aD6+iIm9KRTiKymHcbQlwYa5tV2g9Rb1OKKZW4fiNY6G3ng9NoQtnPKHaks
-4aJjwGlFj8z0sDvEK5KZtx6UN6udpU/WEY1P+qNWzWogVZ6fo5TwzKfB1dR8rss7iQQiQ9kV
-CxNkJ1NP80rH9TiKqB6GPyg0Lh9xtKi5CN3epbMWTDIa/6A8o8tNidjv32LpexIKOivrlThq
-AktIwRBVaQt783ujcJ5nx/E=
---------------010405000201080404020708--
+-- 
+Shine bright,
+(: Nav :)
