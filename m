@@ -1,141 +1,138 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 1/2] i2c: exynos5: add support for HSI2C on Exynos5260 SoC
-Date: Fri, 22 Nov 2013 13:02:22 +0530
-Message-ID: <CAHfPSqAtQBzBPq_Ho-y8w2vMmX9OeTNBOXT-AFmDpH-d5dxm9g@mail.gmail.com>
-References: <1385100726-32165-1-git-send-email-ch.naveen@samsung.com> <CA+NduCDdAV1R4RRJ4e=cYZiMA1imVjRZRL+fe0XA2-v=ziVDQg@mail.gmail.com>
+From: randy <lxr1234@hotmail.com>
+Subject: I want to add dts for a exynos4412 board but usb doesn't work
+Date: Fri, 22 Nov 2013 15:38:31 +0800
+Message-ID: <BLU0-SMTP429D46FE5027B79CFA0D286ADE00@phx.gbl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/mixed;
+	boundary="------------010405000201080404020708"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:41094 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750808Ab3KVHcn (ORCPT
+Received: from blu0-omc4-s32.blu0.hotmail.com ([65.55.111.171]:52599 "EHLO
+	blu0-omc4-s32.blu0.hotmail.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750808Ab3KVHoj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Nov 2013 02:32:43 -0500
-In-Reply-To: <CA+NduCDdAV1R4RRJ4e=cYZiMA1imVjRZRL+fe0XA2-v=ziVDQg@mail.gmail.com>
+	Fri, 22 Nov 2013 02:44:39 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, hs@denx.de, khali@linux-fr.org, Ben Dooks <ben-linux@fluff.org>
+To: linux-samsung-soc@vger.kernel.org
 
-Hello Yuvaraj,
+--------------010405000201080404020708
+Content-Type: text/plain; charset="GB2312"
+Content-Transfer-Encoding: 7bit
 
-On 22 November 2013 12:16, Yuvaraj Cd <yuvaraj.lkml@gmail.com> wrote:
-> On Fri, Nov 22, 2013 at 11:42 AM, Naveen Krishna Chatradhi
-> <ch.naveen@samsung.com> wrote:
->> This patch adds new compatible to support HSI2C module on Exynos5260
->> HSI2C module on Exynos5260 needs to be reset during during initialization.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> ---
->>  .../devicetree/bindings/i2c/i2c-exynos5.txt        |    6 +++-
->>  drivers/i2c/busses/i2c-exynos5.c                   |   31 ++++++++++++++++++--
->>  2 files changed, 34 insertions(+), 3 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
->> index 056732c..704ab92 100644
->> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
->> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
->> @@ -5,7 +5,11 @@ at various speeds ranging from 100khz to 3.4Mhz.
->>
->>  Required properties:
->>    - compatible: value should be.
->> -      -> "samsung,exynos5-hsi2c", for i2c compatible with exynos5 hsi2c.
->> +       -> "samsung,exynos5-hsi2c", for i2c compatible with HSI2C available on
->> +                               Exynos5250/5420 SoCs.
->> +       -> "samsung,exynos5260-hsi2c", for i2c compatible with HSI2C available
->> +                               on Exynos5260 SoCs.
->> +
->>    - reg: physical base address of the controller and length of memory mapped
->>      region.
->>    - interrupts: interrupt number to the cpu.
->> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
->> index aca3991..cbb49e2 100644
->> --- a/drivers/i2c/busses/i2c-exynos5.c
->> +++ b/drivers/i2c/busses/i2c-exynos5.c
->> @@ -184,14 +184,35 @@ struct exynos5_i2c {
->>          * 2. Fast speed upto 1Mbps
->>          */
->>         int                     speed_mode;
->> +
->> +       /* Version of HS-I2C Hardware */
->> +       unsigned int            version;
->> +};
->> +
->> +enum hsi2c_version {
->> +       EXYNOS_5,
->> +       EXYNOS_5260
->>  };
->>
->>  static const struct of_device_id exynos5_i2c_match[] = {
->> -       { .compatible = "samsung,exynos5-hsi2c" },
->> +       {
->> +               .compatible = "samsung,exynos5-hsi2c",
->> +               .data = (void *)EXYNOS_5 },
->> +       {
->> +               .compatible = "samsung,exynos5260-hsi2c",
->> +               .data = (void *)EXYNOS_5260 },
->>         {},
->>  };
->>  MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
->>
->> +static inline unsigned int exynos5_i2c_get_version(struct platform_device *pdev)
->> +{
->> +       const struct of_device_id *match;
->> +
->> +       match = of_match_node(exynos5_i2c_match, pdev->dev.of_node);
->> +       return (unsigned int)match->data;
->> +}
->> +
->>  static void exynos5_i2c_clr_pend_irq(struct exynos5_i2c *i2c)
->>  {
->>         writel(readl(i2c->regs + HSI2C_INT_STATUS),
->> @@ -692,7 +713,13 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
->>         if (ret)
->>                 goto err_clk;
->>
->> -       exynos5_i2c_init(i2c);
->> +       i2c->version = exynos5_i2c_get_version(pdev);
->> +
->> +       /* The HS-I2C core on Exynos5260 needs a reset to start with */
->> +       if (i2c->version == EXYNOS_5260)
->
-> Is there is any change in the HSI2C IP for EXYNOS5260?
-> Can you let me know whats the change w.r.t IP and
-> why it needs reset to start,which was not needed in earlier SOC?
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-Problem:
-While working on HSI2C on uboot for Exynos5260 i faced a problem.
-To operate on bus "0" which was default bus
-If i try i2c md/mw on channel 0 without selecting the bus using "i2c dev 0"
-the transaction was failing. But, the subsequent transactions were passing.
+The board is FriendlyArm tiny4412 ver.1306.
+I have made the mmc2(sd slot) work and place rootfs in it.
+But I failed in usbhost part(not otg which has been broken by me),
+which works properly in manufacturer's kernel.
+I can't find the ehci controller and root hub at all.
+In this board, the usb host is conntected to a external hub to change
+voltage level.
+in dmesg, log shows as below:
+[    1.075000] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+[    1.075000] ehci-exynos: EHCI EXYNOS driver
+[    1.075000] unable to find transceiver of type USB2 PHY
+[    1.075000] exynos-ehci 12580000.ehci: no platform data or
+transceiver defined
+[    1.085000] platform 12580000.ehci: Driver exynos-ehci requests
+probe deferral
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
 
-Software Work around:
-After looking at the code i found out, resetting the bus for the first
-time made it work.
+iQEcBAEBAgAGBQJSjwn3AAoJEPb4VsMIzTziaFIH/0wxwYrSp0HCSQtCN8v4g9Vj
+2YxATdQ/SeTLN6F+h6ggooIlaWOUyH2H+yz73T4YYnh+swqPUGyBoXa6KZNep2na
+O9xCNWSntELXHKJqrVFPBOBSWkhqf71q4DbApWHZYMvVCa1UhAYqg6AFy5M3gMWl
+jbMd5SBDwKjIioJhgOgqGa1w2HUp8QNmCACtKl+YagTBNAdv3BJr7egKhWoRqOQR
+INk2kb3UeptmKeTL08uUcgxMxEAn/W+r53FBjbvuU+TKMccj48kpWpZ513hfKKva
+W9NmaLWDiuV73kz135o/955lCO7wdrs2cVtp37g6BCc0U+RdUI3tqwyswYFWwg4=
+=suW2
+-----END PGP SIGNATURE-----
 
-Hardware engg suggestion:
-Meanwhile inputs from Hardware engineers are, "HSI2C on Exynos5260 needs a reset
-during init."  I've not gone personally into the internals of HSI2C module.
+--------------010405000201080404020708
+Content-Type: text/plain; name="exynos4412-tiny4412.dts"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="exynos4412-tiny4412.dts"
 
->From user manual for Exynos5260, FIFO depth supported is 16bytes
-instead of 64bytes.
->
->> +               exynos5_i2c_reset(i2c);
->> +       else
->> +               exynos5_i2c_init(i2c);
->>
->>         ret = i2c_add_adapter(&i2c->adap);
->>         if (ret < 0) {
->> --
->> 1.7.10.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+LyoKICogSGFyZGtlcm5lbCdzIEV4eW5vczQ0MTIgYmFzZWQgdGlueTQ0MTIgMTMwNiBib2Fy
+ZCBkZXZpY2UgdHJlZSBzb3VyY2UKICoKICogQ29weXJpZ2h0IChjKSAyMDEzIFRvbW95YSBH
+aXRzdWZ1a2kgPGF5YWthQG1haWwuc291bGlrLmluZm8+CiAqCiAqIERldmljZSB0cmVlIHNv
+dXJjZSBmaWxlIGZvciBGcmllbmR5YXJtIHRpbnk0NDEyIDEzMDYgYm9hcmQgd2hpY2ggaXMg
+YmFzZWQgb24KICogU2Ftc3VuZydzIEV4eW5vczQ0MTIgU29DLgogKgogKiBUaGlzIHByb2dy
+YW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1v
+ZGlmeQogKiBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBM
+aWNlbnNlIHZlcnNpb24gMiBhcwogKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUg
+Rm91bmRhdGlvbi4KKi8KCi9kdHMtdjEvOwojaW5jbHVkZSAiZXh5bm9zNDQxMi5kdHNpIgoK
+LyB7Cgltb2RlbCA9ICJGcmllbmRseSBBcm0gVGlueTQ0MTIgMTMwNiBib2FyZCBiYXNlZCBv
+biBFeHlub3M0NDEyIjsKCWNvbXBhdGlibGUgPSAiZnJpZW5kbHlhcm0sdGlueTQ0MTItMTMw
+NiIsICJzYW1zdW5nLGV4eW5vczQ0MTIiOwoKCW1lbW9yeSB7CgkJcmVnID0gPDB4NDAwMDAw
+MDAgMHg0MDAwMDAwMD47Cgl9OwoKCWNob3NlbiB7CgkJYm9vdGFyZ3MgPSJyb290PS9kZXYv
+bW1jYmxrMHAxIHJvb3Rmc3R5cGU9ZXh0NCBydyBjb25zb2xlPXR0eVNBQzAsMTE1MjAwIGlu
+aXQ9L3NiaW4vaW5pdCI7Cgl9OwoKCWxlZHMgewoJCWNvbXBhdGlibGUgPSAiZ3Bpby1sZWRz
+IjsKCQlsZWQxIHsKCQkJbGFiZWwgPSAibGVkMTpoZWFydCI7CgkJCWdwaW9zID0gPCZncG00
+IDAgMT47CgkJCWRlZmF1bHQtc3RhdGUgPSAib24iOwoJCQlsaW51eCxkZWZhdWx0LXRyaWdn
+ZXIgPSAiaGVhcnRiZWF0IjsKCQl9OwoJCWxlZDIgewoJCQlsYWJlbCA9ICJsZWQyOm1tYzAi
+OwoJCQlncGlvcyA9IDwmZ3BtNCAxIDE+OwoJCQlkZWZhdWx0LXN0YXRlID0gIm9uIjsKCQkJ
+bGludXgsZGVmYXVsdC10cmlnZ2VyID0gIm1tYzAiOwoJCX07CgoJfTsKCglyZWd1bGF0b3Jz
+IHsKCQljb21wYXRpYmxlID0gInNpbXBsZS1idXMiOwoJCSNhZGRyZXNzLWNlbGxzID0gPDE+
+OwoKCQl2ZW1tY19yZWc6IHJlZ3VsYXRvci0wIHsKCQkJY29tcGF0aWJsZSA9ICJyZWd1bGF0
+b3ItZml4ZWQiOwoJCQlyZWd1bGF0b3ItbmFtZSA9ICJWTUVNX1ZERF8yLjhWIjsKCQkJcmVn
+dWxhdG9yLW1heC1taWNyb3ZvbHQgPSA8MjgwMDAwMD47CgkJCXJlZ3VsYXRvci1taW4tbWlj
+cm92b2x0ID0gPDI4MDAwMDA+OwoJCQlncGlvID0gPCZncGswIDIgMD47CgkJCWVuYWJsZS1h
+Y3RpdmUtaGlnaDsKCQl9OwoKCX07CgovKgoJbXNoY0AxMjU1MDAwMCB7CgkJI2FkZHJlc3Mt
+Y2VsbHMgPSA8MT47CgkJI3NpemUtY2VsbHMgPSA8MD47CgkJcGluY3RybC0wID0gPCZzZDRf
+Y2xrICZzZDRfY21kICZzZDRfYnVzNCAmc2Q0X2J1czg+OwoJCXBpbmN0cmwtbmFtZXMgPSAi
+ZGVmYXVsdCI7CgkJc3RhdHVzID0gIm9rYXkiOwoJCXZtbWMtc3VwcGx5ID0gPCZ2ZW1tY19y
+ZWc+OwoJCWNsb2NrcyA9IDwmY2xvY2sgMzAxPiwgPCZjbG9jayAxNDk+OwoJCWNsb2Nrcy1u
+YW1lID0gImR3bWNpIiwgInNjbGtfZHdtY2kiOwoJCWNsb2NrLWZyZXF1ZW5jeSA9IDw0MDAw
+MDAwMDA+OwoKCQludW0tc2xvdHMgPSA8MT47CgkJc3VwcG9ydHMtaGlnaHNwZWVkOwoJCWJy
+b2tlbi1jZDsKCQlmaWZvLWRlcHRoID0gPDB4ODA+OwoJCWNhcmQtZGV0ZWN0LWRlbGF5ID0g
+PDIwMD47CgkJc2Ftc3VuZyxkdy1tc2hjLXNkci10aW1pbmcgPSA8MiAzPjsKCQlzYW1zdW5n
+LGR3LW1zaGMtZGRyLXRpbWluZyA9IDwxIDI+OwoKCQlzbG90QDAgewoJCQlyZWcgPSA8MD47
+CgkJCWJ1cy13aWR0aCA9IDw4PjsKCQl9OwoJfTsKKi8KCglydGNAMTAwNzAwMDAgewoJCXN0
+YXR1cyA9ICJva2F5IjsKCX07CgoJc2RoY2lAMTI1MzAwMDAgewoJCWJ1cy13aWR0aCA9IDw0
+PjsKCQlwaW5jdHJsLTAgPSA8JnNkMl9jbGsgJnNkMl9jbWQgJnNkMl9idXM0ICZzZDJfY2Q+
+OwoJCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7CgkJc3RhdHVzID0gIm9rYXkiOwoJfTsK
+CXNkaGNpQDEyNTQwMDAgewoJCWJ1cy13aWR0aCA9IDw0PjsKCQlwaW5jdHJsLTAgPSA8JnNk
+M19jbGsgJnNkM19jbWQgJnNkM19idXM0ICZzZDNfY2Q+OwoJCXBpbmN0cmwtbmFtZXMgPSAi
+ZGVmYXVsdCI7CgkJc3RhdHVzID0gIm9rYXkiOwoJfTsKCXVzYmhvc3QwQDEyNTgwMDAwIHsK
+CQkjYWRkcmVzcy1jZWxscyA9IDwxPjsKCQkjc2l6ZS1jZWxscyA9IDwxPjsKCQljb21wYXRp
+YmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMC11c2JwaHkiOwoJCXJlZyA9IDwweDEyNTgwMDAw
+IDB4MTAwPjsKCQlyYW5nZXM7CgoJCWNsb2NrcyA9IDwmY2xvY2sgMj4sIDwmY2xvY2sgMzA0
+PjsKCQljbG9jay1uYW1lcyA9ICJ4dXNieHRpIiwgInVzYmhvc3QiOwoJCXVzYnBoeS1zeXMg
+ewoJCQkvKiBVU0IgZGV2aWNlIGFuZCBob3N0IFBIWV9DT05UUk9MIHJlZ2lzdGVycyAqLwoJ
+CQlyZWcgPSA8MHgxMDAyMDcwOCAweDg+OwoJCX07Cgl9OwoKCglvdGdAMTI1QjAwMDAgewoJ
+CSNhZGRyZXNzLWNlbGxzID0gPDE+OwoJCSNzaXplLWNlbGxzID0gPDE+OwoJCWNvbXBhdGli
+bGUgPSAic2Ftc3VuZyxleHlub3M0MjEwLXVzYnBoeSI7CgkJcmVnID0gPDB4MTI1QjAwMDAg
+MHgxMDA+OwoJCXJhbmdlczsKCgkJY2xvY2tzID0gPCZjbG9jayAyPiwgPCZjbG9jayAzMDU+
+OwoJCWNsb2NrLW5hbWVzID0gInh1c2J4dGkiLCAib3RnIjsKCQl1c2JwaHktc3lzIHsKCQkJ
+LyogVVNCIGRldmljZSBhbmQgaG9zdCBQSFlfQ09OVFJPTCByZWdpc3RlcnMgKi8KCQkJcmVn
+ID0gPDB4MTAwMjA3MDQgMHg4PjsKCQl9OwoJfTsKCgllaGNpQDEyNTgwMDAwIHsKCQlzdGF0
+dXMgPSAib2theSI7Cgl9OwoJCglvaGNpQDEyNTkwMDAwIHsKCQlzdGF0dXMgPSAib2theSI7
+Cgl9OwoKCgljb2RlY0AxMzQwMDAwMCB7CgkJc2Ftc3VuZyxtZmMtciA9IDwweDQzMDAwMDAw
+IDB4ODAwMDAwPjsKCQlzYW1zdW5nLG1mYy1sID0gPDB4NTEwMDAwMDAgMHg4MDAwMDA+OwoJ
+CXN0YXR1cyA9ICJva2F5IjsKCX07CgoJc2VyaWFsQDEzODAwMDAwIHsKCQlzdGF0dXMgPSAi
+b2theSI7Cgl9OwoKCXNlcmlhbEAxMzgxMDAwMCB7CgkJc3RhdHVzID0gIm9rYXkiOwoJfTsK
+CglzZXJpYWxAMTM4MjAwMDAgewoJCXN0YXR1cyA9ICJva2F5IjsKCX07CgoJc2VyaWFsQDEz
+ODMwMDAwIHsKCQlzdGF0dXMgPSAib2theSI7Cgl9OwoKCWZpeGVkLXJhdGUtY2xvY2tzIHsK
+CQl4eHRpIHsKCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGNsb2NrLXh4dGkiOwoJCQljbG9j
+ay1mcmVxdWVuY3kgPSA8MD47CgkJfTsKCgkJeHVzYnh0aSB7CgkJCWNvbXBhdGlibGUgPSAi
+c2Ftc3VuZyxjbG9jay14dXNieHRpIjsKCQkJY2xvY2stZnJlcXVlbmN5ID0gPDI0MDAwMDAw
+PjsKCQl9OwoJfTsKCglpMmNAMTM4NjAwMDAgewoJCXN0YXR1cyA9ICJva2F5IjsKCQlzYW1z
+dW5nLGkyYy1zZGEtZGVsYXkgPSA8MTAwPjsKCQlzYW1zdW5nLGkyYy1tYXgtYnVzLWZyZXEg
+PSA8MjAwMDAwPjsKCQlncGlvcyA9IDwmZ3BkMSAyIDAgLyogU0RBICovCgkJCSZncGQxIDMg
+MCAvKiBTQ0wgKi8+OwoKCQl3bTg5NjBAMTAgewoJCQljb21wYXRpYmxlID0gIndsZix3bTg5
+NjAiOwoJCQlyZWcgPSA8MHgxMD47CgkJfTsKCX07Cn07Cg==
+--------------010405000201080404020708
+Content-Type: application/pgp-signature; name="exynos4412-tiny4412.dts.sig"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="exynos4412-tiny4412.dts.sig"
 
-
-
--- 
-Shine bright,
-(: Nav :)
+iQEcBAABAgAGBQJSjwn3AAoJEPb4VsMIzTzi44kIAIKc/JvgEL4PiY5ItKKbJ9sySBF9+hYx
+IsCbZ7uSqzvZZw8xRMl2ygh4TYhKKJ6K5Q/2mTavuwH1fUS/aMSajri39fNX5ftBK9YPIk5r
+KHXpQvot3ZXg/aD6+iIm9KRTiKymHcbQlwYa5tV2g9Rb1OKKZW4fiNY6G3ng9NoQtnPKHaks
+4aJjwGlFj8z0sDvEK5KZtx6UN6udpU/WEY1P+qNWzWogVZ6fo5TwzKfB1dR8rss7iQQiQ9kV
+CxNkJ1NP80rH9TiKqB6GPyg0Lh9xtKi5CN3epbMWTDIa/6A8o8tNidjv32LpexIKOivrlThq
+AktIwRBVaQt783ujcJ5nx/E=
+--------------010405000201080404020708--
