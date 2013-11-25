@@ -1,142 +1,186 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: linux 3.13-rc1 make dw_mmc-exynos more worse
-Date: Mon, 25 Nov 2013 17:33:24 +0900
-Message-ID: <002101cee9b9$01de23c0$059a6b40$%jun@samsung.com>
-References: <BLU0-SMTP154F63148320A2FFA456BFADE20@phx.gbl>
- <CAOesGMim3niC75g3VK1Ue=98NySmUVHyRAOvd-+RWwZ3gHVx2w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38765 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751596Ab3KYIdc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Nov 2013 03:33:32 -0500
-In-reply-to: <CAOesGMim3niC75g3VK1Ue=98NySmUVHyRAOvd-+RWwZ3gHVx2w@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Subject: [PATCH v8] videobuf2: Add missing lock held on vb2_fop_relase
+Date: Mon, 25 Nov 2013 09:49:02 +0100
+Message-ID: <1385369342-11785-1-git-send-email-ricardo.ribalda@gmail.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>, Ricardo Ribalda <ricardo.ribalda@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Pawel Osciak <pawel@osciak.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "open list:SAMSUNG S5P/EXYNO..." <linux-media@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-arm-kernel@lists.infradead.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'randy' <lxr1234@hotmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, devicetree@vger.kernel.org, 'Tomasz Figa' <t.figa@samsung.com>
 
-On Mon, November 25, 2013, Olof Johansson wrote:
-> Hi,
-> 
-> On Sun, Nov 24, 2013 at 4:07 AM, randy <lxr1234@hotmail.com> wrote:
-> > -----BEGIN PGP SIGNED MESSAGE-----
-> > Hash: SHA1
-> >
-> > After pull the merge of 3.13-rc1, the dw_mmc-exynos will make the boot
-> > stock.In 3.13, it is just stocked udev in 3.13 and makse udev timeout
-> > but kernel report the emmc device is found.
-> >
-> > And in the Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt I
-> > saw that it is need to define which gpio ports that a emmc slot use,
-> > but when I watched others dts, they use pinctrl, which is correct?
-> > Here is the log and dts
-> 
-> [..]
-> 
-> > =======================log begin =============================
-> [..]
-> > [    0.000000] CPU EXYNOS4412 (id 0xe4412011)
-> 
-> [..]
-> 
-> > [    1.095000] mmc0: no vmmc regulator found
-> > [    1.130000] mmc0: SDHCI controller on samsung-hsmmc
-> > [12530000.sdhci] using ADMA
-> > [    1.130000] Synopsys Designware Multimedia Card Interface Driver
-> > [    1.130000] Unable to handle kernel NULL pointer dereference at
-> > virtual address 0000002a
-> > [    1.130000] pgd = c0004000
-> > [    1.130000] [0000002a] *pgd=00000000
-> > [    1.135000] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-> > [    1.140000] Modules linked in:
-> > [    1.140000] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
-> > 3.13.0-rc1-00008-g584fa45-dirty #3
-> > [    1.150000] task: ef0a4000 ti: ef0a8000 task.ti: ef0a8000
-> > [    1.155000] PC is at clk_get_rate+0x18/0x5c
-> > [    1.160000] LR is at clk_prepare_lock+0xc/0xd8
-> > [    1.165000] pc : [<c0319400>]    lr : [<c0318864>]    psr: a0000113
-> > [    1.165000] sp : ef0a9e20  ip : ee94eb40  fp : 00000000
-> > [    1.175000] r10: c0571510  r9 : ef0a8000  r8 : ef227a10
-> > [    1.180000] r7 : c043544c  r6 : fffffffe  r5 : ee94ead0  r4 : fffffffe
-> > [    1.185000] r3 : ef0a4000  r2 : 00000001  r1 : 000002b9  r0 : 00000001
-> > [    1.195000] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM
-> > Segment kernel
-> > [    1.200000] Control: 10c5387d  Table: 4000404a  DAC: 00000015
-> > [    1.205000] Process swapper/0 (pid: 1, stack limit = 0xef0a8240)
-> > [    1.210000] Stack: (0xef0a9e20 to 0xef0aa000)
-> > [    1.215000] 9e20: c0308474 ee9ea610 ee94ead0 c0308488 c0308474
-> > ee9ea610 00000000 c030592c
-> > [    1.225000] 9e40: ef227a10 00001000 c043544c c020a920 c0838b04
-> > 17d78400 ee9ea610 ef227a00
-> > [    1.235000] 9e60: ef227a10 c05d6b1c 00000000 c05d6b1c c05890b0
-> > ef0a8000 c0571510 c0269448
-> > [    1.240000] 9e80: c0269430 ef227a10 c061291c c0268088 00000000
-> > ef227a10 c05d6b1c ef227a44
-> > [    1.250000] 9ea0: 00000000 c026822c 00000000 c05d6b1c c02681a0
-> > c02668a8 ef005478 ef212740
-> > [    1.255000] 9ec0: c05d6b1c ef2c7900 c05cf438 c0267864 c0511e38
-> > c05d6b1c 00000006 c05d6b1c
-> > [    1.265000] 9ee0: 00000006 c059575c c05df580 c026884c 00000000
-> > c05a2e14 00000006 c00088dc
-> > [    1.275000] 9f00: c0603f70 ef163e00 c040e334 60000113 c05b5000
-> > a0000113 c05b5054 c05b5050
-> > [    1.280000] 9f20: c05df580 c054ad68 c0839c96 c04247b4 00000093
-> > c0035158 c05b5054 c05a2a20
-> > [    1.290000] 9f40: c050ae2c c054a438 00000006 00000006 00000000
-> > c05a2e14 00000006 c059575c
-> > [    1.300000] 9f60: c05df580 00000093 c0595768 c0571510 00000000
-> > c0571c48 00000006 00000006
-> > [    1.305000] 9f80: c0571510 c003df68 00000000 c0403544 00000000
-> > 00000000 00000000 00000000
-> > [    1.315000] 9fa0: 00000000 c040354c 00000000 c000e738 00000000
-> > 00000000 00000000 00000000
-> > [    1.320000] 9fc0: 00000000 00000000 00000000 00000000 00000000
-> > 00000000 00000000 00000000
-> > [    1.330000] 9fe0: 00000000 00000000 00000000 00000000 00000013
-> > 00000000 be73efa4 ffffbffd
-> > [    1.340000] [<c0319400>] (clk_get_rate+0x18/0x5c) from [<c0308488>]
-> > (dw_mci_exynos_setup_clock+0x14/0x2c)
-> > [    1.350000] [<c0308488>] (dw_mci_exynos_setup_clock+0x14/0x2c) from
-> > [<c030592c>] (dw_mci_probe+0x15c/0xca4)
-> > [    1.360000] [<c030592c>] (dw_mci_probe+0x15c/0xca4) from
-> > [<c0269448>] (platform_drv_probe+0x18/0x48)
-> > [    1.365000] [<c0269448>] (platform_drv_probe+0x18/0x48) from
-> > [<c0268088>] (driver_probe_device+0x100/0x218)
-> > [    1.375000] [<c0268088>] (driver_probe_device+0x100/0x218) from
-> > [<c026822c>] (__driver_attach+0x8c/0x90)
-> > [    1.385000] [<c026822c>] (__driver_attach+0x8c/0x90) from
-> > [<c02668a8>] (bus_for_each_dev+0x54/0x88)
-> > [    1.395000] [<c02668a8>] (bus_for_each_dev+0x54/0x88) from
-> > [<c0267864>] (bus_add_driver+0xd4/0x1d0)
-> > [    1.405000] [<c0267864>] (bus_add_driver+0xd4/0x1d0) from
-> > [<c026884c>] (driver_register+0x78/0xf4)
-> > [    1.415000] [<c026884c>] (driver_register+0x78/0xf4) from
-> > [<c00088dc>] (do_one_initcall+0xec/0x148)
-> > [    1.420000] [<c00088dc>] (do_one_initcall+0xec/0x148) from
-> > [<c0571c48>] (kernel_init_freeable+0xfc/0x1c8)
-> > [    1.430000] [<c0571c48>] (kernel_init_freeable+0xfc/0x1c8) from
-> > [<c040354c>] (kernel_init+0x8/0x110)
-> > [    1.440000] [<c040354c>] (kernel_init+0x8/0x110) from [<c000e738>]
-> > (ret_from_fork+0x14/0x3c)
-> > [    1.450000] Code: ebfffd18 e3540000 01a05004 0a000008 (e594302c)
-> 
-> 
-> Looks like a clock issue on 4412? I only have 5250 that I boot test
-> on, no EXYNOS4 coverage at all (I had an Odroid-X but it wasn't useful
-> due to the very old u-boot it came with so I gave it away).
-> 
-> Tomasz, is this something you can reproduce on 4210/4412?
+From: Ricardo Ribalda <ricardo.ribalda@gmail.com>
 
-Thank you for detect.
-Clock adaptation has been added for upper host including EXYNOS 5250 
-since c6d9d(mmc: dw_mmc: exynos: adjust the clock rate with speed mode)
-It should have been considered for all EXYNOS.
-I could send a fix.
+vb2_fop_release does not held the lock although it is modifying the
+queue->owner field.
 
-Thanks,
-Seungwon
+This could lead to race conditions on the vb2_perform_io function
+when multiple applications are accessing the video device via
+read/write API:
+
+[ 308.297741] BUG: unable to handle kernel NULL pointer dereference at
+0000000000000260
+[ 308.297759] IP: [<ffffffffa07a9fd2>] vb2_perform_fileio+0x372/0x610
+[videobuf2_core]
+[ 308.297794] PGD 159719067 PUD 158119067 PMD 0
+[ 308.297812] Oops: 0000 #1 SMP
+[ 308.297826] Modules linked in: qt5023_video videobuf2_dma_sg
+qtec_xform videobuf2_vmalloc videobuf2_memops videobuf2_core
+qtec_white qtec_mem gpio_xilinx qtec_cmosis qtec_pcie fglrx(PO)
+spi_xilinx spi_bitbang qt5023
+[ 308.297888] CPU: 1 PID: 2189 Comm: java Tainted: P O 3.11.0-qtec-standard #1
+[ 308.297919] Hardware name: QTechnology QT5022/QT5022, BIOS
+PM_2.1.0.309 X64 05/23/2013
+[ 308.297952] task: ffff8801564e1690 ti: ffff88014dc02000 task.ti:
+ffff88014dc02000
+[ 308.297962] RIP: 0010:[<ffffffffa07a9fd2>] [<ffffffffa07a9fd2>]
+vb2_perform_fileio+0x372/0x610 [videobuf2_core]
+[ 308.297985] RSP: 0018:ffff88014dc03df8 EFLAGS: 00010202
+[ 308.297995] RAX: 0000000000000000 RBX: ffff880158a23000 RCX: dead000000100100
+[ 308.298003] RDX: 0000000000000000 RSI: dead000000200200 RDI: 0000000000000000
+[ 308.298012] RBP: ffff88014dc03e58 R08: 0000000000000000 R09: 0000000000000001
+[ 308.298020] R10: ffffea00051e8380 R11: ffff88014dc03fd8 R12: ffff880158a23070
+[ 308.298029] R13: ffff8801549040b8 R14: 0000000000198000 R15: 0000000001887e60
+[ 308.298040] FS: 00007f65130d5700(0000) GS:ffff88015ed00000(0000)
+knlGS:0000000000000000
+[ 308.298049] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 308.298057] CR2: 0000000000000260 CR3: 0000000159630000 CR4: 00000000000007e0
+[ 308.298064] Stack:
+[ 308.298071] ffff880156416c00 0000000000198000 0000000000000000
+ffff880100000001
+[ 308.298087] ffff88014dc03f50 00000000810a79ca 0002000000000001
+ffff880154904718
+[ 308.298101] ffff880156416c00 0000000000198000 ffff880154904338
+ffff88014dc03f50
+[ 308.298116] Call Trace:
+[ 308.298143] [<ffffffffa07aa3c4>] vb2_read+0x14/0x20 [videobuf2_core]
+[ 308.298198] [<ffffffffa07aa494>] vb2_fop_read+0xc4/0x120 [videobuf2_core]
+[ 308.298252] [<ffffffff8154ee9e>] v4l2_read+0x7e/0xc0
+[ 308.298296] [<ffffffff8116e639>] vfs_read+0xa9/0x160
+[ 308.298312] [<ffffffff8116e882>] SyS_read+0x52/0xb0
+[ 308.298328] [<ffffffff81784179>] tracesys+0xd0/0xd5
+[ 308.298335] Code: e5 d6 ff ff 83 3d be 24 00 00 04 89 c2 4c 8b 45 b0
+44 8b 4d b8 0f 8f 20 02 00 00 85 d2 75 32 83 83 78 03 00 00 01 4b 8b
+44 c5 48 <8b> 88 60 02 00 00 85 c9 0f 84 b0 00 00 00 8b 40 58 89 c2 41
+89
+[ 308.298487] RIP [<ffffffffa07a9fd2>] vb2_perform_fileio+0x372/0x610
+[videobuf2_core]
+[ 308.298507] RSP <ffff88014dc03df8>
+[ 308.298514] CR2: 0000000000000260
+[ 308.298526] ---[ end trace e8f01717c96d1e41 ]---
+---
+
+v2: Comments by Sylvester Nawrocki
+
+fimc-capture and fimc-lite where calling vb2_fop_release with the lock held.
+Therefore a new __vb2_fop_release function has been created to be used by
+drivers that overload the release function.
+
+v3: Comments by Sylvester Nawrocki and Mauro Carvalho Chehab
+
+Use vb2_fop_release_locked instead of __vb2_fop_release
+
+v4: Comments by Sylvester Nawrocki
+
+Rename vb2_fop_release_locked to __vb2_fop_release and fix patch format
+
+v5: Comments by Sylvester Nawrocki and Hans Verkuil
+
+Rename __vb2_fop_release to vb2_fop_release_unlock and rearrange
+arguments
+
+v6: Comments by Hans Verkuil
+
+Fix typo on description
+Rename vb2_fop_release_locked to vb2_fop_release_no_lock
+
+v7: Comments by Hans Verkuil and Sylvester Nawrocki
+
+Export _vb2_fop_release instead of using vb2_fop_release_no_lock
+
+v8: Comments by Hans Verkuil and rebase
+
+Missed semicolon
+
+Signed-off-by: Ricardo Ribalda <ricardo.ribalda@gmail.com>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+ drivers/media/platform/exynos4-is/fimc-capture.c |  2 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c    |  2 +-
+ drivers/media/v4l2-core/videobuf2-core.c         | 15 ++++++++++++++-
+ include/media/videobuf2-core.h                   |  1 +
+ 4 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-capture.c b/drivers/media/platform/exynos4-is/fimc-capture.c
+index fb27ff7..8a712ca 100644
+--- a/drivers/media/platform/exynos4-is/fimc-capture.c
++++ b/drivers/media/platform/exynos4-is/fimc-capture.c
+@@ -549,7 +549,7 @@ static int fimc_capture_release(struct file *file)
+ 		vc->streaming = false;
+ 	}
+ 
+-	ret = vb2_fop_release(file);
++	ret = _vb2_fop_release(file, NULL);
+ 
+ 	if (close) {
+ 		clear_bit(ST_CAPT_BUSY, &fimc->state);
+diff --git a/drivers/media/platform/exynos4-is/fimc-lite.c b/drivers/media/platform/exynos4-is/fimc-lite.c
+index e5798f7..d3b32b6 100644
+--- a/drivers/media/platform/exynos4-is/fimc-lite.c
++++ b/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -546,7 +546,7 @@ static int fimc_lite_release(struct file *file)
+ 		mutex_unlock(&entity->parent->graph_mutex);
+ 	}
+ 
+-	vb2_fop_release(file);
++	_vb2_fop_release(file, NULL);
+ 	pm_runtime_put(&fimc->pdev->dev);
+ 	clear_bit(ST_FLITE_SUSPENDED, &fimc->state);
+ 
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index de0e87f..01f1585 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -2621,16 +2621,29 @@ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma)
+ }
+ EXPORT_SYMBOL_GPL(vb2_fop_mmap);
+ 
+-int vb2_fop_release(struct file *file)
++int _vb2_fop_release(struct file *file, struct mutex *lock)
+ {
+ 	struct video_device *vdev = video_devdata(file);
+ 
+ 	if (file->private_data == vdev->queue->owner) {
++		if (lock)
++			mutex_lock(lock);
+ 		vb2_queue_release(vdev->queue);
+ 		vdev->queue->owner = NULL;
++		if (lock)
++			mutex_unlock(lock);
+ 	}
+ 	return v4l2_fh_release(file);
+ }
++EXPORT_SYMBOL_GPL(_vb2_fop_release);
++
++int vb2_fop_release(struct file *file)
++{
++	struct video_device *vdev = video_devdata(file);
++	struct mutex *lock = vdev->queue->lock ? vdev->queue->lock : vdev->lock;
++
++	return _vb2_fop_release(file, lock);
++}
+ EXPORT_SYMBOL_GPL(vb2_fop_release);
+ 
+ ssize_t vb2_fop_write(struct file *file, char __user *buf,
+diff --git a/include/media/videobuf2-core.h b/include/media/videobuf2-core.h
+index 6781258..cc7ab81 100644
+--- a/include/media/videobuf2-core.h
++++ b/include/media/videobuf2-core.h
+@@ -491,6 +491,7 @@ int vb2_ioctl_expbuf(struct file *file, void *priv,
+ 
+ int vb2_fop_mmap(struct file *file, struct vm_area_struct *vma);
+ int vb2_fop_release(struct file *file);
++int _vb2_fop_release(struct file *file, struct mutex *lock);
+ ssize_t vb2_fop_write(struct file *file, char __user *buf,
+ 		size_t count, loff_t *ppos);
+ ssize_t vb2_fop_read(struct file *file, char __user *buf,
+-- 
+1.8.4.3
