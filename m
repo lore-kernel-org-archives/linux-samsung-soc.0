@@ -1,128 +1,54 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH V3 6/6] cpufreq: Tegra: Use cpufreq_generic_suspend()
-Date: Mon, 25 Nov 2013 19:41:46 +0530
-Message-ID: <d6b2668d6326b2279ff36086e2eb6ae1b334f496.1385374822.git.viresh.kumar@linaro.org>
-References: <cover.1385374819.git.viresh.kumar@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using pinfunc.
+Date: Mon, 25 Nov 2013 15:34:19 +0100
+Message-ID: <CACRpkdbyjm0X9RX+8WjqQxBPyRjBOAunkqVcO-0KUd1PTdGavA@mail.gmail.com>
+References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
+	<528BB1F2.4080107@wwwdotorg.org>
+	<CAD=FV=XS0dbE7zfgDGVdp84h4fHH6tfO8aN_HNh1LbOjYy51aQ@mail.gmail.com>
+	<528BB913.6080409@wwwdotorg.org>
+	<CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cover.1385374819.git.viresh.kumar@linaro.org>
-In-Reply-To: <cover.1385374819.git.viresh.kumar@linaro.org>
-References: <cover.1385374819.git.viresh.kumar@linaro.org>
+In-Reply-To: <CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: rjw@rjwysocki.net
-Cc: linaro-kernel@lists.linaro.org, patches@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, nm@ti.com, swarren@wwwdotorg.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, tianyu.lan@intel.com, sebastian.capella@linaro.org, jhbird.choi@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Doug Anderson <dianders@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently we have implemented PM notifiers to disable/enable ->target() routines
-functionality during suspend/resume.
+On Wed, Nov 20, 2013 at 1:02 AM, Kyungmin Park <kmpark@infradead.org> wrote:
+> On Wed, Nov 20, 2013 at 4:16 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
-Now we have support present in cpufreq core, lets use it.
+>> I think that last point should be addressed by having a driver that owns
+>> the GPIO set it to the desired output level, and the implementation of
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- drivers/cpufreq/tegra-cpufreq.c | 54 +++++------------------------------------
- 1 file changed, 6 insertions(+), 48 deletions(-)
+> Some pins are not connected (NC). At that cases, there's no drivers to
+> handle it. To reduce power leakage, it sets proper configuration with
+> values instead of reset values.
 
-diff --git a/drivers/cpufreq/tegra-cpufreq.c b/drivers/cpufreq/tegra-cpufreq.c
-index f42df7e..336368b 100644
---- a/drivers/cpufreq/tegra-cpufreq.c
-+++ b/drivers/cpufreq/tegra-cpufreq.c
-@@ -26,7 +26,6 @@
- #include <linux/err.h>
- #include <linux/clk.h>
- #include <linux/io.h>
--#include <linux/suspend.h>
- 
- static struct cpufreq_frequency_table freq_table[] = {
- 	{ .frequency = 216000 },
-@@ -48,8 +47,6 @@ static struct clk *pll_p_clk;
- static struct clk *emc_clk;
- 
- static unsigned long target_cpu_speed[NUM_CPUS];
--static DEFINE_MUTEX(tegra_cpu_lock);
--static bool is_suspended;
- 
- static unsigned int tegra_getspeed(unsigned int cpu)
- {
-@@ -137,50 +134,10 @@ static unsigned long tegra_cpu_highest_speed(void)
- 
- static int tegra_target(struct cpufreq_policy *policy, unsigned int index)
- {
--	unsigned int freq;
--	int ret = 0;
--
--	mutex_lock(&tegra_cpu_lock);
--
--	if (is_suspended) {
--		ret = -EBUSY;
--		goto out;
--	}
--
--	freq = freq_table[index].frequency;
--
--	target_cpu_speed[policy->cpu] = freq;
--
--	ret = tegra_update_cpu_speed(policy, tegra_cpu_highest_speed());
--
--out:
--	mutex_unlock(&tegra_cpu_lock);
--	return ret;
-+	target_cpu_speed[policy->cpu] = freq_table[index].frequency;
-+	return tegra_update_cpu_speed(policy, tegra_cpu_highest_speed());
- }
- 
--static int tegra_pm_notify(struct notifier_block *nb, unsigned long event,
--	void *dummy)
--{
--	mutex_lock(&tegra_cpu_lock);
--	if (event == PM_SUSPEND_PREPARE) {
--		struct cpufreq_policy *policy = cpufreq_cpu_get(0);
--		is_suspended = true;
--		pr_info("Tegra cpufreq suspend: setting frequency to %d kHz\n",
--			freq_table[0].frequency);
--		tegra_update_cpu_speed(policy, freq_table[0].frequency);
--		cpufreq_cpu_put(policy);
--	} else if (event == PM_POST_SUSPEND) {
--		is_suspended = false;
--	}
--	mutex_unlock(&tegra_cpu_lock);
--
--	return NOTIFY_OK;
--}
--
--static struct notifier_block tegra_cpu_pm_notifier = {
--	.notifier_call = tegra_pm_notify,
--};
--
- static int tegra_cpu_init(struct cpufreq_policy *policy)
- {
- 	int ret;
-@@ -192,6 +149,7 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- 	clk_prepare_enable(cpu_clk);
- 
- 	target_cpu_speed[policy->cpu] = tegra_getspeed(policy->cpu);
-+	policy->suspend_freq = freq_table[0].frequency;
- 
- 	/* FIXME: what's the actual transition time? */
- 	ret = cpufreq_generic_init(policy, freq_table, 300 * 1000);
-@@ -201,9 +159,6 @@ static int tegra_cpu_init(struct cpufreq_policy *policy)
- 		return ret;
- 	}
- 
--	if (policy->cpu == 0)
--		register_pm_notifier(&tegra_cpu_pm_notifier);
--
- 	return 0;
- }
- 
-@@ -223,6 +178,9 @@ static struct cpufreq_driver tegra_cpufreq_driver = {
- 	.exit		= tegra_cpu_exit,
- 	.name		= "tegra",
- 	.attr		= cpufreq_generic_attr,
-+#ifdef CONFIG_PM
-+	.suspend	= cpufreq_generic_suspend,
-+#endif
- };
- 
- static int __init tegra_cpufreq_init(void)
--- 
-1.7.12.rc2.18.g61b472e
+This is correspondant to the PIN_CONFIG_OUTPUT from
+include/linux/pinctrl/pinconf-generic.h
+
+I.e. driving a pin - any pin, even one that cannot do GPIO - high
+or low as default.
+
+One could argue that if you can drive the pin high/low using
+software then by definition it *is* GPIO. Even if it cannot trigger
+IRQs or anything.
+
+The rationale for having it in pinconf-generic is basically for
+use cases such that one of the the pin config states the device
+pass through may relate to what the documentation calls
+the "GPIO mode fallacy" - a state on the pins that is definately
+related to the use case of a certain device, but puts the pin
+in something the manual calls "GPIO mode" in order to save
+power.
+
+But from a use case point of view that is not GPIO, it is the
+typically the sleep state of a certain pin when used with a
+certain device.
+
+I'll see if I can think of some doc patch to make this more clear...
+
+Yours,
+Linus Walleij
