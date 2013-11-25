@@ -1,60 +1,44 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH V3 0/6] cpufreq: suspend early/resume late
-Date: Mon, 25 Nov 2013 15:37:43 -0600
-Message-ID: <5293C327.2030606@ti.com>
-References: <cover.1385374819.git.viresh.kumar@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH V9 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Mon, 25 Nov 2013 14:24:08 -0800
+Message-ID: <CAD=FV=UUTZLhxdNWF262crUf2CykkPWj3RRDowusPwEDyjASAg@mail.gmail.com>
+References: <1384768189-2839-1-git-send-email-l.krishna@samsung.com>
+	<1384768189-2839-2-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <cover.1385374819.git.viresh.kumar@linaro.org>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, rjw@rjwysocki.net
-Cc: linaro-kernel@lists.linaro.org, patches@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, swarren@wwwdotorg.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, tianyu.lan@intel.com, sebastian.capella@linaro.org, jhbird.choi@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f170.google.com ([209.85.128.170]:56386 "EHLO
+	mail-ve0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752813Ab3KYWYJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Nov 2013 17:24:09 -0500
+Received: by mail-ve0-f170.google.com with SMTP id oy12so3525122veb.29
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Nov 2013 14:24:08 -0800 (PST)
+In-Reply-To: <1384768189-2839-2-git-send-email-l.krishna@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Wim Van Sebroeck <wim@iguana.be>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, "cpgs ." <cpgs@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Guenter Roeck <linux@roeck-us.net>
 
-On 11/25/2013 08:11 AM, Viresh Kumar wrote:
-> This patchset adds cpufreq callbacks to dpm_{suspend|resume}() for handling
-> suspend/resume of cpufreq governors and core. This is required for early suspend
-> and late resume of governors and cpufreq core.
-> 
-> There are multiple problems that are fixed by this patch:
-> - Nishanth Menon (TI) found an interesting problem on his platform, OMAP. His board
->   wasn't working well with suspend/resume as calls for removing non-boot CPUs
->   was turning out into a call to drivers ->target() which then tries to play
->   with regulators. But regulators and their I2C bus were already suspended and
->   this resulted in a failure. Many platforms have such problems, samsung, tegra,
->   etc.. They solved it with driver specific PM notifiers where they used to
->   disable their driver's ->target() routine. Most of these are updated in this
->   patchset to use new infrastructure.
-> 
-> - Lan Tianyu (Intel) & Jinhyuk Choi (Broadcom) found another issue where
->   tunables configuration for clusters/sockets with non-boot CPUs was getting
->   lost after suspend/resume, as we were notifying governors with
->   CPUFREQ_GOV_POLICY_EXIT on removal of the last cpu for that policy and so
->   deallocating memory for tunables. This is also fixed with this patch as don't
->   allow any operation on Governors during suspend/resume now.
-> 
-> 
-> So to solve these issues we introduce early suspend and late resume callbacks
-> which would remove need of cpufreq drivers to implement PM notifiers to disable
-> transition after suspend and before resume.
-> 
-> @Nishanth: Can you please test V2 as well and confirm that suspend_noirq()
-> doesn't work for you. I am sure it will not, but would be better if you confirm
-> that.
-> 
-> Viresh Kumar (6):
->   cpufreq: suspend governors on system suspend/hibernate
->   cpufreq: call driver's suspend/resume for each policy
-patches 1-2,
-Tested-by: Nishanth Menon <nm@ti.com>
-http://pastebin.mozilla.org/3670932
+Hi Leela Krishna,
 
-Prior to these two patches: http://pastebin.mozilla.org/3670933
-cpufreq driver used: cpufreq_cpu0
+On Mon, Nov 18, 2013 at 1:49 AM, Leela Krishna Amudala
+<l.krishna@samsung.com> wrote:
+> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
+> handle PMU register accesses in a centralized way using syscon driver
+>
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/arm/samsung/pmu.txt |   16 ++++++++++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
+>  arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
+>  3 files changed, 26 insertions(+)
 
+Looks good to me.  I've tested this applied to our local tree
+<https://chromium-review.googlesource.com/#/c/177931/> and it's
+working well for me.
 
--- 
-Regards,
-Nishanth Menon
+Reviewed-by: Doug Anderson <dianders@chromium.org>
+Tested-by: Doug Anderson <dianders@chromium.org>
