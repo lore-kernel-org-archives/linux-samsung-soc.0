@@ -1,49 +1,45 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH V9 3/3] ARM: dts: update watchdog device nodes for
- Exynos5250 and Exynos5420
-Date: Mon, 25 Nov 2013 14:46:42 -0800
-Message-ID: <CAD=FV=UxMp-JE3WFKJucLFmR5TD8kYP=NVR_mazcdZ6iwjwc3A@mail.gmail.com>
-References: <1384768189-2839-1-git-send-email-l.krishna@samsung.com>
-	<1384768189-2839-4-git-send-email-l.krishna@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1384768189-2839-4-git-send-email-l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] watchdog: s3c2410_wdt: Only register for cpufreq on CPU_FREQ_S3C24XX
+Date: Mon, 25 Nov 2013 14:55:37 -0800
+Message-ID: <1385420137-32725-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Leela Krishna,
+On modern SoCs the watchdog timer is parented on a clock that doesn't
+change every time we have a cpufreq change.  That means we don't need
+to constantly adjust the watchdog timer, so avoid registering for and
+dealing with cpufreq transitions unless we've actually got
+CPU_FREQ_S3C24XX defined.
 
-On Mon, Nov 18, 2013 at 1:49 AM, Leela Krishna Amudala
-<l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> In Exynos5 series SoCs, PMU has registers to enable/disable mask/unmask
-> watchdog timer which is not the case with s3c series SoCs so, there is a
-> need to have different compatible names for watchdog to handle these pmu
-> registers access.
->
-> Hence this patch removes watchdog node from Exynos5.dtsi common file and
-> make it separate by updating existing node in Exynos5250 and adding new node
-> to Exynos5420. This patch also makes the watchdog node enabled by default
->
-> Signed-off-by: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/exynos5.dtsi    |    7 -------
->  arch/arm/boot/dts/exynos5250.dtsi |    6 +++++-
->  arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
->  3 files changed, 14 insertions(+), 8 deletions(-)
+Note that this is more than just an optimization.  The s3c2410
+watchdog driver actually pats the watchdog on every CPU frequency
+change.  On modern systems these happen many times per second (even in
+a system where "nothing" is happening).  That effectively makes any
+userspace watchdog program useless (the watchdog is constantly patted
+by the kernel).  If we need CPU_FREQ_S3C24XX defined on a
+multiplatform kernel we'll need to make sure that kernel supports
+common clock and change this to user common clock framework.
 
-I've got this locally running in our tree
-<https://chromium-review.googlesource.com/#/c/177933/> based on your
-patch.
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+ drivers/watchdog/s3c2410_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-
--Doug
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 7d8fd04..4980f84 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -264,7 +264,7 @@ static irqreturn_t s3c2410wdt_irq(int irqno, void *param)
+ 	return IRQ_HANDLED;
+ }
+ 
+-#ifdef CONFIG_CPU_FREQ
++#ifdef CONFIG_CPU_FREQ_S3C24XX
+ 
+ static int s3c2410wdt_cpufreq_transition(struct notifier_block *nb,
+ 					  unsigned long val, void *data)
+-- 
+1.8.4.1
