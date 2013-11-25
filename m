@@ -1,54 +1,37 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using pinfunc.
-Date: Mon, 25 Nov 2013 15:34:19 +0100
-Message-ID: <CACRpkdbyjm0X9RX+8WjqQxBPyRjBOAunkqVcO-0KUd1PTdGavA@mail.gmail.com>
-References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
-	<528BB1F2.4080107@wwwdotorg.org>
-	<CAD=FV=XS0dbE7zfgDGVdp84h4fHH6tfO8aN_HNh1LbOjYy51aQ@mail.gmail.com>
-	<528BB913.6080409@wwwdotorg.org>
-	<CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: samsung: Allow grouping multiple pinmux/pinconf nodes
+Date: Mon, 25 Nov 2013 15:46:12 +0100
+Message-ID: <CACRpkdZHUfZinS20OFm+DkziiACxDOvJNhDMvdw3LdDbau1tCA@mail.gmail.com>
+References: <1384881034-10520-1-git-send-email-t.figa@samsung.com>
+	<528BB789.5020201@wwwdotorg.org>
+	<7242109.um7KlGhuI2@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Doug Anderson <dianders@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f180.google.com ([209.85.214.180]:37312 "EHLO
+	mail-ob0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754328Ab3KYOqM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Nov 2013 09:46:12 -0500
+Received: by mail-ob0-f180.google.com with SMTP id wo20so4282212obc.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Nov 2013 06:46:12 -0800 (PST)
+In-Reply-To: <7242109.um7KlGhuI2@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wed, Nov 20, 2013 at 1:02 AM, Kyungmin Park <kmpark@infradead.org> wrote:
-> On Wed, Nov 20, 2013 at 4:16 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+On Wed, Nov 20, 2013 at 3:00 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Stephen:
+>> Is the lifetime of the string "returned" by
+>> of_property_read_string_index() really so short that you must copy the
+>> string? I'd be tempted just to store the pointer, although perhaps you
+>> need to get() the node so that's safe.
+>
+> Right. I have done it the copy-less way in other places, but missed this
+> one. Thanks.
 
->> I think that last point should be addressed by having a driver that owns
->> the GPIO set it to the desired output level, and the implementation of
-
-> Some pins are not connected (NC). At that cases, there's no drivers to
-> handle it. To reduce power leakage, it sets proper configuration with
-> values instead of reset values.
-
-This is correspondant to the PIN_CONFIG_OUTPUT from
-include/linux/pinctrl/pinconf-generic.h
-
-I.e. driving a pin - any pin, even one that cannot do GPIO - high
-or low as default.
-
-One could argue that if you can drive the pin high/low using
-software then by definition it *is* GPIO. Even if it cannot trigger
-IRQs or anything.
-
-The rationale for having it in pinconf-generic is basically for
-use cases such that one of the the pin config states the device
-pass through may relate to what the documentation calls
-the "GPIO mode fallacy" - a state on the pins that is definately
-related to the use case of a certain device, but puts the pin
-in something the manual calls "GPIO mode" in order to save
-power.
-
-But from a use case point of view that is not GPIO, it is the
-typically the sleep state of a certain pin when used with a
-certain device.
-
-I'll see if I can think of some doc patch to make this more clear...
+So I guess I'm waiting for a new version of this patch, right?
 
 Yours,
 Linus Walleij
