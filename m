@@ -1,48 +1,58 @@
-From: Jonghwan Choi <jhbird.choi@gmail.com>
-Subject: [PATCH 2/2] cpufreq: exynos: Frequency lock should be considered in hibernation also.
-Date: Mon, 25 Nov 2013 22:39:30 +0900
-Message-ID: <1385386770-4118-1-git-send-email-jhbird.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f43.google.com ([209.85.160.43]:42687 "EHLO
-	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751976Ab3KYNjg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Nov 2013 08:39:36 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: [PATCH V3 0/6] cpufreq: suspend early/resume late
+Date: Mon, 25 Nov 2013 19:41:40 +0530
+Message-ID: <cover.1385374819.git.viresh.kumar@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rjw@rjwysocki.net
+Cc: linaro-kernel@lists.linaro.org, patches@linaro.org, cpufreq@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, nm@ti.com, swarren@wwwdotorg.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, tianyu.lan@intel.com, sebastian.capella@linaro.org, jhbird.choi@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>
 
-The Frequency lock value should be higher or same than the booting frequency,
-which is set by the bootloader. To eliminate possible inconsistency
-in frequency, we save and restore frequency during suspend & resume
-and disable CPUFREQ activity. This should be considered in hibernation also.
+This patchset adds cpufreq callbacks to dpm_{suspend|resume}() for handling
+suspend/resume of cpufreq governors and core. This is required for early suspend
+and late resume of governors and cpufreq core.
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
----
- drivers/cpufreq/exynos-cpufreq.c | 3 +++
- 1 file changed, 3 insertions(+)
+There are multiple problems that are fixed by this patch:
+- Nishanth Menon (TI) found an interesting problem on his platform, OMAP. His board
+  wasn't working well with suspend/resume as calls for removing non-boot CPUs
+  was turning out into a call to drivers ->target() which then tries to play
+  with regulators. But regulators and their I2C bus were already suspended and
+  this resulted in a failure. Many platforms have such problems, samsung, tegra,
+  etc.. They solved it with driver specific PM notifiers where they used to
+  disable their driver's ->target() routine. Most of these are updated in this
+  patchset to use new infrastructure.
 
-diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-index f3c2287..cd05b0a 100644
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -187,6 +187,7 @@ static int exynos_cpufreq_pm_notifier(struct notifier_block *notifier,
- 	int ret;
- 
- 	switch (pm_event) {
-+	case PM_HIBERNATION_PREPARE:
- 	case PM_SUSPEND_PREPARE:
- 		mutex_lock(&cpufreq_lock);
- 		frequency_locked = true;
-@@ -198,6 +199,8 @@ static int exynos_cpufreq_pm_notifier(struct notifier_block *notifier,
- 
- 		break;
- 
-+	case PM_POST_HIBERNATION:
-+	case PM_POST_RESTORE:
- 	case PM_POST_SUSPEND:
- 		mutex_lock(&cpufreq_lock);
- 		frequency_locked = false;
+- Lan Tianyu (Intel) & Jinhyuk Choi (Broadcom) found another issue where
+  tunables configuration for clusters/sockets with non-boot CPUs was getting
+  lost after suspend/resume, as we were notifying governors with
+  CPUFREQ_GOV_POLICY_EXIT on removal of the last cpu for that policy and so
+  deallocating memory for tunables. This is also fixed with this patch as don't
+  allow any operation on Governors during suspend/resume now.
+
+
+So to solve these issues we introduce early suspend and late resume callbacks
+which would remove need of cpufreq drivers to implement PM notifiers to disable
+transition after suspend and before resume.
+
+@Nishanth: Can you please test V2 as well and confirm that suspend_noirq()
+doesn't work for you. I am sure it will not, but would be better if you confirm
+that.
+
+Viresh Kumar (6):
+  cpufreq: suspend governors on system suspend/hibernate
+  cpufreq: call driver's suspend/resume for each policy
+  cpufreq: Implement cpufreq_generic_suspend()
+  cpufreq: exynos: Use cpufreq_generic_suspend()
+  cpufreq: s5pv210: Use cpufreq_generic_suspend()
+  cpufreq: Tegra: Use cpufreq_generic_suspend()
+
+ drivers/base/power/main.c         |   5 ++
+ drivers/cpufreq/cpufreq.c         | 133 +++++++++++++++++++++-----------------
+ drivers/cpufreq/exynos-cpufreq.c  |  97 ++-------------------------
+ drivers/cpufreq/s5pv210-cpufreq.c |  49 +-------------
+ drivers/cpufreq/tegra-cpufreq.c   |  54 ++--------------
+ include/linux/cpufreq.h           |   6 ++
+ 6 files changed, 99 insertions(+), 245 deletions(-)
+
 -- 
-1.8.1.2
+1.7.12.rc2.18.g61b472e
