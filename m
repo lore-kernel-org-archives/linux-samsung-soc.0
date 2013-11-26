@@ -1,63 +1,99 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4] i2c: s3c2410: dont need CPU_FREQ transitions for exynos
- series
-Date: Tue, 26 Nov 2013 09:52:46 +0530
-Message-ID: <1385439767-18586-1-git-send-email-ch.naveen@samsung.com>
-References: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1381490814-20890-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 1/2 v2] i2c: exynos5: add support for HSI2C on Exynos5260 SoC
+Date: Tue, 26 Nov 2013 09:56:17 +0530
+Message-ID: <1385439977-19077-1-git-send-email-ch.naveen@samsung.com>
+References: <1385100726-32165-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1385100726-32165-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: sjg@chromium.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, wsa@the-dreams.de, ben-linux@fluff.org, grant.likely@secretlab.ca, broonie@kernel.org, dianders@chromium.org, cpgs@samsung.com, t.figa@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-For Exynos4 and Exynos5 SoCs from Samsung the i2c clock is based
-on a fixed 66 MHz peripheral clock, and therefore is completely
-independent of the cpu frequency.
-Thus, registering for a CPU freq notifier is very wasteful.
+This patch adds new compatible to support HSI2C module on Exynos5260
+HSI2C module on Exynos5260 needs to be reset during during initialization.
 
-This patch modifes the code such that, i2c bus registers to
-cpu_freq_transition only if CONFIG_CPU_FREQ_S3C24XX is enabled.
-
-This change should save a bunch of cpufreq transitions calls
-which does not apply to exynos SoCs.
-
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 ---
-Changes since v3:
-As per discussion at https://patchwork.kernel.org/patch/3235091/
-Post f023f8dd59 commit we should be using
-ARM_S3C24XX_CPUFREQ instead of CPU_FREQ_S3C24XX
+Changes since v1:
+Rebasing on linux-i2c for-next
 
-upstrea linux kernel and linuxsamsung already has the commit
-f023f8dd59. Hence, rebasing the patch.
+ .../devicetree/bindings/i2c/i2c-exynos5.txt        |    6 +++-
+ drivers/i2c/busses/i2c-exynos5.c                   |   31 ++++++++++++++++++--
+ 2 files changed, 34 insertions(+), 3 deletions(-)
 
- drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index bf8fb94..a77ce13 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -123,7 +123,7 @@ struct s3c24xx_i2c {
- 	struct s3c2410_platform_i2c	*pdata;
- 	int			gpios[2];
- 	struct pinctrl          *pctrl;
--#ifdef CONFIG_CPU_FREQ
-+#if defined(CONFIG_ARM_S3C24XX_CPUFREQ)
- 	struct notifier_block	freq_transition;
- #endif
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+index 056732c..704ab92 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
+@@ -5,7 +5,11 @@ at various speeds ranging from 100khz to 3.4Mhz.
+ 
+ Required properties:
+   - compatible: value should be.
+-      -> "samsung,exynos5-hsi2c", for i2c compatible with exynos5 hsi2c.
++	-> "samsung,exynos5-hsi2c", for i2c compatible with HSI2C available on
++				Exynos5250/5420 SoCs.
++	-> "samsung,exynos5260-hsi2c", for i2c compatible with HSI2C available
++				on Exynos5260 SoCs.
++
+   - reg: physical base address of the controller and length of memory mapped
+     region.
+   - interrupts: interrupt number to the cpu.
+diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+index da39ff0..497ff91 100644
+--- a/drivers/i2c/busses/i2c-exynos5.c
++++ b/drivers/i2c/busses/i2c-exynos5.c
+@@ -184,14 +184,35 @@ struct exynos5_i2c {
+ 	 * 2. Fast speed upto 1Mbps
+ 	 */
+ 	int			speed_mode;
++
++	/* Version of HS-I2C Hardware */
++	unsigned int		version;
++};
++
++enum hsi2c_version {
++	EXYNOS_5,
++	EXYNOS_5260
  };
-@@ -843,7 +843,7 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
- 	return 0;
- }
  
--#ifdef CONFIG_CPU_FREQ
-+#if defined(CONFIG_ARM_S3C24XX_CPUFREQ)
+ static const struct of_device_id exynos5_i2c_match[] = {
+-	{ .compatible = "samsung,exynos5-hsi2c" },
++	{
++		.compatible = "samsung,exynos5-hsi2c",
++		.data = (void *)EXYNOS_5 },
++	{
++		.compatible = "samsung,exynos5260-hsi2c",
++		.data = (void *)EXYNOS_5260 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
  
- #define freq_to_i2c(_n) container_of(_n, struct s3c24xx_i2c, freq_transition)
++static inline unsigned int exynos5_i2c_get_version(struct platform_device *pdev)
++{
++	const struct of_device_id *match;
++
++	match = of_match_node(exynos5_i2c_match, pdev->dev.of_node);
++	return (unsigned int)match->data;
++}
++
+ static void exynos5_i2c_clr_pend_irq(struct exynos5_i2c *i2c)
+ {
+ 	writel(readl(i2c->regs + HSI2C_INT_STATUS),
+@@ -692,7 +713,13 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_clk;
  
+-	exynos5_i2c_init(i2c);
++	i2c->version = exynos5_i2c_get_version(pdev);
++
++	/* The HS-I2C core on Exynos5260 needs a reset to start with */
++	if (i2c->version == EXYNOS_5260)
++		exynos5_i2c_reset(i2c);
++	else
++		exynos5_i2c_init(i2c);
+ 
+ 	ret = i2c_add_adapter(&i2c->adap);
+ 	if (ret < 0) {
 -- 
 1.7.10.4
