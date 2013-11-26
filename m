@@ -1,38 +1,74 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] watchdog: s3c2410_wdt: Only register for cpufreq on CPU_FREQ_S3C24XX
-Date: Tue, 26 Nov 2013 01:16:51 +0100
-Message-ID: <2791036.CbFhSFdK0z@flatron>
-References: <1385420137-32725-1-git-send-email-dianders@chromium.org> <20131126000831.GW12108@trinity.fluff.org>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using pinfunc.
+Date: Tue, 26 Nov 2013 01:30:37 +0100
+Message-ID: <2715269.S45Tc0DQGQ@flatron>
+References: <1384881351-10782-1-git-send-email-t.figa@samsung.com> <CACRpkdbyjm0X9RX+8WjqQxBPyRjBOAunkqVcO-0KUd1PTdGavA@mail.gmail.com> <5293ACA6.7060403@bracey.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f51.google.com ([209.85.214.51]:52633 "EHLO
-	mail-bk0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751903Ab3KZAQx (ORCPT
+Received: from mail-bk0-f47.google.com ([209.85.214.47]:46311 "EHLO
+	mail-bk0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751894Ab3KZAaj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Nov 2013 19:16:53 -0500
-In-Reply-To: <20131126000831.GW12108@trinity.fluff.org>
+	Mon, 25 Nov 2013 19:30:39 -0500
+In-Reply-To: <5293ACA6.7060403@bracey.fi>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben@trinity.fluff.org>
-Cc: Doug Anderson <dianders@chromium.org>, Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kevin Bracey <kevin@bracey.fi>, Linus Walleij <linus.walleij@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kmpark@infradead.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Tuesday 26 of November 2013 00:08:31 Ben Dooks wrote:
-> On Mon, Nov 25, 2013 at 02:55:37PM -0800, Doug Anderson wrote:
-> > On modern SoCs the watchdog timer is parented on a clock that doesn't
-> > change every time we have a cpufreq change.  That means we don't need
-> > to constantly adjust the watchdog timer, so avoid registering for and
-> > dealing with cpufreq transitions unless we've actually got
-> > CPU_FREQ_S3C24XX defined.
+On Monday 25 of November 2013 22:01:42 Kevin Bracey wrote:
+> On 25/11/2013 16:34, Linus Walleij wrote:
+> > On Wed, Nov 20, 2013 at 1:02 AM, Kyungmin Park <kmpark@infradead.org> wrote:
+> >> On Wed, Nov 20, 2013 at 4:16 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> >>> I think that last point should be addressed by having a driver that owns
+> >>> the GPIO set it to the desired output level, and the implementation of
+> >> Some pins are not connected (NC). At that cases, there's no drivers to
+> >> handle it. To reduce power leakage, it sets proper configuration with
+> >> values instead of reset values.
+> > This is correspondant to the PIN_CONFIG_OUTPUT from
+> > include/linux/pinctrl/pinconf-generic.h
 > 
-> The S3C2410 to at-least S3C2440 there is only one PLL/clock-divider
-> set so changing any part of that can change frequency supplied to
-> the watchdog.
+> Indeed it is - I was waiting for someone to point that out. Now we've 
+> got there...
+> 
+> I've been working on extending the shmobile PFC driver to provide 
+> "gpio-mode" and implement PIN_CONFIG_OUTPUT as described by 
+> Documentation/pinctrl.txt, primarily to handle sleep states, but I have 
+> begun to wonder about the initial state problem, as discussed here.
+> 
+> As far as I can see, we can't currently specify "fallback" states for 
+> pins, which is one of Tomasz' key requirements.
+> 
+> We can specify "hog" states, and we can specify "default for a driver", 
+> but not "default before/in absence of a driver" or "sleep in absence of 
+> a driver". Having a hog precludes any finer driver control, AFAICT.
+> 
+> Some of our existing pre-pinconf board files have a "unused pins" table 
+> which is used to claim and pull GPIOs. I've converted that to "hog" 
+> pinconf, but that only works because the table omits all pins used by 
+> drivers. And, unsurprisingly, that's been error-prone; if those tables 
+> originally covered all unused pins, they don't any more.
+> 
+> I'd like confidence that we can get every pin into the correct state by 
+> having a fully-populated table containing all pins, that can be used 
+> regardless of which drivers start. I think what we're lacking is a "weak 
+> hog". Whatever you call that. :)
+> 
+> That would also specify the state to fallback to when a group is 
+> released (where we currently do pinmux_disable_setting).
+> 
+> Thoughts?
 
-And so we're leaving the notifier code intact, just changing the ifdef
-conditionm which decides whether it should be compiled in, from a (too)
-generic one to an S3C24xx-specific one.
+I fully agree with Kevin. We're currently also using "hogs" for this, but
+as Kevin mentioned, this is error prone, as it can be used for pins that
+are not touched by any drivers.
+
+IMHO a way to specify a default safe state of all pins (with lowest power
+consumption, without possibility of glitching external devices, etc.)
+would be really useful for Samsung platforms (and probably Renesas ones
+as Kevin wrote).
 
 Best regards,
 Tomasz
