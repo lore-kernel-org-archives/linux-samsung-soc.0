@@ -1,413 +1,52 @@
-From: randy <lxr1234@hotmail.com>
-Subject: Re: linux 3.13-rc1 make dw_mmc-exynos more worse
-Date: Tue, 26 Nov 2013 09:47:26 +0800
-Message-ID: <BLU0-SMTP146D04141F53FD0FFC1D78DADEC0@phx.gbl>
-References: <BLU0-SMTP154F63148320A2FFA456BFADE20@phx.gbl> <CAOesGMim3niC75g3VK1Ue=98NySmUVHyRAOvd-+RWwZ3gHVx2w@mail.gmail.com> <1468386.irfukHHsPa@flatron>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
+Date: Tue, 26 Nov 2013 07:56:19 +0530
+Message-ID: <CAKohpok0E=m=63KXM22usiW7Rsu59cD7Q=+k3tRcW=8269tZnQ@mail.gmail.com>
+References: <cover.1385374819.git.viresh.kumar@linaro.org>
+	<55cc3fbf9c553d669629e8ba98eef2b0ef33aaad.1385374822.git.viresh.kumar@linaro.org>
+	<40779593.MBXsTetiKz@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from blu0-omc4-s30.blu0.hotmail.com ([65.55.111.169]:12473 "EHLO
-	blu0-omc4-s30.blu0.hotmail.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751081Ab3KZBrX convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Nov 2013 20:47:23 -0500
-In-Reply-To: <1468386.irfukHHsPa@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <40779593.MBXsTetiKz@vostro.rjw.lan>
+Sender: cpufreq-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>, jh80.chung@samsung.com, olof@lixom.netjh80.chung@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, t.figa@samsung.com
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+On 26 November 2013 04:59, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>> @@ -1259,6 +1262,8 @@ int dpm_suspend(pm_message_t state)
+>>
+>>       might_sleep();
+>>
+>> +     cpufreq_suspend();
+>> +
+>>
+>>       mutex_lock(&dpm_list_mtx);
+>>       pm_transition = state;
+>>       async_error = 0;
+>
+> Shouldn't it do cpufreq_resume() on errors?
 
-=E4=BA=8E 2013=E5=B9=B411=E6=9C=8826=E6=97=A5 08:41, Tomasz Figa =E5=86=
-=99=E9=81=93:
-> On Sunday 24 of November 2013 22:18:46 Olof Johansson wrote:
->> Hi,
->>=20
->> On Sun, Nov 24, 2013 at 4:07 AM, randy <lxr1234@hotmail.com>
->> wrote:
->>> -----BEGIN PGP SIGNED MESSAGE----- Hash: SHA1
->>>=20
->>> After pull the merge of 3.13-rc1, the dw_mmc-exynos will make
->>> the boot stock.In 3.13, it is just stocked udev in 3.13 and
->>> makse udev timeout but kernel report the emmc device is found.
->>>=20
->>> And in the
->>> Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt I saw
->>> that it is need to define which gpio ports that a emmc slot
->>> use, but when I watched others dts, they use pinctrl, which is
->>> correct? Here is the log and dts
->>=20
->> [..]
->>=20
->>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-log begin =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
->> [..]
->>> [    0.000000] CPU EXYNOS4412 (id 0xe4412011)
->>=20
->> [..]
->>=20
->>> [    1.095000] mmc0: no vmmc regulator found [    1.130000]
->>> mmc0: SDHCI controller on samsung-hsmmc [12530000.sdhci] using
->>> ADMA [    1.130000] Synopsys Designware Multimedia Card
->>> Interface Driver [    1.130000] Unable to handle kernel NULL
->>> pointer dereference at virtual address 0000002a [    1.130000]
->>> pgd =3D c0004000 [    1.130000] [0000002a] *pgd=3D00000000 [
->>> 1.135000] Internal error: Oops: 5 [#1] PREEMPT SMP ARM [
->>> 1.140000] Modules linked in: [    1.140000] CPU: 0 PID: 1 Comm:
->>> swapper/0 Not tainted 3.13.0-rc1-00008-g584fa45-dirty #3 [
->>> 1.150000] task: ef0a4000 ti: ef0a8000 task.ti: ef0a8000 [
->>> 1.155000] PC is at clk_get_rate+0x18/0x5c [    1.160000] LR is
->>> at clk_prepare_lock+0xc/0xd8 [    1.165000] pc : [<c0319400>]
->>> lr : [<c0318864>]    psr: a0000113 [    1.165000] sp : ef0a9e20
->>> ip : ee94eb40  fp : 00000000 [    1.175000] r10: c0571510  r9 :
->>> ef0a8000  r8 : ef227a10 [    1.180000] r7 : c043544c  r6 :
->>> fffffffe  r5 : ee94ead0  r4 : fffffffe [    1.185000] r3 :
->>> ef0a4000  r2 : 00000001  r1 : 000002b9  r0 : 00000001 [
->>> 1.195000] Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM=20
->>> Segment kernel [    1.200000] Control: 10c5387d  Table:
->>> 4000404a  DAC: 00000015 [    1.205000] Process swapper/0 (pid:
->>> 1, stack limit =3D 0xef0a8240) [    1.210000] Stack: (0xef0a9e20
->>> to 0xef0aa000) [    1.215000] 9e20: c0308474 ee9ea610 ee94ead0
->>> c0308488 c0308474 ee9ea610 00000000 c030592c [    1.225000]
->>> 9e40: ef227a10 00001000 c043544c c020a920 c0838b04 17d78400
->>> ee9ea610 ef227a00 [    1.235000] 9e60: ef227a10 c05d6b1c
->>> 00000000 c05d6b1c c05890b0 ef0a8000 c0571510 c0269448 [
->>> 1.240000] 9e80: c0269430 ef227a10 c061291c c0268088 00000000=20
->>> ef227a10 c05d6b1c ef227a44 [    1.250000] 9ea0: 00000000
->>> c026822c 00000000 c05d6b1c c02681a0 c02668a8 ef005478 ef212740=20
->>> [    1.255000] 9ec0: c05d6b1c ef2c7900 c05cf438 c0267864
->>> c0511e38 c05d6b1c 00000006 c05d6b1c [    1.265000] 9ee0:
->>> 00000006 c059575c c05df580 c026884c 00000000 c05a2e14 00000006
->>> c00088dc [    1.275000] 9f00: c0603f70 ef163e00 c040e334
->>> 60000113 c05b5000 a0000113 c05b5054 c05b5050 [    1.280000]
->>> 9f20: c05df580 c054ad68 c0839c96 c04247b4 00000093 c0035158
->>> c05b5054 c05a2a20 [    1.290000] 9f40: c050ae2c c054a438
->>> 00000006 00000006 00000000 c05a2e14 00000006 c059575c [
->>> 1.300000] 9f60: c05df580 00000093 c0595768 c0571510 00000000=20
->>> c0571c48 00000006 00000006 [    1.305000] 9f80: c0571510
->>> c003df68 00000000 c0403544 00000000 00000000 00000000 00000000=20
->>> [    1.315000] 9fa0: 00000000 c040354c 00000000 c000e738
->>> 00000000 00000000 00000000 00000000 [    1.320000] 9fc0:
->>> 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->>> 00000000 [    1.330000] 9fe0: 00000000 00000000 00000000
->>> 00000000 00000013 00000000 be73efa4 ffffbffd [    1.340000]
->>> [<c0319400>] (clk_get_rate+0x18/0x5c) from [<c0308488>]=20
->>> (dw_mci_exynos_setup_clock+0x14/0x2c) [    1.350000]
->>> [<c0308488>] (dw_mci_exynos_setup_clock+0x14/0x2c) from=20
->>> [<c030592c>] (dw_mci_probe+0x15c/0xca4) [    1.360000]
->>> [<c030592c>] (dw_mci_probe+0x15c/0xca4) from [<c0269448>]
->>> (platform_drv_probe+0x18/0x48) [    1.365000] [<c0269448>]
->>> (platform_drv_probe+0x18/0x48) from [<c0268088>]
->>> (driver_probe_device+0x100/0x218) [    1.375000] [<c0268088>]
->>> (driver_probe_device+0x100/0x218) from [<c026822c>]
->>> (__driver_attach+0x8c/0x90) [    1.385000] [<c026822c>]
->>> (__driver_attach+0x8c/0x90) from [<c02668a8>]
->>> (bus_for_each_dev+0x54/0x88) [    1.395000] [<c02668a8>]
->>> (bus_for_each_dev+0x54/0x88) from [<c0267864>]
->>> (bus_add_driver+0xd4/0x1d0) [    1.405000] [<c0267864>]
->>> (bus_add_driver+0xd4/0x1d0) from [<c026884c>]
->>> (driver_register+0x78/0xf4) [    1.415000] [<c026884c>]
->>> (driver_register+0x78/0xf4) from [<c00088dc>]
->>> (do_one_initcall+0xec/0x148) [    1.420000] [<c00088dc>]
->>> (do_one_initcall+0xec/0x148) from [<c0571c48>]
->>> (kernel_init_freeable+0xfc/0x1c8) [    1.430000] [<c0571c48>]
->>> (kernel_init_freeable+0xfc/0x1c8) from [<c040354c>]
->>> (kernel_init+0x8/0x110) [    1.440000] [<c040354c>]
->>> (kernel_init+0x8/0x110) from [<c000e738>]=20
->>> (ret_from_fork+0x14/0x3c) [    1.450000] Code: ebfffd18
->>> e3540000 01a05004 0a000008 (e594302c)
->>=20
->>=20
->> Looks like a clock issue on 4412? I only have 5250 that I boot
->> test on, no EXYNOS4 coverage at all (I had an Odroid-X but it
->> wasn't useful due to the very old u-boot it came with so I gave
->> it away).
->>=20
->> Tomasz, is this something you can reproduce on 4210/4412?
->=20
-> Nope. All of our boards (exynos4210-trats, exynos4412-trats2) are=20
-> configured to use sdhci-s3c for all MMC slots[1], as at the time
-> they got submitted to mainline, this driver was considered more
-> reliable than dw-mmc. Not sure about today, though.
->=20
-> [1] On Exynos4 there is one dw-mmc block and four sdhci-s3c
-> blocks, while there are just four physical busses. Using pin
-> control you can configure any of the four sets of pins to work
-> either using its dedicated sdhci-s3c or the only one dw-mmc.
->=20
-> Best regards, Tomasz
->=20
-> -- To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to
-> majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
->=20
->=20
-Well I don't think it can work this time, maybe my dts is wrong.
-At this time neither emmc nor usb can work.
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3Dlog begin=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[    1.035000] s3c-rtc 10070000.rtc: rtc disabled, re-enabling
-[    1.040000] s3c-rtc 10070000.rtc: rtc core: registered s3c as rtc0
-[    1.050000] device-mapper: ioctl: 4.27.0-ioctl (2013-10-30)
-initialised: dm-devel@redhat.com
-[    1.055000] sdhci: Secure Digital Host Controller Interface driver
-[    1.060000] sdhci: Copyright(c) Pierre Ossman
-[    1.065000] s3c-sdhci 12530000.sdhci: clock source 2: mmc_busclk.2
-(100000000 Hz)
-[    1.075000] s3c-sdhci 12530000.sdhci: dummy supplies not allowed
-[    1.080000] mmc0: no vqmmc regulator found
-[    1.085000] s3c-sdhci 12530000.sdhci: dummy supplies not allowed
-[    1.090000] mmc0: no vmmc regulator found
-[    1.125000] mmc0: SDHCI controller on samsung-hsmmc
-[12530000.sdhci] using ADMA
-[    1.125000] s3c-sdhci 12550000.sdhci: failed to get io clock
-[    1.125000] s3c-sdhci: probe of 12550000.sdhci failed with error -2
-[    1.125000] Synopsys Designware Multimedia Card Interface Driver
-[    1.130000] usbcore: registered new interface driver usbhid
-[    1.130000] usbhid: USB HID core driver
-[    1.135000] TCP: cubic registered
-[    1.145000] NET: Registered protocol family 10
-[    1.145000] NET: Registered protocol family 17
-[    1.145000] NET: Registered protocol family 15
-[    1.150000] Key type dns_resolver registered
-[    1.155000] Registering SWP/SWPB emulation handler
-[    1.160000] unable to find transceiver of type USB2 PHY
-[    1.165000] exynos-ehci 12580000.ehci: no platform data or
-transceiver defined
-[    1.175000] platform 12580000.ehci: Driver exynos-ehci requests
-probe deferral
-[    1.175000] mmc0: new high speed SDHC card at address aaaa
-[    1.185000] isa bounce pool size: 16 pages
-[    1.190000] mmcblk0: mmc0:aaaa SU08G 7.40 GiB
-[    1.195000] s3c-rtc 10070000.rtc: setting system clock to
-2013-01-01 12:06:09 UTC (1357041969)
-[    1.205000] exynos_cpufreq_init: failed to get resource vdd_arm
-[    1.205000]  mmcblk0: p1 p2 p3 p4
-[    1.215000] unable to find transceiver of type USB2 PHY
-[    1.215000] exynos-ehci 12580000.ehci: no platform data or
-transceiver defined
-[    1.225000] platform 12580000.ehci: Driver exynos-ehci requests
-probe deferral
+Yes and this is already done I believe. In case dpm_suspend() fails,
+dpm_resume() gets called. Isn't it?
 
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3Dlog end=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3Ddt=
-s=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-/*
- * Hardkernel's Exynos4412 based tiny4412 1306 board device tree source
- *
- * Copyright (c) 2013 Tomoya Gitsufuki <ayaka@mail.soulik.info>
- *
- * Device tree source file for Friendyarm tiny4412 1306 board which is
-based on
- * Samsung's Exynos4412 SoC.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
-*/
+>> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+>> +void cpufreq_suspend(void)
+>> +{
+>> +     struct cpufreq_policy *policy;
+>> +
+>> +     if (!has_target())
+>> +             return;
+>> +
+>> +     pr_debug("%s: Suspending Governors\n", __func__);
+>> +
+>> +     list_for_each_entry(policy, &cpufreq_policy_list, policy_list)
+>> +             if (__cpufreq_governor(policy, CPUFREQ_GOV_STOP))
+>> +                     pr_err("%s: Failed to stop governor for policy: %p\n",
+>> +                                     __func__, policy);
+>
+> This appears to be racy.  Is it really racy, or just seemingly?
 
-/dts-v1/;
-#include "exynos4412.dtsi"
-
-/ {
-	model =3D "Friendly Arm Tiny4412 1306 board based on Exynos4412";
-	compatible =3D "friendlyarm,tiny4412-1306", "samsung,exynos4412";
-
-	memory {
-		reg =3D <0x40000000 0x40000000>;
-	};
-
-	chosen {
-		bootargs =3D"root=3D/dev/mmcblk0p1 rootfstype=3Dext4 rw
-console=3DttySAC0,115200 init=3D/sbin/init";
-	};
-
-	leds {
-		compatible =3D "gpio-leds";
-		led1 {
-			label =3D "led1:heart";
-			gpios =3D <&gpm4 0 1>;
-			default-state =3D "on";
-			linux,default-trigger =3D "heartbeat";
-		};
-		led2 {
-			label =3D "led2:mmc0";
-			gpios =3D <&gpm4 1 1>;
-			default-state =3D "on";
-			linux,default-trigger =3D "mmc0";
-		};
-
-	};
-
-	regulators {
-		compatible =3D "simple-bus";
-		#address-cells =3D <1>;
-
-		vemmc_reg: regulator-0 {
-			compatible =3D "regulator-fixed";
-			regulator-name =3D "VMEM_VDD_2.8V";
-			regulator-min-microvolt =3D <2800000>;
-			regulator-max-microvolt =3D <2800000>;
-			gpio =3D <&gpk0 2 0>;
-			enable-active-high;
-		};
-
-	};
-
-/*
-	mshc@12550000 {
-		#address-cells =3D <1>;
-		#size-cells =3D <0>;
-		pinctrl-0 =3D <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
-		pinctrl-names =3D "default";
-		status =3D "okay";
-
-		vmmc-supply =3D <&vemmc_reg>;
-		clocks =3D <&clock 301>, <&clock 149>;
-		clocks-name =3D "dwmci", "sclk_dwmci";
-		clock-frequency =3D <400000000>;
-
-		num-slots =3D <1>;
-		supports-highspeed;
-		broken-cd;
-		fifo-depth =3D <0x80>;
-		card-detect-delay =3D <200>;
-		samsung,dw-mshc-sdr-timing =3D <2 3>;
-		samsung,dw-mshc-ddr-timing =3D <1 2>;
-
-		slot@0 {
-			reg =3D <0>;
-			bus-width =3D <8>;
-			=09
-		};
-	};
-*/
-
-	rtc@10070000 {
-		status =3D "okay";
-	};
-
-	sdhci@12530000 {
-		bus-width =3D <4>;
-		pinctrl-0 =3D <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
-		pinctrl-names =3D "default";
-		status =3D "okay";
-	};
-
-	sdhci@1254000 {
-		bus-width =3D <4>;
-		pinctrl-0 =3D <&sd3_clk &sd3_cmd &sd3_bus4 &sd3_cd>;
-		pinctrl-names =3D "default";
-		status =3D "okay";
-	};
-
-	sdhci@12550000 {
-		compatible =3D "samsung,exynos4210-sdhci";
-		#address-cells =3D <1>;
-		#size-cells =3D <0>;
-		reg =3D <0x12550000 0x1000>;
-		interrupts =3D <0 77 0>;
-		non-removable;
-		pinctrl-0 =3D <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
-		pinctrl-names =3D "default";
-		status =3D "okay";
-
-		bus-width =3D <8>;
-		vmmc-supply =3D <&vemmc_reg>;
-		clocks =3D <&clock 301>, <&clock 149>;
-		clocks-name =3D "dwmci", "sclk_dwmci";
-		clock-frequency =3D <400000000>;
-
-	};
-
-	/* the usb phy of hsic0, hsic1 and otg are in the same place */
-	usb_phy: otg@125B0000 {
-		#address-cells =3D <1>;
-		#size-cells =3D <1>;
-		compatible =3D "samsung,exynos4210-usbphy";
-		reg =3D <0x125B0000 0x100>;
-		ranges;
-
-		clocks =3D <&clock 2>, <&clock 305>;
-		clock-names =3D "xusbxti", "otg";
-		usbphy-sys {
-			/* USB device and host PHY_CONTROL registers */
-			reg =3D <0x10020704 0x8>;
-		};
-	};
-
-	ehci@12580000 {
-		usb-phy =3D <&usb_phy>;
-		status =3D "okay";
-	};
-=09
-	ohci@12590000 {
-		status =3D "okay";
-	};
-
-
-	codec@13400000 {
-		samsung,mfc-r =3D <0x43000000 0x800000>;
-		samsung,mfc-l =3D <0x51000000 0x800000>;
-		status =3D "okay";
-	};
-
-	serial@13800000 {
-		status =3D "okay";
-	};
-
-	serial@13810000 {
-		status =3D "okay";
-	};
-
-	serial@13820000 {
-		status =3D "okay";
-	};
-
-	serial@13830000 {
-		status =3D "okay";
-	};
-
-	fixed-rate-clocks {
-		xxti {
-			compatible =3D "samsung,clock-xxti";
-			clock-frequency =3D <0>;
-		};
-
-		xusbxti {
-			compatible =3D "samsung,clock-xusbxti";
-			clock-frequency =3D <24000000>;
-		};
-	};
-
-	i2c@13860000 {
-		status =3D "okay";
-		samsung,i2c-sda-delay =3D <100>;
-		samsung,i2c-max-bus-freq =3D <200000>;
-
-		wm8960@10 {
-			compatible =3D "wlf,wm8960";
-			reg =3D <0x10>;
-		};
-	};
-};
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
-
-iQEcBAEBAgAGBQJSk/2uAAoJEPb4VsMIzTzirLAH/0H3n2a8s8qvizr+YOOCnLvr
-iiK21Mh/Gi9wLgvpU16oEDiOP5p2da7TUKI7AnIGY48SnBrB+E0C2UVHVn7L/4aX
-cputqr5mEswV3RUOaEg7s1HHbXp249LJ4Z8IByxesO4lVCRGVTcz+i121uDGKrH4
-OoybBl/YuDACo3D1AZShNq+m8lLIAyEUT3UOEPJdxsa1V/Zwf4MdQbY1YMC6Twqs
-kmLPCgKlS7wKeFvpYG/cmWZEG/fFlBiCey3mmJDy6DK+YC6Mq1WEFJEU4zWec3kI
-cJwyA20U+GC5cz7CZfDjkLhMinXnOhz8oP9RGCKlKrz22DlEJd4/mXnHwEK1c1o=3D
-=3DGHoW
------END PGP SIGNATURE-----
+Why does it look racy to you? Userspace should be frozen by now,
+policy_list should be stable as well as nobody would touch it.
