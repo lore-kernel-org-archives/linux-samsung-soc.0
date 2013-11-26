@@ -1,82 +1,140 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: Re: [PATCH v2] clk: exynos5420: fix cpll clock register offsets
-Date: Tue, 26 Nov 2013 13:37:24 +0530
-Message-ID: <CANuQgHEPxYZPPQsx9VgnGfaN=VetphEnoEp8YkCuyfnPLCKEZQ@mail.gmail.com>
-References: <1380186395-28814-1-git-send-email-chander.kashyap@linaro.org>
-	<CANuQgHFPB4C69C1sDFPVx6E8XjMhbqs-75R9xq1LP0=yO9C4zg@mail.gmail.com>
-	<CANuQgHEMsNMyjvwoZ6we8dz-X+T0XdQYyYwCHGCPk0iuH8W=8A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+Subject: [PATCH v4 0/4] Exynos 5410 Dual cluster support
+Date: Tue, 26 Nov 2013 12:58:04 +0400
+Message-ID: <1385456288-20398-1-git-send-email-v.tyrtov@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:61329 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751796Ab3KZIHZ (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:44485 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752165Ab3KZJCA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Nov 2013 03:07:25 -0500
-Received: by mail-oa0-f53.google.com with SMTP id m1so5651184oag.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Nov 2013 00:07:24 -0800 (PST)
-In-Reply-To: <CANuQgHEMsNMyjvwoZ6we8dz-X+T0XdQYyYwCHGCPk0iuH8W=8A@mail.gmail.com>
+	Tue, 26 Nov 2013 04:02:00 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Mike Turquette <mturquette@linaro.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, yadi.brar@samsung.com, "t.figa@samsung.com" <t.figa@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
+To: linux-kernel@vger.kernel.org
+Cc: Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>, Tyrtov Vyacheslav <v.tyrtov@samsung.com>, Dave.Martin@arm.com, nicolas.pitre@linaro.org, tomasz.figa@gmail.com
 
-Hi Mike,
+The series of patches represent support of Exynos 5410 SoC
 
-On 22 October 2013 11:20, Chander Kashyap <chander.kashyap@linaro.org> wrote:
-> On 16 October 2013 11:10, Chander Kashyap <chander.kashyap@linaro.org> wrote:
->> On 26 September 2013 14:36, Chander Kashyap <chander.kashyap@linaro.org> wrote:
->>> Fixes cpll control and lock register offset values for Exynos5420 SoC.
->>>
->>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->>> ---
->>> Changes Since v1:
->>>         - Fixed patch subject as per Kukgin suggestion.
->>>
->>>  drivers/clk/samsung/clk-exynos5420.c |    4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
->>> index 86dfc64..892aac0 100644
->>> --- a/drivers/clk/samsung/clk-exynos5420.c
->>> +++ b/drivers/clk/samsung/clk-exynos5420.c
->>> @@ -730,8 +730,8 @@ struct samsung_gate_clock exynos5420_gate_clks[] __initdata = {
->>>  struct __initdata samsung_pll_clock exynos5420_plls[nr_plls] = {
->>>         [apll] = PLL(pll_2550, fout_apll, "fout_apll", "fin_pll", APLL_LOCK,
->>>                 APLL_CON0, NULL),
->>> -       [cpll] = PLL(pll_2550, fout_mpll, "fout_mpll", "fin_pll", MPLL_LOCK,
->>> -               MPLL_CON0, NULL),
->>> +       [cpll] = PLL(pll_2550, fout_cpll, "fout_cpll", "fin_pll", CPLL_LOCK,
->>> +               CPLL_CON0, NULL),
->>>         [dpll] = PLL(pll_2550, fout_dpll, "fout_dpll", "fin_pll", DPLL_LOCK,
->>>                 DPLL_CON0, NULL),
->>>         [epll] = PLL(pll_2650, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
->>> --
->>> 1.7.9.5
->>>
->>
->>
->> Mike, can you please take this patch.
->
-> Can this patch be merged?
+The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
+Patches allow all 8 CPU cores (4 x A7 and 4 x A15) to run at the same time
 
-Any update on this patch ?
+Patches add new platform description, support of clock controller,
+dual cluster support and device tree for Exynos 5410
 
->
->>
->> --
->> with warm regards,
->> Chander Kashyap
->
->
->
-> --
-> with warm regards,
-> Chander Kashyap
+Has been build on v3.13-rc1.
+Has been tested on Exynos 5410 reference board (exynos_defconfig).
+
+Thanks for all your comments to Tomasz Figa, Dave Martin and Nicolas Pitre.
+
+Vyacheslav.
 
 
+Changelog:
+
+v4:
+	In arch/arm/mach-exynos/edcs.c
+1. Renamed all exynos_ prefixes to edcs_.
+2. Reworked edcs_core_power_up/down functions.
+3. Removed exynos_core_power_control function.
+4. Added this_core_to_pcpu function.
+5. Added core_power_state function which detects if cpu is being reset.
+6. Replaced cache flush sequences with v7_exit_coherency_flush().
+7. exynos_core_power_down moved to lock protected area.
+8. edcs_power_down_finish implemented.
+	In Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+1. External clocks documented.
+	In arch/arm/boot/dts/exynos5410-smdk5410.dts
+1. oscclk node corrected according to ePAPR recommendation.
+	In arch/arm/boot/dts/exynos5410.dtsi
+1. mct@101C0000 node renamed to timer@101C0000.
+2. "interrupt-controller" line removed from mct node.
+3. mct_map renamed to interrupt_map.
+	In arch/arm/mach-exynos/Kconfig
+1. some cosmetic corrections.
+	In include/dt-bindings/clock/exynos5410.h
+1. Unnecessary defines removed.
+
+v3:
+	In drivers/clk/samsung/clk-exynos5410.c
+1. Fixed rate clock "samsung,clock-oscclk" removed.
+	In arch/arm/boot/dts/exynos5410.dtsi
+1. In mct node clock CLK_FIN_PLL replaced with generic fixed rate oscclk.
+	In arch/arm/boot/dts/exynos5410-smdk5410.dts
+1. Fixed rate oscclk clock added.
+	In arch/arm/mach-exynos/edcs.c
+1. Added write memory barrier in exynos_core_power_control function.
+2. __raw_readl/__raw_writel replaced with readl_relaxed/writel_relaxed.
+3. #define added for some magic constants.
+4. Disabled the GIC CPU interface in exynos_power_down function.
+
+v2:
+	In drivers/clk/samsung/clk-exynos5410.c
+1. Clock driver converted to use preprocessor macros instead of enums.
+   Clock IDs now defined in include/dt-bindings/clock/exynos5410.h.
+2. Unused spinlock removed.
+3. Function exynos5410_clk_init defined as static.
+   Struct exynos5410_fixed_rate_ext_clks defined as static.
+   Struct exynos5410_mux_clks defined as static.
+   Struct exynos5410_div_clks defined as static.
+   Struct exynos5410_gate_clks defined as static.
+4. Removed aliases.
+5. Pll's magic register offsets defined as preprocessor macros.
+6. Redundant check of device_node pointer removed.
+	
+	In arch/arm/boot/dts/exynos5410.dtsi
+1. dwmmcX nodes renamed to mmc.
+   dwmmc_X renamed to mmc_X.
+   dwmmc status="disabled" field added.
+   fifo-depth field moved from arch/arm/boot/dts/exynos5410-smdk5410.dts
+2. Blank lines added where necessary.
+3. cpu@ suffixes corrected.
+4. edcs node removed.
+5. Hexadecimal characters case corrected.
+6. Clock IDs replaced with preprocessor macros.
+	
+	In arch/arm/boot/dts/exynos5410-smdk5410.dts
+1. status = "okay" field added to mmc nodes.
+	
+	In arch/arm/mach-exynos/edcs.c
+1. "kfs_" prefix replaced with "edcs_"
+2. EDCS_CPUS_PER_CLUSTER and EDCS_CLUSTERS defined instead of MCPM's values.
+3. Cache handling sequence borrowed from arch/arm/mach-vexpress/tc2_pm.c
+4. mcpm_sync_init() call added.
+5. power management functions reworked.
+	
+	Other
+1. Documentation/devicetree/bindings/clock/exynos5410-clock.txt corrected.
+2. Removed smdk5410_defconfig. Instead SOC_EXYNOS5410 now selects MCPM and
+   ARM_CCI in arch/arm/mach-exynos/Kconfig.
+3. edcs_status driver removed.
+
+Tarek Dakhran (4):
+  ARM: EXYNOS: Add support for EXYNOS5410 SoC
+  clk: exynos5410: register clocks using common clock framework
+  ARM: dts: Add initial device tree support for EXYNOS5410
+  ARM: EXYNOS: add Exynos Dual Cluster Support
+
+ .../devicetree/bindings/clock/exynos5410-clock.txt |  54 ++++
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |  72 +++++
+ arch/arm/boot/dts/exynos5410.dtsi                  | 207 ++++++++++++++
+ arch/arm/mach-exynos/Kconfig                       |  12 +
+ arch/arm/mach-exynos/Makefile                      |   2 +
+ arch/arm/mach-exynos/common.c                      |  18 ++
+ arch/arm/mach-exynos/edcs.c                        | 297 +++++++++++++++++++++
+ arch/arm/mach-exynos/include/mach/map.h            |   1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |   1 +
+ arch/arm/plat-samsung/include/plat/cpu.h           |   8 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-exynos5410.c               | 239 +++++++++++++++++
+ include/dt-bindings/clock/exynos5410.h             |  32 +++
+ 14 files changed, 945 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+ create mode 100644 arch/arm/boot/dts/exynos5410-smdk5410.dts
+ create mode 100644 arch/arm/boot/dts/exynos5410.dtsi
+ create mode 100644 arch/arm/mach-exynos/edcs.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5410.c
+ create mode 100644 include/dt-bindings/clock/exynos5410.h
 
 -- 
-with warm regards,
-Chander Kashyap
+1.8.1.5
