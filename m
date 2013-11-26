@@ -1,47 +1,63 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
- where possible
-Date: Tue, 26 Nov 2013 16:18:41 +0530
-Message-ID: <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
-References: <1384264120-24750-1-git-send-email-broonie@kernel.org>
-	<1384264120-24750-2-git-send-email-broonie@kernel.org>
-	<CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
-	<20131126102311.GW14725@sirena.org.uk>
+From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2 v2] i2c: exynos5: add support for HSI2C on Exynos5260 SoC
+Date: Tue, 26 Nov 2013 16:59:42 +0530
+Message-ID: <CAK9yfHz1HL65megQ9vDZovZr9oBo8UsrgGS+umWiT9FmHrnK3Q@mail.gmail.com>
+References: <1385100726-32165-1-git-send-email-ch.naveen@samsung.com>
+	<1385439977-19077-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f45.google.com ([209.85.128.45]:44809 "EHLO
-	mail-qe0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751652Ab3KZKsm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Nov 2013 05:48:42 -0500
-Received: by mail-qe0-f45.google.com with SMTP id 6so5397809qea.18
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Nov 2013 02:48:41 -0800 (PST)
-In-Reply-To: <20131126102311.GW14725@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1385439977-19077-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, Padmavathi Venna <padma.v@samsung.com>
 
-Hi Mark,
-
-On Tue, Nov 26, 2013 at 3:53 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Nov 26, 2013 at 10:55:17AM +0530, Padma Venkat wrote:
+On 26 November 2013 09:56, Naveen Krishna Chatradhi
+<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch adds new compatible to support HSI2C module on Exynos5260
+> HSI2C module on Exynos5260 needs to be reset during during initialization.
 >
->> I tested this patch set on smdk5420 i2s. During playback audio playing
->> fast and there is underrun error like below.
->> underrun!!! (at least 0.061 ms long)
->> underrun!!! (at least 0.043 ms long)
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+[snip]
 >
-> This sounds like it's setting the transfer width incorrectly, though I
-> can't immediately see how that's changed unless the DMA driver is not
-> working correctly.  What exactly did you do to test?
+>  Required properties:
+>    - compatible: value should be.
+> -      -> "samsung,exynos5-hsi2c", for i2c compatible with exynos5 hsi2c.
+> +       -> "samsung,exynos5-hsi2c", for i2c compatible with HSI2C available on
+> +                               Exynos5250/5420 SoCs.
 
-I tried this on linux-samsung tree by applying all the patches from
-you and Lars.
-I initialised the dma_data for secondary dai as there is a crash with out that.
-Then I used aplay after running the mixer settings.
-./aplay /mars/share/sounds/alsa/Front_Center.wav
+This string could be made more specific ("samsung,exynos5250-hsi2c")
+now that we have variants for this.
 
-Thanks
-Padma
+> +       -> "samsung,exynos5260-hsi2c", for i2c compatible with HSI2C available
+> +                               on Exynos5260 SoCs.
+> +
+>    - reg: physical base address of the controller and length of memory mapped
+>      region.
+>    - interrupts: interrupt number to the cpu.
+> diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
+> index da39ff0..497ff91 100644
+> --- a/drivers/i2c/busses/i2c-exynos5.c
+> +++ b/drivers/i2c/busses/i2c-exynos5.c
+> @@ -184,14 +184,35 @@ struct exynos5_i2c {
+>          * 2. Fast speed upto 1Mbps
+>          */
+>         int                     speed_mode;
+> +
+> +       /* Version of HS-I2C Hardware */
+> +       unsigned int            version;
+> +};
+> +
+> +enum hsi2c_version {
+> +       EXYNOS_5,
+
+ditto.
+
+> +       EXYNOS_5260
+>  };
+>
+
+-- 
+With warm regards,
+Sachin
