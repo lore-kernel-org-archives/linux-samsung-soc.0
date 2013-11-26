@@ -1,35 +1,97 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Only register for cpufreq on
- ARM_S3C24XX_CPUFREQ
-Date: Tue, 26 Nov 2013 10:14:54 -0800
-Message-ID: <5294E51E.60907@roeck-us.net>
-References: <1385420137-32725-1-git-send-email-dianders@chromium.org> <1385422603-22684-1-git-send-email-dianders@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] watchdog: s3c2410_wdt: Handle rounding a little better for
+ timeout
+Date: Tue, 26 Nov 2013 10:30:37 -0800
+Message-ID: <1385490637-10306-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1385422603-22684-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Wim Van Sebroeck <wim@iguana.be>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-watchdog@vger.kernel.org, Leela Krishna Amudala <l.krishna@samsung.com>, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 11/25/2013 03:36 PM, Doug Anderson wrote:
-> On modern SoCs the watchdog timer is parented on a clock that doesn't
-> change every time we have a cpufreq change.  That means we don't need
-> to constantly adjust the watchdog timer, so avoid registering for and
-> dealing with cpufreq transitions unless we've actually got
-> CONFIG_ARM_S3C24XX_CPUFREQ defined.
->
-> Note that this is more than just an optimization.  The s3c2410
-> watchdog driver actually pats the watchdog on every CPU frequency
-> change.  On modern systems these happen many times per second (even in
-> a system where "nothing" is happening).  That effectively makes any
-> userspace watchdog program useless (the watchdog is constantly patted
-> by the kernel).  If we need ARM_S3C24XX_CPUFREQ defined on a
-> multiplatform kernel we'll need to make sure that kernel supports
-> common clock and change this to user common clock framework.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+The existing watchdog timeout worked OK but didn't deal with
+rounding in an ideal way when dividing out all of its clocks.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Specifically if you had a timeout of 32 seconds and an input clock of
+66666666, you'd end up setting a timeout of 31.9998 seconds and
+reporting a timeout of 31 seconds.
+
+Specifically DBG printouts showed:
+  s3c2410wdt_set_heartbeat: count=16666656, timeout=32, freq=520833
+  s3c2410wdt_set_heartbeat: timeout=32, divisor=255, count=16666656 (0000ff4f)
+and the final timeout reported to the user was:
+  ((count / divisor) * divisor) / freq
+  (0xff4f * 255) / 520833 = 31 (truncated from 31.9998)
+the technically "correct" value is:
+  (0xff4f * 255) / (66666666.0 / 128) = 31.9998
+
+By using "DIV_ROUND_UP" we can be a little more correct.
+  s3c2410wdt_set_heartbeat: count=16666688, timeout=32, freq=520834
+  s3c2410wdt_set_heartbeat: timeout=32, divisor=255, count=16666688 (0000ff50)
+and the final timeout reported to the user:
+  (0xff50 * 255) / 520834 = 32
+the technically "correct" value is:
+  (0xff50 * 255) / (66666666.0 / 128) = 32.0003
+
+We'll use a DIV_ROUND_UP to solve this, generally erroring on the side
+of reporting shorter values to the user and setting the watchdog to
+slightly longer than requested:
+* Round input frequency up to assume watchdog is counting faster.
+* Round divisions by divisor up to give us extra time.
+
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+ drivers/watchdog/s3c2410_wdt.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 7d8fd04..fe2322b 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -188,7 +188,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeou
+ 	if (timeout < 1)
+ 		return -EINVAL;
+ 
+-	freq /= 128;
++	freq = DIV_ROUND_UP(freq, 128);
+ 	count = timeout * freq;
+ 
+ 	DBG("%s: count=%d, timeout=%d, freq=%lu\n",
+@@ -201,20 +201,20 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeou
+ 
+ 	if (count >= 0x10000) {
+ 		for (divisor = 1; divisor <= 0x100; divisor++) {
+-			if ((count / divisor) < 0x10000)
++			if (DIV_ROUND_UP(count, divisor) < 0x10000)
+ 				break;
+ 		}
+ 
+-		if ((count / divisor) >= 0x10000) {
++		if (divisor > 0x100) {
+ 			dev_err(wdt->dev, "timeout %d too big\n", timeout);
+ 			return -EINVAL;
+ 		}
+ 	}
+ 
+ 	DBG("%s: timeout=%d, divisor=%d, count=%d (%08x)\n",
+-	    __func__, timeout, divisor, count, count/divisor);
++	    __func__, timeout, divisor, count, DIV_ROUND_UP(count, divisor));
+ 
+-	count /= divisor;
++	count = DIV_ROUND_UP(count, divisor);
+ 	wdt->count = count;
+ 
+ 	/* update the pre-scaler */
+-- 
+1.8.4.1
