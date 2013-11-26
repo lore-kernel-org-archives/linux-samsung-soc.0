@@ -1,124 +1,70 @@
-From: Amit Kachhap <amit.kachhap@gmail.com>
-Subject: Re: [PATCH] thermal: EXYNOS: always register TMU driver with core
- thermal framework
-Date: Tue, 26 Nov 2013 11:45:41 +0530
-Message-ID: <CADGdYn6O9LdwijYfoFqfMcrndBy3L5H=1cbSsGXMOj4yavZT0A@mail.gmail.com>
-References: <2244251.cWS1a83qbK@amdc1032>
-	<1440196.1vM1gSXuH1@amdc1032>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH V4 1/6] clk: exynos-audss: convert to platform device
+Date: Tue, 26 Nov 2013 11:59:44 +0530
+Message-ID: <CAAgF-BdPPG6QdX_QKOYQ6POKrvYoB4DCqVvoM6DTLjO9u2mRFA@mail.gmail.com>
+References: <1380046016-5811-1-git-send-email-abrestic@chromium.org>
+ <1380143572-11741-1-git-send-email-abrestic@chromium.org>
+ <CAL1qeaE2Y2EkRtbGQUqsxyci6PSSNihObPju-xquy39fV4zOMw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f178.google.com ([209.85.223.178]:51089 "EHLO
-	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752950Ab3KZGPm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Nov 2013 01:15:42 -0500
-In-Reply-To: <1440196.1vM1gSXuH1@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAL1qeaE2Y2EkRtbGQUqsxyci6PSSNihObPju-xquy39fV4zOMw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, linux-doc@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tushar Behera <tushar.behera@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>, Jiri Kosina <jkosina@suse.cz>S
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 11/25/13, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com> wrote:
+Hi Mike and Kukjin,
+
+On Tue, Oct 8, 2013 at 10:23 PM, Andrew Bresticker
+<abrestic@chromium.org> wrote:
+> Hi Mike and Kukjin,
 >
-> Hi,
+> Any decisions regarding this patchset?  I believe all comments have
+> been addressed.
 >
-> Could you please also apply this patch?
+> Thanks,
+> Andrew
+
+Any decisions on this patchset. These can be applied directly on
+linux-samsung tree.
+
 >
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
-> On Friday, October 04, 2013 02:38:25 PM Bartlomiej Zolnierkiewicz wrote:
->> There is little sense in having separate config option for
->> registering EXYNOS TMU driver with the core thermal framework.
->> Fix it by integrating EXYNOS_THERMAL_CORE config option with
->> EXYNOS_THERMAL one.
+> On Wed, Sep 25, 2013 at 2:12 PM, Andrew Bresticker
+> <abrestic@chromium.org> wrote:
+>> The Exynos AudioSS clock controller will later be modified to allow
+>> input clocks to be specified via device-tree in order to support
+>> multiple Exynos SoCs.  This will introduce a dependency on the core
+>> SoC clock controller being initialized first so that the AudioSS driver
+>> can look up its input clocks, but the order in which clock providers
+>> are probed in of_clk_init() is not guaranteed.  Since deferred probing
+>> is not supported in of_clk_init() and the AudioSS block is not the core
+>> controller, we can initialize it later as a platform device.
 >>
-Sorry for the late reply but this patch is not needed as in my opinion
-as it is just decreasing the flexibility when only sensor hardware
-needs to be initialised and all cooling is hw controlled.
-
-Thanks,
-Amit D
->> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>> Acked-by: Tomasz Figa <t.figa@samsung.com>
+>> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 >> ---
->>  drivers/thermal/samsung/Kconfig                 | 14 +++-----------
->>  drivers/thermal/samsung/Makefile                |  2 +-
->>  drivers/thermal/samsung/exynos_thermal_common.h | 12 ------------
->>  3 files changed, 4 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/thermal/samsung/Kconfig
->> b/drivers/thermal/samsung/Kconfig
->> index f760389..04eabee 100644
->> --- a/drivers/thermal/samsung/Kconfig
->> +++ b/drivers/thermal/samsung/Kconfig
->> @@ -5,14 +5,6 @@ config EXYNOS_THERMAL
->>  	  If you say yes here you get support for the TMU (Thermal Management
->>  	  Unit) driver for SAMSUNG EXYNOS series of SoCs. This driver
->> initialises
->>  	  the TMU, reports temperature and handles cooling action if defined.
->> -	  This driver uses the Exynos core thermal APIs and TMU configuration
->> -	  data from the supported SoCs.
->> -
->> -config EXYNOS_THERMAL_CORE
->> -	bool "Core thermal framework support for EXYNOS SOCs"
->> -	depends on EXYNOS_THERMAL
->> -	help
->> -	  If you say yes here you get support for EXYNOS TMU
->> -	  (Thermal Management Unit) common registration/unregistration
->> -	  functions to the core thermal layer and also to use the generic
->> -	  CPU cooling APIs.
->> +	  This driver uses the Exynos core thermal APIs, TMU configuration data
->> +	  from the supported SoCs, common registration/unregistration functions
->> +	  to the core thermal layer and also the generic CPU cooling APIs.
->> diff --git a/drivers/thermal/samsung/Makefile
->> b/drivers/thermal/samsung/Makefile
->> index c09d830..a829107 100644
->> --- a/drivers/thermal/samsung/Makefile
->> +++ b/drivers/thermal/samsung/Makefile
->> @@ -4,4 +4,4 @@
->>  obj-$(CONFIG_EXYNOS_THERMAL)			+= exynos_thermal.o
->>  exynos_thermal-y				:= exynos_tmu.o
->>  exynos_thermal-y				+= exynos_tmu_data.o
->> -exynos_thermal-$(CONFIG_EXYNOS_THERMAL_CORE)	+= exynos_thermal_common.o
->> +exynos_thermal-y				+= exynos_thermal_common.o
->> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h
->> b/drivers/thermal/samsung/exynos_thermal_common.h
->> index 3eb2ed9..8681679 100644
->> --- a/drivers/thermal/samsung/exynos_thermal_common.h
->> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
->> @@ -88,20 +88,8 @@ struct thermal_sensor_conf {
->>  	struct device *dev;
->>  };
->>
->> -/*Functions used exynos based thermal sensor driver*/
->> -#ifdef CONFIG_EXYNOS_THERMAL_CORE
->>  void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf);
->>  int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf);
->>  void exynos_report_trigger(struct thermal_sensor_conf *sensor_conf);
->> -#else
->> -static inline void
->> -exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf) {
->> return; }
->>
->> -static inline int
->> -exynos_register_thermal(struct thermal_sensor_conf *sensor_conf) { return
->> 0; }
->> -
->> -static inline void
->> -exynos_report_trigger(struct thermal_sensor_conf *sensor_conf) { return;
->> }
->> -
->> -#endif /* CONFIG_EXYNOS_THERMAL_CORE */
->>  #endif /* _EXYNOS_THERMAL_COMMON_H */
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+>> Changes since v3:
+>>  - __init -> __exit for module exit function
+>>  - fixed nits from Sylwester
+>> Changes since v2:
+>>  - add error handling to probe callback
+>>  - fixed ordering of of_clk_{add,del}_provider
+>>  - fixed nits from Tomasz and Sylwester
+>> Changes since v1:
+>>  - add clk_unregister() calls to remove callback
+>>  - fixed minor nits from Tomasz
+>> ---
+
+Thanks
+Padma
