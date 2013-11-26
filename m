@@ -1,52 +1,68 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
-Date: Tue, 26 Nov 2013 07:56:19 +0530
-Message-ID: <CAKohpok0E=m=63KXM22usiW7Rsu59cD7Q=+k3tRcW=8269tZnQ@mail.gmail.com>
-References: <cover.1385374819.git.viresh.kumar@linaro.org>
-	<55cc3fbf9c553d669629e8ba98eef2b0ef33aaad.1385374822.git.viresh.kumar@linaro.org>
-	<40779593.MBXsTetiKz@vostro.rjw.lan>
+From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3] i2c: s3c2410: dont need CPU_FREQ transitions for
+ exynos series
+Date: Tue, 26 Nov 2013 09:37:25 +0530
+Message-ID: <CAHfPSqAT1XgA+3n_SG6R7OYPS1pruMkxE30KjCbbvR6YhDOQew@mail.gmail.com>
+References: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
+ <1384841915-8264-1-git-send-email-ch.naveen@samsung.com> <CAD=FV=Wu13jiFggjp9FZrnB0ejODR7ix_jSby+waZwpcACLwXA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <40779593.MBXsTetiKz@vostro.rjw.lan>
-Sender: cpufreq-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAD=FV=Wu13jiFggjp9FZrnB0ejODR7ix_jSby+waZwpcACLwXA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 26 November 2013 04:59, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> @@ -1259,6 +1262,8 @@ int dpm_suspend(pm_message_t state)
->>
->>       might_sleep();
->>
->> +     cpufreq_suspend();
->> +
->>
->>       mutex_lock(&dpm_list_mtx);
->>       pm_transition = state;
->>       async_error = 0;
+Hello Doug,
+
+On 26 November 2013 05:11, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> Naveen,
 >
-> Shouldn't it do cpufreq_resume() on errors?
-
-Yes and this is already done I believe. In case dpm_suspend() fails,
-dpm_resume() gets called. Isn't it?
-
->> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
->> +void cpufreq_suspend(void)
->> +{
->> +     struct cpufreq_policy *policy;
->> +
->> +     if (!has_target())
->> +             return;
->> +
->> +     pr_debug("%s: Suspending Governors\n", __func__);
->> +
->> +     list_for_each_entry(policy, &cpufreq_policy_list, policy_list)
->> +             if (__cpufreq_governor(policy, CPUFREQ_GOV_STOP))
->> +                     pr_err("%s: Failed to stop governor for policy: %p\n",
->> +                                     __func__, policy);
+> On Mon, Nov 18, 2013 at 10:18 PM, Naveen Krishna Chatradhi
+> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>> For Exynos4 and Exynos5 SoCs from Samsung the i2c clock is based
+>> on a fixed 66 MHz peripheral clock, and therefore is completely
+>> independent of the cpu frequency.
+>> Thus, registering for a CPU freq notifier is very wasteful.
+>>
+>> This patch modifes the code such that, i2c bus registers to
+>> cpu_freq_transition only if CONFIG_CPU_FREQ_S3C24XX is enabled.
+>>
+>> This change should save a bunch of cpufreq transitions calls
+>> which does not apply to exynos SoCs.
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> ---
+>> Changes since v2:
+>> None, Rebased on for-next of linux-i2c git repo.
+>>
+>> Changes since v1:
+>> Use CONFIG_CPU_FREQ_S3C24XX instead of (CONFIG_CPU_FREQ & !CONFIG_EXYNOS)
+>> As commented by Tomasz
+>>
+>>  drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> This appears to be racy.  Is it really racy, or just seemingly?
+> Can you please spin this with comments from
+> <https://patchwork.kernel.org/patch/3235091/>?  Thanks!
+Thanks for pointing out for me
 
-Why does it look racy to you? Userspace should be frozen by now,
-policy_list should be stable as well as nobody would touch it.
+To summarize, Post f023f8dd59 commit we should be using
+ARM_S3C24XX_CPUFREQ instead of ARM_S3C24XX_CPUFREQ right.
+
+Will re-spin with this changes.
+>
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Thanks & Regards,
+(: Nav :)
