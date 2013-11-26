@@ -1,59 +1,110 @@
-From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
-Date: Tue, 26 Nov 2013 21:23:15 +0100
-Message-ID: <4253729.doK7ubnxKx@vostro.rjw.lan>
-References: <cover.1385374819.git.viresh.kumar@linaro.org> <40779593.MBXsTetiKz@vostro.rjw.lan> <CAKohpok0E=m=63KXM22usiW7Rsu59cD7Q=+k3tRcW=8269tZnQ@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] watchdog: s3c2410_wdt: Handle rounding a little better
+ for timeout
+Date: Tue, 26 Nov 2013 13:34:20 -0800
+Message-ID: <CAD=FV=UX5gm3Ju8sCd3DSgyo97P6imN_Ay1zvc8yX=qTJ_mbrw@mail.gmail.com>
+References: <1385490637-10306-1-git-send-email-dianders@chromium.org>
+	<5294ED12.9080700@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAKohpok0E=m=63KXM22usiW7Rsu59cD7Q=+k3tRcW=8269tZnQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Lists linaro-kernel <linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, Patch Tracking <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kgene Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jinchoi-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Lan Tianyu <tianyu.lan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sebastian Capella <sebastian.capella-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jonghwan Choi <jhbird.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vb0-f50.google.com ([209.85.212.50]:54341 "EHLO
+	mail-vb0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753538Ab3KZVeW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Nov 2013 16:34:22 -0500
+Received: by mail-vb0-f50.google.com with SMTP id 10so4271212vbe.37
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Nov 2013 13:34:21 -0800 (PST)
+In-Reply-To: <5294ED12.9080700@roeck-us.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wim Van Sebroeck <wim@iguana.be>, Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-watchdog@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Tuesday, November 26, 2013 07:56:19 AM Viresh Kumar wrote:
-> On 26 November 2013 04:59, Rafael J. Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org> wrote:
-> >> @@ -1259,6 +1262,8 @@ int dpm_suspend(pm_message_t state)
-> >>
-> >>       might_sleep();
-> >>
-> >> +     cpufreq_suspend();
-> >> +
-> >>
-> >>       mutex_lock(&dpm_list_mtx);
-> >>       pm_transition = state;
-> >>       async_error = 0;
-> >
-> > Shouldn't it do cpufreq_resume() on errors?
-> 
-> Yes and this is already done I believe. In case dpm_suspend() fails,
-> dpm_resume() gets called. Isn't it?
+Guenter,
 
-OK
+On Tue, Nov 26, 2013 at 10:48 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 11/26/2013 10:30 AM, Doug Anderson wrote:
+>>
+>> The existing watchdog timeout worked OK but didn't deal with
+>> rounding in an ideal way when dividing out all of its clocks.
+>>
+>> Specifically if you had a timeout of 32 seconds and an input clock of
+>> 66666666, you'd end up setting a timeout of 31.9998 seconds and
+>> reporting a timeout of 31 seconds.
+>>
+>> Specifically DBG printouts showed:
+>>    s3c2410wdt_set_heartbeat: count=16666656, timeout=32, freq=520833
+>>    s3c2410wdt_set_heartbeat: timeout=32, divisor=255, count=16666656
+>> (0000ff4f)
+>> and the final timeout reported to the user was:
+>>    ((count / divisor) * divisor) / freq
+>>    (0xff4f * 255) / 520833 = 31 (truncated from 31.9998)
+>> the technically "correct" value is:
+>>    (0xff4f * 255) / (66666666.0 / 128) = 31.9998
+>>
+>> By using "DIV_ROUND_UP" we can be a little more correct.
+>>    s3c2410wdt_set_heartbeat: count=16666688, timeout=32, freq=520834
+>>    s3c2410wdt_set_heartbeat: timeout=32, divisor=255, count=16666688
+>> (0000ff50)
+>> and the final timeout reported to the user:
+>>    (0xff50 * 255) / 520834 = 32
+>> the technically "correct" value is:
+>>    (0xff50 * 255) / (66666666.0 / 128) = 32.0003
+>>
+>> We'll use a DIV_ROUND_UP to solve this, generally erroring on the side
+>> of reporting shorter values to the user and setting the watchdog to
+>> slightly longer than requested:
+>> * Round input frequency up to assume watchdog is counting faster.
+>> * Round divisions by divisor up to give us extra time.
+>>
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> ---
+>>   drivers/watchdog/s3c2410_wdt.c | 10 +++++-----
+>>   1 file changed, 5 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/watchdog/s3c2410_wdt.c
+>> b/drivers/watchdog/s3c2410_wdt.c
+>> index 7d8fd04..fe2322b 100644
+>> --- a/drivers/watchdog/s3c2410_wdt.c
+>> +++ b/drivers/watchdog/s3c2410_wdt.c
+>> @@ -188,7 +188,7 @@ static int s3c2410wdt_set_heartbeat(struct
+>> watchdog_device *wdd, unsigned timeou
+>>         if (timeout < 1)
+>>                 return -EINVAL;
+>>
+>> -       freq /= 128;
+>> +       freq = DIV_ROUND_UP(freq, 128);
+>>         count = timeout * freq;
+>>
+>>         DBG("%s: count=%d, timeout=%d, freq=%lu\n",
+>> @@ -201,20 +201,20 @@ static int s3c2410wdt_set_heartbeat(struct
+>> watchdog_device *wdd, unsigned timeou
+>>
+>>         if (count >= 0x10000) {
+>>                 for (divisor = 1; divisor <= 0x100; divisor++) {
+>> -                       if ((count / divisor) < 0x10000)
+>> +                       if (DIV_ROUND_UP(count, divisor) < 0x10000)
+>>                                 break;
+>>                 }
+>>
+> Since you are at it,
+>         divisor = DIV_ROUND_UP(count + 1, 0x10000);
+> might be faster, simpler, and easier to understand than the loop.
 
-> >> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> >> +void cpufreq_suspend(void)
-> >> +{
-> >> +     struct cpufreq_policy *policy;
-> >> +
-> >> +     if (!has_target())
-> >> +             return;
-> >> +
-> >> +     pr_debug("%s: Suspending Governors\n", __func__);
-> >> +
-> >> +     list_for_each_entry(policy, &cpufreq_policy_list, policy_list)
-> >> +             if (__cpufreq_governor(policy, CPUFREQ_GOV_STOP))
-> >> +                     pr_err("%s: Failed to stop governor for policy: %p\n",
-> >> +                                     __func__, policy);
-> >
-> > This appears to be racy.  Is it really racy, or just seemingly?
-> 
-> Why does it look racy to you? Userspace should be frozen by now,
-> policy_list should be stable as well as nobody would touch it.
+Way to see the forest for the trees!
 
-You're stopping governors while they may be in use in principle.  Do we have
-suitable synchronization in place for that?
+Your math ends up with a slightly different result than the old code,
+though.  One example is when the count is 0x1ffff.  You'll end up with
+a divider of 2 and I'll end up with a divider of 3.
 
-Rafael
+I think we just want:
+
+divisor = DIV_ROUND_UP(count, 0xffff);
+
+...that produces the same result as the old loop, but am curious to
+know why you chose the "count + 1" and "0x10000".
+
+Thanks!
+
+-Doug
