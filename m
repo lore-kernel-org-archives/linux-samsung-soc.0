@@ -1,79 +1,207 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
- where possible
-Date: Tue, 26 Nov 2013 12:20:31 +0000
-Message-ID: <20131126122031.GA14725@sirena.org.uk>
-References: <1384264120-24750-1-git-send-email-broonie@kernel.org>
- <1384264120-24750-2-git-send-email-broonie@kernel.org>
- <CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
- <20131126102311.GW14725@sirena.org.uk>
- <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V9 2/3] watchdog: s3c2410_wdt: use syscon regmap interface
+ to configure pmu register
+Date: Tue, 26 Nov 2013 18:01:02 +0530
+Message-ID: <CAL1wa8eAUKkDA41A-9HTc+=iPbGFrkQUXPMtkNFbH4Y9y-b0tA@mail.gmail.com>
+References: <1384768189-2839-1-git-send-email-l.krishna@samsung.com>
+ <1384768189-2839-3-git-send-email-l.krishna@samsung.com> <CAD=FV=W+PNhUY+KC6DoMqRuEQFsgdffP466x=VTdGR-3L8ibFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CXwywHnYJ7GE90zd"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:49663 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756108Ab3KZMUk (ORCPT
+Received: from mail-we0-f173.google.com ([74.125.82.173]:61338 "EHLO
+	mail-we0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756727Ab3KZMbY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Nov 2013 07:20:40 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
+	Tue, 26 Nov 2013 07:31:24 -0500
+In-Reply-To: <CAD=FV=W+PNhUY+KC6DoMqRuEQFsgdffP466x=VTdGR-3L8ibFQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, Padmavathi Venna <padma.v@samsung.com>
+To: Doug Anderson <dianders@chromium.org>, Wim Van Sebroeck <wim@iguana.be>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, "cpgs ." <cpgs@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Guenter Roeck <linux@roeck-us.net>
+
+Hi Doug,
+
+Thanks for reviewing the patch series.
+
+On Tue, Nov 26, 2013 at 4:14 AM, Doug Anderson <dianders@chromium.org> wrote:
+>
+> Hi Leela Krishna,
+>
+> On Mon, Nov 18, 2013 at 1:49 AM, Leela Krishna Amudala
+> <l.krishna@samsung.com> wrote:
+> > Add device tree support for exynos5250 and 5420 SoCs and use syscon regmap interface
+> > to configure AUTOMATIC_WDT_RESET_DISABLE and MASK_WDT_RESET_REQUEST registers of PMU
+> > to mask/unmask enable/disable of watchdog in probe and s2r scenarios.
+> >
+> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> > ---
+> >  .../devicetree/bindings/watchdog/samsung-wdt.txt   |   21 ++-
+> >  drivers/watchdog/Kconfig                           |    1 +
+> >  drivers/watchdog/s3c2410_wdt.c                     |  145 ++++++++++++++++++--
+> >  3 files changed, 157 insertions(+), 10 deletions(-)
+>
+> ...
+>
+> > +struct s3c2410_wdt_variant {
+> > +       int disable_reg;
+> > +       int mask_reset_reg;
+> > +       int mask_bit;
+> > +       u32 quirks;
+> > +};
+>
+> Ideally you could add descriptions.  I added them in a patch based on
+> yours <https://chromium-review.googlesource.com/#/c/177935/1/drivers/watchdog/s3c2410_wdt.c>,
+> but since yours hasn't landed perhaps you can do it directly?
+>
+> /**
+>  * struct s3c2410_wdt_variant - Per-variant config data
+>  *
+>  * @disable_reg: Offset in pmureg for the register that disables the watchdog
+>  * timer reset functionality.
+>  * @mask_reset_reg: Offset in pmureg for the register that masks the watchdog
+>  * timer reset functionality.
+>  * @mask_bit: Bit number for the watchdog timer in the disable register and the
+>  * mask reset register.
+>  * @quirks: A bitfield of quirks.
+>  */
+>
+
+Okay, Added the above descriptions
+
+> > +
+> >  struct s3c2410_wdt {
+> >         struct device           *dev;
+> >         struct clk              *clock;
+> > @@ -94,7 +107,49 @@ struct s3c2410_wdt {
+> >         unsigned long           wtdat_save;
+> >         struct watchdog_device  wdt_device;
+> >         struct notifier_block   freq_transition;
+> > +       struct s3c2410_wdt_variant *drv_data;
+> > +       struct regmap *pmureg;
+>
+> Total nit, but everything else in this structure is tab aligned and
+> your new elements are not.
+>
+
+Me and Tomasz had a discussion about it and he replied for this comment
+
+> >  static int s3c2410wdt_probe(struct platform_device *pdev)
+> >  {
+> >         struct device *dev;
+> > @@ -354,6 +443,16 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+> >         spin_lock_init(&wdt->lock);
+> >         wdt->wdt_device = s3c2410_wdd;
+> >
+> > +       wdt->drv_data = get_wdt_drv_data(pdev);
+> > +       if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
+> > +               wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
+> > +                                                       "samsung,syscon-phandle");
+> > +               if (IS_ERR(wdt->pmureg)) {
+> > +                       dev_err(dev, "syscon regmap lookup failed.\n");
+> > +                       return PTR_ERR(wdt->pmureg);
+>
+> nit: this function appears to never call "return" directly.  You'll
+> match other error handling better if you do:
+>
+> ret = PTR_ERR(wdt->pmureg);
+> goto err;
+>
+> (if someone else has already said they don't like that, just ignore me).
+>
+
+Will consider Tomasz suggestion for this
+
+> > +               }
+> > +       }
+> > +
+> >         wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> >         if (wdt_irq == NULL) {
+> >                 dev_err(dev, "no irq resource specified\n");
+> > @@ -444,6 +543,14 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+> >                  (wtcon & S3C2410_WTCON_RSTEN) ? "en" : "dis",
+> >                  (wtcon & S3C2410_WTCON_INTEN) ? "en" : "dis");
+> >
+> > +       if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
+> > +               ret = s3c2410wdt_mask_and_disable_reset(wdt, false);
+> > +               if (ret < 0) {
+> > +                       dev_err(wdt->dev, "failed to update pmu register");
+> > +                       goto err_cpufreq;
+> > +               }
+> > +       }
+>
+> There are a few minor problems here:
+>
+> 1. You're putting a potential failure condition _after_ printing that
+> the watchdog is enabled.  You should put your code above the
+> "dev_info".
+>
+
+Yes moved it like below
+
+static int s3c2410wdt_probe(struct platform_device *pdev)
+{
+
+[snip]
+
+if (tmr_atboot && started == 0) {
+                dev_info(dev, "starting watchdog timer\n");
+                s3c2410wdt_start(&wdt->wdt_device);
+}
+[snip]
 
 
---CXwywHnYJ7GE90zd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> 2. Error handling doesn't seem quite right.  If you fail here you'll
+> be returning an error but you might have started the watchdog already.
+>  Perhaps you should be moving the "mask_and_disable" up a little and
+> then you an undo it if needed?
+>
 
-On Tue, Nov 26, 2013 at 04:18:41PM +0530, Padma Venkat wrote:
+Above mentioned comment will take care of this
 
-> I tried this on linux-samsung tree by applying all the patches from
-> you and Lars.
+> 3. I think it would be fine to put the "dev_err" directly in the
+> s3c2410wdt_mask_and_disable_reset() as per Guenter, but still return
+> the error code.  You'll still use the error code here, right?
+>
 
-Can you use -next plus the posted patches please in case there's
-something been misplaced, it'll help if we're working from the same code
-base?
+Yes, used dev_err and moved it into s3c2410wdt_mask_and_disable_reset()
+and removed the dev_err message in the if (ret < 0) check
 
-> I initialised the dma_data for secondary dai as there is a crash with out that.
+> > +
+> >         return 0;
+> >
+> >   err_cpufreq:
+> > @@ -459,8 +566,15 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+> >
+> >  static int s3c2410wdt_remove(struct platform_device *dev)
+> >  {
+> > +       int ret;
+> >         struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
+> >
+> > +       if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
+> > +               ret = s3c2410wdt_mask_and_disable_reset(wdt, true);
+>
+> This function does return an error.  Why not pass the error on
+> through?  The system wouldn't be in such a stellar state, but if
+> regmap is failing it's probably pretty bad anyway...
+>
+>
 
-Can you please send a patch for that if you find it's needed?  Like I
-said in reply to your earlier mail it looks like this doesn't work
-anyway so mainline ought to be fixed.
+Yes, returning the error here and doing the same in other functions also
+like suspend and resume
 
-> Then I used aplay after running the mixer settings.
-> ./aplay /mars/share/sounds/alsa/Front_Center.wav
+Will post the next version tomorrow
 
-So this is 16 bit stereo or something, and did it work beforehand?  Like
-I say I suspect the DMA is ending up being configured with the wrong
-transfer size, can you check what actually happens there please - what's
-different about the configuration that the DMA controller gets?  I don't
-have any Exynos systems with mainline audio support so I can't test
-anything myself.
+Best Wishes,
+Leela Krishna.
 
---CXwywHnYJ7GE90zd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSlJIMAAoJELSic+t+oim9by4P/2sUipayD6COz2TXKNtQ9E6T
-rcpr0pPArGjEE+4XVGdBe+qsITL+Kh6P4N8BXm5LRpZEvTZJ3Hy7nPE5odmef5YK
-6PZkD79wrJhEPgmNu9Xxsm0AX3JAd7aY+ito8IAHRH4gWuqQ7MFYFTNA8fbO/8ZW
-LK1OshegthEQ6OWy0sTd3Q2XIYPn7CISNquoX30xveNGfxA+T1/y214+0aVUpJKM
-+ZU5HxoVIgYEcSepN4gmbCrzO0Op6Xy2FDzs6PPQp5qdxdF2SC1VhQlumvJ5Mt9w
-1mWm7NDZxPomm0sYYrwbusUVT3JPkYeo9A1Q604hKsv1Y1aPFQQjDy2c5jRfWQRl
-uCIHqkn0vqtKhr5RHTtx+eajFGnr3o+VVBv1Duvgt50X+zlx36wY/rTaD3bCFTxv
-TqVSWM8rXQuulV0znygtorqhDVHP16mCqLJ99qUXF0qoLFj/Tm0PmwSde71CwqHp
-EoQwwfT/3DcbvvlIkrVXrAznIC4SasUFPN/yaK09OOboM5NdbcpL+Q2rtpMkuka+
-y4sZYYYOkBJBW03KKeEvEzBYw2MJyu2ncTYUL8PBRLthGoAllg2XgHv0e3Qg/tn4
-1M7zIy6p7v4D92BLvUM2FTaQMAcIEr6zfY8DFyqeDc62D+jytUb/2AtnP0HM2u/4
-Aw9ZlYbcN64zfb9tkUZT
-=G+K6
------END PGP SIGNATURE-----
-
---CXwywHnYJ7GE90zd--
+>
+> Nothing here is terrible and I wouldn't be upset if you landed these
+> as-is, but since it seems that Guenter is requesting a spin.  Perhaps
+> you could address my comments, too?
+>
+>
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
