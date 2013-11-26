@@ -1,68 +1,62 @@
-From: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3] i2c: s3c2410: dont need CPU_FREQ transitions for
- exynos series
-Date: Tue, 26 Nov 2013 09:37:25 +0530
-Message-ID: <CAHfPSqAT1XgA+3n_SG6R7OYPS1pruMkxE30KjCbbvR6YhDOQew@mail.gmail.com>
-References: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
- <1384841915-8264-1-git-send-email-ch.naveen@samsung.com> <CAD=FV=Wu13jiFggjp9FZrnB0ejODR7ix_jSby+waZwpcACLwXA@mail.gmail.com>
+From: viresh kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
+Date: Tue, 26 Nov 2013 09:42:43 +0530
+Message-ID: <52941FBB.7070603@linaro.org>
+References: <cover.1385374819.git.viresh.kumar@linaro.org> <55cc3fbf9c553d669629e8ba98eef2b0ef33aaad.1385374822.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAD=FV=Wu13jiFggjp9FZrnB0ejODR7ix_jSby+waZwpcACLwXA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "cpgs ." <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55cc3fbf9c553d669629e8ba98eef2b0ef33aaad.1385374822.git.viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org
+Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nm-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jinchoi-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, tianyu.lan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sebastian.capella-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, jhbird.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Doug,
+On Monday 25 November 2013 07:41 PM, Viresh Kumar wrote:
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index dc196bb..6d93f91 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -255,6 +255,9 @@ struct cpufreq_driver {
+>  int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+>  int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+>  
+> +void cpufreq_suspend(void);
+> +void cpufreq_resume(void);
+> +
+>  const char *cpufreq_get_current_driver(void);
+>  
+>  static inline void cpufreq_verify_within_limits(struct cpufreq_policy *policy,
 
-On 26 November 2013 05:11, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> Naveen,
->
-> On Mon, Nov 18, 2013 at 10:18 PM, Naveen Krishna Chatradhi
-> <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> For Exynos4 and Exynos5 SoCs from Samsung the i2c clock is based
->> on a fixed 66 MHz peripheral clock, and therefore is completely
->> independent of the cpu frequency.
->> Thus, registering for a CPU freq notifier is very wasteful.
->>
->> This patch modifes the code such that, i2c bus registers to
->> cpu_freq_transition only if CONFIG_CPU_FREQ_S3C24XX is enabled.
->>
->> This change should save a bunch of cpufreq transitions calls
->> which does not apply to exynos SoCs.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> ---
->> Changes since v2:
->> None, Rebased on for-next of linux-i2c git repo.
->>
->> Changes since v1:
->> Use CONFIG_CPU_FREQ_S3C24XX instead of (CONFIG_CPU_FREQ & !CONFIG_EXYNOS)
->> As commented by Tomasz
->>
->>  drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> Can you please spin this with comments from
-> <https://patchwork.kernel.org/patch/3235091/>?  Thanks!
-Thanks for pointing out for me
+A minor fix here to get kernel compiled without cpufreq support enabled:
 
-To summarize, Post f023f8dd59 commit we should be using
-ARM_S3C24XX_CPUFREQ instead of ARM_S3C24XX_CPUFREQ right.
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 8d8b2f4..d40809d 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -259,9 +259,6 @@ struct cpufreq_driver {
+ int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+ int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
 
-Will re-spin with this changes.
->
-> -Doug
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-void cpufreq_suspend(void);
+-void cpufreq_resume(void);
+-
+ const char *cpufreq_get_current_driver(void);
 
+ static inline void cpufreq_verify_within_limits(struct cpufreq_policy *policy,
+@@ -287,6 +284,14 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
+                        policy->cpuinfo.max_freq);
+ }
 
-
--- 
-Thanks & Regards,
-(: Nav :)
++#ifdef CONFIG_CPU_FREQ
++void cpufreq_suspend(void);
++void cpufreq_resume(void);
++#elif
++static inline void cpufreq_suspend(void) {}
++static inline void cpufreq_resume(void) {}
++#endif
++
+ /*********************************************************************
+  *                     CPUFREQ NOTIFIER INTERFACE                    *
+  *********************************************************************/
