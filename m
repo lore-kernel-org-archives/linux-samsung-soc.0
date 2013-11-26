@@ -1,48 +1,35 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Only register for cpufreq on ARM_S3C24XX_CPUFREQ
-Date: Tue, 26 Nov 2013 01:03:49 +0100
-Message-ID: <12609399.rlV8OtdFZt@flatron>
-References: <1385420137-32725-1-git-send-email-dianders@chromium.org> <1385422603-22684-1-git-send-email-dianders@chromium.org>
+From: Ben Dooks <ben@trinity.fluff.org>
+Subject: Re: [PATCH] watchdog: s3c2410_wdt: Only register for cpufreq on
+ CPU_FREQ_S3C24XX
+Date: Tue, 26 Nov 2013 00:08:31 +0000
+Message-ID: <20131126000831.GW12108@trinity.fluff.org>
+References: <1385420137-32725-1-git-send-email-dianders@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f42.google.com ([209.85.214.42]:46465 "EHLO
-	mail-bk0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753680Ab3KZADv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Nov 2013 19:03:51 -0500
-In-Reply-To: <1385422603-22684-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1385420137-32725-1-git-send-email-dianders@chromium.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Doug Anderson <dianders@chromium.org>
-Cc: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-watchdog@vger.kernel.org, Leela Krishna Amudala <l.krishna@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, Olof Johansson <olof@lixom.net>, Guenter Roeck <linux@roeck-us.net>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday 25 of November 2013 15:36:43 Doug Anderson wrote:
+On Mon, Nov 25, 2013 at 02:55:37PM -0800, Doug Anderson wrote:
 > On modern SoCs the watchdog timer is parented on a clock that doesn't
 > change every time we have a cpufreq change.  That means we don't need
 > to constantly adjust the watchdog timer, so avoid registering for and
 > dealing with cpufreq transitions unless we've actually got
-> CONFIG_ARM_S3C24XX_CPUFREQ defined.
-> 
-> Note that this is more than just an optimization.  The s3c2410
-> watchdog driver actually pats the watchdog on every CPU frequency
-> change.  On modern systems these happen many times per second (even in
-> a system where "nothing" is happening).  That effectively makes any
-> userspace watchdog program useless (the watchdog is constantly patted
-> by the kernel).  If we need ARM_S3C24XX_CPUFREQ defined on a
-> multiplatform kernel we'll need to make sure that kernel supports
-> common clock and change this to user common clock framework.
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> ---
-> Changes in v2:
-> - Use the updated config name.
-> 
->  drivers/watchdog/s3c2410_wdt.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> CPU_FREQ_S3C24XX defined.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-
-Best regards,
-Tomasz
+The S3C2410 to at-least S3C2440 there is only one PLL/clock-divider
+set so changing any part of that can change frequency supplied to
+the watchdog.
