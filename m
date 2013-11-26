@@ -1,24 +1,39 @@
-From: Dave Martin <Dave.Martin-5wv7dgnIgG8@public.gmane.org>
+From: Dave Martin <Dave.Martin@arm.com>
 Subject: Re: [PATCH v4 4/4] ARM: EXYNOS: add Exynos Dual Cluster Support
-Date: Tue, 26 Nov 2013 15:30:26 +0000
-Message-ID: <20131126153026.GB2355@e103592.cambridge.arm.com>
+Date: Tue, 26 Nov 2013 16:40:33 +0000
+Message-ID: <20131126164033.GD2355@e103592.cambridge.arm.com>
+References: <1385456288-20398-1-git-send-email-v.tyrtov@samsung.com>
+ <1385456288-20398-5-git-send-email-v.tyrtov@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, nicolas.pitre-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Naour Romain <romain.naour-oid7hba3+9NWj0EZb7rXcA@public.gmane.org>, Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Landley <rob-VoJi6FS/r0vR7s880joybQ@public.gmane.org>
+In-Reply-To: <1385456288-20398-5-git-send-email-v.tyrtov@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Heiko Stuebner <heiko@sntech.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Naour Romain <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.or
 List-Id: linux-samsung-soc@vger.kernel.org
 
+[Resending to to a mail snafu on my end -- apologies for any duplicates
+of this message received]
+
 On Tue, Nov 26, 2013 at 12:58:08PM +0400, Vyacheslav Tyrtov wrote:
-> From: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> From: Tarek Dakhran <t.dakhran@samsung.com>
 > 
 > Add EDCS(Exynos Dual Cluster Support) for Samsung Exynos5410 SoC.
 > This enables all 8 cores, 4 x A7 and 4 x A15 run at the same time.
 > 
-> Signed-off-by: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
+> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
 > ---
 >  arch/arm/mach-exynos/Makefile |   2 +
 >  arch/arm/mach-exynos/edcs.c   | 297 ++++++++++++++++++++++++++++++++++++++++++
@@ -45,7 +60,7 @@ On Tue, Nov 26, 2013 at 12:58:08PM +0400, Vyacheslav Tyrtov wrote:
 > + * arch/arm/mach-exynos/edcs.c - exynos dual cluster power management support
 > + *
 > + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + * Author: Tarek Dakhran <t.dakhran-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> + * Author: Tarek Dakhran <t.dakhran@samsung.com>
 > + *
 > + * This program is free software; you can redistribute it and/or modify
 > + * it under the terms of the GNU General Public License version 2 as
@@ -410,9 +425,5 @@ Cheers
 > 
 > _______________________________________________
 > linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> linux-arm-kernel@lists.infradead.org
 > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
