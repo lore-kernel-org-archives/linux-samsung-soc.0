@@ -1,14 +1,15 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/2] ASoC: samsung: Provide helper for DMA
- init
-Date: Tue, 26 Nov 2013 10:15:02 +0000
-Message-ID: <20131126101502.GV14725@sirena.org.uk>
+Subject: Re: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
+ where possible
+Date: Tue, 26 Nov 2013 10:23:11 +0000
+Message-ID: <20131126102311.GW14725@sirena.org.uk>
 References: <1384264120-24750-1-git-send-email-broonie@kernel.org>
- <CAAgF-BdUWGun6m2+zxMhUU1_DpZviHg-REnsGvh+bWgpm2NuLg@mail.gmail.com>
+ <1384264120-24750-2-git-send-email-broonie@kernel.org>
+ <CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============5900015828737594014=="
+Content-Type: multipart/mixed; boundary="===============1456736532150454773=="
 Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAAgF-BdUWGun6m2+zxMhUU1_DpZviHg-REnsGvh+bWgpm2NuLg@mail.gmail.com>
+In-Reply-To: <CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
 List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
  <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
 List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
@@ -23,58 +24,56 @@ Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kerne
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============5900015828737594014==
+--===============1456736532150454773==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yV94raM4eJLN8srE"
+	protocol="application/pgp-signature"; boundary="vHrcnSuaBi45WmF/"
 Content-Disposition: inline
 
 
---yV94raM4eJLN8srE
+--vHrcnSuaBi45WmF/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Nov 26, 2013 at 10:54:57AM +0530, Padma Venkat wrote:
+On Tue, Nov 26, 2013 at 10:55:17AM +0530, Padma Venkat wrote:
 
-> > -       snd_soc_dai_init_dma_data(dai, &i2s->dma_playback, &i2s->dma_capture);
-> > +       samsung_asoc_init_dma_data(dai, &i2s->dma_playback, &i2s->dma_capture);
+> I tested this patch set on smdk5420 i2s. During playback audio playing
+> fast and there is underrun error like below.
+> underrun!!! (at least 0.061 ms long)
+> underrun!!! (at least 0.043 ms long)
 
-> we have to initialize the dma data for i2s secondary dai also
-> otherwise there is a crash in dmaengine_pcm_new during probe.
+This sounds like it's setting the transfer width incorrectly, though I
+can't immediately see how that's changed unless the DMA driver is not
+working correctly.  What exactly did you do to test?
 
-This should be called when both DAIs are probed...  in any case, if this
-is broken presumably the driver is already broken given that this is
-just a substitution?  I've no systems capable of actually running audio
-with the later DAIs.
-
---yV94raM4eJLN8srE
+--vHrcnSuaBi45WmF/
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSlHSjAAoJELSic+t+oim9FEsP/A/c0QoNFecJurNdd57geL6w
-tBPAuX6B3niaefpxpMdnuf7FwU59HxXPYR6fydJLko1hN91MyvDppuDW0kbHw2sN
-g1QHI/+eN28hBrLwpvpQz08FjlwuWxHHrfytiJdaj/EE9zeEwKXrDpdNTsrxOWWY
-FiF8XR4D/BLZdqfLBRoD7oVfxw8nYQ3QucfYgtSv/XsK40KFS2nGk2yJpSa/oGF3
-9zj33vGVojPDBJNs3z4FnDCKHefZ9xX2GksuvkDa/NMBMhm4FwjtWIo66WWJ8Fgm
-0BCOKLv01RiLWxDjYkzqbOiAwspJloGU98cvDtsFS4h2wmKXrqzhD2qhSeO2wFWd
-bOqyKriJDLvU0lrWi0AdhHpjOHTGqwdA7+23RvtYrAaBRyISnmUXQw3xvsWcoGJb
-t5iQcuDeeKTVenjKXY5J/HUakH4i0/ezU/iQEq9ONZM/u8s6e9YxwwmguWF9ljho
-Rlfp1TS7my58AfavRQEvL3GSe+hK6sCdSKzYh8ZnSkSb+oZbt3hJTK9YtzNMcg1U
-KbHthhWuujb0zL3hh0/hVxHBp3slPRERuvJN4NaPLM+y1DVdR5w7SLC3UJRmbLvm
-jAwO2uX7Cl8tOMyVC4C2/6RGVuaFboKB1ZLRlCc7E9VOrTM4/bD+M0RCd0Wy4MZ0
-B6qb5yTAFleDJlfKzLy4
-=VKlc
+iQIcBAEBAgAGBQJSlHaLAAoJELSic+t+oim9DXUQAJhcwoqibr6Y59jKPWz1upqB
+iaoQcaWqAkIxv/xu56D4xvXj3NvR4PQcZWMRD5eiprh2sZCsLGyBumC01x7ozDcO
+lqiJrzk0AiLtO/4o2aA+RwDdlizxmGVNEVYG/oDOqZsE6XrnyLc0iXnFxoSlHuft
+a4OIYcOWow9GmUGAt5TdkmurBAfAuzdlU8Ssb4L0Oo7lcbO85+7kYUs0ggVfOSJw
+QM04+mydltK/0aAnn9JXnc9ioToYv+TNGGmiYA3g6ImBRlv5eiNU0NHVcDYNHTFH
+1JIwus4miPtyOdAnGjXVTOS5wNxN21NH3gjWNKj1RHiHVwOBwDwge1vodFGCWkqt
+DLaUGa4nr0daiHCBpQalbN/kkkAlma4eBlh5ksp1kfOd3pvEUjGfsO5G8TIJkMm3
+YJ6j5H7z8NjC2yQx8dycS1mAbZzGXW8TsIMw1ZPZ0jL22FrdMawGfHCeMMXsik0y
+OIYbFpjvkYn1AFe5DL6m7VHSX+JjBstD5FZLNy+PoyMlvzGdTb9tmMSkuqCO6SI9
+qOFS7G1tCDKjFrIDZe50/SBgujHvTWtOJrr2Vsmxem6SxnuTDWi12j/CHmREAziJ
++v49l4Czsz+HzQV6u8ANyaYN1GNvkxnS1zsQ1h2Pxfs56Lz0SSRetaEunFyDqAo+
+l8+1niaOK1Tbz94AJGg3
+=nUxc
 -----END PGP SIGNATURE-----
 
---yV94raM4eJLN8srE--
+--vHrcnSuaBi45WmF/--
 
---===============5900015828737594014==
+--===============1456736532150454773==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Content-Disposition: inline
 
 
---===============5900015828737594014==--
+--===============1456736532150454773==--
