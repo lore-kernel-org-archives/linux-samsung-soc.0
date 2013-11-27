@@ -1,105 +1,71 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2] watchdog: s3c2410_wdt: Handle rounding a little better
- for timeout
-Date: Tue, 26 Nov 2013 17:04:09 -0800
-Message-ID: <52954509.1060508@roeck-us.net>
-References: <1385490637-10306-1-git-send-email-dianders@chromium.org> <1385513839-17181-1-git-send-email-dianders@chromium.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH V3 1/6] cpufreq: suspend governors on system suspend/hibernate
+Date: Wed, 27 Nov 2013 02:42:27 +0100
+Message-ID: <4787675.sJF8mqYyxv@vostro.rjw.lan>
+References: <cover.1385374819.git.viresh.kumar@linaro.org> <CAKohpok0E=m=63KXM22usiW7Rsu59cD7Q=+k3tRcW=8269tZnQ@mail.gmail.com> <4253729.doK7ubnxKx@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:58102 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759024Ab3K0BEL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Nov 2013 20:04:11 -0500
-In-Reply-To: <1385513839-17181-1-git-send-email-dianders@chromium.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <4253729.doK7ubnxKx@vostro.rjw.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Wim Van Sebroeck <wim@iguana.be>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 11/26/2013 04:57 PM, Doug Anderson wrote:
-> The existing watchdog timeout worked OK but didn't deal with
-> rounding in an ideal way when dividing out all of its clocks.
->
-> Specifically if you had a timeout of 32 seconds and an input clock of
-> 66666666, you'd end up setting a timeout of 31.9998 seconds and
-> reporting a timeout of 31 seconds.
->
-> Specifically DBG printouts showed:
->    s3c2410wdt_set_heartbeat: count=16666656, timeout=32, freq=520833
->    s3c2410wdt_set_heartbeat: timeout=32, divisor=255, count=16666656 (0000ff4f)
-> and the final timeout reported to the user was:
->    ((count / divisor) * divisor) / freq
->    (0xff4f * 255) / 520833 = 31 (truncated from 31.9998)
-> the technically "correct" value is:
->    (0xff4f * 255) / (66666666.0 / 128) = 31.9998
->
-> By using "DIV_ROUND_UP" we can be a little more correct.
->    s3c2410wdt_set_heartbeat: count=16666688, timeout=32, freq=520834
->    s3c2410wdt_set_heartbeat: timeout=32, divisor=255, count=16666688 (0000ff50)
-> and the final timeout reported to the user:
->    (0xff50 * 255) / 520834 = 32
-> the technically "correct" value is:
->    (0xff50 * 255) / (66666666.0 / 128) = 32.0003
->
-> We'll use a DIV_ROUND_UP to solve this, generally erroring on the side
-> of reporting shorter values to the user and setting the watchdog to
-> slightly longer than requested:
-> * Round input frequency up to assume watchdog is counting faster.
-> * Round divisions by divisor up to give us extra time.
->
-> At the same time we can avoid a for loop by just doing the right math.
->
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+On Tuesday, November 26, 2013 09:23:15 PM Rafael J. Wysocki wrote:
+> On Tuesday, November 26, 2013 07:56:19 AM Viresh Kumar wrote:
+> > On 26 November 2013 04:59, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > >> @@ -1259,6 +1262,8 @@ int dpm_suspend(pm_message_t state)
+> > >>
+> > >>       might_sleep();
+> > >>
+> > >> +     cpufreq_suspend();
+> > >> +
+> > >>
+> > >>       mutex_lock(&dpm_list_mtx);
+> > >>       pm_transition = state;
+> > >>       async_error = 0;
+> > >
+> > > Shouldn't it do cpufreq_resume() on errors?
+> > 
+> > Yes and this is already done I believe. In case dpm_suspend() fails,
+> > dpm_resume() gets called. Isn't it?
+> 
+> OK
+> 
+> > >> diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > >> +void cpufreq_suspend(void)
+> > >> +{
+> > >> +     struct cpufreq_policy *policy;
+> > >> +
+> > >> +     if (!has_target())
+> > >> +             return;
+> > >> +
+> > >> +     pr_debug("%s: Suspending Governors\n", __func__);
+> > >> +
+> > >> +     list_for_each_entry(policy, &cpufreq_policy_list, policy_list)
+> > >> +             if (__cpufreq_governor(policy, CPUFREQ_GOV_STOP))
+> > >> +                     pr_err("%s: Failed to stop governor for policy: %p\n",
+> > >> +                                     __func__, policy);
+> > >
+> > > This appears to be racy.  Is it really racy, or just seemingly?
+> > 
+> > Why does it look racy to you? Userspace should be frozen by now,
+> > policy_list should be stable as well as nobody would touch it.
+> 
+> You're stopping governors while they may be in use in principle.  Do we have
+> suitable synchronization in place for that?
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Anyway, if you did what I asked you to do and put the cpufreq suspend/resume
+into dpm_suspend/resume_noirq(), I'd probably take this for 3.13.  However,
+since you've decided to put those things somewhere else thus making the
+change much more intrusive, I can only queue it up for 3.14.
 
-> ---
-> Changes in v2:
-> - Avoid a for loop as per Guenter.
->
->   drivers/watchdog/s3c2410_wdt.c | 13 +++++--------
->   1 file changed, 5 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 7d8fd04..d9bcd6e 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -188,7 +188,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeou
->   	if (timeout < 1)
->   		return -EINVAL;
->
-> -	freq /= 128;
-> +	freq = DIV_ROUND_UP(freq, 128);
->   	count = timeout * freq;
->
->   	DBG("%s: count=%d, timeout=%d, freq=%lu\n",
-> @@ -200,21 +200,18 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_device *wdd, unsigned timeou
->   	*/
->
->   	if (count >= 0x10000) {
-> -		for (divisor = 1; divisor <= 0x100; divisor++) {
-> -			if ((count / divisor) < 0x10000)
-> -				break;
-> -		}
-> +		divisor = DIV_ROUND_UP(count, 0xffff);
->
-> -		if ((count / divisor) >= 0x10000) {
-> +		if (divisor > 0x100) {
->   			dev_err(wdt->dev, "timeout %d too big\n", timeout);
->   			return -EINVAL;
->   		}
->   	}
->
->   	DBG("%s: timeout=%d, divisor=%d, count=%d (%08x)\n",
-> -	    __func__, timeout, divisor, count, count/divisor);
-> +	    __func__, timeout, divisor, count, DIV_ROUND_UP(count, divisor));
->
-> -	count /= divisor;
-> +	count = DIV_ROUND_UP(count, divisor);
->   	wdt->count = count;
->
->   	/* update the pre-scaler */
->
+This means I'm going to take the Tianyu's patch as a stop gap for 3.13.
+
+Thanks!
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
