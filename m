@@ -1,86 +1,72 @@
-From: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH V10 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
- exynos5420 dtsi files
-Date: Wed, 27 Nov 2013 17:20:08 +0530
-Message-ID: <1385553010-30183-2-git-send-email-l.krishna@samsung.com>
-References: <1385553010-30183-1-git-send-email-l.krishna@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1385553010-30183-1-git-send-email-l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org
-Cc: dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
+ where possible
+Date: Wed, 27 Nov 2013 18:08:47 +0530
+Message-ID: <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
+References: <1384264120-24750-1-git-send-email-broonie@kernel.org>
+	<1384264120-24750-2-git-send-email-broonie@kernel.org>
+	<CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
+	<20131126102311.GW14725@sirena.org.uk>
+	<CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
+	<20131126122031.GA14725@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f47.google.com ([209.85.216.47]:62919 "EHLO
+	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751749Ab3K0Mis (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Nov 2013 07:38:48 -0500
+Received: by mail-qa0-f47.google.com with SMTP id w5so5675431qac.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2013 04:38:47 -0800 (PST)
+In-Reply-To: <20131126122031.GA14725@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, Padmavathi Venna <padma.v@samsung.com>
 
-This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
-handle PMU register accesses in a centralized way using syscon driver
+Hi Mark,
 
-Signed-off-by: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
----
- Documentation/devicetree/bindings/arm/samsung/pmu.txt |   16 ++++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
- arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
- 3 files changed, 26 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+On Tue, Nov 26, 2013 at 5:50 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Tue, Nov 26, 2013 at 04:18:41PM +0530, Padma Venkat wrote:
+>
+>> I tried this on linux-samsung tree by applying all the patches from
+>> you and Lars.
+>
+> Can you use -next plus the posted patches please in case there's
+> something been misplaced, it'll help if we're working from the same code
+> base?
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-new file mode 100644
-index 0000000..307e727
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -0,0 +1,16 @@
-+SAMSUNG Exynos SoC series PMU Registers
-+
-+Properties:
-+ - name : should be 'syscon';
-+ - compatible : should contain two values. First value must be one from following list:
-+		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
-+		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
-+		second value must be always "syscon".
-+
-+ - reg : offset and length of the register set.
-+
-+Example :
-+pmu_syscon: syscon@10040000 {
-+	compatible = "samsung,exynos5250-pmu", "syscon";
-+	reg = <0x10040000 0x5000>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 9db5047..2f264ad 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -163,6 +163,11 @@
- 		interrupts = <0 47 0>;
- 	};
- 
-+	pmu_syscon: syscon@10040000 {
-+		compatible = "samsung,exynos5250-pmu", "syscon";
-+		reg = <0x10040000 0x5000>;
-+	};
-+
- 	watchdog {
- 		clocks = <&clock 336>;
- 		clock-names = "watchdog";
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 09aa06c..06e97a7 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -310,4 +310,9 @@
- 		clocks = <&clock 431>, <&clock 143>;
- 		clock-names = "mixer", "sclk_hdmi";
- 	};
-+
-+	pmu_syscon: syscon@10040000 {
-+		compatible = "samsung,exynos5420-pmu", "syscon";
-+		reg = <0x10040000 0x5000>;
-+	};
- };
--- 
-1.7.10.4
+Sound tree has some booting issue on smdk5420 so I tried this on
+linux-samsung tree.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>> I initialised the dma_data for secondary dai as there is a crash with out that.
+>
+> Can you please send a patch for that if you find it's needed?  Like I
+> said in reply to your earlier mail it looks like this doesn't work
+> anyway so mainline ought to be fixed.
+
+Okay. I will send a patch.
+
+>
+>> Then I used aplay after running the mixer settings.
+>> ./aplay /mars/share/sounds/alsa/Front_Center.wav
+>
+> So this is 16 bit stereo or something, and did it work beforehand?  Like
+> I say I suspect the DMA is ending up being configured with the wrong
+> transfer size, can you check what actually happens there please - what's
+> different about the configuration that the DMA controller gets?  I don't
+> have any Exynos systems with mainline audio support so I can't test
+> anything myself.
+
+This stream was working before. dma_size in i2s_hw_params not getting
+effected as dma_data is getting initialized only at dai probe time. So
+by default the dma_size is always 4 which is initialized at driver
+probe time. The fifo_size of dai is also always 0. It is not getting
+passed from dai driver. I just hard coded the dma_size to 2 and
+fifo_size to 32 then I can hear the audio only on right ear phone.
+Still underrun error message appears.
+
+Thanks
+Padma
