@@ -1,385 +1,184 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH V10 2/3] watchdog: s3c2410_wdt: use syscon regmap interface
- to configure pmu register
-Date: Wed, 27 Nov 2013 08:58:11 -0800
-Message-ID: <529624A3.2030802@roeck-us.net>
-References: <1385553010-30183-1-git-send-email-l.krishna@samsung.com> <1385553010-30183-3-git-send-email-l.krishna@samsung.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH v4 4/4] ARM: EXYNOS: add Exynos Dual Cluster Support
+Date: Wed, 27 Nov 2013 12:44:21 -0500 (EST)
+Message-ID: <alpine.LFD.2.10.1311271227320.9667@knanqh.ubzr>
+References: <1385456288-20398-1-git-send-email-v.tyrtov@samsung.com>
+ <1385456288-20398-5-git-send-email-v.tyrtov@samsung.com>
+ <20131126164033.GD2355@e103592.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:63424 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756482Ab3K0Q6P (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Nov 2013 11:58:15 -0500
-In-Reply-To: <1385553010-30183-3-git-send-email-l.krishna@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20131126164033.GD2355@e103592.cambridge.arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dave Martin <Dave.Martin@arm.com>
+Cc: Mark Rutland <Mark.Rutland@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Heiko Stuebner <heiko@sntech.de>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Naour Romain <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ian Campbell <ijc+devicetree@hellion.org.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm->
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, wim@iguana.be
-Cc: dianders@chromium.org, kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com
 
-On 11/27/2013 03:50 AM, Leela Krishna Amudala wrote:
-> Add device tree support for exynos5250 and 5420 SoCs and use syscon regmap interface
-> to configure AUTOMATIC_WDT_RESET_DISABLE and MASK_WDT_RESET_REQUEST registers of PMU
-> to mask/unmask enable/disable of watchdog in probe and s2r scenarios.
->
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->   .../devicetree/bindings/watchdog/samsung-wdt.txt   |   21 ++-
->   drivers/watchdog/Kconfig                           |    1 +
->   drivers/watchdog/s3c2410_wdt.c                     |  164 ++++++++++++++++++--
->   3 files changed, 176 insertions(+), 10 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> index 2aa486c..cfff375 100644
-> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> @@ -5,10 +5,29 @@ after a preset amount of time during which the WDT reset event has not
->   occurred.
->
->   Required properties:
-> -- compatible : should be "samsung,s3c2410-wdt"
-> +- compatible : should be one among the following
-> +	(a) "samsung,s3c2410-wdt" for Exynos4 and previous SoCs
-> +	(b) "samsung,exynos5250-wdt" for Exynos5250
-> +	(c) "samsung,exynos5420-wdt" for Exynos5420
-> +
->   - reg : base physical address of the controller and length of memory mapped
->   	region.
->   - interrupts : interrupt number to the cpu.
-> +- samsung,syscon-phandle : reference to syscon node (This property required only
-> +	in case of compatible being "samsung,exynos5250-wdt" or "samsung,exynos5420-wdt".
-> +	In case of Exynos5250 and 5420 this property points to syscon node holding the PMU
-> +	base address)
->
->   Optional properties:
->   - timeout-sec : contains the watchdog timeout in seconds.
-> +
-> +Example:
-> +
-> +watchdog@101D0000 {
-> +	compatible = "samsung,exynos5250-wdt";
-> +	reg = <0x101D0000 0x100>;
-> +	interrupts = <0 42 0>;
-> +	clocks = <&clock 336>;
-> +	clock-names = "watchdog";
-> +	samsung,syscon-phandle = <&pmu_syscon>;
-> +};
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 5be6e91..24738c0 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -188,6 +188,7 @@ config S3C2410_WATCHDOG
->   	tristate "S3C2410 Watchdog"
->   	depends on HAVE_S3C2410_WATCHDOG
->   	select WATCHDOG_CORE
-> +	select MFD_SYSCON if ARCH_EXYNOS5
->   	help
->   	  Watchdog timer block in the Samsung SoCs. This will reboot
->   	  the system when the timer expires with the watchdog enabled.
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 7d8fd04..b00b535 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -40,6 +40,8 @@
->   #include <linux/slab.h>
->   #include <linux/err.h>
->   #include <linux/of.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
->
->   #define S3C2410_WTCON		0x00
->   #define S3C2410_WTDAT		0x04
-> @@ -60,6 +62,10 @@
->   #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
->   #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
->
-> +#define WDT_DISABLE_REG_OFFSET		0x0408
-> +#define WDT_MASK_RESET_REG_OFFSET	0x040c
-> +#define QUIRK_NEEDS_PMU_CONFIG		(1 << 0)
-> +
->   static bool nowayout	= WATCHDOG_NOWAYOUT;
->   static int tmr_margin;
->   static int tmr_atboot	= CONFIG_S3C2410_WATCHDOG_ATBOOT;
-> @@ -83,6 +89,25 @@ MODULE_PARM_DESC(soft_noboot, "Watchdog action, set to 1 to ignore reboots, "
->   			"0 to reboot (default 0)");
->   MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
->
-> +/**
-> + * struct s3c2410_wdt_variant - Per-variant config data
-> + *
-> + * @disable_reg: Offset in pmureg for the register that disables the watchdog
-> + * timer reset functionality.
-> + * @mask_reset_reg: Offset in pmureg for the register that masks the watchdog
-> + * timer reset functionality.
-> + * @mask_bit: Bit number for the watchdog timer in the disable register and the
-> + * mask reset register.
-> + * @quirks: A bitfield of quirks.
-> + */
-> +
-> +struct s3c2410_wdt_variant {
-> +	int disable_reg;
-> +	int mask_reset_reg;
-> +	int mask_bit;
-> +	u32 quirks;
-> +};
-> +
->   struct s3c2410_wdt {
->   	struct device		*dev;
->   	struct clk		*clock;
-> @@ -93,8 +118,50 @@ struct s3c2410_wdt {
->   	unsigned long		wtdat_save;
->   	struct watchdog_device	wdt_device;
->   	struct notifier_block	freq_transition;
-> +	struct s3c2410_wdt_variant *drv_data;
-> +	struct regmap *pmureg;
-> +};
-> +
-> +static const struct s3c2410_wdt_variant drv_data_s3c2410 = {
-> +	.quirks = 0
-> +};
-> +
-> +#ifdef CONFIG_OF
-> +static const struct s3c2410_wdt_variant drv_data_exynos5250  = {
-> +	.disable_reg = WDT_DISABLE_REG_OFFSET,
-> +	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
-> +	.mask_bit = 20,
-> +	.quirks = QUIRK_NEEDS_PMU_CONFIG
-> +};
-> +
-> +static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
-> +	.disable_reg = WDT_DISABLE_REG_OFFSET,
-> +	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
-> +	.mask_bit = 0,
-> +	.quirks = QUIRK_NEEDS_PMU_CONFIG
->   };
->
-> +static const struct of_device_id s3c2410_wdt_match[] = {
-> +	{ .compatible = "samsung,s3c2410-wdt",
-> +	  .data = &drv_data_s3c2410 },
-> +	{ .compatible = "samsung,exynos5250-wdt",
-> +	  .data = &drv_data_exynos5250 },
-> +	{ .compatible = "samsung,exynos5420-wdt",
-> +	  .data = &drv_data_exynos5420 },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
-> +#endif
-> +
-> +static const struct platform_device_id s3c2410_wdt_ids[] = {
-> +	{
-> +		.name = "s3c2410-wdt",
-> +		.driver_data = (unsigned long)&drv_data_s3c2410,
-> +	},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(platform, s3c2410_wdt_ids);
-> +
->   /* watchdog control routines */
->
->   #define DBG(fmt, ...)					\
-> @@ -110,6 +177,32 @@ static inline struct s3c2410_wdt *freq_to_wdt(struct notifier_block *nb)
->   	return container_of(nb, struct s3c2410_wdt, freq_transition);
->   }
->
-> +static int s3c2410wdt_mask_and_disable_reset(struct s3c2410_wdt *wdt, bool mask)
-> +{
-> +	int ret;
-> +	u32 mask_val = 1 << wdt->drv_data->mask_bit;
-> +	u32 val = 0;
-> +
-> +	if (mask)
-> +		val = mask_val;
-> +
-> +	ret = regmap_update_bits(wdt->pmureg,
-> +			wdt->drv_data->disable_reg,
-> +			mask_val, val);
-> +	if (ret < 0) {
-> +		dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
-> +		return ret;
-> +	}
-> +
-Since you are now doing something in the error handler,
-you might want to follow coding style rules:
+On Tue, 26 Nov 2013, Dave Martin wrote:
 
-	if (ret < 0)
-		goto error;
+> [Resending to to a mail snafu on my end -- apologies for any duplicates
+> of this message received]
+> 
+> On Tue, Nov 26, 2013 at 12:58:08PM +0400, Vyacheslav Tyrtov wrote:
+> > From: Tarek Dakhran <t.dakhran@samsung.com>
+> > 
+> > Add EDCS(Exynos Dual Cluster Support) for Samsung Exynos5410 SoC.
+> > This enables all 8 cores, 4 x A7 and 4 x A15 run at the same time.
+> > 
+> > Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
+> > Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/Makefile |   2 +
+> >  arch/arm/mach-exynos/edcs.c   | 297 ++++++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 299 insertions(+)
+> >  create mode 100644 arch/arm/mach-exynos/edcs.c
+> > 
+> > diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> > index 8930b66..bc1f7f9 100644
+> > --- a/arch/arm/mach-exynos/Makefile
+> > +++ b/arch/arm/mach-exynos/Makefile
+> > @@ -34,3 +34,5 @@ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
+> >  
+> >  obj-$(CONFIG_ARCH_EXYNOS4)	+= mach-exynos4-dt.o
+> >  obj-$(CONFIG_ARCH_EXYNOS5)	+= mach-exynos5-dt.o
+> > +
+> > +obj-$(CONFIG_SOC_EXYNOS5410)	+= edcs.o
+> > diff --git a/arch/arm/mach-exynos/edcs.c b/arch/arm/mach-exynos/edcs.c
+> > new file mode 100644
+> > index 0000000..29f0bdd
+> > --- /dev/null
+> > +++ b/arch/arm/mach-exynos/edcs.c
+> > @@ -0,0 +1,297 @@
+> > +/*
+> > + * arch/arm/mach-exynos/edcs.c - exynos dual cluster power management support
+> > + *
+> > + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
+> > + * Author: Tarek Dakhran <t.dakhran@samsung.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + *
+> > + * EDCS(exynos dual cluster support) for Exynos5410 SoC.
+> > + */
+> > +
+> > +#define pr_fmt(fmt)	"%s: " fmt, __func__
+> > +
+> > +#include <linux/init.h>
+> > +#include <linux/io.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/spinlock.h>
+> > +#include <linux/errno.h>
+> > +#include <linux/irqchip/arm-gic.h>
+> > +#include <linux/delay.h>
+> > +
+> > +#include <asm/mcpm.h>
+> > +#include <asm/proc-fns.h>
+> > +#include <asm/cacheflush.h>
+> > +#include <asm/cputype.h>
+> > +#include <asm/cp15.h>
+> > +
+> > +#include <linux/arm-cci.h>
+> > +#include <mach/regs-pmu.h>
+> > +
+> > +#define EDCS_CPUS_PER_CLUSTER		4
+> > +#define EDCS_CLUSTERS			2
+> > +
+> > +/* Exynos5410 power management registers */
+> > +#define EDCS_CORE_CONFIGURATION(_nr)	(S5P_ARM_CORE0_CONFIGURATION	\
+> > +						+ ((_nr) * 0x80))
+> > +#define EDCS_CORE_STATUS(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x4)
+> > +#define EDCS_CORE_OPTION(_nr)		(EDCS_CORE_CONFIGURATION(_nr) + 0x8)
+> > +
+> > +#define REG_CPU_STATE_ADDR0		(S5P_VA_SYSRAM_NS + 0x28)
+> > +#define REG_CPU_STATE_ADDR(_nr)		(REG_CPU_STATE_ADDR0 +	\
+> > +						 (_nr) * EDCS_CPUS_PER_CLUSTER)
+> > +
+> > +#define SECONDARY_RESET			(1 << 1)
+> > +#define REG_ENTRY_ADDR			(S5P_VA_SYSRAM_NS + 0x1c)
+> > +
+> > +#define EDCS_CORE_PWR_ON		0x3
+> > +#define EDCS_CORE_PWR_OFF		0x0
+> > +#define CORE_PWR_STATE_MASK		0x3
+> > +
+> > +static arch_spinlock_t edcs_lock = __ARCH_SPIN_LOCK_UNLOCKED;
+> > +
+> > +static int edcs_use_count[EDCS_CPUS_PER_CLUSTER][EDCS_CLUSTERS];
+> > +static int core_count[EDCS_CLUSTERS];
+> > +
+> > +/*
+> > + * this_core_to_pcpu reads mpidr and defines cluster and cpu.
+> > + */
+> > +static void this_core_to_pcpu(unsigned int *pcpu, unsigned int *pcluster)
+> > +{
+> > +	unsigned int mpidr;
+> > +
+> > +	mpidr = read_cpuid_mpidr();
+> > +	*pcpu = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+> > +	*pcluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+> > +}
+> > +
+> > +/*
+> > + * core_power_state is used to get core power state.
+> > + * returns:
+> > + *        0x0 - powered off;
+> > + *        0x3 - powered on;
+> > + *        other values - in process;
+> > + */
+> > +static int core_power_state(unsigned int cpu, unsigned int cluster)
+> > +{
+> > +	unsigned int offset = cluster * EDCS_CPUS_PER_CLUSTER + cpu;
+> > +	int status = readl_relaxed(EDCS_CORE_STATUS(offset));
+> > +
+> > +	return status & CORE_PWR_STATE_MASK;
+> > +}
+> > +
+> > +static void edcs_core_power_up(unsigned int cpu, unsigned int cluster)
+> > +{
+> > +	unsigned int offset = cluster * EDCS_CPUS_PER_CLUSTER + cpu;
+> > +	if (core_power_state(cpu, cluster) == EDCS_CORE_PWR_OFF) {
+> 
+> This still looks racy.
+> 
+> edcs_core_power_up and edcs_core_power_down are both called with
+> edcs_lock held, and cluster/cpu ref counting is done before we
+> get here.  So we know that the power state *change* is really supposed
+> to happen.
+> 
+> *If* my assumption is correct that there is a delay between requesting a
+> new power state, and the change being reported as completed in
+> EDCS_CORE_STATUS:
+> 
+> 
+> For edcs_core_power_up(), there may be a pending power-down
+> request which is not visible in the EDCS_CORE_STATUS registers yet.
+> 
+> I think this may mean that a power-up request will simply be missed
+> if the core status does not read as EDCS_CORE_PWR_OFF yet.  If that
+> can happen, then you need to wait -- calling the power_down_finish
+> method may be the right thing to do.
 
-> +	ret = regmap_update_bits(wdt->pmureg,
-> +			wdt->drv_data->mask_reset_reg,
-> +			mask_val, val);
+I agree with your analysis so far.  However there is a fundamental 
+question that the hardware designers need to answer:
 
-error:
-> +	if (ret < 0)
-> +		dev_err(wdt->dev, "failed to update reg(%d)\n", ret);
-> +
-> +	return ret;
-> +}
-> +
->   static int s3c2410wdt_keepalive(struct watchdog_device *wdd)
->   {
->   	struct s3c2410_wdt *wdt = watchdog_get_drvdata(wdd);
-> @@ -331,6 +424,20 @@ static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
->   }
->   #endif
->
-> +/* s3c2410_get_wdt_driver_data */
-> +static inline struct s3c2410_wdt_variant *
-> +get_wdt_drv_data(struct platform_device *pdev)
-> +{
-> +	if (pdev->dev.of_node) {
-> +		const struct of_device_id *match;
-> +		match = of_match_node(s3c2410_wdt_match, pdev->dev.of_node);
-> +		return (struct s3c2410_wdt_variant *)match->data;
-> +	} else {
-> +		return (struct s3c2410_wdt_variant *)
-> +			platform_get_device_id(pdev)->driver_data;
-> +	}
-> +}
-> +
->   static int s3c2410wdt_probe(struct platform_device *pdev)
->   {
->   	struct device *dev;
-> @@ -353,6 +460,16 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->   	spin_lock_init(&wdt->lock);
->   	wdt->wdt_device = s3c2410_wdd;
->
-> +	wdt->drv_data = get_wdt_drv_data(pdev);
-> +	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-> +		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
-> +							"samsung,syscon-phandle");
-> +		if (IS_ERR(wdt->pmureg)) {
-> +			dev_err(dev, "syscon regmap lookup failed.\n");
-> +			return PTR_ERR(wdt->pmureg);
-> +		}
-> +	}
-> +
->   	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
->   	if (wdt_irq == NULL) {
->   		dev_err(dev, "no irq resource specified\n");
-> @@ -421,6 +538,12 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->   		goto err_cpufreq;
->   	}
->
-> +	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-> +		ret = s3c2410wdt_mask_and_disable_reset(wdt, false);
-> +		if (ret < 0)
-> +			goto err_unregister;
-> +	}
-> +
->   	if (tmr_atboot && started == 0) {
->   		dev_info(dev, "starting watchdog timer\n");
->   		s3c2410wdt_start(&wdt->wdt_device);
-> @@ -445,6 +568,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->
->   	return 0;
->
-> + err_unregister:
-> +	watchdog_unregister_device(&wdt->wdt_device);
-> +
->    err_cpufreq:
->   	s3c2410wdt_cpufreq_deregister(wdt);
->
-> @@ -458,8 +584,15 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
->
->   static int s3c2410wdt_remove(struct platform_device *dev)
->   {
-> +	int ret;
->   	struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
->
-> +	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-> +		ret = s3c2410wdt_mask_and_disable_reset(wdt, true);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->   	watchdog_unregister_device(&wdt->wdt_device);
->
->   	s3c2410wdt_cpufreq_deregister(wdt);
-> @@ -472,8 +605,15 @@ static int s3c2410wdt_remove(struct platform_device *dev)
->
->   static void s3c2410wdt_shutdown(struct platform_device *dev)
->   {
-> +	int ret;
->   	struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
->
-> +	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-> +		ret = s3c2410wdt_mask_and_disable_reset(wdt, true);
-> +		if (ret < 0)
-> +			dev_warn(wdt->dev, "failed to update pmu register");
+What happens if EDCS_CORE_PWR_OFF and then EDCS_CORE_PWR_ON is written 
+to the EDCS_CORE_CONFIGURATION register without waiting for the status 
+to become EDCS_CORE_PWR_OFF in between the two writes?  In other words, 
+will the PWR_ON be lost or will it be honored even if the PWR_OFF 
+request has not yet completed?
 
-Duplicate error message.
+If the PWR_ON request is always honored then there is no need for a 
+status check here.  Otherwise this is a bit more complicated as 
+outlined by Dave.
 
-> +	}
-> +
->   	s3c2410wdt_stop(&wdt->wdt_device);
->   }
->
-> @@ -481,12 +621,19 @@ static void s3c2410wdt_shutdown(struct platform_device *dev)
->
->   static int s3c2410wdt_suspend(struct device *dev)
->   {
-> +	int ret;
->   	struct s3c2410_wdt *wdt = dev_get_drvdata(dev);
->
->   	/* Save watchdog state, and turn it off. */
->   	wdt->wtcon_save = readl(wdt->reg_base + S3C2410_WTCON);
->   	wdt->wtdat_save = readl(wdt->reg_base + S3C2410_WTDAT);
->
-> +	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-> +		ret = s3c2410wdt_mask_and_disable_reset(wdt, true);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->   	/* Note that WTCNT doesn't need to be saved. */
->   	s3c2410wdt_stop(&wdt->wdt_device);
->
-> @@ -495,6 +642,7 @@ static int s3c2410wdt_suspend(struct device *dev)
->
->   static int s3c2410wdt_resume(struct device *dev)
->   {
-> +	int ret;
->   	struct s3c2410_wdt *wdt = dev_get_drvdata(dev);
->
->   	/* Restore watchdog state. */
-> @@ -502,6 +650,12 @@ static int s3c2410wdt_resume(struct device *dev)
->   	writel(wdt->wtdat_save, wdt->reg_base + S3C2410_WTCNT);/* Reset count */
->   	writel(wdt->wtcon_save, wdt->reg_base + S3C2410_WTCON);
->
-> +	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-> +		ret = s3c2410wdt_mask_and_disable_reset(wdt, false);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->   	dev_info(dev, "watchdog %sabled\n",
->   		(wdt->wtcon_save & S3C2410_WTCON_ENABLE) ? "en" : "dis");
->
-> @@ -512,18 +666,11 @@ static int s3c2410wdt_resume(struct device *dev)
->   static SIMPLE_DEV_PM_OPS(s3c2410wdt_pm_ops, s3c2410wdt_suspend,
->   			s3c2410wdt_resume);
->
-> -#ifdef CONFIG_OF
-> -static const struct of_device_id s3c2410_wdt_match[] = {
-> -	{ .compatible = "samsung,s3c2410-wdt" },
-> -	{},
-> -};
-> -MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
-> -#endif
-> -
->   static struct platform_driver s3c2410wdt_driver = {
->   	.probe		= s3c2410wdt_probe,
->   	.remove		= s3c2410wdt_remove,
->   	.shutdown	= s3c2410wdt_shutdown,
-> +	.id_table	= s3c2410_wdt_ids,
->   	.driver		= {
->   		.owner	= THIS_MODULE,
->   		.name	= "s3c2410-wdt",
-> @@ -538,4 +685,3 @@ MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>, "
->   	      "Dimitry Andric <dimitry.andric@tomtom.com>");
->   MODULE_DESCRIPTION("S3C2410 Watchdog Device Driver");
->   MODULE_LICENSE("GPL");
-> -MODULE_ALIAS("platform:s3c2410-wdt");
->
+
+Nicolas
