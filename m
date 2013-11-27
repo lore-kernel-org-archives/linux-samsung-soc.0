@@ -1,68 +1,99 @@
-From: kgene@kernel.org
-Subject: RE: [PATCH v2 5/5] ARM: dts: exynos4412-trats2: Enable TMU support at
- Trats2
-Date: Wed, 27 Nov 2013 20:36:03 +0900
-Message-ID: <004d01ceeb64$da648200$8f2d8600$@kernel.org>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
- <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
- <1381300194-13134-6-git-send-email-l.majewski@samsung.com>
- <20131015082935.3d33eee7@amdc308.digital.local>
- <20131127081242.0591f911@amdc308.digital.local>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <20131127081242.0591f911@amdc308.digital.local>
-Content-language: ko
-Sender: linux-pm-owner@vger.kernel.org
-To: 'Lukasz Majewski' <l.majewski@samsung.com>
-Cc: 'Linux PM list' <linux-pm@vger.kernel.org>, 'Lukasz Majewski' <l.majewski@majess.pl>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH V10 0/3] Add watchdog DT nodes and use syscon regmap interface
+ to configure pmu registers
+Date: Wed, 27 Nov 2013 17:20:07 +0530
+Message-ID: <1385553010-30183-1-git-send-email-l.krishna@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:46880 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752433Ab3K0LrI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Nov 2013 06:47:08 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, wim@iguana.be
+Cc: dianders@chromium.org, kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, linux@roeck-us.net
 
-Lukasz Majewski wrote:
-> 
-> Hi Kukjin,
-> 
-> > Hi Kukjin,
-> >
-> > > This patch enables support for TMU at Exynos4412 based Trats2 board.
-> > >
-> > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> > >
-> > > ---
-> > > Changes for v2:
-> > > - None
-> > >
-> > >  arch/arm/boot/dts/exynos4412-trats2.dts |    5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > >
-> > > diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts
-> > > b/arch/arm/boot/dts/exynos4412-trats2.dts index fb7b9ae..57136f8
-> > > 100644 --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> > > +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> > > @@ -467,6 +467,11 @@
-> > >  		status = "okay";
-> > >  	};
-> > >
-> > > +	tmu@100C0000 {
-> > > +		vtmu-supply = <&ldo10_reg>;
-> > > +		status = "okay";
-> > > +	};
-> > > +
-> > >  	i2c_ak8975: i2c-gpio-0 {
-> > >  		compatible = "i2c-gpio";
-> > >  		gpios = <&gpy2 4 0>, <&gpy2 5 0>;
-> >
-> > Can you pull this DT node definition for TMU (as a fix to v3.12)?
-> >
-> > It is crucial for Exynos4412. Other patches from this patch set were
-> > already pulled as v3.12 fixes.
-> >
-> 
-> Kukjin, could you pull this patch?
-> 
-Applied, thanks.
-Kukjin
+This patchset does the following things
+	- Adds pmusysreg device node to exynos5.dtsi file
+	- Adds watchdog DT nodes to Exynos5250 and 5420
+	- Uses syscon regmap interface to configure pmu registers
+	  to mask/unmask enable/disable of watchdog.
+	
+This patch set is rebased on Kgene's for-next branch and tested on SMDK5420
 
+changes since V9:
+	- added descriptions to s3c2410_wdt_variant structure fields
+	- moved calling s3c2410wdt_mask_and_disable_reset() function above s3c2410wdt_start() call in probe
+	- put dev_err message back to s3c2410wdt_mask_and_disable_reset() function
+	  (suggested by Doug Anderson <dianders@chromium.org>)
+
+changes since V8:
+	- modified the patch description for the below patch
+	  "watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu register"
+	- removed MODULE_ALIAS in watchdog driver
+	- changed dev_warn to dev_err in one failure case handling (suggested by Guenter Roeck <linux@roeck-us.net>)
+	- renamed variable name from pmu_config to drv_data
+	- changed the compatible field description in documentation file
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
+
+changes since V7:
+	- re-ordered the patches in the series
+	- moved pmu_config_s3c2410 structure out of ifdef CONFIG_OF
+	  and limited only this structure to platform match table
+	- renamed structure name from s3c_wdt_driver_ids to s3c2410_wdt_ids
+	- removed exynos variants from platform match table
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
+
+changes since V6:
+	- added SoC-specific compatible value to syscon node and documented it
+	- given more patch description for below patch
+	  ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420
+	- added platform_device_id array for watchdog devices
+	- selected MFD_SYSCON in Kconfig entry for watchdog
+
+Changes since V5:
+	- removed status property in DT nodes
+	- changed the return type for the function s3c2410wdt_mask_and_disable_reset()
+	  and handled error cases
+	- Handled to get driver data in non-DT cases
+	- Addressed comments given by Tomasz Figa <t.figa@samsung.com>
+
+Changes since V4:
+	- changed the node name from pmusysreg to syscon and node label from pmu_sys_reg to pmu_syscon
+	- changed the property name from samsung,pmusysreg to samsung,syscon-phandle
+	- used regmap_update_bits instead of remap_read/regmap_write
+	- Addressed other comments given by Tomasz Figa <t.figa@samsung.com>
+
+Changes since V3:
+	- changed the compatible strings for watchdog node
+	- splitted up adding pmusysreg node and made it separate patch
+	- Addressed comments given by Sachin Kamat <sachin.kamat@linaro.org>
+
+Changes since V2:
+	- used syscon regmap interface to configure pmu registers in WDT driver
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
+
+Changes since V1:
+        - Added new compatible string for Exynos5 SoCs
+        - Introduced quirk mechanism to program PMU registers
+        - Addressed comments given by Tomasz Figa <t.figa@samsung.com>
+
+Leela Krishna Amudala (3):
+  ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi files
+  watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu
+    register
+  ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |   16 ++
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |   21 ++-
+ arch/arm/boot/dts/exynos5.dtsi                     |    7 -
+ arch/arm/boot/dts/exynos5250.dtsi                  |   11 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |   14 ++
+ drivers/watchdog/Kconfig                           |    1 +
+ drivers/watchdog/s3c2410_wdt.c                     |  164 ++++++++++++++++++--
+ 7 files changed, 216 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+
+-- 
+1.7.10.4
