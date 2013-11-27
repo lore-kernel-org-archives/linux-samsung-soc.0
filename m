@@ -1,209 +1,102 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH] phy: Add exynos-phy driver
-Date: Wed, 27 Nov 2013 14:26:28 +0100
-Message-ID: <1385558788-10880-2-git-send-email-t.stanislaws@samsung.com>
-References: <1385558788-10880-1-git-send-email-t.stanislaws@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1385558788-10880-1-git-send-email-t.stanislaws@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: t.figa@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, sylvester.nawrocki@gmail.com, kishon@ti.com, kyungmin.park@samsung.com, Tomasz Stanislawski <t.stanislaws@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
+ where possible
+Date: Wed, 27 Nov 2013 15:05:34 +0000
+Message-ID: <20131127150534.GW14725@sirena.org.uk>
+References: <1384264120-24750-1-git-send-email-broonie@kernel.org>
+ <1384264120-24750-2-git-send-email-broonie@kernel.org>
+ <CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
+ <20131126102311.GW14725@sirena.org.uk>
+ <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
+ <20131126122031.GA14725@sirena.org.uk>
+ <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============3836422542178709929=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add exynos-phy driver to support a single register
-PHY interfaces present on Exynos4 SoC.
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/phy/Kconfig      |    5 ++
- drivers/phy/Makefile     |    1 +
- drivers/phy/exynos-phy.c |  152 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 158 insertions(+)
- create mode 100644 drivers/phy/exynos-phy.c
+--===============3836422542178709929==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HRz4dlJa0zmFsB3a"
+Content-Disposition: inline
 
-diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-index a344f3d..4414c73 100644
---- a/drivers/phy/Kconfig
-+++ b/drivers/phy/Kconfig
-@@ -51,4 +51,9 @@ config PHY_EXYNOS_DP_VIDEO
- 	help
- 	  Support for Display Port PHY found on Samsung EXYNOS SoCs.
- 
-+config EXYNOS_PHY
-+	tristate "Exynos PHY driver"
-+	help
-+	  Support for PHY controllers on SoCs from Exynos family.
-+
- endmenu
-diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-index d0caae9..b2a833d 100644
---- a/drivers/phy/Makefile
-+++ b/drivers/phy/Makefile
-@@ -5,5 +5,6 @@
- obj-$(CONFIG_GENERIC_PHY)		+= phy-core.o
- obj-$(CONFIG_PHY_EXYNOS_DP_VIDEO)	+= phy-exynos-dp-video.o
- obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)	+= phy-exynos-mipi-video.o
-+obj-$(CONFIG_EXYNOS_PHY)	+= exynos-phy.o
- obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
- obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
-diff --git a/drivers/phy/exynos-phy.c b/drivers/phy/exynos-phy.c
-new file mode 100644
-index 0000000..5a1ae6d
---- /dev/null
-+++ b/drivers/phy/exynos-phy.c
-@@ -0,0 +1,152 @@
-+/*
-+ * Exynos PHY driver
-+ *
-+ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
-+ * Author: Tomasz Stanislawski <t.stanislaws@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/phy/phy.h>
-+
-+#define EXYNOS_PHY_ENABLE	(1 << 0)
-+
-+static int exynos_phy_power_on(struct phy *phy)
-+{
-+	void __iomem *reg = phy_get_drvdata(phy);
-+	u32 val;
-+
-+	val = readl(reg);
-+	val |= EXYNOS_PHY_ENABLE;
-+	writel(val, reg);
-+
-+	return 0;
-+}
-+
-+static int exynos_phy_power_off(struct phy *phy)
-+{
-+	void __iomem *reg = phy_get_drvdata(phy);
-+	u32 val;
-+
-+	val = readl(reg);
-+	val &= ~EXYNOS_PHY_ENABLE;
-+	writel(val, reg);
-+
-+	return 0;
-+}
-+
-+static struct phy_ops exynos_phy_ops = {
-+	.power_on	= exynos_phy_power_on,
-+	.power_off	= exynos_phy_power_off,
-+	.owner		= THIS_MODULE,
-+};
-+
-+static const u32 exynos4210_offsets[] = {
-+	0x0700, /* HDMI_PHY */
-+	0x070C, /* DAC_PHY */
-+	0x0718, /* ADC_PHY */
-+	0x071C, /* PCIE_PHY */
-+	0x0720, /* SATA_PHY */
-+	~0, /* end mark */
-+};
-+
-+static const u32 exynos4412_offsets[] = {
-+	0x0700, /* HDMI_PHY */
-+	0x0718, /* ADC_PHY */
-+	~0, /* end mark */
-+};
-+
-+static const struct of_device_id exynos_phy_of_match[] = {
-+	{ .compatible = "exynos4210-phy", .data = exynos4210_offsets},
-+	{ .compatible = "exynos4412-phy", .data = exynos4412_offsets},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, exynos_phy_of_match);
-+
-+static struct phy *exynos_phy_xlate(struct device *dev,
-+					struct of_phandle_args *args)
-+{
-+	struct phy **phys = dev_get_drvdata(dev);
-+	int index = args->args[0];
-+	int i;
-+
-+	/* verify if index is valid */
-+	for (i = 0; i <= index; ++i)
-+		if (!phys[i])
-+			return ERR_PTR(-ENODEV);
-+
-+	return phys[index];
-+}
-+
-+static int exynos_phy_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *of_id = of_match_device(
-+		of_match_ptr(exynos_phy_of_match), &pdev->dev);
-+	const u32 *offsets = of_id->data;
-+	int count;
-+	struct device *dev = &pdev->dev;
-+	struct phy **phys;
-+	struct resource *res;
-+	void __iomem *regs;
-+	int i;
-+	struct phy_provider *phy_provider;
-+
-+	/* count number of phys to create */
-+	for (count = 0; offsets[count] != ~0; ++count)
-+		;
-+
-+	phys = devm_kzalloc(dev, (count + 1) * sizeof(phys[0]), GFP_KERNEL);
-+	if (!phys)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(dev, phys);
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+
-+	regs = devm_ioremap(dev, res->start, res->end);
-+	if (IS_ERR(regs)) {
-+		dev_err(dev, "failed to ioremap registers\n");
-+		return PTR_ERR(regs);
-+	}
-+
-+	/* NOTE: last entry in phys[] is NULL */
-+	for (i = 0; i < count; ++i) {
-+		phys[i] = devm_phy_create(dev, &exynos_phy_ops, NULL);
-+		if (IS_ERR(phys[i])) {
-+			dev_err(dev, "failed to create PHY %d\n", i);
-+			return PTR_ERR(phys[i]);
-+		}
-+		phy_set_drvdata(phys[i], regs + offsets[i]);
-+	}
-+
-+	phy_provider = devm_of_phy_provider_register(dev, exynos_phy_xlate);
-+	if (IS_ERR(phy_provider)) {
-+		dev_err(dev, "failed to register PHY provider\n");
-+		return PTR_ERR(phy_provider);
-+	}
-+
-+	dev_info(dev, "added %d phys\n", count);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver exynos_phy_driver = {
-+	.probe	= exynos_phy_probe,
-+	.driver = {
-+		.of_match_table	= exynos_phy_of_match,
-+		.name  = "exynos-phy",
-+		.owner = THIS_MODULE,
-+	}
-+};
-+module_platform_driver(exynos_phy_driver);
-+
-+MODULE_DESCRIPTION("Exynos PHY driver");
-+MODULE_AUTHOR("Tomasz Stanislawski <t.stanislaws@samsung.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-1.7.9.5
+
+--HRz4dlJa0zmFsB3a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Nov 27, 2013 at 06:08:47PM +0530, Padma Venkat wrote:
+> On Tue, Nov 26, 2013 at 5:50 PM, Mark Brown <broonie@kernel.org> wrote:
+
+> > So this is 16 bit stereo or something, and did it work beforehand?  Like
+> > I say I suspect the DMA is ending up being configured with the wrong
+> > transfer size, can you check what actually happens there please - what's
+> > different about the configuration that the DMA controller gets?  I don't
+> > have any Exynos systems with mainline audio support so I can't test
+> > anything myself.
+
+> This stream was working before. dma_size in i2s_hw_params not getting
+> effected as dma_data is getting initialized only at dai probe time. So
+> by default the dma_size is always 4 which is initialized at driver
+> probe time. The fifo_size of dai is also always 0. It is not getting
+> passed from dai driver. I just hard coded the dma_size to 2 and
+
+But if it's initialised at probe time then when is it getting
+overwritten?  This must be something triggered by DT which unfortunately
+I can't test.  It's a bit of a shame that the flows are different
+between the DT and non-DT cases.
+
+The FIFO size looks like a difference between the pl330 and pl080, it
+doesn't seem to matter for pl080.  We just need to set it though.
+
+> fifo_size to 32 then I can hear the audio only on right ear phone.
+> Still underrun error message appears.
+
+Are you sure that dma_size should be 2?  The i2s DAI driver seems to be
+hard coding it to 4.
+
+--HRz4dlJa0zmFsB3a
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSlgo7AAoJELSic+t+oim9Zx4P/13EyND/WVeCdcaA2K0xUeEc
+Eu9QdSHVpHGIOaMqabe6t77GOcdnRAFhr9VVPAeZj/L8lpyMLerhy8rf1uUMicnI
+torF+fKs8VMiq3mPVUY/kRi19JryGyLzMWozYPlgg2LtNMZQfeyWw6uyVKnwUed5
+p/pJFJvvXZMGg08395fcJVit7//A5Ijhuv8Wd1dcVNcQwJ1IlswYCmp7znW1zpr6
+qOy87RU9KeCdxK4SzULKdHxNlg7LNiH2o5tKIRZBYr5REIa8K7whxgXhFe8lbugP
+Ps9Xq/QZS+etvSPRtgpa2yiFxZgqbu2roV28rSQkFPpr9LWMYV21YPygP1J6eWCB
+K7+rSmAduAYtCx3c1wFZqTllHQJG5EXS+JrVgXC0yYSzBcqjyVwasA+lg3Zyulbr
+faDpXLVEyHEFYMfKSRQ4rafTunPVShyZ8h/t8zCelIfEyWDp2KEOXegiBBIG8W7i
+tCI5+CShkFdlheQD9bvq3z/aO6yQvhQhUIET/4CMBPlfcFjDrse7CtoyT1+W/kZI
+kVCnHTriAO1N+MronT0gxRiUGQ+lqyPbQdyQG1akaZ0IneuWl6tIW9lLvmyxNerZ
+6dnwF2RZcSsGcAWsPELMv2q+dKJfNwyjyRP1mvvV8LAv2cJdqLfQ77w3gj/dwP8o
+j1Q6aUBdSXaTNNZcK8LM
+=DtKw
+-----END PGP SIGNATURE-----
+
+--HRz4dlJa0zmFsB3a--
+
+--===============3836422542178709929==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============3836422542178709929==--
