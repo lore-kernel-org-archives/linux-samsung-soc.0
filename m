@@ -1,72 +1,93 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
- where possible
-Date: Wed, 27 Nov 2013 18:08:47 +0530
-Message-ID: <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
-References: <1384264120-24750-1-git-send-email-broonie@kernel.org>
-	<1384264120-24750-2-git-send-email-broonie@kernel.org>
-	<CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
-	<20131126102311.GW14725@sirena.org.uk>
-	<CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
-	<20131126122031.GA14725@sirena.org.uk>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 4/5] ARM: dts: exynos4x12: Device tree node definition
+ for TMU on Exynos4x12
+Date: Wed, 27 Nov 2013 13:39:27 +0100
+Message-ID: <20131127133927.3c792302@amdc2363>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-5-git-send-email-l.majewski@samsung.com>
+ <20131015082750.4b2f3325@amdc308.digital.local>
+ <20131127081144.5402a81e@amdc308.digital.local>
+ <004c01ceeb64$b5c708a0$215519e0$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f47.google.com ([209.85.216.47]:62919 "EHLO
-	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751749Ab3K0Mis (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:18626 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751871Ab3K0Mje (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Nov 2013 07:38:48 -0500
-Received: by mail-qa0-f47.google.com with SMTP id w5so5675431qac.13
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Nov 2013 04:38:47 -0800 (PST)
-In-Reply-To: <20131126122031.GA14725@sirena.org.uk>
+	Wed, 27 Nov 2013 07:39:34 -0500
+In-reply-to: <004c01ceeb64$b5c708a0$215519e0$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, Padmavathi Venna <padma.v@samsung.com>
+To: kgene@kernel.org
+Cc: 'Lukasz Majewski' <l.majewski@majess.pl>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Mark,
+Hi kgene@kernel.org,
 
-On Tue, Nov 26, 2013 at 5:50 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Nov 26, 2013 at 04:18:41PM +0530, Padma Venkat wrote:
->
->> I tried this on linux-samsung tree by applying all the patches from
->> you and Lars.
->
-> Can you use -next plus the posted patches please in case there's
-> something been misplaced, it'll help if we're working from the same code
-> base?
+> Lukasz Majewski wrote:
+> > 
+> > Hi Kukjin,
+> > 
+> Hi,
+> 
+> > > Hi Kukjin,
+> > >
+> > > > The TMU device tree node definition for Exynos4x12 family of
+> > > > SoCs.
+> > > >
+> > > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > > > Reviewed-by: Bartlomiej Zolnierkiewicz
+> > > > <b.zolnierkie@samsung.com> Reviewed-by: Tomasz Figa
+> > > > <t.figa@samsung.com>
+> > > >
+> > > > ---
+> > > > Changes for v2:
+> > > > - None
+> > > >
+> > > >  arch/arm/boot/dts/exynos4x12.dtsi |   10 ++++++++++
+> > > >  1 file changed, 10 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
+> > > > b/arch/arm/boot/dts/exynos4x12.dtsi index ad531fe..64c0ece
+> > > > 100644 --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> > > > +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> > > > @@ -176,4 +176,14 @@
+> > > >  			};
+> > > >  		};
+> > > >  	};
+> > > > +
+> > > > +	tmu@100C0000 {
+> > > > +		compatible = "samsung,exynos4412-tmu";
+> > > > +		interrupt-parent = <&combiner>;
+> > > > +		interrupts = <2 4>;
+> > > > +		reg = <0x100C0000 0x100>;
+> > > > +		clocks = <&clock 383>;
+> > > > +		clock-names = "tmu_apbif";
+> > > > +		status = "disabled";
+> > > > +	};
+> > > >  };
+> > >
+> > > Can you pull this DT node definition for TMU (as a fix to v3.12)?
+> > >
+> > > It is crucial for Exynos4412.
+> > >
+> > 
+> > Kukjin, could you pull this patch?
+> > 
+> Yes, but I'm not sure this is _really_ critical bug fix so maybe this
+> will be queued for 3.14.
 
-Sound tree has some booting issue on smdk5420 so I tried this on
-linux-samsung tree.
+The thermal fixes were taken by Eduardo for 3.12-rcX cycle. Those were
+critical.
 
->
->> I initialised the dma_data for secondary dai as there is a crash with out that.
->
-> Can you please send a patch for that if you find it's needed?  Like I
-> said in reply to your earlier mail it looks like this doesn't work
-> anyway so mainline ought to be fixed.
+The code, which expects those definitions is already in ML, so we can
+try to upstream those ASAP.
 
-Okay. I will send a patch.
-
->
->> Then I used aplay after running the mixer settings.
->> ./aplay /mars/share/sounds/alsa/Front_Center.wav
->
-> So this is 16 bit stereo or something, and did it work beforehand?  Like
-> I say I suspect the DMA is ending up being configured with the wrong
-> transfer size, can you check what actually happens there please - what's
-> different about the configuration that the DMA controller gets?  I don't
-> have any Exynos systems with mainline audio support so I can't test
-> anything myself.
-
-This stream was working before. dma_size in i2s_hw_params not getting
-effected as dma_data is getting initialized only at dai probe time. So
-by default the dma_size is always 4 which is initialized at driver
-probe time. The fifo_size of dai is also always 0. It is not getting
-passed from dai driver. I just hard coded the dma_size to 2 and
-fifo_size to 32 then I can hear the audio only on right ear phone.
-Still underrun error message appears.
-
-Thanks
-Padma
+> 
+> If any problem, please kindly let me know.
+> 
+> Thanks,
+> Kukjin
+> 
