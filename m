@@ -1,58 +1,74 @@
-From: panchaxari <panchaxari.prasannamurthy@linaro.org>
-Subject: [PATCH] ARM:EXYNOS:Enable ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR by default
-Date: Wed, 27 Nov 2013 09:58:05 +0530
-Message-ID: <1385526485-23758-2-git-send-email-panchaxari.prasannamurthy@linaro.org>
-References: <1385526485-23758-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 4/5] ARM: dts: exynos4x12: Device tree node definition
+ for TMU on Exynos4x12
+Date: Wed, 27 Nov 2013 08:11:44 +0100
+Message-ID: <20131127081144.5402a81e@amdc308.digital.local>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-5-git-send-email-l.majewski@samsung.com>
+ <20131015082750.4b2f3325@amdc308.digital.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:43526 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752620Ab3K0E2h (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60673 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750842Ab3K0HL4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Nov 2013 23:28:37 -0500
-Received: by mail-pd0-f177.google.com with SMTP id q10so9095356pdj.36
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Nov 2013 20:28:37 -0800 (PST)
-In-Reply-To: <1385526485-23758-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
+	Wed, 27 Nov 2013 02:11:56 -0500
+In-reply-to: <20131015082750.4b2f3325@amdc308.digital.local>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: nataraja.km@lge.com
-Cc: panchaxari.prasannamurthy@linaro.org, linaro-kernel@lists.linaro.org, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: "kgene.kim@samsung.com" <kgene.kim@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR is enabled by default for Exynos
-platforms.
+Hi Kukjin,
 
-Introduction of this config as default will enable phy-to-virt and
-virt-to-phy translation function at boot and module loading time
-and enforce dynamic reallocation of memory.
+> Hi Kukjin,
+> 
+> > The TMU device tree node definition for Exynos4x12 family of SoCs.
+> > 
+> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> > 
+> > ---
+> > Changes for v2:
+> > - None
+> > 
+> >  arch/arm/boot/dts/exynos4x12.dtsi |   10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
+> > b/arch/arm/boot/dts/exynos4x12.dtsi index ad531fe..64c0ece 100644
+> > --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> > @@ -176,4 +176,14 @@
+> >  			};
+> >  		};
+> >  	};
+> > +
+> > +	tmu@100C0000 {
+> > +		compatible = "samsung,exynos4412-tmu";
+> > +		interrupt-parent = <&combiner>;
+> > +		interrupts = <2 4>;
+> > +		reg = <0x100C0000 0x100>;
+> > +		clocks = <&clock 383>;
+> > +		clock-names = "tmu_apbif";
+> > +		status = "disabled";
+> > +	};
+> >  };
+> 
+> Can you pull this DT node definition for TMU (as a fix to v3.12)?
+> 
+> It is crucial for Exynos4412.
+> 
 
-This config is mutually exclusive to XIP_KERNEL, which is used in
-systems with NOR flash devices
+Kukjin, could you pull this patch?
 
-Requesting Exynos maintainers to evaluate the changes on the
-board and comment, as I dont have the board for testing
-I am seeking an ACK from Exynos maintainers.
-
-Signed-off-by: panchaxari <panchaxari.prasannamurthy@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
----
- arch/arm/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 214b698..28d84f3 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -807,6 +807,8 @@ config ARCH_EXYNOS
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARCH_SPARSEMEM_ENABLE
- 	select ARM_GIC
-+	select ARM_PATCH_PHYS_VIRT
-+	select AUTO_ZRELADDR
- 	select COMMON_CLK
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
 -- 
-1.7.10.4
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
