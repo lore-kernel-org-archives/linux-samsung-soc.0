@@ -1,94 +1,113 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH] ASoC: samsung: Initialize the dma_data for secondary dai
-Date: Thu, 28 Nov 2013 15:32:12 +0530
-Message-ID: <1385632932-16579-1-git-send-email-padma.v@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: Add initial support for Arndale Octa board
+Date: Thu, 28 Nov 2013 16:08:01 +0530
+Message-ID: <1385635081-21072-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45292 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751140Ab3K1KEB (ORCPT
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:49056 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752306Ab3K1Kk3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Nov 2013 05:04:01 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MWY00DZPXADON60@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 28 Nov 2013 19:03:50 +0900 (KST)
+	Thu, 28 Nov 2013 05:40:29 -0500
+Received: by mail-pb0-f51.google.com with SMTP id up15so12311156pbc.24
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Nov 2013 02:40:27 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.v@samsung.com, padma.kvr@gmail.com
-Cc: broonie@kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, lars@metafoo.de
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-This patch initializes the dma_data for the secondary dai.
-Without this patch there is crash due to NULL pointer
-dereference during boot time on systems where secondary dai
-is initialized.
+Arndale Octa board is based on Exynos5420 SoC. This patch
+adds the basic support required for booting it through DT.
 
-Below is the crash log:
-[    1.630000] smdk-audio-wm8894 sound.7:  wm8994-aif1 <-> 3830000.i2s mapping ok
-[    1.630000] Unable to handle kernel NULL pointer dereference at virtual address 00000010
-[    1.630000] pgd = c0004000
-[    1.630000] [00000010] *pgd=00000000
-[    1.630000] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-[    1.630000] Modules linked in:
-...
-...
-[<c0342d6c>] (dmaengine_pcm_new+0x284/0x2ac) from [<c0341ae8>] (soc_new_pcm+0x2fc/0x3f4)
-[<c0341ae8>] (soc_new_pcm+0x2fc/0x3f4) from [<c0338558>] (snd_soc_register_card+0x1898/0x18d8)
-[<c0338558>] (snd_soc_register_card+0x1898/0x18d8) from [<c034cc34>] (smdk_audio_probe+0xa8/0xe8)
-[<c034cc34>] (smdk_audio_probe+0xa8/0xe8) from [<c0252368>] (platform_drv_probe+0x18/0x1c)
-[<c0252368>] (platform_drv_probe+0x18/0x1c) from [<c02510a4>] (driver_probe_device+0xf4/0x204)
-[<c02510a4>] (driver_probe_device+0xf4/0x204) from [<c0251240>] (__driver_attach+0x8c/0x90)
-[<c0251240>] (__driver_attach+0x8c/0x90) from [<c024f70c>] (bus_for_each_dev+0x54/0x88)
-[<c024f70c>] (bus_for_each_dev+0x54/0x88) from [<c0250724>] (bus_add_driver+0xe0/0x2b8)
-[<c0250724>] (bus_add_driver+0xe0/0x2b8) from [<c0251868>] (driver_register+0x78/0xf4)
-[<c0251868>] (driver_register+0x78/0xf4) from [<c00086e8>] (do_one_initcall+0x34/0x150)
-[<c00086e8>] (do_one_initcall+0x34/0x150) from [<c0543c30>] (kernel_init_freeable+0x12c/0x1d0)
-[<c0543c30>] (kernel_init_freeable+0x12c/0x1d0) from [<c03ebf9c>] (kernel_init+0x8/0xe8)
-[<c03ebf9c>] (kernel_init+0x8/0xe8) from [<c000e978>] (ret_from_fork+0x14/0x3c)
-
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
-This is made based on Mark Brown for-next branch of sound.git
-This patch is based on Mark Brown below patches for
-generic dma engine support for samsung audio IPs.
-ASoC: samsung: Use ASoC dmaengine code where possible
-ASoC: samsung: Provide helper for DMA init
+ arch/arm/boot/dts/Makefile                    |    1 +
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |   66 +++++++++++++++++++++++++
+ 2 files changed, 67 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5420-arndale-octa.dts
 
- sound/soc/samsung/dmaengine.c |    3 ++-
- sound/soc/samsung/i2s.c       |    5 ++++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/samsung/dmaengine.c b/sound/soc/samsung/dmaengine.c
-index ad0a371..3f60479 100644
---- a/sound/soc/samsung/dmaengine.c
-+++ b/sound/soc/samsung/dmaengine.c
-@@ -67,7 +67,8 @@ EXPORT_SYMBOL_GPL(samsung_asoc_init_dma_data);
- int samsung_asoc_dma_platform_register(struct device *dev)
- {
- 	return snd_dmaengine_pcm_register(dev, &samsung_dmaengine_pcm_config,
--					  SND_DMAENGINE_PCM_FLAG_COMPAT);
-+					  SND_DMAENGINE_PCM_FLAG_COMPAT |
-+				SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME);
- }
- EXPORT_SYMBOL_GPL(samsung_asoc_dma_platform_register);
- 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 67d9fa9..0bcd7fb 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -946,8 +946,11 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 	struct i2s_dai *i2s = to_info(dai);
- 	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
- 
--	if (other && other->clk) /* If this is probe on secondary */
-+	if (other && other->clk) { /* If this is probe on secondary */
-+		samsung_asoc_init_dma_data(dai, &other->sec_dai->dma_playback,
-+						NULL);
- 		goto probe_exit;
-+	}
- 
- 	i2s->addr = ioremap(i2s->base, 0x100);
- 	if (i2s->addr == NULL) {
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b14bb117fc3a..602a317ad5dc 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -63,6 +63,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos5250-arndale.dtb \
+ 	exynos5250-smdk5250.dtb \
+ 	exynos5250-snow.dtb \
++	exynos5420-arndale-octa.dtb \
+ 	exynos5420-smdk5420.dtb \
+ 	exynos5440-sd5v1.dtb \
+ 	exynos5440-ssdk5440.dtb
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+new file mode 100644
+index 000000000000..7340745ff979
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -0,0 +1,66 @@
++/*
++ * Samsung's Exynos5420 based Arndale Octa board device tree source
++ *
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++#include "exynos5420.dtsi"
++
++/ {
++	model = "Insignal Arndale Octa evaluation board based on EXYNOS5420";
++	compatible = "insignal,arndale-octa", "samsung,exynos5420";
++
++	memory {
++		reg = <0x20000000 0x80000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttySAC3,115200";
++	};
++
++	fixed-rate-clocks {
++		oscclk {
++			compatible = "samsung,exynos5420-oscclk";
++			clock-frequency = <24000000>;
++		};
++	};
++
++	mmc@12200000 {
++		status = "okay";
++		broken-cd;
++		supports-highspeed;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <0 4>;
++		samsung,dw-mshc-ddr-timing = <0 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <8>;
++		};
++	};
++
++	mmc@12220000 {
++		status = "okay";
++		supports-highspeed;
++		card-detect-delay = <200>;
++		samsung,dw-mshc-ciu-div = <3>;
++		samsung,dw-mshc-sdr-timing = <2 3>;
++		samsung,dw-mshc-ddr-timing = <1 2>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++
++		slot@0 {
++			reg = <0>;
++			bus-width = <4>;
++		};
++	};
++};
 -- 
-1.7.4.4
+1.7.9.5
