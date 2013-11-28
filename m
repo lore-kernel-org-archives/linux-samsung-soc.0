@@ -1,48 +1,69 @@
-From: Alexei Colin <alexei@alexeicolin.com>
-Subject: Re: [PATCH v3 0/4] Exynos 5410 Dual cluster support
-Date: Thu, 28 Nov 2013 05:45:59 -0500
-Message-ID: <52971EE7.7070702@alexeicolin.com>
-References: <1383811969-32712-1-git-send-email-v.tyrtov@samsung.com> <1951315.Ol55YFu91h@flatron> <528CBF17.4020500@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: Initialize the dma_data for secondary dai
+Date: Thu, 28 Nov 2013 11:38:00 +0000
+Message-ID: <20131128113800.GB27568@sirena.org.uk>
+References: <1385632932-16579-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <528CBF17.4020500@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tarek Dakhran <t.dakhran@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, nicolas.pitre@linaro.org, Stephen Warren <swarren@wwwdotorg.org>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, linux-samsung-soc@vger.kernel.org, Rob Landley <rob@landley.net>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Naour Romain <romain.naour@openwide.fr>, Dave.Martin@arm.com, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:37498 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758635Ab3K1LiV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 Nov 2013 06:38:21 -0500
+Content-Disposition: inline
+In-Reply-To: <1385632932-16579-1-git-send-email-padma.v@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, padma.kvr@gmail.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, lars@metafoo.de
 
-On 11/20/2013 08:54 AM, Tarek Dakhran wrote:
-> On 20.11.2013 03:23, Tomasz Figa wrote:
->> I've applied the patches on top of today's linux-next and tried to boot
->> my ODROID-XU using exynos5410-smdk5410.dts and exynos_defconfig, but all
->> I can get is an imprecise external abort, when the kernel tries to jump
->> to init. Full boot log below. Any ideas?
 
->> [    5.195000] Unhandled fault: imprecise external abort (0x1406) at 0x00000000
->> [    5.210000] Kernel panic - not syncing: Attempted to kill init! exitcode=0x00000007
->>
-> Tomasz, there is CCI on/off switcher on smdk5410 board, also there is 
-> XOMCCI pin on SoC.
-> Looks like switcher on board controls the XOMCCI SoC pin.
-> 
-> When I turn switcher OFF, I getting the same problem you got.
-> Please, check the cci state on Odroid-XU Board, maybe it is turned off.
+--rS8CxjVDS/+yyDmU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I've soldered a wire to the XOMCCI pin on Odroid-XU+E. When pulled to
-Vdd via 100k (original configuration), the fault is "imprecise external
-abort (0x1406)" (as above). When pulled to ground, the fault is
-"imprecise external abort (0x406)". This is consistently reproducible.
+On Thu, Nov 28, 2013 at 03:32:12PM +0530, Padmavathi Venna wrote:
 
-AFAICT, from ARM reference [1]: the 5 status bits in both cases are
-"Asynchronous external abort." and the difference is bit 12 "external
-abort type:" when pulled to Vdd, caused by "AXI Slave error," when
-pulled to ground, caused by "AXI Decode error".
+> This is made based on Mark Brown for-next branch of sound.git
+> This patch is based on Mark Brown below patches for
+> generic dma engine support for samsung audio IPs.
+> ASoC: samsung: Use ASoC dmaengine code where possible
+> ASoC: samsung: Provide helper for DMA init
 
-Any pointers on further differences between SMDK5410 and ODROID-XU that
-are preventing the patch from booting? Thanks in advance.
+Why don't we need this fix for mainline?  The dmaengine change is just
+moving the initialisation through a layer of indirection but there was
+initialisation anyway.  I'm concerned that there's a bug that ought to
+be fixed for v3.13 as well here.
 
-[1]
-http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ddi0344b/Bgbiaghh.html
+>  	return snd_dmaengine_pcm_register(dev, &samsung_dmaengine_pcm_config,
+> -					  SND_DMAENGINE_PCM_FLAG_COMPAT);
+> +					  SND_DMAENGINE_PCM_FLAG_COMPAT |
+> +				SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME);
 
+This is already done.
+
+--rS8CxjVDS/+yyDmU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSlysVAAoJELSic+t+oim9STcQAIOILSBoVzm/abmfpi6Yc97h
+dQ0FBT4CtOiDvUfMdWfn+9LMNFelo+v1fe7ittLi9iB9jcaDkjliGLq4+R2YQS8r
+xkgWN+ZF5lso7qzPCjJNLvpIJ1sl41qbaI6VzKy/c2UPH7N302+cJLV4wkIlAX07
+aVeATYU5fjndLP0uKUqOfjbKG3Sq/qjD878w2YZWd9oOj7G2KTVwUaSuBC4SfVnu
+HprDe85Knnqoan4406Db9e3uyX4VBoWJ8FJ2l8qbmIr7N/cx18Dg9JaCG6D2Qxbj
+T6h/ORtlPEFcgMv5aWCSeZ1dVt0KKqHrgW++z7LmrzpBgqyO1tNINNgi+0YMlc3X
+h2I0rZRuF5tY704KFgMLM6j3Ogocr0J2MK/Cm1TqjHZwCMHUxT4we692S+1BGr9/
+RFZ1mMoauv3m7t+uQ2d4rGm9unSnnQfLzYWk67UgzZmqrYb+E0OMsiGDv6jfF/o2
+qXKDxbxdckxHdaLObgOXkoHJw7hyns1i1i+3JxSzxBHE9MLOFNpPanGjB5kP9Ffu
+QT/e3dYuepn0XTrMZnFiLX1A7N9OFY88No+EkaDk4vnDe3ZEu9+3Sd2oFQ91Wgcy
+03EiYgGNXES28ZY/pu7Sco1JlP6sALMRah363xnPoe1rTa9qYZK4OyKE+RiNi597
+BpGS7bySN9ryf2CSI6ZR
+=cCGU
+-----END PGP SIGNATURE-----
+
+--rS8CxjVDS/+yyDmU--
