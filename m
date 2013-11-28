@@ -1,119 +1,114 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
- where possible
-Date: Thu, 28 Nov 2013 11:53:51 +0000
-Message-ID: <20131128115351.GC27568@sirena.org.uk>
-References: <1384264120-24750-1-git-send-email-broonie@kernel.org>
- <1384264120-24750-2-git-send-email-broonie@kernel.org>
- <CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
- <20131126102311.GW14725@sirena.org.uk>
- <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
- <20131126122031.GA14725@sirena.org.uk>
- <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
- <20131127150534.GW14725@sirena.org.uk>
- <CAAgF-BcoKDt=u51tqiWyxveb4iJSXKuV49X1VmOsWiRsSGKKpg@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/1] pwm: samsung: avoid setting manual update bit
+ unnecessarily
+Date: Thu, 28 Nov 2013 14:26:41 +0100
+Message-ID: <20131128132640.GA23201@ulmo.nvidia.com>
+References: <1383108704-3297-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3445045470172597962=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAAgF-BcoKDt=u51tqiWyxveb4iJSXKuV49X1VmOsWiRsSGKKpg@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1383108704-3297-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============3445045470172597962==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DSayHWYpDlRfCAAQ"
-Content-Disposition: inline
-
-
---DSayHWYpDlRfCAAQ
+--EeQfGwPcQSOJBaQU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 28, 2013 at 03:29:31PM +0530, Padma Venkat wrote:
-> On Wed, Nov 27, 2013 at 8:35 PM, Mark Brown <broonie@kernel.org> wrote:
+On Wed, Oct 30, 2013 at 10:21:44AM +0530, Sachin Kamat wrote:
+> From: Andrew Bresticker <abrestic@chromium.org>
+>=20
+> When possible, avoid setting the manual update bit and starting/stopping
+> the PWM when adjusting the PWM as it causes noticable flickering when
+> setting the backlight brightness.
+>=20
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  drivers/pwm/pwm-samsung.c |   23 +++++++++++++++++++----
+>  1 file changed, 19 insertions(+), 4 deletions(-)
 
-> > But if it's initialised at probe time then when is it getting
-> > overwritten?  This must be something triggered by DT which unfortunately
-> > I can't test.  It's a bit of a shame that the flows are different
-> > between the DT and non-DT cases.
+There has been no comment on this, so can I assume this is fine with
+everyone?
 
-> it's getting overwritten in i2s_hw_params which is happening after
-> dma_data got initialized in dai probe. Based on mono or stereo channel
-> this value getting initialized to 2 or 4 respectively in
-> i2s_hw_params. This value is not triggered by DT now.
+Thierry
 
-OK, so we can probably just reinitialise the dmaengine data after we
-reset it?  Like below
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index b59639e..6d23eb3 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -34,6 +34,7 @@
+> =20
+>  #define REG_TCNTB(chan)			(0x0c + ((chan) * 0xc))
+>  #define REG_TCMPB(chan)			(0x10 + ((chan) * 0xc))
+> +#define REG_TCNTO(chan)			(0x14 + ((chan) * 0xc))
+> =20
+>  #define TCFG0_PRESCALER_MASK		0xff
+>  #define TCFG0_PRESCALER1_SHIFT		8
+> @@ -234,15 +235,29 @@ static int pwm_samsung_enable(struct pwm_chip *chip=
+, struct pwm_device *pwm)
+>  	struct samsung_pwm_chip *our_chip =3D to_samsung_pwm_chip(chip);
+>  	unsigned int tcon_chan =3D to_tcon_channel(pwm->hwpwm);
+>  	unsigned long flags;
+> -	u32 tcon;
+> +	u32 tcon, tcnt, tcnt_o;
+> =20
+>  	spin_lock_irqsave(&samsung_pwm_lock, flags);
+> =20
+>  	tcon =3D readl(our_chip->base + REG_TCON);
+> +	tcnt =3D readl(our_chip->base + REG_TCNTB(pwm->hwpwm));
+> +	tcnt_o =3D readl(our_chip->base + REG_TCNTO(pwm->hwpwm));
+> =20
+> -	tcon &=3D ~TCON_START(tcon_chan);
+> -	tcon |=3D TCON_MANUALUPDATE(tcon_chan);
+> -	writel(tcon, our_chip->base + REG_TCON);
+> +	/*
+> +	 * If we've got a big value stuck in the PWM we need to adjust it using
+> +	 * manualupdate.  The start bit needs to be off for that to work
+> +	 * properly so we only do this if strictly necessary since it can cause
+> +	 * the PWM to blink.
+> +	 *
+> +	 * We will also use manualupdate if we find that the autoreload bit
+> +	 * wasn't set previously since the very first time the timer is
+> +	 * configured we seem to need to kickstart the PWM.
+> +	 */
+> +	if ((tcnt_o > tcnt) || !(tcon & TCON_AUTORELOAD(tcon_chan))) {
+> +		tcon &=3D ~TCON_START(tcon_chan);
+> +		tcon |=3D TCON_MANUALUPDATE(tcon_chan);
+> +		writel(tcon, our_chip->base + REG_TCON);
+> +	}
+> =20
+>  	tcon &=3D ~TCON_MANUALUPDATE(tcon_chan);
+>  	tcon |=3D TCON_START(tcon_chan) | TCON_AUTORELOAD(tcon_chan);
+> --=20
+> 1.7.9.5
+>=20
 
-> > Are you sure that dma_size should be 2?  The i2s DAI driver seems to be
-> > hard coding it to 4.
-
-> I think for mono files the dma_size should be 2 only. Right now based
-> on mono or stereo this value getting overwritten in i2s_hw_params.
-> Initially it is hardcoded to 4. Due to this commit "ASoC: samsung:
-> Allow mono in i2s driver" which was not there earlier, I got confused.
-> Now it seems clear except that underrun message which I am still
-> debugging.
-
-Yeah, that's now confusing - I'll send a patch to remove the
-initialisation on probe() since it's getting overwritten later.
-
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 67d9fa91fdb9..ba24a954b9e4 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -702,6 +702,8 @@ static int i2s_hw_params(struct snd_pcm_substream *subs=
-tream,
- 	}
- 	writel(mod, i2s->addr + I2SMOD);
-=20
-+	samsung_asoc_init_dma_data(dai, &i2s->dma_playback, &i2s->dma_capture);
-+
- 	i2s->frmclk =3D params_rate(params);
-=20
- 	return 0;
-
---DSayHWYpDlRfCAAQ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+--EeQfGwPcQSOJBaQU
+Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQIcBAEBAgAGBQJSly7MAAoJELSic+t+oim9+b0QAIJ1DfvT7uvXyF1xnfo+Pl7P
-KppMNIEj0V7qr4VYak0M8i1Ed7+9VUvL1C0Lkj+l914cBYVLZD711PnKkrX34h7I
-LbAB51PxZfit9qbAtn00NxFniXry/kvCpbi8dwJNFk/bu1d7UX60T/gwaS9DIN+X
-/pewriPcPSrpo1LT2QSXnFtgXSeyt39SqRWVlhFajD5qDt9wP9IXmIbJlJGdczg1
-IFLkGNc6z8047YPa0uRMaAB4nibyegBn4PCbWCipZrEHKWQGAlbGbddW7s3WyD5V
-5MXRMIS8iTDWDN9V8rJTCBZ8do491ucajslJbJ4IuwkEhxU2M1dVXFLDgucZqlSY
-5W81pmQgrg1MSVRQSAvI815NIdvB0gggrfXFZKkscDGprzq6Ye6Hdw5kdufgZRmr
-z8/PHM4r+7Al9kSilJpX0t9PEWdasd/WI1sM6XDdy9QSM3pDt7ZWOaiZTX4ZSIjp
-UtuYkqtEMFW5Wi5pVhNj12S1YsuGkqtD4Lj08rbMgrHS3F9C8FI4/E2ePnRIC3bp
-mWNUt670thLH7v6swFPtzLQMw6UR+ycDlI1HhSyQnc5NqUxzUVCnDggwSk5vlGgG
-vYrsxMVrXlAO5szUbKpManfVqVjQgXfgFrg1j+pGksQSW1Gvsf2owG3cEOlcW/0M
-epqXzPalWV7c6KbdUioE
-=bwgJ
+iQIcBAEBAgAGBQJSl0SQAAoJEN0jrNd/PrOhk8kQALpe3+n91B1+4oPF1k0NeDNw
+R86OrS7KyjZhWoZlkvUuNiRUlZKv9nTAHRCDO6rAMTsr1g/QjhHY71nSq0JayOgZ
+tx5k54nl8o7vxzPfxVDXuyf0sbiUqF82cxG/0LJJ/rKgUoavkod4ToOgmPBlwlUE
+x4G6iezGLxEnYmFTbHkQK32/+3J8dH3z09cnLyW6tt+7CaD6aOA6537+yoavFsy0
+qGWShb6AYSVB3ZTJy1rNpLnsEE57fvalosclcNt2YIXVyZKmQ8cwPwOt31jJ89EG
+0Ff2l8l1HHc3yhWC2J36PZcQ8p4QxqkoYgtn/Jjco/kbZsCht0DvQ31i52QwX0xB
+zjfnjN4afV8jWeq5ITmD3nDhjf5Q8khlc9M+jxP9c0zaFtogrzMtFLCVR/DjvXMd
+AsiQwnLSXYqtIXgxtNfw4VAxph2wI2eOkpZhpkFN7S3MyqT9jOBF7iApZNrbFURj
+TbNhuTPpmMJd9vh1gC86/Jtdoao2TAt15h9/a2IW2u6sZkmtPXr+/kchj1TKcLVA
+VNia8L0esmHjU+DEqVj1FC3nLDl/5pOizrNxvhNUoRDBhSDx7JSSAXrhnQni2wgq
+zy+tUcWtX3zzXVAylTnhJzP0A9uY81g54NxuBVlmLtqs1/qzfn5SlljHDg6dsuY0
+GHsnvMIjposTj7eI99a4
+=Efw7
 -----END PGP SIGNATURE-----
 
---DSayHWYpDlRfCAAQ--
-
---===============3445045470172597962==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============3445045470172597962==--
+--EeQfGwPcQSOJBaQU--
