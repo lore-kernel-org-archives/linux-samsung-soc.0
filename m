@@ -1,82 +1,103 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH V4 1/6] clk: exynos-audss: convert to platform device
-Date: Wed, 27 Nov 2013 10:41:45 -0800
-Message-ID: <20131127184145.16819.44300@quantum>
-References: <1380046016-5811-1-git-send-email-abrestic@chromium.org>
- <1380143572-11741-1-git-send-email-abrestic@chromium.org>
- <CAL1qeaE2Y2EkRtbGQUqsxyci6PSSNihObPju-xquy39fV4zOMw@mail.gmail.com>
- <CAAgF-BdPPG6QdX_QKOYQ6POKrvYoB4DCqVvoM6DTLjO9u2mRFA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAAgF-BdPPG6QdX_QKOYQ6POKrvYoB4DCqVvoM6DTLjO9u2mRFA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Padma Venkat <padma.kvr@gmail.com>, Andrew Bresticker <abrestic@chromium.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-doc@vger.kernel.org, Tomasz Figa <t.figa@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tushar Behera <tushar.behera@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Sachin Kamat <sachin.kamat@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Grant Likely <grant.likely@linaro.org>, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, Jiri Kosina <jkosina@suse.cz>, Stephen Boyd <sboyd@codeaurora.org>, Doug
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH V11 0/3] Add watchdog DT nodes and use syscon regmap interface
+ to configure pmu registers
+Date: Thu, 28 Nov 2013 10:04:00 +0530
+Message-ID: <1385613243-3559-1-git-send-email-l.krishna@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:33609 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932317Ab3K1Ea4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Nov 2013 23:30:56 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, wim@iguana.be
+Cc: dianders@chromium.org, kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, linux@roeck-us.net
 
-Quoting Padma Venkat (2013-11-25 22:29:44)
-> Hi Mike and Kukjin,
-> 
-> On Tue, Oct 8, 2013 at 10:23 PM, Andrew Bresticker
-> <abrestic@chromium.org> wrote:
-> > Hi Mike and Kukjin,
-> >
-> > Any decisions regarding this patchset?  I believe all comments have
-> > been addressed.
-> >
-> > Thanks,
-> > Andrew
-> 
-> Any decisions on this patchset. These can be applied directly on
-> linux-samsung tree.
+This patchset does the following things
+	- Adds pmusysreg device node to exynos5.dtsi file
+	- Adds watchdog DT nodes to Exynos5250 and 5420
+	- Uses syscon regmap interface to configure pmu registers
+	  to mask/unmask enable/disable of watchdog.
+	
+This patch set is rebased on Kgene's for-next branch and tested on SMDK5420
 
-For all of the clk parts:
+changes since V10:
+	- followed coding style rules
+	- removed duplicate error message suggested by Guenter Roeck <linux@roeck-us.net>
 
-Acked-by: Mike Turquette <mturquette@linaro.org>
+changes since V9:
+	- added descriptions to s3c2410_wdt_variant structure fields
+	- moved calling s3c2410wdt_mask_and_disable_reset() function above s3c2410wdt_start() call in probe
+	- put dev_err message back to s3c2410wdt_mask_and_disable_reset() function
+	  (suggested by Doug Anderson <dianders@chromium.org>)
 
-I'm happy to take them in as part of a pull request.
+changes since V8:
+	- modified the patch description for the below patch
+	  "watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu register"
+	- removed MODULE_ALIAS in watchdog driver
+	- changed dev_warn to dev_err in one failure case handling (suggested by Guenter Roeck <linux@roeck-us.net>)
+	- renamed variable name from pmu_config to drv_data
+	- changed the compatible field description in documentation file
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
 
-Regards,
-Mike
+changes since V7:
+	- re-ordered the patches in the series
+	- moved pmu_config_s3c2410 structure out of ifdef CONFIG_OF
+	  and limited only this structure to platform match table
+	- renamed structure name from s3c_wdt_driver_ids to s3c2410_wdt_ids
+	- removed exynos variants from platform match table
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
 
-> 
-> >
-> > On Wed, Sep 25, 2013 at 2:12 PM, Andrew Bresticker
-> > <abrestic@chromium.org> wrote:
-> >> The Exynos AudioSS clock controller will later be modified to allow
-> >> input clocks to be specified via device-tree in order to support
-> >> multiple Exynos SoCs.  This will introduce a dependency on the core
-> >> SoC clock controller being initialized first so that the AudioSS driver
-> >> can look up its input clocks, but the order in which clock providers
-> >> are probed in of_clk_init() is not guaranteed.  Since deferred probing
-> >> is not supported in of_clk_init() and the AudioSS block is not the core
-> >> controller, we can initialize it later as a platform device.
-> >>
-> >> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> >> Acked-by: Tomasz Figa <t.figa@samsung.com>
-> >> Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> >> ---
-> >> Changes since v3:
-> >>  - __init -> __exit for module exit function
-> >>  - fixed nits from Sylwester
-> >> Changes since v2:
-> >>  - add error handling to probe callback
-> >>  - fixed ordering of of_clk_{add,del}_provider
-> >>  - fixed nits from Tomasz and Sylwester
-> >> Changes since v1:
-> >>  - add clk_unregister() calls to remove callback
-> >>  - fixed minor nits from Tomasz
-> >> ---
-> 
-> Thanks
-> Padma
+changes since V6:
+	- added SoC-specific compatible value to syscon node and documented it
+	- given more patch description for below patch
+	  ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420
+	- added platform_device_id array for watchdog devices
+	- selected MFD_SYSCON in Kconfig entry for watchdog
+
+Changes since V5:
+	- removed status property in DT nodes
+	- changed the return type for the function s3c2410wdt_mask_and_disable_reset()
+	  and handled error cases
+	- Handled to get driver data in non-DT cases
+	- Addressed comments given by Tomasz Figa <t.figa@samsung.com>
+
+Changes since V4:
+	- changed the node name from pmusysreg to syscon and node label from pmu_sys_reg to pmu_syscon
+	- changed the property name from samsung,pmusysreg to samsung,syscon-phandle
+	- used regmap_update_bits instead of remap_read/regmap_write
+	- Addressed other comments given by Tomasz Figa <t.figa@samsung.com>
+
+Changes since V3:
+	- changed the compatible strings for watchdog node
+	- splitted up adding pmusysreg node and made it separate patch
+	- Addressed comments given by Sachin Kamat <sachin.kamat@linaro.org>
+
+Changes since V2:
+	- used syscon regmap interface to configure pmu registers in WDT driver
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
+
+Changes since V1:
+        - Added new compatible string for Exynos5 SoCs
+        - Introduced quirk mechanism to program PMU registers
+        - Addressed comments given by Tomasz Figa <t.figa@samsung.com>
+
+Leela Krishna Amudala (3):
+  ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi files
+  watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu
+    register
+  ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |   16 ++
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |   21 ++-
+ arch/arm/boot/dts/exynos5.dtsi                     |    7 -
+ arch/arm/boot/dts/exynos5250.dtsi                  |   11 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |   14 ++
+ drivers/watchdog/Kconfig                           |    1 +
+ drivers/watchdog/s3c2410_wdt.c                     |  159 ++++++++++++++++++--
+ 7 files changed, 211 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+
+-- 
+1.7.10.4
