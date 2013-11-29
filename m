@@ -1,67 +1,23 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 1/1] dmaengine: s3c24xx-dma: use DMA_COMPLETE for dma
- completion status
-Date: Thu, 28 Nov 2013 14:33:22 -0800
-Message-ID: <CAA9_cmcYpS0R4CqpjtEAWe=ZhtU+aehWE6g+aik49QJJzLHxPA@mail.gmail.com>
-References: <1383196690-28307-1-git-send-email-sachin.kamat@linaro.org>
-	<20131031134227.GH18788@intel.com>
-	<086101cedf91$e2a1ce70$a7e56b50$@org>
-	<20131113085858.GS8834@intel.com>
-	<20131128072509.GT8834@intel.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH V4] cpufreq: suspend governors on system suspend/hibernate
+Date: Fri, 29 Nov 2013 08:56:08 +0530
+Message-ID: <CAKohpomA9r5a4GkfA-Huh0ectc-hXjSxcdLkJhF6DZvL22yY4w@mail.gmail.com>
+References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org>
+	<3057132.zHNVNQZ8pP@vostro.rjw.lan>
+	<CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
+	<1781198.iCUX9ZdW7W@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f45.google.com ([209.85.216.45]:63682 "EHLO
-	mail-qa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750948Ab3K1WdY convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Nov 2013 17:33:24 -0500
-In-Reply-To: <20131128072509.GT8834@intel.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1781198.iCUX9ZdW7W@vostro.rjw.lan>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
 
-On Wed, Nov 27, 2013 at 11:25 PM, Vinod Koul <vinod.koul@intel.com> wro=
-te:
-> On Wed, Nov 13, 2013 at 02:28:58PM +0530, Vinod Koul wrote:
->> On Tue, Nov 12, 2013 at 07:28:10PM +0900, Kukjin Kim wrote:
->> > Vinod Koul wrote:
->> > >
->> > > On Thu, Oct 31, 2013 at 10:48:09AM +0530, Sachin Kamat wrote:
->> > > > Use the recently introduced DMA_COMPLETE instead of DMA_SUCCES=
-S.
->> > > > Without this patch we get the following build error:
->> > > > drivers/dma/s3c24xx-dma.c: In function =91s3c24xx_dma_tx_statu=
-s=92:
->> > > > drivers/dma/s3c24xx-dma.c:798:13: error: =91DMA_SUCCESS=92 und=
-eclared
->> > > > (first use in this function)
->> > > I missed it because this is not in my tree! This needs to go thr=
-u kgene's
->> > > tree
->> > > and for that you can merge dma_complete branch from my tree. I w=
-ill not
->> > > rebase
->> > > that
->> > >
->> > > Acked-by: Vinod Koul <vinod.koul@intel.com>
->> > >
->> >
->> > Oops, I missed :(
->> >
->> > Vinod, since the s3c24xx-dma is in Linus' tree now, you can go ahe=
-ad with my ack into your fixes.
->> >
->> > If you want me to take this into samsung tree, let me know :-)
->> Okay, I will apply this after merge window
-> Applied now,
+On 29 November 2013 01:59, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> So I'm reading this as "the version of the patch in bleeding-edge is OK".
 >
+> I hope that really is the case. :-)
 
-This driver also missed the unmap rework.  Fixing now.
-
-Vinod, I'll send you the pile after I finish my build regression suite.
-
---
-Dan
+Yeah, that's correct.
