@@ -1,38 +1,39 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: dts: Add missing frequency property to exynos5250
-Date: Fri, 29 Nov 2013 18:29:13 +0100
-Message-ID: <7860838.7Z1cWJA9lN@amdc1227>
-References: <1385724892-20518-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Alex Ling <kasimling@gmail.com>
+Subject: [PATCH 1/1] ARM: dts: Add missing clock names for exynos4412 dwmmc node
+Date: Sun,  1 Dec 2013 18:11:47 +0800
+Message-ID: <1385892707-25063-1-git-send-email-kasimling@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39320 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751882Ab3K2R3V (ORCPT
+Received: from mail-pb0-f53.google.com ([209.85.160.53]:44140 "EHLO
+	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751027Ab3LAKM2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Nov 2013 12:29:21 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MX1002PNCKV0T80@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 29 Nov 2013 17:29:19 +0000 (GMT)
-In-reply-to: <1385724892-20518-1-git-send-email-sachin.kamat@linaro.org>
+	Sun, 1 Dec 2013 05:12:28 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: ben-linux@fluff.org, kgene.kim@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Alex Ling <kasimling@gmail.com>
 
-On Friday 29 of November 2013 17:04:52 Sachin Kamat wrote:
-> Added missing clock frequency property to CPU node to avoid
-> boot time warnings.
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |    2 ++
->  1 file changed, 2 insertions(+)
+This patch adds "biu" and "ciu" clock names for exynos4412 dwmmc
+node. Without this patch, dwmmc host driver will skip enabling the
+two clocks and it will break dwmmc host function on exynos4412.
+Tested on FriendlyARM TINY4412 board.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Alex Ling <kasimling@gmail.com>
+---
+ arch/arm/boot/dts/exynos4412.dtsi |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Best regards,
-Tomasz
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index e743e67..67bef99 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -67,5 +67,7 @@
+ 		interrupts = <0 77 0>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++		clocks = <&clock 301>, <&clock 149>;
++		clock-names = "biu", "ciu";
+ 	};
+ };
+-- 
+1.7.9.5
