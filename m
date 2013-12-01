@@ -1,39 +1,81 @@
-From: Alex Ling <kasimling@gmail.com>
-Subject: [PATCH 1/1] ARM: dts: Add missing clock names for exynos4412 dwmmc node
-Date: Sun,  1 Dec 2013 18:11:47 +0800
-Message-ID: <1385892707-25063-1-git-send-email-kasimling@gmail.com>
+From: Kim Phillips <kim.phillips@linaro.org>
+Subject: Re: [RFC PATCH v2 0/7] VFIO for device tree based platform devices
+ (work in progress)
+Date: Sun, 1 Dec 2013 12:09:54 +0000
+Message-ID: <20131201120954.1d6cec431a99a7ad5f34da18@linaro.org>
+References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:44140 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751027Ab3LAKM2 (ORCPT
+Received: from mail-wg0-f54.google.com ([74.125.82.54]:56548 "EHLO
+	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752341Ab3LAMKC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Dec 2013 05:12:28 -0500
+	Sun, 1 Dec 2013 07:10:02 -0500
+Received: by mail-wg0-f54.google.com with SMTP id n12so9592955wgh.21
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Dec 2013 04:10:01 -0800 (PST)
+In-Reply-To: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Alex Ling <kasimling@gmail.com>
+To: a.motakis@virtualopensystems.com
+Cc: kvmarm@lists.cs.columbia.edu, alex.williamson@redhat.com, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, kvm@vger.kernel.org, agraf@suse.de, B08248@freescale.com, tech@virtualopensystems.com
 
-This patch adds "biu" and "ciu" clock names for exynos4412 dwmmc
-node. Without this patch, dwmmc host driver will skip enabling the
-two clocks and it will break dwmmc host function on exynos4412.
-Tested on FriendlyARM TINY4412 board.
+On Mon, 30 Sep 2013 17:28:36 +0200
+Antonios Motakis <a.motakis@virtualopensystems.com> wrote:
 
-Signed-off-by: Alex Ling <kasimling@gmail.com>
----
- arch/arm/boot/dts/exynos4412.dtsi |    2 ++
- 1 file changed, 2 insertions(+)
+> This is a preview of the base work, towards VFIO support on ARM platforms
+> with an IOMMU. It forms a base on to which to implement the functionality
+> necessary to enable using device tree devices on ARM (and other platforms
+> based on device trees) with VFIO.
+> 
+> This patch series has been subjected to limited testing on the Arndale board
+> (with the Exynos 5250 System MMU). More extensive testing will follow as more
+> features are implemented.
 
-diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
-index e743e67..67bef99 100644
---- a/arch/arm/boot/dts/exynos4412.dtsi
-+++ b/arch/arm/boot/dts/exynos4412.dtsi
-@@ -67,5 +67,7 @@
- 		interrupts = <0 77 0>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		clocks = <&clock 301>, <&clock 149>;
-+		clock-names = "biu", "ciu";
- 	};
- };
--- 
-1.7.9.5
+Hi, I'm trying to attach the vfio-platform driver to an(y) iommu-backed
+device on the arndale.  I chose the relatively simple 'tv' device,
+isolated it in the arndale device tree (to get rid of any dependency
+conflicts), and, when I run Alex' vfio-correctness-tests [1], I get
+this:
+
+# echo 14650000.sysmmu > /sys/bus/platform/devices/14650000.sysmmu/driver/unbind
+# echo 14650000.sysmmu > /sys/bus/platform/drivers/vfio-platform/bind
+# ls -l /sys/bus/platform/devices/14650000.sysmmu/iommu_group
+lrwxrwxrwx 1 root root 0 Oct  1 23:14 /sys/bus/platform/devices/14650000.sysmmu/iommu_group -> ../../kernel/iommu_groups/43
+# vfio-tests/vfio-correctness-tests 43
+[   84.567643] ------------[ cut here ]------------
+[   84.572258] WARNING: CPU: 0 PID: 1606 at drivers/iommu/exynos-iommu.c:472 __exynos_sysmmu_enable+0x170/0x184()
+[   84.582225] Modules linked in:
+[   84.585268] CPU: 0 PID: 1606 Comm: vfio-correctnes Not tainted 3.13.0-rc1-00296-gb703d74-dirty #46
+[   84.594219] [<c0014d20>] (unwind_backtrace+0x0/0xf4) from [<c0011648>] (show_stack+0x10/0x14)
+[   84.602719] [<c0011648>] (show_stack+0x10/0x14) from [<c0377948>] (dump_stack+0x7c/0xb0)
+[   84.610791] [<c0377948>] (dump_stack+0x7c/0xb0) from [<c001dc50>] (warn_slowpath_common+0x6c/0x88)
+[   84.619730] [<c001dc50>] (warn_slowpath_common+0x6c/0x88) from [<c001dd08>] (warn_slowpath_null+0x1c/0x24)
+[   84.629365] [<c001dd08>] (warn_slowpath_null+0x1c/0x24) from [<c02dace8>] (__exynos_sysmmu_enable+0x170/0x184)
+[   84.639348] [<c02dace8>] (__exynos_sysmmu_enable+0x170/0x184) from [<c02dad4c>] (exynos_iommu_attach_device+0x50/0x108)
+[   84.650111] [<c02dad4c>] (exynos_iommu_attach_device+0x50/0x108) from [<c02d939c>] (iommu_attach_device+0x64/0xb8)
+[   84.660440] [<c02d939c>] (iommu_attach_device+0x64/0xb8) from [<c02d92ec>] (iommu_group_for_each_dev+0x78/0x94)
+[   84.670509] [<c02d92ec>] (iommu_group_for_each_dev+0x78/0x94) from [<c0263678>] (vfio_iommu_type1_attach_group+0xd0/0x144)
+[   84.681530] [<c0263678>] (vfio_iommu_type1_attach_group+0xd0/0x144) from [<c02629e0>] (vfio_fops_unl_ioctl+0x3ac/0x460)
+[   84.692295] [<c02629e0>] (vfio_fops_unl_ioctl+0x3ac/0x460) from [<c00c1f14>] (do_vfs_ioctl+0x3f0/0x5b8)
+[   84.701668] [<c00c1f14>] (do_vfs_ioctl+0x3f0/0x5b8) from [<c00c2114>] (SyS_ioctl+0x38/0x60)
+[   84.710002] [<c00c2114>] (SyS_ioctl+0x38/0x60) from [<c000e1a0>] (ret_fast_syscall+0x0/0x30)
+[   84.718417] ---[ end trace a1400d7981f699ce ]---
+[   84.723071] vfio-platform 14650000.sysmmu: exynos_iommu_attach_device: Failed to attach IOMMU with pgtable 0x6eae8000
+
+It's failing this test:
+
+        if (WARN_ON(!client))
+                return -ENODEV;
+
+but I haven't been able to figure out why...I have the exynos
+iommu v10 patchseries applied, and even though there's not much
+documentation available for this device, I figure this simple test is
+supposed to 'just work.'  Any ideas?
+
+Thanks,
+
+Kim
+
+[1] git://github.com/awilliam/tests.git
