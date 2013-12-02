@@ -1,60 +1,145 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
-Date: Mon, 2 Dec 2013 15:57:12 +0530
-Message-ID: <CAK9yfHx7YZk1bW5YY_mFw2XnikA5fEDRXQrfSsogP2atKCg=oQ@mail.gmail.com>
-References: <1383797386-29458-1-git-send-email-sachin.kamat@linaro.org>
-	<11439635.3nLj0DE42O@flatron>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH v2] ARM: dts: Add hs-i2c nodes to exynos5420
+Date: Mon,  2 Dec 2013 16:41:42 +0530
+Message-ID: <1385982702-18335-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f179.google.com ([209.85.214.179]:49593 "EHLO
-	mail-ob0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753099Ab3LBK1N (ORCPT
+Received: from mail-pb0-f54.google.com ([209.85.160.54]:33866 "EHLO
+	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753435Ab3LBLOU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Dec 2013 05:27:13 -0500
-Received: by mail-ob0-f179.google.com with SMTP id wm4so12323967obc.24
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2013 02:27:12 -0800 (PST)
-In-Reply-To: <11439635.3nLj0DE42O@flatron>
+	Mon, 2 Dec 2013 06:14:20 -0500
+Received: by mail-pb0-f54.google.com with SMTP id un15so18809450pbc.27
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2013 03:14:19 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, t.figa@samsung.com
 
-On 10 November 2013 23:50, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Thursday 07 of November 2013 09:39:46 Sachin Kamat wrote:
->> Fixed samaung -> samsung in property name.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> ---
->>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> index e695aba5f73c..e62c8eb57438 100644
->> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
->> @@ -64,7 +64,7 @@
->>                       samsung,pins = "gpx0-7";
->>                       samsung,pin-function = <3>;
->>                       samsung,pin-pud = <0>;
->> -                     samaung,pin-drv = <0>;
->> +                     samsung,pin-drv = <0>;
->>               };
->>       };
->>
->>
->
-> Good catch.
->
-> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
-> Best regards,
-> Tomasz
->
+Added high speed I2C nodes to Exynos5420 DT file.
 
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+Changes since v1:
+Changed the node name to i2c as suggested by Tomasz Figa.
+---
+ arch/arm/boot/dts/exynos5420.dtsi |   98 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 98 insertions(+)
 
-Ping Kukjin.
-
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 6ffefd163fa0..38fcfc72a013 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -34,6 +34,13 @@
+ 		i2c1 = &i2c_1;
+ 		i2c2 = &i2c_2;
+ 		i2c3 = &i2c_3;
++		i2c4 = &hsi2c_4;
++		i2c5 = &hsi2c_5;
++		i2c6 = &hsi2c_6;
++		i2c7 = &hsi2c_7;
++		i2c8 = &hsi2c_8;
++		i2c9 = &hsi2c_9;
++		i2c10 = &hsi2c_10;
+ 		gsc0 = &gsc_0;
+ 		gsc1 = &gsc_1;
+ 	};
+@@ -333,6 +340,97 @@
+ 		status = "disabled";
+ 	};
+ 
++	hsi2c_4: i2c@12CA0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CA0000 0x1000>;
++		interrupts = <0 60 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c4_hs_bus>;
++		clocks = <&clock 265>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_5: i2c@12CB0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CB0000 0x1000>;
++		interrupts = <0 61 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c5_hs_bus>;
++		clocks = <&clock 266>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_6: i2c@12CC0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CC0000 0x1000>;
++		interrupts = <0 62 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c6_hs_bus>;
++		clocks = <&clock 267>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_7: i2c@12CD0000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12CD0000 0x1000>;
++		interrupts = <0 63 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c7_hs_bus>;
++		clocks = <&clock 268>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_8: i2c@12E00000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E00000 0x1000>;
++		interrupts = <0 87 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c8_hs_bus>;
++		clocks = <&clock 281>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_9: i2c@12E10000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E10000 0x1000>;
++		interrupts = <0 88 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c9_hs_bus>;
++		clocks = <&clock 282>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
++	hsi2c_10: i2c@12E20000 {
++		compatible = "samsung,exynos5-hsi2c";
++		reg = <0x12E20000 0x1000>;
++		interrupts = <0 203 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c10_hs_bus>;
++		clocks = <&clock 283>;
++		clock-names = "hsi2c";
++		status = "disabled";
++	};
++
+ 	hdmi@14530000 {
+ 		compatible = "samsung,exynos4212-hdmi";
+ 		reg = <0x14530000 0x70000>;
 -- 
-With warm regards,
-Sachin
+1.7.9.5
