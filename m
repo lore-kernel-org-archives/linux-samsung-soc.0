@@ -1,241 +1,389 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH RESEND v10 2/7] cpufreq:acpi:x86: Adjust the acpi-cpufreq.c
- code to work with common boost solution
-Date: Mon, 02 Dec 2013 13:19:16 +0100
-Message-ID: <1385986761-17934-3-git-send-email-l.majewski@samsung.com>
-References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
- <1385986761-17934-1-git-send-email-l.majewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1385986761-17934-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>
-Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: linux 3.13-rc1 make dw_mmc-exynos more worse
+Date: Mon, 02 Dec 2013 21:58:05 +0900
+Message-ID: <001c01ceef5e$244fd8e0$6cef8aa0$%jun@samsung.com>
+References: <BLU0-SMTP154F63148320A2FFA456BFADE20@phx.gbl>
+ <CAOesGMim3niC75g3VK1Ue=98NySmUVHyRAOvd-+RWwZ3gHVx2w@mail.gmail.com>
+ <1468386.irfukHHsPa@flatron> <BLU0-SMTP146D04141F53FD0FFC1D78DADEC0@phx.gbl>
+ <52942461.5060406@samsung.com> <BLU0-SMTP572E6FBC0A6572AEB71304ADEC0@phx.gbl>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:40478 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752171Ab3LBM6I convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Dec 2013 07:58:08 -0500
+In-reply-to: <BLU0-SMTP572E6FBC0A6572AEB71304ADEC0@phx.gbl>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'randy' <lxr1234@hotmail.com>, 'Jaehoon Chung' <jh80.chung@samsung.com>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, t.figa@samsung.com, olof@lixom.net, kgene.kim@samsung.com
 
-The Intel's hardware based boost solution driver has been changed to cooperate with
-common cpufreq boost framework.
+On Tue, November 26, 2013, Randy wrote:
+> Thanks Jaehoon,
+> I have noticed that before it, but in dw_mmc driver, I won't meet thi=
+s
+> problem.
+> As you can seen in dts, I have defined a clock source.
+> Or the clock source what I choose is not correct?
+> I don't know how to debug this, I don't know much about it.
+> Actually, I don't really understand the contain in chapter 7 of datas=
+heet.
+> I am sorry for that.
+> Would you like to tell me some more about it?
 
-The global sysfs boost attribute entry code (/sys/devices/system/cpu/cpufreq/boost)
-has been moved to a core cpufreq code. This attribute is now only visible,
-when cpufreq driver supports it.
+Can you add the followings for you test?
+arch/arm/boot/dts/exynos4412.dtsi
++               clocks =3D <&clock 301>, <&clock 149>;
++               clock-name =3D "biu", "ciu";
 
-The _store_boost() function has been redesigned to be used as set_boost
-callback.
+Thanks,
+Seungwon Jeon
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-Signed-off-by: Myungjoo Ham <myungjoo.ham@samsung.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
----
-Changes for v10:
-- None
-
-Changes for v9:
-- None
-
-Changes for v8:
-- None
-
-Changes for v7:
-- Remove superfluous acpi_cpufreq_driver.boost_supported = false at
-  acpi_cpufreq_boost_init()
-
-Changes for v6:
-- Perform acpi_cpufreq_boost_init initialization before cpufreq_driver
-  registration
-- Compile store_boost() only when CONFIG_X86_ACPI_CPUFREQ_CPB defined
-- Use boost_enabled flag defined at acpi_cpufreq_driver to store information
-  about boost state
-- Instead of using cpufreq_set_boost_enabled(), modify the boost_enable in
-  the acpi driver code
-
-Changes for v5:
-- Remove acpi-cpufreq's boost_enabled global flag and reuse one defined at
-  cpufreq core
-
-Changes for v4:
-- add _store_boost to acpi_cpufreq_driver structure
-
-Changes for v3:
-- Bring back boost_enabled as a global flag
-- Move boost_supported to cpufreq_driver structure
-
-Changes for v2:
-- Replace boost_enabled and boost_supported global flags with proper entries
-  at struct cpufreq_driver.
-- Removal of struct cpufreq_boost
-
- drivers/cpufreq/acpi-cpufreq.c |   86 ++++++++++++++--------------------------
- 1 file changed, 29 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/cpufreq/acpi-cpufreq.c b/drivers/cpufreq/acpi-cpufreq.c
-index caf41eb..79e5608 100644
---- a/drivers/cpufreq/acpi-cpufreq.c
-+++ b/drivers/cpufreq/acpi-cpufreq.c
-@@ -80,7 +80,6 @@ static struct acpi_processor_performance __percpu *acpi_perf_data;
- static struct cpufreq_driver acpi_cpufreq_driver;
- 
- static unsigned int acpi_pstate_strict;
--static bool boost_enabled, boost_supported;
- static struct msr __percpu *msrs;
- 
- static bool boost_state(unsigned int cpu)
-@@ -133,49 +132,16 @@ static void boost_set_msrs(bool enable, const struct cpumask *cpumask)
- 	wrmsr_on_cpus(cpumask, msr_addr, msrs);
- }
- 
--static ssize_t _store_boost(const char *buf, size_t count)
-+static int _store_boost(int val)
- {
--	int ret;
--	unsigned long val = 0;
--
--	if (!boost_supported)
--		return -EINVAL;
--
--	ret = kstrtoul(buf, 10, &val);
--	if (ret || (val > 1))
--		return -EINVAL;
--
--	if ((val && boost_enabled) || (!val && !boost_enabled))
--		return count;
--
- 	get_online_cpus();
--
- 	boost_set_msrs(val, cpu_online_mask);
--
- 	put_online_cpus();
--
--	boost_enabled = val;
- 	pr_debug("Core Boosting %sabled.\n", val ? "en" : "dis");
- 
--	return count;
--}
--
--static ssize_t store_global_boost(struct kobject *kobj, struct attribute *attr,
--				  const char *buf, size_t count)
--{
--	return _store_boost(buf, count);
--}
--
--static ssize_t show_global_boost(struct kobject *kobj,
--				 struct attribute *attr, char *buf)
--{
--	return sprintf(buf, "%u\n", boost_enabled);
-+	return 0;
- }
- 
--static struct global_attr global_boost = __ATTR(boost, 0644,
--						show_global_boost,
--						store_global_boost);
--
- static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
- {
- 	struct acpi_cpufreq_data *data = per_cpu(acfreq_data, policy->cpu);
-@@ -186,15 +152,32 @@ static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
- cpufreq_freq_attr_ro(freqdomain_cpus);
- 
- #ifdef CONFIG_X86_ACPI_CPUFREQ_CPB
-+static ssize_t store_boost(const char *buf, size_t count)
-+{
-+	int ret;
-+	unsigned long val = 0;
-+
-+	if (!acpi_cpufreq_driver.boost_supported)
-+		return -EINVAL;
-+
-+	ret = kstrtoul(buf, 10, &val);
-+	if (ret || (val > 1))
-+		return -EINVAL;
-+
-+	_store_boost((int) val);
-+
-+	return count;
-+}
-+
- static ssize_t store_cpb(struct cpufreq_policy *policy, const char *buf,
- 			 size_t count)
- {
--	return _store_boost(buf, count);
-+	return store_boost(buf, count);
- }
- 
- static ssize_t show_cpb(struct cpufreq_policy *policy, char *buf)
- {
--	return sprintf(buf, "%u\n", boost_enabled);
-+	return sprintf(buf, "%u\n", acpi_cpufreq_driver.boost_enabled);
- }
- 
- cpufreq_freq_attr_rw(cpb);
-@@ -554,7 +537,7 @@ static int boost_notify(struct notifier_block *nb, unsigned long action,
- 	switch (action) {
- 	case CPU_UP_PREPARE:
- 	case CPU_UP_PREPARE_FROZEN:
--		boost_set_msrs(boost_enabled, cpumask);
-+		boost_set_msrs(acpi_cpufreq_driver.boost_enabled, cpumask);
- 		break;
- 
- 	case CPU_DOWN_PREPARE:
-@@ -911,6 +894,7 @@ static struct cpufreq_driver acpi_cpufreq_driver = {
- 	.resume		= acpi_cpufreq_resume,
- 	.name		= "acpi-cpufreq",
- 	.attr		= acpi_cpufreq_attr,
-+	.set_boost      = _store_boost,
+>=20
+> =E4=BA=8E 2013=E5=B9=B411=E6=9C=8826=E6=97=A5 12:32, Jaehoon Chung =E5=
+=86=99=E9=81=93:
+> > Hi, Randy,
+> >
+> > It seems a problem that controller didn't find the clock source.
+> > Also you can see the below message. Did you check the clock
+> > source?
+> >
+> >> [    1.125000] s3c-sdhci 12550000.sdhci: failed to get io clock
+> >
+> > Actually, need to prevent the "null pointer dereference" for clock
+> > in dw-mmc.c
+> >
+> > And If dw-mmc controller can be used, recommend to use it. dw-mmc
+> > can use DDR mode, but sdhci can't.
+> >
+> > Best Regards, Jaehoon Chung
+> >
+> > On 11/26/2013 10:47 AM, randy wrote: =E4=BA=8E 2013=E5=B9=B411=E6=9C=
+=8826=E6=97=A5 08:41, Tomasz
+> > Figa =E5=86=99=E9=81=93:
+> >>>> On Sunday 24 of November 2013 22:18:46 Olof Johansson wrote:
+> >>>>> Hi,
+> >>>>>
+> >>>>> On Sun, Nov 24, 2013 at 4:07 AM, randy
+> >>>>> <lxr1234@hotmail.com> wrote:
+> >>>>>> -----BEGIN PGP SIGNED MESSAGE----- Hash: SHA1
+> >>>>>>
+> >>>>>> After pull the merge of 3.13-rc1, the dw_mmc-exynos will
+> >>>>>> make the boot stock.In 3.13, it is just stocked udev in
+> >>>>>> 3.13 and makse udev timeout but kernel report the emmc
+> >>>>>> device is found.
+> >>>>>>
+> >>>>>> And in the
+> >>>>>> Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> >>>>>> I saw that it is need to define which gpio ports that a
+> >>>>>> emmc slot use, but when I watched others dts, they use
+> >>>>>> pinctrl, which is correct? Here is the log and dts
+> >>>>>
+> >>>>> [..]
+> >>>>>
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3Dlog begin
+> >>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> >>>>> [..]
+> >>>>>> [    0.000000] CPU EXYNOS4412 (id 0xe4412011)
+> >>>>>
+> >>>>> [..]
+> >>>>>
+> >>>>>> [    1.095000] mmc0: no vmmc regulator found [ 1.130000]
+> >>>>>> mmc0: SDHCI controller on samsung-hsmmc [12530000.sdhci]
+> >>>>>> using ADMA [    1.130000] Synopsys Designware Multimedia
+> >>>>>> Card Interface Driver [ 1.130000] Unable to handle kernel
+> >>>>>> NULL pointer dereference at virtual address 0000002a [
+> >>>>>> 1.130000] pgd =3D c0004000 [    1.130000] [0000002a]
+> >>>>>> *pgd=3D00000000 [ 1.135000] Internal error: Oops: 5 [#1]
+> >>>>>> PREEMPT SMP ARM [ 1.140000] Modules linked in: [
+> >>>>>> 1.140000] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+> >>>>>> 3.13.0-rc1-00008-g584fa45-dirty #3 [ 1.150000] task:
+> >>>>>> ef0a4000 ti: ef0a8000 task.ti: ef0a8000 [ 1.155000] PC
+> >>>>>> is at clk_get_rate+0x18/0x5c [    1.160000] LR is at
+> >>>>>> clk_prepare_lock+0xc/0xd8 [    1.165000] pc :
+> >>>>>> [<c0319400>] lr : [<c0318864>]    psr: a0000113 [
+> >>>>>> 1.165000] sp : ef0a9e20 ip : ee94eb40  fp : 00000000 [
+> >>>>>> 1.175000] r10: c0571510  r9 : ef0a8000  r8 : ef227a10 [
+> >>>>>> 1.180000] r7 : c043544c  r6 : fffffffe  r5 : ee94ead0
+> >>>>>> r4 : fffffffe [    1.185000] r3 : ef0a4000  r2 :
+> >>>>>> 00000001 r1 : 000002b9  r0 : 00000001 [ 1.195000] Flags:
+> >>>>>> NzCv IRQs on  FIQs on  Mode SVC_32  ISA ARM Segment
+> >>>>>> kernel [ 1.200000] Control: 10c5387d  Table: 4000404a
+> >>>>>> DAC: 00000015 [    1.205000] Process swapper/0 (pid: 1,
+> >>>>>> stack limit =3D 0xef0a8240) [    1.210000] Stack:
+> >>>>>> (0xef0a9e20 to 0xef0aa000) [    1.215000] 9e20: c0308474
+> >>>>>> ee9ea610 ee94ead0 c0308488 c0308474 ee9ea610 00000000
+> >>>>>> c030592c [ 1.225000] 9e40: ef227a10 00001000 c043544c
+> >>>>>> c020a920 c0838b04 17d78400 ee9ea610 ef227a00 [
+> >>>>>> 1.235000] 9e60: ef227a10 c05d6b1c 00000000 c05d6b1c
+> >>>>>> c05890b0 ef0a8000 c0571510 c0269448 [ 1.240000] 9e80:
+> >>>>>> c0269430 ef227a10 c061291c c0268088 00000000 ef227a10
+> >>>>>> c05d6b1c ef227a44 [ 1.250000] 9ea0: 00000000 c026822c
+> >>>>>> 00000000 c05d6b1c c02681a0 c02668a8 ef005478 ef212740 [
+> >>>>>> 1.255000] 9ec0: c05d6b1c ef2c7900 c05cf438 c0267864
+> >>>>>> c0511e38 c05d6b1c 00000006 c05d6b1c [    1.265000] 9ee0:
+> >>>>>> 00000006 c059575c c05df580 c026884c 00000000 c05a2e14
+> >>>>>> 00000006 c00088dc [ 1.275000] 9f00: c0603f70 ef163e00
+> >>>>>> c040e334 60000113 c05b5000 a0000113 c05b5054 c05b5050 [
+> >>>>>> 1.280000] 9f20: c05df580 c054ad68 c0839c96 c04247b4
+> >>>>>> 00000093 c0035158 c05b5054 c05a2a20 [    1.290000] 9f40:
+> >>>>>> c050ae2c c054a438 00000006 00000006 00000000 c05a2e14
+> >>>>>> 00000006 c059575c [ 1.300000] 9f60: c05df580 00000093
+> >>>>>> c0595768 c0571510 00000000 c0571c48 00000006 00000006 [
+> >>>>>> 1.305000] 9f80: c0571510 c003df68 00000000 c0403544
+> >>>>>> 00000000 00000000 00000000 00000000 [    1.315000] 9fa0:
+> >>>>>> 00000000 c040354c 00000000 c000e738 00000000 00000000
+> >>>>>> 00000000 00000000 [ 1.320000] 9fc0: 00000000 00000000
+> >>>>>> 00000000 00000000 00000000 00000000 00000000 00000000 [
+> >>>>>> 1.330000] 9fe0: 00000000 00000000 00000000 00000000
+> >>>>>> 00000013 00000000 be73efa4 ffffbffd [    1.340000]
+> >>>>>> [<c0319400>] (clk_get_rate+0x18/0x5c) from [<c0308488>]
+> >>>>>> (dw_mci_exynos_setup_clock+0x14/0x2c) [    1.350000]
+> >>>>>> [<c0308488>] (dw_mci_exynos_setup_clock+0x14/0x2c) from
+> >>>>>> [<c030592c>] (dw_mci_probe+0x15c/0xca4) [    1.360000]
+> >>>>>> [<c030592c>] (dw_mci_probe+0x15c/0xca4) from [<c0269448>]
+> >>>>>> (platform_drv_probe+0x18/0x48) [ 1.365000] [<c0269448>]
+> >>>>>> (platform_drv_probe+0x18/0x48) from [<c0268088>]
+> >>>>>> (driver_probe_device+0x100/0x218) [ 1.375000]
+> >>>>>> [<c0268088>] (driver_probe_device+0x100/0x218) from
+> >>>>>> [<c026822c>] (__driver_attach+0x8c/0x90) [ 1.385000]
+> >>>>>> [<c026822c>] (__driver_attach+0x8c/0x90) from
+> >>>>>> [<c02668a8>] (bus_for_each_dev+0x54/0x88) [    1.395000]
+> >>>>>> [<c02668a8>] (bus_for_each_dev+0x54/0x88) from
+> >>>>>> [<c0267864>] (bus_add_driver+0xd4/0x1d0) [    1.405000]
+> >>>>>> [<c0267864>] (bus_add_driver+0xd4/0x1d0) from
+> >>>>>> [<c026884c>] (driver_register+0x78/0xf4) [    1.415000]
+> >>>>>> [<c026884c>] (driver_register+0x78/0xf4) from
+> >>>>>> [<c00088dc>] (do_one_initcall+0xec/0x148) [    1.420000]
+> >>>>>> [<c00088dc>] (do_one_initcall+0xec/0x148) from
+> >>>>>> [<c0571c48>] (kernel_init_freeable+0xfc/0x1c8) [
+> >>>>>> 1.430000] [<c0571c48>] (kernel_init_freeable+0xfc/0x1c8)
+> >>>>>> from [<c040354c>] (kernel_init+0x8/0x110) [    1.440000]
+> >>>>>> [<c040354c>] (kernel_init+0x8/0x110) from [<c000e738>]
+> >>>>>> (ret_from_fork+0x14/0x3c) [    1.450000] Code: ebfffd18
+> >>>>>> e3540000 01a05004 0a000008 (e594302c)
+> >>>>>
+> >>>>>
+> >>>>> Looks like a clock issue on 4412? I only have 5250 that I
+> >>>>> boot test on, no EXYNOS4 coverage at all (I had an
+> >>>>> Odroid-X but it wasn't useful due to the very old u-boot it
+> >>>>> came with so I gave it away).
+> >>>>>
+> >>>>> Tomasz, is this something you can reproduce on 4210/4412?
+> >>>>
+> >>>> Nope. All of our boards (exynos4210-trats,
+> >>>> exynos4412-trats2) are configured to use sdhci-s3c for all
+> >>>> MMC slots[1], as at the time they got submitted to mainline,
+> >>>> this driver was considered more reliable than dw-mmc. Not
+> >>>> sure about today, though.
+> >>>>
+> >>>> [1] On Exynos4 there is one dw-mmc block and four sdhci-s3c
+> >>>> blocks, while there are just four physical busses. Using pin
+> >>>>  control you can configure any of the four sets of pins to
+> >>>> work either using its dedicated sdhci-s3c or the only one
+> >>>> dw-mmc.
+> >>>>
+> >>>> Best regards, Tomasz
+> >>>>
+> >>>> -- To unsubscribe from this list: send the line "unsubscribe
+> >>>>  linux-samsung-soc" in the body of a message to
+> >>>> majordomo@vger.kernel.org More majordomo info at
+> >>>> http://vger.kernel.org/majordomo-info.html
+> >>>>
+> >>>>
+> > Well I don't think it can work this time, maybe my dts is wrong.
+> > At this time neither emmc nor usb can work.
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3Dlog begin=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >  [    1.035000] s3c-rtc 10070000.rtc: rtc disabled, re-enabling [
+> > 1.040000] s3c-rtc 10070000.rtc: rtc core: registered s3c as rtc0 [
+> > 1.050000] device-mapper: ioctl: 4.27.0-ioctl (2013-10-30)
+> > initialised: dm-devel@redhat.com [    1.055000] sdhci: Secure
+> > Digital Host Controller Interface driver [    1.060000] sdhci:
+> > Copyright(c) Pierre Ossman [    1.065000] s3c-sdhci
+> > 12530000.sdhci: clock source 2: mmc_busclk.2 (100000000 Hz) [
+> > 1.075000] s3c-sdhci 12530000.sdhci: dummy supplies not allowed [
+> > 1.080000] mmc0: no vqmmc regulator found [    1.085000] s3c-sdhci
+> > 12530000.sdhci: dummy supplies not allowed [    1.090000] mmc0: no
+> > vmmc regulator found [    1.125000] mmc0: SDHCI controller on
+> > samsung-hsmmc [12530000.sdhci] using ADMA [    1.125000] s3c-sdhci
+> > 12550000.sdhci: failed to get io clock [    1.125000] s3c-sdhci:
+> > probe of 12550000.sdhci failed with error -2 [    1.125000]
+> > Synopsys Designware Multimedia Card Interface Driver [
+> > 1.130000] usbcore: registered new interface driver usbhid [
+> > 1.130000] usbhid: USB HID core driver [    1.135000] TCP: cubic
+> > registered [ 1.145000] NET: Registered protocol family 10 [
+> > 1.145000] NET: Registered protocol family 17 [    1.145000] NET:
+> > Registered protocol family 15 [    1.150000] Key type dns_resolver
+> > registered [    1.155000] Registering SWP/SWPB emulation handler [
+> > 1.160000] unable to find transceiver of type USB2 PHY [ 1.165000]
+> > exynos-ehci 12580000.ehci: no platform data or transceiver defined
+> > [    1.175000] platform 12580000.ehci: Driver exynos-ehci requests
+> > probe deferral [    1.175000] mmc0: new high speed SDHC card at
+> > address aaaa [    1.185000] isa bounce pool size: 16 pages [
+> > 1.190000] mmcblk0: mmc0:aaaa SU08G 7.40 GiB [ 1.195000] s3c-rtc
+> > 10070000.rtc: setting system clock to 2013-01-01 12:06:09 UTC
+> > (1357041969) [    1.205000] exynos_cpufreq_init: failed to get
+> > resource vdd_arm [    1.205000]  mmcblk0: p1 p2 p3 p4 [
+> > 1.215000] unable to find transceiver of type USB2 PHY [ 1.215000]
+> > exynos-ehci 12580000.ehci: no platform data or transceiver defined
+> > [    1.225000] platform 12580000.ehci: Driver exynos-ehci requests
+> > probe deferral
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3Dlog end=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+dts=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> >
+> >
+> /*
+> > * Hardkernel's Exynos4412 based tiny4412 1306 board device tree
+> > source * * Copyright (c) 2013 Tomoya Gitsufuki
+> > <ayaka@mail.soulik.info> * * Device tree source file for
+> > Friendyarm tiny4412 1306 board which is based on * Samsung's
+> > Exynos4412 SoC. * * This program is free software; you can
+> > redistribute it and/or modify * it under the terms of the GNU
+> > General Public License version 2 as * published by the Free
+> > Software Foundation. */
+> >
+> > /dts-v1/; #include "exynos4412.dtsi"
+> >
+> > / { model =3D "Friendly Arm Tiny4412 1306 board based on Exynos4412=
+";
+> > compatible =3D "friendlyarm,tiny4412-1306", "samsung,exynos4412";
+> >
+> > memory { reg =3D <0x40000000 0x40000000>; };
+> >
+> > chosen { bootargs =3D"root=3D/dev/mmcblk0p1 rootfstype=3Dext4 rw
+> > console=3DttySAC0,115200 init=3D/sbin/init"; };
+> >
+> > leds { compatible =3D "gpio-leds"; led1 { label =3D "led1:heart";
+> > gpios =3D <&gpm4 0 1>; default-state =3D "on"; linux,default-trigge=
+r =3D
+> > "heartbeat"; }; led2 { label =3D "led2:mmc0"; gpios =3D <&gpm4 1 1>=
+;
+> > default-state =3D "on"; linux,default-trigger =3D "mmc0"; };
+> >
+> > };
+> >
+> > regulators { compatible =3D "simple-bus"; #address-cells =3D <1>;
+> >
+> > vemmc_reg: regulator-0 { compatible =3D "regulator-fixed";
+> > regulator-name =3D "VMEM_VDD_2.8V"; regulator-min-microvolt =3D
+> > <2800000>; regulator-max-microvolt =3D <2800000>; gpio =3D <&gpk0 2=
+ 0>;
+> > enable-active-high; };
+> >
+> > };
+> >
+> > /* mshc@12550000 { #address-cells =3D <1>; #size-cells =3D <0>;
+> > pinctrl-0 =3D <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>; pinctrl-name=
+s
+> > =3D "default"; status =3D "okay";
+> >
+> > vmmc-supply =3D <&vemmc_reg>; clocks =3D <&clock 301>, <&clock 149>=
+;
+> > clocks-name =3D "dwmci", "sclk_dwmci"; clock-frequency =3D
+> > <400000000>;
+> >
+> > num-slots =3D <1>; supports-highspeed; broken-cd; fifo-depth =3D
+> > <0x80>; card-detect-delay =3D <200>; samsung,dw-mshc-sdr-timing =3D=
+ <2
+> > 3>; samsung,dw-mshc-ddr-timing =3D <1 2>;
+> >
+> > slot@0 { reg =3D <0>; bus-width =3D <8>;  }; }; */
+> >
+> > rtc@10070000 { status =3D "okay"; };
+> >
+> > sdhci@12530000 { bus-width =3D <4>; pinctrl-0 =3D <&sd2_clk &sd2_cm=
+d
+> > &sd2_bus4 &sd2_cd>; pinctrl-names =3D "default"; status =3D "okay";=
  };
- 
- static void __init acpi_cpufreq_boost_init(void)
-@@ -921,33 +905,22 @@ static void __init acpi_cpufreq_boost_init(void)
- 		if (!msrs)
- 			return;
- 
--		boost_supported = true;
--		boost_enabled = boost_state(0);
--
-+		acpi_cpufreq_driver.boost_supported = true;
-+		acpi_cpufreq_driver.boost_enabled = boost_state(0);
- 		get_online_cpus();
- 
- 		/* Force all MSRs to the same value */
--		boost_set_msrs(boost_enabled, cpu_online_mask);
-+		boost_set_msrs(acpi_cpufreq_driver.boost_enabled,
-+			       cpu_online_mask);
- 
- 		register_cpu_notifier(&boost_nb);
- 
- 		put_online_cpus();
--	} else
--		global_boost.attr.mode = 0444;
--
--	/* We create the boost file in any case, though for systems without
--	 * hardware support it will be read-only and hardwired to return 0.
--	 */
--	if (cpufreq_sysfs_create_file(&(global_boost.attr)))
--		pr_warn(PFX "could not register global boost sysfs file\n");
--	else
--		pr_debug("registered global boost sysfs file\n");
-+	}
- }
- 
- static void __exit acpi_cpufreq_boost_exit(void)
- {
--	cpufreq_sysfs_remove_file(&(global_boost.attr));
--
- 	if (msrs) {
- 		unregister_cpu_notifier(&boost_nb);
- 
-@@ -993,12 +966,11 @@ static int __init acpi_cpufreq_init(void)
- 			*iter = &cpb;
- 	}
- #endif
-+	acpi_cpufreq_boost_init();
- 
- 	ret = cpufreq_register_driver(&acpi_cpufreq_driver);
- 	if (ret)
- 		free_acpi_perf_data();
--	else
--		acpi_cpufreq_boost_init();
- 
- 	return ret;
- }
--- 
-1.7.10.4
+> >
+> > sdhci@1254000 { bus-width =3D <4>; pinctrl-0 =3D <&sd3_clk &sd3_cmd
+> > &sd3_bus4 &sd3_cd>; pinctrl-names =3D "default"; status =3D "okay";=
+ };
+> >
+> > sdhci@12550000 { compatible =3D "samsung,exynos4210-sdhci";
+> > #address-cells =3D <1>; #size-cells =3D <0>; reg =3D <0x12550000 0x=
+1000>;
+> > interrupts =3D <0 77 0>; non-removable; pinctrl-0 =3D <&sd4_clk
+> > &sd4_cmd &sd4_bus4 &sd4_bus8>; pinctrl-names =3D "default"; status =
+=3D
+> > "okay";
+> >
+> > bus-width =3D <8>; vmmc-supply =3D <&vemmc_reg>; clocks =3D <&clock
+> > 301>, <&clock 149>; clocks-name =3D "dwmci", "sclk_dwmci";
+> > clock-frequency =3D <400000000>;
+> >
+> > };
+> >
+> > /* the usb phy of hsic0, hsic1 and otg are in the same place */
+> > usb_phy: otg@125B0000 { #address-cells =3D <1>; #size-cells =3D <1>=
+;
+> > compatible =3D "samsung,exynos4210-usbphy"; reg =3D <0x125B0000 0x1=
+00>;
+> > ranges;
+> >
+> > clocks =3D <&clock 2>, <&clock 305>; clock-names =3D "xusbxti", "ot=
+g";
+> >  usbphy-sys { /* USB device and host PHY_CONTROL registers */ reg
+> > =3D <0x10020704 0x8>; }; };
+> >
+> > ehci@12580000 { usb-phy =3D <&usb_phy>; status =3D "okay"; };
+> > ohci@12590000 { status =3D "okay"; };
+> >
+> >
+> > codec@13400000 { samsung,mfc-r =3D <0x43000000 0x800000>;
+> > samsung,mfc-l =3D <0x51000000 0x800000>; status =3D "okay"; };
+> >
+> > serial@13800000 { status =3D "okay"; };
+> >
+> > serial@13810000 { status =3D "okay"; };
+> >
+> > serial@13820000 { status =3D "okay"; };
+> >
+> > serial@13830000 { status =3D "okay"; };
+> >
+> > fixed-rate-clocks { xxti { compatible =3D "samsung,clock-xxti";
+> > clock-frequency =3D <0>; };
+> >
+> > xusbxti { compatible =3D "samsung,clock-xusbxti"; clock-frequency =3D
+> > <24000000>; }; };
+> >
+> > i2c@13860000 { status =3D "okay"; samsung,i2c-sda-delay =3D <100>;
+> > samsung,i2c-max-bus-freq =3D <200000>;
+> >
+> > wm8960@10 { compatible =3D "wlf,wm8960"; reg =3D <0x10>; }; }; };
+> >>
+> >
+> > -- To unsubscribe from this list: send the line "unsubscribe
+> > linux-samsung-soc" in the body of a message to
+> > majordomo@vger.kernel.org More majordomo info at
+> > http://vger.kernel.org/majordomo-info.html
+> >
+> >
+>=20
+> -----BEGIN PGP SIGNATURE-----
+> Version: GnuPG v1.4.12 (GNU/Linux)
+> Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+>=20
+> iQEcBAEBAgAGBQJSlDj0AAoJEPb4VsMIzTziji8H/jgZfK7ZArb6kK74jb/P8vOv
+> OIsOw301smAp83LafMd1BWzInkhZnMp+4g/uTawjWDGPw3rJOiu8Qcyr4VmI1r4h
+> oXfcVS+p27qAVsMN+11e9fFKu2DsDwxb/aidau6OAAi5+U3h0rHTptRzIzbqbnxp
+> 5lOV1eldrnXSRIsUTYmaPVLUcVRAD0p8zcPmOH79XghrcHdTisYA/yjFgu2mQJgE
+> QgaDaEgwoFwXrTkg/w+fHHZFdOUHhursSzIGR8HUKirK2Sg2KaPRU+MXPf8nVY8B
+> 1MEX7pnI+7feOK20eNEc9H8GmCph8MnjCsY+9DxwxqDeBkP31BhTVGIxK+ajmzw=3D
+> =3DaRRx
+> -----END PGP SIGNATURE-----
