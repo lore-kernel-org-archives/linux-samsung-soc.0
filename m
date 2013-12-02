@@ -1,145 +1,86 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v2] ARM: dts: Add hs-i2c nodes to exynos5420
-Date: Mon,  2 Dec 2013 16:41:42 +0530
-Message-ID: <1385982702-18335-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f54.google.com ([209.85.160.54]:33866 "EHLO
-	mail-pb0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753435Ab3LBLOU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Dec 2013 06:14:20 -0500
-Received: by mail-pb0-f54.google.com with SMTP id un15so18809450pbc.27
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2013 03:14:19 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH RESEND v10 0/7] cpufreq:boost: CPU Boost mode support
+Date: Mon, 02 Dec 2013 13:19:14 +0100
+Message-ID: <1385986761-17934-1-git-send-email-l.majewski@samsung.com>
+References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>
+Cc: "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, t.figa@samsung.com
 
-Added high speed I2C nodes to Exynos5420 DT file.
+This patch series introduces support for CPU overclocking technique
+called Boost.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Changes since v1:
-Changed the node name to i2c as suggested by Tomasz Figa.
----
- arch/arm/boot/dts/exynos5420.dtsi |   98 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+It is a follow up of a LAB governor proposal. Boost is a LAB component:
+http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
 
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index 6ffefd163fa0..38fcfc72a013 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -34,6 +34,13 @@
- 		i2c1 = &i2c_1;
- 		i2c2 = &i2c_2;
- 		i2c3 = &i2c_3;
-+		i2c4 = &hsi2c_4;
-+		i2c5 = &hsi2c_5;
-+		i2c6 = &hsi2c_6;
-+		i2c7 = &hsi2c_7;
-+		i2c8 = &hsi2c_8;
-+		i2c9 = &hsi2c_9;
-+		i2c10 = &hsi2c_10;
- 		gsc0 = &gsc_0;
- 		gsc1 = &gsc_1;
- 	};
-@@ -333,6 +340,97 @@
- 		status = "disabled";
- 	};
- 
-+	hsi2c_4: i2c@12CA0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CA0000 0x1000>;
-+		interrupts = <0 60 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c4_hs_bus>;
-+		clocks = <&clock 265>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_5: i2c@12CB0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CB0000 0x1000>;
-+		interrupts = <0 61 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c5_hs_bus>;
-+		clocks = <&clock 266>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_6: i2c@12CC0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CC0000 0x1000>;
-+		interrupts = <0 62 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c6_hs_bus>;
-+		clocks = <&clock 267>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_7: i2c@12CD0000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12CD0000 0x1000>;
-+		interrupts = <0 63 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c7_hs_bus>;
-+		clocks = <&clock 268>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_8: i2c@12E00000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E00000 0x1000>;
-+		interrupts = <0 87 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c8_hs_bus>;
-+		clocks = <&clock 281>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_9: i2c@12E10000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E10000 0x1000>;
-+		interrupts = <0 88 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c9_hs_bus>;
-+		clocks = <&clock 282>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
-+	hsi2c_10: i2c@12E20000 {
-+		compatible = "samsung,exynos5-hsi2c";
-+		reg = <0x12E20000 0x1000>;
-+		interrupts = <0 203 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c10_hs_bus>;
-+		clocks = <&clock 283>;
-+		clock-names = "hsi2c";
-+		status = "disabled";
-+	};
-+
- 	hdmi@14530000 {
- 		compatible = "samsung,exynos4212-hdmi";
- 		reg = <0x14530000 0x70000>;
+Boost unifies hardware based solution (e.g. Intel Nehalem) with
+software oriented one (like the one done at Exynos).
+For this reason cpufreq/freq_table code has been reorganized to include
+common code.
+
+Important design decisions:
+- Boost related code is compiled-in unconditionally to cpufreq core and
+  disabled by default. The cpufreq_driver is responsibile for setting
+  boost_supported flag and providing set_boost callback(if HW support
+  is needed). For software managed boost, special Kconfig flag -
+  CONFIG_CPU_FREQ_BOOST_SW has been defined. It will be selected only
+  when a target platform has thermal framework properly configured.
+
+- struct cpufreq_driver has been extended with boost related fields:
+        -- boost_supported - when driver supports boosting
+        -- boost_enabled - boost state
+        -- set_boost - callback to function, which is necessary to
+           enable/disable boost
+
+- Boost sysfs attribute (/sys/devices/system/cpu/cpufreq/boost) is visible
+  _only_ when cpufreq driver supports Boost.
+
+- No special spin_lock for Boost was created. The one from cpufreq core
+  was reused.
+
+- The Boost code doesn't rely on any policy. When boost state is changed,
+  then the policy list is iterated and proper adjustements are done.
+
+- To improve safety level, the thermal framework is also extended to disable
+  software boosting, when thermal trip point is reached. After cooling down
+  the boost can be enabled again. This emulates behaviour similar to HW
+  managed boost (like x86)
+
+Tested at HW:
+       Exynos 4412 3.13-rc2 Linux
+       Intel Core i7-3770 3.13-rc2 Linux
+
+Above patches were posted on top of kernel_pm/bleeding-edge
+(SHA1: 9483a9f69d5c8f83f1723361bf8340ddfb6475b4)
+
+
+Lukasz Majewski (7):
+  cpufreq: Add boost frequency support in core
+  cpufreq:acpi:x86: Adjust the acpi-cpufreq.c code to work with common
+    boost solution
+  cpufreq:boost:Kconfig: Provide support for software managed BOOST
+  cpufreq:exynos:Extend Exynos cpufreq driver to support boost
+    framework
+  Documentation:cpufreq:boost: Update BOOST documentation
+  cpufreq:exynos4x12: Change L0 driver data to CPUFREQ_BOOST_FREQ
+  thermal:exynos:boost: Automatic enable/disable of BOOST feature (at
+    Exynos4412)
+
+ Documentation/cpu-freq/boost.txt          |   26 +++----
+ drivers/cpufreq/Kconfig                   |    4 +
+ drivers/cpufreq/Kconfig.arm               |   15 ++++
+ drivers/cpufreq/acpi-cpufreq.c            |   86 +++++++--------------
+ drivers/cpufreq/cpufreq.c                 |  118 ++++++++++++++++++++++++++++-
+ drivers/cpufreq/exynos-cpufreq.c          |    3 +
+ drivers/cpufreq/exynos4x12-cpufreq.c      |    2 +-
+ drivers/cpufreq/freq_table.c              |   56 ++++++++++++--
+ drivers/thermal/samsung/exynos_tmu_data.c |   47 ++++++++++++
+ include/linux/cpufreq.h                   |   24 ++++++
+ 10 files changed, 302 insertions(+), 79 deletions(-)
+
 -- 
-1.7.9.5
+1.7.10.4
+
