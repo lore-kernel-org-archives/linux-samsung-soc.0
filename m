@@ -1,68 +1,49 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v3 1/2] ARM: dts: Fix sysreg node name in exynos4.dtsi
-Date: Mon, 2 Dec 2013 09:51:34 +0530
-Message-ID: <CAK9yfHxdbuNxb9xJfjPC7SjHHgGyOvfb72bMxOyd5bPT=BioDA@mail.gmail.com>
-References: <1383632302-23535-1-git-send-email-sachin.kamat@linaro.org>
-	<086301cedf93$a9f6bf70$fde43e50$@org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f181.google.com ([209.85.214.181]:43389 "EHLO
-	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752702Ab3LBEVi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Dec 2013 23:21:38 -0500
-Received: by mail-ob0-f181.google.com with SMTP id uy5so11972903obc.26
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Dec 2013 20:21:38 -0800 (PST)
-In-Reply-To: <086301cedf93$a9f6bf70$fde43e50$@org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH V4 0/6] cpufreq: suspend early/resume late: dpm_{suspend|resume}()
+Date: Mon,  2 Dec 2013 11:22:30 +0530
+Message-ID: <cover.1385962528.git.viresh.kumar@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org
+Cc: linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, cpufreq-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nm-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tianyu.lan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, jhbird.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 12 November 2013 16:10, Kukjin Kim <kgene@kernel.org> wrote:
-> Sachin Kamat wrote:
->>
->> Fix the name as per DT node naming convention.
->> - rename the node to syscon which is a more generic name.
->> - append the register value to the node name.
->>
->> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> ---
->> Changes since v2:
->> None.
->> ---
->>  arch/arm/boot/dts/exynos4.dtsi |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos4.dtsi
->> b/arch/arm/boot/dts/exynos4.dtsi
->> index cb0f70cc552b..b7378154c0a1 100644
->> --- a/arch/arm/boot/dts/exynos4.dtsi
->> +++ b/arch/arm/boot/dts/exynos4.dtsi
->> @@ -99,7 +99,7 @@
->>               reg = <0x10440000 0x1000>;
->>       };
->>
->> -     sys_reg: sysreg {
->> +     sys_reg: syscon@10010000 {
->>               compatible = "samsung,exynos4-sysreg", "syscon";
->>               reg = <0x10010000 0x400>;
->>       };
->> --
->> 1.7.9.5
->
-> Looks good to me, thanks for this patch and reviews from Sylwester and
-> Tomasz.
->
-> Applied.
+This patchset moves cpufreq callbacks to dpm_{suspend|resume}() from
+dpm_{suspend|resume}_noirq() for handling suspend/resume of cpufreq governors
+and core. This is required for early suspend and late resume of governors as
+there are drivers which want to change cpu frequency before suspending governors
+and they want to do it before devices get suspended, as some of them might be
+required to change frequency.
 
-Kukjin,
+Following patch is already pushed for v3.13 as it was required for fixing some
+bugs in there. And the remaining was decided to be pushed for v3.14.
 
-I don't see these patches in your tree yet. Please check.
+commit 5a87182aa21d6d5d306840feab9321818dd3e2a3
+Author: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Date:   Wed Nov 27 09:09:42 2013 +0530
 
+    cpufreq: suspend governors on system suspend/hibernate
+
+This is already tested by few people and so incorporating their Tested-by as
+well.
+
+For: v3.14.
+
+Viresh Kumar (6):
+  cpufreq: suspend governors from dpm_{suspend|resume}()
+  cpufreq: call driver's suspend/resume for each policy
+  cpufreq: Implement cpufreq_generic_suspend()
+  cpufreq: exynos: Use cpufreq_generic_suspend()
+  cpufreq: s5pv210: Use cpufreq_generic_suspend()
+  cpufreq: Tegra: Use cpufreq_generic_suspend()
+
+ drivers/base/power/main.c         |   6 +-
+ drivers/cpufreq/cpufreq.c         | 137 ++++++++++++++++----------------------
+ drivers/cpufreq/exynos-cpufreq.c  |  96 ++------------------------
+ drivers/cpufreq/s5pv210-cpufreq.c |  49 +-------------
+ drivers/cpufreq/tegra-cpufreq.c   |  46 ++-----------
+ include/linux/cpufreq.h           |   3 +
+ 6 files changed, 79 insertions(+), 258 deletions(-)
 
 -- 
-With warm regards,
-Sachin
+1.7.12.rc2.18.g61b472e
