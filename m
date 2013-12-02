@@ -1,130 +1,64 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH] watchdog: s3c2410_wdt: Report when the watchdog reset the system
-Date: Mon,  2 Dec 2013 10:14:41 -0800
-Message-ID: <1386008082-28740-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Mon, 2 Dec 2013 10:50:14 -0800
+Message-ID: <CAOesGMjbWRwEvuYh2DRvUfKm=fMmLOzpKCOO9p-gNvSXuf5hQg@mail.gmail.com>
+References: <1385613243-3559-1-git-send-email-l.krishna@samsung.com>
+	<1385613243-3559-2-git-send-email-l.krishna@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qe0-f44.google.com ([209.85.128.44]:34397 "EHLO
+	mail-qe0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752578Ab3LBSuP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Dec 2013 13:50:15 -0500
+Received: by mail-qe0-f44.google.com with SMTP id nd7so13093266qeb.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2013 10:50:14 -0800 (PST)
+In-Reply-To: <1385613243-3559-2-git-send-email-l.krishna@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, cpgs@samsung.com, Guenter Roeck <linux@roeck-us.net>
 
-A good watchdog driver is supposed to report when it was responsible
-for resetting the system.  Implement this for the s3c2410, at least on
-exynos5250 and exynos5420 where we already have a pointer to the PMU
-registers to read the information.
+Hi,
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-This patch is based atop Leela Krishna's recent series that ends with
-(ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420)
-AKA <https://patchwork.kernel.org/patch/3251861/>.
+On Wed, Nov 27, 2013 at 8:34 PM, Leela Krishna Amudala
+<l.krishna@samsung.com> wrote:
+> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
+> handle PMU register accesses in a centralized way using syscon driver
+>
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Tested-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  Documentation/devicetree/bindings/arm/samsung/pmu.txt |   16 ++++++++++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
+>  arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
+>  3 files changed, 26 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> new file mode 100644
+> index 0000000..307e727
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> @@ -0,0 +1,16 @@
+> +SAMSUNG Exynos SoC series PMU Registers
+> +
+> +Properties:
+> + - name : should be 'syscon';
 
- drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+It's common to use a non-abbreviated name, such as 'system-controller'
+here. Or, given that it's referring to "pmusysreg" then maybe
+something like "pmu-system-registers".
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 47f4dcf..2c87d37 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -62,9 +62,13 @@
- #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
- #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
- 
-+#define RST_STAT_REG_OFFSET		0x0404
- #define WDT_DISABLE_REG_OFFSET		0x0408
- #define WDT_MASK_RESET_REG_OFFSET	0x040c
- #define QUIRK_NEEDS_PMU_CONFIG		(1 << 0)
-+#define QUIRK_HAS_RST_STAT		(1 << 1)
-+#define QUIRKS_NEED_PMUREG		(QUIRK_NEEDS_PMU_CONFIG | \
-+					 QUIRK_HAS_RST_STAT)
- 
- static bool nowayout	= WATCHDOG_NOWAYOUT;
- static int tmr_margin;
-@@ -98,6 +102,9 @@ MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
-  * timer reset functionality.
-  * @mask_bit: Bit number for the watchdog timer in the disable register and the
-  * mask reset register.
-+ * @rst_stat_reg: Offset in pmureg for the register that has the reset status.
-+ * @rst_stat_bit: Bit number in the rst_stat register indicating a watchdog
-+ * reset.
-  * @quirks: A bitfield of quirks.
-  */
- 
-@@ -105,6 +112,8 @@ struct s3c2410_wdt_variant {
- 	int disable_reg;
- 	int mask_reset_reg;
- 	int mask_bit;
-+	int rst_stat_reg;
-+	int rst_stat_bit;
- 	u32 quirks;
- };
- 
-@@ -131,14 +140,20 @@ static const struct s3c2410_wdt_variant drv_data_exynos5250  = {
- 	.disable_reg = WDT_DISABLE_REG_OFFSET,
- 	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
- 	.mask_bit = 20,
--	.quirks = QUIRK_NEEDS_PMU_CONFIG
-+	.rst_stat_reg = RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = 20,
-+	.quirks = QUIRK_NEEDS_PMU_CONFIG |
-+		QUIRK_HAS_RST_STAT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
- 	.disable_reg = WDT_DISABLE_REG_OFFSET,
- 	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
- 	.mask_bit = 0,
--	.quirks = QUIRK_NEEDS_PMU_CONFIG
-+	.rst_stat_reg = RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = 9,
-+	.quirks = QUIRK_NEEDS_PMU_CONFIG |
-+		QUIRK_HAS_RST_STAT,
- };
- 
- static const struct of_device_id s3c2410_wdt_match[] = {
-@@ -423,6 +438,25 @@ static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
- }
- #endif
- 
-+static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
-+{
-+	unsigned int bootstatus = 0;
-+	int ret;
-+
-+	if (wdt->drv_data->quirks & QUIRK_HAS_RST_STAT) {
-+		unsigned int rst_stat;
-+
-+		ret = regmap_read(wdt->pmureg, wdt->drv_data->rst_stat_reg,
-+				  &rst_stat);
-+		if (ret)
-+			dev_warn(wdt->dev, "Couldn't get RST_STAT register\n");
-+		else if (rst_stat & BIT(wdt->drv_data->rst_stat_bit))
-+			bootstatus |= WDIOF_CARDRESET;
-+	}
-+
-+	return bootstatus;
-+}
-+
- /* s3c2410_get_wdt_driver_data */
- static inline struct s3c2410_wdt_variant *
- get_wdt_drv_data(struct platform_device *pdev)
-@@ -460,7 +494,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	wdt->wdt_device = s3c2410_wdd;
- 
- 	wdt->drv_data = get_wdt_drv_data(pdev);
--	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
-+	if (wdt->drv_data->quirks & QUIRKS_NEED_PMUREG) {
- 		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
- 							"samsung,syscon-phandle");
- 		if (IS_ERR(wdt->pmureg)) {
-@@ -531,6 +565,8 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 
- 	watchdog_set_nowayout(&wdt->wdt_device, nowayout);
- 
-+	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
-+
- 	ret = watchdog_register_device(&wdt->wdt_device);
- 	if (ret) {
- 		dev_err(dev, "cannot register watchdog (%d)\n", ret);
--- 
-1.8.4.1
+> + - compatible : should contain two values. First value must be one from following list:
+> +                  - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+> +                  - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+> +               second value must be always "syscon".
+
+
+
+-Olof
