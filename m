@@ -1,54 +1,67 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 2/2] ARM: dts: Update display clock frequency for Origen-4412
-Date: Mon, 2 Dec 2013 09:44:40 +0530
-Message-ID: <CAK9yfHxrafJFcEhGksKygkaJmAx+MeLvfhncr_y0YKb6CznPQA@mail.gmail.com>
-References: <1380171018-24229-1-git-send-email-sachin.kamat@linaro.org>
-	<1380171018-24229-2-git-send-email-sachin.kamat@linaro.org>
-	<085801cedf90$6e2a6580$4a7f3080$@org>
-	<CAHbNUh2gW3KV_T2iJ=m5a9qe0nsNUzXuHS=fHYDeoXMn9H-Leg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] ARM: dts: Fix sysreg node name in exynos4.dtsi
+Date: Mon, 2 Dec 2013 09:51:34 +0530
+Message-ID: <CAK9yfHxdbuNxb9xJfjPC7SjHHgGyOvfb72bMxOyd5bPT=BioDA@mail.gmail.com>
+References: <1383632302-23535-1-git-send-email-sachin.kamat@linaro.org>
+	<086301cedf93$a9f6bf70$fde43e50$@org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f53.google.com ([209.85.219.53]:41196 "EHLO
-	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752753Ab3LBEOk (ORCPT
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:43389 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752702Ab3LBEVi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Dec 2013 23:14:40 -0500
-Received: by mail-oa0-f53.google.com with SMTP id m1so12657421oag.12
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Dec 2013 20:14:40 -0800 (PST)
-In-Reply-To: <CAHbNUh2gW3KV_T2iJ=m5a9qe0nsNUzXuHS=fHYDeoXMn9H-Leg@mail.gmail.com>
+	Sun, 1 Dec 2013 23:21:38 -0500
+Received: by mail-ob0-f181.google.com with SMTP id uy5so11972903obc.26
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Dec 2013 20:21:38 -0800 (PST)
+In-Reply-To: <086301cedf93$a9f6bf70$fde43e50$@org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Sachin Kamat <sachin.kamat@linaro.org>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 13 November 2013 09:17, Tushar Behera <tushar.behera@linaro.org> wrote:
-> On 12 November 2013 15:47, Kukjin Kim <kgene@kernel.org> wrote:
->> Sachin Kamat wrote:
->>>
->> + dt ml.
+On 12 November 2013 16:10, Kukjin Kim <kgene@kernel.org> wrote:
+> Sachin Kamat wrote:
 >>
->>> As per the timing information for supported panel, the value should
->>> be between 47.2 MHz to 47.9 MHz for 60Hz refresh rate.
->>>
->>> Total horizontal pixels = 1024 (x-res) + 80 (margin) + 48 (hsync) = 1152
->>> Total vertical pixels = 600 (y-res) + 80 (margin) + 3 (vsync) = 653
+>> Fix the name as per DT node naming convention.
+>> - rename the node to syscon which is a more generic name.
+>> - append the register value to the node name.
 >>
->> Should be 683?
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>> ---
+>> Changes since v2:
+>> None.
+>> ---
+>>  arch/arm/boot/dts/exynos4.dtsi |    2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->>>
->>> Target pixel clock rate for refresh rate @60 Hz
->>>       = 1152 * 653 * 60 = 47208960 Hz ~ 47.5 MHz
->>>
->> Same here.
+>> diff --git a/arch/arm/boot/dts/exynos4.dtsi
+>> b/arch/arm/boot/dts/exynos4.dtsi
+>> index cb0f70cc552b..b7378154c0a1 100644
+>> --- a/arch/arm/boot/dts/exynos4.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4.dtsi
+>> @@ -99,7 +99,7 @@
+>>               reg = <0x10440000 0x1000>;
+>>       };
 >>
+>> -     sys_reg: sysreg {
+>> +     sys_reg: syscon@10010000 {
+>>               compatible = "samsung,exynos4-sysreg", "syscon";
+>>               reg = <0x10010000 0x400>;
+>>       };
+>> --
+>> 1.7.9.5
 >
-> Yes, typo in both the cases, however the calculation is right. The
-> same typo in patch 1/2 also. You may please fix them while applying.
+> Looks good to me, thanks for this patch and reviews from Sylwester and
+> Tomasz.
 >
+> Applied.
 
+Kukjin,
 
-Ping Kukjin.
+I don't see these patches in your tree yet. Please check.
+
 
 -- 
 With warm regards,
