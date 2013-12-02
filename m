@@ -1,106 +1,130 @@
-From: Kim Phillips <kim.phillips@linaro.org>
-Subject: Re: [RFC PATCH v2 0/7] VFIO for device tree based platform devices
- (work in progress)
-Date: Mon, 2 Dec 2013 18:08:45 +0000
-Message-ID: <20131202180845.1a383879edcdb7e53dabe7c7@linaro.org>
-References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
-	<20131201120954.1d6cec431a99a7ad5f34da18@linaro.org>
-	<CAG8rG2zir5-hXaARvuDbZ=OnX2Zs7suy_DetxYHS++5VrHGZfA@mail.gmail.com>
-	<20131202160832.8f5ee84355086cdb14d6a431@linaro.org>
-	<CAG8rG2zWfP+Ku5jD4DCCotpa=i6juiBTr99hsLJzJy2pqV-uZA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ea0-f180.google.com ([209.85.215.180]:51998 "EHLO
-	mail-ea0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752909Ab3LBSIt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Dec 2013 13:08:49 -0500
-Received: by mail-ea0-f180.google.com with SMTP id f15so9360943eak.39
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Dec 2013 10:08:48 -0800 (PST)
-In-Reply-To: <CAG8rG2zWfP+Ku5jD4DCCotpa=i6juiBTr99hsLJzJy2pqV-uZA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: [PATCH] watchdog: s3c2410_wdt: Report when the watchdog reset the system
+Date: Mon,  2 Dec 2013 10:14:41 -0800
+Message-ID: <1386008082-28740-1-git-send-email-dianders@chromium.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: a.motakis@virtualopensystems.com
-Cc: kvmarm@lists.cs.columbia.edu, alex.williamson@redhat.com, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, kvm@vger.kernel.org, agraf@suse.de, B08248@freescale.com, tech@virtualopensystems.com
 
-On Mon, 2 Dec 2013 17:30:11 +0100
-Antonios Motakis <a.motakis@virtualopensystems.com> wrote:
+A good watchdog driver is supposed to report when it was responsible
+for resetting the system.  Implement this for the s3c2410, at least on
+exynos5250 and exynos5420 where we already have a pointer to the PMU
+registers to read the information.
 
-> On Mon, Dec 2, 2013 at 5:08 PM, Kim Phillips <kim.phillips@linaro.org> wrote:
-> > On Mon, 2 Dec 2013 14:56:58 +0100
-> > Antonios Motakis <a.motakis@virtualopensystems.com> wrote:
-> >
-> >> VFIO for platform is still under development, and cannot be used yet
-> >> to fully assign a device. However, looking at the example you ran, I
-> >> would not have expected it to fail so spectacularly, so this is
-> >> definitely something I will investigate for our next update to the
-> >
-> > it fails in executing this call in vfio-correctness-tests.c [1]:
-> >
-> > ioctl(container, VFIO_SET_IOMMU, VFIO_TYPE1_IOMMU);
-> >
-> 
-> Hm, I realize now that you where trying to bind the SMMU to the VFIO
-> driver. This is not the right way to use it, the SMMU device needs to
-> be bound by a valid SMMU driver. However, you need to bind the target
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+This patch is based atop Leela Krishna's recent series that ends with
+(ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420)
+AKA <https://patchwork.kernel.org/patch/3251861/>.
 
-look at the device address - not the compatible name:  I'm binding the
-'tv' device, made compatible with the sysmmu via Cho KyongHo's "ARM:
-dts: Add description of System MMU of Exynos SoCs":
+ drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 39 insertions(+), 3 deletions(-)
 
-       sysmmu_tv: sysmmu@14650000 {
-               compatible = "samsung,exynos4210-sysmmu";
-               reg = <0x14650000 0x1000>;
-               interrupt-parent = <&combiner>;
-               interrupts = <7 4>;
-               clock-names = "sysmmu";
-               clocks = <&clock 349>;
-               samsung,power-domain = <&pd_disp1>;
-       };
-
-although I don't understand why it's being made compatible with the
-sysmmu driver.
-
-> device to vfio-platform. To do that you need to edit the device tree,
-> as mentioned in the patch series description; this is because at the
-> time it was not possible to have a platform driver dynamically bind to
-> any device (this particular point will be fixed in future versions)
-
-I'm using this:
-
-https://lkml.org/lkml/2013/10/11/51
-
-to bind.
-
-> Also, you need to check from the device tree if the device is actually
-> linked with an SMMU. In my case I was testing using the MFC.
-
-ok, I thought it was, but I'll double-check, or may try using the MFC.
-
-> >> patch series. Thanks for pointing this out. I plan to release an
-> >> updated series with several improvements and fixes soon enough.
-> >
-> > may I ask how you test the patchseries currently?  If on arndale, any
-> > particular device?  Also, I'm assuming you're using a different
-> > userspace test than Alex Williamson's vfio-tests?
-> >
-> 
-> Since this is a work in progress, I initially used a custom test where
-> I directly put each IOCTL I was testing. Since devices on the Arndale
-> are not very well documented, today I am testing on the FastModels
-> SMMU model which includes a pl330 controller.
-
-ok, thanks for the info.
-
-> Keep in mind this version of the patchset is not supposed to fully let
-> you use a device with VFIO yet, just discover it and attempt some
-> basic mappings. In the meantime we have fixed several bugs when
-> actually trying to access memory regions, and added missing
-> functionality. Soon we will release a functional version along with
-> some easily reproducible tests.
-
-ok, no problem, thanks.
-
-Kim
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 47f4dcf..2c87d37 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -62,9 +62,13 @@
+ #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
+ #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
+ 
++#define RST_STAT_REG_OFFSET		0x0404
+ #define WDT_DISABLE_REG_OFFSET		0x0408
+ #define WDT_MASK_RESET_REG_OFFSET	0x040c
+ #define QUIRK_NEEDS_PMU_CONFIG		(1 << 0)
++#define QUIRK_HAS_RST_STAT		(1 << 1)
++#define QUIRKS_NEED_PMUREG		(QUIRK_NEEDS_PMU_CONFIG | \
++					 QUIRK_HAS_RST_STAT)
+ 
+ static bool nowayout	= WATCHDOG_NOWAYOUT;
+ static int tmr_margin;
+@@ -98,6 +102,9 @@ MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
+  * timer reset functionality.
+  * @mask_bit: Bit number for the watchdog timer in the disable register and the
+  * mask reset register.
++ * @rst_stat_reg: Offset in pmureg for the register that has the reset status.
++ * @rst_stat_bit: Bit number in the rst_stat register indicating a watchdog
++ * reset.
+  * @quirks: A bitfield of quirks.
+  */
+ 
+@@ -105,6 +112,8 @@ struct s3c2410_wdt_variant {
+ 	int disable_reg;
+ 	int mask_reset_reg;
+ 	int mask_bit;
++	int rst_stat_reg;
++	int rst_stat_bit;
+ 	u32 quirks;
+ };
+ 
+@@ -131,14 +140,20 @@ static const struct s3c2410_wdt_variant drv_data_exynos5250  = {
+ 	.disable_reg = WDT_DISABLE_REG_OFFSET,
+ 	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
+ 	.mask_bit = 20,
+-	.quirks = QUIRK_NEEDS_PMU_CONFIG
++	.rst_stat_reg = RST_STAT_REG_OFFSET,
++	.rst_stat_bit = 20,
++	.quirks = QUIRK_NEEDS_PMU_CONFIG |
++		QUIRK_HAS_RST_STAT,
+ };
+ 
+ static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
+ 	.disable_reg = WDT_DISABLE_REG_OFFSET,
+ 	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
+ 	.mask_bit = 0,
+-	.quirks = QUIRK_NEEDS_PMU_CONFIG
++	.rst_stat_reg = RST_STAT_REG_OFFSET,
++	.rst_stat_bit = 9,
++	.quirks = QUIRK_NEEDS_PMU_CONFIG |
++		QUIRK_HAS_RST_STAT,
+ };
+ 
+ static const struct of_device_id s3c2410_wdt_match[] = {
+@@ -423,6 +438,25 @@ static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
+ }
+ #endif
+ 
++static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
++{
++	unsigned int bootstatus = 0;
++	int ret;
++
++	if (wdt->drv_data->quirks & QUIRK_HAS_RST_STAT) {
++		unsigned int rst_stat;
++
++		ret = regmap_read(wdt->pmureg, wdt->drv_data->rst_stat_reg,
++				  &rst_stat);
++		if (ret)
++			dev_warn(wdt->dev, "Couldn't get RST_STAT register\n");
++		else if (rst_stat & BIT(wdt->drv_data->rst_stat_bit))
++			bootstatus |= WDIOF_CARDRESET;
++	}
++
++	return bootstatus;
++}
++
+ /* s3c2410_get_wdt_driver_data */
+ static inline struct s3c2410_wdt_variant *
+ get_wdt_drv_data(struct platform_device *pdev)
+@@ -460,7 +494,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+ 	wdt->wdt_device = s3c2410_wdd;
+ 
+ 	wdt->drv_data = get_wdt_drv_data(pdev);
+-	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
++	if (wdt->drv_data->quirks & QUIRKS_NEED_PMUREG) {
+ 		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 							"samsung,syscon-phandle");
+ 		if (IS_ERR(wdt->pmureg)) {
+@@ -531,6 +565,8 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+ 
+ 	watchdog_set_nowayout(&wdt->wdt_device, nowayout);
+ 
++	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
++
+ 	ret = watchdog_register_device(&wdt->wdt_device);
+ 	if (ret) {
+ 		dev_err(dev, "cannot register watchdog (%d)\n", ret);
+-- 
+1.8.4.1
