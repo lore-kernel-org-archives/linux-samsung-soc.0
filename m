@@ -1,78 +1,40 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [RFC PATCH] clk: samsung: add support for multiple clock providers
-Date: Mon, 02 Dec 2013 16:06:24 +0100
-Message-ID: <3869121.7qly6TIYcg@amdc1227>
-References: <1385963716-20045-1-git-send-email-rahul.sharma@samsung.com>
- <1874542.EOuUcEDkzz@amdc1227>
- <CAPdUM4OSWyRGC2jLuP9JsOOSMgV+ML219v+RDhTOXi5Xg60hiw@mail.gmail.com>
+From: Kim Phillips <kim.phillips@linaro.org>
+Subject: Re: [RFC PATCH v2 0/7] VFIO for device tree based platform devices
+ (work in progress)
+Date: Mon, 2 Dec 2013 16:08:32 +0000
+Message-ID: <20131202160832.8f5ee84355086cdb14d6a431@linaro.org>
+References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
+	<20131201120954.1d6cec431a99a7ad5f34da18@linaro.org>
+	<CAG8rG2zir5-hXaARvuDbZ=OnX2Zs7suy_DetxYHS++5VrHGZfA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:65359 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752254Ab3LBPGe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Dec 2013 10:06:34 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MX6007RGPYVU720@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Dec 2013 15:06:31 +0000 (GMT)
-In-reply-to: <CAPdUM4OSWyRGC2jLuP9JsOOSMgV+ML219v+RDhTOXi5Xg60hiw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <kvm-owner@vger.kernel.org>
+In-Reply-To: <CAG8rG2zir5-hXaARvuDbZ=OnX2Zs7suy_DetxYHS++5VrHGZfA@mail.gmail.com>
+Sender: kvm-owner@vger.kernel.org
+To: a.motakis@virtualopensystems.com
+Cc: kvmarm@lists.cs.columbia.edu, alex.williamson@redhat.com, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, kvm@vger.kernel.org, agraf@suse.de, B08248@freescale.com, tech@virtualopensystems.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rahul Sharma <r.sh.open@gmail.com>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>
 
-On Monday 02 of December 2013 20:19:52 Rahul Sharma wrote:
-> Thanks Tomasz,
-> 
-> On 2 December 2013 19:39, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Rahul,
-> >
-> > On Monday 02 of December 2013 11:25:16 Rahul Sharma wrote:
-> >> Samsung CCF helper functions doesn't provide support to
-> >> register multiple Clock Providers for a given SoC. Due to
-> >> this limitation soc platforms are not able to use these
-> >> helpers for registering multiple clock providers and forced
-> >> to bypass this layer.
-> >
-> > This might make sense indeed, but I don't see any use cases for it
-> > at the moment. Do you have anything in particular in mind?
-> >
-> 
-> We had 2 clock providers (cmu and audss ) in 5420. In 5260, we had
-> 12 CMUs (top, egl, kfc, aud ...) which are physically independent and
-> mapped at non-contiguous phy-addresses. I am going to post the basic
-> patch set to add support for 5260 including clock file, which based on the
-> following RFC patch.
+On Mon, 2 Dec 2013 14:56:58 +0100
+Antonios Motakis <a.motakis@virtualopensystems.com> wrote:
 
-OK, thanks for the explanation. So I guess support for the SoC itself
-is coming to the mainline too?
+> VFIO for platform is still under development, and cannot be used yet
+> to fully assign a device. However, looking at the example you ran, I
+> would not have expected it to fail so spectacularly, so this is
+> definitely something I will investigate for our next update to the
 
-> 
-> > Also this is somehow ugly to require passing device_node to every function
-> > even when DT is not used. Instead, I would make samsung_clk_init() return
-> > the context pointer, which would be then passed to other functions. This
-> > would also eliminate the need to add private infrastructure mapping nodes
-> > into context pointers.
-> >
-> 
-> yea correct. Sounds better. I will change it as you suggested.
+it fails in executing this call in vfio-correctness-tests.c [1]:
 
-OK.
+ioctl(container, VFIO_SET_IOMMU, VFIO_TYPE1_IOMMU);
 
-> 
-> > One more thing is the name of clk_provider_context struct. It sounds too
-> > generic for a Samsung specific structure. IMHO samsung_clk_provider would
-> > be much better.
-> 
-> I named it simple as it is already defined in samsung/clk.c.
-> samsung_clk_provider
-> also seems good to me.
+> patch series. Thanks for pointing this out. I plan to release an
+> updated series with several improvements and fixes soon enough.
 
-OK.
+may I ask how you test the patchseries currently?  If on arndale, any
+particular device?  Also, I'm assuming you're using a different
+userspace test than Alex Williamson's vfio-tests?
 
-Best regards,
-Tomasz
+Kim
+
+[1] git://github.com/awilliam/tests.git
