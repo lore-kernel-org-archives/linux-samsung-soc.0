@@ -1,598 +1,250 @@
-From: randy <lxr1234@hotmail.com>
-Subject: Re: linux 3.13-rc1 make dw_mmc-exynos more worse
-Date: Mon, 2 Dec 2013 21:15:13 +0800
-Message-ID: <BLU0-SMTP44179A172F9E1D7C75FB03EADEA0@phx.gbl>
-References: <BLU0-SMTP154F63148320A2FFA456BFADE20@phx.gbl> <CAOesGMim3niC75g3VK1Ue=98NySmUVHyRAOvd-+RWwZ3gHVx2w@mail.gmail.com> <1468386.irfukHHsPa@flatron> <BLU0-SMTP146D04141F53FD0FFC1D78DADEC0@phx.gbl> <52942461.5060406@samsung.com> <BLU0-SMTP572E6FBC0A6572AEB71304ADEC0@phx.gbl> <001c01ceef5e$244fd8e0$6cef8aa0$%jun@samsung.com>
+From: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
+Subject: Re: [RFC PATCH v2 0/7] VFIO for device tree based platform devices
+	(work in progress)
+Date: Mon, 2 Dec 2013 14:55:32 +0100
+Message-ID: <CAG8rG2xjQ48pkzV0wMUELnVVuCeGLWdsG34rvRpDCbruWiFUVA@mail.gmail.com>
+References: <1380554923-17818-1-git-send-email-a.motakis@virtualopensystems.com>
+	<20131201120954.1d6cec431a99a7ad5f34da18@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from blu0-omc4-s27.blu0.hotmail.com ([65.55.111.166]:3172 "EHLO
-	blu0-omc4-s27.blu0.hotmail.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752263Ab3LBNPT convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Dec 2013 08:15:19 -0500
-In-Reply-To: <001c01ceef5e$244fd8e0$6cef8aa0$%jun@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============4088783172752371372=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <20131201120954.1d6cec431a99a7ad5f34da18-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Kim Phillips <kim.phillips-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Linux Samsung SOC <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, KVM devel mailing list <kvm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>, Linux IOMMU <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Yoder Stuart-B08248 <B08248-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, VirtualOpenSystems Technical Team <tech-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, kvm-arm <kvmarm-FPEHb7Xf0XXUo1n7N8X6UoWGPAHP3yOg@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
 
------BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA1
+--===============4088783172752371372==
+Content-Type: multipart/alternative; boundary=047d7bacb2f0c1e20904ec8d891f
 
-Yes, I have tested it. It doesn't work.
-The new dts is attached here, I have to comment mshc
-part or kernel will dead.
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3Ddts=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-new file mode 100644
-index 0000000..fedd9cc
-- --- /dev/null
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -0,0 +1,173 @@
-+/*
-+ * Hardkernel's Exynos4412 based tiny4412 1306 board device tree sourc=
-e
-+ *
-+ * Copyright (c) 2013 Tomoya Gitsufuki <ayaka@mail.soulik.info>
-+ *
-+ * Device tree source file for Friendyarm tiny4412 1306 board which
-is based on
-+ * Samsung's Exynos4412 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modif=
-y
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+#include "exynos4412.dtsi"
-+
-+/ {
-+	model =3D "Friendly Arm Tiny4412 1306 board based on Exynos4412";
-+	compatible =3D "friendlyarm,tiny4412-1306", "samsung,exynos4412";
-+
-+	memory {
-+		reg =3D <0x40000000 0x40000000>;
-+	};
-+
-+	chosen {
-+		bootargs =3D"root=3D/dev/mmcblk0p1 rootfstype=3Dext4 rw
-console=3DttySAC0,115200 init=3D/sbin/init";
-+	};
-+
-+	leds {
-+		compatible =3D "gpio-leds";
-+		led1 {
-+			label =3D "led1:heart";
-+			gpios =3D <&gpm4 0 1>;
-+			default-state =3D "on";
-+			linux,default-trigger =3D "heartbeat";
-+		};
-+		led2 {
-+			label =3D "led2:mmc0";
-+			gpios =3D <&gpm4 1 1>;
-+			default-state =3D "on";
-+			linux,default-trigger =3D "mmc0";
-+		};
-+
-+	};
-+
-+	regulators {
-+		compatible =3D "simple-bus";
-+		#address-cells =3D <1>;
-+
-+		vemmc_reg: regulator-0 {
-+			compatible =3D "regulator-fixed";
-+			regulator-name =3D "VMEM_VDD_2.8V";
-+			regulator-min-microvolt =3D <2800000>;
-+			regulator-max-microvolt =3D <2800000>;
-+			gpio =3D <&gpk0 2 0>;
-+			enable-active-high;
-+		};
-+
-+	};
-+
-+	/*
-+	mshc@12550000 {
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+		pinctrl-0 =3D <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
-+		pinctrl-names =3D "default";
-+		status =3D "okay";
-+
-+		vmmc-supply =3D <&vemmc_reg>;
-+		clocks =3D <&clock 301>, <&clock 149>;
-+		clocks-name =3D "biu", "ciu";
-+
-+		num-slots =3D <1>;
-+		supports-highspeed;
-+		broken-cd;
-+		fifo-depth =3D <0x80>;
-+		card-detect-delay =3D <200>;
-+		samsung,dw-mshc-ciu-div =3D <3>;
-+		samsung,dw-mshc-sdr-timing =3D <2 3>;
-+		samsung,dw-mshc-ddr-timing =3D <1 2>;
-+
-+		slot@0 {
-+			reg =3D <0>;
-+			bus-width =3D <8>;
-+			=09
-+		};
-+	};
-+	*/
-+
-+	rtc@10070000 {
-+		status =3D "okay";
-+	};
-+
-+	sdhci@12530000 {
-+		bus-width =3D <4>;
-+		pinctrl-0 =3D <&sd2_clk &sd2_cmd &sd2_bus4 &sd2_cd>;
-+		pinctrl-names =3D "default";
-+		status =3D "okay";
-+	};
-+	sdhci@1254000 {
-+		bus-width =3D <4>;
-+		pinctrl-0 =3D <&sd3_clk &sd3_cmd &sd3_bus4 &sd3_cd>;
-+		pinctrl-names =3D "default";
-+		status =3D "okay";
-+	};
-+
-+	usb_phy: usbphy@125B0000 {
-+		#address-cells =3D <1>;
-+		#size-cells =3D <1>;
-+		compatible =3D "samsung,exynos4210-usb2phy";
-+		reg =3D <0x125B0000 0x100>;
-+		ranges;
-+		status =3D "okay";
-+
-+		clocks =3D <&clock 2>, <&clock 305>;
-+		clock-names =3D "xusbxti", "otg";
-+		usbphy-sys {
-+			/* USB device and host PHY_CONTROL registers */
-+			/*reg =3D <0x10020704 0xc 0x1001021c 0x4>;*/
-+			reg =3D <0x10020704 0x8>;
-+		};
-+	};
-+
-+	ehci@12580000 {
-+		usb-phy =3D <&usb_phy>;
-+		status =3D "okay";
-+	};
-+
-+	codec@13400000 {
-+		samsung,mfc-r =3D <0x43000000 0x800000>;
-+		samsung,mfc-l =3D <0x51000000 0x800000>;
-+		status =3D "okay";
-+	};
-+
-+	serial@13800000 {
-+		status =3D "okay";
-+	};
-+
-+	serial@13810000 {
-+		status =3D "okay";
-+	};
-+
-+	serial@13820000 {
-+		status =3D "okay";
-+	};
-+
-+	serial@13830000 {
-+		status =3D "okay";
-+	};
-+
-+	fixed-rate-clocks {
-+		xxti {
-+			compatible =3D "samsung,clock-xxti";
-+			clock-frequency =3D <0>;
-+		};
-+
-+		xusbxti {
-+			compatible =3D "samsung,clock-xusbxti";
-+			clock-frequency =3D <24000000>;
-+		};
-+	};
-+
-+	i2c@13860000 {
-+		status =3D "okay";
-+		samsung,i2c-sda-delay =3D <100>;
-+		samsung,i2c-max-bus-freq =3D <200000>;
-+
-+		wm8960@10 {
-+			compatible =3D "wlf,wm8960";
-+			reg =3D <0x10>;
-+		};
-+	};
-+};
+--047d7bacb2f0c1e20904ec8d891f
+Content-Type: text/plain; charset=ISO-8859-1
 
-=E4=BA=8E 2013=E5=B9=B412=E6=9C=8802=E6=97=A5 20:58, Seungwon Jeon =E5=86=
-=99=E9=81=93:
-> On Tue, November 26, 2013, Randy wrote:
->> Thanks Jaehoon, I have noticed that before it, but in dw_mmc
->> driver, I won't meet this problem. As you can seen in dts, I have
->> defined a clock source. Or the clock source what I choose is not
->> correct? I don't know how to debug this, I don't know much about
->> it. Actually, I don't really understand the contain in chapter 7
->> of datasheet. I am sorry for that. Would you like to tell me some
->> more about it?
->=20
-> Can you add the followings for you test?=20
-> arch/arm/boot/dts/exynos4412.dtsi +               clocks =3D <&clock
-> 301>, <&clock 149>; +               clock-name =3D "biu", "ciu";
->=20
-> Thanks, Seungwon Jeon
->=20
->>=20
->> =E4=BA=8E 2013=E5=B9=B411=E6=9C=8826=E6=97=A5 12:32, Jaehoon Chung =E5=
-=86=99=E9=81=93:
->>> Hi, Randy,
->>>=20
->>> It seems a problem that controller didn't find the clock
->>> source. Also you can see the below message. Did you check the
->>> clock source?
->>>=20
->>>> [    1.125000] s3c-sdhci 12550000.sdhci: failed to get io
->>>> clock
->>>=20
->>> Actually, need to prevent the "null pointer dereference" for
->>> clock in dw-mmc.c
->>>=20
->>> And If dw-mmc controller can be used, recommend to use it.
->>> dw-mmc can use DDR mode, but sdhci can't.
->>>=20
->>> Best Regards, Jaehoon Chung
->>>=20
->>> On 11/26/2013 10:47 AM, randy wrote: =E4=BA=8E 2013=E5=B9=B411=E6=9C=
-=8826=E6=97=A5 08:41,
->>> Tomasz Figa =E5=86=99=E9=81=93:
->>>>>> On Sunday 24 of November 2013 22:18:46 Olof Johansson
->>>>>> wrote:
->>>>>>> Hi,
->>>>>>>=20
->>>>>>> On Sun, Nov 24, 2013 at 4:07 AM, randy=20
->>>>>>> <lxr1234@hotmail.com> wrote:
->>>>>>>> -----BEGIN PGP SIGNED MESSAGE----- Hash: SHA1
->>>>>>>>=20
->>>>>>>> After pull the merge of 3.13-rc1, the dw_mmc-exynos
->>>>>>>> will make the boot stock.In 3.13, it is just stocked
->>>>>>>> udev in 3.13 and makse udev timeout but kernel report
->>>>>>>> the emmc device is found.
->>>>>>>>=20
->>>>>>>> And in the=20
->>>>>>>> Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->>>>>>>>
->>>>>>>>=20
-I saw that it is need to define which gpio ports that a
->>>>>>>> emmc slot use, but when I watched others dts, they
->>>>>>>> use pinctrl, which is correct? Here is the log and
->>>>>>>> dts
->>>>>>>=20
->>>>>>> [..]
->>>>>>>=20
->>>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3Dlog begin=20
->>>>>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
->>>>>>> [..]
->>>>>>>> [    0.000000] CPU EXYNOS4412 (id 0xe4412011)
->>>>>>>=20
->>>>>>> [..]
->>>>>>>=20
->>>>>>>> [    1.095000] mmc0: no vmmc regulator found [
->>>>>>>> 1.130000] mmc0: SDHCI controller on samsung-hsmmc
->>>>>>>> [12530000.sdhci] using ADMA [    1.130000] Synopsys
->>>>>>>> Designware Multimedia Card Interface Driver [
->>>>>>>> 1.130000] Unable to handle kernel NULL pointer
->>>>>>>> dereference at virtual address 0000002a [ 1.130000]
->>>>>>>> pgd =3D c0004000 [    1.130000] [0000002a]=20
->>>>>>>> *pgd=3D00000000 [ 1.135000] Internal error: Oops: 5
->>>>>>>> [#1] PREEMPT SMP ARM [ 1.140000] Modules linked in:
->>>>>>>> [ 1.140000] CPU: 0 PID: 1 Comm: swapper/0 Not
->>>>>>>> tainted 3.13.0-rc1-00008-g584fa45-dirty #3 [
->>>>>>>> 1.150000] task: ef0a4000 ti: ef0a8000 task.ti:
->>>>>>>> ef0a8000 [ 1.155000] PC is at clk_get_rate+0x18/0x5c
->>>>>>>> [    1.160000] LR is at clk_prepare_lock+0xc/0xd8 [
->>>>>>>> 1.165000] pc : [<c0319400>] lr : [<c0318864>]    psr:
->>>>>>>> a0000113 [ 1.165000] sp : ef0a9e20 ip : ee94eb40  fp
->>>>>>>> : 00000000 [ 1.175000] r10: c0571510  r9 : ef0a8000
->>>>>>>> r8 : ef227a10 [ 1.180000] r7 : c043544c  r6 :
->>>>>>>> fffffffe  r5 : ee94ead0 r4 : fffffffe [    1.185000]
->>>>>>>> r3 : ef0a4000  r2 : 00000001 r1 : 000002b9  r0 :
->>>>>>>> 00000001 [ 1.195000] Flags: NzCv IRQs on  FIQs on
->>>>>>>> Mode SVC_32  ISA ARM Segment kernel [ 1.200000]
->>>>>>>> Control: 10c5387d  Table: 4000404a DAC: 00000015 [
->>>>>>>> 1.205000] Process swapper/0 (pid: 1, stack limit =3D
->>>>>>>> 0xef0a8240) [    1.210000] Stack: (0xef0a9e20 to
->>>>>>>> 0xef0aa000) [    1.215000] 9e20: c0308474 ee9ea610
->>>>>>>> ee94ead0 c0308488 c0308474 ee9ea610 00000000 c030592c
->>>>>>>> [ 1.225000] 9e40: ef227a10 00001000 c043544c c020a920
->>>>>>>> c0838b04 17d78400 ee9ea610 ef227a00 [ 1.235000] 9e60:
->>>>>>>> ef227a10 c05d6b1c 00000000 c05d6b1c c05890b0 ef0a8000
->>>>>>>> c0571510 c0269448 [ 1.240000] 9e80: c0269430 ef227a10
->>>>>>>> c061291c c0268088 00000000 ef227a10 c05d6b1c ef227a44
->>>>>>>> [ 1.250000] 9ea0: 00000000 c026822c 00000000 c05d6b1c
->>>>>>>> c02681a0 c02668a8 ef005478 ef212740 [ 1.255000] 9ec0:
->>>>>>>> c05d6b1c ef2c7900 c05cf438 c0267864 c0511e38 c05d6b1c
->>>>>>>> 00000006 c05d6b1c [    1.265000] 9ee0: 00000006
->>>>>>>> c059575c c05df580 c026884c 00000000 c05a2e14 00000006
->>>>>>>> c00088dc [ 1.275000] 9f00: c0603f70 ef163e00 c040e334
->>>>>>>> 60000113 c05b5000 a0000113 c05b5054 c05b5050 [=20
->>>>>>>> 1.280000] 9f20: c05df580 c054ad68 c0839c96 c04247b4=20
->>>>>>>> 00000093 c0035158 c05b5054 c05a2a20 [    1.290000]
->>>>>>>> 9f40: c050ae2c c054a438 00000006 00000006 00000000
->>>>>>>> c05a2e14 00000006 c059575c [ 1.300000] 9f60: c05df580
->>>>>>>> 00000093 c0595768 c0571510 00000000 c0571c48 00000006
->>>>>>>> 00000006 [ 1.305000] 9f80: c0571510 c003df68 00000000
->>>>>>>> c0403544 00000000 00000000 00000000 00000000 [
->>>>>>>> 1.315000] 9fa0: 00000000 c040354c 00000000 c000e738
->>>>>>>> 00000000 00000000 00000000 00000000 [ 1.320000] 9fc0:
->>>>>>>> 00000000 00000000 00000000 00000000 00000000 00000000
->>>>>>>> 00000000 00000000 [ 1.330000] 9fe0: 00000000 00000000
->>>>>>>> 00000000 00000000 00000013 00000000 be73efa4 ffffbffd
->>>>>>>> [    1.340000] [<c0319400>] (clk_get_rate+0x18/0x5c)
->>>>>>>> from [<c0308488>]=20
->>>>>>>> (dw_mci_exynos_setup_clock+0x14/0x2c) [    1.350000]=20
->>>>>>>> [<c0308488>] (dw_mci_exynos_setup_clock+0x14/0x2c)
->>>>>>>> from [<c030592c>] (dw_mci_probe+0x15c/0xca4) [
->>>>>>>> 1.360000] [<c030592c>] (dw_mci_probe+0x15c/0xca4)
->>>>>>>> from [<c0269448>] (platform_drv_probe+0x18/0x48) [
->>>>>>>> 1.365000] [<c0269448>] (platform_drv_probe+0x18/0x48)
->>>>>>>> from [<c0268088>] (driver_probe_device+0x100/0x218) [
->>>>>>>> 1.375000] [<c0268088>]
->>>>>>>> (driver_probe_device+0x100/0x218) from [<c026822c>]
->>>>>>>> (__driver_attach+0x8c/0x90) [ 1.385000] [<c026822c>]
->>>>>>>> (__driver_attach+0x8c/0x90) from [<c02668a8>]
->>>>>>>> (bus_for_each_dev+0x54/0x88) [    1.395000]=20
->>>>>>>> [<c02668a8>] (bus_for_each_dev+0x54/0x88) from=20
->>>>>>>> [<c0267864>] (bus_add_driver+0xd4/0x1d0) [
->>>>>>>> 1.405000] [<c0267864>] (bus_add_driver+0xd4/0x1d0)
->>>>>>>> from [<c026884c>] (driver_register+0x78/0xf4) [
->>>>>>>> 1.415000] [<c026884c>] (driver_register+0x78/0xf4)
->>>>>>>> from [<c00088dc>] (do_one_initcall+0xec/0x148) [
->>>>>>>> 1.420000] [<c00088dc>] (do_one_initcall+0xec/0x148)
->>>>>>>> from [<c0571c48>] (kernel_init_freeable+0xfc/0x1c8)
->>>>>>>> [ 1.430000] [<c0571c48>]
->>>>>>>> (kernel_init_freeable+0xfc/0x1c8) from [<c040354c>]
->>>>>>>> (kernel_init+0x8/0x110) [    1.440000] [<c040354c>]
->>>>>>>> (kernel_init+0x8/0x110) from [<c000e738>]=20
->>>>>>>> (ret_from_fork+0x14/0x3c) [    1.450000] Code:
->>>>>>>> ebfffd18 e3540000 01a05004 0a000008 (e594302c)
->>>>>>>=20
->>>>>>>=20
->>>>>>> Looks like a clock issue on 4412? I only have 5250 that
->>>>>>> I boot test on, no EXYNOS4 coverage at all (I had an=20
->>>>>>> Odroid-X but it wasn't useful due to the very old
->>>>>>> u-boot it came with so I gave it away).
->>>>>>>=20
->>>>>>> Tomasz, is this something you can reproduce on
->>>>>>> 4210/4412?
->>>>>>=20
->>>>>> Nope. All of our boards (exynos4210-trats,=20
->>>>>> exynos4412-trats2) are configured to use sdhci-s3c for
->>>>>> all MMC slots[1], as at the time they got submitted to
->>>>>> mainline, this driver was considered more reliable than
->>>>>> dw-mmc. Not sure about today, though.
->>>>>>=20
->>>>>> [1] On Exynos4 there is one dw-mmc block and four
->>>>>> sdhci-s3c blocks, while there are just four physical
->>>>>> busses. Using pin control you can configure any of the
->>>>>> four sets of pins to work either using its dedicated
->>>>>> sdhci-s3c or the only one dw-mmc.
->>>>>>=20
->>>>>> Best regards, Tomasz
->>>>>>=20
->>>>>> -- To unsubscribe from this list: send the line
->>>>>> "unsubscribe linux-samsung-soc" in the body of a message
->>>>>> to majordomo@vger.kernel.org More majordomo info at=20
->>>>>> http://vger.kernel.org/majordomo-info.html
->>>>>>=20
->>>>>>=20
->>> Well I don't think it can work this time, maybe my dts is
->>> wrong. At this time neither emmc nor usb can work.=20
->>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3Dlog
->>> begin=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [    1.035000] s3c-rtc
->>> 10070000.rtc: rtc disabled, re-enabling [ 1.040000] s3c-rtc
->>> 10070000.rtc: rtc core: registered s3c as rtc0 [ 1.050000]
->>> device-mapper: ioctl: 4.27.0-ioctl (2013-10-30) initialised:
->>> dm-devel@redhat.com [    1.055000] sdhci: Secure Digital Host
->>> Controller Interface driver [    1.060000] sdhci: Copyright(c)
->>> Pierre Ossman [    1.065000] s3c-sdhci 12530000.sdhci: clock
->>> source 2: mmc_busclk.2 (100000000 Hz) [ 1.075000] s3c-sdhci
->>> 12530000.sdhci: dummy supplies not allowed [ 1.080000] mmc0: no
->>> vqmmc regulator found [    1.085000] s3c-sdhci 12530000.sdhci:
->>> dummy supplies not allowed [    1.090000] mmc0: no vmmc
->>> regulator found [    1.125000] mmc0: SDHCI controller on=20
->>> samsung-hsmmc [12530000.sdhci] using ADMA [    1.125000]
->>> s3c-sdhci 12550000.sdhci: failed to get io clock [    1.125000]
->>> s3c-sdhci: probe of 12550000.sdhci failed with error -2 [
->>> 1.125000] Synopsys Designware Multimedia Card Interface Driver
->>> [ 1.130000] usbcore: registered new interface driver usbhid [=20
->>> 1.130000] usbhid: USB HID core driver [    1.135000] TCP:
->>> cubic registered [ 1.145000] NET: Registered protocol family 10
->>> [ 1.145000] NET: Registered protocol family 17 [    1.145000]
->>> NET: Registered protocol family 15 [    1.150000] Key type
->>> dns_resolver registered [    1.155000] Registering SWP/SWPB
->>> emulation handler [ 1.160000] unable to find transceiver of
->>> type USB2 PHY [ 1.165000] exynos-ehci 12580000.ehci: no
->>> platform data or transceiver defined [    1.175000] platform
->>> 12580000.ehci: Driver exynos-ehci requests probe deferral [
->>> 1.175000] mmc0: new high speed SDHC card at address aaaa [
->>> 1.185000] isa bounce pool size: 16 pages [ 1.190000] mmcblk0:
->>> mmc0:aaaa SU08G 7.40 GiB [ 1.195000] s3c-rtc 10070000.rtc:
->>> setting system clock to 2013-01-01 12:06:09 UTC (1357041969) [
->>> 1.205000] exynos_cpufreq_init: failed to get resource vdd_arm [
->>> 1.205000]  mmcblk0: p1 p2 p3 p4 [ 1.215000] unable to find
->>> transceiver of type USB2 PHY [ 1.215000] exynos-ehci
->>> 12580000.ehci: no platform data or transceiver defined [
->>> 1.225000] platform 12580000.ehci: Driver exynos-ehci requests=20
->>> probe deferral
->>>=20
->>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3Dlog
->>> end=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>=20
->>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-dts=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>
->>>
->>>
->>
->>>=20
-/*
->>> * Hardkernel's Exynos4412 based tiny4412 1306 board device
->>> tree source * * Copyright (c) 2013 Tomoya Gitsufuki=20
->>> <ayaka@mail.soulik.info> * * Device tree source file for=20
->>> Friendyarm tiny4412 1306 board which is based on * Samsung's=20
->>> Exynos4412 SoC. * * This program is free software; you can=20
->>> redistribute it and/or modify * it under the terms of the GNU=20
->>> General Public License version 2 as * published by the Free=20
->>> Software Foundation. */
->>>=20
->>> /dts-v1/; #include "exynos4412.dtsi"
->>>=20
->>> / { model =3D "Friendly Arm Tiny4412 1306 board based on
->>> Exynos4412"; compatible =3D "friendlyarm,tiny4412-1306",
->>> "samsung,exynos4412";
->>>=20
->>> memory { reg =3D <0x40000000 0x40000000>; };
->>>=20
->>> chosen { bootargs =3D"root=3D/dev/mmcblk0p1 rootfstype=3Dext4 rw=20
->>> console=3DttySAC0,115200 init=3D/sbin/init"; };
->>>=20
->>> leds { compatible =3D "gpio-leds"; led1 { label =3D "led1:heart";=20
->>> gpios =3D <&gpm4 0 1>; default-state =3D "on";
->>> linux,default-trigger =3D "heartbeat"; }; led2 { label =3D
->>> "led2:mmc0"; gpios =3D <&gpm4 1 1>; default-state =3D "on";
->>> linux,default-trigger =3D "mmc0"; };
->>>=20
->>> };
->>>=20
->>> regulators { compatible =3D "simple-bus"; #address-cells =3D <1>;
->>>=20
->>> vemmc_reg: regulator-0 { compatible =3D "regulator-fixed";=20
->>> regulator-name =3D "VMEM_VDD_2.8V"; regulator-min-microvolt =3D=20
->>> <2800000>; regulator-max-microvolt =3D <2800000>; gpio =3D <&gpk0 2
->>> 0>; enable-active-high; };
->>>=20
->>> };
->>>=20
->>> /* mshc@12550000 { #address-cells =3D <1>; #size-cells =3D <0>;=20
->>> pinctrl-0 =3D <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>;
->>> pinctrl-names =3D "default"; status =3D "okay";
->>>=20
->>> vmmc-supply =3D <&vemmc_reg>; clocks =3D <&clock 301>, <&clock
->>> 149>; clocks-name =3D "dwmci", "sclk_dwmci"; clock-frequency =3D=20
->>> <400000000>;
->>>=20
->>> num-slots =3D <1>; supports-highspeed; broken-cd; fifo-depth =3D=20
->>> <0x80>; card-detect-delay =3D <200>; samsung,dw-mshc-sdr-timing =3D
->>> <2 3>; samsung,dw-mshc-ddr-timing =3D <1 2>;
->>>=20
->>> slot@0 { reg =3D <0>; bus-width =3D <8>;  }; }; */
->>>=20
->>> rtc@10070000 { status =3D "okay"; };
->>>=20
->>> sdhci@12530000 { bus-width =3D <4>; pinctrl-0 =3D <&sd2_clk
->>> &sd2_cmd &sd2_bus4 &sd2_cd>; pinctrl-names =3D "default"; status
->>> =3D "okay"; };
->>>=20
->>> sdhci@1254000 { bus-width =3D <4>; pinctrl-0 =3D <&sd3_clk
->>> &sd3_cmd &sd3_bus4 &sd3_cd>; pinctrl-names =3D "default"; status
->>> =3D "okay"; };
->>>=20
->>> sdhci@12550000 { compatible =3D "samsung,exynos4210-sdhci";=20
->>> #address-cells =3D <1>; #size-cells =3D <0>; reg =3D <0x12550000
->>> 0x1000>; interrupts =3D <0 77 0>; non-removable; pinctrl-0 =3D
->>> <&sd4_clk &sd4_cmd &sd4_bus4 &sd4_bus8>; pinctrl-names =3D
->>> "default"; status =3D "okay";
->>>=20
->>> bus-width =3D <8>; vmmc-supply =3D <&vemmc_reg>; clocks =3D <&clock=
-=20
->>> 301>, <&clock 149>; clocks-name =3D "dwmci", "sclk_dwmci";=20
->>> clock-frequency =3D <400000000>;
->>>=20
->>> };
->>>=20
->>> /* the usb phy of hsic0, hsic1 and otg are in the same place
->>> */ usb_phy: otg@125B0000 { #address-cells =3D <1>; #size-cells =3D
->>> <1>; compatible =3D "samsung,exynos4210-usbphy"; reg =3D
->>> <0x125B0000 0x100>; ranges;
->>>=20
->>> clocks =3D <&clock 2>, <&clock 305>; clock-names =3D "xusbxti",
->>> "otg"; usbphy-sys { /* USB device and host PHY_CONTROL
->>> registers */ reg =3D <0x10020704 0x8>; }; };
->>>=20
->>> ehci@12580000 { usb-phy =3D <&usb_phy>; status =3D "okay"; };=20
->>> ohci@12590000 { status =3D "okay"; };
->>>=20
->>>=20
->>> codec@13400000 { samsung,mfc-r =3D <0x43000000 0x800000>;=20
->>> samsung,mfc-l =3D <0x51000000 0x800000>; status =3D "okay"; };
->>>=20
->>> serial@13800000 { status =3D "okay"; };
->>>=20
->>> serial@13810000 { status =3D "okay"; };
->>>=20
->>> serial@13820000 { status =3D "okay"; };
->>>=20
->>> serial@13830000 { status =3D "okay"; };
->>>=20
->>> fixed-rate-clocks { xxti { compatible =3D "samsung,clock-xxti";=20
->>> clock-frequency =3D <0>; };
->>>=20
->>> xusbxti { compatible =3D "samsung,clock-xusbxti"; clock-frequency
->>> =3D <24000000>; }; };
->>>=20
->>> i2c@13860000 { status =3D "okay"; samsung,i2c-sda-delay =3D <100>;=20
->>> samsung,i2c-max-bus-freq =3D <200000>;
->>>=20
->>> wm8960@10 { compatible =3D "wlf,wm8960"; reg =3D <0x10>; }; }; };
->>>>=20
->>>=20
->>> -- To unsubscribe from this list: send the line "unsubscribe=20
->>> linux-samsung-soc" in the body of a message to=20
->>> majordomo@vger.kernel.org More majordomo info at=20
->>> http://vger.kernel.org/majordomo-info.html
->>>=20
->>>=20
->>=20
->> -----BEGIN PGP SIGNATURE----- Version: GnuPG v1.4.12 (GNU/Linux)=20
->> Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
->>=20
->> iQEcBAEBAgAGBQJSlDj0AAoJEPb4VsMIzTziji8H/jgZfK7ZArb6kK74jb/P8vOv=20
->> OIsOw301smAp83LafMd1BWzInkhZnMp+4g/uTawjWDGPw3rJOiu8Qcyr4VmI1r4h=20
->> oXfcVS+p27qAVsMN+11e9fFKu2DsDwxb/aidau6OAAi5+U3h0rHTptRzIzbqbnxp=20
->> 5lOV1eldrnXSRIsUTYmaPVLUcVRAD0p8zcPmOH79XghrcHdTisYA/yjFgu2mQJgE=20
->> QgaDaEgwoFwXrTkg/w+fHHZFdOUHhursSzIGR8HUKirK2Sg2KaPRU+MXPf8nVY8B=20
->> 1MEX7pnI+7feOK20eNEc9H8GmCph8MnjCsY+9DxwxqDeBkP31BhTVGIxK+ajmzw=3D=20
->> =3DaRRx -----END PGP SIGNATURE-----
->=20
-> -- To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in the body of a message to
-> majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
->=20
->=20
+On Sun, Dec 1, 2013 at 1:09 PM, Kim Phillips <kim.phillips-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>wrote:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-Comment: Using GnuPG with Mozilla - http://enigmail.mozdev.org/
+> On Mon, 30 Sep 2013 17:28:36 +0200
+> Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org> wrote:
+>
+> > This is a preview of the base work, towards VFIO support on ARM platforms
+> > with an IOMMU. It forms a base on to which to implement the functionality
+> > necessary to enable using device tree devices on ARM (and other platforms
+> > based on device trees) with VFIO.
+> >
+> > This patch series has been subjected to limited testing on the Arndale
+> board
+> > (with the Exynos 5250 System MMU). More extensive testing will follow as
+> more
+> > features are implemented.
+>
+> Hi, I'm trying to attach the vfio-platform driver to an(y) iommu-backed
+> device on the arndale.  I chose the relatively simple 'tv' device,
+> isolated it in the arndale device tree (to get rid of any dependency
+> conflicts), and, when I run Alex' vfio-correctness-tests [1], I get
+> this:
+>
+> # echo 14650000.sysmmu >
+> /sys/bus/platform/devices/14650000.sysmmu/driver/unbind
+> # echo 14650000.sysmmu > /sys/bus/platform/drivers/vfio-platform/bind
+> # ls -l /sys/bus/platform/devices/14650000.sysmmu/iommu_group
+> lrwxrwxrwx 1 root root 0 Oct  1 23:14
+> /sys/bus/platform/devices/14650000.sysmmu/iommu_group ->
+> ../../kernel/iommu_groups/43
+> # vfio-tests/vfio-correctness-tests 43
+> [   84.567643] ------------[ cut here ]------------
+> [   84.572258] WARNING: CPU: 0 PID: 1606 at
+> drivers/iommu/exynos-iommu.c:472 __exynos_sysmmu_enable+0x170/0x184()
+> [   84.582225] Modules linked in:
+> [   84.585268] CPU: 0 PID: 1606 Comm: vfio-correctnes Not tainted
+> 3.13.0-rc1-00296-gb703d74-dirty #46
+> [   84.594219] [<c0014d20>] (unwind_backtrace+0x0/0xf4) from [<c0011648>]
+> (show_stack+0x10/0x14)
+> [   84.602719] [<c0011648>] (show_stack+0x10/0x14) from [<c0377948>]
+> (dump_stack+0x7c/0xb0)
+> [   84.610791] [<c0377948>] (dump_stack+0x7c/0xb0) from [<c001dc50>]
+> (warn_slowpath_common+0x6c/0x88)
+> [   84.619730] [<c001dc50>] (warn_slowpath_common+0x6c/0x88) from
+> [<c001dd08>] (warn_slowpath_null+0x1c/0x24)
+> [   84.629365] [<c001dd08>] (warn_slowpath_null+0x1c/0x24) from
+> [<c02dace8>] (__exynos_sysmmu_enable+0x170/0x184)
+> [   84.639348] [<c02dace8>] (__exynos_sysmmu_enable+0x170/0x184) from
+> [<c02dad4c>] (exynos_iommu_attach_device+0x50/0x108)
+> [   84.650111] [<c02dad4c>] (exynos_iommu_attach_device+0x50/0x108) from
+> [<c02d939c>] (iommu_attach_device+0x64/0xb8)
+> [   84.660440] [<c02d939c>] (iommu_attach_device+0x64/0xb8) from
+> [<c02d92ec>] (iommu_group_for_each_dev+0x78/0x94)
+> [   84.670509] [<c02d92ec>] (iommu_group_for_each_dev+0x78/0x94) from
+> [<c0263678>] (vfio_iommu_type1_attach_group+0xd0/0x144)
+> [   84.681530] [<c0263678>] (vfio_iommu_type1_attach_group+0xd0/0x144)
+> from [<c02629e0>] (vfio_fops_unl_ioctl+0x3ac/0x460)
+> [   84.692295] [<c02629e0>] (vfio_fops_unl_ioctl+0x3ac/0x460) from
+> [<c00c1f14>] (do_vfs_ioctl+0x3f0/0x5b8)
+> [   84.701668] [<c00c1f14>] (do_vfs_ioctl+0x3f0/0x5b8) from [<c00c2114>]
+> (SyS_ioctl+0x38/0x60)
+> [   84.710002] [<c00c2114>] (SyS_ioctl+0x38/0x60) from [<c000e1a0>]
+> (ret_fast_syscall+0x0/0x30)
+> [   84.718417] ---[ end trace a1400d7981f699ce ]---
+> [   84.723071] vfio-platform 14650000.sysmmu: exynos_iommu_attach_device:
+> Failed to attach IOMMU with pgtable 0x6eae8000
+>
+> It's failing this test:
+>
+>         if (WARN_ON(!client))
+>                 return -ENODEV;
+>
+> but I haven't been able to figure out why...I have the exynos
+> iommu v10 patchseries applied, and even though there's not much
+> documentation available for this device, I figure this simple test is
+> supposed to 'just work.'  Any ideas?
+>
 
-iQEcBAEBAgAGBQJSnIfhAAoJEPb4VsMIzTziUk0IAJL43x0sp039RAt6WcPjzeE9
-ibFlP8X0B/EKgllk5W/3SSa6bWxoTOqRZUxVByTxzYDSlViH3yqFyiPg6pNIsR46
-hGe5RIDkLJ+Jmyxq2vdkTc9DSVYFx4k4rUeUICoKxrB30sNem2Y9jfdhoaGM68cN
-=46i9dyV56F0n2AyR2xYVepqqSk1kYJZvbovekk+Ph4OxgHK5KaLMsFUOdGj1KH5/0
-gS+tsc6JHGnduu+ngqeZfX8ILyx+kBljhGe+VlzjsbYH5pIkq50J/ik+Yfzt/cph
-8UgACMjXZjI73hW6FW0BaEIa1B4aZqAEr84sHzL0TOO0LoYDvQrCM7BlZD4835g=3D
-=3D1Hzt
------END PGP SIGNATURE-----
+Hello Kim,
+
+Thanks for your interest on our VFIO work.
+
+VFIO for platform is still under development, and cannot be used yet to
+fully assign a device. However, looking at the example you ran, I would not
+have expected it to fail so spectacularly, so this is definitely something
+I will investigate for our next update to the patch series. Thanks for
+pointing this out. I plan to release an updated series with several
+improvements and fixes soon enough.
+
+Best regards,
+Antonios
+
+
+>
+> Thanks,
+>
+> Kim
+>
+> [1] git://github.com/awilliam/tests.git
+>
+
+--047d7bacb2f0c1e20904ec8d891f
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br><div class=3D"gmail_extra"><br><br><div class=3D"gmail=
+_quote">On Sun, Dec 1, 2013 at 1:09 PM, Kim Phillips <span dir=3D"ltr">&lt;=
+<a href=3D"mailto:kim.phillips-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" target=3D"_blank">kim.phillips@l=
+inaro.org</a>&gt;</span> wrote:<br>
+
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex"><div class=3D"im">On Mon, 30 Sep 2013 17:28:=
+36 +0200<br>
+Antonios Motakis &lt;<a href=3D"mailto:a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org">a.=
+motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org</a>&gt; wrote:<br>
+<br>
+&gt; This is a preview of the base work, towards VFIO support on ARM platfo=
+rms<br>
+&gt; with an IOMMU. It forms a base on to which to implement the functional=
+ity<br>
+&gt; necessary to enable using device tree devices on ARM (and other platfo=
+rms<br>
+&gt; based on device trees) with VFIO.<br>
+&gt;<br>
+&gt; This patch series has been subjected to limited testing on the Arndale=
+ board<br>
+&gt; (with the Exynos 5250 System MMU). More extensive testing will follow =
+as more<br>
+&gt; features are implemented.<br>
+<br>
+</div>Hi, I&#39;m trying to attach the vfio-platform driver to an(y) iommu-=
+backed<br>
+device on the arndale. =A0I chose the relatively simple &#39;tv&#39; device=
+,<br>
+isolated it in the arndale device tree (to get rid of any dependency<br>
+conflicts), and, when I run Alex&#39; vfio-correctness-tests [1], I get<br>
+this:<br>
+<br>
+# echo 14650000.sysmmu &gt; /sys/bus/platform/devices/14650000.sysmmu/drive=
+r/unbind<br>
+# echo 14650000.sysmmu &gt; /sys/bus/platform/drivers/vfio-platform/bind<br=
+>
+# ls -l /sys/bus/platform/devices/14650000.sysmmu/iommu_group<br>
+lrwxrwxrwx 1 root root 0 Oct =A01 23:14 /sys/bus/platform/devices/14650000.=
+sysmmu/iommu_group -&gt; ../../kernel/iommu_groups/43<br>
+# vfio-tests/vfio-correctness-tests 43<br>
+[ =A0 84.567643] ------------[ cut here ]------------<br>
+[ =A0 84.572258] WARNING: CPU: 0 PID: 1606 at drivers/iommu/exynos-iommu.c:=
+472 __exynos_sysmmu_enable+0x170/0x184()<br>
+[ =A0 84.582225] Modules linked in:<br>
+[ =A0 84.585268] CPU: 0 PID: 1606 Comm: vfio-correctnes Not tainted 3.13.0-=
+rc1-00296-gb703d74-dirty #46<br>
+[ =A0 84.594219] [&lt;c0014d20&gt;] (unwind_backtrace+0x0/0xf4) from [&lt;c=
+0011648&gt;] (show_stack+0x10/0x14)<br>
+[ =A0 84.602719] [&lt;c0011648&gt;] (show_stack+0x10/0x14) from [&lt;c03779=
+48&gt;] (dump_stack+0x7c/0xb0)<br>
+[ =A0 84.610791] [&lt;c0377948&gt;] (dump_stack+0x7c/0xb0) from [&lt;c001dc=
+50&gt;] (warn_slowpath_common+0x6c/0x88)<br>
+[ =A0 84.619730] [&lt;c001dc50&gt;] (warn_slowpath_common+0x6c/0x88) from [=
+&lt;c001dd08&gt;] (warn_slowpath_null+0x1c/0x24)<br>
+[ =A0 84.629365] [&lt;c001dd08&gt;] (warn_slowpath_null+0x1c/0x24) from [&l=
+t;c02dace8&gt;] (__exynos_sysmmu_enable+0x170/0x184)<br>
+[ =A0 84.639348] [&lt;c02dace8&gt;] (__exynos_sysmmu_enable+0x170/0x184) fr=
+om [&lt;c02dad4c&gt;] (exynos_iommu_attach_device+0x50/0x108)<br>
+[ =A0 84.650111] [&lt;c02dad4c&gt;] (exynos_iommu_attach_device+0x50/0x108)=
+ from [&lt;c02d939c&gt;] (iommu_attach_device+0x64/0xb8)<br>
+[ =A0 84.660440] [&lt;c02d939c&gt;] (iommu_attach_device+0x64/0xb8) from [&=
+lt;c02d92ec&gt;] (iommu_group_for_each_dev+0x78/0x94)<br>
+[ =A0 84.670509] [&lt;c02d92ec&gt;] (iommu_group_for_each_dev+0x78/0x94) fr=
+om [&lt;c0263678&gt;] (vfio_iommu_type1_attach_group+0xd0/0x144)<br>
+[ =A0 84.681530] [&lt;c0263678&gt;] (vfio_iommu_type1_attach_group+0xd0/0x1=
+44) from [&lt;c02629e0&gt;] (vfio_fops_unl_ioctl+0x3ac/0x460)<br>
+[ =A0 84.692295] [&lt;c02629e0&gt;] (vfio_fops_unl_ioctl+0x3ac/0x460) from =
+[&lt;c00c1f14&gt;] (do_vfs_ioctl+0x3f0/0x5b8)<br>
+[ =A0 84.701668] [&lt;c00c1f14&gt;] (do_vfs_ioctl+0x3f0/0x5b8) from [&lt;c0=
+0c2114&gt;] (SyS_ioctl+0x38/0x60)<br>
+[ =A0 84.710002] [&lt;c00c2114&gt;] (SyS_ioctl+0x38/0x60) from [&lt;c000e1a=
+0&gt;] (ret_fast_syscall+0x0/0x30)<br>
+[ =A0 84.718417] ---[ end trace a1400d7981f699ce ]---<br>
+[ =A0 84.723071] vfio-platform 14650000.sysmmu: exynos_iommu_attach_device:=
+ Failed to attach IOMMU with pgtable 0x6eae8000<br>
+<br>
+It&#39;s failing this test:<br>
+<br>
+=A0 =A0 =A0 =A0 if (WARN_ON(!client))<br>
+=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;<br>
+<br>
+but I haven&#39;t been able to figure out why...I have the exynos<br>
+iommu v10 patchseries applied, and even though there&#39;s not much<br>
+documentation available for this device, I figure this simple test is<br>
+supposed to &#39;just work.&#39; =A0Any ideas?<br></blockquote><div><br></d=
+iv><div>Hello Kim,<br><br></div><div>Thanks for your interest on our VFIO w=
+ork.<br></div><div><br></div><div>VFIO for platform is still under developm=
+ent, and cannot be used yet to fully assign a device. However, looking at t=
+he example you ran, I would not have expected it to fail so spectacularly, =
+so this is definitely something I will investigate for our next update to t=
+he patch series. Thanks for pointing this out. I plan to release an updated=
+ series with several improvements and fixes soon enough.<br>
+
+<br></div><div>Best regards,<br>Antonios<br></div><div>=A0</div><blockquote=
+ class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc soli=
+d;padding-left:1ex">
+<br>
+Thanks,<br>
+<br>
+Kim<br>
+<br>
+[1] git://<a href=3D"http://github.com/awilliam/tests.git" target=3D"_blank=
+">github.com/awilliam/tests.git</a><br>
+</blockquote></div><br></div></div>
+
+--047d7bacb2f0c1e20904ec8d891f--
+
+--===============4088783172752371372==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============4088783172752371372==--
