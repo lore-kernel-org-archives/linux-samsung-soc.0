@@ -1,68 +1,64 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [RFC v2 2/4] power: asv: Add a common ASV driver for Exynos SoCs.
-Date: Tue, 3 Dec 2013 20:16:39 +0530
-Message-ID: <CAM4voakmcVGTHF6zHh=GrghJexPQOVGtmAFr-w7qqaeKVDEW7Q@mail.gmail.com>
-References: <1384515691-26299-1-git-send-email-sachin.kamat@linaro.org>
-	<1384515691-26299-3-git-send-email-sachin.kamat@linaro.org>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v3 0/5] ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+Date: Tue, 3 Dec 2013 16:19:57 +0100
+Message-ID: <201312031619.58062.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1384515691-26299-3-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, "myungjoo.ham" <myungjoo.ham@samsung.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Doug Anderson <dianders@google.com>, Andrew Bresticker <abrestic@google.com>
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gloria.sntech.de ([95.129.55.99]:55118 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753279Ab3LCPUB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Dec 2013 10:20:01 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, t.figa@samsung.com
 
-Hi,
+Resurrecting this series again after to much time.
 
-CC'ing Doug and Andrew who have also worked on ASV.
+Changed is the pll registration to follow the new system and getting the
+external clocks from dt fixed-rate clocks.
 
-[...]
+Hopefully I did address all comments received for v2 in july.
 
-> +
-> +       chip_id = of_find_compatible_node(NULL, NULL,
-> +                                               "samsung,exynos4210-chipid");
-> +       if (!chip_id) {
-> +               pr_err("%s: unable to find chipid\n", __func__);
-> +               return -ENODEV;
-> +       }
-> +
-> +       base = of_iomap(chip_id, 0);
-> +       if (!base) {
-> +               dev_err(&pdev->dev, "unable to map chip_id register\n");
-> +               ret = -ENOMEM;
-> +               goto err_map;
-> +       }
-My u-boot had the chipid clock disabled and I was getting an invalid
-value at 1000_0004 (0 on the SMDK5420 and 0x43520010 on the
-chromebook). Maybe it would be better if we enable the chipid clock in
-the driver as well.
-> +
-> +       exynos_asv_info->base = base;
-> +
-> +       /* call SoC specific intialisation routine */
-> +
-> +       register_asv_member(exynos_asv_info->asv_list, exynos_asv_info->nr_mem);
-> +
-> +       iounmap(base);
-> +err_map:
-> +       of_node_put(chip_id);
-> +
-> +       return ret;
-> +}
-[...]
-> diff --git a/drivers/power/asv/exynos-asv.h b/drivers/power/asv/exynos-asv.h
-> new file mode 100644
-> index 000000000000..89a1ae8b5e19
-> --- /dev/null
-> +++ b/drivers/power/asv/exynos-asv.h
-> @@ -0,0 +1,21 @@
-> +/*
-> + * Exynos - Adaptive Supply Voltage Driver Header File
-> + *
-> + * copyright (c) 2013 samsung electronics co., ltd.
-> + *             http://www.samsung.com/
-Please fix the copyright
+Tested on both non-dt and dt s3c2416. As s3c2443 is working the same way it
+should work, but is only compile tested.
 
-Thanks,
-Abhilash
+Heiko Stuebner (5):
+  clk: samsung: add pll_6552 variant for s3c2416
+  clk: samsung: add plls used by the s3c2443
+  dt-bindings: add binding for clock-controller of s3c2443 and following
+  clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
+  ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+
+ .../bindings/clock/samsung,s3c2443-clock.txt       |   46 ++
+ arch/arm/boot/dts/s3c2416-smdk2416.dts             |    9 +
+ arch/arm/boot/dts/s3c2416.dtsi                     |   48 ++
+ arch/arm/mach-s3c24xx/Kconfig                      |   14 +-
+ arch/arm/mach-s3c24xx/Makefile                     |    5 +-
+ arch/arm/mach-s3c24xx/clock-s3c2416.c              |  171 -----
+ arch/arm/mach-s3c24xx/clock-s3c2443.c              |  212 ------
+ arch/arm/mach-s3c24xx/common-s3c2443.c             |  675 --------------------
+ arch/arm/mach-s3c24xx/common.c                     |   16 +-
+ arch/arm/mach-s3c24xx/common.h                     |    6 +
+ arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   39 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c              |    9 +-
+ arch/arm/mach-s3c24xx/mach-smdk2443.c              |    9 +-
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-pll.c                      |   84 ++-
+ drivers/clk/samsung/clk-pll.h                      |    3 +
+ drivers/clk/samsung/clk-s3c2443.c                  |  417 ++++++++++++
+ include/dt-bindings/clock/samsung,s3c2443-clock.h  |   92 +++
+ 18 files changed, 742 insertions(+), 1114 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c2443-clock.txt
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
+ delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
+ delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
+ create mode 100644 drivers/clk/samsung/clk-s3c2443.c
+ create mode 100644 include/dt-bindings/clock/samsung,s3c2443-clock.h
+
+-- 
+1.7.10.4
