@@ -1,115 +1,85 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH RESEND v10 0/7] cpufreq:boost: CPU Boost mode support
-Date: Wed, 04 Dec 2013 07:59:21 +0100
-Message-ID: <20131204075921.3b9e86fa@amdc2363>
-References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
- <1385986761-17934-1-git-send-email-l.majewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-reply-to: <1385986761-17934-1-git-send-email-l.majewski@samsung.com>
-Sender: cpufreq-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <eduardo.valentin@ti.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v2 0/4] Add Exynos5 USB 3.0 phy driver based on generic PHY
+ framework
+Date: Wed, 04 Dec 2013 15:39:03 +0530
+Message-ID: <1386151747-3209-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, kishon@ti.com, jg1.han@samsung.com, s.nawrocki@samsung.com, t.figa@samsung.com, jwerner@chromium.org, k.debski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Rafael,
+Adding a phy driver for USB 3.0 PHY controller present on Exynos5
+series of SoCs alongwith DWC3 controller for USB 3.0 operations.
 
-> This patch series introduces support for CPU overclocking technique
-> called Boost.
-> 
-> It is a follow up of a LAB governor proposal. Boost is a LAB
-> component:
-> http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
-> 
-> Boost unifies hardware based solution (e.g. Intel Nehalem) with
-> software oriented one (like the one done at Exynos).
-> For this reason cpufreq/freq_table code has been reorganized to
-> include common code.
-> 
-> Important design decisions:
-> - Boost related code is compiled-in unconditionally to cpufreq core
-> and disabled by default. The cpufreq_driver is responsibile for
-> setting boost_supported flag and providing set_boost callback(if HW
-> support is needed). For software managed boost, special Kconfig flag -
->   CONFIG_CPU_FREQ_BOOST_SW has been defined. It will be selected only
->   when a target platform has thermal framework properly configured.
-> 
-> - struct cpufreq_driver has been extended with boost related fields:
->         -- boost_supported - when driver supports boosting
->         -- boost_enabled - boost state
->         -- set_boost - callback to function, which is necessary to
->            enable/disable boost
-> 
-> - Boost sysfs attribute (/sys/devices/system/cpu/cpufreq/boost) is
-> visible _only_ when cpufreq driver supports Boost.
-> 
-> - No special spin_lock for Boost was created. The one from cpufreq
-> core was reused.
-> 
-> - The Boost code doesn't rely on any policy. When boost state is
-> changed, then the policy list is iterated and proper adjustements are
-> done.
-> 
-> - To improve safety level, the thermal framework is also extended to
-> disable software boosting, when thermal trip point is reached. After
-> cooling down the boost can be enabled again. This emulates behaviour
-> similar to HW managed boost (like x86)
-> 
-> Tested at HW:
->        Exynos 4412 3.13-rc2 Linux
->        Intel Core i7-3770 3.13-rc2 Linux
-> 
-> Above patches were posted on top of kernel_pm/bleeding-edge
-> (SHA1: 9483a9f69d5c8f83f1723361bf8340ddfb6475b4)
-> 
+Few functions used in this driver to translate ref clock rate are
+common to Kamil's usb2.0 phy driver [1]. So we can figure out how
+to re-use them across these drivers.
 
-Rafael, could you pull patches from 1 to 6 of this series? Those are
-related to cpufreq core and has already been accepted by Viresh at a
-late August this year.
-This would facilitate my further cpufreq work.
+Theses patches are based on usb-next branch and tested with
+Kishon's patches for adapting DWC3 to generic phy framework, [2]
+on smdk5250 as well as smdk5420 board.
 
-And about the last patch - related to thermal. It seems that more
-discussion NOT related to cpufreq will be ongoing. 
+[1] [PATCH v3 1/3] phy: Add new Exynos USB PHY driver
+    https://lkml.org/lkml/2013/11/5/272
+[2] [PATCH v2 1/7] usb: dwc3: get "usb_phy" only if the platform indicates the presence of PHY's
+    (http://www.spinics.net/lists/linux-usb/msg95733.html)
+    [PATCH v2 2/7] usb: dwc3: adapt dwc3 core to use Generic PHY Framework
+    (http://www.spinics.net/lists/linux-usb/msg95734.html)
 
-I would prefer to add it as a separate patch to thermal subtree.
+Changed from RFC patch-set:
+1) fixes in documentation file
+ - added provision for syscon interface for using PMU register.
+ - added clock names and description
+ - modified description style for 'compatible property'
+ - made usb30_sclk as additional clock rather then making it optional, since
+   it is actually an additional clock for Exynos5420 Soc.
+2) fixes in phy-exynos5-usb3 driver file
+ - removed unnecessary #ifndef around KHZ and MHZ definitions
+ - removed 'samsung_cpu_type', 'usb3phy_state' enums; and merged necessary
+   necessary from 'usb3phy_instance' structure to 'usb3phy_driver'.
+ - changed name 'sclk_usbphy30' to 'usb30_sclk_100m' since this is the name
+   indicated as input to the PHY block; and also added (!IS_ERR()) check for
+   using usb30_sclk.
+ - removed unnecessary 'state' check code.
+ - moved 'of_device_id' structure definitions before 'probe()' to avoid
+   unnecessary declaration.
+ - added (pdev->dev.of_node == NULL) check at the starting of probe()
+ - moved 'devm_of_phy_provider_register()' call to end of the probe().
+ - removed 'label' for usb3drd phy.
+ - corrected macros definition 'PHYCLKRST_MPLL_MULTIPLIER_50M_REF' from
+   0x02 to 0x32 after confirming same from PHY's data sheet.
+ - replaced pmu register handling, used for power-isolation, with syscon
+   interface api's.
+ - added '.init' and '.exit' callbacks and using them for one time
+   PHY-initialization and deinitialization.
+ - Filtering out the PHY 'power-on' and 'power-off' sequence to '.power_on"
+   and ".power_off" callbacks.
+ - Removed drivers/usb/phy/phy-samsung-usb3.c driver and related code.
+3) fixes in dt files
+ - added reference for 'samsung,syscon-phandle' to used for PMU register.
+ - removed second register field which was earlier used for PMU.
 
+Vivek Gautam (4):
+  phy: Add new Exynos5 USB 3.0 PHY driver
+  dt: exynos5250: Enable support for generic USB 3.0 phy
+  dt: exynos5420: Enable support for USB 3.0 PHY controller
+  dt: exynos5420: Enable support for DWC3 controller
 
-
-> 
-> Lukasz Majewski (7):
->   cpufreq: Add boost frequency support in core
->   cpufreq:acpi:x86: Adjust the acpi-cpufreq.c code to work with common
->     boost solution
->   cpufreq:boost:Kconfig: Provide support for software managed BOOST
->   cpufreq:exynos:Extend Exynos cpufreq driver to support boost
->     framework
->   Documentation:cpufreq:boost: Update BOOST documentation
->   cpufreq:exynos4x12: Change L0 driver data to CPUFREQ_BOOST_FREQ
->   thermal:exynos:boost: Automatic enable/disable of BOOST feature (at
->     Exynos4412)
-> 
->  Documentation/cpu-freq/boost.txt          |   26 +++----
->  drivers/cpufreq/Kconfig                   |    4 +
->  drivers/cpufreq/Kconfig.arm               |   15 ++++
->  drivers/cpufreq/acpi-cpufreq.c            |   86
-> +++++++-------------- drivers/cpufreq/cpufreq.c                 |
-> 118 ++++++++++++++++++++++++++++-
-> drivers/cpufreq/exynos-cpufreq.c          |    3 +
-> drivers/cpufreq/exynos4x12-cpufreq.c      |    2 +-
-> drivers/cpufreq/freq_table.c              |   56 ++++++++++++--
-> drivers/thermal/samsung/exynos_tmu_data.c |   47 ++++++++++++
-> include/linux/cpufreq.h                   |   24 ++++++ 10 files
-> changed, 302 insertions(+), 79 deletions(-)
-> 
-
-
+ .../devicetree/bindings/phy/samsung-phy.txt        |   43 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   16 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |   54 ++
+ drivers/phy/Kconfig                                |    8 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/phy-exynos5-usb3.c                     |  545 ++++++++++++++++++++
+ drivers/usb/phy/Kconfig                            |   10 +-
+ drivers/usb/phy/Makefile                           |    1 -
+ drivers/usb/phy/phy-samsung-usb.h                  |   80 ---
+ drivers/usb/phy/phy-samsung-usb3.c                 |  350 -------------
+ 10 files changed, 658 insertions(+), 450 deletions(-)
+ create mode 100644 drivers/phy/phy-exynos5-usb3.c
+ delete mode 100644 drivers/usb/phy/phy-samsung-usb3.c
 
 -- 
--- 
-Best regards,
+1.7.6.5
 
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
