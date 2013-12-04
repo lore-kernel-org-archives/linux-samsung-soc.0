@@ -1,43 +1,43 @@
 From: Mike Turquette <mturquette@linaro.org>
 Subject: Re: [PATCH v2] clk: exynos5420: fix cpll clock register offsets
-Date: Wed, 04 Dec 2013 12:25:27 -0800
-Message-ID: <20131204202527.29850.94931@quantum>
+Date: Wed, 4 Dec 2013 12:42:23 -0800
+Message-ID: <CAPtuhTievddh8Z-DUYRCwoNeTtLVW+ucSJ+Kuf2u1pAPX4jxmA@mail.gmail.com>
 References: <1380186395-28814-1-git-send-email-chander.kashyap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f54.google.com ([209.85.213.54]:34584 "EHLO
-	mail-yh0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755220Ab3LDUZh convert rfc822-to-8bit (ORCPT
+Received: from mail-we0-f178.google.com ([74.125.82.178]:34152 "EHLO
+	mail-we0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932999Ab3LDUmo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Dec 2013 15:25:37 -0500
-Received: by mail-yh0-f54.google.com with SMTP id z12so11968238yhz.27
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Dec 2013 12:25:36 -0800 (PST)
+	Wed, 4 Dec 2013 15:42:44 -0500
+Received: by mail-we0-f178.google.com with SMTP id u57so10099110wes.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Dec 2013 12:42:43 -0800 (PST)
 In-Reply-To: <1380186395-28814-1-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, yadi.brar@samsung.com, t.figa@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
+To: Chander Kashyap <chander.kashyap@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kgene Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, "t.figa@samsung.com" <t.figa@samsung.com>
 
-Quoting Chander Kashyap (2013-09-26 02:06:35)
+On Thu, Sep 26, 2013 at 2:06 AM, Chander Kashyap
+<chander.kashyap@linaro.org> wrote:
 > Fixes cpll control and lock register offset values for Exynos5420 SoC.
-> 
+>
 > Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
 > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
 Taken into clk-next.
 
-Thanks,
+Thanks!
 Mike
 
 > ---
 > Changes Since v1:
 >         - Fixed patch subject as per Kukgin suggestion.
-> 
+>
 >  drivers/clk/samsung/clk-exynos5420.c |    4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
+>
 > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
 > index 86dfc64..892aac0 100644
 > --- a/drivers/clk/samsung/clk-exynos5420.c
@@ -53,6 +53,6 @@ Mike
 >         [dpll] = PLL(pll_2550, fout_dpll, "fout_dpll", "fin_pll", DPLL_LOCK,
 >                 DPLL_CON0, NULL),
 >         [epll] = PLL(pll_2650, fout_epll, "fout_epll", "fin_pll", EPLL_LOCK,
-> -- 
+> --
 > 1.7.9.5
-> 
+>
