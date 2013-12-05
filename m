@@ -1,80 +1,46 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
- exynos5420 dtsi files
-Date: Thu, 5 Dec 2013 10:26:18 -0800
-Message-ID: <CAD=FV=VKT2mdwNMeZrimurtHeqNBJcpbmZzXV1-es2DxKcFXqw@mail.gmail.com>
+Subject: Re: [PATCH V11 2/3] watchdog: s3c2410_wdt: use syscon regmap
+ interface to configure pmu register
+Date: Thu, 5 Dec 2013 10:27:25 -0800
+Message-ID: <CAD=FV=UJbNBpdoYuxDoCDUCEEZV3tVZA9DFagY_g0nVQcJJKYg@mail.gmail.com>
 References: <1385613243-3559-1-git-send-email-l.krishna@samsung.com>
-	<1385613243-3559-2-git-send-email-l.krishna@samsung.com>
-	<CAOesGMjbWRwEvuYh2DRvUfKm=fMmLOzpKCOO9p-gNvSXuf5hQg@mail.gmail.com>
-	<1468334.WxyIceyAAx@flatron>
+	<1385613243-3559-3-git-send-email-l.krishna@samsung.com>
+	<CAD=FV=XvTPbkdopAQVQt-ga2HrwwZ1MSWytMTeDAz=M91icy3g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f172.google.com ([209.85.216.172]:55699 "EHLO
-	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752990Ab3LES0T (ORCPT
+Received: from mail-qa0-f54.google.com ([209.85.216.54]:46736 "EHLO
+	mail-qa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756328Ab3LES10 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 13:26:19 -0500
-Received: by mail-qc0-f172.google.com with SMTP id e16so5281849qcx.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Dec 2013 10:26:18 -0800 (PST)
-In-Reply-To: <1468334.WxyIceyAAx@flatron>
+	Thu, 5 Dec 2013 13:27:26 -0500
+Received: by mail-qa0-f54.google.com with SMTP id f11so56409qae.20
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Dec 2013 10:27:25 -0800 (PST)
+In-Reply-To: <CAD=FV=XvTPbkdopAQVQt-ga2HrwwZ1MSWytMTeDAz=M91icy3g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Olof Johansson <olof@lixom.net>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
+To: Leela Krishna Amudala <l.krishna@samsung.com>, Wim Van Sebroeck <wim@iguana.be>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
 
 Leela Krishna,
 
-On Mon, Dec 2, 2013 at 11:49 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Monday 02 of December 2013 10:50:14 Olof Johansson wrote:
->> Hi,
->>
->> On Wed, Nov 27, 2013 at 8:34 PM, Leela Krishna Amudala
->> <l.krishna@samsung.com> wrote:
->> > This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
->> > handle PMU register accesses in a centralized way using syscon driver
->> >
->> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
->> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->> > Reviewed-by: Doug Anderson <dianders@chromium.org>
->> > Tested-by: Doug Anderson <dianders@chromium.org>
->> > ---
->> >  Documentation/devicetree/bindings/arm/samsung/pmu.txt |   16 ++++++++++++++++
->> >  arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
->> >  arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
->> >  3 files changed, 26 insertions(+)
->> >  create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
->> >
->> > diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
->> > new file mode 100644
->> > index 0000000..307e727
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
->> > @@ -0,0 +1,16 @@
->> > +SAMSUNG Exynos SoC series PMU Registers
->> > +
->> > +Properties:
->> > + - name : should be 'syscon';
->>
->> It's common to use a non-abbreviated name, such as 'system-controller'
->> here. Or, given that it's referring to "pmusysreg" then maybe
->> something like "pmu-system-registers".
+On Mon, Dec 2, 2013 at 9:32 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Leela Krishna,
 >
-> Hmm, it's two syscons vs two system-controllers in existing device trees.
-> I agree that system-controller sounds much better as a name for this class
-> of devices. I don't remember why I initially suggested syscon, though.
-> Possibly based on those two existing device trees using this name.
+> On Wed, Nov 27, 2013 at 8:34 PM, Leela Krishna Amudala
+> <l.krishna@samsung.com> wrote:
+>> Add device tree support for exynos5250 and 5420 SoCs and use syscon regmap interface
+>> to configure AUTOMATIC_WDT_RESET_DISABLE and MASK_WDT_RESET_REQUEST registers of PMU
+>> to mask/unmask enable/disable of watchdog in probe and s2r scenarios.
+>>
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> ---
+>>  .../devicetree/bindings/watchdog/samsung-wdt.txt   |   21 ++-
+>>  drivers/watchdog/Kconfig                           |    1 +
+>>  drivers/watchdog/s3c2410_wdt.c                     |  159 ++++++++++++++++++--
+>>  3 files changed, 171 insertions(+), 10 deletions(-)
 
-I'd vote for using "pmu-system-registers".  We end up using the
-"syscon" subsystem but really we're describing pmu registers.
-
-I'd even say that you don't need to formally specify the "name" in the
-bindings (though I'm not up with all the latest device tree
-requirements).  ...still you'd want to use "pmu-system-registers" in
-the DTS changes.
-
-Can you spin up a v12?
-
-Thanks!
+Based on feedback in another patch series, perhaps you can incorporate
+<https://patchwork.kernel.org/patch/3290551/> and spin a v12?
 
 -Doug
