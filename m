@@ -1,42 +1,38 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: Add hs-i2c nodes to exynos5420
-Date: Thu, 05 Dec 2013 12:36:31 +0100
-Message-ID: <4767310.mAz1U2YlJK@amdc1227>
-References: <1385982702-18335-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v10 0/2] S5K5BAF camera sensor driver
+Date: Thu, 05 Dec 2013 12:38:38 +0100
+Message-ID: <1386243520-17117-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:20278 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754532Ab3LELgl (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:53546 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753698Ab3LELjD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 06:36:41 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MXC00JGN093CH10@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Dec 2013 11:36:39 +0000 (GMT)
-In-reply-to: <1385982702-18335-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 5 Dec 2013 06:39:03 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: linux-media@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Grant Likely <grant.likely@linaro.org>
 
-Hi Sachin,
+Hi,
 
-On Monday 02 of December 2013 16:41:42 Sachin Kamat wrote:
-> Added high speed I2C nodes to Exynos5420 DT file.
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
-> Changes since v1:
-> Changed the node name to i2c as suggested by Tomasz Figa.
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi |   98 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 98 insertions(+)
+This is the 10th iteration of S5K5BAF camera patch (time for celebration).
+All changes are described in patches.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Regards
+Andrzej
 
-Best regards,
-Tomasz
+Andrzej Hajda (2):
+  s5k5baf: add camera sensor driver
+  s5k5baf: add DT bindings for camera sensor
+
+ .../devicetree/bindings/media/samsung-s5k5baf.txt  |   58 +
+ MAINTAINERS                                        |    7 +
+ drivers/media/i2c/Kconfig                          |    7 +
+ drivers/media/i2c/Makefile                         |    1 +
+ drivers/media/i2c/s5k5baf.c                        | 2043 ++++++++++++++++++++
+ 5 files changed, 2116 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+ create mode 100644 drivers/media/i2c/s5k5baf.c
+
+-- 
+1.8.3.2
