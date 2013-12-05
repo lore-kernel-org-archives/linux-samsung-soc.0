@@ -1,88 +1,75 @@
-From: kgene@kernel.org
-Subject: RE: [GIT PULL] s3c64xx dmaengine conversion
-Date: Thu, 05 Dec 2013 20:48:03 +0900
-Message-ID: <000401cef1af$dcdfd330$969f7990$@kernel.org>
-References: <20131124145011.GA14725@sirena.org.uk>
- <CAOesGMj2uun+0Kr0yKtpHs_0FntJ_rnYGeM8hs+DjpT8Nn-bwg@mail.gmail.com>
- <2721712.y1VtH8x62I@amdc1227>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: Initialize the dma_data for secondary dai
+Date: Thu, 5 Dec 2013 11:50:15 +0000
+Message-ID: <20131205115015.GP29268@sirena.org.uk>
+References: <1385632932-16579-1-git-send-email-padma.v@samsung.com>
+ <20131128113800.GB27568@sirena.org.uk>
+ <CAAgF-BdqRzB5MxTf_9nZkgSOY=F6dGAs0yhTkNHqrUQLonFAsw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="aE2Tjr+Wh4rS13mJ"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:13975 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755422Ab3LELsN (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:43159 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753801Ab3LELuk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 06:48:13 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXC00DP70S67B00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Dec 2013 20:48:07 +0900 (KST)
-In-reply-to: <2721712.y1VtH8x62I@amdc1227>
-Content-language: ko
+	Thu, 5 Dec 2013 06:50:40 -0500
+Content-Disposition: inline
+In-Reply-To: <CAAgF-BdqRzB5MxTf_9nZkgSOY=F6dGAs0yhTkNHqrUQLonFAsw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, 'Olof Johansson' <olof@lixom.net>
-Cc: 'Mark Brown' <broonie@kernel.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, lars@metafoo.de
 
-Tomasz Figa wrote:
-> 
-> On Wednesday 04 of December 2013 13:38:39 Olof Johansson wrote:
-> > On Sun, Nov 24, 2013 at 6:50 AM, Mark Brown <broonie@kernel.org> wrote:
-> > > The following changes since commit
-> 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
-> > >
-> > >   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
-> > >
-> > > are available in the git repository at:
-> > >
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git
-> tags/s3c64xx-dmaengine
-> > >
-> > > for you to fetch changes up to
-> 3faecea70b0d6d050e0ae911032ec340341dc389:
-> > >
-> > >   spi: s3c64xx: Always select S3C64XX_PL080 when ARCH_S3C64XX is
-> enabled (2013-11-24 14:38:25 +0000)
-> > >
-> > > ----------------------------------------------------------------
-> > > ARM: s3c64xx: Convert to dmaengine
-> > >
-> > > This series of commits from Tomasz converting s3c64xx to use dmaengine
-> > > rather than the old s3c-dma API missed the v3.13 merge window - Kukjin
-> > > said that he'd applied it (which should mean it's OK from a review
-> point
-> > > of view) but it didn't make it into -next or a pull request.
-> > >
-> > > Since a s3c64xx based system is one of my primary development
-> platforms
-> > > it'd be really helpful if I could merge this into both ASoC and SPI,
-> > > I've got some patches for ASoC ready to go converting to use dmaengine
-> > > directly which help with multiplatform and there's some other
-> dmaengine
-> > > work for SPI in progress too.  I've therefore made this signed tag,
-> it'd
-> > > be great if it could be merged into both arm-soc and those two trees.
-> > >
-> > > ----------------------------------------------------------------
-> > >
-> > > I'm open to other ideas for doing this, I'd just really like to see
-> the
-> > > code building on this go in this cycle so anything that accomplishes
-> > > that is good for me.
-> >
-> > It's been 10 days and Kukjin hasn't moved on this, nor replied. I'm
-> > going to merge it into arm-soc as samsung/s3c64xx-dmaengine ->
-> > next/drivers so that you can use the branch as a base for your work.
-> 
-Oops, I have no idea why I missed that :-(
-Sorry about that. Olof, thanks for your taking anyway.
 
-- Kukjin
+--aE2Tjr+Wh4rS13mJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> OK, thanks.
-> 
-> Best regards,
-> Tomasz
+On Thu, Dec 05, 2013 at 04:33:19PM +0530, Padma Venkat wrote:
+> On Thu, Nov 28, 2013 at 5:08 PM, Mark Brown <broonie@kernel.org> wrote:
+
+> > Why don't we need this fix for mainline?  The dmaengine change is just
+> > moving the initialisation through a layer of indirection but there was
+> > initialisation anyway.  I'm concerned that there's a bug that ought to
+> > be fixed for v3.13 as well here.
+
+> Yes. We need this for mainline. Not dependent on your dmaengine changes.
+
+Ah, just saw this one - I'll cook up a version of it, due to the
+refactoring the change doesn't apply directly to v3.13.
+
+> >>       return snd_dmaengine_pcm_register(dev, &samsung_dmaengine_pcm_config,
+> >> -                                       SND_DMAENGINE_PCM_FLAG_COMPAT);
+> >> +                                       SND_DMAENGINE_PCM_FLAG_COMPAT |
+> >> +                             SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME);
+
+> > This is already done.
+
+> Should I send another patch by removing this flag from this patch?
+
+No need.
+
+--aE2Tjr+Wh4rS13mJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSoGh0AAoJELSic+t+oim9320P/ilvkvmQ0JLX5Avox9MURpU2
+ZZ4wc5E/6ubg7wK5mkoy3qSYJJD43CsV7XwvD4FOOOmUyANBTNZfhwtQaBr+nf8y
+wlviH4Gz/jD0JryRjgqmMm0MEUCBFVNzqYJi8FGAj0i6M6fy5l0YL9Emwzy6Xm5O
+6OSphNwSwDuHvJ5UQ1xU8+WiRSxLg/XTlGA/cNEUCq475L3MK+llcd4SQNtZRc8K
+gVfnIFFvNy2l0DktNQGJdGbdW1bjpDpgxV+LGFGb6Wzhf3kZYjZLWoal4YtEKz7w
++HJ673isdYWAcFw1KpXabzl1GPScpKwICuKRFFg49sr53UTU+Po6qMRwQc8RJtvM
+C+D3XNYqJItxJzpGRlpFtIb2m3rOcdfJrQGewpK1cks9l1VpQkmSp47b4VWWZzlc
+PECwFqsT/mKyW1QU7RI1RbQTlgAP6VAjztsJHyGV2dss6vHfxAMTNbYaCSRWUKqV
+KGpFBd5vwNoi1/pr5lxjqLUC9cof/WXN8p/1giZqrXKEtR/Ufe4pjszFAUNFSX9E
+w2s7NO5jAUU2RMc6RX4Wd8XQ3EGnxjcTUYFLL93zxY3zV3OBFaKfG7A6cPoKDSee
+ns3O2aTJaXQBjsUi2eaXPhgSX5r/FsqK9Wu182urrouXvuCwxw3+Y/W1qs6x8Xcv
+b+lliJ7kPBJcIRHGBucV
+=mqoX
+-----END PGP SIGNATURE-----
+
+--aE2Tjr+Wh4rS13mJ--
