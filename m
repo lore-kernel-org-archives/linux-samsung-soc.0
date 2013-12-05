@@ -1,102 +1,88 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
- where possible
-Date: Thu, 5 Dec 2013 11:45:38 +0000
-Message-ID: <20131205114538.GO29268@sirena.org.uk>
-References: <1384264120-24750-2-git-send-email-broonie@kernel.org>
- <CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
- <20131126102311.GW14725@sirena.org.uk>
- <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
- <20131126122031.GA14725@sirena.org.uk>
- <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
- <20131127150534.GW14725@sirena.org.uk>
- <CAAgF-BcoKDt=u51tqiWyxveb4iJSXKuV49X1VmOsWiRsSGKKpg@mail.gmail.com>
- <20131128115351.GC27568@sirena.org.uk>
- <CAAgF-Bc3fOdJ3C-Jrmw-7Vxt_9QSJHEX5kWvCEyu_WBrsMDdEA@mail.gmail.com>
+From: kgene@kernel.org
+Subject: RE: [GIT PULL] s3c64xx dmaengine conversion
+Date: Thu, 05 Dec 2013 20:48:03 +0900
+Message-ID: <000401cef1af$dcdfd330$969f7990$@kernel.org>
+References: <20131124145011.GA14725@sirena.org.uk>
+ <CAOesGMj2uun+0Kr0yKtpHs_0FntJ_rnYGeM8hs+DjpT8Nn-bwg@mail.gmail.com>
+ <2721712.y1VtH8x62I@amdc1227>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2211098120683002428=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAAgF-Bc3fOdJ3C-Jrmw-7Vxt_9QSJHEX5kWvCEyu_WBrsMDdEA@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============2211098120683002428==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OE5XN2KVoD5QaTkR"
-Content-Disposition: inline
-
-
---OE5XN2KVoD5QaTkR
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Dec 05, 2013 at 04:20:03PM +0530, Padma Venkat wrote:
-> On Thu, Nov 28, 2013 at 5:23 PM, Mark Brown <broonie@kernel.org> wrote:
-
-> > OK, so we can probably just reinitialise the dmaengine data after we
-> > reset it?  Like below
-
-> Yes. That works well.
-
-Great.
-
-> As I forgot to add SND_DMAENGINE_PCM_FLAG_NO_RESIDUE flag, I was
-> getting underrun error. After adding this flag audio playback is
-> working fine for smaller files on smdk5420 with pl330 dma driver.
-
-OK, there were some patches on the thread adding residue support to the
-PL330 driver yesterday - hopefully those can get merged at some point
-
-> Except for the crash due to NULL pointer dereference in secondary
-> dai(I posted a patch for the same (ASoC: samsung: Initialize the
-> dma_data for secondary dai)) you can add my
-
-> Tested By: Padmavathi Venna <padma.v@samsung.com>
-
-Excellent, thanks - I'd squashed in your change already.  Like I say I'm
-still concerned that we might need a fix for v3.13 since I can't
-entirely see why the code works as-is.
-
---OE5XN2KVoD5QaTkR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSoGdfAAoJELSic+t+oim9s2sP/1eh9i/zxfU7ZQJVi48rv68M
-zBzteoDM21/Sb3SK45B4khMbe+APIu3AlIlTbMdUCJp90obtjDlKzYsrqkC6fLSM
-BVDOYNrjA5PedJMeahJTnNCAoDrn4CmfUCFJToAWDvSznfVBzJwQpX45sU8EFxai
-Q9tiOUhcnlBF+ykR1g+OgOsPkW2aMiKQednMJ3xtU+3Ei6S6gaYKx05zXFhNoIlt
-Ov2NhNGaz+CaMEJ7vBXq5l7sH0qfFhfzAGm75c3DXyg6vJcUds1u6wvvp9ZJU34v
-WsvZcgYss+cq9Iuq6CdzXXPt8IFCRB/Yz06NHqbEJiniK4HN1GfwS+WVcan7j9Ax
-LihvnW2lgXaSK9C0F0bFiBBa5RZTzAlOFva+NUB+ZvZUZ6XYpNaaPDlmwB2hLn+N
-HJBQkeyzOrrA5K84EQqxlUcWQZb74fTYwlge2hf6jV7Mi6OG6gv9MXxMjXSKwvlW
-NYcdkb9btr01czqzg/iUObuNM11z1RZ4eD4JlOvTj7ddaDCXZifyPf7SDanIWpTl
-Cv+M0Uu0264CTEtEi/Pc+q80y+OnHhGtUCnM7Haaa6NcK0Z0CO015xV7mNwDxn2q
-aCmnDjTyWBkRTJtNUvvd5PC8oWGA45U8y7txJvy2esPP6oR4a9x+E3onPYNHuYZA
-gR7vRvjI+/xTL0NE4U8E
-=5BF7
------END PGP SIGNATURE-----
-
---OE5XN2KVoD5QaTkR--
-
---===============2211098120683002428==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:13975 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755422Ab3LELsN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Dec 2013 06:48:13 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MXC00DP70S67B00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 05 Dec 2013 20:48:07 +0900 (KST)
+In-reply-to: <2721712.y1VtH8x62I@amdc1227>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <t.figa@samsung.com>, 'Olof Johansson' <olof@lixom.net>
+Cc: 'Mark Brown' <broonie@kernel.org>, 'Tomasz Figa' <tomasz.figa@gmail.com>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
+Tomasz Figa wrote:
+> 
+> On Wednesday 04 of December 2013 13:38:39 Olof Johansson wrote:
+> > On Sun, Nov 24, 2013 at 6:50 AM, Mark Brown <broonie@kernel.org> wrote:
+> > > The following changes since commit
+> 6ce4eac1f600b34f2f7f58f9cd8f0503d79e42ae:
+> > >
+> > >   Linux 3.13-rc1 (2013-11-22 11:30:55 -0800)
+> > >
+> > > are available in the git repository at:
+> > >
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git
+> tags/s3c64xx-dmaengine
+> > >
+> > > for you to fetch changes up to
+> 3faecea70b0d6d050e0ae911032ec340341dc389:
+> > >
+> > >   spi: s3c64xx: Always select S3C64XX_PL080 when ARCH_S3C64XX is
+> enabled (2013-11-24 14:38:25 +0000)
+> > >
+> > > ----------------------------------------------------------------
+> > > ARM: s3c64xx: Convert to dmaengine
+> > >
+> > > This series of commits from Tomasz converting s3c64xx to use dmaengine
+> > > rather than the old s3c-dma API missed the v3.13 merge window - Kukjin
+> > > said that he'd applied it (which should mean it's OK from a review
+> point
+> > > of view) but it didn't make it into -next or a pull request.
+> > >
+> > > Since a s3c64xx based system is one of my primary development
+> platforms
+> > > it'd be really helpful if I could merge this into both ASoC and SPI,
+> > > I've got some patches for ASoC ready to go converting to use dmaengine
+> > > directly which help with multiplatform and there's some other
+> dmaengine
+> > > work for SPI in progress too.  I've therefore made this signed tag,
+> it'd
+> > > be great if it could be merged into both arm-soc and those two trees.
+> > >
+> > > ----------------------------------------------------------------
+> > >
+> > > I'm open to other ideas for doing this, I'd just really like to see
+> the
+> > > code building on this go in this cycle so anything that accomplishes
+> > > that is good for me.
+> >
+> > It's been 10 days and Kukjin hasn't moved on this, nor replied. I'm
+> > going to merge it into arm-soc as samsung/s3c64xx-dmaengine ->
+> > next/drivers so that you can use the branch as a base for your work.
+> 
+Oops, I have no idea why I missed that :-(
+Sorry about that. Olof, thanks for your taking anyway.
 
---===============2211098120683002428==--
+- Kukjin
+
+> OK, thanks.
+> 
+> Best regards,
+> Tomasz
