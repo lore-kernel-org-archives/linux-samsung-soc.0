@@ -1,141 +1,80 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH v2 2/2] watchdog: s3c2410_wdt: Report when the watchdog reset the system
-Date: Thu,  5 Dec 2013 10:15:29 -0800
-Message-ID: <1386267329-9941-2-git-send-email-dianders@chromium.org>
-References: <1386008082-28740-1-git-send-email-dianders@chromium.org>
- <1386267329-9941-1-git-send-email-dianders@chromium.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1386267329-9941-1-git-send-email-dianders@chromium.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Thu, 5 Dec 2013 10:26:18 -0800
+Message-ID: <CAD=FV=VKT2mdwNMeZrimurtHeqNBJcpbmZzXV1-es2DxKcFXqw@mail.gmail.com>
+References: <1385613243-3559-1-git-send-email-l.krishna@samsung.com>
+	<1385613243-3559-2-git-send-email-l.krishna@samsung.com>
+	<CAOesGMjbWRwEvuYh2DRvUfKm=fMmLOzpKCOO9p-gNvSXuf5hQg@mail.gmail.com>
+	<1468334.WxyIceyAAx@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f172.google.com ([209.85.216.172]:55699 "EHLO
+	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752990Ab3LES0T (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Dec 2013 13:26:19 -0500
+Received: by mail-qc0-f172.google.com with SMTP id e16so5281849qcx.31
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Dec 2013 10:26:18 -0800 (PST)
+In-Reply-To: <1468334.WxyIceyAAx@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
 
-A good watchdog driver is supposed to report when it was responsible
-for resetting the system.  Implement this for the s3c2410, at least on
-exynos5250 and exynos5420 where we already have a pointer to the PMU
-registers to read the information.
+Leela Krishna,
 
-Note that exynos4 SoCs also provide the reset status, but providing
-that is left as an exercise for future changes and is not plumbed up
-in this patch series.  Also note the exynos4 SoCs don't appear to need
-any PMU config, which is why this patch separates the concepts of
-having PMU Registers vs. needing PMU Config.
+On Mon, Dec 2, 2013 at 11:49 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Monday 02 of December 2013 10:50:14 Olof Johansson wrote:
+>> Hi,
+>>
+>> On Wed, Nov 27, 2013 at 8:34 PM, Leela Krishna Amudala
+>> <l.krishna@samsung.com> wrote:
+>> > This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
+>> > handle PMU register accesses in a centralized way using syscon driver
+>> >
+>> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>> > Reviewed-by: Doug Anderson <dianders@chromium.org>
+>> > Tested-by: Doug Anderson <dianders@chromium.org>
+>> > ---
+>> >  Documentation/devicetree/bindings/arm/samsung/pmu.txt |   16 ++++++++++++++++
+>> >  arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
+>> >  arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
+>> >  3 files changed, 26 insertions(+)
+>> >  create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>> > new file mode 100644
+>> > index 0000000..307e727
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>> > @@ -0,0 +1,16 @@
+>> > +SAMSUNG Exynos SoC series PMU Registers
+>> > +
+>> > +Properties:
+>> > + - name : should be 'syscon';
+>>
+>> It's common to use a non-abbreviated name, such as 'system-controller'
+>> here. Or, given that it's referring to "pmusysreg" then maybe
+>> something like "pmu-system-registers".
+>
+> Hmm, it's two syscons vs two system-controllers in existing device trees.
+> I agree that system-controller sounds much better as a name for this class
+> of devices. I don't remember why I initially suggested syscon, though.
+> Possibly based on those two existing device trees using this name.
 
-Signed-off-by: Doug Anderson <dianders@chromium.org>
----
-Changes in v2:
-- Explained QUIRK organization in patch descritpion.
-- Reduced indentation as per Olof and Tomasz suggestion.
-- Now atop proposed v12 of Leela Krishna's patches.
-- NEEDS => HAS, EXYNOS5 prefix
+I'd vote for using "pmu-system-registers".  We end up using the
+"syscon" subsystem but really we're describing pmu registers.
 
- drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+I'd even say that you don't need to formally specify the "name" in the
+bindings (though I'm not up with all the latest device tree
+requirements).  ...still you'd want to use "pmu-system-registers" in
+the DTS changes.
 
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 6a00299..45a9503 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -62,9 +62,15 @@
- #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
- #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
- 
-+#define EXYNOS5_RST_STAT_REG_OFFSET		0x0404
- #define EXYNOS5_WDT_DISABLE_REG_OFFSET		0x0408
- #define EXYNOS5_WDT_MASK_RESET_REG_OFFSET	0x040c
- #define QUIRK_HAS_PMU_CONFIG			(1 << 0)
-+#define QUIRK_HAS_RST_STAT			(1 << 1)
-+
-+/* These quirks require that we have a PMU register map */
-+#define QUIRKS_HAVE_PMUREG			(QUIRK_HAS_PMU_CONFIG | \
-+						 QUIRK_HAS_RST_STAT)
- 
- static bool nowayout	= WATCHDOG_NOWAYOUT;
- static int tmr_margin;
-@@ -98,6 +104,9 @@ MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
-  * timer reset functionality.
-  * @mask_bit: Bit number for the watchdog timer in the disable register and the
-  * mask reset register.
-+ * @rst_stat_reg: Offset in pmureg for the register that has the reset status.
-+ * @rst_stat_bit: Bit number in the rst_stat register indicating a watchdog
-+ * reset.
-  * @quirks: A bitfield of quirks.
-  */
- 
-@@ -105,6 +114,8 @@ struct s3c2410_wdt_variant {
- 	int disable_reg;
- 	int mask_reset_reg;
- 	int mask_bit;
-+	int rst_stat_reg;
-+	int rst_stat_bit;
- 	u32 quirks;
- };
- 
-@@ -131,14 +142,20 @@ static const struct s3c2410_wdt_variant drv_data_exynos5250  = {
- 	.disable_reg = EXYNOS5_WDT_DISABLE_REG_OFFSET,
- 	.mask_reset_reg = EXYNOS5_WDT_MASK_RESET_REG_OFFSET,
- 	.mask_bit = 20,
--	.quirks = QUIRK_HAS_PMU_CONFIG
-+	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = 20,
-+	.quirks = QUIRK_HAS_PMU_CONFIG |
-+		QUIRK_HAS_RST_STAT,
- };
- 
- static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
- 	.disable_reg = EXYNOS5_WDT_DISABLE_REG_OFFSET,
- 	.mask_reset_reg = EXYNOS5_WDT_MASK_RESET_REG_OFFSET,
- 	.mask_bit = 0,
--	.quirks = QUIRK_HAS_PMU_CONFIG
-+	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = 9,
-+	.quirks = QUIRK_HAS_PMU_CONFIG |
-+		QUIRK_HAS_RST_STAT,
- };
- 
- static const struct of_device_id s3c2410_wdt_match[] = {
-@@ -427,6 +444,23 @@ static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
- }
- #endif
- 
-+static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
-+{
-+	unsigned int rst_stat;
-+	int ret;
-+
-+	if (!(wdt->drv_data->quirks & QUIRK_HAS_RST_STAT))
-+		return 0;
-+
-+	ret = regmap_read(wdt->pmureg, wdt->drv_data->rst_stat_reg, &rst_stat);
-+	if (ret)
-+		dev_warn(wdt->dev, "Couldn't get RST_STAT register\n");
-+	else if (rst_stat & BIT(wdt->drv_data->rst_stat_bit))
-+		return WDIOF_CARDRESET;
-+
-+	return 0;
-+}
-+
- /* s3c2410_get_wdt_driver_data */
- static inline struct s3c2410_wdt_variant *
- get_wdt_drv_data(struct platform_device *pdev)
-@@ -464,7 +498,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 	wdt->wdt_device = s3c2410_wdd;
- 
- 	wdt->drv_data = get_wdt_drv_data(pdev);
--	if (wdt->drv_data->quirks & QUIRK_HAS_PMU_CONFIG) {
-+	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
- 		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
- 							"samsung,syscon-phandle");
- 		if (IS_ERR(wdt->pmureg)) {
-@@ -535,6 +569,8 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 
- 	watchdog_set_nowayout(&wdt->wdt_device, nowayout);
- 
-+	wdt->wdt_device.bootstatus = s3c2410wdt_get_bootstatus(wdt);
-+
- 	ret = watchdog_register_device(&wdt->wdt_device);
- 	if (ret) {
- 		dev_err(dev, "cannot register watchdog (%d)\n", ret);
--- 
-1.8.5.1
+Can you spin up a v12?
+
+Thanks!
+
+-Doug
