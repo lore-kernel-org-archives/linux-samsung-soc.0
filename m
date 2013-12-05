@@ -1,143 +1,83 @@
 From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH v4 0/9] phy: Add new Exynos USB 2.0 PHY driver
-Date: Thu, 05 Dec 2013 13:29:30 +0100
-Message-ID: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16559 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756580Ab3LEM3y (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 07:29:54 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/9] phy: core: Change the way of_phy_get is called
+Date: Thu, 05 Dec 2013 13:29:31 +0100
+Message-ID: <1386246579-25141-2-git-send-email-k.debski@samsung.com>
+References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, Kamil Debski <k.debski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Previously the of_phy_get function took a struct device * and
+was declared static. It was impossible to call it from
+another driver and thus it was impossible to get phy defined
+for a given node.
 
-This is the fourth version of the patchset adding the new Exynos USB 2.0 PHY
-driver. The driver uses the Generic PHY Framework.
+Signed-off-by: Kamil Debski <k.debski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/phy/phy-core.c  |   12 +++++-------
+ include/linux/phy/phy.h |    1 +
+ 2 files changed, 6 insertions(+), 7 deletions(-)
 
-A month has passed since the last version. I have addressed numerous comments
-that appeared on the mailing list in this patch. I would like to specially
-thank Kishon, Tomasz, Matt and Vivek for their comments.
-
-This patch contains two necessary patches to the phy core.
-It is very useful to be able to get phy using a device tree node.
-
-In addition this patch depends on:
-[PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi
-files [1].
-
-Best wishes,
-Kamil Debski
-
-[1] - http://www.spinics.net/lists/linux-samsung-soc/msg24528.html
-
-----------------
-Changes from v3:
-- using PMU and system registers indirectly via syscon
-- change labelling
-- change Kconfig name
-- fixed typos/stray whitespace
-- move of_phy_provider_register() to the end of probe
-- add a regular error return code to the rate_to_clk functions
-- cleanup code and remove unused code
-- change struct names to avoid collisions
-- add mechanism to support multiple phys by the ehci driver
-
-----------------
-Changes from v2:
-- rebase all patches to the usb-next branch
-- fixes in the documentation file
-  - remove wrong entries in the phy node (ranges, and #address- & #size-cells)
-  - add clocks and clock-names as required properites
-  - rephrase a few sentences
-- fixes in the ehci-exynos.c file
-  - move phy_name variable next to phy in exynos_ehci_hcd
-  - remove otg from exynos_ehci_hcd as it was no longer used
-  - move devm_phy_get after the Exynos5440 skip_phy check
-- fixes in the s3c-hsotg.c file
-  - cosmetic fixes (remove empty line that was wrongfully added)
-- fixes in the main driver
-  - remove cpu_type in favour for a boolean flag matched with the compatible
-    value
-  - rename files, structures, variables and Kconfig entires - change from simple
-    "uphy" to "usb2_phy"
-  - fix multiline comments style
-  - simplify #ifdefs in of_device_id
-  - fix Kconfig description
-  - change dev_info to dev_dbg where reasonable
-  - cosmetic changes (remove wrongful blank lines)
-  - remove unnecessary reference counting
-
-----------------
-Changes from v1:
-- the changes include minor fixes of the hardware initialization of the PHY
-  module
-- some other minor fixes were introduced
-
-----------------------
-Original cover letter:
-
-Hi,
-
-This patch adds a new drive for USB PHYs for Samsung SoCs. The driver is
-using the Generic PHY Framework created by Kishon Vijay Abrahan I. It
-can be found here https://lkml.org/lkml/2013/8/21/29. This patch adds
-support to Exynos4 family of SoCs. Support for Exynos3 and Exynos5 is
-planned to be added in the near future.
-
-I welcome your comments.
-
-----------------------
-
-[1] https://lkml.org/lkml/2013/8/21/29
-
-
-Kamil Debski (8):
-  phy: core: Change the way of_phy_get is called
-  phy: core: Add devm_of_phy_get to phy-core
-  phy: Add new Exynos USB PHY driver
-  usb: ehci-s5p: Change to use phy provided by the generic phy
-    framework
-  usb: s3c-hsotg: Use the new Exynos USB phy driver with the generic
-    phy framework
-  phy: Add Exynos 5250 support to the Exynos USB 2.0 PHY driver
-  dts: Add usb2phy to Exynos 4
-  dts: Add usb2phy to Exynos 5250
-
-Mateusz Krawczuk (1):
-  phy: Add support for S5PV210 to the Exynos USB PHY driver
-
- .../devicetree/bindings/arm/samsung/pmu.txt        |    2 +
- .../devicetree/bindings/phy/samsung-usbphy.txt     |   56 +++
- .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 +
- Documentation/devicetree/bindings/usb/usb-ehci.txt |   35 ++
- arch/arm/boot/dts/exynos4.dtsi                     |   31 ++
- arch/arm/boot/dts/exynos4210.dtsi                  |   17 +
- arch/arm/boot/dts/exynos4x12.dtsi                  |   17 +
- arch/arm/boot/dts/exynos5250.dtsi                  |   33 +-
- drivers/phy/Kconfig                                |   35 ++
- drivers/phy/Makefile                               |    5 +
- drivers/phy/phy-core.c                             |   43 ++-
- drivers/phy/phy-exynos4210-usb2.c                  |  264 ++++++++++++++
- drivers/phy/phy-exynos4212-usb2.c                  |  312 +++++++++++++++++
- drivers/phy/phy-exynos5250-usb2.c                  |  363 ++++++++++++++++++++
- drivers/phy/phy-s5pv210-usb2.c                     |  206 +++++++++++
- drivers/phy/phy-samsung-usb2.c                     |  240 +++++++++++++
- drivers/phy/phy-samsung-usb2.h                     |   74 ++++
- drivers/usb/gadget/s3c-hsotg.c                     |   11 +-
- drivers/usb/host/ehci-exynos.c                     |   95 +++--
- include/linux/phy/phy.h                            |    3 +
- 20 files changed, 1789 insertions(+), 57 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
- create mode 100644 drivers/phy/phy-exynos4210-usb2.c
- create mode 100644 drivers/phy/phy-exynos4212-usb2.c
- create mode 100644 drivers/phy/phy-exynos5250-usb2.c
- create mode 100644 drivers/phy/phy-s5pv210-usb2.c
- create mode 100644 drivers/phy/phy-samsung-usb2.c
- create mode 100644 drivers/phy/phy-samsung-usb2.h
-
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index 03cf8fb..7fb3474 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
+  * not yet loaded. This function uses of_xlate call back function provided
+  * while registering the phy_provider to find the phy instance.
+  */
+-static struct phy *of_phy_get(struct device *dev, int index)
++struct phy *of_phy_get(struct device_node *np, int index)
+ {
+ 	int ret;
+ 	struct phy_provider *phy_provider;
+ 	struct phy *phy = NULL;
+ 	struct of_phandle_args args;
+ 
+-	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells",
++	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
+ 		index, &args);
+-	if (ret) {
+-		dev_dbg(dev, "failed to get phy in %s node\n",
+-			dev->of_node->full_name);
++	if (ret)
+ 		return ERR_PTR(-ENODEV);
+-	}
+ 
+ 	mutex_lock(&phy_provider_mutex);
+ 	phy_provider = of_phy_provider_lookup(args.np);
+@@ -281,6 +278,7 @@ err0:
+ 
+ 	return phy;
+ }
++EXPORT_SYMBOL_GPL(of_phy_get);
+ 
+ /**
+  * phy_put() - release the PHY
+@@ -370,7 +368,7 @@ struct phy *phy_get(struct device *dev, const char *string)
+ 	if (dev->of_node) {
+ 		index = of_property_match_string(dev->of_node, "phy-names",
+ 			string);
+-		phy = of_phy_get(dev, index);
++		phy = of_phy_get(dev->of_node, index);
+ 		if (IS_ERR(phy)) {
+ 			dev_err(dev, "unable to find phy\n");
+ 			return phy;
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 6d72269..169f572 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -131,6 +131,7 @@ struct phy *phy_get(struct device *dev, const char *string);
+ struct phy *devm_phy_get(struct device *dev, const char *string);
+ void phy_put(struct phy *phy);
+ void devm_phy_put(struct device *dev, struct phy *phy);
++struct phy *of_phy_get(struct device_node *np, int index);
+ struct phy *of_phy_simple_xlate(struct device *dev,
+ 	struct of_phandle_args *args);
+ struct phy *phy_create(struct device *dev, const struct phy_ops *ops,
 -- 
 1.7.9.5
