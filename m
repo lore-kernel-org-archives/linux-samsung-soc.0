@@ -1,129 +1,162 @@
 From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] watchdog: s3c2410_wdt: Report when the watchdog reset the system
-Date: Thu, 5 Dec 2013 10:16:14 -0800
-Message-ID: <CAD=FV=U_ntCJWgb7qcRve8JqcFVSo5vyuPTabLGGdNUGg56P-Q@mail.gmail.com>
+Subject: [PATCH v2 1/2] fixup: watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu register
+Date: Thu,  5 Dec 2013 10:15:28 -0800
+Message-ID: <1386267329-9941-1-git-send-email-dianders@chromium.org>
 References: <1386008082-28740-1-git-send-email-dianders@chromium.org>
-	<42011482.56GYn1upCz@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f181.google.com ([209.85.220.181]:42531 "EHLO
-	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757481Ab3LESQP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 13:16:15 -0500
-Received: by mail-vc0-f181.google.com with SMTP id ks9so13184522vcb.40
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Dec 2013 10:16:14 -0800 (PST)
-In-Reply-To: <42011482.56GYn1upCz@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1386008082-28740-1-git-send-email-dianders@chromium.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>, Guenter Roeck <linux@roeck-us.net>, Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-watchdog@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Tomasz,
+This patch is not intended to land upon itself but is proposed fixup
+to Leela Krishna's patch (v11) that can be found at
+<https://patchwork.kernel.org/patch/3251841/>, potentially making a v12.
 
-On Thu, Dec 5, 2013 at 8:21 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Doug,
->
-> Please see my comments inline.
->
-> On Monday 02 of December 2013 10:14:41 Doug Anderson wrote:
->> A good watchdog driver is supposed to report when it was responsible
->> for resetting the system.  Implement this for the s3c2410, at least on
->> exynos5250 and exynos5420 where we already have a pointer to the PMU
->> registers to read the information.
->>
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> ---
->> This patch is based atop Leela Krishna's recent series that ends with
->> (ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420)
->> AKA <https://patchwork.kernel.org/patch/3251861/>.
->>
->>  drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 39 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
->> index 47f4dcf..2c87d37 100644
->> --- a/drivers/watchdog/s3c2410_wdt.c
->> +++ b/drivers/watchdog/s3c2410_wdt.c
->> @@ -62,9 +62,13 @@
->>  #define CONFIG_S3C2410_WATCHDOG_ATBOOT               (0)
->>  #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME (15)
->>
->> +#define RST_STAT_REG_OFFSET          0x0404
->
-> IMHO this should be namespaced, at least with EXYNOS5 prefix. The two
-> registers below should be as well, but I missed this in the patch adding
-> them.
+Posted so that I can build upon his patch with the fixups requested by
+Guenter, Olof, and Tomasz.
 
-Done in v2 (plus fixup of Leela Krishna's).
+Signed-off-by: Doug Anderson <dianders@chromium.org>
+---
+Changes in v2:
+- Added EXYNOS5 prefix to REG_OFFSET defines (Tomasz)
+- NEEDS_PMU_CONFIG => HAS_PMU_CONFIG (Olof, Guenter)
+- Move QUIRK_HAS_PMU_CONFIG to (Guenter)
 
+ drivers/watchdog/s3c2410_wdt.c | 59 +++++++++++++++++++-----------------------
+ 1 file changed, 27 insertions(+), 32 deletions(-)
 
->>  #define WDT_DISABLE_REG_OFFSET               0x0408
->>  #define WDT_MASK_RESET_REG_OFFSET    0x040c
->>  #define QUIRK_NEEDS_PMU_CONFIG               (1 << 0)
->> +#define QUIRK_HAS_RST_STAT           (1 << 1)
->> +#define QUIRKS_NEED_PMUREG           (QUIRK_NEEDS_PMU_CONFIG | \
->> +                                      QUIRK_HAS_RST_STAT)
->>
->>  static bool nowayout = WATCHDOG_NOWAYOUT;
->>  static int tmr_margin;
->> @@ -98,6 +102,9 @@ MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
->>   * timer reset functionality.
->>   * @mask_bit: Bit number for the watchdog timer in the disable register and the
->>   * mask reset register.
->> + * @rst_stat_reg: Offset in pmureg for the register that has the reset status.
->> + * @rst_stat_bit: Bit number in the rst_stat register indicating a watchdog
->> + * reset.
->>   * @quirks: A bitfield of quirks.
->>   */
->>
->> @@ -105,6 +112,8 @@ struct s3c2410_wdt_variant {
->>       int disable_reg;
->>       int mask_reset_reg;
->>       int mask_bit;
->> +     int rst_stat_reg;
->> +     int rst_stat_bit;
->>       u32 quirks;
->>  };
->>
->> @@ -131,14 +140,20 @@ static const struct s3c2410_wdt_variant drv_data_exynos5250  = {
->>       .disable_reg = WDT_DISABLE_REG_OFFSET,
->>       .mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
->>       .mask_bit = 20,
->> -     .quirks = QUIRK_NEEDS_PMU_CONFIG
->> +     .rst_stat_reg = RST_STAT_REG_OFFSET,
->> +     .rst_stat_bit = 20,
->> +     .quirks = QUIRK_NEEDS_PMU_CONFIG |
->> +             QUIRK_HAS_RST_STAT,
->>  };
->>
->>  static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
->>       .disable_reg = WDT_DISABLE_REG_OFFSET,
->>       .mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
->>       .mask_bit = 0,
->> -     .quirks = QUIRK_NEEDS_PMU_CONFIG
->> +     .rst_stat_reg = RST_STAT_REG_OFFSET,
->> +     .rst_stat_bit = 9,
->> +     .quirks = QUIRK_NEEDS_PMU_CONFIG |
->> +             QUIRK_HAS_RST_STAT,
->>  };
->>
->>  static const struct of_device_id s3c2410_wdt_match[] = {
->> @@ -423,6 +438,25 @@ static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
->>  }
->>  #endif
->>
->> +static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
->> +{
->> +     unsigned int bootstatus = 0;
->> +     int ret;
->> +
->> +     if (wdt->drv_data->quirks & QUIRK_HAS_RST_STAT) {
->
-> nit: I guess it's just a matter of taste, but to reduce code indentation
-> you could inverse the check and simply return 0 here.
-
-Done in v2.  This is the same suggestion Olof made.
-
--Doug
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 47f4dcf..6a00299 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -62,9 +62,9 @@
+ #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
+ #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
+ 
+-#define WDT_DISABLE_REG_OFFSET		0x0408
+-#define WDT_MASK_RESET_REG_OFFSET	0x040c
+-#define QUIRK_NEEDS_PMU_CONFIG		(1 << 0)
++#define EXYNOS5_WDT_DISABLE_REG_OFFSET		0x0408
++#define EXYNOS5_WDT_MASK_RESET_REG_OFFSET	0x040c
++#define QUIRK_HAS_PMU_CONFIG			(1 << 0)
+ 
+ static bool nowayout	= WATCHDOG_NOWAYOUT;
+ static int tmr_margin;
+@@ -128,17 +128,17 @@ static const struct s3c2410_wdt_variant drv_data_s3c2410 = {
+ 
+ #ifdef CONFIG_OF
+ static const struct s3c2410_wdt_variant drv_data_exynos5250  = {
+-	.disable_reg = WDT_DISABLE_REG_OFFSET,
+-	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
++	.disable_reg = EXYNOS5_WDT_DISABLE_REG_OFFSET,
++	.mask_reset_reg = EXYNOS5_WDT_MASK_RESET_REG_OFFSET,
+ 	.mask_bit = 20,
+-	.quirks = QUIRK_NEEDS_PMU_CONFIG
++	.quirks = QUIRK_HAS_PMU_CONFIG
+ };
+ 
+ static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
+-	.disable_reg = WDT_DISABLE_REG_OFFSET,
+-	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
++	.disable_reg = EXYNOS5_WDT_DISABLE_REG_OFFSET,
++	.mask_reset_reg = EXYNOS5_WDT_MASK_RESET_REG_OFFSET,
+ 	.mask_bit = 0,
+-	.quirks = QUIRK_NEEDS_PMU_CONFIG
++	.quirks = QUIRK_HAS_PMU_CONFIG
+ };
+ 
+ static const struct of_device_id s3c2410_wdt_match[] = {
+@@ -183,6 +183,10 @@ static int s3c2410wdt_mask_and_disable_reset(struct s3c2410_wdt *wdt, bool mask)
+ 	u32 mask_val = 1 << wdt->drv_data->mask_bit;
+ 	u32 val = 0;
+ 
++	/* No need to do anything if no PMU CONFIG needed */
++	if (!(wdt->drv_data->quirks & QUIRK_HAS_PMU_CONFIG))
++		return 0;
++
+ 	if (mask)
+ 		val = mask_val;
+ 
+@@ -460,7 +464,7 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+ 	wdt->wdt_device = s3c2410_wdd;
+ 
+ 	wdt->drv_data = get_wdt_drv_data(pdev);
+-	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
++	if (wdt->drv_data->quirks & QUIRK_HAS_PMU_CONFIG) {
+ 		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
+ 							"samsung,syscon-phandle");
+ 		if (IS_ERR(wdt->pmureg)) {
+@@ -537,11 +541,9 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
+ 		goto err_cpufreq;
+ 	}
+ 
+-	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
+-		ret = s3c2410wdt_mask_and_disable_reset(wdt, false);
+-		if (ret < 0)
+-			goto err_unregister;
+-	}
++	ret = s3c2410wdt_mask_and_disable_reset(wdt, false);
++	if (ret < 0)
++		goto err_unregister;
+ 
+ 	if (tmr_atboot && started == 0) {
+ 		dev_info(dev, "starting watchdog timer\n");
+@@ -586,11 +588,9 @@ static int s3c2410wdt_remove(struct platform_device *dev)
+ 	int ret;
+ 	struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
+ 
+-	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
+-		ret = s3c2410wdt_mask_and_disable_reset(wdt, true);
+-		if (ret < 0)
+-			return ret;
+-	}
++	ret = s3c2410wdt_mask_and_disable_reset(wdt, true);
++	if (ret < 0)
++		return ret;
+ 
+ 	watchdog_unregister_device(&wdt->wdt_device);
+ 
+@@ -606,8 +606,7 @@ static void s3c2410wdt_shutdown(struct platform_device *dev)
+ {
+ 	struct s3c2410_wdt *wdt = platform_get_drvdata(dev);
+ 
+-	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG)
+-		s3c2410wdt_mask_and_disable_reset(wdt, true);
++	s3c2410wdt_mask_and_disable_reset(wdt, true);
+ 
+ 	s3c2410wdt_stop(&wdt->wdt_device);
+ }
+@@ -623,11 +622,9 @@ static int s3c2410wdt_suspend(struct device *dev)
+ 	wdt->wtcon_save = readl(wdt->reg_base + S3C2410_WTCON);
+ 	wdt->wtdat_save = readl(wdt->reg_base + S3C2410_WTDAT);
+ 
+-	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
+-		ret = s3c2410wdt_mask_and_disable_reset(wdt, true);
+-		if (ret < 0)
+-			return ret;
+-	}
++	ret = s3c2410wdt_mask_and_disable_reset(wdt, true);
++	if (ret < 0)
++		return ret;
+ 
+ 	/* Note that WTCNT doesn't need to be saved. */
+ 	s3c2410wdt_stop(&wdt->wdt_device);
+@@ -645,11 +642,9 @@ static int s3c2410wdt_resume(struct device *dev)
+ 	writel(wdt->wtdat_save, wdt->reg_base + S3C2410_WTCNT);/* Reset count */
+ 	writel(wdt->wtcon_save, wdt->reg_base + S3C2410_WTCON);
+ 
+-	if (wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG) {
+-		ret = s3c2410wdt_mask_and_disable_reset(wdt, false);
+-		if (ret < 0)
+-			return ret;
+-	}
++	ret = s3c2410wdt_mask_and_disable_reset(wdt, false);
++	if (ret < 0)
++		return ret;
+ 
+ 	dev_info(dev, "watchdog %sabled\n",
+ 		(wdt->wtcon_save & S3C2410_WTCON_ENABLE) ? "en" : "dis");
+-- 
+1.8.5.1
