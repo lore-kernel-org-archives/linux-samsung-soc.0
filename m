@@ -1,75 +1,143 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Initialize the dma_data for secondary dai
-Date: Thu, 5 Dec 2013 11:50:15 +0000
-Message-ID: <20131205115015.GP29268@sirena.org.uk>
-References: <1385632932-16579-1-git-send-email-padma.v@samsung.com>
- <20131128113800.GB27568@sirena.org.uk>
- <CAAgF-BdqRzB5MxTf_9nZkgSOY=F6dGAs0yhTkNHqrUQLonFAsw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="aE2Tjr+Wh4rS13mJ"
+From: Kamil Debski <k.debski@samsung.com>
+Subject: [PATCH v4 0/9] phy: Add new Exynos USB 2.0 PHY driver
+Date: Thu, 05 Dec 2013 13:29:30 +0100
+Message-ID: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:43159 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753801Ab3LELuk (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16559 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756580Ab3LEM3y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 06:50:40 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAgF-BdqRzB5MxTf_9nZkgSOY=F6dGAs0yhTkNHqrUQLonFAsw@mail.gmail.com>
+	Thu, 5 Dec 2013 07:29:54 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, alsa-devel@alsa-project.org, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, lars@metafoo.de
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, Kamil Debski <k.debski@samsung.com>
+
+Hi,
+
+This is the fourth version of the patchset adding the new Exynos USB 2.0 PHY
+driver. The driver uses the Generic PHY Framework.
+
+A month has passed since the last version. I have addressed numerous comments
+that appeared on the mailing list in this patch. I would like to specially
+thank Kishon, Tomasz, Matt and Vivek for their comments.
+
+This patch contains two necessary patches to the phy core.
+It is very useful to be able to get phy using a device tree node.
+
+In addition this patch depends on:
+[PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi
+files [1].
+
+Best wishes,
+Kamil Debski
+
+[1] - http://www.spinics.net/lists/linux-samsung-soc/msg24528.html
+
+----------------
+Changes from v3:
+- using PMU and system registers indirectly via syscon
+- change labelling
+- change Kconfig name
+- fixed typos/stray whitespace
+- move of_phy_provider_register() to the end of probe
+- add a regular error return code to the rate_to_clk functions
+- cleanup code and remove unused code
+- change struct names to avoid collisions
+- add mechanism to support multiple phys by the ehci driver
+
+----------------
+Changes from v2:
+- rebase all patches to the usb-next branch
+- fixes in the documentation file
+  - remove wrong entries in the phy node (ranges, and #address- & #size-cells)
+  - add clocks and clock-names as required properites
+  - rephrase a few sentences
+- fixes in the ehci-exynos.c file
+  - move phy_name variable next to phy in exynos_ehci_hcd
+  - remove otg from exynos_ehci_hcd as it was no longer used
+  - move devm_phy_get after the Exynos5440 skip_phy check
+- fixes in the s3c-hsotg.c file
+  - cosmetic fixes (remove empty line that was wrongfully added)
+- fixes in the main driver
+  - remove cpu_type in favour for a boolean flag matched with the compatible
+    value
+  - rename files, structures, variables and Kconfig entires - change from simple
+    "uphy" to "usb2_phy"
+  - fix multiline comments style
+  - simplify #ifdefs in of_device_id
+  - fix Kconfig description
+  - change dev_info to dev_dbg where reasonable
+  - cosmetic changes (remove wrongful blank lines)
+  - remove unnecessary reference counting
+
+----------------
+Changes from v1:
+- the changes include minor fixes of the hardware initialization of the PHY
+  module
+- some other minor fixes were introduced
+
+----------------------
+Original cover letter:
+
+Hi,
+
+This patch adds a new drive for USB PHYs for Samsung SoCs. The driver is
+using the Generic PHY Framework created by Kishon Vijay Abrahan I. It
+can be found here https://lkml.org/lkml/2013/8/21/29. This patch adds
+support to Exynos4 family of SoCs. Support for Exynos3 and Exynos5 is
+planned to be added in the near future.
+
+I welcome your comments.
+
+----------------------
+
+[1] https://lkml.org/lkml/2013/8/21/29
 
 
---aE2Tjr+Wh4rS13mJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Kamil Debski (8):
+  phy: core: Change the way of_phy_get is called
+  phy: core: Add devm_of_phy_get to phy-core
+  phy: Add new Exynos USB PHY driver
+  usb: ehci-s5p: Change to use phy provided by the generic phy
+    framework
+  usb: s3c-hsotg: Use the new Exynos USB phy driver with the generic
+    phy framework
+  phy: Add Exynos 5250 support to the Exynos USB 2.0 PHY driver
+  dts: Add usb2phy to Exynos 4
+  dts: Add usb2phy to Exynos 5250
 
-On Thu, Dec 05, 2013 at 04:33:19PM +0530, Padma Venkat wrote:
-> On Thu, Nov 28, 2013 at 5:08 PM, Mark Brown <broonie@kernel.org> wrote:
+Mateusz Krawczuk (1):
+  phy: Add support for S5PV210 to the Exynos USB PHY driver
 
-> > Why don't we need this fix for mainline?  The dmaengine change is just
-> > moving the initialisation through a layer of indirection but there was
-> > initialisation anyway.  I'm concerned that there's a bug that ought to
-> > be fixed for v3.13 as well here.
+ .../devicetree/bindings/arm/samsung/pmu.txt        |    2 +
+ .../devicetree/bindings/phy/samsung-usbphy.txt     |   56 +++
+ .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 +
+ Documentation/devicetree/bindings/usb/usb-ehci.txt |   35 ++
+ arch/arm/boot/dts/exynos4.dtsi                     |   31 ++
+ arch/arm/boot/dts/exynos4210.dtsi                  |   17 +
+ arch/arm/boot/dts/exynos4x12.dtsi                  |   17 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   33 +-
+ drivers/phy/Kconfig                                |   35 ++
+ drivers/phy/Makefile                               |    5 +
+ drivers/phy/phy-core.c                             |   43 ++-
+ drivers/phy/phy-exynos4210-usb2.c                  |  264 ++++++++++++++
+ drivers/phy/phy-exynos4212-usb2.c                  |  312 +++++++++++++++++
+ drivers/phy/phy-exynos5250-usb2.c                  |  363 ++++++++++++++++++++
+ drivers/phy/phy-s5pv210-usb2.c                     |  206 +++++++++++
+ drivers/phy/phy-samsung-usb2.c                     |  240 +++++++++++++
+ drivers/phy/phy-samsung-usb2.h                     |   74 ++++
+ drivers/usb/gadget/s3c-hsotg.c                     |   11 +-
+ drivers/usb/host/ehci-exynos.c                     |   95 +++--
+ include/linux/phy/phy.h                            |    3 +
+ 20 files changed, 1789 insertions(+), 57 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+ create mode 100644 drivers/phy/phy-exynos4210-usb2.c
+ create mode 100644 drivers/phy/phy-exynos4212-usb2.c
+ create mode 100644 drivers/phy/phy-exynos5250-usb2.c
+ create mode 100644 drivers/phy/phy-s5pv210-usb2.c
+ create mode 100644 drivers/phy/phy-samsung-usb2.c
+ create mode 100644 drivers/phy/phy-samsung-usb2.h
 
-> Yes. We need this for mainline. Not dependent on your dmaengine changes.
-
-Ah, just saw this one - I'll cook up a version of it, due to the
-refactoring the change doesn't apply directly to v3.13.
-
-> >>       return snd_dmaengine_pcm_register(dev, &samsung_dmaengine_pcm_config,
-> >> -                                       SND_DMAENGINE_PCM_FLAG_COMPAT);
-> >> +                                       SND_DMAENGINE_PCM_FLAG_COMPAT |
-> >> +                             SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME);
-
-> > This is already done.
-
-> Should I send another patch by removing this flag from this patch?
-
-No need.
-
---aE2Tjr+Wh4rS13mJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSoGh0AAoJELSic+t+oim9320P/ilvkvmQ0JLX5Avox9MURpU2
-ZZ4wc5E/6ubg7wK5mkoy3qSYJJD43CsV7XwvD4FOOOmUyANBTNZfhwtQaBr+nf8y
-wlviH4Gz/jD0JryRjgqmMm0MEUCBFVNzqYJi8FGAj0i6M6fy5l0YL9Emwzy6Xm5O
-6OSphNwSwDuHvJ5UQ1xU8+WiRSxLg/XTlGA/cNEUCq475L3MK+llcd4SQNtZRc8K
-gVfnIFFvNy2l0DktNQGJdGbdW1bjpDpgxV+LGFGb6Wzhf3kZYjZLWoal4YtEKz7w
-+HJ673isdYWAcFw1KpXabzl1GPScpKwICuKRFFg49sr53UTU+Po6qMRwQc8RJtvM
-C+D3XNYqJItxJzpGRlpFtIb2m3rOcdfJrQGewpK1cks9l1VpQkmSp47b4VWWZzlc
-PECwFqsT/mKyW1QU7RI1RbQTlgAP6VAjztsJHyGV2dss6vHfxAMTNbYaCSRWUKqV
-KGpFBd5vwNoi1/pr5lxjqLUC9cof/WXN8p/1giZqrXKEtR/Ufe4pjszFAUNFSX9E
-w2s7NO5jAUU2RMc6RX4Wd8XQ3EGnxjcTUYFLL93zxY3zV3OBFaKfG7A6cPoKDSee
-ns3O2aTJaXQBjsUi2eaXPhgSX5r/FsqK9Wu182urrouXvuCwxw3+Y/W1qs6x8Xcv
-b+lliJ7kPBJcIRHGBucV
-=mqoX
------END PGP SIGNATURE-----
-
---aE2Tjr+Wh4rS13mJ--
+-- 
+1.7.9.5
