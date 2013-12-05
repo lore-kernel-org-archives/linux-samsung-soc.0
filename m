@@ -1,104 +1,122 @@
-From: Sonny Rao <sonnyrao-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] ARM: dts: Fix mmc node on exynos5250 snow board
-Date: Thu, 5 Dec 2013 10:49:14 -0800
-Message-ID: <CAPz6YkUO7tqSa+tU_M4Do5k7dwc6MaCxX3T-3aJtG1=XQFjTRQ@mail.gmail.com>
-References: <1386237974-2255-1-git-send-email-yuvaraj.cd@samsung.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH v4 4/9] usb: ehci-s5p: Change to use phy provided by the
+ generic phy framework
+Date: Thu, 5 Dec 2013 13:52:46 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1312051342300.869-100000@iolanthe.rowland.org>
+References: <1386246579-25141-5-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1386237974-2255-1-git-send-email-yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, ALIM AKHTAR <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Douglas Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from iolanthe.rowland.org ([192.131.102.54]:57771 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1756963Ab3LESwr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Dec 2013 13:52:47 -0500
+In-Reply-To: <1386246579-25141-5-git-send-email-k.debski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org
 
-On Thu, Dec 5, 2013 at 2:06 AM, Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Commits 64c138a ("ARM: dts: Move fifo-depth property from exynos5250
-> board dts") and 0c3de788 ("ARM: dts: change status property of dwmmc
-> nodes for exynos5250") missed out handling the exynos5250 snow dts file.
-> Delete the fifo-depth property and enable the mmc node in the snow dts
-> file.
->
+On Thu, 5 Dec 2013, Kamil Debski wrote:
 
-Since this is really fixing two different issues, even though they
-both affect dw_mmc, would you mind splitting this up into two
-different commits?
+> Change the phy provider used from the old usb phy specific to a new one
+> using the generic phy framework.
+> 
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-> Signed-off-by : Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/cros5250-common.dtsi |    7 -------
->  arch/arm/boot/dts/exynos5250-snow.dts  |    9 +++++++++
->  2 files changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
-> index 6470536..2dd70e9 100644
-> --- a/arch/arm/boot/dts/cros5250-common.dtsi
-> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
-> @@ -233,7 +233,6 @@
->                 num-slots = <1>;
->                 supports-highspeed;
->                 broken-cd;
-> -               fifo-depth = <0x80>;
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
 
-Why are you deleting fifo-depth?
+> @@ -42,10 +42,10 @@
+>  static const char hcd_name[] = "ehci-exynos";
+>  static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+>  
+> +#define PHY_NUMBER 3
+>  struct exynos_ehci_hcd {
+>  	struct clk *clk;
+> -	struct usb_phy *phy;
+> -	struct usb_otg *otg;
 
->                 card-detect-delay = <200>;
->                 samsung,dw-mshc-ciu-div = <3>;
->                 samsung,dw-mshc-sdr-timing = <2 3>;
-> @@ -247,14 +246,9 @@
->                 };
->         };
->
-> -       mmc@12210000 {
-> -               status = "disabled";
-> -       };
+Are you sure you want to remove that line?
+
+> +	struct phy *phy[PHY_NUMBER];
+>  };
+>  
+>  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+
+> @@ -102,13 +132,24 @@ static int exynos_ehci_probe(struct platform_device *pdev)
+>  					"samsung,exynos5440-ehci"))
+>  		goto skip_phy;
+>  
+> -	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+> -	if (IS_ERR(phy)) {
+> -		usb_put_hcd(hcd);
+> -		dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
+> -		return -EPROBE_DEFER;
+> -	} else {
+> -		exynos_ehci->phy = phy;
+> +	for_each_available_child_of_node(pdev->dev.of_node, child) {
+> +		err = of_property_read_u32(child, "reg", &phy_number);
+> +		if (err) {
+> +			dev_err(&pdev->dev, "Failed to parse device tree\n");
+> +			return err;
+> +		}
+> +		if (phy_number >= PHY_NUMBER) {
+> +			dev_err(&pdev->dev, "Failed to parse device tree - number out of range\n");
+> +			return -EINVAL;
+
+Do you need to call of_node_put(child) before each of these return 
+statements?
+
+> +		}
+> +		phy = devm_of_phy_get(&pdev->dev, child, 0);
+> +		of_node_put(child);
+> +		if (IS_ERR(phy)) {
+> +			dev_err(&pdev->dev, "Failed to get phy number %d",
+> +								phy_number);
+> +			return PTR_ERR(phy);
+> +		}
+> +		exynos_ehci->phy[phy_number] = phy;
+>  		exynos_ehci->otg = phy->otg;
+
+Did you intend to remove this line?  Above, you removed the
+exynos_ehci->otg field.  I can't see how this patch would ever compile
+without an error.
+
+>  	}
+>  
+> @@ -149,11 +190,11 @@ skip_phy:
+>  		goto fail_io;
+>  	}
+>  
+> -	if (exynos_ehci->otg)
+> -		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
 > -
->         mmc@12220000 {
->                 num-slots = <1>;
->                 supports-highspeed;
-> -               fifo-depth = <0x80>;
->                 card-detect-delay = <200>;
->                 samsung,dw-mshc-ciu-div = <3>;
->                 samsung,dw-mshc-sdr-timing = <2 3>;
-> @@ -273,7 +267,6 @@
->                 num-slots = <1>;
->                 supports-highspeed;
->                 broken-cd;
-> -               fifo-depth = <0x80>;
->                 card-detect-delay = <200>;
->                 samsung,dw-mshc-ciu-div = <3>;
->                 samsung,dw-mshc-sdr-timing = <2 3>;
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index a9395c4..67484d1 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -171,11 +171,20 @@
->                 };
->         };
->
-> +       mmc@12200000 {
-> +               status = "okay";
-> +       };
-> +
-> +       mmc@12220000 {
-> +               status = "okay";
-> +       };
-> +
->         /*
->          * On Snow we've got SIP WiFi and so can keep drive strengths low to
->          * reduce EMI.
->          */
->         mmc@12230000 {
-> +               status = "okay";
->                 slot@0 {
->                         pinctrl-names = "default";
->                         pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4>;
-> --
-> 1.7.9.5
->
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> -	if (exynos_ehci->phy)
+> -		usb_phy_init(exynos_ehci->phy);
+> +	err = exynos_phys_on(exynos_ehci->phy);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Failed to enabled phys\n");
+> +		goto fail_phys_on;
+
+Why add a new statement label?  Just goto fail_io.
+
+> +	}
+>  
+>  	ehci = hcd_to_ehci(hcd);
+>  	ehci->caps = hcd->regs;
+> @@ -172,8 +213,8 @@ skip_phy:
+>  	return 0;
+>  
+>  fail_add_hcd:
+> -	if (exynos_ehci->phy)
+> -		usb_phy_shutdown(exynos_ehci->phy);
+> +	exynos_phys_off(exynos_ehci->phy);
+> +fail_phys_on:
+>  fail_io:
+>  	clk_disable_unprepare(exynos_ehci->clk);
+>  fail_clk:
+
+Alan Stern
