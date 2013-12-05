@@ -1,100 +1,98 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] dt: exynos5250: Enable support for generic USB 3.0 phy
-Date: Thu, 5 Dec 2013 13:47:45 +0530
-Message-ID: <CAFp+6iH8Sobgjrxj4jmXwhLOCaJSRqe3v6wSFm7wU0vQu5qyDg@mail.gmail.com>
-References: <1386151747-3209-1-git-send-email-gautam.vivek@samsung.com>
-	<1386151747-3209-3-git-send-email-gautam.vivek@samsung.com>
-	<2442031.907VFG2eGN@amdc1032>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v9] s5k5baf: add camera sensor driver
+Date: Thu, 5 Dec 2013 09:22:16 +0000
+Message-ID: <20131205092216.GG29200@e106331-lin.cambridge.arm.com>
+References: <1383233370-8648-1-git-send-email-a.hajda@samsung.com>
+ <529FB817.1030401@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2442031.907VFG2eGN@amdc1032>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:38730 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752985Ab3LEJWa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Dec 2013 04:22:30 -0500
+Content-Disposition: inline
+In-Reply-To: <529FB817.1030401@gmail.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, Pawel Moll <Pawel.Moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "grant.likely@linaro.org" <grant.likely@linaro.org>
 
-Hi,
-
-
-On Wed, Dec 4, 2013 at 6:20 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+On Wed, Dec 04, 2013 at 11:17:43PM +0000, Sylwester Nawrocki wrote:
+> On 10/31/2013 04:29 PM, Andrzej Hajda wrote:
+> > Driver for Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor
+> > with embedded SoC ISP.
+> > The driver exposes the sensor as two V4L2 subdevices:
+> > - S5K5BAF-CIS - pure CMOS Image Sensor, fixed 1600x1200 format,
+> >    no controls.
+> > - S5K5BAF-ISP - Image Signal Processor, formats up to 1600x1200,
+> >    pre/post ISP cropping, downscaling via selection API, controls.
+> >
+> > Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> > Signed-off-by: Andrzej Hajda<a.hajda@samsung.com>
+> > Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> > ---
+> > Hi,
+> >
+> > This is the 9th iteration of the patch.
+> > In this iteration 'binary' blobs from source
+> > file have been moved to separate firmware file.
+> > Firmware file will be uploaded to appropriate
+> > repository.
+> [...]
+> > v9
+> > - patch, ccm and cis configuration blobs moved to
+> >    firmware set files,
+> > - minor improvements of bindings,
+> > - cosmetic changes
 >
-> Hi,
->
-> Does the old phy-samsung-usb3 driver currently work on Exynos5250?  If yes,
-> then this patch should be merged with patch #1 to preserve bisectability.
+> Hi Mark,
 
-Yes, the old phy-samsung-usb3 driver works well on Exynos5250 currently.
-Ok, will merge it with patch #1
-[PATCH v2 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
-
-Thanks for pointing out.
+Hi Sylwester,
 
 >
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
-> On Wednesday, December 04, 2013 03:39:05 PM Vivek Gautam wrote:
->> Update device tree bindings for DWC3 controller and
->> USB 3.0 phy present on Exynos 5250 SoC, to start using
->> the phy driver based on generic phy framework.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  arch/arm/boot/dts/exynos5250.dtsi |   16 ++++++----------
->>  1 files changed, 6 insertions(+), 10 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
->> index 9db5047..7444717 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -475,22 +475,18 @@
->>                       compatible = "synopsys,dwc3";
->>                       reg = <0x12000000 0x10000>;
->>                       interrupts = <0 72 0>;
->> -                     usb-phy = <&usb2_phy &usb3_phy>;
->> +                     phys = <&usb3_phy>;
->> +                     phy-names = "usb3-phy";
->>               };
->>       };
->>
->>       usb3_phy: usbphy@12100000 {
->>               compatible = "samsung,exynos5250-usb3phy";
->>               reg = <0x12100000 0x100>;
->> -             clocks = <&clock 1>, <&clock 286>;
->> -             clock-names = "ext_xtal", "usbdrd30";
->> -             #address-cells = <1>;
->> -             #size-cells = <1>;
->> -             ranges;
->> -
->> -             usbphy-sys {
->> -                     reg = <0x10040704 0x8>;
->> -             };
->> +             clocks = <&clock 286>, <&clock 1>;
->> +             clock-names = "phy", "usb3phy_refclk";
->> +             samsung,syscon-phandle = <&pmu_syscon>;
->> +             #phy-cells = <0>;
->>       };
->>
->>       usb@12110000 {
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> What do you think about this DT binding now, could we have your Ack ?
 
+Other than a minor nit below, the binding looks fine to me.
 
+With the fixed, for the binding:
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+> I think we still need to move the DT binding into a separate patch.
+
+If you're going to post the patch again, then please do split the
+binding into a separate patch.
+
+[...]
+
+> > diff --git a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+> > new file mode 100644
+> > index 0000000..23ebe0f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+> > @@ -0,0 +1,57 @@
+> > +Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
+> > +--------------------------------------------------------------------
+> > +
+> > +Required properties:
+> > +
+> > +- compatible   : "samsung,s5k5baf";
+> > +- reg                  : I2C slave address of the sensor;
+> > +- vdda-supply          : analog power supply 2.8V (2.6V to 3.0V);
+> > +- vddreg-supply        : regulator input power supply 1.8V (1.7V to 1.9V)
+> > +                 or 2.8V (2.6V to 3.0);
+> > +- vddio-supply         : I/O power supply 1.8V (1.65V to 1.95V)
+> > +                 or 2.8V (2.5V to 3.1V);
+> > +- stbyn-gpios          : GPIO connected to STDBYN pin;
+> > +- rstn-gpios   : GPIO connected to RSTN pin;
+> > +- clocks       : clock-specifiers (per the common clock bindings) for the
+> > +                 clocks described in clock-names;
+
+Clocks are referred to by phandle + clock-specifier pairs rather than
+just clock-specifiers, it would be nice to fix up the terminology here.
+
+Thanks,
+Mark.
