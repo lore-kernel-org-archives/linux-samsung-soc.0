@@ -1,63 +1,76 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized
- using pinfunc.
-Date: Thu, 5 Dec 2013 18:00:22 +0000
-Message-ID: <20131205180022.GX29268@sirena.org.uk>
-References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
- <CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ@mail.gmail.com>
- <20131205150747.GW29268@sirena.org.uk>
- <1502243.eRBlCfUhTO@amdc1227>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] watchdog: s3c2410_wdt: Report when the watchdog reset the system
+Date: Thu, 5 Dec 2013 10:15:52 -0800
+Message-ID: <CAD=FV=VppmDoREkCq-0HeS-MxUGrPuSRzxK2copG2yZpEg2+rw@mail.gmail.com>
+References: <1386008082-28740-1-git-send-email-dianders@chromium.org>
+	<20131202202120.GA23611@roeck-us.net>
+	<CAOesGMi-P6LG1-XKVizUS_qX-gfZi_iXBO5r+=6a2nfvBS60mw@mail.gmail.com>
+	<20131202213654.GA4059@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="DLfA7Wi+Vmsdqq5j"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1502243.eRBlCfUhTO@amdc1227>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kevin Bracey <kevin@bracey.fi>, Kyungmin Park <kmpark@infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ve0-f173.google.com ([209.85.128.173]:59556 "EHLO
+	mail-ve0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756963Ab3LESPx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Dec 2013 13:15:53 -0500
+Received: by mail-ve0-f173.google.com with SMTP id oz11so14137435veb.18
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Dec 2013 10:15:53 -0800 (PST)
+In-Reply-To: <20131202213654.GA4059@roeck-us.net>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Olof Johansson <olof@lixom.net>, Wim Van Sebroeck <wim@iguana.be>, Leela Krishna Amudala <l.krishna@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
+Guenter and Olof,
 
---DLfA7Wi+Vmsdqq5j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Mon, Dec 2, 2013 at 1:36 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On Mon, Dec 02, 2013 at 12:47:53PM -0800, Olof Johansson wrote:
+>> On Mon, Dec 2, 2013 at 12:21 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+>> > On Mon, Dec 02, 2013 at 10:14:41AM -0800, Doug Anderson wrote:
+>> >> A good watchdog driver is supposed to report when it was responsible
+>> >> for resetting the system.  Implement this for the s3c2410, at least on
+>> >> exynos5250 and exynos5420 where we already have a pointer to the PMU
+>> >> registers to read the information.
+>> >>
+>> >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> >> ---
+>> >> This patch is based atop Leela Krishna's recent series that ends with
+>> >> (ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420)
+>> >> AKA <https://patchwork.kernel.org/patch/3251861/>.
+>> >>
+>> >>  drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
+>> >>  1 file changed, 39 insertions(+), 3 deletions(-)
+>> >>
+>> >> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+>> >> index 47f4dcf..2c87d37 100644
+>> >> --- a/drivers/watchdog/s3c2410_wdt.c
+>> >> +++ b/drivers/watchdog/s3c2410_wdt.c
+>> >> @@ -62,9 +62,13 @@
+>> >>  #define CONFIG_S3C2410_WATCHDOG_ATBOOT               (0)
+>> >>  #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME (15)
+>> >>
+>> >> +#define RST_STAT_REG_OFFSET          0x0404
+>> >>  #define WDT_DISABLE_REG_OFFSET               0x0408
+>> >>  #define WDT_MASK_RESET_REG_OFFSET    0x040c
+>> >>  #define QUIRK_NEEDS_PMU_CONFIG               (1 << 0)
+>> >> +#define QUIRK_HAS_RST_STAT           (1 << 1)
+>> >> +#define QUIRKS_NEED_PMUREG           (QUIRK_NEEDS_PMU_CONFIG | \
+>> >> +                                      QUIRK_HAS_RST_STAT)
+>> >>
+>> > I am not really happy about the NEED (both of them, really) here.
+>> > How about HAS instead ?
+>>
+>> Ah, I just commented on these things on our internal review site too
+>> on this patch. I don't even think a quirk is needed -- just use the
+>> presence of a non-0 rst_stat_reg to tell if you need to use regmap.
+>>
+> Agreed; same is true for the QUIRK_NEEDS_PMU_CONFIG related registers
+> as well.
 
-On Thu, Dec 05, 2013 at 04:11:15PM +0100, Tomasz Figa wrote:
-> On Thursday 05 of December 2013 15:07:47 Mark Brown wrote:
+I have changed all instances of NEED / NEEDS and HAS / HAVE.  Please
+take a look.  Since some of those changes applied to Leela Krishna's
+patch I'm sending up a "fixup" patch which hopefully he can
+incorporate into a v12.
 
-> > Or should we be going and applying the default state to all devices on
-> > init without worrying about a driver appearing?
-
-> If a device isn't used, then it's often better to configure the pins for
-> a different function, such as GPIO, to minimize leakage current.
-
-That's true but on the other hand it's much more likely that the default
-information will be there than the hog for the case when the driver
-doesn't get loaded for some reason so it's more likely that the default
-will kick in; perhaps we need to work down a list of states in order
-instead?
-
---DLfA7Wi+Vmsdqq5j
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSoL8zAAoJELSic+t+oim9tc0P/1VYr8OYjYMtRpfZVDdhkWOp
-YtV/ItbepthusLVGzFzMbWvPg+lPanub3eUj0QxDLD9mwmegVCEOXc5CQkOvvBsB
-ZzLUwdufYzG9dwrzOjTLKV76p27pb+fwpQ+ElnGrBQzwUlKY6ACOlgQ9pC0RiJXD
-gAjvIat8TurrHA2OOQ/ai2d3a1XHjFNdUsvTBltKmvGvgpbCzhnHarTSO/qFvjYq
-h+VoUgZ1yAzpglXya5wS7r/l02Y/cpKYM2rTI4eCGO17/QwVrxPpdvDrVxmBiKiy
-RyfbEOGNDBPESJnnYMfxs4G+Z7Aq+H4rMJDMnYyzoWFeujEjt5mL4ZMdLghHVi/g
-euSigZXj1XTxsaGgJtb9LcO/81OTxkyXI5/0Udygt/If4iIHqx/rSneN/vPGmUlt
-3uQGWLwEtUreBP0/LqfpNerHB7CD1SW7WEhXiTf9zOaXvC9pDmKuHoA4eXy9uALL
-yRan0uSm4zUHDEwWR4p1bn/Khzr+V4+K7cQ73p2gBtR3sc5pv468BEuQhraZlYfU
-hGSPIGwhuKFigFnM2Z6zZ71Cq4P8ZE3Ew+gIr6H+bdmsd31nufs0PRVf1ylina4d
-oDzrE75Vn/Mzfl1mG1tcUMh0cgCwGt1LLF/2Q+G2oP8aKzJ6Ruoep2ltT0HVHYEG
-Hq1iqGkns4I0mGQ9iwfL
-=bl4v
------END PGP SIGNATURE-----
-
---DLfA7Wi+Vmsdqq5j--
+-Doug
