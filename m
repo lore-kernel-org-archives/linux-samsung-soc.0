@@ -1,72 +1,84 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
- exynos5420 dtsi files
-Date: Thu, 5 Dec 2013 11:02:50 -0800
-Message-ID: <CAD=FV=XHLfJr=5d9Ush4BSYYtx3jrby+N=e503YUFVUsnn+fGA@mail.gmail.com>
-References: <1385613243-3559-1-git-send-email-l.krishna@samsung.com>
-	<1979723.ga7TBeh7CQ@flatron>
-	<CAD=FV=UcqaG9Dw_rd-bdTAmDwdW-_yCO6HpaEr1G07AW4TWm0w@mail.gmail.com>
-	<1676404.arUWsvfauz@flatron>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using
+ pinfunc.
+Date: Thu, 05 Dec 2013 16:54:08 -0700
+Message-ID: <52A11220.8080509@wwwdotorg.org>
+References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>	<528BB1F2.4080107@wwwdotorg.org>	<CAD=FV=XS0dbE7zfgDGVdp84h4fHH6tfO8aN_HNh1LbOjYy51aQ@mail.gmail.com>	<528BB913.6080409@wwwdotorg.org>	<CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>	<CACRpkdbyjm0X9RX+8WjqQxBPyRjBOAunkqVcO-0KUd1PTdGavA@mail.gmail.com>	<5293ACA6.7060403@bracey.fi> <CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ve0-f178.google.com ([209.85.128.178]:40562 "EHLO
-	mail-ve0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751957Ab3LETCv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 14:02:51 -0500
-Received: by mail-ve0-f178.google.com with SMTP id c14so14635483vea.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Dec 2013 11:02:51 -0800 (PST)
-In-Reply-To: <1676404.arUWsvfauz@flatron>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Bracey <kevin-Tpk74O8xG8r1KXRcyAk9cg@public.gmane.org>
+Cc: Kyungmin Park <kmpark-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Olof Johansson <olof@lixom.net>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
 
-Tomasz,
+On 12/03/2013 02:29 AM, Linus Walleij wrote:
+...
+> So I guess what you're after is a kind of hog that will be pushed
+> aside and ignored if a struct device with an associated state appears
+> that will use the same pin?
 
-On Thu, Dec 5, 2013 at 10:59 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On Thursday 05 of December 2013 10:35:20 Doug Anderson wrote:
->> Tomasz,
->>
->> On Thu, Dec 5, 2013 at 10:30 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> >> I'd vote for using "pmu-system-registers".  We end up using the
->> >> "syscon" subsystem but really we're describing pmu registers.
->> >>
->> >> I'd even say that you don't need to formally specify the "name" in the
->> >> bindings (though I'm not up with all the latest device tree
->> >> requirements).  ...still you'd want to use "pmu-system-registers" in
->> >> the DTS changes.
->> >
->> > Well, since the name should specify the class of device, I would say that
->> > pmu-system-registers is too specific. If we want to change this, I'd say
->> > we should go with system-controller.
->>
->> ...but the "compatible" is "samsung,exynos5250-pmu", "syscon", right?
->> That means that the class of the device is "exynos5250-pmu", right?
->
-> Nope. "samsung,exynos5250-pmu" is the specific device (or hardware
-> programming interface) this device is compatible with.
->
-> With class I mean the generic kind of device, such as system-controller,
-> i2c, pinctrl, display, etc., as specified by sections 2.2.1 and 2.2.2 of
-> ePAPR.
->
-> Anyway, node names are just a matter of coding style, as they don't have
-> any semantical meaning in most cases (such as this one).
->
->> It is also compatible with the generic "syscon" class of devices.
->
-> It is also compatible with the generic "syscon" programming interface,
-> which represents a set of loosely related registers that control various
-> aspects of other IP blocks.
+That probably would be useful. Perhaps we should just make all hogs not
+exclusively own the pins they configure?
 
-OK.  I will certainly cede to your superior knowledge of device tree
-conventions.
+> It is true that we currently require the tables to be strict and not
+> overlap like this, so ideally you should remove the hogs when you
+> have a device driver, but you're actually describing an interesting
+> case here:
+> 
+> What if I have a driver for this IP block, and it was supposed to
+> take care of a few pins, but I decide not to compile it into my
+> kernel? Or if I have it as a module and only modprobe it later
+> at runtime?
 
-Leela Krishna: unless someone else comes up with a convincing
-argument, it sounds like the dts files should have the name
-"system-controller" and the bindings change should remove all
-references to the name.
+Indeed, that's the nasty hole in pushing even static per-device pinctrl
+configuration into each device's node; the device may not appear.
 
--Doug
+Related, I prefer to put /all/ static pinctrl configuration into the
+pinctrl device's "default" state (i.e. use a hog) rather than
+configuring the static pinctrl setup per device, for another reason too:
+
+If a particular IO controller's signals can be routed to n different
+(sets of) pins, then we need to do *both* of the following when setting
+up the pinmux:
+
+a) Configure the pins we want to host those signals to route to/from
+that particular IO controller.
+
+b) Configure any other pins that could route to/from that particular IO
+controller as some other function; either disabled, or routed to/from
+some different IO controller.
+
+That is so that the IO controller's RX/input signals are not connected
+from two different sets of pins at once, which would cause two things to
+driver them. Depending on HW, this could cause on of:
+
+1) Multiple drivers -> high power usage, or even Silicon damage.
+
+2) Inconsistent configuration, with the "wrong" set of pins driving the
+IO controller's inputs, and hence the signals on the "correct" pins
+being ignored -> hard to find bug.
+
+Now, (a) could easily happen when the driver for the IO controller is
+probed. However, (b) can't, because some other IO controller may need to
+use those pins, and the two drivers (or pinctrl states for different
+devices) can't both set up those pins.
+
+The only way to solve this is to set up all pinmux state using a single
+global table (e.g. the pin controller's default state, or hog) that is
+applied early on.
+
+If we rely on resolving these conflicts in per-device default/...
+states, then that means the conflicts won't get resolved until a driver
+gets probed, if it ever does, which is too late.
+
+... and as such, I prefer only putting *dynamic* configuration into
+per-device (non-hog) nodes. (e.g. an I2C bus mux driver which actively
+changes the pinmux at run-time to move an I2C controller between
+different sets of SoC pins).
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
