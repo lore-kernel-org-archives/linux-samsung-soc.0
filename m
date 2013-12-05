@@ -1,51 +1,63 @@
-From: Kevin Bracey <kevin@bracey.fi>
-Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using
- pinfunc.
-Date: Thu, 05 Dec 2013 18:49:56 +0200
-Message-ID: <52A0AEB4.7090909@bracey.fi>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized
+ using pinfunc.
+Date: Thu, 5 Dec 2013 18:00:22 +0000
+Message-ID: <20131205180022.GX29268@sirena.org.uk>
 References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
  <CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ@mail.gmail.com>
- <20131205150747.GW29268@sirena.org.uk> <1502243.eRBlCfUhTO@amdc1227>
+ <20131205150747.GW29268@sirena.org.uk>
+ <1502243.eRBlCfUhTO@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DLfA7Wi+Vmsdqq5j"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <1502243.eRBlCfUhTO@amdc1227>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kmpark@infradead.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kevin Bracey <kevin@bracey.fi>, Kyungmin Park <kmpark@infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 05/12/2013 17:11, Tomasz Figa wrote:
+
+--DLfA7Wi+Vmsdqq5j
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Dec 05, 2013 at 04:11:15PM +0100, Tomasz Figa wrote:
 > On Thursday 05 of December 2013 15:07:47 Mark Brown wrote:
->> On Tue, Dec 03, 2013 at 10:29:42AM +0100, Linus Walleij wrote:
->>
->>> So a suggested patch to support weak hogs would be interesting
->>> to look at. Can you provide details on how you think this would
->>> work?
->> Or should we be going and applying the default state to all devices on
->> init without worrying about a driver appearing?
+
+> > Or should we be going and applying the default state to all devices on
+> > init without worrying about a driver appearing?
+
 > If a device isn't used, then it's often better to configure the pins for
 > a different function, such as GPIO, to minimize leakage current.
->
 
-And there can also be mutually-exclusive drivers choosing different 
-default states for the same pin. I think you do need a separate "safe" 
-indicator.
+That's true but on the other hand it's much more likely that the default
+information will be there than the hog for the case when the driver
+doesn't get loaded for some reason so it's more likely that the default
+will kick in; perhaps we need to work down a list of states in order
+instead?
 
-My current thought is that  a late-init "make safe all unclaimed pins" 
-pass would make sense - you can't really mess with pins in an automated 
-fashion on init, as it can mess up bootloader->driver handover.   There 
-already exist late-init "turn off all unclaimed clocks" (at least on 
-shmobile) and "turn off all unclaimed regulators", and it would fit that 
-model.
+--DLfA7Wi+Vmsdqq5j
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Kevin
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSoL8zAAoJELSic+t+oim9tc0P/1VYr8OYjYMtRpfZVDdhkWOp
+YtV/ItbepthusLVGzFzMbWvPg+lPanub3eUj0QxDLD9mwmegVCEOXc5CQkOvvBsB
+ZzLUwdufYzG9dwrzOjTLKV76p27pb+fwpQ+ElnGrBQzwUlKY6ACOlgQ9pC0RiJXD
+gAjvIat8TurrHA2OOQ/ai2d3a1XHjFNdUsvTBltKmvGvgpbCzhnHarTSO/qFvjYq
+h+VoUgZ1yAzpglXya5wS7r/l02Y/cpKYM2rTI4eCGO17/QwVrxPpdvDrVxmBiKiy
+RyfbEOGNDBPESJnnYMfxs4G+Z7Aq+H4rMJDMnYyzoWFeujEjt5mL4ZMdLghHVi/g
+euSigZXj1XTxsaGgJtb9LcO/81OTxkyXI5/0Udygt/If4iIHqx/rSneN/vPGmUlt
+3uQGWLwEtUreBP0/LqfpNerHB7CD1SW7WEhXiTf9zOaXvC9pDmKuHoA4eXy9uALL
+yRan0uSm4zUHDEwWR4p1bn/Khzr+V4+K7cQ73p2gBtR3sc5pv468BEuQhraZlYfU
+hGSPIGwhuKFigFnM2Z6zZ71Cq4P8ZE3Ew+gIr6H+bdmsd31nufs0PRVf1ylina4d
+oDzrE75Vn/Mzfl1mG1tcUMh0cgCwGt1LLF/2Q+G2oP8aKzJ6Ruoep2ltT0HVHYEG
+Hq1iqGkns4I0mGQ9iwfL
+=bl4v
+-----END PGP SIGNATURE-----
+
+--DLfA7Wi+Vmsdqq5j--
