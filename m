@@ -1,38 +1,84 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using
- pinfunc.
-Date: Thu, 05 Dec 2013 16:11:15 +0100
-Message-ID: <1502243.eRBlCfUhTO@amdc1227>
-References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
- <CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ@mail.gmail.com>
- <20131205150747.GW29268@sirena.org.uk>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] watchdog: s3c2410_wdt: Report when the watchdog reset
+ the system
+Date: Thu, 5 Dec 2013 08:00:27 -0800
+Message-ID: <20131205160027.GA13200@roeck-us.net>
+References: <1386008082-28740-1-git-send-email-dianders@chromium.org>
+ <20131202202120.GA23611@roeck-us.net>
+ <CAOesGMi-P6LG1-XKVizUS_qX-gfZi_iXBO5r+=6a2nfvBS60mw@mail.gmail.com>
+ <20131202213654.GA4059@roeck-us.net>
+ <CAL1wa8cQcvRzXgaEP3kzkvzogqyeM2eJt_oRZfu6NbWxfP3zAg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:32293 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751247Ab3LEPL0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 10:11:26 -0500
-In-reply-to: <20131205150747.GW29268@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAL1wa8cQcvRzXgaEP3kzkvzogqyeM2eJt_oRZfu6NbWxfP3zAg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Wim Van Sebroeck <wim@iguana.be>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kevin Bracey <kevin@bracey.fi>, Kyungmin Park <kmpark@infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Thursday 05 of December 2013 15:07:47 Mark Brown wrote:
-> On Tue, Dec 03, 2013 at 10:29:42AM +0100, Linus Walleij wrote:
+On Thu, Dec 05, 2013 at 01:27:13PM +0530, Leela Krishna Amudala wrote:
+> Hi Guenter Roeck,
 > 
-> > So a suggested patch to support weak hogs would be interesting
-> > to look at. Can you provide details on how you think this would
-> > work?
+> On Tue, Dec 3, 2013 at 3:06 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> >
+> > On Mon, Dec 02, 2013 at 12:47:53PM -0800, Olof Johansson wrote:
+> > > On Mon, Dec 2, 2013 at 12:21 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> > > > On Mon, Dec 02, 2013 at 10:14:41AM -0800, Doug Anderson wrote:
+> > > >> A good watchdog driver is supposed to report when it was responsible
+> > > >> for resetting the system.  Implement this for the s3c2410, at least on
+> > > >> exynos5250 and exynos5420 where we already have a pointer to the PMU
+> > > >> registers to read the information.
+> > > >>
+> > > >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> > > >> ---
+> > > >> This patch is based atop Leela Krishna's recent series that ends with
+> > > >> (ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420)
+> > > >> AKA <https://patchwork.kernel.org/patch/3251861/>.
+> > > >>
+> > > >>  drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
+> > > >>  1 file changed, 39 insertions(+), 3 deletions(-)
+> > > >>
+> > > >> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> > > >> index 47f4dcf..2c87d37 100644
+> > > >> --- a/drivers/watchdog/s3c2410_wdt.c
+> > > >> +++ b/drivers/watchdog/s3c2410_wdt.c
+> > > >> @@ -62,9 +62,13 @@
+> > > >>  #define CONFIG_S3C2410_WATCHDOG_ATBOOT               (0)
+> > > >>  #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME (15)
+> > > >>
+> > > >> +#define RST_STAT_REG_OFFSET          0x0404
+> > > >>  #define WDT_DISABLE_REG_OFFSET               0x0408
+> > > >>  #define WDT_MASK_RESET_REG_OFFSET    0x040c
+> > > >>  #define QUIRK_NEEDS_PMU_CONFIG               (1 << 0)
+> > > >> +#define QUIRK_HAS_RST_STAT           (1 << 1)
+> > > >> +#define QUIRKS_NEED_PMUREG           (QUIRK_NEEDS_PMU_CONFIG | \
+> > > >> +                                      QUIRK_HAS_RST_STAT)
+> > > >>
+> > > > I am not really happy about the NEED (both of them, really) here.
+> > > > How about HAS instead ?
+> > >
+> > > Ah, I just commented on these things on our internal review site too
+> > > on this patch. I don't even think a quirk is needed -- just use the
+> > > presence of a non-0 rst_stat_reg to tell if you need to use regmap.
+> > >
+> > Agreed; same is true for the QUIRK_NEEDS_PMU_CONFIG related registers
+> > as well.
+> >
 > 
-> Or should we be going and applying the default state to all devices on
-> init without worrying about a driver appearing?
+> As Tomasz Figa suggested I introduced quirks,
+> 
+'quirk' implies a workaround for non-standard or broken hardware,
+not a flag indicating device specific functionality.
 
-If a device isn't used, then it's often better to configure the pins for
-a different function, such as GPIO, to minimize leakage current.
-
-Best regards,
-Tomasz
+Guenter
