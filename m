@@ -1,66 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized
- using pinfunc.
-Date: Thu, 5 Dec 2013 15:07:47 +0000
-Message-ID: <20131205150747.GW29268@sirena.org.uk>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using
+ pinfunc.
+Date: Thu, 05 Dec 2013 16:11:15 +0100
+Message-ID: <1502243.eRBlCfUhTO@amdc1227>
 References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
- <528BB1F2.4080107@wwwdotorg.org>
- <CAD=FV=XS0dbE7zfgDGVdp84h4fHH6tfO8aN_HNh1LbOjYy51aQ@mail.gmail.com>
- <528BB913.6080409@wwwdotorg.org>
- <CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>
- <CACRpkdbyjm0X9RX+8WjqQxBPyRjBOAunkqVcO-0KUd1PTdGavA@mail.gmail.com>
- <5293ACA6.7060403@bracey.fi>
  <CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ@mail.gmail.com>
+ <20131205150747.GW29268@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GZxc/eAcyN/xQwfo"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:58794 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751247Ab3LEPIm (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:32293 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751247Ab3LEPL0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 10:08:42 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ@mail.gmail.com>
+	Thu, 5 Dec 2013 10:11:26 -0500
+In-reply-to: <20131205150747.GW29268@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kevin Bracey <kevin@bracey.fi>, Kyungmin Park <kmpark@infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kevin Bracey <kevin@bracey.fi>, Kyungmin Park <kmpark@infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
+On Thursday 05 of December 2013 15:07:47 Mark Brown wrote:
+> On Tue, Dec 03, 2013 at 10:29:42AM +0100, Linus Walleij wrote:
+> 
+> > So a suggested patch to support weak hogs would be interesting
+> > to look at. Can you provide details on how you think this would
+> > work?
+> 
+> Or should we be going and applying the default state to all devices on
+> init without worrying about a driver appearing?
 
---GZxc/eAcyN/xQwfo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+If a device isn't used, then it's often better to configure the pins for
+a different function, such as GPIO, to minimize leakage current.
 
-On Tue, Dec 03, 2013 at 10:29:42AM +0100, Linus Walleij wrote:
-
-> So a suggested patch to support weak hogs would be interesting
-> to look at. Can you provide details on how you think this would
-> work?
-
-Or should we be going and applying the default state to all devices on
-init without worrying about a driver appearing?
-
---GZxc/eAcyN/xQwfo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSoJa/AAoJELSic+t+oim9MxQQAIiQ7biYagSPUH3xNFuPOCv2
-XPDndz24i9I/xtewThg5QI0meKW01hkqiDpbTo4CqkJoQIVklQ//b8oWGXoii1na
-/+NMt9i1XoxJqCbADKg6rJO+TBeIn+5GuETytXKHwXpcdOr9fP+4M7/MbVvsIbh0
-tW21WCewN1Fmf4PYAvvIpYgn98uEYEAmc1Zr9fGt11VOzB/FziRROAP8SzCvbuSV
-9yrnoy/EZugLS7ax2ECX+R5ooi2oOuMNkC+Pb9gCK4n6UI+uKSkEGxfPd4Dz0YMR
-1nQd9MEeI7+67sMfM1poAoUsaGRMZDrTyn0oEkaEAlEFFtFCCBLX5XIIwe3vmyjw
-VXpnH+APCDW9pGcPamcFu5NoZ7d227q1ltNNJ7+sOXNFVJtPDH6VUZEhzZNvOlBE
-xmnmXL0HudLr4clyMNIPXK22XJW46bs9j1uFvdGSi6ToQTZsypj1wX+dw/mNd/Pp
-m37iYVliRRpLLU+lWegFQrAq+zoL8UbdMdTXMhSwV38UoEjcc2sYirEFW+Yrxbwn
-7sZCmEY1SJpQUmP831NECLuYsypJc+XpgJK1S3U0fHnJngVx6v+adzjahxyJWsOP
-e6Q4i2w8tqya9Yrb9L5UJSGKF0VNJ6LzvsxhXgl0r5hzEEF6uXH7WLjtNUH/aHdY
-H6GSi3Qrg3z29MXenAc4
-=x9xJ
------END PGP SIGNATURE-----
-
---GZxc/eAcyN/xQwfo--
+Best regards,
+Tomasz
