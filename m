@@ -1,122 +1,57 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v4 4/9] usb: ehci-s5p: Change to use phy provided by the
- generic phy framework
-Date: Thu, 5 Dec 2013 13:52:46 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1312051342300.869-100000@iolanthe.rowland.org>
-References: <1386246579-25141-5-git-send-email-k.debski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi files
+Date: Thu, 05 Dec 2013 19:59:15 +0100
+Message-ID: <1676404.arUWsvfauz@flatron>
+References: <1385613243-3559-1-git-send-email-l.krishna@samsung.com> <1979723.ga7TBeh7CQ@flatron> <CAD=FV=UcqaG9Dw_rd-bdTAmDwdW-_yCO6HpaEr1G07AW4TWm0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:57771 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756963Ab3LESwr (ORCPT
+Received: from mail-ea0-f178.google.com ([209.85.215.178]:47973 "EHLO
+	mail-ea0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750757Ab3LES7V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 13:52:47 -0500
-In-Reply-To: <1386246579-25141-5-git-send-email-k.debski@samsung.com>
+	Thu, 5 Dec 2013 13:59:21 -0500
+In-Reply-To: <CAD=FV=UcqaG9Dw_rd-bdTAmDwdW-_yCO6HpaEr1G07AW4TWm0w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Olof Johansson <olof@lixom.net>, Leela Krishna Amudala <l.krishna@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
 
-On Thu, 5 Dec 2013, Kamil Debski wrote:
-
-> Change the phy provider used from the old usb phy specific to a new one
-> using the generic phy framework.
+On Thursday 05 of December 2013 10:35:20 Doug Anderson wrote:
+> Tomasz,
 > 
-> Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> On Thu, Dec 5, 2013 at 10:30 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> >> I'd vote for using "pmu-system-registers".  We end up using the
+> >> "syscon" subsystem but really we're describing pmu registers.
+> >>
+> >> I'd even say that you don't need to formally specify the "name" in the
+> >> bindings (though I'm not up with all the latest device tree
+> >> requirements).  ...still you'd want to use "pmu-system-registers" in
+> >> the DTS changes.
+> >
+> > Well, since the name should specify the class of device, I would say that
+> > pmu-system-registers is too specific. If we want to change this, I'd say
+> > we should go with system-controller.
+> 
+> ...but the "compatible" is "samsung,exynos5250-pmu", "syscon", right?
+> That means that the class of the device is "exynos5250-pmu", right?
 
-> --- a/drivers/usb/host/ehci-exynos.c
-> +++ b/drivers/usb/host/ehci-exynos.c
+Nope. "samsung,exynos5250-pmu" is the specific device (or hardware
+programming interface) this device is compatible with.
 
-> @@ -42,10 +42,10 @@
->  static const char hcd_name[] = "ehci-exynos";
->  static struct hc_driver __read_mostly exynos_ehci_hc_driver;
->  
-> +#define PHY_NUMBER 3
->  struct exynos_ehci_hcd {
->  	struct clk *clk;
-> -	struct usb_phy *phy;
-> -	struct usb_otg *otg;
+With class I mean the generic kind of device, such as system-controller,
+i2c, pinctrl, display, etc., as specified by sections 2.2.1 and 2.2.2 of
+ePAPR.
 
-Are you sure you want to remove that line?
+Anyway, node names are just a matter of coding style, as they don't have
+any semantical meaning in most cases (such as this one).
 
-> +	struct phy *phy[PHY_NUMBER];
->  };
->  
->  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+> It is also compatible with the generic "syscon" class of devices.
 
-> @@ -102,13 +132,24 @@ static int exynos_ehci_probe(struct platform_device *pdev)
->  					"samsung,exynos5440-ehci"))
->  		goto skip_phy;
->  
-> -	phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-> -	if (IS_ERR(phy)) {
-> -		usb_put_hcd(hcd);
-> -		dev_warn(&pdev->dev, "no platform data or transceiver defined\n");
-> -		return -EPROBE_DEFER;
-> -	} else {
-> -		exynos_ehci->phy = phy;
-> +	for_each_available_child_of_node(pdev->dev.of_node, child) {
-> +		err = of_property_read_u32(child, "reg", &phy_number);
-> +		if (err) {
-> +			dev_err(&pdev->dev, "Failed to parse device tree\n");
-> +			return err;
-> +		}
-> +		if (phy_number >= PHY_NUMBER) {
-> +			dev_err(&pdev->dev, "Failed to parse device tree - number out of range\n");
-> +			return -EINVAL;
+It is also compatible with the generic "syscon" programming interface,
+which represents a set of loosely related registers that control various
+aspects of other IP blocks.
 
-Do you need to call of_node_put(child) before each of these return 
-statements?
-
-> +		}
-> +		phy = devm_of_phy_get(&pdev->dev, child, 0);
-> +		of_node_put(child);
-> +		if (IS_ERR(phy)) {
-> +			dev_err(&pdev->dev, "Failed to get phy number %d",
-> +								phy_number);
-> +			return PTR_ERR(phy);
-> +		}
-> +		exynos_ehci->phy[phy_number] = phy;
->  		exynos_ehci->otg = phy->otg;
-
-Did you intend to remove this line?  Above, you removed the
-exynos_ehci->otg field.  I can't see how this patch would ever compile
-without an error.
-
->  	}
->  
-> @@ -149,11 +190,11 @@ skip_phy:
->  		goto fail_io;
->  	}
->  
-> -	if (exynos_ehci->otg)
-> -		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
-> -
-> -	if (exynos_ehci->phy)
-> -		usb_phy_init(exynos_ehci->phy);
-> +	err = exynos_phys_on(exynos_ehci->phy);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Failed to enabled phys\n");
-> +		goto fail_phys_on;
-
-Why add a new statement label?  Just goto fail_io.
-
-> +	}
->  
->  	ehci = hcd_to_ehci(hcd);
->  	ehci->caps = hcd->regs;
-> @@ -172,8 +213,8 @@ skip_phy:
->  	return 0;
->  
->  fail_add_hcd:
-> -	if (exynos_ehci->phy)
-> -		usb_phy_shutdown(exynos_ehci->phy);
-> +	exynos_phys_off(exynos_ehci->phy);
-> +fail_phys_on:
->  fail_io:
->  	clk_disable_unprepare(exynos_ehci->clk);
->  fail_clk:
-
-Alan Stern
+Best regards,
+Tomasz
