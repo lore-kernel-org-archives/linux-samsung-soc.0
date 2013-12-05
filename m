@@ -1,93 +1,102 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v10 2/2] s5k5baf: add DT bindings for camera sensor
-Date: Thu, 05 Dec 2013 12:38:40 +0100
-Message-ID: <1386243520-17117-3-git-send-email-a.hajda@samsung.com>
-References: <1386243520-17117-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1386243520-17117-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, laurent.pinchart@ideasonboard.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, Grant Likely <grant.likely@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
+ where possible
+Date: Thu, 5 Dec 2013 11:45:38 +0000
+Message-ID: <20131205114538.GO29268@sirena.org.uk>
+References: <1384264120-24750-2-git-send-email-broonie@kernel.org>
+ <CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
+ <20131126102311.GW14725@sirena.org.uk>
+ <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
+ <20131126122031.GA14725@sirena.org.uk>
+ <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
+ <20131127150534.GW14725@sirena.org.uk>
+ <CAAgF-BcoKDt=u51tqiWyxveb4iJSXKuV49X1VmOsWiRsSGKKpg@mail.gmail.com>
+ <20131128115351.GC27568@sirena.org.uk>
+ <CAAgF-Bc3fOdJ3C-Jrmw-7Vxt_9QSJHEX5kWvCEyu_WBrsMDdEA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============2211098120683002428=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CAAgF-Bc3fOdJ3C-Jrmw-7Vxt_9QSJHEX5kWvCEyu_WBrsMDdEA@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch adds the DT bindings documentation for
-Samsung S5K5BAF Image Sensor.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
----
-v10
-- bindings moved to separate patch,
-- improved clocks description.
----
- .../devicetree/bindings/media/samsung-s5k5baf.txt  | 58 ++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
+--===============2211098120683002428==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="OE5XN2KVoD5QaTkR"
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
-new file mode 100644
-index 0000000..1f51e04
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/samsung-s5k5baf.txt
-@@ -0,0 +1,58 @@
-+Samsung S5K5BAF UXGA 1/5" 2M CMOS Image Sensor with embedded SoC ISP
-+--------------------------------------------------------------------
-+
-+Required properties:
-+
-+- compatible	  : "samsung,s5k5baf";
-+- reg		  : I2C slave address of the sensor;
-+- vdda-supply	  : analog power supply 2.8V (2.6V to 3.0V);
-+- vddreg-supply	  : regulator input power supply 1.8V (1.7V to 1.9V)
-+		    or 2.8V (2.6V to 3.0);
-+- vddio-supply	  : I/O power supply 1.8V (1.65V to 1.95V)
-+		    or 2.8V (2.5V to 3.1V);
-+- stbyn-gpios	  : GPIO connected to STDBYN pin;
-+- rstn-gpios	  : GPIO connected to RSTN pin;
-+- clocks	  : list of phandle and clock specifier pairs
-+		    according to common clock bindings for the
-+		    clocks described in clock-names;
-+- clock-names	  : should include "mclk" for the sensor's master clock;
-+
-+Optional properties:
-+
-+- clock-frequency : the frequency at which the "mclk" clock should be
-+		    configured to operate, in Hz; if this property is not
-+		    specified default 24 MHz value will be used.
-+
-+The device node should contain one 'port' child node with one child 'endpoint'
-+node, according to the bindings defined in Documentation/devicetree/bindings/
-+media/video-interfaces.txt. The following are properties specific to those
-+nodes.
-+
-+endpoint node
-+-------------
-+
-+- data-lanes : (optional) specifies MIPI CSI-2 data lanes as covered in
-+	       video-interfaces.txt. If present it should be <1> - the device
-+	       supports only one data lane without re-mapping.
-+
-+Example:
-+
-+s5k5bafx@2d {
-+	compatible = "samsung,s5k5baf";
-+	reg = <0x2d>;
-+	vdda-supply = <&cam_io_en_reg>;
-+	vddreg-supply = <&vt_core_15v_reg>;
-+	vddio-supply = <&vtcam_reg>;
-+	stbyn-gpios = <&gpl2 0 1>;
-+	rstn-gpios = <&gpl2 1 1>;
-+	clock-names = "mclk";
-+	clocks = <&clock_cam 0>;
-+	clock-frequency = <24000000>;
-+
-+	port {
-+		s5k5bafx_ep: endpoint {
-+			remote-endpoint = <&csis1_ep>;
-+			data-lanes = <1>;
-+		};
-+	};
-+};
--- 
-1.8.3.2
+
+--OE5XN2KVoD5QaTkR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Dec 05, 2013 at 04:20:03PM +0530, Padma Venkat wrote:
+> On Thu, Nov 28, 2013 at 5:23 PM, Mark Brown <broonie@kernel.org> wrote:
+
+> > OK, so we can probably just reinitialise the dmaengine data after we
+> > reset it?  Like below
+
+> Yes. That works well.
+
+Great.
+
+> As I forgot to add SND_DMAENGINE_PCM_FLAG_NO_RESIDUE flag, I was
+> getting underrun error. After adding this flag audio playback is
+> working fine for smaller files on smdk5420 with pl330 dma driver.
+
+OK, there were some patches on the thread adding residue support to the
+PL330 driver yesterday - hopefully those can get merged at some point
+
+> Except for the crash due to NULL pointer dereference in secondary
+> dai(I posted a patch for the same (ASoC: samsung: Initialize the
+> dma_data for secondary dai)) you can add my
+
+> Tested By: Padmavathi Venna <padma.v@samsung.com>
+
+Excellent, thanks - I'd squashed in your change already.  Like I say I'm
+still concerned that we might need a fix for v3.13 since I can't
+entirely see why the code works as-is.
+
+--OE5XN2KVoD5QaTkR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSoGdfAAoJELSic+t+oim9s2sP/1eh9i/zxfU7ZQJVi48rv68M
+zBzteoDM21/Sb3SK45B4khMbe+APIu3AlIlTbMdUCJp90obtjDlKzYsrqkC6fLSM
+BVDOYNrjA5PedJMeahJTnNCAoDrn4CmfUCFJToAWDvSznfVBzJwQpX45sU8EFxai
+Q9tiOUhcnlBF+ykR1g+OgOsPkW2aMiKQednMJ3xtU+3Ei6S6gaYKx05zXFhNoIlt
+Ov2NhNGaz+CaMEJ7vBXq5l7sH0qfFhfzAGm75c3DXyg6vJcUds1u6wvvp9ZJU34v
+WsvZcgYss+cq9Iuq6CdzXXPt8IFCRB/Yz06NHqbEJiniK4HN1GfwS+WVcan7j9Ax
+LihvnW2lgXaSK9C0F0bFiBBa5RZTzAlOFva+NUB+ZvZUZ6XYpNaaPDlmwB2hLn+N
+HJBQkeyzOrrA5K84EQqxlUcWQZb74fTYwlge2hf6jV7Mi6OG6gv9MXxMjXSKwvlW
+NYcdkb9btr01czqzg/iUObuNM11z1RZ4eD4JlOvTj7ddaDCXZifyPf7SDanIWpTl
+Cv+M0Uu0264CTEtEi/Pc+q80y+OnHhGtUCnM7Haaa6NcK0Z0CO015xV7mNwDxn2q
+aCmnDjTyWBkRTJtNUvvd5PC8oWGA45U8y7txJvy2esPP6oR4a9x+E3onPYNHuYZA
+gR7vRvjI+/xTL0NE4U8E
+=5BF7
+-----END PGP SIGNATURE-----
+
+--OE5XN2KVoD5QaTkR--
+
+--===============2211098120683002428==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============2211098120683002428==--
