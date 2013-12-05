@@ -1,139 +1,61 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] watchdog: s3c2410_wdt: Report when the watchdog reset the
- system
-Date: Thu, 05 Dec 2013 17:44:16 +0100
-Message-ID: <35548763.UvKAOvJvxh@amdc1227>
-References: <1386008082-28740-1-git-send-email-dianders@chromium.org>
- <42011482.56GYn1upCz@amdc1227> <20131205164038.GA15560@roeck-us.net>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using
+ pinfunc.
+Date: Thu, 05 Dec 2013 18:03:02 +0100
+Message-ID: <1475204.PCyxT0KMui@amdc1227>
+References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
+ <1502243.eRBlCfUhTO@amdc1227> <52A0AEB4.7090909@bracey.fi>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36329 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751947Ab3LEQo1 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:41254 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751318Ab3LERDM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 11:44:27 -0500
-In-reply-to: <20131205164038.GA15560@roeck-us.net>
+	Thu, 5 Dec 2013 12:03:12 -0500
+In-reply-to: <52A0AEB4.7090909@bracey.fi>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Doug Anderson <dianders@chromium.org>, Wim Van Sebroeck <wim@iguana.be>, Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kevin Bracey <kevin@bracey.fi>
+Cc: Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Kyungmin Park <kmpark@infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Thursday 05 of December 2013 08:40:38 Guenter Roeck wrote:
-> On Thu, Dec 05, 2013 at 05:21:47PM +0100, Tomasz Figa wrote:
-> > Hi Doug,
-> > 
-> > Please see my comments inline.
-> > 
-> > On Monday 02 of December 2013 10:14:41 Doug Anderson wrote:
-> > > A good watchdog driver is supposed to report when it was responsible
-> > > for resetting the system.  Implement this for the s3c2410, at least on
-> > > exynos5250 and exynos5420 where we already have a pointer to the PMU
-> > > registers to read the information.
-> > > 
-> > > Signed-off-by: Doug Anderson <dianders@chromium.org>
-> > > ---
-> > > This patch is based atop Leela Krishna's recent series that ends with
-> > > (ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420)
-> > > AKA <https://patchwork.kernel.org/patch/3251861/>.
-> > > 
-> > >  drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
-> > >  1 file changed, 39 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> > > index 47f4dcf..2c87d37 100644
-> > > --- a/drivers/watchdog/s3c2410_wdt.c
-> > > +++ b/drivers/watchdog/s3c2410_wdt.c
-> > > @@ -62,9 +62,13 @@
-> > >  #define CONFIG_S3C2410_WATCHDOG_ATBOOT		(0)
-> > >  #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME	(15)
-> > >  
-> > > +#define RST_STAT_REG_OFFSET		0x0404
-> > 
-> > IMHO this should be namespaced, at least with EXYNOS5 prefix. The two
-> > registers below should be as well, but I missed this in the patch adding
-> > them.
-> > 
-> > >  #define WDT_DISABLE_REG_OFFSET		0x0408
-> > >  #define WDT_MASK_RESET_REG_OFFSET	0x040c
-> > >  #define QUIRK_NEEDS_PMU_CONFIG		(1 << 0)
-> > > +#define QUIRK_HAS_RST_STAT		(1 << 1)
-> > > +#define QUIRKS_NEED_PMUREG		(QUIRK_NEEDS_PMU_CONFIG | \
-> > > +					 QUIRK_HAS_RST_STAT)
-> > >  
-> > >  static bool nowayout	= WATCHDOG_NOWAYOUT;
-> > >  static int tmr_margin;
-> > > @@ -98,6 +102,9 @@ MODULE_PARM_DESC(debug, "Watchdog debug, set to >1 for debug (default 0)");
-> > >   * timer reset functionality.
-> > >   * @mask_bit: Bit number for the watchdog timer in the disable register and the
-> > >   * mask reset register.
-> > > + * @rst_stat_reg: Offset in pmureg for the register that has the reset status.
-> > > + * @rst_stat_bit: Bit number in the rst_stat register indicating a watchdog
-> > > + * reset.
-> > >   * @quirks: A bitfield of quirks.
-> > >   */
-> > >  
-> > > @@ -105,6 +112,8 @@ struct s3c2410_wdt_variant {
-> > >  	int disable_reg;
-> > >  	int mask_reset_reg;
-> > >  	int mask_bit;
-> > > +	int rst_stat_reg;
-> > > +	int rst_stat_bit;
-> > >  	u32 quirks;
-> > >  };
-> > >  
-> > > @@ -131,14 +140,20 @@ static const struct s3c2410_wdt_variant drv_data_exynos5250  = {
-> > >  	.disable_reg = WDT_DISABLE_REG_OFFSET,
-> > >  	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
-> > >  	.mask_bit = 20,
-> > > -	.quirks = QUIRK_NEEDS_PMU_CONFIG
-> > > +	.rst_stat_reg = RST_STAT_REG_OFFSET,
-> > > +	.rst_stat_bit = 20,
-> > > +	.quirks = QUIRK_NEEDS_PMU_CONFIG |
-> > > +		QUIRK_HAS_RST_STAT,
-> > >  };
-> > >  
-> > >  static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
-> > >  	.disable_reg = WDT_DISABLE_REG_OFFSET,
-> > >  	.mask_reset_reg = WDT_MASK_RESET_REG_OFFSET,
-> > >  	.mask_bit = 0,
-> > > -	.quirks = QUIRK_NEEDS_PMU_CONFIG
-> > > +	.rst_stat_reg = RST_STAT_REG_OFFSET,
-> > > +	.rst_stat_bit = 9,
-> > > +	.quirks = QUIRK_NEEDS_PMU_CONFIG |
-> > > +		QUIRK_HAS_RST_STAT,
-> > >  };
-> > >  
-> > >  static const struct of_device_id s3c2410_wdt_match[] = {
-> > > @@ -423,6 +438,25 @@ static inline void s3c2410wdt_cpufreq_deregister(struct s3c2410_wdt *wdt)
-> > >  }
-> > >  #endif
-> > >  
-> > > +static inline unsigned int s3c2410wdt_get_bootstatus(struct s3c2410_wdt *wdt)
-> > > +{
-> > > +	unsigned int bootstatus = 0;
-> > > +	int ret;
-> > > +
-> > > +	if (wdt->drv_data->quirks & QUIRK_HAS_RST_STAT) {
-> > 
-> > nit: I guess it's just a matter of taste, but to reduce code indentation
-> > you could inverse the check and simply return 0 here.
-> > 
+On Thursday 05 of December 2013 18:49:56 Kevin Bracey wrote:
+> On 05/12/2013 17:11, Tomasz Figa wrote:
+> > On Thursday 05 of December 2013 15:07:47 Mark Brown wrote:
+> >> On Tue, Dec 03, 2013 at 10:29:42AM +0100, Linus Walleij wrote:
+> >>
+> >>> So a suggested patch to support weak hogs would be interesting
+> >>> to look at. Can you provide details on how you think this would
+> >>> work?
+> >> Or should we be going and applying the default state to all devices on
+> >> init without worrying about a driver appearing?
+> > If a device isn't used, then it's often better to configure the pins for
+> > a different function, such as GPIO, to minimize leakage current.
+> >
 > 
-> nit: If so, it would make sense to to the same for the other 'quirk'
-> for consistency.
-> 
-> static int s3c2410wdt_mask_and_disable_reset(struct s3c2410_wdt *wdt, bool mask)
-> {
-> 	...
-> 	if (!(wdt->drv_data->quirks & QUIRK_NEEDS_PMU_CONFIG))
-> 		return 0;
-> 	...
-> }
+> And there can also be mutually-exclusive drivers choosing different 
+> default states for the same pin. I think you do need a separate "safe" 
+> indicator.
 
-That's quite a bit different story, as currently the check is outside of
-this function, but I agree, it would look better.
+That's not quite true, as on a single board you should rather have
+a single device node with "okay" status referencing given set of pins.
+Still, I think that a separate safe state is the way to go.
+
+> 
+> My current thought is that  a late-init "make safe all unclaimed pins" 
+> pass would make sense - you can't really mess with pins in an automated 
+> fashion on init, as it can mess up bootloader->driver handover.   There 
+> already exist late-init "turn off all unclaimed clocks" (at least on 
+> shmobile)
+
+That's a feature of Common Clock Framework.
+
+> and "turn off all unclaimed regulators", and it would fit that 
+> model.
+
+Maybe that's the way to do it. I need to think a bit more on this,
+especially considering our (Samsung's) use cases.
 
 Best regards,
 Tomasz
