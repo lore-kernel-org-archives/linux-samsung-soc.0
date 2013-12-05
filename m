@@ -1,239 +1,156 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 1/2] ASoC: samsung: Provide helper for DMA init
-Date: Thu,  5 Dec 2013 14:25:58 +0000
-Message-ID: <1386253559-18262-1-git-send-email-broonie@kernel.org>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v4 0/9] phy: Add new Exynos USB 2.0 PHY driver
+Date: Thu, 5 Dec 2013 20:37:06 +0530
+Message-ID: <52A0969A.5070607@ti.com>
+References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:46200 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752266Ab3LEO3l (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:34291 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932203Ab3LEPHU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 09:29:41 -0500
+	Thu, 5 Dec 2013 10:07:20 -0500
+In-Reply-To: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
+To: Kamil Debski <k.debski@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org
 
-From: Mark Brown <broonie@linaro.org>
+Hi,
 
-In preparation for using the dmaengine helpers in ASoC rather than the
-dmaengine wrappers for the Samsung API wrap the configuration of dma_data.
-The dmaengine code expects different data to that used by the legacy API.
+On Thursday 05 December 2013 05:59 PM, Kamil Debski wrote:
+> Hi,
+> 
+> This is the fourth version of the patchset adding the new Exynos USB 2.0 PHY
+> driver. The driver uses the Generic PHY Framework.
+> 
+> A month has passed since the last version. I have addressed numerous comments
+> that appeared on the mailing list in this patch. I would like to specially
+> thank Kishon, Tomasz, Matt and Vivek for their comments.
+> 
+> This patch contains two necessary patches to the phy core.
+> It is very useful to be able to get phy using a device tree node.
+> 
+> In addition this patch depends on:
+> [PATCH V11 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi
+> files [1].
+> 
+> Best wishes,
+> Kamil Debski
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
+The last four patches are missing [1]
 
-This will need merging with the fix patch I sent earlier, I'l do that
-assuming this is OK.
+[1] -> https://lkml.org/lkml/2013/12/5/166
 
- sound/soc/samsung/ac97.c | 51 +++++++++++++++---------------------------------
- sound/soc/samsung/dma.c  |  8 ++++++++
- sound/soc/samsung/dma.h  |  3 +++
- sound/soc/samsung/i2s.c  |  7 +++++--
- sound/soc/samsung/pcm.c  | 18 +++++++++--------
- 5 files changed, 42 insertions(+), 45 deletions(-)
-
-diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
-index 350ba23a9893..4a88e36c82ec 100644
---- a/sound/soc/samsung/ac97.c
-+++ b/sound/soc/samsung/ac97.c
-@@ -221,24 +221,6 @@ static struct snd_ac97_bus_ops s3c_ac97_ops = {
- 	.reset      = s3c_ac97_cold_reset,
- };
- 
--static int s3c_ac97_hw_params(struct snd_pcm_substream *substream,
--				  struct snd_pcm_hw_params *params,
--				  struct snd_soc_dai *dai)
--{
--	struct snd_soc_pcm_runtime *rtd = substream->private_data;
--	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--	struct s3c_dma_params *dma_data;
--
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--		dma_data = &s3c_ac97_pcm_out;
--	else
--		dma_data = &s3c_ac97_pcm_in;
--
--	snd_soc_dai_set_dma_data(cpu_dai, substream, dma_data);
--
--	return 0;
--}
--
- static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
- 				struct snd_soc_dai *dai)
- {
-@@ -279,21 +261,6 @@ static int s3c_ac97_trigger(struct snd_pcm_substream *substream, int cmd,
- 	return 0;
- }
- 
--static int s3c_ac97_hw_mic_params(struct snd_pcm_substream *substream,
--				      struct snd_pcm_hw_params *params,
--				      struct snd_soc_dai *dai)
--{
--	struct snd_soc_pcm_runtime *rtd = substream->private_data;
--	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--		return -ENODEV;
--	else
--		snd_soc_dai_set_dma_data(cpu_dai, substream, &s3c_ac97_mic_in);
--
--	return 0;
--}
--
- static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
- 				    int cmd, struct snd_soc_dai *dai)
- {
-@@ -329,15 +296,27 @@ static int s3c_ac97_mic_trigger(struct snd_pcm_substream *substream,
- }
- 
- static const struct snd_soc_dai_ops s3c_ac97_dai_ops = {
--	.hw_params	= s3c_ac97_hw_params,
- 	.trigger	= s3c_ac97_trigger,
- };
- 
- static const struct snd_soc_dai_ops s3c_ac97_mic_dai_ops = {
--	.hw_params	= s3c_ac97_hw_mic_params,
- 	.trigger	= s3c_ac97_mic_trigger,
- };
- 
-+static int s3c_ac97_dai_probe(struct snd_soc_dai *dai)
-+{
-+	samsung_asoc_init_dma_data(dai, &s3c_ac97_pcm_out, &s3c_ac97_pcm_in);
-+
-+	return 0;
-+}
-+
-+static int s3c_ac97_mic_dai_probe(struct snd_soc_dai *dai)
-+{
-+	samsung_asoc_init_dma_data(dai, NULL, &s3c_ac97_mic_in);
-+
-+	return 0;
-+}
-+
- static struct snd_soc_dai_driver s3c_ac97_dai[] = {
- 	[S3C_AC97_DAI_PCM] = {
- 		.name =	"samsung-ac97",
-@@ -354,6 +333,7 @@ static struct snd_soc_dai_driver s3c_ac97_dai[] = {
- 			.channels_max = 2,
- 			.rates = SNDRV_PCM_RATE_8000_48000,
- 			.formats = SNDRV_PCM_FMTBIT_S16_LE,},
-+		.probe = s3c_ac97_dai_probe,
- 		.ops = &s3c_ac97_dai_ops,
- 	},
- 	[S3C_AC97_DAI_MIC] = {
-@@ -365,6 +345,7 @@ static struct snd_soc_dai_driver s3c_ac97_dai[] = {
- 			.channels_max = 1,
- 			.rates = SNDRV_PCM_RATE_8000_48000,
- 			.formats = SNDRV_PCM_FMTBIT_S16_LE,},
-+		.probe = s3c_ac97_mic_dai_probe,
- 		.ops = &s3c_ac97_mic_dai_ops,
- 	},
- };
-diff --git a/sound/soc/samsung/dma.c b/sound/soc/samsung/dma.c
-index fe2748b494d4..ee23194f7ab8 100644
---- a/sound/soc/samsung/dma.c
-+++ b/sound/soc/samsung/dma.c
-@@ -441,6 +441,14 @@ static struct snd_soc_platform_driver samsung_asoc_platform = {
- 	.pcm_free	= dma_free_dma_buffers,
- };
- 
-+void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
-+				struct s3c_dma_params *playback,
-+				struct s3c_dma_params *capture)
-+{
-+	snd_soc_dai_init_dma_data(dai, playback, capture);
-+}
-+EXPORT_SYMBOL_GPL(samsung_asoc_init_dma_data);
-+
- int samsung_asoc_dma_platform_register(struct device *dev)
- {
- 	return snd_soc_register_platform(dev, &samsung_asoc_platform);
-diff --git a/sound/soc/samsung/dma.h b/sound/soc/samsung/dma.h
-index 0e86315a3eaf..fb09a1c5f75b 100644
---- a/sound/soc/samsung/dma.h
-+++ b/sound/soc/samsung/dma.h
-@@ -22,6 +22,9 @@ struct s3c_dma_params {
- 	char *ch_name;
- };
- 
-+void samsung_asoc_init_dma_data(struct snd_soc_dai *dai,
-+				struct s3c_dma_params *playback,
-+				struct s3c_dma_params *capture);
- int samsung_asoc_dma_platform_register(struct device *dev);
- void samsung_asoc_dma_platform_unregister(struct device *dev);
- 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index a5cbdb4f1655..eab0050d4579 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -946,8 +946,11 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 	struct i2s_dai *i2s = to_info(dai);
- 	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
- 
--	if (other && other->clk) /* If this is probe on secondary */
-+	if (other && other->clk) { /* If this is probe on secondary */
-+		samsung_asoc_init_dma_data(dai, &other->sec_dai->dma_playback,
-+					   NULL);
- 		goto probe_exit;
-+	}
- 
- 	i2s->addr = ioremap(i2s->base, 0x100);
- 	if (i2s->addr == NULL) {
-@@ -963,7 +966,7 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 	}
- 	clk_prepare_enable(i2s->clk);
- 
--	snd_soc_dai_init_dma_data(dai, &i2s->dma_playback, &i2s->dma_capture);
-+	samsung_asoc_init_dma_data(dai, &i2s->dma_playback, &i2s->dma_capture);
- 
- 	if (other) {
- 		other->addr = i2s->addr;
-diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
-index e54256fc4b2c..6a5e4bf6ac96 100644
---- a/sound/soc/samsung/pcm.c
-+++ b/sound/soc/samsung/pcm.c
-@@ -275,7 +275,6 @@ static int s3c_pcm_hw_params(struct snd_pcm_substream *substream,
- {
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct s3c_pcm_info *pcm = snd_soc_dai_get_drvdata(rtd->cpu_dai);
--	struct s3c_dma_params *dma_data;
- 	void __iomem *regs = pcm->regs;
- 	struct clk *clk;
- 	int sclk_div, sync_div;
-@@ -284,13 +283,6 @@ static int s3c_pcm_hw_params(struct snd_pcm_substream *substream,
- 
- 	dev_dbg(pcm->dev, "Entered %s\n", __func__);
- 
--	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
--		dma_data = pcm->dma_playback;
--	else
--		dma_data = pcm->dma_capture;
--
--	snd_soc_dai_set_dma_data(rtd->cpu_dai, substream, dma_data);
--
- 	/* Strictly check for sample size */
- 	switch (params_format(params)) {
- 	case SNDRV_PCM_FORMAT_S16_LE:
-@@ -461,10 +453,20 @@ static const struct snd_soc_dai_ops s3c_pcm_dai_ops = {
- 	.set_fmt	= s3c_pcm_set_fmt,
- };
- 
-+static int s3c_pcm_dai_probe(struct snd_soc_dai *dai)
-+{
-+	struct s3c_pcm_info *pcm = snd_soc_dai_get_drvdata(dai);
-+
-+	snd_soc_dai_init_dma_data(dai, pcm->dma_playback, pcm->dma_capture);
-+
-+	return 0;
-+}
-+
- #define S3C_PCM_RATES  SNDRV_PCM_RATE_8000_96000
- 
- #define S3C_PCM_DAI_DECLARE			\
- 	.symmetric_rates = 1,					\
-+	.probe = s3c_pcm_dai_probe,				\
- 	.ops = &s3c_pcm_dai_ops,				\
- 	.playback = {						\
- 		.channels_min	= 2,				\
--- 
-1.8.5.1
+Thanks
+Kishon
+> 
+> [1] - http://www.spinics.net/lists/linux-samsung-soc/msg24528.html
+> 
+> ----------------
+> Changes from v3:
+> - using PMU and system registers indirectly via syscon
+> - change labelling
+> - change Kconfig name
+> - fixed typos/stray whitespace
+> - move of_phy_provider_register() to the end of probe
+> - add a regular error return code to the rate_to_clk functions
+> - cleanup code and remove unused code
+> - change struct names to avoid collisions
+> - add mechanism to support multiple phys by the ehci driver
+> 
+> ----------------
+> Changes from v2:
+> - rebase all patches to the usb-next branch
+> - fixes in the documentation file
+>   - remove wrong entries in the phy node (ranges, and #address- & #size-cells)
+>   - add clocks and clock-names as required properites
+>   - rephrase a few sentences
+> - fixes in the ehci-exynos.c file
+>   - move phy_name variable next to phy in exynos_ehci_hcd
+>   - remove otg from exynos_ehci_hcd as it was no longer used
+>   - move devm_phy_get after the Exynos5440 skip_phy check
+> - fixes in the s3c-hsotg.c file
+>   - cosmetic fixes (remove empty line that was wrongfully added)
+> - fixes in the main driver
+>   - remove cpu_type in favour for a boolean flag matched with the compatible
+>     value
+>   - rename files, structures, variables and Kconfig entires - change from simple
+>     "uphy" to "usb2_phy"
+>   - fix multiline comments style
+>   - simplify #ifdefs in of_device_id
+>   - fix Kconfig description
+>   - change dev_info to dev_dbg where reasonable
+>   - cosmetic changes (remove wrongful blank lines)
+>   - remove unnecessary reference counting
+> 
+> ----------------
+> Changes from v1:
+> - the changes include minor fixes of the hardware initialization of the PHY
+>   module
+> - some other minor fixes were introduced
+> 
+> ----------------------
+> Original cover letter:
+> 
+> Hi,
+> 
+> This patch adds a new drive for USB PHYs for Samsung SoCs. The driver is
+> using the Generic PHY Framework created by Kishon Vijay Abrahan I. It
+> can be found here https://lkml.org/lkml/2013/8/21/29. This patch adds
+> support to Exynos4 family of SoCs. Support for Exynos3 and Exynos5 is
+> planned to be added in the near future.
+> 
+> I welcome your comments.
+> 
+> ----------------------
+> 
+> [1] https://lkml.org/lkml/2013/8/21/29
+> 
+> 
+> Kamil Debski (8):
+>   phy: core: Change the way of_phy_get is called
+>   phy: core: Add devm_of_phy_get to phy-core
+>   phy: Add new Exynos USB PHY driver
+>   usb: ehci-s5p: Change to use phy provided by the generic phy
+>     framework
+>   usb: s3c-hsotg: Use the new Exynos USB phy driver with the generic
+>     phy framework
+>   phy: Add Exynos 5250 support to the Exynos USB 2.0 PHY driver
+>   dts: Add usb2phy to Exynos 4
+>   dts: Add usb2phy to Exynos 5250
+> 
+> Mateusz Krawczuk (1):
+>   phy: Add support for S5PV210 to the Exynos USB PHY driver
+> 
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |    2 +
+>  .../devicetree/bindings/phy/samsung-usbphy.txt     |   56 +++
+>  .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 +
+>  Documentation/devicetree/bindings/usb/usb-ehci.txt |   35 ++
+>  arch/arm/boot/dts/exynos4.dtsi                     |   31 ++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |   17 +
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |   17 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   33 +-
+>  drivers/phy/Kconfig                                |   35 ++
+>  drivers/phy/Makefile                               |    5 +
+>  drivers/phy/phy-core.c                             |   43 ++-
+>  drivers/phy/phy-exynos4210-usb2.c                  |  264 ++++++++++++++
+>  drivers/phy/phy-exynos4212-usb2.c                  |  312 +++++++++++++++++
+>  drivers/phy/phy-exynos5250-usb2.c                  |  363 ++++++++++++++++++++
+>  drivers/phy/phy-s5pv210-usb2.c                     |  206 +++++++++++
+>  drivers/phy/phy-samsung-usb2.c                     |  240 +++++++++++++
+>  drivers/phy/phy-samsung-usb2.h                     |   74 ++++
+>  drivers/usb/gadget/s3c-hsotg.c                     |   11 +-
+>  drivers/usb/host/ehci-exynos.c                     |   95 +++--
+>  include/linux/phy/phy.h                            |    3 +
+>  20 files changed, 1789 insertions(+), 57 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+>  create mode 100644 drivers/phy/phy-exynos4210-usb2.c
+>  create mode 100644 drivers/phy/phy-exynos4212-usb2.c
+>  create mode 100644 drivers/phy/phy-exynos5250-usb2.c
+>  create mode 100644 drivers/phy/phy-s5pv210-usb2.c
+>  create mode 100644 drivers/phy/phy-samsung-usb2.c
+>  create mode 100644 drivers/phy/phy-samsung-usb2.h
+> 
