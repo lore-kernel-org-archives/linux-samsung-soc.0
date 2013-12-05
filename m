@@ -1,79 +1,121 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH] watchdog: s3c2410_wdt: Report when the watchdog reset the system
-Date: Thu, 5 Dec 2013 13:27:13 +0530
-Message-ID: <CAL1wa8cQcvRzXgaEP3kzkvzogqyeM2eJt_oRZfu6NbWxfP3zAg@mail.gmail.com>
-References: <1386008082-28740-1-git-send-email-dianders@chromium.org>
- <20131202202120.GA23611@roeck-us.net> <CAOesGMi-P6LG1-XKVizUS_qX-gfZi_iXBO5r+=6a2nfvBS60mw@mail.gmail.com>
- <20131202213654.GA4059@roeck-us.net>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH RFC 1/4] phy: Add new Exynos5 USB 3.0 PHY driver
+Date: Thu, 5 Dec 2013 13:44:36 +0530
+Message-ID: <CAFp+6iF+N+eMOd=B-J3oS_u0TEse+5V2gHkcNxN0OS+YbV_Y9g@mail.gmail.com>
+References: <1383205544-32244-1-git-send-email-gautam.vivek@samsung.com>
+	<1383205544-32244-2-git-send-email-gautam.vivek@samsung.com>
+	<527744B2.4090303@ti.com>
+	<030d01ced946$d6e23490$84a69db0$%debski@samsung.com>
+	<52779D28.9000905@ti.com>
+	<CAFp+6iH7vQ-OtMFL4pyr4tFDRchH4oh1Z0753WNgrHiUzj+kzw@mail.gmail.com>
+	<00fe01ceda0a$941957a0$bc4c06e0$%debski@samsung.com>
+	<000001ceda17$f41c2030$dc546090$%han@samsung.com>
+	<000101ceda1f$04ca6f20$0e5f4d60$%han@samsung.com>
+	<CAFp+6iFAZab35F-MOOZHcHpzSEOL=51gWBK2KZbOJS+0731GJQ@mail.gmail.com>
+	<000301ceda84$1d648bf0$582da3d0$%han@samsung.com>
+	<5280BB65.5040305@ti.com>
+	<CAFp+6iGKpzOHjwnSMvSgTehzPLQMB8madoYqMk5JPSAZfSGSTg@mail.gmail.com>
+	<528C7B0E.3080401@ti.com>
+	<CAFp+6iF3UnV-w2pYQE2THQZBGma8xpp6pqSuwXzjUN3emJnftQ@mail.gmail.com>
+	<528CD8EC.9050403@ti.com>
+	<529F3C1C.2050509@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20131202213654.GA4059@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Wim Van Sebroeck <wim@iguana.be>, Leela Krishna Amudala <l.krishna@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <529F3C1C.2050509@ti.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Kamil Debski <k.debski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-doc@vger.kernel.org, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Felipe Balbi <balbi@ti.com>, Julius Werner <jwerner@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Guenter Roeck,
+Hi Kishon,
 
-On Tue, Dec 3, 2013 at 3:06 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+
+On Wed, Dec 4, 2013 at 7:58 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+> Hi Vivek,
 >
-> On Mon, Dec 02, 2013 at 12:47:53PM -0800, Olof Johansson wrote:
-> > On Mon, Dec 2, 2013 at 12:21 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> > > On Mon, Dec 02, 2013 at 10:14:41AM -0800, Doug Anderson wrote:
-> > >> A good watchdog driver is supposed to report when it was responsible
-> > >> for resetting the system.  Implement this for the s3c2410, at least on
-> > >> exynos5250 and exynos5420 where we already have a pointer to the PMU
-> > >> registers to read the information.
-> > >>
-> > >> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> > >> ---
-> > >> This patch is based atop Leela Krishna's recent series that ends with
-> > >> (ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420)
-> > >> AKA <https://patchwork.kernel.org/patch/3251861/>.
-> > >>
-> > >>  drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
-> > >>  1 file changed, 39 insertions(+), 3 deletions(-)
-> > >>
-> > >> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> > >> index 47f4dcf..2c87d37 100644
-> > >> --- a/drivers/watchdog/s3c2410_wdt.c
-> > >> +++ b/drivers/watchdog/s3c2410_wdt.c
-> > >> @@ -62,9 +62,13 @@
-> > >>  #define CONFIG_S3C2410_WATCHDOG_ATBOOT               (0)
-> > >>  #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME (15)
-> > >>
-> > >> +#define RST_STAT_REG_OFFSET          0x0404
-> > >>  #define WDT_DISABLE_REG_OFFSET               0x0408
-> > >>  #define WDT_MASK_RESET_REG_OFFSET    0x040c
-> > >>  #define QUIRK_NEEDS_PMU_CONFIG               (1 << 0)
-> > >> +#define QUIRK_HAS_RST_STAT           (1 << 1)
-> > >> +#define QUIRKS_NEED_PMUREG           (QUIRK_NEEDS_PMU_CONFIG | \
-> > >> +                                      QUIRK_HAS_RST_STAT)
-> > >>
-> > > I am not really happy about the NEED (both of them, really) here.
-> > > How about HAS instead ?
-> >
-> > Ah, I just commented on these things on our internal review site too
-> > on this patch. I don't even think a quirk is needed -- just use the
-> > presence of a non-0 rst_stat_reg to tell if you need to use regmap.
-> >
-> Agreed; same is true for the QUIRK_NEEDS_PMU_CONFIG related registers
-> as well.
+> On Wednesday 20 November 2013 09:14 PM, Kishon Vijay Abraham I wrote:
+>> Hi,
+>>
+>> On Wednesday 20 November 2013 03:02 PM, Vivek Gautam wrote:
+>>> On Wed, Nov 20, 2013 at 2:34 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>>> On Wednesday 20 November 2013 02:27 PM, Vivek Gautam wrote:
+>>>>> Hi Kishon,
+>>>>>
+>>>>>
+>>>>> On Mon, Nov 11, 2013 at 4:41 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>>>>> Hi,
+>>>>> sorry for the delayed response.
+>>>>>
+>>>>>>
+>>>>>> On Wednesday 06 November 2013 05:37 AM, Jingoo Han wrote:
+>>>>>>> On Wednesday, November 06, 2013 2:58 AM, Vivek Gautam wrote:
+>>>>>>>> On Tue, Nov 5, 2013 at 5:33 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+>>>>>>>
+>>>>>>> [.....]
+>>>>>>>
+>>>>>>>>> USB3.0 PHY consists of two blocks such as 3.0 block and 2.0 block.
+>>>>>>>>> This USB3.0 PHY can support UTMI+ and PIPE3 interface for 3.0 block
+>>>>>>>>> and 2.0 block, respectively.
+>>>>>>>>>
+>>>>>>>>> Conclusion:
+>>>>>>>>>
+>>>>>>>>>    1) USB2.0 PHY: USB2.0 HOST, USB2.0 Device
+>>>>>>>>>                        Base address: 0x1213 0000
+>>>>>>>>>
+>>>>>>>>>    2) USB3.0 PHY: USB3.0 DRD (3.0 HOST & 3.0 Device)
+>>>>>>>>>                        Base address: 0x1210 0000
+>>>>>>>>>                        2.0 block(UTMI+) & 3.0 block(PIPE3)
+>>>>>>>>
+>>>>>>>> And this is of course the PHY used by DWC3 controller, which works at
+>>>>>>>> both High speed as well as Super Speed.
+>>>>>>>> Right ?
+>>>>>>>
+>>>>>>> Right.
+>>>>>>>
+>>>>>>> While 3.0 block(PIPE3) can be used for Super Speed, 2.0 block(UTMI+)
+>>>>>>> can be used for High speed.
+>>>>>>
+>>>>>> It should then come under *single IP muliple PHY* category similar to what
+>>>>>> Sylwester has done.
+>>>>>
+>>>>> Do you mean that i should be including PHY IDs for UTMI+ phy and PIPE3
+>>>>> phy present in this PHY block ?
+>>>>> AFAICS the two phys (UTMI+ and PIPE3) do not really have separate
+>>>>> registers to program, and that's the reason
+>>>>> we program the entire PHY in a shot.
+>>>>
+>>>> you mean you program the same set of bits for UTMI+ and PIPE3?
+>>>
+>>> No, looking closely into PHY datasheet as well as Exynos5250 manual, i
+>>> can see that UTMI+ and PIPE3
+>>> phys have separate bit settings. So i think we should be able to
+>>> segregate the two PHYs (UTMI+ and PIPE3).
+>>> Pardon me for my earlier observations.
+>>
+>> no problem..
+>>> Let me clarify more with our h/w team also on this and then i will
+>>> confirm with this.
 >
+> Did you get more information on this?
 
-As Tomasz Figa suggested I introduced quirks,
+Yes, i have been in contact with our hardware team.
+The functionality of setting up UTMI+ and PIPE3 phys separately, and
+thereby using only one functionality of the two
+at some point of time (either high speed or super speed) hasn't been
+tested so far.
+So i will be looking into this and try to find out proper init
+sequences for the two available PHYs
+separately and as soon as i get a working solution for this, i will update.
 
-Tomasz,
-Any comments from you here...??
+>
+> Thanks
+> Kishon
 
 
-Best wishes,
-Leela Krishna
 
-
-> Guenter
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
