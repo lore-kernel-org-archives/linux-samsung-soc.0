@@ -1,67 +1,79 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH] serial: samsung: move clock deactivation below uart registration
-Date: Thu, 5 Dec 2013 00:54:38 +0100
-Message-ID: <201312050054.39327.heiko@sntech.de>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH] watchdog: s3c2410_wdt: Report when the watchdog reset the system
+Date: Thu, 5 Dec 2013 13:27:13 +0530
+Message-ID: <CAL1wa8cQcvRzXgaEP3kzkvzogqyeM2eJt_oRZfu6NbWxfP3zAg@mail.gmail.com>
+References: <1386008082-28740-1-git-send-email-dianders@chromium.org>
+ <20131202202120.GA23611@roeck-us.net> <CAOesGMi-P6LG1-XKVizUS_qX-gfZi_iXBO5r+=6a2nfvBS60mw@mail.gmail.com>
+ <20131202213654.GA4059@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:45256 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754216Ab3LDXyp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Dec 2013 18:54:45 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20131202213654.GA4059@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Wim Van Sebroeck <wim@iguana.be>, Leela Krishna Amudala <l.krishna@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
 
-Commit 60e93575476f (serial: samsung: enable clock before clearing pending
-interrupts during init) added handling of the controller clock during init.
+Hi Guenter Roeck,
 
-On most systems this clock is also one of the baud_clock sources and
-possibly used by the earlycon and thus already enabled by the bootloader.
+On Tue, Dec 3, 2013 at 3:06 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Mon, Dec 02, 2013 at 12:47:53PM -0800, Olof Johansson wrote:
+> > On Mon, Dec 2, 2013 at 12:21 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> > > On Mon, Dec 02, 2013 at 10:14:41AM -0800, Doug Anderson wrote:
+> > >> A good watchdog driver is supposed to report when it was responsible
+> > >> for resetting the system.  Implement this for the s3c2410, at least on
+> > >> exynos5250 and exynos5420 where we already have a pointer to the PMU
+> > >> registers to read the information.
+> > >>
+> > >> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> > >> ---
+> > >> This patch is based atop Leela Krishna's recent series that ends with
+> > >> (ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420)
+> > >> AKA <https://patchwork.kernel.org/patch/3251861/>.
+> > >>
+> > >>  drivers/watchdog/s3c2410_wdt.c | 42 +++++++++++++++++++++++++++++++++++++++---
+> > >>  1 file changed, 39 insertions(+), 3 deletions(-)
+> > >>
+> > >> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+> > >> index 47f4dcf..2c87d37 100644
+> > >> --- a/drivers/watchdog/s3c2410_wdt.c
+> > >> +++ b/drivers/watchdog/s3c2410_wdt.c
+> > >> @@ -62,9 +62,13 @@
+> > >>  #define CONFIG_S3C2410_WATCHDOG_ATBOOT               (0)
+> > >>  #define CONFIG_S3C2410_WATCHDOG_DEFAULT_TIME (15)
+> > >>
+> > >> +#define RST_STAT_REG_OFFSET          0x0404
+> > >>  #define WDT_DISABLE_REG_OFFSET               0x0408
+> > >>  #define WDT_MASK_RESET_REG_OFFSET    0x040c
+> > >>  #define QUIRK_NEEDS_PMU_CONFIG               (1 << 0)
+> > >> +#define QUIRK_HAS_RST_STAT           (1 << 1)
+> > >> +#define QUIRKS_NEED_PMUREG           (QUIRK_NEEDS_PMU_CONFIG | \
+> > >> +                                      QUIRK_HAS_RST_STAT)
+> > >>
+> > > I am not really happy about the NEED (both of them, really) here.
+> > > How about HAS instead ?
+> >
+> > Ah, I just commented on these things on our internal review site too
+> > on this patch. I don't even think a quirk is needed -- just use the
+> > presence of a non-0 rst_stat_reg to tell if you need to use regmap.
+> >
+> Agreed; same is true for the QUIRK_NEEDS_PMU_CONFIG related registers
+> as well.
+>
 
-Therefore a gap exists between s3c24xx_serial_init_port disabling the
-clock and an attached console reenabling it, making the transition from
-earlycon to regular console possibly hang the system - as seen on my
-S3C2442 based Freerunner today.
+As Tomasz Figa suggested I introduced quirks,
 
-Therefore move the disabling of the clock from s3c24xx_serial_init_port
-below the uart port registration, effectively creating an overlap and
-keeping the clock running non-stop if the console wants to grab this port.
+Tomasz,
+Any comments from you here...??
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/tty/serial/samsung.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index c1af04d..9cd706d 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1209,7 +1209,6 @@ static int s3c24xx_serial_init_port(struct s3c24xx_uart_port *ourport,
- 
- 	/* reset the fifos (and setup the uart) */
- 	s3c24xx_serial_resetport(port, cfg);
--	clk_disable_unprepare(ourport->clk);
- 	return 0;
- }
- 
-@@ -1287,6 +1286,13 @@ static int s3c24xx_serial_probe(struct platform_device *pdev)
- 	uart_add_one_port(&s3c24xx_uart_drv, &ourport->port);
- 	platform_set_drvdata(pdev, &ourport->port);
- 
-+	/*
-+	 * Deactivate the clock enabled in s3c24xx_serial_init_port here,
-+	 * so that a potential re-enablement through the pm-callback overlaps
-+	 * and keeps the clock enabled in this case.
-+	 */
-+	clk_disable_unprepare(ourport->clk);
-+
- #ifdef CONFIG_SAMSUNG_CLOCK
- 	ret = device_create_file(&pdev->dev, &dev_attr_clock_source);
- 	if (ret < 0)
--- 
-1.7.10.4
+Best wishes,
+Leela Krishna
+
+
+> Guenter
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
