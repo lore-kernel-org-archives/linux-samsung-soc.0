@@ -1,84 +1,51 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH 2/9] phy: core: Add devm_of_phy_get to phy-core
-Date: Thu, 05 Dec 2013 13:29:32 +0100
-Message-ID: <1386246579-25141-3-git-send-email-k.debski@samsung.com>
-References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] ASoC: samsung: Ensure DMA data is initialised for secondary DAI
+Date: Thu,  5 Dec 2013 14:13:57 +0000
+Message-ID: <1386252837-17321-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:65450 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756647Ab3LEMaI (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:47066 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751429Ab3LEOOL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Dec 2013 07:30:08 -0500
-In-reply-to: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
+	Thu, 5 Dec 2013 09:14:11 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, Kamil Debski <k.debski@samsung.com>
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>, stable@vger.kernel.org
 
-Adding devm_of_phy_get will allow to get phys by supplying the
-device_node instead of by name.
+From: Mark Brown <broonie@linaro.org>
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+While testing the upcoming dmaengine conversion for the driver Padma
+noticed that the DMA data for the secondard DAI is not being correctly
+initialised and provided a fix on top of the conversion.  Also do this
+fix for mainline.
+
+Reported-by: Padmavathi Venna <padma.v@samsung.com>
+Signed-off-by: Mark Brown <broonie@linaro.org>
+Cc: stable@vger.kernel.org
 ---
- drivers/phy/phy-core.c  |   31 +++++++++++++++++++++++++++++++
- include/linux/phy/phy.h |    2 ++
- 2 files changed, 33 insertions(+)
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index 7fb3474..b39b48c 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -421,6 +421,37 @@ struct phy *devm_phy_get(struct device *dev, const char *string)
- EXPORT_SYMBOL_GPL(devm_phy_get);
+Compile tested only, I don't have hardware to test.
+
+ sound/soc/samsung/i2s.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index a5cbdb4f1655..f9f2227421ea 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -946,8 +946,11 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 	struct i2s_dai *i2s = to_info(dai);
+ 	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
  
- /**
-+ * devm_of_phy_get() - lookup and obtain a reference to a phy.
-+ * @dev: device that requests this phy
-+ * @np: node containing the phy
-+ * @index: the index of the phy
-+ *
-+ * Gets the phy using phy_get(), and associates a device with it using
-+ * devres. On driver detach, release function is invoked on the devres data,
-+ * then, devres data is freed.
-+ */
-+struct phy *devm_of_phy_get(struct device *dev, struct device_node *np, int
-+									index)
-+{
-+	struct phy **ptr, *phy;
-+
-+	ptr = devres_alloc(devm_phy_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	phy = of_phy_get(np, index);
-+	if (!IS_ERR(phy)) {
-+		*ptr = phy;
-+		devres_add(dev, ptr);
-+	} else {
-+		devres_free(ptr);
+-	if (other && other->clk) /* If this is probe on secondary */
++	if (other && other->clk) { /* If this is probe on secondary */
++		snd_soc_dai_init_dma_data(dai, &other->sec_dai->dma_playback,
++					  NULL);
+ 		goto probe_exit;
 +	}
-+
-+	return phy;
-+}
-+EXPORT_SYMBOL_GPL(devm_of_phy_get);
-+
-+/**
-  * phy_create() - create a new phy
-  * @dev: device that is creating the new phy
-  * @ops: function pointers for performing phy operations
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 169f572..f143ee8 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -129,6 +129,8 @@ int phy_power_on(struct phy *phy);
- int phy_power_off(struct phy *phy);
- struct phy *phy_get(struct device *dev, const char *string);
- struct phy *devm_phy_get(struct device *dev, const char *string);
-+struct phy *devm_of_phy_get(struct device *dev, struct device_node *np, int
-+									index);
- void phy_put(struct phy *phy);
- void devm_phy_put(struct device *dev, struct phy *phy);
- struct phy *of_phy_get(struct device_node *np, int index);
+ 
+ 	i2s->addr = ioremap(i2s->base, 0x100);
+ 	if (i2s->addr == NULL) {
 -- 
-1.7.9.5
+1.8.5.1
