@@ -1,450 +1,322 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH 3/3] cpufreq: exynos: Add exynos5420 cpufreq driver
-Date: Fri,  6 Dec 2013 15:18:04 +0530
-Message-ID: <1386323284-15646-4-git-send-email-arun.kk@samsung.com>
-References: <1386323284-15646-1-git-send-email-arun.kk@samsung.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: [PATCH v4 6/9] phy: Add support for S5PV210 to the Exynos USB PHY
+ driver
+Date: Fri, 06 Dec 2013 11:31:37 +0100
+Message-ID: <1386325897-27260-1-git-send-email-k.debski@samsung.com>
+References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f49.google.com ([209.85.160.49]:53972 "EHLO
-	mail-pb0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754029Ab3LFJtQ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:54281 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754481Ab3LFKcA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Dec 2013 04:49:16 -0500
-In-Reply-To: <1386323284-15646-1-git-send-email-arun.kk@samsung.com>
+	Fri, 6 Dec 2013 05:32:00 -0500
+In-reply-to: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cpufreq@vger.kernel.org
-Cc: mturquette@linaro.org, kgene.kim@samsung.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, tomasz.figa@gmail.com, arjun.kv@samsung.com, abrestic@chromium.org, arunkk.samsung@gmail.com
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org, matt.porter@linaro.org, k.debski@samsung.com
 
-From: "Arjun.K.V" <arjun.kv@samsung.com>
+From: Mateusz Krawczuk <mat.krawczuk@gmail.com>
 
-The patch adds cpufreq driver for exynos5420.
+Add support for the Samsung's S5PV210 SoC to the Exynos USB PHY driver.
 
-Signed-off-by: Arjun.K.V <arjun.kv@samsung.com>
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+Signed-off-by: Mateusz Krawczuk <m.krawczuk@partner.samsung.com>
+[k.debski@samsung.com: cleanup and commit description]
+[k.debski@samsung.com: make changes accordingly to the mailing list
+comments]
+Signed-off-by: Kamil Debski <k.debski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/cpufreq/Kconfig.arm          |   11 ++
- drivers/cpufreq/Makefile             |    1 +
- drivers/cpufreq/exynos-cpufreq.c     |    2 +
- drivers/cpufreq/exynos-cpufreq.h     |    8 +
- drivers/cpufreq/exynos5420-cpufreq.c |  346 ++++++++++++++++++++++++++++++++++
- 5 files changed, 368 insertions(+)
- create mode 100644 drivers/cpufreq/exynos5420-cpufreq.c
+ .../devicetree/bindings/phy/samsung-usbphy.txt     |    1 +
+ drivers/phy/Kconfig                                |    7 +
+ drivers/phy/Makefile                               |    1 +
+ drivers/phy/phy-s5pv210-usb2.c                     |  206 ++++++++++++++++++++
+ drivers/phy/phy-samsung-usb2.c                     |    6 +
+ drivers/phy/phy-samsung-usb2.h                     |    1 +
+ 6 files changed, 222 insertions(+)
+ create mode 100644 drivers/phy/phy-s5pv210-usb2.c
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index ce52ed9..96769fe 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -51,6 +51,17 @@ config ARM_EXYNOS5250_CPUFREQ
+diff --git a/Documentation/devicetree/bindings/phy/samsung-usbphy.txt b/Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+index cadbf70..77a8e9c 100644
+--- a/Documentation/devicetree/bindings/phy/samsung-usbphy.txt
++++ b/Documentation/devicetree/bindings/phy/samsung-usbphy.txt
+@@ -3,6 +3,7 @@ Samsung S5P/EXYNOS SoC series USB PHY
  
- 	  If in doubt, say N.
+ Required properties:
+ - compatible : should be one of the listed compatibles:
++	- "samsung,s5pv210-usb2-phy"
+ 	- "samsung,exynos4210-usb2-phy"
+ 	- "samsung,exynos4212-usb2-phy"
+ - reg : a list of registers used by phy driver
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index b29018f..2e433cd 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -58,6 +58,13 @@ config PHY_SAMSUNG_USB2
+ 	  This driver provides common interface to interact, for Samsung
+ 	  USB 2.0 PHY driver.
  
-+config ARM_EXYNOS5420_CPUFREQ
-+	bool "SAMSUNG EXYNOS5420"
-+	depends on SOC_EXYNOS5420
-+	default y
-+	select ARM_EXYNOS_CPUFREQ
++config PHY_S5PV210_USB2
++	bool "Support for S5PV210"
++	depends on PHY_SAMSUNG_USB2
++	depends on ARCH_S5PV210
 +	help
-+	  This adds the CPUFreq driver for Samsung EXYNOS5420
-+	  SoC.
++	  Enable USB PHY support for S5PV210
 +
-+	  If in doubt, say N.
-+
- config ARM_EXYNOS5440_CPUFREQ
- 	bool "SAMSUNG EXYNOS5440"
- 	depends on SOC_EXYNOS5440
-diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index 7494565..802c251 100644
---- a/drivers/cpufreq/Makefile
-+++ b/drivers/cpufreq/Makefile
-@@ -53,6 +53,7 @@ obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)	+= exynos-cpufreq.o
- obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)	+= exynos4210-cpufreq.o
- obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)	+= exynos4x12-cpufreq.o
- obj-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)	+= exynos5250-cpufreq.o
-+obj-$(CONFIG_ARM_EXYNOS5420_CPUFREQ)	+= exynos5420-cpufreq.o
- obj-$(CONFIG_ARM_EXYNOS5440_CPUFREQ)	+= exynos5440-cpufreq.o
- obj-$(CONFIG_ARM_HIGHBANK_CPUFREQ)	+= highbank-cpufreq.o
- obj-$(CONFIG_ARM_IMX6Q_CPUFREQ)		+= imx6q-cpufreq.o
-diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-index f3c2287..ac556eb 100644
---- a/drivers/cpufreq/exynos-cpufreq.c
-+++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -246,6 +246,8 @@ static int __init exynos_cpufreq_init(void)
- 		ret = exynos4x12_cpufreq_init(exynos_info);
- 	else if (soc_is_exynos5250())
- 		ret = exynos5250_cpufreq_init(exynos_info);
-+	else if (soc_is_exynos5420())
-+		ret = exynos5420_cpufreq_init(exynos_info);
- 	else
- 		return 0;
- 
-diff --git a/drivers/cpufreq/exynos-cpufreq.h b/drivers/cpufreq/exynos-cpufreq.h
-index 7f25cee..d2f3d1e 100644
---- a/drivers/cpufreq/exynos-cpufreq.h
-+++ b/drivers/cpufreq/exynos-cpufreq.h
-@@ -67,3 +67,11 @@ static inline int exynos5250_cpufreq_init(struct exynos_dvfs_info *info)
- 	return -EOPNOTSUPP;
- }
- #endif
-+#ifdef CONFIG_ARM_EXYNOS5420_CPUFREQ
-+extern int exynos5420_cpufreq_init(struct exynos_dvfs_info *);
-+#else
-+static inline int exynos5420_cpufreq_init(struct exynos_dvfs_info *info)
-+{
-+	return -EOPNOTSUPP;
-+}
-+#endif
-diff --git a/drivers/cpufreq/exynos5420-cpufreq.c b/drivers/cpufreq/exynos5420-cpufreq.c
+ config PHY_EXYNOS4210_USB2
+ 	bool "Support for Exynos 4210"
+ 	depends on PHY_SAMSUNG_USB2
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index 9f4befd..fefc6c2 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -8,5 +8,6 @@ obj-$(CONFIG_PHY_EXYNOS_MIPI_VIDEO)	+= phy-exynos-mipi-video.o
+ obj-$(CONFIG_OMAP_USB2)			+= phy-omap-usb2.o
+ obj-$(CONFIG_TWL4030_USB)		+= phy-twl4030-usb.o
+ obj-$(CONFIG_PHY_SAMSUNG_USB2)		+= phy-samsung-usb2.o
++obj-$(CONFIG_PHY_S5PV210_USB2)		+= phy-s5pv210-usb2.o
+ obj-$(CONFIG_PHY_EXYNOS4210_USB2)	+= phy-exynos4210-usb2.o
+ obj-$(CONFIG_PHY_EXYNOS4212_USB2)	+= phy-exynos4212-usb2.o
+diff --git a/drivers/phy/phy-s5pv210-usb2.c b/drivers/phy/phy-s5pv210-usb2.c
 new file mode 100644
-index 0000000..728ce71
+index 0000000..528a114
 --- /dev/null
-+++ b/drivers/cpufreq/exynos5420-cpufreq.c
-@@ -0,0 +1,346 @@
++++ b/drivers/phy/phy-s5pv210-usb2.c
+@@ -0,0 +1,206 @@
 +/*
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
++ * Samsung SoC USB 1.1/2.0 PHY driver - S5PV210 support
 + *
-+ * EXYNOS5420 - CPU frequency scaling support
++ * Copyright (C) 2013 Samsung Electronics Co., Ltd.
++ * Authors: Kamil Debski <k.debski@samsung.com>
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
-+*/
-+#include <linux/kernel.h>
-+#include <linux/err.h>
++ */
++
 +#include <linux/clk.h>
++#include <linux/delay.h>
 +#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <linux/cpufreq.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++#include <linux/spinlock.h>
++#include "phy-samsung-usb2.h"
 +
-+#include <mach/map.h>
-+#include <mach/regs-clock.h>
++/* Exynos USB PHY registers */
 +
-+#include "exynos-cpufreq.h"
++/* PHY power control */
++#define S5PV210_UPHYPWR			0x0
 +
-+#define CPUFREQ_NUM_LEVELS	(L18 + 1)
-+#define EXYNOS5_CLKDIV_STATCPU0_MASK	0x11111111
-+#define EXYNOS5_CLKDIV_STATCPU1_MASK	0x111
++#define S5PV210_UPHYPWR_PHY0_SUSPEND	(1 << 0)
++#define S5PV210_UPHYPWR_PHY0_PWR		(1 << 3)
++#define S5PV210_UPHYPWR_PHY0_OTG_PWR	(1 << 4)
++#define S5PV210_UPHYPWR_PHY0	( \
++	S5PV210_UPHYPWR_PHY0_SUSPEND | \
++	S5PV210_UPHYPWR_PHY0_PWR | \
++	S5PV210_UPHYPWR_PHY0_OTG_PWR)
 +
-+static struct clk *mout_cpu;
-+static struct clk *mout_mspll_cpu;
-+static struct clk *mout_apll;
-+static struct clk *fout_apll;
-+static struct clk *fout_spll;
++#define S5PV210_UPHYPWR_PHY1_SUSPEND	(1 << 6)
++#define S5PV210_UPHYPWR_PHY1_PWR		(1 << 7)
++#define S5PV210_UPHYPWR_PHY1 ( \
++	S5PV210_UPHYPWR_PHY1_SUSPEND | \
++	S5PV210_UPHYPWR_PHY1_PWR)
 +
-+struct cpufreq_clkdiv {
-+	unsigned int	index;
-+	unsigned int	clkdiv;
-+	unsigned int	clkdiv1;
-+};
++/* PHY clock control */
++#define S5PV210_UPHYCLK			0x4
 +
-+static unsigned int exynos5420_volt_table[CPUFREQ_NUM_LEVELS];
-+static struct cpufreq_frequency_table exynos5420_freq_table[] = {
-+	{L0,  2000 * 1000},
-+	{L1,  1900 * 1000},
-+	{L2,  1800 * 1000},
-+	{L3,  1700 * 1000},
-+	{L4,  1600 * 1000},
-+	{L5,  1500 * 1000},
-+	{L6,  1400 * 1000},
-+	{L7,  1300 * 1000},
-+	{L8,  1200 * 1000},
-+	{L9,  1100 * 1000},
-+	{L10, 1000 * 1000},
-+	{L11,  900 * 1000},
-+	{L12,  800 * 1000},
-+	{L13,  700 * 1000},
-+	{L14,  600 * 1000},
-+	{L15,  500 * 1000},
-+	{L16,  400 * 1000},
-+	{L17,  300 * 1000},
-+	{L18,  200 * 1000},
-+	{0, CPUFREQ_TABLE_END},
-+};
++#define S5PV210_UPHYCLK_PHYFSEL_MASK	(0x3 << 0)
++#define S5PV210_UPHYCLK_PHYFSEL_48MHZ	(0x0 << 0)
++#define S5PV210_UPHYCLK_PHYFSEL_24MHZ	(0x3 << 0)
++#define S5PV210_UPHYCLK_PHYFSEL_12MHZ	(0x2 << 0)
 +
-+static struct cpufreq_clkdiv exynos5420_clkdiv_table[CPUFREQ_NUM_LEVELS];
++#define S5PV210_UPHYCLK_PHY0_ID_PULLUP	(0x1 << 2)
++#define S5PV210_UPHYCLK_PHY0_COMMON_ON	(0x1 << 4)
++#define S5PV210_UPHYCLK_PHY1_COMMON_ON	(0x1 << 7)
 +
-+static unsigned int clkdiv_cpu0_5420[CPUFREQ_NUM_LEVELS][7] = {
-+	/*
-+	 *  Clock divider values for {CPUD, ATB, PCLK_DBG, APLL, ARM2}
-+	 */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L0: 2.0GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L1: 1.9GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L2: 1.8GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L3: 1.7GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L4: 1.6GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L5: 1.5GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L6: 1.4GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L7: 1.3GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L8: 1.2GHz */
-+	{ 2, 7, 7, 3, 0 }, /* ARM L9: 1.1GHz */
-+	{ 2, 6, 6, 3, 0 }, /* ARM L10: 1GHz */
-+	{ 2, 6, 6, 3, 0 }, /* ARM L11: 900MHz */
-+	{ 2, 5, 5, 3, 0 }, /* ARM L12: 800MHz */
-+	{ 2, 5, 5, 3, 0 }, /* ARM L13: 700MHz */
-+	{ 2, 4, 4, 3, 0 }, /* ARM L14: 600MHz */
-+	{ 2, 3, 3, 3, 0 }, /* ARM L15: 500MHz */
-+	{ 2, 3, 3, 3, 0 }, /* ARM L16: 400MHz */
-+	{ 2, 3, 3, 3, 0 }, /* ARM L17: 300MHz */
-+	{ 2, 3, 3, 3, 0 }, /* ARM L18: 200MHz */
-+};
++/* PHY reset control */
++#define S5PV210_UPHYRST			0x8
 +
-+unsigned int clkdiv_cpu1_5420[CPUFREQ_NUM_LEVELS][2] = {
-+	/* Clock divider values for { copy, HPM } */
-+	{ 7, 7 }, /* ARM L0: 2.0GHz */
-+	{ 7, 7 }, /* ARM L1: 1.9GHz */
-+	{ 7, 7 }, /* ARM L2: 1.8GHz */
-+	{ 7, 7 }, /* ARM L3: 1.7GHz */
-+	{ 7, 7 }, /* ARM L4: 1.6GHz */
-+	{ 7, 7 }, /* ARM L5: 1.5GHz */
-+	{ 7, 7 }, /* ARM L6: 1.4GHz */
-+	{ 7, 7 }, /* ARM L7: 1.3GHz */
-+	{ 7, 7 }, /* ARM L8: 1.2GHz */
-+	{ 7, 7 }, /* ARM L9: 1.1GHz */
-+	{ 7, 7 }, /* ARM L10: 1GHz */
-+	{ 7, 7 }, /* ARM L11: 900MHz */
-+	{ 7, 7 }, /* ARM L12: 800MHz */
-+	{ 7, 7 }, /* ARM L13: 700MHz */
-+	{ 7, 7 }, /* ARM L14: 600MHz */
-+	{ 7, 7 }, /* ARM L15: 500MHz */
-+	{ 7, 7 }, /* ARM L16: 400MHz */
-+	{ 7, 7 }, /* ARM L17: 300MHz */
-+	{ 7, 7 }, /* ARM L18: 200MHz */
++#define S5PV210_URSTCON_PHY0		(1 << 0)
++#define S5PV210_URSTCON_OTG_HLINK		(1 << 1)
++#define S5PV210_URSTCON_OTG_PHYLINK		(1 << 2)
++#define S5PV210_URSTCON_PHY1_ALL		(1 << 3)
++#define S5PV210_URSTCON_HOST_LINK_ALL	(1 << 4)
++
++/* Isolation, configured in the power management unit */
++#define S5PV210_USB_ISOL_DEVICE_OFFSET	0x704
++#define S5PV210_USB_ISOL_DEVICE		(1 << 0)
++#define S5PV210_USB_ISOL_HOST_OFFSET	0x708
++#define S5PV210_USB_ISOL_HOST		(1 << 1)
++
++
++enum s5pv210_phy_id {
++	S5PV210_DEVICE,
++	S5PV210_HOST,
++	S5PV210_NUM_PHYS,
 +};
 +
 +/*
-+ * Default ASV table
++ * s5pv210_rate_to_clk() converts the supplied clock rate to the value that
++ * can be written to the phy register.
 + */
-+static const unsigned int asv_voltage_5420[CPUFREQ_NUM_LEVELS] = {
-+	1300000,	/* L0  2000 */
-+	1300000,	/* L1  1900 */
-+	1200000,	/* L2  1800 */
-+	1200000,	/* L3  1700 */
-+	1200000,	/* L4  1600 */
-+	1175000,	/* L5  1500 */
-+	1150000,	/* L6  1400 */
-+	1125000,	/* L7  1300 */
-+	1100000,	/* L8  1200 */
-+	1075000,	/* L9  1100 */
-+	1050000,	/* L10 1000 */
-+	1000000,	/* L11  900 */
-+	 950000,	/* L12  800 */
-+	 925000,	/* L13  700 */
-+	 900000,	/* L14  600 */
-+	 900000,	/* L15  500 */
-+	 900000,	/* L16  400 */
-+	 900000,	/* L17  300 */
-+	 900000,	/* L18  200 */
-+};
-+
-+static void exynos5420_set_clkdiv(unsigned int div_index)
++static int s5pv210_rate_to_clk(unsigned long rate, u32 *reg)
 +{
-+	unsigned int tmp;
-+
-+	/* Change Divider - CPU0 for CMU_CPU */
-+	tmp = exynos5420_clkdiv_table[div_index].clkdiv;
-+	__raw_writel(tmp, EXYNOS5_CLKDIV_CPU0);
-+
-+	do {
-+		cpu_relax();
-+		tmp = __raw_readl(EXYNOS5_CLKDIV_STATCPU0);
-+	} while (tmp & EXYNOS5_CLKDIV_STATCPU0_MASK);
-+	pr_debug("DIV_CPU0[0x%x]\n", __raw_readl(EXYNOS5_CLKDIV_CPU0));
-+
-+	/* Change Divider - CPU1 for CMU_CPU */
-+	tmp = exynos5420_clkdiv_table[div_index].clkdiv1;
-+	__raw_writel(tmp, EXYNOS5_CLKDIV_CPU1);
-+
-+	do {
-+		cpu_relax();
-+		tmp = __raw_readl(EXYNOS5_CLKDIV_STATCPU1);
-+	} while (tmp & EXYNOS5_CLKDIV_STATCPU1_MASK);
-+	pr_debug("DIV_CPU1[0x%x]\n", __raw_readl(EXYNOS5_CLKDIV_CPU1));
-+}
-+
-+static void exynos5420_set_apll(unsigned int new_index,
-+				unsigned int old_index)
-+{
-+	unsigned int tmp;
-+	unsigned long rate;
-+
-+	clk_prepare_enable(fout_spll);
-+	/* 1. MUX_CORE_SEL = MOUT_MSPLL; ARMCLK uses MOUT_MSPLL for lock time */
-+	if (clk_set_parent(mout_cpu, mout_mspll_cpu))
-+		pr_err(KERN_ERR "Unable to set parent of clock mout_cpu\n");
-+
-+	do {
-+		cpu_relax();
-+		tmp = __raw_readl(EXYNOS5_CLKMUX_STATCPU);
-+		tmp &= EXYNOS5_CLKMUX_STATCPU_MUXCORE_MASK;
-+	} while (tmp != (0x2 << EXYNOS5_CLKSRC_CPU_MUXCORE_SHIFT));
-+
-+	/* 2. Set APLL rate */
-+	rate = exynos5420_freq_table[new_index].frequency * 1000;
-+	if (clk_set_rate(fout_apll, rate))
-+		pr_err("Unable to change apll rate to %lu\n", rate);
-+
-+	/* 3. MUX_CORE_SEL = APLL */
-+	if (clk_set_parent(mout_cpu, mout_apll))
-+		pr_err("Unable to set parent of clock mout_cpu\n");
-+
-+	do {
-+		cpu_relax();
-+		tmp = __raw_readl(EXYNOS5_CLKMUX_STATCPU);
-+		tmp &= EXYNOS5_CLKMUX_STATCPU_MUXCORE_MASK;
-+	} while (tmp != (0x1 << EXYNOS5_CLKSRC_CPU_MUXCORE_SHIFT));
-+
-+	clk_disable_unprepare(fout_spll);
-+}
-+
-+static bool exynos5420_pms_change(unsigned int old_index,
-+				  unsigned int new_index)
-+{
-+	/*
-+	 * The Exynos cpufreq driver uses this to determine if it can
-+	 * avoid changing the CPU voltage and re-parenting the CPU clock
-+	 * while chaning the PLL rate.  Because we're using CCF to change
-+	 * the PLL rate, we no longer have access to the PLL divider table,
-+	 * so we can't tell whether or not we can take the fast path from
-+	 * here and must always take the slow path.  Since this only affects
-+	 * a few transitions, there should hopefully be no impact on
-+	 * performance.
-+	 */
-+	return (old_index != new_index);
-+}
-+static void exynos5420_set_frequency(unsigned int old_index,
-+				     unsigned int new_index)
-+{
-+	if (old_index > new_index) {
-+		/* 1. Change the system clock divider values */
-+		exynos5420_set_clkdiv(new_index);
-+		/* 2. Change the apll rate */
-+		exynos5420_set_apll(new_index, old_index);
-+	} else if (old_index < new_index) {
-+		/* 1. Change the apll rate */
-+		exynos5420_set_apll(new_index, old_index);
-+		/* 2. Change the system clock divider values */
-+		exynos5420_set_clkdiv(new_index);
++	pr_info("%lu\n", rate);
++	switch (rate) {
++	case 12 * MHZ:
++		*reg = S5PV210_UPHYCLK_PHYFSEL_12MHZ;
++		break;
++	case 24 * MHZ:
++		*reg = S5PV210_UPHYCLK_PHYFSEL_24MHZ;
++		break;
++	case 48 * MHZ:
++		*reg = S5PV210_UPHYCLK_PHYFSEL_48MHZ;
++		break;
++	default:
++		return -EINVAL;
 +	}
 +}
 +
-+static void __init set_volt_table(void)
++static void s5pv210_isol(struct samsung_usb2_phy_instance *inst, bool on)
 +{
-+	unsigned int i;
-+	unsigned int asv_volt = 0;
++	struct samsung_usb2_phy_driver *drv = inst->drv;
++	u32 mask;
++	u32 tmp;
 +
-+	for (i = 0; i < CPUFREQ_NUM_LEVELS; i++) {
-+#ifdef CONFIG_ARM_EXYNOS5420_ASV
-+		asv_volt = get_match_volt
-+			(ID_ARM, exynos5420_freq_table[i].frequency);
-+#endif
-+		if (!asv_volt)
-+			exynos5420_volt_table[i] = asv_voltage_5420[i];
-+		else
-+			exynos5420_volt_table[i] = asv_volt;
-+		pr_debug("CPUFREQ of CA15 L%d : %d uV\n", i,
-+				exynos5420_volt_table[i]);
-+	}
-+	for (i = L0; i < L2; i++)
-+		exynos5420_freq_table[i].frequency = CPUFREQ_ENTRY_INVALID;
-+	for (i = L14; i <= L18; i++)
-+		exynos5420_freq_table[i].frequency = CPUFREQ_ENTRY_INVALID;
++	if (!drv->reg_isol)
++		return;
++
++	switch (inst->cfg->id) {
++	case S5PV210_DEVICE:
++		mask = S5PV210_USB_ISOL_DEVICE;
++		break;
++	case S5PV210_HOST:
++		mask = S5PV210_USB_ISOL_HOST;
++		break;
++	default:
++		return;
++	};
++
++	regmap_update_bits(drv->reg_pmu, offset, mask, on ? 0 : mask);
 +}
 +
-+int exynos5420_cpufreq_init(struct exynos_dvfs_info *info)
++static void s5pv210_phy_pwr(struct samsung_usb2_phy_instance *inst, bool on)
 +{
-+	int i;
-+	unsigned int tmp;
-+	unsigned long rate;
-+	struct clk *sclk_spll;
++	struct samsung_usb2_phy_driver *drv = inst->drv;
++	u32 rstbits = 0;
++	u32 phypwr = 0;
++	u32 rst;
++	u32 pwr;
 +
-+	set_volt_table();
++	switch (inst->cfg->id) {
++	case S5PV210_DEVICE:
++		phypwr =	S5PV210_UPHYPWR_PHY0;
++		rstbits =	S5PV210_URSTCON_PHY0;
++		break;
++	case S5PV210_HOST:
++		phypwr =	S5PV210_UPHYPWR_PHY1;
++		rstbits =	S5PV210_URSTCON_PHY1_ALL |
++				S5PV210_URSTCON_HOST_LINK_ALL;
++		break;
++	};
 +
-+	mout_cpu = clk_get(NULL, "mout_cpu");
-+	if (IS_ERR(mout_cpu))
-+		return PTR_ERR(mout_cpu);
++	if (on) {
++		writel(inst->clk, drv->reg_phy + S5PV210_UPHYCLK);
 +
-+	mout_mspll_cpu = clk_get(NULL, "mout_mspll_cpu");
-+	if (IS_ERR(mout_mspll_cpu))
-+		goto err_mout_mspll_cpu;
++		pwr = readl(drv->reg_phy + S5PV210_UPHYPWR);
++		pwr &= ~phypwr;
++		writel(pwr, drv->reg_phy + S5PV210_UPHYPWR);
 +
-+	sclk_spll = clk_get(NULL, "mout_spll");
-+	if (IS_ERR(sclk_spll))
-+		goto err_sclk_spll;
-+	clk_set_parent(mout_mspll_cpu, sclk_spll);
-+	clk_put(sclk_spll);
-+
-+	fout_spll = clk_get(NULL, "fout_spll");
-+	if (IS_ERR(fout_spll))
-+		goto err_fout_spll;
-+
-+	rate = clk_get_rate(mout_mspll_cpu) / 1000;
-+
-+	mout_apll = clk_get(NULL, "mout_apll");
-+	if (IS_ERR(mout_apll))
-+		goto err_mout_apll;
-+
-+	fout_apll = clk_get(NULL, "fout_apll");
-+	if (IS_ERR(fout_apll))
-+		goto err_fout_apll;
-+
-+	for (i = L0; i < CPUFREQ_NUM_LEVELS; i++) {
-+		exynos5420_clkdiv_table[i].index = i;
-+
-+		tmp = __raw_readl(EXYNOS5_CLKDIV_CPU0);
-+		tmp &= ~(EXYNOS5_CLKDIV_CPU0_CPUD_MASK |
-+			EXYNOS5_CLKDIV_CPU0_ATB_MASK |
-+			EXYNOS5_CLKDIV_CPU0_PCLKDBG_MASK |
-+			EXYNOS5_CLKDIV_CPU0_APLL_MASK |
-+			EXYNOS5_CLKDIV_CPU0_CORE2_MASK);
-+		tmp |= ((clkdiv_cpu0_5420[i][0] <<
-+				EXYNOS5_CLKDIV_CPU0_CPUD_SHIFT) |
-+			(clkdiv_cpu0_5420[i][1] <<
-+				EXYNOS5_CLKDIV_CPU0_ATB_SHIFT) |
-+			(clkdiv_cpu0_5420[i][2] <<
-+				EXYNOS5_CLKDIV_CPU0_PCLKDBG_SHIFT) |
-+			(clkdiv_cpu0_5420[i][3] <<
-+				EXYNOS5_CLKDIV_CPU0_APLL_SHIFT) |
-+			(clkdiv_cpu0_5420[i][4] <<
-+				EXYNOS5_CLKDIV_CPU0_CORE2_SHIFT));
-+
-+		exynos5420_clkdiv_table[i].clkdiv = tmp;
-+
-+		tmp = __raw_readl(EXYNOS5_CLKDIV_CPU1);
-+		tmp &= ~(EXYNOS5_CLKDIV_CPU1_COPY_MASK |
-+			EXYNOS5_CLKDIV_CPU1_HPM_MASK);
-+		tmp |= ((clkdiv_cpu1_5420[i][0] <<
-+				EXYNOS5_CLKDIV_CPU1_COPY_SHIFT) |
-+			(clkdiv_cpu1_5420[i][1] <<
-+				EXYNOS5_CLKDIV_CPU1_HPM_SHIFT));
-+
-+		exynos5420_clkdiv_table[i].clkdiv1 = tmp;
++		rst = readl(drv->reg_phy + S5PV210_UPHYRST);
++		rst |= rstbits;
++		writel(rst, drv->reg_phy + S5PV210_UPHYRST);
++		udelay(10);
++		rst &= ~rstbits;
++		writel(rst, drv->reg_phy + S5PV210_UPHYRST);
++	} else {
++		pwr = readl(drv->reg_phy + S5PV210_UPHYPWR);
++		pwr |= phypwr;
++		writel(pwr, drv->reg_phy + S5PV210_UPHYPWR);
 +	}
++}
 +
-+	info->mpll_freq_khz = rate;
-+	info->pll_safe_idx = L12;
-+	info->cpu_clk = fout_apll;
-+	pr_debug("fout_apll[%lu]\n", clk_get_rate(fout_apll));
-+	info->volt_table = exynos5420_volt_table;
-+	info->freq_table = exynos5420_freq_table;
-+	info->set_freq = exynos5420_set_frequency;
-+	info->need_apll_change = exynos5420_pms_change;
++static int s5pv210_power_on(struct samsung_usb2_phy_instance *inst)
++{
++	struct samsung_usb2_phy_driver *drv = inst->drv;
++
++	s5pv210_isol(inst, 0);
++	s5pv210_phy_pwr(inst, 1);
 +
 +	return 0;
-+
-+err_fout_apll:
-+	clk_put(fout_apll);
-+err_mout_apll:
-+	clk_put(mout_apll);
-+err_fout_spll:
-+	clk_put(fout_spll);
-+err_sclk_spll:
-+	clk_put(sclk_spll);
-+err_mout_mspll_cpu:
-+	clk_put(mout_mspll_cpu);
-+
-+	pr_err("%s: failed initialization\n", __func__);
-+	return -EINVAL;
 +}
++
++static int s5pv210_power_off(struct samsung_usb2_phy_instance *inst)
++{
++	struct samsung_usb2_phy_driver *drv = inst->drv;
++
++	s5pv210_phy_pwr(inst, 0);
++	s5pv210_isol(inst, 1);
++
++	return 0;
++}
++
++
++static const struct samsung_usb2_common_phy s5pv210_phys[] = {
++	{
++		.label		= "device",
++		.id		= S5PV210_DEVICE,
++		.rate_to_clk	= s5pv210_rate_to_clk,
++		.power_on	= s5pv210_power_on,
++		.power_off	= s5pv210_power_off,
++	},
++	{
++		.label		= "host",
++		.id		= S5PV210_HOST,
++		.rate_to_clk	= s5pv210_rate_to_clk,
++		.power_on	= s5pv210_power_on,
++		.power_off	= s5pv210_power_off,
++	},
++	{},
++};
++
++const struct samsung_usb2_phy_config s5pv210_usb2_phy_config = {
++	.cpu		= TYPE_S5PV210,
++	.num_phys	= S5PV210_NUM_PHYS,
++	.phys		= s5pv210_phys,
++};
++
+diff --git a/drivers/phy/phy-samsung-usb2.c b/drivers/phy/phy-samsung-usb2.c
+index 804ec77..ef93fd3 100644
+--- a/drivers/phy/phy-samsung-usb2.c
++++ b/drivers/phy/phy-samsung-usb2.c
+@@ -98,6 +98,12 @@ static struct phy *samsung_usb2_phy_xlate(struct device *dev,
+ }
+ 
+ static const struct of_device_id samsung_usb2_phy_of_match[] = {
++#ifdef CONFIG_PHY_S5PV210_USB2
++	{
++		.compatible = "samsung,s5pv210-usb2-phy",
++		.data = &s5pv210_usb2_phy_config,
++	},
++#endif
+ #ifdef CONFIG_PHY_EXYNOS4210_USB2
+ 	{
+ 		.compatible = "samsung,exynos4210-usb2-phy",
+diff --git a/drivers/phy/phy-samsung-usb2.h b/drivers/phy/phy-samsung-usb2.h
+index cd12477..0f51dbb 100644
+--- a/drivers/phy/phy-samsung-usb2.h
++++ b/drivers/phy/phy-samsung-usb2.h
+@@ -66,6 +66,7 @@ struct samsung_usb2_phy_config {
+ 	char has_mode_switch;
+ };
+ 
++extern const struct samsung_usb2_phy_config s5pv210_usb2_phy_config;
+ extern const struct samsung_usb2_phy_config exynos4210_usb2_phy_config;
+ extern const struct samsung_usb2_phy_config exynos4212_usb2_phy_config;
+ #endif
 -- 
 1.7.9.5
