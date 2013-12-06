@@ -1,37 +1,44 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3] watchdog: s3c2410_wdt: Report when the watchdog reset
- the system
-Date: Fri, 6 Dec 2013 13:28:48 -0800
-Message-ID: <20131206212848.GA12283@roeck-us.net>
-References: <1386267329-9941-2-git-send-email-dianders@chromium.org>
- <1386364088-6220-1-git-send-email-dianders@chromium.org>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Fri, 6 Dec 2013 15:01:23 -0800
+Message-ID: <CAD=FV=VdcN8rswMABcCZhkhgPjcpngGr+GRS2rsxFaRHwrTuwQ@mail.gmail.com>
+References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
+	<1386308868-30264-2-git-send-email-l.krishna@samsung.com>
+	<20131206194709.GA14464@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:37098 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754075Ab3LFV2x (ORCPT
+Received: from mail-ve0-f171.google.com ([209.85.128.171]:44805 "EHLO
+	mail-ve0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752227Ab3LFXBY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Dec 2013 16:28:53 -0500
-Content-Disposition: inline
-In-Reply-To: <1386364088-6220-1-git-send-email-dianders@chromium.org>
+	Fri, 6 Dec 2013 18:01:24 -0500
+Received: by mail-ve0-f171.google.com with SMTP id pa12so1518495veb.2
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2013 15:01:23 -0800 (PST)
+In-Reply-To: <20131206194709.GA14464@roeck-us.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Wim Van Sebroeck <wim@iguana.be>, Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>
 
-On Fri, Dec 06, 2013 at 01:08:07PM -0800, Doug Anderson wrote:
-> A good watchdog driver is supposed to report when it was responsible
-> for resetting the system.  Implement this for the s3c2410, at least on
-> exynos5250 and exynos5420 where we already have a pointer to the PMU
-> registers to read the information.
-> 
-> Note that exynos4 SoCs also provide the reset status, but providing
-> that is left as an exercise for future changes and is not plumbed up
-> in this patch series.  Also note the exynos4 SoCs don't appear to need
-> any PMU config, which is why this patch separates the concepts of
-> having PMU Registers vs. needing PMU Config.
-> 
-> Signed-off-by: Doug Anderson <dianders@chromium.org>
+Guenter,
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On Fri, Dec 6, 2013 at 11:47 AM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On Fri, Dec 06, 2013 at 11:17:46AM +0530, Leela Krishna Amudala wrote:
+>> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
+>> handle PMU register accesses in a centralized way using syscon driver
+>>
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+>> Reviewed-by: Doug Anderson <dianders@chromium.org>
+>> Tested-by: Doug Anderson <dianders@chromium.org>
+>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+
+I'm curious of your opinion of Sylwester's requests, since your Ack
+came in after his requests.  Would you like to see a respin of this,
+or do you think it's gone through enough spinning and are thinking it
+would go in as-is?
+
+-Doug
