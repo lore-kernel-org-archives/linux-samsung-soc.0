@@ -1,85 +1,94 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
- exynos5420 dtsi files
-Date: Fri, 06 Dec 2013 11:17:46 +0530
-Message-ID: <1386308868-30264-2-git-send-email-l.krishna@samsung.com>
+Subject: [PATCH V12 3/3] ARM: dts: update watchdog device nodes for Exynos5250
+ and Exynos5420
+Date: Fri, 06 Dec 2013 11:17:48 +0530
+Message-ID: <1386308868-30264-4-git-send-email-l.krishna@samsung.com>
 References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:12205 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:12219 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751262Ab3LFFox (ORCPT
+	with ESMTP id S1751262Ab3LFFo5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Dec 2013 00:44:53 -0500
+	Fri, 6 Dec 2013 00:44:57 -0500
 In-reply-to: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, wim@iguana.be
 Cc: dianders@chromium.org, kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, linux@roeck-us.net
 
-This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
-handle PMU register accesses in a centralized way using syscon driver
+In Exynos5 series SoCs, PMU has registers to enable/disable mask/unmask
+watchdog timer which is not the case with s3c series SoCs so, there is a
+need to have different compatible names for watchdog to handle these pmu
+registers access.
+
+Hence this patch removes watchdog node from Exynos5.dtsi common file and
+make it separate by updating existing node in Exynos5250 and adding new node
+to Exynos5420. This patch also makes the watchdog node enabled by default
 
 Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 Reviewed-by: Doug Anderson <dianders@chromium.org>
 Tested-by: Doug Anderson <dianders@chromium.org>
 ---
- Documentation/devicetree/bindings/arm/samsung/pmu.txt |   15 +++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
- arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
- 3 files changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+ arch/arm/boot/dts/exynos5.dtsi    |    7 -------
+ arch/arm/boot/dts/exynos5250.dtsi |    6 +++++-
+ arch/arm/boot/dts/exynos5420.dtsi |    9 +++++++++
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-new file mode 100644
-index 0000000..f1f1552
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-@@ -0,0 +1,15 @@
-+SAMSUNG Exynos SoC series PMU Registers
-+
-+Properties:
-+ - compatible : should contain two values. First value must be one from following list:
-+		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
-+		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
-+		second value must be always "syscon".
-+
-+ - reg : offset and length of the register set.
-+
-+Example :
-+pmu_system_controller: system-controller@10040000 {
-+	compatible = "samsung,exynos5250-pmu", "syscon";
-+	reg = <0x10040000 0x5000>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index b98ffc3..62f9e36 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -163,6 +163,11 @@
- 		interrupts = <0 47 0>;
+diff --git a/arch/arm/boot/dts/exynos5.dtsi b/arch/arm/boot/dts/exynos5.dtsi
+index e52b038..f1fea28 100644
+--- a/arch/arm/boot/dts/exynos5.dtsi
++++ b/arch/arm/boot/dts/exynos5.dtsi
+@@ -81,13 +81,6 @@
+ 		status = "disabled";
  	};
  
-+	pmu_system_controller: system-controller@10040000 {
-+		compatible = "samsung,exynos5250-pmu", "syscon";
-+		reg = <0x10040000 0x5000>;
-+	};
-+
- 	watchdog {
+-	watchdog {
+-		compatible = "samsung,s3c2410-wdt";
+-		reg = <0x101D0000 0x100>;
+-		interrupts = <0 42 0>;
+-		status = "disabled";
+-	};
+-
+ 	fimd@14400000 {
+ 		compatible = "samsung,exynos5250-fimd";
+ 		interrupt-parent = <&combiner>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 62f9e36..d440a9a 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -168,9 +168,13 @@
+ 		reg = <0x10040000 0x5000>;
+ 	};
+ 
+-	watchdog {
++	watchdog@101D0000 {
++		compatible = "samsung,exynos5250-wdt";
++		reg = <0x101D0000 0x100>;
++		interrupts = <0 42 0>;
  		clocks = <&clock 336>;
  		clock-names = "watchdog";
++		samsung,syscon-phandle = <&pmu_system_controller>;
+ 	};
+ 
+ 	g2d@10850000 {
 diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index b1fa334..cd47db0 100644
+index cd47db0..167480c 100644
 --- a/arch/arm/boot/dts/exynos5420.dtsi
 +++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -402,4 +402,9 @@
- 		clock-names = "gscl";
- 		samsung,power-domain = <&gsc_pd>;
+@@ -407,4 +407,13 @@
+ 		compatible = "samsung,exynos5420-pmu", "syscon";
+ 		reg = <0x10040000 0x5000>;
  	};
 +
-+	pmu_system_controller: system-controller@10040000 {
-+		compatible = "samsung,exynos5420-pmu", "syscon";
-+		reg = <0x10040000 0x5000>;
-+	};
++        watchdog@101D0000 {
++		compatible = "samsung,exynos5420-wdt";
++		reg = <0x101D0000 0x100>;
++		interrupts = <0 42 0>;
++		clocks = <&clock 316>;
++		clock-names = "watchdog";
++		samsung,syscon-phandle = <&pmu_system_controller>;
++        };
  };
 -- 
 1.7.10.4
