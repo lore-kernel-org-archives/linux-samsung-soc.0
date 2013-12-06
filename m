@@ -1,82 +1,67 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: [PATCH v4 5/9] usb: s3c-hsotg: Use the new Exynos USB phy driver
- with the generic phy framework
-Date: Fri, 06 Dec 2013 17:29:21 +0100
-Message-ID: <00fd01cef2a0$51fc4720$f5f4d560$%debski@samsung.com>
-References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
- <1386246579-25141-6-git-send-email-k.debski@samsung.com>
- <52A1B0F7.2050501@ti.com> <20131206150101.GA31091@beef>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Fri, 6 Dec 2013 08:38:50 -0800
+Message-ID: <CAD=FV=VfxvOLAi5T+cUkQOxQfW08tE_JZtq5-9pQAo4h4z3Pxw@mail.gmail.com>
+References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
+	<1386308868-30264-2-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:14904 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753539Ab3LFQ33 (ORCPT
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:43933 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757988Ab3LFQiv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Dec 2013 11:29:29 -0500
-In-reply-to: <20131206150101.GA31091@beef>
-Content-language: pl
+	Fri, 6 Dec 2013 11:38:51 -0500
+Received: by mail-vc0-f178.google.com with SMTP id lh4so985943vcb.9
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2013 08:38:50 -0800 (PST)
+In-Reply-To: <1386308868-30264-2-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Matt Porter' <matt.porter@linaro.org>, 'Kishon Vijay Abraham I' <kishon@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, Tomasz Figa <t.figa@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org
+To: Leela Krishna Amudala <l.krishna@samsung.com>, Olof Johansson <olof@lixom.net>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
 
-Hi,
+Leela Krishna,
 
-> From: Matt Porter [mailto:matt.porter@linaro.org]
-> Sent: Friday, December 06, 2013 4:01 PM
-> 
-> On Fri, Dec 06, 2013 at 04:41:51PM +0530, Kishon Vijay Abraham I wrote:
-> > Hi,
-> >
-> > On Thursday 05 December 2013 05:59 PM, Kamil Debski wrote:
-> > > Change the used phy driver to the new Exynos USB phy driver that
-> > > uses the generic phy framework.
-> > >
-> > > Signed-off-by: Kamil Debski <k.debski@samsung.com>
-> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > ---
-> > >  .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 ++++
-> > >  drivers/usb/gadget/s3c-hsotg.c                     |   11 ++++++--
+On Thu, Dec 5, 2013 at 9:47 PM, Leela Krishna Amudala
+<l.krishna@samsung.com> wrote:
+> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
+> handle PMU register accesses in a centralized way using syscon driver
+>
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Tested-by: Doug Anderson <dianders@chromium.org>
 > ---
-> > >  2 files changed, 10 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/usb/samsung-
-> hsotg.txt
-> > > b/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
-> > > index b83d428..9340d06 100644
-> > > --- a/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
-> > > +++ b/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
-> > > @@ -24,6 +24,8 @@ Required properties:
-> > >      - first entry: must be "otg"
-> > >  - vusb_d-supply: phandle to voltage regulator of digital section,
-> > >  - vusb_a-supply: phandle to voltage regulator of analog section.
-> > > +- phys: from general PHY binding: phandle to the PHY device
-> > > +- phy-names: from general PHY binding: should be "usb2-phy"
-> >
-> > are you sure it's usb2-phy. The example below seems to have a
-> different value.
-> 
-> I requested this be changed to usb2-phy, looks like he just missed the
-> update to the example.
+>  Documentation/devicetree/bindings/arm/samsung/pmu.txt |   15 +++++++++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
+>  arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
+>  3 files changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> new file mode 100644
+> index 0000000..f1f1552
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+> @@ -0,0 +1,15 @@
+> +SAMSUNG Exynos SoC series PMU Registers
+> +
+> +Properties:
+> + - compatible : should contain two values. First value must be one from following list:
+> +                  - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+> +                  - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+> +               second value must be always "syscon".
+> +
+> + - reg : offset and length of the register set.
+> +
+> +Example :
+> +pmu_system_controller: system-controller@10040000 {
+> +       compatible = "samsung,exynos5250-pmu", "syscon";
+> +       reg = <0x10040000 0x5000>;
+> +};
 
-This is true. I missed the change in the example part of the file.
+This looks right to me based on previous discussion.  Hopefully Olof
+and/or Tomasz can indicate that they're happy with it now.
 
-> 
-> >
-> > >
-> > >  Example
-> > >  -----
-> > > @@ -36,5 +38,7 @@ Example
-> > >  		clock-names = "otg";
-> > >  		vusb_d-supply = <&vusb_reg>;
-> > >  		vusb_a-supply = <&vusbdac_reg>;
-> > > +		phys = <&usb2phy 0>;
-> > > +		phy-names = "device";
-> > >  	};
-
-Best wishes,
--- 
-Kamil Debski
-Samsung R&D Institute Poland
+-Doug
