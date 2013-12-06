@@ -1,99 +1,108 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 1/9] phy: core: Change the way of_phy_get is called
-Date: Fri, 6 Dec 2013 11:00:44 +0530
-Message-ID: <52A16104.3080704@ti.com>
-References: <1386246579-25141-1-git-send-email-k.debski@samsung.com> <1386246579-25141-2-git-send-email-k.debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1386246579-25141-2-git-send-email-k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH V12 0/3] Add watchdog DT nodes and use syscon regmap interface
+ to configure pmu registers
+Date: Fri, 06 Dec 2013 11:17:45 +0530
+Message-ID: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:54852 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751221Ab3LFFox (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Dec 2013 00:44:53 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, wim@iguana.be
+Cc: dianders@chromium.org, kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, linux@roeck-us.net
 
-Hi,
+This patchset does the following things
+	- Adds pmusysreg device node to exynos5.dtsi file
+	- Adds watchdog DT nodes to Exynos5250 and 5420
+	- Uses syscon regmap interface to configure pmu registers
+	  to mask/unmask enable/disable of watchdog.
+	
+This patch set is rebased on Kgene's for-next branch and tested on SMDK5420
 
-On Thursday 05 December 2013 05:59 PM, Kamil Debski wrote:
-> Previously the of_phy_get function took a struct device * and
-> was declared static. It was impossible to call it from
-> another driver and thus it was impossible to get phy defined
+changes since V11:
+	- Added EXYNOS5 prefix to REG_OFFSET defines (suggested by Tomasz)
+	- NEEDS_PMU_CONFIG => HAS_PMU_CONFIG (suggested by Olof, Guenter)
+	- Move QUIRK_HAS_PMU_CONFIG check to s3c2410wdt_mask_and_disable_reset (suggested by Guenter)
 
-It was never intended to be called from other drivers. What's up with the
-wrapper of of_phy_get, phy_get()/devm_phy_get()? Why isn't that enough?
+changes since V10:
+	- followed coding style rules
+	- removed duplicate error message suggested by Guenter Roeck <linux@roeck-us.net>
 
-Thanks
-Kishon
-> for a given node.
-> 
-> Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/phy/phy-core.c  |   12 +++++-------
->  include/linux/phy/phy.h |    1 +
->  2 files changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 03cf8fb..7fb3474 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -250,20 +250,17 @@ EXPORT_SYMBOL_GPL(phy_power_off);
->   * not yet loaded. This function uses of_xlate call back function provided
->   * while registering the phy_provider to find the phy instance.
->   */
-> -static struct phy *of_phy_get(struct device *dev, int index)
-> +struct phy *of_phy_get(struct device_node *np, int index)
->  {
->  	int ret;
->  	struct phy_provider *phy_provider;
->  	struct phy *phy = NULL;
->  	struct of_phandle_args args;
->  
-> -	ret = of_parse_phandle_with_args(dev->of_node, "phys", "#phy-cells",
-> +	ret = of_parse_phandle_with_args(np, "phys", "#phy-cells",
->  		index, &args);
-> -	if (ret) {
-> -		dev_dbg(dev, "failed to get phy in %s node\n",
-> -			dev->of_node->full_name);
-> +	if (ret)
->  		return ERR_PTR(-ENODEV);
-> -	}
->  
->  	mutex_lock(&phy_provider_mutex);
->  	phy_provider = of_phy_provider_lookup(args.np);
-> @@ -281,6 +278,7 @@ err0:
->  
->  	return phy;
->  }
-> +EXPORT_SYMBOL_GPL(of_phy_get);
->  
->  /**
->   * phy_put() - release the PHY
-> @@ -370,7 +368,7 @@ struct phy *phy_get(struct device *dev, const char *string)
->  	if (dev->of_node) {
->  		index = of_property_match_string(dev->of_node, "phy-names",
->  			string);
-> -		phy = of_phy_get(dev, index);
-> +		phy = of_phy_get(dev->of_node, index);
->  		if (IS_ERR(phy)) {
->  			dev_err(dev, "unable to find phy\n");
->  			return phy;
-> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-> index 6d72269..169f572 100644
-> --- a/include/linux/phy/phy.h
-> +++ b/include/linux/phy/phy.h
-> @@ -131,6 +131,7 @@ struct phy *phy_get(struct device *dev, const char *string);
->  struct phy *devm_phy_get(struct device *dev, const char *string);
->  void phy_put(struct phy *phy);
->  void devm_phy_put(struct device *dev, struct phy *phy);
-> +struct phy *of_phy_get(struct device_node *np, int index);
->  struct phy *of_phy_simple_xlate(struct device *dev,
->  	struct of_phandle_args *args);
->  struct phy *phy_create(struct device *dev, const struct phy_ops *ops,
-> 
+changes since V9:
+	- added descriptions to s3c2410_wdt_variant structure fields
+	- moved calling s3c2410wdt_mask_and_disable_reset() function above s3c2410wdt_start() call in probe
+	- put dev_err message back to s3c2410wdt_mask_and_disable_reset() function
+	  (suggested by Doug Anderson <dianders@chromium.org>)
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+changes since V8:
+	- modified the patch description for the below patch
+	  "watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu register"
+	- removed MODULE_ALIAS in watchdog driver
+	- changed dev_warn to dev_err in one failure case handling (suggested by Guenter Roeck <linux@roeck-us.net>)
+	- renamed variable name from pmu_config to drv_data
+	- changed the compatible field description in documentation file
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
+
+changes since V7:
+	- re-ordered the patches in the series
+	- moved pmu_config_s3c2410 structure out of ifdef CONFIG_OF
+	  and limited only this structure to platform match table
+	- renamed structure name from s3c_wdt_driver_ids to s3c2410_wdt_ids
+	- removed exynos variants from platform match table
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
+
+changes since V6:
+	- added SoC-specific compatible value to syscon node and documented it
+	- given more patch description for below patch
+	  ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420
+	- added platform_device_id array for watchdog devices
+	- selected MFD_SYSCON in Kconfig entry for watchdog
+
+Changes since V5:
+	- removed status property in DT nodes
+	- changed the return type for the function s3c2410wdt_mask_and_disable_reset()
+	  and handled error cases
+	- Handled to get driver data in non-DT cases
+	- Addressed comments given by Tomasz Figa <t.figa@samsung.com>
+
+Changes since V4:
+	- changed the node name from pmusysreg to syscon and node label from pmu_sys_reg to pmu_syscon
+	- changed the property name from samsung,pmusysreg to samsung,syscon-phandle
+	- used regmap_update_bits instead of remap_read/regmap_write
+	- Addressed other comments given by Tomasz Figa <t.figa@samsung.com>
+
+Changes since V3:
+	- changed the compatible strings for watchdog node
+	- splitted up adding pmusysreg node and made it separate patch
+	- Addressed comments given by Sachin Kamat <sachin.kamat@linaro.org>
+
+Changes since V2:
+	- used syscon regmap interface to configure pmu registers in WDT driver
+	  (suggested by Tomasz Figa <t.figa@samsung.com>)
+
+Changes since V1:
+        - Added new compatible string for Exynos5 SoCs
+        - Introduced quirk mechanism to program PMU registers
+        - Addressed comments given by Tomasz Figa <t.figa@samsung.com>
+
+Leela Krishna Amudala (3):
+  ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi files
+  watchdog: s3c2410_wdt: use syscon regmap interface to configure pmu
+    register
+  ARM: dts: update watchdog device nodes for Exynos5250 and Exynos5420
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |   15 ++
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |   21 ++-
+ arch/arm/boot/dts/exynos5.dtsi                     |    7 -
+ arch/arm/boot/dts/exynos5250.dtsi                  |   11 +-
+ arch/arm/boot/dts/exynos5420.dtsi                  |   14 ++
+ drivers/watchdog/Kconfig                           |    1 +
+ drivers/watchdog/s3c2410_wdt.c                     |  154 ++++++++++++++++++--
+ 7 files changed, 205 insertions(+), 18 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+
+-- 
+1.7.10.4
