@@ -1,123 +1,80 @@
-From: Matt Porter <matt.porter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 5/9] usb: s3c-hsotg: Use the new Exynos USB phy driver
- with the generic phy framework
-Date: Fri, 6 Dec 2013 10:01:01 -0500
-Message-ID: <20131206150101.GA31091@beef>
-References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
- <1386246579-25141-6-git-send-email-k.debski@samsung.com>
- <52A1B0F7.2050501@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <52A1B0F7.2050501-l0cyMroinI0@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Cc: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org
+From: Rahul Sharma <rahul.sharma@samsung.com>
+Subject: [PATCH 0/7] exynos: add basic support for exynos5260 SoC
+Date: Fri, 06 Dec 2013 21:26:24 +0530
+Message-ID: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:18458 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753037Ab3LFP5O (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Dec 2013 10:57:14 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, pankaj.dubey@samsung.com, yg1004.jang@samsung.com, arun.kk@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-On Fri, Dec 06, 2013 at 04:41:51PM +0530, Kishon Vijay Abraham I wrote:
-> Hi,
-> 
-> On Thursday 05 December 2013 05:59 PM, Kamil Debski wrote:
-> > Change the used phy driver to the new Exynos USB phy driver that uses the
-> > generic phy framework.
-> > 
-> > Signed-off-by: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 ++++
-> >  drivers/usb/gadget/s3c-hsotg.c                     |   11 ++++++-----
-> >  2 files changed, 10 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/usb/samsung-hsotg.txt b/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
-> > index b83d428..9340d06 100644
-> > --- a/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
-> > +++ b/Documentation/devicetree/bindings/usb/samsung-hsotg.txt
-> > @@ -24,6 +24,8 @@ Required properties:
-> >      - first entry: must be "otg"
-> >  - vusb_d-supply: phandle to voltage regulator of digital section,
-> >  - vusb_a-supply: phandle to voltage regulator of analog section.
-> > +- phys: from general PHY binding: phandle to the PHY device
-> > +- phy-names: from general PHY binding: should be "usb2-phy"
-> 
-> are you sure it's usb2-phy. The example below seems to have a different value.
+add basic support for exynos5260 SoC.
 
-I requested this be changed to usb2-phy, looks like he just missed the
-update to the example.
+This series is based on linux-next, Kukjin's for-next and
+Mike's clk-for-linus-3.13 branches.
 
-> 
-> >  
-> >  Example
-> >  -----
-> > @@ -36,5 +38,7 @@ Example
-> >  		clock-names = "otg";
-> >  		vusb_d-supply = <&vusb_reg>;
-> >  		vusb_a-supply = <&vusbdac_reg>;
-> > +		phys = <&usb2phy 0>;
-> > +		phy-names = "device";
-> >  	};
-> >  
-> > diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-> > index eccb147..db096fd 100644
-> > --- a/drivers/usb/gadget/s3c-hsotg.c
-> > +++ b/drivers/usb/gadget/s3c-hsotg.c
-> > @@ -31,6 +31,7 @@
-> >  #include <linux/regulator/consumer.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_platform.h>
-> > +#include <linux/phy/phy.h>
-> >  
-> >  #include <linux/usb/ch9.h>
-> >  #include <linux/usb/gadget.h>
-> > @@ -162,7 +163,7 @@ struct s3c_hsotg_ep {
-> >  struct s3c_hsotg {
-> >  	struct device		 *dev;
-> >  	struct usb_gadget_driver *driver;
-> > -	struct usb_phy		*phy;
-> > +	struct phy		 *phy;
-> >  	struct s3c_hsotg_plat	 *plat;
-> >  
-> >  	spinlock_t              lock;
-> > @@ -2905,7 +2906,7 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
-> >  	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
-> >  
-> >  	if (hsotg->phy)
-> > -		usb_phy_init(hsotg->phy);
-> > +		phy_power_on(hsotg->phy);
-> >  	else if (hsotg->plat->phy_init)
-> >  		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
-> >  }
-> > @@ -2922,7 +2923,7 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
-> >  	struct platform_device *pdev = to_platform_device(hsotg->dev);
-> >  
-> >  	if (hsotg->phy)
-> > -		usb_phy_shutdown(hsotg->phy);
-> > +		phy_power_off(hsotg->phy);
-> >  	else if (hsotg->plat->phy_exit)
-> >  		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
-> >  }
-> > @@ -3529,7 +3530,7 @@ static void s3c_hsotg_delete_debug(struct s3c_hsotg *hsotg)
-> >  static int s3c_hsotg_probe(struct platform_device *pdev)
-> >  {
-> >  	struct s3c_hsotg_plat *plat = dev_get_platdata(&pdev->dev);
-> > -	struct usb_phy *phy;
-> > +	struct phy *phy;
-> >  	struct device *dev = &pdev->dev;
-> >  	struct s3c_hsotg_ep *eps;
-> >  	struct s3c_hsotg *hsotg;
-> > @@ -3544,7 +3545,7 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
-> >  		return -ENOMEM;
-> >  	}
-> >  
-> > -	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-> > +	phy = devm_phy_get(&pdev->dev, "usb2-phy");
-> >  	if (IS_ERR(phy)) {
-> >  		/* Fallback for pdata */
-> >  		plat = dev_get_platdata(&pdev->dev);
-> > 
-> 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This patch is dependent on the following series from
+Tomasz Figa <t.figa@samsung.com>:
+http://www.spinics.net/lists/arm-kernel/msg280223.html
+
+Arun Kumar K (1):
+  ARM: dts: add dts files for exynos5260 SoC
+
+Pankaj Dubey (2):
+  ARM: EXYNOS: initial board support for exynos5260 SoC
+  clk/samsung: add support for pll2550xx
+
+Rahul Sharma (3):
+  clk/samsung: add support for multuple clock providers
+  clk/samsung: add support for pll2650xx
+  clk/exynos5260: add clock file for exynos5260
+
+Young-Gun Jang (1):
+  pinctrl: exynos: add exynos5260 SoC specific data
+
+ .../devicetree/bindings/clock/exynos5260-clock.txt |  228 ++
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
+ arch/arm/boot/dts/Makefile                         |    1 +
+ arch/arm/boot/dts/exynos5260-pinctrl.dtsi          |  586 +++++
+ arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts    |   85 +
+ arch/arm/boot/dts/exynos5260.dtsi                  |  315 +++
+ arch/arm/mach-exynos/Kconfig                       |    9 +
+ arch/arm/mach-exynos/common.c                      |   19 +-
+ arch/arm/mach-exynos/cpuidle.c                     |    2 +-
+ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+ arch/arm/mach-exynos/include/mach/regs-pmu.h       |    4 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    1 +
+ arch/arm/plat-samsung/include/plat/cpu.h           |    8 +
+ arch/arm/plat-samsung/include/plat/map-s5p.h       |    1 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos4.c                  |   47 +-
+ drivers/clk/samsung/clk-exynos5250.c               |   26 +-
+ drivers/clk/samsung/clk-exynos5260.c               | 2661 ++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5260.h               |  496 ++++
+ drivers/clk/samsung/clk-exynos5420.c               |   24 +-
+ drivers/clk/samsung/clk-exynos5440.c               |   18 +-
+ drivers/clk/samsung/clk-pll.c                      |  222 +-
+ drivers/clk/samsung/clk-pll.h                      |    3 +-
+ drivers/clk/samsung/clk-s3c64xx.c                  |   44 +-
+ drivers/clk/samsung/clk.c                          |  110 +-
+ drivers/clk/samsung/clk.h                          |   46 +-
+ drivers/pinctrl/pinctrl-exynos.c                   |   82 +
+ drivers/pinctrl/pinctrl-samsung.c                  |    2 +
+ drivers/pinctrl/pinctrl-samsung.h                  |    1 +
+ include/dt-bindings/clk/exynos5260-clk.h           |  169 ++
+ 30 files changed, 5076 insertions(+), 137 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5260-clock.txt
+ create mode 100644 arch/arm/boot/dts/exynos5260-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5260-xyref5260-evt0.dts
+ create mode 100644 arch/arm/boot/dts/exynos5260.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.c
+ create mode 100644 drivers/clk/samsung/clk-exynos5260.h
+ create mode 100644 include/dt-bindings/clk/exynos5260-clk.h
+
+-- 
+1.7.9.5
