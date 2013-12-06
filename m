@@ -1,109 +1,67 @@
-From: Yuvaraj Kumar <yuvaraj.cd@gmail.com>
-Subject: Re: [PATCH] ARM: dts: Fix mmc node on exynos5250 snow board
-Date: Fri, 6 Dec 2013 10:30:28 +0530
-Message-ID: <CAKuRcO+DTOmVrXYrRNHYhjC42rwQSX5qzPFxSiKok47VKtEsfQ@mail.gmail.com>
-References: <1386237974-2255-1-git-send-email-yuvaraj.cd@samsung.com>
-	<CAPz6YkUO7tqSa+tU_M4Do5k7dwc6MaCxX3T-3aJtG1=XQFjTRQ@mail.gmail.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
+ where possible
+Date: Fri, 6 Dec 2013 10:44:19 +0530
+Message-ID: <CAAgF-Bfk8byZwVBd_5PopM3ji-wdTMR5i-J7w1W4zq4gFk4i+Q@mail.gmail.com>
+References: <1386253559-18262-1-git-send-email-broonie@kernel.org>
+	<1386253559-18262-2-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f51.google.com ([209.85.216.51]:36547 "EHLO
-	mail-qa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750703Ab3LFFA3 (ORCPT
+Received: from mail-qe0-f44.google.com ([209.85.128.44]:54403 "EHLO
+	mail-qe0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051Ab3LFFOU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Dec 2013 00:00:29 -0500
-In-Reply-To: <CAPz6YkUO7tqSa+tU_M4Do5k7dwc6MaCxX3T-3aJtG1=XQFjTRQ@mail.gmail.com>
+	Fri, 6 Dec 2013 00:14:20 -0500
+Received: by mail-qe0-f44.google.com with SMTP id nd7so163229qeb.17
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Dec 2013 21:14:19 -0800 (PST)
+In-Reply-To: <1386253559-18262-2-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sonny Rao <sonnyrao@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Douglas Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Padmavathi Venna <padma.v@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-On Fri, Dec 6, 2013 at 12:19 AM, Sonny Rao <sonnyrao@chromium.org> wrote:
-> On Thu, Dec 5, 2013 at 2:06 AM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
->> Commits 64c138a ("ARM: dts: Move fifo-depth property from exynos5250
->> board dts") and 0c3de788 ("ARM: dts: change status property of dwmmc
->> nodes for exynos5250") missed out handling the exynos5250 snow dts file.
->> Delete the fifo-depth property and enable the mmc node in the snow dts
->> file.
->>
+Hi Mark,
+
+On Thu, Dec 5, 2013 at 7:55 PM, Mark Brown <broonie@kernel.org> wrote:
+> From: Mark Brown <broonie@linaro.org>
 >
-> Since this is really fixing two different issues, even though they
-> both affect dw_mmc, would you mind splitting this up into two
-> different commits?
- OK, I will split into two and repost.
+> Since all Exynos platforms have been converted to dmaengine and many of
+> the older platforms are in the process of conversion they do not need to
+> use the legacy s3c-dma APIs for DMA but can instead use the standard ASoC
+> dmaengine helpers. This both allows them to benefit from improvements
+> implemented in the generic code and supports multiplatform.
 >
->> Signed-off-by : Abhilash Kesavan <a.kesavan@samsung.com>
->>
->> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->> ---
->>  arch/arm/boot/dts/cros5250-common.dtsi |    7 -------
->>  arch/arm/boot/dts/exynos5250-snow.dts  |    9 +++++++++
->>  2 files changed, 9 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
->> index 6470536..2dd70e9 100644
->> --- a/arch/arm/boot/dts/cros5250-common.dtsi
->> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
->> @@ -233,7 +233,6 @@
->>                 num-slots = <1>;
->>                 supports-highspeed;
->>                 broken-cd;
->> -               fifo-depth = <0x80>;
+> This patch includes some fixes from Padma for Exynos SoCs.
 >
-> Why are you deleting fifo-depth?
-fifo-depth property has been moved to SOC specific file exynos5250.dtsi
+> Signed-off-by: Mark Brown <broonie@linaro.org>
+> Tested By: Padmavathi Venna <padma.v@samsung.com>
+> ---
 >
->>                 card-detect-delay = <200>;
->>                 samsung,dw-mshc-ciu-div = <3>;
->>                 samsung,dw-mshc-sdr-timing = <2 3>;
->> @@ -247,14 +246,9 @@
->>                 };
->>         };
->>
->> -       mmc@12210000 {
->> -               status = "disabled";
->> -       };
->> -
->>         mmc@12220000 {
->>                 num-slots = <1>;
->>                 supports-highspeed;
->> -               fifo-depth = <0x80>;
->>                 card-detect-delay = <200>;
->>                 samsung,dw-mshc-ciu-div = <3>;
->>                 samsung,dw-mshc-sdr-timing = <2 3>;
->> @@ -273,7 +267,6 @@
->>                 num-slots = <1>;
->>                 supports-highspeed;
->>                 broken-cd;
->> -               fifo-depth = <0x80>;
->>                 card-detect-delay = <200>;
->>                 samsung,dw-mshc-ciu-div = <3>;
->>                 samsung,dw-mshc-sdr-timing = <2 3>;
->> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
->> index a9395c4..67484d1 100644
->> --- a/arch/arm/boot/dts/exynos5250-snow.dts
->> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
->> @@ -171,11 +171,20 @@
->>                 };
->>         };
->>
->> +       mmc@12200000 {
->> +               status = "okay";
->> +       };
->> +
->> +       mmc@12220000 {
->> +               status = "okay";
->> +       };
->> +
->>         /*
->>          * On Snow we've got SIP WiFi and so can keep drive strengths low to
->>          * reduce EMI.
->>          */
->>         mmc@12230000 {
->> +               status = "okay";
->>                 slot@0 {
->>                         pinctrl-names = "default";
->>                         pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4>;
->> --
->> 1.7.9.5
->>
+> I think this should reflect all your testing but a recheck would be good.
+
+I couldn't test this patch set due to some crash in recent kernel in
+dmaengine_unmap_put. I think this unmap support is not yet implemented
+for pl330 driver. It is mentioned in the commit "dmaengine: prepare
+for generic 'unmap' data", [bzolnier: prepare pl330 driver for adding
+missing unmap while at it].
+
+
+[snip]
+
+> +
+> +int samsung_asoc_dma_platform_register(struct device *dev)
+> +{
+> +       return snd_dmaengine_pcm_register(dev, &samsung_dmaengine_pcm_config,
+> +                                         SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME |
+> +                                         SND_DMAENGINE_PCM_NO_RESIDUE |
+
+This flag should be SND_DMAENGINE_PCM_FLAG_NO_RESIDUE.
+
+> +                                         SND_DMAENGINE_PCM_FLAG_COMPAT);
+> +}
+> +EXPORT_SYMBOL_GPL(samsung_asoc_dma_platform_register);
+> +
+
+Thanks
+Padma
