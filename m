@@ -1,70 +1,32 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH 1/2] ASoC: samsung: Provide helper for DMA
- init
-Date: Fri, 6 Dec 2013 11:27:08 +0000
-Message-ID: <20131206112708.GD29268@sirena.org.uk>
-References: <1386253559-18262-1-git-send-email-broonie@kernel.org>
- <CAAgF-BdD_DONQYPOenMwBmc6N+EOJQ3TwJz1hpG2qZVfzhR63Q@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] ARM: s3c24xx: get rid of custom <mach/gpio.h>
+Date: Fri, 6 Dec 2013 12:58:21 +0100
+Message-ID: <CACRpkdZuk3zzhDnj3wJg1cmuqX0Cj-qQ--sBzEEV_XWyeDje3w@mail.gmail.com>
+References: <1386322280-23756-1-git-send-email-linus.walleij@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UXdImcDs+Jp8Skh3"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:35516 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753212Ab3LFL1P (ORCPT
+Received: from mail-oa0-f53.google.com ([209.85.219.53]:33763 "EHLO
+	mail-oa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757863Ab3LFL6W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Dec 2013 06:27:15 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAgF-BdD_DONQYPOenMwBmc6N+EOJQ3TwJz1hpG2qZVfzhR63Q@mail.gmail.com>
+	Fri, 6 Dec 2013 06:58:22 -0500
+Received: by mail-oa0-f53.google.com with SMTP id m1so641063oag.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Dec 2013 03:58:21 -0800 (PST)
+In-Reply-To: <1386322280-23756-1-git-send-email-linus.walleij@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
+On Fri, Dec 6, 2013 at 10:31 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
 
---UXdImcDs+Jp8Skh3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> This isolates the custom S3C24xx GPIO definition table to
+> <linux/platform_data/gpio-samsung-s3x24xx.h>
 
-On Fri, Dec 06, 2013 at 10:44:33AM +0530, Padma Venkat wrote:
+Maybe I'm too trigger happy. I'll send a combined series with
+S3C24xx, S3C64xx and maybe also S5P variants all fixed
+so you can see the overall idea here. Hold on.
 
-> This is done in your earlier patch " ASoC: samsung: Ensure DMA data is
-> initialised for secondary DAI ". Was it done on purpose or by mistake
-> in this patch?
-
-It's intentional - notice that the function has changed, this is why I
-kept asking you about mainline.  Mainline doesn't have the wrapper
-function that abstracts the difference between s3c-dma and dmaengine,
-this is why I'm saying these two will need to be rebased on top of the
-mainline fix.
-
-> I think you also told to include a patch for reinitialization of the
-> dma_data in i2s_hw_params. If you are in the process of debugging some
-> bug as you mentioned earlier you can ignore this comment. Otherwise it
-> is just a reminder.
-
-Hrm, forgot to commit that bit.
-
---UXdImcDs+Jp8Skh3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIbBAEBAgAGBQJSobSJAAoJELSic+t+oim9j6cP8QEU250j/qab9xMZXQ4qJiwW
-myuzFZAo52RI8/4Iq211efDEb5m3LjlsZShGfMyoDimEhSqdcGhDXmn9nCoxm865
-9vgBBC0E8gWGur9FmLjqvpV7q/upKvZ9Ox+oOrqIXl4gsh+yRuMpK8iDnoqQizGf
-QPsXTjhCpvfiuTmlWoZxtTIG5YAbrS1tMSKvufL+BSxfYNH/6iS1H0REglTKL38C
-nepofSqx3suU3z8/qlIgUONslc7OetIO0kjT6giGOAfV8GX63XiQAItXYiycZh/I
-Da+U3Vps1n2A6BeNCizN63fhIkq4hG5g3KMpmI7+s1kVphwvlmPWwh6nIdHl3+Px
-qPwHtgQosXPIscvR7n/gQ8IoSfdA2s+kplU1D7m3mQqvtDMuNvluhozG8F/1N9Fx
-ztU/09GGCS3UBnQjTuvOFxzEBXFeG5ySPO2YW2Hv+U0P94bzjX9lgJjq9aPY9cNj
-U0P5YN/ufT+HrbGsPIC9DVOfqo7hpfnfNvzMMrcpXVf5q6Hop7fOgfc7SwaHvmd6
-DOoUXSWlC2cHMaJ+tznLIwW4YfwfqcBJkJxzeEZk2TbO5GvvbKXvpXyTNyxojUIw
-qGQW7vb7xCxOVhoYSZD+C+J80HrWHDvKS6J5LY8DahEU4WPZiroHy3r2Ql9JqRVr
-zHXbUbSnvPBT+Nba6qE=
-=D7dn
------END PGP SIGNATURE-----
-
---UXdImcDs+Jp8Skh3--
+Yours,
+Linus Walleij
