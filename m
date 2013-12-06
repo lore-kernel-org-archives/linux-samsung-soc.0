@@ -1,164 +1,782 @@
 From: Rahul Sharma <rahul.sharma@samsung.com>
-Subject: [PATCH 2/7] pinctrl: exynos: add exynos5260 SoC specific data
-Date: Fri, 06 Dec 2013 21:26:26 +0530
-Message-ID: <1386345391-23482-3-git-send-email-rahul.sharma@samsung.com>
+Subject: [PATCH 4/7] clk/samsung: add support for multuple clock providers
+Date: Fri, 06 Dec 2013 21:26:28 +0530
+Message-ID: <1386345391-23482-5-git-send-email-rahul.sharma@samsung.com>
 References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:18465 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753037Ab3LFP5U (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:52482 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753037Ab3LFP52 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Dec 2013 10:57:20 -0500
+	Fri, 6 Dec 2013 10:57:28 -0500
 In-reply-to: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, pankaj.dubey@samsung.com, yg1004.jang@samsung.com, arun.kk@samsung.com, r.sh.open@gmail.com, Rahul Sharma <rahul.sharma@samsung.com>
 
-From: Young-Gun Jang <yg1004.jang@samsung.com>
+Samsung CCF helper functions do not provide support to
+register multiple Clock Providers for a given SoC. Due to
+this limitation SoC platforms are not able to use these
+helpers for registering mulitple clock providers and are
+forced to bypass this layer.
 
-Add Samsung Exynos5260 SoC specific data to enable pinctrl
-support for all platforms based on EXYNOS5260.
+This layer is modified acordingly to enable the support.
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Clockfile for exynos4, exynos5250, exynos5420, exynos5440
+and S3c64xx are also modified as per changed helper functions.
+
 Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
- .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
- drivers/pinctrl/pinctrl-exynos.c                   |   82 ++++++++++++++++++++
- drivers/pinctrl/pinctrl-samsung.c                  |    2 +
- drivers/pinctrl/pinctrl-samsung.h                  |    1 +
- 4 files changed, 86 insertions(+)
+ drivers/clk/samsung/clk-exynos4.c    |   47 ++++++++-------
+ drivers/clk/samsung/clk-exynos5250.c |   26 ++++----
+ drivers/clk/samsung/clk-exynos5420.c |   24 +++++---
+ drivers/clk/samsung/clk-exynos5440.c |   18 +++---
+ drivers/clk/samsung/clk-pll.c        |   14 +++--
+ drivers/clk/samsung/clk-s3c64xx.c    |   44 ++++++++------
+ drivers/clk/samsung/clk.c            |  110 +++++++++++++++++++---------------
+ drivers/clk/samsung/clk.h            |   46 ++++++++++----
+ 8 files changed, 195 insertions(+), 134 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index 257677d..2b32783 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -16,6 +16,7 @@ Required Properties:
-   - "samsung,exynos4210-pinctrl": for Exynos4210 compatible pin-controller.
-   - "samsung,exynos4x12-pinctrl": for Exynos4x12 compatible pin-controller.
-   - "samsung,exynos5250-pinctrl": for Exynos5250 compatible pin-controller.
-+  - "samsung,exynos5260-pinctrl": for Exynos5260 compatible pin-controller.
-   - "samsung,exynos5420-pinctrl": for Exynos5420 compatible pin-controller.
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index ca2a940..e634ba9 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1093,7 +1093,7 @@ static unsigned long exynos4_get_xom(void)
+ 	return xom;
+ }
  
- - reg: Base address of the pin controller hardware module and length of
-diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
-index 155b1b3..9a93df6 100644
---- a/drivers/pinctrl/pinctrl-exynos.c
-+++ b/drivers/pinctrl/pinctrl-exynos.c
-@@ -1042,6 +1042,88 @@ struct samsung_pin_ctrl exynos5250_pin_ctrl[] = {
- 	},
+-static void __init exynos4_clk_register_finpll(void)
++static void __init exynos4_clk_register_finpll(struct samsung_clk_provider *ctx)
+ {
+ 	struct samsung_fixed_rate_clock fclk;
+ 	struct clk *clk;
+@@ -1116,7 +1116,7 @@ static void __init exynos4_clk_register_finpll(void)
+ 	fclk.parent_name = NULL;
+ 	fclk.flags = CLK_IS_ROOT;
+ 	fclk.fixed_rate = finpll_f;
+-	samsung_clk_register_fixed_rate(&fclk, 1);
++	samsung_clk_register_fixed_rate(ctx, &fclk, 1);
+ 
+ }
+ 
+@@ -1226,22 +1226,25 @@ static struct samsung_pll_clock exynos4x12_plls[nr_plls] __initdata = {
+ static void __init exynos4_clk_init(struct device_node *np,
+ 				    enum exynos4_soc soc)
+ {
++	struct samsung_clk_provider *ctx;
+ 	exynos4_soc = soc;
+ 
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base)
+ 		panic("%s: failed to map registers\n", __func__);
+ 
+-	samsung_clk_init(np, reg_base, nr_clks);
++	ctx = samsung_clk_init(np, reg_base, nr_clks);
++	if (!ctx)
++		panic("%s: unable to allocate context.\n", __func__);
+ 
+-	samsung_clk_of_register_fixed_ext(exynos4_fixed_rate_ext_clks,
++	samsung_clk_of_register_fixed_ext(ctx, exynos4_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos4_fixed_rate_ext_clks),
+ 			ext_clk_match);
+ 
+-	exynos4_clk_register_finpll();
++	exynos4_clk_register_finpll(ctx);
+ 
+ 	if (exynos4_soc == EXYNOS4210) {
+-		samsung_clk_register_mux(exynos4210_mux_early,
++		samsung_clk_register_mux(ctx, exynos4210_mux_early,
+ 					ARRAY_SIZE(exynos4210_mux_early));
+ 
+ 		if (_get_rate("fin_pll") == 24000000) {
+@@ -1255,7 +1258,7 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 			exynos4210_plls[vpll].rate_table =
+ 							exynos4210_vpll_rates;
+ 
+-		samsung_clk_register_pll(exynos4210_plls,
++		samsung_clk_register_pll(ctx, exynos4210_plls,
+ 					ARRAY_SIZE(exynos4210_plls), reg_base);
+ 	} else {
+ 		if (_get_rate("fin_pll") == 24000000) {
+@@ -1267,42 +1270,42 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 							exynos4x12_vpll_rates;
+ 		}
+ 
+-		samsung_clk_register_pll(exynos4x12_plls,
++		samsung_clk_register_pll(ctx, exynos4x12_plls,
+ 					ARRAY_SIZE(exynos4x12_plls), reg_base);
+ 	}
+ 
+-	samsung_clk_register_fixed_rate(exynos4_fixed_rate_clks,
++	samsung_clk_register_fixed_rate(ctx, exynos4_fixed_rate_clks,
+ 			ARRAY_SIZE(exynos4_fixed_rate_clks));
+-	samsung_clk_register_mux(exynos4_mux_clks,
++	samsung_clk_register_mux(ctx, exynos4_mux_clks,
+ 			ARRAY_SIZE(exynos4_mux_clks));
+-	samsung_clk_register_div(exynos4_div_clks,
++	samsung_clk_register_div(ctx, exynos4_div_clks,
+ 			ARRAY_SIZE(exynos4_div_clks));
+-	samsung_clk_register_gate(exynos4_gate_clks,
++	samsung_clk_register_gate(ctx, exynos4_gate_clks,
+ 			ARRAY_SIZE(exynos4_gate_clks));
+ 
+ 	if (exynos4_soc == EXYNOS4210) {
+-		samsung_clk_register_fixed_rate(exynos4210_fixed_rate_clks,
++		samsung_clk_register_fixed_rate(ctx, exynos4210_fixed_rate_clks,
+ 			ARRAY_SIZE(exynos4210_fixed_rate_clks));
+-		samsung_clk_register_mux(exynos4210_mux_clks,
++		samsung_clk_register_mux(ctx, exynos4210_mux_clks,
+ 			ARRAY_SIZE(exynos4210_mux_clks));
+-		samsung_clk_register_div(exynos4210_div_clks,
++		samsung_clk_register_div(ctx, exynos4210_div_clks,
+ 			ARRAY_SIZE(exynos4210_div_clks));
+-		samsung_clk_register_gate(exynos4210_gate_clks,
++		samsung_clk_register_gate(ctx, exynos4210_gate_clks,
+ 			ARRAY_SIZE(exynos4210_gate_clks));
+-		samsung_clk_register_alias(exynos4210_aliases,
++		samsung_clk_register_alias(ctx, exynos4210_aliases,
+ 			ARRAY_SIZE(exynos4210_aliases));
+ 	} else {
+-		samsung_clk_register_mux(exynos4x12_mux_clks,
++		samsung_clk_register_mux(ctx, exynos4x12_mux_clks,
+ 			ARRAY_SIZE(exynos4x12_mux_clks));
+-		samsung_clk_register_div(exynos4x12_div_clks,
++		samsung_clk_register_div(ctx, exynos4x12_div_clks,
+ 			ARRAY_SIZE(exynos4x12_div_clks));
+-		samsung_clk_register_gate(exynos4x12_gate_clks,
++		samsung_clk_register_gate(ctx, exynos4x12_gate_clks,
+ 			ARRAY_SIZE(exynos4x12_gate_clks));
+-		samsung_clk_register_alias(exynos4x12_aliases,
++		samsung_clk_register_alias(ctx, exynos4x12_aliases,
+ 			ARRAY_SIZE(exynos4x12_aliases));
+ 	}
+ 
+-	samsung_clk_register_alias(exynos4_aliases,
++	samsung_clk_register_alias(ctx, exynos4_aliases,
+ 			ARRAY_SIZE(exynos4_aliases));
+ 
+ 	exynos4_clk_sleep_init();
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index 82f14e1..af4f7fd 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -583,6 +583,8 @@ static struct of_device_id ext_clk_match[] __initdata = {
+ /* register exynox5250 clocks */
+ static void __init exynos5250_clk_init(struct device_node *np)
+ {
++	struct samsung_clk_provider *ctx;
++
+ 	if (np) {
+ 		reg_base = of_iomap(np, 0);
+ 		if (!reg_base)
+@@ -591,11 +593,14 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 		panic("%s: unable to determine soc\n", __func__);
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, nr_clks);
+-	samsung_clk_of_register_fixed_ext(exynos5250_fixed_rate_ext_clks,
++	ctx = samsung_clk_init(np, reg_base, nr_clks);
++	if (!ctx)
++		panic("%s: unable to allocate context.\n", __func__);
++
++	samsung_clk_of_register_fixed_ext(ctx, exynos5250_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_rate_ext_clks),
+ 			ext_clk_match);
+-	samsung_clk_register_mux(exynos5250_pll_pmux_clks,
++	samsung_clk_register_mux(ctx, exynos5250_pll_pmux_clks,
+ 				ARRAY_SIZE(exynos5250_pll_pmux_clks));
+ 
+ 	if (_get_rate("fin_pll") == 24 * MHZ)
+@@ -604,17 +609,18 @@ static void __init exynos5250_clk_init(struct device_node *np)
+ 	if (_get_rate("mout_vpllsrc") == 24 * MHZ)
+ 		exynos5250_plls[vpll].rate_table =  vpll_24mhz_tbl;
+ 
+-	samsung_clk_register_pll(exynos5250_plls, ARRAY_SIZE(exynos5250_plls),
+-					reg_base);
+-	samsung_clk_register_fixed_rate(exynos5250_fixed_rate_clks,
++	samsung_clk_register_pll(ctx, exynos5250_plls,
++			ARRAY_SIZE(exynos5250_plls),
++			reg_base);
++	samsung_clk_register_fixed_rate(ctx, exynos5250_fixed_rate_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_rate_clks));
+-	samsung_clk_register_fixed_factor(exynos5250_fixed_factor_clks,
++	samsung_clk_register_fixed_factor(ctx, exynos5250_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos5250_fixed_factor_clks));
+-	samsung_clk_register_mux(exynos5250_mux_clks,
++	samsung_clk_register_mux(ctx, exynos5250_mux_clks,
+ 			ARRAY_SIZE(exynos5250_mux_clks));
+-	samsung_clk_register_div(exynos5250_div_clks,
++	samsung_clk_register_div(ctx, exynos5250_div_clks,
+ 			ARRAY_SIZE(exynos5250_div_clks));
+-	samsung_clk_register_gate(exynos5250_gate_clks,
++	samsung_clk_register_gate(ctx, exynos5250_gate_clks,
+ 			ARRAY_SIZE(exynos5250_gate_clks));
+ 
+ 	exynos5250_clk_sleep_init();
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 9de5bfd..e5493cf 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -808,6 +808,8 @@ static struct of_device_id ext_clk_match[] __initdata = {
+ /* register exynos5420 clocks */
+ static void __init exynos5420_clk_init(struct device_node *np)
+ {
++	struct samsung_clk_provider *ctx;
++
+ 	if (np) {
+ 		reg_base = of_iomap(np, 0);
+ 		if (!reg_base)
+@@ -816,21 +818,25 @@ static void __init exynos5420_clk_init(struct device_node *np)
+ 		panic("%s: unable to determine soc\n", __func__);
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, nr_clks);
+-	samsung_clk_of_register_fixed_ext(exynos5420_fixed_rate_ext_clks,
++	ctx = samsung_clk_init(np, reg_base, nr_clks);
++	if (!ctx)
++		panic("%s: unable to allocate context.\n", __func__);
++
++	samsung_clk_of_register_fixed_ext(ctx, exynos5420_fixed_rate_ext_clks,
+ 			ARRAY_SIZE(exynos5420_fixed_rate_ext_clks),
+ 			ext_clk_match);
+-	samsung_clk_register_pll(exynos5420_plls, ARRAY_SIZE(exynos5420_plls),
+-					reg_base);
+-	samsung_clk_register_fixed_rate(exynos5420_fixed_rate_clks,
++	samsung_clk_register_pll(ctx, exynos5420_plls,
++			ARRAY_SIZE(exynos5420_plls),
++			reg_base);
++	samsung_clk_register_fixed_rate(ctx, exynos5420_fixed_rate_clks,
+ 			ARRAY_SIZE(exynos5420_fixed_rate_clks));
+-	samsung_clk_register_fixed_factor(exynos5420_fixed_factor_clks,
++	samsung_clk_register_fixed_factor(ctx, exynos5420_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos5420_fixed_factor_clks));
+-	samsung_clk_register_mux(exynos5420_mux_clks,
++	samsung_clk_register_mux(ctx, exynos5420_mux_clks,
+ 			ARRAY_SIZE(exynos5420_mux_clks));
+-	samsung_clk_register_div(exynos5420_div_clks,
++	samsung_clk_register_div(ctx, exynos5420_div_clks,
+ 			ARRAY_SIZE(exynos5420_div_clks));
+-	samsung_clk_register_gate(exynos5420_gate_clks,
++	samsung_clk_register_gate(ctx, exynos5420_gate_clks,
+ 			ARRAY_SIZE(exynos5420_gate_clks));
+ 
+ 	exynos5420_clk_sleep_init();
+diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
+index e3e460a..c2f5d3c 100644
+--- a/drivers/clk/samsung/clk-exynos5440.c
++++ b/drivers/clk/samsung/clk-exynos5440.c
+@@ -106,6 +106,7 @@ static struct of_device_id ext_clk_match[] __initdata = {
+ static void __init exynos5440_clk_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
++	struct samsung_clk_provider *ctx;
+ 
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+@@ -114,22 +115,25 @@ static void __init exynos5440_clk_init(struct device_node *np)
+ 		return;
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, nr_clks);
+-	samsung_clk_of_register_fixed_ext(exynos5440_fixed_rate_ext_clks,
++	ctx = samsung_clk_init(np, reg_base, nr_clks);
++	if (!ctx)
++		panic("%s: unable to allocate context.\n", __func__);
++
++	samsung_clk_of_register_fixed_ext(ctx, exynos5440_fixed_rate_ext_clks,
+ 		ARRAY_SIZE(exynos5440_fixed_rate_ext_clks), ext_clk_match);
+ 
+ 	samsung_clk_register_pll2550x("cplla", "xtal", reg_base + 0x1c, 0x10);
+ 	samsung_clk_register_pll2550x("cpllb", "xtal", reg_base + 0x20, 0x10);
+ 
+-	samsung_clk_register_fixed_rate(exynos5440_fixed_rate_clks,
++	samsung_clk_register_fixed_rate(ctx, exynos5440_fixed_rate_clks,
+ 			ARRAY_SIZE(exynos5440_fixed_rate_clks));
+-	samsung_clk_register_fixed_factor(exynos5440_fixed_factor_clks,
++	samsung_clk_register_fixed_factor(ctx, exynos5440_fixed_factor_clks,
+ 			ARRAY_SIZE(exynos5440_fixed_factor_clks));
+-	samsung_clk_register_mux(exynos5440_mux_clks,
++	samsung_clk_register_mux(ctx, exynos5440_mux_clks,
+ 			ARRAY_SIZE(exynos5440_mux_clks));
+-	samsung_clk_register_div(exynos5440_div_clks,
++	samsung_clk_register_div(ctx, exynos5440_div_clks,
+ 			ARRAY_SIZE(exynos5440_div_clks));
+-	samsung_clk_register_gate(exynos5440_gate_clks,
++	samsung_clk_register_gate(ctx, exynos5440_gate_clks,
+ 			ARRAY_SIZE(exynos5440_gate_clks));
+ 
+ 	pr_info("Exynos5440: arm_clk = %ldHz\n", _get_rate("arm_clk"));
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index 529e11d..e8e8953 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -710,8 +710,9 @@ struct clk * __init samsung_clk_register_pll2550x(const char *name,
+ 	return clk;
+ }
+ 
+-static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
+-						void __iomem *base)
++static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
++				struct samsung_pll_clock *pll_clk,
++				void __iomem *base)
+ {
+ 	struct samsung_clk_pll *pll;
+ 	struct clk *clk;
+@@ -804,7 +805,7 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
+ 		return;
+ 	}
+ 
+-	samsung_clk_add_lookup(clk, pll_clk->id);
++	samsung_clk_add_lookup(ctx, clk, pll_clk->id);
+ 
+ 	if (!pll_clk->alias)
+ 		return;
+@@ -815,11 +816,12 @@ static void __init _samsung_clk_register_pll(struct samsung_pll_clock *pll_clk,
+ 			__func__, pll_clk->name, ret);
+ }
+ 
+-void __init samsung_clk_register_pll(struct samsung_pll_clock *pll_list,
+-				unsigned int nr_pll, void __iomem *base)
++void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
++			struct samsung_pll_clock *pll_list,
++			unsigned int nr_pll, void __iomem *base)
+ {
+ 	int cnt;
+ 
+ 	for (cnt = 0; cnt < nr_pll; cnt++)
+-		_samsung_clk_register_pll(&pll_list[cnt], base);
++		_samsung_clk_register_pll(ctx, &pll_list[cnt], base);
+ }
+diff --git a/drivers/clk/samsung/clk-s3c64xx.c b/drivers/clk/samsung/clk-s3c64xx.c
+index a43cbde..b7d06ae 100644
+--- a/drivers/clk/samsung/clk-s3c64xx.c
++++ b/drivers/clk/samsung/clk-s3c64xx.c
+@@ -442,12 +442,14 @@ static struct samsung_clock_alias s3c6410_clock_aliases[] = {
+ 	ALIAS(MEM0_SROM, NULL, "srom"),
  };
  
-+/* pin banks of exynos5260 pin-controller 0 */
-+static struct samsung_pin_bank exynos5260_pin_banks0[] = {
-+	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpa0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpa1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpa2", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpb0", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x080, "gpb1", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x0A0, "gpb2", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0C0, "gpb3", 0x18),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0E0, "gpb4", 0x1c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpb5", 0x20),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd0", 0x24),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x140, "gpd1", 0x28),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x160, "gpd2", 0x2c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpe0", 0x30),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x1A0, "gpe1", 0x34),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x1C0, "gpf0", 0x38),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x1E0, "gpf1", 0x3c),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x200, "gpk0", 0x40),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
-+};
+-static void __init s3c64xx_clk_register_fixed_ext(unsigned long fin_pll_f,
+-							unsigned long xusbxti_f)
++static void __init s3c64xx_clk_register_fixed_ext(
++				struct samsung_clk_provider *ctx,
++				unsigned long fin_pll_f,
++				unsigned long xusbxti_f)
+ {
+ 	s3c64xx_fixed_rate_ext_clks[0].fixed_rate = fin_pll_f;
+ 	s3c64xx_fixed_rate_ext_clks[1].fixed_rate = xusbxti_f;
+-	samsung_clk_register_fixed_rate(s3c64xx_fixed_rate_ext_clks,
++	samsung_clk_register_fixed_rate(ctx, s3c64xx_fixed_rate_ext_clks,
+ 				ARRAY_SIZE(s3c64xx_fixed_rate_ext_clks));
+ }
+ 
+@@ -456,6 +458,8 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+ 			     unsigned long xusbxti_f, bool s3c6400,
+ 			     void __iomem *base)
+ {
++	struct samsung_clk_provider *ctx;
 +
-+/* pin banks of exynos5260 pin-controller 1 */
-+static struct samsung_pin_bank exynos5260_pin_banks1[] = {
-+	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpc0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpc1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x040, "gpc2", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x060, "gpc3", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x080, "gpc4", 0x10),
-+};
+ 	reg_base = base;
+ 	is_s3c6400 = s3c6400;
+ 
+@@ -465,48 +469,50 @@ void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+ 			panic("%s: failed to map registers\n", __func__);
+ 	}
+ 
+-	samsung_clk_init(np, reg_base, NR_CLKS);
++	ctx = samsung_clk_init(np, reg_base, NR_CLKS);
++	if (!ctx)
++		panic("%s: unable to allocate context.\n", __func__);
+ 
+ 	/* Register external clocks. */
+ 	if (!np)
+-		s3c64xx_clk_register_fixed_ext(xtal_f, xusbxti_f);
++		s3c64xx_clk_register_fixed_ext(ctx, xtal_f, xusbxti_f);
+ 
+ 	/* Register PLLs. */
+-	samsung_clk_register_pll(s3c64xx_pll_clks,
++	samsung_clk_register_pll(ctx, s3c64xx_pll_clks,
+ 				ARRAY_SIZE(s3c64xx_pll_clks), reg_base);
+ 
+ 	/* Register common internal clocks. */
+-	samsung_clk_register_fixed_rate(s3c64xx_fixed_rate_clks,
++	samsung_clk_register_fixed_rate(ctx, s3c64xx_fixed_rate_clks,
+ 					ARRAY_SIZE(s3c64xx_fixed_rate_clks));
+-	samsung_clk_register_mux(s3c64xx_mux_clks,
++	samsung_clk_register_mux(ctx, s3c64xx_mux_clks,
+ 					ARRAY_SIZE(s3c64xx_mux_clks));
+-	samsung_clk_register_div(s3c64xx_div_clks,
++	samsung_clk_register_div(ctx, s3c64xx_div_clks,
+ 					ARRAY_SIZE(s3c64xx_div_clks));
+-	samsung_clk_register_gate(s3c64xx_gate_clks,
++	samsung_clk_register_gate(ctx, s3c64xx_gate_clks,
+ 					ARRAY_SIZE(s3c64xx_gate_clks));
+ 
+ 	/* Register SoC-specific clocks. */
+ 	if (is_s3c6400) {
+-		samsung_clk_register_mux(s3c6400_mux_clks,
++		samsung_clk_register_mux(ctx, s3c6400_mux_clks,
+ 					ARRAY_SIZE(s3c6400_mux_clks));
+-		samsung_clk_register_div(s3c6400_div_clks,
++		samsung_clk_register_div(ctx, s3c6400_div_clks,
+ 					ARRAY_SIZE(s3c6400_div_clks));
+-		samsung_clk_register_gate(s3c6400_gate_clks,
++		samsung_clk_register_gate(ctx, s3c6400_gate_clks,
+ 					ARRAY_SIZE(s3c6400_gate_clks));
+-		samsung_clk_register_alias(s3c6400_clock_aliases,
++		samsung_clk_register_alias(ctx, s3c6400_clock_aliases,
+ 					ARRAY_SIZE(s3c6400_clock_aliases));
+ 	} else {
+-		samsung_clk_register_mux(s3c6410_mux_clks,
++		samsung_clk_register_mux(ctx, s3c6410_mux_clks,
+ 					ARRAY_SIZE(s3c6410_mux_clks));
+-		samsung_clk_register_div(s3c6410_div_clks,
++		samsung_clk_register_div(ctx, s3c6410_div_clks,
+ 					ARRAY_SIZE(s3c6410_div_clks));
+-		samsung_clk_register_gate(s3c6410_gate_clks,
++		samsung_clk_register_gate(ctx, s3c6410_gate_clks,
+ 					ARRAY_SIZE(s3c6410_gate_clks));
+-		samsung_clk_register_alias(s3c6410_clock_aliases,
++		samsung_clk_register_alias(ctx, s3c6410_clock_aliases,
+ 					ARRAY_SIZE(s3c6410_clock_aliases));
+ 	}
+ 
+-	samsung_clk_register_alias(s3c64xx_clock_aliases,
++	samsung_clk_register_alias(ctx, s3c64xx_clock_aliases,
+ 					ARRAY_SIZE(s3c64xx_clock_aliases));
+ 	s3c64xx_clk_sleep_init();
+ 
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index 91bec3e..20de446 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -15,11 +15,6 @@
+ #include "clk.h"
+ 
+ static DEFINE_SPINLOCK(lock);
+-static struct clk **clk_table;
+-static void __iomem *reg_base;
+-#ifdef CONFIG_OF
+-static struct clk_onecell_data clk_data;
+-#endif
+ 
+ void samsung_clk_save(void __iomem *base,
+ 				    struct samsung_clk_reg_dump *rd,
+@@ -55,40 +50,53 @@ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
+ }
+ 
+ /* setup the essentials required to support clock lookup using ccf */
+-void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+-			     unsigned long nr_clks)
++struct samsung_clk_provider *__init samsung_clk_init(struct device_node *np,
++			void __iomem *base, unsigned long nr_clks)
+ {
+-	reg_base = base;
++	struct samsung_clk_provider *ctx;
++	struct clk **clk_table;
++	int ret;
 +
-+/* pin banks of exynos5260 pin-controller 2 */
-+static struct samsung_pin_bank exynos5260_pin_banks2[] = {
-+	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
-+};
++	if (!np)
++		return NULL;
 +
-+/*
-+ * Samsung pinctrl driver data for Exynos5260 SoC. Exynos5420 SoC includes
-+ * four gpio/pin-mux/pinconfig controllers.
++	ctx = kzalloc(sizeof(struct samsung_clk_provider), GFP_KERNEL);
++	if (!ctx)
++		panic("could not allocate clock provider context.\n");
+ 
+ 	clk_table = kzalloc(sizeof(struct clk *) * nr_clks, GFP_KERNEL);
+ 	if (!clk_table)
+ 		panic("could not allocate clock lookup table\n");
+ 
+-	if (!np)
+-		return;
++	ctx->reg_base = base;
++	ctx->clk_data.clks = clk_table;
++	ctx->clk_data.clk_num = nr_clks;
+ 
+-#ifdef CONFIG_OF
+-	clk_data.clks = clk_table;
+-	clk_data.clk_num = nr_clks;
+-	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+-#endif
++	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
++			&ctx->clk_data);
++	if (ret)
++		panic("could not register clock provide\n");
++
++	return ctx;
+ }
+ 
+ /* add a clock instance to the clock lookup table used for dt based lookup */
+-void samsung_clk_add_lookup(struct clk *clk, unsigned int id)
++void samsung_clk_add_lookup(struct samsung_clk_provider *ctx, struct clk *clk,
++				unsigned int id)
+ {
+-	if (clk_table && id)
+-		clk_table[id] = clk;
++	if (ctx->clk_data.clks && id)
++		ctx->clk_data.clks[id] = clk;
+ }
+ 
+ /* register a list of aliases */
+-void __init samsung_clk_register_alias(struct samsung_clock_alias *list,
+-					unsigned int nr_clk)
++void __init samsung_clk_register_alias(struct samsung_clk_provider *ctx,
++				struct samsung_clock_alias *list,
++				unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+ 	unsigned int idx, ret;
+ 
+-	if (!clk_table) {
++	if (!ctx->clk_data.clks) {
+ 		pr_err("%s: clock table missing\n", __func__);
+ 		return;
+ 	}
+@@ -100,7 +108,7 @@ void __init samsung_clk_register_alias(struct samsung_clock_alias *list,
+ 			continue;
+ 		}
+ 
+-		clk = clk_table[list->id];
++		clk = ctx->clk_data.clks[list->id];
+ 		if (!clk) {
+ 			pr_err("%s: failed to find clock %d\n", __func__,
+ 				list->id);
+@@ -115,7 +123,7 @@ void __init samsung_clk_register_alias(struct samsung_clock_alias *list,
+ }
+ 
+ /* register a list of fixed clocks */
+-void __init samsung_clk_register_fixed_rate(
++void __init samsung_clk_register_fixed_rate(struct samsung_clk_provider *ctx,
+ 		struct samsung_fixed_rate_clock *list, unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+@@ -130,7 +138,7 @@ void __init samsung_clk_register_fixed_rate(
+ 			continue;
+ 		}
+ 
+-		samsung_clk_add_lookup(clk, list->id);
++		samsung_clk_add_lookup(ctx, clk, list->id);
+ 
+ 		/*
+ 		 * Unconditionally add a clock lookup for the fixed rate clocks.
+@@ -144,7 +152,7 @@ void __init samsung_clk_register_fixed_rate(
+ }
+ 
+ /* register a list of fixed factor clocks */
+-void __init samsung_clk_register_fixed_factor(
++void __init samsung_clk_register_fixed_factor(struct samsung_clk_provider *ctx,
+ 		struct samsung_fixed_factor_clock *list, unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+@@ -159,20 +167,22 @@ void __init samsung_clk_register_fixed_factor(
+ 			continue;
+ 		}
+ 
+-		samsung_clk_add_lookup(clk, list->id);
++		samsung_clk_add_lookup(ctx, clk, list->id);
+ 	}
+ }
+ 
+ /* register a list of mux clocks */
+-void __init samsung_clk_register_mux(struct samsung_mux_clock *list,
+-					unsigned int nr_clk)
++void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
++				struct samsung_mux_clock *list,
++				unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+ 	unsigned int idx, ret;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+ 		clk = clk_register_mux(NULL, list->name, list->parent_names,
+-			list->num_parents, list->flags, reg_base + list->offset,
++			list->num_parents, list->flags,
++			ctx->reg_base + list->offset,
+ 			list->shift, list->width, list->mux_flags, &lock);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+@@ -180,7 +190,7 @@ void __init samsung_clk_register_mux(struct samsung_mux_clock *list,
+ 			continue;
+ 		}
+ 
+-		samsung_clk_add_lookup(clk, list->id);
++		samsung_clk_add_lookup(ctx, clk, list->id);
+ 
+ 		/* register a clock lookup only if a clock alias is specified */
+ 		if (list->alias) {
+@@ -194,8 +204,9 @@ void __init samsung_clk_register_mux(struct samsung_mux_clock *list,
+ }
+ 
+ /* register a list of div clocks */
+-void __init samsung_clk_register_div(struct samsung_div_clock *list,
+-					unsigned int nr_clk)
++void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
++				struct samsung_div_clock *list,
++				unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+ 	unsigned int idx, ret;
+@@ -203,22 +214,22 @@ void __init samsung_clk_register_div(struct samsung_div_clock *list,
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+ 		if (list->table)
+ 			clk = clk_register_divider_table(NULL, list->name,
+-					list->parent_name, list->flags,
+-					reg_base + list->offset, list->shift,
+-					list->width, list->div_flags,
+-					list->table, &lock);
++				list->parent_name, list->flags,
++				ctx->reg_base + list->offset,
++				list->shift, list->width, list->div_flags,
++				list->table, &lock);
+ 		else
+ 			clk = clk_register_divider(NULL, list->name,
+-					list->parent_name, list->flags,
+-					reg_base + list->offset, list->shift,
+-					list->width, list->div_flags, &lock);
++				list->parent_name, list->flags,
++				ctx->reg_base + list->offset, list->shift,
++				list->width, list->div_flags, &lock);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+ 				list->name);
+ 			continue;
+ 		}
+ 
+-		samsung_clk_add_lookup(clk, list->id);
++		samsung_clk_add_lookup(ctx, clk, list->id);
+ 
+ 		/* register a clock lookup only if a clock alias is specified */
+ 		if (list->alias) {
+@@ -232,15 +243,16 @@ void __init samsung_clk_register_div(struct samsung_div_clock *list,
+ }
+ 
+ /* register a list of gate clocks */
+-void __init samsung_clk_register_gate(struct samsung_gate_clock *list,
+-						unsigned int nr_clk)
++void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
++				struct samsung_gate_clock *list,
++				unsigned int nr_clk)
+ {
+ 	struct clk *clk;
+ 	unsigned int idx, ret;
+ 
+ 	for (idx = 0; idx < nr_clk; idx++, list++) {
+ 		clk = clk_register_gate(NULL, list->name, list->parent_name,
+-				list->flags, reg_base + list->offset,
++				list->flags, ctx->reg_base + list->offset,
+ 				list->bit_idx, list->gate_flags, &lock);
+ 		if (IS_ERR(clk)) {
+ 			pr_err("%s: failed to register clock %s\n", __func__,
+@@ -257,7 +269,7 @@ void __init samsung_clk_register_gate(struct samsung_gate_clock *list,
+ 					__func__, list->alias);
+ 		}
+ 
+-		samsung_clk_add_lookup(clk, list->id);
++		samsung_clk_add_lookup(ctx, clk, list->id);
+ 	}
+ }
+ 
+@@ -266,21 +278,21 @@ void __init samsung_clk_register_gate(struct samsung_gate_clock *list,
+  * tree and register it
+  */
+ #ifdef CONFIG_OF
+-void __init samsung_clk_of_register_fixed_ext(
++void __init samsung_clk_of_register_fixed_ext(struct samsung_clk_provider *ctx,
+ 			struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 			unsigned int nr_fixed_rate_clk,
+ 			struct of_device_id *clk_matches)
+ {
+ 	const struct of_device_id *match;
+-	struct device_node *np;
++	struct device_node *clk_np;
+ 	u32 freq;
+ 
+-	for_each_matching_node_and_match(np, clk_matches, &match) {
+-		if (of_property_read_u32(np, "clock-frequency", &freq))
++	for_each_matching_node_and_match(clk_np, clk_matches, &match) {
++		if (of_property_read_u32(clk_np, "clock-frequency", &freq))
+ 			continue;
+ 		fixed_rate_clk[(u32)match->data].fixed_rate = freq;
+ 	}
+-	samsung_clk_register_fixed_rate(fixed_rate_clk, nr_fixed_rate_clk);
++	samsung_clk_register_fixed_rate(ctx, fixed_rate_clk, nr_fixed_rate_clk);
+ }
+ #endif
+ 
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index c7141ba..433bab3 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -21,6 +21,17 @@
+ #include <linux/of_address.h>
+ #include "clk-pll.h"
+ 
++/* Context node which holds information about the clock provider. */
++/**
++ * struct samsung_clk_provider: information about clock plovider
++ * @reg_base: virtual address for the register base.
++ * @clk_data: holds clock related data like clk* and number of clocks.
 + */
-+struct samsung_pin_ctrl exynos5260_pin_ctrl[] = {
-+	{
-+		/* pin-controller instance 0 data */
-+		.pin_banks	= exynos5260_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks0),
-+		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-+		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-+		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-+		.weint_con	= EXYNOS_WKUP_ECON_OFFSET,
-+		.weint_mask	= EXYNOS_WKUP_EMASK_OFFSET,
-+		.weint_pend	= EXYNOS_WKUP_EPEND_OFFSET,
-+		.svc		= EXYNOS_SVC_OFFSET,
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+		.label		= "exynos5260-gpio-ctrl0",
-+	}, {
-+		/* pin-controller instance 1 data */
-+		.pin_banks	= exynos5260_pin_banks1,
-+		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks1),
-+		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-+		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-+		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-+		.svc		= EXYNOS_SVC_OFFSET,
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos5260-gpio-ctrl1",
-+	}, {
-+		/* pin-controller instance 2 data */
-+		.pin_banks	= exynos5260_pin_banks2,
-+		.nr_banks	= ARRAY_SIZE(exynos5260_pin_banks2),
-+		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
-+		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
-+		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
-+		.svc		= EXYNOS_SVC_OFFSET,
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos5260-gpio-ctrl2",
-+	},
++struct samsung_clk_provider {
++	void __iomem *reg_base;
++	struct clk_onecell_data clk_data;
 +};
 +
- /* pin banks of exynos5420 pin-controller 0 */
- static struct samsung_pin_bank exynos5420_pin_banks0[] = {
- 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpy7", 0x00),
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index 47ec2e8..0324d4c 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -1120,6 +1120,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = (void *)exynos4x12_pin_ctrl },
- 	{ .compatible = "samsung,exynos5250-pinctrl",
- 		.data = (void *)exynos5250_pin_ctrl },
-+	{ .compatible = "samsung,exynos5260-pinctrl",
-+		.data = (void *)exynos5260_pin_ctrl },
- 	{ .compatible = "samsung,exynos5420-pinctrl",
- 		.data = (void *)exynos5420_pin_ctrl },
- 	{ .compatible = "samsung,s5pv210-pinctrl",
-diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-index 30622d9..bab9c21 100644
---- a/drivers/pinctrl/pinctrl-samsung.h
-+++ b/drivers/pinctrl/pinctrl-samsung.h
-@@ -254,6 +254,7 @@ struct samsung_pmx_func {
- extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
-+extern struct samsung_pin_ctrl exynos5260_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5420_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c2412_pin_ctrl[];
+ /**
+  * struct samsung_clock_alias: information about mux clock
+  * @id: platform specific id of the clock.
+@@ -312,29 +323,40 @@ struct samsung_pll_clock {
+ 	__PLL(_typ, _id, NULL, _name, _pname, CLK_GET_RATE_NOCACHE,	\
+ 		_lock, _con, _rtable, _alias)
+ 
+-extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+-				    unsigned long nr_clks);
++extern struct samsung_clk_provider *__init samsung_clk_init(
++			struct device_node *np, void __iomem *base,
++			unsigned long nr_clks);
+ extern void __init samsung_clk_of_register_fixed_ext(
++		struct samsung_clk_provider *ctx,
+ 		struct samsung_fixed_rate_clock *fixed_rate_clk,
+ 		unsigned int nr_fixed_rate_clk,
+ 		struct of_device_id *clk_matches);
+ 
+-extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id);
++extern void samsung_clk_add_lookup(struct samsung_clk_provider *ctx,
++			struct clk *clk, unsigned int id);
+ 
+-extern void samsung_clk_register_alias(struct samsung_clock_alias *list,
+-		unsigned int nr_clk);
++extern void samsung_clk_register_alias(struct samsung_clk_provider *ctx,
++			struct samsung_clock_alias *list,
++			unsigned int nr_clk);
+ extern void __init samsung_clk_register_fixed_rate(
+-		struct samsung_fixed_rate_clock *clk_list, unsigned int nr_clk);
++			struct samsung_clk_provider *ctx,
++			struct samsung_fixed_rate_clock *clk_list,
++			unsigned int nr_clk);
+ extern void __init samsung_clk_register_fixed_factor(
+-		struct samsung_fixed_factor_clock *list, unsigned int nr_clk);
+-extern void __init samsung_clk_register_mux(struct samsung_mux_clock *clk_list,
++			struct samsung_clk_provider *ctx,
++			struct samsung_fixed_factor_clock *list,
++			unsigned int nr_clk);
++extern void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
++		struct samsung_mux_clock *clk_list,
+ 		unsigned int nr_clk);
+-extern void __init samsung_clk_register_div(struct samsung_div_clock *clk_list,
++extern void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
++		struct samsung_div_clock *clk_list,
+ 		unsigned int nr_clk);
+-extern void __init samsung_clk_register_gate(
++extern void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+ 		struct samsung_gate_clock *clk_list, unsigned int nr_clk);
+-extern void __init samsung_clk_register_pll(struct samsung_pll_clock *pll_list,
+-		unsigned int nr_clk, void __iomem *base);
++extern void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
++			struct samsung_pll_clock *pll_list,
++			unsigned int nr_clk, void __iomem *base);
+ 
+ extern unsigned long _get_rate(const char *clk_name);
+ 
 -- 
 1.7.9.5
