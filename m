@@ -1,55 +1,146 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH V4] cpufreq: suspend governors on system
- suspend/hibernate
-Date: Sat, 07 Dec 2013 16:24:09 +0100
-Message-ID: <1386429849.9737.7.camel@x41.thuisdomein>
-References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org>
-	 <3057132.zHNVNQZ8pP@vostro.rjw.lan>
-	 <CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
-	 <1781198.iCUX9ZdW7W@vostro.rjw.lan>
-	 <CAKohpomA9r5a4GkfA-Huh0ectc-hXjSxcdLkJhF6DZvL22yY4w@mail.gmail.com>
-	 <87vbz0j55p.fsf@nemi.mork.no>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Sat, 07 Dec 2013 23:20:43 +0100
+Message-ID: <52A39F3B.5070806@gmail.com>
+References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com> <1386308868-30264-2-git-send-email-l.krishna@samsung.com> <52A207D8.3030206@gmail.com> <8302228.6iSJIFqj3A@flatron>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <87vbz0j55p.fsf@nemi.mork.no>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:62668 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754564Ab3LGWUt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 7 Dec 2013 17:20:49 -0500
+In-Reply-To: <8302228.6iSJIFqj3A@flatron>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, wim@iguana.be, dianders@chromium.org, kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, linux@roeck-us.net
 
-On Sat, 2013-12-07 at 12:01 +0100, Bj=C3=B8rn Mork wrote:
-> Sorry to be making noise here again, but I was eager to verify that t=
-he
-> fixes in v3.13-rc3 were OK on my system.  Unfortunately it seems this
-> patch completely broke suspend for me.  Hibernete ended up with a bla=
-nk
-> console and no visible activity, without ever writing any image to di=
-sk.
->=20
-> There really weren't that many suspects between v3.13-rc2 and v3.13-r=
-c3,
-> so I went directly to reverting 5a87182aa21d ("cpufreq: suspend
-> governors on system suspend/hibernate") which fixed the problem. I
-> didn't bother debugging it further from there. I don't think there is
-> anything magic about my system which should make this problem specifi=
-c
-> to it.
->=20
-> I am still using the acpi-cpufreq driver on an old x86_64 laptop if t=
-hat
-> matters.
+Hi Tomasz,
 
-On an x86 (32 bits) laptop hibernate also broke in v3.13-rc3. On that
-machine hibernation itself worked, or at least seemed to work, but the
-machine would basically stop after thawing (directly after loading the
-hibernation image).
+On 12/07/2013 01:57 AM, Tomasz Figa wrote:
+> On Friday 06 of December 2013 18:22:32 Sylwester Nawrocki wrote:
+[...]
+> I wouldn't really nitpick on such things, but if we end up needing another
+> respin, here's what I think.
 
-And reverting commit 5a87182aa21d ("cpufreq: suspend governors on syste=
-m
-suspend/hibernate"), on top of v3.13-rc3, also lead to a successful
-hibernation/thaw cycle.
+Yeah, I didn't really realize the iteration index for this series was 
+already
+a 2 digit number and some people could have already gotten upset or 
+seriously
+impatient. Started to regret I even bothered with posting any comments 
+to that.
+:) Anyway, I didn't request any corrections, just pointed out what could be
+improved. People are free to accept it or ignore as they see fit. And having
+seen patch series that got merged after periods like 2.5 year V12 is not
+something unusual anyway. :)
 
+>> On 12/06/2013 06:47 AM, Leela Krishna Amudala wrote:
+>>> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
+>>
+>> s/pmusysreg/PMU sysreg ? Similarly I would capitalize it in the subject
+>> line as well.
+>
+> Well, since this is supposed to be a human readable description, I would
+> go even further and write "...device tree node of Power Management Unit
+>   to...".
 
-Paul Bolle
+Agreed, it sounds better.
+
+>>> handle PMU register accesses in a centralized way using syscon driver
+>>>
+>>> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
+>>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+>>> Reviewed-by: Doug Anderson<dianders@chromium.org>
+>>> Tested-by: Doug Anderson<dianders@chromium.org>
+>>> ---
+>>>    Documentation/devicetree/bindings/arm/samsung/pmu.txt |   15 +++++++++++++++
+>>>    arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
+>>>    arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
+>>>    3 files changed, 25 insertions(+)
+>>>    create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>>> new file mode 100644
+>>> index 0000000..f1f1552
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>>
+>> I might be easy to confuse this with ARM Performance Monitoring Unit.
+>> So perhaps we should rename this file to, e.g. power-management-unit.txt ?
+>
+> Considering location of this file, which is arm/samsung, I think this
+> name is pretty much clear. ARM PMU is a generic thing, so it couldn't
+> be placed here.
+
+It's up to the patch author if they want to change it or not, I still think
+it's better to not use short acronyms like this, if we can easily make it
+unambiguous.
+
+>>> @@ -0,0 +1,15 @@
+>>> +SAMSUNG Exynos SoC series PMU Registers
+>>
+>> s/PMU/Power Management Unit ?
+>
+> s/PMU Registers/Power Management Unit/
+
+Yeah, that's more accurate.
+
+>>> +Properties:
+>>> + - compatible : should contain two values. First value must be one from following list:
+>>> +		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+>>> +		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+>>
+>> s/./; ?
+>>
+>>> +		second value must be always "syscon".
+>>
+>> It might be more safe to specify it as the last value, so something along
+>> the lines of:
+>>
+>> 	The last value should be "syscon".
+>>
+>>> +
+>>> + - reg : offset and length of the register set.
+>>> +
+>>> +Example :
+>>> +pmu_system_controller: system-controller@10040000 {
+>>
+>> Might be more sensible to use 'power_management_unit' for the label.
+>
+> That's quite a lot of text for a label. pmu_syscon as in previous version
+> of this patch would look more sensible to me.
+
+I don't think it hurts to have this long labels, what I proposed is exactly
+of same length as the original one. Anyway pmu_syscon sounds good to me too.
+
+>>> +	compatible = "samsung,exynos5250-pmu", "syscon";
+>>> +	reg =<0x10040000 0x5000>;
+>>> +};
+>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+>>> index b98ffc3..62f9e36 100644
+>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>>> @@ -163,6 +163,11 @@
+>>>    		interrupts =<0 47 0>;
+>>>    	};
+>>>
+>>> +	pmu_system_controller: system-controller@10040000 {
+>>
+>> s/pmu_system_controller/power_management_unit ? So it describes the
+>> subsystem better in terms used in the SoCs User Manual ?
+>
+> See above.
+
+I can't see anything wrong in such long labels, but this discussion is 
+really
+just a bike-shedding, so let's end it right now not to risk annoying 
+even more
+people! :)
+
+--
+Regards,
+Sylwester
