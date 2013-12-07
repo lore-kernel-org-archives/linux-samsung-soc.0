@@ -1,148 +1,51 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and exynos5420 dtsi files
-Date: Sat, 07 Dec 2013 01:57:27 +0100
-Message-ID: <8302228.6iSJIFqj3A@flatron>
-References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com> <1386308868-30264-2-git-send-email-l.krishna@samsung.com> <52A207D8.3030206@gmail.com>
+From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
+Subject: Re: [PATCH V4] cpufreq: suspend governors on system suspend/hibernate
+Date: Sat, 07 Dec 2013 12:01:54 +0100
+Message-ID: <87vbz0j55p.fsf@nemi.mork.no>
+References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org>
+	<3057132.zHNVNQZ8pP@vostro.rjw.lan>
+	<CAKohpondYbBeObUJJqNZLe04dmN9tLMZv9KrjzqLr2NDorRtLw@mail.gmail.com>
+	<1781198.iCUX9ZdW7W@vostro.rjw.lan>
+	<CAKohpomA9r5a4GkfA-Huh0ectc-hXjSxcdLkJhF6DZvL22yY4w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f53.google.com ([74.125.83.53]:40166 "EHLO
-	mail-ee0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752989Ab3LGA5e (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Dec 2013 19:57:34 -0500
-In-Reply-To: <52A207D8.3030206@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAKohpomA9r5a4GkfA-Huh0ectc-hXjSxcdLkJhF6DZvL22yY4w@mail.gmail.com>
+	(Viresh Kumar's message of "Fri, 29 Nov 2013 08:56:08 +0530")
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, wim@iguana.be, dianders@chromium.org, kgene.kim@samsung.com, t.figa@samsung.com, devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org, cpgs@samsung.com, linux@roeck-us.net
 
-Hi Sylwester,
+Viresh Kumar <viresh.kumar@linaro.org> writes:
 
-On Friday 06 of December 2013 18:22:32 Sylwester Nawrocki wrote:
-> Hi,
-> 
-> Just a few minor comments...
+> On 29 November 2013 01:59, Rafael J. Wysocki <rjw@rjwysocki.net> wrot=
+e:
+>> So I'm reading this as "the version of the patch in bleeding-edge is=
+ OK".
+>>
+>> I hope that really is the case. :-)
+>
+> Yeah, that's correct.
 
-I wouldn't really nitpick on such things, but if we end up needing another
-respin, here's what I think.
+Sorry to be making noise here again, but I was eager to verify that the
+fixes in v3.13-rc3 were OK on my system.  Unfortunately it seems this
+patch completely broke suspend for me.  Hibernete ended up with a blank
+console and no visible activity, without ever writing any image to disk=
+=2E
 
-> 
-> On 12/06/2013 06:47 AM, Leela Krishna Amudala wrote:
-> > This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files to
-> 
-> s/pmusysreg/PMU sysreg ? Similarly I would capitalize it in the subject
-> line as well.
+There really weren't that many suspects between v3.13-rc2 and v3.13-rc3=
+,
+so I went directly to reverting 5a87182aa21d ("cpufreq: suspend
+governors on system suspend/hibernate") which fixed the problem. I
+didn't bother debugging it further from there. I don't think there is
+anything magic about my system which should make this problem specific
+to it.
 
-Well, since this is supposed to be a human readable description, I would
-go even further and write "...device tree node of Power Management Unit
- to...".
+I am still using the acpi-cpufreq driver on an old x86_64 laptop if tha=
+t
+matters.
 
-> 
-> > handle PMU register accesses in a centralized way using syscon driver
-> >
-> > Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
-> > Reviewed-by: Tomasz Figa<t.figa@samsung.com>
-> > Reviewed-by: Doug Anderson<dianders@chromium.org>
-> > Tested-by: Doug Anderson<dianders@chromium.org>
-> > ---
-> >   Documentation/devicetree/bindings/arm/samsung/pmu.txt |   15 +++++++++++++++
-> >   arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
-> >   arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
-> >   3 files changed, 25 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> > new file mode 100644
-> > index 0000000..f1f1552
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
-> 
-> I might be easy to confuse this with ARM Performance Monitoring Unit.
-> So perhaps we should rename this file to, e.g. power-management-unit.txt ?
 
-Considering location of this file, which is arm/samsung, I think this
-name is pretty much clear. ARM PMU is a generic thing, so it couldn't
-be placed here.
-
-> 
-> > @@ -0,0 +1,15 @@
-> > +SAMSUNG Exynos SoC series PMU Registers
-> 
-> s/PMU/Power Management Unit ?
-
-s/PMU Registers/Power Management Unit/
-
-> 
-> > +
-> > +Properties:
-> > + - compatible : should contain two values. First value must be one from following list:
-> > +		   - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
-> > +		   - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
-> 
-> s/./; ?
-> 
-> > +		second value must be always "syscon".
-> 
-> It might be more safe to specify it as the last value, so something along
-> the lines of:
-> 
-> 	The last value should be "syscon".
-> 
-> > +
-> > + - reg : offset and length of the register set.
-> > +
-> > +Example :
-> > +pmu_system_controller: system-controller@10040000 {
-> 
-> Might be more sensible to use 'power_management_unit' for the label.
-
-That's quite a lot of text for a label. pmu_syscon as in previous version
-of this patch would look more sensible to me.
-
-> 
-> > +	compatible = "samsung,exynos5250-pmu", "syscon";
-> > +	reg =<0x10040000 0x5000>;
-> > +};
-> > diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> > index b98ffc3..62f9e36 100644
-> > --- a/arch/arm/boot/dts/exynos5250.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> > @@ -163,6 +163,11 @@
-> >   		interrupts =<0 47 0>;
-> >   	};
-> >
-> > +	pmu_system_controller: system-controller@10040000 {
-> 
-> s/pmu_system_controller/power_management_unit ? So it describes the 
-> subsystem
-> better in terms used in the SoCs User Manual ?
-
-See above.
-
-> 
-> > +		compatible = "samsung,exynos5250-pmu", "syscon";
-> > +		reg =<0x10040000 0x5000>;
-> > +	};
-> > +
-> >   	watchdog {
-> >   		clocks =<&clock 336>;
-> >   		clock-names = "watchdog";
-> > diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-> > index b1fa334..cd47db0 100644
-> > --- a/arch/arm/boot/dts/exynos5420.dtsi
-> > +++ b/arch/arm/boot/dts/exynos5420.dtsi
-> > @@ -402,4 +402,9 @@
-> >   		clock-names = "gscl";
-> >   		samsung,power-domain =<&gsc_pd>;
-> >   	};
-> > +
-> > +	pmu_system_controller: system-controller@10040000 {
-> 
-> s/pmu_system_controller/power_management_unit ?
-
-See above.
-
-Best regards,
-Tomasz
+Bj=C3=B8rn
