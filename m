@@ -1,152 +1,49 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 1/5] phy: unify the phy name parameters
-Date: Mon,  9 Dec 2013 17:08:53 +0200
-Message-ID: <1386601737-8735-2-git-send-email-heikki.krogerus@linux.intel.com>
-References: <1386601737-8735-1-git-send-email-heikki.krogerus@linux.intel.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: dts: Leave Exynos5250 SPI controller disabled by
+ default
+Date: Mon, 09 Dec 2013 16:23:03 +0100
+Message-ID: <5026211.5mW8H3pyKS@amdc1227>
+References: <1385381710-5212-1-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1386601737-8735-1-git-send-email-heikki.krogerus@linux.intel.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:26837 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761195Ab3LIPXP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Dec 2013 10:23:15 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MXJ00HLBPEPAU30@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 09 Dec 2013 15:23:13 +0000 (GMT)
+In-reply-to: <1385381710-5212-1-git-send-email-broonie@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-Replace "string" and "port" that are used as phy name
-parameter for various functions with "con_id" which is
-commonly used in other frameworks.
+Hi Kukjin,
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- drivers/phy/phy-core.c  | 22 ++++++++++------------
- include/linux/phy/phy.h |  8 ++++----
- 2 files changed, 14 insertions(+), 16 deletions(-)
+On Monday 25 of November 2013 12:15:08 Mark Brown wrote:
+> From: Mark Brown <broonie@linaro.org>
+> 
+> Rather than requiring each board to explicitly disable the SPI controllers
+> it is not using instead require boards to enable those that they are using.
+> This is less work overall since normally at most one of the controllers is
+> in use and avoids issues caused by inappropriate pinmuxing.
+> 
+> Signed-off-by: Mark Brown <broonie@linaro.org>
+> Acked-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/boot/dts/cros5250-common.dtsi    |  9 +--------
+>  arch/arm/boot/dts/exynos5250-arndale.dts  | 12 ------------
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |  6 ++----
+>  arch/arm/boot/dts/exynos5250.dtsi         |  3 +++
+>  4 files changed, 6 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index 03cf8fb..1102aef 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -53,7 +53,7 @@ static int devm_phy_match(struct device *dev, void *res, void *match_data)
- 	return res == match_data;
- }
- 
--static struct phy *phy_lookup(struct device *device, const char *port)
-+static struct phy *phy_lookup(struct device *device, const char *con_id)
- {
- 	unsigned int count;
- 	struct phy *phy;
-@@ -68,7 +68,7 @@ static struct phy *phy_lookup(struct device *device, const char *port)
- 		consumers = phy->init_data->consumers;
- 		while (count--) {
- 			if (!strcmp(consumers->dev_name, dev_name(device)) &&
--					!strcmp(consumers->port, port)) {
-+					!strcmp(consumers->port, con_id)) {
- 				class_dev_iter_exit(&iter);
- 				return phy;
- 			}
-@@ -350,33 +350,32 @@ EXPORT_SYMBOL_GPL(of_phy_simple_xlate);
- /**
-  * phy_get() - lookup and obtain a reference to a phy.
-  * @dev: device that requests this phy
-- * @string: the phy name as given in the dt data or the name of the controller
-- * port for non-dt case
-+ * @con_id: name of the phy from device's point of view
-  *
-  * Returns the phy driver, after getting a refcount to it; or
-  * -ENODEV if there is no such phy.  The caller is responsible for
-  * calling phy_put() to release that count.
-  */
--struct phy *phy_get(struct device *dev, const char *string)
-+struct phy *phy_get(struct device *dev, const char *con_id)
- {
- 	int index = 0;
- 	struct phy *phy = NULL;
- 
--	if (string == NULL) {
-+	if (con_id == NULL) {
- 		dev_WARN(dev, "missing string\n");
- 		return ERR_PTR(-EINVAL);
- 	}
- 
- 	if (dev->of_node) {
- 		index = of_property_match_string(dev->of_node, "phy-names",
--			string);
-+						 con_id);
- 		phy = of_phy_get(dev, index);
- 		if (IS_ERR(phy)) {
- 			dev_err(dev, "unable to find phy\n");
- 			return phy;
- 		}
- 	} else {
--		phy = phy_lookup(dev, string);
-+		phy = phy_lookup(dev, con_id);
- 		if (IS_ERR(phy)) {
- 			dev_err(dev, "unable to find phy\n");
- 			return phy;
-@@ -395,14 +394,13 @@ EXPORT_SYMBOL_GPL(phy_get);
- /**
-  * devm_phy_get() - lookup and obtain a reference to a phy.
-  * @dev: device that requests this phy
-- * @string: the phy name as given in the dt data or phy device name
-- * for non-dt case
-+ * @con_id: name of the phy from device's point of view
-  *
-  * Gets the phy using phy_get(), and associates a device with it using
-  * devres. On driver detach, release function is invoked on the devres data,
-  * then, devres data is freed.
-  */
--struct phy *devm_phy_get(struct device *dev, const char *string)
-+struct phy *devm_phy_get(struct device *dev, const char *con_id)
- {
- 	struct phy **ptr, *phy;
- 
-@@ -410,7 +408,7 @@ struct phy *devm_phy_get(struct device *dev, const char *string)
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
--	phy = phy_get(dev, string);
-+	phy = phy_get(dev, con_id);
- 	if (!IS_ERR(phy)) {
- 		*ptr = phy;
- 		devres_add(dev, ptr);
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 6d72269..d67dcbf 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -127,8 +127,8 @@ int phy_init(struct phy *phy);
- int phy_exit(struct phy *phy);
- int phy_power_on(struct phy *phy);
- int phy_power_off(struct phy *phy);
--struct phy *phy_get(struct device *dev, const char *string);
--struct phy *devm_phy_get(struct device *dev, const char *string);
-+struct phy *phy_get(struct device *dev, const char *con_id);
-+struct phy *devm_phy_get(struct device *dev, const char *con_id);
- void phy_put(struct phy *phy);
- void devm_phy_put(struct device *dev, struct phy *phy);
- struct phy *of_phy_simple_xlate(struct device *dev,
-@@ -199,12 +199,12 @@ static inline int phy_power_off(struct phy *phy)
- 	return -ENOSYS;
- }
- 
--static inline struct phy *phy_get(struct device *dev, const char *string)
-+static inline struct phy *phy_get(struct device *dev, const char *con_id)
- {
- 	return ERR_PTR(-ENOSYS);
- }
- 
--static inline struct phy *devm_phy_get(struct device *dev, const char *string)
-+static inline struct phy *devm_phy_get(struct device *dev, const char *con_id)
- {
- 	return ERR_PTR(-ENOSYS);
- }
--- 
-1.8.5.1
+Seems like you have missed this series. Could you apply it?
+
+Best regards,
+Tomasz
