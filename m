@@ -1,40 +1,49 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: dts: Add initial support for Arndale Octa board
-Date: Tue, 10 Dec 2013 05:29:16 +0900
-Message-ID: <52A6281C.2050304@samsung.com>
-References: <1385635081-21072-1-git-send-email-sachin.kamat@linaro.org> <1532760.vJJg0eBWoc@amdc1227>
+Subject: Re: [PATCH v4 2/4] clk: exynos5410: register clocks using common
+ clock framework
+Date: Tue, 10 Dec 2013 05:37:59 +0900
+Message-ID: <52A62A27.7080408@samsung.com>
+References: <1385456288-20398-1-git-send-email-v.tyrtov@samsung.com> <1385456288-20398-3-git-send-email-v.tyrtov@samsung.com> <1914850.6CAa0SzDWP@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f53.google.com ([209.85.160.53]:45313 "EHLO
-	mail-pb0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932186Ab3LIU3X (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 15:29:23 -0500
-In-Reply-To: <1532760.vJJg0eBWoc@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1914850.6CAa0SzDWP@amdc1227>
+Sender: linux-doc-owner@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com
+Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Mark Rutland <mark.rutland@arm.com>, nicolas.pitre@linaro.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, tomasz.figa@gmail.com, Naour Romain <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Dave.Martin@arm.com, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Landley <rob@landley.net>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/10/13 01:37, Tomasz Figa wrote:
-> Hi Sachin,
+On 12/10/13 01:34, Tomasz Figa wrote:
+> Hi Vyacheslav, Tarek,
 >
-> On Thursday 28 of November 2013 16:08:01 Sachin Kamat wrote:
->> Arndale Octa board is based on Exynos5420 SoC. This patch
->> adds the basic support required for booting it through DT.
+> On Tuesday 26 of November 2013 12:58:06 Vyacheslav Tyrtov wrote:
+>> From: Tarek Dakhran<t.dakhran@samsung.com>
 >>
->> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+>> The EXYNOS5410 clocks are statically listed and registered
+>> using the Samsung specific common clock helper functions.
+>>
+>> Signed-off-by: Tarek Dakhran<t.dakhran@samsung.com>
+>> Signed-off-by: Vyacheslav Tyrtov<v.tyrtov@samsung.com>
 >> ---
->>   arch/arm/boot/dts/Makefile                    |    1 +
->>   arch/arm/boot/dts/exynos5420-arndale-octa.dts |   66 +++++++++++++++++++++++++
->>   2 files changed, 67 insertions(+)
->>   create mode 100644 arch/arm/boot/dts/exynos5420-arndale-octa.dts
+>>   .../devicetree/bindings/clock/exynos5410-clock.txt |  54 +++++
+>>   drivers/clk/samsung/Makefile                       |   1 +
+>>   drivers/clk/samsung/clk-exynos5410.c               | 239 +++++++++++++++++++++
+>>   include/dt-bindings/clock/exynos5410.h             |  32 +++
+>>   4 files changed, 326 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
+>>   create mode 100644 drivers/clk/samsung/clk-exynos5410.c
+>>   create mode 100644 include/dt-bindings/clock/exynos5410.h
 >
-> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+> Acked-by: Tomasz Figa<t.figa@samsung.com>
 >
-Tomasz, thanks for your review and looks good to me :-)
+Tomasz, thanks for your ack on clk stuff.
 
-Applied, thanks.
+> This should go through Samsung tree, I guess, since it's a dependency
+> of other patches in this series and doesn't depend on any things from
+> clock tree. Mike, Kukjin, are you okay with this?
+>
+Yeah, I'm fine on this series but 4th patch for supporting dual cluster.
+
+Let me take 1 to 3 patches firstly. Thanks.
 - Kukjin
