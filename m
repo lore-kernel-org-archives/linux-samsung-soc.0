@@ -1,66 +1,83 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
  where possible
-Date: Mon, 9 Dec 2013 17:30:21 +0000
-Message-ID: <20131209173021.GC29268@sirena.org.uk>
-References: <1386253559-18262-1-git-send-email-broonie@kernel.org>
- <1386253559-18262-2-git-send-email-broonie@kernel.org>
- <CAAgF-Bfk8byZwVBd_5PopM3ji-wdTMR5i-J7w1W4zq4gFk4i+Q@mail.gmail.com>
+Date: Mon, 9 Dec 2013 23:22:39 +0530
+Message-ID: <CAAgF-Bc5wpwsCtvg-i=nwoSgwDb137VkLC78R1tgsf7CqY-KQQ@mail.gmail.com>
+References: <1384264120-24750-2-git-send-email-broonie@kernel.org>
+ <CAAgF-BcJZrwwHYtk6pKj_-+CzmbhhV4V_Z02kjHveObOR6oiFQ@mail.gmail.com>
+ <20131126102311.GW14725@sirena.org.uk>
+ <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
+ <20131126122031.GA14725@sirena.org.uk>
+ <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
+ <20131127150534.GW14725@sirena.org.uk>
+ <CAAgF-BcoKDt=u51tqiWyxveb4iJSXKuV49X1VmOsWiRsSGKKpg@mail.gmail.com>
+ <20131128115351.GC27568@sirena.org.uk>
+ <CAAgF-Bc3fOdJ3C-Jrmw-7Vxt_9QSJHEX5kWvCEyu_WBrsMDdEA@mail.gmail.com>
+ <20131205114538.GO29268@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hVUY+LYn0LT07sdA"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:42077 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753885Ab3LIRa1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 12:30:27 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAgF-Bfk8byZwVBd_5PopM3ji-wdTMR5i-J7w1W4zq4gFk4i+Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20131205114538.GO29268@sirena.org.uk>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org
+
+Hi Mark,
+
+On Thu, Dec 5, 2013 at 5:15 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, Dec 05, 2013 at 04:20:03PM +0530, Padma Venkat wrote:
+>> On Thu, Nov 28, 2013 at 5:23 PM, Mark Brown <broonie@kernel.org> wrote:
+>
+>> > OK, so we can probably just reinitialise the dmaengine data after we
+>> > reset it?  Like below
+>
+>> Yes. That works well.
+>
+> Great.
+>
+>> As I forgot to add SND_DMAENGINE_PCM_FLAG_NO_RESIDUE flag, I was
+>> getting underrun error. After adding this flag audio playback is
+>> working fine for smaller files on smdk5420 with pl330 dma driver.
+>
+> OK, there were some patches on the thread adding residue support to the
+> PL330 driver yesterday - hopefully those can get merged at some point
+>
+>> Except for the crash due to NULL pointer dereference in secondary
+>> dai(I posted a patch for the same (ASoC: samsung: Initialize the
+>> dma_data for secondary dai)) you can add my
+>
+>> Tested By: Padmavathi Venna <padma.v@samsung.com>
+>
+> Excellent, thanks - I'd squashed in your change already.  Like I say I'm
+> still concerned that we might need a fix for v3.13 since I can't
+> entirely see why the code works as-is.
+
+Here two things
+1)crash due to null pointer reference during boot which got fixed by
+initializing the secondary dai.
+     This crash was not there in mainline because the channel request
+happening at runtime and with dmaengine the channel request happening
+at boot time. But if some one try to play audio with secondary device
+then at run time this crash might happen.
+2) overwritting of dma_size during hw_params
+    This is not required in mainline because pointer to the whole
+s3c_dma_params were being passed as dma_data which has dma_size init.
+But with dmaengine we are just passing the pointer to
+snd_dmaengine_dai_dma_data which is embedded in s3c_dma_params and
+dma_size is outside.
 
 
---hVUY+LYn0LT07sdA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I think this is what you are concern about why it is not working as-is.
 
-On Fri, Dec 06, 2013 at 10:44:19AM +0530, Padma Venkat wrote:
-
-> I couldn't test this patch set due to some crash in recent kernel in
-> dmaengine_unmap_put. I think this unmap support is not yet implemented
-> for pl330 driver. It is mentioned in the commit "dmaengine: prepare
-> for generic 'unmap' data", [bzolnier: prepare pl330 driver for adding
-> missing unmap while at it].
-
-This is unfortunate...  I'd suggest trying mainline but I see it's
-broken in Linus' tree too and no fixes in -next. :(
-
-I'm tempted to push up with your Tested-by a note saying you did your
-testing on an earlier version but weren't able to test due to other bugs.
-
---hVUY+LYn0LT07sdA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSpf4pAAoJELSic+t+oim9EpUP/RaB5GEPsoHcNVVRwrpVPoZq
-K1JGaMQu8oCx8Rbz8JPR5vEda52dm2l/6XCcx8Utizyk9pRqF7uQSF0QXZz+yq6c
-xbTVxRc6tZU8XPUDZXFM/P773yIzaDe4kXa3XIVPRHDyCSUDK2C08ujEnFvNQ5qM
-cmcM0QjwTpyHfOJJclc2OLHEATM6ckUxb3HcL9J76Qo2rVzkFAvR8h7OzjxhOhVw
-CvpNdsjS/ZRNqu0f456UCcgysR6jbdkvFaRrA0KOH48RX310KGJ8tIfxi5VN960p
-q9W39yycIXL+c1XELpq6RK3S4oSl6K6t6XOrasMZq2UuctrsvZIMCVcDXqzYUsWa
-aDnJQoqYf4nLGUQp39qhFm7aphsvV26SM1Ug5Xd0e75lf09Y9IBYCKwg0CI3BPLP
-N9XSFiyxoLwOEM8Hn9gbNnBhTyHDFcv5cRo1ZVXRHvYad1KGitXRAJHeX6Vd7Iwb
-X1oa+roTtlNAAY7MjQoTbF760GQiPC9DKGqMIy6i4FdAEHWfQZUNHkKN42GwYQr4
-Mi0emSvIedDjTcWreY5TY+924v2mm9v8lCEgqxuT4pLJN/KQCH/1fHrTSWqdLDqT
-FUWYEmxT5GmwbQcfqjvibL2huPYbdjbwozIAUtcdBdnRxBD4tDkHpoujQu62MNF+
-NTD3obwuWvaINJ613oea
-=BVY8
------END PGP SIGNATURE-----
-
---hVUY+LYn0LT07sdA--
+Thanks
+Padma
