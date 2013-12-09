@@ -1,96 +1,77 @@
-From: Vikas Sajjan <vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed HUBs
-Date: Mon,  9 Dec 2013 18:14:18 +0545
-Message-ID: <1386592158-12086-1-git-send-email-vikas.sajjan@linaro.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sarah.a.sharp-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, tianyu.lan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, burzalodowa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 3/4 v9] thermal: samsung: Add TMU support for Exynos5420
+ SoCs
+Date: Mon, 09 Dec 2013 13:43:18 +0100
+Message-ID: <1424435.eCnbAs4DIp@amdc1227>
+References: <1378268629-2886-3-git-send-email-ch.naveen@samsung.com>
+ <1384238225-24632-1-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1384238225-24632-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Does warm reset while activating SuperSpeed HUBs if the hub activate type
-is HUB_RESET_RESUME.
+Hi Naveen, Andrew,
 
-When we do Suspend-to-RAM with (any one of the 16, 32, 64 Jetflash) transcend
-USB 3.0 device connected on 3.0 port, during resume I noticed that the
-XHCI controller has moved to sometimes RECOVERY, POLLING or INACTIVE STATE.
-This behaviour is inconsistent and the connection with connected USB 3.0 device
-on 3.0 port was LOST.
+Please see my comments inline.
 
-Doing warm reset while activating SuperSpeed HUBs if the hub
-activate type is HUB_RESET_RESUME, gets the connected device to the stable state.
+On Tuesday 12 of November 2013 12:07:05 Naveen Krishna Chatradhi wrote:
+> Exynos5420 has 5 TMU channels, the TRIMINFO register is
+> misplaced for TMU channels 2, 3 and 4
+> TRIMINFO at 0x1006c000 contains data for TMU channel 3
+> TRIMINFO at 0x100a0000 contains data for TMU channel 4
+> TRIMINFO at 0x10068000 contains data for TMU channel 2
+> 
+> This patch
+> 1 Adds the neccessary register changes and arch information
+>    to support Exynos5420 SoCs.
+> 2. Handles the gate clock for misplaced TRIMINFO register
+> 3. Updates the Documentation at
+>    Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> ---
+> Changes since v8:
+> 1. rewrote the Documentation for device tree bindings
+> 2. Merged the https://lkml.org/lkml/2013/11/7/262 (as this is a fix)
+> 3. introduces "samsung,exynos5420-tmu-triminfo" and 
+>    "samsung,exynos5420-tmu-triminfo-clk" to handle the TMU channels on
+>    Exynos5420 more appropriately
+> 
+>  .../devicetree/bindings/thermal/exynos-thermal.txt |   45 +++++++++
+>  drivers/thermal/samsung/exynos_tmu.c               |   58 ++++++++++-
+>  drivers/thermal/samsung/exynos_tmu.h               |    2 +
+>  drivers/thermal/samsung/exynos_tmu_data.c          |  106 ++++++++++++++++++++
+>  drivers/thermal/samsung/exynos_tmu_data.h          |    8 ++
+>  5 files changed, 215 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> index 116cca0..5055b31 100644
+> --- a/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> +++ b/Documentation/devicetree/bindings/thermal/exynos-thermal.txt
+> @@ -6,6 +6,11 @@
+>  	       "samsung,exynos4412-tmu"
+>  	       "samsung,exynos4210-tmu"
+>  	       "samsung,exynos5250-tmu"
+> +	       "samsung,exynos5420-tmu" for TMU channel 0, 1 on Exynos5420
+> +	       "samsung,exynos5420-tmu-triminfo" for TMU channel 2 Exynos5420
+> +			(Must pass triminfo base)
+> +	       "samsung,exynos5420-tmu-triminfo-clk" for TMU channel 3 and 4
+> +			Exynos5420 (Must pass triminfo base and triminfo clock)
 
-Reviewed at https://chromium-review.googlesource.com/#/c/177132/
+I don't think you need those two separate compatible values. Instead you
+can keep only the one that requires clock and specify the same base clock
+as triminfo clock. Also IMHO "samsung,exynos5420-tmu-ext-triminfo" would
+be a better name, as it describes the hardware better (TMU with external
+triminfo block, as opposed to normal TMU that has it internally).
 
-Tested on exynos5420 and exynos5250 with Transcend Jetflash USB 3.0 device (8564:1000)
+Otherwise the patch looks fine.
 
-rebased on Greg Kroah-Hartman's usb-next
-git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+Best regards,
+Tomasz
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/usb/core/hub.c |   41 +++++++++++++++++++++++++----------------
- 1 file changed, 25 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index a7c04e2..d8432b0 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -993,6 +993,21 @@ int usb_remove_device(struct usb_device *udev)
- 	return 0;
- }
- 
-+#define PORT_RESET_TRIES	5
-+#define SET_ADDRESS_TRIES	2
-+#define GET_DESCRIPTOR_TRIES	2
-+#define SET_CONFIG_TRIES	(2 * (use_both_schemes + 1))
-+#define USE_NEW_SCHEME(i)	((i) / 2 == (int)old_scheme_first)
-+
-+#define HUB_ROOT_RESET_TIME	50	/* times are in msec */
-+#define HUB_SHORT_RESET_TIME	10
-+#define HUB_BH_RESET_TIME	50
-+#define HUB_LONG_RESET_TIME	200
-+#define HUB_RESET_TIMEOUT	800
-+
-+static int hub_port_reset(struct usb_hub *hub, int port1,
-+			struct usb_device *udev, unsigned int delay, bool warm);
-+
- enum hub_activation_type {
- 	HUB_INIT, HUB_INIT2, HUB_INIT3,		/* INITs must come first */
- 	HUB_POST_RESET, HUB_RESUME, HUB_RESET_RESUME,
-@@ -1093,6 +1108,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
- 		u16 portstatus, portchange;
- 
- 		portstatus = portchange = 0;
-+
-+		/* Some connected devices might be still in unknown state even
-+		 * after reset-resume, a WARM_RESET gets the connected device
-+		 * to the normal state.
-+		 */
-+		if (udev && hub_is_superspeed(hub->hdev) &&
-+						type == HUB_RESET_RESUME)
-+			hub_port_reset(hub, port1, NULL,
-+						HUB_BH_RESET_TIME, true);
-+
- 		status = hub_port_status(hub, port1, &portstatus, &portchange);
- 		if (udev || (portstatus & USB_PORT_STAT_CONNECTION))
- 			dev_dbg(hub->intfdev,
-@@ -2510,22 +2535,6 @@ static unsigned hub_is_wusb(struct usb_hub *hub)
- 	return hcd->wireless;
- }
- 
--
--#define PORT_RESET_TRIES	5
--#define SET_ADDRESS_TRIES	2
--#define GET_DESCRIPTOR_TRIES	2
--#define SET_CONFIG_TRIES	(2 * (use_both_schemes + 1))
--#define USE_NEW_SCHEME(i)	((i) / 2 == (int)old_scheme_first)
--
--#define HUB_ROOT_RESET_TIME	50	/* times are in msec */
--#define HUB_SHORT_RESET_TIME	10
--#define HUB_BH_RESET_TIME	50
--#define HUB_LONG_RESET_TIME	200
--#define HUB_RESET_TIMEOUT	800
--
--static int hub_port_reset(struct usb_hub *hub, int port1,
--			struct usb_device *udev, unsigned int delay, bool warm);
