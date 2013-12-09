@@ -1,41 +1,99 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] usb: ohci-exynos: Change to use phy provided by the
- generic phy framework
-Date: Sun, 8 Dec 2013 17:55:53 -0800
-Message-ID: <20131209015553.GA27542@kroah.com>
-References: <001401ceda8f$67f1ee50$37d5caf0$%han@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 4/5] ARM: dts: exynos4x12: Device tree node definition
+ for TMU on Exynos4x12
+Date: Mon, 09 Dec 2013 09:33:25 +0100
+Message-ID: <20131209093325.51564f20@amdc2363>
+References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
+ <1381300194-13134-5-git-send-email-l.majewski@samsung.com>
+ <20131015082750.4b2f3325@amdc308.digital.local>
+ <20131127081144.5402a81e@amdc308.digital.local>
+ <004c01ceeb64$b5c708a0$215519e0$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <001401ceda8f$67f1ee50$37d5caf0$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kamil Debski' <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kishon Vijay Abraham I' <kishon-l0cyMroinI0@public.gmane.org>, 'Tomasz Figa' <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Mateusz Krawczuk' <mat.krawczuk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Yulgon Kim' <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Praveen Paneri' <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Anton Tikhomirov' <av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kumar Gala' <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:64662 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754357Ab3LIIdf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Dec 2013 03:33:35 -0500
+In-reply-to: <004c01ceeb64$b5c708a0$215519e0$@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
+Cc: 'Lukasz Majewski' <l.majewski@majess.pl>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
 
-On Wed, Nov 06, 2013 at 10:27:49AM +0900, Jingoo Han wrote:
-> Change the phy provider used from the old usb phy specific to a new one
-> using the generic phy framework.
+Hi Kukjin,
+
+> Lukasz Majewski wrote:
+> > 
+> > Hi Kukjin,
+> > 
+> Hi,
 > 
-> Signed-off-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> Exynos OHCI driver also uses Exynos USB2.0 PHY. Thus, I make this
-> patch based-on Kamil Debski's patchset for adding Exynos USB 2.0 PHY
-> driver.
-> (http://www.spinics.net/lists/linux-samsung-soc/msg24104.html)
+> > > Hi Kukjin,
+> > >
+> > > > The TMU device tree node definition for Exynos4x12 family of
+> > > > SoCs.
+> > > >
+> > > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > > > Reviewed-by: Bartlomiej Zolnierkiewicz
+> > > > <b.zolnierkie@samsung.com> Reviewed-by: Tomasz Figa
+> > > > <t.figa@samsung.com>
+> > > >
+> > > > ---
+> > > > Changes for v2:
+> > > > - None
+> > > >
+> > > >  arch/arm/boot/dts/exynos4x12.dtsi |   10 ++++++++++
+> > > >  1 file changed, 10 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
+> > > > b/arch/arm/boot/dts/exynos4x12.dtsi index ad531fe..64c0ece
+> > > > 100644 --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> > > > +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> > > > @@ -176,4 +176,14 @@
+> > > >  			};
+> > > >  		};
+> > > >  	};
+> > > > +
+> > > > +	tmu@100C0000 {
+> > > > +		compatible = "samsung,exynos4412-tmu";
+> > > > +		interrupt-parent = <&combiner>;
+> > > > +		interrupts = <2 4>;
+> > > > +		reg = <0x100C0000 0x100>;
+> > > > +		clocks = <&clock 383>;
+> > > > +		clock-names = "tmu_apbif";
+> > > > +		status = "disabled";
+> > > > +	};
+> > > >  };
+> > >
+> > > Can you pull this DT node definition for TMU (as a fix to v3.12)?
+> > >
+> > > It is crucial for Exynos4412.
+> > >
+> > 
+> > Kukjin, could you pull this patch?
+> > 
+> Yes, but I'm not sure this is _really_ critical bug fix so maybe this
+> will be queued for 3.14.
+
+Will you apply this patch to your Samsung tree? 
+
+Thanks in advance.
+
 > 
->  drivers/usb/host/ohci-exynos.c |   28 ++++++++--------------------
->  1 file changed, 8 insertions(+), 20 deletions(-)
+> If any problem, please kindly let me know.
+> 
+> Thanks,
+> Kukjin
+> 
 
-This has some fuzz when applied to my tree, care to redo it against my
-usb-next branch of the usb.git tree on git.kernel.org?
 
-thanks,
+-- 
+Best regards,
 
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
