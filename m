@@ -1,129 +1,93 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/2 v2] i2c: exynos5: add support for HSI2C on Exynos5260
- SoC
-Date: Mon, 09 Dec 2013 17:27:29 +0100
-Message-ID: <47816304.YeQAZze1OM@amdc1227>
-References: <1385100726-32165-1-git-send-email-ch.naveen@samsung.com>
- <1385439977-19077-1-git-send-email-ch.naveen@samsung.com>
+Subject: Re: [PATCH 2/2] i2c: exynos5: configure fifo_depth based on HSI2C
+ module version
+Date: Mon, 09 Dec 2013 17:31:07 +0100
+Message-ID: <1739891.MYO4PRtJOt@amdc1227>
+References: <1385100851-32254-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29952 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932468Ab3LIQ1m (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:29831 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932737Ab3LIQbT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 11:27:42 -0500
-In-reply-to: <1385439977-19077-1-git-send-email-ch.naveen@samsung.com>
+	Mon, 9 Dec 2013 11:31:19 -0500
+In-reply-to: <1385100851-32254-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-i2c@vger.kernel.org, sjg@chromium.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, wsa@the-dreams.de, ben-linux@fluff.org, grant.likely@secretlab.ca, broonie@kernel.org, dianders@chromium.org, cpgs@samsung.com
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, hs@denx.de, khali@linux-fr.org, ben-linux@fluff.org, naveenkrishna.ch@gmail.com
 
 Hi Naveen,
 
-On Tuesday 26 of November 2013 09:56:17 Naveen Krishna Chatradhi wrote:
-> This patch adds new compatible to support HSI2C module on Exynos5260
-> HSI2C module on Exynos5260 needs to be reset during during initialization.
+On Friday 22 of November 2013 11:44:11 Naveen Krishna Chatradhi wrote:
+> fifo_depth of the HSI2C is not constant
+> Exynos5420 and Exynos5250 supports fifo_depth of 64bytes
+> Exynos5260 supports fifo_depth of 16bytes
 > 
+> This patch configures the fifo_depth based on HSI2C modules version.
 > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 > ---
-> Changes since v1:
-> Rebasing on linux-i2c for-next
+>  drivers/i2c/busses/i2c-exynos5.c |   29 ++++++++++++++++++-----------
+>  1 file changed, 18 insertions(+), 11 deletions(-)
 > 
->  .../devicetree/bindings/i2c/i2c-exynos5.txt        |    6 +++-
->  drivers/i2c/busses/i2c-exynos5.c                   |   31 ++++++++++++++++++--
->  2 files changed, 34 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-> index 056732c..704ab92 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-> @@ -5,7 +5,11 @@ at various speeds ranging from 100khz to 3.4Mhz.
->  
->  Required properties:
->    - compatible: value should be.
-> -      -> "samsung,exynos5-hsi2c", for i2c compatible with exynos5 hsi2c.
-> +	-> "samsung,exynos5-hsi2c", for i2c compatible with HSI2C available on
-> +				Exynos5250/5420 SoCs.
-> +	-> "samsung,exynos5260-hsi2c", for i2c compatible with HSI2C available
-> +				on Exynos5260 SoCs.
-> +
->    - reg: physical base address of the controller and length of memory mapped
->      region.
->    - interrupts: interrupt number to the cpu.
 > diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-> index da39ff0..497ff91 100644
+> index cbb49e2..19277d8 100644
 > --- a/drivers/i2c/busses/i2c-exynos5.c
 > +++ b/drivers/i2c/busses/i2c-exynos5.c
-> @@ -184,14 +184,35 @@ struct exynos5_i2c {
->  	 * 2. Fast speed upto 1Mbps
->  	 */
->  	int			speed_mode;
+> @@ -77,12 +77,6 @@
+>  #define HSI2C_RXFIFO_TRIGGER_LEVEL(x)		((x) << 4)
+>  #define HSI2C_TXFIFO_TRIGGER_LEVEL(x)		((x) << 16)
+>  
+> -/* As per user manual FIFO max depth is 64bytes */
+> -#define HSI2C_FIFO_MAX				0x40
+> -/* default trigger levels for Tx and Rx FIFOs */
+> -#define HSI2C_DEF_TXFIFO_LVL			(HSI2C_FIFO_MAX - 0x30)
+> -#define HSI2C_DEF_RXFIFO_LVL			(HSI2C_FIFO_MAX - 0x10)
+> -
+>  /* I2C_TRAILING_CTL Register bits */
+>  #define HSI2C_TRAILING_COUNT			(0xf)
+>  
+> @@ -187,6 +181,9 @@ struct exynos5_i2c {
+>  
+>  	/* Version of HS-I2C Hardware */
+>  	unsigned int		version;
 > +
-> +	/* Version of HS-I2C Hardware */
-> +	unsigned int		version;
-> +};
-> +
-> +enum hsi2c_version {
-> +	EXYNOS_5,
-> +	EXYNOS_5260
+> +	/* FIFO depth */
+> +	unsigned int		fifo_depth;
 >  };
-
-I don't like this kind of hardware versioningm as there might show up
-revisions that are previous revisions mixed together (e.g. some quirks
-from one and some quirks from another).
-
-IMHO better way to represent differences between hardware versions are
-variant structs that define characteristics of particular variants.
-
-For now, it doesn't really matter, though, as the only things that change
-are fifo depth and whether the reset is needed (although see my comment
-below on this). However if you could spot any other differences between
-these two versions that might affect the driver in future, it would be
-better to use a variant struct.
-
 >  
->  static const struct of_device_id exynos5_i2c_match[] = {
-> -	{ .compatible = "samsung,exynos5-hsi2c" },
-> +	{
-> +		.compatible = "samsung,exynos5-hsi2c",
-> +		.data = (void *)EXYNOS_5 },
-> +	{
-> +		.compatible = "samsung,exynos5260-hsi2c",
-> +		.data = (void *)EXYNOS_5260 },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
+>  enum hsi2c_version {
+> @@ -437,7 +434,7 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
+>  		fifo_status = readl(i2c->regs + HSI2C_FIFO_STATUS);
+>  		fifo_level = HSI2C_TX_FIFO_LVL(fifo_status);
 >  
-> +static inline unsigned int exynos5_i2c_get_version(struct platform_device *pdev)
-> +{
-> +	const struct of_device_id *match;
-> +
-> +	match = of_match_node(exynos5_i2c_match, pdev->dev.of_node);
-> +	return (unsigned int)match->data;
-> +}
-> +
->  static void exynos5_i2c_clr_pend_irq(struct exynos5_i2c *i2c)
->  {
->  	writel(readl(i2c->regs + HSI2C_INT_STATUS),
-> @@ -692,7 +713,13 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_clk;
+> -		len = HSI2C_FIFO_MAX - fifo_level;
+> +		len = i2c->fifo_depth - fifo_level;
+>  		if (len > (i2c->msg->len - i2c->msg_ptr))
+>  			len = i2c->msg->len - i2c->msg_ptr;
 >  
-> -	exynos5_i2c_init(i2c);
-> +	i2c->version = exynos5_i2c_get_version(pdev);
-> +
-> +	/* The HS-I2C core on Exynos5260 needs a reset to start with */
-> +	if (i2c->version == EXYNOS_5260)
-> +		exynos5_i2c_reset(i2c);
-> +	else
-> +		exynos5_i2c_init(i2c);
+> @@ -505,6 +502,7 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+>  	u32 i2c_auto_conf = 0;
+>  	u32 fifo_ctl;
+>  	unsigned long flags;
+> +	unsigned short trig_lvl;
+>  
+>  	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
+>  	i2c_ctl &= ~(HSI2C_TXCHON | HSI2C_RXCHON);
+> @@ -515,13 +513,19 @@ static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+>  
+>  		i2c_auto_conf = HSI2C_READ_WRITE;
+>  
+> -		fifo_ctl |= HSI2C_RXFIFO_TRIGGER_LEVEL(HSI2C_DEF_TXFIFO_LVL);
+> +		trig_lvl = (i2c->msg->len > i2c->fifo_depth) ?
+> +			(i2c->fifo_depth * 3/4) : i2c->msg->len;
 
-What about simply calling exynos5_i2c_reset() here regardless of the
-version? I don't think it should cause any problems and could be even
-more reliable as the hardware would be always reset to its default state
-regardless of what the firmware does with it.
+This patch changes the fifo trigger level calculation (it's dependent now
+on message length), not just maximum fifo size, as the description says.
+It should be split into two separate patches, explaining why both changes
+are necessary.
 
 Best regards,
 Tomasz
