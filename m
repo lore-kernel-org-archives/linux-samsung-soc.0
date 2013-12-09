@@ -1,261 +1,62 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: Add regulator entries to Exynos5420 SMDK
- board
-Date: Tue, 10 Dec 2013 06:27:27 +0900
-Message-ID: <52A635BF.9030102@samsung.com>
-References: <1386236664-27763-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: dts: Fix a typo in exynos5420-pinctrl.dtsi
+Date: Tue, 10 Dec 2013 06:31:30 +0900
+Message-ID: <52A636B2.7000403@samsung.com>
+References: <1383797386-29458-1-git-send-email-sachin.kamat@linaro.org>	<11439635.3nLj0DE42O@flatron> <CAK9yfHx7YZk1bW5YY_mFw2XnikA5fEDRXQrfSsogP2atKCg=oQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f42.google.com ([209.85.160.42]:51598 "EHLO
-	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751805Ab3LIV1d (ORCPT
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:33534 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758864Ab3LIVbf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 16:27:33 -0500
-In-Reply-To: <1386236664-27763-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 9 Dec 2013 16:31:35 -0500
+Received: by mail-pd0-f177.google.com with SMTP id q10so5891032pdj.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2013 13:31:35 -0800 (PST)
+In-Reply-To: <CAK9yfHx7YZk1bW5YY_mFw2XnikA5fEDRXQrfSsogP2atKCg=oQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 12/05/13 18:44, Sachin Kamat wrote:
-> Added regulator entries to Exynos5420 SMDK board.
+On 12/02/13 19:27, Sachin Kamat wrote:
+> On 10 November 2013 23:50, Tomasz Figa<tomasz.figa@gmail.com>  wrote:
+>> On Thursday 07 of November 2013 09:39:46 Sachin Kamat wrote:
+>>> Fixed samaung ->  samsung in property name.
+>>>
+>>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+>>> ---
+>>>   arch/arm/boot/dts/exynos5420-pinctrl.dtsi |    2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>>> index e695aba5f73c..e62c8eb57438 100644
+>>> --- a/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos5420-pinctrl.dtsi
+>>> @@ -64,7 +64,7 @@
+>>>                        samsung,pins = "gpx0-7";
+>>>                        samsung,pin-function =<3>;
+>>>                        samsung,pin-pud =<0>;
+>>> -                     samaung,pin-drv =<0>;
+>>> +                     samsung,pin-drv =<0>;
+>>>                };
+>>>        };
+>>>
+>>>
+>>
+>> Good catch.
+>>
+>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+>>
+>> Best regards,
+>> Tomasz
+>>
 >
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> ---
-> Changes since v1:
-> Changed node name
-> ---
->   arch/arm/boot/dts/exynos5420-smdk5420.dts |  216 +++++++++++++++++++++++++++++
->   1 file changed, 216 insertions(+)
 >
-> diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> index fb5a1e25c632..62e1ebe4e989 100644
-> --- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> +++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-> @@ -120,4 +120,220 @@
->   			reg =<0x50>;
->   		};
->   	};
-> +
-> +	hsi2c_4: i2c@12CA0000 {
-> +		status = "okay";
-> +
-> +		s2mps11_pmic@66 {
-> +			compatible = "samsung,s2mps11-pmic";
-> +			reg =<0x66>;
-> +			s2mps11,buck2-ramp-delay =<12>;
-> +			s2mps11,buck34-ramp-delay =<12>;
-> +			s2mps11,buck16-ramp-delay =<12>;
-> +			s2mps11,buck6-ramp-enable =<1>;
-> +			s2mps11,buck2-ramp-enable =<1>;
-> +			s2mps11,buck3-ramp-enable =<1>;
-> +			s2mps11,buck4-ramp-enable =<1>;
-> +
-> +			s2mps11_osc: clocks {
-> +				#clock-cells =<1>;
-> +				clock-output-names = "s2mps11_ap",
-> +						"s2mps11_cp", "s2mps11_bt";
-> +			};
-> +
-> +			regulators {
-> +				ldo1_reg: LDO1 {
-> +					regulator-name = "vdd_ldo1";
-> +					regulator-min-microvolt =<1000000>;
-> +					regulator-max-microvolt =<1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo3_reg: LDO3 {
-> +					regulator-name = "vdd_ldo3";
-> +					regulator-min-microvolt =<1800000>;
-> +					regulator-max-microvolt =<1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo5_reg: LDO5 {
-> +					regulator-name = "vdd_ldo5";
-> +					regulator-min-microvolt =<1800000>;
-> +					regulator-max-microvolt =<1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo6_reg: LDO6 {
-> +					regulator-name = "vdd_ldo6";
-> +					regulator-min-microvolt =<1000000>;
-> +					regulator-max-microvolt =<1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo7_reg: LDO7 {
-> +					regulator-name = "vdd_ldo7";
-> +					regulator-min-microvolt =<1800000>;
-> +					regulator-max-microvolt =<1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo8_reg: LDO8 {
-> +					regulator-name = "vdd_ldo8";
-> +					regulator-min-microvolt =<1800000>;
-> +					regulator-max-microvolt =<1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo9_reg: LDO9 {
-> +					regulator-name = "vdd_ldo9";
-> +					regulator-min-microvolt =<3000000>;
-> +					regulator-max-microvolt =<3000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo10_reg: LDO10 {
-> +					regulator-name = "vdd_ldo10";
-> +					regulator-min-microvolt =<1800000>;
-> +					regulator-max-microvolt =<1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo11_reg: LDO11 {
-> +					regulator-name = "vdd_ldo11";
-> +					regulator-min-microvolt =<1000000>;
-> +					regulator-max-microvolt =<1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo12_reg: LDO12 {
-> +					regulator-name = "vdd_ldo12";
-> +					regulator-min-microvolt =<1800000>;
-> +					regulator-max-microvolt =<1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo13_reg: LDO13 {
-> +					regulator-name = "vdd_ldo13";
-> +					regulator-min-microvolt =<2800000>;
-> +					regulator-max-microvolt =<2800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo15_reg: LDO15 {
-> +					regulator-name = "vdd_ldo15";
-> +					regulator-min-microvolt =<3100000>;
-> +					regulator-max-microvolt =<3100000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo16_reg: LDO16 {
-> +					regulator-name = "vdd_ldo16";
-> +					regulator-min-microvolt =<2200000>;
-> +					regulator-max-microvolt =<2200000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo17_reg: LDO17 {
-> +					regulator-name = "tsp_avdd";
-> +					regulator-min-microvolt =<3300000>;
-> +					regulator-max-microvolt =<3300000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo19_reg: LDO19 {
-> +					regulator-name = "vdd_sd";
-> +					regulator-min-microvolt =<2800000>;
-> +					regulator-max-microvolt =<2800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo24_reg: LDO24 {
-> +					regulator-name = "tsp_io";
-> +					regulator-min-microvolt =<2800000>;
-> +					regulator-max-microvolt =<2800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				buck1_reg: BUCK1 {
-> +					regulator-name = "vdd_mif";
-> +					regulator-min-microvolt =<800000>;
-> +					regulator-max-microvolt =<1300000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck2_reg: BUCK2 {
-> +					regulator-name = "vdd_arm";
-> +					regulator-min-microvolt =<800000>;
-> +					regulator-max-microvolt =<1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck3_reg: BUCK3 {
-> +					regulator-name = "vdd_int";
-> +					regulator-min-microvolt =<800000>;
-> +					regulator-max-microvolt =<1400000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck4_reg: BUCK4 {
-> +					regulator-name = "vdd_g3d";
-> +					regulator-min-microvolt =<800000>;
-> +					regulator-max-microvolt =<1400000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck5_reg: BUCK5 {
-> +					regulator-name = "vdd_mem";
-> +					regulator-min-microvolt =<800000>;
-> +					regulator-max-microvolt =<1400000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck6_reg: BUCK6 {
-> +					regulator-name = "vdd_kfc";
-> +					regulator-min-microvolt =<800000>;
-> +					regulator-max-microvolt =<1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck7_reg: BUCK7 {
-> +					regulator-name = "vdd_1.0v_ldo";
-> +					regulator-min-microvolt =<800000>;
-> +					regulator-max-microvolt =<1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck8_reg: BUCK8 {
-> +					regulator-name = "vdd_1.8v_ldo";
-> +					regulator-min-microvolt =<800000>;
-> +					regulator-max-microvolt =<1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck9_reg: BUCK9 {
-> +					regulator-name = "vdd_2.8v_ldo";
-> +					regulator-min-microvolt =<3000000>;
-> +					regulator-max-microvolt =<3750000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck10_reg: BUCK10 {
-> +					regulator-name = "vdd_vmem";
-> +					regulator-min-microvolt =<2850000>;
-> +					regulator-max-microvolt =<2850000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +			};
-> +		};
-> +	};
->   };
+> Ping Kukjin.
+>
+Oh, OK, applied ;-)
 
-just + DT ml.
-
-- Kukjin
+Thanks,
+Kukjin
