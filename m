@@ -1,68 +1,72 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/4 v10] thermal: samsung: replace inten_ bit fields with
- intclr_
-Date: Mon, 09 Dec 2013 13:51:35 +0100
-Message-ID: <4489646.QoKFUWLh9W@amdc1227>
-References: <1384238168-24561-1-git-send-email-ch.naveen@samsung.com>
- <1384866259-15983-1-git-send-email-ch.naveen@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized using pinfunc.
+Date: Mon, 9 Dec 2013 13:57:00 +0100
+Message-ID: <CACRpkdbDxNkb9XnVnfVWK9HEKj1mb+VUawh1GMe1bggQVg88KA@mail.gmail.com>
+References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
+	<528BB1F2.4080107@wwwdotorg.org>
+	<CAD=FV=XS0dbE7zfgDGVdp84h4fHH6tfO8aN_HNh1LbOjYy51aQ@mail.gmail.com>
+	<528BB913.6080409@wwwdotorg.org>
+	<CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>
+	<CACRpkdbyjm0X9RX+8WjqQxBPyRjBOAunkqVcO-0KUd1PTdGavA@mail.gmail.com>
+	<5293ACA6.7060403@bracey.fi>
+	<CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ@mail.gmail.com>
+	<52A11220.8080509@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:17803 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932512Ab3LIMvs (ORCPT
+Received: from mail-ob0-f181.google.com ([209.85.214.181]:42463 "EHLO
+	mail-ob0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932944Ab3LIM5C (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 07:51:48 -0500
-In-reply-to: <1384866259-15983-1-git-send-email-ch.naveen@samsung.com>
+	Mon, 9 Dec 2013 07:57:02 -0500
+Received: by mail-ob0-f181.google.com with SMTP id uy5so3563808obc.26
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2013 04:57:01 -0800 (PST)
+In-Reply-To: <52A11220.8080509@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Kevin Bracey <kevin@bracey.fi>, Kyungmin Park <kmpark@infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Naveen,
+On Fri, Dec 6, 2013 at 12:54 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 12/03/2013 02:29 AM, Linus Walleij wrote:
 
-On Tuesday 19 of November 2013 18:34:19 Naveen Krishna Chatradhi wrote:
-> This patch replaces the inten_rise_shift/mask and inten_fall_shift/mask
-> with intclr_rise_shift/mask and intclr_fall_shift/mask respectively.
-> Currently, inten_rise_shift/mask and inten_fall_shift/mask bits are only used
-> to configure intclr related registers.
-> 
-> Description of H/W:
-> The offset for the bits in the CLEAR register are not consistent across TMU
-> modules in Exynso5250, 5420 and 5440.
-> 
-> On Exynos5250, the FALL interrupt related en, status and clear bits are
-> available at an offset of
-> 16 in INTEN, INTSTAT registers and at an offset of
-> 12 in INTCLEAR register.
-> 
-> On Exynos5420, the FALL interrupt related en, status and clear bits are
-> available at an offset of
-> 16 in INTEN, INTSTAT and INTCLEAR registers.
-> 
-> On Exynos5440,
-> the FALL_IRQEN bits are at an offset of 4
-> and the RISE_IRQEN bits are at an offset of 0
-> 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Acked-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
-> Changes since v9:
-> Just respinning
-> 
-> Changes since v8:
-> 1. Modified the patch description,
-> 2. replaces the inten_rise/fall_shift/mask with intclr_rise/fall_shift/mask
-> 
->  drivers/thermal/samsung/exynos_tmu.c      |    6 +++---
->  drivers/thermal/samsung/exynos_tmu.h      |   16 ++++++++--------
->  drivers/thermal/samsung/exynos_tmu_data.c |   18 +++++++++---------
->  drivers/thermal/samsung/exynos_tmu_data.h |    4 ++--
->  4 files changed, 22 insertions(+), 22 deletions(-)
+(skipped the conversation on weak hogs, we are on the same page
+here, just waiting for someone to start working on it ...)
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> Related, I prefer to put /all/ static pinctrl configuration into the
+> pinctrl device's "default" state (i.e. use a hog) rather than
+> configuring the static pinctrl setup per device, for another reason too:
+>
+> If a particular IO controller's signals can be routed to n different
+> (sets of) pins, then we need to do *both* of the following when setting
+> up the pinmux:
+>
+> a) Configure the pins we want to host those signals to route to/from
+> that particular IO controller.
+>
+> b) Configure any other pins that could route to/from that particular IO
+> controller as some other function; either disabled, or routed to/from
+> some different IO controller.
+>
+> That is so that the IO controller's RX/input signals are not connected
+> from two different sets of pins at once, which would cause two things to
+> driver them. Depending on HW, this could cause on of:
+>
+> 1) Multiple drivers -> high power usage, or even Silicon damage.
+>
+> 2) Inconsistent configuration, with the "wrong" set of pins driving the
+> IO controller's inputs, and hence the signals on the "correct" pins
+> being ignored -> hard to find bug.
 
-Best regards,
-Tomasz
+I'm following, I think what we need here is to think about additional
+behaviours and electronic constraints we can encode into the drivers
+and/or the pin tables to safeguard pin states from electronically
+unsound states.
+
+That is to say, I prefer the subsystem to be conscious about the
+electronic constraints and navigate around them or put up a road
+block, rather than trying ti avoid driving into the roadblocks by means
+of carefully crafted tables if you get the picture ...
+
+Yours,
+Linus Walleij
