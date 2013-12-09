@@ -1,50 +1,134 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] usb: ohci-exynos: Change to use phy provided by the
- generic phy framework
-Date: Mon, 09 Dec 2013 18:26:08 +0900
-Message-ID: <000001cef4c0$b123ba90$136b2fb0$%han@samsung.com>
-References: <001401ceda8f$67f1ee50$37d5caf0$%han@samsung.com>
- <20131209015553.GA27542@kroah.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH RESEND v10 0/7] cpufreq:boost: CPU Boost mode support
+Date: Mon, 09 Dec 2013 11:04:01 +0100
+Message-ID: <20131209110401.329351e9@amdc2363>
+References: <1370502472-7249-1-git-send-email-l.majewski@samsung.com>
+ <1385986761-17934-1-git-send-email-l.majewski@samsung.com>
+ <20131204075921.3b9e86fa@amdc2363> <529F384A.8040409@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20131209015553.GA27542@kroah.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Greg KH' <greg@kroah.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org, 'Kamil Debski' <k.debski@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, m.szyprowski@samsung.com, gautam.vivek@samsung.com, 'Mateusz Krawczuk' <mat.krawczuk@gmail.com>, 'Yulgon Kim' <yulgon.kim@samsung.com>, 'Praveen Paneri' <p.paneri@samsung.com>, 'Anton Tikhomirov' <av.tikhomirov@samsung.com>, 'Kumar Gala' <galak@codeaurora.org>, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <529F384A.8040409@ti.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Viresh Kumar <viresh.kumar@linaro.org>, Zhang Rui <rui.zhang@intel.com>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Jonghwa Lee <jonghwa3.lee@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, linux-kernel <linux-kernel@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Myungjoo Ham <myungjoo.ham@samsung.com>, durgadoss.r@intel.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Monday, December 09, 2013 10:56 AM, Greg KH wrote:
-> On Wed, Nov 06, 2013 at 10:27:49AM +0900, Jingoo Han wrote:
-> > Change the phy provider used from the old usb phy specific to a new one
-> > using the generic phy framework.
-> >
-> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> > Cc: Kamil Debski <k.debski@samsung.com>
-> > ---
-> > Exynos OHCI driver also uses Exynos USB2.0 PHY. Thus, I make this
-> > patch based-on Kamil Debski's patchset for adding Exynos USB 2.0 PHY
-> > driver.
-> > (http://www.spinics.net/lists/linux-samsung-soc/msg24104.html)
-> >
-> >  drivers/usb/host/ohci-exynos.c |   28 ++++++++--------------------
-> >  1 file changed, 8 insertions(+), 20 deletions(-)
+Hi Rafael,
+
+> On 04-12-2013 02:59, Lukasz Majewski wrote:
+> > Hi Rafael,
+> > 
+> >> This patch series introduces support for CPU overclocking technique
+> >> called Boost.
+> >>
+> >> It is a follow up of a LAB governor proposal. Boost is a LAB
+> >> component:
+> >> http://thread.gmane.org/gmane.linux.kernel/1484746/match=cpufreq
+> >>
+> >> Boost unifies hardware based solution (e.g. Intel Nehalem) with
+> >> software oriented one (like the one done at Exynos).
+> >> For this reason cpufreq/freq_table code has been reorganized to
+> >> include common code.
+> >>
+> >> Important design decisions:
+> >> - Boost related code is compiled-in unconditionally to cpufreq core
+> >> and disabled by default. The cpufreq_driver is responsibile for
+> >> setting boost_supported flag and providing set_boost callback(if HW
+> >> support is needed). For software managed boost, special Kconfig
+> >> flag - CONFIG_CPU_FREQ_BOOST_SW has been defined. It will be
+> >> selected only when a target platform has thermal framework
+> >> properly configured.
+> >>
+> >> - struct cpufreq_driver has been extended with boost related
+> >> fields: -- boost_supported - when driver supports boosting
+> >>         -- boost_enabled - boost state
+> >>         -- set_boost - callback to function, which is necessary to
+> >>            enable/disable boost
+> >>
+> >> - Boost sysfs attribute (/sys/devices/system/cpu/cpufreq/boost) is
+> >> visible _only_ when cpufreq driver supports Boost.
+> >>
+> >> - No special spin_lock for Boost was created. The one from cpufreq
+> >> core was reused.
+> >>
+> >> - The Boost code doesn't rely on any policy. When boost state is
+> >> changed, then the policy list is iterated and proper adjustements
+> >> are done.
+> >>
+> >> - To improve safety level, the thermal framework is also extended
+> >> to disable software boosting, when thermal trip point is reached.
+> >> After cooling down the boost can be enabled again. This emulates
+> >> behaviour similar to HW managed boost (like x86)
+> >>
+> >> Tested at HW:
+> >>        Exynos 4412 3.13-rc2 Linux
+> >>        Intel Core i7-3770 3.13-rc2 Linux
+> >>
+> >> Above patches were posted on top of kernel_pm/bleeding-edge
+> >> (SHA1: 9483a9f69d5c8f83f1723361bf8340ddfb6475b4)
+> >>
+> > 
+> > Rafael, could you pull patches from 1 to 6 of this series? Those are
+> > related to cpufreq core and has already been accepted by Viresh at a
+> > late August this year.
+> > This would facilitate my further cpufreq work.
+> > 
+> > And about the last patch - related to thermal. It seems that more
+> > discussion NOT related to cpufreq will be ongoing. 
+> > 
+> > I would prefer to add it as a separate patch to thermal subtree.
 > 
-> This has some fuzz when applied to my tree, care to redo it against my
-> usb-next branch of the usb.git tree on git.kernel.org?
+> I agree with Lukasz here. The part that touches the thermal driver is
+> minimal and the discussion is a simple matter of concept and
+> optimization of data structures.
 
-Hi Greg,
+Rafael, what is your opinion here?
 
-This patch should be updated, based on Kamil Debski's  V4 patchset
-for adding Exynos USB 2.0 PHY driver [1].
-I will send v2 patch based on Kamil Debski's  V4 patchset [1].
+Shall I prepare another resend (without thermal patch) or would you
+accept the cpufreq part of this patch set (1 to 6) as is?
 
-[1] [PATCH v4 0/9] phy: Add new Exynos USB 2.0 PHY driver 
-     (http://www.spinics.net/lists/linux-usb/msg98911.html)
+> 
+> > 
+> > 
+> > 
+> >>
+> >> Lukasz Majewski (7):
+> >>   cpufreq: Add boost frequency support in core
+> >>   cpufreq:acpi:x86: Adjust the acpi-cpufreq.c code to work with
+> >> common boost solution
+> >>   cpufreq:boost:Kconfig: Provide support for software managed BOOST
+> >>   cpufreq:exynos:Extend Exynos cpufreq driver to support boost
+> >>     framework
+> >>   Documentation:cpufreq:boost: Update BOOST documentation
+> >>   cpufreq:exynos4x12: Change L0 driver data to CPUFREQ_BOOST_FREQ
+> >>   thermal:exynos:boost: Automatic enable/disable of BOOST feature
+> >> (at Exynos4412)
+> >>
+> >>  Documentation/cpu-freq/boost.txt          |   26 +++----
+> >>  drivers/cpufreq/Kconfig                   |    4 +
+> >>  drivers/cpufreq/Kconfig.arm               |   15 ++++
+> >>  drivers/cpufreq/acpi-cpufreq.c            |   86
+> >> +++++++-------------- drivers/cpufreq/cpufreq.c                 |
+> >> 118 ++++++++++++++++++++++++++++-
+> >> drivers/cpufreq/exynos-cpufreq.c          |    3 +
+> >> drivers/cpufreq/exynos4x12-cpufreq.c      |    2 +-
+> >> drivers/cpufreq/freq_table.c              |   56 ++++++++++++--
+> >> drivers/thermal/samsung/exynos_tmu_data.c |   47 ++++++++++++
+> >> include/linux/cpufreq.h                   |   24 ++++++ 10 files
+> >> changed, 302 insertions(+), 79 deletions(-)
+> >>
+> > 
+> > 
+> > 
+> 
+> 
 
-Thank you.
 
+-- 
 Best regards,
-Jingoo Han
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
