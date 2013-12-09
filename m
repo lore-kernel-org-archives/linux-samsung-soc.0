@@ -1,49 +1,70 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: dts: Leave Exynos5250 SPI controller disabled by
- default
-Date: Mon, 09 Dec 2013 16:23:03 +0100
-Message-ID: <5026211.5mW8H3pyKS@amdc1227>
-References: <1385381710-5212-1-git-send-email-broonie@kernel.org>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed
+ HUBs
+Date: Mon, 9 Dec 2013 10:24:52 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1312091019400.1439-100000@iolanthe.rowland.org>
+References: <1386592158-12086-1-git-send-email-vikas.sajjan@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:26837 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761195Ab3LIPXP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 10:23:15 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MXJ00HLBPEPAU30@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 09 Dec 2013 15:23:13 +0000 (GMT)
-In-reply-to: <1385381710-5212-1-git-send-email-broonie@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1386592158-12086-1-git-send-email-vikas.sajjan@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, sarah.a.sharp@linux.intel.com, vpalatin@chromium.org, jwerner@chromium.org, tianyu.lan@intel.com, burzalodowa@gmail.com, gregkh@linuxfoundation.org, gautam.vivek@samsung.com, dianders@chromium.org, balbi@ti.com, joshi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-Hi Kukjin,
+On Mon, 9 Dec 2013, Vikas Sajjan wrote:
 
-On Monday 25 of November 2013 12:15:08 Mark Brown wrote:
-> From: Mark Brown <broonie@linaro.org>
+> Does warm reset while activating SuperSpeed HUBs if the hub activate type
+> is HUB_RESET_RESUME.
 > 
-> Rather than requiring each board to explicitly disable the SPI controllers
-> it is not using instead require boards to enable those that they are using.
-> This is less work overall since normally at most one of the controllers is
-> in use and avoids issues caused by inappropriate pinmuxing.
+> When we do Suspend-to-RAM with (any one of the 16, 32, 64 Jetflash) transcend
+> USB 3.0 device connected on 3.0 port, during resume I noticed that the
+> XHCI controller has moved to sometimes RECOVERY, POLLING or INACTIVE STATE.
+> This behaviour is inconsistent and the connection with connected USB 3.0 device
+> on 3.0 port was LOST.
 > 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
-> Acked-by: Tomasz Figa <t.figa@samsung.com>
+> Doing warm reset while activating SuperSpeed HUBs if the hub
+> activate type is HUB_RESET_RESUME, gets the connected device to the stable state.
+> 
+> Reviewed at https://chromium-review.googlesource.com/#/c/177132/
+> 
+> Tested on exynos5420 and exynos5250 with Transcend Jetflash USB 3.0 device (8564:1000)
+> 
+> rebased on Greg Kroah-Hartman's usb-next
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+> 
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
 > ---
->  arch/arm/boot/dts/cros5250-common.dtsi    |  9 +--------
->  arch/arm/boot/dts/exynos5250-arndale.dts  | 12 ------------
->  arch/arm/boot/dts/exynos5250-smdk5250.dts |  6 ++----
->  arch/arm/boot/dts/exynos5250.dtsi         |  3 +++
->  4 files changed, 6 insertions(+), 24 deletions(-)
+>  drivers/usb/core/hub.c |   41 +++++++++++++++++++++++++----------------
+>  1 file changed, 25 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> index a7c04e2..d8432b0 100644
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
 
-Seems like you have missed this series. Could you apply it?
+> @@ -1093,6 +1108,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
+>  		u16 portstatus, portchange;
+>  
+>  		portstatus = portchange = 0;
+> +
+> +		/* Some connected devices might be still in unknown state even
+> +		 * after reset-resume, a WARM_RESET gets the connected device
+> +		 * to the normal state.
+> +		 */
+> +		if (udev && hub_is_superspeed(hub->hdev) &&
+> +						type == HUB_RESET_RESUME)
+> +			hub_port_reset(hub, port1, NULL,
+> +						HUB_BH_RESET_TIME, true);
 
-Best regards,
-Tomasz
+Please don't do this all the time to every attached port.  Do it only 
+when it is really needed.
+
+Shouldn't you pass udev as the third argument?  If not, please explain
+why not.
+
+Finally, I don't see why you put this in hub_activate().  Isn't it more 
+closely connected with the reset-resume procedure for the child device?
+
+Alan Stern
