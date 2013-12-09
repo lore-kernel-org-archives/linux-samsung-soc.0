@@ -1,99 +1,71 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v2 4/5] ARM: dts: exynos4x12: Device tree node definition
- for TMU on Exynos4x12
-Date: Mon, 09 Dec 2013 09:33:25 +0100
-Message-ID: <20131209093325.51564f20@amdc2363>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
- <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
- <1381300194-13134-5-git-send-email-l.majewski@samsung.com>
- <20131015082750.4b2f3325@amdc308.digital.local>
- <20131127081144.5402a81e@amdc308.digital.local>
- <004c01ceeb64$b5c708a0$215519e0$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Michael Opdenacker <michael.opdenacker@free-electrons.com>
+Subject: [PATCH][RESEND] ARM: SAMSUNG: remove IRQF_DISABLED
+Date: Mon,  9 Dec 2013 10:02:15 +0100
+Message-ID: <1386579735-4065-1-git-send-email-michael.opdenacker@free-electrons.com>
+References: <000801cec874$%han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64662 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754357Ab3LIIdf (ORCPT
+Received: from top.free-electrons.com ([176.31.233.9]:33894 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755451Ab3LIJC0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 03:33:35 -0500
-In-reply-to: <004c01ceeb64$b5c708a0$215519e0$@kernel.org>
+	Mon, 9 Dec 2013 04:02:26 -0500
+In-Reply-To: <000801cec874$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
-Cc: 'Lukasz Majewski' <l.majewski@majess.pl>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
+To: ben-linux@fluff.org, kgene.kim@samsung.com, linux@arm.linux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>
 
-Hi Kukjin,
+This patch proposes to remove the use of the IRQF_DISABLED flag
 
-> Lukasz Majewski wrote:
-> > 
-> > Hi Kukjin,
-> > 
-> Hi,
-> 
-> > > Hi Kukjin,
-> > >
-> > > > The TMU device tree node definition for Exynos4x12 family of
-> > > > SoCs.
-> > > >
-> > > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > > > Reviewed-by: Bartlomiej Zolnierkiewicz
-> > > > <b.zolnierkie@samsung.com> Reviewed-by: Tomasz Figa
-> > > > <t.figa@samsung.com>
-> > > >
-> > > > ---
-> > > > Changes for v2:
-> > > > - None
-> > > >
-> > > >  arch/arm/boot/dts/exynos4x12.dtsi |   10 ++++++++++
-> > > >  1 file changed, 10 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
-> > > > b/arch/arm/boot/dts/exynos4x12.dtsi index ad531fe..64c0ece
-> > > > 100644 --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> > > > +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> > > > @@ -176,4 +176,14 @@
-> > > >  			};
-> > > >  		};
-> > > >  	};
-> > > > +
-> > > > +	tmu@100C0000 {
-> > > > +		compatible = "samsung,exynos4412-tmu";
-> > > > +		interrupt-parent = <&combiner>;
-> > > > +		interrupts = <2 4>;
-> > > > +		reg = <0x100C0000 0x100>;
-> > > > +		clocks = <&clock 383>;
-> > > > +		clock-names = "tmu_apbif";
-> > > > +		status = "disabled";
-> > > > +	};
-> > > >  };
-> > >
-> > > Can you pull this DT node definition for TMU (as a fix to v3.12)?
-> > >
-> > > It is crucial for Exynos4412.
-> > >
-> > 
-> > Kukjin, could you pull this patch?
-> > 
-> Yes, but I'm not sure this is _really_ critical bug fix so maybe this
-> will be queued for 3.14.
+It's a NOOP since 2.6.35 and it will be removed one day.
 
-Will you apply this patch to your Samsung tree? 
+Signed-off-by: Michael Opdenacker <michael.opdenacker@free-electrons.com>
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+---
+ arch/arm/mach-s3c24xx/dma.c         | 2 +-
+ arch/arm/mach-s3c24xx/simtec-usb.c  | 3 +--
+ arch/arm/mach-s3c64xx/mach-smartq.c | 2 +-
+ 3 files changed, 3 insertions(+), 4 deletions(-)
 
-Thanks in advance.
-
-> 
-> If any problem, please kindly let me know.
-> 
-> Thanks,
-> Kukjin
-> 
-
-
+diff --git a/arch/arm/mach-s3c24xx/dma.c b/arch/arm/mach-s3c24xx/dma.c
+index 4a65cba3295d..a8dafc174fe3 100644
+--- a/arch/arm/mach-s3c24xx/dma.c
++++ b/arch/arm/mach-s3c24xx/dma.c
+@@ -742,7 +742,7 @@ int s3c2410_dma_request(enum dma_ch channel,
+ 		chan->irq_claimed = 1;
+ 		local_irq_restore(flags);
+ 
+-		err = request_irq(chan->irq, s3c2410_dma_irq, IRQF_DISABLED,
++		err = request_irq(chan->irq, s3c2410_dma_irq, 0,
+ 				  client->name, (void *)chan);
+ 
+ 		local_irq_save(flags);
+diff --git a/arch/arm/mach-s3c24xx/simtec-usb.c b/arch/arm/mach-s3c24xx/simtec-usb.c
+index 2ed2e32430dc..bb3eac6a7697 100644
+--- a/arch/arm/mach-s3c24xx/simtec-usb.c
++++ b/arch/arm/mach-s3c24xx/simtec-usb.c
+@@ -78,8 +78,7 @@ static void usb_simtec_enableoc(struct s3c2410_hcd_info *info, int on)
+ 
+ 	if (on) {
+ 		ret = request_irq(BAST_IRQ_USBOC, usb_simtec_ocirq,
+-				  IRQF_DISABLED | IRQF_TRIGGER_RISING |
+-				   IRQF_TRIGGER_FALLING,
++				  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+ 				  "USB Over-current", info);
+ 		if (ret != 0) {
+ 			printk(KERN_ERR "failed to request usb oc irq\n");
+diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
+index a6b338fd0470..08a889c141da 100644
+--- a/arch/arm/mach-s3c64xx/mach-smartq.c
++++ b/arch/arm/mach-s3c64xx/mach-smartq.c
+@@ -106,7 +106,7 @@ static void smartq_usb_host_enableoc(struct s3c2410_hcd_info *info, int on)
+ 
+ 	if (on) {
+ 		ret = request_irq(gpio_to_irq(S3C64XX_GPL(10)),
+-				  smartq_usb_host_ocirq, IRQF_DISABLED |
++				  smartq_usb_host_ocirq,
+ 				  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+ 				  "USB host overcurrent", info);
+ 		if (ret != 0)
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+1.8.3.2
