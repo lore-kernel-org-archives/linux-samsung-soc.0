@@ -1,43 +1,44 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/1] clk: exynos5250: Add CLK_SET_RATE_PARENT flag to
- mout_apll
-Date: Mon, 09 Dec 2013 14:31:48 +0100
-Message-ID: <1466487.IbnMiN0f0X@amdc1227>
-References: <1385007454-5234-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH] clk: samsung: exynos4: Correct SRC_MFC register
+Date: Mon, 09 Dec 2013 14:35:28 +0100
+Message-ID: <4009792.HvWcr5GnEc@amdc1227>
+References: <1385097668-24620-1-git-send-email-sw0312.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:19940 "EHLO
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:20142 "EHLO
 	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933522Ab3LINcB (ORCPT
+	with ESMTP id S933431Ab3LINfk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 08:32:01 -0500
+	Mon, 9 Dec 2013 08:35:40 -0500
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
  by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MXJ0050NK9BD210@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 09 Dec 2013 13:31:59 +0000 (GMT)
-In-reply-to: <1385007454-5234-1-git-send-email-sachin.kamat@linaro.org>
+ 17 2011)) with ESMTP id <0MXJ0053PKFFD210@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 09 Dec 2013 13:35:39 +0000 (GMT)
+In-reply-to: <1385097668-24620-1-git-send-email-sw0312.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org
+To: Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-Hi Sachin,
+Hi Seung-Woo,
 
-On Thursday 21 of November 2013 09:47:34 Sachin Kamat wrote:
-> Add CLK_SET_RATE_PARENT flag to be able to change the frequency
-> to desired value.
+On Friday 22 of November 2013 14:21:08 Seung-Woo Kim wrote:
+> The SRC_MFC register was incorrect. This patch corrects it.
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos5250.c |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  drivers/clk/samsung/clk-exynos4.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 
-Your patch description is a bit off. It doesn't say frequency of what
-clock will be able to be changed to "desired value" and what is the reason
-for this change.
+Good catch.
+
+Acked-by: Tomasz Figa <t.figa@samsung.com>
+
+I guess this could go as a fix for current rc, through clk-fixes.
+Mike, what do you think?
 
 Best regards,
 Tomasz
