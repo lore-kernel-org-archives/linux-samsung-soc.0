@@ -1,81 +1,96 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
- where possible
-Date: Mon, 9 Dec 2013 17:59:03 +0000
-Message-ID: <20131209175903.GM29268@sirena.org.uk>
-References: <20131126102311.GW14725@sirena.org.uk>
- <CAAgF-BdWLXeLyVZv-durSxxVEm4hHaC7sXQuz_pGLLY-x7XS+w@mail.gmail.com>
- <20131126122031.GA14725@sirena.org.uk>
- <CAAgF-Bc5mEmOBFZak2rSuCqs+xjcrNqnVNZc=zno8F3VOCuuwA@mail.gmail.com>
- <20131127150534.GW14725@sirena.org.uk>
- <CAAgF-BcoKDt=u51tqiWyxveb4iJSXKuV49X1VmOsWiRsSGKKpg@mail.gmail.com>
- <20131128115351.GC27568@sirena.org.uk>
- <CAAgF-Bc3fOdJ3C-Jrmw-7Vxt_9QSJHEX5kWvCEyu_WBrsMDdEA@mail.gmail.com>
- <20131205114538.GO29268@sirena.org.uk>
- <CAAgF-Bc5wpwsCtvg-i=nwoSgwDb137VkLC78R1tgsf7CqY-KQQ@mail.gmail.com>
+From: Sarah Sharp <sarah.a.sharp@linux.intel.com>
+Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming
+ SuperSpeed HUBs
+Date: Mon, 9 Dec 2013 10:24:10 -0800
+Message-ID: <20131209182410.GA5220@xanatos>
+References: <1386592158-12086-1-git-send-email-vikas.sajjan@linaro.org>
+ <Pine.LNX.4.44L0.1312091019400.1439-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4483565007784772744=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <CAAgF-Bc5wpwsCtvg-i=nwoSgwDb137VkLC78R1tgsf7CqY-KQQ@mail.gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linaro-kernel@lists.linaro.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1312091019400.1439-100000@iolanthe.rowland.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, vpalatin@chromium.org, jwerner@chromium.org, tianyu.lan@intel.com, burzalodowa@gmail.com, gregkh@linuxfoundation.org, gautam.vivek@samsung.com, dianders@chromium.org, balbi@ti.com, joshi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Mon, Dec 09, 2013 at 10:24:52AM -0500, Alan Stern wrote:
+> On Mon, 9 Dec 2013, Vikas Sajjan wrote:
+> 
+> > Does warm reset while activating SuperSpeed HUBs if the hub activate type
+> > is HUB_RESET_RESUME.
+> > 
+> > When we do Suspend-to-RAM with (any one of the 16, 32, 64 Jetflash) transcend
+> > USB 3.0 device connected on 3.0 port, during resume I noticed that the
+> > XHCI controller has moved to sometimes RECOVERY, POLLING or INACTIVE STATE.
+> > This behaviour is inconsistent and the connection with connected USB 3.0 device
+> > on 3.0 port was LOST.
 
---===============4483565007784772744==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="kW8VbOAxhix4S1vC"
-Content-Disposition: inline
+Does the device eventually re-connect on the USB port?  Or is warm reset
+necessary to make the device connect?
 
+Does the xHCI register restore complete after resume from S3, or is
+power lost?  I'm trying to figure out whether xhci_reset is called
+before your issue is triggered.
 
---kW8VbOAxhix4S1vC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > Doing warm reset while activating SuperSpeed HUBs if the hub
+> > activate type is HUB_RESET_RESUME, gets the connected device to the stable state.
+> > 
+> > Reviewed at https://chromium-review.googlesource.com/#/c/177132/
+> > 
+> > Tested on exynos5420 and exynos5250 with Transcend Jetflash USB 3.0 device (8564:1000)
 
-On Mon, Dec 09, 2013 at 11:22:39PM +0530, Padma Venkat wrote:
+Is this issue specific to the particular USB device manufacturer
+(Transcend)?  Does the same device lose connection on resume from S3
+with other host controller vendors?  Have you seen this issue when the
+USB 3.0 device is behind a USB 3.0 hub?
 
-> I think this is what you are concern about why it is not working as-is.
+I ask because this sounds like a low-level link training issue that's
+specific to the exynos host or USB device.  I would rather track down
+which hardware is to blame than generically add a warm reset for all USB
+3.0 devices.
 
-OK, makes sense - thanks!
+> > rebased on Greg Kroah-Hartman's usb-next
+> > git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+> > 
+> > Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> > ---
+> >  drivers/usb/core/hub.c |   41 +++++++++++++++++++++++++----------------
+> >  1 file changed, 25 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+> > index a7c04e2..d8432b0 100644
+> > --- a/drivers/usb/core/hub.c
+> > +++ b/drivers/usb/core/hub.c
+> 
+> > @@ -1093,6 +1108,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
+> >  		u16 portstatus, portchange;
+> >  
+> >  		portstatus = portchange = 0;
+> > +
+> > +		/* Some connected devices might be still in unknown state even
+> > +		 * after reset-resume, a WARM_RESET gets the connected device
+> > +		 * to the normal state.
+> > +		 */
+> > +		if (udev && hub_is_superspeed(hub->hdev) &&
+> > +						type == HUB_RESET_RESUME)
+> > +			hub_port_reset(hub, port1, NULL,
+> > +						HUB_BH_RESET_TIME, true);
+> 
+> Please don't do this all the time to every attached port.  Do it only 
+> when it is really needed.
 
---kW8VbOAxhix4S1vC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Agreed.  Can we at least limit the warm reset to devices directly
+attached to roothubs?  You can also change this code to get the port
+status and only do the warm reset if the port link state is
+USB_SS_PORT_LS_POLLING, USB_SS_PORT_LS_RX_DETECT, or
+USB_SS_PORT_LS_SS_INACTIVE.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
+> Shouldn't you pass udev as the third argument?  If not, please explain
+> why not.
+> 
+> Finally, I don't see why you put this in hub_activate().  Isn't it more 
+> closely connected with the reset-resume procedure for the child device?
 
-iQIcBAEBAgAGBQJSpgTjAAoJELSic+t+oim9S3MQAJEqI/Ks2doilofA+Uu6ZlYf
-PiiX8zm4UVqsrbRBvGGrBZGxgBHm9EQafDB+wwVmqcnaHG4BCen2itWtD+fqXAWU
-F1Y3m6nU/aehWrxaV3xL8grF5zyZSbbNFaVpdxRcUodanW1fnC9yes23svthArOM
-2J6ZyL6lIpG7iEO4NLyjTLVAK748CUgI7VTH6ypkgXN1uR0nMiqP42izw9uTW/Vm
-d2jjcW8Wbob3ut5ucCS9EVQjhX+LuIgOzkEmJ2ORkTVQCf2c6SHxq9+pts6lNBhz
-9+UDcaCfzJTvvNnpqP17psiF6VShdrjm76zqmtRs3y72JkV/cKq5P3oEKqhP+TNW
-xlT96sxjD1g82/z8d86y7bRbvtwWvP7JVodY/6NXhrawzN2J6crkpqthHF7rX391
-Wqu5iHqSYleg5Fju5LU5T43L3Z7HSRT6sX6RZqPBzouBuEdPcuqclJPAlqEaaFpJ
-I4Nw2pky0kbVxoFCprkuuy3QwRMkDLqAZPN7vAvYhW5G65sdGETUV/7IEUoRgBaj
-CMKFuIwVRbNXIZR1bMtvZbpWc7RxgAw1jIG/qfYcVSvX32wHRO7upOc9Zbh8n5v8
-NUwWWy/wZeKgFRFHqTGpr2TsmuYNTPZdSldzSx1UJ6WOlaRSBarRBSVzBuQmwxjn
-BIAtvUAS4aQAoW+gUSRX
-=biLZ
------END PGP SIGNATURE-----
-
---kW8VbOAxhix4S1vC--
-
---===============4483565007784772744==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============4483565007784772744==--
+Sarah Sharp
