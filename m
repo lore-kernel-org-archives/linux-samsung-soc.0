@@ -1,68 +1,53 @@
-From: Michael Opdenacker <michael.opdenacker@free-electrons.com>
-Subject: [PATCH] ARM: SAMSUNG: remove unused SAMSUNG_GPIOLIB_4BIT Kconfig parameter
-Date: Mon,  9 Dec 2013 05:38:27 +0100
-Message-ID: <1386563907-18808-1-git-send-email-michael.opdenacker@free-electrons.com>
-References: <000001ced94433863209a92960$%han@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 2/7] pinctrl: exynos: add exynos5260 SoC specific data
+Date: Mon, 9 Dec 2013 10:21:55 +0530
+Message-ID: <CAK9yfHxJP8gUpvngcT-iu3j0+=J60X3DojRe9OXb3uek+VVqaQ@mail.gmail.com>
+References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
+	<1386345391-23482-3-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:60882 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1760260Ab3LIEin (ORCPT
+Received: from mail-oa0-f48.google.com ([209.85.219.48]:50789 "EHLO
+	mail-oa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760320Ab3LIEvz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Dec 2013 23:38:43 -0500
-In-Reply-To: <000001ced94433863209a92960$%han@samsung.com>
+	Sun, 8 Dec 2013 23:51:55 -0500
+Received: by mail-oa0-f48.google.com with SMTP id l6so3311009oag.35
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Dec 2013 20:51:55 -0800 (PST)
+In-Reply-To: <1386345391-23482-3-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux@arm.linux.org.uk, ben-linux@fluff.org, kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, yg1004.jang@samsung.com, Arun Kumar <arun.kk@samsung.com>, Rahul Sharma <r.sh.open@gmail.com>
 
-This removes the SAMSUNG_GPIOLIB_4BIT Kconfig parameter,
-which was no longer used anywhere in the source code
-and Makefiles.
+Hi Rahul, Young-Gun,
 
-Signed-off-by: Michael Opdenacker <michael.opdenacker@free-electrons.com>
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
----
- arch/arm/Kconfig              | 1 -
- arch/arm/plat-samsung/Kconfig | 8 --------
- 2 files changed, 9 deletions(-)
+On 6 December 2013 21:26, Rahul Sharma <rahul.sharma@samsung.com> wrote:
+> From: Young-Gun Jang <yg1004.jang@samsung.com>
+>
+> Add Samsung Exynos5260 SoC specific data to enable pinctrl
+> support for all platforms based on EXYNOS5260.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index c1f1a7eee953..5e227a371401 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -740,7 +740,6 @@ config ARCH_S3C64XX
- 	select S3C_DEV_NAND
- 	select S3C_GPIO_TRACK
- 	select SAMSUNG_ATAGS
--	select SAMSUNG_GPIOLIB_4BIT
- 	select SAMSUNG_WAKEMASK
- 	select SAMSUNG_WDT_RESET
- 	select USB_ARCH_HAS_OHCI
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 6d95d60276d6..58645a58d0d8 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -24,7 +24,6 @@ config PLAT_S5P
- 	select S3C_GPIO_TRACK
- 	select S5P_GPIO_DRVSTR
- 	select SAMSUNG_CLKSRC if !COMMON_CLK
--	select SAMSUNG_GPIOLIB_4BIT
- 	help
- 	  Base platform code for Samsung's S5P series SoC.
- 
-@@ -115,13 +114,6 @@ config S5P_GPIO_INT
- 
- # options for gpio configuration support
- 
--config SAMSUNG_GPIOLIB_4BIT
--	bool
--	help
--	  GPIOlib file contains the 4 bit modification functions for gpio
--	  configuration. GPIOlib shall be compiled only for S3C64XX and S5P
--	  series of processors.
--
- config S5P_GPIO_DRVSTR
- 	bool
- 	help
+Author's (Young-Gun Jang) signed-off by is missing here.
+
+[snip]
+
+> +
+> +/* pin banks of exynos5260 pin-controller 2 */
+> +static struct samsung_pin_bank exynos5260_pin_banks2[] = {
+> +       EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
+> +       EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
+> +};
+> +
+> +/*
+> + * Samsung pinctrl driver data for Exynos5260 SoC. Exynos5420 SoC includes
+
+s/5420/5260 ?
+
 -- 
-1.8.3.2
+With warm regards,
+Sachin
