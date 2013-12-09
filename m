@@ -1,71 +1,35 @@
-From: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: dts: Fix status property of mmc nodes for snow board
-Date: Mon, 9 Dec 2013 08:16:12 -0800
-Message-ID: <CAD=FV=WqgGPZaEz46JLJAPymLA5Wzehgre2Z7X4AFAWN9L_Lvg@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 2/2] ARM: dts:Move fifo-depth property from cros5250-common.dtsi
+Date: Mon, 9 Dec 2013 08:19:30 -0800
+Message-ID: <CAD=FV=Vg5Zfw8ABB_1CT9p7qhfi4Mm4pkjd8T==aN=2St4x5=w@mail.gmail.com>
 References: <1386571118-17793-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1386571118-17793-2-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1386571118-17793-1-git-send-email-yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ian.campbell-Sxgqhf6Nn4DQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sonny Rao <sonnyrao-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vb0-f42.google.com ([209.85.212.42]:54565 "EHLO
+	mail-vb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932812Ab3LIQTb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Dec 2013 11:19:31 -0500
+Received: by mail-vb0-f42.google.com with SMTP id w5so683715vbf.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2013 08:19:30 -0800 (PST)
+In-Reply-To: <1386571118-17793-2-git-send-email-yuvaraj.cd@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, pawel.moll@arm.com, mark.rutland@arm.com, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
 Yuvaraj,
 
-On Sun, Dec 8, 2013 at 10:38 PM, Yuvaraj Kumar C D <yuvaraj.cd-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Commit 0c3de788 ("ARM: dts: change status property of dwmmc nodes
-> for exynos5250") missed out handling the exynos5250 snow dts file.
+On Sun, Dec 8, 2013 at 10:38 PM, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+> Commit 64c138a ("ARM: dts: Move fifo-depth property from exynos5250
+> board dts") missed out handling the exynos5250 snow dts file.
+> Deletes the fifo-depth property, as this property has been moved to
+> SOC specific exynos5250.dtsi file.
 >
-> Signed-off-by : Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by : Abhilash Kesavan <a.kesavan@samsung.com>
 >
-> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  arch/arm/boot/dts/cros5250-common.dtsi |    4 ----
->  arch/arm/boot/dts/exynos5250-snow.dts  |    9 +++++++++
->  2 files changed, 9 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
-> index 6470536..1ceb62e 100644
-> --- a/arch/arm/boot/dts/cros5250-common.dtsi
-> +++ b/arch/arm/boot/dts/cros5250-common.dtsi
-> @@ -247,10 +247,6 @@
->                 };
->         };
->
-> -       mmc@12210000 {
-> -               status = "disabled";
-> -       };
-> -
->         mmc@12220000 {
->                 num-slots = <1>;
->                 supports-highspeed;
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index a9395c4..67484d1 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -171,11 +171,20 @@
->                 };
->         };
->
-> +       mmc@12200000 {
-> +               status = "okay";
-> +       };
-> +
-> +       mmc@12220000 {
-> +               status = "okay";
-> +       };
-> +
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-I probably would have put the 12200000 and 12220000 ones in
-cros5250-common since that's where all of the other stuff relating to
-those ports is.  Some of it may need to be moved around once we get
-the HP Chromebook 11 (exynos5250-spring) in place, but until then it
-seems best to keep it all together.
-
--Doug
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Reviewed-by: Doug Anderson <dianders@chromium.org>
