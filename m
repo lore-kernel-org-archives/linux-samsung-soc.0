@@ -1,49 +1,42 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v4 2/4] clk: exynos5410: register clocks using common
- clock framework
-Date: Tue, 10 Dec 2013 05:37:59 +0900
-Message-ID: <52A62A27.7080408@samsung.com>
-References: <1385456288-20398-1-git-send-email-v.tyrtov@samsung.com> <1385456288-20398-3-git-send-email-v.tyrtov@samsung.com> <1914850.6CAa0SzDWP@amdc1227>
+Subject: Re: [PATCH 2/2] ARM: dts:Move fifo-depth property from cros5250-common.dtsi
+Date: Tue, 10 Dec 2013 05:45:14 +0900
+Message-ID: <52A62BDA.4030508@samsung.com>
+References: <1386571118-17793-1-git-send-email-yuvaraj.cd@samsung.com>	<1386571118-17793-2-git-send-email-yuvaraj.cd@samsung.com> <CAD=FV=Vg5Zfw8ABB_1CT9p7qhfi4Mm4pkjd8T==aN=2St4x5=w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1914850.6CAa0SzDWP@amdc1227>
-Sender: linux-doc-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Mark Rutland <mark.rutland@arm.com>, nicolas.pitre@linaro.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, tomasz.figa@gmail.com, Naour Romain <romain.naour@openwide.fr>, Tarek Dakhran <t.dakhran@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Dave.Martin@arm.com, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Landley <rob@landley.net>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f47.google.com ([209.85.160.47]:61960 "EHLO
+	mail-pb0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933186Ab3LIUpX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Dec 2013 15:45:23 -0500
+In-Reply-To: <CAD=FV=Vg5Zfw8ABB_1CT9p7qhfi4Mm4pkjd8T==aN=2St4x5=w@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <rob.herring@calxeda.com>, pawel.moll@arm.com, mark.rutland@arm.com, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ian.campbell@citrix.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On 12/10/13 01:34, Tomasz Figa wrote:
-> Hi Vyacheslav, Tarek,
+On 12/10/13 01:19, Doug Anderson wrote:
+> Yuvaraj,
 >
-> On Tuesday 26 of November 2013 12:58:06 Vyacheslav Tyrtov wrote:
->> From: Tarek Dakhran<t.dakhran@samsung.com>
+> On Sun, Dec 8, 2013 at 10:38 PM, Yuvaraj Kumar C D<yuvaraj.cd@gmail.com>  wrote:
+>> Commit 64c138a ("ARM: dts: Move fifo-depth property from exynos5250
+>> board dts") missed out handling the exynos5250 snow dts file.
+>> Deletes the fifo-depth property, as this property has been moved to
+>> SOC specific exynos5250.dtsi file.
 >>
->> The EXYNOS5410 clocks are statically listed and registered
->> using the Samsung specific common clock helper functions.
+>> Signed-off-by : Abhilash Kesavan<a.kesavan@samsung.com>
+
+No need space between "by" and ":".
+
 >>
->> Signed-off-by: Tarek Dakhran<t.dakhran@samsung.com>
->> Signed-off-by: Vyacheslav Tyrtov<v.tyrtov@samsung.com>
->> ---
->>   .../devicetree/bindings/clock/exynos5410-clock.txt |  54 +++++
->>   drivers/clk/samsung/Makefile                       |   1 +
->>   drivers/clk/samsung/clk-exynos5410.c               | 239 +++++++++++++++++++++
->>   include/dt-bindings/clock/exynos5410.h             |  32 +++
->>   4 files changed, 326 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
->>   create mode 100644 drivers/clk/samsung/clk-exynos5410.c
->>   create mode 100644 include/dt-bindings/clock/exynos5410.h
+>> Signed-off-by: Yuvaraj Kumar C D<yuvaraj.cd@samsung.com>
 >
-> Acked-by: Tomasz Figa<t.figa@samsung.com>
->
-Tomasz, thanks for your ack on clk stuff.
+> Reviewed-by: Doug Anderson<dianders@chromium.org>
 
-> This should go through Samsung tree, I guess, since it's a dependency
-> of other patches in this series and doesn't depend on any things from
-> clock tree. Mike, Kukjin, are you okay with this?
->
-Yeah, I'm fine on this series but 4th patch for supporting dual cluster.
+Looks good, applied.
 
-Let me take 1 to 3 patches firstly. Thanks.
-- Kukjin
+Thanks,
+Kukjin
