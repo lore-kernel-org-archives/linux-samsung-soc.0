@@ -1,70 +1,52 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed
- HUBs
-Date: Mon, 9 Dec 2013 10:24:52 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1312091019400.1439-100000@iolanthe.rowland.org>
-References: <1386592158-12086-1-git-send-email-vikas.sajjan@linaro.org>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4] i2c: s3c2410: dont need CPU_FREQ transitions for exynos
+ series
+Date: Mon, 09 Dec 2013 17:09:19 +0100
+Message-ID: <1750845.YHGrteBMYZ@amdc1227>
+References: <1381490814-20890-1-git-send-email-ch.naveen@samsung.com>
+ <1385439767-18586-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1386592158-12086-1-git-send-email-vikas.sajjan@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, sarah.a.sharp@linux.intel.com, vpalatin@chromium.org, jwerner@chromium.org, tianyu.lan@intel.com, burzalodowa@gmail.com, gregkh@linuxfoundation.org, gautam.vivek@samsung.com, dianders@chromium.org, balbi@ti.com, joshi@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1385439767-18586-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 9 Dec 2013, Vikas Sajjan wrote:
+Hi Naveen,
 
-> Does warm reset while activating SuperSpeed HUBs if the hub activate type
-> is HUB_RESET_RESUME.
+On Tuesday 26 of November 2013 09:52:46 Naveen Krishna Chatradhi wrote:
+> For Exynos4 and Exynos5 SoCs from Samsung the i2c clock is based
+> on a fixed 66 MHz peripheral clock, and therefore is completely
+> independent of the cpu frequency.
+> Thus, registering for a CPU freq notifier is very wasteful.
 > 
-> When we do Suspend-to-RAM with (any one of the 16, 32, 64 Jetflash) transcend
-> USB 3.0 device connected on 3.0 port, during resume I noticed that the
-> XHCI controller has moved to sometimes RECOVERY, POLLING or INACTIVE STATE.
-> This behaviour is inconsistent and the connection with connected USB 3.0 device
-> on 3.0 port was LOST.
+> This patch modifes the code such that, i2c bus registers to
+> cpu_freq_transition only if CONFIG_CPU_FREQ_S3C24XX is enabled.
 > 
-> Doing warm reset while activating SuperSpeed HUBs if the hub
-> activate type is HUB_RESET_RESUME, gets the connected device to the stable state.
+> This change should save a bunch of cpufreq transitions calls
+> which does not apply to exynos SoCs.
 > 
-> Reviewed at https://chromium-review.googlesource.com/#/c/177132/
-> 
-> Tested on exynos5420 and exynos5250 with Transcend Jetflash USB 3.0 device (8564:1000)
-> 
-> rebased on Greg Kroah-Hartman's usb-next
-> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-> 
-> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 > ---
->  drivers/usb/core/hub.c |   41 +++++++++++++++++++++++++----------------
->  1 file changed, 25 insertions(+), 16 deletions(-)
+> Changes since v3:
+> As per discussion at https://patchwork.kernel.org/patch/3235091/
+> Post f023f8dd59 commit we should be using
+> ARM_S3C24XX_CPUFREQ instead of CPU_FREQ_S3C24XX
 > 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index a7c04e2..d8432b0 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
+> upstrea linux kernel and linuxsamsung already has the commit
+> f023f8dd59. Hence, rebasing the patch.
+> 
+>  drivers/i2c/busses/i2c-s3c2410.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-> @@ -1093,6 +1108,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
->  		u16 portstatus, portchange;
->  
->  		portstatus = portchange = 0;
-> +
-> +		/* Some connected devices might be still in unknown state even
-> +		 * after reset-resume, a WARM_RESET gets the connected device
-> +		 * to the normal state.
-> +		 */
-> +		if (udev && hub_is_superspeed(hub->hdev) &&
-> +						type == HUB_RESET_RESUME)
-> +			hub_port_reset(hub, port1, NULL,
-> +						HUB_BH_RESET_TIME, true);
+Reviewed-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Please don't do this all the time to every attached port.  Do it only 
-when it is really needed.
+Wolfram, are you okay with this patch?
 
-Shouldn't you pass udev as the third argument?  If not, please explain
-why not.
-
-Finally, I don't see why you put this in hub_activate().  Isn't it more 
-closely connected with the reset-resume procedure for the child device?
-
-Alan Stern
+Best regards,
+Tomasz
