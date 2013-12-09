@@ -1,46 +1,37 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 2/4] clk: exynos5410: register clocks using common clock
- framework
-Date: Mon, 09 Dec 2013 17:34:44 +0100
-Message-ID: <1914850.6CAa0SzDWP@amdc1227>
-References: <1385456288-20398-1-git-send-email-v.tyrtov@samsung.com>
- <1385456288-20398-3-git-send-email-v.tyrtov@samsung.com>
+Subject: Re: [PATCH 1/1] ARM: dts: Add initial support for Arndale Octa board
+Date: Mon, 09 Dec 2013 17:37:17 +0100
+Message-ID: <1532760.vJJg0eBWoc@amdc1227>
+References: <1385635081-21072-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <1385456288-20398-3-git-send-email-v.tyrtov@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>, Dave.Martin@arm.com, nicolas.pitre@linaro.org, tomasz.figa@gmail.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:29608 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932702Ab3LIQha (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 9 Dec 2013 11:37:30 -0500
+In-reply-to: <1385635081-21072-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com
 
-Hi Vyacheslav, Tarek,
+Hi Sachin,
 
-On Tuesday 26 of November 2013 12:58:06 Vyacheslav Tyrtov wrote:
-> From: Tarek Dakhran <t.dakhran@samsung.com>
+On Thursday 28 of November 2013 16:08:01 Sachin Kamat wrote:
+> Arndale Octa board is based on Exynos5420 SoC. This patch
+> adds the basic support required for booting it through DT.
 > 
-> The EXYNOS5410 clocks are statically listed and registered
-> using the Samsung specific common clock helper functions.
-> 
-> Signed-off-by: Tarek Dakhran <t.dakhran@samsung.com>
-> Signed-off-by: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
->  .../devicetree/bindings/clock/exynos5410-clock.txt |  54 +++++
->  drivers/clk/samsung/Makefile                       |   1 +
->  drivers/clk/samsung/clk-exynos5410.c               | 239 +++++++++++++++++++++
->  include/dt-bindings/clock/exynos5410.h             |  32 +++
->  4 files changed, 326 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/exynos5410-clock.txt
->  create mode 100644 drivers/clk/samsung/clk-exynos5410.c
->  create mode 100644 include/dt-bindings/clock/exynos5410.h
+>  arch/arm/boot/dts/Makefile                    |    1 +
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts |   66 +++++++++++++++++++++++++
+>  2 files changed, 67 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/exynos5420-arndale-octa.dts
 
-Acked-by: Tomasz Figa <t.figa@samsung.com>
-
-This should go through Samsung tree, I guess, since it's a dependency
-of other patches in this series and doesn't depend on any things from
-clock tree. Mike, Kukjin, are you okay with this?
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
 Best regards,
 Tomasz
-
