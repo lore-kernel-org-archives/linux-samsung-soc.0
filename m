@@ -1,61 +1,68 @@
-From: Rahul Sharma <r.sh.open@gmail.com>
-Subject: Re: [PATCH 2/7] pinctrl: exynos: add exynos5260 SoC specific data
-Date: Mon, 9 Dec 2013 12:06:04 +0530
-Message-ID: <CAPdUM4NuDiQfXOR_jxFuPH374qzKxh33NRr5P6nvvkQEUfbJhw@mail.gmail.com>
-References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
-	<1386345391-23482-3-git-send-email-rahul.sharma@samsung.com>
-	<CAK9yfHxJP8gUpvngcT-iu3j0+=J60X3DojRe9OXb3uek+VVqaQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Subject: [PATCH 1/2] ARM: dts: Fix status property of mmc nodes for snow board
+Date: Mon,  9 Dec 2013 12:08:37 +0530
+Message-ID: <1386571118-17793-1-git-send-email-yuvaraj.cd@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:44922 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755758Ab3LIGgH (ORCPT
+Received: from mail-pb0-f43.google.com ([209.85.160.43]:47436 "EHLO
+	mail-pb0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755758Ab3LIGis (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 01:36:07 -0500
-In-Reply-To: <CAK9yfHxJP8gUpvngcT-iu3j0+=J60X3DojRe9OXb3uek+VVqaQ@mail.gmail.com>
+	Mon, 9 Dec 2013 01:38:48 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, Young-Gun Jang <yg1004.jang@samsung.com>, Arun Kumar <arun.kk@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, rob.herring@calxeda.com, pawel.moll@arm.com, mark.rutland@arm.com, swarren@wwwdotorg.org, ian.campbell@citrix.com, devicetree@vger.kernel.org, a.kesavan@samsung.com
+Cc: t.figa@samsung.com, alim.akhtar@samsung.com, sonnyrao@chromium.org, dianders@chromium.org, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On 9 December 2013 10:21, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Rahul, Young-Gun,
->
-> On 6 December 2013 21:26, Rahul Sharma <rahul.sharma@samsung.com> wrote:
->> From: Young-Gun Jang <yg1004.jang@samsung.com>
->>
->> Add Samsung Exynos5260 SoC specific data to enable pinctrl
->> support for all platforms based on EXYNOS5260.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
->> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
->
-> Author's (Young-Gun Jang) signed-off by is missing here.
+Commit 0c3de788 ("ARM: dts: change status property of dwmmc nodes
+for exynos5250") missed out handling the exynos5250 snow dts file.
 
-I will add his signed-off.
+Signed-off-by : Abhilash Kesavan <a.kesavan@samsung.com>
 
->
-> [snip]
->
->> +
->> +/* pin banks of exynos5260 pin-controller 2 */
->> +static struct samsung_pin_bank exynos5260_pin_banks2[] = {
->> +       EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
->> +       EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
->> +};
->> +
->> +/*
->> + * Samsung pinctrl driver data for Exynos5260 SoC. Exynos5420 SoC includes
->
-> s/5420/5260 ?
->
-It should be 5260. I will change this in next version.
+Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+---
+ arch/arm/boot/dts/cros5250-common.dtsi |    4 ----
+ arch/arm/boot/dts/exynos5250-snow.dts  |    9 +++++++++
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-Thanks,
-Rahul Sharma.
-
-> --
-> With warm regards,
-> Sachin
+diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
+index 6470536..1ceb62e 100644
+--- a/arch/arm/boot/dts/cros5250-common.dtsi
++++ b/arch/arm/boot/dts/cros5250-common.dtsi
+@@ -247,10 +247,6 @@
+ 		};
+ 	};
+ 
+-	mmc@12210000 {
+-		status = "disabled";
+-	};
+-
+ 	mmc@12220000 {
+ 		num-slots = <1>;
+ 		supports-highspeed;
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index a9395c4..67484d1 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -171,11 +171,20 @@
+ 		};
+ 	};
+ 
++	mmc@12200000 {
++		status = "okay";
++	};
++
++	mmc@12220000 {
++		status = "okay";
++	};
++
+ 	/*
+ 	 * On Snow we've got SIP WiFi and so can keep drive strengths low to
+ 	 * reduce EMI.
+ 	 */
+ 	mmc@12230000 {
++		status = "okay";
+ 		slot@0 {
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&sd3_clk &sd3_cmd &sd3_bus4>;
+-- 
+1.7.9.5
