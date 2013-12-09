@@ -1,55 +1,96 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [alsa-devel] [PATCH 1/2] ASoC: samsung: Provide helper for DMA init
-Date: Mon, 9 Dec 2013 17:30:47 +0530
-Message-ID: <CAAgF-BcVqUt7wnYiDxWNsyo79JoZqiSCc=z7obRptXmdx2Ht_g@mail.gmail.com>
-References: <1386253559-18262-1-git-send-email-broonie@kernel.org>
-	<CAAgF-BdD_DONQYPOenMwBmc6N+EOJQ3TwJz1hpG2qZVfzhR63Q@mail.gmail.com>
-	<20131206112708.GD29268@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f173.google.com ([209.85.216.173]:49052 "EHLO
-	mail-qc0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932604Ab3LIMAt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 07:00:49 -0500
-Received: by mail-qc0-f173.google.com with SMTP id m20so2570557qcx.18
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2013 04:00:48 -0800 (PST)
-In-Reply-To: <20131206112708.GD29268@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vikas Sajjan <vikas.sajjan-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed HUBs
+Date: Mon,  9 Dec 2013 18:14:18 +0545
+Message-ID: <1386592158-12086-1-git-send-email-vikas.sajjan@linaro.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sarah.a.sharp-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, tianyu.lan-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, burzalodowa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org
 
-Hi Mark,
+Does warm reset while activating SuperSpeed HUBs if the hub activate type
+is HUB_RESET_RESUME.
 
-On Fri, Dec 6, 2013 at 4:57 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Dec 06, 2013 at 10:44:33AM +0530, Padma Venkat wrote:
->
->> This is done in your earlier patch " ASoC: samsung: Ensure DMA data is
->> initialised for secondary DAI ". Was it done on purpose or by mistake
->> in this patch?
->
-> It's intentional - notice that the function has changed, this is why I
-> kept asking you about mainline.  Mainline doesn't have the wrapper
-> function that abstracts the difference between s3c-dma and dmaengine,
-> this is why I'm saying these two will need to be rebased on top of the
-> mainline fix.
+When we do Suspend-to-RAM with (any one of the 16, 32, 64 Jetflash) transcend
+USB 3.0 device connected on 3.0 port, during resume I noticed that the
+XHCI controller has moved to sometimes RECOVERY, POLLING or INACTIVE STATE.
+This behaviour is inconsistent and the connection with connected USB 3.0 device
+on 3.0 port was LOST.
 
-Ok. I didn't notice the function name. Then this commit is not
-required in the mainline.
-This is required only after your changes because in dmaengine we are
-requesting the dma channel statically but in mainline(with samsung
-proprietary ops) we are requesting the dma channel at run time during
-playback or capture.
+Doing warm reset while activating SuperSpeed HUBs if the hub
+activate type is HUB_RESET_RESUME, gets the connected device to the stable state.
 
->
->> I think you also told to include a patch for reinitialization of the
->> dma_data in i2s_hw_params. If you are in the process of debugging some
->> bug as you mentioned earlier you can ignore this comment. Otherwise it
->> is just a reminder.
->
-> Hrm, forgot to commit that bit.
+Reviewed at https://chromium-review.googlesource.com/#/c/177132/
 
-Thanks
-Padma
+Tested on exynos5420 and exynos5250 with Transcend Jetflash USB 3.0 device (8564:1000)
+
+rebased on Greg Kroah-Hartman's usb-next
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+
+Signed-off-by: Vikas Sajjan <vikas.sajjan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/usb/core/hub.c |   41 +++++++++++++++++++++++++----------------
+ 1 file changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index a7c04e2..d8432b0 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -993,6 +993,21 @@ int usb_remove_device(struct usb_device *udev)
+ 	return 0;
+ }
+ 
++#define PORT_RESET_TRIES	5
++#define SET_ADDRESS_TRIES	2
++#define GET_DESCRIPTOR_TRIES	2
++#define SET_CONFIG_TRIES	(2 * (use_both_schemes + 1))
++#define USE_NEW_SCHEME(i)	((i) / 2 == (int)old_scheme_first)
++
++#define HUB_ROOT_RESET_TIME	50	/* times are in msec */
++#define HUB_SHORT_RESET_TIME	10
++#define HUB_BH_RESET_TIME	50
++#define HUB_LONG_RESET_TIME	200
++#define HUB_RESET_TIMEOUT	800
++
++static int hub_port_reset(struct usb_hub *hub, int port1,
++			struct usb_device *udev, unsigned int delay, bool warm);
++
+ enum hub_activation_type {
+ 	HUB_INIT, HUB_INIT2, HUB_INIT3,		/* INITs must come first */
+ 	HUB_POST_RESET, HUB_RESUME, HUB_RESET_RESUME,
+@@ -1093,6 +1108,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
+ 		u16 portstatus, portchange;
+ 
+ 		portstatus = portchange = 0;
++
++		/* Some connected devices might be still in unknown state even
++		 * after reset-resume, a WARM_RESET gets the connected device
++		 * to the normal state.
++		 */
++		if (udev && hub_is_superspeed(hub->hdev) &&
++						type == HUB_RESET_RESUME)
++			hub_port_reset(hub, port1, NULL,
++						HUB_BH_RESET_TIME, true);
++
+ 		status = hub_port_status(hub, port1, &portstatus, &portchange);
+ 		if (udev || (portstatus & USB_PORT_STAT_CONNECTION))
+ 			dev_dbg(hub->intfdev,
+@@ -2510,22 +2535,6 @@ static unsigned hub_is_wusb(struct usb_hub *hub)
+ 	return hcd->wireless;
+ }
+ 
+-
+-#define PORT_RESET_TRIES	5
+-#define SET_ADDRESS_TRIES	2
+-#define GET_DESCRIPTOR_TRIES	2
+-#define SET_CONFIG_TRIES	(2 * (use_both_schemes + 1))
+-#define USE_NEW_SCHEME(i)	((i) / 2 == (int)old_scheme_first)
+-
+-#define HUB_ROOT_RESET_TIME	50	/* times are in msec */
+-#define HUB_SHORT_RESET_TIME	10
+-#define HUB_BH_RESET_TIME	50
+-#define HUB_LONG_RESET_TIME	200
+-#define HUB_RESET_TIMEOUT	800
+-
+-static int hub_port_reset(struct usb_hub *hub, int port1,
+-			struct usb_device *udev, unsigned int delay, bool warm);
