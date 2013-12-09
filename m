@@ -1,87 +1,69 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v3 3/5] dt-bindings: add binding for clock-controller of
- s3c2443 and following
-Date: Mon, 09 Dec 2013 18:03:51 +0100
-Message-ID: <6031022.c4eBMggiUt@amdc1227>
-References: <201312031619.58062.heiko@sntech.de>
- <201312031623.10187.heiko@sntech.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] pinctrl: samsung: Allow pin value to be initialized
+ using pinfunc.
+Date: Mon, 9 Dec 2013 17:04:22 +0000
+Message-ID: <20131209170422.GT29268@sirena.org.uk>
+References: <1384881351-10782-1-git-send-email-t.figa@samsung.com>
+ <528BB1F2.4080107@wwwdotorg.org>
+ <CAD=FV=XS0dbE7zfgDGVdp84h4fHH6tfO8aN_HNh1LbOjYy51aQ@mail.gmail.com>
+ <528BB913.6080409@wwwdotorg.org>
+ <CAH9JG2UjnL5bZzNUuJhWY3GpwPD=rJvR2O4Hcpm33G+prSS=BA@mail.gmail.com>
+ <CACRpkdbyjm0X9RX+8WjqQxBPyRjBOAunkqVcO-0KUd1PTdGavA@mail.gmail.com>
+ <5293ACA6.7060403@bracey.fi>
+ <CACRpkdYrPd9tnO48bA_5n+-k=KEDyhY7czkCNhTZfpgF3ar+LQ@mail.gmail.com>
+ <20131205150747.GW29268@sirena.org.uk>
+ <CACRpkdZ7YCt7NvDDqgv6CZS07wkfVJ1NRZHFhqKxcYbdW7pXnQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:31126 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755798Ab3LIREE convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 12:04:04 -0500
-In-reply-to: <201312031623.10187.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4TSNxiJ5t2iBNdYs"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdZ7YCt7NvDDqgv6CZS07wkfVJ1NRZHFhqKxcYbdW7pXnQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kevin Bracey <kevin@bracey.fi>, Kyungmin Park <kmpark@infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, Stephen Warren <swarren@wwwdotorg.org>, Tomasz Figa <t.figa@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, devicetree@vger.kernel.org
 
-Hi Heiko,
 
-On Tuesday 03 of December 2013 16:23:09 Heiko St=FCbner wrote:
-> Starting with the s3c2443 the s3c24xx series got a new clock tree
-> compared to the previous s3c24xx socs. This binding describes the
-> clock controller found in the s3c2443, s3c2416 and s3c2450 socs.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../bindings/clock/samsung,s3c2443-clock.txt       |   46 ++++++++++=
-++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s=
-3c2443-clock.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/samsung,s3c2443-=
-clock.txt b/Documentation/devicetree/bindings/clock/samsung,s3c2443-clo=
-ck.txt
-> new file mode 100644
-> index 0000000..a3eb4ed
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/samsung,s3c2443-clock.t=
-xt
-> @@ -0,0 +1,46 @@
-> +* Samsung S3C2443 Clock Controller
-> +
-> +The S3C2443 clock controller generates and supplies clock to various=
- controllers
-> +within the SoC. The clock binding described here is applicable to al=
-l SoCs in
-> +the s3c24x family starting with the s3c2443.
-> +
-> +Required Properties:
-> +
-> +- compatible: should be one of the following.
-> +  - "samsung,s3c2416-clock" - controller compatible with S3C2416 SoC=
-=2E
-> +  - "samsung,s3c2443-clock" - controller compatible with S3C2443 SoC=
-=2E
-> +  - "samsung,s3c2450-clock" - controller compatible with S3C2450 SoC=
-=2E
-> +- reg: physical base address of the controller and length of memory =
-mapped
-> +  region.
-> +- #clock-cells: should be 1.
-> +
-> +Each clock is assigned an identifier and client nodes can use this i=
-dentifier
-> +to specify the clock which they consume. Some of the clocks are avai=
-lable only
-> +on a particular SoC.
-> +
-> +All available clocks are defined as preprocessor macros in
-> +dt-bindings/clock/samsung,s3c2443-clock.h header and can be used in =
-device
-> +tree sources.
+--4TSNxiJ5t2iBNdYs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I believe this driver needs some external clocks to be defined as fixed
-rate clocks using generic bindings. It should be noted what clocks are
-needed here in the documentation.
+On Mon, Dec 09, 2013 at 11:22:44AM +0100, Linus Walleij wrote:
+> On Thu, Dec 5, 2013 at 4:07 PM, Mark Brown <broonie@kernel.org> wrote:
 
-Otherwise the patch looks fine.
+> > Or should we be going and applying the default state to all devices on
+> > init without worrying about a driver appearing?
 
-Best regards,
-Tomasz
+> That doesn't really work: if you have an unused device not in the
+> DT you usually mark it "disabled", and then the DT core doesn't
+> even create a platform_device for this node.
+
+> So doing this would involve parsing the tree and ... yuck.
+
+Hrm, yeah, good point.  That's got a low awesomeness factor even though
+it should work.  Boo.
+
+--4TSNxiJ5t2iBNdYs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSpfgTAAoJELSic+t+oim92kAQAICF9OgQeeOIPRJS1DY0Bq9x
+1QbNxgERbCzn8JEanIgmDCPls5943cHVj77/R22gcwaF53hGDlwJT+wqXLQykVL8
+zR/xaTGmtXQZm5TbXsNbxkb/SU54gdH3bdnl9ytyL5hqgRVCko6CyMoifH8dfZZy
+pyI7FA1zDSbozk+DQp4l06hmemw+wrJfAwvjq4hUBCGl/VmCp6qqfPyH6iGv9XUU
+2KpSVcpUMOHGagl6oGqIE8cACeYR2850O8SLg/k/QtbYLijqgJnb6nQWZlu4uow6
+Z7425g1MiHQub01pH78iW6U+zAyYfnYMP/j2I4hgS2gBlHsU4jO5pSHnlwT2EPcA
+LqlduWXdb5wLYRoaWdTVwf0B2WFTmKvbVbnzilCen9pEX/wRRpewTw9nTHq6pqbi
+yoBGCA+R00U+ulK6FIU3ZfzIR//vxdUSFzSljdKJLt6nFL2iuOI6norfCLa0/vNF
+zvl8vZtTifXQZAne7NREpBDzk/vg8a6bLX94VHgK2l/FYmChVBlqATjlV/PwRPZh
+BDkLEsQsCiaHALopTmWi7/vRh89ZwNFGVYqILAOahIcQgPmuO+Y8/UKgxjygi5+i
+esSbmFgsYv6b2pwXYfRDo+8xwQIh4VQObIOwOvbZDarJ+pP3IrjXTpMAPkFT3W7D
+/4lw4JVOsvd8chZcF2nK
+=n3fD
+-----END PGP SIGNATURE-----
+
+--4TSNxiJ5t2iBNdYs--
