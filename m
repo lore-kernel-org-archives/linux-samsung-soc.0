@@ -1,55 +1,110 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: dts: Leave Exynos5250 SPI controller disabled
- by default
-Date: Tue, 10 Dec 2013 06:07:14 +0900
-Message-ID: <52A63102.5040708@samsung.com>
-References: <1385381710-5212-1-git-send-email-broonie@kernel.org> <5026211.5mW8H3pyKS@amdc1227>
+Subject: Re: [PATCH 4/4 v4] ARM: dts: Exynos5420: Add device nodes for TMU
+ blocks
+Date: Tue, 10 Dec 2013 06:15:08 +0900
+Message-ID: <52A632DC.6040509@samsung.com>
+References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com> <1384866359-16157-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:39490 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761540Ab3LIVHV (ORCPT
+Received: from mail-pb0-f45.google.com ([209.85.160.45]:44309 "EHLO
+	mail-pb0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751345Ab3LIVPO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 16:07:21 -0500
-Received: by mail-pd0-f181.google.com with SMTP id p10so5886492pdj.12
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2013 13:07:20 -0800 (PST)
-In-Reply-To: <5026211.5mW8H3pyKS@amdc1227>
+	Mon, 9 Dec 2013 16:15:14 -0500
+In-Reply-To: <1384866359-16157-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@linaro.org>, Doug Anderson <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: linux-pm@vger.kernel.org, naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
 
-On 12/10/13 00:23, Tomasz Figa wrote:
-> Hi Kukjin,
+On 11/19/13 22:05, Naveen Krishna Chatradhi wrote:
+> Exynos5420 SoC has per core thermal management unit.
+> 5 TMU channels 4 for CPUs and 5th for GPU.
 >
-Hi,
-
-> On Monday 25 of November 2013 12:15:08 Mark Brown wrote:
->> From: Mark Brown<broonie@linaro.org>
->>
->> Rather than requiring each board to explicitly disable the SPI controllers
->> it is not using instead require boards to enable those that they are using.
->> This is less work overall since normally at most one of the controllers is
->> in use and avoids issues caused by inappropriate pinmuxing.
->>
->> Signed-off-by: Mark Brown<broonie@linaro.org>
->> Acked-by: Tomasz Figa<t.figa@samsung.com>
->> ---
->>   arch/arm/boot/dts/cros5250-common.dtsi    |  9 +--------
->>   arch/arm/boot/dts/exynos5250-arndale.dts  | 12 ------------
->>   arch/arm/boot/dts/exynos5250-smdk5250.dts |  6 ++----
->>   arch/arm/boot/dts/exynos5250.dtsi         |  3 +++
->>   4 files changed, 6 insertions(+), 24 deletions(-)
+> This patch adds the device tree nodes to the DT device list.
 >
-> Seems like you have missed this series. Could you apply it?
+> Nodes carry the misplaced second base address and the second
+> clock to access the misplaced base address.
 >
-Yeah, thanks for your gentle reminder.
+> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi<ch.naveen@samsung.com>
+> Signed-off-by: Andrew Bresticker<abrestic@chromium.org>
+> ---
+> Changes since v3:
+> None, Just respinning
+>
+> Changes since v2:
+> 3. uses the new compatible strings introduced along with adding
+>     support for Exynso5420.
+>
+> Changes since v1:
+> 1. Nodes carry the misplaced second base address and the second
+>     clock to access the misplaced base address.
+> 2. Correct the clock number for the TMU4
+>
+>   arch/arm/boot/dts/exynos5420.dtsi |   48 +++++++++++++++++++++++++++++++++++++
+>   1 file changed, 48 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+> index 6ffefd1..d736b40 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -369,4 +369,52 @@
+>   		clock-names = "gscl";
+>   		samsung,power-domain =<&gsc_pd>;
+>   	};
+> +
+> +	/* tmu for CPU0 */
+> +	tmu@10060000 {
+> +		compatible = "samsung,exynos5420-tmu";
+> +		reg =<0x10060000 0x100>;
+> +		interrupts =<0 65 0>;
+> +		clocks =<&clock 318>;
+> +		clock-names = "tmu_apbif";
+> +	};
+> +
+> +	/* tmu for CPU1 */
+> +	tmu@10064000 {
+> +		compatible = "samsung,exynos5420-tmu";
+> +		reg =<0x10064000 0x100>;
+> +		interrupts =<0 183 0>;
+> +		clocks =<&clock 318>;
+> +		clock-names = "tmu_apbif";
+> +	};
+> +
+> +	/* tmu for CPU2 */
+> +	tmu@10068000 {
+> +		compatible = "samsung,exynos5420-tmu-triminfo";
+> +		/* 2nd reg is for the misplaced TRIMINFO register */
+> +		reg =<0x10068000 0x100>,<0x1006c000 0x4>;
+> +		interrupts =<0 184 0>;
+> +		clocks =<&clock 318>;
+> +		clock-names = "tmu_apbif";
+> +	};
+> +
+> +	/* tmu for CPU3 */
+> +	tmu@1006c000 {
+> +		compatible = "samsung,exynos5420-tmu-triminfo-clk";
+> +		/* 2nd reg is for the misplaced TRIMINFO register */
+> +		reg =<0x1006c000 0x100>,<0x100a0000 0x4>;
+> +		interrupts =<0 185 0>;
+> +		clocks =<&clock 318>,<&clock 319>;
+> +		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
+> +	};
+> +
+> +	/* tmu for GPU */
+> +	tmu@100a0000 {
+> +		compatible = "samsung,exynos5420-tmu-triminfo-clk";
+> +		/* 2nd reg is for the misplaced TRIMINFO register */
+> +		reg =<0x100a0000 0x100>,<0x10068000 0x4>;
+> +		interrupts =<0 215 0>;
+> +		clocks =<&clock 319>,<&clock 318>;
+> +		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
+> +	};
+>   };
 
-+ Doug and Olof
-
-BTW, Doug and Olof, are you OK with changing the name of cros5250-common 
-DT file? Basically, I agree with Mark's patch.
+BTW, there is just only this patch to support TMU on exynos5420?
 
 - Kukjin
