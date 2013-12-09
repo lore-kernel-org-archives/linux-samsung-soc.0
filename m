@@ -1,71 +1,50 @@
-From: Michael Opdenacker <michael.opdenacker@free-electrons.com>
-Subject: [PATCH][RESEND] ARM: SAMSUNG: remove IRQF_DISABLED
-Date: Mon,  9 Dec 2013 10:02:15 +0100
-Message-ID: <1386579735-4065-1-git-send-email-michael.opdenacker@free-electrons.com>
-References: <000801cec874$%han@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:33894 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1755451Ab3LIJC0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Dec 2013 04:02:26 -0500
-In-Reply-To: <000801cec874$%han@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] usb: ohci-exynos: Change to use phy provided by the
+ generic phy framework
+Date: Mon, 09 Dec 2013 18:26:08 +0900
+Message-ID: <000001cef4c0$b123ba90$136b2fb0$%han@samsung.com>
+References: <001401ceda8f$67f1ee50$37d5caf0$%han@samsung.com>
+ <20131209015553.GA27542@kroah.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20131209015553.GA27542@kroah.com>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Greg KH' <greg@kroah.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-arm@vger.kernel.org, 'Kamil Debski' <k.debski@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, m.szyprowski@samsung.com, gautam.vivek@samsung.com, 'Mateusz Krawczuk' <mat.krawczuk@gmail.com>, 'Yulgon Kim' <yulgon.kim@samsung.com>, 'Praveen Paneri' <p.paneri@samsung.com>, 'Anton Tikhomirov' <av.tikhomirov@samsung.com>, 'Kumar Gala' <galak@codeaurora.org>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com, linux@arm.linux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Opdenacker <michael.opdenacker@free-electrons.com>
 
-This patch proposes to remove the use of the IRQF_DISABLED flag
+On Monday, December 09, 2013 10:56 AM, Greg KH wrote:
+> On Wed, Nov 06, 2013 at 10:27:49AM +0900, Jingoo Han wrote:
+> > Change the phy provider used from the old usb phy specific to a new one
+> > using the generic phy framework.
+> >
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > Cc: Kamil Debski <k.debski@samsung.com>
+> > ---
+> > Exynos OHCI driver also uses Exynos USB2.0 PHY. Thus, I make this
+> > patch based-on Kamil Debski's patchset for adding Exynos USB 2.0 PHY
+> > driver.
+> > (http://www.spinics.net/lists/linux-samsung-soc/msg24104.html)
+> >
+> >  drivers/usb/host/ohci-exynos.c |   28 ++++++++--------------------
+> >  1 file changed, 8 insertions(+), 20 deletions(-)
+> 
+> This has some fuzz when applied to my tree, care to redo it against my
+> usb-next branch of the usb.git tree on git.kernel.org?
 
-It's a NOOP since 2.6.35 and it will be removed one day.
+Hi Greg,
 
-Signed-off-by: Michael Opdenacker <michael.opdenacker@free-electrons.com>
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
----
- arch/arm/mach-s3c24xx/dma.c         | 2 +-
- arch/arm/mach-s3c24xx/simtec-usb.c  | 3 +--
- arch/arm/mach-s3c64xx/mach-smartq.c | 2 +-
- 3 files changed, 3 insertions(+), 4 deletions(-)
+This patch should be updated, based on Kamil Debski's  V4 patchset
+for adding Exynos USB 2.0 PHY driver [1].
+I will send v2 patch based on Kamil Debski's  V4 patchset [1].
 
-diff --git a/arch/arm/mach-s3c24xx/dma.c b/arch/arm/mach-s3c24xx/dma.c
-index 4a65cba3295d..a8dafc174fe3 100644
---- a/arch/arm/mach-s3c24xx/dma.c
-+++ b/arch/arm/mach-s3c24xx/dma.c
-@@ -742,7 +742,7 @@ int s3c2410_dma_request(enum dma_ch channel,
- 		chan->irq_claimed = 1;
- 		local_irq_restore(flags);
- 
--		err = request_irq(chan->irq, s3c2410_dma_irq, IRQF_DISABLED,
-+		err = request_irq(chan->irq, s3c2410_dma_irq, 0,
- 				  client->name, (void *)chan);
- 
- 		local_irq_save(flags);
-diff --git a/arch/arm/mach-s3c24xx/simtec-usb.c b/arch/arm/mach-s3c24xx/simtec-usb.c
-index 2ed2e32430dc..bb3eac6a7697 100644
---- a/arch/arm/mach-s3c24xx/simtec-usb.c
-+++ b/arch/arm/mach-s3c24xx/simtec-usb.c
-@@ -78,8 +78,7 @@ static void usb_simtec_enableoc(struct s3c2410_hcd_info *info, int on)
- 
- 	if (on) {
- 		ret = request_irq(BAST_IRQ_USBOC, usb_simtec_ocirq,
--				  IRQF_DISABLED | IRQF_TRIGGER_RISING |
--				   IRQF_TRIGGER_FALLING,
-+				  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
- 				  "USB Over-current", info);
- 		if (ret != 0) {
- 			printk(KERN_ERR "failed to request usb oc irq\n");
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index a6b338fd0470..08a889c141da 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -106,7 +106,7 @@ static void smartq_usb_host_enableoc(struct s3c2410_hcd_info *info, int on)
- 
- 	if (on) {
- 		ret = request_irq(gpio_to_irq(S3C64XX_GPL(10)),
--				  smartq_usb_host_ocirq, IRQF_DISABLED |
-+				  smartq_usb_host_ocirq,
- 				  IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
- 				  "USB host overcurrent", info);
- 		if (ret != 0)
--- 
-1.8.3.2
+[1] [PATCH v4 0/9] phy: Add new Exynos USB 2.0 PHY driver 
+     (http://www.spinics.net/lists/linux-usb/msg98911.html)
+
+Thank you.
+
+Best regards,
+Jingoo Han
