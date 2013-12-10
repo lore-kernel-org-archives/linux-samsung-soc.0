@@ -1,123 +1,262 @@
-From: Vikas Sajjan <sajjan.linux@gmail.com>
-Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed HUBs
-Date: Tue, 10 Dec 2013 11:00:25 +0530
-Message-ID: <CAGm_ybgC6Ca0qz6zJL0PkEUiyUi=Ct0L5t2GJOt9ZU-buP+wBQ@mail.gmail.com>
-References: <1386592158-12086-1-git-send-email-vikas.sajjan@linaro.org>
-	<Pine.LNX.4.44L0.1312091019400.1439-100000@iolanthe.rowland.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44L0.1312091019400.1439-100000@iolanthe.rowland.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>, vpalatin@chromium.org, jwerner@chromium.org, tianyu.lan@intel.com, burzalodowa@gmail.com, gregkh@linuxfoundation.org, gautam.vivek@samsung.com, Douglas Anderson <dianders@chromium.org>, balbi@ti.com, sunil joshi <joshi@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: dts: Add PMIC support to arndale-octa
+Date: Tue, 10 Dec 2013 11:59:18 +0530
+Message-ID: <1386656958-28292-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f51.google.com ([209.85.160.51]:33506 "EHLO
+	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750726Ab3LJGcL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Dec 2013 01:32:11 -0500
+Received: by mail-pb0-f51.google.com with SMTP id up15so7001541pbc.38
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2013 22:32:10 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org
 
-Hi Alan,
+Added PMIC node to Arndale-Octa board.
 
-On Mon, Dec 9, 2013 at 8:54 PM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Mon, 9 Dec 2013, Vikas Sajjan wrote:
->
->> Does warm reset while activating SuperSpeed HUBs if the hub activate type
->> is HUB_RESET_RESUME.
->>
->> When we do Suspend-to-RAM with (any one of the 16, 32, 64 Jetflash) transcend
->> USB 3.0 device connected on 3.0 port, during resume I noticed that the
->> XHCI controller has moved to sometimes RECOVERY, POLLING or INACTIVE STATE.
->> This behaviour is inconsistent and the connection with connected USB 3.0 device
->> on 3.0 port was LOST.
->>
->> Doing warm reset while activating SuperSpeed HUBs if the hub
->> activate type is HUB_RESET_RESUME, gets the connected device to the stable state.
->>
->> Reviewed at https://chromium-review.googlesource.com/#/c/177132/
->>
->> Tested on exynos5420 and exynos5250 with Transcend Jetflash USB 3.0 device (8564:1000)
->>
->> rebased on Greg Kroah-Hartman's usb-next
->> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
->>
->> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->> ---
->>  drivers/usb/core/hub.c |   41 +++++++++++++++++++++++++----------------
->>  1 file changed, 25 insertions(+), 16 deletions(-)
->>
->> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
->> index a7c04e2..d8432b0 100644
->> --- a/drivers/usb/core/hub.c
->> +++ b/drivers/usb/core/hub.c
->
->> @@ -1093,6 +1108,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
->>               u16 portstatus, portchange;
->>
->>               portstatus = portchange = 0;
->> +
->> +             /* Some connected devices might be still in unknown state even
->> +              * after reset-resume, a WARM_RESET gets the connected device
->> +              * to the normal state.
->> +              */
->> +             if (udev && hub_is_superspeed(hub->hdev) &&
->> +                                             type == HUB_RESET_RESUME)
->> +                     hub_port_reset(hub, port1, NULL,
->> +                                             HUB_BH_RESET_TIME, true);
->
-> Please don't do this all the time to every attached port.  Do it only
-> when it is really needed.
->
-> Shouldn't you pass udev as the third argument?  If not, please explain
-> why not.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts |  220 +++++++++++++++++++++++++
+ 1 file changed, 220 insertions(+)
 
-yea, I have NOT tried passing udev as the third argument.
-
-
->
-> Finally, I don't see why you put this in hub_activate().  Isn't it more
-> closely connected with the reset-resume procedure for the child device?
-
-
-I was trying to add a FIX in usb_port_resume(), but in our case we
-have CONFIG_USB_DEFAULT_PERSIST disabled.
-
-Interestingly, if I disable the CONFIG_USB_DEFAULT_PERSIST, then the
-function usb_port_resume() will never be called and transcend Jetflash
-device Suspend-to-RAM fails.
-
-In normal scenario (ie., CONFIG_USB_DEFAULT_PERSIST=y) the sequence is:
-===========================================================================
-Step 1: For Root HUB :
-usb_resume_both() ---> usb_resume_device() -> generic_resume() -->
-hcd_bus_resume() --> xhci_bus_resume().
-                              |
-                              |-->usb_resume_interface() --->
-hub_reset_resume() -->  xhci_update_hub_device()
-
-Step 2:  For the Device connected
-usb_resume_both() ---> usb_resume_device() ->
-generic_resume()-->usb_port_resume()-->hub_port_logical_disconnect()
---> hub_port_disable() --> hub_usb3_port_disable().
-
-
-In our scenario (ie., CONFIG_USB_DEFAULT_PERSIST=N) the sequence is:
-===============================================================================
-Step 1: For Root HUB
-usb_resume_both() ---> usb_resume_device() -> generic_resume() -->
-hcd_bus_resume() --> xhci_bus_resume().
-                              |
-                              |-->usb_resume_interface() --->
-hub_reset_resume() -->  xhci_update_hub_device()
-
-Step 2 :  Never occurs
-
-So Suspend-to-RAM fails.
-
-Hence i added a FIX in  hub_reset_resume().
-
-Let me know if I am wrong.
-
->
-> Alan Stern
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index 7340745ff979..7d94d8d3b118 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -11,6 +11,7 @@
+ 
+ /dts-v1/;
+ #include "exynos5420.dtsi"
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "Insignal Arndale Octa evaluation board based on EXYNOS5420";
+@@ -63,4 +64,223 @@
+ 			bus-width = <4>;
+ 		};
+ 	};
++
++	hsi2c_4: i2c@12CA0000 {
++		status = "okay";
++
++		s2mps11_pmic@66 {
++			compatible = "samsung,s2mps11-pmic";
++			reg = <0x66>;
++			s2mps11,buck2-ramp-delay = <12>;
++			s2mps11,buck34-ramp-delay = <12>;
++			s2mps11,buck16-ramp-delay = <12>;
++			s2mps11,buck6-ramp-enable = <1>;
++			s2mps11,buck2-ramp-enable = <1>;
++			s2mps11,buck3-ramp-enable = <1>;
++			s2mps11,buck4-ramp-enable = <1>;
++
++			interrupt-parent = <&gpx3>;
++			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
++
++			s2mps11_osc: clocks {
++				#clock-cells = <1>;
++				clock-output-names = "s2mps11_ap",
++						"s2mps11_cp", "s2mps11_bt";
++			};
++
++			regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "vdd_ldo1";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "vdd_ldo3";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo5_reg: LDO5 {
++					regulator-name = "vdd_ldo5";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo6_reg: LDO6 {
++					regulator-name = "vdd_ldo6";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "vdd_ldo7";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "vdd_ldo8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo9_reg: LDO9 {
++					regulator-name = "vdd_ldo9";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++					regulator-always-on;
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "vdd_ldo10";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo11_reg: LDO11 {
++					regulator-name = "vdd_ldo11";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo12_reg: LDO12 {
++					regulator-name = "vdd_ldo12";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo13_reg: LDO13 {
++					regulator-name = "vdd_ldo13";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo15_reg: LDO15 {
++					regulator-name = "vdd_ldo15";
++					regulator-min-microvolt = <3100000>;
++					regulator-max-microvolt = <3100000>;
++					regulator-always-on;
++				};
++
++				ldo16_reg: LDO16 {
++					regulator-name = "vdd_ldo16";
++					regulator-min-microvolt = <2200000>;
++					regulator-max-microvolt = <2200000>;
++					regulator-always-on;
++				};
++
++				ldo17_reg: LDO17 {
++					regulator-name = "tsp_avdd";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				ldo19_reg: LDO19 {
++					regulator-name = "vdd_sd";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo24_reg: LDO24 {
++					regulator-name = "tsp_io";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "vdd_mif";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck3_reg: BUCK3 {
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck4_reg: BUCK4 {
++					regulator-name = "vdd_g3d";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "vdd_mem";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck6_reg: BUCK6 {
++					regulator-name = "vdd_kfc";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck7_reg: BUCK7 {
++					regulator-name = "vdd_1.0v_ldo";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck8_reg: BUCK8 {
++					regulator-name = "vdd_1.8v_ldo";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck9_reg: BUCK9 {
++					regulator-name = "vdd_2.8v_ldo";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3750000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck10_reg: BUCK10 {
++					regulator-name = "vdd_vmem";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++			};
++		};
++	};
+ };
+-- 
+1.7.9.5
