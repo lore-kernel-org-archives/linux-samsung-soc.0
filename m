@@ -1,56 +1,68 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] serial: samsung: move clock deactivation below uart
- registration
-Date: Tue, 10 Dec 2013 14:52:40 +0100
-Message-ID: <4640026.L8HxPz97OG@amdc1227>
-References: <201312050054.39327.heiko@sntech.de>
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH RFC 3/4] xhci: Tune PHY for the DWC3-Exynos host
+ controller
+Date: Tue, 10 Dec 2013 15:55:48 +0200
+Message-ID: <20131210135548.GA28456@xps8300>
+References: <1386672926-26885-1-git-send-email-gautam.vivek@samsung.com>
+ <1386672926-26885-4-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:65528 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751776Ab3LJNwx convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 08:52:53 -0500
-In-reply-to: <201312050054.39327.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1386672926-26885-4-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, sarah.a.sharp@linux.intel.com, kgene.kim@samsung.com, kishon@ti.com, jg1.han@samsung.com, jwerner@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
 
-Hi Heiko,
+Hi,
 
-On Thursday 05 of December 2013 00:54:38 Heiko St=FCbner wrote:
-> Commit 60e93575476f (serial: samsung: enable clock before clearing pe=
-nding
-> interrupts during init) added handling of the controller clock during=
- init.
->=20
-> On most systems this clock is also one of the baud_clock sources and
-> possibly used by the earlycon and thus already enabled by the bootloa=
-der.
->=20
-> Therefore a gap exists between s3c24xx_serial_init_port disabling the
-> clock and an attached console reenabling it, making the transition fr=
-om
-> earlycon to regular console possibly hang the system - as seen on my
-> S3C2442 based Freerunner today.
->=20
-> Therefore move the disabling of the clock from s3c24xx_serial_init_po=
-rt
-> below the uart port registration, effectively creating an overlap and
-> keeping the clock running non-stop if the console wants to grab this =
-port.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  drivers/tty/serial/samsung.c |    8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+On Tue, Dec 10, 2013 at 04:25:25PM +0530, Vivek Gautam wrote:
+> @@ -170,6 +189,15 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	/*
+> +	 * The parent of the xhci-plat device may pass in a PHY via
+> +	 * platform data.  If it exists, store it in our struct usb_hcd
+> +	 * so that we can use it later.
+> +	 */
+> +	phy_generic = dev_get_platdata(&pdev->dev);
+> +	if (phy_generic)
+> +		xhci->shared_hcd->phy_generic = *phy_generic;
 
-Makes sense.
+Getting the handle to the phy from platform data like this is not
+going to work for long. It should be possible to get it normally with
+phy_get(). It's not going to be possible to get the handle from the
+platform data like this if the xhci-hcd platform device is created
+from ACPI or DT. You are also not considering case where you have two
+phys.
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+Vivek, I have made a patch set for the phy framework allowing
+associations between the phys and their users to be made in same way
+gpios and clk make them. With those you should be able to create a
+lookup entry to the phy framework in drivers/usb/dwc3/host.c. Then we
+could use phy_get() here already. Please check them. Subject of the
+thread:
 
-Best regards,
-Tomasz
+"phy: remove the need for the phys to know about their users"
+
+The lookup table can then be added in drivers/usb/dwc3/host.c with
+something like this:
+
+int dwc3_host_init(struct dwc3 *dwc)
+{
+        struct platform_device  *xhci;
+        struct phy_lookup_table *table;
+        ...
+        table->dev_id = dev_name(&xhci->dev);
+        if (dwc->usb2_generic_phy)
+                table->table[0].phy_name = dev_name(&dwc->usb2_generic_phy->dev);
+        if (dwc->usb3_generic_phy)
+                table->table[1].phy_name = dev_name(&dwc->usb3_generic_phy->dev);
+        phy_add_lookup_table(table);
+        ...
+
+Br,
+
+-- 
+heikki
