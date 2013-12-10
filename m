@@ -1,48 +1,65 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [alsa-devel] [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
- where possible
-Date: Tue, 10 Dec 2013 22:09:05 +0530
-Message-ID: <CAAgF-BdWpQ2wn8GCpXLLWBZFxrrTYmX-e4bWRLYdwfpwhObnfg@mail.gmail.com>
-References: <1386253559-18262-1-git-send-email-broonie@kernel.org>
-	<1386253559-18262-2-git-send-email-broonie@kernel.org>
-	<CAAgF-Bfk8byZwVBd_5PopM3ji-wdTMR5i-J7w1W4zq4gFk4i+Q@mail.gmail.com>
-	<20131209173021.GC29268@sirena.org.uk>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH v5 0/3] Exynos 5410 support
+Date: Tue, 10 Dec 2013 08:40:39 -0800
+Message-ID: <87ppp48xrs.fsf@linaro.org>
+References: <1386685599-31536-1-git-send-email-v.tyrtov@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f53.google.com ([209.85.216.53]:48427 "EHLO
-	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755090Ab3LJQjG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 11:39:06 -0500
-Received: by mail-qa0-f53.google.com with SMTP id j5so3844501qaq.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Dec 2013 08:39:05 -0800 (PST)
-In-Reply-To: <20131209173021.GC29268@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1386685599-31536-1-git-send-email-v.tyrtov@samsung.com>
+	(Vyacheslav Tyrtov's message of "Tue, 10 Dec 2013 18:26:36 +0400")
+Sender: linux-doc-owner@vger.kernel.org
+To: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>, Dave.Martin@arm.com, nicolas.pitre@linaro.org, tomasz.figa@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org
 
-Hi Mark,
+Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
 
-On Mon, Dec 9, 2013 at 11:00 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Dec 06, 2013 at 10:44:19AM +0530, Padma Venkat wrote:
+> The series of patches represent support of Exynos 5410 SoC
 >
->> I couldn't test this patch set due to some crash in recent kernel in
->> dmaengine_unmap_put. I think this unmap support is not yet implemented
->> for pl330 driver. It is mentioned in the commit "dmaengine: prepare
->> for generic 'unmap' data", [bzolnier: prepare pl330 driver for adding
->> missing unmap while at it].
+> The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
 >
-> This is unfortunate...  I'd suggest trying mainline but I see it's
-> broken in Linus' tree too and no fixes in -next. :(
+> Patches add new platform description, support of clock controller and device 
+> tree for Exynos 5410.
 >
-> I'm tempted to push up with your Tested-by a note saying you did your
-> testing on an earlier version but weren't able to test due to other bugs.
+> Dual cluster support for Exynos 5410 (EDCS) has been removed from this series 
+> This patches is activating only the big cluster (all A15 cores)
 
-I managed to test your latest version of these patches(posted on
-Dec6th) on earlier version of linux-samsung tree. May be you can push
-up these patches with my Tested-by.
+Testing this series on top of v3.13-rc3, plus a couple of other
+necessary changes (which should've probably been noted in the changelog):
 
-Thanks
-Padma
+1) change CONFIG_NR_CPUS=8 in .config
+2) add the exynos combiner patch from Chander:
+   [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base value
+
+I'm still only seeing 2 out of 4 cores come up on my odroid-xu:
+
+[    0.045000] CPU: Testing write buffer coherency: ok
+[    0.045000] CPU0: update cpu_power 1024
+[    0.045000] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.045000] Setting up static identity map for 0x403717d8 - 0x40371830
+[    0.045000] CPU1: Booted secondary processor
+[    0.065000] CPU1: update cpu_power 1024
+[    0.065000] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    1.075000] CPU2: failed to boot: -38
+[    2.075000] CPU3: failed to boot: -38
+[    2.075000] Brought up 2 CPUs
+[    2.075000] SMP: Total of 2 processors activated.
+[    2.075000] CPU: All CPU(s) started in SVC mode.
+
+Full boot log below.
+
+Kevin
+
+
+Connected to odroid-xu console [channel connected] (~$quit to exit)
+(user:khilman) is already connected
+(user:khilman) is already connected
+
+~$hardreset
+
+/ # 
+Command(odroid-xu console)> hardreset
+(user:khilman) Reboot odroid-xu
+.~;+wQt.
