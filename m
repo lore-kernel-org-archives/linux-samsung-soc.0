@@ -1,105 +1,111 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/1] ARM: dts: Add PMIC support to arndale-octa
-Date: Tue, 10 Dec 2013 18:54:16 +0000
-Message-ID: <20131210185416.GH11468@sirena.org.uk>
-References: <1386656958-28292-1-git-send-email-sachin.kamat@linaro.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] ARM: topology: Staticise non-exported symbols
+Date: Wed, 11 Dec 2013 07:48:54 +0900
+Message-ID: <001201cef5fa$00b90e40$022b2ac0$%han@samsung.com>
+References: <1386673649-15181-1-git-send-email-broonie@kernel.org>
+ <1386673649-15181-2-git-send-email-broonie@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IbVRjBtIbJdbeK1C"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:41882 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751806Ab3LJSyk (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:24127 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751424Ab3LJWs4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 13:54:40 -0500
-Content-Disposition: inline
-In-Reply-To: <1386656958-28292-1-git-send-email-sachin.kamat@linaro.org>
+	Tue, 10 Dec 2013 17:48:56 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MXM002HY4PIY860@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Dec 2013 07:48:54 +0900 (KST)
+In-reply-to: <1386673649-15181-2-git-send-email-broonie@kernel.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com
+To: 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>
+Cc: 'Doug Anderson' <dianders@chromium.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 'Mark Brown' <broonie@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
+On Tuesday, December 10, 2013 8:07 PM, Mark Brown wrote:
+> 
+> From: Mark Brown <broonie@linaro.org>
+> 
+> These symbols are only referenced in this source file so can be made
+> static, and the efficiency table is constant data so can be declared as
+> such.  This avoids polluting the global namespace and fixes warnings
+> from sparse.
+> 
+> The function arch_scale_freq_power() is still not prototyped or static,
+> this is a separate issue as this is overriding a weak symbol from the
+> scheduler which neglects to provide a prototype.
+> 
+> Signed-off-by: Mark Brown <broonie@linaro.org>
 
---IbVRjBtIbJdbeK1C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It looks good.
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
-On Tue, Dec 10, 2013 at 11:59:18AM +0530, Sachin Kamat wrote:
+Best regards,
+Jingoo Han
 
-> Added PMIC node to Arndale-Octa board.
-
-Is there a bootloader posted for this anywhere yet?
-
-> +			regulators {
-> +				ldo1_reg: LDO1 {
-> +					regulator-name =3D "vdd_ldo1";
-
-So, there is a label on the schematic for PVDD_LDO1 but it's not
-entirely obvious why that's there as throughout the rest of the
-schematic it's got the rather more constructive name PVDD_ALIVE_1V0. =20
-We should really be using the more readable versions of the names
-in the DT since the whole point in overriding the driver default
-names is to make it easier to associate the kernel diagnostics with
-the schematic, what the DT is doing here serves no purpose.
-
-The same comment applies to all the LDO supplies.
-
-> +				buck2_reg: BUCK2 {
-> +					regulator-name =3D "vdd_arm";
-> +					regulator-min-microvolt =3D <800000>;
-> +					regulator-max-microvolt =3D <1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-
-Why are you specifying boot-on?  It doesn't seem terribly plausible that
-the cores won't be powered on boot, or that we can't tell what the state
-is by reading the registers.
-
-Same for all the DCDCs.
-
-> +				buck7_reg: BUCK7 {
-> +					regulator-name =3D "vdd_1.0v_ldo";
-> +					regulator-min-microvolt =3D <800000>;
-> +					regulator-max-microvolt =3D <1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-
-This doesn't correspond to the schematic which says that BUCK7 is
-supplying VIN_LLDO_1V4 (the input for some of the LDOs).  The voltage
-range specified there doesn't seem terribly sensible either, are you
-sure you haven't just got the underlying voltage range for the DCDC?
-I can't see why you'd want to raise the voltage over 1.4V (that's rather
-defeating the point) and while it'd be nice to have the core be able to
-vary supply to track the headroom needed by the LDOs none of the LDOs
-were configured with variable voltage so even if we implemented that
-it'd never be used.
-
-Similar issues apply to the other bucks being used to drop the battery
-voltage for LDO supplies.
-
---IbVRjBtIbJdbeK1C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSp2NUAAoJELSic+t+oim9V+IP/R6qpbCeakBJ3zaPfcTGROdg
-Law/Dm248qNFtMsfPGhYg0j9+KUobwrUIaJfqpgOfo0bG28gtXOGJD52irOh0E38
-gMrBnxskOXSfQY7+WirpRK1LvaQMbUO7osDzcxEx+/Kfz5jiFmxocgEkdEv9JxnY
-CSapz9+XVD2xA6XXdqEwfX9WoqVkQY/XRBcXsAeNgJ3cEHpmf1Y7Cb89kUeqddhp
-Ti5aZZiIsml3WckR8EeOuNCbHf2R5G5w0PFHVGGrFCqW2z9JBHF/AHEi5mFqwYmf
-GTqUoCPQcCncUeDj2HRG3/WomhkOva8xa/69qmx52Rfk4s1cLzNMqf6qaRziDjph
-ldI8r6+BaS92nZYoHWpdsWqFbRiPnareIyUyOkhWBLIodnqGug5LSLhk/a5vQ20n
-WHFEaYbKcc/MZtDiD7o665vqclD27ukgDxbxg55NFpSZoFHGdBXHvAfz6HzPOc7u
-3R7Vfsoix5BoSXprDcVVZi+pyz8nk1oflNfKyfSCPSPzvKsNYoSfvY201bhUQlGq
-hkPMk02Z3pb9mEJe6EObwtSRIxQmDRbP4RCVJi0EdfW3+5pWsiMhKaH5/OCmwo7q
-AVATW2jps60DXR3UfleC9MWcVcpbtsYdCkyJVhHooSG2d2+gLPGB9eP+Bj4YYvYE
-qoBt/egTM6VaoW8e/SXx
-=pKsc
------END PGP SIGNATURE-----
-
---IbVRjBtIbJdbeK1C--
+> ---
+>  arch/arm/kernel/topology.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
+> index 85a87370f144..0bc94b1fd1ae 100644
+> --- a/arch/arm/kernel/topology.c
+> +++ b/arch/arm/kernel/topology.c
+> @@ -68,16 +68,16 @@ struct cpu_efficiency {
+>   * Processors that are not defined in the table,
+>   * use the default SCHED_POWER_SCALE value for cpu_scale.
+>   */
+> -struct cpu_efficiency table_efficiency[] = {
+> +static const struct cpu_efficiency table_efficiency[] = {
+>  	{"arm,cortex-a15", 3891},
+>  	{"arm,cortex-a7",  2048},
+>  	{NULL, },
+>  };
+> 
+> -unsigned long *__cpu_capacity;
+> +static unsigned long *__cpu_capacity;
+>  #define cpu_capacity(cpu)	__cpu_capacity[cpu]
+> 
+> -unsigned long middle_capacity = 1;
+> +static unsigned long middle_capacity = 1;
+> 
+>  /*
+>   * Iterate all CPUs' descriptor in DT and compute the efficiency
+> @@ -89,7 +89,7 @@ unsigned long middle_capacity = 1;
+>   */
+>  static void __init parse_dt_topology(void)
+>  {
+> -	struct cpu_efficiency *cpu_eff;
+> +	const struct cpu_efficiency *cpu_eff;
+>  	struct device_node *cn = NULL;
+>  	unsigned long min_capacity = (unsigned long)(-1);
+>  	unsigned long max_capacity = 0;
+> @@ -158,7 +158,7 @@ static void __init parse_dt_topology(void)
+>   * boot. The update of all CPUs is in O(n^2) for heteregeneous system but the
+>   * function returns directly for SMP system.
+>   */
+> -void update_cpu_power(unsigned int cpu)
+> +static void update_cpu_power(unsigned int cpu)
+>  {
+>  	if (!cpu_capacity(cpu))
+>  		return;
+> @@ -185,7 +185,7 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
+>  	return &cpu_topology[cpu].core_sibling;
+>  }
+> 
+> -void update_siblings_masks(unsigned int cpuid)
+> +static void update_siblings_masks(unsigned int cpuid)
+>  {
+>  	struct cputopo_arm *cpu_topo, *cpuid_topo = &cpu_topology[cpuid];
+>  	int cpu;
+> --
+> 1.8.5.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
