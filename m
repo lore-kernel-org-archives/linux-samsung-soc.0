@@ -1,65 +1,88 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH v5 0/3] Exynos 5410 support
-Date: Tue, 10 Dec 2013 08:40:39 -0800
-Message-ID: <87ppp48xrs.fsf@linaro.org>
-References: <1386685599-31536-1-git-send-email-v.tyrtov@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/2] ASoC: samsung: Use ASoC dmaengine code
+ where possible
+Date: Tue, 10 Dec 2013 17:01:33 +0000
+Message-ID: <20131210170133.GB11468@sirena.org.uk>
+References: <1386253559-18262-1-git-send-email-broonie@kernel.org>
+ <1386253559-18262-2-git-send-email-broonie@kernel.org>
+ <CAAgF-Bfk8byZwVBd_5PopM3ji-wdTMR5i-J7w1W4zq4gFk4i+Q@mail.gmail.com>
+ <20131209173021.GC29268@sirena.org.uk>
+ <CAAgF-BdWpQ2wn8GCpXLLWBZFxrrTYmX-e4bWRLYdwfpwhObnfg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <1386685599-31536-1-git-send-email-v.tyrtov@samsung.com>
-	(Vyacheslav Tyrtov's message of "Tue, 10 Dec 2013 18:26:36 +0400")
-Sender: linux-doc-owner@vger.kernel.org
-To: Vyacheslav Tyrtov <v.tyrtov@samsung.com>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Landley <rob@landley.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Heiko Stuebner <heiko@sntech.de>, Naour Romain <romain.naour@openwide.fr>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tarek Dakhran <t.dakhran@samsung.com>, Dave.Martin@arm.com, nicolas.pitre@linaro.org, tomasz.figa@gmail.com
+Content-Type: multipart/mixed; boundary="===============1733770349425640079=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <CAAgF-BdWpQ2wn8GCpXLLWBZFxrrTYmX-e4bWRLYdwfpwhObnfg@mail.gmail.com>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, Padmavathi Venna <padma.v@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
 
-> The series of patches represent support of Exynos 5410 SoC
->
-> The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
->
-> Patches add new platform description, support of clock controller and device 
-> tree for Exynos 5410.
->
-> Dual cluster support for Exynos 5410 (EDCS) has been removed from this series 
-> This patches is activating only the big cluster (all A15 cores)
-
-Testing this series on top of v3.13-rc3, plus a couple of other
-necessary changes (which should've probably been noted in the changelog):
-
-1) change CONFIG_NR_CPUS=8 in .config
-2) add the exynos combiner patch from Chander:
-   [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base value
-
-I'm still only seeing 2 out of 4 cores come up on my odroid-xu:
-
-[    0.045000] CPU: Testing write buffer coherency: ok
-[    0.045000] CPU0: update cpu_power 1024
-[    0.045000] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
-[    0.045000] Setting up static identity map for 0x403717d8 - 0x40371830
-[    0.045000] CPU1: Booted secondary processor
-[    0.065000] CPU1: update cpu_power 1024
-[    0.065000] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
-[    1.075000] CPU2: failed to boot: -38
-[    2.075000] CPU3: failed to boot: -38
-[    2.075000] Brought up 2 CPUs
-[    2.075000] SMP: Total of 2 processors activated.
-[    2.075000] CPU: All CPU(s) started in SVC mode.
-
-Full boot log below.
-
-Kevin
+--===============1733770349425640079==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
+Content-Disposition: inline
 
 
-Connected to odroid-xu console [channel connected] (~$quit to exit)
-(user:khilman) is already connected
-(user:khilman) is already connected
+--8P1HSweYDcXXzwPJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-~$hardreset
+On Tue, Dec 10, 2013 at 10:09:05PM +0530, Padma Venkat wrote:
+> On Mon, Dec 9, 2013 at 11:00 PM, Mark Brown <broonie@kernel.org> wrote:
 
-/ # 
-Command(odroid-xu console)> hardreset
-(user:khilman) Reboot odroid-xu
-.~;+wQt.
+> > This is unfortunate...  I'd suggest trying mainline but I see it's
+> > broken in Linus' tree too and no fixes in -next. :(
+
+> > I'm tempted to push up with your Tested-by a note saying you did your
+> > testing on an earlier version but weren't able to test due to other bugs.
+
+> I managed to test your latest version of these patches(posted on
+> Dec6th) on earlier version of linux-samsung tree. May be you can push
+> up these patches with my Tested-by.
+
+Yeah, that was what I was planning - I was just going to add a note
+saying you'd not been able to test this version due to the other
+breakage so if it turns out to have problems people know it was
+something I introduced after your testing.
+
+--8P1HSweYDcXXzwPJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.22 (GNU/Linux)
+
+iQIcBAEBAgAGBQJSp0jqAAoJELSic+t+oim9vw8P/iWItuWCwqdI78T0MGIfkoqB
+k4H7tmlBcaGEcPuZOohdA8bn3Z0NfMQrI0thNzYsEwyfUXFRRBkF/P+P81FevB5c
+HrObSR4VM2FNq/5qE2HEDZkOlG8kxYY2u8dtlYW4lj3NTk4xNbQkZfMr2bvp1HKF
+TRTkMfmoiG5XzjKa9M7oS9kO19Mejl17ue2IsqYiN/ZxhrRw07OLyTYtP6c6UgIG
+FV60LlJo278qDBiJxjroqWz3pN/j60VVHd6bvWTiuGLsa4/CFZIz7awg9ErAIvsV
+R375+G/Xuh9l34SkxqqkA64zX7OjUMGQsVygyIOVqArfN7lrq4wY9iTUg5Ankx75
+7d3gZ2efcPvcYAxYeq/YhahHyUOHrjqcL4WaKq8LCwKBnCTjDytiw69SKb7HU7oP
+LSMaDFKCboq/col4fd6PNW0eABw6V+jLohrLhD1k19GtrV31eBz+loR5THcCpcLb
+wioy3CWNkO2qXww99DgwFAB8rB1QCgi//TFqgCdiHcR35Wu+HMKmzF2QS/vLzjrx
+pRJFUz2oRrV7qUVMa8AlRt3zWXhQ8ZmkJn5K+NefthtjxPQ3g8uUcCs+Xd2bH5vp
+M4P/Cc/l9935w4kD3kCUrzFWYkHd1+iN3tgvWTEyXUnQIAHqiFWAYWQIPsmSlf2P
+tCrMM/poUi1bmWBUArM9
+=1gIS
+-----END PGP SIGNATURE-----
+
+--8P1HSweYDcXXzwPJ--
+
+--===============1733770349425640079==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============1733770349425640079==--
