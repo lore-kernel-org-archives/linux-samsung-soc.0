@@ -1,40 +1,87 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: exynos_defconfig: Enable S2MPS11 voltage regulator
-Date: Tue, 10 Dec 2013 12:08:41 +0530
-Message-ID: <1386657521-30924-1-git-send-email-sachin.kamat@linaro.org>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH v11 4/4] ARM: dts: Exynos5420: Add device nodes for TMU blocks
+Date: Tue, 10 Dec 2013 12:13:07 +0530
+Message-ID: <1386657787-21654-1-git-send-email-ch.naveen@samsung.com>
+References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:33038 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751522Ab3LJGlj (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:46760 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751522Ab3LJGmH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 01:41:39 -0500
-Received: by mail-pd0-f175.google.com with SMTP id w10so6701598pde.34
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2013 22:41:38 -0800 (PST)
+	Tue, 10 Dec 2013 01:42:07 -0500
+In-reply-to: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org
+To: linux-pm@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
 
-S2MPS11 voltage regulator is commonly used on the latest Exynos
-boards like SMDK5420, Arndale-Octa, etc. Hence it makes sense to
-enable it like S5M8767A voltage regulator.
+Exynos5420 SoC has per core thermal management unit.
+5 TMU channels 4 for CPUs and 5th for GPU.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+This patch adds the device tree nodes to the DT device list.
+
+Nodes carry the misplaced second base address and the second
+clock to access the misplaced base address.
+
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 ---
- arch/arm/configs/exynos_defconfig |    1 +
- 1 file changed, 1 insertion(+)
+Changes since previous version:
+1. used lables instead of comment lines
+2. pass the same clock as trimfo_apbif clock for TMU channel 2
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index aec8a3ea1436..dbe1f1c47bb0 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -79,6 +79,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_MAX8997=y
- CONFIG_REGULATOR_MAX77686=y
-+CONFIG_REGULATOR_S2MPS11=y
- CONFIG_REGULATOR_S5M8767=y
- CONFIG_REGULATOR_TPS65090=y
- CONFIG_FB=y
+ arch/arm/boot/dts/exynos5420.dtsi |   40 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index b1fa334..c62cde6 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -402,4 +402,44 @@
+ 		clock-names = "gscl";
+ 		samsung,power-domain = <&gsc_pd>;
+ 	};
++
++	tmu_cpu0:tmu@10060000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x10060000 0x100>;
++		interrupts = <0 65 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
++	tmu_cpu1:tmu@10064000 {
++		compatible = "samsung,exynos5420-tmu";
++		reg = <0x10064000 0x100>;
++		interrupts = <0 183 0>;
++		clocks = <&clock 318>;
++		clock-names = "tmu_apbif";
++	};
++
++	tmu_cpu2:tmu@10068000 {
++		compatible = "samsung,exynos5420-tmu-ext-triminfo";
++		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
++		interrupts = <0 184 0>;
++		clocks = <&clock 318>, <&clock 318>;
++		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
++	};
++
++	tmu_cpu3:tmu@1006c000 {
++		compatible = "samsung,exynos5420-tmu-ext-triminfo";
++		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
++		interrupts = <0 185 0>;
++		clocks = <&clock 318>, <&clock 319>;
++		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
++	};
++
++	tmu_gpu:tmu@100a0000 {
++		compatible = "samsung,exynos5420-tmu-ext-triminfo";
++		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
++		interrupts = <0 215 0>;
++		clocks = <&clock 319>, <&clock 318>;
++		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
++	};
+ };
 -- 
-1.7.9.5
+1.7.10.4
