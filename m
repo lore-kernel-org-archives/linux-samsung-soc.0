@@ -1,64 +1,46 @@
-From: Tarek Dakhran <t.dakhran@samsung.com>
-Subject: Re: [PATCH v4 2/4] clk: exynos5410: register clocks using common clock
- framework
-Date: Tue, 10 Dec 2013 13:50:25 +0400
-Message-ID: <52A6E3E1.1060907@samsung.com>
-References: <1385456288-20398-1-git-send-email-v.tyrtov@samsung.com>
- <1385456288-20398-3-git-send-email-v.tyrtov@samsung.com>
- <1914850.6CAa0SzDWP@amdc1227> <52A62A27.7080408@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <52A62A27.7080408@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>
-Cc: Vyacheslav Tyrtov <v.tyrtov@samsung.com>, Mark Rutland <mark.rutland@arm.com>, nicolas.pitre@linaro.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, tomasz.figa@gmail.com, Naour Romain <romain.naour@openwide.fr>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Dave.Martin@arm.com, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Landley <rob@landley.net>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH RFC 0/4] Fine tune USB 3.0 PHY on exynos5420
+Date: Tue, 10 Dec 2013 16:25:22 +0530
+Message-ID: <1386672926-26885-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, sarah.a.sharp-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 12/10/2013 12:37 AM, Kukjin Kim wrote:
-> On 12/10/13 01:34, Tomasz Figa wrote:
->> Hi Vyacheslav, Tarek,
->>
->> On Tuesday 26 of November 2013 12:58:06 Vyacheslav Tyrtov wrote:
->>> From: Tarek Dakhran<t.dakhran@samsung.com>
->>>
->>> The EXYNOS5410 clocks are statically listed and registered
->>> using the Samsung specific common clock helper functions.
->>>
->>> Signed-off-by: Tarek Dakhran<t.dakhran@samsung.com>
->>> Signed-off-by: Vyacheslav Tyrtov<v.tyrtov@samsung.com>
->>> ---
->>>   .../devicetree/bindings/clock/exynos5410-clock.txt |  54 +++++
->>>   drivers/clk/samsung/Makefile                       |   1 +
->>>   drivers/clk/samsung/clk-exynos5410.c               | 239 
->>> +++++++++++++++++++++
->>>   include/dt-bindings/clock/exynos5410.h             |  32 +++
->>>   4 files changed, 326 insertions(+)
->>>   create mode 100644 
->>> Documentation/devicetree/bindings/clock/exynos5410-clock.txt
->>>   create mode 100644 drivers/clk/samsung/clk-exynos5410.c
->>>   create mode 100644 include/dt-bindings/clock/exynos5410.h
->>
->> Acked-by: Tomasz Figa<t.figa@samsung.com>
->>
-> Tomasz, thanks for your ack on clk stuff.
->
->> This should go through Samsung tree, I guess, since it's a dependency
->> of other patches in this series and doesn't depend on any things from
->> clock tree. Mike, Kukjin, are you okay with this?
->>
-> Yeah, I'm fine on this series but 4th patch for supporting dual cluster.
->
-> Let me take 1 to 3 patches firstly. Thanks.
-> - Kukjin
->
+The DWC3-exynos eXtensible host controller present on Exynos5420
+SoC is quirky. The PHY serving this controller operates at High-Speed
+by default, so it detects even Super-speed devices as high-speed ones.
+This PHY needs to be tuned for its Tx LOS levels and Boost levels.
 
-Hi,
+In this patch-set, we are registering a quirk for this DWC3-Exynos
+controller with XHCI, so that once after xhci_reset(), the controller
+can call to tune the associated PHY and achieve the SuperSpeed.
 
-Today (10/12/2013) I will release [PATCH v5] without dual cluster support.
-EDCS (exynos dual cluster support) will be moved to separate patch.
+These patches are based on new USB 3.0 phy driver for Exynos SoC series. [1]
 
-Best regards,
-     Tarek Dakhran.
+[1] Add Exynos5 USB 3.0 phy driver based on generic PHY framework
+http://lwn.net/Articles/575586/
 
+Vivek Gautam (4):
+  phy: Add provision for tuning phy.
+  xhci: Add quirk for DWC3-Exynos controller
+  xhci: Tune PHY for the DWC3-Exynos host controller
+  phy-exynos-usb3: Fine tune LOS levels for exynos5420
+
+ drivers/phy/phy-core.c         |   20 +++++++
+ drivers/phy/phy-exynos5-usb3.c |  107 ++++++++++++++++++++++++++++++++++++++++
+ drivers/usb/dwc3/host.c        |    7 +++
+ drivers/usb/host/xhci-plat.c   |   62 ++++++++++++++++++++++-
+ drivers/usb/host/xhci.h        |    1 +
+ include/linux/phy/phy.h        |    7 +++
+ include/linux/usb/hcd.h        |    1 +
+ 7 files changed, 203 insertions(+), 2 deletions(-)
+
+-- 
+1.7.6.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
