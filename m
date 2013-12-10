@@ -1,64 +1,56 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/3] ARM: dts: Leave Exynos5250 SPI controller disabled
- by default
-Date: Tue, 10 Dec 2013 11:13:09 +0000
-Message-ID: <20131210111309.GD29268@sirena.org.uk>
-References: <1385381710-5212-1-git-send-email-broonie@kernel.org>
- <CAD=FV=XEKUFWEM-30Bx0pVBOT8X0zXsdHyzq=pDY8TOcdGHgRg@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH] serial: samsung: move clock deactivation below uart
+ registration
+Date: Tue, 10 Dec 2013 14:52:40 +0100
+Message-ID: <4640026.L8HxPz97OG@amdc1227>
+References: <201312050054.39327.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="UrvBM2MrVm6e3rrU"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:55440 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753198Ab3LJLNf (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:65528 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751776Ab3LJNwx convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 06:13:35 -0500
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=XEKUFWEM-30Bx0pVBOT8X0zXsdHyzq=pDY8TOcdGHgRg@mail.gmail.com>
+	Tue, 10 Dec 2013 08:52:53 -0500
+In-reply-to: <201312050054.39327.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>
+To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Chander Kashyap <chander.kashyap@linaro.org>
 
+Hi Heiko,
 
---UrvBM2MrVm6e3rrU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Thursday 05 of December 2013 00:54:38 Heiko St=FCbner wrote:
+> Commit 60e93575476f (serial: samsung: enable clock before clearing pe=
+nding
+> interrupts during init) added handling of the controller clock during=
+ init.
+>=20
+> On most systems this clock is also one of the baud_clock sources and
+> possibly used by the earlycon and thus already enabled by the bootloa=
+der.
+>=20
+> Therefore a gap exists between s3c24xx_serial_init_port disabling the
+> clock and an attached console reenabling it, making the transition fr=
+om
+> earlycon to regular console possibly hang the system - as seen on my
+> S3C2442 based Freerunner today.
+>=20
+> Therefore move the disabling of the clock from s3c24xx_serial_init_po=
+rt
+> below the uart port registration, effectively creating an overlap and
+> keeping the clock running non-stop if the console wants to grab this =
+port.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/tty/serial/samsung.c |    8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
 
-On Mon, Dec 09, 2013 at 04:57:01PM -0800, Doug Anderson wrote:
+Makes sense.
 
-> I'm a little surprised that I don't see removal of spi_0 on SMDK5250.
-> When I apply your patch to ToT Linux I still see this in
-> "exynos5250-smdk5250.dts":
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
->         spi_0: spi@12d20000 {
->                 status = "disabled";
->         };
-
-I suspect that one went AWOL during rebasing - these have been kicking
-around since September.  Resent with that added.
-
---UrvBM2MrVm6e3rrU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSpvdCAAoJELSic+t+oim9/rgP/jzkFKnlSzD3Qwybt5/JtNZK
-QpK/qq0O/SFfyB84CYYMQAJ8306mz1gcpOarHx7bjyfko84B4radh6artcN6GS/h
-F89PUjHPUCQ1gTsfJokJuwd834eQnMZBgZVUrL7cOy1PWglXEOGwOXohTgMrC5MK
-b4Dol1GYALQnCH7LQ194pNZGDDJs0CMW6NlIFRk8q/NIm6A8r2wQYA5+1wWGWLXP
-WwiYZEIdSL5WzCr+/hB8XvG8M2h/vBO34a69sXOvGSdSzaj6/xDtgauw90MtjQmM
-/OZMF1i99LTzQNcsXn1xhXOVkwgWVHw1oBDFIV2/nAref1jyeIj44oZIcEkXJVTn
-DUtHnJ0I2n/h7tGQErDBDVpR668z3Hygv0gw9pGLIROImEQ6nJvRRMTHQe88Ezo0
-kkXLtpXRDqFyfnAkIJOItXmBobPMvfCgacmyxP2Av6xIkUL7YFOJv4QUro9ypPwI
-R+juyulN3VGrlhRVi2ylNMF8ATHsAT8ofi+cHFP8fdFJtzLshlJAKPQuK8UuXYR5
-9ZfchIoVYbLCQfU9yzIb6uuEY4wh0mJXrtQ/kLk8ulsbpcdkke7HZrLZ0TjRcaeR
-cLSPI9cRScHBYSTWeR0j89uQqMzu8YV8gQPgUYrfxils6qv7dWdBL0/ZC9R8uveN
-QLJofOW2VIPX+Xdb1YrL
-=P+Go
------END PGP SIGNATURE-----
-
---UrvBM2MrVm6e3rrU--
+Best regards,
+Tomasz
