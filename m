@@ -1,262 +1,48 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: dts: Add PMIC support to arndale-octa
-Date: Tue, 10 Dec 2013 11:59:18 +0530
-Message-ID: <1386656958-28292-1-git-send-email-sachin.kamat@linaro.org>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH v11 0/4] thermal: samsung: Clean up and add support for
+ Exynos5420
+Date: Tue, 10 Dec 2013 12:10:40 +0530
+Message-ID: <1386657640-21481-1-git-send-email-ch.naveen@samsung.com>
+References: <1384238132-24515-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f51.google.com ([209.85.160.51]:33506 "EHLO
-	mail-pb0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750726Ab3LJGcL (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:46223 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750748Ab3LJGjo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 01:32:11 -0500
-Received: by mail-pb0-f51.google.com with SMTP id up15so7001541pbc.38
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 09 Dec 2013 22:32:10 -0800 (PST)
+	Tue, 10 Dec 2013 01:39:44 -0500
+In-reply-to: <1384238132-24515-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, sachin.kamat@linaro.org
+To: linux-pm@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
 
-Added PMIC node to Arndale-Octa board.
+This patchset does a little clean up of the existing code (linux-soc-thermal)
+1.  [v11] thermal: samsung: replace inten_ bit fields with intclr_
+2.  [v11] thermal: samsung: change base_common to more meaningful base_second
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/boot/dts/exynos5420-arndale-octa.dts |  220 +++++++++++++++++++++++++
- 1 file changed, 220 insertions(+)
+adds support for Exynos5420 in the driver and (linux-soc-thermal)
+3.  [v11] thermal: samsung: Add TMU support for Exynos5420 SoCs
+also adds the device tree nodes for the same to exynos5420.dtsi (linux-samsung.git)
+4.  [v11] ARM: dts: Exynos5420: Add device nodes for TMU blocks
 
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-index 7340745ff979..7d94d8d3b118 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -11,6 +11,7 @@
- 
- /dts-v1/;
- #include "exynos5420.dtsi"
-+#include <dt-bindings/interrupt-controller/irq.h>
- 
- / {
- 	model = "Insignal Arndale Octa evaluation board based on EXYNOS5420";
-@@ -63,4 +64,223 @@
- 			bus-width = <4>;
- 		};
- 	};
-+
-+	hsi2c_4: i2c@12CA0000 {
-+		status = "okay";
-+
-+		s2mps11_pmic@66 {
-+			compatible = "samsung,s2mps11-pmic";
-+			reg = <0x66>;
-+			s2mps11,buck2-ramp-delay = <12>;
-+			s2mps11,buck34-ramp-delay = <12>;
-+			s2mps11,buck16-ramp-delay = <12>;
-+			s2mps11,buck6-ramp-enable = <1>;
-+			s2mps11,buck2-ramp-enable = <1>;
-+			s2mps11,buck3-ramp-enable = <1>;
-+			s2mps11,buck4-ramp-enable = <1>;
-+
-+			interrupt-parent = <&gpx3>;
-+			interrupts = <2 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			s2mps11_osc: clocks {
-+				#clock-cells = <1>;
-+				clock-output-names = "s2mps11_ap",
-+						"s2mps11_cp", "s2mps11_bt";
-+			};
-+
-+			regulators {
-+				ldo1_reg: LDO1 {
-+					regulator-name = "vdd_ldo1";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo3_reg: LDO3 {
-+					regulator-name = "vdd_ldo3";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo5_reg: LDO5 {
-+					regulator-name = "vdd_ldo5";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo6_reg: LDO6 {
-+					regulator-name = "vdd_ldo6";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo7_reg: LDO7 {
-+					regulator-name = "vdd_ldo7";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo8_reg: LDO8 {
-+					regulator-name = "vdd_ldo8";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo9_reg: LDO9 {
-+					regulator-name = "vdd_ldo9";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo10_reg: LDO10 {
-+					regulator-name = "vdd_ldo10";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo11_reg: LDO11 {
-+					regulator-name = "vdd_ldo11";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo12_reg: LDO12 {
-+					regulator-name = "vdd_ldo12";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo13_reg: LDO13 {
-+					regulator-name = "vdd_ldo13";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo15_reg: LDO15 {
-+					regulator-name = "vdd_ldo15";
-+					regulator-min-microvolt = <3100000>;
-+					regulator-max-microvolt = <3100000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo16_reg: LDO16 {
-+					regulator-name = "vdd_ldo16";
-+					regulator-min-microvolt = <2200000>;
-+					regulator-max-microvolt = <2200000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo17_reg: LDO17 {
-+					regulator-name = "tsp_avdd";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo19_reg: LDO19 {
-+					regulator-name = "vdd_sd";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo24_reg: LDO24 {
-+					regulator-name = "tsp_io";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				buck1_reg: BUCK1 {
-+					regulator-name = "vdd_mif";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck2_reg: BUCK2 {
-+					regulator-name = "vdd_arm";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck3_reg: BUCK3 {
-+					regulator-name = "vdd_int";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck4_reg: BUCK4 {
-+					regulator-name = "vdd_g3d";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck5_reg: BUCK5 {
-+					regulator-name = "vdd_mem";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck6_reg: BUCK6 {
-+					regulator-name = "vdd_kfc";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck7_reg: BUCK7 {
-+					regulator-name = "vdd_1.0v_ldo";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck8_reg: BUCK8 {
-+					regulator-name = "vdd_1.8v_ldo";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck9_reg: BUCK9 {
-+					regulator-name = "vdd_2.8v_ldo";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3750000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck10_reg: BUCK10 {
-+					regulator-name = "vdd_vmem";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+			};
-+		};
-+	};
- };
+(linux-soc-thermal)
+Naveen Krishna Chatradhi (3):
+  thermal: samsung: replace inten_ bit fields with intclr_
+  thermal: samsung: change base_common to more meaningful base_second
+  thermal: samsung: Add TMU support for Exynos5420 SoCs
+
+ .../devicetree/bindings/thermal/exynos-thermal.txt |   42 ++++++-
+ drivers/thermal/samsung/exynos_tmu.c               |   72 +++++++++---
+ drivers/thermal/samsung/exynos_tmu.h               |   21 ++--
+ drivers/thermal/samsung/exynos_tmu_data.c          |  119 ++++++++++++++++++--
+ drivers/thermal/samsung/exynos_tmu_data.h          |   12 +-
+ 5 files changed, 228 insertions(+), 38 deletions(-)
+
+(linux-samsung.git)
+Naveen Krishna Chatradhi (1):
+  ARM: dts: Exynos5420: Add device nodes for TMU blocks
+
+ arch/arm/boot/dts/exynos5420.dtsi |   40 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 -- 
-1.7.9.5
+1.7.10.4
