@@ -1,87 +1,97 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v4 0/7] ARM: S3C24XX: Convert s3c2416 and s3c2443 to common
- clock framework
-Date: Tue, 10 Dec 2013 16:27:04 +0100
-Message-ID: <2199894.9J6a8matPx@amdc1227>
-References: <201312101614.29781.heiko@sntech.de>
+Subject: Re: [PATCH 1/7] ARM: EXYNOS: initial board support for exynos5260 SoC
+Date: Tue, 10 Dec 2013 16:57:23 +0100
+Message-ID: <2452273.S9E2sU17uX@amdc1227>
+References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
+ <1386345391-23482-2-git-send-email-rahul.sharma@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:15625 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753743Ab3LJP1S convert rfc822-to-8bit (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:16939 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753523Ab3LJP5g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 10:27:18 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MXL0054QK9GA200@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Dec 2013 15:27:16 +0000 (GMT)
-In-reply-to: <201312101614.29781.heiko@sntech.de>
+	Tue, 10 Dec 2013 10:57:36 -0500
+In-reply-to: <1386345391-23482-2-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, pankaj.dubey@samsung.com, yg1004.jang@samsung.com, arun.kk@samsung.com, r.sh.open@gmail.com
 
-Hi Heiko,
+Hi Pankaj, Rahul, Arun,
 
-On Tuesday 10 of December 2013 16:14:29 Heiko St=FCbner wrote:
-> Next try, this time with less time between submissions.
->=20
-> Tested on both non-dt and dt s3c2416.
->=20
-> Changes since v3:
-> - address comments from Tomasz Figa (binding documentation, etc)
-> - prevent conflicts with unconverted s3c24xx socs
-> Changes since v2
-> - address comments from Tomasz Figa
-> - use new pll registration mechanism
-> - use fixed-rate clocks for xti etc
->=20
-> Heiko Stuebner (7):
->   clk: samsung: add pll_6552 variant for s3c2416
->   clk: samsung: add plls used by the s3c2443
->   dt-bindings: add binding for clock-controller of s3c2443 and follow=
-ing
->   clk: samsung: add clock-driver for s3c2416, s3c2443 and s3c2450
->   ARM: S3C24XX: prevent conflicts between ccf and non-ccf s3c24xx-soc=
-s
->   ARM: dt: add clock data for s3c2416
->   ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
->=20
->  .../bindings/clock/samsung,s3c2443-clock.txt       |   56 ++
->  arch/arm/boot/dts/s3c2416-smdk2416.dts             |   13 +
->  arch/arm/boot/dts/s3c2416.dtsi                     |   42 ++
->  arch/arm/mach-s3c24xx/Kconfig                      |   18 +-
->  arch/arm/mach-s3c24xx/Makefile                     |    5 +-
->  arch/arm/mach-s3c24xx/clock-s3c2416.c              |  171 -----
->  arch/arm/mach-s3c24xx/clock-s3c2443.c              |  212 ------
->  arch/arm/mach-s3c24xx/common-s3c2443.c             |  675 ----------=
-----------
->  arch/arm/mach-s3c24xx/common.c                     |   18 +-
->  arch/arm/mach-s3c24xx/common.h                     |    6 +
->  arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |   39 +-
->  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    9 +-
->  arch/arm/mach-s3c24xx/mach-smdk2443.c              |    9 +-
->  drivers/clk/samsung/Makefile                       |    1 +
->  drivers/clk/samsung/clk-pll.c                      |   84 ++-
->  drivers/clk/samsung/clk-pll.h                      |    3 +
->  drivers/clk/samsung/clk-s3c2443.c                  |  417 ++++++++++=
-++
->  include/dt-bindings/clock/samsung,s3c2443-clock.h  |   92 +++
->  18 files changed, 756 insertions(+), 1114 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/samsung,s=
-3c2443-clock.txt
->  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2416.c
->  delete mode 100644 arch/arm/mach-s3c24xx/clock-s3c2443.c
->  delete mode 100644 arch/arm/mach-s3c24xx/common-s3c2443.c
->  create mode 100644 drivers/clk/samsung/clk-s3c2443.c
->  create mode 100644 include/dt-bindings/clock/samsung,s3c2443-clock.h
+In addition to issues already pointed by Sachin, please also see my
+comments inline.
 
-I have already acked clock patches, so for remaining ones:
+On Friday 06 of December 2013 21:26:25 Rahul Sharma wrote:
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+> 
+> This patch add basic arch side support for exynos5260 SoC.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig                 |    9 +++++++++
+>  arch/arm/mach-exynos/common.c                |   19 ++++++++++++++++++-
+>  arch/arm/mach-exynos/cpuidle.c               |    2 +-
+>  arch/arm/mach-exynos/include/mach/map.h      |    1 +
+>  arch/arm/mach-exynos/include/mach/regs-pmu.h |    4 ++++
+>  arch/arm/mach-exynos/mach-exynos5-dt.c       |    1 +
+>  arch/arm/plat-samsung/include/plat/cpu.h     |    8 ++++++++
+>  arch/arm/plat-samsung/include/plat/map-s5p.h |    1 +
+>  8 files changed, 43 insertions(+), 2 deletions(-)
+[snip]
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+> index ddbfe87..405c11a 100644
+> --- a/arch/arm/mach-exynos/cpuidle.c
+> +++ b/arch/arm/mach-exynos/cpuidle.c
+> @@ -120,7 +120,7 @@ static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+>  	cpu_suspend(0, idle_finisher);
+>  
+>  #ifdef CONFIG_SMP
+> -	if (!soc_is_exynos5250())
+> +	if (!soc_is_exynos5250() || soc_is_exynos5260())
 
-Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+The added OR condition doesn't affect the if condition in any way, because
+when running on Exynos5260, soc_is_exynos5250() will return false and make
+the whole condition evaluate to true.
+
+Shouldn't it be
+
+	if (!soc_is_exynos5250() && !soc_is_exynos5260())
+
+if Exynos5260 doesn't need scu_enable(), or left as is if it needs?
+
+>  		scu_enable(S5P_VA_SCU);
+>  #endif
+>  	cpu_pm_exit();
+> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+> index 7b046b5..bd6fa02 100644
+> --- a/arch/arm/mach-exynos/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -29,6 +29,7 @@
+>  #define EXYNOS4210_PA_SYSRAM_NS		0x0203F000
+>  #define EXYNOS4x12_PA_SYSRAM_NS		0x0204F000
+>  #define EXYNOS5250_PA_SYSRAM_NS		0x0204F000
+> +#define EXYNOS5260_PA_SYSRAM_NS		0x02073000
+>  
+>  #define EXYNOS_PA_CHIPID		0x10000000
+>  
+> diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> index 2cdb63e..09ae29a 100644
+> --- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> @@ -234,6 +234,10 @@
+>  
+>  #define EXYNOS5_SYS_WDTRESET					(1 << 20)
+>  
+> +#define EXYNOS5260_A7_WDTRST					(1 << 24)
+> +#define EXYNOS5260_A15_WDTRST					(1 << 23)
+> +#define EXYNOS5260_SYS_WDTRESET	(EXYNOS5260_A7_WDTRST || EXYNOS5260_A15_WDTRST)
+> +
+
+Are these definitions needed? I don't see any user in this patch.
 
 Best regards,
 Tomasz
