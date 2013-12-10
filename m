@@ -1,87 +1,139 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v11 4/4] ARM: dts: Exynos5420: Add device nodes for TMU blocks
-Date: Tue, 10 Dec 2013 12:13:07 +0530
-Message-ID: <1386657787-21654-1-git-send-email-ch.naveen@samsung.com>
-References: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: dts: Enable RTC node in exynos4.dtsi file
+Date: Tue, 10 Dec 2013 14:37:13 +0530
+Message-ID: <CAK9yfHwgCkFZV7pE3t2pu7xYnvCD8DErgZTJPyDVQcE+s57pvA@mail.gmail.com>
+References: <1382438215-13215-1-git-send-email-sachin.kamat@linaro.org>
+	<528353F7.4050004@samsung.com>
+	<1764307.sx88zLt93L@amdc1032>
+	<2781292.vINFB8v7mM@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46760 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751522Ab3LJGmH (ORCPT
+Received: from mail-ob0-f178.google.com ([209.85.214.178]:54033 "EHLO
+	mail-ob0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752376Ab3LJJHO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 01:42:07 -0500
-In-reply-to: <1382004240-3282-1-git-send-email-l.krishna@samsung.com>
+	Tue, 10 Dec 2013 04:07:14 -0500
+Received: by mail-ob0-f178.google.com with SMTP id uz6so4975616obc.23
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Dec 2013 01:07:13 -0800 (PST)
+In-Reply-To: <2781292.vINFB8v7mM@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, rui.zhang@intel.com, eduardo.valentin@ti.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, amit.daniel@samsung.com, kgene.kim@samsung.com, devicetree@vger.kernel.org, b.zolnierkie@samsung.com, cpgs@samsung.com, t.figa@samsung.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Mark Rutland <mark.rutland@arm.com>, Grant Likely <grant.likely@secretlab.ca>, Kumar Gala <galak@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>
 
-Exynos5420 SoC has per core thermal management unit.
-5 TMU channels 4 for CPUs and 5th for GPU.
+On 13 November 2013 17:51, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On Wednesday 13 of November 2013 12:52:05 Bartlomiej Zolnierkiewicz wrote:
+>
+> [+ DT maintainers]
+>
+>>
+>> Hi,
+>>
+>> On Wednesday, November 13, 2013 11:27:03 AM Sylwester Nawrocki wrote:
+>> > On 13/11/13 09:08, Tomasz Figa wrote:
+>> > >> As was discussed earlier too, status field of DT node is not supposed
+>> > >> > to be used for
+>> > >> > keeping an IP enabled or disabled. That should be done via the kernel
+>> > >> > config. The DT status
+>> > >> > is mostly to indicate the hardware status of the IP on the SoC/board.
+>> > >> > If the node fully defines the hardware,
+>> > >> > then it should be kept enabled by default unless such enabling causes
+>> > >> > some issues with other IPs due to
+>> > >> > pin sharing conflicts, etc. In the above case the node completely
+>> > >> > defines the hardware and hence there is no
+>> > >> > reason to keep it disabled.
+>> > >
+>> > > That's correct. (Unless I'm missing some board specific dependency of RTC.
+>> > > If so, please correct me.)
+>
+> Well, I was missing one indeed. RTC requires an external 32.768KHz clock,
+> which must be provided by an oscillator or any other clock source on the
+> board. However...
+>
+>> >
+>> > I don't really like this argument. Why not allow the firmware to decide
+>> > which devices are relevant and should be handled by the kernel ?
+>> > And since we are aiming at single kernel config, if I understand things
+>> > correctly, I can't see anything else than dts that could hold the machine
+>> > *configuration*.
+>> >
+>> > So let's not make all stuff enabled by default, that's not something we
+>> > want on those mobile device SoCs. We should not be making fine system
+>> > tuning more difficult than necessary.
+>> >
+>> > I'm with Kukjin on this matter and would prefer patches like the $subject
+>> > patch not be merged.
+>>
+>> I generally agree with Sylwester and Kukjin that devices should not be
+>> enabled by default in dtsi files.  However in a particular case of RTC
+>> support there should be an exception from the generic rule and RTC
+>> should be enabled for all EXYNOS boards (we have RTC driver config
+>> option already enabled in our exynos_defconfig and we are also already
+>> enabling RTC device explicitly in EXYNOS5250 dtsi file).
+>
+> I believe the rule is clear and we already went through enough discussion
+> about this. To clarify again:
+>
+> Device Tree should not restrict possible use cases of particular hardware
+> that are allowed by particular integration of such hardware on particular
+> board. This means that if there are no technical reasons to mark such
+> hardware as disabled on particular board, this should not be done. Let
+> me show you this on several examples:
+>
+> 1. SoC X has an MMC controller, which needs N pins of the SoC to be
+> routed to an MMC slot. Our board X1 does _not_ have necessary traces on
+> its PCB. In this case the MMC controller must be marked as disabled.
+>
+> 2. SoC X has an MMC controller, which needs N pins of the SoC to be
+> routed to an MMC slot. Our board X2 _does_ have necessary traces on its
+> PCB, so when user inserts an MMC card into the slot he expects that the
+> system detects it. In this case the MMC controller must _not_ be marked
+> as disabled.
+>
+> 3. SoC X has a built-in 2D graphics accelerator. It does not have any
+> output pads nor any requirements with respect to the board - it's purely
+> a mem-to-mem device. A user might want to run a rootfs that uses it to
+> accelerate his applications, so this device must _not_ be marked as
+> disabled.
+>
+> 4. SoC X has a image processing block, consisting of two functions:
+>  - a camera interface, that requires SoC pads to be connected to a camera
+>    sensor,
+>  - general-purpose image scaler and format converter, that can operate
+>    either on input of camera interface or on images stored in memory.
+> This case is more interesting. Even if board does not have a physical
+> camera interface, the binding should be designed in a way that allows
+> enabling only the memory-to-memory scaler. Then such IP must be marked
+> okay regardless of board support, because the camera interface will be
+> used only if relevant board-specific properties are provided.
+>
+> To sum up, I would not interpret the "disabled" value of "status" property
+> as the opposite of "enabled", but rather as "disabled" in "disabled
+> person".
+>
+> Anyway, I'd like to get a confirmation (or denial) from other Device Tree
+> maintainers and if what I've written above is correct, maybe we should
+> put this somewhere in kernel documentation.
 
-This patch adds the device tree nodes to the DT device list.
+Ping..
 
-Nodes carry the misplaced second base address and the second
-clock to access the misplaced base address.
+In the absence of kernel documentation formulating the guidelines for
+enabling/disabling
+of IP (nodes), the current code should be the reference for someone
+doing this for a given
+platform. However, the current code (Exynos DT files) itself is not
+consistent one way or the
+other w.r.t to the above points. For e.g. commit 73784475febf ("ARM:
+dts: Update the "status"
+property of RTC DT node for Exynos5250 SoC") does the exact same thing
+done by this patch.
+Similarly in exynos5420.dtsi. I am sure there are other similar
+examples as well. I think there should be
+one consistent guideline, atleast for accepting patches of this nature
+(for this platform).
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
----
-Changes since previous version:
-1. used lables instead of comment lines
-2. pass the same clock as trimfo_apbif clock for TMU channel 2
 
- arch/arm/boot/dts/exynos5420.dtsi |   40 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index b1fa334..c62cde6 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -402,4 +402,44 @@
- 		clock-names = "gscl";
- 		samsung,power-domain = <&gsc_pd>;
- 	};
-+
-+	tmu_cpu0:tmu@10060000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10060000 0x100>;
-+		interrupts = <0 65 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	tmu_cpu1:tmu@10064000 {
-+		compatible = "samsung,exynos5420-tmu";
-+		reg = <0x10064000 0x100>;
-+		interrupts = <0 183 0>;
-+		clocks = <&clock 318>;
-+		clock-names = "tmu_apbif";
-+	};
-+
-+	tmu_cpu2:tmu@10068000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x10068000 0x100>, <0x1006c000 0x4>;
-+		interrupts = <0 184 0>;
-+		clocks = <&clock 318>, <&clock 318>;
-+		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
-+	};
-+
-+	tmu_cpu3:tmu@1006c000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x1006c000 0x100>, <0x100a0000 0x4>;
-+		interrupts = <0 185 0>;
-+		clocks = <&clock 318>, <&clock 319>;
-+		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
-+	};
-+
-+	tmu_gpu:tmu@100a0000 {
-+		compatible = "samsung,exynos5420-tmu-ext-triminfo";
-+		reg = <0x100a0000 0x100>, <0x10068000 0x4>;
-+		interrupts = <0 215 0>;
-+		clocks = <&clock 319>, <&clock 318>;
-+		clock-names = "tmu_apbif", "tmu_apbif_triminfo";
-+	};
- };
 -- 
-1.7.10.4
+With warm regards,
+Sachin
