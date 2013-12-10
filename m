@@ -1,14 +1,14 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] ARM: topology: Staticise non-exported symbols
-Date: Tue, 10 Dec 2013 11:07:27 +0000
-Message-ID: <1386673649-15181-2-git-send-email-broonie@kernel.org>
+Subject: [PATCH 2/3] ARM: dts: Disable I2C controllers by default on Exynos5250
+Date: Tue, 10 Dec 2013 11:07:28 +0000
+Message-ID: <1386673649-15181-3-git-send-email-broonie@kernel.org>
 References: <1386673649-15181-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:46429 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:38948 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751401Ab3LJLHs (ORCPT
+	with ESMTP id S1751687Ab3LJLHv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 06:07:48 -0500
+	Tue, 10 Dec 2013 06:07:51 -0500
 In-Reply-To: <1386673649-15181-1-git-send-email-broonie@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -17,70 +17,309 @@ Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm
 
 From: Mark Brown <broonie@linaro.org>
 
-These symbols are only referenced in this source file so can be made
-static, and the efficiency table is constant data so can be declared as
-such.  This avoids polluting the global namespace and fixes warnings
-from sparse.
-
-The function arch_scale_freq_power() is still not prototyped or static,
-this is a separate issue as this is overriding a weak symbol from the
-scheduler which neglects to provide a prototype.
+Ensure that unused I2C controllers are not activated, causing problems due
+to inappropriate pinmuxing or similar, by marking the controllers as
+disabled by default and requiring boards to explicitly enable those that
+are in use.
 
 Signed-off-by: Mark Brown <broonie@linaro.org>
+Acked-by: Tomasz Figa <t.figa@samsung.com>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
 ---
- arch/arm/kernel/topology.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/cros5250-common.dtsi    | 12 ++++++++----
+ arch/arm/boot/dts/exynos5250-arndale.dts  | 32 ++++++++-----------------------
+ arch/arm/boot/dts/exynos5250-smdk5250.dts | 25 +++++-------------------
+ arch/arm/boot/dts/exynos5250.dtsi         | 10 ++++++++++
+ 4 files changed, 31 insertions(+), 48 deletions(-)
 
-diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
-index 85a87370f144..0bc94b1fd1ae 100644
---- a/arch/arm/kernel/topology.c
-+++ b/arch/arm/kernel/topology.c
-@@ -68,16 +68,16 @@ struct cpu_efficiency {
-  * Processors that are not defined in the table,
-  * use the default SCHED_POWER_SCALE value for cpu_scale.
-  */
--struct cpu_efficiency table_efficiency[] = {
-+static const struct cpu_efficiency table_efficiency[] = {
- 	{"arm,cortex-a15", 3891},
- 	{"arm,cortex-a7",  2048},
- 	{NULL, },
- };
+diff --git a/arch/arm/boot/dts/cros5250-common.dtsi b/arch/arm/boot/dts/cros5250-common.dtsi
+index d32ec0fb7f39..2fed9acd28da 100644
+--- a/arch/arm/boot/dts/cros5250-common.dtsi
++++ b/arch/arm/boot/dts/cros5250-common.dtsi
+@@ -37,6 +37,7 @@
+ 	};
  
--unsigned long *__cpu_capacity;
-+static unsigned long *__cpu_capacity;
- #define cpu_capacity(cpu)	__cpu_capacity[cpu]
+ 	i2c@12C60000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <378000>;
  
--unsigned long middle_capacity = 1;
-+static unsigned long middle_capacity = 1;
+@@ -185,6 +186,7 @@
+ 	};
  
- /*
-  * Iterate all CPUs' descriptor in DT and compute the efficiency
-@@ -89,7 +89,7 @@ unsigned long middle_capacity = 1;
-  */
- static void __init parse_dt_topology(void)
- {
--	struct cpu_efficiency *cpu_eff;
-+	const struct cpu_efficiency *cpu_eff;
- 	struct device_node *cn = NULL;
- 	unsigned long min_capacity = (unsigned long)(-1);
- 	unsigned long max_capacity = 0;
-@@ -158,7 +158,7 @@ static void __init parse_dt_topology(void)
-  * boot. The update of all CPUs is in O(n^2) for heteregeneous system but the
-  * function returns directly for SMP system.
-  */
--void update_cpu_power(unsigned int cpu)
-+static void update_cpu_power(unsigned int cpu)
- {
- 	if (!cpu_capacity(cpu))
- 		return;
-@@ -185,7 +185,7 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
- 	return &cpu_topology[cpu].core_sibling;
- }
+ 	i2c@12C70000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <378000>;
  
--void update_siblings_masks(unsigned int cpuid)
-+static void update_siblings_masks(unsigned int cpuid)
- {
- 	struct cputopo_arm *cpu_topo, *cpuid_topo = &cpu_topology[cpuid];
- 	int cpu;
+@@ -198,6 +200,7 @@
+ 	};
+ 
+ 	i2c@12C80000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 
+@@ -208,30 +211,31 @@
+ 	};
+ 
+ 	i2c@12C90000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 	};
+ 
+ 	i2c@12CA0000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 	};
+ 
+ 	i2c@12CB0000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 	};
+ 
+-	i2c@12CC0000 {
+-		status = "disabled";
+-	};
+-
+ 	i2c@12CD0000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 	};
+ 
+ 	i2c@12CE0000 {
++		status = "okay";
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <378000>;
+ 
+diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+index de9508b100d9..36f41ce49337 100644
+--- a/arch/arm/boot/dts/exynos5250-arndale.dts
++++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+@@ -34,6 +34,7 @@
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <20000>;
+ 		samsung,i2c-slave-addr = <0x66>;
++		status = "okay";
+ 
+ 		s5m8767_pmic@66 {
+ 			compatible = "samsung,s5m8767-pmic";
+@@ -319,11 +320,9 @@
+ 		};
+ 	};
+ 
+-	i2c@12C70000 {
+-		status = "disabled";
+-	};
+-
+ 	i2c@12C80000 {
++		status = "okay";
++
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 		samsung,i2c-slave-addr = <0x50>;
+@@ -335,7 +334,10 @@
+ 	};
+ 
+ 	i2c@12C90000 {
++		status = "okay";
++
+ 		wm1811a@1a {
++
+ 			compatible = "wlf,wm1811";
+ 			reg = <0x1a>;
+ 
+@@ -353,23 +355,9 @@
+ 		};
+ 	};
+ 
+-	i2c@12CA0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CB0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CC0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CD0000 {
+-		status = "disabled";
+-	};
+-
+ 	i2c@12CE0000 {
++		status = "okay";
++
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
+ 		samsung,i2c-slave-addr = <0x38>;
+@@ -380,10 +368,6 @@
+ 		};
+ 	};
+ 
+-	i2c@121D0000 {
+-		status = "disabled";
+-	};
+-
+ 	mmc_0: mmc@12200000 {
+ 		status = "okay";
+ 		num-slots = <1>;
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 87b55f0edda4..aaacfc833ccc 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -30,6 +30,7 @@
+ 	i2c@12C60000 {
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <20000>;
++		status = "okay";
+ 
+ 		eeprom@50 {
+ 			compatible = "samsung,s524ad0xd1";
+@@ -64,6 +65,7 @@
+ 	i2c@12C70000 {
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <20000>;
++		status = "okay";
+ 
+ 		eeprom@51 {
+ 			compatible = "samsung,s524ad0xd1";
+@@ -89,6 +91,7 @@
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <40000>;
+ 		samsung,i2c-slave-addr = <0x38>;
++		status = "okay";
+ 
+ 		sata-phy {
+ 			compatible = "samsung,sata-phy";
+@@ -103,6 +106,7 @@
+ 	i2c@12C80000 {
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
++		status = "okay";
+ 
+ 		hdmiddc@50 {
+ 			compatible = "samsung,exynos4210-hdmiddc";
+@@ -110,29 +114,10 @@
+ 		};
+ 	};
+ 
+-	i2c@12C90000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CA0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CB0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CC0000 {
+-		status = "disabled";
+-	};
+-
+-	i2c@12CD0000 {
+-		status = "disabled";
+-	};
+-
+ 	i2c@12CE0000 {
+ 		samsung,i2c-sda-delay = <100>;
+ 		samsung,i2c-max-bus-freq = <66000>;
++		status = "okay";
+ 
+ 		hdmiphy@38 {
+ 			compatible = "samsung,exynos4212-hdmiphy";
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 9831b5650a05..3d036673b5b5 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -242,6 +242,7 @@
+ 		clock-names = "i2c";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2c0_bus>;
++		status = "disabled";
+ 	};
+ 
+ 	i2c_1: i2c@12C70000 {
+@@ -254,6 +255,7 @@
+ 		clock-names = "i2c";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2c1_bus>;
++		status = "disabled";
+ 	};
+ 
+ 	i2c_2: i2c@12C80000 {
+@@ -266,6 +268,7 @@
+ 		clock-names = "i2c";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2c2_bus>;
++		status = "disabled";
+ 	};
+ 
+ 	i2c_3: i2c@12C90000 {
+@@ -278,6 +281,7 @@
+ 		clock-names = "i2c";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2c3_bus>;
++		status = "disabled";
+ 	};
+ 
+ 	i2c_4: i2c@12CA0000 {
+@@ -290,6 +294,7 @@
+ 		clock-names = "i2c";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2c4_bus>;
++		status = "disabled";
+ 	};
+ 
+ 	i2c_5: i2c@12CB0000 {
+@@ -302,6 +307,7 @@
+ 		clock-names = "i2c";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2c5_bus>;
++		status = "disabled";
+ 	};
+ 
+ 	i2c_6: i2c@12CC0000 {
+@@ -314,6 +320,7 @@
+ 		clock-names = "i2c";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2c6_bus>;
++		status = "disabled";
+ 	};
+ 
+ 	i2c_7: i2c@12CD0000 {
+@@ -326,6 +333,7 @@
+ 		clock-names = "i2c";
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&i2c7_bus>;
++		status = "disabled";
+ 	};
+ 
+ 	i2c_8: i2c@12CE0000 {
+@@ -336,6 +344,7 @@
+ 		#size-cells = <0>;
+ 		clocks = <&clock 302>;
+ 		clock-names = "i2c";
++		status = "disabled";
+ 	};
+ 
+ 	i2c@121D0000 {
+@@ -345,6 +354,7 @@
+                 #size-cells = <0>;
+ 		clocks = <&clock 288>;
+ 		clock-names = "i2c";
++		status = "disabled";
+ 	};
+ 
+ 	spi_0: spi@12d20000 {
 -- 
 1.8.5.1
