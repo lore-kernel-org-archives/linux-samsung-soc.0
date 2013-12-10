@@ -1,76 +1,51 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH RFC 2/4] xhci: Add quirk for DWC3-Exynos controller
-Date: Tue, 10 Dec 2013 16:25:24 +0530
-Message-ID: <1386672926-26885-3-git-send-email-gautam.vivek@samsung.com>
-References: <1386672926-26885-1-git-send-email-gautam.vivek@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v3 5/5] ARM: S3C24XX: Convert s3c2416 and s3c2443 to common clock framework
+Date: Tue, 10 Dec 2013 11:57:07 +0100
+Message-ID: <201312101157.08297.heiko@sntech.de>
+References: <201312031619.58062.heiko@sntech.de> <201312031624.11442.heiko@sntech.de> <4563504.qD7ztRvaeD@amdc1227>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:64330 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752413Ab3LJK4L (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:54875 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752321Ab3LJK5Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 05:56:11 -0500
-In-reply-to: <1386672926-26885-1-git-send-email-gautam.vivek@samsung.com>
+	Tue, 10 Dec 2013 05:57:16 -0500
+In-Reply-To: <4563504.qD7ztRvaeD@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, sarah.a.sharp@linux.intel.com, kgene.kim@samsung.com, kishon@ti.com, jg1.han@samsung.com, jwerner@chromium.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
 
-The DWC3-exynos eXtensible host controller on Exynos5420 SoC
-is quirky in a way that the PHY needs to be tuned to get it
-working at SuperSpeed.
-By default this PHY works as High-speed phy and therefore
-detects even Super-speed devices as high-speed ones.
-So, the PHY needs to be tuned after controller has been reset.
+Hi Tomasz,
 
-Adding a xHCI quirk for this purpose.
+Am Montag, 9. Dezember 2013, 18:19:16 schrieb Tomasz Figa:
+> > diff --git a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+> > b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c index f50454a..0a86953 100644
+> > --- a/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
+> > +++ b/arch/arm/mach-s3c24xx/mach-s3c2416-dt.c
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- drivers/usb/host/xhci-plat.c |   19 +++++++++++++++++++
- drivers/usb/host/xhci.h      |    1 +
- 2 files changed, 20 insertions(+), 0 deletions(-)
+[...]
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index d9c169f..395c9e9 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -21,6 +21,25 @@
- 
- static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
- {
-+	struct device *parent_dev;
-+	struct device *vendor_parent_dev;
-+
-+	parent_dev = dev->parent;
-+	vendor_parent_dev = parent_dev->parent;
-+
-+	/*
-+	 * The DWC3-exynos host controller on Exynos5420 SoC is quirky
-+	 * in a way that the PHY needs to be tuned to get it working
-+	 * at SuperSpeed. By default this PHY works as High-speed phy
-+	 * and so detects even Super-speed devices as high-speed ones.
-+	 * Therefor the PHY needs to be tuned after controller
-+	 * has been reset, since a controller reset actually forces the
-+	 * PHY to fall back to its default state wherein it works as
-+	 * High-Speed PHY only.
-+	 */
-+	if (!strstr(dev_name(vendor_parent_dev), "exynos"))
-+		xhci->quirks |= XHCI_DWC3_EXYNOS;
-+
- 	/*
- 	 * As of now platform drivers don't provide MSI support so we ensure
- 	 * here that the generic code does not try to make a pci_dev from our
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 7807f62..f69af8c 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1560,6 +1560,7 @@ struct xhci_hcd {
- #define XHCI_PLAT		(1 << 16)
- #define XHCI_SLOW_SUSPEND	(1 << 17)
- #define XHCI_SPURIOUS_WAKEUP	(1 << 18)
-+#define XHCI_DWC3_EXYNOS	(1 << 19)
- 	unsigned int		num_active_eps;
- 	unsigned int		limit_active_eps;
- 	/* There are two roothubs to keep track of bus suspend info for */
--- 
-1.7.6.5
+> > @@ -86,6 +50,5 @@ DT_MACHINE_START(S3C2416_DT, "Samsung S3C2416
+> > (Flattened Device Tree)")
+> > 
+> >  	.map_io		= s3c2416_dt_map_io,
+> >  	.init_irq	= irqchip_init,
+> >  	.init_machine	= s3c2416_dt_machine_init,
+> > 
+> > -	 .init_time	= clocksource_of_init,
+> 
+> Should it really be a part of this patch?
+
+Yes it is needed as part of the conversion, as somebody has to call 
+of_clk_init(), which the init_time default-handler does.
+
+The only other option would be to introduce a new local init_time callback, 
+calling of_clk_init and clocksource_of_init, only to remove it again in an 
+additional patch.
+
+
+Heiko
