@@ -1,239 +1,91 @@
 From: Arun Kumar K <arunkk.samsung@gmail.com>
-Subject: Re: [PATCH 3/3] cpufreq: exynos: Add exynos5420 cpufreq driver
-Date: Tue, 10 Dec 2013 10:10:06 +0530
-Message-ID: <CALt3h7-25_mW5SnnTbZWjoF0pOZxsU5Gg6FqOdoz1MgdH7gm5w@mail.gmail.com>
-References: <1386323284-15646-1-git-send-email-arun.kk@samsung.com>
-	<1386323284-15646-4-git-send-email-arun.kk@samsung.com>
-	<20131209092324.1f8b6502@amdc2363>
+Subject: Re: [PATCH] CHROMIUM: s5p-mfc: add controls to set vp8 enc profile
+Date: Tue, 10 Dec 2013 10:14:35 +0530
+Message-ID: <CALt3h789M_yT465LXcZ2QKXHPKXbvOk9GyP0GJYi_W4Nq6u6fQ@mail.gmail.com>
+References: <1386594961-17803-1-git-send-email-arun.kk@samsung.com>
+	<52A5C3F8.1090503@xs4all.nl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <20131209092324.1f8b6502@amdc2363>
-Sender: cpufreq-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, cpufreq@vger.kernel.org, rjw@rjwysocki.net, Viresh Kumar <viresh.kumar@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, arjun.kv@samsung.com, abrestic@chromium.org, Sachin Kamat <sachin.kamat@linaro.org>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-Reply-To: <52A5C3F8.1090503@xs4all.nl>
+Sender: linux-media-owner@vger.kernel.org
+To: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kamil Debski <k.debski@samsung.com>, avnd.kiran@samsung.com, posciak@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Lukasz,
+Hi Hans,
 
-Thank you for the review.
+Thanks for the review.
 
-
-On Mon, Dec 9, 2013 at 1:53 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+On Mon, Dec 9, 2013 at 6:52 PM, Hans Verkuil <hverkuil@xs4all.nl> wrote:
 > Hi Arun,
 >
->> From: "Arjun.K.V" <arjun.kv@samsung.com>
+> Some comments below...
+>
+> On 12/09/2013 02:16 PM, Arun Kumar K wrote:
+>> Add v4l2 controls to set desired profile for VP8 encoder.
+>> Acceptable levels for VP8 encoder are
+>> 0: Version 0
+>> 1: Version 1
+>> 2: Version 2
+>> 3: Version 3
 >>
->> The patch adds cpufreq driver for exynos5420.
->>
->> Signed-off-by: Arjun.K.V <arjun.kv@samsung.com>
->> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>> Signed-off-by: Pawel Osciak <posciak@chromium.org>
+>> Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
 >> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 >> ---
->>  drivers/cpufreq/Kconfig.arm          |   11 ++
->>  drivers/cpufreq/Makefile             |    1 +
->>  drivers/cpufreq/exynos-cpufreq.c     |    2 +
->>  drivers/cpufreq/exynos-cpufreq.h     |    8 +
->>  drivers/cpufreq/exynos5420-cpufreq.c |  346
->> ++++++++++++++++++++++++++++++++++ 5 files changed, 368 insertions(+)
->>  create mode 100644 drivers/cpufreq/exynos5420-cpufreq.c
+>> This patch is rebased over another VP8 control patch from me:
+>> https://linuxtv.org/patch/20733/
+>> ---
+>>  Documentation/DocBook/media/v4l/controls.xml    |    9 +++++++++
+>>  drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    1 +
+>>  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c    |   11 +++++++++++
+>>  drivers/media/platform/s5p-mfc/s5p_mfc_opr_v6.c |    6 ++----
+>>  drivers/media/v4l2-core/v4l2-ctrls.c            |    8 ++++++++
+>>  include/uapi/linux/v4l2-controls.h              |    1 +
+>>  6 files changed, 32 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/Documentation/DocBook/media/v4l/controls.xml b/Documentation/DocBook/media/v4l/controls.xml
+>> index e4db4ac..c1f7544 100644
+>> --- a/Documentation/DocBook/media/v4l/controls.xml
+>> +++ b/Documentation/DocBook/media/v4l/controls.xml
+>> @@ -3193,6 +3193,15 @@ V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_REF_PERIOD as a golden frame.</entry>
+>>             <row><entry spanname="descr">Quantization parameter for a P frame for VP8.</entry>
+>>             </row>
+>>
+>> +           <row><entry></entry></row>
+>> +           <row>
+>> +             <entry spanname="id"><constant>V4L2_CID_MPEG_VIDEO_VPX_PROFILE</constant>&nbsp;</entry>
+>> +             <entry>integer</entry>
 >
-> I think that we shall cleanup "a bit" the cpufreq code for exynos.
-> Now we have [*]:
-> - exynos4x12-cpufreq.c
-> - exynos4210-cpufreq.c
-> - exynos5250-cpufreq.c
+> This says 'integer' whereas the control is actually an integer menu.
 >
-> and you want to add exynos5420-cpufreq.c
->
-> Those files are pretty similar, so are a very good candidates for
-> cleanup.
->
-
-Yes thats right. There is a lot of common code now in these files.
-
-> All supported processors (up to exynos5250) allows for frequency
-> setting on all cores in the SoC.
->
-> Those files [*] can be easily replaced by cpu0-cpufreq.c generic code.
-> Also we can provide frequency, voltage table and ASV if needed via
-> device tree.
->
-> I did some preliminary work on this for Exynos4412. My plan is to
-> continue when things with BOOST "calm down" :-).
+> Why did you choose 'integer menu' for this? Would a regular integer or perhaps a standard
+> menu be better?
 >
 
-Ok I will wait for your patches then :)
+I chose integer menu as it is standard set of values with only 4
+options (integers).
+Same thing is done in the controls - V4L2_CID_MPEG_VIDEO_VPX_NUM_PARTITIONS
+and V4L2_CID_MPEG_VIDEO_VPX_NUM_REF_FRAMES. I felt this new controls is also
+in-line with the requirement of a integer-menu type. What do you think?
 
-[snip]
-
->> +static unsigned int exynos5420_volt_table[CPUFREQ_NUM_LEVELS];
->> +static struct cpufreq_frequency_table exynos5420_freq_table[] = {
->> +     {L0,  2000 * 1000},
->> +     {L1,  1900 * 1000},
->> +     {L2,  1800 * 1000},
->> +     {L3,  1700 * 1000},
->> +     {L4,  1600 * 1000},
->> +     {L5,  1500 * 1000},
->> +     {L6,  1400 * 1000},
->> +     {L7,  1300 * 1000},
->> +     {L8,  1200 * 1000},
->> +     {L9,  1100 * 1000},
->> +     {L10, 1000 * 1000},
->> +     {L11,  900 * 1000},
->> +     {L12,  800 * 1000},
->> +     {L13,  700 * 1000},
->> +     {L14,  600 * 1000},
->> +     {L15,  500 * 1000},
->> +     {L16,  400 * 1000},
->> +     {L17,  300 * 1000},
->> +     {L18,  200 * 1000},
->> +     {0, CPUFREQ_TABLE_END},
->> +};
+>> +           </row>
+>> +           <row><entry spanname="descr">Select the desired profile for VP8 encoder.
+>> +Acceptable values are 0, 1, 2 and 3 corresponding to encoder versions 0, 1, 2 and 3.</entry>
 >
-> This shall be provided via device tree.
+> Is it a 'profile' or a 'version'? It looks a bit confusing. I don't have the VP8 standard,
+> so I can't really tell what the correct terminology is.
 >
 
-Ok.
+Ok will make it more clear.
 
->> +
->> +static struct cpufreq_clkdiv
->> exynos5420_clkdiv_table[CPUFREQ_NUM_LEVELS]; +
->> +static unsigned int clkdiv_cpu0_5420[CPUFREQ_NUM_LEVELS][7] = {
->> +     /*
->> +      *  Clock divider values for {CPUD, ATB, PCLK_DBG, APLL,
->> ARM2}
->> +      */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L0: 2.0GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L1: 1.9GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L2: 1.8GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L3: 1.7GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L4: 1.6GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L5: 1.5GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L6: 1.4GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L7: 1.3GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L8: 1.2GHz */
->> +     { 2, 7, 7, 3, 0 }, /* ARM L9: 1.1GHz */
->> +     { 2, 6, 6, 3, 0 }, /* ARM L10: 1GHz */
->> +     { 2, 6, 6, 3, 0 }, /* ARM L11: 900MHz */
->> +     { 2, 5, 5, 3, 0 }, /* ARM L12: 800MHz */
->> +     { 2, 5, 5, 3, 0 }, /* ARM L13: 700MHz */
->> +     { 2, 4, 4, 3, 0 }, /* ARM L14: 600MHz */
->> +     { 2, 3, 3, 3, 0 }, /* ARM L15: 500MHz */
->> +     { 2, 3, 3, 3, 0 }, /* ARM L16: 400MHz */
->> +     { 2, 3, 3, 3, 0 }, /* ARM L17: 300MHz */
->> +     { 2, 3, 3, 3, 0 }, /* ARM L18: 200MHz */
->> +};
->
-> This table is not needed (as similar ones in this patch), since the
-> Common Clock Framework (and more specific the PLL code for Exynos)
-> shall handle this.
+> Also, does this control apply just to VP8 or also to other VP versions? The control name
+> says 'VPX' while the description says 'VP8' explicitly.
 >
 
-Actually these values are not for PLL, but for the dividers.
-If you see below, the PLL rate setting is done through clk_set_rate() going
-via CCF. But I found an issue if the divider values are set via
-clk_set_rate API.
-What I found is, the system goes into freeze if all the divider values are not
-set in one shot. So we cannot call multiple clk_set_rate()'s on each divider.
-Thats why I continued with non-CCF way of setting the divider.
-Are you taking care of this requirement in your restructuring?
-
->> +
->> +unsigned int clkdiv_cpu1_5420[CPUFREQ_NUM_LEVELS][2] = {
->> +     /* Clock divider values for { copy, HPM } */
->> +     { 7, 7 }, /* ARM L0: 2.0GHz */
->> +     { 7, 7 }, /* ARM L1: 1.9GHz */
->> +     { 7, 7 }, /* ARM L2: 1.8GHz */
->> +     { 7, 7 }, /* ARM L3: 1.7GHz */
->> +     { 7, 7 }, /* ARM L4: 1.6GHz */
->> +     { 7, 7 }, /* ARM L5: 1.5GHz */
->> +     { 7, 7 }, /* ARM L6: 1.4GHz */
->> +     { 7, 7 }, /* ARM L7: 1.3GHz */
->> +     { 7, 7 }, /* ARM L8: 1.2GHz */
->> +     { 7, 7 }, /* ARM L9: 1.1GHz */
->> +     { 7, 7 }, /* ARM L10: 1GHz */
->> +     { 7, 7 }, /* ARM L11: 900MHz */
->> +     { 7, 7 }, /* ARM L12: 800MHz */
->> +     { 7, 7 }, /* ARM L13: 700MHz */
->> +     { 7, 7 }, /* ARM L14: 600MHz */
->> +     { 7, 7 }, /* ARM L15: 500MHz */
->> +     { 7, 7 }, /* ARM L16: 400MHz */
->> +     { 7, 7 }, /* ARM L17: 300MHz */
->> +     { 7, 7 }, /* ARM L18: 200MHz */
->> +};
->> +
->> +/*
->> + * Default ASV table
->> + */
->> +static const unsigned int asv_voltage_5420[CPUFREQ_NUM_LEVELS] = {
->> +     1300000,        /* L0  2000 */
->> +     1300000,        /* L1  1900 */
->> +     1200000,        /* L2  1800 */
->> +     1200000,        /* L3  1700 */
->> +     1200000,        /* L4  1600 */
->> +     1175000,        /* L5  1500 */
->> +     1150000,        /* L6  1400 */
->> +     1125000,        /* L7  1300 */
->> +     1100000,        /* L8  1200 */
->> +     1075000,        /* L9  1100 */
->> +     1050000,        /* L10 1000 */
->> +     1000000,        /* L11  900 */
->> +      950000,        /* L12  800 */
->> +      925000,        /* L13  700 */
->> +      900000,        /* L14  600 */
->> +      900000,        /* L15  500 */
->> +      900000,        /* L16  400 */
->> +      900000,        /* L17  300 */
->> +      900000,        /* L18  200 */
->> +};
->> +
->
-> If I remember correctly, some code for ASV generic framework has
-> been posted recently (by Sachin):
->
-> http://article.gmane.org/gmane.linux.power-management.general/40453/match=asv+framework
->
-
-Yes that will be incorporated with ASV support enabled. Even without
-ASV enabled, a default
-table can be provided with safe operating voltages. If ASV is enabled,
-these values wont be used.
-
->> +static void exynos5420_set_clkdiv(unsigned int div_index)
->> +{
->> +     unsigned int tmp;
->> +
->> +     /* Change Divider - CPU0 for CMU_CPU */
->> +     tmp = exynos5420_clkdiv_table[div_index].clkdiv;
->> +     __raw_writel(tmp, EXYNOS5_CLKDIV_CPU0);
->> +
->> +     do {
->> +             cpu_relax();
->> +             tmp = __raw_readl(EXYNOS5_CLKDIV_STATCPU0);
->> +     } while (tmp & EXYNOS5_CLKDIV_STATCPU0_MASK);
->> +     pr_debug("DIV_CPU0[0x%x]\n",
->> __raw_readl(EXYNOS5_CLKDIV_CPU0)); +
->> +     /* Change Divider - CPU1 for CMU_CPU */
->> +     tmp = exynos5420_clkdiv_table[div_index].clkdiv1;
->> +     __raw_writel(tmp, EXYNOS5_CLKDIV_CPU1);
->> +
->> +     do {
->> +             cpu_relax();
->> +             tmp = __raw_readl(EXYNOS5_CLKDIV_STATCPU1);
->> +     } while (tmp & EXYNOS5_CLKDIV_STATCPU1_MASK);
->> +     pr_debug("DIV_CPU1[0x%x]\n",
->> __raw_readl(EXYNOS5_CLKDIV_CPU1)); +}
->> +
->
-> Operations on raw registers - behind the Common Clock Framework is
-> asking for a trouble. I had a similar issues. Please refer to
-> appropriate Exynos4412/4210 patches.
->
-> http://article.gmane.org/gmane.linux.kernel/1575500/match=cpufreq
->
-
-As mentioned earlier, I couldnt avoid doing it for divider values setting.
+As of now its applicable to VP8, but I am not sure if the same thing
+will apply to VP9 also.
 
 Regards
 Arun
