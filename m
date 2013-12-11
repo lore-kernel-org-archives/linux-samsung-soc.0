@@ -1,53 +1,105 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] ARM: dts: Add CODEC MCLK for SMDK5250
-Date: Wed, 11 Dec 2013 21:39:38 +0000
-Message-ID: <1386797978-12394-1-git-send-email-broonie@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:50463 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750873Ab3LKVjt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 16:39:49 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada,
+ R-Car PCI host maintainers
+Date: Thu, 12 Dec 2013 07:24:47 +0900
+Message-ID: <000f01cef6bf$cd0fe340$672fa9c0$%han@samsung.com>
+References: <20131211183237.GI4699@google.com>
+ <20131211184321.GJ4699@google.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-reply-to: <20131211184321.GJ4699@google.com>
+Content-language: ko
+Sender: linux-sh-owner@vger.kernel.org
+To: 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Shawn Guo' <shawn.guo@linaro.org>, 'Jason Cooper' <jason@lakedaemon.net>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Simon Horman' <horms@verge.net.au>, 'Magnus Damm' <magnus.damm@gmail.com>, 'Valentine Barshak' <valentine.barshak@cogentembedded.com>, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Kuninori Morimoto' <kuninori.morimoto.gx@renesas.com>, 'Mohit Kumar' <mohit.kumar@st.com>, 'Pratyush Anand' <pratyush.anand@st.com>, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, Mark Brown <broonie@linaro.org>
 
-From: Mark Brown <broonie@linaro.org>
+On Thursday, December 12, 2013 3:43 AM, Bjorn Helgaas wrote:
+> On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
+> > If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+> 
+> And I see Mohit's patch [1] to update the DesignWare entry:
+> 
+> +PCIE DRIVER FOR SYNOPSIS DESIGNWARE CONTROLLER
+> +M:	Mohit Kumar <mohit.kumar@st.com>
+> +M:	Jingoo Han <jg1.han@samsung.com>
+> +L:	linux-pci@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/pci/host/pcie-designware.c
+> 
+> I can fold in that update too if Jingoo acks it.
+> 
+> [1] http://patchwork.ozlabs.org/patch/299905/
 
-There is a 16.934MHz fixed rate clock connected to MCLK1 on the CODEC, add
-this to the device tree bindings.
+Hi Bjorn,
 
-Signed-off-by: Mark Brown <broonie@linaro.org>
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I agree with this. :-)
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index aaacfc833ccc..00b57faf977e 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -79,6 +79,9 @@
- 			gpio-controller;
- 			#gpio-cells = <2>;
- 
-+			clocks = <&codec_mclk>;
-+			clock-names = "MCLK1";
-+
- 			AVDD2-supply = <&vdd>;
- 			CPVDD-supply = <&vdd>;
- 			DBVDD-supply = <&dbvdd>;
-@@ -250,5 +253,11 @@
- 			compatible = "samsung,clock-xxti";
- 			clock-frequency = <24000000>;
- 		};
-+
-+		codec_mclk: codec-mclk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <16934000>;
-+		};
- 	};
- };
--- 
-1.8.5.1
+Best regards,
+Jingoo Han
+
+> > MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
+> >
+> > Add entries for PCI host controller drivers in drivers/pci/host/.
+> >
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > ---
+> >  MAINTAINERS |   31 +++++++++++++++++++++++++++++++
+> >  1 file changed, 31 insertions(+)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 8285ed4676b6..826c722d92ba 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -6449,16 +6449,47 @@ F:	drivers/pci/
+> >  F:	include/linux/pci*
+> >  F:	arch/x86/pci/
+> >
+> > +PCI DRIVER FOR DESIGNWARE
+> > +M:	Jingoo Han <jg1.han@samsung.com>
+> > +L:	linux-pci@vger.kernel.org
+> > +S:	Maintained
+> > +F:	drivers/pci/host/*designware*
+> > +
+> > +PCI DRIVER FOR IMX6
+> > +M:	Shawn Guo <shawn.guo@linaro.org>
+> > +L:	linux-pci@vger.kernel.org
+> > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > +S:	Maintained
+> > +F:	drivers/pci/host/*imx6*
+> > +
+> > +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
+> > +M:	Jason Cooper <jason@lakedaemon.net>
+> > +L:	linux-pci@vger.kernel.org
+> > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > +S:	Maintained
+> > +F:	drivers/pci/host/*mvebu*
+> > +
+> >  PCI DRIVER FOR NVIDIA TEGRA
+> >  M:	Thierry Reding <thierry.reding@gmail.com>
+> >  L:	linux-tegra@vger.kernel.org
+> > +L:	linux-pci@vger.kernel.org
+> >  S:	Supported
+> >  F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> >  F:	drivers/pci/host/pci-tegra.c
+> >
+> > +PCI DRIVER FOR RENESAS R-CAR
+> > +M:	Simon Horman <horms@verge.net.au>
+> > +M:	Magnus Damm <magnus.damm@gmail.com>
+> > +L:	linux-pci@vger.kernel.org
+> > +L:	linux-sh@vger.kernel.org
+> > +S:	Maintained
+> > +F:	drivers/pci/host/*rcar*
+> > +
+> >  PCI DRIVER FOR SAMSUNG EXYNOS
+> >  M:	Jingoo Han <jg1.han@samsung.com>
+> >  L:	linux-pci@vger.kernel.org
+> > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+> >  S:	Maintained
+> >  F:	drivers/pci/host/pci-exynos.c
+> >
+
