@@ -1,102 +1,93 @@
-From: Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed HUBs
-Date: Wed, 11 Dec 2013 15:38:52 -0800
-Message-ID: <CAA9_cmc8b2rmp6hsgkLUEnFBmKqwdYCbdb_2rEycs-qVksAFpg@mail.gmail.com>
-References: <CAGm_ybgC6Ca0qz6zJL0PkEUiyUi=Ct0L5t2GJOt9ZU-buP+wBQ@mail.gmail.com>
-	<Pine.LNX.4.44L0.1312111204220.1531-100000@iolanthe.rowland.org>
-	<CAODwPW_ZUgHWymOF7Fzxh7sbhrvV0-g-pMXWQm=eSz2U8EBRtQ@mail.gmail.com>
-	<20131211193647.GA25483@xanatos>
-	<CAA9_cme4XmXqQfx9kTPEJWdx2XwBZk-G8s7pjSuZ5KWg3UZZ8Q@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
+ host maintainers
+Date: Thu, 12 Dec 2013 08:51:35 +0900
+Message-ID: <20131211235135.GA11671@verge.net.au>
+References: <20131211183237.GI4699@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f175.google.com ([209.85.216.175]:54762 "EHLO
-	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751377Ab3LKXix convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 18:38:53 -0500
-In-Reply-To: <CAA9_cme4XmXqQfx9kTPEJWdx2XwBZk-G8s7pjSuZ5KWg3UZZ8Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20131211183237.GI4699@google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <weiyj.lk@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sarah Sharp <sarah.a.sharp@linux.intel.com>
-Cc: Julius Werner <jwerner@chromium.org>, Alan Stern <stern@rowland.harvard.edu>, Vikas Sajjan <sajjan.linux@gmail.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Vincent Palatin <vpalatin@chromium.org>, Lan Tianyu <tianyu.lan@intel.com>, Ksenia Ragiadakou <burzalodowa@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Douglas Anderson <dianders@chromium.org>, Felipe Balbi <balbi@ti.com>, sunil joshi <joshi@samsung.com>
 
-On Wed, Dec 11, 2013 at 2:51 PM, Dan Williams <dan.j.williams@gmail.com=
-> wrote:
-> On Wed, Dec 11, 2013 at 11:36 AM, Sarah Sharp
-> <sarah.a.sharp@linux.intel.com> wrote:
->> On Wed, Dec 11, 2013 at 11:00:13AM -0800, Julius Werner wrote:
->>> > I don't know what you mean by "fails".  The system goes to sleep =
-and
->>> > then later on wakes up, doesn't it?
->>> >
->>> > Do you mean that the Jetflash device gets disconnected when the s=
-ystem
->>> > wakes up?  That's _supposed_ to happen under those circumstances.
->>> > When hub_activate() sees HUB_RESET_RESUME, all child devices get
->>> > disconnected except those where udev->persist_enabled is set.
->>>
->>> This patch was written in response to the same bug as my "usb: hub:
->>> Use correct reset for wedged USB3 devices that are NOTATTACHED"
->>> submission. My patch only helps when the port gets stuck in Complia=
-nce
->>> Mode, but Vikas reports that he can sometimes see it stuck in Polli=
-ng
->>> or Recovery states as well.
->>>
->>> The underlying issue is a deadlock in the USB 3.0 link training sta=
-te
->>> machine when the host controller is unilaterally reset on resume
->>> (without driving a reset on the bus).
->>
->> The xHCI spec requires that when the xHCI host is reset, a USB reset=
- is
->> driven down the USB 3.0 ports.  If hot reset fails, the port may mig=
-rate
->> to warm reset.  See table 32 in the xHCI spec, in the definition of
->> HCRST.  It sounds like this host doesn't drive a USB reset down USB =
-3.0
->> ports at all on host controller reset?
->
-> ...although, the spec says that it does not wait for the port resets
-> to complete.  As far as I can see re-issuing a warm reset and waiting
-> is the only way to guarantee the core times the recovery.  Presumably
-> the portstatus debounce in hub_activate() mitigates this, but that
-> 100ms is less than a full reset timeout.  I have something similar in
-> the port power rework patches [1], but I think something like the
-> following (untested) is more generic, it arranges for reset_resume to
-> start with a warm reset if necessary.
->
-> (also attached)
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index a7c04e24ca48..30ce237569dd 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -2783,8 +2783,14 @@ static int check_port_resume_type(struct
-> usb_device *udev,
->                 struct usb_hub *hub, int port1,
->                 int status, unsigned portchange, unsigned portstatus)
->  {
-> +       /* Did the port go SS.Inactive?  Even if ->persist_enabled is
-> cleared the
-> +        * device won't come back until a warm reset completes
-> +        */
-> +       if (hub_port_warm_reset_required(hub, portstatus)) {
-> +               udev->reset_resume =3D 1;
-> +               udev->reset_resume_warm =3D 1;
+On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
+> If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+> 
+> Bjorn
+> 
+> 
+> MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
+> 
+> Add entries for PCI host controller drivers in drivers/pci/host/.
+> 
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Also need to set 'status' to 0 here.
+Renesas R-Car potion:
 
-If it's truly just a case of waiting for port warm resets to complete
-it might be better to inject additional debounce delay here, but the
-spec seems to indicate that there is no way to know that escalated
-warm resets are in progress.  4.19.5.1 says "The Port Reset (PR) flag
-shall be =911=92 while Hot or Warm Reset is being executed. The Port Re=
-set
-Change (PRC) flag shall be set (=911=92) when the reset execution is
-complete and PR transitions to =910=92."... but that is only if softwar=
-e
-initiated the warm reset.  When the warm reset was the result of an
-HCRST we hit "Note, the completion of the xHC reset process is not
-gated by the Root Hub port reset process."
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+>  MAINTAINERS |   31 +++++++++++++++++++++++++++++++
+>  1 file changed, 31 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8285ed4676b6..826c722d92ba 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -6449,16 +6449,47 @@ F:	drivers/pci/
+>  F:	include/linux/pci*
+>  F:	arch/x86/pci/
+>  
+> +PCI DRIVER FOR DESIGNWARE
+> +M:	Jingoo Han <jg1.han@samsung.com>
+> +L:	linux-pci@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/pci/host/*designware*
+> +
+> +PCI DRIVER FOR IMX6
+> +M:	Shawn Guo <shawn.guo@linaro.org>
+> +L:	linux-pci@vger.kernel.org
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	drivers/pci/host/*imx6*
+> +
+> +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
+> +M:	Jason Cooper <jason@lakedaemon.net>
+> +L:	linux-pci@vger.kernel.org
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +S:	Maintained
+> +F:	drivers/pci/host/*mvebu*
+> +
+>  PCI DRIVER FOR NVIDIA TEGRA
+>  M:	Thierry Reding <thierry.reding@gmail.com>
+>  L:	linux-tegra@vger.kernel.org
+> +L:	linux-pci@vger.kernel.org
+>  S:	Supported
+>  F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+>  F:	drivers/pci/host/pci-tegra.c
+>  
+> +PCI DRIVER FOR RENESAS R-CAR
+> +M:	Simon Horman <horms@verge.net.au>
+> +M:	Magnus Damm <magnus.damm@gmail.com>
+> +L:	linux-pci@vger.kernel.org
+> +L:	linux-sh@vger.kernel.org
+> +S:	Maintained
+> +F:	drivers/pci/host/*rcar*
+> +
+>  PCI DRIVER FOR SAMSUNG EXYNOS
+>  M:	Jingoo Han <jg1.han@samsung.com>
+>  L:	linux-pci@vger.kernel.org
+> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+>  S:	Maintained
+>  F:	drivers/pci/host/pci-exynos.c
+>  
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
