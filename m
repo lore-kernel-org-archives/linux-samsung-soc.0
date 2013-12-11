@@ -1,87 +1,80 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed
- HUBs
-Date: Wed, 11 Dec 2013 12:18:09 -0500 (EST)
-Message-ID: <Pine.LNX.4.44L0.1312111204220.1531-100000@iolanthe.rowland.org>
-References: <CAGm_ybgC6Ca0qz6zJL0PkEUiyUi=Ct0L5t2GJOt9ZU-buP+wBQ@mail.gmail.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host
+ maintainers
+Date: Wed, 11 Dec 2013 11:32:37 -0700
+Message-ID: <20131211183237.GI4699@google.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from iolanthe.rowland.org ([192.131.102.54]:55842 "HELO
-	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750922Ab3LKRSL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 12:18:11 -0500
-In-Reply-To: <CAGm_ybgC6Ca0qz6zJL0PkEUiyUi=Ct0L5t2GJOt9ZU-buP+wBQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-pci-owner@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <weiyj.lk@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <sajjan.linux@gmail.com>
-Cc: Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, Sarah Sharp <sarah.a.sharp@linux.intel.com>, vpalatin@chromium.org, jwerner@chromium.org, tianyu.lan@intel.com, burzalodowa@gmail.com, gregkh@linuxfoundation.org, gautam.vivek@samsung.com, Douglas Anderson <dianders@chromium.org>, balbi@ti.com, sunil joshi <joshi@samsung.com>
 
-On Tue, 10 Dec 2013, Vikas Sajjan wrote:
+If this looks reasonable, I'll merge it via the PCI tree for v3.13.
 
-> > Finally, I don't see why you put this in hub_activate().  Isn't it more
-> > closely connected with the reset-resume procedure for the child device?
-> 
-> 
-> I was trying to add a FIX in usb_port_resume(), but in our case we
-> have CONFIG_USB_DEFAULT_PERSIST disabled.
-> 
-> Interestingly, if I disable the CONFIG_USB_DEFAULT_PERSIST, then the
-> function usb_port_resume() will never be called and transcend Jetflash
-> device Suspend-to-RAM fails.
+Bjorn
 
-I don't know what you mean by "fails".  The system goes to sleep and 
-then later on wakes up, doesn't it?
 
-Do you mean that the Jetflash device gets disconnected when the system
-wakes up?  That's _supposed_ to happen under those circumstances.  
-When hub_activate() sees HUB_RESET_RESUME, all child devices get
-disconnected except those where udev->persist_enabled is set.
+MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
 
-> In normal scenario (ie., CONFIG_USB_DEFAULT_PERSIST=y) the sequence is:
-> ===========================================================================
-> Step 1: For Root HUB :
-> usb_resume_both() ---> usb_resume_device() -> generic_resume() -->
-> hcd_bus_resume() --> xhci_bus_resume().
->                               |
->                               |-->usb_resume_interface() --->
-> hub_reset_resume() -->  xhci_update_hub_device()
-> 
-> Step 2:  For the Device connected
-> usb_resume_both() ---> usb_resume_device() ->
-> generic_resume()-->usb_port_resume()-->hub_port_logical_disconnect()
+Add entries for PCI host controller drivers in drivers/pci/host/.
 
-You lost me there.  Why does usb_port_resume call 
-hub_port_logical_disconnect?  Does this happen because 
-check_port_resume_type returns an error code?  What are the values of 
-the portchange and portstatus arguments to check_port_resume_type?
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ MAINTAINERS |   31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
-> --> hub_port_disable() --> hub_usb3_port_disable().
-> 
-> 
-> In our scenario (ie., CONFIG_USB_DEFAULT_PERSIST=N) the sequence is:
-> ===============================================================================
-> Step 1: For Root HUB
-> usb_resume_both() ---> usb_resume_device() -> generic_resume() -->
-> hcd_bus_resume() --> xhci_bus_resume().
->                               |
->                               |-->usb_resume_interface() --->
-> hub_reset_resume() -->  xhci_update_hub_device()
-> 
-> Step 2 :  Never occurs
-
-That's exactly right.
-
-> So Suspend-to-RAM fails.
-
-No, it succeeds in behaving the way it is intended to behave.
-
-> Hence i added a FIX in  hub_reset_resume().
-> 
-> Let me know if I am wrong.
-
-I can't tell at this point.  It depends on the reason why 
-hub_port_logical_disconnect got called.
-
-Alan Stern
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8285ed4676b6..826c722d92ba 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6449,16 +6449,47 @@ F:	drivers/pci/
+ F:	include/linux/pci*
+ F:	arch/x86/pci/
+ 
++PCI DRIVER FOR DESIGNWARE
++M:	Jingoo Han <jg1.han@samsung.com>
++L:	linux-pci@vger.kernel.org
++S:	Maintained
++F:	drivers/pci/host/*designware*
++
++PCI DRIVER FOR IMX6
++M:	Shawn Guo <shawn.guo@linaro.org>
++L:	linux-pci@vger.kernel.org
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Maintained
++F:	drivers/pci/host/*imx6*
++
++PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
++M:	Jason Cooper <jason@lakedaemon.net>
++L:	linux-pci@vger.kernel.org
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++S:	Maintained
++F:	drivers/pci/host/*mvebu*
++
+ PCI DRIVER FOR NVIDIA TEGRA
+ M:	Thierry Reding <thierry.reding@gmail.com>
+ L:	linux-tegra@vger.kernel.org
++L:	linux-pci@vger.kernel.org
+ S:	Supported
+ F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+ F:	drivers/pci/host/pci-tegra.c
+ 
++PCI DRIVER FOR RENESAS R-CAR
++M:	Simon Horman <horms@verge.net.au>
++M:	Magnus Damm <magnus.damm@gmail.com>
++L:	linux-pci@vger.kernel.org
++L:	linux-sh@vger.kernel.org
++S:	Maintained
++F:	drivers/pci/host/*rcar*
++
+ PCI DRIVER FOR SAMSUNG EXYNOS
+ M:	Jingoo Han <jg1.han@samsung.com>
+ L:	linux-pci@vger.kernel.org
++L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
++L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	drivers/pci/host/pci-exynos.c
+ 
