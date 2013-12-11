@@ -1,191 +1,194 @@
-From: Vikas Sajjan <vikas.sajjan@linaro.org>
-Subject: [PATCH 2/2] ARM: EXYNOS: Add CMU virtual addresses for exynos5260
-Date: Wed, 11 Dec 2013 16:25:16 +0545
-Message-ID: <1386758416-31065-3-git-send-email-vikas.sajjan@linaro.org>
-References: <1386758416-31065-1-git-send-email-vikas.sajjan@linaro.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 4/7] clk/samsung: add support for multuple clock providers
+Date: Wed, 11 Dec 2013 12:15:47 +0100
+Message-ID: <11276764.MQ2Wg9nEER@amdc1227>
+References: <1386345391-23482-1-git-send-email-rahul.sharma@samsung.com>
+ <1386345391-23482-5-git-send-email-rahul.sharma@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f44.google.com ([209.85.160.44]:56345 "EHLO
-	mail-pb0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750864Ab3LKKkg (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48896 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751762Ab3LKLQB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 05:40:36 -0500
-Received: by mail-pb0-f44.google.com with SMTP id rq2so9679383pbb.31
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 02:40:36 -0800 (PST)
-In-Reply-To: <1386758416-31065-1-git-send-email-vikas.sajjan@linaro.org>
+	Wed, 11 Dec 2013 06:16:01 -0500
+In-reply-to: <1386345391-23482-5-git-send-email-rahul.sharma@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, t.figa@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, joshi@samsung.com
+To: Rahul Sharma <rahul.sharma@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mturquette@linaro.org, kgene.kim@samsung.com, thomas.ab@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, pankaj.dubey@samsung.com, yg1004.jang@samsung.com, arun.kk@samsung.com, r.sh.open@gmail.com
 
-From: Young-Gun Jang <yg1004.jang@samsung.com>
+Hi Rahul,
 
-Adds CMU virtual addresses for exynos5260.
+Please see my comments inline.
 
-Change-Id: Ia4f4eda96187d8d9e1edfc1a6b025af56d3bc43e
-Signed-off-by: Young-Gun Jang <yg1004.jang@samsung.com>
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
----
- arch/arm/mach-exynos/common.c                  | 65 ++++++++++++++++++++++++++
- arch/arm/mach-exynos/include/mach/map.h        | 14 ++++++
- arch/arm/mach-exynos/include/mach/regs-clock.h | 17 +++++++
- arch/arm/plat-samsung/include/plat/map-s5p.h   | 16 +++++++
- 4 files changed, 112 insertions(+)
+On Friday 06 of December 2013 21:26:28 Rahul Sharma wrote:
+> Samsung CCF helper functions do not provide support to
+> register multiple Clock Providers for a given SoC. Due to
+> this limitation SoC platforms are not able to use these
+> helpers for registering mulitple clock providers and are
+> forced to bypass this layer.
+> 
+> This layer is modified acordingly to enable the support.
+> 
+> Clockfile for exynos4, exynos5250, exynos5420, exynos5440
+> and S3c64xx are also modified as per changed helper functions.
+[snip]
+> diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+> index 91bec3e..20de446 100644
+> --- a/drivers/clk/samsung/clk.c
+> +++ b/drivers/clk/samsung/clk.c
+> @@ -15,11 +15,6 @@
+>  #include "clk.h"
+>  
+>  static DEFINE_SPINLOCK(lock);
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 70da5c4..350b730 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -332,6 +332,71 @@ static struct map_desc exynos5260_iodesc[] __initdata = {
- 		.length		= SZ_16K,
- 		.type		= MT_DEVICE,
- 	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_TOP,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_TOP),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_PERI,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_PERI),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_EGL,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_EGL),
-+		.length		= SZ_8K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_KFC,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_KFC),
-+		.length		= SZ_8K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_G2D,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_G2D),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_MIF,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_MIF),
-+		.length		= SZ_8K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_MFC,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_MFC),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_G3D,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_G3D),
-+		.length		= SZ_8K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_FSYS,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_FSYS),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_AUD,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_AUD),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_ISP,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_ISP),
-+		.length		= SZ_8K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_GSCL,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_GSCL),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)EXYNOS5260_VA_CMU_DISP,
-+		.pfn		= __phys_to_pfn(EXYNOS5260_PA_CMU_DISP),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
- 		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
- 		.pfn		= __phys_to_pfn(EXYNOS5_PA_WATCHDOG),
- 		.length		= SZ_4K,
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index cc190b9..fa1b565 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -48,6 +48,20 @@
- #define EXYNOS5260_PA_SYS_DISP				0x14540000
- #define EXYNOS5260_PA_SYS_AUD				0x128F0000
- 
-+#define EXYNOS5260_PA_CMU_TOP                          0x10010000
-+#define EXYNOS5260_PA_CMU_PERI                         0x10200000
-+#define EXYNOS5260_PA_CMU_EGL                          0x10600000
-+#define EXYNOS5260_PA_CMU_KFC                          0x10700000
-+#define EXYNOS5260_PA_CMU_G2D                          0x10A00000
-+#define EXYNOS5260_PA_CMU_MIF                          0x10CE0000
-+#define EXYNOS5260_PA_CMU_MFC                          0x11090000
-+#define EXYNOS5260_PA_CMU_G3D                          0x11830000
-+#define EXYNOS5260_PA_CMU_FSYS                         0x122E0000
-+#define EXYNOS5260_PA_CMU_AUD                          0x128C0000
-+#define EXYNOS5260_PA_CMU_ISP                          0x133C0000
-+#define EXYNOS5260_PA_CMU_GSCL                         0x13F00000
-+#define EXYNOS5260_PA_CMU_DISP                         0x14550000
-+
- #define EXYNOS_PA_CHIPID		0x10000000
- 
- #define EXYNOS4_PA_SYSCON		0x10010000
-diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
-index d36ad76..1c568d0 100644
---- a/arch/arm/mach-exynos/include/mach/regs-clock.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
-@@ -365,6 +365,23 @@
- 
- /* Compatibility defines and inclusion */
- 
-+
-+/* For EXYNOS5260 */
-+#define EXYNOS_CLKREG_TOP(x)                    (EXYNOS5260_VA_CMU_TOP + (x))
-+#define EXYNOS_CLKREG_PERI(x)                   (EXYNOS5260_VA_CMU_PERI + (x))
-+#define EXYNOS_CLKREG_EGL(x)                    (EXYNOS5260_VA_CMU_EGL + (x))
-+#define EXYNOS_CLKREG_KFC(x)                    (EXYNOS5260_VA_CMU_KFC + (x))
-+#define EXYNOS_CLKREG_G2D(x)                    (EXYNOS5260_VA_CMU_G2D + (x))
-+#define EXYNOS_CLKREG_MIF(x)                    (EXYNOS5260_VA_CMU_MIF + (x))
-+#define EXYNOS_CLKREG_MFC(x)                    (EXYNOS5260_VA_CMU_MFC + (x))
-+#define EXYNOS_CLKREG_G3D(x)                    (EXYNOS5260_VA_CMU_G3D + (x))
-+#define EXYNOS_CLKREG_FSYS(x)                   (EXYNOS5260_VA_CMU_FSYS + (x))
-+#define EXYNOS_CLKREG_AUD(x)                    (EXYNOS5260_VA_CMU_AUD + (x))
-+#define EXYNOS_CLKREG_ISP(x)                    (EXYNOS5260_VA_CMU_ISP + (x))
-+#define EXYNOS_CLKREG_GSCL(x)                   (EXYNOS5260_VA_CMU_GSCL + (x))
-+#define EXYNOS_CLKREG_DISP(x)                   (EXYNOS5260_VA_CMU_DISP + (x))
-+
-+
- #include <mach/regs-pmu.h>
- 
- #define S5P_EPLL_CON				EXYNOS4_EPLL_CON0
-diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
-index c2d7fcf..32966c8 100644
---- a/arch/arm/plat-samsung/include/plat/map-s5p.h
-+++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
-@@ -72,6 +72,22 @@
- #define EXYNOS5260_VA_SYS_GSCL          S3C_ADDR(0x02870000)
- #define EXYNOS5260_VA_SYS_DISP          S3C_ADDR(0x02874000)
- 
-+
-+#define EXYNOS5260_VA_CMU_TOP           (S5P_VA_CMU + (SZ_4K * 1))
-+#define EXYNOS5260_VA_CMU_PERI          (S5P_VA_CMU + (SZ_4K * 2))
-+#define EXYNOS5260_VA_CMU_EGL           (S5P_VA_CMU + (SZ_4K * 3))
-+#define EXYNOS5260_VA_CMU_KFC           (S5P_VA_CMU + (SZ_4K * 5))
-+#define EXYNOS5260_VA_CMU_G2D           (S5P_VA_CMU + (SZ_4K * 7))
-+#define EXYNOS5260_VA_CMU_MIF           (S5P_VA_CMU + (SZ_4K * 8))
-+#define EXYNOS5260_VA_CMU_MFC           (S5P_VA_CMU + (SZ_4K * 10))
-+#define EXYNOS5260_VA_CMU_G3D           (S5P_VA_CMU + (SZ_4K * 11))
-+#define EXYNOS5260_VA_CMU_FSYS          (S5P_VA_CMU + (SZ_4K * 13))
-+#define EXYNOS5260_VA_CMU_AUD           (S5P_VA_CMU + (SZ_4K * 14))
-+#define EXYNOS5260_VA_CMU_ISP           (S5P_VA_CMU + (SZ_4K * 15))
-+#define EXYNOS5260_VA_CMU_GSCL          (S5P_VA_CMU + (SZ_4K * 17))
-+#define EXYNOS5260_VA_CMU_DISP          (S5P_VA_CMU + (SZ_4K * 18))
-+
-+
- #include <plat/map-s3c.h>
- 
- #endif /* __ASM_PLAT_MAP_S5P_H */
--- 
-1.7.12.4
+IMHO you can also move the spinlock into samsung_clk_provider struct, to
+have more fine grained locking, as you shouldn't need to lock between
+particular providers, just multiple requests for one.
+
+> -static struct clk **clk_table;
+> -static void __iomem *reg_base;
+> -#ifdef CONFIG_OF
+> -static struct clk_onecell_data clk_data;
+> -#endif
+>  
+>  void samsung_clk_save(void __iomem *base,
+>  				    struct samsung_clk_reg_dump *rd,
+> @@ -55,40 +50,53 @@ struct samsung_clk_reg_dump *samsung_clk_alloc_reg_dump(
+>  }
+>  
+>  /* setup the essentials required to support clock lookup using ccf */
+> -void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+> -			     unsigned long nr_clks)
+> +struct samsung_clk_provider *__init samsung_clk_init(struct device_node *np,
+> +			void __iomem *base, unsigned long nr_clks)
+>  {
+> -	reg_base = base;
+> +	struct samsung_clk_provider *ctx;
+> +	struct clk **clk_table;
+> +	int ret;
+> +
+> +	if (!np)
+> +		return NULL;
+
+This check is incorrect. It's completely correct to call this function
+with NULL np, when booted without DT and this was handled correctly
+before this patch. Please keep the same behavior.
+
+> +
+> +	ctx = kzalloc(sizeof(struct samsung_clk_provider), GFP_KERNEL);
+> +	if (!ctx)
+> +		panic("could not allocate clock provider context.\n");
+>  
+>  	clk_table = kzalloc(sizeof(struct clk *) * nr_clks, GFP_KERNEL);
+>  	if (!clk_table)
+>  		panic("could not allocate clock lookup table\n");
+>  
+> -	if (!np)
+> -		return;
+> +	ctx->reg_base = base;
+> +	ctx->clk_data.clks = clk_table;
+> +	ctx->clk_data.clk_num = nr_clks;
+>  
+> -#ifdef CONFIG_OF
+> -	clk_data.clks = clk_table;
+> -	clk_data.clk_num = nr_clks;
+> -	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
+> -#endif
+> +	ret = of_clk_add_provider(np, of_clk_src_onecell_get,
+> +			&ctx->clk_data);
+> +	if (ret)
+> +		panic("could not register clock provide\n");
+> +
+> +	return ctx;
+>  }
+[snip]
+> diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+> index c7141ba..433bab3 100644
+> --- a/drivers/clk/samsung/clk.h
+> +++ b/drivers/clk/samsung/clk.h
+> @@ -21,6 +21,17 @@
+>  #include <linux/of_address.h>
+>  #include "clk-pll.h"
+>  
+> +/* Context node which holds information about the clock provider. */
+> +/**
+> + * struct samsung_clk_provider: information about clock plovider
+
+typo: s/plovider/provider/
+
+> + * @reg_base: virtual address for the register base.
+> + * @clk_data: holds clock related data like clk* and number of clocks.
+> + */
+
+Why two comments? The kerneldoc one should be enough.
+
+> +struct samsung_clk_provider {
+> +	void __iomem *reg_base;
+> +	struct clk_onecell_data clk_data;
+> +};
+> +
+>  /**
+>   * struct samsung_clock_alias: information about mux clock
+>   * @id: platform specific id of the clock.
+> @@ -312,29 +323,40 @@ struct samsung_pll_clock {
+>  	__PLL(_typ, _id, NULL, _name, _pname, CLK_GET_RATE_NOCACHE,	\
+>  		_lock, _con, _rtable, _alias)
+>  
+> -extern void __init samsung_clk_init(struct device_node *np, void __iomem *base,
+> -				    unsigned long nr_clks);
+> +extern struct samsung_clk_provider *__init samsung_clk_init(
+> +			struct device_node *np, void __iomem *base,
+> +			unsigned long nr_clks);
+>  extern void __init samsung_clk_of_register_fixed_ext(
+> +		struct samsung_clk_provider *ctx,
+>  		struct samsung_fixed_rate_clock *fixed_rate_clk,
+>  		unsigned int nr_fixed_rate_clk,
+>  		struct of_device_id *clk_matches);
+>  
+> -extern void samsung_clk_add_lookup(struct clk *clk, unsigned int id);
+> +extern void samsung_clk_add_lookup(struct samsung_clk_provider *ctx,
+> +			struct clk *clk, unsigned int id);
+>  
+> -extern void samsung_clk_register_alias(struct samsung_clock_alias *list,
+> -		unsigned int nr_clk);
+> +extern void samsung_clk_register_alias(struct samsung_clk_provider *ctx,
+> +			struct samsung_clock_alias *list,
+> +			unsigned int nr_clk);
+>  extern void __init samsung_clk_register_fixed_rate(
+> -		struct samsung_fixed_rate_clock *clk_list, unsigned int nr_clk);
+> +			struct samsung_clk_provider *ctx,
+> +			struct samsung_fixed_rate_clock *clk_list,
+> +			unsigned int nr_clk);
+>  extern void __init samsung_clk_register_fixed_factor(
+> -		struct samsung_fixed_factor_clock *list, unsigned int nr_clk);
+> -extern void __init samsung_clk_register_mux(struct samsung_mux_clock *clk_list,
+> +			struct samsung_clk_provider *ctx,
+> +			struct samsung_fixed_factor_clock *list,
+> +			unsigned int nr_clk);
+> +extern void __init samsung_clk_register_mux(struct samsung_clk_provider *ctx,
+> +		struct samsung_mux_clock *clk_list,
+>  		unsigned int nr_clk);
+> -extern void __init samsung_clk_register_div(struct samsung_div_clock *clk_list,
+> +extern void __init samsung_clk_register_div(struct samsung_clk_provider *ctx,
+> +		struct samsung_div_clock *clk_list,
+>  		unsigned int nr_clk);
+> -extern void __init samsung_clk_register_gate(
+> +extern void __init samsung_clk_register_gate(struct samsung_clk_provider *ctx,
+>  		struct samsung_gate_clock *clk_list, unsigned int nr_clk);
+> -extern void __init samsung_clk_register_pll(struct samsung_pll_clock *pll_list,
+> -		unsigned int nr_clk, void __iomem *base);
+> +extern void __init samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+> +			struct samsung_pll_clock *pll_list,
+> +			unsigned int nr_clk, void __iomem *base);
+>  
+>  extern unsigned long _get_rate(const char *clk_name);
+>  
+
+nit: Please keep the indentation consistent in all the function prototypes
+above.
+
+Best regards,
+Tomasz
