@@ -1,62 +1,39 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 0/5] Power Related Fixes for Exynos5250
-Date: Wed, 11 Dec 2013 13:41:48 +0100
-Message-ID: <1474895.cu1U1Gy5We@amdc1227>
-References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
+From: Matt Porter <matt.porter@linaro.org>
+Subject: Re: [PATCH v4 5/9] usb: s3c-hsotg: Use the new Exynos USB phy driver
+ with the generic phy framework
+Date: Wed, 11 Dec 2013 10:15:56 -0500
+Message-ID: <20131211151556.GB6279@beef>
+References: <1386246579-25141-1-git-send-email-k.debski@samsung.com>
+ <1386246579-25141-6-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: yadi.brar@samsung.com, kgene.kim@samsung.com, mturquette@linaro.org, devicetree-discuss@lists.ozlabs.org, jonghwa3.lee@samsung.com, dianders@chromium.org, linux-samsung-soc@vger.kernel.org, olof@lixom.net, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:40437 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751036Ab3LKPQC (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Dec 2013 10:16:02 -0500
+Received: by mail-ie0-f181.google.com with SMTP id e14so11238107iej.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 07:16:00 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1386246579-25141-6-git-send-email-k.debski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kamil Debski <k.debski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, kyungmin.park@samsung.com, kishon@ti.com, t.figa@samsung.com, s.nawrocki@samsung.com, m.szyprowski@samsung.com, gautam.vivek@samsung.com, mat.krawczuk@gmail.com, yulgon.kim@samsung.com, p.paneri@samsung.com, av.tikhomirov@samsung.com, jg1.han@samsung.com, galak@codeaurora.org
 
-Hi Abhilash,
-
-On Wednesday 11 of December 2013 17:27:04 Abhilash Kesavan wrote:
-> Patch 1 prevents the gating of sysreg clock on Exynos5250.
-> Patch 2 is a re-send of an earlier patch.
-> (http://www.spinics.net/lists/linux-samsung-soc/msg15485.html)
-> Patches 3 and 4 are fixes for MAX77686 on Exynos5250 based Snow
-> board (boot-up issues).
-> Patch 5 implements a power-off call-back for Exynos5250 that can
-> be re-used for Exynos5420.
+On Thu, Dec 05, 2013 at 01:29:35PM +0100, Kamil Debski wrote:
+> Change the used phy driver to the new Exynos USB phy driver that uses the
+> generic phy framework.
 > 
-> The patches have been tested on an SMDK5250 based Chromebook.
-> 
-> Abhilash Kesavan (4):
->   clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for the sysreg
->     clock
->   ARM: EXYNOS5: Fix PMU register configuration for local power blocks
->   clk: max77686: Replace is_enabled() with is_prepared call-back
->   ARM: dts: Setup the interrupt parent for max77686
-> 
-> Olof Johansson (1):
->   ARM: EXYNOS5250: Implement pm_power_off
-> 
->  arch/arm/boot/dts/cros5250-common.dtsi       |   11 ++++
->  arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
->  arch/arm/mach-exynos/pmu.c                   |   86 ++++++++++++++++++++------
->  drivers/clk/clk-max77686.c                   |    4 +-
->  drivers/clk/samsung/clk-exynos5250.c         |    3 +-
->  5 files changed, 86 insertions(+), 21 deletions(-)
+> Signed-off-by: Kamil Debski <k.debski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  .../devicetree/bindings/usb/samsung-hsotg.txt      |    4 ++++
+>  drivers/usb/gadget/s3c-hsotg.c                     |   11 ++++++-----
+>  2 files changed, 10 insertions(+), 5 deletions(-)
 
-You used the old and now invalid address of DT mailing list.
+This is only applying with fuzz against -rc3, needs an update. It's
+otherwise still working fine on my BCM Capri board.
 
-Anyway, there is no need to send patches for .dts* files to DT mailing
-list anymore. Just changes in drivers that affect how they handle data
-from DT and binding documentation (Documentation/devicetree/.*). So
-please drop the DT mailing list in next iteration of the series.
-
-Best regards,
-Tomasz
+-Matt
