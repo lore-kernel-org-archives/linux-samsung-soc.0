@@ -1,269 +1,200 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH] ARM: EXYNOS5: Add PMU settings for exynos5420
-Date: Wed, 11 Dec 2013 17:29:53 +0530
-Message-ID: <1386763193-8573-1-git-send-email-a.kesavan@samsung.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
+ exynos5420 dtsi files
+Date: Wed, 11 Dec 2013 21:22:45 +0900
+Message-ID: <CAL1wa8fTuOMk9=G3JhdpNOE8=FPTfMSJ_mB-7jo1pNF1cAavgg@mail.gmail.com>
+References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
+ <1386308868-30264-2-git-send-email-l.krishna@samsung.com> <52A207D8.3030206@gmail.com>
+ <8302228.6iSJIFqj3A@flatron> <52A39F3B.5070806@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:59950 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751552Ab3LKL6y (ORCPT
+Received: from mail-wg0-f50.google.com ([74.125.82.50]:33996 "EHLO
+	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751058Ab3LKMXH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 06:58:54 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXN00J475A5D530@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Dec 2013 20:58:53 +0900 (KST)
+	Wed, 11 Dec 2013 07:23:07 -0500
+In-Reply-To: <52A39F3B.5070806@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
 
-Add intial PMU settings for exynos5420. This is required for
-future S2R and Switching support.
+Hi,
 
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- arch/arm/mach-exynos/include/mach/regs-pmu.h |   82 ++++++++++++++++++++
- arch/arm/mach-exynos/pmu.c                   |  106 ++++++++++++++++++++++++++
- 2 files changed, 188 insertions(+)
+As I was in travel not accessed my mails.
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-index 2cdb63e..d5d5386 100644
---- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-@@ -53,6 +53,8 @@
- #define S5P_INFORM6				S5P_PMUREG(0x0818)
- #define S5P_INFORM7				S5P_PMUREG(0x081C)
- 
-+#define S5P_PMU_SPARE3				S5P_PMUREG(0x090C)
-+
- #define S5P_ARM_CORE0_LOWPWR			S5P_PMUREG(0x1000)
- #define S5P_DIS_IRQ_CORE0			S5P_PMUREG(0x1004)
- #define S5P_DIS_IRQ_CENTRAL0			S5P_PMUREG(0x1008)
-@@ -365,4 +367,84 @@
- 
- #define EXYNOS5_OPTION_USE_RETENTION				(1 << 4)
- 
-+/* Only for EXYNOS5420 */
-+#define EXYNOS5420_LPI_MASK					S5P_PMUREG(0x0004)
-+#define EXYNOS5420_LPI_MASK1					S5P_PMUREG(0x0008)
-+#define EXYNOS5420_ARM_INTR_SPREAD_ENABLE			S5P_PMUREG(0x0100)
-+#define EXYNOS5420_ARM_INTR_SPREAD_USE_STANDBYWFI		S5P_PMUREG(0x0104)
-+#define EXYNOS5420_UP_SCHEDULER					S5P_PMUREG(0x0120)
-+#define EXYNOS5420_CMU_CLKSTOP_DISP1_SYS_PWR_REG		S5P_PMUREG(0x1490)
-+#define EXYNOS5420_CMU_CLKSTOP_MAU_SYS_PWR_REG			S5P_PMUREG(0x1494)
-+#define EXYNOS5420_CMU_CLKSTOP_G2D_SYS_PWR_REG			S5P_PMUREG(0x1498)
-+#define EXYNOS5420_CMU_CLKSTOP_MSC_SYS_PWR_REG			S5P_PMUREG(0x149C)
-+#define EXYNOS5420_CMU_CLKSTOP_FSYS_SYS_PWR_REG			S5P_PMUREG(0x14A0)
-+#define EXYNOS5420_CMU_CLKSTOP_FSYS2_SYS_PWR_REG		S5P_PMUREG(0x14A4)
-+#define EXYNOS5420_CMU_CLKSTOP_PSGEN_SYS_PWR_REG		S5P_PMUREG(0x14A8)
-+#define EXYNOS5420_CMU_CLKSTOP_PERIC_SYS_PWR_REG		S5P_PMUREG(0x14AC)
-+#define EXYNOS5420_CMU_CLKSTOP_WCORE_SYS_PWR_REG		S5P_PMUREG(0x14B0)
-+#define EXYNOS5420_CMU_SYSCLK_TOPPWR_SYS_PWR_REG		S5P_PMUREG(0x14BC)
-+#define EXYNOS5420_CMU_SYSCLK_DISP1_SYS_PWR_REG			S5P_PMUREG(0x14D0)
-+#define EXYNOS5420_CMU_SYSCLK_MAU_SYS_PWR_REG			S5P_PMUREG(0x14D4)
-+#define EXYNOS5420_CMU_SYSCLK_G2D_SYS_PWR_REG			S5P_PMUREG(0x14D8)
-+#define EXYNOS5420_CMU_SYSCLK_MSC_SYS_PWR_REG			S5P_PMUREG(0x14DC)
-+#define EXYNOS5420_CMU_SYSCLK_FSYS_SYS_PWR_REG			S5P_PMUREG(0x14E0)
-+#define EXYNOS5420_CMU_SYSCLK_FSYS2_SYS_PWR_REG			S5P_PMUREG(0x14E4)
-+#define EXYNOS5420_CMU_SYSCLK_PSGEN_SYS_PWR_REG			S5P_PMUREG(0x14E8)
-+#define EXYNOS5420_CMU_SYSCLK_PERIC_SYS_PWR_REG			S5P_PMUREG(0x14EC)
-+#define EXYNOS5420_CMU_SYSCLK_WCORE_SYS_PWR_REG			S5P_PMUREG(0x14F0)
-+#define EXYNOS5420_CMU_SYSCLK_SYSMEM_TOPPWR_SYS_PWR_REG		S5P_PMUREG(0x14F4)
-+#define EXYNOS5420_CMU_RESET_FSYS2_SYS_PWR_REG			S5P_PMUREG(0x1570)
-+#define EXYNOS5420_CMU_RESET_PSGEN_SYS_PWR_REG			S5P_PMUREG(0x1574)
-+#define EXYNOS5420_CMU_RESET_PERIC_SYS_PWR_REG			S5P_PMUREG(0x1578)
-+#define EXYNOS5420_CMU_RESET_WCORE_SYS_PWR_REG			S5P_PMUREG(0x157C)
-+#define EXYNOS5420_CMU_RESET_DISP1_SYS_PWR_REG			S5P_PMUREG(0x1590)
-+#define EXYNOS5420_CMU_RESET_MAU_SYS_PWR_REG			S5P_PMUREG(0x1594)
-+#define EXYNOS5420_CMU_RESET_G2D_SYS_PWR_REG			S5P_PMUREG(0x1598)
-+#define EXYNOS5420_CMU_RESET_MSC_SYS_PWR_REG			S5P_PMUREG(0x159C)
-+#define EXYNOS5420_CMU_RESET_FSYS_SYS_PWR_REG			S5P_PMUREG(0x15A0)
-+#define EXYNOS5420_ARM_COMMON_STATUS				S5P_PMUREG(0x2504)
-+#define EXYNOS5420_ARM_COMMON_OPTION				S5P_PMUREG(0x2508)
-+#define EXYNOS5420_KFC_COMMON_STATUS				S5P_PMUREG(0x2584)
-+#define EXYNOS5420_KFC_COMMON_OPTION				S5P_PMUREG(0x2588)
-+#define EXYNOS5420_ARM_L2_OPTION				S5P_PMUREG(0x2608)
-+#define EXYNOS5420_KFC_L2_OPTION				S5P_PMUREG(0x2688)
-+#define EXYNOS5420_LOGIC_RESET_DURATION3			S5P_PMUREG(0x2D1C)
-+
-+#define EXYNOS5_XXTI_DURATION3					S5P_PMUREG(0x343C)
-+
-+/* For EXYNOS_CENTRAL_SEQ_OPTION */
-+#define EXYNOS5420_ARM_USE_STANDBY_WFI0				(1 << 4)
-+#define EXYNOS5420_ARM_USE_STANDBY_WFI1				(1 << 5)
-+#define EXYNOS5420_ARM_USE_STANDBY_WFI2				(1 << 6)
-+#define EXYNOS5420_ARM_USE_STANDBY_WFI3				(1 << 7)
-+#define EXYNOS5420_KFC_USE_STANDBY_WFI0				(1 << 8)
-+#define EXYNOS5420_KFC_USE_STANDBY_WFI1				(1 << 9)
-+#define EXYNOS5420_KFC_USE_STANDBY_WFI2				(1 << 10)
-+#define EXYNOS5420_KFC_USE_STANDBY_WFI3				(1 << 11)
-+#define EXYNOS5420_ARM_USE_STANDBY_WFE0				(1 << 16)
-+#define EXYNOS5420_ARM_USE_STANDBY_WFE1				(1 << 17)
-+#define EXYNOS5420_ARM_USE_STANDBY_WFE2				(1 << 18)
-+#define EXYNOS5420_ARM_USE_STANDBY_WFE3				(1 << 19)
-+#define EXYNOS5420_KFC_USE_STANDBY_WFE0				(1 << 20)
-+#define EXYNOS5420_KFC_USE_STANDBY_WFE1				(1 << 21)
-+#define EXYNOS5420_KFC_USE_STANDBY_WFE2				(1 << 22)
-+#define EXYNOS5420_KFC_USE_STANDBY_WFE3				(1 << 23)
-+
-+#define EXYNOS5420_USE_STANDBY_WFI_ALL				(EXYNOS5420_ARM_USE_STANDBY_WFI0   \
-+								| EXYNOS5420_ARM_USE_STANDBY_WFI1  \
-+								| EXYNOS5420_ARM_USE_STANDBY_WFI2  \
-+								| EXYNOS5420_ARM_USE_STANDBY_WFI3  \
-+								| EXYNOS5420_KFC_USE_STANDBY_WFI0  \
-+								| EXYNOS5420_KFC_USE_STANDBY_WFI1  \
-+								| EXYNOS5420_KFC_USE_STANDBY_WFI2  \
-+								| EXYNOS5420_KFC_USE_STANDBY_WFI3)
-+
-+#define EXYNOS5420_ATB_KFC					(1 << 13)
-+#define EXYNOS5420_ATB_ISP_ARM					(1 << 19)
-+
-+#define DUR_WAIT_RESET						0xF
-+#define SPREAD_ENABLE						0xF
-+#define SPREAD_USE_STANDWFI					0xF
-+#define EXYNOS5420_SWRESET_KFC_SEL				0x3
-+
- #endif /* __ASM_ARCH_REGS_PMU_H */
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 97d6885..2dd21bc 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -14,6 +14,7 @@
- #include <linux/bug.h>
- 
- #include <mach/regs-clock.h>
-+#include <mach/regs-pmu.h>
- 
- #include "common.h"
- 
-@@ -337,6 +338,46 @@ static void __iomem *exynos5_list_diable_wfi_wfe[] = {
- 	EXYNOS5_ISP_ARM_OPTION,
- };
- 
-+void __iomem *exynos5420_list_disable_pmu_reg[] = {
-+	EXYNOS5_CMU_CLKSTOP_GSCL_SYS_PWR_REG,
-+	EXYNOS5_CMU_CLKSTOP_ISP_SYS_PWR_REG,
-+	EXYNOS5_CMU_CLKSTOP_MFC_SYS_PWR_REG,
-+	EXYNOS5_CMU_CLKSTOP_G3D_SYS_PWR_REG,
-+	EXYNOS5420_CMU_CLKSTOP_DISP1_SYS_PWR_REG,
-+	EXYNOS5420_CMU_CLKSTOP_MAU_SYS_PWR_REG,
-+	EXYNOS5420_CMU_CLKSTOP_G2D_SYS_PWR_REG,
-+	EXYNOS5420_CMU_CLKSTOP_MSC_SYS_PWR_REG,
-+	EXYNOS5420_CMU_CLKSTOP_FSYS_SYS_PWR_REG,
-+	EXYNOS5420_CMU_CLKSTOP_PSGEN_SYS_PWR_REG,
-+	EXYNOS5420_CMU_CLKSTOP_PERIC_SYS_PWR_REG,
-+	EXYNOS5420_CMU_CLKSTOP_WCORE_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_GSCL_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_ISP_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_MFC_SYS_PWR_REG,
-+	EXYNOS5_CMU_SYSCLK_G3D_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_DISP1_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_MAU_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_G2D_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_MSC_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_FSYS_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_FSYS2_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_PSGEN_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_PERIC_SYS_PWR_REG,
-+	EXYNOS5420_CMU_SYSCLK_WCORE_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_FSYS2_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_PSGEN_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_PERIC_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_WCORE_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_GSCL_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_ISP_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_MFC_SYS_PWR_REG,
-+	EXYNOS5_CMU_RESET_G3D_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_DISP1_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_MAU_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_G2D_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_MSC_SYS_PWR_REG,
-+	EXYNOS5420_CMU_RESET_FSYS_SYS_PWR_REG,
-+};
- static void exynos5_init_pmu(void)
- {
- 	unsigned int i;
-@@ -391,6 +432,7 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
- static int __init exynos_pmu_init(void)
- {
- 	unsigned int value;
-+	unsigned int i;
- 
- 	exynos_pmu_config = exynos4210_pmu_config;
- 
-@@ -415,6 +457,70 @@ static int __init exynos_pmu_init(void)
- 
- 		exynos_pmu_config = exynos5250_pmu_config;
- 		pr_info("EXYNOS5250 PMU Initialize\n");
-+	} else if (soc_is_exynos5420()) {
-+		/*
-+		 * Set the CMU_RESET, CMU_SYSCLK and CMU_CLKSTOP registers
-+		 * for local power blocks to Low initially as per Table 8-4:
-+		 * "System-Level Power-Down Configuration Registers".
-+		 */
-+		for (i = 0; i < ARRAY_SIZE(exynos5420_list_disable_pmu_reg); i++)
-+			__raw_writel(0x0, exynos5420_list_disable_pmu_reg[i]);
-+
-+		/* Time taken to stabilized XXTI clock */
-+		__raw_writel(0x005dc, EXYNOS5_XXTI_DURATION3);
-+
-+		/* Enable USE_STANDBY_WFI for all CORE */
-+		__raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
-+				S5P_CENTRAL_SEQ_OPTION);
-+
-+		value = __raw_readl(EXYNOS5420_ARM_L2_OPTION);
-+		value &= ~EXYNOS5_OPTION_USE_RETENTION;
-+		__raw_writel(value, EXYNOS5420_ARM_L2_OPTION);
-+
-+		value = __raw_readl(EXYNOS5420_KFC_L2_OPTION);
-+		value &= ~EXYNOS5_OPTION_USE_RETENTION;
-+		__raw_writel(value, EXYNOS5420_KFC_L2_OPTION);
-+
-+		/*
-+		 * If L2_COMMON is turned off, clocks related to ATB async
-+		 * bridge are gated. Thus, when ISP power is gated, LPI
-+		 * may get stuck.
-+		 */
-+		value = __raw_readl(EXYNOS5420_LPI_MASK);
-+		value |= EXYNOS5420_ATB_ISP_ARM;
-+		__raw_writel(value, EXYNOS5420_LPI_MASK);
-+		value = __raw_readl(EXYNOS5420_LPI_MASK1);
-+		value |= EXYNOS5420_ATB_KFC;
-+		__raw_writel(value, EXYNOS5420_LPI_MASK1);
-+
-+		/* Prevent issue of new bus request from L2 memory */
-+		value = __raw_readl(EXYNOS5420_ARM_COMMON_OPTION);
-+		value |= EXYNOS5_SKIP_DEACTIVATE_ACEACP_IN_PWDN;
-+		value &= ~EXYNOS5_USE_SC_COUNTER;
-+		value |= EXYNOS5_USE_SC_FEEDBACK;
-+		__raw_writel(value, EXYNOS5420_ARM_COMMON_OPTION);
-+
-+		value = __raw_readl(EXYNOS5420_KFC_COMMON_OPTION);
-+		value |= EXYNOS5_SKIP_DEACTIVATE_ACEACP_IN_PWDN;
-+		value &= ~EXYNOS5_USE_SC_COUNTER;
-+		value |= EXYNOS5_USE_SC_FEEDBACK;
-+		__raw_writel(value, EXYNOS5420_KFC_COMMON_OPTION);
-+
-+		/* Increase stability of KFC Reset */
-+		__raw_writel(EXYNOS5420_SWRESET_KFC_SEL, S5P_PMU_SPARE3);
-+
-+		/*
-+		 * This setting is to reduce suspend/resume time.
-+		 */
-+		__raw_writel(DUR_WAIT_RESET, EXYNOS5420_LOGIC_RESET_DURATION3);
-+
-+		/* Serialized CPU wakeup of Eagle */
-+		__raw_writel(SPREAD_ENABLE, EXYNOS5420_ARM_INTR_SPREAD_ENABLE);
-+		__raw_writel(SPREAD_USE_STANDWFI,
-+			EXYNOS5420_ARM_INTR_SPREAD_USE_STANDBYWFI);
-+		__raw_writel(0x1, EXYNOS5420_UP_SCHEDULER);
-+
-+		pr_info("EXYNOS5420 PMU Initialized\n");
- 	} else {
- 		pr_info("EXYNOS: PMU not supported\n");
- 	}
--- 
-1.7.9.5
+I'll try to post next version of this series tomorrow addressing
+Sylwester's comments.
+
+Best Wishes,
+Leela Krishna.
+
+On Sun, Dec 8, 2013 at 7:20 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> Hi Tomasz,
+>
+>
+> On 12/07/2013 01:57 AM, Tomasz Figa wrote:
+>>
+>> On Friday 06 of December 2013 18:22:32 Sylwester Nawrocki wrote:
+>
+> [...]
+>
+>> I wouldn't really nitpick on such things, but if we end up needing another
+>> respin, here's what I think.
+>
+>
+> Yeah, I didn't really realize the iteration index for this series was
+> already
+> a 2 digit number and some people could have already gotten upset or
+> seriously
+> impatient. Started to regret I even bothered with posting any comments to
+> that.
+> :) Anyway, I didn't request any corrections, just pointed out what could be
+> improved. People are free to accept it or ignore as they see fit. And having
+> seen patch series that got merged after periods like 2.5 year V12 is not
+> something unusual anyway. :)
+>
+>
+>>> On 12/06/2013 06:47 AM, Leela Krishna Amudala wrote:
+>>>>
+>>>> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files
+>>>> to
+>>>
+>>>
+>>> s/pmusysreg/PMU sysreg ? Similarly I would capitalize it in the subject
+>>> line as well.
+>>
+>>
+>> Well, since this is supposed to be a human readable description, I would
+>> go even further and write "...device tree node of Power Management Unit
+>>   to...".
+>
+>
+> Agreed, it sounds better.
+>
+>
+>>>> handle PMU register accesses in a centralized way using syscon driver
+>>>>
+>>>> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
+>>>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
+>>>> Reviewed-by: Doug Anderson<dianders@chromium.org>
+>>>> Tested-by: Doug Anderson<dianders@chromium.org>
+>>>> ---
+>>>>    Documentation/devicetree/bindings/arm/samsung/pmu.txt |   15
+>>>> +++++++++++++++
+>>>>    arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
+>>>>    arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
+>>>>    3 files changed, 25 insertions(+)
+>>>>    create mode 100644
+>>>> Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>>>> b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>>>> new file mode 100644
+>>>> index 0000000..f1f1552
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
+>>>
+>>>
+>>> I might be easy to confuse this with ARM Performance Monitoring Unit.
+>>> So perhaps we should rename this file to, e.g. power-management-unit.txt
+>>> ?
+>>
+>>
+>> Considering location of this file, which is arm/samsung, I think this
+>> name is pretty much clear. ARM PMU is a generic thing, so it couldn't
+>> be placed here.
+>
+>
+> It's up to the patch author if they want to change it or not, I still think
+> it's better to not use short acronyms like this, if we can easily make it
+> unambiguous.
+>
+>
+>>>> @@ -0,0 +1,15 @@
+>>>> +SAMSUNG Exynos SoC series PMU Registers
+>>>
+>>>
+>>> s/PMU/Power Management Unit ?
+>>
+>>
+>> s/PMU Registers/Power Management Unit/
+>
+>
+> Yeah, that's more accurate.
+>
+>
+>>>> +Properties:
+>>>> + - compatible : should contain two values. First value must be one from
+>>>> following list:
+>>>> +                  - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
+>>>> +                  - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
+>>>
+>>>
+>>> s/./; ?
+>>>
+>>>> +               second value must be always "syscon".
+>>>
+>>>
+>>> It might be more safe to specify it as the last value, so something along
+>>> the lines of:
+>>>
+>>>         The last value should be "syscon".
+>>>
+>>>> +
+>>>> + - reg : offset and length of the register set.
+>>>> +
+>>>> +Example :
+>>>> +pmu_system_controller: system-controller@10040000 {
+>>>
+>>>
+>>> Might be more sensible to use 'power_management_unit' for the label.
+>>
+>>
+>> That's quite a lot of text for a label. pmu_syscon as in previous version
+>> of this patch would look more sensible to me.
+>
+>
+> I don't think it hurts to have this long labels, what I proposed is exactly
+> of same length as the original one. Anyway pmu_syscon sounds good to me too.
+>
+>
+>>>> +       compatible = "samsung,exynos5250-pmu", "syscon";
+>>>> +       reg =<0x10040000 0x5000>;
+>>>> +};
+>>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>>>> b/arch/arm/boot/dts/exynos5250.dtsi
+>>>> index b98ffc3..62f9e36 100644
+>>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>>>> @@ -163,6 +163,11 @@
+>>>>                 interrupts =<0 47 0>;
+>>>>         };
+>>>>
+>>>> +       pmu_system_controller: system-controller@10040000 {
+>>>
+>>>
+>>> s/pmu_system_controller/power_management_unit ? So it describes the
+>>> subsystem better in terms used in the SoCs User Manual ?
+>>
+>>
+>> See above.
+>
+>
+> I can't see anything wrong in such long labels, but this discussion is
+> really
+> just a bike-shedding, so let's end it right now not to risk annoying even
+> more
+> people! :)
+>
+> --
+> Regards,
+> Sylwester
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
