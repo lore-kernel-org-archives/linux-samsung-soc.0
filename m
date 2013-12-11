@@ -1,59 +1,79 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: Re: [PATCH RFC 1/4] phy: Add provision for tuning phy.
-Date: Wed, 11 Dec 2013 10:54:52 +0200
-Message-ID: <20131211085452.GE28456@xps8300>
-References: <1386672926-26885-1-git-send-email-gautam.vivek@samsung.com>
- <1386672926-26885-2-git-send-email-gautam.vivek@samsung.com>
- <20131210140142.GB28456@xps8300>
- <CAFp+6iENkrSUT=_iv+uZnVpDSGDQGOzF_oyZ6Dmzr8VcQfjztw@mail.gmail.com>
- <20131211080906.GC28456@xps8300>
- <CAFp+6iFHO6Nr1KRzNqsZpY29czmvTXqPaVbUz9JRdc8QmPziYQ@mail.gmail.com>
+From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH] phy: Add exynos-phy driver
+Date: Wed, 11 Dec 2013 15:24:19 +0530
+Message-ID: <52A8364B.5020204@ti.com>
+References: <1385558788-10880-1-git-send-email-t.stanislaws@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iFHO6Nr1KRzNqsZpY29czmvTXqPaVbUz9JRdc8QmPziYQ@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Kukjin Kim <kgene.kim@samsung.com>, kishon <kishon@ti.com>, Jingoo Han <jg1.han@samsung.com>, Julius Werner <jwerner@chromium.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1385558788-10880-1-git-send-email-t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi again,
+Hi,
 
-On Wed, Dec 11, 2013 at 02:02:43PM +0530, Vivek Gautam wrote:
-> On Wed, Dec 11, 2013 at 1:39 PM, Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> > On Wed, Dec 11, 2013 at 12:08:04PM +0530, Vivek Gautam wrote:
-> >> On Tue, Dec 10, 2013 at 7:31 PM, Heikki Krogerus
-> >> > I think "setup" instead of "tune" is much more clear and reusable.
-> >>
-> >> I think "setup" will look more like first time setting up the phy,
-> >> which is rather served by "init" callback.
-> >> This i thought would serve the purpose of over-riding certain PHY
-> >> parameters, which would not have been
-> >> possible at "init" time.
-> >> Please correct my thinking if i am unable to understand your point here.
-> >
-> > OK, sorry I was not clear on this. I'm thinking the same, that this is
-> > something that is called later, for example when the controller is
-> > ready. Some ULPI phys need to be initialized, but since the controller
-> > provides the interface, it's usually not possible during init time.
-> > This hook could be used in that case as well.
-> >
-> > All I'm saying is that "tune" is a poor expression. You will need to
-> > add a comment explaining what the hook does in any case, so you'll
-> > have something like "this is something that is called when the
-> > controller is ready" or something similar. That will make it clear
-> > what it's meant for.
+On Wednesday 27 November 2013 06:56 PM, Tomasz Stanislawski wrote:
+> Hello everyone,
+> The Samsung SoCs from Exynos family are enhanced with a bunch of switches
+> dedicated for IP blocks. Those switches are called PHYs in Exynos
+> specification. They are usually controlled by a single bit in a single
+> one-word-long register.
+
+So only enabling this switch is enough for the controller or some other actual
+PHY IP is needed along with this switch?
+
+However I'm not sure if the switch should be modelled as PHY as it is not a PHY
+in the real sense.
+
+Thanks
+Kishon
+
 > 
-> Ok, i think i should have kept a comment atleast :-(
-> I will add proper comments above, and as suggested in the mail by
-> Kishon, may be name it calibrate ?
-> What do you think ?
+> A IP driver has to control such a switch in an abstract manner.  Therefore,
+> such 'enablers' were implemented as clocks in older versions of Linux kernel.
+> With the dawn of PHY subsystems, PHYs become a natural way of exporting the
+> 'enabler' functionality to drivers.  However, there is an unexpected
+> consequence. Some of those 1-bit PHYs were implemented as separate drivers.
+> This means that one has to create a struct device, struct phy, its phy provider
+> and 100-150 lines of driver code to basically set one bit.
+> 
+> The DP phy driver is a good example:
+> https://lkml.org/lkml/2013/7/18/53
+> 
+> And simple-phy RFC (shares only driver code but not other resources):
+> https://lkml.org/lkml/2013/10/21/313
+> 
+> To avoid waste of resources I propose to create all such 1-bit phys from Exynos
+> SoC using a single device, driver and phy provider.
+> 
+> This patchset contains a proposed solution.
+> 
+> All comment are welcome.
+> 
+> Hopefully in future the functionality introduced by this patch may be merged
+> into a larger Power Management Unit (PMU) gluer driver.  On Samsusng SoC , the
+> PMU part contains a number of register barely linked to power management (like
+> clock gating, clock dividers, CPU resetting, etc.).  It may be tempting to
+> create a hybrid driver that export clocks/phys/etc that are controlled by PMU
+> unit.
+> 
+> Regards,
+> Tomasz Stanislawski
+> 
+> Tomasz Stanislawski (1):
+>   phy: Add exynos-phy driver
+> 
+>  drivers/phy/Kconfig      |    5 ++
+>  drivers/phy/Makefile     |    1 +
+>  drivers/phy/exynos-phy.c |  152 ++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 158 insertions(+)
+>  create mode 100644 drivers/phy/exynos-phy.c
+> 
 
-Sure, I'm fine with that.
-
-Thanks,
-
--- 
-heikki
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
