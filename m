@@ -1,102 +1,56 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
- host maintainers
-Date: Wed, 11 Dec 2013 11:43:21 -0700
-Message-ID: <20131211184321.GJ4699@google.com>
-References: <20131211183237.GI4699@google.com>
+From: Julius Werner <jwerner@chromium.org>
+Subject: Re: [PATCH] USB: core: Add warm reset while reset-resuming SuperSpeed HUBs
+Date: Wed, 11 Dec 2013 11:00:13 -0800
+Message-ID: <CAODwPW_ZUgHWymOF7Fzxh7sbhrvV0-g-pMXWQm=eSz2U8EBRtQ@mail.gmail.com>
+References: <CAGm_ybgC6Ca0qz6zJL0PkEUiyUi=Ct0L5t2GJOt9ZU-buP+wBQ@mail.gmail.com>
+	<Pine.LNX.4.44L0.1312111204220.1531-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f43.google.com ([209.85.213.43]:47692 "EHLO
-	mail-yh0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750911Ab3LKSn3 (ORCPT
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:46154 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750922Ab3LKTAP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 13:43:29 -0500
-Received: by mail-yh0-f43.google.com with SMTP id a41so5357577yho.30
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 10:43:29 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20131211183237.GI4699@google.com>
+	Wed, 11 Dec 2013 14:00:15 -0500
+Received: by mail-ob0-f176.google.com with SMTP id vb8so1899365obc.21
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 11:00:14 -0800 (PST)
+In-Reply-To: <Pine.LNX.4.44L0.1312111204220.1531-100000@iolanthe.rowland.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Thierry Reding <thierry.reding@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <weiyj.lk@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, Mohit Kumar <mohit.kumar@st.com>, Pratyush Anand <pratyush.anand@st.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Vikas Sajjan <vikas.sajjan@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Sarah Sharp <sarah.a.sharp@linux.intel.com>, Vincent Palatin <vpalatin@chromium.org>, Julius Werner <jwerner@chromium.org>, Lan Tianyu <tianyu.lan@intel.com>, burzalodowa@gmail.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Vivek Gautam <gautam.vivek@samsung.com>, Douglas Anderson <dianders@chromium.org>, Felipe Balbi <balbi@ti.com>, sunil joshi <joshi@samsung.com>
 
-[+cc Mohit]
+> I don't know what you mean by "fails".  The system goes to sleep and
+> then later on wakes up, doesn't it?
+>
+> Do you mean that the Jetflash device gets disconnected when the system
+> wakes up?  That's _supposed_ to happen under those circumstances.
+> When hub_activate() sees HUB_RESET_RESUME, all child devices get
+> disconnected except those where udev->persist_enabled is set.
 
-On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
-> If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+This patch was written in response to the same bug as my "usb: hub:
+Use correct reset for wedged USB3 devices that are NOTATTACHED"
+submission. My patch only helps when the port gets stuck in Compliance
+Mode, but Vikas reports that he can sometimes see it stuck in Polling
+or Recovery states as well.
 
-And I see Mohit's patch [1] to update the DesignWare entry:
+The underlying issue is a deadlock in the USB 3.0 link training state
+machine when the host controller is unilaterally reset on resume
+(without driving a reset on the bus). The host port starts out back in
+Rx.Detect without remembering anything about its previous state, but
+the device is still in U3. The host detects Rx terminations, moves to
+Polling and starts sending LFPS link training packets, but the device
+doesn't expect those and interprets them as link problems (moving to
+Recovery). What happens next seems to be device specific, but
+apparently the device can end up in SS.Inactive while the host port
+gets stuck in Polling or Recovery (or some kind of livelock between
+those).
 
-+PCIE DRIVER FOR SYNOPSIS DESIGNWARE CONTROLLER
-+M:	Mohit Kumar <mohit.kumar@st.com>
-+M:	Jingoo Han <jg1.han@samsung.com>
-+L:	linux-pci@vger.kernel.org
-+S:	Maintained
-+F:	drivers/pci/host/pcie-designware.c
-
-I can fold in that update too if Jingoo acks it.
-
-[1] http://patchwork.ozlabs.org/patch/299905/
-
-> MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
-> 
-> Add entries for PCI host controller drivers in drivers/pci/host/.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  MAINTAINERS |   31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8285ed4676b6..826c722d92ba 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6449,16 +6449,47 @@ F:	drivers/pci/
->  F:	include/linux/pci*
->  F:	arch/x86/pci/
->  
-> +PCI DRIVER FOR DESIGNWARE
-> +M:	Jingoo Han <jg1.han@samsung.com>
-> +L:	linux-pci@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/pci/host/*designware*
-> +
-> +PCI DRIVER FOR IMX6
-> +M:	Shawn Guo <shawn.guo@linaro.org>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	drivers/pci/host/*imx6*
-> +
-> +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
-> +M:	Jason Cooper <jason@lakedaemon.net>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +S:	Maintained
-> +F:	drivers/pci/host/*mvebu*
-> +
->  PCI DRIVER FOR NVIDIA TEGRA
->  M:	Thierry Reding <thierry.reding@gmail.com>
->  L:	linux-tegra@vger.kernel.org
-> +L:	linux-pci@vger.kernel.org
->  S:	Supported
->  F:	Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
->  F:	drivers/pci/host/pci-tegra.c
->  
-> +PCI DRIVER FOR RENESAS R-CAR
-> +M:	Simon Horman <horms@verge.net.au>
-> +M:	Magnus Damm <magnus.damm@gmail.com>
-> +L:	linux-pci@vger.kernel.org
-> +L:	linux-sh@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/pci/host/*rcar*
-> +
->  PCI DRIVER FOR SAMSUNG EXYNOS
->  M:	Jingoo Han <jg1.han@samsung.com>
->  L:	linux-pci@vger.kernel.org
-> +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
->  S:	Maintained
->  F:	drivers/pci/host/pci-exynos.c
->  
+This patch tries to warm reset all USB 3.0 ports on reset-resume
+(after xhci_reset() was called) that had devices connected to them
+before suspend. This seems to be the only way to ensure the devices'
+state machines get back to a well-defined state that the host can work
+with. I don't think this is a specific hardware bug, it's just an
+unfortunate design flaw that the USB 3.0 spec doesn't account for a
+root hub port being reset independently of its connected device. I
+think Sarah is correct that it could be limited to root hubs, though.
