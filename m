@@ -1,200 +1,72 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH V12 1/3] ARM: dts: Add pmu sysreg node to exynos5250 and
- exynos5420 dtsi files
-Date: Wed, 11 Dec 2013 21:22:45 +0900
-Message-ID: <CAL1wa8fTuOMk9=G3JhdpNOE8=FPTfMSJ_mB-7jo1pNF1cAavgg@mail.gmail.com>
-References: <1386308868-30264-1-git-send-email-l.krishna@samsung.com>
- <1386308868-30264-2-git-send-email-l.krishna@samsung.com> <52A207D8.3030206@gmail.com>
- <8302228.6iSJIFqj3A@flatron> <52A39F3B.5070806@gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 3/5] clk: max77686: Replace is_enabled() with is_prepared
+ call-back
+Date: Wed, 11 Dec 2013 13:24:32 +0100
+Message-ID: <20396343.nNtkmZyqTH@amdc1227>
+References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
+ <1386763029-8516-4-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:33996 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751058Ab3LKMXH (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:52700 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751058Ab3LKMYq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 07:23:07 -0500
-In-Reply-To: <52A39F3B.5070806@gmail.com>
+	Wed, 11 Dec 2013 07:24:46 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MXN00IYJ6H8TC50@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Dec 2013 12:24:44 +0000 (GMT)
+In-reply-to: <1386763029-8516-4-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, devicetree@vger.kernel.org, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Guenter Roeck <linux@roeck-us.net>
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: dianders@chromium.org, olof@lixom.net, kgene.kim@samsung.com, jonghwa3.lee@samsung.com, yadi.brar@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 
-Hi,
+Hi Abhilash,
 
-As I was in travel not accessed my mails.
+On Wednesday 11 of December 2013 17:27:07 Abhilash Kesavan wrote:
+> Following messages are observed when unused PMIC clocks are being
+> disabled during boot-up:
+> [ 2921.969560] BUG: scheduling while atomic: swapper/0/1/0x00000002
+> [ 2921.974080] Modules linked in:
+> [ 2921.977120] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.13.0-rc1-00018-g8465d57 #27
+> [ 2921.984772] [<c0013c80>] (unwind_backtrace+0x0/0xf8) from [<c00110cc>] (show_stack+0x10/0x14)
+> [ 2921.993269] [<c00110cc>] (show_stack+0x10/0x14) from [<c032c10c>] (dump_stack+0x64/0xa4)
+> [ 2922.001340] [<c032c10c>] (dump_stack+0x64/0xa4) from [<c0329b00>] (__schedule_bug+0x48/0x60)
+> [ 2922.009758] [<c0329b00>] (__schedule_bug+0x48/0x60) from [<c032d414>] (__schedule+0x468/0x504)
+> [ 2922.018351] [<c032d414>] (__schedule+0x468/0x504) from [<c032caac>] (schedule_timeout+0x114/0x19c)
+> [ 2922.027294] [<c032caac>] (schedule_timeout+0x114/0x19c) from [<c0255c00>] (s3c24xx_i2c_xfer+0x1cc/0x320)
+> [ 2922.036754] [<c0255c00>] (s3c24xx_i2c_xfer+0x1cc/0x320) from [<c0252e08>] (__i2c_transfer+0x44/0x7c)
+> [ 2922.045868] [<c0252e08>] (__i2c_transfer+0x44/0x7c) from [<c025416c>] (i2c_transfer+0x74/0x98)
+> [ 2922.054462] [<c025416c>] (i2c_transfer+0x74/0x98) from [<c021ed38>] (regmap_i2c_read+0x48/0x64)
+> [ 2922.063142] [<c021ed38>] (regmap_i2c_read+0x48/0x64) from [<c021b41c>] (_regmap_raw_read+0xa8/0xfc)
+> [ 2922.072168] [<c021b41c>] (_regmap_raw_read+0xa8/0xfc) from [<c021b780>] (_regmap_bus_read+0x28/0x48)
+> [ 2922.081281] [<c021b780>] (_regmap_bus_read+0x28/0x48) from [<c0219d30>] (_regmap_read+0x5c/0xc4)
+> [ 2922.090048] [<c0219d30>] (_regmap_read+0x5c/0xc4) from [<c0219ddc>] (regmap_read+0x44/0x5c)
+> [ 2922.098383] [<c0219ddc>] (regmap_read+0x44/0x5c) from [<c0290bdc>] (max77686_clk_is_enabled+0x20/0x3c)
+> [ 2922.107670] [<c0290bdc>] (max77686_clk_is_enabled+0x20/0x3c) from [<c028cfdc>] (clk_disable_unused_subtree+0x6c/0xa8)
+> [ 2922.118258] [<c028cfdc>] (clk_disable_unused_subtree+0x6c/0xa8) from [<c028dc90>] (clk_disable_unused+0x30/0xd8)
+> [ 2922.128414] [<c028dc90>] (clk_disable_unused+0x30/0xd8) from [<c00087a8>] (do_one_initcall+0x38/0x160)
+> 
+> Fix it by replacing is_enabled call-back with is_prepared as the i2c driver may
+> sleep during a transfer.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> ---
+>  drivers/clk/clk-max77686.c |    4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'll try to post next version of this series tomorrow addressing
-Sylwester's comments.
+This has been already fixed as a part of series I sent a while ago to
+fix max77686 clock driver. Unfortunately nobody seems to have applied
+it.
 
-Best Wishes,
-Leela Krishna.
+Please refer to following thread:
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/24153
 
-On Sun, Dec 8, 2013 at 7:20 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> Hi Tomasz,
->
->
-> On 12/07/2013 01:57 AM, Tomasz Figa wrote:
->>
->> On Friday 06 of December 2013 18:22:32 Sylwester Nawrocki wrote:
->
-> [...]
->
->> I wouldn't really nitpick on such things, but if we end up needing another
->> respin, here's what I think.
->
->
-> Yeah, I didn't really realize the iteration index for this series was
-> already
-> a 2 digit number and some people could have already gotten upset or
-> seriously
-> impatient. Started to regret I even bothered with posting any comments to
-> that.
-> :) Anyway, I didn't request any corrections, just pointed out what could be
-> improved. People are free to accept it or ignore as they see fit. And having
-> seen patch series that got merged after periods like 2.5 year V12 is not
-> something unusual anyway. :)
->
->
->>> On 12/06/2013 06:47 AM, Leela Krishna Amudala wrote:
->>>>
->>>> This patch adds pmusysreg node to exynos5250 and exynos5420 dtsi files
->>>> to
->>>
->>>
->>> s/pmusysreg/PMU sysreg ? Similarly I would capitalize it in the subject
->>> line as well.
->>
->>
->> Well, since this is supposed to be a human readable description, I would
->> go even further and write "...device tree node of Power Management Unit
->>   to...".
->
->
-> Agreed, it sounds better.
->
->
->>>> handle PMU register accesses in a centralized way using syscon driver
->>>>
->>>> Signed-off-by: Leela Krishna Amudala<l.krishna@samsung.com>
->>>> Reviewed-by: Tomasz Figa<t.figa@samsung.com>
->>>> Reviewed-by: Doug Anderson<dianders@chromium.org>
->>>> Tested-by: Doug Anderson<dianders@chromium.org>
->>>> ---
->>>>    Documentation/devicetree/bindings/arm/samsung/pmu.txt |   15
->>>> +++++++++++++++
->>>>    arch/arm/boot/dts/exynos5250.dtsi                     |    5 +++++
->>>>    arch/arm/boot/dts/exynos5420.dtsi                     |    5 +++++
->>>>    3 files changed, 25 insertions(+)
->>>>    create mode 100644
->>>> Documentation/devicetree/bindings/arm/samsung/pmu.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.txt
->>>> b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
->>>> new file mode 100644
->>>> index 0000000..f1f1552
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.txt
->>>
->>>
->>> I might be easy to confuse this with ARM Performance Monitoring Unit.
->>> So perhaps we should rename this file to, e.g. power-management-unit.txt
->>> ?
->>
->>
->> Considering location of this file, which is arm/samsung, I think this
->> name is pretty much clear. ARM PMU is a generic thing, so it couldn't
->> be placed here.
->
->
-> It's up to the patch author if they want to change it or not, I still think
-> it's better to not use short acronyms like this, if we can easily make it
-> unambiguous.
->
->
->>>> @@ -0,0 +1,15 @@
->>>> +SAMSUNG Exynos SoC series PMU Registers
->>>
->>>
->>> s/PMU/Power Management Unit ?
->>
->>
->> s/PMU Registers/Power Management Unit/
->
->
-> Yeah, that's more accurate.
->
->
->>>> +Properties:
->>>> + - compatible : should contain two values. First value must be one from
->>>> following list:
->>>> +                  - "samsung,exynos5250-pmu" - for Exynos5250 SoC,
->>>> +                  - "samsung,exynos5420-pmu" - for Exynos5420 SoC.
->>>
->>>
->>> s/./; ?
->>>
->>>> +               second value must be always "syscon".
->>>
->>>
->>> It might be more safe to specify it as the last value, so something along
->>> the lines of:
->>>
->>>         The last value should be "syscon".
->>>
->>>> +
->>>> + - reg : offset and length of the register set.
->>>> +
->>>> +Example :
->>>> +pmu_system_controller: system-controller@10040000 {
->>>
->>>
->>> Might be more sensible to use 'power_management_unit' for the label.
->>
->>
->> That's quite a lot of text for a label. pmu_syscon as in previous version
->> of this patch would look more sensible to me.
->
->
-> I don't think it hurts to have this long labels, what I proposed is exactly
-> of same length as the original one. Anyway pmu_syscon sounds good to me too.
->
->
->>>> +       compatible = "samsung,exynos5250-pmu", "syscon";
->>>> +       reg =<0x10040000 0x5000>;
->>>> +};
->>>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->>>> b/arch/arm/boot/dts/exynos5250.dtsi
->>>> index b98ffc3..62f9e36 100644
->>>> --- a/arch/arm/boot/dts/exynos5250.dtsi
->>>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->>>> @@ -163,6 +163,11 @@
->>>>                 interrupts =<0 47 0>;
->>>>         };
->>>>
->>>> +       pmu_system_controller: system-controller@10040000 {
->>>
->>>
->>> s/pmu_system_controller/power_management_unit ? So it describes the
->>> subsystem better in terms used in the SoCs User Manual ?
->>
->>
->> See above.
->
->
-> I can't see anything wrong in such long labels, but this discussion is
-> really
-> just a bike-shedding, so let's end it right now not to risk annoying even
-> more
-> people! :)
->
-> --
-> Regards,
-> Sylwester
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I plan to rebase and resent the series soon.
+
+Best regards,
+Tomasz
