@@ -1,111 +1,95 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] ARM: topology: Staticise non-exported symbols
-Date: Wed, 11 Dec 2013 07:48:54 +0900
-Message-ID: <001201cef5fa$00b90e40$022b2ac0$%han@samsung.com>
-References: <1386673649-15181-1-git-send-email-broonie@kernel.org>
- <1386673649-15181-2-git-send-email-broonie@kernel.org>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH RFC 1/4] phy: Add provision for tuning phy.
+Date: Wed, 11 Dec 2013 12:08:04 +0530
+Message-ID: <CAFp+6iENkrSUT=_iv+uZnVpDSGDQGOzF_oyZ6Dmzr8VcQfjztw@mail.gmail.com>
+References: <1386672926-26885-1-git-send-email-gautam.vivek@samsung.com>
+	<1386672926-26885-2-git-send-email-gautam.vivek@samsung.com>
+	<20131210140142.GB28456@xps8300>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:24127 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751424Ab3LJWs4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Dec 2013 17:48:56 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXM002HY4PIY860@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Dec 2013 07:48:54 +0900 (KST)
-In-reply-to: <1386673649-15181-2-git-send-email-broonie@kernel.org>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20131210140142.GB28456@xps8300>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Sarah Sharp <sarah.a.sharp-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>
-Cc: 'Doug Anderson' <dianders@chromium.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 'Mark Brown' <broonie@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Tuesday, December 10, 2013 8:07 PM, Mark Brown wrote:
-> 
-> From: Mark Brown <broonie@linaro.org>
-> 
-> These symbols are only referenced in this source file so can be made
-> static, and the efficiency table is constant data so can be declared as
-> such.  This avoids polluting the global namespace and fixes warnings
-> from sparse.
-> 
-> The function arch_scale_freq_power() is still not prototyped or static,
-> this is a separate issue as this is overriding a weak symbol from the
-> scheduler which neglects to provide a prototype.
-> 
-> Signed-off-by: Mark Brown <broonie@linaro.org>
+Hi,
 
-It looks good.
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
 
-Best regards,
-Jingoo Han
+On Tue, Dec 10, 2013 at 7:31 PM, Heikki Krogerus
+<heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org> wrote:
+> Hi,
 
-> ---
->  arch/arm/kernel/topology.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/kernel/topology.c b/arch/arm/kernel/topology.c
-> index 85a87370f144..0bc94b1fd1ae 100644
-> --- a/arch/arm/kernel/topology.c
-> +++ b/arch/arm/kernel/topology.c
-> @@ -68,16 +68,16 @@ struct cpu_efficiency {
->   * Processors that are not defined in the table,
->   * use the default SCHED_POWER_SCALE value for cpu_scale.
->   */
-> -struct cpu_efficiency table_efficiency[] = {
-> +static const struct cpu_efficiency table_efficiency[] = {
->  	{"arm,cortex-a15", 3891},
->  	{"arm,cortex-a7",  2048},
->  	{NULL, },
->  };
-> 
-> -unsigned long *__cpu_capacity;
-> +static unsigned long *__cpu_capacity;
->  #define cpu_capacity(cpu)	__cpu_capacity[cpu]
-> 
-> -unsigned long middle_capacity = 1;
-> +static unsigned long middle_capacity = 1;
-> 
->  /*
->   * Iterate all CPUs' descriptor in DT and compute the efficiency
-> @@ -89,7 +89,7 @@ unsigned long middle_capacity = 1;
->   */
->  static void __init parse_dt_topology(void)
->  {
-> -	struct cpu_efficiency *cpu_eff;
-> +	const struct cpu_efficiency *cpu_eff;
->  	struct device_node *cn = NULL;
->  	unsigned long min_capacity = (unsigned long)(-1);
->  	unsigned long max_capacity = 0;
-> @@ -158,7 +158,7 @@ static void __init parse_dt_topology(void)
->   * boot. The update of all CPUs is in O(n^2) for heteregeneous system but the
->   * function returns directly for SMP system.
->   */
-> -void update_cpu_power(unsigned int cpu)
-> +static void update_cpu_power(unsigned int cpu)
->  {
->  	if (!cpu_capacity(cpu))
->  		return;
-> @@ -185,7 +185,7 @@ const struct cpumask *cpu_coregroup_mask(int cpu)
->  	return &cpu_topology[cpu].core_sibling;
->  }
-> 
-> -void update_siblings_masks(unsigned int cpuid)
-> +static void update_siblings_masks(unsigned int cpuid)
->  {
->  	struct cputopo_arm *cpu_topo, *cpuid_topo = &cpu_topology[cpuid];
->  	int cpu;
+Thanks for reviewing this.
+
+>
+> On Tue, Dec 10, 2013 at 04:25:23PM +0530, Vivek Gautam wrote:
+>> Some PHY controllers may need to tune PHY post-initialization,
+>> so that the PHY consumers can call phy-tuning at appropriate
+>> point of time.
+>>
+>> Signed-off-by: vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>  drivers/phy/phy-core.c  |   20 ++++++++++++++++++++
+>>  include/linux/phy/phy.h |    7 +++++++
+>>  2 files changed, 27 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+>> index 03cf8fb..68dbb90 100644
+>> --- a/drivers/phy/phy-core.c
+>> +++ b/drivers/phy/phy-core.c
+>> @@ -239,6 +239,26 @@ out:
+>>  }
+>>  EXPORT_SYMBOL_GPL(phy_power_off);
+>>
+>> +int phy_tune(struct phy *phy)
+>> +{
+>> +     int ret = -ENOTSUPP;
+>> +
+>> +     mutex_lock(&phy->mutex);
+>> +     if (phy->ops->tune) {
+>> +             ret =  phy->ops->tune(phy);
+>> +             if (ret < 0) {
+>> +                     dev_err(&phy->dev, "phy tuning failed --> %d\n", ret);
+>> +                     goto out;
+>> +             }
+>> +     }
+>> +
+>> +out:
+>> +     mutex_unlock(&phy->mutex);
+>> +
+>> +     return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(phy_tune);
+>
+> I think "setup" instead of "tune" is much more clear and reusable.
+
+I think "setup" will look more like first time setting up the phy,
+which is rather served by "init" callback.
+This i thought would serve the purpose of over-riding certain PHY
+parameters, which would not have been
+possible at "init" time.
+Please correct my thinking if i am unable to understand your point here.
+
+>
+> Thanks,
+>
 > --
-> 1.8.5.1
-> 
+> heikki
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
