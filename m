@@ -1,49 +1,50 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH 1/5] clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for
- the sysreg clock
-Date: Wed, 11 Dec 2013 17:27:05 +0530
-Message-ID: <1386763029-8516-2-git-send-email-a.kesavan@samsung.com>
-References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH 0/5] Power Related Fixes for Exynos5250
+Date: Wed, 11 Dec 2013 17:27:04 +0530
+Message-ID: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:16440 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751408Ab3LKL40 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:38471 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751408Ab3LKL42 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 06:56:26 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 11 Dec 2013 06:56:28 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXN008JG560F820@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Dec 2013 20:56:24 +0900 (KST)
-In-reply-to: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
+ with ESMTP id <0MXN003S655X5O40@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Dec 2013 20:56:22 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dianders@chromium.org, olof@lixom.net, kgene.kim@samsung.com, jonghwa3.lee@samsung.com, yadi.brar@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 Cc: Abhilash Kesavan <a.kesavan@samsung.com>
 
-The sysreg (system register) generates control signals for various blocks
-like disp1blk, i2c, mipi etc. However, it gets disabled as an unused clock
-at boot-up.
+Patch 1 prevents the gating of sysreg clock on Exynos5250.
+Patch 2 is a re-send of an earlier patch.
+(http://www.spinics.net/lists/linux-samsung-soc/msg15485.html)
+Patches 3 and 4 are fixes for MAX77686 on Exynos5250 based Snow
+board (boot-up issues).
+Patch 5 implements a power-off call-back for Exynos5250 that can
+be re-used for Exynos5420.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- drivers/clk/samsung/clk-exynos5250.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The patches have been tested on an SMDK5250 based Chromebook.
 
-diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
-index adf3234..0833501 100644
---- a/drivers/clk/samsung/clk-exynos5250.c
-+++ b/drivers/clk/samsung/clk-exynos5250.c
-@@ -406,7 +406,8 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
- 	GATE(hsi2c2, "hsi2c2", "aclk66", GATE_IP_PERIC, 30, 0, 0),
- 	GATE(hsi2c3, "hsi2c3", "aclk66", GATE_IP_PERIC, 31, 0, 0),
- 	GATE(chipid, "chipid", "aclk66", GATE_IP_PERIS, 0, 0, 0),
--	GATE(sysreg, "sysreg", "aclk66", GATE_IP_PERIS, 1, 0, 0),
-+	GATE(sysreg, "sysreg", "aclk66",
-+			GATE_IP_PERIS, 1, CLK_IGNORE_UNUSED, 0),
- 	GATE(pmu, "pmu", "aclk66", GATE_IP_PERIS, 2, CLK_IGNORE_UNUSED, 0),
- 	GATE(tzpc0, "tzpc0", "aclk66", GATE_IP_PERIS, 6, 0, 0),
- 	GATE(tzpc1, "tzpc1", "aclk66", GATE_IP_PERIS, 7, 0, 0),
+Abhilash Kesavan (4):
+  clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for the sysreg
+    clock
+  ARM: EXYNOS5: Fix PMU register configuration for local power blocks
+  clk: max77686: Replace is_enabled() with is_prepared call-back
+  ARM: dts: Setup the interrupt parent for max77686
+
+Olof Johansson (1):
+  ARM: EXYNOS5250: Implement pm_power_off
+
+ arch/arm/boot/dts/cros5250-common.dtsi       |   11 ++++
+ arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
+ arch/arm/mach-exynos/pmu.c                   |   86 ++++++++++++++++++++------
+ drivers/clk/clk-max77686.c                   |    4 +-
+ drivers/clk/samsung/clk-exynos5250.c         |    3 +-
+ 5 files changed, 86 insertions(+), 21 deletions(-)
+
 -- 
 1.7.9.5
