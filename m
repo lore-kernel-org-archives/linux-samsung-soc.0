@@ -1,39 +1,51 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] phy: Add exynos-phy driver
-Date: Wed, 11 Dec 2013 11:16:39 +0100
-Message-ID: <52A83B87.205@samsung.com>
-References: <1385558788-10880-1-git-send-email-t.stanislaws@samsung.com>
- <52A8364B.5020204@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <52A8364B.5020204@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: t.figa@samsung.com, kgene.kim@samsung.com, grant.likely@linaro.org, rob.herring@calxeda.com, sylvester.nawrocki@gmail.com, kyungmin.park@samsung.com
+From: Vikas Sajjan <vikas.sajjan@linaro.org>
+Subject: [PATCH 0/2] Add initial support of PMU and CMU for exynos5260
+Date: Wed, 11 Dec 2013 16:25:14 +0545
+Message-ID: <1386758416-31065-1-git-send-email-vikas.sajjan@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:43004 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750864Ab3LKKk0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Dec 2013 05:40:26 -0500
+Received: by mail-pb0-f42.google.com with SMTP id uo5so9752272pbc.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 02:40:26 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, t.figa@samsung.com, patches@linaro.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, joshi@samsung.com
 
-On 11/12/13 10:54, Kishon Vijay Abraham I wrote:
-> On Wednesday 27 November 2013 06:56 PM, Tomasz Stanislawski wrote:
->> > Hello everyone,
->> > The Samsung SoCs from Exynos family are enhanced with a bunch of switches
->> > dedicated for IP blocks. Those switches are called PHYs in Exynos
->> > specification. They are usually controlled by a single bit in a single
->> > one-word-long register.
->
-> So only enabling this switch is enough for the controller or some other actual
-> PHY IP is needed along with this switch?
-> 
-> However I'm not sure if the switch should be modelled as PHY as it is not a PHY
-> in the real sense.
+1) Added initial PMU support for exynos5260
 
-These are ordinary PHY devices embedded in an SoC. I wouldn't really call
-them "switches", as they indeed provide the physical layer functionality 
-for various interfaces, like USB, HDMI, MIPI CSI/DSI, etc. Their control 
-interface is often very simple - usually only an enable and a reset 
-control bit. But that can't change the fact they are real PHY devices,
-so let's not call them switches, that's just untrue.
+2) Added exynos5260_iodesc for mapping 5260 specific SFRs. We modified
+exynos5_map_io so that in case of exynos5260 only exynos5260_iodesc can
+be initialized.
 
-Regards,
-Sylwester
+3) Added new macros for WAKEUP MASK for 5260, and modified exynos_pm_drvinit
+accordingly.
+
+4) Adds CMU virtual addresses for exynos5260.
+
+rebased on kgene tree for-next branch
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+and on top of rahul's patches for basic support of exynos5260
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg24573.html
+
+Vikas Sajjan (1):
+  ARM: EXYNOS: Add initial support of PMU for Exynos5260
+
+Young-Gun Jang (1):
+  ARM: EXYNOS: Add CMU virtual addresses for exynos5260
+
+ arch/arm/mach-exynos/common.c                  | 154 ++++++++++++++++-
+ arch/arm/mach-exynos/common.h                  |   5 +
+ arch/arm/mach-exynos/include/mach/map.h        |  31 ++++
+ arch/arm/mach-exynos/include/mach/regs-clock.h |  17 ++
+ arch/arm/mach-exynos/include/mach/regs-pmu.h   | 221 +++++++++++++++++++++++++
+ arch/arm/mach-exynos/pm.c                      |  33 +++-
+ arch/arm/mach-exynos/pmu.c                     | 140 ++++++++++++++++
+ arch/arm/plat-samsung/include/plat/map-s5p.h   |  30 ++++
+ 8 files changed, 620 insertions(+), 11 deletions(-)
+
+-- 
+1.7.12.4
