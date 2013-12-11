@@ -1,79 +1,70 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH] phy: Add exynos-phy driver
-Date: Wed, 11 Dec 2013 15:24:19 +0530
-Message-ID: <52A8364B.5020204@ti.com>
-References: <1385558788-10880-1-git-send-email-t.stanislaws@samsung.com>
+From: Tarek Dakhran <t.dakhran@samsung.com>
+Subject: Re: [PATCH v5 0/3] Exynos 5410 support
+Date: Wed, 11 Dec 2013 13:56:25 +0400
+Message-ID: <52A836C9.9020405@samsung.com>
+References: <1386685599-31536-1-git-send-email-v.tyrtov@samsung.com>
+ <87ppp48xrs.fsf@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1385558788-10880-1-git-send-email-t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <87ppp48xrs.fsf@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kevin Hilman <khilman@linaro.org>, Vyacheslav Tyrtov <v.tyrtov@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, nicolas.pitre@linaro.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Heiko Stuebner <heiko@sntech.de>, linux-doc@vger.kernel.org, tomasz.figa@gmail.com, Naour Romain <romain.naour@openwide.fr>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Dave.Martin@arm.com, devicetree@vger.kernel.org, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Mike Turquette <mturquette@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Landley <rob@landley.net>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 12/10/2013 08:40 PM, Kevin Hilman wrote:
+> Vyacheslav Tyrtov <v.tyrtov@samsung.com> writes:
+>
+>> The series of patches represent support of Exynos 5410 SoC
+>>
+>> The Exynos 5410 is the first Samsung SoC based on bigLITTLE architecture
+>>
+>> Patches add new platform description, support of clock controller and device
+>> tree for Exynos 5410.
+>>
+>> Dual cluster support for Exynos 5410 (EDCS) has been removed from this series
+>> This patches is activating only the big cluster (all A15 cores)
+> Testing this series on top of v3.13-rc3, plus a couple of other
+> necessary changes (which should've probably been noted in the changelog):
+>
+> 1) change CONFIG_NR_CPUS=8 in .config
+> 2) add the exynos combiner patch from Chander:
+>     [PATCH v2] irqchip: exynos-combiner: remove hard-coded irq_base value
+>
+> I'm still only seeing 2 out of 4 cores come up on my odroid-xu:
+>
+> [    0.045000] CPU: Testing write buffer coherency: ok
+> [    0.045000] CPU0: update cpu_power 1024
+> [    0.045000] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+> [    0.045000] Setting up static identity map for 0x403717d8 - 0x40371830
+> [    0.045000] CPU1: Booted secondary processor
+> [    0.065000] CPU1: update cpu_power 1024
+> [    0.065000] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+> [    1.075000] CPU2: failed to boot: -38
+> [    2.075000] CPU3: failed to boot: -38
+> [    2.075000] Brought up 2 CPUs
+> [    2.075000] SMP: Total of 2 processors activated.
+> [    2.075000] CPU: All CPU(s) started in SVC mode.
+>
+Hi Kevin,
 
-On Wednesday 27 November 2013 06:56 PM, Tomasz Stanislawski wrote:
-> Hello everyone,
-> The Samsung SoCs from Exynos family are enhanced with a bunch of switches
-> dedicated for IP blocks. Those switches are called PHYs in Exynos
-> specification. They are usually controlled by a single bit in a single
-> one-word-long register.
+EDCS(exynos dual cluster support) moved to separate patch now.
+This patches introduce only base SoC support  (2xA15).
 
-So only enabling this switch is enough for the controller or some other actual
-PHY IP is needed along with this switch?
+Patches tested on samsung smdk5410 board.
 
-However I'm not sure if the switch should be modelled as PHY as it is not a PHY
-in the real sense.
+Next version of EDCS patches will be available soon.
+They allow power on and boot all 8 cores.
 
-Thanks
-Kishon
-
-> 
-> A IP driver has to control such a switch in an abstract manner.  Therefore,
-> such 'enablers' were implemented as clocks in older versions of Linux kernel.
-> With the dawn of PHY subsystems, PHYs become a natural way of exporting the
-> 'enabler' functionality to drivers.  However, there is an unexpected
-> consequence. Some of those 1-bit PHYs were implemented as separate drivers.
-> This means that one has to create a struct device, struct phy, its phy provider
-> and 100-150 lines of driver code to basically set one bit.
-> 
-> The DP phy driver is a good example:
-> https://lkml.org/lkml/2013/7/18/53
-> 
-> And simple-phy RFC (shares only driver code but not other resources):
-> https://lkml.org/lkml/2013/10/21/313
-> 
-> To avoid waste of resources I propose to create all such 1-bit phys from Exynos
-> SoC using a single device, driver and phy provider.
-> 
-> This patchset contains a proposed solution.
-> 
-> All comment are welcome.
-> 
-> Hopefully in future the functionality introduced by this patch may be merged
-> into a larger Power Management Unit (PMU) gluer driver.  On Samsusng SoC , the
-> PMU part contains a number of register barely linked to power management (like
-> clock gating, clock dividers, CPU resetting, etc.).  It may be tempting to
-> create a hybrid driver that export clocks/phys/etc that are controlled by PMU
-> unit.
-> 
-> Regards,
-> Tomasz Stanislawski
-> 
-> Tomasz Stanislawski (1):
->   phy: Add exynos-phy driver
-> 
->  drivers/phy/Kconfig      |    5 ++
->  drivers/phy/Makefile     |    1 +
->  drivers/phy/exynos-phy.c |  152 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 158 insertions(+)
->  create mode 100644 drivers/phy/exynos-phy.c
-> 
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+     Tarek Dakhran.
