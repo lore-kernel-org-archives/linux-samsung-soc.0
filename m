@@ -1,136 +1,85 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 7/8] clk: max77686: Register OF clock provider
-Date: Thu, 12 Dec 2013 17:07:20 +0100
-Message-ID: <1386864441-19561-8-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 4/8] clk: max77686: Make max77686_clk_register() return
+ struct clk *
+Date: Thu, 12 Dec 2013 17:07:17 +0100
+Message-ID: <1386864441-19561-5-git-send-email-t.figa@samsung.com>
 References: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49963 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751716Ab3LLQHs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Dec 2013 11:07:48 -0500
-In-reply-to: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1386864441-19561-1-git-send-email-t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Lee Jones <lee.jones@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-If max77686 chip is instantiated from device tree, it is desirable to
-have an OF clock provider to allow device tree based look-up of clocks.
-This patch adds OF clock provider registration to the clk-max77686
-driver.
+As a preparation for further patches, this patch modifies the clock
+registration helper function to return a pointer to the newly registered
+clock. No functional change is done to the driver.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- .../devicetree/bindings/clock/maxim,max77686.txt   | 38 ++++++++++++++++++++++
- Documentation/devicetree/bindings/mfd/max77686.txt |  3 ++
- drivers/clk/clk-max77686.c                         | 24 ++++++++++++++
- 3 files changed, 65 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77686.txt
+ drivers/clk/clk-max77686.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/maxim,max77686.txt b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-new file mode 100644
-index 0000000..96ce71b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/maxim,max77686.txt
-@@ -0,0 +1,38 @@
-+Binding for Maxim MAX77686 32k clock generator block
-+
-+This is a part of device tree bindings of MAX77686 multi-function device.
-+More information can be found in bindings/mfd/max77686.txt file.
-+
-+The MAX77686 contains three 32.768khz clock outputs that can be controlled
-+(gated/ungated) over I2C.
-+
-+Following properties should be presend in main device node of the MFD chip.
-+
-+Required properties:
-+- #clock-cells: simple one-cell clock specifier format is used, where the
-+  only cell is used as an index of the clock inside the provider. Following
-+  indices are allowed:
-+    - 0: 32khz_ap clock,
-+    - 1: 32khz_cp clock,
-+    - 2: 32khz_pmic clock.
-+
-+Example: Node of the MFD chip
-+
-+	max77686: max77686@09 {
-+		compatible = "maxim,max77686";
-+		interrupt-parent = <&wakeup_eint>;
-+		interrupts = <26 0>;
-+		reg = <0x09>;
-+		#clock-cells = <1>;
-+
-+		/* ... */
-+	};
-+
-+Example: Clock consumer node
-+
-+	foo@0 {
-+		compatible = "bar,foo";
-+		/* ... */
-+		clock-names = "my-clock";
-+		clocks = <&max77686 2>;
-+	};
-diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index c6a3469..678f3cf 100644
---- a/Documentation/devicetree/bindings/mfd/max77686.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -7,6 +7,9 @@ different i2c slave address,presently for which we are statically creating i2c
- client while probing.This document describes the binding for mfd device and
- PMIC submodule.
- 
-+Binding for the built-in 32k clock generator block is defined separately
-+in bindings/clk/maxim,max77686.txt file.
-+
- Required properties:
- - compatible : Must be "maxim,max77686";
- - reg : Specifies the i2c slave address of PMIC block.
 diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index 3cf38dc..3d7e8dd 100644
+index 5d78460..2e6ba0e 100644
 --- a/drivers/clk/clk-max77686.c
 +++ b/drivers/clk/clk-max77686.c
-@@ -169,6 +169,26 @@ static int max77686_clk_probe(struct platform_device *pdev)
+@@ -112,27 +112,26 @@ static struct clk_init_data max77686_clks_init[MAX77686_CLKS_NUM] = {
+ 	},
+ };
  
- 	platform_set_drvdata(pdev, clocks);
- 
-+	if (iodev->dev->of_node) {
-+		struct clk_onecell_data *of_data;
-+
-+		of_data = devm_kzalloc(&pdev->dev,
-+					sizeof(*of_data), GFP_KERNEL);
-+		if (!of_data) {
-+			ret = -ENOMEM;
-+			goto err_clocks;
-+		}
-+
-+		of_data->clks = clocks;
-+		of_data->clk_num = MAX77686_CLKS_NUM;
-+		ret = of_clk_add_provider(iodev->dev->of_node,
-+					of_clk_src_onecell_get, of_data);
-+		if (ret) {
-+			dev_err(&pdev->dev, "failed to register OF clock provider\n");
-+			goto err_clocks;
-+		}
-+	}
-+
- 	return 0;
- 
- err_clocks:
-@@ -182,9 +202,13 @@ err_clocks:
- 
- static int max77686_clk_remove(struct platform_device *pdev)
+-static int max77686_clk_register(struct device *dev,
++static struct clk *max77686_clk_register(struct device *dev,
+ 				struct max77686_clk *max77686)
  {
-+	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct clk **clocks = platform_get_drvdata(pdev);
- 	int i;
+ 	struct clk *clk;
+ 	struct clk_hw *hw = &max77686->hw;
  
-+	if (iodev->dev->of_node)
-+		of_clk_del_provider(iodev->dev->of_node);
-+
+ 	clk = clk_register(dev, hw);
+-
+ 	if (IS_ERR(clk))
+-		return -ENOMEM;
++		return clk;
+ 
+ 	max77686->lookup = kzalloc(sizeof(struct clk_lookup), GFP_KERNEL);
+ 	if (!max77686->lookup)
+-		return -ENOMEM;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	max77686->lookup->con_id = hw->init->name;
+ 	max77686->lookup->clk = clk;
+ 
+ 	clkdev_add(max77686->lookup);
+ 
+-	return 0;
++	return clk;
+ }
+ 
+ static int max77686_clk_probe(struct platform_device *pdev)
+@@ -154,12 +153,16 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 	}
+ 
  	for (i = 0; i < MAX77686_CLKS_NUM; i++) {
- 		struct clk_hw *hw = __clk_get_hw(clocks[i]);
- 		struct max77686_clk *max77686 = to_max77686_clk(hw);
++		struct clk *clk;
++
+ 		max77686_clks[i]->iodev = iodev;
+ 		max77686_clks[i]->mask = 1 << i;
+ 		max77686_clks[i]->hw.init = &max77686_clks_init[i];
+ 
+-		ret = max77686_clk_register(&pdev->dev, max77686_clks[i]);
+-		if (ret) {
++		clk = max77686_clk_register(&pdev->dev, max77686_clks[i]);
++		if (IS_ERR(clk)) {
++			ret = PTR_ERR(clk);
++
+ 			switch (i) {
+ 			case MAX77686_CLK_AP:
+ 				dev_err(&pdev->dev, "Fail to register CLK_AP\n");
 -- 
 1.8.4.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
