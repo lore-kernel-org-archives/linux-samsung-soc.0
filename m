@@ -1,57 +1,82 @@
-From: Mohit KUMAR DCG <Mohit.KUMAR@st.com>
-Subject: RE: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
- host maintainers
-Date: Thu, 12 Dec 2013 13:06:16 +0800
-Message-ID: <2CC2A0A4A178534D93D5159BF3BCB66189F95F642F@EAPEX1MAIL1.st.com>
-References: <20131211183237.GI4699@google.com>
- <20131211184321.GJ4699@google.com>
- <000f01cef6bf$cd0fe340$672fa9c0$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <000f01cef6bf$cd0fe340$672fa9c0$%han@samsung.com>
-Content-Language: en-US
-Sender: linux-pci-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Shawn Guo' <shawn.guo@linaro.org>, 'Jason Cooper' <jason@lakedaemon.net>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Simon Horman' <horms@verge.net.au>, 'Magnus Damm' <magnus.damm@gmail.com>, 'Valentine Barshak' <valentine.barshak@cogentembedded.com>, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Kuninori Morimoto' <kuninori.morimoto.gx@renesas.com>, Pratyush ANAND <pratyush.anand@st.com>
+From: panchaxari <panchaxari.prasannamurthy@linaro.org>
+Subject: [PATCH CFT] ARM:S5P64X0: Enable ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR by default
+Date: Thu, 12 Dec 2013 10:42:32 +0530
+Message-ID: <1386825152-398-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f42.google.com ([209.85.160.42]:54305 "EHLO
+	mail-pb0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751028Ab3LLFNR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Dec 2013 00:13:17 -0500
+Received: by mail-pb0-f42.google.com with SMTP id uo5so11454852pbc.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 21:13:16 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: patches@linaro.org, linaro-kernel@lists.linaro.org, panchaxari.prasannamurthy@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Jingoo Han [mailto:jg1.han@samsung.com]
-> Sent: Thursday, December 12, 2013 3:55 AM
-> To: 'Bjorn Helgaas'; linux-pci@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> linux-tegra@vger.kernel.org; linux-sh@vger.kernel.org; linux-samsung-
-> soc@vger.kernel.org; 'Shawn Guo'; 'Jason Cooper'; 'Thierry Reding'; 'Simon
-> Horman'; 'Magnus Damm'; 'Valentine Barshak'; 'Wei Yongjun'; 'Wei Yongjun';
-> 'Kuninori Morimoto'; Mohit KUMAR DCG; Pratyush ANAND; 'Jingoo Han'
-> Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car
-> PCI host maintainers
-> 
-> On Thursday, December 12, 2013 3:43 AM, Bjorn Helgaas wrote:
-> > On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
-> > > If this looks reasonable, I'll merge it via the PCI tree for v3.13.
-> >
-> > And I see Mohit's patch [1] to update the DesignWare entry:
-> >
-> > +PCIE DRIVER FOR SYNOPSIS DESIGNWARE CONTROLLER
-> > +M:	Mohit Kumar <mohit.kumar@st.com>
-> > +M:	Jingoo Han <jg1.han@samsung.com>
-> > +L:	linux-pci@vger.kernel.org
-> > +S:	Maintained
-> > +F:	drivers/pci/host/pcie-designware.c
-> >
-> > I can fold in that update too if Jingoo acks it.
-> >
-> > [1] http://patchwork.ozlabs.org/patch/299905/
-> 
-> Hi Bjorn,
-> 
-> I agree with this. :-)
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
-> 
-- Thanks Bjorn and Jingoo. I will remove this patch from my v2 patches.
+ARM_PATCH_PHYS_VIRT and AUTO_ZRELADDR have been enabled as default configs
+to S5P64X0 platforms.
 
-Regards
-Mohit
+Introduction of PHYS_VIRT config as default would enable phy-to-virt and
+virt-to-phy translation function at boot and module loading time
+and enforce dynamic reallocation of memory. AUTO_ZRELADDR config would
+enable calculation of kernel load address at run time.
+
+PHYS_VIRT config is mutually exclusive to XIP_KERNEL, XIP_KERNEL is used in
+systems with NOR flash devices, and ZRELADDR config is mutually exclusive
+to ZBOOT_ROM.
+
+CFT::Call For Testing
+
+Requesting maintainers of S5P64X0 platforms to evaluate the changes on the
+board and comment, as I dont have the board for testing and also requesting
+an ACK
+
+Signed-off-by: panchaxari <panchaxari.prasannamurthy@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+---
+The samsung S5P64X0 vega has an average performing CPU with max speed 667 Mhz.
+This SOC has two variants S5P6440 and S5P6450. It has one core based on
+ARM1176JZF-S instruction set, and has 16KB data and instruction cache each.
+
+SOC has a memory subsystem with support to NAND Flash interface with x8 data
+bus, with 1/4/8/12/16 bit hardware ECC circuit and 4KB Page mode. It has
+Mobile DDR interface with x16 or x32 data bus, and DDR2 interface with x16 or
+x32 data bus it also supports eMMC4.4.
+
+Below lkml link is a quoting by Russell which clears the concept of PHYS_VIRT
+and ZRELADDR
+-------------------------------------------------
+
+https://lkml.org/lkml/2011/10/14/434
+
+-------------------------------------------------
+---
+ arch/arm/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 934e26c..8986335 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -759,6 +759,8 @@ config ARCH_S3C64XX
+ 
+ config ARCH_S5P64X0
+ 	bool "Samsung S5P6440 S5P6450"
++	select ARM_PATCH_PHYS_VIRT
++	select AUTO_ZRELADDR
+ 	select CLKDEV_LOOKUP
+ 	select CLKSRC_SAMSUNG_PWM
+ 	select CPU_V6
+-- 
+1.7.10.4
