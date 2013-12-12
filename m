@@ -1,49 +1,53 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH CFT] ARM:S5P64X0: Enable ARM_PATCH_PHYS_VIRT and
- AUTO_ZRELADDR by default
-Date: Thu, 12 Dec 2013 12:40:59 +0100
-Message-ID: <3126277.U19MiHChc4@amdc1227>
-References: <1386825152-398-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
- <26167386.hX5eWUjT6T@flatron>
- <CAAunhULO5n3rf5_Q+HwExd=kadsPC_rTz9oP8kXKM7krBetbdQ@mail.gmail.com>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
+ host maintainers
+Date: Thu, 12 Dec 2013 07:38:59 -0500
+Message-ID: <20131212123859.GH10053@titan.lakedaemon.net>
+References: <20131211183237.GI4699@google.com>
+ <52A96877.90902@free-electrons.com>
+ <001901cef71a$41f3a520$c5daef60$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38115 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751380Ab3LLLlN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Dec 2013 06:41:13 -0500
-In-reply-to: <CAAunhULO5n3rf5_Q+HwExd=kadsPC_rTz9oP8kXKM7krBetbdQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <001901cef71a$41f3a520$c5daef60$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Gregory CLEMENT' <gregory.clement@free-electrons.com>, 'Bjorn Helgaas' <bhelgaas@google.com>, linux-pci@vger.kernel.org, 'Kuninori Morimoto' <kuninori.morimoto.gx@renesas.com>, linux-samsung-soc@vger.kernel.org, 'Wei Yongjun' <weiyj.lk@gmail.com>, 'Simon Horman' <horms@verge.net.au>, linux-sh@vger.kernel.org, 'Magnus Damm' <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 'Valentine Barshak' <valentine.barshak@cogentembedded.com>, 'Wei Yongjun' <yongjun_wei@trendmicro.com.cn>, 'Thierry Reding' <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, 'Shawn Guo' <shawn.guo@linaro.org>, linux-arm-kernel@lists.infradead.org, 'Thomas Petazzoni' <thomas.petazzoni@free-electrons.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Panchaxari Prasannamurthy Tumkur <panchaxari.prasannamurthy@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kgene Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thursday 12 of December 2013 16:33:46 Panchaxari Prasannamurthy Tumkur wrote:
-> Hi Tomasz
+On Thu, Dec 12, 2013 at 06:12:18PM +0900, Jingoo Han wrote:
+> On Thursday, December 12, 2013 4:41 PM, Gregory CLEMENT wrote:
+> > On 11/12/2013 19:32, Bjorn Helgaas wrote:
+> > > If this looks reasonable, I'll merge it via the PCI tree for v3.13.
+> > >
+> > > Bjorn
 > 
-> > Could you explain the purpose of this change on S5P64x0?
-> >
-> > This is actually quite a poor platform choice. As of today, the kernel
-> > is stuck with supporting just SMDK6440/6450 boards, which are proprietary
-> > development boards and it doesn't look like any further boards will show
-> > up in future. Kukjin has actually proposed removing support for this
-> > platform at all and I consider this reasonable.
-> >
-> > Kukjin, should we proceed with removal?
+> [.....]
 > 
-> The purpose of this patch is with the greater intent of consolidating
-> ARM-32 kernel. Which means a generic kernel for ARM-32 processors.
+> > > +PCI DRIVER FOR MVEBU (Marvell Armada 370 and Armada XP SOC support)
+> > > +M:	Jason Cooper <jason@lakedaemon.net>
+> > > +L:	linux-pci@vger.kernel.org
+> > > +L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+> > > +S:	Maintained
+> > > +F:	drivers/pci/host/*mvebu*
+> > 
+> > I think that Thomas Petazzoni would be more appropriate, he worked
+> > on the mvebu PCIe since 6 moths and now know very well the
+> > subject. Until now all the mvebu PCIe related questions were
+> > managed by Thomas.
+> 
+> I think so, too. :-)
+> 
+> Thomas Petazzoni is the author of the  mvebu PCIe. Also, he did
+> The basic foundation of PCIe Host with Thierry Reding.  I think
+> That he is the best person for the Maintainer of the mvebu PCIe.
 
-OK. So do you have plans to send similar patches for other, more active
-(and closer to having multiplatform support) platforms, such as s3c64xx,
-s5pv210 and exynos?
+100% Ack.  Thanks for the nomination, but Thomas is the person best
+suited to review patches and maintain the driver.  If you want some
+patch wrangling, I don't mind helping out, but I'd prefer Thomas be the
+maintainer here.
 
-In case of s5p64x0 probably the only person capable of testing it is
-Kukjin, as we don't have any other active people with boards based on
-these SoCs.
+thx,
 
-Best regards,
-Tomasz
+Jason.
