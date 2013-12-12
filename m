@@ -1,45 +1,93 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH 3/3] ARM: dts: Fix MDMA0 clock number
-Date: Thu, 12 Dec 2013 08:32:02 +0530
-Message-ID: <1386817322-11265-3-git-send-email-a.kesavan@samsung.com>
-References: <1386817322-11265-1-git-send-email-a.kesavan@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH 1/5] clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag
+ for the sysreg clock
+Date: Thu, 12 Dec 2013 10:06:36 +0530
+Message-ID: <CAM4voanSSqqAzRqrNrRc+HYh4vtq3zgNeGQYCVG6sE6nB_eWGA@mail.gmail.com>
+References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
+	<1386763029-8516-2-git-send-email-a.kesavan@samsung.com>
+	<CAD=FV=WK-zgcNvF6qtnsRky3RbEvBOW+1uNiUR-fyp2257gPPw@mail.gmail.com>
+	<CA+Ln22EQnpLfjcCOAY7U-tpc--XFy=dnwUr7K577x_ker4KuHw@mail.gmail.com>
+	<CAD=FV=XG+5n+SW_bDiFtQB7ieViAxVAO5E12+y-DgY34maT6DQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:31505 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750882Ab3LLDBM (ORCPT
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:47481 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751086Ab3LLEgh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 22:01:12 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0MXO00JSSB1YV1B0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Dec 2013 12:01:10 +0900 (KST)
-In-reply-to: <1386817322-11265-1-git-send-email-a.kesavan@samsung.com>
+	Wed, 11 Dec 2013 23:36:37 -0500
+Received: by mail-qc0-f174.google.com with SMTP id n7so5727418qcx.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 20:36:36 -0800 (PST)
+In-Reply-To: <CAD=FV=XG+5n+SW_bDiFtQB7ieViAxVAO5E12+y-DgY34maT6DQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dianders@chromium.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, jonghwa3.lee@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Fix wrong clock number in mdma0 node.
+Hi Tomasz and Doug,
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- arch/arm/boot/dts/exynos5250.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks for the review.
+On Thu, Dec 12, 2013 at 6:00 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Tomasz,
+>
+> On Wed, Dec 11, 2013 at 4:13 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>> 2013/12/12 Doug Anderson <dianders@chromium.org>:
+>>> This does match what's done in exynos4 and exynos5420 and it's not
+>>> terrible.  I'm always a fan of actually specifying clocks properly and
+>>> that's more possible now using the syscon stuff (see Leela Krishna's
+>>> watchdog patches).  You'd have to extend that to add a clock, but that
+>>> wouldn't be too hard.
+>>
+>> Leela's patches are about PMU, not sysreg, but that's not an issue, I guess,
+>> as it's about adding a clock to the generic syscon driver.
+>
+> Right.  I was proposing doing something similar to his, but for the
+> separate "sysreg" address range.  ...then adding a clock to the
+> generic syscon driver.
+>
+> I _think_ the syscon clock doesn't really need to be always on--it
+> only needs to be on during the access of these registers, right?  I
+> make this statement based on the fact that exynos5250 boards currently
+> bootup and are very functional, but this clock is currently off.
+I see USB2 currently using sysreg at boot-up, so I would assume that
+it would fail if we have this clock turned off by the firmware. Have
+not tested yet.
+>
+>
+>> Still, I discussed about such cases as this with Sylwester a bit today and
+>> maybe a bit different approach would be better. There is a number of clocks
+>> that need to be always on, such as PMU (but also a lot of currently undefined
+>> ones). IMHO it would be nice to make sure they are enabled at boot time
+>> and do one of following:
+>> 1) claim and enable them directly from the clock controller driver
+>> 2) define them with CLK_IGNORE_UNUSED flag and enable them directly from
+>>    the clock controller driver (without increasing the refcount, so users could
+>>    possibly disable them later),
+>> 3) add a generic flag, such as CLK_BOOT_ENABLE (or something), that would
+>>    make the CCF enable such clock at bootup (in addition to implying
+>>    CLK_IGNORE_UNUSED).
+>>
+>> For me, the most sensible option would be 2) as it doesn't bloat the CCF with
+>> yet another flag and doesn't encourage people to leave clocks always on
+>> just because of laziness stopping them from implementing proper clock
+>> support in drivers.
+>
+> Right, we're using #2 for this now, but one problem is that it's
+> possible that the firmware may turn off one of these misc-type clocks.
+>  On exynos5250-snow we ran into this.  The firmware actually gates the
+> clock needed for accessing the chip_id, though perhaps that's not one
+> of the clocks that needs to be on all the time.
 
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 9db5047..177becd 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -559,7 +559,7 @@
- 			compatible = "arm,pl330", "arm,primecell";
- 			reg = <0x10800000 0x1000>;
- 			interrupts = <0 33 0>;
--			clocks = <&clock 271>;
-+			clocks = <&clock 346>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
- 			#dma-channels = <8>;
--- 
-1.7.9.5
+Yes, If the firmware gates sysreg then we should see failures at
+boot-up or later.
+Is this patch OK for now ? How would you guys like me to proceed on this ?
+>
+> -Doug
+
+Regards,
+Abhilash
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
