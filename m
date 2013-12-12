@@ -1,64 +1,50 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI
- host maintainers
-Date: Thu, 12 Dec 2013 12:15:57 +0100
-Message-ID: <20131212111556.GB11524@ulmo.nvidia.com>
-References: <20131211183237.GI4699@google.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="/NkBOFFp2J2Af1nK"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20131211183237.GI4699@google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Jingoo Han <jg1.han@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>, Wei Yongjun <weiyj.lk@gmail.com>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] mmc: sdhci-s3c: Check if clk_set_rate() succeeds
+Date: Thu, 12 Dec 2013 11:21:06 +0000
+Message-ID: <1386847266-2131-1-git-send-email-broonie@kernel.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: linux-mmc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+From: Mark Brown <broonie@linaro.org>
 
---/NkBOFFp2J2Af1nK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+It is possible that we may fail to set the clock rate, if we do so then
+log the failure and don't bother reprogramming the IP.
 
-On Wed, Dec 11, 2013 at 11:32:37AM -0700, Bjorn Helgaas wrote:
-> If this looks reasonable, I'll merge it via the PCI tree for v3.13.
->=20
-> Bjorn
->=20
->=20
-> MAINTAINERS: Add DesignWare, i.MX6, Armada, R-Car PCI host maintainers
->=20
-> Add entries for PCI host controller drivers in drivers/pci/host/.
->=20
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  MAINTAINERS |   31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
+Signed-off-by: Mark Brown <broonie@linaro.org>
+Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+---
+ drivers/mmc/host/sdhci-s3c.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Looks good to me:
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index 6debda952155..5c20f827d828 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -295,6 +295,7 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
+ 	struct device *dev = &ourhost->pdev->dev;
+ 	unsigned long timeout;
+ 	u16 clk = 0;
++	int ret;
+ 
+ 	/* If the clock is going off, set to 0 at clock control register */
+ 	if (clock == 0) {
+@@ -305,7 +306,12 @@ static void sdhci_cmu_set_clock(struct sdhci_host *host, unsigned int clock)
+ 
+ 	sdhci_s3c_set_clock(host, clock);
+ 
+-	clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
++	ret = clk_set_rate(ourhost->clk_bus[ourhost->cur_clk], clock);
++	if (ret != 0) {
++		dev_err(dev, "%s: failed to set clock rate %uHz\n",
++			mmc_hostname(host->mmc), clock);
++		return;
++	}
+ 
+ 	host->clock = clock;
+ 
+-- 
+1.8.5.1
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---/NkBOFFp2J2Af1nK
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.22 (GNU/Linux)
-
-iQIcBAEBAgAGBQJSqZrsAAoJEN0jrNd/PrOhoGAP/Rwv5Hl1kzl2/sl6eHcZ5ejn
-weIUFpPMDI9nlrXDrB6WLC7AeUa2ZiK6VIyg2gn+ORxqtSxlzb9o4X0CQmqvhK91
-RK8cXNasIqNUp5cTzihzvRvPlPmYhElSmqgoAV35BHh14hhaVNxtbnKqTNGUjQUR
-JX+0SWNllb2wG6Bc2kA/mIk2HU4OugQmIIFsZ+Kh8rFNKFYW/gh2b76fkZwAi9Ra
-ncRoXec7XZkC9cVgxiCQwlifwgzNzMzbmTz1LvqUkxN5shBebaBvRJbcfST9ILEg
-JoVTDzJCmhtRt5ugJX7nAXvJmIdwZaTGl1rUtDKWs5fFPT3LPDCqcdUl+nyBIuSL
-wZ4z9S5ya2hYdOUQzvDzY91n6BCiquNVqoJNEPMj23A8EqrrpfDPfn4wChwLJtxK
-QyxCbfQwchhLVQeZBrOtEaTMJaZXl14zbM4YzkPCBndyoOzDc0jD3paf21wilVo/
-ogBUcVdeQcgm3H+EFueJSBlhVsmwmJHGKbgmLJp0F6wpeAFeBph/0mKTf2yyD0TJ
-WJ3Xs9y1E4DxcaUPnx9VSuijo4OEkGrXZKd+2AtXjjRNV6ZU4tbYlts9ecYZ3A6V
-dmZZKg0hhyVkT2H5VkPCkb3PuZVpMEuvN6jofe34/KmD0vtyGj4ZguZvmW8EAzAN
-6wY+t8q6F2A6ZfhotLqG
-=Y3ls
------END PGP SIGNATURE-----
-
---/NkBOFFp2J2Af1nK--
