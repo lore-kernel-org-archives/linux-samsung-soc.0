@@ -1,92 +1,72 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH V4] cpufreq: suspend governors on system suspend/hibernate
-Date: Thu, 12 Dec 2013 02:50:13 +0100
-Message-ID: <2173296.zTKqhC7Obn@vostro.rjw.lan>
-References: <28d493f20239a242a7b26dfe1efed40d83bf1e10.1385523340.git.viresh.kumar@linaro.org> <3466098.C5M665z3nb@vostro.rjw.lan> <20131208124108.GA4286@pd.tnic>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH 0/5] Power Related Fixes for Exynos5250
+Date: Thu, 12 Dec 2013 08:12:50 +0530
+Message-ID: <CAM4voa=Vxy72EzRTNmraRgPz7WeJX1QSU6dC2bLjHi=5t9arHw@mail.gmail.com>
+References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
+	<1474895.cu1U1Gy5We@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <cpufreq-owner@vger.kernel.org>
-In-Reply-To: <20131208124108.GA4286@pd.tnic>
-Sender: cpufreq-owner@vger.kernel.org
-To: Borislav Petkov <bp@alien8.de>
-Cc: Paul Bolle <pebolle@tiscali.nl>, =?ISO-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>, Viresh Kumar <viresh.kumar@linaro.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Patch Tracking <patches@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Kgene Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-tegra@vger.kernel.org, jinchoi@broadcom.com, Lan Tianyu <tianyu.lan@intel.com>, Sebastian Capella <sebastian.capella@linaro.org>, Jonghwan Choi <jhbird.choi@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f176.google.com ([209.85.216.176]:61813 "EHLO
+	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750882Ab3LLCmv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Dec 2013 21:42:51 -0500
+Received: by mail-qc0-f176.google.com with SMTP id i8so5818677qcq.35
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 18:42:50 -0800 (PST)
+In-Reply-To: <1474895.cu1U1Gy5We@amdc1227>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, jonghwa3.lee@samsung.com, Douglas Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On Sunday, December 08, 2013 01:41:08 PM Borislav Petkov wrote:
-> On Sun, Dec 08, 2013 at 01:34:36AM +0100, Rafael J. Wysocki wrote:
-> > On Saturday, December 07, 2013 04:24:09 PM Paul Bolle wrote:
-> > > On Sat, 2013-12-07 at 12:01 +0100, Bj=C3=B8rn Mork wrote:
-> > > > Sorry to be making noise here again, but I was eager to verify =
-that the
-> > > > fixes in v3.13-rc3 were OK on my system.  Unfortunately it seem=
-s this
-> > > > patch completely broke suspend for me.  Hibernete ended up with=
- a blank
-> > > > console and no visible activity, without ever writing any image=
- to disk.
-> > > >=20
-> > > > There really weren't that many suspects between v3.13-rc2 and v=
-3.13-rc3,
-> > > > so I went directly to reverting 5a87182aa21d ("cpufreq: suspend
-> > > > governors on system suspend/hibernate") which fixed the problem=
-=2E I
-> > > > didn't bother debugging it further from there. I don't think th=
-ere is
-> > > > anything magic about my system which should make this problem s=
-pecific
-> > > > to it.
-> > > >=20
-> > > > I am still using the acpi-cpufreq driver on an old x86_64 lapto=
-p if that
-> > > > matters.
-> > >=20
-> > > On an x86 (32 bits) laptop hibernate also broke in v3.13-rc3. On =
-that
-> > > machine hibernation itself worked, or at least seemed to work, bu=
-t the
-> > > machine would basically stop after thawing (directly after loadin=
-g the
-> > > hibernation image).
-> > >=20
-> > > And reverting commit 5a87182aa21d ("cpufreq: suspend governors on=
- system
-> > > suspend/hibernate"), on top of v3.13-rc3, also lead to a successf=
-ul
-> > > hibernation/thaw cycle.
-> >=20
-> > OK, reverted.
->=20
-> +1.
->=20
-> Grrr, I just wasted a whole morning bisecting the same issue as repor=
-ted
-> above and can confirm the revert is the right thing to do.
->=20
-> Well, almost: the box almost suspends until I hear the clicking sound=
- of
-> the mainboard trying to turn stuff off but then the fan remains on. W=
-hen
-> I hit a button on the keyboard, it then turns off completely. This is
-> probably some nasty BIOS SMI crap which we don't have control over an=
-d
-> I'd guess unrelated to the issue at hand.
->=20
-> Anyway, Rafael, I was wondering: I have a couple of boxes here and it
-> would probably make a good sense to help out with testing this stuff
-> more - I just can't have suspend breakages.
->=20
-> Maybe you'd like me to give a run of your tree now and then to check
-> whether someone has sent you a quickly rushed brownpaper bag of
-> questionable nature and we can fish it out before it hits Linus. :)
->=20
-> So let me know.
+Hi Tomasz,
 
-That would be great, thanks!
+On Wed, Dec 11, 2013 at 6:11 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Abhilash,
+>
+> On Wednesday 11 of December 2013 17:27:04 Abhilash Kesavan wrote:
+>> Patch 1 prevents the gating of sysreg clock on Exynos5250.
+>> Patch 2 is a re-send of an earlier patch.
+>> (http://www.spinics.net/lists/linux-samsung-soc/msg15485.html)
+>> Patches 3 and 4 are fixes for MAX77686 on Exynos5250 based Snow
+>> board (boot-up issues).
+>> Patch 5 implements a power-off call-back for Exynos5250 that can
+>> be re-used for Exynos5420.
+>>
+>> The patches have been tested on an SMDK5250 based Chromebook.
+>>
+>> Abhilash Kesavan (4):
+>>   clk: samsung: exynos5250: Add CLK_IGNORE_UNUSED flag for the sysreg
+>>     clock
+>>   ARM: EXYNOS5: Fix PMU register configuration for local power blocks
+>>   clk: max77686: Replace is_enabled() with is_prepared call-back
+>>   ARM: dts: Setup the interrupt parent for max77686
+>>
+>> Olof Johansson (1):
+>>   ARM: EXYNOS5250: Implement pm_power_off
+>>
+>>  arch/arm/boot/dts/cros5250-common.dtsi       |   11 ++++
+>>  arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
+>>  arch/arm/mach-exynos/pmu.c                   |   86 ++++++++++++++++++++------
+>>  drivers/clk/clk-max77686.c                   |    4 +-
+>>  drivers/clk/samsung/clk-exynos5250.c         |    3 +-
+>>  5 files changed, 86 insertions(+), 21 deletions(-)
+>
+> You used the old and now invalid address of DT mailing list.
+>
+> Anyway, there is no need to send patches for .dts* files to DT mailing
+> list anymore. Just changes in drivers that affect how they handle data
+> from DT and binding documentation (Documentation/devicetree/.*). So
+> please drop the DT mailing list in next iteration of the series.
 
-My tree is not too interesting at the moment from the cpufreq testing
-perspective, but I'll let you know when there's more stuff in there.
-
-Thanks,
-Rafael
-
+Thanks for the pointer. I'll take care in the future.
+>
+> Best regards,
+> Tomasz
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
