@@ -1,41 +1,84 @@
-From: Panchaxari Prasannamurthy Tumkur
-	<panchaxari.prasannamurthy@linaro.org>
-Subject: Re: [PATCH CFT] ARM:S5P64X0: Enable ARM_PATCH_PHYS_VIRT and
- AUTO_ZRELADDR by default
-Date: Thu, 12 Dec 2013 19:55:27 +0530
-Message-ID: <CAAunhUJiTNW0HxCpMtwf7yPrBrrRwZ0T6odtj-yTw0rowPU2Zw@mail.gmail.com>
-References: <1386825152-398-1-git-send-email-panchaxari.prasannamurthy@linaro.org>
-	<26167386.hX5eWUjT6T@flatron>
-	<CAAunhULO5n3rf5_Q+HwExd=kadsPC_rTz9oP8kXKM7krBetbdQ@mail.gmail.com>
-	<3126277.U19MiHChc4@amdc1227>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v11 1/2] [media] exynos5-is: Adds DT binding documentation
+Date: Thu, 12 Dec 2013 16:32:14 +0100
+Message-ID: <52A9D6FE.30302@samsung.com>
+References: <1383650355-28838-1-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qe0-f44.google.com ([209.85.128.44]:63710 "EHLO
-	mail-qe0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751931Ab3LLOZ2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Dec 2013 09:25:28 -0500
-Received: by mail-qe0-f44.google.com with SMTP id nd7so359431qeb.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Dec 2013 06:25:27 -0800 (PST)
-In-Reply-To: <3126277.U19MiHChc4@amdc1227>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1383650355-28838-1-git-send-email-arun.kk@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>, linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: shaik.ameer@samsung.com, arunkk.samsung@gmail.com, Mark Rutland <Mark.Rutland@arm.com>, Mauro Carvalho Chehab <mchehab@redhat.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kgene Kim <kgene.kim@samsung.com>, Patch Tracking <patches@linaro.org>, linaro-kernel@lists.linaro.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-> OK. So do you have plans to send similar patches for other, more active
-> (and closer to having multiplatform support) platforms, such as s3c64xx,
-> s5pv210 and exynos?
->
-> In case of s5p64x0 probably the only person capable of testing it is
-> Kukjin, as we don't have any other active people with boards based on
-> these SoCs.
+Hi Arun,
 
-Yes I have, Exynos is already sent, s3c64xx and s5pv210 are in pipeline.
-I shall send them shortly.
+(Adding Mark and Mauro to Cc)
 
-thanks for your guidance.
+On 05/11/13 12:19, Arun Kumar K wrote:
+> From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> 
+> The patch adds the DT binding doc for exynos5 SoC camera
+> subsystem.
+> 
+> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> ---
+>  .../bindings/media/exynos5250-camera.txt           |  126 ++++++++++++++++++++
+>  1 file changed, 126 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/exynos5250-camera.txt b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> new file mode 100644
+> index 0000000..09420ba
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/exynos5250-camera.txt
+> @@ -0,0 +1,126 @@
+> +Samsung EXYNOS5 SoC Camera Subsystem
+> +------------------------------------
+> +
+> +The Exynos5 SoC Camera subsystem comprises of multiple sub-devices
+> +represented by separate device tree nodes. Currently this includes: FIMC-LITE,
+> +MIPI CSIS and FIMC-IS.
+> +
+> +The sub-device nodes are referenced using phandles in the common 'camera' node
+> +which also includes common properties of the whole subsystem not really
+> +specific to any single sub-device, like common camera port pins or the common
+> +camera bus clocks.
+> +
+> +Common 'camera' node
+> +--------------------
+> +
+> +Required properties:
+> +
+> +- compatible		: must be "samsung,exynos5250-fimc"
+> +- clocks		: list of clock specifiers, corresponding to entries in
+> +                          the clock-names property
+> +- clock-names		: must contain "sclk_bayer" entry
+> +- samsung,csis		: list of phandles to the mipi-csis device nodes
+> +- samsung,fimc-lite	: list of phandles to the fimc-lite device nodes
+> +- samsung,fimc-is	: phandle to the fimc-is device node
+> +
+> +The pinctrl bindings defined in ../pinctrl/pinctrl-bindings.txt must be used
+> +to define a required pinctrl state named "default".
+> +
+> +'parallel-ports' node
+> +---------------------
+> +
+> +This node should contain child 'port' nodes specifying active parallel video
+> +input ports. It includes camera A, camera B and RGB bay inputs.
+> +'reg' property in the port nodes specifies the input type:
+> + 1 - parallel camport A
+> + 2 - parallel camport B
+> + 5 - RGB camera bay
+> +
+> +3, 4 are for MIPI CSI-2 bus and are already described in samsung-mipi-csis.txt
 
-regards
-pancham
+Was there posted a version of this patch with Mark's comments addressed:
+http://www.spinics.net/lists/devicetree/msg11550.html ? I couldn't find it.
+
+-- 
+Thanks,
+Sylwester
