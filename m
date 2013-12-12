@@ -1,60 +1,69 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 5/5] ARM: dts: Setup the interrupt parent for max77686
-Date: Thu, 12 Dec 2013 08:20:17 +0530
-Message-ID: <CAM4voambaGq=r6HfHhXrsF_7sE0Z2Op+OLWqZOmhL6uvfr9zuA@mail.gmail.com>
-References: <1386763029-8516-1-git-send-email-a.kesavan@samsung.com>
-	<1386763029-8516-6-git-send-email-a.kesavan@samsung.com>
-	<CAD=FV=Vkobnvk1tic5eLkoXzniqRYFM4BhWkW+_7AL25Hd9iwQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH 2/3] clk: samsung: exynos5250: Add MDMA0 clocks
+Date: Thu, 12 Dec 2013 08:32:01 +0530
+Message-ID: <1386817322-11265-2-git-send-email-a.kesavan@samsung.com>
+References: <1386817322-11265-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:59158 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750911Ab3LLCuS (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:50617 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750971Ab3LLDBK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Dec 2013 21:50:18 -0500
-Received: by mail-qc0-f170.google.com with SMTP id x13so5974927qcv.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Dec 2013 18:50:18 -0800 (PST)
-In-Reply-To: <CAD=FV=Vkobnvk1tic5eLkoXzniqRYFM4BhWkW+_7AL25Hd9iwQ@mail.gmail.com>
+	Wed, 11 Dec 2013 22:01:10 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0MXO009I6B1XJBA0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Dec 2013 12:01:09 +0900 (KST)
+In-reply-to: <1386817322-11265-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: jonghwa3.lee@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: dianders@chromium.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, mturquette@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Abhilash Kesavan <a.kesavan@samsung.com>
 
-Hi Doug,
+Adds gate clock for MDMA0 on Exynos5250 SoC.
 
-On Thu, Dec 12, 2013 at 5:27 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Abhliash,
->
-> On Wed, Dec 11, 2013 at 3:57 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
->> Fix the following warning message:
->> [ 2921.671238] WARNING: CPU: 0 PID: 1 at kernel/irq/irqdomain.c:399 irq_create_mapping+0xe4/0xfc()
->> [ 2921.679907] irq_create_mapping(, b) called with NULL domain
->> [ 2921.685462] Modules linked in:
->> [ 2921.688498] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.13.0-rc1-00026-g36cc776 #67
->> [ 2921.696154] [<c0013c80>] (unwind_backtrace+0x0/0xf8) from [<c00110cc>] (show_stack+0x10/0x14)
->> [ 2921.704654] [<c00110cc>] (show_stack+0x10/0x14) from [<c03779fc>] (dump_stack+0x64/0xa4)
->> [ 2921.712725] [<c03779fc>] (dump_stack+0x64/0xa4) from [<c001c830>] (warn_slowpath_common+0x64/0x84)
->> [ 2921.721663] [<c001c830>] (warn_slowpath_common+0x64/0x84) from [<c001c8e4>] (warn_slowpath_fmt+0x30/0x40)
->> [ 2921.731210] [<c001c8e4>] (warn_slowpath_fmt+0x30/0x40) from [<c005a564>] (irq_create_mapping+0xe4/0xfc)
->> [ 2921.740590] [<c005a564>] (irq_create_mapping+0xe4/0xfc) from [<c029c85c>] (max77686_rtc_probe+0x110/0x21c)
->> [ 2921.750221] [<c029c85c>] (max77686_rtc_probe+0x110/0x21c) from [<c02253a8>] (platform_drv_probe+0x18/0x48)
->>
->> Also setup the default state of the max77686 irq line.
->>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> ---
->>  arch/arm/boot/dts/cros5250-common.dtsi |   11 +++++++++++
->>  1 file changed, 11 insertions(+)
->
-> Thank you for sending stuff upstream, but I'm afraid this patch has
-> already landed:
->
-> c61248a ARM: dts: Add max77686 RTC interrupt to cros5250-common
->
-> My patch matches yours but also includes the "wakeup-source" property.
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+---
+ .../devicetree/bindings/clock/exynos5250-clock.txt |    2 ++
+ drivers/clk/samsung/clk-exynos5250.c               |    5 ++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-I was working on Kgene's for-next; I do see your patch in linux-next.
-
-Regards,
-Abhilash
+diff --git a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+index 24765c1..5883ec8 100644
+--- a/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos5250-clock.txt
+@@ -159,6 +159,8 @@ clock which they consume.
+   mixer			343
+   hdmi			344
+   g2d			345
++  mdma0			346
++  smmu_mdma0		347
+ 
+ 
+    [Clock Muxes]
+diff --git a/drivers/clk/samsung/clk-exynos5250.c b/drivers/clk/samsung/clk-exynos5250.c
+index cbba4a8..27ffe2f 100644
+--- a/drivers/clk/samsung/clk-exynos5250.c
++++ b/drivers/clk/samsung/clk-exynos5250.c
+@@ -120,7 +120,8 @@ enum exynos5250_clks {
+ 	spi2, i2s1, i2s2, pcm1, pcm2, pwm, spdif, ac97, hsi2c0, hsi2c1, hsi2c2,
+ 	hsi2c3, chipid, sysreg, pmu, cmu_top, cmu_core, cmu_mem, tzpc0, tzpc1,
+ 	tzpc2, tzpc3, tzpc4, tzpc5, tzpc6, tzpc7, tzpc8, tzpc9, hdmi_cec, mct,
+-	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g2d,
++	wdt, rtc, tmu, fimd1, mie1, dsim0, dp, mixer, hdmi, g2d, mdma0,
++	smmu_mdma0,
+ 
+ 	/* mux clocks */
+ 	mout_hdmi = 1024,
+@@ -492,6 +493,8 @@ static struct samsung_gate_clock exynos5250_gate_clks[] __initdata = {
+ 	GATE(mixer, "mixer", "mout_aclk200_disp1", GATE_IP_DISP1, 5, 0, 0),
+ 	GATE(hdmi, "hdmi", "mout_aclk200_disp1", GATE_IP_DISP1, 6, 0, 0),
+ 	GATE(g2d, "g2d", "aclk200", GATE_IP_ACP, 3, 0, 0),
++	GATE(mdma0, "mdma0", "aclk266", GATE_IP_ACP, 1, 0, 0),
++	GATE(smmu_mdma0, "smmu_mdma0", "aclk266", GATE_IP_ACP, 5, 0, 0),
+ };
+ 
+ static struct samsung_pll_rate_table vpll_24mhz_tbl[] __initdata = {
+-- 
+1.7.9.5
