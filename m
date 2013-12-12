@@ -1,50 +1,86 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 2/8] clk: max77686: Provide .recalc_rate() operation
-Date: Thu, 12 Dec 2013 17:07:15 +0100
-Message-ID: <1386864441-19561-3-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v2 5/8] clk: max77686: Fix clean-up in error and remove paths
+Date: Thu, 12 Dec 2013 17:07:18 +0100
+Message-ID: <1386864441-19561-6-git-send-email-t.figa@samsung.com>
 References: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:52763 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751469Ab3LLQHq (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:49963 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751614Ab3LLQHr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Dec 2013 11:07:46 -0500
+	Thu, 12 Dec 2013 11:07:47 -0500
 In-reply-to: <1386864441-19561-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Mike Turquette <mturquette@linaro.org>, Lee Jones <lee.jones@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-It is usually nice to know frequency of a clock, so this patch adds a
-.recalc_rate() callback returning rates of provided clocks.
+This patch fixes invalid kfree() and adds missing call to clk_unregister()
+in error and remove paths in max77686_clk_probe(). While at it, error
+handling is also cleaned up.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/clk/clk-max77686.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/clk-max77686.c | 32 ++++++++++----------------------
+ 1 file changed, 10 insertions(+), 22 deletions(-)
 
 diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
-index e39d463..e40ecdb 100644
+index 2e6ba0e..81b3680 100644
 --- a/drivers/clk/clk-max77686.c
 +++ b/drivers/clk/clk-max77686.c
-@@ -81,10 +81,17 @@ static int max77686_clk_is_prepared(struct clk_hw *hw)
- 	return val & max77686->mask;
+@@ -162,20 +162,9 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 		clk = max77686_clk_register(&pdev->dev, max77686_clks[i]);
+ 		if (IS_ERR(clk)) {
+ 			ret = PTR_ERR(clk);
+-
+-			switch (i) {
+-			case MAX77686_CLK_AP:
+-				dev_err(&pdev->dev, "Fail to register CLK_AP\n");
+-				goto err_clk_ap;
+-				break;
+-			case MAX77686_CLK_CP:
+-				dev_err(&pdev->dev, "Fail to register CLK_CP\n");
+-				goto err_clk_cp;
+-				break;
+-			case MAX77686_CLK_PMIC:
+-				dev_err(&pdev->dev, "Fail to register CLK_PMIC\n");
+-				goto err_clk_pmic;
+-			}
++			dev_err(&pdev->dev, "failed to register %s\n",
++				max77686_clks[i]->hw.init->name);
++			goto err_clocks;
+ 		}
+ 	}
+ 
+@@ -183,13 +172,12 @@ static int max77686_clk_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-err_clk_pmic:
+-	clkdev_drop(max77686_clks[MAX77686_CLK_CP]->lookup);
+-	kfree(max77686_clks[MAX77686_CLK_CP]->hw.clk);
+-err_clk_cp:
+-	clkdev_drop(max77686_clks[MAX77686_CLK_AP]->lookup);
+-	kfree(max77686_clks[MAX77686_CLK_AP]->hw.clk);
+-err_clk_ap:
++err_clocks:
++	for (--i; i >= 0; --i) {
++		clkdev_drop(max77686_clks[i]->lookup);
++		clk_unregister(max77686_clks[i]->hw.clk);
++	}
++
+ 	return ret;
  }
  
-+static unsigned long max77686_recalc_rate(struct clk_hw *hw,
-+					  unsigned long parent_rate)
-+{
-+	return 32768;
-+}
-+
- static struct clk_ops max77686_clk_ops = {
- 	.prepare	= max77686_clk_prepare,
- 	.unprepare	= max77686_clk_unprepare,
- 	.is_prepared	= max77686_clk_is_prepared,
-+	.recalc_rate	= max77686_recalc_rate,
- };
+@@ -200,7 +188,7 @@ static int max77686_clk_remove(struct platform_device *pdev)
  
- static struct clk_init_data max77686_clks_init[MAX77686_CLKS_NUM] = {
+ 	for (i = 0; i < MAX77686_CLKS_NUM; i++) {
+ 		clkdev_drop(max77686_clks[i]->lookup);
+-		kfree(max77686_clks[i]->hw.clk);
++		clk_unregister(max77686_clks[i]->hw.clk);
+ 	}
+ 	return 0;
+ }
 -- 
 1.8.4.3
